@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/histdomain.cpp,v 1.3 1999-01-12 16:21:35 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/histdomain.cpp,v 1.4 1999-04-22 15:35:54 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -79,7 +79,7 @@ KssHistoryDomain::size() const
 
 // ----------------------------------------------------------------------------
 //
-KssChildIterator *
+KssChildIterator_THISTYPE *
 KssHistoryDomain::newIterator() const
 {
     return new KssSimpleDomainIterator(_tracks);
@@ -88,7 +88,7 @@ KssHistoryDomain::newIterator() const
 
 // ----------------------------------------------------------------------------
 //
-KssChildIterator *
+KssChildIterator_THISTYPE *
 KssHistoryDomain::newMaskedIterator(const KsMask & name_mask,
 				    KS_OBJ_TYPE type_mask) const
 {
