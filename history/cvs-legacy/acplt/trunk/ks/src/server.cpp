@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.12 1998-01-29 12:56:46 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.13 1998-02-10 14:13:18 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -70,9 +70,10 @@ KsServer::KsServer(u_long ttl, int port)
 {
     if ( port != KS_ANYPORT ) {
         //
-        // Some day I'll after those who'd invented virtual base
+        // Some day I'll be after those who'd invented virtual base
         // classes without defining the order of constructors called
-        // for derived classes.
+        // for derived classes. But on the other side, we did I ever
+        // relied on that?!
         //
         _sock_port = port;
     }
