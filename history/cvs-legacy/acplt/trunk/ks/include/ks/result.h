@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RESULT_INCLUDED
 #define KS_RESULT_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/result.h,v 1.2 1997-03-17 09:02:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/result.h,v 1.3 1997-03-17 09:13:47 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -48,7 +48,8 @@ class KsResult
 : public KsXdrAble 
 {
 public:
-    KsResult( KS_RESULT res = KS_ERR_OK ) { result = res; }
+    KsResult( KS_RESULT res = KS_ERR_OK ) : result(res) { }
+    KsResult( XDR *, bool &);
 
     bool xdrEncode(XDR *xdr) const;
     bool xdrDecode(XDR *xdr);

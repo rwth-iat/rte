@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.1 1997-03-17 09:01:01 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.2 1997-03-17 09:13:50 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -62,20 +62,17 @@ KsResult::xdrDecode(XDR *xdr) {
 
 ///////////////////////////////////////////////////////////////////////////
 
-KsResult *
-KsResult::xdrNew(XDR *xdr) {
-
-    KsResult *pksr = new KsResult();
-
-    if( (pksr != NULL) && (pksr->xdrDecode(xdr)) ) {
-
-        return pksr;
-    
-    } else {
-
-        delete pksr;
-        return NULL;
-    }
+KsResult::KsResult(XDR *xdr, bool & ok)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    ok = xdr_enum( xdr, &result);
 }
+
+//////////////////////////////////////////////////////////////////////
+
+KS_IMPL_XDRNEW(KsResult);
+
+//////////////////////////////////////////////////////////////////////
+
 
 // EOF ks/result
