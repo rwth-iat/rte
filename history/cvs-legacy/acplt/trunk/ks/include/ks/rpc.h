@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.3 1997-04-02 14:52:12 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.4 1997-04-03 15:12:11 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -67,6 +67,7 @@ extern "C" {
 #include <rpc/rpc.h>
 #include <rpc/svc.h>
 #include <rpc/svc_soc.h>
+#include <rpc/clnt_soc.h>
 #include <rpc/pmap_clnt.h>
 #endif
 
