@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_dbutil.c,v 1.6 2004-10-27 12:09:06 ansgar Exp $
+*   $Id: ov_dbutil.c,v 1.7 2004-10-27 13:32:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

@@ -152,9 +152,9 @@ int main(int argc, char **argv) {
 	char 				*libname=NULL;
 	char 				*filename=NULL;
 	int				i;
-	boolean				classinfo = FALSE;
-	boolean				associnfo = FALSE;
-	boolean				structinfo = FALSE;
+	OV_BOOL				classinfo = FALSE;
+	OV_BOOL				associnfo = FALSE;
+	OV_BOOL				structinfo = FALSE;
 	char				text[32];
 	OV_LIBRARY_DEF			*plibdef = NULL;
 	OV_CLASS_DEF			*pclassdef = NULL;
@@ -340,7 +340,7 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 			        while (pvardef) {
 					fprintf(fp,"\t\t\t %s", pvardef->identifier);
 				        if (pvardef->veclen == 0) fprintf(fp,"[]");
-				        if (pvardef->veclen > 1) fprintf(fp,"[%d]", pvardef->veclen);
+				        if (pvardef->veclen > 1) fprintf(fp,"[%lu]", pvardef->veclen);
 				        fprintf(fp," : ");
 			        	fprintf(fp,"%s", getfulltypetext(pvardef->vartype));
 			        	if (pvardef->vartype == OV_VT_STRUCT) {
@@ -416,7 +416,7 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 			        while (pvardef) {
 					fprintf(fp,"\t\t %s", pvardef->identifier);
 				        if (pvardef->veclen == 0) fprintf(fp,"[]");
-				        if (pvardef->veclen > 1) fprintf(fp,"[%d]", pvardef->veclen);
+				        if (pvardef->veclen > 1) fprintf(fp,"[%lu]", pvardef->veclen);
 				        fprintf(fp," : ");
 			        	fprintf(fp,"%s", getfulltypetext(pvardef->vartype));
 			        	if (pvardef->vartype == OV_VT_STRUCT) {
@@ -469,6 +469,7 @@ CLOSEDLL:
 			return -1;
 		}
 	}
+	return 0;
 }
 
 /*	----------------------------------------------------------------------	*/
