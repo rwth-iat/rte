@@ -276,23 +276,23 @@ avsimplemodule.obj: ..\..\src\avsimplemodule.cpp \
  ..\..\include\ks\rpc.h ..\..\include\ks\xdr.h \
  ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\string.h \
  ..\..\..\plt\include\plt\string.h ..\..\include\ks\client.h \
- ..\..\include\ks\register.h ..\..\include\ks\time.h \
- ..\..\..\plt\include\plt\time.h ..\..\include\ks\result.h \
- ..\..\include\ks\serviceparams.h ..\..\include\ks\props.h \
- ..\..\include\ks\handle.h ..\..\include\ks\value.h \
- ..\..\include\ks\array.h ..\..\..\plt\include\plt\array.h \
+ ..\..\include\ks\hostent.h ..\..\include\ks\register.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\props.h ..\..\include\ks\handle.h \
+ ..\..\include\ks\value.h ..\..\include\ks\array.h \
  ..\..\include\ks\list.h ..\..\..\plt\include\plt\list.h \
  ..\..\include\ks\avmodule.h
 
 client.obj: ..\..\src\client.cpp ..\..\include\ks\client.h \
- ..\..\include\ks\rpc.h ..\..\include\ks\xdr.h \
- ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\register.h \
- ..\..\include\ks\ks.h ..\..\include\ks\string.h \
- ..\..\..\plt\include\plt\string.h ..\..\include\ks\time.h \
- ..\..\..\plt\include\plt\time.h ..\..\include\ks\result.h \
- ..\..\include\ks\serviceparams.h ..\..\include\ks\props.h \
- ..\..\include\ks\handle.h ..\..\include\ks\value.h \
- ..\..\include\ks\array.h ..\..\..\plt\include\plt\array.h \
+ ..\..\include\ks\rpc.h ..\..\include\ks\hostent.h \
+ ..\..\include\ks\xdr.h ..\..\..\plt\include\plt\rtti.h \
+ ..\..\include\ks\register.h ..\..\include\ks\ks.h \
+ ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\props.h ..\..\include\ks\handle.h \
+ ..\..\include\ks\value.h ..\..\include\ks\array.h \
  ..\..\include\ks\list.h ..\..\..\plt\include\plt\list.h \
  ..\..\include\ks\avmodule.h
 
@@ -310,8 +310,12 @@ commobject.obj: ..\..\src\commobject.cpp ..\..\include\ks\commobject.h \
  ..\..\..\plt\include\plt\array.h ..\..\include\ks\time.h \
  ..\..\..\plt\include\plt\time.h ..\..\include\ks\clntpath.h \
  ..\..\include\ks\avmodule.h ..\..\include\ks\client.h \
- ..\..\include\ks\register.h ..\..\include\ks\result.h \
- ..\..\include\ks\serviceparams.h ..\..\include\ks\list.h
+ ..\..\include\ks\hostent.h ..\..\include\ks\register.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\list.h
+
+hostent.obj: ..\..\src\hostent.cpp ..\..\include\ks\hostent.h \
+ ..\..\include\ks\rpc.h
 
 package.obj: ..\..\src\package.cpp ..\..\include\ks\package.h \
  ..\..\include\ks\commobject.h ..\..\include\ks\props.h \
@@ -322,9 +326,9 @@ package.obj: ..\..\src\package.cpp ..\..\include\ks\package.h \
  ..\..\..\plt\include\plt\array.h ..\..\include\ks\time.h \
  ..\..\..\plt\include\plt\time.h ..\..\include\ks\clntpath.h \
  ..\..\include\ks\avmodule.h ..\..\include\ks\sorter.h \
- ..\..\include\ks\client.h ..\..\include\ks\register.h \
- ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
- ..\..\include\ks\list.h
+ ..\..\include\ks\client.h ..\..\include\ks\hostent.h \
+ ..\..\include\ks\register.h ..\..\include\ks\result.h \
+ ..\..\include\ks\serviceparams.h ..\..\include\ks\list.h
 
 sorter.obj: ..\..\src\sorter.cpp ..\..\include\ks\sorter.h \
  ..\..\include\ks\commobject.h ..\..\include\ks\props.h \
@@ -334,9 +338,10 @@ sorter.obj: ..\..\src\sorter.cpp ..\..\include\ks\sorter.h \
  ..\..\include\ks\value.h ..\..\include\ks\array.h \
  ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
  ..\..\include\ks\clntpath.h ..\..\include\ks\avmodule.h \
- ..\..\include\ks\client.h ..\..\include\ks\register.h \
- ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
- ..\..\include\ks\list.h ..\..\include\ks\package.h
+ ..\..\include\ks\client.h ..\..\include\ks\hostent.h \
+ ..\..\include\ks\register.h ..\..\include\ks\result.h \
+ ..\..\include\ks\serviceparams.h ..\..\include\ks\list.h \
+ ..\..\include\ks\package.h
 
 variables.obj: ..\..\src\variables.cpp ..\..\include\ks\variables.h \
  ..\..\..\plt\include\plt\debug.h ..\..\..\plt\include\plt\config.h \
@@ -350,14 +355,14 @@ variables.obj: ..\..\src\variables.cpp ..\..\include\ks\variables.h \
  ..\..\include\ks\clntpath.h ..\..\include\ks\avmodule.h
 
 pmobile.obj: ..\..\examples\pmobile.cpp ..\..\include\ks\client.h \
- ..\..\include\ks\rpc.h ..\..\include\ks\xdr.h \
- ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\register.h \
- ..\..\include\ks\ks.h ..\..\include\ks\string.h \
- ..\..\..\plt\include\plt\string.h ..\..\include\ks\time.h \
- ..\..\..\plt\include\plt\time.h ..\..\include\ks\result.h \
- ..\..\include\ks\serviceparams.h ..\..\include\ks\props.h \
- ..\..\include\ks\handle.h ..\..\include\ks\value.h \
- ..\..\include\ks\array.h ..\..\..\plt\include\plt\array.h \
+ ..\..\include\ks\rpc.h ..\..\include\ks\hostent.h \
+ ..\..\include\ks\xdr.h ..\..\..\plt\include\plt\rtti.h \
+ ..\..\include\ks\register.h ..\..\include\ks\ks.h \
+ ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\props.h ..\..\include\ks\handle.h \
+ ..\..\include\ks\value.h ..\..\include\ks\array.h \
  ..\..\include\ks\list.h ..\..\..\plt\include\plt\list.h \
  ..\..\include\ks\avmodule.h ..\..\include\ks\clntpath.h \
  ..\..\include\ks\commobject.h ..\..\include\ks\package.h \
@@ -380,19 +385,20 @@ pmobile_code.obj: ..\..\examples\pmobile_code.cpp \
  ..\..\..\plt\include\plt\time.h ..\..\include\ks\clntpath.h \
  ..\..\include\ks\avmodule.h ..\..\include\ks\package.h \
  ..\..\include\ks\sorter.h ..\..\include\ks\client.h \
- ..\..\include\ks\register.h ..\..\include\ks\result.h \
- ..\..\include\ks\serviceparams.h ..\..\include\ks\list.h \
- ..\..\..\plt\include\plt\log.h ..\..\..\plt\include\plt\logstream.h
+ ..\..\include\ks\hostent.h ..\..\include\ks\register.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\list.h ..\..\..\plt\include\plt\log.h \
+ ..\..\..\plt\include\plt\logstream.h
 
 tclient.obj: ..\..\examples\tclient.cpp ..\..\include\ks\client.h \
- ..\..\include\ks\rpc.h ..\..\include\ks\xdr.h \
- ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\register.h \
- ..\..\include\ks\ks.h ..\..\include\ks\string.h \
- ..\..\..\plt\include\plt\string.h ..\..\include\ks\time.h \
- ..\..\..\plt\include\plt\time.h ..\..\include\ks\result.h \
- ..\..\include\ks\serviceparams.h ..\..\include\ks\props.h \
- ..\..\include\ks\handle.h ..\..\include\ks\value.h \
- ..\..\include\ks\array.h ..\..\..\plt\include\plt\array.h \
+ ..\..\include\ks\rpc.h ..\..\include\ks\hostent.h \
+ ..\..\include\ks\xdr.h ..\..\..\plt\include\plt\rtti.h \
+ ..\..\include\ks\register.h ..\..\include\ks\ks.h \
+ ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\props.h ..\..\include\ks\handle.h \
+ ..\..\include\ks\value.h ..\..\include\ks\array.h \
  ..\..\include\ks\list.h ..\..\include\ks\avmodule.h \
  ..\..\include\ks\commobject.h ..\..\include\ks\clntpath.h \
  ..\..\include\ks\package.h ..\..\include\ks\sorter.h \
@@ -405,14 +411,14 @@ tclient.obj: ..\..\examples\tclient.cpp ..\..\include\ks\client.h \
  ..\..\..\plt\include\plt\sort_impl.h tclient_inst.h
 
 tclient1.obj: ..\..\examples\tclient1.cpp ..\..\include\ks\client.h \
- ..\..\include\ks\rpc.h ..\..\include\ks\xdr.h \
- ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\register.h \
- ..\..\include\ks\ks.h ..\..\include\ks\string.h \
- ..\..\..\plt\include\plt\string.h ..\..\include\ks\time.h \
- ..\..\..\plt\include\plt\time.h ..\..\include\ks\result.h \
- ..\..\include\ks\serviceparams.h ..\..\include\ks\props.h \
- ..\..\include\ks\handle.h ..\..\include\ks\value.h \
- ..\..\include\ks\array.h ..\..\..\plt\include\plt\array.h \
+ ..\..\include\ks\rpc.h ..\..\include\ks\hostent.h \
+ ..\..\include\ks\xdr.h ..\..\..\plt\include\plt\rtti.h \
+ ..\..\include\ks\register.h ..\..\include\ks\ks.h \
+ ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\props.h ..\..\include\ks\handle.h \
+ ..\..\include\ks\value.h ..\..\include\ks\array.h \
  ..\..\include\ks\list.h ..\..\include\ks\avmodule.h \
  ..\..\include\ks\commobject.h ..\..\include\ks\clntpath.h \
  ..\..\include\ks\package.h ..\..\include\ks\sorter.h \
@@ -578,14 +584,14 @@ tshell.obj: ..\..\examples\tshell.cpp ..\..\include\ks\commobject.h \
  ..\..\..\plt\include\plt\list_impl.h tshell_inst.h
 
 ttree.obj: ..\..\examples\ttree.cpp ..\..\include\ks\client.h \
- ..\..\include\ks\rpc.h ..\..\include\ks\xdr.h \
- ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\register.h \
- ..\..\include\ks\ks.h ..\..\include\ks\string.h \
- ..\..\..\plt\include\plt\string.h ..\..\include\ks\time.h \
- ..\..\..\plt\include\plt\time.h ..\..\include\ks\result.h \
- ..\..\include\ks\serviceparams.h ..\..\include\ks\props.h \
- ..\..\include\ks\handle.h ..\..\include\ks\value.h \
- ..\..\include\ks\array.h ..\..\..\plt\include\plt\array.h \
+ ..\..\include\ks\rpc.h ..\..\include\ks\hostent.h \
+ ..\..\include\ks\xdr.h ..\..\..\plt\include\plt\rtti.h \
+ ..\..\include\ks\register.h ..\..\include\ks\ks.h \
+ ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\props.h ..\..\include\ks\handle.h \
+ ..\..\include\ks\value.h ..\..\include\ks\array.h \
  ..\..\include\ks\list.h ..\..\..\plt\include\plt\list.h \
  ..\..\include\ks\avmodule.h ..\..\include\ks\clntpath.h \
  ..\..\include\ks\commobject.h \
