@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.18 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_library.c,v 1.19 2002-05-15 12:59:23 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -360,6 +360,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	if (strcmp(plibdef->ov_version, ovversion)) {
 		strncpy(ovversion1, plibdef->ov_version, 15);
 		strncpy(ovversion2, ovversion, 15);
+		ovversion1[15]=0;
+		ovversion2[15]=0;
 		pc1 = (char*) ovversion1 + strlen(ovversion1)-1;
 		pc2 = (char*) ovversion2 + strlen(ovversion2)-1;
 		while (pc1>ovversion1) {
