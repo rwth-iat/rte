@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.18 2000-10-27 07:50:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.19 2001-01-29 13:00:44 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -30,23 +30,35 @@ PLT_IMPL_RTTI2(KssSimpleVariable, KssVariable, KssSimpleCommObject);
 PLT_IMPL_RTTI2(KssTimeNowVariable, KssVariable, KssSimpleCommObject);
 PLT_IMPL_RTTI2(KssSimpleLinkAlias, KssDomain, KssSimpleCommObject);
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Lookup an immediate child of this domain by the child's identifier.
+// Returns an unbound handle in case the child does not exist.
+//
 KssCommObjectHandle
 KssSimpleDomain::getChildById(const KsString & id) const
 {
     KssCommObjectHandle h;
-    if (_children.query(id, h) ) {
-        // found in own children
+    if ( _children.query(id, h) ) {
+	//
+        // Found in own set of children, so return it.
+	//
         return h;
-    } else if (_next_sister) {
-        // otherwise ask sister
+    } else if ( _next_sister ) {
+	//
+        // Not found here, but delegate to our sister which might know
+	// this child.
+	//
         return _next_sister->getChildById(id);
     } else {
-        // otherwise there is no such child
+	//
+        // Otherwise there is no such child, so we return an unbound
+	// handle to the caller.
+	//
         return KssCommObjectHandle();
     }
-}
+} // KssSimpleDomain::getChildById
+
 
 //////////////////////////////////////////////////////////////////////
 
