@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.26 2000-04-10 15:02:48 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.27 2000-09-04 08:55:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -97,6 +97,10 @@ public:
     bool removeTimerEvent(KsTimerEvent *event);
     KsTimerEvent *removeNextTimerEvent();
 
+    // address reuse
+    bool getReuseAddr() { return _reuse_addr; }
+    void setReuseAddr(bool reuse) { _reuse_addr = reuse; }
+
     // service functions
 #if !PLT_SERVER_TRUNC_ONLY
     virtual void getVar(KsAvTicket &ticket,
@@ -138,6 +142,7 @@ protected:
     // protected attributes
     bool _is_ok;
     int _sock_port; // RPC socket port number
+    bool _reuse_addr; // SO_REUSEADDR
 
     // deserializes ticket or return 0 on failure. It can also return
     // an emergency ticket with a result() != 0.
