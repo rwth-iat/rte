@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.8 2000-06-14 18:05:10 dirk Exp $
+*   $Id: ov_ksserver.h,v 1.9 2001-07-09 12:49:09 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	28-Jul-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	21-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	02-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: adjustings for KsGetHist-service.
 */
 
 #ifndef OV_KSSERVER_H_INCLUDED
@@ -256,6 +257,7 @@ OV_RESULT ov_ksserver_getep_additem(
 	const KS_OBJ_TYPE	typemask,
 	const OV_STRING		namemask
 );
+
 
 /*
 *	Execute the Link service (subroutine)

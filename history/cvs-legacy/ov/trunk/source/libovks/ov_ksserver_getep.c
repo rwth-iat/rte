@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.9 2000-04-13 09:13:14 dirk Exp $
+*   $Id: ov_ksserver_getep.c,v 1.10 2001-07-09 12:50:01 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	01-Jun-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
+*	09-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: special GetEP answer for KsHistory and KsHistoryTrack objects
 */
 
 #define OV_COMPILE_LIBOVKS
@@ -87,6 +88,7 @@ void ov_ksserver_getep(
 	*	and/or parts of the object specified in the path
 	*/
 	if(params->scope_flags & KS_EPF_PARTS) {
+
 		/*
 		*	TODO & FIXME! flatten modus...
 		*/
@@ -103,10 +105,10 @@ void ov_ksserver_getep(
 		if(params->type_mask & KS_OT_LINK) {
 			mask |= OV_ET_PARENTLINK | OV_ET_CHILDLINK;
 		}
+		if(params->type_mask & KS_OT_HISTORY) {
+			mask |= OV_ET_OBJECT;
+		}
 		if(mask == OV_ET_NONE) {
-			/*
-			*	for now, we do not have histories...
-			*/
 			result->result = OV_ERR_OK;
 			return;
 		}
@@ -114,6 +116,7 @@ void ov_ksserver_getep(
 		*	search through the parts
 		*/
 		child.elemtype = OV_ET_NONE;
+		
 		while(TRUE) {
 			/*
 			*	get next part
@@ -139,7 +142,8 @@ void ov_ksserver_getep(
 			}
 		}
 	}
-	if((params->scope_flags & KS_EPF_CHILDREN) && ((params->type_mask & (KS_OT_DOMAIN | KS_OT_VARIABLE)))) {
+	if((params->scope_flags & KS_EPF_CHILDREN) && ((params->type_mask & (KS_OT_DOMAIN | KS_OT_VARIABLE | KS_OT_HISTORY)))) {
+
 		/*
 		*	search through the children
 		*/
@@ -194,9 +198,12 @@ OV_RESULT ov_ksserver_getep_additem(
 	OV_OBJ_ENGINEERED_PROPS	*pprops;
 	OV_OBJ_TYPE				objtype;
 	OV_ACCESS				access;
-	OV_INSTPTR_ov_object	pobj = pelem->pobj;
-	OV_VTBLPTR_ov_object	pvtable;
+	OV_INSTPTR_ov_object			pobj = pelem->pobj;
+	OV_VTBLPTR_ov_object			pvtable;
 	OV_BOOL					vendorobj = FALSE;
+	OV_BOOL					kshistobj = FALSE;
+	OV_BOOL					kshisttrackobj = FALSE;
+	OV_INSTPTR_ov_class			pclass;
 	OV_STRING				identifier;
 	/*
 	*	get the vtable of the object the element belongs to
@@ -226,7 +233,25 @@ OV_RESULT ov_ksserver_getep_additem(
 			objtype = KS_OT_VARIABLE;
 			vendorobj = TRUE;
 		} else {
-			objtype = KS_OT_DOMAIN;
+			pclass=Ov_GetParent(ov_instantiation, pelem->pobj);
+			while (pclass && (!kshistobj) && (!kshisttrackobj)) {
+				if (ov_string_compare(pclass->v_identifier, "KsHistory")==0) {
+					objtype = KS_OT_HISTORY;
+					kshistobj = TRUE;
+				}
+				else {
+					if (ov_string_compare(pclass->v_identifier, "KsHistoryTrack")==0) {
+						objtype = KS_OT_VARIABLE;
+						kshisttrackobj = TRUE;
+					}
+				      	else {
+						pclass=Ov_GetParent(ov_inheritance, pclass);
+					}
+				}
+			}
+			if ((!kshistobj) && (!kshisttrackobj)) {
+				objtype = KS_OT_DOMAIN;
+			}
 		}
 		/*
 		*	embedded objects are parts
@@ -321,6 +346,52 @@ OV_RESULT ov_ksserver_getep_additem(
 				.tech_unit = ov_vendortree_getunit(pobj);
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
 				.vartype = varcurrprops.value.vartype & OV_VT_KSMASK;
+			return OV_ERR_OK;
+		}
+		if(kshistobj) {
+			OV_ELEMENT givenobject;
+			OV_ELEMENT searchedelement;
+
+			givenobject.elemtype = OV_ET_OBJECT;
+			givenobject.pobj = Ov_PtrUpCast(ov_object, pobj);
+			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "HistoryType")))
+			{
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props
+					.historytype = *((OV_HIST_TYPE*) (searchedelement.pvalue));
+			}
+			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "defaultIPM")))
+			{
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props
+					.default_interpolation = *((OV_HIST_TYPE*) (searchedelement.pvalue));
+			}
+			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "supportedIPM")))
+			{
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props
+					.supported_interpolation = *((OV_HIST_TYPE*) (searchedelement.pvalue));
+			}
+			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "HistoryIdentifier")))
+			{
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props
+					.type_identifier = *((OV_STRING*) (searchedelement.pvalue));
+			}
+			return OV_ERR_OK;
+		}
+		if(kshisttrackobj) {
+			OV_ELEMENT givenobject;
+			OV_ELEMENT searchedelement;
+
+			givenobject.elemtype = OV_ET_OBJECT;
+			givenobject.pobj = Ov_PtrUpCast(ov_object, pobj);
+			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "TechUnit")))
+			{
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit
+					= *((OV_STRING*) (searchedelement.pvalue));
+			}
+			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "Type")))
+			{
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype
+					= *((OV_VAR_TYPE*) (searchedelement.pvalue));
+			}
 			return OV_ERR_OK;
 		}
 		pprops->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier

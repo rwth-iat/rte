@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.c,v 1.5 2000-04-04 15:12:53 dirk Exp $
+*   $Id: ov_ksserver_xdr.c,v 1.6 2001-07-09 12:50:01 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	20-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	02-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: xdr routines for OV_GETHIST.
 */
 /*
 *	Description:
@@ -631,6 +632,23 @@ OV_KSSERVER_DECL_XDRFNC(OV_EXGDATA_RES) {
 /*	----------------------------------------------------------------------	*/
 
 /*
+*	XDR routine for OV_HISTORY_ENGINEERED_PROPS
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_HISTORY_ENGINEERED_PROPS) {
+	if(!ov_ksserver_xdr_OV_HIST_TYPE(xdrs, &objp->historytype)) {
+		return FALSE;
+	}
+	if(!ov_ksserver_xdr_OV_INTERPOLATION_MODE(xdrs, &objp->default_interpolation)) {
+		return FALSE;
+	}
+	if(!ov_ksserver_xdr_OV_INTERPOLATION_MODE(xdrs, &objp->supported_interpolation)) {
+		return FALSE;
+	}
+	return ov_ksserver_xdr_string(xdrs, &objp->type_identifier, ~0);
+}
+
+/*	----------------------------------------------------------------------	*/
+/*
 *	XDR routine for OV_DOMAIN_ENGINEERED_PROPS
 */
 OV_KSSERVER_DECL_XDRFNC(OV_DOMAIN_ENGINEERED_PROPS) {
@@ -674,6 +692,13 @@ OV_KSSERVER_DECL_XDRFNC(OV_OBJ_ENGINEERED_PROPS) {
 		return FALSE;
 	}
 	switch(objp->objtype) {
+	case KS_OT_HISTORY:
+		if(!ov_ksserver_xdr_OV_HISTORY_ENGINEERED_PROPS(xdrs, &objp->OV_OBJ_ENGINEERED_PROPS_u.
+			history_engineered_props)
+		) {
+			return FALSE;
+		}
+		break;
 	case KS_OT_DOMAIN:
 		if(!ov_ksserver_xdr_OV_DOMAIN_ENGINEERED_PROPS(xdrs, &objp->OV_OBJ_ENGINEERED_PROPS_u.
 			domain_engineered_props)

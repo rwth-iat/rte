@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.10 2000-06-14 18:05:11 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.11 2001-07-09 12:50:01 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	23-Jul-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	21-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	02-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: adjustings for KsGetHist-service.
 */
 
 #define OV_COMPILE_LIBOVKS
@@ -600,6 +601,7 @@ void ov_ksserver_dispatch(
 	OV_TICKET	*povticket = ((OvKsAvTicket*)pticket)->ov_getTicket();
 #else
 	OV_TICKET	*povticket = pticket;
+	printf("just C\n");
 #endif
 	/*
 	*	dispatch the service

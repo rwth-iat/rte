@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_logfile.c,v 1.5 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_logfile.c,v 1.6 2001-07-09 12:50:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	14-May-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	07-Jun-2001 J.Nagelmann <nagelmann@ltsoft.de>: Changes for Sun Solaris.
 */
 
 #define OV_COMPILE_LIBOV
@@ -331,7 +332,7 @@ OV_DLLFNCEXPORT void ov_logfile_info(
 	*	print text to logfile
 	*/
 	va_start(args, format);
-#if OV_SYSTEM_UNIX
+#if OV_SYSTEM_UNIX && !OV_SYSTEM_SOLARIS
 	vsnprintf(msg, sizeof(msg), format, args);
 #else
 	vsprintf(msg, format, args);
@@ -357,7 +358,7 @@ OV_DLLFNCEXPORT void ov_logfile_debug(
 	*	print text to logfile
 	*/
 	va_start(args, format);
-#if OV_SYSTEM_UNIX
+#if OV_SYSTEM_UNIX  && !OV_SYSTEM_SOLARIS
 	vsnprintf(msg, sizeof(msg), format, args);
 #else
 	vsprintf(msg, format, args);
@@ -383,7 +384,7 @@ OV_DLLFNCEXPORT void ov_logfile_warning(
 	*	print text to logfile
 	*/
 	va_start(args, format);
-#if OV_SYSTEM_UNIX
+#if OV_SYSTEM_UNIX  && !OV_SYSTEM_SOLARIS
 	vsnprintf(msg, sizeof(msg), format, args);
 #else
 	vsprintf(msg, format, args);
@@ -409,7 +410,7 @@ OV_DLLFNCEXPORT void ov_logfile_error(
 	*	print text to logfile
 	*/
 	va_start(args, format);
-#if OV_SYSTEM_UNIX
+#if OV_SYSTEM_UNIX  && !OV_SYSTEM_SOLARIS
 	vsnprintf(msg, sizeof(msg), format, args);
 #else
 	vsprintf(msg, format, args);
@@ -435,7 +436,7 @@ OV_DLLFNCEXPORT void ov_logfile_alert(
 	*	print text to logfile
 	*/
 	va_start(args, format);
-#if OV_SYSTEM_UNIX
+#if OV_SYSTEM_UNIX  && !OV_SYSTEM_SOLARIS
 	vsnprintf(msg, sizeof(msg), format, args);
 #else
 	vsprintf(msg, format, args);

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.h,v 1.5 2000-04-04 15:12:44 dirk Exp $
+*   $Id: ov_ksserver_xdr.h,v 1.6 2001-07-09 12:49:13 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	20-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	02-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: adjustings for KsGetHist-service.
 */
 /*
 *	Description:
@@ -244,6 +245,19 @@ typedef struct {
 }	OV_LINK_ENGINEERED_PROPS;
 
 /*
+*	OV_HIST_ENGINEERED_PROPS:
+*	-----------------------
+*	Engineered properites of a history object.
+*/
+typedef struct {
+	OV_HIST_TYPE		historytype;
+	OV_INTERPOLATION_MODE 	default_interpolation;
+	OV_INTERPOLATION_MODE 	supported_interpolation;
+	OV_STRING		type_identifier;
+}	OV_HISTORY_ENGINEERED_PROPS;
+
+
+/*
 *	OV_OBJ_ENGINEERED_PROPS:
 *	-----------------------
 *	Engineered properties of an communication object.
@@ -256,12 +270,13 @@ struct OV_OBJ_ENGINEERED_PROPS {
 		OV_DOMAIN_ENGINEERED_PROPS	domain_engineered_props;
 		OV_VAR_ENGINEERED_PROPS		var_engineered_props;
 		OV_LINK_ENGINEERED_PROPS	link_engineered_props;
+		OV_HISTORY_ENGINEERED_PROPS	history_engineered_props;
 	}	OV_OBJ_ENGINEERED_PROPS_u;
 	OV_STRING			identifier;
 	OV_TIME				creation_time;
 	OV_STRING			comment;
 	OV_ACCESS			access;
-	OV_SEMANTIC_FLAGS	semantic_flags;
+	OV_SEMANTIC_FLAGS		semantic_flags;
 };
 typedef struct OV_OBJ_ENGINEERED_PROPS	OV_OBJ_ENGINEERED_PROPS;
 
@@ -679,6 +694,7 @@ OV_KSSERVER_DECL_XDRFNC(OV_STRING);
 #define ov_ksserver_xdr_OV_OBJ_TYPE				ov_ksserver_xdr_OV_ENUM
 #define ov_ksserver_xdr_OV_ACCESS				ov_ksserver_xdr_OV_ENUM
 #define ov_ksserver_xdr_OV_LINK_TYPE			ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_HIST_TYPE			ov_ksserver_xdr_OV_ENUM
 #define ov_ksserver_xdr_OV_PLACEMENT_HINT		ov_ksserver_xdr_OV_ENUM
 #define ov_ksserver_xdr_OV_EP_FLAGS				ov_ksserver_xdr_OV_ENUM
 #define ov_ksserver_xdr_OV_TIME_TYPE			ov_ksserver_xdr_OV_ENUM
@@ -699,6 +715,7 @@ OV_KSSERVER_DECL_XDRFNC(OV_VAR_PROJECTED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_LINK_PROJECTED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_OBJ_PROJECTED_PROPS);
 
+OV_KSSERVER_DECL_XDRFNC(OV_HISTORY_ENGINEERED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_DOMAIN_ENGINEERED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_VAR_ENGINEERED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_LINK_ENGINEERED_PROPS);

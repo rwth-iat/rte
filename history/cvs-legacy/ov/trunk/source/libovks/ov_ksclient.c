@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.c,v 1.8 2000-12-15 15:41:47 dirk Exp $
+*   $Id: ov_ksclient.c,v 1.9 2001-07-09 12:50:01 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -26,6 +26,7 @@
 *	26-Feb-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	03-May-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Mayor revision.
 *	12-Dec-2000 Dirk Meyer <dirk@plt.rwth-aachen.de>: Fixed a serious memory allocation bug.
+*	09-Feb-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: NULL check before use of callbackfnc.
 */
 
 #define OV_COMPILE_LIBOVKS
@@ -462,6 +463,7 @@ KS_RESULT OvKssInterKsServerConnection::connect(
 	/*
 	*	set the callback function and the user's data
 	*/
+	_sendrequestcallbackfnc = NULL;
 	_opencallbackfnc = callbackfnc;
 	_userdata = userdata;
 	/*
@@ -495,7 +497,10 @@ void OvKssInterKsServerConnection::disconnect(void) {
 	*	function with a KS_ERR_GENERIC result.
 	*/
 	if(_psvc) {
-		_sendrequestcallbackfnc(this, KS_ERR_GENERIC, _psvc, _userdata);
+		if (_sendrequestcallbackfnc) {
+			_sendrequestcallbackfnc(this, KS_ERR_GENERIC, _psvc, _userdata);
+			_sendrequestcallbackfnc = NULL;
+		}
 		_psvc->pconn = NULL;
 	}
 	/*
@@ -589,7 +594,10 @@ void OvKssInterKsServerConnection::async_attention(
 			}
 		}
 		/* call the user's callback function */
-		_opencallbackfnc(this, result, _userdata);
+		if (_opencallbackfnc) {
+			_opencallbackfnc(this, result, _userdata);
+			_opencallbackfnc = NULL;
+		}
 		return;
 
 	case ISC_OP_CALL: {
@@ -603,51 +611,72 @@ void OvKssInterKsServerConnection::async_attention(
 		bool_t				ok;
 		XDR					*xdr;
 		/*
-		*	reset the connection ptr of the service object and the service object ptr
-		*/
-		_psvc->pconn = NULL;
-		_psvc = NULL;
-		/*
 		*	check for errors
 		*/
-		result = getLastResult();
-		if(result != KS_ERR_OK) {
-			/* close the connection and call callback fnc */
-			close();
-			_sendrequestcallbackfnc(this, result, psvc, _userdata);
-			return;
-		}
-		/*
-		*	receive the reply
-		*/
-		xdr = getXdr();
-		if(!beginReceive()) {
-			_sendrequestcallbackfnc(this, getLastResult(), psvc, _userdata);
-			return;
-		}
-		ok = ov_ksclient_xdr_KS_AVMODULE_RES(xdr, &avresult);
-		if(ok) {
-			if(avresult.type == OV_TT_NONE) {
-				psvc->pavmodule->type = OV_TT_NONE;
-			} else {
-				if(avresult.type != psvc->pavmodule->type) {
-					ok = FALSE;
+		if (psvc) {
+			/*
+			*	reset the connection ptr of the service object and the service object ptr
+			*/
+			_psvc->pconn = NULL;
+			_psvc = NULL;
+			result = getLastResult();
+			if(result != KS_ERR_OK) {
+				/* close the connection and call callback fnc */
+				close();
+				if (_sendrequestcallbackfnc) {
+					_sendrequestcallbackfnc(this, result, psvc, _userdata);
+					_sendrequestcallbackfnc = NULL;
+				}
+				return;
+			}
+			/*
+			*	receive the reply
+			*/
+			xdr = getXdr();
+			if(!beginReceive()) {
+				if (_sendrequestcallbackfnc) {
+					_sendrequestcallbackfnc(this, getLastResult(), psvc, _userdata);
+					_sendrequestcallbackfnc = NULL;
+				}
+				return;
+			}
+			ok = ov_ksclient_xdr_KS_AVMODULE_RES(xdr, &avresult);
+			if(ok) {
+				if(avresult.type == OV_TT_NONE) {
+					psvc->pavmodule->type = OV_TT_NONE;
+				} else {
+					if(avresult.type != psvc->pavmodule->type) {
+						ok = FALSE;
+					}
 				}
 			}
+			if(!ok) {
+				if (_sendrequestcallbackfnc) {
+					_sendrequestcallbackfnc(this, KS_ERR_GENERIC, psvc, _userdata);
+					_sendrequestcallbackfnc = NULL;
+				}
+				return;
+			}
+			if(!ov_ksclient_service_decoderesult(psvc, xdr)) {
+				if (_sendrequestcallbackfnc) {
+					_sendrequestcallbackfnc(this, KS_ERR_GENERIC, psvc, _userdata);
+					_sendrequestcallbackfnc = NULL;
+				}
+				return;
+			}
+			if(!endReceive()) {
+				if (_sendrequestcallbackfnc) {
+				_sendrequestcallbackfnc(this, getLastResult(), psvc, _userdata);
+					_sendrequestcallbackfnc = NULL;
+				}
+				return;
+			}
+			if (_sendrequestcallbackfnc) {
+				_sendrequestcallbackfnc(this, result, psvc, _userdata);
+				_sendrequestcallbackfnc = NULL;
+			}
 		}
-		if(!ok) {
-			_sendrequestcallbackfnc(this, KS_ERR_GENERIC, psvc, _userdata);
-			return;
-		}
-		if(!ov_ksclient_service_decoderesult(psvc, xdr)) {
-			_sendrequestcallbackfnc(this, KS_ERR_GENERIC, psvc, _userdata);
-			return;
-		}
-		if(!endReceive()) {
-			_sendrequestcallbackfnc(this, getLastResult(), psvc, _userdata);
-			return;
-		}
-		_sendrequestcallbackfnc(this, result, psvc, _userdata);
+		else Ov_Warning("attention operation encountered in an incorrect way");
 		return;
 	}
 

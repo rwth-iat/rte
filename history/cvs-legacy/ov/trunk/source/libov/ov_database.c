@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.9 2000-07-05 16:25:31 dirk Exp $
+*   $Id: ov_database.c,v 1.10 2001-07-09 12:49:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	07-Jun-2001 J.Nagelmann <nagelmann@ltsoft.de>: Changes for Sun Solaris.
 */
 
 #define OV_COMPILE_LIBOV
@@ -34,6 +35,34 @@
 #include "libov/ov_string.h"
 #include "libov/ov_time.h"
 #include "libov/ov_macros.h"
+
+
+
+#if OV_SYSTEM_SOLARIS
+#include "/usr/ucbinclude/sys/file.h"
+#include <sys/file.h>
+#include <fcntl.h>
+int flock (int filedes, int oper)
+{
+  struct flock the_lock;
+  switch (oper) {
+  case LOCK_EX:
+    the_lock.l_type = F_WRLCK;
+    break;
+  case LOCK_UN:
+    the_lock.l_type = F_UNLCK;
+    break;
+  default:
+    return (-1);
+    break;
+  }
+  the_lock.l_start=0;
+  the_lock.l_whence=SEEK_SET;
+  the_lock.l_len=0;
+  return (fcntl(filedes,F_SETLKW, &the_lock));
+}
+
+#endif
 
 #if OV_SYSTEM_UNIX
 #include <sys/mman.h>
@@ -246,10 +275,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	/*
 	*	lock the database file
 	*/
+#if OV_SYSTEM_SOLARIS
+	if(flock(fd, LOCK_EX)) {
+		close(fd);
+		return OV_ERR_CANTLOCKFILE;
+	}
+#else 
 	if(flock(fd, LOCK_EX | LOCK_NB)) {
 		close(fd);
 		return OV_ERR_CANTLOCKFILE;
 	}
+#endif
 	/*
 	*	make the file "size" bytes long (rounded up)
 	*/
@@ -487,10 +523,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map(
 	/*
 	*	lock the database file
 	*/
+#if OV_SYSTEM_SOLARIS
+	if(flock(fd, LOCK_EX)) {
+		close(fd);
+		return OV_ERR_CANTLOCKFILE;
+	}
+#else 
 	if(flock(fd, LOCK_EX | LOCK_NB)) {
 		close(fd);
 		return OV_ERR_CANTLOCKFILE;
 	}
+#endif
 	/*
 	*	read the base address
 	*/
@@ -744,7 +787,11 @@ OV_DLLFNCEXPORT void ov_database_unmap(void) {
 		/*
 		*	unmap the file and close it
 		*/
+#if OV_SYSTEM_SOLARIS
+		munmap((caddr_t )pdb, pdb->size);
+#else
 		munmap(pdb, pdb->size);
+#endif
 		close(fd);
 #endif
 #if OV_SYSTEM_NT

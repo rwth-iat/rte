@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.13 2000-04-13 09:12:17 dirk Exp $
+*   $Id: ov_ov.h,v 1.14 2001-07-09 12:48:57 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
+*	02-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: adjustings for KsHistory-objects.
 */
 
 #ifndef OV_OV_H_INCLUDED
@@ -390,6 +391,7 @@ typedef OV_ENUM OV_ACCESS;
 */
 #define OV_AT_ONE_TO_MANY	0x00000001			/* 1:n association */
 #define OV_AT_MANY_TO_MANY	0x00000002			/* n:m association */
+#define OV_AT_ONE_TO_ONE	0x00000003			/* 1:1 association */
 
 typedef OV_ENUM OV_ASSOC_TYPE;
 

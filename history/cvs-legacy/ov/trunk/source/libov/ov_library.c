@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.10 2000-12-15 15:39:36 dirk Exp $
+*   $Id: ov_library.c,v 1.11 2001-07-09 12:49:39 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	02-Jul-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	07-Jun-2001 J.Nagelmann <nagelmann@ltsoft.de>: Changes for Sun Solaris.
 */
 
 #define OV_COMPILE_LIBOV
@@ -703,7 +704,7 @@ OV_DLLFNCEXPORT OV_STRING ov_library_getenv(void) {
 OV_DLLFNCEXPORT void ov_library_setenv(
 	OV_STRING path
 ) {
-#if OV_SYSTEM_MC164
+#if OV_SYSTEM_MC164  || OV_SYSTEM_SOLARIS
     return;
 #else	
 #if OV_SYSTEM_NT || OV_SYSTEM_RMOS

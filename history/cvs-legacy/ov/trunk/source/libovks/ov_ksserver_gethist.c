@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_gethist.c,v 1.4 2000-04-04 15:12:50 dirk Exp $
+*   $Id: ov_ksserver_gethist.c,v 1.5 2001-07-09 12:50:01 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,15 +24,34 @@
 *	History:
 *	--------
 *	20-Jul-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	09-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Gethistory-service-wrapper
 */
 
 #define OV_COMPILE_LIBOVKS
 
 #include "libovks/ov_ksserver.h"
+#include "libov/ov_library.h"
 #include "libov/ov_path.h"
 #include "libov/ov_string.h"
 #include "libov/ov_time.h"
 #include "libov/ov_macros.h"
+
+/*
+*	Makro wrapping the address resolution of a symbol in a DLL/shared library
+*/
+#if OV_DYNAMIC_LIBRARIES
+#if OV_SYSTEM_UNIX
+#define Ov_Library_GetAddr(handle, symbolname)	dlsym(handle, symbolname)
+#elif OV_SYSTEM_NT
+#define Ov_Library_GetAddr(handle, symbolname)	GetProcAddress(handle, symbolname)
+#endif
+#endif
+
+#define OV_CONST_FNC_GETHIST "OV_FNC_GETHIST"
+
+/*	----------------------------------------------------------------------	*/
+
+
 
 /*	----------------------------------------------------------------------	*/
 
@@ -42,18 +61,24 @@
 void ov_ksserver_gethist(
 	const OV_UINT			version,
 	const OV_TICKET			*pticket,
-	const OV_GETHIST_PAR	*params,
+	const OV_GETHIST_PAR		*params,
 	OV_GETHIST_RES			*result
 ) {
 	/*
 	*	local variables
 	*/
-	OV_UINT					len = params->items_len;
-	OV_GETHIST_ITEM			*pitem = params->items_val;
+	OV_GETHIST_ITEM		*pitem = params->items_val;
 	OV_GETHISTSINGLERESULT	*psingleresult;
 	OV_GETHISTRESULT_ITEM	*presultitem;
-	OV_UINT					i;
-	OV_TIME					from, to;
+	OV_UINT			i,j;
+	OV_PATH			path;
+	OV_INSTPTR_ov_class	pclass;
+	OV_INSTPTR_ov_library	plib;
+	OV_ELEMENT		child;
+	OV_ELEMENT		givenobject;
+	OV_ELEMENT 		searchedelement;
+	OV_FNC_GETHIST		*gethist = NULL;
+	char			tmpstring[256];
 	/*
 	*	check access rights
 	*/
@@ -61,147 +86,128 @@ void ov_ksserver_gethist(
 		result->result = OV_ERR_NOACCESS;
 		return;
 	}
-	/*
-	*	for now, we only support one path: "/messages". This history is
-	*	a message log, which contains two tracks, "t" and "value".
-	*/
+
 	result->result = OV_ERR_BADPARAM;
-	if(params->paths_len != 1) {
+	if((params->paths_len < 1) || (params->items_len < 1)) {
 		return;
 	}
-	if(strcmp(params->paths_val[0], "/messages")) {
-		return;
-	}
-	for(i=0; i<len; i++) {
-		if(strcmp(params->items_val[i].part, "t")
-			&& strcmp(params->items_val[i].part, "value")
-		) {
-			return;
-		}
-	}
+
 	/*
-	*	allocate memory for the one and only single result item
+	*	allocate memory for the paths_len number of single result items
 	*/
-	psingleresult = (OV_GETHISTSINGLERESULT*)ov_memstack_alloc(sizeof(OV_GETHISTSINGLERESULT));
+	psingleresult = (OV_GETHISTSINGLERESULT*)ov_memstack_alloc(sizeof(OV_GETHISTSINGLERESULT) * params->paths_len);
 	if(!psingleresult) {
 		result->result = OV_ERR_TARGETGENERIC;
 		return;
 	}
-	result->results_val = psingleresult;
 	result->result = OV_ERR_OK;
-	result->results_len = 1;
+	result->results_val = psingleresult;
+	result->results_len = params->paths_len;
 	/*
 	*	further initialization
 	*/
 	psingleresult->items_len = 0;
 	psingleresult->items_val = NULL;
-	/*
-	*	if there are no items, we are done
-	*/
-	if(!len) {
-		return;
-	}
-	/*
-	*	allocate memory for the result items
-	*/
-	presultitem = (OV_GETHISTRESULT_ITEM*)ov_memstack_alloc(len*sizeof(OV_GETHISTRESULT_ITEM));
-	if(!presultitem) {
-		result->result = OV_ERR_TARGETGENERIC;
-		return;
-	}
-	psingleresult->result = OV_ERR_OK;
-	psingleresult->items_val = presultitem;
-	psingleresult->items_len = len;
-	/*
-	*	iterate over the items given
-	*/
-	for(i=0; i<len; i++, pitem++, presultitem++) {
-		switch(pitem->selector.hseltype) {
-		case OV_HSELT_NONE:
-			/*
-			*	get all messages available
-			*/
-			from.secs = 0;
-			from.usecs = 0;
-			ov_time_gettime(&to);
-			break;
-		case OV_HSELT_TIME:
-			/*
-			*	only get selected messages
-			*/
-			if(pitem->selector.OV_HISTSELECTOR_u.ths.ip_mode != OV_IPM_NONE) {
-				/* messages are change driven; no interpolation available */
-				presultitem->result = OV_ERR_BADSELECTOR;
-				continue;
-			}
-			switch(pitem->selector.OV_HISTSELECTOR_u.ths.from.timetype) {
-			case OV_TT_ABSOLUTE:
-				from = pitem->selector.OV_HISTSELECTOR_u.ths.from.OV_ABSRELTIME_u.abstime;
-				break;
-			case OV_TT_RELATIVE:
-				ov_time_gettime(&from);
-				ov_time_add(&from, &from,
-					&pitem->selector.OV_HISTSELECTOR_u.ths.from.OV_ABSRELTIME_u.reltime);
-				break;
-			default:
-				presultitem->result = OV_ERR_BADSELECTOR;
-				continue;
-			}
-			switch(pitem->selector.OV_HISTSELECTOR_u.ths.to.timetype) {
-			case OV_TT_ABSOLUTE:
-				to = pitem->selector.OV_HISTSELECTOR_u.ths.to.OV_ABSRELTIME_u.abstime;
-				break;
-			case OV_TT_RELATIVE:
-				ov_time_gettime(&to);
-				ov_time_add(&to, &to,
-					&pitem->selector.OV_HISTSELECTOR_u.ths.to.OV_ABSRELTIME_u.reltime);
-				break;
-			default:
-				presultitem->result = OV_ERR_BADSELECTOR;
-				continue;
-			}
-			break;
-		case OV_HSELT_STRING:
-			/*
-			*	not supported
-			*/
-			/* fall through... */
-		default:
-			presultitem->result = OV_ERR_BADSELECTOR;
-			continue;
-		}	/* switch() */
+
+	for(j=0; j<params->paths_len; j++, psingleresult++) {
 		/*
-		*	we now know the start and the end time
+		*	resolve path (must be absolute)
 		*/
-		if(*pitem->part == 't') {
-			/*
-			*	retreive time stamps
-			*/
-			presultitem->value.vartype = OV_VT_TIME_VEC;
-			presultitem->result = ov_logfile_getmessages(&from, &to,
-				params->max_answers, NULL,
-				&presultitem->value.valueunion.val_time_vec.value,
-				&presultitem->value.valueunion.val_time_vec.veclen);
-			if(Ov_Fail(presultitem->result)) {
-				presultitem->result = OV_ERR_TARGETGENERIC;	/* out of memory */
-			}
-		} else {
-			/*
-			*	retreive message values
-			*/
-			presultitem->value.vartype = OV_VT_STRING_VEC;
-			presultitem->result = ov_logfile_getmessages(&from, &to,
-				params->max_answers,
-				&presultitem->value.valueunion.val_string_vec.value, NULL,
-				&presultitem->value.valueunion.val_string_vec.veclen);
-			if(Ov_Fail(presultitem->result)) {
-				presultitem->result = OV_ERR_TARGETGENERIC;	/* out of memory */
+		psingleresult->result = ov_path_resolve(&path, NULL, params->paths_val[j], version);
+		if(Ov_Fail(result->result)) {
+			return;
+		}
+		psingleresult->result = OV_ERR_BADTYPE;
+		if (path.elements[path.size-1].elemtype == OV_ET_OBJECT) {
+			pclass=Ov_GetParent(ov_instantiation, path.elements[path.size-1].pobj);
+			while (pclass && (ov_string_compare(pclass->v_identifier, "KsHistory")!=0)) 
+				pclass=Ov_GetParent(ov_inheritance, pclass);
+			if (!pclass) {
+				return;
 			}
 		}
-	}	/* for */
-	/*
-	*	we are finished.
-	*/
+		else {
+			return;
+		}
+		
+		/*
+		*	allocate memory for the result items
+		*/
+		presultitem = (OV_GETHISTRESULT_ITEM*)ov_memstack_alloc(params->items_len*sizeof(OV_GETHISTRESULT_ITEM));
+		if(!presultitem) {
+			psingleresult->result = OV_ERR_TARGETGENERIC;
+			return;
+		}
+		psingleresult->result = OV_ERR_OK;
+		psingleresult->items_val = presultitem;
+		psingleresult->items_len = params->items_len;
+
+		for(i=0; i<params->items_len; i++, presultitem++, pitem++) {
+			
+			child.elemtype = OV_ET_NONE;
+			child.pobj = NULL;
+
+			while (TRUE) {
+				/*
+				*	get next child
+				*/
+				if(Ov_Fail(ov_element_getnextchild(&path.elements[path.size-1], &child))) {
+					presultitem->result = OV_ERR_BADPARAM;
+					return;
+				}
+				/*
+				*	test if we are finished and found nothing
+				*/
+				if(child.elemtype == OV_ET_NONE) {
+					presultitem->result = OV_ERR_BADPARAM;
+					return;
+				}
+				/*
+				*	test if we found the item-object
+				*/
+				if(child.elemtype == OV_ET_OBJECT) {
+					if (strcmp(pitem->part, child.pobj->v_identifier)==0)
+						break;
+				}
+			}
+
+			pclass=Ov_GetParent(ov_instantiation, child.pobj);
+			searchedelement.elemtype = OV_ET_NONE;
+			searchedelement.pobj = NULL;
+		
+			while (TRUE) {
+				/*
+				*	get next child of class-object
+				*/
+				ov_element_getnextpart(&child, &searchedelement, OV_ET_OPERATION);
+
+				/*
+				*	test if we are finished and found nothing
+				*/
+				if(searchedelement.elemtype == OV_ET_NONE) {
+					presultitem->result = OV_ERR_BADPARAM;
+					return;
+				}
+				/*
+				*	test if we are finished and found the gethist operation
+				*/
+				if(searchedelement.elemtype == OV_ET_OPERATION) {
+					if (strcmp(searchedelement.elemunion.pop->v_cfnctypename, OV_CONST_FNC_GETHIST)==0)
+						break;
+				}
+			}
+			
+			plib=Ov_StaticPtrCast(ov_library,Ov_GetParent(ov_containment, Ov_PtrUpCast(ov_object,pclass)));
+
+			sprintf(tmpstring, "%s_%s_%s", plib->v_identifier, pclass->v_identifier, searchedelement.elemunion.pop->v_identifier);
+
+			gethist = (OV_FNC_GETHIST*)Ov_Library_GetAddr((OV_DLLHANDLE)plib->v_handle, tmpstring);
+		
+			presultitem->result = gethist(child.pobj,&pitem->selector,&presultitem->value, params->max_answers);
+			
+		}
+	}
+
 	return;
 }
 

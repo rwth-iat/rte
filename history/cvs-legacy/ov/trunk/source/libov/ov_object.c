@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.20 2000-06-20 06:50:34 dirk Exp $
+*   $Id: ov_object.c,v 1.21 2001-07-09 12:50:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1047,6 +1047,7 @@ OV_RESULT ov_object_move(
 	OV_STRING_VEC				*pvector;
 	OV_ANY						*pany;
 	Ov_Association_DefineIteratorNM(pit);
+
 	/*
 	*	determine pointer offset of objects in the copy
 	*/

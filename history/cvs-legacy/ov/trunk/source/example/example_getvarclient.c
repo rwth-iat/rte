@@ -1,5 +1,5 @@
 /*
-*   $Id: example_getvarclient.c,v 1.5 1999-09-15 10:48:20 dirk Exp $
+*   $Id: example_getvarclient.c,v 1.6 2001-07-09 12:49:28 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	04-May-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	07-Jun-2001 J.Nagelmann <nagelmann@ltsoft.de>: Changes for Sun Solaris.
 */
 
 #ifndef OV_COMPILE_LIBRARY_example
@@ -58,7 +59,7 @@ void example_getvarclient_message(
 	*	create string containing the message
 	*/
 	va_start(args, format);
-#if OV_SYSTEM_UNIX
+#if OV_SYSTEM_UNIX && !OV_SYSTEM_SOLARIS
 	vsnprintf(msg, sizeof(msg), format, args);
 #else
 	vsprintf(msg, format, args);

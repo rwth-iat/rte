@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.c,v 1.7 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_string.c,v 1.8 2001-07-09 12:50:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	20-Jan-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	07-Jun-2001 J.Nagelmann <nagelmann@ltsoft.de>: Changes for Sun Solaris.
 */
 
 #define OV_COMPILE_LIBOV
@@ -356,7 +357,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	*	create the actual string
 	*/
 	va_start(args, format);
-#if defined(OV_DEBUG) && OV_SYSTEM_UNIX
+#if defined(OV_DEBUG) && OV_SYSTEM_UNIX && !OV_SYSTEM_SOLARIS
 	if(vsnprintf(pc, length, format, args) >= length) {
 		Ov_Warning("string buffer too small");
 		ov_memstack_unlock();
