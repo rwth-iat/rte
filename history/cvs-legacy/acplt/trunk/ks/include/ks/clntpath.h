@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KSC_CLNTPATH_INCLUDED
 #define KSC_CLNTPATH_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/clntpath.h,v 1.7 1999-09-06 06:50:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/clntpath.h,v 1.8 1999-09-06 07:16:59 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -37,18 +37,19 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
+/* Authors: Markus Juergens <markusj@plt.rwth-aachen.de> */
+/*          Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
 
 #include "ks/string.h"
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // max depth of relative paths that are generated
 //
 const size_t KSC_MAX_REL_DEPTH = 5;
 
-//////////////////////////////////////////////////////////////////////
+
+// ----------------------------------------------------------------------------
 // class KscPath
 //   manages an absolute path which should look like
 //   /domain1/domain2/../name and provides mechanism to change
@@ -61,9 +62,15 @@ public:
     KscPath(const char *);
     KscPath(const KsString &);
     KscPath(const KscPath &);
+    KscPath(); // well -- a default ctor is most of the time nice...
+
+    PltString & operator = (const char *);
+    PltString & operator = (const PltString &);
 
     bool isValid() const;
     size_t countComponents() const;
+    bool isRootDomain() const;
+
     KsString getName() const;
     bool isNamePart() const;
     KsString getPathOnly() const;
@@ -85,45 +92,58 @@ protected:
 };
 
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // class KscPathParser
+// As of the 1.1.3 release this class has now been enhanced not only to parse
+// paths (well, to be more precise: resource locators), but also the special
+// ones, like //host or //host/server. This class should have named more
+// appropriately "KscResourceLocator", but we won't break source compatibility
+// -- yet.
 //
+enum KscPathType {
+    KSC_PT_INVALID,         // something invalid.
+    KSC_PT_RESOURCELOCATOR, // something like "//host/server/path/to/object"
+    KSC_PT_HOST,            // only "//host"
+    KSC_PT_HOSTSERVER,      // only "//host/server"
+    KSC_PT_PATHONLY         // something like "/path/to/object"
+}; // enum KscPathType
+
+
 class KscPathParser
 {
 public:
-    KscPathParser(const char *);
+    KscPathParser(const char *sz);
 
     operator KsString () const;
 
+    KscPathType getType() const;
     bool isValid() const;
+    bool isRootDomain() const;
 
     const KsString &getHostAndServer() const;
     const KscPath &getPathAndName() const;
     KsString getName() const;
     KsString getPathOnly() const;
     bool isNamePart() const;
+    KsString getHostname() const;
+    KsString getServername() const;
+
+    KsString getParent(bool beyondRoot) const;
+    KsString resolve(const char *sz) const;
 
     bool operator == (const KscPathParser &) const;
     bool operator != (const KscPathParser &) const;
 
-#if 0
-    // These ops are currently not implemented 
-    // because they would be slow and they are not
-    // needed at the moment.
-    //
-    bool operator <  (const KscPathParser &) const;
-    bool operator <= (const KscPathParser &) const;
-    bool operator >  (const KscPathParser &) const;
-    bool operator >= (const KscPathParser &) const;
-#endif
-
 protected:
-    size_t pathStart(const char *);
+    bool parseResourceLocator(const char *);
 
-    bool fValid;
-    KsString host_and_server;
-    KscPath path_and_name;
-};
+    KscPathType _pathType;       // type of path
+    size_t      _pathStartIndex; // index of start of path
+    size_t      _hostLen;        // length of host name component
+    KsString    _hostserver;     // stores "//host/server"
+    KscPath     _fullPath;       // stores "/path/to/object"
+}; // class KscPathParser
+
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
@@ -155,6 +175,35 @@ KscPath::KscPath(const KscPath &other)
   last_comp(other.last_comp)
 {}
 
+inline
+KscPath::KscPath()
+: KsString(),
+  fValid(false)
+{
+} // KscPath::KscPath
+
+// ----------------------------------------------------------------------------
+//
+inline
+PltString &
+KscPath::operator = (const char *s)
+{
+    PltString::operator=(s);
+    fValid = parse();
+    return *this;
+} // KscPath::operator = (const char *)
+
+// ----------------------------------------------------------------------------
+//
+inline
+PltString &
+KscPath::operator = (const PltString &s)
+{
+    PltString::operator=(s);
+    fValid = parse();
+    return *this;
+} // KscPath::operator = (const PltString &)
+
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -163,6 +212,17 @@ KscPath::isValid() const
 {
     return fValid;
 }
+
+// ----------------------------------------------------------------------------
+// Returns true, if path specifies the root domain "/". Otherwise returns
+// false (you might have guessed already by now...)
+//
+inline
+bool
+KscPath::isRootDomain() const
+{
+    return fValid && (slash_count == 0);
+} // KscPath::isRootDomain
 
 //////////////////////////////////////////////////////////////////////
 
@@ -236,47 +296,109 @@ KscPath::getSubstrPtr(size_t start_at) const
     return (const char *)(*this) + start_at;
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
-inline
-KscPathParser::KscPathParser(const char *sz)
-: host_and_server(sz, pathStart(sz)-1),
-  path_and_name(sz + host_and_server.len())
-{
-    fValid &= path_and_name.isValid();
-}
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// KscPathParser inline implementation part
+//
 
+// ----------------------------------------------------------------------------
+// Returns true, if path is valid. Note that this is also the case for special
+// resource locators like "//host", "//host/server" and paths without a host
+// and server part ("/some/object").
+//
 inline
 bool
 KscPathParser::isValid() const
 {
-    return fValid;
-}
+    return _pathType != KSC_PT_INVALID;
+} // KscPathParser::isValid
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
+// Returns true, if the resource locator identifies the root domain "/".
+//
+inline
+bool
+KscPathParser::isRootDomain() const
+{
+    return ((_pathType == KSC_PT_RESOURCELOCATOR)
+	    || (_pathType == KSC_PT_PATHONLY))
+	&& _fullPath.isRootDomain();
+} // KscPathParser::isRootDomain
 
+
+// ----------------------------------------------------------------------------
+// Returns the type of resource locator/path once put into this KscPathParser
+// object.
+//
+inline
+KscPathType
+KscPathParser::getType() const
+{
+    return _pathType;
+} // KscPathParser::getType
+
+// ----------------------------------------------------------------------------
+// Returns the host name specified in the resource locator (if applicable),
+// otherwise returns an empty string.
+//
+inline
+KsString
+KscPathParser::getHostname() const
+{
+    PLT_PRECONDITION(isValid());
+
+    if ( !isValid() ) {
+	return KsString();
+    } else {
+	return _hostserver.substr(2, _hostLen);
+    }
+} // KscPathParser::getHostname
+
+// ----------------------------------------------------------------------------
+// Returns the server name specified in the resource locator (if applicable),
+// otherwise returns an empty string.
+inline
+KsString
+KscPathParser::getServername() const
+{
+    PLT_PRECONDITION(isValid());
+
+    if ( !isValid() ) {
+	return KsString();
+    } else {
+	return _hostserver.substr(_hostLen + 3);
+    }    
+} // KscPathParser::getServername
+
+// ----------------------------------------------------------------------------
+// Returns the host and server part as "//host/server" or an empty string in
+// case the resource locator is invalid or does not contain both the host and
+// server components.
+//
 inline
 const KsString &
 KscPathParser::getHostAndServer() const
 {
     PLT_PRECONDITION(isValid());
+    static KsString empty;
 
-    return host_and_server;
-}
+	return _hostserver;
+} // KscPathParser::getHostAndServer
 
-//////////////////////////////////////////////////////////////////////
-
+// ----------------------------------------------------------------------------
+// Returns the path and name part of the resource locator, that is, the
+// so-called "full path".
+//
 inline
 const KscPath &
 KscPathParser::getPathAndName() const
 {
     PLT_PRECONDITION(isValid());
 
-    return path_and_name;
-}
+    return _fullPath;
+} // KscPathParser::getPathAndName
 
 //////////////////////////////////////////////////////////////////////
 
@@ -286,15 +408,23 @@ KscPathParser::getName() const
 {
     PLT_PRECONDITION(isValid());
 
-    return path_and_name.getName();
+    return _fullPath.getName();
 }
 
-
+// ----------------------------------------------------------------------------
+// Returns true, if the name (or identifier) of the ACPLT/KS communication
+// object addressed by the path is a part (thus the last component, the name,
+// is separated by "." instead of "/" from the previous components).
+//
 inline
 bool
 KscPathParser::isNamePart() const
 {
-    return path_and_name.isNamePart();
+    PLT_PRECONDITION(isValid());
+
+    return (_pathType != KSC_PT_INVALID) ?
+	_fullPath.isNamePart() :
+	false;
 } // KscPathParser::isNamePart
 
 //////////////////////////////////////////////////////////////////////
@@ -305,7 +435,7 @@ KscPathParser::getPathOnly() const
 {
     PLT_PRECONDITION(isValid());
 
-    return path_and_name.getPathOnly();
+    return _fullPath.getPathOnly();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -315,8 +445,9 @@ KscPathParser::operator == (const KscPathParser &other) const
 {
     PLT_PRECONDITION(isValid() && other.isValid());
 
-    return host_and_server == other.host_and_server
-        && path_and_name == other.path_and_name;
+    return _pathType == other._pathType
+        && _hostserver == other._hostserver
+        && _fullPath == other._fullPath;
 }
         
 //////////////////////////////////////////////////////////////////////
@@ -326,61 +457,10 @@ KscPathParser::operator != (const KscPathParser &other) const
 {
     PLT_PRECONDITION(isValid() && other.isValid());
 
-    return host_and_server != other.host_and_server
-        || path_and_name != other.path_and_name;
+    return _pathType != other._pathType
+        || _hostserver != other._hostserver
+        || _fullPath != other._fullPath;
 }
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-#if 0
-
-inline bool 
-KscPathParser::operator <  (const KscPathParser &other) const
-{
-    PLT_PRECONDITION(isValid() && other.isValid() && 
-                     host_and_server == other.host_and_server);
-
-    return path_and_name < other.path_and_name;
-}
-
-//////////////////////////////////////////////////////////////////////
-    
-inline bool 
-KscPathParser::operator <= (const KscPathParser &other) const
-{
-    PLT_PRECONDITION(isValid() && other.isValid() && 
-                     host_and_server == other.host_and_server);
-
-    return path_and_name <= other.path_and_name;
-}
-
-//////////////////////////////////////////////////////////////////////
-    
-inline bool 
-KscPathParser::operator > (const KscPathParser &other) const
-{
-    PLT_PRECONDITION(isValid() && other.isValid() && 
-                     host_and_server == other.host_and_server);
-
-    return path_and_name > other.path_and_name;
-}
-
-//////////////////////////////////////////////////////////////////////
-    
-inline bool 
-KscPathParser::operator >= (const KscPathParser &other) const
-{
-    PLT_PRECONDITION(isValid() && other.isValid() && 
-                     host_and_server == other.host_and_server);
-
-    return path_and_name >= other.path_and_name;
-}
-
-#endif
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 
 #endif
