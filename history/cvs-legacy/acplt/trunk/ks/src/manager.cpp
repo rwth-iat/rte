@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.40 2003-10-13 12:52:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.41 2003-10-14 17:42:56 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -376,7 +376,7 @@ KsManager::KsManager(int port)
                             "c/o Chair of Process Control Engineering, "
                             "RWTH Aachen, Aachen (Germany)")
             && addStringVar(vendor, "copyright",
-                            "(c) 1996, 2001 Chair of Process Control Engineering, "
+                            "(c) 1996, 2003 Chair of Process Control Engineering, "
                             "Aachen University of Technology")
             && addDomain(vendor, "extensions", "protocol extension information")
             && addDomain(KsPath("/vendor/extensions"), "ks_core")
