@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.5 1999-09-16 10:54:39 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.6 2000-04-10 12:47:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -85,6 +85,11 @@ public:
     void close();
 
     //
+    // Return protocol version spoken by ACPLT/KS server
+    //
+    u_short getProtocolVersion() const;
+
+    //
     // Send an ACPLT/KS message (request) to the wire:
     //   send() is just a C++ convenience,
     //   C-lovers please take the beginSend()/.../endSend() route.
@@ -165,6 +170,8 @@ protected:
 
     unsigned long                    _connect_timeout;
     unsigned long                    _call_timeout;
+
+    unsigned short                   _protocol_version;
 }; // class KssInterKsServerConnection
 
 

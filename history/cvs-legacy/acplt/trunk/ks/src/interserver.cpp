@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.5 1999-09-16 10:54:47 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.6 2000-04-10 12:47:54 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -40,6 +40,7 @@
 #include <unistd.h>
 #endif
 
+
 // ---------------------------------------------------------------------------
 // Construct a new inter server connection object. This involves parsing the
 // given host and server names for optional port numbers.
@@ -53,7 +54,8 @@ KssInterKsServerConnection::KssInterKsServerConnection(
       _result(KS_ERR_OK),
       _host(host), _host_port(0),
       _server(server), _server_port(0),
-      _connect_timeout(15), _call_timeout(30)
+      _connect_timeout(15), _call_timeout(30),
+      _protocol_version(0)
 {
     const char *pColon;
 
@@ -204,6 +206,11 @@ bool KssInterKsServerConnection::open()
     _host_addr.sin_family = AF_INET; // preset some things...
     _host_addr.sin_addr = ip;
     //
+    // When connecting to an ACPLT/KS server, start with the highest
+    // supported ACPLT/KS protocol version first.
+    //
+    _protocol_version = KS_PROTOCOL_VERSION;
+    //
     // Depending on whether a port number has been specified for either the
     // host name or server name, we start at different points of the
     // contacting procedure.
@@ -243,6 +250,17 @@ XDR *KssInterKsServerConnection::getXdr() const
 
 
 // ---------------------------------------------------------------------------
+// Return the ACPLT/KS protocol version spoken by server.
+//
+u_short KssInterKsServerConnection::getProtocolVersion() const {
+    if ( _state != ISC_STATE_OPEN ) {
+	return 0;
+    }
+    return _protocol_version;
+}
+
+
+// ---------------------------------------------------------------------------
 // Start building a request telegramme. After calling this method you can
 // serialize data into the connection using its associated XDR stream (which
 // can be retrieved through the getXdr() accessor). When you're done, call
@@ -260,7 +278,7 @@ bool KssInterKsServerConnection::beginSend(u_long serviceid)
     //
     if ( !_cln_con->beginRequest(makeXid(),
 				 KS_RPC_PROGRAM_NUMBER,
-				 KS_PROTOCOL_VERSION,
+				 _protocol_version,
 				 serviceid) ) {
 	_result = KS_ERR_GENERIC;
 	return false;
@@ -574,7 +592,7 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
     cout << endl << "connection state: ";
     switch ( state ) {
     case KssConnection::CNX_STATE_CONNECTING:
-	cout << "CONNECTED."; break;
+	cout << "CONNECTING."; break;
     case KssConnection::CNX_STATE_CONNECTED:
 	cout << "CONNECTED."; break;
     case KssConnection::CNX_STATE_CONN_FAILED:
@@ -632,11 +650,14 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 	    // The connection to the portmapper is established, so try to
 	    // ask for the ACPLT/KS manager. This is the usual query for
 	    // a RPC server (in our case with running protocol 300664).
+	    // Note that we ask for the appropriate ACPLT/KS protocol version
+	    // and will lower our expectations lateron as we can't find
+	    // a suitable server...
 	    //
 	    struct pmap pm_request;
 
 	    pm_request.pm_prog = KS_RPC_PROGRAM_NUMBER;
-	    pm_request.pm_vers = KS_PROTOCOL_VERSION;
+	    pm_request.pm_vers = _protocol_version;
 	    pm_request.pm_prot = IPPROTO_UDP;
 	    pm_request.pm_port = 0; // unused
 
@@ -691,6 +712,11 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 			// does not always hold true, but who cares? If I
 			// can't find the manager, I am not able to find the
 			// server. That's it. Got it?
+		    	// Please note that the portmapper will typically lie
+		    	// in case it finds the program requested although it
+		    	// has the wrong version. In these cases the portmapper
+		    	// will return the port number of the ACPLT/KS manager
+		    	// nevertheless.
 			//
 			_result = KS_ERR_SERVERUNKNOWN;
 			break; // fall through and report an error.
@@ -721,11 +747,11 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 	    // The connection with the ACPLT/KS manager has been established.
 	    // We can now ask it for the server we're looking for.
 	    //
-	    KsServerDesc serverdesc(_server, KS_PROTOCOL_VERSION);
+	    KsServerDesc serverdesc(_server, _protocol_version);
 
 	    bool ok = _cln_con->beginRequest(makeXid(),
 					     KS_RPC_PROGRAM_NUMBER,
-					     KS_PROTOCOL_VERSION,
+					     _protocol_version,
 					     KS_GETSERVER);
 	    //
 	    // Always use the A/V NONE mechanism when asking the manager.
@@ -771,6 +797,7 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 #if 0
 		    cout << "server = " << serverresult.server.name << endl;
 		    cout << "port = " << serverresult.port << endl;
+		    cout << "protocol version = " << _protocol_version << endl;
 #endif
 		    //
 		    // Phew. Now we can try to connect to the server as
@@ -782,6 +809,34 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 		    return false; // never "reactivate" the old connection,
 			          // because it has gone...
 		} else if ( ok ) {
+		    //
+		    // In case we couldn't find the server, but we have still
+		    // an older ACPLT/KS protocol version we can try, ask
+		    // the Manager again.
+		    //
+		    if ( --_protocol_version >= KS_MINPROTOCOL_VERSION ) {
+		    	//
+		    	// Reask for older protocol version. As the connection
+		    	// has been closed, we need to reopen it. In case the
+		    	// port of the ACPLT/KS Manager hasn't been specified, we
+		    	// will recontact the portmapper first. Otherwise we can
+		    	// immediately try to connect to the Manager.
+		    	//
+                        if ( _host_port ) {
+	                    if ( !openManagerConnection(_host_port, IPPROTO_TCP) ) {
+	                    	break; // Fall through and report error...
+	                    }
+                        } else {
+                            if ( !openPortmapperConnection() ) {
+                            	break; // Fall through and report error...
+                            }
+		        }
+			return false; // never "reactivate" the old connection,
+			              // because it has been gone...
+		    }
+		    //
+		    // Sigh. Unknown server...
+		    //
 		    _result = KS_ERR_SERVERUNKNOWN;
 		    break;
 		}
