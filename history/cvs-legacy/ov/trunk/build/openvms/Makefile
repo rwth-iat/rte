@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.1 1999-07-19 15:01:59 dirk Exp $
+#   $Id: Makefile,v 1.2 1999-07-28 16:00:37 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -179,12 +179,12 @@ OV_CODEGEN_EXE = ov_codegen$(EXE)
 #	----------------
 
 OV_LIBOV_SRC = \
-	$(OV_SOURCE_LIBOV_DIR)ov_database.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_association.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_childrelationship.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_class.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_construction.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_containment.c \
+	$(OV_SOURCE_LIBOV_DIR)ov_database.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_debug.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_element.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_embedment.c \
@@ -206,6 +206,7 @@ OV_LIBOV_SRC = \
 	$(OV_SOURCE_LIBOV_DIR)ov_supervise.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_time.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_variable.c \
+	$(OV_SOURCE_LIBOV_DIR)ov_vector.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_vendortree.c
 OV_LIBOV_OBJ = $(foreach source, $(OV_LIBOV_SRC), \
 	$(basename $(notdir $(source)))$(OBJ))
