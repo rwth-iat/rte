@@ -13,6 +13,7 @@
 #include "tasklib.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_scheduler.h"
+#include "libov/ov_supervise.h"
 #include "libov/ov_time.h"
 
 
@@ -72,9 +73,10 @@ OV_DLLFNCEXPORT void tasklib_SchedulerTask_execute(
 	OV_INSTPTR_ov_object pobj
 ) {
 	OV_INSTPTR_tasklib_Task		       	pchildtask;
-	OV_VTBLPTR_tasklib_Task			pvtable;	
-	OV_TIME acttime;
-	OV_INSTPTR_tasklib_Task ptask;
+	OV_VTBLPTR_tasklib_Task			pvtable;
+	OV_TIME 				acttime;
+	OV_INSTPTR_tasklib_Task 		ptask;
+	OV_JUMPBUFFER				jumpbuffer;
 
 	ptask = Ov_StaticPtrCast(tasklib_Task, pobj);
 	ov_time_gettime(&acttime);
@@ -108,30 +110,20 @@ OV_DLLFNCEXPORT void tasklib_SchedulerTask_execute(
 			break;
 	}
 
-	pchildtask = Ov_GetFirstChild(tasklib_tasklist, ptask);
-	while (pchildtask) {
-		if ( (pchildtask->v_actimode > 0) && (ov_time_compare(&pchildtask->v_proctime, &acttime) <=0) ) {
-			Ov_GetVTablePtr(tasklib_Task, pvtable, pchildtask);
-			pvtable->m_execute(Ov_PtrUpCast(ov_object, pchildtask));
-			switch (pchildtask->v_actimode) {
-				case 1:
-					ov_time_add(&pchildtask->v_proctime, &acttime, &pchildtask->v_cycletime);
-					break;
-				case 2:
-					if (ov_time_compare(&pchildtask->v_alarmtime, &acttime) <=0) 
-						pchildtask->v_actimode = 0;
-					else ov_time_add(&pchildtask->v_proctime, &acttime, &pchildtask->v_cycletime);
-					break;
-				case 3:
-					pchildtask->v_actimode = 0;
-					break;
-				case 4:
-					ov_time_add(&pchildtask->v_proctime, &acttime, &pchildtask->v_cycletime);
-					pchildtask->v_actimode = 1;
-					break;
-			}
+	if (ptask->v_supervised) {
+		if(ov_supervise_setjmp(jumpbuffer) == 0) {
+			ov_supervise_start(&ptask->v_cycletime, &jumpbuffer);
+			pchildtask = Ov_GetFirstChild(tasklib_tasklist, ptask);
+			tasklib_Task_executechilds(ptask, acttime);
+			ov_supervise_end();
 		}
-		pchildtask = Ov_GetNextChild(tasklib_tasklist, pchildtask);
+		else {
+		     	ptask->v_actimode = 0;
+		     	ptask->v_ErrState = 1;
+		}
+	}
+	else {
+	     	tasklib_Task_executechilds(ptask, acttime);
 	}
 }
 

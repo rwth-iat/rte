@@ -13,6 +13,7 @@
 #include "tasklib.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_scheduler.h"
+#include "libov/ov_supervise.h"
 #include "libov/ov_time.h"
 
 OV_DLLFNCEXPORT OV_UINT tasklib_Task_actimode_get(
@@ -30,18 +31,19 @@ OV_DLLFNCEXPORT OV_RESULT tasklib_Task_actimode_set(
 	if (value < 5) {
 		if ((pobj->v_actimode == 0) && (value > 0)) {
 			pobj->v_actimode = value;
+			pobj->v_ErrState = FALSE;
 			Ov_GetVTablePtr(tasklib_Task, pvtable, pobj);
-			pvtable->m_activate(pobj);		
+			pvtable->m_activate(pobj);
 	        	return OV_ERR_OK;
 		}
 		if ((pobj->v_actimode > 0) && (value == 0)) {
 			pobj->v_actimode = value;
 			Ov_GetVTablePtr(tasklib_Task, pvtable, pobj);
-			pvtable->m_activate(pobj);		
+			pvtable->m_activate(pobj);
 	        	return OV_ERR_OK;
 		}
 	}
-	return OV_ERR_BADVALUE;     
+	return OV_ERR_BADVALUE;
 }
 
 OV_DLLFNCEXPORT void tasklib_Task_activate(
@@ -85,6 +87,29 @@ OV_DLLFNCEXPORT OV_RESULT tasklib_Task_cycletime_set(
 	return OV_ERR_NOACCESS;     
 }
 
+OV_DLLFNCEXPORT OV_BOOL tasklib_Task_ErrState_get(
+             OV_INSTPTR_tasklib_Task          pobj
+) {
+             return pobj->v_ErrState;
+}
+
+OV_DLLFNCEXPORT OV_BOOL tasklib_Task_supervised_get(
+             OV_INSTPTR_tasklib_Task          pobj
+) {
+             return pobj->v_supervised;
+}
+
+OV_DLLFNCEXPORT OV_RESULT tasklib_Task_supervised_set(
+             OV_INSTPTR_tasklib_Task          pobj,
+             const OV_BOOL           value
+) {
+	if (pobj->v_actimode==0) {
+		pobj->v_supervised = value;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_NOACCESS;
+}
+
 OV_DLLFNCEXPORT OV_TIME tasklib_Task_proctime_get(
              OV_INSTPTR_tasklib_Task          pobj
 ) {
@@ -106,19 +131,16 @@ OV_DLLFNCEXPORT OV_RESULT tasklib_Task_alarmtime_set(
 		pobj->v_alarmtime = value;
 		return OV_ERR_OK;
 	}
-	return OV_ERR_NOACCESS;     
+	return OV_ERR_NOACCESS;
 }
 
-OV_DLLFNCEXPORT void tasklib_Task_execute(
-	OV_INSTPTR_ov_object pobj
+OV_DLLFNCEXPORT void tasklib_Task_executechilds(
+	OV_INSTPTR_tasklib_Task ptask,
+	OV_TIME			acttime
 ) {
 	OV_INSTPTR_tasklib_Task		       	pchildtask;
-	OV_VTBLPTR_tasklib_Task			pvtable;	
-	OV_TIME 				acttime;
-	OV_INSTPTR_tasklib_Task 		ptask;
+	OV_VTBLPTR_tasklib_Task			pvtable;
 
-	ptask = Ov_StaticPtrCast(tasklib_Task, pobj);
-	ov_time_gettime(&acttime);
 	pchildtask = Ov_GetFirstChild(tasklib_tasklist, ptask);
 	while (pchildtask) {
 		if ( (pchildtask->v_actimode > 0) && (ov_time_compare(&pchildtask->v_proctime, &acttime) <=0) ) {
@@ -129,7 +151,7 @@ OV_DLLFNCEXPORT void tasklib_Task_execute(
 					ov_time_add(&pchildtask->v_proctime, &acttime, &pchildtask->v_cycletime);
 					break;
 				case 2:
-					if (ov_time_compare(&pchildtask->v_alarmtime, &acttime) <=0) 
+					if (ov_time_compare(&pchildtask->v_alarmtime, &acttime) <=0)
 						pchildtask->v_actimode = 0;
 					else ov_time_add(&pchildtask->v_proctime, &acttime, &pchildtask->v_cycletime);
 					break;
@@ -143,6 +165,32 @@ OV_DLLFNCEXPORT void tasklib_Task_execute(
 			}
 		}
 		pchildtask = Ov_GetNextChild(tasklib_tasklist, pchildtask);
+	}
+
+}
+
+OV_DLLFNCEXPORT void tasklib_Task_execute(
+	OV_INSTPTR_ov_object pobj
+) {
+	OV_TIME 				acttime;
+	OV_INSTPTR_tasklib_Task 		ptask;
+	OV_JUMPBUFFER				jumpbuffer;
+
+	ptask = Ov_StaticPtrCast(tasklib_Task, pobj);
+	ov_time_gettime(&acttime);
+	if (ptask->v_supervised) {
+		if(ov_supervise_setjmp(jumpbuffer) == 0) {
+			ov_supervise_start(&ptask->v_cycletime, &jumpbuffer);
+			tasklib_Task_executechilds(ptask, acttime);
+			ov_supervise_end();
+		}
+		else {
+		     	ptask->v_actimode = 0;
+		     	ptask->v_ErrState = 1;
+		}
+	}
+	else {
+		tasklib_Task_executechilds(ptask, acttime);
 	}
 }
 

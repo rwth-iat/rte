@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.13 2003-08-25 09:16:03 ansgar Exp $
+*   $Id: ov_ovmparser.y,v 1.14 2004-10-08 15:17:36 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -944,7 +944,7 @@ vartype:
 	| TOK_C_TYPE TOK_C_IDENTIFIER
 		{
 			$$ = Ov_Codegen_Malloc(OV_OVM_VARTYPE_DEF);
-			$$->vartype = OV_VT_BYTE_VEC;
+			$$->vartype = OV_VT_CTYPE;
 			$$->structurename = NULL;
 			$$->ctypename = $2;
 		}

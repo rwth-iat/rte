@@ -23,10 +23,12 @@ OV_DLLFNCEXPORT OV_RESULT tasklib_tasklist_link(
         const OV_PLACEMENT_HINT            childhint,
         const OV_CPT_tasklib_tasklist                 prelchild
 ) {
-        return ov_association_link(passoc_tasklib_tasklist, Ov_PtrUpCast
+        if (!ov_association_testpath(passoc_tasklib_tasklist, (OV_INSTPTR_ov_object)pchild, (OV_INSTPTR_ov_object)pparent))
+	        return ov_association_link(passoc_tasklib_tasklist, Ov_PtrUpCast
                        (ov_object, pparent), Ov_PtrUpCast(ov_object, pchild),
                       parenthint, Ov_PtrUpCast(ov_object, prelparent),
                       childhint, Ov_PtrUpCast(ov_object, prelchild));
+        return OV_ERR_GENERIC;
 }
 
 OV_DLLFNCEXPORT void tasklib_tasklist_unlink(
@@ -42,6 +44,8 @@ OV_DLLFNCEXPORT OV_ACCESS tasklib_tasklist_getaccess(
         const OV_CPT_tasklib_tasklist                 pchild,
         const OV_TICKET                    *pticket
 ) {
-        return OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE;
+        if (!ov_association_testpath(passoc_tasklib_tasklist, (OV_INSTPTR_ov_object)pchild, (OV_INSTPTR_ov_object)pparent))
+		return OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE;
+	return OV_AC_READ | OV_AC_UNLINKABLE;
 }
 

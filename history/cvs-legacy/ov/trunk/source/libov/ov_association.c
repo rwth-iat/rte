@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.18 2004-05-19 14:51:23 ansgar Exp $
+*   $Id: ov_association.c,v 1.19 2004-10-08 15:18:03 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1518,6 +1518,45 @@ void ov_association_linktable_insert(
 	*/
 	pclass->v_linktablesize += addsize;
 }
+
+/*
+*	Test if a child is linked recursively to parent by passsoc
+*/
+OV_DLLFNCEXPORT OV_BOOL ov_association_testpath(
+	const OV_INSTPTR_ov_association	passoc,
+	const OV_INSTPTR_ov_object	pparent,
+	const OV_INSTPTR_ov_object	pchild
+) {
+	OV_INSTPTR_ov_object	pthis;
+	OV_INSTPTR_ov_object	pnext;
+	Ov_Association_DefineIteratorNM(pit);
+
+   	if ( (!passoc) || (!pchild) || (!pparent) ) return FALSE;
+
+	pthis = pparent;
+	switch (passoc->v_assoctype) {
+	        case OV_AT_ONE_TO_ONE:
+	               	while (pthis) {
+				if (pthis == pchild) return TRUE;
+	        		pthis = Ov_Association_GetChild(passoc, pthis);
+	        	}
+        		break;
+	        case OV_AT_ONE_TO_MANY:
+        	        Ov_Association_ForEachChild(passoc, pthis, pnext) {
+        	                if (pnext == pchild) return TRUE;
+        	                if (ov_association_testpath(passoc, pnext, pchild)) return TRUE;
+	        	}
+	        	break;
+	        case OV_AT_MANY_TO_MANY:
+        	        Ov_Association_ForEachChildNM(passoc, pit, pthis, pnext) {
+        	                if (pnext == pchild) return TRUE;
+        	                if (ov_association_testpath(passoc, pnext, pchild)) return TRUE;
+	        	}
+	        	break;
+	}
+	return FALSE;
+}
+
 
 /*	----------------------------------------------------------------------	*/
 

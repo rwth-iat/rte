@@ -9,6 +9,11 @@ typedef OV_DLLFNCEXPORT void TASKLIB_FNC_ACTIVATE(
 	OV_INSTPTR_tasklib_Task ptask
 );
 
+typedef OV_DLLFNCEXPORT void TASKLIB_FNC_EXECUTECHILDS(
+	OV_INSTPTR_tasklib_Task ptask,
+	OV_TIME acttime
+);
+
 #endif
 /*
 *	End of file

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.21 2004-05-19 14:47:59 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.22 2004-10-08 15:17:36 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -312,7 +312,7 @@ int ov_codegen_createheaderfile(
 	found = FALSE;
 	for(pstruct=plib->structures; pstruct; pstruct=pstruct->pnext) {
 		for(pvar=pstruct->members; pvar; pvar=pvar->pnext) {
-			if(pvar->vartype == OV_VT_BYTE_VEC) {
+			if(pvar->vartype == OV_VT_CTYPE) {
 				found = TRUE;
 				break;
 			}
@@ -324,7 +324,7 @@ int ov_codegen_createheaderfile(
 	if(!found) {
 		for(pclass=plib->classes; pclass; pclass=pclass->pnext) {
 			for(pvar=pclass->variables; pvar; pvar=pvar->pnext) {
-				if(pvar->vartype == OV_VT_BYTE_VEC) {
+				if(pvar->vartype == OV_VT_CTYPE) {
 					found = TRUE;
 					break;
 				}
@@ -350,7 +350,7 @@ int ov_codegen_createheaderfile(
 	fprintf(fp, "#define OV_FNCEXTERN OV_DLLFNCEXPORT\n");
 	fprintf(fp, "#else\n");
 	fprintf(fp, "#define OV_VAREXTERN OV_DLLVARIMPORT\n");
-	fprintf(fp, "#define OV_FNCEXTERN OV_DLLFNCEXPORT\n");
+	fprintf(fp, "#define OV_FNCEXTERN OV_DLLVARIMPORT\n");
 	fprintf(fp, "#endif\n");
 	fprintf(fp, "\n");
 	/*
@@ -686,7 +686,7 @@ int ov_codegen_createsourcefile(
 	fprintf(fp, "OV_LIBRARY_DEF OV_LIBRARY_DEF_%s = {\n", plib->identifier);
 	fprintf(fp, "    \"%s\",\n", plib->identifier);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(plib->version));
-	fprintf(fp, "    \"%s\",\n", OV_VER_CODEGEN);
+	fprintf(fp, "    \"%s\",\n", OV_VER_LIBOV);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(plib->author));
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(plib->copyright));
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(plib->comment));
@@ -887,7 +887,7 @@ void ov_codegen_printstructtypedef(
 				fprintf(fp, "    OV_STRUCT_%s v_%s", ov_codegen_replace(pvar->structurename),
 					pvar->identifier);
 				break;
-			case OV_VT_BYTE_VEC:
+			case OV_VT_CTYPE:
 				fprintf(fp, "    %s v_%s", pvar->ctypename, pvar->identifier);
 				break;
 			default:
@@ -979,7 +979,7 @@ void ov_codegen_printclassinstdefines(
 					fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
 						pvar->structurename), pvar->identifier);
 					break;
-				case OV_VT_BYTE_VEC:
+				case OV_VT_CTYPE:
 					fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
 					break;
 				default:
@@ -1036,7 +1036,7 @@ void ov_codegen_printclassinstdefines(
 					fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
 						pvar->structurename), pvar->identifier);
 					break;
-				case OV_VT_BYTE_VEC:
+				case OV_VT_CTYPE:
 					fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
 					break;
 				default:
@@ -1139,7 +1139,7 @@ void ov_codegen_printclassaccessorfncdecls(
 			case OV_VT_STRUCT:
 				fprintf(fp, "OV_STRUCT_%s *", ov_codegen_replace(pvar->structurename));
 				break;
-			case OV_VT_BYTE_VEC:
+			case OV_VT_CTYPE:
 				fprintf(fp, "%s *", pvar->ctypename);
 				break;
 			case OV_VT_BOOL_PV:
@@ -1183,7 +1183,7 @@ void ov_codegen_printclassaccessorfncdecls(
 			case OV_VT_ANY:
 				fprintf(fp, "    const %s *p", ov_codegen_getvartypetext(pvar->vartype));
 				break;
-			case OV_VT_BYTE_VEC:
+			case OV_VT_CTYPE:
 				fprintf(fp, "    const %s *p", pvar->ctypename);
 				break;
 			default:
@@ -1508,7 +1508,7 @@ void ov_codegen_printmemberdefobj(
 		fprintf(fp, "    %lu*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
 			ov_codegen_replace(pvar->structurename));
 		break;
-	case OV_VT_BYTE_VEC:
+	case OV_VT_CTYPE:
 		fprintf(fp, "    \"%s\",\n", pvar->ctypename);
 		fprintf(fp, "    (OV_STRING)NULL,\n");
 		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
@@ -1735,7 +1735,7 @@ void ov_codegen_printvardefobj(
 		fprintf(fp, "    %lu*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
 			ov_codegen_replace(pvar->structurename));
 		break;
-	case OV_VT_BYTE_VEC:
+	case OV_VT_CTYPE:
 		fprintf(fp, "    \"%s\",\n", pvar->ctypename);
 		fprintf(fp, "    (OV_STRING)NULL,\n");
 		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);

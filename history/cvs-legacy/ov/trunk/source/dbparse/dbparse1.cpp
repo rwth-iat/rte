@@ -1993,11 +1993,11 @@ bool write_variables(instance *node)
 		unsigned int nr_v = 0;
 		while (*it) {
 			PltString delimiter;
-			if (strncmp(node->ident->getHead(), "vendor", 6) == 0) {	// different var. format
-				delimiter = "/";
-			} else {
+			if (strncmp(node->ident->getHead(), "vendor", 6) != 0) {	//do not write variables of vendor tree // different var. format
+//				delimiter = "/";
+//			} else {
 				delimiter = ".";
-			}
+//			}
 			KscVariable help(server + *(node->ident) + delimiter + (*it)->a_key);
 			if (!help.getEngPropsUpdate()) {
 				cout << "Error: Variable " << *(node->ident) << delimiter << (const char*)(*it)->a_key
@@ -2011,6 +2011,7 @@ bool write_variables(instance *node)
 			} else {
 				(*it)->a_value->val->type = DB_VT_NONE;		// ignore read-only variables
 			}
+			} // end of do not write vendor tree variables
 			++*it;
 		} // while (*it)
 
@@ -2339,9 +2340,9 @@ bool write_links(instance *node)
 			return false;
 		}
 		const KsLinkEngProps *helpprops = (const KsLinkEngProps *)help.getEngProps();
-		if (! (helpprops->access_mode & KS_AC_LINKABLE)) {	// link cannot be changed
-			continue;
-		}
+		//if (! (helpprops->access_mode & KS_AC_LINKABLE)) {	// link cannot be changed
+		//	continue;
+		//}
 		if (! (*it)->a_value->link_paths) {					// empty link
 			continue;
 		}
@@ -2394,6 +2395,9 @@ bool write_links(instance *node)
 
 	} // for
 	delete it;
+	if (verbose) {
+		cout << "Wrote links of " << *(node->ident) << " successfully!" << endl;
+	}
 	return true;
 } // write_links
 

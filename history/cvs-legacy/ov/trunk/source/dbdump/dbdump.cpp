@@ -40,7 +40,7 @@
 #define uint unsigned int
 #endif
 
-#define version "1.33"
+#define version "1.34"
 
 // Global variables
 search_p				sp;				// search parameters
@@ -714,7 +714,6 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 			db_file << "END_INSTANCE;" << endl << endl;
 		}
 	}
-
 	DumpChildren(obj, indent);							// Dump child objects recursively
 } // DumpEngProps
 
@@ -1145,21 +1144,13 @@ int main(int argc, char **argv)						// command line arguments
 	}
 
 	db_file.open(outfile, ios::noreplace);	// open output file
-	char inp;
 
 	if (! (overwrite_output || db_file.good() )) {
-		cout << "Output file " << outfile << " already exists!" << endl
-			 << "If you want to replace it type \"y\": ";
-		cin >> inp;
-		if (inp == 'y' || inp == 'Y') {
-			db_file.open(outfile);
-		} else {
-			cout << "Output file " << outfile << " already exists:" << endl
-				 << "choose another file name!" << endl;
-			delete sp;
-			delete dop;
-			return -1;
-		}
+		cout << "Output file " << outfile << " already exists:" << endl
+			 << "choose another file name!" << endl;
+		delete sp;
+		delete dop;
+		return -1;
 	}
 	start_path = sp->host_and_server + sp->path;
 	KscAnyCommObject start_object(start_path);		// create comm. object to start with

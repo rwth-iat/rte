@@ -2,14 +2,14 @@
 #include <string.h>
 
 #ifdef OV_SYSTEM_NT
-char dupath[64] = "g:/acplt/user";
-char dapath[64] = "x:/apps_32/ov/acplt/base";
-char dbpath[64] = "x:/apps_32/ov/acplt/bin";
+char dupath[64] = "c:/acplt/user";
+char dapath[64] = "c:/acplt/base";
+char dbpath[64] = "c:/acplt/bin";
 #endif
 #ifdef OV_SYSTEM_LINUX
-char dupath[64] = "~/plt/acplt";
-char dapath[64] = "~/plt/acplt";
-char dbpath[64] = "~/plt/bin/linux";
+char dupath[64] = "~/acplt/user";
+char dapath[64] = "~/acplt/base";
+char dbpath[64] = "~/acplt/bin";
 #endif
 
 int main(int argc, char **argv) {
@@ -162,6 +162,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"\n");
 	fprintf(fp,"ACPLT_DIR               = %s/\n",apath);
 	fprintf(fp,"ACPLT_BIN_DIR           = %s/\n",bpath);
+	fprintf(fp,"ACPLT_LIB_DIR           = $(ACPLT_DIR)lib/\n");
 	fprintf(fp,"MYLIB_DIR               = ../../\n");
 	fprintf(fp,"MYLIB_MODEL_DIR         = $(MYLIB_DIR)model/\n");
 	fprintf(fp,"MYLIB_INCLUDE_DIR       = $(MYLIB_DIR)include/\n");
@@ -244,8 +245,8 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	//	Makefile
 	//
 #ifdef OV_SYSTEM_NT
-	if (upath) sprintf(name,"%s/%s/build/nt/Makefile",upath,libname);
-	else sprintf(name,"%s/build/nt/Makefile",libname);
+	if (upath) sprintf(name,"%s/%s/build/nt/borland.mk",upath,libname);
+	else sprintf(name,"%s/build/nt/borland.mk",libname);
 #endif
 #ifdef OV_SYSTEM_LINUX
 	if (upath) sprintf(name,"%s/%s/build/linux/Makefile",upath,libname);
@@ -289,7 +290,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"include ../generic.mk\n\n");
 #ifdef OV_SYSTEM_NT
 	//
-	//	Makefile NT
+	//	Makefile NT (Borland)
 	//
 	fprintf(fp,"#   Oncrpc\n");
 	fprintf(fp,"#   ------\n\n");
@@ -379,7 +380,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
   	      fprintf(fp,"\t-cp $(MYLIB_DLL) $(subst /,\\\\, $(COPY_DIR%d))\n",k);
   	      k++;
 	}
-	fprintf(fp"\n");
+	fprintf(fp,"\n");
 	fprintf(fp,"#\n");
 	fprintf(fp,"#   Shared Lib\n");
 	fprintf(fp,"#   ----------\n");
@@ -400,6 +401,128 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"\t@-del *$(OBJ)\n");
 	fprintf(fp,"\t@-del *$(RES)\n");
 	fprintf(fp,"\t@-del respfile\n\n");
+	if(fclose(fp)) {
+		fprintf(stderr, "error closing file.\n");
+		return -1;
+	}
+	//
+	//	Makefile NT (VC)
+	//
+	if (upath) sprintf(name,"%s/%s/build/nt/msvc.mk",upath,libname);
+	else sprintf(name,"%s/build/nt/msvc.mk",libname);
+	fp = fopen(name, "w");
+	if(!fp) {
+		fprintf(stderr, "unable to open file for writing: %s.\n", name);
+		return -1;
+	}
+	fprintf(fp,"#\n");
+	fprintf(fp,"# automatisch erzeugtes makefile mit makmak\n");
+	fprintf(fp,"# (c) 2002 Lehrstuhl für Prozessleittechnik\n");
+	fprintf(fp,"#\n\n");
+	fprintf(fp,"#   Plattform\n");
+	fprintf(fp,"#   ---------\n\n");
+	fprintf(fp,"SYSTEM = NT\n");
+	fprintf(fp,"SYSDIR = nt\n\n");
+	fprintf(fp,"#   Filename conventions\n");
+	fprintf(fp,"#   --------------------\n\n");
+	fprintf(fp,"OBJ = .obj\n");
+	fprintf(fp,"LIB = .lib\n");
+	fprintf(fp,"DLL = .dll\n");
+	fprintf(fp,"EXE = .exe\n");
+	fprintf(fp,"RES = .res\n\n");
+	fprintf(fp,"#   Include generic part\n");
+	fprintf(fp,"#   --------------------\n\n");
+	fprintf(fp,"include ../generic.mk\n\n");
+	fprintf(fp,"#   Oncrpc\n");
+	fprintf(fp,"#   ------\n\n");
+	fprintf(fp,"ONCRPC_DIR              = $(ACPLT_DIR)oncrpc/\n\n");
+	fprintf(fp,"#   Libraries\n");
+	fprintf(fp,"#   ---------\n\n");
+	fprintf(fp,"OVLIBS = $(ACPLT_LIB_DIR)libov$(LIB) $(ACPLT_LIB_DIR)libovks$(LIB)\n\n");
+	fprintf(fp,"BASELIBS = ");
+	k = 0;
+	while (k < j) {
+		fprintf(fp," \\\n");
+		fprintf(fp,"\t$(BASELIB%d_BUILD_DIR)%s$(LIB)",k,libs[k]);
+		k++;
+	}
+	fprintf(fp,"\n\n");
+	fprintf(fp,"#   Compiler\n");
+	fprintf(fp,"#   --------\n\n");
+	fprintf(fp,"OV_CODEGEN_EXE  = $(ACPLT_BIN_DIR)ov_codegen$(EXE)\n\n");
+	fprintf(fp,"MKIMPDEF        = mkimpdef$(EXE)\n");
+	fprintf(fp,"MKEXPDEF        = mkexpdef$(EXE)\n");
+	fprintf(fp,"MKDLLDEF        = mkdlldef$(EXE)\n\n");
+	fprintf(fp,"CC              = cl\n");
+	fprintf(fp,"CC_FLAGS        = /W3 /c \n");
+	fprintf(fp,"CC_DEFINES      = $(DEFINES)\n");
+	fprintf(fp,"CC_INCLUDES     = $(INCLUDES) /I$(ONCRPC_DIR)\n");
+	fprintf(fp,"COMPILE_C       = $(CC) $(CC_FLAGS) /TC $(CC_DEFINES) $(CC_INCLUDES) \n\n");
+	fprintf(fp,"IMPLIB          = cl\n");
+	fprintf(fp,"IMPDEF          = cl\n\n");
+	fprintf(fp,"LD              = link /DLL");
+        k = 0;
+        while (k < m) {
+        	fprintf(fp," /LIBPATH:%s",incpath[k]);
+                k++;
+        }
+	fprintf(fp,"\n");
+	fprintf(fp,"#   Implicit Rules\n");
+	fprintf(fp,"#   --------------\n\n");
+	fprintf(fp,".c$(OBJ):\n");
+	fprintf(fp,"\t$(COMPILE_C) /out:$@ $<\n\n");
+	fprintf(fp,".ovm.c:\n");
+	fprintf(fp,"\t$(OV_CODEGEN_EXE) -I $(ACPLT_OV_MODEL_DIR) ");
+	k = 0;
+	while (k < j) {
+		fprintf(fp,"-I $(BASELIB%d_MODEL_DIR) ",k);
+		k++;
+	}
+	fprintf(fp,"-f $(subst /,\\\\, $<) -l $(notdir $(basename $<))\n\n");
+	fprintf(fp,".ovm.h:\n");
+	fprintf(fp,"\t$(OV_CODEGEN_EXE) -I $(ACPLT_OV_MODEL_DIR) ");
+	k = 0;
+	while (k < j) {
+		fprintf(fp,"-I $(BASELIB%d_MODEL_DIR) ",k);
+		k++;
+	}
+	fprintf(fp,"-f $(subst /,\\\\, $<) -l $(notdir $(basename $<))\n\n");
+	fprintf(fp,"#   Libraries\n");
+	fprintf(fp,"#   ---------\n\n");
+	k = 0;
+	while (k < j) {
+		fprintf(fp,"%s.h : $(BASELIB%d_MODEL_DIR)%s.ovm\n",libs[k],k,libs[k]);
+		fprintf(fp,"\t$(OV_CODEGEN_EXE) -I $(ACPLT_OV_MODEL_DIR) ");
+		l = k + 1;
+		while (l < j) {
+			fprintf(fp,"-I $(BASELIB%d_MODEL_DIR) ",l);
+			l++;
+		}
+		fprintf(fp,"-f $(subst /,\\\\, $<)\n\n");
+		k++;
+	}
+	fprintf(fp,"ov.h : $(ACPLT_OV_MODEL_DIR)ov.ovm\n");
+	fprintf(fp,"\t$(OV_CODEGEN_EXE) -f $(subst /,\\\\, $<)\n\n");
+	fprintf(fp,"$(MYLIB_LIB) : $(MYLIB_DLL)\n\n");
+	fprintf(fp,"$(MYLIB_DLL) : $(MYLIB_OBJ) $(OVLIBS) $(BASELIBS)\n");
+	fprintf(fp,"\t$(LD) /out:$@ /implib:$(MYLIB_LIB) $(filter-out %$(RES), $^)\n");
+	fprintf(fp,"\tcopy $(MYLIB_DLL) $(subst /,\\\\, $(USER_LIBS_DIR))\n\n");
+	fprintf(fp,"#   Aufraeumen\n");
+	fprintf(fp,"#   ----------\n\n");
+	fprintf(fp,"clean:\n");
+	fprintf(fp,"\t@-del *.c\n");
+	fprintf(fp,"\t@-del *.h\n");
+	fprintf(fp,"\t@-del *.x\n");
+	fprintf(fp,"\t@-del *.bak\n");
+	fprintf(fp,"\t@-del *.map\n");
+	fprintf(fp,"\t@-del *.pdb\n");
+	fprintf(fp,"\t@-del *.ilk\n");
+	fprintf(fp,"\t@-del *$(LIB)\n");
+	fprintf(fp,"\t@-del *$(DLL)\n");
+	fprintf(fp,"\t@-del *$(OBJ)\n");
+	fprintf(fp,"\t@-del *$(RES)\n");
+	fprintf(fp,"\t@-del respfile\n\n");
+
 #endif
 #ifdef OV_SYSTEM_LINUX
 	//
