@@ -46,6 +46,7 @@ class KsString
 {
 public:
     KsString(const char *, size_t = PLT_SIZE_T_MAX);
+    KsString(const char *, const char *);
     KsString();
     KsString(const PltString &);
 
@@ -68,6 +69,13 @@ KsString::KsString(const char *p, size_t len)
 : PltString(p,len)
 {
 }
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsString::KsString(const char *sz1, const char *sz2)
+: PltString(sz1, sz2)
+{}
 
 //////////////////////////////////////////////////////////////////////
 

@@ -42,6 +42,8 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#include <plt/handle.h>
+
 #include "ks/ks.h"
 #include "ks/xdr.h"
 
@@ -60,6 +62,8 @@ public:
     virtual bool xdrDecode(XDR *) = 0;
 };
 
+typedef PltPtrHandle<KscNegotiator> KscNegotiatorHandle;
+
 //////////////////////////////////////////////////////////////////////
 // class KscAvModule
 // 
@@ -67,7 +71,12 @@ class KscAvModule
 {
 public:
     virtual ~KscAvModule() {}
-    virtual KscNegotiator *getNegotiator(const KscServer *) const = 0;
+    virtual KscNegotiatorHandle getNegotiator(const KscServer *) const = 0;
+
+    virtual KS_AUTH_TYPE typeCode() const = 0;
+    
+    virtual unsigned long hash() const;
+    bool operator == (const KscAvModule &) const;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -95,7 +104,9 @@ class KscAvNoneModule
 : public KscAvModule
 {
 public:
-    KscNegotiator *getNegotiator(const KscServer *) const;
+    virtual KS_AUTH_TYPE typeCode() const;
+
+    KscNegotiatorHandle getNegotiator(const KscServer *) const;
 
     static KscNegotiator *getStaticNegotiator();
 
@@ -105,6 +116,33 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
+//////////////////////////////////////////////////////////////////////
+
+inline
+unsigned long
+KscAvModule::hash() const
+{
+    return typeCode();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+bool
+KscAvModule::operator == (const KscAvModule &other) const
+{
+    return this == &other;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_AUTH_TYPE
+KscAvNoneModule::typeCode() const
+{
+    return KS_AUTH_NONE;
+}
+
 //////////////////////////////////////////////////////////////////////
 
 inline

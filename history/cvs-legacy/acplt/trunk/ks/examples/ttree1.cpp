@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.1 1997-05-20 15:20:14 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.2 1997-05-23 13:01:37 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -109,7 +109,7 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     //
     switch ( proj_props.xdrTypeCode() ) {
     case KS_OT_DOMAIN:
-	cout << "<DOM> " << info;
+        cout << "<DOM> " << info;
 	break;
 
     case KS_OT_VARIABLE:
@@ -117,11 +117,11 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
 	    cout << "<VAR> " << info;
 
 	    const KsVarProjProps *var_proj_props =
-		PLT_DYNAMIC_PCAST(KsVarProjProps, &proj_props);
+            PLT_DYNAMIC_PCAST(KsVarProjProps, &proj_props);
 	    if( !var_proj_props ) {
-		cout << "<unknown projected properties>";
+            cout << "<unknown projected properties>";
 	    } else {
-		DumpVarType(var_proj_props->type);
+            DumpVarType(var_proj_props->type);
 	    }
 	    break;
 	}
@@ -171,13 +171,14 @@ void DumpBranch(KscDomain &branch, int indent)
     // it... (whistle, whistle...)
     //
     for ( ; *children; ++*children ) {
-	DumpProjProps(**children, indent + INDENTATION);
-	if ( (*children)->xdrTypeCode() == KS_OT_DOMAIN ) {
-	    KscDomain child_domain(PltString(branch.getFullPath()) + 
-				   PltString(indent ? "/" : "") +
-				   (*children)->identifier);
-	    DumpBranch(child_domain, indent + INDENTATION);
-	}
+        KsProjPropsHandle current(**children);
+        DumpProjProps(*current, indent + INDENTATION);
+        if ( current->xdrTypeCode() == KS_OT_DOMAIN ) {
+            KscDomain child_domain(PltString(branch.getFullPath()) + 
+                                   PltString(indent ? "/" : "") +
+                                   current->identifier);
+            DumpBranch(child_domain, indent + INDENTATION);
+        }
     }
 
     //
