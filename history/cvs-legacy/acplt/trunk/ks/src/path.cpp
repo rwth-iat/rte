@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.10 2000-04-05 13:11:40 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.11 2001-01-29 12:38:51 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998, 1999
+ * Copyright (c) 1996, 2001
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -27,28 +27,32 @@
 
 #include "ks/ks.h"
 #include "ks/string.h"
-//#include "ks/array.h"
-//#include "ks/serviceparams.h"
 #include "ks/conversions.h"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-/////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-
+// ---------------------------------------------------------------------------
+// Parse the path string into path components, separated by slashes or dots
+// depending on whether they denote children or parts. The indices of the
+// beginnings of the path components are stored for later (quick) use.
+// Note that the "../" and "./" components are not indexed, but rather we
+// remember how many components we should go up within the object tree.
+//
 void KsPath::findSlashes() 
 {
-    if (_slash.size() == 0) {
-        _valid = false; // TODO better error indication
+    if ( _slash.size() == 0 ) {
+	//
+	// We don't have exceptions (well, we don't want to use them),
+	// so this is the only way to indicate failure.
+	//
+        _valid = false;
     }
-    if (isValid()) {
+    if ( isValid() ) {
         const char *s = _str;
         size_t si = 0;
         //
-        // Start with skipping the ../../ garbage at the beginning
+        // Start with skipping the "../../" garbage at the beginning
         // of the path.
+	//
         while (s[si] == '/' || s[si] == '.') ++si;
         //
         // Now save the indices of the remaining slashes
@@ -72,27 +76,40 @@ void KsPath::findSlashes()
     }
     PLT_POSTCONDITION(  !isValid() 
                       || (_first == 0 && _slash.size() == size() + 1));
-}
+} // KsPath::findSlashes
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Parse the path string, checking for well-formedness, and at the same time
+// count the number of components.
+//
 size_t
 KsPath::checkAndCount() {
     const char * p = _str;         // running pointer
     bool was_slash = false;        // was last char == '/' ?
     _valid = true; // be optimistic
 
-    if (! *p) {
-        _valid = false;  // empty paths are not allowed
+    //
+    // Empty paths are not allowed, so bail out as soon as possible.
+    //
+    if ( !*p ) {
+        _valid = false;
         return 0;
     }
+    //
+    //
+    //
     if ( *p == '/' ) {
         // The path is absolute.
         _go_up = 0;
         was_slash = true;
         ++p;
     } else {
-        // The path is relative.
+	//
+        // The path is relative, so we need to skip the "stay here" and
+	// "go up" components in front of the more interesting part of
+	// the path.
+	//
         _go_up = 1;
         //
         // handle points
@@ -136,17 +153,13 @@ KsPath::checkAndCount() {
                 ++slashes;
             }
         } else {
-#if 0
-            if (! isalnum(ch) && ch != '_') {
-                _valid = false;
-                return 0;
-            }
-#endif
+	    // ##TODO: Check for valid characters in string and bail out
+	    // if garbage is found...
             was_slash = false;
         }
     }
     return slashes;
-}
+} // KsPath::checkAndCount
 
 
 //////////////////////////////////////////////////////////////////////
@@ -278,18 +291,27 @@ KsPath::operator[] (size_t i) const
                        _slash[_first+i+1] - _slash[_first+i] - 1);
 } 
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Given a context, resolve this path against it and return the result
+// (which now is an absolute path) as a new path object. In case something
+// goes boing, return an invalid path.
+//
 KsPath
 KsPath::resolve(const KsPath & rel)
 {
     PLT_PRECONDITION(   isValid() && isAbsolute()
                      && rel.isValid());
-    if (rel.isAbsolute()) {
+    if ( rel.isAbsolute() ) {
+	//
+	// Path is already absolute, so just return it.
+	//
         return rel;
     } else {
-        // relative
-        if (rel._go_up <= size()) {
+        //
+	// Relative path: we have to resolve it. But then, just delegate.
+	//
+        if ( rel._go_up <= size() ) {
             return KsPath(*this, rel);
         } else {
             // error
@@ -298,197 +320,129 @@ KsPath::resolve(const KsPath & rel)
     }
 }
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Given a set of paths, resolve all relative paths into absolute paths. The
+// set forms a context, were the first path must not be relative, as it will
+// first set the context for the other paths to follow. This method also
+// checks for validity of the paths according to the ACPLT/KS protocol
+// specification.
+//
 void
-KsPath::resolvePaths(const PltArray<KsString> & ids,
+KsPath::resolvePaths(const PltArray<KsString> &ids,
                      PltArray<KsPath> &paths,
                      PltArray<KS_RESULT> &res) 
 {
-    PLT_PRECONDITION(   ids.size() == paths.size() 
+    size_t size = ids.size();
+    PLT_PRECONDITION(       size   == paths.size() 
                      && res.size() == paths.size());
 
-    KsPath current("//"); // start with an invalid current path.
-    for (size_t i=0; i < ids.size(); ++i) {
-        KsPath & path = paths[i]; // shortcut
-        path = KsPath(ids[i]);
-        if (path.isValid()) {
-            // valid syntax
-            if (current.isValid()) {
-                // resolve path based on the current path.
-                path = current.resolve(path);
-                // current = path;
-                if ( path.isValid() ) {
-                    res[i] = KS_ERR_OK;
-                } else {
-                    res[i] = KS_ERR_BADPATH;
-                }
+    //
+    // Start with an invalid context to prevent the first path from
+    // being relative without a context in which it could be resolved.
+    //
+    KsPath context("//");
+
+    size_t idx;
+    for ( idx = 0; idx < size ; ++idx ) {
+        KsPath & path = paths[idx]; // shortcut
+        path = KsPath(ids[idx]);
+        if ( path.isValid() ) {
+	    //
+	    // Now if we have either an absolute path or the path is
+	    // relative and the context is valid either, then mark this
+	    // path for later resolving.
+	    //
+            if ( context.isValid() ) {
+		//
+                // Resolve path based on the context path.
+		//
+                path = context.resolve(path);
+		//
+		// Although the relative path was syntactically correct,
+		// resolving might not have been possible, so the resolve
+		// method might have returned an invalid path to indicate
+		// this. So we have to check validity of the resolved
+		// path (again).
+		//
+                res[idx] = path.isValid() ? KS_ERR_OK : KS_ERR_BADPATH;
             } else {
-                // There is no valid current path
-                if (path.isAbsolute()) {
-                    // Use this.
-                    res[i] = path.isValid() ? KS_ERR_OK : KS_ERR_BADNAME;
-                } else {
-                    // Sorry. No current path to base this on.
-                    // request on.
-                    res[i] = KS_ERR_BADPATH;
-                }
+		//
+                // The previous path was invalid, so we lost context
+                // and thus we can not resolve the current path in case
+                // it is not absolute. We already know that at least
+		// the current path is valid.
+		//
+                res[idx] = path.isAbsolute() ? KS_ERR_OK : KS_ERR_BADPATH;
             }
         } else {
-            res[i] = KS_ERR_BADPATH;
+	    //
+	    // Given path does not adhere to the ACPLT/KS protocol
+	    // specification. Flag it as invalid.
+	    //
+            res[idx] = KS_ERR_BADPATH;
         }
-        // Do conversion if necessary
-        if( res[i] == KS_ERR_OK ) {
-            res[i] = path.convert();
-        }
-        current = path;
+	// In every case, the current path now forms the context for
+	// the next path to resolve, regardless of whether the current
+	// path is valid or not.
+	//
+        context = path;
     } // for each id
-}
-
-#if 0
-
-void resolvePaths(KsArray<KsString> &identifiers,
-                  KsArray<KsGetVarItemResult> &results)
-{
-    int size;
-    char const *path_start, *path_end, *p;
-    bool bail_out;
-
-    path_start = 0;
-
-    size = identifiers.size();
-    for ( int i = 0; i < size; i++ ) {
-        if ( *(p = identifiers[i]) != '/' ) {
-            //
-            // This may be a relative path, as the path name lacks the
-            // leading slash. But first we bark at the user, if there is
-            // no "current working path", that is, we havn't yet seen a
-            // full path name.
-            //
-            if ( !path_start ) {
-                results[i].result = KS_ERR_BADNAME;
-                continue;
-            }
-            bail_out = false;
-            while ( strncmp(p, "../", 3) == 0 ) {
-                //
-                // Go up one domain. This one is called as long as there
-                // are leading "../" in the path.
-                //
-                if ( path_end != path_start ) {
-                    path_end = strrchr(path_end - 1, '/');
-                    if ( !path_end ) {
-                        path_end = path_start;
-                    }
-                    p += 3;
-                } else {
-                    path_start = 0;
-                    results[i].result = KS_ERR_BADNAME;
-                    bail_out = true;
-                    break;
-                }
-            }
-            if ( bail_out ) {
-                continue;
-            }
-            //
-            // The path is relative to the current "working" path. If
-            // the path we're currently parsing contains "./" at the
-            // beginning, then we'll skip that.
-            //
-            if ( strncmp(p, "./", 2) == 0 ) {
-                p += 2;
-            }
-            PltString full_path(path_start, path_end - path_start);
-            full_path += p;
-            identifiers[i] = full_path;
-        } else {
-            //
-            // It is an absolute path name. We don't need to resolve it,
-            // but we have to remember the path for later reference. The
-            // "current" path (within the scope of this function) is
-            // remembered by "path_start" and "path_end", the latter
-            // pointing to the final "/" in the path.
-            //
-            path_start = p;
-            path_end   = p;
-            while ( *p ) {
-                if ( *p == '/' ) {
-                    path_end = p;
-                }
-                ++p;
-            }
+    //
+    // Finally decode all encoded characters (%xx) in all the absolute
+    // paths. We have to do this after resolving all paths, otherwise
+    // we will be badly hit when reparsing paths containing slashes or dots
+    // -- and reparsing is necessary when resolving a path with relation
+    // to another one.
+    //
+    for ( idx = 0; idx < size ; ++idx ) {
+        if( res[idx] == KS_ERR_OK ) {
+            res[idx] = paths[idx].decodePercents();
         }
     }
-} // resolvePaths
+} // KsPath::resolvePaths
 
-//////////////////////////////////////////////////////////////////////
 
-bool checkPath(PltString &path, bool allow_slash, bool allow_point)
-{
-    const char * p = path;
-    if (! *p) {
-        return false; // empty paths are not allowed
-    }
-    //
-    // handle points
-    //
-    if ( allow_point ) {
-        do {
-            if ( *p == '.' ) {           // first '.'
-                ++p;
-                if ( *p == '.' ) ++p;    // second '.'
-            }
-        } while (allow_slash && *p == '/');
-    }
-    //
-    // no more points expected from now on
-    //
-    while (char ch = *p++) {
-        if (   (!isascii(ch)  && !isprint(ch))
-            || (!allow_slash && ch == '/')) {
-            return false;
-        }
-    }
-    return true;
-} 
-
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-
+// ---------------------------------------------------------------------------
+// Convert from external encoded representation using percents for special
+// characters into internal representation.
+//
 KS_RESULT
-KsPath::convert()
+KsPath::decodePercents()
 {
     KsString new_str;
     KS_RESULT res = ksStringFromPercent(_str, new_str);
 
-    if( res == KS_ERR_OK ) {
+    if ( res == KS_ERR_OK ) {
+	//
         // Iterate over parts of path and adjust slash positions.
         // Each percent found in the old string shortens the current
-        // path by two as "%xx" was converted to a single char.
+        // path by two as "%xx" was converted into a single char.
         // As the whole string was changed, we need to iterate over all
-        // slashes except the first and last one.
+        // slashes except the first and last one (the last one denotes
+	// the end of the path).
         //
         size_t count = 0;
-        size_t last_slash = _slash[0];
-        for(size_t i = 1; i < _slash.size() - 1; i++) {
-            for(size_t j = last_slash; j < _slash[i]; j++) {
-                if( _str[j] == '%' ) count++;
+        size_t slash_index = _slash[0];
+        for ( size_t i = 1; i < _slash.size() - 1; i++ ) {
+	    size_t next_slash_index = _slash[i];
+            for ( size_t j = slash_index; j < next_slash_index; j++ ) {
+                if ( _str[j] == '%' ) count++;
             }
-            last_slash = _slash[i];
-            if( count ) {
+            slash_index = next_slash_index;
+            if ( count ) {
                 _slash[i] -= 2 * count;
             }
         }
-
+	//
+	// Use decoded string as the new path string. The slash indices
+	// have already been corrected above.
+	//
         _str = new_str;
     }
-
     return res;
-}
+} // KsPath::decodePercents
                 
-//////////////////////////////////////////////////////////////////////
+
 // EOF ks/path.cpp
-/////////////////////////////////////////////////////////////////////////////
 
