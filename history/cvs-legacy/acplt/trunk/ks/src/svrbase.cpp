@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.22 1997-09-15 11:44:11 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.23 1997-09-22 08:55:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -57,7 +57,7 @@
 #endif
 
 #if PLT_SYSTEM_OPENVMS
-#define bzero(__x, __y) memset(__x, 0, __y)
+#define bzero(x, y) memset(x, 0, y)
 #endif
 
 #include "ks/svrbase.h"
@@ -657,6 +657,19 @@ KsServerBase::serveRequests(const KsTime *pTimeout) {
         // back -- no matter how many requests are still waiting on the
         // connections just served.
         //
+
+        // When you write to a pipe or a socket and there is no listener
+        // any more, you will get a SIGPIPE, which by default terminates
+        // the application. There are two problems here: The code of the
+        // underlying system might depend on delivery of SIGPIPE and
+        // there are multiple interfaces for setting signal handlers.
+
+#ifdef KS_IGNORE_SIGPIPE
+        // TODO: This is a temporary fix. We leave it
+        // to the user what to do providing a hook.
+        signal(SIGPIPE, SIG_IGN);
+#endif
+        
         svc_getreqset(&read_fds);
     } 
     return res;
