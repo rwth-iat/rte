@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.11 1999-01-12 16:17:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.12 1999-05-12 10:01:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -56,7 +56,15 @@
 // ----------------------------------------------------------------------------
 // class KssCommObject: it's the parent of all communication objects within an
 // ACPLT/KS server (if you're using the proxy and/or static object system
-// implemented here and in other source files).
+// implemented here and in other source files). All that is guarantueed you
+// can do on *any* communication object is to ask for its engineered props,
+// like name, creation time, comment and access mode. In addition, you have
+// the chance to find out what kind of ACPLT/KS communication is really
+// dangling at your pointer/handle through the typeCode() method, which
+// returns exactly one out of the KS_OT_xxx constants.
+//
+// The bottom line about KssCommObject is that it is really, ahem, abstract:
+// it just provides a generic interface to all communication objects.
 //
 class KssCommObject
 {
@@ -80,7 +88,7 @@ typedef PltPtrHandle<KssCommObject> KssCommObjectHandle;
 
 
 // ----------------------------------------------------------------------------
-// But now for the services, which can be provided by various derived classes
+// But now for the services which can be provided by various derived classes
 // of the KssCommClass. These services are more or less the services requested
 // by ACPLT/KS clients and are helpful for implementing these services in
 // ACPLT/KS servers, especially the mis-nomed "simple server" class.
