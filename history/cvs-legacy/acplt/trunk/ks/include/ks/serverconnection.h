@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/serverconnection.h,v 1.1 2003-10-13 11:34:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/serverconnection.h,v 1.2 2003-10-13 12:52:42 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -34,8 +34,6 @@
 
 #ifndef KSSERVERCONNECTION_H_INCLUDED
 #define KSSERVERCONNECTION_H_INCLUDED
-
-#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/svrbase.h"
 #include "ks/xdrtcpcon.h"
@@ -185,8 +183,6 @@ protected:
     unsigned short                   _protocol_version;
 }; // class KsServerConnection
 
-
-#endif /* PLT_USE_BUFFERED_STREAMS */
 
 #endif /* KSSERVERCONNECTION_H_INCLUDED */
 

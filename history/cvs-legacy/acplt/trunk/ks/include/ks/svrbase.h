@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.28 2003-10-13 11:32:11 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.29 2003-10-13 12:52:55 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -36,21 +36,9 @@
 typedef int sig_atomic_t;
 #endif
 
-#if PLT_USE_BUFFERED_STREAMS
 #include "ks/connection.h"
 #include "ks/connectionmgr.h"
 #include "ks/xdrtcpcon.h"
-#endif
-
-
-// ---------------------------------------------------------------------------
-// PRIVATE! forward declaration
-// This dispatcher is only used with the genuine ONC/RPC package.
-//
-#if !PLT_USE_BUFFERED_STREAMS
-extern "C" void 
-ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
-#endif
 
 
 typedef KssXDRConnection KssTransport;

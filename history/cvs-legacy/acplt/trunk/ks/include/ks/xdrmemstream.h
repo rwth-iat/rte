@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrmemstream.h,v 1.6 1999-09-16 10:54:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrmemstream.h,v 1.7 2003-10-13 12:52:55 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -30,8 +30,6 @@
 
 #ifndef __XDRDYNAMICMEMORYSTREAM_H
 #define __XDRDYNAMICMEMORYSTREAM_H
-
-#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdr.h"
 
@@ -78,7 +76,6 @@ void   xdrmemstream_freegarbage();
 }
 #endif
 
-#endif /* PLT_USE_BUFFERED_STREAMS */
 #endif
 
 /* End of xdrmemstream.h */

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.16 2003-09-23 15:35:31 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.17 2003-10-13 12:52:49 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -96,11 +96,11 @@ protected:
     KsString getOsIdent();
 
 private:
-#if PLT_USE_BUFFERED_STREAMS
     bool initStatistics();
-#endif
 }; // class KsSimpleServer
 
 
 //////////////////////////////////////////////////////////////////////
 #endif // KS_SIMPLESERVER_INCLUDED
+
+// End of ks/simpleserver.h
