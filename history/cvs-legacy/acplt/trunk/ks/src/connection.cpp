@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.9 2000-04-11 14:10:32 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.10 2002-05-23 10:28:41 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -111,10 +111,6 @@ bool KssConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
 // bound. Of course, calling this method only makes sense, if it's using the
 // IP protocols.
 //
-#if PLT_USE_XTI && PLT_SYSTEM_SOLARIS
-extern int t_getname(int fd, struct netbuf *namep, int type);
-#endif
-
 u_short KssConnection::getPort() const
 {
     struct sockaddr_in addr;
@@ -127,45 +123,10 @@ u_short KssConnection::getPort() const
 #endif
     
     addr_len = sizeof(addr);
-#if !PLT_USE_XTI
     if ( (getsockname(_fd, (struct sockaddr *) &addr, &addr_len) < 0) ||
          (addr.sin_family != AF_INET) ) {
     	return 0;
     }
-#else
-#if PLT_SYSTEM_SOLARIS
-    //
-    // This hack is for Solaris with TLI instead of XTI (SunOS 2.4 etc)
-    //
-    // Credit where credit is due: Richard Stevens saved my day once more again.
-    // I asked in comp.protocols.tcp-ip for this undocumented function prototype
-    // and he helped me out within the time zone difference between Europe and
-    // the United States...
-    //
-    struct netbuf local;
-    
-    local.maxlen = sizeof(addr);
-    local.buf    = (char *) &addr;
-    if ( (t_getname(_fd, &local, LOCALNAME) < 0) ||
-         (addr.sin_family != AF_INET) ) {
-    	return 0;
-    }
-#else
-    struct t_bind local, peer;
-    
-    local.addr.maxlen = addr_len;
-    local.addr.buf    = (char *) &addr;
-    peer.addr.maxlen  = 0;
-    
-    if ( t_getprotaddr(_fd, &local, &peer) < 0 ) {
-    	return 0;
-    }
-    if ( (local.addr.len != addr_len) ||
-    	 (addr.sin_familiy != AF_INET) ) {
-    	return 0;
-    }
-#endif
-#endif
     return ntohs(addr.sin_port);
 } //  KssConnection::getPort
 
@@ -238,8 +199,6 @@ void KssXDRConnection::shutdown()
     //
 #if PLT_SYSTEM_NT
     closesocket(_fd); // Ouch!!!
-#elif PLT_USE_XTI
-    t_close(_fd); // one more "Ouch!!!"
 #else
     close(_fd);
 #endif
@@ -284,9 +243,6 @@ bool KssXDRConnection::makeNonblocking()
     int nbmode = 1;
     return ioctl(_fd, FIONBIO, (char *) &nbmode) != -1;
 #else
-    //
-    // This works even with XTI...
-    //
     int mode = fcntl(_fd, F_GETFL);
     if ( mode == -1 ) {
     	return false;
@@ -303,61 +259,10 @@ bool KssXDRConnection::makeNonblocking()
 //
 bool KssXDRConnection::enableKeepAlive()
 {
-#if !PLT_USE_XTI
     int mode = 1; // enable KEEP ALIVE
-#if PLT_SYSTEM_NT
-    return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE, 
+    return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE,
                       (char *) &mode, sizeof(mode))
 	       != -1;
-#else
-    return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE, 
-                      (char *) &mode, sizeof(mode))
-	       != -1;
-#endif
-#else
-#if 0
-    struct t_kpalive {
-    	t_scalar_t kp_onoff;
-	t_scalar_t kp_timeout;
-    };
-    struct t_opthdr
-
-    struct t_optmgmt request, result;
-    struct {
-    	struct t_opthdr  header;
-	struct t_kpalive keepalive;
-    } reqopt, resopt;
-    
-    request.opt.len           = sizeof(reqopt);
-    request.opt.maxlen        = request.len;
-    request.opt.buf           = &reqopt;
-    request.flags             = T_NEGOTIATE;
-    
-    reqopt.header.len         = sizeof(header) + sizeof(keepalive);
-    reqopt.header.level       = T_INET_TCP;
-    reqopt.header.name        = T_TCP_KEEPALIVE;
-    reqopt.keepalive.l_onoff  = T_YES;
-    reqopt.keepalive.l_linger = T_UNSPEC;
-    
-    result.opt.len            = sizeof(header) + sizeof(keepalive);
-    result.opt.maxlen         = result.len;
-    result.opt.buf            = &resopt;
-    result.flags              = T_CURRENT;
-    
-    resopt.header.len         = sizeof(resopt);
-    resopt.header.level       = T_INET_TCP;
-    resopt.header.name        = T_TCP_KEEPALIVE;
-    
-    if ( t_optmgmt(_fd, &request, &result) < 0 ) {
-    	return false;
-    }
-    return (result.status == T_SUCCESS) &&
-           (resopt.header.status == T_SUCCESS) &&
-	   (resopt.keepalive.l_onoff == T_YES);
-#else
-    return true;
-#endif
-#endif
 } // KssXDRConnection::enableKeepAlive
 
 

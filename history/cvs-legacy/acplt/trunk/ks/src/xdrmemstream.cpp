@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.12 2002-05-21 17:54:15 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.13 2002-05-23 10:30:26 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -743,10 +743,6 @@ static bool_t MemStreamSetPos(XDR *, u_int)
  */
 bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
 {
-#if PLT_USE_XTI
-    int flags;
-#endif
-
     if ( xdrs->x_op != XDR_ENCODE ) {
     	if ( err ) {
 	    *err = EINVAL;
@@ -777,11 +773,7 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
 	if ( *max < count ) {
 	    count = *max;
 	}
-#if !PLT_USE_XTI
         count_read = read(fd, xdrs->x_private, count);
-#else
-    	count_read = t_rcv(fd, xdrs->x_private, count, &flags);
-#endif
         if ( count_read < 0 ) {
             /*
              * Do not choke on interrupted system calls and not-yet-available
@@ -792,36 +784,6 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
 	    myerrno = WSAGetLastError(); /* MS VC++4.2 is brain damaged... */
 #else
             int myerrno = errno;
-#endif
-#if PLT_USE_XTI
-    	    /*
-	     * Make sure that a pending event on the XTI endpoint is read.
-	     * Especially handle connection release or disconnection. Yeah,
-	     * with XTI you'll have to handle all things yourself. What a
-	     * great deal.
-	     */
-    	    switch ( t_errno ) {
-	    case TLOOK: {
-	    	int events = t_look(fd);
-		myerrno = EIO;
-		if ( events & T_DISCONNECT ) {
-		    t_rcvdis(fd, 0);
-		    myerrno = EIO;
-		}
-		if ( events & T_ORDREL ) {
-		    t_rcvrel(fd);
-		    myerrno = EIO;
-		}
-		break;
-	    	}
-	    case TNODATA:
-		myerrno = EWOULDBLOCK;
-		return TRUE;
-	    case TSYSERR:
-		break; /* just take the ordinary errno */
-	    default:
-	    	myerrno = 0; /* indicate XTI error */
-	    }
 #endif
     	    if ( err ) {
 	    	*err = myerrno;
@@ -850,11 +812,7 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
 	 * XTI, the transport has already indicated whether there is more
 	 * data waiting to be read (some of the quite few goodies in XTI).
          */
-#if !PLT_USE_XTI
         if ( count != count_read ) {
-#else
-    	if ( !(flags & T_MORE) ) {
-#endif
             return TRUE;
         }
     }
@@ -912,11 +870,7 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
 	if ( *max <= count ) {
 	    count = *max;
 	}
-#if !PLT_USE_XTI
         count_written = write(fd, xdrs->x_private, count);
-#else
-	count_written = t_snd(fd, xdrs->x_private, count, 0);
-#endif
         if ( count_written < 0 ) {
             /*
              * Do not choke on interrupted system calls and not-yet-free
@@ -927,36 +881,6 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
 	    myerrno = WSAGetLastError(); /* MS VC++4.2 is brain damaged... */
 #else
             int myerrno = errno;
-#endif
-#if PLT_USE_XTI
-    	    /*
-	     * Make sure that a pending event on the XTI endpoint is read.
-	     * Especially handle connection release or disconnection. Yeah,
-	     * with XTI you'll have to handle all things yourself. What a
-	     * great deal.
-	     */
-    	    switch ( t_errno ) {
-	    case TLOOK: {
-	    	int events = t_look(fd);
-		myerrno = EIO;
-		if ( events & T_DISCONNECT ) {
-		    t_rcvdis(fd, 0);
-		    myerrno = EPIPE;
-		}
-		if ( events & T_ORDREL ) {
-		    t_rcvrel(fd);
-		    myerrno = EPIPE;
-		}
-		break;
-	    	}
-	    case TFLOW:
-		myerrno = EWOULDBLOCK;
-		return TRUE;
-	    case TSYSERR:
-		break; /* just take the ordinary errno */
-	    default:
-	    	myerrno = 0; /* indicate XTI error */
-	    }
 #endif
     	    if ( err ) {
 	    	*err = myerrno;

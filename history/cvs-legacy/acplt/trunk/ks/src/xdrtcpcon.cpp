@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.15 2000-04-11 14:10:32 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.16 2002-05-23 10:31:21 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -77,13 +77,9 @@ KssListenTCPXDRConnection::KssListenTCPXDRConnection(int fd,
 	_state = CNX_STATE_DEAD;
 	return;
     }
-#if !PLT_USE_XTI
     if ( listen(_fd, 5) < 0 ) {
 	_state = CNX_STATE_DEAD;
     }
-#else
-    // TODO: already be configured by server code
-#endif
 } // KssListenTCPXDRConnection::KssListenTCPXDRConnection
         
 
