@@ -60,7 +60,7 @@ class KscServerBase;
 //
 const int KSC_UDP_MAX_TRIES = 5;
 const struct timeval KSC_UDP_TIMEOUT = {10, 0};      // DONT USE KsTime 
-const struct timeval KSC_RPCCALL_TIMEOUT = {10, 0};  // or PltTime
+const struct timeval KSC_RPCCALL_TIMEOUT = {30, 0};  // or PltTime
 
 //////////////////////////////////////////////////////////////////////
 // class KscClient
