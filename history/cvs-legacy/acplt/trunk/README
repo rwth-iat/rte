@@ -144,6 +144,10 @@ Version 1.2.1
     brain-damaged default of 32.
   * Fixed strange setpgrp() parameter calling problem with Solaris which
     prevented the Un*x-based KS Manager from properly entering daemon mode.
+  * Moved buffered-streams specific information from "/vendor" to
+    "/vendor/modules/acpltks".
+  * Added "server_os" variable to "/vendor" domain, returning an operating
+    system, version and release string.
 
 - GENERIC:
   * Fixed warnings from VC++ 6.0 grumbling about converting bool_t to bool.
