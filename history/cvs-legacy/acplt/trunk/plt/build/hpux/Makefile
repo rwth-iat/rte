@@ -63,8 +63,9 @@ CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray\
 	thtname tcomparable thandle
 
-all : libplt.a $(TESTS)
+all : libplt.a
 
+tests : $(TESTS)
 
 libplt.a: $(CXX_LIBPLT_OBJECTS)
 	ar r $@ $?

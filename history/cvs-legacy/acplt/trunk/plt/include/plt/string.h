@@ -83,9 +83,10 @@ public:
     friend bool operator == (const PltString &, const PltString &);
     friend bool operator != (const PltString &, const char *);
     friend bool operator != (const PltString &, const PltString &);
-  
 
-private:
+protected:
+    PltString(size_t sz, char *p);
+
     class srep {
     public:
         char * s;

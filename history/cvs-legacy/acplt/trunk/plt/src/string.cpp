@@ -55,7 +55,9 @@ PltString::invariant() const
 {
     return (!p 
             || 
-            (p->refcount > 0 && p->s && strlen(p->s) == p->len));
+            (p->refcount > 0 && p->s 
+// && strlen(p->s) == p->len
+));
 }
 #endif
 
@@ -119,6 +121,23 @@ PltString::~PltString()
     }
 }
 
+//////////////////////////////////////////////////////////////////////
+
+PltString::PltString(size_t sz, char *s)
+{
+    PLT_PRECONDITION(s);
+	p = new srep;
+    if (p) {
+        p->len = sz;
+        p->s = s;
+        if (!p->s) {
+            delete p;
+            p = 0;
+        }
+    }
+//    PLT_CHECK_INVARIANT(); // p->len is temporarily != strlen(p->s)
+}
+    
 //////////////////////////////////////////////////////////////////////
 
 PltString & 

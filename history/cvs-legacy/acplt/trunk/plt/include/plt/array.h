@@ -103,7 +103,7 @@ public:
     virtual size_t size() const;
     virtual PltArrayIterator<T> * newIterator() const;
 
-private:
+protected:
     PltArrayHandle<T> a_array;
     size_t a_size;
 

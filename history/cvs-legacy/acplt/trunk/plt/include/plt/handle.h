@@ -326,7 +326,8 @@ PltHandle<T>::bindTo(T* p, enum PltOwnership t)
     PLT_ASSERT( palloc == 0 );
 
     // bind new handled object
-    if (t != PltOsUnmanaged) {
+    if (p && t != PltOsUnmanaged) {
+        // only managed non-NULL objects get an AllocTracker
         palloc = new AllocTracker;
         if (palloc) {
             palloc->count = 1;
