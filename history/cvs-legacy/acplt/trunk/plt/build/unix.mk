@@ -45,6 +45,7 @@ CXX_LIBPLT_OBJECTS = \
 	log.o \
 	priorityqueue.o \
 	rtti.o \
+	time.o \
 	string.o
 
 CXX_TEST_SOURCES = \
