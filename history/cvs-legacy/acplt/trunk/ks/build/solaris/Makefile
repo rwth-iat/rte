@@ -1,20 +1,24 @@
-# Platform specific part for solaris
+#
+# Platform specific makefile for the Solaris operating system.
+#
+# Make sure that you always define the symbol PLT_SYSTEM_SOLARIS
+# when compiling for this operating system.
+# Adjust the CXX_FLAGS according to your needs.
+#
 
-RANLIB = ranlib
 CXX_FLAGS = -DNDEBUG -O2 -Wall
 #CXX_FLAGS = -g -Wall
+
 CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_SOLARIS=1
 CXX_PLATFORM_LIBS = -lrpcsvc -lsocket
+
 PLATFORM = solaris
+MAKE=make
+RANLIB = ranlib
 
 include ../unix.mk
 
-#tfoxia$(EXE) : tfoxia$(O) tfoxia1$(O) $(LIBKS)
-#	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) -lfox -lnsl $(CXX_LIBS)
-
-#depend: tfoxia.cpp tfoxia1.cpp
-
-
+# End of solaris/Makefile
 
 
 
