@@ -37,6 +37,39 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
+#ifndef PLT_SYSTEM_HPUX
+#define PLT_SYSTEM_HPUX 0
+#endif
+
+#ifndef PLT_SYSTEM_NT
+#define PLT_SYSTEM_NT 0
+#endif
+
+/* End of configuration section */
+
+#if PLT_SYSTEM_HPUX + PLT_SYSTEM_NT != 1
+#error Must define exactly one system!
+#endif
+
+#if PLT_SYSTEM_HPUX
+#define PLT_USE_SYSLOG 1
+#endif
+
+#if PLT_SYSTEM_NT
+#define PLT_USE_SYSLOG 0
+#endif
+
+#ifndef PLT_USE_SYSLOG
+#define PLT_USE_SYSLOG 0
+#endif
+
+#ifdef __GNUC__
+#define PLT_SIMULATE_BOOL 0
+#define PLT_SIMULATE_RTTI 1
+#endif
+
+
+
 #ifndef PLT_SIMULATE_BOOL
 #define PLT_SIMULATE_BOOL 0			/* Is bool not defined by the system? */
 #endif
@@ -45,7 +78,6 @@
 #define PLT_SIMULATE_RTTI 1
 #endif
 
-/* End of configuration section */
 
 #if PLT_SIMULATE_BOOL
 typedef int bool;
