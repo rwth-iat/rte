@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.c,v 1.3 1999-07-28 16:07:01 dirk Exp $
+*   $Id: ov_string.c,v 1.4 1999-08-02 11:04:41 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -143,7 +143,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_setvecvalue(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Compare two strings, result is -1, 0 or 1.
+*	Compare two strings, result is greater than, equal to or less than zero
 */
 OV_INT OV_DLLFNCEXPORT ov_string_compare(
 	const OV_STRING		string1,
