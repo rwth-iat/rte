@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/inaddrset.cpp,v 1.2 1997-10-28 10:39:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/inaddrset.cpp,v 1.3 1997-12-02 10:17:25 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -36,6 +36,8 @@
  */
 /* Written by Martin Kneissl <martin@plt.rwth-aachen.de> */
 /* Devastated by Harald Albrecht <harald@plt.rwth-aachen.de> */
+
+#include <stdlib.h>
 
 #include "ks/inaddrset.h"
 
