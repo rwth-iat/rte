@@ -38,28 +38,11 @@
 #include "plt/hashtable.h"
 
 //////////////////////////////////////////////////////////////////////
-// sentinel obj
-// TODO: should not require two additional singleton classes
-
-class PltNoKey : public PltKey
-{
-    virtual unsigned long hash() const { return 0; }
-    virtual bool operator == (const PltKey & ) const { return false; }
-    PLT_DECL_RTTI;
-};
-
-PLT_IMPL_RTTI1(PltNoKey, PltKey);
-
-//////////////////////////////////////////////////////////////////////
 
 class PltDeletedHashAssoc : public PltAssoc_
 {
-    static PltNoKey noKey;
-    virtual const void * key() const { return &noKey; }
+    virtual const void * key() const { return 0; }
 };
-
-PltNoKey
-PltDeletedHashAssoc::noKey;
 
 //////////////////////////////////////////////////////////////////////
 // sentinel
