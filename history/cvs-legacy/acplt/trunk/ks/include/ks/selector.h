@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
-
 #ifndef KS_SELECTOR_INCLUDED
 #define KS_SELECTOR_INCLUDED
-
 /*
+ * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.4 1998-10-06 13:19:39 harald Exp $
+ *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
@@ -44,6 +44,7 @@
 
 #include <plt/rtti.h>
 
+#include "ks/ks.h"
 #include "ks/xdr.h"
 #include "ks/handle.h"
 #include "ks/string.h"
@@ -69,6 +70,7 @@ typedef enum_t KS_TIME_TYPE;
 
 /////////////////////////////////////////////////////////////////////////////
 
+#if 0
 enum KS_INTERPOLATION_MODE_ENUM {
     KS_IPM_DEFAULT = 0,
     KS_IPM_NONE    = 1,
@@ -78,6 +80,7 @@ enum KS_INTERPOLATION_MODE_ENUM {
     KS_IPM_HOLD    = 5
 };
 typedef enum_t KS_INTERPOLATION_MODE;
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // A unified class for times and time spans
