@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.5 1999-04-22 15:34:25 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.6 1999-05-12 10:01:36 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -36,7 +36,8 @@
  */
 
 /*
- * connection.cpp -- Abstract base class for I/O connections.
+ * connection.cpp -- Abstract base class for I/O connections. This module
+ *                   also contains the abstraction of a XDR connection.
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
@@ -50,17 +51,37 @@
 #include <errno.h>
 
 #if !PLT_SYSTEM_OPENVMS
+
 #include <fcntl.h>
+
 #else
+
+//
+// OpenVMS idiosyncrasies. Well, OpenVMS 6.2 is really "open" at this point.
+// Gosh. What a rubbish.
+//
 #include <ioctl.h>
 extern int ioctl(int d, int request, char *argp);
+
 #endif
 
 #endif
 
 
 // ---------------------------------------------------------------------------
-// Construct a new connection from a given file descriptor.
+// Construct a new connection from a given file descriptor. A connection is
+// ...well... just a connection, not necessarily used by ACPLT/KS or even
+// ONC/RPC. Instead a connection to the ACPLT/KS server is just an i/o pipe
+// connected so some partner. All instances of connections have their own
+// file descriptor (NT looses to some extend, because it has problems to mix
+// i/o channels, which are often fake file descriptors), an associated default
+// timeout, and most important a type. The type indicates, whether this side
+// of a connection plays the rule of the server or client. For example, the
+// ACPLT/KS transports receiving requests are playing on the server side.
+// Note that a fresh connection doesn't has a client address (well, this is
+// rather the address of the peer at the other end of the connection), as
+// well as a attention method. If a connection needs attention, then you have
+// to set an attention handler later.
 //
 KssConnection::KssConnection(int fd, bool autoDestroyable,
                              unsigned long timeout,
@@ -69,14 +90,25 @@ KssConnection::KssConnection(int fd, bool autoDestroyable,
       _auto_destroyable(autoDestroyable),
       _fd(fd),
       _client_address_len(0),
-      _manager(0),
+      _manager(0), // this is set later when putting this connection under
+                   // control of the connection manager.
       _attention_partner(0)
 {
+    //
+    // In case of a connection playing the server side, it starts out in the
+    // idle state, ready to receive requests without any timeout pending. The
+    // timeout will only be set later after the first byte of a request has
+    // been seen. In case of being on the client side, a connection starts
+    // in the passive state, because there's no i/o do be done yet at all.
+    //
     _state = _cnx_type == CNX_TYPE_SERVER ? CNX_STATE_IDLE : CNX_STATE_PASSIVE;
 } // KssConnection::KssConnection
 
 
 // ---------------------------------------------------------------------------
+// Set the IP address of the communication partner at the other end of the
+// connection. This is necessary, so UDP-based connections can send their
+// data to the appropriate peer and receive data only from the right peer.
 //
 bool KssConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
 {
@@ -91,7 +123,9 @@ bool KssConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
 
 
 // ---------------------------------------------------------------------------
-//
+// For this given connection, find out to what port the connection has been
+// bound. Of course, calling this method only makes sense, if it's using the
+// IP protocols.
 //
 #if PLT_USE_XTI && PLT_SYSTEM_SOLARIS
 extern int t_getname(int fd, struct netbuf *namep, int type);
@@ -150,8 +184,18 @@ u_short KssConnection::getPort() const
 } //  KssConnection::getPort
 
 
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// And now for the second important type of connections which are based on the
+// ONC/XDR data type representation.
+//
 
 // ---------------------------------------------------------------------------
+// A XDR-based connection is like a KssConnection, but in addition it has an
+// associated xdr stream. While the specific kind of xdr stream is up to a
+// derived class, this class has a flag (_cleanup_xdr_stream) whether it
+// should clean up the xdr stream using xdr_destroy() when it's time for this
+// instance to bite the bullet.
 //
 KssXDRConnection::KssXDRConnection(int fd, bool autoDestroyable, 
 	                           unsigned long timeout,
@@ -164,7 +208,17 @@ KssXDRConnection::KssXDRConnection(int fd, bool autoDestroyable,
 
 // ---------------------------------------------------------------------------
 // With XDR-based connections we make sure that the XDR stream is destroyed
-// when the connection is shut down.
+// when the connection is shut down. In case the xdr stream can't be destroyed
+// with the usual xdr_destroy(), this can be inhibited by setting the
+// _cleanup_xdr_stream flag to false. You are then responsible to clean up the
+// xdr mess you've made yourself. 
+//
+// NOTE: you need to shutdown() a connection first, before you can destroy the
+// connection object. These seperate steps are necessary because we may need
+// to reimplement how to close a connection in a derived class. But we can not
+// do this in a destructor, because there then would be multiple attempts to
+// close the file description: from the destructor of the derived class as well
+// as from the destructor of the base class.
 //
 void KssXDRConnection::shutdown()
 {
@@ -172,6 +226,12 @@ void KssXDRConnection::shutdown()
     	xdr_destroy(&_xdrs);
 	_cleanup_xdr_stream = false;
     }
+    //
+    // ...and in the following lines you can see so-called "advanced" operating
+    // systems to fail miserably in the field of integrating all kind of i/o
+    // through file descriptors. Only Unix handles them all in a uniform manner.
+    // Way to go, NT...
+    //
 #if PLT_SYSTEM_NT
     closesocket(_fd); // Ouch!!!
 #elif PLT_USE_XTI
@@ -179,11 +239,20 @@ void KssXDRConnection::shutdown()
 #else
     close(_fd);
 #endif
+    //
+    // Make sure, the connection is in the dead state, from which it can't be
+    // reactivated any more.
+    //
     _state = CNX_STATE_DEAD;
 } // KssXDRConnection::shutdown
 
 
 // ---------------------------------------------------------------------------
+// This method allows a XDR connection to free allocated buffer memory after
+// a request has been received completely. So the request will not eat up
+// precious buffer memory when it has already been deserialzed and thus
+// converted into C++ objects. This method also gives the A/V tickets a
+// chance to read in their trailer part and check the permissions.
 //
 KS_RESULT KssXDRConnection::finishRequestDeserialization(KsAvTicket &avt, bool)
 {
@@ -197,7 +266,10 @@ KS_RESULT KssXDRConnection::finishRequestDeserialization(KsAvTicket &avt, bool)
 
 // ---------------------------------------------------------------------------
 // Put a socket into non-blocking mode. This encapsulates differences between
-// various operating systems. Well, "NT" might be an operating system.
+// various operating systems. Well, "NT" might be an operating system. But
+// then, who knows (no Bill, you don't know what an operating system is, you
+// only know how to operate your multi-Bill-ion dollar company on the expense
+// of your users).
 //
 bool KssXDRConnection::makeNonblocking()
 {
@@ -222,6 +294,8 @@ bool KssXDRConnection::makeNonblocking()
 
 
 // ---------------------------------------------------------------------------
+// For connections (esp. on the server side) you can enable the keep alive
+// mode in order to detect dead connections and drop such suckers.
 //
 bool KssXDRConnection::enableKeepAlive()
 {
