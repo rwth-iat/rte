@@ -2,7 +2,7 @@
 #ifndef KS_ARRAY_INCLUDED
 #define KS_ARRAY_INCLUDED
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -70,6 +70,7 @@ class KsArray
 //////////////////////////////////////////////////////////////////////
 
 #if PLT_COMPILER_GCC
+#if (__GNUC__<2) || ((__GNUC__==2) && (__GNUC_MINOR__<=7))
 
 bool KsArray<char>::xdrEncode(XDR *) const;
 bool KsArray<char>::xdrDecode(XDR *);
@@ -100,6 +101,8 @@ bool KsArray<float>::xdrDecode(XDR *);
 
 bool KsArray<double>::xdrEncode(XDR *) const;
 bool KsArray<double>::xdrDecode(XDR *);
+
+#endif
 #endif
 
 #if PLT_COMPILER_MSVC
