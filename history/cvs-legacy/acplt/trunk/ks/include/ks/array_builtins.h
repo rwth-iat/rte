@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_BUILTINS_INCLUDED
 #define KS_ARRAY_BUILTINS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.4 1999-09-16 10:54:38 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.5 2000-09-04 06:22:05 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -112,7 +112,7 @@ KsArray<char>::xdrDecode(XDR *xdr)
 
     /* now deserialize elements */
     char * p = a_array.getPtr();
-    return xdr_opaque(xdr, p, sz);
+    return xdr_opaque(xdr, p, sz) ? true : false;
 }
 
 
