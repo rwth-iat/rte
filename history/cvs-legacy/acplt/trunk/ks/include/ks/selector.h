@@ -2,9 +2,9 @@
 #ifndef KS_SELECTOR_INCLUDED
 #define KS_SELECTOR_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.4 1998-10-06 13:19:39 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.5 1999-01-12 16:23:43 harald Exp $
  *
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
