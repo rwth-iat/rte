@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.13 1997-09-03 14:09:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.14 1997-09-09 08:22:43 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -98,6 +98,7 @@ KsAvTicket::xdrNew(XDR * xdrs)
             // try builtins
             switch(typecode) {                                     
                 KS_XDR_MAP(KS_AUTH_NONE, KsAvNoneTicket);
+                KS_XDR_MAP(KS_AUTH_SIMPLE, KsAvSimpleTicket);
             default:                                                
                 {
                     // unknown auth:
