@@ -1,7 +1,12 @@
 ACPLT/KS C++ Communication Library
 ==================================
 
-(Preliminary Version C)
+This is the preliminary version "D". The client as well as the server
+side are implemented and the library's interface is okay. For up-to-date
+information see
+    http://www.plt.rwth-aachen.de/ks/english
+or
+    http://www.plt.rwth-aachen.de/ks (German)
 
 
 1. Introduction
