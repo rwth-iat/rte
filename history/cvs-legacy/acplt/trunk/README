@@ -1,10 +1,10 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.5 of the C++ Communication Libary. As always, it
-contains bug-fixes and some small improvements behind the scenes. For
-details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
-of this document below.
+This is the developer's version 1.1.3 of the C++ Communication
+Libary. As always, it contains bug-fixes and some small improvements
+behind the scenes. For details about bug-fixes and changes, see part 3
+"Changes & Bug-Fixes" of this document below.
 
 Although this release is a minor release we suggest to upgrade to this
 release as especially a memory leak (from 1.0.4) was fixed and the
@@ -112,6 +112,24 @@ That's it. This will build the library as well as the examples.
 
 3. Changes & Bug-Fixes
 ----------------------
+
+Version 1.1.3
+- SERVERS:
+  * Fixed registration of the dispatch method, when using the genuine
+    ONC/RPC library and dispatching model.
+  * Fixed bug in auto-detection of ACPLT/KS Manager version when
+    connecting. When connecting to an ACPLT/KS Manager picky about the
+    KS protocol version, we step down the KS protocol version until
+    both sides can agree on the version to use. A client will
+    nevertheless try to ask for the best protocol version it can
+    understand.
+  * Added new ACPLT/KS services, like GetCanonicalPath and
+    RenameObject. Also added the semantic flags to the abstract base class
+    of all communication objects. Made ks.h header file C compliant even
+    for lesser C compilers on 16bit platforms.
+  * Implemented backwards compatibility for v2 clients with v1 servers.
+
+- CLIENTS:
 
 Version 1.0.5
 - SERVERS: interserver connections added (YESSS!). The tserver example shows
