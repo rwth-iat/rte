@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.7 1997-03-10 17:07:47 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.8 1997-03-11 10:45:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -407,7 +407,7 @@ PltHandle<T>::bindTo(T * p, enum PltOwnership t)
 {
     PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
                      || t==PltOsNew || t==PltOsArrayNew);
-    if (t == PltOsUnmanaged) {
+    if (p == 0 || t == PltOsUnmanaged) {
         PltHandle_base::bindTo(p,0);
         return true;
     } else {
