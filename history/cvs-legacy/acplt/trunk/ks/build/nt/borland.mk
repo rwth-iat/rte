@@ -8,7 +8,7 @@ O=.obj
 A=.lib
 EXE=.exe
 ONCDIR = \oncrpc
-LIBRPC = \oncrpc\librpc\oncrpc.lib
+LIBRPC = \oncrpc\bin\oncrpc.lib
 PLTDIR = ..\..\..\plt
 LIBPLT = $(PLTDIR)\build\nt\libplt.lib
 KSDIR = ..\..
@@ -21,8 +21,8 @@ EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
 CXX = bcc32
-CXX_FLAGS = -D_BORLANDC -w
-#CXX_FLAGS = -D_BORLANDC=1 -DNDEBUG -w
+#CXX_FLAGS = -D_BORLANDC -w
+CXX_FLAGS = -D_BORLANDC=1 -DNDEBUG -w
 #CXX_FLAGS =
 CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1 -DFD_SETSIZE=128
 
@@ -127,7 +127,10 @@ pmobile.obj:    $(EXAMPLESSRCDIR)pmobile.cpp
 		$< $(LIBKS) $(LIBKSCLN) $(LIBKSSVR) $(LIBPLT) $(LIBRPC)
 !
 
-examples:       tclient.exe ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
+examples:       tclient.exe ntksmanager.exe tmanager.exe tserver.exe ttree.exe
+#
+# tslcient.exe and tshell.exe aren't supported.
+#examples:       tclient.exe ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 
 tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
 	@echo Linking $@
@@ -154,7 +157,7 @@ pmobile.exe: pmobile.obj pmobile_code.obj $(LIBKS) $(LIBKSCLN)
 !
 
 
-ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc                        
+ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
 	$(RC) -r -fontksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
 
 ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) ntksmanager.res
@@ -162,7 +165,7 @@ ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) 
 	$(CXX) @&&!
 		-tWM ntksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
-	$(RC) ntksmanager.res ntksmanager.exe
+	$(RC) -fentksmanager.exe ntksmanager.res
 
 ttree.exe: ttree.obj ttree1.obj $(LIBKSCLN) $(LIBKS)
 	@echo Linking $@
@@ -208,19 +211,11 @@ $(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
 clean :
 	del *.obj
 	del *.exe
+	del *.map
 
 mrproper : clean
 	del *.lib
 	del *.err
 	del *.sym
 	del *.mbr
-
-
-
-
-
-
-
-
-
 
