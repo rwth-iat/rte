@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.5 1997-03-19 17:19:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.6 1997-03-26 17:21:52 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -434,14 +434,14 @@ getReadyFds(fd_set & fds, const KsTime * pto)
     KsTime timeout;
     KsTime *pTimeout;
     if (pto) {
-        timeout = *pTimeout;
+        timeout = *pto;
         pTimeout = &timeout;
     } else {
         pTimeout = 0;
     }
 
     size_t numfds = ks_dtablesize();
-        
+
 #if PLT_SYSTEM_HPUX
     int res = select(numfds, (int*) &fds,0,0, pTimeout); // TODO wasdas?
 #else
@@ -450,6 +450,7 @@ getReadyFds(fd_set & fds, const KsTime * pto)
 
     if (res == -1) {
         // select reports an error
+        PLT_DMSG("select returned -1: " << strerror(errno) << endl);
         if (errno == EINTR) {
             // interrupted by a signal
             // interpret as timeout
