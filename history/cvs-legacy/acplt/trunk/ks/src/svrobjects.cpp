@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.6 1997-04-03 15:14:31 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.7 1997-04-04 07:57:11 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -183,9 +183,10 @@ void
 KssMaskedDomainIterator::skipWhileNotMatching()
 {
     for ( ; _it; ++_it) {
-        if (*_it) {
+        KssCommObjectHandle hobj(*_it);
+        if (hobj) {
             // Handle is ok
-            const KssCommObject & obj = **_it;
+            const KssCommObject & obj = *hobj;
             if (   (obj.typeCode() & _type_mask)
                 && 1==_name_mask.matches(obj.getIdentifier())) {
                 // Match! Stop skipping

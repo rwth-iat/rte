@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.5 1997-04-03 15:14:30 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.6 1997-04-04 07:57:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -196,12 +196,13 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
     if (path.isValid() && path.isAbsolute()) {
         // Path is OK
         if (ticket.isVisible(params.path)) {
+            KssCommObjectHandle hc;
             KssDomain *pd = 0;
             if (params.path == "/") {
                 // root must be handled specially
                 pd = &_root_domain;
             } else {
-                KssCommObjectHandle hc(_root_domain.getChildByPath(path));
+                hc = _root_domain.getChildByPath(path);
                 if (hc) {
                     // Child found. Is it a domain?
                     pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
