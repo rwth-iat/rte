@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.31 2003-10-13 11:17:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.32 2003-10-14 17:41:53 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -22,6 +22,7 @@
  */
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
+/* updated to work with nonblocking IO by Albrecht boshi */
 
 //////////////////////////////////////////////////////////////////////
 
@@ -33,6 +34,8 @@
 #include "ks/register.h"
 #include "ks/serviceparams.h"
 #include "ks/avmodule.h"
+#include "ks/clnrequest.h"
+#include "ks/serverconnection.h"
 
 //////////////////////////////////////////////////////////////////////
 // forward declaration
@@ -233,6 +236,10 @@ protected:
 };
 
 
+class KscServerConnection;
+class KscServerReconnectTimer;
+
+
 //////////////////////////////////////////////////////////////////////
 // class KscServer
 //
@@ -287,6 +294,14 @@ public:
     bool isLiving() const;
 
     //
+    // new nonblocking stuff
+    void terminateRequests();
+    void requestAsyncByOpcode(KscServiceRequestHandle hreq);
+
+    bool open();
+    void close();
+
+    //
     // set timeout and numbers of retries
     //
     void setTimeouts(const PltTime &rpc_timeout,        // time to complete a RPC
@@ -303,34 +318,35 @@ protected:
     friend class KscAvModule;
     void dismissNegotiator(const KscAvModule *);
 
-    // service functions
+
+
     //
-    bool getServerDesc(struct sockaddr_in *host_addr,    // host 
-                       unsigned short port,              // opt. port of manager
-                       const KsServerDesc &server,       // description
-                       KsGetServerResult &server_info);  // result
+    // new nonblocking transport stuff
+    friend class KscServerConnection;
+    friend class KscServerReconnectTimer;
 
+    KsServerConnection *_svr_con;
+    KscServiceRequestHandle _current_request;
+    PltList<KscServiceRequestHandle> _request_queue;
+    
+    // manage requests queue and request initiation
+    void initiateRequestIfPossible(KscServiceRequestHandle newRequest);
 
-    bool createTransport();
-    void destroyTransport();
-    int timedConnect(struct sockaddr_in host_addr, PltTime timeout);
-    virtual bool reconnectServer(size_t try_count, enum clnt_stat errcode);
-    virtual bool reconnectServer(KS_RESULT result);
-    bool getHostAddr(struct sockaddr_in *addr);
-    void setResultAfterService(enum clnt_stat errcode);
+    // manage events from the server connection and from the timer queue
+    void async_attention(KsServerConnection::KsServerConnectionOperations op);
+    void reconnectTimerTrigger();
 
-    void initExtTable();
-
-
-    KsServerDesc server_desc;      // server description given by user
-    KsGetServerResult server_info; // server description given by manager
-    CLIENT *_client_transport;     // RPC client handle
-
+    // reconnect control stuff
+    KscServerReconnectTimer *_reconnect_timer;
     PltTime _rpc_timeout;
     PltTime _retry_wait;
     size_t _tries;
-    KSC_IP_TYPE last_ip;	
-      	// last IP used to connect to server/manager   
+    size_t _tries_remaining;
+
+    virtual bool reconnectServer(KS_RESULT result);
+
+    void initExtTable();
+
 
     PltHashTable<PltKeyPlainConstPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
     PltHashTable<KsString, u_long> ext_opcodes;
@@ -420,7 +436,8 @@ inline
 u_short
 KscServer::getProtocolVersion() const
 {
-    return server_info.server.protocol_version;
+    // FIXME & TODO
+    return 2;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -429,10 +446,12 @@ inline
 PltTime
 KscServer::getExpiresAt() const
 {
+    // FIXME & TODO
+    return PltTime::now(30);
     // NOTE: without cast gcc reports internal
     // compiler error
     //
-    return PltTime(server_info.expires_at);
+//    return PltTime(server_info.expires_at);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -441,7 +460,9 @@ inline
 bool
 KscServer::isLiving() const
 {
-    return server_info.living;
+    // TODO & FIXME
+    return true;
+    // return server_info.living;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -456,48 +477,7 @@ KscClient::getClient()
     return _the_client;
 }
 
-/////////////////////////////////////////////////////////////////////////////
 
-#if 0
-inline bool 
-KscServer::getPP(const KscAvModule *avm,
-                 const KsGetPPParams &params,
-                 KsGetPPResult &result)
-{
-    return requestByOpcode(KS_GETPP, avm, &params, &result);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-inline bool 
-KscServer::getVar(const KscAvModule *avm,
-                  const KsGetVarParams &params,
-                  KsGetVarResult &result)
-{
-    return requestByOpcode(KS_GETVAR, avm, &params, &result);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-inline bool 
-KscServer::setVar(const KscAvModule *avm,
-                  const KsSetVarParams &params,
-                  KsSetVarResult &result)
-{
-    return requestByOpcode(KS_SETVAR, avm, &params, &result);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-inline bool
-KscServer::exgData(const KscAvModule *avm,
-                   const KsExgDataParams &params,
-                   KsExgDataResult &result)
-{
-    return requestByOpcode(KS_EXGDATA, avm, &params, &result);
-}
-
-#endif
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
