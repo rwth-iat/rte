@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.9 1997-09-05 11:05:04 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.10 1998-12-10 17:27:43 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,6 +44,7 @@ PLT_IMPL_RTTI0(KssSimpleCommObject);
 PLT_IMPL_RTTI2(KssSimpleDomain, KssDomain, KssSimpleCommObject);
 PLT_IMPL_RTTI2(KssSimpleVariable, KssVariable, KssSimpleCommObject);
 PLT_IMPL_RTTI2(KssTimeNowVariable, KssVariable, KssSimpleCommObject);
+PLT_IMPL_RTTI2(KssSimpleLinkAlias, KssDomain, KssSimpleCommObject);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -277,6 +278,19 @@ KssTimeNowVariable::getValue() const
     tv.tv_usec = now.tv_usec;
     return KsValueHandle(&tv, KsOsUnmanaged);
 }
+
+
+
+// ----------------------------------------------------------------------------
+//
+KssSimpleLinkAlias::KssSimpleLinkAlias(KssDomainHandle hdom, 
+				       const KsString &id,
+				       KsTime ctime,
+				       KsString comment)
+: KssSimpleCommObject(id, ctime, comment),
+  _halias_domain(hdom)
+{ } // KssSimpleLinkAlias::KssSimpleLinkAlias
+
 
 
 //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.9 1997-09-05 11:05:03 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.10 1998-12-10 17:27:43 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,9 +44,29 @@
 // RTTI implementation
 //////////////////////////////////////////////////////////////////////
 
+PLT_IMPL_RTTI0(KssCurrPropsService);
+PLT_IMPL_RTTI0(KssChildrenService);
+
 PLT_IMPL_RTTI0(KssCommObject);
-PLT_IMPL_RTTI1(KssDomain, KssCommObject);
-PLT_IMPL_RTTI1(KssVariable, KssCommObject);
+PLT_IMPL_RTTI2(KssDomain, KssCommObject, KssChildrenService);
+PLT_IMPL_RTTI2(KssVariable, KssCommObject, KssCurrPropsService);
+PLT_IMPL_RTTI2(KssLink, KssCommObject, KssChildrenService);
+
+// ----------------------------------------------------------------------------
+// This is just a default implementation provided for backwards compatibility
+// with old software. You should instead implement your own version, which is
+// capable of returning more differentiated error codes.
+//
+KS_RESULT
+KssCurrPropsService::getCurrProps(KsCurrPropsHandle &hprops) const
+{
+    hprops = getCurrProps();
+    return hprops ? KS_ERR_OK : KS_ERR_GENERIC;
+} // KssCurrPropsService::getCurrProps
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////
 // class KssDomain
@@ -320,5 +340,28 @@ KssVariable::setCurrProps(const KsCurrPropsHandle & hprops)
     }
 }
 
-//////////////////////////////////////////////////////////////////////
+
+
+// ----------------------------------------------------------------------------
+// Return the engineered properties for a link communication object. This is
+// per default implemented by retrieving the individual attributes of a link
+// and putting this into a link engineered properties object/structure.
+//
+KsProjPropsHandle
+KssLink::getPP() const
+{
+    KsLinkProjProps * p = new KsLinkProjProps;
+    KsProjPropsHandle h(p, KsOsNew);
+    if ( p && h ) {
+        p->identifier               = getIdentifier();
+        p->creation_time            = getCreationTime();
+        p->comment                  = getComment();
+        p->access_mode              = getAccessMode();
+	p->type                     = getType();
+	p->opposite_role_identifier = getOppositeRoleIdentifier();
+    }
+    return h;
+} // KssLink::getPP
+
+
 /* EOF ks/svrobjects.cpp */

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.21 1998-10-01 09:59:12 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.22 1998-12-10 17:27:43 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -291,18 +291,39 @@ KsSimpleServer::getVarItem(KsAvTicket &ticket,
                            KsGetVarItemResult & result)
 {
     PLT_PRECONDITION(path.isValid() && path.isAbsolute());
-    if (ticket.canReadVar(KsString(PltString(path)))) {
+    if ( ticket.canReadVar(KsString(PltString(path))) ) {
         // Access okay.
-        KssCommObjectHandle hvar(_root_domain.getChildByPath(path));
-        if (hvar) {
-            KssVariable * pvar = 
-                PLT_DYNAMIC_PCAST(KssVariable, hvar.getPtr());
-            if (pvar) {
-                // Hey, we have found the variable!
-                result.item = pvar->getCurrProps();
-                result.result = result.item ? KS_ERR_OK : KS_ERR_GENERIC;
+        KssCommObjectHandle hobj(_root_domain.getChildByPath(path));
+        if ( hobj ) {
+            //
+	    // Unfortunately, some C++ compilers don't support true RTTI,
+            // so downcasting to a particular class isn't always working
+            // properly when multiple inheritance comes into play. So we
+	    // need to give compilers a helping hand. Sigh.
+	    //
+	    KssCurrPropsService *pobj = 0;
+	    switch ( hobj->typeCode() ) {
+	    case KS_OT_VARIABLE:
+		pobj = (KssVariable*) hobj.getPtr();
+		break;
+	    case KS_OT_LINK:
+		//###FIXME## pobj = (KssLink*) hobj.getPtr();
+		break;
+	    default:
+		break; // all other object classes are invalid.
+	    }
+            if ( pobj ) {
+                //
+                // Hey, we have found something that might give us some
+		// current properties.
+		//
+		result.result = pobj->getCurrProps(result.item);
+//                result.item = pobj->getCurrProps();
+//                result.result = result.item ? KS_ERR_OK : KS_ERR_GENERIC;
             } else {
-                // Not a variable.
+		//
+                // Nothing that wants to give us its current properties.
+		//
                 result.result = KS_ERR_BADTYPE;
             }
         } else {
@@ -313,7 +334,7 @@ KsSimpleServer::getVarItem(KsAvTicket &ticket,
         // Access denied.
         result.result = KS_ERR_NOACCESS;
     }
-}
+} // KsSimpleServer::getVarItem
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -325,17 +346,34 @@ KsSimpleServer::setVarItem(KsAvTicket &ticket,
                            KsResult & result)
 {
     PLT_PRECONDITION(path.isValid() && path.isAbsolute());
-    if (ticket.canWriteVar(KsString(PltString(path)))) {
+    if ( ticket.canWriteVar(KsString(PltString(path))) ) {
         // Access okay.
-        KssCommObjectHandle hvar(_root_domain.getChildByPath(path));
-        if (hvar) {
-            KssVariable * pvar = 
-                PLT_DYNAMIC_PCAST(KssVariable, hvar.getPtr());
-            if (pvar) {
-                // Hey, we have found the variable!
-                result.result = pvar->setCurrProps(curr_props);
+        KssCommObjectHandle hobj(_root_domain.getChildByPath(path));
+        if ( hobj ) {
+            //
+	    // Unfortunately, some C++ compilers don't support true RTTI,
+            // so downcasting to a particular class isn't always working
+            // properly when multiple inheritance comes into play. So we
+	    // need to give compilers a helping hand. Sigh.
+	    //
+	    KssCurrPropsService *pobj = 0;
+	    switch ( hobj->typeCode() ) {
+	    case KS_OT_VARIABLE:
+		pobj = (KssVariable*) hobj.getPtr();
+		break;
+	    default:
+		break; // all other object classes are invalid.
+	    }
+            if ( pobj ) {
+                //
+                // Hey, we have found something that might want take some
+		// current properties from us.
+		//
+                result.result = pobj->setCurrProps(curr_props);
             } else {
-                // Not a variable.
+		//
+                // Nothing that wants to get some current properties.
+		//
                 result.result = KS_ERR_BADTYPE;
             }
         } else {
@@ -351,69 +389,97 @@ KsSimpleServer::setVarItem(KsAvTicket &ticket,
 //////////////////////////////////////////////////////////////////////
 
 void
-KsSimpleServer::getPPOfDomain(KssDomain *pd,
+KsSimpleServer::getPPOfObject(KssCommObject *pobj,
                               const PltString &prefix,
                               KsAvTicket &ticket,
                               const KsGetPPParams &params,
                               KsGetPPResult &result)
 {
-    PLT_PRECONDITION( pd );
+    PLT_PRECONDITION( pobj );
  
-    if (params.name_mask == "") {
-        // We are being asked about the proj. props of the
-        // domain itself
-        KsProjPropsHandle h(pd->getPP());
-        if (h && result.items.addLast(h)) {
+    if ( params.name_mask == "" ) {
+	//
+        // We are being asked about the proj. props of the object itself.
+	// Just add them to the end of the list of proj. props the result
+	// already has.
+        //
+        KsProjPropsHandle h(pobj->getPP());
+        if ( h && result.items.addLast(h) ) {
             result.result = KS_ERR_OK;
         } else {
             result.result = KS_ERR_GENERIC;
         }
     } else {
-        // Convert mask
+	//
+        // Make sure that the object for which the children are to be
+	// queried can have children. For instance, you can't ask a variable
+        // for children, because it'll never can have children. For objects
+	// which can be queried for its children, get the pointer to the
+        // apropriate interface. Once again, we would need true RTTI support
+        // with all C++ compilers, but... so we need to do the downcast
+        // ourselves very carefully -- or bang!
+        //
+        KssChildrenService *pcs = 0;
+	switch ( pobj->typeCode() ) {
+	case KS_OT_DOMAIN:
+	    pcs = (KssDomain *) pobj;
+	    break;
+	case KS_OT_LINK:
+	    pcs = (KssLink *) pobj;
+	    break;
+	default:
+	    result.result = KS_ERR_BADPATH;
+	    return;
+	}
+	//
+        // Convert mask.
+	//
         KsString mask;
         result.result = ksStringFromPercent(params.name_mask, mask);
-        if( result.result == KS_ERR_OK ) {
-            // Iterate over its children.
-            KssDomainIterator *pit =
-                PLT_RETTYPE_CAST((KssDomainIterator *))
-                pd->newMaskedIterator(mask,params.type_mask);
-            if (pit) {
-                // We got an iterator. Use it.
-                for (KssDomainIterator &it = *pit; it; ++it) {
-                    if (*it) {
-                        // check if the child is visible
-                        PltString childname(prefix,
-                                            (*it)->getIdentifier());
-                        if (ticket.isVisible(childname)) {
-                            // Ask for proj properties
-                            KsProjPropsHandle hpp = (*it)->getPP();
-                            if (hpp) {
-                                hpp->access_mode &= 
-                                    ticket.getAccess(childname);
-                                hpp->identifier = 
-                                    ksStringToPercent(hpp->identifier);
-                                result.items.addLast(hpp);
-                            } else {
-                                // ignore error
-                            }
-                        } else {
-                            // not visible, do nothing
-                        }
-                    } else {
-                        // null handle, log error
-                        PltLog::Error("Child iterator returned"
-                                      " null handle");
+        if ( result.result != KS_ERR_OK ) {
+	    return;
+	}
+	//
+        // Iterate over the children of a communication object.
+	//
+        KssDomainIterator *pit =
+	       PLT_RETTYPE_CAST((KssDomainIterator *))
+	       pcs->newMaskedIterator(mask, params.type_mask);
+	if ( pit ) {
+	    // We got an iterator. Use it.
+	    for ( KssDomainIterator &it = *pit; it; ++it ) {
+		if ( *it ) {
+		    // check if the child is visible
+                    PltString childname(prefix,
+					(*it)->getIdentifier());
+		    if ( ticket.isVisible(childname) ) {
+			// Ask for proj properties
+                        KsProjPropsHandle hpp = (*it)->getPP();
+			if ( hpp ) {
+			    hpp->access_mode &= 
+				ticket.getAccess(childname);
+			    hpp->identifier = 
+				ksStringToPercent(hpp->identifier);
+			    result.items.addLast(hpp);
+			} else {
+			    // ignore error
+			}
+		    } else {
+			// not visible, do nothing
                     }
-                } // for
-                delete pit;
-            } else {
-                // no iterator: ignore error
-            }
+		} else {
+		    // null handle, log error
+                    PltLog::Error("Child iterator returned"
+				  " null handle");
+		}
+	    } // for
+            delete pit; // get rid of iterator...
         } else {
-            // conversion error, code already set
+	    // no iterator: ignore error
         }
     }               
-}
+} // KsSimpleServer::getPPOfObject
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -428,24 +494,35 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
     if( path.isValid() && path.isAbsolute() ) {
         KS_RESULT convres = path.convert();
         if( convres == KS_ERR_OK ) {
-            // Path is OK
-            if (ticket.isVisible(KsString(path))) {
+	    //
+            // Path is okay, so we can now proceed -- if the object is
+	    // at least visible.
+	    //
+            if ( ticket.isVisible(KsString(path)) ) {
                 KssCommObjectHandle hc;
-                KssDomain *pd = 0;
-                if (params.path == "/") {
+                KssCommObject *pd = 0;
+                if ( params.path == "/" ) {
                     prefix = params.path;
-                    // root must be handled specially
+		    //
+                    // The root must be handled specially...
+		    //
                     pd = &_root_domain;
                 } else {
-                    prefix = PltString(PltString(path),"/");
+		    //
+                    //
+                    //
+                    prefix = PltString(PltString(path), "/");
                     hc = _root_domain.getChildByPath(path);
-                    if (hc) {
+                    if ( hc ) {
+			//
                         // Child found. Is it a domain?
-                        pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
+			//
+                        //pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
+			pd = hc.getPtr();
                     }
                 }
-                if( pd ) {
-                    getPPOfDomain(pd, prefix, ticket, params, result);
+                if ( pd ) {
+                    getPPOfObject(pd, prefix, ticket, params, result);
                 } else {
                     // not a domain or no such child
                     result.result = KS_ERR_BADPATH;
@@ -609,6 +686,9 @@ KsSimpleServer::initVendorTree()
 
         && addStringVar(vendor, "server_version",
                         getServerVersion())
+
+        && addStringVar(vendor, "ks_comm_lib_version",
+                        KS_VERSION_STRING)
 
         && addStringVar(vendor, "server_description",
                         getServerDescription())

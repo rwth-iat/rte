@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.11 1998-09-17 12:02:22 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.12 1998-12-10 17:27:27 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,8 +37,11 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #include "ks/svrobjects.h"
 #include "plt/hashtable.h"
+
+
 /////////////////////////////////////////////////////////////////////////////
 // forward declaration
 /////////////////////////////////////////////////////////////////////////////
@@ -164,6 +167,7 @@ private:
 
 };
 
+
 //////////////////////////////////////////////////////////////////////
 // class KssSimpleVariable
 //////////////////////////////////////////////////////////////////////
@@ -277,6 +281,67 @@ private:
     PLT_DECL_RTTI;
 };
 
+
+
+
+// ----------------------------------------------------------------------------
+// The class KssSimpleLinkAlias implements an 1:m link, with an underlying
+// domain as the real container.
+//
+class KssSimpleLinkAlias
+: public KssLink,
+  public KssSimpleCommObject
+{
+public:
+    //// KssCommObject
+    //// accessors
+    // projected properties
+    virtual KsString getIdentifier() const
+        { return KssSimpleCommObject::getIdentifier(); }
+    virtual KsTime   getCreationTime() const
+        { return KssSimpleCommObject::getCreationTime(); }
+    virtual KsString getComment() const
+        { return KssSimpleCommObject::getComment(); }
+
+    //// KssLink/KssChildrenService ////
+    //// accessors
+    virtual KS_LINK_TYPE getType() const { return KS_LT_LOCAL_1_MANY; }
+    virtual KsString getOppositeRoleIdentifier() const { return KsString(); }
+
+
+    virtual KS_RESULT setCurrProps(const KsCurrPropsHandle &hprops)
+	{ return KS_ERR_NOACCESS; }
+    virtual KsCurrPropsHandle getCurrProps() const
+	{ return KsCurrPropsHandle(); }
+
+
+    virtual KssChildIterator_THISTYPE * newIterator() const
+	{ return (KssChildIterator_THISTYPE *) _halias_domain->newIterator(); }
+    virtual KssChildIterator_THISTYPE *
+        newMaskedIterator(const KsMask & name_mask,
+                          KS_OBJ_TYPE type_mask) const
+	{ return _halias_domain->newMaskedIterator(name_mask, type_mask); }
+    virtual KssCommObjectHandle getChildById(const KsString & id) const
+	{ return _halias_domain->getChildById(id); }
+    virtual KssCommObjectHandle getChildByPath(const KsPath & path) const
+	{ return _halias_domain->getChildByPath(path); }
+
+    //// KssSimpleLinkAlias ////
+    //// ctor/dtor
+    KssSimpleLinkAlias(KssDomainHandle hdom,
+		       const KsString &id,
+		       KsTime ctime = KsTime::now(),
+		       KsString comment = KsString());
+private:
+    KssDomainHandle _halias_domain;
+
+    PLT_DECL_RTTI;
+}; // class KssSimpleLinkAlias
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
@@ -329,7 +394,7 @@ KssSimpleCommObject::setComment(const KsString &s)
 // TODO should be easier through inheritance...
 // forward to base
 inline KsString KssSimpleDomain::getIdentifier() const
-{  return KssSimpleCommObject::getIdentifier(); }
+{ return KssSimpleCommObject::getIdentifier(); }
 
 inline KsTime KssSimpleDomain::getCreationTime() const
 { return KssSimpleCommObject::getCreationTime(); }
