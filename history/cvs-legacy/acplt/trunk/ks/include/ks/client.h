@@ -70,33 +70,43 @@ const struct timeval KSC_RPCCALL_TIMEOUT = {10, 0};  // or PltTime
 // Tasks:
 // - keep track of server objects
 //
-// It is not allowed to create more than one instance of this class.
-// Otherwise a runtime error occurrs.
+// Only one instance of this class exists for every programm. You 
+// should use KscClient::getClient() to access it, but you should not
+// delete the object pointed to, since it is a static object.
 //
 //////////////////////////////////////////////////////////////////////
 
 class KscClient
 {
 public:
-    KscClient();
     ~KscClient();
 
+    // returns a pointer to the client object
+    //
     static KscClient *getClient();
 
-    // find or create server
+    // find server by name
     //
     KscServer *getServer(const KscAbsPath &host_and_name); 
 
     void setAvModule(const KscAvModule *);
     const KscAvModule *getAvModule() const;
 
-    KscNegotiator *getNegotiator();
+    KscNegotiator *getNegotiator(KscServer *forServer);
 
 #if PLT_DEBUG
     void printServers();
 #endif
 
 protected:
+    KscClient();
+
+    // find or create server,
+    // should only be used by KscCommObject objects
+    //
+    friend KscCommObject;
+    KscServer *createServer(const KscAbsPath &host_and_name); 
+
     // destroy an server, should only be used
     // by KscServer objects
     //
@@ -105,7 +115,7 @@ protected:
 
     // for each application there is only one KscClient object
     //
-    static KscClient *the_client;
+    static KscClient the_client;
 
     const KscAvModule *av_module;
 
@@ -114,6 +124,10 @@ protected:
     static KscNegotiator *none_negotiator;
     
     PltHashTable<KscAbsPath,KscServer *> server_table;
+
+private:
+    KscClient(const KscClient &); // forbidden
+    KscClient &operator = (const KscClient &); // forbidden
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -140,6 +154,11 @@ public:
     enum_t getErrcode() const;
     // ping server
     bool ping();
+
+    // reread server description and state 
+    // from manager
+    //
+    bool getStateUpdate();
 
     // service functions
     //
@@ -172,6 +191,7 @@ public:
     KscAbsPath getHostAndName() const;
     u_short getProtocolVersion() const;
     PltTime getExpiresAt() const;
+    bool isLiving() const; 
 
 protected:
     // service functions
@@ -298,6 +318,15 @@ KscServer::getExpiresAt() const
 //////////////////////////////////////////////////////////////////////
 
 inline
+bool
+KscServer::isLiving() const
+{
+    return server_info.living;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
 void 
 KscServer::setAvModule(const KscAvModule *avm)
 {
@@ -319,8 +348,7 @@ inline
 KscClient *
 KscClient::getClient() 
 {
-    PLT_PRECONDITION(the_client);
-    return the_client;
+    return &the_client;
 }
 
 //////////////////////////////////////////////////////////////////////

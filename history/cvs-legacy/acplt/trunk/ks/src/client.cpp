@@ -56,8 +56,9 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////
 // initialize static data
-KscClient *KscClient::the_client = 0;
+KscClient KscClient::the_client;
 KscNegotiator *KscClient::none_negotiator = 0; 
+
 
 //////////////////////////////////////////////////////////////////////
 // class KscClient
@@ -65,8 +66,6 @@ KscNegotiator *KscClient::none_negotiator = 0;
 
 KscClient::KscClient() 
 {
-    PLT_PRECONDITION(the_client == 0);
-    the_client = this;
     none_negotiator = KscAvNoneModule::getStaticNegotiator();
 }
 
@@ -74,9 +73,12 @@ KscClient::KscClient()
 
 KscClient::~KscClient()
 {
-    PLT_PRECONDITION(the_client == this);
+    // TODO: neccessary ?
+    //       servers should be destroyed anyway by their own
+    //       since their cant be any commobjects left at this time
+    PLT_DMSG("Servers left at KscClient dtor : " << server_table.size() << endl);
 
-    // destroy related KscServer objects
+    // destroy related KscServer objects if any left
     //
     PltHashIterator<KscAbsPath,KscServer *> it(server_table);
     KscServer *pcurr;
@@ -96,6 +98,20 @@ KscClient::getServer(const KscAbsPath &host_and_name)
 {
     PLT_PRECONDITION(host_and_name.isValid());
 
+    KscServer *pServer;
+
+    bool ok = server_table.query(host_and_name, pServer);
+
+    return ok ? pServer : 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscServer *
+KscClient::createServer(const KscAbsPath &host_and_name) 
+{
+    PLT_PRECONDITION(host_and_name.isValid());
+
     KscServer *pServer = 0;
 
     bool ok = server_table.query(host_and_name, pServer);
@@ -112,6 +128,8 @@ KscClient::getServer(const KscAbsPath &host_and_name)
             server_table.add(host_and_name, pServer);
         }
     }
+
+    PLT_ASSERT(pServer);
 
     return pServer;
 }
@@ -136,12 +154,12 @@ KscClient::deleteServer(KscServer *server)
 //////////////////////////////////////////////////////////////////////
 
 KscNegotiator *
-KscClient::getNegotiator()
+KscClient::getNegotiator(KscServer *forServer)
 {
     KscNegotiator *neg;
 
     if(av_module) {
-        neg = av_module->getNegotiator();
+        neg = av_module->getNegotiator(forServer);
         if(neg) {
             return neg;
         }
@@ -195,8 +213,7 @@ KscServer::KscServer(KsString host,
 
 //////////////////////////////////////////////////////////////////////
 // Destructor
-// We close the TCP connection and destroy all related communication
-// objects.
+// We close the TCP connection. 
 //
 KscServer::~KscServer()
 {
@@ -279,6 +296,35 @@ KscServer::destroyTransport()
     if(pClient) {
         clnt_destroy(pClient);
     }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscServer::getStateUpdate()
+{
+    struct hostent *hp;
+    
+    // locate host
+    //
+    hp = gethostbyname(host_name);
+    if( !hp ) {
+        status = KscHostNotFound;
+        return false;
+    }
+
+    // request server description from manager
+    //
+    if( !getServerDesc(hp, server_desc, server_info) ) {
+        // dont change status set by getServerDescription()
+        return false;
+    }
+    if( server_info.result != KS_ERR_OK ) {
+        status = KscNoServer;
+        return false;
+    }
+
+    return true;
 }
     
 //////////////////////////////////////////////////////////////////////
@@ -831,13 +877,13 @@ KscServer::getNegotiator()
     KscNegotiator *neg;
 
     if(av_module) {
-        neg = av_module->getNegotiator();
+        neg = av_module->getNegotiator(this);
         if(neg) {
             return neg;
         }
     }
 
-    neg = KscClient::getClient()->getNegotiator();
+    neg = KscClient::getClient()->getNegotiator(this);
 
     PLT_ASSERT(neg);
 

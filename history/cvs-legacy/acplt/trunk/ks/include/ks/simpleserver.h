@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.6 1997-04-11 17:24:34 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.7 1997-04-18 13:00:32 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -64,10 +64,10 @@ public:
     //// modifiers
     // service functions
     virtual void getVar(KsAvTicket &ticket,
-                        KsGetVarParams &params,
+                        const KsGetVarParams &params,
                         KsGetVarResult &result);
     virtual void setVar(KsAvTicket &ticket,
-                        KsSetVarParams &params,
+                        const KsSetVarParams &params,
                         KsSetVarResult &result);
     virtual void getPP(KsAvTicket &ticket, 
                        const KsGetPPParams & params,

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.11 1997-04-10 16:25:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.12 1997-04-18 13:00:42 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -371,6 +371,30 @@ KsServerBase::dispatch(u_long serviceId,
         }
         break;
 
+    case KS_EXGDATA:
+        {
+            KsExgDataParams params(xdrIn, decodedOk);
+            if(decodedOk) {
+                // execute service function
+                KsExgDataResult result(params.set_vars.size(),
+                                       params.get_vars.size());
+                if(result.results.size() == params.set_vars.size()
+                   && result.items.size() == params.get_vars.size()) 
+                { // allocation ok
+                    exgData(ticket, params, result);
+                    // send back result
+                    sendReply(xprt, ticket, result);
+                } else {
+                    // allocation failed
+                    sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+                }
+            } else {
+                // not properly decoded
+                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+            }
+        }
+        break;
+
     default:
         // 
         // This is an unknown service.
@@ -382,13 +406,42 @@ KsServerBase::dispatch(u_long serviceId,
 //////////////////////////////////////////////////////////////////////
 
 void 
-KsServerBase::setVar(KsAvTicket &,
-                  KsSetVarParams &,
-                  KsSetVarResult & result) 
+KsServerBase::getVar(KsAvTicket &,
+                     const KsGetVarParams &,
+                     KsGetVarResult & result) 
 {
     result.result = KS_ERR_NOTIMPLEMENTED;
 }
 
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsServerBase::setVar(KsAvTicket &,
+                     const KsSetVarParams &,
+                     KsSetVarResult & result) 
+{
+    result.result = KS_ERR_NOTIMPLEMENTED;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsServerBase::getPP(KsAvTicket &,
+                    const KsGetPPParams &,
+                    KsGetPPResult & result) 
+{
+    result.result = KS_ERR_NOTIMPLEMENTED;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsServerBase::exgData(KsAvTicket &,
+                      const KsExgDataParams &,
+                      KsExgDataResult & result) 
+{
+    result.result = KS_ERR_NOTIMPLEMENTED;
+}
 
 
 /////////////////////////////////////////////////////////////////////////////

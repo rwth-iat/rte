@@ -136,6 +136,7 @@ public:
     virtual enum_t xdrTypeCode() const { return KS_VT_UINT; }
 
     operator unsigned long () const { return val; }
+    KsUIntValue &operator = (unsigned long); 
 
 protected:
     virtual bool xdrEncodeVariant(XDR *) const;
@@ -169,6 +170,7 @@ public:
     virtual enum_t xdrTypeCode() const { return KS_VT_SINGLE; }
 
     operator float () const { return val; }
+    KsSingleValue &operator = (float);
 
 protected:
     virtual bool xdrEncodeVariant(XDR *) const;
@@ -201,6 +203,7 @@ public:
     virtual enum_t xdrTypeCode() const { return KS_VT_DOUBLE; }
 
     operator double () const { return val; }
+    KsDoubleValue & operator = (double);
 
 protected:
     virtual bool xdrEncodeVariant(XDR *) const;
@@ -272,6 +275,8 @@ public:
     virtual bool xdrDecode(XDR *);
 
     virtual enum_t xdrTypeCode() const;
+
+    KsTimeValue &operator = (const PltTime &);
 
 protected:
     bool xdrEncodeVariant(XDR *) const;
@@ -590,6 +595,16 @@ KsUIntValue::setUInt(unsigned long v)
 }
 
 //////////////////////////////////////////////////////////////////////
+
+inline
+KsUIntValue &
+KsUIntValue::operator = (unsigned long v)
+{
+    val = v;
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -620,6 +635,16 @@ inline void
 KsSingleValue::setSingle(float v)
 {
     val = v;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsSingleValue &
+KsSingleValue::operator = (float v)
+{
+    val = v;
+    return *this;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -655,6 +680,15 @@ KsDoubleValue::setDouble(double v)
     val = v;
 }
 
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsDoubleValue &
+KsDoubleValue::operator = (double v)
+{
+    val = v;
+    return *this;
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -701,6 +735,18 @@ inline
 KsTimeValue::KsTimeValue(XDR *xdr, bool &ok)
 : KsTime(xdr, ok)
 {}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsTimeValue &
+KsTimeValue::operator = (const PltTime &t)
+{
+    tv_sec = t.tv_sec;
+    tv_usec = t.tv_usec;
+
+    return *this;
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

@@ -84,6 +84,7 @@ public:
 
 protected:
     KscServer *findServer();
+
     // returns negotiator which is only approbiate for
     // single access to this object
     KscNegotiator *getNegotiator();
@@ -158,7 +159,7 @@ protected:
 
     PLT_DECL_RTTI;
 
-public:
+private:
     KscDomain(const KscDomain &other); // forbidden
     KscDomain &operator = (const KscDomain &other); // forbidden
 
@@ -188,6 +189,7 @@ public:
 
     const KsVarProjProps *getProjProps() const;
     const KsVarCurrProps *getCurrProps() const;
+    KsCurrPropsHandle getCurrPropsHandle() const;
     bool setCurrProps(KsVarCurrProps &cp);
     bool isDirty() const;
    
@@ -394,7 +396,17 @@ KscVariable::getCurrProps() const
 {
     return &curr_props;
 }
- 
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsCurrPropsHandle
+KscVariable::getCurrPropsHandle() const
+{
+    return KsCurrPropsHandle(&curr_props,
+                             KS_OS_UNMANAGED);
+}
+
 //////////////////////////////////////////////////////////////////////
 
 inline

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.10 1997-04-14 15:30:11 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.11 1997-04-18 13:00:29 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -102,8 +102,6 @@ public:
     virtual KS_RESULT result() const = 0;
 
     virtual enum_t xdrTypeCode() const = 0;
-    virtual bool xdrDecodeVariant(XDR *)  = 0;
-    virtual bool xdrEncodeVariant(XDR *) const = 0;
 
     virtual KS_ACCESS getAccess(const KsString &name) const;
 
@@ -127,6 +125,10 @@ public:
     virtual bool invariant() const;
 #endif
 
+protected:
+    virtual bool xdrEncodeVariant(XDR *) const = 0;
+    virtual bool xdrDecodeVariant(XDR *)  = 0;
+
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
 };
@@ -147,8 +149,6 @@ public:
     virtual KS_RESULT result() const;
 
     virtual enum_t xdrTypeCode() const { return KS_AUTH_NONE; }
-    bool xdrDecodeVariant(XDR *);
-    bool xdrEncodeVariant(XDR *) const;
 
     virtual KS_ACCESS getAccess(const KsString &name) const;
 
@@ -161,6 +161,10 @@ public:
 #if PLT_DEBUG_INVARIANTS
     virtual bool invariant() const;
 #endif
+
+protected:
+    bool xdrDecodeVariant(XDR *);
+    bool xdrEncodeVariant(XDR *) const;
 
 private:
     static KS_ACCESS _default_access;

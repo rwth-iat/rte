@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.8 1997-04-11 17:24:40 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.9 1997-04-18 13:00:41 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -55,7 +55,7 @@ KsSimpleServer::KsSimpleServer()
 
 void 
 KsSimpleServer::getVar(KsAvTicket &ticket,
-                       KsGetVarParams &params,
+                       const KsGetVarParams &params,
                        KsGetVarResult &result)
 {
     size_t reqsz=params.identifiers.size();
@@ -85,7 +85,7 @@ KsSimpleServer::getVar(KsAvTicket &ticket,
 
 void 
 KsSimpleServer::setVar(KsAvTicket &ticket,
-                       KsSetVarParams &params,
+                       const KsSetVarParams &params,
                        KsSetVarResult &result)
 {
     size_t reqsz=params.items.size();

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.11 1997-04-11 17:24:35 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.12 1997-04-18 13:00:33 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -91,16 +91,20 @@ public:
 
     // service functions
     virtual void getVar(KsAvTicket &ticket,
-                        KsGetVarParams &params,
-                        KsGetVarResult &result) = 0;
+                        const KsGetVarParams &params,
+                        KsGetVarResult &result);
 
     virtual void getPP(KsAvTicket &ticket, 
                        const KsGetPPParams & params,
-                       KsGetPPResult & result) = 0;
+                       KsGetPPResult & result);
 
     virtual void setVar(KsAvTicket &ticket,
-                        KsSetVarParams &params,
+                        const KsSetVarParams &params,
                         KsSetVarResult &result);
+
+    virtual void exgData(KsAvTicket &ticket,
+                         const KsExgDataParams &params,
+                         KsExgDataResult &result);                         
 
 protected:
     virtual void dispatch(u_long serviceId, 

@@ -116,6 +116,7 @@ KscCommObject::KscCommObject(const char *object_path)
 }
 
 //////////////////////////////////////////////////////////////////////
+
 #if 0
 KscCommObject::KscCommObject(const KscAbsPath &object_path)
 : path(object_path),
@@ -177,10 +178,8 @@ KscCommObject::~KscCommObject()
 KscServer *
 KscCommObject::findServer()
 {
-    PLT_PRECONDITION(KscClient::getClient() != 0);
-
     return KscClient::getClient()->
-        getServer(path.getHostAndServer());
+        createServer(path.getHostAndServer());
 
 }
 
@@ -202,7 +201,7 @@ KscCommObject::getNegotiator()
     // first try to get private negotiator
     //
     if(av_module) {
-        neg = av_module->getNegotiator();
+        neg = av_module->getNegotiator(getServer());
         if(neg) {
             return neg;
         }
