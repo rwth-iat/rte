@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.10 1998-12-14 18:02:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.11 1999-01-12 16:17:07 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -327,6 +327,49 @@ public:
 
     PLT_DECL_RTTI;
 }; // class KssLink
+
+
+// ----------------------------------------------------------------------------
+// class KssHistory: ACPLT/KS histories provide access to archived data stored
+// in time series or message logs.
+//
+class KssHistory
+: public KssCommObject, public KssChildrenService,
+  public PltHandleContainer<KssCommObject>
+{
+public:
+    //// KssCommObject
+    //   accessors
+    virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_HISTORY; }
+
+    // projected properties
+    virtual KsString  getIdentifier() const = 0;
+    virtual KsTime    getCreationTime() const = 0;
+    virtual KsString  getComment() const = 0;
+    virtual KS_ACCESS getAccessMode() const { return KS_AC_READ; }
+    virtual KsProjPropsHandle getPP() const;
+
+    //// KssChildrenService stuff
+    virtual KssChildIterator_THISTYPE *
+        newIterator() const = 0;
+    virtual KssChildIterator_THISTYPE *
+        newMaskedIterator(const KsMask & name_mask,
+                          KS_OBJ_TYPE type_mask)
+            const = 0;
+
+    virtual KssCommObjectHandle getChildById(const KsString & id) const = 0;
+    virtual KssCommObjectHandle getChildByPath(const KsPath & path) const = 0;
+
+    //// KssHistory
+    ///  accessors
+    // projected properties
+    virtual KS_HIST_TYPE          getType() const = 0;
+    virtual KS_INTERPOLATION_MODE getDefaultInterpolation() const = 0;
+    virtual KS_INTERPOLATION_MODE getSupportedInterpolations() const = 0;
+    virtual KsString              getTypeIdentifier() const = 0;
+
+    PLT_DECL_RTTI;
+}; // class KssHistory
 
 
 #endif // KS_SVROBJECTS_INCLUDED
