@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.11 1999-09-06 06:58:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.12 1999-09-06 07:20:49 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -198,13 +198,18 @@ KssConnection::ConnectionIoMode KssListenTCPXDRConnection::send()
 
 
 // ---------------------------------------------------------------------------
-// And a TCP rendevouser can´t get reset -- it´s always "reset" in some
-// respect.
+// And a TCP rendevouser can't get reset -- it's always "reset" in some
+// respect. And we also don't care of time outs.
 //
-KssConnection::ConnectionIoMode KssListenTCPXDRConnection::reset(bool)
+KssConnection::ConnectionIoMode KssListenTCPXDRConnection::reset()
 {
     return getIoMode();
 } // KssListenTCPXDRConnection::reset
+
+KssConnection::ConnectionIoMode KssListenTCPXDRConnection::timedOut()
+{
+    return getIoMode();
+} // KssListenTCPXDRConnection::timedOut
 
 
 // ---------------------------------------------------------------------------
@@ -424,7 +429,7 @@ void KssTCPXDRConnection::sendPingReply()
          _rpc_header.xdrEncode(&_xdrs) ) {
     	_state = CNX_STATE_SENDING;
     } else {
-    	reset(false);
+    	reset();
 	return;
     }
     enterSendingState();
@@ -447,7 +452,7 @@ void KssTCPXDRConnection::sendErrorReply(KsAvTicket &avt, KS_RESULT error)
 	     avt.xdrEncodeTrailer(&_xdrs) ) {
     	    enterSendingState();
 	} else {
-    	    reset(false);
+    	    reset();
 	}
     }    
 } // KssTCPXDRConnection::sendErrorReply
@@ -468,7 +473,7 @@ void KssTCPXDRConnection::sendReply(KsAvTicket &avt, KsResult &result)
 	     && avt.xdrEncodeTrailer(&_xdrs) ) {
     	    enterSendingState();
 	} else {
-    	    reset(false);
+    	    reset();
 	}
     }    
 } // KssTCPXDRConnection::sendReply
@@ -509,7 +514,7 @@ void KssTCPXDRConnection::sendRequest()
 //
 void KssTCPXDRConnection::personaNonGrata()
 {
-    reset(false);
+    reset();
     _state = CNX_STATE_DEAD;
 } // KssTCPXDRConnection::personaNonGrata
 
@@ -722,7 +727,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 	    _remaining_len = rlen;
 	    if ( (err == ENOMEM) && (_cnx_type == CNX_TYPE_SERVER) ) {
 	    	// TODO!!!
-		return reset(false); // flush all incomming data...
+		return reset(); // flush all incomming data...
 	    } else {
 		if ( _cnx_type == CNX_TYPE_CLIENT ) {
 		    _state = CNX_STATE_READY_FAILED;
@@ -759,7 +764,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		xdrmemstream_clear(&_xdrs);
 		if ( !_rpc_header.xdrEncode(&_xdrs) ) {
 		    return (ConnectionIoMode)
-			(reset(false) | CNX_IO_HAD_ERROR);
+			(reset() | CNX_IO_HAD_ERROR);
 		}
 		return (ConnectionIoMode)
 		    (enterSendingState() | CNX_IO_HAD_ERROR);
@@ -891,7 +896,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 	    //
 	    // Enter the IDLE state for a server side connection.
 	    //
-	    return reset(false);
+	    return reset();
 	}
     }
     return getIoMode();
@@ -899,74 +904,109 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 
 
 // ---------------------------------------------------------------------------
-// Reset a TCP connection. This usually just results in clearing the under-
-// lying XDR dynamic memory stream and falling back into the idle mode. In
-// case we were receiving data and caught a timeout then we´re first flushing
-// the pipe and try to send back an error indication.
+// A TCP connection timed out. In case we were receiving data then we're
+// flushing the pipe and try to send back an error indication in case we're a
+// server connection. Otherwise we'll just beg for attention.
 //
-KssConnection::ConnectionIoMode KssTCPXDRConnection::reset(bool hadTimeout)
+KssConnection::ConnectionIoMode KssTCPXDRConnection::timedOut()
+{
+    if ( _state == CNX_STATE_DEAD ) {
+    	//
+	// We are not alive anymore...
+	//
+    	return CNX_IO_DEAD;
+    } 
+
+    //
+    // The stream just timed out. In case of a connection acting as a
+    // client we just ask for attention. We do this by entered the
+    // READY_FAILED or CONN_FAILED state. This way, the caller can
+    // determine whether the failure happened during the process of
+    // opening a connection or during normal i/o (READY_FAILED).
+    //
+    // In case of a server connection we're just resetting the stream
+    // to the idle state. Note that we do not try to reply with a RPC
+    // error telegramme in this situation as this could result in a
+    // deadlock.
+    //
+    if ( _cnx_type == CNX_TYPE_CLIENT ) {
+	if ( _state == CNX_STATE_CONNECTING ) {
+	    _state = CNX_STATE_CONN_FAILED;
+	} else {
+	    _state = CNX_STATE_READY_FAILED;
+	}
+    } else {
+	_state = CNX_STATE_IDLE;
+    }
+
+    //
+    // Always reset the stream. At this point the connection can be either
+    // idle (thus ready to receive data without timeout) or in some other
+    // state (probably CONNECTING or READY) where it doesn't need any i/o.
+    // So it's perfectly okay to reset the underlying XDR stream and the
+    // fragment automata to a state where they can receive new data.
+    //
+    xdrmemstream_clear(&_xdrs);
+    _fragment_state = FRAGMENT_HEADER;
+    _remaining_len  = 4;
+    _ptr            = _fragment_header;
+    return getIoMode();
+} // KssTCPXDRConnection::timedOut
+
+
+// ---------------------------------------------------------------------------
+// Reset a TCP connection. This usually just results in clearing the under-
+// lying XDR dynamic memory stream and falling back into the idle mode.
+//
+KssConnection::ConnectionIoMode KssTCPXDRConnection::reset()
 {
     if ( _state == CNX_STATE_DEAD ) {
     	//
 	// Can't reset a dead connection.
 	//
     	return CNX_IO_DEAD;
-    } 
-    if ( !hadTimeout ) {
-	switch ( _state ) {
-	case CNX_STATE_SENDING:
-	case CNX_STATE_WAITING:
-	case CNX_STATE_RECEIVING:
-	    //
-	    // Enter failure state. Typically, the connection will then be
-	    // killed under the control of another object. In case of a
-	    // connection where we are the server side, the active connection
-	    // had trouble receiving data from a client. In this case we
-	    // only reset it without making any trouble. In case of sending
-	    // from the server, we *do* make trouble.
-	    //
-	    if ( _cnx_type == CNX_TYPE_CLIENT ) {
-		_state = CNX_STATE_READY_FAILED;
-	    } else {
-		if ( _state == CNX_STATE_SENDING ) {
-		    _state = CNX_STATE_IDLE;
-		} else {
-		    _state = CNX_STATE_DEAD;
-		}
-	    }
-	    break;
-	default:
-	    //
-	    // Don't touch the state for a server connection. If we're on
-	    // the client side, then switch back into the connected state
-	    // so we're becomming inactive. It is not garantueed that there
-	    // is really a socket connection still living.
-	    //
-	    if ( _cnx_type == CNX_TYPE_CLIENT ) {
-		_state = CNX_STATE_CONNECTED;
-	    }
-	}
-    } else {
+    }
+ 
+    switch ( _state ) {
+    case CNX_STATE_SENDING:
+    case CNX_STATE_WAITING:
+    case CNX_STATE_RECEIVING:
 	//
-	// The stream just timed out. In case of connection acting as
-	// a client we just ask for attention. We do this by entered
-	// the READY_FAILED state. In case of a server connection
-	// we're just resetting the stream to the idle state. Especially
-	// for a timeout when receiving a request we do not try to reply
-	// as this might result in a deadlock situation.
+	// Enter failure state. Typically, the connection will then be
+	// killed under the control of another object. In case of a
+	// connection where we are the server side, the active connection
+	// had trouble receiving data from a client. In this case we
+	// only reset it without making any trouble. In case of sending
+	// from the server, we *do* make trouble.
 	//
 	if ( _cnx_type == CNX_TYPE_CLIENT ) {
-	    switch ( _state ) {
-	    case CNX_STATE_CONNECTING:
-		_state = CNX_STATE_CONN_FAILED;
-		break;
-	    default:
-		_state = CNX_STATE_READY_FAILED;
-	    }
+	    _state = CNX_STATE_READY_FAILED;
 	} else {
-	    _state = CNX_STATE_IDLE;
+	    //
+	    // A server connection timing out while in sending state will
+	    // return to idle state. When the server connection is in any
+	    // other state, it will just enter zombie state, so it can be
+	    // either killed completely manually or automatically.
+	    //
+	    if ( _state == CNX_STATE_SENDING ) {
+		_state = CNX_STATE_IDLE;
+	    } else {
+		_state = CNX_STATE_DEAD;
+	    }
+	}
+	break;
+    default:
+	//
+	// Don't touch the state for a server connection. If we're on
+	// the client side, then switch back into the connected state
+	// so we're becomming inactive. It is not garantueed that there
+	// is really a socket connection still living.
+	//
+	if ( _cnx_type == CNX_TYPE_CLIENT ) {
+	    _state = CNX_STATE_CONNECTED;
 	}
     }
+
     //
     // Always reset the stream. At this point the connection can be either
     // idle (thus ready to receive data without timeout) or in some other

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrudpcon.h,v 1.4 1999-04-22 15:34:03 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrudpcon.h,v 1.5 1999-09-06 07:20:48 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -52,9 +52,14 @@
 
 class KssUDPXDRConnection : public KssXDRConnection {
 public:
-    KssUDPXDRConnection(int fd, unsigned long timeout,
+    KssUDPXDRConnection(int fd, 
+			unsigned long timeout,
+			unsigned long retrytimeout,
+	                struct sockaddr_in *clientAddr = 0, 
+			int clientAddrLen = 0,
 	                ConnectionType type = CNX_TYPE_SERVER,
                         unsigned long buffsize = 16384);
+    ~KssUDPXDRConnection();
         
     virtual ConnectionIoMode getIoMode() const;
 
@@ -70,10 +75,16 @@ public:
 protected:
     virtual ConnectionIoMode receive();
     virtual ConnectionIoMode send();
-    virtual ConnectionIoMode reset(bool hadTimeout);
+    virtual ConnectionIoMode timedOut();
+    virtual ConnectionIoMode reset();
+
+    unsigned long  _total_timeout;
+    unsigned long  _time_passed;
 
     unsigned long  _buffer_size;
-    char          *_buffer;
+    char          *_recvbuffer;
+    char          *_sendbuffer;
+    unsigned long  _tosend;
 
 private:
     KssUDPXDRConnection(KssUDPXDRConnection &); // forbidden

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.7 1999-05-12 12:41:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.8 1999-09-06 07:20:49 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -71,12 +71,21 @@
 // Constructs an UDP connection with XDR for data representation. After con-
 // structing such a connection, check the instance's state for CNX_STATE_DEAD,
 // as this indicates a failure to initialize the object.
+// Note that the retrytimeout parameter is used only for client connections.
 //
-KssUDPXDRConnection::KssUDPXDRConnection(int fd, unsigned long timeout,
+KssUDPXDRConnection::KssUDPXDRConnection(int fd, 
+					 unsigned long timeout,
+					 unsigned long retrytimeout,
+	                                 struct sockaddr_in *clientAddr,
+                                         int clientAddrLen,
                                          ConnectionType type,
 					 unsigned long buffsize)
-    : KssXDRConnection(fd, false, timeout, type),
-      _buffer_size(buffsize)
+    : KssXDRConnection(fd, false, 
+		       (type == CNX_TYPE_CLIENT) ? retrytimeout : timeout, 
+		       type),
+      _total_timeout(timeout),
+      _buffer_size(buffsize),
+      _recvbuffer(0), _sendbuffer(0)
 {
     if ( _buffer_size < 1024 ) {
     	_buffer_size = 1024;
@@ -84,6 +93,12 @@ KssUDPXDRConnection::KssUDPXDRConnection(int fd, unsigned long timeout,
     if ( _buffer_size > 65500 ) {
     	_buffer_size = 65500;
     }
+
+    if ( clientAddr && clientAddrLen ) {
+        _client_address = *clientAddr;
+	_client_address_len = clientAddrLen;
+    }
+
     //
     // Now set up a XDR (static) memory stream which will be used for
     // receiving and sending UDP datagrams. Then, put the udp socket
@@ -91,9 +106,11 @@ KssUDPXDRConnection::KssUDPXDRConnection(int fd, unsigned long timeout,
     // robust against arriving potential trouble between select() and
     // read() or write().
     //
-    _buffer = new char[_buffer_size];
-    if ( _buffer ) {
-    	xdrmem_create(&_xdrs, (caddr_t) _buffer, _buffer_size, XDR_DECODE);
+    _recvbuffer = new char[_buffer_size];
+    _sendbuffer = new char[_buffer_size];
+    if ( _recvbuffer && _sendbuffer ) {
+    	xdrmem_create(&_xdrs, (caddr_t) _recvbuffer, _buffer_size, 
+		      XDR_DECODE);
     	_cleanup_xdr_stream = true;
 	
 	if ( !makeNonblocking() ) {
@@ -102,6 +119,14 @@ KssUDPXDRConnection::KssUDPXDRConnection(int fd, unsigned long timeout,
 	    if ( type == CNX_TYPE_CLIENT ) {
 		PltTime jetzt = PltTime::now();
 		_rpc_header._xid = getpid() ^ jetzt.tv_sec ^ jetzt.tv_usec;
+		//
+		// We immitate the connection behaviour found for TCP/IP
+		// connection, where the connecting procedure can take quite
+		// some time. With UDP/IP there's no connecting procedure,
+		// but we switch into this mode and cause a attention request
+		// nevertheless, so TCP and UDP connections behave similiar.
+		//
+		_state = CNX_STATE_CONNECTED;
 	    }
 	}
     } else {
@@ -111,20 +136,57 @@ KssUDPXDRConnection::KssUDPXDRConnection(int fd, unsigned long timeout,
 
 
 // ---------------------------------------------------------------------------
+// Clean up the mess we've once allocated...
+//
+KssUDPXDRConnection::~KssUDPXDRConnection()
+{
+    if ( _recvbuffer ) {
+	delete [] _recvbuffer; _recvbuffer = 0;
+    }
+    if ( _sendbuffer ) {
+	delete [] _sendbuffer; _sendbuffer = 0;
+    }
+} // KssUDPXDRConnection::~KssUDPXDRConnection
+
+
+// ---------------------------------------------------------------------------
 // Ask an UDP XDR connection about its i/o mode: this way, a connection
 // manager can find out in what fdsets it must put the connection.
 //
 KssConnection::ConnectionIoMode KssUDPXDRConnection::getIoMode() const
 {
     switch ( _state ) {
-    case CNX_STATE_DEAD:      return CNX_IO_DEAD;
-    case CNX_STATE_IDLE:      return CNX_IO_READABLE;
-    case CNX_STATE_WAITING:   return (ConnectionIoMode)(CNX_IO_READABLE |
-					                    CNX_IO_NEED_TIMEOUT);
-    case CNX_STATE_PASSIVE:   return CNX_IO_DORMANT;
-    case CNX_STATE_READY:     return (ConnectionIoMode)(CNX_IO_DORMANT | CNX_IO_ATTENTION);
-    case CNX_STATE_SENDING:   return CNX_IO_WRITEABLE;
-    default:                  return CNX_IO_READABLE;
+    case CNX_STATE_DEAD:
+	return CNX_IO_DEAD;
+    case CNX_STATE_IDLE:
+	return CNX_IO_READABLE;
+    case CNX_STATE_WAITING:
+	return (ConnectionIoMode)(CNX_IO_READABLE |
+				  CNX_IO_NEED_TIMEOUT);
+    case CNX_STATE_PASSIVE:
+	return CNX_IO_DORMANT;
+    case CNX_STATE_READY:
+	return (ConnectionIoMode)(CNX_IO_DORMANT | CNX_IO_ATTENTION);
+    case CNX_STATE_READY_FAILED:
+	//
+	// A reply didn't came in in time. So we're just asking for attention.
+	//
+	return (ConnectionIoMode)
+	    (CNX_IO_DORMANT | CNX_IO_ATTENTION);
+    case CNX_STATE_CONNECTED:
+	//
+	// Will happen as soon as this connection is created. It is just
+	// a virtual connect, well: a fake.
+	//
+	return (ConnectionIoMode)(CNX_IO_DORMANT | CNX_IO_ATTENTION);
+    case CNX_STATE_SENDING:
+	//
+	// This connection is actively sending a request or a reply (server
+	// or client side).
+	//
+	return CNX_IO_WRITEABLE;
+    default:
+	return CNX_IO_READABLE;
     }
 } // KssUDPXDRConnection::getIoMode
 
@@ -153,7 +215,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
     	return CNX_IO_DEAD;
     }
     if ( (_state != CNX_STATE_IDLE) && (_state != CNX_STATE_WAITING) ) {
-    	return reset(false);
+    	return reset();
     }
     //
     // reset the read pointer of the underlaying XDR stream back to the
@@ -161,7 +223,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
     //
     _xdrs.x_op = XDR_DECODE;
     XDR_SETPOS(&_xdrs, 0);
-    
+
     for ( ;; ) {
 	if ( _cnx_type == CNX_TYPE_SERVER ) {
 #if !PLT_USE_XTI
@@ -170,7 +232,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 #if PLT_SYSTEM_NT
                                 (char *)
 #endif
-                                _buffer, 
+                                _recvbuffer, 
                                 _buffer_size,
 		        	0, // no special flags
 	                	(struct sockaddr *) &_client_address,
@@ -185,7 +247,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    udta.addr.buf     = (char *) &_client_address;
 	    udta.opt.maxlen   = 0;
 	    udta.udata.maxlen = _buffer_size;
-	    udta.udata.buf    = (char *) _buffer;
+	    udta.udata.buf    = (char *) _recvbuffer;
 	    received = t_rcvudata(_fd, &udta, &flags);
 	    if ( received == 0 ) {
 	    	//
@@ -208,7 +270,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 #if PLT_SYSTEM_NT
                                 (char *)
 #endif
-                                _buffer, 
+                                _recvbuffer, 
                                 _buffer_size,
 		        	0, // no special flags
 		    	        0, 0);
@@ -218,7 +280,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    udta.opt.maxlen   = 0; // address...
 	    udta.udata.maxlen = _buffer_size;
 	    udta.udata.len    = 0;
-	    udta.udata.buf    = (char *) _buffer;
+	    udta.udata.buf    = (char *) _recvbuffer;
 	    received = t_rcvudata(_fd, &udta, &flags);
 	    if ( received == 0 ) {
 	    	// Same as above...
@@ -291,7 +353,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    // valid answer.
 	    //
 	    if ( _cnx_type == CNX_TYPE_CLIENT ) {
-		long *ppp = (long *) _buffer;
+		long *ppp = (long *) _recvbuffer;
 		if ( ((u_long) IXDR_GET_LONG(ppp)) != 
 		         _rpc_header._xid ) {
 		    //
@@ -328,7 +390,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 //
 KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 {
-    int sent, tosend;
+    int sent;
     
     //
     // First, we don't want to deal with dead connections -- it just makes
@@ -338,18 +400,17 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
     	return CNX_IO_DEAD;
     }
     if ( _state != CNX_STATE_SENDING ) {
-    	return reset(false);
+    	return reset();
     }
     
     for ( ;; ) {
-	tosend = (int) XDR_GETPOS(&_xdrs);
 #if !PLT_USE_XTI
 	sent = sendto(_fd, 
 #if PLT_SYSTEM_NT
                       (char *)
 #endif
-                      _buffer, 
-                      tosend,
+                      _sendbuffer, 
+                      _tosend,
 		      0,
 		      (struct sockaddr *) &_client_address,
 		      _client_address_len);
@@ -359,7 +420,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 	    udta.addr.buf     = (char *) &_client_address;
 	    udta.opt.maxlen   = 0;
 	    udta.udata.len    = tosend;
-	    udta.udata.buf    = (char *) _buffer;
+	    udta.udata.buf    = (char *) _sendbuffer;
 	    sent = t_sndudata(_fd, &udta);
 #endif
 	if ( sent < 0 ) {
@@ -396,7 +457,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 	    case EWOULDBLOCK:
 	    	return getIoMode();
 	    default:
-	    	return (ConnectionIoMode)(reset(false) | CNX_IO_HAD_TX_ERROR);
+	    	return (ConnectionIoMode)(reset() | CNX_IO_HAD_TX_ERROR);
 	    }
 	}
     	//
@@ -413,10 +474,9 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 
 // ---------------------------------------------------------------------------
 // Reset this connection to a well-known state, which is in our case the
-// CNX_STATE_IDLE state where we'll wait for arriving datagrams. Also, don't
-// be afraid of timeouts...
+// CNX_STATE_IDLE state where we'll wait for arriving datagrams.
 //
-KssConnection::ConnectionIoMode KssUDPXDRConnection::reset(bool)
+KssConnection::ConnectionIoMode KssUDPXDRConnection::reset()
 {
     if ( _state == CNX_STATE_DEAD ) {
     	//
@@ -432,6 +492,38 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::reset(bool)
 
 
 // ---------------------------------------------------------------------------
+// Handle timeouts on this UDP "connection". Timeouts can only happen while
+// we're playing the role of a client connection and we've sent a request and
+// are now waiting for a reply.
+//
+KssConnection::ConnectionIoMode KssUDPXDRConnection::timedOut()
+{
+    if ( _cnx_type == CNX_TYPE_CLIENT ) {
+	if ( (_time_passed += _timeout) >= _total_timeout ) {
+	    //
+	    // We've reached the total timeout. So we enter attention mode
+	    // and signal a timeout.
+	    //
+	    _state = CNX_STATE_READY_FAILED;
+	} else {
+	    //
+	    // The total timeout hasn't been reached yet. So take another
+	    // round and try again. This involves sending the request again
+	    // and waiting for an answer once more.
+	    //
+	    _state = CNX_STATE_SENDING;
+	}
+	return getIoMode();
+    } else {
+	//
+	// In case it's a server connection, just reset and don't be afraid...
+	//
+	return reset();
+    }
+} // KssUDPXDRConnection::timedOut
+
+
+// ---------------------------------------------------------------------------
 //
 void KssUDPXDRConnection::sendPingReply()
 {
@@ -440,9 +532,12 @@ void KssUDPXDRConnection::sendPingReply()
 	XDR_SETPOS(&_xdrs, 0);
 	_rpc_header.acceptCall();
 	if ( _rpc_header.xdrEncode(&_xdrs) ) {
+	    _tosend = (int) XDR_GETPOS(&_xdrs);
+	    memcpy(_sendbuffer, _recvbuffer, _buffer_size);
+	    _time_passed = 0;
     	    _state = CNX_STATE_SENDING;
 	} else {
-    	    reset(false);
+    	    reset();
 	}
     }    
 } // KssUDPXDRConnection::sendPingReply
@@ -461,9 +556,12 @@ void KssUDPXDRConnection::sendErrorReply(KsAvTicket &avt, KS_RESULT error)
 	     avt.xdrEncode(&_xdrs) &&
 	     xdr_u_long(&_xdrs, &e) &&
 	     avt.xdrEncodeTrailer(&_xdrs) ) {
+	    _tosend = (int) XDR_GETPOS(&_xdrs);
+	    memcpy(_sendbuffer, _recvbuffer, _buffer_size);
+	    _time_passed = 0;
     	    _state = CNX_STATE_SENDING;
 	} else {
-    	    reset(false);
+    	    reset();
 	}
     }    
 } // KssUDPXDRConnection::sendErrorReply
@@ -481,9 +579,12 @@ void KssUDPXDRConnection::sendReply(KsAvTicket &avt, KsResult &result)
 	     avt.xdrEncode(&_xdrs) &&
 	     result.xdrEncode(&_xdrs) &&
 	     avt.xdrEncodeTrailer(&_xdrs) ) {
+	    _tosend = (int) XDR_GETPOS(&_xdrs);
+	    memcpy(_sendbuffer, _recvbuffer, _buffer_size);
+	    _time_passed = 0;
     	    _state = CNX_STATE_SENDING;
 	} else {
-    	    reset(false);
+    	    reset();
 	}
     }    
 } // KssUDPXDRConnection::sendReply
@@ -493,13 +594,15 @@ void KssUDPXDRConnection::sendReply(KsAvTicket &avt, KsResult &result)
 //
 void KssUDPXDRConnection::personaNonGrata()
 {
-    reset(false);
+    reset();
 } // KssUDPXDRConnection::personaNonGrata
 
 
 // ---------------------------------------------------------------------------
 //
-bool KssUDPXDRConnection::beginRequest(u_long, u_long, u_long, u_long)
+bool KssUDPXDRConnection::beginRequest(u_long xid,
+				       u_long prog_number, u_long prog_version,
+				       u_long proc_number)
 {
     if ( _state == CNX_STATE_DEAD ) {
 	return false;
@@ -508,10 +611,10 @@ bool KssUDPXDRConnection::beginRequest(u_long, u_long, u_long, u_long)
     // reset the read pointer of the underlaying XDR stream back to the
     // start of the buffer and fill in request header.
     //
-    _xdrs.x_op = XDR_DECODE;
+    _xdrs.x_op = XDR_ENCODE;
     XDR_SETPOS(&_xdrs, 0);
     _state = CNX_STATE_PASSIVE;
-    ++_rpc_header._xid;
+    _rpc_header.setRequest(xid, prog_number, prog_version, proc_number);
     return _rpc_header.xdrEncode(&_xdrs);
 } // KssUDPXDRConnection::beginRequest
 
@@ -521,8 +624,10 @@ bool KssUDPXDRConnection::beginRequest(u_long, u_long, u_long, u_long)
 void KssUDPXDRConnection::sendRequest()
 {
     if ( _state != CNX_STATE_DEAD ) {
+	_tosend = (int) XDR_GETPOS(&_xdrs);
+	memcpy(_sendbuffer, _recvbuffer, _buffer_size);
+	_time_passed = 0;
     	_state = CNX_STATE_SENDING;
-    	_manager->resetConnection(*this);
     }
 } // KssUDPXDRConnection::sendRequest
 
