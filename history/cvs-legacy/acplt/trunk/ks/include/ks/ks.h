@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.23 1999-01-12 16:14:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.24 1999-01-29 12:42:06 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -62,7 +62,7 @@
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.0.5pre5"
+#define KS_VERSION_STRING "1.0.5pre6"
 
 	 
 /* ----------------------------------------------------------------------------
@@ -309,8 +309,16 @@ enum KS_SVC_ENUM {
     KS_DELETEOBJECT  = 0x00000202,
     KS_RENAMEOBJECT  = 0x00000203,
 
+    /*
+     * Structure management service group.
+     */
     KS_LINK          = 0x00000301,
     KS_UNLINK        = 0x00000302,
+
+    /*
+     * History access service group.
+     */
+    KS_GETHIST       = 0x00000401
 };
 
 
