@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.4 1999-01-08 13:09:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.5 1999-01-29 12:44:33 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -45,6 +45,10 @@
 
 #include "ks/connectionmgr.h"
 
+
+//#define CNXDEBUG 1
+
+
 //
 // Ah, yes... compile the whole stuff only if we want to use the buffered
 // stream magic. Otherwise we can skip this source completely.
@@ -61,6 +65,10 @@
 #include <values.h>
 #else
 #define MAXINT (((int) -1) >> 1)
+#endif
+
+#ifdef CNXDEBUG
+#include <iostream.h>
 #endif
 
 
@@ -196,6 +204,10 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
 {
     int  fd        = item._connection->getFd();
     bool fastwrite = false;
+
+#ifdef CNXDEBUG
+    cout << "trackCnxIoMode: " << fd << ": ";
+#endif
     //
     // Set the flags in the fdsets for reading or writing data accordingly
     // to what the connection indicates. This way the connection manager does
@@ -207,8 +219,14 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
     	 (item._last_io_mode & KssConnection::CNX_IO_READABLE) ) {
 	if ( ioMode & KssConnection::CNX_IO_READABLE ) {
     	    FD_SET(fd, &_readable_fdset);
+#ifdef CNXDEBUG
+	    cout << "[readable]";
+#endif
     	} else {
     	    FD_CLR(fd, &_readable_fdset);
+#ifdef CNXDEBUG
+	    cout << "[!readable]";
+#endif
 	}
     }
     if ( (ioMode & KssConnection::CNX_IO_WRITEABLE) !=
@@ -216,8 +234,14 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
     	if ( ioMode & KssConnection::CNX_IO_WRITEABLE ) {
     	    FD_SET(fd, &_writeable_fdset);
 	    fastwrite = true;
+#ifdef CNXDEBUG
+	    cout << "[writeable]";
+#endif
     	} else {
     	    FD_CLR(fd, &_writeable_fdset);
+#ifdef CNXDEBUG
+	    cout << "[!writeable]";
+#endif
     	}
     }
     
@@ -228,6 +252,9 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
 	item.remove(); // just in case it was in the timeout list
 	item.addAfter(_serviceable_connections);
 	++_serviceable_count;
+#ifdef CNXDEBUG
+	cout << "[attention]";
+#endif
     }
 
     if ( (ioMode & KssConnection::CNX_IO_NEED_TIMEOUT) !=
@@ -249,8 +276,14 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
 		it = (_KssConnectionItem *) it->_prev;
 	    }
 	    item.addAfter(*it);
+#ifdef CNXDEBUG
+	    cout << "[timeout]";
+#endif
 	} else if ( !(ioMode & KssConnection::CNX_IO_ATTENTION) ) {
 	    item.remove();
+#ifdef CNXDEBUG
+	    cout << "[!timeout]";
+#endif
 	}
     }
     //
@@ -258,13 +291,26 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
     //
     if ( ioMode & KssConnection::CNX_IO_HAD_ERROR ) {
 	++_io_errors;
+#ifdef CNXDEBUG
+	cout << "[io error]";
+#endif
     }
     if ( ioMode & KssConnection::CNX_IO_HAD_RX_ERROR ) {
 	++_io_rx_errors;
+#ifdef CNXDEBUG
+	cout << "[io rx error]";
+#endif
     }
     if ( ioMode & KssConnection::CNX_IO_HAD_TX_ERROR ) {
 	++_io_tx_errors;
+#ifdef CNXDEBUG
+	cout << "[io tx error]";
+#endif
     }
+
+#ifdef CNXDEBUG
+    cout << endl;
+#endif
     //
     // Finally remember this new state so we can optimize the fdset access
     // functions the next time we're called for this particular connection.
@@ -273,8 +319,8 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
     //
     // This looks somehow like a dirty hack but it does speed up things in
     // some situations by quite some ten miliseconds, because we do fill
-    // the outgoing pipe very early without having to wait for the select()
-    // call to notifiy us to send our data the first time.
+    // an outgoing pipe very early without having to wait for the select()
+    // call to notifiy us to send our data for the first time.
     //
     if ( fastwrite ) {
 	trackCnxIoMode(item, item._connection->send());
@@ -411,6 +457,10 @@ int KssConnectionManager::processConnections(fd_set &readables,
 	    item = getConnectionItem(*sock);
 #endif
 	    con  = item->_connection;
+#ifdef CNXDEBUG
+	    cout << "processConnections: " << con->getFd() 
+		 << ": [send]" << endl;
+#endif
 	    ioMode = con->send();
 	    trackCnxIoMode(*item, ioMode);
 	    if ( ioMode & KssConnection::CNX_IO_DEAD ) {
@@ -420,6 +470,10 @@ int KssConnectionManager::processConnections(fd_set &readables,
 	    	// connections that have been closed or become broken. If we're
 	    	// not allowed to doom the connection, then we'll just reset it.
 	    	//
+#ifdef CNXDEBUG
+	    cout << "processConnections: " << con->getFd() 
+		 << ": [dead after send]" << endl;
+#endif
 	    	if ( con->isAutoDestroyable() ) {
 		    removeConnection(*con);
 		    con->shutdown();
@@ -450,6 +504,10 @@ int KssConnectionManager::processConnections(fd_set &readables,
 	    item = getConnectionItem(*sock);
 #endif
 	    con    = item->_connection;
+#ifdef CNXDEBUG
+	    cout << "processConnections: " << con->getFd() 
+		 << ": [receive]" << endl;
+#endif
 	    ioMode = con->receive();
 	    trackCnxIoMode(*item, ioMode);
 	    if ( ioMode & KssConnection::CNX_IO_DEAD ) {
@@ -459,6 +517,10 @@ int KssConnectionManager::processConnections(fd_set &readables,
 	    	// connections that have been closed or become broken. If we're
 	    	// not allowed to doom the connection, then we'll just reset it.
 	    	//
+#ifdef CNXDEBUG
+	    cout << "processConnections: " << con->getFd() 
+		 << ": [dead after receive]" << endl;
+#endif
 	    	if ( con->isAutoDestroyable() ) {
 		    removeConnection(*con);
 		    con->shutdown();
@@ -536,7 +598,7 @@ bool KssConnectionManager::shutdownConnections(long secs)
 	}
     	sleep = doomsday - sleep;
     	writeables = _writeable_fdset;
-#if PLT_SYSTEM_HPUX
+#if PLT_SYSTEM_HPUX && PLT_SYSTEM_HPUX_MAJOR<10
 	int res = select(_fdset_size,
 	        	 0, (int *) &writeables, 0,
 	        	 &sleep);
@@ -638,7 +700,20 @@ bool KssConnectionManager::reactivateConnection(KssConnection &con)
     if ( item && item->_connection ) {
 	if ( con.getState() != KssConnection::CNX_STATE_DEAD ) {
     	    trackCnxIoMode(*item, con.getIoMode());
-	    return true;
+	    /*
+	     * As we take advantage of "fast writes" (or early writes),
+	     * we need to check the state of the connection after we have
+	     * tracked its io mode. This is necessary, because trackCnx-
+	     * IoMode() does fast writes, that it, is tries immediately to
+	     * write data down to a connection which just has switched into
+	     * sending state. Then it can happen that the connections runs
+	     * into trouble (broken connection, etc.), so that we need to
+	     * kill it immediately. Otherwise it would just stall and never
+	     * be closed.
+	     */
+	    if ( con.getState() != KssConnection::CNX_STATE_DEAD ) {
+		return true;
+	    }
 	}
 	if ( con.isAutoDestroyable() ) {
 	    con.shutdown();
