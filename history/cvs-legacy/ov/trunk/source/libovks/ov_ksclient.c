@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.c,v 1.7 2000-07-03 13:38:40 dirk Exp $
+*   $Id: ov_ksclient.c,v 1.8 2000-12-15 15:41:47 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	26-Feb-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	03-May-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Mayor revision.
+*	12-Dec-2000 Dirk Meyer <dirk@plt.rwth-aachen.de>: Fixed a serious memory allocation bug.
 */
 
 #define OV_COMPILE_LIBOVKS
@@ -339,6 +340,7 @@ OV_DLLFNCEXPORT void ov_ksclient_service_freeresult(
 	default:
 		break;
 	}
+	memset(&psvc->result, 0, sizeof(psvc->result));
 }
 
 /*	----------------------------------------------------------------------	*/

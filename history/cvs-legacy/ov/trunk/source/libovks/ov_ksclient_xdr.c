@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient_xdr.c,v 1.6 2000-04-04 15:12:47 dirk Exp $
+*   $Id: ov_ksclient_xdr.c,v 1.7 2000-12-15 15:41:47 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	03-May-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	12-Dec-2000 Dirk Meyer <dirk@plt.rwth-aachen.de>: Fixed a serious memory allocation bug.
 */
 /*
 *	Description:
@@ -65,6 +66,7 @@ OV_BOOL ov_ksclient_xdr_bytes(
 	*/
 	switch(xdrs->x_op) {
 	case XDR_ENCODE:
+	case XDR_FREE:
 		_size = *sizep;
 		return xdr_bytes(xdrs, cpp, &_size, _maxsize);
 	case XDR_DECODE:
@@ -103,6 +105,7 @@ OV_BOOL ov_ksclient_xdr_array(
 	*/
 	switch(xdrs->x_op) {
 	case XDR_ENCODE:
+	case XDR_FREE:
 		_size = *sizep;
 		return xdr_array(xdrs, addrp, &_size, _maxsize, _elsize, elproc);
 	case XDR_DECODE:
