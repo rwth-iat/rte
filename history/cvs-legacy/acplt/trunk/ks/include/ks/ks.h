@@ -46,7 +46,7 @@ enum KS_RESULT {
     KS_ERR_UNKNOWNAUTH              = 0x0005,
     KS_ERR_NOTIMPLEMENTED           = 0x0003,
     KS_ERR_BADPARAM                 = 0x0004,
-    
+   
     KS_ERR_BADNAME                  = 0x0010,
     KS_ERR_BADPATH                  = 0x0011,
     KS_ERR_BADMASK                  = 0x0012,
@@ -58,6 +58,7 @@ enum KS_RESULT {
     KS_ERR_SERVERUNKNOWN            = 0x0021
 };
 
+
 /*
  * A/V stuff
  */
@@ -65,6 +66,7 @@ enum KS_AUTH_TYPE {
     KS_AUTH_NONE   = 0, /* NONE-A/V-Module   */
     KS_AUTH_SIMPLE = 1  /* SIMPLE-A/V-Module */
 };
+
 
 /*
  * Object types (flags). When browsing through the object tree, these flags
@@ -111,15 +113,3 @@ enum KS_VAR_TYPE {
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-

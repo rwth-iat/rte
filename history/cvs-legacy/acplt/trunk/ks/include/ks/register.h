@@ -38,6 +38,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 #include "ks/xdr.h"
+#include "ks/ks.h"
 #include "ks/string.h"
 
 ////////////////////////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ public:
     bool xdrDecode(XDR *);
     static KsServerDesc *xdrNew(XDR *);
     
-    KsString name;
+    KsString  name;
     u_short   protocol_version;
 };
 
@@ -65,7 +66,7 @@ public:
 class KsResult : public KsXdrAble {
 public:
 
-    KsResult( KS_RESULT res ) { result = res; }
+    KsResult( KS_RESULT res = KS_ERR_OK ) { result = res; }
 
     bool xdrEncode(XDR *xdr) const;
     bool xdrDecode(XDR *xdr);
