@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.30 2000-09-04 09:00:08 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.31 2001-01-29 12:56:40 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -373,6 +373,15 @@ enum { false=0, true=1 };
 #ifndef PLT_DONTTOUCH_FD_SETSIZE
 #define FD_SETSIZE 1024
 #endif
+#endif
+
+/*
+ * Set maximum pool block count. Every block (fragment) is 4k in size.
+ * This pool block maximum is just a simple insurance against clients
+ * gone mad and sending and sending data without stopping.
+ */
+#ifndef PLT_POOL_BLOCK_COUNT
+#define PLT_POOL_BLOCK_COUNT 2048
 #endif
 
 #endif /* PLT_CONFIG.H */
