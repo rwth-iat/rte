@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.22 1997-12-02 18:08:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.23 1997-12-08 07:20:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -271,6 +271,7 @@ KsmServer::KsmServer(const KsServerDesc & d,
 
 KsManager::KsManager(int port)
 : KsSimpleServer(port),
+  _udp_transport(0),
   _registered(false),
   _servers_domain("servers"),
   _manager_port(0)
@@ -625,7 +626,7 @@ void
 KsManager::cleanup()
 {
     if ( _registered ) {
-        if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
+        if ( pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION) ) {
             PLT_DMSG_ADD("1st pmap_unset ok.");
             PLT_DMSG_END;
             if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
@@ -638,6 +639,7 @@ KsManager::cleanup()
         } else {
             PltLog::Warning("Can't unregister with portmapper.");
         }
+	_registered = false;
     } else {
         PLT_DMSG_ADD("not registered");
         PLT_DMSG_END;
