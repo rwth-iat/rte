@@ -35,7 +35,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# $Header: /home/david/cvs/acplt/Makefile,v 1.1 1997-04-28 17:23:15 harald Exp $
+# $Header: /home/david/cvs/acplt/Makefile,v 1.2 1997-04-29 13:18:49 harald Exp $
 #
 
 UNIXES	= linux hpux solaris
@@ -48,7 +48,10 @@ nothing:
 	@echo "make XXX.acplt   -- build the libraries only"
 	@echo
 	@echo "Where \"XXX\" is either:"
-	@echo "  \"hpux\", \"linux\", \"solaris\", or even \"nt\""
+	@echo "  \"hpux\", \"linux\", or \"solaris\"."
+	@echo
+	@echo "If you're on NT, do instead a:"
+	@echo "     make -f makefile.nt nt.all    (etc.)"
 
 clean:
 	@echo "-------------------------------------------------------------"
