@@ -21,7 +21,15 @@ CXX_LIBKS_SOURCES = \
 	templates.cpp \
 	mask.cpp \
 	event.cpp \
-	templates.cpp
+	templates.cpp \
+	connection.cpp \
+	xdrmemstream.cpp \
+	xdrudpcon.cpp \
+	xdrtcpcon.cpp \
+	rpcproto.cpp \
+	connectionmgr.cpp \
+	stdconnectionmgr.cpp \
+	serverconnection.cpp
 
 CXX_LIBKSSVR_SOURCES = \
 	avticket.cpp \
@@ -32,16 +40,7 @@ CXX_LIBKSSVR_SOURCES = \
 	simpleserver.cpp \
 	svrbase.cpp \
 	svrobjects.cpp \
-	svrrpcctx.cpp \
 	svrsimpleobjects.cpp \
-	svrtransport.cpp \
-	xdrmemstream.cpp \
-	rpcproto.cpp \
-	connectionmgr.cpp \
-	connection.cpp \
-	interserver.cpp \
-	xdrudpcon.cpp \
-	xdrtcpcon.cpp \
 	histdomain.cpp
 
 CXX_LIBKSCLN_SOURCES= \
@@ -79,7 +78,15 @@ LIBKS_OBJECTS3 = \
 	xdr$(O) \
 	templates$(O) \
 	mask$(O) \
-	event$(O)
+	event$(O) \
+	connection$(O) \
+	xdrmemstream$(O) \
+	xdrudpcon$(O) \
+	xdrtcpcon$(O) \
+	rpcproto$(O) \
+	connectionmgr$(O) \
+	stdconnectionmgr$(O) \
+	serverconnection$(O)
 
 LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2) $(LIBKS_OBJECTS3)
 
@@ -94,23 +101,10 @@ LIBKSSVR_OBJECTS1 = \
 LIBKSSVR_OBJECTS2 = \
 	svrbase$(O) \
 	svrobjects$(O) \
-	svrrpcctx$(O) \
 	svrsimpleobjects$(O) \
-	svrtransport$(O)
+	histdomain$(O)
 
-LIBKSSVR_OBJECTS3 = \
-	xdrmemstream$(O) \
-	rpcproto$(O) \
-	connectionmgr$(O) \
-	connection$(O) \
-	xdrudpcon$(O)
-
-LIBKSSVR_OBJECTS4 = \
-	xdrtcpcon$(O) \
-	interserver$(O) \
-	histdomain$(O) 
-
-LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2) $(LIBKSSVR_OBJECTS3) $(LIBKSSVR_OBJECTS4)
+LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2)
 
 LIBKSCLN_OBJECTS1 = \
 	avmodule$(O) \
