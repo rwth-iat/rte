@@ -1,5 +1,19 @@
-# unix generic part
+### -*-makefile-*-
+###
+### unix generic part
+###
 
+### Filename conventions
+O=.o
+A=.a
+
+# The following is not typically unix, but handy.
+EXE=.exe
+
+SRCDIR = ../../src/
+TESTSRCDIR = ../../tests/
+
+### Compiler
 CXX = g++
 
 CXX_EXTRA_FLAGS = -I. -I../../include  -fno-implicit-templates
@@ -16,11 +30,9 @@ CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 CXX_LINK = perl ../templ.pl g++
 CXX_LIBS = -lstdc++
 
-VPATH = ../../tests ../../src
-
 .SUFFIXES:
 
-.SUFFIXES: .cpp .o .a .s
+.SUFFIXES: .cpp .a .o .s .exe
 
 .cpp.o:
 	$(CXX_COMPILE) -o $@ $<
@@ -28,98 +40,37 @@ VPATH = ../../tests ../../src
 .cpp.s:
 	$(CXX_COMPILE) -S -o $@ $<
 
-CXX_LIBPLT_SOURCES = \
-	debug.cpp \
-	handle.cpp \
-	hashtable.cpp \
-	list.cpp \
-	log.cpp \
-	priorityqueue.cpp \
-	rtti.cpp \
-	string.cpp
+.o.exe:
+	$(CXX) -o $@ $< $(LIBPLT) $(PLATFORM_LIBS) -lstdc++
 
-CXX_LIBPLT_OBJECTS = \
-	debug.o \
-	handle.o \
-	hashtable.o \
-	list.o \
-	log.o \
-	priorityqueue.o \
-	rtti.o \
-	time.o \
-	string.o
 
-CXX_TEST_SOURCES = \
-	tarray.cpp \
-	tdebug.cpp \
-	thandle.cpp\
-	thashtable.cpp \
-	thtname.cpp \
-	tlist.cpp \
-	tlog.cpp \
-	tpriorityqueue.cpp \
-	trtti.cpp \
-	tstring.cpp \
-	ttime.cpp
+VPATH = $(SRCDIR) $(TESTSRCDIR)
 
-CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
+### Include generic part
 
-TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray\
-	thtname thandle tlog tdebug
+include ../generic.mk
 
-all : libplt.a
-
-tests : $(TESTS)
-
-libplt.a: $(CXX_LIBPLT_OBJECTS)
+libplt.a: $(LIBPLT_OBJECTS)
 	ar r $@ $?
-	ranlib $@
+	$(RANLIB) $@
 
-thandle : thandle.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
+../depend.mk : $(CXX_SOURCES)
+	$(CXX_COMPILE) -MM $^ > .depend
+	perl ../depend.pl .depend > $@
 
-tdebug : tdebug.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-tlist : tlist.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-tlog : tlog.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-trtti :	trtti.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-tpriorityqueue : tpriorityqueue.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-tstring : tstring.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-ttime :	ttime.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-thashtable :	thashtable.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-thtname :	thtname.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-tarray :	tarray.o libplt.a
-	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
-
-clean :
-	rm -f *.o core
-
-mrproper :	clean
-	rm -f libplt.a .depend $(TESTS)
-	for i in t*_inst.h ; do echo > $$i ; done
-
-
-depend : $(CXX_SOURCES)
-	$(CXX_COMPILE) -M $^ > .depend
+depend : ../depend.mk
 
 .depend:
 	touch .depend
+
+clean :
+	rm -f *.o
+	rm -f *.exe
+
+mrproper :
+	rm -f .depend *.a
+#	for i in *_inst.h ; do echo rm $i ; touch $i ; done
+
+### Include autodependencies
 
 include .depend
