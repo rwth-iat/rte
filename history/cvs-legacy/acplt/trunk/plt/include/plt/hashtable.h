@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.7 1997-03-25 21:16:34 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.8 1997-04-01 12:29:51 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -52,7 +52,8 @@
 //////////////////////////////////////////////////////////////////////
 
 class PltHashTable_base;           // "private" implementation class
-class PltHashTable_;               // "private" implementation template
+template <class K, class V> class PltHashTable_; 
+                                   // "private" implementation template
 class PltHashIterator_base;        // "private" implementation class
 
 //////////////////////////////////////////////////////////////////////
@@ -154,7 +155,8 @@ class PltHashTable_
 : public PltDictionary<K,V>,
   private PltHashTable_base
 {
-    friend PltHashIterator_base::PltHashIterator_base(const PltHashTable_base &);
+    friend class PltHashIterator_base;
+    friend class PltHashIterator<K,V>;
 public:
     PltHashTable_(size_t mincap=11, 
                  float highwater=0.8, 
@@ -200,6 +202,10 @@ class PltHashTable_base
 {
     friend class PltHashIterator_base;
 protected:
+    static PltAssoc_ * deletedAssoc;
+    static bool usedSlot(const PltAssoc_ *p) 
+        { return p && p != deletedAssoc; }
+
     PltHashTable_base(size_t mincap=11, 
                       float highwater=0.8, 
                       float lowwater=0.4);
@@ -231,7 +237,6 @@ protected:
     // accessors
     size_t locate(const void * key) const;
     size_t collidx(size_t i, size_t j) const;
-    static bool usedSlot(const PltAssoc_ *);
 
     // modifiers
     bool insert(PltAssoc_ *);

@@ -32,7 +32,7 @@ CXX_EXTRA_FLAGS = -I=.;..\..\include;E:\devel\oncrpc
 
 ### How to build things
 .obj.exe :
-	wcl386 $< e:\devel\oncrpc\bin\oncrpc.lib $(LIBPLT)
+	wcl386 $< $(LIBPLT)
 
 $(LIBPLT) : $(LIBPLT_OBJECTS)
 	..\w_ar r $@ $?
@@ -43,7 +43,5 @@ clean : .SYMBOLIC
 
 mrproper : clean
 	del *.lib
-
-# include ../depend.mk
 
 
