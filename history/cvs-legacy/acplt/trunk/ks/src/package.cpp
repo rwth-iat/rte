@@ -744,6 +744,9 @@ _KscPackageBase::copyGetVarResults(
     size_t count = 0,
            to_copy = res.size();
 
+    //
+    // TODO : add more specific error codes
+    //
     while(count < to_copy) {
         if(res[count].result == KS_ERR_OK) {
             KsVarCurrProps *cp = 
@@ -753,9 +756,14 @@ _KscPackageBase::copyGetVarResults(
                 // TODO :  
                 ok &= sorted_vars[count]->setCurrProps(*cp);
                 sorted_vars[count]->fDirty = false;
+                sorted_vars[count]->last_result = KS_ERR_OK;
             } else {
+                // type mismatch
+                sorted_vars[count]->last_result = KS_ERR_GENERIC;
                 ok = false;
             }
+        } else {
+            sorted_vars[count]->last_result = res[count].result;
         }
         ++count;
     }
@@ -842,6 +850,7 @@ _KscPackageBase::copySetVarResults(const PltArray<KscVariableHandle> &sorted_var
     size_t size = sorted_vars.size();
 
     for(size_t count = 0; count < size; count++) {
+        sorted_vars[count]->last_result = res[count].result;
         if(res[count].result == KS_ERR_OK) {
             sorted_vars[count]->fDirty = false;
         }

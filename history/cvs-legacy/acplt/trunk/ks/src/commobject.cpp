@@ -52,6 +52,7 @@ KscCommObject::debugPrint(ostream &os) const
 {
     KsString str(path);
     os << "Path and Name: " << str << endl;
+    os << "Last result:" << getLastResult() << endl;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -107,7 +108,8 @@ PLT_IMPL_RTTI1(KscDomain, KscCommObject);
 
 KscCommObject::KscCommObject(const char *object_path)
 : path(object_path),
-  av_module(0)
+  av_module(0),
+  last_result(-1)
 {
     PLT_PRECONDITION(path.isValid());
 
@@ -220,16 +222,33 @@ KscDomain::getProjPropsUpdate()
     bool ok = myServer->getPP(av_module,
                               params, 
                               result);
-
-    if(ok &&
-       result.result == KS_ERR_OK &&
-       result.items.size() == 1) 
-    {
-        KsProjPropsHandle hpp = result.items.removeFirst();
-        if( hpp->xdrTypeCode() == KS_OT_DOMAIN ) {
-            proj_props = *(KsDomainProjProps *)hpp.getPtr();
-            return true;
+    //
+    // TODO: extend KS_RESULT for more specific failure indication
+    //
+    if(ok) {
+        last_result = result.result;
+        if(result.result == KS_ERR_OK) {
+            if(result.items.size() == 1) { 
+                KsProjPropsHandle hpp = result.items.removeFirst();
+                if( hpp && hpp->xdrTypeCode() == KS_OT_DOMAIN ) {
+                    proj_props = *(KsDomainProjProps *)hpp.getPtr();
+                    return true;
+                } else {
+                    // type mismatch
+                    last_result = KS_ERR_GENERIC;
+                }
+            } else {
+                // more than one item in response, 
+                // it is more likely an internal error
+                last_result = KS_ERR_GENERIC;
+            }
         }
+    } else {
+        // failed to do getPP
+        // result.result should be -1 indicating that no meaningful
+        // result was returned
+        //
+        last_result = result.result;
     }
 
     return false;
@@ -273,7 +292,12 @@ KscDomain::getChildPPUpdate()
     bool ok = myServer->getPP(av_module,
                               params, result);
 
-    if( !(ok && result.result == KS_ERR_OK) ) {
+    //
+    // TODO: extend KS_RESULT for more specific error indication
+    //
+    last_result = result.result;
+
+    if(!(ok && result.result == KS_ERR_OK) ) {
         return false;
     }
 
@@ -298,6 +322,10 @@ KscDomain::getChildPPUpdate()
     } // while
 
     fChildPPValid = ok;
+
+    if(!ok) {
+        last_result = KS_ERR_GENERIC;  // TODO : change to more specific code
+    }
             
     return ok;
 }        
@@ -420,15 +448,30 @@ KscVariable::getProjPropsUpdate()
     bool ok = myServer->getPP(av_module,
                               params, result);
 
-    if(ok &&
-       result.result == KS_ERR_OK &&
-       result.items.size() == 1) 
-    {
-        KsProjPropsHandle hpp = result.items.removeFirst();
-        if( hpp->xdrTypeCode() == KS_OT_VARIABLE ) {
-            proj_props = *(KsVarProjProps *)hpp.getPtr();
-            return true;
-        }
+    //
+    // TODO: extend KS_RESULT for more specific error indication
+    //
+    if(ok) {
+        last_result = result.result;
+        if(result.result == KS_ERR_OK) {
+            if(result.items.size() == 1) {
+                KsProjPropsHandle hpp = result.items.removeFirst();
+                if( hpp && hpp->xdrTypeCode() == KS_OT_VARIABLE ) {
+                    proj_props = *(KsVarProjProps *)hpp.getPtr();
+                    return true;
+                } else {
+                    // type mismatch
+                    last_result = KS_ERR_GENERIC;
+                }
+            } else {
+                // too much items,
+                // maybe an internal error
+                last_result = KS_ERR_GENERIC;
+            }
+        } // result.result == KS_ERR_OK
+    } else {
+        // getPP failed
+        last_result = result.result;  // == -1
     }
 
     return false;
@@ -465,22 +508,29 @@ KscVariable::getUpdate()
     bool ok = myServer->getVar(av_module,
                                params, 
                                result);
+    //
+    // TODO: extend KS_RESULT for more specific error indication
+    //
+    last_result = result.result;
 
     if( ok && result.result == KS_ERR_OK )  {
         // check wether typecode is ok
         //
         KsGetVarItemResult *pitem = &(result.items[0]);
 
-        if(pitem->result != KS_ERR_OK ||
-           pitem->item->xdrTypeCode() != KS_OT_VARIABLE) {
-            return false;
+        if(pitem->result == KS_ERR_OK) {
+            if(pitem->item->xdrTypeCode() == KS_OT_VARIABLE) {
+                // everything went ok
+                curr_props = *(KsVarCurrProps *)pitem->item.getPtr(); 
+                fDirty = false;
+                return true;
+            } else {
+                // type mismatch
+                last_result = KS_ERR_GENERIC;
+            }
+        } else {
+            last_result = pitem->result;
         }
-
-        curr_props = *(KsVarCurrProps *)pitem->item.getPtr(); 
-        
-        fDirty = false;
-
-        return true;
     }
 
     return false;
@@ -505,13 +555,26 @@ KscVariable::setUpdate()
                                params,
                                result);
 
-    if(ok && 
-       result.result == KS_ERR_OK &&
-       result.results[0].result == KS_ERR_OK) {
-        // successs
-        //
-        fDirty = false;
-        return true;
+    //
+    // TODO: extend KS_RESULT for more specific error indication
+    //
+    last_result = result.result;
+
+    if(ok) { 
+        if(result.result == KS_ERR_OK) {
+            if(result.results[0].result == KS_ERR_OK) {
+                // successs
+                //
+                fDirty = false;
+                return true;
+            } else {
+                // error in writing item
+                last_result = result.results[0].result;
+            }
+        } else {
+            // error in whole request
+            // last_result already set
+        }
     }
 
     return false;

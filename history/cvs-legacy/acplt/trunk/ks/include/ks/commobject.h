@@ -84,6 +84,8 @@ public:
     virtual void setAvModule(const KscAvModule *avm);
     virtual const KscAvModule *getAvModule() const;
 
+    KS_RESULT getLastResult() const;
+
     //
     // order of KscCommObject's falls back to order
     // of their paths 
@@ -108,6 +110,7 @@ protected:
     KscPathParser path;
     KscServer *server;
     const KscAvModule *av_module;
+    KS_RESULT last_result;
 
     PLT_DECL_RTTI;
 
@@ -372,6 +375,14 @@ KscCommObject::getAvModule() const
     return av_module;
 }
 
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_RESULT
+KscCommObject::getLastResult() const
+{
+    return last_result;
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
