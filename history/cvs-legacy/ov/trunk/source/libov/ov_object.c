@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.7 1999-08-18 13:11:26 dirk Exp $
+*   $Id: ov_object.c,v 1.8 1999-08-19 11:54:51 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -305,6 +305,16 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 				else if(pclass == pclass_ov_library) {
 					if(ov_library_canunload(Ov_StaticPtrCast(ov_library, pobj))) {
 						access |= OV_AC_DELETEABLE;
+					}
+				}
+				else if(pclass == pclass_ov_class) {
+					if(pclass->v_classprops & OV_CP_INSTANTIABLE) {
+						if((Ov_GetParent(ov_containment, pobj) != Ov_PtrUpCast(ov_domain, &pdb->ov))
+							|| (pobj == Ov_PtrUpCast(ov_object, pclass_ov_domain))
+							|| (pobj == Ov_PtrUpCast(ov_object, pclass_ov_library))
+						) {
+							access |= OV_AC_INSTANTIABLE;
+						}
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.2 1999-08-19 11:54:54 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -162,8 +162,8 @@ void ov_ksserver_getvar_getitem(
 			if((pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
 				&& (pobj >= &pdb->vendorobj[0])
 			) {
-				pitem->result = ov_vendortree_getvar(pobj, pelem,
-					&pitem->var_current_props);
+				pitem->result = ov_vendortree_getvar(pobj, 
+					&pitem->var_current_props, pticket);
 				pitem->var_current_props.value.vartype &= OV_VT_KSMASK;
 				return;
 			}

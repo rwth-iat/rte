@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.4 1999-08-05 09:21:23 dirk Exp $
+*   $Id: ov_vector.c,v 1.5 1999-08-19 11:54:52 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -146,7 +146,6 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicveclen(
 	/*
 	*	local variables
 	*/
-	OV_RESULT	result;
 	OV_UINT		i;
 	OV_STRING	*pstring;
 	OV_UINT		oldsize;

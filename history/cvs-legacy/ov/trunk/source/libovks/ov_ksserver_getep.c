@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_getep.c,v 1.2 1999-08-19 11:54:54 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -189,7 +189,6 @@ OV_RESULT ov_ksserver_getep_additem(
 	OV_INSTPTR_ov_object	pobj = pelem->pobj;
 	OV_VTBLPTR_ov_object	pvtable;
 	OV_BOOL					vendorobj = FALSE;
-	OV_INSTPTR_ov_class		pclass;
 	OV_STRING				identifier;
 	/*
 	*	get the vtable of the object the element belongs to
@@ -226,15 +225,6 @@ OV_RESULT ov_ksserver_getep_additem(
 			*/
 			if(pobj->v_pouterobject) {
 				access |= OV_AC_PART;
-			}
-			/*
-			*	class objects can be instantiable
-			*/
-			pclass = Ov_DynamicPtrCast(ov_class, pobj);
-			if(pclass) {
-				if(pclass->v_classprops & OV_CP_INSTANTIABLE) {
-					access |= OV_AC_INSTANTIABLE;
-				}
 			}
 			break;
 		case OV_ET_VARIABLE:
@@ -315,7 +305,7 @@ OV_RESULT ov_ksserver_getep_additem(
 		case OV_ET_OBJECT:
 			if(vendorobj) {
 				OV_VAR_CURRENT_PROPS	varcurrprops;
-				if(Ov_Fail(ov_vendortree_getvar(pobj, pelem, &varcurrprops))) {
+				if(Ov_Fail(ov_vendortree_getvar(pobj, &varcurrprops, pticket))) {
 					return OV_ERR_GENERIC;
 				}
 				pprops->comment = "";

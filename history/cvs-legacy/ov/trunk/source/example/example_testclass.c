@@ -1,5 +1,5 @@
 /*
-*   $Id: example_testclass.c,v 1.4 1999-07-29 08:57:52 dirk Exp $
+*   $Id: example_testclass.c,v 1.5 1999-08-19 11:54:50 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -31,7 +31,6 @@
 #endif
 
 #include "example.h"
-#include "libov/ov_string.h"
 #include "libov/ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/

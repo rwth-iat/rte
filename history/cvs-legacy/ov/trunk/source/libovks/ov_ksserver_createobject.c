@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.2 1999-08-06 07:59:35 dirk Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.3 1999-08-19 11:54:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -125,6 +125,15 @@ void ov_ksserver_createobject(
 		}
 		pclass = Ov_DynamicPtrCast(ov_class, path.elements[path.size-1].pobj);
 		if(!pclass) {
+			presult->result = OV_ERR_BADFACTORY;
+			continue;
+		}
+		/*
+		*	check access rights
+		*/
+		if(!(ov_object_getaccess(path.elements[path.size-1].pobj,
+			&path.elements[path.size-1], pticket) & OV_AC_INSTANTIABLE)
+		) {
 			presult->result = OV_ERR_BADFACTORY;
 			continue;
 		}
