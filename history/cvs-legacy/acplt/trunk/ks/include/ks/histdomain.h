@@ -1,10 +1,9 @@
 /* -*-plt-c++-*- */
-
 #ifndef KS_HISTDOMAIN_INCLUDED
 #define KS_HISTDOMAIN_INCLUDED
-
+/* $Header: */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -45,18 +44,49 @@
 #include "ks/histparams.h"
 #include "ks/svrsimpleobjects.h"
 
-/////////////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// The KssHistoryDomain class implements a common history proxy object which
+// should be subclassed for the final interface to a real historian.
+//
 class KssHistoryDomain
-    : public KssSimpleDomain
+: public KssHistory, public KssSimpleCommObject
 {
 public:
     KssHistoryDomain(const KsString &id,
+		     KS_HIST_TYPE htype,
+		     KS_INTERPOLATION_MODE defi,
+		     KS_INTERPOLATION_MODE suppi,
                      KsTime ctime = KsTime::now(),
-                     KsString comment = KsString());
+                     KsString comment = KsString(),
+		     KsString ti = KsString());
 
     virtual void getHist(const KsGetHistParams &params,
                          KsGetHistSingleResult &result) = 0;
+
+
+    // projected properties
+    virtual KsString  getIdentifier() const;
+    virtual KsTime    getCreationTime() const;
+    virtual KsString  getComment() const;
+    virtual KS_ACCESS getAccessMode() const;
+    virtual KsProjPropsHandle getPP() const;
+
+    virtual KS_HIST_TYPE          getType() const;
+    virtual KS_INTERPOLATION_MODE getDefaultInterpolation() const;
+    virtual KS_INTERPOLATION_MODE getSupportedInterpolations() const;
+    virtual KsString              getTypeIdentifier() const;
+
+    //// KssChildrenService stuff
+    virtual KssChildIterator * newIterator() const;
+    virtual KssChildIterator *
+        newMaskedIterator(const KsMask & name_mask,
+                          KS_OBJ_TYPE type_mask) const;
+    virtual KssCommObjectHandle getChildById(const KsString & id) const;
+    virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
+
+    //// accessor
+    size_t size() const;
 
 protected:
 #if 0
@@ -95,14 +125,23 @@ protected:
                  KS_VAR_TYPE vtype,
                  KsString comment = KsString(""));
 
+    bool addTrack(KssCommObject * p);
+
     static KsSelectorHandle getSelector(const KsGetHistParams &params,
                                         KsString id);
 
 private:
+    PltHashTable<KsString, KssCommObjectHandle> _tracks;
+    KS_HIST_TYPE                                _hist_type;
+    KS_INTERPOLATION_MODE                       _default_interpolation;
+    KS_INTERPOLATION_MODE                       _supported_interpolations;
+    KsString                                    _type_identifier;
+
     //    PltHashTable<PartInfo> _parts;
 
     PLT_DECL_RTTI;
 };
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -156,10 +195,17 @@ protected:
 
 inline
 KssHistoryDomain::KssHistoryDomain(const KsString &id,
-                                   KsTime ctime,
-                                   KsString comment)
-    : KssSimpleDomain(id, ctime, comment)
+				   KS_HIST_TYPE htype,
+				   KS_INTERPOLATION_MODE defi,
+				   KS_INTERPOLATION_MODE suppi,
+				   KsTime ctime,
+				   KsString comment,
+				   KsString ti)
+    : KssSimpleCommObject(id, ctime, comment),
+      _hist_type(htype), _default_interpolation(defi),
+      _supported_interpolations(suppi), _type_identifier(ti)
 {}
+
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -173,7 +219,7 @@ KssHistoryPart::KssHistoryPart(const KsString &id,
       creation_time(ctime),
       var_type(vt),
       comment(co)
-{}
+{} // KssHistoryPart::KssHistoryPart
 
 /////////////////////////////////////////////////////////////////////////////
 

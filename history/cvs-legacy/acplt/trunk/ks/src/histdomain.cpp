@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/src/histdomain.cpp,v 1.3 1999-01-12 16:21:35 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -48,6 +48,178 @@ PLT_IMPL_RTTI1(KssHistoryPart, KssVariable);
 
 /////////////////////////////////////////////////////////////////////////////
 
+
+
+
+// ----------------------------------------------------------------------------
+// Add another track to this history, so clients can browse and find out what
+// tracks are provided by a particular history object.
+//
+bool
+KssHistoryDomain::addTrack(KssCommObject * p)
+{
+    KssCommObjectHandle h(p, KsOsNew);
+
+    if ( !h ) {
+	return false;
+    }
+    return _tracks.add(h->getIdentifier(), h);
+} // KssHistoryDomain::addTrack
+
+
+// ----------------------------------------------------------------------------
+// Returns the number of tracks provided by a history.
+//
+size_t
+KssHistoryDomain::size() const
+{
+    return _tracks.size();
+} // KssHistoryDomain::size
+
+
+// ----------------------------------------------------------------------------
+//
+KssChildIterator *
+KssHistoryDomain::newIterator() const
+{
+    return new KssSimpleDomainIterator(_tracks);
+} // KssHistoryDomain::newIterator
+
+
+// ----------------------------------------------------------------------------
+//
+KssChildIterator *
+KssHistoryDomain::newMaskedIterator(const KsMask & name_mask,
+				    KS_OBJ_TYPE type_mask) const
+{
+    PltPtrHandle<KssChildIterator>
+	h(PLT_RETTYPE_CAST((KssChildIterator *)) newIterator(), PltOsNew); 
+    if ( h ) {
+	return new KssMaskedDomainIterator(h, name_mask, type_mask);
+    }
+    return 0;
+} // KssHistoryDomain::newMaskedIterator
+
+
+// ----------------------------------------------------------------------------
+// Provide access to the various engineered properties of a history object.
+// Argh, this is dump coding stuff...
+//
+KsString
+KssHistoryDomain::getIdentifier() const
+{
+    return KssSimpleCommObject::getIdentifier();
+} // KssHistoryDomain::getIdentifier
+
+
+KsTime
+KssHistoryDomain::getCreationTime() const
+{
+    return KssSimpleCommObject::getCreationTime();
+} // KssHistoryDomain::getCreationTime
+
+
+KsString
+KssHistoryDomain::getComment() const
+{
+    return KssSimpleCommObject::getComment();
+} // KssHistoryDomain::getComment
+
+
+KS_ACCESS
+KssHistoryDomain::getAccessMode() const
+{
+    return KssHistory::getAccessMode();
+} // KssHistoryDomain::getAccessMode
+
+
+KsProjPropsHandle
+KssHistoryDomain::getPP() const
+{
+    return KssHistory::getPP();
+} // KssSimpleCommObject::getPP
+
+
+KS_HIST_TYPE
+KssHistoryDomain::getType() const
+{
+    return _hist_type;
+} // KssHistoryDomain::getType
+
+
+KS_INTERPOLATION_MODE
+KssHistoryDomain::getDefaultInterpolation() const
+{
+    return _default_interpolation;
+} // KssHistoryDomain::getDefaultInterpolation
+
+
+KS_INTERPOLATION_MODE
+KssHistoryDomain::getSupportedInterpolations() const
+{
+    return _supported_interpolations;
+} // KssHistoryDomain::getSupportedInterpolations
+
+
+KsString
+KssHistoryDomain::getTypeIdentifier() const
+{
+    return _type_identifier;
+} // KssHistoryDomain::getTypeIdentifier
+
+
+// ----------------------------------------------------------------------------
+// Phew, it's now getting somehow interesting again...
+//
+KssCommObjectHandle
+KssHistoryDomain::getChildById(const KsString & id) const
+{
+    KssCommObjectHandle h;
+
+    if ( _tracks.query(id, h) ) {
+	return h;
+    }
+    return KssCommObjectHandle(); // return unbound handle
+} // KssHistoryDomain::getChildById
+
+
+KssCommObjectHandle
+KssHistoryDomain::getChildByPath(const KsPath & path) const
+{
+    PLT_PRECONDITION(path.isValid());
+
+    //
+    // try to look up the child indicated by the first part of the given
+    // identifier and path.
+    //
+    KssCommObjectHandle hc(getChildById(path.getHead()));
+    if ( hc ) {
+	//
+        // Good. There is such a child, so the first component in the
+	// path was okay.
+	//
+        if ( path.isSingle() ) {
+	    //
+            // We were asked about this child. So return it.
+	    //
+            return hc;
+        }
+	//
+	// The caller wants a grandchild. But histories have no grand-
+	// children, so the path is definitly wrong. Just fall through
+	// at this point and trigger an error.
+	//
+    }
+    //
+    // We don't know of such a child...
+    //
+    return KssCommObjectHandle();
+} // KssHistoryDomain::getChildByPath
+
+
+
+
+// ----------------------------------------------------------------------------
 bool
 KssHistoryDomain::addPart(KsString id,
                           KS_VAR_TYPE vtype,
@@ -57,7 +229,7 @@ KssHistoryDomain::addPart(KsString id,
         new KssHistoryPart(id, getCreationTime(),
                            vtype, comment);
 
-    return addChild(p);
+    return addTrack(p);
 }
 
 /////////////////////////////////////////////////////////////////////////////
