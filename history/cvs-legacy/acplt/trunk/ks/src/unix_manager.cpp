@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.1 1997-04-10 14:18:29 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.2 1997-04-10 16:25:15 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -76,23 +76,28 @@ KsUnixManager::KsUnixManager()
 
 int main(int argc, char **argv) {
     bool daemon = false;
+    bool argsok = false;
     PltLog * pLog = 0;
 
     //
     // parse command line
     //
+    if (argc < 2) argsok = true;
+
     if (argc == 2) {
-        if (argv[1][0]== '-' && argv[1][1] = 'd') {
+        if (argv[1][0]== '-' && argv[1][1] == 'd') {
             daemon = true;
-        } else {
-            cerr << "Usage: " << PROG_NAME << "[-d]" << endl;
-            return EXIT_FAILURE;
-        }
+            argsok = true;
+        } 
+    }
+    if (!argsok) {
+        cerr << "Usage: " << PROG_NAME << "[-d]" << endl;
+        return EXIT_FAILURE;
     }
 
     if (daemon) {
         //
-        // If daemon mode is requested, detach and report to syslog
+        // Daemon mode is requested, detach and report to syslog
         //
         switch (fork()) {
         case -1:
@@ -132,6 +137,7 @@ int main(int argc, char **argv) {
     } else {
         PltLog::Error("could not initialize.");
     }
+    if (pLog) delete pLog;
     return EXIT_SUCCESS;
 }
 

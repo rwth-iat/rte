@@ -35,6 +35,7 @@ LIBKS_OBJECTS2 = \
 	props$(O) \
 	register$(O) \
 	result$(O) \
+	rpc$(O) \
 	server$(O) \
 	serviceparams$(O)
 

@@ -18,7 +18,8 @@ TESTSRCDIR = $(KSDIR)\tests\\
 
 ### Compiler
 CXX = bcc32
-CXX_FLAGS =
+CXX_FLAGS = -DNDEBUG -O2
+#CXX_FLAGS = 
 CXX_EXTRA_FLAGS = -w -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1
 
 .SUFFIXES:	

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.10 1997-04-10 14:17:58 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.11 1997-04-10 16:25:14 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -115,9 +115,6 @@ KsServerBase::KsServerBase()
   _receive_buffer_size(16384)
 {
     PLT_PRECONDITION( the_server == 0 );
-#if PLT_SYSTEM_NT
-    rpc_nt_init();
-#endif
     //
     // create transport
     //
@@ -170,10 +167,6 @@ KsServerBase::~KsServerBase()
 
     PLT_ASSERT(the_server == this);
     the_server = 0;
-
-#if PLT_SYSTEM_NT
-    rpc_nt_exit();
-#endif
 } 
 //////////////////////////////////////////////////////////////////////
 

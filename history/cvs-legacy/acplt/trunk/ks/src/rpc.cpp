@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/rpc.cpp,v 1.1 1997-04-10 15:17:08 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/rpc.cpp,v 1.2 1997-04-10 16:25:13 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -59,7 +59,7 @@ KsNTOncRpc::KsNTOncRpc()
 
 //////////////////////////////////////////////////////////////////////
 
-KsOncRpc::~KsOncRpc()
+KsNTOncRpc::~KsNTOncRpc()
 {
     if (0 == --refcount) {
 	// Last time

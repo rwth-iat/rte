@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.5 1997-04-10 14:17:43 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.6 1997-04-10 16:25:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -60,7 +60,19 @@ typedef unsigned char u_char;
 #include <rpc/rpc.h>
 #include <rpc/pmap_pro.h>
 #include <rpc/pmap_cln.h>
-#endif
+
+class KsNTOncRpc
+{
+public:
+    KsNTOncRpc();
+    ~KsNTOncRpc();
+private:
+    static int refcount;
+};
+
+static KsNTOncRpc ks_nt_oncrpc;
+
+#endif // PLT_SYSTEM_NT
 
 #if PLT_SYSTEM_SOLARIS
 #include <rpc/rpc.h>
