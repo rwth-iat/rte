@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.3 1997-08-15 08:59:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.4 1997-09-15 19:42:50 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -51,28 +51,8 @@
 #include "ks/array_builtins.h"
 #include "ks/handle.h"
 #include "ks/list.h"
-
-// Borland's linker is somewhat weird...
-#if 1
-#include "plt/priorityqueue.h"
-#include "ks/svrbase.h"
-#include "ks/svrobjects.h"
-template class PltHandle<KssCommObject>;
-template class PltHandle<KssDomain>;
-template class PltHandle<PltHandleIterator<KssCommObject> >;
-template class PltHandleContainer<KssCommObject>;
-template class PltHandleIterator<KssCommObject>;
-template class PltHashIterator<KsString, PltPtrHandle<KssCommObject> >;
-template class PltHashTable<KsString, PltPtrHandle<KssCommObject> >;
-template class PltHashTable_<KsString, PltPtrHandle<KssCommObject> >;
-template class PltIterator<PltAssoc<KsString, PltPtrHandle<KssCommObject> > >;
-template class PltIterator_<KssCommObject>;
-template class PltIterator_<PltAssoc<KsString, PltPtrHandle<KssCommObject> > >;
-template class PltPriorityQueue<PltPtrComparable<KsTimerEvent> >;
-template class PltPtrComparable<KsTimerEvent>;
 #endif
 
-#endif
 
 #if PLT_INSTANTIATE_TEMPLATES
 #include "ttree_inst.h"

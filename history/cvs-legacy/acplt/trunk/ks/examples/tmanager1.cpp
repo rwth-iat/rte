@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.4 1997-09-15 18:41:40 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.5 1997-09-15 19:42:48 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,10 +42,6 @@
 #include "ks/manager.h"
 #include "plt/log.h"
 #include <signal.h>
-
-#if PLT_COMPILER_BORLAND
-#include "ks/array_builtins.h"
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -110,6 +106,11 @@ int main(int, char **) {
 
 //////////////////////////////////////////////////////////////////////
 // EOF tmanager.cpp
+
+
+
+
+
 
 
 
