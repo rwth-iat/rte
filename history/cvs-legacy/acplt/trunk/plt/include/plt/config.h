@@ -70,6 +70,7 @@
 #ifdef __GNUC__
 #define PLT_SIMULATE_BOOL 0
 #define PLT_SIMULATE_RTTI 1
+#define PLT_INSTANTIATE_TEMPLATES 1
 #endif
 
 
@@ -82,6 +83,9 @@
 #define PLT_SIMULATE_RTTI 1
 #endif
 
+#ifndef PLT_INSTANTIATE_TEMPLATES    /* Explicit template instantiation? */
+#define PLT_INSTANTIATE_TEMPLATES 0
+#endif
 
 #if PLT_SIMULATE_BOOL
 typedef int bool;
