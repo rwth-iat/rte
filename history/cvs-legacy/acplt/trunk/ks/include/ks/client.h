@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.30 2002-05-23 10:36:23 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.31 2003-10-13 11:17:21 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -244,13 +244,6 @@ public:
     // ping server
     bool ping();
 
-#if 0
-    // reread server description and state 
-    // from manager
-    //
-    bool getStateUpdate();
-#endif
-
     //
     // service functions
     //
@@ -420,21 +413,6 @@ KscServerBase::getLastResult() const
 //////////////////////////////////////////////////////////////////////
 // KscServer
 //////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-bool
-KscServer::ping()
-{
-    enum clnt_stat errcode;
-    errcode = clnt_call(_client_transport, 0, 
-			(xdrproc_t) xdr_void, 0, 
-			(xdrproc_t) xdr_void, 0, 
-			KSC_RPCCALL_TIMEOUT);
-
-    return errcode == RPC_SUCCESS;
-}
 
 //////////////////////////////////////////////////////////////////////
 
