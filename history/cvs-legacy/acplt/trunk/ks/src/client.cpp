@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.37 1999-02-22 15:09:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.38 1999-09-06 06:48:45 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -51,6 +51,9 @@
 #if PLT_DEBUG
 #include <iostream.h>
 #endif
+
+
+#include <iostream.h> // FIXME
 
 
 //////////////////////////////////////////////////////////////////////
@@ -267,9 +270,19 @@ KscClient::createServer(KsString host_and_name,
 	    // code.
 	    //
 	} else {
+	    //
+	    // The resource locator is valid but we don't have a suitable
+	    // KscServer object now. So we create one.
+	    //
+	    // NOTE: We use KS_MINPROTOCOL_VERSION here, so a client will
+	    // accept older servers as partners (how nice) and switch back
+	    // to the version 1 GetPP server when appropriate. Nevertheless
+	    // a client still will always get the newest KS server if
+	    // possible.
+	    //
 	    KscServer *temp = new KscServer(host, 
 					    KsServerDesc(server,
-							 KS_PROTOCOL_VERSION));
+							 KS_MINPROTOCOL_VERSION));
 	    if ( temp ) {
 		//
 		// Server object successfully created. So inherit the
@@ -325,17 +338,30 @@ KscClient::deleteServer(KscServerBase *server)
     delete server;
 }
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Accessors to the timeout and retry struff...
+//
 void 
 KscClient::setTimeouts(const PltTime &rpc_timeout,        
                        const PltTime &retry_wait,         
                        size_t tries)
 {
     _rpc_timeout = rpc_timeout;
-    _retry_wait = retry_wait;
-    _tries = tries;
-}
+    _retry_wait  = retry_wait;
+    _tries       = tries;
+} // KscClient::setTimeouts
+
+void
+KscClient::getTimeouts(PltTime &rpc_timeout,
+		       PltTime &retry_wait,
+		       size_t &tries)
+{
+    rpc_timeout = _rpc_timeout;
+    retry_wait  = _retry_wait;
+    tries       = _tries;
+} // KscClient::getTimeouts
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -411,6 +437,175 @@ KscServerBase::decRefcount()
         the_client->deleteServer(this);
     }
 }
+
+
+// ----------------------------------------------------------------------------
+// The new ACPLT/KS protocol version 2 GETEP service. This superceedes the old
+// GETPP service and works with the new engineered properties. To make live
+// easier for client writers, the getEP() method backwards compatibility with
+// version 1 ACPLT/KS servers: if a we detect a version 1 server (this info is
+// returned by the GETSERVER service from the MANAGER), then we transparently
+// issue a GETPP and convert the result back into a list of engineered
+// properties.
+//
+bool 
+KscServerBase::getEP(const KscAvModule *avm,
+		     const KsGetEPParams &params,
+		     KsGetEPResult &result)
+{
+    u_long version;
+
+    //
+    // Retrieve the server's protocol version. This will try to connect if
+    // not already done. We need the protocol version so we can transparently
+    // issue a GETPP service request for old v1 servers.
+    //
+    if ( !getServerVersion(version) ) {
+	//
+	// If we can't open the connection then bail out immediately. We
+	// don't touch the _last_result here, because it has already been
+	// set by the getServerVersion() method.
+	//
+	return false;
+    }
+
+    if ( version == 1 ) {
+	//
+	// We're talking to a ACPLT/KS core protocol version 1 server, so we
+	// need to use the old GETPP service instead of GETEP.
+	//
+	KsGetPPParams getPPParams;
+	KsGetPPResult getPPResult;
+
+	//
+	// The KS_EPF_FLATTEN scope flag is ignored as it has no equivalent
+	// with the GETPP service. Also the KS_EPF_PARTS flag can be ignored
+	// with the old version 1 protocol (flattening works only with parts
+	// but not with children in v2). In case the KS_EPF_CHILDREN flag
+	// is missing we can shortcut the service request immediately, as
+	// we know that the result list must be empty.
+	//
+	if ( !(params.scope_flags & KS_EPF_CHILDREN) ) {
+	    result.result = KS_ERR_OK;
+	    return true;
+	}
+	
+	//
+	// Execute the old and now depreciated GetPP service (at least try
+	// to execute it...). If something fails, bail out. Note that we make
+	// sure that the service params will always ask only for variables and
+	// domain communication objects to avoid potential trouble.
+	//
+	getPPParams.path      = params.path;
+	getPPParams.type_mask = params.type_mask &
+	                        (KS_OT_VARIABLE | KS_OT_DOMAIN |
+				    KS_OT_LINK | KS_OT_HISTORY);
+	getPPParams.name_mask = params.name_mask;
+	if ( !requestByOpcode(KS_GETPP, avm, params, getPPResult) ) {
+	    result.result = getPPResult.result;
+	    return false;
+	}
+	//
+	// Check that the service request was accepted by the ACPLT/KS server
+	// and then convert the old projected properties into engineered
+	// properties.
+	//
+	result.result = getPPResult.result;
+	if ( getPPResult.result == KS_ERR_OK ) {
+	    KsEngPropsV1Handle hv1ep;
+	    
+	    while ( !getPPResult.items.isEmpty() ) {
+		//
+		// Remove one set of old projected properties at a time and
+		// make sure that we get a bound handle before trying to
+		// convert the old projected properties into new engineered
+		// properties.
+		//
+		hv1ep = getPPResult.items.removeFirst();
+		if ( hv1ep ) {
+		    KsEngProps *ep = 0;
+		    switch ( hv1ep->xdrTypeCode() ) {
+		    case KS_OT_DOMAIN:
+			ep = new KsDomainEngProps(
+			    hv1ep->identifier,
+			    hv1ep->creation_time,
+			    hv1ep->comment,
+			    hv1ep->access_mode,
+			    0,         // ...no semantic flags
+			    KsString() // ...no class identifier
+			    );
+			break;
+			
+		    case KS_OT_VARIABLE:
+			ep = new KsVarEngProps(
+			    hv1ep->identifier,
+			    hv1ep->creation_time,
+			    hv1ep->comment,
+			    hv1ep->access_mode,
+			    0,         // ...no semantic flags
+			    ((KsVarEngPropsV1 *)hv1ep.getPtr())->tech_unit,
+			    ((KsVarEngPropsV1 *)hv1ep.getPtr())->type
+			    );
+			break;
+
+#if PLT_SOURCE_V1PLUS_BC
+		    case KS_OT_LINK:
+			ep = new KsLinkEngProps(
+			    hv1ep->identifier,
+			    hv1ep->creation_time,
+			    hv1ep->comment,
+			    hv1ep->access_mode,
+			    0,         // ...no semantic flags
+			    ((KsLinkEngPropsV1 *)hv1ep.getPtr())->type,
+			    ((KsLinkEngPropsV1 *)hv1ep.getPtr())->opposite_role_identifier,
+			    ((KsLinkEngPropsV1 *)hv1ep.getPtr())->class_identifier
+			    );
+			break;
+
+		    case KS_OT_HISTORY:
+			ep = new KsHistoryEngProps(
+			    hv1ep->identifier,
+			    hv1ep->creation_time,
+			    hv1ep->comment,
+			    hv1ep->access_mode,
+			    0,         // ...no semantic flags
+			    ((KsHistoryEngPropsV1 *)hv1ep.getPtr())->type,
+			    ((KsHistoryEngPropsV1 *)hv1ep.getPtr())->default_interpolation,
+			    ((KsHistoryEngPropsV1 *)hv1ep.getPtr())->supported_interpolations,
+			    ((KsHistoryEngPropsV1 *)hv1ep.getPtr())->type_identifier
+			    );
+			break;
+#endif
+			
+		    default:
+			continue; // be nice and ignore unknown objects.
+		    }
+		    //
+		    // Make sure that the engineered properties could be
+		    // converted and that we could add them to the result
+		    // list.
+		    //
+		    if ( !ep || 
+			 !result.items.addLast(KsEngPropsHandle(ep, 
+								KsOsNew)) ) {
+			result.result = KS_ERR_GENERIC;
+			return false;
+		    }
+		}
+	    }
+	}
+	return true;
+    } else {
+	//
+	// We're talking to a new protocol v2 version server, so we can use
+	// the GETEP service (as intended...).
+	//
+	return requestByOpcode(KS_GETEP, avm, params, result);
+    }
+} // KscServerBase::getEP
+
+
+
     
 //////////////////////////////////////////////////////////////////////
 // class KscServer
@@ -491,7 +686,18 @@ KscServer::setTimeouts(const PltTime &rpc_timeout,
             PltLog::Warning("Failed to specifify timeout value for RPC");
         }
     }
-}
+} // KscServer::setTimeouts
+
+void
+KscServer::getTimeouts(PltTime &rpc_timeout,
+		       PltTime &retry_wait,
+		       size_t &tries)
+{
+    rpc_timeout = _rpc_timeout;
+    retry_wait  = _retry_wait;
+    tries       = _tries;
+} // KscServer::getTimeouts
+
 
 //////////////////////////////////////////////////////////////////////
 // Get the IP address of the host this server object points to. This
@@ -598,7 +804,7 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
 } // KscServer::getHostAddr
 
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // Try to establish a RPC connection to the ACPLT/KS server. This
 // includes querying the portmapper and ACPLT/KS manager on the host
 // where the server is supposed to reside. If this function succeeds
@@ -677,14 +883,20 @@ KscServer::createTransport()
     // not KS_ERR_OK, then the manager could not successfully serve the
     // request.
     //
+    // Note: we need to know what particular protocol version an ACPLT/KS
+    // server implements (especially for transparently switching between
+    // the GetEP/GetPP services in the client).
+    //
     if ( !getServerDesc(&host_addr, port, server_desc, server_info) ) {
-        //
-        // Note: don't change the last result set by getServerDesc().
-        // Just fall through.
-        //
-        return false;
+	//
+	// We could not contact the ACPLT/KS manager. In this case,
+	// _last_result has been already set by getServerDesc(),
+	// so we don't touch it anymore but just report the failure
+	// to the caller.
+	//
+	return false;
     }
-        
+    
     if ( server_info.result != KS_ERR_OK ) {
         //
         // If the ACPLT/KS manager returned a service error, then we
@@ -699,9 +911,18 @@ KscServer::createTransport()
         return false;
     }
 
+    //
+    // Remember which protocol version we're now using and clamp this
+    // version number for the next reconnection procedure, in case the
+    // connection should be lost.
+    //
+    server_desc.protocol_version = server_info.server.protocol_version;
+
 #if PLT_DEBUG_PEDANTIC
     cerr << "Trying to connect server at port "
          << server_info.port
+	 << " running protocol version "
+	 << server_info.server.protocol_version
          << endl;
 #endif
 
@@ -760,6 +981,25 @@ KscServer::destroyTransport()
     }
 } // KscServer::destroyTransport
 
+
+// ----------------------------------------------------------------------------
+//
+bool
+KscServer::getServerVersion(u_long &version)
+{
+    // FIXME retry count?
+    if ( !_client_transport ) {
+        if( !createTransport() ) {
+            if ( !reconnectServer(_last_result) ) {
+                return false;
+            }
+        }
+    }
+    version = server_desc.protocol_version;
+    return true;
+} // KscServer::getServerVersion
+
+
 //////////////////////////////////////////////////////////////////////
 #if 0
 bool
@@ -791,7 +1031,7 @@ KscServer::getStateUpdate()
 #endif
 
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // Here's the magic stepping in... to make ACPLT/KS more reliable in
 // the face of network problems, we try to reconnect to a ACPLT/KS if
 // the connection went done for any reason. A particular reason to
@@ -853,37 +1093,6 @@ KscServer::reconnectServer(size_t try_count, enum clnt_stat errcode)
 void
 KscServer::setResultAfterService(enum clnt_stat errcode)
 {
-#if 0
-    switch ( _status ) {
-    case KscHostNotFound : 
-        _last_result = KS_ERR_HOSTUNKNOWN;
-        return;
-    case KscCannotCreateClientHandle :
-        _last_result = KS_ERR_CANTCONTACT;
-        return;
-    case KscCannotCreateUDPClient :
-        if ((_errcode == RPC_PROGNOTREGISTERED) ||
-            (_errcode == RPC_PROGUNAVAIL) ) {
-            _last_result = KS_ERR_NOMANAGER;
-        } else {
-            _last_result = KS_ERR_CANTCONTACT;
-        }
-        return;
-    case KscNoServer :
-        _last_result = KS_ERR_SERVERUNKNOWN;
-        return;
-    case KscNoManager:
-	//
-	// Couldn't get a ACPLT/KS manager on the given host. At least
-	// the portmapper was running, but no ACPLT/KS manager.
-	//
-	_last_result = KS_ERR_NOMANAGER;
-	return;
-    default:
-        ;     // behavior depends on errcode, see next switch
-    }
-#endif
-
     switch ( errcode ) {
     case RPC_SUCCESS :
         _last_result = KS_ERR_OK;
@@ -926,7 +1135,7 @@ KscServer::reconnectServer(KS_RESULT result)
 } // KscServer::reconnectServer
 
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // Here are the getServerDesc() and helper structs and classes
 // comming. They implement the GetServer request which is used with
 // ACPLT/KS managers to find where a particular ACPLT/KS server can
@@ -961,7 +1170,8 @@ struct KscGetServerOutStruct
     KsGetServerResult *gsr;
 }; // struct KscGetServerOutStruct
 
-//////////////////////////////////////////////////////////////////////
+
+// ----------------------------------------------------------------------------
 // Following are the two XDR toplevel encoding and decoding functions.
 // They are responsible for sending and receiving the ACPLT/KS service
 // request and reply for the GetServer service.
@@ -993,7 +1203,8 @@ KscGetServerOutHelper(XDR *xdr, void *p)
         && data->gsr->xdrDecode(xdr);
 } // KscGetServerOutHelper
 
-//////////////////////////////////////////////////////////////////////
+
+// ----------------------------------------------------------------------------
 // Okay, here's the real helper function coming. Feed it with the IP
 // address of a host and the description of a ACPLT/KS server, then it
 // will return more information about this server, for instance, at
@@ -1013,7 +1224,7 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
                          const KsServerDesc &server,
                          KsGetServerResult &server_desc)
 {
-    int socket = RPC_ANYSOCK;
+    int socket;
     CLIENT *transport;
     enum clnt_stat errcode;
 
@@ -1023,100 +1234,127 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
     // transport at this point, then we'll return immediately with
     // an error code in the "last result".
     //
-    // Note: as of version 1.0.2 we now support for an explicit
-    // port number of the manager specified in the host name. In
-    // this case we switch over to TCP instead of UDP because we
-    // client most probably uses such hostnames to access ACPLT/KS
-    // systems behind firewalls and UDP through a firewall is not
-    // the most wanted protocol...
+    // Note: as of version 1.0.2 of the C++ Communication Library we now
+    // support for an explicit port number of the manager specified in the
+    // host name. In this case we switch over to TCP instead of UDP because
+    // the client most probably uses such hostnames to access ACPLT/KS
+    // systems behind firewalls and UDP through a firewall is not the most
+    // desired protocol...
     //
     host_addr->sin_family = AF_INET;
     host_addr->sin_port = htons(port);
     
-    if ( port ) {
-        transport = clnttcp_create(host_addr,
-                                   KS_RPC_PROGRAM_NUMBER,
-                                   KS_PROTOCOL_VERSION,
-                                   &socket,
-                                   0, 0);
-    } else {
-        transport = clntudp_create(host_addr,
-                                   KS_RPC_PROGRAM_NUMBER,
-                                   KS_PROTOCOL_VERSION,
-                                   KSC_UDP_TIMEOUT,
-                                   &socket);
-    }
-    if( !transport ) {
+    //
+    // Note: we always indicate the highest protocol version we can run on,
+    // so future ACPLT/KS managers might take this into account when choosing
+    // a suitable server for us.
+    //
+
+    u_long version = KS_PROTOCOL_VERSION;
+
+    do {
 	//
-	// Try to figure out what exactly lead to our problem that
-	// we can't create the UDP/TCP transport for communicating with the
-	// ACPLT/KS manager. If the communication failed because there is
-	// no ACPLT/KS manager, then exactly return this error, otherwise
-	// fall back to the more generic "can't contact".
+	// Okay, here a few words in German from our sponsor:
+	// "Scheiss Initialisierung fuer diesen bekloppten socket-Parameter
+	//  fuer den Aufruf von clntXXX_create(). Hab' ich doch vergessen,
+	//  beim Umstellen auf die Schleife, socket jedesmal wieder neu
+	//  zu initialisieren. Ach neeeeee, das kann doch echt nicht wahr
+	//  sein. Wie kann man auch eine so beknackte Semantic in diesen
+	//  Funktionsaufruf hineinpacken. Das ist doch echt daemlich."
+	// Phew. Now I feel better.
 	//
-	switch ( rpc_createerr.cf_stat ) {
-	case RPC_PROGNOTREGISTERED:
-	case RPC_PROGUNAVAIL:
-	case RPC_PROGVERSMISMATCH:
-	    _last_result = KS_ERR_NOMANAGER;
-	    break;
-	default:
-	    _last_result = KS_ERR_CANTCONTACT;
+	socket = RPC_ANYSOCK;
+	if ( port ) {
+	    transport = clnttcp_create(host_addr,
+				       KS_RPC_PROGRAM_NUMBER,
+				       version,
+				       &socket,
+				       0, 0);
+	} else {
+	    transport = clntudp_create(host_addr,
+				       KS_RPC_PROGRAM_NUMBER,
+				       version,
+				       KSC_UDP_TIMEOUT,
+				       &socket);
 	}
-        return false;
-    }
+	if( !transport ) {
+	    //
+	    // Try to figure out what exactly lead to our problem that
+	    // we can't create the UDP/TCP transport for communicating with the
+	    // ACPLT/KS manager. If the communication failed because there is
+	    // no ACPLT/KS manager, then exactly return this error, otherwise
+	    // fall back to the more generic "can't contact".
+	    //
+	    switch ( rpc_createerr.cf_stat ) {
+	    case RPC_PROGNOTREGISTERED:
+	    case RPC_PROGUNAVAIL:
+	    case RPC_PROGVERSMISMATCH:
+		_last_result = KS_ERR_NOMANAGER;
+		break;
+	    default:
+		_last_result = KS_ERR_CANTCONTACT;
+	    }
+	    return false;
+	}
 
 #if PLT_DEBUG_PEDANTIC
-    // ping manager
-    //
-    errcode = clnt_call(transport, 0, 
-                        xdr_void, 0, 
-                        xdr_void, 0, 
-                        KSC_UDP_TIMEOUT);
-
-    if ( errcode != RPC_SUCCESS ) {
-        cerr << "ping failed, error code " << (unsigned) errcode << endl;
-    }
-    else {
-        cerr << "manager pinged" << endl;
-    }
+	// ping manager
+	//
+	errcode = clnt_call(transport, 0, 
+			    (xdrproc_t) xdr_void, 0, 
+			    (xdrproc_t) xdr_void, 0, 
+			    KSC_UDP_TIMEOUT);
+	
+	if ( errcode != RPC_SUCCESS ) {
+	    cerr << "ping failed, error code " << (unsigned) errcode << endl;
+	}
+	else {
+	    cerr << "manager pinged" << endl;
+	}
 #endif
 
-    //
-    // Now ask the ACPLT/KS manager for the server description of the
-    // server in question.
-    //
-    KsGetServerParams params(server);
-    KscGetServerInStruct inData(
-        KscAvNoneModule::getStaticNegotiator(), 
-        &params);
-    KscGetServerOutStruct outData(
-        KscAvNoneModule::getStaticNegotiator(),
-        &server_desc);
+	//
+	// Now ask the ACPLT/KS manager for the server description of the
+	// server in question.
+	//
+	KsGetServerParams params(server);
+	KscGetServerInStruct inData(
+	    KscAvNoneModule::getStaticNegotiator(), 
+	    &params);
+	KscGetServerOutStruct outData(
+	    KscAvNoneModule::getStaticNegotiator(),
+	    &server_desc);
+	
+	errcode = clnt_call(transport, 
+			    KS_GETSERVER,
+			    (xdrproc_t) KscGetServerInHelper,
+			    (char *) &inData,
+			    (xdrproc_t) KscGetServerOutHelper,
+			    (char *) &outData,
+			    KSC_UDP_TIMEOUT);
 
-    errcode = clnt_call(transport, 
-			KS_GETSERVER,
-			(xdrproc_t) KscGetServerInHelper,
-			(char *) &inData,
-			(xdrproc_t) KscGetServerOutHelper,
-			(char *) &outData,
-			KSC_UDP_TIMEOUT);
+	//
+	// Free the resources used by communication transport and return
+	// the information in question.
+	//
+	clnt_destroy(transport);
 
-    //
-    // Free the resources used by communication transport and return
-    // the information in question.
-    //
-    clnt_destroy(transport);
+	if ( errcode == RPC_SUCCESS ) {
+	    _last_result = KS_ERR_OK;
+	    return true;
+	}
+	if ( errcode != RPC_PROGVERSMISMATCH ) {
+	    PLT_DMSG("function call to MANAGER failed, error code " << (unsigned) errcode << endl);
 
-    if ( errcode != RPC_SUCCESS ) {
-        PLT_DMSG("function call to MANAGER failed, error code " << (unsigned) errcode << endl);
-
-        _last_result = KS_ERR_CANTCONTACT;
-        return false;
-    }
-
-    _last_result = KS_ERR_OK;
-    return true;
+	    _last_result = KS_ERR_CANTCONTACT;
+	    return false;
+	}
+	//
+	// Step down one version number and retry the call to the MANAGER.
+	//
+    } while ( --version >= KS_MINPROTOCOL_VERSION ); 
+    _last_result = KS_ERR_CANTCONTACT;
+    return false;
 } // KscServer::getServerDesc
 
 
@@ -1154,7 +1392,7 @@ KscServer::requestService(const KsString &extension,
 	KsValueHandle hval; 
 
 	//
-	// Yes. There might be errors. In case there isn´t a description of
+	// Yes. There might be errors. In case there isn't a description of
 	// the extension available, then return KS_ERR_NOTIMPLEMENTED, other-
 	// wise return the error code resulting from the failed communication.
 	//
@@ -1261,7 +1499,7 @@ KscRequestOutHelper(XDR *xdr, void *p)
 } // KscRequestOutHelper
 
 
-/////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // Issue an ACPLT/KS request and wait for the reply. The service to be re-
 // quested is identified by its service id which is a 32bit number defined
 // in the ACPLT/KS protocol (or some extension protocol).
@@ -1294,6 +1532,7 @@ KscServer::requestByOpcode(u_long service,
     // service parameters, so the server object can lateron build the
     // data packets.
     //
+    // FIXME: this needs to be moved to createTransport() or whatever!
     KscNegotiator *negotiator = getNegotiator(avm);
 
 #if PLT_DEBUG
@@ -1365,9 +1604,9 @@ KscServer::requestByOpcode(u_long service,
 } // KscServer::requestByOpcode
 
 
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-// And now for the core ACPLT/KS services. They´re simply implemented on top
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// And now for the core ACPLT/KS services. They're simply implemented on top
 // of the requestByOpcode method.
 //
 bool 

@@ -1,11 +1,9 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.25 1998-10-06 13:18:36 harald Exp $ */
-
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.26 1999-09-06 06:48:38 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
-
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -115,6 +113,9 @@ public:
     void setTimeouts(const PltTime &rpc_timeout, // time to complete a RPC
                      const PltTime &retry_wait,  // time between retries
                      size_t tries);              // number of tries
+    void getTimeouts(PltTime &rpc_timeout,
+		     PltTime &retry_wait,
+		     size_t &tries);
 
 #if PLT_DEBUG
     void printServers();
@@ -181,6 +182,9 @@ public:
     virtual bool getPP(const KscAvModule *avm,
                        const KsGetPPParams &params,
                        KsGetPPResult &result) = 0;
+    virtual bool getEP(const KscAvModule *avm,
+                       const KsGetEPParams &params,
+                       KsGetEPResult &result);
 
     virtual bool getVar(const KscAvModule *avm,
                         const KsGetVarParams &params,
@@ -206,6 +210,11 @@ public:
                                  const KscAvModule *avm,
                                  const KsXdrAble &params,
                                  KsResult &result) = 0;
+
+    //
+    // transport helper...
+    //
+    virtual bool getServerVersion(u_long &version) = 0;
 
     // AV related functions
     //
@@ -238,6 +247,7 @@ protected:
     long ref_count;                // communication objects related to this server
     KS_RESULT _last_result;
 };
+
 
 //////////////////////////////////////////////////////////////////////
 // class KscServer
@@ -289,6 +299,8 @@ public:
                                  const KsXdrAble &params,
                                  KsResult &result);
 
+    virtual bool getServerVersion(u_long &version);
+
 
     //
     // accessors
@@ -303,7 +315,10 @@ public:
     void setTimeouts(const PltTime &rpc_timeout,        // time to complete a RPC
                      const PltTime &retry_wait,         // time between retries
                      size_t tries);                     // number of tries
- 
+    void getTimeouts(PltTime &rpc_timeout,
+		     PltTime &retry_wait,
+		     size_t &tries);
+
 
 protected:
     KscNegotiator *getNegotiator(const KscAvModule *);
