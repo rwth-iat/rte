@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.h,v 1.3 1999-09-15 10:48:14 dirk Exp $
+*   $Id: ov_element.h,v 1.4 2000-12-15 15:40:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -82,8 +82,6 @@ typedef struct {
 		struct OV_INST_ov_association	*passoc;
 		/* in case element is an operation: */
 		struct OV_INST_ov_operation		*pop;
-		/* in case element is a class: */
-		struct OV_INST_ov_class			*pclass;
 	}	elemunion;
 }	OV_ELEMENT;
 
