@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.12 2000-06-20 06:50:34 dirk Exp $
+*   $Id: ov_class.c,v 1.13 2000-12-15 15:39:36 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -52,7 +52,7 @@
 /*
 *	Search for a class object with given identifier
 */
-OV_INSTPTR_ov_class ov_class_search(
+OV_DLLFNCEXPORT OV_INSTPTR_ov_class ov_class_search(
 	OV_STRING	identifier
 ) {
 	/*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.h,v 1.4 1999-09-15 10:48:14 dirk Exp $
+*   $Id: ov_class.h,v 1.5 2000-12-15 15:39:34 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -130,7 +130,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_INITOBJ(
 /*
 *	Search for a class object with given identifier
 */
-OV_INSTPTR_ov_class ov_class_search(
+OV_DLLFNCEXPORT OV_INSTPTR_ov_class ov_class_search(
 	OV_STRING	identifier
 );
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.9 2000-04-13 09:26:44 dirk Exp $
+*   $Id: ov_library.c,v 1.10 2000-12-15 15:39:36 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -138,7 +138,7 @@ OV_DLLFNCEXPORT void ov_library_destructor(
 /*
 *	Search for a library object with given identifier
 */
-OV_INSTPTR_ov_library ov_library_search(
+OV_DLLFNCEXPORT OV_INSTPTR_ov_library ov_library_search(
 	OV_STRING	identifier
 ) {
 	/*
