@@ -71,7 +71,7 @@ KscNoneNegotiator::xdrDecode(XDR *xdr)
 //////////////////////////////////////////////////////////////////////
 
 KscNegotiator *
-KscAvNoneModule::getNegotiator() const
+KscAvNoneModule::getNegotiator(const KscServer *) const
 {
     return &the_negotiator;
 }

@@ -509,8 +509,10 @@ KscGetPPOutHelper(XDR *xdr, void *p)
     PLT_ASSERT(data->avt);
     PLT_ASSERT(data->gpr);
 
-    return data->avt->xdrDecode(xdr)
+    bool ok = data->avt->xdrDecode(xdr)
         && data->gpr->xdrDecode(xdr);
+
+    return ok;
 }
 
 

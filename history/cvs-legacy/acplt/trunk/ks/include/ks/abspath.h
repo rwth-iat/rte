@@ -117,16 +117,6 @@ operator != (const KscAbsPath &a, const KscAbsPath &b)
 
 //////////////////////////////////////////////////////////////////////
 
-inline
-KscAbsPath
-operator + (const KscAbsPath &path,
-            const PltString &var)
-{
-    PltString temp(path._str);
-    temp += "/";
-    temp += var;
-    return KscAbsPath(temp);
-}
 
 //////////////////////////////////////////////////////////////////////
 

@@ -141,6 +141,20 @@ KscAbsPath::getPathOnly() const
 }
 
 //////////////////////////////////////////////////////////////////////
+
+KscAbsPath
+operator + (const KscAbsPath &path,
+            const PltString &var)
+{
+    PltString temp((const char *)path);
+    if(temp[temp.len()-1] != '/') {
+        temp += "/";
+    }
+    temp += var;
+    return KscAbsPath(temp);
+}
+
+//////////////////////////////////////////////////////////////////////
 // EOF abspath.cpp
 //////////////////////////////////////////////////////////////////////
 

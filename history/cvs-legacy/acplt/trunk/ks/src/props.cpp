@@ -203,8 +203,12 @@ KsVarProjProps::xdrTypeCode() const
 
 // KS_IMPL_XDRCTOR(KsDomainProjProps);
 
-KsDomainProjProps::KsDomainProjProps(XDR *, bool &)
-{}
+KsDomainProjProps::KsDomainProjProps(XDR *, bool &ok)
+{
+    ok = true;
+}
+
+//////////////////////////////////////////////////////////////////////
 
 enum_t
 KsDomainProjProps::xdrTypeCode() const {

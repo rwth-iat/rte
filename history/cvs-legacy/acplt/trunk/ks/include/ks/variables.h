@@ -62,7 +62,7 @@ class KscTypedVar
 : public KscVariable
 {
 public:
-    KscTypedVar(const KscAbsPath &name);
+    KscTypedVar(const char *name);
 
     // check for type errors but dont fail
     // due to it
@@ -88,7 +88,7 @@ protected:
 // problems with the macros following below
 //
 inline
-KscTypedVar::KscTypedVar(const KscAbsPath &name)
+KscTypedVar::KscTypedVar(const char *name)
 : KscVariable(name),
   fTypeError(false)
 {}
@@ -99,7 +99,7 @@ class KscIntVar
 : public KscTypedVar
 {
 public:
-    KscIntVar(const KscAbsPath &name);
+    KscIntVar(const char *name);
 
     KscIntVar &operator = (long);
     operator long ();
@@ -118,7 +118,7 @@ class KscUIntVar
 : public KscTypedVar
 {
 public:
-    KscUIntVar(const KscAbsPath &name);
+    KscUIntVar(const char *name);
 
     KscUIntVar &operator = (u_long);
     operator u_long ();
@@ -137,7 +137,7 @@ class KscSingleVar
 : public KscTypedVar
 {
 public:
-    KscSingleVar(const KscAbsPath &name);
+    KscSingleVar(const char *name);
 
     KscSingleVar &operator = (float);
     operator float ();
@@ -156,7 +156,7 @@ class KscDoubleVar
 : public KscTypedVar
 {
 public:
-    KscDoubleVar(const KscAbsPath &name);
+    KscDoubleVar(const char *name);
 
     KscDoubleVar &operator = (double);
     operator double ();
@@ -175,7 +175,7 @@ class KscStringVar
 : public KscTypedVar
 {
 public:
-    KscStringVar(const KscAbsPath &name);
+    KscStringVar(const char *name);
 
     KscStringVar &operator = (const KsString &);
     operator KsString ();
@@ -195,7 +195,7 @@ class KscTimeVar
 : public KscTypedVar
 {
 public:
-    KscTimeVar(const KscAbsPath &name);
+    KscTimeVar(const char *name);
 
     KscTimeVar &operator = (const KsTime &);
     operator KsTime ();
@@ -214,7 +214,7 @@ class KscVoidVar
 : public KscTypedVar
 {
 public:
-    KscVoidVar(const KscAbsPath &name);
+    KscVoidVar(const char *name);
 
 protected:
     KS_VAR_TYPE varType() const;
@@ -231,7 +231,7 @@ class KscDoubleVecVar
 : public KscTypedVar
 {
 public:
-    KscDoubleVecVar(const KscAbsPath &name);
+    KscDoubleVecVar(const char *name);
 
     KscDoubleVecVar &operator = (const KsDoubleVecValue &);
     operator KsDoubleVecValue ();
@@ -250,6 +250,26 @@ protected:
 
 
 //////////////////////////////////////////////////////////////////////
+// macro to implement the getCastedValue() function
+//
+#define PLT_IMPL_GET_CASTED_VALUE(forClass, castTo)                  \
+    castTo *                                                         \
+    forClass::getCastedValue() {                                     \
+        if(curr_props.value) {                                       \
+            if(curr_props.value->xdrTypeCode() == varType()) {       \
+              return (castTo *)(curr_props.value.getPtr());          \
+            } else {                                                 \
+                fTypeError = true;                                   \
+            }                                                        \
+        }                                                            \
+        castTo *val = new castTo;                                    \
+        curr_props.value =                                           \
+            KsPtrHandle<KsValue>(val, KsOsNew);                      \
+        return val;                                                  \
+    }                                                                \
+typedef void ks_dummy_typedef
+
+//////////////////////////////////////////////////////////////////////
 // some macros to declare and implement the vector types
 //
 // note: first letter of elemtype should be uppercase
@@ -260,7 +280,7 @@ protected:
     : public KscTypedVar                                             \
     {                                                                \
     public:                                                          \
-        Ksc##elemtype##VecVar(const KscAbsPath &name)                \
+        Ksc##elemtype##VecVar(const char *name)                      \
             : KscTypedVar(name) {}                                   \
         Ksc##elemtype##VecVar                                        \
         &operator=(const Ks##elemtype##VecValue &);                  \
@@ -353,7 +373,7 @@ KscIntVar::varType() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscIntVar::KscIntVar(const KscAbsPath &name)
+KscIntVar::KscIntVar(const char *name)
 : KscTypedVar(name)
 {}
 
@@ -370,7 +390,7 @@ KscUIntVar::varType() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscUIntVar::KscUIntVar(const KscAbsPath &name)
+KscUIntVar::KscUIntVar(const char *name)
 : KscTypedVar(name)
 {}
 
@@ -378,7 +398,7 @@ KscUIntVar::KscUIntVar(const KscAbsPath &name)
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscSingleVar::KscSingleVar(const KscAbsPath &name)
+KscSingleVar::KscSingleVar(const char *name)
 : KscTypedVar(name)
 {}
 
@@ -395,7 +415,7 @@ KscSingleVar::varType() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscDoubleVar::KscDoubleVar(const KscAbsPath &name)
+KscDoubleVar::KscDoubleVar(const char *name)
 : KscTypedVar(name)
 {}
 
@@ -412,7 +432,7 @@ KscDoubleVar::varType() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscStringVar::KscStringVar(const KscAbsPath &name)
+KscStringVar::KscStringVar(const char *name)
 : KscTypedVar(name)
 {}
 
@@ -429,7 +449,7 @@ KscStringVar::varType() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscTimeVar::KscTimeVar(const KscAbsPath &name)
+KscTimeVar::KscTimeVar(const char *name)
 : KscTypedVar(name)
 {}
 
@@ -446,7 +466,7 @@ KscTimeVar::varType() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscVoidVar::KscVoidVar(const KscAbsPath &name)
+KscVoidVar::KscVoidVar(const char *name)
 : KscTypedVar(name)
 {}
 
@@ -465,7 +485,7 @@ KscVoidVar::varType() const
 #if 0
 
 inline
-KscDoubleVecVar::KscDoubleVecVar(const KscAbsPath &name)
+KscDoubleVecVar::KscDoubleVecVar(const char *name)
 : KscTypedVar(name)
 {}
 

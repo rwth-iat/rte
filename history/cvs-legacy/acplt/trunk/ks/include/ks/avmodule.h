@@ -46,10 +46,14 @@
 #include "ks/xdr.h"
 
 //////////////////////////////////////////////////////////////////////
+// forward declaration
+//
+class KscServer;
+
+//////////////////////////////////////////////////////////////////////
 // class KscNegotiator
 //
 class KscNegotiator
-// : public KsXdrAble // TODO:neccessary / useful ?
 {
 public:
     virtual bool xdrEncode(XDR *) = 0;
@@ -63,7 +67,7 @@ class KscAvModule
 {
 public:
     virtual ~KscAvModule() {}
-    virtual KscNegotiator *getNegotiator() const = 0;
+    virtual KscNegotiator *getNegotiator(const KscServer *) const = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -91,7 +95,7 @@ class KscAvNoneModule
 : public KscAvModule
 {
 public:
-    KscNegotiator *getNegotiator() const;
+    KscNegotiator *getNegotiator(const KscServer *) const;
 
     static KscNegotiator *getStaticNegotiator();
 

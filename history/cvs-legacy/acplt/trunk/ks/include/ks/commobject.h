@@ -122,6 +122,8 @@ public:
     KscDomain(const char *domain_path);
 //  KscDomain(const KscAbsPath &domain_path);
 
+    ~KscDomain();
+
     KS_OBJ_TYPE typeCode() const;
 
     const KsDomainProjProps *getProjProps() const;
@@ -135,7 +137,7 @@ public:
 
 protected:
     KsDomainProjProps proj_props;
-    PltHashTable<KscAbsPath, KscCommObject *>child_table;
+    PltHashTable<KscAbsPath, KscCommObject *> child_table;
 
     // remove childs from table
     bool flushChilds(KS_OBJ_TYPE typeMask);
@@ -189,7 +191,7 @@ public:
 
     const KsVarProjProps *getProjProps() const;
     const KsVarCurrProps *getCurrProps() const;
-    KsCurrPropsHandle getCurrPropsHandle() const;
+    KsCurrPropsHandle getCurrPropsHandle();
     bool setCurrProps(KsVarCurrProps &cp);
     bool isDirty() const;
    
@@ -401,10 +403,10 @@ KscVariable::getCurrProps() const
 
 inline
 KsCurrPropsHandle
-KscVariable::getCurrPropsHandle() const
+KscVariable::getCurrPropsHandle()
 {
     return KsCurrPropsHandle(&curr_props,
-                             KS_OS_UNMANAGED);
+                             KsOsUnmanaged);
 }
 
 //////////////////////////////////////////////////////////////////////

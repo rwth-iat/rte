@@ -221,6 +221,12 @@ KscCommObject::getNegotiator()
 //////////////////////////////////////////////////////////////////////
 // class KscDomain
 //////////////////////////////////////////////////////////////////////
+KscDomain::~KscDomain()
+{
+    flushChilds(KS_OT_ANY);
+}
+
+//////////////////////////////////////////////////////////////////////
 
 bool
 KscDomain::getProjPropsUpdate() 
@@ -306,6 +312,7 @@ KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
         if(hpp) {
             KscAbsPath new_path =
                 path + hpp->identifier;
+
             PLT_ASSERT(new_path.isValid());
             
             KscCommObject *new_var = 0;
@@ -351,7 +358,7 @@ KscDomain::flushChilds(KS_OBJ_TYPE typeMask)
             temp = 0;
             child_table.remove(it->a_key, temp);
             PLT_ASSERT(temp);
-            // delete temp;
+            delete temp;
         }
         ++it;
     }

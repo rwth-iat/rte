@@ -125,7 +125,7 @@ KscTypedVar::getUpdate()
     bool ok = KscVariable::getUpdate();
 
     if(ok) {
-        ok |= checkType();
+        ok &= checkType();
     }
 
     return ok;
@@ -151,6 +151,8 @@ KscTypedVar::setCurrProps(KsVarCurrProps &cp)
 // class KscIntVar
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+
 KsIntValue *
 KscIntVar::getCastedValue() 
 {
@@ -170,6 +172,10 @@ KscIntVar::getCastedValue()
         return val;
     }
 }
+
+#endif
+
+PLT_IMPL_GET_CASTED_VALUE(KscIntVar, KsIntValue);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -203,6 +209,8 @@ KscIntVar::operator long()
 // class KscUIntVar
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+
 KsUIntValue *
 KscUIntVar::getCastedValue() 
 {
@@ -222,6 +230,10 @@ KscUIntVar::getCastedValue()
         return val;
     }
 }
+
+#endif
+
+PLT_IMPL_GET_CASTED_VALUE(KscUIntVar, KsUIntValue);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -255,6 +267,8 @@ KscUIntVar::operator u_long()
 // class KscSingleVar
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+
 KsSingleValue *
 KscSingleVar::getCastedValue() 
 {
@@ -274,6 +288,10 @@ KscSingleVar::getCastedValue()
         return val;
     }
 }
+
+#endif
+
+PLT_IMPL_GET_CASTED_VALUE(KscSingleVar, KsSingleValue);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -308,6 +326,8 @@ KscSingleVar::operator float()
 // class KscDoubleVar
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+
 KsDoubleValue *
 KscDoubleVar::getCastedValue() 
 {
@@ -327,6 +347,9 @@ KscDoubleVar::getCastedValue()
         return val;
     }
 }
+#endif
+
+PLT_IMPL_GET_CASTED_VALUE(KscDoubleVar, KsDoubleValue);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -360,6 +383,8 @@ KscDoubleVar::operator double()
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+
 KsStringValue *
 KscStringVar::getCastedValue() 
 {
@@ -379,6 +404,10 @@ KscStringVar::getCastedValue()
         return val;
     }
 }
+
+#endif
+
+PLT_IMPL_GET_CASTED_VALUE(KscStringVar, KsStringValue);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -412,6 +441,8 @@ KscStringVar::operator KsString()
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+
 KsTimeValue *
 KscTimeVar::getCastedValue() 
 {
@@ -431,6 +462,10 @@ KscTimeVar::getCastedValue()
         return val;
     }
 }
+
+#endif
+
+PLT_IMPL_GET_CASTED_VALUE(KscTimeVar, KsTimeValue);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -521,5 +556,6 @@ KscDoubleVecVar::operator KsDoubleVecValue()
 //////////////////////////////////////////////////////////////////////
 
     
+
 
 
