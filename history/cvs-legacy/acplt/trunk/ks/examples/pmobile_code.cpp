@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.1 1997-09-09 15:32:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.2 1997-09-10 14:56:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -88,9 +88,9 @@ void buildPackage(istream & istr, KscPackage &pkg)
 
 // ----------------------------------------------------------------------------
 //
-void keepSpinning(KscPackage &pkg, int secs)
+void keepSpinning(KscPackage &pkg, int secs, bool verbose)
 {
-    for ( ;; ) {
+    for (;;) {
         if ( !pkg.getUpdate() ) {
             ls << "Oops: couldn't update the package.";
             ls.error();
@@ -98,20 +98,22 @@ void keepSpinning(KscPackage &pkg, int secs)
         ls << "package updated.";
         ls.debug();
 
-        PltIterator<KscVariableHandle> *pit = pkg.newVariableIterator();
-        if ( pit ) {
-            ls << "My shopping bag contains...";
-            ls.debug();
-            for (PltIterator<KscVariableHandle> & it = *pit;
-                 it;
-                 ++it) {
-                ls << "  " << (*it)->getFullPath();
+        if (verbose) {
+            PltIterator<KscVariableHandle> *pit = pkg.newVariableIterator();
+            if ( pit ) {
+                ls << "My shopping bag contains...";
+                ls.debug();
+                for (PltIterator<KscVariableHandle> & it = *pit;
+                     it;
+                     ++it) {
+                    ls << "  " << (*it)->getFullPath();
+                    ls.debug();
+                }
+                delete pit;
+            } else {
+                ls << "Can't create iterator for package.\n";
                 ls.debug();
             }
-            delete pit;
-        } else {
-            ls << "Can't create iterator for package.\n";
-            ls.debug();
         }
         sleep(secs);
     }
@@ -135,7 +137,7 @@ int main(int argc, char **argv)
     ls << "Package created.";
     ls.debug();
     
-    keepSpinning(pkg, sleepsecs);
+    keepSpinning(pkg, sleepsecs, false);
 
     return 0;
 } // main
