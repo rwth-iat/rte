@@ -50,6 +50,9 @@
 #include "ks/avmodule.h"
 #include "ks/client.h"
 
+//////////////////////////////////////////////////////////////////////
+
+#define KSC_USE_QSORT 1
 
 //////////////////////////////////////////////////////////////////////
 // This is a helper class which groups together KscVariable objects
@@ -76,7 +79,7 @@ public:
 //    KscNegotiator *getNegotiator() const;
 
 private:
-#if 0
+#if KSC_USE_QSORT
     PltList<KscVariableHandle> var_lst;
 #else
     PltPriorityQueue<KscVariableHandle> var_lst;
@@ -254,7 +257,7 @@ inline
 bool
 KscSorterBucket::add(KscVariableHandle var)
 {
-#if 0
+#if KSC_USE_QSORT
     bool ok = var_lst.addFirst(var);
 #else
     bool ok = var_lst.add(var);

@@ -41,6 +41,10 @@
 
 #include "ks/sorter.h"
 
+#if KSC_USE_QSORT
+#include <plt/sort.h>
+#endif
+
 //////////////////////////////////////////////////////////////////////
 
 bool
@@ -73,13 +77,13 @@ KscSorterBucket::getSortedVars()
         return PltArray<KscVariableHandle>(0);
     }
 
-#if 0
+#if KSC_USE_QSORT
     size_t count = 0;
     while(!var_lst.isEmpty()) {
         sv[count++] = var_lst.removeFirst();
     }
 
-    plt_qsort(sv);
+    PltSort<KscVariableHandle>::qsort(sv);
 #else
     size_t count = 0;
     while(!var_lst.isEmpty()) {
