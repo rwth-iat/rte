@@ -8,7 +8,7 @@ REPOSITORY = dka0:[martin.cxx_repository]
 
 CXX = cxx
 
-CXX_FLAGS = /notemplate_define /repository=($(REPOSITORY))
+CXX_FLAGS = /notemplate_define /repository=($(REPOSITORY)) /debug
 #/notemplate_define
 
 CXX_DEFINES = PLT_SYSTEM_OPENVMS=1
@@ -45,6 +45,7 @@ $(LIBPLT_OBJECTS):	%.obj: [-.-.src]%.cpp
 		/define=($(CXX_DEFINES)) $<
 
 libplt$(A):	$(LIBPLT_OBJECTS)
+	-del libplt$(A);*
 	$(AR) /create libplt$(A) $^
 
 clean:

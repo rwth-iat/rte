@@ -20,6 +20,7 @@ CXX_LIBKS_SOURCES = \
 	templates.cpp
 
 CXX_LIBKSSVR_SOURCES = \
+	inaddrset.cpp \
 	manager.cpp \
 	server.cpp \
 	simpleserver.cpp \
@@ -61,6 +62,7 @@ LIBKS_OBJECTS2 = \
 LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2)
 
 LIBKSSVR_OBJECTS = \
+        inaddrset$(O) \
 	manager$(O) \
 	server$(O) \
 	simpleserver$(O) \

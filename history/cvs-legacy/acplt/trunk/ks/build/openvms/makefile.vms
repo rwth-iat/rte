@@ -58,7 +58,7 @@ CXX_COMPILE = $(CXX) \
 		$(CXX_FLAGS)
 
 ### Include auto dependencies
-#include [-]depend.nt
+include depend.vms
 
 $(LIBKS_OBJECTS): %.obj: [-.-.src]%.cpp
 	$(CXX_COMPILE) $<
@@ -88,18 +88,23 @@ tshell.exe : tshell.obj $(LIBKS) $(LIBKSCLN)
 	$(LD) $(LD_FLAGS) tshell.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 libks$(A): $(LIBKS_OBJECTS)
+	-del libks$(A);*
 	$(AR) /create libks$(A) $^
 
 libkssvr$(A): $(LIBKSSVR_OBJECTS)
+	-del libkssvr$(A);*
 	$(AR) /create libkssvr$(A) $^
 
 libkscln$(A): $(LIBKSCLN_OBJECTS)
+	-del libkscln$(A);*
 	$(AR) /create libkscln$(A) $^
 
 clean:
 	del *$(O);*
 	del libks$(A);*
 	del libkssrv$(A);*
+	del libkscln$(A);*
+	del t*$(EXE);*
 
 # EOF makefile.vms
 

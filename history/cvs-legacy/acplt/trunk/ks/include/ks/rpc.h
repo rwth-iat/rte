@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.8 1997-08-18 13:41:37 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.9 1997-09-02 15:08:27 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,6 +45,9 @@
 #if PLT_SYSTEM_HPUX
 extern "C" {
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 extern int get_myaddress(struct sockaddr_in *);
@@ -53,6 +56,8 @@ extern int get_myaddress(struct sockaddr_in *);
 
 #if PLT_SYSTEM_LINUX
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 #endif
@@ -90,10 +95,16 @@ static KsNTOncRpc ks_nt_oncrpc;
 #endif
 
 #if PLT_SYSTEM_OPENVMS
-#include <sys/socket.h>
+//
+// This seems to be very order dependant!!!
+// Don't put the rpc below the socket headers.
+//
 #include <rpc/rpc.h>
-// #include <rpc/clnt.h>
 #include <rpc/pmap_clnt.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+// #include <rpc/clnt.h>
 #endif
 
 #endif // KS_RPC_INCLUDED
