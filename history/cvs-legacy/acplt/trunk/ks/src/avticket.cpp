@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.15 1997-09-15 10:59:27 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.16 1998-06-29 11:20:38 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -210,6 +210,20 @@ KsAvTicket::emergencyTicket()
     static KsAvNoneTicket e_ticket(KS_ERR_GENERIC, KS_AC_NONE);
     return &e_ticket;
 }
+
+
+bool
+KsAvTicket::xdrEncodeTrailer(XDR *)
+{
+    return true;
+} // KsAvTicket::xdrEncodeTrailer
+
+bool
+KsAvTicket::xdrDecodeTrailer(XDR *)
+{
+    return true;
+} // KsAvTicket::xdrDecodeTrailer
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
