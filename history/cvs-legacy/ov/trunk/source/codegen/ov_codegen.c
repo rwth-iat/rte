@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.12 2000-02-10 13:06:58 dirk Exp $
+*   $Id: ov_codegen.c,v 1.13 2001-07-09 12:23:45 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -26,6 +26,7 @@
 *	15-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
+*	07-Mai-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Bugfix: get and set parameters of static vectors.
 */
 
 #include <ctype.h>
@@ -1093,7 +1094,7 @@ void ov_codegen_printclassaccessorfncdecls(
 				pclass->identifier, pvar->identifier);
 			fprintf(fp, "    OV_INSTPTR_%s_%s pobj", plib->identifier,
 				pclass->identifier);
-			if(!pvar->veclen) {
+			if(pvar->veclen!=1) {
 				fprintf(fp, ",\n    OV_UINT *pveclen");
 			}
 			fprintf(fp, "\n);\n");
@@ -1128,7 +1129,7 @@ void ov_codegen_printclassaccessorfncdecls(
 				break;
 			}
 			fprintf(fp, "value");
-			if(!pvar->veclen) {
+			if(pvar->veclen!=1) {
 				fprintf(fp, ",\n    const OV_UINT veclen");
 			}
 			fprintf(fp, "\n);\n");
