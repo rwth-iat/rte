@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.28 1997-12-11 17:19:18 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.29 1998-06-29 11:22:52 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -35,10 +35,17 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// svrbase.cpp
-//
+/*
+ * svrbase.cpp -- The basic communication and dispatching stuff common to
+ *                all ACPLT/KS servers (and managers). It´s sometimes getting
+ *                real dirty here as we´ve to hide the communication details
+ *                from the server application programmer. Especially with
+ *                the connection manager and other communication layers this
+ *                leads to a bunch of #defines. But now -- enjoy =:)
+ *
+ * Written by Harald Albrecht & Martin Kneissl
+ * <harald@plt.rwth-aachen.de> <martin@plt.rwth-aachen.de>
+ */
 
 #if PLT_SYSTEM_NT
 //
@@ -60,6 +67,10 @@
 #define bzero(x, y) memset(x, 0, y)
 #endif
 
+#if PLT_SYSTEM_SOLARIS
+#include <netconfig.h>
+#endif
+
 #include "ks/svrbase.h"
 #include "plt/log.h"
 
@@ -68,14 +79,15 @@
 #include <iomanip.h>
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// utilities
+
+// ---------------------------------------------------------------------------
+// As we don't know how expensive the call to FD_SETSIZE is, we're cashing the
+// result here. On some systems, FD_SETSIZE boils down to a (fast!) kernel
+// trap, on some others to a sloooow kernel trap. So we take our chances here.
+// BTW -- with NT it boils down to a stupid constant: 64. Believe it or not:
+// that is claimed to be "new technology" -- hah!
 //
-// As we don't know how expensive the call to FD_SETSIZE is, we're
-// cashing the result here. On some systems, FD_SETSIZE boils down to
-// a (fast!) kernel trap, on some others to a sloooow kernel trap. So
-// we take our chances here...
-//
+#if !PLT_USE_BUFFERED_STREAMS
 static size_t ks_dtsz;
 static bool ks_dtsz_valid = false;
 inline static size_t
@@ -85,7 +97,8 @@ ks_dtablesize()
         ks_dtsz = FD_SETSIZE;
     }
     return ks_dtsz;
-}
+} // 
+#endif ks_dtablesize
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -112,168 +125,198 @@ KsTimerEvent::trigger()
 }
 
 
-/////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 // There can be only one... KS server object. We need this pointer lateron
 // when redirecting (de-)serializing requests comming from the RPC level to
-// our server object.
+// our server object. And this pointer is also very handy in various places,
+// so there´s even an accessor for it in the KsServerBase class.
 //
 KsServerBase *
 KsServerBase::the_server = 0;
 
 
-////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 // Construction & destruction area. Watch for falling bits...
 // Uhh, I've been hit.
-
+// Me too, once again...
+//
 KsServerBase::KsServerBase()
-: _sock_port(KS_ANYPORT),
-  _tcp_transport(0),
-  _shutdown_flag(0),
-  _send_buffer_size(16384),
-  _receive_buffer_size(16384)
+    : _sock_port(KS_ANYPORT),
+#if PLT_USE_BUFFERED_STREAMS
+      _cnx_manager(0), // don't create a connection manager object yet as a
+                       // server programmer might wish to subclass it and use
+		       // this particular implementation.
+#endif
+      _tcp_transport(0),
+      _shutdown_flag(0),
+      _send_buffer_size(16384),
+      _receive_buffer_size(16384)
 {
     PLT_PRECONDITION( the_server == 0 );
     the_server = this;
     _is_ok = true;
-}
+} // KsServerBase::KsServerBase
 
-/////////////////////////////////////////////////////////////////////////////
-// Now we're through. Clean up everything
+
+// ---------------------------------------------------------------------------
+// Now we're through. Clean up everything. Especially get rid of a possible
+// connection manager.
 //
 KsServerBase::~KsServerBase()
 {
     cleanup();
 
+#if PLT_USE_BUFFERED_STREAMS
+    if ( _cnx_manager ) {
+	//
+	// Get rid of the communication manager. We can´t do this in the
+	// cleanup() method as this method is also called when stopping the
+	// server. But a connection manager needs to be created only once
+	// before starting the server and thus can only be destroyed when
+	// the server object is destroyed too.
+	//
+    	delete _cnx_manager;
+	_cnx_manager = 0;
+    }
+#endif
+
     PLT_ASSERT(the_server == this);
     the_server = 0;
-} 
+} // KsServerBase::~KsServerBase
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Cleanup such things that aren´t needed anymore after stopping the server.
+// Don´t clean up things that might be needed the next time the server is
+// started again (for instance, a connection manager).
+//
 void KsServerBase::cleanup()
 {
     //
-    // destroy transport, if there is one left...
+    // Destroy the TCP/IP transport, if there is one left...
     //
     if ( _tcp_transport ) {
-        svc_destroy(_tcp_transport); 
+#if !PLT_USE_BUFFERED_STREAMS
+        svc_destroy(_tcp_transport);
+#else
+	_cnx_manager->removeConnection(*_tcp_transport);
+	_tcp_transport->shutdown();
+    	delete _tcp_transport;
+#endif
         _tcp_transport = 0;
     }
-
     //
-    // remove remaining timer events, there's no need for them now.
+    // Remove remaining timer events, there's no need for them now.
     //
     while (!_timer_queue.isEmpty()) {
         KsTimerEvent *pevent = _timer_queue.removeFirst();
         delete pevent;
     }
-}
+} // KsServerBase::cleanup
 
-//////////////////////////////////////////////////////////////////////
 
-#if 0
-/////////////////////////////////////////////////////////////////////////////
-// The RPC library is so brain-damaged, I wanna cry. If you want to close
-// down cleanly, you have to destroy ALL transports currently in use. But
-// you only know of the primary transport(s) you've once created. The other
-// ones are the transports that are used for the communication with the
-// particular clients and are hidden within the RPC layer. And they must be
-// closed too.
+#if PLT_USE_XTI
+// ---------------------------------------------------------------------------
 //
-void KsServerBase::destroyLurkingTransports()
+//
+PltString KsServerBase::getNetworkTransportDevice(const char *protocol)
 {
-    int set_size = ks_dtablesize();
-    bool lurking = false;
-
-    for ( int fd = 0; fd < set_size; fd++ ) {
-        if ( FD_ISSET(fd, &svc_fdset) ) {
-            //
-            // First shoot the transport's socket...
-            //
-            close(fd);
-            lurking = true;
-        }
+    void             *handle;
+    struct netconfig *nc;
+    PltString         device("/dev/", protocol);
+    
+    handle = setnetconfig();
+    while ( (nc = getnetconfig(handle)) != 0 ) {
+    	if ( strcmp(nc->nc_proto, protocol) == 0 ) {
+	    device = PltString(nc->nc_device);
+	    break;
+	}
     }
-    if ( lurking ) {
-        //
-        // Now kill the transports by trying to read from them...
-        //
-        svc_getreqset(&svc_fdset);
-    }
-}
+    endnetconfig(handle);
+    return device;
+} // KsServerBase::getNetworkTransportDevice
 #endif
 
-////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------
 // Now comes the dispatcher section. Here we redirect and bounce request
 // forth and back until no-one knows where the request comes from and to
 // whom it should be send, and who's responsible for all this mess. Hey,
 // this is just like in real life...
 //
-////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------
 // This is the wrapper that redirects incomming requests issued by the RPC
-// layer up to the responsible server object.
+// layer up to the responsible server object. As mentioned in the header of
+// this source file, this wrapper is communication layer-dependant. But thanks
+// to the transport interface generalization this is rather painless to
+// achieve.
 //
+#if !PLT_USE_BUFFERED_STREAMS
 extern "C" void 
 ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
 {
     PLT_PRECONDITION(KsServerBase::the_server);
-    PLT_DMSG_ADD("Req: " << hex << request->rq_proc << dec);
+    
+    KsServerBase::the_server->_transport.setNewRequest(transport, request);
+    KsServerBase::the_server->dispatchTransport(KsServerBase::the_server->_transport);
+} // ks_c_dispatch
+#endif
+
+
+// ---------------------------------------------------------------------------
+//
+void KsServerBase::dispatchTransport(KssTransport &transp)
+{
+
+    PLT_DMSG_ADD("Req: " << hex << transp.getServiceId() << dec);
     PLT_DMSG_END;
-    if ( request->rq_proc == 0 ) {
+    if ( transp.getServiceId() == 0 ) {
         //
         // This is just here for the compliance with ONC/RPC rules. If
         // someone pings us, we send back a void reply.
         //
         PLT_DMSG_ADD("Pinged...");
         PLT_DMSG_END;
-        svc_sendreply(transport, (xdrproc_t) xdr_void, 0); // FIXME ??
+	transp.sendPingReply();
     } else {
         //
-        // A real request
+        // Let´s see: it´s a real request... at least it seems to be so.
         //
-        XDR *xdr = KsServerBase::the_server->getXdrForTransport(transport);
-
-        // get a ticket
+	XDR *xdr = transp.getDeserializingXdr();
+    	//
+        // Now get a ticket -- nope, not a parking ticket, but an A/V ticket
+	// instead, which can hold authentification/verification information.
+	// If this fails (for whatever reason, for it is memory shortage or
+	// an invalid a/v header) take the emergency ticket, which has been
+	// statically allocated and is therefore always available.
+	//
         KsAvTicket *pTicket = KsAvTicket::xdrNew(xdr);
-        if (!pTicket) {
-            // no ticket ?? Use emergency ticket!
+        if ( !pTicket ) {
             pTicket = KsAvTicket::emergencyTicket();
         }
         PLT_ASSERT(pTicket); // we have at least an error ticket
 
-        if ( pTicket->result()!= KS_ERR_OK ) {
+        if ( pTicket->result() != KS_ERR_OK ) {
             //
             // Ups. Something went wrong when we created the A/V ticket. So
-            // just send the error reply...
+            // just send back the error reply...
             //
-            KsServerBase::sendErrorReply(transport, 
-                                         *pTicket, 
-                                         pTicket->result());
+	    transp.finishRequestDeserialization(*pTicket, false);
+	    transp.sendErrorReply(*pTicket, pTicket->result());
         } else {
             //
-            // Save the socket address of the sender
+            // Save the socket address of the sender into the ticket. The
+	    // ticket then might decide to drop the connection...
             //
-            sockaddr * sa;
+            struct sockaddr *sa; // TODO
             int namelen;
-#if PLT_SYSTEM_SOLARIS
-            // solaris does not store a valid sockaddr_in in xp_raddr...
-            // instead it uses a netbuf in xp_rtaddr...
-            // TODO: Is this correct??
-            sa = (sockaddr*) transport->xp_rtaddr.buf; 
-            namelen = transport->xp_rtaddr.len;
-#else
-            //
-            // xp_raddr contains a valid sockaddr_in
-            //
-            sa = (sockaddr *) &transport->xp_raddr;
-            PLT_ASSERT(sa->sa_family == AF_INET);
-            namelen = sizeof (sockaddr_in);
-#endif // PLT_SYSTEM_SOLARIS        
-
-            bool accept = 
-                pTicket->setSenderAddress(sa, namelen);
-            if (!accept) {
-                // TODO: may drop connection
+	    namelen = sizeof(sockaddr);
+    	    sa = (struct sockaddr *) transp.getPeerAddress(namelen);
+            bool accept = pTicket->setSenderAddress(sa, namelen);
+            if ( !accept ) {
+                transp.personaNonGrata();
+		return;
             }
 
 #if PLT_DEBUG
@@ -282,46 +325,53 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
             PLT_DMSG_END;
 #endif
             //
-            // We're now ready to serve the service...
+            // We're now ready to serve the service request...
             //
-            KsServerBase::the_server->dispatch(request->rq_proc, 
-                                               transport, 
-                                               xdr,
-                                               *pTicket);
+            KsServerBase::the_server->dispatch(
+	    	transp.getServiceId(), 
+                transp,
+		xdr, *pTicket);
         }
-        if (pTicket && pTicket != KsAvTicket::emergencyTicket()) {
+        if ( pTicket && (pTicket != KsAvTicket::emergencyTicket()) ) {
             delete pTicket;
         }
     } // if (pinged) else
-}
+} // KsServerBase::dispatchTransport
 
 
-//////////////////////////////////////////////////////////////////////
-// Here we can find the real dispatcher. It may be extended in 
-// derived classes (e.g. KsManager)
-//////////////////////////////////////////////////////////////////////
-
+// ---------------------------------------------------------------------------
+// Here comes the real service request dispatcher. It may be extended in 
+// derived classes (like KsManager). If you extend the dispatcher, then you
+// have to do it according to the following pattern:
+//   case YOUR_SERVICE_ID:
+//       read in the service parameters
+//       finish request deserialization
+//       do whatever you need to do to server the request
+//       send back the (error) reply
+//       ...and that´s it!
+//
 void
 KsServerBase::dispatch(u_long serviceId,
-                         SVCXPRT *xprt,
-                         XDR *xdrIn,
-                         KsAvTicket &ticket)
+                       KssTransport &transport,
+                       XDR *xdrIn,
+                       KsAvTicket &ticket)
 {
     bool decodedOk = true;
-    switch(serviceId) {
+    switch ( serviceId ) {
         
     case KS_GETVAR:
         {
             KsGetVarParams params(xdrIn, decodedOk);
-            if (decodedOk) {
+	    transport.finishRequestDeserialization(ticket, decodedOk);
+            if ( decodedOk ) {
                 // execute service function
                 KsGetVarResult result(params.identifiers.size());
                 getVar(ticket, params, result);
                 // send back result
-                sendReply(xprt, ticket, result);
+                transport.sendReply(ticket, result);
             } else {
                 // not properly decoded
-                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+                transport.sendErrorReply(ticket, KS_ERR_GENERIC);
             }
         }
         break;
@@ -329,15 +379,16 @@ KsServerBase::dispatch(u_long serviceId,
     case KS_SETVAR:
         {
             KsSetVarParams params(xdrIn, decodedOk);
-            if (decodedOk) {
+	    transport.finishRequestDeserialization(ticket, decodedOk);
+            if ( decodedOk ) {
                 // execute service function
                 KsSetVarResult result(params.items.size());
                 setVar(ticket, params, result);
                 // send back result
-                sendReply(xprt, ticket, result);
+                transport.sendReply(ticket, result);
             } else {
                 // not properly decoded
-                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+                transport.sendErrorReply(ticket, KS_ERR_GENERIC);
             }
         }
         break;
@@ -345,15 +396,16 @@ KsServerBase::dispatch(u_long serviceId,
     case KS_GETPP:
         {
             KsGetPPParams params(xdrIn, decodedOk);
-            if (decodedOk) {
+	    transport.finishRequestDeserialization(ticket, decodedOk);
+            if ( decodedOk ) {
                 // execute service function
                 KsGetPPResult result;
                 getPP(ticket, params, result);
                 // send back result
-                sendReply(xprt, ticket, result);
+                transport.sendReply(ticket, result);
             } else {
                 // not properly decoded
-                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+                transport.sendErrorReply(ticket, KS_ERR_GENERIC);
             }
         }
         break;
@@ -361,7 +413,8 @@ KsServerBase::dispatch(u_long serviceId,
     case KS_EXGDATA:
         {
             KsExgDataParams params(xdrIn, decodedOk);
-            if(decodedOk) {
+	    transport.finishRequestDeserialization(ticket, decodedOk);
+            if ( decodedOk ) {
                 // execute service function
                 KsExgDataResult result(params.set_vars.size(),
                                        params.get_vars.size());
@@ -370,14 +423,14 @@ KsServerBase::dispatch(u_long serviceId,
                 { // allocation ok
                     exgData(ticket, params, result);
                     // send back result
-                    sendReply(xprt, ticket, result);
+                    transport.sendReply(ticket, result);
                 } else {
                     // allocation failed
-                    sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+                    transport.sendErrorReply(ticket, KS_ERR_GENERIC);
                 }
             } else {
                 // not properly decoded
-                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+                transport.sendErrorReply(ticket, KS_ERR_GENERIC);
             }
         }
         break;
@@ -386,21 +439,24 @@ KsServerBase::dispatch(u_long serviceId,
         // 
         // This is an unknown service.
         //
-        sendErrorReply(xprt, ticket, KS_ERR_NOTIMPLEMENTED);
+	transport.finishRequestDeserialization(ticket, false);
+        transport.sendErrorReply(ticket, KS_ERR_NOTIMPLEMENTED);
     }
-}
+} // KsServerBase::dispatch
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// The following ACPLT/KS base services are not implemented by default. A
+// derived class is responsible for providing suitable implementations.
+//
 void 
 KsServerBase::getVar(KsAvTicket &,
                      const KsGetVarParams &,
                      KsGetVarResult & result) 
 {
     result.result = KS_ERR_NOTIMPLEMENTED;
-}
+} // KsServerBase::getVar
 
-//////////////////////////////////////////////////////////////////////
 
 void
 KsServerBase::setVar(KsAvTicket &,
@@ -408,9 +464,8 @@ KsServerBase::setVar(KsAvTicket &,
                      KsSetVarResult & result) 
 {
     result.result = KS_ERR_NOTIMPLEMENTED;
-}
+} // KsServerBase::setVar
 
-//////////////////////////////////////////////////////////////////////
 
 void 
 KsServerBase::getPP(KsAvTicket &,
@@ -418,9 +473,8 @@ KsServerBase::getPP(KsAvTicket &,
                     KsGetPPResult & result)
 {
     result.result = KS_ERR_NOTIMPLEMENTED;
-}
+} // KsServerBase::getPP
 
-//////////////////////////////////////////////////////////////////////
 
 void 
 KsServerBase::exgData(KsAvTicket &,
@@ -428,124 +482,30 @@ KsServerBase::exgData(KsAvTicket &,
                       KsExgDataResult & result) 
 {
     result.result = KS_ERR_NOTIMPLEMENTED;
-}
+} // KsServerBase::exgData
 
 
-/////////////////////////////////////////////////////////////////////////////
-// Because objects can serialize and deserialize themselves into/from xdr
-// streams, we often need to know the xdr stream identifier when
-//   **DESERIALIZING**
-// requests. Never, NEVER, NEVER use getXdrForTransport() when SERIALIZING
-// replys or you're in deep trouble, pals.
-//
-// C part
-extern "C" bool_t 
-ks_c_get_xdr_for_transport(XDR *xdr, void *obj_ptr)
-{
-    *((XDR **) obj_ptr) = xdr;
-    return 1;
-} 
-
-//////////////////////////////////////////////////////////////////////
-// C++ part
-XDR *
-KsServerBase::getXdrForTransport(SVCXPRT *transport)
-{
-    XDR *xdr;
-
-    svc_getargs(transport, 
-                (xdrproc_t)ks_c_get_xdr_for_transport, 
-                (caddr_t)&xdr);
-
-    PLT_ASSERT(xdr->x_op == XDR_DECODE);
-
-    return xdr;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-// The next function is a helper that sends back a complete KS reply to some
-// KS client. In every case, the reply consists of the A/V information as
-// well as of an error code. If there is no error, then the service reply
-// data will follow.
-//
-typedef struct {
-    KsAvTicket     *ticket;
-    KsResult *result;
-    KS_RESULT       result_state;
-} KsXdrReplyInfo;
-
-
-//////////////////////////////////////////////////////////////////////
-// C part
-//
-extern "C" bool_t 
-ks_c_send_reply(XDR *xdr, void *reply_info)
-{
-    KsXdrReplyInfo *info = (KsXdrReplyInfo *) reply_info;
-
-    if ( !info->ticket->xdrEncode(xdr) ) {
-        return FALSE;
-    }
-    if ( info->result == 0 ) {
-        //
-        // We've got stuck with an error result very early in the
-        // decoding process. Thus there's no full result available and
-        // we just send back the error code...
-        //
-        return ks_xdre_enum(xdr, &(info->result_state));
-    } else {
-        //
-        // We have a full blown result to send back...
-        //
-        return info->result->xdrEncode(xdr);
-    }
-} 
-
-/////////////////////////////////////////////////////////////////////////////
-// Send back an full blown service reply.
-//
-void 
-KsServerBase::sendReply(SVCXPRT *transport, 
-                        KsAvTicket &ticket,
-                        KsResult &result)
-{
-    KsXdrReplyInfo answer;
-
-    answer.ticket = &ticket;
-    answer.result = &result;
-    answer.result_state = KS_ERR_GENERIC; // should never be used
-    svc_sendreply(transport, (xdrproc_t) ks_c_send_reply, (char*) &answer);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// Send back an error reply to the KS client.
-//
-void KsServerBase::sendErrorReply(SVCXPRT *transport, KsAvTicket &ticket,
-				  KS_RESULT result)
-{
-    KsXdrReplyInfo answer;
-
-    answer.ticket = &ticket;
-    answer.result = 0;
-    answer.result_state = result;
-    svc_sendreply(transport, (xdrproc_t) ks_c_send_reply, (char*) &answer);
-}
-
-
-////////////////////////////////////////////////////////////////////////////
-// Event handling section.
+// ---------------------------------------------------------------------------
+// Event handling section (timeouts & i/o).
 // Here we deal with timer events and impatient KS clients requesting
 // services from us...
 //
 
 
-//////////////////////////////////////////////////////////////////////
-// Helper function. Get ready read fds with optional timeout
-// Return number of ready fds or -1 on error
+// ---------------------------------------------------------------------------
+// Helper function. Get ready readable fds with optional timeout. When using
+// a connection manager we´re watching for writeable fds too.
+// Returns number of ready fds or -1 on error, and the fdsets are updated to
+// reflect file descriptors willing to do i/o. Note that this helper function
+// eventually boils down to a select() with an optional PltTime timeout.
 //
 static int
-getReadyFds(fd_set & fds, const KsTime * pto)
+#if !PLT_USE_BUFFERED_STREAMS
+getReadyFds(fd_set &read_fds, const KsTime *pto)
+#else
+getReadyFds(fd_set &read_fds, fd_set &write_fds, size_t numfds, 
+            const KsTime *pto)
+#endif
 {
 #if PLT_SYSTEM_NT
     //
@@ -567,15 +527,22 @@ getReadyFds(fd_set & fds, const KsTime * pto)
         pTimeout = 0;
     }
 
+#if !PLT_USE_BUFFERED_STREAMS
+#define WRITE_FDS 0
     size_t numfds = ks_dtablesize();
-
-#if PLT_SYSTEM_HPUX
-    int res = select(numfds, (int*) &fds,0,0, pTimeout); // TODO wasdas?
 #else
-    int res = select(numfds, &fds,0,0, pTimeout);
+#define WRITE_FDS &write_fds
 #endif
 
-    if (res == -1) {
+#if PLT_SYSTEM_HPUX
+    int res = select(numfds,
+	             (int *) &read_fds, (int *) WRITE_FDS, 0,
+	             pTimeout);
+#else
+    int res = select(numfds, &read_fds, WRITE_FDS, 0, pTimeout);
+#endif
+
+    if ( res == -1 ) {
         // select reports an error
 #if PLT_SYSTEM_NT
         errno = WSAGetLastError();
@@ -585,7 +552,10 @@ getReadyFds(fd_set & fds, const KsTime * pto)
         if (errno == EINTR) {
             // interrupted by a signal
             // interpret as timeout
-            FD_ZERO(&fds);
+            FD_ZERO(&read_fds);
+#if PLT_USE_BUFFERED_STREAMS
+	    FD_ZERO(&write_fds);
+#endif
             res = 0;
         } else {
             // something unexpected happened
@@ -593,7 +563,7 @@ getReadyFds(fd_set & fds, const KsTime * pto)
         }
     }
     return res;
-}        
+} // getReadyFds
 
 
 //////////////////////////////////////////////////////////////////////
@@ -603,25 +573,71 @@ getReadyFds(fd_set & fds, const KsTime * pto)
 bool
 KsServerBase::hasPendingEvents() const
 {
+    //TODO cnx mgr...
+#if !PLT_USE_BUFFERED_STREAMS
     fd_set read_fds = svc_fdset;
+#else
+    fd_set read_fds, write_fds;
+    size_t numfds = _cnx_manager->getFdSets(read_fds, write_fds);
+#endif
     KsTime zerotimeout;
     return 
-        ( 
-               !_timer_queue.isEmpty()
-            && !_timer_queue.peek()->remainingTime().isZero()
+        (   // check for a timer event...
+                !_timer_queue.isEmpty()
+             && !_timer_queue.peek()->remainingTime().isZero()
         )
+#if PLT_USE_BUFFERED_STREAMS
+	||  // check to see whether there is a connection timeout
+	(   // pending...
+	         _cnx_manager->mayHaveTimeout()
+	     && !_cnx_manager->getEarliestTimeoutSpan().isZero()
+        )
+#endif
+#if !PLT_USE_BUFFERED_STREAMS
         || getReadyFds(read_fds, &zerotimeout) > 0;
-}
+#else
+        || getReadyFds(read_fds, write_fds, numfds, &zerotimeout) > 0;
+#endif
+} // KsServerBase::hasPendingEvents
+
 
 //////////////////////////////////////////////////////////////////////
-//
 // Serve RPC requests with timeout. Return -1 on error or the number
-// of served fds
+// of served fds.
 //
 int
-KsServerBase::serveRequests(const KsTime *pTimeout) {
+KsServerBase::serveRequests(const KsTime *pTimeout)
+{
+#if !PLT_USE_BUFFERED_STREAMS
     fd_set read_fds = svc_fdset;
-    int res = getReadyFds(read_fds,pTimeout);
+    int res = getReadyFds(read_fds, pTimeout);
+#else
+    KsTime cnx_timeout;
+    bool   has_cnx_timeout = false;
+    fd_set read_fds, write_fds;
+    
+    if ( _cnx_manager->mayHaveTimeout() ) {
+	//
+	// There is a timeout in the connection manager´s queue, so let´s
+	// check when this timeout will happen. If it would happen earlier
+	// than a possible other timeout, then we´ll take the timeout from
+	// the connection manager.
+	//
+	cnx_timeout = _cnx_manager->getEarliestTimeoutSpan();
+	if ( pTimeout ) {
+	    if ( cnx_timeout < *pTimeout ) {
+		pTimeout = &cnx_timeout;
+		has_cnx_timeout = true;
+	    }
+	} else {
+	    pTimeout = &cnx_timeout;
+	    has_cnx_timeout = true;
+	}
+    }
+    
+    size_t numfds = _cnx_manager->getFdSets(read_fds, write_fds);
+    int res = getReadyFds(read_fds, write_fds, numfds, pTimeout);
+#endif
     if (res > 0) {
         //
         // Now as there are requests pending on some connections, try to
@@ -645,23 +661,52 @@ KsServerBase::serveRequests(const KsTime *pTimeout) {
         // to the user what to do providing a hook.
         signal(SIGPIPE, SIG_IGN);
 #endif
-        
+
+#if !PLT_USE_BUFFERED_STREAMS
         svc_getreqset(&read_fds);
-    } 
+#else
+	int serviceables = _cnx_manager->processConnections(read_fds,
+		                                            write_fds);
+	while ( serviceables-- ) {
+	    KssConnection *con = _cnx_manager->getNextServiceableConnection();
+	    if ( !con ) {
+		break;
+	    }
+	    dispatchTransport(* (KssXDRConnection *) con);
+    	    _cnx_manager->reactivateConnection(*con);
+	}
+#endif
+    } else {
+#if PLT_USE_BUFFERED_STREAMS
+	if ( has_cnx_timeout ) {
+	    //
+	    // We had a connection timeout. So let the connection manager do
+	    // its dirty duty.
+	    //
+	    _cnx_manager->processTimeout();
+	}
+#endif
+    }
     return res;
-}
+} // KsServerBase::serveRequests
+
 
 //////////////////////////////////////////////////////////////////////
-
+// Handles pending events or waits at most until timeout. In this
+// case it returns false, otherwise -- when events have been served --
+// it returns true.
+//
 bool
-KsServerBase::servePendingEvents(KsTime * pTimeout) {
+KsServerBase::servePendingEvents(KsTime * pTimeout)
+{
     const KsTimerEvent *pEvent = peekNextTimerEvent();
-    if (pEvent) {
+    if ( pEvent ) {
         //
-        // timerqueue nonempty
+        // The timerqueue is not empty, so peek at the first entry
+	// which is the event that will trigger soon...
         //
         KsTime timeleft( pEvent->remainingTime() );
-        if (!timeleft.isZero()) {
+        if ( !timeleft.isZero() ) {
             // 
             // The next timer event is still not pending.
             //
@@ -669,7 +714,7 @@ KsServerBase::servePendingEvents(KsTime * pTimeout) {
             // external timeout and the time left until the
             // timer event occurs
             //
-            if (pTimeout && *pTimeout < timeleft) {
+            if ( pTimeout && *pTimeout < timeleft ) {
                 timeleft = *pTimeout;
             }
             int servedRequests = serveRequests(&timeleft);
@@ -683,12 +728,12 @@ KsServerBase::servePendingEvents(KsTime * pTimeout) {
         }
     } else {
         // 
-        // timerqueue empty: use external timeout
+        // The timer queue is empty: use external timeout
         // 
         int servedRequests = serveRequests(pTimeout);
         return servedRequests > 0;
     }
-}
+} // KsServerBase::servePendingEvents
 
 
 //////////////////////////////////////////////////////////////////////
@@ -702,15 +747,30 @@ KsServerBase::servePendingEvents(KsTime * pTimeout) {
 void
 KsServerBase::startServer()
 {
+#if PLT_USE_BUFFERED_STREAMS
+    //
+    // If the user didn't create his very own connection manager object
+    // then we'll supply a default one. In case this can't be done or
+    // the user's manager isn't okay, then bail out with an error.
+    //
+    if ( !_cnx_manager ) {
+    	_cnx_manager = new KssConnectionManager();
+    }
+    if ( !_cnx_manager && !_cnx_manager->isOk() ) {
+    	_is_ok = false;
+	return;
+    }
+#endif
     //
     // Create transport: because the caller can specify the port to which we
     // should bind, this can be sometimes a lot of work... especially if
     // we're sitting on top of a TLI system. Urgs.
     //
-#if PLT_SYSTEM_SOLARIS
-    int sock = t_open("/dev/tcp", O_RDWR, (struct t_info *) 0);
-#else
+#if !PLT_USE_XTI
     int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#else
+    int sock = t_open((const char *) getNetworkTransportDevice("tcp"),
+                      O_RDWR, (struct t_info *) 0);
 #endif
     if ( sock >= 0 ) {
         struct sockaddr_in my_addr;
@@ -720,7 +780,7 @@ KsServerBase::startServer()
         my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
         my_addr.sin_port        = htons((u_short) _sock_port);
 
-#if PLT_SYSTEM_SOLARIS
+#if PLT_USE_XTI
         struct t_bind req;
 
         req.addr.maxlen = sizeof(my_addr);
@@ -735,7 +795,7 @@ KsServerBase::startServer()
             // Failed.
 #if PLT_SYSTEM_NT
             closesocket(sock);
-#elif PLT_SYSTEM_SOLARIS
+#elif PLT_USE_XTI
             t_close(sock);
 #else
             close(sock);
@@ -743,13 +803,18 @@ KsServerBase::startServer()
             sock = -1;
             PltLog::Error("KsServerBase::startServer(): could not bind the TCP socket.");
         } else {
+#if !PLT_USE_BUFFERED_STREAMS
             _tcp_transport = svctcp_create(sock,
                                            _send_buffer_size,
                                            _receive_buffer_size);
+#else
+    	    _tcp_transport = new KssListenTCPXDRConnection(sock, 60/* secs */);
+#endif
         }
     }
 
     if ( _tcp_transport ) {
+#if !PLT_USE_BUFFERED_STREAMS
         //
         // Now register the dispatcher that should be called whenever there
         // is a request for the KS program id and the correct version number.
@@ -771,14 +836,25 @@ KsServerBase::startServer()
         } else {
             svc_destroy(_tcp_transport);
             _tcp_transport = 0;
-            PltLog::Error("KsServerBase::startServer(): could not register service.");
+            PltLog::Error("KsServerBase::startServer(): could not register TCP service.");
             _is_ok = false;
         }
+#else
+    	if ( _cnx_manager->addConnection(*_tcp_transport) ) {
+	    _is_ok = true;
+	} else {
+	    _tcp_transport->shutdown();
+	    delete _tcp_transport;
+            _tcp_transport = 0;
+            PltLog::Error("KsServerBase::startServer(): could not add TCP transport.");
+            _is_ok = false;
+	}
+#endif
     } else {
         PltLog::Error("KsServerBase::startServer(): could not create TCP transport.");
         _is_ok = false;
     }
-}
+} // KsServerBase::startServer
 
 //////////////////////////////////////////////////////////////////////
 // Try to stop the event loop as soon as possible. Due to the nature of
@@ -860,5 +936,4 @@ KsServerBase::removeNextTimerEvent()
     return _timer_queue.removeFirst();
 } 
 
-// EOF svrbase.cpp
-
+/* End of svrbase.cpp */

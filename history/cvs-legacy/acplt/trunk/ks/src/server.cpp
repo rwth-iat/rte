@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.13 1998-02-10 14:13:18 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.14 1998-06-29 11:22:51 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -116,7 +116,11 @@ KsServer::register_server()
     KssRegistrationContext regctx(ticket);
     regctx.params.server.name = getServerName();
     regctx.params.server.protocol_version = getProtocolVersion();
+#if !PLT_USE_BUFFERED_STREAMS
     regctx.params.port = _tcp_transport->xp_port;
+#else
+    regctx.params.port = _tcp_transport->getPort();
+#endif
     regctx.params.time_to_live = _ttl;
     
     CLIENT * clnt = createLocalClient();

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.10 1998-01-23 08:45:19 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.11 1998-06-29 11:22:52 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -46,7 +46,7 @@
 //////////////////////////////////////////////////////////////////////
 
 const char PROG_NAME[] = "manager";
-const KsString KS_MANAGER_VERSION("1.0.2");
+const KsString KS_MANAGER_VERSION(KS_VERSION_STRING);
 
 //////////////////////////////////////////////////////////////////////////////
 // First, we'll now entering a very dangerous terrain of unix land: the

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.17 1998-02-10 14:13:18 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.18 1998-06-29 11:22:52 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -43,6 +43,154 @@
 #include "ks/path.h"
 #include "plt/log.h"
 
+#include "ks/svrsimpleobjects.h"
+
+
+#if PLT_USE_BUFFERED_STREAMS
+
+#include "ks/xdrmemstream.h"
+
+// ---------------------------------------------------------------------------
+// When a server uses dynamic XDR memory streams, then you´ll find in its
+// /vendor domain a few variables with statistics information about the
+// communication layer -- like number of open transports, memory footprint,...
+// All these variables are represented by instances of the class below which
+// handles getting the up-to-date data...
+//
+class KssIoStatisticsVariable : public KssSimpleVariable
+{
+public:
+    enum StatisticType {
+    	DLAS_CONNECTION_COUNT = 0,
+	DLAS_IO_ERROR_COUNT,
+	DLAS_IO_RX_ERROR_COUNT,
+	DLAS_IO_TX_ERROR_COUNT,
+	DLAS_POOL_SIZE,
+	DLAS_POOL_USED,
+	DLAS_THIS_IS_THE_END
+    };
+	
+    KssIoStatisticsVariable(StatisticType type);
+    
+    virtual KsValueHandle getValue() const;
+    virtual KsTime        getTime() const;
+
+protected:
+    StatisticType _stat_type;
+}; // class KssIoStatisticsVariable
+
+
+// ---------------------------------------------------------------------------
+// List of statistical variables: name, a comment and the technical unit.
+//
+static struct {
+    const char *_name;
+    const char *_comment;
+    const char *_unit;
+} _statisticsVariables[] = {
+    { "transport_count", "number of open transports", "" },
+    { "io_error_count", "number of generic I/O errors during communication", "" },
+    { "io_rx_error_count", "number of receiving errors during communication", "" },
+    { "io_tx_error_count", "number of sending errors during communication", "" },
+    { "transport_pool_size", "size of memory pool for transports", "bytes" },
+    { "transport_pool_used", "memory used for active transports", "bytes" }
+}; // _statisticsVariables
+
+
+// ---------------------------------------------------------------------------
+// Construct a statistical variable and connect it to a particular statistics
+// parameter of the communication layer.
+//
+KssIoStatisticsVariable::KssIoStatisticsVariable(StatisticType type)
+    : KssSimpleVariable(_statisticsVariables[type]._name,
+	                KsTime::now(),
+	                _statisticsVariables[type]._comment),
+      _stat_type(type)
+{
+    setState(KS_ST_GOOD);
+    setTechUnit(KsString(_statisticsVariables[type]._unit));
+    lock();
+} // KssIoStatisticsVariable::KssIoStatisticsVariable
+
+
+// ---------------------------------------------------------------------------
+// Retrieve the current value for a statistical variable. This eventually maps
+// to calling the appropriate information function.
+//
+KsValueHandle KssIoStatisticsVariable::getValue() const
+{
+    KsValue *pVal = 0;
+    
+    switch ( _stat_type ) {
+    case DLAS_CONNECTION_COUNT:
+	pVal = new KsIntValue(
+	    KsServerBase::getServerObject().getConnectionManager()->getConnectionCount());
+	break;
+    case DLAS_IO_ERROR_COUNT:
+	pVal = new KsIntValue(
+	    KsServerBase::getServerObject().getConnectionManager()->getIoErrorCount());
+	break;
+    case DLAS_IO_RX_ERROR_COUNT:
+	pVal = new KsIntValue(
+	    KsServerBase::getServerObject().getConnectionManager()->getIoRxErrorCount());
+	break;
+    case DLAS_IO_TX_ERROR_COUNT:
+	pVal = new KsIntValue(
+	    KsServerBase::getServerObject().getConnectionManager()->getIoTxErrorCount());
+	break;
+    case DLAS_POOL_SIZE:
+	{
+	    u_int total, freepool;
+	    xdrmemstream_getusage(&total, &freepool);
+	    pVal = new KsIntValue(total);
+    	}
+	break;
+    case DLAS_POOL_USED:
+	{
+	    u_int total, freepool;
+	    xdrmemstream_getusage(&total, &freepool);
+	    pVal = new KsIntValue(total - freepool);
+    	}
+	break;
+    default:
+	break;
+    }
+    return KsValueHandle(pVal, KsOsNew);
+} // KssIoStatisticsVariable::getValue
+
+
+// ---------------------------------------------------------------------------
+// Always make a statistical variable using the current time for the timestamp
+// of its value.
+//
+KsTime KssIoStatisticsVariable::getTime() const
+{
+    return KsTime::now();
+} // KssIoStatisticsVariable::getTime
+
+
+// ---------------------------------------------------------------------------
+// Set up the statistical variables below the /vendor domain.
+//
+bool KsSimpleServer::initStatistics()
+{
+    KsPath vendor("/vendor");
+    int i;
+    
+    for ( i = 0; i < KssIoStatisticsVariable::DLAS_THIS_IS_THE_END; ++i ) {
+    	KssCommObjectHandle h(
+		new KssIoStatisticsVariable(
+		    (KssIoStatisticsVariable::StatisticType) i), KsOsNew);
+	if ( !h || !addCommObject(vendor, h) ) {
+	    return false;
+	}
+    }
+    return true;
+} // KsSimpleServer::initStatistics
+
+#endif
+
+
 //////////////////////////////////////////////////////////////////////
 // Note that the virtual base class KsServerBase will first set the
 // member variable _sock_port to KS_ANYPORT before we'll here reset
@@ -57,8 +205,8 @@ KsSimpleServer::KsSimpleServer(int port)
         //
         // Some day I'll be after those who'd invented virtual base
         // classes without defining the order of constructors called
-        // for derived classes. But on the other side, we did I ever
-        // relied on that?!
+        // for derived classes. But on the other side, why did I ever
+        // relied on that?! Okay -- I´m silly, yeah. =:)
         //
         _sock_port = port;
     }
@@ -380,7 +528,9 @@ KsSimpleServer::initVendorTree()
     static KssTimeNowVariable server_time("server_time");
     KssCommObjectHandle server_time_handle(&server_time, KsOsUnmanaged);
     
-    static KssSimpleVariable startup_time("startup_time", KsTime::now(), "Server startup time");
+    static KssSimpleVariable startup_time("startup_time",
+	                                  KsTime::now(),
+	                                  "Server startup time");
     startup_time.setValue(new KsTimeValue(KsTime::now()));
     startup_time.setTechUnit("UTC");
     startup_time.setState(KS_ST_GOOD);
@@ -404,9 +554,12 @@ KsSimpleServer::initVendorTree()
         && addStringVar(vendor, "name",
                         getVendorName())
 
+#if PLT_USE_BUFFERED_STREAMS
+    	&& initStatistics()
+#endif
+
         && addCommObject(vendor, startup_time_handle);
-}
+} // KsSimpleServer::initVendorTree
 
 
-//////////////////////////////////////////////////////////////////////
-/* EOF ks/simpleserver.cpp */
+/* End of simpleserver.cpp */
