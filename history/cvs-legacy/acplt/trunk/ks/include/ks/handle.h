@@ -134,7 +134,7 @@ template<class T> class PltHandle;
 #define KsOsUnmanaged     PltOsUnmanaged
 #define KsOsMalloc        PltOsMalloc
 #define KsOsNew           PltOsNew
-#define KsOsArrayNew      KsOsArrayNew
+#define KsOsArrayNew      PltOsArrayNew
 
 //////////////////////////////////////////////////////////////////////
 // Pointer-like handle
