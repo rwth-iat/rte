@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.12 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.13 2002-02-06 17:00:12 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -580,7 +580,20 @@ OV_DLLFNCEXPORT void ov_ksserver_sighandler(int) {
 		pserver->downServer();
 	}
 }
+
+OV_DLLFNCEXPORT void ov_ksserver_sighandler_register()
+{
+			signal(SIGTERM, ov_ksserver_sighandler);
+#if !PLT_SYSTEM_RMOS
+			signal(SIGINT, ov_ksserver_sighandler);
+#if !PLT_SYSTEM_NT
+			signal(SIGHUP, ov_ksserver_sighandler);
 #endif
+#endif
+}
+
+#endif
+
 
 /*	----------------------------------------------------------------------	*/
 

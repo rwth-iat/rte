@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.9 2001-07-09 12:49:09 ansgar Exp $
+*   $Id: ov_ksserver.h,v 1.10 2002-02-06 17:00:12 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -163,6 +163,11 @@ void ov_ksserver_dispatch(
 OV_DLLFNCEXPORT void ov_ksserver_sighandler(
 	int signal
 );
+
+/*
+*	Register Default signal handler (subroutine)
+*/
+OV_DLLFNCEXPORT void ov_ksserver_sighandler_register();
 
 /*
 *	Send a service reply (subroutine)
