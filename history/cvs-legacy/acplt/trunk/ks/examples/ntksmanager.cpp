@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.4 1997-12-02 18:41:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.5 1997-12-10 17:45:00 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -204,10 +204,12 @@ KsServerBase *NtManagerService::createServer(int argc, char **argv)
 // destroyed.
 //
 #ifdef PLT_W95SERVICE
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     NtManagerService nt_service(argc, argv);
 #else
-int main(int, char **) {
+int main(int, char **)
+{
     NtManagerService nt_service;
 #endif
 
