@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.21 1999-01-29 12:47:30 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.22 1999-04-22 15:29:11 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
@@ -144,6 +144,7 @@
 #define WIN32 1
 #endif
 #endif
+
 
 #ifndef PLT_USE_SYSLOG
 #define PLT_USE_SYSLOG 0
@@ -301,6 +302,34 @@ enum { false=0, true=1 };
 #else
 #define PLT_RETTYPE_CAST(typ) typ
 #endif
+
+
+//
+// Aarrrrrghhhh!! WinSock 2 vs. Winsock I. MS is soooooo brain damaged.
+// They're even try to tell you in the Winsock 2 docu that the Berkeley
+// socket API is just for TCP/IP and UDP/IP but nothing other. So how
+// comes that /etc/protocols just defines a bunch of other protocols to
+// be used through the socket API and esp. all that Linux apps can use
+// IPX, etc...? It's just again plain Microsoft FUD.
+//
+#if PLT_SYSTEM_NT
+
+#if PLT_COMPILER_BORLAND
+#if __BORLANDC__ >= 0x0530
+#define PLT_USE_WINSOCK2 1
+#define _MSWSOCK_ /* HACK!! */
+#else
+#define PLT_USE_WINSOCK2 0
+#endif
+
+#else
+
+#define PLT_USE_WINSOCK2 0
+
+#endif
+
+#endif /* PLT_SYSTEM_NT */
+
 
 #endif /* PLT_CONFIG.H */
 
