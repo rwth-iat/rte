@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.28 1998-01-14 16:36:34 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.29 1998-01-29 12:56:23 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -539,7 +539,7 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
     // situation here, so "0.0.0.0" is simply forbidden.
     //
     KSC_IP_TYPE ip;
-    if ( host_name.len() ) {
+    if ( DNS_name.len() ) {
 	ip = inet_addr(DNS_name);
     } else {
 	ip = INVALID_IP;
@@ -551,7 +551,7 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
         // resolve it as a DNS name.
         //
 #if 1
-	KscHostEnt he(gethostbyname(DNS_name));
+	KscHostEnt he(gethostbyname((const char *) DNS_name));
 #endif
 	if ( (he.numIP() > 1) && (he.getIP(0) == last_ip) ) {
 	    ip = he.getIP(1);
