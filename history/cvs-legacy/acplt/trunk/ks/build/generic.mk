@@ -1,7 +1,6 @@
 # generic unix makefile
 
 CXX_LIBKS_SOURCES = \
-	abspath.cpp \
 	array.cpp \
 	avmodule.cpp \
 	avticket.cpp \
@@ -22,16 +21,18 @@ CXX_LIBKS_SOURCES = \
 	value.cpp \
 	variables.cpp \
 	xdr.cpp \
-	manager.cpp \
 	mask.cpp \
 	event.cpp \
+	templates.cpp
+
+CXX_LIBKSSVR_SOURCES = \
+	manager.cpp \
+	server.cpp \
+	simpleserver.cpp \
 	svrbase.cpp \
 	svrobjects.cpp \
 	svrrpcctx.cpp \
-	svrsimpleobjects.cpp \
-	server.cpp \
-	simpleserver.cpp \
-	templates.cpp \
+	svrsimpleobjects.cpp
 
 LIBKS_OBJECTS1 = \
 	array$(O) \
@@ -50,18 +51,9 @@ LIBKS_OBJECTS2 = \
 	serviceparams$(O)
 
 LIBKS_OBJECTS3 = \
-	manager$(O) \
-	mask$(O) \
-	event$(O) \
-	svrbase$(O) \
-	svrobjects$(O) \
-	svrrpcctx$(O) \
-	svrsimpleobjects$(O)
+	mask$(O)
 
 LIBKS_OBJECTS4 = \
-	server$(O) \
-	simpleserver$(O) \
-	templates$(O) \
 	time$(O) \
 	value$(O) \
 	xdr$(O) \
@@ -70,7 +62,6 @@ LIBKS_OBJECTS4 = \
 LIBKS_OBJECTS5 = \
 	string$(O) \
 	sorter$(O) \
-	abspath$(O) \
 	avmodule$(O) \
 	client$(O) \
 	commobject$(O) \
@@ -79,6 +70,14 @@ LIBKS_OBJECTS5 = \
 LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2) $(LIBKS_OBJECTS3) \
 	$(LIBKS_OBJECTS4) $(LIBKS_OBJECTS5)
 
+LIBKSSVR_OBJECTS = \
+	manager$(O) \
+	server$(O) \
+	simpleserver$(O) \
+	svrbase$(O) \
+	svrobjects$(O) \
+	svrrpcctx$(O) \
+	svrsimpleobjects$(O)
 
 CXX_EXAMPLES_SOURCES = \
 	tmanager.cpp \
@@ -89,6 +88,16 @@ CXX_EXAMPLES_SOURCES = \
 	tserver1.cpp \
 	ttree.cpp \
 	ttree1.cpp
+
+EXAMPLES_OBJECTS = \
+	tmanager$O \
+	tmanager1$O \
+	tsclient$O \
+	tsclient1$O \
+	tserver$O \
+	tserver1$O \
+	ttree$O \
+	ttree1$O
 
 TESTS = tmanager$(EXE) tserver$(EXE) tsclient$(EXE) ttree$(EXE)
 
