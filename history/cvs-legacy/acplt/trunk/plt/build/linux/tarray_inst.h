@@ -4,6 +4,8 @@ template class PltArrayHandle<char>;
 template class PltArrayHandle<int>;
 template class PltArrayIterator<char>;
 template class PltArrayIterator<int>;
+template class PltArrayed<char>;
+template class PltArrayed<int>;
 template class PltBidirIterator<char>;
 template class PltBidirIterator<int>;
 template class PltContainer<char>;
