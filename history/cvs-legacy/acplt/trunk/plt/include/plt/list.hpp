@@ -9,7 +9,7 @@
 #define PLT_LIST_INCLUDED
     
 #include <plt/debug.h>
-#include <plt/iterator.hpp>
+#include <plt/container.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Overview
@@ -35,9 +35,88 @@
 
 //////////////////////////////////////////////////////////////////////
 // Forward declarations
+class PltListNode_base;
+class PltList_base;
+class PltListIterator_base;
 
+template <class T> class PltListNode;
 template <class T> class PltIListIterator;
 template <class T> class PltListIterator;
+
+////////////////////////////////////////////////////////////////////////
+// Non-intrusive double linked list node with information type T
+template <class T>
+class PltList 
+: public PltContainer<T>,
+  private PltList_base 
+{
+      friend class PltListIterator<T>;
+public:
+    bool isEmpty() const;
+    // modifiers
+    bool addFirst(const T & t);
+    bool addLast(const T & t);
+    T removeFirst();
+    T removeLast();
+    PltIterator<T> * newIterator() const;
+};
+
+////////////////////////////////////////////////////////////////////////
+// Intrusive double linked list of elements of type T which must be 
+// derived from PltListNode_base.
+template <class T>
+class PltIList 
+: public PltContainer<T>,
+  private PltList_base 
+{
+    friend class PltIListIterator<T>;
+public:
+    bool isEmpty() const;
+    // modifiers
+    bool addFirst(T* p);
+    bool addLast(T* p);
+    T* remove(T* p);
+    T* removeFirst();
+    T* removeLast();
+    PltIterator<T> * newIterator() const;
+};
+
+////////////////////////////////////////////////////////////////////////
+// Iterator on PltList<T>
+template <class T>
+class PltListIterator 
+: public PltBidirIterator<T>, 
+  private PltListIterator_base {
+public:
+    PltListIterator(const PltList<T> &list, bool startAtEnd=false);
+    virtual operator const void * () const;
+    virtual const T & operator * () const;
+    virtual PltIterator<T> & operator ++ ();
+    virtual void toStart();
+    virtual PltBidirIterator<T> & operator -- ();
+    virtual void toEnd();
+#if 0
+    T remove();
+#endif
+};
+
+////////////////////////////////////////////////////////////////////////
+// Iterator on PltIList<T>
+template <class T>
+class PltIListIterator 
+: public PltBidirIterator<T>,
+  private PltListIterator_base 
+{
+public:
+    PltIListIterator(const PltIList<T> &list, bool startAtEnd=false );
+    virtual operator const void * () const;
+    virtual const T* operator -> () const;
+    virtual PltIterator<T> & operator ++ ();
+    virtual void toStart();
+    virtual PltBidirIterator<T> & operator -- ();
+    virtual void toEnd();
+};
+
 
 ////////////////////////////////////////////////////////////////////////
 // Link node with forward and backward chaining.
@@ -79,7 +158,7 @@ public:
 // Not useful for direct use.
 class PltListIterator_base {
 protected:
-    PltListIterator_base(PltList_base &listarg, bool startAtEnd=false); 
+    PltListIterator_base(const PltList_base &listarg, bool startAtEnd=false); 
     operator const void * () const;
 
     PltListNode_base *getPtr() const;
@@ -93,7 +172,7 @@ protected:
     void toEnd();
 private:
     PltListNode_base *curr_elem;
-    PltList_base *list;
+    const PltList_base  & list;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -107,67 +186,6 @@ class PltListNode : public PltListNode_base {
 public:
     PltListNode(const T& t) : info(t) { }
 };
-
-////////////////////////////////////////////////////////////////////////
-// Non-intrusive double linked list node with information type T
-template <class T>
-class PltList : private PltList_base {
-    friend class PltListIterator<T>;
-public:
-    bool isEmpty() const;
-    // modifiers
-    bool addFirst(const T & t);
-    bool addLast(const T & t);
-    T removeFirst();
-    T removeLast();
-};
-
-////////////////////////////////////////////////////////////////////////
-// Intrusive double linked list of elements of type T which must be 
-// derived from PltListNode_base.
-template <class T>
-class PltIList : private PltList_base {
-    friend class PltIListIterator<T>;
-public:
-    bool isEmpty() const;
-    // modifiers
-    bool addFirst(T* p);
-    bool addLast(T* p);
-    T* remove(T* p);
-    T* removeFirst();
-    T* removeLast();
-};
-
-////////////////////////////////////////////////////////////////////////
-// Iterator on PltList<T>
-template <class T>
-class PltListIterator 
-: public PltIterator<T>, 
-  private PltListIterator_base {
-public:
-    PltListIterator(PltList<T> &list, bool startAtEnd=false);
-    virtual operator const void * () const;
-    virtual const T & operator * () const;
-    virtual PltListIterator<T> & operator ++ ();
-    virtual void reset();
-
-    T get() const;
-#if 0
-    T remove();
-#endif
-};
-
-
-
-////////////////////////////////////////////////////////////////////////
-// Iterator on PltIList<T>
-template <class T>
-class PltIListIterator : public PltListIterator_base {
-public:
-  PltIListIterator(PltIList<T> &list, bool startAtEnd=false );
-  T* getPtr() const;
-};
-
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
@@ -203,12 +221,12 @@ PltList_base::removeLast()
 //////////////////////////////////////////////////////////////////////
 
 inline PltListIterator_base::PltListIterator_base (
-    PltList_base &listarg, 
+    const PltList_base &listarg, 
     bool startAtEnd
     ) 
-: list( &listarg)
+: list( listarg)
 { 
-    curr_elem = startAtEnd?list->last:list->first; 
+    curr_elem = startAtEnd?list.last:list.first; 
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -216,7 +234,7 @@ inline PltListIterator_base::PltListIterator_base (
 inline void
 PltListIterator_base::toStart()
 {
-    curr_elem = list->first;
+    curr_elem = list.first;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -224,7 +242,7 @@ PltListIterator_base::toStart()
 inline void
 PltListIterator_base::toEnd()
 {
-    curr_elem = list->last;
+    curr_elem = list.last;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -342,6 +360,16 @@ PltList<T>::removeLast()
   return t;
 }
 
+
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+inline PltIterator<T> *
+PltIList<T>::newIterator() const
+{
+    return new PltIListIterator<T>(*this);
+}
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -397,13 +425,22 @@ PltIList<T>::removeLast()
     return (T*) PltList_base::removeLast(); 
 }
 
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+inline PltIterator<T> *
+PltList<T>::newIterator() const
+{
+    return new PltListIterator<T>(*this);
+}
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 template <class T>  
 inline
-PltListIterator<T>::PltListIterator(PltList<T> &list, bool startAtEnd)
+PltListIterator<T>::PltListIterator(const PltList<T> &list, bool startAtEnd)
 : PltListIterator_base(list, startAtEnd) 
 { 
 }
@@ -420,15 +457,6 @@ PltListIterator<T>::operator const void *() const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline T 
-PltListIterator<T>::get() const 
-{
-    return ( (PltListNode<T> *) PltListIterator_base::getPtr() ) -> info;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
 inline PltIterator<T> &
 PltListIterator<T>::operator ++ ()
 {
@@ -439,8 +467,18 @@ PltListIterator<T>::operator ++ ()
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
+inline PltBidirIterator<T> &
+PltListIterator<T>::operator -- ()
+{
+    PltListIterator_base::operator --();
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
 inline const T &
-PltListIterator<T>::operator * ()
+PltListIterator<T>::operator * () const
 {
     return ( (PltListNode<T> *) PltListIterator_base::getPtr() ) -> info;
 }
@@ -452,6 +490,15 @@ inline void
 PltListIterator<T>::toStart()
 {
     PltListIterator_base::toStart();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline void
+PltListIterator<T>::toEnd()
+{
+    PltListIterator_base::toEnd();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -469,12 +516,13 @@ PltListIterator<T>::remove()
 }
 #endif
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 template <class T>
 inline
-PltIListIterator<T>::PltIListIterator(PltIList<T> &list, bool startAtEnd) 
+PltIListIterator<T>::PltIListIterator(const PltIList<T> &list, 
+                                      bool startAtEnd) 
 : PltListIterator_base(list, startAtEnd) 
 { 
 }
@@ -482,12 +530,70 @@ PltIListIterator<T>::PltIListIterator(PltIList<T> &list, bool startAtEnd)
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline T * 
-PltIListIterator<T>::getPtr() const 
-{ 
-    return (T*) PltListIterator_base::getPtr(); 
+inline
+PltIListIterator<T>::operator const void *() const
+{
+    return PltListIterator_base::operator const void * ();
 }
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline PltIterator<T> &
+PltIListIterator<T>::operator ++ ()
+{
+    PltListIterator_base::operator ++();
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline PltBidirIterator<T> &
+PltIListIterator<T>::operator -- ()
+{
+    PltListIterator_base::operator --();
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline const T *
+PltIListIterator<T>::operator -> () const
+{
+    return ( T *) ( PltListIterator_base::getPtr() );
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline void
+PltIListIterator<T>::toStart()
+{
+    PltListIterator_base::toStart();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline void
+PltIListIterator<T>::toEnd()
+{
+    PltListIterator_base::toEnd();
+}
+
+//////////////////////////////////////////////////////////////////////
+
 #endif  
+
+
+
+
+
+
+
+
 
 
 

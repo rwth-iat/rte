@@ -395,7 +395,7 @@ PltHashIterator_base::inRange() const
 PltHashIterator_base::PltHashIterator_base(const PltHashTable_base & t)
 : a_container(t), a_index(0)
 {
-    restart();
+    toStart();
 }
 
 
@@ -428,7 +428,7 @@ PltHashIterator_base::advance()
 //////////////////////////////////////////////////////////////////////
 
 void 
-PltHashIterator_base::restart()
+PltHashIterator_base::toStart()
 {
     a_index=0;
     if (   inRange() 

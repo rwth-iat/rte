@@ -9,8 +9,8 @@
 #define PLT_DICTIONARY_INCLUDED
 
 #include <plt/debug.h>
-#include <plt/key.hpp>
 #include <plt/assoc.hpp>
+#include <plt/container.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // abstract class PltDictionary<K,V>
@@ -45,10 +45,14 @@
 //////////////////////////////////////////////////////////////////////
 
 template <class K, class V>
-class PltDictionary {
+class PltDictionary 
+: public PltContainer< PltAssoc<K,V> > 
+{
 public:
     // accessors
     virtual bool query(const K&, V&) const = 0;
+    PltIterator< PltAssoc<K, V> > * newIterator() const = 0;
+
     // modifiers
     virtual bool add(const K&, const V&) = 0;
     virtual bool remove(const K&, V&) = 0;

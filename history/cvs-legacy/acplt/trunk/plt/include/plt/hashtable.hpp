@@ -94,7 +94,7 @@ public:
     virtual const PltAssoc<K,V> * operator -> () const;     // current element
 
     virtual PltIterator< PltAssoc<K,V> > & operator ++ ();  // advance
-    virtual void restart();                                 // from beginning
+    virtual void toStart();                                 // from beginning
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ protected:
     bool inRange() const;
     const PltAssoc_ * pCurrent() const;
     void advance();
-    void restart();
+    void toStart();
 private:
     const PltHashTable_base & a_container;
     size_t a_index;
@@ -284,9 +284,9 @@ PltHashIterator<K,V>::operator -> () const
 
 template <class K, class V>
 inline void
-PltHashIterator<K,V>::restart()
+PltHashIterator<K,V>::toStart()
 {
-    PltHashIterator_base::restart();
+    PltHashIterator_base::toStart();
 }
 
 //////////////////////////////////////////////////////////////////////
