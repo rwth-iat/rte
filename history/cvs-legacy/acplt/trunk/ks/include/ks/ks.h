@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.27 1999-03-01 14:14:02 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.28 1999-05-12 10:00:00 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -74,9 +74,9 @@ extern "C" {
 
 #else
 
-#define ENUMBEGIN(t) typedef enum_t t; enum t##_ENUM {
+#define ENUMBEGIN(t) typedef enum_t t; enum t##_ENUM { t##_DUMMY
 #define ENUMEND };
-#define ENUM(e,v) e = v,
+#define ENUM(e,v) , e = v
 
 #endif
 
@@ -88,7 +88,7 @@ extern "C" {
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.0.5pre7"
+#define KS_VERSION_STRING "1.0.5"
 
 	 
 /* ----------------------------------------------------------------------------
