@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/mask.cpp,v 1.1 1997-03-25 21:19:48 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/mask.cpp,v 1.2 1998-04-20 08:27:05 nicole Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -56,7 +56,7 @@ int
 int
 KsMask::m_loop(const char *name, int n, int m) const 
 {
-  bool r;
+  int r;
   int k=strlen(name);
   int l=len();
   const char *mask = p->s;
@@ -72,7 +72,13 @@ KsMask::m_loop(const char *name, int n, int m) const
         case '?' : m++; n++;
                    break;
         default  : if (mask[m]=='\\') m++;
-                   if (m>=l || mask[m]!=name[n]) return false;
+                   #if (PLT_IGNOR_UPCASE)
+                       if (m>=l || (mask[m]!=toupper(name[n]) && mask[m]!=tolower(name[n]))
+                           return false;
+                   #else
+                       if (m>=l || mask[m]!=name[n]) 
+                           return false;
+                   #endif;
                    m++; n++;
      }
   if (n==k && m==l) return true;
@@ -95,47 +101,97 @@ KsMask::set(const char *name, int &n, int &m) const
         if ((( isdigit(mask[m+1]) && isdigit(mask[m+3]) ) ||
              ( isupper(mask[m+1]) && isupper(mask[m+3]) ) ||
              ( islower(mask[m+1]) && islower(mask[m+3]) )) && (mask[m+4]==']')) {         
-           for (i=mask[m+1]; i<=mask[m+3]; i++)
-               if (i==name[n]) {
-                  n++; m+=5;
-                  return true;
-               }
+           #if (PLT_IGNOR_UPCASE)
+               for (i=toupper(mask[m+1]); i<=toupper(mask[m+3]); i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   } 
+               for (i=tolower(mask[m+1]); i<=tolower(mask[m+3]); i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true; 
+                   }
+           #else
+               for (i=mask[m+1]; i<=mask[m+3]; i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   }
+           #endif 
            return false;
         } else if (isupper(mask[m+1]) && islower(mask[m+3]) && (mask[m+4]==']')) {
-           for (i=mask[m+1]; i<='Z'; i++)
-               if (i==name[n]) {
-                  n++; m+=5;
-                  return true;
-               }
-           for (i='a'; i<=mask[m+3]; i++)
-               if (i==name[n]) {
-                  n++; m+=5;
-                  return true;
-               }
+           #if (PLT_IGNOR_UPCASE)
+               for (i=mask[m+1]; i<=toupper(mask[m+3]); i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   }
+               for (i=tolower(mask[m+1]); i<=mask[m+3]; i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   }
+           #else
+               for (i=mask[m+1]; i<='Z'; i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   }
+               for (i='a'; i<=mask[m+3]; i++)
+                   if (i==name[n]) {
+                      n++; m+=5;
+                      return true;
+                   }
+           #endif
            return false;
         } else if (islower(mask[m+1]) && isupper(mask[m+3]) && (mask[m+4]==']')) {
-           for (i=mask[m+1]; i<='z'; i++)
-               if (i==name[n]) {
-                  n++; m+=5;
-                  return true;
-               }
-           for (i='A'; i<=mask[m+3]; i++)
-               if (i==name[n]) {
-                  n++; m+=5;
-                  return true;
-               }
+           #if (PLT_IGNOR_UPCASE)
+               for (i=mask[m+1]; i<=tolower(mask[m+3]); i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   }
+               for (i=toupper(mask[m+1]); i<=mask[m+3]; i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   }            
+           #else
+               for (i=mask[m+1]; i<='z'; i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   }
+               for (i='A'; i<=mask[m+3]; i++)
+                   if (i==name[n]) {
+                       n++; m+=5;
+                       return true;
+                   }
+           #endif
            return false;
         } else return (-(m+1));
      } else {
         for (i=m+1; i<l && mask[i]!=']'; i++)
-            if (mask[i]==name[n]) {
-               while (i<l && mask[i]!=']') i++;
-               if (mask[i]==']') {
-                  n++; m=i+1;
-                  return true;
-               }
-               else return (-(m+1));
-            }
+            #if (PLT_IGNOR_UPCASE)
+                if (mask[i]==toupper(name[n]) || mask[i]==tolower(name[n])) {
+                    while (i<l && mask[i]!=']') i++;
+                    if (mask[i]==']') {
+                        n++; m=i+1;
+                        return true;
+                    }
+                    else return (-(m+1));
+                }
+            #else
+                if (mask[i]==name[n]) {
+                    while (i<l && mask[i]!=']') i++;
+                    if (mask[i]==']') {
+                        n++; m=i+1;
+                        return true;
+                    }
+                    else return (-(m+1));
+                }
+            #endif
         if (mask[i]==']') return false;
         else return (-(m+1));
      }
@@ -144,48 +200,98 @@ KsMask::set(const char *name, int &n, int &m) const
         if ((( isdigit(mask[m+2]) && isdigit(mask[m+4]) ) ||
              ( isupper(mask[m+2]) && isupper(mask[m+4]) ) ||
              ( islower(mask[m+2]) && islower(mask[m+4]) )) && (mask[m+5]==']')) {         
-           for (i=mask[m+2]; i<=mask[m+4]; i++)
-               if (i!=name[n]) {
-                  n++; m+=6;
-                  return true;
-               }
-           return false;
+           #if (PLT_IGNOR_UPCASE)
+               for (i=toupper(mask[m+2]); i<=toupper(mask[m+4]); i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+               for (i=tolower(mask[m+2]); i<=tolower(mask[m+4]); i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   } 
+           #else
+               for (i=mask[m+2]; i<=mask[m+4]; i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+           #endif
+           return true;
         } else if (isupper(mask[m+2]) && islower(mask[m+4]) && (mask[m+5]==']')) {
-           for (i=mask[m+1]; i<='Z'; i++)
-               if (i!=name[n]) {
-                  n++; m+=6;
-                  return true;
-               }
-           for (i='a'; i<=mask[m+4]; i++)
-               if (i!=name[n]) {
-                  n++; m+=6;
-                  return true;
-               }
-           return false;
+           #if (PLT_IGNOR_UPCASE)
+               for (i=mask[m+2]; i<=toupper(mask[m+4]); i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+               for (i=tolower(mask[m+2]); i<=mask[m+4]; i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+           #else
+               for (i=mask[m+2]; i<='Z'; i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+               for (i='a'; i<=mask[m+4]; i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+           #endif
+           return true;
         } else if (islower(mask[m+2]) && isupper(mask[m+4]) && (mask[m+5]==']')) {
-           for (i=mask[m+2]; i<='z'; i++)
-               if (i!=name[n]) {
-                  n++; m+=6;
-                  return true;
-               }
-           for (i='A'; i<=mask[m+4]; i++)
-               if (i!=name[n]) {
-                  n++; m+=6;
-                  return true;
-               }
-           return false;
+           #if (PLT_IGNOR_UPCASE)
+               for (i=mask[m+2]; i<=tolower(mask[m+4]); i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+               for (i=toupper(mask[m+2]); i<=mask[m+4]; i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+           #else 
+               for (i=mask[m+2]; i<='z'; i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+               for (i='A'; i<=mask[m+4]; i++)
+                   if (i==name[n]) {
+                       n++; m+=6;
+                       return false;
+                   }
+           #endif
+           return true;
         } else return (-(m+1));
      } else {
         for (i=m+2; i<l && mask[i]!=']'; i++)
-            if (mask[i]!=name[n]) {
-               while (i<l && mask[i]!=']') i++;
-               if (mask[i]==']') {
-                  n++; m=i+1;
-                  return true;
-               }
-               else return (-(m+1));
-            }
-        if (mask[i]==']') return false;
+            #if (PLT_IGNOR_UPCASE)
+                if (mask[i]==toupper(name[n]) || mask[i]==tolower(name[n])) {
+                    while (i<l && mask[i]!=']') i++;
+                    if (mask[i]==']') {
+                        n++; m=i+1;
+                        return false;
+                    }
+                    else return (-(m+1));
+                }     
+            #else
+                if (mask[i]==name[n]) {
+                    while (i<l && mask[i]!=']') i++;
+                    if (mask[i]==']') {
+                        n++; m=i+1;
+                        return false;
+                    }
+                    else return (-(m+1));
+                }
+            #endif  
+        if (mask[i]==']') return true;
         else return (-(m+1));
      }
   }                     
@@ -226,7 +332,7 @@ KsMask::joker(const char *name, int &n, int &m) const
          l_rest++;
   if (l_rest==0) return (-(m+1));
   if (mask[m+1]=='\\') m++;
- 
+
   if (mask[m+1]!='[') {
      for (i=k-l_rest; i>=n; i--)
         if (mask[m+1]==name[i]) {

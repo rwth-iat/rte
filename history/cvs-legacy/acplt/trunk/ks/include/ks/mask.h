@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MASK_INCLUDED
 #define KS_MASK_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/mask.h,v 1.1 1997-03-25 21:19:35 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/mask.h,v 1.2 1998-04-20 08:28:42 nicole Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,6 +41,10 @@
  */
 
 #include "plt/string.h"
+
+#ifndef PLT_IGNOR_UPCASE
+#define PLT_IGNOR_UPCASE 0
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 
