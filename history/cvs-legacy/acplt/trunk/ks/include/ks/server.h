@@ -1,7 +1,7 @@
-/* -*-plt-c++-*- */
+/* -*-c++-*- */
 #ifndef KS_SERVER_INCLUDED
 #define KS_SERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.9 1999-09-16 10:54:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.10 2003-10-13 11:32:25 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -41,10 +41,11 @@ class KsReregisterServerEvent;
 
 //////////////////////////////////////////////////////////////////////
 
+class KsManagerRegistration;
+
 class KsServer
 : virtual public KsServerBase
 {
-    friend class KsReregisterServerEvent;
 public:
     KsServer(u_long ttl, int port = KS_ANYPORT);
     virtual ~KsServer();
@@ -59,50 +60,12 @@ public:
     virtual void stopServer();     // stop answering requests asap
 
 protected:
-    static CLIENT *createLocalClient();
-    bool register_server();
-    bool unregister_server();
-private:
     u_long _ttl;
-    bool _registered;
+    KsManagerRegistration *_ks_mgr;
 };
-
-//////////////////////////////////////////////////////////////////////
-
-class KsReregisterServerEvent
-: public KsTimerEvent
-{
-public:
-    KsReregisterServerEvent(KsServer & svr,
-                            const KsTime at)
-        : KsTimerEvent(at), _server(svr) { }
-
-    virtual void trigger();
-private:
-    static const u_long MIN_TTL;
-    KsServer & _server;
-};
-
-//////////////////////////////////////////////////////////////////////
-
-
-//
-// The purpose of the following declaration and the definition is to
-// provide a link-time check making sure that both the ACPLT/KS server
-// and the libkssvr were compiled with either PLT_USE_BUFFERED_STREAMS
-// enabled or disabled, but not one with enabled buffering and the other
-// one without.
-//
-extern void *This_libKssvr_Was_Compiled_Without_PLT_USE_BUFFERED_STREAMS;
-extern void *This_libKssvr_Was_Compiled_With_PLT_USE_BUFFERED_STREAMS;
-static void *Checking_PLT_USE_BUFFERED_STREAMS_Option = 
-#if PLT_USE_BUFFERED_STREAMS
-    &This_libKssvr_Was_Compiled_Without_PLT_USE_BUFFERED_STREAMS;
-#else
-    &This_libKssvr_Was_Compiled_With_PLT_USE_BUFFERED_STREAMS;
-#endif
 
     
 #endif // KS_SERVER_INCLUDED
 
 
+// End of ks/server.h
