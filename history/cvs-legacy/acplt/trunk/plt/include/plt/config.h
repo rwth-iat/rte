@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.23 1999-05-12 10:04:29 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.24 1999-09-06 06:47:41 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
@@ -87,6 +87,19 @@
 #endif
 
 #include <stddef.h>
+
+
+// --------------------------------------------------------------------------
+// Provide backwards compatibility with old ACPLT/KS applications written
+// for the 1.0.x series of the C++ Communication Library
+//
+#ifndef PLT_SOURCE_V1_BC
+#define PLT_SOURCE_V1_BC 1
+#endif
+
+#ifndef PLT_SOURCE_V1PLUS_BC
+#define PLT_SOURCE_V1PLUS_BC 1
+#endif
 
 // --------------------------------------------------------------------------
 // Enable/disable use of the connection manager class and the buffered
