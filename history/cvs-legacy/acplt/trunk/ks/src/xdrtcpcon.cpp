@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.9 1999-04-22 15:35:14 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.10 1999-05-12 10:03:54 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -534,13 +534,14 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 	// where platform issues can arise (portability...)
 	//
 	int error;
+#if !PLT_SYSTEM_OPENVMS
 	int size = sizeof(error);
+#else
+        unsigned int size = sizeof(error);
+#endif
 
 	if ( (getsockopt(_fd, SOL_SOCKET, SO_ERROR, 
-#if 1 || PLT_SYSTEM_NT
-                (char *)
-#endif
-                         &error, &size) < 0)
+                         (char *) &error, &size) < 0)
 	     || error ) {
 	    //
 	    // Connection establishment failed. Put the connection into the
@@ -800,13 +801,14 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 	// where platform issues can arise (portability...)
 	//
 	int error;
+#if !PLT_SYSTEM_OPENVMS
 	int size = sizeof(error);
+#else
+	unsigned int size = sizeof(error);
+#endif
 
 	if ( (getsockopt(_fd, SOL_SOCKET, SO_ERROR, 
-#if 1 || PLT_SYSTEM_NT
-                (char *)
-#endif
-                         &error, &size) < 0)
+                         (char *) &error, &size) < 0)
 	     || error ) {
 	    //
 	    // Connection establishment failed. Put the connection into the
@@ -841,9 +843,9 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 
     //
     // Gotcha: that one took me one full day (much(!) more than eight hours)
-    // to find it. It´s simply not good first to write the fragment header to
+    // to find it. It's simply not good first to write the fragment header to
     // the socket and then the body. This will usually result in two packets
-    // on the wire and therefore cause large delays due to waiting for ACK´s.
+    // on the wire and therefore cause large delays due to waiting for ACK's.
     // This effectively slowed down communication quite a lot (with lots of
     // free cpu time...!). The solution: write fragment header and body in
     // one call to write.
@@ -932,6 +934,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::reset(bool hadTimeout)
 		    _state = CNX_STATE_DEAD;
 		}
 	    }
+	    break;
 	default:
 	    //
 	    // Don't touch the state for a server connection. If we're on
