@@ -10,7 +10,7 @@ CXX_FLAGS = -DNDEBUG -O2 -Wall
 #CXX_FLAGS = -g -Wall
 
 CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_SOLARIS=1
-CXX_PLATFORM_LIBS = -lrpcsvc -lsocket
+CXX_PLATFORM_LIBS = -lrpcsvc -lnsl -lsocket
 
 PLATFORM = solaris
 MAKE=make
