@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.8 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_library.c,v 1.9 2000-04-13 09:26:44 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -270,6 +270,11 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 					ov_library_close(plib);
 				}
 			}
+#if OV_SYSTEM_LINUX
+			else {
+				ov_logfile_error("Can't load library. Reason: %s", dlerror());
+			}
+#endif
 			/*
 			*	free the temporary string
 			*/
