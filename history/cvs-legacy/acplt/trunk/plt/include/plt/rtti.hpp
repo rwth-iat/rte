@@ -68,9 +68,47 @@ PltRTTI::canCastFrom(const PltRTTI *p) const
 // MACROS
 //////////////////////////////////////////////////////////////////////
 
-#define PLT_DYNAMIC_PCAST(T,p) \
+#define PLT_DYNAMIC_PCAST(T,p)                                         \
            ((&T::RTTI)->canCastFrom(p->getRTTI()) ? (T*)((p)) : 0)
+
+#define PLT_DECL_RTTI                                                  \
+     public:                                                           \
+         virtual const PltRTTI* getRTTI() const                        \
+             { return &RTTI; }                                         \
+         static const PltRTTI RTTI
+
+#define PLT_IMPL_RTTI0(clsname)                                        \
+     const PltRTTI clsname::RTTI(#clsname,0)
+
+#define PLT_IMPL_RTTI1(clsname,base1)                                  \
+     static const PltRTTI * clsname##_bases [] = {                     \
+         &base1::RTTI,                                                 \
+         0 };                                                          \
+     const PltRTTI clsname::RTTI(#clsname,clsname##_bases)
+
+#define PLT_IMPL_RTTI2(clsname,base1,base2)                            \
+     static const PltRTTI * clsname##_bases [] = {                     \
+         &base1::RTTI,                                                 \
+         &base2::RTTI,                                                 \
+         0 };                                                          \
+     const PltRTTI clsname::RTTI(#clsname,clsname##_bases)
+
+#define PLT_IMPL_RTTI3(clsname,base1,base2,base3)                      \
+     static const PltRTTI * clsname##_bases [] = {                     \
+         &base1::RTTI,                                                 \
+         &base2::RTTI,                                                 \
+         &base3::RTTI,                                                 \
+         0 };                                                          \
+     const PltRTTI clsname::RTTI(#clsname,clsname##_bases)
+
 #else // PLT_SIMULATE_RTTI
+
+#define PLT_DECL_RTTI typedef void plt_rtti_dummy
+#define PLT_IMPL_RTTI0(c) typedef void plt_rtti_dummy
+#define PLT_IMPL_RTTI1(c,b1) typedef void plt_rtti_dummy
+#define PLT_IMPL_RTTI2(c,b2) typedef void plt_rtti_dummy
+#define PLT_IMPL_RTTI3(c,b3) typedef void plt_rtti_dummy
+
 #define PLT_DYNAMIC_PCAST(T,p) \
            (dynamic_cast<T*> (p))
 #endif // PLT_SIMULATE_RTTI
