@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.12 2004-08-04 15:15:50 ansgar Exp $
+#   $Id: generic.mk,v 1.13 2004-10-21 15:02:30 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -55,6 +55,9 @@ OV_SOURCE_DYNOV_DIR			= $(OV_SOURCE_DIR)dynov/
 OV_SOURCE_TASKLIB_DIR			= $(OV_SOURCE_DIR)tasklib/
 OV_SOURCE_DBDUMP_DIR			= $(OV_SOURCE_DIR)dbdump/
 OV_SOURCE_DBPARSE_DIR			= $(OV_SOURCE_DIR)dbparse/
+OV_SOURCE_MAKMAK_DIR			= $(OV_SOURCE_DIR)makmak/
+OV_SOURCE_DBINFO_DIR			= $(OV_SOURCE_DIR)dbinfo/
+OV_SOURCE_LIBINFO_DIR			= $(OV_SOURCE_DIR)libinfo/
 
 ACPLT_PLT_DIR				= ../../../plt/
 
@@ -111,6 +114,9 @@ SOURCE_DIRS	= \
 	$(OV_SOURCE_TASKLIB_DIR) \
 	$(OV_SOURCE_DBDUMP_DIR) \
 	$(OV_SOURCE_DBPARSE_DIR) \
+	$(OV_SOURCE_MAKMAK_DIR) \
+	$(OV_SOURCE_DBINFO_DIR) \
+	$(OV_SOURCE_LIBINFO_DIR) \
 	$(OV_SOURCE_EXAMPLE_DIR) \
 	$(ACPLT_KS_SOURCE_DIR)
 
@@ -295,6 +301,7 @@ OV_BUILDER_SRC := ov_ovmparser.c ov_ovmscanner.c \
 OV_BUILDER_OBJ  = $(foreach source, $(OV_BUILDER_SRC), \
 	$(basename $(notdir $(source)))$(OBJ))
 OV_BUILDER_EXE  = ov_builder$(EXE)
+OV_BUILDER_RES	= $(basename $(OV_BUILDER_EXE))$(RES)
 
 #	ACPLT/OV library
 #	----------------
@@ -422,6 +429,7 @@ TASKLIB_DLL  = tasklib$(DLL)
 DBDUMP_SRC := $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.c) $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.cpp)
 DBDUMP_OBJ  = $(foreach source, $(DBDUMP_SRC), $(basename $(notdir $(source)))$(OBJ))
 DBDUMP_EXE  = ov_dbdump$(EXE)
+DBDUMP_RES  = $(basename $(DBDUMP_EXE))$(RES)
 
 #	ACPLT/OV database parser
 #	------------------------
@@ -429,6 +437,23 @@ DBDUMP_EXE  = ov_dbdump$(EXE)
 DBPARSE_SRC := db_lex.c db_y.c $(wildcard $(OV_SOURCE_DBPARSE_DIR)*.c) $(wildcard $(OV_SOURCE_DBPARSE_DIR)*.cpp)
 DBPARSE_OBJ  = $(foreach source, $(DBPARSE_SRC), $(basename $(notdir $(source)))$(OBJ))
 DBPARSE_EXE  = ov_dbparse$(EXE)
+DBPARSE_RES  = $(basename $(DBPARSE_EXE))$(RES)
+
+#	ACPLT/OV makmak
+#	---------------
+
+MAKMAK_SRC := $(wildcard $(OV_SOURCE_MAKMAK_DIR)*.c)
+MAKMAK_OBJ  = $(foreach source, $(MAKMAK_SRC), $(basename $(notdir $(source)))$(OBJ))
+MAKMAK_EXE  = ov_makmak$(EXE)
+MAKMAK_RES  = $(basename $(MAKMAK_EXE))$(RES)
+
+#	ACPLT/OV library info
+#	---------------------
+
+LIBINFO_SRC := $(wildcard $(OV_SOURCE_LIBINFO_DIR)*.c)
+LIBINFO_OBJ  = $(foreach source, $(LIBINFO_SRC), $(basename $(notdir $(source)))$(OBJ))
+LIBINFO_EXE  = ov_libinfo$(EXE)
+LIBINFO_RES  = $(basename $(LIBINFO_EXE))$(RES)
 
 #	Targets and their sources
 #	-------------------------
@@ -451,6 +476,8 @@ TARGETS = \
 	$(EXAMPLE_LIB) \
 	$(DBDUMP_EXE) \
 	$(DBPARSE_EXE) \
+	$(MAKMAK_EXE) \
+	$(LIBINFO_EXE) \
 	$(OV_SERVER_EXE)
 
 ALL = \
@@ -469,4 +496,6 @@ SOURCES = \
 	$(TASKLIB_SRC) \
 	$(DBDUMP_SRC) \
 	$(DBPARSE_SRC) \
+	$(MAKMAK_SRC) \
+	$(LIBINFO_SRC) \
 	$(EXAMPLE_SRC)

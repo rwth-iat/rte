@@ -2204,8 +2204,12 @@ bool write_variables(instance *node)
 			} // switch
 
 			KsValueHandle hvalue(val, KsOsNew);
-			KsVarCurrProps *cprops = new KsVarCurrProps(hvalue, *((*it)->a_value->var_time),
-														(*it)->a_value->var_state);
+			KsVarCurrProps *cprops;
+			if ((*it)->a_value->var_time)
+				cprops = new KsVarCurrProps(hvalue, *((*it)->a_value->var_time), (*it)->a_value->var_state);
+			else
+				cprops = new KsVarCurrProps(hvalue, KsTime(0,0), (*it)->a_value->var_state);
+
 			KsCurrPropsHandle hcprops(cprops, KsOsNew);
 
 			PltString delimiter;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_dbutil.c,v 1.4 2004-10-20 16:31:39 ansgar Exp $
+*   $Id: ov_dbutil.c,v 1.5 2004-10-21 15:02:30 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -147,7 +147,7 @@ void ov_partoutput(
 	while (partelem.elemtype != OV_ET_NONE) {
 	        fprintf(handle, "\t\tPART_INSTANCE ");
         	ov_instanceoutput(partelem.pobj, handle, rnum + 2);
-		fprintf(handle, "\t\tEND_PART_INSTANCE;");
+		fprintf(handle, "END_PART_INSTANCE;");
 		ov_newline(handle, rnum);
 		ov_element_getnextpart(&parentelem, &partelem, OV_ET_OBJECT);
 	}
@@ -178,6 +178,9 @@ void ov_basevalueoutput(
         OV_TIME_SPAN tsp;
 
         switch (vartype){
+                case OV_VT_VOID:
+		      fprintf(handle, "<void>");
+		      break;
 	        case OV_VT_BOOL:
                       b = *(OV_BOOL*)(pvalue);
                       if (b == 0) fprintf(handle, "FALSE");
@@ -207,7 +210,7 @@ void ov_basevalueoutput(
                       st = *(OV_STRING*)(pvalue);
                       if(st){
         	             ov_memstack_lock();
- 	                     fprintf(handle, "%s", ov_path_topercent(st));
+ 	                     fprintf(handle, "\"%s\"", st);
                 	     ov_memstack_unlock();
                       }
 		      else fprintf(handle, "\"\"");
@@ -258,6 +261,7 @@ void ov_valueoutput(
                 case OV_VT_TIME:
                 case OV_VT_TIME_SPAN:
                 	ov_basevalueoutput(vartype, pvalue, handle);
+		        fprintf(handle, ";");
                  	break;
                 case OV_VT_BOOL_VEC:
                 case OV_VT_BYTE_VEC:
@@ -290,13 +294,14 @@ void ov_valueoutput(
                       			}
                     		}
                    	}
-	                fprintf(handle, " }");
+	                fprintf(handle, " };");
                  	break;
                  case OV_VT_ANY:
                  	if (((OV_ANY*)pvalue)->value.vartype & OV_VT_ISVECTOR) veclength = 0;
                  	else veclength = 1;
                    	ov_valueoutput(partelem, (((OV_ANY*)pvalue)->value.vartype & OV_VT_KSMASK), veclength, &(((OV_ANY*)pvalue)->value.valueunion.val_byte), handle);
 	                break;
+                        fprintf(handle, ";");
                  case OV_VT_STRUCT:
 	                fprintf(handle, "{ ");
 			ov_element_getnextpart(&thiselem, &partelem, OV_ET_VARIABLE);
@@ -306,10 +311,10 @@ void ov_valueoutput(
 				ov_element_getnextpart(&thiselem, &partelem, OV_ET_VARIABLE);
 				if (partelem.elemtype != OV_ET_NONE) fprintf(handle, ", ");
 			}
-	                fprintf(handle, " }");
+	                fprintf(handle, " };");
                  	break;
 
-              }
+        }
 
 }
 
@@ -334,9 +339,14 @@ void ov_variableoutput(
 
 	ov_element_getnextpart(&parentelem, &partelem, OV_ET_VARIABLE);
 	while (partelem.elemtype != OV_ET_NONE) {
-	        fprintf(handle, "\t\t%s = ", partelem.elemunion.pvar->v_identifier);
-		ov_valueoutput(partelem, partelem.elemunion.pvar->v_vartype, partelem.elemunion.pvar->v_veclen, partelem.pvalue, handle);
-		ov_newline(handle, rnum);
+	        if (((partelem.elemunion.pvar->v_vartype & OV_VT_CTYPE) != OV_VT_CTYPE) &&
+		    strcmp(partelem.elemunion.pvar->v_identifier, "identifier") &&
+		    strcmp(partelem.elemunion.pvar->v_identifier, "creationtime") &&
+		    strcmp(partelem.elemunion.pvar->v_identifier, "objectstate")) {
+		        fprintf(handle, "\t\t%s = ", partelem.elemunion.pvar->v_identifier);
+			ov_valueoutput(partelem, partelem.elemunion.pvar->v_vartype, partelem.elemunion.pvar->v_veclen, partelem.pvalue, handle);
+			ov_newline(handle, rnum);
+		}
 		ov_element_getnextpart(&parentelem, &partelem, OV_ET_VARIABLE);
 	}
 }
@@ -366,22 +376,25 @@ void ov_linkoutput(
 
 	ov_element_getnextpart(&parentelem, &partelem, OV_ET_PARENTLINK | OV_ET_CHILDLINK);
 	while (partelem.elemtype != OV_ET_NONE) {
-	        if (partelem.elemtype == OV_ET_PARENTLINK) {
-		        fprintf(handle, "\t\t%s={", partelem.elemunion.passoc->v_childrolename);
+	        if ((partelem.elemtype == OV_ET_PARENTLINK) &&
+		     strcmp(partelem.elemunion.passoc->v_identifier, "containment")) {
+       		        fprintf(handle, "\t\t%s = {", partelem.elemunion.passoc->v_childrolename);
 		        switch (partelem.elemunion.passoc->v_assoctype) {
 		                case OV_AT_ONE_TO_ONE:
 		                	pchild = Ov_Association_GetChild(partelem.elemunion.passoc, pobj);
-				        ov_memstack_lock();
-				        res = ov_path_getcanonicalpath(pchild, 2);
-				        fprintf(handle, " %s", res);
-				        ov_memstack_unlock();
+				        if (pchild) {
+				                ov_memstack_lock();
+					        res = ov_path_getcanonicalpath(pchild, 2);
+					        fprintf(handle, "%s", res);
+					        ov_memstack_unlock();
+					}
 		                	break;
 		                case OV_AT_ONE_TO_MANY:
 		                	pchild = Ov_Association_GetFirstChild(partelem.elemunion.passoc, pobj);
 		                	while (pchild) {
 					        ov_memstack_lock();
 					        res = ov_path_getcanonicalpath(pchild, 2);
-					        fprintf(handle, " %s", res);
+					        fprintf(handle, "%s", res);
 					        ov_memstack_unlock();
 					        pchild = Ov_Association_GetNextChild(partelem.elemunion.passoc, pchild);
 					        if (pchild) fprintf(handle, ",");
@@ -399,21 +412,27 @@ void ov_linkoutput(
 					}
 		                	break;
 		        }
+	                fprintf(handle, "}");
+			ov_newline(handle, rnum);
 		}
-	        if (partelem.elemtype == OV_ET_CHILDLINK) {
-		        fprintf(handle, "\t\t%s={", partelem.elemunion.passoc->v_parentrolename);
+	        if ((partelem.elemtype == OV_ET_CHILDLINK) &&
+		     strcmp(partelem.elemunion.passoc->v_identifier, "containment") &&
+		     strcmp(partelem.elemunion.passoc->v_identifier, "instantiation")) {
+		        fprintf(handle, "\t\t%s = {", partelem.elemunion.passoc->v_parentrolename);
 		        switch (partelem.elemunion.passoc->v_assoctype) {
 		                case OV_AT_ONE_TO_ONE:
 		                case OV_AT_ONE_TO_MANY:
 		                	pparent = Ov_Association_GetParent(partelem.elemunion.passoc, pobj);
-				        ov_memstack_lock();
-				        res = ov_path_getcanonicalpath(pparent, 2);
-				        fprintf(handle, " %s", res);
-				        ov_memstack_unlock();
+				        if (pparent) {
+						ov_memstack_lock();
+				        	res = ov_path_getcanonicalpath(pparent, 2);
+				        	fprintf(handle, " %s", res);
+				        	ov_memstack_unlock();
+				        }
 		                	break;
 		                case OV_AT_MANY_TO_MANY:
 		                	pparent = Ov_Association_GetFirstParentNM(partelem.elemunion.passoc, pit, pobj);
-		                	while (pparent) {
+					while (pparent) {
 					        ov_memstack_lock();
 					        res = ov_path_getcanonicalpath(pparent, 2);
 					        fprintf(handle, " %s", res);
@@ -423,9 +442,9 @@ void ov_linkoutput(
 					}
 		                	break;
 		        }
+	                fprintf(handle, "}");
+			ov_newline(handle, rnum);
 		}
-	        fprintf(handle, " }");
-		ov_newline(handle, rnum);
 		ov_element_getnextpart(&parentelem, &partelem, OV_ET_PARENTLINK | OV_ET_CHILDLINK);
 	}
 }
@@ -442,7 +461,6 @@ void ov_instanceoutput(
         int rnum
 ){
         OV_INSTPTR_ov_class   	pclass;
-        OV_INSTPTR_ov_library  	pobjlib;
         OV_STRING 		res;
         OV_STRING 		tstring;
         char			text[32];
@@ -466,26 +484,26 @@ void ov_instanceoutput(
 	ov_newline(handle, rnum);
 
 	/* Ausgabe der Erzeugungszeit */
-	tstring = ov_time_timetoascii(&pobjlib->v_creationtime);
+	tstring = ov_time_timetoascii(&pobj->v_creationtime);
 	fprintf(handle, "\tCREATION_TIME = %s;", tstring);
 	ov_newline(handle, rnum);
 
      	/* Hier werden die Flags zu der Klasse ausgeschrieben */
     	if(pclass->v_flags){
     	        flagstext(pclass->v_flags, text);
-        	fprintf(handle, "\tFLAGS = \"%s\"", text);
+        	fprintf(handle, "\tFLAGS = \"%s\";", text);
      	}
      	else {
-        	fprintf(handle, "\tFLAGS = \"\"");
+        	fprintf(handle, "\tFLAGS = \"\";");
      	}
 	ov_newline(handle, rnum);
 
 	/* Ausgabe des Kommentars */
 	if(pclass->v_comment){
-        	fprintf(handle, "\tCOMMENT = \"%s\"", pclass->v_comment);
+        	fprintf(handle, "\tCOMMENT = \"%s\";", pclass->v_comment);
       	}
       	else {
-        	fprintf(handle, "\tCOMMENT = \"\"");
+        	fprintf(handle, "\tCOMMENT = \"\";");
        	}
 	ov_newline(handle, rnum);
 
@@ -528,14 +546,16 @@ void ov_dump_db(
 	OV_INSTPTR_ov_domain pdom
 ) {
 	OV_INSTPTR_ov_object 	pobj;
+	OV_INSTPTR_ov_domain 	pdom2;
 
 	Ov_ForEachChild(ov_containment, pdom, pobj) {
-		ov_newline(handle, 0);
 	        fprintf(handle, "INSTANCE ");
 	        ov_instanceoutput(pobj, handle, 0);
 		fprintf(handle, "END_INSTANCE;");
 		ov_newline(handle, 0);
-		if (Ov_DynamicPtrCast(ov_domain, pobj)) ov_dump_db(handle, Ov_StaticPtrCast(ov_domain, pobj));
+		ov_newline(handle, 0);
+		pdom2 = Ov_DynamicPtrCast(ov_domain, pobj);
+		if (pdom2) ov_dump_db(handle, pdom2);
 	}
 }
 /*	----------------------------------------------------------------------	*/
@@ -555,21 +575,37 @@ OV_RESULT ov_dump(
 		ov_logfile_error("unable to open file for writing: %s.\n", name);
 		return -1;
 	}
-
-	passoc_ov_containment = &pdb->containment;
-	passoc_ov_instantiation = &pdb->instantiation;
-	if ((!passoc_ov_containment) || (!passoc_ov_instantiation)) return -1;
+	passoc_ov_containment = &(pdb->containment);
+	passoc_ov_instantiation = &(pdb->instantiation);
+	if ((!passoc_ov_containment) || (!passoc_ov_instantiation)) {
+	        fclose(handle);
+	        return -1;
+	}
 
 	// get passocs from database
 	Ov_ForEachChild(ov_containment, &pdb->ov, pobj) {
+	        if (!strcmp(pobj->v_identifier, "containment")) passoc_ov_containment = (OV_INSTPTR_ov_association) pobj;
+	        if (!strcmp(pobj->v_identifier, "instantiation")) passoc_ov_instantiation = (OV_INSTPTR_ov_association) pobj;
 	        if (!strcmp(pobj->v_identifier, "inheritance")) passoc_ov_inheritance = (OV_INSTPTR_ov_association) pobj;
 	        if (!strcmp(pobj->v_identifier, "parentrelationship")) passoc_ov_parentrelationship = (OV_INSTPTR_ov_association) pobj;
 	        if (!strcmp(pobj->v_identifier, "childrelationship")) passoc_ov_childrelationship = (OV_INSTPTR_ov_association) pobj;
+
+	        if (!strcmp(pobj->v_identifier, "object")) pclass_ov_object = (OV_INSTPTR_ov_class) pobj;
+	        if (!strcmp(pobj->v_identifier, "domain")) pclass_ov_domain = (OV_INSTPTR_ov_class) pobj;
+	        if (!strcmp(pobj->v_identifier, "class")) pclass_ov_class = (OV_INSTPTR_ov_class) pobj;
+	        if (!strcmp(pobj->v_identifier, "association")) pclass_ov_association = (OV_INSTPTR_ov_class) pobj;
+	        if (!strcmp(pobj->v_identifier, "variable")) pclass_ov_variable = (OV_INSTPTR_ov_class) pobj;
+	        if (!strcmp(pobj->v_identifier, "operation")) pclass_ov_operation = (OV_INSTPTR_ov_class) pobj;
+	        if (!strcmp(pobj->v_identifier, "part")) pclass_ov_part = (OV_INSTPTR_ov_class) pobj;
 	}
-	if ((!passoc_ov_inheritance) || (!passoc_ov_parentrelationship) || (!passoc_ov_childrelationship)) return -1;
+	if ((!passoc_ov_inheritance) || (!passoc_ov_parentrelationship) || (!passoc_ov_childrelationship)) {
+	        fclose(handle);
+	        return -1;
+	}
 
 	// start recursive object iteration
 	ov_dump_db(handle, &pdb->root);
+	fclose(handle);
 	return 0;
 }
 
