@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.18 1998-10-06 13:19:16 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.19 1998-10-23 12:50:53 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -81,6 +81,7 @@ enum KS_RESULT_ENUM {
     KS_ERR_UNKNOWNAUTH              = 0x0005,
     KS_ERR_NOTIMPLEMENTED           = 0x0003,
     KS_ERR_BADPARAM                 = 0x0004,
+    KS_ERR_BADOBJTYPE               = 0x0007,
    
     KS_ERR_BADNAME                  = 0x0010,
     KS_ERR_BADPATH                  = 0x0011,
@@ -89,11 +90,15 @@ enum KS_RESULT_ENUM {
     KS_ERR_BADTYPE                  = 0x0014,
     KS_ERR_CANTSYNC                 = 0x0015,
     KS_ERR_BADSELECTOR              = 0x0016,
-    KS_ERR_BADINITPARAM             = 0x0017,
-    KS_ERR_NOFACTORY                = 0x0018,
+    KS_ERR_BADVALUE                 = 0x0017,
     
     KS_ERR_NOREMOTE                 = 0x0020,
     KS_ERR_SERVERUNKNOWN            = 0x0021,
+
+    KS_ERR_BADFACTORY               = 0x0030,
+    KS_ERR_ALREADYEXISTS            = 0x0031,
+    KS_ERR_BADINITPARAM             = 0x0032,
+    KS_ERR_BADPLACEMENT             = 0x0033,
 
 /*  
  *  ... and errors which can occur in the client part of the
