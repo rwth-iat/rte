@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "libov/ov_version.h"
 
 #ifdef OV_SYSTEM_NT
 char dupath[64] = "c:/acplt/user";
@@ -91,6 +92,7 @@ int main(int argc, char **argv) {
                         fprintf(stderr, "ACPLT  directory: %s\n", dapath);
                         fprintf(stderr, "USER   directory: %s\n", dupath);
                         fprintf(stderr, "BINARY directory: %s\n", dbpath);
+                        fprintf(stderr, "OV_MAKMAK Version: %s\n", OV_VER_MAKMAK);
                         return 0;
 		}
 		else if(!strcmp(argv[i], "-h")) {
@@ -102,7 +104,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
                                         "The acplt base software is stored in the ACPLT-directory."
                                         "It's subdivided in the 'plt', 'ks' and 'ov' directory.\n"
                                         "The compiled acplt-software is stored in the BINARY directory.\n\n");
-                        fprintf(stderr, "Usage: makmak [arguments]\n"
+                        fprintf(stderr, "Usage: ov_makmak [arguments]\n"
 			"\n"
 			"-l  LIBNAME     Set name of the library whose makefile is to be generated\n"
 			"-pu PATH        Set path to the USER directory\n"
@@ -111,7 +113,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 			"-i  PATH        Set additional include path for headers or libraries (absolute or relative to <LIBNAME>/build/<SYSTEM>)\n"
 			"-c  PATH        Set additional (absolute) path, the compiled library is copied to\n"
 			"-d  LIBNAME     Set name of base libraries (consider the correct order)\n"
-			"-v              Lists the default settings\n");
+			"-v              Lists the default settings and version informations\n");
 			return 0;
 		}
 	}

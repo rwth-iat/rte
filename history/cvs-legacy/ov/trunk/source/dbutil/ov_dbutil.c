@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_dbutil.c,v 1.2 1999-07-26 16:14:11 dirk Exp $
+*   $Id: ov_dbutil.c,v 1.3 2004-10-14 14:14:54 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	03-Jul-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	20-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	11-Oct-2004 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: integration of extended infos and dbdump functions.
 */
 
 #include <stdio.h>
@@ -34,6 +35,9 @@
 #include "libov/ov_database.h"
 #include "libov/ov_result.h"
 #include "libov/ov_logfile.h"
+#include "libov/ov_macros.h"
+#include "libov/ov_path.h"
+
 
 /*	----------------------------------------------------------------------	*/
 
@@ -48,6 +52,150 @@ Ov_EndStaticLibraryTable;
 
 /*	----------------------------------------------------------------------	*/
 
+void flagstext(
+	OV_UINT	flags,
+	char *text
+) {
+   	OV_UINT j;
+   	unsigned char i;
+
+	for (i=0;i<32;i++) {
+		j = 1 << i;
+		if (flags & j) {
+			*text = 'a'+i;
+			text++;
+		}
+	}
+	*text = 0;
+
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	new line in respect to rnum
+*/
+void ov_newline(
+	FILE* handle,
+	int rnum
+) {
+   	int i;
+   	
+   	fprintf("\n");
+   	for (i=0;i<rnum;i++) fprintf(handle,"\t");
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	database dump
+*/
+
+void ov_instanceoutput(
+        OV_INSTPTR_ov_object pobj,
+        FILE *handle,
+        int rnum
+){
+        OV_INSTPTR_ov_class   	pclass;
+        OV_INSTPTR_ov_library  	pobjlib;
+        OV_STRING 		res;
+        OV_STRING 		tstring;
+        char			text[32];
+
+	/*liefert den Zeiger der Klasse einer Instanz*/
+        pclass = Ov_GetClassPtr(pobj);
+
+	/*liefert den Pfad des Objektes aus*/
+        ov_memstack_lock();
+        res = ov_path_getcanonicalpath(pobj, 2);
+        fprintf(handle, "%s", res);
+        ov_memstack_unlock();
+
+	/* schreibt den Namen der zugeörigen Bibliothek und Klasse aus */
+        fprintf(handle, " : CLASS ");
+        ov_memstack_lock();
+        res = ov_path_getcanonicalpath(pclass, 2);
+        fprintf(handle,"%s", res);
+        ov_memstack_unlock();
+
+	ov_newline(handle, rnum);
+
+	/* Ausgabe der Erzeugungszeit */
+	tstring = ov_time_timetoascii(&pobjlib->v_creationtime);
+	fprintf(handle, "\tCREATION_TIME = %s;", tstring);
+	ov_newline(handle, rnum);
+
+     	/* Hier werden die Flags zu der Klasse ausgeschrieben */
+    	if(pclass->v_flags){
+    	        flagstext(pclass->v_flags, text);
+        	fprintf(handle, "\tFLAGS = \"%s\"", text);
+     	}
+     	else {
+        	fprintf(handle, "\tFLAGS = \"\"");
+     	}
+	ov_newline(handle, rnum);
+
+	/* Ausgabe des Kommentars */
+	if(pclass->v_comment){
+        	fprintf(handle, "\tCOMMENT = \"%s\"", pclass->v_comment);
+      	}
+      	else {
+        	fprintf(handle, "\tCOMMENT = \"\"");
+       	}
+	ov_newline(handle, rnum);
+
+	/* Ausgabe der Objekt-Variablen */
+	fprintf(handle, "\tVARIABLE_VALUES");
+	ov_newline(handle, rnum);
+
+	ov_variableoutput(pobj, handle, rnum);
+
+	fprintf(handle, "\tEND_VARIABLE_VALUES;");
+	ov_newline(handle, rnum);
+
+	/* Ausgabe der Objekt-Links */
+	fprintf(handle, "\tLINK_VALUES");
+	ov_newline(handle, rnum);
+
+	ov_linkoutput(pobj, handle, rnum);
+
+	fprintf(handle, "\tEND_LINK_VALUES;");
+	ov_newline(handle, rnum);
+
+	/* Ausgabe der Objekt-Parts */
+	fprintf(handle, "\tPART_INSTANCES");
+	ov_newline(handle, rnum);
+
+	ov_partoutput(pobj, handle, rnum);
+
+	fprintf(handle, "\tEND_PART_INSTANCES;");
+	ov_newline(handle, rnum);
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	database dump
+*/
+
+OV_RESULT ov_dump(
+	OV_STRING name
+) {
+	FILE *fp;
+
+	fp = fopen(name, "w");
+	if(!fp) {
+		ov_logfile_error("unable to open file for writing: %s.\n", name);
+		return -1;
+	}
+	passoc_ov_containment = &pdb->containment;
+	passoc_ov_instantiation = &pdb->instantiation;
+
+	return 0;
+}
+
+/*	----------------------------------------------------------------------	*/
+
 /*
 *	Main program
 */
@@ -55,12 +203,16 @@ int main(int argc, char **argv) {
 	/*
 	*	local variables
 	*/
-	OV_UINT 	i;
-	OV_UINT		size = 0;
-	OV_STRING	filename = "database.ovd";
-	OV_RESULT	result;
+	OV_INT	 		i;
+	OV_UINT			size = 0;
+	OV_STRING		filename = "database.ovd";
+	OV_STRING		dumpfilename = NULL;
+	OV_RESULT		result;
+	OV_BOOL			extended = FALSE;
+	OV_INSTPTR_ov_object	pobj;
+	OV_INSTPTR_ov_object	pinst;
 	/*
-	*	if we are debugging, log to stderr (if not 
+	*	if we are debugging, log to stderr (if not
 	*	specified by the command line options)
 	*/
 #ifdef OV_DEBUG
@@ -117,6 +269,23 @@ int main(int argc, char **argv) {
 			}
 		}
 		/*
+		*	display extended information
+		*/
+		else if(!strcmp(argv[i], "-e") || !strcmp(argv[i], "--extended")) {
+			extended = TRUE;
+		}
+		/*
+		*	display extended information
+		*/
+		else if(!strcmp(argv[i], "-d") || !strcmp(argv[i], "--dump")) {
+			i++;
+			if(i<argc) {
+				dumpfilename = argv[i];
+			} else {
+				goto HELP;
+			}
+		}
+		/*
 		*	display version option
 		*/
 		else if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) {
@@ -139,6 +308,7 @@ HELP:		fprintf(stderr, "Usage: ov_dbutil [arguments]\n"
 #else
 				" or stderr\n"
 #endif
+				"-e, --extended                  Display extended database information\n"
 				"-v, --version                   Display version information\n"
 				"-h, --help                      Display this help message\n");
 			return EXIT_FAILURE;
@@ -160,11 +330,43 @@ ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
 		ov_logfile_info("Database created.");
 	} else {
 		ov_logfile_info("Mapping database \"%s\"...", filename);
-		result = ov_database_map(filename);
+		result = ov_database_map_loadfile(filename);
 		if(Ov_Fail(result)) {
 			goto ERRORMSG;
 		}
 		ov_logfile_info("Database mapped.");
+	 	if (extended) {
+			/*
+			*	Print extended database information
+			*/
+			passoc_ov_containment = &pdb->containment;
+			passoc_ov_instantiation = &pdb->instantiation;
+
+			pobj = Ov_GetFirstChild(ov_containment, &(pdb->ov));
+			while (pobj) {
+			        if (!strcmp(pobj->v_identifier, "library")) {
+			        	Ov_ForEachChild(ov_instantiation, (OV_INSTPTR_ov_class) pobj, pinst) {
+						ov_logfile_info("Defined library %s, version %s", pinst->v_identifier, ((OV_INSTPTR_ov_library) pinst)->v_version);
+	                               	}
+			        }
+			        pobj = Ov_GetNextChild(ov_containment, pobj);
+			}
+		}
+		if (dumpfilename) {
+			/*
+			*	Create a text dump file of the ov database
+			*/
+			result = ov_dump(dumpfilename);
+			if(Ov_Fail(result)) {
+				goto ERRORMSG;
+			}
+
+		}
+		ov_logfile_info("Loading libraries \"%s\"...", filename);
+		result = ov_database_map_loadlib(filename);
+		if(Ov_Fail(result)) {
+			goto ERRORMSG;
+		}
 	}
 	/*
 	*	Print some information
@@ -172,7 +374,7 @@ ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
 	ov_logfile_info("Database size is %ld Byte.", ov_database_getsize());
 	ov_logfile_info("Used storage size is %ld Byte.", ov_database_getused());
 	ov_logfile_info("Free storage size is %ld Byte.", ov_database_getfree());
-	ov_logfile_info("Unmapping database \"%s\"...", filename);
+        ov_logfile_info("Unmapping database \"%s\"...", filename);
 	ov_database_unmap();
 	ov_logfile_info("Database unmapped.");
 	/*

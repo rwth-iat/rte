@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.11 2004-08-04 15:15:32 ansgar Exp $
+*   $Id: ov_database.h,v 1.12 2004-10-14 14:17:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -97,6 +97,20 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 *	Map an existing database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_database_map(
+	OV_STRING	filename
+);
+
+/*
+*	Map an existing database part 1
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
+	OV_STRING	filename
+);
+
+/*
+*	Map an existing database part 2
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadlib(
 	OV_STRING	filename
 );
 

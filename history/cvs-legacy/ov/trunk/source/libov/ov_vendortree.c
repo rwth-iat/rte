@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.15 2004-10-08 15:18:03 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.16 2004-10-14 14:16:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -127,9 +127,6 @@ OV_RESULT ov_vendortree_init(void) {
 		memset(pdb->vendorobj[i].v_linktable, 0, pclass_ov_object->v_linktablesize);
 		Ov_Link(ov_containment, &pdb->vendordom, &pdb->vendorobj[i]);
 		Ov_Link(ov_instantiation, pclass_ov_object, &pdb->vendorobj[i]);
-	}
-	Ov_ForEachChild(ov_containment, &pdb->vendordom, pobj) {
-	        printf("%s\n", pobj->v_identifier);
 	}
 	return OV_ERR_OK;
 }

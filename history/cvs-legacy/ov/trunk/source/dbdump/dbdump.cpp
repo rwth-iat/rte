@@ -34,13 +34,12 @@
 #include <fstream.h>
 #include <ctype.h>
 #include <time.h>
+#include "libov/ov_version.h"
 
 #if PLT_SYSTEM_NT
 #include <stdio.h>
 #define uint unsigned int
 #endif
-
-#define version "1.34"
 
 // Global variables
 search_p				sp;				// search parameters
@@ -1018,7 +1017,7 @@ int main(int argc, char **argv)						// command line arguments
 	KsString	start_path;			// domain specified as root object
 	bool		overwrite_output = false;	// overwrite output file without prompting
 
-	cout << "** ACPLT/OV database dumper, version " << version << " **" << endl
+	cout << "** ACPLT/OV database dumper, version " << OV_VER_DBDUMP << " **" << endl
 		 << "(c) 2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
 		 << endl;
 

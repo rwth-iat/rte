@@ -1,5 +1,5 @@
 /*
-*   $Id: libov.rc,v 1.6 2004-10-14 14:16:11 ansgar Exp $
+*   $Id: ov_dbdump.rc,v 1.1 2004-10-14 14:14:03 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -23,8 +23,8 @@
 /*
 *	History:
 *	--------
-*	11-Jan-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
-*	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	21-Jul-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	20-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 */
 
 #include "libov/ov_version.h"
@@ -34,15 +34,13 @@
 #include <windows.h>
 #endif
 
-#define OV_ICON			1
-#define OV_MESSAGE		1
+#define OV_ICON	1
 #define VERSIONINFO_1	1
-#define MESSAGE			11
 
 VERSIONINFO_1 VERSIONINFO 
 
-FILEVERSION		OV_VER_FILEVERSION_LIBOV
-PRODUCTVERSION	OV_VER_PRODUCTVERSION_LIBOV
+FILEVERSION		OV_VER_FILEVERSION_DBUTIL
+PRODUCTVERSION	OV_VER_PRODUCTVERSION_DBUTIL
 
 #ifdef __BORLANDC__
 FILEOS			VOS_NT_WINDOWS32
@@ -54,12 +52,12 @@ FILETYPE		VFT_DLL
   BLOCK "040904E4"
   {
    VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
-   VALUE "FileDescription", "ACPLT/OV Object Management Library\000"
-   VALUE "FileVersion", OV_VER_LIBOV "\000\000"
-   VALUE "InternalName", "libov.dll\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-2004\000\000"
-   VALUE "OriginalFilename", "libov.dll\000"
-   VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>, Ansgar Münnemann <ansgar@plt.rwth-aachen.de>\000"
+   VALUE "FileDescription", "ACPLT/OV Database Dump Utility\000"
+   VALUE "FileVersion", OV_VER_DBDUMP "\000\000"
+   VALUE "InternalName", "ov_dbdump.exe\000"
+   VALUE "LegalCopyright", "Copyright © PLT 20002-2004\000\000"
+   VALUE "OriginalFilename", "ov_dbdump.exe\000"
+   VALUE "Author", ", Ansgar Münnemann <ansgar@plt.rwth-aachen.de>\000"
    VALUE "License", OV_VER_LICENSE "\000"
   }
 
@@ -72,12 +70,5 @@ FILETYPE		VFT_DLL
 
 }
 
-OV_ICON ICON "libov.ico"
-
-LANGUAGE 0x9,0x1
-OV_MESSAGE MESSAGE "libov.bin"
-
-/*
-*	End of file
-*/
+OV_ICON ICON "ov_dbdump.ico"
 

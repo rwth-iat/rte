@@ -34,14 +34,13 @@
 
 #include <time.h>
 #include "dbparse.h"
+#include "libov/ov_version.h"
 
 #if PLT_SYSTEM_NT
 #include "db_y.h"
 #else
 #include "db.y.h"
 #endif
-
-#define version "1.14"
 
 //-------------------------------------------------------------------------------
 // global variables
@@ -2599,7 +2598,7 @@ int main(int argc, char **argv)
 //	yydebug = 1;
 
 	// print info on startup
-	cout << "** ACPLT/OV text file parser, version " << version << " **" << endl
+	cout << "** ACPLT/OV text file parser, version " << OV_VER_DBPARSE << " **" << endl
 		 << "(c) 2002/2004 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
 		 << endl;
 

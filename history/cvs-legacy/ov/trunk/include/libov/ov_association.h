@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.9 2002-01-24 15:22:12 ansgar Exp $
+*   $Id: ov_association.h,v 1.10 2004-10-14 14:17:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -444,6 +444,15 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedparentlink(
 OV_DLLFNCEXPORT OV_BOOL ov_association_isusedchildlink(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pchild
+);
+
+/*
+*	Test if a child is linked recursively to parent by passsoc
+*/
+OV_DLLFNCEXPORT OV_BOOL ov_association_testpath(
+	const OV_INSTPTR_ov_association	passoc,
+	const OV_INSTPTR_ov_object	pparent,
+	const OV_INSTPTR_ov_object	pchild
 );
 
 #ifdef __cplusplus

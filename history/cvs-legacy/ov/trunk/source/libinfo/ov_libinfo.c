@@ -198,6 +198,10 @@ int main(int argc, char **argv) {
 		else if(!strcmp(argv[i], "-s")) {
 			structinfo = TRUE;
 		}
+		else if(!strcmp(argv[i], "-v")) {
+                        fprintf(stderr, "OV_LIBINFO Version: " OV_VER_LIBINFO "\n");
+                        return 0;
+		}
 		else if(!strcmp(argv[i], "-h")) {
 HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library version, comment info of the library.\n"
 					"Lists additionally all classes, associations, and structures\n");
@@ -207,7 +211,8 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 			"-f  FILENAME    Set name of the target file forthe listed informations\n"
 			"-c              List class definitions\n"
 			"-a              List association definitions\n"
-			"-s              List structure definitions\n");
+			"-s              List structure definitions\n"
+			"-v		 List version information\n");
 			return 0;
 		}
 	}
@@ -307,7 +312,12 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 		*	list library infos
 		*/
 		fprintf(stderr,"library path: %s\n", fpath);
-		fprintf(stderr,"compiled wih OV version: %s\n\n", plibdef->ov_version);
+		fprintf(stderr,"version: %s\n", plibdef->version);
+		fprintf(stderr,"compiled wih OV version: %s\n", plibdef->ov_version);
+		fprintf(stderr,"author: %s\n", plibdef->author);
+		fprintf(stderr,"copyright: %s\n", plibdef->copyright);
+		fprintf(stderr,"comment: %s\n\n", plibdef->comment);
+
 		fprintf(fp,"LIBRARY %s\n", plibdef->identifier);
 		fprintf(fp,"\t VERSION   = \"%s\";\n", plibdef->version);
 		fprintf(fp,"\t AUTHOR    = \"%s\";\n", plibdef->author);

@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.3 2004-08-04 15:16:39 ansgar Exp $
+#   $Id: msvc.mk,v 1.4 2004-10-14 14:18:04 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -205,6 +205,16 @@ db_lex.obj: db_lex.c
 
 $(DBPARSE_EXE) : $(DBPARSE_OBJ) $(DBPARSE_RES)
 	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
+
+#	ACPLT/OV makmak
+
+$(MAKMAK_EXE) : $(MAKMAK_OBJ) $(MAKMAK_RES)
+	$(LINK) $^ $(C_LIBS) $(LINK_FLAGS) /out:$(MAKMAK_EXE)
+
+#	ACPLT/OV library informations tool
+
+$(LIBINFO_EXE) : $(LIBINFO_OBJ) $(OV_LIBOV_LIB) $(LIBINFO_RES)
+	$(LINK) $^ $(C_LIBS) $(LIBMPM_LIB) $(LINK_FLAGS) /out:$(LIBINFO_EXE)
 
 #	ACPLT/OV KsHistory library
 #	--------------------------

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.rc,v 1.4 2004-05-24 15:23:25 ansgar Exp $
+*   $Id: ov_codegen.rc,v 1.5 2004-10-14 14:13:42 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -57,7 +57,7 @@ FILETYPE		VFT_DLL
    VALUE "InternalName", "ov_codegen.exe\000"
    VALUE "LegalCopyright", "Copyright © PLT 1998-1999\000\000"
    VALUE "OriginalFilename", "ov_codegen.exe\000"
-   VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>\000"
+   VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>, Ansgar Münnemann <ansgar@plt.rwth-aachen.de>\000"
    VALUE "License", OV_VER_LICENSE "\000"
   }
 

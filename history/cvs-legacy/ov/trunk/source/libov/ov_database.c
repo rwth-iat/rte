@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.17 2003-01-31 10:04:46 ansgar Exp $
+*   $Id: ov_database.c,v 1.18 2004-10-14 14:16:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -282,7 +282,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 		close(fd);
 		return OV_ERR_CANTLOCKFILE;
 	}
-#else 
+#else
 	if(flock(fd, LOCK_EX | LOCK_NB)) {
 		close(fd);
 		return OV_ERR_CANTLOCKFILE;
@@ -489,6 +489,25 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 *	Map an existing database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_database_map(
+	OV_STRING	filename
+) {
+	/*
+	*	local variables
+	*/
+	OV_RESULT	result;
+
+	result = ov_database_map_loadfile(filename);
+	if (result!=OV_ERR_OK) return result;
+	result = ov_database_map_loadlib(filename);
+	return result;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Map an existing database part 1
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	OV_STRING	filename
 ) {
 	/*
@@ -750,6 +769,21 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map(
 		ov_database_unmap();
 		return OV_ERR_BADDATABASE;
 	}
+	return result;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Map an existing database part 2
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadlib(
+	OV_STRING	filename
+) {
+	/*
+	*	local variables
+	*/
+	OV_RESULT	result;
 	/*
 	*	load the OV library
 	*/

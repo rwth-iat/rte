@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.13 2003-11-07 09:25:34 ansgar Exp $
+*   $Id: ov.ovm,v 1.14 2004-10-14 14:13:23 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -29,9 +29,9 @@
 */
 
 LIBRARY ov
-	VERSION = "1.6.4";
+	VERSION = "1.6.5";
 	AUTHOR = "Dirk Meyer/Ansgar Münnemann";
-	COPYRIGHT = "Copyright (C) 1998-2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+	COPYRIGHT = "Copyright (C) 1998-2004 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
 	COMMENT = "Metamodel of ACPLT/OV";
 	/*
 	*	object: top level class
