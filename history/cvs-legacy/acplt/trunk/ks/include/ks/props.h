@@ -107,7 +107,7 @@ protected:
     bool xdrEncodeVariant(XDR *) const;
     bool xdrDecodeVariant(XDR *); 
 private:
-    friend KsProjProps;
+    friend class KsProjProps;
     KsVarProjProps( XDR *, bool & );
     PLT_DECL_RTTI;
 };
@@ -135,7 +135,7 @@ protected:
     bool xdrDecodeVariant(XDR *) { return true; }
 
 private:
-    friend KsProjProps;
+    friend class KsProjProps;
     KsDomainProjProps( XDR *, bool & );
     PLT_DECL_RTTI;
 };
@@ -186,7 +186,7 @@ protected:
     bool xdrDecodeVariant(XDR *);
 
 private:
-    friend KsCurrProps;
+    friend class KsCurrProps;
     KsVarCurrProps( XDR *, bool & );
     PLT_DECL_RTTI;
 };
@@ -205,7 +205,7 @@ protected:
     bool xdrDecodeVariant(XDR *);
 
 private:
-    friend KsCurrProps;
+    friend class KsCurrProps;
     KsDomainCurrProps(XDR *, bool &);
     PLT_DECL_RTTI;
 };

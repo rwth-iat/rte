@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_PRIORITYQUEUE_INCLUDED
 #define PLT_PRIORITYQUEUE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue.h,v 1.2 1997-03-12 16:19:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue.h,v 1.3 1997-04-10 14:09:27 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -202,6 +202,12 @@ PltPQIterator<T>::toStart()
 {
     a_index=0;
 }
+
+//////////////////////////////////////////////////////////////////////
+
+#if PLT_SEE_ALL_TEMPLATES
+#include "plt/priorityqueue_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

@@ -39,6 +39,19 @@
  * 2550 Garcia Avenue
  * Mountain View, California  94043
  */
+#include "plt/debug.h"
+
+#if PLT_SYSTEM_NT
+
+int from_local(struct sockaddr_in *) 
+{
+  /* TODO */
+	return 1;
+}
+
+
+#else
+
 
 #ifdef TEST
 #undef perror
@@ -190,3 +203,5 @@ main()
 }
 
 #endif
+#endif
+

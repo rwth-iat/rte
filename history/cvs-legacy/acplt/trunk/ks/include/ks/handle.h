@@ -198,6 +198,11 @@ KsPtrHandle<T>::xdrEncode(XDR *xdr) const
     return *this ? getPtr()->xdrEncode(xdr) : false;
 }
 
+//////////////////////////////////////////////////////////////////////
+
+#if PLT_SEE_ALL_TEMPLATES
+#include "ks/handle_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 #endif // PLT_HANDLE_INCLUDED

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.9 1997-04-03 10:04:27 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.10 1997-04-10 14:17:58 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,11 +41,12 @@
 //
 
 #include <errno.h>
-#include <sys/time.h>
-
 #include <stdlib.h>
 #include <string.h>
+
+#if 0
 #include <unistd.h>
+#endif
 
 #include "ks/svrbase.h"
 #include "plt/log.h"
@@ -74,13 +75,13 @@ ks_dtablesize()
 // Return the next timer event that will trigger or 0, if there's none in
 // the timer event queue.
 //
-inline KsTimerEvent *
-KsServerBase::getNextTimerEvent()
+inline const KsTimerEvent *
+KsServerBase::peekNextTimerEvent() const
 {
-    if ( timer_queue.isEmpty() ) {
+    if ( _timer_queue.isEmpty() ) {
         return 0;
     } else {
-        return timer_queue.peek();
+        return _timer_queue.peek();
     }
 }
 
@@ -108,14 +109,42 @@ KsServerBase::the_server = 0;
 // Uhh, I've been hit.
 
 KsServerBase::KsServerBase()
-:     _tcp_transport(0),
-      shutdown_flag(false),
-      send_buffer_size(16384),
-      receive_buffer_size(16384)
+: _tcp_transport(0),
+  _shutdown_flag(false),
+  _send_buffer_size(16384),
+  _receive_buffer_size(16384)
 {
     PLT_PRECONDITION( the_server == 0 );
-    the_server    = this;
-    
+#if PLT_SYSTEM_NT
+    rpc_nt_init();
+#endif
+    //
+    // create transport
+    //
+    _tcp_transport = svctcp_create(RPC_ANYSOCK, 
+                                   _send_buffer_size, _receive_buffer_size);
+    if (_tcp_transport) {
+        //
+        // Now register the dispatcher that should be called whenever there
+        // is a request for the KS program id and the correct version number.
+        //
+        if ( svc_register(_tcp_transport, 
+                          KS_RPC_PROGRAM_NUMBER,
+                          KS_PROTOCOL_VERSION,
+                          ks_c_dispatch,
+                          0) ) {  // Do not contact the portmapper!
+            _is_ok = true;
+            the_server    = this;
+        } else {
+            svc_destroy(_tcp_transport);
+            _tcp_transport = 0;
+            PltLog::Error("KsServerBase: could not register service");
+            _is_ok = false;
+        }
+    } else {
+        PltLog::Error("KsServerBase: could not create transport");
+        _is_ok = false;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -123,31 +152,32 @@ KsServerBase::KsServerBase()
 //
 KsServerBase::~KsServerBase()
 {
-    destroyTransports();
-    destroyLurkingTransports();
+    //
+    // destroy transports
+    //
+    if ( _tcp_transport ) {
+        svc_destroy(_tcp_transport); 
+        _tcp_transport = 0;
+    }
 
+    //
     // Remove remaining timer events
-    while (!timer_queue.isEmpty()) {
-        KsTimerEvent *pevent = timer_queue.removeFirst();
+    //
+    while (!_timer_queue.isEmpty()) {
+        KsTimerEvent *pevent = _timer_queue.removeFirst();
         delete pevent;
     }
 
     PLT_ASSERT(the_server == this);
     the_server = 0;
+
+#if PLT_SYSTEM_NT
+    rpc_nt_exit();
+#endif
 } 
+//////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////
-// Okay, okay. Now take a deep breath...and... fire up the whole mess! We
-// can't do this in the constructor as derived classes need first to complete
-// their initializations before we can create the transports, and everything
-// else.
-//
-void KsServerBase::init()
-{
-    createTransports();
-}
-
-
+#if 0
 ////////////////////////////////////////////////////////////////////////////
 // Transport section. Watch for network cables strangling innocent
 // workstations...
@@ -162,7 +192,7 @@ bool
 KsServerBase::createTransports()
 {
     _tcp_transport = svctcp_create(RPC_ANYSOCK, 
-                                   send_buffer_size, receive_buffer_size);
+                                   _send_buffer_size, _receive_buffer_size);
     if (! _tcp_transport) {
         PltLog::Error("KsServerBase: could not create transport");
         return false;
@@ -225,6 +255,8 @@ void KsServerBase::destroyLurkingTransports()
         svc_getreqset(&svc_fdset);
     }
 }
+
+#endif
 
 ////////////////////////////////////////////////////////////////////////////
 // Now comes the dispatcher section. Here we redirect and bounce request
@@ -525,11 +557,11 @@ bool
 KsServerBase::hasPendingEvents() const
 {
     fd_set read_fds = svc_fdset;
-    KsTime zerotimeout(0,0);
+    KsTime zerotimeout;
     return 
         ( 
-               !timer_queue.isEmpty 
-            && timer_queue.peek()->remainingTime() == 0 
+               !_timer_queue.isEmpty()
+            && !_timer_queue.peek()->remainingTime().isZero() 
         )
         || getReadyFds(read_fds, &zerotimeout) > 0;
 }
@@ -566,13 +598,13 @@ KsServerBase::serveRequests(const KsTime *pTimeout) {
 
 bool
 KsServerBase::servePendingEvents(KsTime * pTimeout) {
-    KsTimerEvent *pEvent = getNextTimerEvent();
+    const KsTimerEvent *pEvent = peekNextTimerEvent();
     if (pEvent) {
         //
         // timerqueue nonempty
         //
         KsTime timeleft( pEvent->remainingTime() );
-        if (timeleft) {
+        if (!timeleft.isZero()) {
             // 
             // The next timer event is still not pending.
             //
@@ -589,7 +621,7 @@ KsServerBase::servePendingEvents(KsTime * pTimeout) {
             //
             // pending timer event, execute it immediately
             // 
-            (timer_queue.removeFirst())->trigger();
+            removeNextTimerEvent()->trigger();
             return true;
         }
     } else {
@@ -618,7 +650,7 @@ KsServerBase::startServer()
 //
 void KsServerBase::stopServer()
 {
-    shutdown_flag = true;
+    _shutdown_flag = true;
 }
 
 //
@@ -629,8 +661,8 @@ void KsServerBase::stopServer()
 void
 KsServerBase::run()
 {    
-    shutdown_flag = false;
-    while (! shutdown_flag) {
+    _shutdown_flag = false;
+    while (! _shutdown_flag) {
         servePendingEvents(0); // no timeout -> wait forever
     }
 }   
@@ -640,10 +672,11 @@ KsServerBase::run()
 // Add a timer event object to the timer event queue. If its time has come
 // the timer event object will be activated by calling its trigger method.
 //
-bool KsServerBase::addTimerEvent(KsTimerEvent *event)
+bool 
+KsServerBase::addTimerEvent(KsTimerEvent *event)
 {
     PLT_PRECONDITION(event);
-    return timer_queue.add(event);
+    return _timer_queue.add(event);
 }
 
 //
@@ -651,9 +684,19 @@ bool KsServerBase::addTimerEvent(KsTimerEvent *event)
 // queue. In this case the method returns "true". Otherwise if the timer
 // event isn't in the queue then you'll get a "false" result.
 //
-bool KsServerBase::removeTimerEvent(KsTimerEvent *event)
+bool 
+KsServerBase::removeTimerEvent(KsTimerEvent *event)
 {
-    return timer_queue.remove(event);
-} // KsServerBase::removeTimerEvent
+    return _timer_queue.remove(event);
+} 
+
+//
+//  Remove the next timer event from the queue
+//
+KsTimerEvent *
+KsServerBase::removeNextTimerEvent()
+{
+    return _timer_queue.removeFirst();
+} 
 
 

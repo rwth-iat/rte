@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.8 1997-04-01 12:29:51 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.9 1997-04-10 14:09:23 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -132,6 +132,29 @@ private:
     
 //////////////////////////////////////////////////////////////////////
 
+class PltHashIterator_base
+{
+protected:
+    PltHashIterator_base(const PltHashTable_base &);
+    bool inRange() const;
+    const PltAssoc_ * pCurrent() const;
+    void advance();
+    void toStart();
+private:
+    const PltHashTable_base & a_container;
+    PltHashIterator_base & operator = (const PltHashIterator_base &);
+                         // forbidden
+    size_t a_index;
+#if PLT_DEBUG_INVARIANTS
+public:
+    virtual bool invariant() const;
+    virtual ~PltHashIterator_base() { };
+#endif
+};
+    
+
+//////////////////////////////////////////////////////////////////////
+
 template <class K, class V>
 class PltHashIterator 
 : public PltIterator< PltAssoc<K,V> >, 
@@ -148,54 +171,6 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION PART -- clients should stop reading here...
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V>
-class PltHashTable_
-: public PltDictionary<K,V>,
-  private PltHashTable_base
-{
-    friend class PltHashIterator_base;
-    friend class PltHashIterator<K,V>;
-public:
-    PltHashTable_(size_t mincap=11, 
-                 float highwater=0.8, 
-                 float lowwater=0.4);
-    virtual ~PltHashTable_();
-
-    // accessors
-    virtual bool query(const K&, V&) const;
-    
-    // modifiers
-    virtual bool add(const K&, const V&);
-
-    virtual bool update(const K& key, 
-                        const V & newValue, 
-                        V & oldValue,
-                        bool & oldValueValid);
-
-    virtual bool remove(const K&, V&);
-
-    // container interface
-    PltHashIterator<K,V> * newIterator() const;
-    size_t size() const;
-
-protected:
-    virtual unsigned long keyHash(const K &) const = 0;
-    virtual bool keyEqual(const K & , const K &) const = 0;
-
-private:
-    virtual unsigned long keyHash(const void * ) const;
-    virtual bool keyEqual(const void *, const void *) const;
-    PltHashTable_(const PltHashTable_ &); // forbidden
-    PltHashTable_<K,V> & operator = ( const PltHashTable_ & ); // forbidden
-};
-    
-
-//////////////////////////////////////////////////////////////////////
-// (PltHashTable_base is a private class)
-//////////////////////////////////////////////////////////////////////
-// Implementation class for PltHashTable<K,V>
 //////////////////////////////////////////////////////////////////////
 
 class PltHashTable_base 
@@ -248,24 +223,53 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-class PltHashIterator_base
+template <class K, class V>
+class PltHashTable_
+: public PltDictionary<K,V>,
+  private PltHashTable_base
 {
-protected:
-    PltHashIterator_base(const PltHashTable_base &);
-    bool inRange() const;
-    const PltAssoc_ * pCurrent() const;
-    void advance();
-    void toStart();
-private:
-    const PltHashTable_base & a_container;
-    size_t a_index;
-#if PLT_DEBUG_INVARIANTS
+    friend class PltHashIterator_base;
+    friend class PltHashIterator<K,V>;
 public:
-    virtual bool invariant() const;
-    virtual ~PltHashIterator_base() { };
-#endif
+    PltHashTable_(size_t mincap=11, 
+                 float highwater=0.8, 
+                 float lowwater=0.4);
+    virtual ~PltHashTable_();
+
+    // accessors
+    virtual bool query(const K&, V&) const;
+    
+    // modifiers
+    virtual bool add(const K&, const V&);
+
+    virtual bool update(const K& key, 
+                        const V & newValue, 
+                        V & oldValue,
+                        bool & oldValueValid);
+
+    virtual bool remove(const K&, V&);
+
+    // container interface
+    PltHashIterator<K,V> * newIterator() const;
+    size_t size() const;
+
+protected:
+    virtual unsigned long keyHash(const K &) const = 0;
+    virtual bool keyEqual(const K & , const K &) const = 0;
+
+private:
+    virtual unsigned long keyHash(const void * ) const;
+    virtual bool keyEqual(const void *, const void *) const;
+    PltHashTable_(const PltHashTable_ &); // forbidden
+    PltHashTable_<K,V> & operator = ( const PltHashTable_ & ); // forbidden
 };
     
+
+//////////////////////////////////////////////////////////////////////
+// (PltHashTable_base is a private class)
+//////////////////////////////////////////////////////////////////////
+// Implementation class for PltHashTable<K,V>
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
@@ -508,5 +512,10 @@ PltHashIterator<K,V>::operator ++ ()
 
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_SEE_ALL_TEMPLATES
+#include "plt/hashtable_impl.h"
+#endif
+
+//////////////////////////////////////////////////////////////////////
 
 #endif // header file

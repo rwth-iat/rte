@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/event.cpp,v 1.2 1997-03-26 17:19:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/event.cpp,v 1.3 1997-04-10 14:17:53 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -51,7 +51,7 @@ KsTimerEvent::remainingTime() const
     if (now < triggersAt()) {
         return triggersAt()-now;
     } else {
-        return KsTime(0,0);
+        return KsTime();
     }
 }
 

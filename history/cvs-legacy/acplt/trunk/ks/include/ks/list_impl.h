@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_LIST_IMPL_INCLUDED
 #define KS_LIST_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.3 1997-03-23 14:33:47 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.4 1997-04-10 14:17:39 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,8 +37,12 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+//////////////////////////////////////////////////////////////////////
+
+#if !PLT_SEE_ALL_TEMPLATES
 #include "ks/list.h"
 #include "plt/list_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

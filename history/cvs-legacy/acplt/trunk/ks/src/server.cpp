@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.4 1997-04-04 07:56:23 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.5 1997-04-10 14:17:56 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -39,7 +39,9 @@
 #include "ks/register.h"
 #include "ks/svrrpcctx.h"
 #include "plt/log.h"
+#if !PLT_SYSTEM_NT
 #include <sys/socket.h>
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -169,7 +171,7 @@ KsReregisterServerEvent::MIN_TTL = 10; // secs
 void
 KsReregisterServerEvent::trigger()
 {
-    if (!_server.shutdown_flag) {
+    if (!_server.isGoingDown()) {
         //
         // The server is still active, try to register it.
         //

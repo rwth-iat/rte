@@ -2,7 +2,7 @@
 #ifndef PLT_PRIORITYQUEUE_IMPL_INCLUDED
 #define PLT_PRIORITYQUEUE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.4 1997-03-23 17:20:11 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.5 1997-04-10 14:09:27 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -39,8 +39,12 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
+//////////////////////////////////////////////////////////////////////
+
+#if !PLT_SEE_ALL_TEMPLATES
 #include "plt/priorityqueue.h"
 #include "plt/container_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -163,11 +167,12 @@ bool
 PltPriorityQueue<T>::grow(size_t cap)
 {
     PLT_PRECONDITION( cap > 0 && cap >= a_size );
-    
+  
+    bool retval;
     
     T *p = new T[cap];
     if (!p) {
-        return false;
+        retval = false;
     } else {
         if (a_elems) {
             // copy a_elems
@@ -181,9 +186,10 @@ PltPriorityQueue<T>::grow(size_t cap)
         }
         a_capacity = cap;
         a_elems = p;
-        return true;
+        retval = true;
     }
     PLT_CHECK_INVARIANT();
+    return retval;
 }
 
 //////////////////////////////////////////////////////////////////////

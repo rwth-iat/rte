@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.6 1997-04-03 15:13:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.7 1997-04-10 14:17:46 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -113,7 +113,7 @@ class KssSimpleDomain
 : public KssDomain,
   public KssSimpleCommObject
 {
-    friend KssSimpleDomainIterator;
+    friend class KssSimpleDomainIterator;
 public:
     //// KssCommObject
     //// accessors

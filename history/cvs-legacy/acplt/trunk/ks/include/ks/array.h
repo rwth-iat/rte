@@ -69,7 +69,8 @@ class KsArray
 // IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
-#if PLT_INSTANTIATE_TEMPLATES
+#if PLT_COMPILER_GCC
+
 bool KsArray<char>::xdrEncode(XDR *) const;
 bool KsArray<char>::xdrDecode(XDR *);
 
@@ -128,5 +129,28 @@ KsArray<T>::KsArray(XDR * xdr, bool & ok)
 
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_SEE_ALL_TEMPLATES
+#include "ks/array_impl.h"
+
+#if PLT_COMPILER_BORLAND
+
+template class extern KsArray<bool>;
+template class extern KsArray<char>;
+template class extern KsArray<long>;
+template class extern KsArray<u_long>;
+template class extern KsArray<int>;
+template class extern KsArray<u_int>;
+template class extern KsArray<short>;
+template class extern KsArray<u_short>;
+template class extern KsArray<double>;
+template class extern KsArray<float>;
+
+#else
+#include "ks/array_builtins.h"
+#endif
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
 #endif // KS_ARRAY_INCLUDED
 

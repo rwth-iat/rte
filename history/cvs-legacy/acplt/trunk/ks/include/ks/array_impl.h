@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_IMPL_INCLUDED
 #define KS_ARRAY_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.4 1997-03-23 14:33:46 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.5 1997-04-10 14:17:36 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,9 +41,10 @@
 // Author: Martin Kneissl <martin@plt.rwth-aachen.de>
 //////////////////////////////////////////////////////////////////////
 
+#if !PLT_SEE_ALL_TEMPLATES
 #include "ks/array.h"
-
 #include "plt/array_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

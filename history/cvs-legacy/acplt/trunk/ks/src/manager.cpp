@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.8 1997-04-03 10:04:24 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.9 1997-04-10 14:17:55 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -32,7 +32,7 @@
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+v * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
@@ -44,11 +44,70 @@
 #include "plt/log.h"
 #include <ctype.h>
 #include <string.h>
+#if !PLT_SYSTEM_NT
 #include <sys/socket.h>
+#endif
 
-static const KsString KS_MANAGER_DESCRIPTION("ACPLT/KS Manager");
 
+//////////////////////////////////////////////////////////////////////
+static char DISCLAIMER[] =
+"Copyright (c) 1996, 1997 \n"
+"Chair of Process Control Engineering, \n"
+"Aachen University of Technology. \n"
+"All rights reserved. \n"
+" Redistribution and use in source and binary forms, with or without\n"
+" modification, are permitted provided that the following conditions\n"
+" are met:\n"
+" 1. Redistributions of source code must retain the above copyright\n"
+"    notice, this list of conditions and the following disclaimer.\n"
+" 2. Redistributions in binary form must print or display the above\n"
+"    copyright notice either during startup or must have a means for\n"
+"    the user to view the copyright notice.\n"
+" 3. Redistributions in binary form must reproduce the above copyright\n"
+"    notice, this list of conditions and the following disclaimer in the\n"
+"    documentation and/or other materials provided with the distribution.\n"
+" 4. Neither the name of the Chair of Process Control Engineering nor the\n"
+"    name of the Aachen University of Technology may be used to endorse or\n"
+"    promote products derived from this software without specific prior\n"
+"    written permission.\n"
+" THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING\n"
+" ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED\n"
+" TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
+" PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE CHAIR OF PROCESS CONTROL\n"
+" ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n"
+" EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n"
+" PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;\n"
+" OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,\n"
+" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR\n"
+" OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF\n"
+" ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.";
 
+//////////////////////////////////////////////////////////////////////
+
+KsString 
+KsManager::getServerName() const 
+{ 
+    return KsString("MANAGER"); 
+}
+
+u_short  
+KsManager::getProtocolVersion() const
+{ 
+    return 1; 
+}
+
+KsString 
+KsManager::getServerDescription() const 
+{ 
+    return KsString("ACPLT/KS Manager"); 
+}
+
+KsString 
+KsManager::getVendorName () const
+{ 
+    return KsString("Lehrstuhl fuer Prozessleittechnik, "
+                    "RWTH Aachen"); 
+}
 //////////////////////////////////////////////////////////////////////
 
 class KsmServer;
@@ -215,13 +274,129 @@ KsManager::KsManager()
 : _registered(false),
   _servers_domain("servers")
 {
+    if (_is_ok) {
+        //
+        // create transports
+        //
+        _udp_transport = svcudp_create(RPC_ANYSOCK);
+        // TODO: send/receive buff sz
+        if (_udp_transport) {
+            //
+            // Now register the dispatcher that should be called 
+            // whenever there is a request for the KS program id 
+            // and the correct version number.
+            //
+            if ( !svc_register(_udp_transport,
+                               KS_RPC_PROGRAM_NUMBER,
+                               KS_PROTOCOL_VERSION,
+                               ks_c_dispatch,
+                               0) ) {  // Do not contact the portmapper!
+                svc_destroy(_tcp_transport);
+                _tcp_transport = 0;
+                PltLog::Error("KsServerBase: could not register");
+                _is_ok = false;
+            }
+        } else {
+            PltLog::Error("Can't create UDP transport");
+            _is_ok = false;
+        }
+    }
+    if (_is_ok && initVendorTree()) {
+        //
+        // initialize /servers
+        //
+        // TODO: I'm lazy here with error checking...
+        KssSimpleDomain *servers_manager =
+            new KssSimpleDomain(getServerName());
+        
+        KssSimpleDomain *servers_manager_version =
+            new KssSimpleDomain(KsString::fromInt(getProtocolVersion()));
+        
+        KssSimpleVariable *manager_port =
+            new KssSimpleVariable("port");
+        
+        KssSimpleVariable *manager_expires_at =
+            new KssSimpleVariable("expires_at");
+        
+        KssSimpleVariable *manager_living =
+            new KssSimpleVariable("living");
+        
+        manager_living->setValue(new KsIntValue(1)); 
+        manager_living->setState(KS_ST_GOOD);
+        manager_living->lock();
+        manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
+        manager_port->setState(KS_ST_GOOD);
+        manager_port->lock();
+        manager_expires_at->setValue(new KsTimeValue(LONG_MAX,0));
+        manager_expires_at->setState(KS_ST_GOOD);
+        manager_expires_at->lock();
+        
+        servers_manager_version->addChild(manager_living);
+        servers_manager_version->addChild(manager_port);
+        servers_manager_version->addChild(manager_expires_at);
+        
+        servers_manager->addChild(servers_manager_version);
+        _servers_domain.addChild(servers_manager);
+        
+        _root_domain.addChild(KssCommObjectHandle(&_servers_domain, 
+                                              KsOsUnmanaged));
+
+        //
+        // set some optional vendor variables
+        // TODO: still lazy.
+        //
+        KsStringVecValue * core_services_val
+            = new KsStringVecValue(3);
+        (*core_services_val)[0] = "ObjDict";
+        (*core_services_val)[1] = "Var";
+        (*core_services_val)[2] = "DataExchg";
+        KssSimpleVariable * core_services_var =
+            new KssSimpleVariable("services");
+        core_services_var->setValue(core_services_val);
+        core_services_var->setState(KS_ST_GOOD);
+        core_services_var->lock();
+        KssCommObjectHandle core_services_handle(core_services_var,
+                                                 KsOsNew);
+
+        KsIntValue * core_opcode_val
+            = new KsIntValue(0);
+        KssSimpleVariable * core_opcode_var =
+            new KssSimpleVariable("major_opcode");
+        core_opcode_var->setValue(core_opcode_val);
+        core_opcode_var->setState(KS_ST_GOOD);
+        core_opcode_var->lock();
+        KssCommObjectHandle core_opcode_handle(core_opcode_var,
+                                                 KsOsNew);
+
+        //
+        // more optional variables
+        // (not lazy anymore)
+        // 
+        KsPath vendor("/vendor");
+        _is_ok = 
+               addStringVar(vendor, "disclaimer", KsString(DISCLAIMER))
+            && addStringVar(vendor, "contact",
+                            "<ks@plt.rwth-aachen.de>")
+            && addDomain(vendor, "extensions")
+            && addDomain(KsPath("/vendor/extensions"), "ks_core")
+            && addCommObject(KsPath("/vendor/extensions/ks_core"),
+                             core_opcode_handle)
+            && addCommObject(KsPath("/vendor/extensions/ks_core"),
+                             core_services_handle);
+    } else {
+        _is_ok = false;
+    }
+
 }
 
 //////////////////////////////////////////////////////////////////////
  
 KsManager::~KsManager()
 {
-    KsManager::destroyTransports();
+    if ( _udp_transport ) {
+        svc_destroy(_udp_transport); 
+        _udp_transport = 0;
+    }
     // server entries are owned (indirectly) by _root_domain
 }
 
@@ -339,7 +514,7 @@ KsManager::dispatch(u_long serviceId,
 }
 
 //////////////////////////////////////////////////////////////////////
-
+#if 0
 bool
 KsManager::createTransports()
 {
@@ -367,12 +542,14 @@ KsManager::createTransports()
     }
     return true;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
 void
 KsManager::startServer()
 {
+    PLT_PRECONDITION(_is_ok);
     KsSimpleServer::startServer();
     //
     // Contact the
@@ -418,7 +595,7 @@ KsManager::stopServer()
 }
 
 //////////////////////////////////////////////////////////////////////
-
+#if 0
 void 
 KsManager::destroyTransports()
 {
@@ -428,14 +605,14 @@ KsManager::destroyTransports()
     }
     KsServerBase::destroyTransports();
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////
 
 static inline bool
 isValidManagerName(const PltString & name)
 {
     // Allowed characters: [A-Za-z0-9_]
-    for (size_t i; i<name.len(); ++i) {
+    for (size_t i=0; i<name.len(); ++i) {
         if (!isalnum(name[i]) && name[i] != '_' ) {
             return false;
         }
@@ -785,47 +962,6 @@ KsManager::removeServer(KsmServer * pserver)
         PltString version(PltString::fromInt(pdesc->protocol_version));
         ps->removeChild(version);
     }
-}
-//////////////////////////////////////////////////////////////////////
-// Object tree
-//////////////////////////////////////////////////////////////////////
-
-bool
-KsManager::initObjectTree()
-{
-    if (initVendorTree(KS_MANAGER_DESCRIPTION,
-                       "Lehrstuhl fuer Prozessleittechnik, RWTH-Aachen")) {
-        KssSimpleDomain *servers_manager =
-            new KssSimpleDomain(getServerName());
-        
-        KssSimpleDomain *servers_manager_version =
-            new KssSimpleDomain(KsString::fromInt(getProtocolVersion()));
-        
-        KssSimpleVariable *manager_port =
-            new KssSimpleVariable("port");
-        
-        KssSimpleVariable *manager_expires_at =
-            new KssSimpleVariable("expires_at");
-        
-        KssSimpleVariable *manager_living =
-            new KssSimpleVariable("living");
-        
-        manager_living->setValue(new KsIntValue(1));
-        manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
-        manager_expires_at->setValue(new KsTimeValue(LONG_MAX,0));
-        
-        servers_manager_version->addChild(manager_living);
-        servers_manager_version->addChild(manager_port);
-        servers_manager_version->addChild(manager_expires_at);
-        
-        servers_manager->addChild(servers_manager_version);
-        _servers_domain.addChild(servers_manager);
-        
-        _root_domain.addChild(KssCommObjectHandle(&_servers_domain, 
-                                              KsOsUnmanaged));
-    }
-
-    return true; // TODO: This is optimistic...
 }
                 
 //////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_VALUE_IMPL_INCLUDED
 #define KS_VALUE_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/value_impl.h,v 1.2 1997-03-23 14:33:48 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/value_impl.h,v 1.3 1997-04-10 14:17:48 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,9 +41,13 @@
 // Author: Markus Juergens <markusj@plt.rwth-aachen.de>
 //////////////////////////////////////////////////////////////////////
 
+#if !PLT_SEE_ALL_TEMPLATES
 #include "ks/value.h"
-
 #include "ks/array_impl.h"
+#if PLT_COMPILER_WATCOM
+#include "ks/array_builtins.h"
+#endif
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.6 1997-04-01 12:30:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.7 1997-04-10 14:09:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -71,6 +71,60 @@ class PltListIterator_base;
 template <class T> class PltListNode;
 template <class T> class PltIListIterator;
 template <class T> class PltListIterator;
+
+////////////////////////////////////////////////////////////////////////
+// Base class for intrusive lists without information on them.
+// Not useful for direct use.
+
+class PltList_base 
+{
+    friend class PltListIterator_base;
+protected:
+    PltListNode_base *first, *last;
+
+public:
+    PltList_base() : first(0), last(0) {}
+
+#if PLT_DEBUG_INVARIANTS
+    virtual bool invariant() const;
+#endif
+    virtual ~PltList_base();
+
+    bool isEmpty() const;
+    size_t size() const;
+
+    bool addFirst(PltListNode_base * p);
+    bool addLast(PltListNode_base * p);
+    
+    PltListNode_base *remove(PltListNode_base *p );
+    PltListNode_base *removeFirst();
+    PltListNode_base *removeLast();
+private:
+    PltList_base(const PltList_base &); // forbidden
+    PltList_base & operator = (const PltList_base &); // forbidden
+};
+  
+////////////////////////////////////////////////////////////////////////
+// Class for iteration on PltList_base.
+// Not useful for direct use.
+class PltListIterator_base {
+protected:
+    PltListIterator_base(const PltList_base &listarg, bool startAtEnd=false); 
+    operator const void * () const;
+
+    PltListNode_base *getPtr() const;
+
+    PltListIterator_base & operator ++ ();
+    PltListIterator_base & operator -- ();
+    void operator ++(int);
+    void operator --(int);
+
+    void toStart();
+    void toEnd();
+private:
+    PltListNode_base *curr_elem;
+    const PltList_base  & list;
+};
 
 ////////////////////////////////////////////////////////////////////////
 // Non-intrusive double linked list node with information type T
@@ -180,60 +234,6 @@ public:
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////
-// Base class for intrusive lists without information on them.
-// Not useful for direct use.
-
-class PltList_base 
-{
-    friend class PltListIterator_base;
-protected:
-    PltListNode_base *first, *last;
-
-public:
-    PltList_base() : first(0), last(0) {}
-
-#if PLT_DEBUG_INVARIANTS
-    virtual bool invariant() const;
-#endif
-    virtual ~PltList_base();
-
-    bool isEmpty() const;
-    size_t size() const;
-
-    bool addFirst(PltListNode_base * p);
-    bool addLast(PltListNode_base * p);
-    
-    PltListNode_base *remove(PltListNode_base *p );
-    PltListNode_base *removeFirst();
-    PltListNode_base *removeLast();
-private:
-    PltList_base(const PltList_base &); // forbidden
-    PltList_base & operator = (const PltList_base &); // forbidden
-};
-  
-////////////////////////////////////////////////////////////////////////
-// Class for iteration on PltList_base.
-// Not useful for direct use.
-class PltListIterator_base {
-protected:
-    PltListIterator_base(const PltList_base &listarg, bool startAtEnd=false); 
-    operator const void * () const;
-
-    PltListNode_base *getPtr() const;
-
-    PltListIterator_base & operator ++ ();
-    PltListIterator_base & operator -- ();
-    void operator ++(int);
-    void operator --(int);
-
-    void toStart();
-    void toEnd();
-private:
-    PltListNode_base *curr_elem;
-    const PltList_base  & list;
-};
 
 ////////////////////////////////////////////////////////////////////////
 // Non-intrusive double linked list node with information type T
@@ -613,6 +613,12 @@ PltIListIterator<T>::toEnd()
 {
     PltListIterator_base::toEnd();
 }
+
+//////////////////////////////////////////////////////////////////////
+
+#if PLT_SEE_ALL_TEMPLATES
+#include "plt/list_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

@@ -111,7 +111,7 @@ protected:
 private:
     long val;
 
-    friend KsValue;
+    friend class KsValue;
     KsIntValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
@@ -144,7 +144,7 @@ protected:
 private:
     unsigned long val;
 
-    friend KsValue;
+    friend class KsValue;
     KsUIntValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
@@ -177,7 +177,7 @@ protected:
 private:
     float val;
 
-    friend KsValue;
+    friend class KsValue;
     KsSingleValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
@@ -209,7 +209,7 @@ protected:
 private:
     double val;
 
-    friend KsValue;
+    friend class KsValue;
     KsDoubleValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -243,7 +243,7 @@ protected:
     virtual bool xdrDecodeVariant(XDR *);
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsStringValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -276,7 +276,7 @@ protected:
     bool xdrDecodeVariant(XDR *);
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsTimeValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -303,7 +303,7 @@ protected:
     bool xdrDecodeVariant(XDR *);
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsVoidValue(XDR *, bool &ok);
 
     PLT_DECL_RTTI;
@@ -353,7 +353,7 @@ public:
     enum_t xdrTypeCode() const;
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsByteVecValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -375,7 +375,7 @@ public:
     enum_t xdrTypeCode() const;
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsIntVecValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -395,7 +395,7 @@ public:
     enum_t xdrTypeCode() const;
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsUIntVecValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -415,7 +415,7 @@ public:
     enum_t xdrTypeCode() const;
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsSingleVecValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -435,7 +435,7 @@ public:
     enum_t xdrTypeCode() const;
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsDoubleVecValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -460,7 +460,7 @@ public:
     enum_t xdrTypeCode() const;
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsStringVecValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -480,7 +480,7 @@ public:
     enum_t xdrTypeCode() const;
 
 private:
-    friend KsValue;
+    friend class KsValue;
     KsTimeVecValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
@@ -688,9 +688,10 @@ KsTimeValue::KsTimeValue(long sec, long usec)
 
 inline 
 KsTimeValue::KsTimeValue(const KsTime &time)
-: tv_sec(time.tv_sec),
-  tv_usec(time.tv_usec)
-{}
+{
+    tv_sec = time.tv_sec;
+    tv_usec = time.tv_usec;
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -870,6 +871,13 @@ KsTimeVecValue::KsTimeVecValue(XDR *xdr, bool &ok)
     ok = xdrDecodeVariant(xdr);
 }
 
+//////////////////////////////////////////////////////////////////////
+
+#if PLT_SEE_ALL_TEMPLATES
+#include "ks/value_impl.h"
+#endif
+
+//////////////////////////////////////////////////////////////////////
 
 #endif
 

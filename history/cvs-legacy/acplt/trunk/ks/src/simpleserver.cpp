@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.6 1997-04-04 07:57:10 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.7 1997-04-10 14:17:57 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -273,60 +273,113 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
 //////////////////////////////////////////////////////////////////////
 
 bool
-KsSimpleServer::initVendorTree(const PltString &s_descr,
-                               const PltString &v_name)
+KsSimpleServer::addCommObject(const KsPath & dompath,
+                              const KssCommObjectHandle & ho)
 {
-    const KsString s_version(KsString::fromInt(getProtocolVersion()));
-    //// TODO: failure detection.
+    PLT_PRECONDITION(dompath.isValid() && dompath.isAbsolute());
+    KssCommObjectHandle hd;
+    if (dompath.isSingle() && dompath[0] == "") {
+        hd.bindTo(&_root_domain, KsOsUnmanaged);
+    } else {
+        hd = _root_domain.getChildByPath(dompath);
+    }
+    if (hd) {
+        //
+        // found an object, is it a simple domain?
+        //
+        KssSimpleDomain * pd = 
+            PLT_DYNAMIC_PCAST(KssSimpleDomain, hd.getPtr());
+        if (pd) {
+            //
+            // It is a simple domain. Add the child.
+           //
+           return pd->addChild(ho);
+        } else {
+            //
+            // Not a simple domain.
+            //
+            return false;
+        }
+    } else {
+        //
+        // object not found or other error.
+        //
+        return false;
+    }
+}
 
-    KssSimpleDomain *vendor_dom = 
-        new KssSimpleDomain("vendor");
-
-    KssSimpleVariable *server_name_var = 
-        new KssSimpleVariable("server_name");
-
-    KssSimpleVariable *server_version_var = 
-        new KssSimpleVariable("server_version"); 
-    
-    KssSimpleVariable *server_description_var = 
-        new KssSimpleVariable("server_description"); 
-    
-    KssTimeNowVariable *server_time_var = 
-        new KssTimeNowVariable("server_time"); 
-    
-    KssSimpleVariable *name_var = 
-        new KssSimpleVariable("name"); 
-    
-    if (   vendor_dom
-        && server_name_var
-        && server_version_var
-        && server_description_var
-        && name_var) {
-        // Allocation ok, now initialize the objects
-        server_name_var->setValue(new KsStringValue(getServerName()));
-        server_name_var->lock();
-
-        server_version_var->setValue(new KsStringValue(s_version));
-        server_version_var->lock();
-
-        server_description_var->setValue(new KsStringValue(s_descr));
-        server_description_var->lock();
-
-        name_var->setValue(new KsStringValue(v_name));
-        name_var->lock();
-    
-        if (   vendor_dom->addChild(server_name_var)
-            && vendor_dom->addChild(server_version_var)
-            && vendor_dom->addChild(server_description_var)
-            && vendor_dom->addChild(server_time_var)
-            && vendor_dom->addChild(name_var)
-            && _root_domain.addChild(vendor_dom)) {
-            return true;
+//////////////////////////////////////////////////////////////////////
+        
+bool
+KsSimpleServer::addDomain(const KsPath & dompath,
+                                const KsString & id,
+                                const KsString & comment)
+{
+    PLT_PRECONDITION(dompath.isValid() && dompath.isAbsolute());
+    KssSimpleDomain * pd = new KssSimpleDomain(id);
+    if (pd) {
+        pd->setComment(comment);
+        KssCommObjectHandle ho(pd, KsOsNew);
+        if (ho) {
+            return addCommObject(dompath, ho);
         }
     }
     return false;
-    // TODO may leak memory
 }
+
+//////////////////////////////////////////////////////////////////////
+        
+bool
+KsSimpleServer::addStringVar(const KsPath & dompath,
+                                   const KsString & id,
+                                   const KsString & str,
+                                   const KsString & comment,
+                                   bool lock)
+{
+    PLT_PRECONDITION(dompath.isValid() && dompath.isAbsolute());
+    KsValueHandle hv(new KsStringValue(str), KsOsNew);
+    if (hv) {
+        KssSimpleVariable *po = new KssSimpleVariable(id);
+        if (po) {
+            po->setValue(hv);
+            po->setState(KS_ST_GOOD);
+            po->setComment(comment);
+            if (lock) po->lock();
+            KssCommObjectHandle ho(po, KsOsNew);
+            if (ho) {
+                return addCommObject(dompath, ho);
+            }
+        }
+    }
+    return false;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsSimpleServer::initVendorTree()
+{
+    static KssTimeNowVariable server_time("server_time");
+    KssCommObjectHandle server_time_handle(&server_time, KsOsUnmanaged);
+    KsPath vendor("/vendor");
+
+    return addDomain(KsPath("/"), "vendor")
+
+        && addCommObject(vendor, server_time_handle)
+
+        && addStringVar(vendor, "server_name",
+                        getServerName())
+
+        && addStringVar(vendor, "server_version",
+                        KsString::fromInt(getProtocolVersion()))
+
+        && addStringVar(vendor, "server_description",
+                        getServerDescription())
+
+        && addStringVar(vendor, "name",
+                        getVendorName());
+}
+
 
 //////////////////////////////////////////////////////////////////////
 /* EOF ks/simpleserver.cpp */

@@ -229,7 +229,7 @@ bool PltHashTable_base::changeCapacity(size_t cap)
                     PLT_ASSERT(b);
                 }
             }
-            delete[] oldTable; oldTable = 0;
+            delete[] oldTable;
         }
         result = true;
     } else {

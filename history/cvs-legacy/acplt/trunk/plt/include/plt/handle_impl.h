@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_IMPL_INCLUDED
 #define PLT_HANDLE_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle_impl.h,v 1.1 1997-03-12 16:19:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle_impl.h,v 1.2 1997-04-10 14:09:22 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,7 +42,9 @@
 // Handle template implementation
 //////////////////////////////////////////////////////////////////////
 
+#if !PLT_SEE_ALL_TEMPLATES
 #include "plt/handle.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

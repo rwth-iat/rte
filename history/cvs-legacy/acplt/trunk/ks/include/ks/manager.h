@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.8 1997-04-03 10:04:19 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.9 1997-04-10 14:17:40 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,10 +45,7 @@
 #include "ks/register.h"
 #include "ks/serviceparams.h"
 #include "ks/path.h"
-
-extern "C" {
-#include <rpc/pmap_clnt.h>
-};
+#include "ks/rpc.h"
 
 #include "plt/hashtable.h"
 
@@ -69,11 +66,12 @@ public:
     KsManager();
     virtual ~KsManager();
     //// accessors
-    virtual KsString getServerName() const 
-        { return KsString("MANAGER"); }
+    // "virtual constants"
+    virtual KsString getServerName() const;
+    virtual u_short  getProtocolVersion() const;
+    virtual KsString getServerDescription() const;
+    virtual KsString getVendorName () const;
 
-    virtual u_long   getProtocolVersion() const
-        { return 1; }
 
     const PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> &
         getServerTable() const
@@ -88,9 +86,6 @@ protected:
                           XDR *incomingXdr,
                           KsAvTicket &ticket);
 
-    virtual bool createTransports();
-    virtual void destroyTransports();
-
     // service functions
     void registerServer(KsAvTicket & ticket,
                   KsRegistrationParams & params,
@@ -104,13 +99,13 @@ protected:
                     KsGetServerParams & params,
                     KsGetServerResult & result);
 
-    virtual bool initObjectTree(); // initialize object tree with predefined values
-
 private:
-    friend KsmExpireServerEvent;
-    friend KsmExpireManagerEvent;
+    friend class KsmExpireServerEvent;
+    friend class KsmExpireManagerEvent;
+
     void removeServer(KsmServer *p);
     static bool isLocal(SVCXPRT *);
+
     SVCXPRT *_udp_transport;
     bool _registered;
     PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> _server_table;

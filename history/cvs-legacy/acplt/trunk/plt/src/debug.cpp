@@ -210,16 +210,19 @@ void operator delete(void * p) {
 #endif
         p = pc;
         PltDebugNewHeader * pheader = (PltDebugNewHeader*)p;
-        PLT_ASSERT(pheader->magic == magic);
-        size_t sz = pheader->size;
-        PLT_ASSERT( PltDebugNewTracker::refcount == 0
-                   || (      PltDebugNewTracker::deleted + sz
-                          <= PltDebugNewTracker::newed
-                       &&    PltDebugNewTracker::deletecount 
-                           < PltDebugNewTracker::newcount));
-        ++PltDebugNewTracker::deletecount;
-        PltDebugNewTracker::deleted += sz;
-        free(pheader);
+
+        if (PltDebugNewTracker::refcount>0) {
+            PLT_ASSERT(pheader->magic == magic);
+            size_t sz = pheader->size;
+            PLT_ASSERT( PltDebugNewTracker::refcount == 0
+                       || (      PltDebugNewTracker::deleted + sz
+                              <= PltDebugNewTracker::newed
+                           &&    PltDebugNewTracker::deletecount 
+                              <  PltDebugNewTracker::newcount));
+            ++PltDebugNewTracker::deletecount;
+            PltDebugNewTracker::deleted += sz;
+            free(pheader);
+        }
     }
 }
 

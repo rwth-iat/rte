@@ -22,29 +22,38 @@ CXX_LIBKS_SOURCES = \
 	value.cpp \
 	xdr.cpp
 
-LIBKS_OBJECTS = \
+LIBKS_OBJECTS1 = \
 	array$(O) \
 	avticket$(O) \
 	event$(O) \
 	from_local$(O) \
 	manager$(O) \
-	mask$(O) \
+	mask$(O)
+
+LIBKS_OBJECTS2 = \
 	path$(O) \
 	props$(O) \
 	register$(O) \
 	result$(O) \
 	server$(O) \
-	serviceparams$(O) \
+	serviceparams$(O)
+
+LIBKS_OBJECTS3 = \
 	string$(O) \
 	simpleserver$(O) \
 	svrbase$(O) \
-	svrobjects$(O) \
+	svrobjects$(O)
+
+LIBKS_OBJECTS4 = \
 	svrsimpleobjects$(O) \
 	svrrpcctx$(O) \
 	templates$(O) \
 	time$(O) \
 	value$(O) \
 	xdr$(O)
+
+LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2) $(LIBKS_OBJECTS3) \
+	$(LIBKS_OBJECTS4)
 
 
 CXX_TEST_SOURCES = \
@@ -74,7 +83,8 @@ CXX_TEST_SOURCES = \
 
 TESTS = tmanager$(EXE) tserver$(EXE) tsclient$(EXE)
 
-CXX_SOURCES = $(CXX_LIBKS_SOURCES) $(CXX_TEST_SOURCES)
+CXX_SOURCES = $(CXX_LIBKS_SOURCES) $(CXX_TEST_SOURCES) \
+	unix_manager.cpp
 
 all :	$(LIBKS)
 
@@ -87,6 +97,5 @@ tmanager$(EXE) : tmanager$(O) tmanager1$(O) $(LIBKS)
 tserver$(EXE) : tserver$(O) tserver1$(O) $(LIBKS)
 
 tsclient$(EXE) : tsclient$(O) tsclient1$(O) $(LIBKS)
-
 
 

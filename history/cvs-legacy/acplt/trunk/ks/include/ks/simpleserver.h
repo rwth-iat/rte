@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.4 1997-04-03 10:04:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.5 1997-04-10 14:17:44 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -57,7 +57,9 @@ public:
 
     //// accessors
     virtual KsString getServerName() const=0;
-    virtual u_long   getProtocolVersion() const=0;
+    virtual u_short  getProtocolVersion() const=0;
+    virtual KsString getServerDescription() const = 0;
+    virtual KsString getVendorName () const = 0;
 
     //// modifiers
     // service functions
@@ -72,18 +74,30 @@ public:
                        KsGetPPResult & result);
 
 protected:
-    virtual bool initVendorTree(const PltString &s_description,
-                                const PltString &v_name);
     KssSimpleDomain _root_domain;
 
-private:
-    void getVarItem(KsAvTicket &ticket,
-                    const KsPath & path,
-                    KsGetVarItemResult &result);
-    void setVarItem(KsAvTicket &ticket,
-                    const KsPath & path,
-                    const KsCurrPropsHandle & curr_props,
-                    KsResult &result);
+    virtual void getVarItem(KsAvTicket &ticket,
+                            const KsPath & path,
+                            KsGetVarItemResult &result);
+    virtual void setVarItem(KsAvTicket &ticket,
+                            const KsPath & path,
+                            const KsCurrPropsHandle & curr_props,
+                            KsResult &result);
+
+    bool addCommObject(const KsPath & dompath,
+                       const KssCommObjectHandle & ho);
+
+    bool addDomain(const KsPath & dompath,
+                   const KsString & id,
+                   const KsString & comment = KsString());
+
+    bool addStringVar(const KsPath & dompath,
+                      const KsString & id,
+                      const KsString & str,
+                      const KsString & comment = KsString(),
+                      bool lock = true);
+    
+    bool initVendorTree();
 
 };
 

@@ -93,7 +93,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 class KsUnregistrationParams 
-: KsXdrAble
+: public KsXdrAble
 {
 public:
     KsUnregistrationParams();

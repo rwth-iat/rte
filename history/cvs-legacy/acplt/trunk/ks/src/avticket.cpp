@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.8 1997-03-25 21:19:04 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.9 1997-04-10 14:17:52 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -130,7 +130,7 @@ KsAvTicket::canReadVars(const KsArray<KsString> & names,
     PLT_PRECONDITION(names.size() == canRead.size());
     bool res = true;
     size_t size = names.size();
-    for (size_t i;
+    for (size_t i=0;
          i < size;
          ++i) {
         bool ok = canReadVar(names[i]);
@@ -150,7 +150,7 @@ KsAvTicket::canWriteVars(const KsArray<KsString> & names,
     PLT_PRECONDITION(names.size() == canWrite.size());
     size_t size = names.size();
     bool res = true;
-    for (size_t i;
+    for (size_t i=0;
          i < size;
          ++i) {
         bool b = canWriteVar(names[i]);

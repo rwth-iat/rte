@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_EVENT_INCLUDED
 #define KS_EVENT_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.5 1997-03-26 17:19:22 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.6 1997-04-10 14:17:36 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,6 +53,7 @@ public:
 //////////////////////////////////////////////////////////////////////
 
 class KsTimerEvent
+: public KsEvent
 {
 public:
     KsTimerEvent(const KsTime & at);

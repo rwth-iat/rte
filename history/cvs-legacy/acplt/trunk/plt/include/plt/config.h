@@ -74,6 +74,12 @@
 #endif
 #endif
 
+#if PLT_SYSTEM_NT
+#ifndef WIN32
+#define WIN32 1
+#endif
+#endif
+
 #ifndef PLT_USE_SYSLOG
 #define PLT_USE_SYSLOG 0
 #endif
@@ -88,16 +94,34 @@
 #endif
 
 #ifdef __GNUC__
+#define PLT_COMPILER_GCC __GNUC__
+#else
+#define PLT_COMPILER_GCC 0
+#endif
+
+#ifdef _MSC_VER
+#define PLT_COMPILER_MSVC _MSC_VER
+#else
+#define PLT_COMPILER_MSVC 0
+#endif
+
+#ifdef __WATCOMC__
+#define PLT_COMPILER_WATCOM __WATCOMC__
+#else
+#define PLT_COMPILER_WATCOM 0
+#endif
+
+#ifdef __BORLANDC__
+#define PLT_COMPILER_BORLAND __BORLANDC__
+#else
+#define PLT_COMPILER_BORLAND 0
+#endif
+
+#if PLT_COMPILER_GCC
 #define PLT_SIMULATE_BOOL 0
 #define PLT_SIMULATE_RTTI 1
 #define PLT_INSTANTIATE_TEMPLATES 1
 #define PLT_AVOID_DELETE_BUG 0
-#endif
-
-#ifdef _MSC_VER
-#define PLT_COMPILER_MSVC 1
-#else
-#define PLT_COMPILER_MSVC 0
 #endif
 
 #if PLT_COMPILER_MSVC
@@ -116,12 +140,24 @@
 #define PLT_POSTFIX_OVERLOADABLE 0
 #define PLT_INSTANTIATE_TEMPLATES 0
 
+#endif /* PLT_COMPILER_MSVC */
+
+#if PLT_COMPILER_BORLAND
+#pragma warn -hid
+#pragma warn -inl
+#pragma warn -stv
+#define PLT_SEE_ALL_TEMPLATES 1
+#define PLT_INSTANTIATE_TEMPLATES 1
 #endif
 
-#ifdef __WATCOMC__
+
+#if PLT_COMPILER_WATCOM
+/* Don't warn about nested comments */
+#pragma warning 15 9
 #define PLT_SIMULATE_BOOL 1
 #define PLT_SIMULATE_RTTI 1
 #define PLT_INSTANTIATE_TEMPLATES 0
+#define PLT_SEE_ALL_TEMPLATES 1
 #define _declspec(x) __declspec(x)
 #endif
 
@@ -135,6 +171,10 @@
 
 #ifndef PLT_INSTANTIATE_TEMPLATES    /* Explicit template instantiation? */
 #define PLT_INSTANTIATE_TEMPLATES 0
+#endif
+
+#ifndef PLT_SEE_ALL_TEMPLATES
+#define PLT_SEE_ALL_TEMPLATES 0
 #endif
 
 #ifndef PLT_AVOID_DELETE_BUG         /* If you can't call delete through */

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_ARRAY_IMPL_INCLUDED
 #define PLT_ARRAY_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/array_impl.h,v 1.2 1997-03-23 17:20:07 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array_impl.h,v 1.3 1997-04-10 14:09:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,8 +44,10 @@
 
 #include "plt/array.h"
 
+#if !PLT_SEE_ALL_TEMPLATES
 #include "plt/handle_impl.h"
 #include "plt/container_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

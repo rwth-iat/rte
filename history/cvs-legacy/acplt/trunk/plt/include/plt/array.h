@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_ARRAY_INCLUDED
 #define PLT_ARRAY_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.6 1997-03-24 12:29:05 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.7 1997-04-10 14:09:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -173,4 +173,11 @@ PltArray<T>::operator [] (size_t i) const
 }
 
 //////////////////////////////////////////////////////////////////////
+
+#if PLT_SEE_ALL_TEMPLATES
+#include "plt/array_impl.h"
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
 #endif // PLT_ARRAY_INCLUDED

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LIST_IMPL_INCLUDED
 #define PLT_LIST_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.4 1997-03-26 17:06:34 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.5 1997-04-10 14:09:26 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,8 +38,13 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
+
+//////////////////////////////////////////////////////////////////////
+
+#if !PLT_SEE_ALL_TEMPLATES
 #include "plt/list.h"
 #include "plt/container_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

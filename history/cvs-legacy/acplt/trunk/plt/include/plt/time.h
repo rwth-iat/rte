@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.7 1997-04-01 11:21:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.8 1997-04-10 14:09:28 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -43,6 +43,10 @@
 #if PLT_SYSTEM_NT
 // does not even have gettimeofday...
 #include <winsock.h>
+#if PLT_COMPILER_MSVC
+#pragma warning (disable : 4237 )  /* disable warning about defining bool... */
+#endif
+
 #elif PLT_SYSTEM_OS2
 // no comment
 struct timeval
@@ -68,8 +72,7 @@ struct PltTime : public timeval {
     bool invariant() const;
 #endif
 
-    // Test for zero
-    operator const void * () const;
+    bool isZero () const;
 
     // Make representation canonical
     void normalize();
@@ -193,10 +196,10 @@ operator < (const PltTime &t1, const PltTime &t2)
 
 //////////////////////////////////////////////////////////////////////
 
-inline
-PltTime::operator const void *() const
+inline bool
+PltTime::isZero() const
 {
-    return (tv_usec == 0 && tv_sec == 0) ? 0 : this;
+    return (tv_usec == 0 && tv_sec == 0) ;
 }
 
 //////////////////////////////////////////////////////////////////////

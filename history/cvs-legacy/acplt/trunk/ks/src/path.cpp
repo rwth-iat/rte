@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.3 1997-04-02 14:52:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.4 1997-04-10 14:17:56 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -184,7 +184,6 @@ KsPath::KsPath(const KsPath & abs, const KsPath & rel)
     _last(abs.size()  - rel._go_up + rel.size()),
     _go_up(0)
 {
-    cout << "XXX" << _str << "XXX" << endl;
     findSlashes();
 }
  

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.10 1997-03-23 14:30:00 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.11 1997-04-10 14:09:22 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -475,6 +475,12 @@ PltArrayHandle<T>::operator[](size_t i) const
     PLT_PRECONDITION( *this );
     return getPtr()[i];
 }
+
+//////////////////////////////////////////////////////////////////////
+
+#if PLT_SEE_ALL_TEMPLATES
+#include "plt/handle_impl.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

@@ -38,17 +38,25 @@ VPATH = ../../src ../../tests
 
 include ../generic.mk
 
+all: manager
+
 $(LIBKS): $(LIBKS_OBJECTS)
 	ar r $@ $?
 
-depend : $(CXX_SOURCES)
-	$(CXX_COMPILE) -MM $^ >.depend
+../depend.mk : $(CXX_SOURCES)
+	$(CXX_COMPILE) -MM $^ > .depend
+	perl $(PLT_DIR)/build/depend.pl .depend > $@
+
+depend : ../depend.mk
 
 .depend :
 	touch .depend
 
 include .depend
 
+manager:	unix_manager.o $(LIBKS)
+	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) $(CXX_LIBS)
+	
 clean :
 	rm -f *.o core
 

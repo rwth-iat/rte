@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list.h,v 1.2 1997-03-12 16:32:26 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/list.h,v 1.3 1997-04-10 14:17:38 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -86,7 +86,11 @@ KsList<T>::KsList(XDR * xdr, bool & ok)
 
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_SEE_ALL_TEMPLATES
+#include "ks/list_impl.h"
+#endif
 
+//////////////////////////////////////////////////////////////////////
 
 #endif  // PLT_LIST_INCLUDED
 

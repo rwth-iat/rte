@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_PATH_INCLUDED
 #define KS_PATH_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.3 1997-03-27 17:49:06 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.4 1997-04-10 14:17:41 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -139,4 +139,4 @@ KsPath::operator const char *() const
 }
 
 //////////////////////////////////////////////////////////////////////
-#endif /KS_PATH_INCLUDED
+#endif //KS_PATH_INCLUDED

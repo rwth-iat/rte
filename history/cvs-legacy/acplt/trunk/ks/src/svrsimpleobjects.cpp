@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.6 1997-04-03 15:14:32 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.7 1997-04-10 14:17:59 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -68,7 +68,11 @@ KssSimpleDomain::getChildById(const KsString & id) const
 bool 
 KssSimpleDomain::addChild(KssCommObjectHandle h) 
 {
-    return h ? _children.add(h->getIdentifier(), h) : false;
+    if (h) {
+        return _children.add(h->getIdentifier(), h);
+    } else {
+        return false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////

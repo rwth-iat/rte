@@ -65,7 +65,6 @@ public:
     virtual ~PltIterator_() { }
     virtual operator const void * () const = 0;   // remaining element?
     virtual PltIterator_ & operator ++ () = 0;     // advance
-    virtual void operator ++ (int);               // (postfix)
     virtual void toStart() = 0;                   // go to the beginning
 };
 
@@ -104,7 +103,6 @@ class PltBidirIterator : public PltIterator<T>
 {
 public:
     virtual PltBidirIterator & operator -- () = 0;  // step backwards
-    virtual void operator -- (int);                 // (postfix)
     virtual void toEnd() = 0;                       // go to the end
 };
 
@@ -212,25 +210,6 @@ PltIterator<T>::operator * () const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline void
-PltIterator_<T>::operator ++ (int)
-{
-    operator ++ ();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline void
-PltBidirIterator<T>::operator -- (int)
-{
-    operator -- ();
-}
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
 inline bool
 PltContainer_<T>::isEmpty() const
 {
@@ -319,4 +298,11 @@ PltArrayed<T>::newIterator() const
 }
 
 //////////////////////////////////////////////////////////////////////
+
+#if PLT_SEE_ALL_TEMPLATES
+#include "plt/container_impl.h"
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
 #endif // PLT_CONTAINER_INCLUDED
