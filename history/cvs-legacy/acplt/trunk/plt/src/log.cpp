@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.7 1999-01-08 13:12:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.8 1999-01-29 12:47:41 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -122,18 +122,19 @@ PltLog::GetLog()
 #if PLT_USE_SYSLOG
 //////////////////////////////////////////////////////////////////////
 
-#if PLT_SYSTEM_HPUX
-// prototypes for syslog functions, copied from syslog(3C) page.
-
-#if 0 // HPUX 10.20
+#if PLT_SYSTEM_HPUX && PLT_SYSTEM_HPUX_MAJOR<10
+//
+// Prototypes for syslog functions, copied from syslog(3C) page. This
+// cludge is only necessary for old HP-UX 9.0.x systems, which don't
+// have clean header files. The newer 10.20.x systems are finally more in
+// line with header standards...
+//
 extern "C" {
 int syslog(int priority, const char *message, ...);
 int openlog(const char *ident, int logopt, int facility);
 int closelog(void);
 int setlogmask(int maskpri);
 };
-#endif
-
 #endif // PLT_SYSTEM_HPUX
 
 //////////////////////////////////////////////////////////////////////

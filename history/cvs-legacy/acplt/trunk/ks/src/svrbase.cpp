@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.34 1999-01-12 16:13:33 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.35 1999-01-29 12:45:08 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -585,7 +585,7 @@ getReadyFds(fd_set &read_fds, fd_set &write_fds, size_t numfds,
 #define WRITE_FDS &write_fds
 #endif
 
-#if PLT_SYSTEM_HPUX
+#if PLT_SYSTEM_HPUX && PLT_SYSTEM_HPUX_MAJOR<10
     int res = select(numfds,
 	             (int *) &read_fds, (int *) WRITE_FDS, 0,
 	             pTimeout);
