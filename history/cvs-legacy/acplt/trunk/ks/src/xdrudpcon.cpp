@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.9 1999-09-16 10:54:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.10 2000-04-12 07:23:15 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -220,9 +220,6 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
                                 _buffer_size,
 		        	0, // no special flags
 	                	(struct sockaddr *) &_client_address,
-#if PLT_SYSTEM_OPENVMS
-				(unsigned int *)
-#endif
 		        	&_client_address_len);
 #else
     	    struct t_unitdata udta;
@@ -249,6 +246,16 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    // the sender´s IP address -- well, I don´t like this idea
 	    // very much...
 	    //
+	    sockaddr dummy_addr;
+#if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
+            socklen_t    dummy_addr_len;
+#elif PLT_SYSTEM_OPENVMS
+            unsigned int dummy_addr_len;
+#else
+            int          dummy_addr_len;
+#endif
+	    dummy_addr_len = sizeof(dummy_addr);
+
 #if !PLT_USE_XTI
 	    received = recvfrom(_fd, 
 #if PLT_SYSTEM_NT
@@ -257,7 +264,8 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
                                 _recvbuffer, 
                                 _buffer_size,
 		        	0, // no special flags
-		    	        0, 0);
+		    	        &dummy_addr,
+				&dummy_addr_len);
 #else
     	    struct t_unitdata udta;
 	    udta.addr.maxlen  = 0; // Not interested in the sender's

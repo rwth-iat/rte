@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.7 2000-04-10 15:07:30 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.8 2000-04-12 07:23:14 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -671,7 +671,6 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 	    _cln_con->sendRequest();
 	    return true; // "reactivate" connection (...to watch it...)
 	}
-	break;
 
 	case KssConnection::CNX_STATE_READY: {
 	    //
@@ -766,7 +765,6 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 	    _cln_con->sendRequest();
 	    return true; // "reactivate" connection (...watch it...)
 	}
-	break;
 
 	case KssConnection::CNX_STATE_READY: {
 	    //

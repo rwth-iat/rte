@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.40 2000-04-10 15:06:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.41 2000-04-12 07:23:15 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -39,9 +39,10 @@
 #include <unistd.h>
 #endif
 
-#if PLT_SYSTEM_OPENVMS
-#define bzero(x, y) memset(x, 0, y)
-#endif
+// Newer DECCXX releases now define this...
+//#if PLT_SYSTEM_OPENVMS
+//#define bzero(x, y) memset(x, 0, y)
+//#endif
 
 #if PLT_SYSTEM_SOLARIS
 #include <netconfig.h>
