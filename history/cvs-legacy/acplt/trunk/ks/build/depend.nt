@@ -359,17 +359,27 @@ connection.obj: ..\..\src\connection.cpp ..\..\include\ks\connection.h \
  ..\..\..\plt\include\plt\dictionary.h ..\..\include\ks\result.h
 
 interserver.obj: ..\..\src\interserver.cpp \
- ..\..\include\ks\interserver.h ..\..\include\ks\connection.h \
- ..\..\include\ks\xdr.h ..\..\..\plt\include\plt\rtti.h \
- ..\..\..\plt\include\plt\debug.h ..\..\..\plt\include\plt\config.h \
- ..\..\include\ks\rpc.h ..\..\include\ks\rpcproto.h \
- ..\..\include\ks\avticket.h ..\..\include\ks\ks.h \
- ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
- ..\..\..\plt\include\plt\alloc.h ..\..\include\ks\array.h \
- ..\..\..\plt\include\plt\array.h ..\..\..\plt\include\plt\container.h \
+ ..\..\include\ks\interserver.h ..\..\include\ks\svrbase.h \
+ ..\..\include\ks\rpc.h ..\..\..\plt\include\plt\debug.h \
+ ..\..\..\plt\include\plt\config.h ..\..\include\ks\avticket.h \
+ ..\..\include\ks\ks.h ..\..\include\ks\xdr.h \
+ ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\string.h \
+ ..\..\..\plt\include\plt\string.h ..\..\..\plt\include\plt\alloc.h \
+ ..\..\include\ks\array.h ..\..\..\plt\include\plt\array.h \
+ ..\..\..\plt\include\plt\container.h \
  ..\..\..\plt\include\plt\handle.h \
  ..\..\..\plt\include\plt\hashtable.h \
- ..\..\..\plt\include\plt\dictionary.h ..\..\include\ks\result.h
+ ..\..\..\plt\include\plt\dictionary.h ..\..\include\ks\event.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\serviceparams.h ..\..\include\ks\register.h \
+ ..\..\include\ks\result.h ..\..\include\ks\props.h \
+ ..\..\include\ks\handle.h ..\..\include\ks\value.h \
+ ..\..\include\ks\list.h ..\..\..\plt\include\plt\list.h \
+ ..\..\..\plt\include\plt\comparable.h \
+ ..\..\..\plt\include\plt\priorityqueue.h \
+ ..\..\include\ks\svrtransport.h ..\..\include\ks\connectionmgr.h \
+ ..\..\include\ks\connection.h ..\..\include\ks\rpcproto.h \
+ ..\..\include\ks\xdrtcpcon.h ..\..\include\ks\xdrudpcon.h
 
 xdrudpcon.obj: ..\..\src\xdrudpcon.cpp ..\..\include\ks\xdrudpcon.h \
  ..\..\include\ks\connection.h ..\..\include\ks\xdr.h \
@@ -758,8 +768,9 @@ tserver1.obj: ..\..\examples\tserver1.cpp ..\..\examples\ext_sp.h \
  ..\..\include\ks\path.h ..\..\include\ks\svrsimpleobjects.h \
  ..\..\include\ks\svrobjects.h ..\..\include\ks\mask.h \
  ..\..\include\ks\histdomain.h ..\..\include\ks\histparams.h \
- ..\..\include\ks\selector.h ..\..\..\plt\include\plt\logstream.h \
- ..\..\..\plt\include\plt\log.h
+ ..\..\include\ks\selector.h ..\..\..\plt\include\plt\log.h \
+ ..\..\..\plt\include\plt\logstream.h ..\..\include\ks\interserver.h \
+ ..\..\include\ks\xdrudpcon.h
 
 tshell.obj: ..\..\examples\tshell.cpp ..\..\include\ks\commobject.h \
  ..\..\include\ks\props.h ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
