@@ -10,7 +10,7 @@ CXX_FLAGS = /optimize /float=ieee_float
 
 CXX_EXTRA_FLAGS = /notemplate_define /repository=($(REPOSITORY))
 
-CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1
+CXX_DEFINES = PLT_USE_BUFFERED_STREAMS=1,PLT_SYSTEM_OPENVMS=1,NDEBUG=1
 
 AR = library
 
@@ -40,17 +40,17 @@ include [-]depend.vms
 
 
 $(LIBPLT_OBJECTS):	%.obj: [-.-.src]%.cpp
-	-del $@;*
+	-if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX) $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) /include=($(CXX_INCLUDES)) \
 		/define=($(CXX_DEFINES)) $<
 
 libplt$(A):	$(LIBPLT_OBJECTS)
-	-del $@;*
+	-if (f$$search("$@").nes."") then del $@;* /nolog
 	$(AR) /create libplt$(A) $^
 
 clean:
-	del *$(O);*
-	del libplt$(A);*
+	if (f$$search("*$(O)").nes."") then del *$(O);* /nolog
+	if (f$$search("libplt$(A)").nes."") then del libplt$(A);* /nolog
 
 
 # EOF makefile.vms

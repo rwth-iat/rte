@@ -8,19 +8,19 @@
 REPOSITORY = acplt$$repository
 
 CXX = cxx
-LD = link
+LD = cxxlink
 
 
 # choose your switches
-CXX_FLAGS = /OPTIMIZE /float=ieee_float
+CXX_FLAGS = /OPTIMIZE /float=ieee_float /NAMES=SHORTENED
 # CXX_FLAGS = /DEBUG
 
-LD_FLAGS =
+LD_FLAGS = /repository=(acplt$$repository)
 # LD_FLAGS = /DEBUG
 
 # The following set of flags compiles with optimization and no PLT debugging
 # helpers (no alloc tracker, no debugging messages)
-CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1
+CXX_DEFINES = PLT_USE_BUFFERED_STREAMS=1,PLT_SYSTEM_OPENVMS=1,NDEBUG=1
 
 # Enable next set of flags when using the new server-side dynamic XDR
 # streams, which buffer client i/o. (Prevents servers from blocking in i/o).
@@ -29,7 +29,7 @@ CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1
 ###### no modification below this line ####################
 
 CXX_EXTRA_FLAGS = \
-	/warnings=(disable=(EXTRASEMI,FOUNDCR)) \
+	/warnings=(disable=(EXTRASEMI)) \
 	/notemplate_define \
 	/repository=($(REPOSITORY))
 
@@ -75,19 +75,19 @@ CXX_COMPILE = $(CXX) \
 include [-]depend.vms
 
 $(LIBKS_OBJECTS): %.obj: [-.-.src]%.cpp
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) $<
 
 $(LIBKSSVR_OBJECTS): %.obj: [-.-.src]%.cpp	
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) $<
 
 $(LIBKSCLN_OBJECTS): %.obj: [-.-.src]%.cpp	
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) $<
 
 $(EXAMPLES_OBJECTS): %.obj: [-.-.examples]%.cpp
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) $<
 
 ############# ??
@@ -98,54 +98,54 @@ ucx$$ioctl_routine$(O):
 ############# executables ######################
 
 pmobile.exe : pmobile$(O) pmobile_code$(O) $(LIBKSCLN) $(LIBKS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) pmobile$(O),pmobile_code$(O),$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tclient.exe : tclient$(O) tclient1$(O) $(LIBKSCLN) $(LIBKS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) tclient$(O),tclient1$(O),$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tserver.exe: tserver.obj tserver1.obj ext_sp.obj $(LIBKSSVR) $(LIBKS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) tserver.obj,tserver1.obj,ext_sp.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tsclient.exe : tsclient.obj tsclient1.obj svrrpcctx$(O) $(LIBKS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tshell.exe : tshell.obj $(LIBKSCLN) $(LIBKS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) tshell.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 ttree.exe : ttree.obj ttree1.obj $(LIBKSCLN) $(LIBKS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) ttree.obj,ttree1.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 
 ############ libraries #####################
 
 libks$(A): $(LIBKS_OBJECTS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(AR) /create libks$(A) $^
 
 libkssvr$(A): $(LIBKSSVR_OBJECTS) ucx$$ioctl_routine$(O)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(AR) /create libkssvr$(A) $^
 
 libkscln$(A): $(LIBKSCLN_OBJECTS)
-	-del $@;*
+	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(AR) /create libkscln$(A) $^
 
 clean:
-	-del *$(O);*
-	-del libks$(A);*
-	-del libkssvr$(A);*
-	-del libkscln$(A);*
-	-del t*$(EXE);*
+	if (f$$search("*$(O)").nes."") then del *$(O);* /nolog
+	if (f$$search("libks$(A)").nes."") then del libks$(A);* /nolog
+	if (f$$search("libkssvr$(A)").nes."") then del libkssvr$(A);* /nolog
+	if (f$$search("libkscln$(A)").nes."") then del libkscln$(A);* /nolog
+	if (f$$search("t*$(EXE)").nes."") then del t*$(EXE);* /nolog
 
 # EOF makefile.vms
 
