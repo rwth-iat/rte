@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.1 1999-07-19 15:02:13 dirk Exp $
+*   $Id: ov_library.c,v 1.2 1999-08-10 07:11:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -725,13 +725,13 @@ void OV_DLLFNCEXPORT ov_library_setenv(
 	/*
 	*	local variables
 	*/
-	OV_STRING setpath = (OV_STRING)Ov_HeapMalloc(strlen(OV_LIBRARY_PATH_ENV "=")
-		+strlen(path)+1);
-	if(setpath) {
-		sprintf(setpath, OV_LIBRARY_PATH_ENV "=%s", path);
-		putenv(setpath);
-		Ov_HeapFree(setpath);
-	}
+	static char setpath[OV_LIBRARY_PATH_ENV_MAXLEN];
+	/*
+	*	instructions
+	*/
+	strcpy(setpath, OV_LIBRARY_PATH_ENV "=");
+	strncat(setpath, path, sizeof(setpath)-strlen(setpath)-1);
+	putenv(setpath);
 #else
 	setenv(OV_LIBRARY_PATH_ENV, path, TRUE);
 #endif

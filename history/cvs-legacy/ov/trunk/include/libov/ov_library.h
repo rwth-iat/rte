@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_library.h,v 1.2 1999-08-10 07:11:48 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -117,7 +117,8 @@ extern "C" {
 /*
 *	Environment variable name: search path for DLLs/shared libraries
 */
-#define OV_LIBRARY_PATH_ENV	"OV_LIBRARY_PATH"
+#define OV_LIBRARY_PATH_ENV			"OV_LIBRARY_PATH"
+#define OV_LIBRARY_PATH_ENV_MAXLEN	1024				/* restriction for NT only */
 
 /*
 *	Delimiter and separators used in paths
