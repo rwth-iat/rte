@@ -21,10 +21,10 @@ EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
 CXX = bcc32
-CXX_FLAGS = -D_BORLANDC=1 -w
+CXX_FLAGS = -D_BORLANDC -w
 #CXX_FLAGS = -D_BORLANDC=1 -DNDEBUG -w
 #CXX_FLAGS =
-CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1
+CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1 -DFD_SETSIZE=128
 
 RC = brc32
 
@@ -45,8 +45,13 @@ all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 {$(EXAMPLESSRCDIR)}.cpp{}.obj:
 	@echo Compiling $<
 	@$(CXX) @&&!
-		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
+		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
 !
+
+################################################################################
+# template instantiation files
+# the following targets are compiled with template instantiation activated(-Jgd)
+################################################################################
 
 templates.obj:  $(SRCDIR)templates.cpp
 	@echo Compiling $<
@@ -87,8 +92,18 @@ ttree.obj:    $(EXAMPLESSRCDIR)ttree.cpp
 tclient.obj:    $(EXAMPLESSRCDIR)tclient.cpp
 	@echo Compiling $<
 	@$(CXX) @&&!
-		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tbigpkg.cpp
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tclient.cpp
 !
+
+pmobile.obj:    $(EXAMPLESSRCDIR)pmobile.cpp
+	@echo Compiling $<
+	@$(CXX) @&&!
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)pmobile.cpp
+!
+
+###############################################################################
+# end of template instantiation files
+###############################################################################
 
 ### Include generic part
 
@@ -124,6 +139,13 @@ tsclient.exe: tsclient.obj tsclient1.obj $(LIBKS)
 	$(CXX) @&&!
 		tsclient.obj tsclient1.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
+
+pmobile.exe: pmobile.obj pmobile_code.obj $(LIBKS) $(LIBKSCLN)
+	@echo Linking $@
+	$(CXX) @&&!
+		pmobile.obj pmobile_code.obj $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBRPC)
+!
+
 
 ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc                        
 	$(RC) -r -fontksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
