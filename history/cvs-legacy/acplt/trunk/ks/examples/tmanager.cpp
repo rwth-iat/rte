@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager.cpp,v 1.2 1997-07-18 14:09:06 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager.cpp,v 1.3 1997-09-15 18:41:39 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -74,3 +74,8 @@
 #endif
 
 // EOF tmanager.cpp
+
+
+
+
+

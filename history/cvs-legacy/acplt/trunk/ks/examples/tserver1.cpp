@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.9 1997-09-13 08:19:42 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.10 1997-09-15 18:41:40 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -120,6 +120,10 @@ public:
     // portability strikes back.
 #if PLT_RETTYPE_OVERLOADABLE
     typedef TestDomainIterator THISTYPE;
+#define TestDomainIterator_THISTYPE TestDomainIterator
+#else
+#define TestDomainIterator_THISTYPE PltIterator_<KssCommObjectHandle> 
+// KssDomainIterator_THISTYPE
 #endif
     virtual operator bool () const
         { return 0; } // no iteration
@@ -152,7 +156,7 @@ class TestDomain
 
     //// KssDomain
     //   accessors
-    virtual TestDomainIterator::THISTYPE * newIterator() const;
+    virtual TestDomainIterator_THISTYPE * newIterator() const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
 
@@ -213,7 +217,7 @@ TestDomain::getChildById(const KsString &str) const
 PLT_IMPL_RTTI1(TestDomain, KssDomain);
 //////////////////////////////////////////////////////////////////////
 
-TestDomainIterator::THISTYPE * 
+TestDomainIterator_THISTYPE * 
 TestDomain::newIterator() const
 { 
     return new TestDomainIterator; 
@@ -412,7 +416,8 @@ TestServer::calculate()
 // Derive from the AvTicket classes extending the can... methods.
 //////////////////////////////////////////////////////////////////////
 
-static const char restricted[] = "/restricted";
+// static 
+const char restricted[] = "/restricted";
 
 //////////////////////////////////////////////////////////////////////
 
@@ -453,7 +458,7 @@ TestAvNone::canReadVar(const KsString & name) const
     //
     // You can't read /restricted with AvNone.
     //
-    if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
+    if (strncmp(name, restricted, sizeof(restricted) - 1) == 0) {
         return false;
     } else {
         return KsAvNoneTicket::canReadVar(name);

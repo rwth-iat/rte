@@ -12,15 +12,16 @@ SRCDIR = $(PLTDIR)\src\\
 
 ### Compiler
 CXX = bcc32
-CXX_FLAGS = -DNDEBUG -O2 -w
+#CXX_FLAGS = -DNDEBUG -O2 -w
+CXX_FLAGS = 
 CXX_EXTRA_FLAGS = -I. -a8 -I$(PLTDIR)\include -DPLT_SYSTEM_NT=1
 
-.SUFFIXES:	
+.SUFFIXES:      
 
-.SUFFIXES:	.cpp .obj .lib .exe
+.SUFFIXES:      .cpp .obj .lib .exe
 
 {$(SRCDIR)}.cpp{}.obj:
-	$(CXX) -Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $< 
+	$(CXX) -Jg $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $< 
 
 ### Include generic part
 
@@ -39,7 +40,7 @@ $(LIBPLT) : plt_ar.exe $(LIBPLT_OBJECTS)
 	plt_ar tlib $@ $(LIBPLT_OBJECTS2)
 
 ### PLT Archiver Wrapper
-plt_ar.exe:	..\plt_ar.cpp
+plt_ar.exe:     ..\plt_ar.cpp
 	$(CXX) ..\plt_ar.cpp
 
 clean :

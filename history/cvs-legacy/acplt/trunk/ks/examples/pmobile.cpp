@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile.cpp,v 1.1 1997-09-09 15:32:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile.cpp,v 1.2 1997-09-15 18:40:45 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,15 +41,24 @@
 #include "ks/commobject.h"
 #include "ks/package.h"
 
-#if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
+#if PLT_SEE_ALL_TEMPLATES
+#include "plt/hashtable.h"
+#include "plt/priorityqueue.h"
+#include "ks/array.h"
+#include "ks/list.h"
+#include "ks/handle.h"
+#include "plt/sort.h"
+#else
 #include "plt/hashtable_impl.h"
 #include "plt/priorityqueue_impl.h"
-//#include "plt/handle_impl.h"
 #include "ks/array_impl.h"
 #include "ks/list_impl.h"
 #include "ks/handle_impl.h"
 #include "plt/sort_impl.h"
-//#include "ks/package_impl.h"
+#endif
+
+#if PLT_COMPILER_BORLAND
+#include "ks/array_builtins.h"
 #endif
 
 #if PLT_INSTANTIATE_TEMPLATES
@@ -58,4 +67,6 @@
 
 
 // End of pmobile.cpp
+
+
 

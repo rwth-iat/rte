@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.5 1997-09-15 13:07:48 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.6 1997-09-15 18:40:52 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,9 +38,18 @@
            Martin Kneissl <martin@plt.rwth-aachen.de>
  */
 
+#include "plt/config.h"
+
 #include <stdlib.h>
 #include <iostream.h>
+
+#if PLT_COMPILER_BORLAND
+#include <strstrea.h>
+#include <time.h>
+#else
 #include <strstream.h>
+#endif
+
 #include <fstream.h>
 
 #include "ks/commobject.h"
@@ -48,6 +57,10 @@
 #include "plt/log.h"
 #include "plt/logstream.h"
 #include "plt/time.h"
+
+#if PLT_COMPILER_BORLAND
+#include "ks/array_builtins.h"
+#endif
 
 static int verbosity = 1;
 inline void check_pointer(void *) { }
@@ -385,3 +398,6 @@ int main(int argc, char **argv)
 } // main
 
 // End of pmobile_code.cpp
+
+
+

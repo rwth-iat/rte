@@ -175,6 +175,7 @@
 #pragma warn -stv
 #define PLT_SEE_ALL_TEMPLATES 1
 #define PLT_INSTANTIATE_TEMPLATES 1
+#define PLT_RETTYPE_OVERLOADABLE 1
 #endif
 
 

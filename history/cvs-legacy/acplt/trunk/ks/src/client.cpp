@@ -149,7 +149,7 @@ KscClient::setClient(KscClient *cl, KsOwnership os)
     } else {
         if(os == KsOsNew) {
             _clean_up.shutdown_delete = true;
-        } else if(KsOsUnmanaged) {
+        } else if(os == KsOsUnmanaged) {
             _clean_up.shutdown_delete = false;
         } else {
             // invalid ownership status
