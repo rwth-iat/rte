@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.c,v 1.5 1999-08-28 15:55:59 dirk Exp $
+*   $Id: ov_ntservice.c,v 1.6 2000-06-14 18:05:12 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -107,7 +107,6 @@ BOOL WINAPI Shell_NotifyIcon(
 	DWORD			dwMessage, 
 	NOTIFYICONDATA	*pnid
 );
-
 #endif
 
 /*	----------------------------------------------------------------------	*/
@@ -719,7 +718,7 @@ ERRORMSG:
 	*	create the server object and add task bar icon
 	*/
 	ov_logfile_info("Creating server object...");
-	result = ov_ksserver_create(servername, port, NULL);
+	result = ov_ksserver_create(servername, port, OV_SIGHANDLER_NONE);
 	if(Ov_Fail(result)) {
 		goto ERRORMSG;
 	}

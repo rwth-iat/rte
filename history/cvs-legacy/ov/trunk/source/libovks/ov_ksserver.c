@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.9 2000-04-13 09:12:20 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.10 2000-06-14 18:05:11 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -341,10 +341,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 		/*
 		*	install signal handler
 		*/
-		if(sighandler) {
+		if(sighandler == OV_SIGHANDLER_DEFAULT) {
+			pserver = new OvKsServer(servername, port, ov_ksserver_sighandler);
+		} else if(sighandler != OV_SIGHANDLER_NONE){
 			pserver = new OvKsServer(servername, port, sighandler);
 		} else {
-			pserver = new OvKsServer(servername, port, ov_ksserver_sighandler);
+			pserver = new OvKsServer(servername, port, 0);
 		}
 		if(pserver) {
 			ov_vendortree_setservername(servername);

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.7 2000-04-13 09:12:19 dirk Exp $
+*   $Id: ov_ksserver.h,v 1.8 2000-06-14 18:05:10 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -48,6 +48,12 @@ extern "C" {
 typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
 	int signal
 );
+
+/*
+*	Flags for installing the signal handler
+*/
+#define OV_SIGHANDLER_DEFAULT	((OV_FNC_SIGHANDLER *)0)
+#define OV_SIGHANDLER_NONE		((OV_FNC_SIGHANDLER *)-1)
 
 /*
 *	Create a ticket from an incoming XDR stream (internal)
@@ -450,13 +456,15 @@ public:
 	// constructor
 	OvKsServer(OV_STRING servername, int port, OV_FNC_SIGHANDLER *sighandler)
 	: KsServer(30, port), _servername(servername) {
-		signal(SIGTERM, sighandler);
+		if(sighandler) {
+			signal(SIGTERM, sighandler);
 #if !PLT_SYSTEM_RMOS
-		signal(SIGINT, sighandler);
+			signal(SIGINT, sighandler);
 #if !PLT_SYSTEM_NT
-		signal(SIGHUP, sighandler);
+			signal(SIGHUP, sighandler);
 #endif
 #endif
+		}
 	}
 
 	// accessors
