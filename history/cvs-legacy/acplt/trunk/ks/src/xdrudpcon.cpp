@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.11 2002-05-23 10:33:22 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.12 2003-10-13 12:08:27 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -137,7 +137,7 @@ KssUDPXDRConnection::~KssUDPXDRConnection()
 // Ask an UDP XDR connection about its i/o mode: this way, a connection
 // manager can find out in what fdsets it must put the connection.
 //
-KssConnection::ConnectionIoMode KssUDPXDRConnection::getIoMode() const
+KsConnection::ConnectionIoMode KssUDPXDRConnection::getIoMode() const
 {
     switch ( _state ) {
     case CNX_STATE_DEAD:
@@ -183,7 +183,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::getIoMode() const
 // socket signalled a possible blocking condition, then the connection will
 // remain in the CNX_STATE_IDLE state.
 //
-KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
+KsConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 {
     int received;
 
@@ -306,7 +306,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 // there was some trouble and the socket signalled a possible blocking
 // condition, then the connection will remain in the CNX_STATE_SENDING state.
 //
-KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
+KsConnection::ConnectionIoMode KssUDPXDRConnection::send()
 {
     int sent;
     
@@ -363,7 +363,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 // Reset this connection to a well-known state, which is in our case the
 // CNX_STATE_IDLE state where we'll wait for arriving datagrams.
 //
-KssConnection::ConnectionIoMode KssUDPXDRConnection::reset()
+KsConnection::ConnectionIoMode KssUDPXDRConnection::reset()
 {
     if ( _state == CNX_STATE_DEAD ) {
     	//
@@ -383,7 +383,7 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::reset()
 // we're playing the role of a client connection and we've sent a request and
 // are now waiting for a reply.
 //
-KssConnection::ConnectionIoMode KssUDPXDRConnection::timedOut()
+KsConnection::ConnectionIoMode KssUDPXDRConnection::timedOut()
 {
     if ( _cnx_type == CNX_TYPE_CLIENT ) {
 	if ( (_time_passed += _timeout) >= _total_timeout ) {
