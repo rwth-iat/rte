@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.2 1999-02-26 13:28:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.3 1999-04-22 15:37:08 harald Exp $ */
 /*
  * Copyright (c) 1999
  * Chair of Process Control Engineering,
@@ -49,6 +49,10 @@
 #if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/interserver.h"
+
+#if !PLT_SYSTEM_NT
+#include <unistd.h>
+#endif
 
 // ---------------------------------------------------------------------------
 // Construct a new inter server connection object. This involves parsing the
@@ -719,8 +723,8 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 	    // Always use the A/V NONE mechanism when asking the manager.
 	    //
 	    u_long avdummy = 0;
-	    ok &= xdr_u_long(_cln_con->getXdr(), &avdummy);
-	    ok &= serverdesc.xdrEncode(_cln_con->getXdr());
+	    ok = ok && xdr_u_long(_cln_con->getXdr(), &avdummy);
+	    ok = ok && serverdesc.xdrEncode(_cln_con->getXdr());
 	    if ( !ok ) {
 		_result = KS_ERR_GENERIC;
 		break;
