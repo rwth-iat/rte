@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.4 1999-08-28 14:18:18 dirk Exp $
+*   $Id: ov.ovm,v 1.5 1999-08-29 16:28:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -189,7 +189,7 @@ LIBRARY ov
 	*	containment: domain objects contain objects
 	*	-------------------------------------------
 	*/
-	ASSOCIATION containment
+	ASSOCIATION containment : ONE_TO_MANY
 		IS_LOCAL;
 		PARENT parent : CLASS ov/domain;
 		CHILD child : CLASS ov/object;
@@ -199,7 +199,7 @@ LIBRARY ov
 	*	instantiation: objects are instances of a class
 	*	-----------------------------------------------
 	*/
-	ASSOCIATION instantiation
+	ASSOCIATION instantiation : ONE_TO_MANY
 		PARENT objectclass : CLASS ov/class;
 		CHILD instance : CLASS ov/object;
 	END_ASSOCIATION;
@@ -208,7 +208,7 @@ LIBRARY ov
 	*	inheritance: base classes inherit their properties to derived classes
 	*	---------------------------------------------------------------------
 	*/
-	ASSOCIATION inheritance
+	ASSOCIATION inheritance : ONE_TO_MANY
 		PARENT baseclass : CLASS ov/class;
 		CHILD derivedclass : CLASS ov/class;
 	END_ASSOCIATION;
@@ -217,7 +217,7 @@ LIBRARY ov
 	*	parentrelationship: associations have a parent class
 	*	----------------------------------------------------
 	*/
-	ASSOCIATION parentrelationship
+	ASSOCIATION parentrelationship : ONE_TO_MANY
 		PARENT parentclass : CLASS ov/class;
 		CHILD parentassociation : CLASS ov/association;
 	END_ASSOCIATION;
@@ -226,7 +226,7 @@ LIBRARY ov
 	*	childrelationship: associations have a child class
 	*	--------------------------------------------------
 	*/
-	ASSOCIATION childrelationship
+	ASSOCIATION childrelationship : ONE_TO_MANY
 		PARENT childclass : CLASS ov/class;
 		CHILD childassociation : CLASS ov/association;
 	END_ASSOCIATION;
@@ -235,7 +235,7 @@ LIBRARY ov
 	*	construction: structured variables are destribed by a structure definition
 	*	--------------------------------------------------------------------------
 	*/
-	ASSOCIATION construction
+	ASSOCIATION construction : ONE_TO_MANY
 		PARENT structure : CLASS ov/structure;
 		CHILD variable : CLASS ov/variable;
 	END_ASSOCIATION;
@@ -244,7 +244,7 @@ LIBRARY ov
 	*	embedment: parts embedded in an object are described by a class
 	*	---------------------------------------------------------------
 	*/
-	ASSOCIATION embedment
+	ASSOCIATION embedment : ONE_TO_MANY
 		PARENT partclass : CLASS ov/class;
 		CHILD part : CLASS ov/part;
 	END_ASSOCIATION;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.8 1999-08-28 13:45:56 dirk Exp $
+*   $Id: ov_ov.h,v 1.9 1999-08-29 16:28:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -385,7 +385,8 @@ typedef OV_ENUM OV_ACCESS;
 *	------------
 *	Association types.
 */
-#define OV_AT_1_TO_MANY		0x00000001			/* 1:n association */
+#define OV_AT_ONE_TO_MANY	0x00000001			/* 1:n association */
+#define OV_AT_MANY_TO_MANY	0x00000002			/* n:m association */
 
 typedef OV_ENUM OV_ASSOC_TYPE;
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.11 1999-08-28 15:55:55 dirk Exp $
+*   $Id: ov_object.c,v 1.12 1999-08-29 16:28:18 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1099,7 +1099,7 @@ OV_RESULT ov_object_move(
 			*	adjust parent link pointers
 			*/
 			switch(passoc->v_assoctype) {
-			case OV_AT_1_TO_MANY:
+			case OV_AT_ONE_TO_MANY:
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->pfirst);
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->plast);
 				break;
@@ -1118,7 +1118,7 @@ OV_RESULT ov_object_move(
 			*	adjust child link pointers
 			*/
 			switch(passoc->v_assoctype) {
-			case OV_AT_1_TO_MANY:
+			case OV_AT_ONE_TO_MANY:
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pnext);
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pprevious);
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pparent);

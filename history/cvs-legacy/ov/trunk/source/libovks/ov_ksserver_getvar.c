@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.3 1999-08-28 15:55:56 dirk Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.4 1999-08-29 16:28:19 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -181,7 +181,7 @@ void ov_ksserver_getvar_getitem(
 		*	get value of a parent link (string vector with children's paths)
 		*/
 		switch(pelem->elemunion.passoc->v_assoctype) {
-		case OV_AT_1_TO_MANY:
+		case OV_AT_ONE_TO_MANY:
 			pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
 			len = pitem->var_current_props.value.veclen
 				= ov_association_getchildcount(pelem->elemunion.passoc, pobj);
@@ -221,7 +221,7 @@ void ov_ksserver_getvar_getitem(
 		*	get value of a child link (string with the parent's paths)
 		*/
 		switch(pelem->elemunion.passoc->v_assoctype) {
-		case OV_AT_1_TO_MANY:
+		case OV_AT_ONE_TO_MANY:
 			pitem->var_current_props.value.vartype = OV_VT_STRING;
 			pparent = Ov_Association_GetParent(pelem->elemunion.passoc, pobj);
 			if(pparent) {

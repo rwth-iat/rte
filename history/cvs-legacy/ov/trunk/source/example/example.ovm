@@ -1,5 +1,5 @@
 /*
-*   $Id: example.ovm,v 1.5 1999-08-28 13:46:00 dirk Exp $
+*   $Id: example.ovm,v 1.6 1999-08-29 16:28:17 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -73,7 +73,7 @@ LIBRARY example
 		END_VARIABLES;
 	END_CLASS;
 
-	ASSOCIATION testassoc
+	ASSOCIATION testassoc : ONE_TO_MANY
 		PARENT MyParent : CLASS example/testclass
 			COMMENT = "link to my parent";
 		CHILD  MyChildren : CLASS example/testclass

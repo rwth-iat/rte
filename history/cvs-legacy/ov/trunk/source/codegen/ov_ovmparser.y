@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.7 1999-08-28 14:18:19 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.8 1999-08-29 16:28:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -50,6 +50,7 @@ OV_UINT				defnum = 0;
 	OV_STRING				string;
 	OV_UINT					uint;
 	OV_CLASS_PROPS			classprops;
+	OV_ASSOC_TYPE			assoctype;
 	OV_ASSOC_PROPS			assocprops;
 	OV_VAR_TYPE				vartype;
 	OV_VAR_PROPS			varprops;
@@ -79,6 +80,7 @@ OV_UINT				defnum = 0;
 
 %token <classprops>	TOK_CLASSPROPS
 
+%token <assoctype>	TOK_ASSOCTYPE
 %token <assocprops>	TOK_ASSOCPROPS
 
 %token <opprops>	TOK_OPPROPS
@@ -109,6 +111,7 @@ OV_UINT				defnum = 0;
 %type <popdef>		operations_block_opt operations_opt
 
 %type <passocdef>	associations_opt associations association
+%type <assoctype>	assoctype_opt assoctype
 %type <assocprops>	assocprops_opt assocprops
 
 %type <pvardef>		members member
@@ -460,7 +463,7 @@ associations:
 ;
 
 association:
-	TOK_ASSOCIATION TOK_IDENTIFIER
+	TOK_ASSOCIATION TOK_IDENTIFIER assoctype_opt
 	assocprops_opt
 	TOK_PARENT TOK_IDENTIFIER ':' TOK_CLASS TOK_IDENTIFIER_EX assocflags_opt assoccomment_opt ';'
 	TOK_CHILD TOK_IDENTIFIER ':' TOK_CLASS TOK_IDENTIFIER_EX assocflags_opt assoccomment_opt ';'
@@ -469,17 +472,35 @@ association:
 			$$ = Ov_Codegen_Malloc(OV_OVM_ASSOCIATION_DEF);
 			$$->pnext = NULL;
 			$$->identifier = $2;
-			$$->assoctype = OV_AT_1_TO_MANY;
-			$$->assocprops = $3;
-			$$->parentrolename = $5;
-			$$->parentclassname = $8;
-			$$->childflags = $9;
-			$$->childcomment = $10;
-			$$->childrolename = $13;
-			$$->childclassname = $16;
-			$$->parentflags = $17;
-			$$->parentcomment = $18;
+			$$->assoctype = $3;
+			$$->assocprops = $4;
+			$$->parentrolename = $6;
+			$$->parentclassname = $9;
+			$$->childflags = $10;
+			$$->childcomment = $11;
+			$$->childrolename = $14;
+			$$->childclassname = $17;
+			$$->parentflags = $18;
+			$$->parentcomment = $19;
 			$$->defnum = defnum++;
+		}
+;
+
+assoctype_opt:
+	/* empty */
+		{
+			$$ = OV_AT_ONE_TO_MANY;
+		}
+	| assoctype
+		{
+			$$ = $1;
+		}
+;
+
+assoctype:
+	':' TOK_ASSOCTYPE
+		{
+			$$ = $2;
 		}
 ;
 
@@ -1082,6 +1103,16 @@ OV_BOOL ov_codegen_checksemantics_association(
 		result = FALSE;
 	}
 	/*
+	*	local n:m associations are not (yet?) supported
+	*/
+	if((passoc->assoctype == OV_AT_MANY_TO_MANY) 
+		&& (passoc->assocprops & OV_AP_LOCAL)
+	) {
+		fprintf(stderr, "association \"%s\": n:m associations cannot be local.\n",
+			passoc->identifier);
+		result = FALSE;
+	}
+	/*
 	*	check for child and parent class and their role names
 	*/
 	if(!pparentclass) {
@@ -1103,6 +1134,8 @@ OV_BOOL ov_codegen_checksemantics_association(
 		}
 		/*
 		*	check child role name -- yes, CHILD rolename
+		*	FIXME! do not only check variables, parts and operations
+		*	       but also links of the parentclass!!
 		*/
 		if(ov_codegen_getvardef(plib, pparentclass, passoc->childrolename)
 			|| ov_codegen_getpartdef(plib, pparentclass, passoc->childrolename)
@@ -1132,10 +1165,12 @@ OV_BOOL ov_codegen_checksemantics_association(
 		}
 		/*
 		*	check parent role name -- yes, PARENT rolename
+		*	FIXME! do not only check variables, parts and operations
+		*	       but also links of the childclass!!
 		*/
-		if(ov_codegen_getvardef(plib, pparentclass, passoc->parentrolename)
-			|| ov_codegen_getpartdef(plib, pparentclass, passoc->parentrolename)
-			|| ov_codegen_getopdef(plib, pparentclass, passoc->parentrolename)
+		if(ov_codegen_getvardef(plib, pchildclass, passoc->parentrolename)
+			|| ov_codegen_getpartdef(plib, pchildclass, passoc->parentrolename)
+			|| ov_codegen_getopdef(plib, pchildclass, passoc->parentrolename)
 		) {
 			fprintf(stderr, "association \"%s\": parent role name \"%s\" already "
 				"used as identifier.", passoc->identifier, passoc->parentrolename);

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.9 1999-08-28 15:55:50 dirk Exp $
+*   $Id: ov_macros.h,v 1.10 1999-08-29 16:28:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -53,69 +53,61 @@
 	OV_CCI_##assoc))))
 
 /*
-*	Get first child in an association
+*	Get first child in a 1:n association
 */
-#if OV_SYSTEM_MC164	/* compiler bug */
 #define Ov_GetFirstChild(assoc, pparent)									\
-	((OV_CPT_##assoc)((pparent)?((pparent)->OV_HN_##assoc.pfirst):(NULL)))
-#else
-#define Ov_GetFirstChild(assoc, pparent)									\
-	((pparent)?((pparent)->OV_HN_##assoc.pfirst):((OV_CPT_##assoc)NULL))
-#endif
+	((OV_CPT_##assoc)((pparent)?((pparent)->OV_CRN_##assoc.pfirst):(NULL)))
 
 /*
-*	Get last child in an association
+*	Get last child in a 1:n association
 */
-#if OV_SYSTEM_MC164	/* compiler bug */
 #define Ov_GetLastChild(assoc, pparent)										\
-	((OV_CPT_##assoc)((pparent)?((pparent)->OV_HN_##assoc.plast):(NULL)))
-#else
-#define Ov_GetLastChild(assoc, pparent)										\
-	((pparent)?((pparent)->OV_HN_##assoc.plast):((OV_CPT_##assoc)NULL))
-#endif
+	((OV_CPT_##assoc)((pparent)?((pparent)->OV_CRN_##assoc.plast):(NULL)))
 
 /*
-*	Get next child in an association
+*	Get next child in a 1:n association
 */
-#if OV_SYSTEM_MC164	/* compiler bug */
 #define Ov_GetNextChild(assoc, pchild)										\
-	((OV_CPT_##assoc)((pchild)?((pchild)->OV_AN_##assoc.pnext):(NULL)))
-#else
-#define Ov_GetNextChild(assoc, pchild)										\
-	((pchild)?((pchild)->OV_AN_##assoc.pnext):((OV_CPT_##assoc)NULL))
-#endif
+	((OV_CPT_##assoc)((pchild)?((pchild)->OV_PRN_##assoc.pnext):(NULL)))
 
 /*
-*	Get previous child in association
+*	Get previous child a 1:n association
 */
-#if OV_SYSTEM_MC164	/* compiler bug */
 #define Ov_GetPrevChild(assoc, pchild)										\
-	((OV_CPT_##assoc)((pchild)?((pchild)->OV_AN_##assoc.pprevious):(NULL)))
-#else
-#define Ov_GetPrevChild(assoc, pchild)										\
-	((pchild)?((pchild)->OV_AN_##assoc.pprevious):((OV_CPT_##assoc)NULL))
-#endif
+	((OV_CPT_##assoc)((pchild)?((pchild)->OV_PRN_##assoc.pprevious):(NULL)))
 
 /*
-*	Get parent in an association
+*	Get parent in a 1:n association
 */
-#if OV_SYSTEM_MC164	/* compiler bug */
 #define Ov_GetParent(assoc, pchild)											\
-	((OV_PPT_##assoc)((pchild)?((pchild)->OV_AN_##assoc.pparent):(NULL)))
-#else
-#define Ov_GetParent(assoc, pchild)											\
-	((pchild)?((pchild)->OV_AN_##assoc.pparent):((OV_PPT_##assoc)NULL))
-#endif
+	((OV_PPT_##assoc)((pchild)?((pchild)->OV_PRN_##assoc.pparent):(NULL)))
 
 /*
-*	Search a child with given identifier in an association
+*	Iterate over all child objects in a 1:n association
+*/
+#define Ov_ForEachChild(assoc, pparent, pchild)								\
+	for(((pchild)=Ov_GetFirstChild(assoc, (pparent))); (pchild);			\
+	(pchild)=Ov_GetNextChild(assoc, (pchild)))
+
+/*
+*	Iterate over all child objects in a 1:n association and dynamically
+*	cast to a given child class
+*/
+#define Ov_ForEachChildEx(assoc, pparent, pchild, childclass)				\
+	for(((pchild)=(OV_INSTPTR_##childclass)Ov_GetFirstChild(assoc, 			\
+	(pparent))); (pchild); (pchild)=(OV_INSTPTR_##childclass)				\
+	Ov_GetNextChild(assoc, (pchild))) if(!Ov_DynamicPtrCast(childclass, 	\
+	(pchild))) {} else
+
+/*
+*	Search a child with given identifier in a 1:n association
 */
 #define Ov_SearchChild(assoc, pparent, ident)								\
 	((OV_CPT_##assoc)ov_association_searchchild(passoc_##assoc, 			\
-	(OV_INSTPTR_ov_object)Ov_ParentPtrUpCast(assoc, pparent), ident))
+	(OV_INSTPTR_ov_object)Ov_ParentPtrUpCast(assoc, (pparent)), (ident)))
 
 /*
-*	Search a child with given identifier and cast to child class
+*	Search a child with given identifier and cast to child class in a 1:n association
 */
 #define Ov_SearchChildEx(assoc, pparent, ident, childclass)					\
 	Ov_DynamicPtrCast(childclass, ((OV_CPT_##assoc)							\
@@ -123,50 +115,157 @@
 	Ov_ParentPtrUpCast(assoc, pparent), ident)))
 
 /*
-*	Link parent and child object, no placement hint
+*	Define an iterator for iterating over n:m associations
 */
-#define Ov_Link(assoc, pparent, pchild)										\
-	assoc##_link(Ov_ParentPtrUpCast(assoc, pparent), Ov_ChildPtrUpCast		\
-	(assoc, pchild), OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL)
+#define Ov_DefineIteratorNM(assoc, pit)										\
+	OV_NMLINK_##assoc *(pit) = NULL
 
 /*
-*	Link parent and child object with given child placement hint (1:n)
+*	Get first child in an n:m association
 */
-#define Ov_LinkPlaced(assoc, pparent, pchild, parenthint, childhint)		\
-	assoc##_link(Ov_ParentPtrUpCast(assoc, pparent), Ov_ChildPtrUpCast		\
-	(assoc, pchild), OV_PMH_DEFAULT, NULL, childhint, NULL)
+#define Ov_GetFirstChildNM(assoc, pit, pparent)								\
+	((OV_CPT_##assoc)(((pparent)?((pit)=(pparent)->OV_CRN_##assoc.pfirst,	\
+	(pit)?((pit)->child.pchild):(NULL)):(NULL))))
 
 /*
-*	Link parent and child object with given relative child placement hint (1:n)
+*	Get last child in an n:m association
 */
-#define Ov_LinkRelativePlaced(assoc, pparent, pchild, childhint, prelchild)	\
-	assoc##_link(Ov_ParentPtrUpCast(assoc, pparent), Ov_ChildPtrUpCast		\
-	(assoc, pchild), OV_PMH_DEFAULT, NULL, childhint, Ov_ChildPtrUpCast		\
-	(assoc, prelchild))
+#define Ov_GetLastChildNM(assoc, pit, pparent)								\
+	((OV_CPT_##assoc)(((pparent)?((pit)=(pparent)->OV_CRN_##assoc.plast,	\
+	(pit)?((pit)->child.pchild):(NULL)):(NULL))))
 
 /*
-*	Unlink parent and child object
+*	Get next child in an n:m association
 */
-#define Ov_Unlink(assoc, pparent, pchild)									\
-	assoc##_unlink(Ov_ParentPtrUpCast(assoc, pparent), Ov_ChildPtrUpCast	\
-	(assoc, pchild))
+#define Ov_GetNextChildNM(assoc, pit)										\
+	((OV_CPT_##assoc)((pit)?((pit)=(pit)->parent.pnext, (pit)?((pit)->child	\
+	.pchild):(NULL)):(NULL)))
 
 /*
-*	Iterate over all child objects in an 1:n association
+*	Get previous child in an n:m association
 */
-#define Ov_ForEachChild(assoc, pparent, pchild)								\
-	for(((pchild)=Ov_GetFirstChild(assoc, pparent)); (pchild);	(pchild)	\
-	=Ov_GetNextChild(assoc, pchild))
+#define Ov_GetPreviousChildNM(assoc, pit)									\
+	((OV_CPT_##assoc)((pit)?((pit)=(pit)->parent.pprevious, (pit)?((pit)	\
+	->child.pchild):(NULL)):(NULL)))
 
 /*
-*	Iterate over all child objects in an association and dynamically
+*	Get first parent in an n:m association
+*/
+#define Ov_GetFirstParentNM(assoc, pit, pchild)								\
+	((OV_PPT_##assoc)(((pchild)?((pit)=(pchild)->OV_PRN_##assoc.pfirst,		\
+	(pit)?((pit)->parent.pparent):(NULL)):(NULL))))
+
+/*
+*	Get last parent in an n:m association
+*/
+#define Ov_GetLastParentNM(assoc, pit, pchild)								\
+	((OV_PPT_##assoc)(((pchild)?((pit)=(pchild)->OV_PRN_##assoc.plast,		\
+	(pit)?((pit)->parent.pparent):(NULL)):(NULL))))
+
+/*
+*	Get next parent in an n:m association
+*/
+#define Ov_GetNextParentNM(assoc, pit)										\
+	((OV_PPT_##assoc)((pit)?((pit)=(pit)->child.pnext, (pit)?((pit)->parent	\
+	.pparent):(NULL)):(NULL)))
+
+/*
+*	Get previous parent in an n:m association
+*/
+#define Ov_GetPreviousParentNM(assoc, pit)									\
+	((OV_PPT_##assoc)((pit)?((pit)=(pit)->child.pprevious, (pit)?((pit)		\
+	->parent.pparent):(NULL)):(NULL)))
+
+/*
+*	Iterate over all child objects in an n:m association
+*/
+#define Ov_ForEachChildNM(assoc, pit, pparent, pchild)						\
+	for(((pchild)=Ov_GetFirstChildNM(assoc, (pit), (pparent))); (pchild);	\
+	(pchild)=Ov_GetNextChildNM(assoc, (pit)))
+
+/*
+*	Iterate over all child objects in an n:m association and dynamically
 *	cast to a given child class
 */
-#define Ov_ForEachChildEx(assoc, pparent, pchild, childclass)				\
-	for(((pchild)=(OV_INSTPTR_##childclass)Ov_GetFirstChild(assoc, 			\
-	pparent)); (pchild); (pchild)=(OV_INSTPTR_##childclass)					\
-	Ov_GetNextChild(assoc, pchild)) if(!Ov_DynamicPtrCast(childclass, 		\
-	pchild)) {} else
+#define Ov_ForEachChildNMEx(assoc, pit, pparent, pchild, childclass)		\
+	for(((pchild)=(OV_INSTPTR_##childclass)Ov_GetFirstChildNM(assoc, (pit),	\
+	(pparent))); (pchild); (pchild)=(OV_INSTPTR_##childclass)				\
+	Ov_GetNextChildNM(assoc, (pit))) if(!Ov_DynamicPtrCast(childclass, 		\
+	(pchild))) {} else
+
+/*
+*	Iterate over all parent objects in an n:m association
+*/
+#define Ov_ForEachParentNM(assoc, pit, pchild, pparent)						\
+	for(((pparent)=Ov_GetFirstParentNM(assoc, (pit), (pchild))); (pparent);	\
+	(pparent)=Ov_GetNextParentNM(assoc, (pit)))
+
+/*
+*	Iterate over all parent objects in an n:m association and dynamically
+*	cast to a given parent class
+*/
+#define Ov_ForEachParentNMEx(assoc, pit, pchild, pparent, parentclass)		\
+	for(((pparent)=(OV_INSTPTR_##parentclass)Ov_GetFirstParentNM(assoc,		\
+	(pit), (pchild))); (pparent); (pparent)=(OV_INSTPTR_##parentclass)		\
+	Ov_GetNextParentNM(assoc, (pit))) if(!Ov_DynamicPtrCast(parentclass, 	\
+	(pparent))) {} else
+
+/*
+*	Link parent and child object, no placement hint (1:n or n:m association)
+*/
+#define Ov_Link(assoc, pparent, pchild)										\
+	assoc##_link(Ov_ParentPtrUpCast(assoc, (pparent)), Ov_ChildPtrUpCast	\
+	(assoc, (pchild)), OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL)
+
+/*
+*	Link parent and child object with given child placement hint (1:n association)
+*/
+#define Ov_LinkPlaced(assoc, pparent, pchild, childhint)					\
+	assoc##_link(Ov_ParentPtrUpCast(assoc, (pparent)), Ov_ChildPtrUpCast	\
+	(assoc, (pchild)), OV_PMH_DEFAULT, NULL, (childhint), NULL)
+
+/*
+*	Link parent and child object with given relative child placement hint (1:n association)
+*/
+#define Ov_LinkRelativePlaced(assoc, pparent, pchild, childhint, prelchild)	\
+	assoc##_link(Ov_ParentPtrUpCast(assoc, (pparent)), Ov_ChildPtrUpCast	\
+	(assoc, (pchild)), OV_PMH_DEFAULT, NULL, (childhint), Ov_ChildPtrUpCast	\
+	(assoc, (prelchild)))
+
+/*
+*	Unlink parent and child object (1:n or n:m association)
+*/
+#define Ov_Unlink(assoc, pparent, pchild)									\
+	assoc##_unlink(Ov_ParentPtrUpCast(assoc, (pparent)), Ov_ChildPtrUpCast	\
+	(assoc, (pchild)))
+
+/*
+*	Link parent and child object, no placement hint (1:n or n:m association)
+*/
+#define Ov_LinkNM(assoc, pparent, pchild)									\
+	Ov_Link(assoc, (pparent), (pchild))
+
+/*
+*	Link parent and child object with given child placement hint (n:m association)
+*/
+#define Ov_LinkPlacedNM(assoc, pparent, pchild, parenthint, childhint)		\
+	assoc##_link(Ov_ParentPtrUpCast(assoc, (pparent)), Ov_ChildPtrUpCast	\
+	(assoc, (pchild)), (parenthint), NULL, (childhint), NULL)
+
+/*
+*	Link parent and child object with given relative placement hints (n:m association)
+*/
+#define Ov_LinkRelativePlacedNM(assoc, pparent, pchild, parenthint,			\
+										prelparent, childhint, prelchild)	\
+	assoc##_link(Ov_ParentPtrUpCast(assoc, (pparent)), Ov_ChildPtrUpCast	\
+	(assoc, (pchild)), (parenthint), Ov_ParentPtrUpCast(assoc, 				\
+	(prelparent)), (childhint), Ov_ChildPtrUpCast(assoc, (prelchild)))
+
+/*
+*	Unlink parent and child object (1:n or n:m association)
+*/
+#define Ov_UnlinkNM(assoc, pparent, pchild)									\
+	Ov_Unlink(assoc, (pparent), (pchild))
 
 /*
 *	Upcast to a pointer of a given base class

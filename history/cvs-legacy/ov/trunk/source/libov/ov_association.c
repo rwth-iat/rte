@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.4 1999-08-28 15:55:54 dirk Exp $
+*   $Id: ov_association.c,v 1.5 1999-08-29 16:28:18 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -236,6 +236,41 @@ OV_INSTPTR_ov_object OV_DLLFNCEXPORT ov_association_searchchild(
 /*	----------------------------------------------------------------------	*/
 
 /*
+*	Get the number of parents of an association
+*/
+OV_UINT OV_DLLFNCEXPORT ov_association_getparentcount(
+	const OV_INSTPTR_ov_association	passoc,
+	const OV_INSTPTR_ov_object		pchild
+) {
+	/*
+	*	local variables
+	*/
+	OV_UINT					num = 0;
+	OV_INSTPTR_ov_object	pparent;
+	Ov_Association_DefineIteratorNM(pit);
+	/*
+	*	switch based on the type of association
+	*/
+	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_MANY:
+		return Ov_Association_GetParent(passoc, pchild)?(1):(0);
+	case OV_AT_MANY_TO_MANY:
+		/*
+		*	count parents
+		*/
+		Ov_Association_ForEachParentNM(passoc, pit, pparent, pchild) {
+			num++;
+		}
+		return num;
+	default:
+		break;
+	}
+	return 0;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
 *	Get the number of children of an association
 */
 OV_UINT OV_DLLFNCEXPORT ov_association_getchildcount(
@@ -247,15 +282,31 @@ OV_UINT OV_DLLFNCEXPORT ov_association_getchildcount(
 	*/
 	OV_UINT					num = 0;
 	OV_INSTPTR_ov_object	pchild;
+	Ov_Association_DefineIteratorNM(pit);
 	/*
-	*	count children
+	*	switch based on the type of association
 	*/
-	for(pchild = Ov_Association_GetFirstChild(passoc, pparent); pchild;
-		pchild = Ov_Association_GetNextChild(passoc, pchild)
-	) {
-		num++;
+	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_MANY:
+		/*
+		*	count children
+		*/
+		Ov_Association_ForEachChild(passoc, pparent, pchild) {
+			num++;
+		}
+		return num;
+	case OV_AT_MANY_TO_MANY:
+		/*
+		*	count parents
+		*/
+		Ov_Association_ForEachChildNM(passoc, pit, pparent, pchild) {
+			num++;
+		}
+		return num;
+	default:
+		break;
 	}
-	return num;
+	return 0;
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -299,7 +350,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	*	check further conditions
 	*/
 	switch(passoc->v_assoctype) {
-	case OV_AT_1_TO_MANY:
+	case OV_AT_ONE_TO_MANY:
 		/*
 		*	check, if the child link (anchor) is not already used
 		*/
@@ -330,7 +381,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	*	handle placements which are not "before" or "after"
 	*/
 	switch(passoc->v_assoctype) {
-	case OV_AT_1_TO_MANY:
+	case OV_AT_ONE_TO_MANY:
 		switch(childhint2) {
 			case OV_PMH_DEFAULT:
 			case OV_PMH_END:
@@ -500,7 +551,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_association_isusedparentlink(
 	*	instructions
 	*/
 	switch(passoc->v_assoctype) {
-	case OV_AT_1_TO_MANY:
+	case OV_AT_ONE_TO_MANY:
 		/*
 		*	get pointer to parent link (head)
 		*/
@@ -536,7 +587,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_association_isusedchildlink(
 	*	instructions
 	*/
 	switch(passoc->v_assoctype) {
-	case OV_AT_1_TO_MANY:
+	case OV_AT_ONE_TO_MANY:
 		/*
 		*	get pointer to child link (anchor)
 		*/

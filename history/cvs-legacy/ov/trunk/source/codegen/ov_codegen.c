@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.8 1999-08-28 15:55:52 dirk Exp $
+*   $Id: ov_codegen.c,v 1.9 1999-08-29 16:28:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -363,8 +363,19 @@ int ov_codegen_createheaderfile(
 	*	print typedefs associated with all associations
 	*/
 	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
-		fprintf(fp, "OV_TYPEDEF_LINKCONNECTORS(%s_%s);\n", plib->identifier,
-			passoc->identifier);
+		switch(passoc->assoctype) {
+		case OV_AT_ONE_TO_MANY:
+			fprintf(fp, "OV_TYPEDEF_LINKS(%s_%s);\n", plib->identifier,
+				passoc->identifier);
+			break;
+		case OV_AT_MANY_TO_MANY:
+			fprintf(fp, "OV_TYPEDEF_NMLINKS(%s_%s);\n", plib->identifier,
+				passoc->identifier);
+			break;
+		default:
+			fprintf(stderr, "internal error -- sorry.\n");
+			exit(EXIT_FAILURE);
+		}
 	}
 	if(plib->associations) {
 		fprintf(fp, "\n");
@@ -658,16 +669,18 @@ int ov_codegen_createsourcefile(
 		fprintf(fp, "            }\n");
 	}
 	for(pclass=plib->classes; pclass; pclass=pclass->pnext) {
-		fprintf(fp, "            pclass_%s_%s = Ov_SearchChildEx(ov_containment, plib, \"%s\", ov_class);\n",
-			plib->identifier, pclass->identifier, pclass->identifier);
-		fprintf(fp, "            if(!pclass_%s_%s) {\n",
-			plib->identifier, pclass->identifier);
+		fprintf(fp, "            pclass_%s_%s = Ov_SearchChildEx(ov_containment, "
+			"plib, \"%s\", ov_class);\n", plib->identifier, pclass->identifier, 
+			pclass->identifier);
+		fprintf(fp, "            if(!pclass_%s_%s) {\n", plib->identifier, 
+			pclass->identifier);
 		fprintf(fp, "                return OV_ERR_GENERIC;\n");
 		fprintf(fp, "            }\n");
 	}
 	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
-		fprintf(fp, "            passoc_%s_%s = Ov_SearchChildEx(ov_containment, plib, \"%s\", ov_association);\n",
-			plib->identifier, passoc->identifier, passoc->identifier);
+		fprintf(fp, "            passoc_%s_%s = Ov_SearchChildEx(ov_containment, "
+			"plib, \"%s\", ov_association);\n", plib->identifier, 
+			passoc->identifier, passoc->identifier);
 		fprintf(fp, "            if(!passoc_%s_%s) {\n",
 			plib->identifier, passoc->identifier);
 		fprintf(fp, "                return OV_ERR_GENERIC;\n");
@@ -837,10 +850,10 @@ void ov_codegen_printassocdefines(
 		passoc->identifier, ov_codegen_replace(passoc->parentclassname));
 	fprintf(fp, "#define OV_CCI_%s_%s is_of_class_%s\n", plib->identifier,
 		passoc->identifier, ov_codegen_replace(passoc->childclassname));
-	fprintf(fp, "#define OV_HN_%s_%s h_%s\n", plib->identifier,
-		passoc->identifier, passoc->childrolename);
-	fprintf(fp, "#define OV_AN_%s_%s a_%s\n", plib->identifier,
+	fprintf(fp, "#define OV_PRN_%s_%s l_%s\n", plib->identifier,
 		passoc->identifier, passoc->parentrolename);
+	fprintf(fp, "#define OV_CRN_%s_%s l_%s\n", plib->identifier,
+		passoc->identifier, passoc->childrolename);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -926,11 +939,11 @@ void ov_codegen_printclassinstdefines(
 			+strlen(pclass->identifier)+1);
 		sprintf(id, "%s/%s", plib->identifier, pclass->identifier);
 		if(!strcmp(passoc->parentclassname, id)) {
-			fprintf(fp, " \\\n    OV_HEAD_%s_%s h_%s;", plib->identifier,
+			fprintf(fp, " \\\n    OV_PARENTLINK_%s_%s l_%s;", plib->identifier,
 				passoc->identifier, passoc->childrolename);
 		}
 		if(!strcmp(passoc->childclassname, id)) {
-			fprintf(fp, " \\\n    OV_ANCHOR_%s_%s a_%s;", plib->identifier,
+			fprintf(fp, " \\\n    OV_CHILDLINK_%s_%s l_%s;", plib->identifier,
 				passoc->identifier, passoc->parentrolename);
 		}
 		ov_codegen_free(id);
@@ -1380,9 +1393,9 @@ void ov_codegen_printassocdefobj(
 	fprintf(fp, "    \"%s\",\n", passoc->parentclassname);
 	fprintf(fp, "    \"%s\",\n", passoc->parentrolename);
 	fprintf(fp, "    \"%s\",\n", passoc->childclassname);
-	fprintf(fp, "    offsetof(OV_INST_%s, h_%s),\n",
+	fprintf(fp, "    offsetof(OV_INST_%s, l_%s),\n",
 		ov_codegen_replace(passoc->parentclassname), passoc->childrolename);
-	fprintf(fp, "    offsetof(OV_INST_%s, a_%s),\n",
+	fprintf(fp, "    offsetof(OV_INST_%s, l_%s),\n",
 		ov_codegen_replace(passoc->childclassname), passoc->parentrolename);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->parentcomment));
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->childcomment));
