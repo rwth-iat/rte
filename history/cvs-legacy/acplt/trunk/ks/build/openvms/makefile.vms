@@ -115,10 +115,6 @@ tserver.exe: tserver.obj tserver1.obj ext_sp.obj $(LIBKSSVR) $(LIBKS)
 	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) tserver.obj,tserver1.obj,ext_sp.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
-tsclient.exe : tsclient.obj tsclient1.obj svrrpcctx$(O) $(LIBKS)
-	if (f$$search("$@").nes."") then del $@;* /nolog
-	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
-
 tshell.exe : tshell.obj $(LIBKSCLN) $(LIBKS)
 	if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LD) $(LD_FLAGS) tshell.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib

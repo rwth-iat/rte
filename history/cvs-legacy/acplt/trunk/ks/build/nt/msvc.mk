@@ -44,8 +44,7 @@ all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
 examples:       ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe tclient.exe ttree.exe
 
-# the tsclient.exe is not supported
-#examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
+#examples:       ntksmanager.exe tmanager.exe tserver.exe ttree.exe
 
 {$(SRCDIR)}.cpp{}.obj:
 	$(CXX)  $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c  $<
@@ -128,12 +127,6 @@ tmanager$(EXE): tmanager$(O) tmanager1$(O) $(LIBKSSVR) $(LIBKS)
 tserver$(EXE): tserver$(O) tserver1$(O) $(LIBKSSVR) $(LIBKS)
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
 		tserver$(O) tserver1$(O) ext_sp$(O) \
-		$(LIBKSSVR) $(CXX_LIBS)
-
-tsclient$(EXE): tsclient$(O) tsclient1$(O) svrrpcctx$(O) $(LIBKSSVR) $(LIBKS)
-	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
-		tsclient$(O) tsclient1$(O) \
-		svrrpcctx$(O) \
 		$(LIBKSSVR) $(CXX_LIBS)
 
 tshell$(EXE): tshell$(O) $(LIBKS) $(LIBKSCLN)

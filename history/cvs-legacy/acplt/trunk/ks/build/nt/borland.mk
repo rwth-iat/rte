@@ -113,12 +113,6 @@ tserver.obj:    $(EXAMPLESSRCDIR)tserver.cpp
 		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tserver.cpp
 !
 
-tsclient.obj:   $(EXAMPLESSRCDIR)tsclient.cpp
-	@echo Compiling $<
-	@$(CXX) @&&!
-		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tsclient.cpp
-!
-
 ntksmanager_templates.obj:      $(EXAMPLESSRCDIR)ntksmanager_templates.cpp
 	@echo Compiling $<
 	@$(CXX) @&&!
