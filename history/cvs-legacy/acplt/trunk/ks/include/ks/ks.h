@@ -35,9 +35,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern "C" {
-#include <rpc/xdr.h>
-};
+#include "ks/rpc.h"
 
 /*
  * RPC program number reserved for ACPLT/KS library

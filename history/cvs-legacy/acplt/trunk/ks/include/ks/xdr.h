@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_XDR_INCLUDED
 #define KS_XDR_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.10 1997-03-23 14:37:22 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.11 1997-03-27 09:14:57 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,10 +38,7 @@
  */
 
 #include "plt/debug.h"
-
-extern "C" {
-#include <rpc/xdr.h>
-};
+#include "ks/rpc.h"
 
 //////////////////////////////////////////////////////////////////////
 // XDR streaming helper classes and macros

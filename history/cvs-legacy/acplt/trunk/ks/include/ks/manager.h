@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.4 1997-03-26 17:21:09 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.5 1997-03-27 09:14:55 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -58,6 +58,7 @@ extern "C" {
 
 class KsmServer;
 class KsmExpireServerEvent;
+class KsmExpireManagerEvent;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -97,31 +98,51 @@ protected:
 
 private:
     friend KsmExpireServerEvent;
+    friend KsmExpireManagerEvent;
     void removeServer(KsmServer *p);
     static bool isLocal(SVCXPRT *);
     SVCXPRT *_udp_transport;
+    bool _registered;
     PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> _server_table;
     KssSimpleDomain _servers_domain;
 };
 
+//////////////////////////////////////////////////////////////////////
+// IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
 class KsmExpireServerEvent
 : public KsTimerEvent
 {
 public:
-    KsmExpireServerEvent(KsManager *m, const KsTime & at, KsmServer * p = 0)
-        : KsTimerEvent(at), pserver(p), _pmanager(m) { }
+    KsmExpireServerEvent(KsManager &m, const KsTime & at, KsmServer * p = 0)
+        : KsTimerEvent(at), pserver(p), _manager(m) { }
 
     virtual void trigger();
     KsmServer * pserver;
 private:
-    KsManager * _pmanager;
+    KsManager & _manager;
     PLT_DECL_RTTI;
 };
 
 
 //////////////////////////////////////////////////////////////////////
+
+
+class KsmExpireManagerEvent
+: public KsTimerEvent
+{
+public:
+    KsmExpireManagerEvent(KsManager &m, const KsTime & at) 
+        : KsTimerEvent(at), _manager(m) { }
+
+    virtual void trigger();
+private:
+    static const KsTime _check_delay;
+    KsManager &_manager;
+    PLT_DECL_RTTI;
+};
+
 
 
 #endif // KS_MANAGER_INCLUDED

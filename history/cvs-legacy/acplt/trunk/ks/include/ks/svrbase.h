@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.5 1997-03-24 18:40:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.6 1997-03-27 09:14:56 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,16 +37,12 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "ks/rpc.h"
 #include "ks/avticket.h"
 #include "ks/event.h"
 #include "ks/result.h"
 #include "plt/comparable.h"
 #include "plt/priorityqueue.h"
-
-extern "C" {
-#include <rpc/rpc.h>
-#include <rpc/svc.h>
-};
 
 //////////////////////////////////////////////////////////////////////
 // PRIVATE! forward declaration
