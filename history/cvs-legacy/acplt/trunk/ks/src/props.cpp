@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/src/props.cpp,v 1.8 1998-12-10 17:27:59 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -36,16 +36,19 @@
  */
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
+/* v1+ and v2: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-/////////////////////////////////////////////////////////////////////////////
 
 #include "ks/props.h"
- 
-////////////////////////////////////////////////////////////////////////////
 
+ 
+// ----------------------------------------------------------------------------
+//
 PLT_IMPL_RTTI1(KsProjProps, KsXdrUnion);
 PLT_IMPL_RTTI1(KsVarProjProps, KsProjProps);
 PLT_IMPL_RTTI1(KsDomainProjProps, KsProjProps);
+PLT_IMPL_RTTI1(KsLinkProjProps, KsProjProps);
+
 PLT_IMPL_RTTI1(KsCurrProps, KsXdrUnion);
 PLT_IMPL_RTTI1(KsVarCurrProps, KsCurrProps);
 PLT_IMPL_RTTI1(KsDomainCurrProps, KsCurrProps);
@@ -123,98 +126,153 @@ KsVarCurrProps::debugPrint(ostream &os) const
 
 #endif // PLT_DEBUG
 
-////////////////////////////////////////////////////////////////////////////
-// class KsProjProps
-////////////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Class KsProjProps: engineered properties common to all ACPLT/KS communi-
+// cation objects. Remember that we represent the engineered properties as a
+// XDR union, so we need to list all derived classes here.
+//
 KS_BEGIN_IMPL_XDRUNION(KsProjProps);
 KS_XDR_MAP(KS_OT_VARIABLE, KsVarProjProps);
 KS_XDR_MAP(KS_OT_DOMAIN, KsDomainProjProps);
+KS_XDR_MAP(KS_OT_LINK, KsLinkProjProps);
 KS_END_IMPL_XDRUNION;
 
+
+// ----------------------------------------------------------------------------
+// Serialize (send to wire) the field of the engineered properties which are
+// common to all ACPLT/KS communication objects.
+//
 bool
 KsProjProps::xdrEncodeCommon(XDR *xdr) const 
 {
-    if( !(identifier.xdrEncode(xdr)) )
+    if( !identifier.xdrEncode(xdr) )
         return false;
-    if( !(creation_time.xdrEncode(xdr)) )
+    if( !creation_time.xdrEncode(xdr) )
         return false;
-    if( !(comment.xdrEncode(xdr)) )
+    if( !comment.xdrEncode(xdr) )
         return false;
     return ks_xdre_enum( xdr, &access_mode );
-}
+} // KsProjProps::xdrEncodeCommon
 
-///////////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Similar to the previous function, but now deserialize (receive from wire).
+//
 bool
 KsProjProps::xdrDecodeCommon(XDR *xdr) 
 {
-    if( !(identifier.xdrDecode(xdr)) )
+    if( !identifier.xdrDecode(xdr) )
         return false;
-    if( !(creation_time.xdrDecode(xdr)) )
+    if( !creation_time.xdrDecode(xdr) )
         return false;
-    if( !(comment.xdrDecode(xdr)) )
+    if( !comment.xdrDecode(xdr) )
         return false;
     return ks_xdrd_enum( xdr, &access_mode );
-}
+} // KsProjProps::xdrDecodeCommon
 
 
-///////////////////////////////////////////////////////////////////////////
-// class KsVarProjProps
-///////////////////////////////////////////////////////////////////////////
-
-// KS_IMPL_XDRCTOR(KsVarProjProps);
-
+// ----------------------------------------------------------------------------
+// Class KsVarProjProps: engineered properties for variables.
+//
 KsVarProjProps::KsVarProjProps(XDR *xdr, bool &ok)
 {
     ok = tech_unit.xdrDecode(xdr)
-        && ks_xdrd_enum(xdr, &type);
-}
+      && ks_xdrd_enum(xdr, &type);
+} // KsVarProjProps::KsVarProjProps
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Serialize those fields which are new to the engineered properties of an
+// ACPLT/KS variable.
 bool
 KsVarProjProps::xdrEncodeVariant(XDR *xdr) const
 {
     return tech_unit.xdrEncode(xdr)
         && ks_xdre_enum(xdr, &type);
-}
+} // KsVarProjProps::xdrEncodeVariant
 
-//////////////////////////////////////////////////////////////////////////
-    
+// ----------------------------------------------------------------------------
+// Deserialize those fields which are new to the engineered properties of an
+// ACPLT/KS variable.
 bool
 KsVarProjProps::xdrDecodeVariant(XDR *xdr)
 {
     return tech_unit.xdrDecode(xdr)
         && ks_xdrd_enum(xdr, &type);
-}
+} // KsVarProjProps::xdrDecodeVariant
 
-//////////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Returns the object type these engineered properties belong to.
+//
 enum_t
 KsVarProjProps::xdrTypeCode() const
 {
     return KS_OT_VARIABLE;
-}
+} // KsVarProjProps::xdrTypeCode
 
-////////////////////////////////////////////////////////////////////////////
-// class KsDomainProjProps
-////////////////////////////////////////////////////////////////////////////
 
-// KS_IMPL_XDRCTOR(KsDomainProjProps);
-
+// ----------------------------------------------------------------------------
+// Class KsDomainProjProps: engineered properties of domains.
+//
 KsDomainProjProps::KsDomainProjProps(XDR *, bool &ok)
 {
-    ok = true;
-}
+    ok = true; // not much to do here ###FIXME###
+} // KsDomainProjProps::KsDomainProjProps
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Returns the object type these engineered properties belong to.
+//
 enum_t
 KsDomainProjProps::xdrTypeCode() const {
 
     return KS_OT_DOMAIN;
-}
+} // KsDomainProjProps::xdrTypeCode
+
+
+// ----------------------------------------------------------------------------
+// Class KsLinkProjProps: engineered properties of links.
+//
+KsLinkProjProps::KsLinkProjProps(XDR *xdr, bool &ok)
+{
+    ok = ks_xdrd_enum(xdr, &type)
+      && opposite_role_identifier.xdrDecode(xdr);
+} // KsLinkProjProps::KsLinkProjProps
+
+
+// ----------------------------------------------------------------------------
+// Serialize those fields which are new to the engineered properties of an
+// ACPLT/KS link.
+bool
+KsLinkProjProps::xdrEncodeVariant(XDR *xdr) const
+{
+    return ks_xdre_enum(xdr, &type)
+        && opposite_role_identifier.xdrEncode(xdr);
+} // KsLinkProjProps::xdrEncodeVariant
+
+// ----------------------------------------------------------------------------
+// Deserialize those fields which are new to the engineered properties of an
+// ACPLT/KS link.
+bool
+KsLinkProjProps::xdrDecodeVariant(XDR *xdr)
+{
+    return ks_xdrd_enum(xdr, &type)
+        && opposite_role_identifier.xdrDecode(xdr);
+} // KsLinkProjProps::xdrDecodeVariant
+
+
+// ----------------------------------------------------------------------------
+// Returns the object type these engineered properties belong to, in this case
+// this is for a link object.
+//
+enum_t
+KsLinkProjProps::xdrTypeCode() const {
+
+    return KS_OT_LINK;
+} // KsLinkProjProps::xdrTypeCode
+
 
 ////////////////////////////////////////////////////////////////////////////
 // class KsCurrProps
