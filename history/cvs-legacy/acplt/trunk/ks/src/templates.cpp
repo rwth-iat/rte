@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.9 1999-01-08 13:09:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.10 1999-09-06 07:00:36 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -323,6 +323,23 @@ template class Plt_AtNew<KsString>;
 template class Plt_AtNew<KsTime>;
 template class Plt_AtNew<KsTimeSpan>;
 template class Plt_AtNew<KsValue>;
+
+
+template class KsList<KsPtrHandle<KsEngPropsV1> >;
+template class KsPtrHandle<KsEngPropsV1>;
+template class PltBidirIterator<KsPtrHandle<KsEngPropsV1> >;
+template class PltContainer<KsPtrHandle<KsEngPropsV1> >;
+template class PltContainer_<KsPtrHandle<KsEngPropsV1> >;
+template class PltHandle<KsEngPropsV1>;
+template class PltIterator<KsPtrHandle<KsEngPropsV1> >;
+template class PltIterator_<KsPtrHandle<KsEngPropsV1> >;
+template class PltList<KsPtrHandle<KsEngPropsV1> >;
+template class PltListNode<KsPtrHandle<KsEngPropsV1> >;
+template class PltListIterator<KsPtrHandle<KsEngPropsV1> >;
+template class PltPtrHandle<KsEngPropsV1>;
+template class Plt_AtArrayNew<KsEngPropsV1>;
+template class Plt_AtNew<KsEngPropsV1>;
+
 
 #endif
 
