@@ -1,0 +1,55 @@
+#
+# Simple and crazy makefile for OpenVMS (libplt)
+#
+#CXX = gcc/plus
+#CXX_FLAGS = /float=ieee/cc1_options="-fno-exceptions -g0 -fno-implicit-templates"
+
+REPOSITORY = dka0:[martin.cxx_repository]
+
+CXX = cxx
+
+CXX_FLAGS = /notemplate_define /repository=($(REPOSITORY))
+#/notemplate_define
+
+CXX_DEFINES = PLT_SYSTEM_OPENVMS=1
+
+AR = library
+
+### Filename conventions
+O = .obj
+A = .olb
+EXE = .exe
+
+PLTDIR = [-.-]
+SRCDIR = [-.-.src]
+CXX_INCLUDES = ".","../../include"
+
+
+.SUFFIXES:
+
+.SUFFIXES: .cpp $(O) $(A) $(EXE)
+
+### The VPATH mechanism isn't supported yet...
+#VPATH = "../../src"
+
+
+### Include generic part (generic dependencies)
+include [-]generic.mk
+
+### Include auto dependencies
+#include [-]depend.nt
+
+
+$(LIBPLT_OBJECTS):	%.obj: [-.-.src]%.cpp
+	$(CXX) $(CXX_FLAGS) /include=($(CXX_INCLUDES)) \
+		/define=($(CXX_DEFINES)) $<
+
+libplt$(A):	$(LIBPLT_OBJECTS)
+	$(AR) /create libplt$(A) $^
+
+clean:
+	del *$(O);*
+	del libplt$(A);*
+
+
+# EOF makefile.vms
