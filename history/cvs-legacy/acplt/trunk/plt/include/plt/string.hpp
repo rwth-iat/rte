@@ -9,6 +9,8 @@
 #define PLT_STRING_INCLUDED
 
 #include <plt/debug.h>
+#include <plt/rtti.hpp>
+#include <plt/hashkey.hpp>
 #include <stdlib.h>
 
 
@@ -19,7 +21,7 @@
 // of the one in the book (Sec.7.11)
 //////////////////////////////////////////////////////////////////////
 
-class PltString : PltDebuggable {
+class PltString : public PltHashKey, PltDebuggable {
 public:
     PltString(const char *);
     PltString();
@@ -32,12 +34,16 @@ public:
     virtual bool invariant() const;
 #endif
 
+    // PltHashKey interface
+    virtual unsigned long hash() const;
+    virtual bool operator == (const PltHashKey &) const;
+
     // accessors
     bool ok() const;
     size_t len() const;
     const char & operator[] (size_t) const;
     operator const char *() const;
-
+    
     // modifiers
     char & operator[] (size_t);
     PltString & operator += ( const PltString & );
@@ -61,6 +67,7 @@ private:
 
     // helper modifiers
     void cloneIfNeeded();
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////

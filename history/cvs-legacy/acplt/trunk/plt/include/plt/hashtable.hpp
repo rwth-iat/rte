@@ -9,8 +9,9 @@
 #define PLT_HASHTABLE_INCLUDED
 
 #include <plt/debug.h>
+#include <plt/rtti.hpp>
 #include <plt/dictionary.hpp>
-
+#include <plt/hashkey.hpp>
 #include <stdlib.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -20,26 +21,22 @@
 class PltHashAssoc_base;           // "private" implementation class
 class PltHashTable_base;           // "private" implementation class
 
+template <class K> class PltIterator;
+
 //////////////////////////////////////////////////////////////////////
-// class PltHashTable<K,V,H>
+// class PltHashTable<K,V>
 //////////////////////////////////////////////////////////////////////
 //
-// A PltHashTable<K,V,H> maps from keys of class K to values of 
+// A PltHashTable<K,V> maps from keys of class K to values of 
 // class V. It is a PltDictionary<K,V>.
 //
-// Helper
-// ------
-// H is a helper class which encapsulates the hash function and a
-// comparison function for K.
+// Keys must implement the PltHashKey interface which provides
+// the hash function and a comparison function for K.
 //
-// H has to provide the following members:
-//    static unsigned long hash(const K & k); 
-//    static bool equal(const K & k1, const K & k2);
+// K::hash and K::operator== must have the following property:
+//    k1 == k2 => k1.hash() == k2.hash()
 //
-// H::hash and H::equal must have the following property:
-//    H::equal(k1,k2) => H::hash(k1) == H::hash(k2)
-//
-// H::hash should be 'almost injective'
+// K::hash should be 'almost injective'
 //
 // Constructor:
 // ------------
@@ -60,7 +57,7 @@ class PltHashTable_base;           // "private" implementation class
 //
 //////////////////////////////////////////////////////////////////////
 
-template <class K, class V, class H>
+template <class K, class V>
 class PltHashTable
 : public PltDictionary<K,V>,
   protected PltHashTable_base
@@ -71,18 +68,11 @@ public:
                  float lowwater=0.4);
     // accessors
     virtual bool query(const K&, V&) const;
+    virtual PltIterator<K> * newIterator() const;
 
     // modifiers
     virtual bool add(const K&, const V&);
     virtual bool remove(const K&, V&);
-
-protected:
-    virtual unsigned long keyHash(const void *) const;
-    virtual unsigned long assocHash(const PltHashAssoc_base *) const;
-    virtual bool assocEqualAssoc(const PltHashAssoc_base *, 
-                                 const PltHashAssoc_base *) const;
-    virtual bool assocEqualKey(const PltHashAssoc_base *, 
-                               const void *) const;
 };
     
 
@@ -94,18 +84,22 @@ protected:
 // (PltHashAssoc_base is a private class)
 //////////////////////////////////////////////////////////////////////
 
-class PltHashAssoc_base 
+class PltHashAssoc_base
 {
     friend class PltHashTable_base;
+protected:
+    virtual const PltHashKey & key() const = 0;
+    bool operator == (const PltHashAssoc_base & ) const;
+    bool operator == (const PltHashKey & ) const;
+    unsigned long hash() const;
 private:
     static PltHashAssoc_base * deleted; // sentinel for deleted elements
-    static PltHashAssoc_base   deleted_obj;
 };
 
 //////////////////////////////////////////////////////////////////////
 // (PltHashTable_base is a private class)
 //////////////////////////////////////////////////////////////////////
-// Implementation class for PltHashTable<K,V,H>
+// Implementation class for PltHashTable<K,V>
 //////////////////////////////////////////////////////////////////////
 
 class PltHashTable_base : virtual public PltDebuggable
@@ -121,18 +115,11 @@ protected:
 #endif
     // accessors
     size_t size() const; // number of nondeleted elements
-    PltHashAssoc_base *lookupAssoc(const void *key) const;
+    PltHashAssoc_base *lookupAssoc(const PltHashKey & key) const;
 
     // modifiers
     bool addAssoc(PltHashAssoc_base *p);
-    PltHashAssoc_base *removeAssoc(const void *key);
-
-    virtual unsigned long keyHash(const void *key) const = 0;
-    virtual unsigned long assocHash(const PltHashAssoc_base *) const = 0;
-    virtual bool assocEqualAssoc(const PltHashAssoc_base *, 
-                                 const PltHashAssoc_base *) const = 0;
-    virtual bool assocEqualKey(const PltHashAssoc_base *, 
-                               const void *key) const = 0;
+    PltHashAssoc_base *removeAssoc(const PltHashKey & key);
 
 private:
     PltHashAssoc_base **a_table;
@@ -145,7 +132,7 @@ private:
     size_t a_deleted;        // number of deleted elements
 
     // accessors
-    size_t locate(const void *key) const;
+    size_t locate(const PltHashKey & key) const;
     size_t collidx(size_t i, size_t j) const;
  
     // modifiers
@@ -164,10 +151,48 @@ public:
     PltHashAssoc(const K&, const V &);
     K a_key;
     V a_value;
+protected:
+    virtual const PltHashKey & key() const;
 };
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline const PltHashKey &
+PltHashAssoc<K,V>::key() const
+{
+    return a_key;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline unsigned long
+PltHashAssoc_base::hash() const 
+{
+    return key().hash();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+PltHashAssoc_base::operator == (const PltHashAssoc_base & arg) const
+{
+    return key() == arg.key();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+PltHashAssoc_base::operator == (const PltHashKey & arg) const
+{
+    return key() == arg;
+}
+
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 inline size_t
@@ -191,9 +216,9 @@ PltHashAssoc<K,V>::PltHashAssoc(const K& k, const V& v)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class K, class V, class H>
+template <class K, class V>
 inline
-PltHashTable<K,V,H>::PltHashTable(size_t mincap, 
+PltHashTable<K,V>::PltHashTable(size_t mincap, 
                                 float highwater, 
                                 float lowwater)
 : PltHashTable_base(mincap, highwater, lowwater)
@@ -202,13 +227,13 @@ PltHashTable<K,V,H>::PltHashTable(size_t mincap,
 
 //////////////////////////////////////////////////////////////////////
 
-template <class K, class V, class H>
+template <class K, class V>
 inline bool
-PltHashTable<K,V,H>::query(const K& key, V& value) const
+PltHashTable<K,V>::query(const K& key, V& value) const
 {
     // This cast is safe, only we can put assocs into the table
     PltHashAssoc<K,V> *p = 
-        ( PltHashAssoc<K,V> *) lookupAssoc((const void *) &key);
+        ( PltHashAssoc<K,V> *) lookupAssoc(key);
     if (p) {
         value = p->a_value;
         return true;
@@ -219,9 +244,9 @@ PltHashTable<K,V,H>::query(const K& key, V& value) const
 
 //////////////////////////////////////////////////////////////////////
 
-template <class K, class V, class H>
+template <class K, class V>
 inline bool
-PltHashTable<K,V,H>::add(const K& key, const V& value)
+PltHashTable<K,V>::add(const K& key, const V& value)
 {
     PltHashAssoc<K,V> *p = new PltHashAssoc<K,V>(key,value);
     if (p) {
@@ -238,13 +263,13 @@ PltHashTable<K,V,H>::add(const K& key, const V& value)
     
 //////////////////////////////////////////////////////////////////////
 
-template <class K, class V, class H>
+template <class K, class V>
 inline bool
-PltHashTable<K,V,H>::remove(const K& key, V& value)
+PltHashTable<K,V>::remove(const K& key, V& value)
 {
     // This cast is safe, only we can put assocs into the table
     PltHashAssoc<K,V> *p = 
-        (PltHashAssoc<K,V> *) removeAssoc((const void *)&key);
+        (PltHashAssoc<K,V> *) removeAssoc(key);
     if (p) {
         value = p->a_value;
         delete p;
@@ -255,61 +280,33 @@ PltHashTable<K,V,H>::remove(const K& key, V& value)
 }
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
-template <class K, class V, class H>
-inline unsigned long
-PltHashTable<K,V,H>::keyHash(const void * p) const
+template <class K>
+class PltHashTableIterator : public PltIterator<K>
 {
-    PLT_ASSERT(p);
-    // This cast is safe, only we can put assocs into the table
-    const K * pk = (const K *) p;
-    return H::hash( *pk );
-}
+    virtual operator void * () const ;
+    virtual const K & operator *() const;
+    virtual PltIterator<K> & operator ++;
+private:
+    PltHashTable_base & a_hashtable;
+    size_t a_index;
+};
+
 
 //////////////////////////////////////////////////////////////////////
 
-template <class K, class V, class H>
-inline unsigned long
-PltHashTable<K,V,H>::assocHash(const PltHashAssoc_base * p) const
+inline
+PltHashTableIterator<K>::operator void *() const
 {
-    PLT_ASSERT(p);
-    // This cast is safe, only we can put assocs into the table
-    const PltHashAssoc<K,V> * pa = (const PltHashAssoc<K,V> *) p;
-    return H::hash( pa->a_key );
+    return a_index < a_hashtable.a_capacity;
 }
+
 
 //////////////////////////////////////////////////////////////////////
 
+inline
+PltHashTableIterator<K>::operator *
 
-template <class K, class V, class H>
-inline bool
-PltHashTable<K,V,H>::assocEqualAssoc(
-    const PltHashAssoc_base * p1,
-    const PltHashAssoc_base * p2) const
-{
-    PLT_ASSERT(p1 && p2);
-    // These casts are safe, only we can put assocs into the table
-    const PltHashAssoc<K,V> * pa1 = (const PltHashAssoc<K,V> *) p1;
-    const PltHashAssoc<K,V> * pa2 = (const PltHashAssoc<K,V> *) p2;
-    return H::equal( pa1->a_key, pa2->a_key );
-}
-
-//////////////////////////////////////////////////////////////////////
-
-
-template <class K, class V, class H>
-inline bool
-PltHashTable<K,V,H>::assocEqualKey(
-    const PltHashAssoc_base* p1, 
-    const void * p2) const
-{
-    PLT_ASSERT(p1 && p2);
-    // These casts are safe, only we can put assocs into the table
-    const PltHashAssoc<K,V> * pa = (const PltHashAssoc<K,V> *) p1;
-    const K * pk = (const K *) p2;
-    return H::equal( pa->a_key, *pk );
-}
-
-//////////////////////////////////////////////////////////////////////
 
 #endif // header file

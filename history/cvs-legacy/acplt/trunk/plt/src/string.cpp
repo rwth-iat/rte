@@ -12,6 +12,10 @@
 
 //////////////////////////////////////////////////////////////////////
 
+PLT_IMPL_RTTI1(PltString, PltHashKey);
+
+//////////////////////////////////////////////////////////////////////
+
 #if PLT_DEBUG_INVARIANTS
 bool
 PltString::invariant() const
@@ -213,3 +217,32 @@ PltString::cloneIfNeeded()
 }
 
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+unsigned long
+PltString::hash() const
+{
+    // TODO: Better (and faster) hash function
+    unsigned long res = 0;
+    if ( ok() ) {
+        for (size_t i = 0; i < len(); ++i) {
+            res += (*this)[i];
+        }
+    }
+    return res;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+PltString::operator == ( const PltHashKey & key ) const
+{
+    PltString *p = PLT_DYNAMIC_PCAST(PltString, &key);
+    if (p) {
+        return *this == *p;
+    }
+    return false;
+}
+
+//////////////////////////////////////////////////////////////////////
