@@ -1,7 +1,7 @@
 The ACPLT/OV C++ Object Management Libraris and Utilities
 =========================================================
 
-This is release 1.2.1 of the ACPLT/OV object management libraries
+This is release 1.2.2 of the ACPLT/OV object management libraries
 and the associated utilities:
 - libov (basic object management library),
 - libovks (ACPLT/KS integration with ACPLT/OV),
@@ -9,7 +9,9 @@ and the associated utilities:
 - ov_dbutil (database utility),
 - ov_server (generic ACPLT/KS server for ACPLT/OV),
 - ov_ntservice (generic ACPLT/KS server for ACPLT/OV implemented
-  as a Windows NT service).
+  as a Windows NT service),
+- ov_controlpanel (control panel applet for configuring the NT
+  service).
 
 Enjoy!
 
