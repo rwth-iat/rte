@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.27 1999-01-29 12:40:36 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.28 1999-02-22 15:08:13 harald Exp $ */
 #ifndef KSC_COMMOBJECT_INCLUDED 
 #define KSC_COMMOBJECT_INCLUDED
 /*
@@ -52,7 +52,7 @@
 
 
 // ---------------------------------------------------------------------------
-// forward declarations
+// Some forward declarations. Some stuff seems to be necessary everwhere...
 //
 class KscServerBase;
 
@@ -64,9 +64,9 @@ typedef PltIterator<KsProjPropsHandle> KscChildIterator;
 // ---------------------------------------------------------------------------
 // class KscCommObject: this abstract base class provides a basic infra-
 // structure to build specific ACPLT/KS communication objects on the client
-// side from. If you just have a resource locator but don't have an inkling
+// side from. If you just have a resource locator but don't have any clue
 // of what what kind of object it references, then use the KscAnyCommObject
-// class instead.
+// class instead. This KscCommObject class will stay abstract.
 //
 class KscCommObject
 {
@@ -100,7 +100,7 @@ public:
     // Communication objects are considered equal if they occupy
     // the same memory location. Other relational operators are
     // not supported and make in fact no sense here. Yes, we've
-    // already learned that the hard way, believe us...
+    // already learned *that* the hard way, believe us...
     //
     bool operator == (const KscCommObject &) const;
     bool operator != (const KscCommObject &) const;
@@ -120,15 +120,23 @@ protected:
     const KscAvModule *av_module;
     KS_RESULT _last_result;
 
-    // read children from server, returns PP's in list
-    bool getChildPPUpdate(KS_OBJ_TYPE typeMask,
-                          KsString nameMask,
-			  KsGetPPResult *&result);
 
-    // get iterator
+    //
+    // Get iterator -- this is implemented here as protected on purpose.
+    // This stuff is needed in several derived classes, so we want to do
+    // it only once. On the other hand, this stuff should only be used
+    // if it makes sense (whatever *that* now means...)
+    //
     KscChildIterator *newChildIterator_(KS_OBJ_TYPE typeMask,
                                         KsString nameMask = KsString("*"));
 
+    //
+    // Now the next one belongs to the stuff above: read children from
+    // server and return their engineered properties in list.
+    //
+    bool getChildPPUpdate(KS_OBJ_TYPE typeMask,
+                          KsString nameMask,
+			  KsGetPPResult *&result);
     //
     // This protected iterator class is responsible for iterating over the
     // child list of a domain communication object. The trick here is that
@@ -154,6 +162,10 @@ protected:
 
     friend class ChildIterator;
 
+
+    //
+    // Ah, yes... the RTTI stuff.
+    //
     PLT_DECL_RTTI;
 
 private:
