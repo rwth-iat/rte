@@ -56,7 +56,6 @@ public:
     static KsString * xdrNew(XDR *);
 protected:
     KsString(size_t sz, char *s);
-    PLT_DECL_RTTI;
 };
 
 
