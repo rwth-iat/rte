@@ -88,6 +88,17 @@ Version 1.02
 - CLIENTS: Fixed a bug which crashed applications creating communication
   objects with an invalid host and/or server name like "//x//a/b/c".
 
+- CLIENTS: The resource locator syntax has been extended to accept an
+  optional port number after the hostname, for example:
+    "//rumpelpumpel.acme.org:2000/MANAGER/vendor/server_time"
+  If no port number is specified, an ACPLT/KS client will look up the
+  manager's port address using the portmapper on the host specified in
+  the resource locator. If the port number is specified (separated by
+  a colon from the host name) then a client will contact the ACPLT/KS
+  manager directly at this port. The purpose of this is, that you can
+  now allow controlled access to ACPLT/KS servers through firewalls
+  without necessarily granting access to the portmapper.
+
 - CLIENTS: Cleaned up error reporting for communication objects like
   variables and domains. If there is a communication level problem between
   client and server, an error code of KS_ERR_NETWORKERROR was issued in
