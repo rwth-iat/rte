@@ -13,12 +13,13 @@
 
 #include <plt/debug.h>
 #include <plt/rtti.h>
-#include <plt/array.h>
 
 #include <ks/xdr.h>
 #include <ks/ks.h>
+#include <ks/array.h>
 #include <ks/string.h>
 #include <ks/time.h>
+#include <ks/handle.h>
 
 //////////////////////////////////////////////////////////////////////
 // KsValue is the base class of value objects. It is closely related
@@ -69,6 +70,8 @@ protected:
     bool xdrDecodeCommon(XDR *);
 
 };
+
+typedef KsPtrHandle<KsValue> KsValueHandle;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -207,6 +210,8 @@ protected:
 private:
     friend KsValue;
     KsStringValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
 }; 
 
 //////////////////////////////////////////////////////////////////////
@@ -232,6 +237,9 @@ protected:
 private:
     friend KsValue;
     KsTimeValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
+
 };
 
 
@@ -252,6 +260,9 @@ protected:
 private:
     friend KsValue;
     KsVoidValue(XDR *, bool &ok);
+
+    // PLT_DECL_RTTI;
+
 };
 
 
@@ -260,19 +271,24 @@ private:
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-class KsVecValueBase 
-: public PltArray<T>, public KsValue
+class KsVecValueBase
+: public KsArray<T>, public KsValue
 {
 public:
     KsVecValueBase(size_t size = 0);
-    KsVecValueBase(size_t size, char *p, PltOwnership os);
+    KsVecValueBase(size_t size, T *p, PltOwnership os);
+
+    // redefinition in order to resolve ambiguity between
+    // functions of base classes
+    virtual bool xdrDecode(XDR *);
+    virtual bool xdrEncode(XDR *) const;
 
 protected:
-    virtual bool xdrEncodeElem(XDR *, size_t) const = 0;
-    virtual bool xdrDecodeElem(XDR *, size_t) = 0;
+    virtual bool xdrEncodeVariant(XDR *) const;
+    virtual bool xdrDecodeVariant(XDR *);
 
-    bool xdrEncodeVariant(XDR *) const;
-    bool xdrDecodeVariant(XDR *);
+    // PLT_DECL_RTTI;
+
 };
 
 
@@ -289,14 +305,135 @@ public:
 
     enum_t xdrTypeCode() const;
 
-protected:
-    bool xdrEncodeElem(XDR *, size_t) const;
-    bool xdrDecodeElem(XDR *, size_t);
+private:
+    friend KsValue;
+    KsByteVecValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
+
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// class KsIntVecValue
+//////////////////////////////////////////////////////////////////////
+
+class KsIntVecValue 
+: public KsVecValueBase<long>
+{
+public:
+    KsIntVecValue(size_t size = 0);
+    KsIntVecValue(size_t size, long *p, PltOwnership os);
+
+    enum_t xdrTypeCode() const;
 
 private:
     friend KsValue;
-    KsVecValueBase(XDR *,bool &); 
+    KsIntVecValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
 };
+
+//////////////////////////////////////////////////////////////////////
+// class KsUIntVecValue
+//////////////////////////////////////////////////////////////////////
+
+class KsUIntVecValue 
+: public KsVecValueBase<u_long>
+{
+public:
+    KsUIntVecValue(size_t size = 0);
+    KsUIntVecValue(size_t size, u_long *p, PltOwnership os);
+
+    enum_t xdrTypeCode() const;
+
+private:
+    friend KsValue;
+    KsUIntVecValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
+};
+
+//////////////////////////////////////////////////////////////////////
+// class KsSingleVecValue
+//////////////////////////////////////////////////////////////////////
+
+class KsSingleVecValue 
+: public KsVecValueBase<float>
+{
+public:
+    KsSingleVecValue(size_t size = 0);
+    KsSingleVecValue(size_t size, float *p, PltOwnership os);
+
+    enum_t xdrTypeCode() const;
+
+private:
+    friend KsValue;
+    KsSingleVecValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
+};
+
+//////////////////////////////////////////////////////////////////////
+// class KsDoubleVecValue
+//////////////////////////////////////////////////////////////////////
+
+class KsDoubleVecValue 
+: public KsVecValueBase<double>
+{
+public:
+    KsDoubleVecValue(size_t size = 0);
+    KsDoubleVecValue(size_t size, double *p, PltOwnership os);
+
+    enum_t xdrTypeCode() const;
+
+private:
+    friend KsValue;
+    KsDoubleVecValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
+};
+
+//////////////////////////////////////////////////////////////////////
+// class KsStringVecValue
+//////////////////////////////////////////////////////////////////////
+
+class KsStringVecValue 
+: public KsVecValueBase<KsString>
+{
+public:
+    KsStringVecValue(size_t size = 0);
+    KsStringVecValue(size_t size, KsString *p, PltOwnership os);
+
+    enum_t xdrTypeCode() const;
+
+private:
+    friend KsValue;
+    KsStringVecValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
+};
+
+//////////////////////////////////////////////////////////////////////
+// class KsTimeVecValue
+//////////////////////////////////////////////////////////////////////
+
+class KsTimeVecValue 
+: public KsVecValueBase<KsTime>
+{
+public:
+    KsTimeVecValue(size_t size = 0);
+    KsTimeVecValue(size_t size, KsTime *p, PltOwnership os);
+
+    enum_t xdrTypeCode() const;
+
+private:
+    friend KsValue;
+    KsTimeVecValue(XDR *, bool &);
+
+    // PLT_DECL_RTTI;
+};
+
 
 //////////////////////////////////////////////////////////////////////
 // Inline implementation
@@ -515,23 +652,8 @@ KsVoidValue::KsVoidValue(XDR *, bool &ok)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
 inline
-KsVecValueBase<T>::KsVecValueBase(size_t size) : PltArray<T>(size)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline
-KsVecValueBase<T>::KsVecValueBase(size_t size, T *p, PltOwnership os)
-: PltArray<T>(size, p, os)
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-inline
-KsByteVecValue::KsByteVecValue(size_t size) 
+KsByteVecValue::KsByteVecValue(size_t size)
 : KsVecValueBase<char>(size)
 {}
 
@@ -539,33 +661,158 @@ KsByteVecValue::KsByteVecValue(size_t size)
 
 inline
 KsByteVecValue::KsByteVecValue(size_t size, char *p, PltOwnership os)
-: KsVecValueBase<char>(size, p, os) {}
+: KsVecValueBase<char>(size, p, os)
+{}
 
 //////////////////////////////////////////////////////////////////////
 
-inline enum_t
-KsByteVecValue::xdrTypeCode() const
+inline
+KsByteVecValue::KsByteVecValue(XDR *xdr, bool &ok)
 {
-    return KS_VT_BYTE_VEC;
+    ok = KsArray<char>::xdrDecode(xdr);
 }
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
-inline bool
-KsByteVecValue::xdrEncodeElem(XDR *xdr, size_t i) const
-{
-    return xdr_char(xdr, &(a_array[i]));
-}
+inline
+KsIntVecValue::KsIntVecValue(size_t size)
+: KsVecValueBase<long>(size)
+{}
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool
-KsByteVecValue::xdrDecodeElem(XDR *xdr, size_t i)
+inline
+KsIntVecValue::KsIntVecValue(size_t size, long *p, PltOwnership os)
+: KsVecValueBase<long>(size, p, os)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsIntVecValue::KsIntVecValue(XDR *xdr, bool &ok)
 {
-    return xdr_char(xdr, &(a_array[i]));
+    ok = xdrDecodeVariant(xdr);
 }
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsUIntVecValue::KsUIntVecValue(size_t size)
+: KsVecValueBase<u_long>(size)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsUIntVecValue::KsUIntVecValue(size_t size, u_long *p, PltOwnership os)
+: KsVecValueBase<u_long>(size, p, os)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsUIntVecValue::KsUIntVecValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsSingleVecValue::KsSingleVecValue(size_t size)
+: KsVecValueBase<float>(size)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsSingleVecValue::KsSingleVecValue(size_t size, float *p, PltOwnership os)
+: KsVecValueBase<float>(size, p, os)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsSingleVecValue::KsSingleVecValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsDoubleVecValue::KsDoubleVecValue(size_t size)
+: KsVecValueBase<double>(size)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsDoubleVecValue::KsDoubleVecValue(size_t size, double *p, PltOwnership os)
+: KsVecValueBase<double>(size, p, os)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsDoubleVecValue::KsDoubleVecValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsStringVecValue::KsStringVecValue(size_t size)
+: KsVecValueBase<KsString>(size)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsStringVecValue::KsStringVecValue(size_t size, KsString *p, PltOwnership os)
+: KsVecValueBase<KsString>(size, p, os)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsStringVecValue::KsStringVecValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsTimeVecValue::KsTimeVecValue(size_t size)
+: KsVecValueBase<KsTime>(size)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsTimeVecValue::KsTimeVecValue(size_t size, KsTime *p, PltOwnership os)
+: KsVecValueBase<KsTime>(size, p, os)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsTimeVecValue::KsTimeVecValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
+}
+
 
 #endif
+
 
 
 

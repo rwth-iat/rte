@@ -21,6 +21,8 @@ PLT_IMPL_RTTI1(KsSingleValue,KsValue);
 PLT_IMPL_RTTI1(KsDoubleValue,KsValue);
 // PLT_IMPL_RTTI2(KsStringValue,KsValue,KsString);
 // PLT_IMPL_RTTI2(KsTimeValue,KsValue,KsTime);
+// PLT_IMPL_RTTI1(KsVoidValue,KsValue);
+// RTTI is currently not implemented for the vector types
 
 //////////////////////////////////////////////////////////////////////
 
@@ -32,16 +34,41 @@ KS_XDR_MAP(KS_VT_DOUBLE,KsDoubleValue);
 KS_XDR_MAP(KS_VT_STRING,KsStringValue);
 KS_XDR_MAP(KS_VT_TIME,KsTimeValue);
 KS_XDR_MAP(KS_VT_VOID,KsVoidValue);
+KS_XDR_MAP(KS_VT_BYTE_VEC, KsByteVecValue);
+KS_XDR_MAP(KS_VT_INT_VEC, KsIntVecValue);
+KS_XDR_MAP(KS_VT_UINT_VEC, KsUIntVecValue);
+KS_XDR_MAP(KS_VT_SINGLE_VEC, KsSingleVecValue);
+KS_XDR_MAP(KS_VT_DOUBLE_VEC, KsDoubleVecValue);
+KS_XDR_MAP(KS_VT_STRING_VEC, KsStringVecValue);
+KS_XDR_MAP(KS_VT_TIME_VEC, KsTimeVecValue);
 KS_END_IMPL_XDRUNION;
 
-// KS_IMPL_XDRCTOR(KsIntValue);
-// KS_IMPL_XDRNEW(KsIntValue);
+#ifdef __GNUC__
+//////////////////////////////////////////////////////////////////////
+// Instantiate member functions (necessary)
+//////////////////////////////////////////////////////////////////////
+
+#include "ks/value_impl.h"
+
+template class KsVecValueBase<char>;
+template class KsVecValueBase<long>;
+template class KsVecValueBase<u_long>;
+template class KsVecValueBase<float>;
+template class KsVecValueBase<double>;
+template class KsVecValueBase<KsTime>;
+template class KsVecValueBase<KsString>;
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsIntValue::xdrEncodeVariant(XDR *xdr) const 
 {
     return xdr_long(xdr,&val);
 }
+
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsIntValue::xdrDecodeVariant(XDR *xdr)
@@ -50,15 +77,15 @@ KsIntValue::xdrDecodeVariant(XDR *xdr)
 }
 
 //////////////////////////////////////////////////////////////////////
-
-// KS_IMPL_XDRCTOR(KsUIntValue);
-// KS_IMPL_XDRNEW(KsUIntValue);
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsUIntValue::xdrEncodeVariant(XDR *xdr) const
 {
     return xdr_u_long(xdr,&val);
 }
+
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsUIntValue::xdrDecodeVariant(XDR *xdr) 
@@ -67,15 +94,15 @@ KsUIntValue::xdrDecodeVariant(XDR *xdr)
 }
 
 //////////////////////////////////////////////////////////////////////
-
-// KS_IMPL_XDRCTOR(KsSingleValue);
-// KS_IMPL_XDRNEW(KsSingleValue);
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsSingleValue::xdrEncodeVariant(XDR *xdr) const
 {
     return xdr_float(xdr,&val);
 }
+
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsSingleValue::xdrDecodeVariant(XDR *xdr)
@@ -85,15 +112,15 @@ KsSingleValue::xdrDecodeVariant(XDR *xdr)
 
 
 //////////////////////////////////////////////////////////////////////
-
-// KS_IMPL_XDRCTOR(KsDoubleValue);
-// KS_IMPL_XDRNEW(KsDoubleValue);
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsDoubleValue::xdrEncodeVariant(XDR *xdr) const 
 {
     return xdr_double(xdr,&val);
 }
+
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsDoubleValue::xdrDecodeVariant(XDR *xdr) 
@@ -142,7 +169,6 @@ KsStringValue::xdrDecodeVariant(XDR *xdr)
 {
     return KsString::xdrDecode(xdr);
 }
-
 
 //////////////////////////////////////////////////////////////////////
 // class KsTimeValue
@@ -196,11 +222,15 @@ KsVoidValue::xdrTypeCode() const
     return KS_VT_VOID;
 }
 
+//////////////////////////////////////////////////////////////////////
+
 bool
 KsVoidValue::xdrEncodeVariant(XDR *) const
 {
     return true;
 }
+
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsVoidValue::xdrDecodeVariant(XDR *)
@@ -209,46 +239,61 @@ KsVoidValue::xdrDecodeVariant(XDR *)
 }
 
 //////////////////////////////////////////////////////////////////////
-// class KsVecValueBase
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-bool
-KsVecValueBase<T>::xdrEncodeVariant(XDR *)
+enum_t
+KsByteVecValue::xdrTypeCode() const
 {
-    // encode size
-    //
-    if( !xdr_u_long(xdr, &a_size) ) return false;
-
-    // encode elements
-    //
-    for( size_t i = 0; i < a_size; i++ ) {
-        if( !xdrEncodeElem(xdr, i) ) return false;
-    }
-
-    return true;
-}
-    
-template <class T> 
-bool
-KsVecValueBase<T>::xdrDecodeVariant(XDR *xdr)
-{
-    u_long sz;
-    if(! xdr_u_long(xdr, &sz) ) return false;
-
-    // adjust array size
-    if(size() != sz) {
-        PltArrayHandle<T> ha(new T[sz], PltOsArrayNew);
-        if( !ha ) return false;
-        a_array = ha;
-        a_size = sz;
-    }
-    
-    for( size_t i = 0; i < a_size; i++ ) {
-        if( !xdrEncodeElem( xdr, i ) ) return false;
-    }
-
-    return true;
+    return KS_VT_BYTE_VEC;
 }
 
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsIntVecValue::xdrTypeCode() const
+{
+    return KS_VT_INT_VEC;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsUIntVecValue::xdrTypeCode() const
+{
+    return KS_VT_UINT_VEC;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsSingleVecValue::xdrTypeCode() const
+{
+    return KS_VT_SINGLE_VEC;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsDoubleVecValue::xdrTypeCode() const
+{
+    return KS_VT_DOUBLE_VEC;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsStringVecValue::xdrTypeCode() const
+{
+    return KS_VT_STRING_VEC;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsTimeVecValue::xdrTypeCode() const
+{
+    return KS_VT_TIME_VEC;
+}
+
+//////////////////////////////////////////////////////////////////////
 
