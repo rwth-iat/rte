@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.2 1997-04-03 10:04:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.3 1997-04-03 10:07:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -82,7 +82,6 @@ KsServer::~KsServer()
 CLIENT *
 KsServer::createLocalClient()
 {
-#if 1
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof sin);
     sin.sin_family = AF_INET;
@@ -94,12 +93,6 @@ KsServer::createLocalClient()
                           KS_PROTOCOL_VERSION,
                           (struct timeval)wait,
                           &sock);
-#else
-    return clnt_create("localhost",
-                       KS_RPC_PROGRAM_NUMBER,
-                       KS_PROTOCOL_VERSION,
-                       "udp");
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////
