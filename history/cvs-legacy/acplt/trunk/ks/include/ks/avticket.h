@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.7 1997-03-18 10:48:35 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.8 1997-03-20 09:42:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -48,7 +48,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-// TODO move this
+
 class KsAuthType 
 : public KsXdrAble
 {
@@ -63,6 +63,7 @@ public:
 private:
     enum_t _t;
 };
+
 //////////////////////////////////////////////////////////////////////
 
 inline bool 
@@ -120,6 +121,10 @@ public:
 
     static KsAvTicket * emergencyTicket();
 
+#if PLT_DEBUG_INVARIANTS
+    virtual bool invariant() const;
+#endif
+
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
 };
@@ -145,6 +150,10 @@ public:
 
     virtual bool canReadVar(const KsString &name) const;
     virtual bool canWriteVar(const KsString &name) const;
+
+#if PLT_DEBUG_INVARIANTS
+    virtual bool invariant() const;
+#endif
 
 private:
     KS_ACCESS _access;

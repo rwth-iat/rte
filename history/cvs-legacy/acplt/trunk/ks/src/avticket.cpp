@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.6 1997-03-19 17:19:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.7 1997-03-20 09:42:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -39,6 +39,20 @@
 #include "ks/avticket.h"
 
 
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG_INVARIANTS
+
+bool
+KsAvTicket::invariant() const
+{
+    enum_t res = result();
+    return res == KS_ERR_OK
+        || res == KS_ERR_GENERIC
+        || res == KS_ERR_UNKNOWNAUTH
+        || res == KS_ERR_BADAUTH;
+}
+
+#endif // PLT_DEBUG_INVARIANTS
 //////////////////////////////////////////////////////////////////////
 
 PltHashTable<KsAuthType, KsTicketConstructor>
@@ -171,12 +185,24 @@ KsAvTicket::emergencyTicket()
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG_INVARIANTS
+
+bool
+KsAvNoneTicket::invariant() const
+{
+    return KsAvTicket::invariant() 
+        && (_access & ~(KS_AC_READ|KS_AC_WRITE)) == 0;
+}
+
+#endif // PLT_DEBUG_INVARIANTS
+//////////////////////////////////////////////////////////////////////
 
 KsAvNoneTicket::KsAvNoneTicket(XDR *, bool & ok)
-: _access(KS_AC_READ || KS_AC_WRITE),
+: _access(KS_AC_READ | KS_AC_WRITE), // TODO: defaults
   _result(KS_ERR_OK)
 {
     ok = true;
+    PLT_CHECK_INVARIANT();
 }
 
 //////////////////////////////////////////////////////////////////////
