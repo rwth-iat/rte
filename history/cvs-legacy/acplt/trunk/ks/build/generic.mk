@@ -6,62 +6,70 @@ CXX_LIBKS_SOURCES = \
 	avmodule.cpp \
 	avticket.cpp \
 	client.cpp \
+	clntpath.cpp \
 	commobject.cpp \
-	event.cpp \
 	from_local.cpp \
-	manager.cpp \
-	mask.cpp \
+	package.cpp \
 	path.cpp \
 	props.cpp \
 	register.cpp \
 	result.cpp \
 	rpc.cpp \
-	server.cpp \
-	simpleserver.cpp \
 	serviceparams.cpp \
+	sorter.cpp \
 	string.cpp \
-	svrbase.cpp \
-	svrobjects.cpp \
-	svrrpcctx.cpp \
-	svrsimpleobjects.cpp \
-	templates.cpp \
 	time.cpp \
 	value.cpp \
 	variables.cpp \
-	xdr.cpp
+	xdr.cpp \
+	manager.cpp \
+	mask.cpp \
+	event.cpp \
+ 	svrbase.cpp \
+	svrobjects.cpp \
+	svrrpcctx.cpp \
+	svrsimpleobjects.cpp \
+ 	server.cpp \
+	simpleserver.cpp \
+	templates.cpp \
 
 LIBKS_OBJECTS1 = \
 	array$(O) \
 	avticket$(O) \
+	clntpath$(O) \
 	event$(O) \
-	from_local$(O) \
-	manager$(O) \
-	mask$(O)
+	from_local$(O)
 
 LIBKS_OBJECTS2 = \
+	package$(O) \
 	path$(O) \
 	props$(O) \
 	register$(O) \
 	result$(O) \
 	rpc$(O) \
-	server$(O) \
 	serviceparams$(O)
 
 LIBKS_OBJECTS3 = \
-	string$(O) \
-	simpleserver$(O) \
-	svrbase$(O) \
-	svrobjects$(O)
+	manager$(O) \
+	mask$(O) \
+	event$(O) \
+ 	svrbase$(O) \
+	svrobjects$(O) \
+	svrrpcctx$(O) \
+	svrsimpleobjects$(O)
 
 LIBKS_OBJECTS4 = \
-	svrsimpleobjects$(O) \
-	svrrpcctx$(O) \
+	server$(O) \
+	simpleserver$(O) \
 	templates$(O) \
 	time$(O) \
 	value$(O) \
-	xdr$(O)
+	xdr$(O) \
+	templates$(O)
 
 LIBKS_OBJECTS5 = \
+	string$(O) \
+	sorter$(O) \
 	abspath$(O) \
 	avmodule$(O) \
 	client$(O) \
@@ -99,3 +107,6 @@ tserver$(EXE) : tserver$(O) tserver1$(O) $(LIBKS)
 tsclient$(EXE) : tsclient$(O) tsclient1$(O) $(LIBKS)
 
 ttree$(EXE) : ttree$(O) ttree1$(O) $(LIBKS)
+
+
+

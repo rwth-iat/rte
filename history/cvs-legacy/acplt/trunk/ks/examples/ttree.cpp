@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.1 1997-05-20 15:20:13 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.2 1997-07-14 15:36:41 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,6 +37,8 @@
 
 /* Author: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
+#include "ks/client.h"
+#include "ks/clntpath.h"
 #include "ks/commobject.h"
 
 #if PLT_COMPILER_GCC

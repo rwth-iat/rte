@@ -8,7 +8,7 @@ O=.obj
 A=.lib
 EXE=.exe
 ONCDIR = \oncrpc
-LIBRPC = \oncrpc\bin\oncrpc.lib
+LIBRPC = \oncrpc\librpc\oncrpc.lib
 PLTDIR = ..\..\..\plt
 LIBPLT = $(PLTDIR)\build\nt\libplt.lib
 KSDIR = ..\..
@@ -18,10 +18,10 @@ EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
 CXX = bcc32
-CXX_FLAGS = -DNDEBUG -O2 -w
+CXX_FLAGS = -D_BORLANDC=1
 #CXX_FLAGS = -DNDEBUG -w -v
 #CXX_FLAGS =
-CXX_EXTRA_FLAGS = -a8 -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1
+CXX_EXTRA_FLAGS = -a8 -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -I\interface -DPLT_SYSTEM_NT=1
 
 RC = brc32
 
@@ -117,7 +117,7 @@ tsclient.exe: tsclient.obj tsclient1.obj $(LIBKS)
 !
 
 ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
-	$(RC) -r -fontksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc 
+	$(RC) -r -fontksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
 
 ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanager.res
 	@echo Linking $@
@@ -132,7 +132,6 @@ ttree.exe: ttree.obj ttree1.obj $(LIBKS)
 		ttree.obj ttree1.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
-
 ### explicit dependencies not covered by platform-dependend depent mechanism
 ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 	@echo Compiling ntservice.cpp
@@ -141,12 +140,12 @@ ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 !
 
 $(LIBKS) : $(LIBKS_OBJECTS) $(LIBKS_NT_OBJECTS)
-	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS1)
-	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS2)
-	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS3)
-	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS4)
-	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS5)
-	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_NT_OBJECTS)
+	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS1)
+	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS2)
+	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS3)
+	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS4)
+	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS5)
+	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_NT_OBJECTS)
 
 clean :
 	del *.obj

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.2 1997-05-23 13:01:37 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.3 1997-07-14 15:36:42 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 	return 1;
     }
 
-    host_and_server = KsString("/") + argv[1];
+    host_and_server = KsString("//") + argv[1];
     host_and_server += "/";
     KscDomain root(host_and_server);
     if ( !root.getProjPropsUpdate() ) {
