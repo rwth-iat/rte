@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_BUILTINS_INCLUDED
 #define KS_ARRAY_BUILTINS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.2 1997-07-18 14:10:57 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.3 1999-05-17 06:13:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -39,7 +39,7 @@
 
 #include "plt/debug.h"
 
-#if PLT_COMPILER_MSVC
+#if PLT_COMPILER_MSVC || PLT_COMPILER_CYGWIN
 #define PLT_PSEUDO_INLINE inline
 #else
 #define PLT_PSEUDO_INLINE

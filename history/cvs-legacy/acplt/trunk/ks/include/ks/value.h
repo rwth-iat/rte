@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */ 
-/* $Header: /home/david/cvs/acplt/ks/include/ks/value.h,v 1.16 1999-05-12 12:40:59 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/value.h,v 1.17 1999-05-17 06:13:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -55,6 +55,11 @@
 #include "ks/string.h"
 #include "ks/time.h"
 #include "ks/handle.h"
+
+#if PLT_COMPILER_CYGWIN
+#include "ks/array_builtins.h"
+#endif
+
 
 //////////////////////////////////////////////////////////////////////
 // KsValue is the base class of value objects. It is closely related
@@ -1308,10 +1313,6 @@ KsStateVecValue::KsStateVecValue(XDR *xdr, bool &ok)
 }
 
 //////////////////////////////////////////////////////////////////////
-
-#if PLT_COMPILER_CYGWIN
-#include "ks/array_builtins.h"
-#endif
 
 #if PLT_SEE_ALL_TEMPLATES
 #include "ks/value_impl.h"
