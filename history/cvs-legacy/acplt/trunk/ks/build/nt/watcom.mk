@@ -10,8 +10,8 @@
 O=.obj
 A=.lib
 EXE=.exe
-ONCDIR = \oncrpc
-LIBRPC = \oncrpc\bin\oncrpc.lib
+ONCDIR = ..\..\..\..\oncrpc
+LIBRPC = $(ONCDIR)\bin\oncrpc.lib
 PLTDIR = ..\..\..\plt
 LIBPLT = $(PLTDIR)\build\nt\libplt.lib
 KSDIR = ..\..
