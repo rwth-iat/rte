@@ -1,7 +1,7 @@
-/* -*-plt-c++-*- */
+/* -*-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.15 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.16 2003-10-13 11:13:57 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.31 1999-09-16 10:54:39 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.32 2003-10-13 11:17:50 harald Exp $ */
 #ifndef KSC_COMMOBJECT_INCLUDED 
 #define KSC_COMMOBJECT_INCLUDED
 /*

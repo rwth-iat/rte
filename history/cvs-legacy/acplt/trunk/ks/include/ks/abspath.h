@@ -1,8 +1,5 @@
-/* -*-plt-c++-*- */
-
-#ifndef KSC_ABSPATH_INCLUDED
-#define KSC_ABSPATH_INCLUDED
-
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/abspath.h,v 1.6 2003-10-13 11:15:30 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,6 +20,10 @@
  */
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
+
+#ifndef KSC_ABSPATH_INCLUDED
+#define KSC_ABSPATH_INCLUDED
+
 
 //////////////////////////////////////////////////////////////////////
 
