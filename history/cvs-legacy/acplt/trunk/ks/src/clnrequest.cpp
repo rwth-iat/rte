@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/clnrequest.cpp,v 1.1 2003-10-14 17:40:05 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/clnrequest.cpp,v 1.2 2003-10-15 15:27:51 harald Exp $ */
 
 /*
  * Copyright (c) 2003
@@ -33,6 +33,7 @@ KscServiceRequest::KscServiceRequest(u_long service,
       _avm(avm),
       _params(params),
       _result(result),
+      _neg(0),
       _status(REQ_NONE)
 {
 } // KscServiceRequest::KscServiceRequest
@@ -51,6 +52,16 @@ void
 KscServiceRequest::attention()
 {
 } // KscServiceRequest::attention
+
+
+// ---------------------------------------------------------------------------
+// Reset the request, so it can be used another time.
+//
+void
+KscServiceRequest::reset()
+{
+    _status = REQ_NONE;
+} // KscServiceRequest::reset
 
 
 // End of ks/clnrequest.cpp

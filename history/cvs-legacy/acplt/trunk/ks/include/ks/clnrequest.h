@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/clnrequest.h,v 1.1 2003-10-14 17:40:05 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/clnrequest.h,v 1.2 2003-10-15 15:27:51 harald Exp $ */
 #ifndef KSC_CLNREQUEST_INCLUDED
 #define KSC_CLNREQUEST_INCLUDED
 
@@ -44,6 +44,8 @@ public:
     const KsXdrAble &_params;
     KsResult &_result;
 
+    KscNegotiator *_neg; // only temporarily used during REQ_BUSY phase.
+
     enum KscServiceRequestStatus {
 	REQ_NONE,     // not even queued for later issue,
 	REQ_WAITING,  // not yet sent, still waiting,
@@ -54,6 +56,8 @@ public:
     KscServiceRequestStatus _status;
 
     virtual void attention();
+
+    virtual void reset();
 
 }; // class KscServiceRequest
 
