@@ -10,19 +10,6 @@
 
 #include <plt/debug.h>
 
-
-//////////////////////////////////////////////////////////////////////
-
-class PltComparable {
-public:
-	virtual bool operator <  (const PltComparable &) const = 0;
-    virtual bool operator == (const PltComparable &) const;
-    virtual bool operator != (const PltComparable &) const;
-    virtual bool operator >  (const PltComparable &) const;
-    virtual bool operator <= (const PltComparable &) const;
-    virtual bool operator >= (const PltComparable &) const;
-};
-
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
@@ -113,46 +100,6 @@ inline
 PltPtrComparable<T>::PltPtrComparable(T *p)
 : a_p(p)
 {
-}
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-PltComparable::operator == (const PltComparable &r) const
-{
-    return ! (*this != r);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-PltComparable::operator != (const PltComparable &r) const
-{
-    return (*this < r) || (r < *this);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-PltComparable::operator > (const PltComparable &r) const
-{
-    return (r < *this);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-PltComparable::operator <= (const PltComparable &r) const
-{
-    return !(r < *this);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-PltComparable::operator >= (const PltComparable &r) const
-{
-    return !(*this < r);
 }
 
 //////////////////////////////////////////////////////////////////////
