@@ -1,49 +1,86 @@
-#/*****************************************************************************
-#*                                                                            *
-#*   i F B S p r o                                                            *
-#*   #############                                                            *
-#*                                                                            *
-#*   © L T S o f t                                                            *
-#*   Agentur für Leittechnik Software GmbH                                    *
-#*   Heinrich-Hertz-Straße 10                                                 *
-#*   50170 Kerpen                                                             *
-#*   Tel      : 02273/9893-0                                                  *
-#*   Fax      : 02273/52526                                                   *
-#*   e-Mail   : ltsoft@ltsoft.de                                              *
-#*   Internet : http://www.ltsoft.de                                          *
-#*                                                                            *
-#******************************************************************************
-#*                                                                            *
-#*   Datei                                                                    *
-#*   -----                                                                    *
-#*   generic.mk - Makefile fuer die Anwender-Bibliothek (generischer Teil)    *
-#******************************************************************************
-#*                                                                            *
-#*   Historie                                                                 *
-#*   --------                                                                 *
-#*                                                                            *
-#*****************************************************************************/
+#
+# PLT-Vorlage
+# generic.mk für iFBSpro Bibliotheken
+#
 
+#
+#	Name der Bibliothek
+#	-------------------
+#
 
+MYLIB_NAME = cmdlib
+
+#
 #	Directories
 #	-----------
 
-BIN_DIR					= ../../../../bin/
+MAIN_DIR                = x:/apps_32/ov/
+BC5_MAIN_DIR            = $(MAIN_DIR)bc5/
+BC5_INCLUDE_DIR         = $(BC5_MAIN_DIR)include/
+BC5_LIB_DIR             = $(BC5_MAIN_DIR)lib/
 
-SOURCE_DIR				= ../../source/
-INCLUDE_DIR				= ../../include/
+USER_MAIN_DIR           = g:/acplt/
+USER_LIBS_DIR           = $(USER_MAIN_DIR)user/libs/
 
-FBS_DIR					= ../../../../base/fbs/
-FBS_INCLUDE_DIR			        = $(FBS_DIR)include/
+ACPLT_DIR               = $(MAIN_DIR)acplt/
+ACPLT_BIN_DIR           = $(ACPLT_DIR)bin/
+ACPLT_LIB_DIR           = $(ACPLT_DIR)base/lib/
+ACPLT_USER_DIR          = $(ACPLT_DIR)user/
+ACPLT_SHAREDLIB_DIR     = $(MAIN_DIR)sharedlibs
 
-ACPLT_DIR				= ../../../../base/acplt/
+FB_DIR					= $(ACPLT_USER_DIR)fb/
+FB_INCLUDE_DIR			= $(FB_DIR)include/
+FB_LIB_DIR				= $(FB_DIR)lib/
 
-ACPLT_KS_INCLUDE_DIR	= $(ACPLT_DIR)ks/include/
-ACPLT_PLT_INCLUDE_DIR	= $(ACPLT_DIR)plt/include/
-ACPLT_OV_INCLUDE_DIR	= $(ACPLT_DIR)ov/include/
+MYLIB_DIR               = ../../
+MYLIB_MODEL_DIR         = $(MYLIB_DIR)model/
+MYLIB_INCLUDE_DIR       = $(MYLIB_DIR)include/
+MYLIB_SOURCE_DIR        = $(MYLIB_DIR)source/
 
-OV_LIBS_DIR				= $(ACPLT_DIR)ov/lib/
-FBS_LIBS_DIR			= $(FBS_DIR)lib/
+ACPLT_OV_DIR            = $(ACPLT_DIR)base/ov/
+ACPLT_OV_MODEL_DIR      = $(ACPLT_OV_DIR)model/
+ACPLT_OV_INCLUDE_DIR    = $(ACPLT_OV_DIR)include/
+
+ACPLT_PLT_DIR           = $(ACPLT_DIR)base/plt/
+ACPLT_PLT_INCLUDE_DIR   = $(ACPLT_PLT_DIR)include/
+
+ACPLT_KS_DIR            = $(ACPLT_DIR)base/ks/
+ACPLT_KS_INCLUDE_DIR    = $(ACPLT_KS_DIR)include/
+
+ONCRPC_DIR 		= $(ACPLT_DIR)base/oncrpc/
+
+
+#	Includes and Defines
+
+MYLIB_INCLUDES = \
+	-I$(MYLIB_MODEL_DIR) \
+	-I$(MYLIB_INCLUDE_DIR)
+
+MYLIB_DEFINES = \
+	-DOV_DEBUG \
+	-DOV_COMPILE_LIBRARY_$(MYLIB_NAME)
+
+OV_INCLUDES = \
+	-I$(ACPLT_OV_INCLUDE_DIR) \
+	-I$(ACPLT_OV_MODEL_DIR) \
+	-I$(ACPLT_PLT_INCLUDE_DIR) \
+	-I$(ACPLT_KS_INCLUDE_DIR)
+
+OV_DEFINES = \
+	-DOV_SYSTEM_$(SYSTEM)=1 \
+	-DPLT_SYSTEM_$(SYSTEM)=1
+
+INCLUDES = $(OV_INCLUDES) $(MYLIB_INCLUDES) -I$(BC5_INCLUDE_DIR) -I$(FB_INCLUDE_DIR) -I.
+
+DEFINES = $(OV_DEFINES) $(MYLIB_DEFINES)
+
+#	Targets and their sources
+
+MYLIB_SRC = $(MYLIB_NAME).c $(wildcard $(MYLIB_SOURCE_DIR)*.c)
+MYLIB_OBJ = $(foreach source, $(MYLIB_SRC), $(basename $(notdir $(source)))$(OBJ))
+MYLIB_DLL = $(MYLIB_NAME)$(DLL)
+
+SOURCE_DIRS = $(MYLIB_SOURCE_DIR)
 
 #   Rules
 #   -----
@@ -52,35 +89,16 @@ FBS_LIBS_DIR			= $(FBS_DIR)lib/
 
 .SUFFIXES: .c .h .ovm $(LIB) $(DLL) $(OBJ)
 
-#	Paths and defines
-#	-----------------
+VPATH = $(SOURCE_DIRS) $(ACPLT_OV_MODEL_DIR) $(MYLIB_MODEL_DIR) .
 
-INCLUDES	= -I$(ACPLT_OV_INCLUDE_DIR) -I$(ACPLT_PLT_INCLUDE_DIR) -I$(ACPLT_KS_INCLUDE_DIR) -I$(FBS_INCLUDE_DIR) -I$(INCLUDE_DIR)
+TARGETS = \
+	ov.h \
+	fb.h \
+	$(MYLIB_LIB) \
+	$(MYLIB_DLL)
 
-VPATH 		= $(SOURCE_DIR) $(INCLUDE_DIR) $(FBS_INCLUDE_DIR) $(ACPLT_OV_INCLUDE_DIR) $(ACPLT_PLT_INCLUDE_DIR) $(ACPLT_KS_INCLUDE_DIR)
+SOURCES = \
+	ov.h \
+	$(MYLIB_SRC)
 
-DEFINES 	= -DOV_SYSTEM_$(SYSTEM)=1 -DPLT_SYSTEM_$(SYSTEM)=1
-
-
-
-
-
-###############################################################################
-#	Anwender-Bibliothek                                                   #
-#	-------------------                                                   #
-###############################################################################
-# (Nur Bibliothek-Name aendern, z.B. demolib in mylib)                        #
-###############################################################################
-
-LIBRARY = cmdlib
-
-###############################################################################
-# (ENDE)                                                                      #
-###############################################################################
-
-
-
-
-USERLIB_C	= $(LIBRARY)$(C)
-USERLIB_LIB = $(LIBRARY)$(LIB)
-USERLIB_DLL = $(LIBRARY)$(DLL)
+all: $(TARGETS)

@@ -8,26 +8,26 @@
 ***                                                                             ***
 **********************************************************************************/
 /**********************************************************************************
-*                                                                                 
-* Datei                                                                           
-* -----                                                                           
-* cmdlib.ovm Definition von Kommandostrukturen                                    
+*
+* Datei
+* -----
+* cmdlib.ovm Definition von Kommandostrukturen
 *
 * CVS Tag: $Name: not supported by cvs2svn $
-* CVS Revision:  $Revision: 1.1.1.1 $
-* CVS Date: $Date: 2002-08-16 13:55:23 $
-*                                                                                 
-*                                                                                 
-* Historie                                                                        
-* --------                                                                        
-* 10-Aug-1999 Murat Fedai: Erstellung,                                            
-*             Lehrstuhl fuer Prozessleittechnik, RWTH Aachen                      
-*                
+* CVS Revision:  $Revision: 1.2 $
+* CVS Date: $Date: 2002-12-03 14:40:39 $
+*
+*
+* Historie
+* --------
+* 10-Aug-1999 Murat Fedai: Erstellung,
+*             Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
+*
 * 16.08.2002 Michael Heeg: Einchecken der cmdlib in CVS (manueller Versionsstand: 0.20
 *
 **********************************************************************************/
 
-#include "fb.ovm"
+#include "x:\apps_32\ov\acplt\user\fb\include\fb.ovm"
 
 LIBRARY cmdlib
 
