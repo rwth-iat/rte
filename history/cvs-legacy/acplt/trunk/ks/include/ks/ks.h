@@ -139,9 +139,9 @@ enum KS_SVC_ENUM {
     KS_GETSERVER     = 0x0000FF03,
     
     /*
-     * The GetOD services group.
+     * The GetPP services group.
      */
-    KS_GETOD         = 0x00000001,
+    KS_GETPP         = 0x00000001,
     
     /*
      * The variable access service group.
