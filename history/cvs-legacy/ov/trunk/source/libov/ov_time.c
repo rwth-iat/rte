@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.c,v 1.5 1999-08-28 15:55:55 dirk Exp $
+*   $Id: ov_time.c,v 1.6 1999-09-06 07:46:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -31,7 +31,11 @@
 
 #include "libov/ov_time.h"
 
+#if OV_SYSTEM_MC164
+#include "mc164/time.h"
+#else
 #include <time.h>
+#endif
 
 #if OV_SYSTEM_UNIX
 #include <sys/time.h>
@@ -39,10 +43,6 @@
 
 #if OV_SYSTEM_NT || OV_SYSTEM_OPENVMS
 #include <sys/timeb.h>
-#endif
-
-#if OV_SYSTEM_MC164
-#include "mc164/time.h"
 #endif
 
 #if OV_SYSTEM_RMOS

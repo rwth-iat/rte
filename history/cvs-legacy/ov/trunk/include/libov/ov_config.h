@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_config.h,v 1.2 1999-09-06 07:46:30 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -215,6 +215,9 @@
 #endif
 
 #if OV_SYSTEM_MC164
+typedef struct { int quot; int rem; } div_t;
+div_t div(int x, int y);
+unsigned long strtoul(const char *nptr, char **endptr, int base);
 char *strdup(const char *s);
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.6 1999-08-30 15:23:31 dirk Exp $
+*   $Id: ov_library.c,v 1.7 1999-09-06 07:46:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -712,7 +712,11 @@ OV_STRING OV_DLLFNCEXPORT ov_library_comment_get(
 *	Get environment variable with library path
 */
 OV_STRING OV_DLLFNCEXPORT ov_library_getenv(void) {
-	return getenv(OV_LIBRARY_PATH_ENV);
+#if OV_SYSTEM_MC164
+    return NULL;
+#else	
+    return getenv(OV_LIBRARY_PATH_ENV);
+#endif
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -723,6 +727,9 @@ OV_STRING OV_DLLFNCEXPORT ov_library_getenv(void) {
 void OV_DLLFNCEXPORT ov_library_setenv(
 	OV_STRING path
 ) {
+#if OV_SYSTEM_MC164
+    return;
+#else	
 #if OV_SYSTEM_NT || OV_SYSTEM_RMOS
 	/*
 	*	local variables
@@ -736,6 +743,7 @@ void OV_DLLFNCEXPORT ov_library_setenv(
 	putenv(setpath);
 #else
 	setenv(OV_LIBRARY_PATH_ENV, path, TRUE);
+#endif
 #endif
 }
 

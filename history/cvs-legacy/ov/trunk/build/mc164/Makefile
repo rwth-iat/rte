@@ -1,24 +1,36 @@
 
-#   $Id: Makefile,v 1.1 1999-07-19 15:01:56 dirk Exp $
+#	Copyright (C) 1998, 1999
+#	Chair of Process Control Engineering,
+#	Aachen University of Technology.
+#	All rights reserved.
 #
-#   Copyright (C) 1998-1999
-#   Lehrstuhl fuer Prozessleittechnik,
-#   RWTH Aachen, D-52056 Aachen, Germany.
-#   All rights reserved.
-#   
-#   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>
-#   
-#   This file is part of the ACPLT/OV Package which is licensed as open
-#   source under the Artistic License; you can use, redistribute and/or
-#   modify it under the terms of that license.
-#   
-#   You should have received a copy of the Artistic License along with
-#   this Package; see the file ARTISTIC-LICENSE. If not, write to the
-#   Copyright Holder.
-#   
-#   THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
-#   WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES
-#   OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#	Redistribution and use in source and binary forms, with or without
+#	modification, are permitted provided that the following conditions
+#	are met:
+#	1. Redistributions of source code must retain the above copyright
+#	   notice, this list of conditions and the following disclaimer.
+#	2. Redistributions in binary form must print or display the above
+#	   copyright notice either during startup or must have a means for
+#	   the user to view the copyright notice.
+#	3. Redistributions in binary form must reproduce the above copyright
+#	   notice, this list of conditions and the following disclaimer in the
+#	   documentation and/or other materials provided with the distribution.
+#	4. Neither the name of the Chair of Process Control Engineering nor the
+#	   name of the Aachen University of Technology may be used to endorse or
+#	   promote products derived from this software without specific prior
+#	   written permission.
+#
+#	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+#	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+#	TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+#	PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE CHAIR OF PROCESS CONTROL
+#	ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+#	EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#	PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#	OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#	WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#	OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #	History:
 #	--------
@@ -51,13 +63,15 @@ OV_PLATFORM_DEFINES			=
 
 COMPILER	= KEIL
 
-CODEGEN		= ../nt/$(OV_CODEGEN_EXE) 
+CODEGEN		= ../../../../bin/nt/$(OV_CODEGEN_EXE) 
 MKLIBTAB	= ../mklibtab
 
 CPP_PATH	= c:/tools/bin
 CPP			= cpp
 CC			= c166
-CC_FLAGS	= DB M167 F64 HLA NOPR
+#CC_FLAGS	= DB M167 F64 HLA NOPR
+CC_FLAGS	= DB M167 HLA SB 
+#EXTINS
 
 AR	 		= lib166
 
@@ -66,19 +80,28 @@ AR	 		= lib166
 
 include ../generic.mk
 
+INCLUDES := $(INCLUDES) -I../../../../../
+
 #	Targets
 #	-------
 
-all: $(OV_LIBOV_LIB) $(OV_LIBOVKS_LIB) ovserver.obj
+all: $(OV_LIBOV_LIB) $(OV_LIBOVKS_LIB)
 
 #	Create short filenames
 #	----------------------
 
 MC_COMM_SRC = \
-	$(MC164_SOURCE_DIR)time.c \
-	$(MC164_SOURCE_DIR)strdup.c \
-	$(MC164_SOURCE_DIR)Kachel.c \
-	$(MC164_SOURCE_DIR)rpchead.c
+	$(MC164_SOURCE_DIR)time.c    \
+	$(MC164_SOURCE_DIR)strdup.c  \
+	$(MC164_SOURCE_DIR)Kachel.c  \
+	$(MC164_SOURCE_DIR)rpchead.c \
+	$(MC164_SOURCE_DIR)CanKa.c   \
+	$(MC164_SOURCE_DIR)mc_srvr.c \
+	$(MC164_SOURCE_DIR)strtoul.c \
+	$(MC164_SOURCE_DIR)mc_div.c  \
+	$(MC164_SOURCE_DIR)mktime.c  \
+	$(MC164_SOURCE_DIR)gmtime.c 
+	
 MC_COMM_OBJ = $(addsuffix $(OBJ), $(shell ../shorten $(basename $(notdir $(MC_COMM_SRC)))))
 
 OV_LIBOV_OBJ = $(addsuffix $(OBJ), $(shell ../shorten $(basename $(notdir $(OV_LIBOV_SRC)))))
@@ -133,7 +156,7 @@ $(OV_LIBTABLE_SRC) : $(OV_LIBRARIES)
 include ov_libov.in
 
 $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ) \
-	$(addsuffix $(OBJ), $(shell ../shorten time) $(shell ../shorten strdup))
+	$(addsuffix $(OBJ), $(shell ../shorten time) $(shell ../shorten strdup) $(shell ../shorten strtoul) $(shell ../shorten gmtime) $(shell ../shorten mktime) $(shell ../shorten mc_div))
 	@del $@
 	$(AR) create $@
 	@( $(foreach object, $^, echo $(AR) add $(object) to $@&) echo rem ) > $(basename $@).bat
@@ -145,7 +168,7 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ) \
 include ov_libovks.in
 
 $(OV_LIBOVKS_LIB) : $(OV_LIBOVKS_OBJ) \
-	$(addsuffix $(OBJ), $(shell ../shorten Kachel) $(shell ../shorten rpchead))
+	$(addsuffix $(OBJ), $(shell ../shorten Kachel) $(shell ../shorten rpchead)  $(shell ../shorten CanKa) $(shell ../shorten mc_srvr))
 	@del $@
 	$(AR) create $@
 	@( $(foreach object, $^, echo $(AR) add $(object) to $@&) echo rem ) > $(basename $@).bat
@@ -156,12 +179,6 @@ $(OV_LIBOVKS_LIB) : $(OV_LIBOVKS_OBJ) \
 
 include mc_comm.in
 
-#	ACPLT/OV server
-
-ovserver.obj: $(MC164_SOURCE_DIR)ovserver.c
-	$(CPP) -Wall -P -C $(DEFINES) $(INCLUDES) $^ > ovserver.c
-	$(CC) ovserver.c $(CC_FLAGS) OJ($@)	
-
 #	Aufraeumen
 #	----------
 
@@ -169,6 +186,7 @@ clean:
 	@del *.c
 	@del *.h
 	@del *.bak
+	@del *.lst
 	@del *$(LIB)
 	@del *$(OBJ)
 
