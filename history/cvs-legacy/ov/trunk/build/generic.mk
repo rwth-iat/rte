@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.5 2000-07-03 13:36:49 dirk Exp $
+#   $Id: generic.mk,v 1.6 2001-07-09 12:40:04 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 #	--------
 #	17-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+#	09-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
 
 
 
@@ -41,12 +42,14 @@ OV_MODEL_DIR				= $(ACPLT_OV_DIR)model/
 OV_SOURCE_DIR				= $(ACPLT_OV_DIR)source/
 
 OV_SOURCE_CODEGEN_DIR		= $(OV_SOURCE_DIR)codegen/
+OV_SOURCE_BUILDER_DIR			= $(OV_SOURCE_DIR)builder/
 OV_SOURCE_LIBOV_DIR			= $(OV_SOURCE_DIR)libov/
 OV_SOURCE_DBUTIL_DIR		= $(OV_SOURCE_DIR)dbutil/
 OV_SOURCE_LIBOVKS_DIR		= $(OV_SOURCE_DIR)libovks/
 OV_SOURCE_SERVER_DIR		= $(OV_SOURCE_DIR)server/
 OV_SOURCE_NTSERVICE_DIR		= $(OV_SOURCE_DIR)ntservice/
 OV_SOURCE_EXAMPLE_DIR		= $(OV_SOURCE_DIR)example/
+OV_SOURCE_KSHISTLIB_DIR		= $(OV_SOURCE_DIR)kshistlib/
 
 ACPLT_PLT_DIR				= ../../../plt/
 
@@ -92,11 +95,13 @@ VMS_REPOSITORY				= acplt$$repository
 
 SOURCE_DIRS	= \
 	$(OV_SOURCE_CODEGEN_DIR) \
+	$(OV_SOURCE_BUILDER_DIR) \
 	$(OV_SOURCE_LIBOV_DIR) \
 	$(OV_SOURCE_DBUTIL_DIR) \
 	$(OV_SOURCE_LIBOVKS_DIR) \
 	$(OV_SOURCE_SERVER_DIR) \
 	$(OV_SOURCE_NTSERVICE_DIR) \
+	$(OV_SOURCE_KSHISTLIB_DIR) \
 	$(OV_SOURCE_EXAMPLE_DIR) \
 	$(ACPLT_KS_SOURCE_DIR)
 
@@ -142,9 +147,9 @@ endif
 ACPLTKS_DEFINES = \
 	$(ACPLTKS_PLATFORM_DEFINES) \
 	-DPLT_SYSTEM_$(SYSTEM)=1 \
-	-DNDEBUG \
 	-DPLT_USE_BUFFERED_STREAMS=1 \
-	-DPLT_SERVER_TRUNC_ONLY=1
+	-DPLT_SERVER_TRUNC_ONLY=1 \
+	-DNDEBUG 
 ACPLTKS_INCLUDES = \
 	-I$(ACPLT_PLT_INCLUDE_DIR) \
 	-I$(ACPLT_KS_INCLUDE_DIR)
@@ -161,8 +166,10 @@ OV_INCLUDES = \
 	-I$(OV_INCLUDE_DIR) \
 	-I$(OV_MODEL_DIR) \
 	-I$(OV_SOURCE_CODEGEN_DIR) \
+	-I$(OV_SOURCE_BUILDER_DIR) \
 	-I$(OV_SOURCE_NTSERVICE_DIR) \
 	-I$(OV_SOURCE_EXAMPLE_DIR) \
+	-I$(OV_SOURCE_KSHISTLIB_DIR) \
 	-I$(LIBMPM_DIR)
 else
 ifeq ($(COMPILER), KEIL)
@@ -223,6 +230,15 @@ OV_CODEGEN_OBJ  = $(foreach source, $(OV_CODEGEN_SRC), \
 	$(basename $(notdir $(source)))$(OBJ))
 OV_CODEGEN_EXE  = ov_codegen$(EXE)
 OV_CODEGEN_RES	 = $(basename $(OV_CODEGEN_EXE))$(RES)
+
+#	ACPLT/OV framework builder
+#	--------------------------
+
+OV_BUILDER_SRC := ov_ovmparser.c ov_ovmscanner.c \
+	$(wildcard $(OV_SOURCE_BUILDER_DIR)*.c)	
+OV_BUILDER_OBJ  = $(foreach source, $(OV_BUILDER_SRC), \
+	$(basename $(notdir $(source)))$(OBJ))
+OV_BUILDER_EXE  = ov_builder$(EXE)
 
 #	ACPLT/OV library
 #	----------------
@@ -318,16 +334,28 @@ EXAMPLE_OBJ  = $(foreach source, $(EXAMPLE_SRC), $(basename $(notdir $(source)))
 EXAMPLE_LIB  = example$(LIB)
 EXAMPLE_DLL  = example$(DLL)
 
+#
+#	ACPLT/OV KsHistory library
+#	--------------------------
+
+KSHISTLIB_SRC := kshistlib.c $(wildcard $(OV_SOURCE_KSHISTLIB_DIR)*.c)
+KSHISTLIB_OBJ  = $(foreach source, $(KSHISTLIB_SRC), $(basename $(notdir $(source)))$(OBJ))
+KSHISTLIB_LIB  = kshistlib$(LIB)
+KSHISTLIB_DLL  = kshistlib$(DLL)
+
 #	Targets and their sources
 #	-------------------------
 
 TARGETS = \
 	$(OV_CODEGEN_EXE) \
+	$(OV_BUILDER_EXE) \
 	$(OV_LIBOV_DLL) \
 	$(OV_LIBOV_LIB) \
 	$(OV_DBUTIL_EXE) \
 	$(OV_LIBOVKS_DLL) \
 	$(OV_LIBOVKS_LIB) \
+	$(KSHISTLIB_DLL) \
+	$(KSHISTLIB_LIB) \
 	$(OV_SERVER_EXE)
 
 EXAMPLE = \
@@ -340,9 +368,11 @@ ALL = \
 
 SOURCES = \
 	$(OV_CODEGEN_SRC) \
+	$(OV_BUILDER_SRC) \
 	$(OV_LIBOV_SRC) \
 	$(OV_DBUTIL_SRC) \
 	$(KS_LIBOVKS_SRC) \
 	$(OV_LIBOVKS_SRC) \
 	$(OV_SERVER_SRC) \
+	$(KSHISTLIB_SRC) \
 	$(EXAMPLE_SRC)

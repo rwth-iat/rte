@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.5 2000-06-20 06:50:29 dirk Exp $
+#   $Id: unix.mk,v 1.6 2001-07-09 12:40:04 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 #	--------
 #	17-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+#	09-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
 
 
 
@@ -155,6 +156,11 @@ ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS)
 
+#	ACPLT/OV framework builder
+
+$(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
 #	ACPLT/OV database utility
 
 $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_DLL)
@@ -164,6 +170,18 @@ $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_DLL)
 
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_DLL) $(OV_LIBOV_DLL)
 	$(CXX_LINK) -rdynamic -o $@ $^ $(C_LIBS) $(LD_LIB)
+
+#	ACPLT/OV KsHistory library
+#	--------------------------
+
+$(KSHISTLIB_LIB) : $(KSHISTLIB_OBJ)
+	$(AR) rv $@ $?
+	$(RANLIB) $@
+
+$(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ)
+	$(LD) -o $@ $^ 
+
+kshistlib.c kshistlib.h : $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV example library
 #	------------------------
@@ -190,7 +208,7 @@ install : all
 
 clean :
 	@echo Cleaning up...
-	@rm -f core *.c *.h *$(LIB) *$(DLL) *$(OBJ) $(OV_CODEGEN_EXE) \
+	@rm -f core *.c *.h *$(LIB) *$(DLL) *$(OBJ) $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) \
 		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(OV_TEST_EXE)
 	@echo Done.
 

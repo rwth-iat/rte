@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.4 2000-07-03 13:36:50 dirk Exp $
+#   $Id: Makefile,v 1.5 2001-07-09 12:40:31 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 #	--------
 #	17-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+#	09-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
 
 
 
@@ -172,6 +173,11 @@ ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ) $(OV_CODEGEN_RES)
 	$(LINK) -o $@ $^ $(C_LIBS)
 
+#	ACPLT/OV framework builder
+
+$(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
 #	ACPLT/OV database utility
 
 $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(OV_DBUTIL_RES)
@@ -191,6 +197,19 @@ $(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV
 
 $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
 	$(DLLWRAP) -mwindows --def $(OV_SOURCE_NTSERVICE_DIR)$(basename $@).def -o $@ $^
+
+#	ACPLT/OV KsHistory library
+#	--------------------------
+
+$(KSHISTLIB_LIB) : $(KSHISTLIB_DLL)
+	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
+
+$(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
+	@echo EXPORTS > $(basename $@).def
+	@nm $(filter %$(OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
+
+kshistlib.c kshistlib.h : $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV example library
 #	------------------------
