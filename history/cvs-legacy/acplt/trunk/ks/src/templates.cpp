@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.4 1997-04-10 14:18:00 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.5 1997-09-15 13:08:06 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,7 +42,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "plt/config.h"
-#include "ks/avticket.h"
 #include "ks/register.h"
 #include "ks/serviceparams.h"
 #include "ks/path.h"
@@ -230,7 +229,6 @@ template class PltArrayed<KsResult>;
 template class PltArrayed<KsSetVarItem>;
 template class PltArrayed<KsString>;
 template class PltArrayed<KsTime>;
-template class PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)>;
 template class PltBidirIterator<KsGetVarItemResult>;
 template class PltBidirIterator<KsPath>;
 template class PltBidirIterator<KsPtrHandle<KsProjProps> >;
@@ -245,7 +243,6 @@ template class PltContainer<KsResult>;
 template class PltContainer<KsSetVarItem>;
 template class PltContainer<KsString>;
 template class PltContainer<KsTime>;
-template class PltContainer<PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)> >;
 template class PltContainer_<KsGetVarItemResult>;
 template class PltContainer_<KsPath>;
 template class PltContainer_<KsPtrHandle<KsProjProps> >;
@@ -253,8 +250,6 @@ template class PltContainer_<KsResult>;
 template class PltContainer_<KsSetVarItem>;
 template class PltContainer_<KsString>;
 template class PltContainer_<KsTime>;
-template class PltContainer_<PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)> >;
-template class PltDictionary<KsAuthType, KsAvTicket *(*)(XDR *)>;
 template class PltHandle<KsCurrProps>;
 template class PltHandle<KsGetVarItemResult>;
 template class PltHandle<KsPath>;
@@ -264,9 +259,6 @@ template class PltHandle<KsSetVarItem>;
 template class PltHandle<KsString>;
 template class PltHandle<KsTime>;
 template class PltHandle<KsValue>;
-template class PltHashIterator<KsAuthType, KsAvTicket *(*)(XDR *)>;
-template class PltHashTable<KsAuthType, KsAvTicket *(*)(XDR *)>;
-template class PltHashTable_<KsAuthType, KsAvTicket *(*)(XDR *)>;
 template class PltIterator<KsGetVarItemResult>;
 template class PltIterator<KsPath>;
 template class PltIterator<KsPtrHandle<KsProjProps> >;
@@ -274,7 +266,6 @@ template class PltIterator<KsResult>;
 template class PltIterator<KsSetVarItem>;
 template class PltIterator<KsString>;
 template class PltIterator<KsTime>;
-template class PltIterator<PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)> >;
 template class PltIterator_<KsGetVarItemResult>;
 template class PltIterator_<KsPath>;
 template class PltIterator_<KsPtrHandle<KsProjProps> >;
@@ -282,7 +273,6 @@ template class PltIterator_<KsResult>;
 template class PltIterator_<KsSetVarItem>;
 template class PltIterator_<KsString>;
 template class PltIterator_<KsTime>;
-template class PltIterator_<PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)> >;
 template class PltList<KsPtrHandle<KsProjProps> >;
 template class PltListIterator<KsPtrHandle<KsProjProps> >;
 template class PltListNode<KsPtrHandle<KsProjProps> >;

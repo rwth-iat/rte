@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.4 1997-09-15 10:57:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.5 1997-09-15 13:07:48 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -256,7 +256,9 @@ void keepSpinning(const PltArray<PltString> & names,
         }
 
         if (verbosity>2) {
-            PltIterator<KscVariableHandle> *pit = ppkg->newVariableIterator();
+            PltIterator<KscVariableHandle> *pit = 
+                PLT_RETTYPE_CAST((PltIterator<KscVariableHandle> *))
+                    ppkg->newVariableIterator();
             if ( pit ) {
                 cout << "My shopping bag contains..." << endl;
                 for (PltIterator<KscVariableHandle> & it = *pit;

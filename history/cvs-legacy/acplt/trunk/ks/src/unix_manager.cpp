@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.6 1997-09-09 15:32:29 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.7 1997-09-15 13:08:08 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -189,15 +189,19 @@ int main(int argc, char **argv) {
 #include "plt/comparable.h"
 
 #if PLT_INSTANTIATE_TEMPLATES
+template class PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)>;
 template class PltAssoc<KsString, PltPtrHandle<KssCommObject> >;
 template class PltAssoc<PltKeyPtr<KsServerDesc>, KsmServer *>;
 template class PltContainer<PltAssoc<KsString, PltPtrHandle<KssCommObject> > >;
 template class PltContainer<PltAssoc<PltKeyPtr<KsServerDesc>, KsmServer *> >;
 template class PltContainer<PltPtrComparable<KsTimerEvent> >;
 template class PltContainer_<KssCommObject>;
+template class PltContainer<PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)> >;
 template class PltContainer_<PltAssoc<KsString, PltPtrHandle<KssCommObject> > >;
 template class PltContainer_<PltAssoc<PltKeyPtr<KsServerDesc>, KsmServer *> >;
 template class PltContainer_<PltPtrComparable<KsTimerEvent> >;
+template class PltContainer_<PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)> >;
+template class PltDictionary<KsAuthType, KsAvTicket *(*)(XDR *)>;
 template class PltDictionary<KsString, PltPtrHandle<KssCommObject> >;
 template class PltDictionary<PltKeyPtr<KsServerDesc>, KsmServer *>;
 template class PltHandle<KssCommObject>;
@@ -218,6 +222,11 @@ template class PltIterator_<KssCommObject>;
 template class PltIterator_<PltAssoc<KsString, PltPtrHandle<KssCommObject> > >;
 template class PltIterator_<PltAssoc<PltKeyPtr<KsServerDesc>, KsmServer *> >;
 template class PltIterator_<PltPtrComparable<KsTimerEvent> >;
+template class PltHashIterator<KsAuthType, KsAvTicket *(*)(XDR *)>;
+template class PltHashTable<KsAuthType, KsAvTicket *(*)(XDR *)>;
+template class PltIterator_<PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)> >;
+template class PltIterator<PltAssoc<KsAuthType, KsAvTicket *(*)(XDR *)> >;
+template class PltHashTable_<KsAuthType, KsAvTicket *(*)(XDR *)>;
 template class PltKeyPtr<KsServerDesc>;
 template class PltPQIterator<PltPtrComparable<KsTimerEvent> >;
 template class PltPriorityQueue<PltPtrComparable<KsTimerEvent> >;
