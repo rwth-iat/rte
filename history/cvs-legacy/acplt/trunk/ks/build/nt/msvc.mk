@@ -32,6 +32,7 @@ CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) \
 CXX_LIBS = $(LIBKS) $(LIBPLT) $(LIBRPC) wsock32.lib advapi32.lib
 
 RC = rc
+RC_OPTS = /dPLT_RCMSVC=1
 
 LIBKS_NT_OBJECTS = ntservice$(O)
 
@@ -41,13 +42,16 @@ LIBKS_NT_OBJECTS = ntservice$(O)
 
 all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
-examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
+examples:       ntksmanager.exe tmanager.exe tserver.exe tclient.exe ttree.exe
+
+# the tsclient.exe is not supported
+#examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 
 {$(SRCDIR)}.cpp{}.obj:
-	$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c  $<
+	$(CXX)  $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c  $<
 
 {$(SRCDIR)}.cpp{}.i:
-	$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) /P $<
+	$(CXX)  $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) /P $<
 
 
 {$(EXAMPLESSRCDIR)}.cpp{}.obj:
@@ -66,17 +70,16 @@ examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 
 ### explicit dependencies not covered by platform-dependend depent mechanism
 ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
-	$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)ntservice.cpp
+	$(CXX)  $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)ntservice.cpp
 
-ntksmanagervc.res: $(EXAMPLESSRCDIR)ntksmanagervc.rc
-	$(RC) $@
+ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
+	$(RC) $(RC_OPTS) /fo ntksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
 
-ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanagervc.res
+ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanager.res
 	@echo Linking $@
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
-		 ntksmanager.obj ntksmanagervc.res ntksmanager_templates.obj \
+		 ntksmanager.obj ntksmanager_templates.obj ntksmanager.res \
 		$(LIBKSSVR) $(CXX_LIBS)
-#	$(RC) ntksmanager.res ntksmanager.exe
 
 
 $(LIBKS) : $(LIBKS_OBJECTS)
