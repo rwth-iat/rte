@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/ntservice.cpp,v 1.3 1997-12-02 10:19:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/ntservice.cpp,v 1.4 1999-04-22 15:38:03 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,7 +40,9 @@
 // ATTENTION!!! We're now going multi-threaded!!!
 // TODO: Why doesn't borland define this automatically when compiling for 
 // multithreaded app?
+#ifndef __MT__
 #define __MT__
+#endif
 
 #include "ks/ntservice.h"
 #include "plt/log.h"
