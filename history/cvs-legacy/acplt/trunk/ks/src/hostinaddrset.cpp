@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.1 1997-10-28 10:39:42 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.2 1997-11-27 13:08:58 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -106,6 +106,13 @@
 #include <windows.h>
 #include <winsock.h>
 #include "plt/string.h"
+
+#if PLT_COMPILER_MSVC
+//
+// Cover Micro$oft's idiosyncrasies
+//
+#define strncmpi(s1,s2,l) _strnicmp(s1,s2,l)
+#endif
 
 #else
 #if PLT_SYSTEM_OPENVMS
