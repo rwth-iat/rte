@@ -1,5 +1,4 @@
 /* -*-plt-c++-*- */
-
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -467,9 +466,9 @@ KscServer::getServerDesc(struct hostent *hp,
     errcode = clnt_call(pUDP, 
                         KS_GETSERVER,
                         (xdrproc_t) KscGetServerInHelper,
-                        &inData,
+                        (char *) &inData,
                         (xdrproc_t) KscGetServerOutHelper,
-                        &outData,
+                        (char *) &outData,
                         KSC_UDP_TIMEOUT);
 
     // free resources used by client handle
@@ -580,9 +579,9 @@ KscServer::getPP(const KscAvModule *avm,
 
     errcode = clnt_call(pClient, KS_GETPP,
                         (xdrproc_t) KscGetPPInHelper,
-                        &inData,
+                        (char *) &inData,
                         (xdrproc_t) KscGetPPOutHelper,
-                        &outData,
+                        (char *) &outData,
                         KSC_RPCCALL_TIMEOUT);
 
 #if PLT_DEBUG
@@ -681,9 +680,9 @@ KscServer::getVar(const KscAvModule *avm,
 
     errcode = clnt_call(pClient, KS_GETVAR,
                         (xdrproc_t) KscGetVarInHelper,
-                        &inData,
+                        (char *) &inData,
                         (xdrproc_t) KscGetVarOutHelper,
-                        &outData,
+                        (char *) &outData,
                         KSC_RPCCALL_TIMEOUT);
 
 #if PLT_DEBUG
@@ -785,9 +784,9 @@ KscServer::setVar(const KscAvModule *avm,
 
     errcode = clnt_call(pClient, KS_SETVAR,
                         (xdrproc_t) KscSetVarInHelper,
-                        &inData,
+                        (char *) &inData,
                         (xdrproc_t) KscSetVarOutHelper,
-                        &outData,
+                        (char *) &outData,
                         KSC_RPCCALL_TIMEOUT);
 
 #if PLT_DEBUG
@@ -888,9 +887,9 @@ KscServer::exgData(const KscAvModule *avm,
 
     errcode = clnt_call(pClient, KS_EXGDATA,
                         (xdrproc_t) KscExgDataInHelper,
-                        &inData,
+                        (char *) &inData,
                         (xdrproc_t) KscExgDataOutHelper,
-                        &outData,
+                        (char *) &outData,
                         KSC_RPCCALL_TIMEOUT);
 
 #if PLT_DEBUG
