@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.29 2001-02-09 08:18:09 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.30 2003-09-25 12:15:28 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -34,7 +34,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+#if PLT_USE_DEPRECIATED_HEADER
 #include <iomanip.h>
+#else
+#include <iomanip>
+#endif
 
 //
 //  Signal handler: Signals shut down the server
@@ -42,6 +46,11 @@
 extern "C" void handler(int) {
     KsServerBase::getServerObject().downServer();
 }
+
+
+//////////////////////////////////////////////////////////////////////
+const KsString PROG_NAME("tmanager");
+const KsString KS_MANAGER_VERSION(KS_VERSION_STRING);
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -202,15 +211,15 @@ TestDomain::getChildById(const KsString &str) const
         } else {
             // the actions...
             if (str == "down") {
-                cerr << endl << "Shutdown requested." << endl;
+                STDNS::cerr << STDNS::endl << "Shutdown requested." << STDNS::endl;
                 TestServer::getServerObject().downServer();
             } else if (str == "exit") {
-                cerr << endl << "Hard exit requested. Bye!" << endl;
+                STDNS::cerr << STDNS::endl << "Hard exit requested. Bye!" << STDNS::endl;
                 exit(1);
             } else if (str == "lockup") {
-                cerr << endl << "Simulating lockup..." << endl;
+                STDNS::cerr << STDNS::endl << "Simulating lockup..." << STDNS::endl;
                 PltTime(40,0).sleep();
-                cerr << endl << "... exiting." << endl;
+                STDNS::cerr << STDNS::endl << "... exiting." << STDNS::endl;
                 exit(1);
             } else if (strncmp(str,"sleep",5)==0) {
                 PltTime delay(atoi(str+5),0);
@@ -354,7 +363,7 @@ void Wecker::async_attention(KssInterKsServerConnectionOperations op)
     case ISC_STATE_BUSY:
 	ls << "busy (not allowed!)"; break;
     }
-    ls << " result=0x" << hex << _result << dec;
+    ls << " result=0x" << STDNS::hex << _result << STDNS::dec;
     ls.info();
 
     if ( op == ISC_OP_OPEN ) {
@@ -395,13 +404,13 @@ void Wecker::async_attention(KssInterKsServerConnectionOperations op)
 	    time_t             value_time;
 	    size_t             size, i;
 	    const KsVarCurrProps *curr_props;
-	    int                   idx;
+	    unsigned           idx;
 
 	    for ( idx = 0; idx < getvarresult.items.size(); ++idx ) {
 
 		if ( getvarresult.items[idx].result != KS_ERR_OK ) {
-		    ls << "reading variable: result=0x" << hex
-		       << getvarresult.items[idx].result << dec;
+		    ls << "reading variable: result=0x" << STDNS::hex
+		       << getvarresult.items[idx].result << STDNS::dec;
 		    ls.error();
 		    continue;
 		}
@@ -457,9 +466,9 @@ void Wecker::async_attention(KssInterKsServerConnectionOperations op)
 			size = 5;
 		    }
 		    for ( i = 0; i < size; ++i ) {
-			ls <<  hex << setfill('0') << setw(2)
+			ls <<  STDNS::hex << STDNS::setfill('0') << STDNS::setw(2)
 			   << (unsigned int) ((KsByteVecValue &) *curr_props->value)[i]
-			   << dec << ",";
+			   << STDNS::dec << ",";
 		    }
 		    ls << "...}";
 		    break;
@@ -470,9 +479,9 @@ void Wecker::async_attention(KssInterKsServerConnectionOperations op)
 			size = 5;
 		    }
 		    for ( i = 0; i < size; ++i ) {
-			ls <<  hex << setfill('0') << setw(2)
+			ls <<  STDNS::hex << STDNS::setfill('0') << STDNS::setw(2)
 			   << ((bool) ((KsBoolVecValue &) *curr_props->value)[i] ? "true" : "false")
-			   << dec << ",";
+			   << STDNS::dec << ",";
 		    }
 		    ls << "...}";
 		    break;
@@ -1032,12 +1041,59 @@ TestAvSimple::canWriteVar(const KsString & name) const
 // Startup code:
 //////////////////////////////////////////////////////////////////////
 
-int main(int, char **) {
+int main(int argc, char **argv) {
     //
     // Use the standard error output for logging.
     // (This is the portable logger)
     //
     PltCerrLog log("tserver");
+
+    //
+    // Parse the command line
+    //
+    bool argsok = true;
+    int port = KsServerBase::KS_ANYPORT;
+    bool reuseaddr = false;
+    int idx = 0;
+    while ( ++idx < argc ) {
+        if ( strcmp(argv[idx], "--help") == 0 ) {
+            argsok = false;
+            break;
+        } else if ( strcmp(argv[idx], "--version") == 0 ) {
+            STDNS::cerr << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << STDNS::endl;
+            return EXIT_FAILURE;
+        } else if ( (strcmp(argv[idx], "-p") == 0) ||
+                    (strcmp(argv[idx], "--port") == 0) ) {
+            if ( ++idx < argc ) {
+                char *endptr;
+                port = strtol(argv[idx], &endptr, 10);
+                if ( (argv[idx][0] == '\0') || *endptr || (port <= 0) ) {
+                    argsok = false;
+                    break;
+                }
+            } else {
+                argsok = false;
+                break;
+            }
+        } else if ( (strcmp(argv[idx], "-r") == 0) ||
+                    (strcmp(argv[idx], "--reuseaddr") == 0) ) {
+            reuseaddr = true;
+        } else {
+            argsok = false;
+            break;
+        }
+    }
+
+    if (!argsok) {
+        STDNS::cerr << "Usage: " << PROG_NAME << "[options]" << STDNS::endl
+             << "Runs the ACPLT/KS Test Server process" << STDNS::endl
+             << STDNS::endl
+             << "  -p #, --port #   binds the ACPLT/KS test server to port number #" << STDNS::endl
+             << "  -r, --reuseaddr  reuse socket address" << STDNS::endl
+             << "  --help           display this help and exit" << STDNS::endl
+             << "  --version        output version information and exit" << STDNS::endl;
+        return EXIT_FAILURE;
+    }
 
     //
     // Register the extended authentification ticket classes.
@@ -1049,11 +1105,12 @@ int main(int, char **) {
     //
     // Create the server object
     //
-	TestServer ts;
+    TestServer ts(port);
     if ( !ts.isOk() ) {
         PltLog::Error("Could not initialize the tserver object.");
         return 42;
     }
+    ts.setReuseAddr(reuseaddr);
     //
     // Start it.
     //
