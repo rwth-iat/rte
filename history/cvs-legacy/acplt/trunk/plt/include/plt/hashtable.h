@@ -167,7 +167,7 @@ public:
     virtual bool update(const K& key, 
                         const V & newValue, 
                         V & oldValue,
-                        bool & oldValueValid) const;
+                        bool & oldValueValid);
 
     virtual bool remove(const K&, V&);
 
@@ -324,7 +324,7 @@ inline bool
 PltHashTable_<K,V>::update(const K& key, 
                            const V & newValue, 
                            V & oldValue,
-                           bool & oldValueValid) const
+                           bool & oldValueValid)
 {
     // This cast is safe, only we can put assocs into the table
     PltAssoc<K,V> *p = 
