@@ -198,43 +198,36 @@ public:
 
     // reread projected props
     bool getProjPropsUpdate();
-    // reread children from server, update properties
-    bool getChildPPUpdate();
     // get iterator, 
     // if update is set to true, it forces the PP's to be read and
     // all other iterators related to this object will become invalid
     KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
-                                       bool update = false);
+                                       KsString nameMask = KsString("*"));
 
 protected:
-    // remove childs from table
-    bool flushChilds();
+    // read children from server, returns PP's in list
+    bool getChildPPUpdate(KS_OBJ_TYPE typeMask,
+                          KsString nameMask,
+                          PltList<KsProjPropsHandle> &);
 
     bool setProjProps(KsProjPropsHandle);
 
     KsDomainProjProps proj_props;
-    PltList<KsProjPropsHandle> child_table;
-    bool fChildPPValid;   // indicates wether PP's already have been read
 
     class ChildIterator
-    : public KscChildIterator
+    : public PltListIterator<KsProjPropsHandle>
     {
     public:
 #if PLT_RETTYPE_OVERLOADABLE
-	#define KscDomain_ChildIterator_THISTYPE KscDomain::ChildIterator
+# define KscDomain_ChildIterator_THISTYPE KscDomain::ChildIterator
         typedef ChildIterator THISTYPE;
 #else
-   #define KscDomain_ChildIterator_THISTYPE PltIterator_THISTYPE(KsProjPropsHandle)
+# define KscDomain_ChildIterator_THISTYPE PltListIterator_THISTYPE(KsProjPropsHandle)
 #endif
-        ChildIterator(const KscDomain &, enum_t);
-        operator bool () const;   // remaining element?
-        THISTYPE & operator ++ ();        // advance
-        void operator ++ (int);           // (postfix)
-        void toStart();                   // go to the beginning
-        const KsProjPropsHandle &operator * () const;
+        ChildIterator(PltList<KsProjPropsHandle> *);
+        ~ChildIterator();
     private:
-        PltListIterator<KsProjPropsHandle> it;
-        enum_t type_mask;
+        PltList<KsProjPropsHandle> *pp_list;
     };
 
     friend class ChildIterator;
@@ -394,8 +387,7 @@ KscCommObject::getLastResult() const
 
 inline
 KscDomain::KscDomain(const char *domain_path)
-: KscCommObject(domain_path),
-  fChildPPValid(false)
+: KscCommObject(domain_path)
 {}
 
 //////////////////////////////////////////////////////////////////////
@@ -479,4 +471,9 @@ KscVariable::isDirty() const
 //////////////////////////////////////////////////////////////////////
 // EOF CommObject.h
 //////////////////////////////////////////////////////////////////////
+
+
+
+
+
 

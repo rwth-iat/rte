@@ -357,6 +357,15 @@ KscServer::setTimeouts(const PltTime &rpc_timeout,
     _rpc_timeout = rpc_timeout;
     _retry_wait = retry_wait;
     _retries = retries;
+
+    if(pClient) {
+        bool ok = clnt_control(pClient,
+                               CLSET_TIMEOUT,
+                               (struct timeval *)(&_rpc_timeout));
+        if(!ok) {
+            PltLog::Warning("Failed to specifify timeout value for RPC");
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -456,6 +465,14 @@ KscServer::createTransport()
         status = KscCannotCreateClientHandle;
         _last_result = KS_ERR_CANTCONTACT;
         return false;
+    }
+
+    // set timeout 
+    //
+    bool ok = clnt_control(pClient, CLSET_TIMEOUT, 
+                           (struct timeval *)(&_rpc_timeout));
+    if(!ok) {
+        PltLog::Warning("Failed to specify timeout value for RPC");
     }
 
     return true;
@@ -599,6 +616,7 @@ KscServer::setResultAfterService()
         _last_result = KS_ERR_GENERIC;
     }
 }        
+
 //////////////////////////////////////////////////////////////////////
 // getServerDescription and helper structs and classes
 //

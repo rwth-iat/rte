@@ -75,16 +75,6 @@ KscDomain::debugPrint(ostream &os) const
     os << "KscDomain object :" << endl;
     KscCommObject::debugPrint(os);
     proj_props.debugPrint(os);
-    os << child_table.size() << " childs :" << endl;
-
-    // iterate over childs and print them
-    //
-    PltListIterator<KsProjPropsHandle> it(child_table);
-
-    while(it) {
-        (*it)->debugPrint(os);
-        ++it;
-    }
 }
 
 #endif // PLT_DEBUG
@@ -111,11 +101,13 @@ KscCommObject::KscCommObject(const char *object_path)
   av_module(0),
   last_result(-1)
 {
-    PLT_PRECONDITION(path.isValid());
-
-    server = findServer();
-    PLT_ASSERT(server);
-    server->incRefcount();
+    if(hasValidPath()) {
+        server = findServer();
+        PLT_ASSERT(server);
+        server->incRefcount();
+    } else {
+        server = 0;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -151,8 +143,6 @@ KscCommObject::getServer() const
 
 KscDomain::~KscDomain()
 {
-    flushChilds();
-    PLT_POSTCONDITION(child_table.size() == 0);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -166,7 +156,12 @@ KscDomain::getProjPropsUpdate()
     }
 
     KscServerBase *myServer = getServer();
-    PLT_ASSERT(myServer);
+    if(!myServer) {
+        // this could only happen  due to insufficient memory
+        //
+        last_result = KS_ERR_GENERIC;
+        return false;
+    }
 
     KsGetPPParams params;
     KsGetPPResult result;
@@ -233,7 +228,9 @@ KscDomain::setProjProps(KsProjPropsHandle hpp)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscDomain::getChildPPUpdate()
+KscDomain::getChildPPUpdate(KS_OBJ_TYPE typeMask,
+                            KsString nameMask,
+                            PltList<KsProjPropsHandle> &pp_list)
 {
     if( !hasValidPath() ) {
         last_result = KS_ERR_MALFORMEDPATH;
@@ -243,14 +240,19 @@ KscDomain::getChildPPUpdate()
     // locate server
     //
     KscServerBase *myServer = getServer();
-    PLT_ASSERT(myServer);
+    if(!myServer) {
+        // this could only happen  due to insufficient memory
+        //
+        last_result = KS_ERR_GENERIC;
+        return false;
+    }
 
     // create and fill data structures
     //
     KsGetPPParams params;
     params.path = path.getPathAndName();
-    params.type_mask = KS_OT_ANY;
-    params.name_mask = KsString("*");
+    params.type_mask = typeMask;
+    params.name_mask = nameMask;
     KsGetPPResult result;
 
     // request service
@@ -267,16 +269,15 @@ KscDomain::getChildPPUpdate()
         return false;
     }
 
-    // delete old childs and insert the new one
+    // 
+    // copy PP
     //
-    flushChilds();
-
     ok = true;
 
     while(!result.items.isEmpty() && ok) {
         KsProjPropsHandle hpp = result.items.removeFirst();
         if(hpp) {
-            ok = child_table.addLast(hpp);
+            ok = pp_list.addLast(hpp);
             if(!ok) {            
                 PLT_DMSG("KscDomain::getChildPPUpdate() : cannot add new commobject to child table" << endl);
             }
@@ -287,8 +288,6 @@ KscDomain::getChildPPUpdate()
         }
     } // while
 
-    fChildPPValid = ok;
-
     if(!ok) {
         last_result = KS_ERR_GENERIC;  // TODO : change to more specific code
     }
@@ -298,101 +297,49 @@ KscDomain::getChildPPUpdate()
 
 //////////////////////////////////////////////////////////////////////
 
-bool
-KscDomain::flushChilds()
-{
-    while(!child_table.isEmpty()) {
-        child_table.removeFirst();
-    }
-
-    fChildPPValid = false;
-
-    return true;
-}
-
-//////////////////////////////////////////////////////////////////////
-
 KscChildIterator *
-KscDomain::newChildIterator(KS_OBJ_TYPE typeMask,
-                            bool update)
+KscDomain::newChildIterator(KS_OBJ_TYPE typeMask, KsString nameMask)
 {
-    if( !fChildPPValid || update ) {
-        if( !getChildPPUpdate() ) {
-            PLT_DMSG("Cannot update childs in KscDomain::newChildIterator" << endl);
+    PltList<KsProjPropsHandle> *pp_list =
+        new PltList<KsProjPropsHandle>;
+
+    if(pp_list) {
+        if(getChildPPUpdate(typeMask, nameMask, *pp_list)) {
+            // success, now create iterator
+            //
+            ChildIterator *it = new ChildIterator(pp_list);
+            if(it) {
+                return it;
+            } else {
+                // clean up list
+                //
+                delete pp_list;
+                return 0;
+            }
+        } else {
+            delete pp_list;
             return 0;
         }
+    } else {
+        return 0;
     }
-
-    KscChildIterator *pit = new ChildIterator(*this, typeMask);
-
-    return pit;
 }
 
 //////////////////////////////////////////////////////////////////////
 // class KscDomain::ChildIterator
-//
-KscDomain::ChildIterator::ChildIterator(const KscDomain &domain,
-                                        enum_t typeMask)
-: it(domain.child_table),
-  type_mask(typeMask)
-{
-    // move forward to the first element
-    // matching with type_mask
-    //
-    while( it && !((*it)->xdrTypeCode() & type_mask)) {
-        ++it;
-    }
-}
+//////////////////////////////////////////////////////////////////////
+
+KscDomain::ChildIterator::ChildIterator(PltList<KsProjPropsHandle> *lst)
+: PltListIterator<KsProjPropsHandle>(*lst),
+  pp_list(lst)
+{}
 
 //////////////////////////////////////////////////////////////////////
 
-KscDomain::ChildIterator::operator bool () const
+KscDomain::ChildIterator::~ChildIterator()
 {
-    return it.operator bool();
+    delete pp_list;
 }
-
-//////////////////////////////////////////////////////////////////////
-
-KscDomain_ChildIterator_THISTYPE &
-KscDomain::ChildIterator::operator ++ ()
-{
-    PLT_PRECONDITION(*this);
-
-    do {
-        ++it;
-    }
-    while(it && 
-          !((*it)->xdrTypeCode() & type_mask));
-    
-    return *this;
-}
-
-//////////////////////////////////////////////////////////////////////
-        
-void
-KscDomain::ChildIterator::operator ++ (int)
-{
-    ++it;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void
-KscDomain::ChildIterator::toStart()
-{
-    it.toStart();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-const KsProjPropsHandle &
-KscDomain::ChildIterator::operator * () const
-{
-    PLT_PRECONDITION(*this);
-
-    return *it;
-}
-
 
 //////////////////////////////////////////////////////////////////////
 // class KscVariable
@@ -407,7 +354,7 @@ KscVariable::getProjPropsUpdate()
     }
 
     KscServerBase *myServer = getServer();
-    PLT_ASSERT(myServer);
+
 
     KsGetPPParams params;
     KsGetPPResult result;
@@ -479,7 +426,12 @@ KscVariable::getUpdate()
     }
 
     KscServerBase *myServer = getServer();
-    PLT_ASSERT(myServer);
+    if(!myServer) {
+        // this could only happen  due to insufficient memory
+        //
+        last_result = KS_ERR_GENERIC;
+        return false;
+    }
 
     KsGetVarParams params(1);
     params.identifiers[0] = path.getPathAndName();
@@ -533,7 +485,12 @@ KscVariable::setUpdate()
     }
 
     KscServerBase *myServer = getServer();
-    PLT_ASSERT(myServer);
+    if(!myServer) {
+        // this could only happen  due to insufficient memory
+        //
+        last_result = KS_ERR_GENERIC;
+        return false;
+    }
 
     KsSetVarParams params(1);
     params.items[0].path_and_name = path.getPathAndName();
