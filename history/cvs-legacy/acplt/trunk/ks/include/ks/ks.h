@@ -35,6 +35,15 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * RPC program number reserved for ACPLT/KS library
+ */
+const unsigned long KS_RPC_PROGRAM_NUMBER = 0x49678; 
+
+/*
+ * default protocol version
+ */ 
+const unsigned long KS_PROTOCOL_VERSION = 1;
 
 /*
  * Currently defined ACPLT/KS error codes.
