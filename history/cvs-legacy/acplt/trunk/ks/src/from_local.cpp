@@ -40,6 +40,7 @@
  * Mountain View, California  94043
  */
 
+/* TODO: Solaris implementation!!! */
 
 #ifdef TEST
 #undef perror
@@ -48,6 +49,11 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+
+#if PLT_SYSTEM_SOLARIS
+#include <sys/sockio.h>
+#endif
+
 #include <stdio.h>
 #include <netdb.h>
 #include <netinet/in.h>
