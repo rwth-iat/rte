@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.45 2003-09-23 15:36:02 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.46 2003-10-13 12:03:15 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -51,6 +51,7 @@ extern int ioctl(int d, int request, char *argp);
 #include <errno.h>
 #endif
 
+#include "ks/connectionmgr.h"
 
 #if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h> // FIXME
@@ -689,7 +690,7 @@ KscServer::setTimeouts(const PltTime &rpc_timeout,
                                (struct timeval *)(&_rpc_timeout));
 #endif
         if(!ok) {
-            PltLog::Warning("Failed to specifify timeout value for RPC");
+            PltLog::Warning("Failed to specify timeout value for RPC");
         }
     }
 } // KscServer::setTimeouts
@@ -1018,37 +1019,6 @@ KscServer::getServerVersion(u_long &version)
     version = server_desc.protocol_version;
     return true;
 } // KscServer::getServerVersion
-
-
-//////////////////////////////////////////////////////////////////////
-#if 0
-bool
-KscServer::getStateUpdate()
-{
-    struct sockaddr_in host_addr;
-    
-    // locate host
-    //
-    if( !getHostAddr(&host_addr) ) {
-        _status = KscHostNotFound;
-        _last_result = KS_ERR_HOSTUNKNOWN;
-        return false;
-    }
-
-    // request server description from manager
-    //
-    if( !getServerDesc(&host_addr, 0, server_desc, server_info) ) {
-        // dont change status set by getServerDescription()
-        return false;
-    }
-    if( server_info.result != KS_ERR_OK ) {
-        _status = KscNoServer;
-        return false;
-    }
-    _last_result = server_info.result;
-    return true;
-}
-#endif
 
 
 // ----------------------------------------------------------------------------
@@ -1986,6 +1956,29 @@ KscServer::dismissNegotiator(const KscAvModule *avm)
     	neg_table.remove(key, hNegotiator);
     }
 } // KscServer::dismissNegotiator
+
+
+// ----------------------------------------------------------------------------
+// Ping a server. In case the connection is not already open, we open it first.
+// Please note that this does not reconnect automatically *multiple* times.
+//
+bool
+KscServer::ping()
+{
+    enum clnt_stat errcode;
+
+    if ( !_client_transport ) {
+        if( !createTransport() ) {
+	    return false;
+        }
+    }
+    errcode = clnt_call(_client_transport, 0, 
+			(xdrproc_t) xdr_void, 0, 
+			(xdrproc_t) xdr_void, 0, 
+			KSC_RPCCALL_TIMEOUT);
+
+    return errcode == RPC_SUCCESS;
+} // KscServer::ping
 
         
 // End of client.cpp
