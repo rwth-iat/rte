@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.2.3 of the C++ Communication Libary. As always, it
+This is version 1.2.4pre1 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
@@ -132,6 +132,19 @@ Please note that code versions are numbered as x.y.z where the middle
 number y denoted the state of the code: even numbered y's denote stable
 releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
+
+Version 1.2.4pre1
+- CLIENTS:
+  * implemented timed connecting to ACPLT/KS servers. Whenever a
+    connection needs to be set up, the the RPC timeout set on a
+    particular KscServer proxy object will control the largest
+    amount of time to wait for the connection setup to succeed.
+
+- SERVERS:
+  * Fixed a bug in xdrmemstream_get_fragments() (from xdrmemstream.cpp),
+    which caused only the final fragment description to be returned.
+  * Cleaned up source code and removed TLI/XTI-related code, which has
+    become obsolete.
 
 Version 1.2.3
 - SERVERS:
