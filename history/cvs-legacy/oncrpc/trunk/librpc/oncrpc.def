@@ -85,4 +85,5 @@ xdrstdio_create
 xprt_register
 xprt_unregister
 svc_fdset DATA
-
+rpc_createerr DATA
+_null_auth DATA
