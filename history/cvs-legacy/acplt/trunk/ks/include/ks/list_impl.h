@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list.h,v 1.2 1997-03-12 16:32:26 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.1 1997-03-12 16:28:00 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -34,69 +34,69 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-#ifndef KS_LIST_INCLUDED
-#define KS_LIST_INCLUDED
 
-#include "plt/list.h"
-#include "ks/xdr.h"
+#include "ks/list.h"
+#include "plt/list_impl.h"
 
-//////////////////////////////////////////////////////////////////////
-// Non-intrusive double linked list node with information type T
-template <class T>
-class KsList 
-: public PltList<T>,
-  public KsXdrAble
-{
-public:
-    KsList();
-    KsList(XDR *, bool &);
-
-    virtual bool xdrEncode(XDR *) const;
-    virtual bool xdrDecode(XDR *);
-
-    static KsList<T> *xdrNew(XDR *);
-
-private:
-    KsList(const KsList &); // forbidden
-    KsList & operator = (const KsList &); // forbidden
-};
-
-
-//////////////////////////////////////////////////////////////////////
-// IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline
-KsList<T>::KsList()
-: PltList<T>()
+bool
+KsList<T>::xdrEncode(XDR * xdr) const
 {
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    // write size
+    u_long sz = size();
+    if (! xdr_u_long(xdr, &sz) ) return false;
+
+    // write elements
+    for (PltListIterator<T> it(*this); it; ++it) {
+        if (! it->xdrEncode(xdr) ) {
+            // serialization of element failed
+            return false;
+        }
+    }
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline
-KsList<T>::KsList(XDR * xdr, bool & ok)
-: PltList<T>()
+bool
+KsList<T>::xdrDecode(XDR * xdr)
 {
-    ok = xdrDecode(xdr);
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    u_long count;
+    if ( ! xdr_u_long(xdr, &count) ) return false;
+    
+    // flush old elements
+    while (! isEmpty() ) {
+        removeFirst();
+    }
+
+    for ( u_long i=0; i < count; ++i) {
+        bool ok=false;
+        T elem(xdr, ok);
+        if (! ok) return false;
+        if (! addLast(elem) ) return false;
+    } 
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 
+template <class T>
+KsList<T> *
+KsList<T>::xdrNew(XDR * xdr)
+{
+    bool ok=false;
+    KsList<T> * p = new KsList<T>(xdr, ok);
+    if ( !ok && p) {                                   
+        delete p;                                  
+        p = 0;                                     
+    }                                              
+    return p;                                      
+}
 
-
-#endif  // PLT_LIST_INCLUDED
-
-
-
-
-
-
-
-
-
-
-
+//////////////////////////////////////////////////////////////////////
+// EOF ks/list_impl.h

@@ -1,5 +1,6 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list.h,v 1.2 1997-03-12 16:32:26 martin Exp $ */
+#ifndef KS_HANDLE_IMPL_INCLUDED
+#define KS_HANDLE_IMPL_INCLUDED
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -35,68 +36,61 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-#ifndef KS_LIST_INCLUDED
-#define KS_LIST_INCLUDED
 
-#include "plt/list.h"
+//////////////////////////////////////////////////////////////////////
+// ks/handle.h provides memory managing pointer replacements with xdr
+//////////////////////////////////////////////////////////////////////
+
+#include "plt/handle.h"
 #include "ks/xdr.h"
 
-//////////////////////////////////////////////////////////////////////
-// Non-intrusive double linked list node with information type T
-template <class T>
-class KsList 
-: public PltList<T>,
-  public KsXdrAble
-{
-public:
-    KsList();
-    KsList(XDR *, bool &);
+#include "plt/handle_impl.h"
 
-    virtual bool xdrEncode(XDR *) const;
-    virtual bool xdrDecode(XDR *);
-
-    static KsList<T> *xdrNew(XDR *);
-
-private:
-    KsList(const KsList &); // forbidden
-    KsList & operator = (const KsList &); // forbidden
-};
-
-
-//////////////////////////////////////////////////////////////////////
-// IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline
-KsList<T>::KsList()
-: PltList<T>()
+bool
+KsPtrHandle<T>::xdrDecode(XDR *xdr)
 {
+    T * p = T::xdrNew(xdr);
+    if (!p) return false;
+    if (!bindTo(p, KsOsNew) ) {
+        delete p;
+        return false;
+    }
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline
-KsList<T>::KsList(XDR * xdr, bool & ok)
-: PltList<T>()
+KsPtrHandle<T>::KsPtrHandle(XDR * xdr, bool & success)
 {
-    ok = xdrDecode(xdr);
+    T * p = T::xdrNew(xdr);
+    if ( p ) {
+        // Allocation ok, streaming succeeded.
+        // Bind handle and object
+        //
+        success = bindTo(p, PltOsNew);
+    } else {
+        success = false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
 
+template <class T>
+KsPtrHandle<T> *
+KsPtrHandle<T>::xdrNew(XDR *xdr)
+{
+    bool ok;                                         
+    KsPtrHandle<T> * p = new KsPtrHandle<T>(xdr, ok);     
+    if (!ok && p) {                             
+        delete p;                                
+        p = 0;                                   
+    }                                            
+    return p;                                    
+}                                                
 
-
-#endif  // PLT_LIST_INCLUDED
-
-
-
-
-
-
-
-
-
-
-
+//////////////////////////////////////////////////////////////////////
+#endif // PLT_HANDLE_IMPL_INCLUDED

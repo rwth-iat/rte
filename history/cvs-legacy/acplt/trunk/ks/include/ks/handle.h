@@ -223,53 +223,6 @@ KsPtrHandle<T>::xdrEncode(XDR *xdr) const
 
 
 //////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline bool
-KsPtrHandle<T>::xdrDecode(XDR *xdr)
-{
-    T * p = T::xdrNew(xdr);
-    if (!p) return false;
-    if (!bindTo(p, KsOsNew) ) {
-        delete p;
-        return false;
-    }
-    return true;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline
-KsPtrHandle<T>::KsPtrHandle(XDR * xdr, bool & success)
-{
-    T * p = T::xdrNew(xdr);
-    if ( p ) {
-        // Allocation ok, streaming succeeded.
-        // Bind handle and object
-        //
-        success = bindTo(p, PltOsNew);
-    } else {
-        success = false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline KsPtrHandle<T> *
-KsPtrHandle<T>::xdrNew(XDR *xdr)
-{
-    bool ok;                                         
-    KsPtrHandle<T> * p = new KsPtrHandle<T>(xdr, ok);     
-    if (!ok && p) {                             
-        delete p;                                
-        p = 0;                                   
-    }                                            
-    return p;                                    
-}                                                
-
-//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 #if 0 // TODO
 

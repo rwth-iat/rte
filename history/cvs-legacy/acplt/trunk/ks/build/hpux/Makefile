@@ -3,7 +3,7 @@ PLT_DIR = ../../../plt
 
 CXX = g++
 
-CXX_EXTRA_FLAGS = -I../../include -I$(PLT_DIR)/include
+CXX_EXTRA_FLAGS = -I . -I../../include -I$(PLT_DIR)/include -fno-implicit-templates
 
 CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_HPUX=1
 
@@ -15,7 +15,7 @@ CXX_FLAGS = -g -Wall
 #
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = g++ 
+CXX_LINK = perl $(PLTDIR)/build/templ.pl g++ -lstdc++
 
 .SUFFIXES:
 
@@ -28,7 +28,7 @@ CXX_LINK = g++
 	$(CXX_COMPILE) -E > $@ $<
 
 CXX_SOURCES = txdr2.cpp txdr.cpp xdr.cpp string.cpp tregister.cpp\
-	avticket.cpp register.cpp
+	avticket.cpp register.cpp array.cpp tarray.cpp templates.cpp
 
 #xdr.cpp
 # tvalue.cpp value.cpp
@@ -45,13 +45,13 @@ value.s : value.cpp
 tvalue :  tvalue.o value.o
 	$(CXX_LINK) -o $@ $^ $(LIBPLT)
 
-txdr2 :  txdr2.o xdr.o string.o $(LIBPLT)
+txdr2 :  txdr2.o xdr.o string.o array.o  templates.o $(LIBPLT)
 	$(CXX_LINK) -o $@ $^ 
 
-txdr :  txdr.o string.o $(LIBPLT)
+tarray : tarray.o xdr.o array.o templates.o $(LIBPLT)
 	$(CXX_LINK) -o $@ $^
 
-tavticket :  avticket.o $(LIBPLT)
+txdr :  txdr.o string.o $(LIBPLT)
 	$(CXX_LINK) -o $@ $^
 
 tregister :	register.o tregister.o string.o $(LIBPLT)

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list.h,v 1.2 1997-03-12 16:32:26 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.1 1997-03-12 16:27:59 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -34,69 +34,89 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-#ifndef KS_LIST_INCLUDED
-#define KS_LIST_INCLUDED
-
-#include "plt/list.h"
-#include "ks/xdr.h"
 
 //////////////////////////////////////////////////////////////////////
-// Non-intrusive double linked list node with information type T
-template <class T>
-class KsList 
-: public PltList<T>,
-  public KsXdrAble
-{
-public:
-    KsList();
-    KsList(XDR *, bool &);
-
-    virtual bool xdrEncode(XDR *) const;
-    virtual bool xdrDecode(XDR *);
-
-    static KsList<T> *xdrNew(XDR *);
-
-private:
-    KsList(const KsList &); // forbidden
-    KsList & operator = (const KsList &); // forbidden
-};
-
-
+// Author: Martin Kneissl <martin@plt.rwth-aachen.de>
 //////////////////////////////////////////////////////////////////////
-// IMPLEMENTATION
+
+#include "ks/array.h"
+
+#include "plt/array_impl.h"
+
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline
-KsList<T>::KsList()
-: PltList<T>()
+bool
+KsArray<T>::xdrDecode(XDR *xdr)
 {
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    // retrieve size
+    //
+    u_long sz;
+    if (! xdr_u_long(xdr, &sz) ) return false; // failed
+
+    // adjust array size (possibly losing contents)
+    //
+    if (size() != sz) {
+        // allocate sz elements
+        PltArrayHandle<T> ha(new T[sz], PltOsArrayNew);
+        if (!ha) return false; // failed
+        a_array = ha;
+        a_size = sz;
+    }
+    PLT_ASSERT(size() == sz);
+
+    // now deserialize elements
+    //
+    for (size_t i=0; i < a_size; ++i) {
+        if (! a_array[i].xdrDecode(xdr) ) return false; // failed
+    }
+    
+    // success
+    //
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline
-KsList<T>::KsList(XDR * xdr, bool & ok)
-: PltList<T>()
+bool
+KsArray<T>::xdrEncode(XDR *xdrs) const
 {
-    ok = xdrDecode(xdr);
+    PLT_PRECONDITION(xdrs->x_op == XDR_ENCODE);
+    // serialize size
+    //
+    u_long sz = a_size;
+    if (! xdr_u_long(xdrs, &sz)) return false; // fail
+
+    // serialize elements
+    //
+    for (size_t i = 0; i < a_size; ++i) {
+        if (! a_array[i].xdrEncode(xdrs)) return false; // fail
+    }
+
+    // success
+    //
+    return true;
 }
+            
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+KsArray<T> *
+KsArray<T>::xdrNew(XDR *xdrs)
+{
+    PLT_PRECONDITION(xdrs->x_op == XDR_DECODE);
+    bool ok;                                         
+    KsArray<T> * p = new KsArray<T>(xdrs, ok);     
+    if ( !ok && p) {                             
+        delete p;                                
+        p = 0;                                   
+    }                                            
+    return p;                                    
+}                                                
 
 //////////////////////////////////////////////////////////////////////
 
-
-
-#endif  // PLT_LIST_INCLUDED
-
-
-
-
-
-
-
-
-
-
+// ks/iarray.h
 
