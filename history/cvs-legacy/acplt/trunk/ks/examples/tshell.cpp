@@ -11,11 +11,16 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#include <ctype.h>
 #include <iostream.h>
+#include <iomanip.h>
 #include <plt/debug.h>
 #include <plt/list.h>
 #include <plt/hashtable.h>
+#include <plt/dictionary.h>
+#include <plt/key.h>
 #include "ks/commobject.h"
+#include "ks/client.h"
 #include "ks/path.h"
 
 
@@ -39,11 +44,26 @@
 
 //////////////////////////////////////////////////////////////////////
 
-typedef void (*ExecuteFunction)();
+typedef void (*ExecuteFunction)(PltList<PltString> &args);
 PltHashTable<PltString,ExecuteFunction> dispatcher_table;
 
 PltString host_name, server_name, current_path;
 KscDomain *current_domain = 0;
+
+/////////////////////////////////////////////////////////////////////////////
+
+class PltIntKey
+{
+public:
+    PltIntKey(KS_RESULT key) : k(key) {}
+
+    unsigned long hash() const { return k; }
+    bool operator == (const PltIntKey &rhs) const { return k == rhs.k; }
+
+    KS_RESULT k;
+};
+
+PltHashTable< PltIntKey, PltString > error_table;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -64,38 +84,61 @@ check_pointer(void *p)
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
+PltString
+get_error_str(KS_RESULT err) 
+{
+    PltString str;
+
+    if( error_table.query(err, str) ) {
+        return str;
+    } else {
+        return PltString("unknown error code");
+    }
+}
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 void
-execute_nothing()
+execute_nothing(PltList<PltString> &)
 {}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 void 
-execute_open()
+execute_open(PltList<PltString> &args)
 {
     if(current_domain) {
         delete current_domain;
     }
     
-    char buf[256];
-    cin >> buf;
+    if( args.size() != 2 ) {
+        err_msg("Syntax: open host server");
+        return;
+    }
+
     PltString temp("//");
-    temp += buf;
+    temp += args.removeFirst();
     temp += "/";
-    cin >> buf;
-    temp += buf;
+    temp += args.removeFirst();
     temp += "/";
-    
+
     current_domain = new KscDomain(temp);
     
     check_pointer(current_domain);
+
+    if( !current_domain->hasValidPath() ) {
+        err_msg("Syntax: open host server");
+        return;
+    }
     
     if(!current_domain->getProjPropsUpdate()) {
-        err_msg("cannot open root domain");
+        PltString msg("cannot open root domain - ",
+                      get_error_str(current_domain->getLastResult()));
+        err_msg(msg);
         delete current_domain;
         current_domain = 0;
     } else {
@@ -107,17 +150,19 @@ execute_open()
 //////////////////////////////////////////////////////////////////////
 
 void 
-execute_cd() 
+execute_cd(PltList<PltString> &args) 
 {
     if(!current_domain) {
         err_msg("first open a server");
         return;
     }
 
-    char buf[256];
-    cin >> buf;
-
-    PltString cdTo(buf);
+    if( args.size() != 1 ) {
+        err_msg("Syntax: cd <relative path>");
+        return;
+    }
+    
+    PltString cdTo = args.removeFirst();
 
     if( cdTo == ".." ) {
         // handle this case special
@@ -266,18 +311,21 @@ print_pp(KsProjPropsHandle hpp)
                 err_msg("internal type error");
                 return;
             }
-            cout << "VAR\t" 
-                 << sz_access_modes[vpp->access_mode]
-                 << sz_var_type(vpp->type)
-                 << vpp->identifier 
+            cout << setw(8) << "VAR" 
+                 << setw(15) << vpp->identifier       
+                 << setw(8) << sz_access_modes[vpp->access_mode]
+                 << setw(10) << sz_var_type(vpp->type)
+                 << vpp->comment
                  << endl;
         }
         break;
     case KS_OT_DOMAIN:
         {
-            cout << "DOMAIN\t" 
-                 << sz_access_modes[hpp->access_mode]
-                 << hpp->identifier << endl;
+            cout << setw(8) << "DOMAIN" 
+                 << setw(15) << hpp->identifier 
+                 << setw(8) << sz_access_modes[hpp->access_mode]
+                 << hpp->comment
+                 << endl;
         }
         break;
     default:
@@ -288,17 +336,34 @@ print_pp(KsProjPropsHandle hpp)
 }
  
 void
-execute_ls()
+execute_ls( PltList<PltString> &args )
 {
     if(!current_domain) {
         err_msg("no current directory - first open a server");
         return;
     }
 
-    KscChildIterator *child_it = 
-        current_domain->newChildIterator(KS_OT_ANY);
+    KscChildIterator *child_it;
 
-    check_pointer(child_it);
+    if( args.isEmpty() ) {
+        child_it = 
+            current_domain->newChildIterator(KS_OT_ANY);
+    } else {
+        child_it = 
+            current_domain->newChildIterator(KS_OT_ANY,
+                                             args.removeFirst());
+    }
+
+    if( !child_it ) {
+        if( current_domain->getLastResult() == KS_ERR_OK ) {
+            cout << "Empty domain" << endl;
+        } else {
+            cout << "Communication error : " 
+                 << get_error_str(current_domain->getLastResult())
+                 << endl;
+        }
+        return;
+    }
 
     while(*child_it) {
         print_pp(**child_it);
@@ -403,18 +468,24 @@ print_value(KsValueHandle hv) {
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
 void
-execute_get_var()
+execute_get_var( PltList<PltString> &args )
 {
-    char buf[256];
-    cin >> buf;
-    PltString var_name(buf);
+    if( args.size() != 1 ) {
+        err_msg("Syntax: getvar <name>");
+        return;
+    }
+
+    PltString var_name = args.removeFirst();
 
     if( !current_domain ) {
         err_msg("first open a server");
         return;
     }
 
+#if 0
     // check if child exists
     //
     KscChildIterator *pit = 
@@ -438,13 +509,14 @@ execute_get_var()
         err_msg("var does not exist");
         return;
     }
+#endif
 
     PltString var_path(current_domain->getFullPath());
     var_path += "/";
     var_path += var_name;
 
     KscVariable var(var_path);
-
+#if 0
     if(!var.getProjPropsUpdate()) {
         err_msg("cannot read PP update");
         return;
@@ -454,13 +526,40 @@ execute_get_var()
         err_msg("var is not readable");
         return;
     }
-
+#endif
     if(!var.getUpdate()) {
-        err_msg("cannot read CP update");
+        PltString msg("cannot read CP update - ",
+                      get_error_str(var.getLastResult()));
+        err_msg(msg);
         return;
     }
 
     print_value(var.getValue());
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+void
+execute_get_pp( PltList<PltString> &args )
+{
+    if( !current_domain ) {
+        err_msg("first open a server");
+        return;
+    }
+
+    if( args.size() == 0 ) {
+        if( current_domain->getProjPropsUpdate() ) {
+            KsDomainProjProps pp(*(current_domain->getProjProps()));
+            print_pp( KsProjPropsHandle(&pp, KsOsUnmanaged) );
+        } else {
+            err_msg("Cannot read projected props");
+        }
+    } else if( args.size() == 1 ) {
+        execute_ls(args);
+    } else {
+        err_msg("Syntax: get_pp\n        get_pp name");
+    }
 }
 
     
@@ -474,9 +573,54 @@ init_dispatcher_table()
     dispatcher_table.add("ls", &execute_ls);
     dispatcher_table.add("cd", &execute_cd);
     dispatcher_table.add("getvar", &execute_get_var);
+    dispatcher_table.add("getpp", &execute_get_pp);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void
+init_error_table() 
+{
+    error_table.add(  KS_ERR_OK, "ok" );
+    error_table.add(  KS_ERR_GENERIC, "generic" );
+    error_table.add(  KS_ERR_BADAUTH, "bad auth" );
+    error_table.add(  KS_ERR_UNKNOWNAUTH, "unknown auth" );
+    error_table.add(  KS_ERR_NOTIMPLEMENTED, "not implemented" );
+    error_table.add(  KS_ERR_BADPARAM, "bad param" );
+    error_table.add(  KS_ERR_BADNAME, "bad name" );
+    error_table.add(  KS_ERR_BADPATH, "bad path" );
+    error_table.add(  KS_ERR_BADMASK, "bad mask" );
+    error_table.add(  KS_ERR_NOACCESS, "no access" );
+    error_table.add(  KS_ERR_BADTYPE, "bad type" );
+    error_table.add(  KS_ERR_CANTSYNC, "cannot sync" );
+    error_table.add(  KS_ERR_NOREMOTE, "no remote" );
+    error_table.add(  KS_ERR_SERVERUNKNOWN, "server unknown" );
+    error_table.add(  KS_ERR_MALFORMEDPATH, "malformed path" );
+    error_table.add(  KS_ERR_NETWORKERROR, "network error" );
+    error_table.add(  KS_ERR_TYPEMISMATCH, "type mismatch" );
+    error_table.add(  KS_ERR_HOSTUNKNOWN, "host unknown" );
+    error_table.add(  KS_ERR_CANTCONTACT, "cannot contact" );
+    error_table.add(  KS_ERR_TIMEOUT, "timed out" );
+    error_table.add(  KS_ERR_NOMANAGER, "no manager" );
 }
 
 //////////////////////////////////////////////////////////////////////
+
+void
+split_line(char *line, PltList<PltString> &items)
+{
+    char *curr = line;
+    char *last_break = line;
+
+    while( *curr ) {
+        while( *curr && !isspace(*curr) ) curr++;
+        items.addLast(PltString(last_break, curr - last_break));
+        while( isspace(*curr) ) curr++;
+        last_break = curr;
+    }
+}
+        
+/////////////////////////////////////////////////////////////////////////////
 
 void 
 start_shell()
@@ -488,26 +632,32 @@ start_shell()
 
     while(fContinue) {
         if(current_domain) {
-            cout << current_domain->getName() << ">";
+            cout << current_domain->getPathAndName() << ">";
         } else {
             cout << "(nowhere)>";
         }
-        cin >> buf;
-        
-        PltString cmd(buf);
 
-        if(cmd == "quit") {
-            fContinue = false;
-        } else {
-            ExecuteFunction func;
-            if(dispatcher_table.query(cmd,func)) {
-                func();
+        cin.getline(buf, sizeof(buf));
+        
+        PltList<PltString> args;
+
+        split_line(buf, args);
+
+        if( !args.isEmpty() ) {
+
+            PltString cmd = args.removeFirst();
+
+            if(cmd == "quit") {
+                fContinue = false;
             } else {
-                err_msg("unknown command");
+                ExecuteFunction func;
+                if(dispatcher_table.query(cmd,func)) {
+                    func(args);
+                } else {
+                    err_msg("unknown command");
+                }
             }
         }
-
-
     }
 }
  
@@ -516,6 +666,11 @@ start_shell()
 int 
 main(int, char **)
 {
+    KscClient::getClient()->
+        setTimeouts(PltTime(60,0), PltTime(60,0), 1);
+
+    init_error_table();
+
     // enter main loop
     //
     start_shell();

@@ -84,8 +84,9 @@ static inline size_t cprimes()
 inline size_t
 PltHashTable_base::collidx(size_t i, size_t j) const
     // collision resolving algorithm
+    // A few steps of quadratic probe followed by linear steps.
 {
-    const size_t k = i+j;
+    const size_t k = (j < 12) ? i+j : i+1;
     return k % a_capacity;
 }
 
@@ -123,7 +124,7 @@ PltHashTable_base::~PltHashTable_base()
 
 /////////////////////////////////////////////////////////////////////////////
 
-void
+bool
 PltHashTable_base::reset(size_t mincap)
 {
     PLT_PRECONDITION( mincap > 0 );
@@ -138,9 +139,11 @@ PltHashTable_base::reset(size_t mincap)
     a_used = 0;
     a_deleted = 0;
 
-    changeCapacity(mincap);
+    bool ok = changeCapacity(mincap);
 
     PLT_CHECK_INVARIANT();
+
+    return ok;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -273,9 +276,11 @@ PltHashTable_base::locate(const void * key) const
     PLT_PRECONDITION(a_used < a_capacity);
     size_t loc = a_capacity;
     size_t i = keyHash(key);
-    for (i = collidx(i,0); 
+    size_t j = 1;
+
+    for (i = collidx(i, 0); 
          loc >= a_capacity && a_table[i]; 
-         i = collidx(i,1)) 
+         i = collidx(i,j), j+=2) 
         {
             if (   a_table[i] != deletedAssoc
                 && keyEqual( a_table[i]->key(), key ) ) {
@@ -302,8 +307,11 @@ PltHashTable_base::insert(PltAssoc_ * p)
     size_t deleted = a_capacity; // first matching deleted if any
     size_t ins;                  // insertion point
     size_t i = keyHash(p->key());
-//    size_t j = 0;
-    for (i = collidx(i,0); !dupe && a_table[i]; i = collidx(i,1)) {
+    size_t j = 1;
+
+    for (i = collidx(i,0); 
+         !dupe && a_table[i]; 
+         i = collidx(i,j), j+=2) {
         if ( a_table[i] == deletedAssoc ) {
             // deleted entry while inserting
             deleted = i;

@@ -265,11 +265,13 @@ void operator delete(void * p) {
         if (PltDebugNewTracker::refcount>0) {
             PLT_ASSERT(pheader->magic == magic);
             size_t sz = pheader->size;
+#if 0
             PLT_ASSERT( PltDebugNewTracker::refcount == 0
                        || (      PltDebugNewTracker::deleted + sz
                               <= PltDebugNewTracker::newed
                            &&    PltDebugNewTracker::deletecount 
                               <  PltDebugNewTracker::newcount));
+#endif
             ++PltDebugNewTracker::deletecount;
             PltDebugNewTracker::deleted += sz;
             free(pheader);

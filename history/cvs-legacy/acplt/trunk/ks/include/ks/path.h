@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_PATH_INCLUDED
 #define KS_PATH_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.5 1997-05-20 15:20:58 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.6 1998-07-30 10:24:29 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -72,6 +72,8 @@ public:
     operator PltString () const;
     KsPath & operator = (const KsPath &);
 
+    void toUpper();
+
     KsPath resolve(const KsPath & rel);
     static void resolvePaths(const PltArray<KsString> & ids,
                              PltArray<KsPath> &paths,
@@ -133,6 +135,14 @@ KsPath::isSingle() const
 }
 
 //////////////////////////////////////////////////////////////////////
+
+inline void
+KsPath::toUpper()
+{
+    _str.toUpper();
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 #if 0
 inline 

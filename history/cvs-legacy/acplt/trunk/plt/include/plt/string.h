@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.11 1997-09-13 08:19:45 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.12 1998-07-30 10:22:42 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -83,7 +83,10 @@ public:
     // modifiers
     char & operator[] (size_t);
     PltString & operator += ( const PltString & );
-    
+
+    void toUpper();
+    PltString toUpper() const;
+
     // friends (accessors)
     friend bool operator == (const PltString &, const char *);
     friend bool operator == (const PltString &, const PltString &);
@@ -96,6 +99,9 @@ public:
 
 
 protected:
+    // takes ownership of p, 
+    // p has to have been allocated by new
+    //
     PltString(size_t sz, char *p);
 
 

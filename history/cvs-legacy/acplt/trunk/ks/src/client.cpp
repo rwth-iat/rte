@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.33 1998-07-15 10:04:08 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.34 1998-07-30 10:24:30 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -94,10 +94,18 @@ _ksc_extractHostAndServer(KsString host_and_server,
     // the host name (DNS) and the server name where the communication
     // object is located at.
     //
+#if PLT_COMPILER_MSVC
+    if ( (host_and_server.len() < 5) ||
+	 (host_and_server.operator[](0) != '/') || 
+         (host_and_server.operator[](1) != '/') ) {
+	return KS_ERR_MALFORMEDPATH;
+    }
+#else
     if ( (host_and_server.len() < 5) ||
 	 (host_and_server[0] != '/') || (host_and_server[1] != '/') ) {
 	return KS_ERR_MALFORMEDPATH;
     }
+#endif
 
     //
     // Now search the separating slash between the host and server name

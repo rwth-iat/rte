@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.17 1998-04-03 13:52:50 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.18 1998-07-30 10:22:43 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,6 +40,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "plt/string.h"
+#include <ctype.h>
+
 #if PLT_SYSTEM_NT
 // Thats ridiculous:
 #include <strstrea.h>
@@ -134,12 +136,18 @@ PltString::~PltString()
 PltString::PltString(size_t sz, char *s)
 {
     PLT_PRECONDITION(s);
-	p = new srep;
+
+    p = new srep;
+
     if (p) {
         p->len = sz;
         p->s = s;
         (p->s)[sz]=0;
+    } else {
+        // free memory
+        delete [] s;
     }
+
     PLT_CHECK_INVARIANT(); // p->len is temporarily != strlen(p->s)
 }
 
@@ -326,6 +334,41 @@ PltString::PltString(const char *p1, const char *p2)
     PLT_CHECK_INVARIANT(); // p->len is temporarily != strlen(p->s)
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
+void
+PltString::toUpper()
+{
+    cloneIfNeeded();
+
+    if(p) {
+        for(size_t i = 0; i < len(); i++) {
+            (p->s)[i] = toupper( (p->s)[i] );
+        }
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+PltString
+PltString::toUpper() const
+{
+    if(p) {
+        char *upper = new char[p->len+1];
+        if(upper) {
+            for(size_t i = 0; i < p->len; i++) {
+                upper[i] = toupper( (p->s)[i] );
+            }
+            upper[p->len] = 0;
+            return PltString(p->len, upper);
+        }
+    }
+
+    // memory allocation failed
+    //
+    return PltString();
+}
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -359,13 +402,20 @@ PltString::cloneIfNeeded()
 unsigned long
 PltString::hash() const
 {
-    // TODO: Better (and faster) hash function
     unsigned long res = 0;
-    if ( ok() ) {
-        for (size_t i = 0; i < len(); ++i) {
-            res += (*this)[i];
+    unsigned long g;
+    
+    if(p) {
+        const char *s = p->s;
+
+        while( *s ) {
+            res = (res << 4) + *(s++);
+            if( (g = res & 0xf0000000) ) {
+                res = (res ^ (g >> 24)) ^ g;
+            }
         }
     }
+
     return res;
 }
 

@@ -2,7 +2,7 @@
 #ifndef PLT_HASHTABLE_IMPL_INCLUDED
 #define PLT_HASHTABLE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.8 1998-03-06 13:22:32 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.9 1998-07-30 10:22:42 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -59,8 +59,21 @@ PltHashTable_<K,V>::~PltHashTable_()
         }
     }
 }
-        
 
+/////////////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+bool
+PltHashTable_<K,V>::reset(size_t mincap) 
+{        
+    for (size_t i = 0; i < a_capacity; ++i) {
+        if ( usedSlot(a_table[i]) ) {
+                delete (PltAssoc<K,V> *) a_table[i];
+        }
+    }
+
+    return PltHashTable_base::reset(mincap);
+}
 
 
 /////////////////////////////////////////////////////////////////////////////
