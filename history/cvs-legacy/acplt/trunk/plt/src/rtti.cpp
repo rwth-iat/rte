@@ -8,7 +8,7 @@
 #include <plt/debug.h>
 #include <plt/rtti.hpp>
 
-
+#if PLT_SIMULATE_RTTI
 //////////////////////////////////////////////////////////////////////
 
 PltRTTI::PltRTTI(const char *name, const PltRTTI* bases[])
@@ -32,3 +32,4 @@ PltRTTI::isBaseOf(const PltRTTI *pd) const
     return false;
 }
     
+#endif
