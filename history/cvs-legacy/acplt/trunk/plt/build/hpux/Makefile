@@ -24,9 +24,10 @@ VPATH = ../../tests ../../src
 CXX_SOURCES = \
 	rtti.cpp trtti.cpp \
 	list.cpp tlist.cpp \
-	priorityqueue.cpp ipriorityqueue.cpp tpriorityqueue.cpp
+	priorityqueue.cpp ipriorityqueue.cpp tpriorityqueue.cpp \
+	string.cpp tstring.cpp
 
-all : trtti tlist tpriorityqueue
+all : trtti tlist tpriorityqueue tstring
 
 tlist : tlist.o list.o
 	$(CXX_LINK) -o $@ $^
@@ -35,6 +36,9 @@ trtti :	rtti.o trtti.o
 	$(CXX_LINK) -o $@ $^
 
 tpriorityqueue : ipriorityqueue.o tpriorityqueue.o
+	$(CXX_LINK) -o $@ $^
+
+tstring : string.o tstring.o
 	$(CXX_LINK) -o $@ $^
 
 trtti.i : trtti.cpp ../../include/plt/rtti.hpp
