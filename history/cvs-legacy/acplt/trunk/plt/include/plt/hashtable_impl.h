@@ -2,7 +2,7 @@
 #ifndef PLT_HASHTABLE_IMPL_INCLUDED
 #define PLT_HASHTABLE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.7 1997-09-11 15:29:13 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.8 1998-03-06 13:22:32 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -155,4 +155,6 @@ PltHashTable_<K,V>::newIterator() const
 #endif //PLT_HASHTABLE_IMPL_INCLUDED
 
 // EOF plt/hashtable_impl.h
+
+
 

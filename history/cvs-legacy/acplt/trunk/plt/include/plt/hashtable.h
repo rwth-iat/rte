@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.12 1997-08-13 11:35:11 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.13 1998-03-06 13:22:32 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -141,6 +141,7 @@ protected:
     size_t collidx(size_t i, size_t j) const;
 
     // modifiers
+    void reset(size_t mincap);
     bool insert(PltAssoc_ *);
     bool changeCapacity(size_t mincap);
 
@@ -172,6 +173,7 @@ public:
     virtual bool query(const K&, V&) const;
     
     // modifiers
+    void reset(size_t mincap = 11);
     virtual bool add(const K&, const V&);
 
     virtual bool update(const K& key, 
@@ -324,6 +326,15 @@ PltHashTable_<K,V>::PltHashTable_(size_t mincap,
 {
 }
 #endif
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline void
+PltHashTable_<K,V>::reset(size_t mincap) 
+{
+  PltHashTable_base::reset(mincap);
+}
+
 //////////////////////////////////////////////////////////////////////
 
 template <class K, class V>

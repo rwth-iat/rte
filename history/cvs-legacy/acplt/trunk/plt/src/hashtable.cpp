@@ -112,7 +112,6 @@ PltHashTable_base::PltHashTable_base(size_t mincap,
     PLT_CHECK_INVARIANT();
 }
 
-
 //////////////////////////////////////////////////////////////////////
 
 PltHashTable_base::~PltHashTable_base()
@@ -120,6 +119,28 @@ PltHashTable_base::~PltHashTable_base()
     if (a_table) {
         delete a_table;
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void
+PltHashTable_base::reset(size_t mincap)
+{
+    PLT_PRECONDITION( mincap > 0 );
+
+    if (a_table) {
+        delete a_table;
+        a_table = 0;
+    }
+
+    a_capacity = 0;
+    a_minCapacity = mincap;
+    a_used = 0;
+    a_deleted = 0;
+
+    changeCapacity(mincap);
+
+    PLT_CHECK_INVARIANT();
 }
 
 //////////////////////////////////////////////////////////////////////
