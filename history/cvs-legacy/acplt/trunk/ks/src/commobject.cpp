@@ -289,7 +289,8 @@ KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
 
     // request service
     //
-    bool ok = myServer->getPP(params, result);
+    bool ok = myServer->getPP(getNegotiator(),
+                              params, result);
 
     if( !(ok && result.result == KS_ERR_OK) ) {
         return false;
@@ -454,7 +455,8 @@ KscVariable::getProjPropsUpdate()
     params.type_mask = KS_OT_VARIABLE;
     params.name_mask = KsString(path.getNameOnly());
 
-    bool ok = myServer->getPP(params, result);
+    bool ok = myServer->getPP(getNegotiator(),
+                              params, result);
 
     if(ok &&
        result.result == KS_ERR_OK &&
