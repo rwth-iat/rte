@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.2 1999-07-26 16:14:13 dirk Exp $
+*   $Id: ov_database.c,v 1.3 1999-07-27 08:07:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -75,20 +75,24 @@
 OV_DLLVAREXPORT OV_DATABASE_INFO *pdb = NULL;
 
 #if OV_SYSTEM_UNIX
-static int		fd;
+static int			fd;
 #endif
 
 #if OV_SYSTEM_NT
-static HANDLE	hfile;
-static HANDLE	hmap;
+static HANDLE		hfile;
+static HANDLE		hmap;
 #endif
 
 #if OV_SYSTEM_RMOS
-FILE			*file;
+FILE				*file;
 #endif
 
 #if OV_SYSTEM_OPENVMS
-unsigned short	channel;
+unsigned short		channel;
+#endif
+
+#if OV_SYSTEM_MC164
+OV_DATABASE_INFO	*pdbmem;
 #endif
 
 /*
