@@ -49,11 +49,14 @@ do {
     open (MSGS, "$link 2>&1 |") || die('cant start linker');
     while (<MSGS>) {
         print STDERR $_;
-	if (!/In function.*:$/ && /(\w+<\s*\w+.*>)::~?\w+.*\(.*\)/) {
+	if (!/In function.*:$/) {
+          if (/(\w+<\s*\w+.*>)::~?\w+.*\(.*\)/
+           || /(\w+<\s*\w+.*>).*\s+virtual table/) {
 	    # member
 	    @new{$1} = 1;
 	    #print STDERR ".";
 	    $needanother = 1;
+            }
 	} else {
 #  	    print STDERR $_ unless (/In function.*:$/);
         }
