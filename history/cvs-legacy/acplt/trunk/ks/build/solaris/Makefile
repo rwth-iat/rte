@@ -9,10 +9,10 @@ PLATFORM = solaris
 
 include ../unix.mk
 
-tfoxia$(EXE) : tfoxia$(O) tfoxia1$(O) $(LIBKS)
-	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) -lfox -lnsl $(CXX_LIBS)
+#tfoxia$(EXE) : tfoxia$(O) tfoxia1$(O) $(LIBKS)
+#	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) -lfox -lnsl $(CXX_LIBS)
 
-depend: tfoxia.cpp tfoxia1.cpp
+#depend: tfoxia.cpp tfoxia1.cpp
 
 
 
