@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.16 1997-08-18 13:41:41 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.17 1997-09-02 15:09:42 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -249,8 +249,14 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
         // This is just here for the compliance with ONC/RPC rules. If
         // someone pings us, we send back a void reply.
         //
+#if PLT_DEBUG
+        cerr << "Pinged..." << endl;
+#endif
         svc_sendreply(transport, (xdrproc_t) xdr_void, 0); // FIXME ??
     } else {
+        //
+        // A real request
+        //
         XDR *xdr = KsServerBase::the_server->getXdrForTransport(transport);
 
         // get a ticket
@@ -273,14 +279,17 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
             //
             // Save the socket address of the sender
             //
-            struct sockaddr_in *sin 
-                = (struct sockaddr_in *) &pTicket->_saddr;
-            *sin = transport->xp_raddr;
+
+            bool accept = 
+                pTicket->setSenderAddress((sockaddr *) & transport->xp_raddr);
+            if (!accept) {
+                // TODO: may drop connection
+            }
+
 #if PLT_DEBUG
             char *from =  inet_ntoa(pTicket->getSenderInAddr());
             cerr << "from: " << from << endl;
 #endif
-
             //
             // We're now ready to serve the service...
             //
@@ -292,7 +301,7 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
         if (pTicket && pTicket != KsAvTicket::emergencyTicket()) {
             delete pTicket;
         }
-    }
+    } // if (pinged) else
 }
 
 
