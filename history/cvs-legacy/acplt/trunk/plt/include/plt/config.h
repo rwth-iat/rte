@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.20 1999-01-12 16:26:02 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.21 1999-01-29 12:47:30 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
@@ -50,12 +50,24 @@
 #define vax 0
 #endif
 
+#ifndef PLT_SYSTEM_LINUX
+#define PLT_SYSTEM_LINUX 0
+#endif
+
 #ifndef PLT_SYSTEM_HPUX
 #define PLT_SYSTEM_HPUX 0
+#else
+#ifndef PLT_SYSTEM_HPUX_MAJOR
+#define PLT_SYSTEM_HPUX_MAJOR 10
+#endif
 #endif
 
 #ifndef PLT_SYSTEM_IRIX
 #define PLT_SYSTEM_IRIX 0
+#endif
+
+#ifndef PLT_SYSTEM_SOLARIS
+#define PLT_SYSTEM_SOLARIS 0
 #endif
 
 #ifndef PLT_SYSTEM_NT
