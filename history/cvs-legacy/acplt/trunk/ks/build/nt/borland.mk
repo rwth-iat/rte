@@ -49,6 +49,24 @@ all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
 !
 
+histparams.obj: $(SRCDIR)histparams.cpp
+	@echo Compiling histparams.cpp with -Vs
+	@$(CXX) @&&!
+		-Jgx -Vs $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)histparams.cpp
+!
+
+history.obj: $(SRCDIR)history.cpp
+	@echo Compiling history.cpp with -Vs
+	@$(CXX) @&&!
+		-Jgx -Vs $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)history.cpp
+!
+
+histdomain.obj: $(SRCDIR)histdomain.cpp
+	@echo Compiling histdomain.cpp with -Vs
+	@$(CXX) @&&!
+		-Jgx -Vs $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)histdomain.cpp
+!
+
 {$(EXAMPLESSRCDIR)}.cpp{}.obj:
 	@echo Compiling $<
 	@$(CXX) @&&!
