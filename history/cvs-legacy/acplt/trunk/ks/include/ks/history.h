@@ -1,10 +1,9 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/include/ks/history.h,v 1.5 1999-01-29 12:41:05 harald Exp $ */
 #ifndef KS_HISTORY_INCLUDED
 #define KS_HISTORY_INCLUDED
-
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -54,8 +53,7 @@ class KscHistory
 public:
     KscHistory(const char *object_path);
 
-    // TODO: Change typecode to a more fitting one
-    KS_OBJ_TYPE typeCode() const { return KS_OT_DOMAIN; }
+    KS_OBJ_TYPE typeCode() const { return KS_OT_HISTORY; }
 
     bool setProjProps(KsProjPropsHandle) { return true; }
     const KsProjProps_THISTYPE *getProjProps() const;
@@ -167,9 +165,6 @@ KscHistory::setMaxEntries(u_long max)
     max_entries = max;
 }
 
-/////////////////////////////////////////////////////////////////////////////
 
 #endif // KS_HISTORY_INCLUDED
-
-
-
+// End of history.h
