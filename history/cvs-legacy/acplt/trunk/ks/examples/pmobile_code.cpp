@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.8 1997-09-15 19:42:48 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.9 1998-01-12 07:46:06 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,6 +42,7 @@
 
 #include <stdlib.h>
 #include <iostream.h>
+#include <iomanip.h>
 
 #if PLT_SYSTEM_NT
 #include <strstrea.h>
@@ -247,7 +248,9 @@ void keepSpinning(const PltArray<PltString> & names,
         }
         PltTime start(PltTime::now());
         if ( !ppkg->getUpdate() ) {
-            ls << "Oops: couldn't update the package.";
+            ls << "Oops: couldn't update the package, reason 0x"
+	       << hex << setfill('0') << setw(4)
+	       << ppkg->getLastResult() << dec;
             ls.error();
         }
         PltTime elapsed = PltTime::now() - start;
