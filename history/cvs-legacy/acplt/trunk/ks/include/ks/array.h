@@ -51,8 +51,8 @@ class KsArray
   public KsXdrAble
 {
  public:
-    PltArray(size_t size = 0); // array size          // [1]
-    PltArray(size_t size,      // array size 
+    KsArray(size_t size = 0); // array size          // [1]
+    KsArray(size_t size,      // array size 
              T * p,            // address of first element
              enum PltOwnership);                      // [1]
     
