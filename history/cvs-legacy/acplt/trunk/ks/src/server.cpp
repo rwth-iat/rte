@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.18 1999-09-16 10:54:50 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.19 2003-10-13 12:12:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -30,55 +30,276 @@
  * <harald@plt.rwth-aachen.de> <martin@plt.rwth-aachen.de>
  */
 
-
 #include "ks/server.h"
+#include "ks/serverconnection.h"
 #include "ks/register.h"
-#include "ks/svrrpcctx.h"
+#include "ks/event.h"
 #include "plt/log.h"
 #if !PLT_SYSTEM_NT
 #include <sys/socket.h>
 #endif
 
 
+#define DEBUG_REG 0
+
+
 // ---------------------------------------------------------------------------
-// The purpose of the following definition is to provide a link-time check
-// which makes sure that both the ACPLT/KS server and the libkssvr were
-// compiled with either PLT_USE_BUFFERED_STREAMS enabled or disabled, but not
-// one with buffering enabled and the other one without.
 //
-#if PLT_USE_BUFFERED_STREAMS
-void *This_libKssvr_Was_Compiled_Without_PLT_USE_BUFFERED_STREAMS;
-#else
-void *This_libKssvr_Was_Compiled_With_PLT_USE_BUFFERED_STREAMS;
+#define MIN_TTL 10 /* Minimum TimeToLive of a server registration */
+#define MGR_TIMEOUT 2 /* Timeout when communicating with KS Manager */
+
+// ---------------------------------------------------------------------------
+// Non-blocking, buffered Manager registration stuff... This is specific to
+// this class, so it's not externally visible outside of this source file.
+//
+class KsManagerRegistration : KsServerConnection, KsTimerEvent {
+public:
+    KsManagerRegistration(u_long ttl, int port);
+    virtual ~KsManagerRegistration();
+
+    void registerServer();
+    void unregisterServer();
+
+    virtual void async_attention(KsServerConnectionOperations op);
+    virtual void trigger();
+
+protected:
+    bool sendRegistration();
+    bool sendUnregistration();
+
+    u_long _ttl;
+    int _port;
+    bool _pendingOperationIsRegistration;
+};
+
+
+// ---------------------------------------------------------------------------
+// Create a Connection object for the registration of this server with the
+// local KS Manager.
+//
+KsManagerRegistration::KsManagerRegistration(u_long ttl, int port)
+    : KsServerConnection("127.0.0.1"),
+      KsTimerEvent(KsTime::now()),
+      _ttl(ttl),
+      _port(port),
+      _pendingOperationIsRegistration(false)
+{
+    setTimeouts(MGR_TIMEOUT, MGR_TIMEOUT); // connection timeout, call timeout
+} // KsManagerRegistration::KsManagerRegistration
+
+
+// ---------------------------------------------------------------------------
+// Remove the registration if not done already.
+//
+KsManagerRegistration::~KsManagerRegistration()
+{
+    KsServerBase::getServerObject().removeTimerEvent(this);
+} // KsManagerRegistration::~KsManagerRegistration
+
+
+// ---------------------------------------------------------------------------
+void
+KsManagerRegistration::registerServer()
+{
+    //
+    // only do or renew the registration, if the server is still running...
+    //
+    if ( !KsServerBase::getServerObject().isGoingDown() ) {
+	switch ( getState() ) {
+	    case ISC_STATE_OPEN:
+		close();
+	    case ISC_STATE_CLOSED:
+		_pendingOperationIsRegistration = true;
+		if ( !open() ) {
+		    PltLog::Error("KsServer: can not open registration connection to ACPLT/KS Manager.");
+		}
+		break;
+	    case ISC_STATE_BUSY:
+		// do nothing here and do *not* queue the request
+		break;
+	}
+    }
+} // KsManagerRegistration::registerServer
+
+
+// ---------------------------------------------------------------------------
+// Unregister this KS server with the local ACPLT/KS Manager. In contrast to
+// the registerServer() method, this method is *blocking*. This way we ensure
+// that deregistration can successfull completed before shutting down the
+// complete process.
+//
+void
+KsManagerRegistration::unregisterServer()
+{
+#if DEBUG_REG
+    PltLog::Debug("Unregistering...");
 #endif
+    //
+    // remove any pending reregistration event (that is, us) from the
+    // server's timer event queue.
+    //
+    KsServerBase::getServerObject().removeTimerEvent(this);
+    //
+    // If there is an outstanding call or connection opening, then abort
+    // it immediately before we proceed to deregistration.
+    //
+    switch ( getState() ) {
+	case ISC_STATE_OPEN:
+	case ISC_STATE_BUSY:
+	    close();
+	case ISC_STATE_CLOSED:
+	    _pendingOperationIsRegistration = false;
+	    if ( !open() ) {
+		PltLog::Error("KsServer: can not open unregistration connection to ACPLT/KS Manager.");
+	    }
+	    break;
+    }
+    //
+    // Since the server is shutdown but the deregistration process is
+    // continuing in the *background*, we need to give IO some spare cycles
+    // so the communication with the KS Manager can happen. The
+    // servePendingEvents() method of the connection manager returns not
+    // later than the timeout given, but also immediately after some
+    // connection has become active the one way or the other. We use this
+    // behaviour to terminate the loop after the deregistration was
+    // completed (if the timeout has not yet been reached).
+    //
+    KsTime slot(1);
+    KsTime deadline(KsTime::now(2 * MGR_TIMEOUT));
+    do {
+	KsConnectionManager::getConnectionManagerObject()->
+	    servePendingEvents(slot);
+    } while ( (getState() != ISC_STATE_CLOSED)
+	      && (KsTime::now() < deadline) );
+} // KsManagerRegistration::unregisterServer
 
 
+// ---------------------------------------------------------------------------
+bool
+KsManagerRegistration::sendRegistration()
+{
+    KsRegistrationParams reg;
 
-//////////////////////////////////////////////////////////////////////
+    reg.server.name = KsServerBase::getServerObject().getServerName();
+    reg.server.protocol_version = 
+	KsServerBase::getServerObject().getProtocolVersion();
+    reg.port = _port;
+    reg.time_to_live = _ttl;
+    
+    return send(KS_REGISTER, reg);
+} // KsManagerRegistration::sendRegistration
 
-typedef KssRPCContext<KS_REGISTER, KsRegistrationParams, KsRegistrationResult>
-    KssRegistrationContext;
 
-typedef KssRPCContext<KS_UNREGISTER, KsUnregistrationParams, KsUnregistrationResult>
-    KssUnregistrationContext;
+// ---------------------------------------------------------------------------
+bool
+KsManagerRegistration::sendUnregistration()
+{
+    KsUnregistrationParams unreg;
 
-//////////////////////////////////////////////////////////////////////
+    unreg.server.name = 
+	KsServerBase::getServerObject().getServerName();
+    unreg.server.protocol_version = 
+	KsServerBase::getServerObject().getProtocolVersion();
 
-#if PLT_INSTANTIATE_TEMPLATES
-template class KssRPCContext<KS_REGISTER, 
-                             KsRegistrationParams, 
-                             KsRegistrationResult>;
-template class KssRPCContext<KS_UNREGISTER, 
-                             KsUnregistrationParams, 
-                             KsUnregistrationResult>;
+    return send(KS_UNREGISTER, unreg);
+} // KsManagerRegistration::sendUnregistration
+
+
+// ---------------------------------------------------------------------------
+// The reregistration timer fired off...
+//
+void
+KsManagerRegistration::trigger()
+{
+    registerServer();
+} // KsManagerRegistration::trigger
+
+
+// ---------------------------------------------------------------------------
+// Handle callbacks from the connection: they indicate that certain events,
+// such as finished opening or receiving a call, are happening.
+//
+void
+KsManagerRegistration::async_attention(KsServerConnectionOperations op)
+{
+    if ( getLastResult() != KS_ERR_OK ) {
+	if ( _pendingOperationIsRegistration ) {
+	    PltLog::Error("KsServer: could not register with ACPLT/KS Manager. Retrying...");
+	} else {
+	    PltLog::Error("KsServer: could not unregister with ACPLT/KS Manager.");
+	}
+    }
+
+    switch ( op ) {
+	//
+	// The connection has been set up, so we can now proceed and issue
+	// the registration or unregistration ACPLT/KS request to our local
+	// KS Manager.
+	//
+	case ISC_OP_OPEN:
+#if DEBUG_REG
+	    PltLog::Debug("ISC_OP_OPEN");
 #endif
+	    if ( getLastResult() == KS_ERR_OK ) {
+		_pendingOperationIsRegistration ?
+		    sendRegistration() : sendUnregistration();
+	    } else if ( _pendingOperationIsRegistration ) {
+		//
+		// If the connection establishment failed, then rearm the
+		// timer event for reregistration.
+		//
+		PltLog::Debug("Rearming fast register timer event.");
+		_trigger_at = KsTime::now(MIN_TTL);
+		KsServerBase::getServerObject().addTimerEvent(this);
+	    }
+	    break;
+	//
+	// The result of a KS service call to the KS Manager has been
+	// arrived.
+	//
+	case ISC_OP_CALL:
+#if DEBUG_REG
+	    PltLog::Debug("ISC_OP_CALL");
+#endif
+	    if ( getLastResult() == KS_ERR_OK ) {
+		PltLog::Debug(_pendingOperationIsRegistration ?
+			      "KsServer: registration successfull." :
+		              "KsServer: unregistration successfull.");
+	    }
+	    //
+	    // Don't forget to renew the registration automatically. If the
+	    // registration was unsuccessfull, then we retry more often.
+	    //
+	    if ( _pendingOperationIsRegistration
+		 && !KsServerBase::getServerObject().isGoingDown() ) {
+#if DEBUG_REG
+		PltLog::Debug("Rearming register timer event.");
+#endif
+		u_long secs = _ttl / 4;
+		secs *= 3;
+		if ( getLastResult() != KS_ERR_OK ) {
+		    secs = MIN_TTL;
+		} else if ( secs < MIN_TTL ) {
+		    secs = MIN_TTL;
+		}
+		_trigger_at = KsTime::now(secs);
+		KsServerBase::getServerObject().addTimerEvent(this);
+	    }
+	    //
+	    // For the moment, we are immediately closing the connection
+	    // after each registration/deregistration.
+	    //
+	    close();
+	    break;
+    }
+} // KsManagerRegistration::async_attention
 
 
 // ---------------------------------------------------------------------------
 //
 KsServer::KsServer(u_long ttl, int port)
 : _ttl(ttl),
-  _registered(false)
+  _ks_mgr(0)
 {
     if ( port != KS_ANYPORT ) {
         //
@@ -96,71 +317,13 @@ KsServer::KsServer(u_long ttl, int port)
 //
 KsServer::~KsServer()
 {
-    if ( _registered ) {
-        unregister_server();
+    //
+    // If this hasn't been done yet...
+    //
+    if ( _ks_mgr ) {
+	delete _ks_mgr;
+	_ks_mgr = 0;
     }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-CLIENT *
-KsServer::createLocalClient()
-{
-    struct sockaddr_in sin;
-    memset(&sin, 0, sizeof sin);
-    sin.sin_family = AF_INET;
-    sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    int sock = RPC_ANYSOCK;
-    KsTime wait(1,0);
-
-    return clntudp_create(&sin,
-                          KS_RPC_PROGRAM_NUMBER,
-                          KS_PROTOCOL_VERSION,
-                          (struct timeval)wait,
-                          &sock);
-} // KsServer::createLocalClient
-
-// ---------------------------------------------------------------------------
-//
-bool
-KsServer::register_server()
-{
-    KsAvNoneTicket ticket;
-    KssRegistrationContext regctx(ticket);
-    regctx.params.server.name = getServerName();
-    regctx.params.server.protocol_version = getProtocolVersion();
-#if !PLT_USE_BUFFERED_STREAMS
-    regctx.params.port = _tcp_transport->xp_port;
-#else
-    regctx.params.port = _tcp_transport->getPort();
-#endif
-    regctx.params.time_to_live = _ttl;
-    
-    CLIENT * clnt = createLocalClient();
-    if (!clnt) return false;
-
-    enum clnt_stat res = regctx.call(clnt, KsTime(2,0));
-    clnt_destroy(clnt);
-    return res == RPC_SUCCESS && regctx.result.result == KS_ERR_OK;
-}
-
-
-// ---------------------------------------------------------------------------
-//
-bool
-KsServer::unregister_server()
-{
-    KsAvNoneTicket ticket;
-    KssUnregistrationContext unregctx(ticket);
-    unregctx.params.server.name = getServerName();
-    unregctx.params.server.protocol_version = getProtocolVersion();
-
-    CLIENT * clnt = createLocalClient();
-    if (!clnt) return false;
-
-    enum clnt_stat res = unregctx.call(clnt, KsTime(2,0));
-    clnt_destroy(clnt);
-    return res == RPC_SUCCESS && unregctx.result.result == KS_ERR_OK;
 }
 
 
@@ -172,11 +335,9 @@ KsServer::startServer()
     KsServerBase::startServer();
 
     if ( _is_ok ) {
-	// schedule registration
-	KsReregisterServerEvent * pevent = 
-	    new KsReregisterServerEvent(*this, KsTime::now());
-	if ( pevent ) {
-	    addTimerEvent(pevent);
+	_ks_mgr = new KsManagerRegistration(_ttl, _tcp_transport->getPort());
+	if ( _ks_mgr ) {
+	    _ks_mgr->registerServer();
 	} else {
 	    _is_ok = false;
 	}
@@ -189,57 +350,16 @@ KsServer::startServer()
 void
 KsServer::stopServer() 
 {
-    // unregister
-    if ( !unregister_server() ) {
-        PltLog::Warning("KsServer::stopServer(): "
-			"could not unregister with manager.");
+    //
+    // Try to unregister first, before we shut down the transports.
+    //
+    if ( _ks_mgr ) {
+	_ks_mgr->unregisterServer();
+	delete _ks_mgr;
+	_ks_mgr = 0;
     }
     KsServerBase::stopServer();
 } // KsServer::stopServer
 
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-const u_long
-KsReregisterServerEvent::MIN_TTL = 10; // secs
-
-//////////////////////////////////////////////////////////////////////
-
-void
-KsReregisterServerEvent::trigger()
-{
-    if (!_server.isGoingDown()) {
-        //
-        // The server is still active, try to register it.
-        //
-        if (_server.register_server()) {
-            // 
-            // It worked. Reschedule event.
-            //
-            PLT_DMSG_ADD("Registered with manager.");
-            PLT_DMSG_END;
-            u_long secs = _server._ttl / 4;
-            secs *= 3;
-            if (secs < MIN_TTL) secs = MIN_TTL;
-            _trigger_at = KsTime::now(secs);
-            _server.addTimerEvent(this);
-        } else {
-            //
-            // Registration failed. Retry soon.
-            //
-            PltLog::Warning("Could not register with manager."
-                            " Is an ACPLT/KS manager running?");
-            _trigger_at = KsTime::now(MIN_TTL);
-            _server.addTimerEvent(this);
-        }
-    } else {
-        //
-        // The server is going down. Ignore and delete the event
-        //
-        delete this;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-// EOF ks/server.cpp
+// End of file ks/server.cpp
