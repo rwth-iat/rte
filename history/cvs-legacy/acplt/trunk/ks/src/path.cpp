@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.5 1997-05-20 15:21:30 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.6 1998-07-22 12:43:42 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -151,10 +151,12 @@ KsPath::checkAndCount() {
                 ++slashes;
             }
         } else {
+#if 0
             if (! isalnum(ch) && ch != '_') {
                 _valid = false;
                 return 0;
             }
+#endif
             was_slash = false;
         }
     }
