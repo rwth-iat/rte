@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.13 1997-11-27 09:37:36 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.14 1997-11-27 18:18:29 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,8 +45,9 @@
 
 //////////////////////////////////////////////////////////////////////
 
-KsSimpleServer::KsSimpleServer()
-: _root_domain("/")
+KsSimpleServer::KsSimpleServer(int port)
+: KsServerBase(port),
+  _root_domain("/")
 {
 }
 
@@ -365,6 +366,14 @@ KsSimpleServer::initVendorTree()
 {
     static KssTimeNowVariable server_time("server_time");
     KssCommObjectHandle server_time_handle(&server_time, KsOsUnmanaged);
+    
+    static KssSimpleVariable startup_time("startup_time", KsTime::now(), "Server startup time");
+    startup_time.setValue(new KsTimeValue(KsTime::now()));
+    startup_time.setTechUnit("UTC");
+    startup_time.setState(KS_ST_GOOD);
+    startup_time.lock();
+    KssCommObjectHandle startup_time_handle(&startup_time, KsOsUnmanaged);
+
     KsPath vendor("/vendor");
     addDomain(KsPath("/"), "vendor"); // ignore error, may already exist.
     return 
@@ -380,7 +389,9 @@ KsSimpleServer::initVendorTree()
                         getServerDescription())
 
         && addStringVar(vendor, "name",
-                        getVendorName());
+                        getVendorName())
+
+        && addCommObject(vendor, startup_time_handle);
 }
 
 

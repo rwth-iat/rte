@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.7 1997-04-18 13:00:32 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.8 1997-11-27 18:18:28 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,7 +53,7 @@ class KsSimpleServer
 : virtual public KsServerBase
 {
 public:
-    KsSimpleServer();
+    KsSimpleServer(int port = KS_ANYPORT);
 
     //// accessors
     virtual KsString getServerName() const=0;

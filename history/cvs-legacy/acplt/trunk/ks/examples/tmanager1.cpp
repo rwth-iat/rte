@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.5 1997-09-15 19:42:48 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.6 1997-11-27 18:18:27 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,7 +45,8 @@
 
 //////////////////////////////////////////////////////////////////////
 
-const KsString KS_MANAGER_VERSION("1.0");
+const char PROG_NAME[] = "tmanager";
+const KsString KS_MANAGER_VERSION("1.01");
 
 //////////////////////////////////////////////////////////////////////
 
@@ -60,13 +61,14 @@ class Manager
 : public KsManager
 {	
 public:
-	Manager();
+	Manager(int port = KS_ANYPORT);
     virtual KsString getServerVersion() const;
 };
 
 //////////////////////////////////////////////////////////////////////
 
-Manager::Manager()
+Manager::Manager(int port)
+  : KsServerBase(port)
 {
     if (_is_ok && initVendorTree()) {
         signal(SIGINT, handler);
@@ -88,9 +90,53 @@ Manager::getServerVersion() const
 
 //////////////////////////////////////////////////////////////////////
 
-int main(int, char **) {
-    PltCerrLog log("manager");
-	Manager m;
+int main(int argc, char **argv) {
+    PltCerrLog log(PROG_NAME);
+
+    bool argsok = true;
+    int  port   = KsServerBase::KS_ANYPORT;
+    int  idx    = 0;
+
+    //
+    // parse command line
+    //
+    while ( ++idx < argc ) {
+        if ( strcmp(argv[idx], "--help") == 0 ) {
+            argsok = false;
+            break;
+        } else if ( strcmp(argv[idx], "--version") == 0 ) {
+            cerr << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << endl;
+            return EXIT_FAILURE;
+        } else if ( (strcmp(argv[idx], "-p") == 0) ||
+                    (strcmp(argv[idx], "--port") == 0) ) {
+            if ( ++idx < argc ) {
+                char *endptr;
+                port = strtol(argv[idx], &endptr, 10);
+                if ( (argv[idx][0] == '\0') || *endptr || (port <= 0) ) {
+                    argsok = false;
+                    break;
+                }
+            } else {
+                argsok = false;
+                break;
+            }
+        } else {
+            argsok = false;
+            break;
+        }
+    }
+
+    if (!argsok) {
+        cerr << "Usage: " << PROG_NAME << "[options]" << endl
+             << "Runs the testing ACPLT/KS Manager process" << endl
+             << endl
+             << "  -p #, --port #  binds the testing ACPLT/KS manager to port number #" << endl
+             << "  --help          display this help and exit" << endl
+             << "  --version       output version information and exit" << endl;
+        return EXIT_FAILURE;
+    }
+
+	Manager m(port);
     if (m.isOk()) {
         m.startServer();
 	PLT_DMSG("entering service loop"<<endl);
@@ -98,7 +144,7 @@ int main(int, char **) {
 	PLT_DMSG("left service loop"<<endl);
 	m.stopServer();
     } else {
-        cout << "The manager could not be initialized." << endl;
+        cerr << "The manager could not be initialized." << endl;
     }
     return 0;
 }
@@ -106,14 +152,3 @@ int main(int, char **) {
 
 //////////////////////////////////////////////////////////////////////
 // EOF tmanager.cpp
-
-
-
-
-
-
-
-
-
-
-

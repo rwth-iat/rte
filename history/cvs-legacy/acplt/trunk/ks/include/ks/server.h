@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SERVER_INCLUDED
 #define KS_SERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.5 1997-07-18 14:11:03 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.6 1997-11-27 18:18:28 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -51,7 +51,7 @@ class KsServer
 {
     friend class KsReregisterServerEvent;
 public:
-    KsServer(u_long ttl);
+    KsServer(u_long ttl, int port = KS_ANYPORT);
     virtual ~KsServer();
 
     //// accessors

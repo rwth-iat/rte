@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.14 1997-07-18 14:11:05 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.15 1997-11-27 18:18:28 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -56,8 +56,10 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 //
 class KsServerBase {
 public:
-    KsServerBase();
+    KsServerBase(int port);
     virtual ~KsServerBase(); // make sure the destructor is virtual...
+
+    enum { KS_ANYPORT = 0 };
 
     //// accessors
     // "virtual constants"
@@ -124,6 +126,7 @@ protected:
 
     // protected attributes
     bool _is_ok;
+    int _sock_port; // RPC socket port number
     SVCXPRT *_tcp_transport; // RPC transport used to receive requests
 
 private:

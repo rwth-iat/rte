@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.11 1997-10-28 10:41:34 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.12 1997-11-27 18:18:28 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -67,7 +67,7 @@ class KsManager
 : public KsSimpleServer
 {
 public:
-    KsManager();
+    KsManager(int port = 0);
     virtual ~KsManager();
     //// accessors
     // "virtual constants"

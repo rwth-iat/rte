@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.1 1997-05-05 06:47:59 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.2 1997-11-27 18:18:27 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -90,23 +90,24 @@ PltNtLog log("ACPLT/KS manager");
 // We simply store the version id string in a static KsString, and return
 // a copy of it whenever someone asks us for it.
 //
-static const KsString NtKsManagerVersionString("1.00(nt)");
+static const KsString NtKsManagerVersionString("1.01(nt)");
 
 class NtManager : public KsManager {
 public:
-    NtManager();
+    NtManager(int port = KS_ANYPORT);
     virtual KsString getServerVersion() const
         { return NtKsManagerVersionString; }
 }; // NtManager
 
 
-NtManager::NtManager()
+NtManager::NtManager(int port)
+  : KsServerBase(port)
 {
     if ( _is_ok &&
          initVendorTree() ) {
         //
         // Okay. Now we've got a basic "/vendor" branch. Now we're ready to
-	// do dirty things...
+        // do dirty things...
     	//
     }
 } // NtManager::NtManager
@@ -133,22 +134,39 @@ protected:
 //
 KsServerBase *NtManagerService::createServer(int argc, char **argv)
 {
-    int i;
+    int idx;
+    int port = KsServerBase::KS_ANYPORT;
 
-    for ( i = 0; i < argc; i++ ) {
-        if ( (stricmp(argv[i], "-v") == 0) ||
-             (stricmp(argv[i], "-verbose") == 0) ) {
+    for ( idx = 0; idx < argc; idx++ ) {
+        if ( (stricmp(argv[idx], "-v") == 0) ||
+             (stricmp(argv[idx], "--verbose") == 0) ) {
              _is_verbose = true;
-        } else if ( (stricmp(argv[i], "-v-") == 0) ||
-             (stricmp(argv[i], "-verbose-") == 0) ) {
+        } else if ( (stricmp(argv[idx], "-v-") == 0) ||
+             (stricmp(argv[idx], "--verbose-") == 0) ) {
              _is_verbose = false;
+        } else if ( (stricmp(argv[idx], "-p") == 0) ||
+                    (stricmp(argv[idx], "--port") == 0) ) {
+            if ( ++idx < argc ) {
+                char *endptr;
+                port = strtol(argv[idx], &endptr, 10);
+                if ( (argv[idx][0] == '\0') || *endptr || (port <= 0) ) {
+                    PltLog::Error("invalid port number");
+                    break;
+                }
+            } else {
+                PltLog::Error("missing port number");
+                break;
+            }
+        } else {
+            PltLog::Error("invalid command line option");
+            break;
         }
     }
     //
     // Okay. Now for the real things...
     //
     verbose("Creating NtManager object");
-    return new NtManager;
+    return new NtManager(port);
 } // NtManagerService::createServer
 
 

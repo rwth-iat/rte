@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.7 1997-09-15 13:08:08 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.8 1997-11-27 18:18:30 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -46,7 +46,7 @@
 //////////////////////////////////////////////////////////////////////
 
 const char PROG_NAME[] = "manager";
-const KsString KS_MANAGER_VERSION("1.0");
+const KsString KS_MANAGER_VERSION("1.01");
 
 //////////////////////////////////////////////////////////////////////
 
@@ -57,17 +57,18 @@ extern "C" void handler(int)
 
 //////////////////////////////////////////////////////////////////////
 
-class KsUnixManager 
+class KsUnixManager
 : public KsManager
 {	
 public:
-	KsUnixManager();
+	KsUnixManager(int port);
     virtual KsString getServerVersion() const;
 };
 
 //////////////////////////////////////////////////////////////////////
 
-KsUnixManager::KsUnixManager()
+KsUnixManager::KsUnixManager(int port)
+: KsServerBase(port), KsManager(port)
 {
     if (_is_ok && initVendorTree()) {
         signal(SIGINT, handler);
@@ -89,26 +90,55 @@ KsUnixManager::getServerVersion() const
 
 int main(int argc, char **argv) {
     bool daemon = false;
-    bool argsok = false;
+    bool argsok = true;
+    int  port   = KsServerBase::KS_ANYPORT;
+    int  idx    = 0;
     PltLog * pLog = 0;
 
     //
     // parse command line
     //
-    if (argc < 2) argsok = true;
-
-    if (argc == 2) {
-        if (argv[1][0]== '-' && argv[1][1] == 'd') {
+    while ( ++idx < argc ) {
+        if ( strcmp(argv[idx], "--help") == 0 ) {
+            argsok = false;
+            break;
+        } else if ( strcmp(argv[idx], "--version") == 0 ) {
+            cerr << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << endl;
+            return EXIT_FAILURE;
+        } else if ( (strcmp(argv[idx], "-d") == 0) ||
+                    (strcmp(argv[idx], "--detach") == 0) ) {
             daemon = true;
-            argsok = true;
-        } 
+        } else if ( (strcmp(argv[idx], "-p") == 0) ||
+                    (strcmp(argv[idx], "--port") == 0) ) {
+            if ( ++idx < argc ) {
+                char *endptr;
+                port = strtol(argv[idx], &endptr, 10);
+                if ( (argv[idx][0] == '\0') || *endptr || (port <= 0) ) {
+                    argsok = false;
+                    break;
+                }
+            } else {
+                argsok = false;
+                break;
+            }
+        } else {
+            argsok = false;
+            break;
+        }
     }
+
     if (!argsok) {
-        cerr << "Usage: " << PROG_NAME << "[-d]" << endl;
+        cerr << "Usage: " << PROG_NAME << "[options]" << endl
+             << "Runs the ACPLT/KS Manager process for un*x operating systems" << endl
+             << endl
+             << "  -d, --detach    sends ACPLT/KS manager process into background" << endl
+             << "  -p #, --port #  binds the ACPLT/KS manager to port number #" << endl
+             << "  --help          display this help and exit" << endl
+             << "  --version       output version information and exit" << endl;
         return EXIT_FAILURE;
     }
 
-    if (daemon) {
+    if ( daemon ) {
         //
         // Daemon mode is requested, detach and report to syslog
         //
@@ -141,7 +171,7 @@ int main(int argc, char **argv) {
     //
     // Ok, let's go!
     //
-	KsUnixManager m;
+	KsUnixManager m(port);
     if (m.isOk()) {
         m.startServer();
         PltLog::Info("started.");
@@ -244,7 +274,3 @@ template class Plt_AtNew<PltHandleIterator<KssCommObject> >;
 #endif
 
 // EOF unix_manager.cpp
-
-
-
-

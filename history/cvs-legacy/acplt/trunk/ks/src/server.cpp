@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.9 1997-09-15 18:50:33 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.10 1997-11-27 18:18:29 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -64,8 +64,9 @@ template class KssRPCContext<KS_UNREGISTER,
 
 //////////////////////////////////////////////////////////////////////
 
-KsServer::KsServer(u_long ttl)
-: _ttl(ttl),
+KsServer::KsServer(u_long ttl, int port)
+: KsServerBase(port),
+  _ttl(ttl),
   _registered(false)
 {
 }

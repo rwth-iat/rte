@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.23 1997-09-22 08:55:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.24 1997-11-27 18:18:30 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -125,18 +125,39 @@ KsServerBase::the_server = 0;
 // Construction & destruction area. Watch for falling bits...
 // Uhh, I've been hit.
 
-KsServerBase::KsServerBase()
-: _tcp_transport(0),
+KsServerBase::KsServerBase(int port)
+: _sock_port(port),
+  _tcp_transport(0),
   _shutdown_flag(0),
   _send_buffer_size(16384),
   _receive_buffer_size(16384)
 {
     PLT_PRECONDITION( the_server == 0 );
     //
-    // create transport
+    // Create transport: because the caller can specify the port to which we
+    // should bind, this can be sometimes a lot of work...
     //
-    _tcp_transport = svctcp_create(RPC_ANYSOCK, 
-                                   _send_buffer_size, _receive_buffer_size);
+    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if ( sock >= 0 ) {
+        struct sockaddr_in my_addr;
+        memset(&my_addr, 0, sizeof(my_addr));
+        my_addr.sin_family      = AF_INET;
+        my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+        my_addr.sin_port        = htons(_sock_port);
+        if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
+            // Failed.
+#if PLT_SYSTEM_NT
+            closesocket(sock);
+#else
+            close(sock);
+#endif
+        } else {
+            _tcp_transport = svctcp_create(sock,
+                                           _send_buffer_size,
+                                           _receive_buffer_size);
+        }
+    }
+
     if (_tcp_transport) {
         //
         // Now register the dispatcher that should be called whenever there

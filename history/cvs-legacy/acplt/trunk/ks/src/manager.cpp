@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.19 1997-10-28 10:41:44 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.20 1997-11-27 18:18:29 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -97,7 +97,7 @@ KsManager::getServerDescription() const
 }
 
 KsString 
-KsManager::getVendorName () const
+KsManager::getVendorName() const
 { 
     return KsString("Chair of Process Control Engineering, "
                     "Aachen University of Technology");
@@ -271,8 +271,9 @@ KsmServer::KsmServer(const KsServerDesc & d,
 
 //////////////////////////////////////////////////////////////////////
 
-KsManager::KsManager()
-: _registered(false),
+KsManager::KsManager(int port)
+: KsServerBase(port),
+  _registered(false),
   _servers_domain("servers")
 {
     KsAvNoneTicket::setDefaultAccess(KS_AC_READ); // TODO
@@ -280,7 +281,25 @@ KsManager::KsManager()
         //
         // create transports
         //
-        _udp_transport = svcudp_create(RPC_ANYSOCK);
+        int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+        if ( sock >= 0 ) {
+            struct sockaddr_in my_addr;
+            memset(&my_addr, 0, sizeof(my_addr));
+            my_addr.sin_family      = AF_INET;
+            my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+            my_addr.sin_port        = htons(_sock_port);
+            if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
+                // Failed.
+#if PLT_SYSTEM_NT
+                closesocket(sock);
+#else
+                close(sock);
+#endif
+            } else {
+                _udp_transport = svcudp_create(sock);
+            }
+        }
+
         // TODO: send/receive buff sz
         if (_udp_transport) {
             //
@@ -293,8 +312,8 @@ KsManager::KsManager()
                                KS_PROTOCOL_VERSION,
                                ks_c_dispatch,
                                0) ) {  // Do not contact the portmapper!
-                svc_destroy(_tcp_transport);
-                _tcp_transport = 0;
+                svc_destroy(_udp_transport);
+                _udp_transport = 0;
                 PltLog::Error("KsServerBase: could not register");
                 _is_ok = false;
             }
@@ -382,6 +401,8 @@ KsManager::KsManager()
                addStringVar(vendor, "disclaimer", KsString(DISCLAIMER))
             && addStringVar(vendor, "contact",
                             "<ks@plt.rwth-aachen.de>")
+            && addStringVar(vendor, "copyright",
+                            "(c) 1996, 1997 Chair of Process Control Engineering, Aachen University of Technology")
             && addDomain(vendor, "extensions")
             && addDomain(KsPath("/vendor/extensions"), "ks_core")
             && addCommObject(KsPath("/vendor/extensions/ks_core"),

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.12 1997-09-15 19:38:35 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.13 1997-11-27 18:18:27 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -62,7 +62,7 @@ class TestServer
   public KsSimpleServer
 {	
 public:
-	TestServer();
+	TestServer(int port = KS_ANYPORT);
 
     //// accessors
     //
@@ -226,8 +226,8 @@ TestDomain::newIterator() const
 //
 // The constructor of the server.
 //
-TestServer::TestServer()
-: KsServer(30)
+TestServer::TestServer(int port)
+: KsServerBase(port), KsServer(30)
 {
     // 
     // When requests are made with authentification method "none"
