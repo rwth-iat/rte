@@ -302,38 +302,6 @@ public:
 
 typedef PltPtrHandle<KscVariable> KscVariableHandle;
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-#if 0
-
-//////////////////////////////////////////////////////////////////////
-// KscVariableHandle implements specialized operators for comparing
-// KscVariableObjects.
-// ==, !=         compare pointers
-// <, <=, >, >=   order defined by path
-//  
-class KscVariableHandle
-: public PltPtrHandle<KscVariable>
-{
-public:
-    KscVariableHandle();
-    KscVariableHandle(KscVariable *p, enum PltOwnership);  // no default to avoid conversion!
-    KscVariableHandle(const KscVariableHandle &);
-       
-    bool operator == (const KscVariableHandle &rhs) const;
-    bool operator != (const KscVariableHandle &rhs) const;
-
-    bool operator <  (const KscVariableHandle &rhs) const;
-    bool operator <= (const KscVariableHandle &rhs) const;
-    bool operator >  (const KscVariableHandle &rhs) const;
-    bool operator >= (const KscVariableHandle &rhs) const;
-};
-
-#endif
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
@@ -505,88 +473,6 @@ KscVariable::isDirty() const
 {
     return fDirty;
 }
-
-//////////////////////////////////////////////////////////////////////
-// class KscVariableHandle
-//////////////////////////////////////////////////////////////////////
-
-#if 0
-
-inline
-KscVariableHandle::KscVariableHandle()
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KscVariableHandle::KscVariableHandle(KscVariable *p, enum PltOwnership os)
-: PltPtrHandle<KscVariable>(p, os)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KscVariableHandle::KscVariableHandle(const KscVariableHandle &rhs)
-: PltPtrHandle<KscVariable>(rhs)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscVariableHandle::operator == (const KscVariableHandle &rhs) const
-{
-    return getPtr() == rhs.getPtr();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscVariableHandle::operator != (const KscVariableHandle &rhs) const
-{
-    return getPtr() != rhs.getPtr();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscVariableHandle::operator < (const KscVariableHandle &rhs) const
-{
-    PLT_PRECONDITION(*this && rhs);
-
-    return **this < *rhs;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscVariableHandle::operator <= (const KscVariableHandle &rhs) const
-{
-    PLT_PRECONDITION(*this && rhs);
-
-    return **this <= *rhs;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscVariableHandle::operator > (const KscVariableHandle &rhs) const
-{
-    PLT_PRECONDITION(*this && rhs);
-
-    return **this > *rhs;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscVariableHandle::operator >= (const KscVariableHandle &rhs) const
-{
-    PLT_PRECONDITION(*this && rhs);
-
-    return **this >= *rhs;
-}
-
-#endif
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
