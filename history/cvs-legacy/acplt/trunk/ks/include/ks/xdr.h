@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_XDR_INCLUDED
 #define KS_XDR_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.14 1999-09-16 10:54:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.15 2000-09-04 06:23:28 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -286,7 +286,7 @@ ks_xdrd_bool(XDR *xdr, bool *p)
     bool_t b;
     if (xdr_bool(xdr, &b)) {
         // success
-        *p = b;
+        *p = b ? true : false;
         return true;
     } else {
         return false;
