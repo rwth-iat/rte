@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.32 1999-09-16 10:54:40 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.33 2000-04-05 13:11:07 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
- * Copyright (c) 1996, 1997, 1998, 1999
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -60,7 +60,7 @@ extern "C" {
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.1.3"
+#define KS_VERSION_STRING "1.2.0pre1"
 
 	 
 /* ----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ ENUMDEF(KS_OBJ_TYPE)
 #define KS_OT_ANY        ENUMVAL(KS_OBJ_TYPE, \
                                      KS_OT_DOMAIN | KS_OT_VARIABLE | \
                                      KS_OT_HISTORY | \
-                                     KS_OT_LINK | KS_OT_STRUCTURE)
+                                     KS_OT_LINK) /* | KS_OT_STRUCTURE) */
 	/* restricted to the currently implemented types */
 
 /* ----------------------------------------------------------------------------
