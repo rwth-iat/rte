@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.3 1997-03-24 18:40:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.4 1997-03-26 17:21:09 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,7 +44,6 @@
 #include "ks/simpleserver.h"
 #include "ks/register.h"
 #include "ks/serviceparams.h"
-#include "ks/objecttree.h"
 #include "ks/path.h"
 
 extern "C" {
@@ -68,6 +67,10 @@ class KsManager
 public:
     KsManager();
     virtual ~KsManager();
+    const PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> &
+        getServerTable() const
+            { return _server_table; }
+
 protected:
     virtual void dispatch(u_long serviceId, 
                           SVCXPRT *transport,
@@ -91,42 +94,15 @@ protected:
                     KsGetServerResult & result);
 
     virtual bool initObjectTree(); // initialize object tree with predefined values
-    
+
 private:
-    void getVar(KsAvTicket &ticket,
-                const KsPath & path,
-                KsGetVarItemResult &result);
-
     friend KsmExpireServerEvent;
-    //
-    // object tree manipulation
-    //
-    KsObjectTree _object_tree;
-
+    void removeServer(KsmServer *p);
     static bool isLocal(SVCXPRT *);
     SVCXPRT *_udp_transport;
     PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> _server_table;
+    KssSimpleDomain _servers_domain;
 };
-    
-
-//////////////////////////////////////////////////////////////////////
-
-    
-struct KsmServer
-{
-public:
-    KsmServer(const KsServerDesc & d,
-              u_short p,
-              u_long ttl,
-              KsTime exp);
-    KsServerDesc desc;
-    u_short port;
-    KsTime expires_at;
-    u_long time_to_live; // seconds
-    bool living;
-    KsmExpireServerEvent *pevent;
-};
-
 
 //////////////////////////////////////////////////////////////////////
 
@@ -141,25 +117,11 @@ public:
     KsmServer * pserver;
 private:
     KsManager * _pmanager;
+    PLT_DECL_RTTI;
 };
 
-//////////////////////////////////////////////////////////////////////
-// INLINE IMPLEMENTATION
-//////////////////////////////////////////////////////////////////////
-inline
-KsmServer::KsmServer(const KsServerDesc & d,
-                     u_short p,
-                     u_long ttl,
-                     KsTime exp)
-: desc(d), 
-  port(p), 
-  expires_at(exp), 
-  time_to_live(ttl),
-  living(true), 
-  pevent(0) 
-{ 
-}
 
 //////////////////////////////////////////////////////////////////////
+
 
 #endif // KS_MANAGER_INCLUDED

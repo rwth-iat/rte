@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.4 1997-03-24 18:40:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.5 1997-03-26 17:21:13 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -52,10 +52,172 @@ static const KsString KS_MANAGER_NAME("MANAGER");
 static const KsString KS_MANAGER_VERSION("1");
 static const KsString KS_MANAGER_DESCRIPTION("ACPLT/KS Manager");
 
+
+//////////////////////////////////////////////////////////////////////
+
+class KsmServer;
+
+/////////////////////////////////////////////////////////////////////////////
+
+class KsmServerIterator
+: public KssDomainIterator
+{
+public:
+    KsmServerIterator(const KsmServer & d)
+        : _d(d), _what(0) { }
+
+    virtual operator const void * () const
+        { return (_what < STOP) ? this : 0; }
+    
+    virtual KssCommObjectHandle operator * () const;
+
+    virtual KsmServerIterator& operator ++ ()
+        { ++_what; return *this; }
+
+    virtual void toStart()
+        { _what = 0; }
+
+private:
+    enum { EXPIRES_AT, LIVING, PORT, STOP }; 
+    const KsmServer & _d;
+    enum_t _what;
+    static const char * _ids[4];
+};
+
+//////////////////////////////////////////////////////////////////////
+
+struct KsmServer
+: public KssDomain
+{
+public:
+    //// KssCommObject ////
+    //// accessors
+
+    // projected properties
+    virtual KsString getIdentifier() const;
+    virtual KsTime   getCreationTime() const;
+    virtual KsString getComment() const;
+
+    //// KssDomain
+    //   accessors
+    virtual KsmServerIterator * newIterator() const;
+
+
+//  virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
+
+    //// KsmServer
+    KsmServer(const KsServerDesc & d,
+              u_short p,
+              u_long ttl,
+              KsTime exp);
+    KsServerDesc desc;
+    u_short port;
+    KsTime expires_at;
+    u_long time_to_live; // seconds
+    bool living;
+    KsmExpireServerEvent *pevent;
+
+    PLT_DECL_RTTI;
+};
+
+//////////////////////////////////////////////////////////////////////
+
+PLT_IMPL_RTTI1(KsmServer, KssDomain);
+
+//////////////////////////////////////////////////////////////////////
+
+KsString 
+KsmServer::getIdentifier() const
+{ 
+    return desc.name; 
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KsTime   
+KsmServer::getCreationTime() const
+{ 
+    return KsTime::now(); 
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KsString 
+KsmServer::getComment() const
+{ 
+    return KsString(); 
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KsmServerIterator *
+KsmServer::newIterator() const
+{
+    return new KsmServerIterator(*this);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+
+const char * KsmServerIterator::_ids[4] = 
+{
+    "expires_at",
+    "living",
+    "port",
+    "/BUG/"
+};
+
+//////////////////////////////////////////////////////////////////////
+
+KssCommObjectHandle 
+KsmServerIterator::operator * () const 
+{
+    KssSimpleVariable *pvar = new KssSimpleVariable(_ids[_what]);
+    if (pvar) {
+        switch (_what) {
+        case EXPIRES_AT:
+            pvar->setValue(new KsTimeValue(_d.expires_at));
+            pvar->lock();
+            break;
+        case LIVING:
+            pvar->setValue(new KsIntValue(_d.living ? 1 : 0));
+            pvar->lock();
+            break;
+        case PORT:
+            pvar->setValue(new KsIntValue(_d.port));
+            pvar->lock();
+            break;
+        default:
+            PLT_ASSERT(0==1);
+        };
+    }
+    return KssCommObjectHandle(pvar, KsOsNew);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+KsmServer::KsmServer(const KsServerDesc & d,
+                     u_short p,
+                     u_long ttl,
+                     KsTime exp)
+: desc(d), 
+  port(p), 
+  expires_at(exp), 
+  time_to_live(ttl),
+  living(true), 
+  pevent(0) 
+{ 
+}
+
+//////////////////////////////////////////////////////////////////////
+
+
 //////////////////////////////////////////////////////////////////////
 
 KsManager::KsManager()
-: KsSimpleServer(KS_MANAGER_NAME)
+: KsSimpleServer(KS_MANAGER_NAME),
+  _servers_domain("servers")
 {
 }
 
@@ -68,12 +230,14 @@ KsManager::~KsManager()
     // timer event in the queue. So we can delete the
     // servers in the table by iterating the queue.
     while (!timer_queue.isEmpty()) {
-        KsmExpireServerEvent *pevent =
-            (KsmExpireServerEvent *) (KsTimerEvent*)timer_queue.removeFirst();
-        if (pevent->pserver) {
-            delete pevent->pserver;
-        }
+        KsTimerEvent *pevent = timer_queue.removeFirst();
         delete pevent;
+    }
+    for (PltHashIterator<PltKeyPtr<KsServerDesc>,KsmServer *>
+         it(_server_table);
+         it;
+         ++it) {
+        delete it->a_value;
     }
 }
 
@@ -297,10 +461,9 @@ KsManager::registerServer(KsAvTicket & /*ticket*/,
         pserver->port = params.port;
         pserver->pevent->pserver = 0; // inactivate old event
     } else {
-
         //
-        // unknown server:
-        // create server registration object
+        // Unknown server:
+        // Create server registration object...
         //
         pserver = new KsmServer(params.server, 
                                 params.port,
@@ -309,16 +472,46 @@ KsManager::registerServer(KsAvTicket & /*ticket*/,
         if (!pserver) {
             result.result = KS_ERR_GENERIC; return;
         }
-
-        // add it to the table of all servers on this machine
+        //
+        // ...add it to the table of all servers on this machine...
+        //
         pdesc = &pserver->desc;
         if (! _server_table.add(pdesc, pserver)) {
             delete pserver;
             result.result = KS_ERR_GENERIC; return;
         }
+        //
+        // ... finally create /servers/... subdomains
+        //
+        KssCommObjectHandle hs(_servers_domain.getChildById(pdesc->name));
+        KssSimpleDomain *ps;
+        bool fresh;
+        if (hs) {
+            // This is another version of an existing server.
+            ps = PLT_DYNAMIC_PCAST(KssSimpleDomain, hs.getPtr());
+            PLT_ASSERT(ps);
+            fresh = false;
+        } else {
+            ps = new KssSimpleDomain(pdesc->name);
+            if (   ! hs.bindTo(ps, KsOsNew) 
+                || ! _servers_domain.addChild(hs)) {
+                result.result = KS_ERR_GENERIC;
+                return;
+            }
+            fresh = true;
+        }
+        KssCommObjectHandle hv;
+        if (   ! hv.bindTo(pserver, KsOsNew) 
+            || ! ps->addChild(hv)) {
+            if (fresh) {
+                _servers_domain.removeChild(pdesc->name);
+                result.result = KS_ERR_GENERIC;
+                return;
+            }
+        }
     }
     //
-    // Success: event created and queued, serverobj resides in the table.
+    // Success: event created and queued, serverobj resides in the tables.
     // Now connect registration object and event
     //
     pserver->pevent = pevent;
@@ -343,16 +536,15 @@ KsManager::unregisterServer(KsAvTicket & /*ticket*/,
         return;
     }
     //
-    // try to remove server entry
+    // Lookup server entry.
     //
     PltKeyPtr<KsServerDesc> pdesc = &params.server;
     KsmServer *pserver;
-    if (_server_table.remove(pdesc, pserver)) {
+    if (_server_table.query(pdesc, pserver)) {
         //
         // found it
         //
-        pserver->pevent->pserver = 0; // inactivate event
-        delete pserver; // destroy entry
+        removeServer(pserver);
         result.result = KS_ERR_OK;
     } else {
         //
@@ -381,7 +573,7 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
         result.server.name = server_name;
         result.server.protocol_version = protocol_version;
         result.port = _tcp_transport->xp_port;
-        result.expires_at = KsTime::now(82400);
+        result.expires_at = KsTime(LONG_MAX);
         result.living = true;
         result.result = KS_ERR_OK;
         return;
@@ -429,55 +621,89 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+PLT_IMPL_RTTI1(KsmExpireServerEvent, KsEvent);
+
+//////////////////////////////////////////////////////////////////////
+
 void 
 KsmExpireServerEvent::trigger()
 {
-#if PLT_DEBUG
-            cerr << "KsmExpireServerEvent: ";
-#endif
+    PLT_DMSG("KsmExpireServerEvent: ");
     if (pserver) {
-#if PLT_DEBUG
-            cerr << "(" << pserver->desc.name  << " " 
-                 << pserver->desc.protocol_version << ") ";
-#endif
+        PLT_DMSG("(" << pserver->desc.name  << " " 
+                 << pserver->desc.protocol_version << ") ");
         PLT_ASSERT(pserver->pevent == this);
+        //
+        // Is the server living?
+        //
         if (pserver->living) {
-            // mark server dead
+            //
+            // Mark it dead...
+            //
             pserver->living = false;
-#if PLT_DEBUG
-            cerr << "dying (sp?)" << endl;
-#endif
-                     
-            // reschedule event
+            PLT_DMSG("dying << endl");
+            //
+            // ...and reschedule event.
+            // 
             _trigger_at = KsTime::now(pserver->time_to_live);
             _pmanager->addTimerEvent(this);
         } else {
-            // remove server
-            PltKeyPtr<KsServerDesc> pdesc = &pserver->desc;
-            KsmServer *pdummy;
-            if (_pmanager->_server_table.remove(pdesc, pdummy)) {
-                // ok
-                PLT_ASSERT(pdummy == pserver);
-#if PLT_DEBUG
-                cerr << "removed." << endl;
-#endif
-                delete pdummy;
-                delete this;
-            } else {
-                PltLog::Error("Could not expire server.");
-                // don't delete this. this is a memory leak,
-                // but this should not happen anyway.
-            }
+            // 
+            // Remove the zombie.
+            //
+            PLT_DMSG("being removed." << endl);
+            _pmanager->removeServer(pserver);
+            delete this;
         }
     } else {
-        // inactive
+        // 
+        // This event is inactive. Do nothing
+        //
         delete this;
-#if PLT_DEBUG
-        cerr << "(inactive)" << endl;
-#endif
+        PLT_DMSG("(inactive)" << endl);
     }
 }
 
+//////////////////////////////////////////////////////////////////////
+
+void
+KsManager::removeServer(KsmServer * pserver) 
+{
+    PLT_PRECONDITION(pserver);
+    PltKeyPtr<KsServerDesc> pdesc = &pserver->desc;
+    // 
+    // Remove server from the table...
+    //
+    KsmServer *pdummy;
+    bool removed = _server_table.remove(pdesc, pdummy);
+    PLT_ASSERT(removed && pdummy == pserver);
+    //
+    // ... and inactivate the associated event.
+    //
+    pserver->pevent->pserver = 0;
+    //
+    // Then remove associated /servers/... entries
+    // from the tree. This deletes the entry through
+    // the handle mechanism.
+    //
+    KssCommObjectHandle hs(_servers_domain.getChildById(pdesc->name));
+    PLT_ASSERT(hs);
+    KssSimpleDomain *ps = PLT_DYNAMIC_PCAST(KssSimpleDomain,hs.getPtr());
+    PLT_ASSERT(ps && ps->size() > 0);
+    if (ps->size() == 1) {
+        //
+        // Server is single version, remove entire subtree
+        //
+        _servers_domain.removeChild(pdesc->name);
+    } else {
+        //
+        // Remove only the domain for this version.
+        //
+        PltString version(PltString::fromInt(pdesc->protocol_version));
+        ps->removeChild(version);
+    }
+    // delete pserver; // HANDLE SHOULD DO THIS
+}
 //////////////////////////////////////////////////////////////////////
 // Object tree
 //////////////////////////////////////////////////////////////////////
@@ -522,9 +748,41 @@ KsManager::initObjectTree()
 
     _root_domain.addChild(vendor);
 
+    KssSimpleDomain *servers_manager =
+        new KssSimpleDomain(KS_MANAGER_NAME);
+    
+    KssSimpleDomain *servers_manager_version =
+        new KssSimpleDomain(KS_MANAGER_VERSION);
+    
+    KssSimpleVariable *manager_port =
+        new KssSimpleVariable("port");
+    
+    KssSimpleVariable *manager_expires_at =
+        new KssSimpleVariable("expires_at");
+    
+    KssSimpleVariable *manager_living =
+        new KssSimpleVariable("living");
+
+    manager_living->setValue(new KsIntValue(1));
+    manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
+    manager_expires_at->setValue(new KsTimeValue(LONG_MAX,0));
+    
+    servers_manager_version->addChild(manager_living);
+    servers_manager_version->addChild(manager_port);
+    servers_manager_version->addChild(manager_expires_at);
+    
+    servers_manager->addChild(servers_manager_version);
+    _servers_domain.addChild(servers_manager);
+
+    _root_domain.addChild(KssCommObjectHandle(&_servers_domain, 
+                                              KsOsUnmanaged));
+    
+
     return true; // This is optimistic...
 }
                 
 //////////////////////////////////////////////////////////////////////
 
 /* EOF ks/manager.cpp */
+
+

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.1 1997-03-24 18:40:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.2 1997-03-26 17:21:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -66,6 +66,9 @@ public:
     virtual void setVar(KsAvTicket &ticket,
                         KsSetVarParams &params,
                         KsSetVarResult &result);
+    virtual void getPP(KsAvTicket &ticket, 
+                       const KsGetPPParams & params,
+                       KsGetPPResult & result);
 
 protected:
     virtual bool initObjectTree() = 0;

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.1 1997-03-24 18:40:23 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.2 1997-03-26 17:21:14 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -52,7 +52,7 @@
 
 KsSimpleServer::KsSimpleServer(const char * str)
 : KsServerBase(str),
-  _root_domain("//root//")
+  _root_domain("/")
 {
 }
 
@@ -108,7 +108,26 @@ KsSimpleServer::dispatch(u_long serviceId,
         }
         break;
 
-        // TODO: remaining services
+    case KS_GETPP:
+        {
+            KsGetPPParams params(xdrIn, decodedOk);
+            if (decodedOk) {
+#if PLT_DEBUG
+                cerr << "GETPP " << endl;
+#endif
+                // properly decoded
+                KsGetPPResult result;
+                getPP(ticket, params, result);
+#if PLT_DEBUG
+                cerr << result.result << endl;
+#endif
+                sendReply(xprt, ticket, result);
+            } else {
+                // not properly decoded
+                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+            }
+        }
+        break;
 
     default:
         // fall back on base class
@@ -191,6 +210,91 @@ KsSimpleServer::getVarItem(KsAvTicket &ticket,
         result.result = KS_ERR_NOACCESS;
     }
 }
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KsSimpleServer::getPP(KsAvTicket &ticket, 
+                      const KsGetPPParams & params,
+                      KsGetPPResult & result) 
+{
+    KsPath path(params.path);
+    if (path.isValid() && path.isAbsolute()) {
+        // Path is OK
+        if (ticket.isVisible(params.path)) {
+            KssDomain *pd = 0;
+            if (params.path == "/") {
+                // root must be handled specially
+                pd = &_root_domain;
+            } else {
+                KssCommObjectHandle hc(_root_domain.getChildByPath(path));
+                if (hc) {
+                    // Child found. Is it a domain?
+                    pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
+                }
+            }
+            if (pd) {
+                // Yes! 
+                if (params.name_mask == "") {
+                    // We are being asked about the proj. props of the
+                    // domain itself
+                    KsProjPropsHandle h(pd->getPP());
+                    if (h && result.items.addLast(h)) {
+                        result.result = KS_ERR_OK;
+                    } else {
+                        result.result = KS_ERR_GENERIC;
+                    }
+                } else {
+                    // Iterate over its children.
+                    result.result = KS_ERR_OK; // report no other errors
+                    KssDomainIterator *pit = 
+                        pd->newMaskedIterator(params.name_mask, 
+                                              params.type_mask);
+                    if (pit) {
+                        // We got an iterator. Use it.
+                        for (KssDomainIterator &it(*pit); it; ++it) {
+                            if (*it) {
+                                // check if the child is visible
+                                PltString childname(params.path,
+                                                    (*it)->getIdentifier());
+                                if (ticket.isVisible(childname)) {
+                                    // Ask for proj properties
+                                    KsProjPropsHandle hpp = (*it)->getPP();
+                                    if (hpp) {
+                                        hpp->access_mode = 
+                                            ticket.getAccess(childname);
+                                        result.items.addLast(hpp);
+                                    } else {
+                                        // ignore error
+                                    }
+                                } else {
+                                    // not visible, do nothing
+                                }
+                            } else {
+                                // null handle, log error
+                                PltLog::Error("Child iterator returned"
+                                              " null handle");
+                            }
+                        } // for
+                        delete pit;
+                    } else {
+                        // no iterator: ignore error
+                    }
+                } // needs iteration
+            } else {
+                // not a domain or no such child
+                result.result = KS_ERR_BADPATH;
+            }
+        } else {
+            // domain invisible
+            result.result = KS_ERR_NOACCESS; // TODO or BADPATH?
+        }
+    } else {
+        // Path syntax error
+        result.result = KS_ERR_BADNAME;
+    }
+}
+
         
 //////////////////////////////////////////////////////////////////////
     
