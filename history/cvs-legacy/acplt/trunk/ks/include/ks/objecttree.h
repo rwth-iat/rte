@@ -42,10 +42,10 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <plt/list.h>
-#include <plt/hashtable.h>
+#include "plt/list.h"
+#include "plt/hashtable.h"
 
-#include <ks/props.h>
+#include "ks/props.h"
 
 //////////////////////////////////////////////////////////////////////
 
@@ -55,7 +55,7 @@ class KsObjectTree;
 
 //////////////////////////////////////////////////////////////////////
 
-enum NodeType { Node, Leaf };
+enum KsNodeType { KsNode, KsLeaf };
 
 //////////////////////////////////////////////////////////////////////
 
@@ -63,7 +63,7 @@ class KsObjectTreeBase
 {
 public:
     virtual ~KsObjectTreeBase();
-    virtual NodeType getNodeType() = 0;
+    virtual KsNodeType getNodeType() = 0;
     const KsString &name();
     virtual KsProjProps *getProjProps() = 0;
     virtual KsCurrProps *getCurrProps() = 0;
@@ -77,9 +77,9 @@ class KsObjectTreeNode
 : public KsObjectTreeBase
 {
 public:
-    KsObjectTreeNode(KsObjectTreeNode *p=NULL);
+    KsObjectTreeNode(KsObjectTreeNode *p=0);
     ~KsObjectTreeNode();
-    NodeType getNodeType();
+    KsNodeType getNodeType();
     KsProjProps *getProjProps();
     KsCurrProps *getCurrProps();
 
@@ -100,8 +100,8 @@ class KsObjectTreeLeaf
 : public KsObjectTreeBase
 {
 public:
-    KsObjectTreeLeaf(KsObjectTreeNode *p=NULL);
-    NodeType getNodeType();
+    KsObjectTreeLeaf(KsObjectTreeNode *p=0);
+    KsNodeType getNodeType();
     KsProjProps *getProjProps();
     KsCurrProps *getCurrProps();
 
@@ -177,10 +177,10 @@ KsObjectTreeBase::name() {
 //////////////////////////////////////////////////////////////////////
 
 inline
-NodeType
+KsNodeType
 KsObjectTreeNode::getNodeType() 
 {
-    return Node;
+    return KsNode;
 }
 
 
@@ -240,10 +240,10 @@ KsObjectTreeLeaf::KsObjectTreeLeaf(KsObjectTreeNode *p)
 //////////////////////////////////////////////////////////////////////
 
 inline
-NodeType
+KsNodeType
 KsObjectTreeLeaf::getNodeType() 
 {
-    return Leaf;
+    return KsLeaf;
 }
 
 //////////////////////////////////////////////////////////////////////

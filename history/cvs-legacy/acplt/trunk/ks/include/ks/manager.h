@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.2 1997-03-19 17:19:35 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.3 1997-03-24 18:40:14 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,8 +41,12 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include "ks/svrbase.h"
+#include "ks/simpleserver.h"
 #include "ks/register.h"
+#include "ks/serviceparams.h"
+#include "ks/objecttree.h"
+#include "ks/path.h"
+
 extern "C" {
 #include <rpc/pmap_clnt.h>
 };
@@ -59,7 +63,7 @@ class KsmExpireServerEvent;
 //////////////////////////////////////////////////////////////////////
 
 class KsManager
-: public KsServerBase
+: public KsSimpleServer
 {
 public:
     KsManager();
@@ -85,37 +89,19 @@ protected:
     void getServer(KsAvTicket & ticket,
                     KsGetServerParams & params,
                     KsGetServerResult & result);
-#if 0
-    // timer events
 
-    virtual bool    hasQueuedTimerEvents() const;
-    virtual bool    hasPendingTimerEvents() const;
-    virtual bool    servePendingTimerEvents();
-    virtual KsTime  timeUntilTimerEvent() const;
-
-    bool addTimerEvent(KsTimerEvent *event);
-    bool removeTimerEvent(KsTimerEvent *event);
-#endif
+    virtual bool initObjectTree(); // initialize object tree with predefined values
+    
 private:
+    void getVar(KsAvTicket &ticket,
+                const KsPath & path,
+                KsGetVarItemResult &result);
+
     friend KsmExpireServerEvent;
     //
     // object tree manipulation
     //
-    void initObjectTree(); // initialize object tree with predefined values
-    bool addServerDescription(const KsString & ,
-                              u_long ,
-                              const KsTime,
-                              u_long) 
-    {
-        // TODO: does nothing
-        return true;
-    }
-    
-    bool removeServerDescription(const KsString &,
-                                 u_long)
-    {
-        return true;
-    }
+    KsObjectTree _object_tree;
 
     static bool isLocal(SVCXPRT *);
     SVCXPRT *_udp_transport;

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.1 1997-03-23 14:35:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.2 1997-03-24 18:40:19 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -132,7 +132,7 @@ public:
         newIterator(const KsString & name_mask,
                     KS_OBJ_TYPE type_mask) const;
 
-    virtual KssCommObjectHandle child(const KsString & id) const;
+    virtual KssCommObjectHandle getChildById(const KsString & id) const;
 
     //// KssSimpleDomain ////
     //// ctor/dtor
@@ -187,12 +187,6 @@ public:
     virtual KsTime        getTime() const;
     virtual KS_STATE      getState() const;
     
-    //// KssSimpleVariable ////
-    //// ctor/dtor
-    KssSimpleVariable(const KsString &id,
-                      KsTime ctime = KsTime::now(),
-                      KsString comment = KsString());
-
     //// modifiers
     //   projected properties
     void setTechUnit(const KsString &);
@@ -207,12 +201,24 @@ public:
 
     virtual KS_RESULT     setState(KS_STATE);
 
+    //// KssSimpleVariable ////
+    //// ctor/dtor
+    KssSimpleVariable(const KsString &id,
+                      KsTime ctime = KsTime::now(),
+                      const KsString & comment = KsString());
+
+    //// accessor
+    bool isWriteable() const;
+
+    //// modifier
+    void lock(bool l=true);
+
 private:
+    bool          _writeable;
     KsString      _tech_unit;
     KsValueHandle _value;
     KsTime        _time;
     KS_STATE      _state;
-    
     PLT_DECL_RTTI;
 };
 
@@ -343,6 +349,23 @@ KssSimpleVariable::getState() const
     return _state;
 }
 
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KssSimpleVariable::isWriteable() const
+{
+    return _writeable;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline void
+KssSimpleVariable::lock(bool l)
+{
+    _writeable = !l;
+}
+
 //////////////////////////////////////////////////////////////////////
 
 inline void
@@ -353,37 +376,10 @@ KssSimpleVariable::setTechUnit(const KsString &tu)
 
 //////////////////////////////////////////////////////////////////////
 
-inline KS_RESULT
-KssSimpleVariable::setValue(const KsValueHandle &h)
-{
-    _value = h;
-    return KS_ERR_OK;
-}
-
-//////////////////////////////////////////////////////////////////////
-
 inline KS_RESULT     
 KssSimpleVariable::setValue(KsValue *p) 
 {
     return KssVariable::setValue(p);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline KS_RESULT
-KssSimpleVariable::setTime(const KsTime &t)
-{
-    _time = t;
-    return KS_ERR_OK;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline KS_RESULT
-KssSimpleVariable::setState(KS_STATE st) 
-{
-    _state =  st;
-    return KS_ERR_OK;
 }
 
 //////////////////////////////////////////////////////////////////////

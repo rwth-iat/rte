@@ -188,13 +188,16 @@ KsGetServerResult::KsGetServerResult(KS_RESULT res)
 //////////////////////////////////////////////////////////////////////
 
 KsGetServerResult::KsGetServerResult(XDR *xdr, bool &ok)
-: KsResult(xdr, ok),
-  server(xdr,ok)
+: KsResult(xdr, ok)
 {
-    ok = ok 
-        && ks_xdrd_u_short(xdr, &port)
-            && expires_at.xdrDecode(xdr)
+    if (ok) {
+        if (result == KS_ERR_OK ) {
+            ok = server.xdrDecode(xdr)
+                && ks_xdrd_u_short(xdr, &port)
+                && expires_at.xdrDecode(xdr)
                 && ks_xdrd_bool(xdr, &living);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -206,11 +209,17 @@ KS_IMPL_XDRNEW(KsGetServerResult);
 bool
 KsGetServerResult::xdrDecode(XDR *xdr)
 {
-    return KsResult::xdrDecode(xdr)
-        && server.xdrDecode(xdr)
+    if (!KsResult::xdrDecode(xdr)) {
+        return false;
+    }
+    if (result != KS_ERR_OK ) {
+        return true;
+    } else {
+        return server.xdrDecode(xdr)
             && ks_xdrd_u_short(xdr, &port)
                 && expires_at.xdrDecode(xdr)
                     && ks_xdrd_bool(xdr, &living);
+    }
 }
         
 
@@ -219,11 +228,17 @@ KsGetServerResult::xdrDecode(XDR *xdr)
 bool
 KsGetServerResult::xdrEncode(XDR *xdr) const
 {
-    return KsResult::xdrEncode(xdr)
-        && server.xdrEncode(xdr)
-            && ks_xdre_u_short(xdr, &port)
-                && expires_at.xdrEncode(xdr)
-                    && ks_xdre_bool(xdr, &living);
+    if (!KsResult::xdrEncode(xdr)) {
+        return false;
+    }
+    if (result != KS_ERR_OK) {
+        return true;
+    } else {
+        return server.xdrEncode(xdr)
+           && ks_xdre_u_short(xdr, &port)
+               && expires_at.xdrEncode(xdr)
+                   && ks_xdre_bool(xdr, &living);
+   } 
 }
 
 /////////////////////////////////////////////////////////////////////////

@@ -52,7 +52,7 @@ class KsServerDesc
 : public KsXdrAble 
 {
 public:
-    KsServerDesc( const KsString &n, u_short pv )
+    KsServerDesc( const KsString &n=KsString(), u_short pv=0)
         : name(n), protocol_version(pv) {}
     KsServerDesc( XDR *, bool &);
 

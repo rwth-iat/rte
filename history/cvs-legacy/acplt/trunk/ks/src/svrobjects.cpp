@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.1 1997-03-23 14:35:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.2 1997-03-24 18:40:24 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,7 +53,7 @@ PLT_IMPL_RTTI1(KssVariable, KssCommObject);
 //////////////////////////////////////////////////////////////////////
 
 KssCommObjectHandle
-KssDomain::child(const KsString &id) const
+KssDomain::getChildById(const KsString &id) const
 {
     //
     // Linear search. This may be VERY inefficient! But then
@@ -72,6 +72,39 @@ KssDomain::child(const KsString &id) const
         }
     }
     return res;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KssCommObjectHandle
+KssDomain::getChildByPath(const KsPath & path) const 
+{
+    PLT_PRECONDITION(path.isValid());
+    // lookup child
+    KssCommObjectHandle hc(getChildById(path.getHead()));
+    if (hc) {
+        // Good. There is such a child.
+        if (path.isSingle()) {
+            // We are beeing asked about this child. Return it.
+            return hc;
+        } else {
+            // They want a grandchild. That means the child must be
+            // a domain.
+            KssDomain * pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
+            if (pd) {
+                // It is a domain. Let _it_ handle the rest of the
+                // request.
+                KsPath tail(path.getTail());
+                return pd->getChildByPath(tail);
+            } else {
+                // The child not a domain, fail.
+                return KssCommObjectHandle();
+            }
+        }
+    } else {
+        // We don't know this child. 
+        return KssCommObjectHandle();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.1 1997-03-23 14:35:19 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.2 1997-03-24 18:40:24 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -47,7 +47,7 @@ PLT_IMPL_RTTI2(KssSimpleVariable, KssVariable, KssSimpleCommObject);
 //////////////////////////////////////////////////////////////////////
 
 KssCommObjectHandle
-KssSimpleDomain::child(const KsString & id) const
+KssSimpleDomain::getChildById(const KsString & id) const
 {
     KssCommObjectHandle h;
     if (_children.query(id, h) ) {
@@ -55,7 +55,7 @@ KssSimpleDomain::child(const KsString & id) const
         return h;
     } else if (_next_sister) {
         // otherwise ask sister
-        return _next_sister->child(id);
+        return _next_sister->getChildById(id);
     } else {
         // otherwise there is no such child
         return KssCommObjectHandle();
@@ -216,12 +216,53 @@ KssSimpleDomain::KssSimpleDomain(const KsString &id,
 
 KssSimpleVariable::KssSimpleVariable(const KsString &id,
                                      KsTime ctime,
-                                     KsString comment)
+                                     const KsString &comment)
 : KssSimpleCommObject(id, ctime, comment),
+  _writeable(true),
   _time(KsTime::now()),
   _state(KS_ST_UNKNOWN)
 {
 }
+
+//////////////////////////////////////////////////////////////////////
+
+KS_RESULT
+KssSimpleVariable::setValue(const KsValueHandle &h)
+{
+    if (isWriteable()) {
+        _value = h;
+        return KS_ERR_OK;
+    } else {
+        return KS_ERR_NOACCESS;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KS_RESULT
+KssSimpleVariable::setTime(const KsTime &t)
+{
+    if (isWriteable()) {
+        _time = t;
+        return KS_ERR_OK;
+    } else {
+        return KS_ERR_NOACCESS;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KS_RESULT
+KssSimpleVariable::setState(KS_STATE st) 
+{
+    if (isWriteable()) {
+        _state =  st;
+        return KS_ERR_OK;
+    } else {
+        return KS_ERR_NOACCESS;
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 /* EOF svrsimpleobjects.cpp */

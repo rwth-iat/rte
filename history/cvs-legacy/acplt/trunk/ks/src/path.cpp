@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.1 1997-03-24 12:31:23 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.2 1997-03-24 18:40:22 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -198,8 +198,27 @@ KsPath::KsPath(const KsPath & path, size_t first, size_t last)
 {
     PLT_PRECONDITION(   path.isValid() 
                      && first <= last && last < path.size());
-    _first = first;
-    _last = last;
+    _first = first + path._first;
+    _last = last + path._first;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+KsPath::KsPath()
+: _str("/"),
+  _slash(2),
+  _first(0),
+  _last(0),
+  _go_up(0)
+{
+    if (_slash.size() == 2) {
+        _slash[0] = 1;
+        _slash[1] = 1;
+        _valid = true;
+    } else {
+        _valid = false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -242,7 +261,7 @@ KsPath
 KsPath::getTail() const
 {
     PLT_ASSERT(size() > 1);
-    return KsPath(*this, 1, _last);
+    return KsPath(*this, 1, size()-1);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -268,7 +287,9 @@ PltString
 KsPath::operator[] (size_t i) const
 {
     PLT_PRECONDITION(isValid() && i < size());
-    return _str.substr(_slash[i], _slash[i+1] - _slash[i] - 1);
+    
+    return _str.substr(_slash[_first + i], 
+                       _slash[_first+i+1] - _slash[_first+i] - 1);
 } 
 
 //////////////////////////////////////////////////////////////////////
@@ -292,6 +313,47 @@ KsPath::resolve(const KsPath & rel)
 }
 
 //////////////////////////////////////////////////////////////////////
+
+void
+KsPath::resolvePaths(const PltArray<KsString> & ids,
+                     PltArray<KsPath> &paths,
+                     PltArray<KS_RESULT> &res) 
+{
+    PLT_PRECONDITION(   ids.size() == paths.size() 
+                     && res.size() == paths.size());
+
+    KsPath current("//"); // start with an invalid current path.
+    for (size_t i=0; i < ids.size(); ++i) {
+        KsPath & path = paths[i]; // shortcut
+        path = KsPath(ids[i]);
+        if (path.isValid()) {
+            // valid syntax
+            if (current.isValid()) {
+                // resolve path based on the current path.
+                path = current.resolve(path);
+                current = path;
+                if ( path.isValid() ) {
+                    res[i] = KS_ERR_OK;
+                } else {
+                    res[i] = KS_ERR_BADPATH;
+                }
+            } else {
+                // There is no valid current path
+                if (path.isAbsolute()) {
+                    // Use this.
+                    res[i] = path.isValid() ? KS_ERR_OK : KS_ERR_BADNAME;
+                } else {
+                    // Sorry. No current path to base this on.
+                    // request on.
+                    res[i] = KS_ERR_BADPATH;
+                }
+            }
+        } else {
+            // Invalid syntax in path. We must begin from scratch
+        }
+        current = path;
+    } // for each id
+}
 
 #if 0
 

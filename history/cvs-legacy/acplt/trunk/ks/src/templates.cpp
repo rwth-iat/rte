@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.1 1997-03-12 16:30:26 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.2 1997-03-24 18:40:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -75,6 +75,16 @@ template class PltArrayIterator<short>;
 template class PltArrayIterator<unsigned int>;
 template class PltArrayIterator<unsigned long>;
 template class PltArrayIterator<unsigned short>;
+template class PltArrayed<bool>;
+template class PltArrayed<char>;
+template class PltArrayed<double>;
+template class PltArrayed<float>;
+template class PltArrayed<int>;
+template class PltArrayed<long>;
+template class PltArrayed<short>;
+template class PltArrayed<unsigned int>;
+template class PltArrayed<unsigned long>;
+template class PltArrayed<unsigned short>;
 template class PltBidirIterator<bool>;
 template class PltBidirIterator<char>;
 template class PltBidirIterator<double>;

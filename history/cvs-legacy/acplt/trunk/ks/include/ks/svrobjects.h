@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.1 1997-03-23 14:35:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.2 1997-03-24 18:40:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,6 +44,7 @@
 #include "ks/string.h"
 #include "ks/time.h"
 #include "ks/value.h"
+#include "ks/path.h"
 
 //////////////////////////////////////////////////////////////////////
 // class KssCommObject
@@ -96,10 +97,12 @@ public:
                                             KS_OBJ_TYPE type_mask) 
         const = 0;
 
-    virtual KssCommObjectHandle child(const KsString & id) const;
+    virtual KssCommObjectHandle getChildById(const KsString & id) const;
     // ^ defaults to linear search on iterator, 
     //   you should implement a more efficient version!!!
-    
+
+    virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
+
     PLT_DECL_RTTI;
 };
 typedef PltPtrHandle<KssDomain> KssDomainHandle;

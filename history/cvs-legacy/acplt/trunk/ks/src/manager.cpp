@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.3 1997-03-20 09:43:53 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.4 1997-03-24 18:40:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,15 +40,22 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "ks/manager.h"
+#include "ks/path.h"
 #include "plt/log.h"
+#include <ctype.h>
 #if PLT_DEBUG
 #include <iostream.h>
 #include <iomanip.h>
 #endif
+
+static const KsString KS_MANAGER_NAME("MANAGER");
+static const KsString KS_MANAGER_VERSION("1");
+static const KsString KS_MANAGER_DESCRIPTION("ACPLT/KS Manager");
+
 //////////////////////////////////////////////////////////////////////
 
 KsManager::KsManager()
-: KsServerBase("MANAGER")
+: KsSimpleServer(KS_MANAGER_NAME)
 {
 }
 
@@ -177,11 +184,9 @@ KsManager::dispatch(u_long serviceId,
         }
         break;
 
-        // TODO: remaining services
-
     default:
         // fall back on base class
-        KsServerBase::dispatch(serviceId, xprt, xdrIn, ticket);
+        KsSimpleServer::dispatch(serviceId, xprt, xdrIn, ticket);
     }
 }
 
@@ -235,13 +240,31 @@ KsManager::destroyTransports()
 
 //////////////////////////////////////////////////////////////////////
 
+static inline bool
+isValidManagerName(const PltString & name)
+{
+    // Allowed characters: [A-Za-z0-9_]
+    for (size_t i; i<name.len(); ++i) {
+        if (!isalnum(name[i]) && name[i] != '_' ) {
+            return false;
+        }
+    }
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 void
 KsManager::registerServer(KsAvTicket & /*ticket*/,
                     KsRegistrationParams & params,
                     KsRegistrationResult & result)
 {
     // TODO use ticket, check params
-    
+    if (   !isValidManagerName(params.server.name)
+        || params.server.protocol_version < 1) {
+        result.result = KS_ERR_BADPARAM;
+        return;
+    }
     if (params.server.name == server_name) {
         // Do not overwrite entry for myself!
         result.result = KS_ERR_BADPARAM;
@@ -453,6 +476,53 @@ KsmExpireServerEvent::trigger()
         cerr << "(inactive)" << endl;
 #endif
     }
+}
+
+//////////////////////////////////////////////////////////////////////
+// Object tree
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsManager::initObjectTree()
+{
+    //// TODO: failure detection.
+
+    KssSimpleDomain *vendor = 
+        new KssSimpleDomain("vendor");
+
+    KssSimpleVariable *server_name = 
+        new KssSimpleVariable("server_name");
+
+    KssSimpleVariable *server_version = 
+        new KssSimpleVariable("server_version"); 
+    
+    KssSimpleVariable *server_description = 
+        new KssSimpleVariable("server_description"); 
+    
+    KssSimpleVariable *name = 
+        new KssSimpleVariable("name"); 
+    
+    server_name->setValue(new KsStringValue(KS_MANAGER_NAME));
+    server_name->lock();
+
+    server_version->setValue(new KsStringValue(KS_MANAGER_VERSION));
+    server_version->lock();
+
+    server_description->setValue(new KsStringValue("ACPLT/KS Manager"));
+    server_description->lock();
+
+    name->setValue(new KsStringValue("Lehrstuhl fuer "
+                                     "Prozessleittechnik, Aachen"));
+    name->lock();
+    
+    vendor->addChild(server_name);
+    vendor->addChild(server_version);
+    vendor->addChild(server_description);
+    vendor->addChild(name);
+
+    _root_domain.addChild(vendor);
+
+    return true; // This is optimistic...
 }
                 
 //////////////////////////////////////////////////////////////////////
