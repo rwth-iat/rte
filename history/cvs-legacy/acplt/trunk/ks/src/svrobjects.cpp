@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.13 1999-04-22 15:40:10 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.14 1999-09-06 06:59:25 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -34,16 +34,24 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
+/*
+ * svrobjects.cpp: contains the abstract classes which represent communication
+ *                 objects within ACPLT/KS. In addition, this module also
+ *                 defines some basic interfaces which apply to retrieving
+ *                 children/parts of a communication object and retrieving or
+ *                 setting the current properties of a variable etc.
+ */
+
+/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
+/* v1+ and v2 objects added by Harald Albrecht <harald@plt.rwth-aachen.de> */
+
 
 #include "ks/svrobjects.h"
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // RTTI implementation
-//////////////////////////////////////////////////////////////////////
-
+//
 PLT_IMPL_RTTI0(KssCurrPropsService);
 PLT_IMPL_RTTI0(KssChildrenService);
 
@@ -67,13 +75,15 @@ KssCurrPropsService::getCurrProps(KsCurrPropsHandle &hprops) const
 } // KssCurrPropsService::getCurrProps
 
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// All the stuff belonging to the class KssDomain.
+//
 
-
-
-//////////////////////////////////////////////////////////////////////
-// class KssDomain
-//////////////////////////////////////////////////////////////////////
-
+// ----------------------------------------------------------------------------
+// Get a child using its identifier. The identifier must identify (sic!) an
+// immediate child of the domain object, or else an unbound handle is returned.
+//
 KssCommObjectHandle
 KssDomain::getChildById(const KsString &id) const
 {
@@ -94,26 +104,38 @@ KssDomain::getChildById(const KsString &id) const
         delete pit;
     }
     return res;
-}
+} // KssDomain::getChildById
 
-/////////////////////////////////////////////////////////////////////////////
 
-KsProjPropsHandle
-KssDomain::getPP() const
+// ----------------------------------------------------------------------------
+// Return the engineered properties of a domain object. This method basically
+// calls the individual getXXX accessors to retrieve the various parts of the
+// engineered properties a domain object has. In case this should be ineffi-
+// cient, you should provide your own getEP() method to fill in all the fields
+// in one shot.
+//
+KsEngPropsHandle
+KssDomain::getEP() const
 {
-    KsDomainProjProps * p = new KsDomainProjProps;
-    KsProjPropsHandle h(p, KsOsNew);
-    if (p && h) {
-        p->identifier    = getIdentifier();
-        p->creation_time = getCreationTime();
-        p->comment       = getComment();
-        p->access_mode   = getAccessMode();
+    KsDomainEngProps *p = new KsDomainEngProps;
+    KsEngPropsHandle h(p, KsOsNew);
+    if ( p && h ) {
+        p->identifier       = getIdentifier();
+        p->creation_time    = getCreationTime();
+        p->comment          = getComment();
+        p->access_mode      = getAccessMode();
+	p->semantic_flags   = getSemanticFlags();
+	p->class_identifier = getClassIdentifier();
     }
     return h;
-}
+} // KssDomain::getEP
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Return an iterator suitable to iterate over the children of a domain object.
+// Note that the iterator returned by this method will iterate only over
+// children and *not* parts.
+//
 KssDomainIterator_THISTYPE *
 KssDomain::newMaskedIterator(const KsMask & name_mask,
                              KS_OBJ_TYPE type_mask) const
@@ -126,32 +148,45 @@ KssDomain::newMaskedIterator(const KsMask & name_mask,
     } else {
         return 0;
     }
-}
+} // KssDomain::newMaskedIterator
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Lookup a child using its path name.
+// FIXME: this needs to be checked for parts...
+//
 KssCommObjectHandle
 KssDomain::getChildByPath(const KsPath & path) const
 {
     PLT_PRECONDITION(path.isValid());
-    // lookup child
+
+    //
+    // First, lookup immediate child. This falls back to using the
+    // getChildById() method.
+    //
     KssCommObjectHandle hc(getChildById(path.getHead()));
-    if (hc) {
+    if ( hc ) {
+	//
         // Good. There is such a child.
-        if (path.isSingle()) {
+	//
+        if ( path.isSingle() ) {
 	    //
-            // We are beeing asked about this child. Return it.
+            // We are being asked about *this* child. Return it. That's it.
 	    //
             return hc;
         } else {
 	    //
-            // They want a grandchild. That means the child can be either:
-            // - domain
-	    // - link
-	    // - history.
+            // "They" want a grandchild. That means that the immediate child
+	    // can either be a:
+            //   - domain,
+	    //   - link,
+	    //   - history,
+	    //   - structure. FIXME
 	    // Unfortunately, because we want to use the lowest common C++
 	    // denominator, we can't use a real dynamic cast, so we have to
-	    // explicitly up- and downcast to get the real pointer.
+	    // explicitly up- and downcast to get the real pointer and let
+	    // the compiler fix up the offsets for retrieving the right
+	    // "this" pointer.
 	    //
             KssChildrenService *pcs = 0;
 	    switch ( hc->typeCode() ) {
@@ -178,22 +213,23 @@ KssDomain::getChildByPath(const KsPath & path) const
             } else {
 		//
                 // This object doesn't know anything about children, so fail.
+		// To indicate this, we just return an unbound handle.
 		//
                 return KssCommObjectHandle();
             }
         }
     } else {
 	//
-        // We don't know *this* child.
+        // We don't know *this* child. So fail and return an unbound handle.
 	//
         return KssCommObjectHandle();
     }
-}
+} // KssDomain::getChildByPath
 
-//////////////////////////////////////////////////////////////////////
+
+// ----------------------------------------------------------------------------
 // KssMaskedDomainIterator
-//////////////////////////////////////////////////////////////////////
-
+//
 KssMaskedDomainIterator::KssMaskedDomainIterator
 (const PltPtrHandle<KssDomainIterator> & hit,
  const KsMask & name_mask,
@@ -262,161 +298,209 @@ KssMaskedDomainIterator::toStart()
     skipWhileNotMatching();
 }
 
-//////////////////////////////////////////////////////////////////////
-// KssVariable
-//////////////////////////////////////////////////////////////////////
 
-KsProjPropsHandle
-KssVariable::getPP() const
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// All the stuff belonging to the class KssVariable.
+//
+
+// ----------------------------------------------------------------------------
+// Return the engineered properties of a variable object. This method basically
+// works the same as KssDomain::getEP(), so the comments made there apply to
+// this sucker too.
+//
+KsEngPropsHandle
+KssVariable::getEP() const
 {
-    KsVarProjProps * p = new KsVarProjProps;
-
-    KsProjPropsHandle h(p, KsOsNew);
-    if (p && h) {
-        p->identifier    = getIdentifier();
-        p->creation_time = getCreationTime();
-        p->comment       = getComment();
-        p->access_mode   = getAccessMode();
-        p->tech_unit     = getTechUnit();
-        p->type          = getType();
+    KsVarEngProps * p = new KsVarEngProps;
+    KsEngPropsHandle h(p, KsOsNew);
+    if ( p && h ) {
+        p->identifier     = getIdentifier();
+        p->creation_time  = getCreationTime();
+        p->comment        = getComment();
+        p->access_mode    = getAccessMode();
+	p->semantic_flags = getSemanticFlags();
+        p->tech_unit      = getTechUnit();
+        p->type           = getType();
     }
     return h;
-}
+} // KssVariable::getEP
 
-/////////////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Return the type of variable, which is basically just another description
+// for the data type used by this particular variable. In case no value is
+// currently set with this variable, then we assume "void".
+//
 KS_VAR_TYPE
 KssVariable::getType() const
 {
     KsValueHandle vh = getValue();
     return vh ? vh->xdrTypeCode() : KS_VT_VOID;
-}
+} // KssVariable::getType
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Return information about the variable's value state. The default
+// implementation just boils down to checking if a value exists and then
+// returning "bad" or otherwise "unknown", if no value currently exists for
+// this variable.
+//
 KS_STATE
 KssVariable::getState() const
 {
-    if (getValue()) {
+    if ( getValue() ) {
         return KS_ST_UNKNOWN;
     } else {
         return KS_ST_BAD;
     }
-}
-//////////////////////////////////////////////////////////////////////
+} // KssVariable::getState
 
+
+// ----------------------------------------------------------------------------
+// Return the timestamp of the value. Default is just "now". No future, no
+// past, no thermodynamic arrow of time at all. Yeeesss!!!!
+//
 KsTime
 KssVariable::getTime() const
 {
     return KsTime::now();
-}
+} // KssVariable::getTime
 
 
-//////////////////////////////////////////////////////////////////////
-
+// ----------------------------------------------------------------------------
+// Retrieve the current properties of a variable, that is, its value.
+//
 KsCurrPropsHandle
 KssVariable::getCurrProps() const
 {
     KsCurrPropsHandle hprops;
     KsValueHandle vh(getValue());
-    if (vh) {
-        // There was a value.
+    if ( vh ) {
+	//
+        // There was a value. So we put into a structure representing the
+	// current properties of this variable, add the timestamp and state.
+	//
         KsCurrPropsHandle hprops(new KsVarCurrProps(vh,
                                                     getTime(),
                                                     getState()),
                                  KsOsNew);
         return hprops;
     } else {
+	//
+	// Return an unbound handle to signal failure.
+	//
         return KsCurrPropsHandle();
     }
-}
+} // KssVariable::getCurrProps
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Set a variable's new value. This just sets the value, but *not* the time-
+// stamp nor state. This is just a convenience function in case no handle is
+// already at hand. The usual failure reasons thus apply.
+//
 KS_RESULT
 KssVariable::setValue(KsValue *p) 
 {
     KsValueHandle h(p, KsOsNew);
-    if (h) {
+    if ( h ) {
         return setValue(h);
     } else {
         return KS_ERR_GENERIC;
     }
-}
+} // KssVariable::setValue
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Set the current properties of a variable. This means, set the value, time-
+// stamp and state at oncce.
+//
 KS_RESULT 
 KssVariable::setCurrProps(KsVarCurrProps &props) 
 {
     KS_RESULT res = setValue(props.value);
-    if (res == KS_ERR_OK) {
+    if ( res == KS_ERR_OK ) {
         setTime(props.time);
         setState(props.state);
-    };
+    }
     return res;
-}
+} // KssVariable::setCurrProps
 
-//////////////////////////////////////////////////////////////////////
-    
+
+// ----------------------------------------------------------------------------
+// Set the current properties of a variable. This means, set the value, time-
+// stamp and state at oncce.
+//  
 KS_RESULT     
 KssVariable::setCurrProps(const KsCurrPropsHandle & hprops)
 {
     KsVarCurrProps *pprops = 
         PLT_DYNAMIC_PCAST(KsVarCurrProps, hprops.getPtr());
-    if (pprops) {
+    if ( pprops ) {
         return setCurrProps(*pprops);
     } else {
         return KS_ERR_BADTYPE;
     }
-}
+} // KssVariable::setCurrProps
 
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// All the stuff belonging to the class KssLink.
+//
 
 // ----------------------------------------------------------------------------
 // Return the engineered properties for a link communication object. This is
 // per default implemented by retrieving the individual attributes of a link
 // and putting this into a link engineered properties object/structure.
 //
-KsProjPropsHandle
-KssLink::getPP() const
+KsEngPropsHandle
+KssLink::getEP() const
 {
-    KsLinkProjProps * p = new KsLinkProjProps;
-    KsProjPropsHandle h(p, KsOsNew);
+    KsLinkEngProps * p = new KsLinkEngProps;
+    KsEngPropsHandle h(p, KsOsNew);
     if ( p && h ) {
         p->identifier               = getIdentifier();
         p->creation_time            = getCreationTime();
         p->comment                  = getComment();
         p->access_mode              = getAccessMode();
+	p->semantic_flags           = getSemanticFlags();
 	p->type                     = getType();
 	p->opposite_role_identifier = getOppositeRoleIdentifier();
     }
     return h;
-} // KssLink::getPP
+} // KssLink::getEP
 
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// All the stuff belonging to the class KssHistory.
+//
 
 // ----------------------------------------------------------------------------
 // Return the engineered properties for a history communication object. This is
 // per default implemented by retrieving the individual attributes of a history
 // and putting this into a history engineered properties object/structure.
 //
-KsProjPropsHandle
-KssHistory::getPP() const
+KsEngPropsHandle
+KssHistory::getEP() const
 {
-    KsHistoryProjProps * p = new KsHistoryProjProps;
-    KsProjPropsHandle h(p, KsOsNew);
+    KsHistoryEngProps * p = new KsHistoryEngProps;
+    KsEngPropsHandle h(p, KsOsNew);
     if ( p && h ) {
         p->identifier               = getIdentifier();
         p->creation_time            = getCreationTime();
         p->comment                  = getComment();
         p->access_mode              = getAccessMode();
+	p->semantic_flags           = getSemanticFlags();
 	p->type                     = getType();
 	p->default_interpolation    = getDefaultInterpolation();
 	p->supported_interpolations = getSupportedInterpolations();
 	p->type_identifier          = getTypeIdentifier();
     }
     return h;
-} // KssHistory::getPP
+} // KssHistory::getEP
 
 
 /* EOF ks/svrobjects.cpp */

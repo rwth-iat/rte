@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.12 1999-05-12 10:01:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.13 1999-09-06 06:59:24 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -37,6 +37,14 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * svrobjects.h: contains the abstract classes which represent communication
+ *               objects within ACPLT/KS. In addition, this module also
+ *               defines some basic interfaces which apply to retrieving
+ *               children/parts of a communication object and retrieving or
+ *               setting the current properties of a variable etc.
+ */
+
 /* Martin Kneissl <martin@plt.rwth-aachen.de> was here! */
 /* v1+ and v2 objects added by Harald Albrecht <harald@plt.rwth-aachen.de> */
 
@@ -69,17 +77,25 @@
 class KssCommObject
 {
 public:
-    // ctor/dtor
+    //
+    // ctor/dtor area
+    //
     virtual ~KssCommObject() { }
     virtual KS_OBJ_TYPE_ENUM typeCode() const = 0; 
-    // ^ optimization in absence of true RTTI
+    // ^ optimization in absence of true RTTI... by looking at the typeCode
+    // of a communication object in the server it's easy to deduct what kind
+    // of object we have dangling at the end of a handle.
+    //
 
-    // projected properties
-    virtual KsString  getIdentifier() const = 0;
-    virtual KsTime    getCreationTime() const = 0;
-    virtual KsString  getComment() const = 0;
-    virtual KS_ACCESS getAccessMode() const = 0;
-    virtual KsProjPropsHandle getPP() const = 0;
+    //
+    // access to the engineered properties...
+    //
+    virtual KsString          getIdentifier() const = 0;
+    virtual KsTime            getCreationTime() const = 0;
+    virtual KsString          getComment() const = 0;
+    virtual KS_ACCESS         getAccessMode() const = 0;
+    virtual KS_SEMANTIC_FLAGS getSemanticFlags() const = 0;
+    virtual KsEngPropsHandle  getEP() const = 0;
 
     PLT_DECL_RTTI;
 }; // class KssCommObj
@@ -94,9 +110,9 @@ typedef PltPtrHandle<KssCommObject> KssCommObjectHandle;
 // ACPLT/KS servers, especially the mis-nomed "simple server" class.
 //
 // These basic (abstract?) services are:
-// - KssCurrPropsService:
-//   Find out what children a communication object has.
 // - KssScanChildrenService:
+//   Find out what children a communication object has.
+// - KssCurrPropsService:
 //   Retrieve or set the current properties (that is, the value) of an object.
 //
 // The various object classes provide one or more of these specialized
@@ -109,7 +125,7 @@ typedef PltPtrHandle<KssCommObject> KssCommObjectHandle;
 //
 
 // ----------------------------------------------------------------------------
-// Class KssCurrPropsService indicates, that a particular communication object
+// Class KssCurrPropsService indicates that a particular communication object
 // class supports reading and/or/whatever writing of its current properties.
 //
 // NOTE: getCurrProps() without arguments is depreciated! Use the other one
@@ -133,7 +149,7 @@ typedef PltHandleIterator<KssCommObject> KssChildIterator;
 
 
 // ----------------------------------------------------------------------------
-// Class KssChildrenService
+// Class KssChildrenService (which is an interface)
 //
 class KssChildrenService {
 public:
@@ -149,7 +165,6 @@ public:
 }; // class KssChildrenService
 
 
-
 // ----------------------------------------------------------------------------
 // Class KssDomainIterator. This is for backwards compatibility with old source
 // code only. The use of these identifiers is depreciated, use the
@@ -159,10 +174,9 @@ public:
 typedef KssChildIterator KssDomainIterator;
 
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // class KssDomain
-//////////////////////////////////////////////////////////////////////
-
+//
 class KssDomain
 : public KssCommObject, public KssChildrenService,
   public PltHandleContainer<KssCommObject>
@@ -172,15 +186,20 @@ public:
     //   accessors
     virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_DOMAIN; }
 
-    // projected properties
-    virtual KsString  getIdentifier() const = 0;
-    virtual KsTime    getCreationTime() const = 0;
-    virtual KsString  getComment() const = 0;
-    virtual KS_ACCESS getAccessMode() const { return KS_AC_READ; }
-    virtual KsProjPropsHandle getPP() const;
+    //   engineered properties
+    virtual KsString          getIdentifier() const = 0;
+    virtual KsTime            getCreationTime() const = 0;
+    virtual KsString          getComment() const = 0;
+    virtual KS_ACCESS         getAccessMode() const { return KS_AC_READ; }
+    virtual KS_SEMANTIC_FLAGS getSemanticFlags() const = 0;
+    virtual KsEngPropsHandle  getEP() const;
 
-    //// KssDomain
-    //   accessors
+    //// KssDomain ////
+    //// accessors
+    //   engineered properties
+    virtual KsString          getClassIdentifier() const = 0;
+
+    //   children
     virtual KssDomainIterator_THISTYPE *
         newIterator() const = 0;
     virtual KssDomainIterator_THISTYPE *
@@ -195,14 +214,13 @@ public:
     virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
 
     PLT_DECL_RTTI;
-};
+}; // class KssDomain
 typedef PltPtrHandle<KssDomain> KssDomainHandle;
 
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // class KssMaskedIterator
-//////////////////////////////////////////////////////////////////////
-
+//
 class KssMaskedDomainIterator
 : public KssDomainIterator
 {
@@ -211,7 +229,7 @@ public:
     typedef KssMaskedDomainIterator THISTYPE;
     #define KssMaskedDomainIterator_THISTYPE KssMaskedDomainIterator
 #else
-	 #define KssMaskedDomainIterator_THISTYPE KssDomainIterator_THISTYPE
+    #define KssMaskedDomainIterator_THISTYPE KssDomainIterator_THISTYPE
 #endif
 
     KssMaskedDomainIterator(const PltPtrHandle<KssDomainIterator> & hit,
@@ -221,13 +239,14 @@ public:
     virtual KssCommObjectHandle operator * () const;
     virtual THISTYPE & operator ++ ();
     virtual void toStart();
+
 private:
     void skipWhileNotMatching();
     KsMask _name_mask;
     KS_OBJ_TYPE _type_mask;
     PltPtrHandle<KssDomainIterator> _hit; // used to hold the refence
     KssDomainIterator & _it; // used for access
-};
+}; // class KssMaskedDomainIterator
 
 
 // ----------------------------------------------------------------------------
@@ -245,23 +264,24 @@ public:
     ///  accessors
     virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_VARIABLE; }
 
-    // projected properties
-    virtual KsString  getIdentifier() const = 0;
-    virtual KsTime    getCreationTime() const = 0;
-    virtual KsString  getComment() const = 0;
-    virtual KS_ACCESS getAccessMode() const = 0;
-    virtual KsProjPropsHandle getPP() const;
+    //   engineered properties
+    virtual KsString          getIdentifier() const = 0;
+    virtual KsTime            getCreationTime() const = 0;
+    virtual KsString          getComment() const = 0;
+    virtual KS_ACCESS         getAccessMode() const = 0;
+    virtual KS_SEMANTIC_FLAGS getSemanticFlags() const = 0;
+    virtual KsEngPropsHandle  getEP() const;
 
     //// KssVariable ////
     //// accessors
-    //   projected properties
-    virtual KsString getTechUnit() const = 0;
-    virtual KS_VAR_TYPE getType() const;
+    //   engineered properties
+    virtual KsString          getTechUnit() const = 0;
+    virtual KS_VAR_TYPE       getType() const;
 
     //   current properties
-    virtual KsValueHandle getValue() const = 0;
-    virtual KsTime        getTime() const;
-    virtual KS_STATE      getState() const;
+    virtual KsValueHandle     getValue() const = 0;
+    virtual KsTime            getTime() const;
+    virtual KS_STATE          getState() const;
 
     virtual KsCurrPropsHandle getCurrProps() const;
 
@@ -297,14 +317,17 @@ public:
     ///  accessors
     virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_LINK; }
 
-    // projected properties
-    virtual KsString     getIdentifier() const = 0;
-    virtual KsTime       getCreationTime() const = 0;
-    virtual KsString     getComment() const = 0;
-    virtual KS_ACCESS    getAccessMode() const { return KS_AC_READ; }
-    virtual KsProjPropsHandle getPP() const;
+    //   engineered properties
+    virtual KsString          getIdentifier() const = 0;
+    virtual KsTime            getCreationTime() const = 0;
+    virtual KsString          getComment() const = 0;
+    virtual KS_ACCESS         getAccessMode() const { return KS_AC_READ; }
+    virtual KS_SEMANTIC_FLAGS getSemanticFlags() const = 0;
+    virtual KsEngPropsHandle  getEP() const;
 
-    //// KssChildrenService stuff
+    //// KssLink ////
+    //// accessors
+    //   children
     virtual KssChildIterator_THISTYPE *
         newIterator() const = 0;
     virtual KssChildIterator_THISTYPE *
@@ -316,7 +339,7 @@ public:
     virtual KssCommObjectHandle getChildByPath(const KsPath & path) const = 0;
 
     //// KssCurrPropsService stuff
-    //virtual KS_RESULT getCurrProps(KsCurrPropsHandle &hprops) const;
+    //FIXMEvirtual KS_RESULT getCurrProps(KsCurrPropsHandle &hprops) const;
     virtual KsCurrPropsHandle getCurrProps() const = 0;
     virtual KS_RESULT setCurrProps(const KsCurrPropsHandle &hprops) = 0;
 
@@ -327,7 +350,7 @@ public:
     virtual KsString     getOppositeRoleIdentifier() const = 0;
 
 #if 0
-
+    // FIXME
     virtual KsValueHandle getValue() const = 0;
     virtual KsTime        getTime() const;
     virtual KS_STATE      getState() const;
@@ -350,14 +373,17 @@ public:
     //   accessors
     virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_HISTORY; }
 
-    // projected properties
-    virtual KsString  getIdentifier() const = 0;
-    virtual KsTime    getCreationTime() const = 0;
-    virtual KsString  getComment() const = 0;
-    virtual KS_ACCESS getAccessMode() const { return KS_AC_READ; }
-    virtual KsProjPropsHandle getPP() const;
+    //   engineered properties
+    virtual KsString          getIdentifier() const = 0;
+    virtual KsTime            getCreationTime() const = 0;
+    virtual KsString          getComment() const = 0;
+    virtual KS_ACCESS         getAccessMode() const { return KS_AC_READ; }
+    virtual KS_SEMANTIC_FLAGS getSemanticFlags() const = 0;
+    virtual KsEngPropsHandle  getEP() const;
 
-    //// KssChildrenService stuff
+    //// KssHistory ////
+    //// accessors
+    //   children
     virtual KssChildIterator_THISTYPE *
         newIterator() const = 0;
     virtual KssChildIterator_THISTYPE *

@@ -66,7 +66,7 @@ public:
 
     // check for type errors but dont fail
     // due to it
-    bool getProjPropsUpdate();
+    bool getEngPropsUpdate();
     // may fail due to type error
     bool getUpdate();
     // may fail due to type error

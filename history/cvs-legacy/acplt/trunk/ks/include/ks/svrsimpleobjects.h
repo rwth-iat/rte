@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.14 1999-01-12 16:25:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.15 1999-09-06 06:59:38 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -37,6 +37,18 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * svrsimpleobjects.h: contains the not-so-abstract communication object
+ *                     classes which can be instantiated and used in your
+ *                     very own ACPLT/KS servers. This module is dubbed
+ *                     the "server simple objects", because the classes
+ *                     declared here use a simple storage mechanism to
+ *                     keep their data: the free storage, also known as
+ *                     the heap.
+ */
+
+/* Martin Kneissl <martin@plt.rwth-aachen.de> was here! */
+/* v1+ and v2 objects added by Harald Albrecht <harald@plt.rwth-aachen.de> */
 
 #include "ks/svrobjects.h"
 #include "plt/hashtable.h"
@@ -64,18 +76,22 @@ class KssSimpleCommObject
 protected:
     KssSimpleCommObject(const KsString &id,
                         KsTime ctime = KsTime::now(),
-                        KsString comment = KsString());
+                        KsString comment = KsString(),
+                        KS_SEMANTIC_FLAGS semflags = 0);
+
 public:
     virtual ~KssSimpleCommObject() { }
 
+    //// KssCommObject ////
     //// accessors
-    // projected properties
-    KsString  getIdentifier() const;
-    KsTime    getCreationTime() const;
-    KsString  getComment() const;
+    //   engineered properties
+    KsString          getIdentifier() const;
+    KsTime            getCreationTime() const;
+    KsString          getComment() const;
+    KS_SEMANTIC_FLAGS getSemanticFlags() const;
 
-	//// modifiers
-    // projected properties
+    //// modifiers
+    //   engineered properties
     void setCreationTime(const KsTime &);
     void setComment(const KsString &);
 
@@ -83,12 +99,22 @@ private:
     KssSimpleCommObject(const KssSimpleCommObject &); // forbidden
     KssSimpleCommObject & operator = (const KssSimpleCommObject &); //forbidden
 //FIXME    PltHashTable<KsString, KssCommObjectHandle> _table;
-    const KsString _identifier;
-    KsTime         _creation_time;
-    KsString       _comment;
+
+    //
+    // This class is called the simple class because it just stores its
+    // engineered properties in the object...and that's simple to do. More
+    // "sophisticated" object classes might have to do much ado just to get
+    // the engineered properties from an underlying DCS... (believe me, one
+    // typically has to do *really much* ado when retrieving metainformation
+    // from a DCS).
+    //
+    const KsString    _identifier;
+    KsTime            _creation_time;
+    KsString          _comment;
+    KS_SEMANTIC_FLAGS _semantic_flags;
 
     PLT_DECL_RTTI;
-};
+}; // class KssSimpleCommObject
 
 
 
@@ -135,12 +161,15 @@ public:
     //// KssCommObject
     //// accessors
     // projected properties
-    virtual KsString getIdentifier() const;
-    virtual KsTime   getCreationTime() const;
-    virtual KsString getComment() const;
+    virtual KsString  getIdentifier() const;
+    virtual KsTime    getCreationTime() const;
+    virtual KsString  getComment() const;
+    KS_SEMANTIC_FLAGS getSemanticFlags() const;
 
     //// KssDomain ////
     //// accessors
+    KsString getClassIdentifier() const;
+
     virtual KssSimpleDomainIterator_THISTYPE * newIterator() const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
@@ -172,6 +201,7 @@ private:
     KssDomainHandle _next_sister;
     PLT_DECL_RTTI;
 
+    KsString _class_identifier;
 };
 
 
@@ -191,6 +221,7 @@ public:
     virtual KsTime    getCreationTime() const;
     virtual KsString  getComment() const;
     virtual KS_ACCESS getAccessMode() const;
+    KS_SEMANTIC_FLAGS getSemanticFlags() const;
 
     //// KssVariable ////
     //// accessors
@@ -254,6 +285,7 @@ public:
     virtual KsTime   getCreationTime() const;
     virtual KsString getComment() const;
     virtual KS_ACCESS getAccessMode() const;
+    KS_SEMANTIC_FLAGS getSemanticFlags() const;
 
     //// KssVariable ////
     //// accessors
@@ -303,9 +335,10 @@ public:
     //// KssCommObject
     //// accessors
     // projected properties
-    virtual KsString getIdentifier() const;
-    virtual KsTime   getCreationTime() const;
-    virtual KsString getComment() const;
+    virtual KsString  getIdentifier() const;
+    virtual KsTime    getCreationTime() const;
+    virtual KsString  getComment() const;
+    KS_SEMANTIC_FLAGS getSemanticFlags() const;
 
     //// KssLink/KssChildrenService ////
     //// accessors
@@ -347,47 +380,50 @@ private:
 // IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // KssSimpleCommObject
-//////////////////////////////////////////////////////////////////////
-
+//
 inline KsString
 KssSimpleCommObject::getIdentifier() const
 {
     return _identifier;
-}
+} // KssSimpleCommObject::getIdentifier
 
-//////////////////////////////////////////////////////////////////////
 
 inline KsTime
 KssSimpleCommObject::getCreationTime() const
 {
     return _creation_time;
-}
+} // KssSimpleCommObject::getCreationTime
 
-//////////////////////////////////////////////////////////////////////
 
 inline KsString
 KssSimpleCommObject::getComment() const
 {
     return _comment;
-}
+} // KssSimpleCommObject::getComment
 
-//////////////////////////////////////////////////////////////////////
+
+inline KS_SEMANTIC_FLAGS
+KssSimpleCommObject::getSemanticFlags() const
+{
+    return _semantic_flags;
+} // KssSimpleCommObject::getSemanticFlags
+
 
 inline void
 KssSimpleCommObject::setCreationTime(const KsTime &t)
 {
     _creation_time = t;
-}
+} // KssSimpleCommObject::setCreationTime
 
-//////////////////////////////////////////////////////////////////////
 
 inline void
 KssSimpleCommObject::setComment(const KsString &s)
 {
     _comment = s;
-}
+} // KssSimpleCommObject::setComment
+
 
 //////////////////////////////////////////////////////////////////////
 // KssSimpleDomain
@@ -402,6 +438,12 @@ inline KsTime KssSimpleDomain::getCreationTime() const
 
 inline KsString KssSimpleDomain::getComment() const
 { return KssSimpleCommObject::getComment(); }
+
+inline KS_SEMANTIC_FLAGS KssSimpleDomain::getSemanticFlags() const
+{ return KssSimpleCommObject::getSemanticFlags(); }
+
+inline KsString KssSimpleDomain::getClassIdentifier() const
+{ return _class_identifier; }
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -434,6 +476,10 @@ inline KsTime KssSimpleVariable::getCreationTime() const
 
 inline KsString KssSimpleVariable::getComment() const
 { return KssSimpleCommObject::getComment(); }
+
+inline KS_SEMANTIC_FLAGS KssSimpleVariable::getSemanticFlags() const
+{ return KssSimpleCommObject::getSemanticFlags(); }
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -564,6 +610,9 @@ KssSimpleLinkAlias::getChildByPath(const KsPath & path) const
     return _halias_domain->getChildByPath(path);
 } // KssSimpleLinkAlias::getChildByPath
 
+inline KS_SEMANTIC_FLAGS
+KssSimpleLinkAlias::getSemanticFlags() const
+{ return KssSimpleCommObject::getSemanticFlags(); }
 
 
 
@@ -594,6 +643,10 @@ inline KsTime KssTimeNowVariable::getCreationTime() const
 
 inline KsString KssTimeNowVariable::getComment() const
 { return KsString("current time"); }
+
+inline KS_SEMANTIC_FLAGS KssTimeNowVariable::getSemanticFlags() const
+{ return KssSimpleCommObject::getSemanticFlags(); }
+
 
 /////////////////////////////////////////////////////////////////////////////
 

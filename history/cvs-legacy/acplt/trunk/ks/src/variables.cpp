@@ -89,7 +89,7 @@ bool
 KscTypedVar::checkType()
 {
     fTypeError =
-        (proj_props.type != varType());
+        (eng_props.type != varType());
 
     if(curr_props.value) {
         fTypeError |= 
@@ -102,13 +102,13 @@ KscTypedVar::checkType()
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscTypedVar::getProjPropsUpdate()
+KscTypedVar::getEngPropsUpdate()
 {
-    bool ok = KscVariable::getProjPropsUpdate();
+    bool ok = KscVariable::getEngPropsUpdate();
 
     if(ok) {
         fTypeError = 
-            proj_props.type != varType();
+            eng_props.type != varType();
         if(fTypeError) {
             PLT_DMSG("WARNING : projected type does not match desired type" << endl);
         }

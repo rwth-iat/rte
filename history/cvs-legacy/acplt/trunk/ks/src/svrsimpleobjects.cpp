@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.14 1999-05-12 10:02:59 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.15 1999-09-06 06:59:39 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -207,12 +207,14 @@ KssSimpleDomainIterator::toStart()
 
 KssSimpleCommObject::KssSimpleCommObject(const KsString &id,
                                          KsTime ctime,
-                                         KsString comment)
-: _identifier(id),
-  _creation_time(ctime),
-  _comment(comment)
+                                         KsString comment,
+					 KS_SEMANTIC_FLAGS semflags)
+    : _identifier(id),
+      _creation_time(ctime),
+      _comment(comment),
+      _semantic_flags(semflags)
 {
-}
+} // KssSimpleCommObject::KssSimpleCommObject
 
 
 //////////////////////////////////////////////////////////////////////
