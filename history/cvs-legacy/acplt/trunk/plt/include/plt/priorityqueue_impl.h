@@ -2,7 +2,7 @@
 #ifndef PLT_PRIORITYQUEUE_IMPL_INCLUDED
 #define PLT_PRIORITYQUEUE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.5 1997-04-10 14:09:27 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.6 1997-09-03 11:19:06 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -107,6 +107,7 @@ PltPriorityQueue<T>::invariant() const
     if (a_capacity < a_size ) return false;
     if (a_capacity > 0 && !a_elems ) return false;
 
+#if PLT_DEBUG_PEDANTIC
     // partial ordering
     for (size_t i = 0; i < (a_size+1)/2; ++i ) {
         const size_t lc = leftChild(i);
@@ -117,6 +118,8 @@ PltPriorityQueue<T>::invariant() const
             return false;
         }
     }
+#endif
+
     return true;
 }
 
