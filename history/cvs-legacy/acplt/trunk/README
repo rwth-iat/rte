@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.3.0 of the C++ Communication Libary. As always, it
+This is version 1.3.1 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
@@ -132,7 +132,7 @@ number y denoted the state of the code: even numbered y's denote stable
 releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
 
-Version 1.3.0
+Version 1.3.1
 - BOTH:
   * Port to g++ 3.3 and new C++ standard compliant header files.
 
@@ -172,6 +172,11 @@ Version 1.3.0
     now relies on the KsServerConnection class.
 
 - CLIENTS:
+  * Finally: KS clients with nonblocking IO have been landed.
+
+  * Added new error KS_ERR_TERMINATED which indicates that a KS service
+    request has been terminated by the client application.
+
 
 Version 1.2.4
 - CLIENTS:
