@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.11 1997-08-18 13:41:40 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.12 1997-09-02 15:07:43 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -121,6 +121,19 @@ KsAvTicket::xdrNew(XDR * xdrs)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+bool
+KsAvTicket::setSenderAddress(const sockaddr * pSaddr)
+{
+    if (pSaddr->sa_family==AF_INET) {
+        _saddr = *pSaddr;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
 bool 
 KsAvTicket::canReadVars(const KsArray<KsString> & names,
                         KsArray<bool> &canRead) 
@@ -166,7 +179,6 @@ KS_ACCESS
 KsAvTicket::getAccess(const KsString &name) const
 {
     enum_t res = KS_AC_NONE;
-
     if (canReadVar(name))   res |= KS_AC_READ;
     if (canWriteVar(name))  res |= KS_AC_WRITE;
     return (KS_ACCESS) res;
@@ -179,6 +191,23 @@ KsAvTicket::isVisible(const KsString &name) const
 {
     return getAccess(name) != KS_AC_NONE;
 }
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsAvTicket::canReadVar(const KsString &name) const
+{
+    return (getAccess(name) & KS_AC_READ) != 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsAvTicket::canWriteVar(const KsString &name) const
+{
+    return (getAccess(name) & KS_AC_WRITE) != 0;
+}
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -249,26 +278,11 @@ KsAvNoneTicket::xdrEncodeVariant(XDR *) const
 }
 
 //////////////////////////////////////////////////////////////////////
-KS_ACCESS 
+
+KS_ACCESS
 KsAvNoneTicket::getAccess(const KsString &) const
 {
     return _access;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-bool
-KsAvNoneTicket::canReadVar(const KsString &) const
-{
-    return (_access & KS_AC_READ) != 0;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-bool
-KsAvNoneTicket::canWriteVar(const KsString &) const
-{
-    return (_access & KS_AC_WRITE) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -289,14 +303,6 @@ bool
 KsAvSimpleTicket::xdrDecodeVariant(XDR *xdr)
 {
     return _id.xdrDecode(xdr);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-bool
-KsAvSimpleTicket::xdrEncodeVariant(XDR *xdr) const
-{
-    return _id.xdrEncode(xdr);
 }
 
 //////////////////////////////////////////////////////////////////////

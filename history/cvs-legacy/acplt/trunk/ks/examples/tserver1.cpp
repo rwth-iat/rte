@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.4 1997-08-13 11:30:45 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.5 1997-09-02 15:06:38 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -188,15 +188,128 @@ TestServer::TestServer()
     }
     _root_domain.addChild(big_dom);
     _root_domain.addChild(new TestDomain);
+    
+    // using convenience functions:
+    addDomain(KsPath("/"), "restricted", "Access restricted");
+    addStringVar(KsPath("/restricted"), 
+                 "writeme", 
+                 "the default value",
+                 "that tcls",
+                 false);
 }
 
 
 
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+static const char restricted[] = "/restricted";
+
+//////////////////////////////////////////////////////////////////////
+
+class TestAvNone
+: public KsAvNoneTicket
+{
+public:
+    TestAvNone(XDR* xdr, bool & ok) : KsAvNoneTicket(xdr,ok) { }
+    KS_ACCESS getAccess(const KsString &) const;
+    static KsAvTicket * xdrNew(XDR *);
+};
+
+//////////////////////////////////////////////////////////////////////
+
+class TestAvSimple
+: public KsAvSimpleTicket
+{
+public:
+    TestAvSimple(XDR* xdr, bool & ok) : KsAvSimpleTicket(xdr,ok) { }
+    bool isVisible(const KsString & name) const;
+    KS_ACCESS getAccess(const KsString & name) const
+        { return KsAvTicket::getAccess(name); }
+    bool canReadVar(const KsString & name) const;
+    bool canWriteVar(const KsString & name) const;
+    static KsAvTicket * xdrNew(XDR *);
+};
+
+//////////////////////////////////////////////////////////////////////
+
+KS_IMPL_XDRNEW2(KsAvTicket,TestAvNone);
+KS_IMPL_XDRNEW2(KsAvTicket,TestAvSimple);
+
+//////////////////////////////////////////////////////////////////////
+
+KS_ACCESS
+TestAvNone::getAccess(const KsString & name) const
+{
+    if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
+        return KS_AC_NONE;
+    } else {
+        return KS_AC_READ | KS_AC_WRITE;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+TestAvSimple::isVisible(const KsString & name) const
+{
+    if (name == restricted) {
+        // check id
+        if (_id == "reader" || _id == "writer") {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        // delegate to base class
+        return KsAvSimpleTicket::isVisible(name);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+TestAvSimple::canReadVar(const KsString & name) const
+{
+    if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
+        // check id
+        if (_id == "reader" || _id == "writer") {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        // delegate to base class
+        return KsAvSimpleTicket::canReadVar(name);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+TestAvSimple::canWriteVar(const KsString & name) const
+{
+    if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
+        // check id
+        if (_id == "writer") {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        // delegate to base class
+        return KsAvSimpleTicket::canWriteVar(name);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 int main(int, char **) {
     PltCerrLog log("tserver");
+    KsAvTicket::registerAvTicketType(KS_AUTH_NONE, TestAvNone::xdrNew);
+    KsAvTicket::registerAvTicketType(KS_AUTH_SIMPLE, TestAvSimple::xdrNew);
 	TestServer ts;
     ts.startServer();
 	ts.run();

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.13 1997-08-18 13:41:37 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.14 1997-09-02 15:07:42 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -85,17 +85,12 @@ KsAuthType::xdrEncode(XDR *xdr) const
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-
 class KsAvTicket;
 
 typedef KsAvTicket * (*KsTicketConstructor)(XDR *);
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-
-// forward declaration
-extern "C" void 
-ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 
 class KsAvTicket
 : public KsXdrUnion
@@ -110,18 +105,25 @@ public:
     ////
     //// Permissions
     ////
-    virtual KS_ACCESS getAccess(const KsString &name) const;
+    virtual KS_ACCESS getAccess(const KsString &name) const;        // [1]
     
     virtual bool isVisible(const KsString & name) const;
 
-    virtual bool canReadVar(const KsString &name) const = 0;
-    virtual bool canWriteVar(const KsString &name) const = 0;
+    virtual bool canReadVar(const KsString &name) const;            // [1]
+    virtual bool canWriteVar(const KsString &name) const;           // [1]
 
     virtual bool canReadVars(const KsArray<KsString> & names,
                              KsArray<bool> &canRead) const;
     
     virtual bool canWriteVars(const KsArray<KsString> & names,
                               KsArray<bool> &canRead) const;
+
+    //
+    // [1] : Overwrite at least one set: 
+    // Implement all of can... or getAccess because the default implementations
+    // fall back on each other!
+    //
+
     ////
     //// sender address
     ////
@@ -143,13 +145,14 @@ public:
     virtual bool invariant() const;
 #endif
 
+    bool setSenderAddress(const sockaddr * sockaddr);
+
 protected:
     virtual bool xdrEncodeVariant(XDR *) const = 0;
     virtual bool xdrDecodeVariant(XDR *)  = 0;
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
     struct sockaddr _saddr;
-    friend void ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 };
 
 
@@ -170,9 +173,6 @@ public:
     virtual enum_t xdrTypeCode() const { return KS_AUTH_NONE; }
 
     virtual KS_ACCESS getAccess(const KsString &name) const;
-
-    virtual bool canReadVar(const KsString &name) const;
-    virtual bool canWriteVar(const KsString &name) const;
 
     static void setDefaultAccess(KS_ACCESS a)
         { _default_access = a; }
@@ -207,8 +207,6 @@ public:
     KsString getId() const { return _id; }
 protected:
     bool xdrDecodeVariant(XDR *);
-    bool xdrEncodeVariant(XDR *) const;
-private:
     KsString _id;
 };
 
@@ -237,6 +235,7 @@ KsAvTicket::getSenderInAddr() const
 }
 
 //////////////////////////////////////////////////////////////////////
+
 
 #endif /* EOF ks/avticket.h */
 
