@@ -1,13 +1,13 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.2.4pre1 of the C++ Communication Libary. As always, it
+This is version 1.4.0 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
 
-IMPORTANT: porting notes from 1.0.5 to 1.2.x, please see part 4
-"Porting Notes" (sic!).
+IMPORTANT: With the 1.4.0 series we will be moving in the direction
+of non-blocking clients.
 
 IMPORTANT: since version 1.1.3 we now license the source code of the
 ACPLT/KS package under the Artistic License (see file ARTISTIC-LICENSE
@@ -20,14 +20,13 @@ either commercial or not. Like before, you can tweak the code to suit
 your needs, etc.
 
 The latest and greatest stable release (as if this developer's release
-were not stable...) is 1.2.3.
+were not stable...) is 1.2.4.
 
 Currently, the following platforms and compilers are supported by the
 C++ Communication Library:
 
   HP-UX 10.20                  g++ 2.8.x
-  IRIX 6.x                     g++ 2.7.2, g++ 2.8.x
-  Linux 2.0/2.2                g++ 2.7.2, g++ 2.8.x, egcs 2.95.x
+  Linux 2.2/2.4                g++ 2.7.2, g++ 2.8.x, egcs 2.95.x, g++ 3.3
   OpenVMS 6.2/7.1              CXX DEC C++ 5.4
   Solaris 2.6                  g++ 2.7.2, g++ 2.8.x
   Windows NT/9x                Borland C++ 5.0,
@@ -133,7 +132,23 @@ number y denoted the state of the code: even numbered y's denote stable
 releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
 
-Version 1.2.4pre1
+Version 1.4.0
+- BOTH:
+  * Port to g++ 3.3 and new C++ standard compliant header files.
+
+  * Fixed sign bug in encoding/decoding routines (aka "%XX").
+
+- SERVERS:
+  * The tserver now accepts certain command line options, in
+    particular: -p for controlling the port number and -r for
+    enabling reusing the socket address.
+
+  * The tmanager also now accepts socket address reusage through
+    the -r command line option.
+
+- CLIENTS:
+
+Version 1.2.4
 - CLIENTS:
   * implemented timed connecting to ACPLT/KS servers. Whenever a
     connection needs to be set up, the the RPC timeout set on a
