@@ -1,0 +1,84 @@
+#
+# Simple and crazy makefile for OpenVMS (libks)
+#
+REPOSITORY = dka0:[martin.cxx_repository]
+
+#CXX = gcc/plus
+#CXX_FLAGS = /float=ieee/cc1_options="-fno-exceptions -g0 -fno-implicit-templates"
+CXX = cxx
+
+CXX_FLAGS = /DEBUG
+
+CXX_EXTRA_FLAGS = \
+	/warnings=(disable=(EXTRASEMI,FOUNDCR)) \
+	/notemplate_define \
+	/repository=($(REPOSITORY))
+
+CXX_DEFINES = PLT_SYSTEM_OPENVMS=1
+
+AR = library
+
+### Filename conventions
+O = .obj
+A = .olb
+EXE = .exe
+
+PLTDIR = [-.-.-.plt]
+SRCDIR = [-.-.src]
+CXX_INCLUDES = "../openvms","../../include","../../../plt/include"
+
+LIBKS = libks$(A)
+LIBPLT = [-.-.-.plt.build.openvms]libplt$(A)
+
+.SUFFIXES:
+
+.SUFFIXES: .cpp $(O) $(A) $(EXE)
+
+### The VPATH mechanism isn't supported yet...
+#VPATH = "../../src"
+
+all: libks$(A) libkssvr$(A)
+
+### Include generic part (generic dependencies)
+include [-]generic.mk
+
+CXX_COMPILE = $(CXX) \
+		$(CXX_EXTRA_FLAGS) \
+		/define=($(CXX_DEFINES)) \
+		/include=($(CXX_INCLUDES)) \
+		$(CXX_FLAGS)
+
+### Include auto dependencies
+#include [-]depend.nt
+
+$(LIBKS_OBJECTS): %.obj: [-.-.src]%.cpp
+	$(CXX_COMPILE) $<
+
+$(LIBKSSVR_OBJECTS): %.obj: [-.-.src]%.cpp	
+	$(CXX_COMPILE) $<
+
+$(EXAMPLES_OBJECTS): %.obj: [-.-.examples]%.cpp
+	$(CXX_COMPILE) $<
+
+tmanager.exe: tmanager.obj tmanager1.obj libkssvr.olb libks.olb
+	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,libkssvr/lib,libks/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
+
+tsclient.exe: tsclient.obj tsclient1.obj svrrpcctx.obj libks.olb
+	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,libks/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
+
+libks$(A): $(LIBKS_OBJECTS)
+	$(AR) /create libks$(A) $^
+
+libkssvr$(A): $(LIBKSSVR_OBJECTS)
+	$(AR) /create libkssvr$(A) $^
+
+clean:
+	del *$(O);*
+	del libks$(A);*
+	del libkssrv$(A);*
+
+# EOF makefile.vms
+
+
+
+
