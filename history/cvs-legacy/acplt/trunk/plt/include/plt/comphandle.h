@@ -54,8 +54,8 @@ public:
     PltEqHandle(T *p, enum PltOwnership);  // no default to avoid conversion!
     PltEqHandle(const PltEqHandle &);
        
-    bool operator == (const PltEqHandle &rhs);
-    bool operator != (const PltEqHandle &rhs);
+    bool operator == (const PltEqHandle &rhs) const;
+    bool operator != (const PltEqHandle &rhs) const;
 };
 
 
@@ -72,10 +72,10 @@ public:
     PltCompHandle(T *p, enum PltOwnership);  // no default to avoid conversion!
     PltCompHandle(const PltCompHandle &);
        
-    bool operator <  (const PltCompHandle &rhs);
-    bool operator <= (const PltCompHandle &rhs);
-    bool operator >  (const PltCompHandle &rhs);
-    bool operator >= (const PltCompHandle &rhs);
+    bool operator <  (const PltCompHandle &rhs) const;
+    bool operator <= (const PltCompHandle &rhs) const;
+    bool operator >  (const PltCompHandle &rhs) const;
+    bool operator >= (const PltCompHandle &rhs) const;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ PltEqHandle<T>::PltEqHandle(const PltEqHandle &rhs)
 
 template <class T>
 inline bool
-PltEqHandle<T>::operator == (const PltEqHandle &rhs)
+PltEqHandle<T>::operator == (const PltEqHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -123,7 +123,7 @@ PltEqHandle<T>::operator == (const PltEqHandle &rhs)
 
 template <class T>
 inline bool
-PltEqHandle<T>::operator != (const PltEqHandle &rhs)
+PltEqHandle<T>::operator != (const PltEqHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -154,7 +154,7 @@ PltCompHandle<T>::PltCompHandle(T *p, enum PltOwnership os)
 
 template <class T>
 inline
-PltCompHandle<T>::PltCompHandle(const PltCompHandle &rhs)
+PltCompHandle<T>::PltCompHandle(const PltCompHandle &rhs) const
 : PltEqHandle<T>(rhs)
 {}
 
@@ -163,7 +163,7 @@ PltCompHandle<T>::PltCompHandle(const PltCompHandle &rhs)
 
 template <class T>
 inline bool
-PltCompHandle<T>::operator < (const PltCompHandle &rhs)
+PltCompHandle<T>::operator < (const PltCompHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -175,7 +175,7 @@ PltCompHandle<T>::operator < (const PltCompHandle &rhs)
 
 template <class T>
 inline bool
-PltCompHandle<T>::operator <= (const PltCompHandle &rhs)
+PltCompHandle<T>::operator <= (const PltCompHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -187,7 +187,7 @@ PltCompHandle<T>::operator <= (const PltCompHandle &rhs)
 
 template <class T>
 inline bool
-PltCompHandle<T>::operator > (const PltCompHandle &rhs)
+PltCompHandle<T>::operator > (const PltCompHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -199,7 +199,7 @@ PltCompHandle<T>::operator > (const PltCompHandle &rhs)
 
 template <class T>
 inline bool
-PltCompHandle<T>::operator >= (const PltCompHandle &rhs)
+PltCompHandle<T>::operator >= (const PltCompHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -211,5 +211,9 @@ PltCompHandle<T>::operator >= (const PltCompHandle &rhs)
 //////////////////////////////////////////////////////////////////////
 // EOF comphandle.h
 //////////////////////////////////////////////////////////////////////
+
+
+
+
 
 

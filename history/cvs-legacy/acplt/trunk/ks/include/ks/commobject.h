@@ -90,12 +90,12 @@ public:
     // order of KscCommObject's falls back to order
     // of their paths
     //
-    bool operator == (const KscCommObject &);
-    bool operator != (const KscCommObject &);
-    bool operator <  (const KscCommObject &);
-    bool operator <= (const KscCommObject &);
-    bool operator >  (const KscCommObject &);
-    bool operator >= (const KscCommObject &);
+    bool operator == (const KscCommObject &) const;
+    bool operator != (const KscCommObject &) const;
+    bool operator <  (const KscCommObject &) const;
+    bool operator <= (const KscCommObject &) const;
+    bool operator >  (const KscCommObject &) const;
+    bool operator >= (const KscCommObject &) const;
 
 protected:
     KscServerBase *findServer();
@@ -129,7 +129,7 @@ public:
 // compiler errors
 //
 inline bool
-KscCommObject::operator == (const KscCommObject &other)
+KscCommObject::operator == (const KscCommObject &other) const
 {
     return path == other.path;
 }
@@ -137,7 +137,7 @@ KscCommObject::operator == (const KscCommObject &other)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscCommObject::operator != (const KscCommObject &other)
+KscCommObject::operator != (const KscCommObject &other) const
 {
     return path != other.path;
 }
@@ -145,7 +145,7 @@ KscCommObject::operator != (const KscCommObject &other)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscCommObject::operator <  (const KscCommObject &other)
+KscCommObject::operator <  (const KscCommObject &other) const
 {
     return path < other.path;
 }
@@ -153,7 +153,7 @@ KscCommObject::operator <  (const KscCommObject &other)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscCommObject::operator <= (const KscCommObject &other)
+KscCommObject::operator <= (const KscCommObject &other) const
 {
     return path <= other.path;
 }
@@ -161,7 +161,7 @@ KscCommObject::operator <= (const KscCommObject &other)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscCommObject::operator >  (const KscCommObject &other)
+KscCommObject::operator >  (const KscCommObject &other) const
 {
     return path > other.path;
 }
@@ -169,7 +169,7 @@ KscCommObject::operator >  (const KscCommObject &other)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscCommObject::operator >= (const KscCommObject &other)
+KscCommObject::operator >= (const KscCommObject &other) const
 {
     return path >= other.path;
 }
@@ -305,13 +305,13 @@ public:
     KscVariableHandle(KscVariable *p, enum PltOwnership);  // no default to avoid conversion!
     KscVariableHandle(const KscVariableHandle &);
        
-    bool operator == (const KscVariableHandle &rhs);
-    bool operator != (const KscVariableHandle &rhs);
+    bool operator == (const KscVariableHandle &rhs) const;
+    bool operator != (const KscVariableHandle &rhs) const;
 
-    bool operator <  (const KscVariableHandle &rhs);
-    bool operator <= (const KscVariableHandle &rhs);
-    bool operator >  (const KscVariableHandle &rhs);
-    bool operator >= (const KscVariableHandle &rhs);
+    bool operator <  (const KscVariableHandle &rhs) const;
+    bool operator <= (const KscVariableHandle &rhs) const;
+    bool operator >  (const KscVariableHandle &rhs) const;
+    bool operator >= (const KscVariableHandle &rhs) const;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -510,7 +510,7 @@ KscVariableHandle::KscVariableHandle(const KscVariableHandle &rhs)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscVariableHandle::operator == (const KscVariableHandle &rhs)
+KscVariableHandle::operator == (const KscVariableHandle &rhs) const
 {
     return getPtr() == rhs.getPtr();
 }
@@ -518,7 +518,7 @@ KscVariableHandle::operator == (const KscVariableHandle &rhs)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscVariableHandle::operator != (const KscVariableHandle &rhs)
+KscVariableHandle::operator != (const KscVariableHandle &rhs) const
 {
     return getPtr() != rhs.getPtr();
 }
@@ -526,7 +526,7 @@ KscVariableHandle::operator != (const KscVariableHandle &rhs)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscVariableHandle::operator < (const KscVariableHandle &rhs)
+KscVariableHandle::operator < (const KscVariableHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -536,7 +536,7 @@ KscVariableHandle::operator < (const KscVariableHandle &rhs)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscVariableHandle::operator <= (const KscVariableHandle &rhs)
+KscVariableHandle::operator <= (const KscVariableHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -546,7 +546,7 @@ KscVariableHandle::operator <= (const KscVariableHandle &rhs)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscVariableHandle::operator > (const KscVariableHandle &rhs)
+KscVariableHandle::operator > (const KscVariableHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
@@ -556,7 +556,7 @@ KscVariableHandle::operator > (const KscVariableHandle &rhs)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KscVariableHandle::operator >= (const KscVariableHandle &rhs)
+KscVariableHandle::operator >= (const KscVariableHandle &rhs) const
 {
     PLT_PRECONDITION(*this && rhs);
 
