@@ -48,7 +48,6 @@
 #include "ks/serviceparams.h"
 #include "ks/avmodule.h"
 #include "ks/abspath.h"
-#include "ks/commobject.h"
 
 #include "plt/hashtable.h"
 
@@ -72,18 +71,24 @@ const struct timeval KSC_RPCCALL_TIMEOUT = {10, 0};  // or PltTime
 //
 // Only one instance of this class exists for every programm. You 
 // should use KscClient::getClient() to access it, but you should not
-// delete the object pointed to, since it is a static object.
+// delete the object pointed to, since it is managed internally.
 //
 //////////////////////////////////////////////////////////////////////
 
 class KscClient
 {
 public:
-    ~KscClient();
+    virtual ~KscClient();
 
     // returns a pointer to the client object
     //
     static KscClient *getClient();
+    // use this function before you create any KscVariable or 
+    // KscDomain object in order to use a class derived from
+    // KscClient as client object
+    // returns false if a client is already set
+    //
+    static bool setClient(KscClient *cl, bool shutdownDelete);
 
     // find server by name
     //
@@ -104,7 +109,7 @@ protected:
     // find or create server,
     // should only be used by KscCommObject objects
     //
-    friend KscCommObject;
+    friend class KscCommObject;
     KscServer *createServer(const KscAbsPath &host_and_name); 
 
     // destroy an server, should only be used
@@ -113,9 +118,7 @@ protected:
     friend class KscServer;
     void deleteServer(KscServer *);
 
-    // for each application there is only one KscClient object
-    //
-    static KscClient the_client;
+    static void createClient();
 
     const KscAvModule *av_module;
 
@@ -128,6 +131,20 @@ protected:
 private:
     KscClient(const KscClient &); // forbidden
     KscClient &operator = (const KscClient &); // forbidden
+
+    // helper class to clean up memory
+    // at end of programm
+    //
+    class CleanUp {
+    public:
+        CleanUp();
+        ~CleanUp();
+
+        bool shutdown_delete;
+    };
+
+    static KscClient *_the_client;
+    static CleanUp _clean_up;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -216,7 +233,7 @@ protected:
     long ref_count;                // communication objects related to this server
     const KscAvModule *av_module;
 
-    PltHashTable<KscAbsPath,KscCommObject *> object_table;
+    // PltHashTable<KscAbsPath,KscCommObject *> object_table;
 
 private:
     friend class KscClient;
@@ -348,7 +365,10 @@ inline
 KscClient *
 KscClient::getClient() 
 {
-    return &the_client;
+    if(!_the_client) {
+        createClient();
+    }
+    return _the_client;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -370,6 +390,25 @@ KscClient::getAvModule() const
     return av_module;
 }
  
+
+//////////////////////////////////////////////////////////////////////
+// class KscClient::CleanUp
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscClient::CleanUp::CleanUp()
+: shutdown_delete(false) 
+{}
+
+inline
+KscClient::CleanUp::~CleanUp()
+{
+    if(shutdown_delete && _the_client) {
+        delete _the_client;
+    }
+}
+
+
 #endif
 
 //////////////////////////////////////////////////////////////////////

@@ -56,7 +56,8 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////
 // initialize static data
-KscClient KscClient::the_client;
+KscClient *KscClient::_the_client = 0;
+KscClient::CleanUp KscClient::_clean_up;
 KscNegotiator *KscClient::none_negotiator = 0; 
 
 
@@ -89,6 +90,32 @@ KscClient::~KscClient()
             delete pcurr;
         }
         ++it;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KscClient::createClient()
+{
+    KscClient *cl = new KscClient();
+    // TODO: abort programm in none debugging mode if cl == 0 
+    PLT_ASSERT(cl);
+    bool ok = setClient(cl, true);
+    PLT_ASSERT(ok);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool 
+KscClient::setClient(KscClient *cl, bool shutdownDelete)
+{
+    if(_the_client || !cl) {
+        return false;
+    } else {
+        _the_client = cl;
+        _clean_up.shutdown_delete = shutdownDelete;
+        return true;
     }
 }
 
