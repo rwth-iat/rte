@@ -1,7 +1,7 @@
 ### -*-makefile-*-
 ### 
 ### Compiler & platform specific part for
-### Borland C++ / make / Windows NT
+### Microsoft VisualC++ / nmake / Windows NT
 ### $id
 ###
 ### Filename conventions
