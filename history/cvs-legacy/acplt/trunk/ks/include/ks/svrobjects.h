@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.9 1998-12-10 17:27:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.10 1998-12-14 18:02:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -38,6 +38,7 @@
  */
 
 /* Martin Kneissl <martin@plt.rwth-aachen.de> was here! */
+/* v1+ and v2 objects added by Harald Albrecht <harald@plt.rwth-aachen.de> */
 
 
 #include "plt/rtti.h"
@@ -275,9 +276,13 @@ public:
 
 
 // ----------------------------------------------------------------------------
-// class KssLink
+// class KssLink: ACPLT/KS links can be references to other communication
+// objects with either local scope (naming scope) or global scope (within the
+// same ACPLT/KS server). In addition, they can be either 1:1 or 1:many links.
 //
-class KssLink : public KssCommObject, public KssChildrenService
+class KssLink :
+public KssCommObject,
+public KssChildrenService, public KssCurrPropsService
 {
 public:
     //// KssCommObject
@@ -291,7 +296,7 @@ public:
     virtual KS_ACCESS    getAccessMode() const { return KS_AC_READ; }
     virtual KsProjPropsHandle getPP() const;
 
-    // ###
+    //// KssChildrenService stuff
     virtual KssChildIterator_THISTYPE *
         newIterator() const = 0;
     virtual KssChildIterator_THISTYPE *
@@ -302,11 +307,17 @@ public:
     virtual KssCommObjectHandle getChildById(const KsString & id) const = 0;
     virtual KssCommObjectHandle getChildByPath(const KsPath & path) const = 0;
 
+    //// KssCurrPropsService stuff
+    //virtual KS_RESULT getCurrProps(KsCurrPropsHandle &hprops) const;
+    virtual KsCurrPropsHandle getCurrProps() const = 0;
+    virtual KS_RESULT setCurrProps(const KsCurrPropsHandle &hprops) = 0;
+
     //// KssLink
     ///  accessors
     // projected properties
     virtual KS_LINK_TYPE getType() const = 0;
     virtual KsString     getOppositeRoleIdentifier() const = 0;
+
 #if 0
 
     virtual KsValueHandle getValue() const = 0;
