@@ -172,7 +172,28 @@ Version 1.3.1
     now relies on the KsServerConnection class.
 
 - CLIENTS:
-  * Finally: KS clients with nonblocking IO have been landed.
+  * Finally: code for KS clients with nonblocking IO have been landed. In this
+    release, the nonblocking stuff is accessible through KscServer's
+    requestAsyncByOpcode() method.
+
+  * New method KscServer::requestAsyncByOpcode(): give it a KscClientRequest
+    object and it will queue it for asynchronous processing. If the request
+    is done and a reply was received or an error occurs asynchronously, then
+    the attention() method of the KscClientRequest will be triggered. Overload
+    this method to do your own processing.
+
+  * The existing KscServer::requestByOpcode() method falls back to its async
+    cousin but waits for its request to complete before returning. Since it
+    yields cpu cycles, other asynchronous requests which are outstanding and
+    complete before the blocking request completes, these other requests are
+    notified first.
+
+  * Requests can be either done by (full) opcode or by minor + major
+    opcode. In the latter case, if the major opcode is not known but only
+    the clear-text name of the extension, fill in only the minor opcode
+    and set the name of the extension in KscClientRequest. The server
+    proxy then will be automatically retrieve the major opcode from the
+    KS server in the background.
 
   * Added new error KS_ERR_TERMINATED which indicates that a KS service
     request has been terminated by the client application.
