@@ -53,16 +53,13 @@ libplt.a: $(LIBPLT_OBJECTS)
 	ar r $@ $?
 	$(RANLIB) $@
 
-../depend.nt ../depend.vms : $(CXX_SOURCES)
+depend : $(CXX_SOURCES)
 	$(CXX_COMPILE) -MM $^ > .depend
 	perl ../depend.pl .depend > ../depend.nt
 	perl ../dependvms.pl .depend > ../depend.vms
 
-depend : ../depend.nt ../depend.vms
-
 .depend:
 	touch .depend
-	rm -f ../depend.nt
 
 clean :
 	rm -f *.o

@@ -53,16 +53,15 @@ $(LIBKSSVR): $(LIBKSSVR_OBJECTS)
 $(LIBKSCLN): $(LIBKSCLN_OBJECTS)
 	ar r $@ $?
 
-../depend.nt ../depend.vms : $(CXX_SOURCES) unix_manager.cpp
+
+depend : $(CXX_SOURCES) unix_manager.cpp
 	$(CXX_COMPILE) -MM $^ > .depend
 	perl $(PLT_DIR)/build/depend.pl .depend > ../depend.nt
 	perl $(PLT_DIR)/build/dependvms.pl .depend > ../depend.vms
 
-depend : ../depend.nt ../depend.vms
 
 .depend :
 	touch .depend
-	rm -f ../depend.nt
 
 include .depend
 
