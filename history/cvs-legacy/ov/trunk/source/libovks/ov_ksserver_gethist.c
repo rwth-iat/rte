@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_gethist.c,v 1.5 2001-07-09 12:50:01 ansgar Exp $
+*   $Id: ov_ksserver_gethist.c,v 1.6 2001-07-20 08:34:51 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -47,7 +47,17 @@
 #endif
 #endif
 
-#define OV_CONST_FNC_GETHIST "OV_FNC_GETHIST"
+/*
+*	Function prototype for method gethistory 
+*	(compare ACPLT/KS)
+*/
+typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETHIST (
+  OV_INSTPTR_ov_object pobj,
+  OV_UINT items_len,	
+  OV_GETHIST_ITEM* pitem,
+  OV_GETHISTRESULT_ITEM* presultitem,
+  OV_UINT max_answers	
+);
 
 /*	----------------------------------------------------------------------	*/
 
@@ -67,15 +77,13 @@ void ov_ksserver_gethist(
 	/*
 	*	local variables
 	*/
-	OV_GETHIST_ITEM		*pitem = params->items_val;
 	OV_GETHISTSINGLERESULT	*psingleresult;
 	OV_GETHISTRESULT_ITEM	*presultitem;
-	OV_UINT			i,j;
+	OV_UINT			j;
 	OV_PATH			path;
 	OV_INSTPTR_ov_class	pclass;
 	OV_INSTPTR_ov_library	plib;
 	OV_ELEMENT		child;
-	OV_ELEMENT		givenobject;
 	OV_ELEMENT 		searchedelement;
 	OV_FNC_GETHIST		*gethist = NULL;
 	char			tmpstring[256];
@@ -120,11 +128,28 @@ void ov_ksserver_gethist(
 		psingleresult->result = OV_ERR_BADTYPE;
 		if (path.elements[path.size-1].elemtype == OV_ET_OBJECT) {
 			pclass=Ov_GetParent(ov_instantiation, path.elements[path.size-1].pobj);
-			while (pclass && (ov_string_compare(pclass->v_identifier, "KsHistory")!=0)) 
+			while (pclass && (ov_string_compare(pclass->v_identifier, "KsHistoryRO")!=0)) 
 				pclass=Ov_GetParent(ov_inheritance, pclass);
 			if (!pclass) {
 				return;
 			}
+
+			pclass=Ov_GetParent(ov_instantiation, path.elements[path.size-1].pobj);
+			child.elemtype = OV_ET_OBJECT;
+			child.pobj = Ov_PtrUpCast(ov_object, pclass);
+			while (pclass) {
+				/*
+				*	search for operation element "gethist"
+				*/
+				if (Ov_OK(ov_element_searchpart(&child, &searchedelement, OV_ET_OPERATION, "gethist"))) break;
+				pclass=Ov_GetParent(ov_inheritance, pclass);
+				child.pobj = Ov_PtrUpCast(ov_object, pclass);
+			}
+			
+			if (!pclass) {
+				return;
+			}
+
 		}
 		else {
 			return;
@@ -138,74 +163,13 @@ void ov_ksserver_gethist(
 			psingleresult->result = OV_ERR_TARGETGENERIC;
 			return;
 		}
-		psingleresult->result = OV_ERR_OK;
 		psingleresult->items_val = presultitem;
 		psingleresult->items_len = params->items_len;
 
-		for(i=0; i<params->items_len; i++, presultitem++, pitem++) {
-			
-			child.elemtype = OV_ET_NONE;
-			child.pobj = NULL;
-
-			while (TRUE) {
-				/*
-				*	get next child
-				*/
-				if(Ov_Fail(ov_element_getnextchild(&path.elements[path.size-1], &child))) {
-					presultitem->result = OV_ERR_BADPARAM;
-					return;
-				}
-				/*
-				*	test if we are finished and found nothing
-				*/
-				if(child.elemtype == OV_ET_NONE) {
-					presultitem->result = OV_ERR_BADPARAM;
-					return;
-				}
-				/*
-				*	test if we found the item-object
-				*/
-				if(child.elemtype == OV_ET_OBJECT) {
-					if (strcmp(pitem->part, child.pobj->v_identifier)==0)
-						break;
-				}
-			}
-
-			pclass=Ov_GetParent(ov_instantiation, child.pobj);
-			searchedelement.elemtype = OV_ET_NONE;
-			searchedelement.pobj = NULL;
-		
-			while (TRUE) {
-				/*
-				*	get next child of class-object
-				*/
-				ov_element_getnextpart(&child, &searchedelement, OV_ET_OPERATION);
-
-				/*
-				*	test if we are finished and found nothing
-				*/
-				if(searchedelement.elemtype == OV_ET_NONE) {
-					presultitem->result = OV_ERR_BADPARAM;
-					return;
-				}
-				/*
-				*	test if we are finished and found the gethist operation
-				*/
-				if(searchedelement.elemtype == OV_ET_OPERATION) {
-					if (strcmp(searchedelement.elemunion.pop->v_cfnctypename, OV_CONST_FNC_GETHIST)==0)
-						break;
-				}
-			}
-			
-			plib=Ov_StaticPtrCast(ov_library,Ov_GetParent(ov_containment, Ov_PtrUpCast(ov_object,pclass)));
-
-			sprintf(tmpstring, "%s_%s_%s", plib->v_identifier, pclass->v_identifier, searchedelement.elemunion.pop->v_identifier);
-
-			gethist = (OV_FNC_GETHIST*)Ov_Library_GetAddr((OV_DLLHANDLE)plib->v_handle, tmpstring);
-		
-			presultitem->result = gethist(child.pobj,&pitem->selector,&presultitem->value, params->max_answers);
-			
-		}
+		plib=Ov_StaticPtrCast(ov_library,Ov_GetParent(ov_containment, Ov_PtrUpCast(ov_object,pclass)));
+		sprintf(tmpstring, "%s_%s_%s", plib->v_identifier, pclass->v_identifier, "gethist");
+		gethist = (OV_FNC_GETHIST*)Ov_Library_GetAddr((OV_DLLHANDLE)plib->v_handle, tmpstring);
+		psingleresult->result = gethist(path.elements[path.size-1].pobj,params->items_len, params->items_val,presultitem, params->max_answers);
 	}
 
 	return;
