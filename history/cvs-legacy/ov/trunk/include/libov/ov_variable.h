@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_variable.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_variable.h,v 1.2 1999-07-27 17:41:11 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -58,38 +58,55 @@ typedef struct OV_VARIABLE_DEF OV_VARIABLE_DEF;
 /*
 *	Function prototype for reading a variable value (scalar)
 */
-#define OV_FNCPTR_GET(VARTYPE)									\
-	OV_##VARTYPE (*)(OV_INSTPTR pobj)
+#define OV_FNCPTR_GET(VARTYPE)				\
+	OV_##VARTYPE (*)(						\
+		OV_INSTPTR				pobj		\
+	)
 	
 /*
 *	Function prototype for reading a variable value (PV)
 */
-#define OV_FNCPTR_GETPV(VARTYPE)								\
-	OV_##VARTYPE##_PV* (*)(OV_INSTPTR pobj)
+#define OV_FNCPTR_GETPV(VARTYPE)			\
+	OV_##VARTYPE##_PV* (*)(					\
+		OV_INSTPTR				pobj		\
+	)
 	
 /*
 *	Function prototype for reading a variable value (vector)
 */
-#define OV_FNCPTR_GETVEC(VARTYPE)								\
-	OV_##VARTYPE *(*)(OV_INSTPTR pobj)
+#define OV_FNCPTR_GETVEC(VARTYPE)			\
+	OV_##VARTYPE *(*)(						\
+		OV_INSTPTR				pobj,		\
+		OV_UINT					*pveclen	\
+	)
 
 /*
 *	Function prototype for writing a variable value (scalar)
 */
-#define OV_FNCPTR_SET(VARTYPE)									\
-	OV_RESULT (*)(OV_INSTPTR pobj, const OV_##VARTYPE value)
+#define OV_FNCPTR_SET(VARTYPE)				\
+	OV_RESULT (*)(							\
+		OV_INSTPTR				pobj,		\
+		const OV_##VARTYPE		value		\
+	)
 
 /*
 *	Function prototype for writing a variable value (PV)
 */
-#define OV_FNCPTR_SETPV(VARTYPE)								\
-	OV_RESULT (*)(OV_INSTPTR pobj, const OV_##VARTYPE##_PV *pvalue)
+#define OV_FNCPTR_SETPV(VARTYPE)			\
+	OV_RESULT (*)(							\
+		OV_INSTPTR				pobj,		\
+		const OV_##VARTYPE##_PV	*pvalue		\
+	)
 
 /*
 *	Function prototype for writing a variable value (vector)
 */
-#define OV_FNCPTR_SETVEC(VARTYPE)								\
-	OV_RESULT (*)(OV_INSTPTR pobj, const OV_##VARTYPE *pvalue)
+#define OV_FNCPTR_SETVEC(VARTYPE)			\
+	OV_RESULT (*)(							\
+		OV_INSTPTR				pobj,		\
+		const OV_##VARTYPE		*pvalue,	\
+		const OV_UINT			veclen		\
+	)
 
 #endif
 

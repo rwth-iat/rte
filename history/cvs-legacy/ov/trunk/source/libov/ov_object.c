@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_object.c,v 1.2 1999-07-27 17:41:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -462,7 +462,8 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 		if(pelem->elemunion.pvar->v_getfnc) {						\
 			pvarcurrprops->value.valueunion.val_##vartype##_vec		\
 				= ((OV_FNCPTR_GETVEC(VARTYPE))						\
-					pelem->elemunion.pvar->v_getfnc)(pobj);			\
+					pelem->elemunion.pvar->v_getfnc)(pobj,			\
+					&pvarcurrprops->value.veclen);					\
 		} else {													\
 			pvarcurrprops->value.valueunion.val_##vartype##_vec		\
 				= ((OV_##VARTYPE*)pelem->pvalue);					\
@@ -597,8 +598,8 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_getvar(
 		if(pelem->elemunion.pvar->v_setfnc) {							\
 			return ((OV_FNCPTR_SETVEC(VARTYPE))							\
 				pelem->elemunion.pvar->v_setfnc)(pobj, 					\
-				pvarcurrprops->value.valueunion.						\
-				val_##vartype##_vec);									\
+				pvarcurrprops->value.valueunion.val_##vartype##_vec,	\
+				pvarcurrprops->value.veclen);							\
 		}																\
 		memcpy(pelem->pvalue,											\
 			pvarcurrprops->value.valueunion.val_##vartype##_vec,		\
@@ -626,8 +627,10 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_setvar(
 			) {
 				return OV_ERR_BADTYPE;
 			}
-			if(pvarcurrprops->value.veclen != pelem->elemunion.pvar->v_veclen) {
-				return OV_ERR_BADVALUE;
+			if(!(pelem->elemunion.pvar->v_varprops & OV_VP_VIRTUAL)) {
+				if(pvarcurrprops->value.veclen != pelem->elemunion.pvar->v_veclen) {
+					return OV_ERR_BADVALUE;
+				}
 			}
 			/*
 			*	set the value and -- if a PV -- state and timestamp
@@ -677,7 +680,8 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_setvar(
 						if(pelem->elemunion.pvar->v_setfnc) {
 							return ((OV_FNCPTR_SETVEC(STRING))
 								pelem->elemunion.pvar->v_setfnc)(pobj,
-								pvarcurrprops->value.valueunion.val_string_vec);
+								pvarcurrprops->value.valueunion.val_string_vec,
+								pvarcurrprops->value.veclen);
 						}
 						return ov_string_setvecvalue((OV_STRING*)pelem->pvalue,
 							pvarcurrprops->value.valueunion.val_string_vec,
@@ -819,6 +823,9 @@ OV_ACCESS ov_object_getaccess_nostartup(
 	*/
 	switch(pelem->elemtype) {
 		case OV_ET_VARIABLE:
+			if(pelem->elemunion.pvar->v_varprops & OV_VP_VIRTUAL) {
+				return OV_AC_NONE;
+			}
 			if(Ov_GetParent(ov_containment, Ov_GetParent(ov_containment,
 				pelem->elemunion.pvar)) != Ov_PtrUpCast(ov_domain, &pdb->ov)
 			) {
@@ -931,21 +938,23 @@ OV_RESULT ov_object_move(
 		) {
 			if(Ov_IsVar(pelem)) {
 				pvar = Ov_StaticPtrCast(ov_variable, pelem);
-				switch(pvar->v_vartype) {
-					case OV_VT_STRING:
-						/*
-						*	adjust pointer of string variable
-						*/
-						Ov_Adjust(OV_STRING, Ov_VarAddress(pobj, pvar->v_offset));
-						break;
-					case OV_VT_STRING_VEC:
-						for(i=0; i<pvar->v_veclen; i++) {
-							Ov_Adjust(OV_STRING, Ov_VarAddress(pobj,
-								pvar->v_offset+i*sizeof(OV_STRING)));
-						}
-						break;
-					default:
-						break;
+				if(!(pvar->v_varprops & OV_VP_VIRTUAL)) {
+					switch(pvar->v_vartype) {
+						case OV_VT_STRING:
+							/*
+							*	adjust pointer of string variable
+							*/
+							Ov_Adjust(OV_STRING, Ov_VarAddress(pobj, pvar->v_offset));
+							break;
+						case OV_VT_STRING_VEC:
+							for(i=0; i<pvar->v_veclen; i++) {
+								Ov_Adjust(OV_STRING, Ov_VarAddress(pobj,
+									pvar->v_offset+i*sizeof(OV_STRING)));
+							}
+							break;
+						default:
+							break;
+					}
 				}
 			}	/* Ov_IsVar(pelem) */
 			else if(Ov_IsPart(pelem)) {

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.1 1999-07-19 15:02:08 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.2 1999-07-27 17:41:12 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -732,8 +732,7 @@ vector_length_opt:
 length_opt:
 	/* empty */
 		{
-			yyerror("vectors with dynamic length are not yet supported");
-			YYERROR;
+			$$ = 0;
 		}
 	| TOK_UINT
 		{
@@ -1178,6 +1177,14 @@ OV_BOOL ov_codegen_checksemantics_member(
 		result = FALSE;
 	}
 	/*
+	*	dynamic non-virtual vectors are not supported
+	*/
+	if(!pvar->veclen) {
+		fprintf(stderr, "structure \"%s\", member \"%s\": dynamic vectors "
+			"are not supported.\n", pstruct->identifier, pvar->identifier);
+		result = FALSE;
+	}
+	/*
 	*	PV vectors are not supported
 	*/
 	if(pvar->veclen != 1) {
@@ -1248,6 +1255,14 @@ OV_BOOL ov_codegen_checksemantics_variable(
 		result = FALSE;
 	}
 	/*
+	*	dynamic non-virtual vectors are not supported
+	*/
+	if((!pvar->veclen) && !(pvar->varprops & OV_VP_VIRTUAL)) {
+		fprintf(stderr, "class \"%s\", variable \"%s\": dynamic vectors of non-virtual "
+			"variables are not supported.\n", pclass->identifier, pvar->identifier);
+		result = FALSE;
+	}
+	/*
 	*	PV vectors are not supported
 	*/
 	if(pvar->veclen != 1) {
@@ -1256,6 +1271,14 @@ OV_BOOL ov_codegen_checksemantics_variable(
 				"are not supported.\n", pclass->identifier, pvar->identifier);
 			result = FALSE;
 		}
+	}
+	/*
+	*	virtual variables need to have get and/or set accessors
+	*/
+	if((pvar->varprops & OV_VP_VIRTUAL) && !(pvar->varprops & OV_VP_ACCESSORS)) {
+		fprintf(stderr, "class \"%s\", variable \"%s\": virtual variables must "
+			"have get and/or set accessors.\n", pclass->identifier, pvar->identifier);
+		result = FALSE;
 	}
 	/*
 	*	if variable is a structure, check the structure definition

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.1 1999-07-19 15:02:12 dirk Exp $
+*   $Id: ov_class.c,v 1.2 1999-07-27 17:41:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -828,25 +828,27 @@ void ov_class_deleteobject_cleanupobj(
 			}
 			switch(child.elemtype) {
 				case OV_ET_VARIABLE:
-					switch(child.elemunion.pvar->v_vartype) {
-						case OV_VT_STRING:
-							/*
-							*	free the string
-							*/
-							ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
-							break;
-						case OV_VT_STRING_VEC:
-							/*
-							*	free all strings of the vector
-							*/
-							pstring = (OV_STRING*)child.pvalue;
-							for(i=0; i<child.elemunion.pvar->v_veclen; i++, pstring++) {
-								ov_string_setvalue(pstring, NULL);
-							}
-							break;
-						case OV_VT_STRUCT:
-							ov_class_deleteobject_cleanupstruct(&child);
-							break;
+					if(!(child.elemunion.pvar->v_varprops & OV_VP_VIRTUAL)) {
+						switch(child.elemunion.pvar->v_vartype) {
+							case OV_VT_STRING:
+								/*
+								*	free the string
+								*/
+								ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
+								break;
+							case OV_VT_STRING_VEC:
+								/*
+								*	free all strings of the vector
+								*/
+								pstring = (OV_STRING*)child.pvalue;
+								for(i=0; i<child.elemunion.pvar->v_veclen; i++, pstring++) {
+									ov_string_setvalue(pstring, NULL);
+								}
+								break;
+							case OV_VT_STRUCT:
+								ov_class_deleteobject_cleanupstruct(&child);
+								break;
+						}
 					}
 					break;
 				case OV_ET_HEAD:
@@ -932,25 +934,27 @@ void ov_class_deleteobject_cleanupstruct(
 		if(child.elemtype == OV_ET_NONE) {
 			break;
 		}
-		switch(child.elemunion.pvar->v_vartype) {
-			case OV_VT_STRING:
-				/*
-				*	free the string
-				*/
-				ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
-				break;
-			case OV_VT_STRING_VEC:
-				/*
-				*	free all strings of the vector
-				*/
-				pstring = (OV_STRING*)child.pvalue;
-				for(i=0; i<child.elemunion.pvar->v_veclen; i++, pstring++) {
-					ov_string_setvalue(pstring, NULL);
-				}
-				break;
-			case OV_VT_STRUCT:
-				ov_class_deleteobject_cleanupstruct(&child);
-				break;
+		if(!(child.elemunion.pvar->v_varprops & OV_VP_VIRTUAL)) {
+			switch(child.elemunion.pvar->v_vartype) {
+				case OV_VT_STRING:
+					/*
+					*	free the string
+					*/
+					ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
+					break;
+				case OV_VT_STRING_VEC:
+					/*
+					*	free all strings of the vector
+					*/
+					pstring = (OV_STRING*)child.pvalue;
+					for(i=0; i<child.elemunion.pvar->v_veclen; i++, pstring++) {
+						ov_string_setvalue(pstring, NULL);
+					}
+					break;
+				case OV_VT_STRUCT:
+					ov_class_deleteobject_cleanupstruct(&child);
+					break;
+			}
 		}
 	}
 	return;

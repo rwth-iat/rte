@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.1 1999-07-19 15:02:08 dirk Exp $
+*   $Id: ov_codegen.c,v 1.2 1999-07-27 17:41:12 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -869,23 +869,25 @@ void ov_codegen_printclassinstdefines(
 	*	include new variables in define
 	*/
 	for(pvar = pclass->variables; pvar; pvar=pvar->pnext) {
-		switch(pvar->vartype) {
-			case OV_VT_STRUCT:
-				fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(pvar->structurename),
-					pvar->identifier);
-				break;
-			case OV_VT_BYTE_VEC:
-				fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
-				break;
-			default:
-				fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(pvar->vartype),
-					pvar->identifier);
-				break;
+		if(!(pvar->varprops & OV_VP_VIRTUAL)) {
+			switch(pvar->vartype) {
+				case OV_VT_STRUCT:
+					fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
+						pvar->structurename), pvar->identifier);
+					break;
+				case OV_VT_BYTE_VEC:
+					fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
+					break;
+				default:
+					fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
+						pvar->vartype),	pvar->identifier);
+					break;
+			}
+			if(pvar->veclen > 1) {
+				fprintf(fp, "[%lu]", pvar->veclen);
+			}
+			fprintf(fp,";");
 		}
-		if(pvar->veclen > 1) {
-			fprintf(fp, "[%lu]", pvar->veclen);
-		}
-		fprintf(fp,";");
 	}
 	/*
 	*	include instance data of new parts in define
@@ -1423,8 +1425,12 @@ void ov_codegen_printvardefobj(
 				ov_codegen_getvartypetext(pvar->vartype));
 			break;
 	}
-	fprintf(fp ,"    offsetof(OV_INST_%s_%s, v_%s),\n", plib->identifier,
-		pclass->identifier, pvar->identifier);
+	if(pvar->varprops & OV_VP_VIRTUAL) {
+		fprintf(fp, "    0,\n");
+	} else {
+		fprintf(fp ,"    offsetof(OV_INST_%s_%s, v_%s),\n", plib->identifier,
+			pclass->identifier, pvar->identifier);
+	}
 	fprintf(fp, "    %lu,\n", pvar->flags);
 	fprintf(fp ,"    %s,\n", ov_codegen_getstringtext(pvar->tech_unit));
 	fprintf(fp ,"    %s,\n", ov_codegen_getstringtext(pvar->comment));
