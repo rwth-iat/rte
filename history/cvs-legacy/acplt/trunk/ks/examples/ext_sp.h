@@ -44,10 +44,10 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // This file contains service parameters for the sample protocol extension
-// "ks_test" and its only service KS_CREATEOBJECT.
+// "ks_test" and its only service KS_CROBJ.
 //
 
-const u_long KS_CREATEOBJECT_MINOR_OPCODE = 0x5;
+const u_long KS_CROBJ_MINOR_OPCODE = 0x5;
 
 /////////////////////////////////////////////////////////////////////////////
 

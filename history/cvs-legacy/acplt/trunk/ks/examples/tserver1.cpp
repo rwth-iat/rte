@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.17 1998-06-29 10:05:20 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.18 1998-10-06 13:17:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -59,8 +59,8 @@ extern "C" void handler(int) {
 // some constants needed for protocol extension
 //
 const u_long ext_major_opcode = 0x0010; // start with first free extension
-const u_long KS_CREATEOBJECT = 
-  (ext_major_opcode << 16) | KS_CREATEOBJECT_MINOR_OPCODE;  
+const u_long KS_CROBJ = 
+  (ext_major_opcode << 16) | KS_CROBJ_MINOR_OPCODE;  
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -457,7 +457,7 @@ TestServer::calculate()
 
 /////////////////////////////////////////////////////////////////////////////
 // Simple protocol extension:
-//   KS_CREATEOBJECT creates a new variable with path /newobjects/<var_name>
+//   KS_CROBJ creates a new variable with path /newobjects/<var_name>
 //
 void 
 TestServer::dispatch(u_long serviceId,
@@ -467,7 +467,7 @@ TestServer::dispatch(u_long serviceId,
 {
     switch(serviceId) {
 
-    case KS_CREATEOBJECT:
+    case KS_CROBJ:
         {
 	    bool ok = false;
 	    KsCreateParams params(xdrIn, ok);
