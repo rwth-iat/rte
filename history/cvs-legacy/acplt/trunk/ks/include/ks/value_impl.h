@@ -1,5 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/value_impl.h,v 1.1 1997-03-18 12:00:51 markusj Exp $ */
+#ifndef KS_VALUE_IMPL_INCLUDED
+#define KS_VALUE_IMPL_INCLUDED
+/* $Header: /home/david/cvs/acplt/ks/include/ks/value_impl.h,v 1.2 1997-03-23 14:33:48 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -95,16 +97,5 @@ KsVecValueBase<T>::xdrDecodeVariant(XDR *xdr)
 }
 
 //////////////////////////////////////////////////////////////////////
-
-// ks/ivalue.h
-
-
-
-
-
-
-
-
-
-
-
+#endif // KS_VALUE_IMPL_INCLUDED
+// ks/value_impl.h

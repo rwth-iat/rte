@@ -1,5 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.3 1997-03-18 11:30:21 markusj Exp $ */
+#ifndef KS_ARRAY_IMPL_INCLUDED
+#define KS_ARRAY_IMPL_INCLUDED
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.4 1997-03-23 14:33:46 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -117,6 +119,7 @@ KsArray<T>::xdrNew(XDR *xdrs)
 }                                                
 
 //////////////////////////////////////////////////////////////////////
+#endif // KS_ARRAY_IMPL_INCLUDED
 
 // ks/array_impl.h
 

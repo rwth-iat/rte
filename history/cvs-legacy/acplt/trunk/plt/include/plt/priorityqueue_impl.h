@@ -1,5 +1,8 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.2 1997-03-19 17:16:26 martin Exp $ */
+#ifndef PLT_PRIORITYQUEUE_IMPL_INCLUDED
+#define PLT_PRIORITYQUEUE_IMPL_INCLUDED
+
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.3 1997-03-23 14:30:23 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -289,6 +292,7 @@ PltPriorityQueue<T>::remove(T elem)
     PLT_CHECK_INVARIANT();
     return result;
 }
+#endif // PLT_PRIORITYQUEUE_INST_INCLUDED
 
 //////////////////////////////////////////////////////////////////////
 // EOF plt/priorityqueue_impl.h

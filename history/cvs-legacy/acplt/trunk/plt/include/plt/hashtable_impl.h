@@ -1,5 +1,8 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.2 1997-03-19 12:27:01 martin Exp $ */
+#ifndef PLT_HASHTABLE_IMPL_INCLUDED
+#define PLT_HASHTABLE_IMPL_INCLUDED
+
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.3 1997-03-23 14:30:22 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -146,4 +149,6 @@ PltHashTable_<K,V>::newIterator() const
 
 
 //////////////////////////////////////////////////////////////////////
+#endif //PLT_HASHTABLE_IMPL_INCLUDED
+
 // EOF plt/hashtable_impl.h

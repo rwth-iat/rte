@@ -1,5 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.2 1997-03-18 10:48:36 martin Exp $ */
+#ifndef KS_LIST_IMPL_INCLUDED
+#define KS_LIST_IMPL_INCLUDED
+/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.3 1997-03-23 14:33:47 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -99,4 +101,5 @@ KsList<T>::xdrNew(XDR * xdr)
 }
 
 //////////////////////////////////////////////////////////////////////
+#endif // KS_LIST_IMPL_INCLUDED
 // EOF ks/list_impl.h
