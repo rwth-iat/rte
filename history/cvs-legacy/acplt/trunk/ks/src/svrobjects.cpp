@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.11 1998-12-14 18:05:03 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.12 1999-01-12 16:18:28 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -51,6 +51,8 @@ PLT_IMPL_RTTI0(KssCommObject);
 PLT_IMPL_RTTI2(KssDomain, KssCommObject, KssChildrenService);
 PLT_IMPL_RTTI2(KssVariable, KssCommObject, KssCurrPropsService);
 PLT_IMPL_RTTI3(KssLink, KssCommObject, KssChildrenService, KssCurrPropsService);
+PLT_IMPL_RTTI2(KssHistory, KssCommObject, KssChildrenService);
+
 
 // ----------------------------------------------------------------------------
 // This is just a default implementation provided for backwards compatibility
@@ -362,6 +364,30 @@ KssLink::getPP() const
     }
     return h;
 } // KssLink::getPP
+
+
+// ----------------------------------------------------------------------------
+// Return the engineered properties for a history communication object. This is
+// per default implemented by retrieving the individual attributes of a history
+// and putting this into a history engineered properties object/structure.
+//
+KsProjPropsHandle
+KssHistory::getPP() const
+{
+    KsHistoryProjProps * p = new KsHistoryProjProps;
+    KsProjPropsHandle h(p, KsOsNew);
+    if ( p && h ) {
+        p->identifier               = getIdentifier();
+        p->creation_time            = getCreationTime();
+        p->comment                  = getComment();
+        p->access_mode              = getAccessMode();
+	p->type                     = getType();
+	p->default_interpolation    = getDefaultInterpolation();
+	p->supported_interpolations = getSupportedInterpolations();
+	p->type_identifier          = getTypeIdentifier();
+    }
+    return h;
+} // KssHistory::getPP
 
 
 /* EOF ks/svrobjects.cpp */
