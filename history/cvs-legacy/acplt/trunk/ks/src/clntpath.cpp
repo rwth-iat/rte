@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/clntpath.cpp,v 1.5 1999-09-16 10:54:46 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/clntpath.cpp,v 1.6 2000-04-10 12:50:52 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -536,7 +536,7 @@ KscPathParser::resolve(const char *sz) const
     // (no host, no server specified), then we will later return a path
     // (albeit a resolved one).
     //
-    if ( _pathType == KSC_PT_INVALID ) {
+    if ( (_pathType == KSC_PT_INVALID) || (_pathType == KSC_PT_HOST) ) {
 	return KsString();
     }
 
