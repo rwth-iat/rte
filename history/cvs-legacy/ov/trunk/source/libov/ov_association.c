@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.2 1999-08-27 16:37:07 dirk Exp $
+*   $Id: ov_association.c,v 1.3 1999-08-28 14:18:20 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -96,12 +96,12 @@ CONTINUE:
 	passoc->v_assocprops = passocdef->assocprops;
 	ov_string_setvalue(&passoc->v_childrolename, passocdef->childrolename);
 	ov_string_setvalue(&passoc->v_parentrolename, passocdef->parentrolename);
-	passoc->v_headoffset = passocdef->headoffset;
-	passoc->v_anchoroffset = passocdef->anchoroffset;
-	ov_string_setvalue(&passoc->v_headcomment, passocdef->headcomment);
-	ov_string_setvalue(&passoc->v_anchorcomment, passocdef->anchorcomment);
-	passoc->v_headflags = passocdef->headflags;
-	passoc->v_anchorflags = passocdef->anchorflags;
+	passoc->v_parentoffset = passocdef->parentoffset;
+	passoc->v_childoffset = passocdef->childoffset;
+	ov_string_setvalue(&passoc->v_parentcomment, passocdef->parentcomment);
+	ov_string_setvalue(&passoc->v_childcomment, passocdef->childcomment);
+	passoc->v_parentflags = passocdef->parentflags;
+	passoc->v_childflags = passocdef->childflags;
 	passoc->v_linkfnc = passocdef->linkfnc;
 	passoc->v_unlinkfnc = passocdef->unlinkfnc;
 	passoc->v_getaccessfnc = passocdef->getaccessfnc;
@@ -169,8 +169,8 @@ OV_RESULT ov_association_compare(
 		|| (passoc->v_assocprops != passocdef->assocprops)
 		|| (strcmp(passoc->v_childrolename, passocdef->childrolename))
 		|| (strcmp(passoc->v_parentrolename, passocdef->parentrolename))
-		|| (passoc->v_headoffset != passocdef->headoffset)
-		|| (passoc->v_anchoroffset != passocdef->anchoroffset)
+		|| (passoc->v_parentoffset != passocdef->parentoffset)
+		|| (passoc->v_childoffset != passocdef->childoffset)
 	) {
 		goto ERRORMSG;
 	}
@@ -276,8 +276,8 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	OV_INSTPTR_ov_object 	ppreviouschild;
 	OV_INSTPTR_ov_object	pnextchild;
 	OV_PLACEMENT_HINT		hint2 = hint;
-	OV_UINT					headoffset;
-	OV_UINT					anchoroffset;
+	OV_UINT					parentoffset;
+	OV_UINT					childoffset;
 	OV_INSTPTR_ov_object	prel = prelchild;
 	/*
 	*	check parameters
@@ -297,8 +297,8 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	/*
 	*	initialize variables
 	*/
-	headoffset = passoc->v_headoffset;
-	anchoroffset = passoc->v_anchoroffset;
+	parentoffset = passoc->v_parentoffset;
+	childoffset = passoc->v_childoffset;
 	/*
 	*	ensure, that there is no name clash
 	*/
@@ -363,24 +363,24 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	*   set pointers of predecessor or parent object
 	*/
 	if(ppreviouschild) {
-		((OV_ANCHOR*)(((OV_BYTE*)ppreviouschild)+anchoroffset))->pnext = pchild;
+		((OV_ANCHOR*)(((OV_BYTE*)ppreviouschild)+childoffset))->pnext = pchild;
 	} else {
-		((OV_HEAD*)(((OV_BYTE*)pparent)+headoffset))->pfirst = pchild;
+		((OV_HEAD*)(((OV_BYTE*)pparent)+parentoffset))->pfirst = pchild;
 	}
 	/*
 	*   set pointers of successor or parent object
 	*/
 	if(pnextchild) {
-		((OV_ANCHOR*)(((OV_BYTE*)pnextchild)+anchoroffset))->pprevious = pchild;
+		((OV_ANCHOR*)(((OV_BYTE*)pnextchild)+childoffset))->pprevious = pchild;
 	} else {
-		((OV_HEAD*)(((OV_BYTE*)pparent)+headoffset))->plast = pchild;
+		((OV_HEAD*)(((OV_BYTE*)pparent)+parentoffset))->plast = pchild;
 	}
 	/*
 	*	set pointers of child object
 	*/
-	((OV_ANCHOR*)(((OV_BYTE*)pchild)+anchoroffset))->pprevious = ppreviouschild;
-	((OV_ANCHOR*)(((OV_BYTE*)pchild)+anchoroffset))->pnext = pnextchild;
-	((OV_ANCHOR*)(((OV_BYTE*)pchild)+anchoroffset))->pparent = pparent;
+	((OV_ANCHOR*)(((OV_BYTE*)pchild)+childoffset))->pprevious = ppreviouschild;
+	((OV_ANCHOR*)(((OV_BYTE*)pchild)+childoffset))->pnext = pnextchild;
+	((OV_ANCHOR*)(((OV_BYTE*)pchild)+childoffset))->pparent = pparent;
 	/*
 	*	that's it.
 	*/
@@ -402,8 +402,8 @@ void OV_DLLFNCEXPORT ov_association_unlink(
 	*/
 	OV_INSTPTR_ov_object	ppreviouschild;
 	OV_INSTPTR_ov_object	pnextchild;
-	OV_UINT					anchoroffset;
-	OV_UINT					headoffset;
+	OV_UINT					childoffset;
+	OV_UINT					parentoffset;
 	/*
 	*	check parameters
 	*/
@@ -419,8 +419,8 @@ void OV_DLLFNCEXPORT ov_association_unlink(
 	/*
 	*	initialize variables
 	*/
-	headoffset = passoc->v_headoffset;
-	anchoroffset = passoc->v_anchoroffset;
+	parentoffset = passoc->v_parentoffset;
+	childoffset = passoc->v_childoffset;
 	/*
 	*	determine predecessor and successor
 	*/
@@ -430,37 +430,37 @@ void OV_DLLFNCEXPORT ov_association_unlink(
 	*	if there's no predecessor and no successor empty the parent's list
 	*/
 	if((!ppreviouschild)&&!(pnextchild)) {
-		((OV_HEAD*)((OV_BYTE*)pparent+headoffset))->pfirst
+		((OV_HEAD*)((OV_BYTE*)pparent+parentoffset))->pfirst
 			= (OV_INSTPTR_ov_object)(NULL);
-		((OV_HEAD*)((OV_BYTE*)pparent+headoffset))->plast
+		((OV_HEAD*)((OV_BYTE*)pparent+parentoffset))->plast
 			= (OV_INSTPTR_ov_object)(NULL);
 	} else {
 		/*
 		*	set pointers of predecessor and successor, and/or parent object
 		*/
 		if(ppreviouschild) {
-			((OV_ANCHOR*)((OV_BYTE*)ppreviouschild+anchoroffset))->pnext
+			((OV_ANCHOR*)((OV_BYTE*)ppreviouschild+childoffset))->pnext
 				= pnextchild;
 		} else {
-			((OV_HEAD*)((OV_BYTE*)pparent+headoffset))->pfirst
+			((OV_HEAD*)((OV_BYTE*)pparent+parentoffset))->pfirst
 				= pnextchild;
 		}
 		if(pnextchild) {
-			((OV_ANCHOR*)((OV_BYTE*)pnextchild+anchoroffset))->pprevious
+			((OV_ANCHOR*)((OV_BYTE*)pnextchild+childoffset))->pprevious
 				= ppreviouschild;
 		} else {
-			((OV_HEAD*)((OV_BYTE*)pparent+headoffset))->plast
+			((OV_HEAD*)((OV_BYTE*)pparent+parentoffset))->plast
 				= ppreviouschild;
 		}
 	}
 	/*
 	*	reset the child object's pointers
 	*/
-	((OV_ANCHOR*)((OV_BYTE*)pchild+anchoroffset))->pprevious
+	((OV_ANCHOR*)((OV_BYTE*)pchild+childoffset))->pprevious
 		= (OV_INSTPTR_ov_object)(NULL);
-	((OV_ANCHOR*)((OV_BYTE*)pchild+anchoroffset))->pnext
+	((OV_ANCHOR*)((OV_BYTE*)pchild+childoffset))->pnext
 		= (OV_INSTPTR_ov_object)(NULL);
-	((OV_ANCHOR*)((OV_BYTE*)pchild+anchoroffset))->pparent
+	((OV_ANCHOR*)((OV_BYTE*)pchild+childoffset))->pparent
 		= (OV_INSTPTR_ov_object)(NULL);
 }
 
@@ -476,7 +476,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_association_isusedhead(
 	/*
 	*	get pointer to head
 	*/
-	OV_HEAD* phead = (OV_HEAD*)(((OV_BYTE*)pparent)+passoc->v_headoffset);
+	OV_HEAD* phead = (OV_HEAD*)(((OV_BYTE*)pparent)+passoc->v_parentoffset);
 	/*
 	*	check if used
 	*/
@@ -498,7 +498,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_association_isusedanchor(
 	/*
 	*	get pointer to anchor
 	*/
-	OV_ANCHOR* panchor = (OV_ANCHOR*)(((OV_BYTE*)pchild)+passoc->v_anchoroffset);
+	OV_ANCHOR* panchor = (OV_ANCHOR*)(((OV_BYTE*)pchild)+passoc->v_childoffset);
 	/*
 	*	check if used
 	*/
@@ -537,28 +537,28 @@ OV_STRING OV_DLLFNCEXPORT ov_association_parentrolename_get(
 	return passoc->v_parentrolename;
 }
 
-OV_STRING OV_DLLFNCEXPORT ov_association_headcomment_get(
+OV_STRING OV_DLLFNCEXPORT ov_association_parentcomment_get(
 	OV_INSTPTR_ov_association	passoc
 ) {
-	return passoc->v_headcomment;
+	return passoc->v_parentcomment;
 }
 
-OV_STRING OV_DLLFNCEXPORT ov_association_anchorcomment_get(
+OV_STRING OV_DLLFNCEXPORT ov_association_childcomment_get(
 	OV_INSTPTR_ov_association	passoc
 ) {
-	return passoc->v_anchorcomment;
+	return passoc->v_childcomment;
 }
 
-OV_UINT OV_DLLFNCEXPORT ov_association_headflags_get(
+OV_UINT OV_DLLFNCEXPORT ov_association_parentflags_get(
 	OV_INSTPTR_ov_association	passoc
 ) {
-	return passoc->v_headflags;
+	return passoc->v_parentflags;
 }
 
-OV_UINT OV_DLLFNCEXPORT ov_association_anchorflags_get(
+OV_UINT OV_DLLFNCEXPORT ov_association_childflags_get(
 	OV_INSTPTR_ov_association	passoc
 ) {
-	return passoc->v_anchorflags;
+	return passoc->v_childflags;
 }
 
 /*	----------------------------------------------------------------------	*/

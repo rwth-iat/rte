@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_association.h,v 1.2 1999-08-28 14:18:17 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -47,12 +47,12 @@ struct OV_ASSOCIATION_DEF {
 	OV_STRING					parentclassname;
 	OV_STRING					parentrolename;
 	OV_STRING					childclassname;
-	OV_UINT						headoffset;
-	OV_UINT						anchoroffset;
-	OV_STRING					headcomment;
-	OV_STRING					anchorcomment;
-	OV_UINT						headflags;
-	OV_UINT						anchorflags;
+	OV_UINT						parentoffset;
+	OV_UINT						childoffset;
+	OV_STRING					parentcomment;
+	OV_STRING					childcomment;
+	OV_UINT						parentflags;
+	OV_UINT						childflags;
 	OV_FNCPTR_LINK				linkfnc;
 	OV_FNCPTR_UNLINK			unlinkfnc;
 	OV_FNCPTR_GETACCESS			getaccessfnc;
@@ -164,35 +164,35 @@ OV_BOOL ov_association_canunload(
 */
 #define Ov_Association_GetFirstChild(passoc, pparent)			\
 	((OV_INSTPTR_ov_object)(pparent?(((OV_HEAD*)((OV_BYTE*)		\
-	pparent+passoc->v_headoffset))->pfirst):NULL))
+	pparent+passoc->v_parentoffset))->pfirst):NULL))
 
 /*
 *	Get last child in an association
 */
 #define Ov_Association_GetLastChild(passoc, pparent)			\
 	((OV_INSTPTR_ov_object)(pparent?(((OV_HEAD*)((OV_BYTE*)		\
-	pparent+passoc->v_headoffset))->plast):NULL))
+	pparent+passoc->v_parentoffset))->plast):NULL))
 
 /*
 *	Get next child in an association
 */
 #define Ov_Association_GetNextChild(passoc, pchild)				\
 	((OV_INSTPTR_ov_object)(pchild?(((OV_ANCHOR*)((OV_BYTE*)	\
-	pchild+passoc->v_anchoroffset))->pnext):NULL))
+	pchild+passoc->v_childoffset))->pnext):NULL))
 
 /*
 *	Get previous child in an association
 */
 #define Ov_Association_GetPrevChild(passoc, pchild)				\
 	((OV_INSTPTR_ov_object)(pchild?(((OV_ANCHOR*)((OV_BYTE*)	\
-	pchild+passoc->v_anchoroffset))->pprevious):NULL))
+	pchild+passoc->v_childoffset))->pprevious):NULL))
 
 /*
 *	Get parent in an association
 */
 #define Ov_Association_GetParent(passoc, pchild)				\
 	((OV_INSTPTR_ov_object)(pchild?(((OV_ANCHOR*)((OV_BYTE*)	\
-	pchild+passoc->v_anchoroffset))->pparent):NULL))
+	pchild+passoc->v_childoffset))->pparent):NULL))
 
 /*
 *	Search for child with a given identifier in an association

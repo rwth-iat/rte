@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.3 1999-08-28 13:45:58 dirk Exp $
+*   $Id: ov.ovm,v 1.4 1999-08-28 14:18:18 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -126,12 +126,12 @@ LIBRARY ov
 			assocprops: INT HAS_GET_ACCESSOR;
 			childrolename : STRING HAS_GET_ACCESSOR;
 			parentrolename : STRING HAS_GET_ACCESSOR;
-			headoffset : UINT;
-			anchoroffset : UINT;
-			headcomment : STRING HAS_GET_ACCESSOR;
-			anchorcomment : STRING HAS_GET_ACCESSOR;
-			headflags : UINT HAS_GET_ACCESSOR;
-			anchorflags : UINT HAS_GET_ACCESSOR;
+			parentoffset : UINT;
+			childoffset : UINT;
+			parentcomment : STRING HAS_GET_ACCESSOR;
+			childcomment : STRING HAS_GET_ACCESSOR;
+			parentflags : UINT HAS_GET_ACCESSOR;
+			childflags : UINT HAS_GET_ACCESSOR;
 			linkfnc : C_TYPE <OV_FNCPTR_LINK>;
 			unlinkfnc : C_TYPE <OV_FNCPTR_UNLINK>;
 			getaccessfnc : C_TYPE <OV_FNCPTR_GETACCESS>;

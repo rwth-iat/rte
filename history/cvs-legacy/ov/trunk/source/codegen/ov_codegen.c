@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.6 1999-08-28 13:45:59 dirk Exp $
+*   $Id: ov_codegen.c,v 1.7 1999-08-28 14:18:19 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1384,10 +1384,10 @@ void ov_codegen_printassocdefobj(
 		ov_codegen_replace(passoc->parentclassname), passoc->childrolename);
 	fprintf(fp, "    offsetof(OV_INST_%s, a_%s),\n",
 		ov_codegen_replace(passoc->childclassname), passoc->parentrolename);
-	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->headcomment));
-	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->anchorcomment));
-	fprintf(fp, "    %lu,\n", passoc->headflags);
-	fprintf(fp, "    %lu,\n", passoc->anchorflags);
+	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->parentcomment));
+	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->childcomment));
+	fprintf(fp, "    %lu,\n", passoc->parentflags);
+	fprintf(fp, "    %lu,\n", passoc->childflags);
 	fprintf(fp, "    (OV_FNCPTR_LINK)%s_%s_link,\n", plib->identifier,
 		passoc->identifier);
 	fprintf(fp, "    (OV_FNCPTR_UNLINK)%s_%s_unlink,\n", plib->identifier,

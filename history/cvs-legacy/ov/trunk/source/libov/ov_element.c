@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.c,v 1.4 1999-08-28 13:46:01 dirk Exp $
+*   $Id: ov_element.c,v 1.5 1999-08-28 14:18:20 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -373,7 +373,7 @@ OV_RESULT ov_element_getnextpart_object(
 	/*
 	*	local variables
 	*/
-	OV_INSTPTR_ov_class		pclass;
+	OV_INSTPTR_ov_class		pclass = NULL;
 	/*
 	*	try until we find the right thing
 	*/
@@ -494,6 +494,7 @@ CONTINUE3:		if(ppart->elemunion.passoc) {
 					if(ppart->elemunion.pvar->v_varprops & OV_VP_DERIVED) {
 						ppart->pvalue = NULL;
 					} else if(ppart->elemunion.pvar->v_varprops & OV_VP_STATIC) {
+						Ov_WarnIfNot(pclass);
 						ppart->pvalue = ((OV_BYTE*)pclass)+Ov_GetInstSize(ov_class)
 							+ppart->elemunion.pvar->v_offset;
 					} else {

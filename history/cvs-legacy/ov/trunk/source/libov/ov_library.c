@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.4 1999-08-28 13:46:01 dirk Exp $
+*   $Id: ov_library.c,v 1.5 1999-08-28 14:18:21 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -405,13 +405,13 @@ OV_RESULT OV_DLLFNCEXPORT ov_library_compare(
 		*/
 		assoc_containment.v_assoctype = OV_ASSOCIATION_DEF_ov_containment.assoctype;
 		assoc_containment.v_assocprops = OV_ASSOCIATION_DEF_ov_containment.assocprops;
-		assoc_containment.v_headoffset = OV_ASSOCIATION_DEF_ov_containment.headoffset;
-		assoc_containment.v_anchoroffset = OV_ASSOCIATION_DEF_ov_containment.anchoroffset;
+		assoc_containment.v_parentoffset = OV_ASSOCIATION_DEF_ov_containment.parentoffset;
+		assoc_containment.v_childoffset = OV_ASSOCIATION_DEF_ov_containment.childoffset;
 		passoc_ov_containment = &assoc_containment;
 		assoc_instantiation.v_assoctype = OV_ASSOCIATION_DEF_ov_instantiation.assoctype;
 		assoc_instantiation.v_assocprops = OV_ASSOCIATION_DEF_ov_instantiation.assocprops;
-		assoc_instantiation.v_headoffset = OV_ASSOCIATION_DEF_ov_instantiation.headoffset;
-		assoc_instantiation.v_anchoroffset = OV_ASSOCIATION_DEF_ov_instantiation.anchoroffset;
+		assoc_instantiation.v_parentoffset = OV_ASSOCIATION_DEF_ov_instantiation.parentoffset;
+		assoc_instantiation.v_childoffset = OV_ASSOCIATION_DEF_ov_instantiation.childoffset;
 		passoc_ov_instantiation = &assoc_instantiation;
 		/*
 		*	get pointer to class "library"
@@ -582,13 +582,13 @@ OV_RESULT ov_library_prepare(
 	*/
 	assoc_containment.v_assoctype = OV_ASSOCIATION_DEF_ov_containment.assoctype;
 	assoc_containment.v_assocprops = OV_ASSOCIATION_DEF_ov_containment.assocprops;
-	assoc_containment.v_headoffset = OV_ASSOCIATION_DEF_ov_containment.headoffset;
-	assoc_containment.v_anchoroffset = OV_ASSOCIATION_DEF_ov_containment.anchoroffset;
+	assoc_containment.v_parentoffset = OV_ASSOCIATION_DEF_ov_containment.parentoffset;
+	assoc_containment.v_childoffset = OV_ASSOCIATION_DEF_ov_containment.childoffset;
 	passoc_ov_containment = &assoc_containment;
 	assoc_instantiation.v_assoctype = OV_ASSOCIATION_DEF_ov_instantiation.assoctype;
 	assoc_instantiation.v_assocprops = OV_ASSOCIATION_DEF_ov_instantiation.assocprops;
-	assoc_instantiation.v_headoffset = OV_ASSOCIATION_DEF_ov_instantiation.headoffset;
-	assoc_instantiation.v_anchoroffset = OV_ASSOCIATION_DEF_ov_instantiation.anchoroffset;
+	assoc_instantiation.v_parentoffset = OV_ASSOCIATION_DEF_ov_instantiation.parentoffset;
+	assoc_instantiation.v_childoffset = OV_ASSOCIATION_DEF_ov_instantiation.childoffset;
 	passoc_ov_instantiation = &assoc_instantiation;
 	/*
 	*	link library objekt with root domain
@@ -652,8 +652,8 @@ OV_RESULT ov_library_prepare(
 		passoc->v_creationtime.secs = OV_VL_MAXUINT;
 		passoc->v_assoctype = passocdef->assoctype;
 		passoc->v_assocprops = passocdef->assocprops;
-		passoc->v_headoffset = passocdef->headoffset;
-		passoc->v_anchoroffset = passocdef->anchoroffset;
+		passoc->v_parentoffset = passocdef->parentoffset;
+		passoc->v_childoffset = passocdef->childoffset;
 		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->ov, passoc)));
 		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_instantiation, pclass_ov_association, passoc)));
 	}

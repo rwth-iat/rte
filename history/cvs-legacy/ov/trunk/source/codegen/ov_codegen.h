@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.h,v 1.1 1999-07-19 15:02:08 dirk Exp $
+*   $Id: ov_codegen.h,v 1.2 1999-08-28 14:18:19 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -134,10 +134,10 @@ struct OV_OVM_ASSOCIATION_DEF {
 	OV_STRING						childrolename;
 	OV_STRING						parentclassname;
 	OV_STRING						childclassname;
-	OV_STRING						headcomment;
-	OV_STRING						anchorcomment;
-	OV_UINT							headflags;
-	OV_UINT							anchorflags;
+	OV_STRING						parentcomment;
+	OV_STRING						childcomment;
+	OV_UINT							parentflags;
+	OV_UINT							childflags;
 	OV_UINT							defnum;
 };
 typedef struct OV_OVM_ASSOCIATION_DEF OV_OVM_ASSOCIATION_DEF;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.9 1999-08-28 13:46:02 dirk Exp $
+*   $Id: ov_object.c,v 1.10 1999-08-28 14:18:21 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -362,9 +362,9 @@ OV_UINT OV_DLLFNCEXPORT ov_object_getflags(
 		case OV_ET_MEMBER:
 			return pelem->elemunion.pvar->v_flags;
 		case OV_ET_HEAD:
-			return pelem->elemunion.passoc->v_headflags;
+			return pelem->elemunion.passoc->v_parentflags;
 		case OV_ET_ANCHOR:
-			return pelem->elemunion.passoc->v_anchorflags;
+			return pelem->elemunion.passoc->v_childflags;
 		default:
 			break;
 	}
@@ -392,9 +392,9 @@ OV_STRING OV_DLLFNCEXPORT ov_object_getcomment(
 		case OV_ET_MEMBER:
 			return pelem->elemunion.pvar->v_comment;
 		case OV_ET_HEAD:
-			return pelem->elemunion.passoc->v_headcomment;
+			return pelem->elemunion.passoc->v_parentcomment;
 		case OV_ET_ANCHOR:
-			return pelem->elemunion.passoc->v_anchorcomment;
+			return pelem->elemunion.passoc->v_childcomment;
 		default:
 			break;
 	}
@@ -1096,8 +1096,8 @@ OV_RESULT ov_object_move(
 			/*
 			*	adjust head pointers
 			*/
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_headoffset)->pfirst);
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_headoffset)->plast);
+			Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->pfirst);
+			Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->plast);
 		}
 		/*
 		*	iterate over all associations in which we are child
@@ -1108,9 +1108,9 @@ OV_RESULT ov_object_move(
 			/*
 			*	adjust anchor pointers
 			*/
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_anchoroffset)->pnext);
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_anchoroffset)->pprevious);
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_anchoroffset)->pparent);
+			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pnext);
+			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pprevious);
+			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pparent);
 		}
 	}	/* for classes */
 	/*

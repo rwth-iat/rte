@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.6 1999-08-28 13:45:59 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.7 1999-08-28 14:18:19 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -473,12 +473,12 @@ association:
 			$$->assocprops = $3;
 			$$->parentrolename = $5;
 			$$->parentclassname = $8;
-			$$->anchorflags = $9;
-			$$->anchorcomment = $10;
+			$$->childflags = $9;
+			$$->childcomment = $10;
 			$$->childrolename = $13;
 			$$->childclassname = $16;
-			$$->headflags = $17;
-			$$->headcomment = $18;
+			$$->parentflags = $17;
+			$$->parentcomment = $18;
 			$$->defnum = defnum++;
 		}
 ;
