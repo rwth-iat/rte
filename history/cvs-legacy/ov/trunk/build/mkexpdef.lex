@@ -1,5 +1,5 @@
 /*
-*   $Id: mkexpdef.lex,v 1.1 1999-07-19 15:01:52 dirk Exp $
+*   $Id: mkexpdef.lex,v 1.2 1999-07-30 15:37:06 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -28,7 +28,7 @@
 
 %%
 .*Debugger.*Data.*\n	{}
-"    _"[a-zA-Z_]*		{ fprintf(yyout, "%s=_%s", yytext+5, yytext+5); }
+"    _"[a-zA-Z0-9_]*	{ fprintf(yyout, "%s=_%s", yytext+5, yytext+5); }
 @.*\n					{ fprintf(yyout, "\n"); }
 [ \t]*\n				{ fprintf(yyout, "\n"); }
 %%
