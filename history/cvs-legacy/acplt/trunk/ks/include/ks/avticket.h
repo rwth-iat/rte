@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.8 1997-03-20 09:42:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.9 1997-03-25 21:17:32 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -106,6 +106,8 @@ public:
     virtual bool xdrEncodeVariant(XDR *) const = 0;
 
     virtual KS_ACCESS getAccess(const KsString &name) const;
+
+    virtual bool isVisible(const KsString & name) const;
 
     virtual bool canReadVar(const KsString &name) const = 0;
     virtual bool canWriteVar(const KsString &name) const = 0;
