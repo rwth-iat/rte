@@ -246,10 +246,14 @@ extern void	svcerr_systemerr();
  */
 #ifdef FD_SETSIZE
 #ifdef WIN32
-#ifdef _DLL
+#ifdef ONCRPCDLL
 extern fd_set svc_fdset;
 #else
-_declspec(dllexport) fd_set svc_fdset;
+#ifdef __BORLANDC__
+extern __import fd_set svc_fdset;
+#else
+_declspec(dllimport) fd_set svc_fdset;
+#endif
 #endif
 #else
 extern fd_set svc_fdset;

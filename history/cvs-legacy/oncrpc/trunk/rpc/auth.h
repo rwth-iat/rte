@@ -158,8 +158,19 @@ typedef struct {
 #define auth_destroy(auth)		\
 		((*((auth)->ah_ops->ah_destroy))(auth))
 
-
+#ifdef WIN32
+#ifdef ONCRPCDLL
 extern struct opaque_auth _null_auth;
+#else
+#ifdef __BORLANDC__
+extern __declspec(dllimport) struct opaque_auth _null_auth;
+#else
+_declspec(dllimport) struct opaque_auth _null_auth;
+#endif
+#endif
+#else
+extern struct opaque_auth _null_auth;
+#endif
 
 
 /*
