@@ -13,7 +13,8 @@
 
 #include <plt/debug.h>
 #include <plt/rtti.h>
-// #include <ks/rpc.h>
+#include <plt/array.h>
+
 #include <ks/xdr.h>
 #include <ks/ks.h>
 #include <ks/string.h>
@@ -235,6 +236,69 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////
+// class KsVoidValue
+//////////////////////////////////////////////////////////////////////
+
+class KsVoidValue : public KsValue
+{
+public:
+    KsVoidValue() {}
+    virtual enum_t xdrTypeCode() const;
+
+protected:
+    bool xdrEncodeVariant(XDR *) const;
+    bool xdrDecodeVariant(XDR *);
+
+private:
+    friend KsValue;
+    KsVoidValue(XDR *, bool &ok);
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// class KsVecValueBase
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+class KsVecValueBase 
+: public PltArray<T>, public KsValue
+{
+public:
+    KsVecValueBase(size_t size = 0);
+    KsVecValueBase(size_t size, char *p, PltOwnership os);
+
+protected:
+    virtual bool xdrEncodeElem(XDR *, size_t) const = 0;
+    virtual bool xdrDecodeElem(XDR *, size_t) = 0;
+
+    bool xdrEncodeVariant(XDR *) const;
+    bool xdrDecodeVariant(XDR *);
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// class KsByteVecValue
+//////////////////////////////////////////////////////////////////////
+
+class KsByteVecValue 
+: public KsVecValueBase<char>
+{
+public:
+    KsByteVecValue(size_t size = 0);
+    KsByteVecValue(size_t size, char *p, PltOwnership os);
+
+    enum_t xdrTypeCode() const;
+
+protected:
+    bool xdrEncodeElem(XDR *, size_t) const;
+    bool xdrDecodeElem(XDR *, size_t);
+
+private:
+    friend KsValue;
+    KsVecValueBase(XDR *,bool &); 
+};
+
+//////////////////////////////////////////////////////////////////////
 // Inline implementation
 //////////////////////////////////////////////////////////////////////
 
@@ -440,6 +504,66 @@ KsTimeValue::KsTimeValue(XDR *xdr, bool &ok)
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
+
+inline
+KsVoidValue::KsVoidValue(XDR *, bool &ok)
+{
+    ok = true;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+KsVecValueBase<T>::KsVecValueBase(size_t size) : PltArray<T>(size)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+KsVecValueBase<T>::KsVecValueBase(size_t size, T *p, PltOwnership os)
+: PltArray<T>(size, p, os)
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsByteVecValue::KsByteVecValue(size_t size) 
+: KsVecValueBase<char>(size)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsByteVecValue::KsByteVecValue(size_t size, char *p, PltOwnership os)
+: KsVecValueBase<char>(size, p, os) {}
+
+//////////////////////////////////////////////////////////////////////
+
+inline enum_t
+KsByteVecValue::xdrTypeCode() const
+{
+    return KS_VT_BYTE_VEC;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KsByteVecValue::xdrEncodeElem(XDR *xdr, size_t i) const
+{
+    return xdr_char(xdr, &(a_array[i]));
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KsByteVecValue::xdrDecodeElem(XDR *xdr, size_t i)
+{
+    return xdr_char(xdr, &(a_array[i]));
+}
 
 #endif
 

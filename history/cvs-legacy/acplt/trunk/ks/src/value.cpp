@@ -31,6 +31,7 @@ KS_XDR_MAP(KS_VT_SINGLE,KsSingleValue);
 KS_XDR_MAP(KS_VT_DOUBLE,KsDoubleValue);
 KS_XDR_MAP(KS_VT_STRING,KsStringValue);
 KS_XDR_MAP(KS_VT_TIME,KsTimeValue);
+KS_XDR_MAP(KS_VT_VOID,KsVoidValue);
 KS_END_IMPL_XDRUNION;
 
 // KS_IMPL_XDRCTOR(KsIntValue);
@@ -185,7 +186,69 @@ KsTimeValue::xdrDecodeVariant(XDR *xdr)
     return KsTime::xdrDecode(xdr);
 }
 
+//////////////////////////////////////////////////////////////////////
+// class KsVoidValue
+//////////////////////////////////////////////////////////////////////
 
+enum_t
+KsVoidValue::xdrTypeCode() const
+{
+    return KS_VT_VOID;
+}
 
+bool
+KsVoidValue::xdrEncodeVariant(XDR *) const
+{
+    return true;
+}
+
+bool
+KsVoidValue::xdrDecodeVariant(XDR *)
+{
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+// class KsVecValueBase
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+bool
+KsVecValueBase<T>::xdrEncodeVariant(XDR *)
+{
+    // encode size
+    //
+    if( !xdr_u_long(xdr, &a_size) ) return false;
+
+    // encode elements
+    //
+    for( size_t i = 0; i < a_size; i++ ) {
+        if( !xdrEncodeElem(xdr, i) ) return false;
+    }
+
+    return true;
+}
+    
+template <class T> 
+bool
+KsVecValueBase<T>::xdrDecodeVariant(XDR *xdr)
+{
+    u_long sz;
+    if(! xdr_u_long(xdr, &sz) ) return false;
+
+    // adjust array size
+    if(size() != sz) {
+        PltArrayHandle<T> ha(new T[sz], PltOsArrayNew);
+        if( !ha ) return false;
+        a_array = ha;
+        a_size = sz;
+    }
+    
+    for( size_t i = 0; i < a_size; i++ ) {
+        if( !xdrEncodeElem( xdr, i ) ) return false;
+    }
+
+    return true;
+}
 
 
