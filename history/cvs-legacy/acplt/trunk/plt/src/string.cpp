@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.8 1997-03-06 14:30:04 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.9 1997-03-06 16:29:45 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -126,10 +126,6 @@ PltString::PltString(size_t sz, char *s)
         p->len = sz;
         p->s = s;
         (p->s)[sz]=0;
-        if (!p->s) {
-            delete p;
-            p = 0;
-        }
     }
 //    PLT_CHECK_INVARIANT(); // p->len is temporarily != strlen(p->s)
 }
