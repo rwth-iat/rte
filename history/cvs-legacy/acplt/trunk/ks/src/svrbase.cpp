@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.6 1997-03-26 17:21:52 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.7 1997-03-27 17:17:46 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,7 +40,7 @@
 // svrbase.cpp
 //
 
-#include <sys/errno.h>
+#include <errno.h>
 #include <sys/time.h>
 
 #include <stdlib.h>
@@ -111,8 +111,8 @@ KsServerBase::KsServerBase(const char *svr_name,
                            const u_long prot_version)
     : server_name(svr_name), 
       protocol_version(prot_version),
-      shutdown_flag(false),
       _tcp_transport(0),
+      shutdown_flag(false),
       send_buffer_size(16384),
       receive_buffer_size(16384)
 {
@@ -168,9 +168,7 @@ KsServerBase::createTransports()
     // Now register the dispatcher that should be called whenever there
     // is a request for the KS program id and the correct version number.
     //
-    if ( !svc_register(_tcp_transport, // nothing more than just a dummy
-		                      //-- at least if you use the "0"
-		                      // as the protocol parameter...
+    if ( !svc_register(_tcp_transport, 
                        KS_RPC_PROGRAM_NUMBER,
                        KS_PROTOCOL_VERSION,
                        ks_c_dispatch,
@@ -286,9 +284,9 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
 // of the abstract server base class in order to hook in the (abstract)
 // service handling.
 //
-void KsServerBase::dispatch(u_long serviceId, 
+void KsServerBase::dispatch(u_long, 
                             SVCXPRT *transport,
-                            XDR * xdrIn,
+                            XDR *,
                             KsAvTicket &ticket)
 {
     //
@@ -322,7 +320,9 @@ KsServerBase::getXdrForTransport(SVCXPRT *transport)
 {
     XDR *xdr;
 
-    svc_getargs(transport, ks_c_get_xdr_for_transport, &xdr);
+    svc_getargs(transport, 
+                (xdrproc_t)ks_c_get_xdr_for_transport, 
+                (caddr_t)&xdr);
 
     PLT_ASSERT(xdr->x_op == XDR_DECODE);
 

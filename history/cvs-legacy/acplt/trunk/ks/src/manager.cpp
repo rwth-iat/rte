@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.5 1997-03-26 17:21:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.6 1997-03-27 17:17:44 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -43,10 +43,8 @@
 #include "ks/path.h"
 #include "plt/log.h"
 #include <ctype.h>
-#if PLT_DEBUG
-#include <iostream.h>
-#include <iomanip.h>
-#endif
+#include <string.h>
+#include <sys/socket.h>
 
 static const KsString KS_MANAGER_NAME("MANAGER");
 static const KsString KS_MANAGER_VERSION("1");
@@ -217,6 +215,7 @@ KsmServer::KsmServer(const KsServerDesc & d,
 
 KsManager::KsManager()
 : KsSimpleServer(KS_MANAGER_NAME),
+  _registered(false),
   _servers_domain("servers")
 {
 }
@@ -226,7 +225,7 @@ KsManager::KsManager()
 KsManager::~KsManager()
 {
     KsManager::destroyTransports();
-    // Every registered server has exactly one corresponding
+    // Each registered server has exactly one corresponding
     // timer event in the queue. So we can delete the
     // servers in the table by iterating the queue.
     while (!timer_queue.isEmpty()) {
@@ -367,6 +366,25 @@ KsManager::createTransports()
         PltLog::Error("Can't create UDP transport");
         return false;
     }
+    //
+    // Now register the dispatcher that should be called whenever there
+    // is a request for the KS program id and the correct version number.
+    //
+    if ( !svc_register(_udp_transport,
+                       KS_RPC_PROGRAM_NUMBER,
+                       KS_PROTOCOL_VERSION,
+                       ks_c_dispatch,
+                       0) ) {  // Do not contact the portmapper!
+        svc_destroy(_tcp_transport);
+        _tcp_transport = 0;
+        PltLog::Error("KsServerBase: could not register");
+        return false;
+    }
+    //
+    // We registered the transports, now contact the
+    // portmapper and tell him that we are ready to receive
+    // requests on them.
+    //
     if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
         PltLog::Debug("Removed old pmap entry.");
     }
@@ -384,6 +402,11 @@ KsManager::createTransports()
         PltLog::Error("Can't register UDP transport.");
         return false;
     }
+    _registered = true;
+    KsmExpireManagerEvent * pevent = new KsmExpireManagerEvent(*this);
+    if (pevent) {
+        addTimerEvent(pevent);
+    }
     return true;
 }
 
@@ -392,7 +415,8 @@ KsManager::createTransports()
 void 
 KsManager::destroyTransports()
 {
-    if (! pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
+    if (   _registered
+        && ! pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
         PltLog::Warning("Can't unregister with portmapper.");
     }
     if ( _udp_transport ) {
@@ -440,7 +464,7 @@ KsManager::registerServer(KsAvTicket & /*ticket*/,
     
     // create expiration event:
     KsmExpireServerEvent * pevent =
-        new KsmExpireServerEvent(this,expire_at);
+        new KsmExpireServerEvent(*this,expire_at);
     if (! pevent) {
         result.result = KS_ERR_GENERIC; return;
     }
@@ -609,16 +633,9 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
         result.result      = KS_ERR_OK;
     } else {
         result.result = KS_ERR_SERVERUNKNOWN;
-        // fill remaining fields with defensive values
-        result.server.name             = "/dead/";
-        result.server.protocol_version = 0;
-        result.port                    = 0;
-        result.expires_at              = KsTime(0,0);
-        result.living                  = false;
     }
 }
 
-//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 PLT_IMPL_RTTI1(KsmExpireServerEvent, KsEvent);
@@ -646,13 +663,13 @@ KsmExpireServerEvent::trigger()
             // ...and reschedule event.
             // 
             _trigger_at = KsTime::now(pserver->time_to_live);
-            _pmanager->addTimerEvent(this);
+            _manager.addTimerEvent(this);
         } else {
             // 
             // Remove the zombie.
             //
             PLT_DMSG("being removed." << endl);
-            _pmanager->removeServer(pserver);
+            _manager.removeServer(pserver);
             delete this;
         }
     } else {
@@ -664,6 +681,68 @@ KsmExpireServerEvent::trigger()
     }
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+PLT_IMPL_RTTI1(KsmExpireManagerEvent, KsTimerEvent);
+
+//////////////////////////////////////////////////////////////////////
+
+const KsTime
+KsmExpireManagerEvent::_check_delay(30,0);
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KsmExpireManagerEvent::trigger()
+{
+    // Check if we are still registered.
+    // Looking at the TCP port registration should be sufficient.
+    struct sockaddr_in sin;
+#if 1
+    memset(&sin, 0, sizeof sin);
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+#else
+    get_myaddress(&sin);
+#endif
+    u_short port = pmap_getport(&sin, 
+                                KS_RPC_PROGRAM_NUMBER,
+                                KS_PROTOCOL_VERSION,
+                                IPPROTO_TCP);
+    if (port == 0 && rpc_createerr.cf_stat != RPC_SUCCESS) {
+        //
+        // Portmapper failure. Report this and retry soon.
+        //
+        PltLog::Warning("Can't query portmapper. Check if it is running!");
+        PLT_DMSG("Portmapper failure:" << rpc_createerr.cf_stat << endl);
+        _trigger_at = KsTime::now(60);
+        _manager.addTimerEvent(this);
+    } else {
+        // 
+        // Ok. The port value is valid.
+        //
+        if (port == _manager._tcp_transport->xp_port) {
+            //
+            // We are still registered. 
+            // Reschedule event.
+            //
+            PLT_DMSG("Still registered with portmapper" << endl);
+            _trigger_at = KsTime::now(_check_delay);
+            _manager.addTimerEvent(this);
+        } else {
+            //
+            // Someone has unregistered us.
+            // No client can reach us anymore, so exit.
+            //
+            PLT_DMSG("Not registered with portmapper. Stopping now." << endl);
+            _manager._registered = false;
+            _manager.stopServer();
+            delete this; // suicide
+        }
+    }
+}        
+        
 //////////////////////////////////////////////////////////////////////
 
 void
@@ -702,7 +781,6 @@ KsManager::removeServer(KsmServer * pserver)
         PltString version(PltString::fromInt(pdesc->protocol_version));
         ps->removeChild(version);
     }
-    // delete pserver; // HANDLE SHOULD DO THIS
 }
 //////////////////////////////////////////////////////////////////////
 // Object tree

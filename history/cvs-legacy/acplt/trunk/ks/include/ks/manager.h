@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.5 1997-03-27 09:14:55 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.6 1997-03-27 17:17:38 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -132,13 +132,15 @@ private:
 class KsmExpireManagerEvent
 : public KsTimerEvent
 {
+private:
+    static const KsTime _check_delay;
 public:
-    KsmExpireManagerEvent(KsManager &m, const KsTime & at) 
+    KsmExpireManagerEvent(KsManager &m, 
+                          const KsTime & at = KsTime::now(_check_delay)) 
         : KsTimerEvent(at), _manager(m) { }
 
     virtual void trigger();
 private:
-    static const KsTime _check_delay;
     KsManager &_manager;
     PLT_DECL_RTTI;
 };

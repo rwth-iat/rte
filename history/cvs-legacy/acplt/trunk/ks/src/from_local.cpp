@@ -40,8 +40,6 @@
  * Mountain View, California  94043
  */
 
-/* TODO: Solaris implementation!!! */
-
 #ifdef TEST
 #undef perror
 #endif

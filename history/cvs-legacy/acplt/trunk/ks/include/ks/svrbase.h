@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.6 1997-03-27 09:14:56 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.7 1997-03-27 17:17:40 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -96,12 +96,12 @@ protected:
 
     // KS_RESULT result; // TODO: wofuer???
 
-    SVCXPRT *_tcp_transport; // RPC transport used to receive requests
     void init();
 
     PltString server_name;
     u_long protocol_version;
     PltPriorityQueue< PltPtrComparable<KsTimerEvent> > timer_queue;
+    SVCXPRT *_tcp_transport; // RPC transport used to receive requests
 private:
     friend void ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 
