@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient_xdr.h,v 1.3 1999-08-30 15:24:22 dirk Exp $
+*   $Id: ov_ksclient_xdr.h,v 1.4 1999-09-06 12:16:57 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -326,7 +326,7 @@ typedef OV_GETCANONICALPATHITEM_RES	KS_GETCANONICALPATHITEM_RES;
 *	------------------------
 *	Result of a GetCanonicalPath Service
 */
-typedef OV_GETCANONICALPATH_RES	KS_GETCANONICALPATH_RES;;
+typedef OV_GETCANONICALPATH_RES	KS_GETCANONICALPATH_RES;
 
 /*
 *	KS_LINK_PAR:

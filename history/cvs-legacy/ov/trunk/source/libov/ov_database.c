@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.5 1999-07-29 08:59:55 dirk Exp $
+*   $Id: ov_database.c,v 1.6 1999-09-06 12:16:58 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -52,6 +52,7 @@
 #include <rmsdef.h>
 #include <secdef.h>
 #include <ssdef.h>
+#include <starlet.h>
 #endif
 
 #ifndef __STDC__

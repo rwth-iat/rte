@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient_xdr.c,v 1.3 1999-08-28 15:55:56 dirk Exp $
+*   $Id: ov_ksclient_xdr.c,v 1.4 1999-09-06 12:16:59 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -39,9 +39,6 @@
 #define OV_COMPILE_LIBOVKS
 
 #include "libovks/ov_ksclient_xdr.h"
-
-#include <rpc/types.h>
-#include <rpc/xdr.h>
 
 #if OV_COMPILER_BORLAND
 #pragma warn -pro

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.4 1999-08-25 13:16:00 dirk Exp $
+*   $Id: ov_server.c,v 1.5 1999-09-06 12:17:00 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -39,7 +39,7 @@
 /*
 *	Constants
 */
-#if OV_SYSTEM_UNIX
+#if OV_SYSTEM_UNIX || OV_SYSTEM_OPENVMS
 #define OV_USERNAME getenv("USER")
 #elif OV_SYSTEM_NT
 #define OV_USERNAME getenv("USERNAME")

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_operation.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_operation.c,v 1.2 1999-09-06 12:16:58 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -46,7 +46,7 @@ OV_RESULT ov_operation_load(
 	*	local variables
 	*/
 	OV_RESULT				result;
-	OV_INSTPTR_ov_operation	pop;
+	OV_INSTPTR_ov_operation	pop = NULL;
 	/*
 	*	create operation object
 	*/
