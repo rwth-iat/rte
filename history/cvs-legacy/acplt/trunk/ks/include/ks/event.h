@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_EVENT_INCLUDED
 #define KS_EVENT_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.2 1997-03-13 16:51:44 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.3 1997-03-17 19:58:09 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -59,7 +59,10 @@ typedef void (KsServerBase::*KsTimerMethod)(KsTimerEvent *event);
 class KsTimerEvent
 {
 public:
-    KsTimerEvent(const KsTime & at, KsTimerMethod meth);
+    KsTimerEvent(const KsTime & at, 
+                 KsServerBase & svr,
+                 KsTimerMethod meth);
+
     virtual void trigger();
     
     KsTime remainingTime() const;
@@ -74,14 +77,20 @@ public:
     // public attributes
     KsTime trigger_at;
     KsTimerMethod method;
+
+private:
+    KsServerBase & _server;
 };
 
 //////////////////////////////////////////////////////////////////////
 
 inline
-KsTimerEvent::KsTimerEvent(const KsTime & at, KsTimerMethod m)
+KsTimerEvent::KsTimerEvent(const KsTime & at,
+                           KsServerBase &svr,
+                           KsTimerMethod m)
 : trigger_at(at),
-  method(m)
+  method(m),
+  _server(svr)
 {
 }
 
@@ -153,4 +162,4 @@ operator > (const KsTimerEvent & lhs, const KsTimerEvent & rhs)
 
 
 //////////////////////////////////////////////////////////////////////
-#endif /* EOF blabla.h */
+#endif // KS_EVENT_INCLUDED

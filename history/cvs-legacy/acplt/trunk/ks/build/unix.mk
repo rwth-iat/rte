@@ -8,7 +8,7 @@ CXX_EXTRA_FLAGS = -I . -I../../include -I$(PLT_DIR)/include -fno-implicit-templa
 
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = perl $(PLT_DIR)/build/templ.pl g++ -lstdc++
+CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl g++ -lstdc++
 
 .SUFFIXES:
 
@@ -23,18 +23,25 @@ CXX_LINK = perl $(PLT_DIR)/build/templ.pl g++ -lstdc++
 CXX_LIBKS_SOURCES = \
 	xdr.cpp \
 	array.cpp \
+	from_local.cpp \
 	string.cpp \
 	register.cpp \
 	result.cpp \
+	time.cpp \
 	avticket.cpp \
 	templates.cpp
 
 CXX_LIBKS_OBJECTS = \
 	xdr.o \
 	array.o \
-	string.o \
 	avticket.o \
+	from_local.o \
+	manager.o \
+	register.o \
 	result.o \
+	string.o \
+	svrbase.o \
+	time.o \
 	templates.o
 
 #	register.o \
@@ -43,6 +50,7 @@ CXX_TEST_SOURCES = \
 	txdr.cpp \
 	txdr2.cpp \
 	tregister.cpp \
+	tmanager.cpp \
 	tarray.cpp
 
 TESTS = txdr txdr2 tarray
@@ -69,6 +77,9 @@ value.s : value.cpp
 
 tvalue :  tvalue.o value.o
 	$(CXX_LINK) -o $@ $^ $(LIBPLT)
+
+tmanager :  tmanager.o $(LIBKS) $(LIBPLT)
+	$(CXX_LINK) -o $@ $^
 
 txdr2 :  txdr2.o $(LIBKS) $(LIBPLT)
 	$(CXX_LINK) -o $@ $^ 

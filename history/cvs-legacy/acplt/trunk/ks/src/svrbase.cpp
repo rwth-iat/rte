@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.2 1997-03-13 16:51:46 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.3 1997-03-17 19:58:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,23 +40,37 @@
 // svrbase.cpp
 //
 
-extern "C" {
-#include <rpc/rpc.h>
-}
 #include <sys/errno.h>
 #include <sys/time.h>
 
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "ks/svrbase.h"
 #include "plt/log.h"
+
+
+//////////////////////////////////////////////////////////////////////
+// utilities
+
+static size_t ks_dtsz;
+static bool ks_dtsz_valid = false;
+inline static size_t
+ks_dtablesize()
+{
+    if (!ks_dtsz_valid) {
+        ks_dtsz = FD_SETSIZE;
+    }
+    return ks_dtsz;
+}
 
 //////////////////////////////////////////////////////////////////////
 
 inline void
 KsTimerEvent::trigger()
 {
-    (KsServerBase::getServerObject().*method)(this);
+    (_server.*method)(this);
 }
 
 
@@ -78,15 +92,14 @@ KsServerBase::KsServerBase(const char *svr_name,
     : server_name(svr_name), 
       protocol_version(prot_version),
       shutdown_flag(false),
-      tcp_transport(0),
+      _tcp_transport(0),
       send_buffer_size(16384),
       receive_buffer_size(16384)
 {
     PLT_PRECONDITION( the_server == 0 );
     the_server    = this;
     
-} // KsServerBase::KsServerBase
-
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // Now we're through. Clean up everything
@@ -97,8 +110,7 @@ KsServerBase::~KsServerBase()
     destroyLurkingTransports();
     PLT_ASSERT(the_server == this);
     the_server = 0;
-} // KsServerBase::~KsServerBase
-
+} 
 
 /////////////////////////////////////////////////////////////////////////////
 // Okay, okay. Now take a deep breath...and... fire up the whole mess! We
@@ -121,36 +133,46 @@ void KsServerBase::init()
 // svc_register() as well as svc_unregister() aren't very useful as the
 // latter one ALWAYS contacts the portmapper.
 //
-void KsServerBase::createTransports()
+
+bool 
+KsServerBase::createTransports()
 {
-    tcp_transport = svctcp_create(RPC_ANYSOCK, 
-				  send_buffer_size, receive_buffer_size);
+    _tcp_transport = svctcp_create(RPC_ANYSOCK, 
+                                   send_buffer_size, receive_buffer_size);
+    if (! _tcp_transport) {
+        PltLog::Error("KsServerBase: could not create transport");
+        return false;
+    }
+
     //
     // Now register the dispatcher that should be called whenever there
     // is a request for the KS program id and the correct version number.
     //
-    if ( !svc_register(tcp_transport, // nothing more than just a dummy
+    if ( !svc_register(_tcp_transport, // nothing more than just a dummy
 		                      //-- at least if you use the "0"
 		                      // as the protocol parameter...
-		       KS_RPC_PROGRAM_NUMBER,
-		       KS_PROTOCOL_VERSION,
-		       dispatcher,
-		       0) ) {         // Do not contact the portmapper!
-        PltLog::Alert("KsServerBase: could not create transport");
+                       KS_RPC_PROGRAM_NUMBER,
+                       KS_PROTOCOL_VERSION,
+                       ks_c_dispatch,
+                       0) ) {  // Do not contact the portmapper!
+        svc_destroy(_tcp_transport);
+        _tcp_transport = 0;
+        PltLog::Error("KsServerBase: could not register");
+        return false;
     }
+    return true;
 } 
-
 
 ////////////////////////////////////////////////////////////////////////////
 // Clean up all transports used for the communication with clients.
 //
 void KsServerBase::destroyTransports()
 {
-    if ( tcp_transport ) {
-	svc_destroy(tcp_transport); tcp_transport = 0;
+    if ( _tcp_transport ) {
+        svc_destroy(_tcp_transport); 
+        _tcp_transport = 0;
     }
-} // KsServerBase::destroyTransports
-
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // The RPC library is so brain-damaged, I wanna cry. If you want to close
@@ -162,10 +184,10 @@ void KsServerBase::destroyTransports()
 //
 void KsServerBase::destroyLurkingTransports()
 {
-    int  fd, set_size;
+    int  fd;
+    size_t set_size = ks_dtablesize();
     bool lurking = false;
 
-    set_size = _rpc_dtablesize();
     for ( fd = 0; fd < set_size; fd++ ) {
         if ( FD_ISSET(fd, &svc_fdset) ) {
             //
@@ -176,13 +198,12 @@ void KsServerBase::destroyLurkingTransports()
         }
     }
     if ( lurking ) {
-	//
-	// Now kill the transports by trying to read from them...
-	//
-	svc_getreqset(svc_fdset);
+        //
+        // Now kill the transports by trying to read from them...
+        //
+        svc_getreqset(&svc_fdset);
     }
-} // KsServerBase::destroyLurkingTransports
-
+}
 
 ////////////////////////////////////////////////////////////////////////////
 // Now comes the dispatcher section. Here we redirect and bounce request
@@ -194,18 +215,18 @@ void KsServerBase::destroyLurkingTransports()
 // This is the wrapper that redirects incomming requests issued by the RPC
 // layer up to the responsible server object.
 //
-void KsServerBase::dispatcher(struct svc_req * request, SVCXPRT *transport)
+extern "C" void 
+ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
 {
-    PLT_PRECONDITION(the_server);
-
+    PLT_PRECONDITION(KsServerBase::the_server);
     if ( request->rq_proc == 0 ) {
         //
         // This is just here for the compliance with ONC/RPC rules. If
         // someone pings us, we send back a void reply.
         //
-        svc_sendreply(transport, xdr_void, 0); // FIXME ??
+        svc_sendreply(transport, (xdrproc_t) xdr_void, 0); // FIXME ??
     } else {
-        XDR *xdr = the_server->getXdrForTransport(transport);
+        XDR *xdr = KsServerBase::the_server->getXdrForTransport(transport);
 
         // get a ticket
         KsAvTicket *pTicket = KsAvTicket::xdrNew(xdr);
@@ -220,25 +241,31 @@ void KsServerBase::dispatcher(struct svc_req * request, SVCXPRT *transport)
             // Ups. Something went wrong when we created the A/V ticket. So
             // just send the error reply...
             //
-            the_server->sendErrorReply(transport, *pTicket, pTicket->result);
+            KsServerBase::sendErrorReply(transport, 
+                                         *pTicket, 
+                                         pTicket->result());
         } else {
             //
             // We're now ready to serve the service...
             //
-            the_server->dispatch(svc_req->rq_proc, transport, *ticket);
+            KsServerBase::the_server->dispatch(request->rq_proc, 
+                                               transport, 
+                                               xdr,
+                                               *pTicket);
         }
         // TODO destroy ticket????
     }
-} // KsServerBase::dispatcher
-
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // Here we can find the real dispatcher. It must be overwritten in subclasses
 // of the abstract server base class in order to hook in the (abstract)
 // service handling.
 //
-void KsServerBase::dispatch(u_long serviceId, SVCXPRT *transport,
-			    KsAvTicket &ticket)
+void KsServerBase::dispatch(u_long serviceId, 
+                            SVCXPRT *transport,
+                            XDR * xdrIn,
+                            KsAvTicket &ticket)
 {
     //
     // This is a fall back for the case when we step onto a serviceId
@@ -246,7 +273,7 @@ void KsServerBase::dispatch(u_long serviceId, SVCXPRT *transport,
     // implemented" error reply.
     //
     sendErrorReply(transport, ticket, KS_ERR_NOTIMPLEMENTED);
-} // KsServerBase::dispatch
+}
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -276,7 +303,7 @@ KsServerBase::getXdrForTransport(SVCXPRT *transport)
     PLT_ASSERT(xdr->x_op == XDR_DECODE);
 
     return xdr;
-} // KsServerBase::getXdrForTransport
+}
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -287,7 +314,7 @@ KsServerBase::getXdrForTransport(SVCXPRT *transport)
 //
 typedef struct {
     KsAvTicket     *ticket;
-    KsServerResult *result;
+    KsResult *result;
     KS_RESULT       result_state;
 } KsXdrReplyInfo;
 
@@ -301,7 +328,7 @@ ks_c_send_reply(XDR *xdr, void *reply_info)
     KsXdrReplyInfo *info = (KsXdrReplyInfo *) reply_info;
 
     if ( !info->ticket->xdrEncode(xdr) ) {
-        return 0;
+        return FALSE;
     }
     if ( info->result == 0 ) {
         //
@@ -309,7 +336,7 @@ ks_c_send_reply(XDR *xdr, void *reply_info)
         // decoding process. Thus there's no full result available and
         // we just send back the error code...
         //
-        return xdr_u_long(xdr, &(info->result_state));
+        return xdr_enum(xdr, &(info->result_state));
     } else {
         //
         // We have a full blown result to send back...
@@ -324,28 +351,28 @@ ks_c_send_reply(XDR *xdr, void *reply_info)
 void 
 KsServerBase::sendReply(SVCXPRT *transport, 
                         KsAvTicket &ticket,
-                        KsServerResult &result)
+                        KsResult &result)
 {
     KsXdrReplyInfo answer;
 
     answer.ticket = &ticket;
     answer.result = &result;
     answer.result_state = KS_ERR_GENERIC; // should never be used
-    svc_sendreply(transport, ks_c_send_reply, &answer);
+    svc_sendreply(transport, (xdrproc_t) ks_c_send_reply, (char*) &answer);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // Send back an error reply to the KS client.
 //
 void KsServerBase::sendErrorReply(SVCXPRT *transport, KsAvTicket &ticket,
-				  KsResult result)
+				  KS_RESULT result)
 {
     KsXdrReplyInfo answer;
 
     answer.ticket = &ticket;
     answer.result = 0;
     answer.result_state = result;
-    svc_sendreply(transport, ks_c_send_reply, &answer);
+    svc_sendreply(transport, (xdrproc_t) ks_c_send_reply, (char*) &answer);
 }
 
 
@@ -377,12 +404,26 @@ void KsServerBase::stopServer()
 // Return number of ready fds or -1 on error
 //
 static int
-getReadyFds(fd_set & fds, KsTime * pTimeout) 
+getReadyFds(fd_set & fds, const KsTime * pto) 
 {
-    
-    int res = select(_rpc_dtablesize(), 
-                     &fds, 0, 0, 
-                     pTimeout);
+    // copy timeout, bbsts
+    KsTime timeout;
+    KsTime *pTimeout;
+    if (pto) {
+        timeout = *pTimeout;
+        pTimeout = &timeout;
+    } else {
+        pTimeout = 0;
+    }
+
+    size_t numfds = ks_dtablesize();
+        
+#if PLT_SYSTEM_HPUX
+    int res = select(numfds, (int*) &fds,0,0, pTimeout); // TODO wasdas?
+#else
+    int res = select(numfds, &fds,0,0, pTimeout);
+#endif
+
     if (res == -1) {
         // select reports an error
         if (errno == EINTR) {
@@ -393,10 +434,9 @@ getReadyFds(fd_set & fds, KsTime * pTimeout)
         } else {
             // something unexpected happened
             PltLog::Error("Select failed unexpectedly");
-            res = -1;
         }
-        return false;
     }
+    return res;
 }        
 
 
@@ -447,8 +487,8 @@ KsServerBase::serveRequests(const KsTime *pTimeout) {
 
 //////////////////////////////////////////////////////////////////////
 
-bool servePendingEvents(KsTime * pTimeout) {
-    bool didEvent = false;
+bool
+KsServerBase::servePendingEvents(KsTime * pTimeout) {
     KsTimerEvent *pEvent = getNextTimerEvent();
     if (pEvent) {
         //
@@ -472,7 +512,7 @@ bool servePendingEvents(KsTime * pTimeout) {
             //
             // pending timer event, execute it immediately
             // 
-            timer_queue.removeFirst()->trigger();
+            (timer_queue.removeFirst())->trigger();
             return true;
         }
     } else {

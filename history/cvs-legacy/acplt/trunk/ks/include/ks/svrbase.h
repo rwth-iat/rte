@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.2 1997-03-13 16:51:44 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.3 1997-03-17 19:58:12 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,12 +40,19 @@
 #include "ks/avticket.h"
 #include "ks/xdr.h"
 #include "ks/event.h"
+#include "ks/result.h"
 #include "plt/comparable.h"
 #include "plt/priorityqueue.h"
 
+extern "C" {
+#include <rpc/rpc.h>
+};
 
 //////////////////////////////////////////////////////////////////////
-class KsServerResult;
+// PRIVATE! forward declaration
+
+extern "C" void 
+ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -58,7 +65,7 @@ public:
 
     void run();                // This is the main loop
     void stopServer();         // end the main loop as soon as possible
-    bool hasPendingEvents();   // check for events that want to be served
+    bool hasPendingEvents() const;   // check for events that want to be served
  
     // serve pending events
     bool servePendingEvents(KsTime timeout = KsTime(0,0)); 
@@ -73,33 +80,44 @@ protected:
     // The next one is the central dispatch routine, which you should
     // overwrite in derived classes (you may decide not to do this, but
     // then you get no funcionality, but then -- why would you?)
-    virtual void dispatch(u_long serviceId, SVCXPRT *transport,
+    virtual void dispatch(u_long serviceId, 
+                          SVCXPRT *transport,
+                          XDR *incomingXdr,
                           KsAvTicket &ticket);
 
-    static XDR *getXdrForTransport(SVCXPRT *transport);
+    static void sendReply(SVCXPRT *transport, 
+                          KsAvTicket &ticket,
+                          KsResult &result);
 
-    void sendReply(SVCXPRT *transport, KsAvTicket &ticket,
-                   KsServerResult &result);
-    void sendErrorReply(SVCXPRT *transport, KsAvTicket &ticket,
-                        KS_RESULT result);
+    static void sendErrorReply(SVCXPRT *transport, 
+                               KsAvTicket &ticket,
+                               KS_RESULT result);
 
-    virtual void createTransports();
+    virtual bool createTransports();
     virtual void destroyTransports();
 
-    KS_RESULT result; // TODO: wofuer???
 
+
+    // KS_RESULT result; // TODO: wofuer???
+
+    SVCXPRT *_tcp_transport; // RPC transport used to receive requests
+    void init();
+private:
+    friend void ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
+
+    KsServerBase(const KsServerBase &); // forbidden
+    KsServerBase & operator = (const KsServerBase &); // forbidden
+
+    PltPriorityQueue< PltPtrComparable<KsTimerEvent> > timer_queue;
+    bool shutdown_flag; // signal to the run() loop to quit
     PltString server_name;
     u_long protocol_version;
     int send_buffer_size;
     int receive_buffer_size;
 
-    PltPriorityQueue< PltPtrComparable<KsTimerEvent> > timer_queue;
-    bool shutdown_flag; // signal to the run() loop to quit
-
-    SVCXPRT *tcp_transport; // RPC transport used to receive requests
-    void init();
-private:
+    static XDR *getXdrForTransport(SVCXPRT *transport);
     static void dispatcher(struct svc_req *request, SVCXPRT *transport);
+    int serveRequests(const KsTime *pTimeout);
     void destroyLurkingTransports();
     static KsServerBase *the_server;
 };

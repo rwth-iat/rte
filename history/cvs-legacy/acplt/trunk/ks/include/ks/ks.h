@@ -35,6 +35,10 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+extern "C" {
+#include <rpc/xdr.h>
+};
+
 /*
  * RPC program number reserved for ACPLT/KS library
  */
@@ -48,7 +52,7 @@ const unsigned long KS_PROTOCOL_VERSION = 1;
 /*
  * Currently defined ACPLT/KS error codes.
  */
-enum KS_RESULT {
+enum KS_RESULT_ENUM {
     KS_ERR_OK                       = 0x0000,
     KS_ERR_GENERIC                  = 0x0001,
     KS_ERR_BADAUTH                  = 0x0002,
@@ -66,7 +70,7 @@ enum KS_RESULT {
     KS_ERR_NOREMOTE                 = 0x0020,
     KS_ERR_SERVERUNKNOWN            = 0x0021
 };
-
+typedef enum_t KS_RESULT;
 
 /*
  * A/V stuff
@@ -121,4 +125,26 @@ enum KS_VAR_TYPE {
     KS_VT_TIME_VEC   = 0xB1
 };
 
+enum KS_SVC {
+    KS_NULL          = 0,
+    /*
+     * Now for the manager part of the KS protocol
+     */
+    KS_REGISTER      = 0x0000FF01,
+    KS_UNREGISTER    = 0x0000FF02,
+    KS_GETSERVER     = 0x0000FF03,
+    
+    /*
+     * The GetOD services group.
+     */
+    KS_GETOD         = 0x00000001,
+    
+    /*
+     * The variable access service group.
+     */
+    KS_GETVAR        = 0x00000101,
+    KS_SETVAR        = 0x00000102,
+    KS_EXGDATA       = 0x00000103
+};
+    
 #endif

@@ -1,3 +1,4 @@
+/* -*- plt-c++ -*- */
 #ifndef KS_REGISTER_INCLUDED
 #define KS_REGISTER_INCLUDED
 /*
@@ -37,9 +38,9 @@
 
 /////////////////////////////////////////////////////////////////////////
 
-#include <ks/xdr.h>
-#include <ks/ks.h>
-#include <ks/string.h>
+#include "ks/xdr.h"
+#include "ks/ks.h"
+#include "ks/string.h"
 #include "ks/result.h"
 
 ////////////////////////////////////////////////////////////////////////
@@ -48,9 +49,9 @@
 
 class KsServerDesc : public KsXdrAble {
 public:
-    KsServerDesc() : name() {}
     KsServerDesc( const KsString &n, u_short pv )
-      : name(n), protocol_version(pv) {}
+        : name(n), protocol_version(pv) {}
+    KsServerDesc( XDR *, bool &);
 
     bool xdrEncode(XDR *) const;
     bool xdrDecode(XDR *);
@@ -66,9 +67,9 @@ public:
 
 class KsRegistrationParams {
 public:
-    KsRegistrationParams() {}
     KsRegistrationParams( const KsServerDesc &, u_short, u_long );
-    
+    KsRegistrationParams( XDR *, bool &);
+
     bool xdrEncode(XDR *) const;
     bool xdrDecode(XDR *);
     static KsRegistrationParams *xdrNew(XDR *);
@@ -79,18 +80,34 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
+// class KsUnregistrationParams
+//////////////////////////////////////////////////////////////////////////
+
+class KsUnregistrationParams {
+public:
+    KsUnregistrationParams( const KsServerDesc &);
+    KsUnregistrationParams( XDR *, bool &);
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsUnregistrationParams *xdrNew(XDR *);
+
+    KsServerDesc server;
+};
+
+//////////////////////////////////////////////////////////////////////////
 // class KsRegistrationResult
 //////////////////////////////////////////////////////////////////////////
 
-class KsRegistrationResult : public KsResult {
-public:
+typedef KsResult KsRegistrationResult;
 
-    KsRegistrationResult( KS_RESULT res ) : KsResult( res ) {}
+//////////////////////////////////////////////////////////////////////////
+// class KsUnregistrationResult
+//////////////////////////////////////////////////////////////////////////
 
-    static KsRegistrationResult *xdrNew(XDR *xdr) {
-        return (KsRegistrationResult *)KsResult::xdrNew(xdr);
-    }
-};
+typedef KsResult KsUnregistrationResult;
+
+//////////////////////////////////////////////////////////////////////
 
 #endif /* end of register.h */
 

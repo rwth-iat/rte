@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.4 1997-03-17 10:57:55 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.5 1997-03-17 19:58:14 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -95,7 +95,8 @@ KsAvTicket::xdrNew(XDR * xdrs)
         }
     }                                                          
     if (p) {                                                   
-        PLT_ASSERT(p->xdrTypeCode() == typecode);              
+        PLT_ASSERT(   p->xdrTypeCode() == typecode 
+                   || p->xdrTypeCode() == KS_AUTH_NONE);              
         if (!p->xdrDecodeCommon(xdrs)) {                       
             delete p;                                          
             return 0;                                          
@@ -210,7 +211,7 @@ KsAvNoneTicket::xdrEncodeVariant(XDR *) const
 
 //////////////////////////////////////////////////////////////////////
 KS_ACCESS 
-KsAvNoneTicket::getAccess(const KsString &name) const
+KsAvNoneTicket::getAccess(const KsString &) const
 {
     return _access;
 }

@@ -1,5 +1,4 @@
-// File: ks/register.cpp
-
+/* -*- plt-c++ -*- */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,8 +39,6 @@
 
 #include "ks/register.h"
 
-////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////
 // class KsServerDesc
 //////////////////////////////////////////////////////////////////
@@ -62,43 +59,28 @@ KsServerDesc::xdrEncode(XDR *xdr) const
 
 /////////////////////////////////////////////////////////////////////////
 
-KsServerDesc *
-KsServerDesc::xdrNew(XDR *xdr)
-{
-    KsServerDesc *psd = new KsServerDesc;
-
-    if( !psd ) {
-      // allocation failed
-      //
-      return NULL;
-    }
-    
-    if( psd->xdrDecode(xdr) ) {
-      
-        // success:
-        // return pointer
-        //
-        return psd;
-    } else {
-        // failed:
-        // clean up
-        //
-        delete psd;
-        return NULL;
-    }
-}
-
+KS_IMPL_XDRCTOR(KsServerDesc);
+KS_IMPL_XDRNEW(KsServerDesc);
 
 ////////////////////////////////////////////////////////////////////////////
 // class KsRegistrationParams
 ///////////////////////////////////////////////////////////////////////////
 
-KsRegistrationParams::KsRegistrationParams( const KsServerDesc &s, 
-  u_short p, u_long t ) : server(s), port(p), time_to_live(t) 
-{}
+KsRegistrationParams::KsRegistrationParams(const KsServerDesc &s, 
+                                           u_short p, 
+                                           u_long t ) 
+: server(s), 
+  port(p), 
+  time_to_live(t) 
+{
+}
     
+//////////////////////////////////////////////////////////////////////
+
 bool
-KsRegistrationParams::xdrEncode(XDR *xdr) const {
+KsRegistrationParams::xdrEncode(XDR *xdr) const 
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
 
     if( !(server.xdrEncode(xdr)) )
         return false;
@@ -106,8 +88,12 @@ KsRegistrationParams::xdrEncode(XDR *xdr) const {
     return xdr_u_short(xdr, &port) && xdr_u_long(xdr, &time_to_live);
 }
 
+//////////////////////////////////////////////////////////////////////
+
 bool 
-KsRegistrationParams::xdrDecode(XDR *xdr) {
+KsRegistrationParams::xdrDecode(XDR *xdr) 
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
 
     if( !(server.xdrDecode(xdr)) )
         return false;
@@ -115,22 +101,58 @@ KsRegistrationParams::xdrDecode(XDR *xdr) {
     return xdr_u_short(xdr, &port)  && xdr_u_long(xdr, &time_to_live);
 }
 
-////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 
-KsRegistrationParams *KsRegistrationParams::xdrNew(XDR *xdr) {
-
-    KsRegistrationParams *prp = new KsRegistrationParams();
-
-    if( prp && prp->xdrDecode(xdr) ) {
-
-        return prp;
-
-    } else {
-
-        delete prp;
-        return NULL;
+KsRegistrationParams::KsRegistrationParams(XDR *xdr, bool &ok)
+: server(xdr, ok)
+{
+    if (ok) {
+        ok =  xdr_u_short(xdr, &port)  && xdr_u_long(xdr, &time_to_live);
     }
 }
 
+//////////////////////////////////////////////////////////////////////
+
+KS_IMPL_XDRNEW(KsRegistrationParams);
+
+////////////////////////////////////////////////////////////////////////////
+// class KsUnregistrationParams
+///////////////////////////////////////////////////////////////////////////
+
+KsUnregistrationParams::KsUnregistrationParams(const KsServerDesc &s)
+: server(s)
+{
+}
+    
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsUnregistrationParams::xdrEncode(XDR *xdr) const 
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return server.xdrEncode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool 
+KsUnregistrationParams::xdrDecode(XDR *xdr) 
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return server.xdrDecode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KsUnregistrationParams::KsUnregistrationParams(XDR *xdr, bool &ok)
+: server(xdr, ok)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KS_IMPL_XDRNEW(KsUnregistrationParams);
+
+/////////////////////////////////////////////////////////////////////////
 // End of file ks/register.cpp
 

@@ -1,5 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.3 1997-03-17 19:58:17 martin Exp $ */
+#ifndef KS_MANAGER_INCLUDED
+#define KS_MANAGER_INCLUDED
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.1 1997-03-17 19:58:11 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -34,49 +36,49 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
 
-#include "ks/result.h"
+//////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////
-// class KsResult
-////////////////////////////////////////////////////////////////////////////
+#include "ks/svrbase.h"
+#include "ks/register.h"
+extern "C" {
+#include <rpc/pmap_clnt.h>
+};
 
-bool 
-KsResult::xdrEncode(XDR *xdr) const {
-    
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
-    enum_t xresult = result;
-    return xdr_enum( xdr, &xresult );
-}
+//////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////
-
-bool
-KsResult::xdrDecode(XDR *xdr) {
-
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
-    enum_t xresult;
-    bool ok = xdr_enum( xdr, &xresult );
-    result = xresult;
-    return ok;
-}
-
-///////////////////////////////////////////////////////////////////////////
-
-KsResult::KsResult(XDR *xdr, bool & ok)
+class KsManager
+: public KsServerBase
 {
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
-    enum_t xresult;
-    ok = xdr_enum( xdr, &xresult);
-    result = xresult;
-}
+public:
+    KsManager();
+    virtual ~KsManager();
+protected:
+    virtual void dispatch(u_long serviceId, 
+                          SVCXPRT *transport,
+                          XDR *incomingXdr,
+                          KsAvTicket &ticket);
+
+    virtual bool createTransports();
+    virtual void destroyTransports();
+
+    void registerServer(KsAvTicket & ticket,
+                  KsRegistrationParams & params,
+                  KsRegistrationResult & result);
+
+    void unregisterServer(KsAvTicket & ticket,
+                    KsUnregistrationParams & params,
+                    KsUnregistrationResult & result);
+
+private:
+    static bool isLocal(SVCXPRT *);
+    SVCXPRT *_udp_transport;
+};
+    
+    
 
 //////////////////////////////////////////////////////////////////////
 
-KS_IMPL_XDRNEW(KsResult);
-
-//////////////////////////////////////////////////////////////////////
-
-
-// EOF ks/result
+#endif // KS_MANAGER_INCLUDED
