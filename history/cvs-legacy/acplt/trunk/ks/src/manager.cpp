@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.30 1999-09-06 06:54:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.31 1999-09-06 07:22:47 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -608,7 +608,7 @@ KsManager::startServer()
 		    _udp_transport = svcudp_create(sock);
 #else
 		    _udp_transport = new KssUDPXDRConnection(
-			sock, 15/* secs */);
+			sock, 15/* secs */, 15/* secs, but don't care here */);
 #endif
 		}
 	    }
