@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.3 1999-08-28 13:45:55 dirk Exp $
+#   $Id: Makefile,v 1.4 2001-07-09 12:41:18 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -92,7 +92,7 @@ include ../generic.mk
 #	Targets
 #	-------
 
-targets: $(OV_LIBOV_LIB) $(OV_DBUTIL_EXE) $(OV_LIBOVKS_LIB) $(OV_SERVER_EXE)
+targets: $(OV_LIBOV_LIB) $(OV_DBUTIL_EXE) $(OV_LIBOVKS_LIB) $(OV_SERVER_EXE) $(KSHISTLIB_LIB)
 
 
 example: $(EXAMPLE)
@@ -133,7 +133,7 @@ depend:
 #	Table of statically linked ACPLT/OV libraries
 #	---------------------------------------------
 
-OV_LIBRARIES = $(EXAMPLE_LIB)
+OV_LIBRARIES = $(EXAMPLE_LIB) $(KSHISTLIB_LIB)
 
 $(OV_LIBTABLE_SRC) : $(OV_LIBRARIES)
 	@echo Generating static library table file '$@'
@@ -166,6 +166,13 @@ ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 #	ACPLT/OV example library
 
 $(EXAMPLE_LIB) : $(EXAMPLE_OBJ)
+	@echo $(foreach object, $?, +-$(object)) > respfile
+	$(AR) $@ @respfile
+	@del respfile
+
+#	ACPLT/OV example library
+
+$(KSHISTLIB_LIB) : $(KSHISTLIB_OBJ)
 	@echo $(foreach object, $?, +-$(object)) > respfile
 	$(AR) $@ @respfile
 	@del respfile
