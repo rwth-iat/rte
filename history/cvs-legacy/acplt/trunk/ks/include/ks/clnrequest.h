@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/clnrequest.h,v 1.2 2003-10-15 15:27:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/clnrequest.h,v 1.3 2003-10-17 13:30:34 harald Exp $ */
 #ifndef KSC_CLNREQUEST_INCLUDED
 #define KSC_CLNREQUEST_INCLUDED
 
@@ -36,12 +36,19 @@ class KscServiceRequest {
 public:
     KscServiceRequest(u_long service,
 	              const KscAvModule *avm,
-		      const KsXdrAble &params, KsResult &result); // TODO
+		      const KsXdrAble &params,
+		      KsResult &result);
+    KscServiceRequest(u_short service,
+		      const KsString extension,
+	              const KscAvModule *avm,
+		      const KsXdrAble &params,
+		      KsResult &result);
     virtual ~KscServiceRequest();
 
-    u_long _service;
-    const KscAvModule *_avm;
-    const KsXdrAble &_params;
+    u_long _service;           // KS service request number
+    const KsString _extension; // optional extension name
+    const KscAvModule *_avm;   // pointer to A/V module object
+    const KsXdrAble &_params;  // the parameters
     KsResult &_result;
 
     KscNegotiator *_neg; // only temporarily used during REQ_BUSY phase.
@@ -54,6 +61,14 @@ public:
     };
 
     KscServiceRequestStatus _status;
+
+    enum KscServiceRequestSubStatus {
+	SUBREQ_NORMAL,   // normal request
+	SUBREQ_OPENONLY, // only open connection, don't send anything
+	SUBREQ_QUERYEXT  // query extension's major opcode
+    };
+
+    KscServiceRequestSubStatus _sub_status;
 
     virtual void attention();
 
