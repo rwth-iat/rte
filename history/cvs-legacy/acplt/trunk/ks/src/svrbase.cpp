@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.43 2000-09-04 08:57:18 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.44 2001-01-29 13:00:22 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -38,11 +38,6 @@
 #if !PLT_SYSTEM_NT
 #include <unistd.h>
 #endif
-
-// Newer DECCXX releases now define this...
-//#if PLT_SYSTEM_OPENVMS
-//#define bzero(x, y) memset(x, 0, y)
-//#endif
 
 #if PLT_SYSTEM_SOLARIS
 #include <netconfig.h>
@@ -109,9 +104,12 @@ KsTimerEvent::trigger()
 #if PLT_USE_BUFFERED_STREAMS
 // ---------------------------------------------------------------------------
 // When working with buffered streams, we´re using a timer event to free up
-// free fragments from time to time. This way, memory from large requests or
+// unused fragments from time to time. This way, memory from large requests or
 // replies can be reclaimed not only by the transports but also by the C++
-// objects.
+// objects. Typically, not all currently unused fragments (buffers) will be
+// given back at once but rather we leave some spare for client requests to
+// come. Someone should implement a sorted list of free fragments, so
+// fragmentation could be minimized. But then, who's gonna do it?
 //
 class KsGarbageTimerEvent : public KsTimerEvent {
 public:
@@ -187,10 +185,11 @@ KsServerBase::KsServerBase()
     //
     // Set some parameters of the dynamic XDR memory streams...
     //
-    xdrmemstream_controlusage(4096, // 4k fragments
-	                      2048, // 4k*2048 = 8M maximum pool size
-	                      0,    // 4k*0 = 0k minimum free pool size
-	                      50);  // clean up 50% per "garbage collection"
+    xdrmemstream_controlusage(
+	4096, // 4k fragments
+	PLT_POOL_BLOCK_COUNT, // default: max 2048 fragments
+	0,    // 4k*0 = 0k minimum free pool size
+	50);  // clean up 50% per "garbage collection"
 #endif
 } // KsServerBase::KsServerBase
 
