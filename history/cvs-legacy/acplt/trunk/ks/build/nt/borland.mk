@@ -235,6 +235,12 @@ ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(SRCDIR)ntservice.cpp
 !
 
+w95service$(O): $(SRCDIR)w95service.cpp $(KSDIR)\include\ks\w95service.h
+	@echo Compiling w95service.cpp
+	@$(CXX) @&&!
+		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(SRCDIR)w95service.cpp
+!
+
 $(LIBKS) : $(LIBKS_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS1)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS2)
