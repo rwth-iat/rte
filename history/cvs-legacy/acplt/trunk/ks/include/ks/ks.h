@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.29 1999-09-06 06:52:33 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.30 1999-09-06 07:20:21 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -271,9 +271,11 @@ ENUMDEF(KS_LINK_TYPE)
 #define KS_LT_LOCAL_1_1         ENUMVAL(KS_LINK_TYPE, 1)
 #define KS_LT_LOCAL_1_MANY      ENUMVAL(KS_LINK_TYPE, 2)
 #define KS_LT_LOCAL_MANY_MANY   ENUMVAL(KS_LINK_TYPE, 5)
+#define KS_LT_LOCAL_MANY_1      ENUMVAL(KS_LINK_TYPE, 6)
 #define KS_LT_GLOBAL_1_1        ENUMVAL(KS_LINK_TYPE, 3)
 #define KS_LT_GLOBAL_1_MANY     ENUMVAL(KS_LINK_TYPE, 4)
-#define KS_LT_GLOBAL_MANY_MANY  ENUMVAL(KS_LINK_TYPE, 6)
+#define KS_LT_GLOBAL_MANY_MANY  ENUMVAL(KS_LINK_TYPE, 7)
+#define KS_LT_GLOBAL_MANY_1     ENUMVAL(KS_LINK_TYPE, 8)
 
 
 /* ----------------------------------------------------------------------------
