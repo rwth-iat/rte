@@ -13,7 +13,8 @@ CXX_EXTRA_FLAGS = -I. -I../../include  -fno-implicit-templates
 
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = perl ../templ.pl g++ -lstdc++
+CXX_LINK = perl ../templ.pl g++
+CXX_LIBS = -lstdc++
 
 VPATH = ../../tests ../../src
 
@@ -50,6 +51,7 @@ CXX_LIBPLT_OBJECTS = \
 
 CXX_TEST_SOURCES = \
 	tarray.cpp \
+	tdebug.cpp \
 	thandle.cpp\
 	thashtable.cpp \
 	thtname.cpp \
@@ -63,7 +65,7 @@ CXX_TEST_SOURCES = \
 CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 
 TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray\
-	thtname thandle tlog
+	thtname thandle tlog tdebug
 
 all : libplt.a
 
@@ -75,6 +77,9 @@ libplt.a: $(CXX_LIBPLT_OBJECTS)
 
 thandle : thandle.o libplt.a
 	$(CXX_LINK) -o $@ $^
+
+tdebug : tdebug.o libplt.a
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 tlist : tlist.o libplt.a
 	$(CXX_LINK) -o $@ $^
