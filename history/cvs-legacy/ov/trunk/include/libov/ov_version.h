@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.2 1999-07-26 16:14:07 dirk Exp $
+*   $Id: ov_version.h,v 1.3 1999-08-06 09:37:21 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,26 +34,26 @@
 *	Version information for different modules of ACPLT/OV
 *	-----------------------------------------------------
 */
-#define OV_VER_CODEGEN					"0.1.0pre5"
-#define OV_VER_LIBOV					"0.1.0pre5"
-#define OV_VER_DBUTIL 					"0.1.0pre5"
-#define OV_VER_LIBOVKS 					"0.1.0pre5"
-#define OV_VER_SERVER					"0.1.0pre5"
-#define OV_VER_NTSERVICE				"0.1.0pre5"
+#define OV_VER_CODEGEN					"0.1.0pre6"
+#define OV_VER_LIBOV					"0.1.0pre6"
+#define OV_VER_DBUTIL 					"0.1.0pre6"
+#define OV_VER_LIBOVKS 					"0.1.0pre6"
+#define OV_VER_SERVER					"0.1.0pre6"
+#define OV_VER_NTSERVICE				"0.1.0pre6"
 
-#define OV_VER_FILEVERSION_CODEGEN		0, 1, 0, 5
-#define OV_VER_FILEVERSION_LIBOV		0, 1, 0, 5
-#define OV_VER_FILEVERSION_DBUTIL 		0, 1, 0, 5
-#define OV_VER_FILEVERSION_LIBOVKS 		0, 1, 0, 5
-#define OV_VER_FILEVERSION_SERVER		0, 1, 0, 5
-#define OV_VER_FILEVERSION_NTSERVICE	0, 1, 0, 5
+#define OV_VER_FILEVERSION_CODEGEN		0, 1, 0, 6
+#define OV_VER_FILEVERSION_LIBOV		0, 1, 0, 6
+#define OV_VER_FILEVERSION_DBUTIL 		0, 1, 0, 6
+#define OV_VER_FILEVERSION_LIBOVKS 		0, 1, 0, 6
+#define OV_VER_FILEVERSION_SERVER		0, 1, 0, 6
+#define OV_VER_FILEVERSION_NTSERVICE	0, 1, 0, 6
 
-#define OV_VER_PRODUCTVERSION_CODEGEN	0, 1, 0, 5
-#define OV_VER_PRODUCTVERSION_LIBOV		0, 1, 0, 5
-#define OV_VER_PRODUCTVERSION_DBUTIL 	0, 1, 0, 5
-#define OV_VER_PRODUCTVERSION_LIBOVKS 	0, 1, 0, 5
-#define OV_VER_PRODUCTVERSION_SERVER	0, 1, 0, 5
-#define OV_VER_PRODUCTVERSION_NTSERVICE	0, 1, 0, 5
+#define OV_VER_PRODUCTVERSION_CODEGEN	0, 1, 0, 6
+#define OV_VER_PRODUCTVERSION_LIBOV		0, 1, 0, 6
+#define OV_VER_PRODUCTVERSION_DBUTIL 	0, 1, 0, 6
+#define OV_VER_PRODUCTVERSION_LIBOVKS 	0, 1, 0, 6
+#define OV_VER_PRODUCTVERSION_SERVER	0, 1, 0, 6
+#define OV_VER_PRODUCTVERSION_NTSERVICE	0, 1, 0, 6
 
 #define OV_VER_LICENSE															\
 	"Copyright (C) 1998-1999 "													\
@@ -69,7 +69,7 @@
 	"this Package; see the file ARTISTIC-LICENSE. If not, write to the "		\
 	"Copyright Holder.\r\n"														\
 	"\r\n"																		\
-	"THIS PACKAGE IS PROVIDED \"AS IS\" AND WITHOUT ANY EXPRESS OR IMPLIED "	\
+	"THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED "	\
 	"WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES "		\
 	"OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.\r\n"
 
