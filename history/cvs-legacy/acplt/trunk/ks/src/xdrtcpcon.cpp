@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.7 1999-02-26 13:28:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.8 1999-03-01 14:16:41 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -166,7 +166,14 @@ KssConnection::ConnectionIoMode KssListenTCPXDRConnection::receive()
 	KssConnection *con = new KssTCPXDRConnection(newfd, _timeout, 
 		                                     saddr, saddr_len,
 		                                     _cnx_type);
-        // FIXME: !con
+        if ( !con ) {
+#if PLT_SYSTEM_NT
+	    closesocket(newfd);
+#else
+	    close(newfd);
+#endif
+	    return CNX_IO_READABLE;
+	}
 	con->setAttentionPartner(getAttentionPartner());
 	ConnectionIoMode ioMode = con->getIoMode();
 	if ( ioMode == CNX_IO_DEAD ) {
@@ -528,7 +535,11 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 	int error;
 	int size = sizeof(error);
 
-	if ( (getsockopt(_fd, SOL_SOCKET, SO_ERROR, &error, &size) < 0)
+	if ( (getsockopt(_fd, SOL_SOCKET, SO_ERROR, 
+#if PLT_SYSTEM_NT
+                (char *)
+#endif
+                         &error, &size) < 0)
 	     || error ) {
 	    //
 	    // Connection establishment failed. Put the connection into the
@@ -789,7 +800,11 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 	int error;
 	int size = sizeof(error);
 
-	if ( (getsockopt(_fd, SOL_SOCKET, SO_ERROR, &error, &size) < 0)
+	if ( (getsockopt(_fd, SOL_SOCKET, SO_ERROR, 
+#if PLT_SYSTEM_NT
+                (char *)
+#endif
+                         &error, &size) < 0)
 	     || error ) {
 	    //
 	    // Connection establishment failed. Put the connection into the
