@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.5 1999-08-02 10:57:11 dirk Exp $
+*   $Id: ov_macros.h,v 1.6 1999-08-05 09:21:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -261,6 +261,14 @@
 	ov_vector_setdynamicvalue((OV_GENERIC_VEC*)(pvector),					\
 		(const OV_POINTER)pvalue, veclen+0*((pvector)-(OV_##type##_VEC*)0),	\
 		veclen*sizeof(OV_##type), OV_VT_##type)
+
+/*
+*	Set the vector length of a dynamic vector variable
+*/
+#define Ov_SetDynamicVectorLength(pvector, veclen, type)					\
+	ov_vector_setdynamicveclen((OV_GENERIC_VEC*)(pvector), veclen			\
+		+0*((pvector)-(OV_##type##_VEC*)0),	veclen*sizeof(OV_##type),		\
+		OV_VT_##type)
 
 /*
 *	Compare two vector variable values

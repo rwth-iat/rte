@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.3 1999-08-02 11:01:39 dirk Exp $
+*   $Id: ov_vector.c,v 1.4 1999-08-05 09:21:23 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -132,6 +132,76 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicvalue(
 	return OV_ERR_OK;
 }
 
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Set the vector length of a dynamic vector variable value
+*/
+OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicveclen(
+	OV_GENERIC_VEC		*pvector,
+	const OV_UINT		veclen,
+	const OV_UINT		size,
+	const OV_VAR_TYPE	vartype
+) {
+	/*
+	*	local variables
+	*/
+	OV_RESULT	result;
+	OV_UINT		i;
+	OV_STRING	*pstring;
+	OV_UINT		oldsize;
+	OV_POINTER	*pnewvalue;
+	/*
+	*	check parameters
+	*/
+	if(!pvector) {
+		return OV_ERR_BADPARAM;
+	}
+	/*
+	*	calculate old size
+	*/
+	oldsize = (size/veclen)*pvector->veclen;
+	/*
+	*	manipulate memory
+	*/
+	if(vartype == OV_VT_STRING) {
+		/*
+		*	free strings that will be erased
+		*/
+		for(i=veclen, pstring=(OV_STRING*)pvector->value;
+			i<pvector->veclen; i++, pstring++
+		) {
+			Ov_WarnIfNot(Ov_OK(ov_string_setvalue(pstring, NULL)));
+		}
+	}
+	if(!veclen) {
+		if(pvector->value) {
+			ov_database_free(pvector->value);
+			pvector->veclen = 0;
+			pvector->value = NULL;
+		}
+		return OV_ERR_OK;
+	}
+	if(pvector->veclen != veclen) {
+		/*
+		*	vector length has changed, reallocate memory
+		*/
+		pnewvalue = ov_database_realloc(pvector->value, size);
+		if(!pnewvalue) {
+			return OV_ERR_DBOUTOFMEMORY;
+		}
+		pvector->veclen = veclen;
+		pvector->value = pnewvalue;
+		/*
+		*	set new allocated memory to zero
+		*/
+		if(size > oldsize) {
+			memset(((OV_BYTE*)pvector->value)+oldsize, 0, size-oldsize);
+		}
+	}
+	return OV_ERR_OK;
+}
+	
 /*	----------------------------------------------------------------------	*/
 
 /*
