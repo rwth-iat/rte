@@ -51,20 +51,21 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-enum KS_SELECTOR_TYPE_ENUM {
-    KS_SEL_NONE,
-    KS_SEL_STRING,
-    KS_SEL_TIME
+enum KS_HSEL_TYPE_ENUM {
+    KS_HSELT_NONE    = 0x0000,
+    KS_HSELT_TIME    = 0x0001,
+    KS_HSELT_STRING  = 0x0002
+
 };
-typedef enum_t KS_SELECTOR_TYPE;
+typedef enum_t KS_HSEL_TYPE;
 
 /////////////////////////////////////////////////////////////////////////////
 
-enum KS_TIME_SELECTOR_TYPE_ENUM {
-    KS_TST_ABSOLUTE = 0,
-    KS_TST_RELATIVE = 1
+enum KS_TIME_TYPE_ENUM {
+    KS_TT_ABSOLUTE = 0,
+    KS_TT_RELATIVE = 1
 };
-typedef enum_t KS_TIME_SELECTOR_TYPE; 
+typedef enum_t KS_TIME_TYPE; 
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -77,6 +78,56 @@ enum KS_INTERPOLATION_MODE_ENUM {
     KS_IPM_HOLD    = 5
 };
 typedef enum_t KS_INTERPOLATION_MODE;
+
+/////////////////////////////////////////////////////////////////////////////
+// A unified class for times and time spans
+/////////////////////////////////////////////////////////////////////////////
+
+class KsAbsRelTime
+    : public KsXdrUnion
+{
+public:
+    inline KsAbsRelTime();
+    KsAbsRelTime(const PltTime &t);
+    KsAbsRelTime(const PltTimeSpan &ts);
+    KsAbsRelTime(XDR *, bool &);
+
+    KS_TIME_TYPE xdrTypeCode() const { return type; }
+
+    operator PltTime () const;
+    operator PltTimeSpan () const;
+
+    KsAbsRelTime &operator = (const PltTime &t);
+    KsAbsRelTime &operator = (const PltTimeSpan &ts);
+
+    virtual bool xdrEncode(XDR *) const;
+    virtual bool xdrDecode(XDR *) ;
+    static KsAbsRelTime * xdrNew(XDR *);
+
+protected:
+    virtual bool xdrEncodeCommon(XDR *) const
+    { PLT_ASSERT(0); return false; }
+    virtual bool xdrDecodeCommon(XDR *)
+    { PLT_ASSERT(0); return false; }             
+    virtual bool xdrEncodeVariant(XDR *) const
+    { PLT_ASSERT(0); return false; }
+    virtual bool xdrDecodeVariant(XDR *)
+    { PLT_ASSERT(0); return false; }
+
+    KS_TIME_TYPE type;
+    union {
+        struct {
+            u_long sec;
+            u_long usec;
+        } abs;
+        struct {
+            long sec;
+            long usec;
+        } rel;
+    } time;
+
+    PLT_DECL_RTTI;
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // Common Base class for selectors
@@ -107,7 +158,7 @@ class KsNoneSel
 public:
     KsNoneSel() {}
 
-    enum_t xdrTypeCode() const { return KS_SEL_NONE; }
+    enum_t xdrTypeCode() const { return KS_HSELT_NONE; }
 
 protected:    
     bool xdrEncodeVariant(XDR *) const { return true; }
@@ -128,19 +179,13 @@ class KsTimeSel
 {
 public:
     KsTimeSel() {}
-    KsTimeSel(KS_TIME_SELECTOR_TYPE atype,
-              KsTime afrom,
-              KsTime ato,
-              KsTime adelta,
-              KS_INTERPOLATION_MODE amode = KS_IPM_DEFAULT);
 
-    enum_t xdrTypeCode() const { return KS_SEL_TIME; }
+    enum_t xdrTypeCode() const { return KS_HSELT_TIME; }
 
-    KS_TIME_SELECTOR_TYPE  type;
     KS_INTERPOLATION_MODE  ip_mode;
-    KsTime                 from;
-    KsTime                 to;
-    KsTime                 delta;
+    KsAbsRelTime           from;
+    KsAbsRelTime           to;
+    KsTimeSpan             delta;
     
 protected:
     bool xdrEncodeVariant(XDR *) const;
@@ -165,7 +210,7 @@ public:
     KsStringSel() {}
     KsStringSel(const PltString &sel_mask);
 
-    enum_t xdrTypeCode() const { return KS_SEL_STRING; }
+    enum_t xdrTypeCode() const { return KS_HSELT_STRING; }
 
     KsString mask;
 
@@ -182,6 +227,79 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsAbsRelTime::KsAbsRelTime()
+    : type(KS_TT_ABSOLUTE)
+{
+    time.abs.sec = 0;
+    time.abs.usec = 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsAbsRelTime::KsAbsRelTime(const PltTime &t)
+    : type(KS_TT_ABSOLUTE)
+{
+    time.abs.sec = t.tv_sec;
+    time.abs.usec = t.tv_usec;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsAbsRelTime::KsAbsRelTime(const PltTimeSpan &ts)
+    : type(KS_TT_RELATIVE)
+{
+    time.rel.sec = ts.tv_sec;
+    time.rel.usec = ts.tv_usec;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsAbsRelTime::operator PltTime () const
+{
+    return type == KS_TT_ABSOLUTE ? 
+        PltTime(time.abs.sec, time.abs.usec) : PltTime(0,0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsAbsRelTime::operator PltTimeSpan () const
+{
+    return type == KS_TT_RELATIVE ? 
+        PltTimeSpan(time.rel.sec, time.rel.usec) : PltTimeSpan(0,0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsAbsRelTime &
+KsAbsRelTime::operator = (const PltTime &t)
+{
+    type = KS_TT_ABSOLUTE;
+    time.abs.sec = t.tv_sec;
+    time.abs.usec = t.tv_usec;
+    return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsAbsRelTime &
+KsAbsRelTime::operator = (const PltTimeSpan &ts)
+{
+    type = KS_TT_RELATIVE;
+    time.rel.sec = ts.tv_sec;
+    time.rel.usec = ts.tv_usec;
+    return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 inline
