@@ -85,12 +85,12 @@ KscSorterBucket::add(KscBucketHandle hbucket)
 
 //////////////////////////////////////////////////////////////////////
 
-KscVariableHandle
+KscSortVarPtr
 KscSorterBucket::removeFirst()
 {
     PLT_PRECONDITION(!var_lst.isEmpty());
 
-    KscVariableHandle hvar = var_lst.removeFirst();
+    KscSortVarPtr hvar = var_lst.removeFirst();
     --var_count;
     return hvar;
 }
@@ -98,14 +98,14 @@ KscSorterBucket::removeFirst()
 //////////////////////////////////////////////////////////////////////
 
 
-PltArray<KscVariableHandle> 
+PltArray< KscSortVarPtr > 
 KscSorterBucket::getSortedVars()
 {
-    PltArray<KscVariableHandle> sv(size());
+    PltArray< KscSortVarPtr > sv(size());
 
     if(sv.size() != size()) {
         // failed to allocate memory
-        return PltArray<KscVariableHandle>(0);
+        return PltArray< KscSortVarPtr >(0);
     }
 
     size_t count = 0;
@@ -115,7 +115,7 @@ KscSorterBucket::getSortedVars()
 
     var_count = 0;
 
-    PltSort<KscVariableHandle>::qsort(sv);
+    PltSort< KscSortVarPtr >::qsort(sv);
 
     return sv;
 }       
@@ -221,7 +221,7 @@ KscSorter::sortVariables(const KscPackage &pkg,
             if(table.query(key, bucket)) {
                 // bucket found
                 //
-                ok = bucket->add(current);
+                ok = bucket->add(KscSortVarPtr(current.getPtr()));
             } else {
                 // create bucket
                 //
@@ -230,7 +230,7 @@ KscSorter::sortVariables(const KscPackage &pkg,
                               PltOsNew);
                 if(bucket) {
                     ok = table.add(key, bucket)
-                        && bucket->add(current);
+                        && bucket->add(KscSortVarPtr(current.getPtr()));
                 } else {
                     ok = false;
                 }

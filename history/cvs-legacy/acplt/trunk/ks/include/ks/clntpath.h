@@ -102,17 +102,19 @@ public:
     KsString getName() const;
     KsString getPathOnly() const;
 
-    // TODO:
-    //   currently paths with different host and server 
-    //   are considered to be not comparable by <, <=, >, >=
-    //   => find a better solution
-    //
     bool operator == (const KscPathParser &) const;
     bool operator != (const KscPathParser &) const;
+
+#if 0
+    // These ops are currently not implemented 
+    // because they would be slow and they are not
+    // needed at the moment.
+    //
     bool operator <  (const KscPathParser &) const;
     bool operator <= (const KscPathParser &) const;
     bool operator >  (const KscPathParser &) const;
     bool operator >= (const KscPathParser &) const;
+#endif
 
 protected:
     size_t pathStart(const char *);
@@ -305,7 +307,10 @@ KscPathParser::operator != (const KscPathParser &other) const
 }
 
 //////////////////////////////////////////////////////////////////////
-    
+//////////////////////////////////////////////////////////////////////
+
+#if 0
+
 inline bool 
 KscPathParser::operator <  (const KscPathParser &other) const
 {
@@ -347,6 +352,12 @@ KscPathParser::operator >= (const KscPathParser &other) const
 
     return path_and_name >= other.path_and_name;
 }
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 
 //////////////////////////////////////////////////////////////////////
 // EOF clntpath.h

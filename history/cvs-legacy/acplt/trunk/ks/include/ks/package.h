@@ -57,15 +57,15 @@ class _KscPackageBase
 protected:
     _KscPackageBase() {}
     
-    static bool fillGetVarParams(const PltArray<KscVariableHandle> &,
+    static bool fillGetVarParams(const PltArray< KscSortVarPtr > &,
                                  KsArray<KsString> &);
-    static bool copyGetVarResults(const PltArray<KscVariableHandle> &,
+    static bool copyGetVarResults(const PltArray< KscSortVarPtr > &,
                                   const KsArray<KsGetVarItemResult> &);
-    static bool fillSetVarParams(const PltArray<KscVariableHandle> &,
+    static bool fillSetVarParams(const PltArray< KscSortVarPtr > &,
                                  KsArray<KsSetVarItem> &);
-    static bool copySetVarResults(const PltArray<KscVariableHandle> &,
+    static bool copySetVarResults(const PltArray< KscSortVarPtr > &,
                                   const KsArray<KsResult> &);
-    static bool optimizePaths(const PltArray<KscVariableHandle> &,
+    static bool optimizePaths(const PltArray< KscSortVarPtr > &,
                               KsArray<KsString> &);
 };                                 
 

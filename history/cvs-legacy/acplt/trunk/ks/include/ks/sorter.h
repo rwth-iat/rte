@@ -51,8 +51,28 @@
 #include "ks/client.h"
 
 //////////////////////////////////////////////////////////////////////
-
+// forward declaration
+//
 class KscPackage;
+
+//////////////////////////////////////////////////////////////////////
+// Helper class which defines a special ordering 
+// for KscVariable-objects 
+//  
+class KscSortVarPtr
+{
+public:
+    KscSortVarPtr(KscVariable *ptr = 0) : p(ptr) {}
+
+    // this is only needed to instantiate PltList
+    //
+    bool operator == (const KscSortVarPtr &) const { PLT_ASSERT(0); return false; }
+    bool operator < (const KscSortVarPtr &rhs) const;
+    KscVariable *operator -> () const;
+
+private:
+    KscVariable *p;
+};
 
 //////////////////////////////////////////////////////////////////////
 // This is a helper class which groups together KscVariable objects
@@ -69,12 +89,12 @@ public:
     KscSorterBucket(const KscAvModule *,
                     KscServerBase *);
 
-    bool add(KscVariableHandle);
+    bool add(KscSortVarPtr);
     bool add(KscBucketHandle);
     size_t size() const;
-    PltIterator<KscVariableHandle> *newVarIterator() const;
+    PltIterator< KscSortVarPtr > *newVarIterator() const;
     // call only once
-    PltArray<KscVariableHandle> getSortedVars();
+    PltArray< KscSortVarPtr > getSortedVars();
 
     KscServerBase *getServer() const;
     const KscAvModule *getAvModule() const;
@@ -84,9 +104,9 @@ private:
     KscSorterBucket &operator = (const KscSorterBucket &);   // forbidden
 
     bool isEmpty() const;
-    KscVariableHandle removeFirst();
+    KscSortVarPtr removeFirst();
 
-    PltList<KscVariableHandle> var_lst;
+    PltList< KscSortVarPtr > var_lst;
 
     const KscAvModule *av_module;
     KscServerBase *server;
@@ -175,6 +195,30 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
+//////////////////////////////////////////////////////////////////////
+// class KscSortVarPtr
+//////////////////////////////////////////////////////////////////////
+
+inline
+bool
+KscSortVarPtr::operator < (const KscSortVarPtr &other) const
+{
+    PLT_PRECONDITION(p && other.p);
+
+    return p->getPathAndName() < other.p->getPathAndName();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscVariable *
+KscSortVarPtr::operator -> () const
+{
+    PLT_ASSERT(p);
+    return p;
+}
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -274,7 +318,7 @@ KscSorterBucket::isEmpty() const
 
 inline
 bool
-KscSorterBucket::add(KscVariableHandle var)
+KscSorterBucket::add(KscSortVarPtr var)
 {
     bool ok = var_lst.addFirst(var);
 
@@ -297,10 +341,10 @@ KscSorterBucket::size() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-PltIterator<KscVariableHandle> *
+PltIterator< KscSortVarPtr > *
 KscSorterBucket::newVarIterator() const
 {
-    return PLT_RETTYPE_CAST((PltIterator<KscVariableHandle> *))
+    return PLT_RETTYPE_CAST((PltIterator<KscSortVarPtr> *))
         var_lst.newIterator();
 }
 

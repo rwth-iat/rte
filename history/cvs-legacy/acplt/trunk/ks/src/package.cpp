@@ -271,7 +271,7 @@ KscPackage::getSimpleUpdate(KscBucketHandle bucket)
     KsGetVarResult result;
     KsGetVarParams params(num_vars);
 
-    PltArray<KscVariableHandle> sorted_vars = 
+    PltArray< KscSortVarPtr > sorted_vars = 
         bucket->getSortedVars();
 
     if(params.identifiers.size() != num_vars
@@ -356,7 +356,7 @@ KscPackage::setSimpleUpdate(KscBucketHandle bucket)
     KsSetVarParams params(num_vars);
     KsSetVarResult result(num_vars);
 
-    PltArray<KscVariableHandle> sorted_vars = 
+    PltArray< KscSortVarPtr > sorted_vars = 
         bucket->getSortedVars();
 
     if(params.items.size() != num_vars || 
@@ -710,7 +710,7 @@ KscExchangePackage::doSimpleExchange(
 
     if(!get_bucket && !set_bucket) return false;
 
-    PltArray<KscVariableHandle> set_vars, get_vars;
+    PltArray< KscSortVarPtr > set_vars, get_vars;
     size_t get_size, set_size;
     KscServerBase *server = 0;
     const KscAvModule *avm = 0;
@@ -784,7 +784,7 @@ KscExchangePackage::doSimpleExchange(
 //////////////////////////////////////////////////////////////////////
 
 bool 
-_KscPackageBase::fillGetVarParams(const PltArray<KscVariableHandle> &sorted_vars,
+_KscPackageBase::fillGetVarParams(const PltArray< KscSortVarPtr > &sorted_vars,
                                   KsArray<KsString> &identifiers)
 {
     return optimizePaths(sorted_vars, identifiers);
@@ -794,7 +794,7 @@ _KscPackageBase::fillGetVarParams(const PltArray<KscVariableHandle> &sorted_vars
 
 bool 
 _KscPackageBase::copyGetVarResults(
-    const PltArray<KscVariableHandle> &sorted_vars,
+    const PltArray< KscSortVarPtr > &sorted_vars,
     const KsArray<KsGetVarItemResult> &res)
 {
     PLT_PRECONDITION(sorted_vars.size() == res.size());
@@ -835,7 +835,7 @@ _KscPackageBase::copyGetVarResults(
 
 bool 
 _KscPackageBase::fillSetVarParams(
-    const PltArray<KscVariableHandle> &sorted_vars,
+    const PltArray< KscSortVarPtr > &sorted_vars,
     KsArray<KsSetVarItem> &items)
 {
     PLT_PRECONDITION(sorted_vars.size() == items.size());
@@ -858,7 +858,7 @@ _KscPackageBase::fillSetVarParams(
 //////////////////////////////////////////////////////////////////////
 
 bool 
-_KscPackageBase::copySetVarResults(const PltArray<KscVariableHandle> &sorted_vars,
+_KscPackageBase::copySetVarResults(const PltArray< KscSortVarPtr > &sorted_vars,
                                    const KsArray<KsResult> &res)
 {
     PLT_PRECONDITION(sorted_vars.size() == res.size());
@@ -882,7 +882,7 @@ _KscPackageBase::copySetVarResults(const PltArray<KscVariableHandle> &sorted_var
 
 bool 
 _KscPackageBase::optimizePaths(
-    const PltArray<KscVariableHandle> &sorted_vars,
+    const PltArray< KscSortVarPtr > &sorted_vars,
     KsArray<KsString> &paths) 
 {
     PLT_PRECONDITION(sorted_vars.size() == paths.size());
@@ -890,10 +890,21 @@ _KscPackageBase::optimizePaths(
     size_t to_copy = sorted_vars.size();
     paths[0] = sorted_vars[0]->getPathAndName();
 
+#if PLT_DEBUG
+    cout << "Optimizing paths:" << endl;
+    cout << setw(25) << "absolute" << setw(25) << "relative" << endl;
+    cout << setw(25) << paths[0] << endl;
+#endif
+
     for(size_t count = 1; count < to_copy; count++) {
         paths[count] = 
             sorted_vars[count]->getPathAndName().relTo(
                 sorted_vars[count-1]->getPathAndName());
+#if PLT_DEBUG
+        cout << setw(25) << sorted_vars[count]->getPathAndName()
+             << setw(25) << paths[count]
+             << endl;
+#endif
      }
 
     return true;

@@ -108,7 +108,7 @@ public:
     //
     void setTimeouts(const PltTime &rpc_timeout,        // time to complete a RPC
                      const PltTime &retry_wait,         // time between retries
-                     size_t retries);                   // number of retries
+                     size_t tries);                     // number of tries
 
 #if PLT_DEBUG
     void printServers();
@@ -133,7 +133,7 @@ protected:
 
     PltTime _rpc_timeout;
     PltTime _retry_wait;
-    size_t _retries;
+    size_t _tries;
 
     PltHashTable<KsString,KscServerBase *> server_table;
 
@@ -267,7 +267,7 @@ public:
     //
     void setTimeouts(const PltTime &rpc_timeout,        // time to complete a RPC
                      const PltTime &retry_wait,         // time between retries
-                     size_t retries);                   // number of retries
+                     size_t tries);                     // number of tries
  
 
 protected:
@@ -310,7 +310,7 @@ protected:
 
     PltTime _rpc_timeout;
     PltTime _retry_wait;
-    size_t _retries;
+    size_t _tries;
 
     PltHashTable<PltKeyCPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
 

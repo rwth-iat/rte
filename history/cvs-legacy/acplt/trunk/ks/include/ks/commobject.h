@@ -87,15 +87,18 @@ public:
     KS_RESULT getLastResult() const;
 
     //
-    // order of KscCommObject's falls back to order
-    // of their paths
+    // commobjects considered to be equal if they
+    // are located at the equal memory location
     //
     bool operator == (const KscCommObject &) const;
     bool operator != (const KscCommObject &) const;
+
+#if 0
     bool operator <  (const KscCommObject &) const;
     bool operator <= (const KscCommObject &) const;
     bool operator >  (const KscCommObject &) const;
     bool operator >= (const KscCommObject &) const;
+#endif
 
 protected:
     KscServerBase *findServer();
@@ -131,7 +134,7 @@ public:
 inline bool
 KscCommObject::operator == (const KscCommObject &other) const
 {
-    return path == other.path;
+    return this == &other;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -139,10 +142,13 @@ KscCommObject::operator == (const KscCommObject &other) const
 inline bool
 KscCommObject::operator != (const KscCommObject &other) const
 {
-    return path != other.path;
+    return this != &other;
 }
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+#if 0
 
 inline bool
 KscCommObject::operator <  (const KscCommObject &other) const
@@ -174,6 +180,9 @@ KscCommObject::operator >= (const KscCommObject &other) const
     return path >= other.path;
 }
 
+#endif
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 typedef PltPtrHandle<KscCommObject> KscCommObjectHandle;
@@ -291,6 +300,13 @@ public:
 #endif
 };
 
+typedef PltPtrHandle<KscVariable> KscVariableHandle;
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+#if 0
+
 //////////////////////////////////////////////////////////////////////
 // KscVariableHandle implements specialized operators for comparing
 // KscVariableObjects.
@@ -313,6 +329,11 @@ public:
     bool operator >  (const KscVariableHandle &rhs) const;
     bool operator >= (const KscVariableHandle &rhs) const;
 };
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
@@ -489,6 +510,8 @@ KscVariable::isDirty() const
 // class KscVariableHandle
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+
 inline
 KscVariableHandle::KscVariableHandle()
 {}
@@ -562,6 +585,11 @@ KscVariableHandle::operator >= (const KscVariableHandle &rhs) const
 
     return **this >= *rhs;
 }
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 #endif
 

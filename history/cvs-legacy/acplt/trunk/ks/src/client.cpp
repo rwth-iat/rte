@@ -92,7 +92,7 @@ KscClient::KscClient()
 : av_module(0),
   _rpc_timeout(KSC_RPCCALL_TIMEOUT),
   _retry_wait(0, 0),
-  _retries(0)
+  _tries(1)
 {}
 
 //////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ KscClient::createServer(KsString host_and_name)
         if(temp) {
             // object successfully created
             //
-            temp->setTimeouts(_rpc_timeout, _retry_wait, _retries);
+            temp->setTimeouts(_rpc_timeout, _retry_wait, _tries);
             pServer = temp;
             server_table.add(host_and_name, pServer);
         }
@@ -228,11 +228,11 @@ KscClient::deleteServer(KscServerBase *server)
 void 
 KscClient::setTimeouts(const PltTime &rpc_timeout,        
                        const PltTime &retry_wait,         
-                       size_t retries)
+                       size_t tries)
 {
     _rpc_timeout = rpc_timeout;
     _retry_wait = retry_wait;
-    _retries = retries;
+    _tries = tries;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ KscServer::KscServer(KsString host,
   pClient(0),
   _rpc_timeout(KSC_RPCCALL_TIMEOUT),
   _retry_wait(0, 0),
-  _retries(0)
+  _tries(1)
 {
 }
 
@@ -339,7 +339,7 @@ KscServer::KscServer(KsString hostAndName, u_short protocolVersion)
   pClient(0),
   _rpc_timeout(KSC_RPCCALL_TIMEOUT),
   _retry_wait(0, 0),
-  _retries(0)
+  _tries(1)
 {
 }
 
@@ -359,11 +359,11 @@ KscServer::~KscServer()
 void 
 KscServer::setTimeouts(const PltTime &rpc_timeout,        
                        const PltTime &retry_wait,         
-                       size_t retries)
+                       size_t tries)
 {
     _rpc_timeout = rpc_timeout;
     _retry_wait = retry_wait;
-    _retries = retries;
+    _tries = tries;
 
     if(pClient) {
 #if PLT_SYSTEM_SOLARIS
@@ -543,7 +543,7 @@ KscServer::reconnectServer(size_t try_count, enum_t errcode)
 {
     // maximum number of tries reached ?
     //
-    if(try_count > _retries) {
+    if(try_count >= _tries) {
         return false;
     }
 
@@ -882,7 +882,11 @@ KscServer::getPP(const KscAvModule *avm,
         }
     } while(errcode != RPC_SUCCESS 
             && reconnectServer(++try_count, errcode));
- 
+
+    if(errcode != RPC_SUCCESS) {
+        destroyTransport();
+    }
+
     setResultAfterService();
         
 #if PLT_DEBUG
@@ -1000,6 +1004,10 @@ KscServer::getVar(const KscAvModule *avm,
         }
     } while(errcode != RPC_SUCCESS
             && reconnectServer(++try_count, errcode));
+
+    if(errcode != RPC_SUCCESS) {
+        destroyTransport();
+    }
 
     setResultAfterService();
 
@@ -1121,6 +1129,10 @@ KscServer::setVar(const KscAvModule *avm,
         }
     } while(errcode != RPC_SUCCESS
             && reconnectServer(++try_count, errcode));
+
+    if(errcode != RPC_SUCCESS) {
+        destroyTransport();
+    }
 
     setResultAfterService();
 
@@ -1246,6 +1258,10 @@ KscServer::exgData(const KscAvModule *avm,
     } while(errcode != RPC_SUCCESS
             && reconnectServer(++try_count, errcode));
 
+    if(errcode != RPC_SUCCESS) {
+        destroyTransport();
+    }
+
     setResultAfterService();
 
 #if PLT_DEBUG
@@ -1308,4 +1324,18 @@ KscServer::getNegotiator(const KscAvModule *avm)
 //////////////////////////////////////////////////////////////////////
 // EOF client.cpp
 //////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
