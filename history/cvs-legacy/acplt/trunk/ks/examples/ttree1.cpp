@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.12 1999-01-29 12:38:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.13 1999-09-06 06:46:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -96,7 +96,7 @@ void DumpLinkType(const int link_type)
 } // DumpLinkType
 
 
-void DumpProjProps(const KsProjProps &proj_props, int indent)
+void DumpEngProps(const KsEngProps &proj_props, int indent)
 {
     PltString info;
     time_t creation_time;
@@ -105,6 +105,9 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     // Get our hands on the object's name...
     //
     Indent(indent);
+    if ( proj_props.access_mode & KS_AC_PART ) {
+	cout << ".";
+    }
     cout << proj_props.identifier << " ";
 
     //
@@ -134,8 +137,8 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
         {
 	    cout << "<LNK> " << info;
 
-            const KsLinkProjProps *link_proj_props =
-                (const KsLinkProjProps *) &proj_props; // for msvc
+            const KsLinkEngProps *link_proj_props =
+                (const KsLinkEngProps *) &proj_props; // for msvc
 
             if( !link_proj_props ) {
                 cout << "<unknown projected properties>";
@@ -153,9 +156,9 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
         {
             cout << "<VAR> " << info;
             
-            const KsVarProjProps *var_proj_props =
-                (const KsVarProjProps *) &proj_props; // for msvc
-// replaced:            PLT_DYNAMIC_PCAST(KsVarProjProps, &proj_props);
+            const KsVarEngProps *var_proj_props =
+                (const KsVarEngProps *) &proj_props; // for msvc
+// replaced:            PLT_DYNAMIC_PCAST(KsVarEngProps, &proj_props);
             if( !var_proj_props ) {
                 cout << "<unknown projected properties>";
             } else {
@@ -168,21 +171,21 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     }
 
     cout << endl;
-} // DumpProjProps
+} // DumpEngProps
 
 
-void DumpProjProps(KscCommObject &obj, int indent)
+void DumpEngProps(KscCommObject &obj, int indent)
 {
-    const KsProjProps *proj_props;
+    const KsEngProps *proj_props;
 
-    if ( !obj.getProjPropsUpdate() ) {
+    if ( !obj.getEngPropsUpdate() ) {
         cout << "Can't retrieve proj. props for \"" 
              << obj.getName() 
              << "\""
              << endl;
         return;
     }
-    proj_props = obj.getProjProps();
+    proj_props = obj.getEngProps();
     if ( !proj_props ) {
         cout << "Can't get hands on \"" 
              << obj.getName() 
@@ -190,8 +193,8 @@ void DumpProjProps(KscCommObject &obj, int indent)
              << endl;
         return;
     }
-    DumpProjProps(*proj_props, indent);
-} // DumpProjProps
+    DumpEngProps(*proj_props, indent);
+} // DumpEngProps
 
 
 void DumpVar(KscVariable &var, int indent)
@@ -415,35 +418,41 @@ void DumpBranch(KscAnyCommObject &branch, int indent)
     // it... (whistle, whistle...)
     //
     for ( ; *children; ++*children ) {
-        KsProjPropsHandle current(**children);
-        DumpProjProps(*current, indent + INDENTATION);
+        KsEngPropsHandle current(**children);
+        DumpEngProps(*current, indent + INDENTATION);
+	PltString delemiter(!indent ? "" :
+			    (current->access_mode & KS_AC_PART ? "." : "/"));
 
         if ( current->xdrTypeCode() == KS_OT_DOMAIN ) {
             KscAnyCommObject child_domain(PltString(branch.getFullPath()) + 
-                                          PltString(indent ? "/" : "") +
+                                          delemiter +
                                           current->identifier);
             DumpBranch(child_domain, indent + INDENTATION);
 
         } else if ( current->xdrTypeCode() == KS_OT_LINK ) {
             KscAnyCommObject child_domain(PltString(branch.getFullPath()) + 
-                                          PltString(indent ? "/" : "") +
+                                          delemiter +
                                           current->identifier);
             KscVariable child_var(PltString(branch.getFullPath()) + 
-                                   PltString(indent ? "/" : "") +
-                                   current->identifier);
+				  delemiter +
+				  current->identifier);
             DumpVar(child_var, indent + 2 * INDENTATION);
             DumpBranch(child_domain, indent + INDENTATION);
 
         } else if ( current->xdrTypeCode() == KS_OT_HISTORY ) {
             KscAnyCommObject child_domain(PltString(branch.getFullPath()) + 
-                                          PltString(indent ? "/" : "") +
+                                          delemiter +
                                           current->identifier);
             DumpBranch(child_domain, indent + INDENTATION);
 
         } else if ( current->xdrTypeCode() == KS_OT_VARIABLE ) {
             KscVariable var(PltString(branch.getFullPath()) + 
-                                   PltString(indent ? "/" : "") +
+                                   delemiter +
                                    current->identifier);
+#if 0
+	    Indent(indent);
+	    cout << "##" << var.getFullPath() << "##" << endl;
+#endif
             DumpVar(var, indent + 2 * INDENTATION);
         }
     }
@@ -467,12 +476,46 @@ int main(int argc, char **argv)
     host_and_server = KsString("//") + argv[1];
     host_and_server += "/";
     KscAnyCommObject root(host_and_server);
-    if ( !root.getProjPropsUpdate() ) {
+    if ( !root.getEngPropsUpdate() ) {
         cerr << "Can't open /" << argv[1] << endl;
         return 42;
     }
+
+
+#if 0
+    KscAnyCommObject test1(host_and_server + ".X");
+    if ( !test1.hasValidPath() ) {
+	cerr << "Invalid path: " << (const char *) test1.getFullPath()
+	     << endl;
+	return 43;
+    }
+    cout << (const char *) test1.getPathOnly() << " # "
+	 << (const char *) test1.getName() << " # "
+	 << (test1.isNamePart() ? "part" : "child") << endl;
+    KscAnyCommObject test2(host_and_server + "A.B/C.X");
+    if ( !test2.hasValidPath() ) {
+	cerr << "Invalid path: " << (const char *) test2.getFullPath()
+	     << endl;
+	return 43;
+    }
+    cout << (const char *) test2.getPathOnly() << " # "
+	 << (const char *) test2.getName() << " # "
+	 << (test2.isNamePart() ? "part" : "child") << endl;
+    KscAnyCommObject test3(host_and_server + "A.B/C/X");
+    if ( !test3.hasValidPath() ) {
+	cerr << "Invalid path: " << (const char *) test3.getFullPath()
+	     << endl;
+	return 43;
+    }
+    cout << (const char *) test3.getPathOnly() << " # "
+	 << (const char *) test3.getName() << " # "
+	 << (test3.isNamePart() ? "part" : "child") << endl;
+
+    return 0;
+#endif
+
     
-    DumpProjProps(root, 0);
+    DumpEngProps(root, 0);
     DumpBranch(root, 0);
 
     return 0;
