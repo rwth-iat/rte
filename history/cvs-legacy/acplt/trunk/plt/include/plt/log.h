@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOG_INCLUDED
 #define PLT_LOG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.1 1997-03-07 12:27:52 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.2 1997-04-01 11:20:50 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -65,7 +65,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-#ifdef PLT_USE_SYSLOG
+#if PLT_USE_SYSLOG
 //////////////////////////////////////////////////////////////////////
 #include <syslog.h>
 
