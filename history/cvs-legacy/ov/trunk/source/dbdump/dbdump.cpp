@@ -1,4 +1,6 @@
 /*
+ * $Id: dbdump.cpp,v 1.10 2005-01-27 12:17:01 ansgar Exp $
+ *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -21,9 +23,7 @@
 // This programme writes the contents of an ACPLT/OV server into a text file.
 //
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
-// dbdump.cpp
-// Version : 1.33
-// last change: Oct 29, 2002
+//			Ansgar Münnemann <ansgar@plt.rwth-aachen.de>
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -442,6 +442,7 @@ int DumpLinks(KscAnyCommObject &branch, int indent)
 	PltString				delimiter;
 	const KsVarCurrProps	*curr_props;
 	int						i, size;
+	char					*tempstr;
 
 	children = branch.newChildIterator(KS_OT_LINK, KS_EPF_DEFAULT, "*");
 	if ( !children ) {
@@ -499,12 +500,38 @@ int DumpLinks(KscAnyCommObject &branch, int indent)
 						db_file << link_eng_props->identifier << " = {";
 						switch (curr_props->value->xdrTypeCode()) {					// link target(s)
 						case KS_VT_STRING :
-							db_file << (const char *) ((KsStringValue &) *curr_props->value);
+								if ((sp->relative) && (strlen(sp->path)>1)){
+									tempstr = (char*) malloc(strlen((const char*)((KsStringValue &) *curr_props->value))+1);
+									strcpy(tempstr, (const char*) ((KsStringValue &) *curr_props->value));
+									if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
+										db_file << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+									}
+									else {
+										db_file << tempstr;
+									}
+									free(tempstr);
+								}
+								else {
+									db_file << (const char *) ((KsStringValue &) *curr_props->value);
+								}
 							break;
 						case KS_VT_STRING_VEC :
 							size = ((KsStringVecValue &) *curr_props->value).size();
 							for (i = 0; i < size; ++i) {
-								db_file << (const char *) ((KsStringVecValue &) *curr_props->value)[i];
+								if ((sp->relative) && (strlen(sp->path)>1)){
+									tempstr = (char*) malloc(strlen((const char*)((KsStringVecValue &) *curr_props->value)[i])+1);
+									strcpy(tempstr, (const char*) ((KsStringVecValue &) *curr_props->value)[i]);
+									if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
+										db_file << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+									}
+									else {
+										db_file << tempstr;
+									}
+									free(tempstr);
+								}
+								else {
+									db_file << (const char *) ((KsStringVecValue &) *curr_props->value)[i];
+								}
 								if (i < size-1) {
 									db_file << "," << endl;
 									Indent(indent + 2 * INDENTATION);
@@ -636,6 +663,7 @@ int DumpChildren(KscAnyCommObject &branch, int indent)
 void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent)
 {
 	int	i;
+	char *tempstr;
 
 													// check search restrictions
 	if ((CompareKsStrings(sp->identifier, eng_props.identifier, 1)) &&
@@ -649,7 +677,20 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 
 		if (eng_props.access_mode & KS_AC_PART) {
 			Indent(indent);
-			db_file << "PART_INSTANCE " << obj.getPathAndName();
+			if ((sp->relative) && (strlen(sp->path)>1)){
+				tempstr = (char*) malloc(strlen(obj.getPathAndName())+1);
+				strcpy(tempstr, (const char*) obj.getPathAndName());
+				if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
+					db_file << "PART_INSTANCE " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+				}
+				else {
+					db_file << "PART_INSTANCE " << tempstr;
+				}
+				free(tempstr);
+			}
+			else {
+				db_file << "PART_INSTANCE " << obj.getPathAndName();
+			}
 		} else {
 			if (indent > 0) {	// if indent is not 0 the parent of obj has to be
 								// a part, e.g. "/x.parent/obj", thus instance obj
@@ -658,13 +699,39 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 				return;
 			}
 			Indent(indent);
-			db_file << "INSTANCE " << obj.getPathAndName();
+			if ((sp->relative) && (strlen(sp->path)>1)){
+				tempstr = (char*) malloc(strlen(obj.getPathAndName())+1);
+				strcpy(tempstr, (const char*) obj.getPathAndName());
+				if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
+					db_file << "INSTANCE " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+				}
+				else {
+					db_file << "INSTANCE " << tempstr;
+				}
+				free(tempstr);
+			}
+			else {
+				db_file << "INSTANCE " << obj.getPathAndName();
+			}
 		}
 
 		// evaluate dump options
 		if (*dop & KS_DO_CLASS_IDENT) {
-			db_file << " : CLASS "
-				<< ((KsDomainEngProps &)eng_props).class_identifier;
+			if ((sp->relative) && (strlen(sp->path)>1)){
+				tempstr = (char*) malloc(strlen(((KsDomainEngProps &)eng_props).class_identifier)+1);
+				strcpy(tempstr, (const char*) ((KsDomainEngProps &)eng_props).class_identifier);
+				if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
+					db_file << " : CLASS " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+				}
+				else {
+					db_file << " : CLASS " << tempstr;
+				}
+				free(tempstr);
+			}
+			else {
+				db_file << " : CLASS "
+					<< ((KsDomainEngProps &)eng_props).class_identifier;
+			}
 		}
 		db_file << endl;
 
@@ -1047,6 +1114,7 @@ int main(int argc, char **argv)						// command line arguments
 			 << "-Ccomment : search for objects containing that comment, wildcards allowed," << endl
 			 << "            no white space" << endl
 			 << "-y : overwrite output file without prompt" << endl
+			 << "-R : dump instances's path relative to PATH (option -P)" << endl
 			 << "-Aaccess[-access][-..] : search for objects matching this/these access right(s)" << endl
 			 << "      valid options: KS_AC_READ           read access" << endl
 			 << "                     KS_AC_WRITE          write access" << endl
@@ -1093,12 +1161,15 @@ int main(int argc, char **argv)						// command line arguments
 	sp = new search_t;								// set search parameters to default values
 	sp->host_and_server = KsString(argv[1]);
 	sp->path = KsString("/");
+	sp->kscpath = new(KscPath);
+    *(sp->kscpath) = KscPath(sp->path);
 	sp->identifier = KsString("*");
 	sp->from_creation_time = KsTime((long)0, (long)0);
 	sp->to_creation_time = GetTime("2030/12/31");	// ???
 	sp->comment = KsString("*");
 	sp->access = KS_AC_READWRITE;
 	sp->semantic_flags = (KS_SEMANTIC_FLAGS) 0;
+	sp->relative = FALSE;
 
 	dop = new dump_opt_t;							// set dump options to default value
 	*dop = 0;
@@ -1112,6 +1183,7 @@ int main(int argc, char **argv)						// command line arguments
 			case 'f': outfile = KsString(&argv[i][2]);
 					  break;
 			case 'P': sp->path = KsString(&argv[i][2]);
+				      *(sp->kscpath) = KscPath(sp->path);
 					  break;
 			case 'I': sp->identifier = KsString(&argv[i][2]);
 					  break;
@@ -1125,17 +1197,21 @@ int main(int argc, char **argv)						// command line arguments
 					  break;
 			case 'S': sp->semantic_flags = GetSemFlags(argv[i]);
 					  break;
+			case 'R': sp->relative = TRUE;
+					  break;
 			case 'D': *dop = GetDumpOpts(argv[i]);
 					  break;
 			case 'y': overwrite_output = true;
 					  break;
 			default	: cout << "Invalid parameter: " << argv[i] << "." << endl;
+					  delete sp->kscpath;	
 					  delete sp;
 					  delete dop;
 					  return -1;
 			}
 		} else {
 			cout << "Invalid parameter: " << argv[i] << "." << endl;
+ 		    delete sp->kscpath;	
 			delete sp;
 			delete dop;
 			return -1;
@@ -1147,6 +1223,7 @@ int main(int argc, char **argv)						// command line arguments
 	if (! (overwrite_output || db_file.good() )) {
 		cout << "Output file " << outfile << " already exists:" << endl
 			 << "choose another file name!" << endl;
+		delete sp->kscpath;	
 		delete sp;
 		delete dop;
 		return -1;
@@ -1156,6 +1233,7 @@ int main(int argc, char **argv)						// command line arguments
 	if (!start_object.getEngPropsUpdate()) {
 		db_file << "Can't open \"" << sp->host_and_server << "\"." << endl;
 		cout << "Can't open \"" << sp->host_and_server << "\"." << endl;
+		delete sp->kscpath;	
 		delete sp;
 		delete dop;
 		db_file.close();
@@ -1167,6 +1245,7 @@ int main(int argc, char **argv)						// command line arguments
 	if (!lib_version.getEngPropsUpdate()) {
 		db_file << "Error: Server is not an ACPLT/OV server." << endl;
 		cout << "Error: Server is not an ACPLT/OV server." << endl;
+		delete sp->kscpath;	
 		delete sp;
 		delete dop;
 		db_file.close();
@@ -1182,6 +1261,7 @@ int main(int argc, char **argv)						// command line arguments
 	}
 	db_file.close();
 
+	delete sp->kscpath;	
 	delete sp;
 	delete dop;
 	cout << "Success." << endl;

@@ -20,9 +20,9 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="Instance"/>
-				<xs:element ref="LinkValue"/>
 				<xs:element ref="VariableValue"/>
+				<xs:element ref="LinkValue"/>
+				<xs:element ref="Instance"/>
 			</xs:choice>
 			<xs:attribute name="ID" type="xs:string" use="required"/>
 			<xs:attribute name="ClassID" type="xs:string" use="required"/>

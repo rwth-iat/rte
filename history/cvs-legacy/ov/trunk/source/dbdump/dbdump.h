@@ -1,4 +1,6 @@
 /*
+ * $Id: dbdump.h,v 1.5 2005-01-27 12:17:01 ansgar Exp $
+ *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -35,6 +37,7 @@
 #include "ks/clntpath.h"
 #include "ks/commobject.h"
 #include "ks/stdconnectionmgr.h"
+#include "ks/path.h"
 
 #if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
 #include "plt/hashtable_impl.h"
@@ -84,10 +87,12 @@
 typedef struct search_params {
 	KsString			host_and_server;
 	KsString			path;
+	KscPath				*kscpath;
 	KsString			identifier;			// identifier of the comm. object, wildcards allowed
 	KsTime				from_creation_time;
 	KsTime				to_creation_time;
 	KsString			comment;
+	bool				relative;
 	KS_ACCESS			access;
 	KS_SEMANTIC_FLAGS	semantic_flags;
 } search_t;

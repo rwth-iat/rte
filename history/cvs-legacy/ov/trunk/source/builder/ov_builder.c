@@ -1,7 +1,7 @@
 /*
-*   $Id: ov_builder.c,v 1.10 2005-01-24 17:58:20 ansgar Exp $
+*   $Id: ov_builder.c,v 1.11 2005-01-27 12:17:00 ansgar Exp $
 *
-*   Copyright (C) 1998-1999
+*   Copyright (C) 1998-2001
 *   Lehrstuhl fuer Prozessleittechnik,
 *   RWTH Aachen, D-52056 Aachen, Germany.
 *   All rights reserved.

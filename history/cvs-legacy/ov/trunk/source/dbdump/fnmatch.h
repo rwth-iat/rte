@@ -1,4 +1,6 @@
 /*
+ * $Id: fnmatch.h,v 1.3 2005-01-27 12:17:01 ansgar Exp $
+ *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.

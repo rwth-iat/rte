@@ -1,4 +1,6 @@
 /*
+ * $Id: dbparse1.cpp,v 1.13 2005-01-27 12:17:01 ansgar Exp $
+ *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.

@@ -36,15 +36,6 @@
 <xsl:text>      END_VARIABLE_VALUES;
 </xsl:text>
 </xsl:if>
-<xsl:if test="Instance">
-<xsl:text>      PART_INSTANCES
-</xsl:text>
-<xsl:for-each select="Instance">
-<xsl:call-template name="PartInstance"/>
-</xsl:for-each>
-<xsl:text>      END_PART_INSTANCES;
-</xsl:text>
-</xsl:if>
 <xsl:if test="LinkValue">
 <xsl:text>      LINK_VALUES
 </xsl:text>
@@ -52,6 +43,15 @@
 <xsl:call-template name="LinkValue"/>
 </xsl:for-each>
 <xsl:text>      END_LINK_VALUES;
+</xsl:text>
+</xsl:if>
+<xsl:if test="Instance">
+<xsl:text>      PART_INSTANCES
+</xsl:text>
+<xsl:for-each select="Instance">
+<xsl:call-template name="PartInstance"/>
+</xsl:for-each>
+<xsl:text>      END_PART_INSTANCES;
 </xsl:text>
 </xsl:if>
 <xsl:apply-templates/>
@@ -85,15 +85,6 @@
 <xsl:text>      END_VARIABLE_VALUES;
 </xsl:text>
 </xsl:if>
-<xsl:if test="Instance">
-<xsl:text>      PART_INSTANCES
-</xsl:text>
-<xsl:for-each select="Instance">
-<xsl:call-template name="PartInstance"/>
-</xsl:for-each>
-<xsl:text>      END_PART_INSTANCES;
-</xsl:text>
-</xsl:if>
 <xsl:if test="LinkValue">
 <xsl:text>      LINK_VALUES
 </xsl:text>
@@ -101,6 +92,15 @@
 <xsl:call-template name="LinkValue"/>
 </xsl:for-each>
 <xsl:text>      END_LINK_VALUES;
+</xsl:text>
+</xsl:if>
+<xsl:if test="Instance">
+<xsl:text>      PART_INSTANCES
+</xsl:text>
+<xsl:for-each select="Instance">
+<xsl:call-template name="PartInstance"/>
+</xsl:for-each>
+<xsl:text>      END_PART_INSTANCES;
 </xsl:text>
 </xsl:if>
 <xsl:apply-templates/>
