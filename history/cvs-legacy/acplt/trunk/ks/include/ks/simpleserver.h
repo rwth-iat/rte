@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.8 1997-11-27 18:18:28 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.9 1998-06-29 11:17:04 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -98,8 +98,12 @@ protected:
                       bool lock = true);
     
     bool initVendorTree();
-
-};
+    
+private:
+#if PLT_USE_BUFFERED_STREAMS
+    bool initStatistics();
+#endif
+}; // class KsSimpleServer
 
 
 //////////////////////////////////////////////////////////////////////

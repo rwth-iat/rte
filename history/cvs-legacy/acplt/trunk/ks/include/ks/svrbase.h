@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.16 1997-12-02 18:08:48 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.17 1998-06-29 11:17:04 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -43,13 +43,23 @@
 #include "ks/serviceparams.h"
 #include "plt/comparable.h"
 #include "plt/priorityqueue.h"
+#include "ks/svrtransport.h"
 
 #include <signal.h>
+
+#if PLT_USE_BUFFERED_STREAMS
+#include "ks/connectionmgr.h"
+#include "ks/xdrtcpcon.h"
+#endif
+
+
 //////////////////////////////////////////////////////////////////////
 // PRIVATE! forward declaration
-
+// This dispatcher is only used with the genuine ONC/RPC package.
+#if !PLT_USE_BUFFERED_STREAMS
 extern "C" void 
 ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -110,27 +120,46 @@ public:
                          const KsExgDataParams &params,
                          KsExgDataResult &result);                         
 
+#if PLT_USE_BUFFERED_STREAMS
+    KssConnectionManager *getConnectionManager() const
+	{ return _cnx_manager; }
+#endif
+
+    inline void setBufferSizes(int rxBuffSize, int txBuffSize)
+    	{ _receive_buffer_size = rxBuffSize;
+          _send_buffer_size = txBuffSize; }
+
+
+    void dispatchTransport(KssTransport &transp);
+
+        
 protected:
     virtual void dispatch(u_long serviceId, 
-                          SVCXPRT *transport,
+                          KssTransport &transport,
                           XDR *incomingXdr,
                           KsAvTicket &ticket);
-
-    static void sendReply(SVCXPRT *transport, 
-                          KsAvTicket &ticket,
-                          KsResult &result);
-
-    static void sendErrorReply(SVCXPRT *transport, 
-                               KsAvTicket &ticket,
-                               KS_RESULT result);
 
     // protected attributes
     bool _is_ok;
     int _sock_port; // RPC socket port number
+
+#if !PLT_USE_BUFFERED_STREAMS
     SVCXPRT *_tcp_transport; // RPC transport used to receive requests
+    KssTransport _transport; // SVCXPRT wrapper for ONC/RPC
+#else
+    KssConnectionManager *_cnx_manager;
+    KssXDRConnection     *_tcp_transport;
+#endif
+
+#if PLT_USE_XTI
+    // ...and now for something completely different: Solaris & XTI!!!
+    PltString getNetworkTransportDevice(const char *protocol);
+#endif
 
 private:
+#if !PLT_USE_BUFFERED_STREAMS
     friend void ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
+#endif
 
     KsServerBase(const KsServerBase &); // forbidden
     KsServerBase & operator = (const KsServerBase &); // forbidden
@@ -144,11 +173,10 @@ private:
     int _send_buffer_size;
     int _receive_buffer_size;
 
-    static XDR *getXdrForTransport(SVCXPRT *transport);
-    static void dispatcher(struct svc_req *request, SVCXPRT *transport);
     int serveRequests(const KsTime *pTimeout);
+    
     static KsServerBase *the_server;
-};
+}; // class KsServerBase
 
 
 
