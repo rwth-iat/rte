@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.47 2003-10-14 17:41:53 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.48 2003-10-15 15:29:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 2003
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -21,8 +21,8 @@
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
 /* Dumb comments by: Harald Albrecht <harald@plt.rwth-aachen.de> */
-/* adaption to non-blocking IO by Albrecht daifu
- * (Albrecht daifu xie zhe ge)
+/* adaption to non-blocking IO by Albrecht boshi
+ * (Albrecht boshi xie zhe ge)
  */
 
 //////////////////////////////////////////////////////////////////////
@@ -406,6 +406,10 @@ KscClient::printServers()
 
 
 // ----------------------------------------------------------------------------
+// Objects of the reconnect timer class are used by KscServer objects to
+// schedule a delayed reconnect procedure. This class is in principle only an
+// adapter class for redirecting the timer event to an appropriate method of
+// the corresponding KscServer object.
 //
 class KscServerReconnectTimer : public KsTimerEvent {
 public:
@@ -515,12 +519,18 @@ KscServerBase::decRefcount()
 
 
 // ----------------------------------------------------------------------------
+// Note: this is a *blocking* method
 bool
 KscServer::getServerVersion(u_long &version)
 {
-    //TODO & FIXME
-    return 2;
-}
+    if ( _svr_con->getState() == KsServerConnection::ISC_STATE_CLOSED ) {
+	if ( !ping() ) {
+	    return false;
+	}
+    }
+    version = _svr_con->getProtocolVersion();
+    return true;
+} // KscServer::getServerVersion
 
 
 // ----------------------------------------------------------------------------
@@ -881,7 +891,6 @@ KscServer::initiateRequestIfPossible(KscServiceRequestHandle newRequest)
 		PltLog::Debug("KscServer::initiateRequestIfPossible: serving now");
 #endif
 		_current_request = newRequest;
-		_current_request->_status = KscServiceRequest::REQ_BUSY;
 	    }
 	} else {
 	    //
@@ -911,8 +920,13 @@ KscServer::initiateRequestIfPossible(KscServiceRequestHandle newRequest)
 	PltLog::Debug("KscServer::initiateRequestIfPossible: serving next request from queue");
 #endif
 	_current_request = _request_queue.removeFirst();
-	_current_request->_status = KscServiceRequest::REQ_BUSY;
     }
+    //
+    // Set up the request for further processing... This in particular implies
+    // getting the right negotiator.
+    //
+    _current_request->_status = KscServiceRequest::REQ_BUSY;
+    _current_request->_neg = getNegotiator(_current_request->_avm);
     //
     // When we have finally reached this bright cute place here deep in the
     // code then there is a new request available which now needs to be
@@ -943,13 +957,7 @@ KscServer::initiateRequestIfPossible(KscServiceRequestHandle newRequest)
 #if DEBUG_CLN
 	    PltLog::Debug("KscServer::initiateRequestIfPossible: open failed");
 #endif
-	    close();
-	    KscServiceRequestHandle request = _current_request;
-	    _current_request.bindTo(0);
-	    request->_result.result = KS_ERR_GENERIC;
-	    request->_status = KscServiceRequest::REQ_DONE;
-	    initiateRequestIfPossible(KscServiceRequestHandle());
-	    request->attention();
+	    finishAndNotify(getLastResult());
 	} else {
 	    //
 	    // Nothing to do here now but to wait for the establishment
@@ -969,38 +977,43 @@ KscServer::initiateRequestIfPossible(KscServiceRequestHandle newRequest)
 #if DEBUG_CLN
 	PltLog::Debug("KscServer::initiateRequestIfPossible: opened, now sending request");
 #endif
-	if ( !_svr_con->send(_current_request->_service,
-			     _current_request->_params) ) {
-	    //
-	    // Could not serialize, so there's a problem. This usually
-	    // indicates a problem with the IO subsystem, so we don't try
-	    // to redo but instead bail out with an error. Release the
-	    // current request and notify the owner of the request of the
-	    // problem.
-	    //
-#if DEBUG_CLN
-	    PltLog::Debug("KscServer::initiateRequestIfPossible: send failed");
-#endif
-	    close();
-	    KscServiceRequestHandle request = _current_request;
-	    _current_request.bindTo(0);
-	    request->_result.result = KS_ERR_GENERIC;
-	    request->_status = KscServiceRequest::REQ_DONE;
-	    initiateRequestIfPossible(KscServiceRequestHandle());
-	    request->attention();
-	} else {
-	    //
-	    // Nothing to do for the very moment but to wait for the
-	    // response from the ACPLT/KS server. This will be handled
-	    // later in the attention callback handler.
-	    //
-#if DEBUG_CLN
-	    PltLog::Debug("KscServer::initiateRequestIfPossible: send succeeded");
-#endif
-	}
+	//
+	// 1azyn3ss ru13z! Just delegate this...
+	//
+	_last_result = KS_ERR_OK;
+	async_attention(KsServerConnection::ISC_OP_OPEN);
 	break;
     }
 } // KscServer::initiateRequestIfPossible
+
+
+// ----------------------------------------------------------------------------
+// Helper method: moves the current request from the BUSY state into DONE
+// state and indicates that the request did or did not succeed. If there are
+// other requests waiting at this time, the first one of them is automatically
+// served (before notification of the failed one!).
+//
+void
+KscServer::finishAndNotify(KS_RESULT result)
+{
+    if ( result != KS_ERR_OK ) {
+	close();
+    }
+    KscServiceRequestHandle request = _current_request;
+    _current_request.bindTo(0); // make room for a new request
+    if ( result != KS_ERR_OK ) {
+	//
+	// only touch the result of the answer if the result argument
+	// was not okay: this indicates that the _result field has not
+	// been properly set by a previous deserialization and thus we
+	// set a proper error value.
+	//
+	request->_result.result = result;
+    }
+    request->_status = KscServiceRequest::REQ_DONE;
+    initiateRequestIfPossible(KscServiceRequestHandle());
+    request->attention();
+} // KscServer::finishAndNotify
 
 
 // ----------------------------------------------------------------------------
@@ -1023,13 +1036,7 @@ KscServer::reconnectTimerTrigger()
 	    // Immediately failed to open the connection. Since that usually
 	    // indicates a severe problem, bail out immediately.
 	    //
-	    close();
-	    KscServiceRequestHandle request = _current_request;
-	    _current_request.bindTo(0);
-	    request->_result.result = KS_ERR_GENERIC;
-	    request->_status = KscServiceRequest::REQ_DONE;
-	    initiateRequestIfPossible(KscServiceRequestHandle());
-	    request->attention();
+	    finishAndNotify(getLastResult());
 	}
     } else {
 	PltLog::Error("KscServer::reconnectTimerTrigger: timer event without waiting request");
@@ -1059,10 +1066,13 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 	    // try a reconnect later... but only do this if there is a
 	    // chance of repeated attempts succeeding.
 	    //
+	    // Note: do not retry ping attempts.
+	    //
 #if DEBUG_CLN
 	    PltLog::Debug("KscServer::async_attention: open failed");
 #endif
-	    if ( reconnectServer(res)
+	    if ( request->_service
+		 && shouldReconnectServer(res)
 		 && --_tries_remaining > 0 ) {
 		_reconnect_timer->setTrigger(PltTime::now(_retry_wait));
 		KsConnectionManager::getConnectionManagerObject()->
@@ -1075,19 +1085,21 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 #if DEBUG_CLN
 		PltLog::Debug("KscServer::async_attention: no more retries, notifying owner");
 #endif
-		_current_request.bindTo(0);
-		request->_result.result = res;
-		request->_status = KscServiceRequest::REQ_DONE;
-		initiateRequestIfPossible(KscServiceRequestHandle());
-		request->attention();
+		finishAndNotify(res);
 	    }
 	} else {
 	    //
 	    // Connection successfully established. So we can now send the
 	    // ACPLT/KS service request.
 	    //
-	    // FIXME & TODO: AV
-	    if ( ! _svr_con->send(request->_service, request->_params) ) {
+	    if ( ! (
+		     (request->_service != 0) ?
+		         _svr_con->send(request->_service, 
+					request->_neg, 
+					request->_params)
+		     :
+		         _svr_con->sendPing()
+		     ) ) {
 		//
 		// We failed to serialize the request. This usually indicates
 		// a problem with the IO subsystem, so we don't try to redo
@@ -1097,12 +1109,7 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 #if DEBUG_CLN
 		PltLog::Debug("KscServer::async_attention: send failed");
 #endif
-		close();
-		_current_request.bindTo(0);
-		request->_result.result = _svr_con->getLastResult();
-		request->_status = KscServiceRequest::REQ_DONE;
-		initiateRequestIfPossible(KscServiceRequestHandle());
-		request->attention();
+		finishAndNotify(_svr_con->getLastResult());
 	    } else {
 		//
 		// Since we could successfully serialize the service request
@@ -1122,10 +1129,13 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 	    //
 	    // Find out whether a reconnect would make sense.
 	    //
+	    // Note: do not retry ping attempts.
+	    //
 #if DEBUG_CLN
 	    PltLog::Debug("KscServer::async_attention: call failed");
 #endif
-	    if ( reconnectServer(res)
+	    if ( request->_service
+		 && shouldReconnectServer(res)
 		 && --_tries_remaining > 0 ) {
 		_reconnect_timer->setTrigger(PltTime::now(_retry_wait));
 		KsConnectionManager::getConnectionManagerObject()->
@@ -1137,11 +1147,7 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 #if DEBUG_CLN
 		PltLog::Debug("KscServer::async_attention: no more retries, notifying owner");
 #endif
-		_current_request.bindTo(0);
-		request->_result.result = res;
-		request->_status = KscServiceRequest::REQ_DONE;
-		initiateRequestIfPossible(KscServiceRequestHandle());
-		request->attention();
+		finishAndNotify(res);
 	    }
 	} else {	
 	    //
@@ -1149,7 +1155,13 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 	    // network stream and look at it, wonder, and try to find out
 	    // what it could mean...
 	    //
-	    if ( !_svr_con->receive(request->_result) ) {
+	    if ( ! (
+		     (request->_service != 0) ?
+		         _svr_con->receive(request->_neg,
+					   request->_result)
+		     :
+		         _svr_con->receivePing()
+		     ) ) {
 		//
 		// Nope. Could not interpret the result. In order to be on
 		// the safe side we close the transport connection and leave
@@ -1158,29 +1170,27 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 #if DEBUG_CLN
 		PltLog::Debug("KscServer::async_attention: could not retrieve reply");
 #endif
-		close();
-		request->_result.result = _svr_con->getLastResult();
+		finishAndNotify(_svr_con->getLastResult());
 		// TODO:??? retry???
 	    } else {
 		//
 		// Got the reply and could successfully deserialize it into
-		// the apropriate KS C++ objects. Just indicate okay and
-		// let the remaining code handle the remaining things.
+		// the apropriate KS C++ objects. Notify the request's owner
+		// that the request is done.
 		//
 #if DEBUG_CLN
 		PltLog::Debug("KscServer::async_attention: reply successfully decoded");
 #endif
+		//
+		// In case of a successfull ping, we need to explitly clear
+		// the result field, since finishAndNotify() won't touch it
+		// in case of KS_ERR_OK.
+		//
+		if ( !request->_service ) {
+		    request->_result.result = KS_ERR_OK;
+		}
+		finishAndNotify(KS_ERR_OK);
 	    }
-	    //
-	    // Indicate that the current request is done and call the
-	    // attention callback of the client request object. Please
-	    // note that we try to serialize immediately the possibly
-	    // next waiting request.
-	    //
-	    _current_request.bindTo(0);
-	    request->_status = KscServiceRequest::REQ_DONE;
-	    initiateRequestIfPossible(KscServiceRequestHandle());
-	    request->attention();
 	}
     }
 } // KscServer::async_attention
@@ -1192,7 +1202,7 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 // open, send or receive with respect to the transport to the server.
 //
 bool
-KscServer::reconnectServer(KS_RESULT result)
+KscServer::shouldReconnectServer(KS_RESULT result)
 {
     switch ( result ) {
     case KS_ERR_HOSTUNKNOWN:
@@ -1201,7 +1211,48 @@ KscServer::reconnectServer(KS_RESULT result)
     default:
 	return true;
     }
-} // KscServer::reconnectServer
+} // KscServer::shouldReconnectServer
+
+
+// ----------------------------------------------------------------------------
+// Block and wait for a particular request to become finished. When waiting,
+// background IO is given some CPU time, so it can be carried out.
+//
+void
+KscServer::waitForRequest(KscServiceRequestHandle req)
+{
+    //
+    // It does not make sense to wait for a non-waiting or non-pending
+    // request, so we immediately return in this case.
+    //
+    switch ( req->_status ) {
+    case KscServiceRequest::REQ_NONE:
+    case KscServiceRequest::REQ_DONE:
+	return;
+    default:
+	break;
+    }
+    //
+    // The request has been queued or is even currently serviced. Since the
+    // caller wants to wait for its completion, we now give idle time to the
+    // connection manager, so that it can do IO. After doing a little bit, the
+    // connection manager will return control and thus give us the chance to
+    // check whether our request was completed. If yes, we return to the
+    // caller with the service result. Otherwise, we call the connection
+    // manager again to do background IO.
+    //
+    while ( req->_status != KscServiceRequest::REQ_DONE ) {
+#if DEBUG_CLN
+	PltLog::Debug("waiting for request to become finished");
+#endif
+	KsConnectionManager::getConnectionManagerObject()->
+	    servePendingEvents(PltTime(1));
+    }
+} // KscServer::waitForRequest
+
+
+
+
 
 
 // ----------------------------------------------------------------------------
@@ -1292,10 +1343,9 @@ KscServer::requestService(const KsString &extension,
 
 
 // ---------------------------------------------------------------------------
-// Synchronous ACPLT/KS service request. This method does not return ealier
-// than this request has been served. However, while waiting for the
-// completion of this request, other requests will be served in the
-// background.
+// Synchronous ACPLT/KS service request. This method does not return before
+// this request has been served. However, while waiting for the completion of
+// this request, other requests will be served in the background.
 //
 bool
 KscServer::requestByOpcode(u_long service, 
@@ -1305,28 +1355,12 @@ KscServer::requestByOpcode(u_long service,
 {
     KscServiceRequest req(service, avm, params, result);
     KscServiceRequestHandle hreq(&req, KsOsUnmanaged);
-
     if ( !hreq ) {
 	_last_result = KS_ERR_GENERIC;
 	return false;
     }
-
     requestAsyncByOpcode(hreq);
-
-    //
-    // The request has been queued. Since the caller wants to wait for its
-    // completion, we now give idle time to the connection manager, so that
-    // it can do IO. After doing a little bit, it will return and give us
-    // the chance to check whether the request was completed. If yes, we
-    // return to the caller with the service result.
-    //
-    while ( req._status != KscServiceRequest::REQ_DONE ) {
-#if DEBUG_CLN
-	PltLog::Debug("idle...");
-#endif
-	KsConnectionManager::getConnectionManagerObject()->
-	    servePendingEvents(PltTime(1));
-    }
+    waitForRequest(hreq);
     return req._result.result == KS_ERR_OK;
 } // KscServer::requestByOpcode
 
@@ -1334,12 +1368,21 @@ KscServer::requestByOpcode(u_long service,
 // ----------------------------------------------------------------------------
 // Issue an ACPLT/KS request asynchronously in the background.
 //
-void
+// Note: if the request is for service id 0 (_service == 0), then the params
+// and the result object references are ignored, but instead an ordinary
+// ONC/RPC ping is carried out (progid = KS).
+//
+bool
 KscServer::requestAsyncByOpcode(KscServiceRequestHandle hreq) 
 {
-    // FIXME & TODO: something missing here???
+    if ( !hreq
+	 || hreq->_status != KscServiceRequest::REQ_NONE ) {
+	_last_result = KS_ERR_GENERIC;
+	return false;
+    }
     initiateRequestIfPossible(hreq);
     _last_result = KS_ERR_OK;
+    return true;
 } // KscServer::requestAsyncByOpcode
 
 
@@ -1384,9 +1427,10 @@ KscServer::exgData(const KscAvModule *avm,
     return requestByOpcode(KS_EXGDATA, avm, params, result);
 } // KscServer::exgData
 
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
 
+
+
+// ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 // Now for something completely different... the A/V modules &
 // negotiator mechanism. "What's this?" you'll surely ask. Well --
@@ -1495,12 +1539,14 @@ KscServer::dismissNegotiator(const KscAvModule *avm)
 // ----------------------------------------------------------------------------
 // Ping a server. In case the connection is not already open, we open it first.
 // Please note that this does not reconnect automatically *multiple* times.
+// This is a *blocking* function. Use requestAsyncByOpcode() with a service
+// of zero to carry out an asynchronous ping.
 //
 bool
 KscServer::ping()
 {
-    // TODO & FIXME
-    return false;
+    KsResult dummy;
+    return requestByOpcode(0, 0, dummy, dummy);
 } // KscServer::ping
 
         

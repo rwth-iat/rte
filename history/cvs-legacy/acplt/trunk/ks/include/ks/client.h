@@ -1,9 +1,9 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.32 2003-10-14 17:41:53 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.33 2003-10-15 15:29:07 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000
+ * Copyright (c) 1996, 2003
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -296,10 +296,10 @@ public:
     //
     // new nonblocking stuff
     void terminateRequests();
-    void requestAsyncByOpcode(KscServiceRequestHandle hreq);
+    bool requestAsyncByOpcode(KscServiceRequestHandle hreq);
 
-    bool open();
-    void close();
+    bool open(); // this is async
+    void close(); // this is sync and immediately closes the connection
 
     //
     // set timeout and numbers of retries
@@ -319,7 +319,6 @@ protected:
     void dismissNegotiator(const KscAvModule *);
 
 
-
     //
     // new nonblocking transport stuff
     friend class KscServerConnection;
@@ -332,6 +331,9 @@ protected:
     // manage requests queue and request initiation
     void initiateRequestIfPossible(KscServiceRequestHandle newRequest);
 
+    // blocking wait for request to become finished
+    void waitForRequest(KscServiceRequestHandle newRequest);
+
     // manage events from the server connection and from the timer queue
     void async_attention(KsServerConnection::KsServerConnectionOperations op);
     void reconnectTimerTrigger();
@@ -343,7 +345,8 @@ protected:
     size_t _tries;
     size_t _tries_remaining;
 
-    virtual bool reconnectServer(KS_RESULT result);
+    virtual bool shouldReconnectServer(KS_RESULT result);
+    void finishAndNotify(KS_RESULT result);
 
     void initExtTable();
 
