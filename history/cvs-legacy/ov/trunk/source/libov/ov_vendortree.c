@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.10 2002-06-18 10:15:58 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.11 2002-06-26 07:13:02 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -81,7 +81,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 	{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
 	{ "activity_lock",			NULL,	ov_vendortree_getactivitylock, ov_vendortree_setactivitylock },
 	{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
-	{ "server_password",			NULL,	ov_vendortree_getserverpassword, NULL },
+	{ "server_password",			NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
 	{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset }
 };
 
@@ -891,6 +891,29 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getbackup(
 /*
 *	Set serverpassword
 */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setserverpassword_ext(
+	const OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	if (pdb->serverpassword) {
+		if (pticket->type == OV_TT_SIMPLE) {
+			if(!strcmp(pticket->ticketunion.simpleticket.id, pdb->serverpassword)) goto CONTINUE1;
+		}
+		return OV_ERR_NOACCESS;
+	}
+CONTINUE1:
+	if (pvarcurrprops->value.vartype == OV_VT_STRING) {
+		if ((pdb->serverpassword)&&(pvarcurrprops->value.valueunion.val_string)) {
+			ov_database_free(pdb->serverpassword);
+			pdb->serverpassword = (OV_STRING)ov_database_malloc(strlen(pvarcurrprops->value.valueunion.val_string)+1);
+			strcpy(pdb->serverpassword, pvarcurrprops->value.valueunion.val_string);
+			return OV_ERR_OK;
+		}
+	}
+	return OV_ERR_BADTYPE;
+}
+
+/*	----------------------------------------------------------------------	*/
 OV_DLLFNCEXPORT void ov_vendortree_setserverpassword(
 	OV_STRING	password
 ) {

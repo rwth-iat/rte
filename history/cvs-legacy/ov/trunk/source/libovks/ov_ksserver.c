@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.14 2002-06-18 10:15:58 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.15 2002-06-26 07:13:02 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -153,7 +153,7 @@ static void ov_ksserver_ticket_defaultticket_deleteticket(OV_TICKET *pticket) {
 	*/
 	if (pticket->type == OV_TT_SIMPLE) {
 		xdr.x_op = XDR_FREE;
-		xdr_string(&xdr, &pticket->ticketunion.simpleticket.id, KS_SIMPLEID_MAXLEN);
+		ov_ksserver_xdr_string(&xdr, &(pticket->ticketunion.simpleticket.id), KS_SIMPLEID_MAXLEN);
 	}
 }
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.8 2002-06-18 10:15:58 ansgar Exp $
+*   $Id: ov_vendortree.h,v 1.9 2002-06-26 07:13:02 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -353,6 +353,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getbackup(
 */
 OV_DLLFNCEXPORT void ov_vendortree_setserverpassword(
 	OV_STRING	password
+);
+
+/*
+*	Set serverpassword external
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setserverpassword_ext(
+	const OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
