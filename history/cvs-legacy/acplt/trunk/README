@@ -1,7 +1,7 @@
 ACPLT/KS C++ Communication Library
 ==================================
 
-This is the Version 1.0.
+This is the Version 1.01.
 
 For up-to-date information see
     http://www.plt.rwth-aachen.de/ks/english
@@ -15,9 +15,9 @@ describes the "C++ Communication Library" in detail.
 1. Introduction
 ---------------
 
-The "C++ Communication Library" is intended to ease the integration of
-the open communication system ACPLT/KS into applications, thus
-enabling them to operate directly with process data.
+The "C++ Communication Library" eases the integration of the open
+communication system ACPLT/KS into applications, thus enabling them to
+operate directly with process data.
 
 
 2. Compiling the Library
@@ -43,7 +43,7 @@ appropriate, replace "linux" with either "hpux", or "solaris".
 
 On NT, take your chances, and do:
 
-  > make -f makefile.nt nt.all
+  X:\acplt> make -f makefile.nt nt.all
 
 During the compilation of the example applications you will see some
 linker warnings like:
