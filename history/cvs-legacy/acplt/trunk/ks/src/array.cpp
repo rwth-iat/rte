@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.1 1997-03-12 16:30:00 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.2 1997-03-18 10:48:39 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,14 +41,14 @@
 
 #include "ks/array.h"
 
-#define KS_IMPL_ARRAY_XDR(elem, xdr_elem)                               \
+#define KS_IMPL_ARRAY_XDR(elem,xdre_elem,xdrd_elem)                     \
 bool                                                                    \
 KsArray<elem>::xdrDecode(XDR *xdr)                                      \
 {                                                                       \
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);                          \
     /* retrieve size */                                                 \
     u_long sz;                                                          \
-    if (! xdr_u_long(xdr, &sz) ) return false;                          \
+    if (! ks_xdrd_u_long(xdr, &sz) ) return false;                      \
                                                                         \
     /* adjust array size (possibly losing contents) */                  \
                                                                         \
@@ -64,7 +64,7 @@ KsArray<elem>::xdrDecode(XDR *xdr)                                      \
     /* now deserialize elements */                                      \
                                                                         \
     for (size_t i=0; i < a_size; ++i) {                                 \
-        if (! xdr_elem(xdr, & a_array[i] ) ) return false;              \
+        if (! xdrd_elem(xdr, & a_array[i] ) ) return false;             \
     }                                                                   \
                                                                         \
     /* success */                                                       \
@@ -81,12 +81,12 @@ KsArray<elem>::xdrEncode(XDR *xdrs) const                               \
     /* serialize size */                                                \
                                                                         \
     u_long sz = a_size;                                                 \
-    if (! xdr_u_long(xdrs, &sz)) return false;                          \
+    if (! ks_xdrd_u_long(xdrs, &sz)) return false;                      \
                                                                         \
     /* serialize elements */                                            \
                                                                         \
     for (size_t i = 0; i < a_size; ++i) {                               \
-        if (! xdr_elem(xdrs, & a_array[i]) ) return false;              \
+        if (! xdre_elem(xdrs, & a_array[i]) ) return false;             \
     }                                                                   \
                                                                         \
     /* success */                                                       \
@@ -97,44 +97,10 @@ typedef void ks_dummy_typedef
 
 //////////////////////////////////////////////////////////////////////
 
-#define KS_IMPL_ARRAY(elem)                     \
-    KS_IMPL_ARRAY_XDR(elem, xdr_##elem);        \
-    bool KsArray<elem>::xdrEncode(XDR *) const; \
-    bool KsArray<elem>::xdrDecode(XDR *);
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-static inline bool_t
-KsArray_xdr_bool(XDR *xdr, bool * pb)
-// better save than sorry
-{
-    PLT_PRECONDITION(pb 
-                     && 
-                     (xdr->x_op == XDR_ENCODE || xdr->x_op == XDR_DECODE));
-    switch (xdr->x_op) {
-    case XDR_ENCODE: 
-        {
-            bool_t tmp = *pb;
-            return xdr_bool(xdr, &tmp);
-        } 
-    case XDR_DECODE:
-        {
-            bool_t tmp;
-            bool_t res = xdr_bool(xdr, &tmp);
-            *pb = tmp;
-            return res;
-        }
-    default:
-        return true;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-KS_IMPL_ARRAY_XDR(bool, KsArray_xdr_bool);
-bool KsArray<bool>::xdrEncode(XDR *) const;
-bool KsArray<bool>::xdrDecode(XDR *);
+#define KS_IMPL_ARRAY(elem)                                        \
+    KS_IMPL_ARRAY_XDR(elem, ks_xdre_##elem,ks_xdrd_##elem);        \
+    bool KsArray<elem>::xdrEncode(XDR *) const;                    \
+    bool KsArray<elem>::xdrDecode(XDR *)
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -145,7 +111,7 @@ KsArray<char>::xdrDecode(XDR *xdr)
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     /* retrieve size */
     u_long sz;
-    if (! xdr_u_long(xdr, &sz) ) return false;
+    if (! ks_xdrd_u_long(xdr, &sz) ) return false;
 
     /* adjust array size (possibly losing contents) */
 
@@ -174,7 +140,7 @@ KsArray<char>::xdrEncode(XDR *xdr) const
     char * p = a_array.getPtr();
     u_long sz = a_size;
 
-    return xdr_u_long(xdr, &sz) 
+    return ks_xdre_u_long(xdr, &sz) 
         && xdr_opaque(xdr, p, sz);
 }
 
@@ -191,11 +157,13 @@ KS_IMPL_ARRAY(short);
 KS_IMPL_ARRAY(u_short);
 KS_IMPL_ARRAY(float);
 KS_IMPL_ARRAY(double);
+KS_IMPL_ARRAY(bool);
 
 //////////////////////////////////////////////////////////////////////
 // explicit instantiation
 
-#ifdef __GNUC__
+#if PLT_INSTANTIATE_TEMPLATES
+
 #include "ks/array_impl.h"
 
 template class KsArray<bool>;
@@ -209,7 +177,7 @@ template class KsArray<u_short>;
 template class KsArray<float>;
 template class KsArray<double>;
 
-#endif
+#endif // PLT_INSTANTIATE_TEMPLATES
 
 //////////////////////////////////////////////////////////////////////
 

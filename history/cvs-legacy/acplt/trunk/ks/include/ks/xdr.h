@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_XDR_INCLUDED
 #define KS_XDR_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.7 1997-03-12 16:32:26 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.8 1997-03-18 10:48:37 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,7 +42,6 @@
 extern "C" {
 #include <rpc/xdr.h>
 };
-
 
 //////////////////////////////////////////////////////////////////////
 // XDR streaming helper classes and macros
@@ -178,7 +177,7 @@ protected:
         PLT_PRECONDITION(xdrs->x_op == XDR_DECODE);                \
         base * p = 0;                                              \
         enum_t typecode;                                           \
-            if (xdr_enum(xdrs, &typecode)) {                       \
+            if (ks_xdrd_enum(xdrs, &typecode)) {                   \
             /* typecode successfully decoded */                    \
             switch(typecode) {                                     \
 
@@ -232,6 +231,79 @@ typedef void ks_dummy_typedef
         return p;                                          \
     }                                                      \
 typedef void ks_dummy_typedef
+
+/////////////////////////////////////////////////////////////////////////////
+
+#define KS_IMPL_XDRWRAPPER2(name,typ)                               \
+inline bool                                                         \
+ks_xdre_##name(XDR *xdr, const typ *p)                              \
+{                                                                   \
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE && p);                 \
+    /* The following const->nonconst cast should be safe, */        \
+    /* because the XDR-library will not change the object */        \
+    /* pointed to.                                        */        \
+    return xdr_##name(xdr, (typ *) p) != 0;                         \
+}                                                                   \
+/****************/                                                  \
+inline bool                                                         \
+ks_xdrd_##name(XDR *xdr, typ *p)                                    \
+{                                                                   \
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE && p);                 \
+    /* we don't want the XDR library to create storage for us! */   \
+                                                                    \
+    return xdr_##name(xdr, p) != 0;                                 \
+}                                                                   \
+typedef void ks_dummy_typedef
+
+/////////////////////////////////////////////////////////////////////////////
+
+#define KS_IMPL_XDRWRAPPER(typ) KS_IMPL_XDRWRAPPER2(typ,typ)
+
+/////////////////////////////////////////////////////////////////////////////
+
+KS_IMPL_XDRWRAPPER(u_long);
+KS_IMPL_XDRWRAPPER(long);
+KS_IMPL_XDRWRAPPER(u_int);
+KS_IMPL_XDRWRAPPER(int);
+KS_IMPL_XDRWRAPPER(u_short);
+KS_IMPL_XDRWRAPPER(short);
+KS_IMPL_XDRWRAPPER(u_char);
+KS_IMPL_XDRWRAPPER(char);
+KS_IMPL_XDRWRAPPER(double);
+KS_IMPL_XDRWRAPPER(float);
+
+KS_IMPL_XDRWRAPPER2(enum,enum_t);
+
+/////////////////////////////////////////////////////////////////////////////
+// 
+// bool needs special treatment, we can't assume that bool and bool_t
+// have the same representation
+//
+
+inline bool
+ks_xdre_bool(XDR *xdr, const bool *p)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE && p);
+    bool_t b = *p;
+    return xdr_bool(xdr, &b) != 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool
+ks_xdrd_bool(XDR *xdr, bool *p)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE && p);
+    /* we don't want the XDR library to create storage for us! */
+    bool_t b;
+    if (xdr_bool(xdr, &b)) {
+        // success
+        *p = b;
+        return true;
+    } else {
+        return false;
+    }
+}
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.3 1997-03-17 19:58:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.4 1997-03-18 10:48:43 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -184,11 +184,10 @@ void KsServerBase::destroyTransports()
 //
 void KsServerBase::destroyLurkingTransports()
 {
-    int  fd;
-    size_t set_size = ks_dtablesize();
+    int set_size = ks_dtablesize();
     bool lurking = false;
 
-    for ( fd = 0; fd < set_size; fd++ ) {
+    for ( int fd = 0; fd < set_size; fd++ ) {
         if ( FD_ISSET(fd, &svc_fdset) ) {
             //
             // First shoot the transport's socket...
@@ -336,7 +335,7 @@ ks_c_send_reply(XDR *xdr, void *reply_info)
         // decoding process. Thus there's no full result available and
         // we just send back the error code...
         //
-        return xdr_enum(xdr, &(info->result_state));
+        return ks_xdre_enum(xdr, &(info->result_state));
     } else {
         //
         // We have a full blown result to send back...

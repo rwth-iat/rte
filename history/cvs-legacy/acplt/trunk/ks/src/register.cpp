@@ -46,7 +46,8 @@
 bool 
 KsServerDesc::xdrDecode(XDR *xdr)
 {
-    return name.xdrDecode(xdr) && xdr_u_short(xdr, &protocol_version);
+    return name.xdrDecode(xdr) 
+        && ks_xdrd_u_short(xdr, &protocol_version);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -54,7 +55,8 @@ KsServerDesc::xdrDecode(XDR *xdr)
 bool
 KsServerDesc::xdrEncode(XDR *xdr) const
 {
-    return name.xdrEncode(xdr) && xdr_u_short(xdr, &protocol_version);
+    return name.xdrEncode(xdr)
+        && ks_xdre_u_short(xdr, &protocol_version);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -85,7 +87,8 @@ KsRegistrationParams::xdrEncode(XDR *xdr) const
     if( !(server.xdrEncode(xdr)) )
         return false;
 
-    return xdr_u_short(xdr, &port) && xdr_u_long(xdr, &time_to_live);
+    return ks_xdre_u_short(xdr, &port) 
+        && ks_xdre_u_long(xdr, &time_to_live);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -98,7 +101,8 @@ KsRegistrationParams::xdrDecode(XDR *xdr)
     if( !(server.xdrDecode(xdr)) )
         return false;
 
-    return xdr_u_short(xdr, &port)  && xdr_u_long(xdr, &time_to_live);
+    return ks_xdrd_u_short(xdr, &port)  
+        && ks_xdrd_u_long(xdr, &time_to_live);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -106,8 +110,10 @@ KsRegistrationParams::xdrDecode(XDR *xdr)
 KsRegistrationParams::KsRegistrationParams(XDR *xdr, bool &ok)
 : server(xdr, ok)
 {
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     if (ok) {
-        ok =  xdr_u_short(xdr, &port)  && xdr_u_long(xdr, &time_to_live);
+        ok =  ks_xdrd_u_short(xdr, &port)
+            && ks_xdrd_u_long(xdr, &time_to_live);
     }
 }
 

@@ -61,7 +61,7 @@ KsProjProps::xdrEncodeCommon(XDR *xdr) const
         return false;
     if( !(comment.xdrEncode(xdr)) )
         return false;
-    return xdr_enum( xdr, &access_mode );
+    return ks_xdre_enum( xdr, &access_mode );
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ KsProjProps::xdrDecodeCommon(XDR *xdr)
         return false;
     if( !(comment.xdrDecode(xdr)) )
         return false;
-    return xdr_enum( xdr, &access_mode );
+    return ks_xdrd_enum( xdr, &access_mode );
 }
 
 
@@ -88,7 +88,7 @@ KsProjProps::xdrDecodeCommon(XDR *xdr)
 KsVarProjProps::KsVarProjProps(XDR *xdr, bool &ok)
 {
     ok = tech_unit.xdrDecode(xdr)
-        && xdr_enum(xdr, &type);
+        && ks_xdrd_enum(xdr, &type);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ bool
 KsVarProjProps::xdrEncodeVariant(XDR *xdr) const
 {
     return tech_unit.xdrEncode(xdr)
-        && xdr_enum(xdr, &type);
+        && ks_xdre_enum(xdr, &type);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ bool
 KsVarProjProps::xdrDecodeVariant(XDR *xdr)
 {
     return tech_unit.xdrDecode(xdr)
-        && xdr_enum(xdr, &type);
+        && ks_xdrd_enum(xdr, &type);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ KsVarCurrProps::KsVarCurrProps(XDR *xdr, bool &ok)
 {
     ok = value.xdrDecode(xdr) &&
         time.xdrDecode(xdr) && 
-        xdr_enum(xdr, &state);
+        ks_xdrd_enum(xdr, &state);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@ KsVarCurrProps::xdrEncodeVariant(XDR *xdr) const
 {
     return value.xdrEncode(xdr)
         && time.xdrEncode(xdr)
-        && xdr_enum(xdr, &state);
+        && ks_xdre_enum(xdr, &state);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ KsVarCurrProps::xdrDecodeVariant(XDR *xdr)
 {
     return value.xdrDecode(xdr) 
         && time.xdrDecode(xdr)
-        && xdr_enum(xdr, &state);
+        && ks_xdrd_enum(xdr, &state);
 }    
 
 enum_t

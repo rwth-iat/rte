@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.1 1997-03-12 16:28:00 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.2 1997-03-18 10:48:36 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -47,7 +47,7 @@ KsList<T>::xdrEncode(XDR * xdr) const
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     // write size
     u_long sz = size();
-    if (! xdr_u_long(xdr, &sz) ) return false;
+    if (! ks_xdre_u_long(xdr, &sz) ) return false;
 
     // write elements
     for (PltListIterator<T> it(*this); it; ++it) {
@@ -67,7 +67,7 @@ KsList<T>::xdrDecode(XDR * xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     u_long count;
-    if ( ! xdr_u_long(xdr, &count) ) return false;
+    if ( ! ks_xdrd_u_long(xdr, &count) ) return false;
     
     // flush old elements
     while (! isEmpty() ) {

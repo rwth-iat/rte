@@ -50,32 +50,38 @@ bool
 KsTime::xdrEncode(XDR *xdr) const {
 
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    u_long sec  = tv_sec;
+    u_long usec = tv_usec;
 
-    return xdr_long(xdr, &tv_sec)
-        && xdr_long(xdr, &tv_usec);
+    return ks_xdre_u_long(xdr, &sec)
+        && ks_xdre_u_long(xdr, &usec);
 }
+
+/////////////////////////////////////////////////////////////////////////////
 
 bool
 KsTime::xdrDecode(XDR *xdr) {
-
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    u_long sec;
+    u_long usec;
 
-    return xdr_long(xdr, &tv_sec)
-        && xdr_long(xdr, &tv_usec);
-}
-
-KsTime *
-KsTime::xdrNew(XDR *xdr) {
-    KsTime *p = new KsTime();
-
-    if ( p && p->xdrDecode(xdr) ) {
-        return p;
+    if (ks_xdrd_u_long(xdr, &sec)
+        && ks_xdrd_u_long(xdr, &usec)) {
+        // success
+        tv_sec = sec;
+        tv_usec = usec;
+        normalize();
+        PLT_CHECK_INVARIANT();
+        return true;
     } else {
-        delete p;
-        return NULL;
+        return false;
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
+KS_IMPL_XDRCTOR(KsTime);
+KS_IMPL_XDRNEW(KsTime);
 
 ///////////////////////////////////////////////////////////////////////////
 // End of File time.cpp

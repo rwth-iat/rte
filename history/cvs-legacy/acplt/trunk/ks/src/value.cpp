@@ -65,7 +65,7 @@ template class KsVecValueBase<KsString>;
 bool
 KsIntValue::xdrEncodeVariant(XDR *xdr) const 
 {
-    return xdr_long(xdr,&val);
+    return ks_xdre_long(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ KsIntValue::xdrEncodeVariant(XDR *xdr) const
 bool
 KsIntValue::xdrDecodeVariant(XDR *xdr)
 {
-    return xdr_long(xdr,&val);
+    return ks_xdrd_long(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ KsIntValue::xdrDecodeVariant(XDR *xdr)
 bool
 KsUIntValue::xdrEncodeVariant(XDR *xdr) const
 {
-    return xdr_u_long(xdr,&val);
+    return ks_xdre_u_long(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ KsUIntValue::xdrEncodeVariant(XDR *xdr) const
 bool
 KsUIntValue::xdrDecodeVariant(XDR *xdr) 
 {
-    return xdr_u_long(xdr,&val);
+    return ks_xdrd_u_long(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ KsUIntValue::xdrDecodeVariant(XDR *xdr)
 bool
 KsSingleValue::xdrEncodeVariant(XDR *xdr) const
 {
-    return xdr_float(xdr,&val);
+    return ks_xdre_float(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ KsSingleValue::xdrEncodeVariant(XDR *xdr) const
 bool
 KsSingleValue::xdrDecodeVariant(XDR *xdr)
 {
-    return xdr_float(xdr,&val);
+    return ks_xdrd_float(xdr,&val);
 }
 
 
@@ -117,7 +117,7 @@ KsSingleValue::xdrDecodeVariant(XDR *xdr)
 bool
 KsDoubleValue::xdrEncodeVariant(XDR *xdr) const 
 {
-    return xdr_double(xdr,&val);
+    return ks_xdre_double(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ KsDoubleValue::xdrEncodeVariant(XDR *xdr) const
 bool
 KsDoubleValue::xdrDecodeVariant(XDR *xdr) 
 {
-    return xdr_double(xdr,&val);
+    return ks_xdrd_double(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////

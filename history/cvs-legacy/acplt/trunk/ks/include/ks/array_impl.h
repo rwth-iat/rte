@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.1 1997-03-12 16:27:59 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.2 1997-03-18 10:48:34 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,7 +53,7 @@ KsArray<T>::xdrDecode(XDR *xdr)
     // retrieve size
     //
     u_long sz;
-    if (! xdr_u_long(xdr, &sz) ) return false; // failed
+    if (! ks_xdrd_u_long(xdr, &sz) ) return false; // failed
 
     // adjust array size (possibly losing contents)
     //
@@ -87,7 +87,7 @@ KsArray<T>::xdrEncode(XDR *xdrs) const
     // serialize size
     //
     u_long sz = a_size;
-    if (! xdr_u_long(xdrs, &sz)) return false; // fail
+    if (! xdre_u_long(xdrs, &sz)) return false; // fail
 
     // serialize elements
     //
@@ -118,5 +118,5 @@ KsArray<T>::xdrNew(XDR *xdrs)
 
 //////////////////////////////////////////////////////////////////////
 
-// ks/iarray.h
+// ks/array_impl.h
 

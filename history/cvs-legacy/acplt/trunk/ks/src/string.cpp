@@ -56,7 +56,7 @@ KsString::KsString(XDR *xdr, bool &success)
     // read length
     //
     u_long sz;
-    if (xdr_u_long(xdr, &sz) ) {
+    if (ks_xdrd_u_long(xdr, &sz) ) {
 
         // allocate memory
         //
@@ -103,7 +103,8 @@ KsString::xdrEncode(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE && ok());
     u_long sz = len();
-    return xdr_u_long(xdr, &sz) && xdr_opaque(xdr, p->s, sz);
+    return ks_xdre_u_long(xdr, &sz) 
+        && xdr_opaque(xdr, p->s, sz);
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -51,8 +51,9 @@ KS_IMPL_XDRCTOR(KsGetPPParams);
 bool 
 KsGetPPParams::xdrEncode(XDR *xdr) const
 {
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     return path.xdrEncode(xdr)
-        && xdr_enum(xdr, &type_mask)
+        && ks_xdre_enum(xdr, &type_mask)
         && name_mask.xdrEncode(xdr);
 }
 
@@ -61,8 +62,9 @@ KsGetPPParams::xdrEncode(XDR *xdr) const
 bool 
 KsGetPPParams::xdrDecode(XDR *xdr) 
 {
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     return path.xdrDecode(xdr)
-        && xdr_enum(xdr, &type_mask)
+        && ks_xdrd_enum(xdr, &type_mask)
         && name_mask.xdrDecode(xdr);
 }
 

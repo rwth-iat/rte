@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.3 1997-03-17 19:58:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.4 1997-03-18 10:48:41 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -47,7 +47,7 @@ KsResult::xdrEncode(XDR *xdr) const {
     
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     enum_t xresult = result;
-    return xdr_enum( xdr, &xresult );
+    return ks_xdre_enum( xdr, &xresult );
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ KsResult::xdrDecode(XDR *xdr) {
 
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     enum_t xresult;
-    bool ok = xdr_enum( xdr, &xresult );
+    bool ok = ks_xdrd_enum( xdr, &xresult );
     result = xresult;
     return ok;
 }
@@ -68,7 +68,7 @@ KsResult::KsResult(XDR *xdr, bool & ok)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     enum_t xresult;
-    ok = xdr_enum( xdr, &xresult);
+    ok = ks_xdrd_enum( xdr, &xresult);
     result = xresult;
 }
 

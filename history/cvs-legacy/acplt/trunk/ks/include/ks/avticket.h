@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.6 1997-03-17 10:57:44 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.7 1997-03-18 10:48:35 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -69,7 +69,7 @@ inline bool
 KsAuthType::xdrDecode(XDR *xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
-    return xdr_enum(xdr, & _t);
+    return ks_xdrd_enum(xdr, & _t);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ inline bool
 KsAuthType::xdrEncode(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
-    return xdr_enum(xdr, & _t);
+    return ks_xdre_enum(xdr, & _t);
 }
 
 
