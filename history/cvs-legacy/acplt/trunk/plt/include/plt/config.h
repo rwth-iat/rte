@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.29 2000-04-11 14:15:56 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.30 2000-09-04 09:00:08 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -328,13 +328,13 @@ enum { false=0, true=1 };
 
 
 /* 
-*  Aarrrrrghhhh!! WinSock 2 vs. Winsock I. MS is soooooo brain damaged.
-*  They're even try to tell you in the Winsock 2 docu that the Berkeley
-*  socket API is just for TCP/IP and UDP/IP but nothing other. So how
-*  comes that /etc/protocols just defines a bunch of other protocols to
-*  be used through the socket API and esp. all that Linux apps can use
-*  IPX, etc...? It's just again plain Microsoft FUD.
-*/ 
+ *  Aarrrrrghhhh!! WinSock 2 vs. Winsock I. MS is soooooo brain damaged.
+ *  They're even try to tell you in the Winsock 2 docu that the Berkeley
+ *  socket API is just for TCP/IP and UDP/IP but nothing other. So how
+ *  comes that /etc/protocols just defines a bunch of other protocols to
+ *  be used through the socket API and esp. all that Linux apps can use
+ *  IPX, etc...? It's just again plain Microsoft FUD.
+ */ 
 #if PLT_SYSTEM_NT
 
 /*
@@ -359,6 +359,21 @@ enum { false=0, true=1 };
 
 #endif /* PLT_SYSTEM_NT */
 
+/*
+ * BigQ is even much more brain-damaged than Microsoft: defaulting the
+ * file descriptor set size to 32 is soooo idiotic, so we should slap
+ * the person who came up with this size over and over again.
+ *
+ * Per default, we allocate 1024 file descriptors, so plenty of clients
+ * can connect to ACPLT/KS servers and bog them down. Oh, greetings to
+ * Bogdan, by the way...<grin> You can avoid setting FD_SETSIZE by defining
+ * the symbol PLT_DONTTOUCH_FD_SETSIZE.
+ */
+#if PLT_SYSTEM_OPENVMS
+#ifndef PLT_DONTTOUCH_FD_SETSIZE
+#define FD_SETSIZE 1024
+#endif
+#endif
 
 #endif /* PLT_CONFIG.H */
 
