@@ -13,6 +13,8 @@ CXX_FLAGS = -g -Wall
 #
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
+CXX_LINK = g++ 
+
 .SUFFIXES:
 
 .SUFFIXES: .cpp .o
@@ -20,17 +22,17 @@ CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 .cpp.o:
 	$(CXX_COMPILE) -o $@ $<
 
-CXX_SOURCES = value.cpp tvalue.cpp
+CXX_SOURCES = value.cpp tvalue.cpp rtti.cpp
 
-VPATH = ../../src ../../tests
+VPATH = $(PLT_DIR)/src ../../src ../../tests
 
 value.o : value.cpp
 
 value.s : value.cpp
 	$(CXX_COMPILE) -S -o $@ $<
 
-tvalue : value.o tvalue.o
-	$(CXX) -o $@ $^
+tvalue : rtti.o value.o tvalue.o
+	$(CXX_LINK) -o $@ $^
 
 depend : $(CXX_SOURCES)
 	$(CXX_COMPILE) -o depend -M $^
