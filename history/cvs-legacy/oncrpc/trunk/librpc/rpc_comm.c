@@ -43,10 +43,19 @@
  * This file should only contain common data (global data) that is exported
  * by public interfaces 
  */
+#if defined(WIN32) && defined(__BORLANDC__)
+__declspec(dllexport)
+#endif
 struct opaque_auth _null_auth;
 #ifdef FD_SETSIZE
+#if defined(WIN32) && defined(__BORLANDC__)
+__declspec(dllexport)
+#endif
 fd_set svc_fdset;
 #else
 int svc_fds;
 #endif /* def FD_SETSIZE */
+#if defined(WIN32) && defined(__BORLANDC__)
+__declspec(dllexport)
+#endif
 struct rpc_createerr rpc_createerr;
