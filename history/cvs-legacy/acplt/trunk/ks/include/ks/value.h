@@ -3,27 +3,24 @@
  *  Copyright (c) 1996 PLT, RWTH-Aachen, Germany. See file copy_plt.txt!
  *  Author: Martin Kneissl <martin@plt.rwth-aachen.de>
  *
+ *  03/06/97 Interfaces changed
+ *
  */
 
 #ifndef KS_VALUE_INCLUDED
 #define KS_VALUE_INCLUDED
 
 #include <plt/debug.h>
-#include <plt/rtti.hpp>
-#include <ks/rpc.hpp>
-#include <ks/xdr.hpp>
+#include <plt/rtti.h>
+// #include <ks/rpc.h>
+#include <ks/xdr.h>
 
 //////////////////////////////////////////////////////////////////////
 // KsValue is the base class of value objects. It is closely related
 // to struct KS_VAR_VALUE
 
-class KsValue;
-extern "C" bool_t xdr_KsValue(XDR *, KsValue **);
-
-////
-
 class KsValue : public KsXdrUnion {
-    friend bool_t xdr_KsValue(XDR *, KsValue **);
+    
 #if 0
     // accessors
     virtual bool getAsInt(long &l) const;
@@ -55,10 +52,12 @@ class KsValue : public KsXdrUnion {
     virtual bool setFromStringAt(size_t n, const PltString &s);
     virtual bool setFromTimeAt(size_t n,   const PltTime &t);
 #endif
-protected:
+public :
     // XDR routines
     virtual enum_t xdrTypeCode() const = 0;
-    virtual bool_t xdr(XDR *) = 0;
+    virtual bool xdrEncode(XDR *) const = 0;
+    virtual bool xdrDecode(XDR *) = 0;
+    // static KsValue *xdrNew(XDR *) = 0;
     
     PLT_DECL_RTTI;
 };
@@ -75,9 +74,11 @@ public:
     operator long () const;
     KsIntValue & operator = (long v);
 
-protected:
     virtual enum_t xdrTypeCode() const { return KS_VT_INT; }
-    virtual bool_t xdr(XDR *);
+    virtual bool xdrEncode(XDR *xdr) const;
+    virtual bool xdrDecode(XDR *);
+    static KsIntValue *xdrNew(XDR *);
+
 private:
     long val;
     
@@ -93,9 +94,10 @@ public:
     void getUInt(unsigned long& v) const;
     void setUInt(unsigned long v);
 
-protected:
-    virtual enum_t xdrTypeCode() const { return KS_VT_UINT; }
-    virtual bool_t xdr(XDR *);
+    virtual bool xdrEncode(XDR *) const;
+    virtual bool xdrDecode(XDR *);
+    static KsUIntValue *xdrNew(XDR *);
+
 private:
     unsigned long val;
     
@@ -111,9 +113,11 @@ public:
     void getSingle(float & v) const;
     void setSingle(float v);
 
-protected:
+    virtual bool xdrEncode(XDR *) const;
+    virtual bool xdrDecode(XDR *);
+    static KsSingleValue *xdrNew(XDR *);
+
     virtual enum_t xdrTypeCode() const { return KS_VT_SINGLE; }
-    virtual bool_t xdr(XDR *);
 
 private:
     float val;
@@ -129,9 +133,12 @@ public:
     KsDoubleValue(double d = 0.0);
     void getDouble(double &v) const;
     void setDouble(double v);
-protected:
+
+    virtual bool xdrEncode(XDR *) const;
+    virtual bool xdrDecode(XDR *);
+    static KsIntValue *xdrNew(XDR *);
     virtual enum_t xdrTypeCode() const { return KS_VT_DOUBLE; }
-    virtual bool_t xdr(XDR *);
+
 private:
     double val;
 
