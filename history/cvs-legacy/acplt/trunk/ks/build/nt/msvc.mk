@@ -19,16 +19,16 @@ SRCDIR = $(KSDIR)\src\\
 EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
-CXX = cl
+CXX = cl /nologo
 #CXX_FLAGS = -Zi -MTd
 CXX_FLAGS = -DNDEBUG -MT
 #CXX_FLAGS =
 
 ### LINKER
-LD = link
+LD = link /nologo
 # LD_FLAGS = /DEBUG
 CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) \
-	-GR -DPLT_SYSTEM_NT=1 -DPLT_DEBUG_NEW=0
+	-GR -DPLT_SYSTEM_NT=1 -DPLT_DEBUG_NEW=0 -DFD_SETSIZE=128
 CXX_LIBS = $(LIBKS) $(LIBPLT) $(LIBRPC) wsock32.lib advapi32.lib
 
 RC = echo
@@ -90,6 +90,16 @@ $(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
 
 # $(LIBKS_NT_OBJECTS)
 
+pmobile$(EXE): pmobile$(O) pmobile_code$(O) $(LIBKS) $(LIBKSCLN)
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		pmobile$(O) pmobile_code$(O) \
+		$(LIBKSCLN) $(CXX_LIBS)
+
+tclient$(EXE): tclient$(O) tclient1$(O) $(LIBKS) $(LIBKSCLN)
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		tclient$(O) tclient1$(O) \
+		$(LIBKSCLN) $(CXX_LIBS)
+
 tmanager$(EXE): tmanager$(O) tmanager1$(O) $(LIBKSSVR) $(LIBKS)
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
 		tmanager$(O) tmanager1$(O) \
@@ -100,25 +110,22 @@ tserver$(EXE): tserver$(O) tserver1$(O) $(LIBKSSVR) $(LIBKS)
 		tserver$(O) tserver1$(O) \
 		$(LIBKSSVR) $(CXX_LIBS)
 
-tsclient$(EXE): tsclient$(O) tsclient1$(O) svrrpcctx$(O) $(LIBKS)
+tsclient$(EXE): tsclient$(O) tsclient1$(O) svrrpcctx$(O) $(LIBKSSVR) $(LIBKS)
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
 		tsclient$(O) tsclient1$(O) \
-		svrrpcctx$(O) $(CXX_LIBS)
-
-ttree$(EXE): ttree$(O) ttree1$(O) $(LIBKS) $(LIBKSCLN)
-	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
-		ttree$(O) ttree1$(O) \
-		$(LIBKSCLN) $(CXX_LIBS)
+		svrrpcctx$(O) \
+		$(LIBKSSVR) $(CXX_LIBS)
 
 tshell$(EXE): tshell$(O) $(LIBKS) $(LIBKSCLN)
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
 		tshell$(O) \
 		$(LIBKSCLN) $(CXX_LIBS)
 
-pmobile$(EXE): pmobile$(O) pmobile_code$(O) $(LIBKS) $(LIBKSCLN)
+ttree$(EXE): ttree$(O) ttree1$(O) $(LIBKS) $(LIBKSCLN)
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
-		pmobile$(O) pmobile_code$(O) \
+		ttree$(O) ttree1$(O) \
 		$(LIBKSCLN) $(CXX_LIBS)
+
 
 clean :
 	del *.obj

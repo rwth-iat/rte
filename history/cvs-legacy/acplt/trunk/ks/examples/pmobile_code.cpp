@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.6 1997-09-15 18:40:52 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.7 1997-09-15 18:48:42 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <iostream.h>
 
-#if PLT_COMPILER_BORLAND
+#if PLT_SYSTEM_NT
 #include <strstrea.h>
 #include <time.h>
 #else
