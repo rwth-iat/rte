@@ -62,7 +62,7 @@ KsTimeSel::KsTimeSel(KS_TIME_SELECTOR_TYPE atype,
                      KsTime afrom,
                      KsTime ato,
                      KsTime adelta,
-                     KS_INTERPOLATION_MODE amode = KS_IPM_DEFAULT)
+                     KS_INTERPOLATION_MODE amode)
     : type(atype),
       ip_mode(amode),
       from(afrom),

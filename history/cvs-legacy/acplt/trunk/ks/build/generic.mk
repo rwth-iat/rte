@@ -58,21 +58,23 @@ LIBKS_OBJECTS1 = \
 	props$(O) \
 	register$(O) \
 	result$(O) \
-	rpc$(O) \
-	histparams$(O)
+	rpc$(O)
 
 LIBKS_OBJECTS2 = \
+	histparams$(O) \
 	serviceparams$(O) \
 	string$(O) \
 	selector$(O) \
 	time$(O) \
 	value$(O) \
-	xdr$(O) \
+	xdr$(O)
+
+LIBKS_OBJECTS3 = \
 	templates$(O) \
 	mask$(O) \
 	event$(O)
 
-LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2)
+LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2) $(LIBKS_OBJECTS3)
 
 LIBKSSVR_OBJECTS1 = \
 	avticket$(O) \
@@ -94,11 +96,13 @@ LIBKSSVR_OBJECTS3 = \
 	rpcproto$(O) \
 	connectionmgr$(O) \
 	connection$(O) \
-	xdrudpcon$(O) \
+	xdrudpcon$(O)
+
+LIBKSSVR_OBJECTS4 = \
 	xdrtcpcon$(O) \
 	histdomain$(O) 
 
-LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2) $(LIBKSSVR_OBJECTS3)
+LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2) $(LIBKSSVR_OBJECTS3) $(LIBKSSVR_OBJECTS4)
 
 LIBKSCLN_OBJECTS1 = \
 	avmodule$(O) \

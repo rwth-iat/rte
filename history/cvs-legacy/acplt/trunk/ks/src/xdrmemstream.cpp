@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.3 1998-09-17 12:02:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.4 1998-09-22 08:52:27 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -421,7 +421,7 @@ void xdrmemstream_clear(XDR *xdrs)
         FreeMemoryStreamFragment(fragment);
         fragment = next;
     }
-    fragment = ((MemoryStreamInfo *) xdrs->x_base)->first->next = 0;
+    ((MemoryStreamInfo *) xdrs->x_base)->first->next = 0;
     ((MemoryStreamInfo *) xdrs->x_base)->fragment_count = 1;
 } /* xdrmemstream_clear */
 
