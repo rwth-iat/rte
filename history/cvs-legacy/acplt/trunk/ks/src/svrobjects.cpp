@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.12 1999-01-12 16:18:28 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.13 1999-04-22 15:40:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -139,24 +139,53 @@ KssDomain::getChildByPath(const KsPath & path) const
     if (hc) {
         // Good. There is such a child.
         if (path.isSingle()) {
+	    //
             // We are beeing asked about this child. Return it.
+	    //
             return hc;
         } else {
-            // They want a grandchild. That means the child must be
-            // a domain.
-            KssDomain * pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
-            if (pd) {
-                // It is a domain. Let _it_ handle the rest of the
-                // request.
+	    //
+            // They want a grandchild. That means the child can be either:
+            // - domain
+	    // - link
+	    // - history.
+	    // Unfortunately, because we want to use the lowest common C++
+	    // denominator, we can't use a real dynamic cast, so we have to
+	    // explicitly up- and downcast to get the real pointer.
+	    //
+            KssChildrenService *pcs = 0;
+	    switch ( hc->typeCode() ) {
+	    case KS_OT_DOMAIN:
+	        pcs = (KssDomain *) hc.getPtr();
+	        break;
+	    case KS_OT_LINK:
+		pcs = (KssLink *) hc.getPtr();
+		break;
+	    case KS_OT_HISTORY:
+		pcs = (KssHistory *) hc.getPtr();
+		break;
+	    default:
+		break;
+	    }
+
+            if ( pcs ) {
+		//
+                // It is an object which can handle questions about childen.
+		// Let *it* handle the rest of the request.
+		//
                 KsPath tail(path.getTail());
-                return pd->getChildByPath(tail);
+                return pcs->getChildByPath(tail);
             } else {
-                // The child not a domain, fail.
+		//
+                // This object doesn't know anything about children, so fail.
+		//
                 return KssCommObjectHandle();
             }
         }
     } else {
-        // We don't know this child.
+	//
+        // We don't know *this* child.
+	//
         return KssCommObjectHandle();
     }
 }

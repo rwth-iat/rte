@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.12 1999-01-12 16:25:18 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.13 1999-04-22 15:40:20 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -325,7 +325,7 @@ KssSimpleLinkAlias::getCurrProps(KsCurrPropsHandle &hprops) const
     // Try to get an iterator from the underlying (simple) domain server
     // object. We will then use this iterator for calculating the value.
     //
-    KssDomainIterator *pit = PLT_RETTYPE_CAST(KssDomainIterator *)
+    KssDomainIterator *pit = PLT_RETTYPE_CAST((KssDomainIterator *))
 	_halias_domain->newIterator();
     if ( !pit ) {
 	return KS_ERR_GENERIC;
