@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.2 1999-08-06 07:59:35 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -328,12 +328,12 @@ OV_RESULT ov_ksserver_createobject_initobj(
 		*plnkresult = ov_path_resolve(&linkpath, &relpath, plnkitem->link_path, 
 			version);
 		if(Ov_Fail(*plnkresult)) {
-			continue;
+			return OV_ERR_BADINITPARAM;
 		}
 		*plnkresult = ov_path_resolve(&elementpath, NULL, plnkitem->element_path,
 			version);
 		if(Ov_Fail(*plnkresult)) {
-			continue;
+			return OV_ERR_BADINITPARAM;
 		}
 		/*
 		*	if relative placement, resolve place path
@@ -344,7 +344,7 @@ OV_RESULT ov_ksserver_createobject_initobj(
 			*plnkresult = ov_path_resolve(&placepath, NULL,
 				plnkitem->place.place_path, version);
 			if(Ov_Fail(*plnkresult)) {
-				continue;
+				return OV_ERR_BADINITPARAM;
 			}
 		}
 		/*
@@ -356,7 +356,7 @@ OV_RESULT ov_ksserver_createobject_initobj(
 			*plnkresult = ov_path_resolve(&oppositeplacepath, NULL,
 				plnkitem->opposite_place.place_path, version);
 			if(Ov_Fail(*plnkresult)) {
-				continue;
+				return OV_ERR_BADINITPARAM;
 			}
 		}
 		/*
