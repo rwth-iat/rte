@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ntservice.h,v 1.3 1997-07-18 14:11:00 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ntservice.h,v 1.4 1999-04-22 15:32:42 harald Exp $ */
 
 #ifndef KS_NTSERVICE_INCLUDED
 #define KS_NTSERVICE_INCLUDED
@@ -44,7 +44,7 @@
 #include "ks/svrbase.h"
 
 // Yuck! Some OS-specific stuff...
-#if PLT_COMPILER_BORLAND
+#if PLTCOMPILER_BORLAND > 0 && PLT_COMPILER_BORLAND < 0x0530
 #include <win32/winsvc.h>
 #else
 #include <winsvc.h>
