@@ -1,0 +1,39 @@
+/**********************************************************************************
+***                                                                             ***
+***             F u n k t i o n s b a u s t e i n s y s t e m                   ***
+***   ###################################################################       ***
+***                                                                             ***
+***   Implementierung des Funktionsbausteinsystems mit Kommandostrukturen       ***
+***   des Lehrstuhls fuer Prozessleittechnik, RWTH Aachen                       ***
+***                                                                             ***
+**********************************************************************************/
+/**********************************************************************************
+*                                                                                 
+* Datei                                                                           
+* -----                                                                           
+* comlib.ovf - Funktionsprototypen fuer Objektmethoden                            
+*                                                                                 
+* CVS Revision:  $Revision: 1.1.1.1 $                                                       
+* CVS Date: $Date: 2002-08-16 13:55:23 $
+*
+* Historie                                                                        
+* --------                                                                        
+* 10-Aug-1999 Murat Fedai: Erstellung,                                            
+*             Lehrstuhl fuer Prozessleittechnik, RWTH Aachen                      
+*
+* 16.08.2002 Michael Heeg: Einchecken der cmdlib in CVS (manueller Versionsstand: 0.20
+*                                                                                 
+****************************************************************************************/
+
+
+#ifndef _FB_CMDLIB_PROTOTYPES_H_
+#define _FB_CMDLIB_PROTOTYPES_H_
+
+/*
+*	Type comand of a functionblock type of ProcessControl
+*/
+typedef OV_STRING OV_DLLFNCEXPORT CMDLIB_FNC_TYPECOMMAND(void);
+
+
+
+#endif

@@ -1,0 +1,8 @@
+LIBRARY     CMDLIB.DLL
+
+EXPORTS
+cmdlib_processcontrol_order_set 
+cmdlib_processcontrol_univ_comands 
+ov_library_open_cmdlib        
+pclass_cmdlib_processcontrol  
+send_comand                   
