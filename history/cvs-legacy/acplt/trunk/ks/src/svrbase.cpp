@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.39 1999-09-16 10:54:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.40 2000-04-10 15:06:52 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -1148,7 +1148,7 @@ KsServerBase::run()
     KsTime aShortTime(2);
 #endif
 
-    _shutdown_flag = 0;
+    resetGoingDown();
     while (!isGoingDown()) {
 #if ! (PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS)
         servePendingEvents(0); // no timeout -> wait forever
