@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.34 2000-09-04 08:57:18 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.35 2001-01-25 10:00:41 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -287,6 +287,12 @@ KsManager::KsManager(int port)
 {
     KsAvNoneTicket::setDefaultAccess(KS_AC_READ); // TODO
 
+    //
+    // Caveat Emptor: when we hit this beautiful piece of code, the
+    // KS server's object tree is still empty. Especially no /vendor
+    // tree, nothing, nada, niente.
+    //
+
     if ( _is_ok ) {
         //
         // initialize /servers
@@ -337,8 +343,8 @@ KsManager::KsManager(int port)
         // set some optional vendor variables
         // TODO: still lazy.
         //
-
-        addDomain(KsPath("/"), "vendor");
+        addDomain(KsPath("/"), "vendor",
+                  "vendor and server-specific information");
 
         KsStringVecValue * core_services_val
             = new KsStringVecValue(3);
@@ -376,9 +382,9 @@ KsManager::KsManager(int port)
                             "c/o Chair of Process Control Engineering, "
                             "RWTH Aachen, Aachen (Germany)")
             && addStringVar(vendor, "copyright",
-                            "(c) 1996, 1997, 1998 Chair of Process Control Engineering, "
+                            "(c) 1996, 2001 Chair of Process Control Engineering, "
                             "Aachen University of Technology")
-            && addDomain(vendor, "extensions")
+            && addDomain(vendor, "extensions", "protocol extension information")
             && addDomain(KsPath("/vendor/extensions"), "ks_core")
             && addCommObject(KsPath("/vendor/extensions/ks_core"),
                              core_opcode_handle)
