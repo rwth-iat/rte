@@ -73,6 +73,9 @@ $(EXAMPLES_OBJECTS): %.obj: [-.-.examples]%.cpp
 tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
 	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
 
+tserver.exe: tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS)
+	$(LD) $(LD_FLAGS) tserver.obj,tserver1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
+
 tsclient.exe: tsclient.obj tsclient1.obj svrrpcctx$O $(LIBKS)
 	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,$(LIBKS)/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
 
