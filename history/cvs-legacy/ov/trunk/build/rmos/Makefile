@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.4 2001-07-09 12:41:18 ansgar Exp $
+#   $Id: Makefile,v 1.5 2004-08-04 15:17:03 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -88,6 +88,35 @@ RC 				= brc32 -i$(OV_INCLUDE_DIR)
 #	--------------------
 
 include ../generic.mk
+
+#	C-Includes
+#	----------
+
+C_INCLUDES = -I$(RMOS_INCLUDE_DIR)
+
+#	ONCRPC-Includes and defines
+#	---------------------------
+
+LIBRPC_DEFINES = \
+	$(LIBRPC_PLATFORM_DEFINES) \
+	-DRMOS32
+LIBRPC_INCLUDES	= \
+	-I$(ONCRPC_INCLUDE_DIR)
+
+#	all defines and includes together
+#	---------------------------------
+
+DEFINES	 = $(LIBRPC_DEFINES) $(ACPLTKS_DEFINES) $(OV_DEFINES)
+INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
+
+#	presupposed libraries
+#	---------------------
+
+LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
+
+LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(LIB)
+
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
 
 #	Targets
 #	-------

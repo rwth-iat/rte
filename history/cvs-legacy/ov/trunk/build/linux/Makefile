@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.1 1999-07-19 15:01:55 dirk Exp $
+#   $Id: Makefile,v 1.2 2004-08-04 15:16:05 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -32,6 +32,11 @@
 
 SYSTEM = LINUX
 SYSDIR = linux
+
+#	C-Includes
+#	----------
+
+C_INCLUDES =
 
 #   Include unix generic part
 #   -------------------------

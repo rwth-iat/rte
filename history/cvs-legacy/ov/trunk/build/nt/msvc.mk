@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.2 2004-05-24 15:18:49 ansgar Exp $
+#   $Id: msvc.mk,v 1.3 2004-08-04 15:16:39 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -92,14 +92,8 @@ include ../generic.mk
 
 targets: $(TARGETS) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)
 
-example: $(EXAMPLE)
-	@
+all: targets
 
-all: targets example
-
-info:
-	echo $(EXAMPLE_OBJ)
-	echo $(EXAMPLE_SRC)
 #   Implicit Rules
 #   --------------
 
@@ -193,6 +187,25 @@ $(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV
 $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ)  $(OV_CONTROLPANEL_RES)
 	$(LD) $^ ADVAPI32.LIB USER32.LIB COMDLG32.LIB /out:$(OV_CONTROLPANEL_CPL)
 
+#	ACPLT/OV database dumper
+
+dbdump.obj : $(OV_SOURCE_DBDUMP_DIR)dbdump.cpp
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /c $^
+
+fnmatch.obj : $(OV_SOURCE_DBDUMP_DIR)fnmatch.c
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /c $^
+
+$(DBDUMP_EXE) : $(DBDUMP_OBJ) $(DBDUMP_RES)
+	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
+
+#	ACPLT/OV database parser
+
+db_lex.obj: db_lex.c
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
+
+$(DBPARSE_EXE) : $(DBPARSE_OBJ) $(DBPARSE_RES)
+	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
+
 #	ACPLT/OV KsHistory library
 #	--------------------------
 
@@ -202,6 +215,26 @@ $(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	$(LD) /out:$(KSHISTLIB_DLL) /implib:$(KSHISTLIB_LIB) $(KSHISTLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB
 
 kshist.c kshist.h : $(OV_CODEGEN_EXE)
+
+#	ACPLT/OV dynov library
+#	----------------------
+
+$(DYNOV_LIB) : $(DYNOV_DLL)
+
+$(DYNOV_DLL) : $(DYNOV_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
+	$(LD) /out:$(DYNOV_DLL) /implib:$(DYNOV_LIB) $(DYNOV_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB
+
+dynov.c dynov.h : $(OV_CODEGEN_EXE)
+
+#	ACPLT/OV tasking library
+#	------------------------
+
+$(TASKLIB_LIB) : $(TASKLIB_DLL)
+
+$(TASKLIB_DLL) : $(TASKLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
+	$(LD) /out:$(TASKLIB_DLL) /implib:$(TASKLIB_LIB) $(TASKLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB
+
+tasklib.c tasklib.h : $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV example library
 #	------------------------

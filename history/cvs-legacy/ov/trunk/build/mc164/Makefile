@@ -80,6 +80,44 @@ AR	 		= lib166
 
 include ../generic.mk
 
+#	C-Includes
+#	----------
+
+C_INCLUDES =
+
+#	ONCRPC-Includes and defines
+#	---------------------------
+
+LIBRPC_DEFINES = \
+	$(LIBRPC_PLATFORM_DEFINES)
+LIBRPC_INCLUDES	= \
+	-I$(MC164_INCLUDE_DIR) \
+	-I$(ONCRPC_INCLUDE_DIR)
+
+
+#	OV-Includes
+#	-----------
+
+OV_INCLUDES = $(OV_INCLUDES) \
+	-I.\
+	-I$(KEIL_INCLUDE_DIR) \
+	-I$(OV_INCLUDE_DIR) \
+	-I$(OV_MODEL_DIR) \
+	-I$(LIBMPM_DIR)
+
+#	all defines and includes together
+#	---------------------------------
+
+DEFINES	 = $(LIBRPC_DEFINES) $(ACPLTKS_DEFINES) $(OV_DEFINES)
+INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
+
+#	presupposed libraries
+#	---------------------
+
+LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
+
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
+
 INCLUDES := $(INCLUDES) -I../../../../../
 
 #	Targets

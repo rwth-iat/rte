@@ -1,5 +1,5 @@
 
-#   $Id: borland.mk,v 1.2 2004-05-24 15:18:49 ansgar Exp $
+#   $Id: borland.mk,v 1.3 2004-08-04 15:16:39 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -47,7 +47,7 @@ CPL = .cpl
 #	Platform-specific definitions
 #	-----------------------------
 
-ACPLTKS_PLATFORM_DEFINES	= -DFD_SETSIZE=128
+ACPLTKS_PLATFORM_DEFINES		= -DFD_SETSIZE=128
 OV_PLATFORM_DEFINES			= -DOV_DEBUG -DOV_CATCH_EXCEPTIONS
 
 #	Compiler
@@ -118,26 +118,14 @@ OV_INCLUDES = $(OV_INCLUDES) \
 DEFINES	 = $(LIBRPC_DEFINES) $(ACPLTKS_DEFINES) $(OV_DEFINES)
 INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 
-#	presupposed libraries
-#	---------------------
-
-LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
-
-LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(LIB)
-
-ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
-
 #	Targets
 #	-------
 
 targets: $(TARGETS) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)
 
-example: $(EXAMPLE)
-	@
+all: targets
 
-all: targets example
-
-info: 
+info:
 	echo $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
 
 
@@ -256,6 +244,16 @@ $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
 	$(LD) -e$@ $(filter-out %$(RES), $^)
 	$(RC) $(filter %$(RES), $^) $@
 
+#	ACPLT/OV database dumper
+
+$(DBDUMP_EXE) : $(DBDUMP_OBJ)
+	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+
+#	ACPLT/OV database parser
+
+$(DBPARSE_EXE) : $(DBPARSE_OBJ)
+	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+
 #	ACPLT/OV KsHistory library
 #	--------------------------
 
@@ -272,6 +270,40 @@ $(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	@del $(basename $@)_tmp.def
 
 kshist.c kshist.h : $(OV_CODEGEN_EXE)
+
+#	ACPLT/OV dynov library
+#	----------------------
+
+$(DYNOV_LIB) : $(DYNOV_DLL)
+
+$(DYNOV_DLL) : $(DYNOV_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
+	$(LD) -e$@ $(filter-out %$(RES), $^)
+	$(IMPDEF) $(basename $@)_tmp.def $@
+	$(MKIMPDEF) $(basename $@)_tmp.def $(basename $@).def
+	$(IMPLIB) $(basename $@)$(LIB) $(basename $@).def
+	$(MKEXPDEF) $(basename $@)_tmp.def $(basename $@).def
+	$(LD) -e$@ $(filter-out %$(RES), $^)
+	$(MKDLLDEF) $(basename $@)_tmp.def $(basename $@).def
+	@del $(basename $@)_tmp.def
+
+dynov.c dynov.h : $(OV_CODEGEN_EXE)
+
+#	ACPLT/OV tasking library
+#	------------------------
+
+$(TASKLIB_LIB) : $(TASKLIB_DLL)
+
+$(TASKLIB_DLL) : $(TASKLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
+	$(LD) -e$@ $(filter-out %$(RES), $^)
+	$(IMPDEF) $(basename $@)_tmp.def $@
+	$(MKIMPDEF) $(basename $@)_tmp.def $(basename $@).def
+	$(IMPLIB) $(basename $@)$(LIB) $(basename $@).def
+	$(MKEXPDEF) $(basename $@)_tmp.def $(basename $@).def
+	$(LD) -e$@ $(filter-out %$(RES), $^)
+	$(MKDLLDEF) $(basename $@)_tmp.def $(basename $@).def
+	@del $(basename $@)_tmp.def
+
+tasklib.c tasklib.h : $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV example library
 #	------------------------
@@ -295,7 +327,9 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-for %i in ( $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
+	@-for %i in ($(filter-out %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
+	@echo Installing files to '$(PLT_LIB_DIR)'
+	@-for %i in ($(filter %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(PLT_LIB_DIR))
 	@echo Done.
 
 #	Clean up

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.11 2004-05-19 14:25:34 ansgar Exp $
+*   $Id: ov_vendortree.h,v 1.12 2004-08-04 15:15:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,7 +38,7 @@ extern "C" {
 /*
 *	Number of objects in the vendor tree
 */
-#define	OV_NUM_VENDOROBJECTS	24
+#define	OV_NUM_VENDOROBJECTS	25
 
 /*
 *	Number of configuration bits
@@ -352,6 +352,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setserverconfiguration(
 *	Get backup
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getbackup(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+);
+
+/*
+*	Write backup file
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_writebackup(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 );

@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.11 2004-05-19 14:29:01 ansgar Exp $
+#   $Id: generic.mk,v 1.12 2004-08-04 15:15:50 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -35,36 +35,41 @@
 
 PLT_DIR						= ../../../../
 PLT_BIN_DIR					= $(PLT_DIR)bin/
+PLT_LIB_DIR					= $(PLT_DIR)base/lib/
 
 ACPLT_OV_DIR				= ../../
 OV_INCLUDE_DIR				= $(ACPLT_OV_DIR)include/
 OV_MODEL_DIR				= $(ACPLT_OV_DIR)model/
 OV_SOURCE_DIR				= $(ACPLT_OV_DIR)source/
 
-OV_SOURCE_CODEGEN_DIR		= $(OV_SOURCE_DIR)codegen/
+OV_SOURCE_CODEGEN_DIR			= $(OV_SOURCE_DIR)codegen/
 OV_SOURCE_BUILDER_DIR			= $(OV_SOURCE_DIR)builder/
 OV_SOURCE_LIBOV_DIR			= $(OV_SOURCE_DIR)libov/
-OV_SOURCE_DBUTIL_DIR		= $(OV_SOURCE_DIR)dbutil/
-OV_SOURCE_LIBOVKS_DIR		= $(OV_SOURCE_DIR)libovks/
-OV_SOURCE_SERVER_DIR		= $(OV_SOURCE_DIR)server/
-OV_SOURCE_NTSERVICE_DIR		= $(OV_SOURCE_DIR)ntservice/
-OV_SOURCE_EXAMPLE_DIR		= $(OV_SOURCE_DIR)example/
-OV_SOURCE_KSHISTLIB_DIR		= $(OV_SOURCE_DIR)kshist/
+OV_SOURCE_DBUTIL_DIR			= $(OV_SOURCE_DIR)dbutil/
+OV_SOURCE_LIBOVKS_DIR			= $(OV_SOURCE_DIR)libovks/
+OV_SOURCE_SERVER_DIR			= $(OV_SOURCE_DIR)server/
+OV_SOURCE_NTSERVICE_DIR			= $(OV_SOURCE_DIR)ntservice/
+OV_SOURCE_EXAMPLE_DIR			= $(OV_SOURCE_DIR)example/
+OV_SOURCE_KSHISTLIB_DIR			= $(OV_SOURCE_DIR)kshist/
+OV_SOURCE_DYNOV_DIR			= $(OV_SOURCE_DIR)dynov/
+OV_SOURCE_TASKLIB_DIR			= $(OV_SOURCE_DIR)tasklib/
+OV_SOURCE_DBDUMP_DIR			= $(OV_SOURCE_DIR)dbdump/
+OV_SOURCE_DBPARSE_DIR			= $(OV_SOURCE_DIR)dbparse/
 
 ACPLT_PLT_DIR				= ../../../plt/
 
 ACPLT_KS_DIR				= ../../../ks/
-ACPLT_PLT_INCLUDE_DIR		= $(ACPLT_PLT_DIR)include/
-ACPLT_KS_INCLUDE_DIR		= $(ACPLT_KS_DIR)include/
-ACPLT_KS_INCLUDE_KS_DIR		= $(ACPLT_KS_INCLUDE_DIR)ks/
+ACPLT_PLT_INCLUDE_DIR			= $(ACPLT_PLT_DIR)include/
+ACPLT_KS_INCLUDE_DIR			= $(ACPLT_KS_DIR)include/
+ACPLT_KS_INCLUDE_KS_DIR			= $(ACPLT_KS_INCLUDE_DIR)ks/
 ACPLT_KS_SOURCE_DIR			= $(ACPLT_KS_DIR)src/
 ACPLT_PLT_BUILD_DIR			= $(PLT_DIR)base/lib/
 
-LIBMPM_DIR					= ../../../libmpm/
+LIBMPM_DIR				= ../../../libmpm/
 
 #	platforms requiring ONC/RPC
 
-ONCRPC_DIR					= ../../../oncrpc/
+ONCRPC_DIR				= ../../../oncrpc/
 ONCRPC_INCLUDE_DIR			= $(ONCRPC_DIR)
 ONCRPC_BIN_DIR				= $(PLT_DIR)base/lib/
 
@@ -75,7 +80,7 @@ MINGWINCLUDEPATH			= //C/usr/local/mingw/include
 
 #	stuff for C16x compatible compilers using the Keil compiler
 
-MC164_DIR					= ../../../../mc164/
+MC164_DIR				= ../../../../mc164/
 MC164_INCLUDE_DIR			= $(MC164_DIR)include/
 MC164_SOURCE_DIR			= $(MC164_DIR)source/
 
@@ -83,9 +88,9 @@ KEIL_INCLUDE_DIR			=  //c/c166/inc/
 
 #	RMOS32 stuff
 
-RMOS_DIR					= c:\\siemens\\step7\\m7sys4.00\\
+RMOS_DIR				= c:\\siemens\\step7\\m7sys4.00\\
 RMOS_INCLUDE_DIR			= $(RMOS_DIR)inc\\
-RMOS_LIBRARY_DIR            = $(RMOS_DIR)lib\\
+RMOS_LIBRARY_DIR            		= $(RMOS_DIR)lib\\
 
 #	OpenVMS stuff
 
@@ -102,27 +107,39 @@ SOURCE_DIRS	= \
 	$(OV_SOURCE_SERVER_DIR) \
 	$(OV_SOURCE_NTSERVICE_DIR) \
 	$(OV_SOURCE_KSHISTLIB_DIR) \
+	$(OV_SOURCE_DYNOV_DIR) \
+	$(OV_SOURCE_TASKLIB_DIR) \
+	$(OV_SOURCE_DBDUMP_DIR) \
+	$(OV_SOURCE_DBPARSE_DIR) \
 	$(OV_SOURCE_EXAMPLE_DIR) \
 	$(ACPLT_KS_SOURCE_DIR)
 
 #	C-Includes
 #	----------
- 
+
 ifeq ($(SYSTEM), RMOS)
 C_INCLUDES = -I$(RMOS_INCLUDE_DIR)
 else
 C_INCLUDES =
 endif
- 
+
 #	ONCRPC definitions and includes
 #	-------------------------------
 
 ifeq ($(SYSTEM), NT)
-LIBRPC_DEFINES = \
-	$(LIBRPC_PLATFORM_DEFINES) \
-	-DWIN32
-LIBRPC_INCLUDES	= \
-	-I$(ONCRPC_INCLUDE_DIR)
+ifeq ($(COMPILER), MSVC)
+	LIBRPC_DEFINES = \
+		$(LIBRPC_PLATFORM_DEFINES) \
+		/DWIN32
+	LIBRPC_INCLUDES	= \
+		/I$(ONCRPC_INCLUDE_DIR)
+else
+	LIBRPC_DEFINES = \
+		$(LIBRPC_PLATFORM_DEFINES) \
+		-DWIN32
+	LIBRPC_INCLUDES	= \
+		-I$(ONCRPC_INCLUDE_DIR)
+endif
 endif
 
 ifeq ($(SYSTEM), RMOS)
@@ -144,16 +161,27 @@ endif
 #	ACPLT/KS definitions and includes
 #	---------------------------------
 
-ACPLTKS_DEFINES = \
-	$(ACPLTKS_PLATFORM_DEFINES) \
-	-DPLT_SYSTEM_$(SYSTEM)=1 \
-	-DPLT_USE_BUFFERED_STREAMS=1 \
-	-DPLT_SERVER_TRUNC_ONLY=1 \
-	-DNDEBUG 
-ACPLTKS_INCLUDES = \
-	-I$(ACPLT_PLT_INCLUDE_DIR) \
-	-I$(ACPLT_KS_INCLUDE_DIR)
-
+ifeq ($(COMPILER), MSVC)
+	ACPLTKS_DEFINES = \
+		$(ACPLTKS_PLATFORM_DEFINES) \
+		/DPLT_SYSTEM_$(SYSTEM)=1 \
+		/DPLT_USE_BUFFERED_STREAMS=1 \
+		/DPLT_SERVER_TRUNC_ONLY=1 \
+		/DNDEBUG
+	ACPLTKS_INCLUDES = \
+		/I$(ACPLT_PLT_INCLUDE_DIR) \
+		/I$(ACPLT_KS_INCLUDE_DIR)
+else
+	ACPLTKS_DEFINES = \
+		$(ACPLTKS_PLATFORM_DEFINES) \
+		-DPLT_SYSTEM_$(SYSTEM)=1 \
+		-DPLT_USE_BUFFERED_STREAMS=1 \
+		-DPLT_SERVER_TRUNC_ONLY=1 \
+		-DNDEBUG
+	ACPLTKS_INCLUDES = \
+		-I$(ACPLT_PLT_INCLUDE_DIR) \
+		-I$(ACPLT_KS_INCLUDE_DIR)
+endif
 #	ACPLT/OV definitions and includes
 #	---------------------------------
 
@@ -170,18 +198,26 @@ OV_INCLUDES = \
 	-I$(OV_SOURCE_NTSERVICE_DIR) \
 	-I$(OV_SOURCE_EXAMPLE_DIR) \
 	-I$(OV_SOURCE_KSHISTLIB_DIR) \
+	-I$(OV_SOURCE_DYNOV_DIR) \
+	-I$(OV_SOURCE_TASKLIB_DIR) \
+	-I$(OV_SOURCE_DBPARSE_DIR) \
+	-I$(OV_SOURCE_DBDUMP_DIR) \
 	-I$(LIBMPM_DIR)
 else
 ifeq ($(COMPILER), MSVC)
 OV_INCLUDES = \
-	-I$(OV_INCLUDE_DIR) \
-	-I$(OV_MODEL_DIR) \
-	-I$(OV_SOURCE_CODEGEN_DIR) \
-	-I$(OV_SOURCE_BUILDER_DIR) \
-	-I$(OV_SOURCE_NTSERVICE_DIR) \
-	-I$(OV_SOURCE_EXAMPLE_DIR) \
-	-I$(OV_SOURCE_KSHISTLIB_DIR) \
-	-I$(LIBMPM_DIR)
+	/I$(OV_INCLUDE_DIR) \
+	/I$(OV_MODEL_DIR) \
+	/I$(OV_SOURCE_CODEGEN_DIR) \
+	/I$(OV_SOURCE_BUILDER_DIR) \
+	/I$(OV_SOURCE_NTSERVICE_DIR) \
+	/I$(OV_SOURCE_EXAMPLE_DIR) \
+	/I$(OV_SOURCE_KSHISTLIB_DIR) \
+	/I$(OV_SOURCE_DYNOV_DIR) \
+	/I$(OV_SOURCE_TASKLIB_DIR) \
+	/I$(OV_SOURCE_DBPARSE_DIR) \
+	/I$(OV_SOURCE_DBDUMP_DIR) \
+	/I$(LIBMPM_DIR)
 else
 ifeq ($(COMPILER), KEIL)
 OV_INCLUDES = \
@@ -195,6 +231,10 @@ OV_INCLUDES = \
 	-I$(OV_MODEL_DIR) \
 	-I$(OV_SOURCE_EXAMPLE_DIR) \
 	-I$(OV_SOURCE_KSHISTLIB_DIR) \
+	-I$(OV_SOURCE_DYNOV_DIR) \
+	-I$(OV_SOURCE_TASKLIB_DIR) \
+	-I$(OV_SOURCE_DBPARSE_DIR) \
+	-I$(OV_SOURCE_DBDUMP_DIR) \
 	-I$(LIBMPM_DIR)
 endif
 endif
@@ -222,7 +262,11 @@ ifeq ($SYSTEM), OPENVMS)
 LIBRPC_LIB			= $(VMS_LIBRPC_DIR)ucx$$rpcxdr
 endif
 
-ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB) 
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
+
+LIBPLT_LIB			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB)
+LIBKS_LIB			= $(ACPLT_PLT_BUILD_DIR)libks$(LIB)
+LIBKSCLN_LIB			= $(ACPLT_PLT_BUILD_DIR)libkscln$(LIB)
 
 #   Rules
 #   -----
@@ -237,7 +281,7 @@ VPATH = $(SOURCE_DIRS) $(OV_MODEL_DIR) $(ACPLT_KS_INCLUDE_KS_DIR) .
 #	-------------------------
 
 OV_CODEGEN_SRC := ov_ovmparser.c ov_ovmscanner.c \
-	$(wildcard $(OV_SOURCE_CODEGEN_DIR)*.c)	
+	$(wildcard $(OV_SOURCE_CODEGEN_DIR)*.c)
 OV_CODEGEN_OBJ  = $(foreach source, $(OV_CODEGEN_SRC), \
 	$(basename $(notdir $(source)))$(OBJ))
 OV_CODEGEN_EXE  = ov_codegen$(EXE)
@@ -247,7 +291,7 @@ OV_CODEGEN_RES	 = $(basename $(OV_CODEGEN_EXE))$(RES)
 #	--------------------------
 
 OV_BUILDER_SRC := ov_ovmparser.c ov_ovmscanner.c \
-	$(wildcard $(OV_SOURCE_BUILDER_DIR)*.c)	
+	$(wildcard $(OV_SOURCE_BUILDER_DIR)*.c)
 OV_BUILDER_OBJ  = $(foreach source, $(OV_BUILDER_SRC), \
 	$(basename $(notdir $(source)))$(OBJ))
 OV_BUILDER_EXE  = ov_builder$(EXE)
@@ -265,7 +309,7 @@ OV_LIBOV_RES  = libov$(RES)
 #	ACPLT/OV database utility
 #	-------------------------
 
-OV_DBUTIL_SRC := $(wildcard $(OV_SOURCE_DBUTIL_DIR)*.c)	
+OV_DBUTIL_SRC := $(wildcard $(OV_SOURCE_DBUTIL_DIR)*.c)
 OV_DBUTIL_OBJ  = $(foreach source, $(OV_DBUTIL_SRC), \
 	$(basename $(notdir $(source)))$(OBJ))
 OV_DBUTIL_EXE  = ov_dbutil$(EXE)
@@ -307,7 +351,7 @@ OV_LIBOVKS_DLL  = libovks$(DLL)
 OV_LIBOVKS_RES  = libovks$(RES)
 
 #	ACPLT/KS-Server for ACPLT/OV
-#   ----------------------------
+#   	----------------------------
 
 OV_SERVER_SRC := $(wildcard $(OV_SOURCE_SERVER_DIR)*.c)
 OV_SERVER_OBJ  = $(foreach source, $(OV_SERVER_SRC), $(basename $(notdir $(source)))$(OBJ))
@@ -315,7 +359,7 @@ OV_SERVER_EXE  = ov_server$(EXE)
 OV_SERVER_RES  = ov_server$(RES)
 
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
-#   --------------------------------------------------
+#   	--------------------------------------------------
 
 OV_NTSERVICE_SRC = $(OV_SOURCE_NTSERVICE_DIR)ov_ntservice.c
 OV_NTSERVICE_OBJ = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(OBJ))
@@ -354,6 +398,38 @@ KSHISTLIB_OBJ  = $(foreach source, $(KSHISTLIB_SRC), $(basename $(notdir $(sourc
 KSHISTLIB_LIB  = kshist$(LIB)
 KSHISTLIB_DLL  = kshist$(DLL)
 
+#
+#	ACPLT/OV dynov library
+#	----------------------
+
+DYNOV_SRC := dynov.c $(wildcard $(OV_SOURCE_DYNOV_DIR)*.c)
+DYNOV_OBJ  = $(foreach source, $(DYNOV_SRC), $(basename $(notdir $(source)))$(OBJ))
+DYNOV_LIB  = dynov$(LIB)
+DYNOV_DLL  = dynov$(DLL)
+
+#
+#	ACPLT/OV tasking library
+#	------------------------
+
+TASKLIB_SRC := tasklib.c $(wildcard $(OV_SOURCE_TASKLIB_DIR)*.c)
+TASKLIB_OBJ  = $(foreach source, $(TASKLIB_SRC), $(basename $(notdir $(source)))$(OBJ))
+TASKLIB_LIB  = tasklib$(LIB)
+TASKLIB_DLL  = tasklib$(DLL)
+
+#	ACPLT/OV database dumper
+#	------------------------
+
+DBDUMP_SRC := $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.c) $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.cpp)
+DBDUMP_OBJ  = $(foreach source, $(DBDUMP_SRC), $(basename $(notdir $(source)))$(OBJ))
+DBDUMP_EXE  = ov_dbdump$(EXE)
+
+#	ACPLT/OV database parser
+#	------------------------
+
+DBPARSE_SRC := db_lex.c db_y.c $(wildcard $(OV_SOURCE_DBPARSE_DIR)*.c) $(wildcard $(OV_SOURCE_DBPARSE_DIR)*.cpp)
+DBPARSE_OBJ  = $(foreach source, $(DBPARSE_SRC), $(basename $(notdir $(source)))$(OBJ))
+DBPARSE_EXE  = ov_dbparse$(EXE)
+
 #	Targets and their sources
 #	-------------------------
 
@@ -367,15 +443,18 @@ TARGETS = \
 	$(OV_LIBOVKS_LIB) \
 	$(KSHISTLIB_DLL) \
 	$(KSHISTLIB_LIB) \
+	$(DYNOV_DLL) \
+	$(DYNOV_LIB) \
+	$(TASKLIB_DLL) \
+	$(TASKLIB_LIB) \
+	$(EXAMPLE_DLL) \
+	$(EXAMPLE_LIB) \
+	$(DBDUMP_EXE) \
+	$(DBPARSE_EXE) \
 	$(OV_SERVER_EXE)
 
-EXAMPLE = \
-	$(EXAMPLE_DLL) \
-	$(EXAMPLE_LIB)
-
 ALL = \
-	$(TARGETS) \
-	$(EXAMPLE)
+	$(TARGETS)
 
 SOURCES = \
 	$(OV_CODEGEN_SRC) \
@@ -386,4 +465,8 @@ SOURCES = \
 	$(OV_LIBOVKS_SRC) \
 	$(OV_SERVER_SRC) \
 	$(KSHISTLIB_SRC) \
+	$(DYNOV_SRC) \
+	$(TASKLIB_SRC) \
+	$(DBDUMP_SRC) \
+	$(DBPARSE_SRC) \
 	$(EXAMPLE_SRC)

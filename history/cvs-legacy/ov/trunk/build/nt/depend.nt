@@ -1258,3 +1258,7 @@ ov_expression_scanner.obj: ov_expression_scanner.c \
  ../../include/libov/ov_element.h \
  ov_expression_parser.h
 
+db_lex.obj: db_lex.c ../../source/dbparse/dbparse.h db_y.c
+db_y.obj: db_y.c ../../source/dbparse/dbparse.h
+
+

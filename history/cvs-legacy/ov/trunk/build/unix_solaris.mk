@@ -1,4 +1,4 @@
-#   $Id: unix_solaris.mk,v 1.4 2004-05-19 14:29:01 ansgar Exp $
+#   $Id: unix_solaris.mk,v 1.5 2004-08-04 15:15:50 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -188,6 +188,16 @@ $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_DLL)
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_DLL) $(OV_LIBOV_DLL)
 	$(CXX_LINK)  -o $@ $^ $(C_LIBS) $(LD_LIB) -lsocket
 
+#	ACPLT/OV database dumper
+
+$(DBDUMP_EXE) : $(DBDUMP_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
+#	ACPLT/OV database parser
+
+$(DBPARSE_EXE) : $(DBPASRE_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
 #	ACPLT/OV KsHistory library
 #	--------------------------
 
@@ -200,6 +210,30 @@ $(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ)
 
 kshist.c kshist.h : $(OV_CODEGEN_EXE)
 
+#	ACPLT/OV dynov library
+#	--------------------------
+
+$(DYNOV_LIB) : $(DYNOV_OBJ)
+	$(AR) rv $@ $?
+	$(RANLIB) $@
+
+$(DYNOV_DLL) : $(DYNOV_OBJ)
+	$(LD) -o $@ $^
+
+dynov.c dynov.h : $(OV_CODEGEN_EXE)
+
+#	ACPLT/OV tasklib library
+#	--------------------------
+
+$(TASKLIB_LIB) : $(TASKLIB_OBJ)
+	$(AR) rv $@ $?
+	$(RANLIB) $@
+
+$(TASKLIB_DLL) : $(TASKLIB_OBJ)
+	$(LD) -o $@ $^
+
+tasklib.c tasklib.h : $(OV_CODEGEN_EXE)
+
 #	ACPLT/OV example library
 #	------------------------
 
@@ -208,7 +242,7 @@ $(EXAMPLE_LIB) : $(EXAMPLE_OBJ)
 	$(RANLIB) $@
 
 $(EXAMPLE_DLL) : $(EXAMPLE_OBJ)
-	$(LD) -o $@ $^ 
+	$(LD) -o $@ $^
 
 example.c example.h : $(OV_CODEGEN_EXE)
 
@@ -225,8 +259,8 @@ install : all
 
 clean :
 	@echo Cleaning up...
-	@rm -f core *.c *.h *$(LIB) *$(DLL) *$(OBJ) $(OV_CODEGEN_EXE) \
-		$(OV_DBUTIL_EXE) $(OV_DBDUMP_EXE) $(OV_DBPARSE_EXE) $(OV_SERVER_EXE) $(OV_TEST_EXE)
+	@rm -f core *.c *.h *$(LIB) *$(DLL) *$(OBJ) $(OV_CODEGEN_EXE) $(DBDUMP_EXE) $(DBPARSE_EXE) \
+		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE)
 	@echo Done.
 
 #	Include dependencies

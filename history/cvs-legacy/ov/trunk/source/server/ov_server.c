@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.14 2003-11-07 09:33:00 ansgar Exp $
+*   $Id: ov_server.c,v 1.15 2004-08-04 15:13:19 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -199,7 +199,6 @@ int main(int argc, char **argv) {
 	*/
 
 	OV_STRING	        filename = "database.ovd";
-	OV_STRING	        backupfilename = NULL;
 	OV_STRING	        servername = NULL;
 	OV_STRING	        password = NULL;
         OV_STRING               libraries[16];
@@ -219,6 +218,7 @@ int main(int argc, char **argv) {
 
 
 	ov_backup = FALSE;
+	db_backup_filename = NULL;
 	libcount = 0;
 	/*
 	*	if we are debugging, log to stderr (if not
@@ -248,7 +248,7 @@ int main(int argc, char **argv) {
 		else if(!strcmp(argv[i], "-b") || !strcmp(argv[i], "--backup")) {
 			i++;
 			if(i<argc) {
-				backupfilename = argv[i];
+				db_backup_filename = argv[i];
 			} else {
 				goto HELP;
 			}
@@ -446,16 +446,16 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 #else
 	result = ov_database_map(filename);
 #endif
-	if (Ov_Fail(result) && backupfilename) {
+	if (Ov_Fail(result) && db_backup_filename) {
 MAPBACKUP:
 		ov_backup = TRUE;
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 		ov_result_getresulttext(result), result);
-		ov_logfile_info("Mapping backup-database \"%s\"...", backupfilename);
+		ov_logfile_info("Mapping backup-database \"%s\"...", db_backup_filename);
 #ifdef OV_CATCH_EXCEPTIONS
-		result = ov_supervised_database_map(backupfilename);
+		result = ov_supervised_database_map(db_backup_filename);
 #else
-		result = ov_database_map(backupfilename);
+		result = ov_database_map(db_backup_filename);
 #endif
 	}
 	if(Ov_Fail(result)) {
@@ -476,7 +476,7 @@ ERRORMSG:
 		result = ov_database_startup();
 #endif
 		if(Ov_Fail(result)) {
-			if ((!ov_backup) && (backupfilename)) goto MAPBACKUP;
+			if ((!ov_backup) && (db_backup_filename)) goto MAPBACKUP;
 			goto ERRORMSG;
 		}
 		ov_logfile_info("Database started up.");
@@ -516,7 +516,7 @@ ERRORMSG:
 #endif
 		ov_ksserver_stop();
 		ov_logfile_info("Server stopped.");
-		if (Ov_Fail(result) && (!ov_backup) && backupfilename) {
+		if (Ov_Fail(result) && (!ov_backup) && db_backup_filename) {
 			ov_ksserver_delete();
 			goto MAPBACKUP;
 		}

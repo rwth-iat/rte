@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.13 2003-11-07 09:33:00 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.14 2004-08-04 15:14:12 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -82,6 +82,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 	{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
 	{ "server_configuration",			NULL,	ov_vendortree_getserverconfiguration, ov_vendortree_setserverconfiguration },
 	{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
+	{ "write_db_backup",		NULL,	ov_vendortree_writebackup, NULL },
 	{ "server_password",			NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
 	{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset }
 };
@@ -916,6 +917,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getbackup(
 	return OV_ERR_OK;
 }
 /*	----------------------------------------------------------------------	*/
+
+/*
+*	Write db backup
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_writebackup(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	return ov_database_write(db_backup_filename);
+}/*	----------------------------------------------------------------------	*/
 
 /*
 *	Set serverpassword

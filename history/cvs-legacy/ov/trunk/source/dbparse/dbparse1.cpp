@@ -2601,18 +2601,18 @@ int main(int argc, char **argv)
 
 	if (argc < 2) {
 		cout << "Error: Missing parameter \"//host/server\"." << endl
-			 << "Usage: dbparse //host/server [-finput_file]" << endl
+			 << "Usage: " << argv[0] << " //host/server [-finput_file]" << endl
 			 << "[-lload_option[-load_option][-..]]" << endl
 			 << "[-wlib_wait_time]" << endl
 			 << "[-v]" << endl
 			 << "[-a]" << endl
-			 << endl << "For more help type \"dbparse -?\"" << endl;
+			 << endl << "For more help type \"" << argv[0] << " -?\"" << endl;
 		return -1;
 	}
 
 	// print extended usage info
 	if ((argc == 2 && (strcmp(argv[1], "-?") == 0))) {							// print help
-		cout << "Usage: dbparse //host/server [-finput_file]" << endl
+		cout << "Usage: " << argv[0] << " //host/server [-finput_file]" << endl
 			 << "[-lload_option[-load_option][-..]]" << endl
 			 << "[-wlib_wait_time]" << endl
 			 << "[-v]" << endl

@@ -19,6 +19,15 @@ codegen.obj: ../../source/codegen/ov_codegen.c \
  ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h
 
+builder.obj: ../../source/builder/ov_builder.c \
+ ../../source/builder/ov_builder.h \
+ ../../source/builder/../codegen/ov_codegen.h \
+ ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
+ ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
+ ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
+ ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_logfile.h
+
 ov.obj: ov.c ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
  ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
@@ -29,6 +38,7 @@ ov.obj: ov.c ov.h ../../include/libov/ov_library.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
  ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
@@ -44,11 +54,12 @@ associat.obj: ../../source/libov/ov_association.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 childrel.obj: ../../source/libov/ov_childrelationship.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
@@ -60,11 +71,12 @@ childrel.obj: ../../source/libov/ov_childrelationship.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 class.obj: ../../source/libov/ov_class.c \
  ../../include/libov/ov_class.h ../../include/libov/ov_ov.h \
@@ -76,12 +88,13 @@ class.obj: ../../source/libov/ov_class.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h ../../include/libov/ov_object.h \
- ../../include/libov/ov_scheduler.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
+ ../../include/libov/ov_object.h ../../include/libov/ov_scheduler.h
 
 construc.obj: ../../source/libov/ov_construction.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
@@ -93,11 +106,12 @@ construc.obj: ../../source/libov/ov_construction.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 containm.obj: ../../source/libov/ov_containment.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
@@ -109,11 +123,12 @@ containm.obj: ../../source/libov/ov_containment.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 database.obj: ../../source/libov/ov_database.c \
  ../../include/libov/ov_database.h ov.h \
@@ -126,11 +141,13 @@ database.obj: ../../source/libov/ov_database.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_object.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h ../../../../libmpm/mp_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_object.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
+ ../../../libmpm/mp_malloc.h
 
 debug.obj: ../../source/libov/ov_debug.c \
  ../../include/libov/ov_debug.h ../../include/libov/ov_ov.h \
@@ -149,11 +166,11 @@ element.obj: ../../source/libov/ov_element.c \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 embedmen.obj: ../../source/libov/ov_embedment.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
@@ -165,11 +182,12 @@ embedmen.obj: ../../source/libov/ov_embedment.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 inherita.obj: ../../source/libov/ov_inheritance.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
@@ -181,11 +199,12 @@ inherita.obj: ../../source/libov/ov_inheritance.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 instanti.obj: ../../source/libov/ov_instantiation.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
@@ -197,11 +216,12 @@ instanti.obj: ../../source/libov/ov_instantiation.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 library.obj: ../../source/libov/ov_library.c \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
@@ -213,11 +233,12 @@ library.obj: ../../source/libov/ov_library.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 logfile.obj: ../../source/libov/ov_logfile.c \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_ov.h \
@@ -230,6 +251,7 @@ logfile.obj: ../../source/libov/ov_logfile.c \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -254,9 +276,9 @@ memstack.obj: ../../source/libov/ov_memstack.c \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h
+ ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h
 
 object.obj: ../../source/libov/ov_object.c \
  ../../include/libov/ov_object.h ov.h ../../include/libov/ov_library.h \
@@ -269,11 +291,11 @@ object.obj: ../../source/libov/ov_object.c \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_scheduler.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_scheduler.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 operatio.obj: ../../source/libov/ov_operation.c \
  ../../include/libov/ov_operation.h ../../include/libov/ov_ov.h \
@@ -285,11 +307,12 @@ operatio.obj: ../../source/libov/ov_operation.c \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 parentre.obj: ../../source/libov/ov_parentrelationship.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
@@ -301,11 +324,12 @@ parentre.obj: ../../source/libov/ov_parentrelationship.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 part.obj: ../../source/libov/ov_part.c ../../include/libov/ov_part.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
@@ -317,11 +341,12 @@ part.obj: ../../source/libov/ov_part.c ../../include/libov/ov_part.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 path.obj: ../../source/libov/ov_path.c ../../include/libov/ov_path.h \
  ov.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
@@ -333,11 +358,12 @@ path.obj: ../../source/libov/ov_path.c ../../include/libov/ov_path.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_malloc.h
 
 result.obj: ../../source/libov/ov_result.c \
  ../../include/libov/ov_result.h ov.h ../../include/libov/ov_library.h \
@@ -349,7 +375,8 @@ result.obj: ../../source/libov/ov_result.c \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h
 
 schedule.obj: ../../source/libov/ov_scheduler.c \
  ../../include/libov/ov_scheduler.h ov.h \
@@ -362,7 +389,8 @@ schedule.obj: ../../source/libov/ov_scheduler.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -379,6 +407,7 @@ string.obj: ../../source/libov/ov_string.c \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
  ../../include/libov/ov_memstack.h
 
@@ -392,7 +421,8 @@ structur.obj: ../../source/libov/ov_structure.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -415,7 +445,9 @@ time.obj: ../../source/libov/ov_time.c ../../include/libov/ov_time.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h
 
 variable.obj: ../../source/libov/ov_variable.c \
  ../../include/libov/ov_variable.h ../../include/libov/ov_ov.h \
@@ -427,11 +459,12 @@ variable.obj: ../../source/libov/ov_variable.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 
 vector.obj: ../../source/libov/ov_vector.c \
  ../../include/libov/ov_vector.h ../../include/libov/ov_ov.h \
@@ -445,6 +478,7 @@ vector.obj: ../../source/libov/ov_vector.c \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
@@ -460,11 +494,12 @@ vendortr.obj: ../../source/libov/ov_vendortree.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
- ../../include/libov/ov_path.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h ../../include/libov/ov_path.h
 
 dbutil.obj: ../../source/dbutil/ov_dbutil.c \
  ../../include/libov/ov_database.h ov.h \
@@ -477,8 +512,9 @@ dbutil.obj: ../../source/dbutil/ov_dbutil.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_result.h
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_result.h
 
 avticket.obj: ../../../ks/src/avticket.cpp \
  ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
@@ -707,11 +743,10 @@ ksserver.obj: ../../source/libovks/ov_ksserver.c \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_object.h \
- ../../include/libov/ov_scheduler.h \
+ ../../include/libov/ov_scheduler.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_malloc.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_malloc.h \
  ../../../plt/include/plt/priorityqueue_impl.h \
  ../../../plt/include/plt/container_impl.h
 
@@ -1125,7 +1160,262 @@ server.obj: ../../source/server/ov_server.c \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
  ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_result.h
+ ../../include/libov/ov_result.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_malloc.h
+
+kshist.obj: kshist.c kshist.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
+ ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
+ ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
+ ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+historyt.obj: \
+ ../../source/kshist/historytrackcontainment.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+istimetr.obj: ../../source/kshist/istimetrackof.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kshistor.obj: ../../source/kshist/kshistoryro.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kssimple.obj: ../../source/kshist/kssimplehistoryeo.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kssimple.obj: ../../source/kshist/kssimplehistoryro.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kssimple.obj: ../../source/kshist/kssimplehistorytrack.c \
+ kshist.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kssimple.obj: ../../source/kshist/kssimplemsgtrack.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kssimple.obj: ../../source/kshist/kssimplesingletrack.c \
+ kshist.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kssimple.obj: ../../source/kshist/kssimplestatetrack.c \
+ kshist.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kssimple.obj: ../../source/kshist/kssimpletimetrack.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+kssimple.obj: ../../source/kshist/kssimplevaluetrack.c \
+ kshist.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+ovmsglog.obj: ../../source/kshist/ovmsglog.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+
+represen.obj: ../../source/kshist/representation.c kshist.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/kshist/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 
 example.obj: example.c example.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
@@ -1137,10 +1427,10 @@ example.obj: example.c example.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../source/example/example.ovt \
- ../../include/libovks/ov_ksclient.h \
- ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libov/ov_element.h \
  ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
+ ../../include/libovks/ov_ksclient_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
@@ -1157,10 +1447,10 @@ example_.obj: ../../source/example/example_fnc.c example.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../source/example/example.ovt \
- ../../include/libovks/ov_ksclient.h \
- ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libov/ov_element.h \
  ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
+ ../../include/libovks/ov_ksclient_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
@@ -1178,10 +1468,10 @@ example_.obj: ../../source/example/example_getvarclient.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../source/example/example.ovt \
- ../../include/libovks/ov_ksclient.h \
- ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libov/ov_element.h \
  ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
+ ../../include/libovks/ov_ksclient_xdr.h \
  ../../source/example/ov_expression.h \
  ../../include/libov/ov_scheduler.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_result.h ../../include/libov/ov_path.h \
@@ -1201,10 +1491,10 @@ example_.obj: ../../source/example/example_testassoc.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../source/example/example.ovt \
- ../../include/libovks/ov_ksclient.h \
- ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libov/ov_element.h \
  ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
+ ../../include/libovks/ov_ksclient_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
@@ -1222,10 +1512,10 @@ example_.obj: ../../source/example/example_testclass.c \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../source/example/example.ovt \
- ../../include/libovks/ov_ksclient.h \
- ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libov/ov_element.h \
  ../../include/libovks/ov_ksserver_xdr.h \
+ ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
+ ../../include/libovks/ov_ksclient_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
@@ -1243,6 +1533,7 @@ expressi.obj: ../../source/example/ov_expression_parser.c \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -1260,5 +1551,6 @@ expressi.obj: ../../source/example/ov_expression_scanner.c \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
  ../../include/libov/ov_element.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../source/example/ov_expression_parser.h
 

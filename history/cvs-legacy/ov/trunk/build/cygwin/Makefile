@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.6 2001-07-20 07:21:34 ansgar Exp $
+#   $Id: Makefile,v 1.7 2004-08-04 15:15:58 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -7,7 +7,7 @@
 #   All rights reserved.
 #   
 #   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>
-#   
+#
 #   This file is part of the ACPLT/OV Package which is licensed as open
 #   source under the Artistic License; you can use, redistribute and/or
 #   modify it under the terms of that license.
@@ -86,10 +86,30 @@ CXX_DLLWRAP		= $(DLLWRAP) --driver-name g++
 WINDRES			= windres --preprocessor $(CPP_PATH)cpp --define OV_USE_WINDRES \
 				  $(foreach sourcedir, $(SOURCE_DIRS) $(OV_INCLUDE_DIR), --include-dir $(sourcedir))
 
+#	C-Includes
+#	----------
+
+C_INCLUDES =
+
 #   Include generic part
 #   --------------------
 
 include ../generic.mk
+
+#	all defines and includes together
+#	---------------------------------
+
+DEFINES	 = $(LIBRPC_DEFINES) $(ACPLTKS_DEFINES) $(OV_DEFINES)
+INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
+
+#	presupposed libraries
+#	---------------------
+
+LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
+
+LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(LIB)
+
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
 
 #	Targets
 #	-------
@@ -148,6 +168,15 @@ $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
+
+#	oncrpc library for ACPLT/KS integration
+$(ONCRPC_LIB) : $(ONCRPC_DLL)
+	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
+
+$(ONCRPC_DLL) : $(ONCRPC_OBJ)
+	@echo EXPORTS > $(basename $@).def
+	@nm $(filter %$(OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 #	ACPLT/OV library for ACPLT/KS integration
 

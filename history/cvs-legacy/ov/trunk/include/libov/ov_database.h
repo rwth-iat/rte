@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.10 2004-05-19 14:25:34 ansgar Exp $
+*   $Id: ov_database.h,v 1.11 2004-08-04 15:15:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -74,7 +74,7 @@ extern OV_DATABASE_INFO OV_MEMSPEC	*pdbmem;
 #endif
 
 /*
-*	Global variable: database pointer
+*	Global variable: database pointer and database backup file name
 */
 #ifdef OV_COMPILE_LIBOV
 #define OV_EXTERN OV_DLLVAREXPORT
@@ -82,6 +82,7 @@ extern OV_DATABASE_INFO OV_MEMSPEC	*pdbmem;
 #define OV_EXTERN OV_DLLVARIMPORT
 #endif
 OV_EXTERN OV_DATABASE_INFO OV_MEMSPEC	*pdb;
+OV_EXTERN OV_STRING db_backup_filename;
 #undef OV_EXTERN
 
 /*

@@ -1025,15 +1025,15 @@ int main(int argc, char **argv)						// command line arguments
 
 	if (argc < 2) {
 		cout << "Error: Missing parameter \"//host/server\"." << endl
-			 << "Usage: dbdump //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
+			 << "Usage: " << argv[0] << " //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
 			 << "[-Ffrom_creation_time] [-Tto_creation_time] [-Ccomment] [-y]" << endl
 			 << "[-Aaccess[-access][-..]] [-Ssemantic_flags] [-Ddump_option[-dump_option][-..]]" << endl
-			 << endl << "For more help type \"dbdump -?\"" << endl;
+			 << endl << "For more help type \"" << argv[0] << " -?\"" << endl;
 		return -1;
 	}
 
 	if ((argc == 2 && (strcmp(argv[1], "-?") == 0))) {							// print help
-		cout << "Usage: dbdump //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
+		cout << "Usage: " << argv[0] << " //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
 			 << "[-Ffrom_creation_time] [-Tto_creation_time] [-Ccomment] [-y]" << endl
 			 << "[-Aaccess[-access][-..]] [-Ssemantic_flags] [-Ddump_option[-dump_option][-..]]" << endl
 			 << endl
