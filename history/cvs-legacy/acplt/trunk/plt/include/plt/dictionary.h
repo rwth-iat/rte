@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DICTIONARY_INCLUDED
 #define PLT_DICTIONARY_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.3 1997-03-12 16:19:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.4 1997-04-01 12:29:36 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -170,6 +170,7 @@ public:
 class PltAssoc_
 {
 public:
+    virtual ~PltAssoc_() { }
     virtual const void * key() const = 0;
 };
 
