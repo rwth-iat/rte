@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.28 1999-01-15 15:00:13 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.29 1999-02-22 15:13:54 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -535,50 +535,70 @@ KsManager::startServer()
         // create transport (if the inherited startServer() method had
         // no problems). This transport (udp) is used especially by
         // servers on the same host to (re-) register with the manager.
+	// Note: if the programmer wants to use its very own transports when
+	// the connection manager is in use, she/he can just create it and
+	// let the _udp_transport member variable point to it. In this case
+	// we won't create a socket and a suitable transport here.
         //
-#if !PLT_USE_XTI
-        int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-#else
-        int sock = t_open((const char *) getNetworkTransportDevice("udp"),
-	                  O_RDWR, (struct t_info *) 0);
+#if PLT_USE_BUFFERED_STREAMS
+	if ( !_udp_transport ) {
+	    //
+	    // Okay, let's create a socket and the corresponding transport
+	    // only if the manager writer hasn't done so.
+	    //
 #endif
-        if ( sock >= 0 ) {
-            struct sockaddr_in my_addr;
+#if !PLT_USE_XTI
+	    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+#else
+	    int sock = t_open((const char *) getNetworkTransportDevice("udp"),
+			      O_RDWR, (struct t_info *) 0);
+#endif
+	    if ( sock >= 0 ) {
+		struct sockaddr_in my_addr;
             
-            memset(&my_addr, 0, sizeof(my_addr));
-            my_addr.sin_family      = AF_INET;
-            my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-            my_addr.sin_port        = htons(_sock_port);
+		memset(&my_addr, 0, sizeof(my_addr));
+		my_addr.sin_family      = AF_INET;
+		my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+		my_addr.sin_port        = htons(_sock_port);
             
 #if PLT_USE_XTI
-            struct t_bind req;
+		struct t_bind req;
 
-            req.addr.maxlen = sizeof(my_addr);
-            req.addr.len    = sizeof(my_addr);
-            req.addr.buf    = (char *) &my_addr;
-            req.qlen        = 5;
+		req.addr.maxlen = sizeof(my_addr);
+		req.addr.len    = sizeof(my_addr);
+		req.addr.buf    = (char *) &my_addr;
+		req.qlen        = 5;
 
-            if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
+		if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
 #else
-            if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
+		if ( bind(sock, (struct sockaddr *) &my_addr, 
+			  sizeof(my_addr)) < 0 ) {
 #endif
-                // Failed.
+		    //
+		    // Failed to bind the socket. So close the socket and
+		    // bail out with an error message.
+		    //
 #if PLT_SYSTEM_NT
-                closesocket(sock);
+		    closesocket(sock);
 #elif PLT_USE_XTI
-                t_close(sock);
+		    t_close(sock);
 #else
-                close(sock);
+		    close(sock);
 #endif
-                PltLog::Error("KsManager::startServer(): could not bind the UDP socket.");
-            } else {
+		    PltLog::Error("KsManager::startServer(): "
+				  "could not bind the UDP socket.");
+		} else {
 #if !PLT_USE_BUFFERED_STREAMS
-                _udp_transport = svcudp_create(sock);
+		    _udp_transport = svcudp_create(sock);
 #else
-		_udp_transport = new KssUDPXDRConnection(sock, 15/* secs */);
+		    _udp_transport = new KssUDPXDRConnection(
+			sock, 15/* secs */);
 #endif
-            }
-        }
+		}
+	    }
+#if PLT_USE_BUFFERED_STREAMS
+	}
+#endif
 
         // TODO: send/receive buff sz
         if ( _udp_transport ) {
@@ -601,6 +621,7 @@ KsManager::startServer()
 		_is_ok = true;
 	    }
 #else
+	    _udp_transport->setAttentionPartner(&_attention_dispatcher);
 	    if ( _cnx_manager->addConnection(*_udp_transport) ) {
 		_is_ok = true;
 	    } else {
