@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.5 1999-08-30 15:23:27 dirk Exp $
+*   $Id: ov_association.h,v 1.6 1999-09-15 10:48:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -103,7 +103,7 @@ typedef struct OV_ASSOCIATION_DEF OV_ASSOCIATION_DEF;
 *	Declare the link function of an association
 */
 #define OV_DECL_LINK(assoc) 										\
-	OV_RESULT OV_DLLFNCEXPORT assoc##_link(							\
+	OV_DLLFNCEXPORT OV_RESULT assoc##_link(							\
 		const OV_PPT_##assoc	pparent,							\
 		const OV_CPT_##assoc	pchild,								\
 		const OV_PLACEMENT_HINT	parenthint,							\
@@ -116,7 +116,7 @@ typedef struct OV_ASSOCIATION_DEF OV_ASSOCIATION_DEF;
 *	Declare the unlink function of an association
 */
 #define OV_DECL_UNLINK(assoc) 										\
-	void OV_DLLFNCEXPORT assoc##_unlink(							\
+	OV_DLLFNCEXPORT void assoc##_unlink(							\
 		const OV_PPT_##assoc	pparent,							\
 		const OV_CPT_##assoc	pchild								\
 	)
@@ -125,7 +125,7 @@ typedef struct OV_ASSOCIATION_DEF OV_ASSOCIATION_DEF;
 *	Declare the getaccess function of an association
 */
 #define OV_DECL_GETACCESS(assoc)									\
-	OV_ACCESS OV_DLLFNCEXPORT assoc##_getaccess(					\
+	OV_DLLFNCEXPORT OV_ACCESS assoc##_getaccess(					\
 		const OV_PPT_##assoc	pparent,							\
 		const OV_CPT_##assoc	pchild,								\
 		const OV_TICKET			*pticket							\
@@ -374,7 +374,7 @@ OV_BOOL ov_association_canunload(
 /*
 *	Search for child with a given identifier in a 1:n association
 */
-OV_INSTPTR_ov_object OV_DLLFNCEXPORT ov_association_searchchild(
+OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_association_searchchild(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent,
 	const OV_STRING					identifier
@@ -383,7 +383,7 @@ OV_INSTPTR_ov_object OV_DLLFNCEXPORT ov_association_searchchild(
 /*
 *	Get the number of parents of an association
 */
-OV_UINT OV_DLLFNCEXPORT ov_association_getparentcount(
+OV_DLLFNCEXPORT OV_UINT ov_association_getparentcount(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pchild
 );
@@ -391,7 +391,7 @@ OV_UINT OV_DLLFNCEXPORT ov_association_getparentcount(
 /*
 *	Get the number of children of an association
 */
-OV_UINT OV_DLLFNCEXPORT ov_association_getchildcount(
+OV_DLLFNCEXPORT OV_UINT ov_association_getchildcount(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent
 );
@@ -399,7 +399,7 @@ OV_UINT OV_DLLFNCEXPORT ov_association_getchildcount(
 /*
 *	Link a parent and a child object
 */
-OV_RESULT OV_DLLFNCEXPORT ov_association_link(
+OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent,
 	const OV_INSTPTR_ov_object		pchild,
@@ -412,7 +412,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 /*
 *	Unlink a parent and a child object
 */
-void OV_DLLFNCEXPORT ov_association_unlink(
+OV_DLLFNCEXPORT void ov_association_unlink(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent,
 	const OV_INSTPTR_ov_object		pchild
@@ -421,7 +421,7 @@ void OV_DLLFNCEXPORT ov_association_unlink(
 /*
 *	Test if a parent link is used
 */
-OV_BOOL OV_DLLFNCEXPORT ov_association_isusedparentlink(
+OV_DLLFNCEXPORT OV_BOOL ov_association_isusedparentlink(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent
 );
@@ -429,7 +429,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_association_isusedparentlink(
 /*
 *	Test if an child link is used
 */
-OV_BOOL OV_DLLFNCEXPORT ov_association_isusedchildlink(
+OV_DLLFNCEXPORT OV_BOOL ov_association_isusedchildlink(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pchild
 );

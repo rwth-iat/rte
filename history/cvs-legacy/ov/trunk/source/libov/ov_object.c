@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.15 1999-08-31 07:42:29 dirk Exp $
+*   $Id: ov_object.c,v 1.16 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -60,7 +60,7 @@
 /*
 *	Default constructor of an object
 */
-OV_RESULT OV_DLLFNCEXPORT ov_object_constructor(
+OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
 	OV_INSTPTR_ov_object 		pobj
 ) {
 	/*
@@ -497,7 +497,7 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 *	a variable (value, state and timestamp, compare ACPLT/KS)
 *	NOTE: call ov_memstack_lock/unlock() outside of this function!
 */
-OV_RESULT OV_DLLFNCEXPORT ov_object_getvar(
+OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 	OV_INSTPTR_ov_object 	pobj, 
 	const OV_ELEMENT		*pelem,
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops
@@ -678,7 +678,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_getvar(
 *	Default method for writing the current properties of
 *	a variable (value, state and timestamp, compare ACPLT/KS)
 */
-OV_RESULT OV_DLLFNCEXPORT ov_object_setvar(
+OV_DLLFNCEXPORT OV_RESULT ov_object_setvar(
 	OV_INSTPTR_ov_object 		pobj,
 	const OV_ELEMENT			*pelem,
 	const OV_VAR_CURRENT_PROPS	*pvarcurrprops
@@ -799,7 +799,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_setvar(
 /*
 *	Test, if an object owns links (except to the parent domain and class)
 */
-OV_BOOL OV_DLLFNCEXPORT ov_object_haslinks(
+OV_DLLFNCEXPORT OV_BOOL ov_object_haslinks(
 	OV_INSTPTR_ov_object 		pobj
 ) {
 	/*
@@ -853,7 +853,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_object_haslinks(
 /*
 *	Test, if a string is a valid identifier for an object
 */
-OV_BOOL OV_DLLFNCEXPORT ov_object_identifierok(
+OV_DLLFNCEXPORT OV_BOOL ov_object_identifierok(
 	OV_STRING					identifier
 ) {
 	/*

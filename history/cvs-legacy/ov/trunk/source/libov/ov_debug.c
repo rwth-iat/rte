@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_debug.c,v 1.1 1999-07-19 15:02:12 dirk Exp $
+*   $Id: ov_debug.c,v 1.2 1999-09-15 10:48:21 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -36,7 +36,7 @@
 /*
 *	Return filename from a path
 */
-OV_STRING OV_DLLFNCEXPORT ov_debug_filename(
+OV_DLLFNCEXPORT OV_STRING ov_debug_filename(
 	OV_STRING	path
 ) {
 	/*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_malloc.c,v 1.1 1999-07-19 15:02:13 dirk Exp $
+*   $Id: ov_malloc.c,v 1.2 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -52,7 +52,7 @@
 /*
 *	Allocate memory on the heap
 */
-OV_POINTER OV_DLLFNCEXPORT ov_malloc(
+OV_DLLFNCEXPORT OV_POINTER ov_malloc(
 	OV_UINT		size
 ) {
 	return malloc(size);
@@ -63,7 +63,7 @@ OV_POINTER OV_DLLFNCEXPORT ov_malloc(
 /*
 *	Free memory allocated in the heap
 */
-void OV_DLLFNCEXPORT ov_free(
+OV_DLLFNCEXPORT void ov_free(
 	OV_POINTER	ptr
 ) {
 	free(ptr);
@@ -74,7 +74,7 @@ void OV_DLLFNCEXPORT ov_free(
 /*
 *	Reallocate memory on the heap
 */
-OV_POINTER OV_DLLFNCEXPORT ov_realloc(
+OV_DLLFNCEXPORT OV_POINTER ov_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 ) {
@@ -86,7 +86,7 @@ OV_POINTER OV_DLLFNCEXPORT ov_realloc(
 /*
 *	Duplicate a string on the heap using malloc
 */
-OV_STRING ov_strdup(
+OV_DLLFNCEXPORT OV_STRING ov_strdup(
 	OV_STRING	string
 ) {
 	/*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.2 1999-09-06 07:46:30 dirk Exp $
+*   $Id: ov_config.h,v 1.3 1999-09-15 10:48:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -148,29 +148,25 @@
 #define OV_DYNAMIC_DATABASE		1
 #define OV_STATIC_LIBRARIES		0
 #define OV_DYNAMIC_LIBRARIES	1
-#define OV_DLLFLNSUFFIX	".so"
+#define OV_DLLFLNSUFFIX			".so"
 #define OV_DLLFNCEXPORT
 #define OV_DLLVAREXPORT
-#define OV_DLLVARIMPORT extern
+#define OV_DLLVARIMPORT 		extern
 #endif
 
 #if OV_SYSTEM_NT
 #define OV_DYNAMIC_DATABASE		0
 #define OV_STATIC_LIBRARIES		0
 #define OV_DYNAMIC_LIBRARIES	1
-#define OV_DLLFLNSUFFIX	".dll"
-#if OV_COMPILER_CYGWIN
-#define OV_DLLFNCEXPORT __declspec(dllexport)
-#define OV_DLLVAREXPORT __declspec(dllexport)
-#define OV_DLLVARIMPORT extern __declspec(dllimport)
-#elif OV_COMPILER_BORLAND
-#define OV_DLLFNCEXPORT _export
-#define OV_DLLVAREXPORT __declspec(dllexport)
-#define OV_DLLVARIMPORT extern __declspec(dllimport)
-#elif OV_COMPILER_MSVC
-#define OV_DLLFNCEXPORT _export
-#define OV_DLLVAREXPORT
-#define OV_DLLVARIMPORT _declspec(dllimport)
+#define OV_DLLFLNSUFFIX			".dll"
+#if OV_COMPILER_MSVC
+#define OV_DLLFNCEXPORT 		_export
+#define OV_DLLVAREXPORT			
+#define OV_DLLVARIMPORT 		_declspec(dllimport)
+#else
+#define OV_DLLFNCEXPORT 		__declspec(dllexport)
+#define OV_DLLVAREXPORT 		__declspec(dllexport)
+#define OV_DLLVARIMPORT 		extern __declspec(dllimport)
 #endif
 #endif
 
@@ -178,20 +174,20 @@
 #define OV_DYNAMIC_DATABASE		0
 #define OV_STATIC_LIBRARIES		1
 #define OV_DYNAMIC_LIBRARIES	0
-#define OV_DLLFLNSUFFIX	""
+#define OV_DLLFLNSUFFIX			""
 #define OV_DLLFNCEXPORT
 #define OV_DLLVAREXPORT
-#define OV_DLLVARIMPORT extern
+#define OV_DLLVARIMPORT 		extern
 #endif
 
 #if OV_SYSTEM_MC164 || OV_SYSTEM_RMOS
 #define OV_DYNAMIC_DATABASE		0
 #define OV_STATIC_LIBRARIES		1
 #define OV_DYNAMIC_LIBRARIES	0
-#define OV_DLLFLNSUFFIX	""
+#define OV_DLLFLNSUFFIX			""
 #define OV_DLLFNCEXPORT
 #define OV_DLLVAREXPORT
-#define OV_DLLVARIMPORT extern
+#define OV_DLLVARIMPORT 		extern
 #endif
 
 /*

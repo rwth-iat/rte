@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.3 1999-08-18 13:11:24 dirk Exp $
+*   $Id: ov_ksserver.h,v 1.4 1999-09-15 10:48:16 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -45,7 +45,7 @@ extern "C" {
 *	------------------
 *	Signal hander function prototype for server shutdown
 */
-typedef void OV_DLLFNCEXPORT OV_FNC_SIGHANDLER(
+typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
 	int signal
 );
 
@@ -53,7 +53,7 @@ typedef void OV_DLLFNCEXPORT OV_FNC_SIGHANDLER(
 *	Terminate an ACPLT/KS server (RMOS only)
 */
 #if OV_SYSTEM_RMOS
-OV_RESULT OV_DLLFNCEXPORT ov_ksserver_terminate(
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_terminate(
 	OV_UINT			taskid
 );
 #endif
@@ -61,7 +61,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_terminate(
 /*
 *	Create the ACPLT/KS server for ACPLT/OV
 */
-OV_RESULT OV_DLLFNCEXPORT ov_ksserver_create(
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 	OV_STRING			servername,
 	int					port,
 	OV_FNC_SIGHANDLER	*sighandler
@@ -70,42 +70,42 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_create(
 /*
 *	Delete the ACPLT/KS server for ACPLKT/OV
 */
-void OV_DLLFNCEXPORT ov_ksserver_delete(void);
+OV_DLLFNCEXPORT void ov_ksserver_delete(void);
 
 /*
 *	Start the ACPLT/KS server for ACPLT/OV
 */
-void OV_DLLFNCEXPORT ov_ksserver_start(void);
+OV_DLLFNCEXPORT void ov_ksserver_start(void);
 
 /*
 *	Run the ACPLT/KS server for ACPLKT/OV
 */
-void OV_DLLFNCEXPORT ov_ksserver_run(void);
+OV_DLLFNCEXPORT void ov_ksserver_run(void);
 
 /*
 *	Stop the ACPLT/KS server for ACPLKT/OV
 */
-void OV_DLLFNCEXPORT ov_ksserver_stop(void);
+OV_DLLFNCEXPORT void ov_ksserver_stop(void);
 
 /*
 *	Tell the server to shut down
 */
-void OV_DLLFNCEXPORT ov_ksserver_downserver(void);
+OV_DLLFNCEXPORT void ov_ksserver_downserver(void);
 
 /*
 *	Test if the ACPLT/KS server for ACPLKT/OV is going down
 */
-OV_BOOL OV_DLLFNCEXPORT ov_ksserver_isgoingdown(void);
+OV_DLLFNCEXPORT OV_BOOL ov_ksserver_isgoingdown(void);
 
 /*
 *	Test the ACPLT/KS server for ACPLKT/OV has pending I/O events
 */
-OV_BOOL OV_DLLFNCEXPORT ov_ksserver_haspendingevents(void);
+OV_DLLFNCEXPORT OV_BOOL ov_ksserver_haspendingevents(void);
 
 /*
 *	Serve pending I/O events of the ACPLT/KS server for ACPLKT/OV
 */
-OV_BOOL OV_DLLFNCEXPORT ov_ksserver_servependingevents(
+OV_DLLFNCEXPORT OV_BOOL ov_ksserver_servependingevents(
 	OV_TIME_SPAN	*ptimeout
 );
 
@@ -123,7 +123,7 @@ void ov_ksserver_dispatch(
 /*
 *	Default signal handler for server shutdown (subroutine)
 */
-void OV_DLLFNCEXPORT ov_ksserver_sighandler(
+OV_DLLFNCEXPORT void ov_ksserver_sighandler(
 	int signal
 );
 

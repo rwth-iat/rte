@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_scheduler.c,v 1.2 1999-08-25 13:15:57 dirk Exp $
+*   $Id: ov_scheduler.c,v 1.3 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -45,7 +45,7 @@ static OV_SCHEDULER_EVENT	*pfirstevent = NULL;
 /*
 *	Register an active object with the scheduler
 */
-OV_RESULT OV_DLLFNCEXPORT ov_scheduler_register(
+OV_DLLFNCEXPORT OV_RESULT ov_scheduler_register(
 	OV_INSTPTR_ov_object	pobj,
 	OV_FNC_EXECUTE			*executefnc
 ) {
@@ -92,7 +92,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_scheduler_register(
 /*
 *	Unregister an active object with the scheduler
 */
-void OV_DLLFNCEXPORT ov_scheduler_unregister(
+OV_DLLFNCEXPORT void ov_scheduler_unregister(
 	OV_INSTPTR_ov_object	pobj
 ) {
 	/*
@@ -136,7 +136,7 @@ void OV_DLLFNCEXPORT ov_scheduler_unregister(
 /*
 *	Set absolute event time of a registered active object
 */
-void OV_DLLFNCEXPORT ov_scheduler_setabseventtime(
+OV_DLLFNCEXPORT void ov_scheduler_setabseventtime(
 	OV_INSTPTR_ov_object	pobj,
 	OV_TIME					*ptime
 ) {
@@ -187,7 +187,7 @@ void OV_DLLFNCEXPORT ov_scheduler_setabseventtime(
 /*
 *	Set relative event time of a registered active object (time span from now on)
 */
-void OV_DLLFNCEXPORT ov_scheduler_setreleventtime(
+OV_DLLFNCEXPORT void ov_scheduler_setreleventtime(
 	OV_INSTPTR_ov_object	pobj,
 	OV_TIME_SPAN			*ptimespan
 ) {
@@ -219,7 +219,7 @@ void OV_DLLFNCEXPORT ov_scheduler_setreleventtime(
 /*
 *	Schedule the pnext event of the event queue if the event is pending
 */
-OV_TIME_SPAN* OV_DLLFNCEXPORT ov_scheduler_schedulenextevent(void) {
+OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_schedulenextevent(void) {
 	/*
 	*	local variables
 	*/

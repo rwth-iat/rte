@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.h,v 1.3 1999-08-28 15:55:49 dirk Exp $
+*   $Id: ov_class.h,v 1.4 1999-09-15 10:48:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -122,7 +122,7 @@ extern "C" {
 *	---------------
 *	Function prototype for function initializing an object
 */
-typedef OV_RESULT OV_DLLFNCEXPORT OV_FNC_INITOBJ(
+typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_INITOBJ(
 	OV_INSTPTR_ov_object	pobj,
 	OV_POINTER				userdata
 );
@@ -160,7 +160,7 @@ OV_BOOL ov_class_canunload(
 /*
 *	Test if a pointer to an instance of a class can be casted to another one
 */
-OV_BOOL OV_DLLFNCEXPORT ov_class_cancastto(
+OV_DLLFNCEXPORT OV_BOOL ov_class_cancastto(
 	const OV_INSTPTR_ov_class	pclassfrom,
 	const OV_INSTPTR_ov_class	pclassto
 );
@@ -168,7 +168,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_class_cancastto(
 /*
 *	Create an instance of the class
 */
-OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
+OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	const OV_INSTPTR_ov_class	pclass,
 	const OV_INSTPTR_ov_domain	pparent,
 	const OV_STRING				identifier,
@@ -182,14 +182,14 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 /*
 *	Delete an instance of the class
 */
-OV_RESULT OV_DLLFNCEXPORT ov_class_deleteobject(
+OV_DLLFNCEXPORT OV_RESULT ov_class_deleteobject(
 	const OV_INSTPTR_ov_object	pobj
 );
 
 /*
 *	Rename an instance of the class
 */
-OV_RESULT OV_DLLFNCEXPORT ov_class_renameobject(
+OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 	const OV_INSTPTR_ov_object	pobj,
 	const OV_INSTPTR_ov_domain	pparent,
 	const OV_STRING				identifier,

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.h,v 1.2 1999-08-10 07:11:48 dirk Exp $
+*   $Id: ov_library.h,v 1.3 1999-09-15 10:48:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -44,7 +44,7 @@
 *	--------------------
 *	Function prototype for opening a library
 */
-typedef struct OV_LIBRARY_DEF* OV_DLLFNCEXPORT OV_FNC_LIBRARY_OPEN(void);
+typedef OV_DLLFNCEXPORT struct OV_LIBRARY_DEF* OV_FNC_LIBRARY_OPEN(void);
 
 /*
 *	OV_FNC_LIBRARY_SETGLOBALVARS:
@@ -90,7 +90,7 @@ extern OV_STATIC_LIBRARY_TABLE static_library_table[];
 *	Macros for building a static library table
 */
 #define Ov_DeclareStaticLibrary(libname)									\
-	OV_LIBRARY_DEF* OV_DLLFNCEXPORT ov_library_open_##libname(void)
+	OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_##libname(void)
 #define Ov_BeginStaticLibraryTable											\
 	OV_STATIC_LIBRARY_TABLE static_library_table[] = {
 #define Ov_DefineStaticLibrary(libname)										\
@@ -144,21 +144,21 @@ OV_INSTPTR_ov_library ov_library_search(
 /*
 *	Open a library which is either a DLL/shared library or statically linked
 */
-OV_LIBRARY_DEF* OV_DLLFNCEXPORT ov_library_open(
+OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 	OV_INSTPTR_ov_library	plib
 );
 
 /*
 *	Close a library file if it is a DLL/shared library
 */
-void OV_DLLFNCEXPORT ov_library_close(
+OV_DLLFNCEXPORT void ov_library_close(
 	OV_INSTPTR_ov_library	plib
 );
 
 /*
 *	Load a library and its definitions into the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_library_load(
+OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	OV_INSTPTR_ov_library	plib,
 	OV_LIBRARY_DEF*			plibdef
 );
@@ -166,7 +166,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_library_load(
 /*
 *	Compare a library with its definition
 */
-OV_RESULT OV_DLLFNCEXPORT ov_library_compare(
+OV_DLLFNCEXPORT OV_RESULT ov_library_compare(
 	OV_INSTPTR_ov_library	plib,
 	OV_LIBRARY_DEF*			plibdef
 );
@@ -174,7 +174,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_library_compare(
 /*
 *	Test if we can unload a library and its definitions from the database
 */
-OV_BOOL OV_DLLFNCEXPORT ov_library_canunload(
+OV_DLLFNCEXPORT OV_BOOL ov_library_canunload(
 	OV_INSTPTR_ov_library	plib
 );
 
@@ -188,12 +188,12 @@ OV_RESULT ov_library_prepare(
 /*
 *	Get environment variable with library path
 */
-OV_STRING OV_DLLFNCEXPORT ov_library_getenv(void);
+OV_DLLFNCEXPORT OV_STRING ov_library_getenv(void);
 
 /*
 *	Set environment variable with library path
 */
-void OV_DLLFNCEXPORT ov_library_setenv(
+OV_DLLFNCEXPORT void ov_library_setenv(
 	OV_STRING path
 );
 

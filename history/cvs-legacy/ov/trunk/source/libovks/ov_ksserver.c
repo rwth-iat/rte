@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.3 1999-08-28 15:55:56 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.4 1999-09-15 10:48:24 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -91,7 +91,7 @@ static OvPltLog		*plog = NULL;
 *	Terminate an ACPLT/KS server (RMOS only)
 */
 #if OV_SYSTEM_RMOS
-OV_RESULT OV_DLLFNCEXPORT ov_ksserver_terminate(
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_terminate(
 	OV_UINT			taskid
 ) {
 	/*
@@ -133,7 +133,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_terminate(
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-OV_RESULT OV_DLLFNCEXPORT ov_ksserver_create(
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 	OV_STRING			servername,
 	int					port,
 	OV_FNC_SIGHANDLER	*sighandler
@@ -185,7 +185,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_create(
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-void OV_DLLFNCEXPORT ov_ksserver_delete(void) {
+OV_DLLFNCEXPORT void ov_ksserver_delete(void) {
 	if(pserver) {
 		/*
 		*	kill the server object
@@ -222,7 +222,7 @@ void OV_DLLFNCEXPORT ov_ksserver_delete(void) {
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-void OV_DLLFNCEXPORT ov_ksserver_start(void) {
+OV_DLLFNCEXPORT void ov_ksserver_start(void) {
 	if(pserver) {
 		ov_vendortree_setstartuptime(NULL);
 		pserver->startServer();
@@ -238,7 +238,7 @@ void OV_DLLFNCEXPORT ov_ksserver_start(void) {
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-void OV_DLLFNCEXPORT ov_ksserver_run(void) {
+OV_DLLFNCEXPORT void ov_ksserver_run(void) {
 	/*
 	*	local variables
 	*/
@@ -278,7 +278,7 @@ void OV_DLLFNCEXPORT ov_ksserver_run(void) {
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-void OV_DLLFNCEXPORT ov_ksserver_stop(void) {
+OV_DLLFNCEXPORT void ov_ksserver_stop(void) {
 	if(pserver) {
 		/*
 		*	stop the server
@@ -296,7 +296,7 @@ void OV_DLLFNCEXPORT ov_ksserver_stop(void) {
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-void OV_DLLFNCEXPORT ov_ksserver_downserver(void) {
+OV_DLLFNCEXPORT void ov_ksserver_downserver(void) {
 	if(pserver) {
 		pserver->downServer();
 	}
@@ -311,7 +311,7 @@ void OV_DLLFNCEXPORT ov_ksserver_downserver(void) {
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-OV_BOOL OV_DLLFNCEXPORT ov_ksserver_isgoingdown(void) {
+OV_DLLFNCEXPORT OV_BOOL ov_ksserver_isgoingdown(void) {
 	if(pserver) {
 		return pserver->isGoingDown();
 	}
@@ -327,7 +327,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_ksserver_isgoingdown(void) {
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-OV_BOOL OV_DLLFNCEXPORT ov_ksserver_haspendingevents(void) {
+OV_DLLFNCEXPORT OV_BOOL ov_ksserver_haspendingevents(void) {
 	if(pserver) {
 		return pserver->hasPendingEvents();
 	}
@@ -343,7 +343,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_ksserver_haspendingevents(void) {
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-OV_BOOL OV_DLLFNCEXPORT ov_ksserver_servependingevents(
+OV_DLLFNCEXPORT OV_BOOL ov_ksserver_servependingevents(
 	OV_TIME_SPAN	*ptimeout
 ) {
 	if(pserver) {
@@ -366,7 +366,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_ksserver_servependingevents(
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-void OV_DLLFNCEXPORT ov_ksserver_sighandler(int) {
+OV_DLLFNCEXPORT void ov_ksserver_sighandler(int) {
 	if(pserver) {
 		pserver->downServer();
 	}

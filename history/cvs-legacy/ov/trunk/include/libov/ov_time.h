@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.h,v 1.2 1999-08-18 13:11:23 dirk Exp $
+*   $Id: ov_time.h,v 1.3 1999-09-15 10:48:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,14 +38,14 @@ extern "C" {
 /*
 *	Get the current system time
 */
-void OV_DLLFNCEXPORT ov_time_gettime(
+OV_DLLFNCEXPORT void ov_time_gettime(
 	OV_TIME				*ptime
 );
 
 /*
 *	Calculate the sum of a time and a time span
 */
-void OV_DLLFNCEXPORT ov_time_add(
+OV_DLLFNCEXPORT void ov_time_add(
 	OV_TIME				*psum,
 	const OV_TIME		*padd1,
 	const OV_TIME_SPAN	*padd2
@@ -54,7 +54,7 @@ void OV_DLLFNCEXPORT ov_time_add(
 /*
 *	Caluculate the difference of two times
 */
-void OV_DLLFNCEXPORT ov_time_diff(
+OV_DLLFNCEXPORT void ov_time_diff(
 	OV_TIME_SPAN		*pdiff,
 	const OV_TIME		*psub1,
 	const OV_TIME		*psub2
@@ -63,7 +63,7 @@ void OV_DLLFNCEXPORT ov_time_diff(
 /*
 *	Compare two times, result is -1, 0 or 1.
 */
-OV_INT OV_DLLFNCEXPORT ov_time_compare(
+OV_DLLFNCEXPORT OV_INT ov_time_compare(
 	const OV_TIME		*ptime1,
 	const OV_TIME		*ptime2
 );
@@ -71,14 +71,14 @@ OV_INT OV_DLLFNCEXPORT ov_time_compare(
 /*
 *	Convert a time into an ASCII string
 */
-OV_STRING OV_DLLFNCEXPORT ov_time_timetoascii(
+OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
 	const OV_TIME		*ptime
 );
 
 /*
 *	Convert an ASCII string into a time
 */
-OV_RESULT OV_DLLFNCEXPORT ov_time_asciitotime(
+OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
 	OV_TIME				*ptime,
 	const OV_STRING		timestring
 );

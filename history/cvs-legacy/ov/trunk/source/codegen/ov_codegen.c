@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.10 1999-08-30 15:23:29 dirk Exp $
+*   $Id: ov_codegen.c,v 1.11 1999-09-15 10:48:18 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -499,7 +499,7 @@ int ov_codegen_createheaderfile(
 	fprintf(fp, "OV_RESULT ov_library_setglobalvars_%s(void);\n",
 		plib->identifier);
 	fprintf(fp, "\n");
-	fprintf(fp, "OV_LIBRARY_DEF* OV_DLLFNCEXPORT " OV_CONST_OPENFNC_PREFIX "%s(void);\n",
+	fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void);\n",
 		plib->identifier);
 	fprintf(fp, "\n");
 	/*
@@ -687,7 +687,7 @@ int ov_codegen_createsourcefile(
 	/*
 	*	print implementation of function opening the library
 	*/
-	fprintf(fp, "OV_LIBRARY_DEF* OV_DLLFNCEXPORT " OV_CONST_OPENFNC_PREFIX "%s(void) {\n", plib->identifier);
+	fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void) {\n", plib->identifier);
 	fprintf(fp, "    return &OV_LIBRARY_DEF_%s;\n", plib->identifier);
 	fprintf(fp, "}\n");
 	/*
@@ -1067,26 +1067,27 @@ void ov_codegen_printclassaccessorfncdecls(
 		*	declare get accessor if appropriate
 		*/
 		if(pvar->varprops & OV_VP_GETACCESSOR) {
+			fprintf(fp, "OV_DLLFNCEXPORT ");
 			switch(pvar->vartype) {
 			case OV_VT_STRUCT:
-				fprintf(fp, "OV_STRUCT_%s*", ov_codegen_replace(pvar->structurename));
+				fprintf(fp, "OV_STRUCT_%s *", ov_codegen_replace(pvar->structurename));
 				break;
 			case OV_VT_BYTE_VEC:
-				fprintf(fp, "%s*", pvar->ctypename);
+				fprintf(fp, "%s *", pvar->ctypename);
 				break;
 			case OV_VT_BOOL_PV:
 			case OV_VT_INT_PV:
 			case OV_VT_SINGLE_PV:
-				fprintf(fp, "%s*", ov_codegen_getvartypetext(pvar->vartype));
+				fprintf(fp, "%s *", ov_codegen_getvartypetext(pvar->vartype));
 				break;
 			default:
-				fprintf(fp, "%s", ov_codegen_getvartypetext(pvar->vartype));
+				fprintf(fp, "%s ", ov_codegen_getvartypetext(pvar->vartype));
 				if(pvar->veclen != 1) {
 					fprintf(fp, "*");
 				}
 				break;
 			}
-			fprintf(fp, " OV_DLLFNCEXPORT %s_%s_%s_get(\n", plib->identifier,
+			fprintf(fp, "%s_%s_%s_get(\n", plib->identifier,
 				pclass->identifier, pvar->identifier);
 			fprintf(fp, "    OV_INSTPTR_%s_%s pobj", plib->identifier,
 				pclass->identifier);
@@ -1100,7 +1101,7 @@ void ov_codegen_printclassaccessorfncdecls(
 		*	declare set accessor if apropriate
 		*/
 		if(pvar->varprops & OV_VP_SETACCESSOR) {
-			fprintf(fp, "OV_RESULT OV_DLLFNCEXPORT %s_%s_%s_set(\n",
+			fprintf(fp, "OV_DLLFNCEXPORT OV_RESULT %s_%s_%s_set(\n",
 				plib->identifier, pclass->identifier, pvar->identifier);
 			fprintf(fp, "    OV_INSTPTR_%s_%s pobj,\n", plib->identifier,
 				pclass->identifier);

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.h,v 1.2 1999-08-28 15:55:49 dirk Exp $
+*   $Id: ov_element.h,v 1.3 1999-09-15 10:48:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -90,7 +90,7 @@ typedef struct {
 /*
 *	Search child of an element ("parent/child" in a path)
 */
-OV_RESULT OV_DLLFNCEXPORT ov_element_searchchild(
+OV_DLLFNCEXPORT OV_RESULT ov_element_searchchild(
 	const OV_ELEMENT	*pparent,
 	OV_ELEMENT			*pchild,
 	OV_STRING			identifier
@@ -99,7 +99,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_element_searchchild(
 /*
 *	Search part of an element ("parent.part" in a path)
 */
-OV_RESULT OV_DLLFNCEXPORT ov_element_searchpart(
+OV_DLLFNCEXPORT OV_RESULT ov_element_searchpart(
 	const OV_ELEMENT	*pparent,
 	OV_ELEMENT			*ppart,
 	OV_ELEM_TYPE		mask,
@@ -109,7 +109,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_element_searchpart(
 /*
 *	Get next child of an element ("parent/child" in a path)
 */
-OV_RESULT OV_DLLFNCEXPORT ov_element_getnextchild(
+OV_DLLFNCEXPORT OV_RESULT ov_element_getnextchild(
 	const OV_ELEMENT	*pparent,
 	OV_ELEMENT			*pchild
 );
@@ -117,7 +117,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_element_getnextchild(
 /*
 *	Get next part of an element ("parent.part" in a path)
 */
-OV_RESULT OV_DLLFNCEXPORT ov_element_getnextpart(
+OV_DLLFNCEXPORT OV_RESULT ov_element_getnextpart(
 	const OV_ELEMENT	*pparent,
 	OV_ELEMENT			*ppart,
 	OV_ELEM_TYPE		mask
@@ -168,7 +168,7 @@ OV_RESULT ov_element_getnextpart_variable(
 /*
 *	Get the identifier of an element
 */
-OV_STRING OV_DLLFNCEXPORT ov_element_getidentifier(
+OV_DLLFNCEXPORT OV_STRING ov_element_getidentifier(
 	const OV_ELEMENT			*pelem
 );
 

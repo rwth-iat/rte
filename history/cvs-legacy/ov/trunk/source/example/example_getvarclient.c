@@ -1,5 +1,5 @@
 /*
-*   $Id: example_getvarclient.c,v 1.4 1999-08-28 15:55:53 dirk Exp $
+*   $Id: example_getvarclient.c,v 1.5 1999-09-15 10:48:20 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -78,14 +78,14 @@ void example_getvarclient_message(
 /*
 *	Accessor functions
 */
-OV_STRING OV_DLLFNCEXPORT example_getvarclient_host_get(
+OV_DLLFNCEXPORT OV_STRING example_getvarclient_host_get(
 	OV_INSTPTR_example_getvarclient	pgvc
 ) {
 	example_getvarclient_message(pgvc, "You asked for the hostname!");
 	return pgvc->v_host;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_getvarclient_host_set(
+OV_DLLFNCEXPORT OV_RESULT example_getvarclient_host_set(
 	OV_INSTPTR_example_getvarclient	pgvc,
 	const OV_STRING					value
 ) {
@@ -105,14 +105,14 @@ OV_RESULT OV_DLLFNCEXPORT example_getvarclient_host_set(
 	return OV_ERR_OK;
 }
 
-OV_STRING OV_DLLFNCEXPORT example_getvarclient_server_get(
+OV_DLLFNCEXPORT OV_STRING example_getvarclient_server_get(
 	OV_INSTPTR_example_getvarclient	pgvc
 ) {
 	example_getvarclient_message(pgvc, "You asked for the servername!");
 	return pgvc->v_server;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_getvarclient_server_set(
+OV_DLLFNCEXPORT OV_RESULT example_getvarclient_server_set(
 	OV_INSTPTR_example_getvarclient	pgvc,
 	const OV_STRING					value
 ) {
@@ -132,14 +132,14 @@ OV_RESULT OV_DLLFNCEXPORT example_getvarclient_server_set(
 	return OV_ERR_OK;
 }
 
-OV_STRING OV_DLLFNCEXPORT example_getvarclient_path_get(
+OV_DLLFNCEXPORT OV_STRING example_getvarclient_path_get(
 	OV_INSTPTR_example_getvarclient	pgvc
 ) {
 	example_getvarclient_message(pgvc, "You asked for the variable path!");
 	return pgvc->v_path;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_getvarclient_path_set(
+OV_DLLFNCEXPORT OV_RESULT example_getvarclient_path_set(
 	OV_INSTPTR_example_getvarclient	pgvc,
 	const OV_STRING					value
 ) {
@@ -153,7 +153,7 @@ OV_RESULT OV_DLLFNCEXPORT example_getvarclient_path_set(
 /*
 *	Start up the getvarclient object
 */
-void OV_DLLFNCEXPORT example_getvarclient_startup(
+OV_DLLFNCEXPORT void example_getvarclient_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
@@ -180,7 +180,7 @@ void OV_DLLFNCEXPORT example_getvarclient_startup(
 /*
 *	Shut down the getvarclient object
 */
-void OV_DLLFNCEXPORT example_getvarclient_shutdown(
+OV_DLLFNCEXPORT void example_getvarclient_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
@@ -213,7 +213,7 @@ void OV_DLLFNCEXPORT example_getvarclient_shutdown(
 /*
 *	Execute the active main method of the getvarclient object
 */
-void OV_DLLFNCEXPORT example_getvarclient_execute(
+OV_DLLFNCEXPORT void example_getvarclient_execute(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	/*

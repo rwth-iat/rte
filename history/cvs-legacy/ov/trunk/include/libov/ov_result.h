@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_result.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_result.h,v 1.2 1999-09-15 10:48:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,7 +38,7 @@ extern "C" {
 /*
 *	Return error string associated with an error code
 */
-OV_STRING OV_DLLFNCEXPORT ov_result_getresulttext(
+OV_DLLFNCEXPORT OV_STRING ov_result_getresulttext(
 	OV_RESULT	result
 );
 

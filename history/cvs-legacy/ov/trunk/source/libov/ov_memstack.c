@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_memstack.c,v 1.2 1999-08-28 13:46:01 dirk Exp $
+*   $Id: ov_memstack.c,v 1.3 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -69,7 +69,7 @@ static OV_INT		refcount = 0;
 *	Increment the reference count of the stack and initialize
 *	if necessary
 */
-void OV_DLLFNCEXPORT ov_memstack_lock(void) {
+OV_DLLFNCEXPORT void ov_memstack_lock(void) {
 	/*
 	*	initialize if necessary
 	*/
@@ -90,7 +90,7 @@ void OV_DLLFNCEXPORT ov_memstack_lock(void) {
 /*
 *	Allocate memory on the stack
 */
-OV_POINTER OV_DLLFNCEXPORT ov_memstack_alloc(
+OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 	OV_UINT		size
 ) {
 	/*
@@ -142,7 +142,7 @@ OV_POINTER OV_DLLFNCEXPORT ov_memstack_alloc(
 *	Decrement the reference count of the stack and free the
 *	stack memory if necessary
 */
-void OV_DLLFNCEXPORT ov_memstack_unlock(void) {
+OV_DLLFNCEXPORT void ov_memstack_unlock(void) {
 	/*
 	*	decrement the reference count
 	*/

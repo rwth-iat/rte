@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.3 1999-08-30 15:24:23 dirk Exp $
+*   $Id: ov_vendortree.c,v 1.4 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -116,7 +116,7 @@ void ov_vendortree_init(void) {
 /*
 *	Get unit of a vendor object
 */
-OV_STRING OV_DLLFNCEXPORT ov_vendortree_getunit(
+OV_DLLFNCEXPORT OV_STRING ov_vendortree_getunit(
 	OV_INSTPTR_ov_object	pobj
 ) {
 	/*
@@ -170,7 +170,7 @@ OV_RESULT ov_vendortree_getvar(
 /*
 *	Set database name
 */
-void OV_DLLFNCEXPORT ov_vendortree_setdatabasename(
+OV_DLLFNCEXPORT void ov_vendortree_setdatabasename(
 	OV_STRING	name
 ) {
 	if(databasename) {
@@ -188,7 +188,7 @@ void OV_DLLFNCEXPORT ov_vendortree_setdatabasename(
 /*
 *	Set vendor name
 */
-void OV_DLLFNCEXPORT ov_vendortree_setname(
+OV_DLLFNCEXPORT void ov_vendortree_setname(
 	OV_STRING	name
 ) {
 	if(vendorname) {
@@ -206,7 +206,7 @@ void OV_DLLFNCEXPORT ov_vendortree_setname(
 /*
 *	Set semantic flag
 */
-void OV_DLLFNCEXPORT ov_vendortree_setsemanticflag(
+OV_DLLFNCEXPORT void ov_vendortree_setsemanticflag(
 	OV_UINT		flagnum,
 	OV_STRING	flagvalue
 ) {
@@ -227,7 +227,7 @@ void OV_DLLFNCEXPORT ov_vendortree_setsemanticflag(
 /*
 *	Set server description
 */
-void OV_DLLFNCEXPORT ov_vendortree_setserverdescription(
+OV_DLLFNCEXPORT void ov_vendortree_setserverdescription(
 	OV_STRING	name
 ) {
 	if(serverdescription) {
@@ -245,7 +245,7 @@ void OV_DLLFNCEXPORT ov_vendortree_setserverdescription(
 /*
 *	Set server name
 */
-void OV_DLLFNCEXPORT ov_vendortree_setservername(
+OV_DLLFNCEXPORT void ov_vendortree_setservername(
 	OV_STRING	name
 ) {
 	if(servername) {
@@ -263,7 +263,7 @@ void OV_DLLFNCEXPORT ov_vendortree_setservername(
 /*
 *	Set server version
 */
-void OV_DLLFNCEXPORT ov_vendortree_setserverversion(
+OV_DLLFNCEXPORT void ov_vendortree_setserverversion(
 	OV_STRING	name
 ) {
 	if(serverversion) {
@@ -281,7 +281,7 @@ void OV_DLLFNCEXPORT ov_vendortree_setserverversion(
 /*
 *	Set startup time
 */
-void OV_DLLFNCEXPORT ov_vendortree_setstartuptime(
+OV_DLLFNCEXPORT void ov_vendortree_setstartuptime(
 	OV_TIME		*ptime
 ) {
 	if(ptime) {
@@ -296,7 +296,7 @@ void OV_DLLFNCEXPORT ov_vendortree_setstartuptime(
 /*
 *	Get list of associations in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getassociations(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getassociations(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 ) {
@@ -342,7 +342,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getassociations(
 /*
 *	Get list of classes in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getclasses(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 ) {
@@ -456,7 +456,7 @@ OV_RESULT ov_vendortree_getdatabasesize(
 /*
 *	Get whether the database is started or not
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasestarted(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasestarted(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 ) {
@@ -540,7 +540,7 @@ OV_RESULT ov_vendortree_getlibovksversion(
 /*
 *	Get list of libraries in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibraries(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 ) {
@@ -586,7 +586,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibraries(
 /*
 *	Get list of semantic flags in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getsemanticflags(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getsemanticflags(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 ) {
@@ -671,7 +671,7 @@ OV_RESULT ov_vendortree_getstartuptime(
 /*
 *	Get list of structures in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getstructures(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 ) {

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.6 1999-09-06 12:16:58 dirk Exp $
+*   $Id: ov_database.c,v 1.7 1999-09-15 10:48:21 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -196,7 +196,7 @@ __ptr_t ov_database_morecore(
 /*
 *	Create a new database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_database_create(
+OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	OV_STRING	filename,
 	OV_UINT		size
 ) {
@@ -449,7 +449,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_database_create(
 /*
 *	Map an existing database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_database_map(
+OV_DLLFNCEXPORT OV_RESULT ov_database_map(
 	OV_STRING	filename
 ) {
 	/*
@@ -720,7 +720,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_database_map(
 /*
 *	Unmap the database
 */
-void OV_DLLFNCEXPORT ov_database_unmap(void) {
+OV_DLLFNCEXPORT void ov_database_unmap(void) {
 	/*
 	*	local variables
 	*/
@@ -777,7 +777,7 @@ void OV_DLLFNCEXPORT ov_database_unmap(void) {
 /*
 *	Flush the contents of a database
 */
-void OV_DLLFNCEXPORT ov_database_flush(void) {
+OV_DLLFNCEXPORT void ov_database_flush(void) {
 	/*
 	*	local variables
 	*/
@@ -887,7 +887,7 @@ void ov_database_init(void) {
 /*
 *	Start up the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_database_startup(void) {
+OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void) {
 	/*
 	*	local variables
 	*/
@@ -930,7 +930,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_database_startup(void) {
 /*
 *	Shut down the database
 */
-void OV_DLLFNCEXPORT ov_database_shutdown(void) {
+OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 	/*
 	*	local variables
 	*/
@@ -958,7 +958,7 @@ void OV_DLLFNCEXPORT ov_database_shutdown(void) {
 /*
 *	Allocate memory in the database
 */
-OV_POINTER OV_DLLFNCEXPORT ov_database_malloc(
+OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
 	OV_UINT		size
 ) {
 	if(pdb) {
@@ -972,7 +972,7 @@ OV_POINTER OV_DLLFNCEXPORT ov_database_malloc(
 /*
 *	Reallocate memory in the database
 */
-OV_POINTER OV_DLLFNCEXPORT ov_database_realloc(
+OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 ) {
@@ -987,7 +987,7 @@ OV_POINTER OV_DLLFNCEXPORT ov_database_realloc(
 /*
 *	Free memory in the database
 */
-void OV_DLLFNCEXPORT ov_database_free(
+OV_DLLFNCEXPORT void ov_database_free(
 	OV_POINTER	ptr
 ) {
 	if(pdb) {
@@ -1000,7 +1000,7 @@ void OV_DLLFNCEXPORT ov_database_free(
 /*
 *	Get size of the database
 */
-OV_UINT OV_DLLFNCEXPORT ov_database_getsize(void) {
+OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
 	if(pdb) {
 		return pdb->size;
 	}
@@ -1012,7 +1012,7 @@ OV_UINT OV_DLLFNCEXPORT ov_database_getsize(void) {
 /*
 *	Get free storage in the database
 */
-OV_UINT OV_DLLFNCEXPORT ov_database_getfree(void) {
+OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 	if(pdb) {
 		return pdb->pend-pdb->pcurr+pmpinfo->bytes_free;
 	}
@@ -1024,7 +1024,7 @@ OV_UINT OV_DLLFNCEXPORT ov_database_getfree(void) {
 /*
 *	Get used storage in the database
 */
-OV_UINT OV_DLLFNCEXPORT ov_database_getused(void) {
+OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
 	if(pdb) {
 		return pdb->pstart-(OV_BYTE*)pdb+pmpinfo->bytes_used;
 	}
@@ -1036,7 +1036,7 @@ OV_UINT OV_DLLFNCEXPORT ov_database_getused(void) {
 /*
 *	Get fragmentation of the database
 */
-OV_UINT OV_DLLFNCEXPORT ov_database_getfrag(void) {
+OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void) {
 	/*
 	*	local variables
 	*/

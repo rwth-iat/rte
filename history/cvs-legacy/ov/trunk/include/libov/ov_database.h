@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.3 1999-07-28 16:01:37 dirk Exp $
+*   $Id: ov_database.h,v 1.4 1999-09-15 10:48:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -83,7 +83,7 @@ OV_EXTERN OV_DATABASE_INFO *pdb;
 /*
 *	Create a new database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_database_create(
+OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	OV_STRING	filename,
 	OV_UINT		size
 );
@@ -91,19 +91,19 @@ OV_RESULT OV_DLLFNCEXPORT ov_database_create(
 /*
 *	Map an existing database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_database_map(
+OV_DLLFNCEXPORT OV_RESULT ov_database_map(
 	OV_STRING	filename
 );
 
 /*
 *	Unmap the database
 */
-void OV_DLLFNCEXPORT ov_database_unmap(void);
+OV_DLLFNCEXPORT void ov_database_unmap(void);
 
 /*
 *	Flush the contents of a database
 */
-void OV_DLLFNCEXPORT ov_database_flush(void);
+OV_DLLFNCEXPORT void ov_database_flush(void);
 
 /*
 *	Initialize the database (subroutine)
@@ -113,24 +113,24 @@ void ov_database_init(void);
 /*
 *	Start up the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_database_startup(void);
+OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void);
 
 /*
 *	Shut down the database
 */
-void OV_DLLFNCEXPORT ov_database_shutdown(void);
+OV_DLLFNCEXPORT void ov_database_shutdown(void);
 
 /*
 *	Allocate memory in the database
 */
-OV_POINTER OV_DLLFNCEXPORT ov_database_malloc(
+OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
 	OV_UINT		size
 );
 
 /*
 *	Reallocate memory in the database
 */
-OV_POINTER OV_DLLFNCEXPORT ov_database_realloc(
+OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 );
@@ -138,29 +138,29 @@ OV_POINTER OV_DLLFNCEXPORT ov_database_realloc(
 /*
 *	Free memory in the database
 */
-void OV_DLLFNCEXPORT ov_database_free(
+OV_DLLFNCEXPORT void ov_database_free(
 	OV_POINTER	ptr
 );
 
 /*
 *	Get size of the database
 */
-OV_UINT OV_DLLFNCEXPORT ov_database_getsize(void);
+OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void);
 
 /*
 *	Get free storage in the database
 */
-OV_UINT OV_DLLFNCEXPORT ov_database_getfree(void);
+OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void);
 
 /*
 *	Get used storage in the database
 */
-OV_UINT OV_DLLFNCEXPORT ov_database_getused(void);
+OV_DLLFNCEXPORT OV_UINT ov_database_getused(void);
 
 /*
 *	Get fragmentation of the database
 */
-OV_UINT OV_DLLFNCEXPORT ov_database_getfrag(void);
+OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void);
 
 /*
 *	Move the database to a new base address (subroutine)

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.7 1999-09-06 07:46:31 dirk Exp $
+*   $Id: ov_library.c,v 1.8 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -87,7 +87,7 @@
 /*
 *	constructor of a library object: open and load library.
 */
-OV_RESULT OV_DLLFNCEXPORT ov_library_constructor(
+OV_DLLFNCEXPORT OV_RESULT ov_library_constructor(
 	OV_INSTPTR_ov_object	pobj
 ) {
 	/*
@@ -120,7 +120,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_library_constructor(
 /*
 *	destructor of a library object: close library.
 */
-void OV_DLLFNCEXPORT ov_library_destructor(
+OV_DLLFNCEXPORT void ov_library_destructor(
 	OV_INSTPTR_ov_object	pobj
 ) {
 	/*
@@ -164,7 +164,7 @@ OV_INSTPTR_ov_library ov_library_search(
 /*
 *	Open a library which is either a DLL/shared library or statically linked
 */
-OV_LIBRARY_DEF* OV_DLLFNCEXPORT ov_library_open(
+OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 	OV_INSTPTR_ov_library	plib
 ) {
 	/*
@@ -292,7 +292,7 @@ OV_LIBRARY_DEF* OV_DLLFNCEXPORT ov_library_open(
 /*
 *	Close a library file if it is a DLL/shared library
 */
-void OV_DLLFNCEXPORT ov_library_close(
+OV_DLLFNCEXPORT void ov_library_close(
 	OV_INSTPTR_ov_library	plib
 ) {
 	if(plib->v_handle) {
@@ -308,7 +308,7 @@ void OV_DLLFNCEXPORT ov_library_close(
 /*
 *	Load a library and its definitions into the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_library_load(
+OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	OV_INSTPTR_ov_library	plib,
 	OV_LIBRARY_DEF*			plibdef
 ) {
@@ -379,7 +379,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_library_load(
 /*
 *	Compare a library with its definition
 */
-OV_RESULT OV_DLLFNCEXPORT ov_library_compare(
+OV_DLLFNCEXPORT OV_RESULT ov_library_compare(
 	OV_INSTPTR_ov_library	plib,
 	OV_LIBRARY_DEF*			plibdef
 ) {
@@ -510,7 +510,7 @@ ERRORMSG:
 /*
 *	Test if we can unload a library and its definitions from the database
 */
-OV_BOOL OV_DLLFNCEXPORT ov_library_canunload(
+OV_DLLFNCEXPORT OV_BOOL ov_library_canunload(
 	OV_INSTPTR_ov_library	plib
 ) {
 	/*
@@ -680,38 +680,9 @@ OV_RESULT ov_library_prepare(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Accessor functions
-*/
-OV_STRING OV_DLLFNCEXPORT ov_library_version_get(
-	OV_INSTPTR_ov_library	plib
-) {
-	return plib->v_version;
-}
-
-OV_STRING OV_DLLFNCEXPORT ov_library_author_get(
-	OV_INSTPTR_ov_library	plib
-) {
-	return plib->v_author;
-}
-
-OV_STRING OV_DLLFNCEXPORT ov_library_copyright_get(
-	OV_INSTPTR_ov_library	plib
-) {
-	return plib->v_copyright;
-}
-
-OV_STRING OV_DLLFNCEXPORT ov_library_comment_get(
-	OV_INSTPTR_ov_library	plib
-) {
-	return plib->v_comment;
-}
-
-/*	----------------------------------------------------------------------	*/
-
-/*
 *	Get environment variable with library path
 */
-OV_STRING OV_DLLFNCEXPORT ov_library_getenv(void) {
+OV_DLLFNCEXPORT OV_STRING ov_library_getenv(void) {
 #if OV_SYSTEM_MC164
     return NULL;
 #else	
@@ -724,7 +695,7 @@ OV_STRING OV_DLLFNCEXPORT ov_library_getenv(void) {
 /*
 *	Set environment variable with library path
 */
-void OV_DLLFNCEXPORT ov_library_setenv(
+OV_DLLFNCEXPORT void ov_library_setenv(
 	OV_STRING path
 ) {
 #if OV_SYSTEM_MC164
@@ -745,6 +716,35 @@ void OV_DLLFNCEXPORT ov_library_setenv(
 	setenv(OV_LIBRARY_PATH_ENV, path, TRUE);
 #endif
 #endif
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Accessor functions
+*/
+OV_DLLFNCEXPORT OV_STRING ov_library_version_get(
+	OV_INSTPTR_ov_library	plib
+) {
+	return plib->v_version;
+}
+
+OV_DLLFNCEXPORT OV_STRING ov_library_author_get(
+	OV_INSTPTR_ov_library	plib
+) {
+	return plib->v_author;
+}
+
+OV_DLLFNCEXPORT OV_STRING ov_library_copyright_get(
+	OV_INSTPTR_ov_library	plib
+) {
+	return plib->v_copyright;
+}
+
+OV_DLLFNCEXPORT OV_STRING ov_library_comment_get(
+	OV_INSTPTR_ov_library	plib
+) {
+	return plib->v_comment;
 }
 
 /*	----------------------------------------------------------------------	*/

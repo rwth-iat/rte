@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_operation.c,v 1.2 1999-09-06 12:16:58 dirk Exp $
+*   $Id: ov_operation.c,v 1.3 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -111,13 +111,13 @@ OV_BOOL ov_operation_canunload(
 /*
 *	Accessor functions
 */
-OV_INT OV_DLLFNCEXPORT ov_operation_opprops_get(
+OV_DLLFNCEXPORT OV_INT ov_operation_opprops_get(
 	OV_INSTPTR_ov_operation	pop
 ) {
 	return pop->v_opprops;
 }
 
-OV_STRING OV_DLLFNCEXPORT ov_operation_cfnctypename_get(
+OV_DLLFNCEXPORT OV_STRING ov_operation_cfnctypename_get(
 	OV_INSTPTR_ov_operation	pop
 ) {
 	return pop->v_cfnctypename;

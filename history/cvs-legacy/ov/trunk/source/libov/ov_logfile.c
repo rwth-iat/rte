@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_logfile.c,v 1.4 1999-08-28 15:55:54 dirk Exp $
+*   $Id: ov_logfile.c,v 1.5 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -77,7 +77,7 @@ static HANDLE		eventsource = NULL;
 /*
 *	Open/create a logfile
 */
-OV_RESULT OV_DLLFNCEXPORT ov_logfile_open(
+OV_DLLFNCEXPORT OV_RESULT ov_logfile_open(
 	const OV_STRING	ident,
 	OV_STRING		filename,
 	OV_STRING		mode
@@ -107,7 +107,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_logfile_open(
 /*
 *	Close the logfile
 */
-void OV_DLLFNCEXPORT ov_logfile_close(void) {
+OV_DLLFNCEXPORT void ov_logfile_close(void) {
 #if !OV_SYSTEM_MC164
 	if(logfile) {
 		if((logfile != stdout) && (logfile != stderr)
@@ -133,7 +133,7 @@ void OV_DLLFNCEXPORT ov_logfile_close(void) {
 /*
 *	Log to stdout
 */
-void OV_DLLFNCEXPORT ov_logfile_logtostdout(
+OV_DLLFNCEXPORT void ov_logfile_logtostdout(
 	const OV_STRING	ident
 ) {
 	id = ident;
@@ -150,7 +150,7 @@ void OV_DLLFNCEXPORT ov_logfile_logtostdout(
 /*
 *	Log to stderr
 */
-void OV_DLLFNCEXPORT ov_logfile_logtostderr(
+OV_DLLFNCEXPORT void ov_logfile_logtostderr(
 	const OV_STRING	ident
 ) {
 	id = ident;
@@ -168,7 +168,7 @@ void OV_DLLFNCEXPORT ov_logfile_logtostderr(
 *	Log to the NT logger (Windows NT only)
 */
 #if OV_SYSTEM_NT
-void OV_DLLFNCEXPORT ov_logfile_logtontlog(
+OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 	const OV_STRING	ident
 ) {
 	/*
@@ -214,7 +214,7 @@ void OV_DLLFNCEXPORT ov_logfile_logtontlog(
 /*
 *	Print text to logfile
 */
-void OV_DLLFNCEXPORT ov_logfile_print(
+OV_DLLFNCEXPORT void ov_logfile_print(
 	OV_MSG_TYPE		msgtype,
 	const OV_STRING	msg
 ) {
@@ -319,7 +319,7 @@ void OV_DLLFNCEXPORT ov_logfile_print(
 /*
 *	Print info to logfile
 */
-void OV_DLLFNCEXPORT ov_logfile_info(
+OV_DLLFNCEXPORT void ov_logfile_info(
 	const OV_STRING	format,
 	...
 ) {
@@ -345,7 +345,7 @@ void OV_DLLFNCEXPORT ov_logfile_info(
 /*
 *	Print debug info to logfile
 */
-void OV_DLLFNCEXPORT ov_logfile_debug(
+OV_DLLFNCEXPORT void ov_logfile_debug(
 	const OV_STRING	format,
 	...
 ) {
@@ -371,7 +371,7 @@ void OV_DLLFNCEXPORT ov_logfile_debug(
 /*
 *	Print warning to logfile
 */
-void OV_DLLFNCEXPORT ov_logfile_warning(
+OV_DLLFNCEXPORT void ov_logfile_warning(
 	const OV_STRING	format,
 	...
 ) {
@@ -397,7 +397,7 @@ void OV_DLLFNCEXPORT ov_logfile_warning(
 /*
 *	Print error to logfile
 */
-void OV_DLLFNCEXPORT ov_logfile_error(
+OV_DLLFNCEXPORT void ov_logfile_error(
 	const OV_STRING	format,
 	...
 ) {
@@ -423,7 +423,7 @@ void OV_DLLFNCEXPORT ov_logfile_error(
 /*
 *	Print alert to logfile
 */
-void OV_DLLFNCEXPORT ov_logfile_alert(
+OV_DLLFNCEXPORT void ov_logfile_alert(
 	const OV_STRING	format,
 	...
 ) {
@@ -450,7 +450,7 @@ void OV_DLLFNCEXPORT ov_logfile_alert(
 *	Get messages from the logfile
 *	Note: you must call ov_memstack_lock() and ov_memstack_unlock() outside
 */
-OV_RESULT OV_DLLFNCEXPORT ov_logfile_getmessages(
+OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 	OV_TIME		*from,
 	OV_TIME		*to,
 	OV_UINT		max_no_messages,

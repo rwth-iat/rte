@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.h,v 1.3 1999-08-18 13:11:24 dirk Exp $
+*   $Id: ov_ksclient.h,v 1.4 1999-09-15 10:48:16 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -71,7 +71,7 @@ typedef enum_t OV_KSCLIENT_CONNECTION_STATE;
 *	Callback function used when asynchronously opening a connection to an
 *	ACPLT/KS server.
 */
-typedef void OV_DLLFNCEXPORT OV_FNC_KSCLIENT_OPENCALLBACK(
+typedef OV_DLLFNCEXPORT void OV_FNC_KSCLIENT_OPENCALLBACK(
 	OV_KSCLIENT_CONNECTION			*pconn,
 	OV_RESULT 						result,
 	OV_POINTER						userdata
@@ -83,7 +83,7 @@ typedef void OV_DLLFNCEXPORT OV_FNC_KSCLIENT_OPENCALLBACK(
 *	Callback function used when asynchronously sending a request to an
 *	ACPLT/KS server.
 */
-typedef void OV_DLLFNCEXPORT OV_FNC_KSCLIENT_REQUESTCALLBACK(
+typedef OV_DLLFNCEXPORT void OV_FNC_KSCLIENT_REQUESTCALLBACK(
 	OV_KSCLIENT_CONNECTION			*pconn,
 	OV_RESULT 						result,
 	OV_KSCLIENT_SERVICE				*psvc,
@@ -141,7 +141,7 @@ struct OV_KSCLIENT_SERVICE {
 /*
 *	Create a client connection object
 */
-OV_KSCLIENT_CONNECTION* OV_DLLFNCEXPORT ov_ksclient_connection_create(
+OV_DLLFNCEXPORT OV_KSCLIENT_CONNECTION* ov_ksclient_connection_create(
 	OV_STRING 						hostname,
 	OV_STRING 						servername
 );
@@ -149,14 +149,14 @@ OV_KSCLIENT_CONNECTION* OV_DLLFNCEXPORT ov_ksclient_connection_create(
 /*
 *	Delete an existing client connection object
 */
-void OV_DLLFNCEXPORT ov_ksclient_connection_delete(
+OV_DLLFNCEXPORT void ov_ksclient_connection_delete(
 	OV_KSCLIENT_CONNECTION			*pconn
 );
 
 /*
 *	Open a client connection to an ACPLT/KS server
 */
-OV_RESULT OV_DLLFNCEXPORT ov_ksclient_connection_open(
+OV_DLLFNCEXPORT OV_RESULT ov_ksclient_connection_open(
 	OV_KSCLIENT_CONNECTION			*pconn,
 	OV_FNC_KSCLIENT_OPENCALLBACK	*callbackfnc,
 	void							*userdata
@@ -165,14 +165,14 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksclient_connection_open(
 /*
 *	Close a client connection to an ACPLT/KS server
 */
-void OV_DLLFNCEXPORT ov_ksclient_connection_close(
+OV_DLLFNCEXPORT void ov_ksclient_connection_close(
 	OV_KSCLIENT_CONNECTION			*pconn
 );
 
 /*
 *	Send a request to an ACPLT/KS server on an open client connection
 */
-OV_RESULT OV_DLLFNCEXPORT ov_ksclient_connection_sendrequest(
+OV_DLLFNCEXPORT OV_RESULT ov_ksclient_connection_sendrequest(
 	OV_KSCLIENT_CONNECTION			*pconn,
 	OV_KSCLIENT_SERVICE				*psvc,
 	OV_FNC_KSCLIENT_REQUESTCALLBACK	*callbackfnc,
@@ -182,7 +182,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksclient_connection_sendrequest(
 /*
 *	Get the current state of a client connection
 */
-OV_KSCLIENT_CONNECTION_STATE OV_DLLFNCEXPORT ov_ksclient_connection_getstate(
+OV_DLLFNCEXPORT OV_KSCLIENT_CONNECTION_STATE ov_ksclient_connection_getstate(
 	OV_KSCLIENT_CONNECTION			*pconn
 );
 
@@ -207,7 +207,7 @@ void OV_DLLFNCEXPORT ov_ksclient_connection_gettimeouts(
 /*
 *	Create a new service object
 */
-OV_KSCLIENT_SERVICE* OV_DLLFNCEXPORT ov_ksclient_service_create(
+OV_DLLFNCEXPORT OV_KSCLIENT_SERVICE *ov_ksclient_service_create(
 	KS_SVC				serviceid,
 	KS_AVMODULE			*pavmodule
 );
@@ -215,14 +215,14 @@ OV_KSCLIENT_SERVICE* OV_DLLFNCEXPORT ov_ksclient_service_create(
 /*
 *	Delete an existing service object
 */
-void OV_DLLFNCEXPORT ov_ksclient_service_delete(
+OV_DLLFNCEXPORT void ov_ksclient_service_delete(
 	OV_KSCLIENT_SERVICE	*psvc
 );
 
 /*
 *	Free memory allocated for the result stored in a service object
 */
-void OV_DLLFNCEXPORT ov_ksclient_service_freeresult(
+OV_DLLFNCEXPORT void ov_ksclient_service_freeresult(
 	OV_KSCLIENT_SERVICE	*psvc
 );
 

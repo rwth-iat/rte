@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_scheduler.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_scheduler.h,v 1.2 1999-09-15 10:48:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -41,7 +41,7 @@ extern "C" {
 *	---------------
 *	Function prototype for methods used in active objects
 */
-typedef void OV_DLLFNCEXPORT OV_FNC_EXECUTE(
+typedef OV_DLLFNCEXPORT void OV_FNC_EXECUTE(
 	OV_INSTPTR_ov_object 	pobj
 );
 
@@ -61,7 +61,7 @@ typedef struct OV_SCHEDULER_EVENT OV_SCHEDULER_EVENT;
 /*
 *	Register an active object with the scheduler
 */
-OV_RESULT OV_DLLFNCEXPORT ov_scheduler_register(
+OV_DLLFNCEXPORT OV_RESULT ov_scheduler_register(
 	OV_INSTPTR_ov_object	pobj,
 	OV_FNC_EXECUTE			*executefnc
 );
@@ -69,14 +69,14 @@ OV_RESULT OV_DLLFNCEXPORT ov_scheduler_register(
 /*
 *	Unregister an active object with the scheduler
 */
-void OV_DLLFNCEXPORT ov_scheduler_unregister(
+OV_DLLFNCEXPORT void ov_scheduler_unregister(
 	OV_INSTPTR_ov_object	pobj
 );
 
 /*
 *	Set absolute event time of a registered active object
 */
-void OV_DLLFNCEXPORT ov_scheduler_setabseventtime(
+OV_DLLFNCEXPORT void ov_scheduler_setabseventtime(
 	OV_INSTPTR_ov_object	pobj,
 	OV_TIME					*ptime
 );
@@ -84,7 +84,7 @@ void OV_DLLFNCEXPORT ov_scheduler_setabseventtime(
 /*
 *	Set relative event time of a registered active object (time span from now on)
 */
-void OV_DLLFNCEXPORT ov_scheduler_setreleventtime(
+OV_DLLFNCEXPORT void ov_scheduler_setreleventtime(
 	OV_INSTPTR_ov_object	pobj,
 	OV_TIME_SPAN			*ptimespan
 );
@@ -92,7 +92,7 @@ void OV_DLLFNCEXPORT ov_scheduler_setreleventtime(
 /*
 *	Schedule the next event of the event queue if the event is pending
 */
-OV_TIME_SPAN* OV_DLLFNCEXPORT ov_scheduler_schedulenextevent(void);
+OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_schedulenextevent(void);
 
 /*
 *	Insert an event into the event queue (subroutine)

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_supervise.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_supervise.h,v 1.2 1999-09-15 10:48:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -113,7 +113,7 @@ typedef jmp_buf		OV_JUMPBUFFER;
 /*
 *	Start the supervision of a user function
 */
-OV_BOOL OV_DLLFNCEXPORT ov_supervise_start(
+OV_DLLFNCEXPORT OV_BOOL ov_supervise_start(
 	OV_TIME_SPAN	*ptimeout,
 	OV_JUMPBUFFER	*pjumpbuffer
 );
@@ -121,7 +121,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_supervise_start(
 /*
 *	Finish supervising a user function
 */
-OV_BOOL OV_DLLFNCEXPORT ov_supervise_end(void);
+OV_DLLFNCEXPORT OV_BOOL ov_supervise_end(void);
 
 /*	----------------------------------------------------------------------	*/
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.2 1999-08-19 11:54:49 dirk Exp $
+*   $Id: ov_vendortree.h,v 1.3 1999-09-15 10:48:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -45,7 +45,7 @@ extern "C" {
 *	--------------------
 *	Function prototype for getting vendor variables
 */
-typedef OV_RESULT OV_DLLFNCEXPORT OV_FNC_GETVENDORVAR(
+typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETVENDORVAR(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -69,14 +69,14 @@ void ov_vendortree_init(void);
 /*
 *	Get unit of a vendor object
 */
-OV_STRING OV_DLLFNCEXPORT ov_vendortree_getunit(
+OV_DLLFNCEXPORT OV_STRING ov_vendortree_getunit(
 	OV_INSTPTR_ov_object	pobj
 );
 
 /*
 *	Get variable of a vendor object
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getvar(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getvar(
 	OV_INSTPTR_ov_object	pobj,
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
@@ -85,21 +85,21 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getvar(
 /*
 *	Set database name
 */
-void OV_DLLFNCEXPORT ov_vendortree_setdatabasename(
+OV_DLLFNCEXPORT void ov_vendortree_setdatabasename(
 	OV_STRING	name
 );
 
 /*
 *	Set vendor name
 */
-void OV_DLLFNCEXPORT ov_vendortree_setname(
+OV_DLLFNCEXPORT void ov_vendortree_setname(
 	OV_STRING	name
 );
 
 /*
 *	Set semantic flag
 */
-void OV_DLLFNCEXPORT ov_vendortree_setsemanticflag(
+OV_DLLFNCEXPORT void ov_vendortree_setsemanticflag(
 	OV_UINT		flagnum,
 	OV_STRING	flagvalue
 );
@@ -107,35 +107,35 @@ void OV_DLLFNCEXPORT ov_vendortree_setsemanticflag(
 /*
 *	Set server name
 */
-void OV_DLLFNCEXPORT ov_vendortree_setservername(
+OV_DLLFNCEXPORT void ov_vendortree_setservername(
 	OV_STRING	name
 );
 
 /*
 *	Set server description
 */
-void OV_DLLFNCEXPORT ov_vendortree_setserverdescription(
+OV_DLLFNCEXPORT void ov_vendortree_setserverdescription(
 	OV_STRING	name
 );
 
 /*
 *	Set server version
 */
-void OV_DLLFNCEXPORT ov_vendortree_setserverversion(
+OV_DLLFNCEXPORT void ov_vendortree_setserverversion(
 	OV_STRING	name
 );
 
 /*
 *	Set startup time
 */
-void OV_DLLFNCEXPORT ov_vendortree_setstartuptime(
+OV_DLLFNCEXPORT void ov_vendortree_setstartuptime(
 	OV_TIME		*ptime
 );
 
 /*
 *	Get list of associations in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getassociations(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getassociations(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -143,7 +143,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getassociations(
 /*
 *	Get list of classes in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getclasses(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -151,7 +151,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getclasses(
 /*
 *	Get fragmentation of the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasefrag(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasefrag(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -159,7 +159,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasefrag(
 /*
 *	Get free storage of the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasefree(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasefree(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -167,7 +167,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasefree(
 /*
 *	Get database name
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasename(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasename(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -175,7 +175,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasename(
 /*
 *	Get size of the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasesize(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasesize(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -183,7 +183,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasesize(
 /*
 *	Get whether the database is started or not
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasestarted(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasestarted(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -191,7 +191,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabasestarted(
 /*
 *	Get used storage of the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabaseused(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabaseused(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -199,7 +199,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getdatabaseused(
 /*
 *	Get vendor name
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getname(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getname(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -207,7 +207,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getname(
 /*
 *	Get libks version
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibksversion(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibksversion(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -215,7 +215,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibksversion(
 /*
 *	Get libov version
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibovversion(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovversion(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -223,7 +223,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibovversion(
 /*
 *	Get libovks version
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibovksversion(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovksversion(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -231,7 +231,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibovksversion(
 /*
 *	Get list of libraries in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibraries(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -239,7 +239,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getlibraries(
 /*
 *	Get list of semantic flags in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getsemanticflags(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getsemanticflags(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -247,7 +247,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getsemanticflags(
 /*
 *	Get server description
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getserverdescription(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverdescription(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -255,7 +255,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getserverdescription(
 /*
 *	Get server name
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getservername(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getservername(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -263,7 +263,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getservername(
 /*
 *	Get server time
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getservertime(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getservertime(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -271,7 +271,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getservertime(
 /*
 *	Get server version
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getserverversion(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverversion(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -279,7 +279,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getserverversion(
 /*
 *	Get startup time
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getstartuptime(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstartuptime(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
@@ -287,7 +287,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getstartuptime(
 /*
 *	Get list of structures in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vendortree_getstructures(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
 	const OV_TICKET			*pticket
 );

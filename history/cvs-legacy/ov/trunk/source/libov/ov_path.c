@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_path.c,v 1.3 1999-08-28 15:55:55 dirk Exp $
+*   $Id: ov_path.c,v 1.4 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -46,7 +46,7 @@
 *	Note: the memory for the path elements is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
 */
-OV_RESULT OV_DLLFNCEXPORT ov_path_resolve(
+OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 	OV_PATH			*ppath,
 	const OV_PATH	*prelpath,
 	const OV_STRING	pathname,
@@ -303,7 +303,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_path_resolve(
 *	Note: the memory for the path name is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
 */
-OV_STRING OV_DLLFNCEXPORT ov_path_getcanonicalpath(
+OV_DLLFNCEXPORT OV_STRING ov_path_getcanonicalpath(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_UINT			version
 ) {
@@ -378,7 +378,7 @@ OV_STRING OV_DLLFNCEXPORT ov_path_getcanonicalpath(
 *	Get the pointer to an object with given path name
 *	Note: you need NOT call ov_memstack_lock()/unlock() outside of this function
 */
-OV_INSTPTR_ov_object OV_DLLFNCEXPORT ov_path_getobjectpointer(
+OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_path_getobjectpointer(
 	const OV_STRING			pathname,
 	const OV_UINT			version
 ) {

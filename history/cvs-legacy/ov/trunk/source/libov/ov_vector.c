@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.5 1999-08-19 11:54:52 dirk Exp $
+*   $Id: ov_vector.c,v 1.6 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -42,7 +42,7 @@
 
 /*	----------------------------------------------------------------------	*/
 
-OV_RESULT OV_DLLFNCEXPORT ov_vector_setstaticvalue(
+OV_DLLFNCEXPORT OV_RESULT ov_vector_setstaticvalue(
 	OV_POINTER			pvector,
 	const OV_POINTER	pvalue,
 	const OV_UINT		veclen,
@@ -71,7 +71,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setstaticvalue(
 /*
 *	Set the value of a dynamic vector variable
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicvalue(
+OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicvalue(
 	OV_GENERIC_VEC		*pvector,
 	const OV_POINTER	pvalue,
 	const OV_UINT		veclen,
@@ -137,7 +137,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicvalue(
 /*
 *	Set the vector length of a dynamic vector variable value
 */
-OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicveclen(
+OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicveclen(
 	OV_GENERIC_VEC		*pvector,
 	const OV_UINT		veclen,
 	const OV_UINT		size,
@@ -206,7 +206,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicveclen(
 /*
 *	Compare two vector variable values, result is greater than, equal to or less than zero
 */
-OV_INT OV_DLLFNCEXPORT ov_vector_compare(
+OV_DLLFNCEXPORT OV_INT ov_vector_compare(
 	const OV_POINTER	pvalue1,
 	const OV_POINTER	pvalue2,
 	const OV_UINT		veclen,

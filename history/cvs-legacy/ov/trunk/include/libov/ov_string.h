@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.h,v 1.4 1999-08-18 13:11:22 dirk Exp $
+*   $Id: ov_string.h,v 1.5 1999-09-15 10:48:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -39,7 +39,7 @@ extern "C" {
 /*
 *	Set value of a string in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_string_setvalue(
+OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 	OV_STRING			*pstring,
 	const OV_STRING		value
 );
@@ -47,7 +47,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_setvalue(
 /*
 *	Set value of a string vector in the database
 */
-OV_RESULT OV_DLLFNCEXPORT ov_string_setvecvalue(
+OV_DLLFNCEXPORT OV_RESULT ov_string_setvecvalue(
 	OV_STRING			*pstringvec,
 	const OV_STRING		*pvalue,
 	OV_UINT				veclen
@@ -56,7 +56,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_setvecvalue(
 /*
 *	Compare two strings, result is greater than, equal to or less than zero
 */
-OV_INT OV_DLLFNCEXPORT ov_string_compare(
+OV_DLLFNCEXPORT OV_INT ov_string_compare(
 	const OV_STRING		string1,
 	const OV_STRING		string2
 );
@@ -64,14 +64,14 @@ OV_INT OV_DLLFNCEXPORT ov_string_compare(
 /*
 *	Get the length of a string
 */
-OV_UINT OV_DLLFNCEXPORT ov_string_getlength(
+OV_DLLFNCEXPORT OV_UINT ov_string_getlength(
 	const OV_STRING		string
 );
 
 /*
 *	Append a string to an existing one
 */
-OV_RESULT OV_DLLFNCEXPORT ov_string_append(
+OV_DLLFNCEXPORT OV_RESULT ov_string_append(
 	OV_STRING			*pstring,
 	const OV_STRING		appstring
 );
@@ -79,7 +79,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_append(
 /*
 *	Formatted print to a string
 */
-OV_RESULT OV_DLLFNCEXPORT ov_string_print(
+OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	OV_STRING		*pstring,
 	const OV_STRING	format,
 	...
@@ -88,7 +88,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_print(
 /*
 *	Test if a string matches a regular expression
 */
-OV_BOOL OV_DLLFNCEXPORT ov_string_match(
+OV_DLLFNCEXPORT OV_BOOL ov_string_match(
 	const OV_STRING		string,
 	const OV_STRING		mask
 );
@@ -97,7 +97,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_string_match(
 *	Convert a string to lower case
 *	Note: you must call ov_memstack_lock/unlock() outside of this function!
 */
-OV_STRING OV_DLLFNCEXPORT ov_string_tolower(
+OV_DLLFNCEXPORT OV_STRING ov_string_tolower(
 	const OV_STRING		string
 );
 
@@ -105,7 +105,7 @@ OV_STRING OV_DLLFNCEXPORT ov_string_tolower(
 *	Convert a string to upper case
 *	Note: you must call ov_memstack_lock/unlock() outside of this function!
 */
-OV_STRING OV_DLLFNCEXPORT ov_string_toupper(
+OV_DLLFNCEXPORT OV_STRING ov_string_toupper(
 	const OV_STRING		string
 );
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: example_testclass.c,v 1.6 1999-08-28 13:46:00 dirk Exp $
+*   $Id: example_testclass.c,v 1.7 1999-09-15 10:48:20 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,14 +38,14 @@
 /*
 *	Accessor functions for "Single"
 */
-OV_SINGLE OV_DLLFNCEXPORT example_testclass_Single_get(
+OV_DLLFNCEXPORT OV_SINGLE example_testclass_Single_get(
 	OV_INSTPTR_example_testclass	ptest
 ) {
 	ov_logfile_info("You asked for Single!");
 	return ptest->v_Single;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_Single_set(
+OV_DLLFNCEXPORT OV_RESULT example_testclass_Single_set(
 	OV_INSTPTR_example_testclass	ptest,
 	const OV_SINGLE					value
 ) {
@@ -57,14 +57,14 @@ OV_RESULT OV_DLLFNCEXPORT example_testclass_Single_set(
 /*
 *	Accessor functions for "String"
 */
-OV_STRING OV_DLLFNCEXPORT example_testclass_String_get(
+OV_DLLFNCEXPORT OV_STRING example_testclass_String_get(
 	OV_INSTPTR_example_testclass	ptest
 ) {
 	ov_logfile_info("You asked for String!");
 	return ptest->v_String;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_String_set(
+OV_DLLFNCEXPORT OV_RESULT example_testclass_String_set(
 	OV_INSTPTR_example_testclass	ptest,
 	OV_STRING						value
 ) {
@@ -76,7 +76,7 @@ OV_RESULT OV_DLLFNCEXPORT example_testclass_String_set(
 /*
 *	Accessor functions for "Time"
 */
-OV_TIME OV_DLLFNCEXPORT example_testclass_Time_get(
+OV_DLLFNCEXPORT OV_TIME example_testclass_Time_get(
 	OV_INSTPTR_example_testclass	ptest
 ) {
 	OV_STATICINSTPTR_example_testclass	pstatictest
@@ -85,7 +85,7 @@ OV_TIME OV_DLLFNCEXPORT example_testclass_Time_get(
 	return pstatictest->v_Time;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_Time_set(
+OV_DLLFNCEXPORT OV_RESULT example_testclass_Time_set(
 	OV_INSTPTR_example_testclass	ptest,
 	OV_TIME							value
 ) {
@@ -99,14 +99,14 @@ OV_RESULT OV_DLLFNCEXPORT example_testclass_Time_set(
 /*
 *	Accessor functions for "IntPV"
 */
-OV_INT_PV* OV_DLLFNCEXPORT example_testclass_IntPV_get(
+OV_DLLFNCEXPORT OV_INT_PV *example_testclass_IntPV_get(
 	OV_INSTPTR_example_testclass	ptest
 ) {
 	ov_logfile_info("You asked for IntPV!");
 	return &ptest->v_IntPV;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_IntPV_set(
+OV_DLLFNCEXPORT OV_RESULT example_testclass_IntPV_set(
 	OV_INSTPTR_example_testclass	ptest,
 	const OV_INT_PV					*pvalue
 ) {
@@ -118,7 +118,7 @@ OV_RESULT OV_DLLFNCEXPORT example_testclass_IntPV_set(
 /*
 *	Accessor functions for "UIntVec"
 */
-OV_UINT* OV_DLLFNCEXPORT example_testclass_UIntVec_get(
+OV_DLLFNCEXPORT OV_UINT *example_testclass_UIntVec_get(
 	OV_INSTPTR_example_testclass	ptest,
 	OV_UINT							*pveclen
 ) {
@@ -127,7 +127,7 @@ OV_UINT* OV_DLLFNCEXPORT example_testclass_UIntVec_get(
 	return ptest->v_UIntVec.value;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_UIntVec_set(
+OV_DLLFNCEXPORT OV_RESULT example_testclass_UIntVec_set(
 	OV_INSTPTR_example_testclass	ptest,
 	const OV_UINT					*pvalue,
 	const OV_UINT					veclen
@@ -140,7 +140,7 @@ OV_RESULT OV_DLLFNCEXPORT example_testclass_UIntVec_set(
 /*
 *	Accessor functions for "StringVec"
 */
-OV_STRING* OV_DLLFNCEXPORT example_testclass_StringVec_get(
+OV_DLLFNCEXPORT OV_STRING *example_testclass_StringVec_get(
 	OV_INSTPTR_example_testclass	ptest,
 	OV_UINT							*pveclen
 ) {
@@ -159,7 +159,7 @@ OV_STRING* OV_DLLFNCEXPORT example_testclass_StringVec_get(
 	return stringvec;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_StringVec_set(
+OV_DLLFNCEXPORT OV_RESULT example_testclass_StringVec_set(
 	OV_INSTPTR_example_testclass	ptest,
 	const OV_STRING*				pvalue,
 	const OV_UINT					veclen

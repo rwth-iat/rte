@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_variable.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_variable.c,v 1.2 1999-09-15 10:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -190,43 +190,43 @@ OV_BOOL ov_variable_canunload(
 /*
 *	Accessor functions
 */
-OV_INT OV_DLLFNCEXPORT ov_variable_vartype_get(
+OV_DLLFNCEXPORT OV_INT ov_variable_vartype_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_vartype;
 }
 
-OV_STRING OV_DLLFNCEXPORT ov_variable_ctypename_get(
+OV_DLLFNCEXPORT OV_STRING ov_variable_ctypename_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_ctypename;
 }
 
-OV_INT OV_DLLFNCEXPORT ov_variable_varprops_get(
+OV_DLLFNCEXPORT OV_INT ov_variable_varprops_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_varprops;
 }
 
-OV_UINT OV_DLLFNCEXPORT ov_variable_veclen_get(
+OV_DLLFNCEXPORT OV_UINT ov_variable_veclen_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_veclen;
 }
 
-OV_STRING OV_DLLFNCEXPORT ov_variable_comment_get(
+OV_DLLFNCEXPORT OV_STRING ov_variable_comment_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_comment;
 }
 
-OV_UINT OV_DLLFNCEXPORT ov_variable_flags_get(
+OV_DLLFNCEXPORT OV_UINT ov_variable_flags_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_flags;
 }
 
-OV_STRING OV_DLLFNCEXPORT ov_variable_techunit_get(
+OV_DLLFNCEXPORT OV_STRING ov_variable_techunit_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_techunit;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.8 1999-08-30 15:23:31 dirk Exp $
+*   $Id: ov_class.c,v 1.9 1999-09-15 10:48:21 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -415,7 +415,7 @@ OV_BOOL ov_class_canunload(
 /*
 *	Test if a pointer to an instance of a class can be casted to another one
 */
-OV_BOOL OV_DLLFNCEXPORT ov_class_cancastto(
+OV_DLLFNCEXPORT OV_BOOL ov_class_cancastto(
 	const OV_INSTPTR_ov_class	pclassfrom,
 	const OV_INSTPTR_ov_class	pclassto
 ) {
@@ -448,7 +448,7 @@ OV_BOOL OV_DLLFNCEXPORT ov_class_cancastto(
 /*
 *	Create an instance of the class
 */
-OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
+OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	const OV_INSTPTR_ov_class	pclass,
 	const OV_INSTPTR_ov_domain	pparent,
 	const OV_STRING				identifier,
@@ -571,7 +571,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 /*
 *	Delete an instance of the class
 */
-OV_RESULT OV_DLLFNCEXPORT ov_class_deleteobject(
+OV_DLLFNCEXPORT OV_RESULT ov_class_deleteobject(
 	const OV_INSTPTR_ov_object	pobj
 ) {
 	/*
@@ -627,7 +627,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_deleteobject(
 /*
 *	Rename an instance of the class
 */
-OV_RESULT OV_DLLFNCEXPORT ov_class_renameobject(
+OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 	const OV_INSTPTR_ov_object	pobj,
 	const OV_INSTPTR_ov_domain	pparent,
 	const OV_STRING				identifier,
@@ -1130,31 +1130,31 @@ void ov_class_deleteobject_cleanupstruct(
 /*
 *	Accessor functions
 */
-OV_INT OV_DLLFNCEXPORT ov_class_classprops_get(
+OV_DLLFNCEXPORT OV_INT ov_class_classprops_get(
 	OV_INSTPTR_ov_class	pclass
 ) {
 	return pclass->v_classprops;
 }
 
-OV_UINT OV_DLLFNCEXPORT ov_class_size_get(
+OV_DLLFNCEXPORT OV_UINT ov_class_size_get(
 	OV_INSTPTR_ov_class	pclass
 ) {
 	return pclass->v_size;
 }
 
-OV_UINT OV_DLLFNCEXPORT ov_class_staticsize_get(
+OV_DLLFNCEXPORT OV_UINT ov_class_staticsize_get(
 	OV_INSTPTR_ov_class	pclass
 ) {
 	return pclass->v_staticsize;
 }
 
-OV_STRING OV_DLLFNCEXPORT ov_class_comment_get(
+OV_DLLFNCEXPORT OV_STRING ov_class_comment_get(
 	OV_INSTPTR_ov_class	pclass
 ) {
 	return pclass->v_comment;
 }
 
-OV_UINT OV_DLLFNCEXPORT ov_class_flags_get(
+OV_DLLFNCEXPORT OV_UINT ov_class_flags_get(
 	OV_INSTPTR_ov_class	pclass
 ) {
 	return pclass->v_flags;

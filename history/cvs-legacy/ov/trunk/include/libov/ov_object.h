@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_object.h,v 1.2 1999-09-15 10:48:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,14 +38,14 @@ extern "C" {
 /*
 *	Test, if an object owns links (except to the parent domain and class)
 */
-OV_BOOL OV_DLLFNCEXPORT ov_object_haslinks(
+OV_DLLFNCEXPORT OV_BOOL ov_object_haslinks(
 	OV_INSTPTR_ov_object 		pobj
 );
 
 /*
 *	Test, if a string is a valid identifier for an object
 */
-OV_BOOL OV_DLLFNCEXPORT ov_object_identifierok(
+OV_DLLFNCEXPORT OV_BOOL ov_object_identifierok(
 	OV_STRING		identifier
 );
 

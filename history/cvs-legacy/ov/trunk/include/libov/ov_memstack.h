@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_memstack.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_memstack.h,v 1.2 1999-09-15 10:48:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -81,12 +81,12 @@ typedef struct OV_MEMSTACK OV_MEMSTACK;
 *	Increment the reference count of the stack and initialize
 *	if necessary
 */
-void OV_DLLFNCEXPORT ov_memstack_lock(void);
+OV_DLLFNCEXPORT void ov_memstack_lock(void);
 
 /*
 *	Allocate memory on the stack
 */
-OV_POINTER OV_DLLFNCEXPORT ov_memstack_alloc(
+OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 	OV_UINT		size
 );
 
@@ -94,7 +94,7 @@ OV_POINTER OV_DLLFNCEXPORT ov_memstack_alloc(
 *	Decrement the reference count of the stack and free the
 *	stack memory if necessary
 */
-void OV_DLLFNCEXPORT ov_memstack_unlock(void);
+OV_DLLFNCEXPORT void ov_memstack_unlock(void);
 
 #ifdef __cplusplus
 }	/* extern "C" */
