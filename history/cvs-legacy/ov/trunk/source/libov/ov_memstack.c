@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_memstack.c,v 1.3 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_memstack.c,v 1.4 2000-02-23 12:57:30 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -124,9 +124,10 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 		pnewpage = (OV_MEMSTACK*)Ov_HeapMalloc(sizeof(OV_MEMSTACK));
 	}
 	if(pnewpage) {
-		pnewpage->memalignunion.pnext = pmemstack->memalignunion.pnext;
+		pnewpage->memalignunion.pnext = NULL;
 		pmemstack->memalignunion.pnext = pnewpage;
-		ptr = (OV_BYTE*)&pnewpage->memory;
+		pmemstack = pnewpage;
+		ptr = (OV_BYTE*)&pmemstack->memory;
 		pmem = ptr + Ov_AlignTo(sizeof(double), size);
 		return ptr;
 	}
@@ -159,7 +160,7 @@ OV_DLLFNCEXPORT void ov_memstack_unlock(void) {
 		/*
 		*	free memory
 		*/
-		pmemstack2=pmemstack->memalignunion.pnext;
+		pmemstack2=memstack.memalignunion.pnext;
 		while(pmemstack2) {
 			pmemstack3 = pmemstack2->memalignunion.pnext;
 			Ov_HeapFree(pmemstack2);
