@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.8 1997-04-10 14:09:28 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.9 1997-07-19 13:18:44 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -118,27 +118,6 @@ bool operator >= (const PltTime &t1, const PltTime &t2);
 
 #ifndef PLT_TIME_TV_USEC_SIGNED
 #define PLT_TIME_TV_USEC_SIGNED 1
-#endif
-
-//////////////////////////////////////////////////////////////////////
-
-#if PLT_DEBUG_INVARIANTS
-inline bool
-PltTime::invariant() const
-{
-    bool ok = true;
-
-#if PLT_TIME_TV_SEC_SIGNED
-    ok = ok && tv_sec >= 0;
-#endif
-
-#if PLT_TIME_TV_USEC_SIGNED
-    ok = ok && 0 <= tv_usec;
-#endif
-
-    ok = ok && tv_usec < 1000000;
-    return ok;
-}
 #endif
 
 //////////////////////////////////////////////////////////////////////

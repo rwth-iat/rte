@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.6 1997-07-18 14:02:58 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.7 1997-07-19 13:18:51 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,6 +45,32 @@
 #if 0 // was: PLT_SYSTEM_NT
 #include <time.h>
 #include <windows.h>
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
+#if PLT_DEBUG_INVARIANTS
+bool
+PltTime::invariant() const
+{
+    bool ok = true;
+
+// We allow negative times, so the following check is disabled.
+
+#if  0 && PLT_TIME_TV_SEC_SIGNED
+    ok = ok && tv_sec >= 0;
+    if (!ok) PLT_DMSG("tv_sec=" << tv_sec);
+#endif
+
+#if PLT_TIME_TV_USEC_SIGNED
+    ok = ok && 0 <= tv_usec;
+    if (!ok) PLT_DMSG("tv_usec=" << tv_usec);
+#endif
+
+    ok = ok && tv_usec < 1000000;
+    if (!ok) PLT_DMSG("tv_usec=" << tv_usec);
+    return ok;
+}
 #endif
 
 //////////////////////////////////////////////////////////////////////
