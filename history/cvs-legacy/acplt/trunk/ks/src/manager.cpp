@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.18 1997-09-10 11:32:12 nicole Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.19 1997-10-28 10:41:44 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -406,18 +406,14 @@ KsManager::~KsManager()
 }
 
 //////////////////////////////////////////////////////////////////////
-extern int from_local(struct sockaddr_in *);
 
 bool 
 KsManager::isLocal(SVCXPRT *xprt)
 {
     struct sockaddr_in * sin = svc_getcaller(xprt);
     PLT_ASSERT(sin);
-    if (from_local(sin)) {
-        return true;
-    } else {
-        return false;
-    }
+
+    return _localIpAddresses.isMember(sin->sin_addr);
 }
          
 //////////////////////////////////////////////////////////////////////

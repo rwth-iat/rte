@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.10 1997-04-11 17:24:33 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.11 1997-10-28 10:41:34 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -46,6 +46,7 @@
 #include "ks/serviceparams.h"
 #include "ks/path.h"
 #include "ks/rpc.h"
+#include "ks/hostinaddrset.h"
 
 #include "plt/hashtable.h"
 
@@ -58,6 +59,9 @@ class KsmExpireServerEvent;
 class KsmExpireManagerEvent;
 
 //////////////////////////////////////////////////////////////////////
+// This is the MANAGER class, which represents an ACPLT/KS server
+// which acts as the MANAGER.
+//
 
 class KsManager
 : public KsSimpleServer
@@ -104,12 +108,13 @@ private:
     friend class KsmExpireManagerEvent;
 
     void removeServer(KsmServer *p);
-    static bool isLocal(SVCXPRT *);
+    bool isLocal(SVCXPRT *);
 
     SVCXPRT *_udp_transport;
     bool _registered;
     PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> _server_table;
     KssSimpleDomain _servers_domain;
+    KsHostInAddrSet _localIpAddresses;
 };
 
 //////////////////////////////////////////////////////////////////////
