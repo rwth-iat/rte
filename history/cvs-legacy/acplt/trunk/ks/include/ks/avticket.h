@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.14 1997-09-02 15:07:42 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.15 1997-09-03 14:08:47 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -105,12 +105,12 @@ public:
     ////
     //// Permissions
     ////
-    virtual KS_ACCESS getAccess(const KsString &name) const;        // [1]
-    
-    virtual bool isVisible(const KsString & name) const;
+    virtual bool isVisible(const KsString & name) const
+        { return getAccess(name) != KS_AC_NONE; }
 
-    virtual bool canReadVar(const KsString &name) const;            // [1]
-    virtual bool canWriteVar(const KsString &name) const;           // [1]
+    virtual bool canReadVar(const KsString &name) const = 0;    
+
+    virtual bool canWriteVar(const KsString &name) const = 0;
 
     virtual bool canReadVars(const KsArray<KsString> & names,
                              KsArray<bool> &canRead) const;
@@ -118,12 +118,8 @@ public:
     virtual bool canWriteVars(const KsArray<KsString> & names,
                               KsArray<bool> &canRead) const;
 
-    //
-    // [1] : Overwrite at least one set: 
-    // Implement all of can... or getAccess because the default implementations
-    // fall back on each other!
-    //
-
+    KS_ACCESS getAccess(const KsString &name) const;
+    
     ////
     //// sender address
     ////
@@ -172,7 +168,8 @@ public:
 
     virtual enum_t xdrTypeCode() const { return KS_AUTH_NONE; }
 
-    virtual KS_ACCESS getAccess(const KsString &name) const;
+    virtual bool canReadVar(const KsString & name) const;
+    virtual bool canWriteVar(const KsString & name) const;
 
     static void setDefaultAccess(KS_ACCESS a)
         { _default_access = a; }
