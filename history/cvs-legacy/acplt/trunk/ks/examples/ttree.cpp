@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.6 1999-09-16 10:54:35 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.7 2000-04-10 14:59:23 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -28,6 +28,7 @@
 #if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
 #include "plt/hashtable_impl.h"
 #include "plt/handle_impl.h"
+#include "plt/list_impl.h"
 #endif
 
 #if PLT_COMPILER_BORLAND
