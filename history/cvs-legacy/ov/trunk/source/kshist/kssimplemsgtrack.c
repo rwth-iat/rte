@@ -39,7 +39,7 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleMsgTrack_constructor(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleMsgTrack_gettrackhist( 
+OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleMsgTrack_gettrackhist(
   OV_INSTPTR_ov_object pobj,
   OV_HISTSELECTOR* phistsel,
   OV_VAR_VALUE* pvarvalue,
@@ -49,11 +49,12 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleMsgTrack_gettrackhist(
 	OV_INSTPTR_kshist_KsSimpleMsgTrack 	pMsgTrack;
 	OV_TIME	from,to;
 	OV_STRING *pstring;
-	OV_INT answers,i;
+	OV_UINT answers;
+	OV_UINT i;
 
 	pMsgTrack = Ov_StaticPtrCast(kshist_KsSimpleMsgTrack, pobj);
 	pvarvalue->vartype = OV_VT_STRING_VEC;
-	pvarvalue->valueunion.val_string_vec.value = (OV_STRING*)ov_memstack_alloc(max_answers*sizeof(OV_STRING));		
+	pvarvalue->valueunion.val_string_vec.value = (OV_STRING*)ov_memstack_alloc(max_answers*sizeof(OV_STRING));
 	pstring = pvarvalue->valueunion.val_string_vec.value;
 	switch(phistsel->hseltype) {
 		case OV_HSELT_NONE:

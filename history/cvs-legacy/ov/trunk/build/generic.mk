@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.14 2004-10-27 12:09:05 ansgar Exp $
+#   $Id: generic.mk,v 1.15 2004-10-29 09:09:05 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -207,6 +207,7 @@ OV_INCLUDES = \
 	-I$(OV_SOURCE_DYNOV_DIR) \
 	-I$(OV_SOURCE_TASKLIB_DIR) \
 	-I$(OV_SOURCE_DBPARSE_DIR) \
+	-I$(OV_SOURCE_DBPARSE_DIR)nt/ \
 	-I$(OV_SOURCE_DBDUMP_DIR) \
 	-I$(LIBMPM_DIR)
 else
@@ -222,6 +223,7 @@ OV_INCLUDES = \
 	/I$(OV_SOURCE_DYNOV_DIR) \
 	/I$(OV_SOURCE_TASKLIB_DIR) \
 	/I$(OV_SOURCE_DBPARSE_DIR) \
+	/I$(OV_SOURCE_DBPARSE_DIR)nt/ \
 	/I$(OV_SOURCE_DBDUMP_DIR) \
 	/I$(LIBMPM_DIR)
 else
@@ -240,6 +242,7 @@ OV_INCLUDES = \
 	-I$(OV_SOURCE_DYNOV_DIR) \
 	-I$(OV_SOURCE_TASKLIB_DIR) \
 	-I$(OV_SOURCE_DBPARSE_DIR) \
+	-I$(OV_SOURCE_DBPARSE_DIR)nt/ \
 	-I$(OV_SOURCE_DBDUMP_DIR) \
 	-I$(LIBMPM_DIR) \
 	-I.

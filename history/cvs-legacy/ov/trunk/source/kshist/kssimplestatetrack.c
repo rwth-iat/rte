@@ -49,7 +49,8 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleStateTrack_gettrackhist(
 	OV_INSTPTR_kshist_KsSimpleStateTrack 	pStateTrack;
 	OV_TIME	from,to;
 	OV_STATE *pint;
-	OV_INT answers,i;
+	OV_UINT answers;
+	OV_UINT i;
 
 	pStateTrack = Ov_StaticPtrCast(kshist_KsSimpleStateTrack, pobj);
 	pvarvalue->vartype = OV_VT_STATE_VEC;

@@ -50,7 +50,7 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleSingleTrack_constructor(
 	OV_INSTPTR_kshist_KsSimpleSingleTrack 	ptrack;
 
 	ptrack = Ov_StaticPtrCast(kshist_KsSimpleSingleTrack, pobj);
-	ptrack->v_Type = OV_VT_SINGLE;		
+	ptrack->v_Type = OV_VT_SINGLE;
 	ov_string_setvalue(&ptrack->v_TechUnit, "Single");
 	return OV_ERR_OK;
 }
@@ -59,13 +59,14 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleSingleTrack_gettrackhist(
   OV_INSTPTR_ov_object pobj,
   OV_HISTSELECTOR* phistsel,
   OV_VAR_VALUE* pvarvalue,
-  OV_UINT max_answers	
+  OV_UINT max_answers
 ) {
 	OV_INSTPTR_kshist_KsSimpleTimeTrack 	pTimeTrack;
 	OV_INSTPTR_kshist_KsSimpleSingleTrack 	pSingleTrack;
 	OV_TIME	from,to;
 	OV_SINGLE *psingle;
-	OV_INT answers,i;
+	OV_UINT answers;
+	OV_UINT i;
 
 	pSingleTrack = Ov_StaticPtrCast(kshist_KsSimpleSingleTrack, pobj);
 	pvarvalue->vartype = OV_VT_SINGLE_VEC;

@@ -73,7 +73,6 @@ OV_DLLFNCEXPORT void tasklib_SchedulerTask_execute(
 	OV_INSTPTR_ov_object pobj
 ) {
 	OV_INSTPTR_tasklib_Task		       	pchildtask;
-	OV_VTBLPTR_tasklib_Task			pvtable;
 	OV_TIME 				acttime;
 	OV_INSTPTR_tasklib_Task 		ptask;
 	OV_JUMPBUFFER				jumpbuffer;

@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.4 2004-10-14 14:18:04 ansgar Exp $
+#   $Id: msvc.mk,v 1.5 2004-10-29 09:09:31 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -189,16 +189,18 @@ $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ)  $(OV_CONTROLPANEL_RES)
 
 #	ACPLT/OV database dumper
 
-dbdump.obj : $(OV_SOURCE_DBDUMP_DIR)dbdump.cpp
-	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /c $^
-
-fnmatch.obj : $(OV_SOURCE_DBDUMP_DIR)fnmatch.c
-	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /c $^
+fnmatch.obj: fnmatch.c
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ) $(DBDUMP_RES)
 	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
 
 #	ACPLT/OV database parser
+
+db_y.h: db_y.c
+
+db_y.obj: db_y.c
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
 
 db_lex.obj: db_lex.c
 	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^

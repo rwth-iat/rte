@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.16 2004-10-14 14:16:11 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.17 2004-10-29 09:08:10 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -97,7 +97,6 @@ OV_RESULT ov_vendortree_init(void) {
 	*	local variables
 	*/
 	OV_UINT	i;
-	OV_INSTPTR_ov_object pobj;
 	/*
 	*	initialize the vendor domain object
 	*/

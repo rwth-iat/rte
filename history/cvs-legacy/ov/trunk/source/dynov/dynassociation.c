@@ -39,20 +39,20 @@ OV_DLLFNCEXPORT void dynov_dynassociation_uncheck(
 	if ((pparentclass) && (pchildclass) && (passoc)) {
 	    if ((passoc->v_parentoffset!=0) && (passoc->v_childoffset!=0)) {
 		if (passoc->v_assoctype == OV_AT_ONE_TO_MANY) {
-			dynov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_ANCHOR), passoc->v_childoffset);
-			dynov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_HEAD), passoc->v_parentoffset);
+			dynov_association_linktable_insert(pchildclass, pchildclass, -(OV_INT) sizeof(OV_ANCHOR), passoc->v_childoffset);
+			dynov_association_linktable_insert(pparentclass, pparentclass, -(OV_INT) sizeof(OV_HEAD), passoc->v_parentoffset);
 			dynov_association_linktable_allocate(pparentclass, 0);
 			dynov_association_linktable_allocate(pchildclass, 0);
 		}
 		if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
-			dynov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_NMHEAD), passoc->v_childoffset);
-			dynov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_NMHEAD), passoc->v_parentoffset);
+			dynov_association_linktable_insert(pchildclass, pchildclass, - (OV_INT) sizeof(OV_NMHEAD), passoc->v_childoffset);
+			dynov_association_linktable_insert(pparentclass, pparentclass, - (OV_INT) sizeof(OV_NMHEAD), passoc->v_parentoffset);
 			dynov_association_linktable_allocate(pparentclass, 0);
 			dynov_association_linktable_allocate(pchildclass, 0);
 		}
 		if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
-			dynov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_INSTPTR_ov_object), passoc->v_childoffset);
-			dynov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_INSTPTR_ov_object), passoc->v_parentoffset);
+			dynov_association_linktable_insert(pchildclass, pchildclass, - (OV_INT) sizeof(OV_INSTPTR_ov_object), passoc->v_childoffset);
+			dynov_association_linktable_insert(pparentclass, pparentclass, - (OV_INT) sizeof(OV_INSTPTR_ov_object), passoc->v_parentoffset);
 			dynov_association_linktable_allocate(pparentclass, 0);
 			dynov_association_linktable_allocate(pchildclass, 0);
 		}
@@ -411,13 +411,13 @@ void dynov_association_linktable_insert(
 		if (addsize >=0) {
 			pcs = pinst->v_linktable+pclass->v_linktablesize-1;
 			pct = pinst->v_linktable+pclass->v_linktablesize-1+addsize;
-			while ((pcs-pinst->v_linktable) >= offset) {
+			while ((OV_UINT)(pcs-pinst->v_linktable) >= offset) {
 				*pct = *pcs;
 				pct--;
 				pcs--;
 			}
 			pcs = pinst->v_linktable+offset+addsize-1;
-			while ((pcs-pinst->v_linktable) >= offset) {
+			while ((OV_UINT)(pcs-pinst->v_linktable) >= offset) {
 				*pcs = 0;
 				pcs--;
 			}
@@ -425,12 +425,12 @@ void dynov_association_linktable_insert(
 		else {
 			pcs = pinst->v_linktable+offset-addsize;
 			pct = pinst->v_linktable+offset;
-			while ((pcs-pinst->v_linktable) < (pclass->v_linktablesize)) {
+			while ((OV_UINT)(pcs-pinst->v_linktable) < (pclass->v_linktablesize)) {
 				*pct = *pcs;
 				pct++;
 				pcs++;
 			}
-			while ((pct-pinst->v_linktable) < pclass->v_linktablesize) {
+			while ((OV_UINT)(pct-pinst->v_linktable) < pclass->v_linktablesize) {
 				*pct = 0;
 				pct++;
 			}

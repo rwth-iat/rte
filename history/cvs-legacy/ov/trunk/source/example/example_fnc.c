@@ -1,5 +1,5 @@
 /*
-*   $Id: example_fnc.c,v 1.1 2000-02-10 13:06:59 dirk Exp $
+*   $Id: example_fnc.c,v 1.2 2004-10-29 09:07:45 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -46,7 +46,7 @@ OV_DLLFNCEXPORT OV_STRING example_fnc_expression_get(
 
 OV_DLLFNCEXPORT OV_RESULT example_fnc_expression_set(
 	OV_INSTPTR_example_fnc	pobj,
-	OV_STRING				value
+	const OV_STRING				value
 ) {
 	/*
 	*	local variables

@@ -1841,8 +1841,6 @@ dbdump.obj: ../../source/dbdump/dbdump.cpp ../../source/dbdump/dbdump.h \
  ../../../plt/include/plt/priorityqueue_impl.h dbdump_inst.h \
  ../../source/dbdump/fnmatch.h ../../include/libov/ov_version.h
 
-fnmatch.obj: ../../source/dbdump/fnmatch.c ../../source/dbdump/fnmatch.h
-
 dbparse1.obj: ../../source/dbparse/dbparse1.cpp \
  ../../source/dbparse/dbparse.h ../../../ks/include/ks/commobject.h \
  ../../../ks/include/ks/props.h ../../../ks/include/ks/ks.h \
@@ -1902,50 +1900,6 @@ dbparse.obj: ../../source/dbparse/dbparse.cpp \
  ../../../plt/include/plt/priorityqueue_impl.h \
  ../../../plt/include/plt/priorityqueue.h dbparse_inst.h
 
-db_lex.obj: db_lex.c ../../source/dbparse/dbparse.h \
- ../../../ks/include/ks/commobject.h ../../../ks/include/ks/props.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
- ../../../ks/include/ks/xdr.h ../../../ks/include/ks/handle.h \
- ../../../ks/include/ks/value.h ../../../ks/include/ks/array.h \
- ../../../plt/include/plt/array.h ../../../ks/include/ks/time.h \
- ../../../plt/include/plt/time.h ../../../ks/include/ks/propsv1.h \
- ../../../ks/include/ks/clntpath.h ../../../ks/include/ks/avmodule.h \
- ../../../ks/include/ks/avsimplemodule.h \
- ../../../ks/include/ks/client.h ../../../ks/include/ks/register.h \
- ../../../ks/include/ks/result.h \
- ../../../ks/include/ks/serviceparams.h ../../../ks/include/ks/list.h \
- ../../../ks/include/ks/clnrequest.h \
- ../../../ks/include/ks/serverconnection.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
- ../../../ks/include/ks/event.h ../../../ks/include/ks/connection.h \
- ../../../ks/include/ks/rpcproto.h \
- ../../../ks/include/ks/connectionmgr.h \
- ../../../ks/include/ks/xdrtcpcon.h ../../../ks/include/ks/xdrudpcon.h \
- ../../../ks/include/ks/objmgrparams.h ../../../ks/include/ks/path.h \
- db_y.h
-
-db_y.obj: db_y.c ../../source/dbparse/dbparse.h \
- ../../../ks/include/ks/commobject.h ../../../ks/include/ks/props.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
- ../../../ks/include/ks/xdr.h ../../../ks/include/ks/handle.h \
- ../../../ks/include/ks/value.h ../../../ks/include/ks/array.h \
- ../../../plt/include/plt/array.h ../../../ks/include/ks/time.h \
- ../../../plt/include/plt/time.h ../../../ks/include/ks/propsv1.h \
- ../../../ks/include/ks/clntpath.h ../../../ks/include/ks/avmodule.h \
- ../../../ks/include/ks/avsimplemodule.h \
- ../../../ks/include/ks/client.h ../../../ks/include/ks/register.h \
- ../../../ks/include/ks/result.h \
- ../../../ks/include/ks/serviceparams.h ../../../ks/include/ks/list.h \
- ../../../ks/include/ks/clnrequest.h \
- ../../../ks/include/ks/serverconnection.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
- ../../../ks/include/ks/event.h ../../../ks/include/ks/connection.h \
- ../../../ks/include/ks/rpcproto.h \
- ../../../ks/include/ks/connectionmgr.h \
- ../../../ks/include/ks/xdrtcpcon.h ../../../ks/include/ks/xdrudpcon.h \
- ../../../ks/include/ks/objmgrparams.h ../../../ks/include/ks/path.h
 
 ov_makmak.obj: ../../source/makmak/ov_makmak.c \
  ../../include/libov/ov_version.h

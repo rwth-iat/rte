@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.c,v 1.9 2003-11-07 10:13:17 ansgar Exp $
+*   $Id: ov_ntservice.c,v 1.10 2004-10-29 09:08:24 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -284,7 +284,7 @@ static OV_BOOL ov_ntservice_parseargs(
 	/*
 	*	local variables
 	*/
-	OV_UINT	i;
+	OV_INT	i;
 	/*
 	*	parse command line arguments
 	*/
@@ -459,7 +459,7 @@ static OV_BOOL ov_ntservice_create(
 		service_name = OV_SERVICE_NAME;
 	}
 	is_ok = TRUE;
-	status_handle = NULL;
+	status_handle = 0;
 	status.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
 	status.dwCurrentState = SERVICE_START_PENDING;
 	status.dwControlsAccepted = 0;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.24 2004-10-27 13:32:32 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.25 2004-10-29 09:06:45 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 	/*
 	*	local variables
 	*/
-	OV_UINT i;
+	OV_INT i;
 	int		exit_status = EXIT_FAILURE;
 	/*
 	*	initialization

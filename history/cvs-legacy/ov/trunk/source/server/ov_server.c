@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.15 2004-08-04 15:13:19 ansgar Exp $
+*   $Id: ov_server.c,v 1.16 2004-10-29 09:08:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -204,7 +204,8 @@ int main(int argc, char **argv) {
         OV_STRING               libraries[16];
         OV_INSTPTR_ov_library   plib;
         OV_INSTPTR_ov_domain    pdom;
-	OV_UINT		        i, libcount;
+        OV_INT			i;
+	OV_INT		        libcount;
 	OV_RESULT	        result;
 	OV_INT 		        port = 0; /* KS_ANYPORT */
 	OV_BOOL		        startup = TRUE;

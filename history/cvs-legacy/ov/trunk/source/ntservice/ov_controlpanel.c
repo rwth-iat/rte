@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_controlpanel.c,v 1.1 2000-07-03 13:40:24 dirk Exp $
+*   $Id: ov_controlpanel.c,v 1.2 2004-10-29 09:08:24 ansgar Exp $
 *
 *   Copyright (C) 2000
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -186,14 +186,14 @@ static void getParamsFromDialog(HWND hwnd) {
 static void openRegistry(void) {
 	if(!hkeysvc_query) {
 		if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, KEY_OVNTSERVICE,
-			NULL, KEY_QUERY_VALUE, &hkeysvc_query) != ERROR_SUCCESS
+			0, KEY_QUERY_VALUE, &hkeysvc_query) != ERROR_SUCCESS
 		) {
 			hkeysvc_query = 0;
 		}
 	}
 	if(!hkeysvc_set) {
 		if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, KEY_OVNTSERVICE,
-			NULL, KEY_SET_VALUE, &hkeysvc_set) != ERROR_SUCCESS
+			0, KEY_SET_VALUE, &hkeysvc_set) != ERROR_SUCCESS
 		) {
 			hkeysvc_set = 0;
 		}
@@ -355,7 +355,7 @@ static void writeParamsToRegistry(HWND hwnd) {
 			port?" -p ":"", port?portno:"",
 			startup?"":" -n"
 		);
-		RegSetValueEx(hkeysvc_set, SUBKEY_IMPAGEPATH, NULL, REG_EXPAND_SZ,
+		RegSetValueEx(hkeysvc_set, SUBKEY_IMPAGEPATH, 0, REG_EXPAND_SZ,
 			(CONST BYTE *)imagepath, strlen(imagepath)+1);
 		free(imagepath);
 	}

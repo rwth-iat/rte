@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.7 2004-05-19 14:47:28 ansgar Exp $
+*   $Id: ov_builder.c,v 1.8 2004-10-29 09:06:39 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 	/*
 	*	local variables
 	*/
-	OV_UINT i;
+	OV_INT i;
 	int		exit_status = EXIT_FAILURE;
 	/*
 	*	initialization
@@ -262,7 +262,7 @@ int ov_builder_createsourcefiles(
 	char			text2[256];
 	char			*ptext;
 	OV_INT			pathcount;
-	int			i;
+	OV_UINT			i;
 	/*
 	*	create output files
 	*/

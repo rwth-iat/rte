@@ -1,5 +1,5 @@
 /*
-*   $Id: example_testclass.c,v 1.8 2000-02-10 13:06:59 dirk Exp $
+*   $Id: example_testclass.c,v 1.9 2004-10-29 09:07:45 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -66,7 +66,7 @@ OV_DLLFNCEXPORT OV_STRING example_testclass_String_get(
 
 OV_DLLFNCEXPORT OV_RESULT example_testclass_String_set(
 	OV_INSTPTR_example_testclass	ptest,
-	OV_STRING						value
+	const OV_STRING			value
 ) {
 	ov_string_setvalue(&ptest->v_String, value);
 	ov_logfile_info("You set String!");
@@ -87,7 +87,7 @@ OV_DLLFNCEXPORT OV_TIME example_testclass_Time_get(
 
 OV_DLLFNCEXPORT OV_RESULT example_testclass_Time_set(
 	OV_INSTPTR_example_testclass	ptest,
-	OV_TIME							value
+	const OV_TIME			value
 ) {
 	OV_STATICINSTPTR_example_testclass	pstatictest
 		= Ov_GetStaticInstPtr(example_testclass, ptest);

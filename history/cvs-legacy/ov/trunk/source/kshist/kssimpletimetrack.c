@@ -48,7 +48,8 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleTimeTrack_gettrackhist(
 	OV_INSTPTR_kshist_KsSimpleTimeTrack 	pTimeTrack;
 	OV_TIME	from,to;
 	OV_TIME	*ptime;
-	OV_INT i,answers;
+	OV_UINT i;
+	OV_UINT answers;
 
 	pTimeTrack = Ov_StaticPtrCast(kshist_KsSimpleTimeTrack, pobj);
 	pvarvalue->vartype = OV_VT_TIME_VEC;

@@ -54,7 +54,7 @@ int is_valid_char(char c) {							/* prüft, ob c in A..Z, a..z, 0..9, _ */
 
 /******************************************************************************************/
 
-int get_hex(char *st, int j, error_t *err_c) {	/* liefert Zeichen zu Hexwert st[j]st[j+1] */
+int get_hex(char *st, unsigned int j, error_t *err_c) {	/* liefert Zeichen zu Hexwert st[j]st[j+1] */
 
 /******************************************************************************************/
 
@@ -78,14 +78,14 @@ int get_hex(char *st, int j, error_t *err_c) {	/* liefert Zeichen zu Hexwert st[
 
 /******************************************************************************************/
 
-int save_set(char *st, list_t **pcmask, list_t **plast, int j, error_t *err_c) {
+int save_set(char *st, list_t **pcmask, list_t **plast, unsigned int j, error_t *err_c) {
 													/* speichert Zeichenmenge als Bitfeld */
 
 /******************************************************************************************/
 
 	list_t	*list_el;
 	char	x;
-	int		k;
+	unsigned int		k;
 
 	if (! (is_valid_char(st[j]) || st[j] == '^' || st[j] == '%')) {		/* falsches Format */
 		*err_c = ERR_INVALID_MASK_CHAR;
@@ -213,7 +213,7 @@ list_t *Acplt_Compile_Mask (char *mask, error_t *err_c) {
 
 	list_t	*list_el, *cmask, *last;
 
-	int		i, j, k;
+	unsigned int		i, j, k;
 	char	hex;
 
 	i = 0;													/* Position im Eingabestring */
@@ -353,12 +353,12 @@ list_t *Acplt_Compile_Mask (char *mask, error_t *err_c) {
 
 /******************************************************************************************/
 
-int comp(list_t *cmask, char *name, int i) {	/* Vergleich der Maske mit gegebenem String */
+int comp(list_t *cmask, char *name, unsigned int i) {	/* Vergleich der Maske mit gegebenem String */
 
 /******************************************************************************************/
 
 	list_t	*list_el;
-	int		j;
+	unsigned int	j;
 
 	list_el = cmask;
 
@@ -378,7 +378,7 @@ int comp(list_t *cmask, char *name, int i) {	/* Vergleich der Maske mit gegebene
 							}
 							i++;
 							break;
-			case quest_type : for (j=1; j <= list_el->contents.number; j++) {
+			case quest_type : for (j=1; (int) j <= list_el->contents.number; j++) {
 								  i++;
 							  }
 							  break;
@@ -438,7 +438,7 @@ int Acplt_FNMatch (char *mask, char *name, int no_case, error_t *err_c) {
 
 	list_t	*compiled_mask;
 	int		result;
-	int		i, j;
+	unsigned int	i, j;
 
 	*err_c = ERR_OK;
 	if (mask == NULL) {
