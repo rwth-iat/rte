@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.13 1997-04-01 11:24:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.14 1997-04-29 14:17:42 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -328,8 +328,9 @@ void
 PltString::cloneIfNeeded()
 {
     PLT_PRECONDITION( ok() );
-    if (--(p->refcount) > 0) { 
+    if ((p->refcount) > 1) { 
         // clone to maintain value semantics
+        --(p->refcount);
         srep *np = new srep;
         if (np) {
             np->len = p->len;
