@@ -16,7 +16,7 @@ CC      = $(BC)\bin\bcc32
 LINK    = $(BC)\bin\tlink32
 IMPLIB  = $(BC)\bin\implib
 
-CC_FLAGS = -DWIN32 -D_WIN32=1 -w-pro
+CC_FLAGS = -DWIN32 -D_WIN32=1 -w-pro -a8
 LD_FLAGS = -L$(BC)\lib -x
 
 all: portmap.exe inst_pm.exe
