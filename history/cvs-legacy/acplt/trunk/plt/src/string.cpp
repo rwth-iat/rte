@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.18 1998-07-30 10:22:43 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.19 1998-09-17 13:08:15 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -370,6 +370,40 @@ PltString::toUpper() const
 }
 
 //////////////////////////////////////////////////////////////////////
+
+void
+PltString::toLower()
+{
+    cloneIfNeeded();
+
+    if(p) {
+        for(size_t i = 0; i < len(); i++) {
+            (p->s)[i] = tolower( (p->s)[i] );
+        }
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+PltString
+PltString::toLower() const
+{
+    if(p) {
+        char *upper = new char[p->len+1];
+        if(upper) {
+            for(size_t i = 0; i < p->len; i++) {
+                upper[i] = tolower( (p->s)[i] );
+            }
+            upper[p->len] = 0;
+            return PltString(p->len, upper);
+        }
+    }
+
+    // memory allocation failed
+    //
+    return PltString();
+}
+
 //////////////////////////////////////////////////////////////////////
 
 void

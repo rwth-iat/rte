@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.12 1998-07-30 10:22:42 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.13 1998-09-17 13:08:13 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -86,6 +86,8 @@ public:
 
     void toUpper();
     PltString toUpper() const;
+    void toLower();
+    PltString toLower() const;
 
     // friends (accessors)
     friend bool operator == (const PltString &, const char *);
