@@ -1,10 +1,9 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/include/ks/props.h,v 1.12 1998-12-10 17:26:18 harald Exp $ */
 #ifndef KS_PROPS_INCLUDED
 #define KS_PROPS_INCLUDED
-
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -39,9 +38,8 @@
  */
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
+/* v1+ and v2: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-
-/////////////////////////////////////////////////////////////////////////////
 
 #include "ks/ks.h"
 #include "ks/string.h"
@@ -50,8 +48,12 @@
 #include "ks/value.h"
 #include "ks/time.h"
 
-////////////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// The engineered properties common to all ACPLT/KS communication objects.
+// Note that there is no such base communication object in ACPLT/KS, it is
+// rather an abstract base class.
+//
 class KsProjProps :
 public KsXdrUnion
 {
@@ -69,6 +71,9 @@ public:
 
     KsProjProps &operator = (const KsProjProps &);
 
+    /*
+     * The Engineered Properties...
+     */
     KsString            identifier;
     KsTime              creation_time;
     KsString            comment;
@@ -84,12 +89,14 @@ protected:
 public:
     virtual void debugPrint(ostream &) const;
 #endif
-};
+}; // class KsProjProps
 
 typedef KsPtrHandle<KsProjProps> KsProjPropsHandle;
 
-///////////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Engineered properties of variable communication objects.
+//
 class KsVarProjProps :
 public KsProjProps
 {
@@ -109,18 +116,22 @@ public:
                    KS_ACCESS am,
                    const KsString &tu,
                    KS_VAR_TYPE tp);
-    ~KsVarProjProps() {}
+    virtual ~KsVarProjProps() {}
 
     KsVarProjProps &operator = (const KsVarProjProps &);
 
     virtual enum_t xdrTypeCode() const;
 
+    /*
+     * Additional Engineered Properties...
+     */
     KsString tech_unit;
     KS_VAR_TYPE type;
 
 protected:
     bool xdrEncodeVariant(XDR *) const;
     bool xdrDecodeVariant(XDR *);
+
 private:
     friend class KsProjProps;
     KsVarProjProps( XDR *, bool & );
@@ -130,10 +141,12 @@ private:
 public:
     virtual void debugPrint(ostream &) const;
 #endif
-};
+}; // class KsVarProjProps
 
-///////////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Engineered properties of domain communication objects.
+//
 class KsDomainProjProps :
 public KsProjProps
 {
@@ -142,7 +155,7 @@ public:
     typedef KsDomainProjProps THISTYPE;
     #define KsDomainProjProps_THISTYPE KsDomainProjProps
 #else
-	 #define KsDomainProjProps_THISTYPE KsProjProps
+    #define KsDomainProjProps_THISTYPE KsProjProps
 #endif
     KsDomainProjProps() {}
     KsDomainProjProps(const KsDomainProjProps &);
@@ -150,11 +163,15 @@ public:
                       const KsTime &ct,
                       const KsString &co,
                       KS_ACCESS am);
-    ~KsDomainProjProps() {}
+    virtual ~KsDomainProjProps() {}
 
     KsDomainProjProps &operator = (const KsDomainProjProps &);
 
     virtual enum_t xdrTypeCode() const;
+
+    /*
+     * No additional Engineered Properties.
+     */
 
 protected:
     bool xdrEncodeVariant(XDR *) const { return true; }
@@ -169,7 +186,58 @@ private:
 public:
     virtual void debugPrint(ostream &) const;
 #endif
-};
+}; // class KsDomainProjProps
+
+
+// ----------------------------------------------------------------------------
+// Engineered properties of link communication objects.
+//
+class KsLinkProjProps :
+public KsProjProps
+{
+public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KsLinkProjProps THISTYPE;
+    #define KsLinkProjProps_THISTYPE KsLinkProjProps
+#else
+    #define KsLinkProjProps_THISTYPE KsProjProps
+#endif
+    KsLinkProjProps() {}
+    KsLinkProjProps(const KsLinkProjProps &);
+    KsLinkProjProps(const KsString &ident,
+		    const KsTime &ct,
+		    const KsString &co,
+		    KS_ACCESS am,
+		    KS_LINK_TYPE lt, 
+		    KsString &ori);
+    virtual ~KsLinkProjProps() {}
+
+    KsLinkProjProps &operator = (const KsLinkProjProps &);
+
+    virtual enum_t xdrTypeCode() const;
+
+    /*
+     * Additional Engineered Properties...
+     */
+    KS_LINK_TYPE  type;
+    KsString      opposite_role_identifier;
+
+protected:
+    bool xdrEncodeVariant(XDR *) const;
+    bool xdrDecodeVariant(XDR *);
+
+private:
+    friend class KsProjProps;
+    KsLinkProjProps( XDR *, bool & );
+    PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream &) const;
+#endif
+}; // class KsLinkProjProps
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -270,19 +338,21 @@ public:
 };
 
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // Inline Implementation
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 
+// ----------------------------------------------------------------------------
+// KsProjProps inline stuff...
+//
 inline
 KsProjProps::KsProjProps(const KsProjProps &other)
 : identifier(other.identifier),
   creation_time(other.creation_time),
   comment(other.comment),
   access_mode(other.access_mode)
-{}
+{} // KsProjProps::KsProjProps
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KsProjProps::KsProjProps(const KsString &ident,
@@ -293,32 +363,32 @@ KsProjProps::KsProjProps(const KsString &ident,
   creation_time(ct),
   comment(co),
   access_mode(am)
-{}
+{} // KsProjProps::KsProjProps
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KsProjProps &
-KsProjProps::operator = (const KsProjProps &other)
+KsProjProps::operator=(const KsProjProps &other)
 {
     identifier = other.identifier;
     creation_time = other.creation_time;
     comment = other.comment;
     access_mode = other.access_mode;
     return *this;
-}
+} // KsProjProps::operator=
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// KsVarProjProps inline stuff...
+//
 inline
 KsVarProjProps::KsVarProjProps(const KsVarProjProps &other)
 : KsProjProps(other.identifier, other.creation_time,
               other.comment, other.access_mode),
   tech_unit(other.tech_unit),
   type(other.type)
-{}
+{} // KsVarProjProps::KsVarProjProps
 
-//////////////////////////////////////////////////////////////////////
     
 inline
 KsVarProjProps::KsVarProjProps(const KsString &ident,
@@ -330,29 +400,29 @@ KsVarProjProps::KsVarProjProps(const KsString &ident,
 : KsProjProps(ident, ct, co, am),
   tech_unit(tu),
   type(tp)
-{}
+{} // KsVarProjProps::KsVarProjProps
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KsVarProjProps &
-KsVarProjProps::operator = (const KsVarProjProps &other)
+KsVarProjProps::operator=(const KsVarProjProps &other)
 {
-    KsProjProps::operator = (other);
+    KsProjProps::operator=(other);
     tech_unit = other.tech_unit;
     type = other.type;
     return *this;
-}
+} // KsVarProjProps::operator=
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// KsDomainProjProps inline stuff...
+//
 inline
 KsDomainProjProps::KsDomainProjProps(const KsDomainProjProps &other)
 : KsProjProps(other.identifier, other.creation_time,
-  other.comment, other.access_mode)
-{}
+              other.comment, other.access_mode)
+{} // KsDomainProjProps::KsDomainProjProps
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KsDomainProjProps::KsDomainProjProps(const KsString &ident,
@@ -360,17 +430,56 @@ KsDomainProjProps::KsDomainProjProps(const KsString &ident,
                                      const KsString &co,
                                      KS_ACCESS am)
 : KsProjProps(ident, ct, co, am) 
-{}
+{} // KsDomainProjProps::KsDomainProjProps
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KsDomainProjProps &
-KsDomainProjProps::operator = (const KsDomainProjProps &other)
+KsDomainProjProps::operator=(const KsDomainProjProps &other)
 {
-    KsProjProps::operator = (other);
+    KsProjProps::operator=(other);
     return *this;
-}
+} // KsDomainProjProps::operator=
+
+
+// ----------------------------------------------------------------------------
+// KsLinkProjProps inline stuff...
+//
+inline
+KsLinkProjProps::KsLinkProjProps(const KsLinkProjProps &other)
+: KsProjProps(other.identifier, other.creation_time,
+              other.comment, other.access_mode),
+  type(other.type),
+  opposite_role_identifier(other.opposite_role_identifier)
+{} // KsLinkProjProps::KsLinkProjProps
+
+
+inline
+KsLinkProjProps::KsLinkProjProps(const KsString &ident,
+				 const KsTime &ct,
+				 const KsString &co,
+				 KS_ACCESS am,
+				 KS_LINK_TYPE lt, 
+				 KsString &ori)
+: KsProjProps(ident, ct, co, am),
+  type(lt), opposite_role_identifier(ori)
+{} // KsLinkProjProps::KsLinkProjProps
+
+
+inline
+KsLinkProjProps &
+KsLinkProjProps::operator=(const KsLinkProjProps &other)
+{
+    KsProjProps::operator=(other);
+    type = other.type;
+    opposite_role_identifier = other.opposite_role_identifier;
+    return *this;
+} // KsLinkProjProps::operator=
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////
 
