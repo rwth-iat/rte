@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.14 1997-09-09 08:22:43 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.15 1997-09-15 10:59:27 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,6 +37,8 @@
 
 
 #include "ks/avticket.h"
+#include <string.h>
+#include <stdlib.h>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -78,6 +80,15 @@ KsAvTicket::deregisterAvTicketType(enum_t ticketType)
 //////////////////////////////////////////////////////////////////////
 
 KS_IMPL_XDRCTOR(KsAuthType);
+
+//////////////////////////////////////////////////////////////////////
+
+KsAvTicket::~KsAvTicket()
+{
+    if (_psaddr) {
+        free(_psaddr);
+    }
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -123,14 +134,20 @@ KsAvTicket::xdrNew(XDR * xdrs)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KsAvTicket::setSenderAddress(const sockaddr * pSaddr)
+KsAvTicket::setSenderAddress(const sockaddr * pSaddr,
+                             int namelen)
 {
-    if (pSaddr->sa_family==AF_INET) {
-        _saddr = *pSaddr;
-        return true;
+    PLT_PRECONDITION(namelen>=0 && pSaddr);
+    _psaddr = (sockaddr *) malloc(namelen);
+    if (_psaddr) {
+        memcpy(_psaddr, pSaddr, namelen);
     } else {
-        return false;
+        if (_psaddr) {
+            free(_psaddr);
+        }
+        _psaddr = 0;
     }
+    return _psaddr != 0;
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.15 1997-09-03 14:08:47 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.16 1997-09-15 10:59:26 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -101,6 +101,8 @@ public:
     virtual KS_RESULT result() const = 0;
 
     virtual enum_t xdrTypeCode() const = 0;
+    KsAvTicket() : _psaddr(0) { }
+    virtual ~KsAvTicket();
 
     ////
     //// Permissions
@@ -123,7 +125,7 @@ public:
     ////
     //// sender address
     ////
-    const struct sockaddr & getSenderAddress() const;
+    const sockaddr * getSenderAddress() const;
     struct in_addr getSenderInAddr() const; // network byte order
 
     ////
@@ -141,14 +143,14 @@ public:
     virtual bool invariant() const;
 #endif
 
-    bool setSenderAddress(const sockaddr * sockaddr);
+    bool setSenderAddress(const sockaddr * sockaddr, int namelen);
 
 protected:
     virtual bool xdrEncodeVariant(XDR *) const = 0;
     virtual bool xdrDecodeVariant(XDR *)  = 0;
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
-    struct sockaddr _saddr;
+    struct sockaddr * _psaddr;
 };
 
 
@@ -211,10 +213,10 @@ protected:
 // INLINE IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
-inline const struct sockaddr &
+inline const struct sockaddr *
 KsAvTicket::getSenderAddress() const
 {
-    return _saddr;
+    return _psaddr;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -223,8 +225,8 @@ inline struct in_addr
 KsAvTicket::getSenderInAddr() const
 {
     struct in_addr inaddr;
-    if (_saddr.sa_family == AF_INET) {
-        inaddr = ((struct sockaddr_in *) & _saddr)->sin_addr;
+    if (_psaddr && _psaddr->sa_family == AF_INET) {
+        inaddr = ((sockaddr_in *)  _psaddr)->sin_addr;
     } else {
         inaddr.s_addr = INADDR_NONE;
     }
