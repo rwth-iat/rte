@@ -192,7 +192,7 @@ PltString::operator += (const PltString & str)
 void
 PltString::cloneIfNeeded()
 {
-    PLT_PRECONDITION( ok() && i < p->len );
+    PLT_PRECONDITION( ok() );
     if (p->refcount > 1) {
         // clone to maintain value semantics
         srep *np = new srep;
