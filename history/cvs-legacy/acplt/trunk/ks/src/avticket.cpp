@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.2 1997-03-13 09:51:44 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.3 1997-03-13 15:36:32 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -87,6 +87,9 @@ KsAvTicket::xdrNew(XDR * xdrs)
                 if ( _factory.query(typecode, ctor) ) {
                     // found it
                     p = ctor(xdrs);
+                } else {
+                    // unknown auth
+                    p = new KsAvNoneTicket(KS_ERR_UNKNOWNAUTH);
                 }
             }                                                      
         }
@@ -157,11 +160,36 @@ KsAvTicket::getAccess(const KsString &name) const
     
 
 //////////////////////////////////////////////////////////////////////
+
+const KsAvTicket *
+KsAvTicket::emergencyTicket()
+{
+    static KsAvNoneTicket e_ticket(KS_ERR_GENERIC, KS_AC_NONE);
+    return &e_ticket;
+}
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 KsAvNoneTicket::KsAvNoneTicket(XDR *, bool & ok)
 {
     ok = true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KsAvNoneTicket::KsAvNoneTicket(KS_RESULT r, KS_ACCESS a)
+: _access(a),
+  _result(r)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KS_RESULT
+KsAvNoneTicket::result() const
+{
+    return _result;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -181,11 +209,18 @@ KsAvNoneTicket::xdrEncodeVariant(XDR *) const
 }
 
 //////////////////////////////////////////////////////////////////////
+KS_ACCESS 
+KsAvNoneTicket::getAccess(const KsString &name) const
+{
+    return _access;
+}
+
+//////////////////////////////////////////////////////////////////////
 
 bool
 KsAvNoneTicket::canReadVar(const KsString &) const
 {
-    return true; // TODO default
+    return (_access & KS_AC_READ) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -193,10 +228,8 @@ KsAvNoneTicket::canReadVar(const KsString &) const
 bool
 KsAvNoneTicket::canWriteVar(const KsString &) const
 {
-    return true; // TODO default
+    return (_access & KS_AC_WRITE) != 0;
 }
-
-//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 /* EOF ks/avticket.cpp */

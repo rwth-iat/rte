@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.2 1997-03-13 09:51:43 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.3 1997-03-13 15:35:27 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -87,11 +87,9 @@ KsAuthType::xdrEncode(XDR *xdr) const
 
 class KsAvTicket;
 
-// TODO move this
 typedef KsAvTicket * (*KsTicketConstructor)(XDR *);
 
 //////////////////////////////////////////////////////////////////////
-
 //////////////////////////////////////////////////////////////////////
 
 class KsAvTicket
@@ -99,6 +97,8 @@ class KsAvTicket
 {
 public:
     static KsAvTicket * xdrNew(XDR *);
+
+    virtual KS_RESULT result() const = 0;
 
     virtual enum_t xdrTypeCode() const = 0;
     virtual bool xdrDecodeVariant(XDR *)  = 0;
@@ -118,6 +118,8 @@ public:
     static bool registerAvTicketType(enum_t ticketType, KsTicketConstructor);
     static bool deregisterAvTicketType(enum_t ticketType);
 
+    static const KsAvTicket * emergencyTicket();
+
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
 };
@@ -130,20 +132,24 @@ class KsAvNoneTicket
 : public KsAvTicket
 {
 public:
-    KsAvNoneTicket() { };
+    KsAvNoneTicket(KS_RESULT r, KS_ACCESS a = KS_AC_NONE);
     KsAvNoneTicket(XDR *, bool &);
+
+    virtual KS_RESULT result() const;
+
     virtual enum_t xdrTypeCode() const { return KS_AUTH_NONE; }
     bool xdrDecodeVariant(XDR *);
     bool xdrEncodeVariant(XDR *) const;
 
     virtual KS_ACCESS getAccess(const KsString &name) const;
+
     virtual bool canReadVar(const KsString &name) const;
     virtual bool canWriteVar(const KsString &name) const;
 
 private:
-    // TODO: default rights
+    KS_ACCESS _access;
+    KS_RESULT _result;
 };
-
 
 //////////////////////////////////////////////////////////////////////
 
