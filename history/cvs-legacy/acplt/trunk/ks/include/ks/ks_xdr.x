@@ -1,5 +1,5 @@
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/ks_xdr.x,v 1.2 1999-02-26 13:28:19 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/ks_xdr.x,v 1.3 1999-04-22 15:32:23 harald Exp $
  *
  * ks_xdr.x -- Specification of the ACPLT/KS protocol for use with the rpcgen
  *   protocol compiler for ONC/RPC. This ONC/RPC protocol specification is
@@ -452,7 +452,7 @@ struct KS_EXGDATA_REQ { /* This is the full request packet */
 
 struct KS_EXGDATA_ITEMS {
     KS_RESULT       results<>;
-    KS_GETVAR_ITEM  items;
+    KS_GETVAR_ITEM  items<>;
 };
 
 union KS_EXGDATA_RET switch (KS_RESULT result) {
