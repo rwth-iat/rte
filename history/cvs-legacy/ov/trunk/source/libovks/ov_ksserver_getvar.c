@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.2 1999-08-19 11:54:54 dirk Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.3 1999-08-28 15:55:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -155,31 +155,33 @@ void ov_ksserver_getvar_getitem(
 	*	switch based on the element's type
 	*/
 	switch(pelem->elemtype) {
-		case OV_ET_OBJECT:
-			/*
-			*	object may be a vendor object
-			*/
-			if((pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
-				&& (pobj >= &pdb->vendorobj[0])
-			) {
-				pitem->result = ov_vendortree_getvar(pobj, 
-					&pitem->var_current_props, pticket);
-				pitem->var_current_props.value.vartype &= OV_VT_KSMASK;
-				return;
-			}
-			break;
-		case OV_ET_MEMBER:
-		case OV_ET_VARIABLE:
-			/*
-			*	get the variable's value, timestamp and time
-			*/
-			pitem->result = (pvtable->m_getvar)(pobj, pelem, &pitem->var_current_props);
+	case OV_ET_OBJECT:
+		/*
+		*	object may be a vendor object
+		*/
+		if((pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
+			&& (pobj >= &pdb->vendorobj[0])
+		) {
+			pitem->result = ov_vendortree_getvar(pobj, 
+				&pitem->var_current_props, pticket);
 			pitem->var_current_props.value.vartype &= OV_VT_KSMASK;
 			return;
-		case OV_ET_HEAD:
-			/*
-			*	get value of an association head (string vector with childrens paths)
-			*/
+		}
+		break;
+	case OV_ET_MEMBER:
+	case OV_ET_VARIABLE:
+		/*
+		*	get the variable's value, timestamp and time
+		*/
+		pitem->result = (pvtable->m_getvar)(pobj, pelem, &pitem->var_current_props);
+		pitem->var_current_props.value.vartype &= OV_VT_KSMASK;
+		return;
+	case OV_ET_PARENTLINK:
+		/*
+		*	get value of a parent link (string vector with children's paths)
+		*/
+		switch(pelem->elemunion.passoc->v_assoctype) {
+		case OV_AT_1_TO_MANY:
 			pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
 			len = pitem->var_current_props.value.veclen
 				= ov_association_getchildcount(pelem->elemunion.passoc, pobj);
@@ -210,10 +212,16 @@ void ov_ksserver_getvar_getitem(
 			ov_time_gettime(&pitem->var_current_props.time);
 			pitem->var_current_props.state = OV_ST_NOTSUPPORTED;
 			return;
-		case OV_ET_ANCHOR:
-			/*
-			*	get value of an association anchor (string with the parent's paths)
-			*/
+		default:
+			Ov_Warning("no such association type");
+			break;
+		}
+	case OV_ET_CHILDLINK:
+		/*
+		*	get value of a child link (string with the parent's paths)
+		*/
+		switch(pelem->elemunion.passoc->v_assoctype) {
+		case OV_AT_1_TO_MANY:
 			pitem->var_current_props.value.vartype = OV_VT_STRING;
 			pparent = Ov_Association_GetParent(pelem->elemunion.passoc, pobj);
 			if(pparent) {
@@ -233,7 +241,11 @@ void ov_ksserver_getvar_getitem(
 			pitem->var_current_props.state = OV_ST_NOTSUPPORTED;
 			return;
 		default:
+			Ov_Warning("no such association type");
 			break;
+		}
+	default:
+		break;
 	}
 	pitem->result = OV_ERR_BADOBJTYPE;
 	return;

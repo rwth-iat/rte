@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.4 1999-08-27 16:37:09 dirk Exp $
+*   $Id: ov_ksserver_getep.c,v 1.5 1999-08-28 15:55:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -93,7 +93,7 @@ void ov_ksserver_getep(
 			mask |= OV_ET_VARIABLE | OV_ET_MEMBER;	/* FIXME! structures? */
 		}
 		if(params->type_mask & KS_OT_LINK) {
-			mask |= OV_ET_HEAD | OV_ET_ANCHOR;
+			mask |= OV_ET_PARENTLINK | OV_ET_CHILDLINK;
 		}
 		if(mask == OV_ET_NONE) {
 			/*
@@ -208,56 +208,56 @@ OV_RESULT ov_ksserver_getep_additem(
 	*	map OV element type to KS object type
 	*/
 	switch(pelem->elemtype) {
-		case OV_ET_OBJECT:
-			/*
-			*	vendor objects must be treated specially
-			*/
-			if((pelem->pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
-				&& (pelem->pobj >= &pdb->vendorobj[0])
-			) {
-				objtype = KS_OT_VARIABLE;
-				vendorobj = TRUE;
-			} else {
-				objtype = KS_OT_DOMAIN;
-			}
-			/*
-			*	embedded objects are parts
-			*/
-			if(pobj->v_pouterobject) {
-				access |= OV_AC_PART;
-			}
-			break;
-		case OV_ET_VARIABLE:
-		case OV_ET_MEMBER:
-			/*
-			*	FIXME! structure?
-			*/
-			if(pelem->elemunion.pvar->v_vartype == OV_VT_STRUCT) {
-				objtype = KS_OT_DOMAIN;
-			} else {
-				objtype = KS_OT_VARIABLE;
-			}
+	case OV_ET_OBJECT:
+		/*
+		*	vendor objects must be treated specially
+		*/
+		if((pelem->pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
+			&& (pelem->pobj >= &pdb->vendorobj[0])
+		) {
+			objtype = KS_OT_VARIABLE;
+			vendorobj = TRUE;
+		} else {
+			objtype = KS_OT_DOMAIN;
+		}
+		/*
+		*	embedded objects are parts
+		*/
+		if(pobj->v_pouterobject) {
 			access |= OV_AC_PART;
-			break;
-		case OV_ET_HEAD:
-			objtype = KS_OT_LINK;
-			identifier = pelem->elemunion.passoc->v_childrolename;
-			access |= OV_AC_PART;
-			break;
-		case OV_ET_ANCHOR:
-			objtype = KS_OT_LINK;
-			identifier = pelem->elemunion.passoc->v_parentrolename;
-			access |= OV_AC_PART;
-			break;
-		case OV_ET_OPERATION:
-			/*
-			*	for now, we do not show operations
-			*/
-			return OV_ERR_OK;	/* TODO! bad path? */
-		default:
-			/* this should not happen... */
-			Ov_Warning("internal error");
-			return OV_ERR_TARGETGENERIC;
+		}
+		break;
+	case OV_ET_VARIABLE:
+	case OV_ET_MEMBER:
+		/*
+		*	FIXME! structure?
+		*/
+		if(pelem->elemunion.pvar->v_vartype == OV_VT_STRUCT) {
+			objtype = KS_OT_DOMAIN;
+		} else {
+			objtype = KS_OT_VARIABLE;
+		}
+		access |= OV_AC_PART;
+		break;
+	case OV_ET_PARENTLINK:
+		objtype = KS_OT_LINK;
+		identifier = pelem->elemunion.passoc->v_childrolename;
+		access |= OV_AC_PART;
+		break;
+	case OV_ET_CHILDLINK:
+		objtype = KS_OT_LINK;
+		identifier = pelem->elemunion.passoc->v_parentrolename;
+		access |= OV_AC_PART;
+		break;
+	case OV_ET_OPERATION:
+		/*
+		*	for now, we do not show operations
+		*/
+		return OV_ERR_OK;	/* TODO! bad path? */
+	default:
+		/* this should not happen... */
+		Ov_Warning("internal error");
+		return OV_ERR_TARGETGENERIC;
 	}
 	/*
 	*	test the type of the element
@@ -302,62 +302,62 @@ OV_RESULT ov_ksserver_getep_additem(
 	pprops->access = access;
 	pprops->semantic_flags = (pvtable->m_getflags)(pobj, pelem);
 	switch(pelem->elemtype) {
-		case OV_ET_OBJECT:
-			if(vendorobj) {
-				OV_VAR_CURRENT_PROPS	varcurrprops;
-				if(Ov_Fail(ov_vendortree_getvar(pobj, &varcurrprops, pticket))) {
-					return OV_ERR_GENERIC;
-				}
-				pprops->comment = "";
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
-					.tech_unit = ov_vendortree_getunit(pobj);
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
-					.vartype = varcurrprops.value.vartype & OV_VT_KSMASK;
-				return OV_ERR_OK;
+	case OV_ET_OBJECT:
+		if(vendorobj) {
+			OV_VAR_CURRENT_PROPS	varcurrprops;
+			if(Ov_Fail(ov_vendortree_getvar(pobj, &varcurrprops, pticket))) {
+				return OV_ERR_GENERIC;
 			}
-			pprops->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier
-				= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,
-				Ov_GetParent(ov_instantiation, pobj)), version);
+			pprops->comment = "";
+			pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
+				.tech_unit = ov_vendortree_getunit(pobj);
+			pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
+				.vartype = varcurrprops.value.vartype & OV_VT_KSMASK;
 			return OV_ERR_OK;
-		case OV_ET_VARIABLE:
-		case OV_ET_MEMBER:
-			switch(objtype) {
-				case KS_OT_VARIABLE:
-					pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit
-						= (pvtable->m_gettechunit)(pobj, pelem);
-					pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype
-						= pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK;
-					return OV_ERR_OK;
-				case KS_OT_DOMAIN:
-					return OV_ERR_OK;
-				default:
-					break;
-			}
-			break;
-		case OV_ET_HEAD:
-			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
-				= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
-				(KS_LT_LOCAL_1_MANY):(KS_LT_GLOBAL_1_MANY);
-			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.
-				opposite_role_identifier = pelem->elemunion.passoc
-				->v_parentrolename;
-			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier
-				= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,pelem->elemunion.passoc),
-				version);
+		}
+		pprops->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier
+			= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,
+			Ov_GetParent(ov_instantiation, pobj)), version);
+		return OV_ERR_OK;
+	case OV_ET_VARIABLE:
+	case OV_ET_MEMBER:
+		switch(objtype) {
+		case KS_OT_VARIABLE:
+			pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit
+				= (pvtable->m_gettechunit)(pobj, pelem);
+			pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype
+				= pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK;
 			return OV_ERR_OK;
-		case OV_ET_ANCHOR:
-			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
-				= KS_LT_GLOBAL_1_1;
-			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.
-				opposite_role_identifier = pelem->elemunion.passoc
-				->v_childrolename;
-			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier
-				= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,pelem->elemunion.passoc),
-				version);
+		case KS_OT_DOMAIN:
 			return OV_ERR_OK;
-		case OV_ET_OPERATION:
 		default:
 			break;
+		}
+		break;
+	case OV_ET_PARENTLINK:
+		pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
+			= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
+			(KS_LT_LOCAL_1_MANY):(KS_LT_GLOBAL_1_MANY);
+		pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.
+			opposite_role_identifier = pelem->elemunion.passoc
+			->v_parentrolename;
+		pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier
+			= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,pelem->elemunion.passoc),
+			version);
+		return OV_ERR_OK;
+	case OV_ET_CHILDLINK:
+		pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
+			= KS_LT_GLOBAL_1_1;
+		pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.
+			opposite_role_identifier = pelem->elemunion.passoc
+			->v_childrolename;
+		pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier
+			= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,pelem->elemunion.passoc),
+			version);
+		return OV_ERR_OK;
+	case OV_ET_OPERATION:
+	default:
+		break;
 	}
 	/* this should not happen... */
 	Ov_Warning("internal error");

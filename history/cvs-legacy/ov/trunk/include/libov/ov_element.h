@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_element.h,v 1.2 1999-08-28 15:55:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -40,20 +40,20 @@ extern "C" {
 *	-------------
 *	An element represents a part of the instance model in the
 *	database. Elements are polymorphic, they can either be objects,
-*	variables, members of structures, operations, head-links or
-*	anchor links. OV_ELEM_TYPE indicates this element type. In
+*	variables, members of structures, operations, parent links or
+*	child links. OV_ELEM_TYPE indicates this element type. In
 *	search masks the element types can be aggregated by ORing
 *	the bit masks of different element types.
 */
 enum OV_ELEM_TYPE_ENUM  {
-	OV_ET_NONE		= 0x00,		/* invalid element */
-	OV_ET_OBJECT	= 0x01,
-	OV_ET_VARIABLE	= 0x02,
-	OV_ET_MEMBER	= 0x04,
-	OV_ET_HEAD		= 0x08,
-	OV_ET_ANCHOR	= 0x10,
-	OV_ET_OPERATION	= 0x20,
-	OV_ET_ANY		= 0x3F		/* used for search masks only */
+	OV_ET_NONE			= 0x00,		/* invalid element */
+	OV_ET_OBJECT		= 0x01,
+	OV_ET_VARIABLE		= 0x02,
+	OV_ET_MEMBER		= 0x04,
+	OV_ET_PARENTLINK	= 0x08,
+	OV_ET_CHILDLINK		= 0x10,
+	OV_ET_OPERATION		= 0x20,
+	OV_ET_ANY			= 0x3F		/* used for search masks only */
 };
 typedef enum_t OV_ELEM_TYPE;
 
@@ -78,7 +78,7 @@ typedef struct {
 		struct OV_INST_ov_variable		*pvar;
 		/* in case element is a part object: */
 		struct OV_INST_ov_part			*ppart;
-		/* in case element is a head-link or an anchor-link: */
+		/* in case element is a parent or child link: */
 		struct OV_INST_ov_association	*passoc;
 		/* in case element is an operation: */
 		struct OV_INST_ov_operation		*pop;

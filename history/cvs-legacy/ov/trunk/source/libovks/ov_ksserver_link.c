@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_link.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_link.c,v 1.2 1999-08-28 15:55:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -154,68 +154,68 @@ OV_RESULT ov_ksserver_link_linkitem(
 		return OV_ERR_BADOBJTYPE;
 	}
 	switch(plinkelem->elemtype) {
-		case OV_ET_HEAD:
-			if((oppositehint == OV_PMH_BEFORE) || (oppositehint == OV_PMH_AFTER)) {
-				return OV_ERR_BADPLACEMENT;
+	case OV_ET_PARENTLINK:
+		if((oppositehint == OV_PMH_BEFORE) || (oppositehint == OV_PMH_AFTER)) {
+			return OV_ERR_BADPLACEMENT;
+		}
+		pparent = plinkelem->pobj;
+		pchild = pelementelem->pobj;
+		if((hint == OV_PMH_BEFORE) || (hint == OV_PMH_AFTER)) {
+			if(pplaceelem->elemtype != OV_ET_OBJECT) {
+				return OV_ERR_BADOBJTYPE;
 			}
-			pparent = plinkelem->pobj;
-			pchild = pelementelem->pobj;
-			if((hint == OV_PMH_BEFORE) || (hint == OV_PMH_AFTER)) {
-				if(pplaceelem->elemtype != OV_ET_OBJECT) {
-					return OV_ERR_BADOBJTYPE;
-				}
-				prelchild = pplaceelem->pobj;
-			} else {
-				prelchild = NULL;
-			}
-			/*
-			*	test if child and relchild can participate in the association
-			*/
-			if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pchild),
+			prelchild = pplaceelem->pobj;
+		} else {
+			prelchild = NULL;
+		}
+		/*
+		*	test if child and relchild can participate in the association
+		*/
+		if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pchild),
+			Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
+		) {
+			return OV_ERR_BADOBJTYPE;
+		}
+		if(prelchild) {
+			if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, prelchild),
 				Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
 			) {
-				return OV_ERR_BADOBJTYPE;
-			}
-			if(prelchild) {
-				if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, prelchild),
-					Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
-				) {
-					return OV_ERR_BADPLACEMENT;
-				}
-			}
-			break;
-		case OV_ET_ANCHOR:
-			if((hint == OV_PMH_BEFORE) || (hint == OV_PMH_AFTER)) {
 				return OV_ERR_BADPLACEMENT;
 			}
-			pchild = plinkelem->pobj;
-			pparent = pelementelem->pobj;
-			if((oppositehint == OV_PMH_BEFORE) || (oppositehint == OV_PMH_AFTER)) {
-				if(pplaceelem->elemtype != OV_ET_OBJECT) {
-					return OV_ERR_BADOBJTYPE;
-				}
-				prelchild = poppositeplaceelem->pobj;
-			} else {
-				prelchild = NULL;
-			}
-			/*
-			*	test if parent and relchild can participate in the association
-			*/
-			if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pparent),
-				Ov_GetParent(ov_parentrelationship, plinkelem->elemunion.passoc))
-			) {
+		}
+		break;
+	case OV_ET_CHILDLINK:
+		if((hint == OV_PMH_BEFORE) || (hint == OV_PMH_AFTER)) {
+			return OV_ERR_BADPLACEMENT;
+		}
+		pchild = plinkelem->pobj;
+		pparent = pelementelem->pobj;
+		if((oppositehint == OV_PMH_BEFORE) || (oppositehint == OV_PMH_AFTER)) {
+			if(pplaceelem->elemtype != OV_ET_OBJECT) {
 				return OV_ERR_BADOBJTYPE;
 			}
-			if(prelchild) {
-				if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, prelchild),
-					Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
-				) {
-					return OV_ERR_BADPLACEMENT;
-				}
-			}
-			break;
-		default:			
+			prelchild = poppositeplaceelem->pobj;
+		} else {
+			prelchild = NULL;
+		}
+		/*
+		*	test if parent and relchild can participate in the association
+		*/
+		if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pparent),
+			Ov_GetParent(ov_parentrelationship, plinkelem->elemunion.passoc))
+		) {
 			return OV_ERR_BADOBJTYPE;
+		}
+		if(prelchild) {
+			if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, prelchild),
+				Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
+			) {
+				return OV_ERR_BADPLACEMENT;
+			}
+		}
+		break;
+	default:			
+		return OV_ERR_BADOBJTYPE;
 	}
 	/*
 	*	check for access rights
@@ -231,7 +231,8 @@ OV_RESULT ov_ksserver_link_linkitem(
 	*	link child with parent relative to relchild
 	*/
 	if(plinkelem->elemunion.passoc->v_linkfnc) {
-		return (plinkelem->elemunion.passoc->v_linkfnc)(pparent, pchild, hint, prelchild);
+		return (plinkelem->elemunion.passoc->v_linkfnc)(pparent, pchild, OV_PMH_DEFAULT,
+			NULL, hint, prelchild);
 	}
 	return OV_ERR_NOACCESS;
 }

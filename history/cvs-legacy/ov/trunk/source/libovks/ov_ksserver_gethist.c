@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_gethist.c,v 1.1 1999-07-26 16:19:13 dirk Exp $
+*   $Id: ov_ksserver_gethist.c,v 1.2 1999-08-28 15:55:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -110,58 +110,58 @@ void ov_ksserver_gethist(
 	*/
 	for(i=0; i<len; i++, pitem++, presultitem++) {
 		switch(pitem->selector.hseltype) {
-			case OV_HSELT_NONE:
-				/*
-				*	get all messages available
-				*/
-				from.secs = 0;
-				from.usecs = 0;
-				ov_time_gettime(&to);
+		case OV_HSELT_NONE:
+			/*
+			*	get all messages available
+			*/
+			from.secs = 0;
+			from.usecs = 0;
+			ov_time_gettime(&to);
+			break;
+		case OV_HSELT_TIME:
+			/*
+			*	only get selected messages
+			*/
+			if(pitem->selector.OV_HISTSELECTOR_u.ths.ip_mode != OV_IPM_NONE) {
+				/* messages are change driven; no interpolation available */
+				presultitem->result = OV_ERR_BADSELECTOR;
+				continue;
+			}
+			switch(pitem->selector.OV_HISTSELECTOR_u.ths.from.timetype) {
+			case OV_TT_ABSOLUTE:
+				from = pitem->selector.OV_HISTSELECTOR_u.ths.from.OV_ABSRELTIME_u.abstime;
 				break;
-			case OV_HSELT_TIME:
-				/*
-				*	only get selected messages
-				*/
-				if(pitem->selector.OV_HISTSELECTOR_u.ths.ip_mode != OV_IPM_NONE) {
-					/* messages are change driven; no interpolation available */
-					presultitem->result = OV_ERR_BADSELECTOR;
-					continue;
-				}
-				switch(pitem->selector.OV_HISTSELECTOR_u.ths.from.timetype) {
-					case OV_TT_ABSOLUTE:
-						from = pitem->selector.OV_HISTSELECTOR_u.ths.from.OV_ABSRELTIME_u.abstime;
-						break;
-					case OV_TT_RELATIVE:
-						ov_time_gettime(&from);
-						ov_time_add(&from, &from,
-							&pitem->selector.OV_HISTSELECTOR_u.ths.from.OV_ABSRELTIME_u.reltime);
-						break;
-					default:
-						presultitem->result = OV_ERR_BADSELECTOR;
-						continue;
-				}
-				switch(pitem->selector.OV_HISTSELECTOR_u.ths.to.timetype) {
-					case OV_TT_ABSOLUTE:
-						to = pitem->selector.OV_HISTSELECTOR_u.ths.to.OV_ABSRELTIME_u.abstime;
-						break;
-					case OV_TT_RELATIVE:
-						ov_time_gettime(&to);
-						ov_time_add(&to, &to,
-							&pitem->selector.OV_HISTSELECTOR_u.ths.to.OV_ABSRELTIME_u.reltime);
-						break;
-					default:
-						presultitem->result = OV_ERR_BADSELECTOR;
-						continue;
-				}
+			case OV_TT_RELATIVE:
+				ov_time_gettime(&from);
+				ov_time_add(&from, &from,
+					&pitem->selector.OV_HISTSELECTOR_u.ths.from.OV_ABSRELTIME_u.reltime);
 				break;
-			case OV_HSELT_STRING:
-				/*
-				*	not supported
-				*/
-				/* fall through... */
 			default:
 				presultitem->result = OV_ERR_BADSELECTOR;
 				continue;
+			}
+			switch(pitem->selector.OV_HISTSELECTOR_u.ths.to.timetype) {
+			case OV_TT_ABSOLUTE:
+				to = pitem->selector.OV_HISTSELECTOR_u.ths.to.OV_ABSRELTIME_u.abstime;
+				break;
+			case OV_TT_RELATIVE:
+				ov_time_gettime(&to);
+				ov_time_add(&to, &to,
+					&pitem->selector.OV_HISTSELECTOR_u.ths.to.OV_ABSRELTIME_u.reltime);
+				break;
+			default:
+				presultitem->result = OV_ERR_BADSELECTOR;
+				continue;
+			}
+			break;
+		case OV_HSELT_STRING:
+			/*
+			*	not supported
+			*/
+			/* fall through... */
+		default:
+			presultitem->result = OV_ERR_BADSELECTOR;
+			continue;
 		}	/* switch() */
 		/*
 		*	we now know the start and the end time

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.h,v 1.2 1999-08-28 13:45:56 dirk Exp $
+*   $Id: ov_class.h,v 1.3 1999-08-28 15:55:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -173,7 +173,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 	const OV_INSTPTR_ov_domain	pparent,
 	const OV_STRING				identifier,
 	const OV_PLACEMENT_HINT		hint,
-	const OV_INSTPTR_ov_object	prelchild,
+	const OV_INSTPTR_ov_object	prelobj,
 	OV_FNC_INITOBJ				*initobjfnc,
 	OV_POINTER					userdata,
 	OV_INSTPTR_ov_object		*ppobj
@@ -194,7 +194,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_renameobject(
 	const OV_INSTPTR_ov_domain	pparent,
 	const OV_STRING				identifier,
 	const OV_PLACEMENT_HINT		hint,
-	const OV_INSTPTR_ov_object	prelchild
+	const OV_INSTPTR_ov_object	prelobj
 );
 
 /*

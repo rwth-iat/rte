@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_instantiation.c,v 1.1 1999-07-19 15:02:13 dirk Exp $
+*   $Id: ov_instantiation.c,v 1.2 1999-08-28 15:55:54 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -56,7 +56,7 @@ OV_DECL_GETACCESS(ov_instantiation) {
 	*/
 	if(pticket) {
 		/*
-		*	anchor is not visible as we can get the class using GetEP
+		*	child link is not visible as we can get the class using GetEP
 		*/
 		if(pchild) {
 			return OV_AC_NONE;

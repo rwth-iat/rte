@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.c,v 1.5 1999-08-18 13:11:26 dirk Exp $
+*   $Id: ov_string.c,v 1.6 1999-08-28 15:55:55 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -294,51 +294,51 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_print(
 			*	handle conversion type character
 			*/
 			switch(*pc) {
-				case 's':
-					length += strlen(va_arg(args, char*));
-					break;
-				case 'c':
-				case 'd':
-				case 'i':
-				case 'o':
-				case 'u':
-				case 'x':
-				case 'X':
-					/*
-					*	reserve space, 32 should be enough
-					*/
-					length += 32;
-					(void)va_arg(args, int);
-					break;
-				case 'e':
-				case 'f':
-				case 'g':
-				case 'E':
-				case 'G':
-					/*
-					*	reserve space; apart from the 32 bytes we take into
-					*	account another 308 bytes (308 is the largest possible
-					*	exponent of an IEEE double)
-					*/
-					length += 340;
-					(void)va_arg(args, double);
-					break;
-				case 'n':
-				case 'p':
-					/*
-					*	reserve space, 32 should be enough
-					*/
-					length += 32;
-					(void)va_arg(args, char*);
-					break;
-				case '%':
-					break;
-				default:
-					/*
-					*	should never happen, but reserve space (just in case...)
-					*/
-					length += 32;
-					break;
+			case 's':
+				length += strlen(va_arg(args, char*));
+				break;
+			case 'c':
+			case 'd':
+			case 'i':
+			case 'o':
+			case 'u':
+			case 'x':
+			case 'X':
+				/*
+				*	reserve space, 32 should be enough
+				*/
+				length += 32;
+				(void)va_arg(args, int);
+				break;
+			case 'e':
+			case 'f':
+			case 'g':
+			case 'E':
+			case 'G':
+				/*
+				*	reserve space; apart from the 32 bytes we take into
+				*	account another 308 bytes (308 is the largest possible
+				*	exponent of an IEEE double)
+				*/
+				length += 340;
+				(void)va_arg(args, double);
+				break;
+			case 'n':
+			case 'p':
+				/*
+				*	reserve space, 32 should be enough
+				*/
+				length += 32;
+				(void)va_arg(args, char*);
+				break;
+			case '%':
+				break;
+			default:
+				/*
+				*	should never happen, but reserve space (just in case...)
+				*/
+				length += 32;
+				break;
 			}
 		}
 	}
@@ -452,44 +452,44 @@ OV_BOOL OV_DLLFNCEXPORT ov_string_match(
 	*/
 	while(mask[i] && string[j]) {
 		switch(mask[i]) {
-			case '[':
-				if(mask[i+1] != '^') {
-					r = ov_string_match_set(mask, string, &i, &j);
-				} else {
-					i++;
-					r = !(ov_string_match_set(mask, string, &i, &j));
-				}
-				if(!r) {
-					return FALSE;
-				}
+		case '[':
+			if(mask[i+1] != '^') {
+				r = ov_string_match_set(mask, string, &i, &j);
+			} else {
 				i++;
-				j++;
-				break;
-
-			case '*':
-				r = ov_string_match_joker(mask, string, &i, &j);
-				if(r) {
-					return TRUE;
-				}
+				r = !(ov_string_match_set(mask, string, &i, &j));
+			}
+			if(!r) {
 				return FALSE;
+			}
+			i++;
+			j++;
+			break;
 
-			case '?':
+		case '*':
+			r = ov_string_match_joker(mask, string, &i, &j);
+			if(r) {
+				return TRUE;
+			}
+			return FALSE;
+
+		case '?':
+			i++;
+			j++;
+			break;
+
+		case '\\':
+			i++;
+			/* no break */
+
+		default:
+			if(mask[i] == string[j]) {
 				i++;
 				j++;
-				break;
-
-			case '\\':
-				i++;
-				/* no break */
-
-			default:
-				if(mask[i] == string[j]) {
-					i++;
-					j++;
-				} else {
-					return FALSE;
-				}
-				break;
+			} else {
+				return FALSE;
+			}
+			break;
 		} /* switch */
 	} /* while */
 	
@@ -583,111 +583,111 @@ int ov_string_match_joker(
 
 	while(chain[*pk]) {
 		switch (mask[*pm]) {
-			case '[':
-				if(mask[*pm+1]!='^') {
-					start = *pm;
-					if(init) {
-						while((!r) && chain[*pk]) {
-							*pm = start;
-							r = ov_string_match_set(mask, chain, pm, pk);
-							(*pk)++;
-						}
-						if(!r) {
-							return 0;
-						}
-						init = 0;
-						(*pk)--;
-					} else {
-						r = ov_string_match_set(mask, chain, pm, pk);
-						if(r) {
-							(*pm)++;
-							(*pk)++;
-						} else {
-							if(chain[*pk]) {
-								init = 1;
-								r = 0;
-								*pm = oldposm;
-								oldposk++;
-								*pk = oldposk;
-							} else {
-								return 0;
-							}
-						}
-					}
-				} else {
-					(*pm)++;
-					start = *pm;
-					if(init) {
-						while((!r) && chain[*pk]) {
-							*pm = start;
-							r = !(ov_string_match_set(mask, chain, pm, pk));
-							(*pk)++;
-						}
-						if(!r) {
-							return 0;
-						}
-						init = 0;
-						(*pk)--;
-					} else {
-						r = !(ov_string_match_set(mask, chain, pm, pk));
-						if(r) {
-							(*pm)++;
-							(*pk)++;
-						} else {
-							if(chain[*pk]) {
-								init = 1;
-								*pm = oldposm;
-								oldposk++;
-								*pk = oldposk;
-								r = 0;
-							} else {
-								return 0;
-							}
-						}
-					}
-				}
-				(*pm)++;
-				(*pk)++;
-				break;
-		 
-			case '*':
-				r = ov_string_match_joker(mask, chain, pm, pk);
-				if(r) {
-					return 1;
-				}
-				return 0;
-			
-			case '?':
-				(*pm)++;
-				(*pk)++;
-				break;
-		 
-			case '\\':
-				(*pm)++;
-				/* no break */
-		 
-			default:
+		case '[':
+			if(mask[*pm+1]!='^') {
+				start = *pm;
 				if(init) {
-					while((mask[*pm] != chain[*pk]) && chain[*pk]) {
+					while((!r) && chain[*pk]) {
+						*pm = start;
+						r = ov_string_match_set(mask, chain, pm, pk);
 						(*pk)++;
 					}
-					init = 0;
-				}
-				if(mask[*pm] == chain[*pk]) {
-					(*pm)++;
-					(*pk)++;
-				} else {
-					if(chain[*pk]) {
-						init = 1;
-						*pm = oldposm;
-						r = 0;
-						oldposk++;
-						*pk = oldposk;
-					} else {
+					if(!r) {
 						return 0;
 					}
+					init = 0;
+					(*pk)--;
+				} else {
+					r = ov_string_match_set(mask, chain, pm, pk);
+					if(r) {
+						(*pm)++;
+						(*pk)++;
+					} else {
+						if(chain[*pk]) {
+							init = 1;
+							r = 0;
+							*pm = oldposm;
+							oldposk++;
+							*pk = oldposk;
+						} else {
+							return 0;
+						}
+					}
 				}
-				break;
+			} else {
+				(*pm)++;
+				start = *pm;
+				if(init) {
+					while((!r) && chain[*pk]) {
+						*pm = start;
+						r = !(ov_string_match_set(mask, chain, pm, pk));
+						(*pk)++;
+					}
+					if(!r) {
+						return 0;
+					}
+					init = 0;
+					(*pk)--;
+				} else {
+					r = !(ov_string_match_set(mask, chain, pm, pk));
+					if(r) {
+						(*pm)++;
+						(*pk)++;
+					} else {
+						if(chain[*pk]) {
+							init = 1;
+							*pm = oldposm;
+							oldposk++;
+							*pk = oldposk;
+							r = 0;
+						} else {
+							return 0;
+						}
+					}
+				}
+			}
+			(*pm)++;
+			(*pk)++;
+			break;
+	 
+		case '*':
+			r = ov_string_match_joker(mask, chain, pm, pk);
+			if(r) {
+				return 1;
+			}
+			return 0;
+		
+		case '?':
+			(*pm)++;
+			(*pk)++;
+			break;
+	 
+		case '\\':
+			(*pm)++;
+			/* no break */
+	 
+		default:
+			if(init) {
+				while((mask[*pm] != chain[*pk]) && chain[*pk]) {
+					(*pk)++;
+				}
+				init = 0;
+			}
+			if(mask[*pm] == chain[*pk]) {
+				(*pm)++;
+				(*pk)++;
+			} else {
+				if(chain[*pk]) {
+					init = 1;
+					*pm = oldposm;
+					r = 0;
+					oldposk++;
+					*pk = oldposk;
+				} else {
+					return 0;
+				}
+			}
+			break;
 		} /* switch */
 	}	/* while	*/
 	if(mask[*pm] == chain[*pk]) {

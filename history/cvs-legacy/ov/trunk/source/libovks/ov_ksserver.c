@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.2 1999-07-26 16:14:15 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.3 1999-08-28 15:55:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -114,12 +114,12 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_terminate(
 		Ov_Warning("Could not delete message queue");
 	}
 	switch(result) {
-		case RM_OK:
-			return OV_ERR_OK;
-		case RM_GOT_TIMEOUT:
-			return OV_ERR_GENERIC;	/* FIXME: error code? */
-		default:
-			break;
+	case RM_OK:
+		return OV_ERR_OK;
+	case RM_GOT_TIMEOUT:
+		return OV_ERR_GENERIC;	/* FIXME: error code? */
+	default:
+		break;
 	}
 	return OV_ERR_BADPARAM;	/* maybe taskid was bad */
 }
@@ -425,25 +425,25 @@ void ov_ksserver_dispatch(
 	*	dispatch the service
 	*/
 	switch(service) {
-		Ov_KsServer_Dispatch(getpp, GETPP);
-		Ov_KsServer_Dispatch(getvar, GETVAR);
-		Ov_KsServer_Dispatch(setvar, SETVAR);
-		Ov_KsServer_Dispatch(exgdata, EXGDATA);
-		Ov_KsServer_Dispatch(getep, GETEP);
-		Ov_KsServer_Dispatch(createobject, CREATEOBJECT);
-		Ov_KsServer_Dispatch(deleteobject, DELETEOBJECT);
-		Ov_KsServer_Dispatch(renameobject, RENAMEOBJECT);
-		Ov_KsServer_Dispatch(getcanonicalpath, GETCANONICALPATH);
-		Ov_KsServer_Dispatch(link, LINK);
-		Ov_KsServer_Dispatch(unlink, UNLINK);
-		Ov_KsServer_Dispatch(gethist, GETHIST);
-		default:
-			/*
-			*	unknown service id, send error reply and unlock memory stack
-			*/
-            result = OV_ERR_NOTIMPLEMENTED;
-			ov_ksserver_sendreply(xdrout, pticket, &result, NULL);
-			return;
+	Ov_KsServer_Dispatch(getpp, GETPP);
+	Ov_KsServer_Dispatch(getvar, GETVAR);
+	Ov_KsServer_Dispatch(setvar, SETVAR);
+	Ov_KsServer_Dispatch(exgdata, EXGDATA);
+	Ov_KsServer_Dispatch(getep, GETEP);
+	Ov_KsServer_Dispatch(createobject, CREATEOBJECT);
+	Ov_KsServer_Dispatch(deleteobject, DELETEOBJECT);
+	Ov_KsServer_Dispatch(renameobject, RENAMEOBJECT);
+	Ov_KsServer_Dispatch(getcanonicalpath, GETCANONICALPATH);
+	Ov_KsServer_Dispatch(link, LINK);
+	Ov_KsServer_Dispatch(unlink, UNLINK);
+	Ov_KsServer_Dispatch(gethist, GETHIST);
+	default:
+		/*
+		*	unknown service id, send error reply and unlock memory stack
+		*/
+        result = OV_ERR_NOTIMPLEMENTED;
+		ov_ksserver_sendreply(xdrout, pticket, &result, NULL);
+		return;
 	}
 	/*
 	*	error decoding

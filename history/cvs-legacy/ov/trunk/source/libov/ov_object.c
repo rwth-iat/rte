@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.10 1999-08-28 14:18:21 dirk Exp $
+*   $Id: ov_object.c,v 1.11 1999-08-28 15:55:55 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -265,81 +265,81 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 	*	switch based on the element's type
 	*/
 	switch(pelem->elemtype) {
-		case OV_ET_OBJECT:
-			/*
-			*	vendor objects are readable only
-			*/
-			if((pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
-				&& (pobj >= Ov_PtrUpCast(ov_object, &pdb->vendordom))
-			) {
-				return OV_AC_READ;
-			}
-			/*
-			*	all other objects are readable and may be deleteable,
-			*	renameable or writeable
-			*/
-			access = OV_AC_READ;
-			pclass = Ov_GetParent(ov_instantiation, pobj);
-			if(Ov_GetParent(ov_containment, pclass) != Ov_PtrUpCast(ov_domain, &pdb->ov)) {
-				if(!pobj->v_pouterobject) {
-					access |= OV_AC_RENAMEABLE;
-					if(!ov_object_haslinks(pobj)) {
-						access |= OV_AC_DELETEABLE;
-					}
-				}
-				if(ov_class_cancastto(pclass, pclass_ov_domain)) {
-					access |= OV_AC_WRITE;
-				}
-			} else {
-				if(pclass == pclass_ov_domain) {
-					access |= OV_AC_WRITE;
-					if(!pobj->v_pouterobject) {
-						access |= OV_AC_RENAMEABLE;
-						if(!Ov_GetFirstChild(ov_containment,
-							Ov_StaticPtrCast(ov_domain, pobj))
-						) {
-							access |= OV_AC_DELETEABLE;
-						}
-					}
-				}
-				else if(pclass == pclass_ov_library) {
-					if(ov_library_canunload(Ov_StaticPtrCast(ov_library, pobj))) {
-						access |= OV_AC_DELETEABLE;
-					}
-				}
-				else if(pclass == pclass_ov_class) {
-					if(pclass->v_classprops & OV_CP_INSTANTIABLE) {
-						if((Ov_GetParent(ov_containment, pobj) != Ov_PtrUpCast(ov_domain, &pdb->ov))
-							|| (pobj == Ov_PtrUpCast(ov_object, pclass_ov_domain))
-							|| (pobj == Ov_PtrUpCast(ov_object, pclass_ov_library))
-						) {
-							access |= OV_AC_INSTANTIABLE;
-						}
-					}
+	case OV_ET_OBJECT:
+		/*
+		*	vendor objects are readable only
+		*/
+		if((pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
+			&& (pobj >= Ov_PtrUpCast(ov_object, &pdb->vendordom))
+		) {
+			return OV_AC_READ;
+		}
+		/*
+		*	all other objects are readable and may be deleteable,
+		*	renameable or writeable
+		*/
+		access = OV_AC_READ;
+		pclass = Ov_GetParent(ov_instantiation, pobj);
+		if(Ov_GetParent(ov_containment, pclass) != Ov_PtrUpCast(ov_domain, &pdb->ov)) {
+			if(!pobj->v_pouterobject) {
+				access |= OV_AC_RENAMEABLE;
+				if(!ov_object_haslinks(pobj)) {
+					access |= OV_AC_DELETEABLE;
 				}
 			}
-			return access;
-		case OV_ET_VARIABLE:
-		case OV_ET_MEMBER:
-			access = OV_AC_NONE;
-			if(pelem->elemunion.pvar->v_varprops & OV_VP_GETACCESSOR) {
-				access |= OV_AC_READ;
-			}
-			if((pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR)
-				&& ((pobj->v_objectstate & OV_OS_INIT) 
-					|| !(pelem->elemunion.pvar->v_varprops & OV_VP_STATIC))
-			) {
+			if(ov_class_cancastto(pclass, pclass_ov_domain)) {
 				access |= OV_AC_WRITE;
 			}
-			return access;
-		case OV_ET_ANCHOR:
-			return pelem->elemunion.passoc->v_getaccessfnc(NULL, pobj, pticket);
-		case OV_ET_HEAD:
-			return pelem->elemunion.passoc->v_getaccessfnc(pobj, NULL, pticket);
-		case OV_ET_OPERATION:
-			return OV_AC_NONE;
-		default:
-			break;
+		} else {
+			if(pclass == pclass_ov_domain) {
+				access |= OV_AC_WRITE;
+				if(!pobj->v_pouterobject) {
+					access |= OV_AC_RENAMEABLE;
+					if(!Ov_GetFirstChild(ov_containment,
+						Ov_StaticPtrCast(ov_domain, pobj))
+					) {
+						access |= OV_AC_DELETEABLE;
+					}
+				}
+			}
+			else if(pclass == pclass_ov_library) {
+				if(ov_library_canunload(Ov_StaticPtrCast(ov_library, pobj))) {
+					access |= OV_AC_DELETEABLE;
+				}
+			}
+			else if(pclass == pclass_ov_class) {
+				if(pclass->v_classprops & OV_CP_INSTANTIABLE) {
+					if((Ov_GetParent(ov_containment, pobj) != Ov_PtrUpCast(ov_domain, &pdb->ov))
+						|| (pobj == Ov_PtrUpCast(ov_object, pclass_ov_domain))
+						|| (pobj == Ov_PtrUpCast(ov_object, pclass_ov_library))
+					) {
+						access |= OV_AC_INSTANTIABLE;
+					}
+				}
+			}
+		}
+		return access;
+	case OV_ET_VARIABLE:
+	case OV_ET_MEMBER:
+		access = OV_AC_NONE;
+		if(pelem->elemunion.pvar->v_varprops & OV_VP_GETACCESSOR) {
+			access |= OV_AC_READ;
+		}
+		if((pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR)
+			&& ((pobj->v_objectstate & OV_OS_INIT) 
+				|| !(pelem->elemunion.pvar->v_varprops & OV_VP_STATIC))
+		) {
+			access |= OV_AC_WRITE;
+		}
+		return access;
+	case OV_ET_CHILDLINK:
+		return pelem->elemunion.passoc->v_getaccessfnc(NULL, pobj, pticket);
+	case OV_ET_PARENTLINK:
+		return pelem->elemunion.passoc->v_getaccessfnc(pobj, NULL, pticket);
+	case OV_ET_OPERATION:
+		return OV_AC_NONE;
+	default:
+		break;
 	}
 	Ov_Warning("internal error");
 	return OV_AC_NONE;
@@ -356,17 +356,17 @@ OV_UINT OV_DLLFNCEXPORT ov_object_getflags(
 	const OV_ELEMENT		*pelem
 ) {
 	switch(pelem->elemtype) {
-		case OV_ET_OBJECT:
-			return Ov_GetParent(ov_instantiation, pobj)->v_flags;
-		case OV_ET_VARIABLE:
-		case OV_ET_MEMBER:
-			return pelem->elemunion.pvar->v_flags;
-		case OV_ET_HEAD:
-			return pelem->elemunion.passoc->v_parentflags;
-		case OV_ET_ANCHOR:
-			return pelem->elemunion.passoc->v_childflags;
-		default:
-			break;
+	case OV_ET_OBJECT:
+		return Ov_GetParent(ov_instantiation, pobj)->v_flags;
+	case OV_ET_VARIABLE:
+	case OV_ET_MEMBER:
+		return pelem->elemunion.pvar->v_flags;
+	case OV_ET_PARENTLINK:
+		return pelem->elemunion.passoc->v_parentflags;
+	case OV_ET_CHILDLINK:
+		return pelem->elemunion.passoc->v_childflags;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -386,17 +386,17 @@ OV_STRING OV_DLLFNCEXPORT ov_object_getcomment(
 	*	switch based on the element's type
 	*/
 	switch(pelem->elemtype) {
-		case OV_ET_OBJECT:
-			return Ov_GetParent(ov_instantiation, pobj)->v_comment;
-		case OV_ET_VARIABLE:
-		case OV_ET_MEMBER:
-			return pelem->elemunion.pvar->v_comment;
-		case OV_ET_HEAD:
-			return pelem->elemunion.passoc->v_parentcomment;
-		case OV_ET_ANCHOR:
-			return pelem->elemunion.passoc->v_childcomment;
-		default:
-			break;
+	case OV_ET_OBJECT:
+		return Ov_GetParent(ov_instantiation, pobj)->v_comment;
+	case OV_ET_VARIABLE:
+	case OV_ET_MEMBER:
+		return pelem->elemunion.pvar->v_comment;
+	case OV_ET_PARENTLINK:
+		return pelem->elemunion.passoc->v_parentcomment;
+	case OV_ET_CHILDLINK:
+		return pelem->elemunion.passoc->v_childcomment;
+	default:
+		break;
 	}
 	return NULL;
 }
@@ -412,18 +412,18 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 	const OV_ELEMENT			*pelem
 ) {
 	switch(pelem->elemtype) {
-		case OV_ET_VARIABLE:
-		case OV_ET_MEMBER:
-			if(pelem->elemunion.pvar->v_techunit) {
-				return pelem->elemunion.pvar->v_techunit;
-			}
-			if((pelem->elemunion.pvar->v_vartype == OV_VT_TIME)
-				|| (pelem->elemunion.pvar->v_vartype == OV_VT_TIME_VEC)
-			) {
-				return "UTC";
-			}
-		default:
-			break;
+	case OV_ET_VARIABLE:
+	case OV_ET_MEMBER:
+		if(pelem->elemunion.pvar->v_techunit) {
+			return pelem->elemunion.pvar->v_techunit;
+		}
+		if((pelem->elemunion.pvar->v_vartype == OV_VT_TIME)
+			|| (pelem->elemunion.pvar->v_vartype == OV_VT_TIME_VEC)
+		) {
+			return "UTC";
+		}
+	default:
+		break;
 	}
 	return NULL;
 }
@@ -503,109 +503,109 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_getvar(
 	OV_VAR_CURRENT_PROPS	*pvarcurrprops
 ) {
 	switch(pelem->elemtype) {
-		case OV_ET_VARIABLE:
+	case OV_ET_VARIABLE:
+		/*
+		*	enter variable type and vector length
+		*/
+		pvarcurrprops->value.vartype = pelem->elemunion.pvar->v_vartype;
+		pvarcurrprops->value.veclen = pelem->elemunion.pvar->v_veclen;
+		/*
+		*	by default, the state of a variable is supported for PVs only
+		*/
+		if(!(pelem->elemunion.pvar->v_vartype & OV_VT_HAS_STATE)) {
+			pvarcurrprops->state = OV_ST_NOTSUPPORTED;
+		}
+		/*
+		*	by default, a variable's time stamp is the current time unless it's a PV
+		*/
+		if(!(pelem->elemunion.pvar->v_vartype & OV_VT_HAS_TIMESTAMP)) {
+			ov_time_gettime(&pvarcurrprops->time);
+		}
+		switch(pelem->elemunion.pvar->v_veclen) {
+		case 1:
 			/*
-			*	enter variable type and vector length
+			*	scalar variable
 			*/
-			pvarcurrprops->value.vartype = pelem->elemunion.pvar->v_vartype;
-			pvarcurrprops->value.veclen = pelem->elemunion.pvar->v_veclen;
-			/*
-			*	by default, the state of a variable is supported for PVs only
-			*/
-			if(!(pelem->elemunion.pvar->v_vartype & OV_VT_HAS_STATE)) {
-				pvarcurrprops->state = OV_ST_NOTSUPPORTED;
+			switch(pelem->elemunion.pvar->v_vartype) {
+			Ov_Object_GetVarValue(bool, BOOL);
+			Ov_Object_GetVarValue(int, INT);
+			Ov_Object_GetVarValue(uint, UINT);
+			Ov_Object_GetVarValue(single, SINGLE);
+			Ov_Object_GetVarValue(double, DOUBLE);
+			Ov_Object_GetVarValue(string, STRING);
+			Ov_Object_GetVarValue(time, TIME);
+			Ov_Object_GetVarValue(time_span, TIME_SPAN);
+			Ov_Object_GetVarPVValue(bool, BOOL);
+			Ov_Object_GetVarPVValue(int, INT);
+			Ov_Object_GetVarPVValue(single, SINGLE);
+			case OV_VT_STRUCT:
+				/*
+				*	TODO & FIXME!
+				*/
+				return OV_ERR_NOTIMPLEMENTED;
+			default:
+				Ov_Warning("internal error");
+				return OV_ERR_GENERIC;
 			}
-			/*
-			*	by default, a variable's time stamp is the current time unless it's a PV
-			*/
-			if(!(pelem->elemunion.pvar->v_vartype & OV_VT_HAS_TIMESTAMP)) {
-				ov_time_gettime(&pvarcurrprops->time);
-			}
-			switch(pelem->elemunion.pvar->v_veclen) {
-				case 1:
-					/*
-					*	scalar variable
-					*/
-					switch(pelem->elemunion.pvar->v_vartype) {
-						Ov_Object_GetVarValue(bool, BOOL);
-						Ov_Object_GetVarValue(int, INT);
-						Ov_Object_GetVarValue(uint, UINT);
-						Ov_Object_GetVarValue(single, SINGLE);
-						Ov_Object_GetVarValue(double, DOUBLE);
-						Ov_Object_GetVarValue(string, STRING);
-						Ov_Object_GetVarValue(time, TIME);
-						Ov_Object_GetVarValue(time_span, TIME_SPAN);
-						Ov_Object_GetVarPVValue(bool, BOOL);
-						Ov_Object_GetVarPVValue(int, INT);
-						Ov_Object_GetVarPVValue(single, SINGLE);
-						case OV_VT_STRUCT:
-							/*
-							*	TODO & FIXME!
-							*/
-							return OV_ERR_NOTIMPLEMENTED;
-						default:
-							Ov_Warning("internal error");
-							return OV_ERR_GENERIC;
-					}
-					break;
-
-				case 0:
-					/*
-					*	dynamic vector variable
-					*/
-					switch(pelem->elemunion.pvar->v_vartype) {
-						Ov_Object_GetVarDynVecValue(bool, BOOL);
-						Ov_Object_GetVarDynVecValue(int, INT);
-						Ov_Object_GetVarDynVecValue(uint, UINT);
-						Ov_Object_GetVarDynVecValue(single, SINGLE);
-						Ov_Object_GetVarDynVecValue(double, DOUBLE);
-						Ov_Object_GetVarDynVecValue(string, STRING);
-						Ov_Object_GetVarDynVecValue(time, TIME);
-						Ov_Object_GetVarDynVecValue(time_span, TIME_SPAN);
-						case OV_VT_BYTE_VEC:
-							/*
-							*	dynamic vectors of C-type variables are not available
-							*/
-							/* fall into... */
-						case OV_VT_STRUCT:
-							/*
-							*	vectors of structures are not available
-							*/
-							/* fall into... */
-						default:
-							Ov_Warning("internal error");
-							return OV_ERR_GENERIC;
-					}
-					break;
-
-				default:
-					/*
-					*	static vector variable
-					*/
-					switch(pelem->elemunion.pvar->v_vartype) {
-						Ov_Object_GetVarVecValue(bool, BOOL);
-						Ov_Object_GetVarVecValue(int, INT);
-						Ov_Object_GetVarVecValue(uint, UINT);
-						Ov_Object_GetVarVecValue(single, SINGLE);
-						Ov_Object_GetVarVecValue(double, DOUBLE);
-						Ov_Object_GetVarVecValue(string, STRING);
-						Ov_Object_GetVarVecValue(time, TIME);
-						Ov_Object_GetVarVecValue(time_span, TIME_SPAN);
-						Ov_Object_GetVarVecValue(byte, BYTE);
-						case OV_VT_STRUCT:
-							/*
-							*	vectors of structures are not available
-							*/
-							/* fall into... */
-						default:
-							Ov_Warning("internal error");
-							return OV_ERR_GENERIC;
-					}
-					break;
-			}
-			return OV_ERR_OK;
-		default:
 			break;
+
+		case 0:
+			/*
+			*	dynamic vector variable
+			*/
+			switch(pelem->elemunion.pvar->v_vartype) {
+			Ov_Object_GetVarDynVecValue(bool, BOOL);
+			Ov_Object_GetVarDynVecValue(int, INT);
+			Ov_Object_GetVarDynVecValue(uint, UINT);
+			Ov_Object_GetVarDynVecValue(single, SINGLE);
+			Ov_Object_GetVarDynVecValue(double, DOUBLE);
+			Ov_Object_GetVarDynVecValue(string, STRING);
+			Ov_Object_GetVarDynVecValue(time, TIME);
+			Ov_Object_GetVarDynVecValue(time_span, TIME_SPAN);
+			case OV_VT_BYTE_VEC:
+				/*
+				*	dynamic vectors of C-type variables are not available
+				*/
+				/* fall into... */
+			case OV_VT_STRUCT:
+				/*
+				*	vectors of structures are not available
+				*/
+				/* fall into... */
+			default:
+				Ov_Warning("internal error");
+				return OV_ERR_GENERIC;
+			}
+			break;
+
+		default:
+			/*
+			*	static vector variable
+			*/
+			switch(pelem->elemunion.pvar->v_vartype) {
+			Ov_Object_GetVarVecValue(bool, BOOL);
+			Ov_Object_GetVarVecValue(int, INT);
+			Ov_Object_GetVarVecValue(uint, UINT);
+			Ov_Object_GetVarVecValue(single, SINGLE);
+			Ov_Object_GetVarVecValue(double, DOUBLE);
+			Ov_Object_GetVarVecValue(string, STRING);
+			Ov_Object_GetVarVecValue(time, TIME);
+			Ov_Object_GetVarVecValue(time_span, TIME_SPAN);
+			Ov_Object_GetVarVecValue(byte, BYTE);
+			case OV_VT_STRUCT:
+				/*
+				*	vectors of structures are not available
+				*/
+				/* fall into... */
+			default:
+				Ov_Warning("internal error");
+				return OV_ERR_GENERIC;
+			}
+			break;
+		}
+		return OV_ERR_OK;
+	default:
+		break;
 	}
 	return OV_ERR_BADPARAM;
 }
@@ -684,112 +684,112 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_setvar(
 	const OV_VAR_CURRENT_PROPS	*pvarcurrprops
 ) {
 	switch(pelem->elemtype) {
-		case OV_ET_VARIABLE:
-			/*
-			*	check the variable type and the vector length
-			*/
-			if(pvarcurrprops->value.vartype !=
-				(pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK)
-			) {
-				return OV_ERR_BADTYPE;
-			}
-			if(pelem->elemunion.pvar->v_veclen) {
-				if(pvarcurrprops->value.veclen != pelem->elemunion.pvar->v_veclen) {
-					return OV_ERR_BADVALUE;
-				}
-			}
-			/*
-			*	set the value and -- if a PV -- state and timestamp
-			*/
-			switch(pelem->elemunion.pvar->v_veclen) {
-				case 1:
-					/*
-					*	scalar variable
-					*/
-					switch(pelem->elemunion.pvar->v_vartype) {
-						Ov_Object_SetVarValue(bool, BOOL);
-						Ov_Object_SetVarValue(int, INT);
-						Ov_Object_SetVarValue(uint, UINT);
-						Ov_Object_SetVarValue(single, SINGLE);
-						Ov_Object_SetVarValue(double, DOUBLE);
-						case OV_VT_STRING:
-							if(pelem->elemunion.pvar->v_setfnc) {
-								return ((OV_FNCPTR_SET(STRING))
-									pelem->elemunion.pvar->v_setfnc)(pobj,
-									pvarcurrprops->value.valueunion.val_string);
-							}
-							return ov_string_setvalue((OV_STRING*)pelem->pvalue,
-								pvarcurrprops->value.valueunion.val_string);
-						Ov_Object_SetVarValue(time, TIME);
-						Ov_Object_SetVarValue(time_span, TIME_SPAN);
-						Ov_Object_SetVarPVValue(bool, BOOL);
-						Ov_Object_SetVarPVValue(int, INT);
-						Ov_Object_SetVarPVValue(single, SINGLE);
-						case OV_VT_STRUCT:
-							/*
-							*	TODO & FIXME!
-							*/
-							return OV_ERR_NOTIMPLEMENTED;
-						default:
-							break;
-					}
-					break;
-
-				case 0:
-					/*
-					*	dynamic vector variable
-					*/
-					switch(pelem->elemunion.pvar->v_vartype) {
-						Ov_Object_SetVarDynVecValue(bool, BOOL);
-						Ov_Object_SetVarDynVecValue(int, INT);
-						Ov_Object_SetVarDynVecValue(uint, UINT);
-						Ov_Object_SetVarDynVecValue(single, SINGLE);
-						Ov_Object_SetVarDynVecValue(double, DOUBLE);
-						Ov_Object_SetVarDynVecValue(string, STRING);
-						Ov_Object_SetVarDynVecValue(time, TIME);
-						Ov_Object_SetVarDynVecValue(time_span, TIME_SPAN);
-						case OV_VT_BYTE_VEC:
-							/*
-							*	dynamic vectors of C-type variables are not available
-							*/
-							/* fall into... */
-						case OV_VT_STRUCT:
-							/*
-							*	vectors of structures are not available
-							*/
-							/* fall into... */
-						default:
-							break;
-					}
-					break;
-
-				default:
-					/*
-					*	static vector variable
-					*/
-					switch(pelem->elemunion.pvar->v_vartype) {
-						Ov_Object_SetVarVecValue(bool, BOOL);
-						Ov_Object_SetVarVecValue(int, INT);
-						Ov_Object_SetVarVecValue(uint, UINT);
-						Ov_Object_SetVarVecValue(single, SINGLE);
-						Ov_Object_SetVarVecValue(double, DOUBLE);
-						Ov_Object_SetVarVecValue(string, STRING);
-						Ov_Object_SetVarVecValue(time, TIME);
-						Ov_Object_SetVarVecValue(time_span, TIME_SPAN);
-						Ov_Object_SetVarVecValue(byte, BYTE);
-						case OV_VT_STRUCT:
-							/*
-							*	vectors of structures are not available
-							*/
-							/* fall into... */
-						default:
-							break;
-					}
-					break;
-			}
+	case OV_ET_VARIABLE:
+		/*
+		*	check the variable type and the vector length
+		*/
+		if(pvarcurrprops->value.vartype !=
+			(pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK)
+		) {
 			return OV_ERR_BADTYPE;
-		default:
+		}
+		if(pelem->elemunion.pvar->v_veclen) {
+			if(pvarcurrprops->value.veclen != pelem->elemunion.pvar->v_veclen) {
+				return OV_ERR_BADVALUE;
+			}
+		}
+		/*
+		*	set the value and -- if a PV -- state and timestamp
+		*/
+		switch(pelem->elemunion.pvar->v_veclen) {
+		case 1:
+			/*
+			*	scalar variable
+			*/
+			switch(pelem->elemunion.pvar->v_vartype) {
+			Ov_Object_SetVarValue(bool, BOOL);
+			Ov_Object_SetVarValue(int, INT);
+			Ov_Object_SetVarValue(uint, UINT);
+			Ov_Object_SetVarValue(single, SINGLE);
+			Ov_Object_SetVarValue(double, DOUBLE);
+			case OV_VT_STRING:
+				if(pelem->elemunion.pvar->v_setfnc) {
+					return ((OV_FNCPTR_SET(STRING))
+						pelem->elemunion.pvar->v_setfnc)(pobj,
+						pvarcurrprops->value.valueunion.val_string);
+				}
+				return ov_string_setvalue((OV_STRING*)pelem->pvalue,
+					pvarcurrprops->value.valueunion.val_string);
+			Ov_Object_SetVarValue(time, TIME);
+			Ov_Object_SetVarValue(time_span, TIME_SPAN);
+			Ov_Object_SetVarPVValue(bool, BOOL);
+			Ov_Object_SetVarPVValue(int, INT);
+			Ov_Object_SetVarPVValue(single, SINGLE);
+			case OV_VT_STRUCT:
+				/*
+				*	TODO & FIXME!
+				*/
+				return OV_ERR_NOTIMPLEMENTED;
+			default:
+				break;
+			}
 			break;
+
+		case 0:
+			/*
+			*	dynamic vector variable
+			*/
+			switch(pelem->elemunion.pvar->v_vartype) {
+			Ov_Object_SetVarDynVecValue(bool, BOOL);
+			Ov_Object_SetVarDynVecValue(int, INT);
+			Ov_Object_SetVarDynVecValue(uint, UINT);
+			Ov_Object_SetVarDynVecValue(single, SINGLE);
+			Ov_Object_SetVarDynVecValue(double, DOUBLE);
+			Ov_Object_SetVarDynVecValue(string, STRING);
+			Ov_Object_SetVarDynVecValue(time, TIME);
+			Ov_Object_SetVarDynVecValue(time_span, TIME_SPAN);
+			case OV_VT_BYTE_VEC:
+				/*
+				*	dynamic vectors of C-type variables are not available
+				*/
+				/* fall into... */
+			case OV_VT_STRUCT:
+				/*
+				*	vectors of structures are not available
+				*/
+				/* fall into... */
+			default:
+				break;
+			}
+			break;
+
+		default:
+			/*
+			*	static vector variable
+			*/
+			switch(pelem->elemunion.pvar->v_vartype) {
+			Ov_Object_SetVarVecValue(bool, BOOL);
+			Ov_Object_SetVarVecValue(int, INT);
+			Ov_Object_SetVarVecValue(uint, UINT);
+			Ov_Object_SetVarVecValue(single, SINGLE);
+			Ov_Object_SetVarVecValue(double, DOUBLE);
+			Ov_Object_SetVarVecValue(string, STRING);
+			Ov_Object_SetVarVecValue(time, TIME);
+			Ov_Object_SetVarVecValue(time_span, TIME_SPAN);
+			Ov_Object_SetVarVecValue(byte, BYTE);
+			case OV_VT_STRUCT:
+				/*
+				*	vectors of structures are not available
+				*/
+				/* fall into... */
+			default:
+				break;
+			}
+			break;
+		}
+		return OV_ERR_BADTYPE;
+	default:
+		break;
 	}
 	return OV_ERR_BADPARAM;
 }
@@ -813,36 +813,36 @@ OV_BOOL OV_DLLFNCEXPORT ov_object_haslinks(
 	parent.pobj = pobj;
 	child.elemtype = OV_ET_NONE;
 	/*
-	*	iterate over heads and anchors and test if the are empty
+	*	iterate over parent and child links and test if the are empty
 	*/
 	while(TRUE) {
 		Ov_AbortIfNot(Ov_OK(ov_element_getnextpart(&parent, &child,
-			OV_ET_OBJECT | OV_ET_HEAD | OV_ET_ANCHOR)));
+			OV_ET_OBJECT | OV_ET_PARENTLINK | OV_ET_CHILDLINK)));
 		if(child.elemtype == OV_ET_NONE) {
 			break;
 		}
 		switch(child.elemtype) {
-			case OV_ET_OBJECT:
-				if(ov_object_haslinks(child.elemunion.pobj)) {
+		case OV_ET_OBJECT:
+			if(ov_object_haslinks(child.elemunion.pobj)) {
+				return TRUE;
+			}
+		case OV_ET_PARENTLINK:
+			if(ov_association_isusedparentlink(child.elemunion.passoc, pobj)) {
+				return TRUE;
+			}
+			break;
+		case OV_ET_CHILDLINK:
+			if((child.elemunion.passoc != passoc_ov_containment)
+				&& (child.elemunion.passoc != passoc_ov_instantiation)
+			) {
+				if(ov_association_isusedchildlink(child.elemunion.passoc, pobj)) {
 					return TRUE;
 				}
-			case OV_ET_HEAD:
-				if(ov_association_isusedhead(child.elemunion.passoc, pobj)) {
-					return TRUE;
-				}
-				break;
-			case OV_ET_ANCHOR:
-				if((child.elemunion.passoc != passoc_ov_containment)
-					&& (child.elemunion.passoc != passoc_ov_instantiation)
-				) {
-					if(ov_association_isusedanchor(child.elemunion.passoc, pobj)) {
-						return TRUE;
-					}
-				}
-				break;
-			default:
-				Ov_Warning("internal error");
-				break;				
+			}
+			break;
+		default:
+			Ov_Warning("internal error");
+			break;				
 		}
 	}
 	return FALSE;
@@ -911,28 +911,30 @@ OV_ACCESS ov_object_getaccess_nostartup(
 	*	switch based on the element's type
 	*/
 	switch(pelem->elemtype) {
-		case OV_ET_VARIABLE:
-			if(pelem->elemunion.pvar->v_varprops & OV_VP_DERIVED) {
-				return OV_AC_NONE;
-			}
-			if(Ov_GetParent(ov_containment, Ov_GetParent(ov_containment,
-				pelem->elemunion.pvar)) != Ov_PtrUpCast(ov_domain, &pdb->ov)
-			) {
-				return OV_AC_READ;
-			}
-			break;
-		case OV_ET_OBJECT:
+	case OV_ET_VARIABLE:
+		if(pelem->elemunion.pvar->v_varprops & OV_VP_DERIVED) {
+			return OV_AC_NONE;
+		}
+		if(Ov_GetParent(ov_containment, Ov_GetParent(ov_containment,
+			pelem->elemunion.pvar)) != Ov_PtrUpCast(ov_domain, &pdb->ov)
+		) {
 			return OV_AC_READ;
-		case OV_ET_ANCHOR:
-			if(pelem->elemunion.passoc == passoc_ov_instantiation) {
-				return OV_AC_NONE;
-			}
-			/* fall into... */
-		case OV_ET_HEAD:
-			if(pelem->elemunion.passoc == passoc_ov_containment) {
-				return OV_AC_NONE;
-			}
-			return OV_AC_READ;
+		}
+		break;
+	case OV_ET_OBJECT:
+		return OV_AC_READ;
+	case OV_ET_CHILDLINK:
+		if(pelem->elemunion.passoc == passoc_ov_instantiation) {
+			return OV_AC_NONE;
+		}
+		/* fall into... */
+	case OV_ET_PARENTLINK:
+		if(pelem->elemunion.passoc == passoc_ov_containment) {
+			return OV_AC_NONE;
+		}
+		return OV_AC_READ;
+	default:
+		break;
 	}
 	return OV_AC_NONE;
 }
@@ -1039,41 +1041,41 @@ OV_RESULT ov_object_move(
 						Ov_Warning("moving of structures not implemented");
 					} else {
 						switch(pvar->v_veclen) {
-							case 1:
-								/*
-								*	variable is a scalar
-								*/
-								if(pvar->v_vartype == OV_VT_STRING) {
-									Ov_Adjust(OV_STRING, Ov_VarAddress(pobj, pvar->v_offset));
-								}
-								break;
+						case 1:
+							/*
+							*	variable is a scalar
+							*/
+							if(pvar->v_vartype == OV_VT_STRING) {
+								Ov_Adjust(OV_STRING, Ov_VarAddress(pobj, pvar->v_offset));
+							}
+							break;
 
-							case 0:
-								/*
-								*	variable is a dynamic vector
-								*/
-								Ov_Adjust(OV_GENERIC_VEC*, Ov_VarAddress(pobj, pvar->v_offset));
-								if(pvar->v_vartype == OV_VT_STRING_VEC) {
-									pvector = (OV_STRING_VEC*)Ov_VarAddress(pobj, pvar->v_offset);
-									if(pvector) {
-										for(i=0; i<pvector->veclen; i++) {
-											Ov_Adjust(OV_STRING, pvector->value[i]);
-										}
+						case 0:
+							/*
+							*	variable is a dynamic vector
+							*/
+							Ov_Adjust(OV_GENERIC_VEC*, Ov_VarAddress(pobj, pvar->v_offset));
+							if(pvar->v_vartype == OV_VT_STRING_VEC) {
+								pvector = (OV_STRING_VEC*)Ov_VarAddress(pobj, pvar->v_offset);
+								if(pvector) {
+									for(i=0; i<pvector->veclen; i++) {
+										Ov_Adjust(OV_STRING, pvector->value[i]);
 									}
 								}
-								break;
+							}
+							break;
 
-							default:
-								/*
-								*	variable is a static vector
-								*/
-								if(pvar->v_vartype == OV_VT_STRING_VEC) {
-									for(i=0; i<pvar->v_veclen; i++) {
-										Ov_Adjust(OV_STRING, Ov_VarAddress(pobj,
-											pvar->v_offset+i*sizeof(OV_STRING)));
-									}
+						default:
+							/*
+							*	variable is a static vector
+							*/
+							if(pvar->v_vartype == OV_VT_STRING_VEC) {
+								for(i=0; i<pvar->v_veclen; i++) {
+									Ov_Adjust(OV_STRING, Ov_VarAddress(pobj,
+										pvar->v_offset+i*sizeof(OV_STRING)));
 								}
-								break;
+							}
+							break;
 						}	/* switch */
 					}	/* if */
 				}
@@ -1094,10 +1096,17 @@ OV_RESULT ov_object_move(
 			passoc=Ov_AssociationPtr(Ov_GetNextChild(ov_parentrelationship, passoc))
 		) {
 			/*
-			*	adjust head pointers
+			*	adjust parent link pointers
 			*/
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->pfirst);
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->plast);
+			switch(passoc->v_assoctype) {
+			case OV_AT_1_TO_MANY:
+				Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->pfirst);
+				Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->plast);
+				break;
+			default:
+				Ov_Warning("no such association type");
+				return OV_ERR_GENERIC;
+			}
 		}
 		/*
 		*	iterate over all associations in which we are child
@@ -1106,11 +1115,18 @@ OV_RESULT ov_object_move(
 			passoc=Ov_AssociationPtr(Ov_GetNextChild(ov_childrelationship, passoc))
 		) {
 			/*
-			*	adjust anchor pointers
+			*	adjust child link pointers
 			*/
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pnext);
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pprevious);
-			Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pparent);
+			switch(passoc->v_assoctype) {
+			case OV_AT_1_TO_MANY:
+				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pnext);
+				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pprevious);
+				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pparent);
+				break;
+			default:
+				Ov_Warning("no such association type");
+				return OV_ERR_GENERIC;
+			}
 		}
 	}	/* for classes */
 	/*

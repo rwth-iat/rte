@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_unlink.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_unlink.c,v 1.2 1999-08-28 15:55:57 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -122,32 +122,32 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 		return OV_ERR_BADOBJTYPE;
 	}
 	switch(plinkelem->elemtype) {
-		case OV_ET_HEAD:
-			pparent = plinkelem->pobj;
-			pchild = pelementelem->pobj;
-			/*
-			*	test if child can participate in the association
-			*/
-			if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pchild),
-				Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
-			) {
-				return OV_ERR_BADOBJTYPE;
-			}
-			break;
-		case OV_ET_ANCHOR:
-			pchild = plinkelem->pobj;
-			pparent = pelementelem->pobj;
-			/*
-			*	test if parent can participate in the association
-			*/
-			if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pparent),
-				Ov_GetParent(ov_parentrelationship, plinkelem->elemunion.passoc))
-			) {
-				return OV_ERR_BADOBJTYPE;
-			}
-			break;
-		default:			
+	case OV_ET_PARENTLINK:
+		pparent = plinkelem->pobj;
+		pchild = pelementelem->pobj;
+		/*
+		*	test if child can participate in the association
+		*/
+		if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pchild),
+			Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
+		) {
 			return OV_ERR_BADOBJTYPE;
+		}
+		break;
+	case OV_ET_CHILDLINK:
+		pchild = plinkelem->pobj;
+		pparent = pelementelem->pobj;
+		/*
+		*	test if parent can participate in the association
+		*/
+		if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pparent),
+			Ov_GetParent(ov_parentrelationship, plinkelem->elemunion.passoc))
+		) {
+			return OV_ERR_BADOBJTYPE;
+		}
+		break;
+	default:			
+		return OV_ERR_BADOBJTYPE;
 	}
 	/*
 	*	check for access rights

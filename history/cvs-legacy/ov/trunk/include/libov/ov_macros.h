@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.8 1999-08-28 13:45:56 dirk Exp $
+*   $Id: ov_macros.h,v 1.9 1999-08-28 15:55:50 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -127,21 +127,22 @@
 */
 #define Ov_Link(assoc, pparent, pchild)										\
 	assoc##_link(Ov_ParentPtrUpCast(assoc, pparent), Ov_ChildPtrUpCast		\
-	(assoc, pchild), OV_PMH_DEFAULT, NULL)
+	(assoc, pchild), OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL)
 
 /*
-*	Link parent and child object with given placement hint
+*	Link parent and child object with given child placement hint (1:n)
 */
-#define Ov_LinkPlaced(assoc, pparent, pchild, placement)					\
+#define Ov_LinkPlaced(assoc, pparent, pchild, parenthint, childhint)		\
 	assoc##_link(Ov_ParentPtrUpCast(assoc, pparent), Ov_ChildPtrUpCast		\
-	(assoc, pchild), placement, NULL)
+	(assoc, pchild), OV_PMH_DEFAULT, NULL, childhint, NULL)
 
 /*
-*	Link parent and child object with given placement hint and relative child
+*	Link parent and child object with given relative child placement hint (1:n)
 */
-#define Ov_LinkRelativePlaced(assoc, pparent, pchild, placement, prelchild)	\
+#define Ov_LinkRelativePlaced(assoc, pparent, pchild, childhint, prelchild)	\
 	assoc##_link(Ov_ParentPtrUpCast(assoc, pparent), Ov_ChildPtrUpCast		\
-	(assoc, pchild), placement, Ov_ChildPtrUpCast(assoc, prelchild))
+	(assoc, pchild), OV_PMH_DEFAULT, NULL, childhint, Ov_ChildPtrUpCast		\
+	(assoc, prelchild))
 
 /*
 *	Unlink parent and child object
@@ -151,7 +152,7 @@
 	(assoc, pchild))
 
 /*
-*	Iterate over all child objects in an association
+*	Iterate over all child objects in an 1:n association
 */
 #define Ov_ForEachChild(assoc, pparent, pchild)								\
 	for(((pchild)=Ov_GetFirstChild(assoc, pparent)); (pchild);	(pchild)	\

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.c,v 1.2 1999-07-26 16:14:15 dirk Exp $
+*   $Id: ov_ksclient.c,v 1.3 1999-08-28 15:55:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -159,14 +159,14 @@ OV_KSCLIENT_CONNECTION_STATE OV_DLLFNCEXPORT ov_ksclient_connection_getstate(
 ) {
 	if(pconn) {
 		switch(pconn->getState()) {
-			case KssInterKsServerConnection::ISC_STATE_CLOSED:
-				return OV_CCS_CLOSED;
-			case KssInterKsServerConnection::ISC_STATE_OPEN:
-				return OV_CCS_OPEN;
-			case KssInterKsServerConnection::ISC_STATE_BUSY:
-				return OV_CCS_BUSY;
-			default:
-				break;
+		case KssInterKsServerConnection::ISC_STATE_CLOSED:
+			return OV_CCS_CLOSED;
+		case KssInterKsServerConnection::ISC_STATE_OPEN:
+			return OV_CCS_OPEN;
+		case KssInterKsServerConnection::ISC_STATE_BUSY:
+			return OV_CCS_BUSY;
+		default:
+			break;
 		}
 	}
 	return OV_CCS_BUSY;
@@ -286,44 +286,44 @@ void OV_DLLFNCEXPORT ov_ksclient_service_freeresult(
 	*	free the reply object(s)
 	*/
 	switch(psvc->serviceid) {
-		case KS_GETPP:
-			ov_ksclient_xdr_KS_GETPP_RES(&xdrdummy, &psvc->result.getpp);
-			break;
-		case KS_GETEP:
-			ov_ksclient_xdr_KS_GETEP_RES(&xdrdummy, &psvc->result.getep);
-			break;
-		case KS_GETVAR:
-			ov_ksclient_xdr_KS_GETVAR_RES(&xdrdummy, &psvc->result.getvar);
-			break;
-		case KS_SETVAR:
-			ov_ksclient_xdr_KS_SETVAR_RES(&xdrdummy, &psvc->result.setvar);
-			break;
-		case KS_EXGDATA:
-			ov_ksclient_xdr_KS_EXGDATA_RES(&xdrdummy, &psvc->result.exgdata);
-			break;
-		case KS_CREATEOBJECT:
-			ov_ksclient_xdr_KS_CREATEOBJECT_RES(&xdrdummy, &psvc->result.createobject);
-			break;
-		case KS_DELETEOBJECT:
-			ov_ksclient_xdr_KS_DELETEOBJECT_RES(&xdrdummy, &psvc->result.deleteobject);
-			break;
-		case KS_RENAMEOBJECT:
-			ov_ksclient_xdr_KS_RENAMEOBJECT_RES(&xdrdummy, &psvc->result.renameobject);
-			break;
-		case KS_LINK:
-			ov_ksclient_xdr_KS_LINK_RES(&xdrdummy, &psvc->result.link);
-			break;
-		case KS_UNLINK:
-			ov_ksclient_xdr_KS_UNLINK_RES(&xdrdummy, &psvc->result.unlink);
-			break;
-		case KS_GETCANONICALPATH:
-			ov_ksclient_xdr_KS_GETCANONICALPATH_RES(&xdrdummy, &psvc->result.getcanonicalpath);
-			break;
-		case KS_GETHIST:
-			ov_ksclient_xdr_KS_GETHIST_RES(&xdrdummy, &psvc->result.gethist);
-			break;
-		default:
-			break;
+	case KS_GETPP:
+		ov_ksclient_xdr_KS_GETPP_RES(&xdrdummy, &psvc->result.getpp);
+		break;
+	case KS_GETEP:
+		ov_ksclient_xdr_KS_GETEP_RES(&xdrdummy, &psvc->result.getep);
+		break;
+	case KS_GETVAR:
+		ov_ksclient_xdr_KS_GETVAR_RES(&xdrdummy, &psvc->result.getvar);
+		break;
+	case KS_SETVAR:
+		ov_ksclient_xdr_KS_SETVAR_RES(&xdrdummy, &psvc->result.setvar);
+		break;
+	case KS_EXGDATA:
+		ov_ksclient_xdr_KS_EXGDATA_RES(&xdrdummy, &psvc->result.exgdata);
+		break;
+	case KS_CREATEOBJECT:
+		ov_ksclient_xdr_KS_CREATEOBJECT_RES(&xdrdummy, &psvc->result.createobject);
+		break;
+	case KS_DELETEOBJECT:
+		ov_ksclient_xdr_KS_DELETEOBJECT_RES(&xdrdummy, &psvc->result.deleteobject);
+		break;
+	case KS_RENAMEOBJECT:
+		ov_ksclient_xdr_KS_RENAMEOBJECT_RES(&xdrdummy, &psvc->result.renameobject);
+		break;
+	case KS_LINK:
+		ov_ksclient_xdr_KS_LINK_RES(&xdrdummy, &psvc->result.link);
+		break;
+	case KS_UNLINK:
+		ov_ksclient_xdr_KS_UNLINK_RES(&xdrdummy, &psvc->result.unlink);
+		break;
+	case KS_GETCANONICALPATH:
+		ov_ksclient_xdr_KS_GETCANONICALPATH_RES(&xdrdummy, &psvc->result.getcanonicalpath);
+		break;
+	case KS_GETHIST:
+		ov_ksclient_xdr_KS_GETHIST_RES(&xdrdummy, &psvc->result.gethist);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -337,32 +337,32 @@ OV_BOOL ov_ksclient_service_encodeparams(
 	XDR					*xdrout	
 ) {
 	switch(psvc->serviceid) {
-		case KS_GETPP:
-			return ov_ksclient_xdr_KS_GETPP_PAR(xdrout, &psvc->params.getpp);
-		case KS_GETEP:
-			return ov_ksclient_xdr_KS_GETEP_PAR(xdrout, &psvc->params.getep);
-		case KS_GETVAR:
-			return ov_ksclient_xdr_KS_GETVAR_PAR(xdrout, &psvc->params.getvar);
-		case KS_SETVAR:
-			return ov_ksclient_xdr_KS_SETVAR_PAR(xdrout, &psvc->params.setvar);
-		case KS_EXGDATA:
-			return ov_ksclient_xdr_KS_EXGDATA_PAR(xdrout, &psvc->params.exgdata);
-		case KS_CREATEOBJECT:
-			return ov_ksclient_xdr_KS_CREATEOBJECT_PAR(xdrout, &psvc->params.createobject);
-		case KS_DELETEOBJECT:
-			return ov_ksclient_xdr_KS_DELETEOBJECT_PAR(xdrout, &psvc->params.deleteobject);
-		case KS_RENAMEOBJECT:
-			return ov_ksclient_xdr_KS_RENAMEOBJECT_PAR(xdrout, &psvc->params.renameobject);
-		case KS_LINK:
-			return ov_ksclient_xdr_KS_LINK_PAR(xdrout, &psvc->params.link);
-		case KS_UNLINK:
-			return ov_ksclient_xdr_KS_UNLINK_PAR(xdrout, &psvc->params.unlink);
-		case KS_GETCANONICALPATH:
-			return ov_ksclient_xdr_KS_GETCANONICALPATH_PAR(xdrout, &psvc->params.getcanonicalpath);
-		case KS_GETHIST:
-			return ov_ksclient_xdr_KS_GETHIST_PAR(xdrout, &psvc->params.gethist);
-		default:
-			break;
+	case KS_GETPP:
+		return ov_ksclient_xdr_KS_GETPP_PAR(xdrout, &psvc->params.getpp);
+	case KS_GETEP:
+		return ov_ksclient_xdr_KS_GETEP_PAR(xdrout, &psvc->params.getep);
+	case KS_GETVAR:
+		return ov_ksclient_xdr_KS_GETVAR_PAR(xdrout, &psvc->params.getvar);
+	case KS_SETVAR:
+		return ov_ksclient_xdr_KS_SETVAR_PAR(xdrout, &psvc->params.setvar);
+	case KS_EXGDATA:
+		return ov_ksclient_xdr_KS_EXGDATA_PAR(xdrout, &psvc->params.exgdata);
+	case KS_CREATEOBJECT:
+		return ov_ksclient_xdr_KS_CREATEOBJECT_PAR(xdrout, &psvc->params.createobject);
+	case KS_DELETEOBJECT:
+		return ov_ksclient_xdr_KS_DELETEOBJECT_PAR(xdrout, &psvc->params.deleteobject);
+	case KS_RENAMEOBJECT:
+		return ov_ksclient_xdr_KS_RENAMEOBJECT_PAR(xdrout, &psvc->params.renameobject);
+	case KS_LINK:
+		return ov_ksclient_xdr_KS_LINK_PAR(xdrout, &psvc->params.link);
+	case KS_UNLINK:
+		return ov_ksclient_xdr_KS_UNLINK_PAR(xdrout, &psvc->params.unlink);
+	case KS_GETCANONICALPATH:
+		return ov_ksclient_xdr_KS_GETCANONICALPATH_PAR(xdrout, &psvc->params.getcanonicalpath);
+	case KS_GETHIST:
+		return ov_ksclient_xdr_KS_GETHIST_PAR(xdrout, &psvc->params.gethist);
+	default:
+		break;
 	}
 	/*
 	*	unknown service id
@@ -380,32 +380,32 @@ OV_BOOL ov_ksclient_service_decoderesult(
 	XDR					*xdrin
 ) {
 	switch(psvc->serviceid) {
-		case KS_GETPP:
-			return ov_ksclient_xdr_KS_GETPP_RES(xdrin, &psvc->result.getpp);
-		case KS_GETEP:
-			return ov_ksclient_xdr_KS_GETEP_RES(xdrin, &psvc->result.getep);
-		case KS_GETVAR:
-			return ov_ksclient_xdr_KS_GETVAR_RES(xdrin, &psvc->result.getvar);
-		case KS_SETVAR:
-			return ov_ksclient_xdr_KS_SETVAR_RES(xdrin, &psvc->result.setvar);
-		case KS_EXGDATA:
-			return ov_ksclient_xdr_KS_EXGDATA_RES(xdrin, &psvc->result.exgdata);
-		case KS_CREATEOBJECT:
-			return ov_ksclient_xdr_KS_CREATEOBJECT_RES(xdrin, &psvc->result.createobject);
-		case KS_DELETEOBJECT:
-			return ov_ksclient_xdr_KS_DELETEOBJECT_RES(xdrin, &psvc->result.deleteobject);
-		case KS_RENAMEOBJECT:
-			return ov_ksclient_xdr_KS_RENAMEOBJECT_RES(xdrin, &psvc->result.renameobject);
-		case KS_LINK:
-			return ov_ksclient_xdr_KS_LINK_RES(xdrin, &psvc->result.link);
-		case KS_UNLINK:
-			return ov_ksclient_xdr_KS_UNLINK_RES(xdrin, &psvc->result.unlink);
-		case KS_GETCANONICALPATH:
-			return ov_ksclient_xdr_KS_GETCANONICALPATH_RES(xdrin, &psvc->result.getcanonicalpath);
-		case KS_GETHIST:
-			return ov_ksclient_xdr_KS_GETHIST_RES(xdrin, &psvc->result.gethist);
-		default:
-			break;
+	case KS_GETPP:
+		return ov_ksclient_xdr_KS_GETPP_RES(xdrin, &psvc->result.getpp);
+	case KS_GETEP:
+		return ov_ksclient_xdr_KS_GETEP_RES(xdrin, &psvc->result.getep);
+	case KS_GETVAR:
+		return ov_ksclient_xdr_KS_GETVAR_RES(xdrin, &psvc->result.getvar);
+	case KS_SETVAR:
+		return ov_ksclient_xdr_KS_SETVAR_RES(xdrin, &psvc->result.setvar);
+	case KS_EXGDATA:
+		return ov_ksclient_xdr_KS_EXGDATA_RES(xdrin, &psvc->result.exgdata);
+	case KS_CREATEOBJECT:
+		return ov_ksclient_xdr_KS_CREATEOBJECT_RES(xdrin, &psvc->result.createobject);
+	case KS_DELETEOBJECT:
+		return ov_ksclient_xdr_KS_DELETEOBJECT_RES(xdrin, &psvc->result.deleteobject);
+	case KS_RENAMEOBJECT:
+		return ov_ksclient_xdr_KS_RENAMEOBJECT_RES(xdrin, &psvc->result.renameobject);
+	case KS_LINK:
+		return ov_ksclient_xdr_KS_LINK_RES(xdrin, &psvc->result.link);
+	case KS_UNLINK:
+		return ov_ksclient_xdr_KS_UNLINK_RES(xdrin, &psvc->result.unlink);
+	case KS_GETCANONICALPATH:
+		return ov_ksclient_xdr_KS_GETCANONICALPATH_RES(xdrin, &psvc->result.getcanonicalpath);
+	case KS_GETHIST:
+		return ov_ksclient_xdr_KS_GETHIST_RES(xdrin, &psvc->result.gethist);
+	default:
+		break;
 	}
 	/*
 	*	unknown service id
@@ -559,80 +559,80 @@ void OvKssInterKsServerConnection::async_attention(
 	*	to which operation do we have to pay attention?
 	*/
 	switch(op) {
-		case ISC_OP_OPEN:
-			/*
-			*	a ov_ksclient_connection_open() was completed in the background,
-			*	call the user's callback function.
-			*/
-			if(getState() == ISC_STATE_OPEN) {
-				result = KS_ERR_OK;
-			} else {
-				result = getLastResult();
-				if(result == KS_ERR_OK) {
-					result = KS_ERR_GENERIC;
-				}
-			}
-			/* call the user's callback function */
-			_opencallbackfnc(this, result, _userdata);
-			return;
-
-		case ISC_OP_CALL: {
-			/*
-			*	a ov_ksclient_connection_sendrequest() was completed in the
-			*	background. Now try to decode the reply and call the user's
-			*	callback function.
-			*/
-			OV_KSCLIENT_SERVICE	*psvc = _psvc;
-			KS_AVMODULE			avresult;
-			bool_t				ok;
-			XDR					*xdr;
-			/*
-			*	reset the connection ptr of the service object and the service object ptr
-			*/
-			_psvc->pconn = NULL;
-			_psvc = NULL;
-			/*
-			*	check for errors
-			*/
+	case ISC_OP_OPEN:
+		/*
+		*	a ov_ksclient_connection_open() was completed in the background,
+		*	call the user's callback function.
+		*/
+		if(getState() == ISC_STATE_OPEN) {
+			result = KS_ERR_OK;
+		} else {
 			result = getLastResult();
-			if(result != KS_ERR_OK) {
-				/* close the connection and call callback fnc */
-				close();
-				_sendrequestcallbackfnc(this, result, psvc, _userdata);
-				return;
+			if(result == KS_ERR_OK) {
+				result = KS_ERR_GENERIC;
 			}
-			/*
-			*	receive the reply
-			*/
-			xdr = getXdr();
-			if(!beginReceive()) {
-				_sendrequestcallbackfnc(this, getLastResult(), psvc, _userdata);
-				return;
-			}
-			ok = ov_ksclient_xdr_KS_AVMODULE_RES(xdr, &avresult);
-			if(ok) {
-				if(avresult.tickettype != psvc->pavmodule->tickettype) {
-					ok = FALSE;
-				}
-			}
-			if(!ok) {
-				_sendrequestcallbackfnc(this, KS_ERR_GENERIC, psvc, _userdata);
-				return;
-			}
-			if(!ov_ksclient_service_decoderesult(psvc, xdr)) {
-				_sendrequestcallbackfnc(this, KS_ERR_GENERIC, psvc, _userdata);
-				return;
-			}
-			if(!endReceive()) {
-				_sendrequestcallbackfnc(this, getLastResult(), psvc, _userdata);
-				return;
-			}
+		}
+		/* call the user's callback function */
+		_opencallbackfnc(this, result, _userdata);
+		return;
+
+	case ISC_OP_CALL: {
+		/*
+		*	a ov_ksclient_connection_sendrequest() was completed in the
+		*	background. Now try to decode the reply and call the user's
+		*	callback function.
+		*/
+		OV_KSCLIENT_SERVICE	*psvc = _psvc;
+		KS_AVMODULE			avresult;
+		bool_t				ok;
+		XDR					*xdr;
+		/*
+		*	reset the connection ptr of the service object and the service object ptr
+		*/
+		_psvc->pconn = NULL;
+		_psvc = NULL;
+		/*
+		*	check for errors
+		*/
+		result = getLastResult();
+		if(result != KS_ERR_OK) {
+			/* close the connection and call callback fnc */
+			close();
 			_sendrequestcallbackfnc(this, result, psvc, _userdata);
 			return;
 		}
+		/*
+		*	receive the reply
+		*/
+		xdr = getXdr();
+		if(!beginReceive()) {
+			_sendrequestcallbackfnc(this, getLastResult(), psvc, _userdata);
+			return;
+		}
+		ok = ov_ksclient_xdr_KS_AVMODULE_RES(xdr, &avresult);
+		if(ok) {
+			if(avresult.tickettype != psvc->pavmodule->tickettype) {
+				ok = FALSE;
+			}
+		}
+		if(!ok) {
+			_sendrequestcallbackfnc(this, KS_ERR_GENERIC, psvc, _userdata);
+			return;
+		}
+		if(!ov_ksclient_service_decoderesult(psvc, xdr)) {
+			_sendrequestcallbackfnc(this, KS_ERR_GENERIC, psvc, _userdata);
+			return;
+		}
+		if(!endReceive()) {
+			_sendrequestcallbackfnc(this, getLastResult(), psvc, _userdata);
+			return;
+		}
+		_sendrequestcallbackfnc(this, result, psvc, _userdata);
+		return;
+	}
 
-		default:
-			break;
+	default:
+		break;
 	}
 	Ov_Warning("unknown attention operation encountered");
 }

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.c,v 1.5 1999-08-28 14:18:20 dirk Exp $
+*   $Id: ov_element.c,v 1.6 1999-08-28 15:55:54 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -102,29 +102,29 @@ OV_RESULT OV_DLLFNCEXPORT ov_element_searchpart(
 	*	switch based on the type of the parent element
 	*/
 	switch(pparent->elemtype) {
-		case OV_ET_OBJECT:
-			/*
-			*	search part of an object
-			*/
-			ppart->pobj = pparent->pobj;
-			return ov_element_searchpart_object(pparent->pobj, ppart, mask, identifier);
-		case OV_ET_VARIABLE:
-			/*
-			*	search part of a variable
-			*/
-			/* fall into... */
-		case OV_ET_MEMBER:
-			/*
-			*	search part of a structure member
-			*/
-			ppart->pobj = pparent->pobj;
-			return ov_element_searchpart_variable(pparent->pobj,
-				pparent->elemunion.pvar, pparent->pvalue, ppart, mask, identifier);
-		default:
-			/*
-			*	element has no parts
-			*/
-			break;
+	case OV_ET_OBJECT:
+		/*
+		*	search part of an object
+		*/
+		ppart->pobj = pparent->pobj;
+		return ov_element_searchpart_object(pparent->pobj, ppart, mask, identifier);
+	case OV_ET_VARIABLE:
+		/*
+		*	search part of a variable
+		*/
+		/* fall into... */
+	case OV_ET_MEMBER:
+		/*
+		*	search part of a structure member
+		*/
+		ppart->pobj = pparent->pobj;
+		return ov_element_searchpart_variable(pparent->pobj,
+			pparent->elemunion.pvar, pparent->pvalue, ppart, mask, identifier);
+	default:
+		/*
+		*	element has no parts
+		*/
+		break;
 	}
 	/*
 	*	no part found; exit
@@ -209,29 +209,29 @@ OV_RESULT OV_DLLFNCEXPORT ov_element_getnextpart(
 	*	switch based on the type of the parent element
 	*/
 	switch(pparent->elemtype) {
-		case OV_ET_OBJECT:
-			/*
-			*	get next part of an object
-			*/
-			ppart->pobj = pparent->pobj;
-			return ov_element_getnextpart_object(pparent->pobj, ppart, mask);
-		case OV_ET_VARIABLE:
-			/*
-			*	get next part of a variable
-			*/
-			/* fall into... */
-		case OV_ET_MEMBER:
-			/*
-			*	get next part of a structure member
-			*/
-			ppart->pobj = pparent->pobj;
-			return ov_element_getnextpart_variable(pparent->pobj,
-				pparent->elemunion.pvar, pparent->pvalue, ppart, mask);
-		default:
-			/*
-			*	element has no parts
-			*/
-			break;
+	case OV_ET_OBJECT:
+		/*
+		*	get next part of an object
+		*/
+		ppart->pobj = pparent->pobj;
+		return ov_element_getnextpart_object(pparent->pobj, ppart, mask);
+	case OV_ET_VARIABLE:
+		/*
+		*	get next part of a variable
+		*/
+		/* fall into... */
+	case OV_ET_MEMBER:
+		/*
+		*	get next part of a structure member
+		*/
+		ppart->pobj = pparent->pobj;
+		return ov_element_getnextpart_variable(pparent->pobj,
+			pparent->elemunion.pvar, pparent->pvalue, ppart, mask);
+	default:
+		/*
+		*	element has no parts
+		*/
+		break;
 	}
 	/*
 	*	no part found; exit
@@ -305,30 +305,30 @@ OV_RESULT ov_element_searchpart_object(
 				goto NOPART;
 			}
 		}
-		if(mask & OV_ET_HEAD) {
+		if(mask & OV_ET_PARENTLINK) {
 			/*
-			*	search for a head with this name
+			*	search for a parent link with this name
 			*/
 			Ov_ForEachChild(ov_parentrelationship, pclass, ppart->elemunion.passoc) {
 				if(!strcmp(ppart->elemunion.passoc->v_childrolename, identifier)) {
 					/*
-					*	head found
+					*	parent link found
 					*/
-					ppart->elemtype = OV_ET_HEAD;
+					ppart->elemtype = OV_ET_PARENTLINK;
 					return OV_ERR_OK;
 				}
 			}
 		}
-		if(mask & OV_ET_ANCHOR) {
+		if(mask & OV_ET_CHILDLINK) {
 			/*
-			*	search for an anchor with this name
+			*	search for a child link with this name
 			*/
 			Ov_ForEachChild(ov_childrelationship, pclass, ppart->elemunion.passoc) {
 				if(!strcmp(ppart->elemunion.passoc->v_parentrolename, identifier)) {
 					/*
-					*	anchor found
+					*	child link found
 					*/
-					ppart->elemtype = OV_ET_ANCHOR;
+					ppart->elemtype = OV_ET_CHILDLINK;
 					return OV_ERR_OK;
 				}
 			}
@@ -382,105 +382,105 @@ OV_RESULT ov_element_getnextpart_object(
 		*	switch based on the type of the part
 		*/
 		switch(ppart->elemtype) {
-			case OV_ET_NONE:
-				/*
-				*	get the very first part (variable, part, operation)...
-				*/
-				pclass = Ov_GetParent(ov_instantiation, pobj);
+		case OV_ET_NONE:
+			/*
+			*	get the very first part (variable, part, operation)...
+			*/
+			pclass = Ov_GetParent(ov_instantiation, pobj);
 CONTINUE4:		ppart->elemunion.pobj = Ov_GetFirstChild(ov_containment, pclass);
-				goto CONTINUE1;
-			case OV_ET_VARIABLE:
-			case OV_ET_OBJECT:
-			case OV_ET_OPERATION:
-				/*
-				*	get the next part (variable, part, operation)...
-				*/
-				pclass = Ov_DynamicPtrCast(ov_class, Ov_GetParent(ov_containment,
-					ppart->elemunion.pobj));
-				if(!pclass) {
-					Ov_Warning("internal error");
-					return OV_ERR_GENERIC;
-				}
-				ppart->elemunion.pobj = Ov_GetNextChild(ov_containment,
-					ppart->elemunion.pobj);
+			goto CONTINUE1;
+		case OV_ET_VARIABLE:
+		case OV_ET_OBJECT:
+		case OV_ET_OPERATION:
+			/*
+			*	get the next part (variable, part, operation)...
+			*/
+			pclass = Ov_DynamicPtrCast(ov_class, Ov_GetParent(ov_containment,
+				ppart->elemunion.pobj));
+			if(!pclass) {
+				Ov_Warning("internal error");
+				return OV_ERR_GENERIC;
+			}
+			ppart->elemunion.pobj = Ov_GetNextChild(ov_containment,
+				ppart->elemunion.pobj);
 CONTINUE1:		if(ppart->elemunion.pobj) {
-					/*
-					*	we found the next part, figure out the type
-					*/
-					if(Ov_CanCastTo(ov_variable, ppart->elemunion.pobj)) {
-						ppart->elemtype = OV_ET_VARIABLE;
-						break;
-					}
-					if(Ov_CanCastTo(ov_part, ppart->elemunion.pobj)) {
-						ppart->elemtype = OV_ET_OBJECT;
-						break;
-					}
-					if(Ov_CanCastTo(ov_operation, ppart->elemunion.pobj)) {
-						ppart->elemtype = OV_ET_OPERATION;
-						break;
-					}
-					/*
-					*	this is strange...
-					*/
-					Ov_Warning("internal error");
-					return OV_ERR_GENERIC;
+				/*
+				*	we found the next part, figure out the type
+				*/
+				if(Ov_CanCastTo(ov_variable, ppart->elemunion.pobj)) {
+					ppart->elemtype = OV_ET_VARIABLE;
+					break;
+				}
+				if(Ov_CanCastTo(ov_part, ppart->elemunion.pobj)) {
+					ppart->elemtype = OV_ET_OBJECT;
+					break;
+				}
+				if(Ov_CanCastTo(ov_operation, ppart->elemunion.pobj)) {
+					ppart->elemtype = OV_ET_OPERATION;
+					break;
 				}
 				/*
-				*	no more variables, parts or operations, get first head
+				*	this is strange...
 				*/
-				ppart->elemtype = OV_ET_HEAD;
-				ppart->elemunion.passoc = Ov_GetFirstChild(ov_parentrelationship,
-					pclass);
-				goto CONTINUE2;
-			case OV_ET_HEAD:
-				/*
-				*	get next part (head)...
-				*/
-				pclass = Ov_GetParent(ov_parentrelationship, ppart->elemunion.passoc);
-				ppart->elemunion.passoc = Ov_GetNextChild(ov_parentrelationship,
-					ppart->elemunion.passoc);
+				Ov_Warning("internal error");
+				return OV_ERR_GENERIC;
+			}
+			/*
+			*	no more variables, parts or operations, get first parent link
+			*/
+			ppart->elemtype = OV_ET_PARENTLINK;
+			ppart->elemunion.passoc = Ov_GetFirstChild(ov_parentrelationship,
+				pclass);
+			goto CONTINUE2;
+		case OV_ET_PARENTLINK:
+			/*
+			*	get next part (parent link)...
+			*/
+			pclass = Ov_GetParent(ov_parentrelationship, ppart->elemunion.passoc);
+			ppart->elemunion.passoc = Ov_GetNextChild(ov_parentrelationship,
+				ppart->elemunion.passoc);
 CONTINUE2:		if(ppart->elemunion.passoc) {
-					/*
-					*	we found the next part
-					*/
-					break;
-				}
 				/*
-				*	no more heads, get first anchor
+				*	we found the next part
 				*/
-				ppart->elemtype = OV_ET_ANCHOR;
-				ppart->elemunion.passoc = Ov_GetFirstChild(ov_childrelationship,
-					pclass);
-				goto CONTINUE3;
-			case OV_ET_ANCHOR:
-				/*
-				*	get next part (head)...
-				*/
-				pclass = Ov_GetParent(ov_childrelationship, ppart->elemunion.passoc);
-				ppart->elemunion.passoc = Ov_GetNextChild(ov_childrelationship,
-					ppart->elemunion.passoc);
+				break;
+			}
+			/*
+			*	no more parent links, get first child link
+			*/
+			ppart->elemtype = OV_ET_CHILDLINK;
+			ppart->elemunion.passoc = Ov_GetFirstChild(ov_childrelationship,
+				pclass);
+			goto CONTINUE3;
+		case OV_ET_CHILDLINK:
+			/*
+			*	get next part (child link)...
+			*/
+			pclass = Ov_GetParent(ov_childrelationship, ppart->elemunion.passoc);
+			ppart->elemunion.passoc = Ov_GetNextChild(ov_childrelationship,
+				ppart->elemunion.passoc);
 CONTINUE3:		if(ppart->elemunion.passoc) {
-					/*
-					*	we found the next part
-					*/
-					break;
-				}
 				/*
-				*	no more heads, go to base class
+				*	we found the next part
 				*/
-				pclass = Ov_GetParent(ov_inheritance, pclass);
-				if(pclass) {
-					/*
-					*	continue with first variable of this class
-					*/
-					goto CONTINUE4;
-				}
+				break;
+			}
+			/*
+			*	no more child links, go to base class
+			*/
+			pclass = Ov_GetParent(ov_inheritance, pclass);
+			if(pclass) {
 				/*
-				*	we are through, no more parts
+				*	continue with first variable of this class
 				*/
-				ppart->elemtype = OV_ET_NONE;
-				ppart->elemunion.pobj = NULL;
-				return OV_ERR_OK;
+				goto CONTINUE4;
+			}
+			/*
+			*	we are through, no more parts
+			*/
+			ppart->elemtype = OV_ET_NONE;
+			ppart->elemunion.pobj = NULL;
+			return OV_ERR_OK;
 		}	/* switch */
 		/*
 		*	if we got an element of the right type, return
@@ -490,23 +490,23 @@ CONTINUE3:		if(ppart->elemunion.passoc) {
 			*	set identifier and the variable value or object pointer if appropriate
 			*/
 			switch(ppart->elemtype) {
-				case OV_ET_VARIABLE:
-					if(ppart->elemunion.pvar->v_varprops & OV_VP_DERIVED) {
-						ppart->pvalue = NULL;
-					} else if(ppart->elemunion.pvar->v_varprops & OV_VP_STATIC) {
-						Ov_WarnIfNot(pclass);
-						ppart->pvalue = ((OV_BYTE*)pclass)+Ov_GetInstSize(ov_class)
-							+ppart->elemunion.pvar->v_offset;
-					} else {
-						ppart->pvalue = ((OV_BYTE*)pobj)+ppart->elemunion.pvar->v_offset;
-					}
-					break;
-				case OV_ET_OBJECT:
-					ppart->pobj = (OV_INSTPTR)(((OV_BYTE*)pobj)
-						+ppart->elemunion.ppart->v_offset);
-					break;
-				default:
-					break;
+			case OV_ET_VARIABLE:
+				if(ppart->elemunion.pvar->v_varprops & OV_VP_DERIVED) {
+					ppart->pvalue = NULL;
+				} else if(ppart->elemunion.pvar->v_varprops & OV_VP_STATIC) {
+					Ov_WarnIfNot(pclass);
+					ppart->pvalue = ((OV_BYTE*)pclass)+Ov_GetInstSize(ov_class)
+						+ppart->elemunion.pvar->v_offset;
+				} else {
+					ppart->pvalue = ((OV_BYTE*)pobj)+ppart->elemunion.pvar->v_offset;
+				}
+				break;
+			case OV_ET_OBJECT:
+				ppart->pobj = (OV_INSTPTR)(((OV_BYTE*)pobj)
+					+ppart->elemunion.ppart->v_offset);
+				break;
+			default:
+				break;
 			}
 			return OV_ERR_OK;
 		}
@@ -545,19 +545,19 @@ OV_STRING OV_DLLFNCEXPORT ov_element_getidentifier(
 		*	return identifier
 		*/
 		switch(pelem->elemtype) {
-			case OV_ET_OBJECT:
-				return pelem->pobj->v_identifier;
-			case OV_ET_VARIABLE:
-			case OV_ET_MEMBER:
-				return pelem->elemunion.pvar->v_identifier;
-			case OV_ET_HEAD:
-				return pelem->elemunion.passoc->v_childrolename;
-			case OV_ET_ANCHOR:
-				return pelem->elemunion.passoc->v_parentrolename;
-			case OV_ET_OPERATION:
-				return pelem->elemunion.pop->v_identifier;
-			default:
-				break;
+		case OV_ET_OBJECT:
+			return pelem->pobj->v_identifier;
+		case OV_ET_VARIABLE:
+		case OV_ET_MEMBER:
+			return pelem->elemunion.pvar->v_identifier;
+		case OV_ET_PARENTLINK:
+			return pelem->elemunion.passoc->v_childrolename;
+		case OV_ET_CHILDLINK:
+			return pelem->elemunion.passoc->v_parentrolename;
+		case OV_ET_OPERATION:
+			return pelem->elemunion.pop->v_identifier;
+		default:
+			break;
 		}
 	}
 	return "";

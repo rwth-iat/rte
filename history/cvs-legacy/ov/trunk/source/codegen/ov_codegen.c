@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.7 1999-08-28 14:18:19 dirk Exp $
+*   $Id: ov_codegen.c,v 1.8 1999-08-28 15:55:52 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -789,17 +789,17 @@ void ov_codegen_printstructtypedef(
 			*	scalar or vector of fixed length
 			*/
 			switch(pvar->vartype) {
-				case OV_VT_STRUCT:
-					fprintf(fp, "    OV_STRUCT_%s v_%s", ov_codegen_replace(pvar->structurename),
-						pvar->identifier);
-					break;
-				case OV_VT_BYTE_VEC:
-					fprintf(fp, "    %s v_%s", pvar->ctypename, pvar->identifier);
-					break;
-				default:
-					fprintf(fp, "    %s v_%s", ov_codegen_getvartypetext(pvar->vartype),
-						pvar->identifier);
-					break;
+			case OV_VT_STRUCT:
+				fprintf(fp, "    OV_STRUCT_%s v_%s", ov_codegen_replace(pvar->structurename),
+					pvar->identifier);
+				break;
+			case OV_VT_BYTE_VEC:
+				fprintf(fp, "    %s v_%s", pvar->ctypename, pvar->identifier);
+				break;
+			default:
+				fprintf(fp, "    %s v_%s", ov_codegen_getvartypetext(pvar->vartype),
+					pvar->identifier);
+				break;
 			}
 			if(pvar->veclen > 1) {
 				fprintf(fp, "[%lu]", pvar->veclen);
@@ -886,17 +886,17 @@ void ov_codegen_printclassinstdefines(
 				*	scalar or vector of fixed length
 				*/
 				switch(pvar->vartype) {
-					case OV_VT_STRUCT:
-						fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
-							pvar->structurename), pvar->identifier);
-						break;
-					case OV_VT_BYTE_VEC:
-						fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
-						break;
-					default:
-						fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
-							pvar->vartype),	pvar->identifier);
-						break;
+				case OV_VT_STRUCT:
+					fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
+						pvar->structurename), pvar->identifier);
+					break;
+				case OV_VT_BYTE_VEC:
+					fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
+					break;
+				default:
+					fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
+						pvar->vartype),	pvar->identifier);
+					break;
 				}
 				if(pvar->veclen > 1) {
 					fprintf(fp, "[%lu]", pvar->veclen);
@@ -919,7 +919,7 @@ void ov_codegen_printclassinstdefines(
 			ov_codegen_replace(ppart->partclassname), ppart->identifier);
 	}
 	/*
-	*	include heads and anchors of new associations in define
+	*	include parent and child links of new associations in define
 	*/
 	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
 		OV_STRING id = (OV_STRING)ov_codegen_malloc(strlen(plib->identifier)+1
@@ -959,17 +959,17 @@ void ov_codegen_printclassinstdefines(
 				*	scalar or vector of fixed length
 				*/
 				switch(pvar->vartype) {
-					case OV_VT_STRUCT:
-						fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
-							pvar->structurename), pvar->identifier);
-						break;
-					case OV_VT_BYTE_VEC:
-						fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
-						break;
-					default:
-						fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
-							pvar->vartype),	pvar->identifier);
-						break;
+				case OV_VT_STRUCT:
+					fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
+						pvar->structurename), pvar->identifier);
+					break;
+				case OV_VT_BYTE_VEC:
+					fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
+					break;
+				default:
+					fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
+						pvar->vartype),	pvar->identifier);
+					break;
 				}
 				if(pvar->veclen > 1) {
 					fprintf(fp, "[%lu]", pvar->veclen);
@@ -1061,23 +1061,23 @@ void ov_codegen_printclassaccessorfncdecls(
 		*/
 		if(pvar->varprops & OV_VP_GETACCESSOR) {
 			switch(pvar->vartype) {
-				case OV_VT_STRUCT:
-					fprintf(fp, "OV_STRUCT_%s*", ov_codegen_replace(pvar->structurename));
-					break;
-				case OV_VT_BYTE_VEC:
-					fprintf(fp, "%s*", pvar->ctypename);
-					break;
-				case OV_VT_BOOL_PV:
-				case OV_VT_INT_PV:
-				case OV_VT_SINGLE_PV:
-					fprintf(fp, "%s*", ov_codegen_getvartypetext(pvar->vartype));
-					break;
-				default:
-					fprintf(fp, "%s", ov_codegen_getvartypetext(pvar->vartype));
-					if(pvar->veclen != 1) {
-						fprintf(fp, "*");
-					}
-					break;
+			case OV_VT_STRUCT:
+				fprintf(fp, "OV_STRUCT_%s*", ov_codegen_replace(pvar->structurename));
+				break;
+			case OV_VT_BYTE_VEC:
+				fprintf(fp, "%s*", pvar->ctypename);
+				break;
+			case OV_VT_BOOL_PV:
+			case OV_VT_INT_PV:
+			case OV_VT_SINGLE_PV:
+				fprintf(fp, "%s*", ov_codegen_getvartypetext(pvar->vartype));
+				break;
+			default:
+				fprintf(fp, "%s", ov_codegen_getvartypetext(pvar->vartype));
+				if(pvar->veclen != 1) {
+					fprintf(fp, "*");
+				}
+				break;
 			}
 			fprintf(fp, " OV_DLLFNCEXPORT %s_%s_%s_get(\n", plib->identifier,
 				pclass->identifier, pvar->identifier);
@@ -1098,23 +1098,23 @@ void ov_codegen_printclassaccessorfncdecls(
 			fprintf(fp, "    OV_INSTPTR_%s_%s pobj,\n", plib->identifier,
 				pclass->identifier);
 			switch(pvar->vartype) {
-				case OV_VT_STRUCT:
-					fprintf(fp, "    const OV_STRUCT_%s *p", ov_codegen_replace(pvar->structurename));
-					break;
-				case OV_VT_BOOL_PV:
-				case OV_VT_INT_PV:
-				case OV_VT_SINGLE_PV:
-					fprintf(fp, "    const %s *p", ov_codegen_getvartypetext(pvar->vartype));
-					break;
-				case OV_VT_BYTE_VEC:
-					fprintf(fp, "    const %s *p", pvar->ctypename);
-					break;
-				default:
-					fprintf(fp, "    const %s ", ov_codegen_getvartypetext(pvar->vartype));
-					if(pvar->veclen != 1) {
-						fprintf(fp, "*p");
-					}
-					break;
+			case OV_VT_STRUCT:
+				fprintf(fp, "    const OV_STRUCT_%s *p", ov_codegen_replace(pvar->structurename));
+				break;
+			case OV_VT_BOOL_PV:
+			case OV_VT_INT_PV:
+			case OV_VT_SINGLE_PV:
+				fprintf(fp, "    const %s *p", ov_codegen_getvartypetext(pvar->vartype));
+				break;
+			case OV_VT_BYTE_VEC:
+				fprintf(fp, "    const %s *p", pvar->ctypename);
+				break;
+			default:
+				fprintf(fp, "    const %s ", ov_codegen_getvartypetext(pvar->vartype));
+				if(pvar->veclen != 1) {
+					fprintf(fp, "*p");
+				}
+				break;
 			}
 			fprintf(fp, "value");
 			if(!pvar->veclen) {
@@ -1420,23 +1420,23 @@ void ov_codegen_printmemberdefobj(
 	fprintf(fp ,"    %d,\n", pvar->varprops);
 	fprintf(fp ,"    %d,\n", pvar->vartype);
 	switch(pvar->vartype) {
-		case OV_VT_STRUCT:
-			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    \"%s\",\n", pvar->structurename);
-			fprintf(fp, "    %lu*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
-				ov_codegen_replace(pvar->structurename));
-			break;
-		case OV_VT_BYTE_VEC:
-			fprintf(fp, "    \"%s\",\n", pvar->ctypename);
-			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
-			break;
-		default:
-			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
-				ov_codegen_getvartypetext(pvar->vartype));
-			break;
+	case OV_VT_STRUCT:
+		fprintf(fp, "    (OV_STRING)NULL,\n");
+		fprintf(fp, "    \"%s\",\n", pvar->structurename);
+		fprintf(fp, "    %lu*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
+			ov_codegen_replace(pvar->structurename));
+		break;
+	case OV_VT_BYTE_VEC:
+		fprintf(fp, "    \"%s\",\n", pvar->ctypename);
+		fprintf(fp, "    (OV_STRING)NULL,\n");
+		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
+		break;
+	default:
+		fprintf(fp, "    (OV_STRING)NULL,\n");
+		fprintf(fp, "    (OV_STRING)NULL,\n");
+		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
+			ov_codegen_getvartypetext(pvar->vartype));
+		break;
 	}
 	fprintf(fp, "    offsetof(OV_STRUCT_%s_%s, v_%s),\n", plib->identifier,
 		pstruct->identifier, pvar->identifier);
@@ -1470,23 +1470,23 @@ void ov_codegen_printvardefobj(
 	fprintf(fp ,"    %d,\n", pvar->varprops);
 	fprintf(fp ,"    %d,\n", pvar->vartype);
 	switch(pvar->vartype) {
-		case OV_VT_STRUCT:
-			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    \"%s\",\n", pvar->structurename);
-			fprintf(fp, "    %lu*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
-				ov_codegen_replace(pvar->structurename));
-			break;
-		case OV_VT_BYTE_VEC:
-			fprintf(fp, "    \"%s\",\n", pvar->ctypename);
-			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
-			break;
-		default:
-			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
-				ov_codegen_getvartypetext(pvar->vartype));
-			break;
+	case OV_VT_STRUCT:
+		fprintf(fp, "    (OV_STRING)NULL,\n");
+		fprintf(fp, "    \"%s\",\n", pvar->structurename);
+		fprintf(fp, "    %lu*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
+			ov_codegen_replace(pvar->structurename));
+		break;
+	case OV_VT_BYTE_VEC:
+		fprintf(fp, "    \"%s\",\n", pvar->ctypename);
+		fprintf(fp, "    (OV_STRING)NULL,\n");
+		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
+		break;
+	default:
+		fprintf(fp, "    (OV_STRING)NULL,\n");
+		fprintf(fp, "    (OV_STRING)NULL,\n");
+		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
+			ov_codegen_getvartypetext(pvar->vartype));
+		break;
 	}
 	if(pvar->varprops & OV_VP_DERIVED) {
 		fprintf(fp, "    0,\n");
@@ -1570,39 +1570,39 @@ OV_STRING ov_codegen_getvartypetext(
 	OV_VAR_TYPE	vartype
 ) {
 	switch(vartype) {
-		case OV_VT_BOOL:
-		case OV_VT_BOOL_VEC:
-			return "OV_BOOL";
-		case OV_VT_INT:
-		case OV_VT_INT_VEC:
-			return "OV_INT";
-		case OV_VT_UINT:
-		case OV_VT_UINT_VEC:
-			return "OV_UINT";
-		case OV_VT_SINGLE:
-		case OV_VT_SINGLE_VEC:
-			return "OV_SINGLE";
-		case OV_VT_DOUBLE:
-		case OV_VT_DOUBLE_VEC:
-			return "OV_DOUBLE";
-		case OV_VT_STRING:
-		case OV_VT_STRING_VEC:
-			return "OV_STRING";
-		case OV_VT_TIME:
-		case OV_VT_TIME_VEC:
-			return "OV_TIME";
-		case OV_VT_TIME_SPAN:
-		case OV_VT_TIME_SPAN_VEC:
-			return "OV_TIME_SPAN";
-		case OV_VT_BOOL_PV:
-			return "OV_BOOL_PV";
-		case OV_VT_INT_PV:
-			return "OV_INT_PV";
-		case OV_VT_SINGLE_PV:
-			return "OV_SINGLE_PV";
-		default:
-			fprintf(stderr, "internal error -- sorry.\n");
-			exit(EXIT_FAILURE);
+	case OV_VT_BOOL:
+	case OV_VT_BOOL_VEC:
+		return "OV_BOOL";
+	case OV_VT_INT:
+	case OV_VT_INT_VEC:
+		return "OV_INT";
+	case OV_VT_UINT:
+	case OV_VT_UINT_VEC:
+		return "OV_UINT";
+	case OV_VT_SINGLE:
+	case OV_VT_SINGLE_VEC:
+		return "OV_SINGLE";
+	case OV_VT_DOUBLE:
+	case OV_VT_DOUBLE_VEC:
+		return "OV_DOUBLE";
+	case OV_VT_STRING:
+	case OV_VT_STRING_VEC:
+		return "OV_STRING";
+	case OV_VT_TIME:
+	case OV_VT_TIME_VEC:
+		return "OV_TIME";
+	case OV_VT_TIME_SPAN:
+	case OV_VT_TIME_SPAN_VEC:
+		return "OV_TIME_SPAN";
+	case OV_VT_BOOL_PV:
+		return "OV_BOOL_PV";
+	case OV_VT_INT_PV:
+		return "OV_INT_PV";
+	case OV_VT_SINGLE_PV:
+		return "OV_SINGLE_PV";
+	default:
+		fprintf(stderr, "internal error -- sorry.\n");
+		exit(EXIT_FAILURE);
 	}
 	return NULL;
 }

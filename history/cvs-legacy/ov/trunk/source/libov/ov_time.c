@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.c,v 1.4 1999-08-19 12:03:49 dirk Exp $
+*   $Id: ov_time.c,v 1.5 1999-08-28 15:55:55 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -250,21 +250,21 @@ OV_RESULT OV_DLLFNCEXPORT ov_time_asciitotime(
 			return OV_ERR_BADPARAM;
 		}
 		switch(*pc1) {
-			case '0':
-				if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
-					return OV_ERR_BADPARAM;
-				}
-				break;
-			case '/':
-			case ':':
-			case ' ':
-			case '.':
-				if(*pc2 != *pc1) {
-					return OV_ERR_BADPARAM;
-				}
-				break;
-			default:
-				Ov_Error("internal error");
+		case '0':
+			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
+				return OV_ERR_BADPARAM;
+			}
+			break;
+		case '/':
+		case ':':
+		case ' ':
+		case '.':
+			if(*pc2 != *pc1) {
+				return OV_ERR_BADPARAM;
+			}
+			break;
+		default:
+			Ov_Error("internal error");
 		}
 	}
 	/*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovt,v 1.1 1999-07-19 15:02:07 dirk Exp $
+*   $Id: ov.ovt,v 1.2 1999-08-28 15:55:51 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -68,7 +68,9 @@ typedef OV_RESULT (* OV_FNCPTR_SET)(
 typedef OV_RESULT (* OV_FNCPTR_LINK)(
 	const OV_INSTPTR			pparent,
 	const OV_INSTPTR			pchild,
-	const OV_PLACEMENT_HINT		hint,
+	const OV_PLACEMENT_HINT		parenthint,
+	const OV_INSTPTR			prelparent,
+	const OV_PLACEMENT_HINT		childhint,
 	const OV_INSTPTR			prelchild
 );
 

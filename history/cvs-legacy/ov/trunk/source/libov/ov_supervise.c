@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_supervise.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_supervise.c,v 1.2 1999-08-28 15:55:55 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -87,22 +87,22 @@ LRESULT CALLBACK ov_supervise_timerwndproc(HWND hWnd, UINT Msg,
 	WPARAM wParam, LPARAM lParam
 ) {
 	switch(Msg) {
-		case WM_TIMER:
-			if(wParam == timeractive) {
-				if(ov_supervise_end()) {
-					CONTEXT context;
-					SuspendThread(mainthread);
-					context.ContextFlags = CONTEXT_CONTROL;
-					if(GetThreadContext(mainthread, &context)) {
-						context.Eip = (DWORD)ov_supervise_execlongjump;
-						SetThreadContext(mainthread, &context);
-					}
-					ResumeThread(mainthread);
+	case WM_TIMER:
+		if(wParam == timeractive) {
+			if(ov_supervise_end()) {
+				CONTEXT context;
+				SuspendThread(mainthread);
+				context.ContextFlags = CONTEXT_CONTROL;
+				if(GetThreadContext(mainthread, &context)) {
+					context.Eip = (DWORD)ov_supervise_execlongjump;
+					SetThreadContext(mainthread, &context);
 				}
+				ResumeThread(mainthread);
 			}
-			return 0;
-		default:
-			break;
+		}
+		return 0;
+	default:
+		break;
 	}
 	return DefWindowProc(hWnd, Msg, wParam, lParam);
 }

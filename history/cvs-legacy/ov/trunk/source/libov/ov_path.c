@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_path.c,v 1.2 1999-08-02 10:59:44 dirk Exp $
+*   $Id: ov_path.c,v 1.3 1999-08-28 15:55:55 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -251,26 +251,26 @@ OV_RESULT OV_DLLFNCEXPORT ov_path_resolve(
 				pc++;
 			}
 			switch(del) {
-				case '/':
-					/*
-					*	next element is a child
-					*/
-					result = ov_element_searchchild(&ppath->elements[ppath->size-1],
-						&ppath->elements[ppath->size], identifier);
-					break;
-				case '.':
-					/*
-					*	next element is a part
-					*/
-					result = ov_element_searchpart(&ppath->elements[ppath->size-1],
-						&ppath->elements[ppath->size], OV_ET_ANY, identifier);
-					break;
-				default:
-					/*
-					*	this is strange...
-					*/
-					ov_logfile_warning("internal error: del = '%d'\n", (int)del);
-					return OV_ERR_GENERIC;
+			case '/':
+				/*
+				*	next element is a child
+				*/
+				result = ov_element_searchchild(&ppath->elements[ppath->size-1],
+					&ppath->elements[ppath->size], identifier);
+				break;
+			case '.':
+				/*
+				*	next element is a part
+				*/
+				result = ov_element_searchpart(&ppath->elements[ppath->size-1],
+					&ppath->elements[ppath->size], OV_ET_ANY, identifier);
+				break;
+			default:
+				/*
+				*	this is strange...
+				*/
+				ov_logfile_warning("internal error: del = '%d'\n", (int)del);
+				return OV_ERR_GENERIC;
 			}
 			*pcundo = cundo;
 			if(Ov_Fail(result)) {

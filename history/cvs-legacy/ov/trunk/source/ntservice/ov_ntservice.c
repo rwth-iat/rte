@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.c,v 1.4 1999-08-25 13:15:59 dirk Exp $
+*   $Id: ov_ntservice.c,v 1.5 1999-08-28 15:55:59 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -527,52 +527,52 @@ void ov_ntservice_servicecontroller(
 	*	what do we have to do?
 	*/
 	switch(control_code) {
-		case SERVICE_CONTROL_STOP:
-			/*
-			*	spin down the service
-			*/
-			switch(status.dwCurrentState) {
-				case SERVICE_RUNNING:
-					ov_ntservice_reportservicestatus(SERVICE_STOP_PENDING,
-						NO_ERROR, 0, 1, OV_TIMEOUT);
-					ov_ksserver_downserver();
-					return;
-				case SERVICE_PAUSED:
-					ov_ntservice_reportservicestatus(SERVICE_STOP_PENDING,
-						NO_ERROR, 0, 1, OV_TIMEOUT);
-					SetEvent(done_event);
-					return;
-				default:
-					break;
-			}
-			break;
-
-		case SERVICE_CONTROL_PAUSE:
-			/*
-			*	send the service to sleep
-			*/
-			if(status.dwCurrentState == SERVICE_RUNNING) {
-				ov_ntservice_reportservicestatus(SERVICE_PAUSE_PENDING,
-					NO_ERROR, 0, 1, OV_TIMEOUT);
-				ov_ksserver_downserver();
-				return;
-			}
-			break;
-
-		case SERVICE_CONTROL_CONTINUE:
-			/*
-			*	back to work
-			*/
-			if(status.dwCurrentState == SERVICE_PAUSED) {
-				ov_ntservice_reportservicestatus(SERVICE_CONTINUE_PENDING,
-					NO_ERROR, 0, 1, OV_TIMEOUT);
-				SetEvent(one_shot_event);
-				return;
-			}
-			break;
-
+	case SERVICE_CONTROL_STOP:
+		/*
+		*	spin down the service
+		*/
+		switch(status.dwCurrentState) {
+		case SERVICE_RUNNING:
+			ov_ntservice_reportservicestatus(SERVICE_STOP_PENDING,
+				NO_ERROR, 0, 1, OV_TIMEOUT);
+			ov_ksserver_downserver();
+			return;
+		case SERVICE_PAUSED:
+			ov_ntservice_reportservicestatus(SERVICE_STOP_PENDING,
+				NO_ERROR, 0, 1, OV_TIMEOUT);
+			SetEvent(done_event);
+			return;
 		default:
 			break;
+		}
+		break;
+
+	case SERVICE_CONTROL_PAUSE:
+		/*
+		*	send the service to sleep
+		*/
+		if(status.dwCurrentState == SERVICE_RUNNING) {
+			ov_ntservice_reportservicestatus(SERVICE_PAUSE_PENDING,
+				NO_ERROR, 0, 1, OV_TIMEOUT);
+			ov_ksserver_downserver();
+			return;
+		}
+		break;
+
+	case SERVICE_CONTROL_CONTINUE:
+		/*
+		*	back to work
+		*/
+		if(status.dwCurrentState == SERVICE_PAUSED) {
+			ov_ntservice_reportservicestatus(SERVICE_CONTINUE_PENDING,
+				NO_ERROR, 0, 1, OV_TIMEOUT);
+			SetEvent(one_shot_event);
+			return;
+		}
+		break;
+
+	default:
+		break;
 	}
 	/*
 	*	otherwise report back the current state
@@ -609,22 +609,22 @@ int ov_ntservice_servicerun(void) {
 		*	what do we have to do now?
 		*/
 		switch(status.dwCurrentState) {
-			case SERVICE_STOP_PENDING:
-				ov_ntservice_reportservicestatus(SERVICE_STOP_PENDING,
-					NO_ERROR, 0, 3, OV_TIMEOUT);
-				SetEvent(done_event);
-				break;
-			case SERVICE_PAUSE_PENDING:
-				ov_ntservice_reportservicestatus(SERVICE_PAUSED,
-					NO_ERROR, 0, 0, 0);
-				break;
-			default:
-				/*
-				*	the service was stopped successfully
-				*/
-				ov_ntservice_reportservicestatus(SERVICE_STOP,
-					NO_ERROR, 0, 0, 0);
-				break;
+		case SERVICE_STOP_PENDING:
+			ov_ntservice_reportservicestatus(SERVICE_STOP_PENDING,
+				NO_ERROR, 0, 3, OV_TIMEOUT);
+			SetEvent(done_event);
+			break;
+		case SERVICE_PAUSE_PENDING:
+			ov_ntservice_reportservicestatus(SERVICE_PAUSED,
+				NO_ERROR, 0, 0, 0);
+			break;
+		default:
+			/*
+			*	the service was stopped successfully
+			*/
+			ov_ntservice_reportservicestatus(SERVICE_STOP,
+				NO_ERROR, 0, 0, 0);
+			break;
 		}
 		/*
 		*	wait until we get woken up again...

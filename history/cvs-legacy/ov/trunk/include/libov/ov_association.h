@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.2 1999-08-28 14:18:17 dirk Exp $
+*   $Id: ov_association.h,v 1.3 1999-08-28 15:55:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -80,7 +80,9 @@ typedef struct OV_ASSOCIATION_DEF OV_ASSOCIATION_DEF;
 	OV_RESULT OV_DLLFNCEXPORT assoc##_link(			\
 		const OV_PPT_##assoc	pparent,			\
 		const OV_CPT_##assoc	pchild,				\
-		const OV_PLACEMENT_HINT	hint,				\
+		const OV_PLACEMENT_HINT	parenthint,			\
+		const OV_CPT_##assoc	prelparent,			\
+		const OV_PLACEMENT_HINT	childhint,			\
 		const OV_CPT_##assoc	prelchild			\
 	)
 
@@ -118,7 +120,7 @@ extern "C" {
 /*
 *	OV_HEAD:
 *	--------
-*	Link attribute in an object acting as an parent in an association.
+*	Link attribute (head) in an association.
 */
 typedef struct {
 	OV_INSTPTR_ov_object	pfirst;
@@ -128,7 +130,7 @@ typedef struct {
 /*
 *	OV_ANCHOR:
 *	----------
-*	Link attribute in an object acting as a child in an association.
+*	Link attribute (anchor) in an association.
 */
 typedef struct {
 	OV_INSTPTR_ov_object	pnext;
@@ -218,7 +220,9 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent,
 	const OV_INSTPTR_ov_object		pchild,
-	const OV_PLACEMENT_HINT			hint,
+	const OV_PLACEMENT_HINT			parenthint,
+	const OV_INSTPTR_ov_object		prelparent,
+	const OV_PLACEMENT_HINT			childhint,
 	const OV_INSTPTR_ov_object		prelchild
 );
 
@@ -232,17 +236,17 @@ void OV_DLLFNCEXPORT ov_association_unlink(
 );
 
 /*
-*	Test if a head is used
+*	Test if a parent link is used
 */
-OV_BOOL OV_DLLFNCEXPORT ov_association_isusedhead(
+OV_BOOL OV_DLLFNCEXPORT ov_association_isusedparentlink(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent
 );
 
 /*
-*	Test if an anchor is used
+*	Test if an child link is used
 */
-OV_BOOL OV_DLLFNCEXPORT ov_association_isusedanchor(
+OV_BOOL OV_DLLFNCEXPORT ov_association_isusedchildlink(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pchild
 );
@@ -253,8 +257,9 @@ OV_BOOL OV_DLLFNCEXPORT ov_association_isusedanchor(
 #define OV_IMPL_LINK(assoc) 												\
 	OV_DECL_LINK(assoc) {													\
 		return ov_association_link(passoc_##assoc, Ov_PtrUpCast(ov_object,	\
-			pparent), Ov_PtrUpCast(ov_object, pchild), hint, 				\
-			Ov_PtrUpCast(ov_object, prelchild));							\
+			pparent), Ov_PtrUpCast(ov_object, pchild), parenthint, 			\
+			Ov_PtrUpCast(ov_object, prelparent), childhint, Ov_PtrUpCast	\
+			(ov_object, prelchild));										\
 	}
 
 /*

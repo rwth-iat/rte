@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient_xdr.c,v 1.2 1999-07-26 16:14:15 dirk Exp $
+*   $Id: ov_ksclient_xdr.c,v 1.3 1999-08-28 15:55:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -67,17 +67,17 @@ OV_BOOL ov_ksclient_xdr_bytes(
 	*	instructions
 	*/
 	switch(xdrs->x_op) {
-		case XDR_ENCODE:
-			_size = *sizep;
-			return xdr_bytes(xdrs, cpp, &_size, _maxsize);
-		case XDR_DECODE:
-			if(!xdr_bytes(xdrs, cpp, &_size, _maxsize)) {
-				return FALSE;
-			}
-			*sizep = _size;
-			return TRUE;
-		default:
-			break;
+	case XDR_ENCODE:
+		_size = *sizep;
+		return xdr_bytes(xdrs, cpp, &_size, _maxsize);
+	case XDR_DECODE:
+		if(!xdr_bytes(xdrs, cpp, &_size, _maxsize)) {
+			return FALSE;
+		}
+		*sizep = _size;
+		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -105,17 +105,17 @@ OV_BOOL ov_ksclient_xdr_array(
 	*	instructions
 	*/
 	switch(xdrs->x_op) {
-		case XDR_ENCODE:
-			_size = *sizep;
-			return xdr_array(xdrs, addrp, &_size, _maxsize, _elsize, elproc);
-		case XDR_DECODE:
-			if(!xdr_array(xdrs, addrp, &_size, _maxsize, _elsize, elproc)) {
-				return FALSE;
-			}
-			*sizep = _size;
-			return TRUE;
-		default:
-			break;
+	case XDR_ENCODE:
+		_size = *sizep;
+		return xdr_array(xdrs, addrp, &_size, _maxsize, _elsize, elproc);
+	case XDR_DECODE:
+		if(!xdr_array(xdrs, addrp, &_size, _maxsize, _elsize, elproc)) {
+			return FALSE;
+		}
+		*sizep = _size;
+		return TRUE;
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -163,12 +163,12 @@ OV_KSCLIENT_DECL_XDRFNC(KS_AVMODULE_PAR) {
 		return FALSE;
 	}
 	switch(objp->tickettype) {
-		case KS_AUTH_NONE:
-			return TRUE;
-		case KS_AUTH_SIMPLE:
-			return xdr_string(xdrs, &objp->id, KS_SIMPLEID_MAXLEN);
-		default:
-			break;
+	case KS_AUTH_NONE:
+		return TRUE;
+	case KS_AUTH_SIMPLE:
+		return xdr_string(xdrs, &objp->id, KS_SIMPLEID_MAXLEN);
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -195,53 +195,53 @@ OV_KSCLIENT_DECL_XDRFNC(KS_VAR_VALUE) {
 		objp->veclen = 1;
 	}
 	switch(objp->vartype) {
-		case KS_VT_BOOL:
-			return ov_ksclient_xdr_KS_BOOL(xdrs, &objp->valueunion.val_bool);
-		case KS_VT_INT:
-			return ov_ksclient_xdr_KS_INT(xdrs, &objp->valueunion.val_int);
-		case KS_VT_UINT:
-			return ov_ksclient_xdr_KS_UINT(xdrs, &objp->valueunion.val_uint);
-		case KS_VT_SINGLE:
-			return ov_ksclient_xdr_KS_SINGLE(xdrs, &objp->valueunion.val_single);
-		case KS_VT_DOUBLE:
-			return ov_ksclient_xdr_KS_DOUBLE(xdrs, &objp->valueunion.val_double);
-		case KS_VT_STRING:
-			return ov_ksclient_xdr_KS_STRING(xdrs, &objp->valueunion.val_string);
-		case KS_VT_TIME:
-			return ov_ksclient_xdr_KS_TIME(xdrs, &objp->valueunion.val_time);
-		case KS_VT_TIME_SPAN:
-			return ov_ksclient_xdr_KS_TIME_SPAN(xdrs, &objp->valueunion.val_time_span);
-		case KS_VT_BOOL_VEC:
-			return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_bool_vec,
-				&objp->veclen, ~0, sizeof(bool_t), (xdrproc_t)ov_ksclient_xdr_KS_BOOL);
-		case KS_VT_INT_VEC:
-			return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_int_vec,
-				&objp->veclen, ~0, sizeof(long), (xdrproc_t)ov_ksclient_xdr_KS_INT);
-		case KS_VT_UINT_VEC:
-			return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_uint_vec,
-				&objp->veclen, ~0, sizeof(u_long), (xdrproc_t)ov_ksclient_xdr_KS_UINT);
-		case KS_VT_SINGLE_VEC:
-			return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_single_vec,
-				&objp->veclen, ~0, sizeof(float), (xdrproc_t)ov_ksclient_xdr_KS_SINGLE);
-		case KS_VT_DOUBLE_VEC:
-			return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_double_vec,
-				&objp->veclen, ~0, sizeof(double), (xdrproc_t)ov_ksclient_xdr_KS_DOUBLE);
-		case KS_VT_STRING_VEC:
-			return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_string_vec,
-				&objp->veclen, ~0, sizeof(KS_STRING), (xdrproc_t)ov_ksclient_xdr_KS_STRING);
-		case KS_VT_TIME_VEC:
-			return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_time_vec,
-				&objp->veclen, ~0, sizeof(KS_TIME), (xdrproc_t)ov_ksclient_xdr_KS_TIME);
-		case KS_VT_TIME_SPAN_VEC:
-			return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_time_span_vec,
-				&objp->veclen, ~0, sizeof(KS_TIME_SPAN), (xdrproc_t)ov_ksclient_xdr_KS_TIME_SPAN);
-		case KS_VT_VOID:
-			return TRUE;
-		case KS_VT_BYTE_VEC:
-			return ov_ksclient_xdr_bytes(xdrs, (char **)&objp->valueunion.val_byte_vec,
-				&objp->veclen, ~0);
-		default:
-			break;
+	case KS_VT_BOOL:
+		return ov_ksclient_xdr_KS_BOOL(xdrs, &objp->valueunion.val_bool);
+	case KS_VT_INT:
+		return ov_ksclient_xdr_KS_INT(xdrs, &objp->valueunion.val_int);
+	case KS_VT_UINT:
+		return ov_ksclient_xdr_KS_UINT(xdrs, &objp->valueunion.val_uint);
+	case KS_VT_SINGLE:
+		return ov_ksclient_xdr_KS_SINGLE(xdrs, &objp->valueunion.val_single);
+	case KS_VT_DOUBLE:
+		return ov_ksclient_xdr_KS_DOUBLE(xdrs, &objp->valueunion.val_double);
+	case KS_VT_STRING:
+		return ov_ksclient_xdr_KS_STRING(xdrs, &objp->valueunion.val_string);
+	case KS_VT_TIME:
+		return ov_ksclient_xdr_KS_TIME(xdrs, &objp->valueunion.val_time);
+	case KS_VT_TIME_SPAN:
+		return ov_ksclient_xdr_KS_TIME_SPAN(xdrs, &objp->valueunion.val_time_span);
+	case KS_VT_BOOL_VEC:
+		return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_bool_vec,
+			&objp->veclen, ~0, sizeof(bool_t), (xdrproc_t)ov_ksclient_xdr_KS_BOOL);
+	case KS_VT_INT_VEC:
+		return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_int_vec,
+			&objp->veclen, ~0, sizeof(long), (xdrproc_t)ov_ksclient_xdr_KS_INT);
+	case KS_VT_UINT_VEC:
+		return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_uint_vec,
+			&objp->veclen, ~0, sizeof(u_long), (xdrproc_t)ov_ksclient_xdr_KS_UINT);
+	case KS_VT_SINGLE_VEC:
+		return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_single_vec,
+			&objp->veclen, ~0, sizeof(float), (xdrproc_t)ov_ksclient_xdr_KS_SINGLE);
+	case KS_VT_DOUBLE_VEC:
+		return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_double_vec,
+			&objp->veclen, ~0, sizeof(double), (xdrproc_t)ov_ksclient_xdr_KS_DOUBLE);
+	case KS_VT_STRING_VEC:
+		return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_string_vec,
+			&objp->veclen, ~0, sizeof(KS_STRING), (xdrproc_t)ov_ksclient_xdr_KS_STRING);
+	case KS_VT_TIME_VEC:
+		return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_time_vec,
+			&objp->veclen, ~0, sizeof(KS_TIME), (xdrproc_t)ov_ksclient_xdr_KS_TIME);
+	case KS_VT_TIME_SPAN_VEC:
+		return ov_ksclient_xdr_array(xdrs, (char **)&objp->valueunion.val_time_span_vec,
+			&objp->veclen, ~0, sizeof(KS_TIME_SPAN), (xdrproc_t)ov_ksclient_xdr_KS_TIME_SPAN);
+	case KS_VT_VOID:
+		return TRUE;
+	case KS_VT_BYTE_VEC:
+		return ov_ksclient_xdr_bytes(xdrs, (char **)&objp->valueunion.val_byte_vec,
+			&objp->veclen, ~0);
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -298,22 +298,22 @@ OV_KSCLIENT_DECL_XDRFNC(KS_OBJ_PROJECTED_PROPS) {
 		return FALSE;
 	}
 	switch(objp->objtype) {
-		case KS_OT_VARIABLE:
-			if(!ov_ksclient_xdr_KS_VAR_PROJECTED_PROPS(xdrs, &objp->KS_OBJ_PROJECTED_PROPS_u.
-				var_projected_props)
-			) {
-				return FALSE;
-			}
-			break;
-		case KS_OT_LINK:
-			if(!ov_ksclient_xdr_KS_LINK_PROJECTED_PROPS(xdrs, &objp->KS_OBJ_PROJECTED_PROPS_u.
-				link_projected_props)
-			) {
-				return FALSE;
-			}
-			break;
-		default:
-			break;
+	case KS_OT_VARIABLE:
+		if(!ov_ksclient_xdr_KS_VAR_PROJECTED_PROPS(xdrs, &objp->KS_OBJ_PROJECTED_PROPS_u.
+			var_projected_props)
+		) {
+			return FALSE;
+		}
+		break;
+	case KS_OT_LINK:
+		if(!ov_ksclient_xdr_KS_LINK_PROJECTED_PROPS(xdrs, &objp->KS_OBJ_PROJECTED_PROPS_u.
+			link_projected_props)
+		) {
+			return FALSE;
+		}
+		break;
+	default:
+		break;
 	}
 	if(!xdr_string(xdrs, &objp->identifier, KS_NAME_MAXLEN)) {
 		return FALSE;
@@ -352,10 +352,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETPP_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_OBJ_PROJECTED_PROPS, items);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_OBJ_PROJECTED_PROPS, items);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -371,16 +371,16 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETVAR_ITEM) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			if(!ov_ksclient_xdr_KS_OBJ_TYPE(xdrs, &objtype)) {
-				return FALSE;
-			}
-			if(objtype != KS_OT_VARIABLE) {
-				return FALSE;
-			}
-			return ov_ksclient_xdr_KS_VAR_CURRENT_PROPS(xdrs, &objp->var_current_props);
-		default:
-			break;
+	case KS_ERR_OK:
+		if(!ov_ksclient_xdr_KS_OBJ_TYPE(xdrs, &objtype)) {
+			return FALSE;
+		}
+		if(objtype != KS_OT_VARIABLE) {
+			return FALSE;
+		}
+		return ov_ksclient_xdr_KS_VAR_CURRENT_PROPS(xdrs, &objp->var_current_props);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -404,10 +404,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETVAR_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_GETVAR_ITEM, items);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_GETVAR_ITEM, items);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -450,10 +450,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_SETVAR_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -480,13 +480,13 @@ OV_KSCLIENT_DECL_XDRFNC(KS_EXGDATA_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			if(!OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results)) {
-				return FALSE;
-			}
-			return OV_KSCLIENT_XDR_ARRAY(KS_GETVAR_ITEM, items);
-		default:
-			break;
+	case KS_ERR_OK:
+		if(!OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results)) {
+			return FALSE;
+		}
+		return OV_KSCLIENT_XDR_ARRAY(KS_GETVAR_ITEM, items);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -537,29 +537,29 @@ OV_KSCLIENT_DECL_XDRFNC(KS_OBJ_ENGINEERED_PROPS) {
 		return FALSE;
 	}
 	switch(objp->objtype) {
-		case KS_OT_DOMAIN:
-			if(!ov_ksclient_xdr_KS_DOMAIN_ENGINEERED_PROPS(xdrs, &objp->KS_OBJ_ENGINEERED_PROPS_u.
-				domain_engineered_props)
-			) {
-				return FALSE;
-			}
-			break;
-		case KS_OT_VARIABLE:
-			if(!ov_ksclient_xdr_KS_VAR_ENGINEERED_PROPS(xdrs, &objp->KS_OBJ_ENGINEERED_PROPS_u.
-				var_engineered_props)
-			) {
-				return FALSE;
-			}
-			break;
-		case KS_OT_LINK:
-			if(!ov_ksclient_xdr_KS_LINK_ENGINEERED_PROPS(xdrs, &objp->KS_OBJ_ENGINEERED_PROPS_u.
-				link_engineered_props)
-			) {
-				return FALSE;
-			}
-			break;
-		default:
-			break;
+	case KS_OT_DOMAIN:
+		if(!ov_ksclient_xdr_KS_DOMAIN_ENGINEERED_PROPS(xdrs, &objp->KS_OBJ_ENGINEERED_PROPS_u.
+			domain_engineered_props)
+		) {
+			return FALSE;
+		}
+		break;
+	case KS_OT_VARIABLE:
+		if(!ov_ksclient_xdr_KS_VAR_ENGINEERED_PROPS(xdrs, &objp->KS_OBJ_ENGINEERED_PROPS_u.
+			var_engineered_props)
+		) {
+			return FALSE;
+		}
+		break;
+	case KS_OT_LINK:
+		if(!ov_ksclient_xdr_KS_LINK_ENGINEERED_PROPS(xdrs, &objp->KS_OBJ_ENGINEERED_PROPS_u.
+			link_engineered_props)
+		) {
+			return FALSE;
+		}
+		break;
+	default:
+		break;
 	}
 	if(!xdr_string(xdrs, &objp->identifier, KS_NAME_MAXLEN)) {
 		return FALSE;
@@ -604,10 +604,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETEP_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_OBJ_ENGINEERED_PROPS, items);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_OBJ_ENGINEERED_PROPS, items);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -622,11 +622,11 @@ OV_KSCLIENT_DECL_XDRFNC(KS_PLACEMENT) {
 		return FALSE;
 	}
 	switch(objp->hint) {
-		case KS_PMH_BEFORE:
-		case KS_PMH_AFTER:
-			return xdr_string(xdrs, &objp->place_path, ~0);
-		default:
-			break;
+	case KS_PMH_BEFORE:
+	case KS_PMH_AFTER:
+		return xdr_string(xdrs, &objp->place_path, ~0);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -701,13 +701,13 @@ OV_KSCLIENT_DECL_XDRFNC(KS_CREATEOBJECTITEM_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_BADINITPARAM:
-			if(!OV_KSCLIENT_XDR_ARRAY(KS_RESULT, params_results)) {
-				return FALSE;
-			}
-			return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, link_results);
-		default:
-			break;
+	case KS_ERR_BADINITPARAM:
+		if(!OV_KSCLIENT_XDR_ARRAY(KS_RESULT, params_results)) {
+			return FALSE;
+		}
+		return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, link_results);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -722,10 +722,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_CREATEOBJECT_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_CREATEOBJECTITEM_RES, obj_results);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_CREATEOBJECTITEM_RES, obj_results);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -749,10 +749,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_DELETEOBJECT_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -791,10 +791,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_RENAMEOBJECT_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -818,10 +818,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETCANONICALPATHITEM_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return xdr_string(xdrs, &objp->canonical_path, ~0);
-		default:
-			break;
+	case KS_ERR_OK:
+		return xdr_string(xdrs, &objp->canonical_path, ~0);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -836,10 +836,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETCANONICALPATH_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_GETCANONICALPATHITEM_RES, results);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_GETCANONICALPATHITEM_RES, results);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -863,10 +863,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_LINK_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -890,10 +890,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_UNLINK_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_RESULT, results);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -908,14 +908,14 @@ OV_KSCLIENT_DECL_XDRFNC(KS_ABSRELTIME) {
 		return FALSE;
 	}
 	switch(objp->timetype) {
-		case KS_TT_ABSOLUTE:
-			return ov_ksclient_xdr_KS_TIME(xdrs,
-				&objp->KS_ABSRELTIME_u.abstime);
-		case KS_TT_RELATIVE:
-			return ov_ksclient_xdr_KS_TIME_SPAN(xdrs,
-				&objp->KS_ABSRELTIME_u.reltime);
-		default:
-			break;
+	case KS_TT_ABSOLUTE:
+		return ov_ksclient_xdr_KS_TIME(xdrs,
+			&objp->KS_ABSRELTIME_u.abstime);
+	case KS_TT_RELATIVE:
+		return ov_ksclient_xdr_KS_TIME_SPAN(xdrs,
+			&objp->KS_ABSRELTIME_u.reltime);
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -957,16 +957,16 @@ OV_KSCLIENT_DECL_XDRFNC(KS_HISTSELECTOR) {
 		return FALSE;
 	}
 	switch(objp->hseltype) {
-		case KS_HSELT_NONE:
-			return TRUE;
-		case KS_HSELT_TIME:
-			return ov_ksclient_xdr_KS_TIMEHISTSELECTOR(xdrs,
-				&objp->KS_HISTSELECTOR_u.ths);
-		case KS_HSELT_STRING:
-			return ov_ksclient_xdr_KS_STRINGHISTSELECTOR(xdrs,
-				&objp->KS_HISTSELECTOR_u.shs);
-		default:
-			break;
+	case KS_HSELT_NONE:
+		return TRUE;
+	case KS_HSELT_TIME:
+		return ov_ksclient_xdr_KS_TIMEHISTSELECTOR(xdrs,
+			&objp->KS_HISTSELECTOR_u.ths);
+	case KS_HSELT_STRING:
+		return ov_ksclient_xdr_KS_STRINGHISTSELECTOR(xdrs,
+			&objp->KS_HISTSELECTOR_u.shs);
+	default:
+		break;
 	}
 	return FALSE;
 }
@@ -993,10 +993,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETHISTRESULT_ITEM) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return ov_ksclient_xdr_KS_VAR_VALUE(xdrs, &objp->value);
-		default:
-			break;
+	case KS_ERR_OK:
+		return ov_ksclient_xdr_KS_VAR_VALUE(xdrs, &objp->value);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -1011,10 +1011,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETHISTSINGLERESULT) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_GETHISTRESULT_ITEM, items);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_GETHISTRESULT_ITEM, items);
+	default:
+		break;
 	}
 	return TRUE;
 }
@@ -1044,10 +1044,10 @@ OV_KSCLIENT_DECL_XDRFNC(KS_GETHIST_RES) {
 		return FALSE;
 	}
 	switch(objp->result) {
-		case KS_ERR_OK:
-			return OV_KSCLIENT_XDR_ARRAY(KS_GETHISTSINGLERESULT, results);
-		default:
-			break;
+	case KS_ERR_OK:
+		return OV_KSCLIENT_XDR_ARRAY(KS_GETHISTSINGLERESULT, results);
+	default:
+		break;
 	}
 	return TRUE;
 }

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.6 1999-08-28 13:46:01 dirk Exp $
+*   $Id: ov_class.c,v 1.7 1999-08-28 15:55:54 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -453,7 +453,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 	const OV_INSTPTR_ov_domain	pparent,
 	const OV_STRING				identifier,
 	const OV_PLACEMENT_HINT		hint,
-	const OV_INSTPTR_ov_object	prelchild,
+	const OV_INSTPTR_ov_object	prelobj,
 	OV_FNC_INITOBJ				*initobjfnc,
 	OV_POINTER					userdata,
 	OV_INSTPTR_ov_object		*ppobj
@@ -523,7 +523,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 	/*
 	*	link with parent domain
 	*/
-	result = Ov_LinkRelativePlaced(ov_containment, pparent, pobj, hint, prelchild);
+	result = Ov_LinkRelativePlaced(ov_containment, pparent, pobj, hint, prelobj);
 	if(Ov_Fail(result)) {
 		ov_class_deleteobject_cleanupinst(pobj);
 		return result;
@@ -632,7 +632,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_renameobject(
 	const OV_INSTPTR_ov_domain	pparent,
 	const OV_STRING				identifier,
 	const OV_PLACEMENT_HINT		hint,
-	const OV_INSTPTR_ov_object	prelchild
+	const OV_INSTPTR_ov_object	prelobj
 ) {
 	/*
 	*	local variables
@@ -673,7 +673,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_renameobject(
 	/*
 	*	we can't move the object to a position relative to itself
 	*/
-	if(pobj == prelchild) {
+	if(pobj == prelobj) {
 		return OV_ERR_BADPLACEMENT;
 	}
 	/*
@@ -710,7 +710,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_renameobject(
 	if(pparent != pcurrparent) {
 		Ov_Unlink(ov_containment, pcurrparent, pobj);
 		Ov_AbortIfNot(Ov_OK(Ov_LinkRelativePlaced(ov_containment,
-			pparent, pobj, hint, prelchild)));
+			pparent, pobj, hint, prelobj)));
 	}
 	return OV_ERR_OK;
 }
@@ -843,101 +843,101 @@ void ov_class_deleteobject_cleanupinst(
 		*/
 		while(TRUE) {
 			Ov_AbortIfNot(Ov_OK(ov_element_getnextpart(&parent, &child,
-				OV_ET_OBJECT | OV_ET_VARIABLE | OV_ET_HEAD | OV_ET_ANCHOR)));
+				OV_ET_OBJECT | OV_ET_VARIABLE | OV_ET_PARENTLINK | OV_ET_CHILDLINK)));
 			if(child.elemtype == OV_ET_NONE) {
 				break;
 			}
 			switch(child.elemtype) {
-				case OV_ET_OBJECT:
-					/*
-					*	clean up the part object as well
-					*/
-					ov_class_deleteobject_cleanupinst(child.pobj);
-					break;
-				case OV_ET_VARIABLE:
-					/*
-					*	free a variable only if it is a normal variable
-					*/
-					if(!(child.elemunion.pvar->v_varprops & (OV_VP_DERIVED | OV_VP_STATIC))) {
-						if(child.elemunion.pvar->v_vartype == OV_VT_STRUCT) {
-							ov_class_deleteobject_cleanupstruct(&child);
-						} else {
-							switch(child.elemunion.pvar->v_veclen) {
-								case 1:
-									/*
-									*	scalar variable
-									*/
-									if(child.elemunion.pvar->v_vartype == OV_VT_STRING) {
-										ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
-										Ov_WarnIf(*(OV_STRING*)child.pvalue);									
-									}
-									break;
-								case 0:
-									/*
-									*	dynamic vector variable
-									*/
-									if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
-										Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
-											(OV_STRING_VEC*)child.pvalue, NULL, 0, STRING)));
-										Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
-									} else {
-										if(((OV_GENERIC_VEC*)child.pvalue)->value) {
-											ov_database_free(((OV_GENERIC_VEC*)child.pvalue)->value);
-										}
-									}
-									break;
-								default:
-									/*
-									*	static vector variable
-									*/
-									if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
-										Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
-											(OV_STRING*)child.pvalue, NULL,
-											child.elemunion.pvar->v_veclen)));
-									}
-									break;
+			case OV_ET_OBJECT:
+				/*
+				*	clean up the part object as well
+				*/
+				ov_class_deleteobject_cleanupinst(child.pobj);
+				break;
+			case OV_ET_VARIABLE:
+				/*
+				*	free a variable only if it is a normal variable
+				*/
+				if(!(child.elemunion.pvar->v_varprops & (OV_VP_DERIVED | OV_VP_STATIC))) {
+					if(child.elemunion.pvar->v_vartype == OV_VT_STRUCT) {
+						ov_class_deleteobject_cleanupstruct(&child);
+					} else {
+						switch(child.elemunion.pvar->v_veclen) {
+						case 1:
+							/*
+							*	scalar variable
+							*/
+							if(child.elemunion.pvar->v_vartype == OV_VT_STRING) {
+								ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
+								Ov_WarnIf(*(OV_STRING*)child.pvalue);									
 							}
-						}
-					}
-					break;
-				case OV_ET_HEAD:
-					/*
-					*	unlink all children
-					*/
-					while(TRUE) {
-						pobj2 = Ov_Association_GetFirstChild(child.elemunion.passoc, pobj);
-						if(!pobj2) {
+							break;
+						case 0:
+							/*
+							*	dynamic vector variable
+							*/
+							if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
+								Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
+									(OV_STRING_VEC*)child.pvalue, NULL, 0, STRING)));
+								Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
+							} else {
+								if(((OV_GENERIC_VEC*)child.pvalue)->value) {
+									ov_database_free(((OV_GENERIC_VEC*)child.pvalue)->value);
+								}
+							}
+							break;
+						default:
+							/*
+							*	static vector variable
+							*/
+							if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
+								Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
+									(OV_STRING*)child.pvalue, NULL,
+									child.elemunion.pvar->v_veclen)));
+							}
 							break;
 						}
-						if(child.elemunion.passoc == passoc_ov_containment) {
-							/* delete the child */
-							ov_class_deleteobject(pobj2);
-						} else {
-							/* unlink the child */
-							(child.elemunion.passoc->v_unlinkfnc)(pobj, pobj2);
-							if(Ov_Association_GetParent(child.elemunion.passoc, pobj2)) {
-								ov_association_unlink(child.elemunion.passoc, pobj, pobj2);
-							}
+					}
+				}
+				break;
+			case OV_ET_PARENTLINK:
+				/*
+				*	unlink all children
+				*/
+				while(TRUE) {
+					pobj2 = Ov_Association_GetFirstChild(child.elemunion.passoc, pobj);
+					if(!pobj2) {
+						break;
+					}
+					if(child.elemunion.passoc == passoc_ov_containment) {
+						/* delete the child */
+						ov_class_deleteobject(pobj2);
+					} else {
+						/* unlink the child */
+						(child.elemunion.passoc->v_unlinkfnc)(pobj, pobj2);
+						if(Ov_Association_GetParent(child.elemunion.passoc, pobj2)) {
+							ov_association_unlink(child.elemunion.passoc, pobj, pobj2);
 						}
 					}
-					break;
-				case OV_ET_ANCHOR:
-					/*
-					*	unlink parent unless it's the class object
-					*/
-					if(child.elemunion.passoc != passoc_ov_instantiation) {
-						pobj2 = Ov_Association_GetParent(child.elemunion.passoc, pobj);
-						if(pobj2) {
-							(child.elemunion.passoc->v_unlinkfnc)(pobj2, pobj);
-							if(Ov_Association_GetParent(child.elemunion.passoc, pobj)) {
-								ov_association_unlink(child.elemunion.passoc, pobj2, pobj);
-							}
+				}
+				break;
+			case OV_ET_CHILDLINK:
+				/*
+				*	unlink parent unless it's the class object
+				*/
+				if(child.elemunion.passoc != passoc_ov_instantiation) {
+					pobj2 = Ov_Association_GetParent(child.elemunion.passoc, pobj);
+					if(pobj2) {
+						(child.elemunion.passoc->v_unlinkfnc)(pobj2, pobj);
+						if(Ov_Association_GetParent(child.elemunion.passoc, pobj)) {
+							ov_association_unlink(child.elemunion.passoc, pobj2, pobj);
 						}
 					}
-					break;
-				default:
-					Ov_Warning("internal error");
-					break;				
+				}
+				break;
+			default:
+				Ov_Warning("internal error");
+				break;				
 			}
 		}
 		/*
@@ -999,38 +999,38 @@ void ov_class_deleteobject_cleanupstaticinst(
 				ov_class_deleteobject_cleanupstruct(&child);
 			} else {
 				switch(pvar->v_veclen) {
-					case 1:
-						/*
-						*	scalar variable
-						*/
-						if(pvar->v_vartype == OV_VT_STRING) {
-							ov_string_setvalue((OV_STRING*)pvalue, NULL);
-							Ov_WarnIf(*(OV_STRING*)pvalue);									
+				case 1:
+					/*
+					*	scalar variable
+					*/
+					if(pvar->v_vartype == OV_VT_STRING) {
+						ov_string_setvalue((OV_STRING*)pvalue, NULL);
+						Ov_WarnIf(*(OV_STRING*)pvalue);									
+					}
+					break;
+				case 0:
+					/*
+					*	dynamic vector variable
+					*/
+					if(pvar->v_vartype == OV_VT_STRING_VEC) {
+						Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
+							(OV_STRING_VEC*)pvalue, NULL, 0, STRING)));
+						Ov_WarnIf(((OV_GENERIC_VEC*)pvalue)->value);
+					} else {
+						if(((OV_GENERIC_VEC*)pvalue)->value) {
+							ov_database_free(((OV_GENERIC_VEC*)pvalue)->value);
 						}
-						break;
-					case 0:
-						/*
-						*	dynamic vector variable
-						*/
-						if(pvar->v_vartype == OV_VT_STRING_VEC) {
-							Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
-								(OV_STRING_VEC*)pvalue, NULL, 0, STRING)));
-							Ov_WarnIf(((OV_GENERIC_VEC*)pvalue)->value);
-						} else {
-							if(((OV_GENERIC_VEC*)pvalue)->value) {
-								ov_database_free(((OV_GENERIC_VEC*)pvalue)->value);
-							}
-						}
-						break;
-					default:
-						/*
-						*	static vector variable
-						*/
-						if(pvar->v_vartype == OV_VT_STRING_VEC) {
-							Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
-								(OV_STRING*)pvalue, NULL, pvar->v_veclen)));
-						}
-						break;
+					}
+					break;
+				default:
+					/*
+					*	static vector variable
+					*/
+					if(pvar->v_vartype == OV_VT_STRING_VEC) {
+						Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
+							(OV_STRING*)pvalue, NULL, pvar->v_veclen)));
+					}
+					break;
 				}
 			}
 		}
@@ -1067,39 +1067,39 @@ void ov_class_deleteobject_cleanupstruct(
 			ov_class_deleteobject_cleanupstruct(&child);
 		} else {
 			switch(child.elemunion.pvar->v_veclen) {
-				case 1:
-					/*
-					*	scalar variable
-					*/
-					if(child.elemunion.pvar->v_vartype == OV_VT_STRING) {
-						ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
-						Ov_WarnIf(*(OV_STRING*)child.pvalue);									
+			case 1:
+				/*
+				*	scalar variable
+				*/
+				if(child.elemunion.pvar->v_vartype == OV_VT_STRING) {
+					ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
+					Ov_WarnIf(*(OV_STRING*)child.pvalue);									
+				}
+				break;
+			case 0:
+				/*
+				*	dynamic vector variable
+				*/
+				if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
+					Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
+						(OV_STRING_VEC*)child.pvalue, NULL, 0, STRING)));
+					Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
+				} else {
+					if(((OV_GENERIC_VEC*)child.pvalue)->value) {
+						ov_database_free(((OV_GENERIC_VEC*)child.pvalue)->value);
 					}
-					break;
-				case 0:
-					/*
-					*	dynamic vector variable
-					*/
-					if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
-						Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
-							(OV_STRING_VEC*)child.pvalue, NULL, 0, STRING)));
-						Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
-					} else {
-						if(((OV_GENERIC_VEC*)child.pvalue)->value) {
-							ov_database_free(((OV_GENERIC_VEC*)child.pvalue)->value);
-						}
-					}
-					break;
-				default:
-					/*
-					*	static vector variable
-					*/
-					if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
-						Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
-							(OV_STRING*)child.pvalue, NULL,
-							child.elemunion.pvar->v_veclen)));
-					}
-					break;
+				}
+				break;
+			default:
+				/*
+				*	static vector variable
+				*/
+				if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
+					Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
+						(OV_STRING*)child.pvalue, NULL,
+						child.elemunion.pvar->v_veclen)));
+				}
+				break;
 			}
 		}
 	}

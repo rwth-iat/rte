@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.3 1999-08-28 14:18:20 dirk Exp $
+*   $Id: ov_association.c,v 1.4 1999-08-28 15:55:54 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -267,7 +267,9 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent,
 	const OV_INSTPTR_ov_object		pchild,
-	const OV_PLACEMENT_HINT			hint,
+	const OV_PLACEMENT_HINT			parenthint,
+	const OV_INSTPTR_ov_object		prelparent,
+	const OV_PLACEMENT_HINT			childhint,
 	const OV_INSTPTR_ov_object		prelchild
 ) {
 	/*
@@ -275,7 +277,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	*/
 	OV_INSTPTR_ov_object 	ppreviouschild;
 	OV_INSTPTR_ov_object	pnextchild;
-	OV_PLACEMENT_HINT		hint2 = hint;
+	OV_PLACEMENT_HINT		childhint2 = childhint;
 	OV_UINT					parentoffset;
 	OV_UINT					childoffset;
 	OV_INSTPTR_ov_object	prel = prelchild;
@@ -289,45 +291,62 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 		return OV_ERR_BADPARAM;
 	}
 	/*
-	*	check, if the anchor is not already used
-	*/
-	if(Ov_Association_GetParent(passoc, pchild)) {
-		return OV_ERR_ALREADYEXISTS;
-	}
-	/*
 	*	initialize variables
 	*/
 	parentoffset = passoc->v_parentoffset;
 	childoffset = passoc->v_childoffset;
 	/*
-	*	ensure, that there is no name clash
+	*	check further conditions
 	*/
-	if(passoc->v_assocprops & OV_AP_LOCAL) {
-		if(ov_association_searchchild(passoc, pparent, pchild->v_identifier)) {
+	switch(passoc->v_assoctype) {
+	case OV_AT_1_TO_MANY:
+		/*
+		*	check, if the child link (anchor) is not already used
+		*/
+		if(Ov_Association_GetParent(passoc, pchild)) {
 			return OV_ERR_ALREADYEXISTS;
 		}
+		/*
+		*	check parent placement
+		*/
+		if(!((parenthint == OV_PMH_DEFAULT) || (parenthint == OV_PMH_BEGIN)
+			|| (parenthint == OV_PMH_END))
+		) {
+			return OV_ERR_BADPLACEMENT;
+		}
+		/*
+		*	ensure, that there is no name clash
+		*/
+		if(passoc->v_assocprops & OV_AP_LOCAL) {
+			if(ov_association_searchchild(passoc, pparent, pchild->v_identifier)) {
+				return OV_ERR_ALREADYEXISTS;
+			}
+		}
+		break;
+	default:
+		return OV_ERR_BADPARAM;
 	}
 	/*
 	*	handle placements which are not "before" or "after"
 	*/
 	switch(passoc->v_assoctype) {
-		case OV_AT_1_TO_MANY:
-			switch(hint2) {
-				case OV_PMH_DEFAULT:
-				case OV_PMH_END:
-					hint2 = OV_PMH_AFTER;
-					prel = Ov_Association_GetLastChild(passoc, pparent);
-					break;
-				case OV_PMH_BEGIN:
-					hint2 = OV_PMH_BEFORE;
-					prel = Ov_Association_GetFirstChild(passoc, pparent);
-					break;
-				default:
-					break;
-			}
-			break;
-		default:
-			return OV_ERR_BADPARAM;
+	case OV_AT_1_TO_MANY:
+		switch(childhint2) {
+			case OV_PMH_DEFAULT:
+			case OV_PMH_END:
+				childhint2 = OV_PMH_AFTER;
+				prel = Ov_Association_GetLastChild(passoc, pparent);
+				break;
+			case OV_PMH_BEGIN:
+				childhint2 = OV_PMH_BEFORE;
+				prel = Ov_Association_GetFirstChild(passoc, pparent);
+				break;
+			default:
+				break;
+		}
+		break;
+	default:
+		return OV_ERR_BADPARAM;
 	}
 	if(prel) {
 		/*
@@ -340,24 +359,24 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 		/*
 		*	the list must be empty
 		*/
-		if(ov_association_isusedhead(passoc, pparent)) {
+		if(ov_association_isusedparentlink(passoc, pparent)) {
 			return OV_ERR_BADPARAM;
 		}
 	}
 	/*
 	*	determine predecessor and successor
 	*/
-	switch(hint2) {
-		case OV_PMH_BEFORE:
-			ppreviouschild = Ov_Association_GetPrevChild(passoc, prel);
-			pnextchild = prel;
-			break;
-		case OV_PMH_AFTER:
-			ppreviouschild = prel;
-			pnextchild = Ov_Association_GetNextChild(passoc, prel);
-			break;
-		default:
-			return OV_ERR_BADPLACEMENT;
+	switch(childhint2) {
+	case OV_PMH_BEFORE:
+		ppreviouschild = Ov_Association_GetPrevChild(passoc, prel);
+		pnextchild = prel;
+		break;
+	case OV_PMH_AFTER:
+		ppreviouschild = prel;
+		pnextchild = Ov_Association_GetNextChild(passoc, prel);
+		break;
+	default:
+		return OV_ERR_BADPLACEMENT;
 	}
 	/*
 	*   set pointers of predecessor or parent object
@@ -467,21 +486,35 @@ void OV_DLLFNCEXPORT ov_association_unlink(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Test if a head is used
+*	Test if a parent link is used
 */
-OV_BOOL OV_DLLFNCEXPORT ov_association_isusedhead(
+OV_BOOL OV_DLLFNCEXPORT ov_association_isusedparentlink(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pparent
 ) {
 	/*
-	*	get pointer to head
+	*	local variables
 	*/
-	OV_HEAD* phead = (OV_HEAD*)(((OV_BYTE*)pparent)+passoc->v_parentoffset);
+	OV_HEAD *phead;
 	/*
-	*	check if used
+	*	instructions
 	*/
-	if((phead->pfirst) || (phead->plast)) {
-		return TRUE;
+	switch(passoc->v_assoctype) {
+	case OV_AT_1_TO_MANY:
+		/*
+		*	get pointer to parent link (head)
+		*/
+		phead = (OV_HEAD*)(((OV_BYTE*)pparent)+passoc->v_parentoffset);
+		/*
+		*	check if used
+		*/
+		if((phead->pfirst) || (phead->plast)) {
+			return TRUE;
+		}
+		return FALSE;
+	default:
+		Ov_Warning("no such association type");
+		break;
 	}
 	return FALSE;
 }
@@ -489,21 +522,35 @@ OV_BOOL OV_DLLFNCEXPORT ov_association_isusedhead(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Test if an anchor is used
+*	Test if a child link is used
 */
-OV_BOOL OV_DLLFNCEXPORT ov_association_isusedanchor(
+OV_BOOL OV_DLLFNCEXPORT ov_association_isusedchildlink(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object		pchild
 ) {
 	/*
-	*	get pointer to anchor
+	*	local variables
 	*/
-	OV_ANCHOR* panchor = (OV_ANCHOR*)(((OV_BYTE*)pchild)+passoc->v_childoffset);
+	OV_ANCHOR *panchor;
 	/*
-	*	check if used
+	*	instructions
 	*/
-	if((panchor->pnext) || (panchor->pprevious) || (panchor->pparent)) {
-		return TRUE;
+	switch(passoc->v_assoctype) {
+	case OV_AT_1_TO_MANY:
+		/*
+		*	get pointer to child link (anchor)
+		*/
+		panchor = (OV_ANCHOR*)(((OV_BYTE*)pchild)+passoc->v_childoffset);
+		/*
+		*	check if used
+		*/
+		if((panchor->pnext) || (panchor->pprevious) || (panchor->pparent)) {
+			return TRUE;
+		}
+		return FALSE;
+	default:
+		Ov_Warning("no such association type");
+		break;
 	}
 	return FALSE;
 }

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_logfile.c,v 1.3 1999-07-29 08:57:53 dirk Exp $
+*   $Id: ov_logfile.c,v 1.4 1999-08-28 15:55:54 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -233,24 +233,24 @@ void OV_DLLFNCEXPORT ov_logfile_print(
 		ident = "ACPLT/OV";
 	}
 	switch(msgtype) {
-		case OV_MT_INFO:
-			typetext = "Info";
-			break;
-		case OV_MT_DEBUG:
-			typetext = "Debug";
-			break;
-		case OV_MT_WARNING:
-			typetext = "Warning";
-			break;
-		case OV_MT_ERROR:
-			typetext = "Error";
-			break;
-		case OV_MT_ALERT:
-			typetext = "Alert";
-			break;
-		default:
-			typetext = "(unknown message type)";
-			break;
+	case OV_MT_INFO:
+		typetext = "Info";
+		break;
+	case OV_MT_DEBUG:
+		typetext = "Debug";
+		break;
+	case OV_MT_WARNING:
+		typetext = "Warning";
+		break;
+	case OV_MT_ERROR:
+		typetext = "Error";
+		break;
+	case OV_MT_ALERT:
+		typetext = "Alert";
+		break;
+	default:
+		typetext = "(unknown message type)";
+		break;
 	}
 	output = (OV_STRING)Ov_HeapMalloc(strlen(ident)+strlen(typetext)+strlen(msg)+5);
 	if(!output) {
@@ -282,24 +282,24 @@ void OV_DLLFNCEXPORT ov_logfile_print(
 		*	report the message to the NT Logger
 		*/
 		switch(msgtype) {
-			case OV_MT_WARNING:
-				ReportEvent(eventsource, EVENTLOG_WARNING_TYPE,
-					0, msgtype, 0, 1, 0, messages, 0);
-				Ov_HeapFree(output);
-				return;
-			case OV_MT_ERROR:
-				ReportEvent(eventsource, EVENTLOG_ERROR_TYPE,
-					0, msgtype, 0, 1, 0, messages, 0);
-				Ov_HeapFree(output);
-				return;
-			case OV_MT_INFO:
-			case OV_MT_DEBUG:
-			case OV_MT_ALERT:
-			default:
-				ReportEvent(eventsource, EVENTLOG_INFORMATION_TYPE,
-					0, msgtype, 0, 1, 0, messages, 0);
-				Ov_HeapFree(output);
-				return;
+		case OV_MT_WARNING:
+			ReportEvent(eventsource, EVENTLOG_WARNING_TYPE,
+				0, msgtype, 0, 1, 0, messages, 0);
+			Ov_HeapFree(output);
+			return;
+		case OV_MT_ERROR:
+			ReportEvent(eventsource, EVENTLOG_ERROR_TYPE,
+				0, msgtype, 0, 1, 0, messages, 0);
+			Ov_HeapFree(output);
+			return;
+		case OV_MT_INFO:
+		case OV_MT_DEBUG:
+		case OV_MT_ALERT:
+		default:
+			ReportEvent(eventsource, EVENTLOG_INFORMATION_TYPE,
+				0, msgtype, 0, 1, 0, messages, 0);
+			Ov_HeapFree(output);
+			return;
 		}
 	}
 #endif

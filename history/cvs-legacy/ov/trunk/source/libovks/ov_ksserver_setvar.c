@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_setvar.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_setvar.c,v 1.2 1999-08-28 15:55:57 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -159,24 +159,24 @@ OV_RESULT ov_ksserver_setvar_setitem(
 	*	switch based on the element's type
 	*/
 	switch(pelem->elemtype) {
-		case OV_ET_OBJECT:
-			/*
-			*	object may be a vendor object
-			*/
-			if((pelem->pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
-				&& (pelem->pobj >= &pdb->vendorobj[0])
-			) {
-				return OV_ERR_NOACCESS;
-			}
-			break;
-		case OV_ET_MEMBER:
-		case OV_ET_VARIABLE:
-			/*
-			*	set the variable's value, timestamp and time
-			*/
-			return (pvtable->m_setvar)(pobj, pelem, &pitem->var_current_props);
-		default:
-			break;
+	case OV_ET_OBJECT:
+		/*
+		*	object may be a vendor object
+		*/
+		if((pelem->pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
+			&& (pelem->pobj >= &pdb->vendorobj[0])
+		) {
+			return OV_ERR_NOACCESS;
+		}
+		break;
+	case OV_ET_MEMBER:
+	case OV_ET_VARIABLE:
+		/*
+		*	set the variable's value, timestamp and time
+		*/
+		return (pvtable->m_setvar)(pobj, pelem, &pitem->var_current_props);
+	default:
+		break;
 	}
 	return OV_ERR_BADOBJTYPE;
 }

@@ -1,5 +1,5 @@
 /*
-*   $Id: example_getvarclient.c,v 1.3 1999-08-28 13:46:00 dirk Exp $
+*   $Id: example_getvarclient.c,v 1.4 1999-08-28 15:55:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -239,15 +239,15 @@ void OV_DLLFNCEXPORT example_getvarclient_execute(
 	*/
 	if(pgvc->v_pconn) {
 		switch(ov_ksclient_connection_getstate(pgvc->v_pconn)) {
-			case OV_CCS_CLOSED:
-				example_getvarclient_openconn(pgvc);
-				break;
-			case OV_CCS_OPEN:
-				example_getvarclient_sendreq(pgvc);
-				break;
-			default:
-				example_getvarclient_message(pgvc, "The connection is busy.");
-				break;
+		case OV_CCS_CLOSED:
+			example_getvarclient_openconn(pgvc);
+			break;
+		case OV_CCS_OPEN:
+			example_getvarclient_sendreq(pgvc);
+			break;
+		default:
+			example_getvarclient_message(pgvc, "The connection is busy.");
+			break;
 		}
 	} else {
 		example_getvarclient_message(pgvc, "Could not create a connection :-(.");
@@ -350,12 +350,12 @@ void example_getvarclient_sendreqcb(
 		goto EXIT;
 	}
 	switch(psvc->result.getvar.items_val[0].var_current_props.value.vartype) {
-		case OV_VT_STRING:
-			example_getvarclient_message(pgvc, "It's a string: \"%s\".", psvc->result.getvar.items_val[0].
-				var_current_props.value.valueunion.val_string);
-			break;
-		default:
-			example_getvarclient_message(pgvc, "I got a value, but I will only display string values...");
+	case OV_VT_STRING:
+		example_getvarclient_message(pgvc, "It's a string: \"%s\".", psvc->result.getvar.items_val[0].
+			var_current_props.value.valueunion.val_string);
+		break;
+	default:
+		example_getvarclient_message(pgvc, "I got a value, but I will only display string values...");
 	}
 	/*
 	*	delete the service result for later reuse of the service object
