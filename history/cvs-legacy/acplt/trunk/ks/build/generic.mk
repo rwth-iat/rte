@@ -136,10 +136,7 @@ CXX_EXAMPLES_SOURCES = \
 	tserver1.cpp \
 	tshell.cpp \
 	ttree.cpp \
-	ttree1.cpp \
-	tvalhist.cpp \
-	thistory.cpp \
-	tconversions.cpp
+	ttree1.cpp
 
 EXAMPLES_OBJECTS = \
 	ext_sp$(O) \
@@ -155,10 +152,7 @@ EXAMPLES_OBJECTS = \
 	tserver1$(O) \
 	tshell$(O) \
 	ttree$(O) \
-	ttree1$(O) \
-	tvalhist$(O) \
-	thistory$(O) \
-	tconversions$(O)
+	ttree1$(O)
 
 
 EXAMPLES = \

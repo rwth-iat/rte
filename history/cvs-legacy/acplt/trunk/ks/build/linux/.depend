@@ -8,6 +8,12 @@ array.o: ../../src/array.cpp ../../include/ks/array.h \
  ../../../plt/include/plt/handle_impl.h \
  ../../../plt/include/plt/container_impl.h \
  ../../include/ks/array_builtins.h
+conversions.o: ../../src/conversions.cpp \
+ ../../include/ks/conversions.h ../../include/ks/ks.h \
+ ../../include/ks/rpc.h ../../../plt/include/plt/debug.h \
+ ../../../plt/include/plt/config.h ../../include/ks/string.h \
+ ../../../plt/include/plt/string.h ../../../plt/include/plt/alloc.h \
+ ../../include/ks/xdr.h ../../../plt/include/plt/rtti.h
 path.o: ../../src/path.cpp ../../include/ks/path.h \
  ../../include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
@@ -15,7 +21,7 @@ path.o: ../../src/path.cpp ../../include/ks/path.h \
  ../../../plt/include/plt/rtti.h ../../include/ks/rpc.h \
  ../../../plt/include/plt/array.h ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h ../../include/ks/result.h \
- ../../include/ks/ks.h
+ ../../include/ks/ks.h ../../include/ks/conversions.h
 props.o: ../../src/props.cpp ../../include/ks/props.h \
  ../../include/ks/ks.h ../../include/ks/rpc.h \
  ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
@@ -158,13 +164,10 @@ manager.o: ../../src/manager.cpp ../../include/ks/manager.h \
  ../../include/ks/list.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../include/ks/path.h \
+ ../../include/ks/svrtransport.h ../../include/ks/path.h \
  ../../include/ks/svrsimpleobjects.h ../../include/ks/svrobjects.h \
  ../../include/ks/mask.h ../../include/ks/hostinaddrset.h \
- ../../include/ks/inaddrset.h ../../include/ks/xdrudpcon.h \
- ../../../plt/include/plt/log.h
+ ../../include/ks/inaddrset.h ../../../plt/include/plt/log.h
 server.o: ../../src/server.cpp ../../include/ks/server.h \
  ../../include/ks/svrbase.h ../../include/ks/rpc.h \
  ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
@@ -183,9 +186,7 @@ server.o: ../../src/server.cpp ../../include/ks/server.h \
  ../../include/ks/list.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../include/ks/svrrpcctx.h \
+ ../../include/ks/svrtransport.h ../../include/ks/svrrpcctx.h \
  ../../../plt/include/plt/log.h
 simpleserver.o: ../../src/simpleserver.cpp \
  ../../include/ks/simpleserver.h ../../include/ks/svrbase.h \
@@ -206,20 +207,18 @@ simpleserver.o: ../../src/simpleserver.cpp \
  ../../include/ks/list.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../include/ks/path.h \
+ ../../include/ks/svrtransport.h ../../include/ks/path.h \
  ../../include/ks/svrsimpleobjects.h ../../include/ks/svrobjects.h \
- ../../include/ks/mask.h ../../../plt/include/plt/log.h \
- ../../include/ks/xdrmemstream.h
-svrbase.o: ../../src/svrbase.cpp ../../include/ks/xdrmemstream.h \
- ../../include/ks/xdr.h ../../../plt/include/plt/rtti.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../include/ks/rpc.h ../../include/ks/svrbase.h \
- ../../include/ks/avticket.h ../../include/ks/ks.h \
- ../../include/ks/string.h ../../../plt/include/plt/string.h \
- ../../../plt/include/plt/alloc.h ../../include/ks/array.h \
- ../../../plt/include/plt/array.h ../../../plt/include/plt/container.h \
+ ../../include/ks/mask.h ../../include/ks/conversions.h \
+ ../../../plt/include/plt/log.h
+svrbase.o: ../../src/svrbase.cpp ../../include/ks/svrbase.h \
+ ../../include/ks/rpc.h ../../../plt/include/plt/debug.h \
+ ../../../plt/include/plt/config.h ../../include/ks/avticket.h \
+ ../../include/ks/ks.h ../../include/ks/xdr.h \
+ ../../../plt/include/plt/rtti.h ../../include/ks/string.h \
+ ../../../plt/include/plt/string.h ../../../plt/include/plt/alloc.h \
+ ../../include/ks/array.h ../../../plt/include/plt/array.h \
+ ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
  ../../../plt/include/plt/hashtable.h \
  ../../../plt/include/plt/dictionary.h ../../include/ks/event.h \
@@ -230,9 +229,7 @@ svrbase.o: ../../src/svrbase.cpp ../../include/ks/xdrmemstream.h \
  ../../include/ks/list.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../../plt/include/plt/log.h
+ ../../include/ks/svrtransport.h ../../../plt/include/plt/log.h
 svrobjects.o: ../../src/svrobjects.cpp ../../include/ks/svrobjects.h \
  ../../../plt/include/plt/rtti.h ../../../plt/include/plt/debug.h \
  ../../../plt/include/plt/config.h \
@@ -538,13 +535,10 @@ tmanager.o: ../../examples/tmanager.cpp ../../include/ks/manager.h \
  ../../include/ks/list.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../include/ks/path.h \
+ ../../include/ks/svrtransport.h ../../include/ks/path.h \
  ../../include/ks/svrsimpleobjects.h ../../include/ks/svrobjects.h \
  ../../include/ks/mask.h ../../include/ks/hostinaddrset.h \
- ../../include/ks/inaddrset.h ../../include/ks/xdrudpcon.h \
- ../../../plt/include/plt/log.h \
+ ../../include/ks/inaddrset.h ../../../plt/include/plt/log.h \
  ../../../plt/include/plt/priorityqueue_impl.h \
  ../../../plt/include/plt/container_impl.h \
  ../../../plt/include/plt/hashtable_impl.h \
@@ -571,13 +565,10 @@ tmanager1.o: ../../examples/tmanager1.cpp ../../include/ks/manager.h \
  ../../include/ks/list.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../include/ks/path.h \
+ ../../include/ks/svrtransport.h ../../include/ks/path.h \
  ../../include/ks/svrsimpleobjects.h ../../include/ks/svrobjects.h \
  ../../include/ks/mask.h ../../include/ks/hostinaddrset.h \
- ../../include/ks/inaddrset.h ../../include/ks/xdrudpcon.h \
- ../../../plt/include/plt/log.h
+ ../../include/ks/inaddrset.h ../../../plt/include/plt/log.h
 tsclient.o: ../../examples/tsclient.cpp ../../include/ks/string.h \
  ../../../plt/include/plt/string.h ../../../plt/include/plt/debug.h \
  ../../../plt/include/plt/config.h ../../../plt/include/plt/alloc.h \
@@ -631,9 +622,7 @@ tserver.o: ../../examples/tserver.cpp ../../include/ks/server.h \
  ../../include/ks/list.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../include/ks/simpleserver.h \
+ ../../include/ks/svrtransport.h ../../include/ks/simpleserver.h \
  ../../include/ks/path.h ../../include/ks/svrsimpleobjects.h \
  ../../include/ks/svrobjects.h ../../include/ks/mask.h \
  ../../../plt/include/plt/log.h \
@@ -662,9 +651,7 @@ tserver1.o: ../../examples/tserver1.cpp ../../examples/ext_sp.h \
  ../../../plt/include/plt/dictionary.h ../../include/ks/event.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../include/ks/simpleserver.h \
+ ../../include/ks/svrtransport.h ../../include/ks/simpleserver.h \
  ../../include/ks/path.h ../../include/ks/svrsimpleobjects.h \
  ../../include/ks/svrobjects.h ../../include/ks/mask.h \
  ../../../plt/include/plt/log.h
@@ -729,13 +716,10 @@ unix_manager.o: ../../src/unix_manager.cpp ../../include/ks/manager.h \
  ../../include/ks/list.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
- ../../include/ks/svrtransport.h ../../include/ks/connectionmgr.h \
- ../../include/ks/connection.h ../../include/ks/rpcproto.h \
- ../../include/ks/xdrtcpcon.h ../../include/ks/path.h \
+ ../../include/ks/svrtransport.h ../../include/ks/path.h \
  ../../include/ks/svrsimpleobjects.h ../../include/ks/svrobjects.h \
  ../../include/ks/mask.h ../../include/ks/hostinaddrset.h \
- ../../include/ks/inaddrset.h ../../include/ks/xdrudpcon.h \
- ../../../plt/include/plt/log.h \
+ ../../include/ks/inaddrset.h ../../../plt/include/plt/log.h \
  ../../../plt/include/plt/priorityqueue_impl.h \
  ../../../plt/include/plt/container_impl.h \
  ../../../plt/include/plt/hashtable_impl.h \
