@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.15 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.16 2001-02-21 09:40:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -428,7 +428,7 @@ operator <= (const PltTime &t1, const PltTime &t2)
     return 
             t1.tv_sec  <  t2.tv_sec
         || ( t1.tv_sec  == t2.tv_sec
-          && t2.tv_usec <= t2.tv_usec);
+          && t1.tv_usec <= t2.tv_usec);
 }
 
 //////////////////////////////////////////////////////////////////////
