@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/alloc.cpp,v 1.1 1997-09-10 14:52:40 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/alloc.cpp,v 1.2 1998-12-14 18:06:04 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -46,13 +46,18 @@ PltAllocator_base::nodelist = 0;
 
 size_t
 PltAllocator_base::icount = 0;
-//////////////////////////////////////////////////////////////////////
 
+
+// ----------------------------------------------------------------------------
+//
 PltAllocator_base::~PltAllocator_base() 
 {
     while (objlist) {
         node * p = objlist;
         objlist = objlist->next;
+#if 0 || PLT_DEBUG
+	cerr << "Freeing 0x" << hex << (unsigned long) p->obj << endl;
+#endif	
         ::operator delete(p->obj);
         delete p;
     }
@@ -64,10 +69,11 @@ PltAllocator_base::~PltAllocator_base()
             delete p;
         }
     }
-}
+} // PltAllocator_base::~PltAllocator_base
     
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+//
 void *
 PltAllocator_base::do_alloc(size_t size) 
 {
@@ -82,18 +88,30 @@ PltAllocator_base::do_alloc(size_t size)
         // add node to nodelist
         p->next  = nodelist;
         nodelist = p;
+#if 0 || PLT_DEBUG
+	cerr << "Reusing 0x" << hex << (unsigned long) retval << endl;
+#endif	
         return retval;
     } else {
-        return ::operator new(size);
+	void * retval = ::operator new(size);
+#if PLT_DEBUG
+	cerr << "Allocating 0x" << hex << (unsigned long) retval << endl;
+#endif	
+        return retval;
     }
-}
+} // PltAllocator_base::do_alloc
 
-//////////////////////////////////////////////////////////////////////
             
+// ----------------------------------------------------------------------------
+//
 void 
 PltAllocator_base::do_free(void *obj)
 {
     if (obj == 0) return;
+
+#if 0 || PLT_DEBUG
+	cerr << "Returning 0x" << hex << (unsigned long) obj << endl;
+#endif	
 
     node * q;
     if (nodelist) {
@@ -105,5 +123,6 @@ PltAllocator_base::do_free(void *obj)
     q->obj = obj;
     q->next = objlist;
     objlist = q;
-} 
+} // PltAllocator_base::do_free
 
+/* End of plt/alloc.cpp */
