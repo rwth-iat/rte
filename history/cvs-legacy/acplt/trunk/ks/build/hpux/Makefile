@@ -27,17 +27,46 @@ CXX_LINK = perl $(PLT_DIR)/build/templ.pl g++ -lstdc++
 .cpp.i:
 	$(CXX_COMPILE) -E > $@ $<
 
-CXX_SOURCES = txdr2.cpp txdr.cpp xdr.cpp string.cpp tregister.cpp\
-	avticket.cpp register.cpp array.cpp tarray.cpp templates.cpp
+CXX_LIBKS_SOURCES = \
+	xdr.cpp \
+	array.cpp \
+	string.cpp \
+	register.cpp \
+	avticket.cpp \
+	templates.cpp
 
-#xdr.cpp
-# tvalue.cpp value.cpp
+CXX_LIBKS_OBJECTS = \
+	xdr.o \
+	array.o \
+	string.o \
+	register.o \
+	avticket.o \
+	templates.o
+
+CXX_TEST_SOURCES = \
+	txdr.cpp \
+	txdr2.cpp \
+	tregister.cpp \
+	tarray.cpp
+
+TESTS = txdr txdr2 tarray
+#tregister
+
+CXX_SOURCES = $(CXX_LIBKS_SOURCES) $(CXX_TEST_SOURCES)
 
 LIBPLT = $(PLT_DIR)/build/hpux/libplt.a
 
+LIBKS = libks.a
+
 VPATH = ../../src ../../tests
 
-all:	tvalue txdr
+all:	$(LIBKS)
+
+tests:	$(TESTS)
+
+libks.a :	$(CXX_LIBKS_OBJECTS)
+	ar r $@ $?
+	ranlib $@
 
 value.s : value.cpp
 	$(CXX_COMPILE) -S -o $@ $<
@@ -45,16 +74,16 @@ value.s : value.cpp
 tvalue :  tvalue.o value.o
 	$(CXX_LINK) -o $@ $^ $(LIBPLT)
 
-txdr2 :  txdr2.o xdr.o string.o array.o  templates.o $(LIBPLT)
+txdr2 :  txdr2.o $(LIBKS) $(LIBPLT)
 	$(CXX_LINK) -o $@ $^ 
 
-tarray : tarray.o xdr.o array.o templates.o $(LIBPLT)
+tarray : tarray.o $(LIBKS) $(LIBPLT)
 	$(CXX_LINK) -o $@ $^
 
-txdr :  txdr.o string.o $(LIBPLT)
+txdr :  txdr.o $(LIBKS) $(LIBPLT)
 	$(CXX_LINK) -o $@ $^
 
-tregister :	register.o tregister.o string.o $(LIBPLT)
+tregister :	tregister.o $(LIBKS) $(LIBPLT)
 		$(CXX_LINK) -o $@ $^     
 
 depend : $(CXX_SOURCES)
@@ -65,6 +94,12 @@ depend : $(CXX_SOURCES)
 
 include .depend
 
+clean :
+	rm -f *.o core
+
+mrproper :	clean
+	rm -f libks.a .depend $(TESTS)
+	for i in t*_inst.h ; do echo > $$i ; done
 
 
 
