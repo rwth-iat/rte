@@ -1,6 +1,6 @@
 /*
 
-*   $Id: ov_server.c,v 1.12 2002-06-18 11:34:47 ansgar Exp $
+*   $Id: ov_server.c,v 1.13 2002-09-09 08:11:04 ansgar Exp $
 
 *
 
@@ -775,7 +775,11 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 
 	ov_logfile_info("Mapping database \"%s\"...", filename);
 
+#ifdef OV_CATCH_EXCEPTIONS
 	result = ov_supervised_database_map(filename);
+#else
+	result = ov_database_map(filename);
+#endif
 
 	if (Ov_Fail(result) && backupfilename) {
 
@@ -787,8 +791,11 @@ MAPBACKUP:
 
 		ov_logfile_info("Mapping backup-database \"%s\"...", backupfilename);
 
+#ifdef OV_CATCH_EXCEPTIONS
 		result = ov_supervised_database_map(backupfilename);
-
+#else
+		result = ov_database_map(backupfilename);
+#endif
 	}
 
 	if(Ov_Fail(result)) {
@@ -815,8 +822,11 @@ ERRORMSG:
 
 		ov_logfile_info("Starting up database...");
 
+#ifdef OV_CATCH_EXCEPTIONS
 		result = ov_supervised_database_startup();
-
+#else
+		result = ov_database_startup();
+#endif
 		if(Ov_Fail(result)) {
 			if ((!backup) && (backupfilename)) goto MAPBACKUP;
 
@@ -851,7 +861,11 @@ ERRORMSG:
 		ov_logfile_info("Server started.");
 
 		ov_ksserver_start();
+#ifdef OV_CATCH_EXCEPTIONS
 		result = ov_supervised_server_run();
+#else
+		ov_ksserver_run();
+#endif
 		ov_ksserver_stop();
 
 		ov_logfile_info("Server stopped.");

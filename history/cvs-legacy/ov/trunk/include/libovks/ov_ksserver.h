@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.14 2002-09-03 09:41:10 ansgar Exp $
+*   $Id: ov_ksserver.h,v 1.15 2002-09-09 08:10:39 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -384,6 +384,7 @@ void ov_ksserver_gethist(
 	OV_GETHIST_RES			*result
 );
 
+#ifdef OV_CATCH_EXCEPTIONS
 OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_startup(void);
 
 OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_map(
@@ -391,6 +392,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_map(
 );
 
 OV_DLLFNCEXPORT OV_RESULT ov_supervised_server_run(void) ;
+#endif
 
 #ifdef __cplusplus
 }

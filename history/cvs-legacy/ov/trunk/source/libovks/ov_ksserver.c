@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.17 2002-09-03 09:40:56 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.18 2002-09-09 08:10:57 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -767,6 +767,7 @@ void ov_ksserver_sendreply(
 *	maps database with supervised exceptions (subroutine)
 */
 
+#ifdef OV_CATCH_EXCEPTIONS
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
@@ -780,13 +781,14 @@ OV_RESULT ov_supervised_database_map(
 		return OV_ERR_GENERIC;
 	}
 }
-
+#endif
 #endif
 /*	----------------------------------------------------------------------	*/
 /*
 *	starts up database with supervised exceptions (subroutine)
 */
 
+#ifdef OV_CATCH_EXCEPTIONS
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
@@ -801,11 +803,13 @@ OV_RESULT ov_supervised_database_startup()
 }
 
 #endif
+#endif
 /*	----------------------------------------------------------------------	*/
 /*
 *	runs server with supervised exceptions (subroutine)
 */
 
+#ifdef OV_CATCH_EXCEPTIONS
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
@@ -820,7 +824,7 @@ OV_RESULT ov_supervised_server_run()
 		return OV_ERR_GENERIC;
 	}
 }
-
+#endif
 #endif
 /*	----------------------------------------------------------------------	*/
 
