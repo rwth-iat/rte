@@ -1,6 +1,5 @@
 /* -*-plt-c++-*- */
-// File: plt/string.cpp
-
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.8 1997-03-06 14:30:04 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -126,6 +125,7 @@ PltString::PltString(size_t sz, char *s)
     if (p) {
         p->len = sz;
         p->s = s;
+        (p->s)[sz]=0;
         if (!p->s) {
             delete p;
             p = 0;
