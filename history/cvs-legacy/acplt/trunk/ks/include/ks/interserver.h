@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.3 1999-05-12 09:59:25 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.4 1999-09-06 07:19:48 harald Exp $ */
 /*
  * Copyright (c) 1999
  * Chair of Process Control Engineering,
@@ -165,7 +165,7 @@ protected:
     bool openManagerConnection(u_short port, int protocol);
     bool openServerConnection(u_short port);
 
-    KssTCPXDRConnection             *_cln_con;
+    KssXDRConnection                *_cln_con;
     bool                             _cln_con_once_closed;
     KssInterKsServerConnectionState  _state;
     ISCSubState                      _sub_state;

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.3 1999-04-22 15:37:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.4 1999-09-06 07:19:49 harald Exp $ */
 /*
  * Copyright (c) 1999
  * Chair of Process Control Engineering,
@@ -45,6 +45,8 @@
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
+
+/* Historical sidenote: somehow "interserver" sounds like "intershop"... */
 
 #if PLT_USE_BUFFERED_STREAMS
 
@@ -243,6 +245,8 @@ void KssInterKsServerConnection::close()
 
 
 // ---------------------------------------------------------------------------
+// Return the XDR stream for this connection or 0 if no XDR stream is
+// currently allocated to this interserver connection.
 //
 XDR *KssInterKsServerConnection::getXdr() const
 {
@@ -255,6 +259,11 @@ XDR *KssInterKsServerConnection::getXdr() const
 
 
 // ---------------------------------------------------------------------------
+// Start building a request telegramme. After calling this method you can
+// serialize data into the connection using its associated XDR stream (which
+// can be retrieved through the getXdr() accessor). When you're done, call
+// endSend() to finish the telegramme and do the actual i/o -- well, it's more
+// "o" than "i" in the case of the request...
 //
 bool KssInterKsServerConnection::beginSend(u_long serviceid)
 {
@@ -405,7 +414,7 @@ bool KssInterKsServerConnection::openPortmapperConnection()
     //
     // Now initiate the opening sequence to the portmapper...
     //
-    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if ( sock < 0 ) {
 	_result = KS_ERR_GENERIC;
 	return false;
@@ -418,8 +427,12 @@ bool KssInterKsServerConnection::openPortmapperConnection()
     // run into a memory shortage.
     //
     _sub_state = ISC_SUBSTATE_CONNECTING_PMAP;
-    _cln_con = new KssTCPXDRConnection(sock, _connect_timeout, 
-				       _host_addr, sizeof(_host_addr),
+    _cln_con = new KssUDPXDRConnection(sock, 
+				       (_connect_timeout > 10) ?
+				           10 : _connect_timeout,
+				       2, /* secs between consecutive
+                                             retries */
+				       &_host_addr, sizeof(_host_addr),
 				       KssConnection::CNX_TYPE_CLIENT);
     if ( !_cln_con || 
 	 (_cln_con->getState() == KssConnection::CNX_STATE_DEAD) ) {
@@ -458,7 +471,9 @@ bool KssInterKsServerConnection::openManagerConnection(u_short port,
     //
     // Now initiate the opening sequence to the ACPLT/KS manager...
     //
-    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    int sock = socket(AF_INET, 
+		      (protocol == IPPROTO_UDP) ? SOCK_DGRAM : SOCK_STREAM,
+		      protocol);
     if ( sock < 0 ) {
 	_result = KS_ERR_GENERIC;
 	return false;
@@ -471,9 +486,18 @@ bool KssInterKsServerConnection::openManagerConnection(u_short port,
     // run into a memory shortage.
     //
     _sub_state = ISC_SUBSTATE_CONNECTING_MANAGER;
-    _cln_con = new KssTCPXDRConnection(sock, _connect_timeout, 
-				       _host_addr, sizeof(_host_addr),
-				       KssConnection::CNX_TYPE_CLIENT);
+    if ( protocol == IPPROTO_UDP ) {
+	_cln_con = new KssUDPXDRConnection(sock, 
+					   _connect_timeout,
+					   5, /* secs between
+                                                 consecutive retries */
+					   &_host_addr, sizeof(_host_addr),
+					   KssConnection::CNX_TYPE_CLIENT);
+    } else {
+	_cln_con = new KssTCPXDRConnection(sock, _connect_timeout, 
+					   _host_addr, sizeof(_host_addr),
+					   KssConnection::CNX_TYPE_CLIENT);
+    }
     if ( !_cln_con || 
 	 (_cln_con->getState() == KssConnection::CNX_STATE_DEAD) ) {
 	if ( _cln_con ) {
@@ -629,7 +653,7 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 
 	    pm_request.pm_prog = KS_RPC_PROGRAM_NUMBER;
 	    pm_request.pm_vers = KS_PROTOCOL_VERSION;
-	    pm_request.pm_prot = IPPROTO_TCP;
+	    pm_request.pm_prot = IPPROTO_UDP;
 	    pm_request.pm_port = 0; // unused
 
 	    if ( !_cln_con->beginRequest(makeXid(),
@@ -671,7 +695,7 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 			// to the ACPLT/KS manager instead.
 			//
 			closeConnection();
-			if ( !openManagerConnection(port, IPPROTO_TCP) ) {
+			if ( !openManagerConnection(port, IPPROTO_UDP) ) {
 			    break;
 			}
 			return false; // never "reactivate" the old connection,
