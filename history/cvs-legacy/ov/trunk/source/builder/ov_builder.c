@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.5 2002-08-29 11:03:56 ansgar Exp $
+*   $Id: ov_builder.c,v 1.6 2003-08-25 09:16:03 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -260,6 +260,7 @@ int ov_builder_createsourcefiles(
 	OV_STRING		class_ident;
 	char			text1[256];
 	char			text2[256];
+	char			*ptext;
 	OV_INT			pathcount;
 	int			i;
 	/*
@@ -426,7 +427,9 @@ int ov_builder_createsourcefiles(
 					if (strncmp(text1, pop->cfnctypename,strlen(pop->cfnctypename))==0) {
 						fprintf(fp,"OV_DLLFNCEXPORT %s %s_%s_%s",
 							text2,plib->identifier,pclass->identifier,pop->identifier);
-						if (text1[strlen(text1)-1] == '(') fprintf(fp,"(");
+						ptext=strstr(text1, "(");
+						if (ptext) fprintf(fp,"%s",ptext);
+						else fprintf(fp,"(");
 						while ( (fscanf(rfp, "%c", &text1[0])!=EOF) && (text1[0]!=';')) {
 							fprintf(fp,"%c",text1[0]);
 						}

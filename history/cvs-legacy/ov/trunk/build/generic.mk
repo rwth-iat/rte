@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.9 2002-01-23 13:43:40 ansgar Exp $
+#   $Id: generic.mk,v 1.10 2003-08-25 09:16:03 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -159,7 +159,8 @@ ACPLTKS_INCLUDES = \
 
 OV_DEFINES = \
 	$(OV_PLATFORM_DEFINES) \
-	-DOV_SYSTEM_$(SYSTEM)=1
+	-DOV_SYSTEM_$(SYSTEM)=1 \
+	-DOV_EXPLAIN
 
 ifeq ($(COMPILER), BORLAND)
 OV_INCLUDES = \

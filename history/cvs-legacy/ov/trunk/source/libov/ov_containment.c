@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_containment.c,v 1.1 1999-07-19 15:02:12 dirk Exp $
+*   $Id: ov_containment.c,v 1.2 2003-08-25 09:16:03 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -56,7 +56,11 @@ OV_DECL_GETACCESS(ov_containment) {
 	*	from the outside world
 	*/
 	if(pticket) {
+#ifdef OV_EXPLAIN
+		return OV_AC_READ;
+#else
 		return OV_AC_NONE;
+#endif
 	}
 	return OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE;
 }

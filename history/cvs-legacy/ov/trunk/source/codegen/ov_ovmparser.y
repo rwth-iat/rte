@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.12 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_ovmparser.y,v 1.13 2003-08-25 09:16:03 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1269,8 +1269,9 @@ OV_BOOL ov_codegen_checksemantics_association(
 	OV_BOOL				result = TRUE;
 	OV_OVM_CLASS_DEF	*pparentclass = ov_codegen_getclassdef(NULL, passoc->parentclassname);
 	OV_OVM_CLASS_DEF	*pchildclass = ov_codegen_getclassdef(NULL, passoc->childclassname);
-	OV_OVM_LIBRARY_DEF		*pparentlib = ov_codegen_getlibdef(pparentclass->libname);
-	OV_OVM_LIBRARY_DEF		*pchildlib = ov_codegen_getlibdef(pchildclass->libname);
+	OV_OVM_LIBRARY_DEF		*pparentlib;
+	OV_OVM_LIBRARY_DEF		*pchildlib;
+
 	/*
 	*	check for unique name
 	*/
@@ -1300,6 +1301,7 @@ OV_BOOL ov_codegen_checksemantics_association(
 			passoc->identifier, passoc->parentclassname);
 		result = FALSE;
 	} else {
+		pparentlib = ov_codegen_getlibdef(pparentclass->libname);
 		if(pparentclass->defnum > passoc->defnum) {
 			fprintf(stderr, "association \"%s\": definition prior to definition "
 				"of parent class \"%s\".\n", passoc->identifier,
@@ -1333,6 +1335,7 @@ OV_BOOL ov_codegen_checksemantics_association(
 			passoc->identifier, passoc->childclassname);
 		result = FALSE;
 	} else {
+		pchildlib = ov_codegen_getlibdef(pchildclass->libname);
 		if(pchildclass->defnum > passoc->defnum) {
 			fprintf(stderr, "association \"%s\": definition prior to definition "
 				"of child class \"%s\".\n", passoc->identifier,

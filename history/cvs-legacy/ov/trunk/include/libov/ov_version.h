@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.22 2003-01-31 10:04:46 ansgar Exp $
+*   $Id: ov_version.h,v 1.23 2003-08-25 09:16:03 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,8 +34,8 @@
 *	Version information for different modules of ACPLT/OV
 *	-----------------------------------------------------
 */
-#define OV_VER_CODEGEN						"1.6.0"
-#define OV_VER_BUILDER 						"1.0.1"
+#define OV_VER_CODEGEN						"1.6.1"
+#define OV_VER_BUILDER 						"1.0.2"
 #define OV_VER_LIBOV						"1.6.2"
 #define OV_VER_DBUTIL 						"1.2.0"
 #define OV_VER_LIBOVKS 						"1.3.3"
@@ -43,8 +43,8 @@
 #define OV_VER_NTSERVICE					"1.3.1"
 #define OV_VER_CONTROLPANEL					"1.2.0"
 
-#define OV_VER_FILEVERSION_CODEGEN			1, 6, 0, 0
-#define OV_VER_FILEVERSION_BUILDER			1, 0, 1, 0
+#define OV_VER_FILEVERSION_CODEGEN			1, 6, 1, 0
+#define OV_VER_FILEVERSION_BUILDER			1, 0, 2, 0
 #define OV_VER_FILEVERSION_LIBOV			1, 6, 2, 0
 #define OV_VER_FILEVERSION_DBUTIL 			1, 2, 0, 0
 #define OV_VER_FILEVERSION_LIBOVKS 			1, 3, 3, 0

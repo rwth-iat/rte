@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.14 2002-12-10 16:40:30 ansgar Exp $
+*   $Id: ov_association.c,v 1.15 2003-08-25 09:16:03 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -28,6 +28,7 @@
 *	23-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Optimized (use of macros).
 *	17-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ONE_TO_ONE Link.
 *	10-Dec-2002 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (inheritance).
+*	22-Aug-2003 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (parentoffset).
 */
 
 #define OV_COMPILE_LIBOV
@@ -149,8 +150,24 @@ CONTINUE:
 			*/
 			passoc->v_parentoffset = pparentclass->v_linktablesize;
 			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_HEAD), pparentclass->v_linktablesize);
+
+			/* 	after adjusting the offsets of the associations of the parentclass and its derived classes the parentclass is
+			*	linked to the loaded association by ov_parentrelationship, so in the case that the childclass is a baseclass of the parentclass 
+			*	the offset adjusting is also done for the parentoffset of this loaded association
+			*	(Bugfix 22.8.2003)
+			*/
+
+			/*
+			*	link association with parent class
+			*/
+			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
+
 			passoc->v_childoffset = pchildclass->v_linktablesize;
 			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_ANCHOR), pchildclass->v_linktablesize);
+			/*
+			*	link association with child class
+			*/
+			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
 		}
 		if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
 			if (pparentclass==pchildclass) {
@@ -174,8 +191,17 @@ CONTINUE:
 			if (Ov_Fail(result)) goto CONTINUEERR1;
 			passoc->v_parentoffset = pparentclass->v_linktablesize;
 			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_NMHEAD), pparentclass->v_linktablesize);
+			/*
+			*	link association with parent class
+			*/
+			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
+
 			passoc->v_childoffset = pchildclass->v_linktablesize;
 			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_NMHEAD), pchildclass->v_linktablesize);
+			/*
+			*	link association with child class
+			*/
+			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
 		}
 		if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
 			if (pparentclass==pchildclass) {
@@ -199,8 +225,16 @@ CONTINUE:
 			if (Ov_Fail(result)) goto CONTINUEERR2;
 			passoc->v_parentoffset = pparentclass->v_linktablesize;
 			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_INSTPTR_ov_object), pparentclass->v_linktablesize);
+			/*
+			*	link association with parent class
+			*/
+			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
 			passoc->v_childoffset = pchildclass->v_linktablesize;
 			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_INSTPTR_ov_object), pchildclass->v_linktablesize);
+			/*
+			*	link association with child class
+			*/
+			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
 		}
 	}
 	passoc->v_parentflags = passocdef->parentflags;
@@ -208,14 +242,6 @@ CONTINUE:
 	passoc->v_linkfnc = passocdef->linkfnc;
 	passoc->v_unlinkfnc = passocdef->unlinkfnc;
 	passoc->v_getaccessfnc = passocdef->getaccessfnc;
-	/*
-	*	link association with parent class
-	*/
-	Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
-	/*
-	*	link association with child class
-	*/
-	Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
 	/*
 	*	finished
 	*/
