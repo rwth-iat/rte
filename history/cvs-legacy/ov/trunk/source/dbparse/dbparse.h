@@ -46,6 +46,11 @@
 #define timezone _timezone
 #endif
 
+#if PLT_COMPILER_MSVC
+#define sleep Sleep
+#include <io.h>
+#endif
+
 //-------------------------------------------------------------------------------
 
 enum value_types {		// defines possible value types for internal representation
@@ -79,7 +84,7 @@ enum value_types {		// defines possible value types for internal representation
 #define LO_OVERWRITE_INCOMPATIBLE	0x8		// overwrite incompatible types
 #define LO_ERROR_ON_INCOMPATIBLE	0x10	// generate error if incompatible types
 #define LO_ADD_DOMAINS				0x20	// add missing parent domains to target database
-#define LO_DEFAULT					(LO_ADD_CLASSES|LO_OVERWRITE_EXACT|LO_ERROR_ON_INCOMPATIBLE| \
+#define LO_DEFAULT					(LO_ADD_CLASSES|LO_OVERWRITE_EXACT| \
 									LO_ADD_DOMAINS)
 
 //-------------------------------------------------------------------------------
@@ -247,7 +252,6 @@ extern int lopts;								// load options
 int yyparse(void);
 int yylex(void);
 int yyerror(char *s);
-
 //-------------------------------------------------------------------------------
 
 // output operators

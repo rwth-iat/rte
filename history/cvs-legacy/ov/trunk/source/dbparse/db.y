@@ -32,7 +32,10 @@
 %{
 #include "dbparse.h"
 
-#define YYDEBUG 1
+#define YYDEBUG 0
+//#define YYPRINT(file, type, value) yyprint(file, type, value)
+
+//void yyprint(FILE*, int, YYSTYPE);
 extern parsetree *parse_tree;		/* the parse tree to be created */
 %}
 
@@ -497,4 +500,19 @@ part_inst:	  PART_INSTANCE PATH ':' CLASS PATH
 int yyerror(char *s)		/* required standard function */
 {
 	fprintf(stderr, "%s\n", s);
+	return 0;
 }
+
+// debugging
+/*void yyprint(FILE* file, int type, YYSTYPE value)
+{
+	 switch (type) {
+	        case STRING_VALUE:
+	        	cout << " " << value.pstringval << " ";
+	        	break;
+	        case PATH:
+	        	cout << " " << *(value.ppathval) << " ";
+	        	break;
+	 }
+}*/
+

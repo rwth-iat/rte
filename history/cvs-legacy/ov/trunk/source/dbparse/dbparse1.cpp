@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996-2002
+ * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -20,9 +20,10 @@
 // ACPLT/OV text file parser
 //
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
+//          Ansgar Münnemann <ansgar@plt.rwth-aachen.de>
 // dbparse1.cpp
-// Version : 1.13
-// last change: Nov 19, 2002
+// Version : 1.14
+// last change: Mai 13, 2004
 
 //-------------------------------------------------------------------------------
 // includes
@@ -40,7 +41,7 @@
 #include "db.y.h"
 #endif
 
-#define version "1.13"
+#define version "1.14"
 
 //-------------------------------------------------------------------------------
 // global variables
@@ -53,6 +54,7 @@ KscServerBase		*server_base;					// server base
 u_int				lib_wait_time;					// time to wait after loading
 													// the libraries
 bool				verbose;						// print verbose status info?
+bool				use_activitylock;						// use activitylock of OV-server
 PltList<instance *>	liblist;						// list of library instances
 
 //-------------------------------------------------------------------------------
@@ -366,6 +368,7 @@ bool parsetree::add(instance *inst) {
 	int			i, j;
 	KsString	delimiter;
 
+	if (verbose) cout << "Adding " << *inst->ident << " to parsetree!" << endl;
 	j = inst->ident->size();					// nr. of path components
 	if (*(inst->ident) == LogPath("/")) {		// root domain always exists
 		*(root->creation_time) = *(inst->creation_time);
@@ -449,6 +452,7 @@ bool parsetree::add(instance *inst) {
 		if (act_inst->part_block->add(*(inst->ident), inst)) {
 			return true;
 		} else {
+		       	cout << "Error: Could not add instance " << *inst->ident << " to part_block!" << endl;
 			return false;
 		}
 	} else {								// instance is a child
@@ -458,6 +462,7 @@ bool parsetree::add(instance *inst) {
 		if (act_inst->children->add(*(inst->ident), inst)) {
 			return true;
 		} else {
+		       	cout << "Error: Could not add instance " << (const char*) (PltString) *inst->ident << " to children!" << endl;
 			return false;
 		}
 	}
@@ -478,7 +483,7 @@ bool parsetree::remove(LogPath *name)
 	// remove instance from hash table of parent
 	if (!parent->children->remove(*name, inst)) {
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
-		exit;
+		exit(-1);
 	}
 	delete inst;
 	return true;
@@ -494,7 +499,7 @@ bool parsetree::remove(instance *inst)
 	parent = search(&LogPath(*(inst->ident), 0, inst->ident->size()-1));
 	if (!parent->children->remove(*(inst->ident), inst)) {
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
-		exit;
+		exit(-1);
 	}
 	delete inst;
 	return true;
@@ -557,8 +562,15 @@ bool parsetree::depthFirstSearch(instance *start, exec_function func) {
 		return false;
 	}
 	if (start->children) {
-		PltHashIterator<PltString, instance *> *it = start->children->newIterator();
+		PltHashIterator<PltString, instance *> *it = (PltHashIterator<PltString, instance *> *) start->children->newIterator();
 		while(*it) {								// iterate over children
+			ret &= depthFirstSearch((**it).a_value, func);
+			++*it;
+		}
+	}
+	if (start->part_block) {
+		PltHashIterator<PltString, instance *> *it = (PltHashIterator<PltString, instance *> *) start->part_block->newIterator();
+		while(*it) {								// iterate over parts
 			ret &= depthFirstSearch((**it).a_value, func);
 			++*it;
 		}
@@ -932,7 +944,7 @@ ostream &operator << (ostream &log, link_value *linkval) {
 	PltListIterator<LogPath> *it;
 
 	if (linkval && linkval->link_paths) {
-		it = linkval->link_paths->newIterator();
+		it = (PltListIterator<LogPath> *) linkval->link_paths->newIterator();
 		log << "   Identifier: " << *(linkval->ident) << endl
 			<< "   Paths: ";
 		while(*it) {	// iterate over link targets
@@ -952,7 +964,7 @@ ostream &operator << (ostream &log, PltHashTable<PltString, variable_value*> *va
 	PltHashIterator<PltString, variable_value *> *it;
 
 	if (var_block) {
-		it = var_block->newIterator();
+		it = (PltHashIterator<PltString, variable_value *> *) var_block->newIterator();
 		while(*it) {	// iterate over variables
 			log << (**it).a_value;
 			++*it;
@@ -968,7 +980,7 @@ ostream &operator << (ostream &log, PltHashTable<PltString, link_value*> *link_b
 	PltHashIterator<PltString, link_value *> *it;
 
 	if(link_block) {
-		it = link_block->newIterator();
+		it = (PltHashIterator<PltString, link_value *> *) link_block->newIterator();
 		while(*it) {	// iterate over links
 			log << (**it).a_value;
 			++*it;
@@ -984,7 +996,7 @@ ostream &operator << (ostream &log, PltHashTable<PltString, instance*> *children
 	PltHashIterator<PltString, instance *> *it;
 
 	if(children) {
-		it = children->newIterator();
+		it = (PltHashIterator<PltString, instance *> *) children->newIterator();
 		while(*it) {	// iterate over children
 			log << (**it).a_value;
 			++*it;
@@ -1210,7 +1222,7 @@ KS_SEMANTIC_FLAGS GetSemFlags(KsString *ksarg)
 			(arg[i] >= 'a' && arg[i] <= 'f')) &&
 			(arg[i+1] == '\0' || arg[i+1] > arg[i])) {
 
-		if isupper(arg[i]) {
+		if (isupper(arg[i])) {
 			ret |= (1 << (arg[i] - 'A'));				// build bit field
 		} else {
 			ret |= (1 << (26 + arg[i] -'a'));
@@ -1428,6 +1440,11 @@ bool checkObjs(instance *node)
 {
 	KsString domname = server + KsString(*node->ident);
 	KscDomain dom(domname);
+	if (verbose) cout << "..." << *node->ident << endl;
+	if (node->is_part) {
+	        node->cr_opts = CO_CHANGE;
+	        return TRUE;
+	}
 	if (!dom.getEngPropsUpdate()) {					// object not in server
 		if (!(lopts & LO_ADD_DOMAINS) && node->cr_opts == CO_TREE) {
 			cout << "Error: Parent domain of " << *(node->ident) << " not in server!" << endl;
@@ -1436,12 +1453,12 @@ bool checkObjs(instance *node)
 			node->cr_opts = CO_CREATE;				// => must be created
 		}
 	} else {										// object in server, check compatibility
-		if (strcmp(KsString(*(node->class_ident)), dom.getEngProps()->class_identifier) == 0) {
+		if (strcmp(KsString(*(node->class_ident)), ((KsDomainEngProps*) dom.getEngProps())->class_identifier) == 0) {
 													// classes are equal
 			if (lopts & LO_OVERWRITE_EXACT) {
 				node->cr_opts = CO_CHANGE;
 			}
-		} else if (compat_classes(*(node->class_ident), dom.getEngProps()->class_identifier)) {
+		} else if (compat_classes(*(node->class_ident), ((KsDomainEngProps*) dom.getEngProps())->class_identifier)) {
 													// classes are compatible
 			if (lopts & LO_OVERWRITE_INHERITED) {
 				node->cr_opts = CO_OVERWRITE;
@@ -1464,6 +1481,7 @@ bool checkObjs(instance *node)
 // Search and compare objects in target server
 bool check_objects()
 {
+ 	if (verbose) cout << "Checking objects ..." << endl;
 	return (parse_tree->forEach(&checkObjs));
 } // check_objects
 
@@ -1482,7 +1500,7 @@ bool check_vendortree()
 	if (!vendor) {										// no vendor branch in parse tree
 		return true;
 	}
-	act_var = vendor->var_block->newIterator();
+	act_var = (PltHashIterator<PltString, variable_value *>	*) vendor->var_block->newIterator();
 
 	while (*act_var) {
 		KscVariable var(server + "/vendor/" + (*act_var)->a_key);
@@ -1490,7 +1508,7 @@ bool check_vendortree()
 			cout << "Error: Cannot access variable /vendor/" << (const char *)(*act_var)->a_key
 				 << " in server!" << endl;
 		}
-		vartype = var.getEngProps()->type;
+		vartype = ((KsVarEngProps*) var.getEngProps())->type;
 		if ((*act_var)->a_value->val->type == DB_VT_VECTOR) {
 			ok = compat_vectors((*act_var)->a_value->val->v.pvector_val, vartype);
 		} else {
@@ -1532,6 +1550,7 @@ bool checkClassId(instance *node) {
 	}
 	KsString domname(server + KsString(*(node->class_ident)));
 	KscDomain dom(domname);
+	if (verbose) cout << "..." << *node->class_ident << endl;
 	if (!dom.getEngPropsUpdate()) {								// class not in server
 		if (!(lopts & LO_ADD_CLASSES)) {
 			cout << "Error: Class " << *(node->class_ident) << " not in server!" << endl;
@@ -1543,7 +1562,7 @@ bool checkClassId(instance *node) {
 				return false;
 			}
 			if (node->var_block) {
-				act_var = node->var_block->newIterator();		// check variables of instance for
+				act_var = (PltHashIterator<PltString, variable_value *>	*) node->var_block->newIterator();		// check variables of instance for
 																// compliance to class definition
 				while (*act_var) {							// for all variables of the instance
 					ret = 0;
@@ -1595,7 +1614,7 @@ bool checkClassId(instance *node) {
 						} // if (act_cobj->children)
 						if (act_cobj->link_block->query("baseclass", bc)) {
 							if (bc->link_paths) {
-								PltListIterator<LogPath> *it = bc->link_paths->newIterator();
+								PltListIterator<LogPath> *it = (PltListIterator<LogPath> *) bc->link_paths->newIterator();
 								act_class_name = **it;					// path of the base class
 								delete it;
 							} else {
@@ -1628,8 +1647,9 @@ bool checkClassId(instance *node) {
 
 		// check variables
 		if (node->var_block) {
-			act_var = node->var_block->newIterator();
+			act_var = (PltHashIterator<PltString, variable_value *>	*) node->var_block->newIterator();
 			while (*act_var) {						// for all variables of the instance
+				if (verbose) cout << "      check variable " << (PltString)(*act_var)->a_key << endl;
 				LogPath act_class_name = LogPath(*(node->class_ident));
 				KsString domname(server + act_class_name + "/" + (*act_var)->a_key);
 				KscDomain var(domname);		// meta information about variable is stored in domain object
@@ -1644,10 +1664,12 @@ bool checkClassId(instance *node) {
 						}
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
 						act_class_name = (KsStringValue &) *parentprops->value;
-						KscDomain var(server + act_class_name + "/" + (*act_var)->a_key);
-						if (var.getEngPropsUpdate()) {			// variable in class definition
-							found = true;
-							break;
+						if (act_class_name.isValid()) {
+							KscDomain var(server + act_class_name + "/" + (*act_var)->a_key);
+							if (var.getEngPropsUpdate()) {			// variable in class definition
+								found = true;
+								break;
+							}
 						}
 					} // while
 				}
@@ -1695,9 +1717,10 @@ bool checkClassId(instance *node) {
 
 		// check links
 		if (node->link_block) {
-			act_link = node->link_block->newIterator();
+			act_link = (PltHashIterator<PltString, link_value *>*) node->link_block->newIterator();
 
 			while (*act_link) {								// for all links of the instance
+				if (verbose) cout << "      check link " << (PltString) (*act_link)->a_key << endl;
 				succ = false;
 				LogPath act_class_name = *(node->class_ident);
 				// 1. Get the contents of the variables "childassociation" and "parentassociation"
@@ -1726,7 +1749,7 @@ bool checkClassId(instance *node) {
 					}
 					const KsVarCurrProps *parentcprops = parentlink.getCurrProps();
 
-					for(i = 0; i < ((KsStringVecValue &) *childcprops->value).size(); i++) {
+					for(i = 0; (unsigned int) i < ((KsStringVecValue &) *childcprops->value).size(); i++) {
 						KscVariable p_role(server + ((KsStringVecValue &) *childcprops->value)[i] + ".parentrolename");
 						if (! (p_role.getEngPropsUpdate() && p_role.getUpdate()) ) {
 							cout << "Error: Class " << *(node->class_ident) << "," << endl
@@ -1741,7 +1764,7 @@ bool checkClassId(instance *node) {
 						}
 					}
 
-					for(i = 0; !succ && i < ((KsStringVecValue &) *parentcprops->value).size(); i++) {
+					for(i = 0; !succ && (unsigned int) i < ((KsStringVecValue &) *parentcprops->value).size(); i++) {
 						KscVariable c_role(server + ((KsStringVecValue &) *parentcprops->value)[i] + ".childrolename");
 						if (! (c_role.getEngPropsUpdate() && c_role.getUpdate()) ) {
 							cout << "Error: Class " << *(node->class_ident) << "," << endl
@@ -1778,19 +1801,20 @@ bool checkClassId(instance *node) {
 
 		// check class type of parts
 		if (node->part_block) {
-			act_part = node->part_block->newIterator();
+			act_part = (PltHashIterator<PltString, instance *>*) node->part_block->newIterator();
 
 			while (*act_part) {									// for all parts of the instance
+				if (verbose) cout << "      check part " << (PltString) (*act_part)->a_key << endl;
 				LogPath act_class_name = LogPath(*(node->class_ident));
 
 				// get part name
 				int j;
 				for (j = (*act_part)->a_key.len() - 1; j >= 0; j--) {
-					if ((*act_part)->a_key[j] == '.') {
+					if ( ((const char*) (*act_part)->a_key) [j] == '.') {
 						break;
 					}
 				}
-				KsString help = KsString(&(*act_part)->a_key[j+1]);
+				KsString help = KsString(& ((const char*) (*act_part)->a_key)[j+1] );
 
 				// info about part is stored in domain "class_name/part_name"
 				KsString domname(server + act_class_name + "/" + help);
@@ -1808,10 +1832,12 @@ bool checkClassId(instance *node) {
 						}
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
 						act_class_name = (KsStringValue &) *parentprops->value;
-						KscDomain part(server + act_class_name + "/" + help);
-						if (part.getEngPropsUpdate()) {
-							found = true;
-							break;
+						if (act_class_name.isValid() ) {
+							KscDomain part(server + act_class_name + "/" + help);
+							if (part.getEngPropsUpdate()) {
+								found = true;
+								break;
+							}
 						}
 					} // while
 				}
@@ -1850,6 +1876,7 @@ bool checkClassId(instance *node) {
 // Are all necessary classes available in target server?
 bool check_class_tree()
 {
+	if (verbose) cout << "Checking classes..." << endl;
 	return parse_tree->forEach(&checkClassId);
 } // check_class_tree
 
@@ -1868,6 +1895,7 @@ bool write_instance(instance *node)
 	enum value_types		vec_t;
 	int						i;
 
+	if (verbose) cout << "write instance" << *node->ident << " in mode " << node->cr_opts << endl;
 	// instance shall be overwritten => delete old instance first
 	if (node->cr_opts == CO_OVERWRITE) {
 		KsArray<KsString> del_path(1);
@@ -1939,11 +1967,30 @@ bool write_instance(instance *node)
 		}
 		node->cr_opts = CO_CHANGE;		// values of new instance must still be set
 	} // if (node->cr_opts == CO_CREATE)
+	return true;
 
+} // write_instance
+
+
+//-------------------------------------------------------------------------------
+
+// write the variables of instance "node" in the target server
+
+bool write_variables(instance *node)
+{
+	KsCreateObjParams		create_params;
+	KsCreateObjResult		create_result;
+	KsDeleteObjParams		delete_params;
+	KsDeleteObjResult		delete_result;
+	KsPlacementHint			pmh;
+	vector					*act_vec;
+	int						vec_sz;
+	enum value_types		vec_t;
+	unsigned int						i;
 	// iterate over all variables of the instance to be changed
 	if (node->cr_opts == CO_CHANGE && node->var_block) {
-		PltHashIterator<PltString, variable_value *> *it = node->var_block->newIterator();
-		int nr_v = 0;
+		PltHashIterator<PltString, variable_value *> *it = (PltHashIterator<PltString, variable_value *> *) node->var_block->newIterator();
+		unsigned int nr_v = 0;
 		while (*it) {
 			PltString delimiter;
 			if (strncmp(node->ident->getHead(), "vendor", 6) == 0) {	// different var. format
@@ -1958,7 +2005,7 @@ bool write_instance(instance *node)
 				delete it;
 				return false;
 			}
-			const KsVarEngProps *helpprops = help.getEngProps();
+			const KsVarEngProps *helpprops = (KsVarEngProps *) help.getEngProps();
 			if (helpprops->access_mode & KS_AC_WRITE) {		// count writable variables
 				nr_v++;
 			} else {
@@ -2185,7 +2232,7 @@ bool write_instance(instance *node)
 				return false;
 			}
 			if (set_result.results.size() != nr_v) {
-				cout << "Error: Out of memory in write_instance!" << endl;
+				cout << "Error: Out of memory in write_variables!" << endl;
 				return false;
 			}
 			for (i = 0; i < nr_v; i++) {
@@ -2210,14 +2257,14 @@ bool write_instance(instance *node)
 				}
 			}
 			if (verbose) {
-				cout << "Created variables of " << *(node->ident) << " successfully!" << endl;
+				cout << "Wrote variables of " << *(node->ident) << " successfully!" << endl;
 			}
 		} // if (nr_v != 0)
 
 	} // if (node->cr_opts == CO_CHANGE ...
 	return true;
 
-} // write_instance
+} // write_variables
 
 //-------------------------------------------------------------------------------
 
@@ -2272,7 +2319,7 @@ bool find_libraries(instance *node)
 // set links between instances
 bool write_links(instance *node)
 {
-	int					i, j;
+	unsigned int					i, j;
 	KsPlacementHint		pmh;
 	KsLinkParams		link_params;
 	KsLinkResult		link_result;
@@ -2281,7 +2328,7 @@ bool write_links(instance *node)
 		return true;				// nothing to be done
 	}
 
-	PltHashIterator<PltString, link_value *> *it = node->link_block->newIterator();
+	PltHashIterator<PltString, link_value *> *it = (PltHashIterator<PltString, link_value *> *) node->link_block->newIterator();
 
 	for ( ; *it; ++*it) {
 		KscAnyCommObject help(server + *(node->ident) + "." + (*it)->a_key);
@@ -2301,7 +2348,7 @@ bool write_links(instance *node)
 		i = (*it)->a_value->link_paths->size();
 		KsArray<KsLinkItem> l_items(i);
 
-		PltListIterator<LogPath> *link_it = (*it)->a_value->link_paths->newIterator();
+		PltListIterator<LogPath> *link_it = (PltListIterator<LogPath> *) (*it)->a_value->link_paths->newIterator();
 		// iterate over link targets
 		for (j = 0; j < i; j++) {
 			l_items[j].link_path = *(node->ident) + "." + (*it)->a_key;		// link name
@@ -2355,6 +2402,14 @@ bool write_links(instance *node)
 // write the parse tree into the server database
 bool write_database()
 {
+	KsArray<KsString> params(1);
+	KsArray<KsSetVarItem> paramsset(1);
+	KsGetVarParams get_params(1);
+	KsGetVarResult get_result(1);
+	KsSetVarParams set_params(1);
+	KsSetVarResult set_result(1);
+	KsCurrPropsHandle hcprops;
+	KsVarCurrProps cprops;
 	bool ok = true;
 
 	// identify library objects and add them to "liblist"
@@ -2363,35 +2418,44 @@ bool write_database()
 		return false;
 	}
 	// enable activity lock: all activities of the server are suspended
-	KsArray<KsSetVarItem> params(1);
-	KsBoolValue *val = new KsBoolValue(1);
-	KsValueHandle hvalue(val, KsOsNew);
-	KsVarCurrProps *cprops = new KsVarCurrProps(hvalue);
-	KsCurrPropsHandle hcprops(cprops, KsOsNew);
+	if (use_activitylock) {
 
-	params[0].path_and_name = "/vendor/activity_lock";
-	params[0].curr_props = hcprops;
+		params[0] = "/vendor/server_configuration";
 
-	KsSetVarParams set_params(1);
-	KsSetVarResult set_result(1);
-	set_params.items = params;
-	if (!server_base->setVar(NULL, set_params, set_result)) {
-		cout << "Error setting activity_lock!" << endl;
-		return false;
-	}
-	if (set_result.results.size() != 1) {
-		cout << "Error: Out of memory in write_database!" << endl;
-		return false;
-	}
-	if (set_result.results[0].result != KS_ERR_OK) {
-		cout << "Error setting activity_lock!" << endl;
-		return false;
-	}
+		get_params.identifiers = params;
+	        if (!server_base->getVar(NULL, get_params, get_result)) {
+			cout << "Error getting server_configuration!" << endl;
+			return false;
+		}
+		if (get_result.items[0].result != KS_ERR_OK) {
+			cout << "Error getting server_configuration!" << endl;
+			return false;
+		}
+		hcprops = get_result.items[0].item;
+		cprops = (KsVarCurrProps &) *hcprops;
 
+		((KsBoolVecValue &) *cprops.value)[0] = TRUE;
+
+		paramsset[0].path_and_name = params[0];
+		paramsset[0].curr_props = hcprops;
+		set_params.items = paramsset;
+		if (!server_base->setVar(NULL, set_params, set_result)) {
+			cout << "Error setting activity_lock!" << endl;
+			return false;
+		}
+		if (set_result.results.size() != 1) {
+			cout << "Error: Out of memory in write_database!" << endl;
+			return false;
+		}
+		if (set_result.results[0].result != KS_ERR_OK) {
+			cout << "Error setting activity_lock!" << endl;
+			return false;
+		}
+ 	}
 	// create library objects first, repeat "liblist.size()" times because of possible load
 	// sequence dependancies
 	int nr_libs = liblist.size();
-	PltListIterator<instance *> *lib_it = liblist.newIterator();	//
+	PltListIterator<instance *> *lib_it = (PltListIterator<instance *> *) liblist.newIterator();	//
 	for (int i = nr_libs; nr_libs > 0 && i > 0; i--) {				//
 		lib_it->toStart();											//
 		while (*lib_it) {											//
@@ -2407,37 +2471,46 @@ bool write_database()
 	}
 
 	if (nr_libs != 0) {												// NEW
-		cout << "Error: Could not load all libraries needed!" << endl;
+		cout << "Warning: Could not load all libraries needed!" << endl;
 		ok = false;
 	}
 
 	sleep(lib_wait_time);	// wait specified time after loading libraries TODO: obsolete?
 
 	// Write instances into database
-	if (ok && !parse_tree->forEach(&write_instance)) {
-		cout << "Error: Could not write objects in server!" << endl;
+	if (!parse_tree->forEach(&write_instance)) {
+		cout << "Warning: Could not write all objects in server!" << endl;
+		ok = false;
+	}
+
+	// Write variables of instances
+	if (!parse_tree->forEach(&write_variables)) {
+		cout << "Warning: Could not write all variables in server!" << endl;
 		ok = false;
 	}
 
 	// set link values
-	if (ok && !parse_tree->forEach(&write_links)) {
-		cout << "Error: Could not write links in server!" << endl;
+	if (!parse_tree->forEach(&write_links)) {
+		cout << "Warning: Could not write all links in server!" << endl;
 		ok = false;
 	}
 
 	// finally disable activity lock
-	*val = KsBoolValue(0);
-	if (!server_base->setVar(NULL, set_params, set_result)) {
-		cout << "Error unsetting activity_lock!" << endl;
-		return false;
-	}
-	if (set_result.results.size() != 1) {
-		cout << "Error: Out of memory in write_database!" << endl;
-		return false;
-	}
-	if (set_result.results[0].result != KS_ERR_OK) {
-		cout << "Error unsetting activity_lock!" << endl;
-		return false;
+	if (use_activitylock) {
+		((KsBoolVecValue &) *cprops.value)[0] = FALSE;
+
+		if (!server_base->setVar(NULL, set_params, set_result)) {
+			cout << "Error unsetting activity_lock!" << endl;
+			return false;
+		}
+		if (set_result.results.size() != 1) {
+			cout << "Error: Out of memory in write_database!" << endl;
+			return false;
+		}
+		if (set_result.results[0].result != KS_ERR_OK) {
+			cout << "Error unsetting activity_lock!" << endl;
+			return false;
+		}
 	}
 	return ok;
 
@@ -2523,7 +2596,7 @@ int main(int argc, char **argv)
 
 	// print info on startup
 	cout << "** ACPLT/OV text file parser, version " << version << " **" << endl
-		 << "(c) 2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
+		 << "(c) 2002/2004 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
 		 << endl;
 
 	if (argc < 2) {
@@ -2532,6 +2605,7 @@ int main(int argc, char **argv)
 			 << "[-lload_option[-load_option][-..]]" << endl
 			 << "[-wlib_wait_time]" << endl
 			 << "[-v]" << endl
+			 << "[-a]" << endl
 			 << endl << "For more help type \"dbparse -?\"" << endl;
 		return -1;
 	}
@@ -2542,6 +2616,7 @@ int main(int argc, char **argv)
 			 << "[-lload_option[-load_option][-..]]" << endl
 			 << "[-wlib_wait_time]" << endl
 			 << "[-v]" << endl
+			 << "[-a]" << endl
 			 << endl
 			 << "Options:" << endl
 			 << "//host/server : name of the OV host and server" << endl
@@ -2561,6 +2636,7 @@ int main(int argc, char **argv)
 			 << "      Options may be combined, separated by \"-\"" << endl
 			 << "-wlib_wait_time : time to wait after loading the libraries in s, default: 0 s" << endl
 			 << "-v : print verbose status information" << endl
+			 << "-a : use activitylock (OV version > 1.6.4)" << endl
 			 << endl;
 		return 0;
 	}
@@ -2606,6 +2682,9 @@ int main(int argc, char **argv)
 			case 'v':
 			case 'V': verbose = true;
 					  break;
+			case 'a':
+			case 'A': use_activitylock = true;
+					  break;
 			default	: cout << "Invalid parameter: " << argv[i] << "." << endl;
 					  return -1;
 			}
@@ -2640,10 +2719,12 @@ int main(int argc, char **argv)
 			ok = false;
 		} else {	// server found
 			ok = check_class_tree();	// check class compatibility
+			ok = TRUE;
 		}
 	}
 	if (ok) {
-		ok = check_objects() && check_vendortree();		// check compatibility of objects
+		ok = check_objects(); // && check_vendortree();		// check compatibility of objects
+		ok = TRUE;
 	}
 
 	if (ok) {	// we need a handle of the root domain to get a pointer to the server object
@@ -2660,8 +2741,10 @@ int main(int argc, char **argv)
 	if (ok) {
 		cout << "Success." << endl;
 	} else {
-		cout << "Error." << endl;
+		cout << "Some Warnings have occurred." << endl;
 	}
 	delete(parse_tree);									// clean up
 	return ret;											// return parser result
 } // main
+
+

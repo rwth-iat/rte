@@ -6,7 +6,7 @@ PLTDIR = $(ACPLTDIR)plt/
 
 KSDIR = $(ACPLTDIR)ks/
 
-ONCDIR = ../../../oncrpc/
+ONCDIR = $(ACPLTDIR)oncrpc/
 
 LIBPLT = $(ACPLTDIR)lib/libplt.lib
 
@@ -24,43 +24,45 @@ FLEX = $(TOOLS)flex
 
 BISON = $(TOOLS)bison
 
-CXX = bcc32
+CXX = cl
+
+LINK = link /MACHINE:I386 /NOLOGO
 
 
 
-CXX_FLAGS = -DPLT_INSTANTIATE_TEMPLATES=1 -DPLT_COMPILER_BORLAND=__BORLANDC__ -w -DNDEBUG -DPLT_USE_BUFFERED_STREAMS -DPLT_SYSTEM_NT=1 -D_BORLANDC=1
+CXX_FLAGS = /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0 /I. /I$(PLTDIR)include /I$(KSDIR)include /I$(ONCDIR) /Int
 
-CXX_EXTRA_FLAGS = -a8 -I. -pc -d -I$(PLTDIR)include -I$(KSDIR)include -I$(ONCDIR) -Int #-v -y
+CXX_EXTRA_FLAGS =
 
 
 
 dbparse.exe:	dbparse.obj dbparse1.obj db_lex.obj db_y.obj
 
-	$(CXX) -P $^ $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBONCRPC)
+	$(LINK) $^ $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBONCRPC) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
 
 
 
 dbparse.obj:	dbparse.cpp
 
-	$(CXX) -P -c $(CXX_FLAGS) $(CXX_EXTRA_FLAGS) dbparse.cpp 
+	$(CXX) /c $(CXX_FLAGS) $(CXX_EXTRA_FLAGS) dbparse.cpp
 
 
 
 dbparse1.obj:	dbparse1.cpp dbparse.h db_y.h
 
-	$(CXX) -P -c $(CXX_FLAGS) $(CXX_EXTRA_FLAGS) dbparse1.cpp
+	$(CXX) /c $(CXX_FLAGS) $(CXX_EXTRA_FLAGS) dbparse1.cpp
 
 
 
 db_lex.obj:	db_lex.c
 
-	$(CXX) -P -c $(CXX_FLAGS) $(CXX_EXTRA_FLAGS) db_lex.c
+	$(CXX) /c /TP $(CXX_FLAGS) db_lex.c
 
 
 
 db_y.obj:	db_y.c dbparse.h
 
-	$(CXX) -P -c $(CXX_FLAGS) $(CXX_EXTRA_FLAGS) db_y.c
+	$(CXX) /c /TP $(CXX_FLAGS) db_y.c
 
 
 

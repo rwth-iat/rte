@@ -52,7 +52,7 @@ year			[12]{digit}{3}
 month			("0"[1-9])|("1"[012])
 day				("0"[1-9])|([12]{digit})|("3"[01])
 hour			([01]{digit})|("2"[0-3])
-hours			{digit}{1,4}
+hours			{digit}{4}
 minute			[0-5]{digit}
 second			{minute}
 usec			{digit}{6}
