@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.36 2001-01-29 12:36:49 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.37 2001-02-21 09:39:42 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -654,7 +654,8 @@ KsManager::startServer()
 		    //
 		    svc_destroy(_udp_transport);
 		    _udp_transport = 0;
-		    PltLog::Error("KsManager::startServer(): could not register UDP service");
+		    PltLog::Error("KsManager::startServer(): "
+		                  "could not register UDP service with dispatcher");
 		    _is_ok = false;
 		    break;
 		}
@@ -667,7 +668,8 @@ KsManager::startServer()
 		_udp_transport->shutdown();
 		delete _udp_transport;
         	_udp_transport = 0;
-        	PltLog::Error("KsManager::startServer(): could not add UDP transport.");
+        	PltLog::Error("KsManager::startServer(): "
+        	              "could not add UDP transport to attention handler.");
         	_is_ok = false;
 	    }
 #endif
@@ -694,7 +696,8 @@ KsManager::startServer()
                       _tcp_transport->GETPORT)) {
             _registered = true;
         } else {
-            PltLog::Error("KsManager::startServer(): could not register TCP transport.");
+            PltLog::Error("KsManager::startServer(): "
+                          "could not register TCP transport with portmap.");
             _is_ok = false;
         }
 
@@ -704,7 +707,8 @@ KsManager::startServer()
                       _udp_transport->GETPORT)) {
             _registered = true;
         } else {
-            PltLog::Error("KsManager::startServer(): could not register UDP transport.");
+            PltLog::Error("KsManager::startServer(): "
+                          "could not register UDP transport with portmap.");
             _is_ok = false;
         }
 
