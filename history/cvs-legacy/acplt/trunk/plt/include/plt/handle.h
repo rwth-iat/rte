@@ -1,6 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.6 1997-03-06 12:14:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
