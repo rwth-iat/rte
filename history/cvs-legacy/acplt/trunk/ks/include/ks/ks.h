@@ -75,40 +75,43 @@ typedef enum_t KS_RESULT;
 /*
  * A/V stuff
  */
-enum KS_AUTH_TYPE {
+enum KS_AUTH_TYPE_ENUM {
     KS_AUTH_NONE   = 0, /* NONE-A/V-Module   */
     KS_AUTH_SIMPLE = 1  /* SIMPLE-A/V-Module */
 };
-
+typedef enum_t KS_AUTH_TYPE;
 
 /*
  * Object types (flags). When browsing through the object tree, these flags
  * can be combined (or-ed) to find any object belonging to one of the types
  * listed in the flag set.
  */
-enum KS_OBJ_TYPE {
+enum KS_OBJ_TYPE_ENUM {
     KS_OT_DOMAIN   = 0x0001, /* object is a domain   */
     KS_OT_VARIABLE = 0x0002, /* object is a variable */
     KS_OT_HISTORY  = 0x0004, /* object is a history  */
     KS_OT_ANY      = 0xFFFF  /* don't care */
 };
+typedef enum_t KS_OBJ_TYPE;
 
-enum KS_ACCESS {
+enum KS_ACCESS_ENUM {
     KS_AC_NONE      = 0, /* no access at all      */
     KS_AC_READ      = 1, /* read access           */
     KS_AC_WRITE     = 2, /* write access          */
     KS_AC_READWRITE = 3  /* read and write access */
 };
+typedef enum_t KS_ACCESS;
 
-enum KS_STATE {
+enum KS_STATE_ENUM {
     KS_ST_NOTSUPPORTED = 0, /* no state available          */
     KS_ST_UNKNOWN      = 1, /* state unknown at this time  */
     KS_ST_BAD          = 2, /* information is bad          */
     KS_ST_QUESTIONABLE = 3, /* information is questionable */
     KS_ST_GOOD         = 4  /* information is good         */
 };
+typedef enum_t KS_STATE;
 
-enum KS_VAR_TYPE {
+enum KS_VAR_TYPE_ENUM {
     KS_VT_VOID       = 0x00,
     KS_VT_INT        = 0x10,
     KS_VT_UINT       = 0x11,
@@ -124,8 +127,9 @@ enum KS_VAR_TYPE {
     KS_VT_STRING_VEC = 0xB0,
     KS_VT_TIME_VEC   = 0xB1
 };
+typedef enum_t KS_VAR_TYPE;
 
-enum KS_SVC {
+enum KS_SVC_ENUM {
     KS_NULL          = 0,
     /*
      * Now for the manager part of the KS protocol
