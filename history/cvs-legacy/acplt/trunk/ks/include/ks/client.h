@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.34 2003-10-15 15:55:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.35 2003-10-17 13:30:06 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -41,13 +41,9 @@
 // forward declaration
 class KscServerBase;
 
-//////////////////////////////////////////////////////////////////////
-// timeout and max tries when contacting manager via UDP
-// timeout when calling rpc function via TCP
-//
-const int KSC_UDP_MAX_TRIES = 5;
-const struct timeval KSC_UDP_TIMEOUT = {10, 0};      // DONT USE KsTime 
-const struct timeval KSC_RPCCALL_TIMEOUT = {30, 0};  // or PltTime
+
+const PltTime KSC_RPCCALL_TIMEOUT(30);
+
 
 //////////////////////////////////////////////////////////////////////
 // class KscClient
@@ -295,6 +291,7 @@ public:
     bool requestAsyncByOpcode(KscServiceRequestHandle hreq);
 
     bool open(); // this is async
+    bool openOnlyAndWait(); // this is sync
     void close(); // this is sync and immediately closes the connection
 
     //
@@ -309,6 +306,8 @@ public:
 
 
 protected:
+    void init();
+
     KscNegotiator *getNegotiator(const KscAvModule *);
 
     friend class KscAvModule;
