@@ -25,6 +25,7 @@ CXX_LIBKS_SOURCES = \
 	array.cpp \
 	string.cpp \
 	register.cpp \
+	result.cpp \
 	avticket.cpp \
 	templates.cpp
 
@@ -33,6 +34,7 @@ CXX_LIBKS_OBJECTS = \
 	array.o \
 	string.o \
 	avticket.o \
+	result.o \
 	templates.o
 
 #	register.o \
