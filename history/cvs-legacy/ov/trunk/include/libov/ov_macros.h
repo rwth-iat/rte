@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.13 2000-02-10 13:06:53 dirk Exp $
+*   $Id: ov_macros.h,v 1.14 2000-10-23 10:17:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -360,8 +360,8 @@
 *	Set the value of a static vector variable
 */
 #define Ov_SetStaticVectorValue(pvector, pvalue, veclen, type)				\
-	ov_vector_setstaticvalue(pvector, (const OV_POINTER)pvalue,				\
-		veclen+0*((pvector)-(OV_##type*)0),	veclen*sizeof(OV_##type),		\
+	ov_vector_setstaticvalue((pvector), (const OV_POINTER)(pvalue),			\
+		(veclen)+0*((pvector)-(OV_##type*)0), (veclen)*sizeof(OV_##type),	\
 		OV_VT_##type)
 
 /*
@@ -369,30 +369,30 @@
 */
 #define Ov_SetDynamicVectorValue(pvector, pvalue, veclen, type)				\
 	ov_vector_setdynamicvalue((OV_GENERIC_VEC*)(pvector),					\
-		(const OV_POINTER)pvalue, veclen+0*((pvector)-(OV_##type##_VEC*)0),	\
-		veclen*sizeof(OV_##type), OV_VT_##type)
+		(const OV_POINTER)(pvalue), (veclen)+0*((pvector)					\
+		-(OV_##type##_VEC*)0), (veclen)*sizeof(OV_##type), OV_VT_##type)
 
 /*
 *	Set the vector length of a dynamic vector variable
 */
 #define Ov_SetDynamicVectorLength(pvector, veclen, type)					\
-	ov_vector_setdynamicveclen((OV_GENERIC_VEC*)(pvector), veclen			\
-		+0*((pvector)-(OV_##type##_VEC*)0),	veclen*sizeof(OV_##type),		\
+	ov_vector_setdynamicveclen((OV_GENERIC_VEC*)(pvector), (veclen)			\
+		+0*((pvector)-(OV_##type##_VEC*)0),	(veclen)*sizeof(OV_##type),		\
 		OV_VT_##type)
 
 /*
 *	Set the value of an ANY variable
 */
 #define Ov_SetAnyValue(pany, pvalue)										\
-	ov_variable_setanyvalue(pany, pvalue)
+	ov_variable_setanyvalue((pany), (pvalue))
 
 /*
 *	Compare two vector variable values
 */
 #define Ov_CompareVectorValues(pvalue1, pvalue2, veclen, type)				\
-	ov_vector_compare((const OV_POINTER)pvalue1, (const OV_POINTER)pvalue2,	\
-	veclen+0*((pvalue1)-(OV_##type*)0)+0*((pvalue2)-(OV_##type*)0), 		\
-	veclen*sizeof(OV_##type), OV_VT_##type)
+	ov_vector_compare((const OV_POINTER)(pvalue1),							\
+	(const OV_POINTER)(pvalue2), (veclen)+0*((pvalue1)-(OV_##type*)0)		\
+	+0*((pvalue2)-(OV_##type*)0), (veclen)*sizeof(OV_##type), OV_VT_##type)
 
 /*
 *	Convert a time (span) into a double variable
@@ -404,8 +404,8 @@
 *	Convert a double into a time (span) variable
 */
 #define Ov_DoubleToTime(dbl, time)											\
-	(time).secs = dbl;														\
-	(time).usecs = (dbl-(OV_DOUBLE)(time).secs)*(OV_DOUBLE)1e6
+	(time).secs = (dbl);													\
+	(time).usecs = ((dbl)-(OV_DOUBLE)(time).secs)*(OV_DOUBLE)1e6
 
 /*
 *	Allocate memory in the database
