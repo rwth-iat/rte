@@ -122,6 +122,11 @@ protected:
         PltListIterator <const KscPackage *> pkgs_it;
     };
     // end of class DeepIterator
+
+#if PLT_DEBUG
+public:
+    void debugPrint(ostream &, bool) const;
+#endif
 };
 
 //
@@ -174,6 +179,11 @@ protected:
                *set_pkg;
 
     const KscAvModule *av_module;
+
+#if PLT_DEBUG
+public:
+    void debugPrint(ostream &, bool) const;
+#endif
 };
     
 //////////////////////////////////////////////////////////////////////

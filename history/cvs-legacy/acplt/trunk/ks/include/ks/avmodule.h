@@ -62,7 +62,7 @@ class KscAvModule
 {
 public:
     virtual ~KscAvModule() {}
-    virtual KscNegotiator *getNegotiator() = 0;
+    virtual KscNegotiator *getNegotiator() const = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -90,11 +90,24 @@ class KscAvNoneModule
 : public KscAvModule
 {
 public:
-    KscNegotiator *getNegotiator();
+    KscNegotiator *getNegotiator() const;
+
+    static KscNegotiator *getStaticNegotiator();
 
 private:
     static KscNoneNegotiator the_negotiator;
 };
+
+//////////////////////////////////////////////////////////////////////
+// Inline Implementation
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscNegotiator *
+KscAvNoneModule::getStaticNegotiator()
+{
+    return &the_negotiator;
+}
 
 #endif
 

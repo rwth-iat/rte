@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 
-#ifndef KSC_FULLPATH_INCLUDED
-#define KSC_FULLPATH_INCLUDED
+#ifndef KSC_ABSPATH_INCLUDED
+#define KSC_ABSPATH_INCLUDED
 
 /*
  * Copyright (c) 1996, 1997

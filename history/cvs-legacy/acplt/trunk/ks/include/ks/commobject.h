@@ -42,14 +42,16 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <plt/hashtable.h>
+#include "plt/debug.h"
+#include "plt/rtti.h"
+#include "plt/hashtable.h"
 
-#include <ks/props.h>
-#include <ks/abspath.h>
+#include "ks/props.h"
+#include "ks/abspath.h"
+#include "ks/avmodule.h"
 
 //////////////////////////////////////////////////////////////////////
 // forward declarations
-class KscAvModule;
 class KscServer;
 
 //////////////////////////////////////////////////////////////////////
@@ -59,9 +61,13 @@ class KscServer;
 class KscCommObject
 {
 public:
-    KscCommObject(const KscAbsPath &object_path);
+    KscCommObject(const char *object_path);
+//  KscCommObject(const KscAbsPath &object_path);
+
     virtual ~KscCommObject();
 
+    // selectors
+    //
     PltString getName() const;
     KscAbsPath getHostAndServer() const;
     const KscAbsPath &getFullPath() const; 
@@ -77,10 +83,28 @@ public:
     virtual const KscAvModule *getAvModule() const;
 
 protected:
+    KscServer *findServer();
+    // returns negotiator which is only approbiate for
+    // single access to this object
+    KscNegotiator *getNegotiator();
+
+    friend class KscDomain;
+    virtual bool setProjProps(KsProjPropsHandle) = 0;
+
     KscAbsPath path;
+    KscServer *server;
     const KscAvModule *av_module;
 
-    virtual bool setProjProps(KsProjPropsHandle) = 0;
+    PLT_DECL_RTTI;
+
+private:
+    KscCommObject(const KscCommObject &other); // forbidden
+    KscCommObject &operator = (const KscCommObject &other); // forbidden
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream &os) const;
+#endif
 };
 
 
@@ -94,7 +118,8 @@ class KscDomain
 : public KscCommObject
 {
 public:
-    KscDomain(const KscAbsPath &domain_path);
+    KscDomain(const char *domain_path);
+//  KscDomain(const KscAbsPath &domain_path);
 
     KS_OBJ_TYPE typeCode() const;
 
@@ -116,9 +141,6 @@ protected:
 
     bool setProjProps(KsProjPropsHandle);
 
-#if 0
-    // TODO : DEBUG
-    //
     class ChildIterator
     : public KscChildIterator
     {
@@ -130,11 +152,20 @@ protected:
         void toStart();                   // go to the beginning
         const KsProjProps * operator -> () const;
     private:
-        enum_t type_mask;
         PltHashIterator<KscAbsPath, KscCommObject *> it;
+        enum_t type_mask;
     };
+
+    PLT_DECL_RTTI;
+
+public:
+    KscDomain(const KscDomain &other); // forbidden
+    KscDomain &operator = (const KscDomain &other); // forbidden
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream &os) const;
 #endif
-        
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -145,7 +176,8 @@ class KscVariable
 : public KscCommObject
 {
 public:
-    KscVariable(const KscAbsPath &var_name);
+    KscVariable(const char *var_name);
+//  KscVariable(const KscAbsPath &var_name);
 
     KS_OBJ_TYPE typeCode() const;
 
@@ -168,7 +200,213 @@ protected:
     bool fDirty;
 
     bool setProjProps(KsProjPropsHandle);
+
+    PLT_DECL_RTTI;
+
+private:
+    KscVariable(const KscVariable &other); // forbidden
+    KscVariable &operator = (const KscVariable &other); // forbidden
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream &os) const;
+#endif
 };
+
+
+//////////////////////////////////////////////////////////////////////
+// Inline Implementation
+//
+
+inline
+PltString
+KscCommObject::getName() const
+{
+    return path.getVarPath();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscAbsPath
+KscCommObject::getHostAndServer() const
+{
+    return path.getHostAndServer();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KscAbsPath &
+KscCommObject::getFullPath() const
+{
+    return path;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+void
+KscCommObject::setAvModule(const KscAvModule *avm) 
+{
+    // don't delete old AvModule since we are not owner
+    // of it
+    //
+    av_module = avm;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KscAvModule *
+KscCommObject::getAvModule() const
+{
+    return av_module;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscDomain::KscDomain(const char *domain_path)
+: KscCommObject(domain_path)
+{}
+
+//////////////////////////////////////////////////////////////////////
+#if 0
+
+inline
+KscDomain::KscDomain(const KscAbsPath &domain_path)
+: KscCommObject(domain_path)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscDomain::KscDomain(const KscDomain &other)
+: KscCommObject(other),
+  proj_props(other.proj_props),
+  child_table(other.child_table)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscDomain &
+KscDomain::operator = (const KscDomain &other)
+{
+    KscCommObject::operator = (other);
+
+    proj_props = other.proj_props;
+    child_table = other.child_table;
+
+    return *this;
+}
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_OBJ_TYPE
+KscDomain::typeCode() const
+{
+    return KS_OT_DOMAIN;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KsDomainProjProps *
+KscDomain::getProjProps() const
+{
+    return &proj_props;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscVariable::KscVariable(const char *var_path)
+: KscCommObject(var_path),
+  fDirty(false)
+{}
+
+//////////////////////////////////////////////////////////////////////
+#if 0
+
+inline
+KscVariable::KscVariable(const KscAbsPath &var_path)
+: KscCommObject(var_path),
+  fDirty(false)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscVariable::KscVariable(const KscVariable &other)
+: KscCommObject(other),
+  proj_props(other.proj_props),
+  curr_props(other.curr_props),
+  fDirty(other.fDirty)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscVariable &
+KscVariable::operator = (const KscVariable &other)
+{
+    KscCommObject::operator = (other);
+    
+    proj_props = other.proj_props;
+    curr_props = other.curr_props;
+    fDirty = other.fDirty;
+
+    return *this;
+}
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_OBJ_TYPE
+KscVariable::typeCode() const
+{
+    return KS_OT_VARIABLE;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KsVarProjProps *
+KscVariable::getProjProps() const
+{
+    return &proj_props;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KsVarCurrProps *
+KscVariable::getCurrProps() const
+{
+    return &curr_props;
+}
+ 
+//////////////////////////////////////////////////////////////////////
+
+inline
+bool
+KscVariable::isDirty() const
+{
+    return fDirty;
+}
+
+//////////////////////////////////////////////////////////////////////
+// End of  Inline Implementation
+//////////////////////////////////////////////////////////////////////
 
 #endif
 

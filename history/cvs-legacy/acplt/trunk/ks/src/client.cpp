@@ -55,14 +55,9 @@ extern "C" {
 #endif
 
 //////////////////////////////////////////////////////////////////////
-// Currently KscNegotiator / KscAvModule not implemented.
-// Instead we are using this simple KsAvNoneTicket.
-//
-KsAvNoneTicket ksc_the_ticket(KS_ERR_OK, KS_AC_READ | KS_AC_WRITE);
-
-//////////////////////////////////////////////////////////////////////
 // initialize static data
 KscClient *KscClient::the_client = 0;
+KscNegotiator *KscClient::none_negotiator = 0; 
 
 //////////////////////////////////////////////////////////////////////
 // class KscClient
@@ -72,6 +67,7 @@ KscClient::KscClient()
 {
     PLT_PRECONDITION(the_client == 0);
     the_client = this;
+    none_negotiator = KscAvNoneModule::getStaticNegotiator();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -96,75 +92,66 @@ KscClient::~KscClient()
 //////////////////////////////////////////////////////////////////////
 
 KscServer *
-KscClient::createServer(KsString host, 
-                        const KsServerDesc &desc)
-{
-    KsString temp("/");
-    temp += host;
-    temp += "/";
-    temp += desc.name;
-
-    KscAbsPath full_name(temp);
-    PLT_ASSERT(full_name.isValid());
-
-    KscServer *pServer = 0;
-
-    if( server_table.query(full_name, pServer) ) {
-        // server already exists, return pointer to it
-        //
-        return pServer;
-    }
-    else {
-        // create new server
-        //
-        pServer = new KscServer(host, desc);
-        if( pServer && pServer->getStatus() == KscServer::KscOk ) {
-            // object successfully created
-            //
-            server_table.add(full_name, pServer);
-            return pServer;
-        }
-
-        // creation failed, clean up if necessary
-        if( pServer ) {
-            delete pServer;
-        }
-        return 0;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-KscServer *
 KscClient::getServer(const KscAbsPath &host_and_name) 
 {
     PLT_PRECONDITION(host_and_name.isValid());
 
-    KscServer *pServer;
-
-#if PLT_DEBUG
-    cout << "KscClient : Server "
-         << host_and_name
-         << " requested"
-         << endl;
-#endif
+    KscServer *pServer = 0;
 
     bool ok = server_table.query(host_and_name, pServer);
 
-#if PLT_DEBUG
-    if( ok ) {
-        cout << "Success: located at "
-             << pServer << endl;
+    if(!ok) {
+        // create new server
+        //
+        pServer = new KscServer(host_and_name.getHost(), 
+                                KsServerDesc(host_and_name.getServer(),
+                                             KS_PROTOCOL_VERSION));
+        if(pServer) {
+            // object successfully created
+            //
+            server_table.add(host_and_name, pServer);
+        }
     }
-    else {
-        cout << "failed"
-             << endl;
-        printServers();
-    }
-#endif
 
-    return ok ? pServer : 0;
+    return pServer;
 }
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KscClient::deleteServer(KscServer *server)
+{
+    KscServer *temp = 0;
+
+    // remove server from table
+    //
+    bool ok = 
+        server_table.remove(server->getHostAndName(), temp);
+
+    PLT_ASSERT(ok && (temp == server));
+
+    delete server;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscNegotiator *
+KscClient::getNegotiator()
+{
+    KscNegotiator *neg;
+
+    if(av_module) {
+        neg = av_module->getNegotiator();
+        if(neg) {
+            return neg;
+        }
+    }
+
+    // there is no special negotiator,
+    // return standard AvNoneNegotiator
+    return none_negotiator;
+}
+
         
 //////////////////////////////////////////////////////////////////////
 #if PLT_DEBUG
@@ -193,38 +180,63 @@ KscClient::printServers()
 // class KscServer
 //
 // Constructor
-//   We try to establish an TCP connect to the named server.
-//   After construction error conditions should be checked 
-//   with getStatus() and getErrcode().
+// Just copies the given data for later use.
 //
 KscServer::KscServer(KsString host, 
                      const KsServerDesc &server)
-: host_name(host)
+: host_name(host),
+  server_desc(server),
+  errcode(RPC_SUCCESS),
+  status(KscNotInitiated),
+  pClient(0),
+  ref_count(0)
 {
+}
+
+//////////////////////////////////////////////////////////////////////
+// Destructor
+// We close the TCP connection and destroy all related communication
+// objects.
+//
+KscServer::~KscServer()
+{
+    destroyTransport();
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// try to establish a connection to the server
+//
+bool
+KscServer::createTransport()
+{
+    // destroy old link if exists
+    //
+    if(pClient) {
+        destroyTransport();
+    }
+
     struct hostent *hp;
     struct sockaddr_in server_addr; 
     int socket = RPC_ANYSOCK;
     
-    status = KscOk;         // assumes everything is ok
-    errcode = RPC_SUCCESS;  // 
-
     // locate host
     //
-    hp = gethostbyname(host);
+    hp = gethostbyname(host_name);
     if( !hp ) {
         status = KscHostNotFound;
-        return;
+        return false;
     }
 
     // request server description from manager
     //
-    if( !getServerDesc(hp, server, server_info) ) {
+    if( !getServerDesc(hp, server_desc, server_info) ) {
         // dont change status set by getServerDescription()
-        return;
+        return false;
     }
     if( server_info.result != KS_ERR_OK ) {
         status = KscNoServer;
-        return;
+        return false;
     }
 
 #if PLT_DEBUG
@@ -244,7 +256,7 @@ KscServer::KscServer(KsString host,
 
     pClient = clnttcp_create(&server_addr,
                              KS_RPC_PROGRAM_NUMBER,
-                             server.protocol_version,
+                             server_desc.protocol_version,
                              &socket,
                              0, 0 );
 
@@ -253,42 +265,35 @@ KscServer::KscServer(KsString host,
 #if PLT_DEBUG
         clnt_pcreateerror("ERROR :");
 #endif
-        return;
+        return false;
     }
 
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////
-// Destructor
-// We close the TCP connection and destroy all related communication
-// objects.
-//
-KscServer::~KscServer()
+
+void 
+KscServer::destroyTransport()
 {
     if(pClient) {
         clnt_destroy(pClient);
     }
-
-    PltHashIterator<KscAbsPath,KscCommObject *>  it(object_table);
-    while(it) {
-        delete it->a_value;
-        ++it;
-    }
 }
-
+    
 //////////////////////////////////////////////////////////////////////
 // getServerDescription and helper structs and classes
 //
 
 struct KscGetServerInStruct 
 {
-    KscGetServerInStruct(KsAvTicket *avTicket, 
-                        KsGetServerParams *params)
+    KscGetServerInStruct(KscNegotiator *avTicket, 
+                         KsGetServerParams *params)
     : avt(avTicket),
       gsp(params)
     {}
 
-    KsAvTicket *avt; // TODO : change to KscAvModule
+    KscNegotiator *avt; 
     KsGetServerParams *gsp;
 };
 
@@ -299,7 +304,7 @@ struct KscGetServerOutStruct
       gsr(result)
     {}
 
-    KsAvTicket *avt; // TODO : change to KscAvModule
+    KscNegotiator *avt; 
     KsGetServerResult *gsr;
 };
 
@@ -324,15 +329,10 @@ KscGetServerOutHelper(XDR *xdr, void *p)
     KscGetServerOutStruct *data = 
         (KscGetServerOutStruct *)p;
     
-    data->avt = KsAvTicket::xdrNew(xdr);
+    PLT_ASSERT(data->avt && data->gsr);
 
-    if( !data->avt ) {
-        return false;
-    } 
-
-    PLT_ASSERT(data->gsr);
-
-    return data->gsr->xdrDecode(xdr);
+    return data->avt->xdrDecode(xdr)
+        && data->gsr->xdrDecode(xdr);
 }
 
 bool
@@ -350,14 +350,12 @@ KscServer::getServerDesc(struct hostent *hp,
     addr_manager.sin_family = AF_INET;
     addr_manager.sin_port = htons(0);
     memcpy(&addr_manager.sin_addr.s_addr, hp->h_addr, hp->h_length);
-
-    // changed to TCP for testing
-    //
-    pUDP = clnttcp_create(&addr_manager,
+    
+    pUDP = clntudp_create(&addr_manager,
                           KS_RPC_PROGRAM_NUMBER,
                           KS_PROTOCOL_VERSION,
-                          // wait,
-                          &socket, 0, 0);
+                          KSC_UDP_TIMEOUT,
+                          &socket);
     if( !pUDP ) {
         status = KscCannotCreateUDPClient;
 #if PLT_DEBUG
@@ -383,8 +381,9 @@ KscServer::getServerDesc(struct hostent *hp,
     // ask manager for server description
     //
     KsGetServerParams params(server);
-    KsAvNoneTicket avTicket(KS_ERR_OK, KS_AC_READ | KS_AC_WRITE);
-    KscGetServerInStruct inData(&avTicket, &params);
+    KscGetServerInStruct inData(
+        KscAvNoneModule::getStaticNegotiator(), 
+        &params);
     KscGetServerOutStruct outData(&server_desc);
 
     errcode = clnt_call(pUDP, 
@@ -420,24 +419,25 @@ KscServer::getServerDesc(struct hostent *hp,
 
 struct KscGetPPInStruct
 {
-    KscGetPPInStruct(KsAvTicket *avTicket,
-                      const KsGetPPParams *params)
+    KscGetPPInStruct(KscNegotiator *avTicket,
+                     const KsGetPPParams *params)
     : avt(avTicket),
       gpp(params)
     {}
 
-    KsAvTicket *avt;
+    KscNegotiator *avt;
     const KsGetPPParams *gpp;
 };
 
 struct KscGetPPOutStruct
 {
-    KscGetPPOutStruct(KsGetPPResult *result)
-    : avt(0),
+    KscGetPPOutStruct(KscNegotiator *neg,
+                      KsGetPPResult *result)
+    : avt(neg),
       gpr(result)
     {}
 
-    KsAvTicket *avt;
+    KscNegotiator *avt;
     KsGetPPResult *gpr;
 };
 
@@ -462,28 +462,33 @@ KscGetPPOutHelper(XDR *xdr, void *p)
     KscGetPPOutStruct *data = 
         (KscGetPPOutStruct *)p;
     
-    data->avt = KsAvTicket::xdrNew(xdr);
-
-    if( !data->avt ) {
-        return false;
-    } 
-
+    PLT_ASSERT(data->avt);
     PLT_ASSERT(data->gpr);
 
-    return data->gpr->xdrDecode(xdr);
+    return data->avt->xdrDecode(xdr)
+        && data->gpr->xdrDecode(xdr);
 }
 
 
 bool 
-KscServer::getPP(const KsGetPPParams &params,
+KscServer::getPP(KscNegotiator *negotiator,
+                 const KsGetPPParams &params,
                  KsGetPPResult &result)
 {
-    PLT_PRECONDITION(pClient);
+    // create client handle if neccessary
+    //
+    if(!pClient) {
+        if( !createTransport() ) {
+            return false;
+        }
+    }
+
+    PLT_ASSERT(pClient);
 
 #if PLT_DEBUG
     cout << "Requesting server " 
          << host_name << "/" << server_info.server.name 
-         << "for getPP service." << endl;
+         << " for getPP service." << endl;
     cout << "Parameters : " << endl; 
     cout << "\tPath : " << params.path << endl;
     cout << "\tType mask : " << params.type_mask << endl;
@@ -491,20 +496,24 @@ KscServer::getPP(const KsGetPPParams &params,
     cout << endl;
 #endif
 
-    KscGetPPInStruct inData(&ksc_the_ticket,&params);
-    KscGetPPOutStruct outData(&result);
+    KscGetPPInStruct inData(negotiator, &params);
+    KscGetPPOutStruct outData(negotiator, &result);
 
-    errcode = clnt_call(pClient, KS_GETVAR,
+    errcode = clnt_call(pClient, KS_GETPP,
                         KscGetPPInHelper,
                         &inData,
                         KscGetPPOutHelper,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
-    if(outData.avt) {
-        // AvTicket currently unused
-        delete outData.avt;
+#if PLT_DEBUG
+    if(errcode == RPC_SUCCESS) {
+        cout << "request successfull" << endl;
     }
+    else {
+        cout << "request failed" << endl;
+    }
+#endif
 
     return errcode == RPC_SUCCESS;
 }
@@ -516,24 +525,25 @@ KscServer::getPP(const KsGetPPParams &params,
 
 struct KscGetVarInStruct
 {
-    KscGetVarInStruct(KsAvTicket *avTicket,
+    KscGetVarInStruct(KscNegotiator *avTicket,
                       const KsGetVarParams *params)
     : avt(avTicket),
       gvp(params)
     {}
 
-    KsAvTicket *avt;
+    KscNegotiator *avt;
     const KsGetVarParams *gvp;
 };
 
 struct KscGetVarOutStruct
 {
-    KscGetVarOutStruct(KsGetVarResult *result)
-    : avt(0),
+    KscGetVarOutStruct(KscNegotiator *neg,
+                       KsGetVarResult *result)
+    : avt(neg),
       gvr(result)
     {}
 
-    KsAvTicket *avt;
+    KscNegotiator *avt;
     KsGetVarResult *gvr;
 };
 
@@ -558,31 +568,35 @@ KscGetVarOutHelper(XDR *xdr, void *p)
     KscGetVarOutStruct *data = 
         (KscGetVarOutStruct *)p;
     
-    data->avt = KsAvTicket::xdrNew(xdr);
+    PLT_ASSERT(data->gvr && data->avt);
 
-    if( !data->avt ) {
-        return false;
-    } 
-
-    PLT_ASSERT(data->gvr);
-
-    return data->gvr->xdrDecode(xdr);
+    return data->avt->xdrDecode(xdr)
+        && data->gvr->xdrDecode(xdr);
 }
 
 
 bool 
-KscServer::getVar(const KsGetVarParams &params,
+KscServer::getVar(KscNegotiator *negotiator,
+                  const KsGetVarParams &params,
                   KsGetVarResult &result)
 {
-    PLT_PRECONDITION(pClient);
+    // create client handle if neccessary
+    //
+    if(!pClient) {
+        if( !createTransport() ) {
+            return false;
+        }
+    }
+
+    PLT_ASSERT(pClient);
 
 #if PLT_DEBUG
     cout << "GetVar request to server "
          << host_name << "/" << server_info.server.name << endl;
 #endif
 
-    KscGetVarInStruct inData(&ksc_the_ticket,&params);
-    KscGetVarOutStruct outData(&result);
+    KscGetVarInStruct inData(negotiator, &params);
+    KscGetVarOutStruct outData(negotiator, &result);
 
     errcode = clnt_call(pClient, KS_GETVAR,
                         KscGetVarInHelper,
@@ -591,10 +605,15 @@ KscServer::getVar(const KsGetVarParams &params,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
-    if(outData.avt) {
-        // AvTicket currently unused
-        delete outData.avt;
+#if PLT_DEBUG
+    if(errcode == RPC_SUCCESS) {
+        cout << "GetVar request successfull" << endl;
     }
+    else {
+        cout << "GetVar request failed" << endl;
+        cout << clnt_sperror(pClient, "");
+    }
+#endif
 
     return errcode == RPC_SUCCESS;
 }
@@ -606,24 +625,25 @@ KscServer::getVar(const KsGetVarParams &params,
 
 struct KscSetVarInStruct
 {
-    KscSetVarInStruct(KsAvTicket *avTicket,
+    KscSetVarInStruct(KscNegotiator *avTicket,
                       const KsSetVarParams *params)
     : avt(avTicket),
       svp(params)
     {}
 
-    KsAvTicket *avt;
+    KscNegotiator *avt;
     const KsSetVarParams *svp;
 };
 
 struct KscSetVarOutStruct
 {
-    KscSetVarOutStruct(KsSetVarResult *result)
-    : avt(0),
+    KscSetVarOutStruct(KscNegotiator *neg,
+                       KsSetVarResult *result)
+    : avt(neg),
       svr(result)
     {}
 
-    KsAvTicket *avt;
+    KscNegotiator *avt;
     KsSetVarResult *svr;
 };
 
@@ -648,31 +668,35 @@ KscSetVarOutHelper(XDR *xdr, void *p)
     KscSetVarOutStruct *data = 
         (KscSetVarOutStruct *)p;
     
-    data->avt = KsAvTicket::xdrNew(xdr);
+    PLT_ASSERT(data->avt && data->svr);
 
-    if( !data->avt ) {
-        return false;
-    } 
-
-    PLT_ASSERT(data->svr);
-
-    return data->svr->xdrDecode(xdr);
+    return data->avt->xdrDecode(xdr)
+        && data->svr->xdrDecode(xdr);
 }
 
 
 bool 
-KscServer::setVar(const KsSetVarParams &params,
+KscServer::setVar(KscNegotiator *negotiator,
+                  const KsSetVarParams &params,
                   KsSetVarResult &result)
 {
-    PLT_PRECONDITION(pClient);
+    // create client handle if neccessary
+    //
+    if(!pClient) {
+        if( !createTransport() ) {
+            return false;
+        }
+    }
+
+    PLT_ASSERT(pClient);
 
 #if PLT_DEBUG
     cout << "SetVar request to server "
          << host_name << "/" << server_info.server.name << endl;
 #endif
 
-    KscSetVarInStruct inData(&ksc_the_ticket,&params);
-    KscSetVarOutStruct outData(&result);
+    KscSetVarInStruct inData(negotiator, &params);
+    KscSetVarOutStruct outData(negotiator, &result);
 
     errcode = clnt_call(pClient, KS_SETVAR,
                         KscSetVarInHelper,
@@ -681,15 +705,9 @@ KscServer::setVar(const KsSetVarParams &params,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
-    if(outData.avt) {
-        // AvTicket currently unused
-        delete outData.avt;
-    }
-
     return errcode == RPC_SUCCESS;
 }
   
-
 
 //////////////////////////////////////////////////////////////////////
 // helper structs and functions for exgData()
@@ -697,24 +715,25 @@ KscServer::setVar(const KsSetVarParams &params,
 
 struct KscExgDataInStruct
 {
-    KscExgDataInStruct(KsAvTicket *avTicket,
-                      const KsExgDataParams *params)
+    KscExgDataInStruct(KscNegotiator *avTicket,
+                       const KsExgDataParams *params)
     : avt(avTicket),
       edp(params)
     {}
 
-    KsAvTicket *avt;
+    KscNegotiator *avt;
     const KsExgDataParams *edp;
 };
 
 struct KscExgDataOutStruct
 {
-    KscExgDataOutStruct(KsExgDataResult *result)
-    : avt(0),
+    KscExgDataOutStruct(KscNegotiator *neg,
+                        KsExgDataResult *result)
+    : avt(neg),
       edr(result)
     {}
 
-    KsAvTicket *avt;
+    KscNegotiator *avt;
     KsExgDataResult *edr;
 };
 
@@ -739,31 +758,35 @@ KscExgDataOutHelper(XDR *xdr, void *p)
     KscExgDataOutStruct *data = 
         (KscExgDataOutStruct *)p;
     
-    data->avt = KsAvTicket::xdrNew(xdr);
+    PLT_ASSERT(data->avt && data->edr);
 
-    if( !data->avt ) {
-        return false;
-    } 
-
-    PLT_ASSERT(data->edr);
-
-    return data->edr->xdrDecode(xdr);
+    return data->avt->xdrDecode(xdr)
+        && data->edr->xdrDecode(xdr);
 }
 
 
 bool 
-KscServer::exgData(const KsExgDataParams &params,
-                  KsExgDataResult &result)
+KscServer::exgData(KscNegotiator *negotiator,
+                   const KsExgDataParams &params,
+                   KsExgDataResult &result)
 {
-    PLT_PRECONDITION(pClient);
+    // create client handle if neccessary
+    //
+    if(!pClient) {
+        if( !createTransport() ) {
+            return false;
+        }
+    }
+
+    PLT_ASSERT(pClient);
 
 #if PLT_DEBUG
     cout << "ExgData request to server "
          << host_name << "/" << server_info.server.name << endl;
 #endif
 
-    KscExgDataInStruct inData(&ksc_the_ticket,&params);
-    KscExgDataOutStruct outData(&result);
+    KscExgDataInStruct inData(negotiator, &params);
+    KscExgDataOutStruct outData(negotiator, &result);
 
     errcode = clnt_call(pClient, KS_EXGDATA,
                         KscExgDataInHelper,
@@ -772,43 +795,56 @@ KscServer::exgData(const KsExgDataParams &params,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
-    if(outData.avt) {
-        // AvTicket currently unused
-        delete outData.avt;
-    }
-
     return errcode == RPC_SUCCESS;
 }            
 
 
 //////////////////////////////////////////////////////////////////////
+// Section for handling of communication objects
+//
 
-bool
-KscServer::registerVar(KscCommObject *newObject) 
+void
+KscServer::incRefcount() 
 {
-    if(newObject) {
-        object_table.add(newObject->getFullPath(), newObject);
-        return true;
-    }
-
-    return false;
+    ref_count++;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-bool
-KscServer::deregisterVar(KscCommObject *object)
+void
+KscServer::decRefcount()
 {
-    if(object) {
-        KscCommObject *temp;
-        if(object_table.query(object->getFullPath(),temp)) {
-            PLT_ASSERT(temp == object);
-            return true;
+    if( !(--ref_count) ) {
+        // no more referring objects left
+        // destroy this object
+        //
+        KscClient *the_client =
+            KscClient::getClient();
+        the_client->deleteServer(this);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+KscNegotiator *
+KscServer::getNegotiator()
+{
+    KscNegotiator *neg;
+
+    if(av_module) {
+        neg = av_module->getNegotiator();
+        if(neg) {
+            return neg;
         }
     }
 
-    return false;
-}
+    neg = KscClient::getClient()->getNegotiator();
+
+    PLT_ASSERT(neg);
+
+    return neg;
+}        
         
 //////////////////////////////////////////////////////////////////////
 // EOF client.cpp
@@ -818,6 +854,9 @@ KscServer::deregisterVar(KscCommObject *object)
     
     
     
+
+
+
 
 
 

@@ -39,25 +39,129 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <ks/commobject.h>
-#include <ks/client.h>
+#include "ks/commobject.h"
+#include "ks/client.h"
 
 //////////////////////////////////////////////////////////////////////
-// Inline Implementation
-// These functions should be inline, but there seems to be a compiler
-// or linker error.
+// printing functions for debbugging
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG
+
+void
+KscCommObject::debugPrint(ostream &os) const
+{
+    os << "Path and Name: " << path << endl;
+}
+
 //////////////////////////////////////////////////////////////////////
 
+void
+KscVariable::debugPrint(ostream &os) const
+{
+    os << "KscVariable object :" << endl;
+    KscCommObject::debugPrint(os);
+    os << "Dirty Flag : " << fDirty << endl;
+    proj_props.debugPrint(os);
+    curr_props.debugPrint(os);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KscDomain::debugPrint(ostream &os) const
+{
+    os << "KscDomain object :" << endl;
+    KscCommObject::debugPrint(os);
+    proj_props.debugPrint(os);
+    os << child_table.size() << " childs :" << endl;
+
+    // iterate over childs and print them
+    //
+    PltHashIterator<KscAbsPath, KscCommObject *> it(child_table);
+
+    while(it) {
+        it->a_value->debugPrint(os);
+        ++it;
+    }
+}
+
+#endif // PLT_DEBUG
+
+//////////////////////////////////////////////////////////////////////
+// end of debbugging section
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+// Implementation of RTTI
+//
+PLT_IMPL_RTTI0(KscCommObject);
+PLT_IMPL_RTTI1(KscVariable, KscCommObject);
+PLT_IMPL_RTTI1(KscDomain, KscCommObject);
+
+
+//////////////////////////////////////////////////////////////////////
+// class KscCommObject
+//////////////////////////////////////////////////////////////////////
+
+KscCommObject::KscCommObject(const char *object_path)
+: path(object_path),
+  av_module(0)
+{
+    PLT_PRECONDITION(path.isValid());
+
+    server = findServer();
+    PLT_ASSERT(server);
+    server->incRefcount();
+}
+
+//////////////////////////////////////////////////////////////////////
+#if 0
 KscCommObject::KscCommObject(const KscAbsPath &object_path)
 : path(object_path),
   av_module(0)
 {
     PLT_PRECONDITION(path.isValid());
 
-    KscServer *myServer = getServer();
-    PLT_ASSERT(myServer);
-    myServer->registerVar(this);
+    server = findServer();
+    PLT_ASSERT(server);
+    server->incRefcount(this);
 }
+
+//////////////////////////////////////////////////////////////////////
+
+KscCommObject::KscCommObject(const KscCommObject &other)
+: path(other.path),
+  server(other.server),
+  av_module(other.av_module)
+{
+    PLT_ASSERT(myServer);
+    server->incRefcount();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscCommObject &
+KscCommObject::operator = (const KscCommObject &other)
+{
+    // deregister at old server
+    //
+    server->decRefcount();
+
+    // copy data
+    //
+    path = other.path;
+    server = other.server;
+    av_module = other.av_module;
+
+    // register at new server
+    //
+    server->incRefcount();
+
+    return *this;
+}
+
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -65,132 +169,13 @@ KscCommObject::~KscCommObject()
 {
     KscServer *myServer = getServer();
     PLT_ASSERT(myServer);
-    myServer->deregisterVar(this);
+    myServer->decRefcount();
 }
 
 //////////////////////////////////////////////////////////////////////
-
-PltString
-KscCommObject::getName() const
-{
-    return path.getVarPath();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-KscAbsPath
-KscCommObject::getHostAndServer() const
-{
-    return path.getHostAndServer();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-const KscAbsPath &
-KscCommObject::getFullPath() const
-{
-    return path;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void
-KscCommObject::setAvModule(const KscAvModule *avm) 
-{
-    // don't delete old AvModule since we are not owner
-    // of it
-    //
-    av_module = avm;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-
-const KscAvModule *
-KscCommObject::getAvModule() const
-{
-    return av_module;
-}
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-
-KscDomain::KscDomain(const KscAbsPath &domain_path)
-: KscCommObject(domain_path)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-KS_OBJ_TYPE
-KscDomain::typeCode() const
-{
-    return KS_OT_DOMAIN;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-const KsDomainProjProps *
-KscDomain::getProjProps() const
-{
-    return &proj_props;
-}
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-
-KscVariable::KscVariable(const KscAbsPath &var_path)
-: KscCommObject(var_path),
-  fDirty(false)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-KS_OBJ_TYPE
-KscVariable::typeCode() const
-{
-    return KS_OT_VARIABLE;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-
-const KsVarProjProps *
-KscVariable::getProjProps() const
-{
-    return &proj_props;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-
-const KsVarCurrProps *
-KscVariable::getCurrProps() const
-{
-    return &curr_props;
-}
- 
-//////////////////////////////////////////////////////////////////////
-
-
-bool
-KscVariable::isDirty() const
-{
-    return fDirty;
-}
-
-//////////////////////////////////////////////////////////////////////
-// End of  Inline Implementation
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
-// class KscCommObject
-//////////////////////////////////////////////////////////////////////
-
+   
 KscServer *
-KscCommObject::getServer() const
+KscCommObject::findServer()
 {
     PLT_PRECONDITION(KscClient::getClient() != 0);
 
@@ -199,6 +184,40 @@ KscCommObject::getServer() const
 
 }
 
+//////////////////////////////////////////////////////////////////////
+
+KscServer *
+KscCommObject::getServer() const
+{
+    return server;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscNegotiator *
+KscCommObject::getNegotiator() 
+{
+    KscNegotiator *neg;
+ 
+    // first try to get private negotiator
+    //
+    if(av_module) {
+        neg = av_module->getNegotiator();
+        if(neg) {
+            return neg;
+        }
+    }
+
+    // now request the server for negotiator,
+    // the server should ensure that we get
+    // a valid object 
+    //
+    neg = getServer()->getNegotiator();
+
+    PLT_ASSERT(neg);
+
+    return neg;
+}
 
 //////////////////////////////////////////////////////////////////////
 // class KscDomain
@@ -217,7 +236,9 @@ KscDomain::getProjPropsUpdate()
     params.type_mask = KS_OT_DOMAIN;
     params.name_mask = KsString(path.getNameOnly());
 
-    bool ok = myServer->getPP(params, result);
+    bool ok = myServer->getPP(getNegotiator(),
+                              params, 
+                              result);
 
     if(ok &&
        result.result == KS_ERR_OK &&
@@ -250,8 +271,6 @@ KscDomain::setProjProps(KsProjPropsHandle hpp)
 
 //////////////////////////////////////////////////////////////////////
 
-#if 0
-
 bool
 KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
 {
@@ -262,10 +281,10 @@ KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
 
     // create and fill data structures
     //
-    KsGetPPParams params(path, typeMask, "*");
-    // params.path = path;
-    // params.type_mask = typeMask;
-    // params.name_mask = KsString("*");
+    KsGetPPParams params;
+    params.path = PltString(path.getVarPath());
+    params.type_mask = typeMask;
+    params.name_mask = KsString("*");
     KsGetPPResult result;
 
     // request service
@@ -280,7 +299,7 @@ KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
     //
     flushChilds(typeMask);
 
-    bool ok = true;
+    ok = true;
 
     while(!result.items.isEmpty() && ok) {
         KsProjPropsHandle hpp = result.items.removeFirst();
@@ -294,10 +313,10 @@ KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
             switch(hpp->xdrTypeCode()) 
             {
             case KS_OT_VARIABLE:
-                new_var = new KscVariable(KscAbsPath);
+                new_var = new KscVariable(new_path);
                 break;
             case KS_OT_DOMAIN:
-                new_var = new KscDomain(KscAbsPath);
+                new_var = new KscDomain(new_path);
                 break;
             default:
                 PLT_DMSG("Unknown objectype in KscDomain::updateChilds" << endl);
@@ -328,14 +347,16 @@ KscDomain::flushChilds(KS_OBJ_TYPE typeMask)
     KscCommObject *temp;
 
     while(it) {
-        if( it->a_value.typeCode() & typeMask ) {
+        if( it->a_value->typeCode() & typeMask ) {
             temp = 0;
-            child_table.remove(*it, temp);
+            child_table.remove(it->a_key, temp);
             PLT_ASSERT(temp);
-            delete temp;
+            // delete temp;
         }
         ++it;
     }
+
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -345,12 +366,13 @@ KscDomain::newChildIterator(KS_OBJ_TYPE typeMask,
                             bool update)
 {
     if( update ) {
-        if( !updateChildren() ) {
+        if( !updateChilds(typeMask) ) {
+            PLT_DMSG("Cannot update childs in KscDomain::newChildIterator" << endl);
             return 0;
         }
     }
 
-    ChildIterator *pit = new ChildIterator(*this, typeMask);
+    KscChildIterator *pit = new ChildIterator(*this, typeMask);
 
     return pit;
 }
@@ -369,7 +391,7 @@ KscDomain::ChildIterator::ChildIterator(const KscDomain &domain,
 KscDomain::ChildIterator::operator
 const void * () const 
 {
-    return it.operator const void ();
+    return it.operator const void * ();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -383,7 +405,7 @@ KscDomain::ChildIterator::operator ++ ()
         ++it;
     }
     while(it && 
-          !(it->typeCode() & type_mask));
+          !(it->a_value->typeCode() & type_mask));
     
     return *this;
 }
@@ -411,10 +433,9 @@ KscDomain::ChildIterator::operator -> () const
 {
     PLT_PRECONDITION(*this);
 
-    return &(*it);
+    return it->a_value->getProjProps();
 }
 
-#endif
 
 //////////////////////////////////////////////////////////////////////
 // class KscVariable
@@ -477,8 +498,9 @@ KscVariable::getUpdate()
 
     KsGetVarResult result(1);
 
-    bool ok = 
-        myServer->getVar(params, result);
+    bool ok = myServer->getVar(getNegotiator(),
+                               params, 
+                               result);
 
     if( ok && result.result == KS_ERR_OK )  {
         // check wether typecode is ok
@@ -515,7 +537,9 @@ KscVariable::setUpdate()
 
     KsSetVarResult result(1);
 
-    bool ok = myServer->setVar(params, result);
+    bool ok = myServer->setVar(getNegotiator(),
+                               params,
+                               result);
 
     if(ok && 
        result.result == KS_ERR_OK &&

@@ -50,6 +50,78 @@ PLT_IMPL_RTTI1(KsCurrProps, KsXdrUnion);
 PLT_IMPL_RTTI1(KsVarCurrProps, KsCurrProps);
 PLT_IMPL_RTTI1(KsDomainCurrProps, KsCurrProps);
 
+//////////////////////////////////////////////////////////////////////
+// print functions for debugging
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG
+
+void 
+KsProjProps::debugPrint(ostream &os) const
+{
+    os << "\tidentifier : " << identifier << endl;
+    os << "\tcreation time : " << creation_time.tv_sec
+       << "." << creation_time.tv_usec << endl;
+    os << "\tcomment : " << comment << endl;
+    os << "\taccess mode : " << access_mode << endl;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsDomainProjProps::debugPrint(ostream &os) const
+{
+    os << "Projected properties for domain :" << endl;
+    KsProjProps::debugPrint(os);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsVarProjProps::debugPrint(ostream &os) const
+{
+    os << "Projected Properties for variable :" << endl;
+    KsProjProps::debugPrint(os);
+    os << "\ttechnical unit : " << tech_unit << endl;
+    os << "\ttype : " << type << endl;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsCurrProps::debugPrint(ostream &) const
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsDomainCurrProps::debugPrint(ostream &os) const
+{
+    os << "Current properties for domain :" << endl;
+    os << "\t-no data-" << endl;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KsVarCurrProps::debugPrint(ostream &os) const
+{
+    os << "Current properties for variable :" << endl;
+    os << "\tvalue : ";
+    if(value) {
+        value->debugPrint(os);
+        os << endl;
+    }
+    else {
+        os << "no value set" << endl;
+    }
+    os << "\ttime : " << time.tv_sec
+       << "." << time.tv_usec << endl;
+    os << "\tstate : " << state << endl;
+}
+
+#endif // PLT_DEBUG
+
 ////////////////////////////////////////////////////////////////////////////
 // class KsProjProps
 ////////////////////////////////////////////////////////////////////////////

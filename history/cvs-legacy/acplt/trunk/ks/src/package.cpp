@@ -43,6 +43,67 @@
 #include <ks/client.h>
 
 //////////////////////////////////////////////////////////////////////
+// printing functions for debbugging
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG
+
+void
+KscPackage::debugPrint(ostream &os, bool printAll) const
+{
+    os << "KscPackage object :" << endl;
+    os << "Related server : ";
+    if(server_set) {
+        os << related_server << endl;
+    }
+    else {
+        os << "none" << endl;
+    }
+    os << "\tVariables : " << sizeVariables() << endl;
+    os << "\tSubpackages : " << sizeSubpackages() << endl;
+
+    if(printAll) {
+        // print variables
+        //
+        PltIterator<KscVariable> *varit =
+            newVariableIterator(false);
+        if(varit) {
+            while(*varit) {
+                // os << (*varit)->getFullPath() << endl;
+                (*varit)->debugPrint(os);
+                ++(*varit);
+            }
+            delete varit;
+        }
+        // print subpackages
+        //
+        PltIterator<KscPackage> *pkgit =
+            newSubpackageIterator();
+        if(pkgit) {
+            while(*pkgit) {
+                (*pkgit)->debugPrint(os,true);
+                ++(*pkgit);
+            }
+            delete pkgit;
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KscExchangePackage::debugPrint(ostream &os, bool printAll) const
+{
+    os << "KscExchangePackage object :" << endl;
+    os << "package to get :" << endl;
+    get_pkg->debugPrint(os,printAll);
+    os << "package to set :" << endl;
+    set_pkg->debugPrint(os,printAll);
+}
+
+#endif
+//////////////////////////////////////////////////////////////////////
+// end of debbugging section               
+//////////////////////////////////////////////////////////////////////
 
 KscPackage::KscPackage()
 : server_set(false),
@@ -62,7 +123,7 @@ KscPackage::~KscPackage()
 bool
 KscPackage::add(const KscVariable &var)
 {
-    if( server_set ) {
+    if( !server_set ) {
         // first variable, set related server object
         //
         related_server = var.getHostAndServer();
@@ -264,8 +325,8 @@ KscPackage::getUpdate()
     while(it) {
         KsCurrPropsHandle *hcp =
             &(result.items[count].item);
-        if(result.items[count].result != KS_ERR_OK
-           && (*hcp).getPtr() ) 
+        if(result.items[count].result == KS_ERR_OK
+           && *hcp ) 
         {
             PLT_ASSERT((*hcp)->xdrTypeCode() == KS_OT_VARIABLE);
 
@@ -482,3 +543,18 @@ KscPackage::DeepIterator::toStart()
     vars_it.toStart();
 }
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

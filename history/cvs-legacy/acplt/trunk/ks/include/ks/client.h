@@ -42,15 +42,15 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <ks/rpc.h>
-#include <ks/xdr.h>
-#include <ks/register.h>
-#include <ks/serviceparams.h>
-#include <ks/avticket.h>
-#include <ks/abspath.h>
-#include <ks/commobject.h>
+#include "ks/rpc.h"
+#include "ks/xdr.h"
+#include "ks/register.h"
+#include "ks/serviceparams.h"
+#include "ks/avmodule.h"
+#include "ks/abspath.h"
+#include "ks/commobject.h"
 
-#include <plt/hashtable.h>
+#include "plt/hashtable.h"
 
 //////////////////////////////////////////////////////////////////////
 // forward declaration
@@ -69,7 +69,9 @@ const struct timeval KSC_RPCCALL_TIMEOUT = {10, 0};  // or PltTime
 //
 // Tasks:
 // - keep track of server objects
-// - allow access to a variable by full name(not completed yet)
+//
+// It is not allowed to create more than one instance of this class.
+// Otherwise a runtime error occurrs.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -80,23 +82,36 @@ public:
     ~KscClient();
 
     static KscClient *getClient();
-    
-    // try to create specified server
-    // 
-    KscServer *createServer(KsString host, 
-                            const KsServerDesc &desc);
-    // find server
+
+    // find or create server
     //
     KscServer *getServer(const KscAbsPath &host_and_name); 
+
+    void setAvModule(const KscAvModule *);
+    const KscAvModule *getAvModule() const;
+
+    KscNegotiator *getNegotiator();
 
 #if PLT_DEBUG
     void printServers();
 #endif
 
 protected:
+    // destroy an server, should only be used
+    // by KscServer objects
+    //
+    friend class KscServer;
+    void deleteServer(KscServer *);
+
     // for each application there is only one KscClient object
     //
     static KscClient *the_client;
+
+    const KscAvModule *av_module;
+
+    // this negotiator is used if no AV-module is set
+    // or if the creation of a negotiator failed
+    static KscNegotiator *none_negotiator;
     
     PltHashTable<KscAbsPath,KscServer *> server_table;
 };
@@ -107,11 +122,10 @@ protected:
 class KscServer
 {
 public:
-    KscServer(KsString host, const KsServerDesc &server);
-    ~KscServer();
 
     enum TStatus {
         KscOk = 0,
+        KscNotInitiated,
         KscHostNotFound,
         KscCannotCreateClientHandle,
         KscCannotCreateUDPClient,
@@ -127,28 +141,37 @@ public:
     // ping server
     bool ping();
 
-    // TODO : handling of variables
-    // 
-    // KscCommObject *newCommObject(const KscAbsPath &);
-    // bool deleteCommObject(const KscAbsPath &);
-    // bool deleteCommObject(KscCommObject *);
-    
     // service functions
-    // TODO: integrate AV
     //
-    bool getPP(const KsGetPPParams &params,
+    bool getPP(KscNegotiator *negotiator,
+               const KsGetPPParams &params,
                KsGetPPResult &);
 
-    bool getVar(const KsGetVarParams &params,
+    bool getVar(KscNegotiator *negotiator,
+                const KsGetVarParams &params,
                 KsGetVarResult &result);
 
-    bool setVar(const KsSetVarParams &params,
+    bool setVar(KscNegotiator *negotiator,
+                const KsSetVarParams &params,
                 KsSetVarResult &result);
 
-    bool exgData(const KsExgDataParams &params,
+    bool exgData(KscNegotiator *negotiator,
+                 const KsExgDataParams &params,
                  KsExgDataResult &result);
 
-    // int initProjProps(); // TODO
+    // AV related functions
+    //
+    void setAvModule(const KscAvModule *);
+    const KscAvModule *getAvModule() const;
+    KscNegotiator *getNegotiator();
+
+    // selectors
+    //
+    PltString getHost() const;
+    PltString getName() const;
+    KscAbsPath getHostAndName() const;
+    u_short getProtocolVersion() const;
+    PltTime getExpiresAt() const;
 
 protected:
     // service functions
@@ -157,17 +180,31 @@ protected:
                        const KsServerDesc &server,       // description
                        KsGetServerResult &server_info);  // result
 
+    friend class KscCommObject;          // for access to the following functions
+    void incRefcount();
+    void decRefcount();
+
+    bool createTransport();
+    void destroyTransport();
+
     KsString host_name;
-    KsGetServerResult server_info;
-    enum clnt_stat errcode;
-    TStatus status;
-    CLIENT *pClient;
+    KsServerDesc server_desc;      // server description given by user
+    KsGetServerResult server_info; // server description given by manager
+    enum clnt_stat errcode;        // last RPC error code
+    TStatus status;                // internal status
+    CLIENT *pClient;               // RPC client handle
+    long ref_count;                // communication objects related to this server
+    const KscAvModule *av_module;
 
     PltHashTable<KscAbsPath,KscCommObject *> object_table;
 
-    friend class KscCommObject;          // for access to the following functions
-    bool registerVar(KscCommObject *);
-    bool deregisterVar(KscCommObject *);
+private:
+    friend class KscClient;
+    KscServer(KsString host, const KsServerDesc &server);
+    ~KscServer();
+
+    KscServer(const KscServer &);              // forbidden
+    KscServer &operator = (const KscServer &); // forbidden
 };
 
 
@@ -208,13 +245,108 @@ KscServer::ping()
 //////////////////////////////////////////////////////////////////////
 
 inline
+PltString 
+KscServer::getHost() const
+{
+    return host_name;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+PltString
+KscServer::getName() const
+{
+    return server_info.server.name;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscAbsPath
+KscServer::getHostAndName() const
+{
+    PltString temp("/");
+    temp += getHost();
+    temp += "/";
+    temp += getName();
+
+    return KscAbsPath(temp);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+u_short
+KscServer::getProtocolVersion() const
+{
+    return server_info.server.protocol_version;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+PltTime
+KscServer::getExpiresAt() const
+{
+    // NOTE: without cast gcc reports internal
+    // compiler error
+    //
+    return PltTime(server_info.expires_at);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+void 
+KscServer::setAvModule(const KscAvModule *avm)
+{
+    av_module = avm;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KscAvModule *
+KscServer::getAvModule() const
+{
+    return av_module;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
 KscClient *
 KscClient::getClient() 
 {
+    PLT_PRECONDITION(the_client);
     return the_client;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+void 
+KscClient::setAvModule(const KscAvModule *avm)
+{
+    av_module = avm;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KscAvModule *
+KscClient::getAvModule() const
+{
+    return av_module;
 }
  
 #endif
+
+//////////////////////////////////////////////////////////////////////
+// EOF client.h
+//////////////////////////////////////////////////////////////////////
 
 
 
