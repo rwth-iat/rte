@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_IMPL_INCLUDED
 #define PLT_HANDLE_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle_impl.h,v 1.2 1997-04-10 14:09:22 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle_impl.h,v 1.3 1997-04-14 17:31:39 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -71,6 +71,8 @@ PltHandle<T>::bindTo(T * p, enum PltOwnership t)
             a = new Plt_AtArrayNew<T>;
             break;
         case PltOsUnmanaged:
+        default:
+            a = 0;
             PLT_ASSERT(0==1);
         }
         if (a) {
