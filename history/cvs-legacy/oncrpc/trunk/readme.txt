@@ -1,7 +1,7 @@
 IMPORTANT NOTE:
 ---------------
 
-This is a patched version of Martin Gergeleits famous ONC/RPC for Windows NT
+This is a patched version of Martin Gergeleit's famous ONC/RPC for Windows NT
 package. The patches made to this sources are listed at the end of this
 README.TXT file.
 
@@ -21,6 +21,7 @@ This patched package
 
 The sources have been adapted to Borland C++ 5.0. Therefore, the binaries
 and executables contained in this package have been compiled with BC++ 5.0.
+The package is still compilable using VC++ 4.2.
 
 
 Changes made:
