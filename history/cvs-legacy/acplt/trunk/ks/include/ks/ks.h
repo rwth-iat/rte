@@ -1,3 +1,5 @@
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.14 1998-01-14 16:34:33 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
