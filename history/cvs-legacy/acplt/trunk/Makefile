@@ -35,7 +35,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# $Header: /home/david/cvs/acplt/Makefile,v 1.5 1997-07-14 16:34:51 harald Exp $
+# $Header: /home/david/cvs/acplt/Makefile,v 1.6 1997-09-09 14:14:37 harald Exp $
 #
 
 UNIXES	= linux hpux solaris
@@ -48,7 +48,7 @@ nothing:
 	@echo "  make XXX.acplt   -- build the libraries only"
 	@echo
 	@echo "  Where \"XXX\" is either:"
-	@echo "    \"hpux\", \"linux\", or \"solaris\"."
+	@echo "    \"hpux\", \"irix\", \"linux\", or \"solaris\"."
 	@echo
 	@echo "  If you're on NT, do instead a:"
 	@echo "     make -f makefile.nt nt.all    (etc.)"
@@ -99,6 +99,23 @@ hpux.all:	hpux.acplt
 	(cd ks/build/hpux; $(MAKE) examples;)
 
 
+irix.acplt:
+	@echo "-------------------------------------------------------------"
+	@echo "Building the libPLT..."
+	@echo "-------------------------------------------------------------"
+	(cd plt/build/irix; $(MAKE) depend; $(MAKE);)
+	@echo "-------------------------------------------------------------"
+	@echo "Building the libKS..."
+	@echo "-------------------------------------------------------------"
+	(cd ks/build/irix; $(MAKE) depend; $(MAKE);)
+
+irix.all:	irix.acplt
+	@echo "-------------------------------------------------------------"
+	@echo "Building examples..."
+	@echo "-------------------------------------------------------------"
+	(cd ks/build/irix; $(MAKE) examples;)
+
+
 solaris.acplt:
 	@echo "-------------------------------------------------------------"
 	@echo "Building the libPLT..."
@@ -126,6 +143,6 @@ export:		clean
 	@echo "-------------------------------------------------------------"
 	(cd plt/build/linux; $(MAKE) depend;)
 	(cd ks/build/linux; $(MAKE) depend;)
-	(cd ks/build/linux; cp *_inst.h ../nt; cp *_inst.h ../solaris; cp *_inst.h ../hpux;)
+	(cd ks/build/linux; cp *_inst.h ../nt; cp *_inst.h ../solaris; cp *_inst.h ../hpux; cp *_inst.h ../irix)
 
 # End of Makefile
