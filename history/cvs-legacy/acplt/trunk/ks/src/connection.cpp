@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.6 1999-05-12 10:01:36 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.7 1999-09-06 07:18:53 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -182,6 +182,24 @@ u_short KssConnection::getPort() const
 #endif
     return ntohs(addr.sin_port);
 } //  KssConnection::getPort
+
+
+// ---------------------------------------------------------------------------
+// Control timeouts. These are just default implementations which can be
+// reimplemented in derived classes. The only real important accessor here is
+// getTimeout(), as it is needed by the connection manager to calculate
+// timeouts.
+//
+long KssConnection::getTimeout() const
+{
+    return _timeout;
+} // KssConnection::getTimeout
+
+
+void KssConnection::setTimeout(unsigned long timeout)
+{
+    _timeout = timeout;
+} // KssConnection::setTimeout
 
 
 // ---------------------------------------------------------------------------

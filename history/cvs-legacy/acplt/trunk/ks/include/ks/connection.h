@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.4 1999-02-25 17:15:48 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.5 1999-09-06 07:18:52 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -71,12 +71,16 @@ public:
 // Abstract base class for a connection: a connection has its own state (it's
 // a finite automata), a socket to suck from, ... and other stuff I forget
 // what it's good for. But what's important: if the connection needs attention
-// then some other object will be notified through the Kss
+// then some other object will be notified through the
+// KssConnectionAttentionInterface. Note that any object implementing this
+// interface can handle the attention request of a connection, so there's no
+// need for a connection class to implement this interface itself.
 //
 class KssConnection {
 public:
     //
-    //
+    // type of connection, either acting as a server's connection waiting
+    // for requests, or as a client's connection.
     //
     enum ConnectionType {
     	CNX_TYPE_SERVER,    	// it´s on the server side
@@ -95,7 +99,9 @@ public:
     virtual void shutdown() = 0;
 
     //
-    //
+    // The "attention partner" is an object implementing the
+    // KssConnectionAttentionInterface interface and handling the attention
+    // request of this connection.
     //
     KssConnectionAttentionInterface *getAttentionPartner() const
         { return _attention_partner; }
@@ -142,10 +148,11 @@ public:
         
     inline bool isAutoDestroyable() const { return _auto_destroyable; }
     inline int getFd() const { return _fd; }
-    inline long getTimeout() const { return _timeout; }
-    inline void setTimeout(unsigned long timeout) { _timeout = timeout; }
     inline ConnectionType getCnxType() const { return _cnx_type; }
     u_short getPort() const;
+
+    virtual long getTimeout() const;
+    virtual void setTimeout(unsigned long timeout);
     
     ConnectionState getState() const { return _state; }
     virtual ConnectionIoMode getIoMode() const = 0;
@@ -163,9 +170,13 @@ protected:
     virtual ConnectionIoMode receive() = 0;
     virtual ConnectionIoMode send() = 0;
     //
+    // Connection i/o has timed out.
+    //
+    virtual ConnectionIoMode timedOut() = 0;
+    //
     // Bring connection back into its default state.
     //
-    virtual ConnectionIoMode reset(bool hadTimeout) = 0;
+    virtual ConnectionIoMode reset() = 0;
     
     void thisIsMyConnectionManager(KssConnectionManager *mgr)
     	{ _manager = mgr; }
