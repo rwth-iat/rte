@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.43 2001-01-29 12:36:34 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.44 2002-05-23 10:34:19 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -34,6 +34,17 @@
 
 #if PLT_DEBUG
 #include <iostream.h>
+#endif
+
+#if PLT_SYSTEM_NT
+#include <fcntl.h>
+#elif PLT_SYSTEM_OPENVMS
+#include <ioctl.h>
+extern int ioctl(int d, int request, char *argp);
+#else
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #endif
 
 
@@ -694,19 +705,6 @@ KscServer::getTimeouts(PltTime &rpc_timeout,
 bool
 KscServer::getHostAddr(struct sockaddr_in *addr)
 {
-#if 0
-    // hostentry struct used for debbugging only
-    //
-    KSC_IP_TYPE ip_terra = inet_addr("134.130.125.131");
-    KSC_IP_TYPE ip_pc212 = inet_addr("134.130.125.76");
-
-    KSC_IP_TYPE *dummy1[3] = { &ip_terra, &ip_pc212, 0 };
-    struct hostent dummy = { 
- 	"", 0, AF_INET, sizeof(KSC_IP_TYPE),
-	(char **)dummy1 };
-    KscHostEnt he(&dummy);
-#endif
-
     // TODO: check data type for 64 bits
     const unsigned long INVALID_IP = INADDR_NONE;
     const unsigned long NO_IP      = INADDR_ANY;
@@ -922,8 +920,20 @@ KscServer::createTransport()
     //
     host_addr.sin_family = AF_INET;
     host_addr.sin_port = htons(server_info.port);
-    
-    // TODO: do a timeout-controllable connect(). See R. Stevens for details
+
+    //
+    // Connect to the ACPLT/KS server (at least try to do so...)
+    //
+    socket = timedConnect(host_addr, _rpc_timeout);
+    if ( socket < 0 ) {
+    	_last_result = KS_ERR_CANTCONTACT;
+    	return false;
+    }
+
+    //
+    // Now as we already have the socket connected, we now create an RPC transport
+    // around it, wrapping the socket.
+    //
     _client_transport = clnttcp_create(&host_addr,
 				       KS_RPC_PROGRAM_NUMBER,
 				       server_desc.protocol_version,
@@ -931,6 +941,7 @@ KscServer::createTransport()
 				       0, 0);
 
     if( !_client_transport ) {
+        // Note that clnttcp_create will automatically close the socket if it failed.
         _last_result = KS_ERR_CANTCONTACT;
         return false;
     }
@@ -1085,6 +1096,211 @@ KscServer::reconnectServer(size_t try_count, enum clnt_stat errcode)
         return false;
     }
 } // KscServer::reconnectServer
+
+
+// ----------------------------------------------------------------------------
+// Set up a connection
+// Returns the file descriptor or < 0 in case the connection setup failed.
+//
+int
+KscServer::timedConnect(struct sockaddr_in host_addr, PltTime timeout)
+{
+    int socket;
+
+    //
+    // We now initiate the connection by hand in order to impose a user-specified
+    // timeout on this. However, as it can be easily seen from the details
+    // given by R. Stevens (we miss you!), this is going to be hairy (not harry!)
+    // when supporting multiple platforms.
+    //
+    // Basic outline: create a socket and put it into non-blocking mode. Then
+    // issue a connect(), which should then progress in the background. Select()
+    // on the socket and wait for the connect to succeed, fail or the timeout to
+    // be reached. That's it. And now for the gory details.
+    //
+    socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if ( socket < 0 ) {
+        return -1;
+    }
+    //
+    // Thanks to non-standard parameter typing putting the socket into non-
+    // blocking mode differs slightly -- different syntax, but same semantics.
+    // Sigh.
+    //
+#if PLT_SYSTEM_NT
+    u_long nbmode = 1;
+    if ( ioctlsocket(socket, FIONBIO, &nbmode) == SOCKET_ERROR ) {
+#elif PLT_SYSTEM_OPENVMS
+    int nbmode = 1;
+    if ( ioctl(socket, FIONBIO, (char *) &nbmode) < 0 ) {
+#else
+    int mode = fcntl(socket, F_GETFL);
+    //
+    // Otherwise I hate such dense coding, as it is a pain to maintain, but
+    // in this case we need to check first for an error returned by getting
+    // the descriptor's flags, then we need to set the non-blocking mode,
+    // and finally have to make sure that setting the new mode did not fail
+    // such that the failure handling code can immediately start after
+    // the end of this conditional code...
+    //
+    if ( (mode == -1)
+         || (mode |= O_NONBLOCK,
+             fcntl(socket, F_SETFL, mode) == -1) ) {
+#endif
+        //
+        // We failed to put the socket into non-blocking mode, so we
+        // don't try any further.
+        //
+#if PLT_SYSTEM_NT
+        closesocket(socket); // Ouch!!!
+#else
+        close(socket);
+#endif
+        return -1;
+    }
+    //
+    // Next, we initiate the connect procedure. If it was properly started,
+    // connect should return EINPROGRESS (or something similiar...)
+    //
+    if ( connect(socket, (struct sockaddr *) &host_addr, sizeof(host_addr) ) == 0 ) {
+        //
+        // Now that was fast! We already got the connection. So we can simply tuckle
+        // along...
+        //
+    } else {
+        //
+        // We now need to check whether we were just notified that the connect
+        // is in progress or whether out attempt failed for some other
+        // (obscure) reason)...
+        //
+#if PLT_SYSTEM_NT
+	    int err;
+	    err = WSAGetLastError(); /* MSVC 4.2++, once again */
+	    if ( (err != WSAEINPROGRESS) && (err != WSAEWOULDBLOCK) ) {
+#else
+	    if ( (errno != EINPROGRESS) && (errno != EWOULDBLOCK) ) {
+#endif
+	        //
+	        // The connect() call failed for some reason. We can not proceed but
+	        // instead bail out.
+	        //
+#if PLT_SYSTEM_NT
+            closesocket(socket); // Ouch!!!
+#else
+            close(socket);
+#endif
+	        return -1;
+	    }
+	    //
+	    // Now wait for the connect either to complete in time or hitting the
+	    // timeout limit.
+	    // TODO: with 1.4.x we should use the particular connectionmanager in
+	    // order to sleep and wait for I/O.
+	    //
+	    fd_set readable_fds;
+	    fd_set writeable_fds;
+	
+	    FD_ZERO(&readable_fds); FD_SET(socket, &readable_fds);
+	    FD_ZERO(&writeable_fds); FD_SET(socket, &writeable_fds);
+	
+cerr << "Sleeping...";
+	    PltTime sleep = timeout;
+	    int res = select(socket + 1, &readable_fds, &writeable_fds, 0, &sleep);
+cerr << "!" << endl;
+	    if ( res == -1 ) {
+	    	//
+	    	// Something went wrong while trying to wait for the socket and
+	    	// the connection phase.
+	    	// We always abort the connecting process and bail out. Especially,
+	    	// we also abort on EINTR -- because there is probably a good reason
+	    	// why we were interrupted.
+	    	//
+#if PLT_SYSTEM_NT
+            closesocket(socket); // Ouch!!!
+#else
+            close(socket);
+#endif
+	    	return -1;
+	    } if ( res == 0 ) {
+	    	//
+	    	// We timed out without the socket becoming readable or writeable.
+	    	// This indicates that the network layer is still in progress of
+	    	// connecting. But we do not want to wait any longer, so we abort
+	    	// the connection phase now.
+	    	//
+#if PLT_SYSTEM_NT
+            closesocket(socket); // Ouch!!!
+#else
+            close(socket);
+#endif
+	    	return -1;
+	    } else {
+	    	//
+	    	// The socket has become active. This can be either because we
+	    	// connection succeeded, but also due to problems. Unfortunately,
+	    	// different platforms handle exact semantics differently...
+	    	// However, in every case, the socket becomes either readable,
+	    	// or writeable, or both. By looking at the SO_ERROR of the
+	    	// socket, we can easily figure out if something went belly up.
+	    	//
+	    	// The following code has more or less been lifted off of the
+	    	// xdrtcpcon.cpp module.
+	    	//
+	    	int error;
+#if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
+            socklen_t size = sizeof(error);
+#elif !PLT_SYSTEM_OPENVMS
+	        int size = sizeof(error);
+#else
+            unsigned int size = sizeof(error);
+#endif
+	    	if ( (getsockopt(socket, SOL_SOCKET, SO_ERROR, (char *) &error, &size) < 0)
+	    	     || error ) {
+	    		//
+	    		// The connect() failed!
+	    		//
+#if PLT_SYSTEM_NT
+                closesocket(socket); // Ouch!!!
+#else
+                close(socket);
+#endif
+	    		return -1;
+	    	}
+	    	//
+	    	// Okay: the connect() call succeeded! So let's go on...
+	    	//
+	    }
+    }
+    //
+    // Connected. Put the socket back to blocking mode, or otherwise the
+    // Sun's ONC/RPC code might get belly-up.
+    //
+#if PLT_SYSTEM_NT
+    nbmode = 0;
+    if ( ioctlsocket(socket, FIONBIO, &nbmode) == SOCKET_ERROR ) {
+#elif PLT_SYSTEM_OPENVMS
+    nbmode = 0;
+    if ( ioctl(socket, FIONBIO, (char *) &nbmode) < 0 ) {
+#else
+    mode = fcntl(socket, F_GETFL);
+    if ( (mode == -1)
+         || (mode &= ~O_NONBLOCK,
+             fcntl(socket, F_SETFL, mode) == -1) ) {
+#endif
+        //
+        // We failed to put the socket back into blocking mode, so we
+        // don't try any further.
+        //
+#if PLT_SYSTEM_NT
+        closesocket(socket); // Ouch!!!
+#else
+        close(socket);
+#endif
+        return -1;
+    }
+    return socket;
+} // KscServer::timedConnect
+
 
 
 //////////////////////////////////////////////////////////////////////
@@ -1258,17 +1474,22 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
 	//  fuer den Aufruf von clntXXX_create(). Hab' ich doch vergessen,
 	//  beim Umstellen auf die Schleife, socket jedesmal wieder neu
 	//  zu initialisieren. Ach neeeeee, das kann doch echt nicht wahr
-	//  sein. Wie kann man auch eine so beknackte Semantic in diesen
+	//  sein. Wie kann man auch eine so beknackte Semantik in diesen
 	//  Funktionsaufruf hineinpacken. Das ist doch echt daemlich."
 	// Phew. Now I feel better.
 	//
 	socket = RPC_ANYSOCK;
 	if ( port ) {
-	    transport = clnttcp_create(host_addr,
-				       KS_RPC_PROGRAM_NUMBER,
-				       version,
-				       &socket,
-				       0, 0);
+		socket = timedConnect(*host_addr, _rpc_timeout);
+		if ( socket >= 0 ) {
+		    transport = clnttcp_create(host_addr,
+					       KS_RPC_PROGRAM_NUMBER,
+					       version,
+					       &socket,
+					       0, 0);
+		} else {
+			transport = 0;
+		}
 	} else {
 	    transport = clntudp_create(host_addr,
 				       KS_RPC_PROGRAM_NUMBER,
