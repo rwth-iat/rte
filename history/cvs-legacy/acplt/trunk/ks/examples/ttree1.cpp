@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.3 1997-07-14 15:36:42 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.4 1997-07-16 18:33:56 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,7 +38,7 @@
 
 /*
  * This is a simple demonstration of how to use the basic c++ communication
- * objects on the client´s side. You supply the host/server on the command
+ * objects on the client's side. You supply the host/server on the command
  * line, and this little gem (or is it just a dust ball?) prints out the
  * tree of communication objects it can find within the KS server.
  */
@@ -83,9 +83,10 @@ void DumpVarType(const int var_type)
 void DumpProjProps(const KsProjProps &proj_props, int indent)
 {
     PltString info;
+    time_t creation_time;
 
     //
-    // Get our hands on the object´s name...
+    // Get our hands on the object's name...
     //
     Indent(indent);
     cout << proj_props.identifier << " ";
@@ -94,7 +95,8 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     // Set up some info, which consists of the creation time and the access
     // mode(s). This info is used lateron...
     //
-    info += PltString(ctime((const time_t *) &proj_props.creation_time.tv_sec)).substr(4, 15);
+    creation_time = proj_props.creation_time.tv_sec;
+    info += PltString(ctime(&creation_time)).substr(4, 15);
     info += " ";
 
     if ( proj_props.access_mode & KS_AC_READ ) {
@@ -105,7 +107,7 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     }
 
     //
-    // Look! Who´s there... what, a communication object?!
+    // Look! Who's there... what, a communication object?!
     //
     switch ( proj_props.xdrTypeCode() ) {
     case KS_OT_DOMAIN:
@@ -162,11 +164,11 @@ void DumpBranch(KscDomain &branch, int indent)
 
     children = branch.newChildIterator(KS_OT_ANY);
     if ( !children ) {
-	cout << "Can´t allocate child iterator" << endl;
+	cout << "Can't allocate child iterator" << endl;
 	return;
     }
     //
-    // Now iterate over all the children of the current level, we´re in.
+    // Now iterate over all the children of the current level, we're in.
     // Take care that you increment the iterator, and not the pointer to
     // it... (whistle, whistle...)
     //
@@ -182,7 +184,7 @@ void DumpBranch(KscDomain &branch, int indent)
     }
 
     //
-    // finally, clean up everything we´ve allocated in this level...
+    // finally, clean up everything we've allocated in this level...
     //
     delete children;
 } // DumpBranch
@@ -201,7 +203,7 @@ int main(int argc, char **argv)
     host_and_server += "/";
     KscDomain root(host_and_server);
     if ( !root.getProjPropsUpdate() ) {
-	cerr << "Can´t open /" << argv[1] << endl;
+	cerr << "Can't open /" << argv[1] << endl;
 	return 42;
     }
     
@@ -212,4 +214,3 @@ int main(int argc, char **argv)
 } // main
 
 /* End of ttree1.cpp */
-
