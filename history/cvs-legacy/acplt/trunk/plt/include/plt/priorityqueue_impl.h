@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.1 1997-03-12 16:19:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.2 1997-03-19 17:16:26 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -252,13 +252,15 @@ PltPriorityQueue<T>::removeFirst()
 {
     PLT_PRECONDITION( ! isEmpty() );
     T x(a_elems[0]);
-    T v(a_elems[--a_size]);
-
-    // TODO: may shrink here
-
-    downheap(0,v);
-
-    PLT_CHECK_INVARIANT();
+    if (--a_size>0) {
+        T v(a_elems[a_size]);
+        
+        // TODO: may shrink here
+        
+        downheap(0,v);
+        
+        PLT_CHECK_INVARIANT();
+    }
     return x;
 }
 
@@ -273,11 +275,13 @@ PltPriorityQueue<T>::remove(T elem)
     size_t loc = locate(0, elem);
     if ( loc < size() ) {
         // found 
-        T v(a_elems[--a_size]);
-        
-        // TODO: may shrink here
-        
-        downheap(loc,v);
+        if (--a_size > 0) { 
+            T v(a_elems[a_size]);
+            
+            // TODO: may shrink here
+            
+            downheap(loc,v);
+        }
         result = true;
     } else {
         result = false;
