@@ -85,7 +85,7 @@ public:
 protected:
     KscServer *findServer();
 
-    // returns negotiator which is only approbiate for
+    // returns negotiator which is only apropriate for
     // single access to this object
     KscNegotiator *getNegotiator();
 
@@ -161,6 +161,8 @@ protected:
         PltHashIterator<KscAbsPath, KscCommObject *> it;
         enum_t type_mask;
     };
+
+    friend class ChildIterator;
 
     PLT_DECL_RTTI;
 

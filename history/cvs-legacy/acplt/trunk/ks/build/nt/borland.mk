@@ -75,6 +75,11 @@ ntksmanager_templates.obj:      $(EXAMPLESSRCDIR)ntksmanager_templates.cpp
 		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)ntksmanager_templates.cpp
 !
 
+ttree.obj:    $(EXAMPLESSRCDIR)ttree.cpp
+	@echo Compiling $<
+	@$(CXX) @&&!
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)ttree.cpp
+!
 
 ### Include generic part
 
@@ -91,7 +96,7 @@ ntksmanager_templates.obj:      $(EXAMPLESSRCDIR)ntksmanager_templates.cpp
 		$< $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
-examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe
+examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 
 tmanager.exe: tmanager.obj tmanager1.obj $(LIBKS)
 	@echo Linking $@
@@ -117,9 +122,16 @@ ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
 ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanager.res
 	@echo Linking $@
 	$(CXX) @&&!
-		-v -tWM ntksmanager.obj ntksmanager_templates.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
+		-tWM ntksmanager.obj ntksmanager_templates.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 	$(RC) ntksmanager.res ntksmanager.exe
+
+ttree.exe: ttree.obj ttree1.obj $(LIBKS)
+	@echo Linking $@
+	$(CXX) @&&!
+		ttree.obj ttree1.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
+!
+
 
 ### explicit dependencies not covered by platform-dependend depent mechanism
 ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
@@ -133,6 +145,7 @@ $(LIBKS) : $(LIBKS_OBJECTS) $(LIBKS_NT_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS2)
 	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS3)
 	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS4)
+	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS5)
 	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_NT_OBJECTS)
 
 clean :

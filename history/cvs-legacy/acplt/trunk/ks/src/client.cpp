@@ -44,11 +44,15 @@
 
 #include <string.h>
 
+#if PLT_SYSTEM_NT
+#include <winsock.h>
+#else
 extern "C" {
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 };
+#endif
 
 #if PLT_DEBUG
 #include <iostream.h>
@@ -466,9 +470,9 @@ KscServer::getServerDesc(struct hostent *hp,
 
     errcode = clnt_call(pUDP, 
                         KS_GETSERVER,
-                        KscGetServerInHelper,
+                        (xdrproc_t) KscGetServerInHelper,
                         &inData,
-                        KscGetServerOutHelper,
+                        (xdrproc_t) KscGetServerOutHelper,
                         &outData,
                         KSC_UDP_TIMEOUT);
 
@@ -575,9 +579,9 @@ KscServer::getPP(KscNegotiator *negotiator,
     KscGetPPOutStruct outData(negotiator, &result);
 
     errcode = clnt_call(pClient, KS_GETPP,
-                        KscGetPPInHelper,
+                        (xdrproc_t) KscGetPPInHelper,
                         &inData,
-                        KscGetPPOutHelper,
+                        (xdrproc_t) KscGetPPOutHelper,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
@@ -674,9 +678,9 @@ KscServer::getVar(KscNegotiator *negotiator,
     KscGetVarOutStruct outData(negotiator, &result);
 
     errcode = clnt_call(pClient, KS_GETVAR,
-                        KscGetVarInHelper,
+                        (xdrproc_t) KscGetVarInHelper,
                         &inData,
-                        KscGetVarOutHelper,
+                        (xdrproc_t) KscGetVarOutHelper,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
@@ -774,9 +778,9 @@ KscServer::setVar(KscNegotiator *negotiator,
     KscSetVarOutStruct outData(negotiator, &result);
 
     errcode = clnt_call(pClient, KS_SETVAR,
-                        KscSetVarInHelper,
+                        (xdrproc_t) KscSetVarInHelper,
                         &inData,
-                        KscSetVarOutHelper,
+                        (xdrproc_t) KscSetVarOutHelper,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
@@ -873,9 +877,9 @@ KscServer::exgData(KscNegotiator *negotiator,
     KscExgDataOutStruct outData(negotiator, &result);
 
     errcode = clnt_call(pClient, KS_EXGDATA,
-                        KscExgDataInHelper,
+                        (xdrproc_t) KscExgDataInHelper,
                         &inData,
-                        KscExgDataOutHelper,
+                        (xdrproc_t) KscExgDataOutHelper,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
@@ -933,15 +937,3 @@ KscServer::getNegotiator()
 //////////////////////////////////////////////////////////////////////
 // EOF client.cpp
 //////////////////////////////////////////////////////////////////////
-                 
-
-    
-    
-    
-
-
-
-
-
-
-

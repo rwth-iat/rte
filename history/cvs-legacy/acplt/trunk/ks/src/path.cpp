@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.4 1997-04-10 14:17:56 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.5 1997-05-20 15:21:30 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -93,8 +93,8 @@ void KsPath::findSlashes()
 
 size_t
 KsPath::checkAndCount() {
-    const char * p = _str;          // running pointer
-    bool was_slash = false;    // was last char == '/' ?
+    const char * p = _str;         // running pointer
+    bool was_slash = false;        // was last char == '/' ?
     _valid = true; // be optimistic
 
     if (! *p) {
@@ -143,9 +143,9 @@ KsPath::checkAndCount() {
         char ch = *p;
         if (ch == '/') { 
             if (was_slash) {
-                // two '/' in a row
-                _valid = false;
-                return 0;
+	        // two '/' in a row are not allowed
+	        _valid = false;
+	        return 0;
             } else {
                 was_slash = true;
                 ++slashes;

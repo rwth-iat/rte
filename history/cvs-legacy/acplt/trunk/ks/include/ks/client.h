@@ -143,6 +143,8 @@ private:
         bool shutdown_delete;
     };
 
+    friend class CleanUp;
+
     static KscClient *_the_client;
     static CleanUp _clean_up;
 };
@@ -272,8 +274,8 @@ bool
 KscServer::ping()
 {
     errcode = clnt_call(pClient, 0, 
-                        xdr_void, 0, 
-                        xdr_void, 0, 
+                        (xdrproc_t) xdr_void, 0, 
+                        (xdrproc_t) xdr_void, 0, 
                         KSC_RPCCALL_TIMEOUT);
 
     return errcode == RPC_SUCCESS;

@@ -46,9 +46,9 @@
 
 //////////////////////////////////////////////////////////////////////
 // class KscAbsPath
-//   manage an absolute path consisting of host, server and in the 
-//   server path information. The path should be formed like 
-//   "//host/server/domain1/../var".
+//   manages an absolute path consisting of host, server and the 
+//   path to the communication object within the KS server. The path
+//   must look like "//host/server/domain1/../var".
 //
 class KscAbsPath
 : public KsPath
@@ -70,7 +70,7 @@ public:
 
     PltString getHost() const;              // host eg "host"
     PltString getServer() const;            // server eg "server"
-    KscAbsPath getHostAndServer() const;    // eg "/host/server"
+    KscAbsPath getHostAndServer() const;    // eg "//host/server"
     KsPath getVarPath() const;              // path + name
     PltString getNameOnly() const;          // name
     PltString getPathOnly() const;          // path

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_PATH_INCLUDED
 #define KS_PATH_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.4 1997-04-10 14:17:41 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.5 1997-05-20 15:20:58 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -66,7 +66,9 @@ public:
 
     size_t size() const;
     PltString operator[] (size_t) const;
+#if 0
     operator const char * () const;
+#endif
     operator PltString () const;
     KsPath & operator = (const KsPath &);
 
@@ -132,11 +134,13 @@ KsPath::isSingle() const
 
 //////////////////////////////////////////////////////////////////////
 
+#if 0
 inline 
 KsPath::operator const char *() const
 {
     return operator PltString();
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 #endif //KS_PATH_INCLUDED

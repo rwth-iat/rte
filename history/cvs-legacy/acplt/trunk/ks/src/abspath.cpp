@@ -146,7 +146,7 @@ KscAbsPath
 operator + (const KscAbsPath &path,
             const PltString &var)
 {
-    PltString temp((const char *)path);
+    PltString temp((const char *)PltString(path));
     if(temp[temp.len()-1] != '/') {
         temp += "/";
     }

@@ -322,10 +322,10 @@ KscDomain::getChildPPUpdate()
             switch(hpp->xdrTypeCode()) 
             {
             case KS_OT_VARIABLE:
-                new_var = new KscVariable(new_path);
+                new_var = new KscVariable(PltString(new_path)); // TODO
                 break;
             case KS_OT_DOMAIN:
-                new_var = new KscDomain(new_path);
+                new_var = new KscDomain(PltString(new_path)); // TODO
                 break;
             default:
                 PLT_DMSG("Unknown objectype in KscDomain::getChildPPUpdate" << endl);

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ntservice.h,v 1.1 1997-05-05 06:48:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ntservice.h,v 1.2 1997-05-20 15:20:57 harald Exp $ */
 
 #ifndef KS_NTSERVICE_INCLUDED
 #define KS_NTSERVICE_INCLUDED

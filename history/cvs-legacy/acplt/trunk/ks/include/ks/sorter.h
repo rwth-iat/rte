@@ -130,6 +130,7 @@ private:
         PltHashIterator<Key,T> it;
     };      
 
+    friend class ValueIterator;
 
     bool sortVars(PltIterator<KscVariable> &);
 
