@@ -19,10 +19,13 @@ CXX_LINK = g++
 
 .SUFFIXES:
 
-.SUFFIXES: .cpp .o
+.SUFFIXES: .cpp .o .i
 
 .cpp.o:
 	$(CXX_COMPILE) -o $@ $<
+
+.cpp.i:
+	$(CXX_COMPILE) -E > $@ $<
 
 CXX_SOURCES = txdr2.cpp txdr.cpp xdr.cpp string.cpp tregister.cpp\
 	avticket.cpp register.cpp
