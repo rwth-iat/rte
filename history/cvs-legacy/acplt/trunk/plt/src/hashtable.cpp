@@ -199,7 +199,7 @@ bool PltHashTable_base::changeCapacity(size_t cap)
     size_t oldCapacity = a_capacity;
     bool result;
 
-    PltHashAssoc_base ** newTable = new (PltHashAssoc_base*)[newCap];
+    PltHashAssoc_base ** newTable = new PltHashAssoc_base*[newCap];
     if (newTable) {
         a_table = newTable; 
         a_used = 0; 
