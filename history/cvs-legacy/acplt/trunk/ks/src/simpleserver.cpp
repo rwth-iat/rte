@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.18 1998-06-29 11:22:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.19 1998-08-28 13:21:20 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -472,6 +472,40 @@ KsSimpleServer::addCommObject(const KsPath & dompath,
         //
         return false;
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool
+KsSimpleServer::removeCommObject(const KsPath &dompath,
+                                 const KsString &id)
+{
+    PLT_PRECONDITION(dompath.isValid() && dompath.isAbsolute());
+
+    KssCommObjectHandle hd;
+    //
+    // Search for object at dompath, 
+    // root domain needs special treatment.
+    //
+    if(dompath.isSingle() && dompath[0] == "") {
+        hd.bindTo(&_root_domain, KsOsUnmanaged);
+    } else {
+        hd = _root_domain.getChildByPath(dompath);
+    }
+ 
+    //
+    // If a domain was found try to remove the child id.
+    //
+    if( hd ) {
+        KssSimpleDomain *dom = 
+            PLT_DYNAMIC_PCAST(KssSimpleDomain, hd.getPtr());
+
+        if( dom ) {
+            return dom->removeChild(id) ? true : false;
+        } 
+    }
+
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////

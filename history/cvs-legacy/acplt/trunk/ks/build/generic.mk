@@ -9,6 +9,7 @@ CXX_LIBKS_SOURCES = \
 	result.cpp \
 	rpc.cpp \
 	serviceparams.cpp \
+	histparams.cpp \
 	string.cpp \
 	time.cpp \
 	value.cpp \
@@ -35,7 +36,8 @@ CXX_LIBKSSVR_SOURCES = \
 	connectionmgr.cpp \
 	connection.cpp \
 	xdrudpcon.cpp \
-	xdrtcpcon.cpp
+	xdrtcpcon.cpp \
+	histdomain.cpp
 
 CXX_LIBKSCLN_SOURCES= \
 	avmodule.cpp \
@@ -54,7 +56,8 @@ LIBKS_OBJECTS1 = \
 	props$(O) \
 	register$(O) \
 	result$(O) \
-	rpc$(O)
+	rpc$(O) \
+	histparams$(O)
 
 LIBKS_OBJECTS2 = \
 	serviceparams$(O) \
@@ -82,14 +85,15 @@ LIBKSSVR_OBJECTS2 = \
 	svrrpcctx$(O) \
 	svrsimpleobjects$(O) \
 	svrtransport$(O)
-	
+
 LIBKSSVR_OBJECTS3 = \
 	xdrmemstream$(O) \
 	rpcproto$(O) \
 	connectionmgr$(O) \
 	connection$(O) \
 	xdrudpcon$(O) \
-	xdrtcpcon$(O)
+	xdrtcpcon$(O) \
+	histdomain$(O) 
 
 LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2) $(LIBKSSVR_OBJECTS3)
 
@@ -114,6 +118,8 @@ CXX_EXAMPLES_SOURCES = \
 	pmobile_code.cpp \
 	tclient.cpp \
 	tclient1.cpp \
+	texgpkg.cpp \
+	texgpkg1.cpp \
 	tmanager.cpp \
 	tmanager1.cpp \
 	tsclient.cpp \
@@ -130,6 +136,8 @@ EXAMPLES_OBJECTS = \
 	pmobile_code$(O) \
 	tclient$(O) \
 	tclient1$(O) \
+	texgpkg$(O) \
+	texgpkg1$(O) \
 	tmanager$(O) \
 	tmanager1$(O) \
 	tsclient$(O) \
@@ -186,3 +194,4 @@ tpackage$(EXE) : tpackage$(O) $(LIBKSCLN) $(LIBKS)
 
 tbigpkg$(EXE) : tbigpkg$(O) $(LIBKSCLN) $(LIBKS)
 
+texgpkg$(EXE) :	texgpkg$(O) texgpkg1$(O) $(LIBKSCLN) $(LIBKS)

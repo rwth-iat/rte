@@ -22,7 +22,7 @@ LIBPLT_OBJECTS1 = \
 	debug$(O) \
 	handle$(O) \
 	hashtable$(O) \
-	list$(O) \
+	list$(O)
 
 LIBPLT_OBJECTS2 = \
 	log$(O) \
