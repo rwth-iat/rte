@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.24 1999-09-06 06:47:41 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.25 1999-09-06 08:45:59 dirk Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
@@ -82,17 +82,21 @@
 #define PLT_SYSTEM_OPENVMS 0
 #endif
 
-#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_IRIX + PLT_SYSTEM_SOLARIS + PLT_SYSTEM_NT + PLT_SYSTEM_OS2 + PLT_SYSTEM_OPENVMS != 1
+#ifndef PLT_SYSTEM_MC164
+#define PLT_SYSTEM_MC164 0
+#endif
+
+#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_IRIX + PLT_SYSTEM_SOLARIS + PLT_SYSTEM_NT + PLT_SYSTEM_OS2 + PLT_SYSTEM_OPENVMS + PLT_SYSTEM_MC164 != 1
 #error Must define exactly one system!
 #endif
 
 #include <stddef.h>
 
 
-// --------------------------------------------------------------------------
-// Provide backwards compatibility with old ACPLT/KS applications written
-// for the 1.0.x series of the C++ Communication Library
-//
+/* --------------------------------------------------------------------------
+*  Provide backwards compatibility with old ACPLT/KS applications written
+*  for the 1.0.x series of the C++ Communication Library
+*/
 #ifndef PLT_SOURCE_V1_BC
 #define PLT_SOURCE_V1_BC 1
 #endif
@@ -101,19 +105,21 @@
 #define PLT_SOURCE_V1PLUS_BC 1
 #endif
 
-// --------------------------------------------------------------------------
-// Enable/disable use of the connection manager class and the buffered
-// (aka dynamic) XDR memory strams. Disabled by default if the user didn't
-// specified otherwise.
+/* --------------------------------------------------------------------------
+*  Enable/disable use of the connection manager class and the buffered
+*  (aka dynamic) XDR memory strams. Disabled by default if the user didn´t
+*  specified otherwise.
+*/
 #ifndef PLT_USE_BUFFERED_STREAMS
 #define PLT_USE_BUFFERED_STREAMS 0
 #endif
 
-// --------------------------------------------------------------------------
-// When running on top of NT, we always need to compile the connection
-// manager class with a hash table due to NT's habbit of allocating file
-// descriptors (aka handles). For other platforms this hash table isn't
-// necessary, so don't enable them.
+/* --------------------------------------------------------------------------
+*  When running on top of NT, we always need to compile the connection
+*  manager class with a hash table due to NT's habbit of allocating file
+*  descriptors (aka handles). For other platforms this hash table isn´t
+*  necessary, so don't enable them.
+*/
 #if PLT_SYSTEM_NT
 #undef  PLT_CNX_MGR_USE_HT
 #define PLT_CNX_MGR_USE_HT 1
@@ -123,23 +129,25 @@
 #define PLT_CNX_MGR_USE_HT 0
 #endif
 
-// --------------------------------------------------------------------------
-// Enable/disable compiling a minimalist ACPLT/KS server trunc only. In this
-// case, no service handling is implemented, only the registration magic.
-// This option is useful if you want to do a C-only ACPLT/KS server which
-// can sit on different tranport and hardware environments, like servers for
-// full-blown workstations and embedded systems (yes, that's true).
+/* --------------------------------------------------------------------------
+*  Enable/disable compiling a minimalist ACPLT/KS server trunc only. In this
+*  case, no service handling is implemented, only the registration magic.
+*  This option is useful if you want to do a C-only ACPLT/KS server which
+*  can sit on different tranport and hardware environments, like servers for
+*  full-blown workstations and embedded systems (yes, that's true).
+*/
 #ifndef PLT_SERVER_TRUNC_ONLY
 #define PLT_SERVER_TRUNC_ONLY 0
 #endif
 
-// --------------------------------------------------------------------------
-// If we're running on top of Solaris and the user didn't specified other-
-// wise, then we'll use XTI (for those who do not know: it's something like
-// the WinSuck 2.0 architecture for unix).
+/*  --------------------------------------------------------------------------
+*  If we're running on top of Solaris and the user didn't specified other-
+*  wise, then we'll use XTI (for those who do not know: it's something like
+*  the WinSuck 2.0 architecture for unix).
+*/
 #if PLT_SYSTEM_SOLARIS
 #ifndef PLT_USE_XTI
-#define PLT_USE_XTI 0 // temporary fix until we get XTI support to work
+#define PLT_USE_XTI 0 /* temporary fix until we get XTI support to work */
 #endif
 #endif
 
@@ -172,7 +180,11 @@
 #endif
 
 #ifndef PLT_SIZE_T_MAX
+#if !PLT_SYSTEM_MC164
 #include <sys/types.h>
+#else
+#include <stddef.h>
+#endif
 #define PLT_SIZE_T_MAX ((size_t)-1)
 #endif
 
@@ -319,14 +331,14 @@ enum { false=0, true=1 };
 #endif
 
 
-//
-// Aarrrrrghhhh!! WinSock 2 vs. Winsock I. MS is soooooo brain damaged.
-// They're even try to tell you in the Winsock 2 docu that the Berkeley
-// socket API is just for TCP/IP and UDP/IP but nothing other. So how
-// comes that /etc/protocols just defines a bunch of other protocols to
-// be used through the socket API and esp. all that Linux apps can use
-// IPX, etc...? It's just again plain Microsoft FUD.
-//
+/* 
+*  Aarrrrrghhhh!! WinSock 2 vs. Winsock I. MS is soooooo brain damaged.
+*  They're even try to tell you in the Winsock 2 docu that the Berkeley
+*  socket API is just for TCP/IP and UDP/IP but nothing other. So how
+*  comes that /etc/protocols just defines a bunch of other protocols to
+*  be used through the socket API and esp. all that Linux apps can use
+*  IPX, etc...? It's just again plain Microsoft FUD.
+*/ 
 #if PLT_SYSTEM_NT
 
 #if PLT_COMPILER_BORLAND

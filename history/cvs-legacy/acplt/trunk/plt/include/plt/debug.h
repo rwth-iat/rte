@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.16 1998-04-03 13:52:49 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.17 1999-09-06 08:45:59 dirk Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -91,7 +91,7 @@
 
 /*****************************************************************/
 
-#if PLT_DEBUG
+#if PLT_DEBUG && defined(__cplusplus)
 
 #include "plt/logstream.h"
 extern PltLogStream plt_dlog;
@@ -147,9 +147,9 @@ void plt_canthappen(const char *what, const char *file, int line);
 #define PLT_CHECK_INVARIANT() ((void)0)
 #endif
 
-//////////////////////////////////////////////////////////////////////
+/********************************************************************/
 #if PLT_DEBUG_NEW
-//////////////////////////////////////////////////////////////////////
+/********************************************************************/
 
 #ifndef PLT_DEBUG_NEW_REPORT
 #define PLT_DEBUG_NEW_REPORT true
@@ -198,9 +198,9 @@ void operator delete[](void *);
 
 static PltDebugNewTracker plt_debug_new_tracker;
 
-//////////////////////////////////////////////////////////////////////
+/********************************************************************/
 #endif //PLT_DEBUG_NEW
-//////////////////////////////////////////////////////////////////////
+/********************************************************************/
 
 #if PLT_DEBUG_VERBOSE
 
@@ -218,5 +218,5 @@ static PltDebugNewTracker plt_debug_new_tracker;
 
 #endif /* __cplusplus */
 
-//////////////////////////////////////////////////////////////////////
+/********************************************************************/
 #endif /* PLT_DEBUG_INCLUDED */

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.16 1999-05-12 10:00:31 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.17 1999-09-06 08:45:58 dirk Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -71,7 +71,9 @@ extern int get_myaddress(struct sockaddr_in *);
 #include <winsock2.h>
 #endif
 
+#if !PLT_COMPILER_CYGWIN
 typedef unsigned char u_char;
+#endif
 #include <rpc/rpc.h>
 #include <rpc/pmap_pro.h>
 #include <rpc/pmap_cln.h>
@@ -96,7 +98,7 @@ static KsNTOncRpc ks_nt_oncrpc;
 
 #endif
 
-#endif // PLT_SYSTEM_NT
+#endif /* PLT_SYSTEM_NT */
 
 #if PLT_SYSTEM_SOLARIS
 #include <sys/socket.h>
@@ -110,16 +112,16 @@ static KsNTOncRpc ks_nt_oncrpc;
 #include <rpc/pmap_clnt.h>
 #include <rpc/pmap_prot.h>
 
-// missing in solaris:
+/* missing in solaris: */
 #define INADDR_NONE ((u_long)-1)
 
 #endif
 
 #if PLT_SYSTEM_OPENVMS
-//
-// This seems to be very order dependant!!!
-// Don't put the rpc below the socket headers.
-//
+/*
+*  This seems to be very order dependant!!!
+*  Don´t put the rpc below the socket headers.
+*/
 #include <ucx$rpc:rpc.h>
 #include <ucx$rpc:pmap_clnt.h>
 #include <ucx$rpc:pmap_prot.h>
@@ -127,7 +129,12 @@ static KsNTOncRpc ks_nt_oncrpc;
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-// #include <rpc/clnt.h>
+/* #include <rpc/clnt.h> */
 #endif
 
-#endif // KS_RPC_INCLUDED
+#if PLT_SYSTEM_MC164
+#include <rpc/xdr.h>
+#include <rpc/rpc.h>
+#endif
+
+#endif /* KS_RPC_INCLUDED */
