@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.13 2002-06-18 10:15:58 ansgar Exp $
+*   $Id: ov_database.c,v 1.14 2002-06-18 10:46:55 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -889,6 +889,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_write(OV_STRING dbname) {
 	fseek(backupfile, 0, SEEK_SET);
 	fwrite((char*)pdb, pdb->size, 1, backupfile);
 	fclose(backupfile);
+	return OV_ERR_OK;
 }
 /*	----------------------------------------------------------------------	*/
 
