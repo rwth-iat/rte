@@ -281,8 +281,8 @@ PltHashTable_base::insert(PltAssoc_ * p)
     size_t deleted = a_capacity; // first matching deleted if any
     size_t ins;                  // insertion point
     size_t i = keyHash(p->key());
-    size_t j = 0;
-    for (i = collidx(i,0); !dupe && a_table[i]; i = collidx(i,++j)) {
+//    size_t j = 0;
+    for (i = collidx(i,0); !dupe && a_table[i]; i = collidx(i,1)) {
         if ( a_table[i] == deletedAssoc ) {
             // deleted entry while inserting
             deleted = i;

@@ -1,6 +1,7 @@
 # generic part
 
 CXX_LIBPLT_SOURCES = \
+	$(SRCDIR)alloc.cpp \
 	$(SRCDIR)array.cpp \
 	$(SRCDIR)container.cpp \
 	$(SRCDIR)debug.cpp \
@@ -15,6 +16,7 @@ CXX_LIBPLT_SOURCES = \
 	$(SRCDIR)time.cpp
 
 LIBPLT_OBJECTS1 = \
+	alloc$(O) \
 	array$(O) \
 	container$(O) \
 	debug$(O) \
