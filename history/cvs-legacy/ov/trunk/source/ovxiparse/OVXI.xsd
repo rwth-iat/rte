@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="ACPLT_OV_InstanceModel">
+		<xs:annotation>
+			<xs:documentation>root element of any ACPLT/OV instance description</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="ovi:Instance"/>
+			</xs:sequence>
+			<xs:attribute name="GenerationDate" type="xs:dateTime" use="optional"/>
+			<xs:attribute name="SourceHost" type="xs:string" use="optional"/>
+			<xs:attribute name="SourceServer" type="xs:string" use="optional"/>
+			<xs:attribute name="OV-Version" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Instance">
+		<xs:annotation>
+			<xs:documentation>an ACPLT/OV instance</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="Instance"/>
+				<xs:element ref="LinkValue"/>
+				<xs:element ref="VariableValue"/>
+			</xs:choice>
+			<xs:attribute name="ID" type="xs:string" use="required"/>
+			<xs:attribute name="ClassID" type="xs:string" use="required"/>
+			<xs:attribute name="CreationTime" type="xs:string" use="optional"/>
+			<xs:attribute name="Flags" type="xs:string" use="optional"/>
+			<xs:attribute name="Comment" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="VariableValue">
+		<xs:annotation>
+			<xs:documentation>value of a variable of an instance</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="ID" type="xs:string" use="required"/>
+					<xs:attribute name="Time" type="xs:string" use="optional"/>
+					<xs:attribute name="State" type="xs:string" use="optional"/>
+					<xs:attribute name="Flags" type="xs:string" use="optional"/>
+					<xs:attribute name="Unit" type="xs:string" use="optional"/>
+					<xs:attribute name="Comment" type="xs:string" use="optional"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LinkValue">
+		<xs:annotation>
+			<xs:documentation>link of an instance</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="ID" type="xs:string" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

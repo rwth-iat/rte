@@ -1310,7 +1310,7 @@ bool write_value(value *val, enum value_types type)
 					fprintf(fout, "%e", val->v.double_val);
 					break;
 				case DB_VT_STRING:
-					fprintf(fout, "%s", (const char*) *val->v.pstring_val);
+					fprintf(fout, "\"%s\"", (const char*) *val->v.pstring_val);
 					break;
 				case DB_VT_TIME:
 					fprintf(fout, "%s", (const char*) TimeToAscii(*val->v.ptime_val));
@@ -1376,7 +1376,7 @@ bool write_instance_base(instance *node, u_int cnt)
 					write_time((*it)->a_value->var_time);
 					fprintf(fout, "\"");
 				}
-				if ((*it)->a_value->var_state) {
+				if ((*it)->a_value->var_state != KS_ST_UNKNOWN) {
 					fprintf(fout, " State=\"");
 					write_state((*it)->a_value->var_state);
 					fprintf(fout, "\"");
@@ -1388,13 +1388,9 @@ bool write_instance_base(instance *node, u_int cnt)
 				}
 				if ((*it)->a_value->var_unit) fprintf(fout," Unit=\"%s\"",(const char*) (*it)->a_value->var_unit);
 				if ((*it)->a_value->var_comment) fprintf(fout," Comment=\"%s\"",(const char*) (*it)->a_value->var_comment);
-				fprintf(fout,">\n");	
-				for (i=0;i<cnt;i++) fprintf(fout, "\t");
-				fprintf(fout, "\t\t");
+				fprintf(fout,">");	
 				write_value((*it)->a_value->val, (*it)->a_value->val->type);
-				fprintf(fout, "\n");
-				for (i=0;i<cnt;i++) fprintf(fout, "\t");
-				fprintf(fout, "\t</VariableValue>\n");
+				fprintf(fout, "</VariableValue>\n");
 			}
 			++*it;
 		}
@@ -1416,20 +1412,19 @@ bool write_instance_base(instance *node, u_int cnt)
 		while (*itlink) {
 			if (verbose) cout << "write link " << (*itlink)->a_key << endl;
 			for (i=0;i<cnt;i++) fprintf(fout, "\t");
-			fprintf(fout, "\t<LinkValue ID=\"%s\">\n", (const char*) (*itlink)->a_key);
+			fprintf(fout, "\t<LinkValue ID=\"%s\">", (const char*) (*itlink)->a_key);
 			
 			// iterate over link targets
 			if ((*itlink)->a_value->link_paths) {
 				PltListIterator<LogPath> *link_it = (PltListIterator<LogPath> *) (*itlink)->a_value->link_paths->newIterator();
 				for (j = 0; j < (*itlink)->a_value->link_paths->size(); j++) {
-					for (i=0;i<cnt;i++) fprintf(fout, "\t");
-					fprintf(fout, "\t\t%s\n", (const char*) PltString(**link_it));		// link target
+					fprintf(fout, "%s", (const char*) PltString(**link_it));		// link target
 					++*link_it;
+					if (*link_it) fprintf(fout, ",");
 				}
 			}
 
-			for (i=0;i<cnt;i++) fprintf(fout, "\t");
-			fprintf(fout, "\t</LinkValue>\n");
+			fprintf(fout, "</LinkValue>\n");
 			
 			++*itlink;
 		}
@@ -1448,7 +1443,7 @@ bool write_instance(instance *node)
 {
 
 	if (node->is_part) return true;   // skip parts here
-	return write_instance_base(node, 0);
+	return write_instance_base(node, 1);
 }
 
 //-------------------------------------------------------------------------------
@@ -1458,7 +1453,6 @@ bool write_file()
 {
 	bool ok = true;
 
-	fprintf(fout, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	fprintf(fout, "<ACPLT_OV_InstanceModel xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
 				  "xsi:noNamespaceSchemaLocation=\"www.plt.rwth-aachen.de/ov/xml/ovi.xsd\">\n");
 	// Write instances into database
