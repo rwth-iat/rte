@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.26 1997-12-02 18:08:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.27 1997-12-08 07:20:36 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -134,6 +134,7 @@ KsServerBase::KsServerBase()
 {
     PLT_PRECONDITION( the_server == 0 );
     the_server = this;
+    _is_ok = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
