@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.29 2005-01-24 17:58:20 ansgar Exp $
+*   $Id: ov_version.h,v 1.30 2005-01-31 13:25:37 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,7 +38,7 @@
 #define OV_VER_BUILDER 						"1.0.4"
 #define OV_VER_MAKMAK 						"1.0.0"
 #define OV_VER_DBDUMP 						"1.3.4"
-#define OV_VER_DBPARSE						"1.1.5"
+#define OV_VER_DBPARSE						"1.1.6"
 #define OV_VER_OVXIPARSE					"1.0.0"
 #define OV_VER_LIBINFO 						"1.0.0"
 #define OV_VER_LIBOV						"1.6.5"
@@ -52,7 +52,7 @@
 #define OV_VER_FILEVERSION_BUILDER			1, 0, 4, 0
 #define OV_VER_FILEVERSION_MAKMAK			1, 0, 0, 0
 #define OV_VER_FILEVERSION_DBDUMP			1, 3, 4, 0
-#define OV_VER_FILEVERSION_DBPARSE			1, 1, 5, 0
+#define OV_VER_FILEVERSION_DBPARSE			1, 1, 6, 0
 #define OV_VER_FILEVERSION_OVXIPARSE		1, 0, 0, 0
 #define OV_VER_FILEVERSION_LIBINFO			1, 0, 0, 0
 #define OV_VER_FILEVERSION_LIBOV			1, 6, 5, 0
@@ -67,7 +67,7 @@
 #define OV_VER_PRODUCTVERSION_MAKMAK		1, 6, 5, 0
 #define OV_VER_PRODUCTVERSION_DBDUMP		1, 6, 5, 0
 #define OV_VER_PRODUCTVERSION_DBPARSE		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_OVXIPARSE		1, 0, 0, 0
+#define OV_VER_PRODUCTVERSION_OVXIPARSE		1, 6, 5, 0
 #define OV_VER_PRODUCTVERSION_LIBINFO		1, 6, 5, 0
 #define OV_VER_PRODUCTVERSION_LIBOV			1, 6, 5, 0
 #define OV_VER_PRODUCTVERSION_DBUTIL 		1, 6, 5, 0

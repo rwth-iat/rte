@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.13 2005-01-27 12:17:01 ansgar Exp $
+ * $Id: dbparse1.cpp,v 1.14 2005-01-31 13:23:43 ansgar Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,9 +23,6 @@
 //
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
 //          Ansgar Münnemann <ansgar@plt.rwth-aachen.de>
-// dbparse1.cpp
-// Version : 1.15
-// last change: Jan 10, 2005
 
 //-------------------------------------------------------------------------------
 // includes
@@ -47,11 +44,13 @@ ofstream			parselog;						// file logging parse results
 parsetree			*parse_tree;			     	// parse tree
 int					lopts;							// load options
 KsString			server;							// target server name
+KscPath  			*path;							// target path in server
 KscServerBase		*server_base;					// server base
 u_int				lib_wait_time;					// time to wait after loading
 													// the libraries
 bool				verbose;						// print verbose status info?
-bool				use_activitylock;						// use activitylock of OV-server
+bool				relative;						// write relative pathes to PATH
+bool				use_activitylock;				// use activitylock of OV-server
 PltList<instance *>	liblist;						// list of library instances
 
 //-------------------------------------------------------------------------------
@@ -2601,8 +2600,9 @@ int main(int argc, char **argv)
 	KscCommObjectHandle		hrootdomain;				// handle of server root
 	char					*x;
 	int						i;
-//	extern int				yydebug;					// enable parser trace facilities
-//	yydebug = 1;
+	KsString 				rootname;
+	//	extern int				yydebug;					// enable parser trace facilities
+	//	yydebug = 1;
 
 	// print info on startup
 	cout << "** ACPLT/OV text file parser, version " << OV_VER_DBPARSE << " **" << endl
@@ -2646,12 +2646,13 @@ int main(int argc, char **argv)
 			 << "      Options may be combined, separated by \"-\"" << endl
 			 << "-wlib_wait_time : time to wait after loading the libraries in s, default: 0 s" << endl
 			 << "-v : print verbose status information" << endl
+			 << "-pPATH : write instances and links with relative path to PATH" << endl
 			 << "-a : use activitylock (OV version > 1.6.4)" << endl
 			 << endl;
 		return 0;
 	}
 
-	if (argc > 6) {
+	if (argc > 7) {
 		cout << "Error: Too many parameters." << endl;
 		return -1;
 	}
@@ -2673,6 +2674,9 @@ int main(int argc, char **argv)
 	server = KsString(argv[1]);
 	lib_wait_time = 0;
 	verbose = false;
+	relative = false;
+	path = new(KscPath);
+	*path = KscPath("/");
 
 	for (i=2; i<argc; i++) {						// read command line parameters
 		if (argv[i][0] == '-') {
@@ -2691,6 +2695,10 @@ int main(int argc, char **argv)
 					  break;
 			case 'v':
 			case 'V': verbose = true;
+					  break;
+			case 'p':
+			case 'P': relative = true;
+					  *path =  KscPath(KsString(&argv[i][2]));
 					  break;
 			case 'a':
 			case 'A': use_activitylock = true;
@@ -2723,7 +2731,7 @@ int main(int argc, char **argv)
 		parselog.close();
 	}
 
-	KsString rootname(server + KsString("/"));
+	rootname = KsString(server + KsString("/"));
 	if (ok) {
 		KscDomain rootdom(rootname);
 		if (!rootdom.getEngPropsUpdate()) {

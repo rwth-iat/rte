@@ -116,6 +116,7 @@ extern parsetree *parse_tree;		/* the parse tree to be created */
 %type <pinstlist> part_instances_block_opt parts_opt
 %type <pvarlist> variable_values_block_opt variables_opt
 %type <plinklist> link_values_block_opt links_opt
+%type <ppathval> abs_or_rel_path
 
 %%
 
@@ -135,7 +136,7 @@ instances:	  inst
 				}
 			;
 
-inst:	  INSTANCE PATH ':' CLASS PATH
+inst:	  INSTANCE abs_or_rel_path ':' CLASS abs_or_rel_path
 		  creation_time_opt
 		  flags_opt
 		  comment_opt
@@ -434,12 +435,12 @@ link_value:	  IDENTIFIER '=' '{''}'
 				}
 			;
 
-paths:		  PATH
+paths:		  abs_or_rel_path
 			{
 				$$ = new(PltList<LogPath>);
 				$$->addLast(*$1);
 			}
-		| paths ',' PATH
+		| paths ',' abs_or_rel_path
 			{
 				$$->addLast(*$3);
 			}
@@ -472,7 +473,7 @@ parts_opt:
 				}
 			;
 
-part_inst:	  PART_INSTANCE PATH ':' CLASS PATH
+part_inst:	  PART_INSTANCE abs_or_rel_path ':' CLASS abs_or_rel_path
 			  creation_time_opt
 			  flags_opt
 			  comment_opt
@@ -495,6 +496,36 @@ part_inst:	  PART_INSTANCE PATH ':' CLASS PATH
 					$$->cr_opts = CO_NONE;
 				}
 			;
+
+abs_or_rel_path: PATH
+						{
+							if (relative) {
+								if ($1->isRelative()) {
+									$$ = new(LogPath);
+									if (*path!=LogPath("/"))
+										*$$ = LogPath( (PltString) *path + "/" + PltString(*$1));
+									else
+										*$$ = LogPath( (PltString) *path +  PltString(*$1));
+									free($1);
+								}
+								else $$ = $1;
+							}
+							else $$ = $1;
+						}
+					| IDENTIFIER
+						{
+							if (relative) {
+								$$ = new(LogPath);
+								if (*path!=LogPath("/"))
+									*$$ = LogPath( (PltString) *path + "/" + PltString(*$1));
+								else
+									*$$ = LogPath( (PltString) *path +  PltString(*$1));
+							} else {
+								$$  = new (LogPath);
+								*$$ = LogPath(*$1);
+							}
+							free($1);
+						}
 %%
 
 int yyerror(char *s)		/* required standard function */

@@ -1,5 +1,5 @@
 /*
- * $Id: ovxiparse.cpp,v 1.3 2005-01-27 12:17:01 ansgar Exp $
+ * $Id: ovxiparse.cpp,v 1.4 2005-01-31 13:23:43 ansgar Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -44,6 +44,8 @@ ofstream			parselog;						// file logging parse results
 parsetree			*parse_tree;			     	// parse tree
 bool				verbose;						// print verbose status info?
 FILE*				fout;						// the output file
+bool				relative;						// write relative pathes to PATH
+KscPath  			*path;							// target path in server
 
 //-------------------------------------------------------------------------------
 
@@ -1488,7 +1490,8 @@ int main(int argc, char **argv)
 	if ((argc == 2) && (strcmp(argv[1], "-h") == 0)) {
 		cout << "OVI text file parser generates a OVXI/XML file as output." << endl
 			 << "Usage: " << argv[0] << " input_file output_file" << endl
-			 << "[-h] print help information" << endl;
+			 << "[-h] print help information" << endl
+			 << "[-pPATH] convert relative pathes to PATH/relative path" << endl;
 		return 0;
 	}
 
@@ -1496,7 +1499,8 @@ int main(int argc, char **argv)
 		cout << "Error: Missing parameter \"//host/server\"." << endl
 			 << "Usage: " << argv[0] << " input_file output_file" << endl
 			 << "[-v] print verbode information" << endl
-			 << "[-h] print help information" << endl;
+			 << "[-h] print help information" << endl
+			 << "[-pPATH] convert relative pathes to PATH/relative path" << endl;
 		return -1;
 	}
 
@@ -1504,12 +1508,18 @@ int main(int argc, char **argv)
 	outfile = argv[2];
 
 	verbose = false;
+	path = new(KscPath);
+	*path = KscPath("/");
 
 	for (i=3; i<argc; i++) {						// read command line parameters
 		if (argv[i][0] == '-') {
 			switch (argv[i][1]) {
 			case 'v':
 			case 'V': verbose = true;
+					  break;
+			case 'p':
+			case 'P': relative = true;
+					  *path =  KscPath(KsString(&argv[i][2]));
 					  break;
 			default	: cout << "Invalid parameter: " << argv[i] << "." << endl;
 					  return -1;

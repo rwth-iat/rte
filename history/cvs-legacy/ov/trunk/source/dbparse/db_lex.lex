@@ -42,7 +42,8 @@
 
 digit			[0-9]
 alpha			[a-zA-Z]
-path_identifier	({alpha}|"_")({alpha}|{digit}|"_")*
+special			("%"({alpha}|{digit})({alpha}|{digit}))
+path_identifier	({alpha}|"_"|{special})({alpha}|{digit}|"_"|{special})*
 string			\"[^\"]*\"
 year			[12]{digit}{3}
 month			("0"[1-9])|("1"[012])
@@ -143,7 +144,12 @@ usec			{digit}{6}
 		yylval.pvoidval = NULL;
 		return(VOID_VALUE);
 	}
-"/"|("/"[.]?{path_identifier}([./]{path_identifier})*)	{
+({alpha}|{special})({alpha}|{digit}|"_")*	{
+		yylval.pstringval = new(KsString);
+		*yylval.pstringval = KsString(yytext);
+		return(IDENTIFIER);
+	}
+"/"|("/"[.]?{path_identifier}([./]{path_identifier})*)|({path_identifier}([./]{path_identifier})*)	{
 		yylval.ppathval = new(LogPath);
 		*yylval.ppathval = LogPath(yytext);
 		return(PATH);
@@ -165,11 +171,6 @@ usec			{digit}{6}
 [+-]?{digit}+	{
 		yylval.intval = strtoul(yytext, NULL, 10);
 		return(INT_VALUE);
-	}
-{alpha}({alpha}|{digit}|"_")*	{
-		yylval.pstringval = new(KsString);
-		*yylval.pstringval = KsString(yytext);
-		return(IDENTIFIER);
 	}
 {string}	{
 		yytext[strlen(yytext)-1] = '\0';

@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.10 2005-01-27 12:17:01 ansgar Exp $
+ * $Id: dbdump.cpp,v 1.11 2005-01-31 13:23:43 ansgar Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -504,7 +504,8 @@ int DumpLinks(KscAnyCommObject &branch, int indent)
 									tempstr = (char*) malloc(strlen((const char*)((KsStringValue &) *curr_props->value))+1);
 									strcpy(tempstr, (const char*) ((KsStringValue &) *curr_props->value));
 									if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
-										db_file << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+										if (sp->kscpath->countComponents()==1) db_file << &tempstr[strlen(sp->kscpath->getPathOnly())];
+										else db_file << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
 									}
 									else {
 										db_file << tempstr;
@@ -522,7 +523,8 @@ int DumpLinks(KscAnyCommObject &branch, int indent)
 									tempstr = (char*) malloc(strlen((const char*)((KsStringVecValue &) *curr_props->value)[i])+1);
 									strcpy(tempstr, (const char*) ((KsStringVecValue &) *curr_props->value)[i]);
 									if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
-										db_file << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+										if (sp->kscpath->countComponents()==1) db_file << &tempstr[strlen(sp->kscpath->getPathOnly())];
+										else db_file << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
 									}
 									else {
 										db_file << tempstr;
@@ -681,7 +683,8 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 				tempstr = (char*) malloc(strlen(obj.getPathAndName())+1);
 				strcpy(tempstr, (const char*) obj.getPathAndName());
 				if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
-					db_file << "PART_INSTANCE " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+					if (sp->kscpath->countComponents()==1) db_file << "PART_INSTANCE " << &tempstr[strlen(sp->kscpath->getPathOnly())];
+					else db_file << "PART_INSTANCE " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
 				}
 				else {
 					db_file << "PART_INSTANCE " << tempstr;
@@ -703,7 +706,8 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 				tempstr = (char*) malloc(strlen(obj.getPathAndName())+1);
 				strcpy(tempstr, (const char*) obj.getPathAndName());
 				if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
-					db_file << "INSTANCE " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+					if (sp->kscpath->countComponents()==1) db_file << "INSTANCE " << &tempstr[strlen(sp->kscpath->getPathOnly())];
+					else db_file << "INSTANCE " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
 				}
 				else {
 					db_file << "INSTANCE " << tempstr;
@@ -721,7 +725,8 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 				tempstr = (char*) malloc(strlen(((KsDomainEngProps &)eng_props).class_identifier)+1);
 				strcpy(tempstr, (const char*) ((KsDomainEngProps &)eng_props).class_identifier);
 				if (!strncmp((const char*) sp->path, tempstr, strlen(sp->path)) && (strlen(sp->kscpath->getPathOnly())+1<strlen(tempstr))) {
-					db_file << " : CLASS " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
+					if (sp->kscpath->countComponents()==1) db_file << " : CLASS " << &tempstr[strlen(sp->kscpath->getPathOnly())];
+					else db_file << " : CLASS " << &tempstr[strlen(sp->kscpath->getPathOnly())+1];
 				}
 				else {
 					db_file << " : CLASS " << tempstr;

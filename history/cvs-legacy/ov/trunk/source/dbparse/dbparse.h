@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse.h,v 1.6 2005-01-27 12:17:01 ansgar Exp $
+ * $Id: dbparse.h,v 1.7 2005-01-31 13:23:43 ansgar Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -245,6 +245,8 @@ class instance {
 extern ofstream parselog;
 extern parsetree *parse_tree;
 extern int lopts;								// load options
+extern KscPath *path;
+extern bool	relative;
 
 //-------------------------------------------------------------------------------
 //
