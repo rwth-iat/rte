@@ -47,7 +47,7 @@
 
 /* End of configuration section */
 
-#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_NT != 1
+#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_SOLARIS != 1
 #error Must define exactly one system!
 #endif
 
@@ -59,8 +59,8 @@
 #define PLT_USE_SYSLOG 1
 #endif
 
-#if PLT_SYSTEM_NT
-#define PLT_USE_SYSLOG 0
+#if PLT_SYSTEM_SOLARIS
+#define PLT_USE_SYSLOG 1
 #endif
 
 #ifndef PLT_USE_SYSLOG
@@ -76,6 +76,7 @@
 #define PLT_SIMULATE_BOOL 0
 #define PLT_SIMULATE_RTTI 1
 #define PLT_INSTANTIATE_TEMPLATES 1
+#define PLT_AVOID_DELETE_BUG 0
 #endif
 
 
@@ -91,6 +92,10 @@
 #ifndef PLT_INSTANTIATE_TEMPLATES    /* Explicit template instantiation? */
 #define PLT_INSTANTIATE_TEMPLATES 0
 #endif
+
+#ifndef PLT_AVOID_DELETE_BUG         /* If you can't call delete through */
+#define PLT_AVOID_DELETE_BUG 0       /* a pointer to a base class object */
+#endif                               /* define this as 1.                */
 
 #if PLT_SIMULATE_BOOL
 typedef int bool;
