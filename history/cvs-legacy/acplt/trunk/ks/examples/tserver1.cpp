@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.16 1998-03-10 13:50:38 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.17 1998-06-29 10:05:20 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -58,7 +58,7 @@ extern "C" void handler(int) {
 /////////////////////////////////////////////////////////////////////////////
 // some constants needed for protocol extension
 //
-const u_long ext_major_opcode = 0x0012;
+const u_long ext_major_opcode = 0x0010; // start with first free extension
 const u_long KS_CREATEOBJECT = 
   (ext_major_opcode << 16) | KS_CREATEOBJECT_MINOR_OPCODE;  
 
@@ -83,7 +83,7 @@ public:
         { return KsString("tserver"); }
 
     virtual KsString getServerVersion() const
-        { return KsString("1.01"); }
+        { return KsString(KS_VERSION_STRING); }
 
     virtual KsString getServerDescription() const 
         { return KsString("ACPLT/KS test server"); }
@@ -97,7 +97,7 @@ public:
     // this function.
     //   
     void dispatch(u_long serviceId,
-                  SVCXPRT *xprt,
+                  KssTransport &transport,
                   XDR *xdrIn,
                   KsAvTicket &ticket);
 
@@ -107,6 +107,7 @@ public:
     void createObject(KsAvTicket &ticket,
                       const KsCreateParams &params,
                       KsCreateResult &result);
+
     //
     // To use data exchange, you must replace the exgdata service
     // method. The default exgData method returns 'not implemented'
@@ -256,6 +257,7 @@ TestDomain::newIterator() const
 TestServer::TestServer(int port)
 : KsServer(30, port)
 {
+    setBufferSizes(131072, 131072);
     // 
     // When requests are made with authentification method "none"
     // objects that don't restrict access further can be read and
@@ -459,36 +461,34 @@ TestServer::calculate()
 //
 void 
 TestServer::dispatch(u_long serviceId,
-                     SVCXPRT *xprt,
+                     KssTransport &transport,
                      XDR *xdrIn,
                      KsAvTicket &ticket)
 {
-  switch(serviceId) {
+    switch(serviceId) {
 
-  case KS_CREATEOBJECT:
-    {
-      bool ok = false;
-      KsCreateParams params(xdrIn, ok);
-      if (ok) {
-        // execute service function
-        KsCreateResult result;
-        createObject(ticket, params, result);
-        // send back result
-        sendReply(xprt, ticket, result);
-      } else {
-        // not properly decoded
-        sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
-      }
+    case KS_CREATEOBJECT:
+        {
+	    bool ok = false;
+	    KsCreateParams params(xdrIn, ok);
+	    transport.finishRequestDeserialization(ticket, ok);
+	    if ( ok ) {
+            	// execute service function
+            	KsCreateResult result;
+            	createObject(ticket, params, result);
+            	// send back result
+            	transport.sendReply(ticket, result);
+	    } else {
+            	// not properly decoded
+            	transport.sendErrorReply(ticket, KS_ERR_GENERIC);
+	    }
+        }
+    	break;
+    default:
+	KsServer::dispatch(serviceId, transport, xdrIn, ticket);
     }
-  break;
+} // TestServer::dispatch
 
-  default:
-    {
-      KsServer::dispatch(serviceId, xprt, xdrIn, ticket);
-    }
- 
-  }
-}
 
 void 
 TestServer::createObject(KsAvTicket &ticket,
@@ -503,6 +503,7 @@ TestServer::createObject(KsAvTicket &ticket,
     result.result = KS_ERR_GENERIC;
   }  
 }
+
 
 //////////////////////////////////////////////////////////////////////
 // Access restrictions:
@@ -666,6 +667,9 @@ int main(int, char **) {
     //
     // Start it.
     //
+#if !PLT_SYSTEM_NT && !PLT_SYSTEM_OPENVMS
+    signal(SIGPIPE, SIG_IGN);
+#endif
     ts.startServer();
     if ( ts.isOk() ) {
         PltLog::Info("Started.");
@@ -688,16 +692,4 @@ int main(int, char **) {
     return ts.isOk() ? 0 : 42;
 }
 
-// EOF tserver1.cpp
-
-
-
-
-
-
-
-
-
-
-
-
+/* End of tserver1.cpp */

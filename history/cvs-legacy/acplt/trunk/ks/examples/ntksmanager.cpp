@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.5 1997-12-10 17:45:00 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.6 1998-06-29 10:05:20 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -99,9 +99,9 @@ PltNtLog log("ACPLT/KS manager");
 // a copy of it whenever someone asks us for it.
 //
 #ifdef PLT_W95SERVICE
-static const KsString NtKsManagerVersionString("1.01(w95)");
+static const KsString NtKsManagerVersionString(KS_VERSION_STRING "(w95)");
 #else
-static const KsString NtKsManagerVersionString("1.01(nt)");
+static const KsString NtKsManagerVersionString(KS_VERSION_STRING "(nt)");
 #endif
 
 class NtManager : public KsManager {

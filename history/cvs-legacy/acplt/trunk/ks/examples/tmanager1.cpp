@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.8 1997-12-11 17:18:09 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.9 1998-06-29 10:05:20 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -46,7 +46,7 @@
 //////////////////////////////////////////////////////////////////////
 
 const char PROG_NAME[] = "tmanager";
-const KsString KS_MANAGER_VERSION("1.01");
+const KsString KS_MANAGER_VERSION(KS_VERSION_STRING);
 
 //////////////////////////////////////////////////////////////////////
 
