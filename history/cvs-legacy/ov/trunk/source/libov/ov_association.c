@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.20 2005-02-04 15:42:33 ansgar Exp $
+*   $Id: ov_association.c,v 1.21 2005-02-25 13:26:43 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -99,12 +99,12 @@ CONTINUE:
 	ov_time_gettime(&passoc->v_creationtime);
 	passoc->v_assoctype = passocdef->assoctype;
 	passoc->v_assocprops = passocdef->assocprops;
-	if (Ov_Fail(ov_string_setvalue(&passoc->v_childrolename, passocdef->childrolename))) goto CONTINUEERR6;
-	if (Ov_Fail(ov_string_setvalue(&passoc->v_parentrolename, passocdef->parentrolename))) goto CONTINUEERR5;
-	if (Ov_Fail(ov_string_setvalue(&passoc->v_parentcomment, passocdef->parentcomment))) goto CONTINUEERR4;
-	if (Ov_Fail(ov_string_setvalue(&passoc->v_childcomment, passocdef->childcomment))) goto CONTINUEERR3;
+	if (Ov_Fail(ov_string_setvalue(&passoc->v_childrolename, passocdef->childrolename))) goto CONTINUEERR4;
+	if (Ov_Fail(ov_string_setvalue(&passoc->v_parentrolename, passocdef->parentrolename))) goto CONTINUEERR3;
+	if (Ov_Fail(ov_string_setvalue(&passoc->v_parentcomment, passocdef->parentcomment))) goto CONTINUEERR2;
+	if (Ov_Fail(ov_string_setvalue(&passoc->v_childcomment, passocdef->childcomment))) goto CONTINUEERR1;
 	if (!exists) {
-		if (Ov_Fail(ov_association_linktable_calculate(passoc, pparentclass, pchildclass))) goto CONINUEERR1;
+		if (Ov_Fail(ov_association_linktable_calculate(passoc, pparentclass, pchildclass))) goto CONTINUEERR1;
 	}
 
 	else {	
@@ -133,14 +133,12 @@ CONTINUE:
 	return OV_ERR_OK;
 
 CONTINUEERR1:
-CONTINUEERR2:
-CONTINUEERR3:
 	ov_string_setvalue(&passoc->v_childcomment, NULL);
-CONTINUEERR4:
+CONTINUEERR2:
 	ov_string_setvalue(&passoc->v_parentcomment, NULL);
-CONTINUEERR5:
+CONTINUEERR3:
 	ov_string_setvalue(&passoc->v_parentrolename, NULL);
-CONTINUEERR6:
+CONTINUEERR4:
 	ov_string_setvalue(&passoc->v_childrolename, NULL);
 	return OV_ERR_DBOUTOFMEMORY;;
 }
@@ -1426,7 +1424,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
 		*/
 		else if (ov_class_cancastto(pparentclass, pchildclass)) {
 			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
-			if (Ov_Fail(result)) goto CONTINUEERR2;
+			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
 		}
 		/*
@@ -1435,7 +1433,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
 		*/
 		else if (ov_class_cancastto(pchildclass, pparentclass)) {
 			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
-			if (Ov_Fail(result)) goto CONTINUEERR2;
+			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR) + sizeof(OV_HEAD));
 		}
 		/*
@@ -1444,7 +1442,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
 		*/
 		else {
 			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
-			if (Ov_Fail(result)) goto CONTINUEERR2;
+			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
 		}
 		if (Ov_Fail(result)) goto CONTINUEERR1;
@@ -1479,17 +1477,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
 		}
 		else if (ov_class_cancastto(pparentclass, pchildclass)) {
 			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
-			if (Ov_Fail(result)) goto CONTINUEERR2;
+			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pparentclass, 2 * sizeof(OV_NMHEAD));
 		}
 		else if (ov_class_cancastto(pchildclass, pparentclass)) {
 			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
-			if (Ov_Fail(result)) goto CONTINUEERR2;
+			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
 		}
 		else {
 			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
-			if (Ov_Fail(result)) goto CONTINUEERR2;
+			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
 		}
 		if (Ov_Fail(result)) goto CONTINUEERR1;
@@ -1513,12 +1511,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
 		}
 		else if (ov_class_cancastto(pparentclass, pchildclass)) {
 			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_INSTPTR_ov_object));
-			if (Ov_Fail(result)) goto CONTINUEERR2;
+			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pparentclass,  2* sizeof(OV_INSTPTR_ov_object));
 		}
 		else if (ov_class_cancastto(pchildclass, pparentclass)) {
 			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
-			if (Ov_Fail(result)) goto CONTINUEERR2;
+			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
 		}
 		else {
@@ -1526,7 +1524,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
 			if (Ov_Fail(result)) goto CONTINUEERR1;
 			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
 		}
-		if (Ov_Fail(result)) goto CONTINUEERR2;
+		if (Ov_Fail(result)) goto CONTINUEERR1;
 		passoc->v_parentoffset = pparentclass->v_linktablesize;
 		ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_INSTPTR_ov_object), pparentclass->v_linktablesize);
 		/*
@@ -1540,6 +1538,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
 		*/
 		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
 	}
+CONTINUEERR1:
+	return result;
+}
 
 
 /*

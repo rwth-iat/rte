@@ -36,14 +36,29 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynoperation_executeable_set(
              const OV_BOOL           value
 ) {
              OV_VTBLPTR_dynov_dynoperation          pvtable;
+             OV_INSTPTR_ov_class		    pclass;
+             OV_INSTPTR_ov_association		    passoc;
 
 	     if ((value) && (!pobj->v_executeable)) {
 		     Ov_GetVTablePtr(dynov_dynoperation, pvtable, pobj);
-		     if (pvtable) 	
+		     if (pvtable)
 	             	pobj->v_executeable = pvtable->m_check(Ov_PtrUpCast(ov_object, pobj));
 		     if (!pobj->v_executeable) return OV_ERR_OPDEFMISMATCH;
 	     }
 	     else if ((!value) && (pobj->v_executeable)) {
+	             pclass = Ov_DynamicPtrCast(ov_class, Ov_Getparent(ov_containment, pobj));
+	             if (pclass) if (pclass->v_isinstantiable) return OV_ERR_NOACCESS;
+	             passoc = Ov_GetParent(dynov_assocaccess, pobj);
+	             if (passoc) if (passoc->v_islinkable) return OV_ERR_NOACCESS;
+	             passoc = Ov_GetParent(dynov_islinkfnc, pobj);
+	             if (passoc) if (passoc->v_islinkable) return OV_ERR_NOACCESS;
+	             passoc = Ov_GetParent(dynov_isunlinkfnc, pobj);
+	             if (passoc) if (passoc->v_islinkable) return OV_ERR_NOACCESS;
+	             pclass = Ov_DynamicPtrCast(ov_class, Ov_Getparent(ov_containment, Ov_GetParent(dynov_isgetaccessor, pobj)));
+	             if (pclass) if (pclass->v_isinstantiable) return OV_ERR_NOACCESS;
+	             pclass = Ov_DynamicPtrCast(ov_class, Ov_Getparent(ov_containment, Ov_GetParent(dynov_issetaccessor, pobj)));
+	             if (pclass) if (pclass->v_isinstantiable) return OV_ERR_NOACCESS;
+
 		     Ov_GetVTablePtr(dynov_dynoperation, pvtable, pobj);
 		     if (pvtable) {
 			pvtable->m_uncheck(Ov_PtrUpCast(ov_object, pobj));
@@ -70,7 +85,7 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynoperation_getaccess(
 			return OV_AC_NONE;
 		case OV_ET_CHILDLINK:
 			if (pdynop->v_executeable) {
-				access = OV_AC_NONE;
+				access = OV_AC_READ;
 			}
 			else  {
 				access = OV_AC_READ | OV_AC_WRITE;

@@ -50,14 +50,14 @@ OV_DLLFNCEXPORT void dynov_dynassociation_uncheck(
 OV_DLLFNCEXPORT OV_BOOL dynov_dynassociation_check(
         OV_INSTPTR_ov_object          pobj
 ) {
-        OV_INSTPTR_ov_class      	pparentclass;
-        OV_INSTPTR_ov_class      	pchildclass;
-        OV_INSTPTR_dynov_dynassociation pdynassoc;
-        OV_INSTPTR_dynov_dynoperation	pdynop;
+    OV_INSTPTR_ov_class      	pparentclass;
+    OV_INSTPTR_ov_class      	pchildclass;
+    OV_INSTPTR_dynov_dynassociation pdynassoc;
+    OV_INSTPTR_dynov_dynoperation	pdynop;
 	OV_ELEMENT	 		baseelement;
 	OV_ELEMENT	 		searchedelement;
 	OV_RESULT			result;
-        OV_VTBLPTR_dynov_dynoperation   pvtableop;
+    OV_VTBLPTR_dynov_dynoperation   pvtableop;
 
 	// test of association's parameters
 
@@ -104,7 +104,7 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynassociation_check(
 
 	// insert the association's link space into linktables of parent and child class' instances
 
-	if (Ov_Fail(ov_association_linktable_calculate(pdynassoc, pparentclass, pchildclass))) return FALSE;
+	if (Ov_Fail(ov_association_linktable_calculate(Ov_PtrUpCast(ov_association, pdynassoc), pparentclass, pchildclass))) return FALSE;
 	return TRUE;
 }
 
@@ -119,6 +119,7 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynassociation_islinkable_set(
              const OV_BOOL           value
 ) {
              OV_INSTPTR_ov_class          	pclass;
+             OV_INSTPTR_ov_class          	pnextclass;
              OV_INSTPTR_ov_object          	pchild;
 
 	     if ((value) && (!pobj->v_islinkable)) {
@@ -126,13 +127,23 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynassociation_islinkable_set(
 		     if (!pobj->v_islinkable) return OV_ERR_ASSOCDEFMISMATCH;
 	     }
 	     else if ((!value) && (pobj->v_islinkable)) {
-		     pclass = Ov_GetParent(ov_parentrelationship, pobj);
-		     Ov_ForEachChild(ov_instantiation, pclass, pchild) {
-			if (ov_association_isusedparentlink(Ov_PtrUpCast(ov_association, pobj), pchild)) return OV_ERR_NOACCESS;
+		     pclass=Ov_GetParent(ov_parentrelationship, pobj);
+		     pnextclass=Ov_GetFirstChild(ov_inheritance, pclass);
+		     while (pclass) {
+			     Ov_ForEachChild(ov_instantiation, pclass, pchild) {
+				if (ov_association_isusedparentlink(Ov_PtrUpCast(ov_association, pobj), pchild)) return OV_ERR_NOACCESS;
+			     }
+			     pclass = pnextclass;
+			     pnextclass = Ov_GetNextChild(ov_inheritance, pnextclass);
 		     }
 		     pclass = Ov_GetParent(ov_childrelationship, pobj);
-		     Ov_ForEachChild(ov_instantiation, pclass, pchild) {
-			if (ov_association_isusedchildlink(Ov_PtrUpCast(ov_association, pobj), pchild)) return OV_ERR_NOACCESS;
+		     pnextclass=Ov_GetFirstChild(ov_inheritance, pclass);
+		     while (pclass) {
+			     Ov_ForEachChild(ov_instantiation, pclass, pchild) {
+				if (ov_association_isusedchildlink(Ov_PtrUpCast(ov_association, pobj), pchild)) return OV_ERR_NOACCESS;
+			     }
+			     pclass = pnextclass;
+			     pnextclass = Ov_GetNextChild(ov_inheritance, pnextclass);
 		     }
 		     dynov_dynassociation_uncheck(Ov_PtrUpCast(ov_object, pobj));
 		     pobj->v_islinkable = FALSE;

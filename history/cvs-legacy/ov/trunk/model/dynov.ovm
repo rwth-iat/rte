@@ -1,5 +1,5 @@
 /*
-*   $Id: dynov.ovm,v 1.2 2005-02-04 15:42:33 ansgar Exp $
+*   $Id: dynov.ovm,v 1.3 2005-02-25 13:26:42 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -29,9 +29,9 @@
 #include "ov.ovm"
 
 LIBRARY dynov
-	VERSION = "1.0";
+	VERSION = "1.1";
 	AUTHOR = "Ansgar Münnemann";
-	COPYRIGHT = "Copyright (C) 2002-2004 Lehrstuhl für Prozessleittechnik, RWTH Aachen";
+	COPYRIGHT = "Copyright (C) 2002-2005 Lehrstuhl für Prozessleittechnik, RWTH Aachen";
 	COMMENT = "modell for dynamically engineering of classes and associations";
 
     CLASS dynobject : CLASS ov/object

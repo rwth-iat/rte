@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.6 2005-01-21 10:31:42 ansgar Exp $
+#   $Id: msvc.mk,v 1.7 2005-02-25 13:26:42 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -211,6 +211,20 @@ db_lex.obj: db_lex.c
 	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
 
 $(DBPARSE_EXE) : $(DBPARSE_OBJ) $(DBPARSE_RES)
+	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
+
+#	ACPLT/OV OVI/XML parser
+
+db_y.h: db_y.c
+
+
+db_lex.o: db_lex.c
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
+
+db_y.o: db_y.c
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
+
+$(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)  $(OVXIPARSE_RES)
 	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
 
 #	ACPLT/OV makmak

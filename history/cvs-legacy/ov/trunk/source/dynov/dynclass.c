@@ -48,6 +48,37 @@ OV_DLLFNCEXPORT void dynov_dynclass_uncheck(
 	}
 }
 
+OV_INT get_operation_offset(
+	OV_INSTPTR_ov_class pclass,
+	OV_INSTPTR_ov_operation pop
+) {
+    OV_INSTPTR_ov_object		pobj;
+	OV_INSTPTR_ov_operation 	pobjop;
+	OV_INSTPTR_ov_class 		pbaseclass;
+	OV_INT				opcnt;
+	OV_BOOL				result;
+
+	opcnt = 0;
+	result = FALSE;
+	while (pclass) {
+		for(pobj = Ov_GetFirstChild(ov_containment, pclass); pobj; pobj=Ov_GetNextChild(ov_containment, pobj)) { // iterate over class elements
+	                pobjop = Ov_DynamicPtrCast(ov_operation, pobj);
+	                if (pobjop) { // class element is an operation
+	                        if (get_operation_offset(Ov_GetParent(ov_inheritance, pclass), pobjop)<0) { // pobjop operation is not overwritten
+		                        if ((pobjop->v_identifier==pop->v_identifier) && (pobjop->v_cfnctypename==pop->v_cfnctypename)) {
+		       				result = TRUE; // searched operation found
+		                        	break; // continue with counting operations of base classes
+		                        }
+		                        opcnt++;
+		                }
+			}
+		}
+	        pclass = Ov_GetParent(ov_inheritance, pclass); // get base class
+ 	}
+	if (result) return (opcnt * sizeof(void*));
+	return -1;   // searched operation not found
+}
+
 OV_DLLFNCEXPORT OV_BOOL dynov_dynclass_check(
         OV_INSTPTR_ov_object          pobj
 ) {
@@ -59,6 +90,8 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynclass_check(
 	OV_INSTPTR_dynov_dynoperation          	pdynop;
 	OV_INSTPTR_dynov_dynclass		pdynclass;
 	OV_INSTPTR_dynov_dynclass		pdynclass2;
+        OV_VTBLPTR_dynov_dynoperation           pvtable;
+        OV_INT					offset;
 
 	pdynclass = Ov_DynamicPtrCast(dynov_dynclass, pobj);
 	if (!pdynclass) return FALSE;
@@ -95,7 +128,16 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynclass_check(
 			pdynclass->v_size += Ov_GetParent(ov_embedment, pdynpart)->v_size;
 		}
 		if (pdynop) {
+		     	Ov_GetVTablePtr(dynov_dynoperation, pvtable, pdynop);
+		     	if (pvtable) pdynop->v_executeable = pvtable->m_check(Ov_PtrUpCast(ov_object, pdynop));
 			if (!pdynop->v_executeable) return FALSE;
+			pbaseclass = Ov_GetParent(dynov_dyninheritance, pdynclass);
+			if (!pbaseclass) pbaseclass = pclass_dynov_dynobject;
+			offset = get_operation_offset(Ov_PtrUpCast(ov_class, pdynclass), Ov_PtrUpCast(ov_operation, pdynop));
+			if (offset>=0) {
+			        (void*) (*((OV_BYTE*) pdynclass->pvtable + offset))=
+
+			}
 		}
 	}
 	pdynclass->v_classprops |= OV_CP_INSTANTIABLE;
