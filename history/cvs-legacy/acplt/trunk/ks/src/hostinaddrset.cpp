@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.3 1997-12-02 10:16:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.4 1997-12-08 07:18:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -391,21 +391,40 @@ bool KsHostInAddrSet::findLocalAddressesW95()
     DWORD  RegValueType;
     char  *IpAddresses = 0;
     DWORD  IpAddressesLength, IpAddressesAllocated = 0;
+    char   TransportName[10];
+    DWORD  TransportNameSize;
+    DWORD  TransportNameType;
 
     NetTransIndex = 0;
     for ( ;; ) {
+        //
+        // Iterate over all entries below the NetTrans entry. They
+        // contain the various transports configurations.
+        //
         SubkeyNameSize = sizeof(SubkeyName);
         result = RegEnumKeyEx(hNetTrans,
                               NetTransIndex++,
                               SubkeyName, &SubkeyNameSize,
                               0, 0, 0, 0);
         if ( result == ERROR_SUCCESS ) {
-	    //
-            //
-            //
             if ( RegOpenKeyEx(hNetTrans, SubkeyName,
                               0, KEY_READ, &hNetTransConfig) 
                  == ERROR_SUCCESS ) {
+		//
+		// Check, that this is really a transport bound to the
+		// TCP/IP transport.
+		//
+		TransportNameSize = sizeof(TransportName);
+		if ( RegQueryValueEx(hNetTransConfig, "DriverDesc",
+                                     0, &TransportNameType,
+                                     (LPBYTE) TransportName, &TransportNameSize)
+                     != ERROR_SUCCESS ) {
+                    continue;
+                }
+		if ( strncmpi(TransportName, "TCP/IP", 7) != 0 ) {
+		    continue;
+		}
+
                 //
                 // First, get the list of IP addresses bound to this interface
                 // (aka service, or whatever, who cares...). We do use here
