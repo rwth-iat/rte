@@ -9,6 +9,10 @@ CXX = cxx
 
 CXX_FLAGS = /DEBUG
 
+LD = link
+
+LD_FLAGS = /DEBUG
+
 CXX_EXTRA_FLAGS = \
 	/warnings=(disable=(EXTRASEMI,FOUNDCR)) \
 	/notemplate_define \
@@ -28,6 +32,9 @@ SRCDIR = [-.-.src]
 CXX_INCLUDES = "../openvms","../../include","../../../plt/include"
 
 LIBKS = libks$(A)
+LIBKSSVR = libkssvr$(A)
+LIBKSCLN = libkscln$(A)
+
 LIBPLT = [-.-.-.plt.build.openvms]libplt$(A)
 
 .SUFFIXES:
@@ -57,19 +64,25 @@ $(LIBKS_OBJECTS): %.obj: [-.-.src]%.cpp
 $(LIBKSSVR_OBJECTS): %.obj: [-.-.src]%.cpp	
 	$(CXX_COMPILE) $<
 
+$(LIBKSCLN_OBJECTS): %.obj: [-.-.src]%.cpp	
+	$(CXX_COMPILE) $<
+
 $(EXAMPLES_OBJECTS): %.obj: [-.-.examples]%.cpp
 	$(CXX_COMPILE) $<
 
-tmanager.exe: tmanager.obj tmanager1.obj libkssvr.olb libks.olb
-	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,libkssvr/lib,libks/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
+tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
+	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
 
-tsclient.exe: tsclient.obj tsclient1.obj svrrpcctx.obj libks.olb
-	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,libks/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
+tsclient.exe: tsclient.obj tsclient1.obj svrrpcctx$O $(LIBKS)
+	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,$(LIBKS)/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
 
 libks$(A): $(LIBKS_OBJECTS)
 	$(AR) /create libks$(A) $^
 
 libkssvr$(A): $(LIBKSSVR_OBJECTS)
+	$(AR) /create libkssvr$(A) $^
+
+libkscln$(A): $(LIBKSCLN_OBJECTS)
 	$(AR) /create libkssvr$(A) $^
 
 clean:

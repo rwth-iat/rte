@@ -1,18 +1,20 @@
 ### -*-makefile-*-
 ###
 ### Compiler & platform specific part for
-### Borland C++ / make / Windows NT
+### MS VC++ 4.2 / nmake / Windows NT
 
 ### Filename conventions
 O=.obj
 A=.lib
 EXE=.exe
 ONCDIR = \oncrpc
-LIBRPC = \oncrpc\bin\oncrpc.lib
+LIBRPC = \oncrpc\bin\oncrpcms.lib
 PLTDIR = ..\..\..\plt
 LIBPLT = $(PLTDIR)\build\nt\libplt.lib
 KSDIR = ..\..
 LIBKS = libks.lib
+LIBKSSVR = libkssvr.lib
+LIBKSCLN = libkscln.lib
 SRCDIR = $(KSDIR)\src\\
 EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
@@ -24,9 +26,10 @@ CXX_FLAGS = -Zi -MTd
 
 ### LINKER
 LD = link
-LD_FLAGS = /DEBUG /NODEFAULTLIB:libc
-
-CXX_EXTRA_FLAGS = -GR -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1
+LD_FLAGS = /DEBUG
+CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) \
+	-GR -DPLT_SYSTEM_NT=1 -DPLT_DEBUG_NEW=0
+CXX_LIBS = $(LIBKS) $(LIBPLT) $(LIBRPC) wsock32.lib advapi32.lib
 
 RC = echo
 
@@ -36,22 +39,19 @@ LIBKS_NT_OBJECTS = ntservice$(O)
 
 .SUFFIXES:      .cpp .obj .lib .exe .i
 
-all: $(LIBKS)
+all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
 examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 
 {$(SRCDIR)}.cpp{}.obj:
-	@echo Compiling $<
-	@$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c  $<
+	$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c  $<
 
 {$(SRCDIR)}.cpp{}.i:
-	@echo Compiling $<
-	@$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) /P $<
+	$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) /P $<
 
 
 {$(EXAMPLESSRCDIR)}.cpp{}.obj:
-	@echo Compiling $<
-	@$(CXX) $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c  $<
+	$(CXX) $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c  $<
 
 
 ### Include generic part
@@ -62,67 +62,67 @@ examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 
 !INCLUDE ..\depend.nt
 
-### How to build things
-.obj.exe :
-	@echo Linking $@
-	$(LD) $(LD_FLAGS) $< \
-		$(LIBKS) $(LIBPLT) $(LIBRPC) \
-		wsock32.lib advapi32.lib
-
+###
 
 ### explicit dependencies not covered by platform-dependend depent mechanism
 ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 	$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)ntservice.cpp
 
 ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
-	$(RC) -r -fontksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
+	echo " "> $@
 
 ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanager.res
 	@echo Linking $@
-	$(LD) $(LD_FLAGS) ntksmanager.obj ntksmanager_templates.obj \
-		$(LIBKS) $(LIBPLT) $(LIBRPC) \
-		wsock32.lib advapi32.lib
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		 ntksmanager.obj ntksmanager_templates.obj \
+		$(LIBKSSVR) $(CXX_LIBS)
 	$(RC) ntksmanager.res ntksmanager.exe
 
 
-$(LIBKS) : $(LIBKS_OBJECTS) ntservice$(O)
-	lib /OUT:$@ $(LIBKS_OBJECTS) ntservice$(O)
+$(LIBKS) : $(LIBKS_OBJECTS)
+	lib /OUT:$@ $(LIBKS_OBJECTS)
+
+$(LIBKSSVR) : $(LIBKSSVR_OBJECTS) ntservice$(O)
+	lib /OUT:$@ $(LIBKSSVR_OBJECTS) ntservice$(O)
+
+$(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
+	lib /OUT:$@ $(LIBKSCLN_OBJECTS)
 
 # $(LIBKS_NT_OBJECTS)
 
-tmanager$(EXE): tmanager$(O) tmanager1$(O)
-	$(LD) $(LD_FLAGS) tmanager$(O) tmanager1$(O) \
-		$(LIBKS) $(LIBPLT) $(LIBRPC) \
-		wsock32.lib advapi32.lib
+tmanager$(EXE): tmanager$(O) tmanager1$(O) $(LIBKSSVR) $(LIBKS)
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		tmanager$(O) tmanager1$(O) \
+		$(LIBKSSVR) $(CXX_LIBS)
 
-tserver$(EXE): tserver$(O) tserver1$(O)
-	$(LD) $(LD_FLAGS) tserver$(O) tserver1$(O) \
-		$(LIBKS) $(LIBPLT) $(LIBRPC) \
-		wsock32.lib advapi32.lib
+tserver$(EXE): tserver$(O) tserver1$(O) $(LIBKSSVR) $(LIBKS)
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		tserver$(O) tserver1$(O) \
+		$(LIBKSSVR) $(CXX_LIBS)
 
-tsclient$(EXE): tsclient$(O) tsclient1$(O)
-	$(LD) $(LD_FLAGS) tsclient$(O) tsclient1$(O) \
-		$(LIBKS) $(LIBPLT) $(LIBRPC) \
-		wsock32.lib advapi32.lib
+tsclient$(EXE): tsclient$(O) tsclient1$(O) svrrpcctx$(O) $(LIBKS)
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		tsclient$(O) tsclient1$(O) \
+		svrrpcctx$(O) $(CXX_LIBS)
 
-tmanager$(EXE): tmanager$(O) tmanager1$(O)
-	$(LD) $(LD_FLAGS) tmanager$(O) tmanager1$(O) \
-		$(LIBKS) $(LIBPLT) $(LIBRPC) \
-		wsock32.lib advapi32.lib
+ttree$(EXE): ttree$(O) ttree1$(O) $(LIBKS) $(LIBKSCLN)
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		ttree$(O) ttree1$(O) \
+		$(LIBKSCLN) $(CXX_LIBS)
 
-ttree$(EXE): ttree$(O) ttree1$(O)
-	$(LD) $(LD_FLAGS) ttree$(O) ttree1$(O) \
-		$(LIBKS) $(LIBPLT) $(LIBRPC) \
-		wsock32.lib advapi32.lib
+tshell$(EXE): tshell$(O) $(LIBKS) $(LIBKSCLN)
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		tshell$(O) \
+		$(LIBKSCLN) $(CXX_LIBS)
 
 clean :
 	del *.obj
 	del *.exe
+	del *.pdb
+	del *.ilk
 
 mrproper : clean
 	del *.lib
 	del *.err
 	del *.sym
 	del *.mbr
-
-

@@ -2,7 +2,8 @@
 ### 
 ### Compiler & platform specific part for
 ### Borland C++ / make / Windows NT
-
+### $id
+###
 ### Filename conventions
 O=.obj
 A=.lib
@@ -14,7 +15,8 @@ TESTDIR = $(PLTDIR)\tests\\
 ### Compiler
 CXX = cl
 CXX_FLAGS = /Zi /MTd
-CXX_EXTRA_FLAGS = -I. -GR -I$(PLTDIR)\include -DPLT_SYSTEM_NT=1
+CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include \
+	-GR -DPLT_SYSTEM_NT=1  -DPLT_DEBUG_NEW=0
 
 .SUFFIXES:	
 
@@ -38,14 +40,8 @@ CXX_EXTRA_FLAGS = -I. -GR -I$(PLTDIR)\include -DPLT_SYSTEM_NT=1
 .obj.exe :
 	$(CXX) $< $(LIBPLT)
 
-$(LIBPLT) : plt_ar.exe $(LIBPLT_OBJECTS)
+$(LIBPLT) : $(LIBPLT_OBJECTS)
 	lib /OUT:$@ $(LIBPLT_OBJECTS)
-#	plt_ar tlib $@ $(LIBPLT_OBJECTS1)
-#	plt_ar tlib $@ $(LIBPLT_OBJECTS2)
-
-### PLT Archiver Wrapper
-plt_ar.exe:	..\plt_ar.cpp
-	$(CXX) ..\plt_ar.cpp
 
 clean :
 	del *.obj
