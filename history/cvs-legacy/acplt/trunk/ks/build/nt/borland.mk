@@ -28,7 +28,7 @@ CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\inc
 
 RC = brc32
 
-LIBKS_NT_OBJECTS = ntservice$(O)
+LIBKS_NT_OBJECTS = ntservice$(O) w95service$(O)
 
 .SUFFIXES:
 
@@ -46,6 +46,14 @@ all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 	@echo Compiling $<
 	@$(CXX) @&&!
 		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
+!
+
+w95ksmanager.obj: $(EXAMPLESSRCDIR)ntksmanager.cpp
+	@echo Compiling ntksmanager.cpp/W95
+	@$(CXX) @&&!
+		-DPLT_W95SERVICE
+		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@
+		$(EXAMPLESSRCDIR)ntksmanager.cpp
 !
 
 ################################################################################
@@ -127,7 +135,7 @@ pmobile.obj:    $(EXAMPLESSRCDIR)pmobile.cpp
 		$< $(LIBKS) $(LIBKSCLN) $(LIBKSSVR) $(LIBPLT) $(LIBRPC)
 !
 
-examples:       tclient.exe ntksmanager.exe tmanager.exe tserver.exe ttree.exe
+examples:       tclient.exe ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe ttree.exe
 #
 # tslcient.exe and tshell.exe aren't supported.
 #examples:       tclient.exe ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
@@ -166,6 +174,16 @@ ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) 
 		-tWM ntksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 	$(RC) -fentksmanager.exe ntksmanager.res
+
+w95ksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
+	$(RC) -DPLT_W95SERVICE -r -fow95ksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
+
+w95ksmanager.exe: w95ksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) w95ksmanager.res
+	@echo Linking $@
+	$(CXX) @&&!
+		-laa -tWM w95ksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
+!
+	$(RC) -few95ksmanager.exe w95ksmanager.res
 
 ttree.exe: ttree.obj ttree1.obj $(LIBKSCLN) $(LIBKS)
 	@echo Linking $@
