@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.2 1997-03-19 17:19:19 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.3 1997-03-20 09:43:53 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -125,13 +125,10 @@ KsManager::dispatch(u_long serviceId,
 
     case KS_UNREGISTER:
         {
-#if PLT_DEBUG
-            cerr << "UNREGISTER .." << endl;
-#endif
             KsUnregistrationParams params(xdrIn, decodedOk);
             if (decodedOk) {
-#if PLT_DEBUG
-                cerr << ". '";
+#if PLT_DEBUG 
+                cerr << "UNREGISTER '";
                 cerr << params.server.name << "' ";
                 cerr << params.server.protocol_version << endl;
 #endif
@@ -360,6 +357,7 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
         // Hey, that's me!!!
         result.server.name = server_name;
         result.server.protocol_version = protocol_version;
+        result.port = _tcp_transport->xp_port;
         result.expires_at = KsTime::now(82400);
         result.living = true;
         result.result = KS_ERR_OK;
@@ -396,6 +394,12 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
         result.result      = KS_ERR_OK;
     } else {
         result.result = KS_ERR_SERVERUNKNOWN;
+        // fill remaining fields with defensive values
+        result.server.name             = "/dead/";
+        result.server.protocol_version = 0;
+        result.port                    = 0;
+        result.expires_at              = KsTime(0,0);
+        result.living                  = false;
     }
 }
 
@@ -405,11 +409,22 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
 void 
 KsmExpireServerEvent::trigger()
 {
+#if PLT_DEBUG
+            cerr << "KsmExpireServerEvent: ";
+#endif
     if (pserver) {
+#if PLT_DEBUG
+            cerr << "(" << pserver->desc.name  << " " 
+                 << pserver->desc.protocol_version << ") ";
+#endif
         PLT_ASSERT(pserver->pevent == this);
         if (pserver->living) {
             // mark server dead
             pserver->living = false;
+#if PLT_DEBUG
+            cerr << "dying (sp?)" << endl;
+#endif
+                     
             // reschedule event
             _trigger_at = KsTime::now(pserver->time_to_live);
             _pmanager->addTimerEvent(this);
@@ -420,6 +435,9 @@ KsmExpireServerEvent::trigger()
             if (_pmanager->_server_table.remove(pdesc, pdummy)) {
                 // ok
                 PLT_ASSERT(pdummy == pserver);
+#if PLT_DEBUG
+                cerr << "removed." << endl;
+#endif
                 delete pdummy;
                 delete this;
             } else {
@@ -431,6 +449,9 @@ KsmExpireServerEvent::trigger()
     } else {
         // inactive
         delete this;
+#if PLT_DEBUG
+        cerr << "(inactive)" << endl;
+#endif
     }
 }
                 
