@@ -21,7 +21,7 @@ C++ Communication Library:
   Solaris 2.6                  g++ 2.7.2, g++ 2.8.x
   Windows NT/9x                Borland C++ 5.0,
                                Microsoft VC++ 4.2, 5.0, 6.0
-                               Cygnus egcs 1.1.2
+                               Cygnus egcs 1.1.2 (first attempt)
 
 But now, compile and enjoy --
   Your ACPLT/KS team <ks@plt.rwth-aachen.de>
@@ -89,6 +89,13 @@ When using VC+ 4.2, you'll see warnings about the "use of nonstandard
 extensions" -- ignore them. The irony behind this is that the C++
 Communication Library emulates such "nonstandard extensions" like the bool
 data type because Microsoft does not adhere to the C++ language standard.
+
+There are now makefiles for the cygwin egcs C++ compiler available in the
+build/cygwin directories. Please check the makefiles first and adjust the
+settings especially for the include paths of the mingw header files, etc.
+You'll also need to build first your own ONC/RPC library using egcs. The
+ONC/RPC library can currently be linked in only statically, because egcs
+doesn't support exporting global variables from DLLs.
 
 
 2.3 OpenVMS
