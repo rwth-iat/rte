@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.22 1999-04-22 15:29:11 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.23 1999-05-12 10:04:29 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
@@ -198,6 +198,8 @@
 #else 
 #define PLT_COMPILER_DECCXX 0
 #endif
+
+#define PLT_COMPILER_KEIL 0
 
 #if PLT_COMPILER_GCC
 #define PLT_SIMULATE_BOOL 0
