@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.26 1999-02-26 13:28:04 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.27 1999-03-01 14:14:02 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -48,10 +48,16 @@
  * need to maintain separate header files containing constant definitions.
  */
 #ifdef __cplusplus
+
 #include "ks/rpc.h"
+
+extern "C" {
+
 #else
+
 #include <rpc/rpc.h>
 #include <rpc/xdr.h>
+
 #endif
 
 
@@ -353,6 +359,9 @@ const unsigned long KS_COMMENT_MAXLEN  = 4095;
 const unsigned long KS_TECHUNIT_MAXLEN =   63;
 const unsigned long KS_SIMPLEID_MAXLEN =  255;
 
+#ifdef __cplusplus
+}; /* extern "C" */
+#endif
     
 #endif
 /* End of ks/ks.h */
