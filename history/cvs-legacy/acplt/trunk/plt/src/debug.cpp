@@ -78,6 +78,18 @@ PltDebugNewTracker::newed = 0;
 size_t 
 PltDebugNewTracker::deleted = 0;
 
+size_t 
+PltDebugNewTracker::max = 0;
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline size_t
+PltDebugNewTracker::inuse()
+{
+    return newed-deleted;
+}
+
 //////////////////////////////////////////////////////////////////////
 
 PltDebugNewTracker::PltDebugNewTracker()
@@ -87,6 +99,7 @@ PltDebugNewTracker::PltDebugNewTracker()
         deletecount = 0;
         newed = 0;
         deleted = 0;
+        max = 0;
     }        
 }
 
@@ -100,6 +113,7 @@ PltDebugNewTracker::~PltDebugNewTracker()
             cerr << endl;
             cerr << "Free store statistics:" << endl;
             cerr << endl;
+            cerr << "Max. bytes used:   " << setw(10) << max << endl;
             cerr << "Calls to ::new:    " << setw(10) << newcount << endl;
             if (deletecount != newcount) {
                 cerr << "Calls to ::delete: " 
@@ -112,6 +126,10 @@ PltDebugNewTracker::~PltDebugNewTracker()
                 cerr << "Bytes deleted:     " 
                      << setw(10) 
                      << deleted 
+                     << endl; 
+                cerr << "Lost bytes:        " 
+                     << setw(10) 
+                     << inuse()
                      << endl;
             }
         }
@@ -147,11 +165,14 @@ void * operator new(size_t sz) {
         (PltDebugNewHeader *)
             malloc(sizeof(PltDebugNewHeader)+sz);
     if (p) {
-         p->magic = PltDebugNewHeader::magic_salt;
-         p->size  = sz;
-         ++PltDebugNewTracker::newcount;
-         PltDebugNewTracker::newed += sz;
-         return p + 1;
+        p->magic = PltDebugNewHeader::magic_salt;
+        p->size  = sz;
+        ++PltDebugNewTracker::newcount;
+        PltDebugNewTracker::newed += sz;
+        if (PltDebugNewTracker::max < PltDebugNewTracker::inuse() ) {
+            PltDebugNewTracker::max = PltDebugNewTracker::inuse();
+        }
+        return p + 1;
     } else {
         return 0;
     }
@@ -163,8 +184,14 @@ void operator delete(void * p) {
     if (p) {
         PltDebugNewHeader * pheader = (PltDebugNewHeader*)p - 1;
         PLT_ASSERT(pheader->magic == PltDebugNewHeader::magic_salt);
-        PltDebugNewTracker::deleted += pheader->size;
+        size_t sz = pheader->size;
+        PLT_ASSERT( PltDebugNewTracker::refcount == 0
+                   || (      PltDebugNewTracker::deleted + sz
+                          <= PltDebugNewTracker::newed
+                       &&    PltDebugNewTracker::deletecount 
+                           < PltDebugNewTracker::newcount));
         ++PltDebugNewTracker::deletecount;
+        PltDebugNewTracker::deleted += sz;
         free(pheader);
     }
 }

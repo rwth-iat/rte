@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.10 1997-03-19 12:24:02 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.11 1997-03-20 09:41:03 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -157,6 +157,8 @@ private:
     static size_t deletecount;
     static size_t newed;
     static size_t deleted;
+    static size_t max;
+    static size_t inuse();
     static bool report_always;
 };
 
