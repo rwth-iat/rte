@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_unlink.c,v 1.5 2000-04-04 15:12:52 dirk Exp $
+*   $Id: ov_ksserver_unlink.c,v 1.6 2000-04-13 09:13:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -62,6 +62,13 @@ void ov_ksserver_unlink(
 	*	if there are no items, we are done
 	*/
 	if(!len) {
+		return;
+	}
+	/*
+	*   test (grand) access
+	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_UNLINKABLE) ) {
+		result->result = OV_ERR_NOACCESS;
 		return;
 	}
 	/*
@@ -154,9 +161,6 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 	/*
 	*	check for access rights
 	*/
-	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_UNLINKABLE)) {
-		return OV_ERR_NOACCESS;
-	}
 	if(plinkelem->elemunion.passoc->v_getaccessfnc) {
 		if(!(plinkelem->elemunion.passoc->v_getaccessfnc(pparent, pchild, pticket)
 			& OV_AC_UNLINKABLE)

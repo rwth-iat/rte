@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_deleteobject.c,v 1.3 2000-04-04 15:12:49 dirk Exp $
+*   $Id: ov_ksserver_deleteobject.c,v 1.4 2000-04-13 09:13:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -67,6 +67,13 @@ void ov_ksserver_deleteobject(
 		return;
 	}
 	/*
+	*   test (grand) access
+	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_DELETEABLE) ) {
+		result->result = OV_ERR_NOACCESS;
+		return;
+	}
+	/*
 	*	allocate memory for the results
 	*/
 	presult = (OV_RESULT*)ov_memstack_alloc(len*sizeof(OV_RESULT));
@@ -105,10 +112,6 @@ void ov_ksserver_deleteobject(
 		/*
 		*	test if we have access to this object
 		*/
-		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_DELETEABLE)) {
-			*presult = OV_ERR_NOACCESS;
-			continue;
-		}
 		if(!(pvtable->m_getaccess(pobj, &path.elements[path.size-1], pticket)
 			& OV_AC_DELETEABLE)
 		) {

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.8 2000-04-04 15:12:49 dirk Exp $
+*   $Id: ov_ksserver_getep.c,v 1.9 2000-04-13 09:13:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -59,6 +59,13 @@ void ov_ksserver_getep(
 	result->items_len = 0;
 	result->pfirst = NULL;
 	result->plast = NULL;
+	/*
+	*   test (grand) access
+	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_READ) ) {
+		result->result = OV_ERR_NOACCESS;
+		return;
+	}
 	/*
 	*	resolve path (must be absolute)
 	*/
@@ -201,8 +208,7 @@ OV_RESULT ov_ksserver_getep_additem(
 	/*
 	*	test if we have access to this object
 	*/
-	access = pvtable->m_getaccess(pobj, pelem, pticket)
-		& pticket->vtbl->getaccess(pticket);
+	access = pvtable->m_getaccess(pobj, pelem, pticket);
 	if(!(access & OV_AC_READ)) {
 		return OV_ERR_OK;
 	}

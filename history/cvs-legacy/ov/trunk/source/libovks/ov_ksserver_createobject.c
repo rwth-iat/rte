@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.5 2000-04-04 15:12:48 dirk Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.6 2000-04-13 09:13:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -85,6 +85,13 @@ void ov_ksserver_createobject(
 		return;
 	}
 	/*
+	*   test (grand) access
+	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_INSTANTIABLE) ) {
+		result->result = OV_ERR_NOACCESS;
+		return;
+	}
+	/*
 	*	allocate memory for the info object and initialize it
 	*/
 	pinfo = Ov_MemStackAlloc(OV_KSSERVER_CREATEOBJECT_INFO);
@@ -131,10 +138,6 @@ void ov_ksserver_createobject(
 		/*
 		*	check access rights
 		*/
-		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_INSTANTIABLE)) {
-			presult->result = OV_ERR_NOACCESS;
-			continue;
-		}
 		if(!(ov_object_getaccess(path.elements[path.size-1].pobj,
 			&path.elements[path.size-1], pticket) & OV_AC_INSTANTIABLE)
 		) {

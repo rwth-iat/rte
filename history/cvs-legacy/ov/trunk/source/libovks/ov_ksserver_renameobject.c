@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_renameobject.c,v 1.3 2000-04-04 15:12:52 dirk Exp $
+*   $Id: ov_ksserver_renameobject.c,v 1.4 2000-04-13 09:13:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -70,6 +70,13 @@ void ov_ksserver_renameobject(
 		return;
 	}
 	/*
+	*   test (grand) access
+	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_RENAMEABLE) ) {
+		result->result = OV_ERR_NOACCESS;
+		return;
+	}
+	/*
 	*	allocate memory for the results
 	*/
 	presult = (OV_RESULT*)ov_memstack_alloc(len*sizeof(OV_RESULT));
@@ -101,10 +108,6 @@ void ov_ksserver_renameobject(
 		/*
 		*	test if we have rename access on the object
 		*/
-		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_RENAMEABLE)) {
-			*presult = OV_ERR_NOACCESS;
-			continue;
-		}
 		Ov_GetVTablePtr(ov_object, pvtable, pobj);
 		if(!pvtable) {
 			pvtable = (OV_VTBLPTR_ov_object)pclass_ov_object->v_pvtable;

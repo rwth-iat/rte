@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_exgdata.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_exgdata.c,v 1.2 2000-04-13 09:13:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -67,6 +67,13 @@ void ov_ksserver_exgdata(
 	*	allocate memory for the result items
 	*/
 	if(setvarlen) {
+		/*
+		*   test (grand) access
+		*/
+		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_WRITE) ) {
+			result->result = OV_ERR_NOACCESS;
+			return;
+		}
 		psetvarresult = (OV_RESULT*)ov_memstack_alloc(setvarlen*sizeof(OV_RESULT));
 		if(!psetvarresult) {
 			result->result = OV_ERR_TARGETGENERIC;	/* TODO! no heap memory */
@@ -76,6 +83,13 @@ void ov_ksserver_exgdata(
 		psetvarresult = NULL;
 	}
 	if(getvarlen) {
+		/*
+		*   test (grand) access
+		*/
+		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_READ) ) {
+			result->result = OV_ERR_NOACCESS;
+			return;
+		}
 		pgetvaritem = (OV_GETVAR_ITEM*)ov_memstack_alloc(getvarlen*sizeof(OV_GETVAR_ITEM));
 		if(!pgetvaritem) {
 			result->result = OV_ERR_TARGETGENERIC;	/* TODO! no heap memory */
