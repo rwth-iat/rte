@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.15 1997-12-02 18:08:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.16 1998-01-29 12:56:46 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,7 +53,14 @@
 KsSimpleServer::KsSimpleServer(int port)
 : _root_domain("/")
 {
-    _sock_port = port;
+    if ( port != KS_ANYPORT ) {
+        //
+        // Some day I'll after those who'd invented virtual base
+        // classes without defining the order of constructors called
+        // for derived classes.
+        //
+        _sock_port = port;
+    }
 }
 
 
