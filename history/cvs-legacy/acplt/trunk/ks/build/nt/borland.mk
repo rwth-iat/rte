@@ -95,6 +95,13 @@ tclient.obj:    $(EXAMPLESSRCDIR)tclient.cpp
 		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tclient.cpp
 !
 
+tshell.obj:    $(EXAMPLESSRCDIR)tshell.cpp
+	@echo Compiling $<
+	@$(CXX) @&&!
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tshell.cpp
+!
+
+
 pmobile.obj:    $(EXAMPLESSRCDIR)pmobile.cpp
 	@echo Compiling $<
 	@$(CXX) @&&!
@@ -161,6 +168,12 @@ ttree.exe: ttree.obj ttree1.obj $(LIBKSCLN) $(LIBKS)
 	@echo Linking $@
 	$(CXX) @&&!
 		ttree.obj ttree1.obj $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBRPC)
+!
+
+tshell.exe: tshell.obj $(LIBKSCLN) $(LIBKS)
+	@echo Linking $@
+	$(CXX) @&&!
+		tshell.obj $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
 tclient.exe: tclient.obj tclient1.obj $(LIBKSCLN) $(LIBKS) 

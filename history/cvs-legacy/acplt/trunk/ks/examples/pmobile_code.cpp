@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.7 1997-09-15 18:48:42 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.8 1997-09-15 19:42:48 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -57,10 +57,6 @@
 #include "plt/log.h"
 #include "plt/logstream.h"
 #include "plt/time.h"
-
-#if PLT_COMPILER_BORLAND
-#include "ks/array_builtins.h"
-#endif
 
 static int verbosity = 1;
 inline void check_pointer(void *) { }
