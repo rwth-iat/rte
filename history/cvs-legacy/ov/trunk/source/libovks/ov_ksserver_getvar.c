@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.5 1999-08-30 15:23:33 dirk Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.6 2000-02-10 13:07:04 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -182,10 +182,10 @@ void ov_ksserver_getvar_getitem(
 		*	get value of a parent link (string vector with children's paths)
 		*/
 		pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
-		len = pitem->var_current_props.value.veclen
+		len = pitem->var_current_props.value.valueunion.val_string_vec.veclen
 			= ov_association_getchildcount(pelem->elemunion.passoc, pobj);
 		if(len) {
-			pstring = pitem->var_current_props.value.valueunion.val_string_vec
+			pstring = pitem->var_current_props.value.valueunion.val_string_vec.value
 				= (OV_STRING*)ov_memstack_alloc(len*sizeof(OV_STRING));
 			if(!pstring) {
 				pitem->result = OV_ERR_TARGETGENERIC;	/* TODO! out of heap memory */
@@ -254,10 +254,10 @@ void ov_ksserver_getvar_getitem(
 			break;
 		case OV_AT_MANY_TO_MANY:
 			pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
-			len = pitem->var_current_props.value.veclen
+			len = pitem->var_current_props.value.valueunion.val_string_vec.veclen
 				= ov_association_getparentcount(pelem->elemunion.passoc, pobj);
 			if(len) {
-				pstring = pitem->var_current_props.value.valueunion.val_string_vec
+				pstring = pitem->var_current_props.value.valueunion.val_string_vec.value
 					= (OV_STRING*)ov_memstack_alloc(len*sizeof(OV_STRING));
 				if(!pstring) {
 					pitem->result = OV_ERR_TARGETGENERIC;	/* TODO! out of heap memory */

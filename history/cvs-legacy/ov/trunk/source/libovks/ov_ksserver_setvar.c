@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_setvar.c,v 1.3 1999-08-30 15:24:58 dirk Exp $
+*   $Id: ov_ksserver_setvar.c,v 1.4 2000-02-10 13:07:04 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -174,6 +174,7 @@ OV_RESULT ov_ksserver_setvar_setitem(
 		/*
 		*	set the variable's value, timestamp and time
 		*/
+		pitem->var_current_props.value.vartype |= (OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
 		return (pvtable->m_setvar)(pobj, pelem, &pitem->var_current_props);
 	default:
 		break;

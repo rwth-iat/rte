@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.h,v 1.3 1999-08-30 15:24:22 dirk Exp $
+*   $Id: ov_ksserver_xdr.h,v 1.4 2000-02-10 13:06:55 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -59,6 +59,8 @@ typedef KS_EP_FLAGS			OV_EP_FLAGS;
 
 typedef OV_TICKET			OV_TICKET_PAR;
 typedef OV_TICKET			OV_TICKET_RES;
+
+typedef OV_ANY				OV_VAR_CURRENT_PROPS;
 
 /*
 *	OV_VAR_PROJECTED_PROPS:

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmscanner.lex,v 1.6 1999-08-29 16:28:16 dirk Exp $
+*   $Id: ov_ovmscanner.lex,v 1.7 2000-02-10 13:06:58 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	12-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	14-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 /*
@@ -132,6 +133,7 @@ CPP_DIRECTIVE	\#{SPACE}{UINT}{SPACE}\"[^ \t\n]+\"({SPACE}{UINT})?{SPACE_OPT}\n
 "BOOL_PV"			{ yylval.vartype = OV_VT_BOOL_PV;	return TOK_VARTYPE; }
 "INT_PV"			{ yylval.vartype = OV_VT_INT_PV;	return TOK_VARTYPE; }
 "SINGLE_PV"			{ yylval.vartype = OV_VT_SINGLE_PV;	return TOK_VARTYPE; }
+"ANY"				{ yylval.vartype = OV_VT_ANY;		return TOK_VARTYPE; }
 
 "ONE_TO_MANY"		{ yylval.assoctype = OV_AT_ONE_TO_MANY;		return TOK_ASSOCTYPE; }
 "MANY_TO_MANY"		{ yylval.assoctype = OV_AT_MANY_TO_MANY;	return TOK_ASSOCTYPE; }

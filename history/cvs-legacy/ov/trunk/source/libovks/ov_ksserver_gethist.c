@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_gethist.c,v 1.2 1999-08-28 15:55:56 dirk Exp $
+*   $Id: ov_ksserver_gethist.c,v 1.3 2000-02-10 13:07:04 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -172,8 +172,9 @@ void ov_ksserver_gethist(
 			*/
 			presultitem->value.vartype = OV_VT_TIME_VEC;
 			presultitem->result = ov_logfile_getmessages(&from, &to,
-				params->max_answers, NULL, &presultitem->value.valueunion.val_time_vec,
-				&presultitem->value.veclen);
+				params->max_answers, NULL,
+				&presultitem->value.valueunion.val_time_vec.value,
+				&presultitem->value.valueunion.val_time_vec.veclen);
 			if(Ov_Fail(presultitem->result)) {
 				presultitem->result = OV_ERR_TARGETGENERIC;	/* out of memory */
 			}
@@ -183,8 +184,9 @@ void ov_ksserver_gethist(
 			*/
 			presultitem->value.vartype = OV_VT_STRING_VEC;
 			presultitem->result = ov_logfile_getmessages(&from, &to,
-				params->max_answers, &presultitem->value.valueunion.val_string_vec, NULL,
-				&presultitem->value.veclen);
+				params->max_answers,
+				&presultitem->value.valueunion.val_string_vec.value, NULL,
+				&presultitem->value.valueunion.val_string_vec.veclen);
 			if(Ov_Fail(presultitem->result)) {
 				presultitem->result = OV_ERR_TARGETGENERIC;	/* out of memory */
 			}

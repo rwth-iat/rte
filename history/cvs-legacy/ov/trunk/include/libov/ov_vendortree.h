@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.3 1999-09-15 10:48:15 dirk Exp $
+*   $Id: ov_vendortree.h,v 1.4 2000-02-10 13:06:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -46,8 +46,8 @@ extern "C" {
 *	Function prototype for getting vendor variables
 */
 typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETVENDORVAR(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
@@ -78,7 +78,7 @@ OV_DLLFNCEXPORT OV_STRING ov_vendortree_getunit(
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getvar(
 	OV_INSTPTR_ov_object	pobj,
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
+	OV_ANY					*pvarcurrprops,
 	const OV_TICKET			*pticket
 );
 
@@ -136,160 +136,160 @@ OV_DLLFNCEXPORT void ov_vendortree_setstartuptime(
 *	Get list of associations in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getassociations(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get list of classes in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get fragmentation of the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasefrag(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get free storage of the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasefree(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get database name
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasename(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get size of the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasesize(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get whether the database is started or not
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasestarted(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get used storage of the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabaseused(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get vendor name
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getname(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get libks version
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibksversion(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get libov version
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovversion(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get libovks version
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovksversion(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get list of libraries in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get list of semantic flags in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getsemanticflags(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get server description
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverdescription(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get server name
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getservername(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get server time
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getservertime(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get server version
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverversion(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get startup time
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstartuptime(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 /*
 *	Get list of structures in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 );
 
 #ifdef __cplusplus

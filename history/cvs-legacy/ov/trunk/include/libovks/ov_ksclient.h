@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.h,v 1.4 1999-09-15 10:48:16 dirk Exp $
+*   $Id: ov_ksclient.h,v 1.5 2000-02-10 13:06:55 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -202,6 +202,13 @@ void OV_DLLFNCEXPORT ov_ksclient_connection_gettimeouts(
 	OV_KSCLIENT_CONNECTION			*pconn,
 	OV_UINT							*ptimeout_open,
 	OV_UINT							*ptimeout_request
+);
+
+/*
+*	Get protocol version of a connection
+*/
+OV_DLLFNCEXPORT OV_UINT ov_ksclient_connection_getprotocolversion(
+	OV_KSCLIENT_CONNECTION		*pconn
 );
 
 /*

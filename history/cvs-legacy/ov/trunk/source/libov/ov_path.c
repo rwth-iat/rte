@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_path.c,v 1.4 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_path.c,v 1.5 2000-02-10 13:07:02 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -116,8 +116,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 			if((prelpath->elements[size-1].elemtype == OV_ET_VARIABLE)
 				|| (prelpath->elements[size-1].elemtype == OV_ET_MEMBER)
 			) {
-				if(prelpath->elements[size-1].elemunion.pvar->v_vartype
-					== OV_VT_STRUCT
+				if((prelpath->elements[size-1].elemunion.pvar->v_vartype
+					& OV_VT_KSMASK) == OV_VT_STRUCT
 				) {
 					break;
 				}						
@@ -148,8 +148,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 						if((prelpath->elements[size-1].elemtype == OV_ET_VARIABLE)
 							|| (prelpath->elements[size-1].elemtype == OV_ET_MEMBER)
 						) {
-							if(prelpath->elements[size-1].elemunion.pvar->v_vartype
-								== OV_VT_STRUCT
+							if((prelpath->elements[size-1].elemunion.pvar->v_vartype
+								& OV_VT_KSMASK) == OV_VT_STRUCT
 							) {
 								break;
 							}						

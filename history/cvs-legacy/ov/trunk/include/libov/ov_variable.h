@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_variable.h,v 1.2 1999-07-27 17:41:11 dirk Exp $
+*   $Id: ov_variable.h,v 1.3 2000-02-10 13:06:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 #ifndef OV_VARIABLE_H_INCLUDED1
@@ -81,6 +82,14 @@ typedef struct OV_VARIABLE_DEF OV_VARIABLE_DEF;
 	)
 
 /*
+*	Function prototype for reading an ANY value
+*/
+#define OV_FNCPTR_GETANY					\
+	OV_ANY* (*)(							\
+		OV_INSTPTR				pobj		\
+	)
+	
+/*
 *	Function prototype for writing a variable value (scalar)
 */
 #define OV_FNCPTR_SET(VARTYPE)				\
@@ -106,6 +115,15 @@ typedef struct OV_VARIABLE_DEF OV_VARIABLE_DEF;
 		OV_INSTPTR				pobj,		\
 		const OV_##VARTYPE		*pvalue,	\
 		const OV_UINT			veclen		\
+	)
+
+/*
+*	Function prototype for writing an ANY value
+*/
+#define OV_FNCPTR_SETANY					\
+	OV_RESULT (*)(							\
+		OV_INSTPTR				pobj,		\
+		const OV_ANY			*pvalue		\
 	)
 
 #endif
@@ -142,6 +160,14 @@ OV_RESULT ov_variable_compare(
 */
 OV_BOOL ov_variable_canunload(
 	OV_INSTPTR_ov_variable		pvar
+);
+
+/*
+*	Set the value of an ANY variable
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_variable_setanyvalue(
+	OV_ANY			*pany,
+	const OV_ANY	*pvalue
 );
 
 #ifdef __cplusplus

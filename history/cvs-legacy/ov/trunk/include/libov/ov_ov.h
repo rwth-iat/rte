@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.9 1999-08-29 16:28:13 dirk Exp $
+*   $Id: ov_ov.h,v 1.10 2000-02-10 13:06:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 #ifndef OV_OV_H_INCLUDED
@@ -43,21 +44,95 @@ extern "C" {
 #endif
 
 /*
+*	Generic datatypes
+*	-----------------
+*/
+typedef void*	OV_POINTER;		/* generic pointer */
+typedef enum_t	OV_ENUM;		/* enumeration value */
+typedef char	OV_BYTE;		/* used with C-type variables */
+
+/*
+*	OV_STATE:
+*	---------
+*   States a value may have.
+*	Note: some codes are identical with the ACPLT/KS codes of KS_STATE.
+*/
+#define OV_ST_NOTSUPPORTED	KS_ST_NOTSUPPORTED	/* no state available */
+#define OV_ST_UNKNOWN		KS_ST_UNKNOWN		/* state unknown at this time */
+#define OV_ST_BAD			KS_ST_BAD			/* information is bad */
+#define OV_ST_QUESTIONABLE	KS_ST_QUESTIONABLE	/* information is questionable */
+#define OV_ST_GOOD			KS_ST_GOOD			/* information is good */
+
+typedef OV_ENUM OV_STATE;
+
+/*
+*	OV_VAR_TYPE:
+*	------------
+*	Variable types (indicate the datatypes of variables).
+*	Note: some codes are identical with the ACPLT/KS codes of OV_VAR_TYPE.
+*/
+#define OV_VT_VOID			KS_VT_VOID			/* used with the ANY datatype */
+
+#define OV_VT_BOOL			KS_VT_BOOL
+#define OV_VT_INT			KS_VT_INT
+#define OV_VT_UINT			KS_VT_UINT
+#define OV_VT_SINGLE		KS_VT_SINGLE
+#define OV_VT_DOUBLE		KS_VT_DOUBLE
+#define OV_VT_STRING		KS_VT_STRING
+#define OV_VT_TIME			KS_VT_TIME
+#define OV_VT_TIME_SPAN		KS_VT_TIME_SPAN
+
+#define OV_VT_BOOL_VEC		KS_VT_BOOL_VEC
+#define OV_VT_INT_VEC		KS_VT_INT_VEC
+#define OV_VT_UINT_VEC		KS_VT_UINT_VEC
+#define OV_VT_SINGLE_VEC	KS_VT_SINGLE_VEC
+#define OV_VT_DOUBLE_VEC	KS_VT_DOUBLE_VEC
+#define OV_VT_STRING_VEC	KS_VT_STRING_VEC
+#define OV_VT_TIME_VEC		KS_VT_TIME_VEC
+#define OV_VT_TIME_SPAN_VEC	KS_VT_TIME_SPAN_VEC
+
+#define OV_VT_STRUCT		KS_VT_STRUCT
+
+#define OV_VT_BYTE			KS_VT_BYTE_VEC		/* used for C-type variables */
+#define OV_VT_BYTE_VEC		KS_VT_BYTE_VEC		/* used for C-type variables */
+
+#define OV_VT_HAS_STATE		ENUMVAL(KS_VAR_TYPE, 0x00010000)
+#define OV_VT_HAS_TIMESTAMP	ENUMVAL(KS_VAR_TYPE, 0x00020000)
+#define OV_VT_KSMASK		ENUMVAL(KS_VAR_TYPE, 0x0000ffff)
+
+#define OV_VT_BOOL_PV		(KS_VT_BOOL | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_INT_PV		(KS_VT_INT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_SINGLE_PV		(KS_VT_SINGLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+
+#define OV_VT_ANY			ENUMVAL(KS_VAR_TYPE, 0x000000ff)
+
+typedef OV_ENUM OV_VAR_TYPE;
+
+/*
+*	OV_VAR_PROPS:
+*	-------------
+*	Variable properties.
+*/
+#define OV_VP_GETACCESSOR	0x00000001			/* variable has a get accessor */
+#define OV_VP_SETACCESSOR	0x00000002			/* variable has a set accessor */
+#define OV_VP_ACCESSORS		(OV_VP_GETACCESSOR | OV_VP_SETACCESSOR)
+#define OV_VP_DERIVED		0x00000004			/* variable is derived (virtual) */
+#define OV_VP_STATIC		0x00000008			/* variable is static (class variable) */
+
+typedef OV_ENUM OV_VAR_PROPS;
+
+/*
 *	Basic data types
 *	----------------
 *	Note: most data types are identical with the datatypes used in the 
 *	XDR routines generated for use with ACPLT/KS.
 */
-typedef void*	OV_POINTER;		/* generic pointer */
-typedef enum_t	OV_ENUM;		/* enumeration value */
-
 typedef	bool_t	OV_BOOL;		/* bool value */
 typedef long	OV_INT;			/* integer value */
 typedef u_long	OV_UINT;		/* unsigned integer value */
 typedef float	OV_SINGLE;		/* single precision floating value */
 typedef double	OV_DOUBLE;		/* double precision floating value */
 typedef char*	OV_STRING;		/* string value */
-typedef char	OV_BYTE;		/* used with C-type variables */
 
 typedef struct {				/* time/date value */
 	OV_UINT	secs;
@@ -73,6 +148,11 @@ typedef struct {				/* time span (duration) value */
 *	Datatypes of dynamic vectors
 *	----------------------------
 */
+typedef struct {				/* dynamic byte value vector, used for C-typed variables */
+	OV_UINT			veclen;
+	OV_BYTE			*value;
+}	OV_BYTE_VEC;
+
 typedef struct {				/* dynamic bool value vector */
 	OV_UINT			veclen;
 	OV_BOOL			*value;
@@ -119,20 +199,6 @@ typedef struct {				/* generic dynamic value vector (internal use) */
 }	OV_GENERIC_VEC;
 
 /*
-*	OV_STATE:
-*	---------
-*   States a value may have.
-*	Note: some codes are identical with the ACPLT/KS codes of KS_STATE.
-*/
-#define OV_ST_NOTSUPPORTED	KS_ST_NOTSUPPORTED	/* no state available */
-#define OV_ST_UNKNOWN		KS_ST_UNKNOWN		/* state unknown at this time */
-#define OV_ST_BAD			KS_ST_BAD			/* information is bad */
-#define OV_ST_QUESTIONABLE	KS_ST_QUESTIONABLE	/* information is questionable */
-#define OV_ST_GOOD			KS_ST_GOOD			/* information is good */
-
-typedef OV_ENUM OV_STATE;
-
-/*
 *	Process value datatypes (PVs)
 */
 typedef struct {				/* boolean process value */
@@ -154,67 +220,14 @@ typedef struct {				/* single precision floating point process value */
 }	OV_SINGLE_PV;
 
 /*
-*	OV_VAR_TYPE:
-*	------------
-*	Variable types (indicate the datatypes of variables).
-*	Note: some codes are identical with the ACPLT/KS codes of OV_VAR_TYPE.
-*/
-#define OV_VT_BOOL			KS_VT_BOOL
-#define OV_VT_INT			KS_VT_INT
-#define OV_VT_UINT			KS_VT_UINT
-#define OV_VT_SINGLE		KS_VT_SINGLE
-#define OV_VT_DOUBLE		KS_VT_DOUBLE
-#define OV_VT_STRING		KS_VT_STRING
-#define OV_VT_TIME			KS_VT_TIME
-#define OV_VT_TIME_SPAN		KS_VT_TIME_SPAN
-
-#define OV_VT_BOOL_VEC		KS_VT_BOOL_VEC
-#define OV_VT_INT_VEC		KS_VT_INT_VEC
-#define OV_VT_UINT_VEC		KS_VT_UINT_VEC
-#define OV_VT_SINGLE_VEC	KS_VT_SINGLE_VEC
-#define OV_VT_DOUBLE_VEC	KS_VT_DOUBLE_VEC
-#define OV_VT_STRING_VEC	KS_VT_STRING_VEC
-#define OV_VT_TIME_VEC		KS_VT_TIME_VEC
-#define OV_VT_TIME_SPAN_VEC	KS_VT_TIME_SPAN_VEC
-
-#define OV_VT_STRUCT		KS_VT_STRUCT
-
-#define OV_VT_VOID			KS_VT_VOID			/* not used in ACPLT/OV */
-#define OV_VT_BYTE			KS_VT_BYTE_VEC		/* used for C-type variables */
-#define OV_VT_BYTE_VEC		KS_VT_BYTE_VEC		/* used for C-type variables */
-
-#define OV_VT_HAS_STATE		ENUMVAL(KS_VAR_TYPE, 0x00010000)
-#define OV_VT_HAS_TIMESTAMP	ENUMVAL(KS_VAR_TYPE, 0x00020000)
-#define OV_VT_KSMASK		ENUMVAL(KS_VAR_TYPE, 0x0000ffff)
-
-#define OV_VT_BOOL_PV		(KS_VT_BOOL | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_INT_PV		(KS_VT_INT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_SINGLE_PV		(KS_VT_SINGLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-
-typedef OV_ENUM OV_VAR_TYPE;
-
-/*
-*	OV_VAR_PROPS:
-*	-------------
-*	Variable properties.
-*/
-#define OV_VP_GETACCESSOR	0x00000001			/* variable has a get accessor */
-#define OV_VP_SETACCESSOR	0x00000002			/* variable has a set accessor */
-#define OV_VP_ACCESSORS		(OV_VP_GETACCESSOR | OV_VP_SETACCESSOR)
-#define OV_VP_DERIVED		0x00000004			/* variable is derived (virtual) */
-#define OV_VP_STATIC		0x00000008			/* variable is static (class variable) */
-
-typedef OV_ENUM OV_VAR_PROPS;
-
-/*
 *	OV_VAR_VALUE:
 *	-------------
 *	Current value of a variable.
 */
 typedef struct {
-	OV_VAR_TYPE		vartype;
-	OV_UINT			veclen;						/* if vartype == OV_VT_XXX_VEC */
+	OV_VAR_TYPE				vartype;			/* actual vartype, may be OV_VT_VOID */
 	union {
+		/* basic datatypes */
 		OV_BOOL				val_bool;			/* if vartype == OV_VT_BOOL */
 		OV_INT				val_int;			/* if vartype == OV_VT_INT */
 		OV_UINT				val_uint;			/* if vartype == OV_VT_UINT */
@@ -223,29 +236,29 @@ typedef struct {
 		OV_STRING			val_string;			/* if vartype == OV_VT_STRING */
 		OV_TIME				val_time;			/* if vartype == OV_VT_TIME */
 		OV_TIME_SPAN		val_time_span;		/* if vartype == OV_VT_TIME_SPAN */
-		OV_BOOL				*val_bool_vec;		/* if vartype == OV_VT_BOOL_VEC */
-		OV_INT				*val_int_vec;		/* if vartype == OV_VT_INT_VEC */
-		OV_UINT				*val_uint_vec;		/* if vartype == OV_VT_UINT_VEC */
-		OV_SINGLE			*val_single_vec;	/* if vartype == OV_VT_SINGLE_VEC */
-		OV_DOUBLE			*val_double_vec;	/* if vartype == OV_VT_DOUBLE_VEC */
-		OV_STRING			*val_string_vec;	/* if vartype == OV_VT_STRING_VEC */
-		OV_TIME				*val_time_vec;		/* if vartype == OV_VT_TIME_VEC */
-		OV_TIME_SPAN		*val_time_span_vec;	/* if vartype == OV_VT_TIME_SPAN_VEC */
-		char				*val_byte_vec;		/* if vartype == OV_VT_BYTE_VEC */
+		/* vector datatypes */
+		OV_BYTE_VEC			val_byte_vec;		/* if vartype == OV_VT_BYTE_VEC */
+		OV_BOOL_VEC			val_bool_vec;		/* if vartype == OV_VT_BOOL_VEC */
+		OV_INT_VEC			val_int_vec;		/* if vartype == OV_VT_INT_VEC */
+		OV_UINT_VEC			val_uint_vec;		/* if vartype == OV_VT_UINT_VEC */
+		OV_SINGLE_VEC		val_single_vec;		/* if vartype == OV_VT_SINGLE_VEC */
+		OV_DOUBLE_VEC		val_double_vec;		/* if vartype == OV_VT_DOUBLE_VEC */
+		OV_STRING_VEC		val_string_vec;		/* if vartype == OV_VT_STRING_VEC */
+		OV_TIME_VEC			val_time_vec;		/* if vartype == OV_VT_TIME_VEC */
+		OV_TIME_SPAN_VEC	val_time_span_vec;	/* if vartype == OV_VT_TIME_SPAN_VEC */
+		OV_GENERIC_VEC		val_generic_vec;	/* for internal use only */
 	}	valueunion;
 }	OV_VAR_VALUE;
 
 /*
-*	OV_VAR_CURRENT_PROPS:
-*	---------------------
-*	Current properties of a variable; includes the variable value, the
-*	variable's state and a time stamp (compare ACPLT/KS).
+*	ANY datatype
+*	------------
 */
 typedef struct {
-	OV_VAR_VALUE	value;
-	OV_STATE		state;
-	OV_TIME			time;
-}	OV_VAR_CURRENT_PROPS;
+	OV_VAR_VALUE			value;				/* the actual value */
+	OV_STATE				state;				/* state of the value */
+	OV_TIME					time;				/* time stamp of the value */
+}	OV_ANY;
 
 /*
 *	OV_CLASS_PROPS:

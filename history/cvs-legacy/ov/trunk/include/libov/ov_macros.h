@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.12 1999-11-03 11:47:19 dirk Exp $
+*   $Id: ov_macros.h,v 1.13 2000-02-10 13:06:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 #ifndef OV_MACROS_H_INCLUDED
@@ -378,6 +379,12 @@
 	ov_vector_setdynamicveclen((OV_GENERIC_VEC*)(pvector), veclen			\
 		+0*((pvector)-(OV_##type##_VEC*)0),	veclen*sizeof(OV_##type),		\
 		OV_VT_##type)
+
+/*
+*	Set the value of an ANY variable
+*/
+#define Ov_SetAnyValue(pany, pvalue)										\
+	ov_variable_setanyvalue(pany, pvalue)
 
 /*
 *	Compare two vector variable values

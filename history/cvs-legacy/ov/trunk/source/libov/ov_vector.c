@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.6 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_vector.c,v 1.7 2000-02-10 13:07:02 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -58,7 +58,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setstaticvalue(
 	/*
 	*	set the value
 	*/
-	if(vartype == OV_VT_STRING) {
+	if((vartype & OV_VT_KSMASK) == OV_VT_STRING) {
 		return ov_string_setvecvalue((OV_STRING*)pvector,
 			(OV_STRING*)pvalue, veclen);
 	}
@@ -92,7 +92,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicvalue(
 	/*
 	*	manipulate memory and set the actual vector value
 	*/
-	if(pvector->veclen && (vartype == OV_VT_STRING)) {
+	if(pvector->veclen && ((vartype & OV_VT_KSMASK) == OV_VT_STRING)) {
 		/*
 		*	free strings
 		*/
@@ -118,7 +118,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicvalue(
 		pvector->veclen = veclen;
 		pvector->value = pnewvalue;
 	}
-	if(vartype == OV_VT_STRING) {
+	if((vartype & OV_VT_KSMASK) == OV_VT_STRING) {
 		memset(pvector->value, 0, size);
 		result = ov_string_setvecvalue((OV_STRING*)pvector->value,
 			(OV_STRING*)pvalue, veclen);
@@ -163,7 +163,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicveclen(
 	/*
 	*	manipulate memory
 	*/
-	if(vartype == OV_VT_STRING) {
+	if((vartype & OV_VT_KSMASK) == OV_VT_STRING) {
 		/*
 		*	free strings that will be erased
 		*/
@@ -224,7 +224,7 @@ OV_DLLFNCEXPORT OV_INT ov_vector_compare(
 	*/
 	if(pvalue1) {
 		if(pvalue2) {
-			if(vartype == OV_VT_STRING) {
+			if((vartype & OV_VT_KSMASK) == OV_VT_STRING) {
 				for(i=0, pstring1=(OV_STRING*)pvalue1, pstring2=(OV_STRING*)pvalue2;
 					i<veclen; i++, pstring1++, pstring2++
 				) {

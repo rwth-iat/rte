@@ -1,5 +1,5 @@
 /*
-*   $Id: example.ovt,v 1.1 1999-07-19 15:02:11 dirk Exp $
+*   $Id: example.ovt,v 1.2 2000-02-10 13:06:59 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -30,6 +30,7 @@
 #define EXAMPLE_OVT_INCLUDED
 
 #include "libovks/ov_ksclient.h"
+#include "ov_expression.h"
 
 /*
 *	Pointer to a client connection object
@@ -40,6 +41,11 @@ typedef OV_KSCLIENT_CONNECTION*	OV_KSCLIENT_CONNECTION_PTR;
 *	Pointer to a service object
 */
 typedef OV_KSCLIENT_SERVICE*	OV_KSCLIENT_SERVICE_PTR;
+
+/*
+*	Pointer to an expression
+*/
+typedef OV_EXPRESSION* OV_EXPRESSION_PTR;
 
 #endif
 /*

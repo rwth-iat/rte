@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.8 1999-08-29 16:28:15 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.9 2000-02-10 13:06:58 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	12-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	15-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 /*
@@ -1227,6 +1228,14 @@ OV_BOOL ov_codegen_checksemantics_member(
 			result = FALSE;
 		}
 		/*
+		*	vectors of ANY variables are not supported
+		*/
+		if(pvar->vartype == OV_VT_ANY) {
+			fprintf(stderr, "structure \"%s\", variable \"%s\": vectors of type ANY "
+				"are not supported.\n", pstruct->identifier, pvar->identifier);
+			result = FALSE;
+		}
+		/*
 		*	dynamic vectors of C-type variables are not supported
 		*/
 		if((!pvar->veclen) && (pvar->vartype == OV_VT_BYTE_VEC)) {
@@ -1304,6 +1313,14 @@ OV_BOOL ov_codegen_checksemantics_variable(
 		*/
 		if(pvar->structurename) {
 			fprintf(stderr, "class \"%s\", variable \"%s\": vectors of structures "
+				"are not supported.\n", pclass->identifier, pvar->identifier);
+			result = FALSE;
+		}
+		/*
+		*	vectors of ANY variables are not supported
+		*/
+		if(pvar->vartype == OV_VT_ANY) {
+			fprintf(stderr, "class \"%s\", variable \"%s\": vectors of type ANY "
 				"are not supported.\n", pclass->identifier, pvar->identifier);
 			result = FALSE;
 		}

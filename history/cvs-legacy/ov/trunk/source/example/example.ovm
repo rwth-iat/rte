@@ -1,5 +1,5 @@
 /*
-*   $Id: example.ovm,v 1.7 1999-08-30 15:23:30 dirk Exp $
+*   $Id: example.ovm,v 1.8 2000-02-10 13:06:59 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -54,6 +54,22 @@ LIBRARY example
 		END_OPERATIONS;
 	END_CLASS;
 
+	CLASS fnc : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT = "function evaluation class";
+		VARIABLES
+			expression : STRING HAS_ACCESSORS COMMENT = "mathematical expression";
+			in1 : DOUBLE HAS_ACCESSORS COMMENT = "1st input";
+			in2 : DOUBLE HAS_ACCESSORS COMMENT = "2nd input";
+			out : DOUBLE HAS_GET_ACCESSOR IS_DERIVED COMMENT = "output";
+			pexpr : C_TYPE <OV_EXPRESSION_PTR>;
+		END_VARIABLES;
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+	
 	CLASS testclass : CLASS ov/domain
 		IS_INSTANTIABLE;
 		COMMENT = "test class";
@@ -70,6 +86,8 @@ LIBRARY example
 				COMMENT = "dynamic unsigned integer vector value";
 			StringVec[] : STRING IS_DERIVED HAS_ACCESSORS
 				COMMENT = "string vector value";
+			AnyVariable : ANY HAS_ACCESSORS
+				COMMENT = "variable of any type";
 		END_VARIABLES;
 	END_CLASS;
 

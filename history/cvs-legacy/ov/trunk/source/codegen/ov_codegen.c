@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.11 1999-09-15 10:48:18 dirk Exp $
+*   $Id: ov_codegen.c,v 1.12 2000-02-10 13:06:58 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	15-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 #include <ctype.h>
@@ -1078,6 +1079,7 @@ void ov_codegen_printclassaccessorfncdecls(
 			case OV_VT_BOOL_PV:
 			case OV_VT_INT_PV:
 			case OV_VT_SINGLE_PV:
+			case OV_VT_ANY:
 				fprintf(fp, "%s *", ov_codegen_getvartypetext(pvar->vartype));
 				break;
 			default:
@@ -1112,6 +1114,7 @@ void ov_codegen_printclassaccessorfncdecls(
 			case OV_VT_BOOL_PV:
 			case OV_VT_INT_PV:
 			case OV_VT_SINGLE_PV:
+			case OV_VT_ANY:
 				fprintf(fp, "    const %s *p", ov_codegen_getvartypetext(pvar->vartype));
 				break;
 			case OV_VT_BYTE_VEC:
@@ -1608,6 +1611,8 @@ OV_STRING ov_codegen_getvartypetext(
 		return "OV_INT_PV";
 	case OV_VT_SINGLE_PV:
 		return "OV_SINGLE_PV";
+	case OV_VT_ANY:
+		return "OV_ANY";
 	default:
 		fprintf(stderr, "internal error -- sorry.\n");
 		exit(EXIT_FAILURE);

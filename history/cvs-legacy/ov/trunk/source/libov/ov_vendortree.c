@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.4 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_vendortree.c,v 1.5 2000-02-10 13:07:02 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -143,7 +143,7 @@ OV_DLLFNCEXPORT OV_STRING ov_vendortree_getunit(
 */
 OV_RESULT ov_vendortree_getvar(
 	OV_INSTPTR_ov_object	pobj,
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
+	OV_ANY					*pvarcurrprops,
 	const OV_TICKET			*pticket
 ) {
 	/*
@@ -297,8 +297,8 @@ OV_DLLFNCEXPORT void ov_vendortree_setstartuptime(
 *	Get list of associations in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getassociations(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	/*
 	*	local variables
@@ -325,8 +325,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getassociations(
 	*	enter association paths into a string vector
 	*/
 	pvarcurrprops->value.vartype = OV_VT_STRING_VEC;
-	pvarcurrprops->value.veclen = assocs;
-	pvarcurrprops->value.valueunion.val_string_vec = pstring;
+	pvarcurrprops->value.valueunion.val_string_vec.veclen = assocs;
+	pvarcurrprops->value.valueunion.val_string_vec.value = pstring;
 	Ov_ForEachChildEx(ov_instantiation, pclass_ov_association, passoc, ov_association) {
 		*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, passoc), 2);
 		if(!*pstring) {
@@ -343,8 +343,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getassociations(
 *	Get list of classes in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	/*
 	*	local variables
@@ -378,8 +378,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 	*	enter class paths into a string vector
 	*/
 	pvarcurrprops->value.vartype = OV_VT_STRING_VEC;
-	pvarcurrprops->value.veclen = classes;
-	pvarcurrprops->value.valueunion.val_string_vec = pstring;
+	pvarcurrprops->value.valueunion.val_string_vec.veclen = classes;
+	pvarcurrprops->value.valueunion.val_string_vec.value = pstring;
 	Ov_ForEachChildEx(ov_instantiation, pclass_ov_class, pclass, ov_class) {
 		pclassobj = Ov_PtrUpCast(ov_object, pclass);
 		element.elemtype = OV_ET_OBJECT;
@@ -400,9 +400,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 /*
 *	Get fragmentation of the database
 */
-OV_RESULT ov_vendortree_getdatabasefrag(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasefrag(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_UINT;
 	pvarcurrprops->value.valueunion.val_uint = ov_database_getfrag();
@@ -414,9 +414,9 @@ OV_RESULT ov_vendortree_getdatabasefrag(
 /*
 *	Get free storage of the database
 */
-OV_RESULT ov_vendortree_getdatabasefree(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasefree(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_UINT;
 	pvarcurrprops->value.valueunion.val_uint = ov_database_getfree();
@@ -428,9 +428,9 @@ OV_RESULT ov_vendortree_getdatabasefree(
 /*
 *	Get database name
 */
-OV_RESULT ov_vendortree_getdatabasename(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasename(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = databasename;
@@ -442,9 +442,9 @@ OV_RESULT ov_vendortree_getdatabasename(
 /*
 *	Get size of the database
 */
-OV_RESULT ov_vendortree_getdatabasesize(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasesize(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_UINT;
 	pvarcurrprops->value.valueunion.val_uint = ov_database_getsize();
@@ -457,8 +457,8 @@ OV_RESULT ov_vendortree_getdatabasesize(
 *	Get whether the database is started or not
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasestarted(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_BOOL;
 	pvarcurrprops->value.valueunion.val_bool = pdb->started;
@@ -470,9 +470,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasestarted(
 /*
 *	Get used storage of the database
 */
-OV_RESULT ov_vendortree_getdatabaseused(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabaseused(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_UINT;
 	pvarcurrprops->value.valueunion.val_uint = ov_database_getused();
@@ -484,9 +484,9 @@ OV_RESULT ov_vendortree_getdatabaseused(
 /*
 *	Get vendor name
 */
-OV_RESULT ov_vendortree_getname(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getname(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = vendorname;
@@ -498,9 +498,9 @@ OV_RESULT ov_vendortree_getname(
 /*
 *	Get libks version
 */
-OV_RESULT ov_vendortree_getlibksversion(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibksversion(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = KS_VERSION_STRING;
@@ -512,9 +512,9 @@ OV_RESULT ov_vendortree_getlibksversion(
 /*
 *	Get libov version
 */
-OV_RESULT ov_vendortree_getlibovversion(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovversion(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = OV_VER_LIBOV;
@@ -526,9 +526,9 @@ OV_RESULT ov_vendortree_getlibovversion(
 /*
 *	Get libovks version
 */
-OV_RESULT ov_vendortree_getlibovksversion(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovksversion(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = OV_VER_LIBOVKS;
@@ -541,8 +541,8 @@ OV_RESULT ov_vendortree_getlibovksversion(
 *	Get list of libraries in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	/*
 	*	local variables
@@ -569,8 +569,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
 	*	enter library paths into a string vector
 	*/
 	pvarcurrprops->value.vartype = OV_VT_STRING_VEC;
-	pvarcurrprops->value.veclen = libs;
-	pvarcurrprops->value.valueunion.val_string_vec = pstring;
+	pvarcurrprops->value.valueunion.val_string_vec.veclen = libs;
+	pvarcurrprops->value.valueunion.val_string_vec.value = pstring;
 	Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plib, ov_library) {
 		*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, plib), 2);
 		if(!*pstring) {
@@ -587,12 +587,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
 *	Get list of semantic flags in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getsemanticflags(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING_VEC;
-	pvarcurrprops->value.veclen = sizeof(semantic_flag)/sizeof(semantic_flag[0]);
-	pvarcurrprops->value.valueunion.val_string_vec = &semantic_flag[0];
+	pvarcurrprops->value.valueunion.val_string_vec.veclen = sizeof(semantic_flag)/sizeof(semantic_flag[0]);
+	pvarcurrprops->value.valueunion.val_string_vec.value = &semantic_flag[0];
 	return OV_ERR_OK;
 }
 
@@ -601,9 +601,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getsemanticflags(
 /*
 *	Get server description
 */
-OV_RESULT ov_vendortree_getserverdescription(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverdescription(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = serverdescription;
@@ -615,9 +615,9 @@ OV_RESULT ov_vendortree_getserverdescription(
 /*
 *	Get server name
 */
-OV_RESULT ov_vendortree_getservername(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getservername(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = servername;
@@ -629,9 +629,9 @@ OV_RESULT ov_vendortree_getservername(
 /*
 *	Get server time
 */
-OV_RESULT ov_vendortree_getservertime(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getservertime(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_TIME;
 	ov_time_gettime(&pvarcurrprops->value.valueunion.val_time);
@@ -643,9 +643,9 @@ OV_RESULT ov_vendortree_getservertime(
 /*
 *	Get server version
 */
-OV_RESULT ov_vendortree_getserverversion(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverversion(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = serverversion;
@@ -657,9 +657,9 @@ OV_RESULT ov_vendortree_getserverversion(
 /*
 *	Get startup time
 */
-OV_RESULT ov_vendortree_getstartuptime(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstartuptime(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_TIME;
 	pvarcurrprops->value.valueunion.val_time = startuptime;
@@ -672,8 +672,8 @@ OV_RESULT ov_vendortree_getstartuptime(
 *	Get list of structures in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
 ) {
 	/*
 	*	local variables
@@ -700,8 +700,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 	*	enter structure paths into a string vector
 	*/
 	pvarcurrprops->value.vartype = OV_VT_STRING_VEC;
-	pvarcurrprops->value.veclen = structs;
-	pvarcurrprops->value.valueunion.val_string_vec = pstring;
+	pvarcurrprops->value.valueunion.val_string_vec.veclen = structs;
+	pvarcurrprops->value.valueunion.val_string_vec.value = pstring;
 	Ov_ForEachChildEx(ov_instantiation, pclass_ov_structure, pstruct, ov_structure) {
 		*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pstruct), 2);
 		if(!*pstring) {

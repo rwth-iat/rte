@@ -1,5 +1,5 @@
 /*
-*   $Id: example_testclass.c,v 1.7 1999-09-15 10:48:20 dirk Exp $
+*   $Id: example_testclass.c,v 1.8 2000-02-10 13:06:59 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -177,6 +177,24 @@ OV_DLLFNCEXPORT OV_RESULT example_testclass_StringVec_set(
 		ov_logfile_info("StringVec[%ld] = \"%s\".", i, pvalue[i]);
 	}
 	return OV_ERR_OK;
+}
+
+/*
+*	Accessor functions for "AnyVariable"
+*/
+OV_DLLFNCEXPORT OV_ANY *example_testclass_AnyVariable_get(
+	OV_INSTPTR_example_testclass	ptest
+) {
+	ov_logfile_info("You asked for AnyVariable!");
+	return &ptest->v_AnyVariable;
+}
+
+OV_DLLFNCEXPORT OV_RESULT example_testclass_AnyVariable_set(
+	OV_INSTPTR_example_testclass	ptest,
+	const OV_ANY					*pvalue
+) {
+	ov_logfile_info("You set AnyVariable!");
+	return Ov_SetAnyValue(&ptest->v_AnyVariable, pvalue);
 }
 
 /*	----------------------------------------------------------------------	*/

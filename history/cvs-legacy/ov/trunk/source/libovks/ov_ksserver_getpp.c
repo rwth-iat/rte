@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getpp.c,v 1.5 1999-08-30 15:23:32 dirk Exp $
+*   $Id: ov_ksserver_getpp.c,v 1.6 2000-02-10 13:07:04 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	23-Jul-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	21-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 #define OV_COMPILE_LIBOVKS
@@ -243,7 +244,7 @@ OV_RESULT ov_ksserver_getpp_additem(
 		/*
 		*	FIXME! structure?
 		*/
-		if(pelem->elemunion.pvar->v_vartype == OV_VT_STRUCT) {
+		if((pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
 			objtype = KS_OT_DOMAIN;
 		} else {
 			objtype = KS_OT_VARIABLE;
@@ -359,7 +360,9 @@ OV_RESULT ov_ksserver_getpp_additem(
 			pprops->OV_OBJ_PROJECTED_PROPS_u.var_projected_props.tech_unit
 				= (pvtable->m_gettechunit)(pobj, pelem);
 			pprops->OV_OBJ_PROJECTED_PROPS_u.var_projected_props.vartype
-				= pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK;
+				= (pelem->elemunion.pvar->v_vartype != OV_VT_ANY)
+				?(pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK)
+				:(((OV_ANY*)pelem->pvalue)->value.vartype & OV_VT_KSMASK);
 			return OV_ERR_OK;
 		case KS_OT_DOMAIN:
 			return OV_ERR_OK;

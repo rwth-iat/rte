@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.16 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_object.c,v 1.17 2000-02-10 13:07:02 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 /*
 *	Description:
@@ -50,6 +51,7 @@
 #include "libov/ov_scheduler.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_library.h"
+#include "libov/ov_variable.h"
 
 #if OV_SYSTEM_MC164
 #define memcpy xmemcpy
@@ -417,8 +419,8 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 		if(pelem->elemunion.pvar->v_techunit) {
 			return pelem->elemunion.pvar->v_techunit;
 		}
-		if((pelem->elemunion.pvar->v_vartype == OV_VT_TIME)
-			|| (pelem->elemunion.pvar->v_vartype == OV_VT_TIME_VEC)
+		if(((pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME)
+			|| ((pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_VEC)
 		) {
 			return "UTC";
 		}
@@ -433,61 +435,64 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 /*
 *	Helper macros for implementing ov_object_getvar()
 */
-#define Ov_Object_GetVarValue(vartype, VARTYPE)						\
-	case OV_VT_##VARTYPE:											\
-		if(pelem->elemunion.pvar->v_getfnc) {						\
-			pvarcurrprops->value.valueunion.val_##vartype			\
-				= ((OV_FNCPTR_GET(VARTYPE))							\
-					pelem->elemunion.pvar->v_getfnc)(pobj);			\
-		} else {													\
-			pvarcurrprops->value.valueunion.val_##vartype			\
-				= *((OV_##VARTYPE*)pelem->pvalue);					\
-		}															\
+#define Ov_Object_GetVarValue(vartype, VARTYPE)								\
+	case OV_VT_##VARTYPE:													\
+		if(pelem->elemunion.pvar->v_getfnc) {								\
+			pvarcurrprops->value.valueunion.val_##vartype					\
+				= ((OV_FNCPTR_GET(VARTYPE))pelem->elemunion.pvar->v_getfnc)	\
+				(pobj);														\
+		} else {															\
+			pvarcurrprops->value.valueunion.val_##vartype					\
+				= *((OV_##VARTYPE*)pelem->pvalue);							\
+		}																	\
 		break
 
-#define Ov_Object_GetVarPVValue(vartype, VARTYPE)					\
-	case OV_VT_##VARTYPE##_PV: {									\
-			OV_##VARTYPE##_PV *pvalue; 								\
-			if(pelem->elemunion.pvar->v_getfnc) {					\
-				pvalue = ((OV_FNCPTR_GETPV(VARTYPE))				\
-					pelem->elemunion.pvar->v_getfnc)(pobj);			\
-			} else {												\
-				pvalue = (OV_##VARTYPE##_PV*)pelem->pvalue;			\
-			}														\
-			pvarcurrprops->value.valueunion.val_##vartype			\
-				= pvalue->value;									\
-			pvarcurrprops->state = (pvalue->state ==				\
-				OV_ST_NOTSUPPORTED)?(OV_ST_UNKNOWN):(pvalue->state);\
-			pvarcurrprops->time = pvalue->time;						\
-		}															\
+#define Ov_Object_GetVarPVValue(vartype, VARTYPE)							\
+	case OV_VT_##VARTYPE##_PV: {											\
+			OV_##VARTYPE##_PV *pvalue; 										\
+			if(pelem->elemunion.pvar->v_getfnc) {							\
+				pvalue = ((OV_FNCPTR_GETPV(VARTYPE))						\
+					pelem->elemunion.pvar->v_getfnc)(pobj);					\
+			} else {														\
+				pvalue = (OV_##VARTYPE##_PV*)pelem->pvalue;					\
+			}																\
+			pvarcurrprops->value.valueunion.val_##vartype = pvalue->value;	\
+			pvarcurrprops->state = (pvalue->state == OV_ST_NOTSUPPORTED)	\
+				?(OV_ST_UNKNOWN):(pvalue->state);							\
+			pvarcurrprops->time = pvalue->time;								\
+		}																	\
+		return OV_ERR_OK
+
+#define Ov_Object_GetVarDynVecValue(vartype, VARTYPE)						\
+	case OV_VT_##VARTYPE##_VEC:												\
+		if(pelem->elemunion.pvar->v_getfnc) {								\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
+				= ((OV_FNCPTR_GETVEC(VARTYPE))								\
+				pelem->elemunion.pvar->v_getfnc)(pobj, 						\
+				&pvarcurrprops->value.valueunion.val_##vartype##_vec		\
+				.veclen);													\
+		} else {															\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen		\
+				= ((OV_##VARTYPE##_VEC*)pelem->pvalue)->veclen;				\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
+				= ((OV_##VARTYPE##_VEC*)pelem->pvalue)->value;				\
+		}																	\
 		break
 
-#define Ov_Object_GetVarDynVecValue(vartype, VARTYPE)				\
-	case OV_VT_##VARTYPE##_VEC:										\
-		if(pelem->elemunion.pvar->v_getfnc) {						\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec		\
-				= ((OV_FNCPTR_GETVEC(VARTYPE))						\
-					pelem->elemunion.pvar->v_getfnc)(pobj,			\
-					&pvarcurrprops->value.veclen);					\
-		} else {													\
-			pvarcurrprops->value.veclen = ((OV_##VARTYPE##_VEC*)	\
-				pelem->pvalue)->veclen;								\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec		\
-				= ((OV_##VARTYPE##_VEC*)pelem->pvalue)->value;		\
-		}															\
-		break
-
-#define Ov_Object_GetVarVecValue(vartype, VARTYPE)					\
-	case OV_VT_##VARTYPE##_VEC:										\
-		if(pelem->elemunion.pvar->v_getfnc) {						\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec		\
-				= ((OV_FNCPTR_GETVEC(VARTYPE))						\
-					pelem->elemunion.pvar->v_getfnc)(pobj,			\
-					&pvarcurrprops->value.veclen);					\
-		} else {													\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec		\
-				= ((OV_##VARTYPE*)pelem->pvalue);					\
-		}															\
+#define Ov_Object_GetVarVecValue(vartype, VARTYPE)							\
+	case OV_VT_##VARTYPE##_VEC:												\
+		if(pelem->elemunion.pvar->v_getfnc) {								\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
+				= ((OV_FNCPTR_GETVEC(VARTYPE))								\
+				pelem->elemunion.pvar->v_getfnc)(pobj,						\
+				&pvarcurrprops->value.valueunion.val_##vartype##_vec		\
+				.veclen);													\
+		} else {															\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen		\
+				= pelem->elemunion.pvar->v_veclen;							\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
+				= ((OV_##VARTYPE*)pelem->pvalue);							\
+		}																	\
 		break
 
 /*	----------------------------------------------------------------------	*/
@@ -500,27 +505,17 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 	OV_INSTPTR_ov_object 	pobj, 
 	const OV_ELEMENT		*pelem,
-	OV_VAR_CURRENT_PROPS	*pvarcurrprops
+	OV_ANY					*pvarcurrprops
 ) {
 	switch(pelem->elemtype) {
 	case OV_ET_VARIABLE:
 		/*
-		*	enter variable type and vector length
+		*	enter default variable type, state and time stamp
 		*/
 		pvarcurrprops->value.vartype = pelem->elemunion.pvar->v_vartype;
-		pvarcurrprops->value.veclen = pelem->elemunion.pvar->v_veclen;
 		/*
-		*	by default, the state of a variable is supported for PVs only
+		*	now get the actual value
 		*/
-		if(!(pelem->elemunion.pvar->v_vartype & OV_VT_HAS_STATE)) {
-			pvarcurrprops->state = OV_ST_NOTSUPPORTED;
-		}
-		/*
-		*	by default, a variable's time stamp is the current time unless it's a PV
-		*/
-		if(!(pelem->elemunion.pvar->v_vartype & OV_VT_HAS_TIMESTAMP)) {
-			ov_time_gettime(&pvarcurrprops->time);
-		}
 		switch(pelem->elemunion.pvar->v_veclen) {
 		case 1:
 			/*
@@ -543,6 +538,23 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 				*	TODO & FIXME!
 				*/
 				return OV_ERR_NOTIMPLEMENTED;
+			case OV_VT_ANY:
+				if(pelem->elemunion.pvar->v_getfnc) {
+					*pvarcurrprops = *(((OV_FNCPTR_GETANY)pelem->elemunion.pvar->v_getfnc)(pobj));
+				} else {
+					*pvarcurrprops = *(OV_ANY*)pelem;
+				}
+				if(pvarcurrprops->value.vartype & OV_VT_HAS_STATE) {
+					if(pvarcurrprops->state == OV_ST_NOTSUPPORTED) {
+						pvarcurrprops->state = OV_ST_UNKNOWN;
+					}
+				} else {
+					pvarcurrprops->state = OV_ST_NOTSUPPORTED;
+				}
+				if(!(pvarcurrprops->value.vartype & OV_VT_HAS_TIMESTAMP)) {
+					ov_time_gettime(&pvarcurrprops->time);
+				}
+				return OV_ERR_OK;
 			default:
 				Ov_Warning("internal error");
 				return OV_ERR_GENERIC;
@@ -603,6 +615,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 			}
 			break;
 		}
+		/*
+		*	enter state and time stamp
+		*/
+		pvarcurrprops->state = OV_ST_NOTSUPPORTED;
+		ov_time_gettime(&pvarcurrprops->time);
 		return OV_ERR_OK;
 	default:
 		break;
@@ -615,61 +632,62 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 /*
 *	Helper macros for implementing ov_object_setvar()
 */
-#define Ov_Object_SetVarValue(vartype, VARTYPE)							\
-	case OV_VT_##VARTYPE:												\
-		if(pelem->elemunion.pvar->v_setfnc) {							\
-			return ((OV_FNCPTR_SET(VARTYPE))							\
-				pelem->elemunion.pvar->v_setfnc)(pobj, 					\
-				pvarcurrprops->value.valueunion.val_##vartype);			\
-		}																\
-		*((OV_##VARTYPE*)pelem->pvalue)									\
-			= pvarcurrprops->value.valueunion.val_##vartype;			\
+#define Ov_Object_SetVarValue(vartype, VARTYPE)								\
+	case OV_VT_##VARTYPE:													\
+		if(pelem->elemunion.pvar->v_setfnc) {								\
+			return ((OV_FNCPTR_SET(VARTYPE))								\
+				pelem->elemunion.pvar->v_setfnc)(pobj, 						\
+				pvarcurrprops->value.valueunion.val_##vartype);				\
+		}																	\
+		*((OV_##VARTYPE*)pelem->pvalue)										\
+			= pvarcurrprops->value.valueunion.val_##vartype;				\
 		return OV_ERR_OK
 		
-#define Ov_Object_SetVarPVValue(vartype, VARTYPE)						\
-	case OV_VT_##VARTYPE##_PV:											\
-		if(pelem->elemunion.pvar->v_setfnc) {							\
-			OV_##VARTYPE##_PV var;										\
-			var.value = pvarcurrprops->value.valueunion.val_##vartype;	\
-			var.state = (pvarcurrprops->state == OV_ST_NOTSUPPORTED)?	\
-				(OV_ST_UNKNOWN):(pvarcurrprops->state);					\
-			var.time = pvarcurrprops->time;								\
-			return ((OV_FNCPTR_SETPV(VARTYPE))pelem->elemunion.pvar->	\
-				v_setfnc)(pobj, &var);									\
-		}																\
-		((OV_##VARTYPE##_PV*)pelem->pvalue)->value						\
-			= pvarcurrprops->value.valueunion.val_##vartype;			\
-		((OV_##VARTYPE##_PV*)pelem->pvalue)->state 						\
-			= (pvarcurrprops->state == OV_ST_NOTSUPPORTED)?				\
-				(OV_ST_UNKNOWN):(pvarcurrprops->state);					\
-		((OV_##VARTYPE##_PV*)pelem->pvalue)->time						\
-			= pvarcurrprops->time;										\
+#define Ov_Object_SetVarPVValue(vartype, VARTYPE)							\
+	case OV_VT_##VARTYPE##_PV:												\
+		if(pelem->elemunion.pvar->v_setfnc) {								\
+			OV_##VARTYPE##_PV var;											\
+			var.value = pvarcurrprops->value.valueunion.val_##vartype;		\
+			var.state = (pvarcurrprops->state == OV_ST_NOTSUPPORTED)		\
+				?(OV_ST_UNKNOWN):(pvarcurrprops->state);					\
+			var.time = pvarcurrprops->time;									\
+			return ((OV_FNCPTR_SETPV(VARTYPE))pelem->elemunion.pvar			\
+				->v_setfnc)(pobj, &var);									\
+		}																	\
+		((OV_##VARTYPE##_PV*)pelem->pvalue)->value							\
+			= pvarcurrprops->value.valueunion.val_##vartype;				\
+		((OV_##VARTYPE##_PV*)pelem->pvalue)->state 							\
+			= (pvarcurrprops->state == OV_ST_NOTSUPPORTED)					\
+			?(OV_ST_UNKNOWN):(pvarcurrprops->state);						\
+		((OV_##VARTYPE##_PV*)pelem->pvalue)->time = pvarcurrprops->time;	\
 		return OV_ERR_OK
 		
-#define Ov_Object_SetVarDynVecValue(vartype, VARTYPE)					\
-	case OV_VT_##VARTYPE##_VEC:											\
-		if(pelem->elemunion.pvar->v_setfnc) {							\
-			return ((OV_FNCPTR_SETVEC(VARTYPE))							\
-				pelem->elemunion.pvar->v_setfnc)(pobj, 					\
-				pvarcurrprops->value.valueunion.val_##vartype##_vec,	\
-				pvarcurrprops->value.veclen);							\
-		}																\
-		Ov_SetDynamicVectorValue((OV_##VARTYPE##_VEC*)pelem->pvalue, 	\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec,		\
-			pvarcurrprops->value.veclen, VARTYPE);						\
+#define Ov_Object_SetVarDynVecValue(vartype, VARTYPE)						\
+	case OV_VT_##VARTYPE##_VEC:												\
+		if(pelem->elemunion.pvar->v_setfnc) {								\
+			return ((OV_FNCPTR_SETVEC(VARTYPE))								\
+				pelem->elemunion.pvar->v_setfnc)(pobj, 						\
+				pvarcurrprops->value.valueunion.val_##vartype##_vec.value,	\
+				pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen);\
+		}																	\
+		Ov_SetDynamicVectorValue((OV_##VARTYPE##_VEC*)pelem->pvalue, 		\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.value,		\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen,		\
+			VARTYPE);														\
 		return OV_ERR_OK
 
-#define Ov_Object_SetVarVecValue(vartype, VARTYPE)						\
-	case OV_VT_##VARTYPE##_VEC:											\
-		if(pelem->elemunion.pvar->v_setfnc) {							\
-			return ((OV_FNCPTR_SETVEC(VARTYPE))							\
-				pelem->elemunion.pvar->v_setfnc)(pobj, 					\
-				pvarcurrprops->value.valueunion.val_##vartype##_vec,	\
-				pvarcurrprops->value.veclen);							\
-		}																\
-		Ov_SetStaticVectorValue((OV_##VARTYPE*)pelem->pvalue, 			\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec,		\
-			pvarcurrprops->value.veclen, VARTYPE);						\
+#define Ov_Object_SetVarVecValue(vartype, VARTYPE)							\
+	case OV_VT_##VARTYPE##_VEC:												\
+		if(pelem->elemunion.pvar->v_setfnc) {								\
+			return ((OV_FNCPTR_SETVEC(VARTYPE))								\
+				pelem->elemunion.pvar->v_setfnc)(pobj, 						\
+				pvarcurrprops->value.valueunion.val_##vartype##_vec.value,	\
+				pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen);\
+		}																	\
+		Ov_SetStaticVectorValue((OV_##VARTYPE*)pelem->pvalue, 				\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.value,		\
+			pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen,		\
+			VARTYPE);														\
 		return OV_ERR_OK
 
 /*	----------------------------------------------------------------------	*/
@@ -679,27 +697,23 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 *	a variable (value, state and timestamp, compare ACPLT/KS)
 */
 OV_DLLFNCEXPORT OV_RESULT ov_object_setvar(
-	OV_INSTPTR_ov_object 		pobj,
-	const OV_ELEMENT			*pelem,
-	const OV_VAR_CURRENT_PROPS	*pvarcurrprops
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_ANY			*pvarcurrprops
 ) {
 	switch(pelem->elemtype) {
 	case OV_ET_VARIABLE:
 		/*
-		*	check the variable type and the vector length
+		*	if not an ANY variable, check the variable type
 		*/
-		if(pvarcurrprops->value.vartype !=
-			(pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK)
+		if((pelem->elemunion.pvar->v_vartype != OV_VT_ANY)
+			&& ((pvarcurrprops->value.vartype & OV_VT_KSMASK)
+			!= (pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK))
 		) {
 			return OV_ERR_BADTYPE;
 		}
-		if(pelem->elemunion.pvar->v_veclen) {
-			if(pvarcurrprops->value.veclen != pelem->elemunion.pvar->v_veclen) {
-				return OV_ERR_BADVALUE;
-			}
-		}
 		/*
-		*	set the value and -- if a PV -- state and timestamp
+		*	set the value -- and, in case of a PV, state and timestamp
 		*/
 		switch(pelem->elemunion.pvar->v_veclen) {
 		case 1:
@@ -730,6 +744,15 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_setvar(
 				*	TODO & FIXME!
 				*/
 				return OV_ERR_NOTIMPLEMENTED;
+			case OV_VT_ANY:
+				if(pelem->elemunion.pvar->v_setfnc) {
+					return ((OV_FNCPTR_SETANY)pelem->elemunion.pvar->v_setfnc)
+						(pobj, pvarcurrprops);
+				} else {
+					return ov_variable_setanyvalue((OV_ANY*)pelem->pvalue,
+						pvarcurrprops);
+				}
+				break;
 			default:
 				break;
 			}
@@ -767,6 +790,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_setvar(
 			/*
 			*	static vector variable
 			*/
+			if(pelem->elemunion.pvar->v_veclen
+				!= pvarcurrprops->value.valueunion.val_generic_vec.veclen
+			) {
+				return OV_ERR_BADVALUE;
+			}
 			switch(pelem->elemunion.pvar->v_vartype) {
 			Ov_Object_SetVarVecValue(bool, BOOL);
 			Ov_Object_SetVarVecValue(int, INT);
@@ -944,42 +972,42 @@ OV_ACCESS ov_object_getaccess_nostartup(
 /*
 *	Helper macros for moving the database to a new base address
 */
-#define Ov_Adjust(type, ptr) 											\
+#define Ov_Adjust(type, ptr) 												\
 	ptr = (type)(((ptr)?(((OV_BYTE*)(ptr))+distance):(NULL)))
 
-#define Ov_ClassPtr(pclass)												\
+#define Ov_ClassPtr(pclass)													\
 	((OV_INSTPTR_ov_class)((pclass)?(((OV_BYTE*)(pclass))+offset):(NULL)))
 	
-#define Ov_StringPtr(pstring)											\
+#define Ov_StringPtr(pstring)												\
 	((OV_STRING)((pstring)?(((OV_BYTE*)(pstring))+offset):(NULL)))
 	
-#define Ov_ObjectPtr(pobj)												\
+#define Ov_ObjectPtr(pobj)													\
 	((OV_INSTPTR_ov_object)((pobj)?(((OV_BYTE*)(pobj))+offset):(NULL)))
 
-#define Ov_AssociationPtr(passoc)										\
+#define Ov_AssociationPtr(passoc)											\
 	((OV_INSTPTR_ov_association)((passoc)?(((OV_BYTE*)(passoc))+offset):(NULL)))
 
-#define Ov_IsVar(pelem)													\
-	(!strcmp(Ov_StringPtr(Ov_ClassPtr(Ov_GetParent(ov_instantiation, 	\
+#define Ov_IsVar(pelem)														\
+	(!strcmp(Ov_StringPtr(Ov_ClassPtr(Ov_GetParent(ov_instantiation, 		\
 	pelem))->v_identifier), OV_OBJNAME_VARIABLE))
 
-#define Ov_IsPart(pelem)												\
-	(!strcmp(Ov_StringPtr(Ov_ClassPtr(Ov_GetParent(ov_instantiation, 	\
+#define Ov_IsPart(pelem)													\
+	(!strcmp(Ov_StringPtr(Ov_ClassPtr(Ov_GetParent(ov_instantiation, 		\
 	pelem))->v_identifier), OV_OBJNAME_PART))
 
-#define Ov_VarAddress(pobj, offset)										\
+#define Ov_VarAddress(pobj, offset)											\
 	(*(OV_POINTER*)(((OV_BYTE*)(pobj))+(offset)))
 
-#define Ov_ObjAddress(pobj, offset)										\
+#define Ov_ObjAddress(pobj, offset)											\
 	((OV_INSTPTR_ov_object)(((OV_BYTE*)(pobj))+(offset)))
 
-#define Ov_HeadAddress(pobj, offset)									\
+#define Ov_HeadAddress(pobj, offset)										\
 	((OV_HEAD*)(((OV_BYTE*)(pobj))+(offset)))
 	
-#define Ov_AnchorAddress(pobj, offset)									\
+#define Ov_AnchorAddress(pobj, offset)										\
 	((OV_ANCHOR*)(((OV_BYTE*)(pobj))+(offset)))
 	
-#define Ov_HeadAddressNM(pobj, offset)									\
+#define Ov_HeadAddressNM(pobj, offset)										\
 	((OV_NMHEAD*)(((OV_BYTE*)(pobj))+(offset)))
 	
 /*	----------------------------------------------------------------------	*/
@@ -1005,6 +1033,7 @@ OV_RESULT ov_object_move(
 	OV_BOOL						domain = FALSE;
 	OV_INSTPTR_ov_object		pchild;
 	OV_STRING_VEC				*pvector;
+	OV_ANY						*pany;
 	Ov_Association_DefineIteratorNM(pit);
 	/*
 	*	determine pointer offset of objects in the copy
@@ -1035,7 +1064,7 @@ OV_RESULT ov_object_move(
 			if(Ov_IsVar(pelem)) {
 				pvar = Ov_StaticPtrCast(ov_variable, pelem);
 				if(!(pvar->v_varprops & OV_VP_DERIVED)) {
-					if(pvar->v_vartype == OV_VT_STRUCT) {
+					if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
 						/*
 						*	variable is a structure, move it
 						*/
@@ -1049,8 +1078,38 @@ OV_RESULT ov_object_move(
 							/*
 							*	variable is a scalar
 							*/
-							if(pvar->v_vartype == OV_VT_STRING) {
+							switch(pvar->v_vartype & OV_VT_KSMASK) {
+							case OV_VT_STRING:
 								Ov_Adjust(OV_STRING, Ov_VarAddress(pobj, pvar->v_offset));
+								break;
+							case OV_VT_ANY:
+								pany = (OV_ANY*)Ov_VarAddress(pobj, pvar->v_offset);
+								switch(pany->value.vartype & OV_VT_KSMASK) {
+								case OV_VT_BYTE_VEC:
+								case OV_VT_BOOL_VEC:
+								case OV_VT_INT_VEC:
+								case OV_VT_UINT_VEC:
+								case OV_VT_SINGLE_VEC:
+								case OV_VT_DOUBLE_VEC:
+								case OV_VT_TIME_VEC:
+								case OV_VT_TIME_SPAN_VEC:
+									Ov_Adjust(OV_POINTER, pany->value.valueunion.val_generic_vec.value);
+									break;
+								case OV_VT_STRING_VEC:
+									pvector = &pany->value.valueunion.val_string_vec;
+									if(pvector) {
+										Ov_Adjust(OV_STRING*, pvector->value);
+										for(i=0; i<pvector->veclen; i++) {
+											Ov_Adjust(OV_STRING, pvector->value[i]);
+										}
+									}
+									break;
+								default:
+									break;
+								}
+								break;
+							default:
+								break;
 							}
 							break;
 
@@ -1058,8 +1117,9 @@ OV_RESULT ov_object_move(
 							/*
 							*	variable is a dynamic vector
 							*/
-							Ov_Adjust(OV_GENERIC_VEC*, Ov_VarAddress(pobj, pvar->v_offset));
-							if(pvar->v_vartype == OV_VT_STRING_VEC) {
+							Ov_Adjust(OV_POINTER, ((OV_GENERIC_VEC*)Ov_VarAddress
+								(pobj, pvar->v_offset))->value);
+							if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 								pvector = (OV_STRING_VEC*)Ov_VarAddress(pobj, pvar->v_offset);
 								if(pvector) {
 									for(i=0; i<pvector->veclen; i++) {
@@ -1073,7 +1133,7 @@ OV_RESULT ov_object_move(
 							/*
 							*	variable is a static vector
 							*/
-							if(pvar->v_vartype == OV_VT_STRING_VEC) {
+							if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 								for(i=0; i<pvar->v_veclen; i++) {
 									Ov_Adjust(OV_STRING, Ov_VarAddress(pobj,
 										pvar->v_offset+i*sizeof(OV_STRING)));

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.c,v 1.3 1999-08-28 15:55:57 dirk Exp $
+*   $Id: ov_ksserver_xdr.c,v 1.4 2000-02-10 13:07:04 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -320,9 +320,6 @@ OV_KSSERVER_DECL_XDRFNC(OV_VAR_VALUE) {
 	if(!ov_ksserver_xdr_OV_VAR_TYPE(xdrs, &objp->vartype)) {
 		return FALSE;
 	}
-	if(xdrs->x_op == XDR_DECODE) {
-		objp->veclen = 1;
-	}
 	switch(objp->vartype) {
 	case OV_VT_BOOL:
 		return ov_ksserver_xdr_OV_BOOL(xdrs, &objp->valueunion.val_bool);
@@ -341,34 +338,42 @@ OV_KSSERVER_DECL_XDRFNC(OV_VAR_VALUE) {
 	case OV_VT_TIME_SPAN:
 		return ov_ksserver_xdr_OV_TIME_SPAN(xdrs, &objp->valueunion.val_time_span);
 	case OV_VT_BOOL_VEC:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_bool_vec,
-			&objp->veclen, ~0, sizeof(bool_t), (xdrproc_t)ov_ksserver_xdr_OV_BOOL);
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_bool_vec.value,
+			&objp->valueunion.val_bool_vec.veclen, ~0, sizeof(bool_t),
+			(xdrproc_t)ov_ksserver_xdr_OV_BOOL);
 	case OV_VT_INT_VEC:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_int_vec,
-			&objp->veclen, ~0, sizeof(long), (xdrproc_t)ov_ksserver_xdr_OV_INT);
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_int_vec.value,
+			&objp->valueunion.val_int_vec.veclen, ~0, sizeof(long),
+			(xdrproc_t)ov_ksserver_xdr_OV_INT);
 	case OV_VT_UINT_VEC:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_uint_vec,
-			&objp->veclen, ~0, sizeof(u_long), (xdrproc_t)ov_ksserver_xdr_OV_UINT);
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_uint_vec.value,
+			&objp->valueunion.val_uint_vec.veclen, ~0, sizeof(u_long),
+			(xdrproc_t)ov_ksserver_xdr_OV_UINT);
 	case OV_VT_SINGLE_VEC:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_single_vec,
-			&objp->veclen, ~0, sizeof(float), (xdrproc_t)ov_ksserver_xdr_OV_SINGLE);
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_single_vec.value,
+			&objp->valueunion.val_single_vec.veclen, ~0, sizeof(float),
+			(xdrproc_t)ov_ksserver_xdr_OV_SINGLE);
 	case OV_VT_DOUBLE_VEC:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_double_vec,
-			&objp->veclen, ~0, sizeof(double), (xdrproc_t)ov_ksserver_xdr_OV_DOUBLE);
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_double_vec.value,
+			&objp->valueunion.val_double_vec.veclen, ~0, sizeof(double),
+			(xdrproc_t)ov_ksserver_xdr_OV_DOUBLE);
 	case OV_VT_STRING_VEC:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_string_vec,
-			&objp->veclen, ~0, sizeof(OV_STRING), (xdrproc_t)ov_ksserver_xdr_OV_STRING);
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_string_vec.value,
+			&objp->valueunion.val_string_vec.veclen, ~0, sizeof(OV_STRING),
+			(xdrproc_t)ov_ksserver_xdr_OV_STRING);
 	case OV_VT_TIME_VEC:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_time_vec,
-			&objp->veclen, ~0, sizeof(OV_TIME), (xdrproc_t)ov_ksserver_xdr_OV_TIME);
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_time_vec.value,
+			&objp->valueunion.val_time_vec.veclen, ~0, sizeof(OV_TIME),
+			(xdrproc_t)ov_ksserver_xdr_OV_TIME);
 	case OV_VT_TIME_SPAN_VEC:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_time_span_vec,
-			&objp->veclen, ~0, sizeof(OV_TIME_SPAN), (xdrproc_t)ov_ksserver_xdr_OV_TIME_SPAN);
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_time_span_vec.value,
+			&objp->valueunion.val_time_span_vec.veclen, ~0, sizeof(OV_TIME_SPAN),
+			(xdrproc_t)ov_ksserver_xdr_OV_TIME_SPAN);
 	case OV_VT_VOID:
 		return TRUE;
 	case OV_VT_BYTE_VEC:
-		return ov_ksserver_xdr_bytes(xdrs, (char **)&objp->valueunion.val_byte_vec,
-			&objp->veclen, ~0);
+		return ov_ksserver_xdr_bytes(xdrs, (char **)&objp->valueunion.val_byte_vec.value,
+			&objp->valueunion.val_byte_vec.veclen, ~0);
 	default:
 		break;
 	}

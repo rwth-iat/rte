@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_variable.c,v 1.2 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_variable.c,v 1.3 2000-02-10 13:07:02 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 *	History:
 *	--------
 *	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 #define OV_COMPILE_LIBOV
@@ -230,6 +231,104 @@ OV_DLLFNCEXPORT OV_STRING ov_variable_techunit_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_techunit;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Helper macros for implementing ov_setvariable_setanyvalue()
+*/
+#define Ov_Variable_SetAnyValueVec(type, TYPE)								\
+	case OV_VT_##TYPE##_VEC:												\
+		value.value.valueunion.val_generic_vec.veclen = 0;					\
+		value.value.valueunion.val_generic_vec.value = NULL;				\
+		result = Ov_SetDynamicVectorValue(									\
+			&value.value.valueunion.val_##type##_vec,						\
+			pvalue->value.valueunion.val_##type##_vec.value,				\
+			pvalue->value.valueunion.val_##type##_vec.veclen, TYPE);		\
+		break
+
+#define Ov_Variable_FreeAnyValueVec(type, TYPE)								\
+	case OV_VT_##TYPE##_VEC:												\
+		Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(						\
+			&pany->value.valueunion.val_##type##_vec, NULL, 0, TYPE)));		\
+		break
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Set the value of an ANY variable
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_variable_setanyvalue(
+	OV_ANY			*pany,
+	const OV_ANY	*pvalue
+) {
+	/*
+	*	internal variables
+	*/
+	OV_ANY		value;
+	OV_RESULT	result = OV_ERR_OK;
+	/*
+	*	instructions
+	*/
+	if(!pany) {
+		return OV_ERR_BADPARAM;
+	}
+	if(pvalue) {
+		value = *pvalue;
+	} else {
+		value.value.vartype = OV_VT_VOID;
+	}
+	switch(value.value.vartype & OV_VT_KSMASK) {
+	case OV_VT_VOID:
+	case OV_VT_BOOL:
+	case OV_VT_INT:
+	case OV_VT_UINT:
+	case OV_VT_SINGLE:
+	case OV_VT_DOUBLE:
+	case OV_VT_TIME:
+	case OV_VT_TIME_SPAN:
+		break;
+	case OV_VT_STRING:
+		value.value.valueunion.val_string = NULL;
+		result = ov_string_setvalue(&value.value.valueunion.val_string,
+			pvalue->value.valueunion.val_string);
+		break;
+	Ov_Variable_SetAnyValueVec(byte, BYTE);
+	Ov_Variable_SetAnyValueVec(bool, BOOL);
+	Ov_Variable_SetAnyValueVec(int, INT);
+	Ov_Variable_SetAnyValueVec(uint, UINT);
+	Ov_Variable_SetAnyValueVec(single, SINGLE);
+	Ov_Variable_SetAnyValueVec(double, DOUBLE);
+	Ov_Variable_SetAnyValueVec(time, TIME);
+	Ov_Variable_SetAnyValueVec(time_span, TIME_SPAN);
+	Ov_Variable_SetAnyValueVec(string, STRING);
+	default:
+		return OV_ERR_BADVALUE;
+	}
+	if(Ov_OK(result)) {
+		/*
+		*	free the memory used by the old ANY value
+		*/
+		switch(pany->value.vartype & OV_VT_KSMASK) {
+		case OV_VT_STRING:
+			ov_string_setvalue(&pany->value.valueunion.val_string, NULL);
+			break;
+		Ov_Variable_FreeAnyValueVec(byte, BYTE);
+		Ov_Variable_FreeAnyValueVec(bool, BOOL);
+		Ov_Variable_FreeAnyValueVec(int, INT);
+		Ov_Variable_FreeAnyValueVec(uint, UINT);
+		Ov_Variable_FreeAnyValueVec(single, SINGLE);
+		Ov_Variable_FreeAnyValueVec(double, DOUBLE);
+		Ov_Variable_FreeAnyValueVec(time, TIME);
+		Ov_Variable_FreeAnyValueVec(time_span, TIME_SPAN);
+		Ov_Variable_FreeAnyValueVec(string, STRING);
+		default:
+			break;
+		}
+		*pany = value;
+	}
+	return result;
 }
 
 /*	----------------------------------------------------------------------	*/

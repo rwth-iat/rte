@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.9 1999-09-15 10:48:21 dirk Exp $
+*   $Id: ov_class.c,v 1.10 2000-02-10 13:07:02 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	24-Aug-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	12-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
 #define OV_COMPILE_LIBOV
@@ -529,6 +530,18 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 		return result;
 	}
 	/*
+	*	call the constructor of the object
+	*/
+	result = pvtable->m_constructor(pobj);
+	if(Ov_Fail(result)) {
+		/*
+		*	construction failed, delete object
+		*/
+		ov_class_deleteobject_cleanupinst(pobj);
+		ov_database_free(pobj);
+		return result;
+	}
+	/*
 	*	call the user-defined initialization function
 	*/
 	if(initobjfnc) {
@@ -543,18 +556,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	*	set the object's state to "initialized"
 	*/
 	ov_class_createobject_setinit(pobj);
-	/*
-	*	call the constructor of the object
-	*/
-	result = pvtable->m_constructor(pobj);
-	if(Ov_Fail(result)) {
-		/*
-		*	construction failed, delete object
-		*/
-		ov_class_deleteobject_cleanupinst(pobj);
-		ov_database_free(pobj);
-		return result;
-	}
 	/*
 	*	start the object up
 	*/
@@ -677,8 +678,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 		return OV_ERR_BADPLACEMENT;
 	}
 	/*
-	*	if we move the object to another parent domain, this parent must not be
-	*	the object or any of it's children and it's new identifier must be unique
+	*	the new identifier of the object must be unique
+	*/
+	if(Ov_SearchChild(ov_containment, pparent, newid)) {
+		return OV_ERR_CANTMOVE;
+	}
+	/*
+	*	if we move the object to another parent domain, this
+	*	parent must not be the object or any of its children
 	*/
 	pcurrparent = Ov_GetParent(ov_containment, pobj);
 	Ov_AbortIfNot(pcurrparent);
@@ -690,9 +697,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 			if(pcurrobj == pobj) {
 				return OV_ERR_CANTMOVE;
 			}
-		}
-		if(Ov_SearchChild(ov_containment, pparent, newid)) {
-			return OV_ERR_CANTMOVE;
 		}
 	}
 	/*
@@ -860,7 +864,7 @@ void ov_class_deleteobject_cleanupinst(
 				*	free a variable only if it is a normal variable
 				*/
 				if(!(child.elemunion.pvar->v_varprops & (OV_VP_DERIVED | OV_VP_STATIC))) {
-					if(child.elemunion.pvar->v_vartype == OV_VT_STRUCT) {
+					if((child.elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
 						ov_class_deleteobject_cleanupstruct(&child);
 					} else {
 						switch(child.elemunion.pvar->v_veclen) {
@@ -868,16 +872,23 @@ void ov_class_deleteobject_cleanupinst(
 							/*
 							*	scalar variable
 							*/
-							if(child.elemunion.pvar->v_vartype == OV_VT_STRING) {
+							switch(child.elemunion.pvar->v_vartype & OV_VT_KSMASK) {
+							case OV_VT_STRING:
 								ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
-								Ov_WarnIf(*(OV_STRING*)child.pvalue);									
+								Ov_WarnIf(*(OV_STRING*)child.pvalue);
+								break;
+							case OV_VT_ANY:
+								Ov_SetAnyValue((OV_ANY*)child.pvalue, NULL);
+								break;
+							default:
+								break;
 							}
 							break;
 						case 0:
 							/*
 							*	dynamic vector variable
 							*/
-							if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
+							if((child.elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 								Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
 									(OV_STRING_VEC*)child.pvalue, NULL, 0, STRING)));
 								Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
@@ -891,7 +902,7 @@ void ov_class_deleteobject_cleanupinst(
 							/*
 							*	static vector variable
 							*/
-							if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
+							if((child.elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 								Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
 									(OV_STRING*)child.pvalue, NULL,
 									child.elemunion.pvar->v_veclen)));
@@ -1007,7 +1018,7 @@ void ov_class_deleteobject_cleanupstaticinst(
 		*/
 		if(pvar->v_varprops & OV_VP_STATIC) {
 			pvalue = ((OV_BYTE*)pclass)+Ov_GetInstSize(ov_class)+pvar->v_offset;
-			if(pvar->v_vartype == OV_VT_STRUCT) {
+			if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
 				/*
 				*	prepare informatin for cleaning up the child and do it
 				*/
@@ -1022,16 +1033,23 @@ void ov_class_deleteobject_cleanupstaticinst(
 					/*
 					*	scalar variable
 					*/
-					if(pvar->v_vartype == OV_VT_STRING) {
+					switch(pvar->v_vartype & OV_VT_KSMASK) {
+					case OV_VT_STRING:
 						ov_string_setvalue((OV_STRING*)pvalue, NULL);
-						Ov_WarnIf(*(OV_STRING*)pvalue);									
+						Ov_WarnIf(*(OV_STRING*)pvalue);
+						break;
+					case OV_VT_ANY:
+						Ov_SetAnyValue((OV_ANY*)pvalue, NULL);
+						break;
+					default:
+						break;
 					}
 					break;
 				case 0:
 					/*
 					*	dynamic vector variable
 					*/
-					if(pvar->v_vartype == OV_VT_STRING_VEC) {
+					if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 						Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
 							(OV_STRING_VEC*)pvalue, NULL, 0, STRING)));
 						Ov_WarnIf(((OV_GENERIC_VEC*)pvalue)->value);
@@ -1045,7 +1063,7 @@ void ov_class_deleteobject_cleanupstaticinst(
 					/*
 					*	static vector variable
 					*/
-					if(pvar->v_vartype == OV_VT_STRING_VEC) {
+					if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 						Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
 							(OV_STRING*)pvalue, NULL, pvar->v_veclen)));
 					}
@@ -1082,7 +1100,7 @@ void ov_class_deleteobject_cleanupstruct(
 		if(child.elemtype == OV_ET_NONE) {
 			break;
 		}
-		if(child.elemunion.pvar->v_vartype == OV_VT_STRUCT) {
+		if((child.elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
 			ov_class_deleteobject_cleanupstruct(&child);
 		} else {
 			switch(child.elemunion.pvar->v_veclen) {
@@ -1090,16 +1108,23 @@ void ov_class_deleteobject_cleanupstruct(
 				/*
 				*	scalar variable
 				*/
-				if(child.elemunion.pvar->v_vartype == OV_VT_STRING) {
+				switch(child.elemunion.pvar->v_vartype & OV_VT_KSMASK) {
+				case OV_VT_STRING:
 					ov_string_setvalue((OV_STRING*)child.pvalue, NULL);
-					Ov_WarnIf(*(OV_STRING*)child.pvalue);									
+					Ov_WarnIf(*(OV_STRING*)child.pvalue);
+					break;
+				case OV_VT_ANY:
+					Ov_SetAnyValue((OV_ANY*)child.pvalue, NULL);
+					break;
+				default:
+					break;
 				}
 				break;
 			case 0:
 				/*
 				*	dynamic vector variable
 				*/
-				if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
+				if((child.elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 					Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
 						(OV_STRING_VEC*)child.pvalue, NULL, 0, STRING)));
 					Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
@@ -1113,7 +1138,7 @@ void ov_class_deleteobject_cleanupstruct(
 				/*
 				*	static vector variable
 				*/
-				if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
+				if((child.elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 					Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
 						(OV_STRING*)child.pvalue, NULL,
 						child.elemunion.pvar->v_veclen)));
