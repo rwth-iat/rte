@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.14 1999-08-30 16:05:01 dirk Exp $
+*   $Id: ov_object.c,v 1.15 1999-08-31 07:42:29 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -308,7 +308,7 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 				}
 			}
 			else if(pclass == pclass_ov_class) {
-				if(pclass->v_classprops & OV_CP_INSTANTIABLE) {
+				if(Ov_StaticPtrCast(ov_class, pobj)->v_classprops & OV_CP_INSTANTIABLE) {
 					if((Ov_GetParent(ov_containment, pobj) != Ov_PtrUpCast(ov_domain, &pdb->ov))
 						|| (pobj == Ov_PtrUpCast(ov_object, pclass_ov_domain))
 						|| (pobj == Ov_PtrUpCast(ov_object, pclass_ov_library))
