@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.7 1997-09-15 18:01:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.8 1998-12-10 17:25:38 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -84,6 +84,18 @@ void DumpVarType(const int var_type)
 } // DumpVarType
 
 
+void DumpLinkType(const int link_type)
+{
+    switch ( link_type ) {
+    case KS_LT_LOCAL_1_1:     cout << "local 1:1 "; break;
+    case KS_LT_LOCAL_1_MANY:  cout << "local 1:m "; break;
+    case KS_LT_GLOBAL_1_1:    cout << "global 1:1 "; break;
+    case KS_LT_GLOBAL_1_MANY: cout << "global 1:m "; break;
+    default:                  cout << "<unknown type> "; break;
+    }
+} // DumpLinkType
+
+
 void DumpProjProps(const KsProjProps &proj_props, int indent)
 {
     PltString info;
@@ -115,8 +127,23 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     //
     switch ( proj_props.xdrTypeCode() ) {
     case KS_OT_DOMAIN:
-        cout << "<DOM> " << info;
-        break;
+        {
+	    cout << "<DOM> " << info;
+
+            const KsLinkProjProps *link_proj_props =
+                (const KsLinkProjProps *) &proj_props; // for msvc
+
+            if( !link_proj_props ) {
+                cout << "<unknown projected properties>";
+            } else {
+		DumpLinkType(link_proj_props->type);
+	    }
+	    break;
+	}
+
+    case KS_OT_LINK:
+	cout << "<LNK> " << info;
+	break;
         
     case KS_OT_VARIABLE:
         {
@@ -389,6 +416,13 @@ void DumpBranch(KscDomain &branch, int indent)
                                    PltString(indent ? "/" : "") +
                                    current->identifier);
             DumpBranch(child_domain, indent + INDENTATION);
+        } else if ( current->xdrTypeCode() == KS_OT_LINK ) {
+            KscDomain child_domain(PltString(branch.getFullPath()) + 
+                                   PltString(indent ? "/" : "") +
+                                   current->identifier);
+cout << "****" << endl;
+            DumpBranch(child_domain, indent + INDENTATION);
+cout << "****" << endl;
         } else if ( current->xdrTypeCode() == KS_OT_VARIABLE ) {
             KscVariable var(PltString(branch.getFullPath()) + 
                                    PltString(indent ? "/" : "") +
