@@ -24,8 +24,6 @@ template class PltIterator<PltAssoc<KsString, KscServerBase *> >;
 template class PltIterator<PltAssoc<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> > >;
 template class PltIterator<PltAssoc<PltString, void (*)(void)> >;
 template class PltIterator_<PltAssoc<KsString, KscServerBase *> >;
-template class PltIterator_<PltAssoc<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> > >;
-template class PltIterator_<PltAssoc<PltString, void (*)(void)> >;
 template class PltKeyCPtr<KscAvModule>;
 template class PltPtrHandle<KscNegotiator>;
 template class Plt_AtArrayNew<KscNegotiator>;

@@ -122,10 +122,13 @@ EXAMPLES_OBJECTS = \
 
 EXAMPLES = \
 	pmobile$(EXE) \
-	tclient$(EXE) \
 	tmanager$(EXE) tserver$(EXE) \
-	tshell$(EXE) \
 	ttree$(EXE)
+
+#
+# The following examples are not supported.
+#	tclient$(EXE)
+#	tshell$(EXE)
 
 CXX_SOURCES = \
 	$(CXX_LIBKS_SOURCES) \
