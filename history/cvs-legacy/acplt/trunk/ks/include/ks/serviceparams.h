@@ -344,10 +344,4 @@ KsExgDataResult::KsExgDataResult(size_t nset, size_t nget)
 
 #endif
 
-
-
-
-
-
-
-
+/* End of ks/serviceparams.h */
