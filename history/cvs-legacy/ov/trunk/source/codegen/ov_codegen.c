@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.3 1999-07-28 16:01:38 dirk Exp $
+*   $Id: ov_codegen.c,v 1.4 1999-07-29 08:57:50 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -809,7 +809,7 @@ void ov_codegen_printstructtypedef(
 			/*
 			*	vector of dynamic length
 			*/
-			fprintf(fp, " \\\n    %s_VEC *v_%s;", ov_codegen_getvartypetext(pvar->vartype),
+			fprintf(fp, " \\\n    %s_VEC v_%s;", ov_codegen_getvartypetext(pvar->vartype),
 				pvar->identifier);
 		}
 	}
@@ -906,7 +906,7 @@ void ov_codegen_printclassinstdefines(
 				/*
 				*	vector of dynamic length
 				*/
-				fprintf(fp, " \\\n    %s_VEC *v_%s;", ov_codegen_getvartypetext(pvar->vartype),
+				fprintf(fp, " \\\n    %s_VEC v_%s;", ov_codegen_getvartypetext(pvar->vartype),
 					pvar->identifier);
 			}
 		}

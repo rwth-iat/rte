@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_logfile.c,v 1.2 1999-07-26 16:14:14 dirk Exp $
+*   $Id: ov_logfile.c,v 1.3 1999-07-29 08:57:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -187,7 +187,7 @@ void OV_DLLFNCEXPORT ov_logfile_logtontlog(
 		sprintf(key, "%s%s", OV_REGISTRY_KEY, ((id)?(id):("ACPLT/OV")));
 		if(RegCreateKey(HKEY_LOCAL_MACHINE, key, &hkey) == ERROR_SUCCESS) {
 			RegSetValueEx(hkey, OV_REGISTRY_NAME1, 0, REG_EXPAND_SZ,
-				OV_REGISTRY_VALUE1, strlen(OV_REGISTRY_VALUE1)+1);
+				(LPBYTE)OV_REGISTRY_VALUE1, strlen(OV_REGISTRY_VALUE1)+1);
 			RegSetValueEx(hkey, OV_REGISTRY_NAME2, 0, REG_DWORD,
 				(LPBYTE)&value2, sizeof(DWORD));
 			RegCloseKey(hkey);

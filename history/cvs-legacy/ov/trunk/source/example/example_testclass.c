@@ -1,5 +1,5 @@
 /*
-*   $Id: example_testclass.c,v 1.3 1999-07-28 16:06:12 dirk Exp $
+*   $Id: example_testclass.c,v 1.4 1999-07-29 08:57:52 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -101,8 +101,8 @@ OV_UINT* OV_DLLFNCEXPORT example_testclass_UIntVec_get(
 	OV_UINT							*pveclen
 ) {
 	ov_logfile_info("You asked for UIntVec!");
-	*pveclen = Ov_GetDynamicVectorLength(ptest->v_UIntVec);
-	return Ov_GetDynamicVectorValue(ptest->v_UIntVec);
+	*pveclen = ptest->v_UIntVec.veclen;
+	return ptest->v_UIntVec.value;
 }
 
 OV_RESULT OV_DLLFNCEXPORT example_testclass_UIntVec_set(

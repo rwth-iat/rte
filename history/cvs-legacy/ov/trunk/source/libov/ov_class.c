@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.3 1999-07-28 16:01:39 dirk Exp $
+*   $Id: ov_class.c,v 1.4 1999-07-29 08:57:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -846,11 +846,11 @@ void ov_class_deleteobject_cleanupobj(
 									*/
 									if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
 										Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
-											(OV_STRING_VEC**)child.pvalue, NULL, 0, STRING)));
-										Ov_WarnIf(*(OV_STRING_VEC**)child.pvalue);
+											(OV_STRING_VEC*)child.pvalue, NULL, 0, STRING)));
+										Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
 									} else {
-										if(*(OV_DYNAMIC_VECTOR**)child.pvalue) {
-											ov_database_free(*(OV_DYNAMIC_VECTOR**)child.pvalue);
+										if(((OV_GENERIC_VEC*)child.pvalue)->value) {
+											ov_database_free(((OV_GENERIC_VEC*)child.pvalue)->value);
 										}
 									}
 									break;
@@ -971,11 +971,11 @@ void ov_class_deleteobject_cleanupstruct(
 					*/
 					if(child.elemunion.pvar->v_vartype == OV_VT_STRING_VEC) {
 						Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
-							(OV_STRING_VEC**)child.pvalue, NULL, 0, STRING)));
-						Ov_WarnIf(*(OV_STRING_VEC**)child.pvalue);
+							(OV_STRING_VEC*)child.pvalue, NULL, 0, STRING)));
+						Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
 					} else {
-						if(*(OV_DYNAMIC_VECTOR**)child.pvalue) {
-							ov_database_free(*(OV_DYNAMIC_VECTOR**)child.pvalue);
+						if(((OV_GENERIC_VEC*)child.pvalue)->value) {
+							ov_database_free(((OV_GENERIC_VEC*)child.pvalue)->value);
 						}
 					}
 					break;

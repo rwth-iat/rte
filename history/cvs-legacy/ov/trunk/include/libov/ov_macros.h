@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.3 1999-07-28 16:01:37 dirk Exp $
+*   $Id: ov_macros.h,v 1.4 1999-07-29 08:57:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -250,30 +250,17 @@
 *	Set the value of a static vector variable
 */
 #define Ov_SetStaticVectorValue(pvector, pvalue, veclen, type)				\
-	ov_vector_setstaticvalue((OV_STATIC_VECTOR*)(pvector),					\
-		(const OV_POINTER)pvalue, veclen+0*((pvector)-(OV_##type*)0),		\
-		veclen*sizeof(OV_##type), OV_VT_##type)
-
-/*
-*	Get the vector length of a dynamic vector variable
-*/
-#define Ov_GetDynamicVectorLength(pvector)									\
-	((pvector)?((pvector)->veclen):(0))
-
-/*
-*	Get the value of a dynamic vector variable
-*/
-#define Ov_GetDynamicVectorValue(pvector)									\
-	((pvector)?((pvector)->value):(NULL))
+	ov_vector_setstaticvalue(pvector, (const OV_POINTER)pvalue,				\
+		veclen+0*((pvector)-(OV_##type*)0),	veclen*sizeof(OV_##type),		\
+		OV_VT_##type)
 
 /*
 *	Set the value of a dynamic vector variable
 */
-#define Ov_SetDynamicVectorValue(ppvector, pvalue, veclen, type)			\
-	ov_vector_setdynamicvalue((OV_DYNAMIC_VECTOR**)(ppvector),				\
-		(const OV_POINTER)pvalue, veclen+0*(*(ppvector)-(OV_##type##_VEC*)	\
-		0),	offsetof(OV_##type##_VEC, value), veclen*sizeof(OV_##type), 	\
-		OV_VT_##type)
+#define Ov_SetDynamicVectorValue(pvector, pvalue, veclen, type)				\
+	ov_vector_setdynamicvalue((OV_GENERIC_VEC*)(pvector),					\
+		(const OV_POINTER)pvalue, veclen+0*((pvector)-(OV_##type##_VEC*)0),	\
+		veclen*sizeof(OV_##type), OV_VT_##type)
 
 /*
 *	Allocate memory in the database

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.1 1999-07-28 15:59:57 dirk Exp $
+*   $Id: ov_vector.c,v 1.2 1999-07-29 08:57:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -42,7 +42,7 @@
 /*	----------------------------------------------------------------------	*/
 
 OV_RESULT OV_DLLFNCEXPORT ov_vector_setstaticvalue(
-	OV_STATIC_VECTOR	*pvector,
+	OV_POINTER			pvector,
 	const OV_POINTER	pvalue,
 	const OV_UINT		veclen,
 	const OV_UINT		size,
@@ -58,7 +58,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setstaticvalue(
 	*	set the value
 	*/
 	if(vartype == OV_VT_STRING) {
-		return ov_string_setvecvalue(pvector->valueunion.string_vec,
+		return ov_string_setvecvalue((OV_STRING*)pvector,
 			(OV_STRING*)pvalue, veclen);
 	}
 	memcpy(pvector, pvalue, size);
@@ -71,19 +71,17 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setstaticvalue(
 *	Set the value of a dynamic vector variable
 */
 OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicvalue(
-	OV_DYNAMIC_VECTOR	**pvector,
+	OV_GENERIC_VEC		*pvector,
 	const OV_POINTER	pvalue,
 	const OV_UINT		veclen,
-	const OV_UINT		offset,
 	const OV_UINT		size,
 	const OV_VAR_TYPE	vartype
 ) {
 	/*
 	*	local variables
 	*/
-	OV_DYNAMIC_VECTOR	*pnewvector;
-	OV_RESULT			result;
-	OV_UINT				oldveclen;
+	OV_POINTER	*pnewvalue;
+	OV_RESULT	result;
 	/*
 	*	check parameters
 	*/
@@ -93,43 +91,41 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicvalue(
 	/*
 	*	manipulate memory and set the actual vector value
 	*/
-	oldveclen = (*pvector)?((*pvector)->valueunion.veclen):(0);
-	if(oldveclen && (vartype == OV_VT_STRING)) {
+	if(pvector->veclen && (vartype == OV_VT_STRING)) {
 		/*
 		*	free strings
 		*/
-		Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
-			(*pvector)->valueunion.string_vec.value, NULL, oldveclen)));
+		Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue((OV_STRING*)pvector->value,
+			NULL, pvector->veclen)));
 	}
 	if(!veclen) {
-		if(*pvector) {
-			ov_database_free(*pvector);
-			*pvector = NULL;
+		if(pvector->value) {
+			ov_database_free(pvector->value);
+			pvector->value = NULL;
+		}
+		return OV_ERR_OK;
+	}
+	if(pvector->veclen != veclen) {
+		/*
+		*	vector length has changed, reallocate memory
+		*/
+		pnewvalue = ov_database_realloc(pvector->value, size);
+		if(!pnewvalue) {
+			return OV_ERR_DBOUTOFMEMORY;
+		}
+		pvector->veclen = veclen;
+		pvector->value = pnewvalue;
+	}
+	if(vartype == OV_VT_STRING) {
+		memset(pvector->value, 0, size);
+		result = ov_string_setvecvalue((OV_STRING*)pvector->value,
+			(OV_STRING*)pvalue, veclen);
+		if(Ov_Fail(result)) {
+			Ov_WarnIfNot(Ov_OK(ov_vector_setdynamicvalue(pvector, NULL, 0, 0, 0)));
+			return result;
 		}
 	} else {
-		if(oldveclen != veclen) {
-			/*
-			*	vector length has changed, reallocate memory
-			*/
-			pnewvector = (OV_DYNAMIC_VECTOR*)ov_database_realloc(*pvector,
-				offset+size);
-			if(!pnewvector) {
-				return OV_ERR_DBOUTOFMEMORY;
-			}
-			pnewvector->valueunion.veclen = veclen;
-			*pvector = pnewvector;
-		}
-		if(vartype == OV_VT_STRING) {
-			memset(((OV_BYTE*)*pvector)+offset, 0, size);
-			result = ov_string_setvecvalue((*pvector)->valueunion.string_vec.value,
-				(OV_STRING*)pvalue, veclen);
-			if(Ov_Fail(result)) {
-				Ov_WarnIfNot(Ov_OK(ov_vector_setdynamicvalue(pvector, NULL, 0,	0, 0, 0)));
-				return result;
-			}
-		} else {
-			memcpy(((OV_BYTE*)*pvector)+offset, pvalue, size);
-		}
+		memcpy(pvector->value, pvalue, size);
 	}
 	return OV_ERR_OK;
 }

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.3 1999-07-28 16:01:39 dirk Exp $
+*   $Id: ov_object.c,v 1.4 1999-07-29 08:57:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -465,11 +465,10 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 					pelem->elemunion.pvar->v_getfnc)(pobj,			\
 					&pvarcurrprops->value.veclen);					\
 		} else {													\
-			pvarcurrprops->value.veclen = Ov_GetDynamicVectorLength	\
-				(*(OV_##VARTYPE##_VEC**)pelem->pvalue);				\
+			pvarcurrprops->value.veclen = ((OV_##VARTYPE##_VEC*)	\
+				pelem->pvalue)->veclen;								\
 			pvarcurrprops->value.valueunion.val_##vartype##_vec		\
-				= Ov_GetDynamicVectorValue(*(OV_##VARTYPE##_VEC**)	\
-				pelem->pvalue);										\
+				= ((OV_##VARTYPE##_VEC*)pelem->pvalue)->value;		\
 		}															\
 		break
 
@@ -650,7 +649,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_getvar(
 				pvarcurrprops->value.valueunion.val_##vartype##_vec,	\
 				pvarcurrprops->value.veclen);							\
 		}																\
-		Ov_SetDynamicVectorValue((OV_##VARTYPE##_VEC**)pelem->pvalue, 	\
+		Ov_SetDynamicVectorValue((OV_##VARTYPE##_VEC*)pelem->pvalue, 	\
 			pvarcurrprops->value.valueunion.val_##vartype##_vec,		\
 			pvarcurrprops->value.veclen, VARTYPE);						\
 		return OV_ERR_OK
@@ -998,7 +997,7 @@ OV_RESULT ov_object_move(
 	OV_UINT						i;
 	OV_BOOL						domain = FALSE;
 	OV_INSTPTR_ov_object		pchild;
-	OV_DYNAMIC_VECTOR			*pvector;
+	OV_STRING_VEC				*pvector;
 	/*
 	*	determine pointer offset of objects in the copy
 	*/
@@ -1051,12 +1050,12 @@ OV_RESULT ov_object_move(
 								/*
 								*	variable is a dynamic vector
 								*/
-								Ov_Adjust(OV_DYNAMIC_VECTOR*, Ov_VarAddress(pobj, pvar->v_offset));
+								Ov_Adjust(OV_GENERIC_VEC*, Ov_VarAddress(pobj, pvar->v_offset));
 								if(pvar->v_vartype == OV_VT_STRING_VEC) {
-									pvector = (OV_DYNAMIC_VECTOR*)Ov_VarAddress(pobj, pvar->v_offset);
+									pvector = (OV_STRING_VEC*)Ov_VarAddress(pobj, pvar->v_offset);
 									if(pvector) {
-										for(i=0; i<pvector->valueunion.veclen; i++) {
-											Ov_Adjust(OV_STRING, pvector->valueunion.string_vec.value[i]);
+										for(i=0; i<pvector->veclen; i++) {
+											Ov_Adjust(OV_STRING, pvector->value[i]);
 										}
 									}
 								}
