@@ -22,19 +22,31 @@ CXX_LINK = g++
 .cpp.o:
 	$(CXX_COMPILE) -o $@ $<
 
-CXX_SOURCES = value.cpp tvalue.cpp rtti.cpp
+CXX_SOURCES = tvalue.cpp value.cpp txdr2.cpp xdr.cpp
 
-VPATH = $(PLT_DIR)/src ../../src ../../tests
+LIBPLT = ../../../libplt/build/hpux/libplt.a
+
+VPATH = ../../src ../../tests
+
+all:	tvalue txdr
 
 value.o : value.cpp
 
 value.s : value.cpp
 	$(CXX_COMPILE) -S -o $@ $<
 
-tvalue : rtti.o value.o tvalue.o
-	$(CXX_LINK) -o $@ $^
+tvalue :  tvalue.o value.o
+	$(CXX_LINK) -o $@ $^ $(LIBPLT)
+
+txdr2 :  txdr2.o xdr.o
+	$(CXX_LINK) -o $@ $^ $(LIBPLT)
 
 depend : $(CXX_SOURCES)
-	$(CXX_COMPILE) -o depend -M $^
+	$(CXX_COMPILE) -M $^ >.depend
 
-include depend
+.depend :
+	touch .depend
+
+include .depend
+
+
