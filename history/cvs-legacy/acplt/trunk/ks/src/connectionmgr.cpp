@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.6 1999-02-25 17:15:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.7 1999-03-01 14:15:33 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -65,7 +65,7 @@
 #include <unistd.h>
 #endif
 
-#if !PLT_SYSTEM_OPENVMS && !PLT_SYSTEM_CYGWIN
+#if !PLT_SYSTEM_OPENVMS && !PLT_COMPILER_CYGWIN
 #include <values.h>
 #else
 #define MAXINT (((int) -1) >> 1)
