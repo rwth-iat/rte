@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.26 1999-09-16 10:54:53 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.27 1999-09-20 09:36:42 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -173,7 +173,7 @@
 #endif
 
 #ifdef __GNUC__
-#define PLT_COMPILER_GCC __GNUC__
+#define PLT_COMPILER_GCC ((__GNUC__ << 16) + __GNUC_MINOR__)
 #else
 #define PLT_COMPILER_GCC 0
 #endif
