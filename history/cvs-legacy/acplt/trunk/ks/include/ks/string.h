@@ -45,7 +45,7 @@ class KsString
   public KsXdrAble
 {
 public:
-    KsString(const char *);
+    KsString(const char *, size_t = PLT_SIZE_T_MAX);
     KsString();
     KsString(const PltString &);
 
@@ -64,8 +64,8 @@ protected:
 //////////////////////////////////////////////////////////////////////
 
 inline
-KsString::KsString(const char *p) 
-: PltString(p)
+KsString::KsString(const char *p, size_t len) 
+: PltString(p,len)
 {
 }
 

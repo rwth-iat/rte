@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.9 1997-03-06 16:29:45 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.10 1997-03-19 10:17:24 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -76,15 +76,18 @@ PltString::PltString()
 
 //////////////////////////////////////////////////////////////////////
         
-PltString::PltString(const char *s)
+PltString::PltString(const char *s, size_t len_arg)
 {
     PLT_PRECONDITION(s);
 	p = new srep;
     if (p) {
-        p->len = strlen(s);
-        p->s = new char[p->len + 1];
+        size_t s_len = strlen(s);
+        size_t len = s_len < len_arg ? s_len : len_arg;
+        p->s = new char[len + 1];
         if (p->s) {
-            memcpy(p->s, s, p->len + 1);
+            memcpy(p->s, s, len);
+            p->s[len] = 0;
+            p->len = len;
         } else {
             delete p;
             p = 0;
@@ -180,6 +183,26 @@ PltString::operator [] (size_t i) const
 {
     PLT_PRECONDITION( ok() && i < p->len );
     return (p->s)[i];
+}
+
+//////////////////////////////////////////////////////////////////////
+
+PltString
+PltString::substr(size_t first, size_t len) const
+{
+    if (p) {
+        if (first == 0 && len >= p->len) {
+            // whole string
+            return *this;
+        } else {
+            // substring
+            if (first < p->len) {
+                // at least one character
+                return PltString(p->s + first, len);
+            }
+        }
+    }
+    return PltString(); // empty String
 }
 
 //////////////////////////////////////////////////////////////////////
