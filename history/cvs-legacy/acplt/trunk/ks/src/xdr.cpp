@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdr.cpp,v 1.5 2003-10-13 12:07:30 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdr.cpp,v 1.6 2005-02-14 13:49:19 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,13 +23,21 @@
 
 #include "ks/xdr.h"
 
-//////////////////////////////////////////////////////////////////////
 
 PLT_IMPL_RTTI0(KsXdrAble);
 PLT_IMPL_RTTI1(KsXdrUnion, KsXdrAble);
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Sigh. Made virtual destructor non-inline to avoid diverse problems with
+// diverse compilers. Gosh.
+//
+KsXdrAble::~KsXdrAble()
+{
+} // KsXdrAble::~KsXdrAble
+
+
+// ---------------------------------------------------------------------------
 bool
 KsXdrUnion::xdrEncode(XDR *xdrs) const
 {
