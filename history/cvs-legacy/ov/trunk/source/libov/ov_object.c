@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.26 2002-02-01 14:43:59 ansgar Exp $
+*   $Id: ov_object.c,v 1.27 2002-02-14 13:48:54 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -429,6 +429,11 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 	case OV_ET_VARIABLE:
 	case OV_ET_MEMBER:
 		access = OV_AC_NONE;
+		if (activitylock) {
+			if (!(pelem->elemunion.pvar->v_varprops & (OV_VP_DERIVED | OV_VP_STATIC)))
+				access |= OV_AC_READ | OV_AC_WRITE;
+			return access;
+		}
 		if(pelem->elemunion.pvar->v_varprops & OV_VP_GETACCESSOR) {
 			access |= OV_AC_READ;
 		}

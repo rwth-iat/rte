@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.8 2002-01-31 16:28:50 ansgar Exp $
+*   $Id: ov_server.c,v 1.9 2002-02-14 13:48:55 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
