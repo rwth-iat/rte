@@ -265,9 +265,14 @@ KscDomain::getChildPPUpdate(KS_OBJ_TYPE typeMask,
     //
     // TODO: extend KS_RESULT for more specific error indication
     //
-    last_result = result.result;
+    if(!ok) {
+        last_result = KS_ERR_NETWORK;
+        return false;
+    } else {
+        last_result = result.result;
+    }
 
-    if(!(ok && result.result == KS_ERR_OK) ) {
+    if(last_result != KS_ERR_OK) ) {
         return false;
     }
 
@@ -323,6 +328,7 @@ KscDomain::newChildIterator(KS_OBJ_TYPE typeMask, KsString nameMask)
             return 0;
         }
     } else {
+        last_result = KS_ERR_GENERIC;
         return 0;
     }
 }
