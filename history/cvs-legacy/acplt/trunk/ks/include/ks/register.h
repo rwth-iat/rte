@@ -72,7 +72,7 @@ public:
     bool xdrDecode(XDR *xdr);
     static KsResult *xdrNew(XDR *);
 
-    u_long result;
+    enum_t result;
 };
 
 //////////////////////////////////////////////////////////////////////////

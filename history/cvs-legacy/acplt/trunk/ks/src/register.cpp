@@ -95,9 +95,9 @@ KsServerDesc::xdrNew(XDR *xdr)
 bool 
 KsResult::xdrEncode(XDR *xdr) const {
     
-    // PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     
-    return xdr_u_long( xdr, &result );
+    return xdr_enum( xdr, &result );
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -105,9 +105,9 @@ KsResult::xdrEncode(XDR *xdr) const {
 bool
 KsResult::xdrDecode(XDR *xdr) {
 
-    // PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
 
-    return xdr_u_long( xdr, &result );
+    return xdr_enum( xdr, &result );
 }
 
 ///////////////////////////////////////////////////////////////////////////
