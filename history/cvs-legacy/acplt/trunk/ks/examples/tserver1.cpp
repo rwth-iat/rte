@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.27 2000-04-10 12:52:04 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.28 2000-10-27 07:47:23 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -706,7 +706,9 @@ TestServer::TestServer(int port)
     KssCommObjectHandle hext_dom = _root_domain.getChildByPath(KsPath("/vendor/extensions"));
     KssSimpleLinkAlias *vendorext_alias =
         new KssSimpleLinkAlias(*(KssDomainHandle*)&hext_dom, 
-                               "extensions_link");
+                               "extensions_link",
+                               KsTime::now(),
+                               "", "/vendor/extensions");
     _root_domain.addChild(vendorext_alias);
 
     KsPath ep("/vendor/extensions/ks_test");
