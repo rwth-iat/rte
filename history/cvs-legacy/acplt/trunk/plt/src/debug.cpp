@@ -37,6 +37,7 @@
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
 #include "plt/debug.h"
+#include "plt/log.h"
 
 #if PLT_DEBUG
 #include <iostream.h>
@@ -46,10 +47,11 @@ void plt_canthappen(const char *what, const char *file, int line)
 	// some programming error has occured.
     // report this and abort.
 {
-    cerr << "This is a bug! Please report it to your maintainer." << endl;
-    cerr << "I have to abort execution now." << endl;
-    cerr << what << endl;
-    cerr << file << ": " << line << endl;
+    PltLog::Alert("This is a bug! Please report it to your maintainer.");
+    PltLog::Alert("I have to abort execution now.");
+    PltLog::Alert(what);
+    plt_dlog << file << ": " << line;
+    plt_dlog.alert();
     abort();
 }
 
@@ -109,28 +111,37 @@ PltDebugNewTracker::~PltDebugNewTracker()
 {
     if (--refcount == 0) {
         // last instance being destroyed
+        size_t max = PltDebugNewTracker::max;
+        size_t newed = PltDebugNewTracker::newed;
+        size_t deleted = PltDebugNewTracker::deleted;
+        size_t newcount = PltDebugNewTracker::newcount;
+        size_t deletecount = PltDebugNewTracker::deletecount;
+        size_t inuse = PltDebugNewTracker::inuse();
+        
         if (report_always || newed != deleted || newcount != deletecount) {
-            cerr << endl;
-            cerr << "Free store statistics:" << endl;
-            cerr << endl;
-            cerr << "Max. bytes used:   " << setw(10) << max << endl;
-            cerr << "Calls to ::new:    " << setw(10) << newcount << endl;
+            plt_dlog << "Free store statistics:";
+            plt_dlog.debug();
+            plt_dlog << "Max. bytes used:   " << setw(10) << max;
+            plt_dlog.debug();
+            plt_dlog << "Calls to ::new:    " << setw(10) << newcount;
+            plt_dlog.debug();
             if (deletecount != newcount) {
-                cerr << "Calls to ::delete: " 
-                     << setw(10) 
-                     << deletecount 
-                     << endl;
+                plt_dlog << "Calls to ::delete: " 
+                         << setw(10) 
+                         << deletecount;
+                plt_dlog.debug();
             }
-            cerr << "Bytes newed:       " << setw(10) << newed << endl;
+            plt_dlog << "Bytes newed:       " << setw(10) << newed;
+            plt_dlog.debug();
             if (newed != deleted) {
-                cerr << "Bytes deleted:     " 
-                     << setw(10) 
-                     << deleted 
-                     << endl; 
-                cerr << "Lost bytes:        " 
-                     << setw(10) 
-                     << inuse()
-                     << endl;
+                plt_dlog << "Bytes deleted:     " 
+                         << setw(10) 
+                         << deleted;
+                plt_dlog.debug();
+                plt_dlog << "Lost bytes:        " 
+                         << setw(10) 
+                         << inuse;
+                plt_dlog.debug();
             }
         }
     }
@@ -245,6 +256,10 @@ void operator delete[](void * p)
 //////////////////////////////////////////////////////////////////////
 #endif //PLT_DEBUG_NEW
 //////////////////////////////////////////////////////////////////////
+
+#if PLT_DEBUG
+PltLogStream plt_dlog;
+#endif
 
 #endif // PLT_DEBUG
 

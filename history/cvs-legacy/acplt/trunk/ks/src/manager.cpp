@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.16 1997-09-05 11:05:02 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.17 1997-09-09 15:32:27 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -435,18 +435,17 @@ KsManager::dispatch(u_long serviceId,
         {
             KsRegistrationParams params(xdrIn, decodedOk);
             if (decodedOk) {
-#if PLT_DEBUG
-                cerr << "REGISTER '";
-                cerr << params.server.name << "' ";
-                cerr << params.server.protocol_version << " ";
-                cerr << params.time_to_live << " >> ";
-#endif
+                PLT_DMSG_ADD("REGISTER '");
+                PLT_DMSG_ADD(params.server.name << "' ");
+                PLT_DMSG_ADD(params.server.protocol_version << " ");
+                PLT_DMSG_ADD(params.time_to_live << " >> ");
+                PLT_DMSG_END;
+
                 if (isLocal(xprt)) {
                     KsRegistrationResult result;
                     registerServer(ticket, params, result);
-#if PLT_DEBUG
-                    cerr << hex << result.result << dec << endl;
-#endif
+                    PLT_DMSG_ADD(hex << result.result << dec);
+                    PLT_DMSG_END;
                     sendReply(xprt, ticket, result);
                 } else {
                     sendErrorReply(xprt, ticket, KS_ERR_NOREMOTE);
@@ -462,17 +461,15 @@ KsManager::dispatch(u_long serviceId,
         {
             KsUnregistrationParams params(xdrIn, decodedOk);
             if (decodedOk) {
-#if PLT_DEBUG 
-                cerr << "UNREGISTER '";
-                cerr << params.server.name << "' ";
-                cerr << params.server.protocol_version << endl;
-#endif
+                PLT_DMSG_ADD("UNREGISTER '"
+                         << params.server.name << "' "
+                         << params.server.protocol_version);
+                PLT_DMSG_END;
                 if (isLocal(xprt)) {
                     KsUnregistrationResult result;
                     unregisterServer(ticket, params, result);
-#if PLT_DEBUG
-                    cerr << hex << result.result << dec << endl;
-#endif
+                    PLT_DMSG_ADD(hex << result.result << dec);
+                    PLT_DMSG_END;
                     sendReply(xprt, ticket, result);
                 } else {
                     // not local
@@ -489,21 +486,18 @@ KsManager::dispatch(u_long serviceId,
         {
             KsGetServerParams params(xdrIn, decodedOk);
             if (decodedOk) {
-#if PLT_DEBUG
-                cerr << "GETSERVER '";
-                cerr << params.server.name << "' ";
-                cerr << params.server.protocol_version << endl;
-#endif
+                PLT_DMSG_ADD("GETSERVER '"
+                         << params.server.name << "' "
+                         << params.server.protocol_version);
+                PLT_DMSG_END;
                 // properly decoded
                 KsGetServerResult result;
                 getServer(ticket, params, result);
-#if PLT_DEBUG
-                cerr << hex << result.result << dec << " ";
-                cerr << result.server.name << "' ";
-                cerr << result.server.protocol_version << " ";
-                cerr << ( result.living ? " living" : "dead" )
-                    << endl;
-#endif
+                PLT_DMSG_ADD(hex << result.result << dec << " "
+                         result.server.name << "' "
+                         result.server.protocol_version << " "
+                         ( result.living ? " living" : "dead" ));
+                PLT_DMSG_END;
                 sendReply(xprt, ticket, result);
             } else {
                 // not properly decoded
@@ -595,18 +589,21 @@ KsManager::stopServer()
 {
     if (_registered) {
         if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
-	    PLT_DMSG("1st pmap_unset ok."<<endl);
+	    PLT_DMSG_ADD("1st pmap_unset ok.");
+        PLT_DMSG_END;
 	    if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
-                PLT_DMSG("2nd pmap_unset ok. *URKS*" <<endl);
+                PLT_DMSG_ADD("2nd pmap_unset ok. *URKS*");
+                PLT_DMSG_END;
             } else {
-                PLT_DMSG("2nd pmap_unset failed. *THIS IS CORRECT BEHAVIOUR*"
-                         << endl);
+                PLT_DMSG_ADD("2nd pmap_unset failed. *THIS IS CORRECT BEHAVIOUR*");
+                PLT_DMSG_END;
             }
         } else {
             PltLog::Warning("Can't unregister with portmapper.");
         }
     } else {
-	PLT_DMSG("not registered" << endl);
+	PLT_DMSG_ADD("not registered");
+    PLT_DMSG_END;
     }
     KsSimpleServer::stopServer();
 }
@@ -838,9 +835,9 @@ PLT_IMPL_RTTI1(KsmExpireServerEvent, KsEvent);
 void 
 KsmExpireServerEvent::trigger()
 {
-    PLT_DMSG("KsmExpireServerEvent: ");
+    PLT_DMSG_ADD("KsmExpireServerEvent: ");
     if (pserver) {
-        PLT_DMSG("(" << pserver->desc.name  << " " 
+        PLT_DMSG_ADD("(" << pserver->desc.name  << " " 
                  << pserver->desc.protocol_version << ") ");
         PLT_ASSERT(pserver->pevent == this);
         //
@@ -851,7 +848,8 @@ KsmExpireServerEvent::trigger()
             // Mark it dead...
             //
             pserver->living = false;
-            PLT_DMSG("dying << endl");
+            PLT_DMSG_ADD("dying");
+            PLT_DMSG_END;
             //
             // ...and reschedule event.
             // 
@@ -861,7 +859,8 @@ KsmExpireServerEvent::trigger()
             // 
             // Remove the zombie.
             //
-            PLT_DMSG("being removed." << endl);
+            PLT_DMSG_ADD("being removed.");
+            PLT_DMSG_END;
             _manager.removeServer(pserver);
             delete this;
         }
@@ -870,7 +869,8 @@ KsmExpireServerEvent::trigger()
         // This event is inactive. Do nothing
         //
         delete this;
-        PLT_DMSG("(inactive)" << endl);
+        PLT_DMSG_ADD("(inactive)");
+        PLT_DMSG_END;
     }
 }
 
@@ -908,7 +908,10 @@ KsmExpireManagerEvent::trigger()
         // Portmapper failure. Report this and retry soon.
         //
         PltLog::Warning("Can't query portmapper. Check if it is running!");
-// TODO        PLT_DMSG("Portmapper failure:" << rpc_createerr.cf_stat << endl);
+#if 0
+        PLT_DMSG_ADD("Portmapper failure:" << rpc_createerr.cf_stat);
+        PLT_DMSG_END;
+#endif
         _trigger_at = KsTime::now(60);
         _manager.addTimerEvent(this);
     } else {
@@ -920,7 +923,8 @@ KsmExpireManagerEvent::trigger()
             // We are still registered. 
             // Reschedule event.
             //
-            PLT_DMSG("Still registered with portmapper" << endl);
+            PLT_DMSG_ADD("Still registered with portmapper");
+            PLT_DMSG_END;
             _trigger_at = KsTime::now(_check_delay);
             _manager.addTimerEvent(this);
         } else {
@@ -928,7 +932,8 @@ KsmExpireManagerEvent::trigger()
             // Someone has unregistered us.
             // No client can reach us anymore, so exit.
             //
-            PLT_DMSG("Not registered with portmapper. Stopping now." << endl);
+            PLT_DMSG_ADD("Not registered with portmapper. Stopping now.");
+            PLT_DMSG_END;
             _manager._registered = false;
             _manager.downServer();
             delete this; // suicide
@@ -947,7 +952,10 @@ KsManager::removeServer(KsmServer * pserver)
     // Remove server from the table...
     //
     KsmServer *pdummy;
-    bool removed = _server_table.remove(pdesc, pdummy);
+#if PLT_DEBUG
+    bool removed = 
+#endif
+    _server_table.remove(pdesc, pdummy);
     PLT_ASSERT(removed && pdummy == pserver);
     //
     // ... and inactivate the associated event.

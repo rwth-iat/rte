@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.14 1997-04-01 11:18:35 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.15 1997-09-09 15:33:04 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -92,6 +92,9 @@
 /*****************************************************************/
 
 #if PLT_DEBUG
+
+#include "plt/logstream.h"
+extern PltLogStream plt_dlog;
 
 #include <iostream.h>
 #include <iomanip.h>
@@ -191,9 +194,17 @@ static PltDebugNewTracker plt_debug_new_tracker;
 //////////////////////////////////////////////////////////////////////
 
 #if PLT_DEBUG_VERBOSE
-#define PLT_DMSG(inserters) cerr << inserters
+
+#define PLT_DMSG(inserters) cerr<<inserters
+#define PLT_DMSG_ADD(inserters) plt_dlog << inserters
+#define PLT_DMSG_END plt_dlog.debug()
+
 #else
+
 #define PLT_DMSG(inserters) ((void)0)
+#define PLT_DMSG_ADD(inserters) ((void)0)
+#define PLT_DMSG_END ((void)0)
+
 #endif
 
 #endif /* __cplusplus */

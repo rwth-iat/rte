@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tsclient1.cpp,v 1.2 1997-07-18 14:09:09 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tsclient1.cpp,v 1.3 1997-09-09 15:32:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -36,6 +36,16 @@
  */
 
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
+
+
+/*
+
+
+   How !_NOT_! to program an ACPLT/KS client...
+
+
+
+ */
 
 #include "ks/ks.h"
 #include "ks/register.h"
@@ -228,4 +238,4 @@ int main (int argc, char **argv)
         return 0;
     }
 }
-// EOF tserver1.cpp
+// EOF tsclient1.cpp

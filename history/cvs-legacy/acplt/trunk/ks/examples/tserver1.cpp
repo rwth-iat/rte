@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.7 1997-09-05 09:27:06 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.8 1997-09-09 15:32:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -426,7 +426,7 @@ TestAvSimple::canWriteVar(const KsString & name) const
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-int main(int, char **) {
+int main(int argc, char **argv) {
     PltCerrLog log("tserver");
     KsAvTicket::registerAvTicketType(KS_AUTH_NONE, TestAvNone::xdrNew);
     KsAvTicket::registerAvTicketType(KS_AUTH_SIMPLE, TestAvSimple::xdrNew);

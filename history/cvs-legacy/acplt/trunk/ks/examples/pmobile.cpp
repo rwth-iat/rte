@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.3 1997-09-09 15:32:16 martin Exp $ */
+// -*-plt-c++-*-
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile.cpp,v 1.1 1997-09-09 15:32:14 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -34,75 +34,28 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/* Author: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
+#include "ks/client.h"
+#include "ks/clntpath.h"
+#include "ks/commobject.h"
+#include "ks/package.h"
 
-//////////////////////////////////////////////////////////////////////
-
-#include "ks/manager.h"
-#include "plt/log.h"
-#include <signal.h>
-
-//////////////////////////////////////////////////////////////////////
-
-const KsString KS_MANAGER_VERSION("1.0");
-
-//////////////////////////////////////////////////////////////////////
-
-extern "C" void handler(int sig) {
-    PLT_DMSG("caught signal " << sig << endl);
-    KsServerBase::getServerObject().downServer();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-class Manager 
-: public KsManager
-{	
-public:
-	Manager();
-    virtual KsString getServerVersion() const;
-};
-
-//////////////////////////////////////////////////////////////////////
-
-Manager::Manager()
-{
-    if (_is_ok && initVendorTree()) {
-        signal(SIGINT, handler);
-        signal(SIGTERM, handler);
-#if !PLT_SYSTEM_NT
-        signal(SIGHUP, handler);
-        signal(SIGPIPE, SIG_IGN);
+#if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
+#include "plt/hashtable_impl.h"
+#include "plt/priorityqueue_impl.h"
+//#include "plt/handle_impl.h"
+#include "ks/array_impl.h"
+#include "ks/list_impl.h"
+#include "ks/handle_impl.h"
+#include "plt/sort_impl.h"
+//#include "ks/package_impl.h"
 #endif
-    }
-}
 
-//////////////////////////////////////////////////////////////////////
-
-KsString
-Manager::getServerVersion() const
-{
-    return KS_MANAGER_VERSION;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-int main(int, char **) {
-    PltCerrLog log("manager");
-	Manager m;
-    if (m.isOk()) {
-        m.startServer();
-	PLT_DMSG("entering service loop"<<endl);
-        m.run();
-	PLT_DMSG("left service loop"<<endl);
-	m.stopServer();
-    } else {
-        cout << "The manager could not be initialized." << endl;
-    }
-    return 0;
-}
+#if PLT_INSTANTIATE_TEMPLATES
+#include "pmobile_inst.h"
+#endif
 
 
-//////////////////////////////////////////////////////////////////////
-// EOF tmanager.cpp
+// End of pmobile.cpp
+

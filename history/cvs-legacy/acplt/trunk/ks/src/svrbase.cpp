@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.17 1997-09-02 15:09:42 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.18 1997-09-09 15:32:29 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -241,17 +241,15 @@ extern "C" void
 ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
 {
     PLT_PRECONDITION(KsServerBase::the_server);
-#if PLT_DEBUG
-    cerr << "Req: " << hex << request->rq_proc << dec << endl;
-#endif
+    PLT_DMSG_ADD("Req: " << hex << request->rq_proc << dec);
+    PLT_DMSG_END;
     if ( request->rq_proc == 0 ) {
         //
         // This is just here for the compliance with ONC/RPC rules. If
         // someone pings us, we send back a void reply.
         //
-#if PLT_DEBUG
-        cerr << "Pinged..." << endl;
-#endif
+        PLT_DMSG_ADD("Pinged...");
+        PLT_DMSG_END;
         svc_sendreply(transport, (xdrproc_t) xdr_void, 0); // FIXME ??
     } else {
         //
@@ -288,7 +286,8 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
 
 #if PLT_DEBUG
             char *from =  inet_ntoa(pTicket->getSenderInAddr());
-            cerr << "from: " << from << endl;
+            PLT_DMSG_ADD("from: " << from);
+            PLT_DMSG_END;
 #endif
             //
             // We're now ready to serve the service...
@@ -589,7 +588,8 @@ getReadyFds(fd_set & fds, const KsTime * pto)
 #if PLT_SYSTEM_NT
         errno = WSAGetLastError();
 #endif
-        PLT_DMSG("select returned -1: " << strerror(errno) << endl);
+        PLT_DMSG_ADD("select returned -1: " << strerror(errno));
+        PLT_DMSG_END;
         if (errno == EINTR) {
             // interrupted by a signal
             // interpret as timeout

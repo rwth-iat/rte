@@ -1,17 +1,16 @@
 #
 # Simple and crazy makefile for OpenVMS (libplt)
 #
-#CXX = gcc/plus
-#CXX_FLAGS = /float=ieee/cc1_options="-fno-exceptions -g0 -fno-implicit-templates"
 
 REPOSITORY = dka0:[martin.cxx_repository]
 
 CXX = cxx
+CXX_FLAGS = /optimize
+# CXX_FLAGS = /debug
 
-CXX_FLAGS = /notemplate_define /repository=($(REPOSITORY)) /debug
-#/notemplate_define
+CXX_EXTRA_FLAGS = /notemplate_define /repository=($(REPOSITORY))
 
-CXX_DEFINES = PLT_SYSTEM_OPENVMS=1
+CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1
 
 AR = library
 
@@ -42,7 +41,7 @@ include [-]depend.vms
 
 $(LIBPLT_OBJECTS):	%.obj: [-.-.src]%.cpp
 	-del $@;*
-	$(CXX) $(CXX_FLAGS) /include=($(CXX_INCLUDES)) \
+	$(CXX) $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) /include=($(CXX_INCLUDES)) \
 		/define=($(CXX_DEFINES)) $<
 
 libplt$(A):	$(LIBPLT_OBJECTS)

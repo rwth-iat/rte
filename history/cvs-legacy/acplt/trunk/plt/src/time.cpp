@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.8 1997-09-09 14:20:10 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.9 1997-09-09 15:33:42 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -59,16 +59,25 @@ PltTime::invariant() const
 
 #if  0 && PLT_TIME_TV_SEC_SIGNED
     ok = ok && tv_sec >= 0;
-    if (!ok) PLT_DMSG("tv_sec=" << tv_sec);
+    if (!ok) { 
+        PLT_DMSG_ADD("tv_sec=" << tv_sec);
+        PLT_DMSG_END;
+    }
 #endif
 
 #if PLT_TIME_TV_USEC_SIGNED
     ok = ok && 0 <= tv_usec;
-    if (!ok) PLT_DMSG("tv_usec=" << tv_usec);
+    if (!ok) {
+        PLT_DMSG_ADD("tv_usec=" << tv_usec);
+        PLT_DMSG_END;
+    }
 #endif
 
     ok = ok && tv_usec < 1000000;
-    if (!ok) PLT_DMSG("tv_usec=" << tv_usec);
+    if (!ok) {
+        PLT_DMSG_ADD("tv_usec=" << tv_usec);
+        PLT_DMSG_END;
+    }
     return ok;
 }
 #endif

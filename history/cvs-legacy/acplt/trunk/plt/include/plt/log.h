@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOG_INCLUDED
 #define PLT_LOG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.5 1997-07-18 14:02:52 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.6 1997-09-09 15:33:05 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,7 +37,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "plt/debug.h"
+#include "plt/config.h"
 
 //////////////////////////////////////////////////////////////////////
 
