@@ -32,6 +32,16 @@ props.obj: [-.-.src]props.cpp [-.-.include.ks]props.h \
  [-.-.include.ks]array.h [-.-.-.plt.include.plt]array.h \
  [-.-.-.plt.include.plt]container.h [-.-.include.ks]time.h \
  [-.-.-.plt.include.plt]time.h
+propsv1.obj: [-.-.src]propsv1.cpp [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]ks.h [-.-.include.ks]rpc.h \
+ [-.-.-.plt.include.plt]debug.h [-.-.-.plt.include.plt]config.h \
+ [-.-.include.ks]string.h [-.-.-.plt.include.plt]string.h \
+ [-.-.-.plt.include.plt]alloc.h [-.-.include.ks]xdr.h \
+ [-.-.-.plt.include.plt]rtti.h [-.-.include.ks]handle.h \
+ [-.-.-.plt.include.plt]handle.h [-.-.include.ks]value.h \
+ [-.-.include.ks]array.h [-.-.-.plt.include.plt]array.h \
+ [-.-.-.plt.include.plt]container.h [-.-.include.ks]time.h \
+ [-.-.-.plt.include.plt]time.h [-.-.include.ks]props.h
 register.obj: [-.-.src]register.cpp [-.-.include.ks]register.h \
  [-.-.include.ks]xdr.h [-.-.-.plt.include.plt]rtti.h \
  [-.-.-.plt.include.plt]debug.h [-.-.-.plt.include.plt]config.h \
@@ -55,8 +65,8 @@ serviceparams.obj: [-.-.src]serviceparams.cpp \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.-.plt.include.plt]handle.h [-.-.include.ks]value.h \
  [-.-.include.ks]array.h [-.-.-.plt.include.plt]array.h \
- [-.-.-.plt.include.plt]container.h [-.-.include.ks]list.h \
- [-.-.-.plt.include.plt]list.h
+ [-.-.-.plt.include.plt]container.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h
 objmgrparams.obj: [-.-.src]objmgrparams.cpp \
  [-.-.include.ks]objmgrparams.h [-.-.include.ks]ks.h \
  [-.-.include.ks]rpc.h [-.-.-.plt.include.plt]debug.h \
@@ -69,8 +79,8 @@ objmgrparams.obj: [-.-.src]objmgrparams.cpp \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]time.h [-.-.-.plt.include.plt]time.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
- [-.-.include.ks]value.h [-.-.include.ks]list.h \
- [-.-.-.plt.include.plt]list.h
+ [-.-.include.ks]value.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h
 histparams.obj: [-.-.src]histparams.cpp [-.-.include.ks]xdr.h \
  [-.-.-.plt.include.plt]rtti.h [-.-.-.plt.include.plt]debug.h \
  [-.-.-.plt.include.plt]config.h [-.-.include.ks]rpc.h \
@@ -123,8 +133,9 @@ templates.obj: [-.-.src]templates.cpp [-.-.-.plt.include.plt]config.h \
  [-.-.include.ks]handle.h [-.-.-.plt.include.plt]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
  [-.-.-.plt.include.plt]array.h [-.-.-.plt.include.plt]container.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.include.ks]path.h [-.-.-.plt.include.plt]priorityqueue_impl.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.include.ks]path.h \
+ [-.-.-.plt.include.plt]priorityqueue_impl.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.-.plt.include.plt]container_impl.h \
  [-.-.-.plt.include.plt]hashtable_impl.h \
@@ -175,8 +186,8 @@ manager.obj: [-.-.src]manager.cpp [-.-.include.ks]manager.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \
@@ -200,8 +211,8 @@ server.obj: [-.-.src]server.cpp [-.-.include.ks]server.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \
@@ -223,8 +234,8 @@ simpleserver.obj: [-.-.src]simpleserver.cpp \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \
@@ -247,8 +258,8 @@ svrbase.obj: [-.-.src]svrbase.cpp [-.-.include.ks]xdrmemstream.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \
@@ -341,8 +352,8 @@ interserver.obj: [-.-.src]interserver.cpp \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \
@@ -403,8 +414,8 @@ avsimplemodule.obj: [-.-.src]avsimplemodule.cpp \
  [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.include.ks]avmodule.h
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.include.ks]avmodule.h
 client.obj: [-.-.src]client.cpp [-.-.include.ks]client.h \
  [-.-.include.ks]rpc.h [-.-.include.ks]hostent.h \
  [-.-.include.ks]xdr.h [-.-.-.plt.include.plt]rtti.h \
@@ -414,9 +425,9 @@ client.obj: [-.-.src]client.cpp [-.-.include.ks]client.h \
  [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.include.ks]avmodule.h [-.-.include.ks]commobject.h \
- [-.-.include.ks]clntpath.h
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.include.ks]avmodule.h \
+ [-.-.include.ks]commobject.h [-.-.include.ks]clntpath.h
 clntpath.obj: [-.-.src]clntpath.cpp [-.-.include.ks]clntpath.h \
  [-.-.include.ks]string.h [-.-.-.plt.include.plt]string.h \
  [-.-.-.plt.include.plt]debug.h [-.-.-.plt.include.plt]config.h \
@@ -428,11 +439,11 @@ commobject.obj: [-.-.src]commobject.cpp [-.-.include.ks]commobject.h \
  [-.-.include.ks]xdr.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
  [-.-.-.plt.include.plt]array.h [-.-.include.ks]time.h \
- [-.-.-.plt.include.plt]time.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]avmodule.h [-.-.include.ks]client.h \
- [-.-.include.ks]hostent.h [-.-.include.ks]register.h \
- [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
- [-.-.include.ks]list.h
+ [-.-.-.plt.include.plt]time.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]avmodule.h \
+ [-.-.include.ks]client.h [-.-.include.ks]hostent.h \
+ [-.-.include.ks]register.h [-.-.include.ks]result.h \
+ [-.-.include.ks]serviceparams.h [-.-.include.ks]list.h
 hostent.obj: [-.-.src]hostent.cpp [-.-.include.ks]hostent.h \
  [-.-.include.ks]rpc.h
 history.obj: [-.-.src]history.cpp [-.-.include.ks]history.h \
@@ -444,10 +455,11 @@ history.obj: [-.-.src]history.cpp [-.-.include.ks]history.h \
  [-.-.-.plt.include.plt]time.h [-.-.include.ks]result.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]array.h [-.-.include.ks]list.h \
- [-.-.-.plt.include.plt]list.h [-.-.include.ks]avmodule.h \
- [-.-.include.ks]commobject.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]histparams.h [-.-.include.ks]selector.h
+ [-.-.include.ks]array.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
+ [-.-.include.ks]avmodule.h [-.-.include.ks]commobject.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]histparams.h \
+ [-.-.include.ks]selector.h
 package.obj: [-.-.src]package.cpp [-.-.include.ks]package.h \
  [-.-.include.ks]commobject.h [-.-.include.ks]props.h \
  [-.-.include.ks]ks.h [-.-.include.ks]rpc.h \
@@ -455,11 +467,12 @@ package.obj: [-.-.src]package.cpp [-.-.include.ks]package.h \
  [-.-.include.ks]xdr.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
  [-.-.-.plt.include.plt]array.h [-.-.include.ks]time.h \
- [-.-.-.plt.include.plt]time.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]avmodule.h [-.-.include.ks]sorter.h \
- [-.-.include.ks]client.h [-.-.include.ks]hostent.h \
- [-.-.include.ks]register.h [-.-.include.ks]result.h \
- [-.-.include.ks]serviceparams.h [-.-.include.ks]list.h
+ [-.-.-.plt.include.plt]time.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]avmodule.h \
+ [-.-.include.ks]sorter.h [-.-.include.ks]client.h \
+ [-.-.include.ks]hostent.h [-.-.include.ks]register.h \
+ [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
+ [-.-.include.ks]list.h
 sorter.obj: [-.-.src]sorter.cpp [-.-.include.ks]sorter.h \
  [-.-.include.ks]commobject.h [-.-.include.ks]props.h \
  [-.-.include.ks]ks.h [-.-.include.ks]rpc.h \
@@ -467,11 +480,11 @@ sorter.obj: [-.-.src]sorter.cpp [-.-.include.ks]sorter.h \
  [-.-.include.ks]xdr.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
  [-.-.include.ks]time.h [-.-.-.plt.include.plt]time.h \
- [-.-.include.ks]clntpath.h [-.-.include.ks]avmodule.h \
- [-.-.include.ks]client.h [-.-.include.ks]hostent.h \
- [-.-.include.ks]register.h [-.-.include.ks]result.h \
- [-.-.include.ks]serviceparams.h [-.-.include.ks]list.h \
- [-.-.include.ks]package.h
+ [-.-.include.ks]propsv1.h [-.-.include.ks]clntpath.h \
+ [-.-.include.ks]avmodule.h [-.-.include.ks]client.h \
+ [-.-.include.ks]hostent.h [-.-.include.ks]register.h \
+ [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
+ [-.-.include.ks]list.h [-.-.include.ks]package.h
 variables.obj: [-.-.src]variables.cpp [-.-.include.ks]variables.h \
  [-.-.-.plt.include.plt]debug.h [-.-.-.plt.include.plt]config.h \
  [-.-.-.plt.include.plt]rtti.h [-.-.include.ks]ks.h \
@@ -481,7 +494,8 @@ variables.obj: [-.-.src]variables.cpp [-.-.include.ks]variables.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
  [-.-.include.ks]array.h [-.-.-.plt.include.plt]array.h \
  [-.-.include.ks]time.h [-.-.-.plt.include.plt]time.h \
- [-.-.include.ks]clntpath.h [-.-.include.ks]avmodule.h
+ [-.-.include.ks]propsv1.h [-.-.include.ks]clntpath.h \
+ [-.-.include.ks]avmodule.h
 ext_sp.obj: [-.-.examples]ext_sp.cpp [-.-.examples]ext_sp.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]xdr.h \
  [-.-.-.plt.include.plt]rtti.h [-.-.-.plt.include.plt]debug.h \
@@ -493,8 +507,8 @@ ext_sp.obj: [-.-.examples]ext_sp.cpp [-.-.examples]ext_sp.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.-.plt.include.plt]handle.h [-.-.include.ks]value.h \
  [-.-.include.ks]array.h [-.-.-.plt.include.plt]array.h \
- [-.-.-.plt.include.plt]container.h [-.-.include.ks]list.h \
- [-.-.-.plt.include.plt]list.h
+ [-.-.-.plt.include.plt]container.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h
 pmobile.obj: [-.-.examples]pmobile.cpp [-.-.include.ks]client.h \
  [-.-.include.ks]rpc.h [-.-.include.ks]hostent.h \
  [-.-.include.ks]xdr.h [-.-.-.plt.include.plt]rtti.h \
@@ -504,10 +518,11 @@ pmobile.obj: [-.-.examples]pmobile.cpp [-.-.include.ks]client.h \
  [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.include.ks]avmodule.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]commobject.h [-.-.include.ks]package.h \
- [-.-.include.ks]sorter.h [-.-.-.plt.include.plt]hashtable_impl.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.include.ks]avmodule.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]commobject.h \
+ [-.-.include.ks]package.h [-.-.include.ks]sorter.h \
+ [-.-.-.plt.include.plt]hashtable_impl.h \
  [-.-.-.plt.include.plt]container_impl.h \
  [-.-.-.plt.include.plt]priorityqueue_impl.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
@@ -522,13 +537,13 @@ pmobile_code.obj: [-.-.examples]pmobile_code.cpp \
  [-.-.include.ks]xdr.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
  [-.-.-.plt.include.plt]array.h [-.-.include.ks]time.h \
- [-.-.-.plt.include.plt]time.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]avmodule.h [-.-.include.ks]package.h \
- [-.-.include.ks]sorter.h [-.-.include.ks]client.h \
- [-.-.include.ks]hostent.h [-.-.include.ks]register.h \
- [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]log.h \
- [-.-.-.plt.include.plt]logstream.h
+ [-.-.-.plt.include.plt]time.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]avmodule.h \
+ [-.-.include.ks]package.h [-.-.include.ks]sorter.h \
+ [-.-.include.ks]client.h [-.-.include.ks]hostent.h \
+ [-.-.include.ks]register.h [-.-.include.ks]result.h \
+ [-.-.include.ks]serviceparams.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]log.h [-.-.-.plt.include.plt]logstream.h
 tclient.obj: [-.-.examples]tclient.cpp [-.-.include.ks]client.h \
  [-.-.include.ks]rpc.h [-.-.include.ks]hostent.h \
  [-.-.include.ks]xdr.h [-.-.-.plt.include.plt]rtti.h \
@@ -538,10 +553,11 @@ tclient.obj: [-.-.examples]tclient.cpp [-.-.include.ks]client.h \
  [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
- [-.-.include.ks]list.h [-.-.include.ks]avmodule.h \
- [-.-.include.ks]commobject.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]package.h [-.-.include.ks]sorter.h \
- [-.-.include.ks]array_impl.h [-.-.-.plt.include.plt]array_impl.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.include.ks]avmodule.h [-.-.include.ks]commobject.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]package.h \
+ [-.-.include.ks]sorter.h [-.-.include.ks]array_impl.h \
+ [-.-.-.plt.include.plt]array_impl.h \
  [-.-.-.plt.include.plt]handle_impl.h \
  [-.-.-.plt.include.plt]container_impl.h \
  [-.-.include.ks]list_impl.h [-.-.-.plt.include.plt]list_impl.h \
@@ -557,10 +573,10 @@ tclient1.obj: [-.-.examples]tclient1.cpp [-.-.include.ks]client.h \
  [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
- [-.-.include.ks]list.h [-.-.include.ks]avmodule.h \
- [-.-.include.ks]commobject.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]package.h [-.-.include.ks]sorter.h \
- [-.-.include.ks]avsimplemodule.h
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.include.ks]avmodule.h [-.-.include.ks]commobject.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]package.h \
+ [-.-.include.ks]sorter.h [-.-.include.ks]avsimplemodule.h
 tmanager.obj: [-.-.examples]tmanager.cpp [-.-.include.ks]manager.h \
  [-.-.include.ks]simpleserver.h [-.-.include.ks]svrbase.h \
  [-.-.include.ks]rpc.h [-.-.-.plt.include.plt]debug.h \
@@ -577,8 +593,8 @@ tmanager.obj: [-.-.examples]tmanager.cpp [-.-.include.ks]manager.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \
@@ -610,8 +626,8 @@ tmanager1.obj: [-.-.examples]tmanager1.cpp [-.-.include.ks]manager.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \
@@ -651,8 +667,9 @@ tsclient1.obj: [-.-.examples]tsclient1.cpp [-.-.include.ks]ks.h \
  [-.-.include.ks]handle.h [-.-.-.plt.include.plt]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
  [-.-.-.plt.include.plt]array.h [-.-.-.plt.include.plt]container.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.include.ks]avticket.h [-.-.-.plt.include.plt]hashtable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.include.ks]avticket.h \
+ [-.-.-.plt.include.plt]hashtable.h \
  [-.-.-.plt.include.plt]dictionary.h [-.-.include.ks]svrrpcctx.h \
  [-.-.-.plt.include.plt]log.h
 tserver.obj: [-.-.examples]tserver.cpp [-.-.include.ks]server.h \
@@ -670,8 +687,8 @@ tserver.obj: [-.-.examples]tserver.cpp [-.-.include.ks]server.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \
@@ -698,10 +715,10 @@ tserver1.obj: [-.-.examples]tserver1.cpp [-.-.examples]ext_sp.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.-.plt.include.plt]handle.h [-.-.include.ks]value.h \
  [-.-.include.ks]array.h [-.-.-.plt.include.plt]array.h \
- [-.-.-.plt.include.plt]container.h [-.-.include.ks]list.h \
- [-.-.-.plt.include.plt]list.h [-.-.include.ks]server.h \
- [-.-.include.ks]svrbase.h [-.-.include.ks]avticket.h \
- [-.-.-.plt.include.plt]hashtable.h \
+ [-.-.-.plt.include.plt]container.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
+ [-.-.include.ks]server.h [-.-.include.ks]svrbase.h \
+ [-.-.include.ks]avticket.h [-.-.-.plt.include.plt]hashtable.h \
  [-.-.-.plt.include.plt]dictionary.h [-.-.include.ks]event.h \
  [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
@@ -720,12 +737,12 @@ tshell.obj: [-.-.examples]tshell.cpp [-.-.include.ks]commobject.h \
  [-.-.include.ks]xdr.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
  [-.-.-.plt.include.plt]array.h [-.-.include.ks]time.h \
- [-.-.-.plt.include.plt]time.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]avmodule.h [-.-.include.ks]client.h \
- [-.-.include.ks]hostent.h [-.-.include.ks]register.h \
- [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
- [-.-.include.ks]list.h [-.-.include.ks]path.h \
- [-.-.-.plt.include.plt]priorityqueue_impl.h \
+ [-.-.-.plt.include.plt]time.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]avmodule.h \
+ [-.-.include.ks]client.h [-.-.include.ks]hostent.h \
+ [-.-.include.ks]register.h [-.-.include.ks]result.h \
+ [-.-.include.ks]serviceparams.h [-.-.include.ks]list.h \
+ [-.-.include.ks]path.h [-.-.-.plt.include.plt]priorityqueue_impl.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.-.plt.include.plt]container_impl.h \
  [-.-.-.plt.include.plt]hashtable_impl.h \
@@ -742,9 +759,9 @@ ttree.obj: [-.-.examples]ttree.cpp [-.-.include.ks]client.h \
  [-.-.include.ks]result.h [-.-.include.ks]serviceparams.h \
  [-.-.include.ks]props.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.include.ks]avmodule.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]commobject.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.include.ks]avmodule.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]commobject.h \
  [-.-.-.plt.include.plt]hashtable_impl.h \
  [-.-.-.plt.include.plt]container_impl.h \
  [-.-.-.plt.include.plt]handle_impl.h ttree_inst.h
@@ -754,8 +771,8 @@ ttree1.obj: [-.-.examples]ttree1.cpp [-.-.include.ks]commobject.h \
  [-.-.include.ks]xdr.h [-.-.include.ks]handle.h \
  [-.-.include.ks]value.h [-.-.include.ks]array.h \
  [-.-.-.plt.include.plt]array.h [-.-.include.ks]time.h \
- [-.-.-.plt.include.plt]time.h [-.-.include.ks]clntpath.h \
- [-.-.include.ks]avmodule.h
+ [-.-.-.plt.include.plt]time.h [-.-.include.ks]propsv1.h \
+ [-.-.include.ks]clntpath.h [-.-.include.ks]avmodule.h
 unix_manager.obj: [-.-.src]unix_manager.cpp [-.-.include.ks]manager.h \
  [-.-.include.ks]simpleserver.h [-.-.include.ks]svrbase.h \
  [-.-.include.ks]rpc.h [-.-.-.plt.include.plt]debug.h \
@@ -772,8 +789,8 @@ unix_manager.obj: [-.-.src]unix_manager.cpp [-.-.include.ks]manager.h \
  [-.-.include.ks]serviceparams.h [-.-.include.ks]register.h \
  [-.-.include.ks]result.h [-.-.include.ks]props.h \
  [-.-.include.ks]handle.h [-.-.include.ks]value.h \
- [-.-.include.ks]list.h [-.-.-.plt.include.plt]list.h \
- [-.-.-.plt.include.plt]comparable.h \
+ [-.-.include.ks]propsv1.h [-.-.include.ks]list.h \
+ [-.-.-.plt.include.plt]list.h [-.-.-.plt.include.plt]comparable.h \
  [-.-.-.plt.include.plt]priorityqueue.h \
  [-.-.include.ks]svrtransport.h [-.-.include.ks]connectionmgr.h \
  [-.-.include.ks]connection.h [-.-.include.ks]rpcproto.h \

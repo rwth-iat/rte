@@ -6,6 +6,7 @@ CXX_LIBKS_SOURCES = \
 	conversions.cpp \
 	path.cpp \
 	props.cpp \
+	propsv1.cpp \
 	register.cpp \
 	result.cpp \
 	rpc.cpp \
@@ -60,6 +61,7 @@ LIBKS_OBJECTS1 = \
 	conversions$(O) \
 	path$(O) \
 	props$(O) \
+	propsv1$(O) \
 	register$(O) \
 	result$(O) \
 	rpc$(O)
