@@ -91,6 +91,8 @@ template<class T>
 class PltContainer
 {
 public:
+    virtual ~PltContainer() { }
+
     virtual bool isEmpty() const;
     virtual size_t size() const = 0;
     virtual PltIterator<T> * newIterator() const = 0;
