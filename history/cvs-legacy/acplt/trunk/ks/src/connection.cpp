@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.4 1999-02-22 15:11:45 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.5 1999-04-22 15:34:25 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -201,14 +201,12 @@ KS_RESULT KssXDRConnection::finishRequestDeserialization(KsAvTicket &avt, bool)
 //
 bool KssXDRConnection::makeNonblocking()
 {
-#if PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS
-    u_long nbmode = 1;
 #if PLT_SYSTEM_NT
+    u_long nbmode = 1;
     return ioctlsocket(_fd, FIONBIO, &nbmode) != SOCKET_ERROR;
-#else
+#elif PLT_SYSTEM_OPENVMS
     int nbmode = 1;
     return ioctl(_fd, FIONBIO, (char *) &nbmode) != -1;
-#endif
 #else
     //
     // This works even with XTI...
@@ -235,7 +233,7 @@ bool KssXDRConnection::enableKeepAlive()
 	       != -1;
 #else
     return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE, 
-                      &mode, sizeof(mode))
+                      (char *) &mode, sizeof(mode))
 	       != -1;
 #endif
 #else
