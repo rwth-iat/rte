@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.19 2004-10-27 12:09:06 ansgar Exp $
+*   $Id: ov_database.c,v 1.20 2004-10-27 14:33:35 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -537,7 +537,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	/*
 	*	open the database file
 	*/
-	fd = open(filename, O_RDWR);
+	fd = open((const char*) filename, O_RDWR);
 	if(fd == -1) {
 		return OV_ERR_CANTOPENFILE;
 	}
@@ -584,7 +584,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	/*
 	*	open the database file
 	*/
-	hfile = CreateFile(filename, GENERIC_READ | GENERIC_WRITE,
+	hfile = CreateFile((const char*)filename, GENERIC_READ | GENERIC_WRITE,
 		0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if(hfile == INVALID_HANDLE_VALUE) {
 		return OV_ERR_CANTOPENFILE;
@@ -650,7 +650,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	/*
 	*	open the database file
 	*/
-	file = fopen(filename, "rb+");
+	file = fopen((const char*)filename, "rb+");
 	if(!file) {
 		return OV_ERR_CANTOPENFILE;
 	}
@@ -694,10 +694,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	*	initialize FAB
 	*/
 	fab = cc$rms_fab;
-	fab.fab$v_ufo = 1;					/* user file open */
-	fab.fab$l_fna = filename;			/* filename address */
-	fab.fab$b_fns = strlen(filename);	/* filename size */
-	fab.fab$v_upd = 1;					/* update access */
+	fab.fab$v_ufo = 1;								/* user file open */
+	fab.fab$l_fna = (const char*) filename;			/* filename address */
+	fab.fab$b_fns = strlen(filename);				/* filename size */
+	fab.fab$v_upd = 1;								/* update access */
 	/*
 	*	open database file
 	*/
@@ -769,7 +769,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 		ov_database_unmap();
 		return OV_ERR_BADDATABASE;
 	}
-	return result;
+	return OV_ERR_OK;
 }
 
 /*	----------------------------------------------------------------------	*/
