@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.2 1997-03-12 16:19:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.3 1997-03-17 15:15:04 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -88,6 +88,8 @@ public:
     bool addLast(const T & t);
     T removeFirst();
     T removeLast();
+
+    bool remove(const T & t);
 
     // container interface
     virtual bool isEmpty() const;
@@ -185,6 +187,7 @@ public:
 class PltList_base 
 {
     friend class PltListIterator_base;
+protected:
     PltListNode_base *first, *last;
 
 public:

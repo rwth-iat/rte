@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LIST_IMPL_INCLUDED
 #define PLT_LIST_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.1 1997-03-12 16:19:19 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.2 1997-03-17 15:15:04 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -94,6 +94,24 @@ PltList<T>::removeLast()
 }
 
 
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+bool
+PltList<T>::remove(const T & t) 
+{
+    for (PltListNode_base *p = first; p; ++p) {
+        PltListNode<T> *q = (PltListNode<T> *) p;
+        if (q->info == t) {
+            delete PltList_base::remove(p);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 template<class T>
