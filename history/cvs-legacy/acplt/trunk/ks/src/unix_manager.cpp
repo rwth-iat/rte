@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.3 1997-04-11 17:24:41 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.4 1997-05-05 06:50:55 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -52,7 +52,7 @@ const KsString KS_MANAGER_VERSION("0.5.1");
 
 extern "C" void handler(int) 
 {
-    KsServerBase::getServerObject().stopServer();
+    KsServerBase::getServerObject().downServer();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -146,7 +146,9 @@ int main(int argc, char **argv) {
         m.startServer();
         PltLog::Info("started.");
         m.run();
-        PltLog::Info("exiting.");
+        PltLog::Info("exiting...");
+	m.stopServer();
+	PltLog::Info("exited.");
     } else {
         PltLog::Error("could not initialize.");
     }

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.12 1997-04-18 13:00:42 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.13 1997-05-05 06:50:53 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,7 +40,15 @@
 // svrbase.cpp
 //
 
+#if PLT_SYSTEM_NT
+//
+// Take care of multi-shredded environments. See notes below in the
+// function getReadyFds() for more information...
+//
 #include <errno.h>
+#else
+#include <errno.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 
@@ -58,7 +66,12 @@
 
 //////////////////////////////////////////////////////////////////////
 // utilities
-
+//
+// As we don't know how expensive the call to FD_SETSIZE is, we're
+// cashing the result here. On some systems, FD_SETSIZE boils down to
+// a (fast!) kernel trap, on some others to a sloooow kernel trap. So
+// we take our chances here...
+//
 static size_t ks_dtsz;
 static bool ks_dtsz_valid = false;
 inline static size_t
@@ -125,6 +138,14 @@ KsServerBase::KsServerBase()
         // Now register the dispatcher that should be called whenever there
         // is a request for the KS program id and the correct version number.
         //
+        // A wise word of warning: when using transports, be extremely care-
+        // ful with what you do! You should never allow svc_register to contact
+        // the portmapper -- better do it yourself. And never (NEVER!!!) use
+        // svc_unregister() as this one would deregister EVERYTHING with the
+        // same program and protocol version number, regardless of the transport
+        // used (udp, tcp). With TI ONC/RPC you must register every transport
+        // you create, but once again, never deregister it, if at all possible.
+        //
         if ( svc_register(_tcp_transport, 
                           KS_RPC_PROGRAM_NUMBER,
                           KS_PROTOCOL_VERSION,
@@ -171,54 +192,6 @@ KsServerBase::~KsServerBase()
 //////////////////////////////////////////////////////////////////////
 
 #if 0
-////////////////////////////////////////////////////////////////////////////
-// Transport section. Watch for network cables strangling innocent
-// workstations...
-// A wise word of warning: when using transports, don't use svc_register
-// again. Here is the ONLY place where it can be used safely. The reason
-// for this is that someone at Sun once "shot a giant ram" -- both
-// svc_register() as well as svc_unregister() aren't very useful as the
-// latter one ALWAYS contacts the portmapper.
-//
-
-bool 
-KsServerBase::createTransports()
-{
-    _tcp_transport = svctcp_create(RPC_ANYSOCK, 
-                                   _send_buffer_size, _receive_buffer_size);
-    if (! _tcp_transport) {
-        PltLog::Error("KsServerBase: could not create transport");
-        return false;
-    }
-
-    //
-    // Now register the dispatcher that should be called whenever there
-    // is a request for the KS program id and the correct version number.
-    //
-    if ( !svc_register(_tcp_transport, 
-                       KS_RPC_PROGRAM_NUMBER,
-                       KS_PROTOCOL_VERSION,
-                       ks_c_dispatch,
-                       0) ) {  // Do not contact the portmapper!
-        svc_destroy(_tcp_transport);
-        _tcp_transport = 0;
-        PltLog::Error("KsServerBase: could not register service");
-        return false;
-    }
-    return true;
-} 
-
-////////////////////////////////////////////////////////////////////////////
-// Clean up all transports used for the communication with clients.
-//
-void KsServerBase::destroyTransports()
-{
-    if ( _tcp_transport ) {
-        svc_destroy(_tcp_transport); 
-        _tcp_transport = 0;
-    }
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // The RPC library is so brain-damaged, I wanna cry. If you want to close
 // down cleanly, you have to destroy ALL transports currently in use. But
@@ -248,7 +221,6 @@ void KsServerBase::destroyLurkingTransports()
         svc_getreqset(&svc_fdset);
     }
 }
-
 #endif
 
 ////////////////////////////////////////////////////////////////////////////
@@ -315,7 +287,7 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
 //////////////////////////////////////////////////////////////////////
 
 void
-KsServerBase::dispatch(u_long serviceId, 
+KsServerBase::dispatch(u_long serviceId,
                          SVCXPRT *xprt,
                          XDR *xdrIn,
                          KsAvTicket &ticket)
@@ -415,7 +387,7 @@ KsServerBase::getVar(KsAvTicket &,
 
 //////////////////////////////////////////////////////////////////////
 
-void 
+void
 KsServerBase::setVar(KsAvTicket &,
                      const KsSetVarParams &,
                      KsSetVarResult & result) 
@@ -428,7 +400,7 @@ KsServerBase::setVar(KsAvTicket &,
 void 
 KsServerBase::getPP(KsAvTicket &,
                     const KsGetPPParams &,
-                    KsGetPPResult & result) 
+                    KsGetPPResult & result)
 {
     result.result = KS_ERR_NOTIMPLEMENTED;
 }
@@ -558,8 +530,18 @@ void KsServerBase::sendErrorReply(SVCXPRT *transport, KsAvTicket &ticket,
 // Return number of ready fds or -1 on error
 //
 static int
-getReadyFds(fd_set & fds, const KsTime * pto) 
+getReadyFds(fd_set & fds, const KsTime * pto)
 {
+#if PLT_SYSTEM_NT
+    //
+    // Take care of a possible multi-shredded environment like NT...
+    // Here we must take care of the fact that in MT environments, there
+    // is no global errno, as it makes no sense. So we locally emulate
+    // it ourselves.
+    //
+    int errno;
+#endif
+
     // copy timeout, bbsts
     KsTime timeout;
     KsTime *pTimeout;
@@ -580,6 +562,9 @@ getReadyFds(fd_set & fds, const KsTime * pto)
 
     if (res == -1) {
         // select reports an error
+#if PLT_SYSTEM_NT
+        errno = WSAGetLastError();
+#endif
         PLT_DMSG("select returned -1: " << strerror(errno) << endl);
         if (errno == EINTR) {
             // interrupted by a signal
@@ -607,13 +592,10 @@ KsServerBase::hasPendingEvents() const
     return 
         ( 
                !_timer_queue.isEmpty()
-            && !_timer_queue.peek()->remainingTime().isZero() 
+            && !_timer_queue.peek()->remainingTime().isZero()
         )
         || getReadyFds(read_fds, &zerotimeout) > 0;
 }
-
-
-
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -694,24 +676,44 @@ KsServerBase::startServer()
 // RPC requests are each served exactly once until we get back to the
 // server main loop "run()".
 //
-void KsServerBase::stopServer()
+void KsServerBase::downServer()
 {
     _shutdown_flag = true;
 }
 
+//////////////////////////////////////////////////////////////////////
+// Finally shut down the server. Here this isn't of much woe, but
+// derived classes needs this sucker, so they can deregister them, or
+// do other strange things...
 //
-// This is the main loop of a KS server. It waits for incomming RPC requests
-// or timer events and dispatches them until the shutdown_flag indicates
-// that we should do an easy escape.
+void KsServerBase::stopServer()
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+// This is the main loop of a KS server. It waits for incomming RPC
+// requests or timer events and dispatches them until the shutdown
+// flag indicates that we should do an easy escape.
+// Unfortunately, NT looses (once again): as it has no signal concept,
+// you can't wake up a sleeping thread after you've signalled it to
+// shut down... so what? New Technology...? ridiculous!
 //
 void
 KsServerBase::run()
-{    
+{
+#if PLT_SYSTEM_NT
+    KsTime oneSecond(1);
+#endif
+
     _shutdown_flag = false;
     while (! _shutdown_flag) {
+#if !PLT_SYSTEM_NT
         servePendingEvents(0); // no timeout -> wait forever
+#else
+        servePendingEvents(&oneSecond);
+#endif
     }
-}   
+}
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -745,4 +747,5 @@ KsServerBase::removeNextTimerEvent()
     return _timer_queue.removeFirst();
 } 
 
+// EOF svrbase.cpp
 

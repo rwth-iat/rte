@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.11 1997-04-14 15:30:16 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.12 1997-05-05 06:50:52 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -51,36 +51,36 @@ v * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //////////////////////////////////////////////////////////////////////
 static char DISCLAIMER[] =
-"Copyright (c) 1996, 1997 \n"
-"Chair of Process Control Engineering, \n"
-"Aachen University of Technology. \n"
-"All rights reserved. \n"
-" Redistribution and use in source and binary forms, with or without\n"
-" modification, are permitted provided that the following conditions\n"
-" are met:\n"
-" 1. Redistributions of source code must retain the above copyright\n"
-"    notice, this list of conditions and the following disclaimer.\n"
-" 2. Redistributions in binary form must print or display the above\n"
-"    copyright notice either during startup or must have a means for\n"
-"    the user to view the copyright notice.\n"
-" 3. Redistributions in binary form must reproduce the above copyright\n"
-"    notice, this list of conditions and the following disclaimer in the\n"
-"    documentation and/or other materials provided with the distribution.\n"
-" 4. Neither the name of the Chair of Process Control Engineering nor the\n"
-"    name of the Aachen University of Technology may be used to endorse or\n"
-"    promote products derived from this software without specific prior\n"
-"    written permission.\n"
-" THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING\n"
-" ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED\n"
-" TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
-" PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE CHAIR OF PROCESS CONTROL\n"
-" ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n"
-" EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n"
-" PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;\n"
-" OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,\n"
-" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR\n"
-" OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF\n"
-" ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.";
+"Copyright (c) 1996, 1997\n"
+"Chair of Process Control Engineering,\n"
+"Aachen University of Technology.\n"
+"All rights reserved.\n\n"
+"Redistribution and use in source and binary forms, with or without\n"
+"modification, are permitted provided that the following conditions\n"
+"are met:\n\n"
+"1. Redistributions of source code must retain the above copyright\n"
+"   notice, this list of conditions and the following disclaimer.\n"
+"2. Redistributions in binary form must print or display the above\n"
+"   copyright notice either during startup or must have a means for\n"
+"   the user to view the copyright notice.\n"
+"3. Redistributions in binary form must reproduce the above copyright\n"
+"   notice, this list of conditions and the following disclaimer in the\n"
+"   documentation and/or other materials provided with the distribution.\n"
+"4. Neither the name of the Chair of Process Control Engineering nor the\n"
+"   name of the Aachen University of Technology may be used to endorse or\n"
+"   promote products derived from this software without specific prior\n"
+"   written permission.\n\n"
+"THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING\n"
+"``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED\n"
+"TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
+"PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE CHAIR OF PROCESS CONTROL\n"
+"ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n"
+"EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n"
+"PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;\n"
+"OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,\n"
+"WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR\n"
+"OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF\n"
+"ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.";
 
 //////////////////////////////////////////////////////////////////////
 
@@ -99,8 +99,8 @@ KsManager::getServerDescription() const
 KsString 
 KsManager::getVendorName () const
 { 
-    return KsString("Lehrstuhl fuer Prozessleittechnik, "
-                    "RWTH Aachen"); 
+    return KsString("Chair of Process Control Engineering, "
+                    "Aachen University of Technology");
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -309,14 +309,14 @@ KsManager::KsManager()
         
         KssSimpleVariable *manager_port =
             new KssSimpleVariable("port");
-        
+
         KssSimpleVariable *manager_expires_at =
             new KssSimpleVariable("expires_at");
-        
+
         KssSimpleVariable *manager_living =
             new KssSimpleVariable("living");
-        
-        manager_living->setValue(new KsIntValue(1)); 
+
+        manager_living->setValue(new KsIntValue(1));
         manager_living->setState(KS_ST_GOOD);
         manager_living->lock();
         manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
@@ -325,15 +325,15 @@ KsManager::KsManager()
         manager_expires_at->setValue(new KsTimeValue(LONG_MAX,0));
         manager_expires_at->setState(KS_ST_GOOD);
         manager_expires_at->lock();
-        
+
         servers_manager_version->addChild(manager_living);
         servers_manager_version->addChild(manager_port);
         servers_manager_version->addChild(manager_expires_at);
-        
+
         servers_manager->addChild(servers_manager_version);
         _servers_domain.addChild(servers_manager);
-        
-        _root_domain.addChild(KssCommObjectHandle(&_servers_domain, 
+
+        _root_domain.addChild(KssCommObjectHandle(&_servers_domain,
                                               KsOsUnmanaged));
 
         //
@@ -369,9 +369,9 @@ KsManager::KsManager()
         //
         // more optional variables
         // (not lazy anymore)
-        // 
+        //
         KsPath vendor("/vendor");
-        _is_ok = 
+        _is_ok =
                addStringVar(vendor, "disclaimer", KsString(DISCLAIMER))
             && addStringVar(vendor, "contact",
                             "<ks@plt.rwth-aachen.de>")
@@ -592,18 +592,6 @@ KsManager::stopServer()
     KsSimpleServer::stopServer();
 }
 
-//////////////////////////////////////////////////////////////////////
-#if 0
-void 
-KsManager::destroyTransports()
-{
-    if ( _udp_transport ) {
-        svc_destroy(_udp_transport); 
-        _udp_transport = 0;
-    }
-    KsServerBase::destroyTransports();
-}
-#endif
 //////////////////////////////////////////////////////////////////////
 
 static inline bool
@@ -965,5 +953,3 @@ KsManager::removeServer(KsmServer * pserver)
 //////////////////////////////////////////////////////////////////////
 
 /* EOF ks/manager.cpp */
-
-

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.12 1997-04-18 13:00:33 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.13 1997-05-05 06:50:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -79,7 +79,8 @@ public:
     //// modifiers
     virtual void startServer();    // start answering requests
     virtual void run();            // This is the main loop
-    virtual void stopServer();     // stop answering requests asap
+    virtual void downServer();     // stop answering requests asap
+    virtual void stopServer();     // shut down request handling finally
  
     // serve pending events
     bool servePendingEvents(KsTime timeout = KsTime()); 
