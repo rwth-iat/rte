@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/props.cpp,v 1.8 1998-12-10 17:27:59 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/props.cpp,v 1.9 1998-12-14 18:04:28 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -74,22 +74,34 @@ KsProjProps::debugPrint(ostream &os) const
 void 
 KsDomainProjProps::debugPrint(ostream &os) const
 {
-    os << "Projected properties for domain :" << endl;
+    os << "Projected properties for domain:" << endl;
     KsProjProps::debugPrint(os);
-}
+} // KsDomainProjProps::debugPrint
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 
 void 
 KsVarProjProps::debugPrint(ostream &os) const
 {
-    os << "Projected Properties for variable :" << endl;
+    os << "Projected Properties for variable:" << endl;
     KsProjProps::debugPrint(os);
-    os << "\ttechnical unit : " << tech_unit << endl;
-    os << "\ttype : " << type << endl;
-}
+    os << "\ttechnical unit: " << tech_unit << endl;
+    os << "\ttype: " << type << endl;
+} // KsVarProjProps::debugPrint
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
+
+void 
+KsLinkProjProps::debugPrint(ostream &os) const
+{
+    os << "Projected Properties for link:" << endl;
+    KsProjProps::debugPrint(os);
+    os << "\topposite role identifier: " << opposite_role_identifier << endl;
+    os << "\ttype: " << type << endl;
+    os << "\tclass: " << class_identifier << endl;
+} // KsLinkProjProps::debugPrint
+
+// ----------------------------------------------------------------------------
 
 void 
 KsCurrProps::debugPrint(ostream &) const
@@ -238,7 +250,8 @@ KsDomainProjProps::xdrTypeCode() const {
 KsLinkProjProps::KsLinkProjProps(XDR *xdr, bool &ok)
 {
     ok = ks_xdrd_enum(xdr, &type)
-      && opposite_role_identifier.xdrDecode(xdr);
+      && opposite_role_identifier.xdrDecode(xdr)
+      && class_identifier.xdrDecode(xdr);
 } // KsLinkProjProps::KsLinkProjProps
 
 
@@ -249,7 +262,8 @@ bool
 KsLinkProjProps::xdrEncodeVariant(XDR *xdr) const
 {
     return ks_xdre_enum(xdr, &type)
-        && opposite_role_identifier.xdrEncode(xdr);
+        && opposite_role_identifier.xdrEncode(xdr)
+        && class_identifier.xdrEncode(xdr);
 } // KsLinkProjProps::xdrEncodeVariant
 
 // ----------------------------------------------------------------------------
@@ -259,7 +273,8 @@ bool
 KsLinkProjProps::xdrDecodeVariant(XDR *xdr)
 {
     return ks_xdrd_enum(xdr, &type)
-        && opposite_role_identifier.xdrDecode(xdr);
+        && opposite_role_identifier.xdrDecode(xdr)
+        && class_identifier.xdrDecode(xdr);
 } // KsLinkProjProps::xdrDecodeVariant
 
 
