@@ -35,6 +35,7 @@ template class PltIterator_<PltAssoc<KsString, PltPtrHandle<KssCommObject> > >;
 template class PltIterator_<PltPtrComparable<KsTimerEvent> >;
 template class PltPQIterator<PltPtrComparable<KsTimerEvent> >;
 template class PltPriorityQueue<PltPtrComparable<KsTimerEvent> >;
+template class PltPtrComparable<KsTimerEvent>;
 template class PltPtrHandle<KsSelector>;
 template class PltPtrHandle<KssCommObject>;
 template class PltPtrHandle<KssDomain>;
