@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.10 1997-07-10 10:19:17 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.11 1997-09-13 08:19:45 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -39,6 +39,7 @@
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
 #include "plt/debug.h"
+#include "plt/alloc.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -97,17 +98,26 @@ public:
 protected:
     PltString(size_t sz, char *p);
 
+
+public: // read: private ;-)
     class srep {
     public:
         char * s;
         size_t len;
         int refcount;
         srep() : s(0), len(0), refcount(1) { }
+
+        void * operator new(size_t);
+        void operator delete(void * ptr);
     };
     srep *p;
+    static PltAllocator<srep> _srep_allocator;
 
+protected:
     // helper modifiers
     void cloneIfNeeded();
+
+
 };
 
 PltString operator + (const PltString &s1, const PltString &s2);
@@ -116,6 +126,27 @@ PltString operator + (const PltString &s1, const char *s2);
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
+//////////////////////////////////////////////////////////////////////
+
+inline void * 
+PltString::srep::operator new(size_t 
+#if PLT_DEBUG
+                              sz
+#endif
+                              )
+{
+    PLT_ASSERT(sz==sizeof (srep));
+    return _srep_allocator.alloc();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline void 
+PltString::srep::operator delete(void * ptr)
+{
+    _srep_allocator.free(ptr);
+}
+
 //////////////////////////////////////////////////////////////////////
 
 inline bool

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.14 1997-09-10 14:51:50 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.15 1997-09-13 08:19:44 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -151,7 +151,11 @@ struct Plt_AllocTracker
 private:
     static PltAllocator<Plt_AllocTracker> _allocator;
 public:
-    void * operator new(size_t sz)
+    void * operator new(size_t 
+#if PLT_DEBUG
+                        sz
+#endif
+                        )
         {
             PLT_ASSERT(sz==sizeof (Plt_AllocTracker));
             return _allocator.alloc();
@@ -218,7 +222,11 @@ protected:
     void *prep;
     Plt_AllocTracker *palloc;
 
-    void * operator new(size_t sz)
+    void * operator new(size_t
+#if PLT_DEBUG
+                        sz
+#endif
+                        )
         {
             PLT_ASSERT(sz==sizeof (PltHandle_base));
             return _allocator.alloc();

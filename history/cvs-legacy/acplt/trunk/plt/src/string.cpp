@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.15 1997-07-18 14:02:57 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.16 1997-09-13 08:19:48 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,6 +45,11 @@
 #include <strstrea.h>
 #else
 #include <strstream.h>
+#endif
+
+PltAllocator<PltString::srep> PltString::_srep_allocator;
+#if PLT_INSTANTIATE_TEMPLATES
+template class PltAllocator<PltString::srep>;
 #endif
 
 //////////////////////////////////////////////////////////////////////

@@ -26,7 +26,7 @@ CXX_FLAGS = -DNDEBUG -MT
 
 ### LINKER
 LD = link
-LD_FLAGS = /DEBUG
+# LD_FLAGS = /DEBUG
 CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) \
 	-GR -DPLT_SYSTEM_NT=1 -DPLT_DEBUG_NEW=0
 CXX_LIBS = $(LIBKS) $(LIBPLT) $(LIBRPC) wsock32.lib advapi32.lib
@@ -113,6 +113,11 @@ ttree$(EXE): ttree$(O) ttree1$(O) $(LIBKS) $(LIBKSCLN)
 tshell$(EXE): tshell$(O) $(LIBKS) $(LIBKSCLN)
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
 		tshell$(O) \
+		$(LIBKSCLN) $(CXX_LIBS)
+
+pmobile$(EXE): pmobile$(O) pmobile_code$(O) $(LIBKS) $(LIBKSCLN)
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		pmobile$(O) pmobile_code$(O) \
 		$(LIBKSCLN) $(CXX_LIBS)
 
 clean :

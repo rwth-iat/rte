@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.9 1997-09-09 15:33:42 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.10 1997-09-13 08:19:49 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,8 +42,7 @@
 #include <sys/timeb.h>
 #endif
 
-#if 0 // was: PLT_SYSTEM_NT
-#include <time.h>
+#if PLT_SYSTEM_NT
 #include <windows.h>
 #endif
 
@@ -100,45 +99,6 @@ PltTime::now(long secs, long usecs)
 #endif
 
 //////////////////////////////////////////////////////////////////////
-
-#if 0 // was: PLT_SYSTEM_NT
-
-PltTime
-PltTime::now(long secs_arg, long usecs_arg)
-{
-    SYSTEMTIME st;
-    GetSystemTime(&st);
-    FILETIME ft;
-    if (SystemTimeToFileTime(&st,&ft)) {  
-        // not very efficient
-        static const DWORD loEpoch    = 3577643008;
-        static const DWORD loEpochNeg =  717324288; // 2^32 - loEpoch
-        static const DWORD hiEpoch =   27111902;
-        DWORD h = ft.dwHighDateTime;
-        DWORD l = ft.dwLowDateTime;
-
-        // let M==2^32, l1+M*h1<l0+M*h0
-        // calc. x = l1+M*h1 - l0+M*h0:
-        if (l >= loEpoch) {
-            l -= loEpoch;   // l1>=l0: x = (l1-l0)+ M(h1-h0)
-        } else {
-            --h;         // l1<l0: x = (l1+(M-l0))+M(h1-1-h0)
-            l += loEpochNeg;
-        }
-        h -= hiEpoch;
-        // (h*M+l) * 100ns(==0.1us) since epoch
-        double secs  = h*429.4967296+l/10000000.0;
-        PltTime res(secs+secs_arg, st.wMilliseconds*1000 + usecs_arg);
-        res.normalize();
-        return res;
-        }
-    else {
-        return PltTime(time(0)+secs_arg,usecs_arg);
-    }
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////
 #if PLT_SYSTEM_LINUX || PLT_SYSTEM_HPUX || PLT_SYSTEM_SOLARIS || PLT_SYSTEM_IRIX
 
 PltTime
@@ -153,6 +113,26 @@ PltTime::now(long secs, long usecs)
     return res;
 }
 #endif
+
+//////////////////////////////////////////////////////////////////////
+
+void
+PltTime::sleep() const
+{
+    PltTime now(PltTime::now());
+    PltTime then(now + *this);
+ 
+    // avoid falling to early out of this method because of
+    // interrupted system calls
+
+    while (now < then) {
+        PltTime delay = then - now;
+        select(0,
+               0,0,0,
+               (struct timeval*) &delay);
+        now = PltTime::now();
+    }
+}
 
 //////////////////////////////////////////////////////////////////////
 /* EOF plt/time.cpp */

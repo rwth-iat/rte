@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.10 1997-09-09 11:02:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.11 1997-09-13 08:19:46 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -80,6 +80,8 @@ struct PltTime : public timeval {
     // adding and substracting times
     PltTime & operator += (const PltTime &t);
     PltTime & operator -= (const PltTime &t);
+    
+    void sleep() const; // delay for at least *this time
 
     static PltTime now(long seconds=0, long useconds = 0);
     static PltTime now(const PltTime &);

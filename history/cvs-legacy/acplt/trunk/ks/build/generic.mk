@@ -90,9 +90,9 @@ CXX_EXAMPLES_SOURCES = \
 	tsclient1.cpp \
 	tserver.cpp \
 	tserver1.cpp \
+	tshell.cpp \
 	ttree.cpp \
 	ttree1.cpp
-# NOT:	tshell.cpp \
 
 EXAMPLES_OBJECTS = \
 	pmobile$(O) \
@@ -103,15 +103,15 @@ EXAMPLES_OBJECTS = \
 	tsclient1$(O) \
 	tserver$(O) \
 	tserver1$(O) \
+	tshell$(O) \
 	ttree$(O) \
 	ttree1$(O)
-# NOT:	tshell$(O) \
 
 EXAMPLES = \
-	pmobiles.$(EXE) \
+	pmobile$(EXE) \
 	tmanager$(EXE) tserver$(EXE) tsclient$(EXE) \
+	tshell$(EXE) \
 	ttree$(EXE)
-# NOT: tshell$(EXE)
 
 CXX_SOURCES = \
 	$(CXX_LIBKS_SOURCES) \

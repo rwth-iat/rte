@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.8 1997-09-09 15:32:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.9 1997-09-13 08:19:42 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,24 +44,35 @@
 #include <signal.h>
 #include <stdlib.h>
 
+
+//
+//  Signal handler: Signals shut down the server
+//
 extern "C" void handler(int) {
     KsServerBase::getServerObject().downServer();
 }
 
+//
+//  Our test server. It inherits SimpleServer behaviour in addition
+//  to the server behaviour.
+//  SimpleServer uses recursive descent to locate communication objects.
+//
 class TestServer
 : public KsServer,
   public KsSimpleServer
 {	
-//    friend void handler(int);
 public:
 	TestServer();
 
     //// accessors
+    //
+    // these define the name and version of this server
+    //
     virtual KsString getServerName() const
         { return KsString("tserver"); }
 
     virtual KsString getServerVersion() const
-        { return KsString("0.5.1"); }
+        { return KsString("1.0"); }
 
     virtual KsString getServerDescription() const 
         { return KsString("ACPLT/KS test server"); }
@@ -70,22 +81,43 @@ public:
         { return KsString("Lehrstuhl fuer Prozessleittechnik, "
                           "RWTH Aachen"); }
 
+    //
+    // To use data exchange, you must replace the exgdata service
+    // method. The default exgData method returns 'not implemented'
+    // which is not desired here...
+    //
     virtual void exgData(KsAvTicket &ticket,
                          const KsExgDataParams &params,
                          KsExgDataResult &result);                         
     
+    //
+    // The TestServer::exgData method calls calculate between
+    // setting and reading the variables.
+    // 
     virtual bool calculate();
 private:
+    //
+    //  The following pointers allow faster access to the
+    //  variables used in data exchange. Note that lifetime of
+    //  the objects is controlled by the lifetime of the domain
+    //  containing the variables! (I.e. the pointers may be invalid
+    //  when the containing domain dies.
+    // 
     KssSimpleVariable *pVar_x;
     KssSimpleVariable *pVar_xsquared;
 };
 
 //////////////////////////////////////////////////////////////////////
-
+//
+// This is a dummy iterator. It does not return any child.
+// Because TestDomain (see below) contains MANY MANY children
+// it would make no sense to have an iterator.
+//
 class TestDomainIterator
 : public KssDomainIterator
 {
 public:
+    // portability strikes back.
 #if PLT_RETTYPE_OVERLOADABLE
     typedef TestDomainIterator THISTYPE;
 #endif
@@ -100,7 +132,14 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////
-
+//
+// This is a domain which contains an infinite count of children (modulo
+// computer's restrictions). It contains children 'n' where n is the string
+// representation for a natural number. The value of each child is n^2.
+//
+// In addition there are some test variables which trigger an action when
+// read. Read the source carefully to determine which.
+//
 class TestDomain
 : public KssDomain
 {
@@ -117,6 +156,7 @@ class TestDomain
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
 
+    // simulate RTTI when necessary
     PLT_DECL_RTTI;
 };
 
@@ -125,15 +165,18 @@ class TestDomain
 KssCommObjectHandle
 TestDomain::getChildById(const KsString &str) const
 {
+    // construct the child
     KssSimpleVariable * var =
         new KssSimpleVariable(str);
     int j = atoi(str);
     if ( var ) {
         if (j != 0) {
+            // the squares... set the variables current properties
             var->setValue(new KsIntValue(j*j));
             var->setState(KS_ST_GOOD);
             var->lock();
         } else {
+            // the actions...
             if (str == "down") {
                 cerr << endl << "Shutdown requested." << endl;
                 TestServer::getServerObject().downServer();
@@ -142,22 +185,31 @@ TestDomain::getChildById(const KsString &str) const
                 exit(1);
             } else if (str == "lockup") {
                 cerr << endl << "Simulating lockup..." << endl;
-                sleep(40);
+                PltTime(40,0).sleep();
                 cerr << endl << "... exiting." << endl;
                 exit(1);
             } else if (strncmp(str,"sleep",5)==0) {
-                sleep(atoi(str+5));
+                PltTime delay(atoi(str+5),0);
+                delay.sleep();
             }
-
-            var->setValue(new KsStringValue(str));
+            // and indicate that there is no meaningful value for
+            // this child.
+            var->setValue(new KsVoidValue);
             var->setState(KS_ST_BAD);
             var->lock();            
         }
     }
+    //
+    //  "handle" this object indicating that it has been allocated with the
+    //  new operator. The handle owns the variable and will destroy it
+    //  when it is not referenced any more.
+    //
     return KssCommObjectHandle(var, KsOsNew);
 }
 
 //////////////////////////////////////////////////////////////////////
+// Generate RTTI if needed (one base class for TestDomain, namely
+// KssDomain).
 PLT_IMPL_RTTI1(TestDomain, KssDomain);
 //////////////////////////////////////////////////////////////////////
 
@@ -168,23 +220,48 @@ TestDomain::newIterator() const
 }
 
 //////////////////////////////////////////////////////////////////////
-
+//
+// The constructor of the server.
+//
 TestServer::TestServer()
 : KsServer(30)
 {
-    KsAvNoneTicket::setDefaultAccess(KS_AC_READ | KS_AC_WRITE); // TODO
+    // 
+    // When requests are made with authentification method "none"
+    // objects that don't restrict access further can be read and
+    // written to.
+    //
+    KsAvNoneTicket::setDefaultAccess(KS_AC_READ | KS_AC_WRITE);
+    
+    //
+    // construct the /vendor tree (uses the virtual constants specified
+    // in the class declaration)
+    //
     initVendorTree();
 
+    //
+    // catch some signals
+    //
     signal(SIGINT, handler);
     signal(SIGTERM, handler);
 #if !PLT_SYSTEM_NT
     signal(SIGHUP, handler);
 #endif
     
+    //
+    // create additional communication objects, doing it the hard way.
+    // Note that error handling is incomplete here ( TODO )
+    //
+
+    // a domain
     KssSimpleDomain * test_dom = new KssSimpleDomain("test");
+    // a writable variable
     KssSimpleVariable * write_me = new KssSimpleVariable("write_me");
+    // no value, yet
     write_me->setValue(new KsVoidValue);
+    // add it to the domain
     test_dom->addChild(write_me);
+    // a vector of 1000 doubles
     KssSimpleVariable * doubles_var = new KssSimpleVariable("doubles");
     KsDoubleVecValue * doubles_val = 
         new KsDoubleVecValue(1000);
@@ -192,8 +269,11 @@ TestServer::TestServer()
         (*doubles_val)[i] = i*i;
     }
     doubles_var->setValue(doubles_val);
+    // write protection on!
     doubles_var->lock();
+    // add it to the domain
     test_dom->addChild(doubles_var);
+    // and so on...
     KssSimpleVariable * double_var = new KssSimpleVariable("double");
     double_var->setValue(new KsDoubleValue(42));
     double_var->lock();
@@ -213,7 +293,12 @@ TestServer::TestServer()
     _root_domain.addChild(big_dom);
     _root_domain.addChild(new TestDomain);
     
-    // using convenience functions:
+    //
+    // Now using convenience functions. No hard errors will happen
+    // here, but you should still check the return values of this
+    // calls. False would indicate failure.
+    // A little bit easier this way, isn't it?
+    //
     addDomain(KsPath("/"), "restricted", "Access restricted");
     addStringVar(KsPath("/restricted"), 
                  "writeme", 
@@ -250,9 +335,14 @@ TestServer::TestServer()
 
 }
 
-
-
 //////////////////////////////////////////////////////////////////////
+//
+// Data exchange is easily implemented. If you do complicated things
+// you might have to do it a little smarter.
+//
+// exgData is implemented as wrapper around setVar and getVar
+// calling compute() in between. Some attention has to be paid to
+// error handling.
 
 void 
 TestServer::exgData(KsAvTicket &ticket,
@@ -293,23 +383,33 @@ bool
 TestServer::calculate()
 {
     if (pVar_x && pVar_xsquared) {
+        // the variables are 'physikalisch vorhanden'(TM)
+        // get a pointer to the value
         KsValue * tmp = pVar_x->getValue().getPtr();
+        // assume it is a KsSingleValue...
         KsSingleValue * pVal_x = 
             PLT_DYNAMIC_PCAST(KsSingleValue, tmp);
         if (pVal_x) {
+            // oh yes, it is. Square it and save the square in xsquared.
             float x = *pVal_x;
             pVar_xsquared->setValue(new KsSingleValue(x*x));
             pVar_xsquared->setState(KS_ST_GOOD);
             return true;
         } else {
+            // no, no, no... someone has written something else
+            // into x . No value in this case...
             pVar_xsquared->setValue(new KsVoidValue);
             pVar_xsquared->setState(KS_ST_BAD);
+            return true;
         }
     }
     return false;
 }
 
 //////////////////////////////////////////////////////////////////////
+// Access restrictions:
+//
+// Derive from the AvTicket classes extending the can... methods.
 //////////////////////////////////////////////////////////////////////
 
 static const char restricted[] = "/restricted";
@@ -350,6 +450,9 @@ KS_IMPL_XDRNEW2(KsAvTicket,TestAvSimple);
 bool
 TestAvNone::canReadVar(const KsString & name) const
 {
+    //
+    // You can't read /restricted with AvNone.
+    //
     if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
         return false;
     } else {
@@ -362,6 +465,9 @@ TestAvNone::canReadVar(const KsString & name) const
 bool
 TestAvNone::canWriteVar(const KsString & name) const
 {
+    //
+    // You can't write /restricted with AvNone.
+    //
     if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
         return false;
     } else {
@@ -374,6 +480,9 @@ TestAvNone::canWriteVar(const KsString & name) const
 bool
 TestAvSimple::isVisible(const KsString & name) const
 {
+    //
+    // You can see /restricted only if you are "reader" or "writer"
+    //
     if (name == restricted) {
         // check id
         if (_id == "reader" || _id == "writer") {
@@ -392,6 +501,9 @@ TestAvSimple::isVisible(const KsString & name) const
 bool
 TestAvSimple::canReadVar(const KsString & name) const
 {
+    //
+    // You can read /restricted only if you are "reader" or "writer"
+    //
     if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
         // check id
         if (_id == "reader" || _id == "writer") {
@@ -410,6 +522,9 @@ TestAvSimple::canReadVar(const KsString & name) const
 bool
 TestAvSimple::canWriteVar(const KsString & name) const
 {
+    //
+    // You can write /restricted only if you are "writer"
+    //
     if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
         // check id
         if (_id == "writer") {
@@ -424,16 +539,43 @@ TestAvSimple::canWriteVar(const KsString & name) const
 }
 
 //////////////////////////////////////////////////////////////////////
+// Startup code:
 //////////////////////////////////////////////////////////////////////
 
-int main(int argc, char **argv) {
+int main(int, char **) {
+    //
+    // Use the standard error output for logging.
+    // (This is the portable logger)
+    //
     PltCerrLog log("tserver");
+
+    //
+    // Register the extended authentification ticket classes.
+    // The will be used instead of the builtin ones.
+    //
     KsAvTicket::registerAvTicketType(KS_AUTH_NONE, TestAvNone::xdrNew);
     KsAvTicket::registerAvTicketType(KS_AUTH_SIMPLE, TestAvSimple::xdrNew);
+
+    //
+    // Create the server object
+    //
 	TestServer ts;
+
+    //
+    // Start it.
+    //
     ts.startServer();
+    //
+    // Enter the service loop.
+    //
 	ts.run();
+    //
+    // After leaving the service loop clean up and stop serving.
+    //
     ts.stopServer();
+    //
+    // Return to the operating system.
+    //
     return 0;
 }
 
