@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.2 1999-07-29 08:57:53 dirk Exp $
+*   $Id: ov_vector.c,v 1.3 1999-08-02 11:01:39 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -37,6 +37,7 @@
 #if OV_SYSTEM_MC164
 #define memcpy xmemcpy
 #define memset xmemset
+#define memcmp xmemcmp
 #endif
 
 /*	----------------------------------------------------------------------	*/
@@ -101,6 +102,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicvalue(
 	if(!veclen) {
 		if(pvector->value) {
 			ov_database_free(pvector->value);
+			pvector->veclen = 0;
 			pvector->value = NULL;
 		}
 		return OV_ERR_OK;
@@ -128,6 +130,50 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicvalue(
 		memcpy(pvector->value, pvalue, size);
 	}
 	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Compare two vector variable values, result is greater than, equal to or less than zero
+*/
+OV_INT OV_DLLFNCEXPORT ov_vector_compare(
+	const OV_POINTER	pvalue1,
+	const OV_POINTER	pvalue2,
+	const OV_UINT		veclen,
+	const OV_UINT		size,
+	const OV_VAR_TYPE	vartype
+) {
+	/*
+	*	local variables
+	*/
+	OV_UINT		i;
+	OV_STRING	*pstring1, *pstring2;
+	OV_INT		result;
+	/*
+	*	compare values
+	*/
+	if(pvalue1) {
+		if(pvalue2) {
+			if(vartype == OV_VT_STRING) {
+				for(i=0, pstring1=(OV_STRING*)pvalue1, pstring2=(OV_STRING*)pvalue2;
+					i<veclen; i++, pstring1++, pstring2++
+				) {
+					result = ov_string_compare(*pstring1, *pstring2);
+					if(result) {
+						return result;
+					}
+				}
+				return 0;
+			}
+			return memcmp(pvalue1, pvalue2, size);
+		}
+		return 1;
+	}
+	if(pvalue2) {
+		return -1;
+	}
+	return 0;
 }
 
 /*	----------------------------------------------------------------------	*/

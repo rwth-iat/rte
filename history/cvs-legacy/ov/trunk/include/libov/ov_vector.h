@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.h,v 1.2 1999-07-29 08:57:49 dirk Exp $
+*   $Id: ov_vector.h,v 1.3 1999-08-02 11:01:38 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -52,6 +52,17 @@ OV_RESULT OV_DLLFNCEXPORT ov_vector_setstaticvalue(
 OV_RESULT OV_DLLFNCEXPORT ov_vector_setdynamicvalue(
 	OV_GENERIC_VEC		*pvector,
 	const OV_POINTER	pvalue,
+	const OV_UINT		veclen,
+	const OV_UINT		size,
+	const OV_VAR_TYPE	vartype
+);
+
+/*
+*	Compare two vector variable values, result is greater than, equal to or less than zero
+*/
+OV_INT OV_DLLFNCEXPORT ov_vector_compare(
+	const OV_POINTER	pvalue1,
+	const OV_POINTER	pvalue2,
 	const OV_UINT		veclen,
 	const OV_UINT		size,
 	const OV_VAR_TYPE	vartype
