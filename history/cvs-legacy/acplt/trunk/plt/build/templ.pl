@@ -73,10 +73,10 @@ do {
 	foreach $templ (@news) {
 	    printf OUT "template class %s;\n", $templ;
 	}
+	sleep 2;
 	close OUT;
 #	printf STDERR "%d new templates found, total %d\n", $#news-$#olds, $#news;
 	@olds = @news;
-	sleep 3;
 	print STDERR "$compile\n";
 	$err = system($compile);
 	if ($err) {
