@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.h,v 1.5 2000-02-10 13:06:55 dirk Exp $
+*   $Id: ov_ksclient.h,v 1.6 2004-05-19 14:25:41 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -260,16 +260,16 @@ OV_BOOL ov_ksclient_service_decoderesult(
 
 #if defined(OV_COMPILE_LIBOVKS) && defined(__cplusplus)
 
-#include "ks/interserver.h"
+#include "ks/serverconnection.h"
 
 /*
 *	Class OvKssInterKsServerConnection
 */
-class OvKssInterKsServerConnection : public KssInterKsServerConnection {	
+class OvKssInterKsServerConnection : public KsServerConnection {
 public:
 	// constructor
 	OvKssInterKsServerConnection(OV_STRING hostname, OV_STRING servername)
-		: KssInterKsServerConnection(hostname, servername), _psvc(NULL)
+		: KsServerConnection(hostname, servername), _psvc(NULL)
 		 {}
 
 	// open a connection
@@ -283,7 +283,7 @@ public:
 		OV_FNC_KSCLIENT_REQUESTCALLBACK *callbackfnc, void *userdata);
 
 	// asynchronously pay attention (after connect or sendrequest)
-	virtual void async_attention(KssInterKsServerConnectionOperations op);
+	virtual void async_attention(KsServerConnectionOperations op);
 
 private:
 	OV_KSCLIENT_SERVICE				*_psvc;

@@ -137,7 +137,7 @@ ov_database.obj: ../../source/libov/ov_database.c \
  ../../include/libov/ov_object.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h ../../../../libmpm/mp_malloc.h
+ ../../include/libov/ov_malloc.h ../../../libmpm/mp_malloc.h
 
 ov_debug.obj: ../../source/libov/ov_debug.c \
  ../../include/libov/ov_debug.h ../../include/libov/ov_ov.h \
@@ -520,7 +520,7 @@ event.obj: ../../../ks/src/event.cpp ../../../ks/include/ks/event.h \
  ../../../plt/include/plt/time.h
 
 interserver.obj: ../../../ks/src/interserver.cpp \
- ../../../ks/include/ks/interserver.h ../../../ks/include/ks/svrbase.h \
+ ../../../ks/include/ks/svrbase.h \
  ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
  ../../../plt/include/plt/config.h ../../../ks/include/ks/avticket.h \
  ../../../ks/include/ks/ks.h ../../../ks/include/ks/xdr.h \
@@ -531,7 +531,7 @@ interserver.obj: ../../../ks/src/interserver.cpp \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+ ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../../ks/include/ks/xdrudpcon.h \
@@ -569,11 +569,11 @@ server.obj: ../../../ks/src/server.cpp ../../../ks/include/ks/server.h \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+ ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../../ks/include/ks/register.h \
- ../../../ks/include/ks/svrrpcctx.h ../../../plt/include/plt/log.h
+ ../../../plt/include/plt/log.h
 
 string.obj: ../../../ks/src/string.cpp ../../../ks/include/ks/string.h \
  ../../../plt/include/plt/string.h ../../../plt/include/plt/debug.h \
@@ -593,21 +593,10 @@ svrbase.obj: ../../../ks/src/svrbase.cpp \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+ ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../../plt/include/plt/log.h
-
-svrrpcctx.obj: ../../../ks/src/svrrpcctx.cpp \
- ../../../ks/include/ks/svrrpcctx.h ../../../ks/include/ks/avticket.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
- ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
- ../../../plt/include/plt/alloc.h ../../../ks/include/ks/time.h \
- ../../../plt/include/plt/time.h
-
-svrtransport.obj: ../../../ks/src/svrtransport.cpp
 
 time.obj: ../../../ks/src/time.cpp ../../../plt/include/plt/debug.h \
  ../../../plt/include/plt/config.h ../../../ks/include/ks/time.h \
@@ -655,7 +644,7 @@ ov_ksclient.obj: ../../source/libovks/ov_ksclient.c \
  ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
  ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
- ../../../ks/include/ks/interserver.h ../../../ks/include/ks/svrbase.h \
+ ../../../ks/include/ks/svrbase.h \
  ../../../ks/include/ks/avticket.h ../../../ks/include/ks/xdr.h \
  ../../../plt/include/plt/rtti.h ../../../ks/include/ks/string.h \
  ../../../plt/include/plt/string.h ../../../plt/include/plt/alloc.h \
@@ -664,7 +653,7 @@ ov_ksclient.obj: ../../source/libovks/ov_ksclient.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+ ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../../ks/include/ks/xdrudpcon.h \
@@ -710,7 +699,7 @@ ov_ksserver.obj: ../../source/libovks/ov_ksserver.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+ ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_object.h \
@@ -746,7 +735,7 @@ ov_ksserver_createobject.obj: \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+ ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -779,7 +768,7 @@ ov_ksserver_deleteobject.obj: \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+ ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -811,7 +800,7 @@ ov_ksserver_exgdata.obj: ../../source/libovks/ov_ksserver_exgdata.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -844,7 +833,7 @@ ov_ksserver_getcanonicalpath.obj: \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -876,7 +865,7 @@ ov_ksserver_getep.obj: ../../source/libovks/ov_ksserver_getep.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -908,7 +897,7 @@ ov_ksserver_gethist.obj: ../../source/libovks/ov_ksserver_gethist.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -940,7 +929,7 @@ ov_ksserver_getpp.obj: ../../source/libovks/ov_ksserver_getpp.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -972,7 +961,7 @@ ov_ksserver_getvar.obj: ../../source/libovks/ov_ksserver_getvar.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -1004,7 +993,7 @@ ov_ksserver_link.obj: ../../source/libovks/ov_ksserver_link.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -1037,7 +1026,7 @@ ov_ksserver_renameobject.obj: \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -1069,7 +1058,7 @@ ov_ksserver_setvar.obj: ../../source/libovks/ov_ksserver_setvar.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -1101,7 +1090,7 @@ ov_ksserver_unlink.obj: ../../source/libovks/ov_ksserver_unlink.c \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h \
  ../../../plt/include/plt/handle.h \
- ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
+  ../../../ks/include/ks/result.h \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_path.h \
@@ -1239,7 +1228,7 @@ example_testclass.obj: ../../source/example/example_testclass.c \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
  ../../include/libov/ov_malloc.h
 
-ov_expression_parser.obj: ../../source/example/ov_expression_parser.c \
+ov_expression_parser.obj: ov_expression_parser.c \
  ../../include/libov/ov_time.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
  ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
@@ -1255,7 +1244,7 @@ ov_expression_parser.obj: ../../source/example/ov_expression_parser.c \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
  ../../include/libov/ov_malloc.h ../../source/example/ov_expression.h
 
-ov_expression_scanner.obj: ../../source/example/ov_expression_scanner.c \
+ov_expression_scanner.obj: ov_expression_scanner.c \
  ../../source/example/ov_expression.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
@@ -1267,5 +1256,5 @@ ov_expression_scanner.obj: ../../source/example/ov_expression_scanner.c \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
  ../../include/libov/ov_element.h \
- ../../source/example/ov_expression_parser.h
+ ov_expression_parser.h
 

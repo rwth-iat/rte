@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.7 2002-07-09 09:45:42 ansgar Exp $
+*   $Id: ov_config.h,v 1.8 2004-05-19 14:25:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -162,8 +162,8 @@
 #define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			".dll"
 #if OV_COMPILER_MSVC
-#define OV_DLLFNCEXPORT 		_export
-#define OV_DLLVAREXPORT			
+#define OV_DLLFNCEXPORT 		_declspec(dllexport)
+#define OV_DLLVAREXPORT                 _declspec(dllexport)
 #define OV_DLLVARIMPORT 		_declspec(dllimport)
 #else
 #define OV_DLLFNCEXPORT 		__declspec(dllexport)
@@ -229,6 +229,9 @@
 #endif
 #endif
 
+#if OV_COMPILER_MSVC
+#include <winbase.h>
+#endif
 #if OV_SYSTEM_MC164
 typedef struct { int quot; int rem; } div_t;
 div_t div(int x, int y);

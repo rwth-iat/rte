@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.10 2003-11-07 09:25:34 ansgar Exp $
+*   $Id: ov_vendortree.h,v 1.11 2004-05-19 14:25:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -51,7 +51,7 @@ extern "C" {
 *	Global variables
 */
 #ifdef OV_COMPILE_LIBOV
-#define OV_EXTERN extern
+#define OV_EXTERN OV_DLLVAREXPORT
 #else
 #define OV_EXTERN OV_DLLVARIMPORT
 #endif

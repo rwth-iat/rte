@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.8 2002-01-23 13:44:14 ansgar Exp $
+#   $Id: unix.mk,v 1.9 2004-05-19 14:29:01 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -74,6 +74,19 @@ RANLIB			= ranlib
 #   --------------------
 
 include ../generic.mk
+
+#	all defines and includes together
+#	---------------------------------
+
+DEFINES	 = $(LIBRPC_DEFINES) $(ACPLTKS_DEFINES) $(OV_DEFINES)
+INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
+
+#	presupposed libraries
+#	---------------------
+
+LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
+
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
 
 #	Targets
 #	-------

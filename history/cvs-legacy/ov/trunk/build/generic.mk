@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.10 2003-08-25 09:16:03 ansgar Exp $
+#   $Id: generic.mk,v 1.11 2004-05-19 14:29:01 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -34,7 +34,7 @@
 #	generic part
 
 PLT_DIR						= ../../../../
-PLT_BIN_DIR					= $(PLT_DIR)bin/$(SYSDIR)/
+PLT_BIN_DIR					= $(PLT_DIR)bin/
 
 ACPLT_OV_DIR				= ../../
 OV_INCLUDE_DIR				= $(ACPLT_OV_DIR)include/
@@ -58,15 +58,15 @@ ACPLT_PLT_INCLUDE_DIR		= $(ACPLT_PLT_DIR)include/
 ACPLT_KS_INCLUDE_DIR		= $(ACPLT_KS_DIR)include/
 ACPLT_KS_INCLUDE_KS_DIR		= $(ACPLT_KS_INCLUDE_DIR)ks/
 ACPLT_KS_SOURCE_DIR			= $(ACPLT_KS_DIR)src/
-ACPLT_PLT_BUILD_DIR			= $(ACPLT_PLT_DIR)build/$(SYSDIR)/
+ACPLT_PLT_BUILD_DIR			= $(PLT_DIR)base/lib/
 
-LIBMPM_DIR					= ../../../../libmpm/
+LIBMPM_DIR					= ../../../libmpm/
 
 #	platforms requiring ONC/RPC
 
-ONCRPC_DIR					= ../../../../oncrpc/
+ONCRPC_DIR					= ../../../oncrpc/
 ONCRPC_INCLUDE_DIR			= $(ONCRPC_DIR)
-ONCRPC_BIN_DIR				= $(ONCRPC_DIR)bin/
+ONCRPC_BIN_DIR				= $(PLT_DIR)base/lib/
 
 #	Cygwin/MinGW stuff
 
@@ -160,9 +160,19 @@ ACPLTKS_INCLUDES = \
 OV_DEFINES = \
 	$(OV_PLATFORM_DEFINES) \
 	-DOV_SYSTEM_$(SYSTEM)=1 \
-	-DOV_EXPLAIN
 
 ifeq ($(COMPILER), BORLAND)
+OV_INCLUDES = \
+	-I$(OV_INCLUDE_DIR) \
+	-I$(OV_MODEL_DIR) \
+	-I$(OV_SOURCE_CODEGEN_DIR) \
+	-I$(OV_SOURCE_BUILDER_DIR) \
+	-I$(OV_SOURCE_NTSERVICE_DIR) \
+	-I$(OV_SOURCE_EXAMPLE_DIR) \
+	-I$(OV_SOURCE_KSHISTLIB_DIR) \
+	-I$(LIBMPM_DIR)
+else
+ifeq ($(COMPILER), MSVC)
 OV_INCLUDES = \
 	-I$(OV_INCLUDE_DIR) \
 	-I$(OV_MODEL_DIR) \
@@ -188,7 +198,7 @@ OV_INCLUDES = \
 	-I$(LIBMPM_DIR)
 endif
 endif
-
+endif
 #	all defines and includes together
 #	---------------------------------
 
@@ -269,16 +279,15 @@ KS_LIBOVKS_SRC = \
 	$(ACPLT_KS_SOURCE_DIR)connection.cpp \
 	$(ACPLT_KS_SOURCE_DIR)connectionmgr.cpp \
 	$(ACPLT_KS_SOURCE_DIR)event.cpp \
-	$(ACPLT_KS_SOURCE_DIR)interserver.cpp \
 	$(ACPLT_KS_SOURCE_DIR)register.cpp \
 	$(ACPLT_KS_SOURCE_DIR)result.cpp \
 	$(ACPLT_KS_SOURCE_DIR)rpc.cpp \
 	$(ACPLT_KS_SOURCE_DIR)rpcproto.cpp \
 	$(ACPLT_KS_SOURCE_DIR)server.cpp \
+	$(ACPLT_KS_SOURCE_DIR)serverconnection.cpp \
+	$(ACPLT_KS_SOURCE_DIR)stdconnectionmgr.cpp \
 	$(ACPLT_KS_SOURCE_DIR)string.cpp \
 	$(ACPLT_KS_SOURCE_DIR)svrbase.cpp \
-	$(ACPLT_KS_SOURCE_DIR)svrrpcctx.cpp \
-	$(ACPLT_KS_SOURCE_DIR)svrtransport.cpp \
 	$(ACPLT_KS_SOURCE_DIR)time.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdr.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdrmemstream.cpp \
@@ -331,7 +340,7 @@ OV_LIBTABLE_OBJ = ov_libtable$(OBJ)
 #	ACPLT/OV example library
 #	------------------------
 
-EXAMPLE_SRC := example.c $(wildcard $(OV_SOURCE_EXAMPLE_DIR)*.c)
+EXAMPLE_SRC := ov_expression_parser.c ov_expression_scanner.c example.c $(wildcard $(OV_SOURCE_EXAMPLE_DIR)*.c)
 EXAMPLE_OBJ  = $(foreach source, $(EXAMPLE_SRC), $(basename $(notdir $(source)))$(OBJ))
 EXAMPLE_LIB  = example$(LIB)
 EXAMPLE_DLL  = example$(DLL)
