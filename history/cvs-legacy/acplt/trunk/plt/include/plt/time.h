@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.13 1998-09-22 15:03:17 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.14 1999-04-22 15:30:42 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,8 +41,14 @@
 #include "plt/debug.h"
 
 #if PLT_SYSTEM_NT
+
 // does not even have gettimeofday...
+#if PLT_USE_WINSOCK2
+#include <winsock2.h>
+#else
 #include <winsock.h>
+#endif
+
 #if PLT_COMPILER_MSVC
 #pragma warning (disable : 4237 )  /* disable warning about defining bool... */
 #endif
