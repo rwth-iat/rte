@@ -67,6 +67,11 @@
 #define PLT_USE_SYSLOG 0
 #endif
 
+#ifndef PLT_SIZE_T_MAX
+#include <sys/types.h>
+#define PLT_SIZE_T_MAX ((size_t)-1)
+#endif
+
 #ifdef __GNUC__
 #define PLT_SIMULATE_BOOL 0
 #define PLT_SIMULATE_RTTI 1
