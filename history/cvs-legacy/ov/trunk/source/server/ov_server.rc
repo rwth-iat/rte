@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.rc,v 1.3 2000-07-03 13:40:49 dirk Exp $
+*   $Id: ov_server.rc,v 1.4 2000-12-15 16:06:28 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -53,7 +53,7 @@ FILETYPE		VFT_DLL
    VALUE "FileDescription", "ACPLT/KS Server for ACPLT/OV\000"
    VALUE "FileVersion", OV_VER_CODEGEN "\000\000"
    VALUE "InternalName", "ov_server.exe\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-1999\000\000"
+   VALUE "LegalCopyright", "Copyright © PLT 1998-2000\000\000"
    VALUE "OriginalFilename", "ov_server.exe\000"
    VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>\000"
    VALUE "License", OV_VER_LICENSE "\000"
