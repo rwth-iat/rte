@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.14 2002-02-01 14:43:59 ansgar Exp $
+*   $Id: ov_library.c,v 1.15 2002-02-01 15:16:58 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -352,15 +352,15 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	*/
 	if (!plibdef->ov_version) return OV_ERR_LIBDEFMISMATCH;
 	if (strcmp(plibdef->ov_version, OV_VER_LIBOV)) {
-		strcpy(ovversion1, plibdef->ov_version);
-		strcpy(ovversion2, OV_VER_LIBOV);
-		pc1 = (char*) (strlen(ovversion1)-1);
-		pc2 = (char*) (strlen(ovversion2)-1);
-		while (pc1>0) {
+		strncpy(ovversion1, plibdef->ov_version, 15);
+		strncpy(ovversion2, OV_VER_LIBOV, 15);
+		pc1 = (char*) ovversion1 + strlen(ovversion1)-1;
+		pc2 = (char*) ovversion2 + strlen(ovversion2)-1;
+		while (pc1>ovversion1) {
 			if (*pc1 == '.') *pc1=0;
 			pc1--;
 		}
-		while (pc2>0) {
+		while (pc2>ovversion2) {
 			if (*pc2 == '.') *pc2=0;
 			pc2--;
 		}
