@@ -26,9 +26,10 @@ CXX_SOURCES = \
 	rtti.cpp trtti.cpp \
 	list.cpp tlist.cpp \
 	priorityqueue.cpp ipriorityqueue.cpp tpriorityqueue.cpp \
-	string.cpp tstring.cpp
+	string.cpp tstring.cpp \
+	ttime.cpp
 
-all : trtti tlist tpriorityqueue tstring
+all : trtti tlist tpriorityqueue tstring ttime
 
 tlist : tlist.o list.o
 	$(CXX_LINK) -o $@ $^
@@ -45,6 +46,8 @@ tstring : string.o tstring.o
 trtti.i : trtti.cpp ../../include/plt/rtti.hpp
 	$(CXX_COMPILE) -E -o $@ $<
 
+ttime :	ttime.o
+	$(CXX_LINK) -o $@ $<
 
 depend : $(CXX_SOURCES)
 	$(CXX_COMPILE) -M $^ > $@
