@@ -31,8 +31,9 @@ CXX_LIBPLT_SOURCES = \
 	list.cpp \
 	priorityqueue.cpp \
 	string.cpp \
-	rbtreedict.cpp \
-	hashtable.cpp
+	hashtable.cpp \
+	key.cpp
+#	rbtreedict.cpp \
 
 CXX_LIBPLT_OBJECTS = \
 	debug.o \
@@ -40,8 +41,9 @@ CXX_LIBPLT_OBJECTS = \
 	list.o \
 	priorityqueue.o \
 	string.o \
-	rbtreedict.o \
-	hashtable.o
+	hashtable.o \
+	key.o
+#	rbtreedict.o \
 
 CXX_TEST_SOURCES = \
 	thandle.cpp\
@@ -51,10 +53,10 @@ CXX_TEST_SOURCES = \
 	ipriorityqueue.cpp tpriorityqueue.cpp \
 	tstring.cpp \
 	ttime.cpp \
-	trbtreedict.cpp \
 	thashtable.cpp \
 	thtname.cpp \
 	tarray.cpp
+#	trbtreedict.cpp
 
 CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 
@@ -105,7 +107,7 @@ tarray :	tarray.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
 clean :
-	rm -f *.o
+	rm -f *.o core
 
 mrproper :	clean
 	rm -f libplt.a .depend $(TESTS)

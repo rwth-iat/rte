@@ -1,16 +1,50 @@
 /* -*-plt-c++-*- */
-/* 
- *  Copyright (c) 1996,1997 PLT, RWTH-Aachen, Germany. See file copy_plt.txt!
- *  Author: Martin Kneissl <martin@plt.rwth-aachen.de>
- *
- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
+/*
+ * Copyright (c) 1996, 1997
+ * Chair of Process Control Engineering,
+ * Aachen University of Technology.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must print or display the above
+ *    copyright notice either during startup or must have a means for
+ *    the user to view the copyright notice.
+ * 3. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 4. Neither the name of the Chair of Process Control Engineering nor the
+ *    name of the Aachen University of Technology may be used to endorse or
+ *    promote products derived from this software without specific prior
+ *    written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE CHAIR OF PROCESS CONTROL
+ * ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
+
+//////////////////////////////////////////////////////////////////////
+// plt/handle.h provides memory managing pointer replacements
+//////////////////////////////////////////////////////////////////////
 
 #include <limits.h>
 #include <stdlib.h>
 
-#include <plt/debug.h>
+#include "plt/debug.h"
 
 //////////////////////////////////////////////////////////////////////
 // Plt...Handle<T>
@@ -42,7 +76,7 @@
 // Create an unbound handle:
 //   PltPtrHandle<int> hi;
 //
-// Try to bind the object and the handle spec. how the object has been
+// Try to bind the object and the handle specifying how the object has been
 // created:
 //   bool success = hi.bindTo(pi, PltOsNew);
 // (bindTo may fail due to lack of free space).
@@ -57,6 +91,38 @@
 //
 // The object will be deleted when all handles to it are deleted or
 // go out of scope. 
+//
+//
+// You can construct a bound handle for an object that you are creating.
+// This contructor must be used with care, semantics follow:
+//
+//    Plt...Handle(T *p, PltOwnership os);
+// 
+// p should point to an object you own. os specifies how the object has
+// been created. 
+// If there is enough memory for binding the handle,
+// the constructed handle is bound to the object p points to.
+// If there is not enough memory to bind, the object pointed to by
+// p WILL BE DESTROYED IMMEDIATELY by this constructor and an unbound
+// handle is constructed.
+//
+// Why is this dangerous operation implemented? Often you need a handle
+// for an object you are creating. If you can't get the handle you don't
+// need the object. So you would delete the object anyway. In this case
+// you should use this constructor which will do all the work for you.
+// Example:
+//   PltHandle<int> hi(new int(3), PltOsNew);
+//   if (hi) {
+//       ... // use it
+//   } else {
+//       // failed to bind the handle, int(3) is already deleted
+//   }
+//
+// Remarks:
+// --------
+//
+// [1] Be careful with the pointer to the representation that you
+//     get. Object lifetime is controled by the Plt...Handle object!
 //
 //
 //////////////////////////////////////////////////////////////////////
@@ -85,15 +151,15 @@ class PltPtrHandle
 {
 public:
     PltPtrHandle();
-    PltPtrHandle(T *p, enum PltOwnership); // no default to avoid conversion!
+    PltPtrHandle(T *p, enum PltOwnership);  // no default to avoid conversion!
     PltPtrHandle(const PltPtrHandle &);
     
     // accessors
     operator bool () const;
     T& operator*() const;
     T* operator->() const;
-    T* getPtr() const; 
-    // ^^ CAUTION: DON'T STORE ANY REFERENCES TO THE REPRESENTATION
+    T* getPtr() const;                                         // [1]
+  
     
     // modifiers
     PltPtrHandle & operator=(PltPtrHandle &rhs);
@@ -115,8 +181,7 @@ public:
 
     operator bool () const;
     T& operator[](size_t) const;
-    T* getPtr() const; 
-    // ^^ CAUTION: DON'T STORE ANY REFERENCES TO THE REPRESENTATION
+    T* getPtr() const;                                          // [1]
 
     PltArrayHandle & operator=(PltArrayHandle &rhs);
     bool bindTo(T *, enum PltOwnership = PltOsArrayNew);
@@ -128,10 +193,14 @@ public:
 
 
 template<class T>
-class PltHandle : virtual public PltDebuggable {
+class PltHandle
+{
 protected:
     PltHandle(); 
     PltHandle(const PltHandle &);
+#ifdef PLT_DEBUG_INVARIANTS
+    virtual
+#endif
     ~PltHandle();
 
     // accessor
@@ -158,7 +227,7 @@ protected:
         } *palloc;
 
 #if PLT_DEBUG_INVARIANTS
-protected:
+public:
     virtual bool invariant() const;
 #endif
 };
@@ -452,7 +521,7 @@ inline
 PltArrayHandle<T>::PltArrayHandle(T *p, enum PltOwnership os) 
 {
     PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
-                     || os==PltOsNew || os==PltOsArrayNew);
+                     || os==PltOsArrayNew);
     if (! bindTo(p, os)) {
         destroy(p, os);
     }
@@ -501,10 +570,7 @@ inline bool
 PltArrayHandle<T>::bindTo(T * p, enum PltOwnership t)
 {
     PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
-                     || t==PltOsNew || t==PltOsArrayNew );
-    if (t == PltOsNew) {
-        t = PltOsArrayNew;
-    }
+                     || t==PltOsArrayNew );
     return PltHandle<T>::bindTo(p,t); // forward to parent
 }
 
@@ -520,4 +586,4 @@ PltArrayHandle<T>::operator[](size_t i) const
 
 //////////////////////////////////////////////////////////////////////
 
-#endif // EOF handle.h
+#endif // PLT_HANDLE_INCLUDED

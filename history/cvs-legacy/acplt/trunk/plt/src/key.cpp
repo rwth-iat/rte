@@ -1,5 +1,4 @@
 /* -*-plt-c++-*- */
-// File: plt/rtti.cpp
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -36,36 +35,13 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
-
-#include "plt/rtti.h"
-
-#if PLT_SIMULATE_RTTI
-
-
-PltRTTI::PltRTTI(const char *name, const PltRTTI* bases[])
-: n(name), b(bases)
-{
-    PLT_ASSERT(n);
-}
+#include "plt/key.h"
 
 //////////////////////////////////////////////////////////////////////
 
-bool
-PltRTTI::isBaseOf(const PltRTTI *pd) const
-{
-    if (pd->b) {
-        for (const PltRTTI **p = pd->b; *p; p++) {
-            if ( isSame(*p) || isBaseOf(*p) ) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-#endif
+PLT_IMPL_RTTI0(PltKey);
 
 //////////////////////////////////////////////////////////////////////
-// EOF plt/rtti.cpp
+// EOF plt/key.cpp
 //////////////////////////////////////////////////////////////////////
+

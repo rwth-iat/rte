@@ -1,5 +1,6 @@
 /* -*-plt-c++-*- */
-// File: plt/rtti.cpp
+#ifndef PLT_ASSOC_INCLUDED
+#define PLT_ASSOC_INCLUDED
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -34,38 +35,99 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
+
 
 //////////////////////////////////////////////////////////////////////
+// plt/assoc.h provides the PltAssoc structure
+//////////////////////////////////////////////////////////////////////
 
-#include "plt/rtti.h"
+#include "plt/key.h"
 
-#if PLT_SIMULATE_RTTI
+//////////////////////////////////////////////////////////////////////
+// forward declaration
+class PltAssoc_;
 
+//////////////////////////////////////////////////////////////////////
+// struct PltAssoc<K,V>
+//////////////////////////////////////////////////////////////////////
+//
+// A PltAssoc<K,V> associates keys of class K with values of 
+// class V. 
+//
+// K must be kind of PltKey
+//
+// Base classes:
+// =============
+// PltAssoc_
+//
+//////////////////////////////////////////////////////////////////////
 
-PltRTTI::PltRTTI(const char *name, const PltRTTI* bases[])
-: n(name), b(bases)
+template <class K, class V>
+struct PltAssoc 
+: public PltAssoc_
 {
-    PLT_ASSERT(n);
+public:
+    // public attributes
+    K a_key;
+    V a_value;
+
+    // ctors/dtors
+    PltAssoc(K k, V v);
+
+    // accessors
+    virtual const PltKey & key() const;
+
+    // modifiers
+};
+
+//////////////////////////////////////////////////////////////////////
+// INLINE IMPLEMENTATION
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// abstract class PltAssoc_
+//////////////////////////////////////////////////////////////////////
+// 
+// Abstract base class for associations
+//
+// Operations:
+// ===========
+//
+// Accessors:
+// ----------
+//
+// key() returns a const reference to the key
+//
+// Modifiers:
+// ----------
+//
+//
+//
+//////////////////////////////////////////////////////////////////////
+
+class PltAssoc_
+{
+public:
+    virtual const PltKey & key() const = 0;
+};
+
+template <class K, class V>
+inline
+PltAssoc<K,V>::PltAssoc(K k, V v)
+: a_key(k), a_value(v)
+{
 }
 
 //////////////////////////////////////////////////////////////////////
 
-bool
-PltRTTI::isBaseOf(const PltRTTI *pd) const
+template <class K, class V>
+inline
+const PltKey &
+PltAssoc<K,V>::key() const
 {
-    if (pd->b) {
-        for (const PltRTTI **p = pd->b; *p; p++) {
-            if ( isSame(*p) || isBaseOf(*p) ) {
-                return true;
-            }
-        }
-    }
-    return false;
+    return a_key;
 }
 
-#endif
+//////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-// EOF plt/rtti.cpp
-//////////////////////////////////////////////////////////////////////
+#endif // PLT_ASSOC_INCLUDED
