@@ -146,8 +146,11 @@ KscPath::getName() const
 {
     PLT_PRECONDITION(isValid());
 
-    return slash_count ? 
-        KsString(substr(last_comp)) : KsString(); 
+    if(slash_count) { 
+        return KsString(substr(last_comp));
+    } else {
+	return KsString();
+    } 
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -158,8 +161,11 @@ KscPath::getPathOnly() const
 {
     PLT_PRECONDITION(isValid());
 
-    return slash_count > 1 ? 
-        KsString(substr(0, last_comp - 1)) : KsString("/"); 
+    if(slash_count > 1) { 
+        return KsString(substr(0, last_comp - 1));
+    } else { 
+	return KsString("/");
+    } 
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -130,6 +130,7 @@ KsArray<T>::KsArray(XDR * xdr, bool & ok)
 //////////////////////////////////////////////////////////////////////
 
 #if PLT_SEE_ALL_TEMPLATES
+
 #include "ks/array_impl.h"
 
 #if PLT_COMPILER_BORLAND

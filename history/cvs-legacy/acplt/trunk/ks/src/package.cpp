@@ -596,6 +596,7 @@ KscExchangePackage::doExchange(bool force)
 
     // both packages exist, now sort variables
     //
+    bool ok = false;
     PltIterator<KscVariableHandle> *get_it =
         get_pkg->newVariableIterator(true);
     PltIterator<KscVariableHandle> *set_it =
@@ -606,16 +607,14 @@ KscExchangePackage::doExchange(bool force)
         KscSorter set_sorter(*set_it, !force);
 
         if(get_sorter.isValid() && set_sorter.isValid()) {
-            return mergeSorters(get_sorter, set_sorter);
+            ok = mergeSorters(get_sorter, set_sorter);
         }
-    } else {
-        if(get_it) delete get_it;
-        if(set_it) delete set_it;
-
-        return false;
     }
 
-    return false; // keep compiler happy
+    if(get_it) delete get_it;
+    if(set_it) delete set_it;
+
+    return ok;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -763,6 +762,8 @@ _KscPackageBase::copyGetVarResults(
 
 //////////////////////////////////////////////////////////////////////
 
+#if 1
+
 bool 
 _KscPackageBase::fillSetVarParams(
     const PltArray<KscVariableHandle> &sorted_vars,
@@ -781,6 +782,41 @@ _KscPackageBase::fillSetVarParams(
 
     return true;
 }
+
+#endif
+
+#if 0
+
+bool 
+_KscPackageBase::fillSetVarParams(
+    const PltArray<KscVariableHandle> &sorted_vars,
+    KsArray<KsSetVarItem> &items)
+{
+    PLT_PRECONDITION(sorted_vars.size() == items.size());
+
+    size_t to_copy = sorted_vars.size();
+    items[0].path_and_name = sorted_vars[0]->getPathAndName();
+    items[0].curr_props = sorted_vars[0]->getCurrPropsHandle();
+
+    PLT_DMSG("Optimizing paths :" << endl);
+    PLT_DMSG("absolute\t\trelative" << endl);
+    PLT_DMSG(items[0].path_and_name << endl); 
+
+    for(size_t count = 1; count < to_copy; count++) { 
+        items[count].path_and_name = 
+            sorted_vars[count]->getPathAndName().relTo(
+                sorted_vars[count-1]->getPathAndName());
+        items[count].curr_props =
+            sorted_vars[count]->getCurrPropsHandle();
+        PLT_DMSG(sorted_vars[count]->getPathAndName() << "\t" \
+                 << items[count].path_and_name << endl);
+                 
+    }
+
+    return true;
+}
+
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

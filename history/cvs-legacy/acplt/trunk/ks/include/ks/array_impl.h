@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_IMPL_INCLUDED
 #define KS_ARRAY_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.5 1997-04-10 14:17:36 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.6 1997-06-20 14:55:54 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -72,9 +72,9 @@ KsArray<T>::xdrDecode(XDR *xdr)
     // now deserialize elements
     //
     for (size_t i=0; i < a_size; ++i) {
-        if (! a_array[i].xdrDecode(xdr) ) return false; // failed
+        if (! (a_array[i]).xdrDecode(xdr) ) return false; // failed
     }
-    
+
     // success
     //
     return true;
@@ -95,14 +95,14 @@ KsArray<T>::xdrEncode(XDR *xdrs) const
     // serialize elements
     //
     for (size_t i = 0; i < a_size; ++i) {
-        if (! a_array[i].xdrEncode(xdrs)) return false; // fail
+        if (! (a_array[i]).xdrEncode(xdrs)) return false; // fail
     }
 
     // success
     //
     return true;
 }
-            
+
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
@@ -110,14 +110,14 @@ KsArray<T> *
 KsArray<T>::xdrNew(XDR *xdrs)
 {
     PLT_PRECONDITION(xdrs->x_op == XDR_DECODE);
-    bool ok;                                         
-    KsArray<T> * p = new KsArray<T>(xdrs, ok);     
-    if ( !ok && p) {                             
-        delete p;                                
-        p = 0;                                   
-    }                                            
-    return p;                                    
-}                                                
+    bool ok;
+    KsArray<T> * p = new KsArray<T>(xdrs, ok);
+    if ( !ok && p) {
+        delete p;
+        p = 0;
+    }
+    return p;
+}
 
 //////////////////////////////////////////////////////////////////////
 #endif // KS_ARRAY_IMPL_INCLUDED

@@ -268,8 +268,8 @@ KscExchangePackage::KscExchangePackage()
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscExchangePackage::KscExchangePackage(KscPackageHandle getPkg,
-                                       KscPackageHandle setPkg)
+KscExchangePackage::KscExchangePackage(KscPackageHandle setPkg,
+                                       KscPackageHandle getPkg)
 : get_pkg(getPkg),
   set_pkg(setPkg),
   av_module(0)
@@ -284,8 +284,8 @@ KscExchangePackage::~KscExchangePackage()
 //////////////////////////////////////////////////////////////////////
 
 inline void 
-KscExchangePackage::setPackages(KscPackageHandle getPkg,
-                                KscPackageHandle setPkg)
+KscExchangePackage::setPackages(KscPackageHandle setPkg,
+                                KscPackageHandle getPkg)
 {
     get_pkg = getPkg;
     set_pkg = setPkg;
@@ -294,8 +294,8 @@ KscExchangePackage::setPackages(KscPackageHandle getPkg,
 //////////////////////////////////////////////////////////////////////
 
 inline void
-KscExchangePackage::getPackages(KscPackageHandle &getPkg,
-                                KscPackageHandle &setPkg)
+KscExchangePackage::getPackages(KscPackageHandle &setPkg,
+                                KscPackageHandle &getPkg)
 {
     getPkg = get_pkg;
     setPkg = set_pkg;
