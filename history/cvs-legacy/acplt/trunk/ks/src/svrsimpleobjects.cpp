@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.2 1997-03-24 18:40:24 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.3 1997-03-25 21:18:40 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -111,14 +111,10 @@ KssSimpleDomain::removeChild(const KsString &id)
 //////////////////////////////////////////////////////////////////////
 // delegates to hashtable iterator or sister iterator
 
-KssSimpleDomainIterator::KssSimpleDomainIterator(const KssSimpleDomain & d,
-                                                 const KsString & name_mask,
-                                                 const KS_OBJ_TYPE type_mask)
-: _name_mask(name_mask),
-  _type_mask(type_mask),
-  _children_iter(d._children),
-  _p_sister_iter(d._next_sister ?
-                 d._next_sister->newIterator(name_mask, type_mask)
+KssSimpleDomainIterator::KssSimpleDomainIterator(const KssSimpleDomain & d)
+: _children_iter(d._children),
+  _p_sister_iter(d._next_sister
+                 ? d._next_sister->newIterator()
                  : 0 ),
   _at_sister(false)
 {
@@ -164,17 +160,10 @@ KssSimpleDomainIterator::operator ++ ()
     if (_p_sister_iter && _at_sister) {
         ++(*_p_sister_iter);
     } else {
-        KssCommObject * p;
-        do {
-            ++ _children_iter;
-            if (! _children_iter) {
-                _at_sister = true;
-                break; //>>>>
-            }
-            p = _children_iter->a_value.getPtr();
-          } while (! (   (p->typeCode() & _type_mask) 
-                      && (p->getIdentifier() == _name_mask)));
-        // TODO: pattern matching    ^^^^^^^^^^^^^
+        ++ _children_iter;
+        if (! _children_iter) {
+            _at_sister = true;
+        }
     }
     return *this;
 }

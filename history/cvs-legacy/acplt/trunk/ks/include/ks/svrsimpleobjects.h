@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.2 1997-03-24 18:40:19 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.3 1997-03-25 21:18:37 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -92,9 +92,7 @@ class KssSimpleDomainIterator
 : public KssDomainIterator
 {
 public:
-    KssSimpleDomainIterator(const KssSimpleDomain & d,
-                            const KsString & name_mask,
-                            const KS_OBJ_TYPE type_mask);
+    KssSimpleDomainIterator(const KssSimpleDomain & d);
     virtual ~KssSimpleDomainIterator();
 
     virtual operator const void * () const;
@@ -102,8 +100,6 @@ public:
     virtual KssSimpleDomainIterator& operator ++ ();
     virtual void toStart();
 private:
-    KsString _name_mask;
-    KS_OBJ_TYPE _type_mask;
     PltHashIterator<KsString,KssCommObjectHandle> _children_iter;
     KssDomainIterator * _p_sister_iter;
     bool _at_sister;
@@ -128,9 +124,7 @@ public:
 
     //// KssDomain ////
     //// accessors
-    virtual KssSimpleDomainIterator * 
-        newIterator(const KsString & name_mask,
-                    KS_OBJ_TYPE type_mask) const;
+    virtual KssSimpleDomainIterator * newIterator() const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
 
@@ -286,12 +280,9 @@ inline KsString KssSimpleDomain::getComment() const
 
 
 inline KssSimpleDomainIterator * 
-KssSimpleDomain::newIterator(const KsString & name_mask,
-                             KS_OBJ_TYPE type_mask) const 
+KssSimpleDomain::newIterator() const 
 {
-    return new KssSimpleDomainIterator(*this, 
-                                       name_mask, 
-                                       type_mask);
+    return new KssSimpleDomainIterator(*this);
 }
 
 //////////////////////////////////////////////////////////////////////

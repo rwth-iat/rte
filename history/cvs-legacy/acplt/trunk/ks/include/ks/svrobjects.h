@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.2 1997-03-24 18:40:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.3 1997-03-25 21:18:36 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,6 +45,8 @@
 #include "ks/time.h"
 #include "ks/value.h"
 #include "ks/path.h"
+#include "ks/mask.h"
+#include "ks/props.h"
 
 //////////////////////////////////////////////////////////////////////
 // class KssCommObject
@@ -62,6 +64,7 @@ public:
     virtual KsString getIdentifier() const = 0;
     virtual KsTime   getCreationTime() const = 0;
     virtual KsString getComment() const = 0;
+    virtual KsProjPropsHandle getPP() const = 0;
 
     PLT_DECL_RTTI;
 };
@@ -90,12 +93,14 @@ public:
     virtual KsString getIdentifier() const = 0;
     virtual KsTime   getCreationTime() const = 0;
     virtual KsString getComment() const = 0;
+    virtual KsProjPropsHandle getPP() const;
 
     //// KssDomain
     //   accessors
-    virtual KssDomainIterator * newIterator(const KsString & name_mask,
-                                            KS_OBJ_TYPE type_mask) 
-        const = 0;
+    virtual KssDomainIterator * newIterator() const = 0;
+    virtual KssDomainIterator * newMaskedIterator(const KsMask & name_mask,
+                                                  KS_OBJ_TYPE type_mask) 
+        const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
     // ^ defaults to linear search on iterator, 
@@ -106,6 +111,30 @@ public:
     PLT_DECL_RTTI;
 };
 typedef PltPtrHandle<KssDomain> KssDomainHandle;
+
+
+//////////////////////////////////////////////////////////////////////
+// class KssMaskedIterator
+//////////////////////////////////////////////////////////////////////
+
+class KssMaskedDomainIterator
+: public KssDomainIterator
+{
+public:
+    KssMaskedDomainIterator(KssDomainIterator & it,
+                            const KsMask & name_mask,
+                            const KS_OBJ_TYPE type_mask);
+    virtual operator const void * () const;
+    virtual const KssCommObjectHandle & operator * () const;
+    virtual KssMaskedDomainIterator& operator ++ ();
+    virtual void toStart();
+private:
+    void skipWhileNotMatching();
+    KsMask _name_mask;
+    KS_OBJ_TYPE _type_mask;
+    KssDomainIterator & _it;
+};
+
 //////////////////////////////////////////////////////////////////////
 // class KssVariable
 //////////////////////////////////////////////////////////////////////
@@ -122,6 +151,7 @@ public:
     virtual KsString getIdentifier() const = 0;
     virtual KsTime   getCreationTime() const = 0;
     virtual KsString getComment() const = 0;
+    virtual KsProjPropsHandle getPP() const;
 
     //// KssVariable ////
     //// accessors

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.2 1997-03-24 18:40:24 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.3 1997-03-25 21:18:39 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -60,10 +60,8 @@ KssDomain::getChildById(const KsString &id) const
     // you should implement your own version of this method.
     //
     KssCommObjectHandle res;
-    KsString name_mask("*");
-    KS_OBJ_TYPE type_mask = KS_OT_ANY;
 
-    KssDomainIterator * pit = newIterator(name_mask, type_mask);
+    KssDomainIterator * pit = newIterator();
     if (pit) {
         for (KssDomainIterator &it(*pit); it; ++it) {
             if ((*it)->getIdentifier() == id) {
@@ -72,6 +70,35 @@ KssDomain::getChildById(const KsString &id) const
         }
     }
     return res;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+KsProjPropsHandle
+KssDomain::getPP() const
+{
+    KsDomainProjProps * p = new KsDomainProjProps;
+    KsProjPropsHandle h(p, KsOsNew);
+    if (p && h) {
+        p->identifier    = getIdentifier();
+        p->creation_time = getCreationTime();
+        p->comment       = getComment();
+    }
+    return h;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KssDomainIterator *
+KssDomain::newMaskedIterator(const KsMask & name_mask,
+                             KS_OBJ_TYPE type_mask) const
+{
+    KssDomainIterator *p = newIterator();
+    if (p) {
+        return new KssMaskedDomainIterator(*p, name_mask, type_mask);
+    } else {
+        return 0;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -108,8 +135,96 @@ KssDomain::getChildByPath(const KsPath & path) const
 }
 
 //////////////////////////////////////////////////////////////////////
+// KssMaskedDomainIterator
+//////////////////////////////////////////////////////////////////////
+
+KssMaskedDomainIterator::KssMaskedDomainIterator
+(KssDomainIterator & it,
+ const KsMask & name_mask,
+ const KS_OBJ_TYPE type_mask) 
+: _name_mask(name_mask),
+  _type_mask(type_mask),
+  _it(it)
+{
+    skipWhileNotMatching();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KssMaskedDomainIterator::operator const void * () const
+{
+    return _it.operator const void * ();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+const KssCommObjectHandle & 
+KssMaskedDomainIterator::operator * () const
+{
+    return _it.operator *();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KssMaskedDomainIterator & 
+KssMaskedDomainIterator::operator ++ ()
+{
+    ++_it;
+    skipWhileNotMatching();
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KssMaskedDomainIterator::skipWhileNotMatching()
+{
+    for ( ; _it; ++_it) {
+        if (*_it) {
+            // Handle is ok
+            const KssCommObject & obj = **_it;
+            if (   (obj.typeCode() & _type_mask)
+                && 1==_name_mask.matches(obj.getIdentifier())) {
+                // Match! Stop skipping
+                return;
+            } 
+        } else {
+            // Nullhandle. Mhmm. TODO: Is this a match? 
+            // For now, it is not.
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void 
+KssMaskedDomainIterator::toStart()
+{
+    _it.toStart();
+    skipWhileNotMatching();
+}
+
+//////////////////////////////////////////////////////////////////////
 // KssVariable
 //////////////////////////////////////////////////////////////////////
+
+KsProjPropsHandle
+KssVariable::getPP() const
+{
+    KsVarProjProps * p = new KsVarProjProps;
+
+    KsProjPropsHandle h(p, KsOsNew);
+    if (p && h) {
+        p->identifier    = getIdentifier();
+        p->creation_time = getCreationTime();
+        p->comment       = getComment();
+        p->tech_unit     = getTechUnit();
+        p->type          = getType();
+    }
+    return h;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 KS_VAR_TYPE
 KssVariable::getType() const 
