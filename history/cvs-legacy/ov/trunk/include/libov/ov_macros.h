@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.4 1999-07-29 08:57:49 dirk Exp $
+*   $Id: ov_macros.h,v 1.5 1999-08-02 10:57:11 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -261,6 +261,27 @@
 	ov_vector_setdynamicvalue((OV_GENERIC_VEC*)(pvector),					\
 		(const OV_POINTER)pvalue, veclen+0*((pvector)-(OV_##type##_VEC*)0),	\
 		veclen*sizeof(OV_##type), OV_VT_##type)
+
+/*
+*	Compare two vector variable values
+*/
+#define Ov_CompareVectorValues(pvalue1, pvalue2, veclen, type)				\
+	ov_vector_compare((const OV_POINTER)pvalue1, (const OV_POINTER)pvalue2,	\
+	veclen+0*((pvalue1)-(OV_##type*)0)+0*((pvalue2)-(OV_##type*)0), 		\
+	veclen*sizeof(OV_##type), OV_VT_##type)
+
+/*
+*	Convert a time (span) into a double variable
+*/
+#define Ov_TimeToDouble(time, dbl)											\
+	dbl = (OV_DOUBLE)(time).secs + (OV_DOUBLE)(time.usecs)/(OV_DOUBLE)1e6
+
+/*
+*	Convert a double into a time (span) variable
+*/
+#define Ov_DoubleToTime(dbl, time)											\
+	(time).secs = dbl;														\
+	(time).usecs = (dbl-(OV_DOUBLE)(time).secs)*(OV_DOUBLE)1e6
 
 /*
 *	Allocate memory in the database
