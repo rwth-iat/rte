@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.6 1997-09-08 09:16:30 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.7 1997-09-15 18:01:41 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -64,6 +64,7 @@ void DumpVarType(const int var_type)
 {
     switch ( var_type ) {
     case KS_VT_VOID:       cout << "void "; break;
+    case KS_VT_BOOL:       cout << "bool "; break;
     case KS_VT_INT:        cout << "int "; break;
     case KS_VT_UINT:       cout << "uint "; break;
     case KS_VT_SINGLE:     cout << "single "; break;
@@ -71,6 +72,7 @@ void DumpVarType(const int var_type)
     case KS_VT_STRING:     cout << "string "; break;
     case KS_VT_TIME:       cout << "time "; break;
     case KS_VT_BYTE_VEC:   cout << "byte vector "; break;
+    case KS_VT_BOOL_VEC:   cout << "bool vector "; break;
     case KS_VT_INT_VEC:    cout << "int vector "; break;
     case KS_VT_UINT_VEC:   cout << "uint vector "; break;
     case KS_VT_SINGLE_VEC: cout << "single vector "; break;
@@ -211,6 +213,10 @@ void DumpVar(KscVariable &var, int indent)
     case KS_VT_VOID:
         cout << "void" << endl;
         break;
+    case KS_VT_BOOL:
+        cout << "bool "
+             << ((bool) ((KsBoolValue &) *curr_props->value) ? "true" : "false")
+             << endl;
     case KS_VT_INT:
         cout << "integer " 
              << (long) ((KsIntValue &) *curr_props->value)
@@ -257,6 +263,19 @@ void DumpVar(KscVariable &var, int indent)
         for ( i = 0; i < size; ++i ) {
             cout <<  hex << setfill('0') << setw(2)
                  << (unsigned int) ((KsByteVecValue &) *curr_props->value)[i]
+                 << dec << ",";
+        }
+        cout << "...}" << endl;
+        break;
+    case KS_VT_BOOL_VEC:
+        size = ((KsByteVecValue &) *curr_props->value).size();
+        cout << "bool vector <" << size << "> {";
+        if ( size > 5 ) {
+            size = 5;
+        }
+        for ( i = 0; i < size; ++i ) {
+            cout <<  hex << setfill('0') << setw(2)
+                 << ((bool) ((KsBoolVecValue &) *curr_props->value)[i] ? "true" : "false")
                  << dec << ",";
         }
         cout << "...}" << endl;
@@ -354,8 +373,8 @@ void DumpBranch(KscDomain &branch, int indent)
 
     children = branch.newChildIterator(KS_OT_ANY);
     if ( !children ) {
-	cout << "Can't allocate child iterator" << endl;
-	return;
+        cout << "Can't allocate child iterator" << endl;
+        return;
     }
     //
     // Now iterate over all the children of the current level, we're in.
@@ -390,16 +409,16 @@ int main(int argc, char **argv)
     KsString host_and_server;
 
     if ( argc != 2 ) {
-	cerr << "usage: ttree <host>/<server>" << endl;
-	return 1;
+        cerr << "usage: ttree <host>/<server>" << endl;
+        return 1;
     }
 
     host_and_server = KsString("//") + argv[1];
     host_and_server += "/";
     KscDomain root(host_and_server);
     if ( !root.getProjPropsUpdate() ) {
-	cerr << "Can't open /" << argv[1] << endl;
-	return 42;
+        cerr << "Can't open /" << argv[1] << endl;
+        return 42;
     }
     
     DumpProjProps(root, 0);
