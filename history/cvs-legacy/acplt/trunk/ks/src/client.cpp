@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.42 2000-04-14 08:44:59 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.43 2001-01-29 12:36:34 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -81,7 +81,7 @@ _ksc_extractHostAndServer(KsString host_and_server,
     // the host name (DNS) and the server name where the communication
     // object is located at.
     //
-#if PLT_COMPILER_MSVC || PLT_COMPILER_DECXX
+#if PLT_COMPILER_MSVC || PLT_COMPILER_DECCXX
     if ( (host_and_server.len() < 5) ||
 	 (host_and_server.operator[](0) != '/') || 
          (host_and_server.operator[](1) != '/') ) {
