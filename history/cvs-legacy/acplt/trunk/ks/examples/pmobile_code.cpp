@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.12 1999-09-16 10:54:35 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.13 2001-01-29 12:32:59 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -374,7 +374,7 @@ int main(int argc, char **argv)
     return 0;
 
  usage:
-    cerr << argv[0] << " [-v erbosity ] [-c updates] [-s secs_between_updates] [-r random_perc [-m max_pkg_size]] [filename]"
+    cerr << argv[0] << " [-v verbosity] [-c updates] [-s secs_between_updates] [-r random_perc [-m max_pkg_size]] [filename]"
         << endl;
     return 1;
 
