@@ -20,8 +20,8 @@ EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
 CXX = cl
-CXX_FLAGS = -Zi -MTd
-#CXX_FLAGS = -DNDEBUG -w -v
+#CXX_FLAGS = -Zi -MTd
+CXX_FLAGS = -DNDEBUG -MT
 #CXX_FLAGS =
 
 ### LINKER
