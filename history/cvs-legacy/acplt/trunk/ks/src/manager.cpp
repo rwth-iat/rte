@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.27 1999-01-08 13:09:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.28 1999-01-15 15:00:13 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -58,9 +58,11 @@
 #endif
 
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
+// Arg... the usual legal stuff...
+//
 static char DISCLAIMER[] =
-"Copyright (c) 1996, 1997, 1998\n"
+"Copyright (c) 1996, 1997, 1998, 1999\n"
 "Chair of Process Control Engineering,\n"
 "Aachen University of Technology.\n"
 "All rights reserved.\n\n"
