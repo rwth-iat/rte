@@ -1,6 +1,7 @@
-# Platform specific part for hpux
+# Platform specific part for linux
 
-CXX_FLAGS = -g -Wall
+RANLIB = touch
+CXX_FLAGS = -g -Wall -pipe
 CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_LINUX=1
 PLATFORM = linux
 

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.4 1997-03-26 17:20:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.5 1997-04-02 14:52:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -43,6 +43,7 @@
 PLT_IMPL_RTTI0(KssSimpleCommObject);
 PLT_IMPL_RTTI2(KssSimpleDomain, KssDomain, KssSimpleCommObject);
 PLT_IMPL_RTTI2(KssSimpleVariable, KssVariable, KssSimpleCommObject);
+PLT_IMPL_RTTI2(KssTimeNowVariable, KssVariable, KssSimpleCommObject);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -260,6 +261,18 @@ KssSimpleVariable::setState(KS_STATE st)
     }
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+KsValueHandle
+KssTimeNowVariable::getValue() const
+{
+    static KsTimeValue tv;
+    KsTime now(KsTime::now());
+    tv.tv_sec  = now.tv_sec;
+    tv.tv_usec = now.tv_usec;
+    return KsValueHandle(&tv, KsOsUnmanaged);
+}
 
-/////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
 /* EOF svrsimpleobjects.cpp */

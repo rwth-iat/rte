@@ -75,6 +75,7 @@ class KsRegistrationParams
 : public KsXdrAble
 {
 public:
+    KsRegistrationParams();
     KsRegistrationParams( const KsServerDesc &, u_short, u_long );
     KsRegistrationParams( XDR *, bool &);
 
@@ -95,6 +96,7 @@ class KsUnregistrationParams
 : KsXdrAble
 {
 public:
+    KsUnregistrationParams();
     KsUnregistrationParams( const KsServerDesc &);
     KsUnregistrationParams( XDR *, bool &);
 

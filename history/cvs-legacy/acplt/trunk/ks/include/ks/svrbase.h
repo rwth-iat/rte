@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.7 1997-03-27 17:17:40 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.8 1997-04-02 14:52:15 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,7 +40,7 @@
 #include "ks/rpc.h"
 #include "ks/avticket.h"
 #include "ks/event.h"
-#include "ks/result.h"
+#include "ks/serviceparams.h"
 #include "plt/comparable.h"
 #include "plt/priorityqueue.h"
 
@@ -58,9 +58,10 @@ public:
     KsServerBase(const char *svr_name,
                  u_long prot_version = KS_PROTOCOL_VERSION);
     virtual ~KsServerBase(); // make sure the destructor is virtual...
-
-    void run();                // This is the main loop
-    void stopServer();         // end the main loop as soon as possible
+    
+    virtual void startServer();    // start answering requests
+    virtual void run();            // This is the main loop
+    virtual void stopServer();     // stop answering requests asap
     bool hasPendingEvents() const;   // check for events that want to be served
  
     // serve pending events
@@ -72,10 +73,21 @@ public:
     KsTimerEvent *getNextTimerEvent();
     
     static KsServerBase & getServerObject();
+
+    // service functions
+    virtual void getVar(KsAvTicket &ticket,
+                        KsGetVarParams &params,
+                        KsGetVarResult &result) = 0;
+
+    virtual void getPP(KsAvTicket &ticket, 
+                       const KsGetPPParams & params,
+                       KsGetPPResult & result) = 0;
+
+    virtual void setVar(KsAvTicket &ticket,
+                        KsSetVarParams &params,
+                        KsSetVarResult &result);
+
 protected:
-    // The next one is the central dispatch routine, which you should
-    // overwrite in derived classes (you may decide not to do this, but
-    // then you get no funcionality, but then -- why would you?)
     virtual void dispatch(u_long serviceId, 
                           SVCXPRT *transport,
                           XDR *incomingXdr,
@@ -102,13 +114,13 @@ protected:
     u_long protocol_version;
     PltPriorityQueue< PltPtrComparable<KsTimerEvent> > timer_queue;
     SVCXPRT *_tcp_transport; // RPC transport used to receive requests
+    bool shutdown_flag; // signal to the run() loop to quit
 private:
     friend void ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 
     KsServerBase(const KsServerBase &); // forbidden
     KsServerBase & operator = (const KsServerBase &); // forbidden
 
-    bool shutdown_flag; // signal to the run() loop to quit
     int send_buffer_size;
     int receive_buffer_size;
 

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.7 1997-03-27 17:17:46 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.8 1997-04-02 14:52:24 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -128,6 +128,13 @@ KsServerBase::~KsServerBase()
 {
     destroyTransports();
     destroyLurkingTransports();
+
+    // Remove remaining timer events
+    while (!timer_queue.isEmpty()) {
+        KsTimerEvent *pevent = timer_queue.removeFirst();
+        delete pevent;
+    }
+
     PLT_ASSERT(the_server == this);
     the_server = 0;
 } 
@@ -175,7 +182,7 @@ KsServerBase::createTransports()
                        0) ) {  // Do not contact the portmapper!
         svc_destroy(_tcp_transport);
         _tcp_transport = 0;
-        PltLog::Error("KsServerBase: could not register");
+        PltLog::Error("KsServerBase: could not register service");
         return false;
     }
     return true;
@@ -279,23 +286,87 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// Here we can find the real dispatcher. It must be overwritten in subclasses
-// of the abstract server base class in order to hook in the (abstract)
-// service handling.
-//
-void KsServerBase::dispatch(u_long, 
-                            SVCXPRT *transport,
-                            XDR *,
-                            KsAvTicket &ticket)
+
+//////////////////////////////////////////////////////////////////////
+// Here we can find the real dispatcher. It may be extended in 
+// derived classes (e.g. KsManager)
+//////////////////////////////////////////////////////////////////////
+
+void
+KsServerBase::dispatch(u_long serviceId, 
+                         SVCXPRT *xprt,
+                         XDR *xdrIn,
+                         KsAvTicket &ticket)
 {
-    //
-    // This is a fall back for the case when we step onto a serviceId
-    // we've never heard of before. We then simply send back a "not
-    // implemented" error reply.
-    //
-    sendErrorReply(transport, ticket, KS_ERR_NOTIMPLEMENTED);
+    bool decodedOk = true;
+    switch(serviceId) {
+        
+    case KS_GETVAR:
+        {
+            KsGetVarParams params(xdrIn, decodedOk);
+            if (decodedOk) {
+                // execute service function
+                KsGetVarResult result(params.identifiers.size());
+                getVar(ticket, params, result);
+                // send back result
+                sendReply(xprt, ticket, result);
+            } else {
+                // not properly decoded
+                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+            }
+        }
+        break;
+
+    case KS_SETVAR:
+        {
+            KsSetVarParams params(xdrIn, decodedOk);
+            if (decodedOk) {
+                // execute service function
+                KsSetVarResult result(params.items.size());
+                setVar(ticket, params, result);
+                // send back result
+                sendReply(xprt, ticket, result);
+            } else {
+                // not properly decoded
+                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+            }
+        }
+        break;
+
+    case KS_GETPP:
+        {
+            KsGetPPParams params(xdrIn, decodedOk);
+            if (decodedOk) {
+                // execute service function
+                KsGetPPResult result;
+                getPP(ticket, params, result);
+                // send back result
+                sendReply(xprt, ticket, result);
+            } else {
+                // not properly decoded
+                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+            }
+        }
+        break;
+
+    default:
+        // 
+        // This is an unknown service.
+        //
+        sendErrorReply(xprt, ticket, KS_ERR_NOTIMPLEMENTED);
+    }
 }
+
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsServerBase::setVar(KsAvTicket &,
+                  KsSetVarParams &,
+                  KsSetVarResult & result) 
+{
+    result.result = KS_ERR_NOTIMPLEMENTED;
+}
+
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -404,22 +475,6 @@ void KsServerBase::sendErrorReply(SVCXPRT *transport, KsAvTicket &ticket,
 // Event handling section.
 // Here we deal with timer events and impatient KS clients requesting
 // services from us...
-//
-////////////////////////////////////////////////////////////////////////////
-// Try to stop the event loop as soon as possible. Due to the nature of
-// ONC/RPC this can take some time as all incomming transports with waiting
-// RPC requests are each served exactly once until we get back to the
-// server main loop "run()".
-//
-void KsServerBase::stopServer()
-{
-    shutdown_flag = true;
-}
-
-//
-// This is the main loop of a KS server. It waits for incomming RPC requests
-// or timer events and dispatches them until the shutdown_flag indicates
-// that we should do an easy escape.
 //
 
 
@@ -551,7 +606,29 @@ KsServerBase::servePendingEvents(KsTime * pTimeout) {
 
 
 //////////////////////////////////////////////////////////////////////
+// Start the Server. This method will be extended by derived classes.
+// 
+void
+KsServerBase::startServer()
+{
+}
 
+//////////////////////////////////////////////////////////////////////
+// Try to stop the event loop as soon as possible. Due to the nature of
+// ONC/RPC this can take some time as all incomming transports with waiting
+// RPC requests are each served exactly once until we get back to the
+// server main loop "run()".
+//
+void KsServerBase::stopServer()
+{
+    shutdown_flag = true;
+}
+
+//
+// This is the main loop of a KS server. It waits for incomming RPC requests
+// or timer events and dispatches them until the shutdown_flag indicates
+// that we should do an easy escape.
+//
 void
 KsServerBase::run()
 {    
@@ -568,8 +645,9 @@ KsServerBase::run()
 //
 bool KsServerBase::addTimerEvent(KsTimerEvent *event)
 {
+    PLT_PRECONDITION(event);
     return timer_queue.add(event);
-} // KsServerBase::addTimerEvent
+}
 
 //
 // Remove a timer event object -- at least if its in the timer event

@@ -1,8 +1,10 @@
-# Platform specific part for hpux
+# Platform specific part for solaris
 
+RANLIB = ranlib
 CXX_FLAGS = -g -Wall
 CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_SOLARIS=1
-PLATFORM = linux
+CXX_PLATFORM_LIBS = -lrpcsvc -lsocket
+PLATFORM = solaris
 
 include ../unix.mk
 

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-#ifndef KS_SIMPLESERVER_INCLUDED
-#define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.3 1997-04-02 14:52:14 martin Exp $ */
+#ifndef KS_SERVER_INCLUDED
+#define KS_SERVER_INCLUDED
+/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.1 1997-04-02 14:52:13 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -36,52 +36,55 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-
-//////////////////////////////////////////////////////////////////////
 
 #include "ks/svrbase.h"
-#include "ks/serviceparams.h"
-#include "ks/path.h"
-#include "ks/svrsimpleobjects.h"
+
 
 //////////////////////////////////////////////////////////////////////
-// forward declarations
+
+class KsReregisterServerEvent;
+
 //////////////////////////////////////////////////////////////////////
 
-class KsSimpleServer
+class KsServer
 : virtual public KsServerBase
 {
+    friend KsReregisterServerEvent;
 public:
-    KsSimpleServer(const char * server_name);
-
-    // service functions
-    virtual void getVar(KsAvTicket &ticket,
-                        KsGetVarParams &params,
-                        KsGetVarResult &result);
-    virtual void setVar(KsAvTicket &ticket,
-                        KsSetVarParams &params,
-                        KsSetVarResult &result);
-    virtual void getPP(KsAvTicket &ticket, 
-                       const KsGetPPParams & params,
-                       KsGetPPResult & result);
+    KsServer(const char * svr_name, 
+             u_long prot_version,
+             u_long ttl);
+    virtual ~KsServer();
+    virtual void startServer();    // start answering requests
+    virtual void stopServer();     // stop answering requests asap
 
 protected:
-    virtual bool initVendorTree(const PltString &s_description,
-                                const PltString &v_name);
-    KssSimpleDomain _root_domain;
-
+    static CLIENT *createLocalClient();
+    bool register_server();
+    bool unregister_server();
 private:
-    void getVarItem(KsAvTicket &ticket,
-                    const KsPath & path,
-                    KsGetVarItemResult &result);
-    void setVarItem(KsAvTicket &ticket,
-                    const KsPath & path,
-                    const KsCurrPropsHandle & curr_props,
-                    KsResult &result);
-
+    u_long _ttl;
+    bool _registered;
 };
 
+//////////////////////////////////////////////////////////////////////
+
+class KsReregisterServerEvent
+: public KsTimerEvent
+{
+public:
+    KsReregisterServerEvent(KsServer & svr,
+                            const KsTime at)
+        : KsTimerEvent(at), _server(svr) { }
+
+    virtual void trigger();
+private:
+    static const u_long MIN_TTL;
+    KsServer & _server;
+};
 
 //////////////////////////////////////////////////////////////////////
-#endif // KS_SIMPLESERVER_INCLUDED
+    
+#endif // KS_SERVER_INCLUDED
+
+

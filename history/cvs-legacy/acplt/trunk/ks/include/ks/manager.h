@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.6 1997-03-27 17:17:38 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.7 1997-04-02 14:52:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -71,6 +71,9 @@ public:
     const PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> &
         getServerTable() const
             { return _server_table; }
+
+    virtual void startServer();
+    virtual void stopServer();
 
 protected:
     virtual void dispatch(u_long serviceId, 

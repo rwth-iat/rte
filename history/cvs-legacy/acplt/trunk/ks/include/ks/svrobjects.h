@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.4 1997-03-26 17:20:10 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.5 1997-04-02 14:52:15 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -165,6 +165,8 @@ public:
     virtual KsValueHandle getValue() const = 0;
     virtual KsTime        getTime() const;
     virtual KS_STATE      getState() const;
+
+    KsCurrPropsHandle getCurrProps() const;
     
     //// modifiers
     //   current properties
@@ -176,6 +178,9 @@ public:
     virtual KS_RESULT     setTime(const KsTime &) = 0;
 
     virtual KS_RESULT     setState(KS_STATE) = 0;
+
+    virtual KS_RESULT     setCurrProps(KsVarCurrProps &props);
+    virtual KS_RESULT     setCurrProps(const KsCurrPropsHandle & hprops);
 
     PLT_DECL_RTTI;
 };

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.2 1997-03-24 18:40:22 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.3 1997-04-02 14:52:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -349,7 +349,7 @@ KsPath::resolvePaths(const PltArray<KsString> & ids,
                 }
             }
         } else {
-            // Invalid syntax in path. We must begin from scratch
+            res[i] = KS_ERR_BADPATH;
         }
         current = path;
     } // for each id

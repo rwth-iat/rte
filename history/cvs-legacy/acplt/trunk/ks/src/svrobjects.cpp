@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.4 1997-03-26 17:20:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.5 1997-04-02 14:52:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -254,7 +254,28 @@ KssVariable::getTime() const
     return KsTime::now();
 }
 
+
 //////////////////////////////////////////////////////////////////////
+
+KsCurrPropsHandle
+KssVariable::getCurrProps() const
+{
+    KsCurrPropsHandle hprops;
+    KsValueHandle vh(getValue());
+    if (vh) {
+        // There was a value.
+        KsCurrPropsHandle hprops(new KsVarCurrProps(vh, 
+                                                    getTime(),
+                                                    getState()),
+                                 KsOsNew);
+        return hprops;
+    } else {
+        return KsCurrPropsHandle();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
 KS_RESULT
 KssVariable::setValue(KsValue *p) 
 {
@@ -263,6 +284,33 @@ KssVariable::setValue(KsValue *p)
         return setValue(h);
     } else {
         return KS_ERR_GENERIC;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KS_RESULT 
+KssVariable::setCurrProps(KsVarCurrProps &props) 
+{
+    KS_RESULT res = setValue(props.value);
+    if (res == KS_ERR_OK) {
+        setTime(props.time);
+        setState(props.state);
+    };
+    return res;
+}
+
+//////////////////////////////////////////////////////////////////////
+    
+KS_RESULT     
+KssVariable::setCurrProps(const KsCurrPropsHandle & hprops)
+{
+    KsVarCurrProps *pprops = 
+        PLT_DYNAMIC_PCAST(KsVarCurrProps, hprops.getPtr());
+    if (pprops) {
+        return setCurrProps(*pprops);
+    } else {
+        return KS_ERR_BADTYPE;
     }
 }
 

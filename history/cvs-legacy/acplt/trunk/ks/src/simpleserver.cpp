@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.2 1997-03-26 17:21:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.3 1997-04-02 14:52:23 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -56,84 +56,6 @@ KsSimpleServer::KsSimpleServer(const char * str)
 {
 }
 
-//////////////////////////////////////////////////////////////////////
-void
-KsSimpleServer::dispatch(u_long serviceId, 
-                         SVCXPRT *xprt,
-                         XDR *xdrIn,
-                         KsAvTicket &ticket)
-{
-    bool decodedOk = true;
-    switch(serviceId) {
-        
-    case KS_GETVAR:
-        {
-            KsGetVarParams params(xdrIn, decodedOk);
-            if (decodedOk) {
-#if PLT_DEBUG
-                cerr << "GETVAR " << endl;
-#endif
-                // properly decoded
-                KsGetVarResult result(params.identifiers.size());
-                getVar(ticket, params, result);
-#if PLT_DEBUG
-                cerr << result.result << endl;
-#endif
-                sendReply(xprt, ticket, result);
-            } else {
-                // not properly decoded
-                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
-            }
-        }
-        break;
-
-    case KS_SETVAR:
-        {
-            KsSetVarParams params(xdrIn, decodedOk);
-            if (decodedOk) {
-#if PLT_DEBUG
-                cerr << "SETVAR " << endl;
-#endif
-                // properly decoded
-                KsSetVarResult result(params.items.size());
-                setVar(ticket, params, result);
-#if PLT_DEBUG
-                cerr << result.result << endl;
-#endif
-                sendReply(xprt, ticket, result);
-            } else {
-                // not properly decoded
-                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
-            }
-        }
-        break;
-
-    case KS_GETPP:
-        {
-            KsGetPPParams params(xdrIn, decodedOk);
-            if (decodedOk) {
-#if PLT_DEBUG
-                cerr << "GETPP " << endl;
-#endif
-                // properly decoded
-                KsGetPPResult result;
-                getPP(ticket, params, result);
-#if PLT_DEBUG
-                cerr << result.result << endl;
-#endif
-                sendReply(xprt, ticket, result);
-            } else {
-                // not properly decoded
-                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
-            }
-        }
-        break;
-
-    default:
-        // fall back on base class
-        KsServerBase::dispatch(serviceId, xprt, xdrIn, ticket);
-    }
-}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -165,6 +87,46 @@ KsSimpleServer::getVar(KsAvTicket &ticket,
 }
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsSimpleServer::setVar(KsAvTicket &ticket,
+                       KsSetVarParams &params,
+                       KsSetVarResult &result)
+{
+    size_t reqsz=params.items.size();
+    PltArray<KsString> ids(reqsz);
+    PltArray<KsPath> paths(reqsz);
+    PltArray<KS_RESULT> pathres(reqsz);
+    if (   paths.size() == reqsz 
+        && ids.size() == reqsz 
+        && pathres.size() == reqsz ) {
+        // Allocation ok, retrieve ids.
+        for (size_t j=0; j<reqsz; ++j) {
+            ids[j] = params.items[j].path_and_name;
+        }
+        // Make them absolute
+        KsPath::resolvePaths(ids, paths, pathres);
+        // Iterate items
+        for (size_t i = 0; i < reqsz; ++i) {
+            if (pathres[i] == KS_ERR_OK) {
+                // Set current properties
+                setVarItem(ticket, 
+                           paths[i], 
+                           params.items[i].curr_props,
+                           result.results[i]);
+            } else {
+                result.results[i].result = pathres[i];
+            }
+        }
+        result.result = KS_ERR_OK;
+    } else {
+        // Allocation failed.
+        result.result = KS_ERR_GENERIC;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
 
 void
 KsSimpleServer::getVarItem(KsAvTicket &ticket, 
@@ -180,23 +142,41 @@ KsSimpleServer::getVarItem(KsAvTicket &ticket,
                 PLT_DYNAMIC_PCAST(KssVariable, hvar.getPtr());
             if (pvar) {
                 // Hey, we have found the variable!
-                KsValueHandle vh (pvar->getValue());
-                if (vh) {
-                    KsCurrPropsHandle 
-                        hprops(new KsVarCurrProps(vh, 
-                                                  pvar->getTime(),
-                                                  pvar->getState()),
-                               KsOsNew);
-                    if (hprops) {
-                        result.item = hprops;
-                        result.result = KS_ERR_OK;
-                    } else {
-                        result.result = KS_ERR_GENERIC;
-                    }
-                } else {
-                    // no value!
-                    result.result = KS_ERR_GENERIC;
-                }
+                result.item = pvar->getCurrProps();
+                result.result = result.item ? KS_ERR_OK : KS_ERR_GENERIC;
+            } else {
+                // Not a variable.
+                result.result = KS_ERR_BADTYPE;
+            }
+        } else {
+            // No such object.
+            result.result = KS_ERR_BADPATH;
+        }
+    } else {
+        // Access denied.
+        result.result = KS_ERR_NOACCESS;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+void
+KsSimpleServer::setVarItem(KsAvTicket &ticket, 
+                           const KsPath & path,
+                           const KsCurrPropsHandle & curr_props,
+                           KsResult & result)
+{
+    PLT_PRECONDITION(path.isValid() && path.isAbsolute());
+    if (ticket.canWriteVar(KsString(PltString(path)))) {
+        // Access okay.
+        KssCommObjectHandle hvar(_root_domain.getChildByPath(path));
+        if (hvar) {
+            KssVariable * pvar = 
+                PLT_DYNAMIC_PCAST(KssVariable, hvar.getPtr());
+            if (pvar) {
+                // Hey, we have found the variable!
+                result.result = pvar->setCurrProps(curr_props);
             } else {
                 // Not a variable.
                 result.result = KS_ERR_BADTYPE;
@@ -295,17 +275,63 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
     }
 }
 
-        
 //////////////////////////////////////////////////////////////////////
-    
-void 
-KsSimpleServer::setVar(KsAvTicket &,
-                  KsSetVarParams &,
-                  KsSetVarResult & result) 
+
+bool
+KsSimpleServer::initVendorTree(const PltString &s_descr,
+                               const PltString &v_name)
 {
-    result.result = KS_ERR_NOACCESS;
+    const KsString s_version("1");
+    //// TODO: failure detection.
+
+    KssSimpleDomain *vendor_dom = 
+        new KssSimpleDomain("vendor");
+
+    KssSimpleVariable *server_name_var = 
+        new KssSimpleVariable("server_name");
+
+    KssSimpleVariable *server_version_var = 
+        new KssSimpleVariable("server_version"); 
+    
+    KssSimpleVariable *server_description_var = 
+        new KssSimpleVariable("server_description"); 
+    
+    KssTimeNowVariable *server_time_var = 
+        new KssTimeNowVariable("server_time"); 
+    
+    KssSimpleVariable *name_var = 
+        new KssSimpleVariable("name"); 
+    
+    if (   vendor_dom
+        && server_name_var
+        && server_version_var
+        && server_description_var
+        && name_var) {
+        // Allocation ok, now initialize the objects
+        server_name_var->setValue(new KsStringValue(server_name));
+        server_name_var->lock();
+
+        server_version_var->setValue(new KsStringValue(s_version));
+        server_version_var->lock();
+
+        server_description_var->setValue(new KsStringValue(s_descr));
+        server_description_var->lock();
+
+        name_var->setValue(new KsStringValue(v_name));
+        name_var->lock();
+    
+        if (   vendor_dom->addChild(server_name_var)
+            && vendor_dom->addChild(server_version_var)
+            && vendor_dom->addChild(server_description_var)
+            && vendor_dom->addChild(server_time_var)
+            && vendor_dom->addChild(name_var)
+            && _root_domain.addChild(vendor_dom)) {
+            return true;
+        }
+    }
+    return false;
+    // TODO may leak memory
 }
 
 //////////////////////////////////////////////////////////////////////
-
 /* EOF ks/simpleserver.cpp */

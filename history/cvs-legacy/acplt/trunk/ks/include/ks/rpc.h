@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.2 1997-03-27 17:17:39 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.3 1997-04-02 14:52:12 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,6 +53,14 @@ extern int get_myaddress(struct sockaddr_in *);
 #if PLT_SYSTEM_LINUX
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
+#endif
+
+#if PLT_SYSTEM_NT
+extern "C" {
+#include <rpc/rpc.h>
+#include <rpc/pmap_prot.h>
+#include <rpc/pmap_clnt.h>
+};
 #endif
 
 #if PLT_SYSTEM_SOLARIS

@@ -69,6 +69,7 @@ class KsArray
 // IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_INSTANTIATE_TEMPLATES
 bool KsArray<char>::xdrEncode(XDR *) const;
 bool KsArray<char>::xdrDecode(XDR *);
 
@@ -92,7 +93,7 @@ bool KsArray<float>::xdrDecode(XDR *);
 
 bool KsArray<double>::xdrEncode(XDR *) const;
 bool KsArray<double>::xdrDecode(XDR *);
-
+#endif
 
 
 //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.3 1997-03-23 12:50:28 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.4 1997-04-02 14:52:19 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -157,14 +157,16 @@ KS_IMPL_ARRAY(short);
 KS_IMPL_ARRAY(u_short);
 KS_IMPL_ARRAY(float);
 KS_IMPL_ARRAY(double);
+#if !PLT_SIMULATE_BOOL
 KS_IMPL_ARRAY(bool);
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // explicit instantiation
 
-#if PLT_INSTANTIATE_TEMPLATES
-
 #include "ks/array_impl.h"
+
+#if PLT_INSTANTIATE_TEMPLATES
 
 template class KsArray<bool>;
 template class KsArray<char>;

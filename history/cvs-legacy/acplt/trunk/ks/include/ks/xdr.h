@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_XDR_INCLUDED
 #define KS_XDR_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.11 1997-03-27 09:14:57 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.12 1997-04-02 14:52:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,7 +37,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "plt/debug.h"
+#include "plt/rtti.h"
 #include "ks/rpc.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -108,6 +108,7 @@ public:
     virtual bool xdrEncode(XDR *) const = 0;  // serialize
     virtual bool xdrDecode(XDR *) = 0;        // deserialize
  // static KsXdrUnion * xdrNew(XDR *) = 0; // deserialization factory meth.
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -125,6 +126,7 @@ protected:
     virtual bool xdrDecodeCommon(XDR *);             // deser.    common part
     virtual bool xdrEncodeVariant(XDR *) const = 0;
     virtual bool xdrDecodeVariant(XDR *) = 0;
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////

@@ -75,6 +75,7 @@ protected:
     bool xdrEncodeCommon(XDR *xdr) const;    
     bool xdrDecodeCommon(XDR *xdr);
     KS_DECL_XDRUNION(KsProjProps);
+    PLT_DECL_RTTI;
 };
 
 typedef KsPtrHandle<KsProjProps> KsProjPropsHandle;
@@ -108,6 +109,7 @@ protected:
 private:
     friend KsProjProps;
     KsVarProjProps( XDR *, bool & );
+    PLT_DECL_RTTI;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -135,6 +137,7 @@ protected:
 private:
     friend KsProjProps;
     KsDomainProjProps( XDR *, bool & );
+    PLT_DECL_RTTI;
 };
 
 
@@ -149,6 +152,7 @@ public:
     virtual ~KsCurrProps() {}
 
     KS_DECL_XDRUNION(KsCurrProps);
+    PLT_DECL_RTTI;
 };
 
 typedef KsPtrHandle<KsCurrProps> KsCurrPropsHandle;
@@ -184,6 +188,7 @@ protected:
 private:
     friend KsCurrProps;
     KsVarCurrProps( XDR *, bool & );
+    PLT_DECL_RTTI;
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -202,6 +207,7 @@ protected:
 private:
     friend KsCurrProps;
     KsDomainCurrProps(XDR *, bool &);
+    PLT_DECL_RTTI;
 };
 
 

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.6 1997-03-27 17:17:44 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.7 1997-04-02 14:52:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -127,7 +127,7 @@ PLT_IMPL_RTTI1(KsmServer, KssDomain);
 KsString 
 KsmServer::getIdentifier() const
 { 
-    return desc.name; 
+    return KsString::fromInt(desc.protocol_version); 
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -214,7 +214,8 @@ KsmServer::KsmServer(const KsServerDesc & d,
 //////////////////////////////////////////////////////////////////////
 
 KsManager::KsManager()
-: KsSimpleServer(KS_MANAGER_NAME),
+:  KsServerBase(KS_MANAGER_NAME),
+   KsSimpleServer(KS_MANAGER_NAME),
   _registered(false),
   _servers_domain("servers")
 {
@@ -225,19 +226,7 @@ KsManager::KsManager()
 KsManager::~KsManager()
 {
     KsManager::destroyTransports();
-    // Each registered server has exactly one corresponding
-    // timer event in the queue. So we can delete the
-    // servers in the table by iterating the queue.
-    while (!timer_queue.isEmpty()) {
-        KsTimerEvent *pevent = timer_queue.removeFirst();
-        delete pevent;
-    }
-    for (PltHashIterator<PltKeyPtr<KsServerDesc>,KsmServer *>
-         it(_server_table);
-         it;
-         ++it) {
-        delete it->a_value;
-    }
+    // server entries are owned (indirectly) by _root_domain
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -349,7 +338,7 @@ KsManager::dispatch(u_long serviceId,
 
     default:
         // fall back on base class
-        KsSimpleServer::dispatch(serviceId, xprt, xdrIn, ticket);
+        KsServerBase::dispatch(serviceId, xprt, xdrIn, ticket);
     }
 }
 
@@ -380,34 +369,56 @@ KsManager::createTransports()
         PltLog::Error("KsServerBase: could not register");
         return false;
     }
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KsManager::startServer()
+{
+    KsSimpleServer::startServer();
     //
-    // We registered the transports, now contact the
+    // Contact the
     // portmapper and tell him that we are ready to receive
     // requests on them.
     //
     if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
         PltLog::Debug("Removed old pmap entry.");
     }
-    if (! pmap_set(KS_RPC_PROGRAM_NUMBER, 
-                   KS_PROTOCOL_VERSION,
-                   IPPROTO_TCP,
-                   _tcp_transport->xp_port)) {
+    _registered = false;
+    if (pmap_set(KS_RPC_PROGRAM_NUMBER, 
+                 KS_PROTOCOL_VERSION,
+                 IPPROTO_TCP,
+                 _tcp_transport->xp_port)) {
+        _registered = true;
+    } else {
         PltLog::Error("Can't register TCP transport.");
-        return false;
     }
-    if (! pmap_set(KS_RPC_PROGRAM_NUMBER, 
-                   KS_PROTOCOL_VERSION,
-                   IPPROTO_UDP,
-                   _udp_transport->xp_port)) {
+    if (pmap_set(KS_RPC_PROGRAM_NUMBER, 
+                 KS_PROTOCOL_VERSION,
+                 IPPROTO_UDP,
+                 _udp_transport->xp_port)) {
+        _registered = true;
+    } else {
         PltLog::Error("Can't register UDP transport.");
-        return false;
     }
-    _registered = true;
     KsmExpireManagerEvent * pevent = new KsmExpireManagerEvent(*this);
     if (pevent) {
         addTimerEvent(pevent);
     }
-    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KsManager::stopServer()
+{
+    if (   _registered
+        && ! pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
+        PltLog::Warning("Can't unregister with portmapper.");
+    }
+    KsSimpleServer::stopServer();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -415,10 +426,6 @@ KsManager::createTransports()
 void 
 KsManager::destroyTransports()
 {
-    if (   _registered
-        && ! pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
-        PltLog::Warning("Can't unregister with portmapper.");
-    }
     if ( _udp_transport ) {
         svc_destroy(_udp_transport); 
         _udp_transport = 0;
@@ -483,6 +490,7 @@ KsManager::registerServer(KsAvTicket & /*ticket*/,
         // found it
         //
         pserver->port = params.port;
+        pserver->expires_at = expire_at;
         pserver->pevent->pserver = 0; // inactivate old event
     } else {
         //
@@ -789,74 +797,39 @@ KsManager::removeServer(KsmServer * pserver)
 bool
 KsManager::initObjectTree()
 {
-    //// TODO: failure detection.
-
-    KssSimpleDomain *vendor = 
-        new KssSimpleDomain("vendor");
-
-    KssSimpleVariable *server_name = 
-        new KssSimpleVariable("server_name");
-
-    KssSimpleVariable *server_version = 
-        new KssSimpleVariable("server_version"); 
-    
-    KssSimpleVariable *server_description = 
-        new KssSimpleVariable("server_description"); 
-    
-    KssSimpleVariable *name = 
-        new KssSimpleVariable("name"); 
-    
-    server_name->setValue(new KsStringValue(KS_MANAGER_NAME));
-    server_name->lock();
-
-    server_version->setValue(new KsStringValue(KS_MANAGER_VERSION));
-    server_version->lock();
-
-    server_description->setValue(new KsStringValue("ACPLT/KS Manager"));
-    server_description->lock();
-
-    name->setValue(new KsStringValue("Lehrstuhl fuer "
-                                     "Prozessleittechnik, Aachen"));
-    name->lock();
-    
-    vendor->addChild(server_name);
-    vendor->addChild(server_version);
-    vendor->addChild(server_description);
-    vendor->addChild(name);
-
-    _root_domain.addChild(vendor);
-
-    KssSimpleDomain *servers_manager =
-        new KssSimpleDomain(KS_MANAGER_NAME);
-    
-    KssSimpleDomain *servers_manager_version =
-        new KssSimpleDomain(KS_MANAGER_VERSION);
-    
-    KssSimpleVariable *manager_port =
-        new KssSimpleVariable("port");
-    
-    KssSimpleVariable *manager_expires_at =
-        new KssSimpleVariable("expires_at");
-    
-    KssSimpleVariable *manager_living =
-        new KssSimpleVariable("living");
-
-    manager_living->setValue(new KsIntValue(1));
-    manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
-    manager_expires_at->setValue(new KsTimeValue(LONG_MAX,0));
-    
-    servers_manager_version->addChild(manager_living);
-    servers_manager_version->addChild(manager_port);
-    servers_manager_version->addChild(manager_expires_at);
-    
-    servers_manager->addChild(servers_manager_version);
-    _servers_domain.addChild(servers_manager);
-
-    _root_domain.addChild(KssCommObjectHandle(&_servers_domain, 
+    if (initVendorTree(KS_MANAGER_DESCRIPTION,
+                       "Lehrstuhl fuer Prozessleittechnik, RWTH-Aachen")) {
+        KssSimpleDomain *servers_manager =
+            new KssSimpleDomain(KS_MANAGER_NAME);
+        
+        KssSimpleDomain *servers_manager_version =
+            new KssSimpleDomain(KS_MANAGER_VERSION);
+        
+        KssSimpleVariable *manager_port =
+            new KssSimpleVariable("port");
+        
+        KssSimpleVariable *manager_expires_at =
+            new KssSimpleVariable("expires_at");
+        
+        KssSimpleVariable *manager_living =
+            new KssSimpleVariable("living");
+        
+        manager_living->setValue(new KsIntValue(1));
+        manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
+        manager_expires_at->setValue(new KsTimeValue(LONG_MAX,0));
+        
+        servers_manager_version->addChild(manager_living);
+        servers_manager_version->addChild(manager_port);
+        servers_manager_version->addChild(manager_expires_at);
+        
+        servers_manager->addChild(servers_manager_version);
+        _servers_domain.addChild(servers_manager);
+        
+        _root_domain.addChild(KssCommObjectHandle(&_servers_domain, 
                                               KsOsUnmanaged));
-    
+    }
 
-    return true; // This is optimistic...
+    return true; // TODO: This is optimistic...
 }
                 
 //////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.4 1997-03-26 17:20:11 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.5 1997-04-02 14:52:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -158,7 +158,7 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////
-// class KssVariable
+// class KssSimpleVariable
 //////////////////////////////////////////////////////////////////////
 
 class KssSimpleVariable
@@ -215,6 +215,55 @@ private:
     KsValueHandle _value;
     KsTime        _time;
     KS_STATE      _state;
+    PLT_DECL_RTTI;
+};
+
+//////////////////////////////////////////////////////////////////////
+// class KssTimeNowVariable
+//////////////////////////////////////////////////////////////////////
+
+class KssTimeNowVariable
+: public KssVariable,
+  public KssSimpleCommObject
+{
+public:
+    //// KssCommObject
+    //// accessors
+    // projected properties
+    virtual KsString getIdentifier() const;
+    virtual KsTime   getCreationTime() const;
+    virtual KsString getComment() const;
+
+    //// KssVariable ////
+    //// accessors
+    //   projected properties
+    virtual KsString getTechUnit() const;
+    
+    //   current properties
+    virtual KsValueHandle getValue() const;
+    virtual KsTime        getTime() const;
+    virtual KS_STATE      getState() const;
+    
+    //// modifiers
+    //   projected properties
+    void setTechUnit(const KsString &);
+
+    //   current properties
+    virtual KS_RESULT     setValue(const KsValueHandle &);
+
+    virtual KS_RESULT     setValue(KsValue *p);
+    //  implicit handle creation, usual caveats apply
+
+    virtual KS_RESULT     setTime(const KsTime &);
+
+    virtual KS_RESULT     setState(KS_STATE);
+
+    //// KssSimpleVariable ////
+    //// ctor/dtor
+    KssTimeNowVariable(const KsString &id,
+                       KsTime ctime = KsTime::now(),
+                       const KsString & comment = KsString());
+private:
     PLT_DECL_RTTI;
 };
 
@@ -375,5 +424,92 @@ KssSimpleVariable::setValue(KsValue *p)
     return KssVariable::setValue(p);
 }
 
+
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KssTimeNowVariable::KssTimeNowVariable(const KsString &id,
+                                     KsTime ctime,
+                                     const KsString &comment)
+: KssSimpleCommObject(id, ctime, comment)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// KssTimeNowVariable
+/////////////////////////////////////////////////////////////////////
+// TODO should be easier through inheritance...
+// forward to base
+
+inline KsString KssTimeNowVariable::getIdentifier() const
+{  return KssSimpleCommObject::getIdentifier(); }
+
+inline KsTime KssTimeNowVariable::getCreationTime() const
+{ return KssSimpleCommObject::getCreationTime(); }
+
+inline KsString KssTimeNowVariable::getComment() const
+{ return KsString("Current time"); }
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline KsString
+KssTimeNowVariable::getTechUnit() const
+{
+    return KsString("UTC");
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline KsTime
+KssTimeNowVariable::getTime() const
+{
+    return KsTime::now();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline KS_STATE
+KssTimeNowVariable::getState() const
+{
+    return KS_ST_GOOD;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline KS_RESULT     
+KssTimeNowVariable::setValue(KsValue *) 
+{
+    return KS_ERR_NOACCESS;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+inline KS_RESULT
+KssTimeNowVariable::setValue(const KsValueHandle &)
+{
+    return KS_ERR_NOACCESS;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline KS_RESULT
+KssTimeNowVariable::setTime(const KsTime &)
+{
+    return KS_ERR_NOACCESS;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline KS_RESULT
+KssTimeNowVariable::setState(KS_STATE) 
+{
+    return KS_ERR_NOACCESS;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 #endif // KS_SVROBJECTS_INCLUDED
