@@ -62,7 +62,9 @@ static char sccsid[] = "@(#)rpc_prot.c 1.36 87/08/11 Copyr 1984 Sun Micro";
 #include <rpc/rpc.h>
 
 /* * * * * * * * * * * * * * XDR Authentication * * * * * * * * * * * */
-
+#ifdef WIN32
+extern
+#endif
 struct opaque_auth _null_auth;
 
 /*
