@@ -1,0 +1,27 @@
+<HTML>
+<HEAD>
+   <TITLE>ONC RPC for Windows NT - What's new?</TITLE>
+</HEAD>
+<BODY BACKGROUND="bg.gif" text="#000000" bgcolor="#FFFFFF" link="#000000" vlink="#808080">
+
+<H1>What's new?</H1>
+<hr>
+
+<H3><IMG SRC="whatsnew.gif" HEIGHT=36 WIDTH=73><A HREF="http://set.gmd.de/~mfg/SRPC111.ZIP">Latest
+version 1.11</A></H3>
+
+<P>In version 1.11 now finally the variable "svc_fdset" is exported by
+oncrpc.dll. A good news for all of you who want to write their own server
+loop.
+While there still is no complete C++ integration, rpcgen now generates
+header-files with "#ifdef __cplusplus" and allows to call the stubs
+directly from C++ (with the additional "CLIENT" parameter).
+The portmapper service now accepts a "-v" flag. If this is not given it
+will no longer trash the application log with useless messages about (not) found
+services (Thanks to Martin Johnson).
+I removed the VC++ Development Studio files as they contained absolute
+pathnames from my environment, so that were probably useless and confusing
+for anybody else.</P>
+
+</BODY>
+</HTML>

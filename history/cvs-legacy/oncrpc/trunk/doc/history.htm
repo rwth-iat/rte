@@ -1,0 +1,117 @@
+<HTML>
+<HEAD>
+   <TITLE>ONC RPC for Windows NT - History</TITLE>
+</HEAD>
+<BODY BACKGROUND="bg.gif" text="#000000" bgcolor="#FFFFFF" link="#000000" vlink="#808080" alink="#FF0000">
+
+<H1>File Change History</H1>
+<hr>
+
+<P><B>Version 1.11</B></P>
+
+<P><B>New Feature:</B> In version 1.11 now finally the variable
+"svc_fdset" is exported by oncrpc.dll. A good news for all of you who 
+want to write their own server loop. While there still is no complete
+C++ integration, rpcgen now generates header-files with 
+"#ifdef __cplusplus" and allows to call the stubs directly from C++ 
+(with the additional "CLIENT" parameter). The portmapper service now 
+accepts a "-v" flag. If this is not given it will no longer trash the 
+application log with useless messages about (not) found services 
+(Thanks to Martin Johnson).
+I removed the VC++ Development Studio files as they contained absolute
+pathnames from my environment, so that were probably useless and confusing
+for anybody else.</P>
+
+<P><B>Version 1.10</B></P>
+
+<P><B>New Feature:</B> You can compile it all in the VC++ Development Studio
+(The old way of compiling it from a shell still works). The xxx<I>byname
+</I>routines now work if you have an &quot;rpc&quot;-file in %SystemRoot%\system32\drivers\etc\.</P>
+
+<P><B>Bug-fixes:</B> XDR_FLOAT now also knows about ALPHA and PPC (thanks
+to Wayne Seward and Ray Drueke).</P>
+
+<P><B>Version 1.09</B></P>
+
+<P><B>New Feature:</B> The &quot;rpcinfo&quot; utility is now included.</P>
+
+<P><B>Version 1.08</B></P>
+
+<P><B>New Feature:</B> Version 1.08 now contains some experimental support
+for NT's multi-threading. The new rpcgen generates server stubs that can
+operate as multi-threaded servers. The initial thread serves as &quot;master-thread&quot;
+that does all message receptions and the creation and shutdown of connections.
+When an incoming request has been processed by the master thread, a new
+server-thread is created that executes the server-procedure, sends back
+the answer and that terminates afterwards. This allows to porcess multiple
+client requests concurrently. To enable this experimental feature you have
+to define the pre-processor symbol MULTITHREAD when compiling the server
+stub &quot;*_svc.c&quot;. It requires no changes to the oncrpc.dll. But
+there are some caveats: </P>
+
+<UL>
+<LI>This feature is still <I>experimental</I>. I think the synchronisation
+works but it is not well tested. </LI>
+
+<LI>Multi-threaded clients are not supported. In order to use the benefits
+of server multi-threading you have to work with multiple client processes.
+</LI>
+
+<LI>In the case when a client dies while a request is processed by the
+server the connection is not properly cleaned up by the server (it will
+be only disabled). This will cause no harm to the server, but there is
+a memory leak. I did it this way to avoid a crash when a server-thread
+comes back from the server procedure and it tries to answer via a already
+removed connection. A real synchronisation would require internal changes
+to the oncrpc.dll and I wanted to avoid this in the first step. </LI>
+</UL>
+
+<P><B>Bug-fixes:</B> If there are a number of &quot;old&quot;, already
+closed socket-connections in the TCP-state TIME_WAIT the winsock implementation
+fails in creating a new connection to the same and still open remote (server)
+socket (clnt_create). I still don't known why and the UN*X sockets seem
+to behave differently but now I added some lines in clnt_tcp.c, that force
+the client sockets to shut down immediatly after &quot;closesocket&quot;
+(socket-option linger). This seems to work. <BR>
+In the event log the oncrpc.dll now uses the correct name &quot;oncrpc.dll&quot;
+instead of the old name &quot;rpc.dll&quot; (thanks to Cyrille Chepelov).
+<BR>
+In clnt_per.c I added a check for a winsock errno (instead of a standard
+errno) before indexing &quot;sys_errlist&quot; (thanks to Don Porges).
+</P>
+
+<P><B>Version 1.07</B></P>
+
+<P>Increased the size of the pipe between rpcgen and the C preprocessor
+(0x1000 o 0xffff). The small size caused rpcgen to hang when bigger interface
+definition files were compiled. (Thanks to Heiko Bacher)</P>
+
+<P><B>Version 1.06</B></P>
+
+<P>A bug in &quot;rpcgen/rpc_main.c&quot; has been fixed that caused &quot;rpcgen.exe&quot;
+to hang when invocing the Visual C++ 4.0 preprocessor. (Thanks to Kosma
+Zygouras) </P>
+
+<P><B>Version 1.05</B></P>
+
+<P>The calls clnt_spcreateerror(), clnt_sperror(), and clnt_broadcast()
+have been added to the dll interface. Broadcast rpc now works, but it does
+not try to find out the local IP-broadcast addresses (does anybody know
+how to do that on NT ?), instead it sends out a request to ff.ff.ff.ff.
+(Thanks to Don Porges and Ray Drueke) </P>
+
+<P><B>Version 1.04</B></P>
+
+<P>Fixes a bug in the XDR double coding/encoding. In former version doubles
+from X86 machines were not swapped completely, thus double transfer fails
+between little and big endian machines. (Thanks to Bill Wade!) </P>
+
+<P><B>Version 1.03</B></P>
+
+<P>Fixes a major bug in version 1.02 that crashed an rpc-application, when
+a socket-handle &gt; 128 was used by the system. (Thanks to Rene de Vries!)
+Also RPC.DLL and RPC.LIB were renamed to ONCRPC.DLL and ONCPRC.LIB in order
+avoid confusion with the MS-RPC stuff. </P>
+
+</BODY>
+</HTML>

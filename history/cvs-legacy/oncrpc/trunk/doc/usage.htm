@@ -1,0 +1,59 @@
+<HTML>
+<HEAD>
+   <TITLE>ONC RPC for Windows NT - Usage</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0b5aGold (WinNT; I) [Netscape]">
+</HEAD>
+<BODY BACKGROUND="bg.gif" text="#000000" bgcolor="#FFFFFF" link="#000000" vlink="#808080" alink="#FF0000">
+
+<H1>Usage</h1>
+<hr>
+
+<H2>Installation</H2>
+
+<P>After you have unzipped SRPC*.ZIP you will find the binaries in the
+directory &quot;bin&quot;. You should copy at least oncrpc.dll to the &quot;system32&quot;
+directory. Now you can run pm_ascii.exe from the &quot;bin&quot; directory
+as console application, but the &quot;real&quot; NT way to do a daemon
+is as a service (this does not work on Windows95).</P>
+
+<P>To install the portmapper as a service copy &quot;portmap.exe&quot;also
+to the &quot;system32&quot; directory und use &quot;inst_pm&quot; to register
+it (see usage). After that you can start and stop the portmapper from the
+&quot;Services&quot; control panel.</P>
+
+<P>If you want to use symbolic names for your rpc services you should create
+an &quot;rpc&quot;-file in the directory &quot;%SystemRoot%\system32\drivers\etc\&quot;.
+You can start with the <A HREF="../etc/rpc">file provided in the &quot;etc&quot;
+subdirectory</A>.</P>
+
+<P>Perhaps you might want to recompile the libs, the dll, and the example-application.
+If you have MS Visual C++ installed, you can use the workspace file &quot;oncnt\oncnt.mdp&quot;.
+It contains all the components of ONC RPC as subprojects. If you prefere
+a shell interface, a &quot;make.bat&quot; in the main dir should also do
+the job. In both cases the &quot;rpcgen&quot; utility calls the MS C preprocessor
+to do its job as it calls the cpp on Unix.</P>
+
+<H2>Hints for writing/porting applications with ONC RPC for Windows NT</H2>
+
+<P>What you need to know is, that a client program like do_cou.c has to
+call rpc_nt_init() and rpc_nt_exit() around the rpc action (because of
+the winsock initialization). Make sure that you have WIN32 defined, the
+<A HREF="../rpc">&quot;rpc&quot; include directory</A> in you include path,
+and rpc.lib in your linker line when you build an RPC-application. Be sure
+that exactly one version of &quot;portmap&quot; (see above) is running
+when you run your RPC-application. </P>
+
+<P>Look into the <A HREF="../test">&quot;test&quot; directory</A> for a simple
+application: a &quot;counter-server&quot;(cou_svc.exe) and simple client
+(do_cou.exe) that calls the server and does some counting.</P>
+
+<P>All run-time components of ONC RPC for Windows NT write their error-messages
+into the application log (clnt_perror() has been changed as an NT application
+does not always have a stderr stream). Look there first if something seems
+to fail.</P>
+
+<P>ONC RPC for Windows NT does currently not support the authentication
+interface.</P>
+
+</BODY>
+</HTML>
