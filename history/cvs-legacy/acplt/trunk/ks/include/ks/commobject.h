@@ -1,11 +1,9 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.26 1998-03-06 13:29:42 markusj Exp $ */
-
+/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.27 1999-01-29 12:40:36 harald Exp $ */
 #ifndef KSC_COMMOBJECT_INCLUDED 
 #define KSC_COMMOBJECT_INCLUDED
-
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -40,8 +38,8 @@
  */
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
+/* v1+ stuff added by: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
 
 #include <plt/debug.h>
 #include <plt/rtti.h>
@@ -52,20 +50,31 @@
 #include "ks/clntpath.h"
 #include "ks/avmodule.h"
 
-//////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------
 // forward declarations
+//
 class KscServerBase;
 
-//////////////////////////////////////////////////////////////////////
-// class KscCommObject
-//////////////////////////////////////////////////////////////////////
+class KsGetPPResult;
 
+typedef PltIterator<KsProjPropsHandle> KscChildIterator;
+
+
+// ---------------------------------------------------------------------------
+// class KscCommObject: this abstract base class provides a basic infra-
+// structure to build specific ACPLT/KS communication objects on the client
+// side from. If you just have a resource locator but don't have an inkling
+// of what what kind of object it references, then use the KscAnyCommObject
+// class instead.
+//
 class KscCommObject
 {
 public:
     KscCommObject(const char *object_path);
     virtual ~KscCommObject();
 
+    //
     // selectors
     //
     bool hasValidPath() const;
@@ -111,78 +120,14 @@ protected:
     const KscAvModule *av_module;
     KS_RESULT _last_result;
 
-    PLT_DECL_RTTI;
-
-private:
-    KscCommObject(const KscCommObject &other); // forbidden
-    KscCommObject &operator = (const KscCommObject &other); // forbidden
-
-#if PLT_DEBUG
-public:
-    virtual void debugPrint(ostream &os) const;
-#endif
-};
-
-//////////////////////////////////////////////////////////////////////
-// sorry, inline comp ops need to be defined here to avoid
-// compiler errors
-//
-inline bool
-KscCommObject::operator == (const KscCommObject &other) const
-{
-    return this == &other;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscCommObject::operator != (const KscCommObject &other) const
-{
-    return this != &other;
-}
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-typedef PltPtrHandle<KscCommObject> KscCommObjectHandle;
-
-//////////////////////////////////////////////////////////////////////
-// class KscDomain
-//////////////////////////////////////////////////////////////////////
-
-class KsGetPPResult;
-
-typedef PltIterator<KsProjPropsHandle> KscChildIterator;
-
-class KscDomain
-: public KscCommObject
-{
-public:
-    KscDomain(const char *domain_path);
-
-    ~KscDomain();
-
-    KS_OBJ_TYPE typeCode() const;
-
-    const KsDomainProjProps_THISTYPE *getProjProps() const;
-
-    // reread projected props
-    bool getProjPropsUpdate();
-    // get iterator, 
-    // if update is set to true, it forces the PP's to be read and
-    // all other iterators related to this object will become invalid
-    KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
-                                       KsString nameMask = KsString("*"));
-
-protected:
     // read children from server, returns PP's in list
     bool getChildPPUpdate(KS_OBJ_TYPE typeMask,
                           KsString nameMask,
 			  KsGetPPResult *&result);
 
-    bool setProjProps(KsProjPropsHandle);
-
-    KsDomainProjProps proj_props;
+    // get iterator
+    KscChildIterator *newChildIterator_(KS_OBJ_TYPE typeMask,
+                                        KsString nameMask = KsString("*"));
 
     //
     // This protected iterator class is responsible for iterating over the
@@ -196,10 +141,10 @@ protected:
     {
     public:
 #if PLT_RETTYPE_OVERLOADABLE
-# define KscDomain_ChildIterator_THISTYPE KscDomain::ChildIterator
+#define KscCommObject_ChildIterator_THISTYPE KscCommObject::ChildIterator
         typedef ChildIterator THISTYPE;
 #else
-# define KscDomain_ChildIterator_THISTYPE PltListIterator_THISTYPE(KsProjPropsHandle)
+#define KscCommObject_ChildIterator_THISTYPE PltListIterator_THISTYPE(KsProjPropsHandle)
 #endif
         ChildIterator(KsGetPPResult &getPPResult);
         ~ChildIterator();
@@ -212,6 +157,109 @@ protected:
     PLT_DECL_RTTI;
 
 private:
+    KscCommObject(const KscCommObject &other); // forbidden
+    KscCommObject &operator = (const KscCommObject &other); // forbidden
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream &os) const;
+#endif
+}; // class KscCommObject;
+
+
+typedef PltPtrHandle<KscCommObject> KscCommObjectHandle;
+
+
+// ---------------------------------------------------------------------------
+// sorry, inline comp ops need to be defined here to avoid compiler errors.
+//
+inline bool
+KscCommObject::operator == (const KscCommObject &other) const
+{
+    return this == &other;
+} // KscCommObject::operator==
+
+
+inline bool
+KscCommObject::operator != (const KscCommObject &other) const
+{
+    return this != &other;
+} // KscCommObject::operator!=
+
+
+// ---------------------------------------------------------------------------
+// class KscAnyCommObject: not really an ACPLT/KS communication object (proxy)
+// but rather some swiss army knive kind of object: it provides access to the
+// engineered and current properties and also to its children as long as you
+// just have a valid resource locator. The KscAnyCommObject can be used if
+// you have a resource locator but no clue what kind of object is hidden
+// behind the locator.
+//
+class KscAnyCommObject : public KscCommObject
+{
+public:
+    KscAnyCommObject(const char *object_path);
+    ~KscAnyCommObject();
+
+    virtual KS_OBJ_TYPE typeCode() const;
+
+    const KsProjProps_THISTYPE *getProjProps() const;
+
+    // reread projected props
+    bool getProjPropsUpdate();
+
+    // get iterator
+    KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
+                                       KsString nameMask = KsString("*"));
+
+protected:
+    bool setProjProps(KsProjPropsHandle h);
+
+    KsProjPropsHandle _hproj_props;
+
+    PLT_DECL_RTTI;
+
+private:
+    KscAnyCommObject(const KscAnyCommObject &other); // forbidden
+    KscAnyCommObject &operator = (const KscAnyCommObject &other); // forbidden
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream &os) const;
+#endif
+}; // class KscAnyCommObject
+
+
+// ---------------------------------------------------------------------------
+// class KscDomain: represents an ACPLT/KS domain object in an ACPLT/KS
+// server. Can be used to query the children of a domain or the engineered
+// properties of the domain itself.
+//
+class KscDomain : public KscCommObject
+{
+public:
+    KscDomain(const char *domain_path);
+    ~KscDomain();
+
+    KS_OBJ_TYPE typeCode() const;
+
+    const KsDomainProjProps_THISTYPE *getProjProps() const;
+
+    // reread projected props
+    bool getProjPropsUpdate();
+
+    // get iterator
+    KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
+                                       KsString nameMask = KsString("*"));
+
+protected:
+    bool setProjProps(KsProjPropsHandle);
+
+    KsDomainProjProps proj_props;
+
+    PLT_DECL_RTTI;
+
+private:
     KscDomain(const KscDomain &other); // forbidden
     KscDomain &operator = (const KscDomain &other); // forbidden
 
@@ -219,21 +267,63 @@ private:
 public:
     virtual void debugPrint(ostream &os) const;
 #endif
-};
+}; // class KscDomain
 
 typedef PltPtrHandle<KscDomain> KscDomainHandle;
 
-//////////////////////////////////////////////////////////////////////
-// class KscVariable
-//////////////////////////////////////////////////////////////////////
 
-class KscVariable
-: public KscCommObject
+#if 0
+// ---------------------------------------------------------------------------
+// class KscLink:
+//
+class KscLink : public KscCommObject
+{
+public:
+    KscLink(const char *link_name);
+    ~KscLink();
+
+    virtual KS_OBJ_TYPE typeCode() const;
+
+    bool getProjPropsUpdate();
+    virtual bool getUpdate();
+    KsValueHandle getValue() const;
+    const KsVarProjProps_THISTYPE *getProjProps() const;
+    const KsVarCurrProps *getCurrProps() const;
+    KsCurrPropsHandle getCurrPropsHandle();
+
+    KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
+                                       KsString nameMask = KsString("*"));
+
+protected:
+    bool setProjProps(KsProjPropsHandle h);
+
+    KsLinkProjProps _proj_props;
+    KsVarCurrProps  _curr_props;
+
+    PLT_DECL_RTTI;
+
+private:
+    KscLink(const KscLink &other); // forbidden
+    KscLink &operator = (const KscLink &other); // forbidden
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream &os) const;
+#endif
+}; // class KscLink
+
+typedef PltPtrHandle<KscLink> KscLinkHandle;
+#endif
+
+// ---------------------------------------------------------------------------
+// class KscVariable
+//
+class KscVariable : public KscCommObject
 {
 public:
     KscVariable(const char *var_name);
 
-    KS_OBJ_TYPE typeCode() const;
+    virtual KS_OBJ_TYPE typeCode() const;
 
     bool getProjPropsUpdate();
     virtual bool getUpdate();
@@ -266,7 +356,7 @@ private:
 public:
     virtual void debugPrint(ostream &os) const;
 #endif
-};
+}; // class KscVariable
 
 typedef PltPtrHandle<KscVariable> KscVariableHandle;
 
@@ -368,16 +458,43 @@ KscCommObject::getLastResult() const
     return _last_result;
 }
 
-//////////////////////////////////////////////////////////////////////
-// class KscDomain
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// class KscAnyCommObject inline stuff...
+//
+inline
+KscAnyCommObject::KscAnyCommObject(const char *object_path)
+    : KscCommObject(object_path)
+{
+} // KscAnyCommObject::KscAnyCommObject
+
+
+inline
+KS_OBJ_TYPE
+KscAnyCommObject::typeCode() const
+{
+    return 0; // we don't have a valid type code!
+} // KscAnyCommObject::typeCode
+
+
+inline
+const KsProjProps_THISTYPE *
+KscAnyCommObject::getProjProps() const
+{
+    return _hproj_props.getPtr();
+} // KscAnyCommObject::getProjProps
+
+
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// class KscDomain inline stuff...
+//
 inline
 KscDomain::KscDomain(const char *domain_path)
 : KscCommObject(domain_path)
 {}
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KS_OBJ_TYPE
@@ -386,7 +503,6 @@ KscDomain::typeCode() const
     return KS_OT_DOMAIN;
 }
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 const KsDomainProjProps_THISTYPE *
@@ -395,17 +511,29 @@ KscDomain::getProjProps() const
     return &proj_props;
 }
 
-//////////////////////////////////////////////////////////////////////
-// class KscVariable
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// class KscLink inline stuff...
+//
+#if 0
+inline
+KscLink::KscLink(const char *link_path)
+: KscCommObject(link_path)
+{} // KscLink::KscLink
+#endif
+
+
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// class KscVariable inline stuff...
+//
 inline
 KscVariable::KscVariable(const char *var_path)
 : KscCommObject(var_path),
   fDirty(false)
 {}
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KS_OBJ_TYPE
@@ -414,7 +542,6 @@ KscVariable::typeCode() const
     return KS_OT_VARIABLE;
 }
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 const KsVarProjProps_THISTYPE *
@@ -423,7 +550,6 @@ KscVariable::getProjProps() const
     return &proj_props;
 }
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KsValueHandle
@@ -432,7 +558,6 @@ KscVariable::getValue() const
     return curr_props.value; 
 }
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 const KsVarCurrProps *
@@ -441,7 +566,6 @@ KscVariable::getCurrProps() const
     return &curr_props;
 }
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 KsCurrPropsHandle
@@ -451,7 +575,6 @@ KscVariable::getCurrPropsHandle()
                              KsOsNew);
 }
 
-//////////////////////////////////////////////////////////////////////
 
 inline
 bool
@@ -460,20 +583,7 @@ KscVariable::isDirty() const
     return fDirty;
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// EOF CommObject.h
-//////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
+// End of ks/commobject.h
