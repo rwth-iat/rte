@@ -1,10 +1,9 @@
 /* -*-plt-c++-*- */
-
 #ifndef KS_HISTPARAMS_INCLUDED
 #define KS_HISTPARAMS_INCLUDED
-
+/* $Header: /home/david/cvs/acplt/ks/include/ks/histparams.h,v 1.4 1999-01-12 16:19:31 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -58,11 +57,11 @@ const KsString KS_HISTORY_PROTOCOL_NAME("plt_histories");
 
 const u_long KS_GETHIST_MINOR_OPCODE  = 0x00000001;
 
-/////////////////////////////////////////////////////////////////////////////
+
+// ----------------------------------------------------------------------------
 // Classes for GetHist request
 //   - KsGetHistItem
 //   - KsGetHistParams
-/////////////////////////////////////////////////////////////////////////////
 
 class KsGetHistItem
     : public KsXdrAble
