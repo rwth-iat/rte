@@ -1,6 +1,8 @@
 ACPLT/KS C++ Communication Library
 ==================================
 
+(Preliminary Version C)
+
 
 1. Introduction
 ---------------
@@ -43,6 +45,7 @@ linker warnings like:
 You can safely ignore these warnings, as there is some compiler/linker
 magic necessary to export variables from DLLs unter Windows NT/95, and
 this magic gets sometimes dazzled (bad magic, huh?).
+
 
 3. Suggested Readings
 ---------------------
