@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.42 2000-09-04 06:25:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.43 2000-09-04 08:57:18 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -169,6 +169,7 @@ KsServerBase::the_server = 0;
 //
 KsServerBase::KsServerBase()
     : _sock_port(KS_ANYPORT),
+      _reuse_addr(false), // per default don't reuse socket/port addresses
 #if PLT_USE_BUFFERED_STREAMS
       _cnx_manager(0), // don't create a connection manager object yet as a
                        // server programmer might wish to subclass it and use
@@ -187,7 +188,7 @@ KsServerBase::KsServerBase()
     // Set some parameters of the dynamic XDR memory streams...
     //
     xdrmemstream_controlusage(4096, // 4k fragments
-	                      1024, // 4k*1024 = 4M maximum pool size
+	                      2048, // 4k*2048 = 8M maximum pool size
 	                      0,    // 4k*0 = 0k minimum free pool size
 	                      50);  // clean up 50% per "garbage collection"
 #endif
@@ -977,14 +978,19 @@ KsServerBase::startServer()
             // based clients which aren't able to properly shut down their
             // TCP/IP connections...
             //
-            int flagOn = 1;
-            if ( setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, 
+            if ( _reuse_addr ) {
+                PltLog::Info("KsServerBase::startServer(): "
+                             "enabling address reuse for TCP socket.");
+                int flagOn = 1;
+                if ( setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, 
 #if PLT_SYSTEM_NT || PLT_SYSTEM_SOLARIS
-                             (char *) // signature wants generic char pointer...
+                                 (char *) // signature wants generic char pointer...
 #endif
-                             &flagOn,
-                             sizeof(flagOn)) ) {
-                PltLog::Warning("Can not enable IP address reuse.");
+                                 &flagOn,
+                                 sizeof(flagOn)) ) {
+                    PltLog::Warning("KsServerBase::startServer(): "
+                                    "Can not enable IP address reuse for TCP socket.");
+                }
             }
 
             //

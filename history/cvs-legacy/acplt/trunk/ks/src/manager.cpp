@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.33 2000-09-04 06:24:59 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.34 2000-09-04 08:57:18 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -559,14 +559,19 @@ KsManager::startServer()
                 // Winblows-based clients which aren't able to properly shut
                 // down their TCP/IP connections...
                 //
-                int flagOn = 1;
-                if ( setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, 
+                if ( _reuse_addr ) {
+                    PltLog::Info("KsServerBase::startServer(): "
+                                 "enabling address reuse for UDP socket.");
+                    int flagOn = 1;
+                    if ( setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, 
 #if PLT_SYSTEM_NT || PLT_SYSTEM_SOLARIS
-                                 (char *) // signature wants generic char pointer...
+                                     (char *) // signature wants generic char pointer...
 #endif
-                                 &flagOn,
-                                 sizeof(flagOn)) ) {
-                    PltLog::Warning("Can not enable IP address reuse.");
+                                     &flagOn,
+                                     sizeof(flagOn)) ) {
+                        PltLog::Warning("KsServerBase::startServer(): "
+                                    "Can not enable IP address reuse for UDP socket.");
+                    }
                 }
 
                 //
