@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_ARRAY_INCLUDED
 #define PLT_ARRAY_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.5 1997-03-23 17:20:06 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.6 1997-03-24 12:29:05 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -92,7 +92,7 @@ public:
 
     // modifiers
     T & operator[] (size_t i);
-    PltArray<T> & operator = ( PltArray<T> &);
+    PltArray<T> & operator = ( const PltArray<T> &);
 
     // container interface
     virtual size_t size() const;
@@ -136,7 +136,7 @@ PltArray<T>::PltArray(size_t sz)
 
 template <class T>
 inline PltArray<T> &
-PltArray<T>::operator = (PltArray<T> & rhs)
+PltArray<T>::operator = ( const PltArray<T> & rhs)
 {
     a_size = rhs.a_size;
     a_array = rhs.a_array;
