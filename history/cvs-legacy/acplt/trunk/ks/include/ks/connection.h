@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.6 1999-09-16 10:54:39 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.7 2000-04-11 14:10:30 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -171,7 +171,13 @@ protected:
     int                              _fd;
     ConnectionState                  _state;
     struct sockaddr_in               _client_address;
+#if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
+    socklen_t                        _client_address_len;
+#elif PLT_SYSTEM_OPENVMS
+    unsigned int                     _client_address_len;
+#else
     int                              _client_address_len;
+#endif
     KssConnectionManager            *_manager;
     KssConnectionAttentionInterface *_attention_partner;
 }; // class KssConnection

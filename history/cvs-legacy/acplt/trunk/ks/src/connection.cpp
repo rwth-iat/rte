@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.8 1999-09-16 10:54:47 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.9 2000-04-11 14:10:32 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -118,7 +118,9 @@ extern int t_getname(int fd, struct netbuf *namep, int type);
 u_short KssConnection::getPort() const
 {
     struct sockaddr_in addr;
-#if !PLT_SYSTEM_OPENVMS
+#if defined(PLT_RUNTIME_GLIBC) && PLT_RUNTIME_GLIBC >= 0x2001
+    socklen_t          addr_len;
+#elif !PLT_SYSTEM_OPENVMS
     int                addr_len;
 #else
     unsigned           addr_len;

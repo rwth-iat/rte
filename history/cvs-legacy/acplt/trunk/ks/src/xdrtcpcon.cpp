@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.14 1999-09-20 09:36:11 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.15 2000-04-11 14:10:32 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -127,7 +127,9 @@ void KssListenTCPXDRConnection::sendRequest()
 KssConnection::ConnectionIoMode KssListenTCPXDRConnection::receive()
 {
     struct sockaddr_in saddr;
-#if !PLT_SYSTEM_OPENVMS
+#if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
+    socklen_t          saddr_len;
+#elif !PLT_SYSTEM_OPENVMS
     int                saddr_len;
 #else
     unsigned int       saddr_len;
@@ -523,7 +525,9 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 	// where platform issues can arise (portability...)
 	//
 	int error;
-#if !PLT_SYSTEM_OPENVMS
+#if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
+        socklen_t size = sizeof(error);
+#elif !PLT_SYSTEM_OPENVMS
 	int size = sizeof(error);
 #else
         unsigned int size = sizeof(error);
@@ -790,7 +794,9 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 	// where platform issues can arise (portability...)
 	//
 	int error;
-#if !PLT_SYSTEM_OPENVMS
+#if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
+        socklen_t size = sizeof(error);
+#elif !PLT_SYSTEM_OPENVMS
 	int size = sizeof(error);
 #else
 	unsigned int size = sizeof(error);
