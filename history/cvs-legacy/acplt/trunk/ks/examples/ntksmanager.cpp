@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.2 1997-11-27 18:18:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.3 1997-12-02 10:13:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -71,7 +71,11 @@
 //       DependOnService (MULTI_SZ)  "tcpip"
 //
 
+#ifdef PLT_W95SERVICE
+#include "ks/w95service.h"
+#else
 #include "ks/ntservice.h"
+#endif
 #include "ks/manager.h"
 #include "plt/log.h"
 
@@ -83,14 +87,22 @@
 // cutable fades away. This will make sure that there is a logger ready
 // for us as soon as we (really) start.
 //
+#ifdef PLT_W95SERVICE
+	// No default logger object for Windooze 95
+#else
 PltNtLog log("ACPLT/KS manager");
+#endif
 
 
 // -------------------------------------------------------------------------
 // We simply store the version id string in a static KsString, and return
 // a copy of it whenever someone asks us for it.
 //
+#ifdef PLT_W95SERVICE
+static const KsString NtKsManagerVersionString("1.01(w95)");
+#else
 static const KsString NtKsManagerVersionString("1.01(nt)");
+#endif
 
 class NtManager : public KsManager {
 public:
@@ -119,10 +131,22 @@ NtManager::NtManager(int port)
 // your service object class which just extends the basic service class by
 // the knowlodge how to instantiate a manager/server object.
 //
-class NtManagerService : public KsNtServiceServer {
+class NtManagerService : 
+#ifdef PLT_W95SERVICE
+	public KsW95ServiceServer
+#else
+	public KsNtServiceServer
+#endif
+{
 public:
+#ifdef PLT_W95SERVICE
+    NtManagerService(int argc, char **argv)
+	: KsW95ServiceServer("KS_manager", argc, argv)
+#else
     NtManagerService()
-        : KsNtServiceServer("KS_manager", 7000, 7000, 7000, 7000) { }
+        : KsNtServiceServer("KS_manager", 7000, 7000, 7000, 7000)
+#endif
+		{ }
 
 protected:
     virtual KsServerBase *createServer(int argc, char **argv);
@@ -137,7 +161,7 @@ KsServerBase *NtManagerService::createServer(int argc, char **argv)
     int idx;
     int port = KsServerBase::KS_ANYPORT;
 
-    for ( idx = 0; idx < argc; idx++ ) {
+    for ( idx = 1; idx < argc; idx++ ) {
         if ( (stricmp(argv[idx], "-v") == 0) ||
              (stricmp(argv[idx], "--verbose") == 0) ) {
              _is_verbose = true;
@@ -165,7 +189,11 @@ KsServerBase *NtManagerService::createServer(int argc, char **argv)
     //
     // Okay. Now for the real things...
     //
+#ifdef PLT_W95SERVICE
+    verbose("Creating W95Manager object");
+#else
     verbose("Creating NtManager object");
+#endif
     return new NtManager(port);
 } // NtManagerService::createServer
 
@@ -175,8 +203,13 @@ KsServerBase *NtManagerService::createServer(int argc, char **argv)
 // run() on it. On return from run(), the server object has already been
 // destroyed.
 //
+#ifdef PLT_W95SERVICE
+int main(int argc, char **argv) {
+    NtManagerService nt_service(argc, argv);
+#else
 int main(int, char **) {
     NtManagerService nt_service;
+#endif
 
     if ( nt_service.isOk() ) {
         nt_service.run();
