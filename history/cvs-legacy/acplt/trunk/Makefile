@@ -35,7 +35,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# $Header: /home/david/cvs/acplt/Makefile,v 1.6 1997-09-09 14:14:37 harald Exp $
+# $Header: /home/david/cvs/acplt/Makefile,v 1.7 1997-12-12 07:34:22 harald Exp $
 #
 
 UNIXES	= linux hpux solaris
@@ -143,6 +143,6 @@ export:		clean
 	@echo "-------------------------------------------------------------"
 	(cd plt/build/linux; $(MAKE) depend;)
 	(cd ks/build/linux; $(MAKE) depend;)
-	(cd ks/build/linux; cp *_inst.h ../nt; cp *_inst.h ../solaris; cp *_inst.h ../hpux; cp *_inst.h ../irix)
+	(cd ks/build/linux; cp *_inst.h ../nt; cp *_inst.h ../solaris; cp *_inst.h ../hpux; cp *_inst.h ../irix; cp *_inst.h ../openvms;)
 
 # End of Makefile
