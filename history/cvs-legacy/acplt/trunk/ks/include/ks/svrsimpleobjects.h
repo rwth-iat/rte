@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.12 1998-12-10 17:27:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.13 1998-12-14 18:03:51 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -296,35 +296,29 @@ public:
     //// KssCommObject
     //// accessors
     // projected properties
-    virtual KsString getIdentifier() const
-        { return KssSimpleCommObject::getIdentifier(); }
-    virtual KsTime   getCreationTime() const
-        { return KssSimpleCommObject::getCreationTime(); }
-    virtual KsString getComment() const
-        { return KssSimpleCommObject::getComment(); }
+    virtual KsString getIdentifier() const;
+    virtual KsTime   getCreationTime() const;
+    virtual KsString getComment() const;
 
     //// KssLink/KssChildrenService ////
     //// accessors
     virtual KS_LINK_TYPE getType() const { return KS_LT_LOCAL_1_MANY; }
     virtual KsString getOppositeRoleIdentifier() const { return KsString(); }
 
-
-    virtual KS_RESULT setCurrProps(const KsCurrPropsHandle &hprops)
-	{ return KS_ERR_NOACCESS; }
+    //// KssCurrPropsService stuff
+    virtual KS_RESULT getCurrProps(KsCurrPropsHandle &hprops) const;
     virtual KsCurrPropsHandle getCurrProps() const
 	{ return KsCurrPropsHandle(); }
+    virtual KS_RESULT setCurrProps(const KsCurrPropsHandle &)
+	{ return KS_ERR_NOACCESS; }
 
-
-    virtual KssChildIterator_THISTYPE * newIterator() const
-	{ return (KssChildIterator_THISTYPE *) _halias_domain->newIterator(); }
+    //// KssChildrenService stuff
+    virtual KssChildIterator_THISTYPE * newIterator() const;
     virtual KssChildIterator_THISTYPE *
         newMaskedIterator(const KsMask & name_mask,
-                          KS_OBJ_TYPE type_mask) const
-	{ return _halias_domain->newMaskedIterator(name_mask, type_mask); }
-    virtual KssCommObjectHandle getChildById(const KsString & id) const
-	{ return _halias_domain->getChildById(id); }
-    virtual KssCommObjectHandle getChildByPath(const KsPath & path) const
-	{ return _halias_domain->getChildByPath(path); }
+                          KS_OBJ_TYPE type_mask) const;
+    virtual KssCommObjectHandle getChildById(const KsString & id) const;
+    virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
 
     //// KssSimpleLinkAlias ////
     //// ctor/dtor
@@ -514,6 +508,56 @@ KssSimpleVariable::setValue(KsValue *p)
 {
     return KssVariable::setValue(p);
 }
+
+
+
+// ----------------------------------------------------------------------------
+// KssSimpleLinkAlias inline implementation stuff...
+//
+inline KsString
+KssSimpleLinkAlias::getIdentifier() const
+{
+    return KssSimpleCommObject::getIdentifier();
+} // KssSimpleLinkAlias::getIdentifier
+
+inline KsTime
+KssSimpleLinkAlias::getCreationTime() const
+{
+    return KssSimpleCommObject::getCreationTime();
+} // KssSimpleLinkAlias::getCreationTime
+
+inline KsString
+KssSimpleLinkAlias::getComment() const
+{
+    return KssSimpleCommObject::getComment();
+} // KssSimpleLinkAlias::getComment
+
+inline KssChildIterator_THISTYPE *
+KssSimpleLinkAlias::newIterator() const
+{
+    return (KssChildIterator_THISTYPE *) _halias_domain->newIterator();
+} // KssSimpleLinkAlias::newIterator
+
+inline KssChildIterator_THISTYPE *
+KssSimpleLinkAlias::newMaskedIterator(const KsMask & name_mask, 
+                                      KS_OBJ_TYPE type_mask) const
+{
+    return _halias_domain->newMaskedIterator(name_mask, type_mask);
+} // KssSimpleLinkAlias::newMaskedIterator
+
+inline KssCommObjectHandle
+KssSimpleLinkAlias::getChildById(const KsString & id) const
+{
+    return _halias_domain->getChildById(id);
+} // KssSimpleLinkAlias::getChildById
+
+inline KssCommObjectHandle
+KssSimpleLinkAlias::getChildByPath(const KsPath & path) const
+{
+    return _halias_domain->getChildByPath(path);
+} // KssSimpleLinkAlias::getChildByPath
+
+
 
 
 //////////////////////////////////////////////////////////////////////

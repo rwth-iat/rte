@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.10 1998-12-10 17:27:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.11 1998-12-14 18:04:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -292,6 +292,108 @@ KssSimpleLinkAlias::KssSimpleLinkAlias(KssDomainHandle hdom,
 { } // KssSimpleLinkAlias::KssSimpleLinkAlias
 
 
+// ----------------------------------------------------------------------------
+//
+KS_RESULT
+KssSimpleLinkAlias::getCurrProps(KsCurrPropsHandle &hprops) const
+{
+    class _PltStringNode {
+    public:
+	struct _PltStringNode *next;
+	KsString               id;
+
+	_PltStringNode() {}
+	~_PltStringNode() {}
+    }; // class _PltStringNode
+
+    _PltStringNode *head = 0;
+    _PltStringNode *tail = 0;
+    _PltStringNode *node;
+    unsigned long   itemcount = 0;
+
+    //
+    // Try to get an iterator from the underlying (simple) domain server
+    // object. We will then use this iterator for calculating the value.
+    //
+    KssDomainIterator *pit = PLT_RETTYPE_CAST(KssDomainIterator *)
+	_halias_domain->newIterator();
+    if ( !pit ) {
+	return KS_ERR_GENERIC;
+    }
+    //
+    // Now collect the identifiers of all children of the domain we're
+    // about to scan. The identifiers are put into a linked list -- we don't
+    // know yet how many identifiers we'll receive during the iteration
+    // process.
+    //
+    while ( *pit ) {
+	node = new _PltStringNode;
+	if ( !node || !(*pit) ) {
+	    while ( head ) {
+		node = head;
+		head = head->next;
+		delete node;
+	    }
+	    return KS_ERR_GENERIC;
+	}
+	++itemcount;
+	node->id = (**pit)->getIdentifier();
+	node->next = 0;
+	if ( !tail ) {
+	    head = node;
+	    tail = node;
+	} else {
+	    tail->next = node;
+	    tail = node;
+	}
+	++(*pit);
+    }
+    delete pit; // don't forget to free the iterator!
+    //
+    // Okay. Now create a value from the list of identifiers.
+    //
+    KsString *vec = new KsString[itemcount];
+    KsValueHandle hVal(new KsStringVecValue(itemcount, vec, KsOsArrayNew), 
+                       KsOsNew);
+    if ( (itemcount && !vec) || !hVal ) {
+	//
+        // Failed to allocate enough memory. So clean up the mess and
+        // leave the stage.
+	//
+	if ( vec && !hVal ) {
+	    delete [] vec;
+	}
+	while ( head ) {
+	    node = head;
+	    head = head->next;
+	    delete node;
+	}
+	return KS_ERR_GENERIC;
+    }
+    //
+    // Copy the identifiers from the list into the value array.
+    //
+    while ( head ) {
+	node = head;
+	head = head->next;
+	*vec++ = node->id;
+	delete node;
+    }
+    //
+    // Finally set up the current properties and return them.
+    //
+    KsVarCurrProps *pvcurrprops = new KsVarCurrProps;
+    if ( !pvcurrprops ) {
+	return KS_ERR_GENERIC;
+    }
+    pvcurrprops->value = hVal;
+    pvcurrprops->state = KS_ST_GOOD;
+    pvcurrprops->time = KsTime::now();
+
+    hprops.bindTo(pvcurrprops, KsOsNew);
+
+    return KS_ERR_OK;
+} // KssSimpleLinkAlias::getCurrProps
 
 //////////////////////////////////////////////////////////////////////
 /* EOF svrsimpleobjects.cpp */
