@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.6 1999-04-22 15:35:20 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.7 1999-05-12 12:41:50 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -499,9 +499,7 @@ void KssUDPXDRConnection::personaNonGrata()
 
 // ---------------------------------------------------------------------------
 //
-bool KssUDPXDRConnection::beginRequest(u_long xid,
-				       u_long prog_number, u_long prog_version,
-				       u_long proc_number)
+bool KssUDPXDRConnection::beginRequest(u_long, u_long, u_long, u_long)
 {
     if ( _state == CNX_STATE_DEAD ) {
 	return false;
