@@ -89,7 +89,7 @@ void plt_canthappen(const char *what, const char *file, int line);
  * method invocation (and should be checked before return with
  * PLT_CHECK_INVARIANT). invariant() should check the invariants of
  * parent classes. To avoid unnecessary virtual calls in production
- * code declaration and definition of invariant() has to be in
+ * code, declaration and definition of invariant() has to be in
  * #if PLT_DEBUG_INVARIANTS / #endif pairs.
  */
 
