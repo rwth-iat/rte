@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.3 1999-02-22 15:11:29 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.4 1999-02-25 17:15:48 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -56,12 +56,14 @@
 // need to handle I/O connections derived from KssConnection. Whenever these
 // connections need attention (request or answer available), they will invoke
 // the attention method of the KssConnectionAttentionInterface.
+// If the attention() method returns true, the connection will the reactivated,
+// otherwise it won't be touched anymore.
 //
 class KssConnection;
 
 class KssConnectionAttentionInterface {
 public:
-    virtual void attention(KssConnection &conn) = 0;
+    virtual bool attention(KssConnection &conn) = 0;
 }; // class KssConnectionAttentionInterface
 
 
@@ -104,15 +106,20 @@ public:
     // The states a connection can be in (a connection is regarded as a
     // finite state automata).
     // For servers: IDLE->RECEIVING->READY->SENDING->IDLE
-    // For clients: (READY)->SENDING->WAITING->RECEIVING->READY
+    // For clients: CONNECTING->CONNECTED->SENDING->WAITING
+    //              ->RECEIVING->READY->CONNECTED
     //
     enum ConnectionState {
     	CNX_STATE_IDLE,   	// connection is waiting for next incom. request
 	CNX_STATE_WAITING,  	// c. is waiting for reply (w/ timeout)
 	CNX_STATE_PASSIVE,  	// c. is not doing any io yet
 	CNX_STATE_READY,  	// c. is waiting to be served (has request/reply)
+	CNX_STATE_READY_FAILED, // c. waiting for reply timed out
 	CNX_STATE_RECEIVING,	// c. is receiving (maybe a request)
 	CNX_STATE_SENDING,	// c. is sending (maybe a reply)
+        CNX_STATE_CONNECTING,   // c. is connecting to a server (w/ timeout)
+	CNX_STATE_CONN_FAILED,  // c. establishment has failed
+	CNX_STATE_CONNECTED,    // c. established
 	CNX_STATE_DEAD	    	// c. is dead and should be destroyed
     }; // enum ConnectionState
     //
@@ -126,6 +133,7 @@ public:
 	CNX_IO_ATTENTION = 0x0004,    // c. need to be served
 	CNX_IO_DEAD = 0x0008, 	      // c. is dead
 	CNX_IO_NEED_TIMEOUT = 0x8000, // c. needs a timeout control
+	CNX_IO_NO_FASTWRITE = 0x0800, // do not immediately send data
 	CNX_IO_HAD_ERROR = 0x4000,    // c. had an i/o error
 	CNX_IO_HAD_TX_ERROR = 0x2000, // c. had i/o error during sending
 	CNX_IO_HAD_RX_ERROR = 0x1000  // c. had i/o error during receiving
@@ -135,6 +143,7 @@ public:
     inline bool isAutoDestroyable() const { return _auto_destroyable; }
     inline int getFd() const { return _fd; }
     inline long getTimeout() const { return _timeout; }
+    inline void setTimeout(unsigned long timeout) { _timeout = timeout; }
     inline ConnectionType getCnxType() const { return _cnx_type; }
     u_short getPort() const;
     
@@ -201,8 +210,10 @@ public:
     virtual void sendReply(KsAvTicket &avt, KsResult &result) = 0;
     virtual void personaNonGrata() = 0;
 
-    virtual bool beginRequest() = 0;
+    virtual bool beginRequest(u_long xid, u_long prog_number,
+			      u_long prog_version, u_long proc_number) = 0;
     virtual void sendRequest() = 0;
+    KsRpcHeader getRpcHeader() const { return _rpc_header; }
     
 protected:
     virtual void freeStreamMemory() { }

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.4 1999-01-29 12:42:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.5 1999-02-25 17:15:49 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -64,7 +64,8 @@ public:
     virtual void sendReply(KsAvTicket &avt, KsResult &result);
     virtual void personaNonGrata();
 
-    virtual bool beginRequest();
+    virtual bool beginRequest(u_long xid, u_long prog_number,
+			      u_long prog_version, u_long proc_number);
     virtual void sendRequest();
 
 protected:
@@ -93,8 +94,9 @@ public:
     virtual void sendReply(KsAvTicket &avt, KsResult &result);
     virtual void personaNonGrata();
 
-    virtual bool beginRequest() { return false; } // TODO sometimes in the
-    virtual void sendRequest()  { }               // future...
+    virtual bool beginRequest(u_long xid, u_long prog_number,
+			      u_long prog_version, u_long proc_number);
+    virtual void sendRequest();
 
 protected:
     virtual ConnectionIoMode receive();

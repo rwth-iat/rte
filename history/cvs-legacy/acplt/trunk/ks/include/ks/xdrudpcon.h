@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrudpcon.h,v 1.2 1999-01-08 13:09:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrudpcon.h,v 1.3 1999-02-25 17:15:50 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -63,7 +63,8 @@ public:
     virtual void sendReply(KsAvTicket &avt, KsResult &result);
     virtual void personaNonGrata();
 
-    virtual bool beginRequest();
+    virtual bool beginRequest(u_long xid, u_long prog_number,
+			      u_long prog_version, u_long proc_number);
     virtual void sendRequest();
 
 protected:

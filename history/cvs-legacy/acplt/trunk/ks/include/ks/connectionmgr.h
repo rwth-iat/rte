@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.4 1999-01-08 13:09:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.5 1999-02-25 17:15:48 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -41,7 +41,8 @@
  *                    streams. The connection manager makes it possible to
  *                    use so-called buffered XDR streams, which decouple
  *                    RPC I/O from service handling and thus serialization
- *                    and deserialization.
+ *                    and deserialization. In addition, the connection
+ *                    manager can also handle other kinds of connections.
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
@@ -142,7 +143,7 @@ public:
     
     // connections waiting to be served...or being served...
     KssConnection *getNextServiceableConnection();
-    bool reactivateConnection(KssConnection &con);
+    bool trackConnection(KssConnection &con);
 
     // connection management
     bool addConnection(KssConnection &con);

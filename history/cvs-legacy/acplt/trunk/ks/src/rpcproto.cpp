@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/rpcproto.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/rpcproto.cpp,v 1.3 1999-02-25 17:15:51 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -341,5 +341,19 @@ void KsRpcHeader::setRPCVersionMismatchError(u_long low, u_long high)
     _low           = low;
     _high          = high;
 } // KsRpcHeader::setRPCVersionMismatchError
+
+
+void KsRpcHeader::setRequest(u_long xid, 
+			     u_long prog_number, u_long prog_version,
+			     u_long proc_nr)
+{
+    _xid          = xid;
+    _msg_type     = KsRpcCALL;
+    _rpc_version  = 2;
+    _prog_number  = prog_number;
+    _prog_version = prog_version;
+    _procedure    = proc_nr;
+} // KsRpcHeader::setRequest
+
 
 /* End of rpcproto.cpp */

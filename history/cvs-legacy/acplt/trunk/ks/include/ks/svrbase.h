@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.21 1999-02-22 15:11:44 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.22 1999-02-25 17:15:49 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -165,7 +165,7 @@ protected:
     class KssAttentionXDRDispatcher:
         public KssConnectionAttentionInterface {
     public:
-        virtual void attention(KssConnection &conn);
+        virtual bool attention(KssConnection &conn);
     };
 
     KssAttentionXDRDispatcher  _attention_dispatcher;

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpcproto.h,v 1.1 1998-06-29 11:19:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpcproto.h,v 1.2 1999-02-25 17:15:49 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -64,6 +64,9 @@ public:
     void setProgramVersionMismatchError(u_long low, u_long high);
     void setSystemError();
     void setRPCVersionMismatchError(u_long low, u_long high);
+
+    void setRequest(u_long xid, u_long prog_number, u_long prog_version,
+		    u_long proc_nr);
 
     typedef enum {
 	KsRpcCALL = 0,

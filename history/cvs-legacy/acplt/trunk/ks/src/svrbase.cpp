@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.36 1999-02-22 15:11:45 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.37 1999-02-25 17:15:51 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -158,9 +158,10 @@ void KsGarbageTimerEvent::trigger()
 // calls for attention to the transport dispatcher of the current ACPLT/KS
 // server object.
 //
-void KsServerBase::KssAttentionXDRDispatcher::attention(KssConnection &conn)
+bool KsServerBase::KssAttentionXDRDispatcher::attention(KssConnection &conn)
 {
     KsServerBase::getServerObject().dispatchTransport((KssXDRConnection &)conn);
+    return true;
 } // KsServerBase::KssAttentionXDRDispatcher::attention
 
 #endif
@@ -684,6 +685,28 @@ KsServerBase::serveRequests(const KsTime *pTimeout)
     bool   has_cnx_timeout = false;
     fd_set read_fds, write_fds;
     
+#if PLT_USE_BUFFERED_STREAMS
+// FIXME!!!
+    for ( ; ; ) {
+	KssConnection *con = _cnx_manager->getNextServiceableConnection();
+	if ( !con ) {
+	    break;
+	}
+	KssConnectionAttentionInterface *attn = con->getAttentionPartner();
+	bool reactivate = true;
+	if ( attn ) {
+	    reactivate = attn->attention(*con);
+	} else {
+	    PltLog::Error("KsServerBase::serveRequests(): "
+			  "connection without attention partner.");
+	    // FIXME: Should we reset the connection here?
+	}
+	if ( reactivate ) {
+	    _cnx_manager->trackConnection(*con);
+	}
+    }
+#endif
+
     if ( _cnx_manager->mayHaveTimeout() ) {
 	//
 	// There is a timeout in the connection manager´s queue, so let´s
@@ -741,14 +764,17 @@ KsServerBase::serveRequests(const KsTime *pTimeout)
 		break;
 	    }
 	    KssConnectionAttentionInterface *attn = con->getAttentionPartner();
+	    bool reactivate = true;
 	    if ( attn ) {
-		attn->attention(*con);
+		reactivate = attn->attention(*con);
 	    } else {
 		PltLog::Error("KsServerBase::serveRequests(): "
 			      "connection without attention partner.");
 		// FIXME: Should we reset the connection here?
 	    }
-    	    _cnx_manager->reactivateConnection(*con);
+	    if ( reactivate ) {
+		_cnx_manager->trackConnection(*con);
+	    }
 	}
 #endif
     } else {

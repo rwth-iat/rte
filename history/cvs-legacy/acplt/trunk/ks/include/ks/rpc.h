@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.13 1997-10-28 10:42:45 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.14 1999-02-25 17:15:49 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -73,6 +73,9 @@ typedef unsigned char u_char;
 #pragma warning (disable : 4237 )  /* disable warning about defining bool... */
 #endif
 
+
+#ifdef __cplusplus
+
 class KsNTOncRpc
 {
 public:
@@ -83,6 +86,8 @@ private:
 };
 
 static KsNTOncRpc ks_nt_oncrpc;
+
+#endif
 
 #endif // PLT_SYSTEM_NT
 

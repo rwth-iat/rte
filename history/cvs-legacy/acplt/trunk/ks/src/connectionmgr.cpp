@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.5 1999-01-29 12:44:33 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.6 1999-02-25 17:15:51 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -38,7 +38,11 @@
 /*
  * connectionmgr.cpp -- Implements a connection manager which can handle
  *                      connection objects which in turn encapsulate XDR
- *                      streams.
+ *                      streams. The connection manager makes it possible to
+ *                      use so-called buffered XDR streams, which decouple
+ *                      RPC I/O from service handling and thus serialization
+ *                      and deserialization. In addition, the connection
+ *                      manager can also handle other kinds of connections.
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
@@ -233,7 +237,9 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
     	 (item._last_io_mode & KssConnection::CNX_IO_WRITEABLE) ) {
     	if ( ioMode & KssConnection::CNX_IO_WRITEABLE ) {
     	    FD_SET(fd, &_writeable_fdset);
-	    fastwrite = true;
+	    if ( !ioMode & KssConnection::CNX_IO_NO_FASTWRITE ) {
+		fastwrite = true;
+	    }
 #ifdef CNXDEBUG
 	    cout << "[writeable]";
 #endif
@@ -348,7 +354,8 @@ int KssConnectionManager::getFdSets(fd_set &readables, fd_set &writeables)
 PltTime KssConnectionManager::getEarliestTimeout()
 {
     if ( mayHaveTimeout() ) {
-    	return ((_KssConnectionItem *) _active_connections._next)->_best_before;
+    	return ((_KssConnectionItem *) _active_connections._next)->
+	    _best_before;
     } else {
     	return PltTime(MAXINT);
     }
@@ -436,6 +443,10 @@ int KssConnectionManager::processConnections(fd_set &readables,
 #else
     int                              i;
     SOCKET                          *sock;
+#endif
+
+#ifdef CNXDEBUG
+    cout << "processConnections" << endl;
 #endif
     
 #if !PLT_SYSTEM_NT
@@ -560,7 +571,8 @@ bool KssConnectionManager::shutdownConnections(long secs)
     for ( i = 0; i < _fdset_size; ++i ) {
 	KssConnection *con = _connections[i]._connection;
 	if ( con ) {
-	    if ( con->getIoMode() & KssConnection::CNX_IO_WRITEABLE ) {
+	    if ( (con->getIoMode() & KssConnection::CNX_IO_WRITEABLE)
+		 && (con->getState() != KssConnection::CNX_STATE_CONNECTING) ) {
 		// count connections that want to send data
 		++pending;
 	    } else {
@@ -693,7 +705,7 @@ KssConnection *KssConnectionManager::getNextServiceableConnection()
 // Brings a connection back into the play after it has moved into the service-
 // able list.
 //
-bool KssConnectionManager::reactivateConnection(KssConnection &con)
+bool KssConnectionManager::trackConnection(KssConnection &con)
 {
     int                 fd   = con.getFd();
     _KssConnectionItem *item = getConnectionItem(fd);
@@ -724,7 +736,35 @@ bool KssConnectionManager::reactivateConnection(KssConnection &con)
 	con.reset(false); // Try to reset nevertheless...
     }
     return false;
-} // KssConnectionManager::reactivateConnection
+} // KssConnectionManager::trackConnection
+
+
+// ---------------------------------------------------------------------------
+// Allow someone outside the connection manager and a connection itself to
+// reset that particular connection.  Puts the connection back into its
+// default mode. After certain i/o errors we might want to do this
+// (especially with udp connections).
+//
+bool KssConnectionManager::resetConnection(KssConnection &con)
+{
+    int                 fd   = con.getFd();
+    _KssConnectionItem *item = getConnectionItem(fd);
+    if ( item && item->_connection ) {
+	if ( con.getState() != KssConnection::CNX_STATE_DEAD ) {
+    	    trackCnxIoMode(*item, con.reset(false));
+	    if ( con.getState() != KssConnection::CNX_STATE_DEAD ) {
+		return true;
+	    }
+	}
+	if ( con.isAutoDestroyable() ) {
+	    con.shutdown();
+	    removeConnection(con);
+	    delete &con;
+	    return true;
+	}
+    }
+    return false;
+} // KssConnectionManager::resetConnection
 
 
 // ---------------------------------------------------------------------------
@@ -894,23 +934,6 @@ bool KssConnectionManager::removeConnection(KssConnection &con)
     }
     return false;
 } // KssConnectionManager::removeConnection
-
-
-// ---------------------------------------------------------------------------
-// Puts a connection back into its default mode. After certain i/o errors we
-// might want to do this (especially with udp connections).
-//
-bool KssConnectionManager::resetConnection(KssConnection &con)
-{
-    int                 fd   = con.getFd();
-    _KssConnectionItem *item = getConnectionItem(fd);
-    if ( item && item->_connection &&
-         (con.getState() != KssConnection::CNX_STATE_DEAD) ) {
-    	trackCnxIoMode(*item, con.reset(false));
-        return true;
-    }    
-    return false;
-} // KssConnectionManager::resetConnection
 
 
 // ---------------------------------------------------------------------------
