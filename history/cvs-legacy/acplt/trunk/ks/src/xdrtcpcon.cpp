@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.10 1999-05-12 10:03:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.11 1999-09-06 06:58:51 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -658,7 +658,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		} else {
 		    _state = CNX_STATE_DEAD;
 		}
-	    	_state = CNX_STATE_DEAD;
+                return getIoMode();
 	    } else {
 		break; // okay, we´ve got data...
 	    }
