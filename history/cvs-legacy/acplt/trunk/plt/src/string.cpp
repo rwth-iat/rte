@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.19 1998-09-17 13:08:15 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.20 1998-09-22 09:05:36 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -389,13 +389,13 @@ PltString
 PltString::toLower() const
 {
     if(p) {
-        char *upper = new char[p->len+1];
-        if(upper) {
+        char *lower = new char[p->len+1];
+        if(lower) {
             for(size_t i = 0; i < p->len; i++) {
-                upper[i] = tolower( (p->s)[i] );
+                lower[i] = tolower( (p->s)[i] );
             }
-            upper[p->len] = 0;
-            return PltString(p->len, upper);
+            lower[p->len] = 0;
+            return PltString(p->len, lower);
         }
     }
 

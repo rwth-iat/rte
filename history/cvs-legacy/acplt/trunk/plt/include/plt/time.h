@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.11 1997-09-13 08:19:46 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.12 1998-09-22 09:05:35 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -59,6 +59,29 @@ struct timeval
 #include <sys/time.h>
 #endif
 
+/////////////////////////////////////////////////////////////////////////////
+// A PltTimeSpan object represents the length of a time interval. 
+/////////////////////////////////////////////////////////////////////////////
+
+class PltTimeSpan
+{
+public:
+    PltTimeSpan(long sec = 0, long usec = 0);
+    PltTimeSpan(const PltTimeSpan &ts);
+
+    PltTimeSpan &operator += (const PltTimeSpan &ts);
+    PltTimeSpan &operator -= (const PltTimeSpan &ts);
+
+    void normalize();
+
+#if PLT_DEBUG_INVARIANTS
+    bool invariant() const
+#endif
+
+    long tv_sec;
+    long tv_usec;
+};
+
 //////////////////////////////////////////////////////////////////////
 // a PltTime object is a timeval with some operations added
 //////////////////////////////////////////////////////////////////////
@@ -80,27 +103,46 @@ struct PltTime : public timeval {
     // adding and substracting times
     PltTime & operator += (const PltTime &t);
     PltTime & operator -= (const PltTime &t);
-    
+    PltTime & operator += (const PltTimeSpan &ts);
+    PltTime & operator -= (const PltTimeSpan &ts);
+
     void sleep() const; // delay for at least *this time
 
     static PltTime now(long seconds=0, long useconds = 0);
     static PltTime now(const PltTime &);
 };
 
+//
+// Return type should be PltTimeSpan, but changing operators  
+// would break existing code.
+//
 PltTime operator + (const PltTime &t1, const PltTime &t2);
 PltTime operator - (const PltTime &t1, const PltTime &t2);
+//
+// Return type PltTime is ok.
+// Errors due to underflow of unsigned tv_sec are ignored.
+//
+PltTime operator + (const PltTime &t, const PltTimeSpan &ts);
+PltTime operator + (const PltTimeSpan &ts, const PltTime &t);
+PltTime operator - (const PltTime &t, const PltTimeSpan &ts);
+PltTime operator - (const PltTimeSpan &ts, const PltTime &t);
 
 //
 // Comparison operators.
 //
+inline bool operator == (const PltTime &t1, const PltTime &t2);
+inline bool operator != (const PltTime &t1, const PltTime &t2);
+inline bool operator < (const PltTime &t1, const PltTime &t2);
+inline bool operator > (const PltTime &t1, const PltTime &t2);
+inline bool operator <= (const PltTime &t1, const PltTime &t2);
+inline bool operator >= (const PltTime &t1, const PltTime &t2);
 
-bool operator == (const PltTime &t1, const PltTime &t2);
-bool operator != (const PltTime &t1, const PltTime &t2);
-bool operator < (const PltTime &t1, const PltTime &t2);
-bool operator > (const PltTime &t1, const PltTime &t2);
-bool operator <= (const PltTime &t1, const PltTime &t2);
-bool operator >= (const PltTime &t1, const PltTime &t2);
-
+inline bool operator == (const PltTimeSpan &ts1, const PltTimeSpan &ts2);
+inline bool operator != (const PltTimeSpan &ts1, const PltTimeSpan &ts2);
+inline bool operator < (const PltTimeSpan &ts1, const PltTimeSpan &ts2);
+inline bool operator > (const PltTimeSpan &ts1, const PltTimeSpan &ts2);
+inline bool operator <= (const PltTimeSpan &ts1, const PltTimeSpan &ts2);
+inline bool operator >= (const PltTimeSpan &t1, const PltTimeSpan &ts2);
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
@@ -122,60 +164,89 @@ bool operator >= (const PltTime &t1, const PltTime &t2);
 #define PLT_TIME_TV_USEC_SIGNED 1
 #endif
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// class PltTimeSpan
+/////////////////////////////////////////////////////////////////////////////
 
-inline bool
-operator == (const PltTime &t1, const PltTime &t2)
+inline
+void
+PltTimeSpan::normalize()
 {
-    return 
-            t1.tv_usec == t2.tv_usec
-        &&  t1.tv_sec  == t2.tv_sec;
+    // Forces tv_usec to be in range from 0 to 999999
+    //
+    while(tv_usec >= 1000000) {
+        tv_usec -= 1000000;
+        tv_sec += 1;
+    }
+
+    while(tv_usec < 0) {
+        tv_usec += 1000000;
+        tv_sec -= 1;
+    }
+
+    PLT_CHECK_INVARIANT();
 }
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
-inline bool
-operator <= (const PltTime &t1, const PltTime &t2)
+inline
+PltTimeSpan::PltTimeSpan(long sec, long usec)
+    : tv_sec(sec), tv_usec(usec)
 {
-    return 
-            t1.tv_sec  <  t2.tv_sec
-        || ( t1.tv_sec  == t2.tv_sec
-          && t2.tv_usec <= t2.tv_usec);
+    normalize();
 }
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
-inline bool
-operator != (const PltTime &t1, const PltTime &t2)
+inline 
+PltTimeSpan::PltTimeSpan(const PltTimeSpan &ts)
+    : tv_sec(ts.tv_sec),
+      tv_usec(ts.tv_usec)
 {
-    return !(t1==t2);
+    PLT_CHECK_INVARIANT();
 }
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
-inline bool
-operator >= (const PltTime &t1, const PltTime &t2)
+inline
+PltTimeSpan &
+PltTimeSpan::operator += (const PltTimeSpan &ts)
 {
-    return t2 <= t1;
+    tv_sec += ts.tv_sec;
+    tv_usec += ts.tv_usec;
+    normalize();
+    return *this;
 }
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
-inline bool
-operator > (const PltTime &t1, const PltTime &t2)
+inline
+PltTimeSpan &
+PltTimeSpan::operator -= (const PltTimeSpan &ts)
 {
-    return !(t1 <= t2);
+    tv_sec -= ts.tv_sec;
+    tv_usec -= ts.tv_usec;
+    normalize();
+    return *this;
 }
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
-inline bool
-operator < (const PltTime &t1, const PltTime &t2)
+#if PLT_DEBUG_INVARIANTS
+
+inline
+bool
+PltTimeSpan::invariant() const
 {
-    return !(t2 <= t1);
+    return 0 <= tv_usec &&
+        tv_usec < 1000000;
 }
 
+#endif
+
 //////////////////////////////////////////////////////////////////////
+// class PltTime
+/////////////////////////////////////////////////////////////////////////////
 
 inline bool
 PltTime::isZero() const
@@ -238,6 +309,19 @@ PltTime::operator += (const PltTime & t)
     return *this;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+PltTime &
+PltTime::operator += (const PltTimeSpan &ts)
+{
+    tv_usec += ts.tv_usec;
+    tv_sec += ts.tv_sec;
+    normalize();
+    PLT_CHECK_INVARIANT();
+    return *this;
+}
+
 //////////////////////////////////////////////////////////////////////
 
 inline PltTime &
@@ -256,7 +340,182 @@ PltTime::operator -= (const PltTime & t)
     return *this;
 }    
 
+/////////////////////////////////////////////////////////////////////////////
+
+inline PltTime &
+PltTime::operator -= (const PltTimeSpan &ts)
+{
+    if (tv_usec < ts.tv_usec) {
+        // this->tv_usec borrows one second
+        tv_usec += 1000000;
+        --tv_sec;
+    }
+    tv_usec -= ts.tv_usec;
+    tv_sec  -= ts.tv_sec;
+    normalize();
+    PLT_CHECK_INVARIANT();
+    return *this;
+}    
+
+/////////////////////////////////////////////////////////////////////////////
+// Comparison operators for class PltTimeSpan
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+bool 
+operator == (const PltTimeSpan &ts1, const PltTimeSpan &ts2)
+{
+    return ts1.tv_sec == ts2.tv_sec
+        && ts1.tv_usec == ts2.tv_usec;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+bool 
+operator != (const PltTimeSpan &ts1, const PltTimeSpan &ts2)
+{
+    return !(ts1 == ts2);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+bool 
+operator < (const PltTimeSpan &ts1, const PltTimeSpan &ts2)
+{
+    return ts1.tv_sec < ts2.tv_sec
+        || (ts1.tv_sec == ts2.tv_sec && ts1.tv_usec < ts2.tv_usec);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline 
+bool 
+operator > (const PltTimeSpan &ts1, const PltTimeSpan &ts2)
+{
+    return ts1.tv_sec > ts2.tv_sec
+        || (ts1.tv_sec == ts2.tv_sec && ts1.tv_usec > ts2.tv_usec);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+bool 
+operator <= (const PltTimeSpan &ts1, const PltTimeSpan &ts2)
+{
+    return ts1.tv_sec < ts2.tv_sec
+        || (ts1.tv_sec == ts2.tv_sec && ts1.tv_usec <= ts2.tv_usec);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+bool 
+operator >= (const PltTimeSpan &ts1, const PltTimeSpan &ts2)
+{
+    return ts1.tv_sec > ts2.tv_sec
+        || (ts1.tv_sec == ts2.tv_sec && ts1.tv_usec >= ts2.tv_usec);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Comparison operators for class PltTime
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool
+operator == (const PltTime &t1, const PltTime &t2)
+{
+    return 
+            t1.tv_usec == t2.tv_usec
+        &&  t1.tv_sec  == t2.tv_sec;
+}
+
 //////////////////////////////////////////////////////////////////////
+
+inline bool
+operator <= (const PltTime &t1, const PltTime &t2)
+{
+    return 
+            t1.tv_sec  <  t2.tv_sec
+        || ( t1.tv_sec  == t2.tv_sec
+          && t2.tv_usec <= t2.tv_usec);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+operator != (const PltTime &t1, const PltTime &t2)
+{
+    return !(t1==t2);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+operator >= (const PltTime &t1, const PltTime &t2)
+{
+    return t2 <= t1;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+operator > (const PltTime &t1, const PltTime &t2)
+{
+    return !(t1 <= t2);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+operator < (const PltTime &t1, const PltTime &t2)
+{
+    return !(t2 <= t1);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+PltTime 
+operator + (const PltTime &t, const PltTimeSpan &ts)
+{
+    
+    return PltTime(t.tv_sec + ts.tv_sec,
+                   t.tv_usec + ts.tv_usec);
+    
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+PltTime 
+operator + (const PltTimeSpan &ts, const PltTime &t)
+{
+    return PltTime(t.tv_sec + ts.tv_sec,
+                   t.tv_usec + ts.tv_usec);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+PltTime 
+operator - (const PltTime &t, const PltTimeSpan &ts)
+{
+    return PltTime(t.tv_sec - ts.tv_sec,
+                   t.tv_usec - ts.tv_usec);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+PltTime 
+operator - (const PltTimeSpan &ts, const PltTime &t)
+{
+    return PltTime(t.tv_sec - ts.tv_sec,
+                   t.tv_usec - ts.tv_usec);
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 inline PltTime
 operator + (const PltTime & t1, const PltTime & t2) 
@@ -284,6 +543,8 @@ PltTime::now(const PltTime & t)
     return PltTime::now(t.tv_sec, t.tv_usec);
 }
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+
 #endif // PLT_TIME_INCLUDED
 
