@@ -299,8 +299,9 @@ struct KscGetServerInStruct
 
 struct KscGetServerOutStruct
 {
-    KscGetServerOutStruct(KsGetServerResult *result)
-    : avt(0),
+    KscGetServerOutStruct(KscNegotiator *neg,
+                          KsGetServerResult *result)
+    : avt(neg),
       gsr(result)
     {}
 
@@ -384,7 +385,9 @@ KscServer::getServerDesc(struct hostent *hp,
     KscGetServerInStruct inData(
         KscAvNoneModule::getStaticNegotiator(), 
         &params);
-    KscGetServerOutStruct outData(&server_desc);
+    KscGetServerOutStruct outData(
+        KscAvNoneModule::getStaticNegotiator(),
+        &server_desc);
 
     errcode = clnt_call(pUDP, 
                         KS_GETSERVER,
@@ -393,11 +396,6 @@ KscServer::getServerDesc(struct hostent *hp,
                         KscGetServerOutHelper,
                         &outData,
                         KSC_UDP_TIMEOUT);
-
-    // TODO
-    if( outData.avt ) {
-        delete outData.avt;
-    }
 
     // free resources used by client handle
     clnt_destroy( pUDP );

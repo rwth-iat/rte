@@ -86,6 +86,8 @@ public:
     const KscAvModule *getAvModule() const;
 
 protected:
+    // TODO:
+    KscNegotiator *getNegotiator() { PLT_ASSERT(0); }
     KscAbsPath related_server;
     bool server_set;
 

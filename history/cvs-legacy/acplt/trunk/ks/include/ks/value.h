@@ -238,6 +238,8 @@ public:
 
     virtual enum_t xdrTypeCode() const;
 
+    KsStringValue &operator = (const PltString &);
+
 protected:
     virtual bool xdrEncodeVariant(XDR *) const;
     virtual bool xdrDecodeVariant(XDR *);

@@ -224,6 +224,15 @@ KsStringValue::xdrDecodeVariant(XDR *xdr)
 }
 
 //////////////////////////////////////////////////////////////////////
+
+KsStringValue &
+KsStringValue::operator = (const PltString &newstr)
+{
+    KsString::operator = (newstr);
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
 #if PLT_DEBUG
 void
 KsStringValue::debugPrint(ostream & ostr) const
@@ -278,7 +287,8 @@ KsTimeValue::xdrDecodeVariant(XDR *xdr)
 void
 KsTimeValue::debugPrint(ostream & ostr) const
 {
-    ostr << "KsTimeValue{" << tv_sec << "," << tv_usec << "}";
+    ostr << "KsTimeValue{" << tv_sec << "," << tv_usec 
+         << " = " << ctime(&tv_sec) << "}";
 }
 #endif
 //////////////////////////////////////////////////////////////////////

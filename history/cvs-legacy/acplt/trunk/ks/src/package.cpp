@@ -309,7 +309,8 @@ KscPackage::getUpdate()
 
     // request updated data from the server
     //
-    bool ok = myServer->getVar(params, result);
+    bool ok = myServer->getVar(getNegotiator(),
+                               params, result);
 
     // check errors
     //

@@ -62,6 +62,9 @@ class KscTypedVar
 public:
     KscTypedVar(const KscAbsPath &name);
 
+    // check for type errors but dont fail
+    // due to it
+    bool getProjPropsUpdate();
     // may fail due to type error
     bool getUpdate();
     // may fail due to type error
@@ -116,6 +119,45 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
+class KscStringVar
+: public KscTypedVar
+{
+public:
+    KscStringVar(const KscAbsPath &name);
+
+    KscStringVar &operator = (const KsString &);
+    operator KsString ();
+
+protected:
+    KsStringValue *getCastedValue();
+    KS_VAR_TYPE varType() const;
+
+    PLT_DECL_RTTI;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+class KscTimeVar
+: public KscTypedVar
+{
+public:
+    KscTimeVar(const KscAbsPath &name);
+
+    KscTimeVar &operator = (const KsTime &);
+    operator KsTime ();
+
+protected:
+    KsTimeValue *getCastedValue();
+    KS_VAR_TYPE varType() const;
+
+    PLT_DECL_RTTI;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+
 class KscDoubleVecVar
 : public KscTypedVar
 {
@@ -131,6 +173,35 @@ protected:
 
     PLT_DECL_RTTI;
 };
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+#if 0
+
+//////////////////////////////////////////////////////////////////////
+// some macros to declare and implement the vector types
+//
+
+#define PLT_DECL_VEC_VAR(elemtype)                                   \
+    class Ksc##elemtypeVecVar                                        \
+    : public KscTypedVar                                             \
+    {                                                                \
+    public:                                                          \
+        Ksc##elemtypeVecVar(const KscAbsPath &);                     \
+        Ksc##elemtypeVecVar                                          \
+        &operator=(const Ks##elemtypeVecValue &);                    \
+        operator Ks##elemtypeVecValue();                             \
+    protected:                                                       \
+        Ks##elemtypeVecValue *getCastedValue();                      \
+        KS_VAR_TYPE varType() const;                                 \
+        PLT_DECL_RTTI;                                               \
+    }
+
+//////////////////////////////////////////////////////////////////////
+
+
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
@@ -184,6 +255,41 @@ KscDoubleVar::varType() const
     return KS_VT_DOUBLE;
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscStringVar::KscStringVar(const KscAbsPath &name)
+: KscTypedVar(name)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_VAR_TYPE
+KscStringVar::varType() const
+{
+    return KS_VT_STRING;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscTimeVar::KscTimeVar(const KscAbsPath &name)
+: KscTypedVar(name)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_VAR_TYPE
+KscTimeVar::varType() const
+{
+    return KS_VT_TIME;
+}
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 inline

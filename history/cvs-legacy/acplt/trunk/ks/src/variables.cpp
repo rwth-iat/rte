@@ -47,6 +47,8 @@
 // 
 PLT_IMPL_RTTI1(KscIntVar,KscVariable);
 PLT_IMPL_RTTI1(KscDoubleVar,KscVariable);
+PLT_IMPL_RTTI1(KscStringVar,KscVariable);
+PLT_IMPL_RTTI1(KscTimeVar,KscVariable);
 PLT_IMPL_RTTI1(KscDoubleVecVar,KscVariable);
 
 //////////////////////////////////////////////////////////////////////
@@ -66,13 +68,31 @@ KscTypedVar::checkType()
 {
     fTypeError =
         (proj_props.type != varType());
-    
+
     if(curr_props.value) {
         fTypeError |= 
             curr_props.value->xdrTypeCode() != varType();
     }
 
     return !fTypeError;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscTypedVar::getProjPropsUpdate()
+{
+    bool ok = KscVariable::getProjPropsUpdate();
+
+    if(ok) {
+        fTypeError = 
+            proj_props.type != varType();
+        if(fTypeError) {
+            PLT_DMSG("WARNING : projected type does not match desired type" << endl);
+        }
+    }
+
+    return ok;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -156,6 +176,7 @@ KscIntVar::operator long()
 }
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 KsDoubleValue *
 KscDoubleVar::getCastedValue() 
@@ -209,7 +230,111 @@ KscDoubleVar::operator double()
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-KsDoubleVecValue *
+KsStringValue *
+KscStringVar::getCastedValue() 
+{
+    if(curr_props.value) {
+        if(curr_props.value->xdrTypeCode() == varType()) {
+            return (KsStringValue *)(curr_props.value.getPtr());
+        }
+        else {
+            fTypeError = true;
+            return 0;
+        }
+    }
+    else {
+        KsStringValue *val = new KsStringValue();
+        curr_props.value = 
+            KsPtrHandle<KsValue>(val, KsOsNew);
+        return val;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscStringVar &
+KscStringVar::operator = (const KsString &newVal)
+{
+    KsStringValue *val = getCastedValue(); 
+
+    if(isValid()) {
+        *val = newVal;
+
+        fDirty = true;
+    }
+    
+    return *this;
+}
+        
+//////////////////////////////////////////////////////////////////////
+
+KscStringVar::operator KsString()
+{
+    KsStringValue *val = getCastedValue();
+
+    if(isValid()) {
+        return *val;
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+KsTimeValue *
+KscTimeVar::getCastedValue() 
+{
+    if(curr_props.value) {
+        if(curr_props.value->xdrTypeCode() == varType()) {
+            return (KsTimeValue *)(curr_props.value.getPtr());
+        }
+        else {
+            fTypeError = true;
+            return 0;
+        }
+    }
+    else {
+        KsTimeValue *val = new KsTimeValue();
+        curr_props.value = 
+            KsPtrHandle<KsValue>(val, KsOsNew);
+        return val;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscTimeVar &
+KscTimeVar::operator = (const KsTime &newVal)
+{
+    KsTimeValue *val = getCastedValue(); 
+
+    if(isValid()) {
+        *val = newVal;
+
+        fDirty = true;
+    }
+    
+    return *this;
+}
+        
+//////////////////////////////////////////////////////////////////////
+
+KscTimeVar::operator KsTime()
+{
+    KsTimeValue *val = getCastedValue();
+
+    if(isValid()) {
+        return *val;
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+KsDoubleVecValue * 
 KscDoubleVecVar::getCastedValue() 
 {
     if(curr_props.value) {
