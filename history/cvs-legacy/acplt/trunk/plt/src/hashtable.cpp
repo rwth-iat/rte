@@ -10,43 +10,20 @@
 
 
 //////////////////////////////////////////////////////////////////////
-
+// sentinel obj
 PltHashAssoc_base
 PltHashAssoc_base::deleted_obj;
 
 //////////////////////////////////////////////////////////////////////
-
+// sentinel
 PltHashAssoc_base *
 PltHashAssoc_base::deleted = &PltHashAssoc_base::deleted_obj;
-
-//////////////////////////////////////////////////////////////////////
-
-bool
-PltHashAssoc_base::keyEqual(const PltHashKey_base &) const
-{
-    return false;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-bool
-PltHashAssoc_base::keyEqual(const PltHashAssoc_base &) const
-{
-    return false;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-unsigned long
-PltHashAssoc_base::keyHash() const
-{
-    return 0;
-}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 static size_t primes[] = 
+    // The hash table must have prime size. Here are some primes.
 { 
     7, 11, 13, 17, 19, 23, 29,
     31, 41, 47, 59, 67, 79, 97, 127, 137, 167, 197, 239, 293, 347, 419,
@@ -64,6 +41,7 @@ static size_t primes[] =
 };
 
 static inline size_t cprimes() 
+    // safe 'macro' for the count of primes
 {
     return sizeof primes / sizeof (primes[0]);
 }
@@ -72,13 +50,13 @@ static inline size_t cprimes()
 
 inline size_t
 PltHashTable_base::collidx(size_t i, size_t j) const
+    // collision resolving algorithm
 {
     const size_t k = i+j;
     return k % a_capacity;
 }
 
 //////////////////////////////////////////////////////////////////////
-
 
 PltHashTable_base::PltHashTable_base(size_t mincap,
                                      float highwater, 
@@ -119,6 +97,7 @@ PltHashTable_base::invariant() const
     if ( a_capacity < a_minCapacity ) return false;
     if ( a_capacity <= a_used ) return false;
     if ( a_deleted > a_used ) return false;
+
 #if PLT_DEBUG_SLOW
     size_t used = 0;
     size_t deld = 0;
@@ -150,14 +129,14 @@ PltHashTable_base::invariant() const
                 && a_table[k] != PltHashAssoc_base::deleted
                 && a_table[l]
                 && a_table[l] != PltHashAssoc_base::deleted
-                && a_table[k]->keyEqual(*a_table[l])) {
+                && assocEqualAssoc(a_table[k],a_table[l])) {
                 dupes = true;
             }
         }
     }
     if (dupes) return false;
-
 #endif
+
     return true;
 }
 #endif
@@ -232,20 +211,23 @@ bool PltHashTable_base::changeCapacity(size_t cap)
 //////////////////////////////////////////////////////////////////////
 
 size_t
-PltHashTable_base::locate(const PltHashKey_base & key) const {
+PltHashTable_base::locate(const void * key) const 
+    // find the index of a key, return a_capacity if not found
+{
     PLT_PRECONDITION(a_used < a_capacity);
-    size_t i = key.hash();
+    size_t loc = a_capacity;
+    size_t i = keyHash(key);
     size_t j = 0;
-    for (i = collidx(i,0); ; i = collidx(i,++j)) {
-        if ( !a_table[i] ) {
-            // unused entry
-            break;
-        } else if ( a_table[i]->keyEqual(key) ) {
-            // key found
-            break;
+    for (i = collidx(i,0); 
+         loc >= a_capacity && a_table[i]; 
+         i = collidx(i,++j)) 
+        {
+            if ( assocEqualKey(a_table[i],key) ) {
+                // key found
+                loc = i;
+            }
         }
-    }
-    return i;
+    return loc;
 }
     
 //////////////////////////////////////////////////////////////////////
@@ -263,14 +245,14 @@ PltHashTable_base::insert(PltHashAssoc_base *p)
     bool dupe   = false;         // duplicate found?
     size_t deleted = a_capacity; // first matching deleted if any
     size_t ins;                  // insertion point
-    size_t i = p->keyHash();
+    size_t i = assocHash(p);
     size_t j = 0;
     for (i = collidx(i,0); !dupe && a_table[i]; i = collidx(i,++j)) {
         if ( a_table[i] == PltHashAssoc_base::deleted ) {
             // deleted entry while inserting
             deleted = i;
             // continue and check for duplicate
-        } else if ( a_table[i]->keyEqual(*p) ) {
+        } else if ( assocEqualAssoc(a_table[i],p) ) {
             // found duplicate
             dupe = true;
         }
@@ -303,7 +285,7 @@ PltHashTable_base::addAssoc(PltHashAssoc_base *p)
 {
     PLT_PRECONDITION(p);
     size_t minCap = a_used + 1 + 1; // compensate for assoc to be added
-    if (    a_capacity < minCap             // ensure functionality
+    if (    a_capacity < minCap     // ensure functionality
         ||  size() + 1 > a_capacity * a_highwater) {
         // Grow.
         size_t tmp = size_t(float(size()) / a_medwater);
@@ -320,7 +302,8 @@ PltHashTable_base::addAssoc(PltHashAssoc_base *p)
 //////////////////////////////////////////////////////////////////////
 
 PltHashAssoc_base *
-PltHashTable_base::removeAssoc(const PltHashKey_base &key)
+PltHashTable_base::removeAssoc(const void * key)
+    // remove an assoc with key key and return it. return 0 if not found
 {
 #if PLT_DEBUG_POSTCONDITIONS
     size_t oldSize = size();
@@ -328,7 +311,8 @@ PltHashTable_base::removeAssoc(const PltHashKey_base &key)
     size_t i = locate(key);
     PltHashAssoc_base *result;
     
-    if ( a_table[i] && a_table[i] != PltHashAssoc_base::deleted ) {
+    if ( i < a_capacity ) {
+        // found
         result = a_table[i];
         a_table[i] = PltHashAssoc_base::deleted;
         ++a_deleted;
@@ -349,12 +333,14 @@ PltHashTable_base::removeAssoc(const PltHashKey_base &key)
 //////////////////////////////////////////////////////////////////////
 
 PltHashAssoc_base *
-PltHashTable_base::lookupAssoc(const PltHashKey_base &key) const
+PltHashTable_base::lookupAssoc(const void *key) const
+    // return an assoc with key key or 0 if not found
 {
     size_t i = locate(key);
     PltHashAssoc_base *result;
 
-    if ( a_table[i] && a_table[i] != PltHashAssoc_base::deleted ) {
+    if (i < a_capacity) {
+        // found
         result = a_table[i];
     } else {
         result = 0;
@@ -363,4 +349,7 @@ PltHashTable_base::lookupAssoc(const PltHashKey_base &key) const
     return result;
 }
     
+//////////////////////////////////////////////////////////////////////
+// EOF
+//////////////////////////////////////////////////////////////////////
 
