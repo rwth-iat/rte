@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_EVENT_INCLUDED
 #define KS_EVENT_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.4 1997-03-19 17:18:07 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.5 1997-03-26 17:19:22 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,6 +38,7 @@
  */
 
 #include "ks/time.h"
+#include "plt/rtti.h"
 
 //////////////////////////////////////////////////////////////////////
 
@@ -46,6 +47,7 @@ class KsEvent
 public:
     virtual void trigger() = 0;
     virtual ~KsEvent() { }
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -54,7 +56,7 @@ class KsTimerEvent
 {
 public:
     KsTimerEvent(const KsTime & at);
-    virtual void trigger();
+    virtual void trigger() = 0;
     KsTime remainingTime() const;
 
     friend bool operator == (const KsTimerEvent & lhs, const KsTimerEvent & rhs);
@@ -67,7 +69,26 @@ public:
     KsTime triggersAt() const;
 protected:
     KsTime _trigger_at;
+    PLT_DECL_RTTI;
 };
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsTimerEvent::KsTimerEvent(const KsTime & at)
+: _trigger_at(at)
+{
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline KsTime
+KsTimerEvent::triggersAt() const 
+{ 
+    return _trigger_at; 
+} 
 
 //////////////////////////////////////////////////////////////////////
 

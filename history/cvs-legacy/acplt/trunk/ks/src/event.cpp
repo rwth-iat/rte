@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/event.cpp,v 1.1 1997-03-19 17:18:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/event.cpp,v 1.2 1997-03-26 17:19:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,13 +38,8 @@
 
 #include "ks/event.h"
 
-
-//////////////////////////////////////////////////////////////////////
-
-KsTimerEvent::KsTimerEvent(const KsTime & at)
-: _trigger_at(at)
-{
-}
+PLT_IMPL_RTTI0(KsEvent);
+PLT_IMPL_RTTI1(KsTimerEvent,KsEvent);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -59,14 +54,6 @@ KsTimerEvent::remainingTime() const
         return KsTime(0,0);
     }
 }
-
-//////////////////////////////////////////////////////////////////////
-
-KsTime
-KsTimerEvent::triggersAt() const 
-{ 
-    return _trigger_at; 
-} 
 
 /////////////////////////////////////////////////////////////////////////////
 /* EOF ks/event.cpp */
