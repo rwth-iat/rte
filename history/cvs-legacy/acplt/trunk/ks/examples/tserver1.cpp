@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.23 1999-02-26 13:26:57 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.24 1999-04-22 15:13:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -296,7 +296,7 @@ class Wecker : public KsTimerEvent, public KssInterKsServerConnection {
 public:
     Wecker() 
 	: KsTimerEvent(PltTime::now(1)),
-	KssInterKsServerConnection("acplt:4444", "MANAGER")  
+	KssInterKsServerConnection("localhost", "MANAGER")  
     { }
     ~Wecker() {  }
     virtual void trigger();
