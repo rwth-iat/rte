@@ -45,6 +45,7 @@
 #include <plt/hashtable.h>
 
 #include "ks/rpc.h"
+#include "ks/hostent.h"
 #include "ks/xdr.h"
 #include "ks/register.h"
 #include "ks/serviceparams.h"
@@ -311,6 +312,8 @@ protected:
     PltTime _rpc_timeout;
     PltTime _retry_wait;
     size_t _tries;
+    KSC_IP_TYPE last_ip;	
+      	// last IP used to connect to server/manager   
 
     PltHashTable<PltKeyCPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
 

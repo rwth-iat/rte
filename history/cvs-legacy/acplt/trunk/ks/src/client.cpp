@@ -1,4 +1,4 @@
-#/* -*-plt-c++-*- */
+/* -*-plt-c++-*- */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -325,7 +325,8 @@ KscServer::KscServer(KsString host,
   pClient(0),
   _rpc_timeout(KSC_RPCCALL_TIMEOUT),
   _retry_wait(0, 0),
-  _tries(1)
+  _tries(1),
+  last_ip(INADDR_NONE)
 {
 }
 
@@ -339,7 +340,8 @@ KscServer::KscServer(KsString hostAndName, u_short protocolVersion)
   pClient(0),
   _rpc_timeout(KSC_RPCCALL_TIMEOUT),
   _retry_wait(0, 0),
-  _tries(1)
+  _tries(1),
+  last_ip(INADDR_NONE)
 {
 }
 
@@ -387,6 +389,20 @@ KscServer::setTimeouts(const PltTime &rpc_timeout,
 bool
 KscServer::getHostAddr(struct sockaddr_in *addr)
 {
+#if 0
+    // hostentry struct used for debbugging only
+    //
+    KSC_IP_TYPE ip_terra = inet_addr("134.130.125.131");
+//    KSC_IP_TYPE ip_pc110 = 0x86827D2A; 
+    KSC_IP_TYPE ip_pc212 = inet_addr("134.130.125.76");
+
+    KSC_IP_TYPE *dummy1[3] = { &ip_terra, &ip_pc212, 0 };
+    struct hostent dummy = { 
+ 	"", 0, AF_INET, sizeof(KSC_IP_TYPE),
+	(char **)dummy1 };
+    KscHostEnt he(&dummy);
+#endif
+
     const unsigned long INVALID_IP = INADDR_NONE;
 
     // clean up first
@@ -396,29 +412,28 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
     // FIXME: (HPUX)
     //        inet_addr() returns 0 if host_name is an empty string
     //
-    unsigned long ip = inet_addr(host_name);
+    KSC_IP_TYPE ip = inet_addr(host_name);
 
     if( ip == INVALID_IP ) {
         // host_name is no IP, try to resolve name
         //
-        struct hostent *hp = gethostbyname(host_name);
-        if(hp) {
-            // copy address
-            memcpy(&(addr->sin_addr.s_addr),
-                   hp->h_addr, 
-                   hp->h_length);
-            return true;
-        } else {
+#if 1
+	KscHostEnt he(gethostbyname(host_name));
+#endif
+	if( he.numIP() > 1 && he.getIP(0) == last_ip ) {
+	  ip = he.getIP(1);
+	} else if( he.numIP() ) {
+	  ip = he.getIP(0);
+	} else {
             PltString err_msg("Failed to get IP of host : ", host_name);
             PltLog::Warning(err_msg);
             return false;
-        }
-    } else {
-        // hostname is an IP, just copy it
-        //
-        addr->sin_addr.s_addr = ip;
-        return true;
-    }
+        }  
+    } 
+
+    last_ip = ip;    
+    addr->sin_addr.s_addr = ip;
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////
