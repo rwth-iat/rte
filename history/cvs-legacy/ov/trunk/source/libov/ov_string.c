@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.c,v 1.2 1999-07-27 17:43:11 dirk Exp $
+*   $Id: ov_string.c,v 1.3 1999-07-28 16:07:01 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -109,18 +109,31 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_setvecvalue(
 	/*
 	*	check parameters
 	*/
-	if(!pstringvec || !pvalue) {
+	if(!pstringvec) {
 		return OV_ERR_BADPARAM;
 	}
 	/*
 	*	set strings
 	*/
-	for(i=0, pstring = pstringvec, pcurrvalue = pvalue; 
+	if(!pvalue) {
+		/*
+		*	clear all strings
+		*/
+		for(i=0, pstring=pstringvec; i<veclen; i++, pstring++) {
+			Ov_WarnIfNot(Ov_OK(ov_string_setvalue(pstring, NULL)));
+			Ov_WarnIf(*pstring);
+		}
+		return OV_ERR_OK;
+	}
+	for(i=0, pstring=pstringvec, pcurrvalue=pvalue; 
 		i<veclen; 
 		i++, pstring++, pcurrvalue++
 	) {
 		result = ov_string_setvalue(pstring, *pcurrvalue);
 		if(Ov_Fail(result)) {
+			for(i=0, pstring=pstringvec; i<veclen; i++, pstring++) {
+				ov_string_setvalue(pstring, NULL);
+			}
 			return result;
 		}
 	}
