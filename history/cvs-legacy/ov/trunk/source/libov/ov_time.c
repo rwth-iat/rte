@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.c,v 1.8 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_time.c,v 1.9 2004-10-20 16:32:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -217,6 +217,35 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
 	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06lu",
 		ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour,
 		ptm->tm_min, ptm->tm_sec, ptime->usecs);
+	return timestring;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Convert a time span into an ASCII string
+*/
+OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
+             const OV_TIME_SPAN  *ptimespan
+){
+	/*
+	*	local variables
+	*/
+        static char 		timestring[]="hhhh:mm:ss.uuuuuu";
+        unsigned int 		seconds, minutes, hours;
+        time_t      		secs = ptimespan->secs;
+
+	/*
+	*	convert the time span to a string
+	*/
+        seconds = secs % 60;
+        secs -= seconds;
+	minutes = (secs % 3600)/60;
+	secs -= minutes * 60;
+	hours = secs / 3600;
+
+	sprintf(timestring, "%04d:%02d:%02d.%06lu",
+		hours, minutes, seconds, ptimespan->usecs);
 	return timestring;
 }
 

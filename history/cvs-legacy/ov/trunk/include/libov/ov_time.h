@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.h,v 1.3 1999-09-15 10:48:15 dirk Exp $
+*   $Id: ov_time.h,v 1.4 2004-10-20 16:31:19 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -73,6 +73,13 @@ OV_DLLFNCEXPORT OV_INT ov_time_compare(
 */
 OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
 	const OV_TIME		*ptime
+);
+
+/*
+*	Convert a time span into an ASCII string
+*/
+OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
+             const OV_TIME_SPAN  *ptimespan
 );
 
 /*

@@ -212,7 +212,7 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 			"-c              List class definitions\n"
 			"-a              List association definitions\n"
 			"-s              List structure definitions\n"
-			"-v		 List version information\n");
+			"-v              List version information\n");
 			return 0;
 		}
 	}
