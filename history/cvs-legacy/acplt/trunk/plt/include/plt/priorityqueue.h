@@ -1,6 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_PRIORITYQUEUE_INCLUDED
 #define PLT_PRIORITYQUEUE_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue.h,v 1.2 1997-03-12 16:19:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,

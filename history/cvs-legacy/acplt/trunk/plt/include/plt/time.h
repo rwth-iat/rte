@@ -1,4 +1,5 @@
 /* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.3 1997-03-12 16:19:22 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,

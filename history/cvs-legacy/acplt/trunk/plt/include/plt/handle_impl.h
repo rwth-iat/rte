@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-#ifndef PLT_DEBUG_INCLUDED
-#define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.9 1997-03-12 16:19:14 martin Exp $ */
+#ifndef PLT_HANDLE_IMPL_INCLUDED
+#define PLT_HANDLE_IMPL_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle_impl.h,v 1.1 1997-03-12 16:19:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,96 +37,76 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-/* 
+
 //////////////////////////////////////////////////////////////////////
- * plt/debug.h provides some simple macros that should aid debugging.
+// Handle template implementation
 //////////////////////////////////////////////////////////////////////
- */
 
-#include "plt/config.h"
+#include "plt/handle.h"
 
-#ifdef NDEBUG
-#define PLT_DEBUG 0
-#else
-#define PLT_DEBUG 1
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+bool
+PltHandle<T>::bindTo(T * p, enum PltOwnership t)
+{
+    PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
+                     || t==PltOsNew || t==PltOsArrayNew);
+    if (p == 0 || t == PltOsUnmanaged) {
+        PltHandle_base::bindTo(p,0);
+        return true;
+    } else {
+        Plt_AllocTracker *a;
+        switch (t) {
+        case PltOsMalloc:
+            a = new Plt_AtMalloc;
+            break;
+        case PltOsNew:
+            a = new Plt_AtNew<T>;
+            break;
+        case PltOsArrayNew:
+            a = new Plt_AtArrayNew<T>;
+            break;
+        case PltOsUnmanaged:
+            PLT_ASSERT(0==1);
+        }
+        if (a) {
+            PltHandle_base::bindTo(p,a);
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+PltHandle<T>::PltHandle(T *p, enum PltOwnership os) 
+{
+    PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
+                     || os==PltOsNew || os==PltOsArrayNew);
+    if (! bindTo(p, os)) {
+        switch (os) {
+        case PltOsMalloc:
+            free(p);
+            break;
+        case PltOsNew:
+            delete p;
+            break;
+        case PltOsArrayNew:
+            delete [] p;
+            break;
+        case PltOsUnmanaged:
+            // do nothing
+            break;
+        }
+    }
+    PLT_CHECK_INVARIANT();
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 #endif
-
-#if !PLT_DEBUG
-
-#define PLT_DEBUG_PRECONDITIONS 0
-#define PLT_DEBUG_POSTCONDITIONS 0
-#define PLT_DEBUG_INVARIANTS 0
-#define PLT_DEBUG_PEDANTIC 0
-
-#else /* !PLT_DEBUG */
-
-#ifndef PLT_DEBUG_PRECONDITIONS
-#define PLT_DEBUG_PRECONDITIONS 1
-#endif
-
-#ifndef PLT_DEBUG_POSTCONDITIONS
-#define PLT_DEBUG_POSTCONDITIONS 1
-#endif
-
-#ifndef PLT_DEBUG_INVARIANTS
-#define PLT_DEBUG_INVARIANTS 1
-#endif
-
-#ifndef PLT_DEBUG_PEDANTIC
-#define PLT_DEBUG_PEDANTIC 0
-#endif
-
-#endif /* !PLT_DEBUG */
-
-#ifdef __cplusplus
-extern "C"
-#endif
-void plt_canthappen(const char *what, const char *file, int line);
-
-#if PLT_DEBUG
-
-#define PLT_FAILED_ASSERTION(expr_str,file,line) \
-     plt_canthappen("assertion failed: "##expr_str,file,line)
-
-#define PLT_ASSERT(expr) \
-  ((expr) ? (void)0 : PLT_FAILED_ASSERTION(#expr,__FILE__,__LINE__))
-
-#else
-
-#define PLT_ASSERT(x) ((void)0)
-
-#endif
-
-#if PLT_DEBUG_PRECONDITIONS
-#define PLT_PRECONDITION(x) PLT_ASSERT(x)
-#else
-#define PLT_PRECONDITION(x) ((void)0)
-#endif
-
-#if PLT_DEBUG_POSTCONDITIONS
-#define PLT_POSTCONDITION(x) PLT_ASSERT(x)
-#else
-#define PLT_POSTCONDITION(x) ((void)0)
-#endif
-
-/*
- * Classes should implement virtual bool invariant() const
- * invariant() is a predicate which must be true at the end of each
- * method invocation (and should be checked before return with
- * PLT_CHECK_INVARIANT). invariant() should check the invariants of
- * parent classes. To avoid unnecessary vtables in production
- * code, declaration and definition of invariant() has to be in
- * #if PLT_DEBUG_INVARIANTS / #endif pairs.
- */
-
-#ifdef __cplusplus
-
-#if PLT_DEBUG_INVARIANTS
-#define PLT_CHECK_INVARIANT() PLT_ASSERT(this->invariant())
-#else
-#define PLT_CHECK_INVARIANT() ((void)0)
-#endif
-
-#endif /* __cplusplus */
-
-#endif /* PLT_DEBUG_INCLUDED */
+// plt/handle_impl.h

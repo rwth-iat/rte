@@ -1,6 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.5 1997-03-12 16:19:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -280,94 +281,6 @@ PltHashTable_<K,V>::PltHashTable_(size_t mincap,
 : PltHashTable_base(mincap, highwater, lowwater)
 {
 }
-
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V>
-inline bool
-PltHashTable_<K,V>::query(const K& key, V& value) const
-{
-    // This cast is safe, only we can put assocs into the table
-    PltAssoc<K,V> *p = 
-        ( PltAssoc<K,V> *) lookupAssoc(&key);
-    if (p) {
-        value = p->a_value;
-        return true;
-    } else {
-        return false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V>
-inline bool
-PltHashTable_<K,V>::add(const K& key, const V& value)
-{
-    PltAssoc<K,V> *p = new PltAssoc<K,V>(key,value);
-    if (p) {
-        if ( addAssoc(p) ) {
-            return true;
-        } else {
-            delete p;
-            return false;
-        }
-    } else {
-        return false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V>
-inline bool
-PltHashTable_<K,V>::update(const K& key, 
-                           const V & newValue, 
-                           V & oldValue,
-                           bool & oldValueValid)
-{
-    // This cast is safe, only we can put assocs into the table
-    PltAssoc<K,V> *p = 
-        ( PltAssoc<K,V> *) lookupAssoc(&key);
-    if (p) {
-        oldValue = p->a_value;
-        oldValueValid = true;
-        p->a_value = newValue;
-        return true;
-    } else {
-        oldValueValid = false;
-        return add(key, newValue);
-    }
-}
-
-    
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V>
-inline bool
-PltHashTable_<K,V>::remove(const K& key, V& value)
-{
-    // This cast is safe, only we can put assocs into the table
-    PltAssoc<K,V> *p = 
-        (PltAssoc<K,V> *) removeAssoc(&key);
-    if (p) {
-        value = p->a_value;
-        delete p;
-        return true;
-    } else {
-        return false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V>
-inline PltHashIterator<K,V> * 
-PltHashTable_<K,V>::newIterator() const
-{
-    return new PltHashIterator<K,V>(*this);
-}
-
 
 //////////////////////////////////////////////////////////////////////
 

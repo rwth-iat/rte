@@ -1,8 +1,8 @@
 CXX = g++
 
-CXX_EXTRA_FLAGS = -I../../include
+CXX_EXTRA_FLAGS = -I. -I../../include
 
-CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_HPUX=1
+CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_HPUX=1 -fno-implicit-templates
 
 CXX_FLAGS = -g -Wall -DPLT_DEBUG_PEDANTIC=0
 #CXX_FLAGS = -O -Wall -DNDEBUG 
@@ -11,7 +11,7 @@ CXX_FLAGS = -g -Wall -DPLT_DEBUG_PEDANTIC=0
 #
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = g++ -lstdc++
+CXX_LINK = perl ../templ.pl g++ -lstdc++
 
 VPATH = ../../tests ../../src
 
@@ -27,44 +27,40 @@ VPATH = ../../tests ../../src
 
 CXX_LIBPLT_SOURCES = \
 	debug.cpp \
-	rtti.cpp \
-	list.cpp \
-	priorityqueue.cpp \
-	string.cpp \
+	handle.cpp \
 	hashtable.cpp \
+	list.cpp \
 	log.cpp \
-	key.cpp
-#	rbtreedict.cpp \
+	priorityqueue.cpp \
+	rtti.cpp \
+	string.cpp
 
 CXX_LIBPLT_OBJECTS = \
 	debug.o \
-	rtti.o \
-	list.o \
-	priorityqueue.o \
-	string.o \
+	handle.o \
 	hashtable.o \
+	list.o \
 	log.o \
-	key.o
-#	rbtreedict.o \
+	priorityqueue.o \
+	rtti.o \
+	string.o
 
 CXX_TEST_SOURCES = \
+	tarray.cpp \
 	thandle.cpp\
-	tcomparable.cpp\
-	trtti.cpp \
-	tlist.cpp \
-	ipriorityqueue.cpp tpriorityqueue.cpp \
-	tstring.cpp \
-	ttime.cpp \
 	thashtable.cpp \
 	thtname.cpp \
+	tlist.cpp \
 	tlog.cpp \
-	tarray.cpp
-#	trbtreedict.cpp
+	tpriorityqueue.cpp \
+	trtti.cpp \
+	tstring.cpp \
+	ttime.cpp
 
 CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 
 TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray\
-	thtname tcomparable thandle tlog
+	thtname thandle tlog
 
 all : libplt.a
 
@@ -86,7 +82,7 @@ tlog : tlog.o libplt.a
 trtti :	trtti.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
-tpriorityqueue : ipriorityqueue.o tpriorityqueue.o libplt.a
+tpriorityqueue : tpriorityqueue.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
 tstring : tstring.o libplt.a
@@ -107,7 +103,7 @@ thashtable :	thashtable.o libplt.a
 thtname :	thtname.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
-tcomparable :	tcomparable.o
+tcomparable :	tcomparable.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
 tarray :	tarray.o libplt.a
@@ -118,6 +114,8 @@ clean :
 
 mrproper :	clean
 	rm -f libplt.a .depend $(TESTS)
+	for i in t*_inst.h ; do echo > $$i ; done
+
 
 depend : $(CXX_SOURCES)
 	$(CXX_COMPILE) -M $^ > .depend

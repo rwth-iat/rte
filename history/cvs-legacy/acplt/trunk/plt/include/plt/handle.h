@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.8 1997-03-11 10:45:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.9 1997-03-12 16:19:15 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -281,68 +281,6 @@ PltHandle_base::operator bool() const
     return prep != 0;
 }
 
-
-//////////////////////////////////////////////////////////////////////
-
-#if PLT_DEBUG_INVARIANTS
-inline bool 
-PltHandle_base::invariant() const 
-{
-    return (prep==0 && palloc==0) 
-        || (prep && (palloc ? palloc->count > 0 : true));
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////
-// Add one reference to the handled object
-
-inline void 
-PltHandle_base::addRef()
-{
-    PLT_PRECONDITION(palloc ? palloc->count<UINT_MAX : true);
-    if (*this && palloc) {
-        palloc->count++;
-    }
-    PLT_CHECK_INVARIANT();
-}
-
-
-
-//////////////////////////////////////////////////////////////////////
-// Remove one reference to the handled object.
-
-inline void
-PltHandle_base::removeRef()
-{
-    if ( *this && palloc && --(palloc->count) == 0) {
-        palloc->destroy(prep);
-        prep = 0;
-        delete palloc; palloc = 0;
-    }
-    PLT_CHECK_INVARIANT();
-}
-
-
-//////////////////////////////////////////////////////////////////////
-// Bind to a new object.
-// If binding succeeds p is no longer valid.
-// Returns true on success.
-
-inline void
-PltHandle_base::bindTo(void * p, Plt_AllocTracker *a)
-{
-    // unbind old handled object
-    removeRef();
-
-    PLT_ASSERT( palloc == 0 );
-    
-    // bind new handled object
-    prep = p;
-    palloc = a;
-    
-    PLT_CHECK_INVARIANT();
-}
-
 //////////////////////////////////////////////////////////////////////
 // Create a PltHandle
 
@@ -351,22 +289,6 @@ PltHandle_base::PltHandle_base()
 : prep(0), 
   palloc(0)
 {
-    PLT_CHECK_INVARIANT();
-}
-
-
-
-//////////////////////////////////////////////////////////////////////
-// Copy constructor. The handled object -- if any -- gets an 
-// additional reference.
-
-inline
-PltHandle_base::PltHandle_base(const PltHandle_base &h)
-: prep(h.prep), palloc(h.palloc)
-{
-    if (h) {
-        addRef();
-    }
     PLT_CHECK_INVARIANT();
 }
 
@@ -380,86 +302,6 @@ PltHandle_base::~PltHandle_base()
     removeRef();
 }
 
-//////////////////////////////////////////////////////////////////////
-//  Assignment
-
-inline PltHandle_base & 
-PltHandle_base::operator=(PltHandle_base &rhs) 
-{
-    // order is important if called as 'handle = handle;'
-    rhs.addRef();
-    removeRef();
-    
-    palloc = rhs.palloc;
-    prep = rhs.prep;
-
-    PLT_CHECK_INVARIANT();
-    return *this;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline bool
-PltHandle<T>::bindTo(T * p, enum PltOwnership t)
-{
-    PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
-                     || t==PltOsNew || t==PltOsArrayNew);
-    if (p == 0 || t == PltOsUnmanaged) {
-        PltHandle_base::bindTo(p,0);
-        return true;
-    } else {
-        Plt_AllocTracker *a;
-        switch (t) {
-        case PltOsMalloc:
-            a = new Plt_AtMalloc;
-            break;
-        case PltOsNew:
-            a = new Plt_AtNew<T>;
-            break;
-        case PltOsArrayNew:
-            a = new Plt_AtArrayNew<T>;
-            break;
-        case PltOsUnmanaged:
-            PLT_ASSERT(0==1);
-        }
-        if (a) {
-            PltHandle_base::bindTo(p,a);
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline
-PltHandle<T>::PltHandle(T *p, enum PltOwnership os) 
-{
-    PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
-                     || os==PltOsNew || os==PltOsArrayNew);
-    if (! bindTo(p, os)) {
-        switch (os) {
-        case PltOsMalloc:
-            free(p);
-            break;
-        case PltOsNew:
-            delete p;
-            break;
-        case PltOsArrayNew:
-            delete [] p;
-            break;
-        case PltOsUnmanaged:
-            // do nothing
-            break;
-        }
-    }
-    PLT_CHECK_INVARIANT();
-}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

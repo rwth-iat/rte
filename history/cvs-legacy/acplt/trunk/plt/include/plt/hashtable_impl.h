@@ -1,7 +1,5 @@
 /* -*-plt-c++-*- */
-#ifndef PLT_COMPARABLE_INCLUDED
-#define PLT_COMPARABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/comparable.h,v 1.3 1997-03-12 16:19:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.1 1997-03-12 16:19:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -36,105 +34,101 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
-#include "plt/debug.h"
+//////////////////////////////////////////////////////////////////////
+// plt/hashtable.h provides a dictionary using hash table implementation
+//////////////////////////////////////////////////////////////////////
+
+#include "plt/hashtable.h"
 
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-class PltPtrComparable
+template <class K, class V>
+bool
+PltHashTable_<K,V>::query(const K& key, V& value) const
 {
-public:
-    bool operator <  ( PltPtrComparable<T> t2);
-    bool operator >  ( PltPtrComparable<T> t2);
-    bool operator != ( PltPtrComparable<T> t2);
-    bool operator == ( PltPtrComparable<T> t2);
-    bool operator <= ( PltPtrComparable<T> t2);
-    bool operator >= ( PltPtrComparable<T> t2);
-
-    operator T * ();
-
-    PltPtrComparable(T * = 0);
-
-private:
-    T *_p;
-};
-
-//////////////////////////////////////////////////////////////////////
-// INLINE IMPLEMENTATION
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline
-PltPtrComparable<T>::PltPtrComparable(T *p)
-: _p(p)
-{
+    // This cast is safe, only we can put assocs into the table
+    PltAssoc<K,V> *p = 
+        ( PltAssoc<K,V> *) lookupAssoc(&key);
+    if (p) {
+        value = p->a_value;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-inline
-PltPtrComparable<T>::operator T * ()
+template <class K, class V>
+bool
+PltHashTable_<K,V>::add(const K& key, const V& value)
 {
-    return _p;
+    PltAssoc<K,V> *p = new PltAssoc<K,V>(key,value);
+    if (p) {
+        if ( addAssoc(p) ) {
+            return true;
+        } else {
+            delete p;
+            return false;
+        }
+    } else {
+        return false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-inline bool 
-PltPtrComparable<T>::operator <  ( PltPtrComparable<T> t2) 
+template <class K, class V>
+bool
+PltHashTable_<K,V>::update(const K& key, 
+                           const V & newValue, 
+                           V & oldValue,
+                           bool & oldValueValid)
 {
-    return *_p < *t2._p;
+    // This cast is safe, only we can put assocs into the table
+    PltAssoc<K,V> *p = 
+        ( PltAssoc<K,V> *) lookupAssoc(&key);
+    if (p) {
+        oldValue = p->a_value;
+        oldValueValid = true;
+        p->a_value = newValue;
+        return true;
+    } else {
+        oldValueValid = false;
+        return add(key, newValue);
+    }
+}
+
+    
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+bool
+PltHashTable_<K,V>::remove(const K& key, V& value)
+{
+    // This cast is safe, only we can put assocs into the table
+    PltAssoc<K,V> *p = 
+        (PltAssoc<K,V> *) removeAssoc(&key);
+    if (p) {
+        value = p->a_value;
+        delete p;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-inline bool 
-PltPtrComparable<T>::operator >  ( PltPtrComparable<T> t2) 
+template <class K, class V>
+PltHashIterator<K,V> * 
+PltHashTable_<K,V>::newIterator() const
 {
-    return *_p > *t2._p;
+    return new PltHashIterator<K,V>(*this);
 }
 
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline bool 
-PltPtrComparable<T>::operator <= ( PltPtrComparable<T> t2) 
-{
-    return *_p <= *t2._p;
-}
 
 //////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline bool 
-PltPtrComparable<T>::operator >=  ( PltPtrComparable<T> t2) 
-{
-    return *_p >= *t2._p;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline bool 
-PltPtrComparable<T>::operator ==  ( PltPtrComparable<T> t2) 
-{
-    return *_p == *t2._p;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline bool 
-PltPtrComparable<T>::operator !=  ( PltPtrComparable<T> t2) 
-{
-    return *_p != *t2._p;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-
-#endif // PLT_COMPARABLE_INCLUDED
+// EOF plt/hashtable_impl.h

@@ -1,6 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_RTTI_INCLUDED
 #define PLT_RTTI_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/rtti.h,v 1.2 1997-03-12 16:19:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,

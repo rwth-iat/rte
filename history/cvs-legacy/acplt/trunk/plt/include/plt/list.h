@@ -1,4 +1,5 @@
 /* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.2 1997-03-12 16:19:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -378,68 +379,6 @@ PltList<T>::size() const
     return PltList_base::size();
 }
     
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-inline bool 
-PltList<T>::addFirst(const T& t) 
-{
-    PltListNode<T> *p = new PltListNode<T>(t);
-    if (p) {
-        return PltList_base::addFirst(p); 
-    } else {
-        return false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-inline bool 
-PltList<T>::addLast(const T & t) 
-{ 
-    PltListNode<T> *p = new PltListNode<T>(t);
-    if (p) {
-        return PltList_base::addLast(p); 
-    } else {
-        return false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-inline T 
-PltList<T>::removeFirst() 
-{
-  PltListNode<T> * p = (PltListNode<T> *) PltList_base::removeFirst();
-  T t(p->info);
-  delete p;
-  return t;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-inline T 
-PltList<T>::removeLast() 
-{
-  PltListNode<T> * p = (PltListNode<T> *) PltList_base::removeLast();
-  T t(p->info);
-  delete p;
-  return t;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-inline PltIListIterator<T> *
-PltIList<T>::newIterator() const
-{
-    return new PltIListIterator<T>(*this);
-}
-
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 

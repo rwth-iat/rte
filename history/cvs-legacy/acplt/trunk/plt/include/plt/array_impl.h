@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-#ifndef PLT_DEBUG_INCLUDED
-#define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.9 1997-03-12 16:19:14 martin Exp $ */
+#ifndef PLT_ARRAY_IMPL_INCLUDED
+#define PLT_ARRAY_IMPL_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array_impl.h,v 1.1 1997-03-12 16:19:12 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,96 +37,51 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-/* 
+
 //////////////////////////////////////////////////////////////////////
- * plt/debug.h provides some simple macros that should aid debugging.
+// PltArray template implementation
 //////////////////////////////////////////////////////////////////////
- */
 
-#include "plt/config.h"
+#include "plt/array.h"
 
-#ifdef NDEBUG
-#define PLT_DEBUG 0
-#else
-#define PLT_DEBUG 1
-#endif
+#include "plt/handle_impl.h"
 
-#if !PLT_DEBUG
-
-#define PLT_DEBUG_PRECONDITIONS 0
-#define PLT_DEBUG_POSTCONDITIONS 0
-#define PLT_DEBUG_INVARIANTS 0
-#define PLT_DEBUG_PEDANTIC 0
-
-#else /* !PLT_DEBUG */
-
-#ifndef PLT_DEBUG_PRECONDITIONS
-#define PLT_DEBUG_PRECONDITIONS 1
-#endif
-
-#ifndef PLT_DEBUG_POSTCONDITIONS
-#define PLT_DEBUG_POSTCONDITIONS 1
-#endif
-
-#ifndef PLT_DEBUG_INVARIANTS
-#define PLT_DEBUG_INVARIANTS 1
-#endif
-
-#ifndef PLT_DEBUG_PEDANTIC
-#define PLT_DEBUG_PEDANTIC 0
-#endif
-
-#endif /* !PLT_DEBUG */
-
-#ifdef __cplusplus
-extern "C"
-#endif
-void plt_canthappen(const char *what, const char *file, int line);
-
-#if PLT_DEBUG
-
-#define PLT_FAILED_ASSERTION(expr_str,file,line) \
-     plt_canthappen("assertion failed: "##expr_str,file,line)
-
-#define PLT_ASSERT(expr) \
-  ((expr) ? (void)0 : PLT_FAILED_ASSERTION(#expr,__FILE__,__LINE__))
-
-#else
-
-#define PLT_ASSERT(x) ((void)0)
-
-#endif
-
-#if PLT_DEBUG_PRECONDITIONS
-#define PLT_PRECONDITION(x) PLT_ASSERT(x)
-#else
-#define PLT_PRECONDITION(x) ((void)0)
-#endif
-
-#if PLT_DEBUG_POSTCONDITIONS
-#define PLT_POSTCONDITION(x) PLT_ASSERT(x)
-#else
-#define PLT_POSTCONDITION(x) ((void)0)
-#endif
-
-/*
- * Classes should implement virtual bool invariant() const
- * invariant() is a predicate which must be true at the end of each
- * method invocation (and should be checked before return with
- * PLT_CHECK_INVARIANT). invariant() should check the invariants of
- * parent classes. To avoid unnecessary vtables in production
- * code, declaration and definition of invariant() has to be in
- * #if PLT_DEBUG_INVARIANTS / #endif pairs.
- */
-
-#ifdef __cplusplus
+//////////////////////////////////////////////////////////////////////
 
 #if PLT_DEBUG_INVARIANTS
-#define PLT_CHECK_INVARIANT() PLT_ASSERT(this->invariant())
-#else
-#define PLT_CHECK_INVARIANT() ((void)0)
+template <class T>
+bool 
+PltArray<T>::invariant() const
+{
+    return (a_size == 0 && ! a_array) || (a_size > 0 && a_array);
+}
 #endif
 
-#endif /* __cplusplus */
+//////////////////////////////////////////////////////////////////////
 
-#endif /* PLT_DEBUG_INCLUDED */
+template <class T>
+PltArrayIterator<T> *
+PltArray<T>::newIterator() const
+{
+    return new PltArrayIterator<T>(*this);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+PltArray<T>
+PltArray<T>::copy() const
+{
+    PltArray<T> res(a_size);
+    
+    // copy elements
+    for (size_t i = 0; i < a_size; ++i) {
+        res.a_array[i] = a_array[i];
+    }
+    return res;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+#endif
+// EOF plt/array_impl.h

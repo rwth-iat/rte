@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-#ifndef PLT_DEBUG_INCLUDED
-#define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.9 1997-03-12 16:19:14 martin Exp $ */
+#ifndef PLT_LIST_IMPL_INCLUDED
+#define PLT_LIST_IMPL_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.1 1997-03-12 16:19:19 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,96 +37,82 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-/* 
+
+#include "plt/list.h"
+
 //////////////////////////////////////////////////////////////////////
- * plt/debug.h provides some simple macros that should aid debugging.
 //////////////////////////////////////////////////////////////////////
- */
 
-#include "plt/config.h"
+template<class T>
+bool 
+PltList<T>::addFirst(const T& t) 
+{
+    PltListNode<T> *p = new PltListNode<T>(t);
+    if (p) {
+        return PltList_base::addFirst(p); 
+    } else {
+        return false;
+    }
+}
 
-#ifdef NDEBUG
-#define PLT_DEBUG 0
-#else
-#define PLT_DEBUG 1
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+bool 
+PltList<T>::addLast(const T & t) 
+{ 
+    PltListNode<T> *p = new PltListNode<T>(t);
+    if (p) {
+        return PltList_base::addLast(p); 
+    } else {
+        return false;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+T 
+PltList<T>::removeFirst() 
+{
+  PltListNode<T> * p = (PltListNode<T> *) PltList_base::removeFirst();
+  T t(p->info);
+  delete p;
+  return t;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+T 
+PltList<T>::removeLast() 
+{
+  PltListNode<T> * p = (PltListNode<T> *) PltList_base::removeLast();
+  T t(p->info);
+  delete p;
+  return t;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+PltIListIterator<T> *
+PltIList<T>::newIterator() const
+{
+    return new PltIListIterator<T>(*this);
+}
+
+//////////////////////////////////////////////////////////////////////
 #endif
+// plt/list_impl.h
 
-#if !PLT_DEBUG
 
-#define PLT_DEBUG_PRECONDITIONS 0
-#define PLT_DEBUG_POSTCONDITIONS 0
-#define PLT_DEBUG_INVARIANTS 0
-#define PLT_DEBUG_PEDANTIC 0
 
-#else /* !PLT_DEBUG */
 
-#ifndef PLT_DEBUG_PRECONDITIONS
-#define PLT_DEBUG_PRECONDITIONS 1
-#endif
 
-#ifndef PLT_DEBUG_POSTCONDITIONS
-#define PLT_DEBUG_POSTCONDITIONS 1
-#endif
 
-#ifndef PLT_DEBUG_INVARIANTS
-#define PLT_DEBUG_INVARIANTS 1
-#endif
 
-#ifndef PLT_DEBUG_PEDANTIC
-#define PLT_DEBUG_PEDANTIC 0
-#endif
 
-#endif /* !PLT_DEBUG */
 
-#ifdef __cplusplus
-extern "C"
-#endif
-void plt_canthappen(const char *what, const char *file, int line);
 
-#if PLT_DEBUG
-
-#define PLT_FAILED_ASSERTION(expr_str,file,line) \
-     plt_canthappen("assertion failed: "##expr_str,file,line)
-
-#define PLT_ASSERT(expr) \
-  ((expr) ? (void)0 : PLT_FAILED_ASSERTION(#expr,__FILE__,__LINE__))
-
-#else
-
-#define PLT_ASSERT(x) ((void)0)
-
-#endif
-
-#if PLT_DEBUG_PRECONDITIONS
-#define PLT_PRECONDITION(x) PLT_ASSERT(x)
-#else
-#define PLT_PRECONDITION(x) ((void)0)
-#endif
-
-#if PLT_DEBUG_POSTCONDITIONS
-#define PLT_POSTCONDITION(x) PLT_ASSERT(x)
-#else
-#define PLT_POSTCONDITION(x) ((void)0)
-#endif
-
-/*
- * Classes should implement virtual bool invariant() const
- * invariant() is a predicate which must be true at the end of each
- * method invocation (and should be checked before return with
- * PLT_CHECK_INVARIANT). invariant() should check the invariants of
- * parent classes. To avoid unnecessary vtables in production
- * code, declaration and definition of invariant() has to be in
- * #if PLT_DEBUG_INVARIANTS / #endif pairs.
- */
-
-#ifdef __cplusplus
-
-#if PLT_DEBUG_INVARIANTS
-#define PLT_CHECK_INVARIANT() PLT_ASSERT(this->invariant())
-#else
-#define PLT_CHECK_INVARIANT() ((void)0)
-#endif
-
-#endif /* __cplusplus */
-
-#endif /* PLT_DEBUG_INCLUDED */

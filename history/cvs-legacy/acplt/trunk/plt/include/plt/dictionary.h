@@ -1,6 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DICTIONARY_INCLUDED
 #define PLT_DICTIONARY_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.3 1997-03-12 16:19:14 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,12 +38,49 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
+#include "plt/container.h"
+    
 //////////////////////////////////////////////////////////////////////
 // plt/dictionary.h provides the dictionary interface template
 //////////////////////////////////////////////////////////////////////
 
-#include "plt/assoc.h"
-#include "plt/container.h"
+//////////////////////////////////////////////////////////////////////
+// forward declaration
+class PltAssoc_;
+
+//////////////////////////////////////////////////////////////////////
+// struct PltAssoc<K,V>
+//////////////////////////////////////////////////////////////////////
+//
+// A PltAssoc<K,V> associates keys of class K with values of 
+// class V. 
+//
+// K must be kind of PltKey
+//
+// Base classes:
+// =============
+// PltAssoc_
+//
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+struct PltAssoc 
+: public PltAssoc_
+{
+public:
+    // public attributes
+    K a_key;
+    V a_value;
+
+    // ctors/dtors
+    PltAssoc(K k, V v);
+
+    // accessors
+    virtual const void * key() const;
+
+    // modifiers
+};
+
 
 //////////////////////////////////////////////////////////////////////
 // abstract class PltDictionary<K,V>
@@ -99,11 +137,62 @@ public:
     virtual bool update(const K & key, 
                         const V & newValue, 
                         V & oldValue,
-                        bool & oldValueValid) const;
+                        bool & oldValueValid) = 0;
 
     virtual bool remove(const K& key, V& oldValue) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
-    
+// INLINE IMPLEMENTATION
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// abstract class PltAssoc_
+//////////////////////////////////////////////////////////////////////
+// 
+// Abstract base class for associations
+//
+// Operations:
+// ===========
+//
+// Accessors:
+// ----------
+//
+// key() returns a const reference to the key
+//
+// Modifiers:
+// ----------
+//
+//
+//
+//////////////////////////////////////////////////////////////////////
+
+class PltAssoc_
+{
+public:
+    virtual const void * key() const = 0;
+};
+
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline
+PltAssoc<K,V>::PltAssoc(K k, V v)
+: a_key(k), a_value(v)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline
+const void *
+PltAssoc<K,V>::key() const
+{
+    return &a_key;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 #endif // PLT_DICTIONARY_INCLUDED
+

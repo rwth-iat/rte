@@ -1,6 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_ARRAY_INCLUDED
 #define PLT_ARRAY_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.4 1997-03-12 16:19:12 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -140,19 +141,6 @@ private:
 // INLINE IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
-
-#if PLT_DEBUG_INVARIANTS
-template <class T>
-inline bool 
-PltArray<T>::invariant() const
-{
-    return (a_size == 0 && ! a_array) || (a_size > 0 && a_array);
-}
-#endif
-
-
-//////////////////////////////////////////////////////////////////////
-
 template <class T>
 inline
 PltArray<T>::PltArray(size_t sz, T * p, enum PltOwnership os)
@@ -186,23 +174,6 @@ PltArray<T>::operator = (PltArray<T> & rhs)
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline
-PltArray<T>
-PltArray<T>::copy() const
-{
-    PltArray<T> res(a_size);
-    
-    // copy elements
-    for (size_t i = 0; i < a_size; ++i) {
-        res.a_array[i] = a_array[i];
-    }
-    return res;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
 inline size_t
 PltArray<T>::size() const
 {
@@ -227,15 +198,6 @@ PltArray<T>::operator [] (size_t i) const
 {
     PLT_PRECONDITION( i < a_size );
     return a_array[i];
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline PltArrayIterator<T> *
-PltArray<T>::newIterator() const
-{
-    return new PltArrayIterator<T>(*this);
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.4 1997-03-12 16:19:22 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
