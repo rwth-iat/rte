@@ -18,8 +18,8 @@ EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
 CXX = bcc32
-CXX_FLAGS = -D_BORLANDC=1
-#CXX_FLAGS = -DNDEBUG -w -v
+#CXX_FLAGS = -D_BORLANDC=1
+CXX_FLAGS = -DNDEBUG -w -O2
 #CXX_FLAGS =
 CXX_EXTRA_FLAGS = -a8 -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -I\interface -DPLT_SYSTEM_NT=1
 
