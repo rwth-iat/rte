@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.29 2000-04-14 08:44:58 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.30 2002-05-23 10:36:23 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -320,6 +320,7 @@ protected:
 
     bool createTransport();
     void destroyTransport();
+    int timedConnect(struct sockaddr_in host_addr, PltTime timeout);
     virtual bool reconnectServer(size_t try_count, enum clnt_stat errcode);
     virtual bool reconnectServer(KS_RESULT result);
     bool getHostAddr(struct sockaddr_in *addr);
