@@ -1,4 +1,4 @@
-/* -*-plt-c++-*- 
+/* -*-plt-c++-*- */
 /* 
  *  Copyright (c) 1996 PLT, RWTH-Aachen, Germany. See file copy_plt.txt!
  *  Author: Martin Kneissl <martin@plt.rwth-aachen.de>
