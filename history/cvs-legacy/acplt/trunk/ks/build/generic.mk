@@ -10,6 +10,7 @@ CXX_LIBKS_SOURCES = \
 	result.cpp \
 	rpc.cpp \
 	serviceparams.cpp \
+	objmgrparams.cpp \
 	histparams.cpp \
 	string.cpp \
 	selector.cpp \
@@ -64,14 +65,15 @@ LIBKS_OBJECTS1 = \
 
 LIBKS_OBJECTS2 = \
 	histparams$(O) \
+	objmgrparams$(O) \
 	serviceparams$(O) \
 	string$(O) \
 	selector$(O) \
 	time$(O) \
-	value$(O) \
-	xdr$(O)
+	value$(O)
 
 LIBKS_OBJECTS3 = \
+	xdr$(O) \
 	templates$(O) \
 	mask$(O) \
 	event$(O)
