@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.8 1997-05-20 15:21:32 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.9 1997-09-15 18:50:33 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -179,7 +179,8 @@ KsReregisterServerEvent::trigger()
             // 
             // It worked. Reschedule event.
             //
-            PltLog::Debug("Registered with manager.");
+            PLT_DMSG_ADD("Registered with manager.");
+            PLT_DMSG_END;
             u_long secs = _server._ttl / 4;
             secs *= 3;
             if (secs < MIN_TTL) secs = MIN_TTL;

@@ -13,7 +13,7 @@ SRCDIR = $(PLTDIR)\src\\
 TESTDIR = $(PLTDIR)\tests\\
 
 ### Compiler
-CXX = cl
+CXX = cl /nologo
 #CXX_FLAGS = /Zi /MTd
 CXX_FLAGS = -DNDEBUG -MT
 CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include \

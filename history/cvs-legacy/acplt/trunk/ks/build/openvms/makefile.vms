@@ -1,23 +1,32 @@
-#
+# -*- Makefile -*-
 # Simple and crazy makefile for OpenVMS (libks)
 #
+
+###### change path names according to your system !!!
+
+# The repository should be on a local drive.
 REPOSITORY = dka0:[martin.cxx_repository]
 
 CXX = cxx
+LD = link
+
+
+# choose your switches
 CXX_FLAGS = /OPTIMIZE
 # CXX_FLAGS = /DEBUG
 
-LD = link
-
 LD_FLAGS =
 # LD_FLAGS = /DEBUG
+
+CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1
+
+###### no modification below this line ####################
 
 CXX_EXTRA_FLAGS = \
 	/warnings=(disable=(EXTRASEMI,FOUNDCR)) \
 	/notemplate_define \
 	/repository=($(REPOSITORY))
 
-CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1
 
 AR = library
 
@@ -75,6 +84,16 @@ $(EXAMPLES_OBJECTS): %.obj: [-.-.examples]%.cpp
 	-del $@;*
 	$(CXX_COMPILE) $<
 
+############# executables ######################
+
+pmobile.exe : pmobile$(O) pmobile_code$(O) $(LIBKSCLN) $(LIBKS)
+	-del $@;*
+	$(LD) $(LD_FLAGS) pmobile$(O),pmobile_code$(O),$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
+
+tclient.exe : tclient$(O) tclient1$(O) $(LIBKSCLN) $(LIBKS)
+	-del $@;*
+	$(LD) $(LD_FLAGS) tclient$(O),tclient1$(O),$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
+
 tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
 	-del $@;*
 	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
@@ -83,17 +102,20 @@ tserver.exe: tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS)
 	-del $@;*
 	$(LD) $(LD_FLAGS) tserver.obj,tserver1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
-tsclient.exe : tsclient.obj tsclient1.obj svrrpcctx$O $(LIBKS)
+tsclient.exe : tsclient.obj tsclient1.obj svrrpcctx$(O) $(LIBKS)
 	-del $@;*
 	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
-ttree.exe : ttree.obj ttree1.obj $(LIBKS) $(LIBKSCLN)
+tshell.exe : tshell.obj $(LIBKSCLN) $(LIBKS)
+	-del $@;*
+	$(LD) $(LD_FLAGS) tshell.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
+
+ttree.exe : ttree.obj ttree1.obj $(LIBKSCLN) $(LIBKS)
 	-del $@;*
 	$(LD) $(LD_FLAGS) ttree.obj,ttree1.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
-tshell.exe : tshell.obj $(LIBKS) $(LIBKSCLN)
-	-del $@;*
-	$(LD) $(LD_FLAGS) tshell.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
+
+############ libraries #####################
 
 libks$(A): $(LIBKS_OBJECTS)
 	-del $@;*

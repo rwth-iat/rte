@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.10 1997-09-15 18:41:40 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.11 1997-09-15 18:45:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -570,6 +570,7 @@ int main(int, char **) {
     // Start it.
     //
     ts.startServer();
+    PltLog::Info("Started.");
     //
     // Enter the service loop.
     //
@@ -577,7 +578,9 @@ int main(int, char **) {
     //
     // After leaving the service loop clean up and stop serving.
     //
+    PltLog::Info("Stopping...");
     ts.stopServer();
+    PltLog::Info("Stopped.");
     //
     // Return to the operating system.
     //
