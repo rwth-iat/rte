@@ -42,6 +42,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "plt/dictionary.h"
+#include "plt/handle.h"
 
 #include <stdlib.h>
 
@@ -50,6 +51,7 @@
 //////////////////////////////////////////////////////////////////////
 
 class PltHashTable_base;           // "private" implementation class
+class PltHashTable_;               // "private" implementation template
 class PltHashIterator_base;        // "private" implementation class
 
 //////////////////////////////////////////////////////////////////////
@@ -59,7 +61,7 @@ class PltHashIterator_base;        // "private" implementation class
 // A PltHashTable<K,V> maps from keys of class K to values of 
 // class V. It is a PltDictionary<K,V>.
 //
-// Keys must implement the PltKey interface which provides
+// Keys must provide
 // the hash function and a comparison function for K.
 //
 // K::hash and K::operator== must have the following property:
@@ -88,12 +90,72 @@ class PltHashIterator_base;        // "private" implementation class
 
 template <class K, class V>
 class PltHashTable
+: public PltHashTable_<K,V>
+{
+protected:
+    virtual unsigned long keyHash(const K & ) const ;
+    virtual bool keyEqual(const K &, const K &) const;
+};
+    
+//////////////////////////////////////////////////////////////////////
+
+#if 0
+template <class K, class V>
+class PltHandleHashTable
+: public PltHashTable_< PltPtrHandle<K>, V >
+{
+protected:
+    virtual unsigned long keyHash(const PltPtrHandle<K> & ) const ;
+    virtual bool keyEqual(const PltPtrHandle<K> &, 
+                          const PltPtrHandle<K> &) const;
+};
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+class PltKeyHandle
+: public PltPtrHandle<T>
+{
+public:
+    PltKeyHandle();
+    PltKeyHandle(T *p, enum PltOwnership);  // no default to avoid conversion!
+    PltKeyHandle(const PltPtrHandle<T> &);
+    PltKeyHandle(const PltKeyHandle &);
+
+    unsigned long hash() const;
+    bool operator == (const PltKeyHandle & h) const;
+};
+    
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+class PltHashIterator 
+: public PltIterator< PltAssoc<K,V> >, 
+  private PltHashIterator_base
+{
+public:
+    PltHashIterator(const PltHashTable_<K,V> & t);
+    virtual operator const void * () const;                 // termination
+    virtual const PltAssoc<K,V> * operator -> () const;     // current element
+
+    virtual PltIterator< PltAssoc<K,V> > & operator ++ ();  // advance
+    virtual void toStart();                                 // from beginning
+};
+
+//////////////////////////////////////////////////////////////////////
+// IMPLEMENTATION PART -- clients should stop reading here...
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+class PltHashTable_
 : public PltDictionary<K,V>,
   private PltHashTable_base
 {
     friend PltHashIterator_base::PltHashIterator_base(const PltHashTable_base &);
 public:
-    PltHashTable(size_t mincap=11, 
+
+    PltHashTable_(size_t mincap=11, 
                  float highwater=0.8, 
                  float lowwater=0.4);
     // accessors
@@ -107,32 +169,17 @@ public:
     PltHashIterator<K,V> * newIterator() const;
     size_t size() const;
 
+protected:
+    virtual unsigned long keyHash(const K &) const = 0;
+    virtual bool keyEqual(const K & , const K &) const = 0;
+
 private:
-    PltHashTable(const PltHashTable &); // forbidden
-    PltHashTable<K,V> & operator = ( const PltHashTable & ); // forbidden
+    virtual unsigned long keyHash(const void * ) const;
+    virtual bool keyEqual(const void *, const void *) const;
+    PltHashTable_(const PltHashTable_ &); // forbidden
+    PltHashTable_<K,V> & operator = ( const PltHashTable_ & ); // forbidden
 };
     
-
-    
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V>
-class PltHashIterator 
-: public PltIterator< PltAssoc<K,V> >, 
-  private PltHashIterator_base
-{
-public:
-    PltHashIterator(const PltHashTable<K,V> & t);
-    virtual operator const void * () const;                 // termination
-    virtual const PltAssoc<K,V> * operator -> () const;     // current element
-
-    virtual PltIterator< PltAssoc<K,V> > & operator ++ ();  // advance
-    virtual void toStart();                                 // from beginning
-};
-
-//////////////////////////////////////////////////////////////////////
-// IMPLEMENTATION PART -- clients should stop reading here...
-//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 // (PltHashTable_base is a private class)
@@ -154,12 +201,14 @@ protected:
 #endif
     // accessors
     size_t size() const; // number of nondeleted elements
-    PltAssoc_ *lookupAssoc(const PltKey & key) const;
+    PltAssoc_ *lookupAssoc(const void * key) const;
 
     // modifiers
     bool addAssoc(PltAssoc_ *p);
-    PltAssoc_ *removeAssoc(const PltKey & key);
+    PltAssoc_ *removeAssoc(const void * key);
 
+    virtual unsigned long keyHash(const void *) const = 0;
+    virtual bool keyEqual(const void *, const void *) const = 0;
 private:
     PltAssoc_ **a_table;
     size_t a_capacity;       // current capacity of a_table
@@ -171,7 +220,7 @@ private:
     size_t a_deleted;        // number of deleted elements
 
     // accessors
-    size_t locate(const PltKey & key) const;
+    size_t locate(const void * key) const;
     size_t collidx(size_t i, size_t j) const;
     static bool usedSlot(const PltAssoc_ *);
 
@@ -219,7 +268,7 @@ PltHashTable_base::size() const
 
 template <class K, class V>
 inline
-PltHashTable<K,V>::PltHashTable(size_t mincap, 
+PltHashTable_<K,V>::PltHashTable_(size_t mincap, 
                                 float highwater, 
                                 float lowwater)
 : PltHashTable_base(mincap, highwater, lowwater)
@@ -230,11 +279,11 @@ PltHashTable<K,V>::PltHashTable(size_t mincap,
 
 template <class K, class V>
 inline bool
-PltHashTable<K,V>::query(const K& key, V& value) const
+PltHashTable_<K,V>::query(const K& key, V& value) const
 {
     // This cast is safe, only we can put assocs into the table
     PltAssoc<K,V> *p = 
-        ( PltAssoc<K,V> *) lookupAssoc(key);
+        ( PltAssoc<K,V> *) lookupAssoc(&key);
     if (p) {
         value = p->a_value;
         return true;
@@ -247,7 +296,7 @@ PltHashTable<K,V>::query(const K& key, V& value) const
 
 template <class K, class V>
 inline bool
-PltHashTable<K,V>::add(const K& key, const V& value)
+PltHashTable_<K,V>::add(const K& key, const V& value)
 {
     PltAssoc<K,V> *p = new PltAssoc<K,V>(key,value);
     if (p) {
@@ -266,11 +315,11 @@ PltHashTable<K,V>::add(const K& key, const V& value)
 
 template <class K, class V>
 inline bool
-PltHashTable<K,V>::remove(const K& key, V& value)
+PltHashTable_<K,V>::remove(const K& key, V& value)
 {
     // This cast is safe, only we can put assocs into the table
     PltAssoc<K,V> *p = 
-        (PltAssoc<K,V> *) removeAssoc(key);
+        (PltAssoc<K,V> *) removeAssoc(&key);
     if (p) {
         value = p->a_value;
         delete p;
@@ -284,7 +333,7 @@ PltHashTable<K,V>::remove(const K& key, V& value)
 
 template <class K, class V>
 inline PltHashIterator<K,V> * 
-PltHashTable<K,V>::newIterator() const
+PltHashTable_<K,V>::newIterator() const
 {
     return new PltHashIterator<K,V>(*this);
 }
@@ -294,9 +343,122 @@ PltHashTable<K,V>::newIterator() const
 
 template <class K, class V>
 inline size_t
-PltHashTable<K,V>::size() const
+PltHashTable_<K,V>::size() const
 {
     return PltHashTable_base::size();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline unsigned long
+PltHashTable_<K,V>::keyHash(const void * key) const
+{
+    return keyHash(* (const K *) key);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline bool
+PltHashTable_<K,V>::keyEqual(const void * k1, const void * k2) const
+{
+    return keyEqual(* (const K *) k1, * (const K *) k2);
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline unsigned long
+PltHashTable<K,V>::keyHash(const K & key) const
+{
+    return key.hash();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline bool
+PltHashTable<K,V>::keyEqual(const K & k1, const K & k2) const
+{
+    return k1 == k2;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+#if 0
+template <class K, class V>
+inline unsigned long
+PltHandleHashTable<K,V>::keyHash(const PltPtrHandle<K> & key) const
+{
+    return key->hash();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline bool
+PltHandleHashTable<K,V>::keyEqual(const PltPtrHandle<K> & k1, 
+                                  const PltPtrHandle<K> & k2) const
+{
+    return (* k1) == (* k2);
+}
+#endif
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltKeyHandle<T>::PltKeyHandle()
+: PltPtrHandle<T>()
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltKeyHandle<T>::PltKeyHandle(T *p, enum PltOwnership os)
+: PltPtrHandle<T>(p,os)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltKeyHandle<T>::PltKeyHandle(const PltKeyHandle &p)
+: PltPtrHandle<T>(p)
+{
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltKeyHandle<T>::PltKeyHandle(const PltPtrHandle<T> &p)
+: PltPtrHandle<T>(p)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline unsigned long
+PltKeyHandle<T>::hash() const
+{
+    return (*this)->hash();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool
+PltKeyHandle<T>::operator == (const PltKeyHandle & rhs) const
+{
+    return this->operator*() == *rhs;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -304,7 +466,7 @@ PltHashTable<K,V>::size() const
 
 template <class K, class V>
 inline
-PltHashIterator<K,V>::PltHashIterator(const PltHashTable<K,V> &t)
+PltHashIterator<K,V>::PltHashIterator(const PltHashTable_<K,V> &t)
 : PltHashIterator_base( (const PltHashTable_base &) t)
 {
 }

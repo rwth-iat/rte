@@ -55,7 +55,7 @@ PLT_IMPL_RTTI1(PltNoKey, PltKey);
 class PltDeletedHashAssoc : public PltAssoc_
 {
     static PltNoKey noKey;
-    virtual const PltKey & key() const { return noKey; }
+    virtual const void * key() const { return &noKey; }
 };
 
 PltNoKey
@@ -186,7 +186,7 @@ PltHashTable_base::invariant() const
         for (size_t l = k + 1; !dupes && l < a_capacity; ++l) {
             if (   usedSlot(a_table[k])
                 && usedSlot(a_table[l])
-                && a_table[k]->key() == a_table[l]->key()   ) {
+                && keyEqual(a_table[k]->key(), a_table[l]->key() )  ) {
                 dupes = true;
             }
         }
@@ -268,18 +268,19 @@ bool PltHashTable_base::changeCapacity(size_t cap)
 //////////////////////////////////////////////////////////////////////
 
 size_t
-PltHashTable_base::locate(const PltKey & key) const 
+PltHashTable_base::locate(const void * key) const 
     // find the index of a key, return a_capacity if not found
 {
     PLT_PRECONDITION(a_used < a_capacity);
     size_t loc = a_capacity;
-    size_t i = key.hash();
+    size_t i = keyHash(key);
     size_t j = 0;
     for (i = collidx(i,0); 
          loc >= a_capacity && a_table[i]; 
          i = collidx(i,++j)) 
         {
-            if ( a_table[i]->key() == key ) {
+            if (   a_table[i] != deletedAssoc
+                && keyEqual( a_table[i]->key(), key ) ) {
                 // key found
                 loc = i;
             }
@@ -302,14 +303,14 @@ PltHashTable_base::insert(PltAssoc_ * p)
     bool dupe   = false;         // duplicate found?
     size_t deleted = a_capacity; // first matching deleted if any
     size_t ins;                  // insertion point
-    size_t i = p->key().hash();
+    size_t i = keyHash(p->key());
     size_t j = 0;
     for (i = collidx(i,0); !dupe && a_table[i]; i = collidx(i,++j)) {
         if ( a_table[i] == deletedAssoc ) {
             // deleted entry while inserting
             deleted = i;
             // continue and check for duplicate
-        } else if ( a_table[i]->key() == p->key() ) {
+        } else if ( keyEqual(a_table[i]->key(), p->key()) ) {
             // found duplicate
             dupe = true;
         }
@@ -359,7 +360,7 @@ PltHashTable_base::addAssoc(PltAssoc_ *p)
 //////////////////////////////////////////////////////////////////////
 
 PltAssoc_ *
-PltHashTable_base::removeAssoc(const PltKey & key)
+PltHashTable_base::removeAssoc(const void * key)
     // remove an assoc with key key and return it. return 0 if not found
 {
 #if PLT_DEBUG_POSTCONDITIONS
@@ -390,7 +391,7 @@ PltHashTable_base::removeAssoc(const PltKey & key)
 //////////////////////////////////////////////////////////////////////
 
 PltAssoc_ *
-PltHashTable_base::lookupAssoc(const PltKey & key) const
+PltHashTable_base::lookupAssoc(const void * key) const
     // return an assoc with key key or 0 if not found
 {
     size_t i = locate(key);

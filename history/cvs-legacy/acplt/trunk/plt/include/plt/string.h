@@ -37,20 +37,18 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
-#include "plt/key.h"
+#include "plt/debug.h"
 
 #include <stdlib.h>
 
-
 //////////////////////////////////////////////////////////////////////
-// PltStrings minimize copying by reference counting. See 
+// PltStrings reduce copying by reference counting. See 
 // [Stroustrup, 2nd] for details. This implementation is a modified 
 // version
 // of the one in the book (Sec.7.11)
 //////////////////////////////////////////////////////////////////////
 
 class PltString 
-: public PltKey
 {
 public:
     PltString(const char *);
@@ -64,9 +62,9 @@ public:
     virtual bool invariant() const;
 #endif
 
-    // PltKey interface
-    virtual unsigned long hash() const;
-    virtual bool operator == (const PltKey &) const;
+    // key interface
+    unsigned long hash() const;
+    // bool operator == (const PltString &) const; // see below
 
     // accessors
     bool ok() const;
@@ -98,7 +96,6 @@ protected:
 
     // helper modifiers
     void cloneIfNeeded();
-    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////

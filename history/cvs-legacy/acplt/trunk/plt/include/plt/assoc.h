@@ -75,7 +75,7 @@ public:
     PltAssoc(K k, V v);
 
     // accessors
-    virtual const PltKey & key() const;
+    virtual const void * key() const;
 
     // modifiers
 };
@@ -108,7 +108,7 @@ public:
 class PltAssoc_
 {
 public:
-    virtual const PltKey & key() const = 0;
+    virtual const void * key() const = 0;
 };
 
 template <class K, class V>
@@ -122,10 +122,10 @@ PltAssoc<K,V>::PltAssoc(K k, V v)
 
 template <class K, class V>
 inline
-const PltKey &
+const void *
 PltAssoc<K,V>::key() const
 {
-    return a_key;
+    return &a_key;
 }
 
 //////////////////////////////////////////////////////////////////////
