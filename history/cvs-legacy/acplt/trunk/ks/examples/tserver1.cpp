@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.2 1997-07-18 14:09:09 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.3 1997-07-19 13:28:27 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -200,6 +200,8 @@ int main(int, char **) {
 	TestServer ts;
     ts.startServer();
 	ts.run();
+    ts.stopServer();
+    return 0;
 }
 
 // EOF tserver1.cpp
