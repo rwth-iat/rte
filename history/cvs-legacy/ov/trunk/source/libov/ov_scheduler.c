@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_scheduler.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_scheduler.c,v 1.2 1999-08-25 13:15:57 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -144,11 +144,17 @@ void OV_DLLFNCEXPORT ov_scheduler_setabseventtime(
 	*	local variables
 	*/
 	OV_SCHEDULER_EVENT	*pcurr, *plast;
+	OV_TIME				time;
 	/*
 	*	check parameters
 	*/
-	if(!pobj || !ptime) {
+	if(!pobj) {
 		return;
+	}
+	if(ptime) {
+		time = *ptime;
+	} else {
+		ov_time_gettime(&time);
 	}
 	/*
 	*	find the event object and always remember the last event
@@ -157,7 +163,7 @@ void OV_DLLFNCEXPORT ov_scheduler_setabseventtime(
 	for(pcurr=pfirstevent; pcurr; pcurr=pcurr->pnext) {
 		if(pcurr->pobj == pobj) {
 			/* we found the object, set the event time */
-			pcurr->time = *ptime;
+			pcurr->time = time;
 			/* remove the event object from the queue */
 			if(plast) {
 				plast->pnext = pcurr->pnext;
@@ -192,7 +198,7 @@ void OV_DLLFNCEXPORT ov_scheduler_setreleventtime(
 	/*
 	*	check parameters
 	*/
-	if(!pobj || !ptimespan) {
+	if(!pobj) {
 		return;
 	}
 	/*
@@ -202,7 +208,9 @@ void OV_DLLFNCEXPORT ov_scheduler_setreleventtime(
 	/*
 	*	add time span
 	*/
-	ov_time_add(&time, &time, ptimespan);
+	if(ptimespan) {
+		ov_time_add(&time, &time, ptimespan);
+	}
 	ov_scheduler_setabseventtime(pobj, &time);
 }
 
@@ -226,10 +234,7 @@ OV_TIME_SPAN* OV_DLLFNCEXPORT ov_scheduler_schedulenextevent(void) {
 	*	test if it's time for the first scheduled active object
 	*/
 	if(pevent) {
-		if((time.secs > pevent->time.secs)
-			|| ((time.secs == pevent->time.secs)
-				&& (time.usecs >= pevent->time.usecs))
-		) {
+		if(ov_time_compare(&time, &pevent->time) > 0) {
 			/* update the scheduled time of the pnext scheduled active object */
 			pevent->time = time;
 			/* remove the object from the beginning of the queue... */
@@ -274,22 +279,18 @@ void ov_scheduler_insertevent(
 	/*
 	*	find the right place and always remember the last event
 	*/
+	pevent->pnext = NULL;
 	plast = NULL;
 	for(pcurr=pfirstevent; pcurr; pcurr=pcurr->pnext) {
-		if((pcurr->time.secs > pevent->time.secs)
-			|| ((pcurr->time.secs == pevent->time.secs)
-				&& (pcurr->time.usecs > pevent->time.usecs))
-		) {
+		if(ov_time_compare(&pcurr->time, &pevent->time) > 0) {
 			pevent->pnext = pcurr;
-			goto INSERT;
+			break;
 		}
 		plast = pcurr;
 	}
-	pevent->pnext = NULL;
 	/*
 	*	insert the event object
 	*/
-INSERT:
 	if(plast) {
 		plast->pnext = pevent;
 	} else {

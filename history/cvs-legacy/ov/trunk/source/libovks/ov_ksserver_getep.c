@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.2 1999-08-19 11:54:54 dirk Exp $
+*   $Id: ov_ksserver_getep.c,v 1.3 1999-08-25 13:15:58 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -309,10 +309,10 @@ OV_RESULT ov_ksserver_getep_additem(
 					return OV_ERR_GENERIC;
 				}
 				pprops->comment = "";
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit
-					= ov_vendortree_getunit(pobj);
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype
-					= varcurrprops.value.vartype & OV_VT_KSMASK;
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
+					.tech_unit = ov_vendortree_getunit(pobj);
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
+					.vartype = varcurrprops.value.vartype & OV_VT_KSMASK;
 				return OV_ERR_OK;
 			}
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier

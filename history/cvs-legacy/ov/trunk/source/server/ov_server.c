@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.3 1999-08-06 10:59:28 dirk Exp $
+*   $Id: ov_server.c,v 1.4 1999-08-25 13:16:00 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -234,10 +234,8 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 	/*
 	*	set vendor name, server description and server version
 	*/
-	ov_vendortree_setname("Chair of Process Control Engineering, "
-		"Aachen University of Technology");
-	ov_vendortree_setserverdescription
-		("Server of the generic object management system ACPLT/OV");
+	ov_vendortree_setname("Lehrstuhl fuer Prozessleittechnik, RWTH Aachen");
+	ov_vendortree_setserverdescription("generic ACPLT/OV server");
 	ov_vendortree_setserverversion(OV_VER_SERVER);
 	/*
 	*	map existing database
