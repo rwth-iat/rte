@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.2 1997-11-27 13:08:58 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.3 1997-12-02 10:16:54 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -7,8 +7,8 @@
  * All rights reserved.
  *
  * NOTE:
- * Some parts are (c) Sun Microsystems, see below for their copyright
- * and conditions.
+ * The part for getting IP addresses on unix operating systems are
+ * (c) Sun Microsystems, see below for their copyright and conditions.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,11 @@
  * Chair of Process Control Engineering. The idea of how to get all
  * host IP addresses on NT was independently developed and then proofed
  * by the NT port of nntp.
+ *
+ * Extended for the "Windooze 95 os" by Harald Albrecht of the Chair
+ * of Process Control Engineering. The idea of how to get all host IP
+ * addresses on 95 was developed after starring for too long at the
+ * registry.
  *
  * Also, some minor changes made in the old functions to take advantage
  * of the PltLog objects and to plug them into the KsHostInAddrSet
@@ -118,7 +123,7 @@
 #if PLT_SYSTEM_OPENVMS
 //
 // The OpenVMS stuff...
-// This looks seriously brain-damaged, but for OpenVMS < 7.1 its
+// This looks seriously brain-damaged, but for OpenVMS < 7.1 it's
 // the only way to get our hands on the ioctl() stuff. Shamelessly
 // stolen from the OpenVMS port of ntpd/xntpd.
 //
@@ -178,7 +183,7 @@ extern int ioctl(int d, int request, char *argp);
  * NT out of his "Windows"...
  * ...like Marianne 013 said: "What a lousy system!"
  */
-bool KsHostInAddrSet::findLocalAddresses()
+bool KsHostInAddrSet::findLocalAddressesNT()
 {
     //
     // First, we must find out which devices (aka network cards) are
@@ -187,17 +192,28 @@ bool KsHostInAddrSet::findLocalAddresses()
     // real network OS should be structured. If Billy Boy thinks that
     // the registry needs a change, everything will break, as there is
     // no official way to determine the IP addresses, etc. This is just
-    // brain-damaged, thanks Bill!
+    // brain-damaged. Thanks, Bill!
     //
     HKEY     hLinkages;
     DWORD    RegValueType, RegValueLength;
     char    *TcpIpBindings;
     in_addr  inIp, mask;
 
-    if ( RegOpenKey(HKEY_LOCAL_MACHINE,
-                    "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Linkage", &hLinkages) 
+    //
+    // First, add the omnipresent local IP address. Unfortunately,
+    // this is not listed in the service bindings by default.
+    //
+    inIp.s_addr = htonl(0x7F000001l);
+    mask.s_addr = htonl(0xFFFFFFFFl);
+    if ( !addItem(inIp, mask, true) ) {
+        PltLog::Error("KsHostInAddrSet::findLocalAddressesNT: Cannot add local address 127.0.0.1");
+    }
+
+    if ( RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+                      "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Linkage", 
+                      0, KEY_READ, &hLinkages) 
          != ERROR_SUCCESS ) {
-        PltLog::Error("KsHostInAddrSet::findLocalAddresses: Can't open TCP/IP linkage registry key");
+        PltLog::Error("KsHostInAddrSet::findLocalAddressesNT: Can't open TCP/IP linkage registry key");
         return false;
     }
     //
@@ -210,18 +226,18 @@ bool KsHostInAddrSet::findLocalAddresses()
                          0, &RegValueType,
                          0, &RegValueLength) != ERROR_SUCCESS ) {
         RegCloseKey(hLinkages);
-        PltLog::Error("KsHostInAddrSet::findLocalAddresses: Can't get TCP/IP linkage binding value from the registry");
+        PltLog::Error("KsHostInAddrSet::findLocalAddressesNT: Can't get TCP/IP linkage binding value from the registry");
         return false;
     }
     if ( RegValueType != REG_MULTI_SZ ) {
         RegCloseKey(hLinkages);
-        PltLog::Alert("KsHostInAddrSet::findLocalAddresses: The TCP/IP linkage binding value is not of type REG_MULTI_SZ. Looks like your registry was corrupted.");
+        PltLog::Alert("KsHostInAddrSet::findLocalAddressesNT: The TCP/IP linkage binding value is not of type REG_MULTI_SZ. Looks like your registry was corrupted.");
         return false;
     }
     TcpIpBindings = new char[RegValueLength];
     if ( TcpIpBindings == 0 ) {
         RegCloseKey(hLinkages);
-        PltLog::Error("KsHostInAddrSet::findLocalAddresses: Out of memory to get TCP/IP linkage binding value");
+        PltLog::Error("KsHostInAddrSet::findLocalAddressesNT: Out of memory to get TCP/IP linkage binding value");
         return false;
     }
     if ( RegQueryValueEx(hLinkages, "Bind",
@@ -229,7 +245,7 @@ bool KsHostInAddrSet::findLocalAddresses()
                          (LPBYTE) TcpIpBindings, &RegValueLength) != ERROR_SUCCESS ) {
         RegCloseKey(hLinkages);
         delete [] TcpIpBindings;
-        PltLog::Error("KsHostInAddrSet::findLocalAddresses: Can't get TCP/IP linkage binding value from the registry");
+        PltLog::Error("KsHostInAddrSet::findLocalAddressesNT: Can't get TCP/IP linkage binding value from the registry");
         return false;
     }
     RegCloseKey(hLinkages);
@@ -243,16 +259,6 @@ bool KsHostInAddrSet::findLocalAddresses()
     char  *IpAddresses = 0;
     DWORD  IpAddressesLength, IpAddressesAllocated = 0;
     HKEY   hService;
-
-    //
-    // First, add the omnipresent local IP address. Unfortunately,
-    // this is not listed in the service bindings by default.
-    //
-    inIp.s_addr = htonl(0x7F000001l);
-    mask.s_addr = htonl(0xFFFFFFFFl);
-    if ( !addItem(inIp, mask, true) ) {
-        PltLog::Error("KsHostInAddrSet::findLocalAddresses: Cannot add local address 127.0.0.1");
-    }
 
     for ( ; *device ; device += serviceLength + 1 ) {
         serviceLength = strlen(device);
@@ -274,7 +280,8 @@ bool KsHostInAddrSet::findLocalAddresses()
             //
             PltString TcpIp("SYSTEM\\CurrentControlSet\\Services", service);
             TcpIp += "\\Parameters\\Tcpip";
-            if ( RegOpenKey(HKEY_LOCAL_MACHINE, TcpIp, &hService)
+            if ( RegOpenKeyEx(HKEY_LOCAL_MACHINE, TcpIp,
+                              0, KEY_READ, &hService)
                  != ERROR_SUCCESS ) {
                 continue;
             }
@@ -290,14 +297,14 @@ bool KsHostInAddrSet::findLocalAddresses()
                                  0, &RegValueType,
                                  0, &IpAddressesLength) != ERROR_SUCCESS ) {
                 RegCloseKey(hService);
-                PltString errorMsg = "KsHostInAddrSet::findLocalAddresses: Can't get IP address for service: ";
+                PltString errorMsg = "KsHostInAddrSet::findLocalAddressesNT: Can't get IP address for service: ";
                 errorMsg += service;
                 PltLog::Error(errorMsg);
                 continue;
             }
             if ( RegValueType != REG_MULTI_SZ ) {
                 RegCloseKey(hService);
-                PltLog::Alert("KsHostInAddrSet::findLocalAddresses: The IP address' value is not of type REG_MULTI_SZ. Looks like your registry was corrupted.");
+                PltLog::Alert("KsHostInAddrSet::findLocalAddressesNT: The IP address' value is not of type REG_MULTI_SZ. Looks like your registry was corrupted.");
                 continue;
             }
             if ( IpAddressesLength > IpAddressesAllocated ) {
@@ -315,7 +322,7 @@ bool KsHostInAddrSet::findLocalAddresses()
                                  (LPBYTE) IpAddresses, &IpAddressesLength)
                  != ERROR_SUCCESS ) {
                 RegCloseKey(hService);
-                PltString errorMsg = "KsHostInAddrSet::findLocalAddresses: Can't get IP address for service: ";
+                PltString errorMsg = "KsHostInAddrSet::findLocalAddressesNT: Can't get IP address for service: ";
                 errorMsg += service;
                 PltLog::Error(errorMsg);
                 continue;
@@ -332,7 +339,7 @@ bool KsHostInAddrSet::findLocalAddresses()
             for ( pIp = IpAddresses ; *pIp ; pIp += IpLength + 1 ) {
                 IpLength = strlen(pIp);
                 ip = inet_addr(pIp);
-                if ( ip == INADDR_NONE ) {
+                if ( (ip == INADDR_NONE) || (ip == 0) ) {
                     continue;
                 }
                 inIp.s_addr = ip;
@@ -348,9 +355,148 @@ bool KsHostInAddrSet::findLocalAddresses()
     }
     delete [] TcpIpBindings;
     return true;
-} // KsHostInAddrSet::findLocalAddresses
+} // KsHostInAddrSet::findLocalAddressesNT
+
+/*
+ * This is the find_local() variant for Windooze 95. It is even more
+ * brain-damaged than the one above for Windoooooze OldTechnology(tm).
+ */
+bool KsHostInAddrSet::findLocalAddressesW95()
+{
+    HKEY    hNetTrans;
+    int     NetTransIndex;
+    in_addr inIp, mask;
+
+    //
+    // First, add the omnipresent local IP address. Unfortunately,
+    // this is not listed in the service bindings by default.
+    //
+    inIp.s_addr = htonl(0x7F000001l);
+    mask.s_addr = htonl(0xFFFFFFFFl);
+    if ( !addItem(inIp, mask, true) ) {
+        PltLog::Error("KsHostInAddrSet::findLocalAddressesW95: Can't add local address 127.0.0.1");
+    }
+
+    if ( RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+                      "SYSTEM\\CurrentControlSet\\Services\\Class\\NetTrans", 
+                      0, KEY_READ, &hNetTrans)
+         != ERROR_SUCCESS ) {
+        return false;
+    }
+
+    char   SubkeyName[8];
+    DWORD  SubkeyNameSize;
+    int    result;
+    HKEY   hNetTransConfig;
+    DWORD  RegValueType;
+    char  *IpAddresses = 0;
+    DWORD  IpAddressesLength, IpAddressesAllocated = 0;
+
+    NetTransIndex = 0;
+    for ( ;; ) {
+        SubkeyNameSize = sizeof(SubkeyName);
+        result = RegEnumKeyEx(hNetTrans,
+                              NetTransIndex++,
+                              SubkeyName, &SubkeyNameSize,
+                              0, 0, 0, 0);
+        if ( result == ERROR_SUCCESS ) {
+	    //
+            //
+            //
+            if ( RegOpenKeyEx(hNetTrans, SubkeyName,
+                              0, KEY_READ, &hNetTransConfig) 
+                 == ERROR_SUCCESS ) {
+                //
+                // First, get the list of IP addresses bound to this interface
+                // (aka service, or whatever, who cares...). We do use here
+                // dynamically allocated memory to hold the registry infor-
+                // mation. This block of memory grows, if the current value is
+                // bigger than the last. This way we can cope with (almost) 
+                // arbitrary sizes...
+                //
+                if ( RegQueryValueEx(hNetTransConfig, "IpAddress",
+                                     0, &RegValueType,
+                                     0, &IpAddressesLength)
+                     != ERROR_SUCCESS ) {
+                    continue;
+                }
+                if ( RegValueType != REG_SZ ) {
+                    RegCloseKey(hNetTransConfig);
+                    PltLog::Alert("KsHostInAddrSet::findLocalAddressesW95: The IP address' value is not of type REG_SZ. Looks like your registry was corrupted.");
+                    continue;
+                }
+                if ( IpAddressesLength > IpAddressesAllocated ) {
+                    if ( IpAddresses ) {
+                        delete [] IpAddresses;
+                    }
+                    IpAddressesAllocated = IpAddressesLength;
+                    IpAddresses = new char[IpAddressesAllocated];
+                    if ( IpAddresses == 0 ) {
+                        break;
+                    }
+                }
+                if ( RegQueryValueEx(hNetTransConfig, "IpAddress",
+                                     0, 0,
+                                     (LPBYTE) IpAddresses, &IpAddressesLength)
+                     != ERROR_SUCCESS ) {
+                    RegCloseKey(hNetTransConfig);
+                    continue;
+                }
+                RegCloseKey(hNetTransConfig);
+                //
+                // Now we can parse the IP address and store it into our
+                // list of local addresses.
+                //
+                unsigned long  ip;
+
+                ip = inet_addr(IpAddresses);
+                if ( (ip == INADDR_NONE) || (ip == 0) ) {
+                    continue;
+                }
+                inIp.s_addr = ip;
+                if ( !addItem(inIp, mask, true) ) {
+                    break;
+                }
+            }
+        } else {
+            if ( result != ERROR_NO_MORE_ITEMS ) {
+                PltLog::Error("KsHostInAddrSet::findLocalAddressesW95: Can't enumerate NetTrans configurations");
+            }
+            break;
+        }
+    }
+
+    RegCloseKey(hNetTrans);
+    if ( IpAddresses ) {
+        delete [] IpAddresses;
+    }
+    return true;
+} // KsHostInAddrSet::findLocalAddressesW95
+
+/*
+ * find_local - for Windooze NT & '95. Depending on the "os" (euphemism!)
+ * we're just running, select the appropriate function to find out the
+ * configured local addresses.
+ */
+bool KsHostInAddrSet::findLocalAddresses()
+{
+    static bool gotOsInfo = false;
+    static OSVERSIONINFO osInfo;
+
+    if ( !gotOsInfo ) {
+        osInfo.dwOSVersionInfoSize = sizeof(osInfo);
+        gotOsInfo = GetVersionEx(&osInfo) == TRUE ? true : false;
+    }
+    if ( gotOsInfo && (osInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) ) {
+        return findLocalAddressesW95();
+    } else {
+        return findLocalAddressesNT();
+    }
+} // KsHostInAddrSet::findLocalAddresses()
+
 
 #else /* Un*x & OpenVMS implementation */
+
 
 /*
  * find_local - find all IP addresses for this host the Un*x way. Compared
@@ -415,6 +561,7 @@ bool KsHostInAddrSet::findLocalAddresses()
     close(sock);
     return true;
 } // KsHostInAddrSet::findLocalAddresses
+
 
 #endif /* Un*x & OpenVMS implementation */
 
