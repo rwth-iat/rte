@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/src/histparams.cpp,v 1.3 1999-05-12 10:02:12 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -41,6 +41,28 @@
 
 #include "ks/xdr.h"
 #include "ks/histparams.h"
+
+
+#if PLT_COMPILER_DECCXX
+#if PLT_SEE_ALL_TEMPLATES
+#include "ks/array.h"
+#include "ks/handle.h"
+#else
+#include "ks/array_impl.h"
+#include "ks/handle_impl.h"
+#endif
+template class PltContainer<KsGetHistItem>;
+template class PltContainer<KsGetHistResultItem>;
+template class PltContainer<KsGetHistSingleResult>;
+template class PltHandle<KsGetHistItem>;
+template class PltHandle<KsGetHistResultItem>;
+template class PltHandle<KsGetHistSingleResult>;
+template class KsPtrHandle<KsSelector>;
+template class KsArray<KsGetHistItem>;
+template class KsArray<KsGetHistResultItem>;
+template class KsArray<KsGetHistSingleResult>;
+#endif
+
 
 /////////////////////////////////////////////////////////////////////////////
 
