@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.11 1997-03-24 12:29:41 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.12 1997-03-26 17:07:15 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,6 +41,7 @@
 
 #include "plt/string.h"
 #include <string.h>
+#include <strstream.h>
 
 //////////////////////////////////////////////////////////////////////
 
@@ -132,7 +133,20 @@ PltString::PltString(size_t sz, char *s)
     }
     PLT_CHECK_INVARIANT(); // p->len is temporarily != strlen(p->s)
 }
-    
+
+//////////////////////////////////////////////////////////////////////
+
+static char conv_buffer[32];
+
+PltString
+PltString::fromInt(int i)
+{
+    strstream s(conv_buffer, sizeof conv_buffer);
+    s << i;
+    s.freeze();
+    return PltString(s.str());
+}
+
 //////////////////////////////////////////////////////////////////////
 
 PltString & 

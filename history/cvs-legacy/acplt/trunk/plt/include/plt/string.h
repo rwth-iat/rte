@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.7 1997-03-24 12:29:39 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.8 1997-03-26 17:07:09 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -61,6 +61,7 @@ public:
     virtual ~PltString();
     PltString & operator = (const char *);
     PltString & operator = (const PltString &);
+    static PltString fromInt(int );
 
 #if PLT_DEBUG_INVARIANTS
     virtual bool invariant() const;
