@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.c,v 1.2 1999-08-06 09:38:36 dirk Exp $
+*   $Id: ov_ntservice.c,v 1.3 1999-08-06 10:59:27 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -747,11 +747,6 @@ ERRORMSG:
 		ov_ntservice_lasterror("Can't terminate service thread");
 	}
 	/*
-	*	delete the server object and remove the task bar icon
-	*/
-	ov_ksserver_delete();
-	ov_ntservice_deletetaskbaricon();
-	/*
 	*	shut down the database if appropriate
 	*/
 	if(startup) {
@@ -759,6 +754,11 @@ ERRORMSG:
 		ov_database_shutdown();
 		ov_logfile_info("Database shut down.");
 	}
+	/*
+	*	delete the server object and remove the task bar icon
+	*/
+	ov_ksserver_delete();
+	ov_ntservice_deletetaskbaricon();
 	/*
 	*   unmap the database
 	*/

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.2 1999-07-26 16:14:16 dirk Exp $
+*   $Id: ov_server.c,v 1.3 1999-08-06 10:59:28 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -273,7 +273,6 @@ ERRORMSG:
 		ov_ksserver_run();
 		ov_ksserver_stop();
 		ov_logfile_info("Server stopped.");
-		ov_ksserver_delete();
 	} else {
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 			ov_result_getresulttext(result), result);
@@ -288,13 +287,19 @@ ERRORMSG:
 		ov_logfile_info("Database shut down.");
 	}
 	/*
+	*	delete the server object
+	*/
+	if(exit_status == EXIT_SUCCESS) {
+		ov_ksserver_delete();
+	}
+	/*
 	*   unmap the database
 	*/
 	ov_logfile_info("Unmapping database \"%s\"...", filename);
 	ov_database_unmap();
 	ov_logfile_info("Database unmapped.");
 	/*
-	*	close logfile and return
+	*	close the logfile and return
 	*/
 	ov_logfile_close();
 	return exit_status;
