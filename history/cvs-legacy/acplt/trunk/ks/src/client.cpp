@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.49 2003-10-15 15:55:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.50 2003-10-17 13:31:56 harald Exp $ */
 /*
  * Copyright (c) 1996, 2003
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -524,7 +524,7 @@ bool
 KscServer::getServerVersion(u_long &version)
 {
     if ( _svr_con->getState() == KsServerConnection::ISC_STATE_CLOSED ) {
-	if ( !ping() ) {
+	if ( !openOnlyAndWait() ) {
 	    return false;
 	}
     }
@@ -538,7 +538,7 @@ u_short
 KscServer::getProtocolVersion()
 {
     if ( _svr_con->getState() == KsServerConnection::ISC_STATE_CLOSED ) {
-	if ( !ping() ) {
+	if ( !openOnlyAndWait() ) {
 	    return 0;
 	}
     }
@@ -729,14 +729,9 @@ KscServer::KscServer(KsString host,
   _retry_wait(0, 0),
   _tries(1)
 {
-    initExtTable(); // make mandatory services available
-    _reconnect_timer = new KscServerReconnectTimer(this);
-    _svr_con = new KscServerConnection(this, host_name, server_name);
-    // TODO & FIXME: timeout settings
-    // TODO & FIXME: error checks
-}
+    init();
+} // KscServer::KscServer
 
-//////////////////////////////////////////////////////////////////////
 
 KscServer::KscServer(KsString hostAndName, u_short protocolVersion)
 : KscServerBase(hostAndName),
@@ -746,12 +741,27 @@ KscServer::KscServer(KsString hostAndName, u_short protocolVersion)
   _retry_wait(0, 0),
   _tries(1)
 {
+    init();
+} // KscServer::KscServer
+
+
+// ----------------------------------------------------------------------------
+// KscServer constructor duty: this initializes everthing else that needs to
+// be initialized.
+//
+void
+KscServer::init()
+{
     initExtTable(); // make mandatory services available
     _reconnect_timer = new KscServerReconnectTimer(this);
     _svr_con = new KscServerConnection(this, host_name, server_name);
-    // TODO & FIXME: timeout settings
-    // TODO & FIXME: error checks
-}
+    if ( !_reconnect_timer
+	 || !_svr_con ) {
+	_last_result = KS_ERR_GENERIC;
+    }
+    setTimeouts(PltTime(30), PltTime(30), 1);
+} // KscServer::init
+
 
 /////////////////////////////////////////////////////////////////////////////
 // initExtTable() fills ext_opcodes with all mandatory 
@@ -953,7 +963,7 @@ KscServer::initiateRequestIfPossible(KscServiceRequestHandle newRequest)
 	// This situation must not happen! It indicates that there has been
 	// something going boing.
 	//
-	PltLog::Error("KscServer::pullNextRequest(): no current request but connection busy, terminating busy request.");
+	PltLog::Error("KscServer::initiateRequestIfPossible(): no current request but connection busy, terminating busy request.");
 	close();
 	// fall through...
 
@@ -1070,7 +1080,10 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 
     switch ( op ) {
     //
-    // Connection has been successful established (or not).
+    // Connection has been successful established (or not). Note that we
+    // also will receive a faked ISC_OP_OPEN notification when a new request
+    // should be issued and the connection is already open. So the ISC_OP_OPEN
+    // is also a stimulus for sending a request.
     //
     case KsServerConnection::ISC_OP_OPEN:
 	if ( res != KS_ERR_OK ) {
@@ -1105,14 +1118,64 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 	    // Connection successfully established. So we can now send the
 	    // ACPLT/KS service request.
 	    //
-	    if ( ! (
-		     (request->_service != 0) ?
+	    if ( request->_sub_status == KscServiceRequest::SUBREQ_OPENONLY ) {
+		//
+		// It's only a connection establishment pseudo-request. So
+		// we're already done at this point.
+		//
+#if DEBUG_CLN
+	    PltLog::Debug("KscServer::async_attention: SUBREQ_OPENONLY finished");
+#endif
+		request->_result.result = KS_ERR_OK;
+		finishAndNotify(KS_ERR_OK);
+		return;
+	    }
+	    //
+	    // If the service has been specified by extension instead of
+	    // directly by complete opcode, then try to find the major opcode
+	    // first in the cache. If this fails, then query the ACPLT/KS
+	    // server for the extension's major opcode. Ask for
+	    // /vendor/extensions/pipapo/major_opcode).
+	    //
+	    bool ok = false;
+	    if ( request->_extension.len() != 0 ) {
+		u_long majorOpcode = 0;
+		if ( ext_opcodes.query(request->_extension, majorOpcode) ) {
+		    //
+		    // The major opcode of the extension is already known,
+		    // so we can immediately issue the request.
+		    //
+		    ok = _svr_con->send((request->_service & 0x0000FFFF)
+			                | (majorOpcode << 16),
+					request->_neg,
+					request->_params);
+		} else {
+		    //
+		    // Since the major opcode is currently unknown we first
+		    // have to query the ACPLT/KS server. So issue an ordinary
+		    // GETVAR request targetted at the vendor-extensions
+		    // branch.
+		    //
+		    KsGetVarParams params(1);
+		    params.identifiers[0] =
+			KsString("/vendor/extensions/")
+			+ request->_extension + "/major_opcode";
+		    ok = _svr_con->send(KS_GETVAR,
+					params);
+		    if ( ok ) {
+			request->_sub_status = KscServiceRequest::SUBREQ_QUERYEXT;
+		    }
+		}
+	    } else {
+		ok = (request->_service != 0) ?
 		         _svr_con->send(request->_service, 
 					request->_neg, 
 					request->_params)
 		     :
-		         _svr_con->sendPing()
-		     ) ) {
+		         _svr_con->sendPing();
+	    }
+
+	    if ( !ok ) {
 		//
 		// We failed to serialize the request. This usually indicates
 		// a problem with the IO subsystem, so we don't try to redo
@@ -1168,13 +1231,71 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 	    // network stream and look at it, wonder, and try to find out
 	    // what it could mean...
 	    //
-	    if ( ! (
-		     (request->_service != 0) ?
+	    bool ok = false;
+	    switch ( request->_sub_status ) {
+	    //
+	    // An ordinary request seems to have been completed...
+	    //
+	    case KscServiceRequest::SUBREQ_NORMAL:
+#if DEBUG_CLN
+		PltLog::Debug("KscServer::async_attention: SUBREQ_NORMAL");
+#endif
+		ok = (request->_service != 0) ?
 		         _svr_con->receive(request->_neg,
 					   request->_result)
 		     :
-		         _svr_con->receivePing()
-		     ) ) {
+		         _svr_con->receivePing();
+		break;
+
+	    //
+	    // The reply belongs to a query for an extension major opcode.
+	    //
+	    case KscServiceRequest::SUBREQ_QUERYEXT: {
+#if DEBUG_CLN
+		PltLog::Debug("KscServer::async_attention: SUBREQ_QUERYEXT");
+#endif
+		KsGetVarResult result;
+		ok = _svr_con->receive(result);
+		if ( ok ) {
+		    if ( (result.result != KS_ERR_OK)
+			 || (result.items.size() != 1)
+			 || (result.items[0].result != KS_ERR_OK) ) {
+			//
+			// This is an unknown extension. All we can do now
+			// is to terminate the call and notify the owner
+			// of the problem.
+			//
+			finishAndNotify(KS_ERR_NOTIMPLEMENTED);
+		    } else {
+			//
+			// Retrieve the major opcode and put it into the
+			// cache.
+			//
+			KsIntValue *pval = PLT_DYNAMIC_PCAST(KsIntValue,
+							     result.items[0].item.getPtr());
+			if ( !pval ) {
+			    finishAndNotify(KS_ERR_NOTIMPLEMENTED);
+			} else {
+			    u_long majorOpcode = (u_long)((long)(*pval));
+			    ext_opcodes.add(request->_extension,
+					    majorOpcode);
+			    request->_sub_status = KscServiceRequest::SUBREQ_NORMAL;
+			    //
+			    // Here, we stimulate ourself (oops) to send the
+			    // real request: this can now be done, since the
+			    // major opcode has been placed into the extension
+			    // opcode cache.  //
+			    async_attention(KsServerConnection::ISC_OP_OPEN);
+			}
+		    }
+		}
+		return;
+	    }
+
+	    default:
+		break;
+	    }
+	    if ( !ok ) {
 		//
 		// Nope. Could not interpret the result. In order to be on
 		// the safe side we close the transport connection and leave
@@ -1281,10 +1402,6 @@ KscServer::waitForRequest(KscServiceRequestHandle req)
 } // KscServer::waitForRequest
 
 
-
-
-
-
 // ----------------------------------------------------------------------------
 // requestService() implements a general service request.
 // The name of the protocol extension determines the major opcode which is
@@ -1298,78 +1415,16 @@ KscServer::requestService(const KsString &extension,
                           const KsXdrAble &params,
                           KsResult &result)
 {
-#if 0
-    u_long opcode = 0;
-    //
-    // Lookup the major opcode in cache. If the lookup fails then query the
-    // ACPLT/KS server (ask for /vendor/extensions/pipapo/major_opcode).
-    //
-    if( !ext_opcodes.query(extension, opcode) ) {
-	//
-      	// Fetch the opcode from the ACPLT/KS server.
-      	// NOTE: It is safe to use a KscVariable as
-      	//       the services of ks_core are implemented
-      	//       independent from requestService().
-	//
-	KsString path(getHostAndName());
-	path += "/vendor/extensions/";
-	path += extension;
-	path += "/major_opcode";
-
-	KscVariable var(path);
-	KsValueHandle hval; 
-
-	//
-	// Yes. There might be errors. In case there isn't a description of
-	// the extension available, then return KS_ERR_NOTIMPLEMENTED, other-
-	// wise return the error code resulting from the failed communication.
-	//
-	if ( !var.hasValidPath() ) {
-	    _last_result = KS_ERR_NOTIMPLEMENTED;
-	    return false;
-	}
-	if ( !var.getUpdate() ) {
-	    _last_result = var.getLastResult();
-	    if ( (_last_result == KS_ERR_BADNAME) ||
-	         (_last_result == KS_ERR_BADPATH) ) {
-		_last_result = KS_ERR_NOTIMPLEMENTED;
-	    }
-	    return false;
-	}
-	
-	hval = var.getValue();
-	if ( !hval ) {
-	    _last_result = KS_ERR_NOTIMPLEMENTED;
-	    return false;
-	}
-
-	KsIntValue *pval = PLT_DYNAMIC_PCAST(KsIntValue, hval.getPtr());
-	if ( !pval ) {
-	    _last_result = KS_ERR_NOTIMPLEMENTED;
-	    return false;
-	}
-
-	// We succeeded in reading the opcode.
-	// 
-	opcode = (u_long)((long)(*pval));
-    } 
-    //
-    // We got the major opcode from the cache or from the server.
-    // Now mix the opcodes and call internal function for transfer.
-    //
-    opcode <<= 16;
-    opcode |= minor_opcode;
-
-    return requestByOpcode(opcode, avm, params, result);
-#endif
-    _last_result = KS_ERR_GENERIC;
-    return false;
+    KscServiceRequest req(minor_opcode, extension, avm, params, result);
+    KscServiceRequestHandle hreq(&req, KsOsUnmanaged);
+    if ( !hreq ) {
+	_last_result = KS_ERR_GENERIC;
+	return false;
+    }
+    requestAsyncByOpcode(hreq);
+    waitForRequest(hreq);
+    return req._result.result == KS_ERR_OK;
 } // KscServer::requestService
-
-
-
-
-
 
 
 // ---------------------------------------------------------------------------
@@ -1578,6 +1633,28 @@ KscServer::ping()
     KsResult dummy;
     return requestByOpcode(0, 0, dummy, dummy);
 } // KscServer::ping
+
+// ----------------------------------------------------------------------------
+// Open a connection to the server and block until it has been established
+//
+bool
+KscServer::openOnlyAndWait()
+{
+    KsResult dummy;
+    KscServiceRequest req(0, 0, dummy, dummy);
+    req._sub_status = KscServiceRequest::SUBREQ_OPENONLY;
+    KscServiceRequestHandle hreq(&req, KsOsUnmanaged);
+    if ( !hreq ) {
+	_last_result = KS_ERR_GENERIC;
+	return false;
+    }
+#if DEBUG_CLN
+	PltLog::Debug("KscServer::openOnlyAndWait: initiating SUBREQ_OPENONLY");
+#endif
+    requestAsyncByOpcode(hreq);
+    waitForRequest(hreq);
+    return req._result.result == KS_ERR_OK;
+} // KscServer::openOnlyAndWait
 
         
 // End of client.cpp
