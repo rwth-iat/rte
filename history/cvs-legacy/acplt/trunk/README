@@ -6,10 +6,18 @@ Libary. As always, it contains bug-fixes and some small improvements
 behind the scenes. For details about bug-fixes and changes, see part 3
 "Changes & Bug-Fixes" of this document below.
 
-Although this release is a minor release we suggest to upgrade to this
-release as especially a memory leak (from 1.0.4) was fixed and the
-buffered streams mechanism was enhanced and also a bug fixed which could
-cause "zombie" streams on slow machines.
+IMPORTANT: Beginning with 1.1.3 we now license the source code of the
+ACPLT/KS package under the Artistic License (see file ARTISTIC-LICENSE
+for details). The rationale behind this is that we get better control
+over what the official ACPLT/KS protocol and implementation is. This
+way we can guarantuee better quality and avoid pollution by vicious
+third parties. As with the old PLT License, the Artistic License is
+OpenSource and allows you to use ACPLT/KS for all your projects,
+either commercial or not. Like before, you can tweak the code to suit
+your needs, etc.
+
+The latest and greatest stable release (as if this developer's release
+were not stable...) is 1.0.5.
 
 Currently, the following platforms and compilers are supported by the
 C++ Communication Library:
