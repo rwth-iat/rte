@@ -1,5 +1,5 @@
 /*
-*   $Id: example_testclass.c,v 1.2 1999-07-27 17:43:47 dirk Exp $
+*   $Id: example_testclass.c,v 1.3 1999-07-28 16:06:12 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -30,81 +30,95 @@
 #define OV_COMPILE_LIBRARY_example
 #endif
 
-#include <stdio.h>
-
 #include "example.h"
 #include "libov/ov_string.h"
+#include "libov/ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Accessor functions
+*	Accessor functions for "Single"
 */
-OV_STRING OV_DLLFNCEXPORT example_testclass_GetOrSetMeString_get(
+OV_SINGLE OV_DLLFNCEXPORT example_testclass_Single_get(
 	OV_INSTPTR_example_testclass	ptest
 ) {
-	ov_logfile_info("You asked for GetOrSetMeString!");
-	return ptest->v_GetOrSetMeString;
+	ov_logfile_info("You asked for Single!");
+	return ptest->v_Single;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_GetOrSetMeString_set(
+OV_RESULT OV_DLLFNCEXPORT example_testclass_Single_set(
+	OV_INSTPTR_example_testclass	ptest,
+	const OV_SINGLE					value
+) {
+	ptest->v_Single = value;
+	ov_logfile_info("You set Single!");
+	return OV_ERR_OK;
+}
+
+/*
+*	Accessor functions for "String"
+*/
+OV_STRING OV_DLLFNCEXPORT example_testclass_String_get(
+	OV_INSTPTR_example_testclass	ptest
+) {
+	ov_logfile_info("You asked for String!");
+	return ptest->v_String;
+}
+
+OV_RESULT OV_DLLFNCEXPORT example_testclass_String_set(
 	OV_INSTPTR_example_testclass	ptest,
 	OV_STRING						value
 ) {
-	ov_logfile_info("You set GetOrSetMeString!");
-	ov_string_setvalue(&ptest->v_GetOrSetMeString, value);
+	ov_string_setvalue(&ptest->v_String, value);
+	ov_logfile_info("You set String!");
 	return OV_ERR_OK;
 }
 
-OV_INT_PV* OV_DLLFNCEXPORT example_testclass_GetOrSetMeInt_get(
+/*
+*	Accessor functions for "IntPV"
+*/
+OV_INT_PV* OV_DLLFNCEXPORT example_testclass_IntPV_get(
 	OV_INSTPTR_example_testclass	ptest
 ) {
-	ov_logfile_info("You asked for GetOrSetMeInt!");
-	return &ptest->v_GetOrSetMeInt;
+	ov_logfile_info("You asked for IntPV!");
+	return &ptest->v_IntPV;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_GetOrSetMeInt_set(
+OV_RESULT OV_DLLFNCEXPORT example_testclass_IntPV_set(
 	OV_INSTPTR_example_testclass	ptest,
 	const OV_INT_PV					*pvalue
 ) {
-	ov_logfile_info("You set GetOrSetMeInt!");
-	ptest->v_GetOrSetMeInt = *pvalue;
+	ptest->v_IntPV = *pvalue;
+	ov_logfile_info("You set IntPV!");
 	return OV_ERR_OK;
 }
 
-OV_SINGLE_PV* OV_DLLFNCEXPORT example_testclass_GetOrSetMeSingle_get(
-	OV_INSTPTR_example_testclass	ptest
-) {
-	ov_logfile_info("You asked for GetOrSetMeSingle!");
-	return &ptest->v_GetOrSetMeSingle;
-}
-
-OV_RESULT OV_DLLFNCEXPORT example_testclass_GetOrSetMeSingle_set(
+/*
+*	Accessor functions for "UIntVec"
+*/
+OV_UINT* OV_DLLFNCEXPORT example_testclass_UIntVec_get(
 	OV_INSTPTR_example_testclass	ptest,
-	const OV_SINGLE_PV				*pvalue
+	OV_UINT							*pveclen
 ) {
-	ov_logfile_info("You set GetOrSetMeSingle!");
-	ptest->v_GetOrSetMeSingle = *pvalue;
-	return OV_ERR_OK;
+	ov_logfile_info("You asked for UIntVec!");
+	*pveclen = Ov_GetDynamicVectorLength(ptest->v_UIntVec);
+	return Ov_GetDynamicVectorValue(ptest->v_UIntVec);
 }
 
-OV_BOOL_PV* OV_DLLFNCEXPORT example_testclass_GetOrSetMeBool_get(
-	OV_INSTPTR_example_testclass	ptest
-) {
-	ov_logfile_info("You asked for GetOrSetMeBool!");
-	return &ptest->v_GetOrSetMeBool;
-}
-
-OV_RESULT OV_DLLFNCEXPORT example_testclass_GetOrSetMeBool_set(
+OV_RESULT OV_DLLFNCEXPORT example_testclass_UIntVec_set(
 	OV_INSTPTR_example_testclass	ptest,
-	const OV_BOOL_PV				*pvalue
+	const OV_UINT					*pvalue,
+	const OV_UINT					veclen
 ) {
-	ov_logfile_info("You set GetOrSetMeBool!");
-	ptest->v_GetOrSetMeBool = *pvalue;
-	return OV_ERR_OK;
+	ov_logfile_info("You set UIntVec!");
+	return Ov_SetDynamicVectorValue(&ptest->v_UIntVec,
+		pvalue, veclen, UINT);
 }
 
-OV_STRING* OV_DLLFNCEXPORT example_testclass_GetOrSetMeVirtual_get(
+/*
+*	Accessor functions for "StringVec"
+*/
+OV_STRING* OV_DLLFNCEXPORT example_testclass_StringVec_get(
 	OV_INSTPTR_example_testclass	ptest,
 	OV_UINT							*pveclen
 ) {
@@ -118,12 +132,12 @@ OV_STRING* OV_DLLFNCEXPORT example_testclass_GetOrSetMeVirtual_get(
 	/*
 	*	instructions
 	*/
-	ov_logfile_info("You asked for GetOrSetMeVirtual!");
+	ov_logfile_info("You asked for StringVec!");
 	*pveclen = sizeof(stringvec)/sizeof(OV_STRING);
 	return stringvec;
 }
 
-OV_RESULT OV_DLLFNCEXPORT example_testclass_GetOrSetMeVirtual_set(
+OV_RESULT OV_DLLFNCEXPORT example_testclass_StringVec_set(
 	OV_INSTPTR_example_testclass	ptest,
 	const OV_STRING*				pvalue,
 	const OV_UINT					veclen
@@ -135,10 +149,10 @@ OV_RESULT OV_DLLFNCEXPORT example_testclass_GetOrSetMeVirtual_set(
 	/*
 	*	instructions
 	*/
-	ov_logfile_info("You set GetOrSetMeString!");
+	ov_logfile_info("You (tried to) set StringVec!");
 	ov_logfile_info("The value is:");
 	for(i=0; i<veclen; i++) {
-		ov_logfile_info("GetOrSetMeVirtual[%ld] = \"%s\".", i, pvalue[i]);
+		ov_logfile_info("StringVec[%ld] = \"%s\".", i, pvalue[i]);
 	}
 	return OV_ERR_OK;
 }

@@ -1,5 +1,5 @@
 /*
-*   $Id: example.ovm,v 1.2 1999-07-27 17:43:47 dirk Exp $
+*   $Id: example.ovm,v 1.3 1999-07-28 16:06:12 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -54,24 +54,24 @@ LIBRARY example
 		IS_INSTANTIABLE;
 		COMMENT = "This is a test class";
 		VARIABLES
-			GetOrSetMeString : STRING HAS_ACCESSORS
-				COMMENT = "A string variable";
-			GetOrSetMeInt : INT_PV HAS_ACCESSORS
-				UNIT = "%" COMMENT = "An integer PV";
-			GetOrSetMeSingle : SINGLE_PV HAS_ACCESSORS
-				UNIT = "m/s" COMMENT = "A single PV";
-			GetOrSetMeBool : BOOL_PV HAS_ACCESSORS
-				COMMENT = "A bool PV";
-			GetOrSetMeVirtual[] : STRING IS_VIRTUAL HAS_ACCESSORS
-				COMMENT = "A virtual string vector variable";
+			Single : SINGLE HAS_ACCESSORS
+				UNIT = "m/s" COMMENT = "single precision value";
+			String : STRING HAS_ACCESSORS
+				COMMENT = "string value";
+			IntPV : INT_PV HAS_ACCESSORS
+				UNIT = "ticks" COMMENT = "integer precess value";
+			UIntVec[] : UINT HAS_ACCESSORS
+				COMMENT = "dynamic unsigned integer vector value";
+			StringVec[] : STRING IS_VIRTUAL HAS_ACCESSORS
+				COMMENT = "virtual string vector value";
 		END_VARIABLES;
 	END_CLASS;
 
 	ASSOCIATION testassoc
-		PARENT daddy : CLASS example/testclass
-			COMMENT = "this is my cool daddy";
-		CHILD  kiddy : CLASS example/testclass
-			COMMENT = "these are my great children";
+		PARENT MyParent : CLASS example/testclass
+			COMMENT = "link to my parent";
+		CHILD  MyChildren : CLASS example/testclass
+			COMMENT = "link to my children";
 	END_ASSOCIATION;
 END_LIBRARY;
 
