@@ -149,6 +149,7 @@ class KsVarCurrProps
 : public KsCurrProps 
 {
 public:
+    KsVarCurrProps();
     KsVarCurrProps(KsValueHandle v);
     KsVarCurrProps(const KsVarCurrProps &);
     KsVarCurrProps(KsValueHandle v,
@@ -255,6 +256,12 @@ KsDomainProjProps::KsDomainProjProps(const KsString &ident,
                                      const KsString &co,
                                      KS_ACCESS am)
 : KsProjProps(ident, ct, co, am) 
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsVarCurrProps::KsVarCurrProps()
 {}
 
 //////////////////////////////////////////////////////////////////////
