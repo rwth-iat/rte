@@ -628,6 +628,18 @@ xdrtcpco.obj: ../../../ks/src/xdrtcpcon.cpp \
  ../../../ks/include/ks/connectionmgr.h \
  ../../../plt/include/plt/time.h
 
+xdrudpco.obj: ../../../ks/src/xdrudpcon.cpp \
+ ../../../ks/include/ks/xdrudpcon.h \
+ ../../../ks/include/ks/connection.h ../../../ks/include/ks/xdr.h \
+ ../../../plt/include/plt/rtti.h ../../../plt/include/plt/debug.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/rpc.h \
+ ../../../ks/include/ks/rpcproto.h ../../../ks/include/ks/avticket.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/string.h \
+ ../../../plt/include/plt/string.h ../../../plt/include/plt/alloc.h \
+ ../../../ks/include/ks/result.h \
+ ../../../ks/include/ks/connectionmgr.h \
+ ../../../plt/include/plt/time.h
+
 ksclient.obj: ../../source/libovks/ov_ksclient.c \
  ../../include/libovks/ov_ksclient.h \
  ../../include/libovks/ov_ksclient_xdr.h \
