@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/w95service.cpp,v 1.1 1997-12-02 10:20:57 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/w95service.cpp,v 1.2 1997-12-10 17:47:12 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -48,12 +48,6 @@
 #if PLT_COMPILER_MSVC
 #include <process.h>
 #endif
-
-// -------------------------------------------------------------------------
-// We *do* need our instance handle but don't want to bother the programmer
-// with it, so that's it why there is this extern declaration...
-//
-extern "C" HINSTANCE _hInstance;
 
 
 // -------------------------------------------------------------------------
@@ -119,13 +113,13 @@ KsW95ServiceServer::KsW95ServiceServer(const char *service_name,
     // register a new window class and then try to create a hidden window.
     //
     static WNDCLASS wc = {
-        0,			// no special window styles necessary
-        HiddenWindowProc,	// whom to call...
-        0, 0,			// no extra class or window bytes needed
-        _hInstance,
-        0, 0,			// no icon and no cursor necessary
-        0,			// no background
-        0,			// no menu needed
+        0,						// no special window styles necessary
+        HiddenWindowProc,		// whom to call...
+        0, 0,					// no extra class or window bytes needed
+        (HINSTANCE) GetModuleHandle(0), // for this instance
+        0, 0,					// no icon and no cursor necessary
+        0,						// no background
+        0,						// no menu needed
         "W95ServiceProcessHiddenWindowClass"
     };
 
@@ -139,7 +133,7 @@ KsW95ServiceServer::KsW95ServiceServer(const char *service_name,
 	0, 0, 1, 1,		// arbitrary window size and position
 	0,			// no parent (well -- desktop)
 	0,			// no menu
-	_hInstance,
+    (HINSTANCE) GetModuleHandle(0), // for this instance
 	0);			// no special pointer needed
     if ( _hidden_window == 0 ) {
         return;
@@ -243,7 +237,17 @@ void KsW95ServiceServer::run()
 	}
 
 	DWORD thread_id;
-#if PLT_COMPILER_BORLAND
+    //
+    // We must use the apropriate function from the C++ RTL here, as we will
+    // otherwise get memory leaks. As if NT wouldn't be the biggest memory
+    // leak ever created by menkind...
+    //
+#if PLT_COMPILER_MSVC
+    _workhorse_thread = (HANDLE) _beginthread(
+        (void (*)(void *)) ks_c_w95serviceRun,    // entry point of new thread
+        0,                                        // stack size (default)
+        0);                                       // arguments (none)
+#elif PLT_COMPILER_BORLAND
 	_workhorse_thread = (HANDLE) _beginthreadNT(
            (void (*)(void *)) ks_c_w95serviceRun,
 	   32768,
@@ -342,7 +346,7 @@ HiddenWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		    if ( WaitForSingleObject(
 			     service->_service_done_event, 10 * 1000 ) !=
 			 WAIT_OBJECT_0 ) {
-			PltLog::Warning("\Service Done\" signalling failed");
+			PltLog::Warning("\"Service Done\" signalling failed");
 		    }
 		}
 		service->verbose("Service thread now terminating");
