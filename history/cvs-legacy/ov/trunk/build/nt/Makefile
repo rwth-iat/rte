@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.4 2000-07-03 13:36:51 dirk Exp $
+#   $Id: Makefile,v 1.5 2001-07-09 12:40:51 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -24,6 +24,7 @@
 #	--------
 #	26-Nov-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+#	09-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
 
 
 
@@ -63,8 +64,8 @@ BISON			= bison
 CPP 			= cpp
 
 CC				= bcc32
-CC_FLAGS		= -w -v -pc -wsig- -a8 -O2 -d
-COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
+CC_FLAGS		= -w -v -pc -wsig- -a8 -O2 -d $(OV_PLATFORM_DEFINES)
+COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c 
 
 LINK			= $(CC) $(CC_FLAGS)
 LD				= $(CC) $(CC_FLAGS) -tWDE
@@ -96,6 +97,9 @@ example: $(EXAMPLE)
 	@
 
 all: targets example
+
+info: 
+	echo $(ACPLTKS_DEFINES)
 
 #   Implicit Rules
 #   --------------
@@ -179,6 +183,11 @@ $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ) $(OV_CODEGEN_RES)
 	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
 	$(RC) $(filter %$(RES), $^) $@
 
+#	ACPLT/OV framework builder
+
+$(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
+	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+
 #	ACPLT/OV database utility
 
 $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(OV_DBUTIL_RES)
@@ -209,6 +218,24 @@ $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
 	@del $(basename $@).def
 	$(LD) -e$@ $(filter-out %$(RES), $^)
 	$(RC) $(filter %$(RES), $^) $@
+
+#	ACPLT/OV KsHistory library
+#	--------------------------
+
+$(KSHISTLIB_LIB) : $(KSHISTLIB_DLL)
+
+$(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
+	@del $(basename $@).def
+	$(LD) -e$@ $(filter-out %$(RES), $^)
+	$(IMPDEF) $(basename $@)_tmp.def $@
+	$(MKIMPDEF) $(basename $@)_tmp.def $(basename $@).def
+	$(IMPLIB) $(basename $@)$(LIB) $(basename $@).def
+	$(MKEXPDEF) $(basename $@)_tmp.def $(basename $@).def
+	$(LD) -e$@ $(filter-out %$(RES), $^)
+	$(MKDLLDEF) $(basename $@)_tmp.def $(basename $@).def
+	@del $(basename $@)_tmp.def
+
+kshistlib.c kshistlib.h : $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV example library
 #	------------------------

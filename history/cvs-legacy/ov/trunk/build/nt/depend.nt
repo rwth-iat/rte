@@ -19,6 +19,13 @@ ov_codegen.obj: ../../source/codegen/ov_codegen.c \
  ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h
 
+ov_builder.obj: ../../source/builder/ov_builder.c ../../source/builder/ov_builder.h \
+ ../../source/codegen/ov_codegen.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h
+
 ov.obj: ov.c ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
  ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
