@@ -1,5 +1,5 @@
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/ks_xdr.x,v 1.1 1999-01-08 13:10:44 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/ks_xdr.x,v 1.2 1999-02-26 13:28:19 harald Exp $
  *
  * ks_xdr.x -- Specification of the ACPLT/KS protocol for use with the rpcgen
  *   protocol compiler for ONC/RPC. This ONC/RPC protocol specification is
@@ -133,6 +133,8 @@ union KS_AUTH_REPLY switch (KS_AUTH_TYPE type) {
         void;
     case KS_AUTH_SIMPLE:
         void;
+    case 0xDeadBeef:
+        u_long DeadBeef;
 };
 
 
