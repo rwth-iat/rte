@@ -94,7 +94,9 @@ typedef PltPtrHandle<KscSorterBucket> KscBucketHandle;
 class KscSorter
 {
 public:
-    KscSorter(PltIterator<KscVariableHandle> &var_it, bool dirty_only = false);
+    KscSorter(PltIterator<KscVariableHandle> &var_it, 
+              const KscAvModule *defaultAvModule,
+              bool dirty_only = false);
     ~KscSorter();
 
     bool isValid() const;
@@ -152,9 +154,13 @@ private:
     friend class ValueIterator;
 
     bool sortVars(PltIterator<KscVariableHandle> &);
+    const KscAvModule *findAvModule(const KscVariable *);
 
     bool valid;
     bool fDirtyOnly;
+    const KscAvModule *avm_default;
+    const KscAvModule *avm_client;  // av-module set for the client, 
+                                    // just a simple cache
     PltHashTable<Key,KscBucketHandle> table;
 };
 
@@ -284,8 +290,11 @@ KscSorterBucket::newVarIterator() const
 
 inline
 KscSorter::KscSorter(PltIterator<KscVariableHandle> &var_it,
+                     const KscAvModule *defaultAvModule,
                      bool dirty_only)
-: fDirtyOnly(dirty_only)
+: fDirtyOnly(dirty_only),
+  avm_default(defaultAvModule),
+  avm_client(KscClient::getClient()->getAvModule())
 {
     valid = sortVars(var_it);
 }
@@ -317,6 +326,25 @@ KscSorter::newBucketIterator() const
     return new ValueIterator(table);
 }
 
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KscAvModule *
+KscSorter::findAvModule(const KscVariable *var)
+{
+    const KscAvModule *temp = var->getAvModule();
+
+    if( temp ) {
+        return temp;
+    } else if(avm_default) {
+        return avm_default;
+    } else if( (temp = var->getServer()->getAvModule()) ) {
+        return temp;
+    } else {
+        return avm_client;
+    }
+}
+    
 //////////////////////////////////////////////////////////////////////
 
 #endif

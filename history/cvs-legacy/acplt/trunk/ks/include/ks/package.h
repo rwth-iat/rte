@@ -145,10 +145,14 @@ protected:
         void operator ++ (int);
         void toStart();
     protected:
+        void normalize();
         const KscPackage &pkg;
         DeepIterator *rek_it; // used to visit the subpackages recursively
         PltListIterator <KscVariableHandle> vars_it;
         PltListIterator <KscPackageHandle> pkgs_it;
+    private:
+        DeepIterator(const DeepIterator &); // forbidden
+        DeepIterator &operator = (const DeepIterator &); // forbidden
     };
     friend class DeepIterator;
     // end of class DeepIterator

@@ -122,7 +122,7 @@ KscPackage::~KscPackage()
 bool
 KscPackage::add(KscVariableHandle var)
 {
-    if(var) {
+    if(var && var->hasValidPath()) {
         bool ok = vars.addLast(var);
     
         if(ok) num_vars++;
@@ -229,7 +229,7 @@ KscPackage::getUpdate()
 {
     DeepIterator var_it(*this);
 
-    KscSorter sorter(var_it);
+    KscSorter sorter(var_it, av_module);
 
     if(!sorter.isValid()) {
         // failed to sort variables by servers and av-types
@@ -318,7 +318,7 @@ bool
 KscPackage::setUpdate(bool force)
 {
     DeepIterator var_it(*this);
-    KscSorter sorter(var_it, !force);
+    KscSorter sorter(var_it, av_module, !force);
 
     if(!sorter.isValid()) {
         PLT_DMSG("Failed to sort variables" << endl);
@@ -405,7 +405,9 @@ KscPackage::DeepIterator::DeepIterator(const KscPackage &itOver)
   rek_it(0),
   vars_it(itOver.vars),
   pkgs_it(itOver.pkgs)
-{}
+{
+    normalize();
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -418,15 +420,42 @@ KscPackage::DeepIterator::~DeepIterator()
 
 //////////////////////////////////////////////////////////////////////
 
+void
+KscPackage::DeepIterator::normalize()
+{
+    if(vars_it) {
+        return;
+    }
+
+    if(rek_it && *rek_it) {
+        return;
+    }
+
+    while(pkgs_it) {
+        if(rek_it) {
+            delete rek_it;
+        }
+        rek_it = new DeepIterator(**pkgs_it);
+        ++pkgs_it;
+        if(rek_it && *rek_it) {
+            return;
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
 KscPackage::DeepIterator::operator bool () const
 {
     if(vars_it) {
         return true;
     }
 
+#if 0
     if(pkgs_it) {
         return true;
     }
+#endif
 
     if(rek_it && *rek_it) {
         return true;
@@ -594,6 +623,7 @@ KscPackage::DeepIterator::toStart()
     }
     pkgs_it.toStart();
     vars_it.toStart();
+    normalize();
 }
 
 
@@ -636,8 +666,17 @@ KscExchangePackage::doExchange(bool force)
     _result = KS_ERR_GENERIC;
 
     if( get_it && set_it ) {
-        KscSorter get_sorter(*get_it);
-        KscSorter set_sorter(*set_it, !force);
+        const KscAvModule *avm = get_pkg->getAvModule();
+        if(!avm) {
+            avm = getAvModule();
+        }
+        KscSorter get_sorter(*get_it, avm);
+        
+        avm = get_pkg->getAvModule();
+        if(!avm) {
+            avm = getAvModule();
+        }
+        KscSorter set_sorter(*set_it, avm, !force);
 
         if(get_sorter.isValid() && set_sorter.isValid()) {
             ok = mergeSorters(get_sorter, set_sorter);

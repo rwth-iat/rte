@@ -138,7 +138,7 @@ KscSorter::sortVars(PltIterator<KscVariableHandle> &var_it)
     while(ok && var_it) {
         KscVariableHandle current = *var_it;
         if( !fDirtyOnly || current->isDirty() ) { 
-            Key key(current->getAvModule(),
+            Key key(findAvModule(current.getPtr()),
                     current->getServer());
             KscBucketHandle bucket;
             
