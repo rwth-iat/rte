@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovf,v 1.3 2000-02-10 13:06:57 dirk Exp $
+*   $Id: ov.ovf,v 1.4 2000-06-20 06:50:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -57,6 +57,13 @@ extern "C" {
 *	Function prototype for constructor of an object
 */
 typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_CONSTRUCTOR(
+	OV_INSTPTR_ov_object 	pobj
+);
+
+/*
+*	Function prototype for checking the initialization
+*/
+typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_CHECKINIT(
 	OV_INSTPTR_ov_object 	pobj
 );
 

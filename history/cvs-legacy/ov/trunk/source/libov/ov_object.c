@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.19 2000-04-17 09:49:22 dirk Exp $
+*   $Id: ov_object.c,v 1.20 2000-06-20 06:50:34 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -97,6 +97,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
 	/*
 	*	nothing else to do
 	*/
+	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Default initialization check of an object
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_object_checkinit(
+	OV_INSTPTR_ov_object 		pobj
+) {
 	return OV_ERR_OK;
 }
 

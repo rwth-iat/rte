@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.5 1999-08-29 16:28:14 dirk Exp $
+*   $Id: ov.ovm,v 1.6 2000-06-20 06:50:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -45,6 +45,7 @@ LIBRARY ov
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			checkinit : C_FUNCTION <OV_FNC_CHECKINIT>;
 			destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;
 			startup : C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;

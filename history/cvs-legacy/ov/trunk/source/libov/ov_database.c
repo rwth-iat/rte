@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.7 1999-09-15 10:48:21 dirk Exp $
+*   $Id: ov_database.c,v 1.8 2000-06-20 06:50:34 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -97,10 +97,11 @@ OV_DATABASE_INFO	*pdbmem;
 #endif
 
 /*
-*	vtable of any object in case we dont start up the database
+*	VTable of any object in case we dont start up the database
 */
 static OV_VTBL_ov_object nostartupvtable = {
 	ov_object_constructor_nostartup,
+	ov_object_checkinit,
 	ov_object_destructor,
 	ov_object_startup,
 	ov_object_shutdown,

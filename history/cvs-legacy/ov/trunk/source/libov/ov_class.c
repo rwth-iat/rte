@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.11 2000-04-13 11:10:15 dirk Exp $
+*   $Id: ov_class.c,v 1.12 2000-06-20 06:50:34 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -493,8 +493,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 		Ov_Warning("no vtable");
 		return OV_ERR_GENERIC;
 	}
-	Ov_AbortIfNot(pvtable->m_constructor && pvtable->m_startup
-		&& pvtable->m_destructor && pvtable->m_shutdown);
+	Ov_AbortIfNot(pvtable->m_constructor && pvtable->m_checkinit
+		&& pvtable->m_startup && pvtable->m_destructor
+		&& pvtable->m_shutdown);
 	/*
 	*	assume instantiation is not successful
 	*/
@@ -530,11 +531,24 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 		return result;
 	}
 	/*
+	*	call the constructor of the object
+	*/
+	result = pvtable->m_constructor(pobj);
+	if(Ov_Fail(result)) {
+		/*
+		*	construction failed, delete object
+		*/
+		ov_class_deleteobject_cleanupinst(pobj);
+		ov_database_free(pobj);
+		return result;
+	}
+	/*
 	*	call the user-defined initialization function
 	*/
 	if(initobjfnc) {
-		result = (initobjfnc)(pobj, userdata);
+		result = initobjfnc(pobj, userdata);
 		if(Ov_Fail(result)) {
+			pvtable->m_destructor(pobj);
 			ov_class_deleteobject_cleanupinst(pobj);
 			ov_database_free(pobj);
 			return result;
@@ -545,13 +559,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	*/
 	ov_class_createobject_setinit(pobj);
 	/*
-	*	call the constructor of the object
+	*	check if the initialization was correct
 	*/
-	result = pvtable->m_constructor(pobj);
+	result = pvtable->m_checkinit(pobj);
 	if(Ov_Fail(result)) {
 		/*
-		*	construction failed, delete object
+		*	check failed, delete object
 		*/
+		pvtable->m_destructor(pobj);
 		ov_class_deleteobject_cleanupinst(pobj);
 		ov_database_free(pobj);
 		return result;

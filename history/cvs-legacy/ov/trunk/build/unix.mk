@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.4 2000-04-11 13:22:06 dirk Exp $
+#   $Id: unix.mk,v 1.5 2000-06-20 06:50:29 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -173,7 +173,7 @@ $(EXAMPLE_LIB) : $(EXAMPLE_OBJ)
 	$(RANLIB) $@
 
 $(EXAMPLE_DLL) : $(EXAMPLE_OBJ)
-	$(LD) -o $@ $^
+	$(LD) -o $@ $^ 
 
 example.c example.h : $(OV_CODEGEN_EXE)
 

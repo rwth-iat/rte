@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.2 1999-07-26 16:14:03 dirk Exp $
+#   $Id: Makefile,v 1.3 2000-06-20 06:50:30 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -189,6 +189,15 @@ $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(OV_DBUTIL_RES)
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVER_RES)
 	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
 	$(RC) $(filter %$(RES), $^) $@
+
+#	ACPLT/KS-Server for ACPLT/OV (Demo version)
+
+ovserver_demo.exe : quitmsgwnd.obj $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVER_RES)
+	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+	$(RC) $(filter %$(RES), $^) $@
+
+#quitmsgwnd.obj: $(OV_SOURCE_SERVER_DIR)quitmsgwnd.cpp
+#	$(CXX_COMPILE) -Jgd $< -o$@
 
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
 
