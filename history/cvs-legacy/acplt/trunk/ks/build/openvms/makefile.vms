@@ -3,6 +3,8 @@
 #
 
 ###### change path names according to your system !!!
+# NOTE: /float=ieee_float has been removed, as it causes incompatibilites
+#       with all ONC/RPC on other platforms (different float format).
 
 # The repository should be on a local drive.
 REPOSITORY = acplt$$repository
@@ -12,7 +14,7 @@ LD = cxxlink
 
 
 # choose your switches
-CXX_FLAGS = /OPTIMIZE /float=ieee_float /NAMES=SHORTENED
+CXX_FLAGS = /OPTIMIZE /NAMES=SHORTENED
 # CXX_FLAGS = /DEBUG
 
 LD_FLAGS = /repository=(acplt$$repository)
