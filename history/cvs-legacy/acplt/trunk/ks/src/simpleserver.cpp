@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.12 1997-09-03 14:10:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.13 1997-11-27 09:37:36 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -62,8 +62,8 @@ KsSimpleServer::getVar(KsAvTicket &ticket,
     PltArray<KsPath> paths(reqsz);
     PltArray<KS_RESULT> pathres(reqsz);
     
-    if (   paths.size() == pathres.size() 
-        && paths.size() == reqsz) {
+    if (   paths.size() == reqsz 
+        && pathres.size() == reqsz) {
         // Allocation ok.
         KsPath::resolvePaths(params.identifiers, paths, pathres);
         for (size_t i = 0; i < reqsz; ++i) {
