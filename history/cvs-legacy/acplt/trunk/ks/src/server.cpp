@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.15 1999-01-08 13:09:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.16 1999-09-06 06:57:01 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -35,6 +35,18 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * server.cpp: this module contains the knowledge how to register ACPLT/KS
+ *             servers with the ACPLT/KS manager. There isn't really much
+ *             more to it, folks.
+ */
+
+/*
+ * Written by Harald Albrecht & Martin Kneissl
+ * <harald@plt.rwth-aachen.de> <martin@plt.rwth-aachen.de>
+ */
+
+
 #include "ks/server.h"
 #include "ks/register.h"
 #include "ks/svrrpcctx.h"
@@ -44,11 +56,11 @@
 #endif
 
 
-//
-// The purpose of the following definition is to provide a link-time
-// check making sure that both the ACPLT/KS server and the libkssvr were
-// compiled with either PLT_USE_BUFFERED_STREAMS enabled or disabled, but
-// not one with enabled buffering and the other one without.
+// ---------------------------------------------------------------------------
+// The purpose of the following definition is to provide a link-time check
+// which makes sure that both the ACPLT/KS server and the libkssvr were
+// compiled with either PLT_USE_BUFFERED_STREAMS enabled or disabled, but not
+// one with buffering enabled and the other one without.
 //
 #if PLT_USE_BUFFERED_STREAMS
 void *This_libKssvr_Was_Compiled_Without_PLT_USE_BUFFERED_STREAMS;
@@ -164,34 +176,40 @@ KsServer::unregister_server()
     return res == RPC_SUCCESS && unregctx.result.result == KS_ERR_OK;
 }
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+//
 void
 KsServer::startServer()
 {
     KsServerBase::startServer();
 
     if ( _is_ok ) {
-      // schedule registration
-      KsReregisterServerEvent * pevent = 
-          new KsReregisterServerEvent(*this, KsTime::now());
-      if ( pevent ) {
-          addTimerEvent(pevent);
-      } else {
-          _is_ok = false;
-      }
+	// schedule registration
+	KsReregisterServerEvent * pevent = 
+	    new KsReregisterServerEvent(*this, KsTime::now());
+	if ( pevent ) {
+	    addTimerEvent(pevent);
+	} else {
+	    _is_ok = false;
+	}
     }
-}
+} // KsServer::startServer
 
+
+// ---------------------------------------------------------------------------
+//
 void
 KsServer::stopServer() 
 {
     // unregister
     if ( !unregister_server() ) {
-        PltLog::Warning("KsServer::stopServer: could not unregister with manager.");
+        PltLog::Warning("KsServer::stopServer(): "
+			"could not unregister with manager.");
     }
     KsServerBase::stopServer();
-}
+} // KsServer::stopServer
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

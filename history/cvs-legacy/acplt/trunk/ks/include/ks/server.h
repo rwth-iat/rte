@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SERVER_INCLUDED
 #define KS_SERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.7 1999-01-08 13:09:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.8 1999-09-06 06:57:00 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -35,6 +35,17 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*
+ * server.h: this module contains the knowledge how to register ACPLT/KS
+ *           servers with the ACPLT/KS manager. There isn't really much
+ *           more to it, folks.
+ */
+
+/*
+ * Written by Harald Albrecht & Martin Kneissl
+ * <harald@plt.rwth-aachen.de> <martin@plt.rwth-aachen.de>
  */
 
 #include "ks/svrbase.h"
