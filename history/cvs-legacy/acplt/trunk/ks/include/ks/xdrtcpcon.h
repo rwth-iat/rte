@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.1 1998-06-29 11:19:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.2 1998-06-30 11:29:06 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -110,7 +110,7 @@ protected:
     FragmentState  _fragment_state;
     u_long         _remaining_len;
     char           _fragment_header[4];
-#if !PLT_COMPILER_BORLAND
+#if !PLT_COMPILER_BORLAND && !PLT_COMPILER_DECCXX
     void          *_ptr;
 #else
     char          *_ptr;

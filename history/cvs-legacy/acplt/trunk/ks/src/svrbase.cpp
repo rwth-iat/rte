@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.29 1998-06-29 11:22:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.30 1998-06-30 11:29:08 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -97,8 +97,8 @@ ks_dtablesize()
         ks_dtsz = FD_SETSIZE;
     }
     return ks_dtsz;
-} // 
-#endif ks_dtablesize
+} // ks_dtablesize
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -175,11 +175,12 @@ KsServerBase::~KsServerBase()
 	// before starting the server and thus can only be destroyed when
 	// the server object is destroyed too.
 	//
-    	delete _cnx_manager;
+#if !PLT_SYSTEM_OPENVMS
+    	delete _cnx_manager; // TODO & FIXME!!!
+#endif
 	_cnx_manager = 0;
     }
 #endif
-
     PLT_ASSERT(the_server == this);
     the_server = 0;
 } // KsServerBase::~KsServerBase

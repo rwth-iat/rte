@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.1 1998-06-29 11:22:53 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -161,6 +161,9 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    received = recvfrom(_fd, _buffer, _buffer_size,
 		        	0, // no special flags
 	                	(struct sockaddr *) &_client_address,
+#if PLT_SYSTEM_OPENVMS
+				(unsigned int *)
+#endif
 		        	&_client_address_len);
 #else
     	    struct t_unitdata udta;
@@ -266,7 +269,8 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    // valid answer.
 	    //
 	    if ( _cnx_type == CNX_TYPE_CLIENT ) {
-		if ( ((u_long) IXDR_GET_LONG(((long *)_buffer))) != 
+		long *ppp = (long *) _buffer;
+		if ( ((u_long) IXDR_GET_LONG(ppp)) != 
 		         _rpc_header._xid ) {
 		    //
 		    // try once again next time as this reply had the wrong

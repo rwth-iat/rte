@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.1 1998-06-29 11:22:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.2 1998-06-30 11:29:07 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -45,15 +45,17 @@
 #include "ks/connection.h"
 
 
-#if PLT_SYSTEM_NT
-
-#define ioctl(fd,r,p) ioctlsocket(fd,r,p)
-
-#else
+#if !PLT_SYSTEM_NT
 
 #include <unistd.h>
 #include <errno.h>
+
+#if !PLT_SYSTEM_OPENVMS
 #include <fcntl.h>
+#else
+#include <ioctl.h>
+extern int ioctl(int d, int request, char *argp);
+#endif
 
 #endif
 
@@ -97,7 +99,11 @@ extern int t_getname(int fd, struct netbuf *namep, int type);
 u_short KssConnection::getPort() const
 {
     struct sockaddr_in addr;
+#if !PLT_SYSTEM_OPENVMS
     int                addr_len;
+#else
+    unsigned           addr_len;
+#endif
     
     addr_len = sizeof(addr);
 #if !PLT_USE_XTI
@@ -194,9 +200,13 @@ KS_RESULT KssXDRConnection::finishRequestDeserialization(KsAvTicket &avt, bool)
 //
 bool KssXDRConnection::makeNonblocking()
 {
-#if PLT_SYSTEM_NT
+#if PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS
     int nbmode = 1;
-    return ioctl(_fd, FIONBIO, &nbmode) != SOCKET_ERROR;
+#if PLT_SYSTEM_NT
+    return ioctlsocket(_fd, FIONBIO, &nbmode) != SOCKET_ERROR;
+#else
+    return ioctl(_fd, FIONBIO, (char *) &nbmode) != -1;
+#endif
 #else
     //
     // This works even with XTI...

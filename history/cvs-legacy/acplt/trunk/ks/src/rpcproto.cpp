@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/rpcproto.cpp,v 1.1 1998-06-29 11:22:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/rpcproto.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -175,7 +175,6 @@ bool KsRpcHeader::xdrDecode(XDR *xdrs)
 	default:
 	    return false;
 	}
-    	return true;
     //
     // Every other message is just invalid!
     //
@@ -272,7 +271,6 @@ bool KsRpcHeader::xdrEncode(XDR *xdrs) const
 	default:
 	    return false;
 	}
-    	return true;
     //
     // Every other message is just invalid!
     //

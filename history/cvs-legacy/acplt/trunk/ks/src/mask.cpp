@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/mask.cpp,v 1.2 1998-04-20 08:27:05 nicole Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/mask.cpp,v 1.3 1998-06-30 11:29:08 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -78,7 +78,7 @@ KsMask::m_loop(const char *name, int n, int m) const
                    #else
                        if (m>=l || mask[m]!=name[n]) 
                            return false;
-                   #endif;
+                   #endif
                    m++; n++;
      }
   if (n==k && m==l) return true;

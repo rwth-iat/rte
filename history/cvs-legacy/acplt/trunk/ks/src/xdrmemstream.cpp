@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.1 1998-06-29 11:22:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -61,6 +61,10 @@
 
 #include <unistd.h>
 #include <errno.h>
+
+#if PLT_SYSTEM_OPENVMS
+#include <string.h>
+#endif
 
 #endif
 
@@ -251,21 +255,28 @@ static void   MemStreamDestroy(XDR *xdrs);
  * memory stream, the stream object will get linked to this method table
  * (good morning, vtable!).
  */
-static struct
-#ifdef __cplusplus /* Arrrghhh. Someone at Sun was soooo lazy and defined */
+#if PLT_SYSTEM_OPENVMS
+#define FUNC(rt) (rt (*)(...))
+#else
+#define FUNC(rt)
+#endif
+
+static
+#if defined(__cplusplus)
+                   /* Arrrghhh. Someone at Sun was soooo lazy and defined */
     XDR::xdr_ops   /* the xdr operations structure within the XDR struct. */
 #else              /* While this is will get into the global namespace    */
-    xdr_ops        /* with C, it will be -- naturally -- in a local name- */
+    struct xdr_ops /* with C, it will be -- naturally -- in a local name- */
 #endif             /* space with C++. Sigh.                               */
         memstream_operations = {
-    MemStreamGetLong,   /* retrieve a 32 bit integer in host order      */
-    MemStreamPutLong,   /* store a 32 bit integer in host order         */
-    MemStreamGetBytes,  /* retrieve some octets (multiple of 4)         */
-    MemStreamPutBytes,  /* store some octets (multiple of 4)            */
-    MemStreamGetPos,    /* */
-    MemStreamSetPos,    /* */
-    MemStreamInline,    /* get some space in the buffer for fast access */
-    MemStreamDestroy    /* clean up the mess                            */
+    FUNC(bool_t) MemStreamGetLong,   /* retrieve a 32 bit integer in host order      */
+    FUNC(bool_t) MemStreamPutLong,   /* store a 32 bit integer in host order         */
+    FUNC(bool_t) MemStreamGetBytes,  /* retrieve some octets (multiple of 4)         */
+    FUNC(bool_t) MemStreamPutBytes,  /* store some octets (multiple of 4)            */
+    FUNC(u_int)  MemStreamGetPos,    /* */
+    FUNC(bool_t) MemStreamSetPos,    /* */
+    FUNC(long *) MemStreamInline,    /* get some space in the buffer for fast access */
+    FUNC(void)   MemStreamDestroy    /* clean up the mess                            */
 }; /* memstream_operations */
 
 
@@ -459,7 +470,13 @@ static bool_t MemStreamGetLong(XDR *xdrs, long *lp)
      * macro here to retrieve the 32 bit int as this macro is the only
      * way to do it platform-independant.
      */
+#if PLT_COMPILER_DECCXX
+    long *ppp = (long *) xdrs->x_private;
+    *lp = IXDR_GET_LONG(ppp);
+    xdrs->x_private = (caddr_t) ppp;
+#else
     *lp = IXDR_GET_LONG(((long *) xdrs->x_private));
+#endif
     xdrs->x_handy -= 4;
     return TRUE;
 } /* MemStreamGetLong */
@@ -492,7 +509,13 @@ static bool_t MemStreamPutLong(XDR *xdrs, long *lp)
      * to a suitable pointer type in order to access a 32 bit integer
      * quantity.
      */
+#if PLT_COMPILER_DECCXX
+    long *ppp = (long *) xdrs->x_private;
+    IXDR_PUT_LONG(ppp, *lp);
+    xdrs->x_private = (caddr_t) ppp;
+#else
     IXDR_PUT_LONG(((long *) xdrs->x_private), *lp);
+#endif
     xdrs->x_handy -= 4;
     return TRUE;
 } /* MemStreamPutLong */

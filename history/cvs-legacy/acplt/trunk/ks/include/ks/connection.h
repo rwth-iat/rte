@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.1 1998-06-29 11:19:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.2 1998-06-30 11:29:06 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -135,8 +135,8 @@ protected:
     //
     virtual ConnectionIoMode reset(bool hadTimeout) = 0;
     
-    void thisIsMyConnectionManager(KssConnectionManager &mgr)
-    	{ _manager = &mgr; }
+    void thisIsMyConnectionManager(KssConnectionManager *mgr)
+    	{ _manager = mgr; }
 
     ConnectionType        _cnx_type;    
     unsigned long         _timeout;

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.1 1998-06-29 11:19:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.2 1998-06-30 11:29:06 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -55,7 +55,7 @@ class KssConnectionManager;
 #include "ks/connection.h"
 #endif
 
-
+#include <stdio.h>
 
 // ---------------------------------------------------------------------------
 // This one was surely missing for long ;-) This is a basic implementation of
@@ -126,13 +126,9 @@ public:
     PltTime getEarliestTimeoutSpan();
     void processTimeout();
     
-    int getFdSets(fd_set &readables, fd_set &writeables)
-        { readables = _readable_fdset; 
-	  writeables = _writeable_fdset;
-	  return _fdset_size;
-	}
+    int getFdSets(fd_set &readables, fd_set &writeables); // OpenVMS: do not inline!!!
     int getFdSetSize() { return _fdset_size; }
-    
+
     // process incomming and outgoing data...
     int processConnections(fd_set &readables, fd_set &writeables);
     

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrtransport.cpp,v 1.1 1998-06-29 11:22:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrtransport.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -49,6 +49,9 @@
 
 #if !PLT_USE_BUFFERED_STREAMS
 
+#if PLT_SYSTEM_OPENVMS
+#include <unixio.h>
+#endif
 
 // ---------------------------------------------------------------------------
 // Because objects can serialize and deserialize themselves into/from xdr
@@ -230,7 +233,11 @@ void KssTransport::personaNonGrata()
 {
 #if !PLT_USE_XTI
     int so_type;
+#if !PLT_SYSTEM_OPENVMS
     int so_type_len = sizeof(so_type);
+#else
+    unsigned so_type_len = sizeof(so_type);
+#endif
     
     if ( getsockopt(_t->xp_sock, SOL_SOCKET, SO_TYPE, 
                     &so_type, &so_type_len) >= 0 ) {

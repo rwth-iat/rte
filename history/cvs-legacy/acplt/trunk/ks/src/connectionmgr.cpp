@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.1 1998-06-29 11:22:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.2 1998-06-30 11:29:07 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -48,7 +48,12 @@
 #if !PLT_SYSTEM_NT
 #include <unistd.h>
 #endif
+
+#if !PLT_SYSTEM_OPENVMS
 #include <values.h>
+#else
+#define MAXINT (((long) -1) >> 1)
+#endif
 
 
 typedef _KssConnectionItem * _pKssConnectionItem;
@@ -119,7 +124,7 @@ KssConnectionManager::KssConnectionManager()
     // For some "new technology" os(?) we´ll need to allocate a hash table
     // to in order to speed up mapping from fds to connection items. In
     // addition, all entries of the _connections table are linked into a
-    // list of free entries. That speeds up finding a free slot quite good.
+    // list of free entries. That speeds up finding a free slot quiet good.
     //
     int i;
     for ( i = 0; i < _fdset_size; ++i ) {
@@ -250,12 +255,22 @@ void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item,
     // This looks somehow like a dirty hack but it does speed up things in
     // some situations by quite some ten miliseconds, because we do fill
     // the outgoing pipe very early without having to wait for the select()
-    // call to notifiy us to send our data in the first time.
+    // call to notifiy us to send our data the first time.
     //
     if ( fastwrite ) {
 	trackCnxIoMode(item, item._connection->send());
     }
 } // KssConnectionManager::trackCnxIoMode
+
+
+// ---------------------------------------------------------------------------
+//
+int KssConnectionManager::getFdSets(fd_set &readables, fd_set &writeables)
+{
+    readables = _readable_fdset;
+    writeables = _writeable_fdset;
+    return _fdset_size;
+} // KssConnectionManager::getFdSets
 
 
 // ---------------------------------------------------------------------------
@@ -585,7 +600,7 @@ bool KssConnectionManager::addConnection(KssConnection &con)
     	item->_connection   = &con;
 	item->_last_io_mode = KssConnection::CNX_IO_DORMANT;
 	item->_fd           = fd;
-	con.thisIsMyConnectionManager(*this);
+	con.thisIsMyConnectionManager(this);
 	trackCnxIoMode(*item, con.getIoMode());
     	++_connection_count;
 	return true;
@@ -625,6 +640,7 @@ bool KssConnectionManager::removeConnection(KssConnection &con)
     	// currently in. And don't forget to remove it from the file
 	// descriptor sets.
 	//
+	item->_connection->thisIsMyConnectionManager(0);
     	item->remove();
     	FD_CLR(fd, &_readable_fdset);
 	FD_CLR(fd, &_writeable_fdset);

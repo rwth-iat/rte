@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.1 1998-06-29 11:22:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -130,7 +130,11 @@ void KssListenTCPXDRConnection::sendRequest()
 KssConnection::ConnectionIoMode KssListenTCPXDRConnection::receive()
 {
     struct sockaddr_in saddr;
+#if !PLT_SYSTEM_OPENVMS
     int                saddr_len;
+#else
+    unsigned int       saddr_len;
+#endif
     int                newfd;
     
     if ( _state == CNX_STATE_DEAD ) {
@@ -251,8 +255,8 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::enterSendingState()
     //
     _fragment_state = FRAGMENT_BODY;
     _remaining_len  = len;
-    _ptr            = xdr_inline(&_xdrs, 4);
-    IXDR_PUT_LONG(((long *) _ptr), (len - 4) | 0x80000000ul);
+    long *ppp       = xdr_inline(&_xdrs, 4);
+    IXDR_PUT_LONG(ppp, (len - 4) | 0x80000000ul);
     xdrmemstream_rewind(&_xdrs, XDR_DECODE);
     return getIoMode();
 } // KssTCPXDRConnection::enterSendingState
@@ -372,6 +376,9 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		// of an interrupted call, let's try again... For all other
 		// errors simply drop this connection.
 		//
+#if PLT_SYSTEM_NT
+    	    	int errno = WSAGetLastError();
+#endif
 		switch ( errno ) {
 		case EINTR:
 		    continue;
@@ -395,8 +402,8 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 	    // Yup. We´ve got it -- so decode it and see if it´s the
 	    // final fragment(tm).
 	    //
-	    _ptr = _fragment_header;
-	    u_long l = IXDR_GET_LONG(((long *) _ptr));
+	    long *ppp = (long *) _fragment_header;
+	    u_long l  = IXDR_GET_LONG(ppp);
 	    _last_fragment = l & 0x80000000ul ? true : false;
 	    _remaining_len = l & 0x7FFFFFFFul;
 	    if ( _remaining_len ) {
