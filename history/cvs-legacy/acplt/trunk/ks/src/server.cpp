@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.16 1999-09-06 06:57:01 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.17 1999-09-06 07:22:12 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -89,8 +89,9 @@ template class KssRPCContext<KS_UNREGISTER,
                              KsUnregistrationResult>;
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+//
 KsServer::KsServer(u_long ttl, int port)
 : _ttl(ttl),
   _registered(false)
@@ -99,15 +100,16 @@ KsServer::KsServer(u_long ttl, int port)
         //
         // Some day I'll be after those who'd invented virtual base
         // classes without defining the order of constructors called
-        // for derived classes. But on the other side, we did I ever
-        // relied on that?!
+        // for derived classes. But on the other side, why did I ever
+        // relied on that?! So shame on me...
         //
         _sock_port = port;
     }
-}
+} // KsServer::KsServer
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+//
 KsServer::~KsServer()
 {
     if ( _registered ) {
@@ -124,18 +126,18 @@ KsServer::createLocalClient()
     memset(&sin, 0, sizeof sin);
     sin.sin_family = AF_INET;
     sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    KsTime wait(1,0);
     int sock = RPC_ANYSOCK;
+    KsTime wait(1,0);
+
     return clntudp_create(&sin,
                           KS_RPC_PROGRAM_NUMBER,
                           KS_PROTOCOL_VERSION,
                           (struct timeval)wait,
                           &sock);
-}
+} // KsServer::createLocalClient
 
-//////////////////////////////////////////////////////////////////////
-
-
+// ---------------------------------------------------------------------------
+//
 bool
 KsServer::register_server()
 {
@@ -158,8 +160,9 @@ KsServer::register_server()
     return res == RPC_SUCCESS && regctx.result.result == KS_ERR_OK;
 }
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+//
 bool
 KsServer::unregister_server()
 {
