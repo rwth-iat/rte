@@ -827,6 +827,10 @@ KscServer::getPP(const KscAvModule *avm,
         }
     }
 
+    // get negotiator
+    //
+    KscNegotiator *negotiator = getNegotiator(avm);
+
 #if PLT_DEBUG
     cerr << "Requesting server " 
          << host_name << "/" << server_info.server.name 
@@ -835,12 +839,9 @@ KscServer::getPP(const KscAvModule *avm,
     cerr << "\tPath : " << params.path << endl;
     cerr << "\tType mask : " << params.type_mask << endl;
     cerr << "\tName mask : " << params.name_mask << endl;
+    cerr << "Using AV-Type : " << negotiator->typeCode() << endl; 
     cerr << endl;
 #endif
-
-    // get negotiator
-    //
-    KscNegotiator *negotiator = getNegotiator(avm);
 
     KscGetPPInStruct inData(negotiator, &params);
     KscGetPPOutStruct outData(negotiator, &result);
@@ -953,12 +954,13 @@ KscServer::getVar(const KscAvModule *avm,
         }
     }
 
+    KscNegotiator *negotiator = getNegotiator(avm);
+
 #if PLT_DEBUG
     cerr << "GetVar request to server "
          << host_name << "/" << server_info.server.name << endl;
+    cerr << "Using AV-type : " << negotiator->typeCode() << endl;
 #endif
-
-    KscNegotiator *negotiator = getNegotiator(avm);
 
     KscGetVarInStruct inData(negotiator, &params);
     KscGetVarOutStruct outData(negotiator, &result);
@@ -1070,15 +1072,15 @@ KscServer::setVar(const KscAvModule *avm,
         }
     }
 
+    // get negotiator
+    //
+    KscNegotiator *negotiator = getNegotiator(avm);
 
 #if PLT_DEBUG
     cerr << "SetVar request to server "
          << host_name << "/" << server_info.server.name << endl;
+    cerr << "Using AV-type : " << negotiator->typeCode() << endl;
 #endif
-
-    // get negotiator
-    //
-    KscNegotiator *negotiator = getNegotiator(avm);
 
     KscSetVarInStruct inData(negotiator, &params);
     KscSetVarOutStruct outData(negotiator, &result);
@@ -1190,14 +1192,19 @@ KscServer::exgData(const KscAvModule *avm,
         }
     }
 
-#if PLT_DEBUG
-    cerr << "ExgData request to server "
-         << host_name << "/" << server_info.server.name << endl;
-#endif
-
     // get negotiator
     //
     KscNegotiator *negotiator = getNegotiator(avm);
+
+#if PLT_DEBUG
+    cerr << "ExgData request to server "
+         << host_name << "/" << server_info.server.name << endl;
+//    cerr << "Variables to set: " << endl;
+//    for(size_t i = 0; i < params.set_vars.size(); i++) {
+//        cerr << (params.set_vars)[i].path_and_name << endl;
+//    }
+    cerr << "Using AV-type : " << negotiator->typeCode() << endl;
+#endif
 
     KscExgDataInStruct inData(negotiator, &params);
     KscExgDataOutStruct outData(negotiator, &result);

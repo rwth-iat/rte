@@ -59,6 +59,7 @@ class KscSimpleNegotiator
 : public KscNegotiator
 {
 public:
+    KS_AUTH_TYPE typeCode() const;
     bool xdrEncode(XDR *);
     bool xdrDecode(XDR *);
 
@@ -98,6 +99,15 @@ inline
 KscSimpleNegotiator::KscSimpleNegotiator(const PltString &str)
 : _id(str)
 {}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_AUTH_TYPE
+KscSimpleNegotiator::typeCode() const
+{
+    return KS_AUTH_SIMPLE;
+}
 
 //////////////////////////////////////////////////////////////////////
 

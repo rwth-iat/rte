@@ -227,9 +227,7 @@ KscPackage::newSubpackageIterator() const
 bool
 KscPackage::getUpdate() 
 {
-    DeepIterator var_it(*this);
-
-    KscSorter sorter(var_it, av_module);
+    KscSorter sorter(*this);
 
     if(!sorter.isValid()) {
         // failed to sort variables by servers and av-types
@@ -269,14 +267,15 @@ KscPackage::getSimpleUpdate(KscBucketHandle bucket)
 {
     // create data structures for transfer
     //
+    size_t num_vars = bucket->size();
     KsGetVarResult result;
-    KsGetVarParams params(bucket->size());
+    KsGetVarParams params(num_vars);
 
     PltArray<KscVariableHandle> sorted_vars = 
         bucket->getSortedVars();
 
-    if(params.identifiers.size() != bucket->size()
-       || sorted_vars.size() != bucket->size()) 
+    if(params.identifiers.size() != num_vars
+       || sorted_vars.size() != num_vars) 
     {
         // failed to allocate memory
         //
@@ -317,8 +316,7 @@ KscPackage::getSimpleUpdate(KscBucketHandle bucket)
 bool
 KscPackage::setUpdate(bool force)
 {
-    DeepIterator var_it(*this);
-    KscSorter sorter(var_it, av_module, !force);
+    KscSorter sorter(*this, !force);
 
     if(!sorter.isValid()) {
         PLT_DMSG("Failed to sort variables" << endl);
@@ -354,15 +352,16 @@ KscPackage::setUpdate(bool force)
 bool
 KscPackage::setSimpleUpdate(KscBucketHandle bucket)
 {
-    KsSetVarParams params(bucket->size());
-    KsSetVarResult result(bucket->size());
+    size_t num_vars = bucket->size();
+    KsSetVarParams params(num_vars);
+    KsSetVarResult result(num_vars);
 
     PltArray<KscVariableHandle> sorted_vars = 
         bucket->getSortedVars();
 
-    if(params.items.size() != bucket->size() || 
-       result.results.size() != bucket->size() ||
-       sorted_vars.size() != bucket->size()) 
+    if(params.items.size() != num_vars || 
+       result.results.size() != num_vars ||
+       sorted_vars.size() != num_vars) 
     {
         // failed to allocate space
         //
@@ -658,33 +657,15 @@ KscExchangePackage::doExchange(bool force)
     // both packages exist, now sort variables
     //
     bool ok = false;
-    PltIterator<KscVariableHandle> *get_it =
-        get_pkg->newVariableIterator(true);
-    PltIterator<KscVariableHandle> *set_it =
-        set_pkg->newVariableIterator(true);
 
     _result = KS_ERR_GENERIC;
 
-    if( get_it && set_it ) {
-        const KscAvModule *avm = get_pkg->getAvModule();
-        if(!avm) {
-            avm = getAvModule();
-        }
-        KscSorter get_sorter(*get_it, avm);
-        
-        avm = get_pkg->getAvModule();
-        if(!avm) {
-            avm = getAvModule();
-        }
-        KscSorter set_sorter(*set_it, avm, !force);
+    KscSorter get_sorter(*get_pkg);
+    KscSorter set_sorter(*set_pkg, !force);
 
-        if(get_sorter.isValid() && set_sorter.isValid()) {
-            ok = mergeSorters(get_sorter, set_sorter);
-        }
+    if(get_sorter.isValid() && set_sorter.isValid()) {
+        ok = mergeSorters(get_sorter, set_sorter);
     }
-
-    if(get_it) delete get_it;
-    if(set_it) delete set_it;
 
     return ok;
 }

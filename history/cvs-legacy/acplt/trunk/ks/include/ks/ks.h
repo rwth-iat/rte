@@ -99,7 +99,8 @@ enum KS_OBJ_TYPE_ENUM {
     KS_OT_DOMAIN   = 0x0001, /* object is a domain   */
     KS_OT_VARIABLE = 0x0002, /* object is a variable */
     KS_OT_HISTORY  = 0x0004, /* object is a history  */
-    KS_OT_ANY      = 0xFFFF  /* don't care */
+    KS_OT_ANY      = KS_OT_DOMAIN | KS_OT_VARIABLE  
+	/* restricted to the currently implemented types */
 };
 typedef enum_t KS_OBJ_TYPE;
 

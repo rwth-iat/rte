@@ -59,6 +59,7 @@ class KscNegotiator
 {
 public:
     virtual ~KscNegotiator() {}
+    virtual KS_AUTH_TYPE typeCode() const = 0;
     virtual bool xdrEncode(XDR *) = 0;
     virtual bool xdrDecode(XDR *) = 0;
 };
@@ -88,6 +89,7 @@ class KscNoneNegotiator
 : public KscNegotiator
 {
 public:
+    KS_AUTH_TYPE typeCode() const;
     bool xdrEncode(XDR *);
     bool xdrDecode(XDR *);
 
@@ -153,7 +155,23 @@ KscAvNoneModule::getStaticNegotiator()
     return &the_negotiator;
 }
 
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_AUTH_TYPE
+KscNoneNegotiator::typeCode() const
+{
+    return KS_AUTH_NONE;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 #endif
+
+
+//////////////////////////////////////////////////////////////////////
+// EOF avmodule.h
+//////////////////////////////////////////////////////////////////////
 
 
 

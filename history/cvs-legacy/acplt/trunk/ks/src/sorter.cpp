@@ -40,6 +40,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "ks/sorter.h"
+#include "ks/package.h"
 
 //////////////////////////////////////////////////////////////////////
 
@@ -59,9 +60,43 @@ KscSorter::Key::hash() const
         + (unsigned long)server;
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscSorterBucket::add(KscBucketHandle hbucket)
+{
+    PLT_ASSERT(hbucket);
+
+#if PLT_DEBUG
+    size_t start_size = size() + hbucket->size();
+#endif
+
+    bool ok = true;
+
+    while(ok && !(hbucket->isEmpty())) {
+        ok = add(hbucket->removeFirst());
+    }
+
+    PLT_POSTCONDITION((start_size == size()) && (hbucket->size() == 0));
+
+    return ok;
+}
 
 //////////////////////////////////////////////////////////////////////
+
+KscVariableHandle
+KscSorterBucket::removeFirst()
+{
+    PLT_PRECONDITION(!var_lst.isEmpty());
+
+    KscVariableHandle hvar = var_lst.removeFirst();
+    --var_count;
+    return hvar;
+}
+
 //////////////////////////////////////////////////////////////////////
+
 
 PltArray<KscVariableHandle> 
 KscSorterBucket::getSortedVars()
@@ -78,6 +113,8 @@ KscSorterBucket::getSortedVars()
         sv[count++] = var_lst.removeFirst();
     }
 
+    var_count = 0;
+
     PltSort<KscVariableHandle>::qsort(sv);
 
     return sv;
@@ -88,6 +125,24 @@ KscSorterBucket::getSortedVars()
 
 KscSorter::~KscSorter() 
 {
+}
+
+//////////////////////////////////////////////////////////////////////
+
+const KscAvModule *
+KscSorter::findAvModule(const KscVariable *var)
+{
+    const KscAvModule *temp = var->getAvModule();
+
+    if( temp ) {
+        return temp;
+    } else if( (temp = rel_pkg.getAvModule()) ) {
+        return temp;
+    } else if( (temp = var->getServer()->getAvModule()) ) {
+        return temp;
+    } else {
+        return KscClient::getClient()->getAvModule();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -126,17 +181,21 @@ KscSorter::removeMatchingBucket(KscBucketHandle bucket)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscSorter::sortVars(PltIterator<KscVariableHandle> &var_it)
+KscSorter::sortVars()
 {
     // iterate over variables and
     // (1) add a variable to the approbiate bucket if it exists
     // (2) create a new bucket if neccessary and add variable
     //
-    bool ok = true;
-    var_it.toStart();
+    PltIterator<KscVariableHandle> *var_it = 
+        rel_pkg.newVariableIterator(false);
+    if(!var_it) return false;
 
-    while(ok && var_it) {
-        KscVariableHandle current = *var_it;
+    bool ok = true;
+    (*var_it).toStart();
+
+    while(ok && *var_it) {
+        KscVariableHandle current = **var_it;
         if( !fDirtyOnly || current->isDirty() ) { 
             Key key(findAvModule(current.getPtr()),
                     current->getServer());
@@ -161,9 +220,40 @@ KscSorter::sortVars(PltIterator<KscVariableHandle> &var_it)
             }
         }
 
-        ++var_it;
+        ++(*var_it);
     }
 
+    delete var_it;
+    var_it = 0;
+
+    if(!ok) return false;
+
+    // iterate over the subpackages and sort their variables too
+    //
+    KscSubpackageIterator *pkg_it =
+        rel_pkg.newSubpackageIterator();
+    if(!pkg_it) return false;
+
+    while(ok && *pkg_it) {
+        KscSorter sub_sorter(***pkg_it, fDirtyOnly);
+        ++(*pkg_it);
+        if( (ok = sub_sorter.isValid()) ) {
+            while(!sub_sorter.isEmpty()) {
+                KscBucketHandle new_bucket = sub_sorter.removeFirst();
+                Key key(new_bucket->getAvModule(),
+                        new_bucket->getServer());
+                KscBucketHandle matching_bucket;
+                if(table.query(key, matching_bucket)) {
+                    ok = matching_bucket->add(new_bucket);
+                } else {
+                    ok = table.add(key, new_bucket);
+                }
+            }
+        }
+    }
+
+    delete pkg_it;
+        
     return ok;
 }
                 

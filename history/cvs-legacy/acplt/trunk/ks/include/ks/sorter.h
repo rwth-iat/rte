@@ -51,11 +51,18 @@
 #include "ks/client.h"
 
 //////////////////////////////////////////////////////////////////////
+
+class KscPackage;
+
+//////////////////////////////////////////////////////////////////////
 // This is a helper class which groups together KscVariable objects
 // belonging to the same server/av-module pair.
 //
 // Intented for internal use only.
 //
+class KscSorterBucket;
+typedef PltPtrHandle<KscSorterBucket> KscBucketHandle;
+
 class KscSorterBucket
 {
 public:
@@ -63,6 +70,7 @@ public:
                     KscServerBase *);
 
     bool add(KscVariableHandle);
+    bool add(KscBucketHandle);
     size_t size() const;
     PltIterator<KscVariableHandle> *newVarIterator() const;
     // call only once
@@ -70,11 +78,13 @@ public:
 
     KscServerBase *getServer() const;
     const KscAvModule *getAvModule() const;
-//    KscNegotiator *getNegotiator() const;
 
 private:
     KscSorterBucket(const KscSorterBucket &);                // forbidden
     KscSorterBucket &operator = (const KscSorterBucket &);   // forbidden
+
+    bool isEmpty() const;
+    KscVariableHandle removeFirst();
 
     PltList<KscVariableHandle> var_lst;
 
@@ -82,8 +92,6 @@ private:
     KscServerBase *server;
     size_t var_count;
 };
-
-typedef PltPtrHandle<KscSorterBucket> KscBucketHandle;
 
 //////////////////////////////////////////////////////////////////////
 // This is a helper class for KscPackage/KscExchangePackage which
@@ -94,8 +102,7 @@ typedef PltPtrHandle<KscSorterBucket> KscBucketHandle;
 class KscSorter
 {
 public:
-    KscSorter(PltIterator<KscVariableHandle> &var_it, 
-              const KscAvModule *defaultAvModule,
+    KscSorter(const KscPackage &pkg,
               bool dirty_only = false);
     ~KscSorter();
 
@@ -153,14 +160,12 @@ private:
 
     friend class ValueIterator;
 
-    bool sortVars(PltIterator<KscVariableHandle> &);
+    bool sortVars();
     const KscAvModule *findAvModule(const KscVariable *);
 
     bool valid;
+    const KscPackage &rel_pkg;
     bool fDirtyOnly;
-    const KscAvModule *avm_default;
-    const KscAvModule *avm_client;  // av-module set for the client, 
-                                    // just a simple cache
     PltHashTable<Key,KscBucketHandle> table;
 };
 
@@ -255,6 +260,17 @@ KscSorterBucket::getAvModule() const
 
 inline
 bool
+KscSorterBucket::isEmpty() const
+{
+    PLT_PRECONDITION((var_count == 0 && var_lst.isEmpty()) ||
+                     (var_count > 0 && !var_lst.isEmpty()));
+    return var_lst.isEmpty();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+bool
 KscSorterBucket::add(KscVariableHandle var)
 {
     bool ok = var_lst.addFirst(var);
@@ -289,14 +305,12 @@ KscSorterBucket::newVarIterator() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscSorter::KscSorter(PltIterator<KscVariableHandle> &var_it,
-                     const KscAvModule *defaultAvModule,
+KscSorter::KscSorter(const KscPackage &pkg,
                      bool dirty_only)
-: fDirtyOnly(dirty_only),
-  avm_default(defaultAvModule),
-  avm_client(KscClient::getClient()->getAvModule())
+: rel_pkg(pkg), 
+  fDirtyOnly(dirty_only)
 {
-    valid = sortVars(var_it);
+    valid = sortVars();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -326,25 +340,6 @@ KscSorter::newBucketIterator() const
     return new ValueIterator(table);
 }
 
-//////////////////////////////////////////////////////////////////////
-
-inline
-const KscAvModule *
-KscSorter::findAvModule(const KscVariable *var)
-{
-    const KscAvModule *temp = var->getAvModule();
-
-    if( temp ) {
-        return temp;
-    } else if(avm_default) {
-        return avm_default;
-    } else if( (temp = var->getServer()->getAvModule()) ) {
-        return temp;
-    } else {
-        return avm_client;
-    }
-}
-    
 //////////////////////////////////////////////////////////////////////
 
 #endif
