@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.20 1999-09-27 05:58:30 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.21 1999-10-04 08:58:58 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -131,7 +131,7 @@ static KsNTOncRpc ks_nt_oncrpc;
  * __GNULIBRARY__ symbol. Because these old glibc systems don't have
  * the int32_t, we do automatically fall back to the old long.
  */
-#if defined(__GLIBC__) && (__GLIBC__ >= 2) && (__GLIBCMINOR__ >= 1)
+#if defined(__GLIBC__) && (__GLIBC__ >= 2) && defined(__GLIBC_MINOR__) && (__GLIBC_MINOR__ >= 1)
 typedef int32_t *XDR_INLINE_PTR;
 #else
 typedef long *XDR_INLINE_PTR;
