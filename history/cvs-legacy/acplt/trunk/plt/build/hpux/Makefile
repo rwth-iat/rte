@@ -42,6 +42,7 @@ CXX_LIBPLT_OBJECTS = \
 	hashtable.o
 
 CXX_TEST_SOURCES = \
+	thandle.cpp\
 	tcomparable.cpp\
 	trtti.cpp \
 	tlist.cpp \
@@ -56,7 +57,7 @@ CXX_TEST_SOURCES = \
 CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 
 TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray\
-	thtname tcomparable
+	thtname tcomparable thandle
 
 all : libplt.a $(TESTS)
 
@@ -65,6 +66,9 @@ libplt.a: $(CXX_LIBPLT_OBJECTS)
 	ar r $@ $?
 	ranlib $@
 	
+thandle : thandle.o libplt.a
+	$(CXX_LINK) -o $@ $^
+
 tlist : tlist.o libplt.a
 	$(CXX_LINK) -o $@ $^
 

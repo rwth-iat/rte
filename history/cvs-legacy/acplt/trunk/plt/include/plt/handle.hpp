@@ -104,7 +104,7 @@ PltHandle<T>::bindTo(T* &p)
 {
     bool ok;
     PLT_PRECONDITION( p && !isBound() );
-    assert(prep == 0 && pcount == 0);
+    PLT_ASSERT(prep == 0 && pcount == 0);
 
     pcount = new unsigned(1);
 
