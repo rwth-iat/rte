@@ -1,8 +1,8 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.27 1999-09-20 09:36:42 harald Exp $ *//*
- * Copyright (c) 1996, 1997, 1998, 1999
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.28 2000-04-10 15:09:38 harald Exp $ *//*
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -38,6 +38,10 @@
 #define PLT_SYSTEM_LINUX 0
 #endif
 
+#ifndef PLT_SYSTEM_FREEBSD
+#define PLT_SYSTEM_FREEBSD 0
+#endif
+
 #ifndef PLT_SYSTEM_HPUX
 #define PLT_SYSTEM_HPUX 0
 #else
@@ -70,7 +74,7 @@
 #define PLT_SYSTEM_MC164 0
 #endif
 
-#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_IRIX + PLT_SYSTEM_SOLARIS + PLT_SYSTEM_NT + PLT_SYSTEM_OS2 + PLT_SYSTEM_OPENVMS + PLT_SYSTEM_MC164 != 1
+#if PLT_SYSTEM_LINUX + PLT_SYSTEM_FREEBSD + PLT_SYSTEM_HPUX + PLT_SYSTEM_IRIX + PLT_SYSTEM_SOLARIS + PLT_SYSTEM_NT + PLT_SYSTEM_OS2 + PLT_SYSTEM_OPENVMS + PLT_SYSTEM_MC164 != 1
 #error Must define exactly one system!
 #endif
 
@@ -262,7 +266,7 @@
 #endif
 
 #if PLT_COMPILER_DECCXX
-#define PLT_SIMULATE_BOOL 1
+#define PLT_SIMULATE_BOOL 0 /* Newer CXX releases now support this... */
 #define PLT_SIMULATE_RTTI 1
 #define PLT_RETTYPE_OVERLOADABLE 0
 #define PLT_ARRAY_NEW_OVERLOADABLE 0
@@ -325,6 +329,12 @@ enum { false=0, true=1 };
 */ 
 #if PLT_SYSTEM_NT
 
+/*
+ * Borland makes trouble... If we find a newer Borland C++ compiler, then
+ * we switch over to WinSock2. To get around header idiosyncrasies, we need
+ * to define _MSWSOCK_ otherwise we can not compile. Where have all the good
+ * men gone -- not to MS and not to Borland either.
+ */
 #if PLT_COMPILER_BORLAND
 #if __BORLANDC__ >= 0x0530
 #define PLT_USE_WINSOCK2 1
@@ -344,3 +354,4 @@ enum { false=0, true=1 };
 
 #endif /* PLT_CONFIG.H */
 
+/* End of plt/config.h */
