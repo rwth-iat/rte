@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.c,v 1.8 2002-06-18 11:34:47 ansgar Exp $
+*   $Id: ov_ntservice.c,v 1.9 2003-11-07 10:13:17 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -344,7 +344,7 @@ static OV_BOOL ov_ntservice_parseargs(
 		*/
 		else if(!strcmp(argv[i], "-a") || !strcmp(argv[i], "--activity-lock")) {
 			i++;
-			activitylock = TRUE;
+			ov_activitylock = TRUE;
 		}
 		/*
 		*	set reuse of socket address/port
