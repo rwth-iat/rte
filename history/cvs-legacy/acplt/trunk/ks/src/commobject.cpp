@@ -221,9 +221,11 @@ KscCommObject::getNegotiator()
 //////////////////////////////////////////////////////////////////////
 // class KscDomain
 //////////////////////////////////////////////////////////////////////
+
 KscDomain::~KscDomain()
 {
     flushChilds(KS_OT_ANY);
+    PLT_POSTCONDITION(child_table.size() == 0);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -277,7 +279,7 @@ KscDomain::setProjProps(KsProjPropsHandle hpp)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
+KscDomain::getChildPPUpdate()
 {
     // locate server
     //
@@ -288,7 +290,7 @@ KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
     //
     KsGetPPParams params;
     params.path = PltString(path.getVarPath());
-    params.type_mask = typeMask;
+    params.type_mask = KS_OT_ANY;
     params.name_mask = KsString("*");
     KsGetPPResult result;
 
@@ -303,7 +305,7 @@ KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
 
     // delete old childs and insert the new one
     //
-    flushChilds(typeMask);
+    flushChilds(KS_OT_ANY);
 
     ok = true;
 
@@ -326,21 +328,28 @@ KscDomain::updateChilds(KS_OBJ_TYPE typeMask)
                 new_var = new KscDomain(new_path);
                 break;
             default:
-                PLT_DMSG("Unknown objectype in KscDomain::updateChilds" << endl);
+                PLT_DMSG("Unknown objectype in KscDomain::getChildPPUpdate" << endl);
             }
             
             if(new_var) {
                 new_var->setProjProps(hpp);
                 ok = child_table.add(new_path, new_var);
+                if(!ok) {
+                    PLT_DMSG("KscDomain::getChildPPUpdate() : cannot add new commobject to child table" << endl);
+                }
             }
             else {
                 ok = false;
+                PLT_DMSG("KscDomain::getChildPPUpdate() : cannot create KscCommObject" << endl);
             }
         }
         else {
             ok = false;
+            PLT_DMSG("KscDomain::getChildPPUpdate() : unbound handle returned" << endl);
         }
     } // while
+
+    fChildPPValid = ok;
             
     return ok;
 }        
@@ -351,17 +360,20 @@ bool
 KscDomain::flushChilds(KS_OBJ_TYPE typeMask)
 {
     PltHashIterator<KscAbsPath,KscCommObject *> it(child_table);
-    KscCommObject *temp;
 
     while(it) {
         if( it->a_value->typeCode() & typeMask ) {
-            temp = 0;
+            KscCommObject *temp = 0;
             child_table.remove(it->a_key, temp);
             PLT_ASSERT(temp);
             delete temp;
+            it.toStart(); // neccessary since we changed the table
+        } else {
+            ++it;
         }
-        ++it;
     }
+
+    fChildPPValid = false;
 
     return true;
 }
@@ -372,8 +384,8 @@ KscChildIterator *
 KscDomain::newChildIterator(KS_OBJ_TYPE typeMask,
                             bool update)
 {
-    if( update ) {
-        if( !updateChilds(typeMask) ) {
+    if( !fChildPPValid || update ) {
+        if( !getChildPPUpdate() ) {
             PLT_DMSG("Cannot update childs in KscDomain::newChildIterator" << endl);
             return 0;
         }
@@ -391,7 +403,14 @@ KscDomain::ChildIterator::ChildIterator(const KscDomain &domain,
                                         enum_t typeMask)
 : it(domain.child_table),
   type_mask(typeMask)
-{}
+{
+    // move forward to the first element
+    // matching with type_mask
+    //
+    while( it && !(it->a_value->typeCode() & type_mask)) {
+        ++it;
+    }
+}
 
 //////////////////////////////////////////////////////////////////////
 

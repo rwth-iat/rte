@@ -39,8 +39,8 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <ks/package.h>
-#include <ks/client.h>
+#include "ks/package.h"
+#include "ks/client.h"
 
 //////////////////////////////////////////////////////////////////////
 // printing functions for debbugging
@@ -51,13 +51,7 @@ void
 KscPackage::debugPrint(ostream &os, bool printAll) const
 {
     os << "KscPackage object :" << endl;
-    os << "Related server : ";
-    if(server_set) {
-        os << related_server << endl;
-    }
-    else {
-        os << "none" << endl;
-    }
+
     os << "\tVariables : " << sizeVariables() << endl;
     os << "\tSubpackages : " << sizeSubpackages() << endl;
 
@@ -106,8 +100,7 @@ KscExchangePackage::debugPrint(ostream &os, bool printAll) const
 //////////////////////////////////////////////////////////////////////
 
 KscPackage::KscPackage()
-: server_set(false),
-  num_vars(0),
+: num_vars(0),
   num_pkgs(0),
   av_module(0),
   fDirty(false)
@@ -121,26 +114,12 @@ KscPackage::~KscPackage()
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::add(const KscVariable &var)
+KscPackage::add(KscVariable &var)
 {
-    if( !server_set ) {
-        // first variable, set related server object
-        //
-        related_server = var.getHostAndServer();
-        server_set = true;
-    }
-    else {
-        // check wether variable belongs to the correct server
-        //
-        if( related_server != var.getHostAndServer() ) {
-            return false;
-        }
-    }
-
 #ifdef PLT_DEBUG
     // check for duplicated pointers to variables
     //
-    PltListIterator<const KscVariable *> it(vars);
+    PltListIterator<KscVariable *> it(vars);
     while(it) {
         if( *it == &var ) {
             return true;
@@ -159,28 +138,12 @@ KscPackage::add(const KscVariable &var)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::add(const KscPackage &pkg) 
+KscPackage::add(KscPackage &pkg) 
 {
-    if( !server_set ) {
-        // if the package has a related server take it
-        //
-        if( pkg.server_set ) {
-            related_server = pkg.related_server;
-            server_set = true;
-        }
-    }
-    else {
-        // check wether related servers match
-        //
-        if( pkg.related_server != related_server ) {
-            return false;
-        }
-    }
-
 #ifdef PLT_DEBUG
     // check for duplicated pointers to variables
     //
-    PltListIterator<const KscPackage *> it(pkgs);
+    PltListIterator<KscPackage *> it(pkgs);
     while(it) {
         if( *it == &pkg ) {
             return true;
@@ -188,7 +151,13 @@ KscPackage::add(const KscPackage &pkg)
         ++it;
     }
 #endif
-        
+
+    // avoid cycles
+    //
+    if(&pkg == this) {
+        return false;
+    }
+
     bool ok = pkgs.addLast(&pkg);
     
     if(ok) num_pkgs++;
@@ -199,7 +168,7 @@ KscPackage::add(const KscPackage &pkg)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::remove(const KscVariable &var) 
+KscPackage::remove(KscVariable &var) 
 {
     bool ok = vars.remove(&var);
     
@@ -211,7 +180,7 @@ KscPackage::remove(const KscVariable &var)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::remove(const KscPackage &pkg)
+KscPackage::remove(KscPackage &pkg)
 {
     bool ok = pkgs.remove(&pkg);
 
@@ -229,7 +198,7 @@ KscPackage::sizeVariables(bool deep) const
         size_t count = 0;
         // iterate over subpackages
         //
-        PltListIterator<const KscPackage *> it(pkgs);
+        PltListIterator<KscPackage *> it(pkgs);
         while(it) {
             count += (*it)->sizeVariables(true);
             ++it;
@@ -269,82 +238,217 @@ KscPackage::newSubpackageIterator() const
 bool
 KscPackage::getUpdate() 
 {
-    int count, size;
+    DeepIterator var_it(*this);
+    KscSorter sorter(var_it);
 
-    // create objects for getVar service
-    //
-    size = sizeVariables(true); // count all variables including this
-                                // in subpackages
-
-    if( !size ) {
-        // empty packages need no update 
-        return true;
-    }
-
-    KsGetVarParams params(size);
-    KsGetVarResult result(0);
-
-    // locate the server
-    //
-    if( !server_set ) {
-        // if we have no related server, 
-        // the package is empty anyway
-        return true;
-    }
-    KscServer *myServer = 
-        KscClient::getClient()->getServer(related_server);
-
-    PLT_ASSERT(myServer);
-
-    // put all variables in params
-    //
-    DeepIterator it(*this);
-    count = 0;
-    while(it) {
-        params.identifiers[count++] = it->getName();
-        it++;
-    }
-
-    PLT_ASSERT(count == size);
-
-    // request updated data from the server
-    //
-    bool ok = myServer->getVar(getNegotiator(),
-                               params, result);
-
-    // check errors
-    //
-    if( !ok || result.result != KS_ERR_OK ) {
+    if(!sorter.isValid()) {
+        // failed to sort variables by servers and av-types
+        //
         return false;
     }
 
-    // copy new data
-    //
-    it.toStart();
-    count = 0;
-    ok = true;
-    while(it) {
-        KsCurrPropsHandle *hcp =
-            &(result.items[count].item);
-        if(result.items[count].result == KS_ERR_OK
-           && *hcp ) 
-        {
-            PLT_ASSERT((*hcp)->xdrTypeCode() == KS_OT_VARIABLE);
+    PltIterator<KscSorterBucket *> *pit =
+        sorter.newBucketIterator();
 
-            it->setCurrProps(*(KsVarCurrProps *)(hcp->getPtr()));
-            it->fDirty = false;
-        }
-        else {
-            ok = false;
-        }
-        ++count;
-        ++it;
+    if(!pit) return false;
+
+    bool ok = true;
+
+    // iterate over buckets and do the jobs
+    //
+    while(*pit) {
+        KscSorterBucket *curr_bucket = **pit;
+        ok &= getSimpleUpdate(*curr_bucket);
+        ++(*pit);
     }
 
-    PLT_ASSERT( size == count );
+    delete pit;
 
-    fDirty = ok;
+    return ok;    
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscPackage::getSimpleUpdate(const KscSorterBucket &bucket)
+{
+    // create data structures for transfer
+    //
+    KsGetVarResult result;
+    KsGetVarParams params(bucket.size());
+
+    if(params.identifiers.size() != bucket.size()) {
+        // failed to allocate memory
+        //
+        return false;
+    }
+
+    // copy data to params
+    //
+    PltIterator<KscVariable *> *bucket_it =
+        bucket.newVarIterator();
+    if(!bucket_it) return false;
+
+    size_t count = 0;
+    while(*bucket_it) {
+        params.identifiers[count++] =
+            (**bucket_it)->getName();
+        ++(*bucket_it);
+    }
+    PLT_ASSERT(count == bucket.size());
+
+    // request service
+    //
+    bool ok = bucket.getServer()->getVar(bucket.getNegotiator(),
+                                         params,
+                                         result);
+
+    if(!ok || result.result != KS_ERR_OK) return false;
+
+    // copy results 
+    //
+    ok = true;
+    count = 0;
+    bucket_it->toStart();
+
+    while(*bucket_it) {
+        if(result.items[count].result == KS_ERR_OK) {
+            KsVarCurrProps *cp = 
+                PLT_DYNAMIC_PCAST(KsVarCurrProps,
+                                  result.items[count].item.getPtr()); 
+            if(cp) {
+                // TODO :  
+                ok &= ((KscVariable *)(**bucket_it))->setCurrProps(*cp);
+            } else {
+                ok = false;
+            }
+        }
+        ++count;
+        ++(*bucket_it);
+    }
+
+    PLT_ASSERT(count == bucket.size());
+
+    delete bucket_it;
+
     return ok;
+}   
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscPackage::setUpdate(bool force)
+{
+    DeepIterator var_it(*this);
+    KscSorter sorter(var_it, !force);
+
+    if(!sorter.isValid()) {
+        PLT_DMSG("Failed to sort variables" << endl);
+        return false;
+    }
+
+    PltIterator<KscSorterBucket *> *pit =
+        sorter.newBucketIterator();
+
+    if(!pit) {
+        PLT_DMSG("Failed to create iterator over av/server-types" << endl);
+        return false;
+    }
+
+    bool ok = true;
+
+    while(*pit) {
+        KscSorterBucket *curr_bucket = **pit;
+        ok &= setSimpleUpdate(*curr_bucket);
+        ++*pit;
+    }
+
+    delete pit;
+
+    return ok;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscPackage::setSimpleUpdate(const KscSorterBucket &bucket)
+{
+    KsSetVarParams params(bucket.size());
+    KsSetVarResult result(bucket.size());
+
+    if(params.items.size() != bucket.size() || 
+       result.results.size() != bucket.size()) 
+    {
+        // failed to allocate space
+        //
+        return false;
+    }
+
+    PltIterator<KscVariable *> *pit =
+        bucket.newVarIterator();
+    if(!pit) {
+        return false;
+    }
+
+    // copy data to params
+    //
+    size_t count = 0;
+    while(*pit) {
+        params.items[count].path_and_name = 
+            (**pit)->getName();
+        params.items[count].curr_props =
+            (**pit)->getCurrPropsHandle();
+        ++count;
+        ++*pit;
+    }
+
+    // request service
+    //
+    bool ok = bucket.getServer()->setVar(
+        bucket.getNegotiator(),
+        params,
+        result);
+
+    if(!(ok && result.result == KS_ERR_OK)) {
+        delete pit;
+        return false;
+    }
+
+    // update state of variable objects
+    //
+    count = 0;
+    pit->toStart();
+    while(*pit) {
+        if(result.results[count++].result == KS_ERR_OK) {
+            KscVariable *pvar = **pit;
+            pvar->fDirty = false;
+        } else {
+            ok = false;
+        }
+        ++*pit;
+    }
+
+    delete pit;
+    return ok;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscNegotiator *
+KscPackage::getNegotiatorForBucket(
+    const KscSorterBucket &bucket)
+{
+    KscNegotiator *neg;
+
+    if(!bucket.getAvModule() && av_module) {
+        // if the bucket lacks an AVModule and 
+        // this package has an AVModule use it
+        //
+        neg = av_module->getNegotiator(bucket.getServer());
+        if(neg) return neg;
+    } 
+    
+    return bucket.getNegotiator();
 }
 
 //////////////////////////////////////////////////////////////////////

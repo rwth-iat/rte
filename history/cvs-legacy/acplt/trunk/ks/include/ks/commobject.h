@@ -42,9 +42,9 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include "plt/debug.h"
-#include "plt/rtti.h"
-#include "plt/hashtable.h"
+#include <plt/debug.h>
+#include <plt/rtti.h>
+#include <plt/hashtable.h>
 
 #include "ks/props.h"
 #include "ks/abspath.h"
@@ -131,18 +131,21 @@ public:
     // reread projected props 
     bool getProjPropsUpdate();
     // reread children from server, update properties
-    bool updateChilds(KS_OBJ_TYPE typeMask);
+    bool getChildPPUpdate();
+    // TODO: currently two iterators of the same KscDomain
+    //       will lead to problems
     KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
                                        bool update = false);
 
 protected:
-    KsDomainProjProps proj_props;
-    PltHashTable<KscAbsPath, KscCommObject *> child_table;
-
     // remove childs from table
     bool flushChilds(KS_OBJ_TYPE typeMask);
 
     bool setProjProps(KsProjPropsHandle);
+
+    KsDomainProjProps proj_props;
+    PltHashTable<KscAbsPath, KscCommObject *> child_table;
+    bool fChildPPValid;   // indicates wether PP's already have been read  
 
     class ChildIterator
     : public KscChildIterator
@@ -273,7 +276,8 @@ KscCommObject::getAvModule() const
 
 inline
 KscDomain::KscDomain(const char *domain_path)
-: KscCommObject(domain_path)
+: KscCommObject(domain_path),
+  fChildPPValid(false)
 {}
 
 //////////////////////////////////////////////////////////////////////

@@ -39,63 +39,86 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include "ks/package.h"
-
-#include <plt/list_impl.h>
+#include "ks/sorter.h"
 
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-KscDirectIterator<T>::KscDirectIterator(const PltList<T *> &lst)
-: it(lst)
-{}
-
-//////////////////////////////////////////////////////////////////////
- 
-template <class T>
-KscDirectIterator<T>::operator const void * () const
+KscNegotiator *
+KscSorterBucket::getNegotiator() const
 {
-    return it.operator const void * ();
+    if(av_module) {
+        KscNegotiator *neg = 
+            av_module->getNegotiator(server);
+        if(neg) return neg;
+    }
+    
+    return server->getNegotiator();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-const T *
-KscDirectIterator<T>::operator -> () const
+KscSorter::~KscSorter() 
 {
-    return *it;
+    // clean up hash table
+    //
+    PltHashIterator<Key,KscSorterBucket*> it(table);
+    while(it) {
+        delete it->a_value;
+        ++it;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-KscDirectIterator<T> &
-KscDirectIterator<T>::operator ++ ()
+bool
+KscSorter::sortVars(PltIterator<KscVariable> &var_it)
 {
-    ++it;
-    return *this;
+    // iterate over variables and
+    // (1) add a variable to the approbiate bucket if it exists
+    // (2) create a new bucket if neccessary and add variable
+    //
+    bool ok = true;
+    var_it.toStart();
+
+    while(ok && var_it) {
+        KscVariable *current = &(*var_it);
+        if( !fDirtyOnly || current->isDirty() ) { 
+            Key key(current->getAvModule(),
+                    current->getServer());
+            KscSorterBucket *bucket;
+            
+            if(table.query(key, bucket)) {
+                // bucket found
+                //
+                ok = bucket->add(current);
+            } else {
+                // create bucket
+                //
+                bucket = new KscSorterBucket(key.getAvModule(),
+                                             key.getServer());
+                if(bucket) {
+                    ok = table.add(key, bucket)
+                        && bucket->add(current);
+                } else {
+                    ok = false;
+                }
+            }
+        }
+
+        ++var_it;
+    }
+
+    return ok;
 }
-
+                
 //////////////////////////////////////////////////////////////////////
- 
-template <class T>
-void
-KscDirectIterator<T>::operator ++ (int)
-{
-    ++it;
-}
-
+// EOF sorter.cpp
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
-void
-KscDirectIterator<T>::toStart()
-{
-    it.toStart();
-}
 
-//////////////////////////////////////////////////////////////////////
+
+
+
 
 
 

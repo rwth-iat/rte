@@ -28,6 +28,8 @@
 class KsValue : 
 public KsXdrUnion 
 {
+public:
+    virtual ~KsValue() {}
     
 #if 0
     // accessors

@@ -753,6 +753,15 @@ KscServer::setVar(KscNegotiator *negotiator,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
 
+#if PLT_DEBUG
+    if( errcode == RPC_SUCCESS ) {
+        cout << "SetVar request successfull" << endl;
+    } else {
+        cout << "SetVar request failed" << endl;
+        cout << clnt_sperror(pClient, "");
+    }
+#endif
+
     return errcode == RPC_SUCCESS;
 }
   

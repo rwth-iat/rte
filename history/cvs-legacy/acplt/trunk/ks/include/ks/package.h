@@ -44,7 +44,8 @@
 
 #include <plt/list.h>
 
-#include <ks/commobject.h>
+#include "ks/commobject.h"
+#include "ks/sorter.h"
 
 //////////////////////////////////////////////////////////////////////
 // class KscPackage
@@ -52,11 +53,6 @@
 //   RESTRICTIONS:
 //   - Related objects are currently referenced by pointers. Therefore
 //     equality is checked by comparing pointers.
-//
-//   - Each package is related to a server object,
-//     which is implicitly defined by the first variable
-//     the package is given. Therefore a package only can
-//     contain variables which belong to the same server. 
 // 
 //////////////////////////////////////////////////////////////////////
 
@@ -66,10 +62,10 @@ public:
     KscPackage();
     ~KscPackage();
 
-    bool add(const KscVariable &var);
-    bool add(const KscPackage &pkg);
-    bool remove(const KscVariable &var);
-    bool remove(const KscPackage &pkg);
+    bool add(KscVariable &var);
+    bool add(KscPackage &pkg);
+    bool remove(KscVariable &var);
+    bool remove(KscPackage &pkg);
     
     size_t sizeVariables(bool deep = false) const;
     size_t sizeSubpackages() const;
@@ -86,18 +82,20 @@ public:
     const KscAvModule *getAvModule() const;
 
 protected:
-    // TODO:
-    KscNegotiator *getNegotiator() { PLT_ASSERT(0); }
-    KscAbsPath related_server;
-    bool server_set;
+    KscNegotiator *getNegotiatorForBucket(const KscSorterBucket &);
 
-    PltList<const KscVariable *> vars;
+    bool getSimpleUpdate(const KscSorterBucket &);
+    bool setSimpleUpdate(const KscSorterBucket &);
+
+    PltList<KscVariable *> vars;
     size_t num_vars;
 
-    PltList<const KscPackage *> pkgs;
+    PltList<KscPackage *> pkgs;
     size_t num_pkgs;
 
     const KscAvModule *av_module;
+
+    // TODO: iterate over elements to determine status
     bool fDirty;
     
     //
@@ -120,8 +118,8 @@ protected:
     protected:
         const KscPackage &pkg;
         DeepIterator *rek_it; // used to visit the subpackages recursively
-        PltListIterator <const KscVariable *> vars_it;
-        PltListIterator <const KscPackage *> pkgs_it;
+        PltListIterator <KscVariable *> vars_it;
+        PltListIterator <KscPackage *> pkgs_it;
     };
     // end of class DeepIterator
 
@@ -141,7 +139,7 @@ class KscDirectIterator
 : public PltIterator<T> 
 {
 public:
-    KscDirectIterator(const PltList<const T *> &);
+    KscDirectIterator(const PltList<T *> &);
 
     operator const void * () const;         // remaining element?
     const T * operator -> () const;       
@@ -149,7 +147,7 @@ public:
     void operator ++ (int);                 // (postfix)
     void toStart();                         // go to the beginning
 protected:
-    PltListIterator<const T *> it;
+    PltListIterator<T *> it;
 };
 // end of class KscDirectIterator
 
