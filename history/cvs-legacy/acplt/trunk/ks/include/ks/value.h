@@ -222,6 +222,7 @@ class KsTimeValue : public KsTime, public KsValue
 {
 public:
     KsTimeValue( long sec = 0L, long usec = 0L );
+    KsTimeValue( const KsTime & );
     
     // redefinitions for resolving multiply function definitions 
     // in base classes
@@ -630,6 +631,14 @@ KsStringValue::KsStringValue(XDR *xdr, bool &ok)
 inline 
 KsTimeValue::KsTimeValue(long sec, long usec)
 : KsTime(sec,usec)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline 
+KsTimeValue::KsTimeValue(const KsTime &time)
+: tv_sec(time.tv_sec),
+  tv_usec(time.tv_usec)
 {}
 
 //////////////////////////////////////////////////////////////////////
