@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.20 2004-10-27 14:33:35 ansgar Exp $
+*   $Id: ov_database.c,v 1.21 2004-10-29 09:21:06 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -183,7 +183,7 @@ __ptr_t ov_database_morecore(
 		/*
 		*	check database file size
 		*/
-		if(pdb->size+Ov_Roundup(size) > OV_DATABASE_MAXSIZE) {
+		if(pdb->size+Ov_Roundup(size) > (OV_UINT) OV_DATABASE_MAXSIZE) {
 			return NULL;
 		}
 #if OV_SYSTEM_UNIX
@@ -253,7 +253,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	if(pdb) {
 		return OV_ERR_GENERIC;
 	}
-	if(!size || (size > OV_DATABASE_MAXSIZE) || !filename) {
+	if(!size || (size > (OV_UINT) OV_DATABASE_MAXSIZE) || !filename) {
 		return OV_ERR_BADPARAM;
 	}
 #if !OV_SYSTEM_MC164
