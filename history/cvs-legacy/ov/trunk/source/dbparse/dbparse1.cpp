@@ -19,8 +19,8 @@
 
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
 // dbparse1.cpp
-// Version : 1.1
-// last change: May 10, 2002
+// Version : 1.12
+// last change: Aug 6, 2002
 
 //-------------------------------------------------------------------------------
 // includes
@@ -38,7 +38,7 @@
 #include "db.y.h"
 #endif
 
-#define version "1.1"
+#define version "1.12"
 
 //-------------------------------------------------------------------------------
 // global variables
@@ -1858,6 +1858,12 @@ bool write_instance(instance *node)
 			cout << "Error: Out of memory!" << endl;
 			return false;
 		}
+		if (create_result.obj_results[0].result != KS_ERR_OK &&
+				create_result.obj_results[0].result != KS_ERR_ALREADYEXISTS) {
+			cout << "Error " << create_result.obj_results[0].result << " creating object " << *(node->ident)
+				 << "!" << endl;
+			return false;
+		}
 		if (verbose) {
 			cout << "Created object " << *(node->ident) << " successfully!" << endl;
 		}
@@ -2273,6 +2279,8 @@ bool write_links(instance *node)
 
 bool write_database()
 {
+	bool ok = true;
+
 	if (!parse_tree->forEach(&find_libraries)) {
 		cout << "Error: In function find_libraries!" << endl;
 		return false;
@@ -2303,28 +2311,46 @@ bool write_database()
 	}
 
 	PltListIterator<instance *> *lib_it = liblist.newIterator();
-	for (int i = 0; i < liblist.size(); i++) {
+	for (int i = 0; ok && i < liblist.size(); i++) {
 		lib_it->toStart();
-		while (*lib_it) {
+		while (ok && *lib_it) {
 			(**lib_it)->cr_opts = CO_CREATE;
-			write_instance(**lib_it);
+			if (!write_instance(**lib_it)) {
+				ok = false;
+				cout << "Error: Could not load all libraries needed!" << endl;
+			}
 			++*lib_it;
 		}
 	}
 
 	sleep(lib_wait_time);
 
-	if (!parse_tree->forEach(&write_instance)) {
+	if (ok && !parse_tree->forEach(&write_instance)) {
 		cout << "Error: Could not write objects in server!" << endl;
-		return false;
+		ok = false;
 	}
 
 	// set actual link values
-	if (!parse_tree->forEach(&write_links)) {
+	if (ok && !parse_tree->forEach(&write_links)) {
 		cout << "Error: Could not write links in server!" << endl;
+		ok = false;
+	}
+
+	*val = KsBoolValue(0);
+	if (!server_base->setVar(NULL, set_params, set_result)) {
+		cout << "Error unsetting activity_lock!" << endl;
 		return false;
 	}
-	return true;
+	if (set_result.results.size() != 1) {
+		cout << "Error: Out of memory in write_database!" << endl;
+		return false;
+	}
+	if (set_result.results[0].result != KS_ERR_OK) {
+		cout << "Error unsetting activity_lock!" << endl;
+		return false;
+	}
+	return ok;
+
 } // write_database
 
 //-------------------------------------------------------------------------------

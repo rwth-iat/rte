@@ -19,6 +19,7 @@
 
 /* db.y */
 /* Author : Christian Poensgen <chris@plt.rwth-aachen.de> */
+/* last change: Jul 18, 2002 */
 
 /* ACPLT/OV Modelling Language */
 
@@ -106,9 +107,9 @@ extern parsetree *parse_tree;
 %type <pstringval> var_unit_opt
 %type <pstringval> var_comment_opt
 %type <ppathlist> paths
-%type <pinstlist> part_instances_block parts_opt
-%type <pvarlist> variable_values_block variables_opt
-%type <plinklist> link_values_block links_opt
+%type <pinstlist> part_instances_block_opt parts_opt
+%type <pvarlist> variable_values_block_opt variables_opt
+%type <plinklist> link_values_block_opt links_opt
 
 %%
 
@@ -131,9 +132,9 @@ inst:	  INSTANCE PATH ':' CLASS PATH
 		  creation_time_opt
 		  flags_opt
 		  comment_opt
-		  variable_values_block
-		  link_values_block
-		  part_instances_block
+		  variable_values_block_opt
+		  link_values_block_opt
+		  part_instances_block_opt
 		  END_INSTANCE ';'
 			{
 				$$ = new(instance);
@@ -180,13 +181,17 @@ comment_opt:
 					}
 				;
 
-variable_values_block:	  VARIABLE_VALUES
-						  variables_opt
-						  END_VARIABLE_VALUES ';'
-							{
-								$$ = $2;
-							}
-						;
+variable_values_block_opt:
+								{
+									$$ = NULL;
+								}
+							| VARIABLE_VALUES
+							  variables_opt
+							  END_VARIABLE_VALUES ';'
+								{
+									$$ = $2;
+								}
+							;
 
 variables_opt:
 				{
@@ -380,13 +385,17 @@ var_comment_opt:
 						}
 					;
 
-link_values_block:	  LINK_VALUES
-					  links_opt
-					  END_LINK_VALUES ';'
-						{
-							$$ = $2;
-						}
-					;
+link_values_block_opt:
+							{
+								$$ = NULL;
+							}
+						| LINK_VALUES
+						  links_opt
+						  END_LINK_VALUES ';'
+							{
+								$$ = $2;
+							}
+						;
 
 links_opt:
 				{
@@ -429,13 +438,17 @@ paths:		  PATH
 			}
 		;
 
-part_instances_block:	  PART_INSTANCES
-						  parts_opt
-						  END_PART_INSTANCES ';'
-							{
-								$$ = $2;
-							}
-						;
+part_instances_block_opt:
+								{
+									$$ = NULL;
+								}
+							| PART_INSTANCES
+							  parts_opt
+							  END_PART_INSTANCES ';'
+								{
+									$$ = $2;
+								}
+							;
 
 parts_opt:
 				{
@@ -456,9 +469,9 @@ part_inst:	  PART_INSTANCE PATH ':' CLASS PATH
 			  creation_time_opt
 			  flags_opt
 			  comment_opt
-			  variable_values_block
-			  link_values_block
-			  part_instances_block
+			  variable_values_block_opt
+			  link_values_block_opt
+			  part_instances_block_opt
 			  END_PART_INSTANCE ';'
 				{
 					$$ = new(instance);
