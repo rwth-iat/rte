@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.10 2000-02-10 13:06:53 dirk Exp $
+*   $Id: ov_ov.h,v 1.11 2000-04-07 10:36:24 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -304,8 +304,13 @@ typedef OV_ENUM OV_TICKET_TYPE;
 *	Tickets are used for authentification/verification
 */
 typedef struct {
-	OV_TICKET_TYPE	tickettype;
-	OV_STRING		id;							/* only, if tickettype == OV_TT_SIMPLE */
+	struct OV_TICKET_VTBL	*vtbl;
+	OV_TICKET_TYPE			type;
+	union {
+		struct {
+			OV_STRING		id;				/* only, if tickettype == OV_TT_SIMPLE */
+		}	simpleticket;
+	}	ticketunion;
 }	OV_TICKET;
 
 /*

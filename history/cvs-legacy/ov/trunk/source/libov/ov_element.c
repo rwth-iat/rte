@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.c,v 1.7 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_element.c,v 1.8 2000-04-07 10:36:25 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -387,7 +387,7 @@ OV_RESULT ov_element_getnextpart_object(
 			*	get the very first part (variable, part, operation)...
 			*/
 			pclass = Ov_GetParent(ov_instantiation, pobj);
-CONTINUE4:		ppart->elemunion.pobj = Ov_GetFirstChild(ov_containment, pclass);
+CONTINUE4:	ppart->elemunion.pobj = Ov_GetFirstChild(ov_containment, pclass);
 			goto CONTINUE1;
 		case OV_ET_VARIABLE:
 		case OV_ET_OBJECT:

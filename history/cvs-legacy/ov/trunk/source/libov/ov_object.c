@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.17 2000-02-10 13:07:02 dirk Exp $
+*   $Id: ov_object.c,v 1.18 2000-04-07 10:36:26 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -288,6 +288,9 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 				if(!ov_object_haslinks(pobj)) {
 					access |= OV_AC_DELETEABLE;
 				}
+else {
+	printf("<%s> has links\n", pobj->v_identifier);
+}
 			}
 			if(ov_class_cancastto(pclass, pclass_ov_domain)) {
 				access |= OV_AC_WRITE;
@@ -851,9 +854,10 @@ OV_DLLFNCEXPORT OV_BOOL ov_object_haslinks(
 		}
 		switch(child.elemtype) {
 		case OV_ET_OBJECT:
-			if(ov_object_haslinks(child.elemunion.pobj)) {
+			if(ov_object_haslinks(child.pobj)) {
 				return TRUE;
 			}
+			break;
 		case OV_ET_PARENTLINK:
 			if(ov_association_isusedparentlink(child.elemunion.passoc, pobj)) {
 				return TRUE;
