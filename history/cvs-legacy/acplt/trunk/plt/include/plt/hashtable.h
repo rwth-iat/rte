@@ -163,6 +163,12 @@ public:
     
     // modifiers
     virtual bool add(const K&, const V&);
+
+    virtual bool update(const K& key, 
+                        const V & newValue, 
+                        V & oldValue,
+                        bool & oldValueValid) const;
+
     virtual bool remove(const K&, V&);
 
     // container interface
@@ -310,6 +316,30 @@ PltHashTable_<K,V>::add(const K& key, const V& value)
         return false;
     }
 }
+
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline bool
+PltHashTable_<K,V>::update(const K& key, 
+                           const V & newValue, 
+                           V & oldValue,
+                           bool & oldValueValid) const
+{
+    // This cast is safe, only we can put assocs into the table
+    PltAssoc<K,V> *p = 
+        ( PltAssoc<K,V> *) lookupAssoc(&key);
+    if (p) {
+        oldValue = p->a_value;
+        oldValueValid = true;
+        p->a_value = newValue;
+        return true;
+    } else {
+        oldValueValid = false;
+        return add(key, newValue);
+    }
+}
+
     
 //////////////////////////////////////////////////////////////////////
 

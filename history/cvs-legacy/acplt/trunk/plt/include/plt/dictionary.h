@@ -71,6 +71,13 @@
 //    - lack of memory
 //    - key k is already a key of the dictionary
 //
+// bool update(const K& k, const V& v, V& oValue, bool & oValid)
+//    Try associate (k with v). Return true on success, 
+//    false on failure. Failure could be caused by
+//    lack of memory
+//    If oValid is true on return, oValue contains the old value associated
+//    with k before the update call.
+//
 // bool remove(const K& k, V& v)
 //    Like query, but removes the association on success.
 //
@@ -82,12 +89,19 @@ class PltDictionary
 {
 public:
     // accessors
-    virtual bool query(const K&, V&) const = 0;
+    virtual bool query(const K& key, V& value) const = 0;
+
     PltIterator< PltAssoc<K, V> > * newIterator() const = 0;
 
     // modifiers
-    virtual bool add(const K&, const V&) = 0;
-    virtual bool remove(const K&, V&) = 0;
+    virtual bool add(const K& key, const V& value) = 0;
+
+    virtual bool update(const K & key, 
+                        const V & newValue, 
+                        V & oldValue,
+                        bool & oldValueValid) const;
+
+    virtual bool remove(const K& key, V& oldValue) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
