@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.6 1997-09-03 14:07:46 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.7 1997-09-05 09:27:06 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,6 +42,7 @@
 
 #include "plt/log.h"
 #include <signal.h>
+#include <stdlib.h>
 
 extern "C" void handler(int) {
     KsServerBase::getServerObject().downServer();
@@ -69,6 +70,14 @@ public:
         { return KsString("Lehrstuhl fuer Prozessleittechnik, "
                           "RWTH Aachen"); }
 
+    virtual void exgData(KsAvTicket &ticket,
+                         const KsExgDataParams &params,
+                         KsExgDataResult &result);                         
+    
+    virtual bool calculate();
+private:
+    KssSimpleVariable *pVar_x;
+    KssSimpleVariable *pVar_xsquared;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -125,9 +134,24 @@ TestDomain::getChildById(const KsString &str) const
             var->setState(KS_ST_GOOD);
             var->lock();
         } else {
+            if (str == "down") {
+                cerr << endl << "Shutdown requested." << endl;
+                TestServer::getServerObject().downServer();
+            } else if (str == "exit") {
+                cerr << endl << "Hard exit requested. Bye!" << endl;
+                exit(1);
+            } else if (str == "lockup") {
+                cerr << endl << "Simulating lockup..." << endl;
+                sleep(40);
+                cerr << endl << "... exiting." << endl;
+                exit(1);
+            } else if (strncmp(str,"sleep",5)==0) {
+                sleep(atoi(str+5));
+            }
+
             var->setValue(new KsStringValue(str));
             var->setState(KS_ST_BAD);
-            var->lock();
+            var->lock();            
         }
     }
     return KssCommObjectHandle(var, KsOsNew);
@@ -196,10 +220,94 @@ TestServer::TestServer()
                  "the default value",
                  "that tcls",
                  false);
+
+    //// construct data exchange demo domain
+    //   variables
+    pVar_x = new KssSimpleVariable("x");
+    pVar_xsquared = new KssSimpleVariable("xsquared");
+    KssCommObjectHandle hVar_x(pVar_x, KsOsNew);
+    KssCommObjectHandle hVar_xsquared(pVar_xsquared, KsOsNew);
+    if (hVar_x && hVar_xsquared) {
+        if (pVar_x->setValue(new KsSingleValue(0)) == KS_ERR_OK) {
+            pVar_x->setState(KS_ST_GOOD);
+        }
+        if (pVar_xsquared->setValue(new KsSingleValue(0)) == KS_ERR_OK) {
+            pVar_xsquared->setState(KS_ST_GOOD);
+        }
+        // domain
+        addDomain(KsPath("/"), "exchange", "Data exchange demo");
+        KsPath exchange("/exchange");
+        if (! (addCommObject(exchange, hVar_x) &&
+               addCommObject(exchange, hVar_xsquared))) {
+            // The variables will die when hVar_... goes out of scope.
+            // We disable our pointers to avoid using them any longer.
+            pVar_x = pVar_xsquared = 0;
+        }
+    } else {
+        // Don't use pointers to nonexistant objects!
+        pVar_x = pVar_xsquared =0;
+    }    
+
 }
 
 
 
+//////////////////////////////////////////////////////////////////////
+
+void 
+TestServer::exgData(KsAvTicket &ticket,
+                    const KsExgDataParams &params,
+                    KsExgDataResult &result)
+{
+    size_t setsz = params.set_vars.size();
+    size_t getsz = params.get_vars.size();
+
+    KsSetVarParams setvar_params(setsz);
+    KsSetVarResult setvar_result(setsz);
+
+    setvar_params.items = params.set_vars;
+    setVar(ticket, setvar_params, setvar_result);
+    if (setvar_result.result == KS_ERR_OK) {
+        // setvar ok, continue
+        calculate();
+
+        KsGetVarParams getvar_params(getsz);
+        KsGetVarResult getvar_result(getsz);
+        getvar_params.identifiers = params.get_vars;
+        getVar(ticket, getvar_params, getvar_result);
+    
+        result.results = setvar_result.results;
+        result.items = getvar_result.items;
+
+        result.result = getvar_result.result;
+    } else {
+        // abort and return error
+        result.result = setvar_result.result;
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+TestServer::calculate()
+{
+    if (pVar_x && pVar_xsquared) {
+        KsValue * tmp = pVar_x->getValue().getPtr();
+        KsSingleValue * pVal_x = 
+            PLT_DYNAMIC_PCAST(KsSingleValue, tmp);
+        if (pVal_x) {
+            float x = *pVal_x;
+            pVar_xsquared->setValue(new KsSingleValue(x*x));
+            pVar_xsquared->setState(KS_ST_GOOD);
+            return true;
+        } else {
+            pVar_xsquared->setValue(new KsVoidValue);
+            pVar_xsquared->setState(KS_ST_BAD);
+        }
+    }
+    return false;
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
