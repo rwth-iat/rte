@@ -135,8 +135,20 @@ releases, which might not be stable: 1.1.0, etc.
 
 Version 1.2.1
 - SERVERS:
+  * The vendor domain is now automatically populated by the following
+    three subdomains (applies to class KsSimpleServer only):
+    - extensions (may contain protocol extension information as per TP#6).
+    - modules (contains information per specific module, this is for
+        instance used by the buffered streams mechanism, under the
+        module acpltks).
+      IMPORTANT: make sure you do not create your own extensions domain,
+        or your objects might not show up at all!
+    - specific (may contain additional vendor specific information not
+        covered by TP#6).
+  * Moved buffered-streams specific information from "/vendor" to
+    "/vendor/modules/acpltks".
   * The listening sockets can now set to SO_REUSEADDR by calling
-    KsServerBase::setAddrReuse(true). This enables binding to a specific
+    KsServerBase::setReuseAddr(true). This enables binding to a specific
     port to which MS-based clients are still connected when starting a
     new KS server (for instance, useful during the development cycle).
   * Added option "-r" to enable address reuse with the Un*x KS Manager.
@@ -144,8 +156,6 @@ Version 1.2.1
     brain-damaged default of 32.
   * Fixed strange setpgrp() parameter calling problem with Solaris which
     prevented the Un*x-based KS Manager from properly entering daemon mode.
-  * Moved buffered-streams specific information from "/vendor" to
-    "/vendor/modules/acpltks".
   * Added "server_os" variable to "/vendor" domain, returning an operating
     system, version and release string.
 
