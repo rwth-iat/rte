@@ -295,7 +295,8 @@ PltList<T>::addLast(const T & t)
 
 template<class T>
 inline T 
-PltList<T>::removeFirst() {
+PltList<T>::removeFirst() 
+{
   PltListNode<T> * p = (PltListNode<T> *) PltList_base::removeFirst();
   T t(p->info);
   delete p;
@@ -306,7 +307,8 @@ PltList<T>::removeFirst() {
 
 template<class T>
 inline T 
-PltList<T>::removeLast() {
+PltList<T>::removeLast() 
+{
   PltListNode<T> * p = (PltListNode<T> *) PltList_base::removeLast();
   T t(p->info);
   delete p;
