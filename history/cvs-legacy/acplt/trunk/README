@@ -69,6 +69,18 @@ Communication Library emulates such "nonstandard extensions" like the bool
 data type because Microsoft does not adhere to the C++ language standard.
 
 
+2.3 OpenVMS
+-----------
+
+Create a directory for the CXX repository, for example CXX_REPOSITORY.DIR
+in your home directory. Then define the symbol acplt$repository, which must
+point to this directory. Finally do a
+
+  $ gmake openvms.all
+
+That's it. This will build the library as well as the examples.
+
+
 3. Changes & Bug-Fixes
 ----------------------
 
