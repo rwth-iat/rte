@@ -1,6 +1,6 @@
 /* -*-plt-c++-*- */
 /*
- * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.4 1998-12-03 17:05:54 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.5 1998-12-16 17:48:29 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -52,6 +52,9 @@ KsPlacementHint::KsPlacementHint()
 KsLinkItem::KsLinkItem()
 {} // KsLinkItem::KsLinkItem
 
+KsUnlinkItem::KsUnlinkItem()
+{} // KsUnlinkItem::KsUnlinkItem
+
 KsCreateObjItem::KsCreateObjItem()
 {} // KsCreateObjItem::KsCreateObjItem
 
@@ -69,6 +72,18 @@ KsDeleteObjParams::KsDeleteObjParams()
 
 KsDeleteObjResult::KsDeleteObjResult()
 {} // KsDeleteObjResult::KsDeleteObjResult
+
+KsLinkParams::KsLinkParams()
+{} // KsLinkParams::KsLinkParams
+
+KsLinkResult::KsLinkResult()
+{} // KsLinkResult::KsLinkResult
+
+KsUnlinkParams::KsUnlinkParams()
+{} // KsUnlinkParams::KsUnlinkParams
+
+KsUnlinkResult::KsUnlinkResult()
+{} // KsUnlinkResult::KsUnlinkResult
 
 
 // ---------------------------------------------------------------------------
@@ -112,7 +127,7 @@ KsLinkItem::xdrEncode(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     return link_path.xdrEncode(xdr)
-        && new_member_path.xdrEncode(xdr)
+        && element_path.xdrEncode(xdr)
         && place.xdrEncode(xdr);
 } // KsLinkItem::xdrEncode
 
@@ -122,9 +137,35 @@ KsLinkItem::xdrDecode(XDR *xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     return link_path.xdrDecode(xdr)
-        && new_member_path.xdrDecode(xdr)
+        && element_path.xdrDecode(xdr)
         && place.xdrDecode(xdr);
 } // KsLinkItem::xdrDecode
+
+
+// ---------------------------------------------------------------------------
+// Implement the constructor, factory and encoding/decoding stuff for the
+// KsUnlinkItem class.
+//
+KS_IMPL_XDRNEW(KsUnlinkItem);
+KS_IMPL_XDRCTOR(KsUnlinkItem);
+
+
+bool
+KsUnlinkItem::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return link_path.xdrEncode(xdr)
+        && element_path.xdrEncode(xdr);
+} // KsUnlinkItem::xdrEncode
+
+
+bool
+KsUnlinkItem::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return link_path.xdrDecode(xdr)
+        && element_path.xdrDecode(xdr);
+} // KsUnlinkItem::xdrDecode
 
 
 // ---------------------------------------------------------------------------
@@ -265,7 +306,8 @@ KsDeleteObjResult::xdrEncode(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     return KsResult::xdrEncode(xdr)
-        && results.xdrEncode(xdr);
+        && (result == KS_ERR_OK ? results.xdrEncode(xdr) 
+                                : true);
 } // KsDeleteObjResult::xdrEncode
 
 
@@ -277,6 +319,100 @@ KsDeleteObjResult::xdrDecode(XDR *xdr)
         && (result == KS_ERR_OK ? results.xdrDecode(xdr) 
                                 : true);
 } // KsDeleteObjResult::xdrDecode
+
+
+// ---------------------------------------------------------------------------
+// Parameters and result stuff needed for the Link service.
+//
+KS_IMPL_XDRNEW(KsLinkParams);
+KS_IMPL_XDRCTOR(KsLinkParams);
+
+
+bool
+KsLinkParams::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return items.xdrEncode(xdr);
+} // KsLinkParams::xdrEncode
+
+
+bool
+KsLinkParams::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return items.xdrDecode(xdr);
+} // KsLinkParams::xdrDecode
+
+
+KS_IMPL_XDRNEW(KsLinkResult);
+KS_IMPL_XDRCTOR(KsLinkResult);
+
+
+bool
+KsLinkResult::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return KsResult::xdrEncode(xdr)
+        && (result == KS_ERR_OK ? results.xdrEncode(xdr) 
+                                : true);
+} // KsLinkResult::xdrEncode
+
+
+bool
+KsLinkResult::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return KsResult::xdrDecode(xdr)
+        && (result == KS_ERR_OK ? results.xdrDecode(xdr) 
+                                : true);
+} // KsLinkResult::xdrDecode
+
+
+// ---------------------------------------------------------------------------
+// Parameters and result stuff needed for the Unlink service.
+//
+KS_IMPL_XDRNEW(KsUnlinkParams);
+KS_IMPL_XDRCTOR(KsUnlinkParams);
+
+
+bool
+KsUnlinkParams::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return items.xdrEncode(xdr);
+} // KsUnlinkParams::xdrEncode
+
+
+bool
+KsUnlinkParams::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return items.xdrDecode(xdr);
+} // KsUnlinkParams::xdrDecode
+
+
+KS_IMPL_XDRNEW(KsUnlinkResult);
+KS_IMPL_XDRCTOR(KsUnlinkResult);
+
+
+bool
+KsUnlinkResult::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return KsResult::xdrEncode(xdr)
+        && (result == KS_ERR_OK ? results.xdrEncode(xdr) 
+                                : true);
+} // KsUnlinkResult::xdrEncode
+
+
+bool
+KsUnlinkResult::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return KsResult::xdrDecode(xdr)
+        && (result == KS_ERR_OK ? results.xdrDecode(xdr) 
+                                : true);
+} // KsUnlinkResult::xdrDecode
 
 
 /* End of ks/objmgrparams.cpp */

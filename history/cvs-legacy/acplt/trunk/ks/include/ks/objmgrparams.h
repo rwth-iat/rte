@@ -2,7 +2,7 @@
 #ifndef KS_OBJMGRPARAMS_INCLUDED
 #define KS_OBJMGRPARAMS_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.4 1998-12-03 17:05:04 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.5 1998-12-16 17:48:28 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -82,9 +82,28 @@ public:
     static KsLinkItem *xdrNew(XDR *);
 
     KsString        link_path;
-    KsString        new_member_path;
+    KsString        element_path;
     KsPlacementHint place;
 }; // class KsLinkItem
+
+
+// ---------------------------------------------------------------------------
+// Just for reasons for orthogonality, now comes the definition of an item to
+// be unlinked from a set of objects. The appropriate service will be defined
+// in some distance from here...
+//
+class KsUnlinkItem : public KsXdrAble {
+public:
+    KsUnlinkItem(XDR *, bool &);
+    KsUnlinkItem();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsUnlinkItem *xdrNew(XDR *);
+
+    KsString link_path;
+    KsString element_path;
+}; // class KsUnlinkItem
 
 
 // ---------------------------------------------------------------------------
@@ -184,6 +203,63 @@ public:
 
     KsArray<KS_RESULT> results;
 }; // class KsDeleteObjResult
+
+
+// ---------------------------------------------------------------------------
+// The request and reply classes of the Link service.
+//
+class KsLinkParams : public KsXdrAble {
+public:
+    KsLinkParams(XDR *, bool &);
+    KsLinkParams();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsLinkParams *xdrNew(XDR *);
+
+    KsArray<KsLinkItem> items;
+}; // class KsLinkParams
+
+
+class KsLinkResult : public KsResult {
+public:
+    KsLinkResult(XDR *, bool &);
+    KsLinkResult();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsLinkResult *xdrNew(XDR *);
+
+    KsArray<KS_RESULT> results;
+}; // class KsLinkResult
+
+
+// ---------------------------------------------------------------------------
+// The request and reply classes of the Unlink service.
+//
+class KsUnlinkParams : public KsXdrAble {
+    KsUnlinkParams(XDR *, bool &);
+    KsUnlinkParams();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsUnlinkParams *xdrNew(XDR *);
+
+    KsArray<KsUnlinkItem> items;
+}; // class KsUnlinkParams
+
+
+class KsUnlinkResult : public KsResult {
+public:
+    KsUnlinkResult(XDR *, bool &);
+    KsUnlinkResult();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsUnlinkResult *xdrNew(XDR *);
+
+    KsArray<KS_RESULT> results;
+}; // class KsUnlinkResult
 
 
 #endif
