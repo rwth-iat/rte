@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.39 2003-10-13 12:12:34 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.40 2003-10-13 12:52:17 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -33,13 +33,6 @@
 #if !PLT_SYSTEM_NT
 #include <unistd.h>
 #include <sys/socket.h>
-#endif
-
-
-#if !PLT_USE_BUFFERED_STREAMS
-#define GETPORT xp_port
-#else
-#define GETPORT getPort()
 #endif
 
 
@@ -534,7 +527,7 @@ KsManager::startServer()
         // accept TCP/IP connections.
         //
         _manager_port->unlock();
-        _manager_port->setValue(new KsIntValue(_tcp_transport->GETPORT));
+        _manager_port->setValue(new KsIntValue(_tcp_transport->getPort()));
         _manager_port->setState(KS_ST_GOOD);
         _manager_port->lock();
 
@@ -547,19 +540,12 @@ KsManager::startServer()
 	// let the _udp_transport member variable point to it. In this case
 	// we won't create a socket and a suitable transport here.
         //
-#if PLT_USE_BUFFERED_STREAMS
 	if ( !_udp_transport ) {
 	    //
 	    // Okay, let's create a socket and the corresponding transport
 	    // only if the manager writer hasn't done so.
 	    //
-#endif
-#if !PLT_USE_XTI
 	    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-#else
-	    int sock = t_open((const char *) getNetworkTransportDevice("udp"),
-			      O_RDWR, (struct t_info *) 0);
-#endif
 	    if ( sock >= 0 ) {
                 //
                 // Allow for reuse of IP address to cure problems with
@@ -591,77 +577,28 @@ KsManager::startServer()
 		my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 		my_addr.sin_port        = htons(_sock_port);
             
-#if PLT_USE_XTI
-		struct t_bind req;
-
-		req.addr.maxlen = sizeof(my_addr);
-		req.addr.len    = sizeof(my_addr);
-		req.addr.buf    = (char *) &my_addr;
-		req.qlen        = 5;
-
-		if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
-#else
 		if ( bind(sock, (struct sockaddr *) &my_addr, 
 			  sizeof(my_addr)) < 0 ) {
-#endif
 		    //
 		    // Failed to bind the socket. So close the socket and
 		    // bail out with an error message.
 		    //
 #if PLT_SYSTEM_NT
 		    closesocket(sock);
-#elif PLT_USE_XTI
-		    t_close(sock);
 #else
 		    close(sock);
 #endif
 		    PltLog::Error("KsManager::startServer(): "
 				  "could not bind the UDP socket.");
 		} else {
-#if !PLT_USE_BUFFERED_STREAMS
-		    _udp_transport = svcudp_create(sock);
-#else
 		    _udp_transport = new KssUDPXDRConnection(
 			sock, 15/* secs */, 15/* secs, but don't care here */);
-#endif
 		}
 	    }
-#if PLT_USE_BUFFERED_STREAMS
 	}
-#endif
 
         // TODO: send/receive buff sz
         if ( _udp_transport ) {
-#if !PLT_USE_BUFFERED_STREAMS
-            //
-            // Now register the dispatcher that should be called
-            // whenever there is a request for the KS program id
-            // and the correct version number.
-            //
-	    u_long ks_version;
-	    
-	    _is_ok = true;
-	    for ( ks_version = KS_PROTOCOL_VERSION;
-		  ks_version >= KS_MINPROTOCOL_VERSION;
-		  --ks_version ) {
-		if ( !svc_register(_udp_transport,
-				   KS_RPC_PROGRAM_NUMBER,
-				   ks_version,
-				   ks_c_dispatch,
-				   0) ) {  // Do not contact the portmapper!
-		    //
-		    // If registration fails, then destroy the transport and
-		    // bail out immediately.
-		    //
-		    svc_destroy(_udp_transport);
-		    _udp_transport = 0;
-		    PltLog::Error("KsManager::startServer(): "
-		                  "could not register UDP service with dispatcher");
-		    _is_ok = false;
-		    break;
-		}
-	    }
-#else
 	    _udp_transport->setAttentionPartner(&_attention_dispatcher);
 	    if ( KsConnectionManager::getConnectionManagerObject()->
 		   addConnection(*_udp_transport) ) {
@@ -674,7 +611,6 @@ KsManager::startServer()
         	              "could not add UDP transport to attention handler.");
         	_is_ok = false;
 	    }
-#endif
         } else {
             PltLog::Error("KsManager::startServer(): could not create UDP transport");
             _is_ok = false;
@@ -695,7 +631,7 @@ KsManager::startServer()
         if ( pmap_set(KS_RPC_PROGRAM_NUMBER, 
                       KS_PROTOCOL_VERSION,
                       IPPROTO_TCP,
-                      _tcp_transport->GETPORT)) {
+                      _tcp_transport->getPort())) {
             _registered = true;
         } else {
             PltLog::Error("KsManager::startServer(): "
@@ -706,7 +642,7 @@ KsManager::startServer()
         if ( pmap_set(KS_RPC_PROGRAM_NUMBER, 
                       KS_PROTOCOL_VERSION,
                       IPPROTO_UDP,
-                      _udp_transport->GETPORT)) {
+                      _udp_transport->getPort())) {
             _registered = true;
         } else {
             PltLog::Error("KsManager::startServer(): "
@@ -945,7 +881,7 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
         result.server.name = getServerName();
         result.server.protocol_version = getProtocolVersion();
 
-        result.port = _tcp_transport->GETPORT;
+        result.port = _tcp_transport->getPort();
         result.expires_at = KsTime(LONG_MAX);
         result.living = true;
         result.result = KS_ERR_OK;
@@ -1077,7 +1013,7 @@ KsmExpireManagerEvent::trigger()
         // 
         // Ok. The port value is valid.
         //
-        if (port == _manager._tcp_transport->GETPORT) {
+        if (port == _manager._tcp_transport->getPort()) {
             //
             // We are still registered. 
             // Reschedule event.
