@@ -11,16 +11,25 @@
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-PltPriorityQueue<T>::PltPriorityQueue(size_t cap) 
-: capacity(0), 
-  size(0), 
-  elems(0)
+PltPriorityQueue<T>::PltPriorityQueue(size_t growsize) 
+: a_growsize(growsize),
+  a_capacity(0), 
+  a_size(0), 
+  a_elems(0)
 {
-    PLT_PRECONDITION( cap > 0 );
-    grow(cap);
+    PLT_PRECONDITION( growsize > 0 );
+    grow(a_growsize);
     PLT_CHECK_INVARIANT();
 }
 
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+PltPriorityQueue<T>::~PltPriorityQueue() {
+    if (a_elems) {
+        delete [] a_elems;
+    }
+}
 //////////////////////////////////////////////////////////////////////
 
 #if PLT_DEBUG_INVARIANTS
@@ -30,18 +39,17 @@ bool
 PltPriorityQueue<T>::invariant() const
 {
     // allocation
-    if (capacity < size ) return false;
-    if (capacity > 0 && !elems ) return false;
+    if (a_capacity < a_size ) return false;
+    if (a_capacity > 0 && !a_elems ) return false;
 
     // partial ordering
-    for (size_t i = 0; i < (size+1)/2; ++i ) {
+    for (size_t i = 0; i < (a_size+1)/2; ++i ) {
         // first child must not be greater than parent
-        if ( lessThan(elems[2*i+1], elems[i]) ) {
+        if ( 2*i+1 < a_size && lessThan(a_elems[2*i+1], a_elems[i]) ) {
             return false;
         }
-        // second child -- if present -- must not be greater
-        // than parent
-        if ( 2*i+2 < size && lessThan(elems[2*i+2], elems[i]) ) {
+        // second child must not be greater than parent
+        if ( 2*i+2 < a_size && lessThan(a_elems[2*i+2], a_elems[i]) ) {
             return false;
         }
     }
@@ -56,25 +64,25 @@ template <class T>
 bool
 PltPriorityQueue<T>::grow(size_t cap)
 {
-    PLT_PRECONDITION( cap > 0 && cap >= size );
+    PLT_PRECONDITION( cap > 0 && cap >= a_size );
     
     
     T *p = new T[cap];
     if (!p) {
         return false;
     } else {
-        if (elems) {
-            // copy elems
-            T *s = elems;
+        if (a_elems) {
+            // copy a_elems
+            T *s = a_elems;
             T *d = p;
-            while (d < p+size) {
+            while (d < p + a_size) {
                 *d++ = *s++;
             }
             // clean up old array
-            delete[] elems;
+            delete[] a_elems;
         }
-        capacity = cap;
-        elems = p;
+        a_capacity = cap;
+        a_elems = p;
         return true;
     }
     PLT_CHECK_INVARIANT();
@@ -84,23 +92,29 @@ PltPriorityQueue<T>::grow(size_t cap)
 
 template <class T>
 bool
-PltPriorityQueue<T>::add(T x)
+PltPriorityQueue<T>::add(const T & x)
 {
-    if (size == capacity) {
-        if (!grow(2*capacity)) {
+    if (a_size == a_capacity) {
+        if (!grow(a_capacity+a_growsize)) {
             return false;
         }
     }
-    assert(size < capacity);
+    assert(a_size < a_capacity);
 
     // upheap
-    size_t i;
-    for (i = size++;
-         i > 0 && lessThan(x, elems[i/2]); 
-         i /= 2) {
-        elems[i] = elems[i/2];
+    size_t i = a_size++;
+    while (i>0) {
+        size_t j = (i-1)/2; // parent of i
+        if ( lessThan(x, a_elems[j]) ) {
+            // partial exchange
+            a_elems[i] = a_elems[j];
+            i = j;
+        } else {
+            // i is insertion point for x
+            break;
+        }
     }
-    elems[i] = x;
+    a_elems[i] = x;
     PLT_CHECK_INVARIANT();
     return true;
 }
@@ -113,28 +127,28 @@ PltPriorityQueue<T>::removeFirst()
 {
     PLT_PRECONDITION( ! isEmpty() );
 
-    T x(elems[0]);
-    T v(elems[size--]);
+    T x(a_elems[0]);
+    T v(a_elems[a_size--]);
     
     // TODO: may shrink here
     
     // downheap
     size_t j;
     size_t k;
-    for ( k = 0; k <= (size+1)/2; k = j ) {
+    for ( k = 0; k <= (a_size+1)/2; k = j ) {
         j = 2 * k + 1;
         // j is first child of k
-        if ( j + 1 < size && lessThan(elems[j+1] , elems[j] ) )  {
+        if ( j + 1 < a_size && lessThan(a_elems[j+1] , a_elems[j] ) )  {
             ++j;
         }
         // j is smaller child of k
-        if ( ! lessThan( elems[j], v ) ) {
+        if ( ! lessThan( a_elems[j], v ) ) {
             break;  // <<<<
         } else {
-            elems[k] = elems[j];
+            a_elems[k] = a_elems[j];
         }
     }
-    elems[k] = v;
+    a_elems[k] = v;
 
     PLT_CHECK_INVARIANT();
     return x;

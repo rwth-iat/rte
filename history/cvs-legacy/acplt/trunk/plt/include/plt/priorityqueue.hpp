@@ -14,9 +14,16 @@
 template <class T>
 class PltPriorityQueue : PltDebuggable {
 public:
-    PltPriorityQueue(size_t cap);
+    PltPriorityQueue(size_t growsize=16);
+    virtual ~PltPriorityQueue();
+
+    // accessors
     bool isEmpty() const;
-    bool add(T elem);
+    size_t size() const;
+    const T & peek() const;
+
+    // modifiers
+    bool add(const T & elem);
     T removeFirst();
 
 #if PLT_DEBUG_INVARIANTS
@@ -24,47 +31,48 @@ public:
 #endif
 
 protected:
-    virtual bool lessThan(T, T) const = 0;
+    virtual bool lessThan(const T& , const T&) const;
 
 private:
     PltPriorityQueue(const PltPriorityQueue &);     // forbidden
     PltPriorityQueue &
         operator = (const PltPriorityQueue &);      // forbidden
-    size_t capacity;           // max num of elems 
-    size_t size;               // num of elements in queue
-    T* elems;                  // array of elements
+    size_t a_growsize;           // grow this many elements
+    size_t a_capacity;           // max num of elems 
+    size_t a_size;               // num of elements in queue
+    T* a_elems;                  // array of elements
+    //
     bool grow(size_t);
 };
-
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-class PltSimplePQ : public PltPriorityQueue<T> {
-public:
-    PltSimplePQ(size_t cap);
-protected:
-    virtual bool lessThan(T,T) const;
-};
-
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline
-PltSimplePQ<T>::PltSimplePQ(size_t cap)
-: PltPriorityQueue<T>(cap)
-{
-}
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
 bool
 PltPriorityQueue<T>::isEmpty() const 
 {
-    return size == 0;
+    return a_size == 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+size_t
+PltPriorityQueue<T>::size() const
+{
+    return a_size;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+const T &
+PltPriorityQueue<T>::peek() const
+{
+    PLT_PRECONDITION( !isEmpty() );
+    return a_elems[0];
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -72,12 +80,11 @@ PltPriorityQueue<T>::isEmpty() const
 
 template <class T>
 inline bool
-PltSimplePQ<T>::lessThan(T t1, T t2) const {
+PltPriorityQueue<T>::lessThan(const T & t1, const T & t2) const {
     return t1 < t2;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-
 
 #endif
