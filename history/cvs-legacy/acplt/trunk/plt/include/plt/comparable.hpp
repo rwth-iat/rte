@@ -24,7 +24,97 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////
+
+template <class T>
+class PltPtrComparable
+{
+    friend bool operator <  ( PltPtrComparable<T> t1, PltPtrComparable<T> t2);
+    friend bool operator >  ( PltPtrComparable<T> t1, PltPtrComparable<T> t2);
+    friend bool operator != ( PltPtrComparable<T> t1, PltPtrComparable<T> t2);
+    friend bool operator == ( PltPtrComparable<T> t1, PltPtrComparable<T> t2);
+    friend bool operator <= ( PltPtrComparable<T> t1, PltPtrComparable<T> t2);
+    friend bool operator >= ( PltPtrComparable<T> t1, PltPtrComparable<T> t2);
+public:
+    operator T * ();
+
+    PltPtrComparable(T * = 0);
+
+private:
+    T *a_p;
+};
+
+//////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool 
+operator <  ( PltPtrComparable<T> t1, PltPtrComparable<T> t2) 
+{
+    return *t1.a_p < *t2.a_p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool 
+operator >  ( PltPtrComparable<T> t1, PltPtrComparable<T> t2) 
+{
+    return *t1.a_p > *t2.a_p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool 
+operator <=  ( PltPtrComparable<T> t1, PltPtrComparable<T> t2) 
+{
+    return *t1.a_p <= *t2.a_p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool 
+operator >=  ( PltPtrComparable<T> t1, PltPtrComparable<T> t2) 
+{
+    return *t1.a_p >= *t2.a_p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool 
+operator ==  ( PltPtrComparable<T> t1, PltPtrComparable<T> t2) 
+{
+    return *t1.a_p == *t2.a_p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool 
+operator !=  ( PltPtrComparable<T> t1, PltPtrComparable<T> t2) 
+{
+    return *t1.a_p != *t2.a_p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltPtrComparable<T>::operator T * ()
+{
+    return a_p;
+}
+
+template <class T>
+inline
+PltPtrComparable<T>::PltPtrComparable(T *p)
+: a_p(p)
+{
+}
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 inline bool
