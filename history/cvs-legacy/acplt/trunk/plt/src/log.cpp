@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.6 1997-07-18 14:02:56 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.7 1999-01-08 13:12:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -125,12 +125,14 @@ PltLog::GetLog()
 #if PLT_SYSTEM_HPUX
 // prototypes for syslog functions, copied from syslog(3C) page.
 
+#if 0 // HPUX 10.20
 extern "C" {
 int syslog(int priority, const char *message, ...);
 int openlog(const char *ident, int logopt, int facility);
 int closelog(void);
 int setlogmask(int maskpri);
 };
+#endif
 
 #endif // PLT_SYSTEM_HPUX
 
