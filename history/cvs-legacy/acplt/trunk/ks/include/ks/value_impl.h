@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_VALUE_IMPL_INCLUDED
 #define KS_VALUE_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/value_impl.h,v 1.4 1998-10-01 09:59:10 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/value_impl.h,v 1.5 1999-04-22 15:27:31 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -47,6 +47,11 @@
 #if PLT_COMPILER_WATCOM
 #include "ks/array_builtins.h"
 #endif
+#endif
+
+// Borland's C++ Builder now needs to see the buildins
+#if PLT_COMPILER_BORLAND
+#include "ks/array_builtins.h"
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -98,6 +103,7 @@ KsVecValueBase<T>::xdrDecodeVariant(XDR *xdr)
 {
     return KsArray<T>::xdrDecode(xdr);
 }
+
 
 //////////////////////////////////////////////////////////////////////
 #endif // KS_VALUE_IMPL_INCLUDED

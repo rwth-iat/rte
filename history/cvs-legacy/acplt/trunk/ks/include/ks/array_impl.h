@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_IMPL_INCLUDED
 #define KS_ARRAY_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.6 1997-06-20 14:55:54 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.7 1999-04-22 15:27:14 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,6 +45,11 @@
 #include "ks/array.h"
 #include "plt/array_impl.h"
 #endif
+
+#if PLT_COMPILER_BORLAND >= 0x0530
+#include "ks/array_builtins.h"
+#endif
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -118,6 +123,7 @@ KsArray<T>::xdrNew(XDR *xdrs)
     }
     return p;
 }
+
 
 //////////////////////////////////////////////////////////////////////
 #endif // KS_ARRAY_IMPL_INCLUDED

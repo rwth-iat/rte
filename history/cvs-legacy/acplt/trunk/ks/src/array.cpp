@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.7 1999-01-08 13:09:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.8 1999-04-22 15:27:39 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -48,6 +48,10 @@
 #if !PLT_COMPILER_BORLAND  && !PLT_COMPILER_DECCXX
 #include "ks/array_builtins.h"
 #endif
+
+//#if PLT_COMPILER_BORLAND >= 0x0530
+//#include "ks/array_builtins.h"
+//#endif
 
 //////////////////////////////////////////////////////////////////////
 // explicit instantiation
