@@ -61,6 +61,7 @@ depend : ../depend.nt
 
 .depend:
 	touch .depend
+	rm -f ../depend.nt
 
 clean :
 	rm -f *.o

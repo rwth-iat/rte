@@ -53,6 +53,7 @@ depend : ../depend.nt
 
 .depend :
 	touch .depend
+	rm -f ../depend.nt
 
 include .depend
 
@@ -65,13 +66,3 @@ clean :
 mrproper :	clean
 	rm -f libks.a .depend $(TESTS)
 	for i in t*_inst.h ; do echo > $$i ; done
-
-
-
-
-
-
-
-
-
-
