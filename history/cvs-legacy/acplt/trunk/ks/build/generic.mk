@@ -2,24 +2,17 @@
 
 CXX_LIBKS_SOURCES = \
 	array.cpp \
-	avmodule.cpp \
 	avticket.cpp \
-	client.cpp \
-	clntpath.cpp \
-	commobject.cpp \
 	from_local.cpp \
-	package.cpp \
 	path.cpp \
 	props.cpp \
 	register.cpp \
 	result.cpp \
 	rpc.cpp \
 	serviceparams.cpp \
-	sorter.cpp \
 	string.cpp \
 	time.cpp \
 	value.cpp \
-	variables.cpp \
 	xdr.cpp \
 	mask.cpp \
 	event.cpp \
@@ -34,15 +27,23 @@ CXX_LIBKSSVR_SOURCES = \
 	svrrpcctx.cpp \
 	svrsimpleobjects.cpp
 
+CXX_LIBKSCLN_SOURCES= \
+	avmodule.cpp \
+	client.cpp \
+	clntpath.cpp \
+	commobject.cpp \
+	package.cpp \
+	sorter.cpp \
+	variables.cpp
+	
 LIBKS_OBJECTS1 = \
 	array$(O) \
 	avticket$(O) \
-	clntpath$(O) \
 	event$(O) \
-	from_local$(O)
+	from_local$(O) \
+	mask$(O) \
 
 LIBKS_OBJECTS2 = \
-	package$(O) \
 	path$(O) \
 	props$(O) \
 	register$(O) \
@@ -51,24 +52,13 @@ LIBKS_OBJECTS2 = \
 	serviceparams$(O)
 
 LIBKS_OBJECTS3 = \
-	mask$(O)
-
-LIBKS_OBJECTS4 = \
-	time$(O) \
-	value$(O) \
-	xdr$(O) \
-	templates$(O)
-
-LIBKS_OBJECTS5 = \
 	string$(O) \
-	sorter$(O) \
-	avmodule$(O) \
-	client$(O) \
-	commobject$(O) \
-	variables$(O)
+	time$(O) \
+	templates$(O) \
+	value$(O) \
+	xdr$(O)
 
-LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2) $(LIBKS_OBJECTS3) \
-	$(LIBKS_OBJECTS4) $(LIBKS_OBJECTS5)
+LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2) $(LIBKS_OBJECTS3) 
 
 LIBKSSVR_OBJECTS = \
 	manager$(O) \
@@ -79,6 +69,15 @@ LIBKSSVR_OBJECTS = \
 	svrrpcctx$(O) \
 	svrsimpleobjects$(O)
 
+LIBKSCLN_OBJECTS = \
+	avmodule$(O) \
+	client$(O) \
+	clntpath$(O) \
+	commobject$(O) \
+	package$(O) \
+	sorter$(O) \
+	variables$(O)
+
 CXX_EXAMPLES_SOURCES = \
 	tmanager.cpp \
 	tmanager1.cpp \
@@ -86,36 +85,48 @@ CXX_EXAMPLES_SOURCES = \
 	tsclient1.cpp \
 	tserver.cpp \
 	tserver1.cpp \
+	tshell.cpp \
 	ttree.cpp \
 	ttree1.cpp
 
 EXAMPLES_OBJECTS = \
-	tmanager$O \
-	tmanager1$O \
-	tsclient$O \
-	tsclient1$O \
-	tserver$O \
-	tserver1$O \
-	ttree$O \
-	ttree1$O
+	tmanager$(O) \
+	tmanager1$(O) \
+	tsclient$(O) \
+	tsclient1$(O) \
+	tserver$(O) \
+	tserver1$(O) \
+	tshell$(O) \
+	ttree$(O) \
+	ttree1$(O)
 
-TESTS = tmanager$(EXE) tserver$(EXE) tsclient$(EXE) ttree$(EXE)
+EXAMPLES = \
+	tmanager$(EXE) tserver$(EXE) tsclient$(EXE) \
+	ttree$(EXE) tshell$(EXE)
 
-CXX_SOURCES = $(CXX_LIBKS_SOURCES) $(CXX_EXAMPLES_SOURCES)
+CXX_SOURCES = \
+	$(CXX_LIBKS_SOURCES) \
+	$(CXX_LIBKSSVR_SOURCES) \
+	$(CXX_LIBKSCLN_SOURCES) \
+	$(CXX_EXAMPLES_SOURCES)
 
 all :	$(LIBKS)
 
-tests :	$(TESTS)
+examples :	$(EXAMPLES)
 
 $(LIBKS) : $(LIBKS_OBJECTS)
 
-tmanager$(EXE) : tmanager$(O) tmanager1$(O) $(LIBKS)
+$(LIBKSSVR) : $(LIBKSSVR_OBJECTS)
 
-tserver$(EXE) : tserver$(O) tserver1$(O) $(LIBKS)
+$(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
 
-tsclient$(EXE) : tsclient$(O) tsclient1$(O) $(LIBKS)
+tmanager$(EXE) : tmanager$(O) tmanager1$(O) $(LIBKSSVR) $(LIBKS)
 
-ttree$(EXE) : ttree$(O) ttree1$(O) $(LIBKS)
+tserver$(EXE) : tserver$(O) tserver1$(O) $(LIBKSSVR) $(LIBKS)
 
+tsclient$(EXE) : tsclient$(O) tsclient1$(O) $(LIBKSSVR) $(LIBKS)
 
+ttree$(EXE) : ttree$(O) ttree1$(O) $(LIBKSCLN) $(LIBKS)
+
+tshell$(EXE) : tshell$(O) $(LIBKSCLN) $(LIBKS)
 

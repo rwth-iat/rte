@@ -34,15 +34,20 @@ LIBPLT = $(PLT_DIR)/build/$(PLATFORM)/libplt.a
 
 LIBKS = libks.a
 
+LIBKSSVR = libkssvr.a
+
+LIBKSCLN = libkscln.a
+
 VPATH = ../../src ../../examples
 
 include ../generic.mk
 
-all: manager
-
-examples: tmanager.exe tserver.exe tsclient.exe ttree.exe
+all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN) manager
 
 $(LIBKS): $(LIBKS_OBJECTS)
+	ar r $@ $?
+
+$(LIBKSSVR): $(LIBKSSVR_OBJECTS)
 	ar r $@ $?
 
 ../depend.nt : $(CXX_SOURCES) unix_manager.cpp
@@ -57,12 +62,17 @@ depend : ../depend.nt
 
 include .depend
 
-manager:	unix_manager.o $(LIBKS)
+manager:	unix_manager.o $(LIBKSSVR) $(LIBKS)
 	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) $(CXX_LIBS)
 
 clean :
 	rm -f *.o core
 
 mrproper :	clean
-	rm -f libks.a .depend $(TESTS)
+	rm -f \
+		$(LIBKS) $(LIBKSSVR) $(LIBKSCLN) \
+		.depend \
+		manager $(TESTS)
 	for i in t*_inst.h ; do echo > $$i ; done
+
+
