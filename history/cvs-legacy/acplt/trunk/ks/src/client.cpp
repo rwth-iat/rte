@@ -446,7 +446,7 @@ KscServer::getServerDesc(struct hostent *hp,
                         xdr_void, 0, 
                         KSC_UDP_TIMEOUT);
     if(errcode != RPC_SUCCESS) {
-        cout << "ping failed, error code " << errcode << endl;
+        cout << "ping failed, error code " << (unsigned) errcode << endl;
     }
     else {
         cout << "manager pinged" << endl;
@@ -477,7 +477,7 @@ KscServer::getServerDesc(struct hostent *hp,
     if( errcode != RPC_SUCCESS ) {
         status = KscRPCCallFailed;
 #if PLT_DEBUG
-        cout << "function call failed, error code " << errcode << endl;
+        cout << "function call failed, error code " << (unsigned) errcode << endl;
 #endif
         return false;
     }
