@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_ARRAY_INCLUDED
 #define PLT_ARRAY_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.7 1997-04-10 14:09:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.8 1997-09-02 15:10:52 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -170,6 +170,15 @@ PltArray<T>::operator [] (size_t i) const
 {
     PLT_PRECONDITION( i < a_size );
     return a_array[i];
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline T*
+PltArray<T>::getPtr() const
+{
+    return a_array.getPtr();
 }
 
 //////////////////////////////////////////////////////////////////////
