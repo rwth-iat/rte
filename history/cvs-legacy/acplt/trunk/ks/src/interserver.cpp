@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.6 2000-04-10 12:47:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.7 2000-04-10 15:07:30 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -322,8 +322,8 @@ bool KssInterKsServerConnection::send(u_long serviceid, KsXdrAble &params)
     //
     // Use the A/V NONE scheme at this time...
     //
-    u_long avscheme = 0;
-    bool ok = xdr_u_long(_cln_con->getXdr(), &avscheme);
+    enum_t avscheme = 0;
+    bool ok = xdr_enum(_cln_con->getXdr(), &avscheme);
     if ( avscheme == KS_AUTH_NONE ) {
 	ok &= params.xdrEncode(_cln_con->getXdr());
     } else {
