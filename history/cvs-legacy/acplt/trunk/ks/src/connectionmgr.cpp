@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.8 1999-04-22 15:34:33 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.9 1999-09-06 07:21:36 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -55,7 +55,7 @@
 
 //
 // Ah, yes... compile the whole stuff only if we want to use the buffered
-// stream magic. Otherwise we can skip this source completely.
+// stream magic. Otherwise we can skip this source module completely.
 //
 #if PLT_USE_BUFFERED_STREAMS
 
@@ -145,9 +145,9 @@ KssConnectionManager::KssConnectionManager()
 #if PLT_CNX_MGR_USE_HT
     //
     // For some "new technology" os(?) we´ll need to allocate a hash table
-    // in order to speed up mapping from fds to connection items. In
-    // addition, all entries of the _connections table are linked into a
-    // list of free entries. That speeds up finding a free slot quite good.
+    // in order to speed up mapping fds to connection items. In addition,
+    // all entries of the _connections table are linked into a list of
+    // free entries. That speeds up finding a free slot quite a bit.
     //
     int i;
     for ( i = 0; i < _fdset_size; ++i ) {
@@ -400,23 +400,28 @@ void KssConnectionManager::processTimeout()
 	    //
 	    // A connection has timed out...
 	    //
-	    KssConnection *con = item->_connection;
-	    if ( con->isAutoDestroyable() ) {
-		//
-		// Force a close on the connection. By deleting the
-		// connection object, this is responsible for shutting
-		// down the connection as soon as possible.
-		//
-		removeConnection(*con);
-		con->shutdown();
-		delete con;
-	    } else {
-		//
-		// We're not allowed to doom this particular connection,
-		// although it had a timeout. So we're just resetting it,
-		// so it'll tell us what io mode it is now in.
-		//
-		trackCnxIoMode(*item, con->reset(true));
+	    KssConnection                   *con = item->_connection;
+	    KssConnection::ConnectionIoMode  iomode = con->timedOut();
+
+	    trackCnxIoMode(*item, iomode);
+	    if ( iomode & KssConnection::CNX_IO_DEAD ) {
+		if ( con->isAutoDestroyable() ) {
+		    //
+		    // Force a close on the connection. By deleting the
+		    // connection object, this is responsible for shutting
+		    // down the connection as soon as possible.
+		    //
+		    removeConnection(*con);
+		    con->shutdown();
+		    delete con;
+		} else {
+		    //
+		    // We're not allowed to doom this particular connection,
+		    // although it had a timeout. So we're just resetting it,
+		    // so it'll tell us what io mode it is now in.
+		    //
+		    trackCnxIoMode(*item, con->reset());
+		}
 	    }
 	    item = next;
 	} else {
@@ -490,7 +495,7 @@ int KssConnectionManager::processConnections(fd_set &readables,
 		    con->shutdown();
 		    delete con;
 		} else {
-		    trackCnxIoMode(*item, con->reset(false));
+		    trackCnxIoMode(*item, con->reset());
 		}
 	    }
 	}
@@ -537,7 +542,7 @@ int KssConnectionManager::processConnections(fd_set &readables,
 		    con->shutdown();
 		    delete con;
 		} else {
-		    trackCnxIoMode(*item, con->reset(false));
+		    trackCnxIoMode(*item, con->reset());
 		}
 	    }
 	}
@@ -670,7 +675,7 @@ bool KssConnectionManager::shutdownConnections(long secs)
 			con->shutdown();
 			delete con;
 		    } else {
-			trackCnxIoMode(*item, con->reset(false));
+			trackCnxIoMode(*item, con->reset());
 		    }
 		}
 	    }
@@ -733,7 +738,7 @@ bool KssConnectionManager::trackConnection(KssConnection &con)
 	    delete &con;
 	    return true;
 	}
-	con.reset(false); // Try to reset nevertheless...
+	con.reset(); // Try to reset nevertheless...
     }
     return false;
 } // KssConnectionManager::trackConnection
@@ -751,7 +756,7 @@ bool KssConnectionManager::resetConnection(KssConnection &con)
     _KssConnectionItem *item = getConnectionItem(fd);
     if ( item && item->_connection ) {
 	if ( con.getState() != KssConnection::CNX_STATE_DEAD ) {
-    	    trackCnxIoMode(*item, con.reset(false));
+    	    trackCnxIoMode(*item, con.reset());
 	    if ( con.getState() != KssConnection::CNX_STATE_DEAD ) {
 		return true;
 	    }
