@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.10 1997-09-03 14:09:08 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.11 1997-09-09 14:19:23 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,7 +53,7 @@ extern int get_myaddress(struct sockaddr_in *);
 };
 #endif
 
-#if PLT_SYSTEM_LINUX
+#if PLT_SYSTEM_LINUX || PLT_SYSTEM_IRIX
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.7 1997-07-19 13:18:51 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.8 1997-09-09 14:20:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -130,7 +130,7 @@ PltTime::now(long secs_arg, long usecs_arg)
 #endif
 
 //////////////////////////////////////////////////////////////////////
-#if PLT_SYSTEM_LINUX || PLT_SYSTEM_HPUX || PLT_SYSTEM_SOLARIS
+#if PLT_SYSTEM_LINUX || PLT_SYSTEM_HPUX || PLT_SYSTEM_SOLARIS || PLT_SYSTEM_IRIX
 
 PltTime
 PltTime::now(long secs, long usecs)
