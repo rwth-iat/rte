@@ -527,6 +527,8 @@ main(int argc, char *argv[])
     readPackage(all);
 
     cout << "finished" << endl;
+
+    return 0;
 }
 
 
