@@ -178,7 +178,7 @@ class KsTimeSel
     : public KsSelector
 {
 public:
-    KsTimeSel() {}
+    KsTimeSel() : ip_mode(KS_IPM_DEFAULT) {}
 
     enum_t xdrTypeCode() const { return KS_HSELT_TIME; }
 

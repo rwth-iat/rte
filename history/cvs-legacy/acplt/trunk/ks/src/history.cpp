@@ -74,7 +74,7 @@ KscHistory::setStringSelector(KsString id,
 bool
 KscHistory::getParts(KsList<KsProjPropsHandle> &parts)
 {
-    if( !hasValidPath() ) return 0;
+    if( !hasValidPath() ) return false;
 
     KscServerBase *server = getServer();
     if( !server ) {

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.20 1998-07-15 10:02:34 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.21 1998-09-24 12:54:33 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -1128,8 +1128,6 @@ _KscPackageBase::copyGetVarResults(
 		// variable. So set the current properties of the
 		// associated variable object.
 		//
-                // TODO: markusj: what to do?
-		//
                 ok &= sorted_vars[count]->setCurrProps(*cp);
                 sorted_vars[count]->fDirty = false;
                 sorted_vars[count]->_last_result = KS_ERR_OK;
@@ -1238,7 +1236,7 @@ _KscPackageBase::optimizePaths(
     size_t to_copy = sorted_vars.size();
     paths[0] = sorted_vars[0]->getPathAndName();
 
-#if PLT_DEBUG
+#if PLT_DEBUG_VERBOSE
     cout << "Optimizing paths:" << endl;
     cout << setw(25) << "absolute" << setw(25) << "relative" << endl;
     cout << setw(25) << paths[0] << endl;
@@ -1248,7 +1246,7 @@ _KscPackageBase::optimizePaths(
         paths[count] = 
             sorted_vars[count]->getPathAndName().relTo(
                 sorted_vars[count-1]->getPathAndName());
-#if PLT_DEBUG
+#if PLT_DEBUG_VERBOSE
         cout << setw(25) << sorted_vars[count]->getPathAndName()
              << setw(25) << paths[count]
              << endl;
