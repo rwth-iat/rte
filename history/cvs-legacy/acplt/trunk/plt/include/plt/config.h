@@ -62,7 +62,11 @@
 #define PLT_SYSTEM_OS2 0
 #endif
 
-#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_SOLARIS + PLT_SYSTEM_NT + PLT_SYSTEM_OS2 != 1
+#ifndef PLT_SYSTEM_OPENVMS
+#define PLT_SYSTEM_OPENVMS 0
+#endif
+
+#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_SOLARIS + PLT_SYSTEM_NT + PLT_SYSTEM_OS2 + PLT_SYSTEM_OPENVMS != 1
 #error Must define exactly one system!
 #endif
 
@@ -124,6 +128,12 @@
 #define PLT_COMPILER_BORLAND 0
 #endif
 
+#ifdef __DECCXX
+#define PLT_COMPILER_DECCXX __DECCXX
+#else 
+#define PLT_COMPILER_DECCXX 0
+#endif
+
 #if PLT_COMPILER_GCC
 #define PLT_SIMULATE_BOOL 0
 #define PLT_SIMULATE_RTTI 1
@@ -146,6 +156,7 @@
 #define PLT_RETTYPE_OVERLOADABLE 0
 #define PLT_POSTFIX_OVERLOADABLE 0
 #define PLT_INSTANTIATE_TEMPLATES 0
+#define PLT_SEE_ALL_TEMPLATES 1
 
 #endif /* PLT_COMPILER_MSVC */
 
@@ -167,6 +178,15 @@
 #define PLT_SEE_ALL_TEMPLATES 1
 #define _declspec(x) __declspec(x)
 #endif
+
+#if PLT_COMPILER_DECCXX
+#define PLT_SIMULATE_BOOL 1
+#define PLT_SIMULATE_RTTI 1
+#define PLT_RETTYPE_OVERLOADABLE 0
+#define PLT_ARRAY_NEW_OVERLOADABLE 0
+#define PLT_SEE_ALL_TEMPLATES 0
+#define PLT_INSTANTIATE_TEMPLATES 1
+#endif /* PLT_COMPILER_DECCXX */
 
 #ifndef PLT_SIMULATE_BOOL
 #define PLT_SIMULATE_BOOL 0			/* Is bool not defined by the system? */
@@ -207,9 +227,9 @@ enum { false=0, true=1 };
 #endif
 
 #if PLT_RETTYPE_OVERLOADABLE
-#define PLT_RETTYPE_CAST(typ,expr) (expr) 
+#define PLT_RETTYPE_CAST(typ) 
 #else
-#define PLT_RETTYPE_CAST(typ,expr) (dynamic_cast< typ > (expr)) 
+#define PLT_RETTYPE_CAST(typ) typ
 #endif
 
 #endif /* PLT_CONFIG.H */

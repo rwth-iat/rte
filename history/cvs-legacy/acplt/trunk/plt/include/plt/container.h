@@ -47,6 +47,14 @@
 #include <stdlib.h>
 
 //////////////////////////////////////////////////////////////////////
+
+#if PLT_RETTYPE_OVERLOADABLE
+#define PltArrayIterator_THISTYPE(T) PltArrayIterator<T>
+#else
+#define PltArrayIterator_THISTYPE(T) PltIterator_<T>
+#endif
+
+//////////////////////////////////////////////////////////////////////
 // Iterator interfaces
 //////////////////////////////////////////////////////////////////////
 // PltIterators iterate in one "direction" over a container,
@@ -62,9 +70,10 @@ template<class T>
 class PltIterator_
 {
 public:
+    typedef PltIterator_ THISTYPE;
     virtual ~PltIterator_() { }
-    virtual operator const void * () const = 0;   // remaining element?
-    virtual PltIterator_ & operator ++ () = 0;     // advance
+    virtual operator bool () const = 0;   // remaining element?
+    virtual THISTYPE & operator ++ () = 0;        // advance
     virtual void toStart() = 0;                   // go to the beginning
 };
 
@@ -76,9 +85,15 @@ class PltIterator
 : public PltIterator_<T>
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef PltIterator THISTYPE;
+#define PltIterator_THISTYPE(T) PltIterator<T>
+#else
+#define PltIterator_THISTYPE(T) PltIterator_<T>
+#endif
     virtual const T & operator * () const;        //  /current element
     virtual const T * operator -> () const;       //  \override at least one!
-    virtual PltIterator & operator ++ () = 0;     // advance
+    virtual THISTYPE & operator ++ () = 0;        // advance
     virtual void toStart() = 0;                   // go to the beginning
 };
 
@@ -90,8 +105,11 @@ class PltHandleIterator
 : public PltIterator_<T>
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef PltHandleIterator THISTYPE;
+#endif
     virtual PltPtrHandle<T> operator * () const = 0; // current element
-    virtual PltHandleIterator & operator ++ () = 0;  // advance
+    virtual THISTYPE & operator ++ () = 0;  // advance
     virtual void toStart() = 0;                      // go to the beginning
 };
 
@@ -101,8 +119,11 @@ public:
 template <class T>
 class PltBidirIterator : public PltIterator<T>
 {
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef PltBidirIterator THISTYPE;
+#endif
 public:
-    virtual PltBidirIterator & operator -- () = 0;  // step backwards
+    virtual THISTYPE & operator -- () = 0;  // step backwards
     virtual void toEnd() = 0;                       // go to the end
 };
 
@@ -129,7 +150,7 @@ class PltContainer
 {
 public:
     virtual size_t size() const;
-    virtual PltIterator<T> * newIterator() const = 0;
+    virtual PltIterator<T>::THISTYPE * newIterator() const = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -140,7 +161,7 @@ class PltHandleContainer
 {
 public:
     virtual size_t size() const;
-    virtual PltHandleIterator<T> * newIterator() const = 0;
+    virtual PltHandleIterator<T>::THISTYPE * newIterator() const = 0;
 };
 
 
@@ -159,7 +180,7 @@ public:
 
     virtual const T & operator[] (size_t idx) const = 0;
 
-    virtual PltArrayIterator<T> * newIterator() const;
+    virtual PltArrayIterator_THISTYPE(T) * newIterator() const;
 };
 
 
@@ -172,14 +193,17 @@ class PltArrayIterator
 : public PltBidirIterator<T>
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef PltArrayIterator THISTYPE;
+#endif
     PltArrayIterator(const PltArrayed<T> &);
 
     // BidirIterator interface
-    virtual operator const void * () const;       // remaining element?
+    virtual operator bool () const;       // remaining element?
     virtual const T & operator * () const;        // current element
-    virtual PltArrayIterator & operator ++ ();    // advance
+    virtual THISTYPE & operator ++ ();            // advance
     virtual void toStart();                       // go to the beginning
-    virtual PltArrayIterator & operator -- ();    // step backwards
+    virtual THISTYPE & operator -- ();            // step backwards
     virtual void toEnd();                         // go to the end
 private:
     const PltArrayed<T> & a_cont;
@@ -231,10 +255,9 @@ PltArrayIterator<T>::PltArrayIterator(const PltArrayed<T> & a)
 
 template <class T>
 inline
-PltArrayIterator<T>::operator const void * () const
+PltArrayIterator<T>::operator bool () const
 {
-    return ( a_idx != (size_t) -1 && a_idx < a_cont.size() ) 
-        ? this : 0;
+    return ( a_idx != (size_t) -1 && a_idx < a_cont.size() );
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -250,7 +273,7 @@ PltArrayIterator<T>::operator * () const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltArrayIterator<T> & 
+inline PltArrayIterator_THISTYPE(T) & 
 PltArrayIterator<T>::operator ++ ()
 {
     a_idx = ( a_idx == (size_t) -1 ) ?  0 : a_idx + 1;
@@ -270,7 +293,7 @@ PltArrayIterator<T>::toStart()
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltArrayIterator<T> & 
+inline PltArrayIterator_THISTYPE(T) & 
 PltArrayIterator<T>::operator -- ()
 {
     a_idx = ( a_idx == 0 ) ? (size_t) -1 : a_idx - 1;
@@ -291,7 +314,7 @@ PltArrayIterator<T>::toEnd()
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltArrayIterator<T> *
+inline PltArrayIterator_THISTYPE(T) *
 PltArrayed<T>::newIterator() const
 {
     return new PltArrayIterator<T>(*this);

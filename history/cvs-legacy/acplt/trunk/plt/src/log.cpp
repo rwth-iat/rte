@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.5 1997-05-05 06:52:45 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.6 1997-07-18 14:02:56 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -248,7 +248,6 @@ PltCerrLog::PltCerrLog(const char *ident)
 }
 
 //////////////////////////////////////////////////////////////////////
-#if !PLT_COMPILER_MSVC
 
 PltCerrLog::~PltCerrLog()
 {
@@ -256,7 +255,7 @@ PltCerrLog::~PltCerrLog()
         delete[] _ident;
     }
 }
-#endif
+
 //////////////////////////////////////////////////////////////////////
 
 void

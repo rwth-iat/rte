@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.10 1997-05-30 13:04:26 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.11 1997-07-18 14:02:49 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -90,6 +90,14 @@ class PltHashIterator_base;        // "private" implementation class
 //
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_RETTYPE_OVERLOADABLE
+#define PltHashIterator_THISTYPE(K,V) PltHashIterator<K,V>
+#else
+#define PltHashIterator_THISTYPE(K,V) PltIterator_< PltAssoc<K,V> >
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
 template <class K, class V>
 class PltHashTable
 : public PltHashTable_<K,V>
@@ -176,11 +184,14 @@ class PltHashIterator
   private PltHashIterator_base
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef PltHashIterator THISTYPE;
+#endif
     PltHashIterator(const PltHashTable_<K,V> & t);
-    virtual operator const void * () const;                 // termination
+    virtual operator bool () const;                 // termination
     virtual const PltAssoc<K,V> * operator -> () const;     // current element
 
-    virtual PltIterator< PltAssoc<K,V> > & operator ++ ();  // advance
+    virtual THISTYPE & operator ++ ();  // advance
     virtual void toStart();                                 // from beginning
 };
 
@@ -248,7 +259,8 @@ class PltHashTable_
 public:
     PltHashTable_(size_t mincap=11, 
                  float highwater=0.8, 
-                 float lowwater=0.4);
+                 float lowwater=0.4)
+        : PltHashTable_base(mincap, highwater, lowwater) { }
     virtual ~PltHashTable_();
 
     // accessors
@@ -265,7 +277,7 @@ public:
     virtual bool remove(const K&, V&);
 
     // container interface
-    PltHashIterator<K,V> * newIterator() const;
+    PltHashIterator_THISTYPE(K,V) * newIterator() const;
     size_t size() const;
 
 protected:
@@ -298,7 +310,8 @@ PltHashTable_base::size() const
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-
+// Microsoft bug
+#if 0
 template <class K, class V>
 inline
 PltHashTable_<K,V>::PltHashTable_(size_t mincap, 
@@ -307,7 +320,7 @@ PltHashTable_<K,V>::PltHashTable_(size_t mincap,
 : PltHashTable_base(mincap, highwater, lowwater)
 {
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////
 
 template <class K, class V>
@@ -457,7 +470,7 @@ inline bool
 PltKeyPtr<T>::operator == (const PltKeyPtr & rhs) const
 {
     return *_p == *rhs._p;
-};
+}
     
 
 //////////////////////////////////////////////////////////////////////
@@ -505,7 +518,7 @@ inline bool
 PltKeyCPtr<T>::operator == (const PltKeyCPtr & rhs) const
 {
     return *_p == *rhs._p;
-};
+}
     
 
 //////////////////////////////////////////////////////////////////////
@@ -540,9 +553,9 @@ PltHashIterator<K,V>::PltHashIterator(const PltHashTable_<K,V> &t)
 
 template <class K, class V>
 inline
-PltHashIterator<K,V>::operator const void * () const 
+PltHashIterator<K,V>::operator bool () const 
 {
-    return inRange() ? this : 0;
+    return inRange();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -566,7 +579,7 @@ PltHashIterator<K,V>::toStart()
 //////////////////////////////////////////////////////////////////////
 
 template <class K, class V>
-inline PltIterator< PltAssoc<K,V> > &
+inline PltHashIterator_THISTYPE(K,V) &
 PltHashIterator<K,V>::operator ++ ()
 {
     advance();

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOG_INCLUDED
 #define PLT_LOG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.4 1997-05-05 06:53:11 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.5 1997-07-18 14:02:52 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -129,7 +129,11 @@ private:
 #if PLT_USE_NTLOG
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_COMPILER_BORLAND
 #include <win32/windows.h>
+#else
+#include <windows.h>
+#endif
 
 //
 // This is a specialised log object, which works only on NT. Yeah, big deal!

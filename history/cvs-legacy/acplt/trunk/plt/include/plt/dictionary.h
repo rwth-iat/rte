@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DICTIONARY_INCLUDED
 #define PLT_DICTIONARY_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.5 1997-04-10 14:09:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.6 1997-07-18 14:02:48 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -153,7 +153,7 @@ public:
     // accessors
     virtual bool query(const K& key, V& value) const = 0;
 
-    PltIterator< PltAssoc<K, V> > * newIterator() const = 0;
+    PltIterator< PltAssoc<K, V> >::THISTYPE * newIterator() const = 0;
 
     // modifiers
     virtual bool add(const K& key, const V& value) = 0;

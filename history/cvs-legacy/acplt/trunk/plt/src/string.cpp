@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.14 1997-04-29 14:17:42 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.15 1997-07-18 14:02:57 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -147,7 +147,7 @@ PltString::fromInt(int i)
 {
     strstream s(conv_buffer, sizeof conv_buffer, ios::out);
     s << i;
-#if !PLT_SYSTEM_NT && !PLT_SYSTEM_OS2
+#if PLT_COMPILER_GCC
     s.freeze();
 #endif
     // TODO

@@ -52,10 +52,11 @@ template <class T>
 size_t 
 PltContainer<T>::size() const
 {
-    PltIterator<T> *pit = newIterator();
+    PltIterator<T> *pit = 
+        PLT_RETTYPE_CAST((PltIterator<T>*)) newIterator();
     size_t count = 0;
     if (pit) {
-        for (PltIterator<T> &it(*pit); it; ++it) {
+        for (PltIterator<T> &it = *pit; it; ++it) {
             ++count;
         }
     }
@@ -68,10 +69,11 @@ template <class T>
 size_t 
 PltHandleContainer<T>::size() const
 {
-    PltHandleIterator<T> *pit = newIterator();
+    PltHandleIterator<T> *pit = 
+        PLT_RETTYPE_CAST((PltHandleIterator<T> *)) newIterator();
     size_t count = 0;
     if (pit) {
-        for (PltHandleIterator<T> &it(*pit); it; ++it) {
+        for (PltHandleIterator<T> &it = *pit; it; ++it) {
             ++count;
         }
     }

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.5 1997-04-01 12:57:23 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.6 1997-07-18 14:02:58 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -49,7 +49,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#if PLT_SYSTEM_OS2 || PLT_SYSTEM_NT
+#if PLT_SYSTEM_OS2 || PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS
 
 PltTime
 PltTime::now(long secs, long usecs)

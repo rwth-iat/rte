@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_PRIORITYQUEUE_INCLUDED
 #define PLT_PRIORITYQUEUE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue.h,v 1.3 1997-04-10 14:09:27 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue.h,v 1.4 1997-07-18 14:02:53 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,6 +44,12 @@
 
 template <class T> class PltPQIterator;
 
+#if PLT_RETTYPE_OVERLOADABLE
+#define PltPQIterator_THISTYPE(T) PltPQIterator<T>
+#else
+#define PltPQIterator_THISTYPE(T) PltIterator_<T>
+#endif
+
 //////////////////////////////////////////////////////////////////////
 // T must be comparable
 //////////////////////////////////////////////////////////////////////
@@ -67,7 +73,7 @@ public:
     T removeFirst();
     bool remove(T elem); // remove one occurrence of elem from *this
 
-    PltPQIterator<T> * newIterator() const;
+    PltPQIterator_THISTYPE(T) * newIterator() const;
     size_t size() const;
 
 #if PLT_DEBUG_INVARIANTS
@@ -103,11 +109,14 @@ class PltPQIterator
 : public PltIterator<T>
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef PltPQIterator THISTYPE;
+#endif
     PltPQIterator(const PltPriorityQueue<T> &);
 
-    virtual operator const void * () const;       // remaining element?
+    virtual operator bool () const;       // remaining element?
     virtual const T & operator * () const;        // current element
-    virtual PltIterator<T> & operator ++ ();      // advance
+    virtual THISTYPE & operator ++ ();      // advance
     virtual void toStart();                       // go to the beginning
 private:
     const PltPriorityQueue<T> & a_container;
@@ -147,7 +156,7 @@ PltPriorityQueue<T>::peek() const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltPQIterator<T> *
+inline PltPQIterator_THISTYPE(T) *
 PltPriorityQueue<T>::newIterator() const
 {
     return new PltPQIterator<T>(*this);
@@ -168,9 +177,9 @@ PltPQIterator<T>::PltPQIterator(const PltPriorityQueue<T> & pq)
 
 template <class T>
 inline
-PltPQIterator<T>::operator const void * () const
+PltPQIterator<T>::operator bool () const
 {
-    return a_index < a_container.a_size ? this : 0;
+    return a_index < a_container.a_size;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -186,7 +195,7 @@ PltPQIterator<T>::operator * () const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltIterator<T> & 
+inline PltPQIterator_THISTYPE(T) & 
 PltPQIterator<T>::operator ++ ()
 {
     PLT_PRECONDITION(*this);

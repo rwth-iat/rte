@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.7 1997-04-10 14:09:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.8 1997-07-18 14:02:50 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -18,7 +18,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  * 4. Neither the name of the Chair of Process Control Engineering nor the
- *    name of the Aachen University of Technology may be used to endorse or
+v *    name of the Aachen University of Technology may be used to endorse or
  *    promote products derived from this software without specific prior
  *    written permission.
  *
@@ -72,6 +72,14 @@ template <class T> class PltListNode;
 template <class T> class PltIListIterator;
 template <class T> class PltListIterator;
 
+#if PLT_RETTYPE_OVERLOADABLE
+#define PltListIterator_THISTYPE(T) PltListIterator<T>
+#define PltIListIterator_THISTYPE(T) PltIListIterator<T>
+#else
+#define PltListIterator_THISTYPE(T) PltIterator_<T>
+#define PltIListIterator_THISTYPE(T) PltIterator_<T>
+#endif
+
 ////////////////////////////////////////////////////////////////////////
 // Base class for intrusive lists without information on them.
 // Not useful for direct use.
@@ -110,14 +118,12 @@ private:
 class PltListIterator_base {
 protected:
     PltListIterator_base(const PltList_base &listarg, bool startAtEnd=false); 
-    operator const void * () const;
+    operator bool () const;
 
     PltListNode_base *getPtr() const;
 
-    PltListIterator_base & operator ++ ();
-    PltListIterator_base & operator -- ();
-    void operator ++(int);
-    void operator --(int);
+    void stepForward();
+    void stepBackward();
 
     void toStart();
     void toEnd();
@@ -135,7 +141,7 @@ class PltList
 {
       friend class PltListIterator<T>;
 public:
-    PltList();
+    PltList() { }
     ~PltList();
 
     // modifiers
@@ -149,7 +155,7 @@ public:
     // container interface
     virtual bool isEmpty() const;
     virtual size_t size() const;
-    virtual PltListIterator<T> * newIterator() const;
+    virtual PltListIterator_THISTYPE(T) * newIterator() const;
 private:
     PltList(const PltList &); // forbidden
     PltList & operator = (const PltList &); // forbidden
@@ -177,7 +183,7 @@ public:
     // container interface
     virtual bool isEmpty() const;
     virtual size_t size() const;
-    virtual PltIListIterator<T> * newIterator() const;
+    virtual PltIListIterator_THISTYPE(T) * newIterator() const;
 private:
     PltIList(const PltIList &); // forbidden
     PltIList & operator = (const PltIList &); // forbidden
@@ -190,12 +196,15 @@ class PltListIterator
 : public PltBidirIterator<T>, 
   private PltListIterator_base {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef PltListIterator<T> THISTYPE;
+#endif
     PltListIterator(const PltList<T> &list, bool startAtEnd=false);
-    virtual operator const void * () const;
+    virtual operator bool () const;
     virtual const T & operator * () const;
-    virtual PltListIterator<T> & operator ++ ();
+    virtual THISTYPE & operator ++ ();
     virtual void toStart();
-    virtual PltListIterator<T> & operator -- ();
+    virtual THISTYPE & operator -- ();
     virtual void toEnd();
 #if 0
     T remove();
@@ -210,12 +219,15 @@ class PltIListIterator
   private PltListIterator_base 
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef PltIListIterator<T> THISTYPE;
+#endif
     PltIListIterator(const PltIList<T> &list, bool startAtEnd=false );
-    virtual operator const void * () const;
+    virtual operator bool () const;
     virtual const T* operator -> () const;
-    virtual PltIListIterator<T> & operator ++ ();
+    virtual THISTYPE & operator ++ ();
     virtual void toStart();
-    virtual PltIListIterator<T> & operator -- ();
+    virtual THISTYPE & operator -- ();
     virtual void toEnd();
 };
 
@@ -307,9 +319,9 @@ PltListIterator_base::toEnd()
 
 //////////////////////////////////////////////////////////////////////
 
-inline PltListIterator_base::operator const void * () const 
+inline PltListIterator_base::operator bool () const 
 { 
-    return curr_elem; 
+    return curr_elem != 0; 
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -323,7 +335,7 @@ PltListIterator_base::getPtr() const
 //////////////////////////////////////////////////////////////////////
 
 inline void
-PltListIterator_base::operator ++ (int) 
+PltListIterator_base::stepForward() 
 { 
     PLT_PRECONDITION( curr_elem );
     curr_elem = curr_elem->next; 
@@ -332,40 +344,22 @@ PltListIterator_base::operator ++ (int)
 //////////////////////////////////////////////////////////////////////
 
 inline void
-PltListIterator_base::operator -- (int) 
+PltListIterator_base::stepBackward() 
 { 
     PLT_PRECONDITION( curr_elem );
     curr_elem = curr_elem->prev; 
 }
 
 //////////////////////////////////////////////////////////////////////
-
-inline PltListIterator_base & 
-PltListIterator_base::operator ++ () 
-{ 
-    PLT_PRECONDITION( curr_elem );
-    curr_elem = curr_elem->next; 
-    return *this; 
-}
-
 //////////////////////////////////////////////////////////////////////
-
-inline PltListIterator_base & 
-PltListIterator_base::operator -- () 
-{ 
-    PLT_PRECONDITION( curr_elem );
-    curr_elem = curr_elem->prev; 
-    return *this; 
-}
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
+// Microsoft bug
+#if 0
 template<class T>
 inline
 PltList<T>::PltList()
 {
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -459,7 +453,7 @@ PltIList<T>::removeLast()
 //////////////////////////////////////////////////////////////////////
 
 template<class T>
-inline PltListIterator<T> *
+inline PltListIterator_THISTYPE(T) *
 PltList<T>::newIterator() const
 {
     return new PltListIterator<T>(*this);
@@ -480,28 +474,28 @@ PltListIterator<T>::PltListIterator(const PltList<T> &list, bool startAtEnd)
 
 template <class T>
 inline
-PltListIterator<T>::operator const void *() const
+PltListIterator<T>::operator bool() const
 {
-    return PltListIterator_base::operator const void * ();
+    return PltListIterator_base::operator bool ();
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltListIterator<T> &
+inline PltListIterator_THISTYPE(T) &
 PltListIterator<T>::operator ++ ()
 {
-    PltListIterator_base::operator ++();
+    PltListIterator_base::stepForward();
     return *this;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltListIterator<T> &
+inline PltListIterator_THISTYPE(T) &
 PltListIterator<T>::operator -- ()
 {
-    PltListIterator_base::operator --();
+    PltListIterator_base::stepBackward();
     return *this;
 }
 
@@ -562,28 +556,28 @@ PltIListIterator<T>::PltIListIterator(const PltIList<T> &list,
 
 template <class T>
 inline
-PltIListIterator<T>::operator const void *() const
+PltIListIterator<T>::operator bool() const
 {
-    return PltListIterator_base::operator const void * ();
+    return PltListIterator_base::operator bool ();
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltIListIterator<T> &
+inline PltIListIterator_THISTYPE(T) &
 PltIListIterator<T>::operator ++ ()
 {
-    PltListIterator_base::operator ++();
+    PltListIterator_base::stepForward();
     return *this;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltIListIterator<T> &
+inline PltIListIterator_THISTYPE(T) &
 PltIListIterator<T>::operator -- ()
 {
-    PltListIterator_base::operator --();
+    PltListIterator_base::stepBackward();
     return *this;
 }
 

@@ -2,7 +2,7 @@
 #ifndef PLT_HASHTABLE_IMPL_INCLUDED
 #define PLT_HASHTABLE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.5 1997-04-10 14:09:24 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.6 1997-07-18 14:02:49 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -144,7 +144,7 @@ PltHashTable_<K,V>::remove(const K& key, V& value)
 //////////////////////////////////////////////////////////////////////
 
 template <class K, class V>
-PltHashIterator<K,V> * 
+PltHashIterator_THISTYPE(K,V) * 
 PltHashTable_<K,V>::newIterator() const
 {
     return new PltHashIterator<K,V>(*this);
