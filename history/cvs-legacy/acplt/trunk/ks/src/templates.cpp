@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.2 1997-03-24 18:40:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.3 1997-04-03 10:04:41 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,10 +41,9 @@
 // always needed in this layer
 //////////////////////////////////////////////////////////////////////
 
-#ifdef __GNUC__
-
 #include "ks/array_impl.h"
 
+#if PLT_INSTANTIATE_TEMPLATES
 template class PltArray<bool>;
 template class PltArray<char>;
 template class PltArray<double>;

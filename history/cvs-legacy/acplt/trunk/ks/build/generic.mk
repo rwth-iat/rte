@@ -40,6 +40,7 @@ LIBKS_OBJECTS = \
 	svrbase$(O) \
 	svrobjects$(O) \
 	svrsimpleobjects$(O) \
+	svrrpcctx$(O) \
 	templates$(O) \
 	time$(O) \
 	value$(O) \
@@ -49,6 +50,8 @@ LIBKS_OBJECTS = \
 CXX_TEST_SOURCES = \
 	tmanager.cpp \
 	tmanager1.cpp \
+	tsclient.cpp \
+	tsclient1.cpp \
 	tserver.cpp \
 	tserver1.cpp
 	
@@ -69,7 +72,7 @@ CXX_TEST_SOURCES = \
 #	tmanager2 \
 #	tarray.cpp
 
-TESTS = tmanager$(EXE) tserver$(EXE)
+TESTS = tmanager$(EXE) tserver$(EXE) tsclient$(EXE)
 
 CXX_SOURCES = $(CXX_LIBKS_SOURCES) $(CXX_TEST_SOURCES)
 
@@ -82,6 +85,8 @@ $(LIBKS) : $(LIBKS_OBJECTS)
 tmanager$(EXE) : tmanager$(O) tmanager1$(O) $(LIBKS)
 
 tserver$(EXE) : tserver$(O) tserver1$(O) $(LIBKS)
+
+tsclient$(EXE) : tsclient$(O) tsclient1$(O) $(LIBKS)
 
 
 
