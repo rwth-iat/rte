@@ -67,6 +67,15 @@ PltList_base::invariant() const
 
 //////////////////////////////////////////////////////////////////////
 
+PltList_base::~PltList_base()
+{
+    for (PltListNode_base *p = first; p; p=p->next) {
+        delete p;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
 size_t
 PltList_base::size() const 
 {

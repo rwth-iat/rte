@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.3 1997-03-17 15:15:04 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.4 1997-03-21 08:22:40 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -195,8 +195,8 @@ public:
 
 #if PLT_DEBUG_INVARIANTS
     virtual bool invariant() const;
-    virtual ~PltList_base() { }
 #endif
+    virtual ~PltList_base();
 
     bool isEmpty() const;
     size_t size() const;
