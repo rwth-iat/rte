@@ -15,7 +15,7 @@ CXX_FLAGS = -g -Wall
 #
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = perl $(PLTDIR)/build/templ.pl g++ -lstdc++
+CXX_LINK = perl $(PLT_DIR)/build/templ.pl g++ -lstdc++
 
 .SUFFIXES:
 
