@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.13 1999-09-16 10:54:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.14 1999-09-20 09:36:11 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -390,7 +390,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::enterSendingState()
     //
     _fragment_state = FRAGMENT_BODY;
     _remaining_len  = len;
-    long *ppp       = xdr_inline(&_xdrs, 4);
+    XDR_INLINE_PTR ppp = xdr_inline(&_xdrs, 4);
     IXDR_PUT_LONG(ppp, (len - 4) | 0x80000000ul);
     xdrmemstream_rewind(&_xdrs, XDR_DECODE);
     return getIoMode();
@@ -663,7 +663,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 	    // Yup. We´ve got it -- so decode it and see if it´s the
 	    // final fragment(tm).
 	    //
-	    long *ppp = (long *) _fragment_header;
+	    XDR_INLINE_PTR ppp = (XDR_INLINE_PTR) _fragment_header;
 	    u_long l  = IXDR_GET_LONG(ppp);
 	    _last_fragment = l & 0x80000000ul ? true : false;
 	    _remaining_len = l & 0x7FFFFFFFul;

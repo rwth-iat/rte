@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.18 1999-09-16 10:54:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.19 1999-09-20 09:36:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -120,5 +120,22 @@ static KsNTOncRpc ks_nt_oncrpc;
 #include <rpc/xdr.h>
 #include <rpc/rpc.h>
 #endif
+
+/*
+ * The Never Ending Story: glic2 update: now the x_inline function
+ * pointer returns an int32_t on glibc2-based plattforms. Well, why,
+ * but in the end that's more precise than the dreaded long *, which
+ * is not very 64bit compliant at all. But Sun surely never dreamt of
+ * 64 bit when developing ONC/RPC...
+ * Note: glibc 2.0 systems don't define __GLIBC__ but instead the
+ * __GNULIBRARY__ symbol. Because these old glibc systems don't have
+ * the int32_t, we do automatically fall back to the old long.
+ */
+#if defined(__GLIBC__) && (__GLIBC__ >= 2)
+typedef int32_t *XDR_INLINE_PTR;
+#else
+typedef long *XDR_INLINE_PTR;
+#endif
+
 
 #endif /* KS_RPC_INCLUDED */

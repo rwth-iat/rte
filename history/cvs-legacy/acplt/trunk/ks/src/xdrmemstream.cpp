@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.10 1999-09-16 10:54:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.11 1999-09-20 09:36:11 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -320,9 +320,8 @@ static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, u_int len);
 static bool_t MemStreamPutBytes(XDR *xdrs, PLT_CONST caddr_t caddr, u_int len);
 static u_int  MemStreamGetPos(PLT_CONST XDR *xdrs);
 static bool_t MemStreamSetPos(XDR *xdrs, u_int pos);
-static long * MemStreamInline(XDR *xdrs, int len);
+static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, int len);
 static void   MemStreamDestroy(XDR *xdrs);
-
 
 /* ---------------------------------------------------------------------------
  * XDR streams are objects with method pointers for reading and writing
@@ -355,7 +354,7 @@ static
     FUNC(bool_t) MemStreamPutBytes,  /* store some octets (multiple of 4)            */
     FUNC(u_int)  MemStreamGetPos,    /* */
     FUNC(bool_t) MemStreamSetPos,    /* */
-    FUNC(long *) MemStreamInline,    /* get some space in the buffer for fast access */
+    FUNC(XDR_INLINE_PTR) MemStreamInline,    /* get some space in the buffer for fast access */
     FUNC(void)   MemStreamDestroy    /* clean up the mess                            */
 }; /* memstream_operations */
 
@@ -558,7 +557,7 @@ static void MemStreamDestroy(XDR *xdrs)
  * or she/he will get in deep trouble the next time she/he
  * accesses the memory stream (due to misaligned pointers).
  */
-static long * MemStreamInline(XDR *xdrs, int len)
+static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, int len)
 {
     if ( xdrs->x_handy == 0 ) {
 	/*
@@ -571,7 +570,7 @@ static long * MemStreamInline(XDR *xdrs, int len)
 	}
     }
     if ( len <= xdrs->x_handy ) {
-	long *space = (long *) xdrs->x_private;
+	XDR_INLINE_PTR space = (XDR_INLINE_PTR) xdrs->x_private;
 	xdrs->x_private += len;
 	xdrs->x_handy   -= len;
 	return space;
@@ -602,14 +601,14 @@ static bool_t MemStreamGetLong(XDR *xdrs, long *lp)
      * The private pointer points now in every case to a 32 bit int
      * in the stream fragment. It is important to use the IXDR_GET_LONG
      * macro here to retrieve the 32 bit int as this macro is the only
-     * way to do it platform-independant.
+     * way to do it platform-independent.
      */
 #if PLT_COMPILER_DECCXX || PLT_COMPILER_MSVC
     long *ppp = (long *) xdrs->x_private;
     *lp = IXDR_GET_LONG(ppp);
     xdrs->x_private = (caddr_t) ppp;
 #else
-    *lp = IXDR_GET_LONG(((long *) xdrs->x_private));
+    *lp = IXDR_GET_LONG(((XDR_INLINE_PTR) xdrs->x_private));
 #endif
     xdrs->x_handy -= 4;
     return TRUE;
@@ -637,7 +636,7 @@ static bool_t MemStreamPutLong(XDR *xdrs, PLT_CONST long *lp)
     /*
      * It is important to use the IXDR_PUT_LONG macro here to store
      * the 32 bit int as this macro is the only way to do it platform-
-     * independant. The only gotch to watch out for is that you must
+     * independent. The only gotch to watch out for is that you must
      * stuff a long * into it, regardless of the platform you're on.
      * The macro will take care on 64 bit platforms to cast that pointer
      * to a suitable pointer type in order to access a 32 bit integer
@@ -648,7 +647,7 @@ static bool_t MemStreamPutLong(XDR *xdrs, PLT_CONST long *lp)
     IXDR_PUT_LONG(ppp, *lp);
     xdrs->x_private = (caddr_t) ppp;
 #else
-    IXDR_PUT_LONG(((long *) xdrs->x_private), *lp);
+    IXDR_PUT_LONG(((XDR_INLINE_PTR) xdrs->x_private), *lp);
 #endif
     xdrs->x_handy -= 4;
     return TRUE;
