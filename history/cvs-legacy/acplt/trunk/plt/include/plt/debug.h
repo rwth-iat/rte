@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.18 1999-09-16 10:54:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.19 2000-04-10 15:09:17 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998, 1999
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -22,9 +22,7 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 /* 
-//////////////////////////////////////////////////////////////////////
  * plt/debug.h provides some simple macros that should aid debugging.
-//////////////////////////////////////////////////////////////////////
  */
 
 #include "plt/config.h"
@@ -204,3 +202,5 @@ static PltDebugNewTracker plt_debug_new_tracker;
 
 /********************************************************************/
 #endif /* PLT_DEBUG_INCLUDED */
+
+/* End of plt/debug.h */
