@@ -252,10 +252,9 @@ PltHashTable_base::locate(const void * key) const
     PLT_PRECONDITION(a_used < a_capacity);
     size_t loc = a_capacity;
     size_t i = keyHash(key);
-    size_t j = 0;
     for (i = collidx(i,0); 
          loc >= a_capacity && a_table[i]; 
-         i = collidx(i,++j)) 
+         i = collidx(i,1)) 
         {
             if (   a_table[i] != deletedAssoc
                 && keyEqual( a_table[i]->key(), key ) ) {
