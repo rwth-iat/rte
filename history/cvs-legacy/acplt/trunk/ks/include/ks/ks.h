@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.21 1998-12-16 17:49:14 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.22 1999-01-08 13:09:42 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -62,7 +62,7 @@
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.0.5pre3"
+#define KS_VERSION_STRING "1.0.5pre4"
 
 	 
 /* ----------------------------------------------------------------------------
