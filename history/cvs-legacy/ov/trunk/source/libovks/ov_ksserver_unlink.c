@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_unlink.c,v 1.3 1999-08-30 15:23:33 dirk Exp $
+*   $Id: ov_ksserver_unlink.c,v 1.4 1999-09-16 16:46:29 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -115,6 +115,8 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 	*/
 	OV_INSTPTR_ov_object	pparent;
 	OV_INSTPTR_ov_object	pchild;
+	OV_INSTPTR_ov_object	pcurrchild;
+	Ov_Association_DefineIteratorNM(pit);
 	/*
 	*	test element types and initialize parent and child pointer
 	*/
@@ -160,10 +162,27 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 		}
 	}
 	/*
-	*	check if child has that parent
+	*	check, if there is a link between that parent and child
 	*/
-	if(Ov_Association_GetParent(plinkelem->elemunion.passoc, pchild) != pparent) {
-		return OV_ERR_BADPATH;	/* FIXME! error code? */
+	switch(plinkelem->elemunion.passoc->v_assoctype) {
+	case OV_AT_ONE_TO_MANY:
+		if(Ov_Association_GetParent(plinkelem->elemunion.passoc, pchild) != pparent) {
+			return OV_ERR_BADPATH;	/* FIXME! error code? */
+		}
+		break;
+	case OV_AT_MANY_TO_MANY:
+		Ov_Association_ForEachChildNM(plinkelem->elemunion.passoc, pit, pparent, pcurrchild) {
+			if(pcurrchild == pchild) {
+				break;
+			}
+		}
+		if(!pit) {
+			return OV_ERR_BADPATH;	/* FIXME! error code? */
+		}
+		break;
+	default:
+		Ov_Warning("no such association type");
+		return OV_ERR_GENERIC;
 	}
 	/*
 	*	unlink child from parent
