@@ -13,8 +13,8 @@ TESTSRCDIR = $(PLTDIR)\tests\\
 
 ### Compiler
 CXX = bcc32
-CXX_FLAGS = -DNDEBUG -O2
-CXX_EXTRA_FLAGS = -w -I. -I$(PLTDIR)\include -DPLT_SYSTEM_NT=1
+CXX_FLAGS = -DNDEBUG -O2 -w
+CXX_EXTRA_FLAGS = -I. -a8 -I$(PLTDIR)\include -DPLT_SYSTEM_NT=1
 
 .SUFFIXES:	
 
@@ -38,9 +38,13 @@ CXX_EXTRA_FLAGS = -w -I. -I$(PLTDIR)\include -DPLT_SYSTEM_NT=1
 .obj.exe :
 	$(CXX) $< $(LIBPLT)
 
-$(LIBPLT) : $(LIBPLT_OBJECTS)
-	$(PLTDIR)\build\plt_ar tlib $@ $(LIBPLT_OBJECTS1)
-	$(PLTDIR)\build\plt_ar tlib $@ $(LIBPLT_OBJECTS2)
+$(LIBPLT) : plt_ar.exe $(LIBPLT_OBJECTS)
+	plt_ar tlib $@ $(LIBPLT_OBJECTS1)
+	plt_ar tlib $@ $(LIBPLT_OBJECTS2)
+
+### PLT Archiver Wrapper
+plt_ar.exe:	..\plt_ar.cpp
+	$(CXX) ..\plt_ar.cpp
 
 clean :
 	del *.obj

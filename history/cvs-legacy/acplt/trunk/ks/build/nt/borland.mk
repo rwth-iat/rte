@@ -18,9 +18,9 @@ TESTSRCDIR = $(KSDIR)\tests\\
 
 ### Compiler
 CXX = bcc32
-CXX_FLAGS = -DNDEBUG -O2
+CXX_FLAGS = -DNDEBUG -O2 -w
 #CXX_FLAGS = 
-CXX_EXTRA_FLAGS = -w -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1
+CXX_EXTRA_FLAGS = -a8 -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1
 
 .SUFFIXES:	
 
@@ -99,10 +99,10 @@ tsclient.exe: tsclient.obj tsclient1.obj $(LIBKS)
 !
 
 $(LIBKS) : $(LIBKS_OBJECTS)
-	$(PLTDIR)\build\plt_ar tlib $@ $(LIBKS_OBJECTS1)
-	$(PLTDIR)\build\plt_ar tlib $@ $(LIBKS_OBJECTS2)
-	$(PLTDIR)\build\plt_ar tlib $@ $(LIBKS_OBJECTS3)
-	$(PLTDIR)\build\plt_ar tlib $@ $(LIBKS_OBJECTS4)
+	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS1)
+	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS2)
+	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS3)
+	$(PLTDIR)\build\nt\plt_ar tlib $@ $(LIBKS_OBJECTS4)
 
 clean :
 	del *.obj

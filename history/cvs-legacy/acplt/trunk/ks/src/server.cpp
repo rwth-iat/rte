@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.6 1997-04-11 17:24:39 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.7 1997-04-14 15:30:17 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -103,7 +103,7 @@ KsServer::createLocalClient()
 bool
 KsServer::register_server()
 {
-    KsAvNoneTicket ticket(KS_ERR_OK); // TODO use a better ticket?
+    KsAvNoneTicket ticket;
     KssRegistrationContext regctx(ticket);
     regctx.params.server.name = getServerName();
     regctx.params.server.protocol_version = getProtocolVersion();
@@ -123,7 +123,7 @@ KsServer::register_server()
 bool
 KsServer::unregister_server()
 {
-    KsAvNoneTicket ticket(KS_ERR_OK); // TODO: better ticket?
+    KsAvNoneTicket ticket;
     KssUnregistrationContext unregctx(ticket);
     unregctx.params.server.name = getServerName();
     unregctx.params.server.protocol_version = getProtocolVersion();

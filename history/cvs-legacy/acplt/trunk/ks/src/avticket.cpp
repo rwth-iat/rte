@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.9 1997-04-10 14:17:52 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.10 1997-04-14 15:30:16 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -202,6 +202,11 @@ KsAvNoneTicket::invariant() const
 }
 
 #endif // PLT_DEBUG_INVARIANTS
+//////////////////////////////////////////////////////////////////////
+
+KS_ACCESS
+KsAvNoneTicket::_default_access = KS_AC_NONE;
+
 //////////////////////////////////////////////////////////////////////
 
 KsAvNoneTicket::KsAvNoneTicket(XDR *, bool & ok)

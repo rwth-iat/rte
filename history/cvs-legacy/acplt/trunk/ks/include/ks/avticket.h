@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.9 1997-03-25 21:17:32 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.10 1997-04-14 15:30:11 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -139,6 +139,8 @@ class KsAvNoneTicket
 : public KsAvTicket
 {
 public:
+    KsAvNoneTicket() : _access(_default_access), _result(KS_ERR_OK) { }
+
     KsAvNoneTicket(KS_RESULT r, KS_ACCESS a = KS_AC_NONE);
     KsAvNoneTicket(XDR *, bool &);
 
@@ -153,11 +155,15 @@ public:
     virtual bool canReadVar(const KsString &name) const;
     virtual bool canWriteVar(const KsString &name) const;
 
+    static void setDefaultAccess(KS_ACCESS a)
+        { _default_access = a; }
+
 #if PLT_DEBUG_INVARIANTS
     virtual bool invariant() const;
 #endif
 
 private:
+    static KS_ACCESS _default_access;
     KS_ACCESS _access;
     KS_RESULT _result;
 };

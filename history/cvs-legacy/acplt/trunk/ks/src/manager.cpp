@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.10 1997-04-11 17:24:38 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.11 1997-04-14 15:30:16 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -268,6 +268,7 @@ KsManager::KsManager()
 : _registered(false),
   _servers_domain("servers")
 {
+    KsAvNoneTicket::setDefaultAccess(KS_AC_READ); // TODO
     if (_is_ok) {
         //
         // create transports
