@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.10 2004-08-04 15:15:50 ansgar Exp $
+#   $Id: unix.mk,v 1.11 2004-10-25 15:20:21 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -193,6 +193,17 @@ $(DBDUMP_EXE) : $(DBDUMP_OBJ)
 
 $(DBPARSE_EXE) : $(DBPASRE_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS)
+
+#	ACPLT/OV makmak
+
+$(MAKMAK_EXE) : $(MAKMAK_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
+#	ACPLT/OV library informations tool
+
+$(LIBINFO_EXE) : $(LIBINFO_OBJ) $(OV_LIBOV_DLL)
+	$(LINK) -rdynamic -o $@ $^ $(C_LIBS) $(LIBMPM_LIB) $(LD_LIB)
+
 
 #	ACPLT/OV KsHistory library
 #	--------------------------

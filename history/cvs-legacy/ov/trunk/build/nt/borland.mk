@@ -1,5 +1,5 @@
 
-#   $Id: borland.mk,v 1.3 2004-08-04 15:16:39 ansgar Exp $
+#   $Id: borland.mk,v 1.4 2004-10-25 15:20:48 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -246,13 +246,24 @@ $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
 
 #	ACPLT/OV database dumper
 
-$(DBDUMP_EXE) : $(DBDUMP_OBJ)
+$(DBDUMP_EXE) : $(DBDUMP_OBJ) $(DBDUMP_RES)
 	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
 
 #	ACPLT/OV database parser
 
-$(DBPARSE_EXE) : $(DBPARSE_OBJ)
+$(DBPARSE_EXE) : $(DBPARSE_OBJ) $(DBPARSE_RES)
 	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+
+#	ACPLT/OV makmak
+
+$(MAKMAK_EXE) : $(MAKMAK_OBJ) $(MAKMAK_RES)
+	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+
+#	ACPLT/OV library informations tool
+
+$(LIBINFO_EXE) : $(LIBINFO_OBJ) $(OV_LIBOV_LIB) $(LIBINFO_RES)
+	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+	$(RC) $(filter %$(RES), $^) $@
 
 #	ACPLT/OV KsHistory library
 #	--------------------------

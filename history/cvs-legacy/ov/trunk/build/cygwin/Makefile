@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.7 2004-08-04 15:15:58 ansgar Exp $
+#   $Id: Makefile,v 1.8 2004-10-25 15:20:31 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -227,6 +227,27 @@ $(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV
 $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
 	$(DLLWRAP) -mwindows --def $(OV_SOURCE_NTSERVICE_DIR)$(basename $@).def -o $@ $^
 
+#	ACPLT/OV database dumper
+
+$(DBDUMP_EXE) : $(DBDUMP_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
+#	ACPLT/OV database parser
+
+$(DBPARSE_EXE) : $(DBPASRE_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
+#	ACPLT/OV makmak
+
+$(MAKMAK_EXE) : $(MAKMAK_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
+#	ACPLT/OV library informations tool
+
+$(LIBINFO_EXE) : $(LIBINFO_OBJ) $(OV_LIBOV_LIB) $(LIBMPM_LIB)
+	$(LINK) -o $@ $^ $(C_LIBS)
+
+
 #	ACPLT/OV KsHistory library
 #	--------------------------
 
@@ -252,6 +273,32 @@ $(EXAMPLE_DLL) : $(EXAMPLE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 example.c example.h : $(OV_CODEGEN_EXE)
+
+#	ACPLT/OV dynov library
+#	--------------------------
+
+$(DYNOV_LIB) : $(DYNOV_DLL)
+	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
+
+$(DYNOV_DLL) : $(DYNOV_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
+	@echo EXPORTS > $(basename $@).def
+	@nm $(filter %$(OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
+
+dynov.c dynov.h : $(OV_CODEGEN_EXE)
+
+#	ACPLT/OV tasklib library
+#	--------------------------
+
+$(TASKLIB_LIB) : $(TASKLIB_DLL)
+	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
+
+$(TASKLIB_DLL) : $(TASKLIB_OBJ)
+	@echo EXPORTS > $(basename $@).def
+	@nm $(filter %$(OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
+
+tasklib.c tasklib.h : $(OV_CODEGEN_EXE)
 
 #	Install
 #	-------
