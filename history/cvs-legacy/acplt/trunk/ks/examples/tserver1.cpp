@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.24 1999-04-22 15:13:48 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.25 1999-09-06 06:45:49 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -185,6 +185,10 @@ class TestDomain
         { return KsTime::now(); } // not strictly correct
     virtual KsString  getComment() const
         { return KsString("A dynamic domain"); }
+    virtual KS_SEMANTIC_FLAGS getSemanticFlags() const
+        { return 0; }
+    virtual KsString getClassIdentifier() const
+        { return KsString(""); }
 
     //// KssDomain
     //   accessors
@@ -267,6 +271,8 @@ public:
 
     virtual void getHist(const KsGetHistParams &params,
                          KsGetHistSingleResult &result);
+    virtual KS_SEMANTIC_FLAGS getSemanticFlags() const
+        { return 0; }
 
 }; // class DummyHistory
 
@@ -571,7 +577,7 @@ void Wecker::async_attention(KssInterKsServerConnectionOperations op)
 	    PltLog::Error("ACPLT/KS service failed");
 	}
 
-	_trigger_at = KsTime::now(2);
+	_trigger_at = KsTime::now(20);
 	KsServerBase::getServerObject().addTimerEvent(this);
     }
 }
@@ -741,6 +747,7 @@ TestServer::TestServer(int port)
     (*core_services_val)[3] = "LinkMgmnt";
     (*core_services_val)[4] = "Manager";
     tmp_var->setValue(core_services_val);
+    tmp_var->lock();
     addCommObject(ec, KssCommObjectHandle(tmp_var, KsOsNew));
 
 #if PLT_USE_BUFFERED_STREAMS
