@@ -9,9 +9,9 @@ RPCINCLUDEPATH = ..
 # you have to give the path to it here.
 RPCLIBPATH = ..\bin\\
 
-DEFINITION =	ONCRPC.DEF
+DEFINITION =    ONCRPC.DEF
 
-OBJS =		CLNT_RAW.OBJ \
+OBJS =          CLNT_RAW.OBJ \
 		XDR.OBJ \
 		CLNT_TCP.OBJ \
 		CLNT_UDP.OBJ \
@@ -54,16 +54,16 @@ OBJS =		CLNT_RAW.OBJ \
 all: oncrpc.dll portmap.exe
 
 clean:
-	del $(OBJS) oncrpc.lib oncrpc.dll oncrpc.exp portmap.obj portmap.exe ..\rpcgen\oncrpc.dll
+	del $(OBJS) oncrpc.lib oncrpc.dll oncrpc.exp portmap.obj portmap.exe ..\rpcgen\oncrpc.dll *.pdb
 
-portmap.exe:	oncrpc.lib portmap.obj
+portmap.exe:    oncrpc.lib portmap.obj
      $(link) $(conlflags) $(ldebug) -out:portmap.exe PORTMAP.obj $(RPCLIBPATH)oncrpc.lib $(conlibsdll) wsock32.lib
 	copy portmap.exe ..\bin\pm_ascii.exe
 
-oncrpc.lib:	$(OBJS) oncrpc.def
+oncrpc.lib:     $(OBJS) oncrpc.def
     $(implib) /out:oncrpc.lib /def:$(DEFINITION) $(OBJS)
 
-oncrpc.dll:	$(OBJS) oncrpc.lib oncrpc.exp
+oncrpc.dll:     $(OBJS) oncrpc.lib oncrpc.exp
     $(link) /DLL /out:oncrpc.dll -entry:_DllMainCRTStartup$(DLLENTRY) $(ldebug) oncrpc.exp $(OBJS) $(conlibsdll) wsock32.lib advapi32.lib
     copy oncrpc.lib ..\bin
     copy oncrpc.dll ..\bin
