@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.17 2000-10-27 07:50:26 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.18 2001-02-15 11:51:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -331,6 +331,7 @@ public:
     //// KssLink/KssChildrenService ////
     //// accessors
     virtual KS_LINK_TYPE getType() const { return KS_LT_LOCAL_1_MANY; }
+    virtual KsString getAssociationIdentifier() const { return KsString(); }
     virtual KsString getOppositeRoleIdentifier() const { return KsString(); }
 
     //// KssCurrPropsService stuff

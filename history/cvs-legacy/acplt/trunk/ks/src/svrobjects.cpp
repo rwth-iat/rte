@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.15 1999-09-16 10:54:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.16 2001-02-15 11:51:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -451,6 +451,7 @@ KssLink::getEP() const
         p->access_mode              = getAccessMode();
 	p->semantic_flags           = getSemanticFlags();
 	p->type                     = getType();
+	p->association_identifier   = getAssociationIdentifier();
 	p->opposite_role_identifier = getOppositeRoleIdentifier();
     }
     return h;

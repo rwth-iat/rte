@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.14 1999-09-16 10:54:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.15 2001-02-15 11:51:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -331,6 +331,7 @@ public:
     ///  accessors
     // projected properties
     virtual KS_LINK_TYPE getType() const = 0;
+    virtual KsString     getAssociationIdentifier() const = 0;
     virtual KsString     getOppositeRoleIdentifier() const = 0;
 
 #if 0
@@ -392,4 +393,3 @@ public:
 
 #endif // KS_SVROBJECTS_INCLUDED
 /* End of ks/svrobjects.h */
-
