@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.12 1999-09-16 10:54:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.13 2000-04-10 15:07:52 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -195,7 +195,11 @@ int main(int argc, char **argv) {
         case 0:
             // child
             for (int i = 0; i<FD_SETSIZE; ++i) close(i);
+#if PLT_SYSTEM_FREEBSD
+	    setpgid(0, 0);
+#else
             setpgrp();
+#endif
             pLog = new PltSyslog(PROG_NAME);
             break;
         default:
