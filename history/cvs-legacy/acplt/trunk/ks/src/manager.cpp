@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.29 1999-02-22 15:13:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.30 1999-09-06 06:54:17 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -160,9 +160,11 @@ public:
     //// accessors
 
     // projected properties
-    virtual KsString getIdentifier() const;
-    virtual KsTime   getCreationTime() const;
-    virtual KsString getComment() const;
+    virtual KsString  getIdentifier() const;
+    virtual KsTime    getCreationTime() const;
+    virtual KsString  getComment() const;
+    KS_SEMANTIC_FLAGS getSemanticFlags() const;
+    virtual KsString  getClassIdentifier() const;
 
     //// KssDomain
     //   accessors
@@ -202,6 +204,20 @@ KsmServer::getCreationTime() const
 {
     return KsTime::now();
 }
+
+// ----------------------------------------------------------------------------
+
+KS_SEMANTIC_FLAGS
+KsmServer::getSemanticFlags() const
+{
+    return 0; // no special semantic flags present.
+} // KsmServer::getSemanticFlags
+
+KsString
+KsmServer::getClassIdentifier() const
+{
+    return KsString();
+} // KssSimpleCommObject::getClassIdentifier
 
 //////////////////////////////////////////////////////////////////////
 
@@ -608,17 +624,27 @@ KsManager::startServer()
             // whenever there is a request for the KS program id
             // and the correct version number.
             //
-            if ( !svc_register(_udp_transport,
-                               KS_RPC_PROGRAM_NUMBER,
-                               KS_PROTOCOL_VERSION,
-                               ks_c_dispatch,
-                               0) ) {  // Do not contact the portmapper!
-                svc_destroy(_udp_transport);
-                _udp_transport = 0;
-                PltLog::Error("KsManager::startServer(): could not register UDP service");
-                _is_ok = false;
-            } else {
-		_is_ok = true;
+	    u_long ks_version;
+	    
+	    _is_ok = true;
+	    for ( ks_version = KS_PROTOCOL_VERSION;
+		  ks_version >= KS_MINPROTOCOL_VERSION;
+		  --ks_version ) {
+		if ( !svc_register(_udp_transport,
+				   KS_RPC_PROGRAM_NUMBER,
+				   ks_version,
+				   ks_c_dispatch,
+				   0) ) {  // Do not contact the portmapper!
+		    //
+		    // If registration fails, then destroy the transport and
+		    // bail out immediately.
+		    //
+		    svc_destroy(_udp_transport);
+		    _udp_transport = 0;
+		    PltLog::Error("KsManager::startServer(): could not register UDP service");
+		    _is_ok = false;
+		    break;
+		}
 	    }
 #else
 	    _udp_transport->setAttentionPartner(&_attention_dispatcher);
