@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.12 2002-01-24 16:37:00 ansgar Exp $
+*   $Id: ov_association.c,v 1.13 2002-02-01 14:43:59 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -49,7 +49,7 @@ OV_RESULT ov_association_load(
 	/*
 	*	local variables
 	*/
-	OV_RESULT			result=OV_ERR_OK;
+	OV_RESULT			result;
 	OV_INSTPTR_ov_association	passoc;
 	OV_INSTPTR_ov_class		pparentclass, pchildclass;
 	OV_BOOL				exists=FALSE;

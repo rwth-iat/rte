@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.13 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_library.c,v 1.14 2002-02-01 14:43:59 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -336,13 +336,38 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	OV_STRUCTURE_DEF	*pstructdef;
 	OV_CLASS_DEF		*pclassdef;
 	OV_ASSOCIATION_DEF	*passocdef;
-	OV_RESULT			result;
+	OV_RESULT		result;
+	char			ovversion1[16];
+	char			ovversion2[16];
+	char*			pc1;
+	char*			pc2;
 	/*
 	*	check parameters
 	*/
 	if(!plib || !plibdef) {
 		return OV_ERR_BADPARAM;
 	}
+	/*
+	*	check ov version of library
+	*/
+	if (!plibdef->ov_version) return OV_ERR_LIBDEFMISMATCH;
+	if (strcmp(plibdef->ov_version, OV_VER_LIBOV)) {
+		strcpy(ovversion1, plibdef->ov_version);
+		strcpy(ovversion2, OV_VER_LIBOV);
+		pc1 = (char*) (strlen(ovversion1)-1);
+		pc2 = (char*) (strlen(ovversion2)-1);
+		while (pc1>0) {
+			if (*pc1 == '.') *pc1=0;
+			pc1--;
+		}
+		while (pc2>0) {
+			if (*pc2 == '.') *pc2=0;
+			pc2--;
+		}
+		if ((!pc1) || (!pc2) || (strcmp(ovversion1, ovversion2))) 
+			return OV_ERR_LIBDEFMISMATCH;
+	}
+
 	/*
 	*	if we load the OV metamodel, we have to prepare some things
 	*/

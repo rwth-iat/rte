@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.7 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.8 2002-02-01 14:43:59 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -78,7 +78,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 	{ "server_version",			NULL,	ov_vendortree_getserverversion, NULL },
 	{ "startup_time",			"UTC",	ov_vendortree_getstartuptime, NULL },
 	{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
-	{ "activitiy_lock",			NULL,	ov_vendortree_getactivitylock, ov_vendortree_setactivitylock },
+	{ "activity_lock",			NULL,	ov_vendortree_getactivitylock, ov_vendortree_setactivitylock },
 	{ "server_password",			NULL,	ov_vendortree_getserverpassword, NULL },
 	{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset }
 };

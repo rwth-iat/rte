@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.25 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_object.c,v 1.26 2002-02-01 14:43:59 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -860,7 +860,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_setvar(
 					return ov_variable_setanyvalue((OV_ANY*)pelem->pvalue,
 						pvarcurrprops);
 				}
-				break;
 			default:
 				break;
 			}

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.h,v 1.4 2000-12-15 15:39:34 dirk Exp $
+*   $Id: ov_library.h,v 1.5 2002-02-01 14:43:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -61,13 +61,14 @@ typedef OV_RESULT OV_FNC_LIBRARY_SETGLOBALVARS(void);
 struct OV_LIBRARY_DEF {
 	OV_STRING						identifier;
 	OV_STRING						version;
+	OV_STRING						ov_version;
 	OV_STRING						author;
 	OV_STRING						copyright;
 	OV_STRING						comment;
-	struct OV_STRUCTURE_DEF			*structures;
-	struct OV_CLASS_DEF				*classes;
-	struct OV_ASSOCIATION_DEF		*associations;
-	OV_FNC_LIBRARY_SETGLOBALVARS	*setglobalvarsfnc;
+	struct OV_STRUCTURE_DEF					*structures;
+	struct OV_CLASS_DEF					*classes;
+	struct OV_ASSOCIATION_DEF				*associations;
+	OV_FNC_LIBRARY_SETGLOBALVARS				*setglobalvarsfnc;
 };
 typedef struct OV_LIBRARY_DEF OV_LIBRARY_DEF;
 

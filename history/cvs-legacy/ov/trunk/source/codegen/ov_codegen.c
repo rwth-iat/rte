@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.16 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.17 2002-02-01 14:43:41 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -682,6 +682,7 @@ int ov_codegen_createsourcefile(
 	fprintf(fp, "OV_LIBRARY_DEF OV_LIBRARY_DEF_%s = {\n", plib->identifier);
 	fprintf(fp, "    \"%s\",\n", plib->identifier);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(plib->version));
+	fprintf(fp, "    \"%s\",\n", OV_VER_CODEGEN);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(plib->author));
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(plib->copyright));
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(plib->comment));
@@ -934,7 +935,6 @@ void ov_codegen_printclassinstdefines(
 	*/
 	OV_OVM_VARIABLE_DEF		*pvar;
 	OV_OVM_PART_DEF			*ppart;
-	OV_OVM_ASSOCIATION_DEF	*passoc;
 	/*
 	*	information about baseclass instance and vtable pointers
 	*/

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.18 2002-01-24 15:22:12 ansgar Exp $
+*   $Id: ov_macros.h,v 1.19 2002-02-01 14:43:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -43,8 +43,7 @@
 *	Upcast of an instance pointer of the parent class
 */
 #define Ov_ParentPtrUpCast(assoc, pparent)									\
-	((OV_PPT_##assoc)((pparent)+(0*((pparent)->__classinfo.					\
-	OV_PCI_##assoc))))
+	((OV_PPT_##assoc)((pparent)+(0*((pparent)->__classinfo.OV_PCI_##assoc))))
 
 /*
 *	Upcast of an instance pointer of the child class
@@ -93,8 +92,8 @@
 */
 #define Ov_GetParent(assoc, pchild)											\
 	((OV_PPT_##assoc)((pchild)?(((pchild)->v_linktable)?((passoc_##assoc->v_assoctype==OV_AT_ONE_TO_MANY)?(((OV_ANCHOR*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
-	+(0*((pchild)->__classinfo.OV_CCI_##assoc))))->pparent):(*((OV_INSTPTR*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
-	+(0*((pchild)->__classinfo.OV_CCI_##assoc)))))):(NULL)):(NULL)))
+	+((pchild)->__classinfo.OV_CCI_##assoc)-((pchild)->__classinfo.OV_CCI_##assoc)))->pparent):(*((OV_INSTPTR*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
+	)))):(NULL)):(NULL)))
 
 /*
 *	Iterate over all child objects in a 1:n association
@@ -119,6 +118,7 @@
 #define Ov_SearchChild(assoc, pparent, ident)								\
 	((OV_CPT_##assoc)ov_association_searchchild(passoc_##assoc, 			\
 	(OV_INSTPTR_ov_object)Ov_ParentPtrUpCast(assoc, (pparent)), (ident)))
+
 
 /*
 *	Search a child with given identifier and cast to child class in a 1:n association
