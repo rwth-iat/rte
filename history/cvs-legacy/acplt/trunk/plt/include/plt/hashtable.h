@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.15 1998-07-30 10:22:41 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.16 1999-05-12 10:06:06 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -301,7 +301,7 @@ public:
     virtual operator bool () const;                 // termination
     virtual const PltAssoc<K,V> * operator -> () const;     // current element
 
-    virtual THISTYPE & operator ++ ();  // advance
+    virtual PltHashIterator_THISTYPE(K,V) & operator ++ ();  // advance
     virtual void toStart();                                 // from beginning
 };
 
