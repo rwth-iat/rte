@@ -1,10 +1,9 @@
 /* -*-plt-c++-*- */
-
 #ifndef KSC_CLNTPATH_INCLUDED
 #define KSC_CLNTPATH_INCLUDED
-
+/* $Header: /home/david/cvs/acplt/ks/include/ks/clntpath.h,v 1.7 1999-09-06 06:50:06 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -66,6 +65,7 @@ public:
     bool isValid() const;
     size_t countComponents() const;
     KsString getName() const;
+    bool isNamePart() const;
     KsString getPathOnly() const;
 
     KsString relTo(const KscPath &, size_t maxDepth = KSC_MAX_REL_DEPTH) const;
@@ -101,6 +101,7 @@ public:
     const KscPath &getPathAndName() const;
     KsString getName() const;
     KsString getPathOnly() const;
+    bool isNamePart() const;
 
     bool operator == (const KscPathParser &) const;
     bool operator != (const KscPathParser &) const;
@@ -177,6 +178,21 @@ KscPath::getName() const
 	return KsString();
     } 
 }
+
+
+inline
+bool
+KscPath::isNamePart() const
+{
+    PLT_PRECONDITION(isValid());
+    
+    if ( slash_count && last_comp ) {
+	return ((*this)[last_comp - 1] == '.') ? true : false;
+    } else {
+	return false;
+    }
+} // KscPath::isNamePart
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -273,6 +289,14 @@ KscPathParser::getName() const
     return path_and_name.getName();
 }
 
+
+inline
+bool
+KscPathParser::isNamePart() const
+{
+    return path_and_name.isNamePart();
+} // KscPathParser::isNamePart
+
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -359,14 +383,5 @@ KscPathParser::operator >= (const KscPathParser &other) const
 //////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////
-// EOF clntpath.h
-//////////////////////////////////////////////////////////////////////
-
 #endif
-
-
-
-
-
-
+// End of file ks/clntpath.h
