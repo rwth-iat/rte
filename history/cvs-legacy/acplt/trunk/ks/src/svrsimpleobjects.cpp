@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.5 1997-04-02 14:52:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.6 1997-04-03 15:14:32 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -216,7 +216,7 @@ KssSimpleVariable::KssSimpleVariable(const KsString &id,
                                      KsTime ctime,
                                      const KsString &comment)
 : KssSimpleCommObject(id, ctime, comment),
-  _writeable(true),
+  _access_mode(KS_AC_READ|KS_AC_WRITE),
   _time(KsTime::now()),
   _state(KS_ST_UNKNOWN)
 {

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.5 1997-04-02 14:52:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.6 1997-04-03 15:14:31 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -84,6 +84,7 @@ KssDomain::getPP() const
         p->identifier    = getIdentifier();
         p->creation_time = getCreationTime();
         p->comment       = getComment();
+        p->access_mode   = getAccessMode();
     }
     return h;
 }
@@ -220,6 +221,7 @@ KssVariable::getPP() const
         p->identifier    = getIdentifier();
         p->creation_time = getCreationTime();
         p->comment       = getComment();
+        p->access_mode   = getAccessMode();
         p->tech_unit     = getTechUnit();
         p->type          = getType();
     }

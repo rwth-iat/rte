@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.4 1997-04-03 10:04:26 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.5 1997-04-03 15:14:30 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -235,7 +235,7 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
                                     // Ask for proj properties
                                     KsProjPropsHandle hpp = (*it)->getPP();
                                     if (hpp) {
-                                        hpp->access_mode = 
+                                        hpp->access_mode &= 
                                             ticket.getAccess(childname);
                                         result.items.addLast(hpp);
                                     } else {
