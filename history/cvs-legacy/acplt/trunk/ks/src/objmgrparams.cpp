@@ -1,6 +1,6 @@
 /* -*-plt-c++-*- */
 /*
- * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.3 1998-10-23 12:52:07 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.4 1998-12-03 17:05:54 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -274,7 +274,8 @@ KsDeleteObjResult::xdrDecode(XDR *xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     return KsResult::xdrDecode(xdr)
-        && results.xdrDecode(xdr);
+        && (result == KS_ERR_OK ? results.xdrDecode(xdr) 
+                                : true);
 } // KsDeleteObjResult::xdrDecode
 
 
