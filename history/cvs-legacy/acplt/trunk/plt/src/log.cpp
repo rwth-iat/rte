@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.9 1999-09-16 10:54:57 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.10 2003-09-23 08:28:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -248,7 +248,7 @@ PltCerrLog::~PltCerrLog()
 void
 PltCerrLog::info(const char *msg)
 {
-    cerr << (_ident?_ident:"") << " [Info]:" << msg << endl;
+    STDNS::cerr << (_ident?_ident:"") << " [Info]:" << msg << STDNS::endl;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ PltCerrLog::info(const char *msg)
 void
 PltCerrLog::debug(const char *msg)
 {
-    cerr << (_ident?_ident:"") << " [Debug]:" << msg << endl;
+    STDNS::cerr << (_ident?_ident:"") << " [Debug]:" << msg << STDNS::endl;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ PltCerrLog::debug(const char *msg)
 void
 PltCerrLog::warning(const char *msg)
 {
-    cerr << (_ident?_ident:"") << " [Warning]:" << msg << endl;
+    STDNS::cerr << (_ident?_ident:"") << " [Warning]:" << msg << STDNS::endl;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -272,7 +272,7 @@ PltCerrLog::warning(const char *msg)
 void
 PltCerrLog::error(const char *msg)
 {
-    cerr << (_ident?_ident:"") << " [Error]:" << msg << endl;
+    STDNS::cerr << (_ident?_ident:"") << " [Error]:" << msg << STDNS::endl;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -280,7 +280,7 @@ PltCerrLog::error(const char *msg)
 void
 PltCerrLog::alert(const char *msg)
 {
-    cerr << (_ident?_ident:"") << " [Alert]:" << msg << endl;
+    STDNS::cerr << (_ident?_ident:"") << " [Alert]:" << msg << STDNS::endl;
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOGSTREAM_INCLUDED
 #define PLT_LOGSTREAM_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.6 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.7 2003-09-23 08:27:47 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,11 +23,19 @@
 /* Written by Harald Albrecht, harald@plt.rwth-aachen.de */
 
 #include "plt/log.h"
+#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
+#else
+#include <iostream>
+#endif
 #if PLT_SYSTEM_NT && !PLT_COMPILER_CYGWIN
 #include <strstrea.h>
 #else
+#if PLT_USE_DEPRECIATED_HEADER
 #include <strstream.h>
+#else
+#include <sstream>
+#endif
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -39,7 +47,12 @@
 // operation: info, debug, warning, error, alert. This is as easy as
 // a cake -- or was that "a pie"?!
 //
-class PltLogStream : public ostrstream {
+class PltLogStream : 
+#if PLT_USE_DEPRECIATED_HEADER
+    public ostrstream {
+#else
+    public std::ostringstream {
+#endif
 public:
     PltLogStream();
     PltLogStream(PltLog &logger);
@@ -73,8 +86,13 @@ protected:
 
 inline void PltLogStream::reset()
 {
+// With the new sstream stuff, memory management issues of the old
+// class(es) have been cleaned up a bit, so the freeze stuff is
+// not required anymore.
+#if PLT_USE_DEPRECIATED_HEADER
     rdbuf()->freeze(0);
     seekp(0);
+#endif
 } /* PltLogStream::reset */
 
 
@@ -90,7 +108,11 @@ inline const char *PltLogStream::str()
                         * data, which still lurks around in the string
 			* stream...
 			*/
+#if PLT_USE_DEPRECIATED_HEADER
     return ostrstream::str();
+#else
+    return std::ostringstream::str().c_str();
+#endif
 } /* PltLogStream::freeze */
 
 #endif

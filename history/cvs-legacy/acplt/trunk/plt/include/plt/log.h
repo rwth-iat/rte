@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOG_INCLUDED
 #define PLT_LOG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.8 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.9 2003-09-23 08:27:47 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -85,7 +85,11 @@ private:
 //////////////////////////////////////////////////////////////////////
 #if PLT_USE_CERRLOG
 //////////////////////////////////////////////////////////////////////
+#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
+#else
+#include <iostream>
+#endif
 
 class PltCerrLog
 : public PltLog

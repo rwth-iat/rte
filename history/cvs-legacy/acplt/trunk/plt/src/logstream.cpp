@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/logstream.cpp,v 1.3 1999-09-16 10:54:57 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/logstream.cpp,v 1.4 2003-09-23 08:28:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -29,12 +29,22 @@
 // log stream, so the stream always uses that logger object.
 //
 PltLogStream::PltLogStream()
-    : ostrstream(), _logger(0)
+#if PLT_USE_DEPRECIATED_HEADER
+    : ostrstream(), 
+#else
+    : std::ostringstream(),
+#endif
+      _logger(0)
 {
 } /* PltLogStream::PltLogStream */
 
 PltLogStream::PltLogStream(PltLog &logger)
-    : ostrstream(), _logger(&logger)
+#if PLT_USE_DEPRECIATED_HEADER
+    : ostrstream(), 
+#else
+    : std::ostringstream(),
+#endif
+      _logger(&logger)
 {
 } /* PltLogStream::PltLogStream */
 

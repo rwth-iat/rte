@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.23 1999-09-16 10:54:58 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.24 2003-09-23 08:28:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -30,7 +30,11 @@
 // That's ridiculous:
 #include <strstrea.h>
 #else
+#if PLT_USE_DEPRECIATED_HEADER
 #include <strstream.h>
+#else
+#include <sstream>
+#endif
 #endif
 
 PltAllocator<PltString::srep> PltString::_srep_allocator;
@@ -142,6 +146,7 @@ static char conv_buffer[32];
 PltString
 PltString::fromInt(int i)
 {
+#if PLT_USE_DEPRECIATED_HEADER
     strstream s(conv_buffer, sizeof conv_buffer, ios::out);
     s << i << ends;
 #if PLT_COMPILER_GCC
@@ -149,6 +154,15 @@ PltString::fromInt(int i)
 #endif
     // TODO
     return PltString(s.str());
+#else
+    //
+    // We can now use the new stringstream interface, which makes some
+    // things really more easy.
+    //
+    std::ostringstream s;
+    s << i;
+    return PltString(s.str().c_str());
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
