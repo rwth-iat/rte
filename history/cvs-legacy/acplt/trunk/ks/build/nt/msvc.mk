@@ -68,9 +68,9 @@ examples:       ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe tclien
 
 ###
 
-w95service$(O): ..\..\include\ks\w95service.h ..\..\src\w95service.cpp
+w95service$(O): $(KSDIR)\include\ks\w95service.h $(KSDIR)\src\w95service.cpp
 
-ntservice$(O): ..\..\include\ks\ntservice.h ..\..\src\ntservice.cpp
+ntservice$(O): $(KSDIR)\include\ks\ntservice.h $(KSDIR)\src\ntservice.cpp
 
 ### explicit dependencies not covered by platform-dependend depent mechanism
 ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
