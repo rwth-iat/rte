@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_INADDRSET_INCLUDED
 #define KS_INADDRSET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/inaddrset.h,v 1.4 2003-09-23 15:35:31 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/inaddrset.h,v 1.5 2003-09-25 12:10:37 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -88,7 +88,6 @@ protected:
     bool _defaultIsAccept;
 }; // class KsSimpleInAddrSet
 
-// TODO!!!
 STDNS::istream & operator >> (STDNS::istream & istr, KsSimpleInAddrSet & set);
 
 //////////////////////////////////////////////////////////////////////
