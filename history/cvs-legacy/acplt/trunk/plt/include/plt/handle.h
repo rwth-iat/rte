@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.9 1997-03-12 16:19:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.10 1997-03-23 14:30:00 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -163,7 +163,7 @@ public:
   
     
     // modifiers
-    PltPtrHandle & operator=(PltPtrHandle &rhs);
+    PltPtrHandle & operator =(const PltPtrHandle &rhs);
     bool bindTo(T *, enum PltOwnership = PltOsNew);
 };
 
@@ -184,7 +184,7 @@ public:
     T& operator[](size_t) const;
     T* getPtr() const;                                          // [1]
 
-    PltArrayHandle & operator=(PltArrayHandle &rhs);
+    PltArrayHandle & operator = (const PltArrayHandle &rhs);
     bool bindTo(T *, enum PltOwnership = PltOsArrayNew);
 };
 
@@ -194,6 +194,7 @@ public:
 
 struct Plt_AllocTracker 
 {
+    virtual ~Plt_AllocTracker() { }
     unsigned count;
     enum PltOwnership type;
     Plt_AllocTracker() : count(1) {}
@@ -244,10 +245,10 @@ protected:
     // ^^ CAUTION: DON'T STORE ANY REFERENCES TO THE REPRESENTATION
 
     // modifiers
-    PltHandle_base & operator=(PltHandle_base &rhs);
+    PltHandle_base & operator = (const PltHandle_base &rhs);
     void bindTo(void *, Plt_AllocTracker * a);
 
-    void addRef();
+    void addRef() const;
     void removeRef();
 
     // state representation
@@ -356,7 +357,7 @@ PltPtrHandle<T>::getPtr () const
 
 template <class T>
 inline PltPtrHandle<T> & 
-PltPtrHandle<T>::operator = ( PltPtrHandle &h)
+PltPtrHandle<T>::operator = (const PltPtrHandle &h)
 {
     return (PltPtrHandle<T> &) (PltHandle<T>::operator = ( h )); 
     // static cast
@@ -448,7 +449,7 @@ PltArrayHandle<T>::getPtr () const
 //////////////////////////////////////////////////////////////////////
 template <class T>
 inline PltArrayHandle<T> & 
-PltArrayHandle<T>::operator = ( PltArrayHandle &h)
+PltArrayHandle<T>::operator = ( const PltArrayHandle &h)
 {
     return (PltArrayHandle<T> &) PltHandle<T>::operator = (h);
     // static cast
