@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.2 1999-07-26 16:14:08 dirk Exp $
+*   $Id: ov_ksserver.h,v 1.3 1999-08-18 13:11:24 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -340,7 +340,7 @@ void ov_ksserver_gethist(
 *	--------------------------------------------------------------------
 */
 
-#ifdef __cplusplus
+#if defined(OV_COMPILE_LIBOVKS) && defined(__cplusplus)
 
 #include "plt/log.h"
 #include "ks/server.h"

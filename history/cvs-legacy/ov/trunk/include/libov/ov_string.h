@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.h,v 1.3 1999-08-02 11:04:40 dirk Exp $
+*   $Id: ov_string.h,v 1.4 1999-08-18 13:11:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -91,6 +91,22 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_print(
 OV_BOOL OV_DLLFNCEXPORT ov_string_match(
 	const OV_STRING		string,
 	const OV_STRING		mask
+);
+
+/*
+*	Convert a string to lower case
+*	Note: you must call ov_memstack_lock/unlock() outside of this function!
+*/
+OV_STRING OV_DLLFNCEXPORT ov_string_tolower(
+	const OV_STRING		string
+);
+
+/*
+*	Convert a string to upper case
+*	Note: you must call ov_memstack_lock/unlock() outside of this function!
+*/
+OV_STRING OV_DLLFNCEXPORT ov_string_toupper(
+	const OV_STRING		string
 );
 
 /*

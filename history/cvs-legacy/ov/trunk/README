@@ -7,7 +7,9 @@ and the associated utilities:
 - libovks (ACPLT/KS integration with ACPLT/OV),
 - ov_codegen (C code generator),
 - ov_dbutil (database utility),
-- ov_server (default ACPLT/KS server for ACPLT/OV).
+- ov_server (generic ACPLT/KS server for ACPLT/OV),
+- ov_ntservice (generic ACPLT/KS server for ACPLT/OV implemented
+  as a Windows NT service).
 
 Enjoy!
 
@@ -129,7 +131,7 @@ You will need the Cygwin B20.1 including a properly installed make
 (version 3.75), flex (version 2.5), bison (version 1.25) and libstdc++ 
 for the mingw32 environment.
 
-In the command line, change to the approriate ACPLT/OV build directory:
+On the command line, change to the approriate ACPLT/OV build directory:
 
 	c:\> cd acplt\ov\build\cygwin
 
@@ -153,7 +155,7 @@ Note, that we do NOT use Borland make but GNU make, so make sure that
 GNU make will be called if you type "make" on the command line. (I 
 would suggest you rename Borland Make from "make.exe" to "bmake.exe").
 
-In the command line, change to the approriate ACPLT/OV build directory:
+On the command line, change to the approriate ACPLT/OV build directory:
 
 	c:\> cd acplt\ov\build\nt
 

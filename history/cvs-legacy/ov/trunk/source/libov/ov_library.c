@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.2 1999-08-10 07:11:49 dirk Exp $
+*   $Id: ov_library.c,v 1.3 1999-08-18 13:11:26 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -721,7 +721,7 @@ OV_STRING OV_DLLFNCEXPORT ov_library_getenv(void) {
 void OV_DLLFNCEXPORT ov_library_setenv(
 	OV_STRING path
 ) {
-#if OV_SYSTEM_NT
+#if OV_SYSTEM_NT || OV_SYSTEM_RMOS
 	/*
 	*	local variables
 	*/

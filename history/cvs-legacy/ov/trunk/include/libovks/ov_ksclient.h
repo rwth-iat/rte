@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.h,v 1.2 1999-07-26 16:14:08 dirk Exp $
+*   $Id: ov_ksclient.h,v 1.3 1999-08-18 13:11:24 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -41,7 +41,7 @@ extern "C" {
 *	-----------------------
 *	Client connection to an ACPLT/KS server used by ACPLT/OV as ACPLT/KS client.
 */
-#ifdef __cplusplus
+#if defined(OV_COMPILE_LIBOVKS) && defined(__cplusplus)
 typedef class OvKssInterKsServerConnection	OV_KSCLIENT_CONNECTION;
 #else
 typedef void*								OV_KSCLIENT_CONNECTION;
@@ -251,7 +251,7 @@ OV_BOOL ov_ksclient_service_decoderesult(
 *	--------------------------------------------------------------------
 */
 
-#ifdef __cplusplus
+#if defined(OV_COMPILE_LIBOVKS) && defined(__cplusplus)
 
 #include "ks/interserver.h"
 

@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.1 1999-07-19 15:02:00 dirk Exp $
+#   $Id: Makefile,v 1.2 1999-08-18 13:11:19 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -38,6 +38,8 @@ SYSDIR = rmos
 OBJ = .obj
 LIB = .lib
 EXE = .exe
+DLL = .dll
+RES = .res
 
 #	Platform-specific definitions
 #	-----------------------------
@@ -56,14 +58,18 @@ C_LIBS = rmfsk2ib.lib m7apibl.lib rm3bcc.lib rmfcrifb.lib rmfhlib.lib
 
 COMPILER		= BORLAND
 
+MKLIBTAB		= mklibtab
 CODEGEN			= ../nt/$(OV_CODEGEN_EXE)
-MKLIBTAB		= ../mklibtab
+FLEX			= flex
+BISON			= bison
+CPP 			= cpp
 
 CC				= bcc32
 CC_FLAGS		= -w -v -pc -wsig- -a8 -O2 -d
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= tlink32 -L$(RMOS_LIBRARY_DIR) -Tpe -ap -c
+LD				= $(CC) $(CC_FLAGS) -tWDE
 
 CXX				= bcc32 -P
 CXX_FLAGS		= $(CC_FLAGS)
@@ -73,6 +79,11 @@ CXX_LINK		= $(CXX) $(CXX_FLAGS)
 
 AR	 			= tlib /P64
 
+IMPLIB			= implib
+IMPDEF			= impdef
+
+RC 				= brc32 -i$(OV_INCLUDE_DIR)
+
 #	Include generic part
 #	--------------------
 
@@ -81,7 +92,13 @@ include ../generic.mk
 #	Targets
 #	-------
 
-all: $(OV_LIBOV_LIB) $(OV_DBUTIL_EXE) $(OV_LIBOVKS_LIB) $(EXAMPLE_LIB) $(OV_SERVER_EXE)
+targets: $(OV_LIBOV_LIB) $(OV_DBUTIL_EXE) $(OV_LIBOVKS_LIB) $(OV_SERVER_EXE)
+
+
+example: $(EXAMPLE)
+	@
+
+all: targets
 
 #   Implicit Rules
 #   --------------
@@ -91,6 +108,15 @@ all: $(OV_LIBOV_LIB) $(OV_DBUTIL_EXE) $(OV_LIBOVKS_LIB) $(EXAMPLE_LIB) $(OV_SERV
 
 .cpp$(OBJ):
 	$(CXX_COMPILE) -Jgx $< -o$@
+
+.rc$(RES):
+	$(RC) -r -fo$@ $<
+
+.lex.c:
+	$(FLEX) -o$@ $<
+
+.y.c:
+	$(BISON) -t -d -o$@ $<
 
 .ovm.c:
 	$(CODEGEN) -I $(OV_MODEL_DIR) -f $(subst /,\\, $<) -l $(notdir $(basename $<))
@@ -111,8 +137,8 @@ OV_LIBRARIES = $(EXAMPLE_LIB)
 
 $(OV_LIBTABLE_SRC) : $(OV_LIBRARIES)
 	@echo Generating static library table file '$@'
-	$(MKLIBTAB) $@ $^	
-	
+	$(MKLIBTAB) $@ $(basename $(notdir $^))
+
 #	Libraries
 #	---------
 
@@ -122,6 +148,7 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ)
 	@echo $(foreach object, $?, +-$(notdir $(object))) > respfile
 	$(AR) $@ @respfile
 	@del respfile
+
 
 #	ACPLT/OV library for ACPLT/KS integration
 
@@ -151,7 +178,7 @@ $(EXAMPLE_LIB) : $(EXAMPLE_OBJ)
 $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(LIBMPM_LIB)
 	@echo $(C_OBJS) $(filter %$(OBJ), $^), $@,, $(subst /,\, $(filter %$(LIB), $^ )) $(C_LIBS) > respfile
 	$(LINK) @respfile
-	@del respfile 
+	@del respfile
 
 #	ACPLT/KS-Server for ACPLT/OV
 
@@ -165,13 +192,11 @@ $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBTABLE_OBJ) $(OV_LIBRARIES) $(OV_LIBO
 
 install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-for %i in ( $(TARGETS) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
+	@-for %i in ( $(OV_LIBOV_LIB) $(OV_LIBOVKS_LIB) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
 	@echo Done.
-
-project : all
-	@echo Installing files to c:\\siemens\\step7\\s7proj\\test_m7\\hrs
-	@copy ov_dbutil.exe c:\\siemens\\step7\\s7proj\\test_m7\\hrs\\p0000010\\p0000010.exe
-	@copy ov_server.exe c:\\siemens\\step7\\s7proj\\test_m7\\hrs\\p0000011\\p0000011.exe
+	@echo Installing files to c:\siemens\step7\s7proj\test_m7\hrs
+	@copy ov_dbutil.exe c:\siemens\step7\s7proj\test_m7\hrs\p0000010\OVdbutil.exe
+	@copy ov_server.exe c:\siemens\step7\s7proj\test_m7\hrs\p0000011\OVserver.exe
 	@echo Done.
 
 #	Clean up

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.c,v 1.4 1999-08-02 11:04:41 dirk Exp $
+*   $Id: ov_string.c,v 1.5 1999-08-18 13:11:26 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,6 +34,7 @@
 #include "libov/ov_memstack.h"
 
 #include <stdarg.h>
+#include <ctype.h>
 
 /*	----------------------------------------------------------------------	*/
 
@@ -371,6 +372,64 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_print(
 	result = ov_string_setvalue(pstring, pc);
 	ov_memstack_unlock();
 	return result;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Convert a string to lower case
+*	Note: you must call ov_memstack_lock/unlock() outside of this function!
+*/
+OV_STRING OV_DLLFNCEXPORT ov_string_tolower(
+	const OV_STRING		string
+) {
+	/*
+	*	local variables
+	*/
+	OV_STRING plower, pfrom, pto;
+	/*
+	*	instructions
+	*/
+	if(!string) {
+		return NULL;
+	}
+	plower = (OV_STRING)ov_memstack_alloc(strlen(string)+1);
+	if(!plower) {
+		return NULL;
+	}
+	for(pfrom=string, pto=plower; *pfrom; pfrom++, pto++) {
+		*pto = tolower(*pfrom);
+	}
+	return plower;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Convert a string to upper case
+*	Note: you must call ov_memstack_lock/unlock() outside of this function!
+*/
+OV_STRING OV_DLLFNCEXPORT ov_string_toupper(
+	const OV_STRING		string
+) {
+	/*
+	*	local variables
+	*/
+	OV_STRING pupper, pfrom, pto;
+	/*
+	*	instructions
+	*/
+	if(!string) {
+		return NULL;
+	}
+	pupper = (OV_STRING)ov_memstack_alloc(strlen(string)+1);
+	if(!pupper) {
+		return NULL;
+	}
+	for(pfrom=string, pto=pupper; *pfrom; pfrom++, pto++) {
+		*pto = toupper(*pfrom);
+	}
+	return pupper;
 }
 
 /*	----------------------------------------------------------------------	*/

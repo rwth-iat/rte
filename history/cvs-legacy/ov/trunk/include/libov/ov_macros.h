@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.6 1999-08-05 09:21:22 dirk Exp $
+*   $Id: ov_macros.h,v 1.7 1999-08-18 13:11:21 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -31,6 +31,8 @@
 
 #include "libov/ov_association.h"
 #include "libov/ov_class.h"
+#include "libov/ov_time.h"
+#include "libov/ov_string.h"
 #include "libov/ov_vector.h"
 #include "libov/ov_database.h"
 #include "libov/ov_memstack.h"

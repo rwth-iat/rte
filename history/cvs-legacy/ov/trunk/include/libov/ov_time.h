@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_time.h,v 1.2 1999-08-18 13:11:23 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -36,10 +36,10 @@ extern "C" {
 #endif
 
 /*
-*	get current system time
+*	Get the current system time
 */
 void OV_DLLFNCEXPORT ov_time_gettime(
-	OV_TIME*	ptime
+	OV_TIME				*ptime
 );
 
 /*
@@ -66,6 +66,21 @@ void OV_DLLFNCEXPORT ov_time_diff(
 OV_INT OV_DLLFNCEXPORT ov_time_compare(
 	const OV_TIME		*ptime1,
 	const OV_TIME		*ptime2
+);
+
+/*
+*	Convert a time into an ASCII string
+*/
+OV_STRING OV_DLLFNCEXPORT ov_time_timetoascii(
+	const OV_TIME		*ptime
+);
+
+/*
+*	Convert an ASCII string into a time
+*/
+OV_RESULT OV_DLLFNCEXPORT ov_time_asciitotime(
+	OV_TIME				*ptime,
+	const OV_STRING		timestring
 );
 
 #ifdef __cplusplus

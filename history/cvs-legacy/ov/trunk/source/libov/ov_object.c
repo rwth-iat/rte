@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.6 1999-08-03 09:48:22 dirk Exp $
+*   $Id: ov_object.c,v 1.7 1999-08-18 13:11:26 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -370,19 +370,11 @@ OV_STRING OV_DLLFNCEXPORT ov_object_getcomment(
 	const OV_ELEMENT			*pelem
 ) {
 	/*
-	*	local variables
-	*/
-	OV_STRING	comment;
-	/*
 	*	switch based on the element's type
 	*/
 	switch(pelem->elemtype) {
 		case OV_ET_OBJECT:
-			comment = Ov_GetParent(ov_instantiation, pobj)->v_comment;
-			if(comment) {
-				return comment;
-			}
-			return Ov_GetParent(ov_instantiation, pobj)->v_identifier;
+			return Ov_GetParent(ov_instantiation, pobj)->v_comment;
 		case OV_ET_VARIABLE:
 		case OV_ET_MEMBER:
 			return pelem->elemunion.pvar->v_comment;
