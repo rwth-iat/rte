@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.37 2000-04-14 11:17:58 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.38 2000-09-04 06:23:00 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -60,7 +60,7 @@ extern "C" {
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.2.0"
+#define KS_VERSION_STRING "1.2.1"
 
 	 
 /* ----------------------------------------------------------------------------
