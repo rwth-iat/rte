@@ -43,5 +43,8 @@ clean : .SYMBOLIC
 
 mrproper : clean
 	del *.lib
+	del *.err
+	del *.sym
+	del *.mbr
 
 

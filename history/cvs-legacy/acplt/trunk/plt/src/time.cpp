@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.4 1997-04-01 12:30:31 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.5 1997-04-01 12:57:23 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -58,7 +58,7 @@ PltTime::now(long secs, long usecs)
     ftime(&t);
 
     PltTime res(t.time+secs, t.millitm*1000+usecs);
-    res.normalize;
+    res.normalize();
     return res;
 }
 
