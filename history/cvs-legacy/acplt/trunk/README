@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.5pre3 of the C++ Communication Libary. As always, it
+This is version 1.0.5pre4 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
@@ -47,6 +47,10 @@ appropriate, replace "linux" with either "hpux", "irix", or "solaris".
 2.2 NT/95
 ---------
 
+We're in the process of adding support for Cygnus' g++ port to the
+Win32 environment. Currently, the server library can be compiled
+and test examples build. Stay tuned for more information.
+
 On NT/95, take your chances, and do (Borland C++):
 
   X:\acplt> make -f makefile.nt nt.all
@@ -85,8 +89,23 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.0.5
-- CLIENTS & SERVERS: links and archives added.
+Version 1.0.5pre4
+- SERVERS: links added.
+
+- SERVERS: fixed a stupid preprocessor define bug in the sorces preventing
+  the buffered streams from working properly on Windows NT/95.
+
+- SERVERS: checking added that makes sure that both the libkssvr and your
+  particular ACPLT/KS server have been compiled using the same setting
+  for PLT_USE_BUFFERED_STREAMS. If you compile one without it and the other
+  one with PLT_USE_BUFFERED_STREAMS, you'll get an unresolved symbol at
+  link time. The name of the unresolved symbol indicates whether the
+  libkssvr has been compiled with PLT_USE_BUFFERED_STREAMS on or off.
+
+- SERVERS: support for Cygwin development environment added.
+
+- SERVERS: fixed some compile problems with Borland C++ 5.01 which behaves
+  slightly different from BC++ 5.0.
 
 Version 1.0.4
 - CLIENTS: Fixed a bug which caused A/V modules to be ignored which
