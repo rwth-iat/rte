@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.45 2003-10-13 11:28:22 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.46 2003-10-14 17:42:26 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -60,7 +60,7 @@ extern "C" {
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.3.0"
+#define KS_VERSION_STRING "1.3.1"
 
 	 
 /* ----------------------------------------------------------------------------
@@ -123,6 +123,7 @@ ENUMDEF(KS_RESULT)
 #define KS_ERR_CANTCONTACT               ENUMVAL(KS_RESULT, 0x1005)
 #define KS_ERR_TIMEOUT                   ENUMVAL(KS_RESULT, 0x1006)
 #define KS_ERR_NOMANAGER                 ENUMVAL(KS_RESULT, 0x1007)
+#define KS_ERR_TERMINATED                ENUMVAL(KS_RESULT, 0x1008)
 
 
 /* ----------------------------------------------------------------------------
