@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.1 1999-02-25 17:15:49 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.2 1999-02-26 13:27:45 harald Exp $ */
 /*
  * Copyright (c) 1999
  * Chair of Process Control Engineering,
@@ -56,7 +56,9 @@
 #include "ks/xdrudpcon.h"
 #include "ks/register.h"
 
+#if !PLT_SYSTEM_NT
 #include <rpc/pmap_prot.h>
+#endif
 
 #include <iostream.h>
 
