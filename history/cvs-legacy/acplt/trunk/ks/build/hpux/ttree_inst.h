@@ -1,1 +1,23 @@
-
+template class PltAssoc<KsString, KscServerBase *>;
+template class PltAssoc<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> >;
+template class PltContainer<PltAssoc<KsString, KscServerBase *> >;
+template class PltContainer<PltAssoc<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> > >;
+template class PltContainer_<PltAssoc<KsString, KscServerBase *> >;
+template class PltContainer_<PltAssoc<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> > >;
+template class PltDictionary<KsString, KscServerBase *>;
+template class PltDictionary<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> >;
+template class PltHandle<KscNegotiator>;
+template class PltHashIterator<KsString, KscServerBase *>;
+template class PltHashIterator<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> >;
+template class PltHashTable<KsString, KscServerBase *>;
+template class PltHashTable<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> >;
+template class PltHashTable_<KsString, KscServerBase *>;
+template class PltHashTable_<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> >;
+template class PltIterator<PltAssoc<KsString, KscServerBase *> >;
+template class PltIterator<PltAssoc<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> > >;
+template class PltIterator_<PltAssoc<KsString, KscServerBase *> >;
+template class PltIterator_<PltAssoc<PltKeyCPtr<KscAvModule>, PltPtrHandle<KscNegotiator> > >;
+template class PltKeyCPtr<KscAvModule>;
+template class PltPtrHandle<KscNegotiator>;
+template class Plt_AtArrayNew<KscNegotiator>;
+template class Plt_AtNew<KscNegotiator>;
