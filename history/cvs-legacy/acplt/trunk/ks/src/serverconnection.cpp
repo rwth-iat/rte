@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/serverconnection.cpp,v 1.2 2003-10-14 17:45:09 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/serverconnection.cpp,v 1.3 2003-10-15 15:27:01 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -290,6 +290,16 @@ u_short KsServerConnection::getProtocolVersion() const {
 
 
 // ---------------------------------------------------------------------------
+// Convenience function for pinging ONC/RPC servers.
+//
+bool KsServerConnection::sendPing()
+{
+    return beginSend(0)
+	   && endSend();
+} // KsServerConnection::sendPing
+
+
+// ---------------------------------------------------------------------------
 // Start building a request telegramme. After calling this method you can
 // serialize data into the connection using its associated XDR stream (which
 // can be retrieved through the getXdr() accessor). When you're done, call
@@ -345,25 +355,56 @@ bool KsServerConnection::endSend()
 //
 bool KsServerConnection::send(u_long serviceid, const KsXdrAble &params)
 {
+    return send(serviceid, 0, params);
+} // KsServerConnection::send
+
+
+bool KsServerConnection::send(u_long serviceid, 
+			      KscNegotiator *neg,
+			      const KsXdrAble &params)
+{
+    //
+    // Put the connection into sending mode (create the RPC header)
+    //
     if ( !beginSend(serviceid) ) {
 	return false;
     }
-    //
-    // Use the A/V NONE scheme at this time...
-    //
-    enum_t avscheme = KS_AUTH_NONE;
-    bool ok = xdr_enum(_cln_con->getXdr(), &avscheme);
-    if ( avscheme == KS_AUTH_NONE ) {
+    bool ok = true;
+    if ( !neg ) {
+	//
+	// Use the A/V NONE scheme, if no suitable negotiator has been
+	// supplied.
+	//
+	enum_t avscheme = KS_AUTH_NONE;
+	ok = xdr_enum(_cln_con->getXdr(), &avscheme);
 	ok &= params.xdrEncode(_cln_con->getXdr());
     } else {
-	ok = false;
+	//
+	// Use the negotiator supplied by the requestor.
+	//
+	ok = neg->xdrEncode(_cln_con->getXdr());
+	ok &= params.xdrEncode(_cln_con->getXdr());
     }
+    //
+    // Do the final check and finish the request. The data then can be
+    // sent whenever the system gets idle time or a multithreaded connection
+    // manager is used.
+    //
     if ( !ok ) {
 	_result = KS_ERR_GENERIC;
 	return false;
     }
     return endSend();
 } // KsServerConnection::send
+
+
+// ---------------------------------------------------------------------------
+//
+bool KsServerConnection::receivePing()
+{
+    return beginReceive()
+	   && endReceive();
+} // KsServerConnection::receivePing
 
 
 // ---------------------------------------------------------------------------
@@ -413,25 +454,34 @@ bool KsServerConnection::endReceive()
 //
 bool KsServerConnection::receive(KsResult &result)
 {
+    return receive(0, result);
+} // KsServerConnection::receive
+
+
+bool KsServerConnection::receive(KscNegotiator *neg, KsResult &result)
+{
     if ( !beginReceive() ) {
 	return false; // _result already set.
     }
-    //
-    // Use the A/V NONE scheme at this time, and then deserialize the
-    // result into an appropriate object.
-    //
-    u_long avdummy = 0;
-    bool ok = xdr_u_long(_cln_con->getXdr(), &avdummy);
-    ok &= result.xdrDecode(_cln_con->getXdr());
-    if ( !ok ) {
-	endReceive();
-	_result = KS_ERR_GENERIC;
-	return false;
+    bool ok;
+    if ( !neg ) {
+	//
+	// Use the A/V NONE scheme if no negotiator was given, and then
+	// deserialize the result into an appropriate object.
+	//
+	u_long avdummy = 0;
+	ok = xdr_u_long(_cln_con->getXdr(), &avdummy);
+	ok &= result.xdrDecode(_cln_con->getXdr());
+    } else {
+	//
+	// Otherwise, use the negotiator specified by the requestor for
+	// retrieving the answer from the server.
+	//
+	ok = neg->xdrDecode(_cln_con->getXdr());
+	ok &= result.xdrDecode(_cln_con->getXdr());
     }
-    if ( !endReceive() ) {
-	return false;
-    }
-    _result = KS_ERR_OK;
+    ok &= endReceive();
+    _result = ok ? KS_ERR_OK : KS_ERR_GENERIC;
     return true;
 } // KsServerConnection::receive
 

@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/serverconnection.h,v 1.3 2003-10-14 17:45:09 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/serverconnection.h,v 1.4 2003-10-15 15:27:01 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -39,6 +39,7 @@
 #include "ks/xdrtcpcon.h"
 #include "ks/xdrudpcon.h"
 #include "ks/register.h"
+#include "ks/avmodule.h"
 
 #if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
@@ -100,16 +101,20 @@ public:
     //   C-lovers please take the beginSend()/.../endSend() route.
     //
     bool send(u_long serviceid, const KsXdrAble &params);
+    bool send(u_long serviceid, KscNegotiator *neg, const KsXdrAble &params);
     bool beginSend(u_long serviceid);
     bool endSend();
+    bool sendPing();
 
     //
     // Receive an ACPLT/KS reply from the wire. Note that the same rules
     // for C++ versus C applies as mentioned just before.
     //
     bool receive(KsResult &result);
+    bool receive(KscNegotiator *neg, KsResult &result);
     bool beginReceive();
     bool endReceive();
+    bool receivePing();
 
     //
     // This method needs to be implemented in derived classes.
