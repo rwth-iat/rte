@@ -73,7 +73,7 @@ enum KS_AUTH_TYPE {
  * can be combined (or-ed) to find any object belonging to one of the types
  * listed in the flag set.
  */
-enum KS_OBJTYPE {
+enum KS_OBJ_TYPE {
     KS_OT_DOMAIN   = 0x0001, /* object is a domain   */
     KS_OT_VARIABLE = 0x0002, /* object is a variable */
     KS_OT_HISTORY  = 0x0004, /* object is a history  */
