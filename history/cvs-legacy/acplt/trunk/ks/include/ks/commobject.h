@@ -50,6 +50,7 @@
 #include "ks/props.h"
 #include "ks/clntpath.h"
 #include "ks/avmodule.h"
+#include "ks/abspath.h"
 
 //////////////////////////////////////////////////////////////////////
 // forward declarations
