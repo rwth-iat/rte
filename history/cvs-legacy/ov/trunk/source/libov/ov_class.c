@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.16 2002-01-24 15:22:12 ansgar Exp $
+*   $Id: ov_class.c,v 1.17 2002-01-24 16:37:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -354,6 +354,7 @@ OV_BOOL ov_class_canunload(
 	OV_INSTPTR_ov_operation	pop;
 	OV_INSTPTR_ov_domain	plib;
 	OV_INSTPTR_ov_class		psubclass;
+	OV_INSTPTR_ov_association	passoc;
 	/*
 	*	test if this class has instances or has subclasses or
 	*	part classes used of other libraries
@@ -409,6 +410,16 @@ OV_BOOL ov_class_canunload(
 			return FALSE;
 		}
 	}
+	/*
+	*	test if there exist associations in some other libraries which use this class as childclass or parentclass
+	*/
+	Ov_ForEachChild(ov_parentrelationship, pclass, passoc) {
+		if (Ov_GetParent(ov_containment, passoc) != plib) return FALSE;
+	}
+	Ov_ForEachChild(ov_childrelationship, pclass, passoc) {
+		if (Ov_GetParent(ov_containment, passoc) != plib) return FALSE;
+	}
+
 	return TRUE;
 }
 

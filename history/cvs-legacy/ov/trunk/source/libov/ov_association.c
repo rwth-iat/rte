@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.11 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_association.c,v 1.12 2002-01-24 16:37:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -298,6 +298,41 @@ ERRORMSG:
 OV_BOOL ov_association_canunload(
 	OV_INSTPTR_ov_association	passoc
 ) {
+	OV_INSTPTR_ov_class		pclass;
+	OV_INSTPTR_ov_domain		plib;
+	OV_INSTPTR_ov_object		pinst;
+	Ov_Association_DefineIteratorNM(pit);
+
+	/*
+	*	test if there exist parent or child classes in an other library which are linked by this association
+	*/
+	plib   = Ov_GetParent(ov_containment, passoc);
+	pclass = Ov_GetParent(ov_parentrelationship, passoc);
+	if (Ov_GetParent(ov_containment, pclass) != plib) {
+		Ov_ForEachChild(ov_instantiation, pclass, pinst) {
+			switch(passoc->v_assoctype) {
+			case OV_AT_ONE_TO_ONE:
+				if (Ov_Association_GetChild(passoc, pinst)) return FALSE;
+			case OV_AT_ONE_TO_MANY:
+				if (Ov_Association_GetFirstChild(passoc, pinst)) return FALSE;
+			case OV_AT_MANY_TO_MANY:
+				if (Ov_Association_GetFirstChildNM(passoc, pit, pinst)) return FALSE;
+			}
+		}
+	}
+	pclass = Ov_GetParent(ov_childrelationship, passoc);
+	if (Ov_GetParent(ov_containment, pclass) != plib) {
+		Ov_ForEachChild(ov_instantiation, pclass, pinst) {
+			switch(passoc->v_assoctype) {
+			case OV_AT_ONE_TO_ONE:
+			case OV_AT_ONE_TO_MANY:
+				if (Ov_Association_GetParent(passoc, pinst)) return FALSE;
+			case OV_AT_MANY_TO_MANY:
+				if (Ov_Association_GetFirstParentNM(passoc, pit, pinst)) return FALSE;
+			}
+		}
+	}
+	
 	return TRUE;
 }
 
