@@ -11,6 +11,27 @@
 #include <plt/debug.h>
 
 #if PLT_SIMULATE_RTTI
+
+
+//////////////////////////////////////////////////////////////////////
+// Runtime type information is still not present in all 
+// implementations of C++. Because the dynamic_cast feature
+// is sometimes needed we provide some simulation of RTTI.
+// This simulation needs help from class implementors.
+//
+// What will you have to do for every class containing new virtual 
+// functions that might be referred to by pointers to base classes?
+//
+// You have to:
+// - create a static null terminated array containing 
+//   pointers to PltRTTI objects of all base classes.
+// - Provide a static data member of class PltRTTI.
+// - Bracket this code with #if PLT_SIMULATE_RTTI / #endif
+// 
+// TODO: Some example to make this clear.
+//////////////////////////////////////////////////////////////////////
+
+
 class PltRTTI {
 public:
     PltRTTI(const char *name,const PltRTTI* bases[]);
