@@ -17,7 +17,7 @@ CXX_LIBS = -lstdc++
 
 .SUFFIXES:
 
-.SUFFIXES: .cpp .o  .exe .i
+.SUFFIXES: .cpp .o .exe .i
 
 .PRECIOUS: .o .a
 

@@ -28,7 +28,14 @@ CXX_LIBKSSVR_SOURCES = \
 	svrbase.cpp \
 	svrobjects.cpp \
 	svrrpcctx.cpp \
-	svrsimpleobjects.cpp
+	svrsimpleobjects.cpp \
+	svrtransport.cpp \
+	xdrmemstream.cpp \
+	rpcproto.cpp \
+	connectionmgr.cpp \
+	connection.cpp \
+	xdrudpcon.cpp \
+	xdrtcpcon.cpp
 
 CXX_LIBKSCLN_SOURCES= \
 	avmodule.cpp \
@@ -73,9 +80,18 @@ LIBKSSVR_OBJECTS2 = \
 	svrbase$(O) \
 	svrobjects$(O) \
 	svrrpcctx$(O) \
-	svrsimpleobjects$(O)
+	svrsimpleobjects$(O) \
+	svrtransport$(O)
+	
+LIBKSSVR_OBJECTS3 = \
+	xdrmemstream$(O) \
+	rpcproto$(O) \
+	connectionmgr$(O) \
+	connection$(O) \
+	xdrudpcon$(O) \
+	xdrtcpcon$(O)
 
-LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2)
+LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2) $(LIBKSSVR_OBJECTS3)
 
 LIBKSCLN_OBJECTS1 = \
 	avmodule$(O) \
@@ -96,17 +112,14 @@ CXX_EXAMPLES_SOURCES = \
 	ext_sp.cpp \
 	pmobile.cpp \
 	pmobile_code.cpp \
-	tbigpkg.cpp \
 	tclient.cpp \
 	tclient1.cpp \
 	tmanager.cpp \
 	tmanager1.cpp \
-	tpackage.cpp \
 	tsclient.cpp \
 	tsclient1.cpp \
 	tserver.cpp \
 	tserver1.cpp \
-	tservice.cpp \
 	tshell.cpp \
 	ttree.cpp \
 	ttree1.cpp
@@ -115,31 +128,23 @@ EXAMPLES_OBJECTS = \
 	ext_sp$(O) \
 	pmobile$(O) \
 	pmobile_code$(O) \
-	tbigpkg$(O) \
 	tclient$(O) \
 	tclient1$(O) \
 	tmanager$(O) \
 	tmanager1$(O) \
-	tpackage$(O) \
 	tsclient$(O) \
 	tsclient1$(O) \
 	tserver$(O) \
 	tserver1$(O) \
-	tservice$(O) \
 	tshell$(O) \
 	ttree$(O) \
 	ttree1$(O)
 
 EXAMPLES = \
 	pmobile$(EXE) \
-	tclient$(EXE) \
-	tbigpkg$(EXE) \
-	tmanager$(EXE) tserver$(EXE) \
-	tpackage$(EXE) \
-	tservice$(EXE) \
-	tshell$(EXE) \
+	tmanager$(EXE) \
+	tserver$(EXE) \
 	ttree$(EXE)
-
 #
 # The following examples are not supported.
 #	tclient$(EXE)
@@ -180,9 +185,4 @@ tshell$(EXE) : tshell$(O) $(LIBKSCLN) $(LIBKS)
 tpackage$(EXE) : tpackage$(O) $(LIBKSCLN) $(LIBKS)
 
 tbigpkg$(EXE) : tbigpkg$(O) $(LIBKSCLN) $(LIBKS)
-
-
-
-
-
 
