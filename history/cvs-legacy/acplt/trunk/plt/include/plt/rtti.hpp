@@ -69,7 +69,7 @@ PltRTTI::canCastFrom(const PltRTTI *p) const
 //////////////////////////////////////////////////////////////////////
 
 #define PLT_DYNAMIC_PCAST(T,p)                                         \
-           ((&T::RTTI)->canCastFrom(p->getRTTI()) ? (T*)((p)) : 0)
+           ((&T::RTTI)->canCastFrom((p)->getRTTI()) ? (T*)((p)) : 0)
 
 #define PLT_DECL_RTTI                                                  \
      public:                                                           \
@@ -111,6 +111,7 @@ PltRTTI::canCastFrom(const PltRTTI *p) const
 
 #define PLT_DYNAMIC_PCAST(T,p) \
            (dynamic_cast<T*> (p))
+
 #endif // PLT_SIMULATE_RTTI
 
 #endif // header
