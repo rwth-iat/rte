@@ -139,6 +139,11 @@ Version 1.2.2
     populating it with information when someone has already created
     the vendor domain. This also fixes "pure virtual method called"
     problems with the Manager.
+  * Fixed bug in state reporting when the attempt to open an interserver
+    connection fails. In case the destination host does not run either
+    a portmapper or a Manager, then async_attention() was called with
+    a "call" indication instead of an "open" indication. This has been
+    fixed to always indicate a failed "open".
 
 Version 1.2.1
 - SERVERS:
