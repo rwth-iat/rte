@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.12 2003-01-31 10:04:46 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.13 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -53,8 +53,9 @@ static OV_STRING	semantic_flag[32] = {
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 					};
-OV_DLLVAREXPORT OV_BOOL activitylock;
-OV_DLLVAREXPORT OV_BOOL backup;
+OV_DLLVAREXPORT OV_BOOL ov_activitylock;
+OV_DLLVAREXPORT OV_BOOL ov_backup;
+OV_DLLVAREXPORT OV_BOOL ov_explain;
 /*
 *	Global variables
 */
@@ -79,7 +80,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 	{ "server_version",			NULL,	ov_vendortree_getserverversion, NULL },
 	{ "startup_time",			"UTC",	ov_vendortree_getstartuptime, NULL },
 	{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
-	{ "activity_lock",			NULL,	ov_vendortree_getactivitylock, ov_vendortree_setactivitylock },
+	{ "server_configuration",			NULL,	ov_vendortree_getserverconfiguration, ov_vendortree_setserverconfiguration },
 	{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
 	{ "server_password",			NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
 	{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset }
@@ -861,23 +862,26 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Get activitylock
+*	Get server configuration
 */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getactivitylock(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverconfiguration(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 ) {
-	pvarcurrprops->value.vartype = OV_VT_BOOL;
-	pvarcurrprops->value.valueunion.val_bool = activitylock;
+	pvarcurrprops->value.vartype = OV_VT_BOOL_VEC;
+	pvarcurrprops->value.valueunion.val_bool_vec.veclen = OV_NUM_SERVER_CONFIG;
+	pvarcurrprops->value.valueunion.val_bool_vec.value = ov_memstack_alloc(OV_NUM_SERVER_CONFIG*sizeof(OV_BOOL));
+	pvarcurrprops->value.valueunion.val_bool_vec.value[0] = ov_activitylock;
+	pvarcurrprops->value.valueunion.val_bool_vec.value[1] = ov_explain;
 	return OV_ERR_OK;
 }
 
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Set activitylock
+*	Set server configuration 
 */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setactivitylock(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setserverconfiguration(
 	const OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 ) {
@@ -888,9 +892,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setactivitylock(
 		return OV_ERR_NOACCESS;
 	}
 CONTINUE1:
-	if (pvarcurrprops->value.vartype == OV_VT_BOOL) {
-		activitylock = pvarcurrprops->value.valueunion.val_bool;
-		return OV_ERR_OK;
+	if (pvarcurrprops->value.vartype == OV_VT_BOOL_VEC) {
+		if (pvarcurrprops->value.valueunion.val_bool_vec.veclen == OV_NUM_SERVER_CONFIG) {
+			ov_activitylock = pvarcurrprops->value.valueunion.val_bool_vec.value[0];
+			ov_explain = pvarcurrprops->value.valueunion.val_bool_vec.value[1];
+			return OV_ERR_OK;
+		}
 	}
 	return OV_ERR_BADTYPE;
 }
@@ -905,7 +912,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getbackup(
 	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_BOOL;
-	pvarcurrprops->value.valueunion.val_bool = backup;
+	pvarcurrprops->value.valueunion.val_bool = ov_backup;
 	return OV_ERR_OK;
 }
 /*	----------------------------------------------------------------------	*/

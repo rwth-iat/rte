@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_unlink.c,v 1.8 2002-05-15 12:41:50 ansgar Exp $
+*   $Id: ov_ksserver_unlink.c,v 1.9 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -200,7 +200,7 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 	*	unlink child from parent
 	*/
 	if(plinkelem->elemunion.passoc->v_unlinkfnc) {
-		if (activitylock) ov_association_unlink(plinkelem->elemunion.passoc, pparent, pchild);
+		if (ov_activitylock) ov_association_unlink(plinkelem->elemunion.passoc, pparent, pchild);
 		else plinkelem->elemunion.passoc->v_unlinkfnc(pparent, pchild);
 	}
 	else ov_association_unlink(plinkelem->elemunion.passoc, pparent, pchild);

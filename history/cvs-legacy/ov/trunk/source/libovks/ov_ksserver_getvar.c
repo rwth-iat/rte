@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.11 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.12 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -152,7 +152,7 @@ OV_NAMED_ELEMENT* ov_ksserver_getvar_getstruct(
 	pstructelem = (OV_NAMED_ELEMENT*) ov_memstack_alloc(sizeof(OV_NAMED_ELEMENT)*num);
 	pstructelem2 = pstructelem;
 	while (pvar) {
-		pstructelem->identifier = (OV_STRING)ov_memstack_alloc(strlen(pvar->v_identifier));
+		pstructelem->identifier = (OV_STRING)ov_memstack_alloc(ov_path_percentsize(pvar->v_identifier));
 		pstructelem->value.vartype = pvar->v_vartype;
 		switch(pstructelem->value.vartype) {
 			GETSTRUCTCASE(bool, BOOL);
@@ -214,7 +214,7 @@ void ov_ksserver_getvar_getitem(
 	*	get the vtable pointer of the object the variable belongs to
 	*/
 	Ov_GetVTablePtr(ov_object, pvtable, pobj);
-	if((!pvtable) || (activitylock)){
+	if((!pvtable) || (ov_activitylock)){
 		pvtable = pclass_ov_object->v_pvtable;
 	}
 	/*

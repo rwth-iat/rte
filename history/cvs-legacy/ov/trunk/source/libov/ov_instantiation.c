@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_instantiation.c,v 1.3 2003-08-25 09:16:03 ansgar Exp $
+*   $Id: ov_instantiation.c,v 1.4 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -55,14 +55,14 @@ OV_DECL_GETACCESS(ov_instantiation) {
 	*	do not allow to link any parent/child couple from the outside world
 	*/
 	if(pticket) {
-#ifndef OV_EXPLAIN
+		if (!ov_explain) {
 		/*
 		*	child link is not visible as we can get the class using GetEP
 		*/
-		if(pchild) {
-			return OV_AC_NONE;
+			if(pchild) {
+				return OV_AC_NONE;
+			}
 		}
-#endif
 		return OV_AC_READ;
 	}
 	return OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE;

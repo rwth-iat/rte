@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getpp.c,v 1.9 2001-07-20 07:28:54 ansgar Exp $
+*   $Id: ov_ksserver_getpp.c,v 1.10 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -297,7 +297,7 @@ OV_RESULT ov_ksserver_getpp_additem(
 	/*
 	*	fix the access rights and identifier for old clients
 	*/
-	identifier = ov_element_getidentifier(pelem);
+	identifier = ov_path_topercent(ov_element_getidentifier(pelem));
 	if(version < 2) {
 		access &= ~(OV_AC_INSTANTIABLE | OV_AC_DELETEABLE);
 		if(objtype == KS_OT_DOMAIN) {

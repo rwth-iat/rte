@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_setvar.c,v 1.7 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_ksserver_setvar.c,v 1.8 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -141,7 +141,7 @@ OV_RESULT ov_ksserver_setvar_setitem(
 	*	get the vtable pointer of the object the variable belongs to
 	*/
 	Ov_GetVTablePtr(ov_object, pvtable, pobj);
-	if((!pvtable) || (activitylock)){
+	if((!pvtable) || (ov_activitylock)){
 		pvtable = pclass_ov_object->v_pvtable;
 	}
 	/*

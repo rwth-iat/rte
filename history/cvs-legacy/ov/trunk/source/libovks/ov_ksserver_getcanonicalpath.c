@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getcanonicalpath.c,v 1.2 2000-04-04 15:12:49 dirk Exp $
+*   $Id: ov_ksserver_getcanonicalpath.c,v 1.3 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -118,7 +118,7 @@ void ov_ksserver_getcanonicalpath(
 							canonicalpath = pitem->canonical_path;
 							size = strlen(canonicalpath)+1;
 							for(k=j+1; k<path.size; k++) {
-								size += strlen(ov_element_getidentifier(&path.elements[k]))+1;
+								size += ov_path_percentsize(ov_element_getidentifier(&path.elements[k]))+1;
 							}
 							pitem->canonical_path = (OV_STRING)ov_memstack_alloc(size);
 							if(pitem->canonical_path) {
@@ -127,8 +127,8 @@ void ov_ksserver_getcanonicalpath(
 								for(k=j+1; k<path.size; k++) {
 									*canonicalpath = '.';
 									canonicalpath++;
-									strcpy(canonicalpath, ov_element_getidentifier(&path.elements[k]));
-									canonicalpath += strlen(ov_element_getidentifier(&path.elements[k]));
+									strcpy(canonicalpath, ov_path_topercent(ov_element_getidentifier(&path.elements[k])));
+									canonicalpath += ov_path_percentsize(ov_element_getidentifier(&path.elements[k]));
 								}
 							} else {
 								pitem->result = OV_ERR_TARGETGENERIC;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.7 2002-05-15 12:41:50 ansgar Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.8 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -227,7 +227,7 @@ void ov_ksserver_createobject(
 			} else {
 				/* relative path */
 				prelchild = Ov_SearchChild(ov_containment, pdom,
-					pitem->place.place_path);
+					ov_path_frompercent(pitem->place.place_path));
 				if(!prelchild) {
 					presult->result = OV_ERR_BADPLACEMENT;
 					continue;
@@ -239,7 +239,7 @@ void ov_ksserver_createobject(
 		*/
 		pinfo->pitem = pitem;
 		pinfo->presult = presult;
-		presult->result = ov_class_createobject(pclass, pdom, identifier,
+		presult->result = ov_class_createobject(pclass, pdom, ov_path_frompercent(identifier),
 			hint, prelchild, ov_ksserver_createobject_initobj, pinfo, &pobj);
 	}	/* for */
 	/*

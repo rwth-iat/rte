@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_path.c,v 1.6 2002-07-02 05:59:01 ansgar Exp $
+*   $Id: ov_path.c,v 1.7 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -75,7 +75,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 		return OV_ERR_BADPATH;
 	}
 	/*
-	*       copy static pathname in memstack (beware of memory access to the codesegments!)  
+	*       copy static pathname in memstack (beware of memory access to the codesegments!)
 	*/
 	pathcopy = ov_memstack_alloc(strlen(pathname)+1);
 	strcpy(pathcopy, pathname);
@@ -127,7 +127,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 					& OV_VT_KSMASK) == OV_VT_STRUCT
 				) {
 					break;
-				}						
+				}
 			}
 			size--;
 			if(!size) {
@@ -159,7 +159,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 								& OV_VT_KSMASK) == OV_VT_STRUCT
 							) {
 								break;
-							}						
+							}
 						}
 					}	/* while */
 				} else {
@@ -263,14 +263,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 				*	next element is a child
 				*/
 				result = ov_element_searchchild(&ppath->elements[ppath->size-1],
-					&ppath->elements[ppath->size], identifier);
+					&ppath->elements[ppath->size], ov_path_frompercent(identifier));
 				break;
 			case '.':
 				/*
 				*	next element is a part
 				*/
 				result = ov_element_searchpart(&ppath->elements[ppath->size-1],
-					&ppath->elements[ppath->size], OV_ET_ANY, identifier);
+					&ppath->elements[ppath->size], OV_ET_ANY, ov_path_frompercent(identifier));
 				break;
 			default:
 				/*
@@ -344,7 +344,7 @@ OV_DLLFNCEXPORT OV_STRING ov_path_getcanonicalpath(
 		*	add space for the identifier and allow for version 1
 		*	path names which may contain "/." as part delimiter
 		*/
-		size += strlen(pcurrobj->v_identifier)+2;
+		size += ov_path_percentsize(pcurrobj->v_identifier)+2;
 	}
 	/*
 	*	allocate memory for the path name on the memory stack
@@ -360,9 +360,9 @@ OV_DLLFNCEXPORT OV_STRING ov_path_getcanonicalpath(
 	*pathname = 0;
 	pcurrobj = pobj;
 	while(pcurrobj != Ov_PtrUpCast(ov_object, &pdb->root)) {
-		currsize = strlen(pcurrobj->v_identifier);
+		currsize = ov_path_percentsize(pcurrobj->v_identifier);
 		pathname -= currsize;
-		strncpy(pathname, pcurrobj->v_identifier, currsize);
+		strncpy(pathname, ov_path_topercent(pcurrobj->v_identifier), currsize);
 		pathname--;
 		if(pcurrobj->v_pouterobject) {
 			*pathname = '.';
@@ -415,7 +415,138 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_path_getobjectpointer(
 	*/
 	return NULL;
 }
-	
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Checks if characters in a valid one
+*/
+
+OV_DLLFNCEXPORT OV_BOOL ov_path_isvalidchar (
+                char pcurr
+) {
+	if((!((pcurr >= 'a') && (pcurr <= 'z')))		/* no lower char */
+		&& (!((pcurr >= 'A') && (pcurr <= 'Z')))	/* no upper char */
+		&& (!((pcurr >= '0') && (pcurr <= '9')))	/* no digit */
+		&& (pcurr != '_')				/* and no underscore */
+	) return FALSE;						/* is not a valid char */
+        return TRUE;                                            /* is a valid char */
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	returns size of a string in respect to a percent conversion
+*/
+
+OV_DLLFNCEXPORT OV_UINT ov_path_percentsize (
+                OV_STRING org
+) {
+    OV_UINT size;
+    char *d;
+
+    size = strlen(org);
+    d = org;
+    while (*d) {
+          if (!ov_path_isvalidchar(*d)) size = size + 2;
+          d++;
+    }
+    return size;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Converts characters in an identifier-string to their percent representation
+*	Note: the memory for the returned string is allocated on the memory
+*	stack, use ov_memstack_lock()/unlock() outside of this function
+*/
+
+OV_DLLFNCEXPORT OV_STRING ov_path_topercent (
+                OV_STRING org
+) {
+    OV_STRING newstring;
+    unsigned char *s,*d;
+    unsigned int upper, lower;
+
+    newstring = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(org)+1);
+    d = org;
+    s = newstring;
+    while (*d) {
+          if (!ov_path_isvalidchar(*d)) {
+              upper = (*d) >> 4;
+              lower = (*d) % 16;
+              s[0] = '%';
+              s[1] = (unsigned char)upper + (upper < 10 ? '0' : '7');
+              s[2] = (unsigned char)lower + (lower < 10 ? '0' : '7');
+              s = s + 2;
+          }
+          else *s = *d;
+          s++;
+          d++;
+    }
+    *s = 0;
+    return newstring;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Converts percent characters in asci characters
+*	Note: the memory for the returned string is allocated on the memory
+*	stack, use ov_memstack_lock()/unlock() outside of this function
+*/
+
+OV_DLLFNCEXPORT OV_STRING ov_path_frompercent (
+                OV_STRING org
+) {
+    OV_UINT val, size;
+    OV_STRING newstring;
+    char *s,*d;
+
+    size = strlen(org);
+    d = org;
+    while (*d) {
+          if (*d == '%') size = size - 2;
+          d++;
+    }
+
+    newstring = (OV_STRING) ov_memstack_alloc(size+1);
+    d = org;
+    s = newstring;
+
+    while (*d) {
+          if (*d == '%') {
+              val = 0;
+              if( d[1] <= '9' ) {
+                  val = d[1] - '0';
+                  val <<= 4;
+              } else if( d[1] <= 'F' ) {
+                  val = d[1] - '7';
+                  val <<= 4;
+              } else if( d[1] <= 'f' )  {
+                  val = d[1] - 'W';
+                  val <<= 4;
+              }
+              if( d[2] <= '9' ) {
+                  val += d[2] - '0';
+              } else if( d[2] <= 'F' ) {
+                  val += d[2] - '7';
+              } else if( d[2] <= 'f' ) {
+                  val += d[2] - 'W';
+              }
+              d = d + 2;
+              *s = (char) val;
+          }
+          else *s = *d;
+          s++;
+          d++;
+    }
+    *s = 0;
+
+    return newstring;
+}
+
 /*	----------------------------------------------------------------------	*/
 
 /*

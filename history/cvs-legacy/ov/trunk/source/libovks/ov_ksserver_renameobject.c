@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_renameobject.c,v 1.4 2000-04-13 09:13:14 dirk Exp $
+*   $Id: ov_ksserver_renameobject.c,v 1.5 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -216,7 +216,7 @@ void ov_ksserver_renameobject(
 			} else {
 				/* relative path */
 				prelchild = Ov_SearchChild(ov_containment, pdom,
-					pitem->place.place_path);
+					ov_path_frompercent(pitem->place.place_path));
 				if(!prelchild) {
 					*presult = OV_ERR_BADPLACEMENT;
 					continue;
@@ -226,7 +226,7 @@ void ov_ksserver_renameobject(
 		/*
 		*	rename the object
 		*/
-		*presult = ov_class_renameobject(pobj, pdom, identifier, hint, prelchild);
+		*presult = ov_class_renameobject(pobj, pdom, ov_path_frompercent(identifier), hint, prelchild);
 	}	/* for */
 	/*
 	*	we are finished.

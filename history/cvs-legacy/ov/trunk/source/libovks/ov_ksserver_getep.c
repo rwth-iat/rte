@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.14 2002-06-18 10:15:58 ansgar Exp $
+*   $Id: ov_ksserver_getep.c,v 1.15 2003-11-07 09:33:00 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -194,7 +194,7 @@ void ov_ksserver_getep(
 		*	search through the parts
 		*/
 		child.elemtype = OV_ET_NONE;
-		
+
 		while(TRUE) {
 			/*
 			*	get next part
@@ -339,10 +339,13 @@ OV_RESULT ov_ksserver_getep_additem(
 		break;
 	case OV_ET_VARIABLE:
 	case OV_ET_MEMBER:
-		if((pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
-			objtype = KS_OT_DOMAIN;  // *** KS_OT_STRUCTURE ***  ? KS ?
-		} else {
-			objtype = KS_OT_VARIABLE;
+		switch(pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK) {
+			case OV_VT_STRUCT:
+			case OV_VT_STRUCT_VEC:
+				objtype = KS_OT_DOMAIN;  // *** KS_OT_STRUCTURE ***  ? KS ?
+				break;
+			default:
+				objtype = KS_OT_VARIABLE;
 		}
 		access |= OV_AC_PART;
 		break;
@@ -378,7 +381,7 @@ OV_RESULT ov_ksserver_getep_additem(
 	/*
 	*	test the name mask
 	*/
-	identifier = ov_element_getidentifier(pelem);
+	identifier = ov_path_topercent(ov_element_getidentifier(pelem));
 	if(namemask) {
 		if(!ov_string_match(identifier, namemask)) {
 			return OV_ERR_OK;
@@ -413,13 +416,13 @@ OV_RESULT ov_ksserver_getep_additem(
 		if(vendorobj) {
 			OV_VAR_CURRENT_PROPS	varcurrprops;
 			OV_RESULT				res;
-			
+
 			res = ov_vendortree_getvar(pobj, &varcurrprops, pticket);
 			if(res==OV_ERR_NOACCESS) {
 				pprops->access = OV_AC_NONE;
 			} else if (Ov_Fail(res)) {
 				return OV_ERR_GENERIC;
-			}				
+			}
 			pprops->comment = "";
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
 				.tech_unit = ov_vendortree_getunit(pobj);
