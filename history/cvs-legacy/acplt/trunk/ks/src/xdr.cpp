@@ -5,51 +5,32 @@
  *
  */
 
-#include <plt/debug.h>
-#include <ks/xdr.hpp>
-#include <plt/string.hpp>
-#define KS_XDR_MAX_PLT_STRING_SIZE 8192
+#include "ks/xdr.h"
 
 //////////////////////////////////////////////////////////////////////
 
-extern "C"                                    			
-bool_t 
-xdr_PltString (XDR *xdrs, PltString **pp)      
-{                            
-    char *p=0;
-    const char *cp;
-
-    PLT_PRECONDITION( xdrs && pp );        
-    switch(xdrs->x_op) {
-        
-        case XDR_FREE:                            
-            if (*pp) {                           
-                delete *pp;                       
-                *pp = 0;                          
-                return TRUE;                     
-            }                                    
-        case XDR_ENCODE:                          
-            if (! *pp) return FALSE;    
-            cp = **pp;
-            if ( !xdr_string(xdrs, &cp, ~0) ) {          
-                return FALSE;                     
-            }                                     
-            break;                                
-                                                  
-        case XDR_DECODE:                          
-            if (!xdr_string(xdrs, &p, ~0)) {         
-                return FALSE;                     
-            }                                     
-            *pp = new PltString(p);
-            xdr_free(xdr_string, &p);
-            if (! *pp)
-                return FALSE;
-            break;
-        default:
-            return FALSE;
-        }
-    return TRUE;
+bool
+KsXdrUnion::xdrEncode(XDR *xdrs) const
+{
+    PLT_PRECONDITION(xdrs->x_op == XDR_ENCODE);                
+    enum_t typecode = xdrTypeCode();                       
+    return 
+        xdr_enum(xdrs, &typecode) 
+            && xdrEncodeVariant(xdrs)
+                && xdrEncodeCommon(xdrs);
+}                                                              
+                                                                   
+//////////////////////////////////////////////////////////////////////
+                                                                   
+bool KsXdrUnion::xdrDecode(XDR * xdrs)                               
+{                                                              
+    PLT_PRECONDITION(xdrs->x_op == XDR_DECODE);               
+    enum_t typecode;                                       
+    return 
+        xdr_enum(xdrs, &typecode) 
+            && typecode == xdrTypeCode()
+                && xdrDecodeVariant(xdrs)
+                    && xdrDecodeCommon(xdrs);
 }
 
-
-
+//////////////////////////////////////////////////////////////////////
