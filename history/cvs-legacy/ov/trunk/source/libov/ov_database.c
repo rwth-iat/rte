@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.4 1999-07-28 16:01:39 dirk Exp $
+*   $Id: ov_database.c,v 1.5 1999-07-29 08:59:55 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -506,7 +506,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_database_map(
 	/*
 	*	map the file to memory
 	*/
-	pdb = (OV_DATABASE_INFO*)mmap(baseaddr+0x10000, OV_DATABASE_MAXSIZE,
+	pdb = (OV_DATABASE_INFO*)mmap(baseaddr, OV_DATABASE_MAXSIZE,
 		PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 	if(pdb == (OV_DATABASE_INFO*)-1) {
 		pdb = NULL;
