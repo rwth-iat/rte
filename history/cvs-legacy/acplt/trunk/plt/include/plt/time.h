@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.9 1997-07-19 13:18:44 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.10 1997-09-09 11:02:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -66,7 +66,7 @@ struct timeval
 struct PltTime : public timeval {
     // Constructors
     PltTime(long seconds = 0, long useconds = 0);
-    PltTime(struct timeval &tv);
+    PltTime(const struct timeval &tv);
 
 #if PLT_DEBUG_INVARIANTS
     bool invariant() const;
@@ -216,7 +216,7 @@ PltTime::PltTime(long seconds, long useconds)
 //////////////////////////////////////////////////////////////////////
 
 inline
-PltTime::PltTime(struct timeval &tv)
+PltTime::PltTime(const struct timeval &tv)
 {
     tv_sec = tv.tv_sec;
     tv_usec = tv.tv_usec; 

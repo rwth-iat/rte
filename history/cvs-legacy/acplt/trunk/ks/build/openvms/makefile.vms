@@ -3,22 +3,21 @@
 #
 REPOSITORY = dka0:[martin.cxx_repository]
 
-#CXX = gcc/plus
-#CXX_FLAGS = /float=ieee/cc1_options="-fno-exceptions -g0 -fno-implicit-templates"
 CXX = cxx
-
-CXX_FLAGS = /DEBUG
+CXX_FLAGS = /OPTIMIZE
+# CXX_FLAGS = /DEBUG
 
 LD = link
 
-LD_FLAGS = /DEBUG
+LD_FLAGS =
+# LD_FLAGS = /DEBUG
 
 CXX_EXTRA_FLAGS = \
 	/warnings=(disable=(EXTRASEMI,FOUNDCR)) \
 	/notemplate_define \
 	/repository=($(REPOSITORY))
 
-CXX_DEFINES = PLT_SYSTEM_OPENVMS=1
+CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1
 
 AR = library
 

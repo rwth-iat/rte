@@ -225,7 +225,10 @@ bool PltHashTable_base::changeCapacity(size_t cap)
             // insert entries from old table into new table
             for (i = 0; i<oldCapacity; ++i) {
                 if ( usedSlot(oldTable[i]) ) {
-                    bool b = insert(oldTable[i]);
+#if PLT_DEBUG
+                    bool b = 
+#endif
+                        insert(oldTable[i]);
                     PLT_ASSERT(b);
                 }
             }
