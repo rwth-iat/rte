@@ -103,7 +103,9 @@ listToPackage(const VariableList &lst)
     KscPackageHandle hpkg(new KscPackage, KsOsNew);
 
     if(hpkg) {
-        PltListIterator<KscVariableHandle> *it = lst.newIterator();
+        PltListIterator<KscVariableHandle> *it = 
+            PLT_RETTYPE_CAST((PltListIterator<KscVariableHandle> *))
+                lst.newIterator();
         if(it) {
             while(*it) {
                 hpkg->add(**it);
@@ -289,7 +291,8 @@ dumpPackage(KscPackageHandle hpkg, bool printVariables = false)
              << " Variables" << endl;
         if(printVariables) {
             KscPkgVariableIterator *it =
-                hpkg->newVariableIterator(true);
+                PLT_RETTYPE_CAST((KscPkgVariableIterator *))
+                    hpkg->newVariableIterator(true);
             PLT_ASSERT(it);
             while(*it) {
                 dumpVariable(**it);
@@ -328,7 +331,9 @@ readVariable(KscVariableHandle hvar)
 void
 readList(VariableList &lst)
 {
-    VariableIterator *it = lst.newIterator();
+    VariableIterator *it = 
+        PLT_RETTYPE_CAST((VariableIterator *))
+            lst.newIterator();
     
     if(it) {
         while(*it) {
@@ -463,12 +468,10 @@ buildAllPackage()
 #else
         KsString path(hostAndServer+"/restricted/writeme");
         KscVariableHandle hvar(new KscVariable(path), KsOsNew);
-//        result->add(hvar);
-        hvar->setAvModule(&av_simple_write);
         KscPackageHandle hsub(new KscPackage, KsOsNew);
         hsub->add(hvar);
         result->add(hsub);
-//        hsub->setAvModule(&av_simple_write);
+        hsub->setAvModule(&av_simple_write);
 #endif
     }
     return result;
@@ -487,7 +490,7 @@ readPackage(KscPackageHandle hpkg)
         cout << "Failed to get update of package" << endl;
     }
 
-    dumpPackage(hpkg, true);
+    dumpPackage(hpkg, !ok);
 }
     
 //////////////////////////////////////////////////////////////////////
@@ -514,14 +517,6 @@ main(int argc, char *argv[])
     cout << "Going to read package without AV-Module" << endl;
     readPackage(all);
 
-#if 0
-    all->setAvModule(&av_simple_write);
-    cout << "************************************************************" << endl;
-    cout << "Going to read package with AVSimple-Module" << endl;
-    readPackage(all);
-#endif
-
-#if 0
     // deletes package, creates a new one
     // just a test of the memory management
     //
@@ -530,7 +525,6 @@ main(int argc, char *argv[])
     cout << "************************************************************" << endl;
     cout << "Going to read package with AVSimple-Module" << endl;
     readPackage(all);
-#endif
 
     cout << "finished" << endl;
 }

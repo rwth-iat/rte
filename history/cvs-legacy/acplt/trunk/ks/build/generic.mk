@@ -61,26 +61,34 @@ LIBKS_OBJECTS2 = \
 
 LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2)
 
-LIBKSSVR_OBJECTS = \
+LIBKSSVR_OBJECTS1 = \
 	avticket$(O) \
         inaddrset$(O) \
 	manager$(O) \
 	server$(O) \
-	simpleserver$(O) \
+	simpleserver$(O)
+
+LIBKSSVR_OBJECTS2 = \
 	svrbase$(O) \
 	svrobjects$(O) \
 	svrrpcctx$(O) \
 	svrsimpleobjects$(O)
 
-LIBKSCLN_OBJECTS = \
+LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2)
+
+LIBKSCLN_OBJECTS1 = \
 	avmodule$(O) \
 	avsimplemodule$(O) \
 	client$(O) \
-	clntpath$(O) \
+	clntpath$(O)
+
+LIBKSCLN_OBJECTS2 = \
 	commobject$(O) \
 	package$(O) \
 	sorter$(O) \
 	variables$(O)
+
+LIBKSCLN_OBJECTS = $(LIBKSCLN_OBJECTS1) $(LIBKSCLN_OBJECTS2)
 
 CXX_EXAMPLES_SOURCES = \
 	pmobile.cpp \

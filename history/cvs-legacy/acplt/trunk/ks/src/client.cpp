@@ -133,13 +133,21 @@ KscClient::~KscClient()
 void
 KscClient::_createClient()
 {
+    PLT_PRECONDITION(!_the_client);
+
     KscClient *cl = new KscClient();
     if(!cl) {
         PltLog::Alert("Cannot create client, going to abort program");
         exit(-1);
     }
+
+#if PLT_DEBUG
     bool ok = setClient(cl, KsOsNew);
     PLT_ASSERT(ok);
+#else
+    setClient(cl, KsOsNew);
+#endif
+
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -216,7 +224,9 @@ KscClient::deleteServer(KscServerBase *server)
 
     // remove server from table
     //
-    bool ok = 
+#if PLT_DEBUG
+    bool ok =
+#endif 
         server_table.remove(server->getHostAndName(), temp);
 
     PLT_ASSERT(ok && (temp == server));

@@ -13,15 +13,18 @@ PLTDIR = ..\..\..\plt
 LIBPLT = $(PLTDIR)\build\nt\libplt.lib
 KSDIR = ..\..
 LIBKS = libks.lib
+LIBKSSVR = libkssvr.lib
+LIBKSCLN = libkscln.lib
+
 SRCDIR = $(KSDIR)\src\\
 EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
 CXX = bcc32
-#CXX_FLAGS = -D_BORLANDC=1
-CXX_FLAGS = -DNDEBUG -w -O2
+CXX_FLAGS = -D_BORLANDC=1 -w
+#CXX_FLAGS = -D_BORLANDC=1 -DNDEBUG -w
 #CXX_FLAGS =
-CXX_EXTRA_FLAGS = -a8 -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -I\interface -DPLT_SYSTEM_NT=1
+CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1
 
 RC = brc32
 
@@ -31,7 +34,7 @@ LIBKS_NT_OBJECTS = ntservice$(O)
 
 .SUFFIXES:      .cpp .obj .lib .exe
 
-all: $(LIBKS)
+all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
 {$(SRCDIR)}.cpp{}.obj:
 	@echo Compiling $<
@@ -42,7 +45,7 @@ all: $(LIBKS)
 {$(EXAMPLESSRCDIR)}.cpp{}.obj:
 	@echo Compiling $<
 	@$(CXX) @&&!
-		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
 !
 
 templates.obj:  $(SRCDIR)templates.cpp
@@ -81,6 +84,12 @@ ttree.obj:    $(EXAMPLESSRCDIR)ttree.cpp
 		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)ttree.cpp
 !
 
+tclient.obj:    $(EXAMPLESSRCDIR)tclient.cpp
+	@echo Compiling $<
+	@$(CXX) @&&!
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tbigpkg.cpp
+!
+
 ### Include generic part
 
 !INCLUDE ..\generic.mk
@@ -93,21 +102,21 @@ ttree.obj:    $(EXAMPLESSRCDIR)ttree.cpp
 .obj.exe :
 	@echo Linking $@
 	$(CXX) @&&!
-		$< $(LIBKS) $(LIBPLT) $(LIBRPC)
+		$< $(LIBKS) $(LIBKSCLN) $(LIBKSSVR) $(LIBPLT) $(LIBRPC)
 !
 
-examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
+examples:       tclient.exe ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 
-tmanager.exe: tmanager.obj tmanager1.obj $(LIBKS)
+tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
 	@echo Linking $@
 	$(CXX) @&&!
-		tmanager.obj tmanager1.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
+		tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
-tserver.exe: tserver.obj tserver1.obj $(LIBKS)
+tserver.exe: tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS)
 	@echo Linking $@
 	$(CXX) @&&!
-		tserver.obj tserver1.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
+		tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
 tsclient.exe: tsclient.obj tsclient1.obj $(LIBKS)
@@ -116,20 +125,26 @@ tsclient.exe: tsclient.obj tsclient1.obj $(LIBKS)
 		tsclient.obj tsclient1.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
-ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
+ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc                        
 	$(RC) -r -fontksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
 
-ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanager.res
+ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) ntksmanager.res
 	@echo Linking $@
 	$(CXX) @&&!
-		-tWM ntksmanager.obj ntksmanager_templates.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
+		-tWM ntksmanager.obj ntksmanager_templates.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 	$(RC) ntksmanager.res ntksmanager.exe
 
-ttree.exe: ttree.obj ttree1.obj $(LIBKS)
+ttree.exe: ttree.obj ttree1.obj $(LIBKSCLN) $(LIBKS)
 	@echo Linking $@
 	$(CXX) @&&!
-		ttree.obj ttree1.obj $(LIBKS) $(LIBPLT) $(LIBRPC)
+		ttree.obj ttree1.obj $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBRPC)
+!
+
+tclient.exe: tclient.obj tclient1.obj $(LIBKSCLN) $(LIBKS) 
+	@echo Linking $@
+	$(CXX) @&&!
+		tclient.obj tclient1.obj $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
 ### explicit dependencies not covered by platform-dependend depent mechanism
@@ -139,13 +154,21 @@ ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(SRCDIR)ntservice.cpp
 !
 
-$(LIBKS) : $(LIBKS_OBJECTS) $(LIBKS_NT_OBJECTS)
-	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS1)
-	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS2)
-	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS3)
-	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS4)
-	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_OBJECTS5)
-	$(PLTDIR)\build\nt\plt_ar tlib /P32 $@ $(LIBKS_NT_OBJECTS)
+$(LIBKS) : $(LIBKS_OBJECTS)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS1)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS2)
+
+
+$(LIBKSSVR) : $(LIBKSSVR_OBJECTS) $(LIBKS_NT_OBJECTS)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS1)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS2)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_NT_OBJECTS)
+
+$(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSCLN_OBJECTS1)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSCLN_OBJECTS2)
+
+
 
 clean :
 	del *.obj
@@ -156,5 +179,8 @@ mrproper : clean
 	del *.err
 	del *.sym
 	del *.mbr
+
+
+
 
 
