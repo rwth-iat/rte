@@ -5,14 +5,14 @@
 ###### change path names according to your system !!!
 
 # The repository should be on a local drive.
-REPOSITORY = dka0:[martin.cxx_repository]
+REPOSITORY = acplt$$repository
 
 CXX = cxx
 LD = link
 
 
 # choose your switches
-CXX_FLAGS = /OPTIMIZE
+CXX_FLAGS = /OPTIMIZE /float=ieee_float
 # CXX_FLAGS = /DEBUG
 
 LD_FLAGS =
@@ -84,6 +84,11 @@ $(EXAMPLES_OBJECTS): %.obj: [-.-.examples]%.cpp
 	-del $@;*
 	$(CXX_COMPILE) $<
 
+############# ??
+
+ucx$$ioctl_routine$(O):
+	$(CXX_COMPILE) /prefix=ALL ucx$$examples:ucx$$ioctl_routine.c
+
 ############# executables ######################
 
 pmobile.exe : pmobile$(O) pmobile_code$(O) $(LIBKSCLN) $(LIBKS)
@@ -121,9 +126,9 @@ libks$(A): $(LIBKS_OBJECTS)
 	-del $@;*
 	$(AR) /create libks$(A) $^
 
-libkssvr$(A): $(LIBKSSVR_OBJECTS)
+libkssvr$(A): $(LIBKSSVR_OBJECTS) ucx$$ioctl_routine$(O)
 	-del $@;*
-	$(AR) /create libkssvr$(A) $^
+	$(AR) /create libkssvr$(A) $^,ucx$$ioctl_routine$(O)
 
 libkscln$(A): $(LIBKSCLN_OBJECTS)
 	-del $@;*
