@@ -37,9 +37,9 @@
 
 /////////////////////////////////////////////////////////////////////////
 
-#include "ks/xdr.h"
-#include "ks/ks.h"
-#include "ks/string.h"
+#include <ks/xdr.h>
+#include <ks/ks.h>
+#include <ks/string.h>
 
 ////////////////////////////////////////////////////////////////////////
 // class KsServerDesc
@@ -63,16 +63,17 @@ public:
 // class KsResult
 ///////////////////////////////////////////////////////////////////////////
 
-class KsResult : public KsXdrAble {
+class KsResult 
+: public KsXdrAble 
+{
 public:
-
     KsResult( KS_RESULT res = KS_ERR_OK ) { result = res; }
 
     bool xdrEncode(XDR *xdr) const;
     bool xdrDecode(XDR *xdr);
     static KsResult *xdrNew(XDR *);
 
-    enum_t result;
+    KS_RESULT result;
 };
 
 //////////////////////////////////////////////////////////////////////////
