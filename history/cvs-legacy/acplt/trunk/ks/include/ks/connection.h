@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.2 1998-06-30 11:29:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.3 1999-02-22 15:11:29 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -36,8 +36,7 @@
  */
 
 /*
- * connection.h -- Abstract base class and basic classes for Internet-based
- *                 connections via UDP/IP and TCP/IP.
+ * connection.h -- Abstract base class for I/O connections.
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
@@ -53,9 +52,24 @@
 
 
 // ---------------------------------------------------------------------------
+// The KssConnectionAttentionInterface has to be inherited by classes which
+// need to handle I/O connections derived from KssConnection. Whenever these
+// connections need attention (request or answer available), they will invoke
+// the attention method of the KssConnectionAttentionInterface.
+//
+class KssConnection;
+
+class KssConnectionAttentionInterface {
+public:
+    virtual void attention(KssConnection &conn) = 0;
+}; // class KssConnectionAttentionInterface
+
+
+// ---------------------------------------------------------------------------
 // Abstract base class for a connection: a connection has its own state (it's
 // a finite automata), a socket to suck from, ... and other stuff I forget
-// what it's good for.
+// what it's good for. But what's important: if the connection needs attention
+// then some other object will be notified through the Kss
 //
 class KssConnection {
 public:
@@ -70,12 +84,21 @@ public:
     KssConnection(int fd, bool autoDestroyable, unsigned long timeout,
 	          ConnectionType type);
     virtual ~KssConnection() { }
+
     //
     // Shuts down the real connection encapsulated by this object. This is
     // where the old "You can't do late binding in your desctructor" comes
     // in again. So before you delete a connection, shut it down first.
     //
     virtual void shutdown() = 0;
+
+    //
+    //
+    //
+    KssConnectionAttentionInterface *getAttentionPartner() const
+        { return _attention_partner; }
+    void setAttentionPartner(KssConnectionAttentionInterface *partner)
+        { _attention_partner = partner; }
         
     //
     // The states a connection can be in (a connection is regarded as a
@@ -138,14 +161,15 @@ protected:
     void thisIsMyConnectionManager(KssConnectionManager *mgr)
     	{ _manager = mgr; }
 
-    ConnectionType        _cnx_type;    
-    unsigned long         _timeout;
-    bool                  _auto_destroyable;
-    int                   _fd;
-    ConnectionState       _state;
-    struct sockaddr_in    _client_address;
-    int                   _client_address_len;
-    KssConnectionManager *_manager;
+    ConnectionType                   _cnx_type;    
+    unsigned long                    _timeout;
+    bool                             _auto_destroyable;
+    int                              _fd;
+    ConnectionState                  _state;
+    struct sockaddr_in               _client_address;
+    int                              _client_address_len;
+    KssConnectionManager            *_manager;
+    KssConnectionAttentionInterface *_attention_partner;
 }; // class KssConnection
 
 

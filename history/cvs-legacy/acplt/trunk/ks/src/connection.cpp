@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.3 1998-09-23 08:49:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.4 1999-02-22 15:11:45 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -36,8 +36,7 @@
  */
 
 /*
- * connection.cpp -- Abstract base class and basic classes for Internet-based
- *                   connections via UDP/IP and TCP/IP.
+ * connection.cpp -- Abstract base class for I/O connections.
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
@@ -69,7 +68,9 @@ KssConnection::KssConnection(int fd, bool autoDestroyable,
     : _cnx_type(type), _timeout(timeout),
       _auto_destroyable(autoDestroyable),
       _fd(fd),
-      _client_address_len(0)
+      _client_address_len(0),
+      _manager(0),
+      _attention_partner(0)
 {
     _state = _cnx_type == CNX_TYPE_SERVER ? CNX_STATE_IDLE : CNX_STATE_PASSIVE;
 } // KssConnection::KssConnection

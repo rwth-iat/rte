@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.20 1999-01-12 16:13:32 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.21 1999-02-22 15:11:44 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -162,8 +162,15 @@ protected:
     SVCXPRT *_tcp_transport; // RPC transport used to receive requests
     KssTransport _transport; // SVCXPRT wrapper for ONC/RPC
 #else
-    KssConnectionManager *_cnx_manager;
-    KssXDRConnection     *_tcp_transport;
+    class KssAttentionXDRDispatcher:
+        public KssConnectionAttentionInterface {
+    public:
+        virtual void attention(KssConnection &conn);
+    };
+
+    KssAttentionXDRDispatcher  _attention_dispatcher;
+    KssConnectionManager      *_cnx_manager;
+    KssXDRConnection          *_tcp_transport;
 #endif
 
 #if PLT_USE_XTI

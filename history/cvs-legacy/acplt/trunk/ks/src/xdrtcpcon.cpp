@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.4 1999-01-29 12:46:14 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.5 1999-02-22 15:11:45 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -164,6 +164,8 @@ KssConnection::ConnectionIoMode KssListenTCPXDRConnection::receive()
 	KssConnection *con = new KssTCPXDRConnection(newfd, _timeout, 
 		                                     saddr, saddr_len,
 		                                     _cnx_type);
+        // FIXME: !con
+	con->setAttentionPartner(getAttentionPartner());
 	ConnectionIoMode ioMode = con->getIoMode();
 	if ( ioMode == CNX_IO_DEAD ) {
 	    delete con;
@@ -413,7 +415,12 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		switch ( myerrno ) {
 		case EINTR:
 		    continue;
+#if PLT_SYSTEM_NT
+		// This is simply brain-damaged. Yes, Bill.
+		case WSAECONNRESET:
+#else
 		case ECONNRESET:
+#endif
 		    //
 		    // In case the connection was closed before any data
 		    // was sent, we assume a gracious close...

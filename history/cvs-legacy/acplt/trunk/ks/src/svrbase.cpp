@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.35 1999-01-29 12:45:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.36 1999-02-22 15:11:45 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -151,6 +151,18 @@ void KsGarbageTimerEvent::trigger()
     _trigger_at = KsTime::now(_interval);
     KsServerBase::getServerObject().addTimerEvent(this);
 } // KsGarbageTimerEvent::trigger
+
+
+// ---------------------------------------------------------------------------
+// This class implements the KssConnectionAttentionInterface and relays all
+// calls for attention to the transport dispatcher of the current ACPLT/KS
+// server object.
+//
+void KsServerBase::KssAttentionXDRDispatcher::attention(KssConnection &conn)
+{
+    KsServerBase::getServerObject().dispatchTransport((KssXDRConnection &)conn);
+} // KsServerBase::KssAttentionXDRDispatcher::attention
+
 #endif
 
 
@@ -728,7 +740,14 @@ KsServerBase::serveRequests(const KsTime *pTimeout)
 	    if ( !con ) {
 		break;
 	    }
-	    dispatchTransport(* (KssXDRConnection *) con);
+	    KssConnectionAttentionInterface *attn = con->getAttentionPartner();
+	    if ( attn ) {
+		attn->attention(*con);
+	    } else {
+		PltLog::Error("KsServerBase::serveRequests(): "
+			      "connection without attention partner.");
+		// FIXME: Should we reset the connection here?
+	    }
     	    _cnx_manager->reactivateConnection(*con);
 	}
 #endif
@@ -817,56 +836,77 @@ KsServerBase::startServer()
 	return;
     }
 #endif
+
     //
     // Create transport: because the caller can specify the port to which we
     // should bind, this can be sometimes a lot of work... especially if
     // we're sitting on top of a TLI system. Urgs.
+    // Note: if the programmer wants to use its very own transports when the
+    // connection manager is in use, she/he can just create it and let the
+    // _tcp_transport member variable point to it. In this case we won't
+    // create a socket and a suitable transport here.
     //
-#if !PLT_USE_XTI
-    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-#else
-    int sock = t_open((const char *) getNetworkTransportDevice("tcp"),
-                      O_RDWR, (struct t_info *) 0);
+#if PLT_USE_BUFFERED_STREAMS
+    if ( !_tcp_transport ) {
+	//
+	// Okay, let's create a socket and the corresponding transport only
+	// if the server writer hasn't done so.
+	//
 #endif
-    if ( sock >= 0 ) {
-        struct sockaddr_in my_addr;
+#if !PLT_USE_XTI
+	int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#else
+	int sock = t_open((const char *) getNetworkTransportDevice("tcp"),
+			  O_RDWR, (struct t_info *) 0);
+#endif
+	if ( sock >= 0 ) {
+	    struct sockaddr_in my_addr;
 
-        memset(&my_addr, 0, sizeof(my_addr));
-        my_addr.sin_family      = AF_INET;
-        my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        my_addr.sin_port        = htons((u_short) _sock_port);
+	    memset(&my_addr, 0, sizeof(my_addr));
+	    my_addr.sin_family      = AF_INET;
+	    my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	    my_addr.sin_port        = htons((u_short) _sock_port);
 
 #if PLT_USE_XTI
-        struct t_bind req;
+	    struct t_bind req;
 
-        req.addr.maxlen = sizeof(my_addr);
-        req.addr.len    = sizeof(my_addr);
-        req.addr.buf    = (char *) &my_addr;
-        req.qlen        = 5;
+	    req.addr.maxlen = sizeof(my_addr);
+	    req.addr.len    = sizeof(my_addr);
+	    req.addr.buf    = (char *) &my_addr;
+	    req.qlen        = 5;
 
-        if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
+	    if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
 #else
-        if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
+	    if ( bind(sock, (struct sockaddr *) &my_addr, 
+		      sizeof(my_addr)) < 0 ) {
 #endif
-            // Failed.
+		//
+		// Failed to bind the socket. So close the socket and
+		// bail out with an error message.
+		//
 #if PLT_SYSTEM_NT
-            closesocket(sock);
+		closesocket(sock);
 #elif PLT_USE_XTI
-            t_close(sock);
+		t_close(sock);
 #else
-            close(sock);
+		close(sock);
 #endif
-            PltLog::Error("KsServerBase::startServer(): could not bind the TCP socket.");
-        } else {
+		PltLog::Error("KsServerBase::startServer(): "
+			      "could not bind the TCP socket.");
+	    } else {
 #if !PLT_USE_BUFFERED_STREAMS
-            _tcp_transport = svctcp_create(sock,
-                                           _send_buffer_size,
-                                           _receive_buffer_size);
+		_tcp_transport = svctcp_create(sock,
+					       _send_buffer_size,
+					       _receive_buffer_size);
 #else
-    	    _tcp_transport = new KssListenTCPXDRConnection(sock, 60/* secs */);
+		_tcp_transport = new KssListenTCPXDRConnection(
+		    sock, 60/* secs */);
 #endif
-        }
+	    }
+	}
+#if PLT_USE_BUFFERED_STREAMS
     }
+#endif
 
     if ( _tcp_transport ) {
 #if !PLT_USE_BUFFERED_STREAMS
@@ -878,9 +918,10 @@ KsServerBase::startServer()
         // ful with what you do! You should never allow svc_register to contact
         // the portmapper -- better do it yourself. And never (NEVER!!!) use
         // svc_unregister() as this one would deregister EVERYTHING with the
-        // same program and protocol version number, regardless of the transport
-        // used (udp, tcp). With TI ONC/RPC you must register every transport
-        // you create, but once again, never deregister it, if at all possible.
+        // same program and protocol version number, regardless of the trans-
+        // port used (udp, tcp). With TI ONC/RPC you must register every
+        // transport you create, but once again, never deregister it, if at
+	// all possible.
         //
         if ( svc_register(_tcp_transport, 
                           KS_RPC_PROGRAM_NUMBER,
@@ -891,40 +932,54 @@ KsServerBase::startServer()
         } else {
             svc_destroy(_tcp_transport);
             _tcp_transport = 0;
-            PltLog::Error("KsServerBase::startServer(): could not register TCP service.");
+            PltLog::Error("KsServerBase::startServer(): "
+                          "could not register TCP service.");
             _is_ok = false;
         }
 #else
+	//
+	// Make sure that the _tcp_transport is always automatically
+	// dispatched into the ACPLT/KS server dispatcher. Then register
+	// the transport with the connection manager.
+	//
+	_tcp_transport->setAttentionPartner(&_attention_dispatcher);
     	if ( _cnx_manager->addConnection(*_tcp_transport) ) {
 	    _is_ok = true;
 	} else {
 	    _tcp_transport->shutdown();
 	    delete _tcp_transport;
             _tcp_transport = 0;
-            PltLog::Error("KsServerBase::startServer(): could not add TCP transport.");
+            PltLog::Error("KsServerBase::startServer(): "
+                          "could not add TCP transport.");
             _is_ok = false;
 	}
 	//
-	// Register a timer event which will fire from time to time and triggers
-	// fragment garbage collection for the dynamic XDR memory streams.
+	// Register a timer event which will fire from time to time and
+        // triggers fragment garbage collection for the dynamic XDR memory
+	// streams.
 	//
-	KsGarbageTimerEvent *pGarbageEvent = new KsGarbageTimerEvent(10);
+	KsGarbageTimerEvent *pGarbageEvent = 
+	    new KsGarbageTimerEvent(30 /* seconds */);
 	if ( !pGarbageEvent ) {
-            PltLog::Error("KsServerBase::startServer(): could not create garbage timer event.");
+            PltLog::Error("KsServerBase::startServer(): "
+                          "could not create garbage timer event.");
     	    _is_ok = false;
 	}
 	if ( !addTimerEvent(pGarbageEvent) ) {
-            PltLog::Error("KsServerBase::startServer(): could not register garbage timer event.");
+            PltLog::Error("KsServerBase::startServer(): "
+                          "could not register garbage timer event.");
     	    _is_ok = false;
 	}
 #endif
     } else {
-        PltLog::Error("KsServerBase::startServer(): could not create TCP transport.");
+        PltLog::Error("KsServerBase::startServer(): "
+                      "could not create TCP transport.");
         _is_ok = false;
     }
 } // KsServerBase::startServer
 
-//////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------
 // Try to stop the event loop as soon as possible. Due to the nature of
 // ONC/RPC this can take some time as all incomming transports with waiting
 // RPC requests are each served exactly once until we get back to the
@@ -933,9 +988,10 @@ KsServerBase::startServer()
 void KsServerBase::downServer()
 {
     _shutdown_flag = 1;
-}
+} // KsServerBase::downServer
 
-//////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------
 // Finally shut down the server. Here this isn't of much woe, but
 // derived classes needs this sucker, so they can deregister them, or
 // do other strange things... Well, at least we shoot our transport
@@ -946,12 +1002,14 @@ void KsServerBase::stopServer()
 #if PLT_USE_BUFFERED_STREAMS
     if ( _cnx_manager ) {
 	if ( !_cnx_manager->shutdownConnections(15) ) { // FIXME
-	    PltLog::Info("KsServerBase::stopServer(): could not flush all sending XDR streams.");
+	    PltLog::Info("KsServerBase::stopServer(): "
+                         "could not flush all sending XDR streams.");
 	}
     }
 #endif
     cleanup();
-}
+} // KsServerBase::stopServer
+
 
 //////////////////////////////////////////////////////////////////////
 // This is the main loop of a KS server. It waits for incomming RPC
