@@ -4,12 +4,12 @@ The ACPLT/KS C++ Communication Library
 IMPORTANT: THIS IS AN INOFFICIAL PRERELEASE OF THE UPCOMMING
 1.2.0 RELEASE.
 
-This is the developer's version 1.2.0 of the C++ Communication
-Libary. As always, it contains bug-fixes and some small improvements
-behind the scenes. For details about bug-fixes and changes, see part 3
-"Changes & Bug-Fixes" of this document below.
+This is version 1.2.0 of the C++ Communication Libary. As always, it
+contains bug-fixes and some small improvements behind the scenes. For
+details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
+of this document below.
 
-IMPORTANT: Beginning with 1.1.3 we now license the source code of the
+IMPORTANT: since version 1.1.3 we now license the source code of the
 ACPLT/KS package under the Artistic License (see file ARTISTIC-LICENSE
 for details). The rationale behind this is that we get better control
 over what the official ACPLT/KS protocol and implementation is. This
@@ -20,14 +20,14 @@ either commercial or not. Like before, you can tweak the code to suit
 your needs, etc.
 
 The latest and greatest stable release (as if this developer's release
-were not stable...) is 1.0.5.
+were not stable...) is 1.2.0.
 
 Currently, the following platforms and compilers are supported by the
 C++ Communication Library:
 
   HP-UX 10.20                  g++ 2.8.x
   IRIX 6.x                     g++ 2.7.2, g++ 2.8.x
-  Linux 2.0/2.2                g++ 2.7.2, g++ 2.8.x, egcs
+  Linux 2.0/2.2                g++ 2.7.2, g++ 2.8.x, egcs 2.95.x
   OpenVMS 6.2/7.1              CXX DEC C++ 5.4
   Solaris 2.6                  g++ 2.7.2, g++ 2.8.x
   Windows NT/9x                Borland C++ 5.0,
@@ -128,8 +128,9 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.2.0pre1
+Version 1.2.0pre2
 - SERVERS:
+  * Fixed compiling problems with egcs and new tool chain (linker).
   * Fixed a bug in KsPath::resolvePaths() concerning handling of encoded
     characters ("%XX") when resolving paths.
   * Fixed a bug/memory leak when using more than one A/V module for the
