@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.11 2002-06-26 07:13:02 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.12 2003-01-31 10:04:46 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -387,35 +387,74 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getassociations(
 
 /*
 *	Get list of classes in the database
+*
+*	an object in OV is a class if it's objectclass (instanstiation) is ov_class or derived of (inheritance) ov_class
+*	or it's objectclass (instantiation) is an instance of a class whose baseclass (inheritance) is ov_class or derived of ov_class
 */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
-	OV_ANY			*pvarcurrprops,
-	const OV_TICKET	*pticket
+
+OV_RESULT ov_vendortree_getderivedclasses(
+	OV_INSTPTR_ov_class pstartclass,
+	OV_STRING** pstring
 ) {
-	/*
-	*	local variables
-	*/
-	OV_UINT					classes = 0;
+	OV_INSTPTR_ov_class		pderivedclass;
+	OV_INSTPTR_ov_class		pclass;
+	OV_INSTPTR_ov_object		pclassobj;
+	OV_VTBLPTR_ov_object		pvtable;
+	OV_ELEMENT			element;
+	OV_RESULT 			res;
+
+	pclass = pstartclass;
+	pderivedclass = Ov_GetFirstChild(ov_inheritance, pclass);
+	while (pclass) {
+		Ov_ForEachChild(ov_instantiation, pclass, pclassobj) {
+			element.elemtype = OV_ET_OBJECT;
+			element.pobj = pclassobj;
+			Ov_GetVTablePtr(ov_object, pvtable, pclassobj);
+			if (pvtable) { 
+				if(pvtable->m_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
+					**pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pclassobj), 2);
+					if(!**pstring) {
+						return OV_ERR_HEAPOUTOFMEMORY;
+					}
+					(*pstring)++;
+				}
+			} 
+			else {
+				if(ov_object_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
+					**pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pclassobj), 2);
+					if(!**pstring) {
+						return OV_ERR_HEAPOUTOFMEMORY;
+					}
+					(*pstring)++;
+				}
+			}
+		}
+		if (Ov_GetFirstChild(ov_inheritance, pderivedclass)) {
+			res = ov_vendortree_getderivedclasses(Ov_GetFirstChild(ov_inheritance, pderivedclass), pstring);
+			if (Ov_Fail(res)) return res;
+		}
+		pclass = pderivedclass;
+		pderivedclass = Ov_GetNextChild(ov_inheritance, pclass);
+	}
+	return OV_ERR_OK;
+}
+
+OV_UINT ov_vendortree_countderivedclasses(
+	OV_INSTPTR_ov_class pstartclass,
+	OV_UINT	lastresult
+) {
 	OV_INSTPTR_ov_class		pclass;
 	OV_INSTPTR_ov_class		pderivedclass;
-	OV_STRING				*pstring = NULL;
-	OV_INSTPTR_ov_object	pclassobj;
-	OV_VTBLPTR_ov_object	pvtable;
-	OV_ELEMENT				element;
-	/*
-	*	count instantiable classes
-	*/
-	Ov_ForEachChildEx(ov_instantiation, pclass_ov_class, pclass, ov_class) {
-		pclassobj = Ov_PtrUpCast(ov_object, pclass);
-		element.elemtype = OV_ET_OBJECT;
-		element.pobj = pclassobj;
-		if(ov_object_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
-			classes++;
-		}
-	}
-	pderivedclass = pclass_ov_class;
-	Ov_ForEachChild(ov_inheritance, pclass_ov_class, pderivedclass) {
-		Ov_ForEachChild(ov_instantiation, pderivedclass, pclassobj) {
+	OV_INSTPTR_ov_object		pclassobj;
+	OV_VTBLPTR_ov_object		pvtable;
+	OV_UINT classes;
+	OV_ELEMENT			element;
+
+	pclass = pstartclass;
+	classes = lastresult;
+	pderivedclass = Ov_GetFirstChild(ov_inheritance, pclass);
+	while (pclass) {
+		Ov_ForEachChild(ov_instantiation, pclass, pclassobj) {
 			element.elemtype = OV_ET_OBJECT;
 			element.pobj = pclassobj;
 			Ov_GetVTablePtr(ov_object, pvtable, pclassobj);
@@ -428,7 +467,27 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 					classes++;
 			}
 		}
+		if (Ov_GetFirstChild(ov_inheritance, pderivedclass)) classes = ov_vendortree_countderivedclasses(Ov_GetFirstChild(ov_inheritance, pderivedclass), classes);
+		pclass = pderivedclass;
+		pderivedclass = Ov_GetNextChild(ov_inheritance, pclass);
 	}
+	return classes;
+}
+
+
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	/*
+	*	local variables
+	*/
+	OV_UINT					classes = 0;
+	OV_STRING				*pstring = NULL;
+	/*
+	*	count instantiable classes
+	*/
+	classes = ov_vendortree_countderivedclasses(pclass_ov_class, 0);
 	/*
 	*	allocate memory for the class paths
 	*/
@@ -444,45 +503,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 	pvarcurrprops->value.vartype = OV_VT_STRING_VEC;
 	pvarcurrprops->value.valueunion.val_string_vec.veclen = classes;
 	pvarcurrprops->value.valueunion.val_string_vec.value = pstring;
-	Ov_ForEachChildEx(ov_instantiation, pclass_ov_class, pclass, ov_class) {
-		pclassobj = Ov_PtrUpCast(ov_object, pclass);
-		element.elemtype = OV_ET_OBJECT;
-		element.pobj = pclassobj;
-		if(ov_object_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
-			*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pclass), 2);
-			if(!*pstring) {
-				return OV_ERR_HEAPOUTOFMEMORY;
-			}
-			pstring++;
-		}
-	}
-	pderivedclass = pclass_ov_class;
-	Ov_ForEachChild(ov_inheritance, pclass_ov_class, pderivedclass) {
-		Ov_ForEachChild(ov_instantiation, pderivedclass, pclassobj) {
-			element.elemtype = OV_ET_OBJECT;
-			element.pobj = pclassobj;
-			Ov_GetVTablePtr(ov_object, pvtable, pclassobj);
-			if (pvtable) { 
-				if(pvtable->m_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
-					*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pclassobj), 2);
-					if(!*pstring) {
-						return OV_ERR_HEAPOUTOFMEMORY;
-					}
-					pstring++;
-				}
-			}
-			else {
-				if(ov_object_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
-					*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pclassobj), 2);
-					if(!*pstring) {
-						return OV_ERR_HEAPOUTOFMEMORY;
-					}
-					pstring++;
-				}
-			}
-		}
-	}
-	return OV_ERR_OK;
+
+	return ov_vendortree_getderivedclasses(pclass_ov_class, &pstring);
 }
 
 /*	----------------------------------------------------------------------	*/
