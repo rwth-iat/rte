@@ -1,10 +1,10 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.3 of the C++ Communication Libary. It contains
-bug-fixes and some small improvements behind the scenes. For details
-about bug-fixes and changes, see part 3 "Changes & Bug-Fixes" of
-this document below.
+This is version 1.0.4 of the C++ Communication Libary. As always, it
+contains bug-fixes and some small improvements behind the scenes. For
+details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
+of this document below.
 
 But now, compile and enjoy --
   Your ACPLT/KS team <ks@plt.rwth-aachen.de>
@@ -84,6 +84,20 @@ That's it. This will build the library as well as the examples.
 
 3. Changes & Bug-Fixes
 ----------------------
+
+Version 1.0.4
+- CLIENTS: Fixed a bug which caused A/V modules to be ignored which
+  were attached to data exchange packets.
+
+- SERVERS: Introduced server-side dynamic XDR streams. They can be
+  enabled with -DPLT_USE_BUFFERED_STREAMS=1 (see makefiles). If enabled,
+  client requests will first be read in completely before processing
+  them. Also the replies will first be deserialized completely into a
+  dynamic XDR stream before sending them to a client. This way blocking
+  i/o during receiving requests or sending replies does not block servers
+  anymore until the 30 second timeout occurs. The streams are NOT enabled
+  by default, as they're relatively new and we want to test them even
+  more before rolling them out officially.
 
 Version 1.0.3
 - SERVERS: Fixed a bug which sometimes caused the port number setting
