@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.6 2000-04-04 15:12:54 dirk Exp $
+*   $Id: ov_server.c,v 1.7 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -164,6 +164,7 @@ int main(int argc, char **argv) {
 	*/
 	OV_STRING	filename = "database.ovd";
 	OV_STRING	servername = NULL;
+	OV_STRING	password = NULL;
 	OV_UINT		i;
 	OV_RESULT	result;
 	OV_INT 		port = 0; /* KS_ANYPORT */
@@ -213,6 +214,17 @@ int main(int argc, char **argv) {
 			i++;
 			if(i<argc) {
 				port = strtol(argv[i], NULL, 0);
+			} else {
+				goto HELP;
+			}
+		}
+		/*
+		*	set identification
+		*/
+		else if(!strcmp(argv[i], "-i") || !strcmp(argv[i], "--identifiy")) {
+			i++;
+			if(i<argc) {
+				password = argv[i];
 			} else {
 				goto HELP;
 			}
@@ -277,6 +289,7 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 				"The following optional arguments are available:\n"
 				"-f FILE, --file FILE            Set database filename (*.ovd)\n"
 				"-s SERVER, --server-name SERVER Set server name\n"
+				"-i ID, --identify ID            Set Ticket Identification for server access\n"
 				"-p PORT, --port-number PORT     Set server port number\n"
 				"-l LOGFILE, --logfile LOGFILE   Set logfile name, you may use stdout"
 #if OV_SYSTEM_NT
@@ -350,6 +363,10 @@ ERRORMSG:
 		return EXIT_FAILURE;
 	}
 	ov_logfile_info("Database mapped.");
+	/*
+	*	set the serverpassword of the database
+	*/
+	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
 	/*
 	*	start up the database if appropriate
 	*/

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.9 2001-07-20 07:28:47 ansgar Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.10 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -149,7 +149,7 @@ void ov_ksserver_getvar_getitem(
 	*	get the vtable pointer of the object the variable belongs to
 	*/
 	Ov_GetVTablePtr(ov_object, pvtable, pobj);
-	if(!pvtable) {
+	if((!pvtable) || (activitylock)){
 		pvtable = pclass_ov_object->v_pvtable;
 	}
 	/*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_scheduler.c,v 1.3 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_scheduler.c,v 1.4 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -226,6 +226,12 @@ OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_schedulenextevent(void) {
 	OV_TIME				time;
 	static OV_TIME_SPAN	timespan;
 	OV_SCHEDULER_EVENT	*pevent = pfirstevent;
+
+	if (activitylock) {
+		timespan.secs = OV_VL_MAXINT;
+		timespan.usecs = 0;
+		return &timespan;
+	}
 	/*
 	*	get current time
 	*/

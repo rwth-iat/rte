@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_setvar.c,v 1.6 2000-04-13 09:13:14 dirk Exp $
+*   $Id: ov_ksserver_setvar.c,v 1.7 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -141,7 +141,7 @@ OV_RESULT ov_ksserver_setvar_setitem(
 	*	get the vtable pointer of the object the variable belongs to
 	*/
 	Ov_GetVTablePtr(ov_object, pvtable, pobj);
-	if(!pvtable) {
+	if((!pvtable) || (activitylock)){
 		pvtable = pclass_ov_object->v_pvtable;
 	}
 	/*
@@ -173,7 +173,7 @@ OV_RESULT ov_ksserver_setvar_setitem(
 		if((pelem->pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
 			&& (pelem->pobj >= &pdb->vendorobj[0])
 		) {
-			return OV_ERR_NOACCESS;
+			return ov_vendortree_setvar(pobj, &pitem->var_current_props, pticket);
 		}
 		break;
 	case OV_ET_MEMBER:

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.6 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.7 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -35,6 +35,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 
+
 /*	----------------------------------------------------------------------	*/
 
 /*
@@ -52,31 +53,34 @@ static OV_STRING	semantic_flag[32] = {
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 					};
-
+OV_DLLVAREXPORT OV_BOOL activitylock;
 /*
 *	Global variables
 */
-static OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
-	{ "associations",			NULL,	ov_vendortree_getassociations },
-	{ "classes",				NULL,	ov_vendortree_getclasses },
-	{ "database_fragmentation",	"%",	ov_vendortree_getdatabasefrag },
-	{ "database_free",			"Byte",	ov_vendortree_getdatabasefree },
-	{ "database_name",			NULL,	ov_vendortree_getdatabasename },
-	{ "database_size",			"Byte",	ov_vendortree_getdatabasesize },
-	{ "database_started",		NULL,	ov_vendortree_getdatabasestarted },
-	{ "database_used",			"Byte",	ov_vendortree_getdatabaseused },
-	{ "name", 					NULL,	ov_vendortree_getname },
-	{ "libks_version",			NULL,	ov_vendortree_getlibksversion },
-	{ "libov_version",			NULL,	ov_vendortree_getlibovversion },
-	{ "libovks_version",		NULL,	ov_vendortree_getlibovksversion },
-	{ "libraries",				NULL,	ov_vendortree_getlibraries },
-	{ "semantic_flags",			NULL,	ov_vendortree_getsemanticflags },
-	{ "server_description",		NULL,	ov_vendortree_getserverdescription },
-	{ "server_name",			NULL,	ov_vendortree_getservername },
-	{ "server_time",			"UTC",	ov_vendortree_getservertime },
-	{ "server_version",			NULL,	ov_vendortree_getserverversion },
-	{ "startup_time",			"UTC",	ov_vendortree_getstartuptime },
-	{ "structures",				NULL,	ov_vendortree_getstructures }
+OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
+	{ "associations",			NULL,	ov_vendortree_getassociations, NULL },
+	{ "classes",				NULL,	ov_vendortree_getclasses, NULL },
+	{ "database_fragmentation",	"%",	ov_vendortree_getdatabasefrag, NULL },
+	{ "database_free",			"Byte",	ov_vendortree_getdatabasefree, NULL },
+	{ "database_name",			NULL,	ov_vendortree_getdatabasename, NULL },
+	{ "database_size",			"Byte",	ov_vendortree_getdatabasesize, NULL },
+	{ "database_started",		NULL,	ov_vendortree_getdatabasestarted, NULL },
+	{ "database_used",			"Byte",	ov_vendortree_getdatabaseused, NULL },
+	{ "name", 					NULL,	ov_vendortree_getname, NULL },
+	{ "libks_version",			NULL,	ov_vendortree_getlibksversion, NULL },
+	{ "libov_version",			NULL,	ov_vendortree_getlibovversion, NULL },
+	{ "libovks_version",		NULL,	ov_vendortree_getlibovksversion, NULL },
+	{ "libraries",				NULL,	ov_vendortree_getlibraries, NULL },
+	{ "semantic_flags",			NULL,	ov_vendortree_getsemanticflags, NULL },
+	{ "server_description",		NULL,	ov_vendortree_getserverdescription, NULL },
+	{ "server_name",			NULL,	ov_vendortree_getservername, NULL },
+	{ "server_time",			"UTC",	ov_vendortree_getservertime, NULL },
+	{ "server_version",			NULL,	ov_vendortree_getserverversion, NULL },
+	{ "startup_time",			"UTC",	ov_vendortree_getstartuptime, NULL },
+	{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
+	{ "activitiy_lock",			NULL,	ov_vendortree_getactivitylock, ov_vendortree_setactivitylock },
+	{ "server_password",			NULL,	ov_vendortree_getserverpassword, NULL },
+	{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset }
 };
 
 /*	----------------------------------------------------------------------	*/
@@ -174,6 +178,35 @@ OV_RESULT ov_vendortree_getvar(
 	ov_time_gettime(&pvarcurrprops->time);
 	pvarcurrprops->state = OV_ST_GOOD;
 	return vendorinfo[i].getvarfnc(pvarcurrprops, pticket);
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Set vendor variable
+*/
+OV_RESULT ov_vendortree_setvar(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ANY		*pvarcurrprops,
+	const OV_TICKET		*pticket
+) {
+	/*
+	*	local variables
+	*/
+	OV_UINT	i;
+	/*
+	*	get number of the vendor object
+	*/
+	i = pobj-pdb->vendorobj;
+	if(i >= OV_NUM_VENDOROBJECTS) {
+		return OV_ERR_GENERIC;
+	}
+	/*
+	*	call the setfnc of the vendor object
+	*/
+	if (vendorinfo[i].setvarfnc) 
+		return vendorinfo[i].setvarfnc(pvarcurrprops, pticket);
+	else return OV_ERR_NOACCESS;
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -721,6 +754,105 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 		pstring++;
 	}
 	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Get activitylock
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getactivitylock(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_BOOL;
+	pvarcurrprops->value.valueunion.val_bool = activitylock;
+	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Set activitylock
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setactivitylock(
+	const OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	if (pvarcurrprops->value.vartype == OV_VT_BOOL) {
+		activitylock = pvarcurrprops->value.valueunion.val_bool;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Set serverpassword
+*/
+OV_DLLFNCEXPORT void ov_vendortree_setserverpassword(
+	OV_STRING	password
+) {
+	if(pdb->serverpassword) {
+		ov_database_free(pdb->serverpassword);
+		pdb->serverpassword = NULL;
+	}
+	if(password) {
+		pdb->serverpassword = (OV_STRING)ov_database_malloc(strlen(password)+1);
+		strcpy(pdb->serverpassword, password);
+	}
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Get serverpassword
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverpassword(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	if (pdb->serverpassword) {
+		if (pticket->type == OV_TT_SIMPLE) {
+			if(!strcmp(pticket->ticketunion.simpleticket.id, pdb->serverpassword)) goto CONTINUE1;
+		}
+		return OV_ERR_NOACCESS;
+	}
+CONTINUE1:
+	pvarcurrprops->value.vartype = OV_VT_STRING;
+	pvarcurrprops->value.valueunion.val_string = pdb->serverpassword;
+	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Get timeoffset
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_gettimeoffset(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_TIME_SPAN;
+	pvarcurrprops->value.valueunion.val_time_span = pdb->timeoffset;
+	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Set timeoffset
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_settimeoffset(
+	const OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	if (pvarcurrprops->value.vartype == OV_VT_TIME_SPAN) {
+		pdb->timeoffset = pvarcurrprops->value.valueunion.val_time_span;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
 }
 
 /*	----------------------------------------------------------------------	*/

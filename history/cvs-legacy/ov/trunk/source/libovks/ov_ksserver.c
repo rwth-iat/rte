@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.11 2001-07-09 12:50:01 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.12 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -97,8 +97,7 @@ static void ov_ksserver_ticket_defaultticket_deleteticket(OV_TICKET *pticket);
 static OV_BOOL ov_ksserver_ticket_defaultticket_encodereply(XDR *xdr, OV_TICKET *pticket);
 static OV_ACCESS ov_ksserver_ticket_defaultticket_getaccess(const OV_TICKET *pticket);
 
-static OV_ACCESS defaultaccess = (OV_AC_READWRITE | OV_AC_INSTANTIABLE | OV_AC_DELETEABLE
-	| OV_AC_RENAMEABLE | OV_AC_LINKABLE | OV_AC_UNLINKABLE);
+static OV_ACCESS defaultaccess = OV_AC_READ;
 
 static OV_TICKET_VTBL defaultticketvtbl = {
 	ov_ksserver_ticket_defaultticket_createticket,
@@ -108,7 +107,7 @@ static OV_TICKET_VTBL defaultticketvtbl = {
 };
 
 static OV_TICKET *ov_ksserver_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type) {
-	static OV_TICKET ticket = { &defaultticketvtbl };
+	static OV_TICKET ticket = { &defaultticketvtbl,  OV_TT_SIMPLE };
 	switch(type) {
 		case OV_TT_NONE:
 			break;
@@ -123,10 +122,39 @@ static OV_TICKET *ov_ksserver_ticket_defaultticket_createticket(XDR *xdr, OV_TIC
 			return NULL;
 	}
 	ticket.type = type;
+	if (pdb->serverpassword) {
+		if (type == OV_TT_SIMPLE) {
+			/*
+			*	only grant read access to anyone who does not have the serverpassword
+			*/
+			if(!strcmp(ticket.ticketunion.simpleticket.id, pdb->serverpassword)) {
+				defaultaccess = OV_AC_READWRITE | OV_AC_INSTANTIABLE
+					| OV_AC_DELETEABLE | OV_AC_RENAMEABLE | OV_AC_LINKABLE
+					| OV_AC_UNLINKABLE; 
+			}
+			else defaultaccess = OV_AC_READ;
+		}
+		else defaultaccess = OV_AC_READ;
+	}
+	else defaultaccess = OV_AC_READWRITE | OV_AC_INSTANTIABLE
+				| OV_AC_DELETEABLE | OV_AC_RENAMEABLE | OV_AC_LINKABLE
+				| OV_AC_UNLINKABLE; 
 	return &ticket;
 }
 
-static void ov_ksserver_ticket_defaultticket_deleteticket(OV_TICKET *) {}
+static void ov_ksserver_ticket_defaultticket_deleteticket(OV_TICKET *pticket) {
+	/*
+	*	local variables
+	*/
+	static XDR xdr;
+	/*
+	*	just let XDR free the memory it allocated during construction of the id
+	*/
+	if (pticket->type == OV_TT_SIMPLE) {
+		xdr.x_op = XDR_FREE;
+		xdr_string(&xdr, &pticket->ticketunion.simpleticket.id, KS_SIMPLEID_MAXLEN);
+	}
+}
 
 static OV_BOOL ov_ksserver_ticket_defaultticket_encodereply(XDR *, OV_TICKET *) {
 	return TRUE;

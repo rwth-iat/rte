@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.24 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_object.c,v 1.25 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -57,6 +57,14 @@
 #if OV_SYSTEM_MC164
 #define memcpy xmemcpy
 #endif
+
+#ifdef OV_COMPILE_LIBOV
+#define OV_EXTERN extern
+#else
+#define OV_EXTERN OV_DLLVARIMPORT
+#endif
+OV_EXTERN OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS];
+#undef OV_EXTERN
 
 /*	----------------------------------------------------------------------	*/
 
@@ -367,6 +375,10 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 		if((pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
 			&& (pobj >= Ov_PtrUpCast(ov_object, &pdb->vendordom))
 		) {
+			if (pobj >= &pdb->vendorobj[0]) {
+				if (vendorinfo[pobj-pdb->vendorobj].setvarfnc)
+					return OV_AC_READ | OV_AC_WRITE;
+			}
 			return OV_AC_READ;
 		}
 		/*
@@ -533,12 +545,12 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 */
 #define Ov_Object_GetVarValue(vartype, VARTYPE)								\
 	case OV_VT_##VARTYPE:													\
-		if(pelem->elemunion.pvar->v_getfnc) {								\
+		if((pelem->elemunion.pvar->v_getfnc) && (!activitylock)){								\
 			pvarcurrprops->value.valueunion.val_##vartype					\
 				= ((OV_FNCPTR_GET(VARTYPE))pelem->elemunion.pvar->v_getfnc)	\
 				(pobj);														\
 		} else {															\
-			pvarcurrprops->value.valueunion.val_##vartype					\
+			if (pelem->pvalue) pvarcurrprops->value.valueunion.val_##vartype					\
 				= *((OV_##VARTYPE*)pelem->pvalue);							\
 		}																	\
 		break
@@ -546,47 +558,47 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 #define Ov_Object_GetVarPVValue(vartype, VARTYPE)							\
 	case OV_VT_##VARTYPE##_PV: {											\
 			OV_##VARTYPE##_PV *pvalue; 										\
-			if(pelem->elemunion.pvar->v_getfnc) {							\
+			if((pelem->elemunion.pvar->v_getfnc) && (!activitylock)){							\
 				pvalue = ((OV_FNCPTR_GETPV(VARTYPE))						\
 					pelem->elemunion.pvar->v_getfnc)(pobj);					\
 			} else {														\
 				pvalue = (OV_##VARTYPE##_PV*)pelem->pvalue;					\
 			}																\
-			pvarcurrprops->value.valueunion.val_##vartype = pvalue->value;	\
-			pvarcurrprops->state = (pvalue->state == OV_ST_NOTSUPPORTED)	\
+			if (pvalue) pvarcurrprops->value.valueunion.val_##vartype = pvalue->value;	\
+			if (pvalue) pvarcurrprops->state = (pvalue->state == OV_ST_NOTSUPPORTED)	\
 				?(OV_ST_UNKNOWN):(pvalue->state);							\
-			pvarcurrprops->time = pvalue->time;								\
+			if (pvalue) pvarcurrprops->time = pvalue->time;								\
 		}																	\
 		return OV_ERR_OK
 
 #define Ov_Object_GetVarDynVecValue(vartype, VARTYPE)						\
 	case OV_VT_##VARTYPE##_VEC:												\
-		if(pelem->elemunion.pvar->v_getfnc) {								\
+		if((pelem->elemunion.pvar->v_getfnc) && (!activitylock)) {								\
 			pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
 				= ((OV_FNCPTR_GETVEC(VARTYPE))								\
 				pelem->elemunion.pvar->v_getfnc)(pobj, 						\
 				&pvarcurrprops->value.valueunion.val_##vartype##_vec		\
 				.veclen);													\
 		} else {															\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen		\
+			if (pelem->pvalue) pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen		\
 				= ((OV_##VARTYPE##_VEC*)pelem->pvalue)->veclen;				\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
+			if (pelem->pvalue) pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
 				= ((OV_##VARTYPE##_VEC*)pelem->pvalue)->value;				\
 		}																	\
 		break
 
 #define Ov_Object_GetVarVecValue(vartype, VARTYPE)							\
 	case OV_VT_##VARTYPE##_VEC:												\
-		if(pelem->elemunion.pvar->v_getfnc) {								\
+		if((pelem->elemunion.pvar->v_getfnc) && (!activitylock)) {								\
 			pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
 				= ((OV_FNCPTR_GETVEC(VARTYPE))								\
 				pelem->elemunion.pvar->v_getfnc)(pobj,						\
 				&pvarcurrprops->value.valueunion.val_##vartype##_vec		\
 				.veclen);													\
 		} else {															\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen		\
+			if (pelem->pvalue) pvarcurrprops->value.valueunion.val_##vartype##_vec.veclen		\
 				= pelem->elemunion.pvar->v_veclen;							\
-			pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
+			if (pelem->pvalue) pvarcurrprops->value.valueunion.val_##vartype##_vec.value		\
 				= ((OV_##VARTYPE*)pelem->pvalue);							\
 		}																	\
 		break
@@ -730,7 +742,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 */
 #define Ov_Object_SetVarValue(vartype, VARTYPE)								\
 	case OV_VT_##VARTYPE:													\
-		if(pelem->elemunion.pvar->v_setfnc) {								\
+		if((pelem->elemunion.pvar->v_setfnc) && (!activitylock)) {								\
 			return ((OV_FNCPTR_SET(VARTYPE))								\
 				pelem->elemunion.pvar->v_setfnc)(pobj, 						\
 				pvarcurrprops->value.valueunion.val_##vartype);				\
@@ -741,7 +753,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 		
 #define Ov_Object_SetVarPVValue(vartype, VARTYPE)							\
 	case OV_VT_##VARTYPE##_PV:												\
-		if(pelem->elemunion.pvar->v_setfnc) {								\
+		if((pelem->elemunion.pvar->v_setfnc) && (!activitylock)) {								\
 			OV_##VARTYPE##_PV var;											\
 			var.value = pvarcurrprops->value.valueunion.val_##vartype;		\
 			var.state = (pvarcurrprops->state == OV_ST_NOTSUPPORTED)		\
@@ -760,7 +772,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 		
 #define Ov_Object_SetVarDynVecValue(vartype, VARTYPE)						\
 	case OV_VT_##VARTYPE##_VEC:												\
-		if(pelem->elemunion.pvar->v_setfnc) {								\
+		if((pelem->elemunion.pvar->v_setfnc) && (!activitylock)) {								\
 			return ((OV_FNCPTR_SETVEC(VARTYPE))								\
 				pelem->elemunion.pvar->v_setfnc)(pobj, 						\
 				pvarcurrprops->value.valueunion.val_##vartype##_vec.value,	\
@@ -774,7 +786,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 
 #define Ov_Object_SetVarVecValue(vartype, VARTYPE)							\
 	case OV_VT_##VARTYPE##_VEC:												\
-		if(pelem->elemunion.pvar->v_setfnc) {								\
+		if((pelem->elemunion.pvar->v_setfnc) && (!activitylock)) {								\
 			return ((OV_FNCPTR_SETVEC(VARTYPE))								\
 				pelem->elemunion.pvar->v_setfnc)(pobj, 						\
 				pvarcurrprops->value.valueunion.val_##vartype##_vec.value,	\

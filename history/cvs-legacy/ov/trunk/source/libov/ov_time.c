@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.c,v 1.7 1999-09-15 10:48:22 dirk Exp $
+*   $Id: ov_time.c,v 1.8 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -30,6 +30,7 @@
 #define OV_COMPILE_LIBOV
 
 #include "libov/ov_time.h"
+#include "libov/ov_database.h"
 
 #if OV_SYSTEM_MC164
 #include "mc164/time.h"
@@ -118,6 +119,7 @@ OV_DLLFNCEXPORT void ov_time_gettime(
 	ptime->secs = (OV_UINT)now;
 	ptime->usecs = (OV_UINT)((now-ptime->secs)*1000000.0);
 #endif
+	if (pdb) ov_time_add(ptime, ptime, &pdb->timeoffset);
 }
 
 /*	----------------------------------------------------------------------	*/

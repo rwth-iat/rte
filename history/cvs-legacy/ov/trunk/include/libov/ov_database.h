@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.6 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_database.h,v 1.7 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -61,6 +61,8 @@ typedef struct {
 	OV_INST_ov_association		instantiation;	/* OV instantiation object */
 	OV_INST_ov_domain		vendordom;	/* vendor domain object */
 	OV_INST_ov_object		vendorobj[OV_NUM_VENDOROBJECTS];	/* vendor object */
+	OV_STRING			serverpassword;	/* password for server access */
+	OV_TIME_SPAN			timeoffset;	/* time offset of servertime to systemtime */
 	OV_BOOL				started;	/* true, if database is started up */
 }	OV_DATABASE_INFO;
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.11 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_database.c,v 1.12 2002-01-29 15:36:07 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1215,6 +1215,7 @@ OV_RESULT ov_database_move(
 	Ov_Adjust(OV_BYTE*, pdb->pstart);
 	Ov_Adjust(OV_BYTE*, pdb->pend);
 	Ov_Adjust(OV_BYTE*, pdb->pcurr);
+	Ov_Adjust(OV_STRING, pdb->serverpassword);
 	/*
 	*	adjust pointers of the memory pool
 	*/
