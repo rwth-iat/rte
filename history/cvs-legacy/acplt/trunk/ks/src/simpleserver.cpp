@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.29 2001-01-29 12:59:55 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.30 2003-10-13 12:11:06 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -102,6 +102,8 @@ KssIoStatisticsVariable::KssIoStatisticsVariable(StatisticType type)
 // Retrieve the current value for a statistical variable. This eventually maps
 // to calling the appropriate information function.
 //
+// DLAS == Damned Lies And Statistics
+//
 KsValueHandle KssIoStatisticsVariable::getValue() const
 {
     KsValue *pVal = 0;
@@ -109,22 +111,22 @@ KsValueHandle KssIoStatisticsVariable::getValue() const
     switch ( _stat_type ) {
     case DLAS_CONNECTION_COUNT:
 	pVal = new KsIntValue(
-	    KsServerBase::getServerObject().getConnectionManager()->
+	    KsConnectionManager::getConnectionManagerObject()->
 	        getConnectionCount());
 	break;
     case DLAS_IO_ERROR_COUNT:
 	pVal = new KsIntValue(
-	    KsServerBase::getServerObject().getConnectionManager()->
+	    KsConnectionManager::getConnectionManagerObject()->
 	        getIoErrorCount());
 	break;
     case DLAS_IO_RX_ERROR_COUNT:
 	pVal = new KsIntValue(
-	    KsServerBase::getServerObject().getConnectionManager()->
+	    KsConnectionManager::getConnectionManagerObject()->
 	        getIoRxErrorCount());
 	break;
     case DLAS_IO_TX_ERROR_COUNT:
 	pVal = new KsIntValue(
-	    KsServerBase::getServerObject().getConnectionManager()->
+	    KsConnectionManager::getConnectionManagerObject()->
 	        getIoTxErrorCount());
 	break;
     case DLAS_POOL_SIZE:
