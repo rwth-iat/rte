@@ -5,6 +5,7 @@ CXX_EXTRA_FLAGS = -I../../include
 CXX_PLATFORM_FLAGS = -DPLT_HAS_BOOL=1
 
 CXX_FLAGS = -g -Wall
+#CXX_FLAGS = -O -Wall -DNDEBUG
 #
 #
 #
