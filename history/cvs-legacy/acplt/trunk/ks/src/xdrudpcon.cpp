@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.5 1999-02-25 17:15:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.6 1999-04-22 15:35:20 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -233,7 +233,8 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    // ignore them silently and remain in the idle state.
 	    //
 #if PLT_SYSTEM_NT
-    	    int myerrno = WSAGetLastError();
+    	    int myerrno;
+	    myerrno = WSAGetLastError(); /* MSVC++ 4.2 */
 #else
             int myerrno = errno;
 #endif
@@ -363,7 +364,8 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 #endif
 	if ( sent < 0 ) {
 #if PLT_SYSTEM_NT
-    	    int myerrno = WSAGetLastError();
+    	    int myerrno;
+	    myerrno = WSAGetLastError(); /* MSVC++ 4.2 */
 #else
             int myerrno = errno;
 #endif

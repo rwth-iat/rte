@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.8 1999-03-01 14:16:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.9 1999-04-22 15:35:14 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -127,10 +127,10 @@ void KssListenTCPXDRConnection::sendReply(KsAvTicket &, KsResult &)
 { }
 void KssListenTCPXDRConnection::personaNonGrata()
 { }
-bool KssListenTCPXDRConnection::beginRequest(u_long xid,
-					     u_long prog_number,
-					     u_long prog_version,
-					     u_long proc_number)
+bool KssListenTCPXDRConnection::beginRequest(u_long,
+					     u_long,
+					     u_long,
+					     u_long)
 { return false; }
 void KssListenTCPXDRConnection::sendRequest()
 { }
@@ -273,7 +273,8 @@ KssTCPXDRConnection::KssTCPXDRConnection(int fd, unsigned long timeout,
 	    // background.
 	    //
 #if PLT_SYSTEM_NT
-	    int err = WSAGetLastError();
+	    int err;
+	    err = WSAGetLastError(); /* MSVC 4.2++, once again */
 	    if ( (err == WSAEINPROGRESS) || (err == WSAEWOULDBLOCK) ) {
 #else
 	    if ( (errno == EINPROGRESS) || (errno == EWOULDBLOCK) ) {
@@ -536,7 +537,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 	int size = sizeof(error);
 
 	if ( (getsockopt(_fd, SOL_SOCKET, SO_ERROR, 
-#if PLT_SYSTEM_NT
+#if 1 || PLT_SYSTEM_NT
                 (char *)
 #endif
                          &error, &size) < 0)
@@ -615,7 +616,8 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		// errors simply drop this connection.
 		//
 #if PLT_SYSTEM_NT
-    	    	int myerrno = WSAGetLastError();
+    	    	int myerrno;
+		myerrno = WSAGetLastError(); /* MSVC 4.2++, once again */
 #else
                 int myerrno = errno;
 #endif
@@ -801,7 +803,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 	int size = sizeof(error);
 
 	if ( (getsockopt(_fd, SOL_SOCKET, SO_ERROR, 
-#if PLT_SYSTEM_NT
+#if 1 || PLT_SYSTEM_NT
                 (char *)
 #endif
                          &error, &size) < 0)

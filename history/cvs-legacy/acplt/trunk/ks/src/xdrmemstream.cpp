@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.8 1999-03-01 14:15:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.9 1999-04-22 15:35:24 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -54,7 +54,12 @@
 #if PLT_SYSTEM_NT
 /*
  * The usual thing that's different by design: M$. Now why can't they
- * even make a usuable WinSock?!
+ * even make a usuable WinSock?! As if that wasn't enough, they even
+ * stacked WinSock2 on top of the dung pile. And what a BS M$ wrote in
+ * their WinSock2 documentation, like the BSD socket API is only suitable
+ * for TCP/IP and UDP/IP but does not support other protocols. How do
+ * they think (?) at M$ Linux supports, for instance, the Novell protocol
+ * suite?
  */
 #include <errno.h>
 #define write(fd,p,l) send(fd,p,l,0)
@@ -340,13 +345,14 @@ static void   MemStreamDestroy(XDR *xdrs);
  * bytes and integers from/to the stream's contents. When creating a new
  * memory stream, the stream object will get linked to this method table
  * (good morning, vtable!).
- * Aldi: I've through with this stuff! Using signatures with old legacy C code
+ * Aldi: I'm through with this stuff! Using signatures with old legacy C code
  * *is* a nightmare. Take five systems and you'll face at least ten different
  * signatures. There are sooo much ONC/RPC ports out there which can't agree
  * on function signatures.
  */
-/*#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT || PLT_SYSTEM_LINUX*/
 #define FUNC(rt) (rt (*)(...))
+/*#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT || PLT_SYSTEM_LINUX*/
+/*#define FUNC(rt) (rt (*)(...))*/
 /*#else*/
 /*#define FUNC(rt)*/
 /*#endif*/
@@ -614,7 +620,7 @@ static bool_t MemStreamGetLong(XDR *xdrs, long *lp)
      * macro here to retrieve the 32 bit int as this macro is the only
      * way to do it platform-independant.
      */
-#if PLT_COMPILER_DECCXX
+#if PLT_COMPILER_DECCXX || PLT_COMPILER_MSVC
     long *ppp = (long *) xdrs->x_private;
     *lp = IXDR_GET_LONG(ppp);
     xdrs->x_private = (caddr_t) ppp;
@@ -653,7 +659,7 @@ static bool_t MemStreamPutLong(XDR *xdrs, PLT_CONST long *lp)
      * to a suitable pointer type in order to access a 32 bit integer
      * quantity.
      */
-#if PLT_COMPILER_DECCXX
+#if PLT_COMPILER_DECCXX || PLT_COMPILER_MSVC
     long *ppp = (long *) xdrs->x_private;
     IXDR_PUT_LONG(ppp, *lp);
     xdrs->x_private = (caddr_t) ppp;
@@ -798,7 +804,8 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
              * data.
              */
 #if PLT_SYSTEM_NT
-    	    int myerrno = WSAGetLastError();
+    	    int myerrno;
+	    myerrno = WSAGetLastError(); /* MS VC++4.2 is brain damaged... */
 #else
             int myerrno = errno;
 #endif
@@ -932,7 +939,8 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
              * send buffers.
              */
 #if PLT_SYSTEM_NT
-    	    int myerrno = WSAGetLastError();
+    	    int myerrno;
+	    myerrno = WSAGetLastError(); /* MS VC++4.2 is brain damaged... */
 #else
             int myerrno = errno;
 #endif
