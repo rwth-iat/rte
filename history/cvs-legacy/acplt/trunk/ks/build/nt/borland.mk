@@ -80,6 +80,8 @@ tsclient.obj:	$(EXAMPLESSRCDIR)tsclient.cpp
 		$< $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
+examples:	tmanager.exe tserver.exe tsclient.exe
+
 tmanager.exe: tmanager.obj tmanager1.obj $(LIBKS)
 	@echo Linking $@
 	$(CXX) @&&!
