@@ -2,10 +2,10 @@
 # Simple and crazy makefile for OpenVMS (libplt)
 #
 
-REPOSITORY = dka0:[martin.cxx_repository]
+REPOSITORY = acplt$$repository
 
 CXX = cxx
-CXX_FLAGS = /optimize
+CXX_FLAGS = /optimize /float=ieee_float
 # CXX_FLAGS = /debug
 
 CXX_EXTRA_FLAGS = /notemplate_define /repository=($(REPOSITORY))
