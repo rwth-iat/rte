@@ -14,6 +14,7 @@ CXX_LIBKS_SOURCES = \
 	time.cpp \
 	value.cpp \
 	xdr.cpp \
+	templates.cpp \
 	mask.cpp \
 	event.cpp \
 	templates.cpp
@@ -29,36 +30,35 @@ CXX_LIBKSSVR_SOURCES = \
 
 CXX_LIBKSCLN_SOURCES= \
 	avmodule.cpp \
+	avsimplemodule.cpp \
 	client.cpp \
 	clntpath.cpp \
 	commobject.cpp \
 	package.cpp \
 	sorter.cpp \
 	variables.cpp
-	
+
 LIBKS_OBJECTS1 = \
 	array$(O) \
 	avticket$(O) \
-	event$(O) \
 	from_local$(O) \
-	mask$(O) \
-
-LIBKS_OBJECTS2 = \
 	path$(O) \
 	props$(O) \
 	register$(O) \
 	result$(O) \
-	rpc$(O) \
-	serviceparams$(O)
+	rpc$(O)
 
-LIBKS_OBJECTS3 = \
+LIBKS_OBJECTS2 = \
+	serviceparams$(O) \
 	string$(O) \
 	time$(O) \
-	templates$(O) \
 	value$(O) \
-	xdr$(O)
+	xdr$(O) \
+	templates$(O) \
+	mask$(O) \
+	event$(O)
 
-LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2) $(LIBKS_OBJECTS3) 
+LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2)
 
 LIBKSSVR_OBJECTS = \
 	manager$(O) \
@@ -71,6 +71,7 @@ LIBKSSVR_OBJECTS = \
 
 LIBKSCLN_OBJECTS = \
 	avmodule$(O) \
+	avsimplemodule$(O) \
 	client$(O) \
 	clntpath$(O) \
 	commobject$(O) \
@@ -129,4 +130,6 @@ tsclient$(EXE) : tsclient$(O) tsclient1$(O) $(LIBKSSVR) $(LIBKS)
 ttree$(EXE) : ttree$(O) ttree1$(O) $(LIBKSCLN) $(LIBKS)
 
 tshell$(EXE) : tshell$(O) $(LIBKSCLN) $(LIBKS)
+
+
 

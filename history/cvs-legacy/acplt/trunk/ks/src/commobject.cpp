@@ -380,14 +380,14 @@ KscDomain::ChildIterator::ChildIterator(const KscDomain &domain,
 
 //////////////////////////////////////////////////////////////////////
 
-KscDomain::ChildIterator::operator bool () const 
+KscDomain::ChildIterator::operator bool () const
 {
     return it.operator bool();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KscDomain::ChildIterator::THISTYPE &
+KscDomain_ChildIterator_THISTYPE &
 KscDomain::ChildIterator::operator ++ ()
 {
     PLT_PRECONDITION(*this);

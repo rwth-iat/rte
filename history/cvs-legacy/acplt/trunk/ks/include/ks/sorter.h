@@ -32,7 +32,7 @@
  * ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-v * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -54,7 +54,7 @@ v * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 //////////////////////////////////////////////////////////////////////
 // This is a helper class which groups together KscVariable objects
 // belonging to the same server/av-module pair.
-//  
+//
 // Intented for internal use only.
 //
 class KscSorterBucket
@@ -68,13 +68,13 @@ public:
     bool add(KscVariableHandle);
     size_t size() const;
     PltIterator<KscVariableHandle> *newVarIterator() const;
-    // call only once 
+    // call only once
     PltArray<KscVariableHandle> getSortedVars();
 
     KscServer *getServer() const;
     const KscAvModule *getAvModule() const;
 //    KscNegotiator *getNegotiator() const;
- 
+
 private:
     PltPriorityQueue<KscVariableHandle> var_lst;
     const KscAvModule *av_module;
@@ -90,7 +90,7 @@ typedef PltPtrHandle<KscSorterBucket> KscBucketHandle;
 //
 // Intented for internal use only.
 //
-class KscSorter 
+class KscSorter
 {
 public:
     KscSorter(PltIterator<KscVariableHandle> &var_it, bool dirty_only = false);
@@ -109,15 +109,15 @@ public:
     public:
         Key(const KscAvModule *,
             KscServer *);
-        
-        const KscAvModule *getAvModule() const 
+
+        const KscAvModule *getAvModule() const
             { return av_module; }
-        KscServer *getServer() const 
+        KscServer *getServer() const
             { return server; }
-        
+
         unsigned long hash() const;
         friend bool operator == (const Key &, const Key &);
-        
+
     private:
         const KscAvModule *av_module;
         KscServer *server;
@@ -133,7 +133,10 @@ private:
     {
     public:
 #if PLT_RETTYPE_OVERLOADABLE
+	#define KscSorter_ValueIterator_THISTYPE KscSorter::ValueIterator
         typedef ValueIterator THISTYPE;
+#else
+	#define KscSorter_ValueIterator_THISTYPE PltIterator_THISTYPE(KscBucketHandle)
 #endif
         ValueIterator(const PltHashTable<Key, KscBucketHandle> &);
 
@@ -143,7 +146,7 @@ private:
         void toStart();
     private:
         PltHashIterator<Key,KscBucketHandle> it;
-    };      
+    };
 
     friend class ValueIterator;
 
@@ -186,8 +189,8 @@ KscSorter::ValueIterator::operator bool () const
 //////////////////////////////////////////////////////////////////////
 
 inline
-const KscBucketHandle * 
-KscSorter::ValueIterator::operator -> () const 
+const KscBucketHandle *
+KscSorter::ValueIterator::operator -> () const
 {
     return &(it->a_value);
 }
@@ -195,7 +198,7 @@ KscSorter::ValueIterator::operator -> () const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscSorter::ValueIterator::THISTYPE & 
+KscSorter_ValueIterator_THISTYPE &
 KscSorter::ValueIterator::operator ++ ()
 {
     ++it;
@@ -205,8 +208,8 @@ KscSorter::ValueIterator::operator ++ ()
 //////////////////////////////////////////////////////////////////////
 
 inline
-void 
-KscSorter::ValueIterator::toStart() 
+void
+KscSorter::ValueIterator::toStart()
 {
     it.toStart();
 }
@@ -254,7 +257,7 @@ KscSorterBucket::add(KscVariableHandle var)
     }
 
     return ok;
-} 
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -281,14 +284,14 @@ KscSorterBucket::newVarIterator() const
 inline
 KscSorter::KscSorter(PltIterator<KscVariableHandle> &var_it,
                      bool dirty_only)
-: fDirtyOnly(dirty_only) 
+: fDirtyOnly(dirty_only)
 {
     valid = sortVars(var_it);
 }
 
 //////////////////////////////////////////////////////////////////////
 
-inline 
+inline
 bool
 KscSorter::isValid() const
 {
@@ -297,7 +300,7 @@ KscSorter::isValid() const
 
 //////////////////////////////////////////////////////////////////////
 
-inline 
+inline
 bool
 KscSorter::isEmpty() const
 {

@@ -466,7 +466,7 @@ KscPackage::DeepIterator::operator -> () const
 
 //////////////////////////////////////////////////////////////////////
 
-KscPackage::DeepIterator::THISTYPE &
+KscPackage_DeepIterator_THISTYPE &
 KscPackage::DeepIterator::operator ++()
 {
     PLT_PRECONDITION(*this);
@@ -481,12 +481,12 @@ KscPackage::DeepIterator::operator ++()
             return *this;
         }
     }
-    
+
     // check for variables in the current subpackage
     //
     if(rek_it && *rek_it) {
         ++(*rek_it);
-        // if this iterator holds more variables 
+        // if this iterator holds more variables
         // we are finished
         if( *rek_it ) {
             return *this;
@@ -529,12 +529,12 @@ KscPackage::DeepIterator::operator ++ (int)
             return;
         }
     }
-    
+
     // check for variables in the current subpackage
     //
     if(rek_it && *rek_it) {
         ++(*rek_it);
-        // if this iterator holds more variables 
+        // if this iterator holds more variables
         // we are finished
         if( *rek_it ) {
             return;

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DICTIONARY_INCLUDED
 #define PLT_DICTIONARY_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.6 1997-07-18 14:02:48 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.7 1997-08-08 07:53:34 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -134,7 +134,7 @@ public:
 //    - key k is already a key of the dictionary
 //
 // bool update(const K& k, const V& v, V& oValue, bool & oValid)
-//    Try associate (k with v). Return true on success, 
+//    Try associate (k with v). Return true on success,
 //    false on failure. Failure could be caused by
 //    lack of memory
 //    If oValid is true on return, oValue contains the old value associated
@@ -146,20 +146,23 @@ public:
 //////////////////////////////////////////////////////////////////////
 
 template <class K, class V>
-class PltDictionary 
-: public PltContainer< PltAssoc<K,V> > 
+class PltDictionary
+: public PltContainer< PltAssoc<K,V> >
 {
 public:
     // accessors
     virtual bool query(const K& key, V& value) const = 0;
 
-    PltIterator< PltAssoc<K, V> >::THISTYPE * newIterator() const = 0;
+//    PltIterator< PltAssoc<K, V> >::THISTYPE * newIterator() const = 0;
+    typedef PltAssoc<K,V> PltTemplateAssoc;	// avoid errors in expanding the
+    			                                 // following macro
+    PltIterator_THISTYPE(PltTemplateAssoc) * newIterator() const = 0;
 
     // modifiers
     virtual bool add(const K& key, const V& value) = 0;
 
-    virtual bool update(const K & key, 
-                        const V & newValue, 
+    virtual bool update(const K & key,
+                        const V & newValue,
                         V & oldValue,
                         bool & oldValueValid) = 0;
 

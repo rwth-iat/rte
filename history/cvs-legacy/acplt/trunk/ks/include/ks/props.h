@@ -39,7 +39,7 @@
  */
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
- 
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -52,11 +52,12 @@
 
 ////////////////////////////////////////////////////////////////////////////
 
-class KsProjProps : 
-public KsXdrUnion 
+class KsProjProps :
+public KsXdrUnion
 {
 public:
     typedef KsProjProps THISTYPE;
+#define KsProjProps_THISTYPE KsProjProps
 
     KsProjProps() {}
     KsProjProps(const KsProjProps &);
@@ -73,8 +74,8 @@ public:
     KsString            comment;
     KS_ACCESS           access_mode;
 
-protected:    
-    bool xdrEncodeCommon(XDR *xdr) const;    
+protected:
+    bool xdrEncodeCommon(XDR *xdr) const;
     bool xdrDecodeCommon(XDR *xdr);
     KS_DECL_XDRUNION(KsProjProps);
     PLT_DECL_RTTI;
@@ -89,12 +90,15 @@ typedef KsPtrHandle<KsProjProps> KsProjPropsHandle;
 
 ///////////////////////////////////////////////////////////////////////////
 
-class KsVarProjProps : 
-public KsProjProps 
+class KsVarProjProps :
+public KsProjProps
 {
 public:
 #if PLT_RETTYPE_OVERLOADABLE
     typedef KsVarProjProps THISTYPE;
+    #define KsVarProjProps_THISTYPE KsVarProjProps
+#else
+    #define KsVarProjProps_THISTYPE KsProjProps
 #endif
 
     KsVarProjProps() {}
@@ -110,13 +114,13 @@ public:
     KsVarProjProps &operator = (const KsVarProjProps &);
 
     virtual enum_t xdrTypeCode() const;
-    
+
     KsString tech_unit;
     KS_VAR_TYPE type;
 
 protected:
     bool xdrEncodeVariant(XDR *) const;
-    bool xdrDecodeVariant(XDR *); 
+    bool xdrDecodeVariant(XDR *);
 private:
     friend class KsProjProps;
     KsVarProjProps( XDR *, bool & );
@@ -130,12 +134,15 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////
 
-class KsDomainProjProps : 
-public KsProjProps 
+class KsDomainProjProps :
+public KsProjProps
 {
 public:
 #if PLT_RETTYPE_OVERLOADABLE
     typedef KsDomainProjProps THISTYPE;
+    #define KsDomainProjProps_THISTYPE KsDomainProjProps
+#else
+	 #define KsDomainProjProps_THISTYPE KsProjProps
 #endif
     KsDomainProjProps() {}
     KsDomainProjProps(const KsDomainProjProps &);
@@ -146,7 +153,7 @@ public:
     ~KsDomainProjProps() {}
 
     KsDomainProjProps &operator = (const KsDomainProjProps &);
- 
+
     virtual enum_t xdrTypeCode() const;
 
 protected:
@@ -169,10 +176,11 @@ public:
 // class KsCurrProps
 //////////////////////////////////////////////////////////////////////
 
-class KsCurrProps : 
-public KsXdrUnion 
+class KsCurrProps :
+public KsXdrUnion
 {
 public:
+#define KsCurrProps_THISTYPE KsCurrProps
     typedef KsCurrProps THISTYPE;
     virtual ~KsCurrProps() {}
 
@@ -187,15 +195,18 @@ public:
 typedef KsPtrHandle<KsCurrProps> KsCurrPropsHandle;
 
 ////////////////////////////////////////////////////////////////////////////
-// class KsVarCurrProps  
+// class KsVarCurrProps
 ////////////////////////////////////////////////////////////////////////////
 
 class KsVarCurrProps
-: public KsCurrProps 
+: public KsCurrProps
 {
 public:
 #if PLT_RETTYPE_OVERLOADABLE
     typedef KsVarCurrProps THISTYPE;
+    #define KsVarCurrProps_THISTYPE KsVarCurrProps
+#else
+    #define KsVarCurrProps_THISTYPE KsCurrProps
 #endif
     KsVarCurrProps();
     KsVarCurrProps(KsValueHandle v);
@@ -205,8 +216,8 @@ public:
                    KS_STATE s);
     ~KsVarCurrProps() {}
 
-    KsVarCurrProps &operator = (KsVarCurrProps &); 
-      
+    KsVarCurrProps &operator = (KsVarCurrProps &);
+
     virtual enum_t xdrTypeCode() const;
 
     KsValueHandle value;
@@ -234,6 +245,9 @@ class KsDomainCurrProps : public KsCurrProps {
 public:
 #if PLT_RETTYPE_OVERLOADABLE
     typedef KsDomainCurrProps THISTYPE;
+    #define KsDomainCurrProps_THISTYPE KsDomainCurrProps
+#else
+    #define KsDomainCurrProps_THISTYPE KsCurrProps
 #endif
     KsDomainCurrProps() {}
     ~KsDomainCurrProps() {}

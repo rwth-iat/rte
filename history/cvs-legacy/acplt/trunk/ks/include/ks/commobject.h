@@ -72,13 +72,13 @@ public:
     KsString getPathOnly() const;
     const KscPath &getPathAndName() const;
     KsString getHostAndServer() const;
-    KsString getFullPath() const; 
- 
+    KsString getFullPath() const;
+
     virtual KS_OBJ_TYPE typeCode() const = 0;
 
     KscServer *getServer() const;
 
-    virtual const KsProjProps::THISTYPE *getProjProps() const = 0;
+    virtual const KsProjProps_THISTYPE *getProjProps() const = 0;
     virtual bool getProjPropsUpdate() = 0;
 
     virtual void setAvModule(const KscAvModule *avm);
@@ -88,7 +88,7 @@ public:
 
     //
     // order of KscCommObject's falls back to order
-    // of their paths 
+    // of their paths
     //
     bool operator == (const KscCommObject &);
     bool operator != (const KscCommObject &);
@@ -125,18 +125,18 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////
-// sorry, inline comp ops need to be defined here to avoid 
+// sorry, inline comp ops need to be defined here to avoid
 // compiler errors
 //
-inline bool 
+inline bool
 KscCommObject::operator == (const KscCommObject &other)
 {
     return path == other.path;
 }
 
 //////////////////////////////////////////////////////////////////////
- 
-inline bool 
+
+inline bool
 KscCommObject::operator != (const KscCommObject &other)
 {
     return path != other.path;
@@ -144,7 +144,7 @@ KscCommObject::operator != (const KscCommObject &other)
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool 
+inline bool
 KscCommObject::operator <  (const KscCommObject &other)
 {
     return path < other.path;
@@ -152,7 +152,7 @@ KscCommObject::operator <  (const KscCommObject &other)
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool 
+inline bool
 KscCommObject::operator <= (const KscCommObject &other)
 {
     return path <= other.path;
@@ -160,7 +160,7 @@ KscCommObject::operator <= (const KscCommObject &other)
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool 
+inline bool
 KscCommObject::operator >  (const KscCommObject &other)
 {
     return path > other.path;
@@ -168,7 +168,7 @@ KscCommObject::operator >  (const KscCommObject &other)
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool 
+inline bool
 KscCommObject::operator >= (const KscCommObject &other)
 {
     return path >= other.path;
@@ -195,9 +195,9 @@ public:
 
     KS_OBJ_TYPE typeCode() const;
 
-    const KsDomainProjProps::THISTYPE *getProjProps() const;
+    const KsDomainProjProps_THISTYPE *getProjProps() const;
 
-    // reread projected props 
+    // reread projected props
     bool getProjPropsUpdate();
     // reread children from server, update properties
     bool getChildPPUpdate();
@@ -214,14 +214,17 @@ protected:
 
     KsDomainProjProps proj_props;
     PltList<KsProjPropsHandle> child_table;
-    bool fChildPPValid;   // indicates wether PP's already have been read  
+    bool fChildPPValid;   // indicates wether PP's already have been read
 
     class ChildIterator
     : public KscChildIterator
     {
     public:
 #if PLT_RETTYPE_OVERLOADABLE
+	#define KscDomain_ChildIterator_THISTYPE KscDomain::ChildIterator
         typedef ChildIterator THISTYPE;
+#else
+   #define KscDomain_ChildIterator_THISTYPE PltIterator_THISTYPE(KsProjPropsHandle)
 #endif
         ChildIterator(const KscDomain &, enum_t);
         operator bool () const;   // remaining element?
@@ -268,18 +271,18 @@ public:
     virtual bool setUpdate();
     KsValueHandle getValue() const;
 
-    const KsVarProjProps::THISTYPE *getProjProps() const;
+    const KsVarProjProps_THISTYPE *getProjProps() const;
     const KsVarCurrProps *getCurrProps() const;
     KsCurrPropsHandle getCurrPropsHandle();
     bool setCurrProps(KsVarCurrProps &cp);
     bool isDirty() const;
-   
+
 protected:
 
     KsVarProjProps proj_props;
     KsVarCurrProps curr_props;
 
-    friend class _KscPackageBase; // for access to fDirty 
+    friend class _KscPackageBase; // for access to fDirty
     bool fDirty;
 
     bool setProjProps(KsProjPropsHandle);
@@ -358,7 +361,7 @@ KscCommObject::getFullPath() const
 
 inline
 void
-KscCommObject::setAvModule(const KscAvModule *avm) 
+KscCommObject::setAvModule(const KscAvModule *avm)
 {
     // don't delete old AvModule since we are not owner
     // of it
@@ -438,7 +441,7 @@ KscDomain::typeCode() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-const KsDomainProjProps::THISTYPE *
+const KsDomainProjProps_THISTYPE *
 KscDomain::getProjProps() const
 {
     return &proj_props;
@@ -479,7 +482,7 @@ KscVariable &
 KscVariable::operator = (const KscVariable &other)
 {
     KscCommObject::operator = (other);
-    
+
     proj_props = other.proj_props;
     curr_props = other.curr_props;
     fDirty = other.fDirty;
@@ -501,7 +504,7 @@ KscVariable::typeCode() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-const KsVarProjProps::THISTYPE *
+const KsVarProjProps_THISTYPE *
 KscVariable::getProjProps() const
 {
     return &proj_props;

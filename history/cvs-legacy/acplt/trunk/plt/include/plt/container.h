@@ -150,7 +150,8 @@ class PltContainer
 {
 public:
     virtual size_t size() const;
-    virtual PltIterator<T>::THISTYPE * newIterator() const = 0;
+    // virtual PltIterator<T>::THISTYPE * newIterator() const = 0;
+    virtual PltIterator_THISTYPE(T) * newIterator() const = 0;
 };
 
 //////////////////////////////////////////////////////////////////////

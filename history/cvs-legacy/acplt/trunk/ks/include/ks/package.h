@@ -133,7 +133,10 @@ protected:
     {
     public:
 #if PLT_RETTYPE_OVERLOADABLE
+	#define KscPackage_DeepIterator_THISTYPE KscPackage::DeepIterator
         typedef DeepIterator THISTYPE;
+#else
+  #define KscPackage_DeepIterator_THISTYPE PltIterator_THISTYPE(KscVariableHandle)
 #endif
         DeepIterator(const KscPackage &);
         ~DeepIterator();
@@ -167,13 +170,13 @@ public:
 //
 template <class T>
 class KscDirectIterator
-: public PltIterator<T> 
+: public PltIterator<T>
 {
 public:
     KscDirectIterator(const PltList<T *> &);
 
     operator const void * () const;         // remaining element?
-    const T * operator -> () const;       
+    const T * operator -> () const;
     KscDirectIterator & operator ++ ();        // advance
     void operator ++ (int);                 // (postfix)
     void toStart();                         // go to the beginning
@@ -193,7 +196,7 @@ class KscExchangePackage
 {
 public:
     KscExchangePackage();
-    KscExchangePackage(KscPackageHandle setPkg, 
+    KscExchangePackage(KscPackageHandle setPkg,
                        KscPackageHandle getPkg);
     ~KscExchangePackage();
 
@@ -221,13 +224,13 @@ public:
     void debugPrint(ostream &, bool) const;
 #endif
 };
-    
+
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
 //////////////////////////////////////////////////////////////////////
 
 inline
-size_t 
+size_t
 KscPackage::sizeSubpackages() const
 {
     return num_pkgs;
@@ -254,7 +257,7 @@ KscPackage::setAvModule(const KscAvModule *avm)
 
 //////////////////////////////////////////////////////////////////////
 
-inline 
+inline
 const KscAvModule *
 KscPackage::getAvModule() const
 {
@@ -287,7 +290,7 @@ KscExchangePackage::~KscExchangePackage()
 
 //////////////////////////////////////////////////////////////////////
 
-inline void 
+inline void
 KscExchangePackage::setPackages(KscPackageHandle setPkg,
                                 KscPackageHandle getPkg)
 {
@@ -315,8 +318,8 @@ KscExchangePackage::setAvModule(const KscAvModule *avModule)
 
 //////////////////////////////////////////////////////////////////////
 
-inline 
-const KscAvModule * 
+inline
+const KscAvModule *
 KscExchangePackage::getAvModule() const
 {
     return av_module;
