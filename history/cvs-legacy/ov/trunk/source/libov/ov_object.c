@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.23 2001-12-10 14:28:41 ansgar Exp $
+*   $Id: ov_object.c,v 1.24 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1072,6 +1072,12 @@ OV_ACCESS ov_object_getaccess_nostartup(
 #define Ov_Adjust(type, ptr) 												\
 	ptr = (type)(((ptr)?(((OV_BYTE*)(ptr))+distance):(NULL)))
 
+#define Ov_AdjustCopy(type, ptr) 												\
+	ptr = (type)(((ptr)?(((OV_BYTE*)(ptr))+offset):(NULL)))
+
+#define Ov_UndoCopyAdjust(type, ptr) 												\
+	ptr = (type)(((ptr)?(((OV_BYTE*)(ptr))-offset):(NULL)))
+
 #define Ov_ClassPtr(pclass)													\
 	((OV_INSTPTR_ov_class)((pclass)?(((OV_BYTE*)(pclass))+offset):(NULL)))
 	
@@ -1099,13 +1105,13 @@ OV_ACCESS ov_object_getaccess_nostartup(
 	((OV_INSTPTR_ov_object)(((OV_BYTE*)(pobj))+(offset)))
 
 #define Ov_HeadAddress(pobj, offset)										\
-	((OV_HEAD*)(((OV_BYTE*)(pobj))+(offset)))
+	((OV_HEAD*)(((OV_BYTE*)((pobj)->v_linktable))+(offset)))
 	
 #define Ov_AnchorAddress(pobj, offset)										\
-	((OV_ANCHOR*)(((OV_BYTE*)(pobj))+(offset)))
+	((OV_ANCHOR*)(((OV_BYTE*)((pobj)->v_linktable))+(offset)))
 	
 #define Ov_HeadAddressNM(pobj, offset)										\
-	((OV_NMHEAD*)(((OV_BYTE*)(pobj))+(offset)))
+	((OV_NMHEAD*)(((OV_BYTE*)((pobj)->v_linktable))+(offset)))
 	
 /*	----------------------------------------------------------------------	*/
 
@@ -1121,14 +1127,14 @@ OV_RESULT ov_object_move(
 	*	local variables
 	*/
 	OV_INT						offset;
-	OV_INSTPTR_ov_class			pclass;
-	OV_INSTPTR_ov_object		pelem, pcurr;
+	OV_INSTPTR_ov_class			pclass, pnextclass;
+	OV_INSTPTR_ov_object		pelem, pcurr, pnextelem;
 	OV_INSTPTR_ov_variable		pvar;
 	OV_INSTPTR_ov_part			ppart;
-	OV_INSTPTR_ov_association	passoc;
+	OV_INSTPTR_ov_association	passoc, pnextassoc;
 	OV_UINT						i;
 	OV_BOOL						domain = FALSE;
-	OV_INSTPTR_ov_object		pchild;
+	OV_INSTPTR_ov_object		pchild, pnextchild;
 	OV_STRING_VEC				*pvector;
 	OV_ANY						*pany;
 	Ov_Association_DefineIteratorNM(pit);
@@ -1142,11 +1148,28 @@ OV_RESULT ov_object_move(
 	*/
 	Ov_Adjust(OV_INSTPTR_ov_object, pobj->v_pouterobject);
 	/*
+	*	adjust pointer to the association table
+	*/
+	Ov_Adjust(OV_ATBLPTR, pobj->v_linktable);
+	/*
+	*	to get the objectlinks in the copy the association table
+	*	has to be adjusted
+	*/
+	Ov_AdjustCopy(OV_ATBLPTR, pobjcopy->v_linktable);
+	/*
 	*	iterate over the object's class and it's superclasses
 	*/
-	for(pclass=Ov_ClassPtr(Ov_GetParent(ov_instantiation, pobjcopy)); pclass;
-		pclass=Ov_ClassPtr(Ov_GetParent(ov_inheritance, pclass))
-	) {
+	pclass=Ov_ClassPtr(Ov_GetParent(ov_instantiation, pobjcopy));
+	/*
+	*	in order to prevent multiple adjustments of the association table
+	*	in the database copy, we undo it
+	*/
+	Ov_UndoCopyAdjust(OV_ATBLPTR, pobjcopy->v_linktable);
+	while(pclass)
+	{
+		Ov_AdjustCopy(OV_ATBLPTR, pclass->v_linktable);
+		pnextclass=Ov_ClassPtr(Ov_GetParent(ov_inheritance, pclass));
+		Ov_UndoCopyAdjust(OV_ATBLPTR, pclass->v_linktable);
 		/*
 		*	test, if the class is class "domain"
 		*/
@@ -1156,10 +1179,15 @@ OV_RESULT ov_object_move(
 		/*
 		*	iterate over the class elements
 		*/
-		for(pelem=Ov_ObjectPtr(Ov_GetFirstChild(ov_containment, pclass)); pelem;
-			pelem=Ov_ObjectPtr(Ov_GetNextChild(ov_containment, pelem))
-		) {
+		Ov_AdjustCopy(OV_ATBLPTR, pclass->v_linktable);
+		pelem=Ov_ObjectPtr(Ov_GetFirstChild(ov_containment, pclass));
+		Ov_UndoCopyAdjust(OV_ATBLPTR, pclass->v_linktable);
+		while(pelem)
+		{
+			Ov_AdjustCopy(OV_ATBLPTR, pelem->v_linktable);
+			pnextelem=Ov_ObjectPtr(Ov_GetNextChild(ov_containment, pelem));
 			if(Ov_IsVar(pelem)) {
+				Ov_UndoCopyAdjust(OV_ATBLPTR, pelem->v_linktable);
 				pvar = Ov_StaticPtrCast(ov_variable, pelem);
 				if(!(pvar->v_varprops & OV_VP_DERIVED)) {
 					if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
@@ -1243,6 +1271,7 @@ OV_RESULT ov_object_move(
 				}
 			}	/* Ov_IsVar(pelem) */
 			else if(Ov_IsPart(pelem)) {
+				Ov_UndoCopyAdjust(OV_ATBLPTR, pelem->v_linktable);
 				ppart = Ov_StaticPtrCast(ov_part, pelem);
 				/*
 				*	call ov_object_move on the part object
@@ -1250,19 +1279,28 @@ OV_RESULT ov_object_move(
 				ov_object_move(Ov_ObjAddress(pobj, ppart->v_offset),
 					Ov_ObjAddress(pobjcopy, ppart->v_offset), distance);
 			}	/* Ov_IsPart(pelem) */
+			else {
+				Ov_UndoCopyAdjust(OV_ATBLPTR, pelem->v_linktable);
+			}
+			pelem=pnextelem;
 		}	/* for class elements */
 		/*
 		*	iterate over all associations in which we are parent
 		*/
-		for(passoc=Ov_AssociationPtr(Ov_GetFirstChild(ov_parentrelationship, pclass)); passoc;
-			passoc=Ov_AssociationPtr(Ov_GetNextChild(ov_parentrelationship, passoc))
-		) {
+		Ov_AdjustCopy(OV_ATBLPTR, pclass->v_linktable);
+		passoc=Ov_AssociationPtr(Ov_GetFirstChild(ov_parentrelationship, pclass));
+		Ov_UndoCopyAdjust(OV_ATBLPTR, pclass->v_linktable);
+		while(passoc)
+		{
+			Ov_AdjustCopy(OV_ATBLPTR, passoc->v_linktable);
+			pnextassoc=Ov_AssociationPtr(Ov_GetNextChild(ov_parentrelationship, passoc));
+			Ov_UndoCopyAdjust(OV_ATBLPTR, passoc->v_linktable);
 			/*
 			*	adjust parent link pointers
 			*/
 			switch(passoc->v_assoctype) {
 			case OV_AT_ONE_TO_ONE:
-				Ov_Adjust(OV_INSTPTR_ov_object, *(OV_INSTPTR_ov_object*) ((OV_BYTE*)pobj + passoc->v_parentoffset) );
+				Ov_Adjust(OV_INSTPTR_ov_object, *(OV_INSTPTR_ov_object*) ((OV_BYTE*)pobj->v_linktable + passoc->v_parentoffset) );
 				break;
 			case OV_AT_ONE_TO_MANY:
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->pfirst);
@@ -1271,29 +1309,37 @@ OV_RESULT ov_object_move(
 			case OV_AT_MANY_TO_MANY:
 				Ov_Adjust(OV_NMLINK*, Ov_HeadAddressNM(pobj, passoc->v_parentoffset)->pfirst);
 				Ov_Adjust(OV_NMLINK*, Ov_HeadAddressNM(pobj, passoc->v_parentoffset)->plast);
+				Ov_AdjustCopy(OV_ATBLPTR, passoc->v_linktable);
 				Ov_Association_ForEachChildNM(passoc, pit, pobj, pcurr) {
 					Ov_Adjust(OV_NMLINK*, pit->parent.pnext);
 					Ov_Adjust(OV_NMLINK*, pit->parent.pprevious);
 					Ov_Adjust(OV_INSTPTR_ov_object, pit->parent.pparent);
 				}
+				Ov_UndoCopyAdjust(OV_ATBLPTR, passoc->v_linktable);
 				break;
 			default:
 				Ov_Warning("no such association type");
 				return OV_ERR_GENERIC;
 			}
+			passoc = pnextassoc;
 		}
 		/*
 		*	iterate over all associations in which we are child
 		*/
-		for(passoc=Ov_AssociationPtr(Ov_GetFirstChild(ov_childrelationship, pclass)); passoc;
-			passoc=Ov_AssociationPtr(Ov_GetNextChild(ov_childrelationship, passoc))
-		) {
+		Ov_AdjustCopy(OV_ATBLPTR, pclass->v_linktable);
+		passoc=Ov_AssociationPtr(Ov_GetFirstChild(ov_childrelationship, pclass));
+		Ov_UndoCopyAdjust(OV_ATBLPTR, pclass->v_linktable);
+		while(passoc)
+		{
+			Ov_AdjustCopy(OV_ATBLPTR, passoc->v_linktable);
+			pnextassoc=Ov_AssociationPtr(Ov_GetNextChild(ov_childrelationship, passoc));
+			Ov_UndoCopyAdjust(OV_ATBLPTR, passoc->v_linktable);
 			/*
 			*	adjust child link pointers
 			*/
 			switch(passoc->v_assoctype) {
 			case OV_AT_ONE_TO_ONE:
-				Ov_Adjust(OV_INSTPTR_ov_object, *(OV_INSTPTR_ov_object*) ((OV_BYTE*)pobj + passoc->v_childoffset) );
+				Ov_Adjust(OV_INSTPTR_ov_object, *(OV_INSTPTR_ov_object*) ((OV_BYTE*)pobj->v_linktable + passoc->v_childoffset) );
 				break;
 			case OV_AT_ONE_TO_MANY:
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pnext);
@@ -1303,29 +1349,38 @@ OV_RESULT ov_object_move(
 			case OV_AT_MANY_TO_MANY:
 				Ov_Adjust(OV_NMLINK*, Ov_HeadAddressNM(pobj, passoc->v_childoffset)->pfirst);
 				Ov_Adjust(OV_NMLINK*, Ov_HeadAddressNM(pobj, passoc->v_childoffset)->plast);
+				Ov_AdjustCopy(OV_ATBLPTR, passoc->v_linktable);
 				Ov_Association_ForEachParentNM(passoc, pit, pobj, pcurr) {
 					Ov_Adjust(OV_NMLINK*, pit->child.pnext);
 					Ov_Adjust(OV_NMLINK*, pit->child.pprevious);
 					Ov_Adjust(OV_INSTPTR_ov_object, pit->child.pchild);
 				}
+				Ov_UndoCopyAdjust(OV_ATBLPTR, passoc->v_linktable);
 				break;
 			default:
 				Ov_Warning("no such association type");
 				return OV_ERR_GENERIC;
 			}
+			passoc = pnextassoc;
 		}
+		pclass = pnextclass;
 	}	/* for classes */
 	/*
 	*	if we are a domain, iterate over child objects and
 	*	call ov_object_memmove on child objects
 	*/
 	if(domain) {
-		for(pchild=Ov_ObjectPtr(Ov_GetFirstChild(ov_containment,
-			Ov_StaticPtrCast(ov_domain, pobjcopy))); pchild;
-			pchild=Ov_ObjectPtr(Ov_GetNextChild(ov_containment, pchild))
-		) {
+		Ov_AdjustCopy(OV_ATBLPTR, pobjcopy->v_linktable);
+		pchild=Ov_ObjectPtr(Ov_GetFirstChild(ov_containment,Ov_StaticPtrCast(ov_domain, pobjcopy)));
+		Ov_UndoCopyAdjust(OV_ATBLPTR, pobjcopy->v_linktable);
+		while(pchild)
+		{
+			Ov_AdjustCopy(OV_ATBLPTR, pchild->v_linktable);
+			pnextchild=Ov_ObjectPtr(Ov_GetNextChild(ov_containment, pchild));
+			Ov_UndoCopyAdjust(OV_ATBLPTR, pchild->v_linktable);
 			ov_object_move(Ov_ObjAddress(pchild, ((OV_BYTE*)pobj-(OV_BYTE*)pobjcopy)),
 				pchild, distance);
+			pchild=pnextchild;
 		}
 	}
 	/*

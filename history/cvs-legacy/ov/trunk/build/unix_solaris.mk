@@ -1,4 +1,4 @@
-#   $Id: unix_solaris.mk,v 1.2 2001-07-20 07:21:33 ansgar Exp $
+#   $Id: unix_solaris.mk,v 1.3 2002-01-23 13:44:14 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -208,7 +208,7 @@ install : all
 clean :
 	@echo Cleaning up...
 	@rm -f core *.c *.h *$(LIB) *$(DLL) *$(OBJ) $(OV_CODEGEN_EXE) \
-		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(OV_TEST_EXE)
+		$(OV_DBUTIL_EXE) $(OV_DBDUMP_EXE) $(OV_DBPARSE_EXE) $(OV_SERVER_EXE) $(OV_TEST_EXE)
 	@echo Done.
 
 #	Include dependencies

@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.6 2001-07-20 07:21:35 ansgar Exp $
+#   $Id: Makefile,v 1.7 2002-01-23 13:44:14 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -197,7 +197,7 @@ $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(OV_DBUTIL_RES)
 #	ACPLT/KS-Server for ACPLT/OV
 
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVER_RES)
-	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+	$(CXX_LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
 	$(RC) $(filter %$(RES), $^) $@
 
 #	ACPLT/KS-Server for ACPLT/OV (Demo version)

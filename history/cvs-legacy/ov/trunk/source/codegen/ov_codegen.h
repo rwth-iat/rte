@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.h,v 1.3 2001-12-10 14:28:38 ansgar Exp $
+*   $Id: ov_codegen.h,v 1.4 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "libov/ov_ov.h"
 
@@ -41,7 +42,6 @@
 #endif
 
 #ifdef WIN32
-#include <time.h>
 #undef sparc
 #endif
 
@@ -138,6 +138,8 @@ struct OV_OVM_ASSOCIATION_DEF {
 	OV_STRING						childclassname;
 	OV_STRING						parentcomment;
 	OV_STRING						childcomment;
+	OV_UINT							parentoffset;
+	OV_UINT							childoffset;
 	OV_UINT							parentflags;
 	OV_UINT							childflags;
 	OV_UINT							defnum;
@@ -445,6 +447,15 @@ OV_OVM_OPERATION_DEF *ov_codegen_getopdefbynum(
 );
 
 /*
+*	Compares the Associationrolenames of a class with a given name
+*/
+OV_BOOL ov_codegen_comparerolename(
+	OV_OVM_CLASS_DEF	*pclass,
+	OV_OVM_ASSOCIATION_DEF	*pthisassoc,
+	OV_STRING		identifier
+);
+
+/*
 *	Clean up memory
 */
 void ov_codegen_cleanup(void);
@@ -699,6 +710,13 @@ OV_STRING ov_codegen_getstringtext(
 *	Replace '/' with '_' in an identifier
 */
 OV_STRING ov_codegen_replace(
+	OV_STRING	identifier
+);
+
+/*
+*	Get Library part in the classname 
+*/
+OV_STRING ov_codegen_getlibname(
 	OV_STRING	identifier
 );
 

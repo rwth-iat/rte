@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovt,v 1.3 1999-08-30 15:24:56 dirk Exp $
+*   $Id: ov.ovt,v 1.4 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -46,6 +46,11 @@ typedef struct OV_INST_ov_object* OV_INSTPTR;
 *	Generic pointer to the vtable of an ACPLT/OV object
 */
 typedef struct OV_VTBL_ov_object* OV_VTBLPTR;
+
+/*
+*	Generic pointer to the link table of an ACPLT/OV object
+*/
+typedef OV_BYTE* OV_ATBLPTR;
 
 /*
 *	Generic pointer to a get function of a variable

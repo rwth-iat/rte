@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.14 2001-07-20 07:21:41 ansgar Exp $
+*   $Id: ov_class.c,v 1.15 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -156,6 +156,7 @@ CONTINUE1:
 	if(Ov_Fail(result)) {
 		return result;
 	}
+	if (pbaseclass) pclass->v_linktablesize = pbaseclass->v_linktablesize;
 	/*
 	*	set parameters
 	*/
@@ -514,6 +515,15 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	}
 	memset(pobj, 0, size);
 	/*
+	*	allocate database memory for the association table and clear it
+	*/
+	pobj->v_linktable = (OV_ATBLPTR)ov_database_malloc(pclass->v_linktablesize);
+	if(!pobj->v_linktable) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	memset(pobj->v_linktable, 0, pclass->v_linktablesize);
+
+	/*
 	*	preinitialize the object
 	*/
 	ov_time_gettime(&time);
@@ -838,9 +848,11 @@ void ov_class_deleteobject_cleanupinst(
 	*	local variables
 	*/
 	OV_INSTPTR_ov_class		pclass = Ov_GetParent(ov_instantiation, pobj);
-	OV_INSTPTR_ov_domain	pparent = Ov_GetParent(ov_containment, pobj);
-	OV_INSTPTR_ov_object	pobj2 = NULL;
-	OV_ELEMENT				parent, child;
+	OV_INSTPTR_ov_domain		pparent = Ov_GetParent(ov_containment, pobj);
+	OV_INSTPTR_ov_object		pobj2 = NULL;
+	OV_INSTPTR_ov_association 	passoc;
+	OV_INSTPTR_ov_class		pparentclass, pchildclass;
+	OV_ELEMENT			parent, child;
 	Ov_Association_DefineIteratorNM(pit);
 	/*
 	*	initialize
@@ -857,6 +869,14 @@ void ov_class_deleteobject_cleanupinst(
 		*/
 		if(Ov_DynamicPtrCast(ov_class, pobj)) {
 			ov_class_deleteobject_cleanupstaticinst(Ov_StaticPtrCast(ov_class, pobj));
+		}
+		/*
+		*	if the object in an association we get a pointer to it's library
+		*/
+		passoc=Ov_DynamicPtrCast(ov_association, pobj);
+		if(passoc) {
+			pparentclass = Ov_GetParent(ov_parentrelationship, passoc);
+			pchildclass = Ov_GetParent(ov_childrelationship, passoc);
 		}
 		/*
 		*	iterate over class elements and free strings, unlink links
@@ -995,6 +1015,12 @@ void ov_class_deleteobject_cleanupinst(
 		*	unlink from class object
 		*/
 		Ov_Unlink(ov_instantiation, pclass, pobj);
+		/*
+		*	if the object in an association unload it from the ov
+		*/
+		if(passoc) {
+			ov_association_unload(passoc, pparentclass, pchildclass);
+		}
 	} else {
 		/*
 		*	unlink from parent domain
@@ -1007,6 +1033,12 @@ void ov_class_deleteobject_cleanupinst(
 		*/
 		ov_string_setvalue(&pobj->v_identifier, NULL);
 	}
+	/*
+	*	free association table
+	*/
+	ov_database_free(pobj->v_linktable);
+	pobj->v_linktable = NULL;
+
 	return;
 }
 
@@ -1192,6 +1224,12 @@ OV_DLLFNCEXPORT OV_UINT ov_class_staticsize_get(
 	OV_INSTPTR_ov_class	pclass
 ) {
 	return pclass->v_staticsize;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_class_linktablesize_get(
+	OV_INSTPTR_ov_class	pclass
+) {
+	return pclass->v_linktablesize;
 }
 
 OV_DLLFNCEXPORT OV_STRING ov_class_comment_get(

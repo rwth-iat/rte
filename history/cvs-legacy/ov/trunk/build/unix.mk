@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.7 2001-07-20 07:21:33 ansgar Exp $
+#   $Id: unix.mk,v 1.8 2002-01-23 13:44:14 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -51,7 +51,7 @@ FLEX			= flex
 BISON			= bison
 
 CC				= gcc
-CC_FLAGS		= -g -Wall -O2 -shared
+CC_FLAGS		= -d -g -Wall -O2 -shared
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= $(CC)

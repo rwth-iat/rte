@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.15 2001-12-10 14:28:34 ansgar Exp $
+*   $Id: ov_ov.h,v 1.16 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

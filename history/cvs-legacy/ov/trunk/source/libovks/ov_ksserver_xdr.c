@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.c,v 1.7 2001-12-10 14:28:42 ansgar Exp $
+*   $Id: ov_ksserver_xdr.c,v 1.8 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

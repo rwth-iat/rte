@@ -1,5 +1,5 @@
 /* 
-*   $Id: ov_variable.c,v 1.4 2001-12-10 14:28:41 ansgar Exp $
+*   $Id: ov_variable.c,v 1.5 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.5 2000-02-10 13:07:02 dirk Exp $
+*   $Id: ov_vendortree.c,v 1.6 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -84,7 +84,7 @@ static OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 /*
 *	Initialize the vendor tree
 */
-void ov_vendortree_init(void) {
+OV_RESULT ov_vendortree_init(void) {
 	/*
 	*	local variables
 	*/
@@ -96,6 +96,11 @@ void ov_vendortree_init(void) {
 	ov_time_gettime(&pdb->vendordom.v_creationtime);
 	pdb->vendordom.v_pouterobject = NULL;
 	pdb->vendordom.v_objectstate = OV_OS_INIT;
+	pdb->vendordom.v_linktable = ov_database_malloc(pclass_ov_domain->v_linktablesize);
+	if(!pdb->vendordom.v_linktable) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	memset(pdb->vendordom.v_linktable, 0, pclass_ov_domain->v_linktablesize);
 	Ov_Link(ov_containment, &pdb->root, &pdb->vendordom);
 	Ov_Link(ov_instantiation, pclass_ov_domain, &pdb->vendordom);
 	/*
@@ -106,9 +111,15 @@ void ov_vendortree_init(void) {
 		ov_time_gettime(&pdb->vendorobj[i].v_creationtime);
 		pdb->vendorobj[i].v_pouterobject = NULL;
 		pdb->vendorobj[i].v_objectstate = OV_OS_INIT;
+		pdb->vendorobj[i].v_linktable = ov_database_malloc(pclass_ov_object->v_linktablesize);
+		if(!pdb->vendorobj[i].v_linktable) {
+			return OV_ERR_DBOUTOFMEMORY;
+		}
+		memset(pdb->vendorobj[i].v_linktable, 0, pclass_ov_object->v_linktablesize);
 		Ov_Link(ov_containment, &pdb->vendordom, &pdb->vendorobj[i]);
 		Ov_Link(ov_instantiation, pclass_ov_object, &pdb->vendorobj[i]);
 	}
+	return OV_ERR_OK;
 }
 
 /*	----------------------------------------------------------------------	*/

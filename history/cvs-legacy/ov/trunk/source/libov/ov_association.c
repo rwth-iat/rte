@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.10 2001-07-20 14:09:54 ansgar Exp $
+*   $Id: ov_association.c,v 1.11 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -49,9 +49,10 @@ OV_RESULT ov_association_load(
 	/*
 	*	local variables
 	*/
-	OV_RESULT					result;
+	OV_RESULT			result=OV_ERR_OK;
 	OV_INSTPTR_ov_association	passoc;
-	OV_INSTPTR_ov_class			pparentclass, pchildclass;
+	OV_INSTPTR_ov_class		pparentclass, pchildclass;
+	OV_BOOL				exists=FALSE;
 	/*
 	*	look for the parent class definition definition
 	*/
@@ -76,6 +77,7 @@ OV_RESULT ov_association_load(
 			*	skip object creation, otherwise it is an error
 			*/
 			if(passoc->v_creationtime.secs == OV_VL_MAXUINT) {
+				exists = TRUE;
 				goto CONTINUE;
 			}
 			return OV_ERR_ALREADYEXISTS;
@@ -95,12 +97,61 @@ CONTINUE:
 	ov_time_gettime(&passoc->v_creationtime);
 	passoc->v_assoctype = passocdef->assoctype;
 	passoc->v_assocprops = passocdef->assocprops;
-	ov_string_setvalue(&passoc->v_childrolename, passocdef->childrolename);
-	ov_string_setvalue(&passoc->v_parentrolename, passocdef->parentrolename);
-	passoc->v_parentoffset = passocdef->parentoffset;
-	passoc->v_childoffset = passocdef->childoffset;
-	ov_string_setvalue(&passoc->v_parentcomment, passocdef->parentcomment);
-	ov_string_setvalue(&passoc->v_childcomment, passocdef->childcomment);
+	if (Ov_Fail(ov_string_setvalue(&passoc->v_childrolename, passocdef->childrolename))) goto CONTINUEERR6;
+	if (Ov_Fail(ov_string_setvalue(&passoc->v_parentrolename, passocdef->parentrolename))) goto CONTINUEERR5;
+	if (Ov_Fail(ov_string_setvalue(&passoc->v_parentcomment, passocdef->parentcomment))) goto CONTINUEERR4;
+	if (Ov_Fail(ov_string_setvalue(&passoc->v_childcomment, passocdef->childcomment))) goto CONTINUEERR3;
+	if (!exists) {
+		/*	
+		*   Calculate offsets and new tablesizes and move instancedata
+		*/
+
+		if (passoc->v_assoctype == OV_AT_ONE_TO_MANY) {
+			if (pparentclass==pchildclass) {
+				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
+			}
+			else {
+				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
+				if (Ov_Fail(result)) goto CONTINUEERR2;
+				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
+			}
+			if (Ov_Fail(result)) goto CONTINUEERR1;
+			passoc->v_parentoffset = pparentclass->v_linktablesize;
+			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_HEAD), pparentclass->v_linktablesize);
+			passoc->v_childoffset = pchildclass->v_linktablesize;
+			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_ANCHOR), pchildclass->v_linktablesize);
+		}
+		if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
+			if (pparentclass==pchildclass) {
+				result = ov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
+			}
+			else {
+				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
+				if (Ov_Fail(result)) goto CONTINUEERR2;
+				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
+			}
+			if (Ov_Fail(result)) goto CONTINUEERR1;
+			passoc->v_parentoffset = pparentclass->v_linktablesize;
+			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_NMHEAD), pparentclass->v_linktablesize);
+			passoc->v_childoffset = pchildclass->v_linktablesize;
+			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_NMHEAD), pchildclass->v_linktablesize);
+		}
+		if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
+			if (pparentclass==pchildclass) {
+				result = ov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
+			}
+			else {
+				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_INSTPTR_ov_object));
+				if (Ov_Fail(result)) goto CONTINUEERR1;
+				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
+			}
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			passoc->v_parentoffset = pparentclass->v_linktablesize;
+			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_INSTPTR_ov_object), pparentclass->v_linktablesize);
+			passoc->v_childoffset = pchildclass->v_linktablesize;
+			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_INSTPTR_ov_object), pchildclass->v_linktablesize);
+		}
+	}
 	passoc->v_parentflags = passocdef->parentflags;
 	passoc->v_childflags = passocdef->childflags;
 	passoc->v_linkfnc = passocdef->linkfnc;
@@ -118,6 +169,55 @@ CONTINUE:
 	*	finished
 	*/
 	return OV_ERR_OK;
+
+CONTINUEERR1:
+CONTINUEERR2:
+CONTINUEERR3:
+	ov_string_setvalue(&passoc->v_childcomment, NULL);
+CONTINUEERR4:
+	ov_string_setvalue(&passoc->v_parentcomment, NULL);
+CONTINUEERR5:
+	ov_string_setvalue(&passoc->v_parentrolename, NULL);
+CONTINUEERR6:
+	ov_string_setvalue(&passoc->v_childrolename, NULL);
+	return OV_ERR_DBOUTOFMEMORY;;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	unload an association
+*/
+void ov_association_unload(
+	OV_INSTPTR_ov_association	passoc,
+	OV_INSTPTR_ov_class		pparentclass, 
+	OV_INSTPTR_ov_class		pchildclass
+) {
+
+	if ((pparentclass) && (pchildclass) && (passoc)) {
+	    if ((passoc->v_parentoffset!=0) && (passoc->v_childoffset!=0)) {
+		if (passoc->v_assoctype == OV_AT_ONE_TO_MANY) {
+			ov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_ANCHOR), passoc->v_childoffset);
+			ov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_HEAD), passoc->v_parentoffset);
+			ov_association_linktable_allocate(pparentclass, 0);
+			ov_association_linktable_allocate(pchildclass, 0);
+		}
+		if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
+			ov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_NMHEAD), passoc->v_childoffset);
+			ov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_NMHEAD), passoc->v_parentoffset);
+			ov_association_linktable_allocate(pparentclass, 0);
+			ov_association_linktable_allocate(pchildclass, 0);
+		}
+		if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
+			ov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_INSTPTR_ov_object), passoc->v_childoffset);
+			ov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_INSTPTR_ov_object), passoc->v_parentoffset);
+			ov_association_linktable_allocate(pparentclass, 0);
+			ov_association_linktable_allocate(pchildclass, 0);
+		}
+		passoc->v_parentoffset=0;
+		passoc->v_childoffset=0;
+	    }
+	}
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -170,8 +270,6 @@ OV_RESULT ov_association_compare(
 		|| (passoc->v_assocprops != passocdef->assocprops)
 		|| (strcmp(passoc->v_childrolename, passocdef->childrolename))
 		|| (strcmp(passoc->v_parentrolename, passocdef->parentrolename))
-		|| (passoc->v_parentoffset != passocdef->parentoffset)
-		|| (passoc->v_childoffset != passocdef->childoffset)
 	) {
 		goto ERRORMSG;
 	}
@@ -349,8 +447,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	*/
 	OV_UINT					parentoffset;
 	OV_UINT					childoffset;
-	OV_INSTPTR_ov_object	pnextchild;
-	OV_INSTPTR_ov_object 	ppreviouschild;
+	OV_INSTPTR_ov_object	pnextchild = NULL;
+	OV_INSTPTR_ov_object 	ppreviouschild = NULL;
 	OV_INSTPTR_ov_object	pcurrchild;
 	OV_INSTPTR_ov_object	pcurrparent;
 	OV_PLACEMENT_HINT		parenthint2 = parenthint;
@@ -637,32 +735,32 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	*/
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
-		*( (OV_INSTPTR_ov_object*) (((OV_BYTE*)pparent)+parentoffset) ) = pchild;
-		*( (OV_INSTPTR_ov_object*) (((OV_BYTE*)pchild)+childoffset) ) = pparent;
+		*( (OV_INSTPTR_ov_object*) ((pparent->v_linktable)+parentoffset) ) = pchild;
+		*( (OV_INSTPTR_ov_object*) ((pchild->v_linktable)+childoffset) ) = pparent;
 		break;
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*   set pointers of predecessor of parent object
 		*/
 		if(ppreviouschild) {
-			((OV_ANCHOR*)(((OV_BYTE*)ppreviouschild)+childoffset))->pnext = pchild;
+			((OV_ANCHOR*)((ppreviouschild->v_linktable)+childoffset))->pnext = pchild;
 		} else {
-			((OV_HEAD*)(((OV_BYTE*)pparent)+parentoffset))->pfirst = pchild;
+			((OV_HEAD*)((pparent->v_linktable)+parentoffset))->pfirst = pchild;
 		}
 		/*
 		*   set pointers of successor of parent object
 		*/
 		if(pnextchild) {
-			((OV_ANCHOR*)(((OV_BYTE*)pnextchild)+childoffset))->pprevious = pchild;
+			((OV_ANCHOR*)((pnextchild->v_linktable)+childoffset))->pprevious = pchild;
 		} else {
-			((OV_HEAD*)(((OV_BYTE*)pparent)+parentoffset))->plast = pchild;
+			((OV_HEAD*)((pparent->v_linktable)+parentoffset))->plast = pchild;
 		}
 		/*
 		*	set pointers of child object
 		*/
-		((OV_ANCHOR*)(((OV_BYTE*)pchild)+childoffset))->pprevious = ppreviouschild;
-		((OV_ANCHOR*)(((OV_BYTE*)pchild)+childoffset))->pnext = pnextchild;
-		((OV_ANCHOR*)(((OV_BYTE*)pchild)+childoffset))->pparent = pparent;
+		((OV_ANCHOR*)((pchild->v_linktable)+childoffset))->pprevious = ppreviouschild;
+		((OV_ANCHOR*)((pchild->v_linktable)+childoffset))->pnext = pnextchild;
+		((OV_ANCHOR*)((pchild->v_linktable)+childoffset))->pparent = pparent;
 		break;
 	case OV_AT_MANY_TO_MANY:
 		/*
@@ -678,7 +776,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		if(ppreviouschildit) {
 			ppreviouschildit->parent.pnext = pit;
 		} else {
-			((OV_NMHEAD*)(((OV_BYTE*)pparent)+parentoffset))->pfirst = pit;
+			((OV_NMHEAD*)((pparent->v_linktable)+parentoffset))->pfirst = pit;
 		}
 		/*
 		*   set pointers of successor of parent object
@@ -686,7 +784,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		if(pnextchildit) {
 			pnextchildit->parent.pprevious = pit;
 		} else {
-			((OV_NMHEAD*)(((OV_BYTE*)pparent)+parentoffset))->plast = pit;
+			((OV_NMHEAD*)((pparent->v_linktable)+parentoffset))->plast = pit;
 		}
 		/*
 		*   set pointers of predecessor of child object
@@ -694,7 +792,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		if(ppreviousparentit) {
 			ppreviousparentit->child.pnext = pit;
 		} else {
-			((OV_NMHEAD*)(((OV_BYTE*)pchild)+childoffset))->pfirst = pit;
+			((OV_NMHEAD*)((pchild->v_linktable)+childoffset))->pfirst = pit;
 		}
 		/*
 		*   set pointers of successor of child object
@@ -702,7 +800,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		if(pnextparentit) {
 			pnextparentit->child.pprevious = pit;
 		} else {
-			((OV_NMHEAD*)(((OV_BYTE*)pchild)+childoffset))->plast = pit;
+			((OV_NMHEAD*)((pchild->v_linktable)+childoffset))->plast = pit;
 		}
 		/*
 		*	set pointers of "link object"
@@ -826,49 +924,49 @@ OV_DLLFNCEXPORT void ov_association_unlink(
 	*/
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
-		*( (OV_INSTPTR_ov_object*) (((OV_BYTE*)pparent)+parentoffset) )= NULL;
-		*( (OV_INSTPTR_ov_object*) (((OV_BYTE*)pchild)+childoffset) )= NULL;
+		*( (OV_INSTPTR_ov_object*) ((pparent->v_linktable)+parentoffset) )= NULL;
+		*( (OV_INSTPTR_ov_object*) ((pchild->v_linktable)+childoffset) )= NULL;
 		break;
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*	if there's no child predecessor and no successor empty the parent's list
 		*/
 		if((!ppreviouschild)&&!(pnextchild)) {
-			((OV_HEAD*)((OV_BYTE*)pparent+parentoffset))->pfirst = NULL;
-			((OV_HEAD*)((OV_BYTE*)pparent+parentoffset))->plast = NULL;
+			((OV_HEAD*)(pparent->v_linktable+parentoffset))->pfirst = NULL;
+			((OV_HEAD*)(pparent->v_linktable+parentoffset))->plast = NULL;
 		} else {
 			/*
 			*	set pointers of child predecessor and successor, and/or parent object
 			*/
 			if(ppreviouschild) {
-				((OV_ANCHOR*)((OV_BYTE*)ppreviouschild+childoffset))->pnext
+				((OV_ANCHOR*)(ppreviouschild->v_linktable+childoffset))->pnext
 					= pnextchild;
 			} else {
-				((OV_HEAD*)((OV_BYTE*)pparent+parentoffset))->pfirst
+				((OV_HEAD*)(pparent->v_linktable+parentoffset))->pfirst
 					= pnextchild;
 			}
 			if(pnextchild) {
-				((OV_ANCHOR*)((OV_BYTE*)pnextchild+childoffset))->pprevious
+				((OV_ANCHOR*)(pnextchild->v_linktable+childoffset))->pprevious
 					= ppreviouschild;
 			} else {
-				((OV_HEAD*)((OV_BYTE*)pparent+parentoffset))->plast
+				((OV_HEAD*)(pparent->v_linktable+parentoffset))->plast
 					= ppreviouschild;
 			}
 		}
 		/*
 		*	reset the child object's pointers
 		*/
-		((OV_ANCHOR*)((OV_BYTE*)pchild+childoffset))->pprevious = NULL;
-		((OV_ANCHOR*)((OV_BYTE*)pchild+childoffset))->pnext = NULL;
-		((OV_ANCHOR*)((OV_BYTE*)pchild+childoffset))->pparent = NULL;
+		((OV_ANCHOR*)(pchild->v_linktable+childoffset))->pprevious = NULL;
+		((OV_ANCHOR*)(pchild->v_linktable+childoffset))->pnext = NULL;
+		((OV_ANCHOR*)(pchild->v_linktable+childoffset))->pparent = NULL;
 		break;
 	case OV_AT_MANY_TO_MANY:
 		/*
 		*	if there's no parent predecessor and no successor empty the parent's list
 		*/
 		if((!ppreviouschildit)&&!(pnextchildit)) {
-			((OV_NMHEAD*)((OV_BYTE*)pparent+parentoffset))->pfirst = NULL;
-			((OV_NMHEAD*)((OV_BYTE*)pparent+parentoffset))->plast = NULL;
+			((OV_NMHEAD*)(pparent->v_linktable+parentoffset))->pfirst = NULL;
+			((OV_NMHEAD*)(pparent->v_linktable+parentoffset))->plast = NULL;
 		} else {
 			/*
 			*	set pointers of child predecessor and successor, and/or parent object
@@ -876,20 +974,20 @@ OV_DLLFNCEXPORT void ov_association_unlink(
 			if(ppreviouschildit) {
 				ppreviouschildit->parent.pnext = pnextchildit;
 			} else {
-				((OV_NMHEAD*)((OV_BYTE*)pparent+parentoffset))->pfirst = pnextchildit;
+				((OV_NMHEAD*)(pparent->v_linktable+parentoffset))->pfirst = pnextchildit;
 			}
 			if(pnextchildit) {
 				pnextchildit->parent.pprevious = ppreviouschildit;
 			} else {
-				((OV_NMHEAD*)((OV_BYTE*)pparent+parentoffset))->plast = ppreviouschildit;
+				((OV_NMHEAD*)(pparent->v_linktable+parentoffset))->plast = ppreviouschildit;
 			}
 		}
 		/*
 		*	if there's no child predecessor and no successor empty the child's list
 		*/
 		if((!ppreviousparentit)&&!(pnextparentit)) {
-			((OV_NMHEAD*)((OV_BYTE*)pchild+childoffset))->pfirst = NULL;
-			((OV_NMHEAD*)((OV_BYTE*)pchild+childoffset))->plast = NULL;
+			((OV_NMHEAD*)(pchild->v_linktable+childoffset))->pfirst = NULL;
+			((OV_NMHEAD*)(pchild->v_linktable+childoffset))->plast = NULL;
 		} else {
 			/*
 			*	set pointers of parent predecessor and successor, and/or parent object
@@ -897,12 +995,12 @@ OV_DLLFNCEXPORT void ov_association_unlink(
 			if(ppreviousparentit) {
 				ppreviousparentit->child.pnext = pnextparentit;
 			} else {
-				((OV_NMHEAD*)((OV_BYTE*)pchild+childoffset))->pfirst = pnextparentit;
+				((OV_NMHEAD*)(pchild->v_linktable+childoffset))->pfirst = pnextparentit;
 			}
 			if(pnextparentit) {
 				pnextparentit->child.pprevious = ppreviousparentit;
 			} else {
-				((OV_NMHEAD*)((OV_BYTE*)pchild+childoffset))->plast = ppreviousparentit;
+				((OV_NMHEAD*)(pchild->v_linktable+childoffset))->plast = ppreviousparentit;
 			}
 		}
 		/*
@@ -933,7 +1031,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedparentlink(
 	*/
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
-		if ( *(OV_INSTPTR_ov_object*) (((OV_BYTE*)pparent)+passoc->v_parentoffset) ) return TRUE;
+		if ( *(OV_INSTPTR_ov_object*) ((pparent->v_linktable)+passoc->v_parentoffset) ) return TRUE;
 		return FALSE;
 	case OV_AT_ONE_TO_MANY:
 		/* fall into... */
@@ -941,7 +1039,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedparentlink(
 		/*
 		*	get pointer to parent link (head)
 		*/
-		phead = (OV_HEAD*)(((OV_BYTE*)pparent)+passoc->v_parentoffset);
+		phead = (OV_HEAD*)((pparent->v_linktable)+passoc->v_parentoffset);
 		/*
 		*	check if used
 		*/
@@ -975,13 +1073,13 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedchildlink(
 	*/
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
-		if ( *(OV_INSTPTR_ov_object*) (((OV_BYTE*)pchild)+passoc->v_childoffset) ) return TRUE;
+		if ( *(OV_INSTPTR_ov_object*) ((pchild->v_linktable)+passoc->v_childoffset) ) return TRUE;
 		return FALSE;
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*	get pointer to child link (anchor)
 		*/
-		panchor = (OV_ANCHOR*)(((OV_BYTE*)pchild)+passoc->v_childoffset);
+		panchor = (OV_ANCHOR*)((pchild->v_linktable)+passoc->v_childoffset);
 		/*
 		*	check if used
 		*/
@@ -993,7 +1091,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedchildlink(
 		/*
 		*	get pointer to child link (head)
 		*/
-		phead = (OV_HEAD*)(((OV_BYTE*)pchild)+passoc->v_childoffset);
+		phead = (OV_HEAD*)((pchild->v_linktable)+passoc->v_childoffset);
 		/*
 		*	check if used
 		*/
@@ -1059,6 +1157,228 @@ OV_DLLFNCEXPORT OV_UINT ov_association_childflags_get(
 	OV_INSTPTR_ov_association	passoc
 ) {
 	return passoc->v_childflags;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_association_parentoffset_get(
+	OV_INSTPTR_ov_association	passoc
+) {
+	return passoc->v_parentoffset;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_association_childoffset_get(
+	OV_INSTPTR_ov_association	passoc
+) {
+	return passoc->v_childoffset;
+}
+/*
+*	Parent and Child Offset of the ov model associations in the association table
+*/
+
+OV_UINT ov_association_getparentoffset(
+	OV_ASSOCIATION_DEF*	passocdef
+) {
+	if (!strcmp(passocdef->identifier,"containment")) return (2*sizeof(OV_ANCHOR));
+	if (!strcmp(passocdef->identifier,"instantiation")) return (2*sizeof(OV_ANCHOR)+1*sizeof(OV_HEAD));
+	if (!strcmp(passocdef->identifier,"inheritance")) return (2*sizeof(OV_ANCHOR)+2*sizeof(OV_HEAD));
+	if (!strcmp(passocdef->identifier,"childrelationship")) return (3*sizeof(OV_ANCHOR)+3*sizeof(OV_HEAD));
+	if (!strcmp(passocdef->identifier,"parentrelationship")) return (3*sizeof(OV_ANCHOR)+4*sizeof(OV_HEAD));
+	if (!strcmp(passocdef->identifier,"embedment")) return (3*sizeof(OV_ANCHOR)+5*sizeof(OV_HEAD));
+	if (!strcmp(passocdef->identifier,"construction")) return (2*sizeof(OV_ANCHOR)+1*sizeof(OV_HEAD));
+	return 0;
+}
+
+OV_UINT ov_association_getchildoffset(
+	OV_ASSOCIATION_DEF*	passocdef
+) {
+	if (!strcmp(passocdef->identifier,"instantiation")) return 0;
+	if (!strcmp(passocdef->identifier,"containment")) return (1*sizeof(OV_ANCHOR));
+	if (!strcmp(passocdef->identifier,"inheritance")) return (2*sizeof(OV_ANCHOR)+3*sizeof(OV_HEAD));
+	if (!strcmp(passocdef->identifier,"parentrelationship")) return (2*sizeof(OV_ANCHOR));
+	if (!strcmp(passocdef->identifier,"childrelationship")) return (3*sizeof(OV_ANCHOR));
+	if (!strcmp(passocdef->identifier,"embedment")) return (2*sizeof(OV_ANCHOR));
+	if (!strcmp(passocdef->identifier,"construction")) return (2*sizeof(OV_ANCHOR));
+	return 0;
+}
+
+OV_UINT ov_association_gettablesize(
+	OV_CLASS_DEF*	pclassdef
+) {
+	if (!strcmp(pclassdef->identifier,"object")) return (2*sizeof(OV_ANCHOR));
+	if (!strcmp(pclassdef->identifier,"domain")) return (2*sizeof(OV_ANCHOR)+1*sizeof(OV_HEAD));
+	if (!strcmp(pclassdef->identifier,"operation")) return (2*sizeof(OV_ANCHOR));
+	if (!strcmp(pclassdef->identifier,"variable")) return (3*sizeof(OV_ANCHOR));
+	if (!strcmp(pclassdef->identifier,"part")) return (3*sizeof(OV_ANCHOR));
+	if (!strcmp(pclassdef->identifier,"association")) return (4*sizeof(OV_ANCHOR));
+	if (!strcmp(pclassdef->identifier,"class")) return (3*sizeof(OV_ANCHOR)+6*sizeof(OV_HEAD));
+	if (!strcmp(pclassdef->identifier,"library")) return (2*sizeof(OV_ANCHOR)+1*sizeof(OV_HEAD));
+	if (!strcmp(pclassdef->identifier,"structure")) return (2*sizeof(OV_ANCHOR)+2*sizeof(OV_HEAD));
+	return 0;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Allocate memory for the new linktable
+*/
+OV_RESULT ov_association_linktable_allocate(
+	OV_INSTPTR_ov_class		pclass,
+	OV_INT				addsize
+) {
+	OV_INSTPTR_ov_class		pderivedclass;
+	OV_INSTPTR_ov_class		pnextclass;
+	OV_INSTPTR_ov_object		pinst;
+	OV_INSTPTR_ov_object		pnextinst;
+	OV_ATBLPTR			pat;
+	OV_RESULT			result;
+
+	/*
+	*	iterate over all derived classes
+	*/
+	pderivedclass = Ov_GetFirstChild(ov_inheritance, pclass);
+	while (pderivedclass) {
+		pnextclass = Ov_GetNextChild(ov_inheritance, pderivedclass);
+		result = ov_association_linktable_allocate(pderivedclass, addsize);
+		if(Ov_Fail(result)) {
+			return result;
+		}
+		pderivedclass = pnextclass;
+	}
+
+	/*
+	*	iterate over all instances of this class
+	*/
+	pinst = Ov_GetFirstChild(ov_instantiation, pclass);
+	while (pinst) {
+		pnextinst = Ov_GetNextChild(ov_instantiation, pinst);
+		pat = (OV_ATBLPTR) ov_database_malloc(pclass->v_linktablesize + addsize);
+		if(!pat) {
+			return OV_ERR_DBOUTOFMEMORY;
+		}
+		memset(pat, 0, pclass->v_linktablesize + addsize);
+		memcpy(pat, pinst->v_linktable, pclass->v_linktablesize);
+		ov_database_free(pinst->v_linktable);
+		pinst->v_linktable = pat;
+		pinst = pnextinst;
+	}
+	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Calculation of linkoffsets and linktablesizes of derived classes, when   
+*	inserting a new link with 'addsize' bytes at the linktable address 'offset'
+* 	using the recuriv function 'linktable_insert'
+*/
+void ov_association_linktable_insert(
+	OV_INSTPTR_ov_class		passocclass,
+	OV_INSTPTR_ov_class		pclass,
+	OV_INT				addsize,
+	OV_UINT				offset
+) {
+	OV_INSTPTR_ov_association	passoc;
+	OV_INSTPTR_ov_association	pchildassoc;
+	OV_INSTPTR_ov_association	pparentassoc;
+	OV_INSTPTR_ov_association	pnextassoc;
+	OV_INSTPTR_ov_class		pderivedclass;
+	OV_INSTPTR_ov_class		pnextclass;
+	OV_INSTPTR_ov_object		pinst;
+	OV_INSTPTR_ov_object		pnextinst;
+	char 				*pcs, *pct;
+
+	/*
+	*	when adjusting the offsets of the child and parent association, we store the
+	*	actual offsets of the associations, so we can prevent the changing
+	*	of teir offsets before the linktable of the instances has been changed
+	*/
+
+	/*
+	*	iterate over all derived classes and call recursive this method
+	*/
+	pderivedclass = Ov_GetFirstChild(ov_inheritance, pclass);
+	while (pderivedclass) {
+		pnextclass = Ov_GetNextChild(ov_inheritance, pderivedclass);
+		ov_association_linktable_insert(passocclass, pderivedclass, addsize, offset);
+		pderivedclass = pnextclass;
+	}
+
+	/*
+	*	First of all get the first child of 'instantiation' , 'childrelationship' and 'parentrelationship'.
+	*	If the actual instance is an ov-association, its linktable could be changed and no further access would be correct
+	*	So change the association offsets before changing the linktable of the instances
+	*	Because the childlink offset of 'instantiation' will never change (in contrast to it's parentlink offset)
+	*	we keep completly access to the following childs of this association.
+	*/
+
+	pinst = Ov_GetFirstChild(ov_instantiation, pclass);
+	pchildassoc = Ov_GetFirstChild(ov_childrelationship, pclass);
+	pparentassoc = Ov_GetFirstChild(ov_parentrelationship, pclass);
+
+	/*
+	*	the association offsets of derived classes (and only of these) has to be adjusted
+	*/
+	if (passocclass!=pclass) {
+		/*
+		*	iterate over all child associations defined to this class and add the inserted datasize to the childoffset
+		*/
+		passoc = pchildassoc;
+		while (passoc) {
+			pnextassoc = Ov_GetNextChild(ov_childrelationship, passoc);
+			passoc->v_childoffset += addsize;
+			passoc = pnextassoc;
+		}
+	
+		/*
+		*	iterate over all parent associations defined to this class and add the inserted datasize to the parentoffset
+		*/
+		passoc = pparentassoc;
+		while (passoc) {
+			pnextassoc = Ov_GetNextChild(ov_parentrelationship, passoc);
+			passoc->v_parentoffset += addsize;
+			passoc = pnextassoc;
+		}
+	}
+
+	/*
+	*	now iterate over all instances of the actual class
+	*/
+
+	while (pinst) {
+		pnextinst = Ov_GetNextChild(ov_instantiation, pinst);
+		if (addsize >=0) {
+			pcs = pinst->v_linktable+pclass->v_linktablesize-1;
+			pct = pinst->v_linktable+pclass->v_linktablesize-1+addsize;
+			while ((pcs-pinst->v_linktable) >= offset) {
+				*pct = *pcs;
+				pct--;
+				pcs--;
+			}
+			pcs = pinst->v_linktable+offset+addsize-1;
+			while ((pcs-pinst->v_linktable) >= offset) {
+				*pcs = 0;
+				pcs--;
+			}
+		}
+		else {
+			pcs = pinst->v_linktable+offset-addsize;
+			pct = pinst->v_linktable+offset;
+			while ((pcs-pinst->v_linktable) < (pclass->v_linktablesize)) {
+				*pct = *pcs;
+				pct++;
+				pcs++;
+			}
+			while ((pct-pinst->v_linktable) < pclass->v_linktablesize) {
+				*pct = 0;
+				pct++;
+			}
+		}
+		pinst = pnextinst;
+	}
+
+	/*
+	*	finaly adjust the linktablesize of the actual class
+	*/
+	pclass->v_linktablesize += addsize;
 }
 
 /*	----------------------------------------------------------------------	*/

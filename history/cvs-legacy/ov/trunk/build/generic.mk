@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.8 2001-07-20 14:08:56 ansgar Exp $
+#   $Id: generic.mk,v 1.9 2002-01-23 13:43:40 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -211,7 +211,7 @@ ifeq ($SYSTEM), OPENVMS)
 LIBRPC_LIB			= $(VMS_LIBRPC_DIR)ucx$$rpcxdr
 endif
 
-ACPLTKS_LIBS		= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB) 
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB) 
 
 #   Rules
 #   -----

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.4 2000-02-10 13:06:53 dirk Exp $
+*   $Id: ov_vendortree.h,v 1.5 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -64,7 +64,7 @@ typedef struct {
 /*
 *	Initialize the vendor tree
 */
-void ov_vendortree_init(void);
+OV_RESULT ov_vendortree_init(void);
 
 /*
 *	Get unit of a vendor object

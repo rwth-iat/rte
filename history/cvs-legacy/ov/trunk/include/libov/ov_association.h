@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.7 2001-07-20 07:21:36 ansgar Exp $
+*   $Id: ov_association.h,v 1.8 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -48,10 +48,10 @@ struct OV_ASSOCIATION_DEF {
 	OV_STRING					parentclassname;
 	OV_STRING					parentrolename;
 	OV_STRING					childclassname;
-	OV_UINT						parentoffset;
-	OV_UINT						childoffset;
 	OV_STRING					parentcomment;
 	OV_STRING					childcomment;
+	OV_UINT						parentoffset;
+	OV_UINT						childoffset;
 	OV_UINT						parentflags;
 	OV_UINT						childflags;
 	OV_FNCPTR_LINK				linkfnc;
@@ -60,56 +60,6 @@ struct OV_ASSOCIATION_DEF {
 };
 typedef struct OV_ASSOCIATION_DEF OV_ASSOCIATION_DEF;
 
-/*
-*	Define the link connectors of a 1:1 association
-*/
-#define OV_TYPEDEF_SLINKS(assoc)		\
-	typedef struct {			\
-		OV_CPT_##assoc	pchild;		\
-	}   OV_PARENTLINK_##assoc;		\
-	typedef struct {			\
-		OV_PPT_##assoc	pparent;	\
-	}   OV_CHILDLINK_##assoc
-
-/*
-*	Define the link connectors of a 1:n association
-*/
-#define OV_TYPEDEF_LINKS(assoc)										\
-	typedef struct {												\
-		OV_CPT_##assoc	pfirst;										\
-		OV_CPT_##assoc	plast;										\
-	}   OV_PARENTLINK_##assoc;										\
-	typedef struct {												\
-		OV_CPT_##assoc	pnext;										\
-		OV_CPT_##assoc	pprevious;									\
-		OV_PPT_##assoc	pparent;									\
-	}   OV_CHILDLINK_##assoc
-
-/*
-*	Define the link connectors of an n:m association
-*/
-#define OV_TYPEDEF_NMLINKS(assoc)									\
-	typedef struct {												\
-		struct OV_NMLINK_##assoc		*pfirst;					\
-		struct OV_NMLINK_##assoc		*plast;						\
-	}   OV_PARENTLINK_##assoc;										\
-	typedef struct {												\
-		struct OV_NMLINK_##assoc		*pfirst;					\
-		struct OV_NMLINK_##assoc		*plast;						\
-	}   OV_CHILDLINK_##assoc;										\
-	struct OV_NMLINK_##assoc {										\
-		struct {													\
-			struct OV_NMLINK_##assoc	*pnext;						\
-			struct OV_NMLINK_##assoc	*pprevious;					\
-			OV_PPT_##assoc				pparent;					\
-		}	parent;													\
-		struct {													\
-			struct OV_NMLINK_##assoc	*pnext;						\
-			struct OV_NMLINK_##assoc	*pprevious;					\
-			OV_CPT_##assoc				pchild;						\
-		}	child;													\
-	};																\
-	typedef struct OV_NMLINK_##assoc OV_NMLINK_##assoc
 
 /*
 *	Declare the link function of an association
@@ -247,8 +197,39 @@ OV_RESULT ov_association_load(
 *	Compare an association with its definition
 */
 OV_RESULT ov_association_compare(
-	OV_INSTPTR_ov_association		passoc,
+	OV_INSTPTR_ov_association	passoc,
+	OV_ASSOCIATION_DEF			*passocdef
+);
+
+/*
+*	Provisorical Parent and Child Offset of an ov model association in the association table
+*/
+OV_UINT ov_association_getparentoffset(
 	OV_ASSOCIATION_DEF*				passocdef
+);
+
+OV_UINT ov_association_getchildoffset(
+	OV_ASSOCIATION_DEF*				passocdef
+);
+
+OV_UINT ov_association_gettablesize(
+	OV_CLASS_DEF*	pclassdef
+);
+
+/*
+*	Calculation of linkoffsets and linktablesizes
+*/
+
+OV_RESULT ov_association_linktable_allocate(
+	OV_INSTPTR_ov_class		pclass,
+	OV_INT				addsize
+);
+
+void ov_association_linktable_insert(
+	OV_INSTPTR_ov_class		passocclass,
+	OV_INSTPTR_ov_class		pclass,
+	OV_INT				addsize,
+	OV_UINT				offset
 );
 
 /*
@@ -259,39 +240,48 @@ OV_BOOL ov_association_canunload(
 );
 
 /*
+*	unload an association
+*/
+void ov_association_unload(
+	OV_INSTPTR_ov_association	passoc,
+	OV_INSTPTR_ov_class		pparentclass,
+	OV_INSTPTR_ov_class		pchildclass
+);
+
+/*
 *	Get child in a 1:1 association
 */
 #define Ov_Association_GetChild(passoc, pparent)		\
 	((OV_INSTPTR_ov_object)((pparent)?(*((OV_INSTPTR_ov_object*)(((OV_BYTE*)		\
-	(pparent))+(passoc)->v_parentoffset))):(NULL)))
+	(pparent)->v_linktable)+(passoc)->v_parentoffset))):(NULL)))
 
 /*
 *	Get first child in a 1:n association
 */
 #define Ov_Association_GetFirstChild(passoc, pparent)				\
 	((OV_INSTPTR_ov_object)((pparent)?(((OV_HEAD*)(((OV_BYTE*)		\
-	(pparent))+(passoc)->v_parentoffset))->pfirst):(NULL)))
+	(pparent)->v_linktable)+(passoc)->v_parentoffset))->pfirst):(NULL)))
 
 /*
 *	Get last child in a 1:n association
 */
 #define Ov_Association_GetLastChild(passoc, pparent)				\
 	((OV_INSTPTR_ov_object)((pparent)?(((OV_HEAD*)(((OV_BYTE*)		\
-	(pparent))+(passoc)->v_parentoffset))->plast):(NULL)))
+	(pparent)->v_linktable)+(passoc)->v_parentoffset))->plast):(NULL)))
 
 /*
 *	Get next child in a 1:n association
 */
 #define Ov_Association_GetNextChild(passoc, pchild)					\
 	((OV_INSTPTR_ov_object)((pchild)?(((OV_ANCHOR*)(((OV_BYTE*)		\
-	(pchild))+(passoc)->v_childoffset))->pnext):(NULL)))
+	(pchild)->v_linktable)+(passoc)->v_childoffset))->pnext):(NULL)))
 
 /*
 *	Get previous child in a 1:n association
 */
 #define Ov_Association_GetPreviousChild(passoc, pchild)				\
 	((OV_INSTPTR_ov_object)((pchild)?(((OV_ANCHOR*)(((OV_BYTE*)		\
-	(pchild))+(passoc)->v_childoffset))->pprevious):(NULL)))
+	(pchild)->v_linktable)+(passoc)->v_childoffset))->pprevious):(NULL)))
 
 /*
 *	Get parent in a 1:1 or in a 1:n association
@@ -299,9 +289,9 @@ OV_BOOL ov_association_canunload(
 #define Ov_Association_GetParent(passoc, pchild)		\
 	(((passoc)->v_assoctype==OV_AT_ONE_TO_ONE)?		\
 	((OV_INSTPTR_ov_object)((pchild)?(*((OV_INSTPTR_ov_object*)(((OV_BYTE*)		\
-	(pchild))+(passoc)->v_childoffset))):(NULL))):		\
+	(pchild)->v_linktable)+(passoc)->v_childoffset))):(NULL))):		\
 	((OV_INSTPTR_ov_object)((pchild)?(((OV_ANCHOR*)(((OV_BYTE*)		\
-	(pchild))+(passoc)->v_childoffset))->pparent):(NULL))))
+	(pchild)->v_linktable)+(passoc)->v_childoffset))->pparent):(NULL))))
 
 /*
 *	Iterate over all children in an 1:n association
@@ -322,7 +312,7 @@ OV_BOOL ov_association_canunload(
 */
 #define Ov_Association_GetFirstChildNM(passoc, pit, pparent)		\
 	((OV_INSTPTR_ov_object)((pparent)?((pit)=((OV_NMHEAD*)			\
-	(((OV_BYTE*)(pparent))+(passoc)->v_parentoffset))->pfirst,		\
+	(((OV_BYTE*)(pparent)->v_linktable)+(passoc)->v_parentoffset))->pfirst,		\
 	(pit)?((pit)->child.pchild):(NULL)):(NULL)))
 
 /*
@@ -330,7 +320,7 @@ OV_BOOL ov_association_canunload(
 */
 #define Ov_Association_GetLastChildNM(passoc, pit, pparent)			\
 	((OV_INSTPTR_ov_object)((pparent)?((pit)=((OV_NMHEAD*)			\
-	(((OV_BYTE*)(pparent))+(passoc)->v_parentoffset))->plast,		\
+	(((OV_BYTE*)(pparent)->v_linktable)+(passoc)->v_parentoffset))->plast,		\
 	(pit)?((pit)->child.pchild):(NULL)):(NULL)))
 
 /*
@@ -360,7 +350,7 @@ OV_BOOL ov_association_canunload(
 */
 #define Ov_Association_GetFirstParentNM(passoc, pit, pchild)		\
 	((OV_INSTPTR_ov_object)((pchild)?((pit)=((OV_NMHEAD*)			\
-	(((OV_BYTE*)(pchild))+(passoc)->v_childoffset))->pfirst,		\
+	(((OV_BYTE*)(pchild)->v_linktable)+(passoc)->v_childoffset))->pfirst,		\
 	(pit)?((pit)->parent.pparent):(NULL)):(NULL)))
 
 /*
@@ -368,7 +358,7 @@ OV_BOOL ov_association_canunload(
 */
 #define Ov_Association_GetLastParentNM(passoc, pit, pchild)			\
 	((OV_INSTPTR_ov_object)((pchild)?((pit)=((OV_NMHEAD*)			\
-	(((OV_BYTE*)(pchild))+(passoc)->v_childoffset))->plast,			\
+	(((OV_BYTE*)(pchild)->v_linktable)+(passoc)->v_childoffset))->plast,			\
 	(pit)?((pit)->parent.pparent):(NULL)):(NULL)))
 
 /*

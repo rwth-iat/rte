@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.10 2001-12-10 14:28:38 ansgar Exp $
+*   $Id: ov_ovmparser.y,v 1.11 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1267,6 +1267,8 @@ OV_BOOL ov_codegen_checksemantics_association(
 	OV_BOOL				result = TRUE;
 	OV_OVM_CLASS_DEF	*pparentclass = ov_codegen_getclassdef(NULL, passoc->parentclassname);
 	OV_OVM_CLASS_DEF	*pchildclass = ov_codegen_getclassdef(NULL, passoc->childclassname);
+	OV_OVM_LIBRARY_DEF		*pparentlib = ov_codegen_getlibdef(pparentclass->libname);
+	OV_OVM_LIBRARY_DEF		*pchildlib = ov_codegen_getlibdef(pchildclass->libname);
 	/*
 	*	check for unique name
 	*/
@@ -1302,20 +1304,22 @@ OV_BOOL ov_codegen_checksemantics_association(
 				passoc->parentclassname);
 			result = FALSE;
 		}
-		if(pparentclass->libname != passoc->libname) {
+/*		if(pparentclass->libname != passoc->libname) {
 			fprintf(stderr, "association \"%s\": definition not in same library "
 				"as parent class \"%s\".\n", passoc->identifier,
 				passoc->parentclassname);
 			result = FALSE;
 		}
+*/
 		/*
 		*	check child role name -- yes, CHILD rolename
 		*	FIXME! do not only check variables, parts and operations
 		*	       but also links of the parentclass!!
 		*/
-		if(ov_codegen_getvardef(plib, pparentclass, passoc->childrolename)
-			|| ov_codegen_getpartdef(plib, pparentclass, passoc->childrolename)
-			|| ov_codegen_getopdef(plib, pparentclass, passoc->childrolename)
+		if(ov_codegen_getvardef(pparentlib, pparentclass, passoc->childrolename)
+			|| ov_codegen_getpartdef(pparentlib, pparentclass, passoc->childrolename)
+			|| ov_codegen_getopdef(pparentlib, pparentclass, passoc->childrolename)
+			|| ov_codegen_comparerolename(pparentclass, passoc, passoc->childrolename)
 		) {
 			fprintf(stderr, "association \"%s\": child role name \"%s\" already "
 				"used as identifier.", passoc->identifier, passoc->childrolename);
@@ -1333,20 +1337,22 @@ OV_BOOL ov_codegen_checksemantics_association(
 				passoc->childclassname);
 			result = FALSE;
 		}
-		if(pchildclass->libname != passoc->libname) {
+/*		if(pchildclass->libname != passoc->libname) {
 			fprintf(stderr, "association \"%s\": definition not in same library "
 				"as child class \"%s\".\n", passoc->identifier,
 				passoc->childclassname);
 			result = FALSE;
 		}
-		/*
+*/	
+	 /*
 		*	check parent role name -- yes, PARENT rolename
 		*	FIXME! do not only check variables, parts and operations
 		*	       but also links of the childclass!!
 		*/
-		if(ov_codegen_getvardef(plib, pchildclass, passoc->parentrolename)
-			|| ov_codegen_getpartdef(plib, pchildclass, passoc->parentrolename)
-			|| ov_codegen_getopdef(plib, pchildclass, passoc->parentrolename)
+		if(ov_codegen_getvardef(pchildlib, pchildclass, passoc->parentrolename)
+			|| ov_codegen_getpartdef(pchildlib, pchildclass, passoc->parentrolename)
+			|| ov_codegen_getopdef(pchildlib, pchildclass, passoc->parentrolename)
+			|| ov_codegen_comparerolename(pchildclass, passoc, passoc->parentrolename)
 		) {
 			fprintf(stderr, "association \"%s\": parent role name \"%s\" already "
 				"used as identifier.", passoc->identifier, passoc->parentrolename);
@@ -2209,6 +2215,47 @@ OV_OVM_OPERATION_DEF *ov_codegen_getopdefbynum(
 		}
 		pop = pop->pnext;
 	}
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Compares the Associationrolenames of a class with a given name
+*/
+OV_BOOL ov_codegen_comparerolename(
+	OV_OVM_CLASS_DEF	*pclass,
+	OV_OVM_ASSOCIATION_DEF	*pthisassoc,
+	OV_STRING		identifier
+) {
+	OV_OVM_ASSOCIATION_DEF	*passoc;
+	OV_OVM_LIBRARY_DEF	*plib;
+	char			classname[256];
+
+	sprintf(classname, "%s/%s", pclass->libname, pclass->identifier);
+	/*
+	*	iterate over libraries
+	*/
+	for(plib=libraries; plib; plib=plib->pnext) {
+		/*
+		*	iterate over associations
+		*/
+		for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
+			if (passoc != pthisassoc) {
+				if (!strcmp(passoc->childclassname, classname)) {
+					if(!strcmp(passoc->parentrolename, identifier)) {
+						return TRUE;
+					}
+				}
+				if (!strcmp(passoc->parentclassname, classname)) {
+					if(!strcmp(passoc->childrolename, identifier)) {
+						return TRUE;
+					}
+				}
+			}
+		}
+	}
+
+	return FALSE;
 }
 
 /*	----------------------------------------------------------------------	*/

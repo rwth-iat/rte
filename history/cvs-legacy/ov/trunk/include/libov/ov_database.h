@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.5 2000-07-05 16:25:30 dirk Exp $
+*   $Id: ov_database.h,v 1.6 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -51,14 +51,16 @@ extern "C" {
 typedef struct {
 	OV_POINTER			baseaddr;	/* base address of the filemapping */
 	OV_UINT				size;		/* size of the filemapping */
-	OV_BYTE OV_MEMSPEC	*pstart;	/* beginning of the database memory */
-	OV_BYTE OV_MEMSPEC	*pend;		/* end of the database memory */
-	OV_BYTE OV_MEMSPEC	*pcurr;		/* current position of the core pointer */
-	OV_INST_ov_domain	root;		/* root domain object */
-	OV_INST_ov_domain	acplt;		/* the acplt domain object */
-	OV_INST_ov_library	ov;			/* OV library object */
-	OV_INST_ov_domain	vendordom;	/* vendor domain object */
-	OV_INST_ov_object	vendorobj[OV_NUM_VENDOROBJECTS];	/* vendor object */
+	OV_BYTE OV_MEMSPEC		*pstart;	/* beginning of the database memory */
+	OV_BYTE OV_MEMSPEC		*pend;		/* end of the database memory */
+	OV_BYTE OV_MEMSPEC		*pcurr;		/* current position of the core pointer */
+	OV_INST_ov_domain		root;		/* root domain object */
+	OV_INST_ov_domain		acplt;		/* the acplt domain object */
+	OV_INST_ov_library		ov;		/* OV library object */
+	OV_INST_ov_association		containment;	/* OV containment object */
+	OV_INST_ov_association		instantiation;	/* OV instantiation object */
+	OV_INST_ov_domain		vendordom;	/* vendor domain object */
+	OV_INST_ov_object		vendorobj[OV_NUM_VENDOROBJECTS];	/* vendor object */
 	OV_BOOL				started;	/* true, if database is started up */
 }	OV_DATABASE_INFO;
 

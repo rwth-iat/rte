@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.7 2001-12-10 14:28:36 ansgar Exp $
+*   $Id: ov.ovm,v 1.8 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -29,9 +29,9 @@
 */
 
 LIBRARY ov
-	VERSION = "1.1";
+	VERSION = "1.2";
 	AUTHOR = "Dirk Meyer/Ansgar Münnemann";
-	COPYRIGHT = "Copyright (C) 1998-1999 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+	COPYRIGHT = "Copyright (C) 1998-2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
 	COMMENT = "Metamodel of ACPLT/OV";
 	/*
 	*	object: top level class
@@ -43,6 +43,7 @@ LIBRARY ov
 			creationtime : TIME;
 			pouterobject : C_TYPE <OV_INSTPTR>;
 			objectstate : INT;
+			linktable : C_TYPE <OV_ATBLPTR>;
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -112,6 +113,7 @@ LIBRARY ov
 			classprops : INT HAS_GET_ACCESSOR;
 			size : UINT HAS_GET_ACCESSOR UNIT = "Byte";
 			staticsize : UINT HAS_GET_ACCESSOR UNIT = "Byte";
+			linktablesize : UINT HAS_GET_ACCESSOR UNIT = "Byte";
 			pvtable : C_TYPE <OV_VTBLPTR>;
 		END_VARIABLES;
 	END_CLASS;
@@ -128,8 +130,8 @@ LIBRARY ov
 			assocprops: INT HAS_GET_ACCESSOR;
 			childrolename : STRING HAS_GET_ACCESSOR;
 			parentrolename : STRING HAS_GET_ACCESSOR;
-			parentoffset : UINT;
-			childoffset : UINT;
+			parentoffset : UINT HAS_GET_ACCESSOR;
+			childoffset : UINT HAS_GET_ACCESSOR;
 			parentcomment : STRING HAS_GET_ACCESSOR;
 			childcomment : STRING HAS_GET_ACCESSOR;
 			parentflags : UINT HAS_GET_ACCESSOR;

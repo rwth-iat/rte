@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.10 2001-07-09 12:49:34 ansgar Exp $
+*   $Id: ov_database.c,v 1.11 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -428,7 +428,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*	initialize database structure
 	*/
 	Ov_AbortIfNot(pdb);
-    memset(pdb, 0, sizeof(OV_DATABASE_INFO));
+	memset(pdb, 0, sizeof(OV_DATABASE_INFO));
 	pdb->baseaddr = (OV_POINTER)pdb;
 	pdb->size = Ov_Roundup(size);
 	pdb->pstart = pdb->pcurr = (OV_BYTE*)Ov_Roundup(pmpinfo+1);
@@ -471,7 +471,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*	initialize the vendor tree
 	*/
 	ov_vendortree_setdatabasename(filename);
-	ov_vendortree_init();
+	Ov_AbortIfNot(Ov_OK(ov_vendortree_init()));
 #if OV_SYSTEM_RMOS
 	/*
 	*	flush the database file
@@ -1141,6 +1141,15 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void) {
 
 /*
 *	Move the database to a new base address (subroutine)
+*
+*	When using linktables, you can't access the links without adjusting the linktablepointer before.
+*	Also the association offsets in this linktable may have been changed (in comparison to the standard
+*	offsets you get by using 'ov_association_getparentoffset' and 'ov_association_getchildoffset')
+*	in a mapped database. So at least we need the knowledge about the associations 'containment' and
+*	'instantiation' which are stored in the database info object . We will search the 'ov' domain
+*	for a contained object 'association' and will then look for it's instances, hence the other ov-associations.
+*	After this we can use the standard ov_object_move, which uses the knowledge about the associations in the ov-model.
+*
 */
 OV_RESULT ov_database_move(
 	const OV_INT	distance
@@ -1153,6 +1162,44 @@ OV_RESULT ov_database_move(
 	struct list			*phead;
 	struct alignlist	*pblock;
 	OV_RESULT			result;
+	OV_INSTPTR_ov_object 		pobj;
+	OV_INST_ov_association 		assoc_inheritance;
+	OV_INST_ov_association 		assoc_childrelationship;
+	OV_INST_ov_association 		assoc_parentrelationship;
+	/*
+	*	search inheritance, childrelationship, parentrelationship association
+	*/
+	passoc_ov_containment = &pdb->containment;
+	passoc_ov_instantiation = &pdb->instantiation;
+
+	assoc_inheritance.v_assoctype = OV_ASSOCIATION_DEF_ov_inheritance.assoctype;
+	assoc_inheritance.v_assocprops = OV_ASSOCIATION_DEF_ov_inheritance.assocprops;
+	assoc_childrelationship.v_assoctype = OV_ASSOCIATION_DEF_ov_childrelationship.assoctype;
+	assoc_childrelationship.v_assocprops = OV_ASSOCIATION_DEF_ov_childrelationship.assocprops;
+	assoc_parentrelationship.v_assoctype = OV_ASSOCIATION_DEF_ov_parentrelationship.assoctype;
+	assoc_parentrelationship.v_assocprops = OV_ASSOCIATION_DEF_ov_parentrelationship.assocprops;
+
+	pobj = (OV_INSTPTR_ov_object) (((OV_HEAD*) (pdb->ov.v_linktable + distance + passoc_ov_containment->v_parentoffset))->pfirst);
+	while (pobj) { 
+		pobj = (OV_INSTPTR_ov_object) ((char*)pobj + distance);
+		if (!strcmp(pobj->v_identifier+distance, "inheritance")) {
+			assoc_inheritance.v_parentoffset = ((OV_INSTPTR_ov_association) pobj)->v_parentoffset;
+			assoc_inheritance.v_childoffset = ((OV_INSTPTR_ov_association) pobj)->v_childoffset;
+		}
+		if (!strcmp(pobj->v_identifier+distance, "childrelationship")) {
+			assoc_childrelationship.v_parentoffset = ((OV_INSTPTR_ov_association) pobj)->v_parentoffset;
+			assoc_childrelationship.v_childoffset = ((OV_INSTPTR_ov_association) pobj)->v_childoffset;
+		}
+		if (!strcmp(pobj->v_identifier+distance, "parentrelationship")) {
+			assoc_parentrelationship.v_parentoffset = ((OV_INSTPTR_ov_association) pobj)->v_parentoffset;
+			assoc_parentrelationship.v_childoffset = ((OV_INSTPTR_ov_association) pobj)->v_childoffset;
+		}
+		pobj = (OV_INSTPTR_ov_object) (((OV_ANCHOR*) (pobj->v_linktable + distance + passoc_ov_containment->v_childoffset))->pnext);
+	}
+
+	passoc_ov_inheritance = &assoc_inheritance;
+	passoc_ov_childrelationship = &assoc_childrelationship;
+	passoc_ov_parentrelationship = &assoc_parentrelationship;
 	/*
 	*	make a copy of the original database
 	*/

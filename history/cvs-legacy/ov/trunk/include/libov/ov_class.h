@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.h,v 1.5 2000-12-15 15:39:34 dirk Exp $
+*   $Id: ov_class.h,v 1.6 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -83,6 +83,7 @@ typedef struct OV_CLASS_DEF OV_CLASS_DEF;
 	};															\
 	typedef struct OV_VTBL_##class OV_VTBL_##class;				\
 	typedef OV_VTBL_##class* OV_VTBLPTR_##class
+
 
 /*
 *   Alignment macro, align must be a power of 2

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.15 2001-12-10 14:28:38 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.16 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -363,31 +363,6 @@ int ov_codegen_createheaderfile(
 	*/
 	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
 		ov_codegen_printassocdefines(plib, passoc, fp);
-		fprintf(fp, "\n");
-	}
-	/*
-	*	print typedefs associated with all associations
-	*/
-	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
-		switch(passoc->assoctype) {
-		case OV_AT_ONE_TO_ONE:
-			fprintf(fp, "OV_TYPEDEF_SLINKS(%s_%s);\n", plib->identifier,
-				passoc->identifier);
-			break;
-		case OV_AT_ONE_TO_MANY:
-			fprintf(fp, "OV_TYPEDEF_LINKS(%s_%s);\n", plib->identifier,
-				passoc->identifier);
-			break;
-		case OV_AT_MANY_TO_MANY:
-			fprintf(fp, "OV_TYPEDEF_NMLINKS(%s_%s);\n", plib->identifier,
-				passoc->identifier);
-			break;
-		default:
-			fprintf(stderr, "internal error -- sorry.\n");
-			exit(EXIT_FAILURE);
-		}
-	}
-	if(plib->associations) {
 		fprintf(fp, "\n");
 	}
 	/*
@@ -942,10 +917,6 @@ void ov_codegen_printassocdefines(
 		passoc->identifier, ov_codegen_replace(passoc->parentclassname));
 	fprintf(fp, "#define OV_CCI_%s_%s is_of_class_%s\n", plib->identifier,
 		passoc->identifier, ov_codegen_replace(passoc->childclassname));
-	fprintf(fp, "#define OV_PRN_%s_%s l_%s\n", plib->identifier,
-		passoc->identifier, passoc->parentrolename);
-	fprintf(fp, "#define OV_CRN_%s_%s l_%s\n", plib->identifier,
-		passoc->identifier, passoc->childrolename);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -1022,23 +993,6 @@ void ov_codegen_printclassinstdefines(
 	for(ppart=pclass->parts; ppart; ppart=ppart->pnext) {
 		fprintf(fp, " \\\n    OV_INST_%s p_%s;",
 			ov_codegen_replace(ppart->partclassname), ppart->identifier);
-	}
-	/*
-	*	include parent and child links of new associations in define
-	*/
-	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
-		OV_STRING id = (OV_STRING)ov_codegen_malloc(strlen(plib->identifier)+1
-			+strlen(pclass->identifier)+1);
-		sprintf(id, "%s/%s", plib->identifier, pclass->identifier);
-		if(!strcmp(passoc->parentclassname, id)) {
-			fprintf(fp, " \\\n    OV_PARENTLINK_%s_%s l_%s;", plib->identifier,
-				passoc->identifier, passoc->childrolename);
-		}
-		if(!strcmp(passoc->childclassname, id)) {
-			fprintf(fp, " \\\n    OV_CHILDLINK_%s_%s l_%s;", plib->identifier,
-				passoc->identifier, passoc->parentrolename);
-		}
-		ov_codegen_free(id);
 	}
 	fprintf(fp, "\n");
 	fprintf(fp, "\n");
@@ -1497,12 +1451,10 @@ void ov_codegen_printassocdefobj(
 	fprintf(fp, "    \"%s\",\n", passoc->parentclassname);
 	fprintf(fp, "    \"%s\",\n", passoc->parentrolename);
 	fprintf(fp, "    \"%s\",\n", passoc->childclassname);
-	fprintf(fp, "    offsetof(OV_INST_%s, l_%s),\n",
-		ov_codegen_replace(passoc->parentclassname), passoc->childrolename);
-	fprintf(fp, "    offsetof(OV_INST_%s, l_%s),\n",
-		ov_codegen_replace(passoc->childclassname), passoc->parentrolename);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->parentcomment));
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->childcomment));
+	fprintf(fp, "    0,\n", passoc->parentoffset);
+	fprintf(fp, "    0,\n", passoc->childoffset);
 	fprintf(fp, "    %lu,\n", passoc->parentflags);
 	fprintf(fp, "    %lu,\n", passoc->childflags);
 	fprintf(fp, "    (OV_FNCPTR_LINK)%s_%s_link,\n", plib->identifier,
@@ -2124,6 +2076,50 @@ OV_STRING ov_codegen_replace(
 	return id;
 }
 
+/*
+*	Get Library part in the lib/class-name 
+*/
+OV_STRING ov_codegen_getlibname(
+	OV_STRING	identifier
+) {
+	/*
+	*	local variables
+	*/
+	OV_STRING	id, pc;
+	/*
+	*	search for '/'
+	*/
+	id = ov_codegen_getstring(identifier, strlen(identifier));
+	for(pc = id; *pc; pc++) {
+		if(*pc == '/') {
+			*pc = 0;
+			break;
+		}
+	}
+	return id;
+}
+/*
+*	Get Class part in the lib/class-name 
+*/
+OV_STRING ov_codegen_getclassname(
+	OV_STRING	identifier
+) {
+	/*
+	*	local variables
+	*/
+	OV_STRING	id, pc;
+	/*
+	*	search for '/'
+	*/
+	id = ov_codegen_getstring(identifier, strlen(identifier));
+	for(pc = id; *pc; pc++) {
+		if(*pc == '/') {
+			pc++;
+			break;
+		}
+	}
+	return pc;
+}
 /*	----------------------------------------------------------------------	*/
 
 /*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.12 2001-12-10 14:28:41 ansgar Exp $
+*   $Id: ov_library.c,v 1.13 2002-01-23 13:44:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -124,16 +124,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_constructor(
 OV_DLLFNCEXPORT void ov_library_destructor(
 	OV_INSTPTR_ov_object	pobj
 ) {
-	OV_INSTPTR_ov_class	pclass;
-	OV_INSTPTR_ov_variable	pvar;
+	OV_INSTPTR_ov_class		pclass;
+	OV_INSTPTR_ov_variable		pvar;
 	/*
 	*	local variables
 	*/
 	OV_INSTPTR_ov_library	plib = Ov_StaticPtrCast(ov_library, pobj);
-	/*
-	*	close the library
-	*/
-	ov_library_close(plib);
 	/* 
 	* 	delete all initialvalues references by deleting the vartype
 	*/
@@ -143,6 +139,10 @@ OV_DLLFNCEXPORT void ov_library_destructor(
 			
 		}
 	}
+	/*
+	*	close the library
+	*/
+	ov_library_close(plib);
 
 }
 
@@ -411,26 +411,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_compare(
 	OV_STRUCTURE_DEF			*pstructdef;
 	OV_CLASS_DEF				*pclassdef;
 	OV_ASSOCIATION_DEF			*passocdef;
-	OV_INST_ov_association 		assoc_containment;
-	OV_INST_ov_association 		assoc_instantiation;
 	OV_RESULT					result;
 	/*
 	*	if we load the OV metamodel, we have to prepare some things
 	*/
 	if(plib == &pdb->ov) {
 		/*
-		*	simulate the containment and the instantiation association
+		*	get the containment and the instantiation association
 		*/
-		assoc_containment.v_assoctype = OV_ASSOCIATION_DEF_ov_containment.assoctype;
-		assoc_containment.v_assocprops = OV_ASSOCIATION_DEF_ov_containment.assocprops;
-		assoc_containment.v_parentoffset = OV_ASSOCIATION_DEF_ov_containment.parentoffset;
-		assoc_containment.v_childoffset = OV_ASSOCIATION_DEF_ov_containment.childoffset;
-		passoc_ov_containment = &assoc_containment;
-		assoc_instantiation.v_assoctype = OV_ASSOCIATION_DEF_ov_instantiation.assoctype;
-		assoc_instantiation.v_assocprops = OV_ASSOCIATION_DEF_ov_instantiation.assocprops;
-		assoc_instantiation.v_parentoffset = OV_ASSOCIATION_DEF_ov_instantiation.parentoffset;
-		assoc_instantiation.v_childoffset = OV_ASSOCIATION_DEF_ov_instantiation.childoffset;
-		passoc_ov_instantiation = &assoc_instantiation;
+		passoc_ov_containment = &pdb->containment;
+		passoc_ov_instantiation = &pdb->instantiation;
 		/*
 		*	get pointer to class "library"
 		*/
@@ -593,24 +583,37 @@ OV_RESULT ov_library_prepare(
 	OV_INSTPTR_ov_association	passoc;
 	OV_CLASS_DEF				*pclassdef;
 	OV_ASSOCIATION_DEF			*passocdef;
-	OV_INST_ov_association 		assoc_containment;
-	OV_INST_ov_association 		assoc_instantiation;
 	/*
 	*	simulate the containment and the instantiation association
 	*/
-	assoc_containment.v_assoctype = OV_ASSOCIATION_DEF_ov_containment.assoctype;
-	assoc_containment.v_assocprops = OV_ASSOCIATION_DEF_ov_containment.assocprops;
-	assoc_containment.v_parentoffset = OV_ASSOCIATION_DEF_ov_containment.parentoffset;
-	assoc_containment.v_childoffset = OV_ASSOCIATION_DEF_ov_containment.childoffset;
-	passoc_ov_containment = &assoc_containment;
-	assoc_instantiation.v_assoctype = OV_ASSOCIATION_DEF_ov_instantiation.assoctype;
-	assoc_instantiation.v_assocprops = OV_ASSOCIATION_DEF_ov_instantiation.assocprops;
-	assoc_instantiation.v_parentoffset = OV_ASSOCIATION_DEF_ov_instantiation.parentoffset;
-	assoc_instantiation.v_childoffset = OV_ASSOCIATION_DEF_ov_instantiation.childoffset;
-	passoc_ov_instantiation = &assoc_instantiation;
+	pdb->containment.v_assoctype = OV_ASSOCIATION_DEF_ov_containment.assoctype;
+	pdb->containment.v_assocprops = OV_ASSOCIATION_DEF_ov_containment.assocprops;
+	pdb->containment.v_parentoffset = ov_association_getparentoffset (&OV_ASSOCIATION_DEF_ov_containment);
+	pdb->containment.v_childoffset = ov_association_getchildoffset (&OV_ASSOCIATION_DEF_ov_containment);
+	passoc_ov_containment = &pdb->containment;
+	pdb->instantiation.v_assoctype = OV_ASSOCIATION_DEF_ov_instantiation.assoctype;
+	pdb->instantiation.v_assocprops = OV_ASSOCIATION_DEF_ov_instantiation.assocprops;
+	pdb->instantiation.v_parentoffset = ov_association_getparentoffset (&OV_ASSOCIATION_DEF_ov_instantiation);
+	pdb->instantiation.v_childoffset = ov_association_getchildoffset (&OV_ASSOCIATION_DEF_ov_instantiation);
+	passoc_ov_instantiation = &pdb->instantiation;
 	/*
 	*	link library objekt with root domain
 	*/
+	pdb->root.v_linktable = ov_database_malloc(ov_association_gettablesize(&OV_CLASS_DEF_ov_domain));
+	if(!pdb->root.v_linktable) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	memset(pdb->root.v_linktable, 0, ov_association_gettablesize(&OV_CLASS_DEF_ov_domain));
+	pdb->acplt.v_linktable = ov_database_malloc(ov_association_gettablesize(&OV_CLASS_DEF_ov_domain));
+	if(!pdb->acplt.v_linktable) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	memset(pdb->acplt.v_linktable, 0, ov_association_gettablesize(&OV_CLASS_DEF_ov_domain));
+	pdb->ov.v_linktable = ov_database_malloc(ov_association_gettablesize(&OV_CLASS_DEF_ov_library));
+	if(!pdb->ov.v_linktable) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	memset(pdb->ov.v_linktable, 0, ov_association_gettablesize(&OV_CLASS_DEF_ov_library));
 	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->root, &pdb->acplt)));
 	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->acplt, &pdb->ov)));
 	/*
@@ -630,6 +633,12 @@ OV_RESULT ov_library_prepare(
 		pclass->v_size = pclassdef->size;
 		pclass->v_staticsize = pclassdef->staticsize;
 		pclass->v_pvtable = (OV_VTBLPTR)pclassdef->pvtable;
+		pclass->v_linktablesize = ov_association_gettablesize(pclassdef);
+		pclass->v_linktable = ov_database_malloc(ov_association_gettablesize(&OV_CLASS_DEF_ov_class));
+		if(!pclass->v_linktable) {
+			return OV_ERR_DBOUTOFMEMORY;
+		}
+		memset(pclass->v_linktable, 0, pclass->v_linktablesize);
 		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->ov, pclass)));
 	}
 	/*
@@ -660,7 +669,9 @@ OV_RESULT ov_library_prepare(
 	*	provisorically load association definitions and link with class "association"
 	*/
 	for(passocdef=plibdef->associations; passocdef; passocdef=passocdef->pnext) {
-		passoc = Ov_DbAlloc(OV_INST_ov_association);
+		if (!strcmp(passocdef->identifier, "containment")) passoc = &pdb->containment;
+		else if (!strcmp(passocdef->identifier, "instantiation")) passoc = &pdb->instantiation;
+		else passoc = Ov_DbAlloc(OV_INST_ov_association);
 		if(!passoc) {
 			return OV_ERR_DBOUTOFMEMORY;
 		}
@@ -670,8 +681,13 @@ OV_RESULT ov_library_prepare(
 		passoc->v_creationtime.secs = OV_VL_MAXUINT;
 		passoc->v_assoctype = passocdef->assoctype;
 		passoc->v_assocprops = passocdef->assocprops;
-		passoc->v_parentoffset = passocdef->parentoffset;
-		passoc->v_childoffset = passocdef->childoffset;
+		passoc->v_parentoffset = ov_association_getparentoffset (passocdef);
+		passoc->v_childoffset = ov_association_getchildoffset (passocdef);
+		passoc->v_linktable = ov_database_malloc(pclass_ov_association->v_linktablesize);
+		if(!passoc->v_linktable) {
+			return OV_ERR_DBOUTOFMEMORY;
+		}
+		memset(passoc->v_linktable, 0, pclass_ov_association->v_linktablesize);
 		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->ov, passoc)));
 		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_instantiation, pclass_ov_association, passoc)));
 	}
