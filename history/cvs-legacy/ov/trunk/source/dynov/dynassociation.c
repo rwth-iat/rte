@@ -36,33 +36,13 @@ OV_DLLFNCEXPORT void dynov_dynassociation_uncheck(
 	passoc = Ov_DynamicPtrCast(ov_association, pobj);
 	pparentclass = Ov_GetParent(ov_parentrelationship, passoc);
 	pchildclass = Ov_GetParent(ov_childrelationship, passoc);
-	if ((pparentclass) && (pchildclass) && (passoc)) {
-	    if ((passoc->v_parentoffset!=0) && (passoc->v_childoffset!=0)) {
-		if (passoc->v_assoctype == OV_AT_ONE_TO_MANY) {
-			dynov_association_linktable_insert(pchildclass, pchildclass, -(OV_INT) sizeof(OV_ANCHOR), passoc->v_childoffset);
-			dynov_association_linktable_insert(pparentclass, pparentclass, -(OV_INT) sizeof(OV_HEAD), passoc->v_parentoffset);
-			dynov_association_linktable_allocate(pparentclass, 0);
-			dynov_association_linktable_allocate(pchildclass, 0);
-		}
-		if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
-			dynov_association_linktable_insert(pchildclass, pchildclass, - (OV_INT) sizeof(OV_NMHEAD), passoc->v_childoffset);
-			dynov_association_linktable_insert(pparentclass, pparentclass, - (OV_INT) sizeof(OV_NMHEAD), passoc->v_parentoffset);
-			dynov_association_linktable_allocate(pparentclass, 0);
-			dynov_association_linktable_allocate(pchildclass, 0);
-		}
-		if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
-			dynov_association_linktable_insert(pchildclass, pchildclass, - (OV_INT) sizeof(OV_INSTPTR_ov_object), passoc->v_childoffset);
-			dynov_association_linktable_insert(pparentclass, pparentclass, - (OV_INT) sizeof(OV_INSTPTR_ov_object), passoc->v_parentoffset);
-			dynov_association_linktable_allocate(pparentclass, 0);
-			dynov_association_linktable_allocate(pchildclass, 0);
-		}
-		passoc->v_parentoffset=0;
-		passoc->v_childoffset=0;
-	    }
-	}
+
+        ov_association_unload(passoc, pparentclass, pchildclass);
+
 	passoc->v_linkfnc = 0;
 	passoc->v_unlinkfnc = 0;
 	passoc->v_getaccessfnc = 0;
+
 	Ov_Unlink(ov_parentrelationship, pparentclass, passoc);
 	Ov_Unlink(ov_childrelationship, pchildclass, passoc);
 }
@@ -78,6 +58,8 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynassociation_check(
 	OV_ELEMENT	 		searchedelement;
 	OV_RESULT			result;
         OV_VTBLPTR_dynov_dynoperation   pvtableop;
+
+	// test of association's parameters
 
 	pdynassoc = Ov_DynamicPtrCast(dynov_dynassociation, pobj);
 	if (!pdynassoc) return FALSE;
@@ -98,74 +80,31 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynassociation_check(
 	if (searchedelement.elemtype != OV_ET_NONE) return FALSE;
 	if (!(pdynassoc->v_assoctype & (OV_AT_ONE_TO_ONE | OV_AT_ONE_TO_MANY | OV_AT_MANY_TO_MANY))) return FALSE;
 	if ((pdynassoc->v_assocprops) && (!(pdynassoc->v_assocprops & OV_AP_LOCAL))) return FALSE;
-	/*	
-	*   Calculate offsets and new tablesizes and move instancedata
-	*/
-	if (pdynassoc->v_assoctype == OV_AT_ONE_TO_MANY) {
-		if (pparentclass==pchildclass) {
-			result = dynov_association_linktable_allocate(pchildclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
-		}
-		else {
-			result = dynov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
-			if (Ov_Fail(result)) return FALSE;
-			result = dynov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
-		}
-		if (Ov_Fail(result))  return FALSE;
-		pdynassoc->v_parentoffset = pparentclass->v_linktablesize;
-		dynov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_HEAD), pparentclass->v_linktablesize);
-		pdynassoc->v_childoffset = pchildclass->v_linktablesize;
-		dynov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_ANCHOR), pchildclass->v_linktablesize);
-	}
-	if (pdynassoc->v_assoctype == OV_AT_MANY_TO_MANY) {
-		if (pparentclass==pchildclass) {
-			result = dynov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
-		}
-		else {
-			result = dynov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
-			if (Ov_Fail(result))  return FALSE;
-			result = dynov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
-		}
-		if (Ov_Fail(result))  return FALSE;
-		pdynassoc->v_parentoffset = pparentclass->v_linktablesize;
-		dynov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_NMHEAD), pparentclass->v_linktablesize);
-		pdynassoc->v_childoffset = pchildclass->v_linktablesize;
-		dynov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_NMHEAD), pchildclass->v_linktablesize);
-	}
-	if (pdynassoc->v_assoctype == OV_AT_ONE_TO_ONE) {
-		if (pparentclass==pchildclass) {
-			result = dynov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
-		}
-		else {
-			result = dynov_association_linktable_allocate(pchildclass, sizeof(OV_INSTPTR_ov_object));
-			if (Ov_Fail(result))  return FALSE;
-			result = dynov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
-		}
-		if (Ov_Fail(result))  return FALSE;
-		pdynassoc->v_parentoffset = pparentclass->v_linktablesize;
-		dynov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_INSTPTR_ov_object), pparentclass->v_linktablesize);
-		pdynassoc->v_childoffset = pchildclass->v_linktablesize;
-		dynov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_INSTPTR_ov_object), pchildclass->v_linktablesize);
-	}
+
+	// get the association's functions
+
 	pdynop = Ov_GetChild(dynov_islinkfnc, pdynassoc);
 	if (pdynop) if (pdynop->v_executeable) {
 		Ov_GetVTablePtr(dynov_dynoperation, pvtableop, pdynop);
-		if (pvtableop) 
+		if (pvtableop)
 			pdynassoc->v_linkfnc = (OV_FNCPTR_LINK) pvtableop->m_fnclink;
 	}
 	pdynop = Ov_GetChild(dynov_isunlinkfnc, pdynassoc);
 	if (pdynop) if (pdynop->v_executeable)  {
 		Ov_GetVTablePtr(dynov_dynoperation, pvtableop, pdynop);
-		if (pvtableop) 
+		if (pvtableop)
 			pdynassoc->v_unlinkfnc = (OV_FNCPTR_UNLINK) pvtableop->m_fncunlink;
 	}
 	pdynop = Ov_GetChild(dynov_assocaccess, pdynassoc);
 	if (pdynop) if (pdynop->v_executeable)  {
 		Ov_GetVTablePtr(dynov_dynoperation, pvtableop, pdynop);
-		if (pvtableop) 
+		if (pvtableop)
 			pdynassoc->v_getaccessfnc = (OV_FNCPTR_GETACCESS) pvtableop->m_fncaccess;
 	}
-	if (Ov_Fail(Ov_Link(ov_parentrelationship, pparentclass, Ov_PtrUpCast(ov_association, pdynassoc)))) return FALSE;
-	if (Ov_Fail(Ov_Link(ov_childrelationship, pchildclass, Ov_PtrUpCast(ov_association, pdynassoc)))) return FALSE;
+
+	// insert the association's link space into linktables of parent and child class' instances
+
+	if (Ov_Fail(ov_association_linktable_calculate(pdynassoc, pparentclass, pchildclass))) return FALSE;
 	return TRUE;
 }
 
@@ -241,12 +180,12 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynassociation_getaccess(
 			return access;
 		case OV_ET_CHILDLINK:
 			if (pdynassoc->v_islinkable) {
-				access = OV_AC_NONE;
+				access = OV_AC_READ;
 				access2 = OV_AC_READ;
 			}
 			else  {
 				access = OV_AC_READ | OV_AC_WRITE;
-				access2 = OV_AC_NONE;
+				access2 = OV_AC_READ;
 			}
 			if (pelem->elemunion.passoc == passoc_ov_childrelationship)
 				return access2;
@@ -259,7 +198,7 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynassociation_getaccess(
 			return OV_AC_NONE;
 		case OV_ET_PARENTLINK:
 			if (pdynassoc->v_islinkable) {
-				access = OV_AC_NONE;
+				access = OV_AC_READ;
 			}
 			else  {
 				access = OV_AC_READ | OV_AC_WRITE;
@@ -276,172 +215,6 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynassociation_getaccess(
 	}
 	if (pdynassoc->v_islinkable) return OV_AC_READ;
 	else return OV_AC_READ | OV_AC_RENAMEABLE | OV_AC_DELETEABLE;
-}
-
-/*	----------------------------------------------------------------------	*/
-
-/*
-*	Allocate memory for the new linktable
-*/
-OV_RESULT dynov_association_linktable_allocate(
-	OV_INSTPTR_ov_class		pclass,
-	OV_INT				addsize
-) {
-	OV_INSTPTR_ov_class		pderivedclass;
-	OV_INSTPTR_ov_class		pnextclass;
-	OV_INSTPTR_ov_object		pinst;
-	OV_INSTPTR_ov_object		pnextinst;
-	OV_ATBLPTR			pat;
-	OV_RESULT			result;
-
-	/*
-	*	iterate over all derived classes
-	*/
-	pderivedclass = Ov_GetFirstChild(ov_inheritance, pclass);
-	while (pderivedclass) {
-		pnextclass = Ov_GetNextChild(ov_inheritance, pderivedclass);
-		result = dynov_association_linktable_allocate(pderivedclass, addsize);
-		if(Ov_Fail(result)) {
-			return result;
-		}
-		pderivedclass = pnextclass;
-	}
-
-	/*
-	*	iterate over all instances of this class
-	*/
-	pinst = Ov_GetFirstChild(ov_instantiation, pclass);
-	while (pinst) {
-		pnextinst = Ov_GetNextChild(ov_instantiation, pinst);
-		pat = (OV_ATBLPTR) ov_database_malloc(pclass->v_linktablesize + addsize);
-		if(!pat) {
-			return OV_ERR_DBOUTOFMEMORY;
-		}
-		memset(pat, 0, pclass->v_linktablesize + addsize);
-		memcpy(pat, pinst->v_linktable, pclass->v_linktablesize);
-		ov_database_free(pinst->v_linktable);
-		pinst->v_linktable = pat;
-		pinst = pnextinst;
-	}
-	return OV_ERR_OK;
-}
-
-/*	----------------------------------------------------------------------	*/
-
-/*
-*	Calculation of linkoffsets and linktablesizes of derived classes, when   
-*	inserting a new link with 'addsize' bytes at the linktable address 'offset'
-* 	using the recuriv function 'linktable_insert'
-*/
-void dynov_association_linktable_insert(
-	OV_INSTPTR_ov_class		passocclass,
-	OV_INSTPTR_ov_class		pclass,
-	OV_INT				addsize,
-	OV_UINT				offset
-) {
-	OV_INSTPTR_ov_association	passoc;
-	OV_INSTPTR_ov_association	pchildassoc;
-	OV_INSTPTR_ov_association	pparentassoc;
-	OV_INSTPTR_ov_association	pnextassoc;
-	OV_INSTPTR_ov_class		pderivedclass;
-	OV_INSTPTR_ov_class		pnextclass;
-	OV_INSTPTR_ov_object		pinst;
-	OV_INSTPTR_ov_object		pnextinst;
-	unsigned char			*pcs, *pct;
-
-	/*
-	*	when adjusting the offsets of the child and parent association, we store the
-	*	actual offsets of the associations, so we can prevent the changing
-	*	of teir offsets before the linktable of the instances has been changed
-	*/
-
-	/*
-	*	iterate over all derived classes and call recursive this method
-	*/
-	pderivedclass = Ov_GetFirstChild(ov_inheritance, pclass);
-	while (pderivedclass) {
-		pnextclass = Ov_GetNextChild(ov_inheritance, pderivedclass);
-		dynov_association_linktable_insert(passocclass, pderivedclass, addsize, offset);
-		pderivedclass = pnextclass;
-	}
-
-	/*
-	*	First of all get the first child of 'instantiation' , 'childrelationship' and 'parentrelationship'.
-	*	If the actual instance is an ov-association, its linktable could be changed and no further access would be correct
-	*	So change the association offsets before changing the linktable of the instances
-	*	Because the childlink offset of 'instantiation' will never change (in contrast to it's parentlink offset)
-	*	we keep completly access to the following childs of this association.
-	*/
-
-	pinst = Ov_GetFirstChild(ov_instantiation, pclass);
-	pchildassoc = Ov_GetFirstChild(ov_childrelationship, pclass);
-	pparentassoc = Ov_GetFirstChild(ov_parentrelationship, pclass);
-
-	/*
-	*	the association offsets of derived classes (and only of these) has to be adjusted
-	*/
-	if (passocclass!=pclass) {
-		/*
-		*	iterate over all child associations defined to this class and add the inserted datasize to the childoffset
-		*/
-		passoc = pchildassoc;
-		while (passoc) {
-			pnextassoc = Ov_GetNextChild(ov_childrelationship, passoc);
-			passoc->v_childoffset += addsize;
-			passoc = pnextassoc;
-		}
-
-		/*
-		*	iterate over all parent associations defined to this class and add the inserted datasize to the parentoffset
-		*/
-		passoc = pparentassoc;
-		while (passoc) {
-			pnextassoc = Ov_GetNextChild(ov_parentrelationship, passoc);
-			passoc->v_parentoffset += addsize;
-			passoc = pnextassoc;
-		}
-	}
-
-	/*
-	*	now iterate over all instances of the actual class
-	*/
-
-	while (pinst) {
-		pnextinst = Ov_GetNextChild(ov_instantiation, pinst);
-		if (addsize >=0) {
-			pcs = pinst->v_linktable+pclass->v_linktablesize-1;
-			pct = pinst->v_linktable+pclass->v_linktablesize-1+addsize;
-			while ((OV_UINT)(pcs-pinst->v_linktable) >= offset) {
-				*pct = *pcs;
-				pct--;
-				pcs--;
-			}
-			pcs = pinst->v_linktable+offset+addsize-1;
-			while ((OV_UINT)(pcs-pinst->v_linktable) >= offset) {
-				*pcs = 0;
-				pcs--;
-			}
-		}
-		else {
-			pcs = pinst->v_linktable+offset-addsize;
-			pct = pinst->v_linktable+offset;
-			while ((OV_UINT)(pcs-pinst->v_linktable) < (pclass->v_linktablesize)) {
-				*pct = *pcs;
-				pct++;
-				pcs++;
-			}
-			while ((OV_UINT)(pct-pinst->v_linktable) < pclass->v_linktablesize) {
-				*pct = 0;
-				pct++;
-			}
-		}
-		pinst = pnextinst;
-	}
-
-	/*
-	*	finaly adjust the linktablesize of the actual class
-	*/
-	pclass->v_linktablesize += addsize;
 }
 
 /*	----------------------------------------------------------------------	*/

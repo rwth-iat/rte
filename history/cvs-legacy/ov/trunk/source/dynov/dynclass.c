@@ -41,14 +41,6 @@ OV_DLLFNCEXPORT void dynov_dynclass_uncheck(
 			dynov_dynoperation_uncheck(Ov_PtrUpCast(ov_object, pdynop));
 		}
 	}
-	Ov_ForEachChild(dynov_dynchildrelationship, pdynclass, pdynassoc) {
-		dynov_dynassociation_uncheck(Ov_PtrUpCast(ov_object, pdynassoc));
-		pdynassoc->v_islinkable = FALSE;
-	}
-	Ov_ForEachChild(dynov_dynparentrelationship, pdynclass, pdynassoc) {
-		dynov_dynassociation_uncheck(Ov_PtrUpCast(ov_object, pdynassoc));
-		pdynassoc->v_islinkable = FALSE;
-	}
 	if (pclass) {
 		pclass2 = Ov_GetParent(ov_inheritance, pclass);
 		Ov_Unlink(ov_inheritance, pclass2, pclass);
@@ -106,12 +98,6 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynclass_check(
 			if (!pdynop->v_executeable) return FALSE;
 		}
 	}
-	Ov_ForEachChild(dynov_dynchildrelationship, pdynclass, pdynassoc) {
-		if (!pdynassoc->v_islinkable) return FALSE;
-	}
-	Ov_ForEachChild(dynov_dynparentrelationship, pdynclass, pdynassoc) {
-		if (!pdynassoc->v_islinkable) return FALSE;
-	}
 	pdynclass->v_classprops |= OV_CP_INSTANTIABLE;
 	pclass = Ov_GetParent(dynov_dyninheritance, pdynclass);
 	if (pclass) {
@@ -135,6 +121,7 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynclass_isinstantiable_set(
              OV_INSTPTR_dynov_dynclass          pobj,
              const OV_BOOL           value
 ) {
+             OV_INSTPTR_ov_class          pclass;
 
 	     if ((value) && (!pobj->v_isinstantiable)) {
 	             pobj->v_isinstantiable = dynov_dynclass_check(Ov_PtrUpCast(ov_object, pobj));
@@ -142,6 +129,9 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynclass_isinstantiable_set(
 	     }
 	     else if ((!value) && (pobj->v_isinstantiable)) {
 		     if (Ov_GetFirstChild(ov_instantiation, pobj)) return OV_ERR_NOACCESS;
+		     Ov_ForEachChild(ov_inheritance, pobj, pclass) {
+			     if (pclass->classprops & OV_CP_INSTANTIABLE) return OV_ERR_NOACCESS;
+		     }
 		     dynov_dynclass_uncheck(Ov_PtrUpCast(ov_object, pobj));
 		     pobj->v_isinstantiable = FALSE;
 	     }
@@ -217,14 +207,14 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynclass_getaccess(
 			return access;
 		case OV_ET_PARENTLINK:
 			if (!ov_string_compare(pelem->elemunion.passoc->v_identifier, "containment"))
-				return OV_AC_NONE;
+				return OV_AC_READ;
 			if (pdynclass->v_isinstantiable) {
-				access = OV_AC_NONE;
+				access = OV_AC_READ;
 				access2 = OV_AC_READ;
 			}
 			else  {
 				access = OV_AC_READ | OV_AC_WRITE;
-				access2 = OV_AC_NONE;
+				access2 = OV_AC_READ;
 			}
 			if (pelem->elemunion.passoc == passoc_ov_instantiation)
 				return access2;

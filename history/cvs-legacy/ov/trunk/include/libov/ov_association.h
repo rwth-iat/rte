@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.10 2004-10-14 14:17:32 ansgar Exp $
+*   $Id: ov_association.h,v 1.11 2005-02-04 15:42:33 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -242,7 +242,7 @@ OV_BOOL ov_association_canunload(
 /*
 *	unload an association
 */
-void ov_association_unload(
+OV_DLLFNCEXPORT void ov_association_unload(
 	OV_INSTPTR_ov_association	passoc,
 	OV_INSTPTR_ov_class		pparentclass,
 	OV_INSTPTR_ov_class		pchildclass
@@ -453,6 +453,15 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_testpath(
 	const OV_INSTPTR_ov_association	passoc,
 	const OV_INSTPTR_ov_object	pparent,
 	const OV_INSTPTR_ov_object	pchild
+);
+
+/*
+*	Calculation of linkoffsets and tabelsizes and move instancedata for inserting a new association
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
+	OV_INSTPTR_ov_association	passoc,
+	OV_INSTPTR_ov_class		pparentclass,
+	OV_INSTPTR_ov_class		pchildclass
 );
 
 #ifdef __cplusplus

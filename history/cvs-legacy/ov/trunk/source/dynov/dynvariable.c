@@ -35,6 +35,8 @@ OV_UINT dynov_dynvariable_getvectype(
 	OV_UINT veclen
 ) {
 	switch(vartype & OV_VT_KSMASK) {
+	case OV_VT_BYTE:
+		return OV_VT_BYTE_VEC;
 	case OV_VT_BOOL:
 		return OV_VT_BOOL_VEC;
 	case OV_VT_INT:
@@ -62,6 +64,10 @@ OV_UINT dynov_dynvariable_getsize(
 	OV_UINT size;
 
 	switch(vartype & OV_VT_KSMASK) {
+	case OV_VT_BYTE_VEC:
+	case OV_VT_BYTE:
+		size = sizeof(OV_BYTE)*veclen;
+		break;
 	case OV_VT_BOOL_VEC:
 	case OV_VT_BOOL:
 		size = sizeof(OV_BOOL)*veclen;
@@ -94,7 +100,7 @@ OV_UINT dynov_dynvariable_getsize(
 	case OV_VT_TIME_SPAN:
 		size = sizeof(OV_TIME_SPAN)*veclen;
 		break;
-	default:	
+	default:
 		size = 0;
 	}
 	if (veclen == 0) size = sizeof(OV_GENERIC_VEC);
@@ -107,6 +113,7 @@ OV_UINT dynov_dynvariable_getsize(
 OV_DLLFNCEXPORT OV_BOOL dynov_dynvariable_check(
         OV_INSTPTR_ov_object          pobj
 ) {
+	OV_INSTPTR_ov_structure          	pstruct;
 	OV_INSTPTR_dynov_dynstructure          	pdynstruct;
 	OV_INSTPTR_dynov_dynvariable          	pdynvar;
 	OV_INSTPTR_dynov_dynoperation          	pdynop;
@@ -116,8 +123,11 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynvariable_check(
 
 	pdynvar = Ov_DynamicPtrCast(dynov_dynvariable, pobj);
 	if (!pdynvar) return FALSE;
-	if (pdynvar->v_vartype == OV_VT_STRUCT) {
-		pdynstruct = Ov_GetParent(dynov_dynconstruction, pdynvar);
+	pstruct = Ov_GetParent(dynov_dynconstruction, pdynvar);
+	if (pstruct) {
+	        pdynvar->v_vartype = OV_VT_STRUCT;
+	        pdynvar->v_veclen = 0;
+		pdynstruct = Ov_DynamicPtrCast(dynov_dynstructure, pstruct);
 		if (pdynstruct) {
 			if (Ov_GetParent(ov_containment, pdynvar)==Ov_PtrUpCast(ov_domain, pdynstruct)) return FALSE;
 			Ov_GetVTablePtr(dynov_dynstructure, pvtable, pdynstruct);
@@ -125,36 +135,44 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynvariable_check(
 			if (!pdynstruct->v_isinstantiable) return FALSE;
 			pdynvar->v_size = pdynstruct->v_size;
 		}
-		else return FALSE;
+		else if (pstruct) pdynvar->v_size = pstruct->v_size;
+		     else return FALSE;
 	}
 	else {
-		if ((pdynvar->v_vartype < OV_VT_STRUCT) && (pdynvar->v_veclen!=1)) 
+		if ((pdynvar->v_vartype < OV_VT_STRUCT) && (pdynvar->v_veclen!=1))
 			pdynvar->v_vartype = dynov_dynvariable_getvectype(pdynvar->v_vartype, pdynvar->v_veclen);
 		pdynvar->v_size = dynov_dynvariable_getsize(pdynvar->v_vartype, pdynvar->v_veclen);
 		if (!pdynvar->v_size) return FALSE;
 	}
 	if (pdynvar->v_ctypename) return FALSE;
-	if ((pdynvar->v_initialvalue.value.vartype!=0) && 
+	if ((pdynvar->v_initialvalue.value.vartype!=0) &&
 	   (pdynvar->v_vartype != (pdynvar->v_initialvalue.value.vartype & OV_VT_KSMASK))) return FALSE;
-	if((pdynvar->v_varprops & OV_VP_DERIVED) && !(pdynvar->v_varprops & OV_VP_ACCESSORS)) return FALSE;
 	if((pdynvar->v_varprops & OV_VP_STATIC) && (pdynvar->v_varprops & OV_VP_DERIVED)) return FALSE;
 
 	pdynop = Ov_GetChild(dynov_isgetaccessor, pdynvar);
+	pdynvar->v_varprops = pdynvar->v_varprops & (~OV_VP_GETACCESSOR);
 	if (pdynop) if (pdynop->v_executeable) {
 		Ov_GetVTablePtr(dynov_dynoperation, pvtableop, pdynop);
-		if (pvtableop) 	
+		if (pvtableop) {
 			pdynvar->v_getfnc = (OV_FNCPTR_GET) pvtableop->m_fncget;
+			pdynvar->v_varprops = pdynvar->v_varprops & OV_VP_GETACCESSOR;
+		}
 	}
+	pdynvar->v_varprops = pdynvar->v_varprops & (~OV_VP_SETACCESSOR);
 	pdynop = Ov_GetChild(dynov_issetaccessor, pdynvar);
 	if (pdynop) if (pdynop->v_executeable)  {
 		Ov_GetVTablePtr(dynov_dynoperation, pvtableop, pdynop);
-		if (pvtableop) 	
+		if (pvtableop) {
 			pdynvar->v_setfnc = (OV_FNCPTR_SET) pvtableop->m_fncset;
+			pdynvar->v_varprops = pdynvar->v_varprops & OV_VP_SETACCESSOR;
+		}
 	}
 
-	pdynstruct = Ov_GetParent(dynov_dynconstruction, pdynvar);
-	if (pdynstruct) {
-		if (Ov_Fail(Ov_Link(ov_construction, pdynstruct, pdynvar))) return FALSE;
+	if((pdynvar->v_varprops & OV_VP_DERIVED) && !(pdynvar->v_varprops & OV_VP_ACCESSORS)) return FALSE;
+
+	pstruct = Ov_GetParent(dynov_dynconstruction, pdynvar);
+	if (pstruct) {
+		if (Ov_Fail(Ov_Link(ov_construction, pstruct, pdynvar))) return FALSE;
 	}
 	return TRUE;
 }
@@ -270,7 +288,7 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynvariable_getaccess(
 ) {
 	OV_ACCESS			access;
 	OV_ACCESS			access2;
-		
+
 	switch(pelem->elemtype) {
 		case OV_ET_VARIABLE:
 			access = OV_AC_NONE;
@@ -278,18 +296,18 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynvariable_getaccess(
 			else access = OV_AC_READ | OV_AC_WRITE;
 			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "vartype")) {
 				if (dynov_dynvariable_isinstantiable(pobj)) return OV_AC_READ;
-				else return OV_AC_NONE;
+				else return OV_AC_READ;
 			}
 			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "dynvartype")) {
-				if (dynov_dynvariable_isinstantiable(pobj)) return OV_AC_NONE;
+				if (dynov_dynvariable_isinstantiable(pobj)) return OV_AC_READ;
 				else return  OV_AC_READ | OV_AC_WRITE;
 			}
 			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "veclen")) {
 				if (dynov_dynvariable_isinstantiable(pobj)) return OV_AC_READ;
-				else return OV_AC_NONE;
+				else return OV_AC_READ;
 			}
 			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "dynveclen")) {
-				if (dynov_dynvariable_isinstantiable(pobj)) return OV_AC_NONE;
+				if (dynov_dynvariable_isinstantiable(pobj)) return OV_AC_READ;
 				else return  OV_AC_READ | OV_AC_WRITE;
 			}
 			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "varprops"))
@@ -311,12 +329,12 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynvariable_getaccess(
 			if (pelem->elemunion.passoc == passoc_ov_containment)
 				return OV_AC_NONE;
 			if (dynov_dynvariable_isinstantiable(pobj)) {
-				access = OV_AC_NONE;
+				access = OV_AC_READ;
 				access2 = OV_AC_READ;
 			}
 			else  {
 				access = OV_AC_READ | OV_AC_WRITE;
-				access2 = OV_AC_NONE;
+				access2 = OV_AC_READ;
 			}
 			if (pelem->elemunion.passoc == passoc_ov_construction)
 				return access2;
@@ -325,7 +343,7 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynvariable_getaccess(
 			return OV_AC_NONE;
 		case OV_ET_PARENTLINK:
 			if (dynov_dynvariable_isinstantiable(pobj)) {
-				access = OV_AC_NONE;
+				access = OV_AC_READ;
 			}
 			else  {
 				access = OV_AC_READ | OV_AC_WRITE;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.19 2004-10-08 15:18:03 ansgar Exp $
+*   $Id: ov_association.c,v 1.20 2005-02-04 15:42:33 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -104,139 +104,8 @@ CONTINUE:
 	if (Ov_Fail(ov_string_setvalue(&passoc->v_parentcomment, passocdef->parentcomment))) goto CONTINUEERR4;
 	if (Ov_Fail(ov_string_setvalue(&passoc->v_childcomment, passocdef->childcomment))) goto CONTINUEERR3;
 	if (!exists) {
-		/*	
-		*   Calculate offsets and new tablesizes and move instancedata
-		*/
-
-		if (passoc->v_assoctype == OV_AT_ONE_TO_MANY) {
-
-			/*
-			*	if same class, memory for head and anchor of link must be allocated
-			*/
-			if (pparentclass==pchildclass) {
-				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
-			}
-			/*
-			*	if childclass is a superclass of parentclass, in parentclass the memory for head and anchor of link must be allocated
-			*	and in childclass only the memory for the link anchor
-			*/
-			else if (ov_class_cancastto(pparentclass, pchildclass)) {
-				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
-				if (Ov_Fail(result)) goto CONTINUEERR2;
-				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
-			}
-			/*
-			*	if parentclass is a superclass of childclass, in childclass memory for head and anchor of link must be allocated
-			*	and in parentclass only the memory for the link head
-			*/
-			else if (ov_class_cancastto(pchildclass, pparentclass)) {
-				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
-				if (Ov_Fail(result)) goto CONTINUEERR2;
-				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR) + sizeof(OV_HEAD));
-			}
-			/*
-			*	if parentclass and childclass have no common baseclass, in childclass memory for the anchor and
-			*	and in parentclass memory for the head must be allocated.
-			*/
-			else {
-				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
-				if (Ov_Fail(result)) goto CONTINUEERR2;
-				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
-			}
-			if (Ov_Fail(result)) goto CONTINUEERR1;
-			/*
-			*	after allocation, memory space is inserted for the new child/parent association and
-			*	and the offset parameter of the particular association objects is adapted.
-			*/
-			passoc->v_parentoffset = pparentclass->v_linktablesize;
-			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_HEAD), pparentclass->v_linktablesize);
-
-			/* 	after adjusting the offsets of the associations of the parentclass and its derived classes the parentclass is
-			*	linked to the loaded association by ov_parentrelationship, so in the case that the childclass is a baseclass of the parentclass 
-			*	the offset adjusting is also done for the parentoffset of this loaded association
-			*	(Bugfix 22.8.2003)
-			*/
-
-			/*
-			*	link association with parent class
-			*/
-			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
-
-			passoc->v_childoffset = pchildclass->v_linktablesize;
-			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_ANCHOR), pchildclass->v_linktablesize);
-			/*
-			*	link association with child class
-			*/
-			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
-		}
-		if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
-			if (pparentclass==pchildclass) {
-				result = ov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
-			}
-			else if (ov_class_cancastto(pparentclass, pchildclass)) {
-				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
-				if (Ov_Fail(result)) goto CONTINUEERR2;
-				result = ov_association_linktable_allocate(pparentclass, 2 * sizeof(OV_NMHEAD));
-			}
-			else if (ov_class_cancastto(pchildclass, pparentclass)) {
-				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
-				if (Ov_Fail(result)) goto CONTINUEERR2;
-				result = ov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
-			}
-			else {
-				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
-				if (Ov_Fail(result)) goto CONTINUEERR2;
-				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
-			}
-			if (Ov_Fail(result)) goto CONTINUEERR1;
-			passoc->v_parentoffset = pparentclass->v_linktablesize;
-			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_NMHEAD), pparentclass->v_linktablesize);
-			/*
-			*	link association with parent class
-			*/
-			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
-
-			passoc->v_childoffset = pchildclass->v_linktablesize;
-			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_NMHEAD), pchildclass->v_linktablesize);
-			/*
-			*	link association with child class
-			*/
-			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
-		}
-		if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
-			if (pparentclass==pchildclass) {
-				result = ov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
-			}
-			else if (ov_class_cancastto(pparentclass, pchildclass)) {
-				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_INSTPTR_ov_object));
-				if (Ov_Fail(result)) goto CONTINUEERR2;
-				result = ov_association_linktable_allocate(pparentclass,  2* sizeof(OV_INSTPTR_ov_object));
-			}
-			else if (ov_class_cancastto(pchildclass, pparentclass)) {
-				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
-				if (Ov_Fail(result)) goto CONTINUEERR2;
-				result = ov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
-			}
-			else {
-				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_INSTPTR_ov_object));
-				if (Ov_Fail(result)) goto CONTINUEERR1;
-				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
-			}
-			if (Ov_Fail(result)) goto CONTINUEERR2;
-			passoc->v_parentoffset = pparentclass->v_linktablesize;
-			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_INSTPTR_ov_object), pparentclass->v_linktablesize);
-			/*
-			*	link association with parent class
-			*/
-			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
-			passoc->v_childoffset = pchildclass->v_linktablesize;
-			ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_INSTPTR_ov_object), pchildclass->v_linktablesize);
-			/*
-			*	link association with child class
-			*/
-			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
-		}
-	} /* if not exists */
+		if (Ov_Fail(ov_association_linktable_calculate(passoc, pparentclass, pchildclass))) goto CONINUEERR1;
+	}
 
 	else {	
 		/* also if association object was created provisorically, it must be linked concerning
@@ -281,9 +150,9 @@ CONTINUEERR6:
 /*
 *	unload an association
 */
-void ov_association_unload(
+OV_DLLFNCEXPORT void ov_association_unload(
 	OV_INSTPTR_ov_association	passoc,
-	OV_INSTPTR_ov_class		pparentclass, 
+	OV_INSTPTR_ov_class		pparentclass,
 	OV_INSTPTR_ov_class		pchildclass
 ) {
 
@@ -1316,7 +1185,7 @@ OV_UINT ov_association_getparentoffset(
 	return 0;
 }
 
-OV_UINT ov_association_getchildoffset(
+OV_DLLFNCEXPORT OV_UINT ov_association_getchildoffset(
 	OV_ASSOCIATION_DEF*	passocdef
 ) {
 	if (!strcmp(passocdef->identifier,"instantiation")) return 0;
@@ -1397,7 +1266,7 @@ OV_RESULT ov_association_linktable_allocate(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Calculation of linkoffsets and linktablesizes of derived classes, when   
+*	Calculation of linkoffsets and linktablesizes of derived classes, when
 *	inserting a new link with 'addsize' bytes at the linktable address 'offset'
 * 	using the recuriv function 'linktable_insert'
 */
@@ -1518,6 +1387,160 @@ void ov_association_linktable_insert(
 	*/
 	pclass->v_linktablesize += addsize;
 }
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Calculation of linkoffsets and tabelsizes and move instancedata for inserting a new association
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
+	OV_INSTPTR_ov_association	passoc,
+	OV_INSTPTR_ov_class		pparentclass,
+	OV_INSTPTR_ov_class		pchildclass
+) {
+	OV_RESULT result = OV_ERR_OK;
+
+	if ((!passoc) || (!pparentclass) || (!pchildclass)) return OV_ERR_BADPARAM;
+
+	/*
+	*   association may not be linked to classes
+	*/
+	if ( Ov_GetParent(ov_childrelationship, passoc))  return OV_ERR_BADPARAM;
+
+	if ( Ov_GetParent(ov_parentrelationship, passoc))  return OV_ERR_BADPARAM;
+	/*
+	*   Calculate offsets and new tablesizes and move instancedata
+	*/
+
+	if (passoc->v_assoctype == OV_AT_ONE_TO_MANY) {
+
+		/*
+		*	if same class, memory for head and anchor of link must be allocated
+		*/
+		if (pparentclass==pchildclass) {
+			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
+		}
+		/*
+		*	if childclass is a superclass of parentclass, in parentclass the memory for head and anchor of link must be allocated
+		*	and in childclass only the memory for the link anchor
+		*/
+		else if (ov_class_cancastto(pparentclass, pchildclass)) {
+			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
+		}
+		/*
+		*	if parentclass is a superclass of childclass, in childclass memory for head and anchor of link must be allocated
+		*	and in parentclass only the memory for the link head
+		*/
+		else if (ov_class_cancastto(pchildclass, pparentclass)) {
+			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR) + sizeof(OV_HEAD));
+		}
+		/*
+		*	if parentclass and childclass have no common baseclass, in childclass memory for the anchor and
+		*	and in parentclass memory for the head must be allocated.
+		*/
+		else {
+			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
+		}
+		if (Ov_Fail(result)) goto CONTINUEERR1;
+		/*
+		*	after allocation, memory space is inserted for the new child/parent association and
+		*	and the offset parameter of the particular association objects is adapted.
+		*/
+		passoc->v_parentoffset = pparentclass->v_linktablesize;
+		ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_HEAD), pparentclass->v_linktablesize);
+
+		/* 	after adjusting the offsets of the associations of the parentclass and its derived classes the parentclass is
+		*	linked to the loaded association by ov_parentrelationship, so in the case that the childclass is a baseclass of the parentclass 
+		*	the offset adjusting is also done for the parentoffset of this loaded association
+		*	(Bugfix 22.8.2003)
+		*/
+
+		/*
+		*	link association with parent class
+		*/
+		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
+
+		passoc->v_childoffset = pchildclass->v_linktablesize;
+		ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_ANCHOR), pchildclass->v_linktablesize);
+		/*
+		*	link association with child class
+		*/
+		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
+	}
+	if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
+		if (pparentclass==pchildclass) {
+			result = ov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
+		}
+		else if (ov_class_cancastto(pparentclass, pchildclass)) {
+			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			result = ov_association_linktable_allocate(pparentclass, 2 * sizeof(OV_NMHEAD));
+		}
+		else if (ov_class_cancastto(pchildclass, pparentclass)) {
+			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			result = ov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
+		}
+		else {
+			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
+		}
+		if (Ov_Fail(result)) goto CONTINUEERR1;
+		passoc->v_parentoffset = pparentclass->v_linktablesize;
+		ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_NMHEAD), pparentclass->v_linktablesize);
+		/*
+		*	link association with parent class
+		*/
+		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
+
+		passoc->v_childoffset = pchildclass->v_linktablesize;
+		ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_NMHEAD), pchildclass->v_linktablesize);
+		/*
+		*	link association with child class
+		*/
+		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
+	}
+	if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
+		if (pparentclass==pchildclass) {
+			result = ov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
+		}
+		else if (ov_class_cancastto(pparentclass, pchildclass)) {
+			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_INSTPTR_ov_object));
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			result = ov_association_linktable_allocate(pparentclass,  2* sizeof(OV_INSTPTR_ov_object));
+		}
+		else if (ov_class_cancastto(pchildclass, pparentclass)) {
+			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
+			if (Ov_Fail(result)) goto CONTINUEERR2;
+			result = ov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
+		}
+		else {
+			result = ov_association_linktable_allocate(pchildclass, sizeof(OV_INSTPTR_ov_object));
+			if (Ov_Fail(result)) goto CONTINUEERR1;
+			result = ov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
+		}
+		if (Ov_Fail(result)) goto CONTINUEERR2;
+		passoc->v_parentoffset = pparentclass->v_linktablesize;
+		ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_INSTPTR_ov_object), pparentclass->v_linktablesize);
+		/*
+		*	link association with parent class
+		*/
+		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
+		passoc->v_childoffset = pchildclass->v_linktablesize;
+		ov_association_linktable_insert(pchildclass, pchildclass, sizeof(OV_INSTPTR_ov_object), pchildclass->v_linktablesize);
+		/*
+		*	link association with child class
+		*/
+		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
+	}
+
 
 /*
 *	Test if a child is linked recursively to parent by passsoc

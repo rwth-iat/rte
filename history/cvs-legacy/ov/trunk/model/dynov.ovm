@@ -1,5 +1,5 @@
 /*
-*   $Id: dynov.ovm,v 1.1 2004-10-14 14:13:23 ansgar Exp $
+*   $Id: dynov.ovm,v 1.2 2005-02-04 15:42:33 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -163,7 +163,7 @@ LIBRARY dynov
     END_ASSOCIATION;
 
     ASSOCIATION dynconstruction : ONE_TO_MANY
-	PARENT dynstructure : CLASS dynov/dynstructure;
+	PARENT dynstructure : CLASS ov/structure;
 	CHILD dynvariable : CLASS dynov/dynvariable;
     END_ASSOCIATION;
 

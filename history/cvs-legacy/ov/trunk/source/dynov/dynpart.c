@@ -65,12 +65,12 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynpart_getaccess(
 			return OV_AC_NONE;
 		case OV_ET_CHILDLINK:
 			if (pdynclass->v_isinstantiable) {
-				access = OV_AC_NONE;
+				access = OV_AC_READ;
 				access2 = OV_AC_READ;
 			}
 			else  {
 				access = OV_AC_READ | OV_AC_WRITE;
-				access2 = OV_AC_NONE;
+				access2 = OV_AC_READ;
 			}
 			if (pelem->elemunion.passoc == passoc_ov_embedment)
 				return access2;
