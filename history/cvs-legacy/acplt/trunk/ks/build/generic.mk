@@ -36,6 +36,7 @@ CXX_LIBKSCLN_SOURCES= \
 	client.cpp \
 	clntpath.cpp \
 	commobject.cpp \
+	hostent.cpp \
 	package.cpp \
 	sorter.cpp \
 	variables.cpp
@@ -84,6 +85,7 @@ LIBKSCLN_OBJECTS1 = \
 
 LIBKSCLN_OBJECTS2 = \
 	commobject$(O) \
+	hostent$(O) \
 	package$(O) \
 	sorter$(O) \
 	variables$(O)
