@@ -25,14 +25,14 @@ CXX_LIBS = -lstdc++
 	$(CXX_COMPILE) -o $@ $<
 
 .o.exe:
-	$(CXX_LINK) -o $@ $^ $(LIBPLT) -lstdc++
+	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) $(CXX_LIBS)
 
 .cpp.i:
 	$(CXX_COMPILE) -E > $@ $<
 
 LIBPLT = $(PLT_DIR)/build/$(PLATFORM)/libplt.a
 
-LIBKS = /tmp/$(USER)-libks.a
+LIBKS = libks.a
 
 VPATH = ../../src ../../tests
 
