@@ -141,10 +141,18 @@ Version 1.2.4pre1
     amount of time to wait for the connection setup to succeed.
 
 - SERVERS:
-  * Fixed a bug in xdrmemstream_get_fragments() (from xdrmemstream.cpp),
+  * Fixed a bug in xdrmemstream_get_fragments() (from xdrmemstream.cpp)
     which caused only the final fragment description to be returned.
   * Cleaned up source code and removed TLI/XTI-related code, which has
     become obsolete.
+
+- BOTH:
+  * Fixed sign extension bug in ksToPercent() (from conversions.cpp)
+    which caused wrong percent encodings to be generated for
+    characters with the bit 7 set (such as German umlaut characters).
+
+  * Fixed xxx::debugPrint() methods, which still used proj_props instead
+    of eng_props (old v1 stuff).
 
 Version 1.2.3
 - SERVERS:
