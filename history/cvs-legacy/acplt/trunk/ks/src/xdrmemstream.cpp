@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.16 2003-10-13 12:51:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.17 2003-11-05 16:46:15 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -312,13 +312,22 @@ static bool_t AdvanceToNextFragment(XDR *xdrs)
 #define PLT_CONST
 #endif
 
+#ifdef PLT_RUNTIME_GLIBC
+#if PLT_RUNTIME_GLIBC < 0x00020003
+#define PLT_MEMSTREAMINLINE_LEN int
+#endif
+#endif
+#ifndef PLT_MEMSTREAMINLINE_LEN
+#define PLT_MEMSTREAMINLINE_LEN u_int
+#endif
+
 static bool_t MemStreamGetLong(XDR *xdrs, long *lp);
 static bool_t MemStreamPutLong(XDR *xdrs, PLT_CONST long *lp);
 static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, u_int len);
 static bool_t MemStreamPutBytes(XDR *xdrs, PLT_CONST caddr_t caddr, u_int len);
 static u_int  MemStreamGetPos(PLT_CONST XDR *xdrs);
 static bool_t MemStreamSetPos(XDR *xdrs, u_int pos);
-static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, u_int len);
+static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, PLT_MEMSTREAMINLINE_LEN len);
 static void   MemStreamDestroy(XDR *xdrs);
 
 /* ---------------------------------------------------------------------------
@@ -355,7 +364,7 @@ static
     FUNC(bool_t,(XDR*,PLT_CONST char *,u_int)) MemStreamPutBytes,  /* store some octets (multiple of 4)            */
     FUNC(u_int,(PLT_CONST XDR*)) MemStreamGetPos,    /* */
     FUNC(bool_t,(XDR*,u_int)) MemStreamSetPos,    /* */
-    FUNC(XDR_INLINE_PTR,(XDR*,u_int)) MemStreamInline,    /* get some space in the buffer for fast access */
+    FUNC(XDR_INLINE_PTR,(XDR*,PLT_MEMSTREAMINLINE_LEN)) MemStreamInline,    /* get some space in the buffer for fast access */
     FUNC(void,(XDR*)) MemStreamDestroy    /* clean up the mess                            */
 }; /* memstream_operations */
 #if defined(__cplusplus)
@@ -562,7 +571,7 @@ static void MemStreamDestroy(XDR *xdrs)
  * or she/he will get in deep trouble the next time she/he
  * accesses the memory stream (due to misaligned pointers).
  */
-static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, u_int len)
+static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, PLT_MEMSTREAMINLINE_LEN len)
 {
     if ( xdrs->x_handy == 0 ) {
 	/*
