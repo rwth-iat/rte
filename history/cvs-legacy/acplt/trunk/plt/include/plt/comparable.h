@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_COMPARABLE_INCLUDED
 #define PLT_COMPARABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/comparable.h,v 1.3 1997-03-12 16:19:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/comparable.h,v 1.4 1997-03-17 10:58:31 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,7 +53,8 @@ public:
     bool operator >= ( PltPtrComparable<T> t2);
 
     operator T * ();
-
+    T * operator ->();
+    T& operator *();
     PltPtrComparable(T * = 0);
 
 private:
@@ -78,6 +79,26 @@ inline
 PltPtrComparable<T>::operator T * ()
 {
     return _p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+
+template <class T>
+inline T *
+PltPtrComparable<T>::operator -> ()
+{
+    return _p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+
+template <class T>
+inline T&
+PltPtrComparable<T>::operator * ()
+{
+    return *_p;
 }
 
 //////////////////////////////////////////////////////////////////////
