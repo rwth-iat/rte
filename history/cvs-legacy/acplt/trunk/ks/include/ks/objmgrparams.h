@@ -2,9 +2,9 @@
 #ifndef KS_OBJMGRPARAMS_INCLUDED
 #define KS_OBJMGRPARAMS_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.5 1998-12-16 17:48:28 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.6 1999-01-12 16:23:22 harald Exp $
  *
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -238,6 +238,7 @@ public:
 // The request and reply classes of the Unlink service.
 //
 class KsUnlinkParams : public KsXdrAble {
+public:
     KsUnlinkParams(XDR *, bool &);
     KsUnlinkParams();
 
