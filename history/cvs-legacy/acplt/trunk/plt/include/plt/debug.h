@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.13 1997-03-26 17:05:48 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.14 1997-04-01 11:18:35 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -156,8 +156,10 @@ class PltDebugNewTracker
 {
     friend void * operator new(size_t);
     friend void operator delete(void *);
+#if PLT_ARRAY_NEW_OVERLOADABLE 
     friend void * operator new[](size_t);
     friend void operator delete[](void *);
+#endif
 
 public:    
     PltDebugNewTracker();
@@ -176,8 +178,11 @@ private:
 
 void * operator new(size_t);
 void operator delete(void *);
+
+#if PLT_ARRAY_NEW_OVERLOADABLE
 void * operator new[](size_t);
 void operator delete[](void *);
+#endif
 
 static PltDebugNewTracker plt_debug_new_tracker;
 
