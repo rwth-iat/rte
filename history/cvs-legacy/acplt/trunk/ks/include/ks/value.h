@@ -11,15 +11,15 @@
 #ifndef KS_VALUE_INCLUDED
 #define KS_VALUE_INCLUDED
 
-#include <plt/debug.h>
-#include <plt/rtti.h>
+#include "plt/debug.h"
+#include "plt/rtti.h"
 
-#include <ks/xdr.h>
-#include <ks/ks.h>
-#include <ks/array.h>
-#include <ks/string.h>
-#include <ks/time.h>
-#include <ks/handle.h>
+#include "ks/xdr.h"
+#include "ks/ks.h"
+#include "ks/array.h"
+#include "ks/string.h"
+#include "ks/time.h"
+#include "ks/handle.h"
 
 //////////////////////////////////////////////////////////////////////
 // KsValue is the base class of value objects. It is closely related
@@ -211,7 +211,7 @@ private:
     friend KsValue;
     KsStringValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 }; 
 
 //////////////////////////////////////////////////////////////////////
@@ -239,7 +239,7 @@ private:
     friend KsValue;
     KsTimeValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 
 };
 
@@ -262,7 +262,7 @@ private:
     friend KsValue;
     KsVoidValue(XDR *, bool &ok);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 
 };
 
@@ -287,9 +287,7 @@ public:
 protected:
     virtual bool xdrEncodeVariant(XDR *) const;
     virtual bool xdrDecodeVariant(XDR *);
-
-    // PLT_DECL_RTTI;
-
+    // sorry : no RTTI
 };
 
 
@@ -310,7 +308,7 @@ private:
     friend KsValue;
     KsByteVecValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 
 };
 
@@ -332,7 +330,7 @@ private:
     friend KsValue;
     KsIntVecValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -352,7 +350,7 @@ private:
     friend KsValue;
     KsUIntVecValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -372,7 +370,7 @@ private:
     friend KsValue;
     KsSingleVecValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -392,7 +390,7 @@ private:
     friend KsValue;
     KsDoubleVecValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -412,7 +410,7 @@ private:
     friend KsValue;
     KsStringVecValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -432,7 +430,7 @@ private:
     friend KsValue;
     KsTimeVecValue(XDR *, bool &);
 
-    // PLT_DECL_RTTI;
+    PLT_DECL_RTTI;
 };
 
 

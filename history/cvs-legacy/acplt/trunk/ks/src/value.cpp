@@ -6,23 +6,31 @@
  *  03/06/97 Interfaces changed, xdrEncode/xdrDecode implemented
  */
 
-#include <plt/debug.h>
-#include <ks/value.h>
+#include "ks/value.h"
 
 
 //////////////////////////////////////////////////////////////////////
 // RTTI Simulation
 //////////////////////////////////////////////////////////////////////
 
-PLT_IMPL_RTTI0(KsValue);
+PLT_IMPL_RTTI1(KsValue,KsXdrUnion);
 PLT_IMPL_RTTI1(KsIntValue,KsValue);
 PLT_IMPL_RTTI1(KsUIntValue,KsValue);
 PLT_IMPL_RTTI1(KsSingleValue,KsValue);
 PLT_IMPL_RTTI1(KsDoubleValue,KsValue);
-// PLT_IMPL_RTTI2(KsStringValue,KsValue,KsString);
-// PLT_IMPL_RTTI2(KsTimeValue,KsValue,KsTime);
-// PLT_IMPL_RTTI1(KsVoidValue,KsValue);
-// RTTI is currently not implemented for the vector types
+PLT_IMPL_RTTI2(KsStringValue,KsValue,KsString);
+PLT_IMPL_RTTI2(KsTimeValue,KsValue,KsTime);
+PLT_IMPL_RTTI1(KsVoidValue,KsValue);
+
+// RTTI skips KsVecValueBase!!!
+
+PLT_IMPL_RTTI1(KsByteVecValue, KsValue);
+PLT_IMPL_RTTI1(KsIntVecValue, KsValue);
+PLT_IMPL_RTTI1(KsUIntVecValue, KsValue);
+PLT_IMPL_RTTI1(KsSingleVecValue, KsValue);
+PLT_IMPL_RTTI1(KsDoubleVecValue, KsValue);
+PLT_IMPL_RTTI1(KsStringVecValue, KsValue);
+PLT_IMPL_RTTI1(KsTimeVecValue, KsValue);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -43,13 +51,13 @@ KS_XDR_MAP(KS_VT_STRING_VEC, KsStringVecValue);
 KS_XDR_MAP(KS_VT_TIME_VEC, KsTimeVecValue);
 KS_END_IMPL_XDRUNION;
 
-#ifdef __GNUC__
 //////////////////////////////////////////////////////////////////////
 // Instantiate member functions (necessary)
 //////////////////////////////////////////////////////////////////////
 
 #include "ks/value_impl.h"
 
+#if PLT_INSTANTIATE_TEMPLATES
 template class KsVecValueBase<char>;
 template class KsVecValueBase<long>;
 template class KsVecValueBase<u_long>;
