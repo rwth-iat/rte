@@ -1,4 +1,4 @@
-/* -*-plt-c++-*- */
+#/* -*-plt-c++-*- */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,12 +38,12 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#include <string.h>
+
 #include <plt/log.h>
 
 #include "ks/client.h"
 #include "ks/ks.h"
-
-#include <string.h>
 
 #if PLT_SYSTEM_NT
 #include <winsock.h>
@@ -72,6 +72,28 @@ PLT_IMPL_RTTI1(KscServer,KscServerBase);
 // initialize static data
 KscClient *KscClient::_the_client = 0;
 KscClient::CleanUp KscClient::_clean_up;
+
+//////////////////////////////////////////////////////////////////////
+// helper function to split a combination of host and server names
+//
+void
+_ksc_extractHostAndServer(KsString host_and_server,
+                          KsString &host,
+                          KsString &server)
+{
+    size_t pos = 2;
+
+    while(host_and_server[pos] && host_and_server[pos++] != '/') ;
+
+    if(host_and_server[pos]) {
+        // ok
+        //
+        host = host_and_server.substr(2, pos - 3);
+        server = host_and_server.substr(pos);
+    } else {
+        PLT_DMSG("Invalid server identification" << host_and_server << endl);
+    }
+}
 
 //////////////////////////////////////////////////////////////////////
 // class KscClient
@@ -159,14 +181,14 @@ KscClient::createServer(KsString host_and_name)
         // create new server
         //
         KsString host, server;
-        extractHostAndServer(host_and_name, host, server);
+        _ksc_extractHostAndServer(host_and_name, host, server);
         KscServer *temp = new KscServer(host, 
                                         KsServerDesc(server,
                                                      KS_PROTOCOL_VERSION));
         if(temp) {
             // object successfully created
             //
-            temp->setTimeouts(_rpc_timeout, _retry_wait, 2);
+            temp->setTimeouts(_rpc_timeout, _retry_wait, _retries);
             pServer = temp;
             server_table.add(host_and_name, pServer);
         }
@@ -175,27 +197,6 @@ KscClient::createServer(KsString host_and_name)
     PLT_ASSERT(pServer);
 
     return pServer;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void
-KscClient::extractHostAndServer(KsString host_and_server,
-                                KsString &host,
-                                KsString &server)
-{
-    size_t pos = 2;
-
-    while(host_and_server[pos] && host_and_server[pos++] != '/') ;
-
-    if(host_and_server[pos]) {
-        // ok
-        //
-        host = host_and_server.substr(2, pos - 3);
-        server = host_and_server.substr(pos);
-    } else {
-        PLT_DMSG("Invalid server identification" << host_and_server << endl);
-    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -267,6 +268,16 @@ KscServerBase::KscServerBase(KsString host, KsString name)
     host_and_name += name;
 }
 
+KscServerBase::KscServerBase(KsString hostAndName)
+: host_and_name(hostAndName),
+  av_module(0),
+  ref_count(0),
+  _last_result(KS_ERR_OK)
+{
+    _ksc_extractHostAndServer(host_and_name, 
+                              host_name, server_name);
+}
+
 //////////////////////////////////////////////////////////////////////
 // Section for handling of communication objects
 //
@@ -302,6 +313,20 @@ KscServer::KscServer(KsString host,
                      const KsServerDesc &server)
 : KscServerBase(host, server.name),
   server_desc(server),
+  errcode(RPC_SUCCESS),
+  status(KscNotInitiated),
+  pClient(0),
+  _rpc_timeout(KSC_RPCCALL_TIMEOUT),
+  _retry_wait(0, 0),
+  _retries(0)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscServer::KscServer(KsString hostAndName, u_short protocolVersion)
+: KscServerBase(hostAndName),
+  server_desc(server_name, protocolVersion),
   errcode(RPC_SUCCESS),
   status(KscNotInitiated),
   pClient(0),
@@ -362,7 +387,8 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
                    hp->h_length);
             return true;
         } else {
-            PLT_DMSG("Failed to get IP of host " << host_name << endl);
+            PltString err_msg("Failed to get IP of host : ", host_name);
+            PltLog::Warning(err_msg);
             return false;
         }
     } else {
@@ -373,7 +399,6 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
     }
 }
 
-            
 //////////////////////////////////////////////////////////////////////
 // try to establish a connection to the server
 //
@@ -393,6 +418,7 @@ KscServer::createTransport()
     //
     if( !getHostAddr(&host_addr) ) {
         status = KscHostNotFound;
+        _last_result = KS_ERR_HOSTUNKNOWN;
         return false;
     }
 
@@ -410,7 +436,7 @@ KscServer::createTransport()
     }
 
 #if PLT_DEBUG_PEDANTIC
-    cout << "Trying to connect server at port "
+    cerr << "Trying to connect server at port "
          << server_info.port
          << endl;
 #endif
@@ -428,9 +454,7 @@ KscServer::createTransport()
 
     if( !pClient ) {
         status = KscCannotCreateClientHandle;
-#if PLT_DEBUG
-        clnt_pcreateerror("ERROR :");
-#endif
+        _last_result = KS_ERR_CANTCONTACT;
         return false;
     }
 
@@ -459,6 +483,7 @@ KscServer::getStateUpdate()
     //
     if( !getHostAddr(&host_addr) ) {
         status = KscHostNotFound;
+        _last_result = KS_ERR_HOSTUNKNOWN;
         return false;
     }
 
@@ -472,7 +497,7 @@ KscServer::getStateUpdate()
         status = KscNoServer;
         return false;
     }
-
+    _last_result = server_info.result;
     return true;
 }
 
@@ -486,7 +511,10 @@ KscServer::reconnectServer(size_t try_count, enum_t errcode)
     if(try_count > _retries) {
         return false;
     }
-    
+
+    //
+    // TODO: make decision whether to try a reconnect configurable
+    //
     if(errcode == RPC_CANTDECODERES ||
        errcode == RPC_CANTSEND ||
        errcode == RPC_CANTRECV ||
@@ -513,15 +541,22 @@ KscServer::wait(PltTime howLong)
         PltTime until(now);
         until += howLong;
 
-        PLT_DMSG("Going to wait.." << endl);
+        PLT_DMSG("Going to wait.." << howLong.tv_sec << endl);
         
         do {
-        		PLT_DMSG("Calling select" << endl);
+#if PLT_SYSTEM_NT
+            PLT_DMSG("Calling Sleep()" << endl);
+            // Sleep expects time to wait as milliseconds
+            //
+            Sleep(howLong.tv_sec*1000 + howLong.tv_usec / 1000);
+#else
+            PLT_DMSG("Calling select" << endl);
             select(0, 0, 0, 0,
-                   (const struct timeval *)(&howLong));
+                   &howLong);
+#endif
             now = PltTime::now();
             howLong = until - now;
-        }  while(until < now);
+        }  while(until > now);
 
         PLT_DMSG("Finished waiting" << endl);
 
@@ -639,11 +674,10 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
                           &socket);
     if( !pUDP ) {
         status = KscCannotCreateUDPClient;
-#if PLT_DEBUG
-        clnt_pcreateerror("ERROR :");
-#endif
+        _last_result = KS_ERR_CANTCONTACT;
         return false;
     }
+
 #if PLT_DEBUG_PEDANTIC
     // ping manager
     //
@@ -651,11 +685,12 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
                         xdr_void, 0, 
                         xdr_void, 0, 
                         KSC_UDP_TIMEOUT);
+
     if(errcode != RPC_SUCCESS) {
-        cout << "ping failed, error code " << (unsigned) errcode << endl;
+        cerr << "ping failed, error code " << (unsigned) errcode << endl;
     }
     else {
-        cout << "manager pinged" << endl;
+        cerr << "manager pinged" << endl;
     }
 #endif
 
@@ -682,6 +717,7 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
 
     if( errcode != RPC_SUCCESS ) {
         status = KscRPCCallFailed;
+        _last_result = KS_ERR_CANTCONTACT;
 
         PLT_DMSG("function call to MANAGER failed, error code " << (unsigned) errcode << endl);
 
@@ -765,21 +801,20 @@ KscServer::getPP(const KscAvModule *avm,
             if(status == KscHostNotFound 
                || status == KscNoServer) 
             {
-                setResultAfterService();
                 return false;
             }
         }
     }
 
 #if PLT_DEBUG
-    cout << "Requesting server " 
+    cerr << "Requesting server " 
          << host_name << "/" << server_info.server.name 
          << " for getPP service." << endl;
-    cout << "Parameters : " << endl; 
-    cout << "\tPath : " << params.path << endl;
-    cout << "\tType mask : " << params.type_mask << endl;
-    cout << "\tName mask : " << params.name_mask << endl;
-    cout << endl;
+    cerr << "Parameters : " << endl; 
+    cerr << "\tPath : " << params.path << endl;
+    cerr << "\tType mask : " << params.type_mask << endl;
+    cerr << "\tName mask : " << params.name_mask << endl;
+    cerr << endl;
 #endif
 
     // get negotiator
@@ -793,7 +828,7 @@ KscServer::getPP(const KscAvModule *avm,
     
     do {
 #if PLT_DEBUG
-        cout << "Trying for the " << (try_count+1) << ". time" << endl;
+        cerr << "Trying for the " << (try_count+1) << ". time" << endl;
 #endif
         if(pClient) {
             errcode = clnt_call(pClient, KS_GETPP,
@@ -812,10 +847,10 @@ KscServer::getPP(const KscAvModule *avm,
         
 #if PLT_DEBUG
     if(errcode == RPC_SUCCESS) {
-        cout << "request successfull" << endl;
+        cerr << "request successfull" << endl;
     }
     else {
-        cout << "request failed" << endl;
+        cerr << "request failed" << endl;
     }
 #endif
 
@@ -898,7 +933,7 @@ KscServer::getVar(const KscAvModule *avm,
     }
 
 #if PLT_DEBUG
-    cout << "GetVar request to server "
+    cerr << "GetVar request to server "
          << host_name << "/" << server_info.server.name << endl;
 #endif
 
@@ -910,7 +945,7 @@ KscServer::getVar(const KscAvModule *avm,
     
     do {
 #if PLT_DEBUG
-        cout << "Trying for the " << (try_count+1) << ". time" << endl;
+        cerr << "Trying for the " << (try_count+1) << ". time" << endl;
 #endif
         if(pClient) {
             errcode = clnt_call(pClient, KS_GETVAR,
@@ -929,11 +964,11 @@ KscServer::getVar(const KscAvModule *avm,
 
 #if PLT_DEBUG
     if(errcode == RPC_SUCCESS) {
-        cout << "GetVar request successfull" << endl;
+        cerr << "GetVar request successfull" << endl;
     }
     else {
-        cout << "GetVar request failed" << endl;
-        cout << clnt_sperror(pClient, "");
+        cerr << "GetVar request failed, error code : "
+             << (unsigned)errcode << endl;
     }
 #endif
 
@@ -1016,7 +1051,7 @@ KscServer::setVar(const KscAvModule *avm,
 
 
 #if PLT_DEBUG
-    cout << "SetVar request to server "
+    cerr << "SetVar request to server "
          << host_name << "/" << server_info.server.name << endl;
 #endif
 
@@ -1031,7 +1066,7 @@ KscServer::setVar(const KscAvModule *avm,
 
     do {
 #if PLT_DEBUG
-        cout << "Trying for the " << (try_count+1) << ". time" << endl;
+        cerr << "Trying for the " << (try_count+1) << ". time" << endl;
 #endif
         if(pClient) {
             errcode = clnt_call(pClient, KS_SETVAR,
@@ -1050,10 +1085,10 @@ KscServer::setVar(const KscAvModule *avm,
 
 #if PLT_DEBUG
     if( errcode == RPC_SUCCESS ) {
-        cout << "SetVar request successfull" << endl;
+        cerr << "SetVar request successfull" << endl;
     } else {
-        cout << "SetVar request failed" << endl;
-        cout << clnt_sperror(pClient, "");
+        cerr << "SetVar request failed, error code : " 
+             << (unsigned)errcode << endl;
     }
 #endif
 
@@ -1135,7 +1170,7 @@ KscServer::exgData(const KscAvModule *avm,
     }
 
 #if PLT_DEBUG
-    cout << "ExgData request to server "
+    cerr << "ExgData request to server "
          << host_name << "/" << server_info.server.name << endl;
 #endif
 
@@ -1150,7 +1185,7 @@ KscServer::exgData(const KscAvModule *avm,
 
     do {
 #if PLT_DEBUG
-        cout << "Trying for the " << (try_count+1) << ". time" << endl;
+        cerr << "Trying for the " << (try_count+1) << ". time" << endl;
 #endif
         if(pClient) {
             errcode = clnt_call(pClient, KS_EXGDATA,
@@ -1169,11 +1204,11 @@ KscServer::exgData(const KscAvModule *avm,
 
 #if PLT_DEBUG
     if(errcode == RPC_SUCCESS) {
-        cout << "ExgData request successfull" << endl;
+        cerr << "ExgData request successfull" << endl;
     }
     else {
-        cout << "ExgData request failed" << endl;
-        cout << clnt_sperror(pClient, "");
+        cerr << "ExgData request failed, error code : " 
+             << (unsigned)errcode << endl;
     }
 #endif
 

@@ -44,15 +44,11 @@
 
 #include <plt/list.h>
 #include <plt/hashtable.h>
-#include <plt/priorityqueue.h>
+#include <plt/sort.h>
 
 #include "ks/commobject.h"
 #include "ks/avmodule.h"
 #include "ks/client.h"
-
-//////////////////////////////////////////////////////////////////////
-
-#define KSC_USE_QSORT 1
 
 //////////////////////////////////////////////////////////////////////
 // This is a helper class which groups together KscVariable objects
@@ -65,8 +61,6 @@ class KscSorterBucket
 public:
     KscSorterBucket(const KscAvModule *,
                     KscServerBase *);
-//    KscSorterBucket(const KscSorterBucket &);
-//    KscSorterBucket &operator = (const KscSorterBucket &);
 
     bool add(KscVariableHandle);
     size_t size() const;
@@ -79,11 +73,11 @@ public:
 //    KscNegotiator *getNegotiator() const;
 
 private:
-#if KSC_USE_QSORT
+    KscSorterBucket(const KscSorterBucket &);                // forbidden
+    KscSorterBucket &operator = (const KscSorterBucket &);   // forbidden
+
     PltList<KscVariableHandle> var_lst;
-#else
-    PltPriorityQueue<KscVariableHandle> var_lst;
-#endif
+
     const KscAvModule *av_module;
     KscServerBase *server;
     size_t var_count;
@@ -257,11 +251,7 @@ inline
 bool
 KscSorterBucket::add(KscVariableHandle var)
 {
-#if KSC_USE_QSORT
     bool ok = var_lst.addFirst(var);
-#else
-    bool ok = var_lst.add(var);
-#endif
 
     if(ok) {
         var_count++;

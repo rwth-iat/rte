@@ -42,13 +42,13 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#include <plt/hashtable.h>
+
 #include "ks/rpc.h"
 #include "ks/xdr.h"
 #include "ks/register.h"
 #include "ks/serviceparams.h"
 #include "ks/avmodule.h"
-
-#include "plt/hashtable.h"
 
 #if PLT_SYSTEM_OPENVMS
 #include <netdb.h>
@@ -113,8 +113,6 @@ public:
                      const PltTime &retry_wait,         // time between retries
                      size_t retries);                   // number of retries
 
-//    KscNegotiator *getNegotiator(KscServer *forServer);
-
 #if PLT_DEBUG
     void printServers();
 #endif
@@ -127,7 +125,6 @@ protected:
     //
     friend class KscCommObject;
     virtual KscServerBase *createServer(KsString host_and_name); 
-    void extractHostAndServer(KsString, KsString &, KsString &);
 
     // destroy an server, should only be used
     // by KscServer objects
@@ -178,7 +175,7 @@ public:
     //
     virtual bool getPP(const KscAvModule *avm,
                        const KsGetPPParams &params,
-                       KsGetPPResult &) = 0;
+                       KsGetPPResult &result) = 0;
 
     virtual bool getVar(const KscAvModule *avm,
                         const KsGetVarParams &params,
@@ -199,9 +196,9 @@ public:
 
     // selectors
     //
-    KsString getHost() const;
-    KsString getName() const;
-    KsString getHostAndName() const;
+    KsString getHost() const;           // host
+    KsString getName() const;           // name
+    KsString getHostAndName() const;    // eg. "//host/name"
     virtual u_short getProtocolVersion() const = 0;
     virtual PltTime getExpiresAt() const = 0;
     virtual bool isLiving() const = 0;
@@ -209,9 +206,10 @@ public:
 
 protected:
     KscServerBase(KsString host, KsString name);
+    KscServerBase(KsString hostAndName);
     virtual ~KscServerBase();
     
-    friend class KscClient;              // for access to dtor
+    friend class KscClient;              // for access to ctor and dtor
     friend class KscCommObject;          // for access to the following functions
     
     void incRefcount();
@@ -231,19 +229,6 @@ class KscServer
 {
     PLT_DECL_RTTI;
 public:
-
-    enum TStatus {
-        KscOk = 0,
-        KscNotInitiated,
-        KscHostNotFound,
-        KscCannotCreateClientHandle,
-        KscCannotCreateUDPClient,
-        KscRPCCallFailed,
-        KscNoServer
-    };
-
-    // return status of the server (see beyond)
-    TStatus getStatus() const;
     // return error code of the last rpc call, 
     // see rpc library for definition of the values
     enum_t getErrcode() const;
@@ -289,6 +274,21 @@ public:
  
 
 protected:
+    // internal status
+    //
+    enum TStatus {
+        KscOk = 0,
+        KscNotInitiated,
+        KscHostNotFound,
+        KscCannotCreateClientHandle,
+        KscCannotCreateUDPClient,
+        KscRPCCallFailed,
+        KscNoServer
+    };
+
+    // return status of the server (see beyond)
+    TStatus getStatus() const;
+    
     KscNegotiator *getNegotiator(const KscAvModule *);
 
     // service functions
@@ -319,6 +319,7 @@ protected:
 
     friend class KscClient;
     KscServer(KsString host, const KsServerDesc &server);
+    KscServer(KsString hostAndName, u_short protocolVersion);
     ~KscServer();
 
 private:
@@ -504,6 +505,7 @@ KscClient::CleanUp::~CleanUp()
     }
 }
 
+//////////////////////////////////////////////////////////////////////
 
 #endif
 

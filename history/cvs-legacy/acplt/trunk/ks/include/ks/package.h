@@ -71,14 +71,11 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 // class KscPackage
-//
-//   RESTRICTIONS:
-//   - Related objects are currently referenced by pointers. Therefore
-//     equality is checked by comparing pointers.
-// 
 //////////////////////////////////////////////////////////////////////
 
 typedef PltPtrHandle<class KscPackage> KscPackageHandle;
+typedef PltIterator<KscVariableHandle> KscPkgVariableIterator;
+typedef PltIterator<KscPackageHandle>  KscSubpackageIterator; 
 
 class KscPackage
 : private _KscPackageBase
@@ -101,15 +98,13 @@ public:
     bool getUpdate();
     bool setUpdate(bool force = false);
 
-    PltIterator<KscVariableHandle> *newVariableIterator(bool deep=false) const;
-    PltIterator<KscPackageHandle> *newSubpackageIterator() const;
+    KscPkgVariableIterator *newVariableIterator(bool deep=false) const;
+    KscSubpackageIterator *newSubpackageIterator() const;
 
     void setAvModule(const KscAvModule *avm);
     const KscAvModule *getAvModule() const;
 
 protected:
-//    KscNegotiator *getNegotiatorForBucket(const KscSorterBucket &);
-
     bool getSimpleUpdate(KscBucketHandle);
     bool setSimpleUpdate(KscBucketHandle);
 
@@ -164,32 +159,6 @@ public:
 #endif
 };
 
-# if 0
-
-//
-// class KscDirectIterator
-// helper class to map an iterator over pointers
-// to an iterator over elements
-//
-template <class T>
-class KscDirectIterator
-: public PltIterator<T>
-{
-public:
-    KscDirectIterator(const PltList<T *> &);
-
-    operator const void * () const;         // remaining element?
-    const T * operator -> () const;
-    KscDirectIterator & operator ++ ();        // advance
-    void operator ++ (int);                 // (postfix)
-    void toStart();                         // go to the beginning
-protected:
-    PltListIterator<T *> it;
-};
-// end of class KscDirectIterator
-
-#endif
-
 //////////////////////////////////////////////////////////////////////
 // class KscExchangePackage
 //////////////////////////////////////////////////////////////////////
@@ -233,6 +202,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
+//////////////////////////////////////////////////////////////////////
+// class KscPackage
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -280,6 +251,7 @@ KscPackage::getAvModule() const
 }
 
 //////////////////////////////////////////////////////////////////////
+// class KscExchangePackage
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -349,7 +321,13 @@ KscExchangePackage::getAvModule() const
     return av_module;
 }
 
+//////////////////////////////////////////////////////////////////////
+
 #endif
+
+//////////////////////////////////////////////////////////////////////
+// EOF package.h
+//////////////////////////////////////////////////////////////////////
 
 
 

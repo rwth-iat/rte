@@ -100,6 +100,10 @@ KscExchangePackage::debugPrint(ostream &os, bool printAll) const
 // end of debbugging section               
 //////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+// class KscPackage
+//////////////////////////////////////////////////////////////////////
+
 KscPackage::KscPackage()
 : num_vars(0),
   num_pkgs(0),
@@ -134,15 +138,6 @@ KscPackage::add(KscVariableHandle var)
 bool
 KscPackage::add(KscPackageHandle pkg) 
 {
-#if 0
-    // TODO:
-    // avoid cycles
-    //
-    if(&pkg == this) {
-        return false;
-    }
-#endif
-
     if(pkg) {
         bool ok = pkgs.addLast(pkg);
     
@@ -208,7 +203,7 @@ KscPackage::sizeVariables(bool deep) const
 
 //////////////////////////////////////////////////////////////////////
 
-PltIterator<KscVariableHandle> *
+KscPkgVariableIterator *
 KscPackage::newVariableIterator(bool deep) const
 {
     if(deep) {
@@ -221,7 +216,7 @@ KscPackage::newVariableIterator(bool deep) const
 
 //////////////////////////////////////////////////////////////////////
 
-PltIterator<KscPackageHandle> *
+KscSubpackageIterator *
 KscPackage::newSubpackageIterator() const 
 {
     return new PltListIterator<KscPackageHandle>(pkgs);
@@ -233,6 +228,7 @@ bool
 KscPackage::getUpdate() 
 {
     DeepIterator var_it(*this);
+
     KscSorter sorter(var_it);
 
     if(!sorter.isValid()) {
@@ -461,7 +457,7 @@ KscPackage::DeepIterator::operator * () const
     // this is an error condition
     //
     PLT_ASSERT(0);
-    // not reachede
+    // not reached
     static KscVariableHandle dummy;
     return dummy; 
 }
@@ -743,7 +739,7 @@ KscExchangePackage::doSimpleExchange(
 
 #if PLT_DEBUG
     if(ok && res.result != KS_ERR_OK) {
-        PLT_DMSG("error code : " << res.result << endl);
+        PLT_DMSG("exchange data error code : " << res.result << endl);
     }
 #endif
 
@@ -817,35 +813,6 @@ _KscPackageBase::copyGetVarResults(
 
 //////////////////////////////////////////////////////////////////////
 
-#if 0
-
-// unoptimized version
-//
-bool 
-_KscPackageBase::fillSetVarParams(
-    const PltArray<KscVariableHandle> &sorted_vars,
-    KsArray<KsSetVarItem> &items)
-{
-    PLT_PRECONDITION(sorted_vars.size() == items.size());
-
-    size_t to_copy = sorted_vars.size();
- 
-    for(size_t count = 0; count < to_copy; count++) { 
-        items[count].path_and_name = 
-            sorted_vars[count]->getPathAndName();
-        items[count].curr_props =
-            sorted_vars[count]->getCurrPropsHandle();
-    }
-
-    return true;
-}
-
-#endif
-
-#if 1
-
-// optimized version
-//
 bool 
 _KscPackageBase::fillSetVarParams(
     const PltArray<KscVariableHandle> &sorted_vars,
@@ -857,31 +824,16 @@ _KscPackageBase::fillSetVarParams(
     items[0].path_and_name = sorted_vars[0]->getPathAndName();
     items[0].curr_props = sorted_vars[0]->getCurrPropsHandle();
 
-    PLT_DMSG("Optimizing paths :" << endl);
-    PLT_DMSG("Input field :" << endl);
-#if PLT_DEBUG
-    for(size_t i = 0; i < sorted_vars.size(); i++) {
-        cerr << (sorted_vars[i])->getPathAndName() << endl;
-    }
-#endif
-    PLT_DMSG("absolute\t\trelative" << endl);
-    PLT_DMSG(items[0].path_and_name << endl); 
-
     for(size_t count = 1; count < to_copy; count++) { 
         items[count].path_and_name = 
             sorted_vars[count]->getPathAndName().relTo(
                 sorted_vars[count-1]->getPathAndName());
         items[count].curr_props =
             sorted_vars[count]->getCurrPropsHandle();
-        PLT_DMSG(sorted_vars[count]->getPathAndName() << "\t" \
-                 << items[count].path_and_name << endl);
-                 
     }
 
     return true;
 }
-
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -908,35 +860,6 @@ _KscPackageBase::copySetVarResults(const PltArray<KscVariableHandle> &sorted_var
 
 //////////////////////////////////////////////////////////////////////
 
-#if 0
-
-// unoptimized version
-//
-bool 
-_KscPackageBase::optimizePaths(
-    const PltArray<KscVariableHandle> &sorted_vars,
-    KsArray<KsString> &paths) 
-{
-    // TODO: implement use of relative paths
-    // currently we just copy the paths
-    //
-    PLT_PRECONDITION(sorted_vars.size() == paths.size());
-
-    size_t to_copy = sorted_vars.size();
-
-    for(size_t count = 0; count < to_copy; count++) {
-        paths[count] = sorted_vars[count]->getName();
-     }
-
-    return true;
-}
-
-#endif
-
-//////////////////////////////////////////////////////////////////////
-
-// optimized version
-//
 bool 
 _KscPackageBase::optimizePaths(
     const PltArray<KscVariableHandle> &sorted_vars,
@@ -947,20 +870,18 @@ _KscPackageBase::optimizePaths(
     size_t to_copy = sorted_vars.size();
     paths[0] = sorted_vars[0]->getPathAndName();
 
-    PLT_DMSG("Optimizing paths :" << endl);
-    PLT_DMSG("absolute\t\trelative" << endl);
-    PLT_DMSG(paths[0] << endl);
-
     for(size_t count = 1; count < to_copy; count++) {
         paths[count] = 
             sorted_vars[count]->getPathAndName().relTo(
                 sorted_vars[count-1]->getPathAndName());
-        PLT_DMSG(sorted_vars[count]->getPathAndName() << "\t" << paths[count] << endl);
      }
 
     return true;
 }
 
+//////////////////////////////////////////////////////////////////////
+// EOF package.cpp
+//////////////////////////////////////////////////////////////////////
 
 
 

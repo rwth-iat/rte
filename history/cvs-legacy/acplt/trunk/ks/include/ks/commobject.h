@@ -189,7 +189,6 @@ class KscDomain
 {
 public:
     KscDomain(const char *domain_path);
-//  KscDomain(const KscAbsPath &domain_path);
 
     ~KscDomain();
 
@@ -201,8 +200,9 @@ public:
     bool getProjPropsUpdate();
     // reread children from server, update properties
     bool getChildPPUpdate();
-    // TODO: currently two iterators of the same KscDomain
-    //       will lead to problems
+    // get iterator, 
+    // if update is set to true, it forces the PP's to be read and
+    // all other iterators related to this object will become invalid
     KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
                                        bool update = false);
 
@@ -262,7 +262,6 @@ class KscVariable
 {
 public:
     KscVariable(const char *var_name);
-//  KscVariable(const KscAbsPath &var_name);
 
     KS_OBJ_TYPE typeCode() const;
 
@@ -303,7 +302,9 @@ typedef PltCompHandle<KscVariable> KscVariableHandle;
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
-//
+//////////////////////////////////////////////////////////////////////
+// class KscCommObject
+//////////////////////////////////////////////////////////////////////
 
 inline
 bool
@@ -388,6 +389,7 @@ KscCommObject::getLastResult() const
 }
 
 //////////////////////////////////////////////////////////////////////
+// class KscDomain
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -395,39 +397,6 @@ KscDomain::KscDomain(const char *domain_path)
 : KscCommObject(domain_path),
   fChildPPValid(false)
 {}
-
-//////////////////////////////////////////////////////////////////////
-#if 0
-
-inline
-KscDomain::KscDomain(const KscAbsPath &domain_path)
-: KscCommObject(domain_path)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KscDomain::KscDomain(const KscDomain &other)
-: KscCommObject(other),
-  proj_props(other.proj_props),
-  child_table(other.child_table)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KscDomain &
-KscDomain::operator = (const KscDomain &other)
-{
-    KscCommObject::operator = (other);
-
-    proj_props = other.proj_props;
-    child_table = other.child_table;
-
-    return *this;
-}
-
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -448,6 +417,7 @@ KscDomain::getProjProps() const
 }
 
 //////////////////////////////////////////////////////////////////////
+// class KscVariable
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -455,42 +425,6 @@ KscVariable::KscVariable(const char *var_path)
 : KscCommObject(var_path),
   fDirty(false)
 {}
-
-//////////////////////////////////////////////////////////////////////
-#if 0
-
-inline
-KscVariable::KscVariable(const KscAbsPath &var_path)
-: KscCommObject(var_path),
-  fDirty(false)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KscVariable::KscVariable(const KscVariable &other)
-: KscCommObject(other),
-  proj_props(other.proj_props),
-  curr_props(other.curr_props),
-  fDirty(other.fDirty)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KscVariable &
-KscVariable::operator = (const KscVariable &other)
-{
-    KscCommObject::operator = (other);
-
-    proj_props = other.proj_props;
-    curr_props = other.curr_props;
-    fDirty = other.fDirty;
-
-    return *this;
-}
-
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -538,8 +472,6 @@ KscVariable::isDirty() const
     return fDirty;
 }
 
-//////////////////////////////////////////////////////////////////////
-// End of  Inline Implementation
 //////////////////////////////////////////////////////////////////////
 
 #endif

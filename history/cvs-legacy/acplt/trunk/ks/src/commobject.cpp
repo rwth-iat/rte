@@ -96,11 +96,11 @@ KscDomain::debugPrint(ostream &os) const
 
 //////////////////////////////////////////////////////////////////////
 // Implementation of RTTI
-//
+//////////////////////////////////////////////////////////////////////
+
 PLT_IMPL_RTTI0(KscCommObject);
 PLT_IMPL_RTTI1(KscVariable, KscCommObject);
 PLT_IMPL_RTTI1(KscDomain, KscCommObject);
-
 
 //////////////////////////////////////////////////////////////////////
 // class KscCommObject
@@ -117,55 +117,6 @@ KscCommObject::KscCommObject(const char *object_path)
     PLT_ASSERT(server);
     server->incRefcount();
 }
-
-//////////////////////////////////////////////////////////////////////
-
-#if 0
-KscCommObject::KscCommObject(const KscAbsPath &object_path)
-: path(object_path),
-  av_module(0)
-{
-    PLT_PRECONDITION(path.isValid());
-
-    server = findServer();
-    PLT_ASSERT(server);
-    server->incRefcount(this);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-KscCommObject::KscCommObject(const KscCommObject &other)
-: path(other.path),
-  server(other.server),
-  av_module(other.av_module)
-{
-    PLT_ASSERT(myServer);
-    server->incRefcount();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-KscCommObject &
-KscCommObject::operator = (const KscCommObject &other)
-{
-    // deregister at old server
-    //
-    server->decRefcount();
-
-    // copy data
-    //
-    path = other.path;
-    server = other.server;
-    av_module = other.av_module;
-
-    // register at new server
-    //
-    server->incRefcount();
-
-    return *this;
-}
-
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -644,10 +595,13 @@ KscVariable::setCurrProps(KsVarCurrProps &cp)
 }
 
 //////////////////////////////////////////////////////////////////////
+// EOF commobject.cpp
+//////////////////////////////////////////////////////////////////////
 
 
 
         
+
 
 
 
