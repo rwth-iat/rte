@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.16 1999-09-16 10:54:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.17 2000-04-11 14:13:32 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -297,8 +297,8 @@ KssSimpleLinkAlias::KssSimpleLinkAlias(KssDomainHandle hdom,
 //
 class _PltSimpleStringNode {
 public:
-    struct _PltSimpleStringNode *next;
-    KsString                     id;
+    class _PltSimpleStringNode *next;
+    KsString                    id;
     
     _PltSimpleStringNode() {}
     ~_PltSimpleStringNode() {}
