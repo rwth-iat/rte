@@ -12,8 +12,8 @@ SRCDIR = $(PLTDIR)\src\\
 
 ### Compiler
 CXX = bcc32
-#CXX_FLAGS = -DNDEBUG -O2 -w
-CXX_FLAGS = 
+CXX_FLAGS = -DNDEBUG -O2 -w
+#CXX_FLAGS = 
 CXX_EXTRA_FLAGS = -I. -a8 -I$(PLTDIR)\include -DPLT_SYSTEM_NT=1
 
 .SUFFIXES:      
