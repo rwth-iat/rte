@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.10 2001-07-09 12:50:01 ansgar Exp $
+*   $Id: ov_ksserver_getep.c,v 1.11 2001-07-20 07:29:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -26,6 +26,7 @@
 *	01-Jun-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 *	09-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: special GetEP answer for KsHistory and KsHistoryTrack objects
+*	13-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: History concept changed
 */
 
 #define OV_COMPILE_LIBOVKS
@@ -35,6 +36,40 @@
 #include "libov/ov_string.h"
 #include "libov/ov_vendortree.h"
 #include "libov/ov_macros.h"
+
+/*
+*	Makro wrapping the address resolution of a symbol in a DLL/shared library
+*/
+#if OV_DYNAMIC_LIBRARIES
+#if OV_SYSTEM_UNIX
+#define Ov_Library_GetAddr(handle, symbolname)	dlsym(handle, symbolname)
+#elif OV_SYSTEM_NT
+#define Ov_Library_GetAddr(handle, symbolname)	GetProcAddress(handle, symbolname)
+#endif
+#endif
+
+/*
+*	Function prototype for method getephist 
+*/
+typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETEPHIST (
+	OV_INSTPTR_ov_object 	pobj,
+	OV_STRING*		type_identifier,
+	OV_HIST_TYPE*		historytype,
+	OV_INTERPOLATION_MODE*  default_interpolation,
+	OV_INTERPOLATION_MODE*	supported_interpolation
+);
+
+/*
+*	Function prototype for method getephistelem 
+*/
+typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETEPHISTELEM (
+	OV_INSTPTR_ov_object 	pobj,
+	const OV_TICKET		*pticket,
+	OV_GETEP_RES		*result,
+	KS_EP_FLAGS		scope_flags,
+	const OV_OBJ_TYPE	type_mask,
+	const OV_STRING		name_mask
+);
 
 /*	----------------------------------------------------------------------	*/
 
@@ -53,7 +88,12 @@ void ov_ksserver_getep(
 	OV_PATH			path;
 	OV_STRING		name_mask = params->name_mask;
 	OV_ELEMENT		child;
-	OV_ELEM_TYPE	mask;
+	OV_ELEM_TYPE		mask;
+	OV_INSTPTR_ov_library	plib;
+	OV_INSTPTR_ov_class	pclass;
+	OV_ELEMENT 		searchedelement;
+	OV_FNC_GETEPHISTELEM	*getephistelem = NULL;
+	char			tmpstring[256];
 	/*
 	*	initialization
 	*/
@@ -82,6 +122,41 @@ void ov_ksserver_getep(
 		result->result = ov_ksserver_getep_additem(version, pticket, result,
 			&path.elements[path.size-1], params->type_mask, NULL);
 		return;
+	}
+
+
+	/*
+	*	test if we have a object derived from class KsHistoryRO (representation object).
+	*	if we have, call the getephistelem function of this object
+	*/
+	if (path.elements[path.size-1].elemtype == OV_ET_OBJECT) {
+		pclass=Ov_GetParent(ov_instantiation, path.elements[path.size-1].pobj);
+		while (pclass && (ov_string_compare(pclass->v_identifier, "KsHistoryRO")!=0)) 
+			pclass=Ov_GetParent(ov_inheritance, pclass);
+
+		/*
+		*	we have ...
+		*/
+		if (pclass) {
+			pclass=Ov_GetParent(ov_instantiation, path.elements[path.size-1].pobj);
+			child.elemtype = OV_ET_OBJECT;
+			child.pobj = Ov_PtrUpCast(ov_object, pclass);
+			while (pclass) {
+				/*
+				*	search for operation element "getephistelem"
+				*/
+				if (Ov_OK(ov_element_searchpart(&child, &searchedelement, OV_ET_OPERATION, "getephistelem"))) break;
+				pclass=Ov_GetParent(ov_inheritance, pclass);
+				child.pobj = Ov_PtrUpCast(ov_object, pclass);
+			}
+			if (pclass) {
+				plib=Ov_StaticPtrCast(ov_library,Ov_GetParent(ov_containment, Ov_PtrUpCast(ov_object,pclass)));
+				sprintf(tmpstring, "%s_%s_%s", plib->v_identifier, pclass->v_identifier, "getephistelem");
+				getephistelem = (OV_FNC_GETEPHISTELEM*)Ov_Library_GetAddr((OV_DLLHANDLE)plib->v_handle, tmpstring);
+				result->result = getephistelem(path.elements[path.size-1].pobj, pticket, result, params->scope_flags, params->type_mask, name_mask);
+			}
+			return;
+		}
 	}
 	/*
 	*	we are asked bout the engineered properties of the children
@@ -202,9 +277,14 @@ OV_RESULT ov_ksserver_getep_additem(
 	OV_VTBLPTR_ov_object			pvtable;
 	OV_BOOL					vendorobj = FALSE;
 	OV_BOOL					kshistobj = FALSE;
-	OV_BOOL					kshisttrackobj = FALSE;
 	OV_INSTPTR_ov_class			pclass;
 	OV_STRING				identifier;
+	OV_ELEMENT 				searchedelement;
+	OV_FNC_GETEPHIST			*getephist = NULL;
+	OV_ELEMENT				child;
+	OV_INSTPTR_ov_library			plib;
+	char					tmpstring[256];
+
 	/*
 	*	get the vtable of the object the element belongs to
 	*/
@@ -234,22 +314,16 @@ OV_RESULT ov_ksserver_getep_additem(
 			vendorobj = TRUE;
 		} else {
 			pclass=Ov_GetParent(ov_instantiation, pelem->pobj);
-			while (pclass && (!kshistobj) && (!kshisttrackobj)) {
-				if (ov_string_compare(pclass->v_identifier, "KsHistory")==0) {
+			while (pclass && (!kshistobj)) {
+				if (ov_string_compare(pclass->v_identifier, "KsHistoryRO")==0) {
 					objtype = KS_OT_HISTORY;
 					kshistobj = TRUE;
 				}
 				else {
-					if (ov_string_compare(pclass->v_identifier, "KsHistoryTrack")==0) {
-						objtype = KS_OT_VARIABLE;
-						kshisttrackobj = TRUE;
-					}
-				      	else {
-						pclass=Ov_GetParent(ov_inheritance, pclass);
-					}
+					pclass=Ov_GetParent(ov_inheritance, pclass);
 				}
 			}
-			if ((!kshistobj) && (!kshisttrackobj)) {
+			if (!kshistobj) {
 				objtype = KS_OT_DOMAIN;
 			}
 		}
@@ -349,48 +423,37 @@ OV_RESULT ov_ksserver_getep_additem(
 			return OV_ERR_OK;
 		}
 		if(kshistobj) {
-			OV_ELEMENT givenobject;
-			OV_ELEMENT searchedelement;
 
-			givenobject.elemtype = OV_ET_OBJECT;
-			givenobject.pobj = Ov_PtrUpCast(ov_object, pobj);
-			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "HistoryType")))
-			{
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props
-					.historytype = *((OV_HIST_TYPE*) (searchedelement.pvalue));
+			OV_RESULT res = OV_ERR_NOTIMPLEMENTED;
+			pclass=Ov_GetParent(ov_instantiation, pelem->pobj);
+			child.elemtype = OV_ET_OBJECT;
+			child.pobj = Ov_PtrUpCast(ov_object, pclass);
+			while (pclass) {
+				/*
+				*	search for operation element "getephist"
+				*/
+				if (Ov_OK(ov_element_searchpart(&child, &searchedelement, OV_ET_OPERATION, "getephist"))) break;
+				pclass=Ov_GetParent(ov_inheritance, pclass);
+				child.pobj = Ov_PtrUpCast(ov_object, pclass);
 			}
-			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "defaultIPM")))
-			{
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props
-					.default_interpolation = *((OV_HIST_TYPE*) (searchedelement.pvalue));
+			if (pclass) {
+				plib=Ov_StaticPtrCast(ov_library,Ov_GetParent(ov_containment, Ov_PtrUpCast(ov_object,pclass)));
+				sprintf(tmpstring, "%s_%s_%s", plib->v_identifier, pclass->v_identifier, "getephist");
+				getephist = (OV_FNC_GETEPHIST*)Ov_Library_GetAddr((OV_DLLHANDLE)plib->v_handle, tmpstring);
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.type_identifier = NULL;
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.historytype = 0;
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.default_interpolation = 0;
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.supported_interpolation = 0;
+				res = getephist(pelem->pobj, &pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.type_identifier, 
+							&pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.historytype,
+							&pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.default_interpolation,
+							&pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.supported_interpolation);
 			}
-			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "supportedIPM")))
-			{
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props
-					.supported_interpolation = *((OV_HIST_TYPE*) (searchedelement.pvalue));
-			}
-			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "HistoryIdentifier")))
-			{
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props
-					.type_identifier = *((OV_STRING*) (searchedelement.pvalue));
-			}
-			return OV_ERR_OK;
-		}
-		if(kshisttrackobj) {
-			OV_ELEMENT givenobject;
-			OV_ELEMENT searchedelement;
-
-			givenobject.elemtype = OV_ET_OBJECT;
-			givenobject.pobj = Ov_PtrUpCast(ov_object, pobj);
-			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "TechUnit")))
-			{
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit
-					= *((OV_STRING*) (searchedelement.pvalue));
-			}
-			if (Ov_OK(ov_element_searchpart(&givenobject, &searchedelement, OV_ET_VARIABLE, "Type")))
-			{
-				pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype
-					= *((OV_VAR_TYPE*) (searchedelement.pvalue));
+			if (res != OV_ERR_OK) {
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.type_identifier = NULL;
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.historytype = 0;
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.default_interpolation = 0;
+				pprops->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props.supported_interpolation = 0;
 			}
 			return OV_ERR_OK;
 		}
@@ -417,6 +480,11 @@ OV_RESULT ov_ksserver_getep_additem(
 		break;
 	case OV_ET_PARENTLINK:
 		switch(pelem->elemunion.passoc->v_assoctype) {
+		case OV_AT_ONE_TO_ONE:
+			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
+				= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
+				(KS_LT_LOCAL_1_1):(KS_LT_GLOBAL_1_1);
+			break;
 		case OV_AT_ONE_TO_MANY:
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
 				= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
@@ -439,6 +507,10 @@ OV_RESULT ov_ksserver_getep_additem(
 		return OV_ERR_OK;
 	case OV_ET_CHILDLINK:
 		switch(pelem->elemunion.passoc->v_assoctype) {
+		case OV_AT_ONE_TO_ONE:
+			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
+				= KS_LT_GLOBAL_1_1;
+			break;
 		case OV_AT_ONE_TO_MANY:
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
 				= KS_LT_GLOBAL_MANY_1;

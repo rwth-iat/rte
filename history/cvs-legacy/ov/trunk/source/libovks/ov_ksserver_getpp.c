@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getpp.c,v 1.8 2000-04-13 09:13:14 dirk Exp $
+*   $Id: ov_ksserver_getpp.c,v 1.9 2001-07-20 07:28:54 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -381,6 +381,11 @@ OV_RESULT ov_ksserver_getpp_additem(
 		switch(objtype) {
 		case KS_OT_LINK:
 			switch(pelem->elemunion.passoc->v_assoctype) {
+			case OV_AT_ONE_TO_ONE:
+				pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
+					= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
+					(KS_LT_LOCAL_1_1):(KS_LT_GLOBAL_1_1);
+				break;
 			case OV_AT_ONE_TO_MANY:
 				pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
 					= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
@@ -417,6 +422,10 @@ OV_RESULT ov_ksserver_getpp_additem(
 		switch(objtype) {
 		case KS_OT_LINK:
 			switch(pelem->elemunion.passoc->v_assoctype) {
+			case OV_AT_ONE_TO_ONE:
+				pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
+					= KS_LT_GLOBAL_1_1;
+				break;
 			case OV_AT_ONE_TO_MANY:
 				pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
 					= KS_LT_GLOBAL_MANY_1;

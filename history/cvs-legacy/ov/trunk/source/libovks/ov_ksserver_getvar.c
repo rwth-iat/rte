@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.8 2000-04-13 09:13:14 dirk Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.9 2001-07-20 07:28:47 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -199,6 +199,9 @@ void ov_ksserver_getvar_getitem(
 				return;
 			}
 			switch(pelem->elemunion.passoc->v_assoctype) {
+			case OV_AT_ONE_TO_ONE:
+				pchild = Ov_Association_GetChild(pelem->elemunion.passoc, pobj);
+				break;
 			case OV_AT_ONE_TO_MANY:
 				pchild = Ov_Association_GetFirstChild(pelem->elemunion.passoc, pobj);
 				break;
@@ -220,6 +223,9 @@ void ov_ksserver_getvar_getitem(
 				*pstring = pathname;
 				pstring++;
 				switch(pelem->elemunion.passoc->v_assoctype) {
+				case OV_AT_ONE_TO_ONE:
+					pchild = NULL;
+					break;
 				case OV_AT_ONE_TO_MANY:
 					pchild = Ov_Association_GetNextChild(pelem->elemunion.passoc, pchild);
 					break;
@@ -245,6 +251,20 @@ void ov_ksserver_getvar_getitem(
 		*	get value of a child link (string with the parent's paths)
 		*/
 		switch(pelem->elemunion.passoc->v_assoctype) {
+		case OV_AT_ONE_TO_ONE:
+			pitem->var_current_props.value.vartype = OV_VT_STRING;
+			pparent = Ov_Association_GetParent(pelem->elemunion.passoc, pobj);
+			if(pparent) {
+				pathname = ov_path_getcanonicalpath(pparent, version);
+				if(!pathname) {
+					pitem->result = OV_ERR_TARGETGENERIC;	/* TODO! out of heap memory */
+					return;
+				}
+				pitem->var_current_props.value.valueunion.val_string = pathname;
+			} else {
+				pitem->var_current_props.value.valueunion.val_string = NULL;
+			}
+			break;
 		case OV_AT_ONE_TO_MANY:
 			pitem->var_current_props.value.vartype = OV_VT_STRING;
 			pparent = Ov_Association_GetParent(pelem->elemunion.passoc, pobj);

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_unlink.c,v 1.6 2000-04-13 09:13:14 dirk Exp $
+*   $Id: ov_ksserver_unlink.c,v 1.7 2001-07-20 07:28:37 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -172,6 +172,11 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 	*	check, if there is a link between that parent and child
 	*/
 	switch(plinkelem->elemunion.passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		if(Ov_Association_GetParent(plinkelem->elemunion.passoc, pchild) != pparent) {
+			return OV_ERR_BADPATH;	/* FIXME! error code? */
+		}
+		break;
 	case OV_AT_ONE_TO_MANY:
 		if(Ov_Association_GetParent(plinkelem->elemunion.passoc, pchild) != pparent) {
 			return OV_ERR_BADPATH;	/* FIXME! error code? */
