@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.25 2003-10-13 12:05:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.26 2003-10-21 11:22:22 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -99,7 +99,7 @@ KscPackage::KscPackage()
   num_pkgs(0),
   av_module(0),
   _is_dirty(false),
-  _last_result(-1)
+  _last_result(KS_ERR_OK)
 {} // KscPackage::KscPackage
 
 
