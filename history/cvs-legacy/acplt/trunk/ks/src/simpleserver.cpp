@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.22 1998-12-10 17:27:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.23 1998-12-14 18:05:03 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -307,7 +307,7 @@ KsSimpleServer::getVarItem(KsAvTicket &ticket,
 		pobj = (KssVariable*) hobj.getPtr();
 		break;
 	    case KS_OT_LINK:
-		//###FIXME## pobj = (KssLink*) hobj.getPtr();
+		pobj = (KssLink*) hobj.getPtr();
 		break;
 	    default:
 		break; // all other object classes are invalid.
@@ -360,6 +360,14 @@ KsSimpleServer::setVarItem(KsAvTicket &ticket,
 	    switch ( hobj->typeCode() ) {
 	    case KS_OT_VARIABLE:
 		pobj = (KssVariable*) hobj.getPtr();
+		break;
+	    case KS_OT_LINK:
+		//
+		// Although you can't write new values to links, we allow
+                // the attempt to do so here. It will be denied through the
+                // setCurrProps() method nevertheless lateron.
+                //
+		pobj = (KssLink*) hobj.getPtr();
 		break;
 	    default:
 		break; // all other object classes are invalid.

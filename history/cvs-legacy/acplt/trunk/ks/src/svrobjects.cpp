@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.10 1998-12-10 17:27:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.11 1998-12-14 18:05:03 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -50,7 +50,7 @@ PLT_IMPL_RTTI0(KssChildrenService);
 PLT_IMPL_RTTI0(KssCommObject);
 PLT_IMPL_RTTI2(KssDomain, KssCommObject, KssChildrenService);
 PLT_IMPL_RTTI2(KssVariable, KssCommObject, KssCurrPropsService);
-PLT_IMPL_RTTI2(KssLink, KssCommObject, KssChildrenService);
+PLT_IMPL_RTTI3(KssLink, KssCommObject, KssChildrenService, KssCurrPropsService);
 
 // ----------------------------------------------------------------------------
 // This is just a default implementation provided for backwards compatibility
