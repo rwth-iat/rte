@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.2 1999-07-27 17:41:12 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.3 1999-07-28 16:01:38 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1177,20 +1177,31 @@ OV_BOOL ov_codegen_checksemantics_member(
 		result = FALSE;
 	}
 	/*
-	*	dynamic non-virtual vectors are not supported
-	*/
-	if(!pvar->veclen) {
-		fprintf(stderr, "structure \"%s\", member \"%s\": dynamic vectors "
-			"are not supported.\n", pstruct->identifier, pvar->identifier);
-		result = FALSE;
-	}
-	/*
-	*	PV vectors are not supported
+	*	check vector types
 	*/
 	if(pvar->veclen != 1) {
+		/*
+		*	PV vectors are not supported
+		*/
 		if(pvar->vartype & (OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)) {
-			fprintf(stderr, "structure \"%s\", member \"%s\": vectors of PV variables "
+			fprintf(stderr, "structure \"%s\", variable \"%s\": vectors of PV variables "
 				"are not supported.\n", pstruct->identifier, pvar->identifier);
+			result = FALSE;
+		}
+		/*
+		*	vectors of structures are not (yet) supported
+		*/
+		if(pvar->structurename) {
+			fprintf(stderr, "structure \"%s\", variable \"%s\": vectors of structures "
+				"are not supported.\n", pstruct->identifier, pvar->identifier);
+			result = FALSE;
+		}
+		/*
+		*	dynamic vectors of C-type variables are not supported
+		*/
+		if((!pvar->veclen) && (pvar->vartype == OV_VT_BYTE_VEC)) {
+			fprintf(stderr, "structure \"%s\", variable \"%s\": dynamic vectors of C-type "
+				"variables are not supported.\n", pstruct->identifier, pvar->identifier);
 			result = FALSE;
 		}
 	}
@@ -1198,14 +1209,6 @@ OV_BOOL ov_codegen_checksemantics_member(
 	*	if member is a structure, check the structure definition
 	*/
 	if(pvar->structurename) {
-		/*
-		*	vectors of structures are not (yet) supported
-		*/
-		if(pvar->veclen != 1) {
-			fprintf(stderr, "structure \"%s\", member \"%s\": vectors of structures "
-				"are not supported.\n", pstruct->identifier, pvar->identifier);
-			result = FALSE;
-		}
 		pvarstruct = ov_codegen_getstructdef(plib, pvar->structurename);
 		if(pvarstruct) {
 			pvar->structurelibname = pvarstruct->libname;
@@ -1255,20 +1258,31 @@ OV_BOOL ov_codegen_checksemantics_variable(
 		result = FALSE;
 	}
 	/*
-	*	dynamic non-virtual vectors are not supported
-	*/
-	if((!pvar->veclen) && !(pvar->varprops & OV_VP_VIRTUAL)) {
-		fprintf(stderr, "class \"%s\", variable \"%s\": dynamic vectors of non-virtual "
-			"variables are not supported.\n", pclass->identifier, pvar->identifier);
-		result = FALSE;
-	}
-	/*
-	*	PV vectors are not supported
+	*	check vector types
 	*/
 	if(pvar->veclen != 1) {
+		/*
+		*	PV vectors are not supported
+		*/
 		if(pvar->vartype & (OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)) {
 			fprintf(stderr, "class \"%s\", variable \"%s\": vectors of PV variables "
 				"are not supported.\n", pclass->identifier, pvar->identifier);
+			result = FALSE;
+		}
+		/*
+		*	vectors of structures are not (yet) supported
+		*/
+		if(pvar->structurename) {
+			fprintf(stderr, "class \"%s\", variable \"%s\": vectors of structures "
+				"are not supported.\n", pclass->identifier, pvar->identifier);
+			result = FALSE;
+		}
+		/*
+		*	dynamic vectors of C-type variables are not supported
+		*/
+		if((!pvar->veclen) && (pvar->vartype == OV_VT_BYTE_VEC)) {
+			fprintf(stderr, "class \"%s\", variable \"%s\": dynamic vectors of C-type "
+				"variables are not supported.\n", pclass->identifier, pvar->identifier);
 			result = FALSE;
 		}
 	}
@@ -1284,14 +1298,6 @@ OV_BOOL ov_codegen_checksemantics_variable(
 	*	if variable is a structure, check the structure definition
 	*/
 	if(pvar->structurename) {
-		/*
-		*	vectors of structures are not (yet) supported
-		*/
-		if(pvar->veclen != 1) {
-			fprintf(stderr, "class \"%s\", variable \"%s\": vectors of structures "
-				"are not supported.\n", pclass->identifier, pvar->identifier);
-			result = FALSE;
-		}
 		pvarstruct = ov_codegen_getstructdef(plib, pvar->structurename);
 		if(pvarstruct) {
 			pvar->structurelibname = pvarstruct->libname;

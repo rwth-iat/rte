@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.3 1999-07-27 17:41:10 dirk Exp $
+*   $Id: ov_ov.h,v 1.4 1999-07-28 16:01:37 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -70,6 +70,50 @@ typedef struct {				/* time span (duration) value */
 }	OV_TIME_SPAN;
 
 /*
+*	Datatypes of dynamic vectors
+*	----------------------------
+*/
+typedef struct {				/* dynamic bool value vector */
+	OV_UINT			veclen;
+	OV_BOOL			value[1];
+}	OV_BOOL_VEC;
+
+typedef struct {				/* dynamic integer value vector */
+	OV_UINT			veclen;
+	OV_INT			value[1];
+}	OV_INT_VEC;
+
+typedef struct {				/* dynamic unsigned integer value vector */
+	OV_UINT			veclen;
+	OV_UINT			value[1];
+}	OV_UINT_VEC;
+
+typedef struct {				/* dynamic single precision floating point value vector */
+	OV_UINT			veclen;
+	OV_SINGLE		value[1];
+}	OV_SINGLE_VEC;
+
+typedef struct {				/* dynamic double precision floating point value vector */
+	OV_UINT			veclen;
+	OV_DOUBLE		value[1];
+}	OV_DOUBLE_VEC;
+
+typedef struct {				/* dynamic string value vector */
+	OV_UINT			veclen;
+	OV_STRING		value[1];
+}	OV_STRING_VEC;
+
+typedef struct {				/* dynamic time/date value vector */
+	OV_UINT			veclen;
+	OV_TIME			value[1];
+}	OV_TIME_VEC;
+
+typedef struct {				/* dynamic time span (duration) value vector */
+	OV_UINT			veclen;
+	OV_TIME_SPAN	value[1];
+}	OV_TIME_SPAN_VEC;
+
+/*
 *	OV_STATE:
 *	---------
 *   States a value may have.
@@ -131,6 +175,7 @@ typedef struct {				/* single precision floating point process value */
 #define OV_VT_STRUCT		KS_VT_STRUCT
 
 #define OV_VT_VOID			KS_VT_VOID			/* not used in ACPLT/OV */
+#define OV_VT_BYTE			KS_VT_BYTE_VEC		/* used for C-type variables */
 #define OV_VT_BYTE_VEC		KS_VT_BYTE_VEC		/* used for C-type variables */
 
 #define OV_VT_HAS_STATE		ENUMVAL(KS_VAR_TYPE, 0x00010000)

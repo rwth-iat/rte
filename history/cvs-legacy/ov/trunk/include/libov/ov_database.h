@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.2 1999-07-26 16:14:07 dirk Exp $
+*   $Id: ov_database.h,v 1.3 1999-07-28 16:01:37 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -39,7 +39,9 @@ extern "C" {
 /*
 *	Maximum size of a database file
 */
+#ifndef OV_DATABASE_MAXSIZE
 #define OV_DATABASE_MAXSIZE	16777216	/* 16 MByte */
+#endif
 
 /*
 *	OV_DATABASE_INFO:

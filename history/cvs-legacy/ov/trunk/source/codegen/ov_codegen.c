@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.2 1999-07-27 17:41:12 dirk Exp $
+*   $Id: ov_codegen.c,v 1.3 1999-07-28 16:01:38 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -784,23 +784,34 @@ void ov_codegen_printstructtypedef(
 	*/
 	fprintf(fp, "typedef struct {\n");
 	for(pvar=pstruct->members; pvar; pvar=pvar->pnext) {
-		switch(pvar->vartype) {
-			case OV_VT_STRUCT:
-				fprintf(fp, "    OV_STRUCT_%s v_%s", ov_codegen_replace(pvar->structurename),
-					pvar->identifier);
-				break;
-			case OV_VT_BYTE_VEC:
-				fprintf(fp, "    %s v_%s", pvar->ctypename, pvar->identifier);
-				break;
-			default:
-				fprintf(fp, "    %s v_%s", ov_codegen_getvartypetext(pvar->vartype),
-					pvar->identifier);
-				break;
+		if(pvar->veclen) {
+			/*
+			*	scalar or vector of fixed length
+			*/
+			switch(pvar->vartype) {
+				case OV_VT_STRUCT:
+					fprintf(fp, "    OV_STRUCT_%s v_%s", ov_codegen_replace(pvar->structurename),
+						pvar->identifier);
+					break;
+				case OV_VT_BYTE_VEC:
+					fprintf(fp, "    %s v_%s", pvar->ctypename, pvar->identifier);
+					break;
+				default:
+					fprintf(fp, "    %s v_%s", ov_codegen_getvartypetext(pvar->vartype),
+						pvar->identifier);
+					break;
+			}
+			if(pvar->veclen > 1) {
+				fprintf(fp, "[%lu]", pvar->veclen);
+			}
+			fprintf(fp, ";\n");
+		} else {
+			/*
+			*	vector of dynamic length
+			*/
+			fprintf(fp, " \\\n    %s_VEC *v_%s;", ov_codegen_getvartypetext(pvar->vartype),
+				pvar->identifier);
 		}
-		if(pvar->veclen > 1) {
-			fprintf(fp, "[%lu]", pvar->veclen);
-		}
-		fprintf(fp,";\n");
 	}
 	fprintf(fp, "}   OV_STRUCT_%s_%s;\n", plib->identifier, pstruct->identifier);
 }
@@ -870,23 +881,34 @@ void ov_codegen_printclassinstdefines(
 	*/
 	for(pvar = pclass->variables; pvar; pvar=pvar->pnext) {
 		if(!(pvar->varprops & OV_VP_VIRTUAL)) {
-			switch(pvar->vartype) {
-				case OV_VT_STRUCT:
-					fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
-						pvar->structurename), pvar->identifier);
-					break;
-				case OV_VT_BYTE_VEC:
-					fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
-					break;
-				default:
-					fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
-						pvar->vartype),	pvar->identifier);
-					break;
+			if(pvar->veclen) {
+				/*
+				*	scalar or vector of fixed length
+				*/
+				switch(pvar->vartype) {
+					case OV_VT_STRUCT:
+						fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
+							pvar->structurename), pvar->identifier);
+						break;
+					case OV_VT_BYTE_VEC:
+						fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
+						break;
+					default:
+						fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
+							pvar->vartype),	pvar->identifier);
+						break;
+				}
+				if(pvar->veclen > 1) {
+					fprintf(fp, "[%lu]", pvar->veclen);
+				}
+				fprintf(fp,";");
+			} else {
+				/*
+				*	vector of dynamic length
+				*/
+				fprintf(fp, " \\\n    %s_VEC *v_%s;", ov_codegen_getvartypetext(pvar->vartype),
+					pvar->identifier);
 			}
-			if(pvar->veclen > 1) {
-				fprintf(fp, "[%lu]", pvar->veclen);
-			}
-			fprintf(fp,";");
 		}
 	}
 	/*
