@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.44 2001-01-29 13:00:22 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.45 2003-10-13 12:10:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -43,9 +43,9 @@
 #include <netconfig.h>
 #endif
 
-#if PLT_USE_BUFFERED_STREAMS
+#include "ks/connection.h"
+#include "ks/stdconnectionmgr.h"
 #include "ks/xdrmemstream.h"
-#endif
 
 #include "ks/svrbase.h"
 #include "plt/log.h"
@@ -57,83 +57,11 @@
 
 
 // ---------------------------------------------------------------------------
-// As we don't know how expensive the call to FD_SETSIZE is, we're cashing the
-// result here. On some systems, FD_SETSIZE boils down to a (fast!) kernel
-// trap, on some others to a sloooow kernel trap. So we take our chances here.
-// BTW -- with NT it boils down to a stupid constant: 64. Believe it or not:
-// that is claimed to be "new technology" -- blah blah blah!
 //
-#if !PLT_USE_BUFFERED_STREAMS
-static size_t ks_dtsz;
-static bool ks_dtsz_valid = false;
-inline static size_t
-ks_dtablesize()
-{
-    if (!ks_dtsz_valid) {
-        ks_dtsz = FD_SETSIZE;
-    }
-    return ks_dtsz;
-} // ks_dtablesize
-#endif
-
-
-// ---------------------------------------------------------------------------
-// Return the next timer event that will trigger or 0, if there's none in
-// the timer event queue.
-//
-inline const KsTimerEvent *
-KsServerBase::peekNextTimerEvent() const
-{
-    if ( _timer_queue.isEmpty() ) {
-        return 0;
-    } else {
-        return _timer_queue.peek();
-    }
-}
-
-
-
-//////////////////////////////////////////////////////////////////////
-
 inline void
 KsTimerEvent::trigger()
 {
 }
-
-
-#if PLT_USE_BUFFERED_STREAMS
-// ---------------------------------------------------------------------------
-// When working with buffered streams, we´re using a timer event to free up
-// unused fragments from time to time. This way, memory from large requests or
-// replies can be reclaimed not only by the transports but also by the C++
-// objects. Typically, not all currently unused fragments (buffers) will be
-// given back at once but rather we leave some spare for client requests to
-// come. Someone should implement a sorted list of free fragments, so
-// fragmentation could be minimized. But then, who's gonna do it?
-//
-class KsGarbageTimerEvent : public KsTimerEvent {
-public:
-    KsGarbageTimerEvent(unsigned long interval);
-    virtual void trigger();
-
-protected:
-    unsigned long _interval;
-}; // class KsGarbageTimerEvent
-
-
-KsGarbageTimerEvent::KsGarbageTimerEvent(unsigned long interval)
-    : KsTimerEvent(KsTime::now(interval)),
-      _interval(interval)
-{
-} // KsGarbageTimerEvent::KsGarbageTimerEvent
-
-
-void KsGarbageTimerEvent::trigger()
-{
-    xdrmemstream_freegarbage();
-    _trigger_at = KsTime::now(_interval);
-    KsServerBase::getServerObject().addTimerEvent(this);
-} // KsGarbageTimerEvent::trigger
 
 
 // ---------------------------------------------------------------------------
@@ -141,13 +69,11 @@ void KsGarbageTimerEvent::trigger()
 // calls for attention to the transport dispatcher of the current ACPLT/KS
 // server object.
 //
-bool KsServerBase::KssAttentionXDRDispatcher::attention(KssConnection &conn)
+bool KsServerBase::KssAttentionXDRDispatcher::attention(KsConnection &conn)
 {
     KsServerBase::getServerObject().dispatchTransport((KssXDRConnection &)conn);
     return true;
 } // KsServerBase::KssAttentionXDRDispatcher::attention
-
-#endif
 
 
 // ---------------------------------------------------------------------------
@@ -168,11 +94,6 @@ KsServerBase::the_server = 0;
 KsServerBase::KsServerBase()
     : _sock_port(KS_ANYPORT),
       _reuse_addr(false), // per default don't reuse socket/port addresses
-#if PLT_USE_BUFFERED_STREAMS
-      _cnx_manager(0), // don't create a connection manager object yet as a
-                       // server programmer might wish to subclass it and use
-		       // this particular implementation.
-#endif
       _tcp_transport(0),
       _shutdown_flag(0),
       _send_buffer_size(16384),
@@ -181,7 +102,6 @@ KsServerBase::KsServerBase()
     PLT_PRECONDITION( the_server == 0 );
     the_server = this;
     _is_ok = true;
-#if PLT_USE_BUFFERED_STREAMS
     //
     // Set some parameters of the dynamic XDR memory streams...
     //
@@ -190,33 +110,19 @@ KsServerBase::KsServerBase()
 	PLT_POOL_BLOCK_COUNT, // default: max 2048 fragments
 	0,    // 4k*0 = 0k minimum free pool size
 	50);  // clean up 50% per "garbage collection"
-#endif
 } // KsServerBase::KsServerBase
 
 
 // ---------------------------------------------------------------------------
-// Now we're through. Clean up everything. Especially get rid of a possible
-// connection manager.
+// Now we're through. Clean up everything.
 //
 KsServerBase::~KsServerBase()
 {
     cleanup();
 
-#if PLT_USE_BUFFERED_STREAMS
-    if ( _cnx_manager ) {
-	//
-	// Get rid of the communication manager. We can´t do this in the
-	// cleanup() method as this method is also called when stopping the
-	// server. But a connection manager needs to be created only once
-	// before starting the server and thus can only be destroyed when
-	// the server object is destroyed too.
-	//
-#if !PLT_SYSTEM_OPENVMS
-    	delete _cnx_manager; // TODO & FIXME!!!
-#endif
-	_cnx_manager = 0;
-    }
-#endif
+    // TODO: when to destroy the Connection Manager? It might still be used
+    // by a KS client object in the same address space...!
+
     PLT_ASSERT(the_server == this);
     the_server = 0;
 } // KsServerBase::~KsServerBase
@@ -233,46 +139,16 @@ void KsServerBase::cleanup()
     // Destroy the TCP/IP transport, if there is one left...
     //
     if ( _tcp_transport ) {
-#if !PLT_USE_BUFFERED_STREAMS
-        svc_destroy(_tcp_transport);
-#else
-	_cnx_manager->removeConnection(*_tcp_transport);
+	KsConnectionManager::getConnectionManagerObject()->
+	    removeConnection(*_tcp_transport);
 	_tcp_transport->shutdown();
     	delete _tcp_transport;
-#endif
         _tcp_transport = 0;
     }
-    //
-    // Remove remaining timer events, there's no need for them now.
-    //
-    while (!_timer_queue.isEmpty()) {
-        KsTimerEvent *pevent = _timer_queue.removeFirst();
-        delete pevent;
-    }
+
+    // TODO: tell the connection manager to cleanup its timer event queue
+
 } // KsServerBase::cleanup
-
-
-#if PLT_USE_XTI
-// ---------------------------------------------------------------------------
-//
-//
-PltString KsServerBase::getNetworkTransportDevice(const char *protocol)
-{
-    void             *handle;
-    struct netconfig *nc;
-    PltString         device("/dev/", protocol);
-    
-    handle = setnetconfig();
-    while ( (nc = getnetconfig(handle)) != 0 ) {
-    	if ( strcmp(nc->nc_proto, protocol) == 0 ) {
-	    device = PltString(nc->nc_device);
-	    break;
-	}
-    }
-    endnetconfig(handle);
-    return device;
-} // KsServerBase::getNetworkTransportDevice
-#endif
 
 
 // ---------------------------------------------------------------------------
@@ -294,23 +170,6 @@ KsServerBase::getTicket(XDR* xdr)
 // this is just like in real life...
 //
 
-// ---------------------------------------------------------------------------
-// This is the wrapper that redirects incomming requests issued by the RPC
-// layer up to the responsible server object. As mentioned in the header of
-// this source file, this wrapper is communication layer-dependant. But thanks
-// to the transport interface generalization this is rather painless to
-// achieve.
-//
-#if !PLT_USE_BUFFERED_STREAMS
-extern "C" void 
-ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
-{
-    PLT_PRECONDITION(KsServerBase::the_server);
-    
-    KsServerBase::the_server->_transport.setNewRequest(transport, request);
-    KsServerBase::the_server->dispatchTransport(KsServerBase::the_server->_transport);
-} // ks_c_dispatch
-#endif
 
 
 // ---------------------------------------------------------------------------
@@ -646,281 +505,17 @@ KsServerBase::exgData(KsAvTicket &,
 
 
 // ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// Event handling section (timeouts & i/o).
-// Here we deal with timer events and impatient KS clients requesting
-// services from us...
-//
-
-// ---------------------------------------------------------------------------
-// Helper function. Get ready readable fds with optional timeout. When using
-// a connection manager we´re watching for writeable fds too.
-// Returns number of ready fds or -1 on error, and the fdsets are updated to
-// reflect file descriptors willing to do i/o. Note that this helper function
-// eventually boils down to a select() with an optional PltTime timeout.
-//
-static int
-#if !PLT_USE_BUFFERED_STREAMS
-getReadyFds(fd_set &read_fds, const KsTime *pto)
-#else
-getReadyFds(fd_set &read_fds, fd_set &write_fds, size_t numfds, 
-            const KsTime *pto)
-#endif
-{
-    // copy timeout, bbsts
-    KsTime timeout;
-    KsTime *pTimeout;
-    if (pto) {
-        timeout = *pto;
-        pTimeout = &timeout;
-    } else {
-        pTimeout = 0;
-    }
-
-#if !PLT_USE_BUFFERED_STREAMS
-#define WRITE_FDS 0
-    size_t numfds = ks_dtablesize();
-#else
-#define WRITE_FDS &write_fds
-#endif
-
-#if PLT_SYSTEM_HPUX && PLT_SYSTEM_HPUX_MAJOR<10
-    int res = select(numfds,
-	             (int *) &read_fds, (int *) WRITE_FDS, 0,
-	             pTimeout);
-#else
-    int res = select(numfds, &read_fds, WRITE_FDS, 0, pTimeout);
-#endif
-
-    if ( res == -1 ) {
-        // select reports an error
-#if PLT_SYSTEM_NT
-        int myerrno = WSAGetLastError();
-#else
-        int myerrno = errno;
-#endif
-        PLT_DMSG_ADD("select returned -1: " << strerror(myerrno));
-        PLT_DMSG_END;
-        if ( myerrno == EINTR ) {
-            //
-            // While waiting for something to happen on the sockets, we
-            // were interrupted by a signal. So let's interpret this as
-            // a timeout...
-            //
-            FD_ZERO(&read_fds);
-#if PLT_USE_BUFFERED_STREAMS
-	    FD_ZERO(&write_fds);
-#endif
-            res = 0;
-        } else {
-            // something unexpected happened
-            PltLog::Error("Select failed unexpectedly");
-        }
-    }
-    return res;
-} // getReadyFds
-
-
-//////////////////////////////////////////////////////////////////////
-//
-//  Check for pending events
+// Check for pending events. This method is retained here for backwards
+// compatibility, but now relies on the current connection manager object
+// doing the real work.
 //
 bool
 KsServerBase::hasPendingEvents() const
 {
-    //TODO cnx mgr...
-#if !PLT_USE_BUFFERED_STREAMS
-    fd_set read_fds = svc_fdset;
-#else
-    fd_set read_fds, write_fds;
-    size_t numfds = _cnx_manager->getFdSets(read_fds, write_fds);
-#endif
-    KsTime zerotimeout;
-    return 
-        (   // check for a timer event...
-                !_timer_queue.isEmpty()
-             && !_timer_queue.peek()->remainingTime().isZero()
-        )
-#if PLT_USE_BUFFERED_STREAMS
-	||  // check to see whether there is a connection timeout
-	(   // pending...
-	         _cnx_manager->mayHaveTimeout()
-	     && !_cnx_manager->getEarliestTimeoutSpan().isZero()
-        )
-#endif
-#if !PLT_USE_BUFFERED_STREAMS
-        || getReadyFds(read_fds, &zerotimeout) > 0;
-#else
-        || getReadyFds(read_fds, write_fds, numfds, &zerotimeout) > 0;
-#endif
+    return KsConnectionManager::getConnectionManagerObject()->
+	hasPendingEvents();
 } // KsServerBase::hasPendingEvents
 
-
-// ---------------------------------------------------------------------------
-// Serve RPC requests with timeout. Return -1 on error or the number
-// of served fds.
-//
-int
-KsServerBase::serveRequests(const KsTime *pTimeout)
-{
-#if !PLT_USE_BUFFERED_STREAMS
-    fd_set read_fds = svc_fdset;
-    int res = getReadyFds(read_fds, pTimeout);
-#else
-    KsTime cnx_timeout;
-    bool   has_cnx_timeout = false;
-    fd_set read_fds, write_fds;
-    
-#if PLT_USE_BUFFERED_STREAMS
-// FIXME!!!
-    for ( ; ; ) {
-	KssConnection *con = _cnx_manager->getNextServiceableConnection();
-	if ( !con ) {
-	    break;
-	}
-	KssConnectionAttentionInterface *attn = con->getAttentionPartner();
-	bool reactivate = true;
-	if ( attn ) {
-	    reactivate = attn->attention(*con);
-	} else {
-	    PltLog::Error("KsServerBase::serveRequests(): "
-			  "connection without attention partner.");
-	    // FIXME: Should we reset the connection here?
-	}
-	if ( reactivate ) {
-	    _cnx_manager->trackConnection(*con);
-	}
-    }
-#endif
-
-    if ( _cnx_manager->mayHaveTimeout() ) {
-	//
-	// There is a timeout in the connection manager´s queue, so let´s
-	// check when this timeout will happen. If it would happen earlier
-	// than a possible other timeout, then we´ll take the timeout from
-	// the connection manager.
-	//
-	cnx_timeout = _cnx_manager->getEarliestTimeoutSpan();
-	if ( pTimeout ) {
-	    if ( cnx_timeout < *pTimeout ) {
-		pTimeout = &cnx_timeout;
-		has_cnx_timeout = true;
-	    }
-	} else {
-	    pTimeout = &cnx_timeout;
-	    has_cnx_timeout = true;
-	}
-    }
-    
-    size_t numfds = _cnx_manager->getFdSets(read_fds, write_fds);
-    int res = getReadyFds(read_fds, write_fds, numfds, pTimeout);
-#endif
-    if (res > 0) {
-        //
-        // Now as there are requests pending on some connections, try to
-        // serve them. The RPC level is responsible for this. Eventually
-        // the RPC level calls a wrapper which in turn redirects the
-        // request handling back to our server object.
-        // Each connection with waiting request(s) will be served exactly
-        // once, so after a round through all input handles we'll come
-        // back -- no matter how many requests are still waiting on the
-        // connections just served.
-        //
-
-        // When you write to a pipe or a socket and there is no listener
-        // any more, you will get a SIGPIPE, which by default terminates
-        // the application. There are two problems here: The code of the
-        // underlying system might depend on delivery of SIGPIPE and
-        // there are multiple interfaces for setting signal handlers.
-
-#ifdef KS_IGNORE_SIGPIPE
-        // TODO: This is a temporary fix. We leave it
-        // to the user what to do providing a hook.
-        signal(SIGPIPE, SIG_IGN);
-#endif
-
-#if !PLT_USE_BUFFERED_STREAMS
-        svc_getreqset(&read_fds);
-#else
-	int serviceables = _cnx_manager->processConnections(read_fds,
-		                                            write_fds);
-	while ( serviceables-- ) {
-	    KssConnection *con = _cnx_manager->getNextServiceableConnection();
-	    if ( !con ) {
-		break;
-	    }
-	    KssConnectionAttentionInterface *attn = con->getAttentionPartner();
-	    bool reactivate = true;
-	    if ( attn ) {
-		reactivate = attn->attention(*con);
-	    } else {
-		PltLog::Error("KsServerBase::serveRequests(): "
-			      "connection without attention partner.");
-		// FIXME: Should we reset the connection here?
-	    }
-	    if ( reactivate ) {
-		_cnx_manager->trackConnection(*con);
-	    }
-	}
-#endif
-    } else {
-#if PLT_USE_BUFFERED_STREAMS
-	if ( has_cnx_timeout ) {
-	    //
-	    // We had a connection timeout. So let the connection manager do
-	    // its dirty duty.
-	    //
-	    _cnx_manager->processTimeout();
-	}
-#endif
-    }
-    return res;
-} // KsServerBase::serveRequests
-
-
-// ---------------------------------------------------------------------------
-// Handles pending events or waits at most until timeout. In this case it
-// returns false, otherwise -- when events have been served -- it returns
-// true.
-//
-bool
-KsServerBase::servePendingEvents(KsTime * pTimeout)
-{
-    const KsTimerEvent *pEvent = peekNextTimerEvent();
-    if ( pEvent ) {
-        //
-        // The timerqueue is not empty, so peek at the first entry
-	// which is the event that will trigger soon...
-        //
-        KsTime timeleft( pEvent->remainingTime() );
-        if ( !timeleft.isZero() ) {
-            // 
-            // The next timer event is still not pending.
-            //
-            // Choose the shorter time from
-            // external timeout and the time left until the
-            // timer event occurs
-            //
-            if ( pTimeout && *pTimeout < timeleft ) {
-                timeleft = *pTimeout;
-            }
-            int servedRequests = serveRequests(&timeleft);
-            return servedRequests > 0;
-        } else {
-            //
-            // pending timer event, execute it immediately
-            // 
-            removeNextTimerEvent()->trigger();
-            return true;
-        }
-    } else {
-        // 
-        // The timer queue is empty: use external timeout
-        // 
-        int servedRequests = serveRequests(pTimeout);
-        return servedRequests > 0;
-    }
-} // KsServerBase::servePendingEvents
 
 
 // ---------------------------------------------------------------------------
@@ -934,20 +529,19 @@ KsServerBase::servePendingEvents(KsTime * pTimeout)
 void
 KsServerBase::startServer()
 {
-#if PLT_USE_BUFFERED_STREAMS
     //
     // If the user didn't create his very own connection manager object
     // then we'll supply a default one. In case this can't be done or
     // the user's manager isn't okay, then bail out with an error.
     //
-    if ( !_cnx_manager ) {
-    	_cnx_manager = new KssConnectionManager;
+    if ( !KsConnectionManager::getConnectionManagerObject() ) {
+    	new KsStdConnectionManager();
     }
-    if ( !_cnx_manager || !_cnx_manager->isOk() ) {
+    if ( !KsConnectionManager::getConnectionManagerObject()
+         || !KsConnectionManager::getConnectionManagerObject()->isOk() ) {
     	_is_ok = false;
 	return;
     }
-#endif
 
     //
     // Create transport: because the caller can specify the port to which we
@@ -958,19 +552,12 @@ KsServerBase::startServer()
     // _tcp_transport member variable point to it. In this case we won't
     // create a socket and a suitable transport here.
     //
-#if PLT_USE_BUFFERED_STREAMS
     if ( !_tcp_transport ) {
 	//
 	// Okay, let's create a socket and the corresponding transport only
 	// if the server writer hasn't done so.
 	//
-#endif
-#if !PLT_USE_XTI
 	int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-#else
-	int sock = t_open((const char *) getNetworkTransportDevice("tcp"),
-			  O_RDWR, (struct t_info *) 0);
-#endif
 	if ( sock >= 0 ) {
             //
             // Allow for reuse of IP address to cure problems with Winblows-
@@ -1002,93 +589,35 @@ KsServerBase::startServer()
 	    my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	    my_addr.sin_port        = htons((u_short) _sock_port);
 
-#if PLT_USE_XTI
-	    struct t_bind req;
-
-	    req.addr.maxlen = sizeof(my_addr);
-	    req.addr.len    = sizeof(my_addr);
-	    req.addr.buf    = (char *) &my_addr;
-	    req.qlen        = 5;
-
-	    if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
-#else
 	    if ( bind(sock, (struct sockaddr *) &my_addr, 
 		      sizeof(my_addr)) < 0 ) {
-#endif
 		//
 		// Failed to bind the socket. So close the socket and
 		// bail out with an error message.
 		//
 #if PLT_SYSTEM_NT
 		closesocket(sock);
-#elif PLT_USE_XTI
-		t_close(sock);
 #else
 		close(sock);
 #endif
 		PltLog::Error("KsServerBase::startServer(): "
 			      "could not bind the TCP socket.");
 	    } else {
-#if !PLT_USE_BUFFERED_STREAMS
-		_tcp_transport = svctcp_create(sock,
-					       _send_buffer_size,
-					       _receive_buffer_size);
-#else
 		_tcp_transport = new KssListenTCPXDRConnection(
 		    sock, 60/* secs */);
-#endif
 	    }
 	}
-#if PLT_USE_BUFFERED_STREAMS
     }
-#endif
 
     if ( _tcp_transport ) {
-#if !PLT_USE_BUFFERED_STREAMS
-        //
-        // Now register the dispatcher that should be called whenever there
-        // is a request for the KS program id and the correct version number.
-        //
-        // A wise word of warning: when using transports, be extremely care-
-        // ful with what you do! You should never allow svc_register to contact
-        // the portmapper -- better do it yourself. And never (NEVER!!!) use
-        // svc_unregister() as this one would deregister EVERYTHING with the
-        // same program and protocol version number, regardless of the trans-
-        // port used (udp, tcp). With TI ONC/RPC you must register every
-        // transport you create, but once again, never deregister it, if at
-	// all possible.
-        //
-	u_long ks_version;
-	
-	_is_ok = true;
-	for ( ks_version = KS_PROTOCOL_VERSION;
-	      ks_version >= KS_MINPROTOCOL_VERSION;
-	      --ks_version ) {
-	    if ( !svc_register(_tcp_transport, 
-			       KS_RPC_PROGRAM_NUMBER,
-			       ks_version,
-			       ks_c_dispatch,
-			       0) ) {  // Do not contact the portmapper!
-		//
-		// If registration fails, then destroy the transport and
-		// bail out immediately.
-		//
-		svc_destroy(_tcp_transport);
-		_tcp_transport = 0;
-		PltLog::Error("KsServerBase::startServer(): "
-			      "could not register TCP service.");
-		_is_ok = false;
-		break;
-	    }
-        }
-#else
 	//
 	// Make sure that the _tcp_transport is always automatically
 	// dispatched into the ACPLT/KS server dispatcher. Then register
 	// the transport with the connection manager.
 	//
 	_tcp_transport->setAttentionPartner(&_attention_dispatcher);
-    	if ( _cnx_manager->addConnection(*_tcp_transport) ) {
+    	if ( KsConnectionManager::getConnectionManagerObject()->
+	       addConnection(*_tcp_transport) ) {
 	    _is_ok = true;
 	} else {
 	    _tcp_transport->shutdown();
@@ -1098,24 +627,6 @@ KsServerBase::startServer()
                           "could not add TCP transport.");
             _is_ok = false;
 	}
-	//
-	// Register a timer event which will fire from time to time and
-        // triggers fragment garbage collection for the dynamic XDR memory
-	// streams.
-	//
-	KsGarbageTimerEvent *pGarbageEvent = 
-	    new KsGarbageTimerEvent(30 /* seconds */);
-	if ( !pGarbageEvent ) {
-            PltLog::Error("KsServerBase::startServer(): "
-                          "could not create garbage timer event.");
-    	    _is_ok = false;
-	}
-	if ( !addTimerEvent(pGarbageEvent) ) {
-            PltLog::Error("KsServerBase::startServer(): "
-                          "could not register garbage timer event.");
-    	    _is_ok = false;
-	}
-#endif
     } else {
         PltLog::Error("KsServerBase::startServer(): "
                       "could not create TCP transport.");
@@ -1144,14 +655,13 @@ void KsServerBase::downServer()
 //
 void KsServerBase::stopServer()
 {
-#if PLT_USE_BUFFERED_STREAMS
-    if ( _cnx_manager ) {
-	if ( !_cnx_manager->shutdownConnections(15) ) { // FIXME
+    if ( KsConnectionManager::getConnectionManagerObject() ) {
+	// TODO: can we shutdown here? What if a client is still running?
+	if ( !KsConnectionManager::getConnectionManagerObject()->shutdownConnections(15) ) { // FIXME
 	    PltLog::Info("KsServerBase::stopServer(): "
-                         "could not flush all sending XDR streams.");
+                         "could not successfully flush all (sending) streams.");
 	}
     }
-#endif
     cleanup();
 } // KsServerBase::stopServer
 
@@ -1175,43 +685,39 @@ KsServerBase::run()
     resetGoingDown();
     while (!isGoingDown()) {
 #if ! (PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS)
-        servePendingEvents(0); // no timeout -> wait forever
+        KsConnectionManager::getConnectionManagerObject()->
+	    servePendingEvents(0); // no timeout -> wait forever
 #else
-        servePendingEvents(&aShortTime);
+        KsConnectionManager::getConnectionManagerObject()->
+	    servePendingEvents(&aShortTime);
 #endif
     }
 }
 
-//////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------
+// Compatibility stuff for backward compatibility with 1.0.x and 1.2.x source
+// code series.
 //
-// Add a timer event object to the timer event queue. If its time has come
-// the timer event object will be activated by calling its trigger method.
-//
-bool 
+bool
 KsServerBase::addTimerEvent(KsTimerEvent *event)
 {
-    PLT_PRECONDITION(event);
-    return _timer_queue.add(event);
-}
+    return KsConnectionManager::getConnectionManagerObject()->
+	addTimerEvent(event);
+} // KsServerBase::addTimerEvent
 
-//
-// Remove a timer event object -- at least if its in the timer event
-// queue. In this case the method returns "true". Otherwise if the timer
-// event isn't in the queue then you'll get a "false" result.
-//
-bool 
+bool
 KsServerBase::removeTimerEvent(KsTimerEvent *event)
 {
-    return _timer_queue.remove(event);
-} 
+    return KsConnectionManager::getConnectionManagerObject()->
+	removeTimerEvent(event);
+} // KsServerBase::removeTimerEvent
 
-//
-//  Remove the next timer event from the queue
-//
-KsTimerEvent *
-KsServerBase::removeNextTimerEvent()
+KsTimerEvent *KsServerBase::removeNextTimerEvent()
 {
-    return _timer_queue.removeFirst();
-} 
+    return KsConnectionManager::getConnectionManagerObject()->
+	removeNextTimerEvent();
+} // KsServerBase::removeNextTimerEvent
+
 
 /* End of svrbase.cpp */
