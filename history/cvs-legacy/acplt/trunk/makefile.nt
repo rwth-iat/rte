@@ -1,5 +1,5 @@
 #
-# Makefile.bc -- toplevel makefile which can be used on NT to build
+# Makefile.nt -- toplevel makefile which can be used on NT to build
 #                the C++ communication library.
 #
 # Copyright (c) 1996, 1997
@@ -35,48 +35,64 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# $Header: /home/david/cvs/acplt/makefile.nt,v 1.1 1997-04-29 13:18:15 harald Exp $
+# $Header: /home/david/cvs/acplt/makefile.nt,v 1.2 1997-12-10 17:41:30 harald Exp $
 #
 
-UNIXES	= linux hpux solaris
-SOME_OTHER_OS = nt
+!ifdef __MAKE__
+DEVENV = borland
+!else
+DEVENV = msvc
+!endif
 
 nothing:
-	@echo "Error! Usage:"
-	@echo "make clean       -- remove all objects, executables, libraries, etc."
-	@echo "make nt.all     -- build libraries and examples"
-	@echo "make nt.acplt   -- build the libraries only"
+	@echo Error! Usage:
+	@echo (n)make clean      -- remove all objects, temporaries, etc.
+	@echo (n)make mrproper   -- like clean, but removes even libraries, etc.
+	@echo (n)make nt.all     -- build libraries and examples
+	@echo (n)make nt.acplt   -- build the libraries only
+	@echo  
+	@echo development environment is: $(DEVENV)
 
 clean:
-	@echo "-------------------------------------------------------------"
-	@echo "Cleaning up (can only do a minor clean, because we're on NT)"
-	@echo "-------------------------------------------------------------"
+	@echo -------------------------------------------------------------
+	@echo Cleaning up (can only do a minor clean, because we're on NT)
+	@echo -------------------------------------------------------------
 	cd plt\build\nt
-	make -f borland.mk clean
+	$(MAKE) -f $(DEVENV).mk clean
 	cd ..\..\..
 	cd ks\build\nt
-	make -f borland.mk clean
+	$(MAKE) -f $(DEVENV).mk clean
+
+mrproper:
+	@echo -------------------------------------------------------------
+	@echo Wiping up (can only do a minor clean, because we're on NT)
+	@echo -------------------------------------------------------------
+	cd plt\build\nt
+	$(MAKE) -f $(DEVENV).mk mrproper
+	cd ..\..\..
+	cd ks\build\nt
+	$(MAKE) -f $(DEVENV).mk mrproper
 
 nt.acplt:
-	@echo "-------------------------------------------------------------"
-	@echo "Building the libPLT..."
-	@echo "-------------------------------------------------------------"
+	@echo -------------------------------------------------------------
+	@echo Building the libPLT...
+	@echo -------------------------------------------------------------
 	cd plt\build\nt
-	make -f borland.mk
+	$(MAKE) -f $(DEVENV).mk 
 	cd ..\..\..
-	@echo "-------------------------------------------------------------"
-	@echo "Building the libKS..."
-	@echo "-------------------------------------------------------------"
+	@echo -------------------------------------------------------------
+	@echo Building the libKS...
+	@echo -------------------------------------------------------------
 	cd ks\build\nt
-	make -f borland.mk
+	$(MAKE) -f $(DEVENV).mk 
 	cd ..\..\..
 
 nt.all:	nt.acplt
-	@echo "-------------------------------------------------------------"
-	@echo "Building examples..."
-	@echo "-------------------------------------------------------------"
+	@echo -------------------------------------------------------------
+	@echo Building examples...
+	@echo -------------------------------------------------------------
 	cd ks\build\nt
-	make -f borland.mk examples
+	$(MAKE) -f $(DEVENV).mk examples
 	cd ..\..\..
 
-# End of Makefile.bc
+# End of Makefile.nt
