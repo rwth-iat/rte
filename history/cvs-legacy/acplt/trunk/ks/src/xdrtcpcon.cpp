@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.16 2002-05-23 10:31:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.17 2003-09-25 12:13:57 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -26,7 +26,11 @@
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
 
+#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
+#else
+#include <iostream>
+#endif
 
 #if PLT_USE_BUFFERED_STREAMS
 
