@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.12 2000-04-13 06:56:48 dirk Exp $
+*   $Id: ov_ov.h,v 1.13 2000-04-13 09:12:17 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -502,12 +502,13 @@ typedef struct {
 *	---------------
 *	VTable associated with an authentification/verification ticket (see ACPLT/KS)
 */
-#ifndef OV_COMPILE_LIBOVKS
 struct OV_TICKET_VTBL {
+	OV_TICKET	*(* createticket)(XDR *xdr, OV_TICKET_TYPE type);
+	void 		(* deleteticket)(OV_TICKET *pticket);
+	OV_BOOL		(* encodereply)(XDR *xdr, OV_TICKET *pticket);
 	OV_ACCESS	(* getaccess)(const OV_TICKET *pticket);
 };
 typedef struct OV_TICKET_VTBL	OV_TICKET_VTBL;
-#endif
 
 /*
 *	OV_MSG_TYPE:

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.6 2000-04-13 06:56:50 dirk Exp $
+*   $Id: ov_ksserver.h,v 1.7 2000-04-13 09:12:19 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -48,21 +48,6 @@ extern "C" {
 typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
 	int signal
 );
-
-/*
-*	OV_TICKET_VTBL:
-*	---------------
-*	VTable associated with an authentification/verification ticket (see ACPLT/KS)
-*/
-#ifdef OV_COMPILE_LIBOVKS
-struct OV_TICKET_VTBL {
-	OV_ACCESS	(* getaccess)(const OV_TICKET *pticket);
-	OV_TICKET	*(* createticket)(XDR *xdr, OV_TICKET_TYPE type);
-	void 		(* deleteticket)(OV_TICKET *pticket);
-	OV_BOOL		(* encodereply)(XDR *xdr, OV_TICKET *pticket);
-};
-typedef struct OV_TICKET_VTBL	OV_TICKET_VTBL;
-#endif
 
 /*
 *	Create a ticket from an incoming XDR stream (internal)

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.8 2000-04-13 06:56:51 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.9 2000-04-13 09:12:20 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -100,10 +100,10 @@ static OV_ACCESS defaultaccess = (OV_AC_READWRITE | OV_AC_INSTANTIABLE | OV_AC_D
 	| OV_AC_RENAMEABLE | OV_AC_LINKABLE | OV_AC_UNLINKABLE);
 
 static OV_TICKET_VTBL defaultticketvtbl = {
-	ov_ksserver_ticket_defaultticket_getaccess,
 	ov_ksserver_ticket_defaultticket_createticket,
 	ov_ksserver_ticket_defaultticket_deleteticket,
-	ov_ksserver_ticket_defaultticket_encodereply
+	ov_ksserver_ticket_defaultticket_encodereply,
+	ov_ksserver_ticket_defaultticket_getaccess
 };
 
 static OV_TICKET *ov_ksserver_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type) {
