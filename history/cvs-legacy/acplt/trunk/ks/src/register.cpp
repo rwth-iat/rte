@@ -1,4 +1,4 @@
-/* -*- plt-c++ -*- */
+/* -*-c++ -*- */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

@@ -1,6 +1,6 @@
-/* -*-plt-c++-*- */
+/* -*-c++-*- */
 /*
- * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.7 1999-09-16 10:54:49 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.8 2003-10-13 12:05:17 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

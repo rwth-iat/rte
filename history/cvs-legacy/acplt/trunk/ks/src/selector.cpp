@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/selector.cpp,v 1.6 2003-10-13 12:06:05 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
