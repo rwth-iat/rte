@@ -19,8 +19,8 @@
 
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
 // dbdump.cpp
-// Version : 1.3
-// last change: Mar 21, 2002
+// Version : 1.33
+// last change: Aug 8, 2002
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +37,7 @@
 #define uint unsigned int
 #endif
 
-#define version "1.3"
+#define version "1.33"
 
 // Global variables
 search_p				sp;				// search parameters
@@ -697,7 +697,7 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 
 		Indent(indent);
 		if (eng_props.access_mode & KS_AC_PART) {
-			db_file << "END_PART_INSTANCE;" << endl;
+			db_file << "END_PART_INSTANCE;" << endl << endl;
 		} else {
 			db_file << "END_INSTANCE;" << endl << endl;
 		}
@@ -1006,6 +1006,7 @@ int main(int argc, char **argv)						// command line arguments
 	int 		i;
 	KsString	start_path;
 	char		*x;
+	bool		overwrite_output = false;
 
 	cout << "** ACPLT/OV database dumper, version " << version << " **" << endl
 		 << "(c) 2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
@@ -1014,7 +1015,7 @@ int main(int argc, char **argv)						// command line arguments
 	if (argc < 2) {
 		cout << "Error: Missing parameter \"//host/server\"." << endl
 			 << "Usage: ./dbdump //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
-			 << "[-Ffrom_creation_time] [-Tto_creation_time] [-Ccomment]" << endl
+			 << "[-Ffrom_creation_time] [-Tto_creation_time] [-Ccomment] [-y]" << endl
 			 << "[-Aaccess[-access][-..]] [-Ssemantic_flags] [-Ddump_option[-dump_option][-..]]" << endl
 			 << endl << "For more help type ./dbdump -?" << endl;
 		return -1;
@@ -1022,7 +1023,7 @@ int main(int argc, char **argv)						// command line arguments
 
 	if ((argc == 2 && (strcmp(argv[1], "-?") == 0))) {							// print help
 		cout << "Usage: ./dbdump //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
-			 << "[-Ffrom_creation_time] [-Tto_creation_time] [-Ccomment]" << endl
+			 << "[-Ffrom_creation_time] [-Tto_creation_time] [-Ccomment] [-y]" << endl
 			 << "[-Aaccess[-access][-..]] [-Ssemantic_flags] [-Ddump_option[-dump_option][-..]]" << endl
 			 << endl
 			 << "Options:" << endl
@@ -1036,6 +1037,7 @@ int main(int argc, char **argv)						// command line arguments
 			 << "      format: YYYY/MM/DD, YYYY/MM/DD,hh:mm:ss or YYYY/MM/DD,hh:mm:ss.uuuuuu" << endl
 			 << "-Ccomment : search for objects containing that comment, wildcards allowed," << endl
 			 << "            no white space" << endl
+			 << "-y : overwrite output file without prompt" << endl
 			 << "-Aaccess[-access][-..] : search for objects matching this/these access right(s)" << endl
 			 << "      valid options: KS_AC_READ           read access" << endl
 			 << "                     KS_AC_WRITE          write access" << endl
@@ -1064,7 +1066,7 @@ int main(int argc, char **argv)						// command line arguments
 		return 0;
 	}
 
-	if (argc > 12) {
+	if (argc > 13) {
 		cout << "Error: Too many parameters." << endl;
 		return -1;
 	}
@@ -1115,6 +1117,8 @@ int main(int argc, char **argv)						// command line arguments
 					  break;
 			case 'D': *dop = GetDumpOpts(argv[i]);
 					  break;
+			case 'y': overwrite_output = true;
+					  break;
 			default	: cout << "Invalid parameter: " << argv[i] << "." << endl;
 					  delete sp;
 					  delete dop;
@@ -1128,11 +1132,28 @@ int main(int argc, char **argv)						// command line arguments
 		}
 	}
 
-	db_file.open(outfile);
+	db_file.open(outfile, ios::noreplace);	
+	char inp;
+
+	if (! (overwrite_output || db_file.good() )) {
+		cout << "Output file " << outfile << " already exists!" << endl
+			 << "If you want to replace it type \"y\": ";
+		cin >> inp;
+		if (inp == 'y' || inp == 'Y') {
+			db_file.open(outfile);
+		} else {
+			cout << "Output file " << outfile << " already exists:" << endl
+				 << "choose another file name!" << endl;
+			delete sp;
+			delete dop;
+			return -1;
+		}
+	}
 	start_path = sp->host_and_server + sp->path;
 	KscAnyCommObject start_object(start_path);		// create comm. object to start with
 	if (!start_object.getEngPropsUpdate()) {
 		db_file << "Can't open \"" << sp->host_and_server << "\"." << endl;
+		cout << "Can't open \"" << sp->host_and_server << "\"." << endl;
 		delete sp;
 		delete dop;
 		db_file.close();
@@ -1142,6 +1163,7 @@ int main(int argc, char **argv)						// command line arguments
 	KscAnyCommObject lib_version(PltString(sp->host_and_server + "/vendor/libov_version"));
 	if (!lib_version.getEngPropsUpdate()) {
 		db_file << "Error: Server is not an ACPLT/OV server." << endl;
+		cout << "Error: Server is not an ACPLT/OV server." << endl;
 		delete sp;
 		delete dop;
 		db_file.close();
@@ -1158,6 +1180,7 @@ int main(int argc, char **argv)						// command line arguments
 
 	delete sp;
 	delete dop;
+	cout << "Success." << endl;
 	return 0;																// no error
 }
 
