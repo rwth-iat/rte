@@ -22,13 +22,13 @@
 #define PLT_DEBUG 1
 #endif
 
-#if PLT_DEBUG
+#if !PLT_DEBUG
 
 #define PLT_DEBUG_PRECONDITIONS 0
 #define PLT_DEBUG_POSTCONDITIONS 0
 #define PLT_DEBUG_INVARIANTS 0
 
-#else /* PLT_DEBUG */
+#else /* !PLT_DEBUG */
 
 #ifndef PLT_DEBUG_PRECONDITIONS
 #define PLT_DEBUG_PRECONDITIONS 1
@@ -42,7 +42,7 @@
 #define PLT_DEBUG_INVARIANTS 1
 #endif
 
-#endif /* PLT_DEBUG */
+#endif /* !PLT_DEBUG */
 
 #if PLT_DEBUG_PRECONDITIONS
 #define PLT_PRECONDITION(x) assert(x)
