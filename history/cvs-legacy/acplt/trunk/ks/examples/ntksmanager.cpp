@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.3 1997-12-02 10:13:09 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.4 1997-12-02 18:41:55 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -113,7 +113,7 @@ public:
 
 
 NtManager::NtManager(int port)
-  : KsServerBase(port)
+  : KsManager(port)
 {
     if ( _is_ok &&
          initVendorTree() ) {
