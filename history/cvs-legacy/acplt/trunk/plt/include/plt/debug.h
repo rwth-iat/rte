@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.9 1997-03-12 16:19:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.10 1997-03-19 12:24:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -53,10 +53,11 @@
 
 #if !PLT_DEBUG
 
-#define PLT_DEBUG_PRECONDITIONS 0
-#define PLT_DEBUG_POSTCONDITIONS 0
-#define PLT_DEBUG_INVARIANTS 0
-#define PLT_DEBUG_PEDANTIC 0
+#define PLT_DEBUG_PRECONDITIONS    0
+#define PLT_DEBUG_POSTCONDITIONS   0
+#define PLT_DEBUG_NEW              0
+#define PLT_DEBUG_INVARIANTS       0
+#define PLT_DEBUG_PEDANTIC         0
 
 #else /* !PLT_DEBUG */
 
@@ -70,6 +71,10 @@
 
 #ifndef PLT_DEBUG_INVARIANTS
 #define PLT_DEBUG_INVARIANTS 1
+#endif
+
+#ifndef PLT_DEBUG_NEW
+#define PLT_DEBUG_NEW 1
 #endif
 
 #ifndef PLT_DEBUG_PEDANTIC
@@ -127,6 +132,46 @@ void plt_canthappen(const char *what, const char *file, int line);
 #define PLT_CHECK_INVARIANT() ((void)0)
 #endif
 
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG_NEW
+//////////////////////////////////////////////////////////////////////
+
+#ifndef PLT_DEBUG_NEW_REPORT
+#define PLT_DEBUG_NEW_REPORT true
+#endif
+
+class PltDebugNewTracker
+{
+    friend void * operator new(size_t);
+    friend void operator delete(void *);
+    friend void * operator new[](size_t);
+    friend void operator delete[](void *);
+
+public:    
+    PltDebugNewTracker();
+    ~PltDebugNewTracker();
+
+private:
+    static size_t refcount;
+    static size_t newcount;
+    static size_t deletecount;
+    static size_t newed;
+    static size_t deleted;
+    static bool report_always;
+};
+
+void * operator new(size_t);
+void operator delete(void *);
+void * operator new[](size_t);
+void operator delete[](void *);
+
+static PltDebugNewTracker plt_debug_new_tracker;
+
+//////////////////////////////////////////////////////////////////////
+#endif //PLT_DEBUG_NEW
+//////////////////////////////////////////////////////////////////////
+
 #endif /* __cplusplus */
 
+//////////////////////////////////////////////////////////////////////
 #endif /* PLT_DEBUG_INCLUDED */

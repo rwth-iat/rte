@@ -53,6 +53,140 @@ void plt_canthappen(const char *what, const char *file, int line)
     abort();
 }
 
+
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG_NEW
+//////////////////////////////////////////////////////////////////////
+
+#include <iomanip.h>
+
+bool
+PltDebugNewTracker::report_always = PLT_DEBUG_NEW_REPORT;
+
+size_t 
+PltDebugNewTracker::refcount = 0;
+
+size_t 
+PltDebugNewTracker::newcount = 0;
+
+size_t 
+PltDebugNewTracker::deletecount = 0;
+
+size_t 
+PltDebugNewTracker::newed = 0;
+
+size_t 
+PltDebugNewTracker::deleted = 0;
+
+//////////////////////////////////////////////////////////////////////
+
+PltDebugNewTracker::PltDebugNewTracker()
+{
+    if (refcount++ == 0) {
+        newcount = 0;
+        deletecount = 0;
+        newed = 0;
+        deleted = 0;
+    }        
+}
+
+//////////////////////////////////////////////////////////////////////
+
+PltDebugNewTracker::~PltDebugNewTracker()
+{
+    if (--refcount == 0) {
+        // last instance being destroyed
+        if (report_always || newed != deleted || newcount != deletecount) {
+            cerr << endl;
+            cerr << "Free store statistics:" << endl;
+            cerr << endl;
+            cerr << "Calls to ::new:    " << setw(10) << newcount << endl;
+            if (deletecount != newcount) {
+                cerr << "Calls to ::delete: " 
+                     << setw(10) 
+                     << deletecount 
+                     << endl;
+            }
+            cerr << "Bytes newed:       " << setw(10) << newed << endl;
+            if (newed != deleted) {
+                cerr << "Bytes deleted:     " 
+                     << setw(10) 
+                     << deleted 
+                     << endl;
+            }
+        }
+    }
+};
+
+//////////////////////////////////////////////////////////////////////
+
+#ifndef PLT_ALIGNMENT
+#define PLT_ALIGNMENT 8
 #endif
+
+#define PLT_ALIGNTO(m,x)  ( ( ((x)-1)/(m) + 1 ) * (m) )
+
+#define PLT_ALIGN(x)  PLT_ALIGNTO(PLT_ALIGNMENT,x)
+
+//////////////////////////////////////////////////////////////////////
+
+struct PltDebugNewHeader
+{
+    static const unsigned long magic_salt;
+    unsigned long magic;
+    size_t size;
+};
+const unsigned long 
+PltDebugNewHeader::magic_salt = 0x471142;
+
+//////////////////////////////////////////////////////////////////////
+
+void * operator new(size_t sz) {
+    PLT_ASSERT(sizeof(PltDebugNewHeader) % PLT_ALIGNMENT == 0);
+    PltDebugNewHeader * p = 
+        (PltDebugNewHeader *)
+            malloc(sizeof(PltDebugNewHeader)+sz);
+    if (p) {
+         p->magic = PltDebugNewHeader::magic_salt;
+         p->size  = sz;
+         ++PltDebugNewTracker::newcount;
+         PltDebugNewTracker::newed += sz;
+         return p + 1;
+    } else {
+        return 0;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void operator delete(void * p) {
+    if (p) {
+        PltDebugNewHeader * pheader = (PltDebugNewHeader*)p - 1;
+        PLT_ASSERT(pheader->magic == PltDebugNewHeader::magic_salt);
+        PltDebugNewTracker::deleted += pheader->size;
+        ++PltDebugNewTracker::deletecount;
+        free(pheader);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void * operator new[](size_t sz) 
+{
+    return operator new(sz);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void operator delete[](void * p)
+{
+    operator delete(p);
+}
+
+//////////////////////////////////////////////////////////////////////
+#endif //PLT_DEBUG_NEW
+//////////////////////////////////////////////////////////////////////
+
+#endif // PLT_DEBUG
 
 /* EOF plt/debug.cpp */
