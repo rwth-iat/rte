@@ -38,6 +38,12 @@
 #define PltArrayIterator_THISTYPE(T) PltIterator_<T>
 #endif
 
+#if PLT_COMPILER_DECCXX
+#define PltArrayIterator_CLASSTHISTYPE(T) PltArrayIterator<T>::THISTYPE
+#else
+#define PltArrayIterator_CLASSTHISTYPE(T) PltArrayIterator_THISTYPE(T) 
+#endif
+
 //////////////////////////////////////////////////////////////////////
 // Iterator interfaces
 //////////////////////////////////////////////////////////////////////
@@ -262,7 +268,7 @@ PltArrayIterator<T>::operator * () const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltArrayIterator_THISTYPE(T) & 
+inline PltArrayIterator_CLASSTHISTYPE(T) & 
 PltArrayIterator<T>::operator ++ ()
 {
     a_idx = ( a_idx == (size_t) -1 ) ?  0 : a_idx + 1;
@@ -282,7 +288,7 @@ PltArrayIterator<T>::toStart()
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltArrayIterator_THISTYPE(T) & 
+inline PltArrayIterator_CLASSTHISTYPE(T) & 
 PltArrayIterator<T>::operator -- ()
 {
     a_idx = ( a_idx == 0 ) ? (size_t) -1 : a_idx - 1;

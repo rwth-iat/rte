@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.10 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.11 2000-04-10 15:08:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -62,6 +62,14 @@ template <class T> class PltListIterator;
 #else
 #define PltListIterator_THISTYPE(T) PltIterator_<T>
 #define PltIListIterator_THISTYPE(T) PltIterator_<T>
+#endif
+
+#if PLT_COMPILER_DECCXX
+#define PltListIterator_CLASSTHISTYPE(T) PltListIterator<T>::THISTYPE
+#define PltIListIterator_CLASSTHISTYPE(T) PltIListIterator<T>::THISTYPE
+#else
+#define PltListIterator_CLASSTHISTYPE(T) PltListIterator_THISTYPE(T) 
+#define PltIListIterator_CLASSTHISTYPE(T) PltIListIterator_THISTYPE(T) 
 #endif
 
 ////////////////////////////////////////////////////////////////////////
@@ -487,7 +495,7 @@ PltListIterator<T>::operator bool() const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltListIterator_THISTYPE(T) &
+inline PltListIterator_CLASSTHISTYPE(T) &
 PltListIterator<T>::operator ++ ()
 {
     PltListIterator_base::stepForward();
@@ -497,7 +505,7 @@ PltListIterator<T>::operator ++ ()
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltListIterator_THISTYPE(T) &
+inline PltListIterator_CLASSTHISTYPE(T) &
 PltListIterator<T>::operator -- ()
 {
     PltListIterator_base::stepBackward();
@@ -569,7 +577,7 @@ PltIListIterator<T>::operator bool() const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltIListIterator_THISTYPE(T) &
+inline PltIListIterator_CLASSTHISTYPE(T) &
 PltIListIterator<T>::operator ++ ()
 {
     PltListIterator_base::stepForward();
@@ -579,7 +587,7 @@ PltIListIterator<T>::operator ++ ()
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltIListIterator_THISTYPE(T) &
+inline PltIListIterator_CLASSTHISTYPE(T) &
 PltIListIterator<T>::operator -- ()
 {
     PltListIterator_base::stepBackward();

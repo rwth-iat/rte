@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_PRIORITYQUEUE_INCLUDED
 #define PLT_PRIORITYQUEUE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue.h,v 1.5 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue.h,v 1.6 2000-04-10 15:08:51 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -32,6 +32,12 @@ template <class T> class PltPQIterator;
 #define PltPQIterator_THISTYPE(T) PltPQIterator<T>
 #else
 #define PltPQIterator_THISTYPE(T) PltIterator_<T>
+#endif
+
+#if PLT_COMPILER_DECCXX
+#define PltPQIterator_CLASSTHISTYPE(T) PltPQIterator<T>::THISTYPE
+#else
+#define PltPQIterator_CLASSTHISTYPE(T) PltPQIterator_THISTYPE(T) 
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -179,7 +185,7 @@ PltPQIterator<T>::operator * () const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline PltPQIterator_THISTYPE(T) & 
+inline PltPQIterator_CLASSTHISTYPE(T) & 
 PltPQIterator<T>::operator ++ ()
 {
     PLT_PRECONDITION(*this);
