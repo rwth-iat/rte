@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.17 1997-09-09 15:32:27 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.18 1997-09-10 11:32:12 nicole Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -494,9 +494,9 @@ KsManager::dispatch(u_long serviceId,
                 KsGetServerResult result;
                 getServer(ticket, params, result);
                 PLT_DMSG_ADD(hex << result.result << dec << " "
-                         result.server.name << "' "
-                         result.server.protocol_version << " "
-                         ( result.living ? " living" : "dead" ));
+                         << result.server.name << "' "
+                         << result.server.protocol_version << " "
+                         << ( result.living ? " living" : "dead" ));
                 PLT_DMSG_END;
                 sendReply(xprt, ticket, result);
             } else {
