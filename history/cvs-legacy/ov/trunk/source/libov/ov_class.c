@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.15 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_class.c,v 1.16 2002-01-24 15:22:12 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -515,15 +515,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	}
 	memset(pobj, 0, size);
 	/*
-	*	allocate database memory for the association table and clear it
-	*/
-	pobj->v_linktable = (OV_ATBLPTR)ov_database_malloc(pclass->v_linktablesize);
-	if(!pobj->v_linktable) {
-		return OV_ERR_DBOUTOFMEMORY;
-	}
-	memset(pobj->v_linktable, 0, pclass->v_linktablesize);
-
-	/*
 	*	preinitialize the object
 	*/
 	ov_time_gettime(&time);
@@ -762,6 +753,14 @@ OV_RESULT ov_class_createobject_preinit(
 	OV_ELEMENT				parent, child;
 	OV_RESULT				result;
 	/*
+	*	allocate database memory for the association table and clear it
+	*/
+	pobj->v_linktable = (OV_ATBLPTR)ov_database_malloc(pclass->v_linktablesize);
+	if(!pobj->v_linktable) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	memset(pobj->v_linktable, 0, pclass->v_linktablesize);
+	/*
 	*	initialize
 	*/
 	parent.elemtype = OV_ET_OBJECT;
@@ -871,7 +870,7 @@ void ov_class_deleteobject_cleanupinst(
 			ov_class_deleteobject_cleanupstaticinst(Ov_StaticPtrCast(ov_class, pobj));
 		}
 		/*
-		*	if the object in an association we get a pointer to it's library
+		*	if the object in an association we get a pointer to it's parent and childclass
 		*/
 		passoc=Ov_DynamicPtrCast(ov_association, pobj);
 		if(passoc) {
