@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.12 1997-05-22 06:29:01 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.13 1997-08-13 11:35:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -127,12 +127,6 @@
 //
 //
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-// forward declaration
-template<class T> class PltHandle;
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
 
 enum PltOwnership 
 { 
@@ -142,54 +136,9 @@ enum PltOwnership
     PltOsArrayNew           // Objects will be delete[]d
     };
 
-//////////////////////////////////////////////////////////////////////
-// Pointer-like handle
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-class PltPtrHandle
-: private PltHandle<T>
-{
-public:
-    PltPtrHandle();
-    PltPtrHandle(T *p, enum PltOwnership);  // no default to avoid conversion!
-    PltPtrHandle(const PltPtrHandle &);
-    
-    // accessors
-    operator bool () const;
-    T& operator*() const;
-    T* operator->() const;
-    T* getPtr() const;                                         // [1]
-  
-    
-    // modifiers
-    PltPtrHandle & operator =(const PltPtrHandle &rhs);
-    bool bindTo(T *, enum PltOwnership = PltOsNew);
-};
 
 //////////////////////////////////////////////////////////////////////
-// Array-like handle
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-class PltArrayHandle
-: private PltHandle<T>
-{
-public:
-    PltArrayHandle();
-    PltArrayHandle(T *p, enum PltOwnership); // no default to avoid conversion!
-    PltArrayHandle(const PltArrayHandle &);
-
-    operator bool () const;
-    T& operator[](size_t) const;
-    T* getPtr() const;                                          // [1]
-
-    PltArrayHandle & operator = (const PltArrayHandle &rhs);
-    bool bindTo(T *, enum PltOwnership = PltOsArrayNew);
-};
-
-//////////////////////////////////////////////////////////////////////
-// Implementation
+//// BEGIN OF INTERNAL BASE CLASSES PART
 //////////////////////////////////////////////////////////////////////
 
 struct Plt_AllocTracker 
@@ -275,6 +224,58 @@ protected:
     bool bindTo(T *, enum PltOwnership);
 };
 
+//////////////////////////////////////////////////////////////////////
+//// END OF INTERNAL BASE CLASSES PART
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// Pointer-like handle
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+class PltPtrHandle
+: private PltHandle<T>
+{
+public:
+    PltPtrHandle();
+    PltPtrHandle(T *p, enum PltOwnership);  // no default to avoid conversion!
+    PltPtrHandle(const PltPtrHandle &);
+    
+    // accessors
+    operator bool () const;
+    T& operator*() const;
+    T* operator->() const;
+    T* getPtr() const;                                         // [1]
+  
+    
+    // modifiers
+    PltPtrHandle & operator =(const PltPtrHandle &rhs);
+    bool bindTo(T *, enum PltOwnership = PltOsNew);
+};
+
+//////////////////////////////////////////////////////////////////////
+// Array-like handle
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+class PltArrayHandle
+: private PltHandle<T>
+{
+public:
+    PltArrayHandle();
+    PltArrayHandle(T *p, enum PltOwnership); // no default to avoid conversion!
+    PltArrayHandle(const PltArrayHandle &);
+
+    operator bool () const;
+    T& operator[](size_t) const;
+    T* getPtr() const;                                          // [1]
+
+    PltArrayHandle & operator = (const PltArrayHandle &rhs);
+    bool bindTo(T *, enum PltOwnership = PltOsArrayNew);
+};
+
+//////////////////////////////////////////////////////////////////////
+// Implementation
 //////////////////////////////////////////////////////////////////////
 
 inline

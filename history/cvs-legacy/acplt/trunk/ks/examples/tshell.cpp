@@ -372,11 +372,11 @@ execute_get_var()
 void
 init_dispatcher_table()
 {
-    dispatcher_table.add("", execute_nothing);
-    dispatcher_table.add("open", execute_open);
-    dispatcher_table.add("ls", execute_ls);
-    dispatcher_table.add("cd", execute_cd);
-    dispatcher_table.add("getvar", execute_get_var);
+    dispatcher_table.add("", &execute_nothing);
+    dispatcher_table.add("open", &execute_open);
+    dispatcher_table.add("ls", &execute_ls);
+    dispatcher_table.add("cd", &execute_cd);
+    dispatcher_table.add("getvar", &execute_get_var);
 }
 
 //////////////////////////////////////////////////////////////////////

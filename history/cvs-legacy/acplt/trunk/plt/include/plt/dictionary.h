@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DICTIONARY_INCLUDED
 #define PLT_DICTIONARY_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.7 1997-08-08 07:53:34 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/dictionary.h,v 1.8 1997-08-13 11:35:09 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -156,7 +156,7 @@ public:
 //    PltIterator< PltAssoc<K, V> >::THISTYPE * newIterator() const = 0;
     typedef PltAssoc<K,V> PltTemplateAssoc;	// avoid errors in expanding the
     			                                 // following macro
-    PltIterator_THISTYPE(PltTemplateAssoc) * newIterator() const = 0;
+    virtual PltIterator_THISTYPE(PltTemplateAssoc) * newIterator() const = 0;
 
     // modifiers
     virtual bool add(const K& key, const V& value) = 0;

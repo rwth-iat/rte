@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.11 1997-07-18 14:02:49 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.12 1997-08-13 11:35:11 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -55,7 +55,7 @@ class PltHashTable_base;           // "private" implementation class
 template <class K, class V> class PltHashTable_; 
                                    // "private" implementation template
 class PltHashIterator_base;        // "private" implementation class
-
+template <class K, class V> class PltHashIterator;
 //////////////////////////////////////////////////////////////////////
 // class PltHashTable<K,V>
 //////////////////////////////////////////////////////////////////////
@@ -97,6 +97,107 @@ class PltHashIterator_base;        // "private" implementation class
 #endif
 
 //////////////////////////////////////////////////////////////////////
+// (PltHashTable_base is a private class)
+//////////////////////////////////////////////////////////////////////
+
+class PltHashTable_base 
+{
+    friend class PltHashIterator_base;
+protected:
+    static PltAssoc_ * deletedAssoc;
+    static bool usedSlot(const PltAssoc_ *p) 
+        { return p && p != deletedAssoc; }
+
+    PltHashTable_base(size_t mincap=11, 
+                      float highwater=0.8, 
+                      float lowwater=0.4);
+    virtual ~PltHashTable_base();
+
+#if PLT_DEBUG_INVARIANTS
+    virtual bool invariant() const;
+#endif
+    // accessors
+    size_t size() const; // number of nondeleted elements
+    PltAssoc_ *lookupAssoc(const void * key) const;
+
+    // modifiers
+    bool addAssoc(PltAssoc_ *p);
+    PltAssoc_ *removeAssoc(const void * key);
+
+    virtual unsigned long keyHash(const void *) const = 0;
+    virtual bool keyEqual(const void *, const void *) const = 0;
+
+    PltAssoc_ **a_table;
+    size_t a_capacity;       // current capacity of a_table
+    size_t a_minCapacity;    // minimal capacity
+    float a_lowwater;        // \  try to keep the capacity between
+    float a_highwater;       // /  lowwater * size and highwater * size
+    float a_medwater;        // median of high- and lowwater
+    size_t a_used;           // current number of used entries;
+    size_t a_deleted;        // number of deleted elements
+
+    // accessors
+    size_t locate(const void * key) const;
+    size_t collidx(size_t i, size_t j) const;
+
+    // modifiers
+    bool insert(PltAssoc_ *);
+    bool changeCapacity(size_t mincap);
+
+    PltHashTable_base(const PltHashTable_base &); // forbidden
+    PltHashTable_base & operator = ( const PltHashTable_base & ); // forbidden
+};
+
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// (PltHashTable_<K,V> are private classes)
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+class PltHashTable_
+: public PltDictionary<K,V>,
+  private PltHashTable_base
+{
+    friend class PltHashIterator_base;
+    friend class PltHashIterator<K,V>;
+public:
+    PltHashTable_(size_t mincap=11, 
+                 float highwater=0.8, 
+                 float lowwater=0.4)
+        : PltHashTable_base(mincap, highwater, lowwater) { }
+    virtual ~PltHashTable_();
+
+    // accessors
+    virtual bool query(const K&, V&) const;
+    
+    // modifiers
+    virtual bool add(const K&, const V&);
+
+    virtual bool update(const K& key, 
+                        const V & newValue, 
+                        V & oldValue,
+                        bool & oldValueValid);
+
+    virtual bool remove(const K&, V&);
+
+    // container interface
+    PltHashIterator_THISTYPE(K,V) * newIterator() const;
+    size_t size() const;
+
+protected:
+    virtual unsigned long keyHash(const K &) const = 0;
+    virtual bool keyEqual(const K & , const K &) const = 0;
+
+private:
+    virtual unsigned long keyHash(const void * ) const;
+    virtual bool keyEqual(const void *, const void *) const;
+    PltHashTable_(const PltHashTable_ &); // forbidden
+    PltHashTable_<K,V> & operator = ( const PltHashTable_ & ); // forbidden
+};
+
+//////////////////////////////////////////////////////////////////////
+
 
 template <class K, class V>
 class PltHashTable
@@ -199,104 +300,6 @@ public:
 // IMPLEMENTATION PART -- clients should stop reading here...
 //////////////////////////////////////////////////////////////////////
 
-class PltHashTable_base 
-{
-    friend class PltHashIterator_base;
-protected:
-    static PltAssoc_ * deletedAssoc;
-    static bool usedSlot(const PltAssoc_ *p) 
-        { return p && p != deletedAssoc; }
-
-    PltHashTable_base(size_t mincap=11, 
-                      float highwater=0.8, 
-                      float lowwater=0.4);
-    virtual ~PltHashTable_base();
-
-#if PLT_DEBUG_INVARIANTS
-    virtual bool invariant() const;
-#endif
-    // accessors
-    size_t size() const; // number of nondeleted elements
-    PltAssoc_ *lookupAssoc(const void * key) const;
-
-    // modifiers
-    bool addAssoc(PltAssoc_ *p);
-    PltAssoc_ *removeAssoc(const void * key);
-
-    virtual unsigned long keyHash(const void *) const = 0;
-    virtual bool keyEqual(const void *, const void *) const = 0;
-
-    PltAssoc_ **a_table;
-    size_t a_capacity;       // current capacity of a_table
-    size_t a_minCapacity;    // minimal capacity
-    float a_lowwater;        // \  try to keep the capacity between
-    float a_highwater;       // /  lowwater * size and highwater * size
-    float a_medwater;        // median of high- and lowwater
-    size_t a_used;           // current number of used entries;
-    size_t a_deleted;        // number of deleted elements
-
-    // accessors
-    size_t locate(const void * key) const;
-    size_t collidx(size_t i, size_t j) const;
-
-    // modifiers
-    bool insert(PltAssoc_ *);
-    bool changeCapacity(size_t mincap);
-
-    PltHashTable_base(const PltHashTable_base &); // forbidden
-    PltHashTable_base & operator = ( const PltHashTable_base & ); // forbidden
-};
-
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V>
-class PltHashTable_
-: public PltDictionary<K,V>,
-  private PltHashTable_base
-{
-    friend class PltHashIterator_base;
-    friend class PltHashIterator<K,V>;
-public:
-    PltHashTable_(size_t mincap=11, 
-                 float highwater=0.8, 
-                 float lowwater=0.4)
-        : PltHashTable_base(mincap, highwater, lowwater) { }
-    virtual ~PltHashTable_();
-
-    // accessors
-    virtual bool query(const K&, V&) const;
-    
-    // modifiers
-    virtual bool add(const K&, const V&);
-
-    virtual bool update(const K& key, 
-                        const V & newValue, 
-                        V & oldValue,
-                        bool & oldValueValid);
-
-    virtual bool remove(const K&, V&);
-
-    // container interface
-    PltHashIterator_THISTYPE(K,V) * newIterator() const;
-    size_t size() const;
-
-protected:
-    virtual unsigned long keyHash(const K &) const = 0;
-    virtual bool keyEqual(const K & , const K &) const = 0;
-
-private:
-    virtual unsigned long keyHash(const void * ) const;
-    virtual bool keyEqual(const void *, const void *) const;
-    PltHashTable_(const PltHashTable_ &); // forbidden
-    PltHashTable_<K,V> & operator = ( const PltHashTable_ & ); // forbidden
-};
-    
-
-//////////////////////////////////////////////////////////////////////
-// (PltHashTable_base is a private class)
-//////////////////////////////////////////////////////////////////////
-// Implementation class for PltHashTable<K,V>
-//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION

@@ -142,8 +142,13 @@
 #endif
 
 #if PLT_COMPILER_MSVC
-#define PLT_SIMULATE_BOOL 1
-#pragma warning (disable : 4237 )  /* disable warning about defining bool... */
+# if PLT_COMPILER_MSVC < 1100
+# define PLT_SIMULATE_BOOL 1
+# pragma warning (disable : 4237 )  /* disable warning about defining bool   */
+# else
+# define PLT_SIMULATE_BOOL 0
+#endif
+
 #pragma warning (disable : 4284 )  /* disable warning about operator ->      */
                                    /* for non-struct data types              */
 #ifdef _CPPRTTI
