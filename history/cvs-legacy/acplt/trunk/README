@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.2.2 of the C++ Communication Libary. As always, it
+This is version 1.2.3 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
@@ -20,7 +20,7 @@ either commercial or not. Like before, you can tweak the code to suit
 your needs, etc.
 
 The latest and greatest stable release (as if this developer's release
-were not stable...) is 1.2.2.
+were not stable...) is 1.2.3.
 
 Currently, the following platforms and compilers are supported by the
 C++ Communication Library:
@@ -132,6 +132,15 @@ Please note that code versions are numbered as x.y.z where the middle
 number y denoted the state of the code: even numbered y's denote stable
 releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
+
+Version 1.2.3
+- SERVERS:
+  * Fixed a long-standing hidden bug in PltTime::operator<=, which failed
+    to compare two time stamps properly if both timestamps were of the
+    same second but with different microseconds. This in turn caused
+    connection establishment timeouts to be missed in certain situations,
+    especially with OV-based object management systems running sub-second
+    cycles.
 
 Version 1.2.2
 - SERVERS:
