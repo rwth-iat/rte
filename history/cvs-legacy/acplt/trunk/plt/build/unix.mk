@@ -76,46 +76,37 @@ libplt.a: $(CXX_LIBPLT_OBJECTS)
 	ranlib $@
 
 thandle : thandle.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 tdebug : tdebug.o libplt.a
 	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 tlist : tlist.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 tlog : tlog.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 trtti :	trtti.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 tpriorityqueue : tpriorityqueue.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 tstring : tstring.o libplt.a
-	$(CXX_LINK) -o $@ $^
-
-trtti.i : trtti.cpp ../../include/plt/rtti.hpp
-	$(CXX_COMPILE) -E -o $@ $<
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 ttime :	ttime.o libplt.a
-	$(CXX_LINK) -o $@ $^
-
-trbtreedict :	trbtreedict.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 thashtable :	thashtable.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 thtname :	thtname.o libplt.a
-	$(CXX_LINK) -o $@ $^
-
-tcomparable :	tcomparable.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 tarray :	tarray.o libplt.a
-	$(CXX_LINK) -o $@ $^
+	$(CXX_LINK) -o $@ $^ $(CXX_LIBS)
 
 clean :
 	rm -f *.o core
