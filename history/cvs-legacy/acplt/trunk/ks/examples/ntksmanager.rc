@@ -1,17 +1,44 @@
-/****************************************************************************
+/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.rc,v 1.3 1997-11-27 09:40:33 harald Exp $ */
+/*
+ * Copyright (c) 1996, 1997
+ * Chair of Process Control Engineering,
+ * Aachen University of Technology.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must print or display the above
+ *    copyright notice either during startup or must have a means for
+ *    the user to view the copyright notice.
+ * 3. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 4. Neither the name of the Chair of Process Control Engineering nor the
+ *    name of the Aachen University of Technology may be used to endorse or
+ *    promote products derived from this software without specific prior
+ *    written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE CHAIR OF PROCESS CONTROL
+ * ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
-
-ntksmanager.RC
-
-produced by Borland Resource Workshop
-
-
-*****************************************************************************/
-
+#include "resource.h"
 
 1 VERSIONINFO 
-FILEVERSION 1, 0, 0, 1
-PRODUCTVERSION 1, 0, 0, 1
+FILEVERSION 1, 1, 0, 1
+PRODUCTVERSION 1, 1, 0, 1
 FILEOS VOS_NT_WINDOWS32
 FILETYPE VFT_APP
 {
@@ -19,15 +46,15 @@ FILETYPE VFT_APP
  {
   BLOCK "040904E4"
   {
-   VALUE "CompanyName", "Chair of Process Control Engineering, Aachen University of Technology, Germany\000"
+   VALUE "CompanyName", "Chair of Process Control Engineering, RWTH Aachen, Germany\000"
    VALUE "FileDescription", "KS Manager service for NT\000"
-   VALUE "FileVersion", "1.00\000"
+   VALUE "FileVersion", "1.01\000"
    VALUE "InternalName", "ntksmanager\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1997\000\000"
-   VALUE "LegalTrademarks", "ACPLT"
+   VALUE "LegalCopyright", "Copyright© PLT 1997\000\000"
+   VALUE "LegalTrademarks", "ACPLT(tm) is a trademark of the Chair of Process Control Engineering\000"
    VALUE "OriginalFilename", "NTKSMANAGER.EXE\000"
-   VALUE "ProductName", "ACPLT(TM) KS Manager\000"
-   VALUE "ProductVersion", "1.00\000"
+   VALUE "ProductName", "ACPLT(tm) KS Manager Service/NT\000"
+   VALUE "ProductVersion", "1.01\000"
   }
 
  }
@@ -39,54 +66,6 @@ FILETYPE VFT_APP
 
 }
 
-42 ICON 
-{
- '00 00 01 00 01 00 20 20 10 00 00 00 00 00 E8 02'
- '00 00 16 00 00 00 28 00 00 00 20 00 00 00 40 00'
- '00 00 01 00 04 00 00 00 00 00 80 02 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 80 00 00 80 00 00 00 80 80 00 80 00'
- '00 00 80 00 80 00 80 80 00 00 80 80 80 00 C0 C0'
- 'C0 00 00 00 FF 00 00 FF 00 00 00 FF FF 00 FF 00'
- '00 00 FF 00 FF 00 FF FF 00 00 FF FF FF 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 0B BB 33 00 00 00 00 00 00 00 0F 0F'
- 'FF FF FF FF 3B BB 33 0F FF FF FF FF F0 F0 08 08'
- '88 88 88 88 33 33 33 08 88 88 88 88 80 80 00 00'
- '00 00 00 00 00 3B 30 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 3B 30 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 3B 30 00 00 00 00 00 00 00 00 00'
- '33 00 00 00 33 3B 33 33 33 30 00 00 00 00 00 03'
- 'BB 30 00 03 BB BB BB BB BB B3 30 00 00 00 00 03'
- 'BB B3 00 3B BB BB BB 33 33 BB B3 00 00 00 00 00'
- '3B B3 00 3B BB 3B B3 00 00 3B BB 30 00 00 00 00'
- '3B B3 03 BB B3 03 30 00 00 3B BB 30 00 00 00 00'
- '3B B3 03 BB B3 00 00 00 00 3B BB 30 00 00 00 00'
- '3B B3 3B BB 30 00 00 00 33 BB BB 30 00 00 00 00'
- '03 BB BB B3 00 00 00 33 BB BB B3 00 00 00 00 00'
- '03 BB BB B3 00 00 03 BB BB B3 30 00 00 00 00 00'
- '03 BB BB BB 30 00 3B BB BB 30 00 00 00 00 00 00'
- '03 BB 33 BB B3 00 3B BB 33 00 00 00 00 00 00 00'
- '03 BB 30 3B BB 30 3B BB 30 00 03 30 00 00 00 00'
- '00 3B B3 03 BB B3 3B BB 30 00 3B B3 00 00 00 00'
- '00 3B B3 00 3B BB 33 BB B3 33 BB B3 00 00 00 00'
- '00 3B B3 00 03 BB B3 BB BB BB BB 30 00 00 00 00'
- '00 03 30 00 00 33 30 33 33 33 33 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
- '00 00 00 00 00 00 00 00 00 00 00 00 00 00 FF FF'
- 'FF FF FF FF FF FF FF FF FF FF FF F0 1F FF A0 00'
- '00 05 A0 00 00 05 A0 00 00 05 FF FC 7F FF FF FC'
- '7F FF FF FC 7F FF F3 F0 01 FF E1 E0 00 7F E0 C0'
- '00 3F F0 C0 3C 1F F0 82 7C 1F F0 83 FC 1F F0 07'
- 'F0 1F F8 0F C0 3F F8 0F 80 7F F8 07 01 FF F8 03'
- '03 FF F8 41 07 9F FC 20 07 0F FC 30 00 0F FC 38'
- '00 1F FE 7C 40 3F FF FF FF FF FF FF FF FF FF FF'
- 'FF FF FF FF FF FF FF FF FF FF FF FF FF FF'
-}
+1 ICON "ks.ico"
+
+
