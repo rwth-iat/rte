@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.3 1997-03-17 11:04:55 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.4 1997-04-07 09:33:05 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -230,6 +230,75 @@ PltSyslog::alert(const char *msg)
 
 //////////////////////////////////////////////////////////////////////
 #endif // PLT_USE_SYSLOG
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+#if PLT_USE_CERRLOG
+//////////////////////////////////////////////////////////////////////
+
+PltCerrLog::PltCerrLog(const char *ident)
+{
+    // make copy of ident just to be sure: 
+    // The syslog facility stores only
+    // the pointer.
+    _ident = ident ? new char[strlen(ident)+1] : 0;
+    
+    if (_ident) {
+        strcpy(_ident, ident);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+#if !PLT_COMPILER_MSVC
+
+PltCerrLog::~PltCerrLog()
+{
+    if (_ident) {
+        delete[] _ident;
+    }
+}
+#endif
+//////////////////////////////////////////////////////////////////////
+
+void
+PltCerrLog::info(const char *msg)
+{
+    cerr << (_ident?_ident:"") << " [Info]:" << msg << endl;
+}
+
+/////////////////////////////////////////////////////////////////////
+
+void
+PltCerrLog::debug(const char *msg)
+{
+    cerr << (_ident?_ident:"") << " [Debug]:" << msg << endl;
+}
+
+/////////////////////////////////////////////////////////////////////
+
+void
+PltCerrLog::warning(const char *msg)
+{
+    cerr << (_ident?_ident:"") << " [Warning]:" << msg << endl;
+}
+
+/////////////////////////////////////////////////////////////////////
+
+void
+PltCerrLog::error(const char *msg)
+{
+    cerr << (_ident?_ident:"") << " [Error]:" << msg << endl;
+}
+
+/////////////////////////////////////////////////////////////////////
+
+void
+PltCerrLog::alert(const char *msg)
+{
+    cerr << (_ident?_ident:"") << " [Alert]:" << msg << endl;
+}
+
+//////////////////////////////////////////////////////////////////////
+#endif // PLT_USE_CERRLOG
 //////////////////////////////////////////////////////////////////////
 
 /* EOF blabla.cpp */
