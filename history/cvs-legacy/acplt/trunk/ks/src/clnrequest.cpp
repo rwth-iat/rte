@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/clnrequest.cpp,v 1.2 2003-10-15 15:27:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/clnrequest.cpp,v 1.3 2003-10-17 13:32:11 harald Exp $ */
 
 /*
  * Copyright (c) 2003
@@ -28,13 +28,31 @@
 // ---------------------------------------------------------------------------
 KscServiceRequest::KscServiceRequest(u_long service,
 				     const KscAvModule *avm,
-				     const KsXdrAble &params, KsResult &result)
+				     const KsXdrAble &params,
+				     KsResult &result)
     : _service(service),
       _avm(avm),
       _params(params),
       _result(result),
       _neg(0),
-      _status(REQ_NONE)
+      _status(REQ_NONE),
+      _sub_status(SUBREQ_NORMAL)
+{
+} // KscServiceRequest::KscServiceRequest
+
+KscServiceRequest::KscServiceRequest(u_short service,
+				     const KsString extension,
+				     const KscAvModule *avm,
+				     const KsXdrAble &params,
+				     KsResult &result)
+    : _service(service),
+      _extension(extension),
+      _avm(avm),
+      _params(params),
+      _result(result),
+      _neg(0),
+      _status(REQ_NONE),
+      _sub_status(SUBREQ_NORMAL)
 {
 } // KscServiceRequest::KscServiceRequest
 
