@@ -1,7 +1,7 @@
 The ACPLT/OV C++ Object Management Libraris and Utilities
 =========================================================
 
-This is release 1.2.2 of the ACPLT/OV object management libraries
+This is release 1.6.1 of the ACPLT/OV object management libraries
 and the associated utilities:
 - libov (basic object management library),
 - libovks (ACPLT/KS integration with ACPLT/OV),
@@ -80,95 +80,7 @@ the CreateObject, DeleteObject, Link and Unlink services provided by
 the integrated ACPLT/KS server.
 
 
-
-2. Compiling the Library
-------------------------
-
-Also make sure you have all the source code:
-
-ACPLT/OV:      source code of the ACPLT/OV libraries and utilties,
-GNU MP-Malloc: at least header files and precompiled library,
-ACPLT/KS:      source code of the ACPLT/KS-libraries (at least version 2),
-Sun ONC/RPC:   at least header files, precompiled library and rpcgen.
-
-The procedures described below will build and install the ACPLT/OV C code 
-generator, the basic ACPLT/OV library libov, the database utility ov_dbutil, 
-the library integrating ACPLT/OV with ACPLT/KS libovks and the ACPLT/KS 
-server for ACPLT/OV ov_server.
-
-2.1 Un*x
---------
-
-Make sure you have the right tools:
-
-GNU Tools:   make (version 3.75), gcc/g++ (version 2.7.2.1), 
-             ar (version 970202) , ranlib (version 970202), 
-             flex (version 2.5.4), bison (version 1.25) 
-             and perl (Version 5.003).
-
-Change to the approriate ACPLT/OV build directory, e.g.:
-
-	$ cd acplt/ov/build/linux
-
-Create dependencies:
-
-	$ make depend
-
-Compile and install:
-
-	$ make
-	$ make install
-
-2.2 Windows NT
---------------
-
-If compiling ACPLT/OV for Windows NT, you may choose between the Cygnus 
-port of the GNU tools Cygwin (in particulare the gcc/g++ compiler) to 
-the WIN32 environment and the Borland C++ compiler.
-
-2.2.1 Windows NT/Cygwin
------------------------
-
-You will need the Cygwin B20.1 including a properly installed make 
-(version 3.75), flex (version 2.5), bison (version 1.25) and libstdc++ 
-for the mingw32 environment.
-
-On the command line, change to the approriate ACPLT/OV build directory:
-
-	c:\> cd acplt\ov\build\cygwin
-
-Create dependencies:
-
-	c:\acplt\ov\build\cygwin> make depend
-
-Compile and install:
-
-	c:\acplt\ov\build\cygwin> make
-	c:\acplt\ov\build\cygwin> make install
-
-2.2.2 Windows NT/Borland
-------------------------
-
-You will need Borland C++ 5.0 (bcc32, brc32, tlib and implib) as well
-as a properly installed Win32 port of GNU make (version 3.75), flex 
-(version 2.5) and bison (version 1.25).
-
-Note, that we do NOT use Borland make but GNU make, so make sure that
-GNU make will be called if you type "make" on the command line. (I 
-would suggest you rename Borland Make from "make.exe" to "bmake.exe").
-
-On the command line, change to the approriate ACPLT/OV build directory:
-
-	c:\> cd acplt\ov\build\nt
-
-Compile and install:
-
-	c:\acplt\ov\build\cygwin> make
-	c:\acplt\ov\build\cygwin> make install
-
-Note, that under Borland you are not able to create the dependencies.
-
-Dirk Meyer <dirk@plt.rwth-aachen.de>
+Ansgar Münnemann <ansgar.muennemann@plt.rwth-aachen.de>
 Lehrstuhl fuer Prozessleittechnik
 RWTH Aachen, D-52056 Aachen, Germany
 
