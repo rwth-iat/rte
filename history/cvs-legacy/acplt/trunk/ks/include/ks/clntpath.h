@@ -61,6 +61,7 @@ class KscPath
 public:
     KscPath(const char *);
     KscPath(const KsString &);
+    KscPath(const KscPath &);
 
     bool isValid() const;
     size_t countComponents() const;
@@ -101,6 +102,18 @@ public:
     KsString getName() const;
     KsString getPathOnly() const;
 
+    // TODO:
+    //   currently paths with different host and server 
+    //   are considered to be not comparable by <, <=, >, >=
+    //   => find a better solution
+    //
+    bool operator == (const KscPathParser &);
+    bool operator != (const KscPathParser &);
+    bool operator <  (const KscPathParser &);
+    bool operator <= (const KscPathParser &);
+    bool operator >  (const KscPathParser &);
+    bool operator >= (const KscPathParser &);
+
 protected:
     size_t pathStart(const char *);
 
@@ -128,6 +141,16 @@ KscPath::KscPath(const KsString &str)
 {
     fValid = parse();
 }
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscPath::KscPath(const KscPath &other)
+: KsString(other),
+  fValid(other.fValid),
+  slash_count(other.slash_count),
+  last_comp(other.last_comp)
+{}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -257,6 +280,72 @@ KscPathParser::getPathOnly() const
     PLT_PRECONDITION(isValid());
 
     return path_and_name.getPathOnly();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscPathParser::operator == (const KscPathParser &other)
+{
+    PLT_PRECONDITION(isValid() && other.isValid());
+
+    return host_and_server == other.host_and_server
+        && path_and_name == other.path_and_name;
+}
+        
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscPathParser::operator != (const KscPathParser &other)
+{
+    PLT_PRECONDITION(isValid() && other.isValid());
+
+    return host_and_server != other.host_and_server
+        || path_and_name != other.path_and_name;
+}
+
+//////////////////////////////////////////////////////////////////////
+    
+inline bool 
+KscPathParser::operator <  (const KscPathParser &other)
+{
+    PLT_PRECONDITION(isValid() && other.isValid() && 
+                     host_and_server == other.host_and_server);
+
+    return path_and_name < other.path_and_name;
+}
+
+//////////////////////////////////////////////////////////////////////
+    
+inline bool 
+KscPathParser::operator <= (const KscPathParser &other)
+{
+    PLT_PRECONDITION(isValid() && other.isValid() && 
+                     host_and_server == other.host_and_server);
+
+    return path_and_name <= other.path_and_name;
+}
+
+//////////////////////////////////////////////////////////////////////
+    
+inline bool 
+KscPathParser::operator > (const KscPathParser &other)
+{
+    PLT_PRECONDITION(isValid() && other.isValid() && 
+                     host_and_server == other.host_and_server);
+
+    return path_and_name > other.path_and_name;
+}
+
+//////////////////////////////////////////////////////////////////////
+    
+inline bool 
+KscPathParser::operator >= (const KscPathParser &other)
+{
+    PLT_PRECONDITION(isValid() && other.isValid() && 
+                     host_and_server == other.host_and_server);
+
+    return path_and_name >= other.path_and_name;
 }
 
 #endif

@@ -102,7 +102,8 @@ public:
     KscBucketHandle removeMatchingBucket(KscBucketHandle);
     PltIterator<KscBucketHandle> *newBucketIterator() const;
 
-private:
+// FIXME private:
+public:
     class Key
     {
     public:
@@ -121,6 +122,11 @@ private:
         const KscAvModule *av_module;
         KscServer *server;
     };
+
+    friend class Key;
+
+//FIXME END
+private:
 
     class ValueIterator
     : public PltIterator<KscBucketHandle>

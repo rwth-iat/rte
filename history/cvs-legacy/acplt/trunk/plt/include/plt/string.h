@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.9 1997-04-01 11:21:05 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.10 1997-07-10 10:19:17 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -88,6 +88,11 @@ public:
     friend bool operator == (const PltString &, const PltString &);
     friend bool operator != (const PltString &, const char *);
     friend bool operator != (const PltString &, const PltString &);
+    friend bool operator <  (const PltString &, const PltString &);
+    friend bool operator <= (const PltString &, const PltString &);
+    friend bool operator >  (const PltString &, const PltString &);
+    friend bool operator >= (const PltString &, const PltString &);
+
 
 protected:
     PltString(size_t sz, char *p);
@@ -174,6 +179,42 @@ operator != (const PltString & str , const char *pc)
 
 //////////////////////////////////////////////////////////////////////
 
+inline bool 
+operator <  (const PltString &x, const PltString &y)
+{
+    PLT_PRECONDITION(x.ok() && y.ok());
+    return strcmp(x.p->s, y.p->s) < 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator <= (const PltString &x, const PltString &y)
+{
+    PLT_PRECONDITION(x.ok() && y.ok());
+    return strcmp(x.p->s, y.p->s) <= 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator >  (const PltString &x, const PltString &y)
+{
+    PLT_PRECONDITION(x.ok() && y.ok());
+    return strcmp(x.p->s, y.p->s) > 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator >= (const PltString &x, const PltString &y)
+{
+    PLT_PRECONDITION(x.ok() && y.ok());
+    return strcmp(x.p->s, y.p->s) >= 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 inline PltString 
 operator + (const PltString &s1, const PltString &s2) 
 {
@@ -199,3 +240,11 @@ operator + (const PltString &s1, const char *s2)
 
 //////////////////////////////////////////////////////////////////////
 #endif // PLT_STRING_INCLUDED
+
+
+
+
+
+
+
+

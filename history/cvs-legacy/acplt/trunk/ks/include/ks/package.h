@@ -91,7 +91,7 @@ public:
     bool add(KscPackageHandle pkg);
     bool remove(KscVariableHandle var);
     bool remove(KscPackageHandle pkg);
-    
+
     size_t sizeVariables(bool deep = false) const;
     size_t sizeSubpackages() const;
 
@@ -122,7 +122,7 @@ protected:
 
     // TODO: iterate over elements to determine status
     bool fDirty;
-    
+
     //
     // class DeepIterator
     // helper class to iterate over variables contained in a package
@@ -146,6 +146,7 @@ protected:
         PltListIterator <KscVariableHandle> vars_it;
         PltListIterator <KscPackageHandle> pkgs_it;
     };
+    friend class DeepIterator;
     // end of class DeepIterator
 
 #if PLT_DEBUG

@@ -762,8 +762,10 @@ _KscPackageBase::copyGetVarResults(
 
 //////////////////////////////////////////////////////////////////////
 
-#if 1
+#if 0
 
+// unoptimized version
+//
 bool 
 _KscPackageBase::fillSetVarParams(
     const PltArray<KscVariableHandle> &sorted_vars,
@@ -785,8 +787,10 @@ _KscPackageBase::fillSetVarParams(
 
 #endif
 
-#if 0
+#if 1
 
+// optimized version
+//
 bool 
 _KscPackageBase::fillSetVarParams(
     const PltArray<KscVariableHandle> &sorted_vars,
@@ -799,6 +803,12 @@ _KscPackageBase::fillSetVarParams(
     items[0].curr_props = sorted_vars[0]->getCurrPropsHandle();
 
     PLT_DMSG("Optimizing paths :" << endl);
+    PLT_DMSG("Input field :" << endl);
+#if PLT_DEBUG
+    for(size_t i = 0; i < sorted_vars.size(); i++) {
+        cerr << (sorted_vars[i])->getPathAndName() << endl;
+    }
+#endif
     PLT_DMSG("absolute\t\trelative" << endl);
     PLT_DMSG(items[0].path_and_name << endl); 
 
@@ -841,6 +851,8 @@ _KscPackageBase::copySetVarResults(const PltArray<KscVariableHandle> &sorted_var
 
 #if 0
 
+// unoptimized version
+//
 bool 
 _KscPackageBase::optimizePaths(
     const PltArray<KscVariableHandle> &sorted_vars,
@@ -864,6 +876,8 @@ _KscPackageBase::optimizePaths(
 
 //////////////////////////////////////////////////////////////////////
 
+// optimized version
+//
 bool 
 _KscPackageBase::optimizePaths(
     const PltArray<KscVariableHandle> &sorted_vars,

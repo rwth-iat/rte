@@ -45,6 +45,7 @@
 #include <plt/debug.h>
 #include <plt/rtti.h>
 #include <plt/list.h>
+#include "plt/comphandle.h"
 
 #include "ks/props.h"
 #include "ks/clntpath.h"
@@ -83,6 +84,17 @@ public:
     virtual void setAvModule(const KscAvModule *avm);
     virtual const KscAvModule *getAvModule() const;
 
+    //
+    // order of KscCommObject's falls back to order
+    // of their paths 
+    //
+    bool operator == (const KscCommObject &);
+    bool operator != (const KscCommObject &);
+    bool operator <  (const KscCommObject &);
+    bool operator <= (const KscCommObject &);
+    bool operator >  (const KscCommObject &);
+    bool operator >= (const KscCommObject &);
+
 protected:
     KscServer *findServer();
 
@@ -108,6 +120,58 @@ public:
     virtual void debugPrint(ostream &os) const;
 #endif
 };
+
+//////////////////////////////////////////////////////////////////////
+// sorry, inline comp ops need to be defined here to avoid 
+// compiler errors
+//
+inline bool 
+KscCommObject::operator == (const KscCommObject &other)
+{
+    return path == other.path;
+}
+
+//////////////////////////////////////////////////////////////////////
+ 
+inline bool 
+KscCommObject::operator != (const KscCommObject &other)
+{
+    return path != other.path;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscCommObject::operator <  (const KscCommObject &other)
+{
+    return path < other.path;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscCommObject::operator <= (const KscCommObject &other)
+{
+    return path <= other.path;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscCommObject::operator >  (const KscCommObject &other)
+{
+    return path > other.path;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscCommObject::operator >= (const KscCommObject &other)
+{
+    return path >= other.path;
+}
+
+//////////////////////////////////////////////////////////////////////
 
 typedef PltPtrHandle<KscCommObject> KscCommObjectHandle;
 
@@ -226,7 +290,7 @@ public:
 #endif
 };
 
-typedef PltPtrHandle<KscVariable> KscVariableHandle;
+typedef PltCompHandle<KscVariable> KscVariableHandle;
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
@@ -304,6 +368,7 @@ KscCommObject::getAvModule() const
 {
     return av_module;
 }
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
