@@ -50,7 +50,8 @@
 // should be subclassed for the final interface to a real historian.
 //
 class KssHistoryDomain
-: public KssHistory, public KssSimpleCommObject
+    : public KssHistory, 
+      public KssSimpleCommObject
 {
 public:
     KssHistoryDomain(const KsString &id,
@@ -76,6 +77,8 @@ public:
     virtual KS_INTERPOLATION_MODE getDefaultInterpolation() const;
     virtual KS_INTERPOLATION_MODE getSupportedInterpolations() const;
     virtual KsString              getTypeIdentifier() const;
+
+    bool isSupported(KS_INTERPOLATION_MODE ipm) const;
 
     //// KssChildrenService stuff
     virtual KssChildIterator * newIterator() const;
@@ -206,6 +209,14 @@ KssHistoryDomain::KssHistoryDomain(const KsString &id,
       _supported_interpolations(suppi), _type_identifier(ti)
 {}
 
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+bool 
+KssHistoryDomain::isSupported(KS_INTERPOLATION_MODE ipm) const
+{
+    return (ipm & getSupportedInterpolations()) ? true : false;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////

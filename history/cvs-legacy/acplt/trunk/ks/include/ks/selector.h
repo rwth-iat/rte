@@ -2,7 +2,7 @@
 #ifndef KS_SELECTOR_INCLUDED
 #define KS_SELECTOR_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.5 1999-01-12 16:23:43 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.6 1999-02-19 15:16:15 markusj Exp $
  *
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -67,20 +67,6 @@ enum KS_TIME_TYPE_ENUM {
     KS_TT_RELATIVE = 1
 };
 typedef enum_t KS_TIME_TYPE; 
-
-/////////////////////////////////////////////////////////////////////////////
-
-#if 0
-enum KS_INTERPOLATION_MODE_ENUM {
-    KS_IPM_DEFAULT = 0,
-    KS_IPM_NONE    = 1,
-    KS_IPM_LINEAR  = 2,
-    KS_IPM_MIN     = 3,
-    KS_IPM_MAX     = 4,
-    KS_IPM_HOLD    = 5
-};
-typedef enum_t KS_INTERPOLATION_MODE;
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // A unified class for times and time spans

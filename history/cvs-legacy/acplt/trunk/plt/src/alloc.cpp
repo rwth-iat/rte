@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/alloc.cpp,v 1.2 1998-12-14 18:06:04 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/alloc.cpp,v 1.3 1999-02-19 15:16:17 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -55,7 +55,7 @@ PltAllocator_base::~PltAllocator_base()
     while (objlist) {
         node * p = objlist;
         objlist = objlist->next;
-#if 0 || PLT_DEBUG
+#if 0 || PLT_DEBUG_PEDANTIC
 	cerr << "Freeing 0x" << hex << (unsigned long) p->obj << endl;
 #endif	
         ::operator delete(p->obj);
@@ -88,13 +88,13 @@ PltAllocator_base::do_alloc(size_t size)
         // add node to nodelist
         p->next  = nodelist;
         nodelist = p;
-#if 0 || PLT_DEBUG
+#if 0 || PLT_DEBUG_PEDANTIC
 	cerr << "Reusing 0x" << hex << (unsigned long) retval << endl;
 #endif	
         return retval;
     } else {
 	void * retval = ::operator new(size);
-#if PLT_DEBUG
+#if PLT_DEBUG_PEDANTIC
 	cerr << "Allocating 0x" << hex << (unsigned long) retval << endl;
 #endif	
         return retval;
@@ -109,7 +109,7 @@ PltAllocator_base::do_free(void *obj)
 {
     if (obj == 0) return;
 
-#if 0 || PLT_DEBUG
+#if 0 || PLT_DEBUG_PEDANTIC
 	cerr << "Returning 0x" << hex << (unsigned long) obj << endl;
 #endif	
 

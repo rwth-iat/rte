@@ -118,7 +118,7 @@ PltHashTable_base::PltHashTable_base(size_t mincap,
 PltHashTable_base::~PltHashTable_base()
 {
     if (a_table) {
-        delete a_table;
+        delete [] a_table;
     }
 }
 
@@ -130,7 +130,7 @@ PltHashTable_base::reset(size_t mincap)
     PLT_PRECONDITION( mincap > 0 );
 
     if (a_table) {
-        delete a_table;
+        delete [] a_table;
         a_table = 0;
     }
 
