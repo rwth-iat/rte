@@ -57,6 +57,20 @@ serviceparams.o: ../../src/serviceparams.cpp \
  ../../include/ks/array.h ../../../plt/include/plt/array.h \
  ../../../plt/include/plt/container.h ../../include/ks/list.h \
  ../../../plt/include/plt/list.h
+objmgrparams.o: ../../src/objmgrparams.cpp \
+ ../../include/ks/objmgrparams.h ../../include/ks/ks.h \
+ ../../include/ks/rpc.h ../../../plt/include/plt/debug.h \
+ ../../../plt/include/plt/config.h ../../include/ks/xdr.h \
+ ../../../plt/include/plt/rtti.h ../../include/ks/result.h \
+ ../../include/ks/array.h ../../../plt/include/plt/array.h \
+ ../../../plt/include/plt/container.h \
+ ../../../plt/include/plt/handle.h ../../../plt/include/plt/alloc.h \
+ ../../include/ks/string.h ../../../plt/include/plt/string.h \
+ ../../include/ks/serviceparams.h ../../include/ks/register.h \
+ ../../include/ks/time.h ../../../plt/include/plt/time.h \
+ ../../include/ks/props.h ../../include/ks/handle.h \
+ ../../include/ks/value.h ../../include/ks/list.h \
+ ../../../plt/include/plt/list.h
 histparams.o: ../../src/histparams.cpp ../../include/ks/xdr.h \
  ../../../plt/include/plt/rtti.h ../../../plt/include/plt/debug.h \
  ../../../plt/include/plt/config.h ../../include/ks/rpc.h \
@@ -74,7 +88,7 @@ string.o: ../../src/string.cpp ../../include/ks/string.h \
  ../../include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../include/ks/rpc.h
 selector.o: ../../src/selector.cpp ../../include/ks/selector.h \
- ../../include/ks/xdr.h ../../include/ks/rpc.h \
+ ../../include/ks/ks.h ../../include/ks/rpc.h ../../include/ks/xdr.h \
  ../../include/ks/handle.h ../../../plt/include/plt/handle.h \
  ../../../plt/include/plt/alloc.h ../../include/ks/string.h \
  ../../../plt/include/plt/string.h ../../include/ks/time.h \
