@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.3 1997-04-02 14:52:23 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.4 1997-04-03 10:04:26 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,17 +42,11 @@
 #include "ks/simpleserver.h"
 #include "ks/path.h"
 #include "plt/log.h"
-#include <ctype.h>
-#if PLT_DEBUG
-#include <iostream.h>
-#include <iomanip.h>
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
-KsSimpleServer::KsSimpleServer(const char * str)
-: KsServerBase(str),
-  _root_domain("/")
+KsSimpleServer::KsSimpleServer()
+: _root_domain("/")
 {
 }
 
@@ -281,7 +275,7 @@ bool
 KsSimpleServer::initVendorTree(const PltString &s_descr,
                                const PltString &v_name)
 {
-    const KsString s_version("1");
+    const KsString s_version(KsString::fromInt(getProtocolVersion()));
     //// TODO: failure detection.
 
     KssSimpleDomain *vendor_dom = 
@@ -308,7 +302,7 @@ KsSimpleServer::initVendorTree(const PltString &s_descr,
         && server_description_var
         && name_var) {
         // Allocation ok, now initialize the objects
-        server_name_var->setValue(new KsStringValue(server_name));
+        server_name_var->setValue(new KsStringValue(getServerName()));
         server_name_var->lock();
 
         server_version_var->setValue(new KsStringValue(s_version));

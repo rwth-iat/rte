@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SERVER_INCLUDED
 #define KS_SERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.1 1997-04-02 14:52:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/server.h,v 1.2 1997-04-03 10:04:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -51,10 +51,13 @@ class KsServer
 {
     friend KsReregisterServerEvent;
 public:
-    KsServer(const char * svr_name, 
-             u_long prot_version,
-             u_long ttl);
+    KsServer(u_long ttl);
     virtual ~KsServer();
+
+    //// accessors
+    virtual KsString getServerName() const=0;
+    virtual u_long   getProtocolVersion() const=0;
+
     virtual void startServer();    // start answering requests
     virtual void stopServer();     // stop answering requests asap
 

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.1 1997-04-02 14:53:08 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.2 1997-04-03 10:04:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,104 +37,9 @@
 
 #include "ks/server.h"
 #include "ks/register.h"
+#include "ks/svrrpcctx.h"
 #include "plt/log.h"
 #include <sys/socket.h>
-
-//////////////////////////////////////////////////////////////////////
-
-struct KssRPCContext_base
-{
-    KssRPCContext_base(const KsAvTicket &t)
-        : request_ticket(t), p_response_ticket(0) { }
-    virtual ~KssRPCContext_base();
-    virtual u_long procedureNumber() const = 0;
-    virtual bool encodeParams(XDR *) const = 0;
-    virtual bool decodeResult(XDR *) = 0;
-    
-    enum clnt_stat call(CLIENT *clnt, const KsTime & timeout);
-
-    // public attributes
-    const KsAvTicket & request_ticket;
-    KsAvTicket * p_response_ticket;
-};
-
-//////////////////////////////////////////////////////////////////////
-
-extern "C" bool_t ks_c_xdr_request(XDR *xdr, caddr_t * p)
-{
-    PLT_PRECONDITION(xdr && xdr->x_op == XDR_ENCODE && p);
-    KssRPCContext_base *pcall = (KssRPCContext_base*)p;
-    return pcall->request_ticket.xdrEncode(xdr) 
-        && pcall->encodeParams(xdr);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-extern "C" bool_t ks_c_xdr_response(XDR *xdr, caddr_t *p)
-{
-    PLT_PRECONDITION(xdr && xdr->x_op == XDR_DECODE && p);
-    KssRPCContext_base * pcall = (KssRPCContext_base*)p;
-    //
-    // The ticket must always be newly created:
-    // First, delete the old one (if present)
-    //
-    if (pcall->p_response_ticket) {
-        delete pcall->p_response_ticket;
-    }
-    //
-    // Then create a new ticket from the XDR stream.
-    //
-    pcall->p_response_ticket = KsAvTicket::xdrNew(xdr);
-    if (pcall->p_response_ticket) {
-        //
-        // We got a ticket, now decode the result. This depends
-        // on the specific call, so ask our child class to do it.
-        //
-        return pcall->decodeResult(xdr);
-    } else {
-        // We could not decode the ticket. So sorry.
-        return FALSE;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-KssRPCContext_base::~KssRPCContext_base()
-{
-    if (p_response_ticket) {
-        delete p_response_ticket;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-enum clnt_stat
-KssRPCContext_base::call(CLIENT *clnt, const KsTime & timeout)
-{
-    u_long procnr = procedureNumber();
-    enum clnt_stat res = clnt_call(clnt,
-                                   procnr,
-                                   (xdrproc_t)ks_c_xdr_request,
-                                   (caddr_t)this,
-                                   (xdrproc_t)ks_c_xdr_response,
-                                   (caddr_t)this,
-                                   timeout);
-    return res;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <u_long NR, class PARAMS, class RESULT>
-struct KssRPCContext
-: public KssRPCContext_base
-{
-    PARAMS params;
-    RESULT result;
-    KssRPCContext(const KsAvTicket & ticket) : KssRPCContext_base(ticket) { }
-    u_long procedureNumber() const { return NR; }
-    bool encodeParams(XDR *xdr) const { return params.xdrEncode(xdr); }
-    bool decodeResult(XDR *xdr) { return result.xdrDecode(xdr); }
-};
 
 //////////////////////////////////////////////////////////////////////
 
@@ -157,11 +62,8 @@ template class KssRPCContext<KS_UNREGISTER,
 
 //////////////////////////////////////////////////////////////////////
 
-KsServer::KsServer(const char * svr_name, 
-                   u_long prot_version,
-                   u_long ttl)
-: KsServerBase(svr_name, prot_version),
-  _ttl(ttl),
+KsServer::KsServer(u_long ttl)
+: _ttl(ttl),
   _registered(false)
 {
 }
@@ -180,17 +82,18 @@ KsServer::~KsServer()
 CLIENT *
 KsServer::createLocalClient()
 {
-#if 0
+#if 1
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof sin);
     sin.sin_family = AF_INET;
     sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     KsTime wait(1,0);
+    int sock = -1;
     return clntudp_create(&sin,
                           KS_RPC_PROGRAM_NUMBER,
                           KS_PROTOCOL_VERSION,
-                          wait,
-                          0);
+                          (struct timeval)wait,
+                          &sock);
 #else
     return clnt_create("localhost",
                        KS_RPC_PROGRAM_NUMBER,
@@ -207,8 +110,8 @@ KsServer::register_server()
 {
     KsAvNoneTicket ticket(KS_ERR_OK); // TODO use a better ticket?
     KssRegistrationContext regctx(ticket);
-    regctx.params.server.name = server_name;
-    regctx.params.server.protocol_version = protocol_version;
+    regctx.params.server.name = getServerName();
+    regctx.params.server.protocol_version = getProtocolVersion();
     regctx.params.port = _tcp_transport->xp_port;
     regctx.params.time_to_live = _ttl;
     
@@ -227,13 +130,14 @@ KsServer::unregister_server()
 {
     KsAvNoneTicket ticket(KS_ERR_OK); // TODO: better ticket?
     KssUnregistrationContext unregctx(ticket);
-    unregctx.params.server.name = server_name;
-    unregctx.params.server.protocol_version = protocol_version;
+    unregctx.params.server.name = getServerName();
+    unregctx.params.server.protocol_version = getProtocolVersion();
 
     CLIENT * clnt = createLocalClient();
     if (!clnt) return false;
 
     enum clnt_stat res = unregctx.call(clnt, KsTime(2,0));
+    clnt_destroy(clnt);
     return res == RPC_SUCCESS && unregctx.result.result == KS_ERR_OK;
 }
 

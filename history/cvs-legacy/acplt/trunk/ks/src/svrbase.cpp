@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.8 1997-04-02 14:52:24 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.9 1997-04-03 10:04:27 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -107,11 +107,8 @@ KsServerBase::the_server = 0;
 // Construction & destruction area. Watch for falling bits...
 // Uhh, I've been hit.
 
-KsServerBase::KsServerBase(const char *svr_name,
-                           const u_long prot_version)
-    : server_name(svr_name), 
-      protocol_version(prot_version),
-      _tcp_transport(0),
+KsServerBase::KsServerBase()
+:     _tcp_transport(0),
       shutdown_flag(false),
       send_buffer_size(16384),
       receive_buffer_size(16384)

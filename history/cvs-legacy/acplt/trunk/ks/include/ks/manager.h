@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.7 1997-04-02 14:52:10 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.8 1997-04-03 10:04:19 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -68,6 +68,13 @@ class KsManager
 public:
     KsManager();
     virtual ~KsManager();
+    //// accessors
+    virtual KsString getServerName() const 
+        { return KsString("MANAGER"); }
+
+    virtual u_long   getProtocolVersion() const
+        { return 1; }
+
     const PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> &
         getServerTable() const
             { return _server_table; }

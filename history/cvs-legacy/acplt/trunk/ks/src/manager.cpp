@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.7 1997-04-02 14:52:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.8 1997-04-03 10:04:24 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -46,8 +46,6 @@
 #include <string.h>
 #include <sys/socket.h>
 
-static const KsString KS_MANAGER_NAME("MANAGER");
-static const KsString KS_MANAGER_VERSION("1");
 static const KsString KS_MANAGER_DESCRIPTION("ACPLT/KS Manager");
 
 
@@ -214,9 +212,7 @@ KsmServer::KsmServer(const KsServerDesc & d,
 //////////////////////////////////////////////////////////////////////
 
 KsManager::KsManager()
-:  KsServerBase(KS_MANAGER_NAME),
-   KsSimpleServer(KS_MANAGER_NAME),
-  _registered(false),
+: _registered(false),
   _servers_domain("servers")
 {
 }
@@ -460,7 +456,7 @@ KsManager::registerServer(KsAvTicket & /*ticket*/,
         result.result = KS_ERR_BADPARAM;
         return;
     }
-    if (params.server.name == server_name) {
+    if (params.server.name == getServerName()) {
         // Do not overwrite entry for myself!
         result.result = KS_ERR_BADPARAM;
         return;
@@ -562,7 +558,7 @@ KsManager::unregisterServer(KsAvTicket & /*ticket*/,
 {
     // TODO: check ticket and params
     
-    if (params.server.name == server_name) {
+    if (params.server.name == getServerName()) {
         // Do not remove entry for myself!
         result.result = KS_ERR_BADPARAM;
         return;
@@ -600,10 +596,10 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
     }
     // TODO: check ticket and params
 
-    if (params.server.name == server_name) {
+    if (params.server.name == getServerName()) {
         // Hey, that's me!!!
-        result.server.name = server_name;
-        result.server.protocol_version = protocol_version;
+        result.server.name = getServerName();
+        result.server.protocol_version = getProtocolVersion();
         result.port = _tcp_transport->xp_port;
         result.expires_at = KsTime(LONG_MAX);
         result.living = true;
@@ -800,10 +796,10 @@ KsManager::initObjectTree()
     if (initVendorTree(KS_MANAGER_DESCRIPTION,
                        "Lehrstuhl fuer Prozessleittechnik, RWTH-Aachen")) {
         KssSimpleDomain *servers_manager =
-            new KssSimpleDomain(KS_MANAGER_NAME);
+            new KssSimpleDomain(getServerName());
         
         KssSimpleDomain *servers_manager_version =
-            new KssSimpleDomain(KS_MANAGER_VERSION);
+            new KssSimpleDomain(KsString::fromInt(getProtocolVersion()));
         
         KssSimpleVariable *manager_port =
             new KssSimpleVariable("port");

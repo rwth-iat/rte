@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.8 1997-04-02 14:52:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.9 1997-04-03 10:04:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -55,14 +55,19 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 //
 class KsServerBase {
 public:
-    KsServerBase(const char *svr_name,
-                 u_long prot_version = KS_PROTOCOL_VERSION);
+    KsServerBase();
     virtual ~KsServerBase(); // make sure the destructor is virtual...
-    
+
+    //// accessors
+    virtual KsString getServerName() const=0;
+    virtual u_long   getProtocolVersion() const=0;
+    static KsServerBase & getServerObject();
+    bool hasPendingEvents() const;   // check for events that want to be served
+
+    //// modifiers
     virtual void startServer();    // start answering requests
     virtual void run();            // This is the main loop
     virtual void stopServer();     // stop answering requests asap
-    bool hasPendingEvents() const;   // check for events that want to be served
  
     // serve pending events
     bool servePendingEvents(KsTime timeout = KsTime(0,0)); 
@@ -72,7 +77,6 @@ public:
     bool removeTimerEvent(KsTimerEvent *event);
     KsTimerEvent *getNextTimerEvent();
     
-    static KsServerBase & getServerObject();
 
     // service functions
     virtual void getVar(KsAvTicket &ticket,
@@ -110,8 +114,6 @@ protected:
 
     void init();
 
-    PltString server_name;
-    u_long protocol_version;
     PltPriorityQueue< PltPtrComparable<KsTimerEvent> > timer_queue;
     SVCXPRT *_tcp_transport; // RPC transport used to receive requests
     bool shutdown_flag; // signal to the run() loop to quit
