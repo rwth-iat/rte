@@ -1,5 +1,7 @@
-#ifndef KS_REGISTER_INCLUDED
-#define KS_REGISTER_INCLUDED
+/* -*-plt-c++-*- */
+#ifndef KS_RESULT_INCLUDED
+#define KS_RESULT_INCLUDED
+/* $Header: /home/david/cvs/acplt/ks/include/ks/result.h,v 1.1 1997-03-17 09:00:58 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -35,63 +37,22 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/////////////////////////////////////////////////////////////////////////
+#include "plt/debug.h"
 
-#include <ks/xdr.h>
-#include <ks/ks.h>
-#include <ks/string.h>
-#include "ks/result.h"
+////////////////////////////////////////////////////////////////////////////
+// class KsResult
+///////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////
-// class KsServerDesc
-////////////////////////////////////////////////////////////////////////
-
-class KsServerDesc : public KsXdrAble {
+class KsResult 
+: public KsXdrAble 
+{
 public:
-    KsServerDesc() : name() {}
-    KsServerDesc( const KsString &n, u_short pv )
-      : name(n), protocol_version(pv) {}
+    KsResult( KS_RESULT res = KS_ERR_OK ) { result = res; }
 
-    bool xdrEncode(XDR *) const;
-    bool xdrDecode(XDR *);
-    static KsServerDesc *xdrNew(XDR *);
-    
-    KsString  name;
-    u_short   protocol_version;
+    bool xdrEncode(XDR *xdr) const;
+    bool xdrDecode(XDR *xdr);
+    static KsResult *xdrNew(XDR *);
+
+    KS_RESULT result;
 };
-
-//////////////////////////////////////////////////////////////////////////
-// class KsRegistrationParams
-//////////////////////////////////////////////////////////////////////////
-
-class KsRegistrationParams {
-public:
-    KsRegistrationParams() {}
-    KsRegistrationParams( const KsServerDesc &, u_short, u_long );
-    
-    bool xdrEncode(XDR *) const;
-    bool xdrDecode(XDR *);
-    static KsRegistrationParams *xdrNew(XDR *);
-
-    KsServerDesc server;
-    u_short      port;
-    u_long       time_to_live;
-};
-
-//////////////////////////////////////////////////////////////////////////
-// class KsRegistrationResult
-//////////////////////////////////////////////////////////////////////////
-
-class KsRegistrationResult : public KsResult {
-public:
-
-    KsRegistrationResult( KS_RESULT res ) : KsResult( res ) {}
-
-    static KsRegistrationResult *xdrNew(XDR *xdr) {
-        return (KsRegistrationResult *)KsResult::xdrNew(xdr);
-    }
-};
-
-#endif /* end of register.h */
-
-
+#endif /* ks/result.h */

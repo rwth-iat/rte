@@ -1,5 +1,5 @@
-#ifndef KS_REGISTER_INCLUDED
-#define KS_REGISTER_INCLUDED
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.1 1997-03-17 09:01:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -35,63 +35,47 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/////////////////////////////////////////////////////////////////////////
 
-#include <ks/xdr.h>
-#include <ks/ks.h>
-#include <ks/string.h>
 #include "ks/result.h"
 
-////////////////////////////////////////////////////////////////////////
-// class KsServerDesc
-////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// class KsResult
+////////////////////////////////////////////////////////////////////////////
 
-class KsServerDesc : public KsXdrAble {
-public:
-    KsServerDesc() : name() {}
-    KsServerDesc( const KsString &n, u_short pv )
-      : name(n), protocol_version(pv) {}
-
-    bool xdrEncode(XDR *) const;
-    bool xdrDecode(XDR *);
-    static KsServerDesc *xdrNew(XDR *);
+bool 
+KsResult::xdrEncode(XDR *xdr) const {
     
-    KsString  name;
-    u_short   protocol_version;
-};
-
-//////////////////////////////////////////////////////////////////////////
-// class KsRegistrationParams
-//////////////////////////////////////////////////////////////////////////
-
-class KsRegistrationParams {
-public:
-    KsRegistrationParams() {}
-    KsRegistrationParams( const KsServerDesc &, u_short, u_long );
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     
-    bool xdrEncode(XDR *) const;
-    bool xdrDecode(XDR *);
-    static KsRegistrationParams *xdrNew(XDR *);
+    return xdr_enum( xdr, &result );
+}
 
-    KsServerDesc server;
-    u_short      port;
-    u_long       time_to_live;
-};
+////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////
-// class KsRegistrationResult
-//////////////////////////////////////////////////////////////////////////
+bool
+KsResult::xdrDecode(XDR *xdr) {
 
-class KsRegistrationResult : public KsResult {
-public:
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
 
-    KsRegistrationResult( KS_RESULT res ) : KsResult( res ) {}
+    return xdr_enum( xdr, &result );
+}
 
-    static KsRegistrationResult *xdrNew(XDR *xdr) {
-        return (KsRegistrationResult *)KsResult::xdrNew(xdr);
+///////////////////////////////////////////////////////////////////////////
+
+KsResult *
+KsResult::xdrNew(XDR *xdr) {
+
+    KsResult *pksr = new KsResult();
+
+    if( (pksr != NULL) && (pksr->xdrDecode(xdr)) ) {
+
+        return pksr;
+    
+    } else {
+
+        delete pksr;
+        return NULL;
     }
-};
+}
 
-#endif /* end of register.h */
-
-
+// EOF ks/result

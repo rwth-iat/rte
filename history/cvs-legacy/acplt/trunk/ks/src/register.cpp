@@ -88,45 +88,6 @@ KsServerDesc::xdrNew(XDR *xdr)
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// class KsResult
-////////////////////////////////////////////////////////////////////////////
-
-bool 
-KsResult::xdrEncode(XDR *xdr) const {
-    
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
-    
-    return xdr_enum( xdr, &result );
-}
-
-////////////////////////////////////////////////////////////////////////////
-
-bool
-KsResult::xdrDecode(XDR *xdr) {
-
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
-
-    return xdr_enum( xdr, &result );
-}
-
-///////////////////////////////////////////////////////////////////////////
-
-KsResult *
-KsResult::xdrNew(XDR *xdr) {
-
-    KsResult *pksr = new KsResult();
-
-    if( (pksr != NULL) && (pksr->xdrDecode(xdr)) ) {
-
-        return pksr;
-    
-    } else {
-
-        delete pksr;
-        return NULL;
-    }
-}
 
 ////////////////////////////////////////////////////////////////////////////
 // class KsRegistrationParams
