@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.35 2003-10-17 13:30:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.36 2003-10-21 11:21:54 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -29,7 +29,6 @@
 #include <plt/hashtable.h>
 
 #include "ks/rpc.h"
-#include "ks/hostent.h"
 #include "ks/xdr.h"
 #include "ks/register.h"
 #include "ks/serviceparams.h"
