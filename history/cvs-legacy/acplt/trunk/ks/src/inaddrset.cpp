@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/inaddrset.cpp,v 1.1 1997-09-02 15:08:41 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/inaddrset.cpp,v 1.2 1997-10-28 10:39:43 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -34,45 +34,101 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-//////////////////////////////////////////////////////////////////////
+/* Written by Martin Kneissl <martin@plt.rwth-aachen.de> */
+/* Devastated by Harald Albrecht <harald@plt.rwth-aachen.de> */
 
 #include "ks/inaddrset.h"
 
 //////////////////////////////////////////////////////////////////////
 
-bool
-KsInAddrSet::addItem(in_addr addr, in_addr mask, bool incl)
+KsInAddrSet_base::KsInAddrSet_base()
 {
-    if ((addr.s_addr & ~mask.s_addr) != 0) return false;
-    Item * pItem = new Item(addr, mask, incl);
-    if (pItem) {
-        return _list.addFirst(pItem);
-    } else {
-        return false;
-    }
-}
+    _items = 0;
+    _items_allocated = 0;
+    _items_used = 0;
+} // KsInAddrSet::KsInAddrSet
+
+KsInAddrSet_base::~KsInAddrSet_base()
+{
+    removeAll();
+} // KsInAddrSet_base::~KsInAddrSet_base
 
 //////////////////////////////////////////////////////////////////////
 
+bool KsInAddrSet_base::addItem(in_addr addr, in_addr mask, bool incl)
+{
+    Item *newItems;
+    int   newItemsCount;
+
+    PLT_PRECONDITION(_items_used >= 0 && _items_used <= _items_allocated);
+
+    if ( (addr.s_addr & ~mask.s_addr) != 0 ) {
+        return false;
+    }
+
+    if ( _items_used >= _items_allocated ) {
+        if ( _items_allocated == 0 ) {
+            newItemsCount = 1;
+        } else {
+            newItemsCount = _items_allocated * 2;
+        }
+        newItems = (Item *) realloc(_items, sizeof(Item) * newItemsCount);
+        if ( newItems == 0 ) {
+            return false;
+        }
+        _items = newItems;
+        _items_allocated = newItemsCount;
+    }
+    //
+    // Fill in next free entry
+    //
+    _items[_items_used]._addr = addr;
+    _items[_items_used]._mask = mask;
+    _items[_items_used]._incl = incl;
+    ++_items_used;
+
+    return true;
+} // KsInAddrSet_base::addItem
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KsInAddrSet_base::removeAll()
+{
+    if ( _items ) {
+        _items_used = 0;
+        _items_allocated = 0;
+        free(_items);
+    }
+} // KsInAddrSet_base::removeAll
+        
+//////////////////////////////////////////////////////////////////////
+
 bool
-KsInAddrSet::isMember(in_addr addr) const
+KsInAddrSet_base::isMember(in_addr addr) const
 {
     PLT_PRECONDITION(addr.s_addr != INADDR_NONE && addr.s_addr != INADDR_ANY);
-    
-    // return first match
-    for (PltIListIterator<Item> it=_list; it; ++it) {
-        if ((addr.s_addr & it->_mask.s_addr) == it->_addr.s_addr) {
-            // match
-            return it->_incl;
+
+    int count = _items_used;
+    for ( int idx = 0; idx < count; ++idx ) {
+        if ( (addr.s_addr & _items[idx]._mask.s_addr) == 
+             _items[idx]._addr.s_addr ) {
+            return _items[idx]._incl;
         }
     }
     return false;
-}
+} // KsInAddrSet_base::isMember
 
 //////////////////////////////////////////////////////////////////////
 
-istream & operator >> (istream & istr, KsInAddrSet & set)
+KsSimpleInAddrSet::KsSimpleInAddrSet(bool defaultIsAccept)
+    : KsInAddrSet_base(), _defaultIsAccept(defaultIsAccept)
+{
+} // KsSimpleInAddrSet::KsSimpleInAddrSet
+
+//////////////////////////////////////////////////////////////////////
+
+istream & operator >> (istream & istr, KsSimpleInAddrSet & set)
 {
     set.removeAll();
     while (istr) {
@@ -113,7 +169,7 @@ istream & operator >> (istream & istr, KsInAddrSet & set)
         in_addr a,m;
         a.s_addr = addr;
         m.s_addr = mask;
-        if (! (incl ? set.add(a,m) : set.remove(a,m))) {
+        if (! (incl ? set.accept(a,m) : set.reject(a,m))) {
             goto failure;
         }
     }
@@ -123,17 +179,6 @@ istream & operator >> (istream & istr, KsInAddrSet & set)
     return istr;
 }
 
-//////////////////////////////////////////////////////////////////////
-
-void
-KsInAddrSet::removeAll()
-{
-    while(!_list.isEmpty()) {
-        delete _list.removeFirst();
-    }
-}
-        
-        
         
 /////////////////////////////////////////////////////////////////////////////
 /* EOF ks/event.cpp */

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_INADDRSET_INCLUDED
 #define KS_INADDRSET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/inaddrset.h,v 1.1 1997-09-02 15:08:39 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/inaddrset.h,v 1.2 1997-10-28 10:39:40 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,52 +41,75 @@
 
 #include <iostream.h>
 #include "ks/rpc.h"
-#include "plt/list.h"
+
+//////////////////////////////////////////////////////////////////////
+//
+// Public interface for inet address sets...
+//
+class KsInAddrSet {
+public:
+    virtual bool isMember(in_addr addr) const = 0;
+}; // class KsInAddrSet
+
+//////////////////////////////////////////////////////////////////////
+//
+// Base class implementing the management of the individual items
+// stored inside an KsInAddrSet. Not useful on its own...
+//
+class KsInAddrSet_base {
+protected:
+    KsInAddrSet_base();
+    ~KsInAddrSet_base();
+
+    void removeAll();
+    bool addItem(in_addr addr, in_addr mask, bool incl);
+    bool isMember(in_addr addr) const;
+    
+    struct Item { // The individual items which make up an addr set...
+    public:
+        in_addr _addr;
+        in_addr _mask; 
+        bool _incl;
+    };
+
+    Item *_items;
+    int   _items_allocated;
+    int   _items_used;
+}; // class KsInAddrSet_base
 
 //////////////////////////////////////////////////////////////////////
 
-class KsInAddrSet
-{
+class KsSimpleInAddrSet:
+    virtual public KsInAddrSet,
+    private KsInAddrSet_base {
 public:
-    ~KsInAddrSet() { removeAll(); }
+    KsSimpleInAddrSet(bool defaultIsAccept = false);
+    ~KsSimpleInAddrSet() { }
 
-    // accessor
-
-    bool isMember(in_addr addr) const;
+    virtual bool isMember(in_addr addr) const;
 
     // modifier
+    bool accept(in_addr addr, in_addr mask);
+    bool accept(in_addr addr);
+    bool reject(in_addr addr, in_addr mask);
+    bool reject(in_addr addr);
 
-    bool add(in_addr addr, in_addr mask);
-    bool add(in_addr addr);
-    bool remove(in_addr addr, in_addr mask);
-    bool remove(in_addr addr);
-    void removeAll();
+    void removeAll() { KsInAddrSet_base::removeAll(); }
     
+protected:
+    bool _defaultIsAccept;
+}; // class KsSimpleInAddrSet
 
-private:
-    bool addItem(in_addr addr, in_addr mask, bool incl);
-    class Item 
-        : public PltListNode_base 
-            { 
-            public:
-                Item(in_addr addr, in_addr mask, bool incl)
-                    : _addr(addr), _mask(mask), _incl(incl)
-                        { }
-                in_addr _addr;
-                in_addr _mask; 
-                bool _incl;
-            };
-    PltIList<Item> _list;
-};
-
-istream & operator >> (istream & istr, KsInAddrSet & set);
+istream & operator >> (istream & istr, KsSimpleInAddrSet & set);
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+
 inline bool
-KsInAddrSet::add(in_addr addr, in_addr mask)
+KsSimpleInAddrSet::accept(in_addr addr, in_addr mask)
 {
     return addItem(addr, mask, true);
 }
@@ -94,7 +117,7 @@ KsInAddrSet::add(in_addr addr, in_addr mask)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KsInAddrSet::remove(in_addr addr, in_addr mask)
+KsSimpleInAddrSet::reject(in_addr addr, in_addr mask)
 {
     return addItem(addr, mask, false);
 }
@@ -102,27 +125,33 @@ KsInAddrSet::remove(in_addr addr, in_addr mask)
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KsInAddrSet::add(in_addr addr)
+KsSimpleInAddrSet::accept(in_addr addr)
 {
     in_addr mask;
     mask.s_addr = 0xffffffff;
-    return add(addr, mask);
+    return accept(addr, mask);
 }
 
 //////////////////////////////////////////////////////////////////////
 
 inline bool
-KsInAddrSet::remove(in_addr addr)
+KsSimpleInAddrSet::reject(in_addr addr)
 {
     in_addr mask;
     mask.s_addr = 0xffffffff;
-    return remove(addr, mask);
+    return reject(addr, mask);
 }
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KsSimpleInAddrSet::isMember(in_addr addr) const
+{
+    return KsInAddrSet_base::isMember(addr) ?
+        true : _defaultIsAccept;
+} // KsSimpleInAddrSet::isMember
 
 //////////////////////////////////////////////////////////////////////
 #endif // KS_INADDRSET_INCLUDED
 
-
-
-
-
+// End of inaddrset.h
