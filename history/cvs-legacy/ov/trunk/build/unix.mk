@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.3 1999-08-28 13:45:49 dirk Exp $
+#   $Id: unix.mk,v 1.4 2000-04-11 13:22:06 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -56,7 +56,7 @@ COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 LINK			= $(CC)
 C_LIBS			= 
 
-LD				= ld -shared
+LD				= $(CC) -shared
 LD_LIB			= -ldl
 
 CXX				= g++
