@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.28 2001-01-25 10:02:56 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.29 2001-01-29 12:59:55 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -35,11 +35,12 @@
 #include "ks/xdrmemstream.h"
 
 // ---------------------------------------------------------------------------
-// When a server uses dynamic XDR memory streams, then you´ll find in its
-// /vendor domain a few variables with statistics information about the
-// communication layer -- like number of open transports, memory footprint,...
-// All these variables are represented by instances of the class below which
-// handles getting the up-to-date data...
+// When a server uses dynamic XDR memory streams, then you´ll find in
+// its /vendor/modules/acpltks domain a few variables with statistics
+// information about the communication layer -- like number of open
+// transports, memory footprint,...  All these variables are
+// represented by instances of the class KssIoStatisticsVariable below
+// which handles getting always up-to-date data...
 //
 class KssIoStatisticsVariable : public KssSimpleVariable
 {
@@ -158,7 +159,9 @@ KsTime KssIoStatisticsVariable::getTime() const
 
 
 // ---------------------------------------------------------------------------
-// Set up the statistical variables below the /vendor domain.
+// Set up the statistical variables below the /vendor
+// domain. Currently, we only populate the C++ Communication Library
+// module branch in /vendor/modules/acpltks
 //
 bool KsSimpleServer::initStatistics()
 {
@@ -166,9 +169,9 @@ bool KsSimpleServer::initStatistics()
     int i;
 
     //
-    // Now create all the information variables below the "acpltks" module info domain.
-    // Here we watch for creation problem when constructing all the variables, and bail
-    // out in case of error.
+    // Now create all the information variables below the "acpltks"
+    // module info domain. Here we watch for creation problem when
+    // constructing all the variables, and bail out in case of error.
     //
     for ( i = 0; i < KssIoStatisticsVariable::DLAS_THIS_IS_THE_END; ++i ) {
     	KssCommObjectHandle h(
@@ -206,38 +209,71 @@ KsSimpleServer::KsSimpleServer(int port)
 } // KsSimpleServer::KsSimpleServer
 
 
-//////////////////////////////////////////////////////////////////////
-
+// ---------------------------------------------------------------------------
+// An ACPLT/KS client requests to read several communication variables.
+//
 void 
 KsSimpleServer::getVar(KsAvTicket &ticket,
                        const KsGetVarParams &params,
                        KsGetVarResult &result)
 {
-    size_t reqsz=params.identifiers.size();
+    size_t reqsz = params.identifiers.size();
     PltArray<KsPath> paths(reqsz);
     PltArray<KS_RESULT> pathres(reqsz);
     
-    if (   paths.size() == reqsz 
-        && pathres.size() == reqsz) {
-        // Allocation ok.
+    if (    (paths.size() == reqsz)
+         && (pathres.size() == reqsz) ) {
+	//
+        // Allocation ok. So we can now resolve relative paths into
+	// absolute ones, decoding encoded characters on the fly.
+	//
         KsPath::resolvePaths(params.identifiers, paths, pathres);
-        for (size_t i = 0; i < reqsz; ++i) {
-            if( pathres[i] == KS_ERR_OK ) {
+	//
+	// Simply retrieve the value of each variable separately, without
+	// any optimization. If this is necessary, override getVar() in
+	// your derived server class.
+	//
+        for ( size_t i = 0; i < reqsz; ++i ) {
+	    //
+	    // Only try to retrieve the variable if we have a syntactically
+	    // valid path for it.
+	    //
+            if ( pathres[i] == KS_ERR_OK ) {
+#if 0
+		cerr << "[" << i << "]: " 
+		     << (const char *) params.identifiers[i] << endl;
+		cerr << "    ";
+		for ( int ii = 0; ii < paths[i].size(); ++ii ) {
+		    cerr << "[" << (const char *) (paths[i])[ii] << "] ";
+		}
+		cerr << endl;
+#endif
                 getVarItem(ticket, paths[i], result.items[i]);
+#if 0
+		cerr << "   Result: " << result.items[i].result << endl;
+#endif
             } else {
                 result.items[i].result = pathres[i];
             }
         }
+	//
+	// The service could be satisfied (this does not mean that we
+	// could successfully do our job on the individual variables)
+	//
         result.result = KS_ERR_OK;
     } else {
-        // Allocation failed.
+        //
+	// Allocation failed. So bail out with a more or less appropriate
+	// error indication: the complete service could not be worked on.
+	//
         result.result = KS_ERR_GENERIC;
     }
-}
+} // KsSimpleServer::getVar
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// An ACPLT/KS client requests to write several communication variables.
+//
 void 
 KsSimpleServer::setVar(KsAvTicket &ticket,
                        const KsSetVarParams &params,
@@ -247,19 +283,29 @@ KsSimpleServer::setVar(KsAvTicket &ticket,
     PltArray<KsString> ids(reqsz);
     PltArray<KsPath> paths(reqsz);
     PltArray<KS_RESULT> pathres(reqsz);
-    if (   paths.size() == reqsz 
-        && ids.size() == reqsz 
-        && pathres.size() == reqsz ) {
-        // Allocation ok, retrieve ids.
-        for (size_t j=0; j<reqsz; ++j) {
+    
+    if (    (paths.size() == reqsz)
+         && (ids.size() == reqsz)
+         && (pathres.size() == reqsz) ) {
+	//
+        // Allocation ok. So we can now resolve relative paths into
+	// absolute ones, decoding encoded characters on the fly.
+	//
+        for ( size_t j = 0; j < reqsz; ++j ) {
             ids[j] = params.items[j].path_and_name;
         }
-        // Make them absolute
         KsPath::resolvePaths(ids, paths, pathres);
-        // Iterate items
-        for (size_t i = 0; i < reqsz; ++i) {
-            if (pathres[i] == KS_ERR_OK) {
-                // Set current properties
+	//
+	// Simply set the value of each variable separately, without
+	// any optimization. If this is necessary, override setVar() in
+	// your derived server class.
+	//
+        for ( size_t i = 0; i < reqsz; ++i ) {
+	    //
+	    // Only try to set the variable if we have a syntactically
+	    // valid path for it.
+	    //
+            if ( pathres[i] == KS_ERR_OK ) {
                 setVarItem(ticket, 
                            paths[i], 
                            params.items[i].curr_props,
@@ -268,23 +314,39 @@ KsSimpleServer::setVar(KsAvTicket &ticket,
                 result.results[i].result = pathres[i];
             }
         }
+	//
+	// The service could be satisfied (this does not mean that we
+	// could successfully do our job on the individual variables)
+	//
         result.result = KS_ERR_OK;
     } else {
-        // Allocation failed.
+        //
+	// Allocation failed. So bail out with a more or less appropriate
+	// error indication: the complete service could not be worked on.
+	//
         result.result = KS_ERR_GENERIC;
     }
-}
+} // KsSimpleServer::setVar
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Retrieve the value for exactly one variable. This assumes that it does not
+// matter whether one or several variables should be read and performance
+// can not be optimized.
+//
 void
 KsSimpleServer::getVarItem(KsAvTicket &ticket, 
-                           const KsPath & path,
-                           KsGetVarItemResult & result)
+                           const KsPath &path,
+                           KsGetVarItemResult &result)
 {
     PLT_PRECONDITION(path.isValid() && path.isAbsolute());
+    
     if ( ticket.canReadVar(KsString(PltString(path))) ) {
-        // Access okay.
+	//
+        // Access granted. Proceed. Now we try to get our hands on the
+	// communication object addressed by the path. Now this is
+	// simple, just ask the root domain for the descendant.
+	//
         KssCommObjectHandle hobj(_root_domain.getChildByPath(path));
         if ( hobj ) {
             //
@@ -310,23 +372,30 @@ KsSimpleServer::getVarItem(KsAvTicket &ticket,
 		// current properties.
 		//
 		result.result = pobj->getCurrProps(result.item);
-//FIXME                result.item = pobj->getCurrProps();
+//##FIXME                result.item = pobj->getCurrProps();
 //                result.result = result.item ? KS_ERR_OK : KS_ERR_GENERIC;
             } else {
 		//
-                // Nothing that wants to give us its current properties.
+                // An object that do not want to give us its current
+		// properties -- mainly because it doesn't have any.
 		//
                 result.result = KS_ERR_BADTYPE;
             }
         } else {
-            // No such object.
+	    //
+            // No such object with this path.
+	    //
             result.result = KS_ERR_BADPATH;
         }
     } else {
-        // Access denied.
+	//
+        // Access denied -- for whatever reason, which we do not want
+	// to leak to the client. No, this is meant seriously.
+	//
         result.result = KS_ERR_NOACCESS;
     }
 } // KsSimpleServer::getVarItem
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -404,7 +473,7 @@ KsSimpleServer::getEPOfObject(KssCommObject *pobj,
 	//
         // We are being asked about the engineered props of the object itself.
 	// Just add them to the end of the list of engineered props the result
-	// already has.
+	// already has. Well, the list should be empty when we came here.
         //
         KsEngPropsHandle h(pobj->getEP());
         if ( h && result.items.addLast(h) ) {
@@ -514,7 +583,7 @@ KsSimpleServer::getEP(KsAvTicket &ticket,
     PltString prefix;
 
     if( path.isValid() && path.isAbsolute() ) {
-        KS_RESULT convres = path.convert();
+        KS_RESULT convres = path.decodePercents();
         if( convres == KS_ERR_OK ) {
 	    //
             // Path is okay, so we can now proceed -- if the object is
