@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.13 1999-04-22 15:40:20 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.14 1999-05-12 10:02:59 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -303,22 +303,30 @@ KssSimpleLinkAlias::KssSimpleLinkAlias(KssDomainHandle hdom,
 
 
 // ----------------------------------------------------------------------------
+// Helper class to build a very simple linked list without all the bells and
+// whistles PltList<> provides. Someday, I'll maybe convert this one...
+// One upon a time, this class was local to KssSimpleLinkAlias::getCurrProps,
+// but VC++ 4.2 fails on this, so I've moved it to this new place. What a
+// bloody compiler VC 4.2 is.
+//
+class _PltSimpleStringNode {
+public:
+    struct _PltSimpleStringNode *next;
+    KsString                     id;
+    
+    _PltSimpleStringNode() {}
+    ~_PltSimpleStringNode() {}
+}; // class _PltSimpleStringNode
+
+
+// ----------------------------------------------------------------------------
 //
 KS_RESULT
 KssSimpleLinkAlias::getCurrProps(KsCurrPropsHandle &hprops) const
 {
-    class _PltStringNode {
-    public:
-	struct _PltStringNode *next;
-	KsString               id;
-
-	_PltStringNode() {}
-	~_PltStringNode() {}
-    }; // class _PltStringNode
-
-    _PltStringNode *head = 0;
-    _PltStringNode *tail = 0;
-    _PltStringNode *node;
+    _PltSimpleStringNode *head = 0;
+    _PltSimpleStringNode *tail = 0;
+    _PltSimpleStringNode *node;
     unsigned long   itemcount = 0;
 
     //
@@ -337,7 +345,7 @@ KssSimpleLinkAlias::getCurrProps(KsCurrPropsHandle &hprops) const
     // process.
     //
     while ( *pit ) {
-	node = new _PltStringNode;
+	node = new _PltSimpleStringNode;
 	if ( !node || !(*pit) ) {
 	    while ( head ) {
 		node = head;
