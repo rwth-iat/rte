@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LIST_IMPL_INCLUDED
 #define PLT_LIST_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.6 1997-07-18 14:02:51 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.7 1997-10-16 14:31:52 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -114,13 +114,15 @@ template<class T>
 bool
 PltList<T>::remove(const T & t) 
 {
-    for (PltListNode_base *p = first; p; ++p) {
-        PltListNode<T> *q = (PltListNode<T> *) p;
-        if (q->info == t) {
-            delete PltList_base::remove(p);
-            return true;
+    for (PltListNode<T> *p = (PltListNode<T> *)first; 
+         p; 
+         p = (PltListNode<T> *)(p->getNext()) ) 
+        {
+            if (p->info == t) {
+                delete PltList_base::remove(p);
+                return true;
+            }
         }
-    }
     return false;
 }
 

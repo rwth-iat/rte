@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.8 1997-07-18 14:02:50 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.9 1997-10-16 14:31:50 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -238,6 +238,9 @@ class PltListNode_base {
     friend class PltList_base;
     friend class PltListIterator_base;
     PltListNode_base *prev, *next;
+protected:
+    PltListNode_base *getPrev();
+    PltListNode_base *getNext();
 public:
     PltListNode_base() : prev(0),next(0) {}
 };
@@ -258,6 +261,24 @@ class PltListNode : public PltListNode_base {
 public:
     PltListNode(const T& t) : info(t) { }
 };
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+PltListNode_base *
+PltListNode_base::getPrev() 
+{
+    return prev;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+PltListNode_base *
+PltListNode_base::getNext() 
+{
+    return next;
+}
 
 //////////////////////////////////////////////////////////////////////
 
