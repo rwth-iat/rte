@@ -18,7 +18,13 @@ CXX_FLAGS = /OPTIMIZE /float=ieee_float
 LD_FLAGS =
 # LD_FLAGS = /DEBUG
 
-CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1,PLT_USE_BUFFERED_STREAMS=1
+# The following set of flags compiles with optimization and no PLT debugging
+# helpers (no alloc tracker, no debugging messages)
+CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1
+
+# Enable next set of flags when using the new server-side dynamic XDR
+# streams, which buffer client i/o. (Prevents servers from blocking in i/o).
+#CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1,PLT_USE_BUFFERED_STREAMS=1
 
 ###### no modification below this line ####################
 

@@ -21,9 +21,16 @@ EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
 CXX = bcc32
-#CXX_FLAGS = -D_BORLANDC -w
-CXX_FLAGS = -D_BORLANDC=1 -DNDEBUG -w -DPLT_USE_BUFFERED_STREAMS=1 -v
-#CXX_FLAGS =
+# The following set of flags compiles with optimization and no PLT debugging
+# helpers (no alloc tracker, no debugging messages)
+CXX_FLAGS = -D_BORLANDC=1 -w -DNDEBUG
+
+# Enable next set of flags when using the new server-side dynamic XDR
+# streams, which buffer client i/o. (Prevents servers from blocking in i/o).
+#CXX_FLAGS = -D_BORLANDC=1 -w -DNDEBUG -DPLT_USE_BUFFERED_STREAMS=1
+
+#CXX_FLAGS = -D_BORLANDC=1 -w -DPLT_USE_BUFFERED_STREAMS=1 -v
+
 CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1 -DFD_SETSIZE=128
 
 RC = brc32

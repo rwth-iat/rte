@@ -6,9 +6,17 @@
 # Adjust the CXX_FLAGS according to your needs.
 #
 
-#CXX_FLAGS = -DNDEBUG -O2 -Wall
-CXX_FLAGS = -g -Wall -DNDEBUG -DPLT_USE_BUFFERED_STREAMS=1
-#-DPLT_USE_BUFFERED_STREAMS=1
+# The following set of flags compiles with optimization and no PLT debugging
+# helpers (no alloc tracker, no debugging messages)
+CXX_FLAGS = -O2 -Wall -DNDEBUG
+
+# Enable next set of flags when using the new server-side dynamic XDR
+# streams, which buffer client i/o. (Prevents servers from blocking in i/o).
+#CXX_FLAGS = -O2 -Wall -DNDEBUG -DPLT_USE_BUFFERED_STREAMS=1
+
+# Enable next set for usual debugging turn-around.
+#CXX_FLAGS = -g -Wall -DNDEBUG -DPLT_USE_BUFFERED_STREAMS=1
+#CXX_FLAGS = -g -Wall -DNDEBUG
 
 CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_SOLARIS=1
 CXX_PLATFORM_LIBS = -lrpcsvc -lnsl -lsocket
