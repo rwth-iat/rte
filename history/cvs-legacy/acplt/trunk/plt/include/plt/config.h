@@ -47,8 +47,12 @@
 
 /* End of configuration section */
 
-#if PLT_SYSTEM_HPUX + PLT_SYSTEM_NT != 1
+#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_NT != 1
 #error Must define exactly one system!
+#endif
+
+#if PLT_SYSTEM_LINUX
+#define PLT_USE_SYSLOG 1
 #endif
 
 #if PLT_SYSTEM_HPUX
