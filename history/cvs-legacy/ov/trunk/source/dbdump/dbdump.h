@@ -52,6 +52,12 @@
 #include "dbdump_inst.h"
 #endif
 
+#if PLT_COMPILER_MSVC
+#include <ctype.h>
+#include <io.h>
+#endif
+
+
 //---------------------------------------------------------------------------------
 
 // Indent output INDENTATION spaces per level

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_expression_parser.y,v 1.1 2000-02-10 13:07:00 dirk Exp $
+*   $Id: ov_expression_parser.y,v 1.2 2004-05-24 15:23:25 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -196,8 +196,8 @@ OV_EXPRESSION *ov_expression_create(
 ) {
 	_pobj = pobj;
 	_pfirstexpr = NULL;
-	ov_expression__scan_string(exprstr);
-	if(ov_expression_parse()) {
+	yy_scan_string(exprstr);
+	if(yyparse()) {
 		return NULL;
 	}
 	return _pexpr;

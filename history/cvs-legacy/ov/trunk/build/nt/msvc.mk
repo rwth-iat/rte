@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.1 2004-05-19 14:24:21 ansgar Exp $
+#   $Id: msvc.mk,v 1.2 2004-05-24 15:18:49 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -47,8 +47,8 @@ CPL = .cpl
 #	Platform-specific definitions
 #	-----------------------------
 
-ACPLTKS_PLATFORM_DEFINES	= /D"FD_SETSIZE=128"
-OV_PLATFORM_DEFINES		= /D"OV_DEBUG"
+ACPLTKS_PLATFORM_DEFINES	= /DFD_SETSIZE=128
+OV_PLATFORM_DEFINES		= /DOV_DEBUG
 
 #	Compiler
 #	--------
@@ -77,10 +77,10 @@ CXX_COMPILE		= $(CXX) $(CXX_FLAGS) /TP $(DEFINES) $(INCLUDES) /c /GX /GR /MT
 
 CXX_LINK		= link
 
-AR	 			= tlib /P64
-
 IMPLIB			= cl
 IMPDEF			= cl
+
+RC 			= rc /i$(OV_INCLUDE_DIR)
 
 #	Include generic part
 #	--------------------
@@ -110,7 +110,7 @@ info:
 	$(CXX_COMPILE) $< -o$@
 
 .rc$(RES):
-	$(RC) -r -fo$@ $<
+	$(RC) /fo$@ $<
 
 .lex.c:
 	$(FLEX) -o$@ $<
@@ -137,8 +137,8 @@ depend:
 
 $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ)
 
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB)
-	$(LD) $(filter-out %$(RES), $^) ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /OUT:$@
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
+	$(LD) $^ ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /OUT:$@
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
@@ -146,8 +146,8 @@ ov.c ov.h : $(OV_CODEGEN_EXE)
 
 $(OV_LIBOVKS_LIB) : $(OV_LIBOVKS_DLL)
 
-$(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(OV_LIBOV_LIB) $(ACPLTKS_LIBS) $(LIBMPM_LIB)
-	$(LD) $(filter-out %$(RES), $^) wsock32.lib ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /NODEFAULTLIB:libc /out:$@ /implib:$(OV_LIBOVKS_LIB)
+$(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(OV_LIBOV_LIB) $(ACPLTKS_LIBS) $(LIBMPM_LIB) $(OV_LIBOVKS_RES)
+	$(LD) $^ wsock32.lib ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /NODEFAULTLIB:libc /out:$@ /implib:$(OV_LIBOVKS_LIB)
 
 ov_ksserver$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	$(CXX_COMPILE) $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c /out:ov_ksserver$(OBJ)
@@ -160,38 +160,38 @@ ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 
 #	ACPLT/OV C code generator
 
-$(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
-	$(LINK) $(filter-out %$(RES), $^) $(C_LIBS) $(LINK_FLAGS) /out:$@
+$(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ) $(OV_CODEGEN_RES)
+	$(LINK) $^ $(C_LIBS) $(LINK_FLAGS) /out:$@
 
 #	ACPLT/OV framework builder
 
-$(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
-	$(LINK) $(OV_BUILDER_OBJ) $(C_LIBS) $(LINK_FLAGS) /out:$(OV_BUILDER_EXE)
+$(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ) $(OV_BUILDER_RES)
+	$(LINK) $^ $(C_LIBS) $(LINK_FLAGS) /out:$(OV_BUILDER_EXE)
 
 #	ACPLT/OV database utility
 
-$(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB)
-	$(LINK) $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(C_LIBS) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /out:$(OV_DBUTIL_EXE)
+$(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(OV_DBUTIL_RES)
+	$(LINK) $^ $(C_LIBS) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /out:$(OV_DBUTIL_EXE)
 
 #	ACPLT/KS-Server for ACPLT/OV
 
-$(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
-	$(CXX_LINK) $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(C_LIBS) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /out:$(OV_SERVER_EXE)
+$(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVER_RES)
+	$(CXX_LINK) $^ $(C_LIBS) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /out:$(OV_SERVER_EXE)
 
 #	ACPLT/KS-Server for ACPLT/OV (Demo version)
 
-ovserver_demo.exe : quitmsgwnd.obj $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
-	$(LINK)  quitmsgwnd.obj $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(C_LIBS) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /out:ovserver_demo.exe
+ovserver_demo.exe : quitmsgwnd.obj $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVER_RES)
+	$(LINK)  $^ $(C_LIBS) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /out:ovserver_demo.exe
 
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
 
-$(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
-	$(LINK)  $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(C_LIBS) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB SHELL32.LIB $(LINK_FLAGS) /out:$(OV_NTSERVICE_EXE)
+$(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_NTSERVICE_RES)
+	$(LINK)  $^ $(C_LIBS) $(LIBMPM_LIB) ADVAPI32.LIB USER32.LIB SHELL32.LIB $(LINK_FLAGS) /out:$(OV_NTSERVICE_EXE)
 
 #	ACPLT/OV Control Panel for the Windows NT service
 
-$(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ)
-	$(LD) /out:$(OV_CONTROLPANEL_CPL) $(OV_CONTROLPANEL_OBJ) ADVAPI32.LIB USER32.LIB COMDLG32.LIB
+$(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ)  $(OV_CONTROLPANEL_RES)
+	$(LD) $^ ADVAPI32.LIB USER32.LIB COMDLG32.LIB /out:$(OV_CONTROLPANEL_CPL)
 
 #	ACPLT/OV KsHistory library
 #	--------------------------
@@ -218,14 +218,16 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@copy $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL) $(PLT_BIN_DIR)
+	@cmd /C for %i in ($(filter-out %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
+	@echo Installing files to '$(PLT_LIB_DIR)'
+	@cmd /C for %i in ($(filter %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(PLT_LIB_DIR))
 	@echo Done.
 
 #	Clean up
 #	--------
 
 clean:
-	@del *.c *.h *.bak *.map *.def *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES) *$(CPL) *.pdb *.ilk
+	@del *.c *.h *.bak *.map *.def *.exp *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES) *$(CPL) *.pdb *.ilk
 
 #	Include dependencies
 #	--------------------

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.19 2004-05-19 14:51:47 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.20 2004-05-24 15:23:25 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -86,7 +86,7 @@ extern "C" {
 #ifdef __cplusplus
 static OvKsServer	*pserver = NULL;
 static OvPltLog		*plog = NULL;
-OV_DLLVAREXPORT KsConnectionManager *KsConnectionManager;
+static KsConnectionManager *OvKsConnectionManager = NULL;
 #endif
 
 /*	----------------------------------------------------------------------	*/
@@ -383,6 +383,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 		if(pserver) {
 			ov_vendortree_setservername(servername);
 			if (reuse) pserver->setReuseAddr(reuse);
+		        OvKsConnectionManager = KsConnectionManager::getConnectionManagerObject();
+			if (!OvKsConnectionManager) {
+			        OvKsConnectionManager = new KsStdConnectionManager();
+			}
 			return OV_ERR_OK;
 		}
 	}
@@ -400,6 +404,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 #else
 OV_DLLFNCEXPORT void ov_ksserver_delete(void) {
 	if(pserver) {
+		/*
+		*	kill the KsConnectionManager object
+		*/
+		delete OvKsConnectionManager;
+		OvKsConnectionManager = NULL;
 		/*
 		*	kill the server object
 		*/
@@ -477,7 +486,7 @@ OV_DLLFNCEXPORT void ov_ksserver_run(void) {
 			}
 #endif
 			ptimeout = ov_scheduler_schedulenextevent();
-			KsConnectionManager->servePendingEvents(KsTime(ptimeout->secs, ptimeout->usecs));
+			OvKsConnectionManager->servePendingEvents(KsTime(ptimeout->secs, ptimeout->usecs));
 		}
 	}
 }
@@ -561,10 +570,10 @@ OV_DLLFNCEXPORT OV_BOOL ov_ksserver_servependingevents(
 ) {
 	if(pserver) {
 		if(ptimeout) {
-			return KsConnectionManager->servePendingEvents(KsTime(ptimeout->secs,
+			return OvKsConnectionManager->servePendingEvents(KsTime(ptimeout->secs,
 				ptimeout->usecs));
 		} else {
-			return KsConnectionManager->servePendingEvents();
+			return OvKsConnectionManager->servePendingEvents();
 		}
 	}
 	return FALSE;

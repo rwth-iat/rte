@@ -1,5 +1,5 @@
 
-#   $Id: borland.mk,v 1.1 2004-05-19 14:24:21 ansgar Exp $
+#   $Id: borland.mk,v 1.2 2004-05-24 15:18:49 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -81,7 +81,7 @@ AR	 			= tlib /P64
 IMPLIB			= implib
 IMPDEF			= impdef
 
-RC 				= brc32 -i$(OV_INCLUDE_DIR)
+RC 			= brc32 -i$(OV_INCLUDE_DIR)
 
 #	Include generic part
 #	--------------------

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.15 2002-09-09 08:10:39 ansgar Exp $
+*   $Id: ov_ksserver.h,v 1.16 2004-05-24 15:19:20 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -407,6 +407,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_supervised_server_run(void) ;
 
 #include "plt/log.h"
 #include "ks/server.h"
+#include "ks/stdconnectionmgr.h"
 
 /*
 *	Class OvPltLog

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_controlpanel.rc,v 1.1 2000-07-03 13:40:24 dirk Exp $
+*   $Id: ov_controlpanel.rc,v 1.2 2004-05-24 15:23:25 ansgar Exp $
 *
 *   Copyright (C) 2000
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,6 +38,7 @@
 #define RESOURCEREF(i)	i
 #endif
 
+#ifdef __BORLANDC__
 DIALOG_OPTIONS DIALOG 0, 0, 240, 80
 STYLE DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "ACPLT/OV NT Service Options"
@@ -84,16 +85,19 @@ FONT 8, "MS Sans Serif"
  CONTROL "D-52056 Aachen", -1, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 32, 43, 160, 9
  CONTROL "Written by Dirk Meyer <dirk@plt.rwth-aachen.de>", -1, "static", SS_LEFT | WS_CHILD | WS_VISIBLE, 32, 60, 160, 9
 }
+#endif
 
 ICON_OV ICON "ov_controlpanel.ico"
 
-VERSIONINFO_OV VERSIONINFO 
+VERSIONINFO_OV VERSIONINFO
 
 FILEVERSION		OV_VER_FILEVERSION_CONTROLPANEL
 PRODUCTVERSION	OV_VER_PRODUCTVERSION_CONTROLPANEL
 
+#ifdef __BORLANDC__
 FILEOS			VOS_NT_WINDOWS32
 FILETYPE		VFT_DLL
+#endif
 {
  BLOCK "StringFileInfo"
  {

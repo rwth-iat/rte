@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_expression.h,v 1.1 2000-02-10 13:07:00 dirk Exp $
+*   $Id: ov_expression.h,v 1.2 2004-05-24 15:23:25 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,15 +38,16 @@
 
 #ifdef WIN32
 #undef sparc
+#include <malloc.h>
 #endif
 
 /*
 *	flex/bison prototypes
 */
-int ov_expression_error(char *msg);
-int ov_expression_parse(void);
-int ov_expression_lex(void);
-struct yy_buffer_state *ov_expression__scan_string(const char *str);
+int yyerror(char *msg);
+int yyparse(void);
+int yylex(void);
+struct yy_buffer_state *yy_scan_string(const char *str);
 
 /*
 *	a structure representing an expression.

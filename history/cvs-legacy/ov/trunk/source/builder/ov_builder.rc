@@ -1,12 +1,11 @@
 /*
-*   $Id: libov.rc,v 1.5 2004-05-24 15:23:25 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
 *   RWTH Aachen, D-52056 Aachen, Germany.
 *   All rights reserved.
 *
-*   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>
+*   Author: Ansgar Münnemann <ansgar@plt.rwth-aachen.de>
 *
 *   This file is part of the ACPLT/OV Package which is licensed as open
 *   source under the Artistic License; you can use, redistribute and/or
@@ -23,8 +22,7 @@
 /*
 *	History:
 *	--------
-*	11-Jan-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
-*	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	24-Mai-2004 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: File created.
 */
 
 #include "libov/ov_version.h"
@@ -34,15 +32,13 @@
 #include <windows.h>
 #endif
 
-#define OV_ICON			1
-#define OV_MESSAGE		1
+#define OV_ICON	1
 #define VERSIONINFO_1	1
-#define MESSAGE			11
 
-VERSIONINFO_1 VERSIONINFO 
+VERSIONINFO_1 VERSIONINFO
 
-FILEVERSION		OV_VER_FILEVERSION_LIBOV
-PRODUCTVERSION	OV_VER_PRODUCTVERSION_LIBOV
+FILEVERSION		OV_VER_FILEVERSION_BUILDER
+PRODUCTVERSION	OV_VER_PRODUCTVERSION_BUILDER
 
 #ifdef __BORLANDC__
 FILEOS			VOS_NT_WINDOWS32
@@ -54,12 +50,12 @@ FILETYPE		VFT_DLL
   BLOCK "040904E4"
   {
    VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
-   VALUE "FileDescription", "ACPLT/OV Object Management Library\000"
-   VALUE "FileVersion", OV_VER_LIBOV "\000\000"
-   VALUE "InternalName", "libov.dll\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-2000\000\000"
-   VALUE "OriginalFilename", "libov.dll\000"
-   VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>\000"
+   VALUE "FileDescription", "ACPLT/OV C-Code Framework Generator\000"
+   VALUE "FileVersion", OV_VER_BUILDER "\000\000"
+   VALUE "InternalName", "ov_builder.exe\000"
+   VALUE "LegalCopyright", "Copyright © PLT 1998-1999\000\000"
+   VALUE "OriginalFilename", "ov_codegen.exe\000"
+   VALUE "Author", "Ansgar Münnemann <ansgar@plt.rwth-aachen.de>\000"
    VALUE "License", OV_VER_LICENSE "\000"
   }
 
@@ -72,10 +68,7 @@ FILETYPE		VFT_DLL
 
 }
 
-OV_ICON ICON "libov.ico"
-
-LANGUAGE 0x9,0x1
-OV_MESSAGE MESSAGE "libov.bin"
+OV_ICON ICON "ov_builder.ico"
 
 /*
 *	End of file

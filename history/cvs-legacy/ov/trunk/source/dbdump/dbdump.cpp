@@ -917,7 +917,7 @@ KS_SEMANTIC_FLAGS GetSemFlags(char *arg)
 			(arg[i] >= 'a' && arg[i] <= 'f')) &&
 			(arg[i+1] == '\0' || arg[i+1] > arg[i])) {
 
-		if isupper(arg[i]) {
+		if (isupper(arg[i])) {
 			ret |= (1 << (arg[i] - 'A'));					// build bit field
 		} else {
 			ret |= (1 << (26 + arg[i] - 'a'));
