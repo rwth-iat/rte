@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.19 1998-01-12 07:49:26 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -36,6 +36,8 @@
  */
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
+/* Improved error code propagation and QC by:
+           Harald Albrecht <harald@plt.rwth-aachen.de> */
 
 //////////////////////////////////////////////////////////////////////
 
@@ -108,8 +110,8 @@ KscPackage::KscPackage()
 : num_vars(0),
   num_pkgs(0),
   av_module(0),
-  fDirty(false),
-  _result(-1)
+  _is_dirty(false),
+  _last_result(-1)
 {}
 
 //////////////////////////////////////////////////////////////////////
@@ -118,68 +120,102 @@ KscPackage::~KscPackage()
 {}
 
 //////////////////////////////////////////////////////////////////////
-
+// Pack another variable object into this bag. To be more precise, we
+// only pack a handle into our bag, but this ensures that the variable
+// object will live as long as we use it (except the programmer did
+// bull sh*t and destroyed the variable object itself after he put it
+// under the control of a handle...)
+//
 bool
 KscPackage::add(KscVariableHandle var)
 {
-    if(var && var->hasValidPath()) {
+    //
+    // Make sure the handle is bound (it has a variable object under
+    // control) and that it isn't invalid. To prevent further problems
+    // we don't accept invalid variable objects here.
+    //
+    if ( var && var->hasValidPath() ) {
         bool ok = vars.addLast(var);
-    
-        if(ok) num_vars++;
-
+        
+        if ( ok ) {
+            //
+            // Yet another sucker to take care of in the future...
+            //
+            _is_dirty = true;
+            num_vars++;
+        }
+        
         return ok;
     } else {
         return false;
     }
-}
+} // KscPackage::add
+
 
 //////////////////////////////////////////////////////////////////////
-
+// Pack another bag into this bag. To be more precise, we only pack a
+// handle into our bag, but this ensures that the subbag object will
+// live as long as we use it (exceptions as explained above may apply)
+//
 bool
 KscPackage::add(KscPackageHandle pkg) 
 {
-    if(pkg) {
+    if ( pkg ) {
         bool ok = pkgs.addLast(pkg);
     
-        if(ok) num_pkgs++;
+        if ( ok ) {
+            num_pkgs++;
+            _is_dirty = true;
+        }
 
         return ok;
     } else {
         return false;
     }
-}
-    
-//////////////////////////////////////////////////////////////////////
+} // KscPackage::add
 
+
+//////////////////////////////////////////////////////////////////////
+// Remove a variable object from our bag.
+//
 bool
 KscPackage::remove(KscVariableHandle var) 
 {
-    if(var) {
+    if ( var ) {
         bool ok = vars.remove(var);
     
-        if(ok) num_vars--;
-
+        if ( ok ) {
+            num_vars--;
+            _is_dirty = true;
+        }
+        
         return ok;
     } else {
         return false;
     }
-}
+} // KscPackage::remove
+
 
 //////////////////////////////////////////////////////////////////////
-
+// Remove a subbag from our bag.
+//
 bool
 KscPackage::remove(KscPackageHandle pkg)
 {
-    if(pkg) {
+    if ( pkg ) {
         bool ok = pkgs.remove(pkg);
 
-        if(ok) num_pkgs--;
-
+        if ( ok ) {
+            num_pkgs--;
+            _is_dirty = true;
+        }
+        
         return ok;
     } else {
         return false;
     }
-}
+} // KscPackage::remove
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -222,136 +258,234 @@ KscPackage::newSubpackageIterator() const
     return new PltListIterator<KscPackageHandle>(pkgs);
 }
 
-//////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+// Retrieve the values (current properties) of the variables con-
+// tained in this package and sub-packages from one or more ACPLT/KS
+// servers.
+//
 bool
 KscPackage::getUpdate() 
 {
     KscSorter sorter(*this);
 
-    if(!sorter.isValid()) {
-        // failed to sort variables by servers and av-types
+    if ( !sorter.isValid() ) {
         //
-        _result = KS_ERR_GENERIC;
+        // The sorter object failed to sort the variables by ACPLT/KS
+        // servers and A/V modules. So fail with the generic error.
+        //
+        PLT_DMSG("KscPackage::getUpdate(): failed to sort variables" << endl);
+        _last_result = KS_ERR_GENERIC;
         return false;
     }
-
+    
+    //
+    // Otherwise get an iterator from the sorter which iterates over
+    // so-called "buckets". Each bucket contains variables which are all
+    // located in the same ACPLT/KS server and need the same A/V module
+    // for accessing them. If we can't get the iterator, fail with the
+    // usual generic error.
+    //
     PltIterator<KscBucketHandle> *pit =
         sorter.newBucketIterator();
 
-    if(!pit) {
-        _result = KS_ERR_GENERIC;
+    if ( !pit ) {
+        PLT_DMSG("KscPackage::getUpdate(): failed to create iterator over av/server-types" << endl);
+        _last_result = KS_ERR_GENERIC;
         return false;
     }
 
-    bool ok = true;
-    _result = KS_ERR_OK;
-
-    // iterate over buckets and do the jobs
     //
-    while(*pit) {
+    // Iterate over buckets and delegate the work, that is, the
+    // requests for the variable's current properties. We first assume
+    // success. In every case we'll try to issue the ACPLT/KS GetVar
+    // request on every bucket, so if one or more fails, we will
+    // nevertheless continue until all buckets have been visited. If
+    // there was a failure, then getUpdate() will return false, although
+    // getLastResult() might reveal KS_ERR_OK. In every case, getLast-
+    // Result() will return the last error encountered during the
+    // getUpdate() operation. If this is KS_ERR_OK (no error), but the
+    // ok flag is false, then reading one or more variables failed on
+    // a per-variable basis and not on the request-level itself.
+    //
+    bool ok = true;
+    _last_result = KS_ERR_OK;
+    _is_dirty = false;
+
+    while ( *pit ) {
         KscBucketHandle curr_bucket = **pit;
         ok &= getSimpleUpdate(curr_bucket);
         ++(*pit);
     }
 
-    delete pit;
+    delete pit; // Throw the iterator away...
 
     return ok;    
-}
+} // KscPackage::getUpdate
+
 
 //////////////////////////////////////////////////////////////////////
-
+// Handle the GetVar request for a single ACPLT/KS server and with
+// a single A/V module. This helping method is called from getUpdate()
+// for every single ACPLT/KS server we have to deal with in a package.
+// If we get into trouble, we'll set the last result accordingly and
+// return a "false".
+//
 bool
 KscPackage::getSimpleUpdate(KscBucketHandle bucket)
 {
-    // create data structures for transfer
+    // 
+    // Create the data structures for the service request.
     //
     size_t num_vars = bucket->size();
-    KsGetVarResult result;
     KsGetVarParams params(num_vars);
+    KsGetVarResult result;
 
     PltArray< KscSortVarPtr > sorted_vars = 
         bucket->getSortedVars();
 
-    if(params.identifiers.size() != num_vars
-       || sorted_vars.size() != num_vars) 
-    {
-        // failed to allocate memory
-        //
-        _result = KS_ERR_GENERIC;
-        return false;
+    if ( (params.identifiers.size() != num_vars)
+         || (sorted_vars.size() != num_vars) )
+        {
+            //
+            // We failed to allocate memory, so we fail with the well known
+            // "generic" error.
+            //
+            _last_result = KS_ERR_GENERIC;
+            return false;
     }
 
-    // copy data to params
     //
-    if(!fillGetVarParams(sorted_vars, params.identifiers)) {
-        _result = KS_ERR_GENERIC;
+    // Copy data into the service parameters (that is, the names of
+    // the variables to query). Once again, bail out if we fail here.
+    //
+    if ( !fillGetVarParams(sorted_vars, params.identifiers) ) {
+        _last_result = KS_ERR_GENERIC;
         return false;
     }
 
-    // request service
+    //
+    // Now query the ACPLT/KS server with the help of the server object. The
+    // server object will handle the request accordingly to whatever kind
+    // of ACPLT/KS server it is connected with. The information about which
+    // server object to use as well as which A/V negotiator used for the
+    // communication is contained in the bucket objects.
     //
     bool ok = bucket->getServer()->getVar(bucket->getAvModule(),
                                           params,
                                           result);
 
-    if(!ok) {
-        _result = KS_ERR_NETWORKERROR;
+    if ( !ok ) {
+	//
+        // The exgData service request failed on the communication level.
+	// In this case, the server object supplies more precise information
+	// about the cause of the failure. At the level of this package
+	// object we just indicate a communication level failure but
+	// distribute the real error reason from the server object to the
+	// variable objects.
+	//
+        _last_result = KS_ERR_NETWORKERROR;
+	distributeErrorResult(bucket->getServer()->getLastResult(),
+			      sorted_vars);
         return false;
     }
 
-    if(result.result != KS_ERR_OK) {
-        _result = result.result;
+    //
+    // Only set the last result, if the ACPLT/KS server reported an error
+    // on the request level. Otherwise don't touch here the last result,
+    // as other functions will set it when an error occours. In every case
+    // we propagate the error code down to the individual variable objects.
+    //
+    if ( result.result != KS_ERR_OK ) {
+        _last_result = KS_ERR_NETWORKERROR;
+	distributeErrorResult(result.result, sorted_vars);
         return false;
     }
 
-    // copy results 
+    //
+    // Copy back the service results...
     //
     return copyGetVarResults(sorted_vars, result.items);
-}   
+} // KscPackage::getSimpleUpdate
+
 
 //////////////////////////////////////////////////////////////////////
-
+// Write the values (current properties) of the variables contained
+// in this package and sub-packages from one or more ACPLT/KS servers.
+//
 bool
 KscPackage::setUpdate(bool force)
 {
     KscSorter sorter(*this, !force);
 
-    if(!sorter.isValid()) {
-        PLT_DMSG("Failed to sort variables" << endl);
-        _result = KS_ERR_GENERIC;
+    if ( !sorter.isValid() ) {
+	//
+        // The sorter object failed to sort the variables by ACPLT/KS
+	// servers and A/V modules. So fail with the generic error.
+        //
+        PLT_DMSG("KscPackage::setUpdate(): failed to sort variables" << endl);
+        _last_result = KS_ERR_GENERIC;
         return false;
     }
 
+    //
+    // Otherwise get an iterator from the sorter which iterates over
+    // so-called "buckets". Each bucket contains variables which are all
+    // located in the same ACPLT/KS server and need the same A/V module
+    // for accessing them. If we can't get the iterator, fail with the
+    // usual generic error.
+    // This particular sorter has a special feature: if asked, it can
+    // include only such variables, which have been changed recently
+    // (got new current properties).
+    //
     PltIterator<KscBucketHandle> *pit =
         sorter.newBucketIterator();
 
-    if(!pit) {
-        PLT_DMSG("Failed to create iterator over av/server-types" << endl);
-        _result = KS_ERR_GENERIC;
+    if ( !pit ) {
+        PLT_DMSG("KscPackage::setUpdate(): failed to create iterator over av/server-types" << endl);
+        _last_result = KS_ERR_GENERIC;
         return false;
     }
 
+    //
+    // Iterate over buckets and delegate the work, that is, the
+    // requests for the variable's current properties. We first assume
+    // success. In every case we'll try to issue the ACPLT/KS SetVar
+    // request on every bucket, so if one or more fails, we will
+    // nevertheless continue until all buckets have been visited. If
+    // there was a failure, then setUpdate() will return false, although
+    // getLastResult() might reveal KS_ERR_OK. In every case, getLast-
+    // Result() will return the last error encountered during the
+    // getUpdate() operation. If this is KS_ERR_OK (no error), but the
+    // ok flag is false, then writing one or more variables failed on
+    // a per-variable basis and not on the request-level itself.
+    //
     bool ok = true;
-    _result = KS_ERR_OK;
+    _last_result = KS_ERR_OK;
+    _is_dirty = false;
 
-    while(*pit) {
+    while ( *pit ) {
         KscBucketHandle curr_bucket = **pit;
         ok &= setSimpleUpdate(curr_bucket);
-        ++*pit;
+        ++(*pit);
     }
 
-    delete pit;
+    delete pit; // Throw the iterator away...
 
     return ok;
-}
+} // KscPackage::setUpdate
+
 
 //////////////////////////////////////////////////////////////////////
-
+// Handle the SetVar request for a single ACPLT/KS server and with
+// a single A/V module.
+//
 bool
 KscPackage::setSimpleUpdate(KscBucketHandle bucket)
 {
+    // 
+    // Create the data structures for the service request.
+    //
     size_t num_vars = bucket->size();
     KsSetVarParams params(num_vars);
     KsSetVarResult result(num_vars);
@@ -359,41 +493,69 @@ KscPackage::setSimpleUpdate(KscBucketHandle bucket)
     PltArray< KscSortVarPtr > sorted_vars = 
         bucket->getSortedVars();
 
-    if(params.items.size() != num_vars || 
-       result.results.size() != num_vars ||
-       sorted_vars.size() != num_vars) 
-    {
-        // failed to allocate space
+    if ( (params.items.size() != num_vars) ||
+	 (result.results.size() != num_vars) ||
+	 (sorted_vars.size() != num_vars) ) {
         //
-        _result = KS_ERR_GENERIC;
+        // We failed to allocate memory, so we fail with the well known
+        // "generic" error.
+        //
+        _last_result = KS_ERR_GENERIC;
         return false;
     }
 
-    // copy data to params
     //
-    if( !fillSetVarParams(sorted_vars, params.items) ) {
-        _result = KS_ERR_GENERIC;
-        return false;
-    }
-
-    // request service
+    // Copy data into the service parameters (that is, the names and
+    // values of the variables to query). Once again, bail out if we
+    // fail here.
     //
-    bool ok = bucket->getServer()->setVar(
-        bucket->getAvModule(),
-        params,
-        result);
-
-    if(!ok) {
-        _result = KS_ERR_NETWORKERROR;
-        return false;
-    }
-    if(result.result != KS_ERR_OK) {
-        _result = result.result;
+    if ( !fillSetVarParams(sorted_vars, params.items) ) {
+        _last_result = KS_ERR_GENERIC;
         return false;
     }
 
+    //
+    // Now query the ACPLT/KS server with the help of the server object. The
+    // server object will handle the request accordingly to whatever kind
+    // of ACPLT/KS server it is connected with. The information about which
+    // server object to use as well as which A/V negotiator used for the
+    // communication is contained in the bucket objects.
+    //
+    bool ok = bucket->getServer()->setVar(bucket->getAvModule(),
+					  params,
+					  result);
+
+    if ( !ok ) {
+	//
+        // The exgData service request failed on the communication level.
+	// In this case, the server object supplies more precise information
+	// about the cause of the failure and we distribute the error
+	// information down to the individual variable objects once again.
+	//
+        _last_result = KS_ERR_NETWORKERROR;
+	distributeErrorResult(bucket->getServer()->getLastResult(),
+			      sorted_vars);
+        return false;
+    }
+
+    //
+    // Only set the last result, if the ACPLT/KS server reported an error
+    // on the request level. Otherwise don't touch here the last result,
+    // as other functions will set it when an error occours. In every case
+    // we propagate the error code down to the individual variable objects.
+    //
+    if ( result.result != KS_ERR_OK ) {
+        _last_result = KS_ERR_NETWORKERROR;
+	distributeErrorResult(result.result, sorted_vars);
+        return false;
+    }
+
+    //
+    // Copy back the service results...
+    //
     return copySetVarResults(sorted_vars, result.results);
-}
+} // KscPackage::setSimpleUpdate
+
 
 //////////////////////////////////////////////////////////////////////
 // class KscPackage::DeepIterator
@@ -521,18 +683,20 @@ KscPackage_DeepIterator_THISTYPE &
 KscPackage::DeepIterator::operator ++()
 {
     PLT_PRECONDITION(*this);
-    // check for variables in this package left
     //
-    if(vars_it) {
+    // Are there any variables left in this package? If there are
+    // some left, then we have (yet) no need to dive into the next
+    // subpackage. BTW -- defensive programming: we first make sure
+    // that we're not already at the end.
+    //
+    if ( vars_it ) {
         ++vars_it;
-        // if we have more variables
-        // there is no need to check the packages
-        //
-        if(vars_it) {
+        if ( vars_it ) {
             return *this;
         }
     }
 
+    //
     // check for variables in the current subpackage
     //
     if(rek_it && *rek_it) {
@@ -544,9 +708,11 @@ KscPackage::DeepIterator::operator ++()
         }
     }
 
-    // check wether there are more subpackages left
     //
-    while(pkgs_it) {
+    // Now check whether there are more subpackages left over which
+    // we can happily iterate...
+    //
+    while ( pkgs_it ) {
         if(rek_it) {
             delete rek_it;
         }
@@ -558,7 +724,8 @@ KscPackage::DeepIterator::operator ++()
         }
     }
 
-    // we ran out of variables
+    //
+    // We finally ran out of variables.
     //
     return *this;
 }
@@ -630,92 +797,129 @@ KscPackage::DeepIterator::toStart()
 // class KscExchangePackage
 //////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+// Carry out a data exchange operation on this special exchange
+// package, thus issuing an ACPLT/KS ExgData service request.
+//
 bool 
 KscExchangePackage::doExchange(bool force)
 {
-    // if none of the packages exists we consider
-    // the operation to be succesfull
-    if( !get_pkg && !set_pkg ) {
-        _result = KS_ERR_OK;
+    //
+    // If none of the packages exists which we need for a true data
+    // *exchange* we consider the operation to be successfull.
+    //
+    if ( !get_pkg && !set_pkg ) {
+        _last_result = KS_ERR_OK;
         return true;
     }
 
-    // if one of the package does exist we use
-    // his functions
-    if( get_pkg && !set_pkg ) {
-        bool ok = get_pkg->getUpdate();
-        _result = get_pkg->getLastResult();
-        return ok;
-    }
-
-    if( !get_pkg && set_pkg ) {
-        bool ok = set_pkg->setUpdate(force);
-        _result = set_pkg->getLastResult();
-        return ok;
-    }
-
-    // both packages exist, now sort variables
     //
-    bool ok = false;
+    // If only one of the packages exists, then we will handle
+    // this as either an ordinary getUpdate() or setUpdate() on
+    // the package that exists.
+    //
+    if ( get_pkg && !set_pkg ) {
+        bool ok = get_pkg->getUpdate();
+        _last_result = get_pkg->getLastResult();
+        return ok;
+    }
 
-    _result = KS_ERR_GENERIC;
+    if ( !get_pkg && set_pkg ) {
+        bool ok = set_pkg->setUpdate(force);
+        _last_result = set_pkg->getLastResult();
+        return ok;
+    }
 
+    //
+    // But now back to our real "destination": both packages exist,
+    // now sort the variables.
+    //
     KscSorter get_sorter(*get_pkg);
     KscSorter set_sorter(*set_pkg, !force);
 
-    if(get_sorter.isValid() && set_sorter.isValid()) {
-        ok = mergeSorters(get_sorter, set_sorter);
+    if ( get_sorter.isValid() && set_sorter.isValid() ) {
+	//
+	// mergeSorters() will set the last result in every case.
+	//
+        return mergeSorters(get_sorter, set_sorter);
     }
 
-    return ok;
-}
+    _last_result = KS_ERR_GENERIC;
+    return false;
+} // KscExchangePackage::doExchange
+
 
 //////////////////////////////////////////////////////////////////////
-
+// Now "merge" all packages belonging to the same ACPLT/KS server and
+// A/V module/negotiator into a single data exchange request.
+//
 bool
 KscExchangePackage::mergeSorters(KscSorter &get_sorter,
                                  KscSorter &set_sorter)
 {
     bool ok = true;
-    _result = KS_ERR_OK;
+    _last_result = KS_ERR_OK;
 
-    // first use all buckets contained in get_sorter and 
-    // buckets out of set_sorter with similar AV/server type
     //
-    while(!get_sorter.isEmpty()) {
+    // First use all buckets contained in get_sorter and buckets out
+    // of set_sorter with same AV module and server object.
+    //
+    // --aldi: this powerful behaviour, when an exchange package
+    // contains heterogeneous packages, was not intented first, but it
+    // can be quite useful: just put packages for several servers into
+    // the same exchange package it this will take care of breaking
+    // the request down into several requests, one for each
+    // server. Hey markusj, you did an excellent job!
+    //
+    while ( !get_sorter.isEmpty() ) {
         KscBucketHandle curr_get(get_sorter.removeFirst());
         KscBucketHandle curr_set(set_sorter.removeMatchingBucket(curr_get));
         ok &= doSimpleExchange(curr_get, curr_set);
     }
 
-    // get_sorter is flushed, now handle the remaining
-    // buckets in set_sorter
+    //
+    // The get_sorter is now flushed, so handle the remaining
+    // (left-over) buckets in the set_sorter.
+    //
     KscBucketHandle dummy_get;
-    while(!set_sorter.isEmpty()) {
+    while ( !set_sorter.isEmpty() ) {
         KscBucketHandle curr_set(set_sorter.removeFirst());
         ok &= doSimpleExchange(dummy_get, curr_set);
     }
 
     return ok;
-}
+} // KscExchangePackage::mergeSorters
+
 
 //////////////////////////////////////////////////////////////////////
-
+// Carry out a data exchange operation for exactly one ACPLT/KS server
+// using exactly one A/V negotiatior module.
+//
+// This function only touches the last result, if there was an error.
+//
 bool
 KscExchangePackage::doSimpleExchange(
     KscBucketHandle get_bucket,
     KscBucketHandle set_bucket)
 {
-    _result = KS_ERR_GENERIC;
-
-    if(!get_bucket && !set_bucket) return false;
+    //
+    // There are no buckets left. Oops...
+    //
+    if ( !get_bucket && !set_bucket ) {
+	_last_result = KS_ERR_GENERIC;
+	return false;
+    }
 
     PltArray< KscSortVarPtr > set_vars, get_vars;
     size_t get_size, set_size;
     KscServerBase *server = 0;
     const KscAvModule *avm = 0;
 
-    if(get_bucket) {
+    //
+    // If we have variables to retrieve during the data exchange, then
+    // set up the parameters accordingly.
+    //
+    if ( get_bucket ) {
         get_size = get_bucket->size();
         get_vars = get_bucket->getSortedVars();
         server = get_bucket->getServer();
@@ -724,7 +928,10 @@ KscExchangePackage::doSimpleExchange(
         get_size = 0;
     }
 
-    if(set_bucket) {
+    //
+    // Same for the variables to set.
+    //
+    if ( set_bucket ) {
         set_size = set_bucket->size();
         set_vars = set_bucket->getSortedVars();
         server = set_bucket->getServer();
@@ -736,48 +943,87 @@ KscExchangePackage::doSimpleExchange(
     KsExgDataParams params(set_size, get_size);
     KsExgDataResult res(set_size, get_size);
 
-    if(params.set_vars.size() != set_size ||
-       params.get_vars.size() != get_size ||
-       res.results.size() != set_size ||
-       res.items.size() != get_size ||
-       get_vars.size() != get_size ||
-       set_vars.size() != set_size )
-    {
+    if ( (params.set_vars.size() != set_size) ||
+	 (params.get_vars.size() != get_size) ||
+	 (res.results.size() != set_size) ||
+	 (res.items.size() != get_size) ||
+	 (get_vars.size() != get_size) ||
+	 (set_vars.size() != set_size) ) {
+	_last_result = KS_ERR_GENERIC;
         return false;
     }
 
-    // copy data to params
+    //
+    // Copy data into the service parameters. Note: here it is
+    // perfectly okay to use "&&" when carrying out setting the
+    // parameters. Both functions return false if they fail due
+    // to memory constraints or the like, so a boolean shortcut
+    // is fine. At other places this might not what we want, so
+    // be careful!
     //
     bool ok = fillGetVarParams(get_vars, params.get_vars) &&
-        fillSetVarParams(set_vars, params.set_vars);
+              fillSetVarParams(set_vars, params.set_vars);
 
-    if(!ok) return false;
+    if ( !ok ) {
+        _last_result = KS_ERR_GENERIC;
+	return false;
+    }
 
-    // request server for service
+    //
+    // Now exchange the date with the ACPLT/KS server with the help of
+    // the server object. The server object will handle the request
+    // accordingly to whatever kind of ACPLT/KS server it is connected
+    // with.
     //
     ok = server->exgData(avm, params, res);
 
 #if PLT_DEBUG
-    if(ok && res.result != KS_ERR_OK) {
+    if ( ok && res.result != KS_ERR_OK ) {
         PLT_DMSG("exchange data error code : " << res.result << endl);
     }
 #endif
 
-    if(!ok) {
-        _result = KS_ERR_NETWORKERROR;
+    if ( !ok ) {
+	//
+        // The exgData service request failed on the communication level.
+	// In this case, the server object supplies more precise information
+	// about the cause of the failure.
+	//
+        _last_result = KS_ERR_NETWORKERROR;
+	distributeErrorResult(server->getLastResult(),
+			      set_vars);
+	distributeErrorResult(server->getLastResult(),
+			      get_vars);
         return false;
     }
 
-    _result = res.result;
-    if(res.result != KS_ERR_OK) return false;
-
-    // copy results
     //
-    ok = copyGetVarResults(get_vars, res.items) &&
-        copySetVarResults(set_vars, res.results);
+    // Only set the last result, if the ACPLT/KS server reported an error
+    // on the request level. Otherwise don't touch here the last result,
+    // as other functions will set it when an error occours. Once again,
+    // propagate the error down to the individual variable objects.
+    //
+    if ( res.result != KS_ERR_OK ) {
+        _last_result = KS_ERR_NETWORKERROR;
+	distributeErrorResult(res.result, set_vars);
+	distributeErrorResult(res.result, get_vars);
+        return false;
+    }
 
+    //
+    // Copy back the results from the data exchange operation. This will
+    // not touch the last result, but instead deliver only the flag
+    // indicating success or failure for particular variables. Note that
+    // we can't use here the shortcutted "&&" operator, as this would
+    // prefent us from retrieving both the "getVars" and the "setVars" if
+    // we could not retrieve the value for at least one of the "getVars"
+    // variables -- and this would be the wrong behaviour!
+    //
+    ok = copyGetVarResults(get_vars, res.items);
+    ok &= copySetVarResults(set_vars, res.results);
     return ok;
-}
+} // KscExchangePackage::doSimpleExchange
+
     
 //////////////////////////////////////////////////////////////////////
 // class _KscPackageBase
@@ -790,8 +1036,34 @@ _KscPackageBase::fillGetVarParams(const PltArray< KscSortVarPtr > &sorted_vars,
     return optimizePaths(sorted_vars, identifiers);
 }
 
-//////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+// Distribute (or propagate) an error which occoured at the communi-
+// cation level down to the individual variable objects.
+//
+void
+_KscPackageBase::distributeErrorResult(
+    KS_RESULT result,
+    const PltArray< KscSortVarPtr > &sorted_vars)
+{
+    size_t count,
+           to_copy = sorted_vars.size();
+
+    for ( count = 0; count < to_copy; ++count ) {
+	sorted_vars[count]->_last_result = result;
+    }
+} // _KscPackageBase::distributeErrorResult
+
+
+//////////////////////////////////////////////////////////////////////
+// Copy back the results of an ACPLT/KS GetVar request into these
+// variable communication objects, which have been queried this time.
+// If something went wrong, we will return false, otherwise true. We
+// will not touch the last result of a (exchange) package here, but
+// instead report an error through the corresponging variable object,
+// because we already know at this point, that the whole ACPLT/KS
+// request was granted.
+//
 bool 
 _KscPackageBase::copyGetVarResults(
     const PltArray< KscSortVarPtr > &sorted_vars,
@@ -799,37 +1071,69 @@ _KscPackageBase::copyGetVarResults(
 {
     PLT_PRECONDITION(sorted_vars.size() == res.size());
 
-    bool ok = true;
+    //
+    // Iterate over all results for the individual variables we've
+    // got back from the ACPLT/KS server and fill the results back
+    // into the appropriate variable objects.
+    //
+    bool ok = true; // be optimistic...
     size_t count = 0,
            to_copy = res.size();
 
-    //
-    // TODO : add more specific error codes
-    //
-    while(count < to_copy) {
-        if(res[count].result == KS_ERR_OK) {
+    while ( count < to_copy ) {
+        if ( res[count].result == KS_ERR_OK ) {
+	    //
+	    // Fine. We got back a value (projected property) from
+	    // the ACPLT/KS server for this variable. Well -- at least
+	    // we hope so, because the server didn't flag an error for
+	    // this particular variable.
+	    //
+	    // TODO: markusj: do we need the dynamic cast here, or is
+	    //                a static cast together with a xdrTypeCode()
+	    //                suitable, because the GetVar service can not
+	    //                return other current properties than the
+	    //                ones for variables...?
+	    //
             KsVarCurrProps *cp = 
                 PLT_DYNAMIC_PCAST(KsVarCurrProps,
                                   res[count].item.getPtr()); 
-            if(cp) {
-                // TODO :  
+            if ( cp ) {
+		//
+		// Fine. We've got back the value for this particular
+		// variable. So set the current properties of the
+		// associated variable object.
+		//
+                // TODO: markusj: what to do?
+		//
                 ok &= sorted_vars[count]->setCurrProps(*cp);
                 sorted_vars[count]->fDirty = false;
-                sorted_vars[count]->last_result = KS_ERR_OK;
+                sorted_vars[count]->_last_result = KS_ERR_OK;
             } else {
-                // type mismatch
-                sorted_vars[count]->last_result = KS_ERR_TYPEMISMATCH;
+		//
+                // Ooops. The handle was unbound, so we didn't get back
+		// the current properties. We assume this being a
+		// type mismatch.
+		//
+                sorted_vars[count]->_last_result = KS_ERR_TYPEMISMATCH;
                 ok = false;
             }
         } else {
-            sorted_vars[count]->last_result = res[count].result;
+	    //
+	    // This variable could not be read, so flag this error and
+	    // return the exact error reason through the corresponding
+	    // variable object. This behaviour is the reason for
+	    // getUpdate() signalling an error but getLastResult()
+	    // returning KS_ERR_OK.
+	    //
+            sorted_vars[count]->_last_result = res[count].result;
             ok = false;
         }
         ++count;
     }
 
-    return ok;
-}
+    return ok; // return the outcome of our little operation...
+} // _KscPackageBase::copyGetVarResults
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -855,28 +1159,44 @@ _KscPackageBase::fillSetVarParams(
     return true;
 }
 
-//////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+// Copy back the results (error codes) of an ACPLT/KS SetVar request
+// into the corresponding variable objects. If there was an error for
+// at least one variable in this set, then the function will return
+// false, otherwise true. This helps client programmers to speed up
+// checking whether the complete setUpdate() operation succeeded.
+//
 bool 
-_KscPackageBase::copySetVarResults(const PltArray< KscSortVarPtr > &sorted_vars,
-                                   const KsArray<KsResult> &res)
+_KscPackageBase::copySetVarResults(
+    const PltArray< KscSortVarPtr > &sorted_vars,
+    const KsArray<KsResult> &res)
 {
     PLT_PRECONDITION(sorted_vars.size() == res.size());
 
-    bool ok = true;
+    bool ok = true; // Be optimistic once again...
     size_t size = sorted_vars.size();
 
-    for(size_t count = 0; count < size; count++) {
-        sorted_vars[count]->last_result = res[count].result;
-        if(res[count].result == KS_ERR_OK) {
+    for ( size_t count = 0; count < size; count++ ) {
+        sorted_vars[count]->_last_result = res[count].result;
+        if ( res[count].result == KS_ERR_OK ) {
+	    //
+	    // Because the variable could be written successfully to
+	    // the ACPLT/KS server, we can now reset the dirty flag.
+	    //
             sorted_vars[count]->fDirty = false;
         } else {
+	    //
+	    // Setting a new value for this particular variable failed,
+	    // so notify the caller of at least one failure.
+	    //
             ok = false;
         }
     }
 
     return ok;
-}
+} // _KscPackageBase::copySetVarResults
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -913,17 +1233,3 @@ _KscPackageBase::optimizePaths(
 //////////////////////////////////////////////////////////////////////
 // EOF package.cpp
 //////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-

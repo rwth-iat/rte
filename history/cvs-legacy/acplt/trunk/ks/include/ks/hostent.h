@@ -1,10 +1,11 @@
 /* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/hostent.h,v 1.2 1998-01-12 07:49:24 harald Exp $ */
 
 #ifndef KSC_HOSTENT_INCLUDED
 #define KSC_HOSTENT_INCLUDED
 
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.

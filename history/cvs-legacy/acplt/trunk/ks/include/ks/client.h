@@ -1,10 +1,11 @@
 /* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.19 1998-01-12 07:49:24 harald Exp $ */
 
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -122,7 +123,8 @@ protected:
     // should only be used by KscCommObject objects
     //
     friend class KscCommObject;
-    virtual KscServerBase *createServer(KsString host_and_name); 
+    virtual KS_RESULT createServer(KsString host_and_name, 
+				   KscServerBase *&pServer);
 
     // destroy an server, should only be used
     // by KscServer objects
@@ -227,16 +229,15 @@ class KscServer
 {
     PLT_DECL_RTTI;
 public:
-    // return error code of the last rpc call, 
-    // see rpc library for definition of the values
-    enum_t getErrcode() const;
     // ping server
     bool ping();
 
+#if 0
     // reread server description and state 
     // from manager
     //
     bool getStateUpdate();
+#endif
 
     // service functions
     //
@@ -272,21 +273,6 @@ public:
  
 
 protected:
-    // internal status
-    //
-    enum TStatus {
-        KscOk = 0,
-        KscNotInitiated,
-        KscHostNotFound,
-        KscCannotCreateClientHandle,
-        KscCannotCreateUDPClient,
-        KscRPCCallFailed,
-        KscNoServer
-    };
-
-    // return status of the server (see beyond)
-    TStatus getStatus() const;
-    
     KscNegotiator *getNegotiator(const KscAvModule *);
 
     // service functions
@@ -298,16 +284,15 @@ protected:
 
     bool createTransport();
     void destroyTransport();
-    virtual bool reconnectServer(size_t try_count, enum_t errcode );
+    virtual bool reconnectServer(size_t try_count, enum clnt_stat errcode);
+    virtual bool reconnectServer(KS_RESULT result);
     virtual bool wait(PltTime howLong);
     bool getHostAddr(struct sockaddr_in *addr);
-    void setResultAfterService();
+    void setResultAfterService(enum clnt_stat errcode);
 
     KsServerDesc server_desc;      // server description given by user
     KsGetServerResult server_info; // server description given by manager
-    enum clnt_stat errcode;        // last RPC error code
-    TStatus status;                // internal status
-    CLIENT *pClient;               // RPC client handle
+    CLIENT *_client_transport;     // RPC client handle
 
     PltTime _rpc_timeout;
     PltTime _retry_wait;
@@ -396,32 +381,17 @@ KscServerBase::getLastResult() const
 // KscServer
 //////////////////////////////////////////////////////////////////////
 
-inline 
-KscServer::TStatus
-KscServer::getStatus() const
-{
-    return status;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-enum_t
-KscServer::getErrcode() const
-{
-    return errcode;
-} 
-
 //////////////////////////////////////////////////////////////////////
 
 inline
 bool
 KscServer::ping()
 {
-    errcode = clnt_call(pClient, 0, 
-                        (xdrproc_t) xdr_void, 0, 
-                        (xdrproc_t) xdr_void, 0, 
-                        KSC_RPCCALL_TIMEOUT);
+    enum clnt_stat errcode;
+    errcode = clnt_call(_client_transport, 0, 
+			(xdrproc_t) xdr_void, 0, 
+			(xdrproc_t) xdr_void, 0, 
+			KSC_RPCCALL_TIMEOUT);
 
     return errcode == RPC_SUCCESS;
 }

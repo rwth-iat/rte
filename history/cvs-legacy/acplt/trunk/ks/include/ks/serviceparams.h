@@ -2,7 +2,7 @@
 #ifndef KS_SERVICEPARAMS_INCLUDED
 #define KS_SERVICEPARAMS_INCLUDED
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.

@@ -1,10 +1,11 @@
 /* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/package.h,v 1.17 1998-01-12 07:49:24 harald Exp $ */
 
 #ifndef KSC_PACKAGE_INCLUDED 
 #define KSC_PACKAGE_INCLUDED
 
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -67,7 +68,9 @@ protected:
                                   const KsArray<KsResult> &);
     static bool optimizePaths(const PltArray< KscSortVarPtr > &,
                               KsArray<KsString> &);
-};                                 
+    static void distributeErrorResult(KS_RESULT result,
+				      const PltArray< KscSortVarPtr > &);
+}; // class _KscPackageBase
 
 //////////////////////////////////////////////////////////////////////
 // class KscPackage
@@ -116,10 +119,11 @@ protected:
 
     const KscAvModule *av_module;
 
-    // TODO: iterate over elements to determine status
-    bool fDirty;
+    // flags adding/removing variables and subpackages, but not
+    // subvariables or sub-subpackages.
+    bool _is_dirty;
 
-    KS_RESULT _result;
+    KS_RESULT _last_result;
 
     //
     // class DeepIterator
@@ -196,7 +200,7 @@ protected:
                      set_pkg;
 
     const KscAvModule *av_module;
-    KS_RESULT _result;
+    KS_RESULT _last_result;
 
 #if PLT_DEBUG
 public:
@@ -223,7 +227,7 @@ inline
 bool
 KscPackage::isDirty() const
 {
-    return fDirty;
+    return _is_dirty;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -232,7 +236,7 @@ inline
 KS_RESULT
 KscPackage::getLastResult() const
 {
-    return _result;
+    return _last_result;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -271,7 +275,7 @@ KscExchangePackage::KscExchangePackage(KscPackageHandle setPkg,
 : get_pkg(getPkg),
   set_pkg(setPkg),
   av_module(0),
-  _result(-1)
+  _last_result(-1)
 {}
 
 //////////////////////////////////////////////////////////////////////
@@ -286,7 +290,7 @@ inline
 KS_RESULT
 KscExchangePackage::getLastResult() const
 {
-    return _result;
+    return _last_result;
 }
 
 //////////////////////////////////////////////////////////////////////

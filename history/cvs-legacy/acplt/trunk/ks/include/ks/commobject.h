@@ -1,10 +1,11 @@
 /* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.25 1998-01-12 07:49:24 harald Exp $ */
 
 #ifndef KSC_COMMOBJECT_INCLUDED 
 #define KSC_COMMOBJECT_INCLUDED
 
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -87,18 +88,13 @@ public:
     KS_RESULT getLastResult() const;
 
     //
-    // commobjects considered to be equal if they
-    // are located at the equal memory location
+    // Communication objects are considered equal if they occupy
+    // the same memory location. Other relational operators are
+    // not supported and make in fact no sense here. Yes, we've
+    // already learned that the hard way, believe us...
     //
     bool operator == (const KscCommObject &) const;
     bool operator != (const KscCommObject &) const;
-
-#if 0
-    bool operator <  (const KscCommObject &) const;
-    bool operator <= (const KscCommObject &) const;
-    bool operator >  (const KscCommObject &) const;
-    bool operator >= (const KscCommObject &) const;
-#endif
 
 protected:
     KscServerBase *findServer();
@@ -113,7 +109,7 @@ protected:
     KscPathParser path;
     KscServerBase *server;
     const KscAvModule *av_module;
-    KS_RESULT last_result;
+    KS_RESULT _last_result;
 
     PLT_DECL_RTTI;
 
@@ -148,48 +144,13 @@ KscCommObject::operator != (const KscCommObject &other) const
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-#if 0
-
-inline bool
-KscCommObject::operator <  (const KscCommObject &other) const
-{
-    return path < other.path;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscCommObject::operator <= (const KscCommObject &other) const
-{
-    return path <= other.path;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscCommObject::operator >  (const KscCommObject &other) const
-{
-    return path > other.path;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KscCommObject::operator >= (const KscCommObject &other) const
-{
-    return path >= other.path;
-}
-
-#endif
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
 typedef PltPtrHandle<KscCommObject> KscCommObjectHandle;
 
 //////////////////////////////////////////////////////////////////////
 // class KscDomain
 //////////////////////////////////////////////////////////////////////
+
+class KsGetPPResult;
 
 typedef PltIterator<KsProjPropsHandle> KscChildIterator;
 
@@ -217,12 +178,19 @@ protected:
     // read children from server, returns PP's in list
     bool getChildPPUpdate(KS_OBJ_TYPE typeMask,
                           KsString nameMask,
-                          PltList<KsProjPropsHandle> &);
+			  KsGetPPResult *&result);
 
     bool setProjProps(KsProjPropsHandle);
 
     KsDomainProjProps proj_props;
 
+    //
+    // This protected iterator class is responsible for iterating over the
+    // child list of a domain communication object. The trick here is that
+    // the iterator is directly connected with the result object from a
+    // GetPP service call, so we don't need to copy the list. Instead, the
+    // iterator destroys the result object when it gets destroyed itself.
+    //
     class ChildIterator
     : public PltListIterator<KsProjPropsHandle>
     {
@@ -233,10 +201,10 @@ protected:
 #else
 # define KscDomain_ChildIterator_THISTYPE PltListIterator_THISTYPE(KsProjPropsHandle)
 #endif
-        ChildIterator(PltList<KsProjPropsHandle> *);
+        ChildIterator(KsGetPPResult &getPPResult);
         ~ChildIterator();
     private:
-        PltList<KsProjPropsHandle> *pp_list;
+        KsGetPPResult &_getPP_result;
     };
 
     friend class ChildIterator;
@@ -388,7 +356,7 @@ inline
 KS_RESULT
 KscCommObject::getLastResult() const
 {
-    return last_result;
+    return _last_result;
 }
 
 //////////////////////////////////////////////////////////////////////

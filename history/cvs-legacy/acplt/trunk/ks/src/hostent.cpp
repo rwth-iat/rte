@@ -1,6 +1,7 @@
 /* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/hostent.cpp,v 1.2 1998-01-12 07:49:26 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -45,19 +46,19 @@
 void
 KscHostEnt::copy_ips(struct hostent *he)
 {
-  if(he) {
-    size_t count = 0;
-    while(he->h_addr_list[count]) count++;
+    if ( he ) {
+	size_t count = 0;
+	while ( he->h_addr_list[count] ) count++;
 
-    ips = PltArray<KSC_IP_TYPE>(count);
+	ips = PltArray<KSC_IP_TYPE>(count);
 
-    for(size_t i = 0; i < count; i++) {
-      ips[i] = *(KSC_IP_TYPE *)(he->h_addr_list[i]);
+	for ( size_t i = 0; i < count; i++ ) {
+	    ips[i] = *(KSC_IP_TYPE *)(he->h_addr_list[i]);
+	}
+    } else {
+	ips = PltArray<KSC_IP_TYPE>(0);
     }
-  } else {
-    ips = PltArray<KSC_IP_TYPE>(0);
-  }
-}
+} // KscHostEnt::copy_ips
 
 //////////////////////////////////////////////////////////////////////
 // EOF hostent.cpp
