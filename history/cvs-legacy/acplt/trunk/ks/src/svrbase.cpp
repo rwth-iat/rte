@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.37 1999-02-25 17:15:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.38 1999-09-06 06:58:15 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -38,7 +38,7 @@
 /*
  * svrbase.cpp -- The basic communication and dispatching stuff common to
  *                all ACPLT/KS servers (and managers). It's sometimes getting
- *                really dirty here as we´ve to hide the communication details
+ *                really dirty here as we've to hide the communication details
  *                from the server application programmer. Especially with
  *                the connection manager and other communication layers this
  *                leads to a bunch of #defines. But now -- enjoy =:)
@@ -81,7 +81,7 @@
 // result here. On some systems, FD_SETSIZE boils down to a (fast!) kernel
 // trap, on some others to a sloooow kernel trap. So we take our chances here.
 // BTW -- with NT it boils down to a stupid constant: 64. Believe it or not:
-// that is claimed to be "new technology" -- hah!
+// that is claimed to be "new technology" -- blah blah blah!
 //
 #if !PLT_USE_BUFFERED_STREAMS
 static size_t ks_dtsz;
@@ -96,8 +96,8 @@ ks_dtablesize()
 } // ks_dtablesize
 #endif
 
-//////////////////////////////////////////////////////////////////////
-//
+
+// ---------------------------------------------------------------------------
 // Return the next timer event that will trigger or 0, if there's none in
 // the timer event queue.
 //
@@ -465,13 +465,110 @@ KsServerBase::dispatch(u_long serviceId,
         break;
 
     case KS_GETPP:
+#if 1
         {
-            KsGetPPParams params(xdrIn, decodedOk);
+	    KsGetPPParams params(xdrIn, decodedOk);
 	    transport.finishRequestDeserialization(ticket, decodedOk);
             if ( decodedOk ) {
                 // execute service function
                 KsGetPPResult result;
-                getPP(ticket, params, result);
+		KsGetEPParams getEPParams;
+		KsGetEPResult getEPResult;
+
+		getEPParams.path = params.path;
+		getEPParams.type_mask = params.type_mask;
+		getEPParams.name_mask = params.name_mask;
+		getEPParams.scope_flags = KS_EPF_CHILDREN;
+
+                getEP(ticket, getEPParams, getEPResult);
+
+                result.result = getEPResult.result;
+		if ( result.result == KS_ERR_OK ) {
+
+		    KsEngPropsHandle hep;
+
+		    while ( !getEPResult.items.isEmpty() ) {
+			hep = getEPResult.items.removeFirst();
+			if ( hep ) {
+			    KsEngPropsV1 *epv1 = 0;
+			    switch ( hep->xdrTypeCode() ) {
+			    case KS_OT_DOMAIN:
+				epv1 = new KsDomainEngPropsV1(
+				    hep->identifier,
+				    hep->creation_time,
+				    hep->comment,
+				    hep->access_mode
+				    );
+				break;
+			    case KS_OT_VARIABLE:
+				epv1 = new KsVarEngPropsV1(
+				    hep->identifier,
+				    hep->creation_time,
+				    hep->comment,
+				    hep->access_mode,
+				    ((KsVarEngProps *)hep.getPtr())->tech_unit,
+				    ((KsVarEngProps *)hep.getPtr())->type
+				    );
+				break;
+#if PLT_SOURCE_V1PLUS_BC
+			    case KS_OT_LINK:
+				epv1 = new KsLinkEngPropsV1(
+				    hep->identifier,
+				    hep->creation_time,
+				    hep->comment,
+				    hep->access_mode,
+				    ((KsLinkEngProps *)hep.getPtr())->type,
+				    ((KsLinkEngProps *)hep.getPtr())->opposite_role_identifier,
+				    ((KsLinkEngProps *)hep.getPtr())->association_identifier
+				    );
+				break;
+			    case KS_OT_HISTORY:
+				epv1 = new KsHistoryEngPropsV1(
+				    hep->identifier,
+				    hep->creation_time,
+				    hep->comment,
+				    hep->access_mode,
+				    ((KsHistoryEngProps *)hep.getPtr())->type,
+				    ((KsHistoryEngProps *)hep.getPtr())->default_interpolation,
+				    ((KsHistoryEngProps *)hep.getPtr())->supported_interpolations,
+				    ((KsHistoryEngProps *)hep.getPtr())->type_identifier
+				    );
+				break;
+#endif
+			    default:
+				continue;
+			    }
+			    if ( !epv1 ||
+				 !result.items.addLast(KsEngPropsV1Handle(epv1,
+									  KsOsNew)) ) {
+				result.result = KS_ERR_GENERIC;
+				break;
+			    }
+			}
+		    }
+
+		}
+
+                // send back result
+                transport.sendReply(ticket, result);
+            } else {
+                // not properly decoded
+                transport.sendErrorReply(ticket, KS_ERR_GENERIC);
+            }
+        }
+#else
+	transport.sendErrorReply(ticket, KS_ERR_NOTIMPLEMENTED);
+#endif
+	break;
+
+    case KS_GETEP:
+        {
+            KsGetEPParams params(xdrIn, decodedOk);
+	    transport.finishRequestDeserialization(ticket, decodedOk);
+            if ( decodedOk ) {
+                // execute service function
+                KsGetEPResult result;
+                getEP(ticket, params, result);
                 // send back result
                 transport.sendReply(ticket, result);
             } else {
@@ -520,7 +617,11 @@ KsServerBase::dispatch(u_long serviceId,
 #if !PLT_SERVER_TRUNC_ONLY
 // ---------------------------------------------------------------------------
 // The following ACPLT/KS base services are not implemented by default. A
-// derived class is responsible for providing suitable implementations.
+// derived class is responsible for providing suitable implementations. In
+// case your server is written in C instead of C++, you can save quite some
+// code space by compiling it using -DPLT_SERVER_TRUNC_ONLY=1. This prevents
+// the linker from sucking in all the service parameters and all the stuff
+// that depends on it.
 //
 void 
 KsServerBase::getVar(KsAvTicket &,
@@ -541,12 +642,12 @@ KsServerBase::setVar(KsAvTicket &,
 
 
 void 
-KsServerBase::getPP(KsAvTicket &,
-                    const KsGetPPParams &,
-                    KsGetPPResult & result)
+KsServerBase::getEP(KsAvTicket &,
+                    const KsGetEPParams &,
+                    KsGetEPResult & result)
 {
     result.result = KS_ERR_NOTIMPLEMENTED;
-} // KsServerBase::getPP
+} // KsServerBase::getEP
 
 
 void 
@@ -949,18 +1050,28 @@ KsServerBase::startServer()
         // transport you create, but once again, never deregister it, if at
 	// all possible.
         //
-        if ( svc_register(_tcp_transport, 
-                          KS_RPC_PROGRAM_NUMBER,
-                          KS_PROTOCOL_VERSION,
-                          ks_c_dispatch,
-                          0) ) {  // Do not contact the portmapper!
-            _is_ok = true;
-        } else {
-            svc_destroy(_tcp_transport);
-            _tcp_transport = 0;
-            PltLog::Error("KsServerBase::startServer(): "
-                          "could not register TCP service.");
-            _is_ok = false;
+	u_long ks_version;
+	
+	_is_ok = true;
+	for ( ks_version = KS_PROTOCOL_VERSION;
+	      ks_version >= KS_MINPROTOCOL_VERSION;
+	      --ks_version ) {
+	    if ( !svc_register(_tcp_transport, 
+			       KS_RPC_PROGRAM_NUMBER,
+			       ks_version,
+			       ks_c_dispatch,
+			       0) ) {  // Do not contact the portmapper!
+		//
+		// If registration fails, then destroy the transport and
+		// bail out immediately.
+		//
+		svc_destroy(_tcp_transport);
+		_tcp_transport = 0;
+		PltLog::Error("KsServerBase::startServer(): "
+			      "could not register TCP service.");
+		_is_ok = false;
+		break;
+	    }
         }
 #else
 	//

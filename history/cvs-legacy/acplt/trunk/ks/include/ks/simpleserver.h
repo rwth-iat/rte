@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.12 1998-12-10 17:27:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.13 1999-09-06 06:57:53 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -36,14 +36,15 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
 
 #include "ks/svrbase.h"
 #include "ks/serviceparams.h"
 #include "ks/path.h"
 #include "ks/svrsimpleobjects.h"
+
 
 //////////////////////////////////////////////////////////////////////
 // forward declarations
@@ -69,9 +70,9 @@ public:
     virtual void setVar(KsAvTicket &ticket,
                         const KsSetVarParams &params,
                         KsSetVarResult &result);
-    virtual void getPP(KsAvTicket &ticket, 
-                       const KsGetPPParams & params,
-                       KsGetPPResult & result);
+    virtual void getEP(KsAvTicket &ticket, 
+                       const KsGetEPParams & params,
+                       KsGetEPResult & result);
 
 protected:
     KssSimpleDomain _root_domain;
@@ -84,11 +85,11 @@ protected:
                             const KsCurrPropsHandle & curr_props,
                             KsResult &result);
 
-    void getPPOfObject(KssCommObject *pd,
+    void getEPOfObject(KssCommObject *pd,
                        const PltString &prefix,
                        KsAvTicket &ticket,
-                       const KsGetPPParams &params,
-                       KsGetPPResult &result);
+                       const KsGetEPParams &params,
+                       KsGetEPResult &result);
 
     bool addCommObject(const KsPath & dompath,
                        const KssCommObjectHandle & ho);

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.22 1999-02-25 17:15:49 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.23 1999-09-06 06:58:14 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -88,7 +88,7 @@ public:
     virtual KsString getVendorName () const = 0;
 
     virtual u_short  getProtocolVersion() const 
-        { return 1; }
+        { return KS_PROTOCOL_VERSION; }
 
     virtual bool isOk() const { return _is_ok; }
     virtual bool isGoingDown() const { return _shutdown_flag != 0; }
@@ -118,9 +118,9 @@ public:
                         const KsGetVarParams &params,
                         KsGetVarResult &result);
 
-    virtual void getPP(KsAvTicket &ticket, 
-                       const KsGetPPParams & params,
-                       KsGetPPResult & result);
+    virtual void getEP(KsAvTicket &ticket, 
+                       const KsGetEPParams & params,
+                       KsGetEPResult & result);
 
     virtual void setVar(KsAvTicket &ticket,
                         const KsSetVarParams &params,
@@ -202,36 +202,38 @@ private:
 }; // class KsServerBase
 
 
-/////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
+// The base class of all ACPLT/KS service results...
 //
 class KsServiceResult {
 public:
     virtual bool_t xdrEncode(XDR *xdr) = 0;
 
     KS_RESULT result;
-};
+}; // class KsServiceResult
 
 
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 // INLINE IMPLEMENTATION
-//////////////////////////////////////////////////////////////////////
+//
 
 inline bool
 KsServerBase::servePendingEvents(KsTime timeout) 
 {
     return servePendingEvents(&timeout);
-}
+} // KsServerBase::servePendingEvents
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 
 inline KsServerBase &
 KsServerBase::getServerObject()
 {
     PLT_PRECONDITION(the_server);
     return *the_server;
-}
-//////////////////////////////////////////////////////////////////////
+} // KsServerBase::getServerObject
+
 
 #endif // PLT_SVRBASE_INCLUDED
-// End of svrbase.h
+/* End of ks/svrbase.h */
+

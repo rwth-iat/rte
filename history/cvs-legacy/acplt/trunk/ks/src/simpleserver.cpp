@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.24 1999-01-12 16:13:33 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.25 1999-09-06 06:57:54 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -37,7 +37,6 @@
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 /* v1+ stuff: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
 
 #include "ks/simpleserver.h"
 #include "ks/path.h"
@@ -125,19 +124,23 @@ KsValueHandle KssIoStatisticsVariable::getValue() const
     switch ( _stat_type ) {
     case DLAS_CONNECTION_COUNT:
 	pVal = new KsIntValue(
-	    KsServerBase::getServerObject().getConnectionManager()->getConnectionCount());
+	    KsServerBase::getServerObject().getConnectionManager()->
+	        getConnectionCount());
 	break;
     case DLAS_IO_ERROR_COUNT:
 	pVal = new KsIntValue(
-	    KsServerBase::getServerObject().getConnectionManager()->getIoErrorCount());
+	    KsServerBase::getServerObject().getConnectionManager()->
+	        getIoErrorCount());
 	break;
     case DLAS_IO_RX_ERROR_COUNT:
 	pVal = new KsIntValue(
-	    KsServerBase::getServerObject().getConnectionManager()->getIoRxErrorCount());
+	    KsServerBase::getServerObject().getConnectionManager()->
+	        getIoRxErrorCount());
 	break;
     case DLAS_IO_TX_ERROR_COUNT:
 	pVal = new KsIntValue(
-	    KsServerBase::getServerObject().getConnectionManager()->getIoTxErrorCount());
+	    KsServerBase::getServerObject().getConnectionManager()->
+	        getIoTxErrorCount());
 	break;
     case DLAS_POOL_SIZE:
 	{
@@ -192,7 +195,7 @@ bool KsSimpleServer::initStatistics()
 #endif
 
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 // Note that the virtual base class KsServerBase will first set the
 // member variable _sock_port to KS_ANYPORT before we'll here reset
 // it to whatever the programmer wants. We do it this way because then
@@ -207,11 +210,11 @@ KsSimpleServer::KsSimpleServer(int port)
         // Some day I'll be after those who'd invented virtual base
         // classes without defining the order of constructors called
         // for derived classes. But on the other side, why did I ever
-        // relied on that?! Okay -- I´m silly, yeah. =:)
+        // relied on that?! Okay -- I'm stupid, yeah. =:)
         //
         _sock_port = port;
     }
-}
+} // KsSimpleServer::KsSimpleServer
 
 
 //////////////////////////////////////////////////////////////////////
@@ -394,24 +397,27 @@ KsSimpleServer::setVarItem(KsAvTicket &ticket,
     }
 }
 
-//////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Retrieve the engineered properties of either a communication object itself
+// or its children, depending on the path and mask specified.
+//
 void
-KsSimpleServer::getPPOfObject(KssCommObject *pobj,
+KsSimpleServer::getEPOfObject(KssCommObject *pobj,
                               const PltString &prefix,
                               KsAvTicket &ticket,
-                              const KsGetPPParams &params,
-                              KsGetPPResult &result)
+                              const KsGetEPParams &params,
+                              KsGetEPResult &result)
 {
     PLT_PRECONDITION( pobj );
  
     if ( params.name_mask == "" ) {
 	//
-        // We are being asked about the proj. props of the object itself.
-	// Just add them to the end of the list of proj. props the result
+        // We are being asked about the engineered props of the object itself.
+	// Just add them to the end of the list of engineered props the result
 	// already has.
         //
-        KsProjPropsHandle h(pobj->getPP());
+        KsEngPropsHandle h(pobj->getEP());
         if ( h && result.items.addLast(h) ) {
             result.result = KS_ERR_OK;
         } else {
@@ -443,7 +449,7 @@ KsSimpleServer::getPPOfObject(KssCommObject *pobj,
 	    return;
 	}
 	//
-        // Convert mask.
+        // Convert mask. FIXME
 	//
         KsString mask;
         result.result = ksStringFromPercent(params.name_mask, mask);
@@ -451,7 +457,8 @@ KsSimpleServer::getPPOfObject(KssCommObject *pobj,
 	    return;
 	}
 	//
-        // Iterate over the children of a communication object.
+        // Iterate over the children of a communication object and add
+	// the engineered properties of each child to the result list.
 	//
         KssChildIterator *pit =
 	       PLT_RETTYPE_CAST((KssChildIterator *))
@@ -470,15 +477,19 @@ KsSimpleServer::getPPOfObject(KssCommObject *pobj,
 					(*it)->getIdentifier());
 		    if ( ticket.isVisible(childname) ) {
 			//
-			// Ask for the child's engineered properties.
+			// Ask for the child's engineered properties. Make
+			// sure that the access mode can't be better than
+			// what the A/V ticket allows at this point. Note
+			// that we must preserve the other flags here.
 			//
-                        KsProjPropsHandle hpp = (*it)->getPP();
-			if ( hpp ) {
-			    hpp->access_mode &= 
-				ticket.getAccess(childname);
-			    hpp->identifier = 
-				ksStringToPercent(hpp->identifier);
-			    result.items.addLast(hpp);
+                        KsEngPropsHandle hep = (*it)->getEP();
+			if ( hep ) {
+			    hep->access_mode &= 
+				ticket.getAccess(childname) |
+				~KS_AC_READWRITE;
+			    hep->identifier = 
+				ksStringToPercent(hep->identifier);
+			    result.items.addLast(hep);
 			} else {
 			    //
 			    // Ignore any error, thus making the child
@@ -492,8 +503,7 @@ KsSimpleServer::getPPOfObject(KssCommObject *pobj,
                     }
 		} else {
 		    // null handle, log error
-                    PltLog::Error("Child iterator returned"
-				  " null handle");
+                    PltLog::Error("Child iterator returned null handle");
 		}
 	    } // for
             delete pit; // get rid of iterator...
@@ -501,15 +511,15 @@ KsSimpleServer::getPPOfObject(KssCommObject *pobj,
 	    // no iterator: ignore error
         }
     }               
-} // KsSimpleServer::getPPOfObject
+} // KsSimpleServer::getEPOfObject
 
 
 /////////////////////////////////////////////////////////////////////////////
 
 void
-KsSimpleServer::getPP(KsAvTicket &ticket, 
-                      const KsGetPPParams & params,
-                      KsGetPPResult & result) 
+KsSimpleServer::getEP(KsAvTicket &ticket, 
+                      const KsGetEPParams & params,
+                      KsGetEPResult & result) 
 {
     KsPath path(params.path);
     PltString prefix;
@@ -541,7 +551,7 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
                     }
                 }
                 if ( pd ) {
-                    getPPOfObject(pd, prefix, ticket, params, result);
+                    getEPOfObject(pd, prefix, ticket, params, result);
                 } else {
                     // not a domain or no such child
                     result.result = KS_ERR_BADPATH;
@@ -695,6 +705,17 @@ KsSimpleServer::initVendorTree()
     startup_time.lock();
     KssCommObjectHandle startup_time_handle(&startup_time, KsOsUnmanaged);
 
+    static KssSimpleVariable fame("ks_comm_lib_fame", KsTime::now(),
+				  "The people behind the ACPLT/KS "
+	                          "C++ Communication Library");
+    KsStringVecValue *fame_val = new KsStringVecValue(3);
+    (*fame_val)[0] = "Harald \"Harry Hirsch\" Albrecht";
+    (*fame_val)[1] = "Markus Juergens";
+    (*fame_val)[2] = "Martin \"Graph Grammar\" Kneissl";
+    fame.setValue(fame_val);
+    fame.lock();
+    KssCommObjectHandle fame_handle(&fame, KsOsUnmanaged);
+
     KsPath vendor("/vendor");
     addDomain(KsPath("/"), "vendor"); // ignore error, may already exist.
     return 
@@ -708,6 +729,8 @@ KsSimpleServer::initVendorTree()
 
         && addStringVar(vendor, "ks_comm_lib_version",
                         KS_VERSION_STRING)
+
+	&& addCommObject(vendor, fame_handle)
 
         && addStringVar(vendor, "server_description",
                         getServerDescription())
