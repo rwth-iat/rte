@@ -17,11 +17,13 @@ VPATH = ../../tests ../../src
 
 .SUFFIXES:
 
-.SUFFIXES: .cpp .o .a
+.SUFFIXES: .cpp .o .a .s
 
 .cpp.o:
 	$(CXX_COMPILE) -o $@ $<
 
+.cpp.s:
+	$(CXX_COMPILE) -S -o $@ $<
 
 CXX_LIBPLT_SOURCES = \
 	debug.cpp \

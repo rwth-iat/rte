@@ -85,10 +85,11 @@ class PltPtrHandle
 {
 public:
     PltPtrHandle();
+    PltPtrHandle(T *p, enum PltOwnership); // no default to avoid conversion!
     PltPtrHandle(const PltPtrHandle &);
     
     // accessors
-    bool isBound() const;
+    operator bool () const;
     T& operator*() const;
     T* operator->() const;
     T* getPtr() const; 
@@ -109,9 +110,10 @@ class PltArrayHandle
 {
 public:
     PltArrayHandle();
+    PltArrayHandle(T *p, enum PltOwnership); // no default to avoid conversion!
     PltArrayHandle(const PltArrayHandle &);
 
-    bool isBound() const;
+    operator bool () const;
     T& operator[](size_t) const;
     T* getPtr() const; 
     // ^^ CAUTION: DON'T STORE ANY REFERENCES TO THE REPRESENTATION
@@ -128,12 +130,12 @@ public:
 template<class T>
 class PltHandle : virtual public PltDebuggable {
 protected:
-    PltHandle();
+    PltHandle(); 
     PltHandle(const PltHandle &);
     ~PltHandle();
 
     // accessor
-    bool isBound() const;
+    operator bool () const;
     T* getPtr() const; 
     // ^^ CAUTION: DON'T STORE ANY REFERENCES TO THE REPRESENTATION
 
@@ -144,6 +146,10 @@ protected:
     void addRef();
     void removeRef();
 
+    // static helper
+    void destroy(T *p, PltOwnership os);
+    
+    // state representation
     T *prep;
     struct AllocTracker 
         {
@@ -161,8 +167,8 @@ protected:
 //////////////////////////////////////////////////////////////////////
 
 template<class T>
-bool
-PltHandle<T>::isBound() const
+inline
+PltHandle<T>::operator bool() const
 {
     return prep != 0;
 }
@@ -172,7 +178,7 @@ PltHandle<T>::isBound() const
 
 #if PLT_DEBUG_INVARIANTS
 template<class T>
-bool 
+inline bool 
 PltHandle<T>::invariant() const 
 {
     return (prep==0 && palloc==0) 
@@ -184,11 +190,11 @@ PltHandle<T>::invariant() const
 // Add one reference to the handled object
 
 template<class T>
-void PltHandle<T>::addRef()
+inline void 
+PltHandle<T>::addRef()
 {
-    PLT_PRECONDITION( isBound() 
-                     && (palloc ? palloc->count<UINT_MAX : true));
-    if (palloc) {
+    PLT_PRECONDITION(palloc ? palloc->count<UINT_MAX : true);
+    if (*this && palloc) {
         palloc->count++;
     }
     PLT_CHECK_INVARIANT();
@@ -196,30 +202,41 @@ void PltHandle<T>::addRef()
 
 
 //////////////////////////////////////////////////////////////////////
-// Remove one reference to the handled object.
 
 template<class T>
-void PltHandle<T>::removeRef()
+inline void 
+PltHandle<T>::destroy(T *p, PltOwnership os) // static member fn
 {
-    PLT_PRECONDITION( isBound() );
- 
-    if ( palloc && --(palloc->count) == 0) {
-        switch (palloc->type) {
+    if (p) {
+        switch (os) {
         case PltOsNew:
-            delete prep;
+            delete p;
             break;
         case PltOsArrayNew:
-            delete[] prep;
+            delete[] p;
             break;
         case PltOsMalloc:
-            free(prep);
+            free(p);
             break;
         default:
             PLT_ASSERT(0==1);
         }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+// Remove one reference to the handled object.
+
+template<class T>
+inline void
+PltHandle<T>::removeRef()
+{
+    if ( *this && palloc && --(palloc->count) == 0) {
+        destroy(prep, palloc->type);
         prep = 0;
         delete palloc; palloc = 0;
     }
+    PLT_CHECK_INVARIANT();
 }
 
 
@@ -229,15 +246,17 @@ void PltHandle<T>::removeRef()
 // Returns true on success.
 
 template <class T>
-bool
+inline bool
 PltHandle<T>::bindTo(T* p, enum PltOwnership t)
 {
     bool ok = true;
-    if (prep) {
-        // unbind
-        removeRef();
-    }
+
+    // unbind old handled object
+    removeRef();
+
     PLT_ASSERT( palloc == 0 );
+
+    // bind new handled object
     if (t != PltOsUnmanaged) {
         palloc = new AllocTracker;
         if (palloc) {
@@ -258,6 +277,7 @@ PltHandle<T>::bindTo(T* p, enum PltOwnership t)
 // Create a PltHandle
 
 template<class T>
+inline
 PltHandle<T>::PltHandle() 
 : prep(0), 
   palloc(0)
@@ -265,15 +285,18 @@ PltHandle<T>::PltHandle()
     PLT_CHECK_INVARIANT();
 }
 
+
+
 //////////////////////////////////////////////////////////////////////
 // Copy constructor. The handled object -- if any -- gets an 
 // additional reference.
 
 template<class T>
+inline
 PltHandle<T>::PltHandle(const PltHandle &h)
 : prep(h.prep), palloc(h.palloc)
 {
-    if (h.isBound()) {
+    if (h) {
         addRef();
     }
     PLT_CHECK_INVARIANT();
@@ -284,26 +307,23 @@ PltHandle<T>::PltHandle(const PltHandle &h)
 // from the handled object.
 
 template<class T>
+inline
 PltHandle<T>::~PltHandle()
 {
-    if (isBound()) {
-        removeRef();
-    }
+    removeRef();
+    PLT_CHECK_INVARIANT();
 }
 
 //////////////////////////////////////////////////////////////////////
 //  Assignment
 template<class T>
-PltHandle<T> & PltHandle<T>::operator=(PltHandle &rhs) 
+inline PltHandle<T> & 
+PltHandle<T>::operator=(PltHandle &rhs) 
 {
     // order is important if called as 'handle = handle;'
-    if (rhs.isBound()) {
-        rhs.addRef();
-    }
-    if (isBound()) {
-        removeRef();
-    }
-
+    rhs.addRef();
+    removeRef();
+    
     palloc = rhs.palloc;
     prep = rhs.prep;
 
@@ -314,7 +334,8 @@ PltHandle<T> & PltHandle<T>::operator=(PltHandle &rhs)
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-T* PltHandle<T>::getPtr () const
+inline T * 
+PltHandle<T>::getPtr () const
 {
     return prep;
 }
@@ -323,33 +344,50 @@ T* PltHandle<T>::getPtr () const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
+inline
 PltPtrHandle<T>::PltPtrHandle()
-: PltHandle<T>()
 {
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
+inline
+PltPtrHandle<T>::PltPtrHandle(T *p, enum PltOwnership os) 
+{
+    PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
+                     || os==PltOsNew);
+    if (! bindTo(p, os)) {
+        destroy(p, os);
+    }
+    PLT_CHECK_INVARIANT();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
 PltPtrHandle<T>::PltPtrHandle(const PltPtrHandle &h)
 : PltHandle<T>(h)
 {
 }
 
 
+
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-bool 
-PltPtrHandle<T>::isBound() const
+inline
+PltPtrHandle<T>::operator bool() const
 {
-    return PltHandle<T>::isBound();
+    return PltHandle<T>::operator bool();
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-T* PltPtrHandle<T>::getPtr () const
+inline T *
+PltPtrHandle<T>::getPtr () const
 {
     return PltHandle<T>::getPtr();
 }
@@ -357,7 +395,7 @@ T* PltPtrHandle<T>::getPtr () const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-PltPtrHandle<T> & 
+inline PltPtrHandle<T> & 
 PltPtrHandle<T>::operator = ( PltPtrHandle &h)
 {
     return (PltPtrHandle<T> &) (PltHandle<T>::operator = ( h )); 
@@ -367,7 +405,7 @@ PltPtrHandle<T>::operator = ( PltPtrHandle &h)
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-bool
+inline bool
 PltPtrHandle<T>::bindTo(T * p, enum PltOwnership t)
 {
     PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
@@ -380,9 +418,10 @@ PltPtrHandle<T>::bindTo(T * p, enum PltOwnership t)
 // to the representation!
 
 template<class T>
-T * PltPtrHandle<T>::operator->() const
+inline T *
+PltPtrHandle<T>::operator->() const
 {
-    return isBound() ? getPtr() : 0;
+    return *this ? getPtr() : 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -390,9 +429,10 @@ T * PltPtrHandle<T>::operator->() const
 // to the representation!
 
 template<class T>
-T & PltPtrHandle<T>::operator*() const
+inline T &
+PltPtrHandle<T>::operator*() const
 {
-    PLT_PRECONDITION( isBound() );
+    PLT_PRECONDITION( *this );
     return *(operator->());
 }
 
@@ -400,14 +440,28 @@ T & PltPtrHandle<T>::operator*() const
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
+inline
 PltArrayHandle<T>::PltArrayHandle()
 : PltHandle<T>()
 {
 }
 
 //////////////////////////////////////////////////////////////////////
+template <class T>
+inline
+PltArrayHandle<T>::PltArrayHandle(T *p, enum PltOwnership os) 
+{
+    PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
+                     || os==PltOsNew || os==PltOsArrayNew);
+    if (! bindTo(p, os)) {
+        destroy(p, os);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
 
 template <class T>
+inline
 PltArrayHandle<T>::PltArrayHandle(const PltArrayHandle & h)
 : PltHandle<T>(h)
 {
@@ -416,23 +470,24 @@ PltArrayHandle<T>::PltArrayHandle(const PltArrayHandle & h)
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-bool 
-PltArrayHandle<T>::isBound() const
+inline
+PltArrayHandle<T>::operator bool() const
 {
-    return PltHandle<T>::isBound();
+    return PltHandle<T>::operator bool();
 }
 
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-T* PltHandle<T>::getPtr () const
+inline T*
+PltArrayHandle<T>::getPtr () const
 {
     return PltHandle<T>::getPtr();
 }
 
 //////////////////////////////////////////////////////////////////////
 template <class T>
-PltArrayHandle<T> & 
+inline PltArrayHandle<T> & 
 PltArrayHandle<T>::operator = ( PltArrayHandle &h)
 {
     return (PltArrayHandle<T> &) PltHandle<T>::operator = (h);
@@ -442,7 +497,7 @@ PltArrayHandle<T>::operator = ( PltArrayHandle &h)
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-bool
+inline bool
 PltArrayHandle<T>::bindTo(T * p, enum PltOwnership t)
 {
     PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
@@ -456,10 +511,10 @@ PltArrayHandle<T>::bindTo(T * p, enum PltOwnership t)
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-T & 
+inline T & 
 PltArrayHandle<T>::operator[](size_t i) const
 {
-    PLT_PRECONDITION( isBound() );
+    PLT_PRECONDITION( *this );
     return getPtr()[i];
 }
 
