@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.13 1999-09-06 06:46:09 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.14 1999-09-06 07:15:38 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -467,6 +467,44 @@ void DumpBranch(KscAnyCommObject &branch, int indent)
 int main(int argc, char **argv)
 {
     KsString host_and_server;
+
+#if 0
+    KscPathParser pp1("//host");
+    KscPathParser pp2("//host/server");
+    KscPathParser pp3("//host/server/");
+    KscPathParser pp4("//host/server/path/to/object");
+    KscPathParser pp5("//host/server/path/to.object");
+    KscPathParser pp6("/path/to.object");
+
+    cerr << (const char *)(KsString) pp1 << ": " << pp1.getType() << endl;
+    cerr << (const char *)(KsString) pp2 << ": " << pp2.getType() << endl;
+    cerr << (const char *)(KsString) pp3 << ": " << pp3.getType() << endl;
+    cerr << (const char *)(KsString) pp4 << ": " << pp4.getType() << endl;
+    cerr << (const char *)(KsString) pp5 << ": " << pp5.getType() << endl;
+    cerr << (const char *)(KsString) pp6 << ": " << pp6.getType() << endl;
+
+    cerr << pp1.getParent(true) << endl;
+    cerr << pp2.getParent(true) << endl;
+    cerr << pp2.getParent(false) << endl;
+    cerr << pp3.getParent(true) << endl;
+    cerr << pp3.getParent(false) << endl;
+    cerr << pp4.getParent(true) << endl;
+    cerr << pp5.getParent(true) << endl;
+    cerr << pp6.getParent(true) << endl;
+
+    cerr << pp5.resolve(".part") << endl;
+    cerr << pp5.resolve("child") << endl;
+    cerr << pp5.resolve("./.part") << endl;
+    cerr << pp5.resolve("./child") << endl;
+    cerr << pp5.resolve("../.part") << endl;
+    cerr << pp5.resolve("../../.part") << endl;
+    cerr << pp5.resolve("../../../../../.part") << endl;
+    cerr << pp5.resolve("./../this/is/./../.part") << endl;
+    cerr << pp5.resolve("./this.part/is/far/away") << endl;
+
+    return 0;
+#endif
+
 
     if ( argc != 2 ) {
         cerr << "usage: ttree <host>/<server>" << endl;
