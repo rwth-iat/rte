@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.26 1999-09-16 10:54:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.27 2000-10-27 07:49:12 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -162,14 +162,19 @@ KsTime KssIoStatisticsVariable::getTime() const
 //
 bool KsSimpleServer::initStatistics()
 {
-    KsPath vendor("/vendor");
+    KsPath modks("/vendor/modules/acpltks");
     int i;
-    
+
+    //
+    // Now create all the information variables below the "acpltks" module info domain.
+    // Here we watch for creation problem when constructing all the variables, and bail
+    // out in case of error.
+    //
     for ( i = 0; i < KssIoStatisticsVariable::DLAS_THIS_IS_THE_END; ++i ) {
     	KssCommObjectHandle h(
 		new KssIoStatisticsVariable(
 		    (KssIoStatisticsVariable::StatisticType) i), KsOsNew);
-	if ( !h || !addCommObject(vendor, h) ) {
+	if ( !h || !addCommObject(modks, h) ) {
 	    return false;
 	}
     }
@@ -672,12 +677,71 @@ KsSimpleServer::addStringVar(const KsPath & dompath,
     return false;
 }
 
-//////////////////////////////////////////////////////////////////////
 
+#if PLT_SYSTEM_LINUX || PLT_SYSTEM_HPUX || PLT_SYSTEM_SOLARIS \
+    || PLT_SYSTEM_FREEBSD || PLT_SYSTEM_IRIX
+#include <sys/utsname.h>
+#endif
+
+// ---------------------------------------------------------------------------
+// Determine the operating system
+//
+KsString
+KsSimpleServer::getOsIdent()
+{
+#if PLT_SYSTEM_NT
+
+    OSVERSIONINFO osinfo;
+
+    osinfo.dwOSVersionInfoSize = sizeof(osinfo);
+    if ( !GetVersionEx(&osinfo) ) {
+    	return "unidentified Win32 \"operating system\"";
+    }
+    KsString name;
+    switch ( osinfo.dwPlatformId ) {
+    case VER_PLATFORM_WIN32_NT:
+    	name = "WinNT";
+    	break;
+    case VER_PLATFORM_WIN32_WINDOWS:
+    	name = "Windows 95, 98, ME, YOU, WHATEVER";
+    	break;
+    default:
+        name = "unidentified Windows \"operating system\"";
+    }
+    return name + " " + KsString::fromInt(osinfo.dwMajorVersion) + "."
+           + KsString::fromInt(osinfo.dwMinorVersion) + "."
+           + KsString::fromInt(osinfo.dwBuildNumber)
+           + " " + osinfo.szCSDVersion;
+	
+#elif PLT_SYSTEM_OPENVMS
+    return "OpenVMS";
+#elif PLT_SYSTEM_LINUX || PLT_SYSTEM_HPUX || PLT_SYSTEM_SOLARIS \
+    || PLT_SYSTEM_FREEBSD || PLT_SYSTEM_IRIX
+
+    struct utsname id;
+    if ( uname(&id) < 0 ) {
+    	return "unidentified Un*x-like operating system";
+    }
+    return KsString(id.sysname) + " " + id.release + " " + id.version + " "
+           + id.machine
+           + " (on " + id.nodename + ")";
+    
+#else
+    return "unidentified operating system";
+#endif
+}
+
+// ---------------------------------------------------------------------------
+// Setup the "/vendor" branch of the ACPLT/KS server and populate it with
+// some variables and domains containing more or less useful information about
+// the server and other things in the universe.
+//
 bool
 KsSimpleServer::initVendorTree()
 {
-    static KssTimeNowVariable server_time("server_time");
+    static KssTimeNowVariable server_time("server_time",
+                                          KsTime::now(),
+                                          "current server time");
     KssCommObjectHandle server_time_handle(&server_time, KsOsUnmanaged);
     
     static KssSimpleVariable startup_time("startup_time",
@@ -688,9 +752,11 @@ KsSimpleServer::initVendorTree()
     startup_time.setState(KS_ST_GOOD);
     startup_time.lock();
     KssCommObjectHandle startup_time_handle(&startup_time, KsOsUnmanaged);
-
+    //
+    // "Man soll den Esel der da drischt nicht das Maul verbinden."
+    //
     static KssSimpleVariable fame("ks_comm_lib_fame", KsTime::now(),
-				  "The people behind the ACPLT/KS "
+				  "the people behind the ACPLT/KS "
 	                          "C++ Communication Library");
     KsStringVecValue *fame_val = new KsStringVecValue(3);
     (*fame_val)[0] = "Harald \"Harry Hirsch\" Albrecht";
@@ -699,28 +765,46 @@ KsSimpleServer::initVendorTree()
     fame.setValue(fame_val);
     fame.lock();
     KssCommObjectHandle fame_handle(&fame, KsOsUnmanaged);
-
+    //
+    // Create the "/vendor" domain but allow that it already exists.
+    //
     KsPath vendor("/vendor");
-    addDomain(KsPath("/"), "vendor"); // ignore error, may already exist.
-    return 
-           addCommObject(vendor, server_time_handle)
+    KsPath modules("/vendor/modules");
+    KsPath modks("/vendor/modules/acpltks");
+    addDomain(KsPath("/"), "vendor",
+              "vendor and server-specific information"); // ignore error, may already exist.
+
+    return
+           addDomain(vendor, "extensions", "protocol extension information")
+
+        && addDomain(vendor, "modules", "information about server modules")
+
+        && addDomain(vendor, "specific", "additional vendor-specific information")
+
+        && addCommObject(vendor, server_time_handle)
 
         && addStringVar(vendor, "server_name",
-                        getServerName())
+                        getServerName(),
+                        "name of server as registered with the ACPLT/KS Manager")
 
         && addStringVar(vendor, "server_version",
-                        getServerVersion())
-
-        && addStringVar(vendor, "ks_comm_lib_version",
-                        KS_VERSION_STRING)
-
-	&& addCommObject(vendor, fame_handle)
+                        getServerVersion(), "server version string")
 
         && addStringVar(vendor, "server_description",
-                        getServerDescription())
+                        getServerDescription(), "short description of this ACPLT/KS server")
 
         && addStringVar(vendor, "name",
-                        getVendorName())
+                        getVendorName(), "name of vendor of this ACPLT/KS server")
+
+        && addStringVar(vendor, "server_os",
+                        getOsIdent(), "operating system underlaying ACPLT/KS server")
+
+        && addDomain(modules, "acpltks", "ACPLT/KS C++ Communication Library module")
+
+        && addStringVar(modks, "ks_comm_lib_version",
+                        KS_VERSION_STRING, "C++ Communication Library version string")
+
+	&& addCommObject(modks, fame_handle)
 
 #if PLT_USE_BUFFERED_STREAMS
     	&& initStatistics()
