@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.7 1997-03-20 09:42:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.8 1997-03-25 21:19:04 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -172,7 +172,14 @@ KsAvTicket::getAccess(const KsString &name) const
     if (canWriteVar(name))  res |= KS_AC_WRITE;
     return (KS_ACCESS) res;
 }
-    
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool
+KsAvTicket::isVisible(const KsString &name) const
+{
+    return getAccess(name) != KS_AC_NONE;
+}
 
 //////////////////////////////////////////////////////////////////////
 
