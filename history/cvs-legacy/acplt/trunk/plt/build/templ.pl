@@ -9,6 +9,10 @@ if ("@ARGV" =~ m/\s(\w+)\.o\s/) {
 }
 
 $make = $ENV{"MAKE"};
+if ($make eq "") {
+   $make = "make"
+}
+
 $compile = "$make $objname";
 $link = "@ARGV";
 
@@ -67,6 +71,7 @@ do {
 	print STDERR "$compile\n";
 	$err = system($compile);
 	if ($err) {
+            print STDERR "Could not remake main object.\n"
 	    exit($err);
 	}
     }
