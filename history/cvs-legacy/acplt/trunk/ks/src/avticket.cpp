@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.3 1997-03-13 15:36:32 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.4 1997-03-17 10:57:55 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -161,7 +161,7 @@ KsAvTicket::getAccess(const KsString &name) const
 
 //////////////////////////////////////////////////////////////////////
 
-const KsAvTicket *
+KsAvTicket *
 KsAvTicket::emergencyTicket()
 {
     static KsAvNoneTicket e_ticket(KS_ERR_GENERIC, KS_AC_NONE);
