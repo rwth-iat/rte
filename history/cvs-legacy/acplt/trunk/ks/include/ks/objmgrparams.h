@@ -2,7 +2,7 @@
 #ifndef KS_OBJMGRPARAMS_INCLUDED
 #define KS_OBJMGRPARAMS_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.6 1999-01-12 16:23:22 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.7 1999-09-06 06:53:43 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -84,6 +84,7 @@ public:
     KsString        link_path;
     KsString        element_path;
     KsPlacementHint place;
+    KsPlacementHint opposite_place;
 }; // class KsLinkItem
 
 
@@ -261,6 +262,91 @@ public:
 
     KsArray<KS_RESULT> results;
 }; // class KsUnlinkResult
+
+
+// ---------------------------------------------------------------------------
+// The request and reply classes of the GetCanonicalPath service.
+//
+class KsGetCanonicalPathResultItem : public KsResult {
+public:
+    KsGetCanonicalPathResultItem(XDR *, bool &);
+    KsGetCanonicalPathResultItem();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsGetCanonicalPathResultItem *xdrNew(XDR *);
+
+    KsString  canonical_path;
+}; // class KsGetCanonicalPathResultItem
+
+
+class KsGetCanonicalPathParams : public KsXdrAble {
+public:
+    KsGetCanonicalPathParams(XDR *, bool &);
+    KsGetCanonicalPathParams();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsGetCanonicalPathParams *xdrNew(XDR *);
+
+    KsArray<KsString> paths;
+}; // class KsGetCanonicalNameParams
+
+
+class KsGetCanonicalPathResult : public KsResult {
+public:
+    KsGetCanonicalPathResult(XDR *, bool &);
+    KsGetCanonicalPathResult();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsGetCanonicalPathResult *xdrNew(XDR *);
+
+    KsArray<KsGetCanonicalPathResultItem> results;
+}; // class KsGetCanonicalPathResult
+
+
+// ---------------------------------------------------------------------------
+// The request and reply classes of the RenameObject service.
+//
+class KsRenameObjItem : public KsXdrAble {
+public:
+    KsRenameObjItem(XDR *, bool &);
+    KsRenameObjItem();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsRenameObjItem *xdrNew(XDR *);
+
+    KsString        old_path;
+    KsString        new_path;
+    KsPlacementHint new_place;
+}; // class KsRenameObjItem
+
+class KsRenameObjParams : public KsXdrAble {
+public:
+    KsRenameObjParams(XDR *, bool &);
+    KsRenameObjParams();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsRenameObjParams *xdrNew(XDR *);
+
+    KsArray<KsRenameObjItem> items;
+}; // class KsRenameObjParams
+
+
+class KsRenameObjResult : public KsResult {
+public:
+    KsRenameObjResult(XDR *, bool &);
+    KsRenameObjResult();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsRenameObjResult *xdrNew(XDR *);
+
+    KsArray<KS_RESULT> results;
+}; // class KsRenameObjResult
 
 
 #endif

@@ -1,6 +1,6 @@
 /* -*-plt-c++-*- */
 /*
- * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.5 1998-12-16 17:48:29 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.6 1999-09-06 06:53:44 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -85,6 +85,24 @@ KsUnlinkParams::KsUnlinkParams()
 KsUnlinkResult::KsUnlinkResult()
 {} // KsUnlinkResult::KsUnlinkResult
 
+KsGetCanonicalPathResultItem::KsGetCanonicalPathResultItem()
+{ } // KsGetCanonicalPathResultItem::KsGetCanonicalPathResultItem
+
+KsGetCanonicalPathParams::KsGetCanonicalPathParams()
+{ } // KsGetCanonicalPathParams::KsGetCanonicalPathParams
+
+KsGetCanonicalPathResult::KsGetCanonicalPathResult()
+{ } // KsGetCanonicalPathResult::KsGetCanonicalPathResult
+
+KsRenameObjItem::KsRenameObjItem()
+{ } // KsRenameObjItem::KsRenameObjItem
+
+KsRenameObjParams::KsRenameObjParams()
+{ } // KsRenameObjParams::KsRenameObjParams
+
+KsRenameObjResult::KsRenameObjResult()
+{ } // KsRenameObjResult::KsRenameObjResult
+
 
 // ---------------------------------------------------------------------------
 // Implement the constructor, factory and encoding/decoding stuff for the
@@ -128,7 +146,8 @@ KsLinkItem::xdrEncode(XDR *xdr) const
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     return link_path.xdrEncode(xdr)
         && element_path.xdrEncode(xdr)
-        && place.xdrEncode(xdr);
+        && place.xdrEncode(xdr)
+	&& opposite_place.xdrEncode(xdr);
 } // KsLinkItem::xdrEncode
 
 
@@ -138,7 +157,8 @@ KsLinkItem::xdrDecode(XDR *xdr)
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     return link_path.xdrDecode(xdr)
         && element_path.xdrDecode(xdr)
-        && place.xdrDecode(xdr);
+        && place.xdrDecode(xdr)
+	&& opposite_place.xdrDecode(xdr);
 } // KsLinkItem::xdrDecode
 
 
@@ -413,6 +433,148 @@ KsUnlinkResult::xdrDecode(XDR *xdr)
         && (result == KS_ERR_OK ? results.xdrDecode(xdr) 
                                 : true);
 } // KsUnlinkResult::xdrDecode
+
+
+// ---------------------------------------------------------------------------
+// Parameters and result stuff needed for the GetCanonicalPath service.
+//
+KS_IMPL_XDRNEW(KsGetCanonicalPathResultItem);
+KS_IMPL_XDRCTOR(KsGetCanonicalPathResultItem);
+
+
+bool
+KsGetCanonicalPathResultItem::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return KsResult::xdrEncode(xdr)
+        && (result == KS_ERR_OK ? canonical_path.xdrEncode(xdr) 
+                                : true);
+} // KsGetCanonicalPathResultItem::xdrEncode
+
+
+bool
+KsGetCanonicalPathResultItem::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return KsResult::xdrDecode(xdr)
+        && (result == KS_ERR_OK ? canonical_path.xdrDecode(xdr) 
+                                : true);
+} // KsGetCanonicalPathResultItem::xdrDecode
+
+
+KS_IMPL_XDRNEW(KsGetCanonicalPathParams);
+KS_IMPL_XDRCTOR(KsGetCanonicalPathParams);
+
+
+bool
+KsGetCanonicalPathParams::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return paths.xdrEncode(xdr);
+} // KsGetCanonicalPathParams::xdrEncode
+
+
+bool
+KsGetCanonicalPathParams::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return paths.xdrDecode(xdr);
+} // KsGetCanonicalPathParams::xdrDecode
+
+
+KS_IMPL_XDRNEW(KsGetCanonicalPathResult);
+KS_IMPL_XDRCTOR(KsGetCanonicalPathResult);
+
+
+bool
+KsGetCanonicalPathResult::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return KsResult::xdrEncode(xdr)
+        && (result == KS_ERR_OK ? results.xdrEncode(xdr) 
+                                : true);
+} // KsGetCanonicalPathResult::xdrEncode
+
+
+bool
+KsGetCanonicalPathResult::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return KsResult::xdrDecode(xdr)
+        && (result == KS_ERR_OK ? results.xdrDecode(xdr) 
+                                : true);
+} // KsGetCanonicalPathResult::xdrDecode
+
+
+// ---------------------------------------------------------------------------
+// Parameters and result stuff needed for the RenameObject service.
+//
+KS_IMPL_XDRNEW(KsRenameObjItem);
+KS_IMPL_XDRCTOR(KsRenameObjItem);
+
+
+bool
+KsRenameObjItem::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return old_path.xdrEncode(xdr)
+	&& new_path.xdrEncode(xdr)
+	&& new_place.xdrEncode(xdr);
+} // KsRenameObjItem::xdrEncode
+
+
+bool
+KsRenameObjItem::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return old_path.xdrDecode(xdr)
+	&& new_path.xdrDecode(xdr)
+	&& new_place.xdrDecode(xdr);
+} // KsRenameObjItem::xdrDecode
+
+
+KS_IMPL_XDRNEW(KsRenameObjParams);
+KS_IMPL_XDRCTOR(KsRenameObjParams);
+
+
+bool
+KsRenameObjParams::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return items.xdrEncode(xdr);
+} // KsRenameObjParams::xdrEncode
+
+
+bool
+KsRenameObjParams::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return items.xdrDecode(xdr);
+} // KsRenameObjParams::xdrDecode
+
+
+KS_IMPL_XDRNEW(KsRenameObjResult);
+KS_IMPL_XDRCTOR(KsRenameObjResult);
+
+
+bool
+KsRenameObjResult::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return KsResult::xdrEncode(xdr)
+        && (result == KS_ERR_OK ? results.xdrEncode(xdr) 
+                                : true);
+} // KsRenameObjResult::xdrEncode
+
+
+bool
+KsRenameObjResult::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return KsResult::xdrDecode(xdr)
+        && (result == KS_ERR_OK ? results.xdrDecode(xdr) 
+                                : true);
+} // KsRenameObjResult::xdrDecode
 
 
 /* End of ks/objmgrparams.cpp */
