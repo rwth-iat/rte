@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.2 1997-03-18 10:48:39 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.3 1997-03-23 12:50:28 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -81,7 +81,7 @@ KsArray<elem>::xdrEncode(XDR *xdrs) const                               \
     /* serialize size */                                                \
                                                                         \
     u_long sz = a_size;                                                 \
-    if (! ks_xdrd_u_long(xdrs, &sz)) return false;                      \
+    if (! ks_xdre_u_long(xdrs, &sz)) return false;                      \
                                                                         \
     /* serialize elements */                                            \
                                                                         \
