@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOGSTREAM_INCLUDED
 #define PLT_LOGSTREAM_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.1 1997-08-18 09:16:09 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.2 1997-09-03 14:11:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -70,7 +70,7 @@ public:
 
 protected:
     void reset();
-    const char *freeze();
+    const char *str();
 
     PltLog *_logger;
 }; // class PltLogStream
@@ -84,11 +84,12 @@ protected:
 // new data. This whole trick allows us to reuse the string stream,
 // which we use as a convenient container for the logging text. The
 // advantage of the string stream is, that it can grow dynamically
-// and can be used just like any ostream. Unfortunately unfreezing a
-// frozen string stream is somewhat tricky...
+// and can be used just like any ostream.
 //
+
 inline void PltLogStream::reset()
 {
+    rdbuf()->freeze(0);
     seekp(0);
 } /* PltLogStream::reset */
 
@@ -99,13 +100,13 @@ inline void PltLogStream::reset()
 // This way, we hopefully encapsulate all brain-damaged things related
 // to string streams...
 //
-inline const char *PltLogStream::freeze()
+inline const char *PltLogStream::str()
 {
     *this << (char) 0; /* This sucker prevents us from printing old
                         * data, which still lurks around in the string
 			* stream...
 			*/
-    return str();
+    return ostrstream::str();
 } /* PltLogStream::freeze */
 
 #endif

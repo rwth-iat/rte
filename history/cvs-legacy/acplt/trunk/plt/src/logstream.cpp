@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/logstream.cpp,v 1.1 1997-08-18 09:16:10 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/logstream.cpp,v 1.2 1997-09-03 14:11:24 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -77,35 +77,35 @@ PltLog *PltLogStream::getLogger()
 //
 void PltLogStream::info()
 {
-    const char *s = freeze();
+    const char *s = str();
     _logger ? _logger->info(s) : PltLog::Info(s);
     reset();
 } /* PltLogStream::info */
 
 void PltLogStream::debug()
 {
-    const char *s = freeze();
+    const char *s = str();
     _logger ? _logger->debug(s) : PltLog::Debug(s);
     reset();
 } /* PltLogStream::debug */
 
 void PltLogStream::warning()
 {
-    const char *s = freeze();
+    const char *s = str();
     _logger ? _logger->warning(s) : PltLog::Warning(s);
     reset();
 } /* PltLogStream::warning */
 
 void PltLogStream::error()
 {
-    const char *s = freeze();
+    const char *s = str();
     _logger ? _logger->error(s) : PltLog::Error(s);
     reset();
 } /* PltLogStream::error */
 
 void PltLogStream::alert()
 {
-    const char *s = freeze();
+    const char *s = str();
     _logger ? _logger->alert(s) : PltLog::Alert(s);
     reset();
 } /* PltLogStream::alert */
