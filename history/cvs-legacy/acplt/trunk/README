@@ -1,10 +1,14 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.5pre7 of the C++ Communication Libary. As always, it
+This is version 1.0.5pre8 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
+
+pre-Notes(sm):
+1.0.5pre8 fixes a bug in the GetPP lookup of children of histories and
+links. It also fixes compile problems with Microsoft Visual C++.
 
 But now, compile and enjoy --
   Your ACPLT/KS team <ks@plt.rwth-aachen.de>
@@ -89,7 +93,7 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.0.5pre7
+Version 1.0.5pre8
 - SERVERS: interserver connections added (YESSS!). The tserver example shows
   how to send and receive ACPLT/KS service requests and replies in the
   background while the server is idle. This makes sending non-blocking
