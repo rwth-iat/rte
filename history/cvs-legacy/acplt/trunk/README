@@ -139,6 +139,7 @@ Version 1.2.1
     KsServerBase::setAddrReuse(true). This enables binding to a specific
     port to which MS-based clients are still connected when starting a
     new KS server (for instance, useful during the development cycle).
+  * Added option "-r" to enable address reuse with the Un*x KS Manager.
   * Set FD_SETSIZE to 1024 on OpenVMS machines, overriding the
     brain-damaged default of 32.
   * Fixed strange setpgrp() parameter calling problem with Solaris which
