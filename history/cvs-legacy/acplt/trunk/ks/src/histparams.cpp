@@ -39,75 +39,66 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#include "ks/xdr.h"
 #include "ks/histparams.h"
 
-//////////////////////////////////////////////////////////////////////
-
-KS_IMPL_XDRNEW(KsGHTimeSel);
-KS_IMPL_XDRCTOR(KsGHTimeSel);
-
-//////////////////////////////////////////////////////////////////////
-
-KsGHTimeSel::KsGHTimeSel(const PltString &sel_name,
-                         KS_TIME_SELECTOR_TYPE sel_type,
-                         const PltTime &sel_from,
-                         const PltTime &sel_to,
-                         const PltTime &sel_delta)
-    : sel(sel_name),
-      type(sel_type),
-      from(sel_from),
-      to(sel_to),
-      delta(sel_delta)
-{}
-
 /////////////////////////////////////////////////////////////////////////////
 
-bool 
-KsGHTimeSel::xdrEncode(XDR *xdr) const
-{
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
-    return sel.xdrEncode(xdr)
-        && ks_xdre_enum(xdr, &type)
-        && from.xdrEncode(xdr)
-        && to.xdrEncode(xdr)
-        && delta.xdrEncode(xdr);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-bool 
-KsGHTimeSel::xdrDecode(XDR *xdr) 
-{
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
-    return sel.xdrDecode(xdr)
-        && ks_xdrd_enum(xdr, &type)
-        && from.xdrDecode(xdr)
-        && to.xdrDecode(xdr)
-        && delta.xdrDecode(xdr);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-KS_IMPL_XDRNEW(KsGHStringSel);
-KS_IMPL_XDRCTOR(KsGHStringSel);
-
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
+KS_IMPL_XDRNEW(KsGetHistItem);
+KS_IMPL_XDRCTOR(KsGetHistItem);
 
 KS_IMPL_XDRNEW(KsGetHistParams);
 KS_IMPL_XDRCTOR(KsGetHistParams);
 
+KS_IMPL_XDRNEW(KsGetHistResultItem);
+KS_IMPL_XDRCTOR(KsGetHistResultItem);
+
+KS_IMPL_XDRNEW(KsGetHistSingleResult);
+KS_IMPL_XDRCTOR(KsGetHistSingleResult);
+
+KS_IMPL_XDRNEW(KsGetHistResult);
+KS_IMPL_XDRCTOR(KsGetHistResult);
+
+/////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-KsGetHistParams::KsGetHistParams(const PltString &aName,
-                                 KS_INTERPOLATION_MODE ipMode,
-                                 u_long maxEntries,
-                                 const KsGHTimeSel &timeSelector)
-    : name(aName),
-      ip_mode(ipMode),
-      max_entries(maxEntries),
-      time_selector(timeSelector)
+KsGetHistItem::KsGetHistItem(const PltString &partId,
+                             KsSelectorHandle selector)
+    : part_id(partId),
+      sel(selector)
+{}
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool
+KsGetHistItem::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+
+    return part_id.xdrEncode(xdr)
+        && sel.xdrEncode(xdr);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool
+KsGetHistItem::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    
+    return part_id.xdrDecode(xdr)
+        && sel.xdrDecode(xdr);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+KsGetHistParams::KsGetHistParams(size_t npaths,
+                                 size_t nitems,
+                                 u_long max)
+    : paths(npaths),
+      max_entries(max),
+      items(nitems)
 {}
 
 /////////////////////////////////////////////////////////////////////////////
@@ -117,11 +108,9 @@ KsGetHistParams::xdrEncode(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
 
-    return name.xdrEncode(xdr)
-        && ks_xdre_enum(xdr, &ip_mode)
+    return paths.xdrEncode(xdr)
         && ks_xdre_u_long(xdr, &max_entries)
-        && time_selector.xdrEncode(xdr)
-        && selectors.xdrEncode(xdr);
+        && items.xdrEncode(xdr);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -131,25 +120,76 @@ KsGetHistParams::xdrDecode(XDR *xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
 
-    return name.xdrDecode(xdr)
-        && ks_xdrd_enum(xdr, &ip_mode)
+    return paths.xdrDecode(xdr)
         && ks_xdrd_u_long(xdr, &max_entries)
-        && time_selector.xdrDecode(xdr)
-        && selectors.xdrDecode(xdr);
+        && items.xdrDecode(xdr);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+ 
+bool 
+KsGetHistResultItem::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    
+    if( result == KS_ERR_OK ) {
+        return KsResult::xdrEncode(xdr)
+            && value.xdrEncode(xdr);
+    } else {
+        return KsResult::xdrEncode(xdr);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool 
+KsGetHistResultItem::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    
+    if( KsResult::xdrDecode(xdr) ) {
+        if( result == KS_ERR_OK ) {
+            return value.xdrDecode(xdr);
+        } else {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-KS_IMPL_XDRNEW(KsGHResultField);
-KS_IMPL_XDRCTOR(KsGHResultField);
+bool 
+KsGetHistSingleResult::xdrEncode(XDR *xdr) const 
+{
+    if( result == KS_ERR_OK ) {
+        return KsResult::xdrEncode(xdr)
+            && items.xdrEncode(xdr);
+    } else {
+        return KsResult::xdrEncode(xdr);
+    }
+}
 
 /////////////////////////////////////////////////////////////////////////////
+
+bool 
+KsGetHistSingleResult::xdrDecode(XDR *xdr)
+{
+    if( KsResult::xdrDecode(xdr) ) {
+        if( result == KS_ERR_OK ) {
+            return items.xdrDecode(xdr);
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////
-
-KS_IMPL_XDRNEW(KsGetHistResult);
-KS_IMPL_XDRCTOR(KsGetHistResult);
-
 /////////////////////////////////////////////////////////////////////////////
 
 bool 
@@ -159,7 +199,7 @@ KsGetHistResult::xdrEncode(XDR *xdr) const
 
     if( result == KS_ERR_OK ) {
         return KsResult::xdrEncode(xdr)
-            && fields.xdrEncode(xdr);
+            && replies.xdrEncode(xdr);
     } else {
         return KsResult::xdrEncode(xdr);
     }
@@ -174,7 +214,7 @@ KsGetHistResult::xdrDecode(XDR *xdr)
     
     if( KsResult::xdrDecode(xdr) ) {
         if( result == KS_ERR_OK ) {
-            return fields.xdrDecode(xdr);
+            return replies.xdrDecode(xdr);
         } else {
             return true;
         }

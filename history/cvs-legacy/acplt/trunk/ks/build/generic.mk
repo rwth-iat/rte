@@ -11,6 +11,7 @@ CXX_LIBKS_SOURCES = \
 	serviceparams.cpp \
 	histparams.cpp \
 	string.cpp \
+	selector.cpp \
 	time.cpp \
 	value.cpp \
 	xdr.cpp \
@@ -46,6 +47,7 @@ CXX_LIBKSCLN_SOURCES= \
 	clntpath.cpp \
 	commobject.cpp \
 	hostent.cpp \
+	history.cpp \
 	package.cpp \
 	sorter.cpp \
 	variables.cpp
@@ -62,6 +64,7 @@ LIBKS_OBJECTS1 = \
 LIBKS_OBJECTS2 = \
 	serviceparams$(O) \
 	string$(O) \
+	selector$(O) \
 	time$(O) \
 	value$(O) \
 	xdr$(O) \
@@ -106,6 +109,7 @@ LIBKSCLN_OBJECTS1 = \
 LIBKSCLN_OBJECTS2 = \
 	commobject$(O) \
 	hostent$(O) \
+	history$(O) \
 	package$(O) \
 	sorter$(O) \
 	variables$(O)
@@ -122,13 +126,15 @@ CXX_EXAMPLES_SOURCES = \
 	texgpkg1.cpp \
 	tmanager.cpp \
 	tmanager1.cpp \
+	thistory.cpp \
 	tsclient.cpp \
 	tsclient1.cpp \
 	tserver.cpp \
 	tserver1.cpp \
 	tshell.cpp \
 	ttree.cpp \
-	ttree1.cpp
+	ttree1.cpp \
+	tvalhist.cpp
 
 EXAMPLES_OBJECTS = \
 	ext_sp$(O) \
@@ -138,6 +144,7 @@ EXAMPLES_OBJECTS = \
 	tclient1$(O) \
 	texgpkg$(O) \
 	texgpkg1$(O) \
+	thistory$(O) \
 	tmanager$(O) \
 	tmanager1$(O) \
 	tsclient$(O) \
@@ -146,7 +153,8 @@ EXAMPLES_OBJECTS = \
 	tserver1$(O) \
 	tshell$(O) \
 	ttree$(O) \
-	ttree1$(O)
+	ttree1$(O) \
+	tvalhist$(O)
 
 EXAMPLES = \
 	pmobile$(EXE) \
@@ -195,3 +203,9 @@ tpackage$(EXE) : tpackage$(O) $(LIBKSCLN) $(LIBKS)
 tbigpkg$(EXE) : tbigpkg$(O) $(LIBKSCLN) $(LIBKS)
 
 texgpkg$(EXE) :	texgpkg$(O) texgpkg1$(O) $(LIBKSCLN) $(LIBKS)
+
+thistory$(EXE) : thistory$(O) $(LIBKSCLN) $(LIBKS)
+
+tvalhist$(EXE) : tvalhist$(O) $(LIBKSCLN) $(LIBKS)
+
+

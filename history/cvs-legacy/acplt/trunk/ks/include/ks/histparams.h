@@ -42,10 +42,13 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
+#include <limits.h>
+
 #include "ks/xdr.h"
 #include "ks/value.h"
-#include "ks/list.h"
+#include "ks/array.h"
 #include "ks/result.h"
+#include "ks/selector.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Constants for GetHist service
@@ -55,99 +58,31 @@ const KsString KS_HISTORY_PROTOCOL_NAME("plt_histories");
 
 const u_long KS_GETHIST_MINOR_OPCODE  = 0x00000001;
 
-enum KS_TIME_SELECTOR_TYPE_ENUM {
-    KS_TST_ABSOLUTE = 0,
-    KS_TST_RELATIVE = 1
-};
-typedef enum_t KS_TIME_SELECTOR_TYPE; 
-
-enum KS_INTERPOLATION_MODE_ENUM {
-    KS_IPM_DEFAULT = 0,
-    KS_IPM_NONE    = 1,
-    KS_IPM_LINEAR  = 2,
-    KS_IPM_MIN     = 3,
-    KS_IPM_MAX     = 4,
-    KS_IPM_HOLD    = 5
-};
-typedef enum_t KS_INTERPOLATION_MODE;
-
 /////////////////////////////////////////////////////////////////////////////
 // Classes for GetHist request
-//   - KsGHTimeSel
-//   - KsGHStringSel
+//   - KsGetHistItem
 //   - KsGetHistParams
 /////////////////////////////////////////////////////////////////////////////
 
-#if 0
-//
-// Keep things simple: 
-// No common base class for KsGHTimeSel and KsGHStringSel
-//
-class KsGHSelector
+
+class KsGetHistItem
     : public KsXdrAble
 {
 public:
-    KsGHSelector(XDR *, bool &);
-    KsGHSelector();
+    KsGetHistItem() {}
+    KsGetHistItem(XDR *, bool &);
+    KsGetHistItem(const PltString &partId,
+                  KsSelectorHandle selector);
 
     bool xdrEncode(XDR *) const;
     bool xdrDecode(XDR *);
-    static KsGHSelector *xdrNew(XDR *);
+    static KsGetHistItem *xdrNew(XDR *);
 
-    KsString sel;
-};
+    // Just compares part_id.
+    bool operator == (const KsGetHistItem &) const;
 
-typedef KsPtrHandle<KsGHSelector> KsGHSelectorHandle;
-
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-
-class KsGHTimeSel
-    : public KsXdrAble
-{
-public:
-    KsGHTimeSel(XDR *, bool &);
-    KsGHTimeSel();
-    KsGHTimeSel(const PltString &sel_name,
-                KS_TIME_SELECTOR_TYPE sel_type,
-                const PltTime &sel_from,
-                const PltTime &sel_to,
-                const PltTime &sel_delta);
-
-    bool xdrEncode(XDR *) const;
-    bool xdrDecode(XDR *);
-    static KsGHTimeSel *xdrNew(XDR *);
-
-    KsString               sel;
-    KS_TIME_SELECTOR_TYPE  type;
-    KsTime                 from;
-    KsTime                 to;
-    KsTime                 delta;
-};
-
-/////////////////////////////////////////////////////////////////////////////
-
-class KsGHStringSel
-    : public KsXdrAble
-{
-public:
-    KsGHStringSel(XDR *, bool &);
-    KsGHStringSel();
-    KsGHStringSel(const PltString &sel_name,
-                  const PltString &sel_mask);
-
-    bool xdrEncode(XDR *) const;
-    bool xdrDecode(XDR *);
-    static KsGHStringSel *xdrNew(XDR *);
-
-    // Operator is needed to instantiate PltList
-    //
-    bool operator == (const KsGHStringSel &) const
-    { PLT_ASSERT(0); return false; }
-
-    KsString sel;
-    KsString mask;
+    KsString         part_id;
+    KsSelectorHandle sel;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -157,48 +92,55 @@ class KsGetHistParams
 {
 public:
     KsGetHistParams(XDR *, bool &);
-    KsGetHistParams();
-    KsGetHistParams(const PltString &aName,
-                    KS_INTERPOLATION_MODE ipMode,
-                    u_long maxEntries,
-                    const KsGHTimeSel &timeSelector);
+    KsGetHistParams() {}
+    KsGetHistParams(size_t npaths,
+                    size_t nitems,
+                    u_long max = ULONG_MAX);
 
     bool xdrEncode(XDR *) const;
     bool xdrDecode(XDR *);
     static KsGetHistParams *xdrNew(XDR *);
 
-    KsString               name;
-    KS_INTERPOLATION_MODE  ip_mode;
+    KsArray<KsString>      paths;
     u_long                 max_entries;
-
-    KsGHTimeSel            time_selector;
-
-    KsList<KsGHStringSel>  selectors;
+    KsArray<KsGetHistItem> items;
 };
 
 /////////////////////////////////////////////////////////////////////////////
 // Classes for GetHist reply:
-//   - KsGHResultField
+//   - KsGetHistResultItem
+//   - KsGetHistSingleResult
 //   - KsGetHistResult
 /////////////////////////////////////////////////////////////////////////////
 
-class KsGHResultField
-    : public KsXdrAble
+class KsGetHistResultItem
+    : public KsResult
 {
 public:
-    KsGHResultField();
-    KsGHResultField(XDR *, bool &);
+    KsGetHistResultItem() {}
+    KsGetHistResultItem(XDR *, bool &);
 
     bool xdrEncode(XDR *) const;
     bool xdrDecode(XDR *);
-    static KsGHResultField *xdrNew(XDR *);
+    static KsGetHistResultItem *xdrNew(XDR *);
 
-    // Operator is necessary to instantiate PltList
-    bool operator == (const KsGHResultField &) 
-    { PLT_ASSERT(0); return false; }
-
-    KsString      sel;
     KsValueHandle value;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+
+class KsGetHistSingleResult
+    : public KsResult
+{
+public:
+    KsGetHistSingleResult() {}
+    KsGetHistSingleResult(XDR *, bool &);
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsGetHistSingleResult *xdrNew(XDR *);
+
+    KsArray<KsGetHistResultItem> items;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -207,14 +149,15 @@ class KsGetHistResult
     : public KsResult
 {
 public:
-    KsGetHistResult();
+    KsGetHistResult() {}
     KsGetHistResult(XDR *, bool &);
+    KsGetHistResult(size_t nitems);
 
     bool xdrEncode(XDR *) const;
     bool xdrDecode(XDR *);
     static KsGetHistResult *xdrNew(XDR *);
 
-    KsList<KsGHResultField> fields;
+    KsArray<KsGetHistSingleResult> replies;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -222,92 +165,18 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 
 inline
-KsGHTimeSel::KsGHTimeSel()
-{}
-
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-inline
-KsGHStringSel::KsGHStringSel()
-{}
-
-/////////////////////////////////////////////////////////////////////////////
-
-inline
-KsGHStringSel::KsGHStringSel(const PltString &sel_name,
-                             const PltString &sel_mask)
-    : sel(sel_name),
-      mask(sel_mask)
-{}
-
-/////////////////////////////////////////////////////////////////////////////
-
-inline 
 bool 
-KsGHStringSel::xdrEncode(XDR *xdr) const
+KsGetHistItem::operator == (const KsGetHistItem &other) const
 {
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
-
-    return sel.xdrEncode(xdr)
-        && mask.xdrEncode(xdr);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-inline 
-bool 
-KsGHStringSel::xdrDecode(XDR *xdr)
-{
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
-
-    return sel.xdrDecode(xdr)
-        && mask.xdrDecode(xdr);
+    return other.part_id == part_id;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 inline
-KsGetHistParams::KsGetHistParams()
-{}
-
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-inline
-KsGHResultField::KsGHResultField()
-{}
-
-/////////////////////////////////////////////////////////////////////////////
-
-inline 
-bool 
-KsGHResultField::xdrEncode(XDR *xdr) const
-{
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
-    
-    return sel.xdrEncode(xdr)
-        && value.xdrEncode(xdr);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-inline 
-bool 
-KsGHResultField::xdrDecode(XDR *xdr)
-{
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
-    
-    return sel.xdrDecode(xdr)
-        && value.xdrDecode(xdr);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-inline
-KsGetHistResult::KsGetHistResult()
+KsGetHistResult::KsGetHistResult(size_t nitems)
+    : replies(nitems)
 {}
 
 /////////////////////////////////////////////////////////////////////////////

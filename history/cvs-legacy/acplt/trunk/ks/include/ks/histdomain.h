@@ -56,11 +56,102 @@ public:
                      KsString comment = KsString());
 
     virtual void getHist(const KsGetHistParams &params,
-                         KsGetHistResult &result) = 0;
+                         KsGetHistSingleResult &result) = 0;
+
+protected:
+#if 0
+    class PartInfo {
+    public:
+        PartInfo(KsString &_id,
+                 enum_t _flags,
+                 KS_SELECTOR_TYPE _sel_type)
+            : id(_id), flags(_flags), sel_type(_sel_type) {}
+
+        unsigned long hash() const { return id.hash(); }
+        bool operator == (const PartInfo &other) const
+        { return id == other.id; }
+
+        KsString id;
+        enum { 
+            READABLE = 1, 
+            MASKABLE = 2, 
+            BOTH = 3,
+            ALWAYS_RETURNED = 4 
+        };
+        enum_t flags;
+        KS_SELECTOR_TYPE sel_type;
+    };
+
+    bool addPart(KsString id,
+                 KS_VAR_TYPE var_type,
+                 enum_t flags, 
+                 KS_SELECTOR_TYPE sel_type);
+#endif
+
+    KS_RESULT parseArgs(const KsGetHistParams &params,
+                        KsGetHistResult &result);
+
+    bool addPart(KsString id,
+                 KS_VAR_TYPE vtype,
+                 KsString comment = KsString(""));
+
+    static KsSelectorHandle getSelector(const KsGetHistParams &params,
+                                        KsString id);
+
+private:
+    //    PltHashTable<PartInfo> _parts;
 
     PLT_DECL_RTTI;
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
+class KssHistoryPart
+    : public KssVariable
+{ 
+public:
+    KssHistoryPart(const KsString &id,
+                   KsTime ctime,
+                   KS_VAR_TYPE vt,
+                   KsString co = KsString());
+
+    // accessors
+    // TODO: Change to a typecode that fits more.
+    virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_VARIABLE; }
+
+    // projected properties
+    virtual KsString  getIdentifier() const { return identifier; }
+    virtual KsTime    getCreationTime() const { return creation_time; }
+    virtual KsString  getComment() const { return comment; }
+    virtual KS_ACCESS getAccessMode() const { return KS_AC_NONE; }
+    virtual KsString getTechUnit() const { return KsString(); }
+    virtual KS_VAR_TYPE getType() const { return var_type; }
+
+    // current properties
+    KsValueHandle getValue() const;
+    KsCurrPropsHandle getCurrProps() const;
+    
+    //// modifiers
+    //   current properties
+    KS_RESULT setValue(const KsValueHandle &) { return KS_ERR_NOACCESS; }
+
+    KS_RESULT setTime(const KsTime &) { return KS_ERR_NOACCESS; }
+
+    KS_RESULT setState(KS_STATE) { return KS_ERR_NOACCESS; }
+
+    KS_RESULT setCurrProps(KsVarCurrProps &) { return KS_ERR_NOACCESS; }
+    KS_RESULT setCurrProps(const KsCurrPropsHandle &) { return KS_ERR_NOACCESS; }
+
+protected:
+    KsString    identifier; 
+    KsTime      creation_time;
+    KS_VAR_TYPE var_type;
+    KsString    comment;
+
+    PLT_DECL_RTTI;
+};
+
+/////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 inline
@@ -69,6 +160,38 @@ KssHistoryDomain::KssHistoryDomain(const KsString &id,
                                    KsString comment)
     : KssSimpleDomain(id, ctime, comment)
 {}
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KssHistoryPart::KssHistoryPart(const KsString &id,
+                               KsTime ctime,
+                               KS_VAR_TYPE vt,
+                               KsString co)
+    : identifier(id),
+      creation_time(ctime),
+      var_type(vt),
+      comment(co)
+{}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsValueHandle
+KssHistoryPart::getValue() const
+{
+    return KsValueHandle();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+KsCurrPropsHandle 
+KssHistoryPart::getCurrProps() const
+{
+    return KsCurrPropsHandle();
+}
 
 /////////////////////////////////////////////////////////////////////////////
 

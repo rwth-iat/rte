@@ -39,88 +39,67 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ks/histdomain.h"
+#include "ks/selector.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
-PLT_IMPL_RTTI1(KssHistoryDomain, KssSimpleDomain);
-PLT_IMPL_RTTI1(KssHistoryPart, KssVariable);
+PLT_IMPL_RTTI0(KsSelector);
+PLT_IMPL_RTTI1(KsNoneSel, KsSelector);
+PLT_IMPL_RTTI1(KsTimeSel, KsSelector);
+PLT_IMPL_RTTI1(KsStringSel, KsSelector);
 
 /////////////////////////////////////////////////////////////////////////////
 
-bool
-KssHistoryDomain::addPart(KsString id,
-                          KS_VAR_TYPE vtype,
-                          KsString comment)
-{
-    KssHistoryPart *p =
-        new KssHistoryPart(id, getCreationTime(),
-                           vtype, comment);
-
-    return addChild(p);
-}
+KS_BEGIN_IMPL_XDRUNION(KsSelector);
+KS_XDR_MAP(KS_SEL_NONE, KsNoneSel);
+KS_XDR_MAP(KS_SEL_TIME, KsTimeSel);
+KS_XDR_MAP(KS_SEL_STRING, KsStringSel);
+KS_END_IMPL_XDRUNION;
 
 /////////////////////////////////////////////////////////////////////////////
 
-#if 0
+KsTimeSel::KsTimeSel(KS_TIME_SELECTOR_TYPE atype,
+                     KsTime afrom,
+                     KsTime ato,
+                     KsTime adelta,
+                     KS_INTERPOLATION_MODE amode = KS_IPM_DEFAULT)
+    : type(atype),
+      ip_mode(amode),
+      from(afrom),
+      to(ato),
+      delta(adelta)
+{}
+
+/////////////////////////////////////////////////////////////////////////////
+
 bool 
-KssHistoryDomain::addPart(KsString id, 
-                          enum_t flags, 
-                          KS_SELECTOR_TYPE sel_type,
-                          KS_VAR_TYPE var_type)
+KsTimeSel::xdrEncodeVariant(XDR *xdr) const
 {
-    PartInfo inf(id, flags, sel_type);
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    
+    return ks_xdre_enum(xdr, &type)
+        && ks_xdre_enum(xdr, &ip_mode)
+        && from.xdrEncode(xdr)
+        && to.xdrEncode(xdr)
+        && delta.xdrEncode(xdr);
+}
 
-    if( _parts.add( inf ) ) {
-        KsString comment;
-        if( flags & BOTH ) {
-            comment = "Maskable and readable";
-        } else if( flags & MASKABLE ) {
-            comment = "Maskable";
-        } else if( flags & READABLE ) {
-            comment = "Readable";
-        } else {
-            comment = "No access";
-        }
+//////////////////////////////////////////////////////////////////////
 
-        KssHistoryPart *p = 
-            new KssHistoryPart(id, getCreationTime(),
-                               var_type, comment);
+bool 
+KsTimeSel::xdrDecodeVariant(XDR *xdr) 
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
 
-        return addCommObject(p);
-    }
-
-    return false;
+    return ks_xdrd_enum(xdr, &type)
+        && ks_xdrd_enum(xdr, &ip_mode)
+        && from.xdrDecode(xdr)
+        && to.xdrDecode(xdr)
+        && delta.xdrDecode(xdr);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-
-KS_RESULT 
-KssHistoryDomain::parseArgs(const KsGetHistParams &params,
-                            KsGetHistResult &result)
-{
-}
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-
-KsSelectorHandle 
-KssHistoryDomain::getSelector(const KsGetHistParams &params,
-                              KsString id)
-{
-    PltArrayIterator<KsGetHistItem> it(params.items);
-
-    for( ; it; ++it) {
-        if( it->part_id == id ) {
-            return it->sel;
-        }
-    }
-
-    return KsSelectorHandle();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// EOF histdomain.cpp
+// EOF selector.cpp
 /////////////////////////////////////////////////////////////////////////////
 
 
