@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.c,v 1.1 1999-07-26 16:13:22 dirk Exp $
+*   $Id: ov_ntservice.c,v 1.2 1999-08-06 09:38:36 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -79,6 +79,36 @@
 #include "libov/ov_database.h"
 #include "libov/ov_result.h"
 #include "libov/ov_logfile.h"
+
+/*
+*	Currently, Cygwin does not have the "shellapi" header file
+*/
+#if OV_COMPILER_CYGWIN
+
+typedef struct {
+	DWORD	cbSize;
+	HWND	hWnd;
+	UINT	uID;
+	UINT	uFlags;
+	UINT	uCallbackMessage;
+	HICON	hIcon;
+	char	szTip[64];
+}	NOTIFYICONDATA;
+
+#define NIM_ADD		0x00000000
+#define NIM_MODIFY	0x00000001
+#define NIM_DELETE	0x00000002
+
+#define NIF_MESSAGE	0x00000001
+#define NIF_ICON	0x00000002
+#define NIF_TIP		0x00000004
+
+BOOL WINAPI Shell_NotifyIcon(
+	DWORD			dwMessage, 
+	NOTIFYICONDATA	*pnid
+);
+
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
