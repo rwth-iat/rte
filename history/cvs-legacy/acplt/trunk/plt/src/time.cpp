@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.1 1997-03-13 11:48:09 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.2 1997-03-19 17:16:50 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,11 +41,14 @@
 //////////////////////////////////////////////////////////////////////
 
 PltTime
-PltTime::now()
+PltTime::now(long secs, long usecs)
 {
     PltTime res;
     struct timezone tz;
     gettimeofday(&res, &tz);
+    res.tv_usec += usecs;
+    res.tv_sec += secs;
+    res.normalize();
     return res;
 }
 
