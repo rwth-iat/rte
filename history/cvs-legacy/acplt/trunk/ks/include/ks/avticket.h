@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.16 1997-09-15 10:59:26 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.17 1998-06-29 11:11:08 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -36,9 +36,6 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-
-//////////////////////////////////////////////////////////////////////
 
 #include "ks/ks.h"
 #include "ks/xdr.h"
@@ -85,8 +82,11 @@ KsAuthType::xdrEncode(XDR *xdr) const
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
+// Typedef for a ticket factory. This way we can generalize ticket
+// construction and thus provide a registry of constructable ticket
+// types.
+//
 class KsAvTicket;
-
 typedef KsAvTicket * (*KsTicketConstructor)(XDR *);
 
 //////////////////////////////////////////////////////////////////////
@@ -145,9 +145,13 @@ public:
 
     bool setSenderAddress(const sockaddr * sockaddr, int namelen);
 
+    virtual bool xdrEncodeTrailer(XDR *);
+    virtual bool xdrDecodeTrailer(XDR *);
+    
 protected:
     virtual bool xdrEncodeVariant(XDR *) const = 0;
     virtual bool xdrDecodeVariant(XDR *)  = 0;
+
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
     struct sockaddr * _psaddr;
@@ -236,7 +240,6 @@ KsAvTicket::getSenderInAddr() const
 //////////////////////////////////////////////////////////////////////
 
 
-#endif /* EOF ks/avticket.h */
+#endif
 
-
-
+/* End of avticket.h */
