@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.38 2000-09-04 06:23:00 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.39 2000-10-27 07:48:29 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -226,6 +226,7 @@ ENUMDEF(KS_VAR_TYPE)
  */
 ENUMDEF(KS_HIST_TYPE)
 #define KS_HT_LOG            ENUMVAL(KS_HIST_TYPE, 0x00)
+#define KS_HT_TABLE          ENUMVAL(KS_HIST_TYPE, 0x01)
 #define KS_HT_BOOL           ENUMVAL(KS_HIST_TYPE, 0x02)
 #define KS_HT_INT            ENUMVAL(KS_HIST_TYPE, 0x10)
 #define KS_HT_UINT           ENUMVAL(KS_HIST_TYPE, 0x11)
