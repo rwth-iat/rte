@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.29 1999-09-06 06:50:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.30 1999-09-06 07:17:41 harald Exp $ */
 #ifndef KSC_COMMOBJECT_INCLUDED 
 #define KSC_COMMOBJECT_INCLUDED
 /*
@@ -398,7 +398,7 @@ inline
 bool
 KscCommObject::hasValidPath() const
 {
-    return path.isValid();
+    return path.getType() == KSC_PT_RESOURCELOCATOR;
 }
 
 //////////////////////////////////////////////////////////////////////

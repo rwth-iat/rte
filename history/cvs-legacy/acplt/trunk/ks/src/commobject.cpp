@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.25 1999-09-06 06:50:44 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.26 1999-09-06 07:17:42 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -415,7 +415,7 @@ KscAnyCommObject::getEngPropsUpdate()
     KsGetEPParams params;
     KsGetEPResult result;
 
-    params.path = path.getPathOnly(); // ###TODO CHECK "/"###
+    params.path = path.getPathOnly();
     params.type_mask = KS_OT_ANY;
     params.name_mask = path.getName();
     params.scope_flags = path.isNamePart() ? 
