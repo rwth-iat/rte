@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.7 1997-04-10 14:17:57 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.8 1997-04-11 17:24:40 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -362,16 +362,15 @@ KsSimpleServer::initVendorTree()
     static KssTimeNowVariable server_time("server_time");
     KssCommObjectHandle server_time_handle(&server_time, KsOsUnmanaged);
     KsPath vendor("/vendor");
-
-    return addDomain(KsPath("/"), "vendor")
-
-        && addCommObject(vendor, server_time_handle)
+    addDomain(KsPath("/"), "vendor"); // ignore error, may already exist.
+    return 
+           addCommObject(vendor, server_time_handle)
 
         && addStringVar(vendor, "server_name",
                         getServerName())
 
         && addStringVar(vendor, "server_version",
-                        KsString::fromInt(getProtocolVersion()))
+                        getServerVersion())
 
         && addStringVar(vendor, "server_description",
                         getServerDescription())

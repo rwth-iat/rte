@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.2 1997-04-10 16:25:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.3 1997-04-11 17:24:41 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,9 +41,12 @@
 #include "plt/log.h"
 #include <signal.h>
 #include <unistd.h>
+#include <errno.h>
+
+//////////////////////////////////////////////////////////////////////
 
 const char PROG_NAME[] = "manager";
-
+const KsString KS_MANAGER_VERSION("0.5.1");
 
 //////////////////////////////////////////////////////////////////////
 
@@ -59,17 +62,27 @@ class KsUnixManager
 {	
 public:
 	KsUnixManager();
+    virtual KsString getServerVersion() const;
 };
 
 //////////////////////////////////////////////////////////////////////
 
 KsUnixManager::KsUnixManager()
 {
-    if (_is_ok) {
+    if (_is_ok && initVendorTree()) {
         signal(SIGINT, handler);
         signal(SIGHUP, handler);
         signal(SIGTERM, handler);
+        signal(SIGPIPE, SIG_IGN);
     }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KsString
+KsUnixManager::getServerVersion() const
+{
+    return KS_MANAGER_VERSION;
 }
 
 //////////////////////////////////////////////////////////////////////

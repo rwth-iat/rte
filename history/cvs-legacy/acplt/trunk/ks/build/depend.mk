@@ -25,8 +25,9 @@ event.obj: ..\..\src\event.cpp ..\..\include\ks\event.h \
  ..\..\include\ks\xdr.h ..\..\..\plt\include\plt\rtti.h \
  ..\..\include\ks\rpc.h
 
-from_local.obj: ..\..\src\from_local.cpp ..\..\..\plt\include\plt\log.h \
- ..\..\..\plt\include\plt\debug.h ..\..\..\plt\include\plt\config.h
+from_local.obj: ..\..\src\from_local.cpp \
+ ..\..\..\plt\include\plt\debug.h ..\..\..\plt\include\plt\config.h \
+ ..\..\..\plt\include\plt\log.h
 
 manager.obj: ..\..\src\manager.cpp ..\..\include\ks\manager.h \
  ..\..\include\ks\simpleserver.h ..\..\include\ks\svrbase.h \
@@ -343,4 +344,31 @@ tserver1.obj: ..\..\tests\tserver1.cpp ..\..\include\ks\server.h \
  ..\..\include\ks\simpleserver.h ..\..\include\ks\path.h \
  ..\..\include\ks\svrsimpleobjects.h ..\..\include\ks\svrobjects.h \
  ..\..\include\ks\mask.h ..\..\..\plt\include\plt\log.h
+
+unix_manager.obj: ..\..\src\unix_manager.cpp ..\..\include\ks\manager.h \
+ ..\..\include\ks\simpleserver.h ..\..\include\ks\svrbase.h \
+ ..\..\include\ks\rpc.h ..\..\..\plt\include\plt\debug.h \
+ ..\..\..\plt\include\plt\config.h ..\..\include\ks\avticket.h \
+ ..\..\include\ks\ks.h ..\..\include\ks\xdr.h \
+ ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\string.h \
+ ..\..\..\plt\include\plt\string.h ..\..\include\ks\array.h \
+ ..\..\..\plt\include\plt\array.h ..\..\..\plt\include\plt\container.h \
+ ..\..\..\plt\include\plt\handle.h \
+ ..\..\..\plt\include\plt\hashtable.h \
+ ..\..\..\plt\include\plt\dictionary.h ..\..\include\ks\event.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\serviceparams.h ..\..\include\ks\register.h \
+ ..\..\include\ks\result.h ..\..\include\ks\props.h \
+ ..\..\include\ks\handle.h ..\..\include\ks\value.h \
+ ..\..\include\ks\list.h ..\..\..\plt\include\plt\list.h \
+ ..\..\..\plt\include\plt\comparable.h \
+ ..\..\..\plt\include\plt\priorityqueue.h ..\..\include\ks\path.h \
+ ..\..\include\ks\svrsimpleobjects.h ..\..\include\ks\svrobjects.h \
+ ..\..\include\ks\mask.h ..\..\..\plt\include\plt\log.h \
+ ..\..\..\plt\include\plt\priorityqueue_impl.h \
+ ..\..\..\plt\include\plt\container_impl.h \
+ ..\..\..\plt\include\plt\hashtable_impl.h \
+ ..\..\include\ks\array_impl.h ..\..\..\plt\include\plt\array_impl.h \
+ ..\..\..\plt\include\plt\handle_impl.h ..\..\include\ks\handle_impl.h \
+ ..\..\include\ks\list_impl.h ..\..\..\plt\include\plt\list_impl.h
 

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.5 1997-04-10 14:17:44 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.6 1997-04-11 17:24:34 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -57,7 +57,7 @@ public:
 
     //// accessors
     virtual KsString getServerName() const=0;
-    virtual u_short  getProtocolVersion() const=0;
+    virtual KsString getServerVersion() const=0;
     virtual KsString getServerDescription() const = 0;
     virtual KsString getVendorName () const = 0;
 

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.10 1997-04-10 14:17:45 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.11 1997-04-11 17:24:35 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -61,9 +61,12 @@ public:
     //// accessors
     // "virtual constants"
     virtual KsString getServerName() const=0;
-    virtual u_short  getProtocolVersion() const=0;
+    virtual KsString getServerVersion() const=0;
     virtual KsString getServerDescription() const = 0;
     virtual KsString getVendorName () const = 0;
+
+    virtual u_short  getProtocolVersion() const 
+        { return 1; }
 
     virtual bool isOk() const { return _is_ok; }
     virtual bool isGoingDown() const { return _shutdown_flag; }

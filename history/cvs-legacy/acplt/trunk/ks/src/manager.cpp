@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.9 1997-04-10 14:17:55 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.10 1997-04-11 17:24:38 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -88,12 +88,6 @@ KsString
 KsManager::getServerName() const 
 { 
     return KsString("MANAGER"); 
-}
-
-u_short  
-KsManager::getProtocolVersion() const
-{ 
-    return 1; 
 }
 
 KsString 
@@ -301,7 +295,7 @@ KsManager::KsManager()
             _is_ok = false;
         }
     }
-    if (_is_ok && initVendorTree()) {
+    if (_is_ok) {
         //
         // initialize /servers
         //
@@ -345,11 +339,14 @@ KsManager::KsManager()
         // set some optional vendor variables
         // TODO: still lazy.
         //
+
+        addDomain(KsPath("/"), "vendor");
+
         KsStringVecValue * core_services_val
             = new KsStringVecValue(3);
         (*core_services_val)[0] = "ObjDict";
         (*core_services_val)[1] = "Var";
-        (*core_services_val)[2] = "DataExchg";
+        (*core_services_val)[2] = "Manager";
         KssSimpleVariable * core_services_var =
             new KssSimpleVariable("services");
         core_services_var->setValue(core_services_val);

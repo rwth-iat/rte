@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.9 1997-04-10 14:17:40 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.10 1997-04-11 17:24:33 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -68,7 +68,7 @@ public:
     //// accessors
     // "virtual constants"
     virtual KsString getServerName() const;
-    virtual u_short  getProtocolVersion() const;
+    virtual KsString getServerVersion() const=0;
     virtual KsString getServerDescription() const;
     virtual KsString getVendorName () const;
 
