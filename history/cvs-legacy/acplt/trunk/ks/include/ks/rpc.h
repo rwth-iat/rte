@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.22 2000-04-10 15:02:00 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.23 2000-04-11 14:14:52 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -154,7 +154,7 @@ typedef int32_t *XDR_INLINE_PTR;
 
 #else
 
-#if defined(__GLIBC__) && (__GLIBC__ >= 2) && defined(__GLIBC_MINOR__) && (__GLIBC_MINOR__ >= 1)
+#if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
 typedef int32_t *XDR_INLINE_PTR;
 #else
 typedef long *XDR_INLINE_PTR;
