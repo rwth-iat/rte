@@ -159,6 +159,9 @@ Version 1.3.1
     all, the XTI design was brain-dead from the beginning, so why
     causing code-bloat by supporting this unnecessary piece?
 
+  * Removed several obsolete source code files from the src/, include/ks/,
+    and example/ directories.
+
 - SERVERS:
   * The tserver now accepts certain command line options, in
     particular: -p for controlling the port number and -r for
