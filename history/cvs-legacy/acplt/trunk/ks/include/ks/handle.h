@@ -158,29 +158,6 @@ public:
     static KsPtrHandle * xdrNew(XDR *);
 };
 
-#if 0  // TODO
-//////////////////////////////////////////////////////////////////////
-// Array-like handle
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-class PltArrayHandle
-: private PltHandle<T>
-{
-public:
-    PltArrayHandle();
-    PltArrayHandle(T *p, enum PltOwnership); // no default to avoid conversion!
-    PltArrayHandle(const PltArrayHandle &);
-
-    operator bool () const;
-    T& operator[](size_t) const;
-    T* getPtr() const;                                          // [1]
-
-    PltArrayHandle & operator=(PltArrayHandle &rhs);
-    bool bindTo(T *, enum PltOwnership = PltOsArrayNew);
-};
-#endif
-
 //////////////////////////////////////////////////////////////////////
 // Implementation
 //////////////////////////////////////////////////////////////////////
@@ -223,85 +200,4 @@ KsPtrHandle<T>::xdrEncode(XDR *xdr) const
 
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-#if 0 // TODO
-
-template <class T>
-inline
-PltArrayHandle<T>::PltArrayHandle()
-: PltHandle<T>()
-{
-}
-
-//////////////////////////////////////////////////////////////////////
-template <class T>
-inline
-PltArrayHandle<T>::PltArrayHandle(T *p, enum PltOwnership os) 
-{
-    PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
-                     || os==PltOsArrayNew);
-    if (! bindTo(p, os)) {
-        destroy(p, os);
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline
-PltArrayHandle<T>::PltArrayHandle(const PltArrayHandle & h)
-: PltHandle<T>(h)
-{
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline
-PltArrayHandle<T>::operator bool() const
-{
-    return PltHandle<T>::operator bool();
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline T*
-PltArrayHandle<T>::getPtr () const
-{
-    return PltHandle<T>::getPtr();
-}
-
-//////////////////////////////////////////////////////////////////////
-template <class T>
-inline PltArrayHandle<T> & 
-PltArrayHandle<T>::operator = ( PltArrayHandle &h)
-{
-    return (PltArrayHandle<T> &) PltHandle<T>::operator = (h);
-    // static cast
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline bool
-PltArrayHandle<T>::bindTo(T * p, enum PltOwnership t)
-{
-    PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
-                     || t==PltOsArrayNew );
-    return PltHandle<T>::bindTo(p,t); // forward to parent
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline T & 
-PltArrayHandle<T>::operator[](size_t i) const
-{
-    PLT_PRECONDITION( *this );
-    return getPtr()[i];
-}
-
-//////////////////////////////////////////////////////////////////////
-#endif // TODO
 #endif // PLT_HANDLE_INCLUDED
