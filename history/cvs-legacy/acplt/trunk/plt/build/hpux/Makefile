@@ -21,17 +21,28 @@ VPATH = ../../tests ../../src
 .cpp.o:
 	$(CXX_COMPILE) -o $@ $<
 
-CXX_SOURCES = rtti.cpp trtti.cpp
-all : trtti
+CXX_SOURCES = \
+	rtti.cpp trtti.cpp \
+	list.cpp tlist.cpp \
+	priorityqueue.cpp ipriorityqueue.cpp tpriorityqueue.cpp
+
+all : trtti tlist tpriorityqueue
+
+tlist : tlist.o list.o
+	$(CXX_LINK) -o $@ $^
 
 trtti :	rtti.o trtti.o
+	$(CXX_LINK) -o $@ $^
+
+tpriorityqueue : ipriorityqueue.o tpriorityqueue.o
 	$(CXX_LINK) -o $@ $^
 
 trtti.i : trtti.cpp ../../include/plt/rtti.hpp
 	$(CXX_COMPILE) -E -o $@ $<
 
+
 depend : $(CXX_SOURCES)
-	$(CXX_COMPILE) -M -o $@ $^
+	$(CXX_COMPILE) -M $^ > $@
 
 
 include depend
