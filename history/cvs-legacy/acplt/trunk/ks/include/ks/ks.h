@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.22 1999-01-08 13:09:42 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.23 1999-01-12 16:14:21 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -62,7 +62,7 @@
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.0.5pre4"
+#define KS_VERSION_STRING "1.0.5pre5"
 
 	 
 /* ----------------------------------------------------------------------------
@@ -146,9 +146,9 @@ enum KS_OBJ_TYPE_ENUM {
     KS_OT_HISTORY   = 0x0004, /* object is a history   */
     KS_OT_LINK      = 0x0008, /* object is a link      */
     KS_OT_STRUCTURE = 0x0010, /* object is a structure */
-    KS_OT_ANY       = KS_OT_DOMAIN | KS_OT_VARIABLE |
+    KS_OT_ANY       = KS_OT_DOMAIN | KS_OT_VARIABLE | KS_OT_HISTORY |
                       KS_OT_LINK
-                    /* FIXME  KS_OT_HISTORY | KS_OT_LINK | KS_OT_STRUCTURE */
+                    /* FIXME  KS_OT_STRUCTURE */
 	/* restricted to the currently implemented types */
 };
 typedef enum_t KS_OBJ_TYPE;
@@ -173,7 +173,8 @@ typedef enum_t KS_ACCESS;
 
 
 /* ----------------------------------------------------------------------------
- *
+ * States a value can have, so clients can decive whether they want to trust
+ * a value.
  */
 enum KS_STATE_ENUM {
     KS_ST_NOTSUPPORTED = 0, /* no state available          */
@@ -229,7 +230,7 @@ enum KS_HIST_TYPE_ENUM {
     KS_HT_TIME          = 0x31,
     KS_HT_TIME_SPAN     = 0x32,
 
-    KS_HT_TYPE_MASK     = 0xFFFF,
+    KS_HT_TYPE_MASK     = 0x0000FFFF,
 
     KS_HT_TIME_DRIVEN   = 0x80000000,
     KS_HT_CHANGE_DRIVEN = 0x40000000
@@ -265,7 +266,7 @@ typedef enum_t KS_PLACEMENT_HINT;
 /* ----------------------------------------------------------------------------
  *
  */
-enum KS_INTERPOLATION_ENUM {
+enum KS_INTERPOLATION_MODE_ENUM {
     KS_IPM_NONE    = 0x0000,
     KS_IPM_LINEAR  = 0x0001,
     KS_IPM_MIN     = 0x0002,
