@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.4 1999-09-15 10:44:44 dirk Exp $
+#   $Id: generic.mk,v 1.5 2000-07-03 13:36:49 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -161,6 +161,7 @@ OV_INCLUDES = \
 	-I$(OV_INCLUDE_DIR) \
 	-I$(OV_MODEL_DIR) \
 	-I$(OV_SOURCE_CODEGEN_DIR) \
+	-I$(OV_SOURCE_NTSERVICE_DIR) \
 	-I$(OV_SOURCE_EXAMPLE_DIR) \
 	-I$(LIBMPM_DIR)
 else
@@ -289,10 +290,18 @@ OV_SERVER_RES  = ov_server$(RES)
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
 #   --------------------------------------------------
 
-OV_NTSERVICE_SRC := $(wildcard $(OV_SOURCE_NTSERVICE_DIR)*.c)
-OV_NTSERVICE_OBJ  = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(OBJ))
-OV_NTSERVICE_EXE  = ov_ntservice$(EXE)
-OV_NTSERVICE_RES  = ov_ntservice$(RES)
+OV_NTSERVICE_SRC = $(OV_SOURCE_NTSERVICE_DIR)ov_ntservice.c
+OV_NTSERVICE_OBJ = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(OBJ))
+OV_NTSERVICE_EXE = ov_ntservice$(EXE)
+OV_NTSERVICE_RES = ov_ntservice$(RES)
+
+#	ACPLT/OV Control Panel for the Windows NT service
+#	-------------------------------------------------
+
+OV_CONTROLPANEL_SRC = $(OV_SOURCE_NTSERVICE_DIR)ov_controlpanel.c
+OV_CONTROLPANEL_OBJ = $(foreach source, $(OV_CONTROLPANEL_SRC), $(basename $(notdir $(source)))$(OBJ))
+OV_CONTROLPANEL_CPL = ov_controlpanel$(CPL)
+OV_CONTROLPANEL_RES = ov_controlpanel$(RES)
 
 #	Table of statically linked ACPLT/OV libraries
 #	---------------------------------------------

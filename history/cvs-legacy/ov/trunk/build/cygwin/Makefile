@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.3 1999-09-15 10:44:45 dirk Exp $
+#   $Id: Makefile,v 1.4 2000-07-03 13:36:50 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -41,6 +41,7 @@ LIB = .a
 DLL = .dll
 EXE = .exe
 RES = _res.o
+CPL = .cpl
 
 #	Platform-specific definitions
 #	-----------------------------
@@ -92,7 +93,7 @@ include ../generic.mk
 #	Targets
 #	-------
 
-targets: $(TARGETS) $(OV_NTSERVICE_EXE)
+targets: $(TARGETS) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)
 
 example: $(EXAMPLE)
 	@
@@ -186,6 +187,11 @@ $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVE
 $(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_NTSERVICE_RES)
 	$(LINK) -mwindows -o $@ $^ $(C_LIBS)
 
+#	ACPLT/OV Control Panel for the Windows NT service
+
+$(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
+	$(DLLWRAP) -mwindows --def $(OV_SOURCE_NTSERVICE_DIR)$(basename $@).def -o $@ $^
+
 #	ACPLT/OV example library
 #	------------------------
 
@@ -204,14 +210,14 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-cp $(ALL) $(OV_NTSERVICE_EXE) $(PLT_BIN_DIR)
+	@-cp $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL) $(PLT_BIN_DIR)
 	@echo Done.
 
 #	Clean up
 #	--------
 
 clean :
-	@del *.c *.h *.bak *.map *.def *.s *.exp *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES)
+	@del *.c *.h *.bak *.map *.def *.s *.exp *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES) *$(CPL)
 
 #	Include dependencies
 #	--------------------

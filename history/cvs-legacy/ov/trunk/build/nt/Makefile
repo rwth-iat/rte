@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.3 2000-06-20 06:50:30 dirk Exp $
+#   $Id: Makefile,v 1.4 2000-07-03 13:36:51 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -41,6 +41,7 @@ LIB = .lib
 DLL = .dll
 EXE = .exe
 RES = .res
+CPL = .cpl
 
 #	Platform-specific definitions
 #	-----------------------------
@@ -89,7 +90,7 @@ include ../generic.mk
 #	Targets
 #	-------
 
-targets: $(TARGETS) $(OV_NTSERVICE_EXE)
+targets: $(TARGETS) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)
 
 example: $(EXAMPLE)
 	@
@@ -196,13 +197,17 @@ ovserver_demo.exe : quitmsgwnd.obj $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV
 	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
 	$(RC) $(filter %$(RES), $^) $@
 
-#quitmsgwnd.obj: $(OV_SOURCE_SERVER_DIR)quitmsgwnd.cpp
-#	$(CXX_COMPILE) -Jgd $< -o$@
-
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
 
 $(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_NTSERVICE_RES)
 	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+	$(RC) $(filter %$(RES), $^) $@
+
+#	ACPLT/OV Control Panel for the Windows NT service
+
+$(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
+	@del $(basename $@).def
+	$(LD) -e$@ $(filter-out %$(RES), $^)
 	$(RC) $(filter %$(RES), $^) $@
 
 #	ACPLT/OV example library
@@ -228,14 +233,14 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-for %i in ( $(ALL) $(OV_NTSERVICE_EXE) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
+	@-for %i in ( $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
 	@echo Done.
 
 #	Clean up
 #	--------
 
 clean:
-	@del *.c *.h *.bak *.map *.def *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES)
+	@del *.c *.h *.bak *.map *.def *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES) *$(CPL)
 
 #	Include dependencies
 #	--------------------
