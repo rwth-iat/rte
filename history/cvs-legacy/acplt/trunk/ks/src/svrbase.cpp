@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.18 1997-09-09 15:32:29 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.19 1997-09-15 10:59:48 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -277,9 +277,25 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
             //
             // Save the socket address of the sender
             //
+            sockaddr * sa;
+            int namelen;
+#if PLT_SYSTEM_SOLARIS
+            // solaris does not store a valid sockaddr_in in xp_raddr...
+            // instead it uses a netbuf in xp_rtaddr...
+            // TODO: Is this correct??
+            sa = (sockaddr*) transport->xp_rtaddr.buf; 
+            namelen = transport->xp_rtaddr.len;
+#else
+            //
+            // xp_raddr contains a valid sockaddr_in
+            //
+            sa = (sockaddr *) transport-xp_raddr;
+            PLT_ASSERT(sa->sa_family == AF_INET);
+            namelen = sizeof (sockaddr_in);
+#endif // PLT_SYSTEM_SOLARIS        
 
             bool accept = 
-                pTicket->setSenderAddress((sockaddr *) & transport->xp_raddr);
+                pTicket->setSenderAddress(sa, namelen);
             if (!accept) {
                 // TODO: may drop connection
             }
