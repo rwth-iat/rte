@@ -1,0 +1,50 @@
+ACPLT/KS C++ Communication Library
+==================================
+
+
+1. Introduction
+---------------
+
+The "C++ Communication Library" is intended to ease the integration of
+the open communication system ACPLT/KS into applications, thus
+enabling them to operate directly with process data.
+
+
+2. Compiling the Library
+------------------------
+
+Make sure you have the right tools.
+
+Change to the root of the library tree, that is the "acplt" directory,
+where this README file is stored too. Choose your weapons -- pardon,
+operating system -- and then do (on Un*x):
+
+  $ make linux.all
+
+This will build the library as well as some example applications. Replace
+"linux" with either "hpux", or "solaris".
+
+On NT take your chances, and do:
+
+  > make -f makefile.bc nt.all
+
+
+3. Suggested Readings
+---------------------
+
+Well -- all "Technology Papers" of course. But for a quick start you
+should first make yourself familiar with the object model of ACPLT/KS
+(Technology Paper #4). If you plan to write a KS server, then you
+should read the "Technology Paper #3" too. In every case, you should
+take a look at the "Technology #8", as it is the reference guide to
+the C++ communication library.
+
+We hope that you enjoy using the C++ communication library!
+
+
+The ACPLT/KS Group
+ks@plt.rwth-aachen.de
+Chair of Process Control Engineering
+Aachen University of Technology
+Turmstrasse 46
+D-52064 Aachen, Germany
