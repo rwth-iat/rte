@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager.cpp,v 1.1 1997-04-14 16:52:04 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager.cpp,v 1.2 1997-07-18 14:09:06 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,7 +41,7 @@
 #include "plt/log.h"
 #include <signal.h>
 
-#if PLT_COMPILER_GCC
+#if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
 #include "plt/priorityqueue_impl.h"
 #include "plt/hashtable_impl.h"
 #include "ks/array_impl.h"

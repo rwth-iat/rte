@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list.h,v 1.3 1997-04-10 14:17:38 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/list.h,v 1.4 1997-07-18 14:11:00 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -49,8 +49,13 @@ class KsList
   public KsXdrAble
 {
 public:
-    KsList();
-    KsList(XDR *, bool &);
+    KsList() 
+        : PltList<T>() { }
+    KsList(XDR * xdr, bool & ok) 
+        : PltList<T>() 
+            {
+                ok = xdrDecode(xdr);
+            }
 
     virtual bool xdrEncode(XDR *) const;
     virtual bool xdrDecode(XDR *);
@@ -66,7 +71,8 @@ private:
 //////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
-
+// Microsoft bug
+#if 0
 template <class T>
 inline
 KsList<T>::KsList()
@@ -83,7 +89,7 @@ KsList<T>::KsList(XDR * xdr, bool & ok)
 {
     ok = xdrDecode(xdr);
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////
 
 #if PLT_SEE_ALL_TEMPLATES

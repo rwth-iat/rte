@@ -56,6 +56,8 @@ class KsProjProps :
 public KsXdrUnion 
 {
 public:
+    typedef KsProjProps THISTYPE;
+
     KsProjProps() {}
     KsProjProps(const KsProjProps &);
     KsProjProps(const KsString &ident,
@@ -78,6 +80,7 @@ protected:
     PLT_DECL_RTTI;
 
 #if PLT_DEBUG
+public:
     virtual void debugPrint(ostream &) const;
 #endif
 };
@@ -90,6 +93,10 @@ class KsVarProjProps :
 public KsProjProps 
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KsVarProjProps THISTYPE;
+#endif
+
     KsVarProjProps() {}
     KsVarProjProps(const KsVarProjProps &);
     KsVarProjProps(const KsString &ident,
@@ -116,6 +123,7 @@ private:
     PLT_DECL_RTTI;
 
 #if PLT_DEBUG
+public:
     virtual void debugPrint(ostream &) const;
 #endif
 };
@@ -126,6 +134,9 @@ class KsDomainProjProps :
 public KsProjProps 
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KsDomainProjProps THISTYPE;
+#endif
     KsDomainProjProps() {}
     KsDomainProjProps(const KsDomainProjProps &);
     KsDomainProjProps(const KsString &ident,
@@ -148,6 +159,7 @@ private:
     PLT_DECL_RTTI;
 
 #if PLT_DEBUG
+public:
     virtual void debugPrint(ostream &) const;
 #endif
 };
@@ -161,6 +173,7 @@ class KsCurrProps :
 public KsXdrUnion 
 {
 public:
+    typedef KsCurrProps THISTYPE;
     virtual ~KsCurrProps() {}
 
     KS_DECL_XDRUNION(KsCurrProps);
@@ -181,6 +194,9 @@ class KsVarCurrProps
 : public KsCurrProps 
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KsVarCurrProps THISTYPE;
+#endif
     KsVarCurrProps();
     KsVarCurrProps(KsValueHandle v);
     KsVarCurrProps(const KsVarCurrProps &);
@@ -207,6 +223,7 @@ private:
     PLT_DECL_RTTI;
 
 #if PLT_DEBUG
+public:
     virtual void debugPrint(ostream &) const;
 #endif
 };
@@ -215,6 +232,9 @@ private:
 
 class KsDomainCurrProps : public KsCurrProps {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KsDomainCurrProps THISTYPE;
+#endif
     KsDomainCurrProps() {}
     ~KsDomainCurrProps() {}
 
@@ -230,6 +250,7 @@ private:
     PLT_DECL_RTTI;
 
 #if PLT_DEBUG
+public:
     virtual void debugPrint(ostream &) const;
 #endif
 };

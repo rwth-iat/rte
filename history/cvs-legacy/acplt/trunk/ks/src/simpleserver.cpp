@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.9 1997-04-18 13:00:41 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.10 1997-07-18 14:11:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -222,12 +222,13 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
                 } else {
                     // Iterate over its children.
                     result.result = KS_ERR_OK; // report no other errors
-                    KssDomainIterator *pit = 
-                        pd->newMaskedIterator(params.name_mask, 
-                                              params.type_mask);
+                    KssDomainIterator *pit =
+                        PLT_RETTYPE_CAST((KssDomainIterator *))
+                            pd->newMaskedIterator(params.name_mask, 
+                                                  params.type_mask);
                     if (pit) {
                         // We got an iterator. Use it.
-                        for (KssDomainIterator &it(*pit); it; ++it) {
+                        for (KssDomainIterator &it = *pit; it; ++it) {
                             if (*it) {
                                 // check if the child is visible
                                 PltString childname(params.path,

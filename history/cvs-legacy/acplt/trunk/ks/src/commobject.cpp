@@ -50,7 +50,8 @@
 void
 KscCommObject::debugPrint(ostream &os) const
 {
-    os << "Path and Name: " << PltString(path) << endl;
+    KsString str(path);
+    os << "Path and Name: " << str << endl;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -351,15 +352,14 @@ KscDomain::ChildIterator::ChildIterator(const KscDomain &domain,
 
 //////////////////////////////////////////////////////////////////////
 
-KscDomain::ChildIterator::operator
-const void * () const 
+KscDomain::ChildIterator::operator bool () const 
 {
-    return it.operator const void * ();
+    return it.operator bool();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KscDomain::ChildIterator &
+KscDomain::ChildIterator::THISTYPE &
 KscDomain::ChildIterator::operator ++ ()
 {
     PLT_PRECONDITION(*this);

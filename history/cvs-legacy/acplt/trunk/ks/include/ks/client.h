@@ -50,6 +50,10 @@
 
 #include "plt/hashtable.h"
 
+#if PLT_SYSTEM_OPENVMS
+#include <netdb.h>
+#endif
+
 //////////////////////////////////////////////////////////////////////
 // forward declaration
 class KscServer;

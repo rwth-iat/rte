@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.12 1997-05-05 06:50:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.13 1997-07-18 14:11:13 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -112,15 +112,18 @@ class KsmServerIterator
 : public KssDomainIterator
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KsmServerIterator THISTYPE;
+#endif
     KsmServerIterator(const KsmServer & d)
         : _d(d), _what(0) { }
 
-    virtual operator const void * () const
-        { return (_what < STOP) ? this : 0; }
+    virtual operator bool () const
+        { return _what < STOP; }
     
     virtual KssCommObjectHandle operator * () const;
 
-    virtual KsmServerIterator& operator ++ ()
+    virtual THISTYPE & operator ++ ()
         { ++_what; return *this; }
 
     virtual void toStart()
@@ -149,7 +152,7 @@ public:
 
     //// KssDomain
     //   accessors
-    virtual KsmServerIterator * newIterator() const;
+    virtual KsmServerIterator::THISTYPE * newIterator() const;
 
 
 //  virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
@@ -199,7 +202,7 @@ KsmServer::getComment() const
 
 //////////////////////////////////////////////////////////////////////
 
-KsmServerIterator *
+KsmServerIterator::THISTYPE *
 KsmServer::newIterator() const
 {
     return new KsmServerIterator(*this);
@@ -556,6 +559,7 @@ KsManager::startServer()
     //
     if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
         PltLog::Debug("Removed old pmap entry.");
+	pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION);
     }
     _registered = false;
     if (pmap_set(KS_RPC_PROGRAM_NUMBER, 
@@ -585,9 +589,20 @@ KsManager::startServer()
 void
 KsManager::stopServer()
 {
-    if (   _registered
-        && ! pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
-        PltLog::Warning("Can't unregister with portmapper.");
+    if (_registered) {
+        if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
+	    PLT_DMSG("1st pmap_unset ok."<<endl);
+	    if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
+                PLT_DMSG("2nd pmap_unset ok. *URKS*" <<endl);
+            } else {
+                PLT_DMSG("2nd pmap_unset failed. *THIS IS CORRECT BEHAVIOUR*"
+                         << endl);
+            }
+        } else {
+            PltLog::Warning("Can't unregister with portmapper.");
+        }
+    } else {
+	PLT_DMSG("not registered" << endl);
     }
     KsSimpleServer::stopServer();
 }
@@ -747,6 +762,12 @@ KsManager::unregisterServer(KsAvTicket & /*ticket*/,
 
 //////////////////////////////////////////////////////////////////////
 
+///////////////////////////
+// work around DEC CXX bug:
+typedef PltHashIterator<PltKeyPtr<KsServerDesc>, KsmServer *> 
+KsmServerDescIterator;
+///////////////////////////
+
 void
 KsManager::getServer(KsAvTicket & /*ticket*/,
                      KsGetServerParams & params,
@@ -774,8 +795,8 @@ KsManager::getServer(KsAvTicket & /*ticket*/,
     //
     KsmServer *pbest = 0;
     u_long best_version = 0;
-    for (PltHashIterator<PltKeyPtr<KsServerDesc>, KsmServer *> 
-             it(_server_table);
+
+    for (KsmServerDescIterator it(_server_table);
          it;
          ++it) {
         const KsServerDesc & desc = it->a_value->desc; // current
@@ -882,7 +903,7 @@ KsmExpireManagerEvent::trigger()
         // Portmapper failure. Report this and retry soon.
         //
         PltLog::Warning("Can't query portmapper. Check if it is running!");
-        PLT_DMSG("Portmapper failure:" << rpc_createerr.cf_stat << endl);
+// TODO        PLT_DMSG("Portmapper failure:" << rpc_createerr.cf_stat << endl);
         _trigger_at = KsTime::now(60);
         _manager.addTimerEvent(this);
     } else {

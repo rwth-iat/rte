@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.7 1997-04-10 14:17:59 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.8 1997-07-18 14:11:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -127,7 +127,8 @@ KssSimpleDomain::removeChild(const KsString &id)
 KssSimpleDomainIterator::KssSimpleDomainIterator(const KssSimpleDomain & d)
 : _children_iter(d._children),
   _p_sister_iter(d._next_sister
-                 ? d._next_sister->newIterator()
+                 ? PLT_RETTYPE_CAST((KssDomainIterator*)) 
+                     d._next_sister->newIterator()
                  : 0 ),
   _at_sister(false)
 {
@@ -142,7 +143,7 @@ KssSimpleDomainIterator::~KssSimpleDomainIterator()
 
 //////////////////////////////////////////////////////////////////////
 
-KssSimpleDomainIterator::operator const void * () const
+KssSimpleDomainIterator::operator bool () const
 {
     if (_p_sister_iter && _at_sister) {
         return *_p_sister_iter;
@@ -166,7 +167,7 @@ KssSimpleDomainIterator::operator * () const
 
 //////////////////////////////////////////////////////////////////////
 
-KssSimpleDomainIterator & 
+KssSimpleDomainIterator::THISTYPE & 
 KssSimpleDomainIterator::operator ++ ()
 {
     PLT_ASSERT(*this);

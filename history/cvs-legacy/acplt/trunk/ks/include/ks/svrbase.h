@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.13 1997-05-05 06:50:48 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.14 1997-07-18 14:11:05 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,6 +44,7 @@
 #include "plt/comparable.h"
 #include "plt/priorityqueue.h"
 
+#include <signal.h>
 //////////////////////////////////////////////////////////////////////
 // PRIVATE! forward declaration
 
@@ -69,7 +70,7 @@ public:
         { return 1; }
 
     virtual bool isOk() const { return _is_ok; }
-    virtual bool isGoingDown() const { return _shutdown_flag; }
+    virtual bool isGoingDown() const { return _shutdown_flag != 0; }
 
     static KsServerBase & getServerObject();
 
@@ -131,7 +132,7 @@ private:
     KsServerBase(const KsServerBase &); // forbidden
     KsServerBase & operator = (const KsServerBase &); // forbidden
 
-    bool _shutdown_flag; // signal to the run() loop to quit
+    sig_atomic_t _shutdown_flag; // signal to the run() loop to quit
 
     PltPriorityQueue< PltPtrComparable<KsTimerEvent> > _timer_queue;
 

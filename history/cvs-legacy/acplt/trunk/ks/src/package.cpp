@@ -395,22 +395,21 @@ KscPackage::DeepIterator::~DeepIterator()
 
 //////////////////////////////////////////////////////////////////////
 
-KscPackage::DeepIterator::operator 
-const void *() const
+KscPackage::DeepIterator::operator bool () const
 {
     if(vars_it) {
-        return this;
+        return true;
     }
 
     if(pkgs_it) {
-        return this;
+        return true;
     }
 
     if(rek_it && *rek_it) {
-        return this;
+        return true;
     }
 
-    return NULL;
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -435,6 +434,9 @@ KscPackage::DeepIterator::operator * () const
     // this is an error condition
     //
     PLT_ASSERT(0);
+    // not reachede
+    static KscVariableHandle dummy;
+    return dummy; 
 }
     
 //////////////////////////////////////////////////////////////////////
@@ -459,11 +461,12 @@ KscPackage::DeepIterator::operator -> () const
     // this is an error condition
     //
     PLT_ASSERT(0);
+    return 0; // not reached
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KscPackage::DeepIterator &
+KscPackage::DeepIterator::THISTYPE &
 KscPackage::DeepIterator::operator ++()
 {
     PLT_PRECONDITION(*this);

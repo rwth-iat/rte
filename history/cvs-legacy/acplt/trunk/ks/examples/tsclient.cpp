@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tsclient.cpp,v 1.2 1997-05-20 15:20:12 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tsclient.cpp,v 1.3 1997-07-18 14:09:08 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -36,12 +36,10 @@
  */
 
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-#include "ks/server.h"
-#include "ks/simpleserver.h"
-
+#include "ks/string.h"
 #include "plt/log.h"
 
-#if PLT_COMPILER_GCC
+#if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
 #include "plt/priorityqueue_impl.h"
 #include "plt/hashtable_impl.h"
 #include "ks/array_impl.h"

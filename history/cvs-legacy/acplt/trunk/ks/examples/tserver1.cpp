@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.1 1997-04-14 16:52:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.2 1997-07-18 14:09:09 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -73,7 +73,22 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 
-class TestDomainIterator;
+class TestDomainIterator
+: public KssDomainIterator
+{
+public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef TestDomainIterator THISTYPE;
+#endif
+    virtual operator bool () const
+        { return 0; } // no iteration
+    virtual KssCommObjectHandle operator * () const
+        { PLT_ASSERT(0==1); return KssCommObjectHandle(); }
+    virtual THISTYPE & operator ++()
+        { return *this; }
+    virtual void toStart()
+        { }
+};
 
 //////////////////////////////////////////////////////////////////////
 
@@ -89,26 +104,11 @@ class TestDomain
 
     //// KssDomain
     //   accessors
-    virtual KssDomainIterator * newIterator() const;
+    virtual TestDomainIterator::THISTYPE * newIterator() const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
 
     PLT_DECL_RTTI;
-};
-
-//////////////////////////////////////////////////////////////////////
-
-class TestDomainIterator
-: public KssDomainIterator
-{
-    virtual operator const void *() const
-        { return 0; } // no iteration
-    virtual KssCommObjectHandle operator * () const
-        { PLT_ASSERT(0==1); return KssCommObjectHandle(); }
-    virtual TestDomainIterator & operator ++()
-        { return *this; }
-    virtual void toStart()
-        { }
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ TestDomain::getChildById(const KsString &str) const
 PLT_IMPL_RTTI1(TestDomain, KssDomain);
 //////////////////////////////////////////////////////////////////////
 
-KssDomainIterator * 
+TestDomainIterator::THISTYPE * 
 TestDomain::newIterator() const
 { 
     return new TestDomainIterator; 

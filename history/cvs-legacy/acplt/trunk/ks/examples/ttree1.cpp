@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.4 1997-07-16 18:33:56 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.5 1997-07-18 14:09:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -119,7 +119,8 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
 	    cout << "<VAR> " << info;
 
 	    const KsVarProjProps *var_proj_props =
-            PLT_DYNAMIC_PCAST(KsVarProjProps, &proj_props);
+           (const KsVarProjProps *) &proj_props; // for msvc
+// replaced:            PLT_DYNAMIC_PCAST(KsVarProjProps, &proj_props);
 	    if( !var_proj_props ) {
             cout << "<unknown projected properties>";
 	    } else {

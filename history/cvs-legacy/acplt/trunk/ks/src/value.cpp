@@ -7,7 +7,9 @@
  */
 
 #include "ks/value.h"
-
+#if PLT_DEBUG && PLT_COMPILER_MSVC
+#include <time.h>
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // RTTI Simulation
@@ -287,8 +289,13 @@ KsTimeValue::xdrDecodeVariant(XDR *xdr)
 void
 KsTimeValue::debugPrint(ostream & ostr) const
 {
+#if PLT_SYSTEM_OPENVMS
+    unsigned long sec = tv_sec;
+#else
+    long sec = tv_sec;
+# endif
     ostr << "KsTimeValue{" << tv_sec << "," << tv_usec 
-         << " = " << ctime(&tv_sec) << "}";
+         << " = " << ctime(&sec) << "}";
 }
 #endif
 //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/ntservice.cpp,v 1.1 1997-05-05 06:52:05 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/ntservice.cpp,v 1.2 1997-07-18 14:11:14 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,12 +38,16 @@
 /* Author: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
 // ATTENTION!!! We're now going multi-threaded!!!
+// TODO: Why doesn't borland define this automatically when compiling for 
+// multithreaded app?
 #define __MT__
 
 #include "ks/ntservice.h"
 #include "plt/log.h"
 #include <stdio.h>
-
+#if PLT_COMPILER_MSVC
+#include <process.h>
+#endif
 
 // -------------------------------------------------------------------------
 // This pointer points to the (only) instance of the service object. We do
@@ -217,7 +221,7 @@ void KsNtServiceServer::run()
 
     service_dispatch_table[0].lpServiceName = (LPTSTR) _service_name;
     service_dispatch_table[0].lpServiceProc = (LPSERVICE_MAIN_FUNCTION)
-                                                  c_serviceMain;
+                                                  ks_c_serviceMain;
     service_dispatch_table[1].lpServiceName = 0;
     service_dispatch_table[1].lpServiceProc = 0;
     if ( !StartServiceCtrlDispatcher(service_dispatch_table) ) {
@@ -232,10 +236,10 @@ void KsNtServiceServer::run()
 // Marshal NT's call for the main function of this service up to the
 // service object.
 //
-void KsNtServiceServer::c_serviceMain(DWORD argc, LPTSTR *argv)
+extern "C" void ks_c_serviceMain(DWORD argc, LPTSTR *argv)
 {
-    _the_service->serviceMain((int) argc, (char **) argv);
-} // KsNtServiceServer::c_serviceMain
+    KsNtServiceServer::_the_service->serviceMain((int) argc, (char **) argv);
+} // ks_c_serviceMain
 
 // -------------------------------------------------------------------------
 //
@@ -259,7 +263,7 @@ void KsNtServiceServer::serviceMain(int argc, char **argv)
     //
     _service_status_handle = RegisterServiceCtrlHandler(
                                  (LPCTSTR) _service_name,
-                                 (LPHANDLER_FUNCTION) c_serviceController);
+                                 (LPHANDLER_FUNCTION) ks_c_serviceController);
     if ( !_service_status_handle ) {
         lastError("Can't register service control handler");
         return;
@@ -282,14 +286,26 @@ void KsNtServiceServer::serviceMain(int argc, char **argv)
     // otherwise get memory leaks. As if NT wouldn't be the biggest memory
     // leak ever created by menkind...
     //
+#if PLT_COMPILER_MSVC
+    _workhorse_thread = (HANDLE) _beginthread(
+        (void (*)(void *)) ks_c_serviceRun,    // entry point of new thread
+        0,                                     // stack size (default)
+        0);                                    // arguments (none)
+#else
+# if PLT_COMPILER_BORLAND
     _workhorse_thread = (HANDLE) _beginthreadNT(
-        (void (*)(void *)) c_serviceRun, // entry point of new thread
+        (void (*)(void *)) ks_c_serviceRun, // entry point of new thread
         32768,                           // initial stack size
         0,                               // no arguments to pass to thread
         0,                               // no security, as NT hasn't one...
         0,                               // spin up thread immediately
         &_workhorse_thread_id);
-    if ( !_workhorse_thread ) {
+# else
+# error Don't know how to start threads
+# endif
+#endif
+
+    if ( _workhorse_thread <= 0) {
     	_is_ok = false;
         PltLog::Error("Can't start service thread");
         return;
@@ -323,10 +339,10 @@ void KsNtServiceServer::serviceMain(int argc, char **argv)
 // Marshal the service control request from Windooze NoThnx up to the
 // service object.
 //
-void WINAPI KsNtServiceServer::c_serviceController(DWORD control_code)
+extern "C" void WINAPI ks_c_serviceController(DWORD control_code)
 {
-    _the_service->serviceController(control_code);
-} // KsNtServiceServer::c_serviceController
+    KsNtServiceServer::_the_service->serviceController(control_code);
+} // ks_c_serviceController
 
 // -------------------------------------------------------------------------
 // Yuck. We've got a service control request and must now look for our real
@@ -395,10 +411,10 @@ void KsNtServiceServer::serviceController(DWORD control_code)
 // -------------------------------------------------------------------------
 // Marshalling wrapper for the real service's main thread.
 //
-int KsNtServiceServer::c_serviceRun()
+extern "C" ks_c_serviceRun()
 {
-    return _the_service->serviceRun();
-} // KsNtServiceServer::c_serviceRun
+    return KsNtServiceServer::_the_service->serviceRun();
+} // ks_c_serviceRun
 
 // -------------------------------------------------------------------------
 // This function is basically the main loop of the KS server task. It loops

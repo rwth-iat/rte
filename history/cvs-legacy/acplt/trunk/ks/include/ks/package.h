@@ -132,12 +132,15 @@ protected:
     : public PltIterator<KscVariableHandle>
     {
     public:
+#if PLT_RETTYPE_OVERLOADABLE
+        typedef DeepIterator THISTYPE;
+#endif
         DeepIterator(const KscPackage &);
         ~DeepIterator();
-        operator const void * () const;
+        operator bool () const;
         const KscVariableHandle & operator * () const;
         const KscVariableHandle * operator -> () const;
-        DeepIterator & operator ++ ();
+        THISTYPE & operator ++ ();
         void operator ++ (int);
         void toStart();
     protected:

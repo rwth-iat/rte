@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.7 1997-04-10 14:17:46 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.8 1997-07-18 14:11:07 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -33,7 +33,7 @@
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+v * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -92,12 +92,16 @@ class KssSimpleDomainIterator
 : public KssDomainIterator
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KssSimpleDomainIterator THISTYPE;
+#endif
+
     KssSimpleDomainIterator(const KssSimpleDomain & d);
     virtual ~KssSimpleDomainIterator();
 
-    virtual operator const void * () const;
+    virtual operator bool () const;
     virtual KssCommObjectHandle operator * () const;
-    virtual KssSimpleDomainIterator& operator ++ ();
+    virtual THISTYPE & operator ++ ();
     virtual void toStart();
 private:
     PltHashIterator<KsString,KssCommObjectHandle> _children_iter;
@@ -124,7 +128,7 @@ public:
 
     //// KssDomain ////
     //// accessors
-    virtual KssSimpleDomainIterator * newIterator() const;
+    virtual KssSimpleDomainIterator::THISTYPE * newIterator() const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
 
@@ -332,7 +336,7 @@ inline KsString KssSimpleDomain::getComment() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-inline KssSimpleDomainIterator * 
+inline KssSimpleDomainIterator::THISTYPE * 
 KssSimpleDomain::newIterator() const 
 {
     return new KssSimpleDomainIterator(*this);

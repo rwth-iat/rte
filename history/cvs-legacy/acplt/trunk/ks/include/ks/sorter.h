@@ -32,7 +32,7 @@
  * ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+v * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -132,11 +132,14 @@ private:
     : public PltIterator<KscBucketHandle>
     {
     public:
+#if PLT_RETTYPE_OVERLOADABLE
+        typedef ValueIterator THISTYPE;
+#endif
         ValueIterator(const PltHashTable<Key, KscBucketHandle> &);
 
-        operator const void * () const;
+        operator bool () const;
         const KscBucketHandle * operator -> () const;
-        ValueIterator & operator ++ ();
+        THISTYPE & operator ++ ();
         void toStart();
     private:
         PltHashIterator<Key,KscBucketHandle> it;
@@ -175,7 +178,7 @@ KscSorter::ValueIterator::ValueIterator(
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscSorter::ValueIterator::operator const void * () const
+KscSorter::ValueIterator::operator bool () const
 {
     return it;
 }
@@ -192,7 +195,7 @@ KscSorter::ValueIterator::operator -> () const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscSorter::ValueIterator & 
+KscSorter::ValueIterator::THISTYPE & 
 KscSorter::ValueIterator::operator ++ ()
 {
     ++it;
@@ -268,7 +271,8 @@ inline
 PltIterator<KscVariableHandle> *
 KscSorterBucket::newVarIterator() const
 {
-    return var_lst.newIterator();
+    return PLT_RETTYPE_CAST((PltIterator<KscVariableHandle> *))
+        var_lst.newIterator();
 }
 
 //////////////////////////////////////////////////////////////////////

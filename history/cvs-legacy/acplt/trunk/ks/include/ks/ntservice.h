@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ntservice.h,v 1.2 1997-05-20 15:20:57 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ntservice.h,v 1.3 1997-07-18 14:11:00 martin Exp $ */
 
 #ifndef KS_NTSERVICE_INCLUDED
 #define KS_NTSERVICE_INCLUDED
@@ -44,7 +44,11 @@
 #include "ks/svrbase.h"
 
 // Yuck! Some OS-specific stuff...
+#if PLT_COMPILER_BORLAND
 #include <win32/winsvc.h>
+#else
+#include <winsvc.h>
+#endif
 
 // -------------------------------------------------------------------------
 // The NT service object class. It hides the "magic" (bad magic, huh?) of
@@ -53,6 +57,12 @@
 // and to implement the createServer() method. That's it. Gosh! OOP: you get
 // the ease and we get the trouble...
 //
+
+//// Marshalling stubs ////
+extern "C" void ks_c_serviceMain(DWORD argc, LPTSTR *argv);
+extern "C" void WINAPI ks_c_serviceController(DWORD control_code);
+extern "C" int ks_c_serviceRun();
+
 class KsNtServiceServer {
 public:
     KsNtServiceServer(const char *service_name,
@@ -102,12 +112,13 @@ private:
     virtual void serviceController(DWORD control_code);
     virtual int serviceRun();
 
-    //// Marshalling stubs ////
-    static void c_serviceMain(DWORD argc, LPTSTR *argv);
-    static void WINAPI c_serviceController(DWORD control_code);
-    static int c_serviceRun();
+friend void ks_c_serviceMain(DWORD argc, LPTSTR *argv);
+friend void WINAPI ks_c_serviceController(DWORD control_code);
+friend int ks_c_serviceRun();
+
 }; // KsNtServiceServer
 
 #endif /* #ifdef KS_NTSERVICE_INCLUDED */
 
 /* End of ntservice.h */
+

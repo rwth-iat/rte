@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tsclient1.cpp,v 1.1 1997-04-14 16:52:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tsclient1.cpp,v 1.2 1997-07-18 14:09:09 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -205,7 +205,7 @@ int main (int argc, char **argv)
                 return 2;
             }
             for (size_t j = 0; j < sz; ++j) {
-                const KsGetVarItemResult & item(getvar_ctx.result.items[j]);
+                const KsGetVarItemResult & item = getvar_ctx.result.items[j];
                 if (item.result == KS_ERR_OK) {
                     if (print) {
                         KsVarCurrProps *pcp = 

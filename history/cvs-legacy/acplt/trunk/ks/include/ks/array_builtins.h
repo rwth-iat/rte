@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_BUILTINS_INCLUDED
 #define KS_ARRAY_BUILTINS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.1 1997-04-10 14:17:35 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.2 1997-07-18 14:10:57 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -39,8 +39,14 @@
 
 #include "plt/debug.h"
 
+#if PLT_COMPILER_MSVC
+#define PLT_PSEUDO_INLINE inline
+#else
+#define PLT_PSEUDO_INLINE
+#endif
+
 #define KS_IMPL_ARRAY_XDR(elem,xdre_elem,xdrd_elem)                     \
-bool                                                                    \
+PLT_PSEUDO_INLINE bool                                                  \
 KsArray<elem>::xdrDecode(XDR *xdr)                                      \
 {                                                                       \
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);                          \
@@ -72,7 +78,7 @@ KsArray<elem>::xdrDecode(XDR *xdr)                                      \
                                                                         \
 /****************************************************************/      \
                                                                         \
-bool                                                                    \
+PLT_PSEUDO_INLINE bool                                                  \
 KsArray<elem>::xdrEncode(XDR *xdrs) const                               \
 {                                                                       \
     PLT_PRECONDITION(xdrs->x_op == XDR_ENCODE);                         \
@@ -98,15 +104,10 @@ typedef void ks_dummy_typedef
 #define KS_IMPL_ARRAY(elem)                                        \
     KS_IMPL_ARRAY_XDR(elem, ks_xdre_##elem,ks_xdrd_##elem);
 
-#if 0
-    bool KsArray<elem>::xdrEncode(XDR *) const;                    \
-    bool KsArray<elem>::xdrDecode(XDR *)
-#endif 
-
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-bool
+PLT_PSEUDO_INLINE bool
 KsArray<char>::xdrDecode(XDR *xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
@@ -133,7 +134,7 @@ KsArray<char>::xdrDecode(XDR *xdr)
 
 //////////////////////////////////////////////////////////////////////
 
-bool
+PLT_PSEUDO_INLINE bool
 KsArray<char>::xdrEncode(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);

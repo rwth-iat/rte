@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.1 1997-04-14 16:52:04 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.2 1997-07-18 14:09:07 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -49,8 +49,9 @@ const KsString KS_MANAGER_VERSION("0.5.1");
 
 //////////////////////////////////////////////////////////////////////
 
-extern "C" void handler(int) {
-    KsServerBase::getServerObject().stopServer();
+extern "C" void handler(int sig) {
+    PLT_DMSG("caught signal " << sig << endl);
+    KsServerBase::getServerObject().downServer();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -92,7 +93,10 @@ int main(int, char **) {
 	Manager m;
     if (m.isOk()) {
         m.startServer();
+	PLT_DMSG("entering service loop"<<endl);
         m.run();
+	PLT_DMSG("left service loop"<<endl);
+	m.stopServer();
     } else {
         cout << "The manager could not be initialized." << endl;
     }

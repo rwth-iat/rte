@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.6 1997-04-03 15:13:11 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.7 1997-07-18 14:11:06 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -100,10 +100,12 @@ public:
 
     //// KssDomain
     //   accessors
-    virtual KssDomainIterator * newIterator() const = 0;
-    virtual KssDomainIterator * newMaskedIterator(const KsMask & name_mask,
-                                                  KS_OBJ_TYPE type_mask) 
-        const;
+    virtual KssDomainIterator::THISTYPE * 
+        newIterator() const = 0;
+    virtual KssDomainIterator::THISTYPE * 
+        newMaskedIterator(const KsMask & name_mask,
+                          KS_OBJ_TYPE type_mask) 
+            const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
     // ^ defaults to linear search on iterator, 
@@ -124,12 +126,16 @@ class KssMaskedDomainIterator
 : public KssDomainIterator
 {
 public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KssMaskedDomainIterator THISTYPE;
+#endif
+
     KssMaskedDomainIterator(const PltPtrHandle<KssDomainIterator> & hit,
                             const KsMask & name_mask,
                             const KS_OBJ_TYPE type_mask);
-    virtual operator const void * () const;
+    virtual operator bool () const;
     virtual KssCommObjectHandle operator * () const;
-    virtual KssMaskedDomainIterator& operator ++ ();
+    virtual THISTYPE & operator ++ ();
     virtual void toStart();
 private:
     void skipWhileNotMatching();

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRRPCCTX_INCLUDED
 #define KS_SVRRPCCTX_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrrpcctx.h,v 1.1 1997-04-03 10:02:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrrpcctx.h,v 1.2 1997-07-18 14:11:06 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,6 +44,7 @@
 
 struct KssRPCContext_base
 {
+public: // Microsoft bug
     KssRPCContext_base(const KsAvTicket &t)
         : request_ticket(t), p_response_ticket(0) { }
     virtual ~KssRPCContext_base();
@@ -64,6 +65,7 @@ template <u_long NR, class PARAMS, class RESULT>
 struct KssRPCContext
 : public KssRPCContext_base
 {
+public: // Microsoft bug
     PARAMS params;
     RESULT result;
     KssRPCContext(const KsAvTicket & ticket) : KssRPCContext_base(ticket) { }

@@ -41,7 +41,12 @@
  */
 #include "plt/debug.h"
 
-#if PLT_SYSTEM_NT
+#if PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS
+# if PLT_SYSTEM_OPENVMS
+# include <in.h>
+# else
+# include <winsock.h>
+# endif
 
 int from_local(struct sockaddr_in *) 
 {

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.14 1997-05-20 15:21:38 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.15 1997-07-18 14:11:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -54,6 +54,10 @@
 
 #if 0
 #include <unistd.h>
+#endif
+
+#if PLT_SYSTEM_OPENVMS
+#define bzero(__x, __y) memset(__x, 0, __y)
 #endif
 
 #include "ks/svrbase.h"
@@ -123,7 +127,7 @@ KsServerBase::the_server = 0;
 
 KsServerBase::KsServerBase()
 : _tcp_transport(0),
-  _shutdown_flag(false),
+  _shutdown_flag(0),
   _send_buffer_size(16384),
   _receive_buffer_size(16384)
 {
@@ -678,7 +682,7 @@ KsServerBase::startServer()
 //
 void KsServerBase::downServer()
 {
-    _shutdown_flag = true;
+    _shutdown_flag = 1;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -697,20 +701,21 @@ void KsServerBase::stopServer()
 // Unfortunately, NT looses (once again): as it has no signal concept,
 // you can't wake up a sleeping thread after you've signalled it to
 // shut down... so what? New Technology...? ridiculous!
+// Here we can see that NT is based on VMS: same problem for VMS...
 //
 void
 KsServerBase::run()
 {
-#if PLT_SYSTEM_NT
-    KsTime oneSecond(1);
+#if PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS
+    KsTime aShortTime(2);
 #endif
 
-    _shutdown_flag = false;
-    while (! _shutdown_flag) {
-#if !PLT_SYSTEM_NT
+    _shutdown_flag = 0;
+    while (!isGoingDown()) {
+#if ! (PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS)
         servePendingEvents(0); // no timeout -> wait forever
 #else
-        servePendingEvents(&oneSecond);
+        servePendingEvents(&aShortTime);
 #endif
     }
 }

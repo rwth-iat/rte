@@ -84,9 +84,15 @@ bool KsArray<u_long>::xdrEncode(XDR *) const;
 bool KsArray<u_long>::xdrDecode(XDR *);
 
 bool KsArray<int>::xdrEncode(XDR *) const;
+bool KsArray<int>::xdrDecode(XDR *);
+
+bool KsArray<u_int>::xdrEncode(XDR *) const;
 bool KsArray<u_int>::xdrDecode(XDR *);
 
 bool KsArray<short>::xdrEncode(XDR *) const;
+bool KsArray<short>::xdrDecode(XDR *);
+
+bool KsArray<u_short>::xdrEncode(XDR *) const;
 bool KsArray<u_short>::xdrDecode(XDR *);
 
 bool KsArray<float>::xdrEncode(XDR *) const;
@@ -96,6 +102,9 @@ bool KsArray<double>::xdrEncode(XDR *) const;
 bool KsArray<double>::xdrDecode(XDR *);
 #endif
 
+#if PLT_COMPILER_MSVC
+#include "ks/array_builtins.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // defaults

@@ -78,7 +78,7 @@ public:
 
     KscServer *getServer() const;
 
-    virtual const KsProjProps *getProjProps() const = 0;
+    virtual const KsProjProps::THISTYPE *getProjProps() const = 0;
     virtual bool getProjPropsUpdate() = 0;
 
     virtual void setAvModule(const KscAvModule *avm);
@@ -192,7 +192,7 @@ public:
 
     KS_OBJ_TYPE typeCode() const;
 
-    const KsDomainProjProps *getProjProps() const;
+    const KsDomainProjProps::THISTYPE *getProjProps() const;
 
     // reread projected props 
     bool getProjPropsUpdate();
@@ -217,9 +217,12 @@ protected:
     : public KscChildIterator
     {
     public:
+#if PLT_RETTYPE_OVERLOADABLE
+        typedef ChildIterator THISTYPE;
+#endif
         ChildIterator(const KscDomain &, enum_t);
-        operator const void * () const;   // remaining element?
-        ChildIterator & operator ++ ();   // advance
+        operator bool () const;   // remaining element?
+        THISTYPE & operator ++ ();        // advance
         void operator ++ (int);           // (postfix)
         void toStart();                   // go to the beginning
         const KsProjPropsHandle &operator * () const;
@@ -262,7 +265,7 @@ public:
     virtual bool setUpdate();
     KsValueHandle getValue() const;
 
-    const KsVarProjProps *getProjProps() const;
+    const KsVarProjProps::THISTYPE *getProjProps() const;
     const KsVarCurrProps *getCurrProps() const;
     KsCurrPropsHandle getCurrPropsHandle();
     bool setCurrProps(KsVarCurrProps &cp);
@@ -424,7 +427,7 @@ KscDomain::typeCode() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-const KsDomainProjProps *
+const KsDomainProjProps::THISTYPE *
 KscDomain::getProjProps() const
 {
     return &proj_props;
@@ -487,7 +490,7 @@ KscVariable::typeCode() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-const KsVarProjProps *
+const KsVarProjProps::THISTYPE *
 KscVariable::getProjProps() const
 {
     return &proj_props;

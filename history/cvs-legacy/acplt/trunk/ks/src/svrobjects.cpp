@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.7 1997-04-04 07:57:11 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.8 1997-07-18 14:11:17 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -61,9 +61,10 @@ KssDomain::getChildById(const KsString &id) const
     //
     KssCommObjectHandle res;
 
-    KssDomainIterator * pit = newIterator();
+    KssDomainIterator * pit = 
+        PLT_RETTYPE_CAST((KssDomainIterator *)) newIterator();
     if (pit) {
-        for (KssDomainIterator &it(*pit); it; ++it) {
+        for (KssDomainIterator &it = *pit; it; ++it) {
             if ((*it)->getIdentifier() == id) {
                 res = *it;
             }
@@ -91,11 +92,13 @@ KssDomain::getPP() const
 
 //////////////////////////////////////////////////////////////////////
 
-KssDomainIterator *
+KssDomainIterator::THISTYPE *
 KssDomain::newMaskedIterator(const KsMask & name_mask,
                              KS_OBJ_TYPE type_mask) const
 {
-    PltPtrHandle<KssDomainIterator> h(newIterator(), PltOsNew);
+    PltPtrHandle<KssDomainIterator> 
+        h(PLT_RETTYPE_CAST((KssDomainIterator *)) newIterator(), 
+          PltOsNew);
     if (h) {
         return new KssMaskedDomainIterator(h, name_mask, type_mask);
     } else {
@@ -154,9 +157,9 @@ KssMaskedDomainIterator::KssMaskedDomainIterator
 
 //////////////////////////////////////////////////////////////////////
 
-KssMaskedDomainIterator::operator const void * () const
+KssMaskedDomainIterator::operator bool () const
 {
-    return _it.operator const void * ();
+    return _it.operator bool();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -169,7 +172,7 @@ KssMaskedDomainIterator::operator * () const
 
 //////////////////////////////////////////////////////////////////////
 
-KssMaskedDomainIterator & 
+KssMaskedDomainIterator::THISTYPE & 
 KssMaskedDomainIterator::operator ++ ()
 {
     ++_it;
