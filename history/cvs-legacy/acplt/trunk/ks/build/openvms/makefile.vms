@@ -46,7 +46,7 @@ LIBRPC = dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr
 ### The VPATH mechanism isn't supported yet...
 #VPATH = "../../src"
 
-all: libks$(A) libkssvr$(A)
+all: libks$(A) libkssvr$(A) libkscln$(A)
 
 ### Include generic part (generic dependencies)
 include [-]generic.mk
@@ -58,53 +58,62 @@ CXX_COMPILE = $(CXX) \
 		$(CXX_FLAGS)
 
 ### Include auto dependencies
-include depend.vms
+include [-]depend.vms
 
 $(LIBKS_OBJECTS): %.obj: [-.-.src]%.cpp
+	-del $@;*
 	$(CXX_COMPILE) $<
 
 $(LIBKSSVR_OBJECTS): %.obj: [-.-.src]%.cpp	
+	-del $@;*
 	$(CXX_COMPILE) $<
 
 $(LIBKSCLN_OBJECTS): %.obj: [-.-.src]%.cpp	
+	-del $@;*
 	$(CXX_COMPILE) $<
 
 $(EXAMPLES_OBJECTS): %.obj: [-.-.examples]%.cpp
+	-del $@;*
 	$(CXX_COMPILE) $<
 
 tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
+	-del $@;*
 	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tserver.exe: tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS)
+	-del $@;*
 	$(LD) $(LD_FLAGS) tserver.obj,tserver1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tsclient.exe : tsclient.obj tsclient1.obj svrrpcctx$O $(LIBKS)
+	-del $@;*
 	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 ttree.exe : ttree.obj ttree1.obj $(LIBKS) $(LIBKSCLN)
+	-del $@;*
 	$(LD) $(LD_FLAGS) ttree.obj,ttree1.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tshell.exe : tshell.obj $(LIBKS) $(LIBKSCLN)
+	-del $@;*
 	$(LD) $(LD_FLAGS) tshell.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 libks$(A): $(LIBKS_OBJECTS)
-	-del libks$(A);*
+	-del $@;*
 	$(AR) /create libks$(A) $^
 
 libkssvr$(A): $(LIBKSSVR_OBJECTS)
-	-del libkssvr$(A);*
+	-del $@;*
 	$(AR) /create libkssvr$(A) $^
 
 libkscln$(A): $(LIBKSCLN_OBJECTS)
-	-del libkscln$(A);*
+	-del $@;*
 	$(AR) /create libkscln$(A) $^
 
 clean:
-	del *$(O);*
-	del libks$(A);*
-	del libkssrv$(A);*
-	del libkscln$(A);*
-	del t*$(EXE);*
+	-del *$(O);*
+	-del libks$(A);*
+	-del libkssrv$(A);*
+	-del libkscln$(A);*
+	-del t*$(EXE);*
 
 # EOF makefile.vms
 

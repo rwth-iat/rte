@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.12 1997-09-02 15:07:43 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.13 1997-09-03 14:09:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -186,31 +186,6 @@ KsAvTicket::getAccess(const KsString &name) const
 
 /////////////////////////////////////////////////////////////////////////////
 
-bool
-KsAvTicket::isVisible(const KsString &name) const
-{
-    return getAccess(name) != KS_AC_NONE;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-bool
-KsAvTicket::canReadVar(const KsString &name) const
-{
-    return (getAccess(name) & KS_AC_READ) != 0;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-bool
-KsAvTicket::canWriteVar(const KsString &name) const
-{
-    return (getAccess(name) & KS_AC_WRITE) != 0;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-
 KsAvTicket *
 KsAvTicket::emergencyTicket()
 {
@@ -279,10 +254,18 @@ KsAvNoneTicket::xdrEncodeVariant(XDR *) const
 
 //////////////////////////////////////////////////////////////////////
 
-KS_ACCESS
-KsAvNoneTicket::getAccess(const KsString &) const
+bool
+KsAvNoneTicket::canReadVar(const KsString &) const
 {
-    return _access;
+    return ( _access & KS_AC_READ ) != 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsAvNoneTicket::canWriteVar(const KsString &) const
+{
+    return ( _access & KS_AC_WRITE ) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////

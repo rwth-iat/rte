@@ -37,15 +37,16 @@ CXX_INCLUDES = ".","../../include"
 include [-]generic.mk
 
 ### Include auto dependencies
-#include [-]depend.nt
+include [-]depend.vms
 
 
 $(LIBPLT_OBJECTS):	%.obj: [-.-.src]%.cpp
+	-del $@;*
 	$(CXX) $(CXX_FLAGS) /include=($(CXX_INCLUDES)) \
 		/define=($(CXX_DEFINES)) $<
 
 libplt$(A):	$(LIBPLT_OBJECTS)
-	-del libplt$(A);*
+	-del $@;*
 	$(AR) /create libplt$(A) $^
 
 clean:
