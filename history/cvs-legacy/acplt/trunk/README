@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.5pre6 of the C++ Communication Libary. As always, it
+This is version 1.0.5pre7 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
@@ -89,7 +89,12 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.0.5pre6
+Version 1.0.5pre7
+- SERVERS: interserver connections added (YESSS!). The tserver example shows
+  how to send and receive ACPLT/KS service requests and replies in the
+  background while the server is idle. This makes sending non-blocking
+  requests to other ACPLT/KS servers easy.
+
 - SERVERS: links added.
 
 - SERVERS: fixed a stupid preprocessor define bug in the sorces preventing
