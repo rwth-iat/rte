@@ -50,6 +50,9 @@ $(LIBKS): $(LIBKS_OBJECTS)
 $(LIBKSSVR): $(LIBKSSVR_OBJECTS)
 	ar r $@ $?
 
+$(LIBKSCLN): $(LIBKSCLN_OBJECTS)
+	ar r $@ $?
+
 ../depend.nt : $(CXX_SOURCES) unix_manager.cpp
 	$(CXX_COMPILE) -MM $^ > .depend
 	perl $(PLT_DIR)/build/depend.pl .depend > $@
