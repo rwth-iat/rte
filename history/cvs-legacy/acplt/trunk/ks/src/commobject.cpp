@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.22 1998-03-06 13:29:43 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.23 1998-07-09 08:53:02 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -155,7 +155,9 @@ KscCommObject::findServer()
 {
     KscServerBase *pServer;
     _last_result = KscClient::getClient()->
-        createServer(path.getHostAndServer(), pServer);
+        createServer(path.getHostAndServer(),
+                     KS_PROTOCOL_VERSION,
+                     pServer);
     return pServer;
 } // KscCommObject::findServer
 
