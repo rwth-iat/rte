@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.14 1997-11-27 18:18:29 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.15 1997-12-02 18:08:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,11 +44,16 @@
 #include "plt/log.h"
 
 //////////////////////////////////////////////////////////////////////
-
+// Note that the virtual base class KsServerBase will first set the
+// member variable _sock_port to KS_ANYPORT before we'll here reset
+// it to whatever the programmer wants. We do it this way because then
+// the compiler can fall back to the default constructor from
+// KsServerBase without breaking existing code.
+//
 KsSimpleServer::KsSimpleServer(int port)
-: KsServerBase(port),
-  _root_domain("/")
+: _root_domain("/")
 {
+    _sock_port = port;
 }
 
 

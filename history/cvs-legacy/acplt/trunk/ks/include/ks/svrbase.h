@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.15 1997-11-27 18:18:28 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.16 1997-12-02 18:08:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -56,7 +56,7 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 //
 class KsServerBase {
 public:
-    KsServerBase(int port);
+    KsServerBase();
     virtual ~KsServerBase(); // make sure the destructor is virtual...
 
     enum { KS_ANYPORT = 0 };
@@ -134,6 +134,8 @@ private:
 
     KsServerBase(const KsServerBase &); // forbidden
     KsServerBase & operator = (const KsServerBase &); // forbidden
+
+    void cleanup();
 
     sig_atomic_t _shutdown_flag; // signal to the run() loop to quit
 

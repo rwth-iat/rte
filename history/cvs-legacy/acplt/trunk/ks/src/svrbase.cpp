@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.25 1997-12-02 10:19:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.26 1997-12-02 18:08:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -125,89 +125,15 @@ KsServerBase::the_server = 0;
 // Construction & destruction area. Watch for falling bits...
 // Uhh, I've been hit.
 
-KsServerBase::KsServerBase(int port)
-: _sock_port(port),
+KsServerBase::KsServerBase()
+: _sock_port(KS_ANYPORT),
   _tcp_transport(0),
   _shutdown_flag(0),
   _send_buffer_size(16384),
   _receive_buffer_size(16384)
 {
     PLT_PRECONDITION( the_server == 0 );
-    //
-    // Create transport: because the caller can specify the port to which we
-    // should bind, this can be sometimes a lot of work...
-    //
-#if PLT_SYSTEM_SOLARIS
-    int sock = t_open("/dev/tcp", O_RDWR, (struct t_info *) 0);
-#else
-    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-#endif
-    if ( sock >= 0 ) {
-        struct sockaddr_in my_addr;
-
-        memset(&my_addr, 0, sizeof(my_addr));
-        my_addr.sin_family      = AF_INET;
-        my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        my_addr.sin_port        = htons((u_short) _sock_port);
-
-#if PLT_SYSTEM_SOLARIS
-        struct t_bind req;
-
-        req.addr.maxlen = sizeof(my_addr);
-        req.addr.len    = sizeof(my_addr);
-        req.addr.buf    = (char *) &my_addr;
-        req.qlen        = 5;
-
-        if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
-#else
-        if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
-#endif
-            // Failed.
-#if PLT_SYSTEM_NT
-            closesocket(sock);
-#elif PLT_SYSTEM_SOLARIS
-            t_close(sock);
-#else
-            close(sock);
-#endif
-            sock = -1;
-        } else {
-            _tcp_transport = svctcp_create(sock,
-                                           _send_buffer_size,
-                                           _receive_buffer_size);
-        }
-    }
-
-    if (_tcp_transport) {
-        //
-        // Now register the dispatcher that should be called whenever there
-        // is a request for the KS program id and the correct version number.
-        //
-        // A wise word of warning: when using transports, be extremely care-
-        // ful with what you do! You should never allow svc_register to contact
-        // the portmapper -- better do it yourself. And never (NEVER!!!) use
-        // svc_unregister() as this one would deregister EVERYTHING with the
-        // same program and protocol version number, regardless of the transport
-        // used (udp, tcp). With TI ONC/RPC you must register every transport
-        // you create, but once again, never deregister it, if at all possible.
-        //
-        if ( svc_register(_tcp_transport, 
-                          KS_RPC_PROGRAM_NUMBER,
-                          KS_PROTOCOL_VERSION,
-                          ks_c_dispatch,
-                          0) ) {  // Do not contact the portmapper!
-            _is_ok = true;
-            the_server    = this;
-        } else {
-            svc_destroy(_tcp_transport);
-            _tcp_transport = 0;
-            PltLog::Error("KsServerBase: could not register service");
-            _is_ok = false;
-        }
-    } else {
-        PltLog::Error("KsServerBase: could not create transport");
-        _is_ok = false;
-    }
+    the_server = this;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -215,8 +141,18 @@ KsServerBase::KsServerBase(int port)
 //
 KsServerBase::~KsServerBase()
 {
+    cleanup();
+
+    PLT_ASSERT(the_server == this);
+    the_server = 0;
+} 
+
+//////////////////////////////////////////////////////////////////////
+
+void KsServerBase::cleanup()
+{
     //
-    // destroy transports
+    // destroy transport, if there is one left...
     //
     if ( _tcp_transport ) {
         svc_destroy(_tcp_transport); 
@@ -224,16 +160,14 @@ KsServerBase::~KsServerBase()
     }
 
     //
-    // Remove remaining timer events
+    // remove remaining timer events, there's no need for them now.
     //
     while (!_timer_queue.isEmpty()) {
         KsTimerEvent *pevent = _timer_queue.removeFirst();
         delete pevent;
     }
+}
 
-    PLT_ASSERT(the_server == this);
-    the_server = 0;
-} 
 //////////////////////////////////////////////////////////////////////
 
 #if 0
@@ -758,10 +692,90 @@ KsServerBase::servePendingEvents(KsTime * pTimeout) {
 
 //////////////////////////////////////////////////////////////////////
 // Start the Server. This method will be extended by derived classes.
+// Here in this class we create the transports. Note that _sock_port
+// should have already been initialized by now. Another note about
+// the _is_ok flag. To allow the restart of a server without explicit
+// reset, we don't check here the flag before starting. But _is_ok
+// will indicate the outcome of the startServer() method.
 // 
 void
 KsServerBase::startServer()
 {
+    //
+    // Create transport: because the caller can specify the port to which we
+    // should bind, this can be sometimes a lot of work... especially if
+    // we're sitting on top of a TLI system. Urgs.
+    //
+#if PLT_SYSTEM_SOLARIS
+    int sock = t_open("/dev/tcp", O_RDWR, (struct t_info *) 0);
+#else
+    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#endif
+    if ( sock >= 0 ) {
+        struct sockaddr_in my_addr;
+
+        memset(&my_addr, 0, sizeof(my_addr));
+        my_addr.sin_family      = AF_INET;
+        my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+        my_addr.sin_port        = htons((u_short) _sock_port);
+
+#if PLT_SYSTEM_SOLARIS
+        struct t_bind req;
+
+        req.addr.maxlen = sizeof(my_addr);
+        req.addr.len    = sizeof(my_addr);
+        req.addr.buf    = (char *) &my_addr;
+        req.qlen        = 5;
+
+        if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
+#else
+        if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
+#endif
+            // Failed.
+#if PLT_SYSTEM_NT
+            closesocket(sock);
+#elif PLT_SYSTEM_SOLARIS
+            t_close(sock);
+#else
+            close(sock);
+#endif
+            sock = -1;
+        } else {
+            _tcp_transport = svctcp_create(sock,
+                                           _send_buffer_size,
+                                           _receive_buffer_size);
+        }
+    }
+
+    if ( _tcp_transport ) {
+        //
+        // Now register the dispatcher that should be called whenever there
+        // is a request for the KS program id and the correct version number.
+        //
+        // A wise word of warning: when using transports, be extremely care-
+        // ful with what you do! You should never allow svc_register to contact
+        // the portmapper -- better do it yourself. And never (NEVER!!!) use
+        // svc_unregister() as this one would deregister EVERYTHING with the
+        // same program and protocol version number, regardless of the transport
+        // used (udp, tcp). With TI ONC/RPC you must register every transport
+        // you create, but once again, never deregister it, if at all possible.
+        //
+        if ( svc_register(_tcp_transport, 
+                          KS_RPC_PROGRAM_NUMBER,
+                          KS_PROTOCOL_VERSION,
+                          ks_c_dispatch,
+                          0) ) {  // Do not contact the portmapper!
+            _is_ok = true;
+        } else {
+            svc_destroy(_tcp_transport);
+            _tcp_transport = 0;
+            PltLog::Error("KsServerBase::startServer(): could not register service");
+            _is_ok = false;
+        }
+    } else {
+        PltLog::Error("KsServerBase::startServer(): could not create TCP transport");
+        _is_ok = false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -778,10 +792,12 @@ void KsServerBase::downServer()
 //////////////////////////////////////////////////////////////////////
 // Finally shut down the server. Here this isn't of much woe, but
 // derived classes needs this sucker, so they can deregister them, or
-// do other strange things...
+// do other strange things... Well, at least we shoot our transport
+// and pending events, too.
 //
 void KsServerBase::stopServer()
 {
+    cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////

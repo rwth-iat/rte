@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.8 1997-11-27 18:18:30 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.9 1997-12-02 18:08:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -68,7 +68,7 @@ public:
 //////////////////////////////////////////////////////////////////////
 
 KsUnixManager::KsUnixManager(int port)
-: KsServerBase(port), KsManager(port)
+: KsManager(port)
 {
     if (_is_ok && initVendorTree()) {
         signal(SIGINT, handler);

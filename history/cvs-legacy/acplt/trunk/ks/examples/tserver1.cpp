@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.13 1997-11-27 18:18:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.14 1997-12-02 18:08:47 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -72,7 +72,7 @@ public:
         { return KsString("tserver"); }
 
     virtual KsString getServerVersion() const
-        { return KsString("1.0"); }
+        { return KsString("1.01"); }
 
     virtual KsString getServerDescription() const 
         { return KsString("ACPLT/KS test server"); }
@@ -227,7 +227,7 @@ TestDomain::newIterator() const
 // The constructor of the server.
 //
 TestServer::TestServer(int port)
-: KsServerBase(port), KsServer(30)
+: KsServer(30, port)
 {
     // 
     // When requests are made with authentification method "none"

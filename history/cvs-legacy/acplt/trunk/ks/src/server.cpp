@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.10 1997-11-27 18:18:29 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.11 1997-12-02 18:08:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -65,17 +65,17 @@ template class KssRPCContext<KS_UNREGISTER,
 //////////////////////////////////////////////////////////////////////
 
 KsServer::KsServer(u_long ttl, int port)
-: KsServerBase(port),
-  _ttl(ttl),
+: _ttl(ttl),
   _registered(false)
 {
+    _sock_port = port;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 KsServer::~KsServer()
 {
-    if (_registered) {
+    if ( _registered ) {
         unregister_server();
     }
 }
@@ -142,21 +142,26 @@ KsServer::unregister_server()
 void
 KsServer::startServer()
 {
-    // schedule registration
-    KsReregisterServerEvent * pevent = 
-        new KsReregisterServerEvent(*this, KsTime::now());
-    if (!pevent) return;
-
-    addTimerEvent(pevent);
     KsServerBase::startServer();
+
+    if ( _is_ok ) {
+      // schedule registration
+      KsReregisterServerEvent * pevent = 
+          new KsReregisterServerEvent(*this, KsTime::now());
+      if ( pevent ) {
+          addTimerEvent(pevent);
+      } else {
+          _is_ok = false;
+      }
+    }
 }
 
 void
 KsServer::stopServer() 
 {
     // unregister
-    if (!unregister_server()) {
-        PltLog::Warning("Could not unregister with manager.");
+    if ( !unregister_server() ) {
+        PltLog::Warning("KsServer::stopServer: could not unregister with manager.");
     }
     KsServerBase::stopServer();
 }

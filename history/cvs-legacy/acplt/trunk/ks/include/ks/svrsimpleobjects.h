@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.9 1997-09-05 11:04:58 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.10 1997-12-02 18:08:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -216,6 +216,7 @@ public:
 
     //// modifier
     void lock();
+    void unlock();
 
 private:
     KS_ACCESS     _access_mode;
@@ -423,6 +424,14 @@ inline void
 KssSimpleVariable::lock()
 {
     _access_mode &= ~KS_AC_WRITE;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline void
+KssSimpleVariable::unlock()
+{
+    _access_mode |= KS_AC_WRITE;
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.21 1997-12-02 10:18:02 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.22 1997-12-02 18:08:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -157,11 +157,7 @@ public:
 
     //// KssDomain
     //   accessors
-    // virtual KsmServerIterator::THISTYPE * newIterator() const;
     virtual KsmServerIterator_THISTYPE * newIterator() const;
-
-
-//  virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
 
     //// KsmServer
     KsmServer(const KsServerDesc & d,
@@ -274,77 +270,14 @@ KsmServer::KsmServer(const KsServerDesc & d,
 //////////////////////////////////////////////////////////////////////
 
 KsManager::KsManager(int port)
-: KsServerBase(port),
+: KsSimpleServer(port),
   _registered(false),
-  _servers_domain("servers")
+  _servers_domain("servers"),
+  _manager_port(0)
 {
     KsAvNoneTicket::setDefaultAccess(KS_AC_READ); // TODO
-    if (_is_ok) {
-        //
-        // create transports
-        //
-#if PLT_SYSTEM_SOLARIS
-        int sock = t_open("/dev/udp", O_RDWR, (struct t_info *) 0);
-#else
-        int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-#endif
-        if ( sock >= 0 ) {
-            struct sockaddr_in my_addr;
 
-            memset(&my_addr, 0, sizeof(my_addr));
-            my_addr.sin_family      = AF_INET;
-            my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-            my_addr.sin_port        = htons(_sock_port);
-
-#if PLT_SYSTEM_SOLARIS
-            struct t_bind req;
-
-            req.addr.maxlen = sizeof(my_addr);
-            req.addr.len    = sizeof(my_addr);
-            req.addr.buf    = (char *) &my_addr;
-            req.qlen        = 5;
-
-            if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
-#else
-            if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
-#endif
-                // Failed.
-#if PLT_SYSTEM_NT
-                closesocket(sock);
-#elif PLT_SYSTEM_SOLARIS
-                t_close(sock);
-#else
-                close(sock);
-#endif
-                sock = -1;
-            } else {
-                _udp_transport = svcudp_create(sock);
-            }
-        }
-
-        // TODO: send/receive buff sz
-        if (_udp_transport) {
-            //
-            // Now register the dispatcher that should be called
-            // whenever there is a request for the KS program id
-            // and the correct version number.
-            //
-            if ( !svc_register(_udp_transport,
-                               KS_RPC_PROGRAM_NUMBER,
-                               KS_PROTOCOL_VERSION,
-                               ks_c_dispatch,
-                               0) ) {  // Do not contact the portmapper!
-                svc_destroy(_udp_transport);
-                _udp_transport = 0;
-                PltLog::Error("KsServerBase: could not register");
-                _is_ok = false;
-            }
-        } else {
-            PltLog::Error("Can't create UDP transport");
-            _is_ok = false;
-        }
-    }
-    if (_is_ok) {
+    if ( _is_ok ) {
         //
         // initialize /servers
         //
@@ -355,7 +288,7 @@ KsManager::KsManager(int port)
         KssSimpleDomain *servers_manager_version =
             new KssSimpleDomain(KsString::fromInt(getProtocolVersion()));
 
-        KssSimpleVariable *manager_port =
+        _manager_port =
             new KssSimpleVariable("port");
 
         KssSimpleVariable *manager_expires_at =
@@ -367,15 +300,17 @@ KsManager::KsManager(int port)
         manager_living->setValue(new KsIntValue(1));
         manager_living->setState(KS_ST_GOOD);
         manager_living->lock();
+#if 0
         manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
         manager_port->setState(KS_ST_GOOD);
         manager_port->lock();
+#endif
         manager_expires_at->setValue(new KsTimeValue(LONG_MAX,0));
         manager_expires_at->setState(KS_ST_GOOD);
         manager_expires_at->lock();
 
         servers_manager_version->addChild(manager_living);
-        servers_manager_version->addChild(manager_port);
+        servers_manager_version->addChild(_manager_port);
         servers_manager_version->addChild(manager_expires_at);
 
         servers_manager->addChild(servers_manager_version);
@@ -441,11 +376,12 @@ KsManager::KsManager(int port)
  
 KsManager::~KsManager()
 {
-    if ( _udp_transport ) {
-        svc_destroy(_udp_transport); 
-        _udp_transport = 0;
-    }
-    // server entries are owned (indirectly) by _root_domain
+    cleanup();
+    // server entries are owned (indirectly) by _root_domain, so they
+    // will be destroyed automatically when we fall off this
+    // destructor. So don't delete the manager port variable, it'll
+    // destroyed automatically. We just reset the pointer to it.
+    _manager_port = 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -552,72 +488,125 @@ KsManager::dispatch(u_long serviceId,
 }
 
 //////////////////////////////////////////////////////////////////////
-#if 0
-bool
-KsManager::createTransports()
-{
-    if (! KsServerBase::createTransports()) {
-        return false;
-    }
-    _udp_transport = svcudp_create(RPC_ANYSOCK); // TODO: send/receive buff sz
-    if (! _udp_transport) {
-        PltLog::Error("Can't create UDP transport");
-        return false;
-    }
-    //
-    // Now register the dispatcher that should be called whenever there
-    // is a request for the KS program id and the correct version number.
-    //
-    if ( !svc_register(_udp_transport,
-                       KS_RPC_PROGRAM_NUMBER,
-                       KS_PROTOCOL_VERSION,
-                       ks_c_dispatch,
-                       0) ) {  // Do not contact the portmapper!
-        svc_destroy(_tcp_transport);
-        _tcp_transport = 0;
-        PltLog::Error("KsServerBase: could not register");
-        return false;
-    }
-    return true;
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////
 
 void
 KsManager::startServer()
 {
     PLT_PRECONDITION(_is_ok);
     KsSimpleServer::startServer();
-    //
-    // Contact the
-    // portmapper and tell him that we are ready to receive
-    // requests on them.
-    //
-    if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
-        PltLog::Debug("Removed old pmap entry.");
-	pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION);
+
+    if ( _is_ok ) {
+        //
+        // create transport (if the inherited startServer() method had
+        // no problems). This transport (udp) is used especially by
+        // servers on the same host to (re-) register with the manager.
+        //
+#if PLT_SYSTEM_SOLARIS
+        int sock = t_open("/dev/udp", O_RDWR, (struct t_info *) 0);
+#else
+        int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+#endif
+        if ( sock >= 0 ) {
+            struct sockaddr_in my_addr;
+            
+            memset(&my_addr, 0, sizeof(my_addr));
+            my_addr.sin_family      = AF_INET;
+            my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+            my_addr.sin_port        = htons(_sock_port);
+            
+#if PLT_SYSTEM_SOLARIS
+            struct t_bind req;
+
+            req.addr.maxlen = sizeof(my_addr);
+            req.addr.len    = sizeof(my_addr);
+            req.addr.buf    = (char *) &my_addr;
+            req.qlen        = 5;
+
+            if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
+#else
+            if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
+#endif
+                // Failed.
+#if PLT_SYSTEM_NT
+                closesocket(sock);
+#elif PLT_SYSTEM_SOLARIS
+                t_close(sock);
+#else
+                close(sock);
+#endif
+                sock = -1;
+            } else {
+                _udp_transport = svcudp_create(sock);
+            }
+        }
+
+        // TODO: send/receive buff sz
+        if ( _udp_transport ) {
+            //
+            //
+            //
+            _manager_port->unlock();
+            _manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
+            _manager_port->setState(KS_ST_GOOD);
+            _manager_port->lock();
+            //
+            // Now register the dispatcher that should be called
+            // whenever there is a request for the KS program id
+            // and the correct version number.
+            //
+            if ( !svc_register(_udp_transport,
+                               KS_RPC_PROGRAM_NUMBER,
+                               KS_PROTOCOL_VERSION,
+                               ks_c_dispatch,
+                               0) ) {  // Do not contact the portmapper!
+                svc_destroy(_udp_transport);
+                _udp_transport = 0;
+                PltLog::Error("KsManager::startServer(): could not register");
+                _is_ok = false;
+            }
+        } else {
+            PltLog::Error("KsManager::startServer(): could not create UDP transport");
+            _is_ok = false;
+        }
     }
-    _registered = false;
-    if (pmap_set(KS_RPC_PROGRAM_NUMBER, 
-                 KS_PROTOCOL_VERSION,
-                 IPPROTO_TCP,
-                 _tcp_transport->xp_port)) {
-        _registered = true;
-    } else {
-        PltLog::Error("Can't register TCP transport.");
-    }
-    if (pmap_set(KS_RPC_PROGRAM_NUMBER, 
-                 KS_PROTOCOL_VERSION,
-                 IPPROTO_UDP,
-                 _udp_transport->xp_port)) {
-        _registered = true;
-    } else {
-        PltLog::Error("Can't register UDP transport.");
-    }
-    KsmExpireManagerEvent * pevent = new KsmExpireManagerEvent(*this);
-    if (pevent) {
-        addTimerEvent(pevent);
+
+    if ( _is_ok ) {
+        //
+        // Contact the portmapper and tell him that we are ready to receive
+        // requests.
+        //
+        if ( pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION))  {
+            PltLog::Debug("KsManager::startServer(): removed old pmap entry.");
+	        pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION);
+        }
+        _registered = false;
+
+        if ( pmap_set(KS_RPC_PROGRAM_NUMBER, 
+                      KS_PROTOCOL_VERSION,
+                      IPPROTO_TCP,
+                      _tcp_transport->xp_port)) {
+            _registered = true;
+        } else {
+            PltLog::Error("KsManager::startServer(): could not register TCP transport.");
+            _is_ok = false;
+        }
+
+        if ( pmap_set(KS_RPC_PROGRAM_NUMBER, 
+                      KS_PROTOCOL_VERSION,
+                      IPPROTO_UDP,
+                      _udp_transport->xp_port)) {
+            _registered = true;
+        } else {
+            PltLog::Error("KsManager::startServer(): could not register UDP transport.");
+            _is_ok = false;
+        }
+
+        if ( _is_ok ) {
+            KsmExpireManagerEvent * pevent = new KsmExpireManagerEvent(*this);
+            if ( pevent ) {
+                addTimerEvent(pevent);
+            }
+        }
     }
 }
 
@@ -626,11 +615,20 @@ KsManager::startServer()
 void
 KsManager::stopServer()
 {
-    if (_registered) {
+    cleanup();
+    KsSimpleServer::stopServer();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KsManager::cleanup()
+{
+    if ( _registered ) {
         if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
-	    PLT_DMSG_ADD("1st pmap_unset ok.");
-        PLT_DMSG_END;
-	    if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
+            PLT_DMSG_ADD("1st pmap_unset ok.");
+            PLT_DMSG_END;
+            if (pmap_unset(KS_RPC_PROGRAM_NUMBER, KS_PROTOCOL_VERSION)) {
                 PLT_DMSG_ADD("2nd pmap_unset ok. *URKS*");
                 PLT_DMSG_END;
             } else {
@@ -641,10 +639,14 @@ KsManager::stopServer()
             PltLog::Warning("Can't unregister with portmapper.");
         }
     } else {
-	PLT_DMSG_ADD("not registered");
-    PLT_DMSG_END;
+        PLT_DMSG_ADD("not registered");
+        PLT_DMSG_END;
     }
-    KsSimpleServer::stopServer();
+    
+    if ( _udp_transport ) {
+        svc_destroy(_udp_transport);
+        _udp_transport = 0;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.12 1997-11-27 18:18:28 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.13 1997-12-02 18:08:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -67,7 +67,7 @@ class KsManager
 : public KsSimpleServer
 {
 public:
-    KsManager(int port = 0);
+    KsManager(int port = KS_ANYPORT);
     virtual ~KsManager();
     //// accessors
     // "virtual constants"
@@ -107,6 +107,8 @@ private:
     friend class KsmExpireServerEvent;
     friend class KsmExpireManagerEvent;
 
+    void cleanup();
+
     void removeServer(KsmServer *p);
     bool isLocal(SVCXPRT *);
 
@@ -115,6 +117,8 @@ private:
     PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> _server_table;
     KssSimpleDomain _servers_domain;
     KsHostInAddrSet _localIpAddresses;
+
+    KssSimpleVariable *_manager_port;
 };
 
 //////////////////////////////////////////////////////////////////////
