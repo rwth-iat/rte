@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.20 1998-12-10 17:26:01 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.21 1998-12-16 17:49:14 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -62,7 +62,7 @@
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.0.5pre2"
+#define KS_VERSION_STRING "1.0.5pre3"
 
 	 
 /* ----------------------------------------------------------------------------
@@ -146,8 +146,9 @@ enum KS_OBJ_TYPE_ENUM {
     KS_OT_HISTORY   = 0x0004, /* object is a history   */
     KS_OT_LINK      = 0x0008, /* object is a link      */
     KS_OT_STRUCTURE = 0x0010, /* object is a structure */
-    KS_OT_ANY       = KS_OT_DOMAIN | KS_OT_VARIABLE | 
-                      KS_OT_HISTORY | KS_OT_LINK | KS_OT_STRUCTURE
+    KS_OT_ANY       = KS_OT_DOMAIN | KS_OT_VARIABLE |
+                      KS_OT_LINK
+                    /* FIXME  KS_OT_HISTORY | KS_OT_LINK | KS_OT_STRUCTURE */
 	/* restricted to the currently implemented types */
 };
 typedef enum_t KS_OBJ_TYPE;
