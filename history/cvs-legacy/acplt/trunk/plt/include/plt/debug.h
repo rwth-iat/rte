@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.12 1997-03-23 17:20:09 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.13 1997-03-26 17:05:48 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -58,6 +58,7 @@
 #define PLT_DEBUG_NEW              0
 #define PLT_DEBUG_INVARIANTS       0
 #define PLT_DEBUG_PEDANTIC         0
+#define PLT_DEBUG_VERBOSE          0
 
 #else /* !PLT_DEBUG */
 
@@ -79,6 +80,10 @@
 
 #ifndef PLT_DEBUG_PEDANTIC
 #define PLT_DEBUG_PEDANTIC 0
+#endif
+
+#ifndef PLT_DEBUG_VERBOSE
+#define PLT_DEBUG_VERBOSE 1
 #endif
 
 #endif /* !PLT_DEBUG */
@@ -179,6 +184,12 @@ static PltDebugNewTracker plt_debug_new_tracker;
 //////////////////////////////////////////////////////////////////////
 #endif //PLT_DEBUG_NEW
 //////////////////////////////////////////////////////////////////////
+
+#if PLT_DEBUG_VERBOSE
+#define PLT_DMSG(inserters) cerr << inserters
+#else
+#define PLT_DMSG(inserters) ((void)0)
+#endif
 
 #endif /* __cplusplus */
 
