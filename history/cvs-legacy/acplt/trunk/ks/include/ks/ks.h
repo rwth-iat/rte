@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.14 1998-01-14 16:34:33 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.15 1998-06-29 11:15:40 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -39,6 +39,11 @@
 
 #include "ks/rpc.h"
 
+/*
+ * Version string for use with banners, messages, etc.
+ */
+#define KS_VERSION_STRING "1.0.4pre1"
+	 
 /*
  * RPC program number reserved for ACPLT/KS library
  */
