@@ -31,7 +31,8 @@ CXX_FLAGS = -D_BORLANDC=1 -w -DNDEBUG -DPLT_USE_BUFFERED_STREAMS=1
 
 #CXX_FLAGS = -D_BORLANDC=1 -w -DPLT_USE_BUFFERED_STREAMS=1 -v
 
-CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1 -DFD_SETSIZE=128
+CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1
+# -DFD_SETSIZE=128
 
 RC = brc32
 
@@ -43,6 +44,7 @@ LIBKS_NT_OBJECTS = ntservice$(O) w95service$(O)
 
 all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
+# FIXME -Jgx for 5.0, -Jg for 5.3
 {$(SRCDIR)}.cpp{}.obj:
 	@echo Compiling $<
 	@$(CXX) @&&!
@@ -67,10 +69,11 @@ histdomain.obj: $(SRCDIR)histdomain.cpp
 		-Jgx -Vs $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)histdomain.cpp
 !
 
+# FIXME -Jgx
 {$(EXAMPLESSRCDIR)}.cpp{}.obj:
 	@echo Compiling $<
 	@$(CXX) @&&!
-		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
+		-Jg $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
 !
 
 w95ksmanager.obj: $(EXAMPLESSRCDIR)ntksmanager.cpp
@@ -90,6 +93,12 @@ templates.obj:  $(SRCDIR)templates.cpp
 	@echo Compiling $<
 	@$(CXX) @&&!
 		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(SRCDIR)templates.cpp
+!
+
+value.obj:  $(SRCDIR)value.cpp
+	@echo Compiling $<
+	@$(CXX) @&&!
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(SRCDIR)value.cpp
 !
 
 tmanager.obj:   $(EXAMPLESSRCDIR)tmanager.cpp
@@ -242,21 +251,21 @@ w95service$(O): $(SRCDIR)w95service.cpp $(KSDIR)\include\ks\w95service.h
 !
 
 $(LIBKS) : $(LIBKS_OBJECTS)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS1)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS2)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS3)
+	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKS_OBJECTS1)
+	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKS_OBJECTS2)
+	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKS_OBJECTS3)
 
 
 $(LIBKSSVR) : $(LIBKSSVR_OBJECTS) $(LIBKS_NT_OBJECTS)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS1)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS2)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS3)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS4)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_NT_OBJECTS)
+	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKSSVR_OBJECTS1)
+	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKSSVR_OBJECTS2)
+	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKSSVR_OBJECTS3)
+	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKSSVR_OBJECTS4)
+	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKS_NT_OBJECTS)
 
 $(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSCLN_OBJECTS1)
-	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSCLN_OBJECTS2)
+	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKSCLN_OBJECTS1)
+	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKSCLN_OBJECTS2)
 
 
 
