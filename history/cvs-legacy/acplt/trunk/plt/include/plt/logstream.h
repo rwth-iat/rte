@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOGSTREAM_INCLUDED
 #define PLT_LOGSTREAM_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.7 2003-09-23 08:27:47 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.8 2003-10-13 11:13:24 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -88,10 +88,13 @@ inline void PltLogStream::reset()
 {
 // With the new sstream stuff, memory management issues of the old
 // class(es) have been cleaned up a bit, so the freeze stuff is
-// not required anymore.
+// not required anymore. Instead, we simply install a new empty string
+// to wipe out all the old content.
 #if PLT_USE_DEPRECIATED_HEADER
     rdbuf()->freeze(0);
     seekp(0);
+#else
+    std::ostringstream::str("");
 #endif
 } /* PltLogStream::reset */
 
