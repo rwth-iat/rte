@@ -1,13 +1,13 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-IMPORTANT: THIS IS AN INOFFICIAL PRERELEASE OF THE UPCOMMING
-1.2.0 RELEASE.
-
 This is version 1.2.0 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
+
+IMPORTANT: porting notes from 1.0.5 to 1.2.0, please see part 4
+"Porting Notes" (sic!).
 
 IMPORTANT: since version 1.1.3 we now license the source code of the
 ACPLT/KS package under the Artistic License (see file ARTISTIC-LICENSE
@@ -128,7 +128,12 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.2.0pre3
+Please note that code versions are numbered as x.y.z where the middle
+number y denoted the state of the code: even numbered y's denote stable
+releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
+releases, which might not be stable: 1.1.0, etc.
+
+Version 1.2.0
 - SERVERS:
   * Fixed compiling problems with egcs and new tool chain (linker). This
     concerned minor glibc2 related compiling problems (glibc2 is fortunately
@@ -320,7 +325,46 @@ Version 1.01
   http://www.plt.rwth-aachen.de/ks/english/firstaid.html
 
 
-4. Suggested Readings
+4. Porting Notes
+----------------
+
+When stepping up from 1.0.5 to 1.2.0 you should watch the following
+changes:
+
+- SERVERS: the default ACPLT/KS core protocol version is 2 (two). This
+  results in addition of a new field in the engineered properties called
+  "semantic_flags". As you might have noted we now speak of "engineered
+  properties" instead of "projected properties" as the former name was a
+  real mis-nomer. In consequence, method and class names have been
+  changed -- don't panic, there are defines which will provide the old
+  names.
+
+  The exceptions are:
+
+  * KsProjPropsHandle KssCommObj::getPP() has been changed to
+    KsEngPropsHandle KssCommObj::getEP(). Currently, you'll need to make
+    this adjustment in your server source codes.
+
+  * The abstract method KssCommObj::getSemanticFlags() has been introduced.
+    Typically (if you don't need semantic flags), you can implement this
+    method in your derived classes as follows:
+    
+      KS_SEMANTIC_FLAGS myclass::getSemanticFlags() const
+      { return 0; }
+
+  * The old method KsServerBase::getPP(...) has been superseded by
+    KsServerBase::getEP(...). If your ACPLT/KS servers base on class
+    KsSimpleServer, you don't need to worry about this, we've already
+    done this for you.
+
+  * Note that class KsServerBase contains an emulation for the old GetPP
+    service, which will be converted behind the scenes into a call to
+    GetEP, so you get the version 1 compatibility automatically.
+
+- CLIENTS: nothing, old code should compile straight out of the box.
+
+
+5. Suggested Readings
 ---------------------
 
 Well -- all "Technology Papers" of course. But for a quick start you
@@ -331,42 +375,124 @@ take a look at the "Technology Paper #8", as it is the reference guide
 to the C++ communication library.
 
 
-5. Legal Stuff
+6. Legal Stuff
 --------------
 
-Copyright (c) 1996, 1997
-Chair of Process Control Engineering,
-Aachen University of Technology.
-All rights reserved.
+                                Preamble
 
-THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
-``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE CHAIR OF
-PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-DAMAGE.
+The intent of this document is to state the conditions under which a
+Package may be copied, such that the Copyright Holder maintains some
+semblance of artistic control over the development of the package,
+while giving the users of the package the right to use and distribute
+the Package in a more-or-less customary fashion, plus the right to make
+reasonable modifications.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must print or display the above
-   copyright notice either during startup or must have a means for
-   the user to view the copyright notice.
-3. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-4. Neither the name of the Chair of Process Control Engineering nor the
-   name of the Aachen University of Technology may be used to endorse or
-   promote products derived from this software without specific prior
-   written permission.
+Definitions:
+
+    - "Package" refers to the collection of files distributed by the
+      Copyright Holder, and derivatives of that collection of files
+      created through textual modification.
+
+    - "Standard Version" refers to such a Package if it has not been
+      modified, or has been modified in accordance with the wishes of
+      the Copyright Holder as specified below.
+
+    - "Copyright Holder" is whoever is named in the copyright or
+      copyrights for the package.
+
+    - "You" is you, if you're thinking about copying or distributing
+      this Package.
+
+    - "Reasonable copying fee" is whatever you can justify on the basis
+      of media cost, duplication charges, time of people involved, and
+      so on. (You will not be required to justify it to the Copyright
+      Holder, but only to the computing community at large as a market
+      that must bear the fee.)
+
+    - "Freely Available" means that no fee is charged for the item
+      itself, though there may be fees involved in handling the item.
+      It also means that recipients of the item may redistribute it
+      under the same conditions they received it.
+
+1.  You may make and give away verbatim copies of the source form of the
+    Standard Version of this Package without restriction, provided that
+    you duplicate all of the original copyright notices and associated
+    disclaimers.
+
+2.  You may apply bug fixes, portability fixes and other modifications
+    derived from the Public Domain or from the Copyright Holder. A
+    Package modified in such a way shall still be considered the
+    Standard Version.
+
+3.  You may otherwise modify your copy of this Package in any way,
+    provided that you insert a prominent notice in each changed file
+    stating how and when you changed that file, and provided that you do
+    at least ONE of the following:
+
+    a) place your modifications in the Public Domain or otherwise make
+       them Freely Available, such as by posting said modifications to
+       Usenet or an equivalent medium, or placing the modifications on a
+       major archive site such as uunet.uu.net, or by allowing the
+       Copyright Holder to include your modifications in the Standard
+       Version of the Package.
+
+    b) use the modified Package only within your corporation or
+       organization.
+
+    c) rename any non-standard executables so the names do not conflict
+       with standard executables, which must also be provided, and
+       provide a separate manual page for each non-standard executable
+       that clearly documents how it differs from the Standard Version.
+
+    d) make other distribution arrangements with the Copyright Holder.
+
+4.  You may distribute the programs of this Package in object code or
+    executable form, provided that you do at least ONE of the following:
+
+    a) distribute a Standard Version of the executables and library
+       files, together with instructions (in the manual page or
+       equivalent) on where to get the Standard Version.
+
+    b) accompany the distribution with the machine-readable source of
+       the Package with your modifications.
+
+    c) give non-standard executables non-standard names, and clearly
+       document the differences in manual pages (or equivalent),
+       together with instructions on where to get the Standard Version.
+
+    d) make other distribution arrangements with the Copyright Holder.
+
+5.  You may charge a reasonable copying fee for any distribution of this
+    Package. You may charge any fee you choose for support of this
+    Package. You may not charge a fee for this Package itself. However,
+    you may distribute this Package in aggregate with other (possibly
+    commercial) programs as part of a larger (possibly commercial)
+    software distribution provided that you do not advertise this
+    Package as a product of your own.
+
+6.  The scripts and library files supplied as input to or produced as
+    output from the programs of this Package do not automatically fall
+    under the copyright of this Package, but belong to whomever
+    generated them, and may be sold commercially, and may be aggregated
+    with this Package.
+
+7.  C subroutines (or comparably compiled subroutines in other
+    languages) supplied by you and linked into this Package shall not be
+    considered part of this Package.
+
+8.  Aggregation of this Package with a commercial distribution is always
+    permitted provided that the use of this Package is embedded; that
+    is, when no overt attempt is made to make this Package's interfaces
+    visible to the end user of the commercial distribution. Such use
+    shall not be construed as a distribution of this Package.
+
+9.  The name of the Copyright Holder may not be used to endorse or
+    promote products derived from this software without specific prior
+    written permission.
+
+10. THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+    WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+    MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 The ACPLT/KS Group
