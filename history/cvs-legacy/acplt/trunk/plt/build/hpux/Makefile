@@ -2,9 +2,9 @@ CXX = g++
 
 CXX_EXTRA_FLAGS = -I../../include
 
-CXX_PLATFORM_FLAGS = -DPLT_HAS_BOOL=1
+CXX_PLATFORM_FLAGS = -DPLT_SIMULATE_BOOL=0 -DPLT_SIMULATE_RTTI=1
 
-CXX_FLAGS = -g -Wall -DPLT_DEBUG_SLOW=0
+CXX_FLAGS = -g -Wall -DPLT_DEBUG_SLOW=1
 #CXX_FLAGS = -O -Wall -DNDEBUG 
 #
 #
@@ -48,11 +48,14 @@ CXX_TEST_SOURCES = \
 	tstring.cpp \
 	ttime.cpp \
 	trbtreedict.cpp \
-	thashtable.cpp
+	thashtable.cpp \
+	tarray.cpp
 
-CXX_SOURCE = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
+CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 
-all : libplt.a trtti tlist tpriorityqueue tstring ttime thashtable
+TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray
+
+all : libplt.a $(TESTS)
 
 
 libplt.a: $(CXX_LIBPLT_OBJECTS)
@@ -78,16 +81,25 @@ ttime :	ttime.o
 	$(CXX_LINK) -o $@ $^
 
 trbtreedict :	trbtreedict.o libplt.a
+	$(CXX_LINK) -o $@ $^
 
 thashtable :	thashtable.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
+tarray :	tarray.o libplt.a
+	$(CXX_LINK) -o $@ $^
 
 clean :
 	rm -f *.o
 
+mrproper :	clean
+	rm -f libplt.a .depend $(TESTS)
+
 depend : $(CXX_SOURCES)
 	$(CXX_COMPILE) -M $^ > .depend
 
+
+.depend:
+	touch .depend
 
 include .depend
