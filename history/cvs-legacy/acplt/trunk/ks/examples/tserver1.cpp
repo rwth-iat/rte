@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.19 1998-12-10 17:25:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.20 1998-12-14 18:00:27 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -374,6 +374,7 @@ TestServer::TestServer(int port)
               "Area of dynamically created objects");
     addDomain(KsPath("/vendor"), "extensions");
     addDomain(KsPath("/vendor/extensions"), "ks_test");
+    addDomain(KsPath("/vendor/extensions"), "ks_core");
 
     KssCommObjectHandle hext_dom = _root_domain.getChildByPath(KsPath("/vendor/extensions"));
     KssSimpleLinkAlias *vendorext_alias =
@@ -392,6 +393,23 @@ TestServer::TestServer(int port)
     (*services_vec)[0] = KsString("createObject");
     tmp_var->setValue(services_vec);
     addCommObject(ep, KssCommObjectHandle(tmp_var, KsOsNew));
+
+    KsPath ec("/vendor/extensions/ks_core");
+
+    tmp_var = new KssSimpleVariable("major_opcode");
+    tmp_var->setValue(new KsIntValue(0));
+    addCommObject(ec, KssCommObjectHandle(tmp_var, KsOsNew));
+
+    tmp_var = new KssSimpleVariable("services");
+    KsStringVecValue * core_services_val
+            = new KsStringVecValue(5);
+    (*core_services_val)[0] = "ObjDict";
+    (*core_services_val)[1] = "Var";
+    (*core_services_val)[2] = "ObjMgmnt";
+    (*core_services_val)[3] = "LinkMgmnt";
+    (*core_services_val)[4] = "Manager";
+    tmp_var->setValue(core_services_val);
+    addCommObject(ec, KssCommObjectHandle(tmp_var, KsOsNew));
 }
 
 //////////////////////////////////////////////////////////////////////
