@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.9 1999-09-16 10:54:49 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.10 2000-04-05 13:11:40 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -337,11 +337,11 @@ KsPath::resolvePaths(const PltArray<KsString> & ids,
         } else {
             res[i] = KS_ERR_BADPATH;
         }
-        current = path;
         // Do conversion if necessary
         if( res[i] == KS_ERR_OK ) {
             res[i] = path.convert();
         }
+        current = path;
     } // for each id
 }
 
