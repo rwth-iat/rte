@@ -3,6 +3,9 @@
 ### Compiler & platform specific part for
 ### Watcom C++ / Watcom make / Windows NT
 
+### DON'T EXPECT ANYTHING FROM THIS MAKEFILE EXCEPT CREATING A BUNCH
+### OF ERROR MESSAGES...
+
 ### Filename conventions
 O=.obj
 A=.lib
@@ -23,7 +26,7 @@ CXX_EXTRA_FLAGS = -I=.;$(KSDIR)\include;$(PLTDIR)\include;D:\devel\watcom\h;d:\d
 
 .cpp: $(KSDIR)\src
 
-.cpp: $(KSDIR)\tests
+.cpp: $(KSDIR)\examples
 
 .cpp.obj:
 	wcl386 $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -fo=$@ $< 
@@ -34,7 +37,7 @@ CXX_EXTRA_FLAGS = -I=.;$(KSDIR)\include;$(PLTDIR)\include;D:\devel\watcom\h;d:\d
 
 ### Include auto dependencies (built with gcc)
 
-!INCLUDE ..\depend.mk
+!INCLUDE ..\depend.nt
 
 ### How to build things
 .obj.exe :

@@ -14,7 +14,7 @@ LIBPLT = $(PLTDIR)\build\nt\libplt.lib
 KSDIR = ..\..
 LIBKS = libks.lib
 SRCDIR = $(KSDIR)\src\\
-TESTSRCDIR = $(KSDIR)\tests\\
+EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
 ### Compiler
 CXX = bcc32
@@ -34,7 +34,7 @@ all: $(LIBKS)
 		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
 !
 
-{$(TESTSRCDIR)}.cpp{}.obj:
+{$(EXAMPLESSRCDIR)}.cpp{}.obj:
 	@echo Compiling $<
 	@$(CXX) @&&!
 		-Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $<
@@ -46,22 +46,22 @@ templates.obj:	$(SRCDIR)templates.cpp
 		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(SRCDIR)templates.cpp
 !
 
-tmanager.obj:	$(TESTSRCDIR)tmanager.cpp
+tmanager.obj:	$(EXAMPLESSRCDIR)tmanager.cpp
 	@echo Compiling $<
 	@$(CXX) @&&!
-		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(TESTSRCDIR)tmanager.cpp
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tmanager.cpp
 !
 
-tserver.obj:	$(TESTSRCDIR)tserver.cpp
+tserver.obj:	$(EXAMPLESSRCDIR)tserver.cpp
 	@echo Compiling $<
 	@$(CXX) @&&!
-		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(TESTSRCDIR)tserver.cpp
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tserver.cpp
 !
 
-tsclient.obj:	$(TESTSRCDIR)tsclient.cpp
+tsclient.obj:	$(EXAMPLESSRCDIR)tsclient.cpp
 	@echo Compiling $<
 	@$(CXX) @&&!
-		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(TESTSRCDIR)tsclient.cpp
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tsclient.cpp
 !
 
 
@@ -71,7 +71,7 @@ tsclient.obj:	$(TESTSRCDIR)tsclient.cpp
 
 ### Include auto dependencies (built with gcc)
 
-!INCLUDE ..\depend.mk
+!INCLUDE ..\depend.nt
 
 ### How to build things
 .obj.exe :

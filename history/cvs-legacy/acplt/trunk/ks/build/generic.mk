@@ -57,35 +57,17 @@ LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2) $(LIBKS_OBJECTS3) \
 	$(LIBKS_OBJECTS4)
 
 
-CXX_TEST_SOURCES = \
+CXX_EXAMPLES_SOURCES = \
 	tmanager.cpp \
 	tmanager1.cpp \
 	tsclient.cpp \
 	tsclient1.cpp \
 	tserver.cpp \
 	tserver1.cpp
-	
-#	thandle.cpp \
-#	tpath.cpp \
-#	tregister.cpp \
-#	tstring.cpp \
-#	txdr.cpp \
-#	tsvrsimpleobjects.cpp \
-#	txdr2.cpp
-#	tvalue.cpp \
-#	tvalue2.cpp \
-#	tvalue3.cpp \
-#	tserviceparams.cpp \
-#	tserviceparams2.cpp \
-#	tserviceparams3.cpp \
-#	tserviceparams4.cpp \
-#	tmanager2 \
-#	tarray.cpp
 
 TESTS = tmanager$(EXE) tserver$(EXE) tsclient$(EXE)
 
-CXX_SOURCES = $(CXX_LIBKS_SOURCES) $(CXX_TEST_SOURCES) \
-	unix_manager.cpp
+CXX_SOURCES = $(CXX_LIBKS_SOURCES) $(CXX_EXAMPLES_SOURCES)
 
 all :	$(LIBKS)
 

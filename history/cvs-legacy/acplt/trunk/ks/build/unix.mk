@@ -34,20 +34,22 @@ LIBPLT = $(PLT_DIR)/build/$(PLATFORM)/libplt.a
 
 LIBKS = libks.a
 
-VPATH = ../../src ../../tests
+VPATH = ../../src ../../examples
 
 include ../generic.mk
 
 all: manager
 
+examples: tmanager.exe tserver.exe tsclient.exe
+
 $(LIBKS): $(LIBKS_OBJECTS)
 	ar r $@ $?
 
-../depend.mk : $(CXX_SOURCES)
+../depend.nt : $(CXX_SOURCES) unix_manager.cpp
 	$(CXX_COMPILE) -MM $^ > .depend
 	perl $(PLT_DIR)/build/depend.pl .depend > $@
 
-depend : ../depend.mk
+depend : ../depend.nt
 
 .depend :
 	touch .depend
@@ -56,7 +58,7 @@ include .depend
 
 manager:	unix_manager.o $(LIBKS)
 	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) $(CXX_LIBS)
-	
+
 clean :
 	rm -f *.o core
 
