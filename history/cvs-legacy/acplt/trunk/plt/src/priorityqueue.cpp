@@ -192,7 +192,7 @@ PltPriorityQueue_base<T>::add(T x)
             return false;
         }
     }
-    assert(a_size < a_capacity);
+    PLT_ASSERT(a_size < a_capacity);
 
     // upheap
     size_t i = a_size++;
