@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOGSTREAM_INCLUDED
 #define PLT_LOGSTREAM_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.4 1998-04-03 13:52:49 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.5 1999-01-08 13:12:31 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -40,7 +40,7 @@
 
 #include "plt/log.h"
 #include <iostream.h>
-#if PLT_SYSTEM_NT
+#if PLT_SYSTEM_NT && !PLT_COMPILER_CYGWIN
 #include <strstrea.h>
 #else
 #include <strstream.h>

@@ -141,6 +141,12 @@
 #define PLT_COMPILER_GCC 0
 #endif
 
+#if defined(__CYGWIN32__) || defined(__MINGW32__)
+#define PLT_COMPILER_CYGWIN 1
+#else
+#define PLT_COMPILER_CYGWIN 0
+#endif
+
 #ifdef _MSC_VER
 #define PLT_COMPILER_MSVC _MSC_VER
 #else

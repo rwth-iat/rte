@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.20 1998-09-22 09:05:36 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.21 1999-01-08 13:12:32 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -42,8 +42,8 @@
 #include "plt/string.h"
 #include <ctype.h>
 
-#if PLT_SYSTEM_NT
-// Thats ridiculous:
+#if PLT_SYSTEM_NT && !PLT_SYSTEM_CYGWIN
+// That's ridiculous:
 #include <strstrea.h>
 #else
 #include <strstream.h>
