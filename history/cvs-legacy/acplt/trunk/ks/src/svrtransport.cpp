@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrtransport.cpp,v 1.4 1999-01-08 13:09:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrtransport.cpp,v 1.5 1999-04-22 15:40:38 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -241,7 +241,7 @@ void KssTransport::personaNonGrata()
     
     if ( getsockopt(_t->xp_sock, SOL_SOCKET, SO_TYPE, 
 #if PLT_SYSTEM_NT
-                (char *)
+           (char *) // signature wants generic char pointer...
 #endif
                     &so_type, &so_type_len) >= 0 ) {
     	//
