@@ -18,14 +18,14 @@ CXX_LIBKS_SOURCES = \
 	time.cpp \
 	value.cpp \
 	xdr.cpp \
+	xdrmemstream.cpp \
+	xdrudpcon.cpp \
+	xdrtcpcon.cpp \
 	templates.cpp \
 	mask.cpp \
 	event.cpp \
 	templates.cpp \
 	connection.cpp \
-	xdrmemstream.cpp \
-	xdrudpcon.cpp \
-	xdrtcpcon.cpp \
 	rpcproto.cpp \
 	connectionmgr.cpp \
 	stdconnectionmgr.cpp \
@@ -48,13 +48,12 @@ CXX_LIBKSCLN_SOURCES= \
 	avsimplemodule.cpp \
 	client.cpp \
 	clntpath.cpp \
+	clnrequest.cpp \
 	commobject.cpp \
-	hostent.cpp \
 	history.cpp \
 	package.cpp \
 	sorter.cpp \
-	variables.cpp \
-	clnrequest.cpp
+	variables.cpp
 
 LIBKS_OBJECTS1 = \
 	array$(O) \
@@ -116,7 +115,6 @@ LIBKSCLN_OBJECTS1 = \
 
 LIBKSCLN_OBJECTS2 = \
 	commobject$(O) \
-	hostent$(O) \
 	history$(O) \
 	package$(O) \
 	sorter$(O) \
@@ -132,8 +130,6 @@ CXX_EXAMPLES_SOURCES = \
 	tclient1.cpp \
 	tmanager.cpp \
 	tmanager1.cpp \
-	tsclient.cpp \
-	tsclient1.cpp \
 	tserver.cpp \
 	tserver1.cpp \
 	tshell.cpp \
@@ -148,8 +144,6 @@ EXAMPLES_OBJECTS = \
 	tclient1$(O) \
 	tmanager$(O) \
 	tmanager1$(O) \
-	tsclient$(O) \
-	tsclient1$(O) \
 	tserver$(O) \
 	tserver1$(O) \
 	tshell$(O) \
@@ -188,8 +182,6 @@ pmobile$(EXE) : pmobile$(O) pmobile_code$(O) $(LIBKSCLN) $(LIBKS)
 tclient$(EXE) : tclient$(O) tclient1$(O) $(LIBKSCLN) $(LIBKS)
 
 tmanager$(EXE) : tmanager$(O) tmanager1$(O) $(LIBKSSVR) $(LIBKS)
-
-tsclient$(EXE) : tsclient$(O) tsclient1$(O) $(LIBKSSVR) $(LIBKS)
 
 tserver$(EXE) : tserver$(O) tserver1$(O) ext_sp$(O) $(LIBKSSVR) $(LIBKS)
 
