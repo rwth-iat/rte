@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.17 2000-04-11 14:13:32 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.18 2000-10-27 07:50:27 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -282,9 +282,11 @@ KssTimeNowVariable::getValue() const
 KssSimpleLinkAlias::KssSimpleLinkAlias(KssDomainHandle hdom, 
 				       const KsString &id,
 				       KsTime ctime,
-				       KsString comment)
+				       const KsString &comment,
+				       const KsString &aliasPath)
 : KssSimpleCommObject(id, ctime, comment),
-  _halias_domain(hdom)
+  _halias_domain(hdom),
+  _alias_path(aliasPath)
 { } // KssSimpleLinkAlias::KssSimpleLinkAlias
 
 
@@ -377,10 +379,15 @@ KssSimpleLinkAlias::getCurrProps(KsCurrPropsHandle &hprops) const
     //
     // Copy the identifiers from the list into the value array.
     //
+    bool absPath = _alias_path.len() != 0;
     while ( head ) {
 	node = head;
 	head = head->next;
-	*vec++ = node->id;
+	if ( absPath ) {
+	    *vec++ = _alias_path + "/" + node->id;
+	} else {
+            *vec++ = node->id;
+	}
 	delete node;
     }
     //

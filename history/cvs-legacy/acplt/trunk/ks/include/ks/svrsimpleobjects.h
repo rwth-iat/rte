@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.16 1999-09-16 10:54:42 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.17 2000-10-27 07:50:26 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -165,6 +165,10 @@ public:
                     KsString comment = KsString());
     //// accessor
     size_t size() const;
+
+    //// modifiers
+    //   engineered properties
+    void setClassIdentifier(const KsString &);
 
     //// modifiers
     bool                addChild(KssCommObjectHandle hChild);
@@ -349,9 +353,11 @@ public:
     KssSimpleLinkAlias(KssDomainHandle hdom,
 		       const KsString &id,
 		       KsTime ctime = KsTime::now(),
-		       KsString comment = KsString());
+		       const KsString & comment = KsString(),
+		       const KsString & aliasPath = KsString());
 private:
     KssDomainHandle _halias_domain;
+    KsString _alias_path;
 
     PLT_DECL_RTTI;
 }; // class KssSimpleLinkAlias
@@ -428,6 +434,12 @@ inline KS_SEMANTIC_FLAGS KssSimpleDomain::getSemanticFlags() const
 
 inline KsString KssSimpleDomain::getClassIdentifier() const
 { return _class_identifier; }
+
+inline void
+KssSimpleDomain::setClassIdentifier(const KsString &ci)
+{
+    _class_identifier = ci;
+} // KssSimpleCommObject::setCreationTime
 
 /////////////////////////////////////////////////////////////////////////////
 
