@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.10 1997-09-13 08:19:49 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.11 1998-06-29 11:25:39 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -115,7 +115,9 @@ PltTime::now(long secs, long usecs)
 #endif
 
 //////////////////////////////////////////////////////////////////////
-
+// Provide a system-independent sleep with resolutions below one
+// second.
+//
 void
 PltTime::sleep() const
 {
@@ -127,9 +129,13 @@ PltTime::sleep() const
 
     while (now < then) {
         PltTime delay = then - now;
+#if !PLT_SYSTEM_NT
         select(0,
                0,0,0,
                (struct timeval*) &delay);
+#else
+    	Sleep(delay.tv_sec * 1000 + delay.tv_usec / 1000);
+#endif
         now = PltTime::now();
     }
 }
