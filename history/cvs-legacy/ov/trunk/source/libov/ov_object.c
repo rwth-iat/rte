@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.18 2000-04-07 10:36:26 dirk Exp $
+*   $Id: ov_object.c,v 1.19 2000-04-17 09:49:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -288,9 +288,6 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 				if(!ov_object_haslinks(pobj)) {
 					access |= OV_AC_DELETEABLE;
 				}
-else {
-	printf("<%s> has links\n", pobj->v_identifier);
-}
 			}
 			if(ov_class_cancastto(pclass, pclass_ov_domain)) {
 				access |= OV_AC_WRITE;
