@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.5pre4 of the C++ Communication Libary. As always, it
+This is version 1.0.5pre6 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
@@ -89,7 +89,7 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.0.5pre4
+Version 1.0.5pre6
 - SERVERS: links added.
 
 - SERVERS: fixed a stupid preprocessor define bug in the sorces preventing
@@ -102,10 +102,15 @@ Version 1.0.5pre4
   link time. The name of the unresolved symbol indicates whether the
   libkssvr has been compiled with PLT_USE_BUFFERED_STREAMS on or off.
 
-- SERVERS: support for Cygwin development environment added.
+- SERVERS: first shots of support for Cygwin development environment added.
 
 - SERVERS: fixed some compile problems with Borland C++ 5.01 which behaves
   slightly different from BC++ 5.0.
+
+- SERVERS: fixed a bug in the buffered streams which in rare circumstances
+  could cause sending transports to stall.
+
+- BOTH: support for HP-UX 10.20.x added.
 
 Version 1.0.4
 - CLIENTS: Fixed a bug which caused A/V modules to be ignored which
