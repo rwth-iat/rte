@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/serverconnection.cpp,v 1.1 2003-10-13 11:58:36 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/serverconnection.cpp,v 1.2 2003-10-14 17:45:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -207,6 +207,8 @@ bool KsServerConnection::open()
     ip_none.s_addr = INADDR_NONE;
     ip_any.s_addr = INADDR_ANY;
 
+    // TODO: handle HPUX idiosyncrasies
+
     if ( (memcmp(&ip, &ip_none, sizeof(ip)) == 0)
 	 || (memcmp(&ip, &ip_any, sizeof(ip)) == 0) ) {
 	//
@@ -341,7 +343,7 @@ bool KsServerConnection::endSend()
 
 // ---------------------------------------------------------------------------
 //
-bool KsServerConnection::send(u_long serviceid, KsXdrAble &params)
+bool KsServerConnection::send(u_long serviceid, const KsXdrAble &params)
 {
     if ( !beginSend(serviceid) ) {
 	return false;

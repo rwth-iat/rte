@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/serverconnection.h,v 1.2 2003-10-13 12:52:42 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/serverconnection.h,v 1.3 2003-10-14 17:45:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -99,7 +99,7 @@ public:
     //   send() is just a C++ convenience,
     //   C-lovers please take the beginSend()/.../endSend() route.
     //
-    bool send(u_long serviceid, KsXdrAble &params);
+    bool send(u_long serviceid, const KsXdrAble &params);
     bool beginSend(u_long serviceid);
     bool endSend();
 
