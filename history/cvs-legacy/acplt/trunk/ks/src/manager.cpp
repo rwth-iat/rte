@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.13 1997-07-18 14:11:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.14 1997-09-03 14:09:45 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -925,7 +925,7 @@ KsmExpireManagerEvent::trigger()
             //
             PLT_DMSG("Not registered with portmapper. Stopping now." << endl);
             _manager._registered = false;
-            _manager.stopServer();
+            _manager.downServer();
             delete this; // suicide
         }
     }
