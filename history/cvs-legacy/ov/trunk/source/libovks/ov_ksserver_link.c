@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_link.c,v 1.2 1999-08-28 15:55:56 dirk Exp $
+*   $Id: ov_ksserver_link.c,v 1.3 1999-08-30 15:23:33 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -146,7 +146,10 @@ OV_RESULT ov_ksserver_link_linkitem(
 	*/
 	OV_INSTPTR_ov_object	pparent;
 	OV_INSTPTR_ov_object	pchild;
+	OV_INSTPTR_ov_object	prelparent;
 	OV_INSTPTR_ov_object	prelchild;
+	OV_PLACEMENT_HINT		parenthint;
+	OV_PLACEMENT_HINT		childhint;
 	/*
 	*	test element types and initialize parent, child and relchild pointer
 	*/
@@ -155,11 +158,10 @@ OV_RESULT ov_ksserver_link_linkitem(
 	}
 	switch(plinkelem->elemtype) {
 	case OV_ET_PARENTLINK:
-		if((oppositehint == OV_PMH_BEFORE) || (oppositehint == OV_PMH_AFTER)) {
-			return OV_ERR_BADPLACEMENT;
-		}
 		pparent = plinkelem->pobj;
 		pchild = pelementelem->pobj;
+		parenthint = oppositehint;
+		childhint = hint;
 		if((hint == OV_PMH_BEFORE) || (hint == OV_PMH_AFTER)) {
 			if(pplaceelem->elemtype != OV_ET_OBJECT) {
 				return OV_ERR_BADOBJTYPE;
@@ -168,30 +170,38 @@ OV_RESULT ov_ksserver_link_linkitem(
 		} else {
 			prelchild = NULL;
 		}
+		if((oppositehint == OV_PMH_BEFORE) || (oppositehint == OV_PMH_AFTER)) {
+			if(poppositeplaceelem->elemtype != OV_ET_OBJECT) {
+				return OV_ERR_BADOBJTYPE;
+			}
+			prelparent = poppositeplaceelem->pobj;
+		} else {
+			prelparent = NULL;
+		}
 		/*
-		*	test if child and relchild can participate in the association
+		*	test if child can participate in the association
 		*/
 		if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pchild),
 			Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
 		) {
 			return OV_ERR_BADOBJTYPE;
 		}
-		if(prelchild) {
-			if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, prelchild),
-				Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
-			) {
-				return OV_ERR_BADPLACEMENT;
-			}
-		}
 		break;
 	case OV_ET_CHILDLINK:
-		if((hint == OV_PMH_BEFORE) || (hint == OV_PMH_AFTER)) {
-			return OV_ERR_BADPLACEMENT;
-		}
-		pchild = plinkelem->pobj;
 		pparent = pelementelem->pobj;
-		if((oppositehint == OV_PMH_BEFORE) || (oppositehint == OV_PMH_AFTER)) {
+		pchild = plinkelem->pobj;
+		parenthint = hint;
+		childhint = oppositehint;
+		if((hint == OV_PMH_BEFORE) || (hint == OV_PMH_AFTER)) {
 			if(pplaceelem->elemtype != OV_ET_OBJECT) {
+				return OV_ERR_BADOBJTYPE;
+			}
+			prelparent = pplaceelem->pobj;
+		} else {
+			prelparent = NULL;
+		}
+		if((oppositehint == OV_PMH_BEFORE) || (oppositehint == OV_PMH_AFTER)) {
+			if(poppositeplaceelem->elemtype != OV_ET_OBJECT) {
 				return OV_ERR_BADOBJTYPE;
 			}
 			prelchild = poppositeplaceelem->pobj;
@@ -199,30 +209,40 @@ OV_RESULT ov_ksserver_link_linkitem(
 			prelchild = NULL;
 		}
 		/*
-		*	test if parent and relchild can participate in the association
+		*	test if parent can participate in the association
 		*/
 		if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, pparent),
 			Ov_GetParent(ov_parentrelationship, plinkelem->elemunion.passoc))
 		) {
 			return OV_ERR_BADOBJTYPE;
 		}
-		if(prelchild) {
-			if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, prelchild),
-				Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
-			) {
-				return OV_ERR_BADPLACEMENT;
-			}
-		}
 		break;
 	default:			
 		return OV_ERR_BADOBJTYPE;
 	}
 	/*
+	*	test if relparent and relchild can participate in the association
+	*/
+	if(prelparent) {
+		if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, prelparent),
+			Ov_GetParent(ov_parentrelationship, plinkelem->elemunion.passoc))
+		) {
+			return OV_ERR_BADPLACEMENT;
+		}
+	}
+	if(prelchild) {
+		if(!ov_class_cancastto(Ov_GetParent(ov_instantiation, prelchild),
+			Ov_GetParent(ov_childrelationship, plinkelem->elemunion.passoc))
+		) {
+			return OV_ERR_BADPLACEMENT;
+		}
+	}
+	/*
 	*	check for access rights
 	*/
 	if(plinkelem->elemunion.passoc->v_getaccessfnc) {
-		if(!(plinkelem->elemunion.passoc->v_getaccessfnc)(pparent, pchild, pticket)
-			& OV_AC_LINKABLE
+		if(!(plinkelem->elemunion.passoc->v_getaccessfnc(pparent, pchild, pticket)
+			& OV_AC_LINKABLE)
 		) {
 			return OV_ERR_NOACCESS;
 		}
@@ -231,8 +251,8 @@ OV_RESULT ov_ksserver_link_linkitem(
 	*	link child with parent relative to relchild
 	*/
 	if(plinkelem->elemunion.passoc->v_linkfnc) {
-		return (plinkelem->elemunion.passoc->v_linkfnc)(pparent, pchild, OV_PMH_DEFAULT,
-			NULL, hint, prelchild);
+		return plinkelem->elemunion.passoc->v_linkfnc(pparent, pchild, parenthint,
+			prelparent, childhint, prelchild);
 	}
 	return OV_ERR_NOACCESS;
 }

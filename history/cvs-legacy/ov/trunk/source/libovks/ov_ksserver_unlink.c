@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_unlink.c,v 1.2 1999-08-28 15:55:57 dirk Exp $
+*   $Id: ov_ksserver_unlink.c,v 1.3 1999-08-30 15:23:33 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -153,8 +153,8 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 	*	check for access rights
 	*/
 	if(plinkelem->elemunion.passoc->v_getaccessfnc) {
-		if(!(plinkelem->elemunion.passoc->v_getaccessfnc)(pparent, pchild, pticket)
-			& OV_AC_UNLINKABLE
+		if(!(plinkelem->elemunion.passoc->v_getaccessfnc(pparent, pchild, pticket)
+			& OV_AC_UNLINKABLE)
 		) {
 			return OV_ERR_NOACCESS;
 		}
@@ -169,7 +169,7 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 	*	unlink child from parent
 	*/
 	if(plinkelem->elemunion.passoc->v_unlinkfnc) {
-		(plinkelem->elemunion.passoc->v_unlinkfnc)(pparent, pchild);
+		plinkelem->elemunion.passoc->v_unlinkfnc(pparent, pchild);
 	}
 	return OV_ERR_OK;
 }

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getpp.c,v 1.4 1999-08-28 15:55:56 dirk Exp $
+*   $Id: ov_ksserver_getpp.c,v 1.5 1999-08-30 15:23:32 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -370,9 +370,20 @@ OV_RESULT ov_ksserver_getpp_additem(
 	case OV_ET_PARENTLINK:
 		switch(objtype) {
 		case KS_OT_LINK:
-			pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
-				= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
-				(KS_LT_LOCAL_1_MANY):(KS_LT_GLOBAL_1_MANY);
+			switch(pelem->elemunion.passoc->v_assoctype) {
+			case OV_AT_ONE_TO_MANY:
+				pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
+					= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
+					(KS_LT_LOCAL_1_MANY):(KS_LT_GLOBAL_1_MANY);
+				break;
+			case OV_AT_MANY_TO_MANY:
+				pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
+					= KS_LT_GLOBAL_MANY_MANY;
+				break;
+			default:
+				Ov_Warning("no such association type");
+				return OV_ERR_TARGETGENERIC;
+			}
 			pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.
 				opposite_role_identifier = pelem->elemunion.passoc
 				->v_parentrolename;
@@ -395,8 +406,19 @@ OV_RESULT ov_ksserver_getpp_additem(
 	case OV_ET_CHILDLINK:
 		switch(objtype) {
 		case KS_OT_LINK:
-			pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
-				= KS_LT_GLOBAL_1_1;
+			switch(pelem->elemunion.passoc->v_assoctype) {
+			case OV_AT_ONE_TO_MANY:
+				pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
+					= KS_LT_GLOBAL_MANY_1;
+				break;
+			case OV_AT_MANY_TO_MANY:
+				pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
+					= KS_LT_GLOBAL_MANY_MANY;
+				break;
+			default:
+				Ov_Warning("no such association type");
+				return OV_ERR_TARGETGENERIC;
+			}
 			pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.
 				opposite_role_identifier = pelem->elemunion.passoc
 				->v_childrolename;

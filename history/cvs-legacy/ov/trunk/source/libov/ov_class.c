@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.7 1999-08-28 15:55:54 dirk Exp $
+*   $Id: ov_class.c,v 1.8 1999-08-30 15:23:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -820,8 +820,9 @@ void ov_class_deleteobject_cleanupinst(
 	*/
 	OV_INSTPTR_ov_class		pclass = Ov_GetParent(ov_instantiation, pobj);
 	OV_INSTPTR_ov_domain	pparent = Ov_GetParent(ov_containment, pobj);
-	OV_INSTPTR_ov_object	pobj2;
+	OV_INSTPTR_ov_object	pobj2 = NULL;
 	OV_ELEMENT				parent, child;
+	Ov_Association_DefineIteratorNM(pit);
 	/*
 	*	initialize
 	*/
@@ -902,10 +903,20 @@ void ov_class_deleteobject_cleanupinst(
 				break;
 			case OV_ET_PARENTLINK:
 				/*
-				*	unlink all children
+				*	unlink all children (if a contained child, delete it)
 				*/
 				while(TRUE) {
-					pobj2 = Ov_Association_GetFirstChild(child.elemunion.passoc, pobj);
+					switch(child.elemunion.passoc->v_assoctype) {
+					case OV_AT_ONE_TO_MANY:
+						pobj2 = Ov_Association_GetFirstChild(child.elemunion.passoc, pobj);
+						break;
+					case OV_AT_MANY_TO_MANY:
+						pobj2 = Ov_Association_GetFirstChildNM(child.elemunion.passoc, pit, pobj);
+						break;
+					default:
+						Ov_Warning("no such association type");
+						break;
+					}
 					if(!pobj2) {
 						break;
 					}
@@ -914,29 +925,37 @@ void ov_class_deleteobject_cleanupinst(
 						ov_class_deleteobject(pobj2);
 					} else {
 						/* unlink the child */
-						(child.elemunion.passoc->v_unlinkfnc)(pobj, pobj2);
-						if(Ov_Association_GetParent(child.elemunion.passoc, pobj2)) {
-							ov_association_unlink(child.elemunion.passoc, pobj, pobj2);
-						}
+						child.elemunion.passoc->v_unlinkfnc(pobj, pobj2);
 					}
 				}
 				break;
 			case OV_ET_CHILDLINK:
 				/*
-				*	unlink parent unless it's the class object
+				*	unlink parent (unless it's the class object)
 				*/
 				if(child.elemunion.passoc != passoc_ov_instantiation) {
-					pobj2 = Ov_Association_GetParent(child.elemunion.passoc, pobj);
-					if(pobj2) {
-						(child.elemunion.passoc->v_unlinkfnc)(pobj2, pobj);
-						if(Ov_Association_GetParent(child.elemunion.passoc, pobj)) {
-							ov_association_unlink(child.elemunion.passoc, pobj2, pobj);
+					while(TRUE) {
+						switch(child.elemunion.passoc->v_assoctype) {
+						case OV_AT_ONE_TO_MANY:
+							pobj2 = Ov_Association_GetParent(child.elemunion.passoc, pobj);
+							break;
+						case OV_AT_MANY_TO_MANY:
+							pobj2 = Ov_Association_GetFirstParentNM(child.elemunion.passoc,
+								pit, pobj);
+							break;
+						default:
+							Ov_Warning("no such association type");
+							break;
 						}
+						if(!pobj2) {
+							break;
+						}
+						child.elemunion.passoc->v_unlinkfnc(pobj2, pobj);
 					}
 				}
 				break;
 			default:
-				Ov_Warning("internal error");
+				Ov_Warning("no such element type");
 				break;				
 			}
 		}

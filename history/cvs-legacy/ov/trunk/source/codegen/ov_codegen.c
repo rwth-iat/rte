@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.9 1999-08-29 16:28:15 dirk Exp $
+*   $Id: ov_codegen.c,v 1.10 1999-08-30 15:23:29 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -339,6 +339,10 @@ int ov_codegen_createheaderfile(
 	/*
 	*	local definitions
 	*/
+	fprintf(fp, "#ifdef __cplusplus\n");
+	fprintf(fp, "extern \"C\" {\n");
+	fprintf(fp, "#endif\n");
+	fprintf(fp, "\n");
 	fprintf(fp, "#ifdef OV_COMPILE_LIBRARY_%s\n", plib->identifier);
 	fprintf(fp, "#define OV_EXTERN extern\n");
 	fprintf(fp, "#else\n");
@@ -419,20 +423,12 @@ int ov_codegen_createheaderfile(
 	/*
 	*	print function declarations associated with all classes
 	*/
-	fprintf(fp, "#ifdef __cplusplus\n");
-	fprintf(fp, "extern \"C\" {\n");
-	fprintf(fp, "#endif\n");
-	fprintf(fp, "\n");
 	for(pclass=plib->classes; pclass; pclass=pclass->pnext) {
 		ov_codegen_printclassfncdecls(plib, pclass, fp);
 		if(pclass->operations) {
 			fprintf(fp, "\n");
 		}
 	}
-	fprintf(fp, "#ifdef __cplusplus\n");
-	fprintf(fp, "}\n");
-	fprintf(fp, "#endif\n");
-	fprintf(fp, "\n");
 	/*
 	*	print vtable defines associated with all classes
 	*/
@@ -453,17 +449,9 @@ int ov_codegen_createheaderfile(
 	/*
 	*	print accessor function declarations associated with all classes
 	*/
-	fprintf(fp, "#ifdef __cplusplus\n");
-	fprintf(fp, "extern \"C\" {\n");
-	fprintf(fp, "#endif\n");
-	fprintf(fp, "\n");
 	for(pclass=plib->classes; pclass; pclass=pclass->pnext) {
 		ov_codegen_printclassaccessorfncdecls(plib, pclass, fp);
 	}
-	fprintf(fp, "#ifdef __cplusplus\n");
-	fprintf(fp, "}\n");
-	fprintf(fp, "#endif\n");
-	fprintf(fp, "\n");
 	/*
 	*	print function declarations associated with all associations
 	*/
@@ -518,6 +506,10 @@ int ov_codegen_createheaderfile(
 	*	local definitions
 	*/
 	fprintf(fp, "#undef OV_EXTERN\n");
+	fprintf(fp, "\n");
+	fprintf(fp, "#ifdef __cplusplus\n");
+	fprintf(fp, "}\n");
+	fprintf(fp, "#endif\n");
 	fprintf(fp, "\n");
 	/*
 	*	Create enclosing #ifndef ... #define ... #endif
@@ -958,6 +950,7 @@ void ov_codegen_printclassinstdefines(
 		fprintf(fp, "    OV_CIB_%s \\\n", ov_codegen_replace(pclass->baseclassname));
 	}
 	fprintf(fp, "    int is_of_class_%s_%s:1;\n", plib->identifier, pclass->identifier);
+	fprintf(fp, "\n");
 	/*
 	*	defines for realizing static variables
 	*/
@@ -997,6 +990,7 @@ void ov_codegen_printclassinstdefines(
 			}
 		}
 	}
+	fprintf(fp, "\n");
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -1514,13 +1508,13 @@ void ov_codegen_printvardefobj(
 	fprintf(fp ,"    %s,\n", ov_codegen_getstringtext(pvar->tech_unit));
 	fprintf(fp ,"    %s,\n", ov_codegen_getstringtext(pvar->comment));
 	if(pvar->varprops & OV_VP_GETACCESSOR) {
-		fprintf(fp, "    (OV_POINTER)%s_%s_%s_get,\n", plib->identifier,
+		fprintf(fp, "    (OV_FNCPTR_GET)%s_%s_%s_get,\n", plib->identifier,
 			pclass->identifier, pvar->identifier);
 	} else {
 		fprintf(fp, "    NULL,\n");
 	}
 	if(pvar->varprops & OV_VP_SETACCESSOR) {
-		fprintf(fp, "    (OV_POINTER)%s_%s_%s_set\n", plib->identifier,
+		fprintf(fp, "    (OV_FNCPTR_SET)%s_%s_%s_set\n", plib->identifier,
 			pclass->identifier, pvar->identifier);
 	} else {
 		fprintf(fp, "    NULL\n");

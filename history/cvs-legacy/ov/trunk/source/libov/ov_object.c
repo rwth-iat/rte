@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.12 1999-08-29 16:28:18 dirk Exp $
+*   $Id: ov_object.c,v 1.13 1999-08-30 15:23:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -278,7 +278,7 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 		*	all other objects are readable and may be deleteable,
 		*	renameable or writeable
 		*/
-		access = OV_AC_READ;
+		access = OV_AC_READ		| OV_AC_DELETEABLE;
 		pclass = Ov_GetParent(ov_instantiation, pobj);
 		if(Ov_GetParent(ov_containment, pclass) != Ov_PtrUpCast(ov_domain, &pdb->ov)) {
 			if(!pobj->v_pouterobject) {
@@ -979,6 +979,9 @@ OV_ACCESS ov_object_getaccess_nostartup(
 #define Ov_AnchorAddress(pobj, offset)									\
 	((OV_ANCHOR*)(((OV_BYTE*)(pobj))+(offset)))
 	
+#define Ov_HeadAddressNM(pobj, offset)									\
+	((OV_NMHEAD*)(((OV_BYTE*)(pobj))+(offset)))
+	
 /*	----------------------------------------------------------------------	*/
 
 /*
@@ -994,7 +997,7 @@ OV_RESULT ov_object_move(
 	*/
 	OV_INT						offset;
 	OV_INSTPTR_ov_class			pclass;
-	OV_INSTPTR_ov_object		pelem;
+	OV_INSTPTR_ov_object		pelem, pcurr;
 	OV_INSTPTR_ov_variable		pvar;
 	OV_INSTPTR_ov_part			ppart;
 	OV_INSTPTR_ov_association	passoc;
@@ -1002,6 +1005,7 @@ OV_RESULT ov_object_move(
 	OV_BOOL						domain = FALSE;
 	OV_INSTPTR_ov_object		pchild;
 	OV_STRING_VEC				*pvector;
+	Ov_Association_DefineIteratorNM(pit);
 	/*
 	*	determine pointer offset of objects in the copy
 	*/
@@ -1103,6 +1107,15 @@ OV_RESULT ov_object_move(
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->pfirst);
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_HeadAddress(pobj, passoc->v_parentoffset)->plast);
 				break;
+			case OV_AT_MANY_TO_MANY:
+				Ov_Adjust(OV_NMLINK*, Ov_HeadAddressNM(pobj, passoc->v_parentoffset)->pfirst);
+				Ov_Adjust(OV_NMLINK*, Ov_HeadAddressNM(pobj, passoc->v_parentoffset)->plast);
+				Ov_Association_ForEachChildNM(passoc, pit, pobj, pcurr) {
+					Ov_Adjust(OV_NMLINK*, pit->parent.pnext);
+					Ov_Adjust(OV_NMLINK*, pit->parent.pprevious);
+					Ov_Adjust(OV_INSTPTR_ov_object, pit->parent.pparent);
+				}
+				break;
 			default:
 				Ov_Warning("no such association type");
 				return OV_ERR_GENERIC;
@@ -1122,6 +1135,15 @@ OV_RESULT ov_object_move(
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pnext);
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pprevious);
 				Ov_Adjust(OV_INSTPTR_ov_object, Ov_AnchorAddress(pobj, passoc->v_childoffset)->pparent);
+				break;
+			case OV_AT_MANY_TO_MANY:
+				Ov_Adjust(OV_NMLINK*, Ov_HeadAddressNM(pobj, passoc->v_childoffset)->pfirst);
+				Ov_Adjust(OV_NMLINK*, Ov_HeadAddressNM(pobj, passoc->v_childoffset)->plast);
+				Ov_Association_ForEachParentNM(passoc, pit, pobj, pcurr) {
+					Ov_Adjust(OV_NMLINK*, pit->child.pnext);
+					Ov_Adjust(OV_NMLINK*, pit->child.pprevious);
+					Ov_Adjust(OV_INSTPTR_ov_object, pit->child.pchild);
+				}
 				break;
 			default:
 				Ov_Warning("no such association type");

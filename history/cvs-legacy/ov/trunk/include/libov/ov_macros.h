@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.10 1999-08-29 16:28:13 dirk Exp $
+*   $Id: ov_macros.h,v 1.11 1999-08-30 15:23:28 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -73,7 +73,7 @@
 /*
 *	Get previous child a 1:n association
 */
-#define Ov_GetPrevChild(assoc, pchild)										\
+#define Ov_GetPreviousChild(assoc, pchild)									\
 	((OV_CPT_##assoc)((pchild)?((pchild)->OV_PRN_##assoc.pprevious):(NULL)))
 
 /*
@@ -403,7 +403,12 @@
 /*
 *	Allocate memory in the database
 */
-#define Ov_DbMalloc(type)	((type*)ov_database_malloc(sizeof(type)))
+#define Ov_DbAlloc(type)	((type*)ov_database_malloc(sizeof(type)))
+
+/*
+*	Allocate memory in the database
+*/
+#define Ov_DbMalloc(size)	ov_database_malloc(size)
 
 /*
 *	Free memory allocated in the database

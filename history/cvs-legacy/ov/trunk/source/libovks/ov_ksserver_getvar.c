@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.4 1999-08-29 16:28:19 dirk Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.5 1999-08-30 15:23:33 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -137,6 +137,7 @@ void ov_ksserver_getvar_getitem(
 	OV_UINT					i;
 	OV_STRING				*pstring;
 	OV_STRING				pathname;
+	Ov_Association_DefineIteratorNM(pit);
 	/*
 	*	get the vtable pointer of the object the variable belongs to
 	*/
@@ -147,7 +148,7 @@ void ov_ksserver_getvar_getitem(
 	/*
 	*	test if we have access to this variable
 	*/
-	if(!(((pvtable->m_getaccess)(pobj, pelem, pticket)) & OV_AC_READ)) {
+	if(!(pvtable->m_getaccess(pobj, pelem, pticket) & OV_AC_READ)) {
 		pitem->result = OV_ERR_NOACCESS;
 		return;
 	}
@@ -180,42 +181,58 @@ void ov_ksserver_getvar_getitem(
 		/*
 		*	get value of a parent link (string vector with children's paths)
 		*/
-		switch(pelem->elemunion.passoc->v_assoctype) {
-		case OV_AT_ONE_TO_MANY:
-			pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
-			len = pitem->var_current_props.value.veclen
-				= ov_association_getchildcount(pelem->elemunion.passoc, pobj);
-			if(len > 0) {
-				pstring = pitem->var_current_props.value.valueunion.val_string_vec
-					= (OV_STRING*)ov_memstack_alloc(len*sizeof(OV_STRING));
-				if(!pstring) {
+		pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
+		len = pitem->var_current_props.value.veclen
+			= ov_association_getchildcount(pelem->elemunion.passoc, pobj);
+		if(len) {
+			pstring = pitem->var_current_props.value.valueunion.val_string_vec
+				= (OV_STRING*)ov_memstack_alloc(len*sizeof(OV_STRING));
+			if(!pstring) {
+				pitem->result = OV_ERR_TARGETGENERIC;	/* TODO! out of heap memory */
+				return;
+			}
+			switch(pelem->elemunion.passoc->v_assoctype) {
+			case OV_AT_ONE_TO_MANY:
+				pchild = Ov_Association_GetFirstChild(pelem->elemunion.passoc, pobj);
+				break;
+			case OV_AT_MANY_TO_MANY:
+				pchild = Ov_Association_GetFirstChildNM(pelem->elemunion.passoc, pit, pobj);
+				break;
+			default:
+				Ov_Warning("no such association type");
+				pitem->result = OV_ERR_TARGETGENERIC;
+				return;
+			}
+			for(i=0; i<len; i++) {
+				Ov_AbortIfNot(pchild);
+				pathname = ov_path_getcanonicalpath(pchild, version);
+				if(!pathname) {
 					pitem->result = OV_ERR_TARGETGENERIC;	/* TODO! out of heap memory */
 					return;
 				}
-				pchild = Ov_Association_GetFirstChild(pelem->elemunion.passoc, pobj);
-				for(i=0; i<len; i++) {
-					Ov_AbortIfNot(pchild);
-					pathname = ov_path_getcanonicalpath(pchild, version);
-					if(!pathname) {
-						pitem->result = OV_ERR_TARGETGENERIC;	/* TODO! out of heap memory */
-						return;
-					}
-					*pstring = pathname;
-					pstring++;
+				*pstring = pathname;
+				pstring++;
+				switch(pelem->elemunion.passoc->v_assoctype) {
+				case OV_AT_ONE_TO_MANY:
 					pchild = Ov_Association_GetNextChild(pelem->elemunion.passoc, pchild);
+					break;
+				case OV_AT_MANY_TO_MANY:
+					pchild = Ov_Association_GetNextChildNM(pelem->elemunion.passoc, pit);
+					break;
+				default:
+					Ov_Warning("no such association type");
+					pitem->result = OV_ERR_TARGETGENERIC;
+					return;
 				}
-				Ov_WarnIf(pchild);
 			}
-			/*
-			*	set timestamp and state
-			*/
-			ov_time_gettime(&pitem->var_current_props.time);
-			pitem->var_current_props.state = OV_ST_NOTSUPPORTED;
-			return;
-		default:
-			Ov_Warning("no such association type");
-			break;
+			Ov_WarnIf(pchild);
 		}
+		/*
+		*	set timestamp and state
+		*/
+		ov_time_gettime(&pitem->var_current_props.time);
+		pitem->var_current_props.state = OV_ST_NOTSUPPORTED;
+		return;
 	case OV_ET_CHILDLINK:
 		/*
 		*	get value of a child link (string with the parent's paths)
@@ -234,16 +251,44 @@ void ov_ksserver_getvar_getitem(
 			} else {
 				pitem->var_current_props.value.valueunion.val_string = NULL;
 			}
-			/*
-			*	set timestamp and state
-			*/
-			ov_time_gettime(&pitem->var_current_props.time);
-			pitem->var_current_props.state = OV_ST_NOTSUPPORTED;
-			return;
+			break;
+		case OV_AT_MANY_TO_MANY:
+			pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
+			len = pitem->var_current_props.value.veclen
+				= ov_association_getparentcount(pelem->elemunion.passoc, pobj);
+			if(len) {
+				pstring = pitem->var_current_props.value.valueunion.val_string_vec
+					= (OV_STRING*)ov_memstack_alloc(len*sizeof(OV_STRING));
+				if(!pstring) {
+					pitem->result = OV_ERR_TARGETGENERIC;	/* TODO! out of heap memory */
+					return;
+				}
+				pparent = Ov_Association_GetFirstParentNM(pelem->elemunion.passoc, pit, pobj);
+				for(i=0; i<len; i++) {
+					Ov_AbortIfNot(pparent);
+					pathname = ov_path_getcanonicalpath(pparent, version);
+					if(!pathname) {
+						pitem->result = OV_ERR_TARGETGENERIC;	/* TODO! out of heap memory */
+						return;
+					}
+					*pstring = pathname;
+					pstring++;
+					pparent = Ov_Association_GetNextParentNM(pelem->elemunion.passoc, pit);
+				}
+				Ov_WarnIf(pparent);
+			}
+			break;
 		default:
 			Ov_Warning("no such association type");
+			pitem->result = OV_ERR_TARGETGENERIC;
 			break;
 		}
+		/*
+		*	set timestamp and state
+		*/
+		ov_time_gettime(&pitem->var_current_props.time);
+		pitem->var_current_props.state = OV_ST_NOTSUPPORTED;
+		return;
 	default:
 		break;
 	}

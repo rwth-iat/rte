@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.4 1999-08-29 16:28:13 dirk Exp $
+*   $Id: ov_association.h,v 1.5 1999-08-30 15:23:27 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -270,7 +270,7 @@ OV_BOOL ov_association_canunload(
 /*
 *	Get previous child in a 1:n association
 */
-#define Ov_Association_GetPrevChild(passoc, pchild)					\
+#define Ov_Association_GetPreviousChild(passoc, pchild)				\
 	((OV_INSTPTR_ov_object)((pchild)?(((OV_ANCHOR*)(((OV_BYTE*)		\
 	(pchild))+(passoc)->v_childoffset))->pprevious):(NULL)))
 
@@ -366,7 +366,7 @@ OV_BOOL ov_association_canunload(
 /*
 *	Iterate over all parents in an n:m association
 */
-#define Ov_Association_ForEachParentNM(passoc, pit, pparent, pchild)\
+#define Ov_Association_ForEachParentNM(passoc, pit, pchild, pparent)\
 	for((pparent)=Ov_Association_GetFirstParentNM((passoc), (pit),	\
 	(pchild)); (pparent); (pparent)=Ov_Association_GetNextParentNM	\
 	((passoc), (pit)))

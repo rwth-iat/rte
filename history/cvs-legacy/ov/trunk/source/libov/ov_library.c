@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.5 1999-08-28 14:18:21 dirk Exp $
+*   $Id: ov_library.c,v 1.6 1999-08-30 15:23:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -642,7 +642,7 @@ OV_RESULT ov_library_prepare(
 	*	provisorically load association definitions and link with class "association"
 	*/
 	for(passocdef=plibdef->associations; passocdef; passocdef=passocdef->pnext) {
-		passoc = Ov_DbMalloc(OV_INST_ov_association);
+		passoc = Ov_DbAlloc(OV_INST_ov_association);
 		if(!passoc) {
 			return OV_ERR_DBOUTOFMEMORY;
 		}
