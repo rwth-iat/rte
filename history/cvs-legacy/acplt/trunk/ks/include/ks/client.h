@@ -218,7 +218,7 @@ protected:
 
     // service functions
     //
-    bool getServerDesc(struct hostent *hp,               // host 
+    bool getServerDesc(struct sockaddr_in *host_addr,    // host 
                        const KsServerDesc &server,       // description
                        KsGetServerResult &server_info);  // result
 
@@ -228,6 +228,8 @@ protected:
 
     bool createTransport();
     void destroyTransport();
+    bool reconnectServer();
+    bool getHostAddr(struct sockaddr_in *addr);
 
     KsString host_name;
     KsServerDesc server_desc;      // server description given by user

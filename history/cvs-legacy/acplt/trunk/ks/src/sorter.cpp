@@ -73,13 +73,21 @@ KscSorterBucket::getSortedVars()
         return PltArray<KscVariableHandle>(0);
     }
 
+#if 0
     size_t count = 0;
+    while(!var_lst.isEmpty()) {
+        sv[count++] = var_lst.removeFirst();
+    }
 
+    plt_qsort(sv);
+#else
+    size_t count = 0;
     while(!var_lst.isEmpty()) {
         sv[count++] = var_lst.removeFirst();
     }
 
     PLT_ASSERT(count == size());
+#endif
 
     return sv;
 }       

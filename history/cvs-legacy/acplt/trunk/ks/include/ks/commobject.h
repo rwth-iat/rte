@@ -45,7 +45,7 @@
 #include <plt/debug.h>
 #include <plt/rtti.h>
 #include <plt/list.h>
-#include "plt/comphandle.h"
+#include <plt/comphandle.h>
 
 #include "ks/props.h"
 #include "ks/clntpath.h"

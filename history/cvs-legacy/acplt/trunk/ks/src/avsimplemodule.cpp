@@ -48,7 +48,7 @@ KscSimpleNegotiator::xdrEncode(XDR *xdr)
 {
     enum_t auth_simple = KS_AUTH_SIMPLE;
     return ks_xdre_enum(xdr, &auth_simple)
-        && id.xdrEncode(xdr);
+        && _id.xdrEncode(xdr);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -61,45 +61,27 @@ KscSimpleNegotiator::xdrDecode(XDR *xdr)
     bool ok = ks_xdrd_enum(xdr, &auth_type);
 
     return ok &&
-        auth_type == KS_AUTH_SIMPLE;
+        (auth_type == KS_AUTH_SIMPLE || auth_type == KS_AUTH_NONE);
 }
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-bool 
-KscAvSimpleModule::addId(const PltString &server, 
-                         const PltString &identification)
-{
-    PltString dummy_string;
-    bool dummy_bool;
-
-    return _id_table.update(server, identification,
-                            dummy_string, dummy_bool);
-}
-
 //////////////////////////////////////////////////////////////////////
 
 KscNegotiatorHandle
-KscAvSimpleModule::getNegotiator(const KscServer *server) const
+KscAvSimpleModule::getNegotiator(const KscServer *) const
 {
-    KsString server_name(server->getHostAndName());
-    KsString id;
-
-    if(_id_table.query(server_name, id)) {
-        return KscNegotiatorHandle(
-            new KscSimpleNegotiator(id), 
-            KsOsNew);
-    } else {
-        return KscNegotiatorHandle(
-            KscAvNoneModule::getStaticNegotiator(),
-            KsOsUnmanaged);
-    }
+        return _negotiator;
 }
 
 //////////////////////////////////////////////////////////////////////
 // EOF avmodule.cpp
 //////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
 
 
 

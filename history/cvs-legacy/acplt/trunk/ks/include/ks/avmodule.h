@@ -58,6 +58,7 @@ class KscServer;
 class KscNegotiator
 {
 public:
+    virtual ~KscNegotiator() {}
     virtual bool xdrEncode(XDR *) = 0;
     virtual bool xdrDecode(XDR *) = 0;
 };

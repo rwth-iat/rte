@@ -64,9 +64,9 @@ public:
 
 private:
     friend class KscAvSimpleModule;
-    KscSimpleNegotiator(const KsString &);
+    KscSimpleNegotiator(const PltString &);
 
-    KsString id;
+    KsString _id;
 };
     
 //////////////////////////////////////////////////////////////////////
@@ -79,16 +79,15 @@ class KscAvSimpleModule
 : public KscAvModule
 {
 public:
-    KscAvSimpleModule();
+    KscAvSimpleModule(const PltString &id);
     ~KscAvSimpleModule();
 
-    bool addId(const PltString &server, 
-               const PltString &identification);
     virtual KS_AUTH_TYPE typeCode() const;
     KscNegotiatorHandle getNegotiator(const KscServer *) const;
 
 protected:
-    PltHashTable<PltString, PltString> _id_table;
+    KsString _id;
+    KscNegotiatorHandle _negotiator;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -96,14 +95,16 @@ protected:
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscSimpleNegotiator::KscSimpleNegotiator(const KsString &str)
-: id(str)
+KscSimpleNegotiator::KscSimpleNegotiator(const PltString &str)
+: _id(str)
 {}
 
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscAvSimpleModule::KscAvSimpleModule()
+KscAvSimpleModule::KscAvSimpleModule(const PltString &id)
+: _id(id),
+  _negotiator(new KscSimpleNegotiator(id), KsOsNew)
 {}
 
 //////////////////////////////////////////////////////////////////////

@@ -209,6 +209,11 @@ KscDomain::~KscDomain()
 bool
 KscDomain::getProjPropsUpdate() 
 {
+    if(!hasValidPath()) {
+        last_result = KS_ERR_MALFORMED_PATH;
+        return false;
+    }
+
     KscServer *myServer = getServer();
     PLT_ASSERT(myServer);
 
@@ -230,11 +235,16 @@ KscDomain::getProjPropsUpdate()
         if(result.result == KS_ERR_OK) {
             if(result.items.size() == 1) { 
                 KsProjPropsHandle hpp = result.items.removeFirst();
-                if( hpp && hpp->xdrTypeCode() == KS_OT_DOMAIN ) {
-                    proj_props = *(KsDomainProjProps *)hpp.getPtr();
-                    return true;
+                if( hpp ) {
+                    if(hpp->xdrTypeCode() == KS_OT_DOMAIN ) {
+                        proj_props = *(KsDomainProjProps *)hpp.getPtr();
+                        return true;
+                    } else {
+                        // type mismatch
+                        last_result = KS_ERR_TYPE_MISMATCH;
+                    }
                 } else {
-                    // type mismatch
+                    // out of mem
                     last_result = KS_ERR_GENERIC;
                 }
             } else {
@@ -274,6 +284,11 @@ KscDomain::setProjProps(KsProjPropsHandle hpp)
 bool
 KscDomain::getChildPPUpdate()
 {
+    if( !hasValidPath() ) {
+        last_result = KS_ERR_MALFORMED_PATH;
+        return false;
+    }
+
     // locate server
     //
     KscServer *myServer = getServer();
@@ -435,6 +450,11 @@ KscDomain::ChildIterator::operator * () const
 bool
 KscVariable::getProjPropsUpdate()
 {
+    if( !hasValidPath() ) {
+        last_result = KS_ERR_MALFORMED_PATH;
+        return false;
+    }
+
     KscServer *myServer = getServer();
     PLT_ASSERT(myServer);
 
@@ -456,11 +476,16 @@ KscVariable::getProjPropsUpdate()
         if(result.result == KS_ERR_OK) {
             if(result.items.size() == 1) {
                 KsProjPropsHandle hpp = result.items.removeFirst();
-                if( hpp && hpp->xdrTypeCode() == KS_OT_VARIABLE ) {
-                    proj_props = *(KsVarProjProps *)hpp.getPtr();
-                    return true;
+                if( hpp ) {
+                    if( hpp->xdrTypeCode() == KS_OT_VARIABLE ) {
+                        proj_props = *(KsVarProjProps *)hpp.getPtr();
+                        return true;
+                    } else {
+                        // type mismatch
+                        last_result = KS_ERR_TYPE_MISMATCH;
+                    }
                 } else {
-                    // type mismatch
+                    // out of mem
                     last_result = KS_ERR_GENERIC;
                 }
             } else {
@@ -497,6 +522,11 @@ KscVariable::setProjProps(KsProjPropsHandle hpp)
 bool
 KscVariable::getUpdate() 
 {
+    if( !hasValidPath() ) {
+        last_result = KS_ERR_MALFORMED_PATH;
+        return false;
+    }
+
     KscServer *myServer = getServer();
     PLT_ASSERT(myServer);
 
@@ -513,24 +543,29 @@ KscVariable::getUpdate()
     //
     last_result = result.result;
 
-    if( ok && result.result == KS_ERR_OK )  {
-        // check wether typecode is ok
-        //
-        KsGetVarItemResult *pitem = &(result.items[0]);
-
-        if(pitem->result == KS_ERR_OK) {
-            if(pitem->item->xdrTypeCode() == KS_OT_VARIABLE) {
-                // everything went ok
-                curr_props = *(KsVarCurrProps *)pitem->item.getPtr(); 
-                fDirty = false;
-                return true;
+    if( ok ) {
+        if( result.result == KS_ERR_OK )  {
+            // check wether typecode is ok
+            //
+            KsGetVarItemResult *pitem = &(result.items[0]);
+            
+            if(pitem->result == KS_ERR_OK) {
+                if(pitem->item->xdrTypeCode() == KS_OT_VARIABLE) {
+                    // everything went ok
+                    curr_props = *(KsVarCurrProps *)pitem->item.getPtr(); 
+                    fDirty = false;
+                    return true;
+                } else {
+                    // type mismatch
+                    last_result = KS_ERR_TYPE_MISMATCH;
+                }
             } else {
-                // type mismatch
-                last_result = KS_ERR_GENERIC;
+                last_result = pitem->result;
             }
-        } else {
-            last_result = pitem->result;
         }
+    } else {
+        // failed to do getVar
+        last_result = KS_ERR_NETWORK_ERROR;
     }
 
     return false;
@@ -541,6 +576,11 @@ KscVariable::getUpdate()
 bool
 KscVariable::setUpdate()
 {
+    if( !hasValidPath() ) {
+        last_result = KS_ERR_MALFORMED_PATH;
+        return false;
+    }
+
     KscServer *myServer = getServer();
     PLT_ASSERT(myServer);
 
@@ -575,6 +615,9 @@ KscVariable::setUpdate()
             // error in whole request
             // last_result already set
         }
+    } else {
+        // setVar failed
+        last_result = KS_ERR_NETWORK_ERROR;
     }
 
     return false;

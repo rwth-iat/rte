@@ -66,7 +66,14 @@ enum KS_RESULT_ENUM {
     KS_ERR_CANTSYNC                 = 0x0015,
     
     KS_ERR_NOREMOTE                 = 0x0020,
-    KS_ERR_SERVERUNKNOWN            = 0x0021
+    KS_ERR_SERVERUNKNOWN            = 0x0021,
+
+/*  
+ *  errors occurring in the client part
+ */
+    KS_ERR_MALFORMED_PATH           = 0x1001,
+    KS_ERR_NETWORK_ERROR            = 0x1002,
+    KS_ERR_TYPE_MISMATCH            = 0x1003
 };
 typedef enum_t KS_RESULT;
 

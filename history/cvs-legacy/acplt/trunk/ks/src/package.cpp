@@ -51,7 +51,7 @@ void
 KscPackage::debugPrint(ostream &os, bool printAll) const
 {
     os << "KscPackage object :" << endl;
-
+    os << "\tLast result : " << getLastResult() << endl;
     os << "\tVariables : " << sizeVariables() << endl;
     os << "\tSubpackages : " << sizeSubpackages() << endl;
 
@@ -88,6 +88,7 @@ void
 KscExchangePackage::debugPrint(ostream &os, bool printAll) const
 {
     os << "KscExchangePackage object :" << endl;
+    os << "Last result : " << getLastResult() << endl;
     os << "package to get :" << endl;
     get_pkg->debugPrint(os,printAll);
     os << "package to set :" << endl;
@@ -103,7 +104,8 @@ KscPackage::KscPackage()
 : num_vars(0),
   num_pkgs(0),
   av_module(0),
-  fDirty(false)
+  fDirty(false),
+  _result(-1)
 {}
 
 //////////////////////////////////////////////////////////////////////
@@ -236,15 +238,20 @@ KscPackage::getUpdate()
     if(!sorter.isValid()) {
         // failed to sort variables by servers and av-types
         //
+        _result = KS_ERR_GENERIC;
         return false;
     }
 
     PltIterator<KscBucketHandle> *pit =
         sorter.newBucketIterator();
 
-    if(!pit) return false;
+    if(!pit) {
+        _result = KS_ERR_GENERIC;
+        return false;
+    }
 
     bool ok = true;
+    _result = KS_ERR_OK;
 
     // iterate over buckets and do the jobs
     //
@@ -277,12 +284,14 @@ KscPackage::getSimpleUpdate(KscBucketHandle bucket)
     {
         // failed to allocate memory
         //
+        _result = KS_ERR_GENERIC;
         return false;
     }
 
     // copy data to params
     //
     if(!fillGetVarParams(sorted_vars, params.identifiers)) {
+        _result = KS_ERR_GENERIC;
         return false;
     }
 
@@ -292,7 +301,15 @@ KscPackage::getSimpleUpdate(KscBucketHandle bucket)
                                           params,
                                           result);
 
-    if(!ok || result.result != KS_ERR_OK) return false;
+    if(!ok) {
+        _result = KS_ERR_NETWORK_ERROR;
+        return false;
+    }
+
+    if(result.result != KS_ERR_OK) {
+        _result = result.result;
+        return false;
+    }
 
     // copy results 
     //
@@ -309,6 +326,7 @@ KscPackage::setUpdate(bool force)
 
     if(!sorter.isValid()) {
         PLT_DMSG("Failed to sort variables" << endl);
+        _result = KS_ERR_GENERIC;
         return false;
     }
 
@@ -317,10 +335,12 @@ KscPackage::setUpdate(bool force)
 
     if(!pit) {
         PLT_DMSG("Failed to create iterator over av/server-types" << endl);
+        _result = KS_ERR_GENERIC;
         return false;
     }
 
     bool ok = true;
+    _result = KS_ERR_OK;
 
     while(*pit) {
         KscBucketHandle curr_bucket = **pit;
@@ -350,12 +370,14 @@ KscPackage::setSimpleUpdate(KscBucketHandle bucket)
     {
         // failed to allocate space
         //
+        _result = KS_ERR_GENERIC;
         return false;
     }
 
     // copy data to params
     //
     if( !fillSetVarParams(sorted_vars, params.items) ) {
+        _result = KS_ERR_GENERIC;
         return false;
     }
 
@@ -366,7 +388,12 @@ KscPackage::setSimpleUpdate(KscBucketHandle bucket)
         params,
         result);
 
-    if(!(ok && result.result == KS_ERR_OK)) {
+    if(!ok) {
+        _result = KS_ERR_NETWORK_ERROR;
+        return false;
+    }
+    if(result.result != KS_ERR_OK) {
+        _result = result.result;
         return false;
     }
 
@@ -584,17 +611,22 @@ KscExchangePackage::doExchange(bool force)
     // if none of the packages exists we consider
     // the operation to be succesfull
     if( !get_pkg && !set_pkg ) {
+        _result = KS_ERR_OK;
         return true;
     }
 
     // if one of the package does exist we use
     // his functions
     if( get_pkg && !set_pkg ) {
-        return get_pkg->getUpdate();
+        bool ok = get_pkg->getUpdate();
+        _result = get_pkg->getLastResult();
+        return ok;
     }
 
     if( !get_pkg && set_pkg ) {
-        return set_pkg->setUpdate(force);
+        bool ok = set_pkg->setUpdate(force);
+        _result = set_pkg->getLastResult();
+        return ok;
     }
 
     // both packages exist, now sort variables
@@ -604,6 +636,8 @@ KscExchangePackage::doExchange(bool force)
         get_pkg->newVariableIterator(true);
     PltIterator<KscVariableHandle> *set_it =
         set_pkg->newVariableIterator(true);
+
+    _result = KS_ERR_GENERIC;
 
     if( get_it && set_it ) {
         KscSorter get_sorter(*get_it);
@@ -627,6 +661,7 @@ KscExchangePackage::mergeSorters(KscSorter &get_sorter,
                                  KscSorter &set_sorter)
 {
     bool ok = true;
+    _result = KS_ERR_OK;
 
     // first use all buckets contained in get_sorter and 
     // buckets out of set_sorter with similar AV/server type
@@ -655,6 +690,8 @@ KscExchangePackage::doSimpleExchange(
     KscBucketHandle get_bucket,
     KscBucketHandle set_bucket)
 {
+    _result = KS_ERR_GENERIC;
+
     if(!get_bucket && !set_bucket) return false;
 
     PltArray<KscVariableHandle> set_vars, get_vars;
@@ -710,7 +747,13 @@ KscExchangePackage::doSimpleExchange(
     }
 #endif
 
-    if(!ok || res.result != KS_ERR_OK) return false;
+    if(!ok) {
+        _result = KS_ERR_NETWORK_ERROR;
+        return false;
+    }
+
+    _result = res.result;
+    if(res.result != KS_ERR_OK) return false;
 
     // copy results
     //
@@ -759,11 +802,12 @@ _KscPackageBase::copyGetVarResults(
                 sorted_vars[count]->last_result = KS_ERR_OK;
             } else {
                 // type mismatch
-                sorted_vars[count]->last_result = KS_ERR_GENERIC;
+                sorted_vars[count]->last_result = KS_ERR_TYPE_MISMATCH;
                 ok = false;
             }
         } else {
             sorted_vars[count]->last_result = res[count].result;
+            ok = false;
         }
         ++count;
     }
@@ -847,16 +891,19 @@ _KscPackageBase::copySetVarResults(const PltArray<KscVariableHandle> &sorted_var
 {
     PLT_PRECONDITION(sorted_vars.size() == res.size());
 
+    bool ok = true;
     size_t size = sorted_vars.size();
 
     for(size_t count = 0; count < size; count++) {
         sorted_vars[count]->last_result = res[count].result;
         if(res[count].result == KS_ERR_OK) {
             sorted_vars[count]->fDirty = false;
+        } else {
+            ok = false;
         }
     }
 
-    return true;
+    return ok;
 }
 
 //////////////////////////////////////////////////////////////////////

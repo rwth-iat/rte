@@ -76,7 +76,11 @@ public:
 //    KscNegotiator *getNegotiator() const;
 
 private:
+#if 0
+    PltList<KscVariableHandle> var_lst;
+#else
     PltPriorityQueue<KscVariableHandle> var_lst;
+#endif
     const KscAvModule *av_module;
     KscServer *server;
     size_t var_count;
@@ -250,7 +254,11 @@ inline
 bool
 KscSorterBucket::add(KscVariableHandle var)
 {
+#if 0
+    bool ok = var_lst.addFirst(var);
+#else
     bool ok = var_lst.add(var);
+#endif
 
     if(ok) {
         var_count++;

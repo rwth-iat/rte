@@ -96,6 +96,7 @@ public:
     size_t sizeSubpackages() const;
 
     bool isDirty() const;
+    KS_RESULT getLastResult() const;
 
     bool getUpdate();
     bool setUpdate(bool force = false);
@@ -122,6 +123,8 @@ protected:
 
     // TODO: iterate over elements to determine status
     bool fDirty;
+
+    KS_RESULT _result;
 
     //
     // class DeepIterator
@@ -200,6 +203,8 @@ public:
                        KscPackageHandle getPkg);
     ~KscExchangePackage();
 
+    KS_RESULT getLastResult() const;
+
     void setPackages(KscPackageHandle setPkg,
                      KscPackageHandle getPkg);
     void getPackages(KscPackageHandle &setPkg,
@@ -217,6 +222,7 @@ protected:
     KscPackageHandle get_pkg,
                      set_pkg;
 
+    KS_RESULT _result;
     const KscAvModule *av_module;
 
 #if PLT_DEBUG
@@ -243,6 +249,15 @@ bool
 KscPackage::isDirty() const
 {
     return fDirty;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_RESULT
+KscPackage::getLastResult() const
+{
+    return _result;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -287,6 +302,15 @@ KscExchangePackage::KscExchangePackage(KscPackageHandle setPkg,
 inline
 KscExchangePackage::~KscExchangePackage()
 {}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_RESULT
+KscExchangePackage::getLastResult() const
+{
+    return _result;
+}
 
 //////////////////////////////////////////////////////////////////////
 
