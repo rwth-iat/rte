@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/src/conversions.cpp,v 1.2 1999-01-13 17:08:09 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -237,8 +237,16 @@ ksStringFromPercent(const KsString &org,
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Encode a string (either a path like "/a/b/c" or a full-blown resource
+// locator like "//host/server/a/b/c"). During encoding, all non-valid
+// characters are represented by their hex value with a leading percent sign
+// instead of their character.
+//
+// And now again for the impaired:
+// "/A-Text" ==> "/A%2FText"
+//
 KS_RESULT
 ksEncodeString(const KsString &org,
                KsString &retval,
@@ -250,116 +258,185 @@ ksEncodeString(const KsString &org,
     //
     const size_t maxsize = org.len() * 3;
     char *buf = new char[maxsize + 1];
-    if( !buf ) return KS_ERR_GENERIC;
-
-    // Iterate over characters of org and do conversions
-    //
-    size_t i = 0;        // position in org
-    size_t j = 0;        // position in buf
+    if( !buf ) {
+	return KS_ERR_GENERIC;
+    }
+    char *pbuf = buf;
     const char *p = org;
+    //
+    // In case of an absolute URL used on the client side, just skip
+    // the //host/server part because they can contain all sorts of
+    // silly characters...
+    //
+    if ( (*p == '/') && (p[1] == '/') ) {
+	//
+	// Just skip the "junk" at the beginning of the resource locator,
+	// containing the host and server and proceed to the root slash.
+	//
+	size_t      len;
+	const char *pSlash = strchr(p + 2, '/');
+	if ( pSlash ) {
+	    pSlash = strchr(pSlash + 1, '/');
+	}
+	if ( !pSlash ) {
+	    //
+	    // The resource locator is missing some parts. But as it is
+	    // intended to be a resource locator, just copy it verbatim.
+	    //
+	    len = org.len();
+	} else {
+	    //
+	    // Process only the host and server part without changing
+	    // anything in it, that is, copy it verbatim into the
+	    // encoded string.
+	    //
+	    len = pSlash - p + 1;
+	}
+	strncpy(pbuf, p, len);
+	p    += len;
+	pbuf += len;
+    }
+    //
+    // Iterate over the characters in the org string and do
+    // the conversions.
+    //
     bool ok = true;
 
-    while( i < org.len() && ok ) {
-        if( allowBackslash && p[i] == '\\' ) {
-            // Check if we have a next char and encode it.
-            // TODO: Should the following char be restricted to 
-            //       '.', '/' and '%' ?
+    while ( *p && ok ) {
+        if ( allowBackslash && (*p == '\\') ) {
+	    //
+            // Check if we have a next char following the backslash
+	    // escape and then encode it. But only "invalid" characters
+	    // are encoded ("\." becomes "%2F"), valid characters like "\a"
+	    // are still copied copied verbatim, that is "\a" becomes "a".
             //
-            if( ++i < org.len() ) {
-                ok = ksToPercent( p[i++], buf + j );
-                j += 3;
+            if ( *++p ) {
+		if ( !ksIsValidChar(*p) ) {
+		    ksToPercent(*p++, pbuf);
+		    pbuf += 3; // skip the %xx stuff
+		} else {
+		    *pbuf++ = *p++;
+		}
             } else {
                 ok = false;
             }
-        } else if( allowPercent && p[i] == '%' ) {
-            // Just copy percent and the following two characters
-            // if exist and are valid.
+        } else if ( allowPercent && (*p == '%') ) {
+	    //
+            // Just copy the percent and the following two characters
+            // if they exist and are valid hex chars.
             //
-            buf[j++] = p[i++];
+            *pbuf++ = *p++;
 
-            if( i < org.len() && isxdigit(p[i]) ) {
-                buf[j++] = p[i++];
-                if( i < org.len() && isxdigit(p[i]) ) {
-                    buf[j++] = p[i++];
+            if ( isxdigit(*p) ) {
+                *pbuf++ = *p++;
+                if ( isxdigit(*p) ) {
+                    *pbuf++ = *p++;
                 } else {
                     ok = false;
                 }
             } else {
                 ok = false;
             }
-        } else if( ksIsValidChar(p[i]) || ksIsDelim(p[i]) ) {
-            buf[j++] = p[i++];
+        } else if ( ksIsValidChar(*p) || ksIsDelim(*p) ) {
+	    //
+	    // All valid characters or delimiters are always copied
+	    // verbatim to the encoded string.
+	    //
+            *pbuf++ = *p++;
         } else {
-            ok = ksToPercent( p[i++], buf + j );
-            j += 3;
+	    //
+	    // All other characters get encoded using the %xx syntax,
+	    // like it is done with URLs in the WWW.
+	    //
+            ksToPercent(*p++, pbuf);
+	    pbuf += 3; // skip the %xx stuff
         }   
     }
+    //
+    // Finally terminate the encoded string.
+    //
+    *pbuf = 0;
 
-    buf[j] = 0;
+    PLT_ASSERT( (pbuf - buf) <= maxsize ); 
 
-    PLT_ASSERT( j <= maxsize ); 
-
-    if( ok ) {
-        retval = KsString(buf, j);
+    if ( ok ) {
+        retval = KsString(buf);
         delete [] buf;
         return retval.ok() ? KS_ERR_OK : KS_ERR_GENERIC;
     } else {
         delete [] buf;
         return KS_ERR_BADNAME;
     }
-}
+} // ksEncodeString
 
-/////////////////////////////////////////////////////////////////////////////
 
+// ---------------------------------------------------------------------------
+// Decode a string (either a path like "/a/b/c" or a full-blown resource
+// locator like "//host/server/a/b/c"). During decoding, all "percentified"
+// characters are converted back to their plan character, optionally escaped
+// by a backslash.
+//
+// And now again for the impaired:
+// "/A%2FText" ==> "/A-Text"
+//
 KS_RESULT
 ksDecodeString(const KsString &org,
                KsString &retval,
                bool useBackslash)
 {
-    // Decoded string has at most org.len() characters.
+    //
+    // The decoded string can have at most org.len() characters.
     //
     char *buf = new char[org.len() + 1];
-    if( !buf ) return KS_ERR_GENERIC;
+    if( !buf ) {
+	return KS_ERR_GENERIC;
+    }
 
     // Iterate over characters of org and do conversions
     //
-    size_t i = 0;
-    size_t j = 0;
-    const char *p  = org;
-    bool ok = true;
+    const char *p = org;
+    char       *pbuf = buf;
+    bool        ok = true;
 
-    while( i < org.len() && ok ) {
-        if( p[i] == '%' ) {
-            char c = ksFromPercent(p + i + 1);
-            if( c == 0 ) {
+    while ( *p && ok ) {
+        if( *p == '%' ) {
+	    //
+	    // Convert characters back from their hex representation into
+	    // their plain character and optionally escape them.
+	    //
+            char c = ksFromPercent(p + 1);
+            if ( !c ) {
                 ok = false;
-            } else if( useBackslash && (ksIsDelim(c) || c == '%') ) {
-                buf[j++] = '\\';
-                buf[j++] = c;
+            } else if ( useBackslash && 
+                        ((c == '\\') || 
+                         (ksIsDelim(c) || (c == '%'))) ) {
+                *pbuf++ = '\\';
+                *pbuf++ = c;
             } else {
-                buf[j++] = c;
+		//
+		// Just use the plain character instead of the encoded one.
+		//
+                *pbuf++ = c;
             }
-            i += 3;
+            p += 3;
         } else {
-            buf[j++] = p[i++];
+	    //
+	    // All other stuff is copied back verbatim.
+	    //
+            *pbuf++ = *p++;
         }
     }
 
-    if( ok ) {
-        retval = KsString(buf, j);
+    *pbuf = 0;
+
+    if ( ok ) {
+        retval = KsString(buf);
         delete [] buf;
         return retval.ok() ? KS_ERR_OK : KS_ERR_GENERIC;
-    } else {
-        delete [] buf;
-        return KS_ERR_BADNAME;
     }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// EOF conversions.cpp
-/////////////////////////////////////////////////////////////////////////////
+    delete [] buf;
+    return KS_ERR_BADNAME;
+} // ksDecodeString
 
 
-
-
-
+// End of ks/conversions.cpp
