@@ -1,6 +1,6 @@
 /* -*-plt-c++-*- */
 
-#ifndef KSC_CLIENT_INCLUDED 
+#ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 
 /*
