@@ -1,8 +1,8 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/*
- * Copyright (c) 1996, 1997
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.20 1999-01-12 16:26:02 harald Exp $ *//*
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -76,30 +76,45 @@
 
 #include <stddef.h>
 
-// Enable/Disable use of the connection manager class and the buffered
+// --------------------------------------------------------------------------
+// Enable/disable use of the connection manager class and the buffered
 // (aka dynamic) XDR memory strams. Disabled by default if the user didn't
 // specified otherwise.
 #ifndef PLT_USE_BUFFERED_STREAMS
 #define PLT_USE_BUFFERED_STREAMS 0
 #endif
 
+// --------------------------------------------------------------------------
 // When running on top of NT, we always need to compile the connection
 // manager class with a hash table due to NT's habbit of allocating file
-// descriptors (aka handles).
+// descriptors (aka handles). For other platforms this hash table isn't
+// necessary, so don't enable them.
 #if PLT_SYSTEM_NT
 #undef  PLT_CNX_MGR_USE_HT
 #define PLT_CNX_MGR_USE_HT 1
 #endif
 
+#ifndef PLT_CNX_MGR_USE_HT
+#define PLT_CNX_MGR_USE_HT 0
+#endif
+
+// --------------------------------------------------------------------------
+// Enable/disable compiling a minimalist ACPLT/KS server trunc only. In this
+// case, no service handling is implemented, only the registration magic.
+// This option is useful if you want to do a C-only ACPLT/KS server which
+// can sit on different tranport and hardware environments, like servers for
+// full-blown workstations and embedded systems (yes, that's true).
+#ifndef PLT_SERVER_TRUNC_ONLY
+#define PLT_SERVER_TRUNC_ONLY 0
+#endif
+
+// --------------------------------------------------------------------------
 // If we're running on top of Solaris and the user didn't specified other-
 // wise, then we'll use XTI (for those who do not know: it's something like
 // the WinSuck 2.0 architecture for unix).
 #if PLT_SYSTEM_SOLARIS
-//#if PLT_USE_BUFFERED_STREAMS // temporal fix until we get XTI to work with
-//#define PLT_USE_XTI 0	     // the connection mgr
-//#endif
 #ifndef PLT_USE_XTI
-#define PLT_USE_XTI 1
+#define PLT_USE_XTI 0 // temporary fix until we get XTI support to work
 #endif
 #endif
 
