@@ -1,7 +1,5 @@
 /* -*-plt-c++-*- */
-#ifndef KS_PATH_INCLUDED
-#define KS_PATH_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.3 1997-03-27 17:49:06 markusj Exp $ */
+
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,106 +35,117 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Authors: 
- *   Harald Albrecht <harald@plt.rwth-aachen.de>
- *   Martin Kneissl <martin@plt.rwth-aachen.de>
- */
-
-#include "ks/string.h"
-#include "plt/array.h"
-#include "ks/result.h"
+/* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
 
 //////////////////////////////////////////////////////////////////////
 
-class KsPath 
-{
-public:
-    KsPath();
-    KsPath(const PltString &);
-    KsPath(const KsPath & path, size_t first, size_t last);
-
-    // accessors
-    bool isValid() const;
-    bool isSingle() const;
-    bool isRelative() const;
-    bool isAbsolute() const;
-
-    PltString getHead() const;
-    KsPath getTail() const;
-
-    size_t size() const;
-    PltString operator[] (size_t) const;
-    operator const char * () const;
-    operator PltString () const;
-    KsPath & operator = (const KsPath &);
-
-    KsPath resolve(const KsPath & rel);
-    static void resolvePaths(const PltArray<KsString> & ids,
-                             PltArray<KsPath> &paths,
-                             PltArray<KS_RESULT> &res) ;
-protected:
-    KsPath(const KsPath &abs, const KsPath &rel);
-    size_t checkAndCount();
-    void findSlashes();
-    PltString _str;
-    bool _valid;
-    PltArray<size_t> _slash;
-    size_t _first;
-    size_t _last;
-    size_t _go_up; // How many domains do you have to go up before appending
-                   // this path to get an absolute one?
-};
+#include "ks/abspath.h"
 
 //////////////////////////////////////////////////////////////////////
 
-
-inline bool
-KsPath::isValid() const 
+KscAbsPath::KscAbsPath(const PltString &s)
+: KsPath(s)
 {
-    return _valid;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KsPath::isAbsolute() const
-{
-    PLT_PRECONDITION(isValid());
-    return _go_up == 0;
+    _valid = _valid && validAbsPath();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool
-KsPath::isRelative() const
+KscAbsPath::KscAbsPath(const char *s)
+: KsPath(s)
 {
-    return !isAbsolute();
+    _valid = _valid && validAbsPath();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-inline size_t
-KsPath::size() const
+bool
+KscAbsPath::validAbsPath() const
 {
-    return isValid() ? (_last - _first + 1) : 0;
+    return (size() >= 2)
+        && isAbsolute();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool
-KsPath::isSingle() const
+PltString
+KscAbsPath::getHost() const
 {
-    return size() == 1;
+    PLT_ASSERT(validAbsPath());
+    return getHead();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-inline 
-KsPath::operator const char *() const
+PltString
+KscAbsPath::getServer() const
 {
-    return operator PltString();
+    PLT_ASSERT(validAbsPath());
+    return (*this)[1];
 }
 
 //////////////////////////////////////////////////////////////////////
-#endif /KS_PATH_INCLUDED
+
+KscAbsPath
+KscAbsPath::getHostAndServer() const
+{
+    PLT_ASSERT(validAbsPath());
+
+#if 0
+    PltString prefix("/");
+
+    prefix += _str.substr(_slash[_first], 
+                          _slash[_first+2] - _slash[_first] - 1);
+
+    return prefix;
+#endif
+
+    return _str.substr(0, _slash[_first+2] - 1);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KsPath
+KscAbsPath::getVarPath() const
+{
+    PLT_PRECONDITION(validAbsPath() && (size() > 2));
+    return KsPath( _str.substr(_slash[_first+2]-1,
+                               _slash[_last+1] - _slash[_first+2]));
+}
+
+//////////////////////////////////////////////////////////////////////
+
+PltString
+KscAbsPath::getNameOnly() const
+{
+    PLT_PRECONDITION(validAbsPath() && size() > 2);
+
+    return _str.substr(_slash[_last],
+                       _slash[_last+1] - _slash[_last] - 1);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+PltString
+KscAbsPath::getPathOnly() const
+{
+    PLT_PRECONDITION(validAbsPath() && size() > 2);
+
+    if( size() == 3 ) {
+        return PltString("/");
+    }
+    else {
+        return _str.substr(_slash[_first+2]-1,
+                           _slash[_last] - _slash[_first+2]);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+// EOF abspath.cpp
+//////////////////////////////////////////////////////////////////////
+
+    
+    
+
+
+

@@ -49,8 +49,14 @@
 //////////////////////////////////////////////////////////////////////
 // class KscPackage
 //
-//   Related objects are currently referenced by pointers. Therefore
-//   equality is checked by comparing pointers.
+//   RESTRICTIONS:
+//   - Related objects are currently referenced by pointers. Therefore
+//     equality is checked by comparing pointers.
+//
+//   - Each package is related to a server object,
+//     which is implicitly defined by the first variable
+//     the package is given. Therefore a package only can
+//     contain variables which belong to the same server. 
 // 
 //////////////////////////////////////////////////////////////////////
 
@@ -80,6 +86,9 @@ public:
     const KscAvModule *getAvModule() const;
 
 protected:
+    KscAbsPath related_server;
+    bool server_set;
+
     PltList<const KscVariable *> vars;
     size_t num_vars;
 
@@ -102,7 +111,7 @@ protected:
         ~DeepIterator();
         operator const void * () const;
         const KscVariable & operator * () const;
-        const KscVariable * operator -> () const;
+        KscVariable * operator -> () const;
         DeepIterator & operator ++ ();
         void operator ++ (int);
         void toStart();
@@ -138,7 +147,6 @@ protected:
 // end of class KscDirectIterator
 
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 // class KscExchangePackage
 //////////////////////////////////////////////////////////////////////
@@ -162,14 +170,12 @@ public:
     const KscAvModule *getAvModule() const;
 
 protected:
-    KscPackage *set_pkg, 
-               *get_pkg;
+    KscPackage *get_pkg, 
+               *set_pkg;
 
     const KscAvModule *av_module;
 };
     
-#endif
-
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
 //////////////////////////////////////////////////////////////////////
@@ -212,8 +218,6 @@ KscPackage::getAvModule() const
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-#if 0
-
 inline
 KscExchangePackage::KscExchangePackage()
 : get_pkg(0),
@@ -228,7 +232,8 @@ KscExchangePackage::KscExchangePackage(KscPackage &getPkg,
                                        KscPackage &setPkg)
 : get_pkg(&getPkg),
   set_pkg(&setPkg),
-  av_module(0);
+  av_module(0)
+{}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -252,17 +257,26 @@ inline void
 KscExchangePackage::getPackages(KscPackage *&getPkg,
                                 KscPackage *&setPkg)
 {
-    *getPkg = get_pkg;
-    *setPkg = set_pkg;
+    getPkg = get_pkg;
+    setPkg = set_pkg;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KscExchangePackage::
-KscExchangePackage::
-KscExchangePackage::
+inline void
+KscExchangePackage::setAvModule(const KscAvModule *avModule)
+{
+    av_module = avModule;
+}
 
-#endif
+//////////////////////////////////////////////////////////////////////
+
+inline 
+const KscAvModule * 
+KscExchangePackage::getAvModule() const
+{
+    return av_module;
+}
 
 #endif
 

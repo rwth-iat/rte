@@ -40,11 +40,13 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <ks/package.h>
+#include <ks/client.h>
 
 //////////////////////////////////////////////////////////////////////
 
 KscPackage::KscPackage()
-: num_vars(0),
+: server_set(false),
+  num_vars(0),
   num_pkgs(0),
   av_module(0),
   fDirty(false)
@@ -60,6 +62,20 @@ KscPackage::~KscPackage()
 bool
 KscPackage::add(const KscVariable &var)
 {
+    if( server_set ) {
+        // first variable, set related server object
+        //
+        related_server = var.getHostAndServer();
+        server_set = true;
+    }
+    else {
+        // check wether variable belongs to the correct server
+        //
+        if( related_server != var.getHostAndServer() ) {
+            return false;
+        }
+    }
+
 #ifdef PLT_DEBUG
     // check for duplicated pointers to variables
     //
@@ -84,6 +100,22 @@ KscPackage::add(const KscVariable &var)
 bool
 KscPackage::add(const KscPackage &pkg) 
 {
+    if( !server_set ) {
+        // if the package has a related server take it
+        //
+        if( pkg.server_set ) {
+            related_server = pkg.related_server;
+            server_set = true;
+        }
+    }
+    else {
+        // check wether related servers match
+        //
+        if( pkg.related_server != related_server ) {
+            return false;
+        }
+    }
+
 #ifdef PLT_DEBUG
     // check for duplicated pointers to variables
     //
@@ -108,8 +140,6 @@ KscPackage::add(const KscPackage &pkg)
 bool
 KscPackage::remove(const KscVariable &var) 
 {
-    PltListIterator<const KscVariable *> it(vars);
-    
     bool ok = vars.remove(&var);
     
     if(ok) num_vars--;
@@ -122,8 +152,6 @@ KscPackage::remove(const KscVariable &var)
 bool
 KscPackage::remove(const KscPackage &pkg)
 {
-    PltListIterator<const KscPackage *> it(pkgs);
-
     bool ok = pkgs.remove(&pkg);
 
     if(ok) num_pkgs--;
@@ -170,6 +198,91 @@ PltIterator<KscPackage> *
 KscPackage::newSubpackageIterator() const 
 {
     return new KscDirectIterator<KscPackage>(pkgs);
+}
+
+//////////////////////////////////////////////////////////////////////
+// TODO:
+//   change absolute path names to relative path names 
+//   in order to save space
+//
+bool
+KscPackage::getUpdate() 
+{
+    int count, size;
+
+    // create objects for getVar service
+    //
+    size = sizeVariables(true); // count all variables including this
+                                // in subpackages
+
+    if( !size ) {
+        // empty packages need no update 
+        return true;
+    }
+
+    KsGetVarParams params(size);
+    KsGetVarResult result(0);
+
+    // locate the server
+    //
+    if( !server_set ) {
+        // if we have no related server, 
+        // the package is empty anyway
+        return true;
+    }
+    KscServer *myServer = 
+        KscClient::getClient()->getServer(related_server);
+
+    PLT_ASSERT(myServer);
+
+    // put all variables in params
+    //
+    DeepIterator it(*this);
+    count = 0;
+    while(it) {
+        params.identifiers[count++] = it->getName();
+        it++;
+    }
+
+    PLT_ASSERT(count == size);
+
+    // request updated data from the server
+    //
+    bool ok = myServer->getVar(params, result);
+
+    // check errors
+    //
+    if( !ok || result.result != KS_ERR_OK ) {
+        return false;
+    }
+
+    // copy new data
+    //
+    it.toStart();
+    count = 0;
+    ok = true;
+    while(it) {
+        KsCurrPropsHandle *hcp =
+            &(result.items[count].item);
+        if(result.items[count].result != KS_ERR_OK
+           && (*hcp).getPtr() ) 
+        {
+            PLT_ASSERT((*hcp)->xdrTypeCode() == KS_OT_VARIABLE);
+
+            it->setCurrProps(*(KsVarCurrProps *)(hcp->getPtr()));
+            it->fDirty = false;
+        }
+        else {
+            ok = false;
+        }
+        ++count;
+        ++it;
+    }
+
+    PLT_ASSERT( size == count );
+
+    fDirty = ok;
+    return ok;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -238,7 +351,7 @@ KscPackage::DeepIterator::operator * () const
     
 //////////////////////////////////////////////////////////////////////
     
-const KscVariable *
+KscVariable *
 KscPackage::DeepIterator::operator -> () const
 {
     PLT_PRECONDITION(*this);

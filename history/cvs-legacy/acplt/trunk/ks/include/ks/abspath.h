@@ -1,7 +1,8 @@
 /* -*-plt-c++-*- */
-#ifndef KS_PATH_INCLUDED
-#define KS_PATH_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.3 1997-03-27 17:49:06 markusj Exp $ */
+
+#ifndef KSC_FULLPATH_INCLUDED
+#define KSC_FULLPATH_INCLUDED
+
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,106 +38,110 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Authors: 
- *   Harald Albrecht <harald@plt.rwth-aachen.de>
- *   Martin Kneissl <martin@plt.rwth-aachen.de>
- */
-
-#include "ks/string.h"
-#include "plt/array.h"
-#include "ks/result.h"
+/* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
 
 //////////////////////////////////////////////////////////////////////
 
-class KsPath 
+#include "ks/path.h"
+
+//////////////////////////////////////////////////////////////////////
+// class KscAbsPath
+//   manage an absolute path consisting of host, server and in the 
+//   server path information. The path should be formed like 
+//   "//host/server/domain1/../var".
+//
+class KscAbsPath
+: public KsPath
 {
 public:
-    KsPath();
-    KsPath(const PltString &);
-    KsPath(const KsPath & path, size_t first, size_t last);
+    KscAbsPath();
+    KscAbsPath(const char *);
+    KscAbsPath(const PltString &);
 
-    // accessors
-    bool isValid() const;
-    bool isSingle() const;
-    bool isRelative() const;
-    bool isAbsolute() const;
+    KscAbsPath &operator = (const KscAbsPath &);
+    friend bool operator == (const KscAbsPath &, 
+                             const KscAbsPath &);
+    friend bool operator != (const KscAbsPath &, 
+                             const KscAbsPath &);
+    friend KscAbsPath operator + (const KscAbsPath &,
+                                  const PltString &);
 
-    PltString getHead() const;
-    KsPath getTail() const;
+    unsigned long hash() const;
 
-    size_t size() const;
-    PltString operator[] (size_t) const;
-    operator const char * () const;
-    operator PltString () const;
-    KsPath & operator = (const KsPath &);
+    PltString getHost() const;              // host eg "host"
+    PltString getServer() const;            // server eg "server"
+    KscAbsPath getHostAndServer() const;    // eg "/host/server"
+    KsPath getVarPath() const;              // path + name
+    PltString getNameOnly() const;          // name
+    PltString getPathOnly() const;          // path
 
-    KsPath resolve(const KsPath & rel);
-    static void resolvePaths(const PltArray<KsString> & ids,
-                             PltArray<KsPath> &paths,
-                             PltArray<KS_RESULT> &res) ;
 protected:
-    KsPath(const KsPath &abs, const KsPath &rel);
-    size_t checkAndCount();
-    void findSlashes();
-    PltString _str;
-    bool _valid;
-    PltArray<size_t> _slash;
-    size_t _first;
-    size_t _last;
-    size_t _go_up; // How many domains do you have to go up before appending
-                   // this path to get an absolute one?
+    bool validAbsPath() const;
 };
 
 //////////////////////////////////////////////////////////////////////
+// Inline Implementation
+//////////////////////////////////////////////////////////////////////
 
-
-inline bool
-KsPath::isValid() const 
-{
-    return _valid;
-}
-
+inline
+KscAbsPath::KscAbsPath()
+{}
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool
-KsPath::isAbsolute() const
+inline
+KscAbsPath &
+KscAbsPath::operator = (const KscAbsPath &ap)
 {
-    PLT_PRECONDITION(isValid());
-    return _go_up == 0;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline bool
-KsPath::isRelative() const
-{
-    return !isAbsolute();
+    KsPath::operator = (ap);
+    return *this;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-inline size_t
-KsPath::size() const
+inline
+bool
+operator == (const KscAbsPath &a, const KscAbsPath &b)
 {
-    return isValid() ? (_last - _first + 1) : 0;
+    return a._str == b._str;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-inline bool
-KsPath::isSingle() const
+inline
+bool
+operator != (const KscAbsPath &a, const KscAbsPath &b)
 {
-    return size() == 1;
+    return a._str != b._str;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-inline 
-KsPath::operator const char *() const
+inline
+KscAbsPath
+operator + (const KscAbsPath &path,
+            const PltString &var)
 {
-    return operator PltString();
+    PltString temp(path._str);
+    temp += "/";
+    temp += var;
+    return KscAbsPath(temp);
 }
 
 //////////////////////////////////////////////////////////////////////
-#endif /KS_PATH_INCLUDED
+
+inline
+unsigned long
+KscAbsPath::hash() const
+{
+    return _str.hash();
+}
+
+
+#endif
+
+
+
+
+
+

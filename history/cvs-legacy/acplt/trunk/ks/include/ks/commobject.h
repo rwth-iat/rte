@@ -42,11 +42,15 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#include <plt/hashtable.h>
+
 #include <ks/props.h>
+#include <ks/abspath.h>
 
 //////////////////////////////////////////////////////////////////////
-
+// forward declarations
 class KscAvModule;
+class KscServer;
 
 //////////////////////////////////////////////////////////////////////
 // class KscCommObject
@@ -55,19 +59,28 @@ class KscAvModule;
 class KscCommObject
 {
 public:
-    KscCommObject(const char *object_name);
+    KscCommObject(const KscAbsPath &object_path);
     virtual ~KscCommObject();
-    virtual const char *getName() const;
+
+    PltString getName() const;
+    KscAbsPath getHostAndServer() const;
+    const KscAbsPath &getFullPath() const; 
+ 
     virtual KS_OBJ_TYPE typeCode() const = 0;
 
-    //virtual bool getProjPropsUpdate();     // TODO
+    KscServer *getServer() const;
+
+    virtual const KsProjProps *getProjProps() const = 0;
+    virtual bool getProjPropsUpdate() = 0;
 
     virtual void setAvModule(const KscAvModule *avm);
     virtual const KscAvModule *getAvModule() const;
 
 protected:
-    PltString name;
+    KscAbsPath path;
     const KscAvModule *av_module;
+
+    virtual bool setProjProps(KsProjPropsHandle) = 0;
 };
 
 
@@ -75,20 +88,53 @@ protected:
 // class KscDomain
 //////////////////////////////////////////////////////////////////////
 
+typedef PltIterator<KsProjProps> KscChildIterator;
+
 class KscDomain
 : public KscCommObject
 {
 public:
-    KscDomain(const char *domain_name);
-    ~KscDomain();
+    KscDomain(const KscAbsPath &domain_path);
 
     KS_OBJ_TYPE typeCode() const;
 
     const KsDomainProjProps *getProjProps() const;
-//    KscChildIterator *newChildIterator(KS_OBJ_TYPE mask); // TODO
+
+    // reread projected props 
+    bool getProjPropsUpdate();
+    // reread children from server, update properties
+    bool updateChilds(KS_OBJ_TYPE typeMask);
+    KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
+                                       bool update = false);
 
 protected:
-    KsDomainProjProps *proj_props;
+    KsDomainProjProps proj_props;
+    PltHashTable<KscAbsPath, KscCommObject *>child_table;
+
+    // remove childs from table
+    bool flushChilds(KS_OBJ_TYPE typeMask);
+
+    bool setProjProps(KsProjPropsHandle);
+
+#if 0
+    // TODO : DEBUG
+    //
+    class ChildIterator
+    : public KscChildIterator
+    {
+    public:
+        ChildIterator(const KscDomain &, enum_t);
+        operator const void * () const;   // remaining element?
+        ChildIterator & operator ++ ();   // advance
+        void operator ++ (int);           // (postfix)
+        void toStart();                   // go to the beginning
+        const KsProjProps * operator -> () const;
+    private:
+        enum_t type_mask;
+        PltHashIterator<KscAbsPath, KscCommObject *> it;
+    };
+#endif
+        
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -99,14 +145,15 @@ class KscVariable
 : public KscCommObject
 {
 public:
-    KscVariable(const char *var_name);
-    ~KscVariable();
+    KscVariable(const KscAbsPath &var_name);
 
     KS_OBJ_TYPE typeCode() const;
 
-    //virtual bool getUpdate();            // TODO
-    //virtual bool setUpdate();            // TODO
-    KsValueHandle getValue() const;      // TODO
+    bool getProjPropsUpdate();
+    virtual bool getUpdate();
+    virtual bool setUpdate();
+    KsValueHandle getValue() const;
+
     const KsVarProjProps *getProjProps() const;
     const KsVarCurrProps *getCurrProps() const;
     bool setCurrProps(KsVarCurrProps &cp);
@@ -114,10 +161,13 @@ public:
    
 protected:
 
-    KsVarProjProps *proj_props;
-    KsVarCurrProps *curr_props;
+    KsVarProjProps proj_props;
+    KsVarCurrProps curr_props;
 
+    friend class KscPackage; // for access to fDirty 
     bool fDirty;
+
+    bool setProjProps(KsProjPropsHandle);
 };
 
 #endif
@@ -125,6 +175,11 @@ protected:
 //////////////////////////////////////////////////////////////////////
 // EOF CommObject.h
 //////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
 
 
