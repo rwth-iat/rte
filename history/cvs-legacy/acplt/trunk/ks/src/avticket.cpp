@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.1 1997-03-10 17:10:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.2 1997-03-13 09:51:44 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,6 +37,29 @@
 
 
 #include "ks/avticket.h"
+
+
+//////////////////////////////////////////////////////////////////////
+
+PltHashTable<KsAuthType, KsTicketConstructor>
+KsAvTicket::_factory;
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsAvTicket::registerAvTicketType(enum_t ticketType, KsTicketConstructor ctor)
+{
+    return _factory.add(KsAuthType(ticketType), ctor);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsAvTicket::deregisterAvTicketType(enum_t ticketType)
+{
+    KsTicketConstructor dummy;
+    return _factory.remove(KsAuthType(ticketType), dummy);
+}
 
 //////////////////////////////////////////////////////////////////////
 

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.1 1997-03-10 17:10:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.2 1997-03-13 09:51:43 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -114,6 +114,10 @@ public:
     
     virtual bool canWriteVars(const KsArray<KsString> & names,
                               KsArray<bool> &canRead) const;
+    
+    static bool registerAvTicketType(enum_t ticketType, KsTicketConstructor);
+    static bool deregisterAvTicketType(enum_t ticketType);
+
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
 };
