@@ -831,8 +831,7 @@ ttree.obj: ..\..\examples\ttree.cpp ..\..\include\ks\client.h \
  ..\..\include\ks\clntpath.h ..\..\include\ks\commobject.h \
  ..\..\..\plt\include\plt\hashtable_impl.h \
  ..\..\..\plt\include\plt\container_impl.h \
- ..\..\..\plt\include\plt\handle_impl.h \
- ..\..\..\plt\include\plt\list_impl.h ttree_inst.h
+ ..\..\..\plt\include\plt\handle_impl.h ttree_inst.h
 
 ttree1.obj: ..\..\examples\ttree1.cpp ..\..\include\ks\commobject.h \
  ..\..\include\ks\props.h ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
@@ -841,7 +840,11 @@ ttree1.obj: ..\..\examples\ttree1.cpp ..\..\include\ks\commobject.h \
  ..\..\include\ks\value.h ..\..\include\ks\array.h \
  ..\..\..\plt\include\plt\array.h ..\..\include\ks\time.h \
  ..\..\..\plt\include\plt\time.h ..\..\include\ks\propsv1.h \
- ..\..\include\ks\clntpath.h ..\..\include\ks\avmodule.h
+ ..\..\include\ks\clntpath.h ..\..\include\ks\avmodule.h \
+ ..\..\include\ks\avsimplemodule.h ..\..\include\ks\client.h \
+ ..\..\include\ks\hostent.h ..\..\include\ks\register.h \
+ ..\..\include\ks\result.h ..\..\include\ks\serviceparams.h \
+ ..\..\include\ks\list.h
 
 unix_manager.obj: ..\..\src\unix_manager.cpp ..\..\include\ks\manager.h \
  ..\..\include\ks\simpleserver.h ..\..\include\ks\svrbase.h \
