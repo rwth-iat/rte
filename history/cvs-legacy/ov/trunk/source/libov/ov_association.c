@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.15 2003-08-25 09:16:03 ansgar Exp $
+*   $Id: ov_association.c,v 1.16 2003-09-04 13:47:03 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -236,7 +236,23 @@ CONTINUE:
 			*/
 			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
 		}
+	} /* if not exists */
+
+	else {	
+		/* also if association object was created provisorically, it must be linked concerning
+		*  the parentrelationship and childrelationship association
+		*/	
+		
+		/*
+		*	link association with parent class
+		*/
+		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
+		/*
+		*	link association with child class
+		*/
+		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
 	}
+
 	passoc->v_parentflags = passocdef->parentflags;
 	passoc->v_childflags = passocdef->childflags;
 	passoc->v_linkfnc = passocdef->linkfnc;
@@ -1296,6 +1312,7 @@ OV_UINT ov_association_getparentoffset(
 	if (!strcmp(passocdef->identifier,"parentrelationship")) return (3*sizeof(OV_ANCHOR)+4*sizeof(OV_HEAD));
 	if (!strcmp(passocdef->identifier,"embedment")) return (3*sizeof(OV_ANCHOR)+5*sizeof(OV_HEAD));
 	if (!strcmp(passocdef->identifier,"construction")) return (2*sizeof(OV_ANCHOR)+1*sizeof(OV_HEAD));
+	if (!strcmp(passocdef->identifier,"typedescription")) return (2*sizeof(OV_ANCHOR));
 	return 0;
 }
 
@@ -1309,6 +1326,7 @@ OV_UINT ov_association_getchildoffset(
 	if (!strcmp(passocdef->identifier,"childrelationship")) return (3*sizeof(OV_ANCHOR));
 	if (!strcmp(passocdef->identifier,"embedment")) return (2*sizeof(OV_ANCHOR));
 	if (!strcmp(passocdef->identifier,"construction")) return (2*sizeof(OV_ANCHOR));
+	if (!strcmp(passocdef->identifier,"typedescription")) return (2*sizeof(OV_ANCHOR));
 	return 0;
 }
 
@@ -1317,13 +1335,14 @@ OV_UINT ov_association_gettablesize(
 ) {
 	if (!strcmp(pclassdef->identifier,"object")) return (2*sizeof(OV_ANCHOR));
 	if (!strcmp(pclassdef->identifier,"domain")) return (2*sizeof(OV_ANCHOR)+1*sizeof(OV_HEAD));
-	if (!strcmp(pclassdef->identifier,"operation")) return (2*sizeof(OV_ANCHOR));
+	if (!strcmp(pclassdef->identifier,"operation")) return (3*sizeof(OV_ANCHOR));
 	if (!strcmp(pclassdef->identifier,"variable")) return (3*sizeof(OV_ANCHOR));
 	if (!strcmp(pclassdef->identifier,"part")) return (3*sizeof(OV_ANCHOR));
 	if (!strcmp(pclassdef->identifier,"association")) return (4*sizeof(OV_ANCHOR));
 	if (!strcmp(pclassdef->identifier,"class")) return (3*sizeof(OV_ANCHOR)+6*sizeof(OV_HEAD));
 	if (!strcmp(pclassdef->identifier,"library")) return (2*sizeof(OV_ANCHOR)+1*sizeof(OV_HEAD));
 	if (!strcmp(pclassdef->identifier,"structure")) return (2*sizeof(OV_ANCHOR)+2*sizeof(OV_HEAD));
+	if (!strcmp(pclassdef->identifier,"operationtype")) return (2*sizeof(OV_ANCHOR)+1*sizeof(OV_HEAD));
 	return 0;
 }
 
@@ -1396,7 +1415,7 @@ void ov_association_linktable_insert(
 	OV_INSTPTR_ov_class		pnextclass;
 	OV_INSTPTR_ov_object		pinst;
 	OV_INSTPTR_ov_object		pnextinst;
-	char 				*pcs, *pct;
+	OV_BYTE				*pcs, *pct;
 
 	/*
 	*	when adjusting the offsets of the child and parent association, we store the
