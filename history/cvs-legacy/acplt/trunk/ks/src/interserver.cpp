@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.1 1999-02-25 17:15:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.2 1999-02-26 13:28:50 harald Exp $ */
 /*
  * Copyright (c) 1999
  * Chair of Process Control Engineering,
@@ -424,7 +424,11 @@ bool KssInterKsServerConnection::openPortmapperConnection()
 	    delete _cln_con;
 	    _cln_con = 0;
 	} else {
+#if PLT_SYSTEM_NT
+	    ::closesocket(sock);
+#else
 	    ::close(sock);
+#endif
 	}
 	_result = KS_ERR_GENERIC;
 	return false;
@@ -473,7 +477,11 @@ bool KssInterKsServerConnection::openManagerConnection(u_short port,
 	    delete _cln_con;
 	    _cln_con = 0;
 	} else {
+#if PLT_SYSTEM_NT
+	    ::closesocket(sock);
+#else
 	    ::close(sock);
+#endif
 	}
 	_result = KS_ERR_GENERIC;
 	return false;
@@ -521,7 +529,11 @@ bool KssInterKsServerConnection::openServerConnection(u_short port)
 	    delete _cln_con;
 	    _cln_con = 0;
 	} else {
+#if PLT_SYSTEM_NT
+	    ::closesocket(sock);
+#else
 	    ::close(sock);
+#endif
 	}
 	_result = KS_ERR_GENERIC;
 	return false;

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.6 1999-02-25 17:15:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.7 1999-02-26 13:28:50 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -244,15 +244,37 @@ KssTCPXDRConnection::KssTCPXDRConnection(int fd, unsigned long timeout,
 	if ( connect(_fd, (struct sockaddr *) &_client_address,
 		     _client_address_len) == 0 ) {
 	    //
-	    // Whoops. That was fast. We got an immediate connection.
+	    // Whoops. That was fast. We've got an immediate connection.
+	    // Well -- chances to get an immediate connection are very rare
+	    // at best. It can probably only happen, if...
+	    // 1) we're connecting to a local listening socket, and
+	    // 2) the scheduler preempts us just after the request was sent
+	    // to the listening socket and before the connect() call checks
+	    // for an answer.
+	    // So this situation will be pretty rare. But even if it should
+	    // show up, we just remain in the connecting state. Because the
+	    // socket will then get at least writeable (because there is now
+	    // free space in the write buffer), the receive() method will
+	    // be called the next time we run a select(), so we will be
+	    // notified in every case that the connection has been
+	    // established.
 	    //
-	    _state = CNX_STATE_CONNECTED;
+	    _state = CNX_STATE_CONNECTING;
 	} else {
 	    //
 	    // Okay. The connection establishment is going on in the
 	    // background.
 	    //
-	    _state = CNX_STATE_CONNECTING;
+#if PLT_SYSTEM_NT
+	    int err = WSAGetLastError();
+	    if ( (err == WSAEINPROGRESS) || (err == WSAEWOULDBLOCK) ) {
+#else
+	    if ( (errno == EINPROGRESS) || (errno == EWOULDBLOCK) ) {
+#endif
+		_state = CNX_STATE_CONNECTING;
+	    } else {
+		_state = CNX_STATE_DEAD;
+	    }
 	}
 	// FIXME: Init _ptr etc ??
     } else {
