@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.12 2000-08-01 11:06:04 dirk Exp $
+*   $Id: ov_version.h,v 1.13 2000-12-15 15:40:47 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -37,15 +37,15 @@
 #define OV_VER_CODEGEN						"1.2.0"
 #define OV_VER_LIBOV						"1.2.1"
 #define OV_VER_DBUTIL 						"1.2.0"
-#define OV_VER_LIBOVKS 						"1.2.1"
+#define OV_VER_LIBOVKS 						"1.2.2"
 #define OV_VER_SERVER						"1.2.0"
 #define OV_VER_NTSERVICE					"1.2.1"
-#define OV_VER_CONTROLPANEL					"1.0.0"
+#define OV_VER_CONTROLPANEL					"1.2.0"
 
 #define OV_VER_FILEVERSION_CODEGEN			1, 2, 0, 0
 #define OV_VER_FILEVERSION_LIBOV			1, 2, 1, 0
 #define OV_VER_FILEVERSION_DBUTIL 			1, 2, 0, 0
-#define OV_VER_FILEVERSION_LIBOVKS 			1, 2, 1, 0
+#define OV_VER_FILEVERSION_LIBOVKS 			1, 2, 2, 0
 #define OV_VER_FILEVERSION_SERVER			1, 2, 0, 0
 #define OV_VER_FILEVERSION_NTSERVICE		1, 2, 1, 0
 #define OV_VER_FILEVERSION_CONTROLPANEL		1, 0, 0, 0
