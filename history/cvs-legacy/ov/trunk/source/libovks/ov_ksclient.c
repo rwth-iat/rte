@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.c,v 1.6 2000-04-04 15:12:47 dirk Exp $
+*   $Id: ov_ksclient.c,v 1.7 2000-07-03 13:38:40 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -625,8 +625,12 @@ void OvKssInterKsServerConnection::async_attention(
 		}
 		ok = ov_ksclient_xdr_KS_AVMODULE_RES(xdr, &avresult);
 		if(ok) {
-			if(avresult.type != psvc->pavmodule->type) {
-				ok = FALSE;
+			if(avresult.type == OV_TT_NONE) {
+				psvc->pavmodule->type = OV_TT_NONE;
+			} else {
+				if(avresult.type != psvc->pavmodule->type) {
+					ok = FALSE;
+				}
 			}
 		}
 		if(!ok) {
