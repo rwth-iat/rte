@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.33 1999-01-08 13:09:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.34 1999-01-12 16:13:33 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -37,8 +37,8 @@
 
 /*
  * svrbase.cpp -- The basic communication and dispatching stuff common to
- *                all ACPLT/KS servers (and managers). It´s sometimes getting
- *                real dirty here as we´ve to hide the communication details
+ *                all ACPLT/KS servers (and managers). It's sometimes getting
+ *                really dirty here as we´ve to hide the communication details
  *                from the server application programmer. Especially with
  *                the connection manager and other communication layers this
  *                leads to a bunch of #defines. But now -- enjoy =:)
@@ -415,7 +415,8 @@ KsServerBase::dispatch(u_long serviceId,
 {
     bool decodedOk = true;
     switch ( serviceId ) {
-        
+#if !PLT_SERVER_TRUNC_ONLY
+
     case KS_GETVAR:
         {
             KsGetVarParams params(xdrIn, decodedOk);
@@ -492,6 +493,7 @@ KsServerBase::dispatch(u_long serviceId,
         }
         break;
 
+#endif
     default:
         // 
         // This is an unknown service.
@@ -502,6 +504,7 @@ KsServerBase::dispatch(u_long serviceId,
 } // KsServerBase::dispatch
 
 
+#if !PLT_SERVER_TRUNC_ONLY
 // ---------------------------------------------------------------------------
 // The following ACPLT/KS base services are not implemented by default. A
 // derived class is responsible for providing suitable implementations.
@@ -540,14 +543,15 @@ KsServerBase::exgData(KsAvTicket &,
 {
     result.result = KS_ERR_NOTIMPLEMENTED;
 } // KsServerBase::exgData
+#endif
 
 
+// ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // Event handling section (timeouts & i/o).
 // Here we deal with timer events and impatient KS clients requesting
 // services from us...
 //
-
 
 // ---------------------------------------------------------------------------
 // Helper function. Get ready readable fds with optional timeout. When using
@@ -653,7 +657,7 @@ KsServerBase::hasPendingEvents() const
 } // KsServerBase::hasPendingEvents
 
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 // Serve RPC requests with timeout. Return -1 on error or the number
 // of served fds.
 //
@@ -743,10 +747,10 @@ KsServerBase::serveRequests(const KsTime *pTimeout)
 } // KsServerBase::serveRequests
 
 
-//////////////////////////////////////////////////////////////////////
-// Handles pending events or waits at most until timeout. In this
-// case it returns false, otherwise -- when events have been served --
-// it returns true.
+// ---------------------------------------------------------------------------
+// Handles pending events or waits at most until timeout. In this case it
+// returns false, otherwise -- when events have been served -- it returns
+// true.
 //
 bool
 KsServerBase::servePendingEvents(KsTime * pTimeout)
@@ -788,13 +792,13 @@ KsServerBase::servePendingEvents(KsTime * pTimeout)
 } // KsServerBase::servePendingEvents
 
 
-//////////////////////////////////////////////////////////////////////
-// Start the Server. This method will be extended by derived classes.
-// Here in this class we create the transports. Note that _sock_port
-// should have already been initialized by now. Another note about
-// the _is_ok flag. To allow the restart of a server without explicit
-// reset, we don't check here the flag before starting. But _is_ok
-// will indicate the outcome of the startServer() method.
+// ---------------------------------------------------------------------------
+// Start the Server. This method will be extended by derived classes. Here in
+// this class we create the transports. Note that _sock_port should have
+// already been initialized by now. Another note about the _is_ok flag. To
+// allow the restart of a server without explicit reset, we don't check here
+// the flag before starting. But _is_ok will indicate the outcome of the
+// startServer() method.
 // 
 void
 KsServerBase::startServer()

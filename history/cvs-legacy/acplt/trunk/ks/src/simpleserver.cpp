@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.23 1998-12-14 18:05:03 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.24 1999-01-12 16:13:33 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -35,7 +35,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
-
+/* v1+ stuff: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
 //////////////////////////////////////////////////////////////////////
 
@@ -318,7 +318,7 @@ KsSimpleServer::getVarItem(KsAvTicket &ticket,
 		// current properties.
 		//
 		result.result = pobj->getCurrProps(result.item);
-//                result.item = pobj->getCurrProps();
+//FIXME                result.item = pobj->getCurrProps();
 //                result.result = result.item ? KS_ERR_OK : KS_ERR_GENERIC;
             } else {
 		//
@@ -435,6 +435,9 @@ KsSimpleServer::getPPOfObject(KssCommObject *pobj,
 	case KS_OT_LINK:
 	    pcs = (KssLink *) pobj;
 	    break;
+        case KS_OT_HISTORY:
+	    pcs = (KssHistory *) pobj;
+	    break;
 	default:
 	    result.result = KS_ERR_BADPATH;
 	    return;
@@ -450,18 +453,25 @@ KsSimpleServer::getPPOfObject(KssCommObject *pobj,
 	//
         // Iterate over the children of a communication object.
 	//
-        KssDomainIterator *pit =
-	       PLT_RETTYPE_CAST((KssDomainIterator *))
+        KssChildIterator *pit =
+	       PLT_RETTYPE_CAST((KssChildIterator *))
 	       pcs->newMaskedIterator(mask, params.type_mask);
 	if ( pit ) {
-	    // We got an iterator. Use it.
-	    for ( KssDomainIterator &it = *pit; it; ++it ) {
+	    //
+	    // We got an iterator. Just use it(tm).
+	    //
+	    for ( KssChildIterator &it = *pit; it; ++it ) {
 		if ( *it ) {
-		    // check if the child is visible
+		    //
+		    // Check that the child is visible before adding it
+		    // to the child list returned as the service's result.
+		    //
                     PltString childname(prefix,
 					(*it)->getIdentifier());
 		    if ( ticket.isVisible(childname) ) {
-			// Ask for proj properties
+			//
+			// Ask for the child's engineered properties.
+			//
                         KsProjPropsHandle hpp = (*it)->getPP();
 			if ( hpp ) {
 			    hpp->access_mode &= 
@@ -470,10 +480,15 @@ KsSimpleServer::getPPOfObject(KssCommObject *pobj,
 				ksStringToPercent(hpp->identifier);
 			    result.items.addLast(hpp);
 			} else {
-			    // ignore error
+			    //
+			    // Ignore any error, thus making the child
+			    // effectively invisible.
+			    //
 			}
 		    } else {
-			// not visible, do nothing
+			//
+			// Not visible, so do nothing(tm).
+			//
                     }
 		} else {
 		    // null handle, log error
@@ -522,10 +537,6 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
                     prefix = PltString(PltString(path), "/");
                     hc = _root_domain.getChildByPath(path);
                     if ( hc ) {
-			//
-                        // Child found. Is it a domain?
-			//
-                        //pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
 			pd = hc.getPtr();
                     }
                 }

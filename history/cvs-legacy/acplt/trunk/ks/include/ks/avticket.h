@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.17 1998-06-29 11:11:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.18 1999-01-12 16:12:36 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -40,8 +40,11 @@
 #include "ks/ks.h"
 #include "ks/xdr.h"
 #include "ks/string.h"
+
+#if !PLT_SERVER_TRUNC_ONLY
 #include "ks/array.h"
 #include "plt/hashtable.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -105,8 +108,9 @@ public:
     virtual ~KsAvTicket();
 
     ////
-    //// Permissions
+    //// Permissions (not available for a minimalist's server)
     ////
+#if !PLT_SERVER_TRUNC_ONLY
     virtual bool isVisible(const KsString & name) const
         { return getAccess(name) != KS_AC_NONE; }
 
@@ -121,6 +125,7 @@ public:
                               KsArray<bool> &canRead) const;
 
     KS_ACCESS getAccess(const KsString &name) const;
+#endif
     
     ////
     //// sender address
@@ -129,10 +134,12 @@ public:
     struct in_addr getSenderInAddr() const; // network byte order
 
     ////
-    //// Ticket type registration
+    //// Ticket type registration (not available for a minimalist's server)
     ////
+#if !PLT_SERVER_TRUNC_ONLY
     static bool registerAvTicketType(enum_t ticketType, KsTicketConstructor);
     static bool deregisterAvTicketType(enum_t ticketType);
+#endif
 
     ////
     //// last resort ticket
@@ -153,9 +160,11 @@ protected:
     virtual bool xdrDecodeVariant(XDR *)  = 0;
 
 private:
+#if !PLT_SERVER_TRUNC_ONLY
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
+#endif
     struct sockaddr * _psaddr;
-};
+}; // class KsAvTicket
 
 
 //////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.19 1999-01-08 13:09:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.20 1999-01-12 16:13:32 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -40,7 +40,9 @@
 #include "ks/rpc.h"
 #include "ks/avticket.h"
 #include "ks/event.h"
+#if !PLT_SERVER_TRUNC_ONLY
 #include "ks/serviceparams.h"
+#endif
 #include "plt/comparable.h"
 #include "plt/priorityqueue.h"
 #include "ks/svrtransport.h"
@@ -111,6 +113,7 @@ public:
     KsTimerEvent *removeNextTimerEvent();
 
     // service functions
+#if !PLT_SERVER_TRUNC_ONLY
     virtual void getVar(KsAvTicket &ticket,
                         const KsGetVarParams &params,
                         KsGetVarResult &result);
@@ -125,7 +128,8 @@ public:
 
     virtual void exgData(KsAvTicket &ticket,
                          const KsExgDataParams &params,
-                         KsExgDataResult &result);                         
+                         KsExgDataResult &result);
+#endif
 
 #if PLT_USE_BUFFERED_STREAMS
     KssConnectionManager *getConnectionManager() const

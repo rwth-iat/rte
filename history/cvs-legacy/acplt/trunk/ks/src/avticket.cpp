@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.16 1998-06-29 11:20:38 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.17 1999-01-12 16:12:56 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -57,6 +57,7 @@ KsAvTicket::invariant() const
 #endif // PLT_DEBUG_INVARIANTS
 //////////////////////////////////////////////////////////////////////
 
+#if !PLT_SERVER_TRUNC_ONLY
 PltHashTable<KsAuthType, KsTicketConstructor>
 KsAvTicket::_factory;
 
@@ -76,6 +77,7 @@ KsAvTicket::deregisterAvTicketType(enum_t ticketType)
     KsTicketConstructor dummy;
     return _factory.remove(KsAuthType(ticketType), dummy);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -100,12 +102,16 @@ KsAvTicket::xdrNew(XDR * xdrs)
     KsAuthType typecode;                                           
     if ( typecode.xdrDecode(xdrs) ) {                       
         /* typecode successfully decoded */                    
+#if !PLT_SERVER_TRUNC_ONLY
         KsTicketConstructor ctor;
                 
         if ( _factory.query(typecode, ctor) ) {
             // found a custom constructor for this av-typecode
             p = ctor(xdrs);
         } else {
+#else
+	{
+#endif
             // try builtins
             switch(typecode) {                                     
                 KS_XDR_MAP(KS_AUTH_NONE, KsAvNoneTicket);
@@ -152,6 +158,7 @@ KsAvTicket::setSenderAddress(const sockaddr * pSaddr,
 
 //////////////////////////////////////////////////////////////////////
 
+#if !PLT_SERVER_TRUNC_ONLY
 bool 
 KsAvTicket::canReadVars(const KsArray<KsString> & names,
                         KsArray<bool> &canRead) 
@@ -201,6 +208,7 @@ KsAvTicket::getAccess(const KsString &name) const
     if (canWriteVar(name))  res |= KS_AC_WRITE;
     return (KS_ACCESS) res;
 }
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
