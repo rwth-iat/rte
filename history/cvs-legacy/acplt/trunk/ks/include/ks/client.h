@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.19 1998-01-12 07:49:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.20 1998-01-14 16:35:51 harald Exp $ */
 
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
@@ -278,6 +278,7 @@ protected:
     // service functions
     //
     bool getServerDesc(struct sockaddr_in *host_addr,    // host 
+                       unsigned short port,              // opt. port of manager
                        const KsServerDesc &server,       // description
                        KsGetServerResult &server_info);  // result
 
