@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.11 1999-08-30 15:23:28 dirk Exp $
+*   $Id: ov_macros.h,v 1.12 1999-11-03 11:47:19 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -344,9 +344,9 @@
 *	Get the vtable pointer of the direct base class of an object
 *	of a given class
 */
-#define Ov_GetBaseclassVTablePtr(class, pobj)								\
-	((OV_BVPT_##class)(Ov_GetParent(ov_inheritance, Ov_GetClassPtr(			\
-	Ov_PtrUpCast(ov_class, pobj)))->v_pvtable))
+#define Ov_GetBaseclassVTablePtr(class, pvtable, pobj)						\
+	pvtable = ((OV_BVPT_##class)(Ov_GetParent(ov_inheritance, 				\
+	Ov_GetClassPtr(class, pobj))->v_pvtable))
 
 /*
 *	Test, if a variable definition object defines a variable with a
@@ -391,7 +391,7 @@
 *	Convert a time (span) into a double variable
 */
 #define Ov_TimeToDouble(time, dbl)											\
-	dbl = (OV_DOUBLE)(time).secs + (OV_DOUBLE)(time.usecs)/(OV_DOUBLE)1e6
+	dbl = (OV_DOUBLE)(time).secs + (OV_DOUBLE)(time).usecs/(OV_DOUBLE)1e6
 
 /*
 *	Convert a double into a time (span) variable
