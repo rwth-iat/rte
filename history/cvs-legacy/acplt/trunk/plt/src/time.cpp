@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.3 1997-04-01 11:24:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.4 1997-04-01 12:30:31 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,31 +38,35 @@
 
 #include "plt/time.h"
 
-#if PLT_SYSTEM_OS2
-#include <time.h>
+#if PLT_SYSTEM_OS2 || PLT_SYSTEM_NT
+#include <sys/timeb.h>
 #endif
 
-#if PLT_SYSTEM_NT
+#if 0 // was: PLT_SYSTEM_NT
 #include <time.h>
 #include <windows.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////
 
-#if PLT_SYSTEM_OS2
+#if PLT_SYSTEM_OS2 || PLT_SYSTEM_NT
 
 PltTime
 PltTime::now(long secs, long usecs)
 {
-    // TODO: better resolution (or another OS)
-    return PltTime(time(0)+secs, usecs);
+    struct timeb t;
+    ftime(&t);
+
+    PltTime res(t.time+secs, t.millitm*1000+usecs);
+    res.normalize;
+    return res;
 }
 
 #endif
 
 //////////////////////////////////////////////////////////////////////
 
-#if PLT_SYSTEM_NT
+#if 0 // was: PLT_SYSTEM_NT
 
 PltTime
 PltTime::now(long secs_arg, long usecs_arg)
