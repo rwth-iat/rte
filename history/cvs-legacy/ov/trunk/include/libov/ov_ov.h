@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.11 2000-04-07 10:36:24 dirk Exp $
+*   $Id: ov_ov.h,v 1.12 2000-04-13 06:56:48 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -299,21 +299,6 @@ typedef OV_ENUM OV_OP_PROPS;
 typedef OV_ENUM OV_TICKET_TYPE;
 
 /*
-*	OV_TICKET:
-*	----------
-*	Tickets are used for authentification/verification
-*/
-typedef struct {
-	struct OV_TICKET_VTBL	*vtbl;
-	OV_TICKET_TYPE			type;
-	union {
-		struct {
-			OV_STRING		id;				/* only, if tickettype == OV_TT_SIMPLE */
-		}	simpleticket;
-	}	ticketunion;
-}	OV_TICKET;
-
-/*
 *	limits of values
 *	----------------
 */
@@ -496,6 +481,33 @@ typedef OV_ENUM OV_HIST_TYPE;
 #define OV_IPM_DEFAULT	KS_IPM_DEFAULT
 
 typedef OV_ENUM OV_INTERPOLATION_MODE;
+
+/*
+*	OV_TICKET:
+*	----------
+*	Tickets are used for authentification/verification
+*/
+typedef struct {
+	struct OV_TICKET_VTBL	*vtbl;
+	OV_TICKET_TYPE			type;
+	union {
+		struct {
+			OV_STRING		id;				/* only, if tickettype == OV_TT_SIMPLE */
+		}	simpleticket;
+	}	ticketunion;
+}	OV_TICKET;
+
+/*
+*	OV_TICKET_VTBL:
+*	---------------
+*	VTable associated with an authentification/verification ticket (see ACPLT/KS)
+*/
+#ifndef OV_COMPILE_LIBOVKS
+struct OV_TICKET_VTBL {
+	OV_ACCESS	(* getaccess)(const OV_TICKET *pticket);
+};
+typedef struct OV_TICKET_VTBL	OV_TICKET_VTBL;
+#endif
 
 /*
 *	OV_MSG_TYPE:
