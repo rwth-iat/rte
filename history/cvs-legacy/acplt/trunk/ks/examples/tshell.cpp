@@ -18,21 +18,19 @@
 #include "ks/commobject.h"
 #include "ks/path.h"
 
-#if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
+
+#if PLT_SEE_ALL_TEMPLATES
+#include "plt/priorityqueue.h"
+#include "plt/hashtable.h"
+#include "ks/array.h"
+#include "ks/handle.h"
+#include "ks/list.h"
+#else
 #include "plt/priorityqueue_impl.h"
 #include "plt/hashtable_impl.h"
 #include "ks/array_impl.h"
 #include "ks/handle_impl.h"
 #include "ks/list_impl.h"
-#endif
-
-#if PLT_COMPILER_BORLAND
-#include "plt/priorityqueue.h"
-#include "plt/hashtable.h"
-#include "ks/array.h"
-#include "ks/array_builtins.h"
-#include "ks/handle.h"
-#include "ks/list.h"
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -302,8 +300,86 @@ execute_ls()
 
 void
 print_value(KsValueHandle hv) {
-    hv->debugPrint(cout);
-    cout << endl;
+    if(!hv) {
+        cout << "no value" << endl;
+        return;
+    }
+
+    switch(hv->xdrTypeCode()) {
+    case KS_VT_VOID : 
+        {
+            cout << "void" << endl;
+        } 
+        break;
+    case KS_VT_INT : 
+        {
+            KsIntValue *pInt =
+                PLT_DYNAMIC_PCAST(KsIntValue, hv.getPtr());
+            check_pointer(pInt);
+            cout << "Int " << (long)(*pInt) << endl;
+        }
+        break;
+    case KS_VT_UINT :
+        {
+            KsUIntValue *pUInt =
+                PLT_DYNAMIC_PCAST(KsUIntValue, hv.getPtr());
+            check_pointer(pUInt);
+            cout << "UInt " << (u_long)(*pUInt) << endl;
+        }
+        break;
+    case KS_VT_SINGLE :
+        {
+            KsSingleValue *pSingle =
+                PLT_DYNAMIC_PCAST(KsSingleValue, hv.getPtr());
+            check_pointer(pSingle);
+            cout << "Single " << (float)(*pSingle) << endl;
+        }
+        break;
+    case KS_VT_DOUBLE :
+        {
+            KsDoubleValue *pDouble =
+                PLT_DYNAMIC_PCAST(KsDoubleValue, hv.getPtr());
+            check_pointer(pDouble);
+            cout << "Double " << (double)(*pDouble) << endl;
+        }
+        break;
+    case KS_VT_STRING :
+        {
+            KsStringValue *pStr =
+                PLT_DYNAMIC_PCAST(KsStringValue, hv.getPtr());
+            check_pointer(pStr);
+            cout << "String " << (const char *)(*pStr) << endl;
+        }
+        break;
+    case KS_VT_TIME :
+        {
+            KsTimeValue *pTime =
+                PLT_DYNAMIC_PCAST(KsTimeValue, hv.getPtr());
+            check_pointer(pTime);
+#if PLT_SYSTEM_OPENVMS
+            unsigned long sec = pTime->tv_sec;
+#else
+            long sec = pTime->tv_sec;
+#endif
+            cout << "Time " << ctime(&sec) << endl;
+        }
+        break;
+    case KS_VT_BYTE_VEC :
+    case KS_VT_INT_VEC :
+    case KS_VT_UINT_VEC :
+    case KS_VT_SINGLE_VEC :
+    case KS_VT_DOUBLE_VEC :
+    case KS_VT_STRING_VEC :
+    case KS_VT_TIME_VEC :
+        {
+            cout << "Vector value" << endl;
+        }
+        break;
+    default:
+        {
+            cout << "unknown typecode" << endl;
+        }
+    }
 }
 
 void
@@ -433,9 +509,15 @@ main(int, char **)
 
 }
 
-#include "plt/hashtable_impl.h"
-#include "plt/handle_impl.h"
+//////////////////////////////////////////////////////////////////////
+
+#if PLT_COMPILER_BORLAND
+#include "ks/array_builtins.h"
+#endif
+
+#if PLT_INSTANTIATE_TEMPLATES
 #include "tshell_inst.h"
+#endif
 
 
 

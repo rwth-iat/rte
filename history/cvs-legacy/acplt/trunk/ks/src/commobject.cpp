@@ -115,8 +115,10 @@ KscCommObject::KscCommObject(const char *object_path)
 KscCommObject::~KscCommObject()
 {
     KscServerBase *myServer = getServer();
-    PLT_ASSERT(myServer);
-    myServer->decRefcount();
+
+    if(hasValidPath() && myServer) {
+        myServer->decRefcount();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
