@@ -10,6 +10,38 @@
 
 #include <plt/debug.h>
 
+//////////////////////////////////////////////////////////////////////
+// abstract class PltDictionary<K,V>
+//////////////////////////////////////////////////////////////////////
+//
+// A PltDictionary<K,V> maps from keys of class K to values of 
+// class V. 
+//
+// Operations:
+// ===========
+//
+// Accessors:
+// ----------
+//
+// bool query(const K& k, V& v) const
+//    Lookup key k. If k is a key in the dictionary assign the 
+//    associated value to v and return true. 
+//    Otherwise return false.
+//
+// Modifiers:
+// ----------
+//
+// bool add(const K& k, const V& v)
+//    Try to insert the association (k->v). Return true on success, 
+//    false on failure. Failure could be caused by
+//    - lack of memory
+//    - key k is already a key of the dictionary
+//
+// bool remove(const K& k, V& v)
+//    Like query, but removes the association on success.
+//
+//////////////////////////////////////////////////////////////////////
+
 template <class K, class V>
 class PltDictionary : virtual public PltDebuggable {
 public:
@@ -20,5 +52,6 @@ public:
     virtual bool remove(const K&, V&) = 0;
 };
 
+//////////////////////////////////////////////////////////////////////
     
 #endif
