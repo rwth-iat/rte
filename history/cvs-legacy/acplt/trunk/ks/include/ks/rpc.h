@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.21 1999-10-04 08:58:58 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.22 2000-04-10 15:02:00 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -49,15 +49,28 @@ extern int get_myaddress(struct sockaddr_in *);
 #include <rpc/pmap_prot.h>
 #endif
 
+/*
+ * But now for the "industrial standard" -- well, looks like our industry
+ * likes this incapable, instable, insecure, insane, inappropriate and
+ * inadequate operating system. Maybe just because of the same "in" prefix.
+ */
 #if PLT_SYSTEM_NT
 
+/*
+ * Make using WinSock2 optional, as it can be sometimes a pain in the ass.
+ */
 #if PLT_USE_WINSOCK2
 #include <winsock2.h>
 #endif
 
+/*
+ * Cygnus' Win32 compiler better than the average Windooze compiler -- no
+ * wonder, as it is based on gcc technology.
+ */
 #if !PLT_COMPILER_CYGWIN
 typedef unsigned char u_char;
 #endif
+
 #include <rpc/rpc.h>
 #include <rpc/pmap_pro.h>
 #include <rpc/pmap_cln.h>
@@ -127,15 +140,29 @@ static KsNTOncRpc ks_nt_oncrpc;
  * but in the end that's more precise than the dreaded long *, which
  * is not very 64bit compliant at all. But Sun surely never dreamt of
  * 64 bit when developing ONC/RPC...
+ *
  * Note: glibc 1.x systems don't define __GLIBC__ but instead the
  * __GNULIBRARY__ symbol. Because these old glibc systems don't have
  * the int32_t, we do automatically fall back to the old long.
+ *
+ * Yet Another Note: FreeBSD also uses int32_t (guess where the glibc
+ * header files might have come from) -- at least newer FreeBSD releases.
  */
+#if PLT_SYSTEM_FREEBSD
+
+typedef int32_t *XDR_INLINE_PTR;
+
+#else
+
 #if defined(__GLIBC__) && (__GLIBC__ >= 2) && defined(__GLIBC_MINOR__) && (__GLIBC_MINOR__ >= 1)
 typedef int32_t *XDR_INLINE_PTR;
 #else
 typedef long *XDR_INLINE_PTR;
 #endif
 
+#endif
+
 
 #endif /* KS_RPC_INCLUDED */
+
+/* End of ks/rpc.h */
