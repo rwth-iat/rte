@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.3 1997-07-19 13:28:27 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.4 1997-08-13 11:30:45 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,7 +44,7 @@
 #include <signal.h>
 
 extern "C" void handler(int) {
-    KsServerBase::getServerObject().stopServer();
+    KsServerBase::getServerObject().downServer();
 }
 
 class TestServer
