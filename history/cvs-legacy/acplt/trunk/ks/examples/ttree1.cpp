@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.5 1997-07-18 14:09:10 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.6 1997-09-08 09:16:30 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,10 +41,12 @@
  * objects on the client's side. You supply the host/server on the command
  * line, and this little gem (or is it just a dust ball?) prints out the
  * tree of communication objects it can find within the KS server.
+ * NEW: now it spits out the variables' values as well...
  */
 
 #include "ks/commobject.h"
 #include <iostream.h>
+#include <iomanip.h>
 #include <time.h>
 
 #define INDENTATION 3
@@ -100,10 +102,10 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     info += " ";
 
     if ( proj_props.access_mode & KS_AC_READ ) {
-	info += "readable ";
+        info += "readable ";
     }
     if ( proj_props.access_mode & KS_AC_WRITE ) {
-	info += "writeable ";
+        info += "writeable ";
     }
 
     //
@@ -112,24 +114,24 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     switch ( proj_props.xdrTypeCode() ) {
     case KS_OT_DOMAIN:
         cout << "<DOM> " << info;
-	break;
-
+        break;
+        
     case KS_OT_VARIABLE:
-	{
-	    cout << "<VAR> " << info;
-
-	    const KsVarProjProps *var_proj_props =
-           (const KsVarProjProps *) &proj_props; // for msvc
+        {
+            cout << "<VAR> " << info;
+            
+            const KsVarProjProps *var_proj_props =
+                (const KsVarProjProps *) &proj_props; // for msvc
 // replaced:            PLT_DYNAMIC_PCAST(KsVarProjProps, &proj_props);
-	    if( !var_proj_props ) {
-            cout << "<unknown projected properties>";
-	    } else {
-            DumpVarType(var_proj_props->type);
-	    }
-	    break;
-	}
+            if( !var_proj_props ) {
+                cout << "<unknown projected properties>";
+            } else {
+                DumpVarType(var_proj_props->type);
+            }
+            break;
+        }
     default:
-	cout << "<???> " << info;
+        cout << "<???> " << info;
     }
 
     cout << endl;
@@ -142,21 +144,208 @@ void DumpProjProps(KscCommObject &obj, int indent)
 
     if ( !obj.getProjPropsUpdate() ) {
         cout << "Can't retrieve \"" 
-	     << obj.getName() 
-	     << "\" for proj. props"
-	     << endl;
-	return;
+             << obj.getName() 
+             << "\" for proj. props"
+             << endl;
+        return;
     }
     proj_props = obj.getProjProps();
     if ( !proj_props ) {
         cout << "Can't get hands on \"" 
-	     << obj.getName() 
-	     << "\" for proj. props"
-	     << endl;
-	return;
+             << obj.getName() 
+             << "\" for proj. props"
+             << endl;
+        return;
     }
     DumpProjProps(*proj_props, indent);
 } // DumpProjProps
+
+
+void DumpVar(KscVariable &var, int indent)
+{
+    KsTime             time;
+    time_t             value_time;
+    size_t             size, i;
+    const KsVarCurrProps *curr_props;
+
+    if ( !var.getUpdate() ) {
+        cout << "Can't retrieve \""
+             << var.getName()
+             << "\" for curr. props"
+             << endl;
+        return;
+    }
+    curr_props = var.getCurrProps();
+    if ( !curr_props ) {
+        cout << "Can't get hands on \""
+             << var.getName()
+             << "\" for curr. props"
+             << endl;
+    }
+
+    Indent(indent);
+
+    value_time = curr_props->time.tv_sec;
+    cout << PltString(ctime(&value_time)).substr(4, 15) << " ";
+    switch ( curr_props->state ) {
+    case KS_ST_NOTSUPPORTED:
+        cout << "(no state supported) ";
+        break;
+    case KS_ST_UNKNOWN:
+        cout << "(state unknown) ";
+        break;
+    case KS_ST_BAD:
+        cout << "(state bad) ";
+        break;
+    case KS_ST_QUESTIONABLE:
+        cout << "(state questionable) ";
+        break;
+    case KS_ST_GOOD:
+        cout << "(state good) ";
+        break;
+    default:
+        cout << "(state ???) ";
+    }
+
+    switch ( curr_props->value->xdrTypeCode() ) {
+    case KS_VT_VOID:
+        cout << "void" << endl;
+        break;
+    case KS_VT_INT:
+        cout << "integer " 
+             << (long) ((KsIntValue &) *curr_props->value)
+             << endl;
+        break;
+    case KS_VT_UINT:
+        cout << "unsigned integer " 
+             << (u_long) ((KsUIntValue &) *curr_props->value)
+             << endl;
+        break;
+    case KS_VT_SINGLE:
+        cout << "single " 
+             << (float) ((KsSingleValue &) *curr_props->value)
+             << endl;
+        break;
+    case KS_VT_DOUBLE:
+        cout << "double " 
+             << (double) ((KsDoubleValue &) *curr_props->value)
+             << endl;
+        break;
+    case KS_VT_STRING:
+        cout << "string \"";
+        if ( ((KsStringValue &) *curr_props->value).len() > 40 ) {
+            cout << ((KsStringValue &) *curr_props->value).substr(0, 40)
+                 << "...";
+        } else {
+            cout << (const char *) ((KsStringValue &) *curr_props->value);
+        }
+        cout << "\"" << endl;
+        break;
+    case KS_VT_TIME:
+        time = ((KsTimeValue &) *curr_props->value);
+        value_time = time.tv_sec;
+        cout << "time " 
+             << PltString(ctime(&value_time)).substr(4, 15)
+             << endl;
+        break;
+    case KS_VT_BYTE_VEC:
+        size = ((KsByteVecValue &) *curr_props->value).size();
+        cout << "byte vector <" << size << "> {";
+        if ( size > 5 ) {
+            size = 5;
+        }
+        for ( i = 0; i < size; ++i ) {
+            cout <<  hex << setfill('0') << setw(2)
+                 << (unsigned int) ((KsByteVecValue &) *curr_props->value)[i]
+                 << dec << ",";
+        }
+        cout << "...}" << endl;
+        break;
+    case KS_VT_INT_VEC:
+        size = ((KsIntVecValue &) *curr_props->value).size();
+        cout << "integer vector <" << size << "> {";
+        if ( size > 5 ) {
+            size = 5;
+        }
+        for ( i = 0; i < size; ++i ) {
+            cout << ((KsIntVecValue &) *curr_props->value)[i]
+                 << ",";
+        }
+        cout << "...}" << endl;
+        break;
+    case KS_VT_UINT_VEC:
+        size = ((KsUIntVecValue &) *curr_props->value).size();
+        cout << "unsigned integer vector <" << size << "> {";
+        if ( size > 5 ) {
+            size = 5;
+        }
+        for ( i = 0; i < size; ++i ) {
+            cout << ((KsUIntVecValue &) *curr_props->value)[i]
+                 << ",";
+        }
+        cout << "...}" << endl;
+        break;
+    case KS_VT_SINGLE_VEC:
+        size = ((KsSingleVecValue &) *curr_props->value).size();
+        cout << "single vector <" << size << "> {";
+        if ( size > 5 ) {
+            size = 5;
+        }
+        for ( i = 0; i < size; ++i ) {
+            cout << ((KsSingleVecValue &) *curr_props->value)[i]
+                 << ",";
+        }
+        cout << "...}" << endl;
+        break;
+    case KS_VT_DOUBLE_VEC:
+        size = ((KsDoubleVecValue &) *curr_props->value).size();
+        cout << "double vector <" << size << "> {";
+        if ( size > 5 ) {
+            size = 5;
+        }
+        for ( i = 0; i < size; ++i ) {
+            cout << ((KsDoubleVecValue &) *curr_props->value)[i]
+                 << ",";
+        }
+        cout << "...}" << endl;
+        break;
+    case KS_VT_STRING_VEC:
+        size = ((KsStringVecValue &) *curr_props->value).size();
+        cout << "string vector <" << size << "> {";
+        if ( size > 5 ) {
+            size = 5;
+        }
+        for ( i = 0; i < size; ++i ) {
+            if ( ((KsStringVecValue &) *curr_props->value)[i].len() > 40 ) {
+                cout << ((KsStringVecValue &) *curr_props->value)[i].substr(0, 40)
+                     << "...";
+            } else {
+                cout << (const char *) ((KsStringVecValue &) *curr_props->value)[i];
+            }
+            cout << ",";
+        }
+        cout << "...}" << endl;
+
+        break;
+    case KS_VT_TIME_VEC:
+        size = ((KsTimeVecValue &) *curr_props->value).size();
+        cout << "time vector <" << size << "> {";
+        if ( size > 5 ) {
+            size = 5;
+        }
+        for ( i = 0; i < size; ++i ) {
+            time = ((KsTimeVecValue &) *curr_props->value)[i];
+            value_time = time.tv_sec;
+            cout << PltString(ctime(&value_time)).substr(4, 15)
+                 << ",";
+        }
+        cout << "...}" << endl;
+
+        break;
+    default:
+        cout << "???" << endl;
+    }
+} // DumpVar
 
 
 void DumpBranch(KscDomain &branch, int indent)
@@ -181,6 +370,11 @@ void DumpBranch(KscDomain &branch, int indent)
                                    PltString(indent ? "/" : "") +
                                    current->identifier);
             DumpBranch(child_domain, indent + INDENTATION);
+        } else if ( current->xdrTypeCode() == KS_OT_VARIABLE ) {
+            KscVariable var(PltString(branch.getFullPath()) + 
+                                   PltString(indent ? "/" : "") +
+                                   current->identifier);
+            DumpVar(var, indent + 2 * INDENTATION);
         }
     }
 
