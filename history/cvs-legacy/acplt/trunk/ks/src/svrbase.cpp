@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.32 1998-12-16 17:47:58 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.33 1999-01-08 13:09:23 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -47,15 +47,7 @@
  * <harald@plt.rwth-aachen.de> <martin@plt.rwth-aachen.de>
  */
 
-#if PLT_SYSTEM_NT
-//
-// Take care of multi-shredded environments. See notes below in the
-// function getReadyFds() for more information...
-//
 #include <errno.h>
-#else
-#include <errno.h>
-#endif
 #include <stdlib.h>
 #include <string.h>
 
@@ -572,16 +564,6 @@ getReadyFds(fd_set &read_fds, fd_set &write_fds, size_t numfds,
             const KsTime *pto)
 #endif
 {
-#if PLT_SYSTEM_NT
-    //
-    // Take care of a possible multi-shredded environment like NT...
-    // Here we must take care of the fact that in MT environments, there
-    // is no global errno, as it makes no sense. So we locally emulate
-    // it ourselves.
-    //
-    int errno;
-#endif
-
     // copy timeout, bbsts
     KsTime timeout;
     KsTime *pTimeout;
@@ -610,13 +592,18 @@ getReadyFds(fd_set &read_fds, fd_set &write_fds, size_t numfds,
     if ( res == -1 ) {
         // select reports an error
 #if PLT_SYSTEM_NT
-        errno = WSAGetLastError();
+        int myerrno = WSAGetLastError();
+#else
+        int myerrno = errno;
 #endif
-        PLT_DMSG_ADD("select returned -1: " << strerror(errno));
+        PLT_DMSG_ADD("select returned -1: " << strerror(myerrno));
         PLT_DMSG_END;
-        if (errno == EINTR) {
-            // interrupted by a signal
-            // interpret as timeout
+        if ( myerrno == EINTR ) {
+            //
+            // While waiting for something to happen on the sockets, we
+            // were interrupted by a signal. So let's interpret this as
+            // a timeout...
+            //
             FD_ZERO(&read_fds);
 #if PLT_USE_BUFFERED_STREAMS
 	    FD_ZERO(&write_fds);
@@ -819,9 +806,9 @@ KsServerBase::startServer()
     // the user's manager isn't okay, then bail out with an error.
     //
     if ( !_cnx_manager ) {
-    	_cnx_manager = new KssConnectionManager();
+    	_cnx_manager = new KssConnectionManager;
     }
-    if ( !_cnx_manager && !_cnx_manager->isOk() ) {
+    if ( !_cnx_manager || !_cnx_manager->isOk() ) {
     	_is_ok = false;
 	return;
     }
@@ -865,7 +852,6 @@ KsServerBase::startServer()
 #else
             close(sock);
 #endif
-            sock = -1;
             PltLog::Error("KsServerBase::startServer(): could not bind the TCP socket.");
         } else {
 #if !PLT_USE_BUFFERED_STREAMS

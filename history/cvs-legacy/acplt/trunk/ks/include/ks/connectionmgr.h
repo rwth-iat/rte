@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.3 1998-09-17 12:02:22 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.4 1999-01-08 13:09:21 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -38,13 +38,18 @@
 /*
  * connectionmgr.h -- Implements a connection manager which can handle
  *                    connection objects which in turn encapsulate XDR
- *                    streams.
+ *                    streams. The connection manager makes it possible to
+ *                    use so-called buffered XDR streams, which decouple
+ *                    RPC I/O from service handling and thus serialization
+ *                    and deserialization.
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
 
 #ifndef KS_CONNECTIONMGR_H_INCLUDED
 #define KS_CONNECTIONMGR_H_INCLUDED
+
+#if PLT_USE_BUFFERED_STREAMS
 
 #include "plt/time.h"
 
@@ -55,7 +60,6 @@ class KssConnectionManager;
 #include "ks/connection.h"
 #endif
 
-#include <stdio.h>
 
 // ---------------------------------------------------------------------------
 // This one was surely missing for long ;-) This is a basic implementation of
@@ -93,11 +97,11 @@ public: // oh, M$ is sooooo dumb...
 }; // struct _KssConnectionItem
 
 
-#if PLT_CNXMGR_USE_HT
+#if PLT_CNX_MGR_USE_HT
 // ---------------------------------------------------------------------------
 // As some "new technology" uses crude handles instead of file descriptors,
-// there´s no easy mapping between fds and connection items. So we´re forced
-// to use a hash table instead which is made of the following class.
+// there's no easy mapping between fds and connection items. So we're forced
+// to use a hash table instead, which is made of the following class.
 //
 struct _KssCnxHashTableItem {
 public: // oh, M$ is sooooo dumb...
@@ -183,7 +187,7 @@ private:
     _PltDLinkedListNode _active_connections; // for timeouts
     _PltDLinkedListNode _serviceable_connections;  // waiting to be served
 
-#if PLT_CNXMGR_USE_HT
+#if PLT_CNX_MGR_USE_HT
     _PltDLinkedListNode   _free_entries;
     _KssCnxHashTableItem *_hash_table;
     int                   _hash_table_size;
@@ -194,6 +198,7 @@ private:
 }; // class KssConnectionManager
 
 
+#endif /* PLT_USE_BUFFERED_STREAMS */
 #endif
 
 /* End of connectionmgr.h */

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrtransport.cpp,v 1.3 1998-09-17 12:02:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrtransport.cpp,v 1.4 1999-01-08 13:09:23 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -240,6 +240,9 @@ void KssTransport::personaNonGrata()
 #endif
     
     if ( getsockopt(_t->xp_sock, SOL_SOCKET, SO_TYPE, 
+#if PLT_SYSTEM_NT
+                (char *)
+#endif
                     &so_type, &so_type_len) >= 0 ) {
     	//
 	// Could retrieve the socket type. If this is a streaming socket, then

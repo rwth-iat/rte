@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.3 1999-01-08 13:09:24 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -42,6 +42,7 @@
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
 
+#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdrtcpcon.h"
 #include "ks/xdrmemstream.h"
@@ -55,10 +56,17 @@
 #define read(fd,p,l) recv(fd,p,l,0)
 #define ioctl(fd,r,p) ioctlsocket(fd,r,p)
 
+#ifdef  EINVAL
 #undef  EINVAL
+#endif
 #define EINVAL      WSAEINVAL
+#ifdef  EINTR
 #undef  EINTR
+#endif
 #define EINTR       WSAEINTR
+#ifdef  EWOULDBLOCK
+#undef  EWOULDBLOCK
+#endif
 #define EWOULDBLOCK WSAEWOULDBLOCK
 
 #else
@@ -377,9 +385,11 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		// errors simply drop this connection.
 		//
 #if PLT_SYSTEM_NT
-    	    	int errno = WSAGetLastError();
+    	    	int myerrno = WSAGetLastError();
+#else
+                int myerrno = errno;
 #endif
-		switch ( errno ) {
+		switch ( myerrno ) {
 		case EINTR:
 		    continue;
 		case EWOULDBLOCK:
@@ -569,5 +579,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::reset(bool hadTimeout)
     return getIoMode();
 } // KssTCPXDRConnection::reset
 
+
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of xdrtcpcon.cpp */

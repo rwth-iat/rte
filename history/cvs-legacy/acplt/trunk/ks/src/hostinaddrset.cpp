@@ -1,13 +1,13 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.4 1997-12-08 07:18:48 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.5 1999-01-08 13:09:23 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
  *
  * NOTE:
- * The part for getting IP addresses on unix operating systems are
+ * The part for getting IP addresses on unix operating systems is
  * (c) Sun Microsystems, see below for their copyright and conditions.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -112,9 +112,10 @@
 #include <winsock.h>
 #include "plt/string.h"
 
-#if PLT_COMPILER_MSVC
+#if PLT_COMPILER_MSVC || PLT_COMPILER_CYGWIN
 //
-// Cover Micro$oft's idiosyncrasies
+// Cover Micro$oft's idiosyncrasies. Unfortunately, Cygwin is following
+// that "road ahead"... Sigh.
 //
 #define strncmpi(s1,s2,l) _strnicmp(s1,s2,l)
 #endif

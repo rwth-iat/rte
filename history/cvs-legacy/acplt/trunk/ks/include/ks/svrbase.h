@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.18 1998-12-16 17:47:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.19 1999-01-08 13:09:21 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -47,22 +47,29 @@
 
 #include <signal.h>
 
+// This is currently missing in Cygnus' headers...
+#if PLT_COMPILER_CYGWIN 
+typedef int sig_atomic_t;
+#endif
+
 #if PLT_USE_BUFFERED_STREAMS
 #include "ks/connectionmgr.h"
 #include "ks/xdrtcpcon.h"
 #endif
 
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 // PRIVATE! forward declaration
 // This dispatcher is only used with the genuine ONC/RPC package.
+//
 #if !PLT_USE_BUFFERED_STREAMS
 extern "C" void 
 ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-//
+
+// ---------------------------------------------------------------------------
+// The root cause for all KS server stuff.
 //
 class KsServerBase {
 public:
@@ -180,8 +187,8 @@ private:
     int serveRequests(const KsTime *pTimeout);
     
     static KsServerBase *the_server;
-}; // class KsServerBase
 
+}; // class KsServerBase
 
 
 /////////////////////////////////////////////////////////////////////////////

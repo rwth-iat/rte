@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.8 1998-10-01 09:59:12 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.9 1999-01-08 13:09:24 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -195,6 +195,19 @@ template class Plt_AtNew<unsigned long>;
 template class Plt_AtNew<unsigned short>;
 
 // general ks templates
+
+#if PLT_COMPILER_CYGWIN
+template class KsArray<bool>;
+template class KsArray<char>;
+template class KsArray<u_long>;
+template class KsArray<long>;
+template class KsArray<u_int>;
+template class KsArray<int>;
+template class KsArray<short>;
+template class KsArray<u_short>;
+template class KsArray<float>;
+template class KsArray<double>;
+#endif
 
 template class KsArray<KsGetVarItemResult>;
 template class KsArray<KsResult>;

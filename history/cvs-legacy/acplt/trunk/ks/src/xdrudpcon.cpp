@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.3 1998-09-23 08:49:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.4 1999-01-08 13:09:24 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -42,13 +42,21 @@
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
 
+#if PLT_USE_BUFFERED_STREAMS
+
 #include "ks/xdrudpcon.h"
 #include "ks/connectionmgr.h"
 #include "plt/time.h"
 
 #if PLT_SYSTEM_NT
 
+#ifdef  EINTR
+#undef  EINTR
+#endif
 #define EINTR       WSAEINTR
+#ifdef  EWOULDBLOCK
+#undef  EWOULDBLOCK
+#endif
 #define EWOULDBLOCK WSAEWOULDBLOCK
 
 #else
@@ -225,8 +233,11 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    // ignore them silently and remain in the idle state.
 	    //
 #if PLT_SYSTEM_NT
-    	    int errno = WSAGetLastError();
-#elif PLT_USE_XTI
+    	    int myerrno = WSAGetLastError();
+#else
+            int myerrno = errno;
+#endif
+#if PLT_USE_XTI
     	    //
 	    // Make sure that a pending event on the XTI endpoint is read.
 	    //
@@ -244,12 +255,12 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    case TNODATA:
 	    	return getIoMode();
 	    case TSYSERR:
-	    	break; // fall through and let the code below handle it
+	    	break; // leave the XTI stuff and let the code below handle it
 	    default:
 		return getIoMode();
 	    }
 #endif
-	    switch ( errno ) {
+	    switch ( myerrno ) {
 	    case EINTR:
 		continue;
 	    case EWOULDBLOCK:
@@ -352,8 +363,11 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 #endif
 	if ( sent < 0 ) {
 #if PLT_SYSTEM_NT
-    	    int errno = WSAGetLastError();
-#elif PLT_USE_XTI
+    	    int myerrno = WSAGetLastError();
+#else
+            int myerrno = errno;
+#endif
+#if PLT_USE_XTI
     	    //
 	    // Make sure that a pending event on the XTI endpoint is read.
 	    //
@@ -369,12 +383,12 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 	    case TFLOW:
 	    	continue;
 	    case TSYSERR:
-	    	break; // fall through and let the code below handle it
+	    	break; // leave the XTI stuff and let the code below handle it
 	    default:
 		return getIoMode();
 	    }
 #endif
-	    switch ( errno ) {
+	    switch ( myerrno ) {
 	    case EINTR:
 		continue;
 	    case EWOULDBLOCK:
@@ -510,5 +524,7 @@ void KssUDPXDRConnection::sendRequest()
     }
 } // KssUDPXDRConnection::sendRequest
 
+
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of xdrudpcon.cpp */

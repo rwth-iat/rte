@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrudpcon.h,v 1.1 1998-06-29 11:19:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrudpcon.h,v 1.2 1999-01-08 13:09:21 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -45,6 +45,7 @@
 #ifndef XDRUDPCON_H_INCLUDED
 #define XDRUDPCON_H_INCLUDED
 
+#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/connection.h"
 
@@ -78,6 +79,7 @@ private:
 }; // class KssUDPXDRConnection
 
 
+#endif /* PLT_USE_BUFFERED_STREAMS */
 #endif
 
 /* End of xdrudpcon.h */

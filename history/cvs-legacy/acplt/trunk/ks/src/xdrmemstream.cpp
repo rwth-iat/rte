@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.4 1998-09-22 08:52:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.5 1999-01-08 13:09:24 harald Exp $ */
 /*
- * Copyright (c) 1998
+ * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -44,17 +44,30 @@
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
 
+#if PLT_USE_BUFFERED_STREAMS
+
 #include "ks/xdrmemstream.h"
 #include <stdlib.h>
 
 #if PLT_SYSTEM_NT
-
+/*
+ * The usual thing that's different by design: M$. Now why can't they
+ * even make a usuable WinSock?!
+ */
 #include <errno.h>
 #define write(fd,p,l) send(fd,p,l,0)
 #define read(fd,p,l) recv(fd,p,l,0)
+#ifdef  EINVAL
+#undef  EINVAL
+#endif
 #define EINVAL      WSAEINVAL
+#ifdef  EINTR
 #undef  EINTR
+#endif
 #define EINTR       WSAEINTR
+#ifdef  EWOULDBLOCK
+#undef  EWOULDBLOCK
+#endif 
 #define EWOULDBLOCK WSAEWOULDBLOCK
 
 #else
@@ -313,7 +326,7 @@ static void   MemStreamDestroy(XDR *xdrs);
  * memory stream, the stream object will get linked to this method table
  * (good morning, vtable!).
  */
-#if PLT_SYSTEM_OPENVMS
+#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT
 #define FUNC(rt) (rt (*)(...))
 #else
 #define FUNC(rt)
@@ -711,8 +724,11 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
              * data.
              */
 #if PLT_SYSTEM_NT
-    	    int errno = WSAGetLastError();
-#elif PLT_USE_XTI
+    	    int myerrno = WSAGetLastError();
+#else
+            int myerrno = errno;
+#endif
+#if PLT_USE_XTI
     	    /*
 	     * Make sure that a pending event on the XTI endpoint is read.
 	     * Especially handle connection release or disconnection. Yeah,
@@ -722,30 +738,31 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
     	    switch ( t_errno ) {
 	    case TLOOK: {
 	    	int events = t_look(fd);
-		errno = EIO;
+		myerrno = EIO;
 		if ( events & T_DISCONNECT ) {
 		    t_rcvdis(fd, 0);
-		    errno = EIO;
+		    myerrno = EIO;
 		}
 		if ( events & T_ORDREL ) {
 		    t_rcvrel(fd);
-		    errno = EIO;
+		    myerrno = EIO;
 		}
 		break;
 	    	}
 	    case TNODATA:
-		errno = EWOULDBLOCK;
+		myerrno = EWOULDBLOCK;
 		return TRUE;
 	    case TSYSERR:
 		break; /* just take the ordinary errno */
 	    default:
-	    	errno = 0; /* indicate XTI error */
+	    	myerrno = 0; /* indicate XTI error */
 	    }
 #endif
     	    if ( err ) {
-	    	*err = errno;
+	    	*err = myerrno;
 	    }
-            return ((errno == EINTR) || (errno == EWOULDBLOCK)) ? TRUE : FALSE;
+            return ((myerrno == EINTR) 
+                    || (myerrno == EWOULDBLOCK)) ? TRUE : FALSE;
         }
 	if ( count_read == 0 ) {
 	    if ( err ) {
@@ -836,8 +853,11 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
              * send buffers.
              */
 #if PLT_SYSTEM_NT
-    	    int errno = WSAGetLastError();
-#elif PLT_USE_XTI
+    	    int myerrno = WSAGetLastError();
+#else
+            int myerrno = errno;
+#endif
+#if PLT_USE_XTI
     	    /*
 	     * Make sure that a pending event on the XTI endpoint is read.
 	     * Especially handle connection release or disconnection. Yeah,
@@ -847,30 +867,31 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
     	    switch ( t_errno ) {
 	    case TLOOK: {
 	    	int events = t_look(fd);
-		errno = EIO;
+		myerrno = EIO;
 		if ( events & T_DISCONNECT ) {
 		    t_rcvdis(fd, 0);
-		    errno = EPIPE;
+		    myerrno = EPIPE;
 		}
 		if ( events & T_ORDREL ) {
 		    t_rcvrel(fd);
-		    errno = EPIPE;
+		    myerrno = EPIPE;
 		}
 		break;
 	    	}
 	    case TFLOW:
-		errno = EWOULDBLOCK;
+		myerrno = EWOULDBLOCK;
 		return TRUE;
 	    case TSYSERR:
 		break; /* just take the ordinary errno */
 	    default:
-	    	errno = 0; /* indicate XTI error */
+	    	myerrno = 0; /* indicate XTI error */
 	    }
 #endif
     	    if ( err ) {
-	    	*err = errno;
+	    	*err = myerrno;
 	    }
-            return ((errno == EINTR) || (errno == EWOULDBLOCK)) ? TRUE : FALSE;
+            return ((myerrno == EINTR) 
+                    || (myerrno == EWOULDBLOCK)) ? TRUE : FALSE;
         }
 	if ( count_written == 0 ) {
 	    if ( err ) {
@@ -893,5 +914,7 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
     return TRUE;
 } /* xdrmemstream_write_to_fd */
 
+
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of xdrmemstream.c */

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.6 1997-07-18 14:11:11 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/array.cpp,v 1.7 1999-01-08 13:09:23 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -52,7 +52,7 @@
 //////////////////////////////////////////////////////////////////////
 // explicit instantiation
 
-#if PLT_INSTANTIATE_TEMPLATES && !PLT_COMPILER_BORLAND && !PLT_COMPILER_DECCXX
+#if PLT_INSTANTIATE_TEMPLATES && !PLT_COMPILER_BORLAND && !PLT_COMPILER_DECCXX && !PLT_COMPILER_CYGWIN
 
 template class KsArray<bool>;
 template class KsArray<char>;

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.14 1998-06-29 11:22:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.15 1999-01-08 13:09:23 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -42,6 +42,21 @@
 #if !PLT_SYSTEM_NT
 #include <sys/socket.h>
 #endif
+
+
+//
+// The purpose of the following definition is to provide a link-time
+// check making sure that both the ACPLT/KS server and the libkssvr were
+// compiled with either PLT_USE_BUFFERED_STREAMS enabled or disabled, but
+// not one with enabled buffering and the other one without.
+//
+#if PLT_USE_BUFFERED_STREAMS
+void *This_libKssvr_Was_Compiled_Without_PLT_USE_BUFFERED_STREAMS;
+#else
+void *This_libKssvr_Was_Compiled_With_PLT_USE_BUFFERED_STREAMS;
+#endif
+
+
 
 //////////////////////////////////////////////////////////////////////
 

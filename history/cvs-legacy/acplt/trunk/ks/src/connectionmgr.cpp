@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.3 1998-09-17 12:02:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.4 1999-01-08 13:09:23 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -45,16 +45,22 @@
 
 #include "ks/connectionmgr.h"
 
+//
+// Ah, yes... compile the whole stuff only if we want to use the buffered
+// stream magic. Otherwise we can skip this source completely.
+//
+#if PLT_USE_BUFFERED_STREAMS
+
 #include <errno.h>
 
 #if !PLT_SYSTEM_NT
 #include <unistd.h>
 #endif
 
-#if !PLT_SYSTEM_OPENVMS
+#if !PLT_SYSTEM_OPENVMS && !PLT_SYSTEM_CYGWIN
 #include <values.h>
 #else
-#define MAXINT (((long) -1) >> 1)
+#define MAXINT (((int) -1) >> 1)
 #endif
 
 
@@ -106,7 +112,7 @@ KssConnectionManager::KssConnectionManager()
     : _is_ok(true),
       _connection_count(0), _serviceable_count(0),
       _io_errors(0), _io_rx_errors(0), _io_tx_errors(0)
-#if PLT_CNXMGR_USE_HT
+#if PLT_CNX_MGR_USE_HT
       , _hash_table(0), _hash_table_size(0), _hash_table_mask(0)
 #endif
 {
@@ -124,7 +130,7 @@ KssConnectionManager::KssConnectionManager()
     if ( !_connections ) {
 	_is_ok = false;
     }
-#if PLT_CNXMGR_USE_HT
+#if PLT_CNX_MGR_USE_HT
     //
     // For some "new technology" os(?) we´ll need to allocate a hash table
     // in order to speed up mapping from fds to connection items. In
@@ -171,7 +177,7 @@ KssConnectionManager::~KssConnectionManager()
     	delete _connections;
 	_connections = 0;
     }
-#if PLT_CNXMGR_USE_HT
+#if PLT_CNX_MGR_USE_HT
     if ( _hash_table ) {
 	delete _hash_table;
 	_hash_table = 0;
@@ -393,7 +399,7 @@ int KssConnectionManager::processConnections(fd_set &readables,
 	// data from the appropriate connection object...
 	//
 	if ( FD_ISSET(fd_idx, &writeables) ) {
-#if !PLT_CNXMGR_USE_HT
+#if !PLT_CNX_MGR_USE_HT
 	    item = _connections + fd_idx;
 #else
 	    item = getConnectionItem(fd_idx);
@@ -432,7 +438,7 @@ int KssConnectionManager::processConnections(fd_set &readables,
 	// the new data into the appropriate connection object...
 	//
 	if ( FD_ISSET(fd_idx, &readables) ) {
-#if !PLT_CNXMGR_USE_HT
+#if !PLT_CNX_MGR_USE_HT
 	    item = _connections + fd_idx;
 #else
 	    item = getConnectionItem(fd_idx);
@@ -562,7 +568,7 @@ bool KssConnectionManager::shutdownConnections(long secs)
 	    // data from the appropriate connection object...
 	    //
 	    if ( FD_ISSET(fd_idx, &writeables) ) {
-#if !PLT_CNXMGR_USE_HT
+#if !PLT_CNX_MGR_USE_HT
 	    item = _connections + fd_idx;
 #else
 	    item = getConnectionItem(fd_idx);
@@ -653,7 +659,7 @@ bool KssConnectionManager::reactivateConnection(KssConnection &con)
 //
 _KssConnectionItem *KssConnectionManager::getConnectionItem(int fd)
 {
-#if !PLT_CNXMGR_USE_HT
+#if !PLT_CNX_MGR_USE_HT
     //
     // Make sure that the given file descriptor makes sense and that this
     // connection hasn't been added yet.
@@ -694,7 +700,7 @@ _KssConnectionItem *KssConnectionManager::getConnectionItem(int fd)
 bool KssConnectionManager::addConnection(KssConnection &con)
 {
     int fd = con.getFd();
-#if !PLT_CNXMGR_USE_HT
+#if !PLT_CNX_MGR_USE_HT
     _KssConnectionItem *item = getConnectionItem(fd);
 #else
     unsigned hidx = getHash(fd) & _hash_table_mask;
@@ -766,7 +772,7 @@ bool KssConnectionManager::addConnection(KssConnection &con)
 bool KssConnectionManager::removeConnection(KssConnection &con)
 {
     int                 fd   = con.getFd();
-#if !PLT_CNXMGR_USE_HT
+#if !PLT_CNX_MGR_USE_HT
     _KssConnectionItem *item = getConnectionItem(fd);
 #else
     unsigned hidx = getHash(fd) & _hash_table_mask;
@@ -795,7 +801,7 @@ bool KssConnectionManager::removeConnection(KssConnection &con)
 	FD_CLR(fd, &_writeable_fdset);
     	--_connection_count;
 	item->_connection = 0;
-#if PLT_CNXMGR_USE_HT
+#if PLT_CNX_MGR_USE_HT
     	//
 	// Remove this entry from the overflow table of a hash table entry
 	// and put it into the list of empty entries.
@@ -845,5 +851,6 @@ KssConnection *KssConnectionManager::lookupConnection(int fd)
     return 0;
 } // KssConnectionManager::lookupConnection
 
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of connectionmgr.cpp */
