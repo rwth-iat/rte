@@ -18,7 +18,7 @@
 #include "ks/commobject.h"
 #include "ks/path.h"
 
-#if PLT_COMPILER_GCC
+#if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
 #include "plt/priorityqueue_impl.h"
 #include "plt/hashtable_impl.h"
 #include "ks/array_impl.h"

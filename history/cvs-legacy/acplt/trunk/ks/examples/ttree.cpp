@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.2 1997-07-14 15:36:41 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.3 1997-08-15 08:59:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,7 +41,7 @@
 #include "ks/clntpath.h"
 #include "ks/commobject.h"
 
-#if PLT_COMPILER_GCC
+#if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
 #include "plt/hashtable_impl.h"
 #include "plt/handle_impl.h"
 #endif
