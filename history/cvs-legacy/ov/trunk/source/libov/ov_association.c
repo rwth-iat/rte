@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.17 2004-01-27 09:12:02 ansgar Exp $
+*   $Id: ov_association.c,v 1.18 2004-05-19 14:51:23 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -290,20 +290,20 @@ void ov_association_unload(
 	if ((pparentclass) && (pchildclass) && (passoc)) {
 	    if ((passoc->v_parentoffset!=0) && (passoc->v_childoffset!=0)) {
 		if (passoc->v_assoctype == OV_AT_ONE_TO_MANY) {
-			ov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_ANCHOR), passoc->v_childoffset);
-			ov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_HEAD), passoc->v_parentoffset);
+			ov_association_linktable_insert(pchildclass, pchildclass, -(OV_INT) sizeof(OV_ANCHOR), passoc->v_childoffset);
+			ov_association_linktable_insert(pparentclass, pparentclass, -(OV_INT) sizeof(OV_HEAD), passoc->v_parentoffset);
 			ov_association_linktable_allocate(pparentclass, 0);
 			ov_association_linktable_allocate(pchildclass, 0);
 		}
 		if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
-			ov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_NMHEAD), passoc->v_childoffset);
-			ov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_NMHEAD), passoc->v_parentoffset);
+			ov_association_linktable_insert(pchildclass, pchildclass, -(OV_INT) sizeof(OV_NMHEAD), passoc->v_childoffset);
+			ov_association_linktable_insert(pparentclass, pparentclass, -(OV_INT) sizeof(OV_NMHEAD), passoc->v_parentoffset);
 			ov_association_linktable_allocate(pparentclass, 0);
 			ov_association_linktable_allocate(pchildclass, 0);
 		}
 		if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
-			ov_association_linktable_insert(pchildclass, pchildclass, -sizeof(OV_INSTPTR_ov_object), passoc->v_childoffset);
-			ov_association_linktable_insert(pparentclass, pparentclass, -sizeof(OV_INSTPTR_ov_object), passoc->v_parentoffset);
+			ov_association_linktable_insert(pchildclass, pchildclass, -(OV_INT) sizeof(OV_INSTPTR_ov_object), passoc->v_childoffset);
+			ov_association_linktable_insert(pparentclass, pparentclass, -(OV_INT) sizeof(OV_INSTPTR_ov_object), passoc->v_parentoffset);
 			ov_association_linktable_allocate(pparentclass, 0);
 			ov_association_linktable_allocate(pchildclass, 0);
 		}
@@ -1486,13 +1486,13 @@ void ov_association_linktable_insert(
 		if (addsize >=0) {
 			pcs = pinst->v_linktable+pclass->v_linktablesize-1;
 			pct = pinst->v_linktable+pclass->v_linktablesize-1+addsize;
-			while ((pcs-pinst->v_linktable) >= offset) {
+			while ((OV_UINT)(pcs-pinst->v_linktable) >= offset) {
 				*pct = *pcs;
 				pct--;
 				pcs--;
 			}
 			pcs = pinst->v_linktable+offset+addsize-1;
-			while ((pcs-pinst->v_linktable) >= offset) {
+			while ((OV_UINT)(pcs-pinst->v_linktable) >= offset) {
 				*pcs = 0;
 				pcs--;
 			}
@@ -1500,12 +1500,12 @@ void ov_association_linktable_insert(
 		else {
 			pcs = pinst->v_linktable+offset-addsize;
 			pct = pinst->v_linktable+offset;
-			while ((pcs-pinst->v_linktable) < (pclass->v_linktablesize)) {
+			while ((OV_UINT)(pcs-pinst->v_linktable) < (pclass->v_linktablesize)) {
 				*pct = *pcs;
 				pct++;
 				pcs++;
 			}
-			while ((pct-pinst->v_linktable) < pclass->v_linktablesize) {
+			while ((OV_UINT)(pct-pinst->v_linktable) < pclass->v_linktablesize) {
 				*pct = 0;
 				pct++;
 			}

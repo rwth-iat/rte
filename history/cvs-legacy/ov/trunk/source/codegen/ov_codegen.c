@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.20 2002-08-29 11:03:56 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.21 2004-05-19 14:47:59 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -346,9 +346,11 @@ int ov_codegen_createheaderfile(
 	fprintf(fp, "#endif\n");
 	fprintf(fp, "\n");
 	fprintf(fp, "#ifdef OV_COMPILE_LIBRARY_%s\n", plib->identifier);
-	fprintf(fp, "#define OV_EXTERN extern\n");
+	fprintf(fp, "#define OV_VAREXTERN OV_DLLVAREXPORT\n");
+	fprintf(fp, "#define OV_FNCEXTERN OV_DLLFNCEXPORT\n");
 	fprintf(fp, "#else\n");
-	fprintf(fp, "#define OV_EXTERN OV_DLLVARIMPORT\n");
+	fprintf(fp, "#define OV_VAREXTERN OV_DLLVARIMPORT\n");
+	fprintf(fp, "#define OV_FNCEXTERN OV_DLLFNCEXPORT\n");
 	fprintf(fp, "#endif\n");
 	fprintf(fp, "\n");
 	/*
@@ -445,7 +447,7 @@ int ov_codegen_createheaderfile(
 	for(pstruct=plib->structures; pstruct; pstruct=pstruct->pnext) {
 		fprintf(fp, "extern OV_STRUCTURE_DEF OV_STRUCTURE_DEF_%s_%s;\n", plib->identifier,
 			pstruct->identifier);
-		fprintf(fp, "OV_EXTERN OV_INSTPTR_ov_structure pstruct_%s_%s;\n",
+		fprintf(fp, "OV_VAREXTERN OV_INSTPTR_ov_structure pstruct_%s_%s;\n",
 			plib->identifier, pstruct->identifier);
 		fprintf(fp, "\n");
 	}
@@ -455,7 +457,7 @@ int ov_codegen_createheaderfile(
 	for(pclass=plib->classes; pclass; pclass=pclass->pnext) {
 		fprintf(fp, "extern OV_CLASS_DEF OV_CLASS_DEF_%s_%s;\n", plib->identifier,
 			pclass->identifier);
-		fprintf(fp, "OV_EXTERN OV_INSTPTR_ov_class pclass_%s_%s;\n",
+		fprintf(fp, "OV_VAREXTERN OV_INSTPTR_ov_class pclass_%s_%s;\n",
 			plib->identifier, pclass->identifier);
 		fprintf(fp, "\n");
 	}
@@ -465,7 +467,7 @@ int ov_codegen_createheaderfile(
 	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
 		fprintf(fp, "extern OV_ASSOCIATION_DEF OV_ASSOCIATION_DEF_%s_%s;\n", plib->identifier,
 			passoc->identifier);
-		fprintf(fp, "OV_EXTERN OV_INSTPTR_ov_association passoc_%s_%s;\n",
+		fprintf(fp, "OV_VAREXTERN OV_INSTPTR_ov_association passoc_%s_%s;\n",
 			plib->identifier, passoc->identifier);
 		fprintf(fp, "\n");
 	}
@@ -486,7 +488,8 @@ int ov_codegen_createheaderfile(
 	/*
 	*	local definitions
 	*/
-	fprintf(fp, "#undef OV_EXTERN\n");
+	fprintf(fp, "#undef OV_VAREXTERN\n");
+	fprintf(fp, "#undef OV_FNCEXTERN\n");
 	fprintf(fp, "\n");
 	fprintf(fp, "#ifdef __cplusplus\n");
 	fprintf(fp, "}\n");
@@ -1075,7 +1078,7 @@ void ov_codegen_printclassfncdecls(
 	*	function prototypes
 	*/
 	for(pop=pclass->operations; pop; pop=pop->pnext) {
-		fprintf(fp, "OV_EXTERN %s %s_%s_%s;\n", pop->cfnctypename,
+		fprintf(fp, "OV_FNCEXTERN %s %s_%s_%s;\n", pop->cfnctypename,
 			plib->identifier, pclass->identifier, pop->identifier);
 	}
 }

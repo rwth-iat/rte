@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_expression_scanner.lex,v 1.1 2000-02-10 13:07:01 dirk Exp $
+*   $Id: ov_expression_scanner.lex,v 1.2 2004-05-19 14:49:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -69,92 +69,92 @@ SPACE	[ \t\n]+
 
 %%
 "acos"	{
-	ov_expression_lval.fnc = _getvalue_acos;
+	yylval.fnc = _getvalue_acos;
 	return TOK_FUNCTION;
 }
 
 "asin"	{
-	ov_expression_lval.fnc = _getvalue_asin;
+	yylval.fnc = _getvalue_asin;
 	return TOK_FUNCTION;
 }
 
 "atan"	{
-	ov_expression_lval.fnc = _getvalue_atan;
+	yylval.fnc = _getvalue_atan;
 	return TOK_FUNCTION;
 }
 
 "ceil"	{
-	ov_expression_lval.fnc = _getvalue_ceil;
+	yylval.fnc = _getvalue_ceil;
 	return TOK_FUNCTION;
 }
 
 "cos"	{
-	ov_expression_lval.fnc = _getvalue_cos;
+	yylval.fnc = _getvalue_cos;
 	return TOK_FUNCTION;
 }
 
 "cosh"	{
-	ov_expression_lval.fnc = _getvalue_cosh;
+	yylval.fnc = _getvalue_cosh;
 	return TOK_FUNCTION;
 }
 
 "exp"	{
-	ov_expression_lval.fnc = _getvalue_exp;
+	yylval.fnc = _getvalue_exp;
 	return TOK_FUNCTION;
 }
 
 "floor"	{
-	ov_expression_lval.fnc = _getvalue_floor;
+	yylval.fnc = _getvalue_floor;
 	return TOK_FUNCTION;
 }
 
 "sin"	{
-	ov_expression_lval.fnc = _getvalue_sin;
+	yylval.fnc = _getvalue_sin;
 	return TOK_FUNCTION;
 }
 
 "sinh"	{
-	ov_expression_lval.fnc = _getvalue_sinh;
+	yylval.fnc = _getvalue_sinh;
 	return TOK_FUNCTION;
 }
 
 "sqrt"	{
-	ov_expression_lval.fnc = _getvalue_sqrt;
+	yylval.fnc = _getvalue_sqrt;
 	return TOK_FUNCTION;
 }
 
 "tan"	{
-	ov_expression_lval.fnc = _getvalue_tan;
+	yylval.fnc = _getvalue_tan;
 	return TOK_FUNCTION;
 }
 
 "tanh"	{
-	ov_expression_lval.fnc = _getvalue_tanh;
+	yylval.fnc = _getvalue_tanh;
 	return TOK_FUNCTION;
 }
 
 "abs"	{
-	ov_expression_lval.fnc = _getvalue_abs;
+	yylval.fnc = _getvalue_abs;
 	return TOK_FUNCTION;
 }
 
 "ln"	{
-	ov_expression_lval.fnc = _getvalue_ln;
+	yylval.fnc = _getvalue_ln;
 	return TOK_FUNCTION;
 }
 
 "log"	{
-	ov_expression_lval.fnc = _getvalue_log;
+	yylval.fnc = _getvalue_log;
 	return TOK_FUNCTION;
 }
 
 "pi"	{
-	ov_expression_lval.floatval = 3.14159265358979323846;
+	yylval.floatval = 3.14159265358979323846;
 	return TOK_FLOAT;
 }
 
 "e"	{
-	ov_expression_lval.floatval = 2.71828182845904523536;
+	yylval.floatval = 2.71828182845904523536;
 	return TOK_FLOAT;
 }
 
@@ -163,12 +163,12 @@ SPACE	[ \t\n]+
 }
 
 {FLOAT}		{
-	ov_expression_lval.floatval = strtod(yytext, NULL);
+	yylval.floatval = strtod(yytext, NULL);
 	return TOK_FLOAT;
 }
 
 {SYMBOL}	{
-	ov_expression_lval.stringval = yytext;
+	yylval.stringval = yytext;
 	return TOK_SYMBOL;
 }
 

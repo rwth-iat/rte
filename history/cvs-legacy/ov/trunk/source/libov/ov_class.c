@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.20 2004-01-27 09:12:02 ansgar Exp $
+*   $Id: ov_class.c,v 1.21 2004-05-19 14:51:23 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -546,7 +546,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	*	call the constructor of the object
 	*/
 	result = pvtable->m_constructor(pobj);
-	if(Ov_Fail(result)) {
+	if(Ov_Fail(result) && (!ov_activitylock)) {
 		/*
 		*	construction failed, delete object
 		*/
@@ -559,7 +559,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	*/
 	if(initobjfnc) {
 		result = initobjfnc(pobj, userdata);
-		if(Ov_Fail(result)) {
+		if(Ov_Fail(result) && (!ov_activitylock)) {
 			pvtable->m_destructor(pobj);
 			ov_class_deleteobject_cleanupinst(pobj);
 			ov_database_free(pobj);
@@ -574,7 +574,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	*	check if the initialization was correct
 	*/
 	result = pvtable->m_checkinit(pobj);
-	if(Ov_Fail(result)) {
+	if(Ov_Fail(result) && (!ov_activitylock)) {
 		/*
 		*	check failed, delete object
 		*/

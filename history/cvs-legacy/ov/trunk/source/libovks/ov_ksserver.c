@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.18 2002-09-09 08:10:57 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.19 2004-05-19 14:51:47 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -86,6 +86,7 @@ extern "C" {
 #ifdef __cplusplus
 static OvKsServer	*pserver = NULL;
 static OvPltLog		*plog = NULL;
+OV_DLLVAREXPORT KsConnectionManager *KsConnectionManager;
 #endif
 
 /*	----------------------------------------------------------------------	*/
@@ -476,7 +477,7 @@ OV_DLLFNCEXPORT void ov_ksserver_run(void) {
 			}
 #endif
 			ptimeout = ov_scheduler_schedulenextevent();
-			pserver->servePendingEvents(KsTime(ptimeout->secs, ptimeout->usecs));
+			KsConnectionManager->servePendingEvents(KsTime(ptimeout->secs, ptimeout->usecs));
 		}
 	}
 }
@@ -560,10 +561,10 @@ OV_DLLFNCEXPORT OV_BOOL ov_ksserver_servependingevents(
 ) {
 	if(pserver) {
 		if(ptimeout) {
-			return pserver->servePendingEvents(KsTime(ptimeout->secs,
+			return KsConnectionManager->servePendingEvents(KsTime(ptimeout->secs,
 				ptimeout->usecs));
 		} else {
-			return pserver->servePendingEvents();
+			return KsConnectionManager->servePendingEvents();
 		}
 	}
 	return FALSE;

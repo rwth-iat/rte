@@ -1,5 +1,5 @@
 ;/*
-;*   $Id: libov.mc,v 1.1 1999-07-27 08:34:14 dirk Exp $
+;*   $Id: libov.mc,v 1.2 2004-05-19 14:51:23 ansgar Exp $
 ;*
 ;*   Copyright (C) 1998-1999
 ;*   Lehrstuhl fuer Prozessleittechnik,

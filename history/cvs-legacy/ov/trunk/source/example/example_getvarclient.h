@@ -1,5 +1,5 @@
 /*
-*   $Id: example_getvarclient.h,v 1.2 1999-08-28 13:46:00 dirk Exp $
+*   $Id: example_getvarclient.h,v 1.3 2004-05-19 14:49:14 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -39,7 +39,10 @@ extern "C" {
 /*
 *	Execute function
 */
-OV_FNC_EXECUTE example_getvarclient_execute;
+OV_DLLFNCEXPORT void example_getvarclient_execute(
+	OV_INSTPTR_ov_object 	pobj
+);
+
 
 /*
 *	Open a connection

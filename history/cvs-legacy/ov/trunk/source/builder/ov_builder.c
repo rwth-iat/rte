@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.6 2003-08-25 09:16:03 ansgar Exp $
+*   $Id: ov_builder.c,v 1.7 2004-05-19 14:47:28 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.h,v 1.4 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_codegen.h,v 1.5 2004-05-19 14:47:59 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <malloc.h>
 #include <time.h>
 
 #include "libov/ov_ov.h"
