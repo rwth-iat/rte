@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.17 2003-09-23 15:36:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.18 2003-10-14 17:38:03 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -37,6 +37,8 @@
 #include <iomanip>
 #endif
 #include <time.h>
+
+#include "plt/log.h"
 
 //##
 #include "ks/avmodule.h"
@@ -460,6 +462,8 @@ void DumpBranch(KscAnyCommObject &branch, int indent)
 int main(int argc, char **argv)
 {
     KsString host_and_server;
+
+    PltCerrLog log("ttree");    
 
 #if 0
     KscPathParser pp1("//host");

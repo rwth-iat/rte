@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.8 2000-04-14 08:42:49 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.9 2003-10-14 17:38:03 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -24,10 +24,15 @@
 #include "ks/client.h"
 #include "ks/clntpath.h"
 #include "ks/commobject.h"
+#include "ks/clnrequest.h" // FIXME
+#include "plt/comparable.h" // FIXME
 
 #if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
 #include "plt/hashtable_impl.h"
 #include "plt/handle_impl.h"
+#include "plt/list_impl.h" // FIXME
+#include "plt/container_impl.h" // FIXME
+#include "plt/priorityqueue_impl.h" // FIXME
 #endif
 
 #if PLT_COMPILER_BORLAND
