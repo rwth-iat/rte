@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.30 2003-09-25 12:15:28 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.31 2003-10-13 12:54:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -28,7 +28,7 @@
 #include "ks/histdomain.h"
 #include "plt/log.h"
 #include "plt/logstream.h"
-#include "ks/interserver.h"
+#include "ks/serverconnection.h"
 
 #include <signal.h>
 #include <stdlib.h>
@@ -89,6 +89,9 @@ public:
     virtual KsString getVendorName () const
         { return KsString("Lehrstuhl fuer Prozessleittechnik, "
                           "RWTH Aachen"); }
+
+    // Do not add events before the server has been started...
+    void startServer();
 
     //
     // To implement a protocol extension we have to override
@@ -289,17 +292,15 @@ DummyHistory::getHist(const KsGetHistParams &params,
 } // DummyHistory::getHist
 
 
-#if PLT_USE_BUFFERED_STREAMS
-
-class Wecker : public KsTimerEvent, public KssInterKsServerConnection {
+class Wecker : public KsTimerEvent, public KsServerConnection {
 public:
     Wecker() 
 	: KsTimerEvent(PltTime::now(1)),
-	KssInterKsServerConnection("localhost", "MANAGER")  
+	KsServerConnection("localhost", "MANAGER")  
     { }
     ~Wecker() {  }
     virtual void trigger();
-    virtual void async_attention(KssInterKsServerConnectionOperations op);
+    virtual void async_attention(KsServerConnectionOperations op);
 
 };
 
@@ -316,7 +317,8 @@ void Wecker::trigger()
 	if ( !open() ) {
 	    PltLog::Error("can not open interserver connection");
 	    _trigger_at = KsTime::now(10);
-	    KsServerBase::getServerObject().addTimerEvent(this);
+	    KsConnectionManager::getConnectionManagerObject()->
+		addTimerEvent(this);
 	}
 	break;
 	
@@ -336,7 +338,8 @@ void Wecker::trigger()
 	    PltLog::Error("can not send GETVAR request");
 	    close();
 	    _trigger_at = KsTime::now(10);
-	    KsServerBase::getServerObject().addTimerEvent(this);
+	    KsConnectionManager::getConnectionManagerObject()->
+		addTimerEvent(this);
 	} else {
 	    PltLog::Info("GETVAR request sent");
 	}
@@ -349,7 +352,7 @@ void Wecker::trigger()
 }
 
 
-void Wecker::async_attention(KssInterKsServerConnectionOperations op)
+void Wecker::async_attention(KsServerConnectionOperations op)
 {
     PltLogStream ls;
 
@@ -376,7 +379,8 @@ void Wecker::async_attention(KssInterKsServerConnectionOperations op)
 	    //
 	    PltLog::Error("open failed");
 	    _trigger_at = KsTime::now(10);
-	    KsServerBase::getServerObject().addTimerEvent(this);
+	    KsConnectionManager::getConnectionManagerObject()->
+		addTimerEvent(this);
 	} else {
 	    //
 	    // The open() succeeded, so send now the first GETVAR request.
@@ -576,11 +580,11 @@ void Wecker::async_attention(KssInterKsServerConnectionOperations op)
 	}
 
 	_trigger_at = KsTime::now(20);
-	KsServerBase::getServerObject().addTimerEvent(this);
+	KsConnectionManager::getConnectionManagerObject()->
+	    addTimerEvent(this);
     }
 }
 
-#endif
 
 
 //////////////////////////////////////////////////////////////////////
@@ -776,10 +780,14 @@ TestServer::TestServer(int port)
     state_var->setState(0x1234FFC3);
     state_var->lock();
     addCommObject(xxx, KssCommObjectHandle(state_var, KsOsNew));
+}
 
-#if PLT_USE_BUFFERED_STREAMS
+
+void
+TestServer::startServer()
+{
+    KsServer::startServer();
     addTimerEvent(new Wecker);
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////
