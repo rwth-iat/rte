@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.4 1997-03-13 11:48:08 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.5 1997-03-13 16:50:31 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -54,6 +54,9 @@ struct PltTime : public timeval {
 #if PLT_DEBUG_INVARIANTS
     bool invariant() const;
 #endif
+
+    // Test for zero
+    operator const void * () const;
 
     // Make representation canonical
     void normalize();
@@ -172,6 +175,14 @@ inline bool
 operator < (const PltTime &t1, const PltTime &t2)
 {
     return !(t2 <= t1);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+PltTime::operator const void *() const
+{
+    return (tv_usec == 0 && tv_sec == 0) ? 0 : this;
 }
 
 //////////////////////////////////////////////////////////////////////
