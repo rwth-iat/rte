@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/history.h,v 1.5 1999-01-29 12:41:05 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/history.h,v 1.6 1999-09-06 06:51:28 harald Exp $ */
 #ifndef KS_HISTORY_INCLUDED
 #define KS_HISTORY_INCLUDED
 /*
@@ -55,9 +55,9 @@ public:
 
     KS_OBJ_TYPE typeCode() const { return KS_OT_HISTORY; }
 
-    bool setProjProps(KsProjPropsHandle) { return true; }
-    const KsProjProps_THISTYPE *getProjProps() const;
-    bool getProjPropsUpdate();
+    bool setEngProps(KsEngPropsHandle) { return true; }
+    const KsEngProps_THISTYPE *getEngProps() const;
+    bool getEngPropsUpdate();
 
     // Add or update a selector
     bool setSelector(KsString id, KsSelectorHandle hsel);
@@ -76,7 +76,7 @@ public:
     void setMaxEntries(u_long max = ULONG_MAX);
 
     // Read parts of a history
-    bool getParts(KsList<KsProjPropsHandle> &parts);
+    bool getParts(KsList<KsEngPropsHandle> &parts);
 
     // Read history with currently set parameters,
     // result is not stored in object
@@ -101,7 +101,7 @@ protected:
 
     KsGetHistSingleResult  gh_result;
 
-    KsProjPropsHandle      hpp;
+    KsEngPropsHandle      hpp;
 };
 
 /////////////////////////////////////////////////////////////////////////////

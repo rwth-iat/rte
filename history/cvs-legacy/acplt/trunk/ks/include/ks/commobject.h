@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.28 1999-02-22 15:08:13 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.29 1999-09-06 06:50:43 harald Exp $ */
 #ifndef KSC_COMMOBJECT_INCLUDED 
 #define KSC_COMMOBJECT_INCLUDED
 /*
@@ -47,6 +47,7 @@
 #include <plt/list.h>
 
 #include "ks/props.h"
+#include "ks/propsv1.h"
 #include "ks/clntpath.h"
 #include "ks/avmodule.h"
 
@@ -56,9 +57,9 @@
 //
 class KscServerBase;
 
-class KsGetPPResult;
+class KsGetEPResult;
 
-typedef PltIterator<KsProjPropsHandle> KscChildIterator;
+typedef PltIterator<KsEngPropsHandle> KscChildIterator;
 
 
 // ---------------------------------------------------------------------------
@@ -79,6 +80,7 @@ public:
     //
     bool hasValidPath() const;
     KsString getName() const;
+    bool isNamePart() const;
     KsString getPathOnly() const;
     const KscPath &getPathAndName() const;
     KsString getHostAndServer() const;
@@ -88,8 +90,13 @@ public:
 
     KscServerBase *getServer() const;
 
+    virtual const KsEngProps_THISTYPE *getEngProps() const = 0;
+    virtual bool getEngPropsUpdate() = 0;
+
+#if 0 // PLT_SOURCE_V1_BC
     virtual const KsProjProps_THISTYPE *getProjProps() const = 0;
-    virtual bool getProjPropsUpdate() = 0;
+    virtual bool getProjPropsUpdate() { return getEngPropsUpdate(); }
+#endif
 
     virtual void setAvModule(const KscAvModule *avm);
     virtual const KscAvModule *getAvModule() const;
@@ -113,7 +120,7 @@ protected:
     KscNegotiator *getNegotiator();
 
     friend class KscDomain;
-    virtual bool setProjProps(KsProjPropsHandle) = 0;
+    virtual bool setEngProps(KsEngPropsHandle) = 0;
 
     KscPathParser path;
     KscServerBase *server;
@@ -128,15 +135,17 @@ protected:
     // if it makes sense (whatever *that* now means...)
     //
     KscChildIterator *newChildIterator_(KS_OBJ_TYPE typeMask,
+					KS_EP_FLAGS scopeFlags = KS_EPF_DEFAULT,
                                         KsString nameMask = KsString("*"));
 
     //
     // Now the next one belongs to the stuff above: read children from
     // server and return their engineered properties in list.
     //
-    bool getChildPPUpdate(KS_OBJ_TYPE typeMask,
+    bool getChildEPUpdate(KS_OBJ_TYPE typeMask,
+			  KS_EP_FLAGS scopeFlags,
                           KsString nameMask,
-			  KsGetPPResult *&result);
+			  KsGetEPResult *&result);
     //
     // This protected iterator class is responsible for iterating over the
     // child list of a domain communication object. The trick here is that
@@ -145,19 +154,19 @@ protected:
     // iterator destroys the result object when it gets destroyed itself.
     //
     class ChildIterator
-    : public PltListIterator<KsProjPropsHandle>
+    : public PltListIterator<KsEngPropsHandle>
     {
     public:
 #if PLT_RETTYPE_OVERLOADABLE
 #define KscCommObject_ChildIterator_THISTYPE KscCommObject::ChildIterator
         typedef ChildIterator THISTYPE;
 #else
-#define KscCommObject_ChildIterator_THISTYPE PltListIterator_THISTYPE(KsProjPropsHandle)
+#define KscCommObject_ChildIterator_THISTYPE PltListIterator_THISTYPE(KsEngPropsHandle)
 #endif
-        ChildIterator(KsGetPPResult &getPPResult);
+        ChildIterator(KsGetEPResult &getEPResult);
         ~ChildIterator();
     private:
-        KsGetPPResult &_getPP_result;
+        KsGetEPResult &_getEP_result;
     };
 
     friend class ChildIterator;
@@ -215,19 +224,23 @@ public:
 
     virtual KS_OBJ_TYPE typeCode() const;
 
-    const KsProjProps_THISTYPE *getProjProps() const;
+    const KsEngProps_THISTYPE *getEngProps() const;
+#if 0 // PLT_SOURCE_V1_BC
+    virtual const KsProjProps_THISTYPE *getProjProps() const;
+#endif
 
     // reread projected props
-    bool getProjPropsUpdate();
+    bool getEngPropsUpdate();
 
     // get iterator
     KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
+				       KS_EP_FLAGS scopeFlags = KS_EPF_DEFAULT,
                                        KsString nameMask = KsString("*"));
 
 protected:
-    bool setProjProps(KsProjPropsHandle h);
+    bool setEngProps(KsEngPropsHandle h);
 
-    KsProjPropsHandle _hproj_props;
+    KsEngPropsHandle _heng_props;
 
     PLT_DECL_RTTI;
 
@@ -255,19 +268,20 @@ public:
 
     KS_OBJ_TYPE typeCode() const;
 
-    const KsDomainProjProps_THISTYPE *getProjProps() const;
+    const KsDomainEngProps_THISTYPE *getEngProps() const;
 
     // reread projected props
-    bool getProjPropsUpdate();
+    bool getEngPropsUpdate();
 
     // get iterator
     KscChildIterator *newChildIterator(KS_OBJ_TYPE typeMask,
+				       KS_EP_FLAGS scopeFlags = KS_EPF_DEFAULT,
                                        KsString nameMask = KsString("*"));
 
 protected:
-    bool setProjProps(KsProjPropsHandle);
+    bool setEngProps(KsEngPropsHandle);
 
-    KsDomainProjProps proj_props;
+    KsDomainEngProps eng_props;
 
     PLT_DECL_RTTI;
 
@@ -296,10 +310,10 @@ public:
 
     virtual KS_OBJ_TYPE typeCode() const;
 
-    bool getProjPropsUpdate();
+    bool getEngPropsUpdate();
     virtual bool getUpdate();
     KsValueHandle getValue() const;
-    const KsVarProjProps_THISTYPE *getProjProps() const;
+    const KsVarEngProps_THISTYPE *getEngProps() const;
     const KsVarCurrProps *getCurrProps() const;
     KsCurrPropsHandle getCurrPropsHandle();
 
@@ -307,9 +321,9 @@ public:
                                        KsString nameMask = KsString("*"));
 
 protected:
-    bool setProjProps(KsProjPropsHandle h);
+    bool setEngProps(KsEngPropsHandle h);
 
-    KsLinkProjProps _proj_props;
+    KsLinkEngProps _proj_props;
     KsVarCurrProps  _curr_props;
 
     PLT_DECL_RTTI;
@@ -327,6 +341,7 @@ public:
 typedef PltPtrHandle<KscLink> KscLinkHandle;
 #endif
 
+
 // ---------------------------------------------------------------------------
 // class KscVariable
 //
@@ -337,12 +352,12 @@ public:
 
     virtual KS_OBJ_TYPE typeCode() const;
 
-    bool getProjPropsUpdate();
+    bool getEngPropsUpdate();
     virtual bool getUpdate();
     virtual bool setUpdate();
     KsValueHandle getValue() const;
 
-    const KsVarProjProps_THISTYPE *getProjProps() const;
+    const KsVarEngProps_THISTYPE *getEngProps() const;
     const KsVarCurrProps *getCurrProps() const;
     KsCurrPropsHandle getCurrPropsHandle();
     bool setCurrProps(KsVarCurrProps &cp);
@@ -350,13 +365,13 @@ public:
 
 protected:
 
-    KsVarProjProps proj_props;
+    KsVarEngProps eng_props;
     KsVarCurrProps curr_props;
 
     friend class _KscPackageBase; // for access to fDirty
     bool fDirty;
 
-    bool setProjProps(KsProjPropsHandle);
+    bool setEngProps(KsEngPropsHandle);
 
     PLT_DECL_RTTI;
 
@@ -403,6 +418,15 @@ KscCommObject::getName() const
 {
     return path.getName();
 }
+
+
+inline
+bool
+KscCommObject::isNamePart() const
+{
+    return path.isNamePart();
+} // KscCommObject::isNamePart
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -491,11 +515,11 @@ KscAnyCommObject::typeCode() const
 
 
 inline
-const KsProjProps_THISTYPE *
-KscAnyCommObject::getProjProps() const
+const KsEngProps_THISTYPE *
+KscAnyCommObject::getEngProps() const
 {
-    return _hproj_props.getPtr();
-} // KscAnyCommObject::getProjProps
+    return _heng_props.getPtr();
+} // KscAnyCommObject::getEngProps
 
 
 // ---------------------------------------------------------------------------
@@ -517,10 +541,10 @@ KscDomain::typeCode() const
 
 
 inline
-const KsDomainProjProps_THISTYPE *
-KscDomain::getProjProps() const
+const KsDomainEngProps_THISTYPE *
+KscDomain::getEngProps() const
 {
-    return &proj_props;
+    return &eng_props;
 }
 
 
@@ -556,10 +580,10 @@ KscVariable::typeCode() const
 
 
 inline
-const KsVarProjProps_THISTYPE *
-KscVariable::getProjProps() const
+const KsVarEngProps_THISTYPE *
+KscVariable::getEngProps() const
 {
-    return &proj_props;
+    return &eng_props;
 }
 
 

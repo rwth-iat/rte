@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.24 1999-01-29 12:43:11 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.25 1999-09-06 06:50:44 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -63,8 +63,8 @@ KscAnyCommObject::debugPrint(ostream &os) const
 {
     os << "KscAnyCommObject object:" << endl;
     KscCommObject::debugPrint(os);
-    if ( _hproj_props ) {
-	_hproj_props->debugPrint(os);
+    if ( _heng_props ) {
+	_heng_props->debugPrint(os);
     }
 } // KscAnyCommObject::debugPrint
 
@@ -112,9 +112,9 @@ PLT_IMPL_RTTI1(KscDomain, KscCommObject);
 // client side within the ACPLT/KS world).
 //
 KscCommObject::KscCommObject(const char *object_path)
-: path(object_path),
-  av_module(0),
-  _last_result(KS_ERR_OK)
+    : path(object_path),
+      av_module(0),
+      _last_result(KS_ERR_OK)
 {
     if ( hasValidPath() ) {
 	//
@@ -181,7 +181,7 @@ KscCommObject::findServer()
 // Query all the children of this domain object, which fit into the name mask
 // and type mask.
 // --aldi: the function now takes as its third argument a reference to
-// a result object pointer. The result object of a GetPP service
+// a result object pointer. The result object of a GetEP service
 // request contains already the list of the projected properties of
 // the children, so why should we build a second list? So we just
 // return the result object if we succeed with our query. The caller
@@ -189,11 +189,14 @@ KscCommObject::findServer()
 // not interested in it anymore. In fact, the ChildIterator local class
 // takes over the ownership of the result object and destroys it when
 // it gets destroyed itself.
+// --aldi: as of protocol version 2 this sucker now got yet another para-
+// meter, the scope flags.
 //
 bool
-KscCommObject::getChildPPUpdate(KS_OBJ_TYPE typeMask,
+KscCommObject::getChildEPUpdate(KS_OBJ_TYPE typeMask,
+				KS_EP_FLAGS scopeFlags,
                                 KsString nameMask,
-                                KsGetPPResult *&result)
+                                KsGetEPResult *&result)
 {
     //
     // Just to make sure the caller is not trying (once) again to read
@@ -221,32 +224,37 @@ KscCommObject::getChildPPUpdate(KS_OBJ_TYPE typeMask,
 
     //
     // Set up the service parameters. Note that not all ACPLT/KS servers
-    // might support the GetPP service on all the variables they provide.
+    // might support the GetEP service on all the variables they provide...
+    // sigh. It sure take a lot of time and a huge amount of work to get
+    // the necessary naming services in distributed control systems, so a
+    // client can ask "what function blocks are available in the DCS?". Way
+    // to go, developers of DCS...
     //
-    KsGetPPParams params;
+    KsGetEPParams params;
 
-    result = new KsGetPPResult;
+    result = new KsGetEPResult;
     if ( !result ) {
 	_last_result = KS_ERR_GENERIC;
 	return false;
     }
 
-    params.path = path.getPathAndName();
-    params.type_mask = typeMask;
-    params.name_mask = nameMask;
+    params.path        = path.getPathAndName();
+    params.type_mask   = typeMask;
+    params.name_mask   = nameMask;
+    params.scope_flags = scopeFlags;
 
     //
     // Now query the ACPLT/KS server with the help of the server object. The
     // server object will handle the request accordingly to whatever kind
     // of ACPLT/KS server it is connected with.
     //
-    bool ok = myServer->getPP(av_module,
+    bool ok = myServer->getEP(av_module,
                               params,
 			      *result);
 
     if ( !ok ) {
 	//
-        // The GetPP service request failed on the communication level.
+        // The GetEP service request failed on the communication level.
 	// In this case, the server object supplies more precise information
 	// about the cause of the failure.
 	//
@@ -266,7 +274,7 @@ KscCommObject::getChildPPUpdate(KS_OBJ_TYPE typeMask,
         return false;
     }
     return true;
-} // KscCommObject::getChildPPUpdate
+} // KscCommObject::getChildEPUpdate
 
 
 // ---------------------------------------------------------------------------
@@ -274,11 +282,13 @@ KscCommObject::getChildPPUpdate(KS_OBJ_TYPE typeMask,
 // communication object which adhere to the given type and name masks.
 //
 KscChildIterator *
-KscCommObject::newChildIterator_(KS_OBJ_TYPE typeMask, KsString nameMask)
+KscCommObject::newChildIterator_(KS_OBJ_TYPE typeMask, 
+				 KS_EP_FLAGS scopeFlags, 
+				 KsString nameMask)
 {
-    KsGetPPResult *result = 0;
+    KsGetEPResult *result = 0;
 
-    if ( getChildPPUpdate(typeMask, nameMask, result) ) {
+    if ( getChildEPUpdate(typeMask, scopeFlags, nameMask, result) ) {
 	if ( result ) {
 	    //
 	    // I'm really overchecking here, but you should already
@@ -312,15 +322,15 @@ KscCommObject::newChildIterator_(KS_OBJ_TYPE typeMask, KsString nameMask)
 // ---------------------------------------------------------------------------
 // This child iterator is an ordinary list iterator, which iterates
 // over handles for projected properties. But in addition to such an
-// ordinary PltListIterator, it also takes the ownership of a GetPP
+// ordinary PltListIterator, it also takes the ownership of a GetEP
 // result object. It will be freed lateron together with this
 // iterator object. The advantage is, that we can save an (possibly
 // expensive) list duplication only to get ownership of the list
 // of the projected properties of the children.
 //
-KscCommObject::ChildIterator::ChildIterator(KsGetPPResult &getPPResult)
-: PltListIterator<KsProjPropsHandle>(getPPResult.items),
-  _getPP_result(getPPResult)
+KscCommObject::ChildIterator::ChildIterator(KsGetEPResult &getEPResult)
+: PltListIterator<KsEngPropsHandle>(getEPResult.items),
+  _getEP_result(getEPResult)
 {
 } // KscCommObject::ChildIterator::ChildIterator
 
@@ -332,7 +342,7 @@ KscCommObject::ChildIterator::ChildIterator(KsGetPPResult &getPPResult)
 //
 KscCommObject::ChildIterator::~ChildIterator()
 {
-    delete &_getPP_result;
+    delete &_getEP_result;
 } // KscCommObject::ChildIterator::~ChildIterator
 
 
@@ -355,9 +365,11 @@ KscAnyCommObject::~KscAnyCommObject()
 // in KscCommObject, which has just been hidden from programmers.
 //
 KscChildIterator *
-KscAnyCommObject::newChildIterator(KS_OBJ_TYPE typeMask, KsString nameMask)
+KscAnyCommObject::newChildIterator(KS_OBJ_TYPE typeMask, 
+				   KS_EP_FLAGS scopeFlags,
+				   KsString nameMask)
 {
-    return newChildIterator_(typeMask, nameMask);
+    return newChildIterator_(typeMask, scopeFlags, nameMask);
 } // KscAnyCommObject::newChildIterator
 
 
@@ -367,7 +379,7 @@ KscAnyCommObject::newChildIterator(KS_OBJ_TYPE typeMask, KsString nameMask)
 // refers to.
 //
 bool
-KscAnyCommObject::getProjPropsUpdate() 
+KscAnyCommObject::getEngPropsUpdate() 
 {
     //
     // Just to make sure the caller is not trying (once) again to read
@@ -397,22 +409,24 @@ KscAnyCommObject::getProjPropsUpdate()
     //
     // Set up the service parameters. We ask exactly for this particular
     // communication object within the server. Note that not all ACPLT/KS
-    // servers might support the GetPP service on all the objects they
+    // servers might support the GetEP service on all the objects they
     // provide.
     //
-    KsGetPPParams params;
-    KsGetPPResult result;
+    KsGetEPParams params;
+    KsGetEPResult result;
 
     params.path = path.getPathOnly(); // ###TODO CHECK "/"###
     params.type_mask = KS_OT_ANY;
     params.name_mask = path.getName();
+    params.scope_flags = path.isNamePart() ? 
+	KS_EPF_PARTS : KS_EPF_CHILDREN;
 
     //
     // Now query the ACPLT/KS server with the help of the server object. The
     // server object will handle the request accordingly to whatever kind
     // of ACPLT/KS server it is connected with.
     //
-    bool ok = myServer->getPP(av_module,
+    bool ok = myServer->getEP(av_module,
                               params, 
                               result);
     if ( ok ) {
@@ -429,9 +443,9 @@ KscAnyCommObject::getProjPropsUpdate()
 	    // included a wildcard character in the resource locator...
             //
             if ( result.items.size() == 1 ) { 
-                KsProjPropsHandle hpp = result.items.removeFirst();
-                if ( hpp ) {
-		    _hproj_props = hpp;
+                KsEngPropsHandle hep = result.items.removeFirst();
+                if ( hep ) {
+		    _heng_props = hep;
 		    return true;
                 } else {
 		    //
@@ -441,7 +455,7 @@ KscAnyCommObject::getProjPropsUpdate()
                 }
             } else {
 		//
-		// Either the ACPLT/KS server does not support the GetPP
+		// Either the ACPLT/KS server does not support the GetEP
 		// on this particular object, or there was a wildcard
 		// in the objects's name. So bail out with an error.
 		//
@@ -453,35 +467,36 @@ KscAnyCommObject::getProjPropsUpdate()
 	    // service reply contains the reason for the failure, so we
 	    // return this through the "last result" member variable. One
 	    // prominent reason for failing here is that the ACPLT/KS does
-	    // not support the GetPP service on this particular object.
+	    // not support the GetEP service on this particular object.
 	    //
 	    _last_result = result.result;
         }
     } else {
 	//
-        // The GetPP service request failed on the communication level.
+        // The GetEP service request failed on the communication level.
 	// In this case, the server object supplies more precise information
 	// about the cause of the failure.
 	//
         _last_result = myServer->getLastResult();
     }
     return false;
-} // KscAnyCommObject::getProjPropsUpdate
+} // KscAnyCommObject::getEngPropsUpdate
 
 
 // ---------------------------------------------------------------------------
 // Set the projected properties of this comm object. This one is definetly
 // *UNSUPPORTED*, so never, NEVER, **NEVER** use it! Also it's of no use (yet).
+// But then, why I'm talking to walls?
 //
 bool
-KscAnyCommObject::setProjProps(KsProjPropsHandle hpp) 
+KscAnyCommObject::setEngProps(KsEngPropsHandle hep) 
 {
-    if ( hpp ) {
-        _hproj_props = hpp;
+    if ( hep ) {
+        _heng_props = hep;
         return true;
     }
     return false;
-} // KscAnyCommObject::setProjProps
+} // KscAnyCommObject::setEngProps
 
 
 
@@ -506,7 +521,7 @@ KscDomain::~KscDomain()
 // refers to.
 //
 bool
-KscDomain::getProjPropsUpdate() 
+KscDomain::getEngPropsUpdate() 
 {
     //
     // Just to make sure the caller is not trying (once) again to read
@@ -535,21 +550,25 @@ KscDomain::getProjPropsUpdate()
     //
     // Set up the service parameters. We ask exactly for this domain
     // communication object within the server. Note that not all ACPLT/KS
-    // might support the GetPP service on all the domains they provide.
+    // might support the GetEP service on all the domains they provide. As
+    // for DCS & Co., I've already described the big picture in a comment
+    // above.
     //
-    KsGetPPParams params;
-    KsGetPPResult result;
+    KsGetEPParams params;
+    KsGetEPResult result;
 
     params.path = path.getPathOnly();
     params.type_mask = KS_OT_DOMAIN;
     params.name_mask = path.getName();
+    params.scope_flags = path.isNamePart() ?
+	KS_EPF_PARTS : KS_EPF_CHILDREN;
 
     //
     // Now query the ACPLT/KS server with the help of the server object. The
     // server object will handle the request accordingly to whatever kind
     // of ACPLT/KS server it is connected with.
     //
-    bool ok = myServer->getPP(av_module,
+    bool ok = myServer->getEP(av_module,
                               params, 
                               result);
     if ( ok ) {
@@ -566,10 +585,10 @@ KscDomain::getProjPropsUpdate()
 	    // included a wildcard character in the resource locator...
             //
             if ( result.items.size() == 1 ) { 
-                KsProjPropsHandle hpp = result.items.removeFirst();
-                if ( hpp ) {
-                    if ( hpp->xdrTypeCode() == KS_OT_DOMAIN ) {
-                        proj_props = *(KsDomainProjProps *)hpp.getPtr();
+                KsEngPropsHandle hep = result.items.removeFirst();
+                if ( hep ) {
+                    if ( hep->xdrTypeCode() == KS_OT_DOMAIN ) {
+                        eng_props = *(KsDomainProjProps *)hep.getPtr();
 			_last_result = KS_ERR_OK;
                         return true;
                     } else {
@@ -589,7 +608,7 @@ KscDomain::getProjPropsUpdate()
                 }
             } else {
 		//
-		// Either the ACPLT/KS server does not support the GetPP
+		// Either the ACPLT/KS server does not support the GetEP
 		// on this particular domain, or there was a wildcard
 		// in the domains's name. So bail out with an error.
 		//
@@ -601,13 +620,13 @@ KscDomain::getProjPropsUpdate()
 	    // service reply contains the reason for the failure, so we
 	    // return this through the "last result" member variable. One
 	    // prominent reason for failing here is that the ACPLT/KS does
-	    // not support the GetPP service on this particular domain.
+	    // not support the GetEP service on this particular domain.
 	    //
 	    _last_result = result.result;
         }
     } else {
 	//
-        // The GetPP service request failed on the communication level.
+        // The GetEP service request failed on the communication level.
 	// In this case, the server object supplies more precise information
 	// about the cause of the failure.
 	//
@@ -615,7 +634,7 @@ KscDomain::getProjPropsUpdate()
     }
 
     return false;
-} // KscDomain::getProjPropsUpdate
+} // KscDomain::getEngPropsUpdate
 
 
 // ---------------------------------------------------------------------------
@@ -623,15 +642,15 @@ KscDomain::getProjPropsUpdate()
 // *UNSUPPORTED*, so never, NEVER, **NEVER** use it! Also it's of no use (yet).
 //
 bool
-KscDomain::setProjProps(KsProjPropsHandle hpp) 
+KscDomain::setEngProps(KsEngPropsHandle hep) 
 {
-    if ( hpp && (hpp->xdrTypeCode() == typeCode()) ) {
-        proj_props = *(KsDomainProjProps *) hpp.getPtr();
+    if ( hep && (hep->xdrTypeCode() == typeCode()) ) {
+        eng_props = *(KsDomainEngProps *) hep.getPtr();
         return true;
     }
 
     return false;
-} // KscDomain::setProjProps
+} // KscDomain::setEngProps
 
 
 // ---------------------------------------------------------------------------
@@ -639,9 +658,11 @@ KscDomain::setProjProps(KsProjPropsHandle hpp)
 // in KscCommObject, which has just been hidden from programmers.
 //
 KscChildIterator *
-KscDomain::newChildIterator(KS_OBJ_TYPE typeMask, KsString nameMask)
+KscDomain::newChildIterator(KS_OBJ_TYPE typeMask, 
+			    KS_EP_FLAGS scopeFlags,
+			    KsString nameMask)
 {
-    return newChildIterator_(typeMask, nameMask);
+    return newChildIterator_(typeMask, scopeFlags, nameMask);
 } // KscDomain::newChildIterator
 
 
@@ -655,7 +676,7 @@ KscDomain::newChildIterator(KS_OBJ_TYPE typeMask, KsString nameMask)
 // of type variable) within the ACPLT/KS server this object refers to.
 //
 bool
-KscVariable::getProjPropsUpdate()
+KscVariable::getEngPropsUpdate()
 {
     //
     // Just to make sure the caller is not trying (once) again to read
@@ -684,22 +705,24 @@ KscVariable::getProjPropsUpdate()
     //
     // Set up the service parameters. We ask exactly for this variable
     // communication object within the server. Note that not all ACPLT/KS
-    // server might support the GetPP service on all the variables they
-    // provide.
+    // server might support the GetEP service on all the variables they
+    // provide. GetEP & commercial DCS? Sigh.
     //
-    KsGetPPParams params;
-    KsGetPPResult result;
+    KsGetEPParams params;
+    KsGetEPResult result;
 
     params.path = path.getPathOnly();
     params.type_mask = KS_OT_VARIABLE;
     params.name_mask = path.getName();
+    params.scope_flags = isNamePart() ?
+	KS_EPF_PARTS : KS_EPF_CHILDREN;
 
     //
     // Now query the ACPLT/KS server with the help of the server object. The
     // server object will handle the request accordingly to whatever kind
     // of ACPLT/KS server it is connected with.
     //
-    bool ok = myServer->getPP(av_module,
+    bool ok = myServer->getEP(av_module,
                               params,
 			      result);
 
@@ -717,10 +740,10 @@ KscVariable::getProjPropsUpdate()
 	    // included a wildcard character in the resource locator...
             //
             if ( result.items.size() == 1 ) {
-                KsProjPropsHandle hpp = result.items.removeFirst();
-                if ( hpp ) {
-                    if ( hpp->xdrTypeCode() == KS_OT_VARIABLE ) {
-                        proj_props = *(KsVarProjProps *)hpp.getPtr();
+                KsEngPropsHandle hep = result.items.removeFirst();
+                if ( hep ) {
+                    if ( hep->xdrTypeCode() == KS_OT_VARIABLE ) {
+                        eng_props = *(KsVarEngProps *)hep.getPtr();
 			_last_result = KS_ERR_OK;
                         return true;
                     } else {
@@ -740,7 +763,7 @@ KscVariable::getProjPropsUpdate()
                 }
             } else {
 		//
-		// Either the ACPLT/KS server does not support the GetPP
+		// Either the ACPLT/KS server does not support the GetEP
 		// on this particular variable, or there was a wildcard
 		// in the variable's name. So bail out with an error.
 		//
@@ -752,13 +775,13 @@ KscVariable::getProjPropsUpdate()
 	    // service reply contains the reason for the failure, so we
 	    // return this through the "last result" member variable. One
 	    // prominent reason for failing here is that the ACPLT/KS does
-	    // not support the GetPP service on this particular variable.
+	    // not support the GetEP service on this particular variable.
 	    //
 	    _last_result = result.result;
 	}
     } else {
 	//
-        // The GetPP service request failed on the communication level.
+        // The GetEP service request failed on the communication level.
 	// In this case, the server object supplies more precise information
 	// about the cause of the failure.
 	//
@@ -766,7 +789,7 @@ KscVariable::getProjPropsUpdate()
     }
 
     return false;
-} // KscVariable::getProjPropsUpdate
+} // KscVariable::getEngPropsUpdate
 
 
 //////////////////////////////////////////////////////////////////////
@@ -775,14 +798,14 @@ KscVariable::getProjPropsUpdate()
 // it's of no use (yet).
 //
 bool
-KscVariable::setProjProps(KsProjPropsHandle hpp)
+KscVariable::setEngProps(KsEngPropsHandle hep)
 {
-    if ( hpp && (hpp->xdrTypeCode() == typeCode()) ) {
-        proj_props = *(KsVarProjProps *) hpp.getPtr();
+    if ( hep && (hep->xdrTypeCode() == typeCode()) ) {
+        eng_props = *(KsVarEngProps *) hep.getPtr();
         return true;
     }
     return false;
-} // KscVariable::setProjProps
+} // KscVariable::setEngProps
 
 
 //////////////////////////////////////////////////////////////////////

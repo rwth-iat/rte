@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/history.cpp,v 1.5 1999-01-29 12:44:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/history.cpp,v 1.6 1999-09-06 06:51:29 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -43,8 +43,8 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const KsProjProps_THISTYPE *
-KscHistory::getProjProps() const
+const KsEngProps_THISTYPE *
+KscHistory::getEngProps() const
 {
     // TODO: implementation
     return 0;
@@ -53,7 +53,7 @@ KscHistory::getProjProps() const
 /////////////////////////////////////////////////////////////////////////////
 
 bool 
-KscHistory::getProjPropsUpdate()
+KscHistory::getEngPropsUpdate()
 {
     // TODO: implementation
     return false;
@@ -72,7 +72,7 @@ KscHistory::setStringSelector(KsString id,
 /////////////////////////////////////////////////////////////////////////////
 
 bool
-KscHistory::getParts(KsList<KsProjPropsHandle> &parts)
+KscHistory::getParts(KsList<KsEngPropsHandle> &parts)
 {
     if( !hasValidPath() ) return false;
 
@@ -84,22 +84,23 @@ KscHistory::getParts(KsList<KsProjPropsHandle> &parts)
 
     // Prepare the service parameters
     //
-    KsGetPPParams params;
-    KsGetPPResult result;
+    KsGetEPParams params;
+    KsGetEPResult result;
 
     params.path      = getPathAndName();
     params.type_mask = KS_OT_VARIABLE;
     params.name_mask = KsString("*");
+    params.scope_flags = KS_EPF_CHILDREN; // FIXME!!!
 
     // Request service
     //
-    bool ok = server->getPP(av_module, params, result);
+    bool ok = server->getEP(av_module, params, result);
     
     if( ok ) {
         if( result.result == KS_ERR_OK ) {
             // Request succeeded, now copy data
             //
-            PltListIterator<KsProjPropsHandle> it(result.items);
+            PltListIterator<KsEngPropsHandle> it(result.items);
             bool copyok = true;
             while( it ) {
                 copyok = copyok && parts.addLast(*it);

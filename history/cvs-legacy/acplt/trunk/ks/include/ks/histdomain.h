@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_HISTDOMAIN_INCLUDED
 #define KS_HISTDOMAIN_INCLUDED
-/* $Header: */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/histdomain.h,v 1.6 1999-09-06 06:51:06 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1998
  * Chair of Process Control Engineering,
@@ -71,7 +71,7 @@ public:
     virtual KsTime    getCreationTime() const;
     virtual KsString  getComment() const;
     virtual KS_ACCESS getAccessMode() const;
-    virtual KsProjPropsHandle getPP() const;
+    virtual KsEngPropsHandle getEP() const;
 
     virtual KS_HIST_TYPE          getType() const;
     virtual KS_INTERPOLATION_MODE getDefaultInterpolation() const;
@@ -162,11 +162,13 @@ public:
     virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_VARIABLE; }
 
     // projected properties
-    virtual KsString  getIdentifier() const { return identifier; }
-    virtual KsTime    getCreationTime() const { return creation_time; }
-    virtual KsString  getComment() const { return comment; }
-    virtual KS_ACCESS getAccessMode() const { return KS_AC_NONE; }
-    virtual KsString getTechUnit() const { return KsString(); }
+    virtual KsString    getIdentifier() const { return identifier; }
+    virtual KsTime      getCreationTime() const { return creation_time; }
+    virtual KsString    getComment() const { return comment; }
+    virtual KS_ACCESS   getAccessMode() const { return KS_AC_NONE; }
+    KS_SEMANTIC_FLAGS   getSemanticFlags() const { return 0; }
+
+    virtual KsString    getTechUnit() const { return KsString(); }
     virtual KS_VAR_TYPE getType() const { return var_type; }
 
     // current properties

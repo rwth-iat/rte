@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/histdomain.cpp,v 1.4 1999-04-22 15:35:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/histdomain.cpp,v 1.5 1999-09-06 06:51:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -133,11 +133,11 @@ KssHistoryDomain::getAccessMode() const
 } // KssHistoryDomain::getAccessMode
 
 
-KsProjPropsHandle
-KssHistoryDomain::getPP() const
+KsEngPropsHandle
+KssHistoryDomain::getEP() const
 {
-    return KssHistory::getPP();
-} // KssSimpleCommObject::getPP
+    return KssHistory::getEP();
+} // KssSimpleCommObject::getEP
 
 
 KS_HIST_TYPE
