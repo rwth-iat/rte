@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_XDR_INCLUDED
 #define KS_XDR_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.9 1997-03-19 17:19:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.10 1997-03-23 14:37:22 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -107,6 +107,7 @@ extern "C" {
 class KsXdrAble 
 {
 public:
+    virtual ~KsXdrAble() { }
     virtual bool xdrEncode(XDR *) const = 0;  // serialize
     virtual bool xdrDecode(XDR *) = 0;        // deserialize
  // static KsXdrUnion * xdrNew(XDR *) = 0; // deserialization factory meth.
