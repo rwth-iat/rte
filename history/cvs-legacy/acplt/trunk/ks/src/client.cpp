@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.27 1998-01-12 07:49:26 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.28 1998-01-14 16:36:34 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -232,6 +232,7 @@ KS_RESULT
 KscClient::createServer(KsString host_and_name, KscServerBase *&pServer)
 {
     KS_RESULT result = KS_ERR_OK;
+
     pServer = 0; // Wipe it out...
 
     //
@@ -497,6 +498,35 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
     const unsigned long NO_IP      = INADDR_ANY;
 
     //
+    // As of version 1.02 we now support a explicit given port address
+    // of the ACPLT/KS manager in the hostname. This is desirable in order
+    // to access ACPLT/KS servers behind firewalls without making the
+    // portmapper accessible from the dangerous "outback".
+    //
+    KsString    DNS_name;
+    const char *pColon;
+
+    pColon = strchr(host_name, ':');
+    if ( pColon ) {
+        //
+        // Seems like the hostname contains an explicit port number. At
+        // this time we only need the real hostname part, so get rid of
+        // the other part here...
+        //
+        int hostpart_len = pColon - (const char *) host_name;
+        if ( hostpart_len <= 0 ) {
+            return false;
+        }
+        DNS_name = host_name.substr(0, hostpart_len);
+    } else {
+        //
+        // It's the traditional hostname style without an explicit
+        // port address.
+        //
+        DNS_name = host_name;
+    }
+
+    //
     // Clean up first and zero out the internet address.
     //
     memset(addr, 0, sizeof(struct sockaddr_in));
@@ -510,7 +540,7 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
     //
     KSC_IP_TYPE ip;
     if ( host_name.len() ) {
-	ip = inet_addr(host_name);
+	ip = inet_addr(DNS_name);
     } else {
 	ip = INVALID_IP;
     }
@@ -521,7 +551,7 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
         // resolve it as a DNS name.
         //
 #if 1
-	KscHostEnt he(gethostbyname(host_name));
+	KscHostEnt he(gethostbyname(DNS_name));
 #endif
 	if ( (he.numIP() > 1) && (he.getIP(0) == last_ip) ) {
 	    ip = he.getIP(1);
@@ -532,7 +562,7 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
 	    // The name lookup failed. So we can't do anything more...
 	    //
 #if PLT_DEBUG
-            PltString err_msg("Failed to get IP address of host : ", host_name);
+            PltString err_msg("Failed to get IP address of host: ", host_name);
             PltLog::Warning(err_msg);
 #endif
             return false;
@@ -578,6 +608,39 @@ KscServer::createTransport()
     }
 
     //
+    // Because we now support specifying the port number of the
+    // ACPLT/KS manager directly within the hostname, we must first
+    // watch out for an optional port number.
+    //
+    const char *pColon = strchr(host_name, ':');
+    unsigned short port = 0; // default is "ask the portmapper"
+
+    if ( pColon ) {
+        //
+        // Seems like there is a port number embedded in the hostname,
+        // so we try to extract it. If there is anything wrong with this
+        // port number, either because it's an invalid string or the
+        // value is out of range, bail out with an malformed path error.
+        //
+        char *pEnd;
+        long port_no;
+
+        ++pColon; // advance to the port number string
+        port_no = strtol(pColon, &pEnd, 10);
+        if ( *pColon && !*pEnd ) {
+            if ( (port_no > 0l) && (port_no <= 65535l) ) {
+                port = (unsigned short) port_no;
+            } else {
+                _last_result = KS_ERR_MALFORMEDPATH;
+                return false;
+            }
+        } else {
+            _last_result = KS_ERR_MALFORMEDPATH;
+            return false;
+        }
+    }
+
+    //
     // Now request the ACPLT/KS server description from the ACPLT/KS
     // manager. If we got something back, then make sure that the
     // request itself succeeded and not only the basic communication.
@@ -585,24 +648,24 @@ KscServer::createTransport()
     // not KS_ERR_OK, then the manager could not successfully serve the
     // request.
     //
-    if ( !getServerDesc(&host_addr, server_desc, server_info) ) {
-	//
-	// Note: don't change the last result set by getServerDesc().
-	// Just fall through.
-	//
+    if ( !getServerDesc(&host_addr, port, server_desc, server_info) ) {
+        //
+        // Note: don't change the last result set by getServerDesc().
+        // Just fall through.
+        //
         return false;
     }
-
+        
     if ( server_info.result != KS_ERR_OK ) {
-	//
-	// If the ACPLT/KS manager returned a service error, then we
-	// will fall back to the error "unknown server". If we would
-	// return the service result verbatim, then it could confuse
-	// the client, because it does not know that the error resulted
-	// from the server lookup and not from the requested operation
-	// itself.
-	//
-	_last_result = KS_ERR_SERVERUNKNOWN;
+        //
+        // If the ACPLT/KS manager returned a service error, then we
+        // will fall back to the error "unknown server". If we would
+        // return the service result verbatim, then it could confuse
+        // the client, because it does not know that the error resulted
+        // from the server lookup and not from the requested operation
+        // itself.
+        //
+        _last_result = KS_ERR_SERVERUNKNOWN;
         PLT_DMSG("Unknown server " << getHostAndName() << endl);
         return false;
     }
@@ -649,7 +712,7 @@ KscServer::createTransport()
     bool ok = clnt_control(_client_transport, CLSET_TIMEOUT, 
                            (struct timeval *)(&_rpc_timeout));
 #endif
-    if(!ok) {
+    if ( !ok ) {
         PltLog::Warning("Failed to set the timeout value for the RPC transport");
     }
 
@@ -685,7 +748,7 @@ KscServer::getStateUpdate()
 
     // request server description from manager
     //
-    if( !getServerDesc(&host_addr, server_desc, server_info) ) {
+    if( !getServerDesc(&host_addr, 0, server_desc, server_info) ) {
         // dont change status set by getServerDescription()
         return false;
     }
@@ -960,11 +1023,12 @@ KscGetServerOutHelper(XDR *xdr, void *p)
 //
 bool
 KscServer::getServerDesc(struct sockaddr_in *host_addr, 
+                         unsigned short port,
                          const KsServerDesc &server,
                          KsGetServerResult &server_desc)
 {
     int socket = RPC_ANYSOCK;
-    CLIENT *pUDP;
+    CLIENT *transport;
     enum clnt_stat errcode;
 
     //
@@ -973,18 +1037,33 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
     // transport at this point, then we'll return immediately with
     // an error code in the "last result".
     //
+    // Note: as of version 1.0.2 we now support for an explicit
+    // port number of the manager specified in the host name. In
+    // this case we switch over to TCP instead of UDP because we
+    // client most probably uses such hostnames to access ACPLT/KS
+    // systems behind firewalls and UDP through a firewall is not
+    // the most wanted protocol...
+    //
     host_addr->sin_family = AF_INET;
-    host_addr->sin_port = htons(0);
+    host_addr->sin_port = htons(port);
     
-    pUDP = clntudp_create(host_addr,
-                          KS_RPC_PROGRAM_NUMBER,
-                          KS_PROTOCOL_VERSION,
-                          KSC_UDP_TIMEOUT,
-                          &socket);
-    if( !pUDP ) {
+    if ( port ) {
+        transport = clnttcp_create(host_addr,
+                                   KS_RPC_PROGRAM_NUMBER,
+                                   KS_PROTOCOL_VERSION,
+                                   &socket,
+                                   0, 0);
+    } else {
+        transport = clntudp_create(host_addr,
+                                   KS_RPC_PROGRAM_NUMBER,
+                                   KS_PROTOCOL_VERSION,
+                                   KSC_UDP_TIMEOUT,
+                                   &socket);
+    }
+    if( !transport ) {
 	//
 	// Try to figure out what exactly lead to our problem that
-	// we can't create the UDP transport for communicating with the
+	// we can't create the UDP/TCP transport for communicating with the
 	// ACPLT/KS manager. If the communication failed because there is
 	// no ACPLT/KS manager, then exactly return this error, otherwise
 	// fall back to the more generic "can't contact".
@@ -1004,7 +1083,7 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
 #if PLT_DEBUG_PEDANTIC
     // ping manager
     //
-    errcode = clnt_call(pUDP, 0, 
+    errcode = clnt_call(transport, 0, 
                         xdr_void, 0, 
                         xdr_void, 0, 
                         KSC_UDP_TIMEOUT);
@@ -1029,7 +1108,7 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
         KscAvNoneModule::getStaticNegotiator(),
         &server_desc);
 
-    errcode = clnt_call(pUDP, 
+    errcode = clnt_call(transport, 
 			KS_GETSERVER,
 			(xdrproc_t) KscGetServerInHelper,
 			(char *) &inData,
@@ -1041,7 +1120,7 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
     // Free the resources used by communication transport and return
     // the information in question.
     //
-    clnt_destroy(pUDP);
+    clnt_destroy(transport);
 
     if ( errcode != RPC_SUCCESS ) {
         PLT_DMSG("function call to MANAGER failed, error code " << (unsigned) errcode << endl);
