@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000
+ * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -17,9 +17,12 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* Author : Christian Poensgen <chris@plt.rwth-aachen.de> */
-
-/* fnmatch.h */
+/* Data structures and prototypes for string matching routines
+ *
+ * Author : Christian Poensgen <chris@plt.rwth-aachen.de>
+ * fnmatch.h
+ * last change: Feb 8, 2002
+ */
 
 #ifndef FNMATCH_H_INCLUDED
 #define FNMATCH_H_INCLUDED

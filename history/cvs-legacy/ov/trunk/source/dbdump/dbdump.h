@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000
+ * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -17,7 +17,10 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Includes, defines and typedefs for ACPLT/OV database dumper
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
+// dbdump.h
+// last change: Jan 25, 2002
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +29,7 @@
 
 #include <time.h>
 
-//----
+//---------------------------------------------------------------------------------
 
 #include "ks/client.h"
 #include "ks/clntpath.h"
@@ -49,7 +52,7 @@
 #include "dbdump_inst.h"
 #endif
 
-//----
+//---------------------------------------------------------------------------------
 
 // Indent output INDENTATION spaces per level
 #define INDENTATION				3

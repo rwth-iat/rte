@@ -1,3 +1,29 @@
+/*
+ * Copyright (c) 1996-2002
+ * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
+ * D-52064 Aachen, Germany.
+ * All rights reserved.
+ *
+ * This file is part of the ACPLT/KS Package which is licensed as open
+ * source under the Artistic License; you can use, redistribute and/or
+ * modify it under the terms of that license.
+ *
+ * You should have received a copy of the Artistic License along with
+ * this Package; see the file ARTISTIC-LICENSE. If not, write to the
+ * Copyright Holder.
+ *
+ * THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES
+ * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+// This file is created automatically, do not change.
+//
+// Author : Christian Poensgen <chris@plt.rwth-aachen.de>
+// dbparse_inst.h
+
+/////////////////////////////////////////////////////////////////////////////
+
 template class KsArray<KsCreateObjItem>;
 template class KsArray<KsCreateObjResultItem>;
 template class KsArray<KsGetCanonicalPathResultItem>;

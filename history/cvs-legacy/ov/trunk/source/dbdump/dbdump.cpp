@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000
+ * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -17,15 +17,18 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// ACPLT/OV database dumper:
+// This programme writes the contents of an ACPLT/OV server into a text file.
+//
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
 // dbdump.cpp
 // Version : 1.33
-// last change: Aug 8, 2002
+// last change: Oct 29, 2002
 
 /////////////////////////////////////////////////////////////////////////////
 
 #include "dbdump.h"
-#include "fnmatch.h"				// for string matching routines
+#include "fnmatch.h"					// for string matching routines
 #include <iostream.h>
 #include <iomanip.h>
 #include <fstream.h>
@@ -53,6 +56,7 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 
 //---------------------------------------------------------------------------------
 
+// Inserts formatting space
 void Indent(int ind)
 {
 	while ( --ind >= 0 ) {
@@ -83,7 +87,7 @@ int CompareKsStrings(KsString mask, KsString name, int no_case)
 
 //---------------------------------------------------------------------------------
 
-//Convert a time into an ASCII string
+//Convert a KsTime object into an ASCII string
 KsString TimeToAscii(const KsTime ptime)
 {
 	// local variables
@@ -93,15 +97,16 @@ KsString TimeToAscii(const KsTime ptime)
 
 	//convert the time to a string
 	ptm = gmtime(&secs);
-	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06lu",
+	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06u",
 		ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour,
 		ptm->tm_min, ptm->tm_sec, ptime.tv_usec);
-	return KsString(timestring);
+	return (KsString)timestring;
 } // TimeToAscii
 
 //---------------------------------------------------------------------------------
 
-// Convert a timespan into an ASCII string
+// Convert a KsTimeSpan object into an ASCII string
+// in the format hours:minutes:seconds.microseconds
 KsString TimeSpanToAscii(const KsTimeSpan ptimesp)
 {
 	// local variables
@@ -115,14 +120,14 @@ KsString TimeSpanToAscii(const KsTimeSpan ptimesp)
 	minutes = secs % 3600;
 	secs -= minutes * 60;
 	hours = secs / 60;
-	sprintf(timestring, "%04d:%02d:%02d.%06lu",
+	sprintf(timestring, "%04d:%02d:%02d.%06u",
 		hours, minutes, seconds, ptimesp.tv_usec);
 	return (KsString)timestring;
 } // TimeSpanToAscii
 
 //---------------------------------------------------------------------------------
 
-// Dump variables of current domain communication object
+// Dump variables of current domain communication object (branch)
 int DumpVars(KscAnyCommObject &branch, int indent)
 {
 	KscChildIterator		*children;
@@ -140,7 +145,6 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 		return -1;
 	}
 
-
 	Indent(indent);
 	db_file << "VARIABLE_VALUES" << endl;
 
@@ -153,7 +157,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 		KsEngPropsHandle current(**children);
 
 		if (strncmp("/vendor", branch.getPathAndName(), 7) == 0) {
-			delimiter = "/";
+			delimiter = "/";	// variables in vendor branch are separated by slashes
 		} else {
 			delimiter = ".";
 		}
@@ -199,6 +203,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 							break;
 						case KS_VT_BOOL:
 							if (strcmp("/vendor/activity_lock", child_var.getPathAndName() ) == 0) {
+								// always enable activity lock flag in output file
 								db_file << "TRUE" << endl;
 							} else {
 								db_file << ((bool) ((KsBoolValue &) *curr_props->value) ? "TRUE" : "FALSE")
@@ -343,10 +348,11 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 							}
 							db_file << "}" << endl;
 							break;
-						default:
+						default:	// unknown variable type
 							db_file << "<???>" << endl;
 						} // switch
 
+						// evaluate dump options
 						if (*dop & KS_DO_VAR_TIME) {
 							Indent(indent + 2 * INDENTATION);
 							db_file << "TIME = ";
@@ -381,6 +387,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 						if (*dop & KS_DO_VAR_SEM_FLAGS) {
 							Indent(indent + 2 * INDENTATION);
 							db_file << "FLAGS = \"";
+							// 'A': lowest bit set, ..., 'Z', 'a', ..., 'f': highest bit set
 							if (var_eng_props->semantic_flags) {
 								for (i = 0; i <= 25; i++) {
 									if (var_eng_props->semantic_flags & (1 << i)) {
@@ -505,7 +512,9 @@ int DumpLinks(KscAnyCommObject &branch, int indent)
 								}
 							}
 							break;
-						default : cout << curr_props->value->xdrTypeCode() << endl;
+						default : cout << "Error: Invalid value type "
+									   << curr_props->value->xdrTypeCode()
+									   << " of link " << child_link.getName() << "." << endl;
 						}
 						db_file << "}" << endl;
 					}
@@ -541,7 +550,7 @@ int DumpParts(KscAnyCommObject &branch, int indent)
 	}
 
 	Indent(indent);
-    db_file << "PART_INSTANCES" << endl;
+	db_file << "PART_INSTANCES" << endl;
 
 	//
 	// Now iterate over all the part domains of the current level, we're in.
@@ -643,7 +652,9 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 			Indent(indent);
 			db_file << "PART_INSTANCE " << obj.getPathAndName();
 		} else {
-			if (indent > 0) {
+			if (indent > 0) {	// if indent is not 0 the parent of obj has to be
+								// a part, e.g. "/x.parent/obj", thus instance obj
+								// must be dumped later on level 0
 				inst_list.addLast(obj.getFullPath() );
 				return;
 			}
@@ -651,6 +662,7 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 			db_file << "INSTANCE " << obj.getPathAndName();
 		}
 
+		// evaluate dump options
 		if (*dop & KS_DO_CLASS_IDENT) {
 			db_file << " : CLASS "
 				<< ((KsDomainEngProps &)eng_props).class_identifier;
@@ -664,7 +676,7 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 					<< ";" << endl;
 		}
 
-		if (*dop & KS_DO_SEM_FLAGS) {			// Semantic Flags: last bit set = "A",
+		if (*dop & KS_DO_SEM_FLAGS) {			// Semantic Flags: lowest bit set = "A",
 			Indent(indent + INDENTATION);		// previous bit set = "B", ...
 			db_file << "FLAGS = \"";
 			if (eng_props.semantic_flags) {
@@ -673,7 +685,7 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 						db_file << char('A' + i);
 					}
 				}
-				for (i = 26; i <= 31; i++) {	// ... first bit set = "f"
+				for (i = 26; i <= 31; i++) {	// ... highest bit set = "f"
 					if (eng_props.semantic_flags & (1 << i)) {
 						db_file << char('a' + i - 26);
 					}
@@ -697,7 +709,7 @@ void DumpEngProps(const KsEngProps &eng_props, KscAnyCommObject &obj, int indent
 
 		Indent(indent);
 		if (eng_props.access_mode & KS_AC_PART) {
-			db_file << "END_PART_INSTANCE;" << endl << endl;
+			db_file << "END_PART_INSTANCE;" << endl;
 		} else {
 			db_file << "END_INSTANCE;" << endl << endl;
 		}
@@ -730,7 +742,7 @@ int DumpEngProps(KscAnyCommObject &obj, int indent)
 				<< endl;
 		return -1;
 	}
-	DumpEngProps(*eng_props, obj, indent);
+	DumpEngProps(*eng_props, obj, indent);	// dump engineered properties of root domain
 	db_file << endl;
 	return 0;
 } // DumpEngProps
@@ -817,7 +829,7 @@ KS_ACCESS GetAccRights(char *arg)
 {
 	KS_OBJ_TYPE	ret;
 	int			i, j, k;
-	char		*constant[11];
+	char		*constant[11];	// at most 11 access rights parameters possible
 	char		x;
 
 	ret = 0;
@@ -828,7 +840,7 @@ KS_ACCESS GetAccRights(char *arg)
 		k = sscanf(&arg[i], "%[A-Za-z_]%1[-]", constant[j], &x);	// verify parameter format
 		if (k == 0) {
 			cout << "Error: Invalid access rights parameter." << endl;
-//			free(constant);											// ???
+//			free(constant);											// ??? error! why?
 			exit(-1);
 		}
 		if (k == 1) {
@@ -883,7 +895,7 @@ KS_ACCESS GetAccRights(char *arg)
 		cout << "Error: Invalid access rights parameter." << endl;
 		exit(-1);
 	}
-//	free(constant);											// ???
+//	free(constant);											// ??? error! why?
 	return ret;
 } // GetAccRights
 
@@ -912,13 +924,12 @@ KS_SEMANTIC_FLAGS GetSemFlags(char *arg)
 		}
 		i++;
 	}
-	if (i != strlen(arg)) {
-    	cout << "Error: Invalid semantic flags." << endl;
-    	exit(-1);
+	if (i == strlen(arg)) {
+		return ret;
+	} else {
+		cout << "Error: Invalid semantic flags." << endl;
+		exit(-1);
 	}
-	
-	return ret;
-
 } // GetSemFlags
 
 //---------------------------------------------------------------------------------
@@ -926,9 +937,9 @@ KS_SEMANTIC_FLAGS GetSemFlags(char *arg)
 // Get dump options from command line parameter
 dump_opt_t GetDumpOpts(char *arg)
 {
-	dump_opt_t	ret = 0;
+	dump_opt_t	ret;
 	int			i, j, k;
-	char		*constant[11];
+	char		*constant[11];	// at most 11 dump options parameters possible
 	char		x;
 
 	i = 2;
@@ -938,7 +949,7 @@ dump_opt_t GetDumpOpts(char *arg)
 		k = sscanf(&arg[i], "%[A-Za-z_]%1[-]", constant[j], &x);	// verify parameter format
 		if (k == 0) {
 			cout << "Error: Invalid dump options parameter." << endl;
-//			free(constant);										// ???
+//			free(constant);										// ??? error! why?
 			exit(-1);
 		}
 		if (k == 1) {
@@ -993,7 +1004,7 @@ dump_opt_t GetDumpOpts(char *arg)
 		cout << "Error: Invalid dump options parameter." << endl;
 		exit(-1);
 	}
-//	free (constant);									// ???
+//	free (constant);									// ??? error! why?
 	return ret;
 } // GetDumpOpts
 
@@ -1003,11 +1014,10 @@ dump_opt_t GetDumpOpts(char *arg)
 // "dop" specifies which information to dump
 int main(int argc, char **argv)						// command line arguments
 {
-	KsString	outfile;
+	KsString	outfile;			// name of output file
 	int 		i;
-	KsString	start_path;
-	char		*x;
-	bool		overwrite_output = false;
+	KsString	start_path;			// domain specified as root object
+	bool		overwrite_output = false;	// overwrite output file without prompting
 
 	cout << "** ACPLT/OV database dumper, version " << version << " **" << endl
 		 << "(c) 2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
@@ -1015,15 +1025,15 @@ int main(int argc, char **argv)						// command line arguments
 
 	if (argc < 2) {
 		cout << "Error: Missing parameter \"//host/server\"." << endl
-			 << "Usage: ./dbdump //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
+			 << "Usage: dbdump //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
 			 << "[-Ffrom_creation_time] [-Tto_creation_time] [-Ccomment] [-y]" << endl
 			 << "[-Aaccess[-access][-..]] [-Ssemantic_flags] [-Ddump_option[-dump_option][-..]]" << endl
-			 << endl << "For more help type ./dbdump -?" << endl;
+			 << endl << "For more help type \"dbdump -?\"" << endl;
 		return -1;
 	}
 
 	if ((argc == 2 && (strcmp(argv[1], "-?") == 0))) {							// print help
-		cout << "Usage: ./dbdump //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
+		cout << "Usage: dbdump //host/server [-foutput_file] [-Ppath] [-Iidentifier]" << endl
 			 << "[-Ffrom_creation_time] [-Tto_creation_time] [-Ccomment] [-y]" << endl
 			 << "[-Aaccess[-access][-..]] [-Ssemantic_flags] [-Ddump_option[-dump_option][-..]]" << endl
 			 << endl
@@ -1051,7 +1061,8 @@ int main(int argc, char **argv)						// command line arguments
 			 << "                     KS_AC_PART           object is part of another object" << endl
 			 << "                     Options may be combined, separated by \"-\"" << endl
 			 << "-Ssemantic_flags : search for objects matching these semantic flags" << endl
-			 << "      format: \"ABC\"..\"Zabcdef\" with \"A\" = last bit set, .., \"f\" = first bit set" << endl
+			 << "      format: \"ABC\"..\"Zabcdef\" with \"A\" = lowest bit set, .., \"f\" = highest bit" << endl
+			 << "              set" << endl
 			 << "-Ddump_option[-dump_option][-..] : dump only info specified by dump_options" << endl
 			 << "      valid options: KS_DO_CLASS_IDENT     dump class identifier" << endl
 			 << "                     KS_DO_CREATION_TIME   dump creation time" << endl
@@ -1071,7 +1082,7 @@ int main(int argc, char **argv)						// command line arguments
 		cout << "Error: Too many parameters." << endl;
 		return -1;
 	}
-	x = (char *)malloc(strlen(argv[1])+1);
+	char *x = (char *)malloc(strlen(argv[1])+1);	// dummy variable
 															// Check host and server name
 	if (sscanf(argv[1], "%1[/]%1[/]%[a-zA-Z0-9_.:-]%1[/]%[a-zA-Z0-9_]%s", x, x, x, x, x, x) != 5) {
 		cout << "Error: Invalid host and server name." << endl;
@@ -1133,7 +1144,7 @@ int main(int argc, char **argv)						// command line arguments
 		}
 	}
 
-	db_file.open(outfile, ios::noreplace);	
+	db_file.open(outfile, ios::noreplace);	// open output file
 	char inp;
 
 	if (! (overwrite_output || db_file.good() )) {
@@ -1161,6 +1172,7 @@ int main(int argc, char **argv)						// command line arguments
 		return -1;
 	}
 
+	// check if server is OV server
 	KscAnyCommObject lib_version(PltString(sp->host_and_server + "/vendor/libov_version"));
 	if (!lib_version.getEngPropsUpdate()) {
 		db_file << "Error: Server is not an ACPLT/OV server." << endl;
@@ -1171,8 +1183,9 @@ int main(int argc, char **argv)						// command line arguments
 		return -1;
 	}
 
-	DumpEngProps(start_object, 0);
+	DumpEngProps(start_object, 0);		// start recursive descent with root domain
 	
+	// dump the objects remaining in inst_list (i.e. "children of parts") on level 0
 	while (! inst_list.isEmpty() ) {
 		KscAnyCommObject obj(inst_list.removeFirst() );
 		DumpEngProps(obj, 0);

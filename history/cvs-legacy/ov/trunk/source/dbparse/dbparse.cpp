@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000
+ * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -17,7 +17,11 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// ACPLT/OV text file parser includes
+//
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
+// dbparse.cpp
+// last change: Jul 20, 2001
 
 //-------------------------------------------------------------------------------
 

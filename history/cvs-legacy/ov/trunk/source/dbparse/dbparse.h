@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000, 2001
+ * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -17,9 +17,11 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Includes and declarations for ACPLT/OV text file parser 
+//
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
 // dbparse.h
-// last change: Nov 26, 2001
+// last change: Nov 19, 2002
 
 //-------------------------------------------------------------------------------
 
@@ -46,8 +48,8 @@
 
 //-------------------------------------------------------------------------------
 
-enum value_types {
-	DB_VT_NONE,
+enum value_types {		// defines possible value types for internal representation
+	DB_VT_NONE,			// of variables
 	DB_VT_BOOL,
 	DB_VT_INT,
 	DB_VT_DOUBLE,
@@ -82,7 +84,7 @@ enum value_types {
 
 //-------------------------------------------------------------------------------
 
-enum create_options {
+enum create_options {		// possible values for attribute "cr_opts" of class instance
 	CO_TREE,				// domain only needed for tree structure
 	CO_NONE,				// initial value before compatibility check
 	CO_CREATE,				// domain not present in server, create it
@@ -92,7 +94,7 @@ enum create_options {
 
 //-------------------------------------------------------------------------------
 
-typedef bool (*exec_function) (class instance *);
+typedef bool (*exec_function) (class instance *);		// function prototype
 
 //-------------------------------------------------------------------------------
 //
@@ -100,6 +102,7 @@ typedef bool (*exec_function) (class instance *);
 //
 //-------------------------------------------------------------------------------
 
+// representation of an object path, modified KsPath to support parts
 class LogPath: public KsPath
 {
 public:
@@ -109,14 +112,15 @@ public:
     operator PltString () const;
 	PltString getHead() const;
 	LogPath getTail() const;
+	bool headIsPart();
+	bool headIsRootPart();
 	bool isPart();
-	bool isRootPart();
 protected:
     size_t checkAndCount();
     void findSlashes();
 };
 
-
+// root of and operations on the parse tree
 class parsetree {
 	public:
 	parsetree();
@@ -132,34 +136,37 @@ class parsetree {
 	protected:
 	bool depthFirstSearch(class instance *start, exec_function func);
 	
-	class instance *root;
+	class instance *root;	// root of the parse tree
 };
 
+// one vector element
 class vector {
 	public:
 	vector();
 	~vector();
 
-	class value			*content;
+	class value			*content;	// value of this vector element
 	enum value_types	type;
-	vector				*next;
+	vector				*next;		// next element of vector
 };
 
+// one structure element (structures are not yet supported!)
 class structure {
 	public:
 	structure();
 	~structure();
 
-	class value		*content;
-	structure		*next;
+	class value		*content;		// value of this structure element
+	structure		*next;			// next element of structure
 };
 
+// value of a variable
 class value {
 	public:
 	value();
 	~value();
 
-	enum value_types	type;
+	enum value_types	type;		// determines type of value stored in v
 	union {
 		bool			bool_val;
 		int				int_val;
@@ -173,6 +180,7 @@ class value {
 	}	v;
 };
 
+// information about a variable
 class variable_value {
 	public:
 	variable_value();
@@ -182,20 +190,23 @@ class variable_value {
 	value				*val;
 	KsTime				*var_time;
 	KS_STATE			var_state;
-	uint				var_flags;
+	uint				var_flags;			// semantic flags
 	KsString			*var_unit;
 	KsString			*var_comment;
 };
 
+
+// value of a link
 class link_value {
 	public:
 	link_value();
 	~link_value();
 
 	KsString			*ident;
-	PltList<LogPath>		*link_paths;
+	PltList<LogPath>	*link_paths;		// targets of the link
 };
 
+// representation of an instance (object) in the parse tree
 class instance {
 	public:
 
@@ -207,10 +218,10 @@ class instance {
 	instance *search_child(KsString *name);
 
 	LogPath										*ident;
-	bool										is_part;
+	bool										is_part;			// true = Part
 	LogPath										*class_ident;
 	KsTime										*creation_time;
-	uint										sem_flags;
+	uint										sem_flags;			// Semantic flags
 	KsString									*comment;
 	PltHashTable<PltString, variable_value *>	*var_block;
 	PltHashTable<PltString, link_value *>		*link_block;
@@ -226,6 +237,10 @@ extern ofstream parselog;
 extern parsetree *parse_tree;
 extern int lopts;								// load options
 
+//-------------------------------------------------------------------------------
+//
+//	Function prototypes
+//
 //-------------------------------------------------------------------------------
 
 // parsing routines

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000, 2001
+ * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -17,8 +17,11 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* db.lex */
+/* Scanner definition for ACPLT/OV text file parser */
+
 /* Author : Christian Poensgen <chris@plt.rwth-aachen.de> */
+/* db.lex */
+/* last change: Mar 21, 2002 */
 
 /* ACPLT/OV Modelling Language */
 
@@ -27,7 +30,7 @@
 *   -----------------
 */
 %{
-#include "dbparse.h"
+#include "dbparse.h"			/* needed for type definitions */
 
 #if PLT_SYSTEM_NT
 #include "db_y.h"
@@ -58,6 +61,8 @@ usec			{digit}{6}
 *   lex rules
 *   ---------
 */
+
+/* components of yylval pass value to parser */
 %%
 "INSTANCE"	{
 		return(INSTANCE);
@@ -152,7 +157,7 @@ usec			{digit}{6}
 		*yylval.ptimeval = GetTime(yytext);
 		return(TIME_VALUE);
 	}
-{hours}":"{minute}":"{second}("."{usec})?	{
+[+-]?{hours}":"{minute}":"{second}("."{usec})?	{
 		yylval.ptimespanval = new(KsTimeSpan);
 		*yylval.ptimespanval = (KsTimeSpan)GetTimeSpan(yytext);
 		return(TIME_SPAN_VALUE);
@@ -176,9 +181,9 @@ usec			{digit}{6}
 		*(yylval.pstringval) = KsString(&(yytext[1]));
 		return(STRING_VALUE);
 	}
-[ \t\n]*	{
+[ \t\n]*	{	/* white space ignored */
 	}
-.	{
+.	{	/* default */
 		return(*yytext);
 	}
 

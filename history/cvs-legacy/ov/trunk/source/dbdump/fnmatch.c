@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000
+ * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -17,7 +17,12 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* Author : Christian Poensgen <chris@plt.rwth-aachen.de> */
+/* String matching routines supporting wildcards and sets.
+ *
+ * Author : Christian Poensgen <chris@plt.rwth-aachen.de>
+ * fnmatch.c
+ * last change: Sep 7, 2000
+ */
 
 #include "fnmatch.h"
 #include <string.h>
@@ -56,7 +61,7 @@ int get_hex(char *st, int j, error_t *err_c) {	/* liefert Zeichen zu Hexwert st[
 	char	hexstr[3];
 	int		hexzahl;
 
-	if (j+1 >= (int)strlen(st)) {
+	if (j+1 >= strlen(st)) {
 		*err_c = ERR_INVALID_MASK_FORMAT;
 		return(-1);
 	}
@@ -106,8 +111,8 @@ int save_set(char *st, list_t **pcmask, list_t **plast, int j, error_t *err_c) {
 		memset(list_el->contents.char_field, 255, sizeof(list_el->contents.char_field));
 														/* Initialisierung des Feldes mit 1 */
 
-		while ((j < (int)strlen(st)) && (st[j] != ']')) {
-			if (j+1 >= (int)strlen(st)) {
+		while (j < strlen(st) && st[j] != ']') {
+			if (j+1 >= strlen(st)) {
 				*err_c = ERR_INVALID_MASK_FORMAT;
 				return(-1);
 			}
@@ -116,7 +121,7 @@ int save_set(char *st, list_t **pcmask, list_t **plast, int j, error_t *err_c) {
 				if (st[j]==-1) {
 					return(-1);
 				}
-				for(k=j+1; k < (int)strlen(st) - 2; k++) {
+				for(k=j+1; k < strlen(st) - 2; k++) {
 					st[k] = st[k+2];
 				}
 				st[strlen(st) - 2] = '\0';
@@ -135,8 +140,8 @@ int save_set(char *st, list_t **pcmask, list_t **plast, int j, error_t *err_c) {
 				j++;
 				continue;
 			}
-			if ((j+2 < (int)strlen(st)) && is_valid_char(st[j]) && (st[j+1] == '-')
-				&& (is_valid_char(st[j]) == is_valid_char(st[j+2])) && (st[j] < st[j+2]) ) {
+			if (j+2 < strlen(st) && is_valid_char(st[j]) && st[j+1] == '-'
+				&& is_valid_char(st[j]) == is_valid_char(st[j+2]) && st[j] < st[j+2]) {
 																		/* falls Zeichenbereich */
 				for (x=st[j];x<=st[j+2];x++) {
 					list_el->contents.char_field[x >> 3] &= (~(1 << (7 - (x & 0x07))));
@@ -153,8 +158,8 @@ int save_set(char *st, list_t **pcmask, list_t **plast, int j, error_t *err_c) {
 
 		memset(list_el->contents.char_field, 0, sizeof(list_el->contents.char_field));
 
-		while ((j < (int)strlen(st)) && (st[j] != ']')) {
-			if (j+1 >= (int)strlen(st)) {
+		while (j < strlen(st) && st[j] != ']') {
+			if (j+1 >= strlen(st)) {
 				*err_c = ERR_INVALID_MASK_FORMAT;
 				return(-1);
 			}
@@ -163,7 +168,7 @@ int save_set(char *st, list_t **pcmask, list_t **plast, int j, error_t *err_c) {
 				if (st[j]==-1) {
 					return(-1);
 				}
-				for(k=j+1; k < (int)strlen(st) - 2; k++) {
+				for(k=j+1; k < strlen(st) - 2; k++) {
 					st[k] = st[k+2];
 				}
 				st[strlen(st) - 2] = '\0';
@@ -176,13 +181,13 @@ int save_set(char *st, list_t **pcmask, list_t **plast, int j, error_t *err_c) {
 					return(-1);
 				}
 			}
-			if (is_valid_char(st[j]) && (st[j+1] != '-')) {
+			if (is_valid_char(st[j]) && st[j+1] != '-') {
 				list_el->contents.char_field[st[j] >> 3] |= (1 << (7 - (st[j] & 0x07)));
 				j++;
 				continue;
 			}
-			if (j+2 < (int)strlen(st) && is_valid_char(st[j]) && (st[j+1] == '-')
-				&& (is_valid_char(st[j]) == is_valid_char(st[j+2])) && (st[j] < st[j+2])) {
+			if (j+2 < strlen(st) && is_valid_char(st[j]) && st[j+1] == '-'
+				&& is_valid_char(st[j]) == is_valid_char(st[j+2]) && st[j] < st[j+2]) {
 
 				for (x=st[j];x<=st[j+2];x++) {
 					list_el->contents.char_field[x >> 3] |= (1 << (7 - (x & 0x07)));
@@ -220,7 +225,7 @@ list_t *Acplt_Compile_Mask (char *mask, error_t *err_c) {
 		j++;
 	}
 	if (j != 0) {
-		for (k=0; k+j < (int)strlen(mask); k++) {
+		for (k=0; k+j < strlen(mask); k++) {
 			mask[k] = mask[k+j];
 		}
 		mask[strlen(mask)-j] = '\0';
@@ -232,7 +237,7 @@ list_t *Acplt_Compile_Mask (char *mask, error_t *err_c) {
 	mask[j+1] = '\0';
 
 
-	while (i < (int)strlen(mask)) {
+	while (i < strlen(mask)) {
 
 		if (is_valid_char(mask[i])) {					/* falls mask[i] normales Zeichen */
 			list_el = (list_t*)malloc(sizeof(list_t));				/* neues Listenelement */
@@ -256,7 +261,7 @@ list_t *Acplt_Compile_Mask (char *mask, error_t *err_c) {
 			list_el->contents.string[0]=mask[i];	/* Zeichen unverändert in Maske eintragen */
 			list_el->contents.string[1]='\0';
 			i++;
-			while (i< (int)strlen(mask) && is_valid_char(mask[i])) {
+			while (i<strlen(mask) && is_valid_char(mask[i])) {
 				strcat(list_el->contents.string," ");		/* evt. weitere Zeichen anhängen */
             list_el->contents.string[strlen(list_el->contents.string)-1]=mask[i];
 				i++;
@@ -315,14 +320,14 @@ list_t *Acplt_Compile_Mask (char *mask, error_t *err_c) {
 			list_el->next = NULL;
 			list_el->contents.number = 1;
 			i++;
-			while (i < (int)strlen(mask) && mask[i]=='?') {
+			while (i<strlen(mask) && mask[i]=='?') {
 				(list_el->contents.number)++;		/* Anzahl aufeinanderfolgender ? speichern */
 				i++;
 			}
 			continue;
 		}
 		if (mask[i]=='*') {			/* * als Platzhalter für beliebig viele (oder 0) Zeichen */
-			while (i< (int)strlen(mask) && mask[i]=='*') {
+			while (i<strlen(mask) && mask[i]=='*') {
 				i++;
 			}
 			list_el = (list_t*)malloc(sizeof(list_t));
@@ -357,9 +362,9 @@ int comp(list_t *cmask, char *name, int i) {	/* Vergleich der Maske mit gegebene
 
 	list_el = cmask;
 
-	while (list_el != NULL && i <= (int)strlen(name)) {
+	while (list_el != NULL && i <= strlen(name)) {
 		switch (list_el->type_id) {
-			case str_type : for (j=0; j < (int)strlen(list_el->contents.string); j++) {
+			case str_type : for (j=0; j < strlen(list_el->contents.string); j++) {
 								if (list_el->contents.string[j] != name[i+j]) {
 									return 0;
 								}
@@ -380,7 +385,7 @@ int comp(list_t *cmask, char *name, int i) {	/* Vergleich der Maske mit gegebene
 			case ast_type : if(list_el->next == NULL) {
 								return 1;
 							}
-							for (j=i; j < (int)strlen(name); j++) {
+							for (j=i; j < strlen(name); j++) {
 								if(comp(list_el->next,name,j)) {		/* rekursiver Aufruf */
 									return 1;
 								}
@@ -390,7 +395,7 @@ int comp(list_t *cmask, char *name, int i) {	/* Vergleich der Maske mit gegebene
 		list_el = list_el->next;
 	}
 
-	if (list_el == NULL && i == (int)strlen(name)) {
+	if (list_el == NULL && i == strlen(name)) {
 		return 1;													/* Übereinstimmung */
 	} else {
 		return 0;												/* keine Übereinstimmung */
@@ -445,14 +450,14 @@ int Acplt_FNMatch (char *mask, char *name, int no_case, error_t *err_c) {
 		return(-1);
 	}
 	if (no_case) {						/* falls <> 0, dann Groß-/Kleinschreibung ignorieren */
-		for (i=0; i < (int)strlen(mask); i++) {		/* evtl. alles in Kleinschreibung umwandeln */
+		for (i=0; i < strlen(mask); i++) {		/* evtl. alles in Kleinschreibung umwandeln */
 			mask[i] = tolower(mask[i]);
 		}
-		for (i=0; i < (int)strlen(name); i++) {
+		for (i=0; i < strlen(name); i++) {
 			name[i] = tolower(name[i]);
 		}
 	}
-	for (i=0; i < (int)strlen(name); i++) {			/* Hexwerte %xx im Namen in Char umwandeln */
+	for (i=0; i < strlen(name); i++) {			/* Hexwerte %xx im Namen in Char umwandeln */
 		if (! (is_valid_char(name[i]) || name[i]=='%')) {
 			*err_c = ERR_INVALID_NAME;
 			return(-1);
@@ -462,7 +467,7 @@ int Acplt_FNMatch (char *mask, char *name, int no_case, error_t *err_c) {
 			if (name[i]==-1) {
 				return(-1);
 			}
-			for(j=i+1; j < (int)strlen(name) - 2; j++) {
+			for(j=i+1; j < strlen(name) - 2; j++) {
 				name[j] = name[j+2];
 			}
 			name[strlen(name) - 2] = '\0';

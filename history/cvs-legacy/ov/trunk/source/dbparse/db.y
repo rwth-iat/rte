@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000, 2001
+ * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -17,8 +17,10 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* db.y */
+/* Parser definition for ACPLT/OV text file parser */
+
 /* Author : Christian Poensgen <chris@plt.rwth-aachen.de> */
+/* db.y */
 /* last change: Jul 18, 2002 */
 
 /* ACPLT/OV Modelling Language */
@@ -31,7 +33,7 @@
 #include "dbparse.h"
 
 #define YYDEBUG 1
-extern parsetree *parse_tree;
+extern parsetree *parse_tree;		/* the parse tree to be created */
 %}
 
 /*
@@ -39,6 +41,7 @@ extern parsetree *parse_tree;
 *   ------------------
 */
 
+/* variable type names to be used in %token and %type definitions */
 %union {
 	bool										boolval;
 	KsString									*pstringval;
@@ -118,6 +121,7 @@ extern parsetree *parse_tree;
 *   -------------------
 */
 
+/* root of the parse tree */
 instances:	  inst
 				{
 					parse_tree->add($1);
@@ -266,7 +270,7 @@ value:	  BOOL_VALUE
 			{
 				$$ = new(value);
 				$$->type = DB_VT_VOID;
-				$$->v.pvoid_val = NULL;
+				$$->v.pvoid_val = $1;
 			}
 		| '{' vector_values '}'
 			{
@@ -490,8 +494,7 @@ part_inst:	  PART_INSTANCE PATH ':' CLASS PATH
 			;
 %%
 
-int yyerror(char *s)
+int yyerror(char *s)		/* required standard function */
 {
-    fprintf(stderr, "%s\n", s);
-    return EXIT_FAILURE;
+	fprintf(stderr, "%s\n", s);
 }
