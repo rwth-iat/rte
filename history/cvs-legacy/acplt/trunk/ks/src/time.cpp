@@ -83,7 +83,43 @@ KsTime::xdrDecode(XDR *xdr) {
 KS_IMPL_XDRCTOR(KsTime);
 KS_IMPL_XDRNEW(KsTime);
 
+/////////////////////////////////////////////////////////////////////////////
+// class KsTimeSpan
+/////////////////////////////////////////////////////////////////////////////
+
+KS_IMPL_XDRCTOR(KsTimeSpan);
+KS_IMPL_XDRNEW(KsTimeSpan);
+
+bool 
+KsTimeSpan::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+
+    return ks_xdre_long(xdr, &tv_sec)
+        && ks_xdre_long(xdr, &tv_usec);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool 
+KsTimeSpan::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+
+    return ks_xdrd_long(xdr, &tv_sec)
+        && ks_xdrd_long(xdr, &tv_usec);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // End of File time.cpp
 ///////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
 

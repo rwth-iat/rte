@@ -64,7 +64,6 @@ const u_long KS_GETHIST_MINOR_OPCODE  = 0x00000001;
 //   - KsGetHistParams
 /////////////////////////////////////////////////////////////////////////////
 
-
 class KsGetHistItem
     : public KsXdrAble
 {

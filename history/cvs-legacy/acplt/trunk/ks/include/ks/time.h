@@ -61,6 +61,23 @@ public:
     static KsTime *xdrNew(XDR *xdr);
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
+class KsTimeSpan
+    : public PltTimeSpan,
+      public KsXdrAble
+{
+public:
+    KsTimeSpan(long sec = 0, long usec = 0)
+        : PltTimeSpan(sec, usec) {}
+    KsTimeSpan(XDR *, bool &);
+    KsTimeSpan(const PltTimeSpan &ts)
+        : PltTimeSpan(ts) {}
+
+    bool xdrEncode(XDR *xdr) const;
+    bool xdrDecode(XDR *xdr);
+    static KsTimeSpan *xdrNew(XDR *xdr);
+};
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation

@@ -147,6 +147,8 @@ KscHistory::getHist(KsGetHistResult &result)
 
     params.paths[0] = getPathAndName();
 
+    params.max_entries = max_entries;
+
     PltListIterator<KsGetHistItem> it(selectors);
     size_t i = 0;
     while( it ) {

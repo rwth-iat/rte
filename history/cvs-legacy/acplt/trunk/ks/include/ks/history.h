@@ -69,6 +69,10 @@ public:
     bool removeSelector(KsString id);
     // Add a string selector(convenience function)
     bool setStringSelector(KsString id, KsString mask);
+    bool setNoneSelector(KsString id);
+
+    // Read max entries at most
+    void setMaxEntries(u_long max = ULONG_MAX);
 
     // Read parts of a history
     bool getParts(KsList<KsProjPropsHandle> &parts);
@@ -89,6 +93,8 @@ public:
     KS_RESULT getIntValue(KsString selector, KsIntVecValue &val);
 
 protected:
+    u_long                 max_entries;
+
     KsList<KsGetHistItem>  selectors;
 
     KsGetHistSingleResult  gh_result;
@@ -111,8 +117,9 @@ inline bool
 KscHistory::setSelector(KsString id, KsSelectorHandle hsel)
 {
     if( hsel ) {
-        // TODO: Check for duplicated identifiers ?
-        return selectors.addLast(KsGetHistItem(id, hsel));
+        KsGetHistItem item(id,hsel);
+        selectors.remove(item); // remove any item with same id
+        return selectors.addLast(item);
     } else {
         return false;
     }
@@ -135,6 +142,24 @@ bool
 KscHistory::removeSelector(KsString id)
 {
     return selectors.remove(KsGetHistItem(id, KsSelectorHandle()));
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline 
+bool
+KscHistory::setNoneSelector(KsString id)
+{
+    return setSelector(id, new KsNoneSel());
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline
+void
+KscHistory::setMaxEntries(u_long max)
+{
+    max_entries = max;
 }
 
 /////////////////////////////////////////////////////////////////////////////

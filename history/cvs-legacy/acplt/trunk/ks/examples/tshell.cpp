@@ -44,6 +44,9 @@
 
 //////////////////////////////////////////////////////////////////////
 
+const PltTime default_timeout(60, 0);
+const size_t default_tries = 1;
+
 typedef void (*ExecuteFunction)(PltList<PltString> &args);
 PltHashTable<PltString,ExecuteFunction> dispatcher_table;
 
@@ -562,7 +565,45 @@ execute_get_pp( PltList<PltString> &args )
     }
 }
 
-    
+/////////////////////////////////////////////////////////////////////////////
+
+void
+execute_set_timeout( PltList<PltString> &args ) 
+{
+    PltTime timeout = default_timeout;
+    size_t tries = default_tries;
+ 
+    if( ! args.isEmpty() ) {
+        PltString s = args.removeFirst();
+        char *end;
+        size_t temp = strtoul(s, &end, 0);
+        if( end == (const char *)s || temp == 0 ) {
+            err_msg("Syntax: set_timeout [time [tries]]");
+            return;
+        } else {
+            timeout = PltTime(temp,0);
+
+            if( ! args.isEmpty() ) {
+                s = args.removeFirst();
+                temp = strtoul(s, &end, 0);
+                if( end == (const char *)s || temp == 0 ) {
+                    err_msg("Syntax: settimeout [time_span [tries]]");
+                    return;
+                } else {
+                    tries = temp;
+                }
+            }
+        }
+    }
+
+    KscClient::getClient()->
+        setTimeouts(timeout, timeout, tries);
+    cout << "Timeout set to " << timeout.tv_sec
+         << " seconds, " << tries
+         << " tries will be done" 
+         << endl;
+}
+
 //////////////////////////////////////////////////////////////////////
 
 void
@@ -574,6 +615,7 @@ init_dispatcher_table()
     dispatcher_table.add("cd", &execute_cd);
     dispatcher_table.add("getvar", &execute_get_var);
     dispatcher_table.add("getpp", &execute_get_pp);
+    dispatcher_table.add("settimeout", &execute_set_timeout);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -581,27 +623,27 @@ init_dispatcher_table()
 void
 init_error_table() 
 {
-    error_table.add(  KS_ERR_OK, "ok" );
-    error_table.add(  KS_ERR_GENERIC, "generic" );
-    error_table.add(  KS_ERR_BADAUTH, "bad auth" );
-    error_table.add(  KS_ERR_UNKNOWNAUTH, "unknown auth" );
-    error_table.add(  KS_ERR_NOTIMPLEMENTED, "not implemented" );
-    error_table.add(  KS_ERR_BADPARAM, "bad param" );
-    error_table.add(  KS_ERR_BADNAME, "bad name" );
-    error_table.add(  KS_ERR_BADPATH, "bad path" );
-    error_table.add(  KS_ERR_BADMASK, "bad mask" );
-    error_table.add(  KS_ERR_NOACCESS, "no access" );
-    error_table.add(  KS_ERR_BADTYPE, "bad type" );
-    error_table.add(  KS_ERR_CANTSYNC, "cannot sync" );
-    error_table.add(  KS_ERR_NOREMOTE, "no remote" );
-    error_table.add(  KS_ERR_SERVERUNKNOWN, "server unknown" );
-    error_table.add(  KS_ERR_MALFORMEDPATH, "malformed path" );
-    error_table.add(  KS_ERR_NETWORKERROR, "network error" );
-    error_table.add(  KS_ERR_TYPEMISMATCH, "type mismatch" );
-    error_table.add(  KS_ERR_HOSTUNKNOWN, "host unknown" );
-    error_table.add(  KS_ERR_CANTCONTACT, "cannot contact" );
-    error_table.add(  KS_ERR_TIMEOUT, "timed out" );
-    error_table.add(  KS_ERR_NOMANAGER, "no manager" );
+    error_table.add( KS_ERR_OK, "ok" );
+    error_table.add( KS_ERR_GENERIC, "generic" );
+    error_table.add( KS_ERR_BADAUTH, "bad auth" );
+    error_table.add( KS_ERR_UNKNOWNAUTH, "unknown auth" );
+    error_table.add( KS_ERR_NOTIMPLEMENTED, "not implemented" );
+    error_table.add( KS_ERR_BADPARAM, "bad param" );
+    error_table.add( KS_ERR_BADNAME, "bad name" );
+    error_table.add( KS_ERR_BADPATH, "bad path" );
+    error_table.add( KS_ERR_BADMASK, "bad mask" );
+    error_table.add( KS_ERR_NOACCESS, "no access" );
+    error_table.add( KS_ERR_BADTYPE, "bad type" );
+    error_table.add( KS_ERR_CANTSYNC, "cannot sync" );
+    error_table.add( KS_ERR_NOREMOTE, "no remote" );
+    error_table.add( KS_ERR_SERVERUNKNOWN, "server unknown" );
+    error_table.add( KS_ERR_MALFORMEDPATH, "malformed path" );
+    error_table.add( KS_ERR_NETWORKERROR, "network error" );
+    error_table.add( KS_ERR_TYPEMISMATCH, "type mismatch" );
+    error_table.add( KS_ERR_HOSTUNKNOWN, "host unknown" );
+    error_table.add( KS_ERR_CANTCONTACT, "cannot contact" );
+    error_table.add( KS_ERR_TIMEOUT, "timed out" );
+    error_table.add( KS_ERR_NOMANAGER, "no manager" );
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -667,7 +709,7 @@ int
 main(int, char **)
 {
     KscClient::getClient()->
-        setTimeouts(PltTime(60,0), PltTime(60,0), 1);
+        setTimeouts(default_timeout, default_timeout, default_tries);
 
     init_error_table();
 

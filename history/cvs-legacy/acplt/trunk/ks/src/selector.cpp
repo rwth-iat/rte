@@ -48,28 +48,72 @@ PLT_IMPL_RTTI1(KsNoneSel, KsSelector);
 PLT_IMPL_RTTI1(KsTimeSel, KsSelector);
 PLT_IMPL_RTTI1(KsStringSel, KsSelector);
 
+PLT_IMPL_RTTI1(KsAbsRelTime, KsXdrUnion);
+
 /////////////////////////////////////////////////////////////////////////////
 
 KS_BEGIN_IMPL_XDRUNION(KsSelector);
-KS_XDR_MAP(KS_SEL_NONE, KsNoneSel);
-KS_XDR_MAP(KS_SEL_TIME, KsTimeSel);
-KS_XDR_MAP(KS_SEL_STRING, KsStringSel);
+KS_XDR_MAP(KS_HSELT_NONE, KsNoneSel);
+KS_XDR_MAP(KS_HSELT_TIME, KsTimeSel);
+KS_XDR_MAP(KS_HSELT_STRING, KsStringSel);
 KS_END_IMPL_XDRUNION;
 
 /////////////////////////////////////////////////////////////////////////////
 
-KsTimeSel::KsTimeSel(KS_TIME_SELECTOR_TYPE atype,
-                     KsTime afrom,
-                     KsTime ato,
-                     KsTime adelta,
-                     KS_INTERPOLATION_MODE amode)
-    : type(atype),
-      ip_mode(amode),
-      from(afrom),
-      to(ato),
-      delta(adelta)
-{}
+KS_IMPL_XDRCTOR(KsAbsRelTime);
+KS_IMPL_XDRNEW(KsAbsRelTime);
 
+/////////////////////////////////////////////////////////////////////////////
+
+bool 
+KsAbsRelTime::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    
+    switch(type) {
+    case KS_TT_ABSOLUTE: {
+        return ks_xdre_enum(xdr, &type)
+            && ks_xdre_u_long(xdr, &time.abs.sec)
+            && ks_xdre_u_long(xdr, &time.abs.usec);
+    } 
+    case KS_TT_RELATIVE: {
+        return ks_xdre_enum(xdr, &type)
+            && ks_xdre_long(xdr, &time.rel.sec)
+            && ks_xdre_long(xdr, &time.rel.usec);
+    }
+    default: {
+        return false;
+    }
+    } // switch
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool 
+KsAbsRelTime::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+
+    if( ks_xdrd_enum(xdr, &type) ) {
+        switch(type) {
+        case KS_TT_ABSOLUTE: {
+            return ks_xdrd_u_long(xdr, &time.abs.sec) && 
+                ks_xdrd_u_long(xdr, &time.abs.usec);
+        }
+        case KS_TT_RELATIVE: {
+            return ks_xdrd_long(xdr, &time.rel.sec)
+                && ks_xdrd_long(xdr, &time.rel.usec);
+        }
+        default: {
+            return false;
+        }
+        } // switch
+    }
+
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 bool 
@@ -77,8 +121,7 @@ KsTimeSel::xdrEncodeVariant(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     
-    return ks_xdre_enum(xdr, &type)
-        && ks_xdre_enum(xdr, &ip_mode)
+    return ks_xdre_enum(xdr, &ip_mode)
         && from.xdrEncode(xdr)
         && to.xdrEncode(xdr)
         && delta.xdrEncode(xdr);
@@ -91,8 +134,7 @@ KsTimeSel::xdrDecodeVariant(XDR *xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
 
-    return ks_xdrd_enum(xdr, &type)
-        && ks_xdrd_enum(xdr, &ip_mode)
+    return ks_xdrd_enum(xdr, &ip_mode)
         && from.xdrDecode(xdr)
         && to.xdrDecode(xdr)
         && delta.xdrDecode(xdr);
