@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.10 1997-03-19 10:17:24 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.11 1997-03-24 12:29:41 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -130,7 +130,7 @@ PltString::PltString(size_t sz, char *s)
         p->s = s;
         (p->s)[sz]=0;
     }
-//    PLT_CHECK_INVARIANT(); // p->len is temporarily != strlen(p->s)
+    PLT_CHECK_INVARIANT(); // p->len is temporarily != strlen(p->s)
 }
     
 //////////////////////////////////////////////////////////////////////
@@ -155,22 +155,40 @@ PltString::operator = (const PltString & r)
 //////////////////////////////////////////////////////////////////////
 
 PltString &
-PltString::operator = (const char *s) 
+PltString::operator = (const char *sa) 
 {
-    PLT_PRECONDITION( ok() && s);
-    if ( --(p->refcount) == 0 ) {
-        delete [] p->s;
-    } else {
-        p = new srep;
-    }
-    if (p) {
-        p->len = strlen(s);
-        p->s = new char[ p->len ];
-        if (! p->s) {
-            delete p;
+    PLT_PRECONDITION(sa);
+
+    if (!p) return *this; // remain in bad state
+
+    size_t len = strlen(sa);
+    char * s = new char[len + 1];
+
+    if (s) {
+        // Storage has been reserved.
+        if (p->refcount > 1) {
+            // clone to maintain value semantics
+            p->refcount --;
+            p = new srep;
         } else {
-            memcpy(p->s, s, p->len+1);
+            delete [] p->s;
         }
+        if (p) {
+            // Now copy string
+            strcpy(s, sa);
+            p->s = s;
+            p->len = len;
+        } else {
+            // No representation, no copy... (in bad state now)
+        }
+    } else {
+        // Failed to reserve storage for the characters.
+        // Go into bad state.
+        if (--(p->refcount) == 0) {
+            delete [] p->s;
+            delete p;
+        }
+        p = 0;
     }
     PLT_CHECK_INVARIANT();
     return *this;
@@ -248,7 +266,7 @@ PltString::operator += (const PltString & str)
         }
     }
     if ( --(p->refcount) == 0 ) {
-        delete p->s;
+        delete [] p->s;
         delete p;
     }
     p = np;
@@ -258,13 +276,34 @@ PltString::operator += (const PltString & str)
     
 
 //////////////////////////////////////////////////////////////////////
+
+PltString::PltString(const char *p1, const char *p2)
+{
+    PLT_PRECONDITION(p1 && p2);
+    size_t len = strlen(p1) + strlen(p2);
+    char * s = new char[len+1];
+    if (s) {
+        strcpy(s,p1);
+        strcat(s,p2);
+        p = new srep;
+        if (p) {
+            p->len = len;
+            p->s = s;
+        }
+    } else {
+        p = 0;
+    }
+    PLT_CHECK_INVARIANT(); // p->len is temporarily != strlen(p->s)
+}
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 void
 PltString::cloneIfNeeded()
 {
     PLT_PRECONDITION( ok() );
-    if (p->refcount > 1) {
+    if (--(p->refcount) > 0) { 
         // clone to maintain value semantics
         srep *np = new srep;
         if (np) {
@@ -277,7 +316,6 @@ PltString::cloneIfNeeded()
                 np = 0;
             }
         }
-        p->refcount --;
         p = np;
     }
     PLT_CHECK_INVARIANT();

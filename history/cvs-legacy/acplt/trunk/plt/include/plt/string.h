@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.6 1997-03-23 14:30:48 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.7 1997-03-24 12:29:39 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -56,6 +56,7 @@ public:
                            // at most first len characters
     PltString();
     PltString(const PltString &);
+    PltString(const char *, const char *); // concatenates
 //    PltString(const PltString &, size_t first, size_t len);
     virtual ~PltString();
     PltString & operator = (const char *);
@@ -79,7 +80,7 @@ public:
     // modifiers
     char & operator[] (size_t);
     PltString & operator += ( const PltString & );
-
+    
     // friends (accessors)
     friend bool operator == (const PltString &, const char *);
     friend bool operator == (const PltString &, const PltString &);
@@ -101,6 +102,10 @@ protected:
     // helper modifiers
     void cloneIfNeeded();
 };
+
+PltString operator + (const PltString &s1, const PltString &s2);
+PltString operator + (const char *s1, const PltString &s2);
+PltString operator + (const PltString &s1, const char *s2);
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
@@ -165,4 +170,30 @@ operator != (const PltString & str , const char *pc)
     return ! (str == pc);
 }
 
+//////////////////////////////////////////////////////////////////////
+
+inline PltString 
+operator + (const PltString &s1, const PltString &s2) 
+{
+    return PltString(s1,s2);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline PltString 
+operator + (const char *s1, const PltString &s2) 
+{
+    return PltString(s1,s2);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline PltString 
+operator + (const PltString &s1, const char *s2) 
+{
+    return PltString(s1,s2);
+}
+
+
+//////////////////////////////////////////////////////////////////////
 #endif // PLT_STRING_INCLUDED
