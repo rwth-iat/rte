@@ -369,9 +369,3 @@ KscPackage::DeepIterator::toStart()
     vars_it.toStart();
 }
     
-
-
-
-
-
-
