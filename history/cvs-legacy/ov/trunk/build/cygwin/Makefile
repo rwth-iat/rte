@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.2 1999-08-06 09:35:14 dirk Exp $
+#   $Id: Makefile,v 1.3 1999-09-15 10:44:45 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -60,25 +60,25 @@ FLEX			= flex
 BISON			= bison
 CPP 			= cpp
 
-CC				= gcc -mno-cygwin
+CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
 CC_FLAGS		= -g -Wall -O2
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
-LINK			= $(CC)
+LINK			= gcc -mno-cygwin -L$(MINGWLIBPATH)
 C_LIBS			= 
 
-CXX				= g++ -mno-cygwin
+CXX				= g++ -mno-cygwin -I$(MINGWINCLUDEPATH)
 CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
-CXX_LINK		= $(CXX)
+CXX_LINK		= g++ -mno-cygwin -L$(MINGWLIBPATH)
 CXX_LIBS		= $(C_LIBS) -lwsock32
 
 AR				= ar
 RANLIB			= ranlib
 
 DLLTOOL			= dlltool
-DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mno-cygwin -mdll
+DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mno-cygwin -mdll -L$(MINGWLIBPATH)
 CXX_DLLWRAP		= $(DLLWRAP) --driver-name g++
 
 WINDRES			= windres --preprocessor $(CPP_PATH)cpp --define OV_USE_WINDRES \

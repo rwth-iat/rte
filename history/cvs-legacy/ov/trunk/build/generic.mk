@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.3 1999-09-06 12:16:27 dirk Exp $
+#   $Id: generic.mk,v 1.4 1999-09-15 10:44:44 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -30,6 +30,8 @@
 #	Directories
 #	-----------
 
+#	generic part
+
 PLT_DIR						= ../../../../
 PLT_BIN_DIR					= $(PLT_DIR)bin/$(SYSDIR)/
 
@@ -57,9 +59,18 @@ ACPLT_PLT_BUILD_DIR			= $(ACPLT_PLT_DIR)build/$(SYSDIR)/
 
 LIBMPM_DIR					= ../../../../libmpm/
 
+#	platforms requiring ONC/RPC
+
 ONCRPC_DIR					= ../../../../oncrpc/
 ONCRPC_INCLUDE_DIR			= $(ONCRPC_DIR)
 ONCRPC_BIN_DIR				= $(ONCRPC_DIR)bin/
+
+#	Cygwin/MinGW stuff
+
+MINGWLIBPATH				= //C/usr/local/mingw/lib
+MINGWINCLUDEPATH			= //C/usr/local/mingw/include
+
+#	stuff for C16x compatible compilers using the Keil compiler
 
 MC164_DIR					= ../../../../mc164/
 MC164_INCLUDE_DIR			= $(MC164_DIR)include/
@@ -67,9 +78,13 @@ MC164_SOURCE_DIR			= $(MC164_DIR)source/
 
 KEIL_INCLUDE_DIR			=  //c/c166/inc/
 
+#	RMOS32 stuff
+
 RMOS_DIR					= c:\\siemens\\step7\\m7sys4.00\\
 RMOS_INCLUDE_DIR			= $(RMOS_DIR)inc\\
 RMOS_LIBRARY_DIR            = $(RMOS_DIR)lib\\
+
+#	OpenVMS stuff
 
 VMS_LIBRPC_DIR				= sys$$sysdevice:[vms$$common.ucx$$lib.rpc]
 
