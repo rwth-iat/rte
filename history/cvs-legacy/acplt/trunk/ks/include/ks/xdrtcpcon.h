@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.5 1999-02-25 17:15:49 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.6 1999-04-22 15:33:55 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -113,11 +113,7 @@ protected:
     FragmentState     _fragment_state;
     u_long            _remaining_len;
     char              _fragment_header[4];
-#if !PLT_COMPILER_BORLAND && !PLT_COMPILER_DECCXX
-    void             *_ptr;
-#else
     char             *_ptr;
-#endif
     
 private:
     KssTCPXDRConnection(KssTCPXDRConnection &); // forbidden

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrudpcon.h,v 1.3 1999-02-25 17:15:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrudpcon.h,v 1.4 1999-04-22 15:34:03 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -73,7 +73,7 @@ protected:
     virtual ConnectionIoMode reset(bool hadTimeout);
 
     unsigned long  _buffer_size;
-    void          *_buffer;
+    char          *_buffer;
 
 private:
     KssUDPXDRConnection(KssUDPXDRConnection &); // forbidden
