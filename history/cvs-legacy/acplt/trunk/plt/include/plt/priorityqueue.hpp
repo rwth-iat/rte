@@ -27,6 +27,9 @@ protected:
     virtual bool lessThan(T, T) const = 0;
 
 private:
+    PltPriorityQueue(const PltPriorityQueue &);     // forbidden
+    PltPriorityQueue &
+        operator = (const PltPriorityQueue &);      // forbidden
     size_t capacity;           // max num of elems 
     size_t size;               // num of elements in queue
     T* elems;                  // array of elements
