@@ -1,5 +1,6 @@
 template class PltAssoc<KsString, PltPtrHandle<KssCommObject> >;
 template class PltContainer<PltAssoc<KsString, PltPtrHandle<KssCommObject> > >;
+template class PltContainer<PltPtrComparable<KsTimerEvent> >;
 template class PltContainer_<KssCommObject>;
 template class PltContainer_<PltAssoc<KsString, PltPtrHandle<KssCommObject> > >;
 template class PltContainer_<PltPtrComparable<KsTimerEvent> >;

@@ -297,8 +297,7 @@ clntpath.obj: ..\..\src\clntpath.cpp ..\..\include\ks\clntpath.h \
  ..\..\include\ks\rpc.h
 
 commobject.obj: ..\..\src\commobject.cpp ..\..\include\ks\commobject.h \
- ..\..\..\plt\include\plt\comphandle.h ..\..\include\ks\props.h \
- ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
+ ..\..\include\ks\props.h ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
  ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
  ..\..\include\ks\xdr.h ..\..\include\ks\handle.h \
  ..\..\include\ks\value.h ..\..\include\ks\array.h \
@@ -311,8 +310,8 @@ commobject.obj: ..\..\src\commobject.cpp ..\..\include\ks\commobject.h \
  ..\..\..\plt\include\plt\dictionary.h
 
 package.obj: ..\..\src\package.cpp ..\..\include\ks\package.h \
- ..\..\include\ks\commobject.h ..\..\..\plt\include\plt\comphandle.h \
- ..\..\include\ks\props.h ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
+ ..\..\include\ks\commobject.h ..\..\include\ks\props.h \
+ ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
  ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
  ..\..\include\ks\xdr.h ..\..\include\ks\handle.h \
  ..\..\include\ks\value.h ..\..\include\ks\array.h \
@@ -324,8 +323,8 @@ package.obj: ..\..\src\package.cpp ..\..\include\ks\package.h \
  ..\..\include\ks\list.h
 
 sorter.obj: ..\..\src\sorter.cpp ..\..\include\ks\sorter.h \
- ..\..\include\ks\commobject.h ..\..\..\plt\include\plt\comphandle.h \
- ..\..\include\ks\props.h ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
+ ..\..\include\ks\commobject.h ..\..\include\ks\props.h \
+ ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
  ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
  ..\..\include\ks\xdr.h ..\..\include\ks\handle.h \
  ..\..\include\ks\value.h ..\..\include\ks\array.h \
@@ -339,13 +338,12 @@ variables.obj: ..\..\src\variables.cpp ..\..\include\ks\variables.h \
  ..\..\..\plt\include\plt\debug.h ..\..\..\plt\include\plt\config.h \
  ..\..\..\plt\include\plt\rtti.h ..\..\include\ks\ks.h \
  ..\..\include\ks\rpc.h ..\..\include\ks\commobject.h \
- ..\..\..\plt\include\plt\comphandle.h ..\..\include\ks\props.h \
- ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
- ..\..\include\ks\xdr.h ..\..\include\ks\handle.h \
- ..\..\include\ks\value.h ..\..\include\ks\array.h \
- ..\..\..\plt\include\plt\array.h ..\..\include\ks\time.h \
- ..\..\..\plt\include\plt\time.h ..\..\include\ks\clntpath.h \
- ..\..\include\ks\avmodule.h
+ ..\..\include\ks\props.h ..\..\include\ks\string.h \
+ ..\..\..\plt\include\plt\string.h ..\..\include\ks\xdr.h \
+ ..\..\include\ks\handle.h ..\..\include\ks\value.h \
+ ..\..\include\ks\array.h ..\..\..\plt\include\plt\array.h \
+ ..\..\include\ks\time.h ..\..\..\plt\include\plt\time.h \
+ ..\..\include\ks\clntpath.h ..\..\include\ks\avmodule.h
 
 tmanager.obj: ..\..\examples\tmanager.cpp ..\..\include\ks\manager.h \
  ..\..\include\ks\simpleserver.h ..\..\include\ks\svrbase.h \
@@ -485,8 +483,7 @@ tserver1.obj: ..\..\examples\tserver1.cpp ..\..\include\ks\server.h \
  ..\..\include\ks\mask.h ..\..\..\plt\include\plt\log.h
 
 tshell.obj: ..\..\examples\tshell.cpp ..\..\include\ks\commobject.h \
- ..\..\..\plt\include\plt\comphandle.h ..\..\include\ks\props.h \
- ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
+ ..\..\include\ks\props.h ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
  ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
  ..\..\include\ks\xdr.h ..\..\include\ks\handle.h \
  ..\..\include\ks\value.h ..\..\include\ks\array.h \
@@ -517,14 +514,13 @@ ttree.obj: ..\..\examples\ttree.cpp ..\..\include\ks\client.h \
  ..\..\include\ks\list.h ..\..\..\plt\include\plt\list.h \
  ..\..\include\ks\avmodule.h ..\..\..\plt\include\plt\hashtable.h \
  ..\..\..\plt\include\plt\dictionary.h ..\..\include\ks\clntpath.h \
- ..\..\include\ks\commobject.h ..\..\..\plt\include\plt\comphandle.h \
+ ..\..\include\ks\commobject.h \
  ..\..\..\plt\include\plt\hashtable_impl.h \
  ..\..\..\plt\include\plt\container_impl.h \
  ..\..\..\plt\include\plt\handle_impl.h ttree_inst.h
 
 ttree1.obj: ..\..\examples\ttree1.cpp ..\..\include\ks\commobject.h \
- ..\..\..\plt\include\plt\comphandle.h ..\..\include\ks\props.h \
- ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
+ ..\..\include\ks\props.h ..\..\include\ks\ks.h ..\..\include\ks\rpc.h \
  ..\..\include\ks\string.h ..\..\..\plt\include\plt\string.h \
  ..\..\include\ks\xdr.h ..\..\include\ks\handle.h \
  ..\..\include\ks\value.h ..\..\include\ks\array.h \

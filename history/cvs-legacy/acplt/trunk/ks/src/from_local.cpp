@@ -48,6 +48,12 @@
 # include <winsock.h>
 # endif
 
+/* 
+ * Currently we have no means to get this information.
+ * For OpenVMS > 7.0 there might be the right ioctl's in
+ * SYS$LIBRARY:UCX$INETDEF.H and/or <ioctl.h>.
+ */
+
 int from_local(struct sockaddr_in *) 
 {
   /* TODO */
