@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.5 2000-07-03 13:37:51 dirk Exp $
+*   $Id: ov_config.h,v 1.6 2000-07-05 16:25:30 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -148,6 +148,7 @@
 #define OV_DYNAMIC_DATABASE		1
 #define OV_STATIC_LIBRARIES		0
 #define OV_DYNAMIC_LIBRARIES	1
+#define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			".so"
 #define OV_DLLFNCEXPORT
 #define OV_DLLVAREXPORT
@@ -158,6 +159,7 @@
 #define OV_DYNAMIC_DATABASE		0
 #define OV_STATIC_LIBRARIES		0
 #define OV_DYNAMIC_LIBRARIES	1
+#define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			".dll"
 #if OV_COMPILER_MSVC
 #define OV_DLLFNCEXPORT 		_export
@@ -174,16 +176,29 @@
 #define OV_DYNAMIC_DATABASE		0
 #define OV_STATIC_LIBRARIES		1
 #define OV_DYNAMIC_LIBRARIES	0
+#define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			""
 #define OV_DLLFNCEXPORT
 #define OV_DLLVAREXPORT
 #define OV_DLLVARIMPORT 		extern
 #endif
 
-#if OV_SYSTEM_MC164 || OV_SYSTEM_RMOS
+#if OV_SYSTEM_RMOS
 #define OV_DYNAMIC_DATABASE		0
 #define OV_STATIC_LIBRARIES		1
 #define OV_DYNAMIC_LIBRARIES	0
+#define OV_MEMSPEC
+#define OV_DLLFLNSUFFIX			""
+#define OV_DLLFNCEXPORT
+#define OV_DLLVAREXPORT
+#define OV_DLLVARIMPORT 		extern
+#endif
+
+#if OV_SYSTEM_MC164
+#define OV_DYNAMIC_DATABASE		0
+#define OV_STATIC_LIBRARIES		1
+#define OV_DYNAMIC_LIBRARIES	0
+#define OV_MEMSPEC				xhuge
 #define OV_DLLFLNSUFFIX			""
 #define OV_DLLFNCEXPORT
 #define OV_DLLVAREXPORT

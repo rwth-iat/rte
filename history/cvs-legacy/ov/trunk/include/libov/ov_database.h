@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.4 1999-09-15 10:48:14 dirk Exp $
+*   $Id: ov_database.h,v 1.5 2000-07-05 16:25:30 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -51,9 +51,9 @@ extern "C" {
 typedef struct {
 	OV_POINTER			baseaddr;	/* base address of the filemapping */
 	OV_UINT				size;		/* size of the filemapping */
-	OV_BYTE				*pstart;	/* beginning of the database memory */
-	OV_BYTE				*pend;		/* end of the database memory */
-	OV_BYTE				*pcurr;		/* current position of the core pointer */
+	OV_BYTE OV_MEMSPEC	*pstart;	/* beginning of the database memory */
+	OV_BYTE OV_MEMSPEC	*pend;		/* end of the database memory */
+	OV_BYTE OV_MEMSPEC	*pcurr;		/* current position of the core pointer */
 	OV_INST_ov_domain	root;		/* root domain object */
 	OV_INST_ov_domain	acplt;		/* the acplt domain object */
 	OV_INST_ov_library	ov;			/* OV library object */
@@ -66,7 +66,7 @@ typedef struct {
 *   Database properties for MC164
 */
 #if OV_SYSTEM_MC164
-extern OV_DATABASE_INFO *pdbmem;
+extern OV_DATABASE_INFO OV_MEMSPEC	*pdbmem;
 #endif
 
 /*
@@ -77,7 +77,7 @@ extern OV_DATABASE_INFO *pdbmem;
 #else
 #define OV_EXTERN OV_DLLVARIMPORT
 #endif
-OV_EXTERN OV_DATABASE_INFO *pdb;
+OV_EXTERN OV_DATABASE_INFO OV_MEMSPEC	*pdb;
 #undef OV_EXTERN
 
 /*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.8 2000-06-20 06:50:34 dirk Exp $
+*   $Id: ov_database.c,v 1.9 2000-07-05 16:25:31 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -73,7 +73,7 @@
 /*
 *	Global variable: database pointer, file handles and stuff
 */
-OV_DLLVAREXPORT OV_DATABASE_INFO *pdb = NULL;
+OV_DLLVAREXPORT OV_DATABASE_INFO OV_MEMSPEC	*pdb = NULL;
 
 #if OV_SYSTEM_UNIX
 static int			fd;
@@ -93,7 +93,7 @@ unsigned short		channel;
 #endif
 
 #if OV_SYSTEM_MC164
-OV_DATABASE_INFO	*pdbmem;
+OV_DATABASE_INFO OV_MEMSPEC	*pdbmem;
 #endif
 
 /*
@@ -125,7 +125,7 @@ static OV_VTBL_ov_object nostartupvtable = {
 /*
 *	Macro: pointer to memory pool info structure
 */
-#define pmpinfo ((mp_info*)(pdb+1))
+#define pmpinfo ((mp_info OV_MEMSPEC *)(pdb+1))
 
 /*	----------------------------------------------------------------------	*/
 
@@ -139,7 +139,7 @@ __ptr_t ov_database_morecore(
 	*	local variables
 	*/
 	__ptr_t	pmem = (__ptr_t)(pdb->pcurr);
-	OV_BYTE	*psoon = pdb->pcurr+size;
+	OV_BYTE	OV_MEMSPEC *psoon = pdb->pcurr+size;
 #if OV_SYSTEM_UNIX
 	char	null = 0;
 #endif
@@ -677,10 +677,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map(
 	*	test if we got the same filemapping size
 	*/
 	Ov_AbortIfNot(pdb);
+#if OV_SYSTEM_MC164
+	/* nothing to do */
+#else
 	if(size != pdb->size) {
 		ov_database_unmap();
 		return OV_ERR_BADDATABASE;
 	}
+#endif
 	/*
 	*	test if we got the same base address
 	*/
@@ -1027,7 +1031,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 */
 OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
 	if(pdb) {
-		return pdb->pstart-(OV_BYTE*)pdb+pmpinfo->bytes_used;
+		return pdb->pstart-(OV_BYTE OV_MEMSPEC*)pdb+pmpinfo->bytes_used;
 	}
 	return 0;
 }
@@ -1041,9 +1045,9 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void) {
 	/*
 	*	local variables
 	*/
-	OV_UINT				i, num, sumsize, avgsize, logavgsize, sum;
-	OV_INSTPTR_ov_class pclass;
-	struct list			*pnext;
+	OV_UINT					i, num, sumsize, avgsize, logavgsize, sum;
+	OV_INSTPTR_ov_class		pclass;
+	struct list OV_MEMSPEC	*pnext;
 	/*
 	*	calculate average instance size
 	*/
