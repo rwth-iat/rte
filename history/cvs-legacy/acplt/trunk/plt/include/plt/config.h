@@ -76,6 +76,33 @@
 
 #include <stddef.h>
 
+// Enable/Disable use of the connection manager class and the buffered
+// (aka dynamic) XDR memory strams. Disabled by default if the user didn't
+// specified otherwise.
+#ifndef PLT_USE_BUFFERED_STREAMS
+#define PLT_USE_BUFFERED_STREAMS 0
+#endif
+
+// When running on top of NT, we always need to compile the connection
+// manager class with a hash table due to NT's habbit of allocating file
+// descriptors (aka handles).
+#if PLT_SYSTEM_NT
+#undef  PLT_CNX_MGR_USE_HT
+#define PLT_CNX_MGR_USE_HT 1
+#endif
+
+// If we're running on top of Solaris and the user didn't specified other-
+// wise, then we'll use XTI (for those who do not know: it's something like
+// the WinSuck 2.0 architecture for unix).
+#if PLT_SYSTEM_SOLARIS
+//#if PLT_USE_BUFFERED_STREAMS // temporal fix until we get XTI to work with
+//#define PLT_USE_XTI 0	     // the connection mgr
+//#endif
+#ifndef PLT_USE_XTI
+#define PLT_USE_XTI 1
+#endif
+#endif
+
 #if PLT_SYSTEM_LINUX || PLT_SYSTEM_HPUX || PLT_SYSTEM_SOLARIS || PLT_SYSTEM_IRIX
 #ifndef PLT_USE_SYSLOG
 #define PLT_USE_SYSLOG 1
