@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.14 2001-07-20 07:21:36 ansgar Exp $
+*   $Id: ov_version.h,v 1.15 2001-07-20 08:43:24 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -45,7 +45,7 @@
 
 #define OV_VER_FILEVERSION_CODEGEN			1, 2, 1, 0
 #define OV_VER_FILEVERSION_BUILDER			1, 0, 0, 0
-##define OV_VER_FILEVERSION_LIBOV			1, 2, 2, 0
+#define OV_VER_FILEVERSION_LIBOV			1, 2, 2, 0
 #define OV_VER_FILEVERSION_DBUTIL 			1, 2, 0, 0
 #define OV_VER_FILEVERSION_LIBOVKS 			1, 3, 0, 0
 #define OV_VER_FILEVERSION_SERVER			1, 2, 0, 0
