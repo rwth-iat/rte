@@ -43,12 +43,12 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-#include <ks/ks.h>
-#include <ks/string.h>
-#include <ks/xdr.h>
-#include <ks/handle.h>
-#include <ks/value.h>
-#include <ks/time.h>
+#include "ks/ks.h"
+#include "ks/string.h"
+#include "ks/xdr.h"
+#include "ks/handle.h"
+#include "ks/value.h"
+#include "ks/time.h"
 
 ////////////////////////////////////////////////////////////////////////////
 

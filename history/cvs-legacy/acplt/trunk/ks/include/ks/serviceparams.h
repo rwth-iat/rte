@@ -40,11 +40,11 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <ks/xdr.h>
-#include <ks/register.h>
-#include <ks/props.h>
-#include <ks/list.h>
-#include <ks/array.h>
+#include "ks/xdr.h"
+#include "ks/register.h"
+#include "ks/props.h"
+#include "ks/list.h"
+#include "ks/array.h"
 
 //////////////////////////////////////////////////////////////////////
 // Classes for GetPP service
@@ -95,6 +95,7 @@ class KsGetVarParams
 : public KsXdrAble
 {
 public:
+    KsGetVarParams();
     KsGetVarParams(size_t num_ids);
     KsGetVarParams(XDR *, bool &);
 
@@ -127,6 +128,7 @@ class KsGetVarResult
 : public KsResult
 {
 public:
+    KsGetVarResult();
     KsGetVarResult(size_t);
     KsGetVarResult(XDR *, bool &);
 
@@ -265,6 +267,12 @@ KsGetPPResult::KsGetPPResult()
 inline
 KsGetVarParams::KsGetVarParams(size_t num_ids)
 : identifiers(num_ids)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsGetVarParams::KsGetVarParams()
 {}
 
 //////////////////////////////////////////////////////////////////////
