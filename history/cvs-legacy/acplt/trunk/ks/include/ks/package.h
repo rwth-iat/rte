@@ -266,7 +266,8 @@ KscExchangePackage::KscExchangePackage(KscPackageHandle setPkg,
                                        KscPackageHandle getPkg)
 : get_pkg(getPkg),
   set_pkg(setPkg),
-  av_module(0)
+  av_module(0),
+  _result(-1)
 {}
 
 //////////////////////////////////////////////////////////////////////
