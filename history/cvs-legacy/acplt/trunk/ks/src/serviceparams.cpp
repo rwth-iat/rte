@@ -87,7 +87,7 @@ KsGetPPResult::xdrEncode(XDR *xdr) const
 
     // check for valid information and encode list contents
     //
-    if( result != KS_ERR_OK ) {
+    if( result == KS_ERR_OK ) {
         return items.xdrEncode(xdr);
     }
     
