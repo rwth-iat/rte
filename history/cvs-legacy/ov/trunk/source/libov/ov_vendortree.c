@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.9 2002-05-15 12:41:50 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.10 2002-06-18 10:15:58 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -54,6 +54,7 @@ static OV_STRING	semantic_flag[32] = {
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 					};
 OV_DLLVAREXPORT OV_BOOL activitylock;
+OV_DLLVAREXPORT OV_BOOL backup;
 /*
 *	Global variables
 */
@@ -79,6 +80,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 	{ "startup_time",			"UTC",	ov_vendortree_getstartuptime, NULL },
 	{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
 	{ "activity_lock",			NULL,	ov_vendortree_getactivitylock, ov_vendortree_setactivitylock },
+	{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
 	{ "server_password",			NULL,	ov_vendortree_getserverpassword, NULL },
 	{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset }
 };
@@ -857,6 +859,13 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setactivitylock(
 	const OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 ) {
+	if (pdb->serverpassword) {
+		if (pticket->type == OV_TT_SIMPLE) {
+			if(!strcmp(pticket->ticketunion.simpleticket.id, pdb->serverpassword)) goto CONTINUE1;
+		}
+		return OV_ERR_NOACCESS;
+	}
+CONTINUE1:
 	if (pvarcurrprops->value.vartype == OV_VT_BOOL) {
 		activitylock = pvarcurrprops->value.valueunion.val_bool;
 		return OV_ERR_OK;
@@ -864,6 +873,19 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setactivitylock(
 	return OV_ERR_BADTYPE;
 }
 
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Get backup 
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getbackup(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_BOOL;
+	pvarcurrprops->value.valueunion.val_bool = backup;
+	return OV_ERR_OK;
+}
 /*	----------------------------------------------------------------------	*/
 
 /*

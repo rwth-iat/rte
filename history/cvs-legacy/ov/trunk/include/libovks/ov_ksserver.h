@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.10 2002-02-06 17:00:12 ansgar Exp $
+*   $Id: ov_ksserver.h,v 1.11 2002-06-18 10:15:58 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -101,7 +101,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_terminate(
 OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 	OV_STRING			servername,
 	int					port,
-	OV_FNC_SIGHANDLER	*sighandler
+	OV_FNC_SIGHANDLER	*sighandler,
+	OV_BOOL				reuse
 );
 
 /*
@@ -373,6 +374,14 @@ void ov_ksserver_gethist(
 	const OV_GETHIST_PAR	*params,
 	OV_GETHIST_RES			*result
 );
+
+OV_RESULT ov_supervised_database_startup();
+
+OV_RESULT ov_supervised_database_map(
+	OV_STRING 	dbname
+);
+
+OV_RESULT ov_supervised_server_run() ;
 
 #ifdef __cplusplus
 }

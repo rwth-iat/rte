@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.7 2002-01-31 16:28:50 ansgar Exp $
+*   $Id: ov_vendortree.h,v 1.8 2002-06-18 10:15:58 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,7 +38,7 @@ extern "C" {
 /*
 *	Number of objects in the vendor tree
 */
-#define	OV_NUM_VENDOROBJECTS	23
+#define	OV_NUM_VENDOROBJECTS	24
 
 /*
 *	Global variables
@@ -49,6 +49,7 @@ extern "C" {
 #define OV_EXTERN OV_DLLVARIMPORT
 #endif
 OV_EXTERN OV_BOOL activitylock;
+OV_EXTERN OV_BOOL backup;
 #undef OV_EXTERN
 
 /*
@@ -336,6 +337,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getactivitylock(
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setactivitylock(
 	const OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+);
+
+/*
+*	Get backup
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getbackup(
+	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 );
 

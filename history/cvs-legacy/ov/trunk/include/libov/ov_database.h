@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.7 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_database.h,v 1.8 2002-06-18 10:15:58 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -108,6 +108,11 @@ OV_DLLFNCEXPORT void ov_database_unmap(void);
 *	Flush the contents of a database
 */
 OV_DLLFNCEXPORT void ov_database_flush(void);
+
+/*
+*	Write the contents of a database to a backupfile
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_database_write(OV_STRING dbname);
 
 /*
 *	Initialize the database (subroutine)

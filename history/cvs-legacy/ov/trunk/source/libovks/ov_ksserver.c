@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.13 2002-02-06 17:00:12 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.14 2002-06-18 10:15:58 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,6 +34,7 @@
 #include "libovks/ov_ksserver_xdr.h"
 #include "libov/ov_object.h"
 #include "libov/ov_scheduler.h"
+#include "libov/ov_database.h"
 #include "libov/ov_vendortree.h"
 #include "libov/ov_macros.h"
 
@@ -343,7 +344,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_terminate(
 OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 	OV_STRING			servername,
 	int					port,
-	OV_FNC_SIGHANDLER	*sighandler
+	OV_FNC_SIGHANDLER	*sighandler,
+	OV_BOOL				reuse
 ) {
 	if(!pserver) {
 		/*
@@ -379,6 +381,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 		}
 		if(pserver) {
 			ov_vendortree_setservername(servername);
+			if (reuse) pserver->setReuseAddr(reuse);
 			return OV_ERR_OK;
 		}
 	}
@@ -736,6 +739,65 @@ void ov_ksserver_sendreply(
 }
 #endif
 
+/*	----------------------------------------------------------------------	*/
+/*
+*	maps database with supervised exceptions (subroutine)
+*/
+
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+OV_RESULT ov_supervised_database_map(
+	OV_STRING 	dbname
+) {
+	try {
+		return ov_database_map(dbname);
+	}
+	catch(...) {
+		return OV_ERR_GENERIC;
+	}
+}
+
+#endif
+/*	----------------------------------------------------------------------	*/
+/*
+*	starts up database with supervised exceptions (subroutine)
+*/
+
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+OV_RESULT ov_supervised_database_startup() 
+{
+	try {
+		return ov_database_startup();
+	}
+	catch(...) {
+		return OV_ERR_GENERIC;
+	}
+}
+
+#endif
+/*	----------------------------------------------------------------------	*/
+/*
+*	runs server with supervised exceptions (subroutine)
+*/
+
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+OV_RESULT ov_supervised_server_run() 
+{
+	try {
+		ov_ksserver_run();
+		return OV_ERR_OK;
+	}
+	catch(...) {
+		return OV_ERR_GENERIC;
+	}
+}
+
+#endif
 /*	----------------------------------------------------------------------	*/
 
 #ifdef __cplusplus

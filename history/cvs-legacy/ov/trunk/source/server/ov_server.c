@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.10 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_server.c,v 1.11 2002-06-18 10:15:58 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -170,11 +170,14 @@ int main(int argc, char **argv) {
 	OV_RESULT	result;
 	OV_INT 		port = 0; /* KS_ANYPORT */
 	OV_BOOL		startup = TRUE;
+	OV_BOOL		reuse = FALSE;
 	int			exit_status = EXIT_SUCCESS;
 #if OV_SYSTEM_RMOS
 	OV_UINT		taskid;
 	OV_BOOL		terminate = FALSE;
 #endif
+
+	backup = FALSE;
 	/*
 	*	if we are debugging, log to stderr (if not 
 	*	specified by the command line options)
@@ -249,6 +252,13 @@ int main(int argc, char **argv) {
 			activitylock = TRUE;
 		}
 		/*
+		*	set reuse of socket address/port
+		*/
+		else if(!strcmp(argv[i], "-r") || !strcmp(argv[i], "--reuse-address")) {
+			i++;
+			reuse = TRUE;
+		}
+		/*
 		*	set logfile option
 		*/
 		else if(!strcmp(argv[i], "-l") || !strcmp(argv[i], "--logfile")) {
@@ -309,7 +319,6 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 				"-f FILE, --file FILE            Set database filename (*.ovd)\n"
 				"-b FILE, --backup FILE          Set backup database filename (*.ovd)\n"
 				"-s SERVER, --server-name SERVER Set server name\n"
-				"-a , --activity-lock            Locks OV activities (scheduler and accessorfnc)\n"
 				"-i ID, --identify ID            Set Ticket Identification for server access\n"
 				"-p PORT, --port-number PORT     Set server port number\n"
 				"-l LOGFILE, --logfile LOGFILE   Set logfile name, you may use stdout"
@@ -322,6 +331,8 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 #if OV_SYSTEM_RMOS
 				"-t TASKID, --terminate TASKID   Terminate server (RMOS option only)\n"
 #endif
+				"-a , --activity-lock            Locks OV activities (scheduler and accessorfnc)\n"
+				"-r , --reuse-address            Reuses the socket address/port\n"
 				"-n, --no-startup                Do not startup the database\n"
 				"-v, --version                   Display version information\n"
 				"-h, --help                      Display this help message\n");
@@ -376,12 +387,14 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 	*	map existing database
 	*/
 	ov_logfile_info("Mapping database \"%s\"...", filename);
-	result = ov_database_map(filename);
-	if (backupfilename) {
+	result = ov_supervised_database_map(filename);
+	if (Ov_Fail(result) && backupfilename) {
+MAPBACKUP:
+		backup = TRUE;
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 			ov_result_getresulttext(result), result);
 		ov_logfile_info("Mapping backup-database \"%s\"...", backupfilename);
-		result = ov_database_map(backupfilename);
+		result = ov_supervised_database_map(backupfilename);
 	}
 	if(Ov_Fail(result)) {
 ERRORMSG:
@@ -391,31 +404,36 @@ ERRORMSG:
 	}
 	ov_logfile_info("Database mapped.");
 	/*
-	*	set the serverpassword of the database
-	*/
-	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
-	/*
 	*	start up the database if appropriate
 	*/
 	if(startup) {
 		ov_logfile_info("Starting up database...");
-		result = ov_database_startup();
+		result = ov_supervised_database_startup();
 		if(Ov_Fail(result)) {
+			if ((!backup) && (backupfilename)) goto MAPBACKUP;
 			goto ERRORMSG;
 		}
 		ov_logfile_info("Database started up.");
 	}
 	/*
+	*	set the serverpassword of the database
+	*/
+	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
+	/*
 	*   run server
 	*/
 	ov_logfile_info("Starting server...");
-	result = ov_ksserver_create(servername, port, ov_server_sighandler);
+	result = ov_ksserver_create(servername, port, ov_server_sighandler, reuse);
 	if(Ov_OK(result)) {
 		ov_logfile_info("Server started.");
 		ov_ksserver_start();
-		ov_ksserver_run();
+		result = ov_supervised_server_run();
 		ov_ksserver_stop();
 		ov_logfile_info("Server stopped.");
+		if (Ov_Fail(result) && (!backup) && backupfilename) {
+			ov_ksserver_delete();
+			goto MAPBACKUP;
+		}
 	} else {
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 			ov_result_getresulttext(result), result);

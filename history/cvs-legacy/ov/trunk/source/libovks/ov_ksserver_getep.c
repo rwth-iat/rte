@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.13 2002-05-15 12:41:50 ansgar Exp $
+*   $Id: ov_ksserver_getep.c,v 1.14 2002-06-18 10:15:58 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -412,9 +412,14 @@ OV_RESULT ov_ksserver_getep_additem(
 	case OV_ET_OBJECT:
 		if(vendorobj) {
 			OV_VAR_CURRENT_PROPS	varcurrprops;
-			if(Ov_Fail(ov_vendortree_getvar(pobj, &varcurrprops, pticket))) {
+			OV_RESULT				res;
+			
+			res = ov_vendortree_getvar(pobj, &varcurrprops, pticket);
+			if(res==OV_ERR_NOACCESS) {
+				pprops->access = OV_AC_NONE;
+			} else if (Ov_Fail(res)) {
 				return OV_ERR_GENERIC;
-			}
+			}				
 			pprops->comment = "";
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props
 				.tech_unit = ov_vendortree_getunit(pobj);
