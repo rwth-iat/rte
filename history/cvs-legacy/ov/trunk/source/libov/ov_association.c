@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.16 2003-09-04 13:47:03 ansgar Exp $
+*   $Id: ov_association.c,v 1.17 2004-01-27 09:12:02 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1416,6 +1416,8 @@ void ov_association_linktable_insert(
 	OV_INSTPTR_ov_object		pinst;
 	OV_INSTPTR_ov_object		pnextinst;
 	OV_BYTE				*pcs, *pct;
+	OV_UINT				childrelationchildoffset;
+	OV_UINT				parentrelationchildoffset;
 
 	/*
 	*	when adjusting the offsets of the child and parent association, we store the
@@ -1442,32 +1444,37 @@ void ov_association_linktable_insert(
 	*/
 
 	pinst = Ov_GetFirstChild(ov_instantiation, pclass);
+        childrelationchildoffset = passoc_ov_childrelationship->v_childoffset;
+        parentrelationchildoffset = passoc_ov_parentrelationship->v_childoffset;
 	pchildassoc = Ov_GetFirstChild(ov_childrelationship, pclass);
 	pparentassoc = Ov_GetFirstChild(ov_parentrelationship, pclass);
 
 	/*
-	*	the association offsets of derived classes (and only of these) has to be adjusted
+	*	the association offsets of the derived classes has to be adjusted. This includes associations which are
+	*   additional defined to passocclass
+	*
+	*	iterate over all child associations defined to this class and add the inserted datasize to the childoffset,
+	*   if the actual offset of the association is greater than the offset for the inserted association
 	*/
-	if (passocclass!=pclass) {
-		/*
-		*	iterate over all child associations defined to this class and add the inserted datasize to the childoffset
-		*/
-		passoc = pchildassoc;
-		while (passoc) {
-			pnextassoc = Ov_GetNextChild(ov_childrelationship, passoc);
-			passoc->v_childoffset += addsize;
-			passoc = pnextassoc;
-		}
-	
-		/*
-		*	iterate over all parent associations defined to this class and add the inserted datasize to the parentoffset
-		*/
-		passoc = pparentassoc;
-		while (passoc) {
-			pnextassoc = Ov_GetNextChild(ov_parentrelationship, passoc);
-			passoc->v_parentoffset += addsize;
-			passoc = pnextassoc;
-		}
+	passoc = pchildassoc;
+	while (passoc) {
+		pnextassoc = (OV_INSTPTR_ov_association) (((OV_ANCHOR*)(passoc->v_linktable+childrelationchildoffset))->pnext);
+		// if iterating over the association of the class whose linktable has to be changed,
+		// the new offset has to be greater than the childoffset for changing this
+		if ((pclass == passocclass) && (passoc->v_childoffset > offset)) passoc->v_childoffset += addsize;
+		// change always the association offset of derived classes
+		if (pclass != passocclass) passoc->v_childoffset += addsize;
+		passoc = pnextassoc;
+	}
+	/*
+	*	iterate over all parent associations defined to this class and add the inserted datasize to the parentoffset
+	*/
+	passoc = pparentassoc;
+	while (passoc) {
+		pnextassoc = (OV_INSTPTR_ov_association) (((OV_ANCHOR*)(passoc->v_linktable+parentrelationchildoffset))->pnext);
+		if ((pclass == passocclass) && (passoc->v_parentoffset > offset)) passoc->v_parentoffset += addsize;
+		if (pclass != passocclass) passoc->v_parentoffset += addsize;
+		passoc = pnextassoc;
 	}
 
 	/*

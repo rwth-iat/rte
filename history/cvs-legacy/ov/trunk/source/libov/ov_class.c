@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.19 2002-08-29 11:03:56 ansgar Exp $
+*   $Id: ov_class.c,v 1.20 2004-01-27 09:12:02 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1019,7 +1019,7 @@ void ov_class_deleteobject_cleanupinst(
 				break;
 			default:
 				Ov_Warning("no such element type");
-				break;				
+				break;
 			}
 		}
 		/*
