@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.11 1999-01-12 16:11:04 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.12 1999-01-29 12:38:43 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -400,7 +400,7 @@ void DumpVar(KscVariable &var, int indent)
 } // DumpVar
 
 
-void DumpBranch(KscDomain &branch, int indent)
+void DumpBranch(KscAnyCommObject &branch, int indent)
 {
     KscChildIterator *children;
 
@@ -417,25 +417,29 @@ void DumpBranch(KscDomain &branch, int indent)
     for ( ; *children; ++*children ) {
         KsProjPropsHandle current(**children);
         DumpProjProps(*current, indent + INDENTATION);
+
         if ( current->xdrTypeCode() == KS_OT_DOMAIN ) {
-            KscDomain child_domain(PltString(branch.getFullPath()) + 
-                                   PltString(indent ? "/" : "") +
-                                   current->identifier);
+            KscAnyCommObject child_domain(PltString(branch.getFullPath()) + 
+                                          PltString(indent ? "/" : "") +
+                                          current->identifier);
             DumpBranch(child_domain, indent + INDENTATION);
+
         } else if ( current->xdrTypeCode() == KS_OT_LINK ) {
-            KscDomain child_domain(PltString(branch.getFullPath()) + 
-                                   PltString(indent ? "/" : "") +
-                                   current->identifier);
+            KscAnyCommObject child_domain(PltString(branch.getFullPath()) + 
+                                          PltString(indent ? "/" : "") +
+                                          current->identifier);
             KscVariable child_var(PltString(branch.getFullPath()) + 
                                    PltString(indent ? "/" : "") +
                                    current->identifier);
             DumpVar(child_var, indent + 2 * INDENTATION);
             DumpBranch(child_domain, indent + INDENTATION);
+
         } else if ( current->xdrTypeCode() == KS_OT_HISTORY ) {
-            KscDomain child_domain(PltString(branch.getFullPath()) + 
-                                   PltString(indent ? "/" : "") +
-                                   current->identifier);
+            KscAnyCommObject child_domain(PltString(branch.getFullPath()) + 
+                                          PltString(indent ? "/" : "") +
+                                          current->identifier);
             DumpBranch(child_domain, indent + INDENTATION);
+
         } else if ( current->xdrTypeCode() == KS_OT_VARIABLE ) {
             KscVariable var(PltString(branch.getFullPath()) + 
                                    PltString(indent ? "/" : "") +
@@ -462,7 +466,7 @@ int main(int argc, char **argv)
 
     host_and_server = KsString("//") + argv[1];
     host_and_server += "/";
-    KscDomain root(host_and_server);
+    KscAnyCommObject root(host_and_server);
     if ( !root.getProjPropsUpdate() ) {
         cerr << "Can't open /" << argv[1] << endl;
         return 42;
