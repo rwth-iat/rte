@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.5 1999-07-29 16:32:25 dirk Exp $
+*   $Id: ov_object.c,v 1.6 1999-08-03 09:48:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -781,9 +781,6 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_setvar(
 							break;
 					}
 					break;
-			}
-			if(pvarcurrprops->value.veclen == 1) {
-			} else {
 			}
 			return OV_ERR_BADTYPE;
 		default:
