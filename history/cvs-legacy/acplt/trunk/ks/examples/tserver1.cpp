@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.5 1997-09-02 15:06:38 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.6 1997-09-03 14:07:46 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -213,7 +213,8 @@ class TestAvNone
 {
 public:
     TestAvNone(XDR* xdr, bool & ok) : KsAvNoneTicket(xdr,ok) { }
-    KS_ACCESS getAccess(const KsString &) const;
+    virtual bool canReadVar(const KsString & name) const;
+    virtual bool canWriteVar(const KsString & name) const;
     static KsAvTicket * xdrNew(XDR *);
 };
 
@@ -225,10 +226,9 @@ class TestAvSimple
 public:
     TestAvSimple(XDR* xdr, bool & ok) : KsAvSimpleTicket(xdr,ok) { }
     bool isVisible(const KsString & name) const;
-    KS_ACCESS getAccess(const KsString & name) const
-        { return KsAvTicket::getAccess(name); }
     bool canReadVar(const KsString & name) const;
     bool canWriteVar(const KsString & name) const;
+
     static KsAvTicket * xdrNew(XDR *);
 };
 
@@ -239,13 +239,25 @@ KS_IMPL_XDRNEW2(KsAvTicket,TestAvSimple);
 
 //////////////////////////////////////////////////////////////////////
 
-KS_ACCESS
-TestAvNone::getAccess(const KsString & name) const
+bool
+TestAvNone::canReadVar(const KsString & name) const
 {
     if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
-        return KS_AC_NONE;
+        return false;
     } else {
-        return KS_AC_READ | KS_AC_WRITE;
+        return KsAvNoneTicket::canReadVar(name);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+TestAvNone::canWriteVar(const KsString & name) const
+{
+    if (strncmp(name, restricted, sizeof restricted - 1) == 0) {
+        return false;
+    } else {
+        return KsAvNoneTicket::canWriteVar(name);
     }
 }
 
