@@ -9,7 +9,6 @@ A=.lib
 EXE=.exe
 PLTDIR = ..\..
 SRCDIR = $(PLTDIR)\src\\
-TESTSRCDIR = $(PLTDIR)\tests\\
 
 ### Compiler
 CXX = wcl386
@@ -20,8 +19,6 @@ CXX_EXTRA_FLAGS = -I=.;$(PLTDIR)\include;D:\devel\watcom\h;d:\devel\watcom\h\nt;
 
 .cpp: $(PLTDIR)\src
 
-.cpp: $(PLTDIR)\tests
-
 .cpp.obj:
 	wcl386 $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -fo=$@ $< 
 
@@ -31,7 +28,7 @@ CXX_EXTRA_FLAGS = -I=.;$(PLTDIR)\include;D:\devel\watcom\h;d:\devel\watcom\h\nt;
 
 ### Include auto dependencies (built with gcc)
 
-!INCLUDE ..\depend.mk
+!INCLUDE ..\depend.nt
 
 ### How to build things
 .obj.exe :

@@ -9,7 +9,6 @@ A=.lib
 EXE=.exe
 PLTDIR = ..\..
 SRCDIR = $(PLTDIR)\src\\
-TESTSRCDIR = $(PLTDIR)\tests\\
 
 ### Compiler
 CXX = bcc32
@@ -23,16 +22,13 @@ CXX_EXTRA_FLAGS = -I. -a8 -I$(PLTDIR)\include -DPLT_SYSTEM_NT=1
 {$(SRCDIR)}.cpp{}.obj:
 	$(CXX) -Jgx $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $< 
 
-{$(TESTSRCDIR)}.cpp{}.obj:
-	$(CXX) -Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $< 
-
 ### Include generic part
 
 !INCLUDE ..\generic.mk
 
 ### Include auto dependencies (built with gcc)
 
-!INCLUDE ..\depend.mk
+!INCLUDE ..\depend.nt
 
 ### How to build things
 .obj.exe :

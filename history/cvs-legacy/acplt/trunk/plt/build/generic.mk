@@ -30,38 +30,9 @@ LIBPLT_OBJECTS2 = \
 
 LIBPLT_OBJECTS = $(LIBPLT_OBJECTS1) $(LIBPLT_OBJECTS2)
 
-CXX_TEST_SOURCES = \
-	$(TESTSRCDIR)tarray.cpp \
-	$(TESTSRCDIR)tdebug.cpp \
-	$(TESTSRCDIR)thandle.cpp\
-	$(TESTSRCDIR)thashtable.cpp \
-	$(TESTSRCDIR)thtname.cpp \
-	$(TESTSRCDIR)tlist.cpp \
-	$(TESTSRCDIR)tlog.cpp \
-	$(TESTSRCDIR)tpriorityqueue.cpp \
-	$(TESTSRCDIR)trtti.cpp \
-	$(TESTSRCDIR)tstring.cpp \
-	$(TESTSRCDIR)ttime.cpp
-
-CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
-
-TESTS = tdebug$(EXE) \
-	trtti$(EXE) \
-	thandle$(EXE) \
-	tlog$(EXE) \
-	tstring$(EXE) \
-	ttime$(EXE) \
-	tarray$(EXE) \
-	tlist$(EXE) \
-	tpriorityqueue$(EXE) \
-	thashtable$(EXE) \
-	thtname$(EXE)
+CXX_SOURCES = $(CXX_LIBPLT_SOURCES)
 
 LIBPLT = libplt$(A)
 
 all : $(LIBPLT)
-
-tests : $(TESTS)
-
-$(TESTS) : $(LIBPLT)
 

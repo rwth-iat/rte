@@ -11,7 +11,6 @@ A=.a
 EXE=.exe
 
 SRCDIR = ../../src/
-TESTSRCDIR = ../../tests/
 
 ### Compiler
 CXX = g++
@@ -44,7 +43,7 @@ CXX_LIBS = -lstdc++
 	$(CXX) -o $@ $< $(LIBPLT) $(PLATFORM_LIBS) -lstdc++
 
 
-VPATH = $(SRCDIR) $(TESTSRCDIR)
+VPATH = $(SRCDIR)
 
 ### Include generic part
 
@@ -54,11 +53,11 @@ libplt.a: $(LIBPLT_OBJECTS)
 	ar r $@ $?
 	$(RANLIB) $@
 
-../depend.mk : $(CXX_SOURCES)
+../depend.nt : $(CXX_SOURCES)
 	$(CXX_COMPILE) -MM $^ > .depend
 	perl ../depend.pl .depend > $@
 
-depend : ../depend.mk
+depend : ../depend.nt
 
 .depend:
 	touch .depend
