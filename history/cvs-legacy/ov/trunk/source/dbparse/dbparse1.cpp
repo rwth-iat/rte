@@ -389,7 +389,7 @@ bool parsetree::add(instance *inst) {
 					return true;
 				}
 			} else {
-				cout << "Error: Duplicate instance identifier in input file!" << endl;
+				cout << "Error 1: Duplicate instance identifier in input file!" << endl;
 				return false;
 			}
 		}
@@ -429,8 +429,8 @@ bool parsetree::remove(LogPath *name)
 	}
 	parent = search(&LogPath(*name, 0, name->size()-1));
 	if (!parent->children->remove(*name, inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
-		exit;
+		cout << "Error 2: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		exit(1);
 	}
 	delete inst;
 	return true;
@@ -445,8 +445,8 @@ bool parsetree::remove(instance *inst)
 
 	parent = search(&LogPath(*(inst->ident), 0, inst->ident->size()-1));
 	if (!parent->children->remove(*(inst->ident), inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
-		exit;
+		cout << "Error 3: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		exit(1);
 	}
 	delete inst;
 	return true;
@@ -969,7 +969,7 @@ KsString TimeToAscii(const KsTime ptime)
 
 	// convert the time to a string
 	ptm = gmtime(&secs);
-	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06u",
+	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06lu",
 		ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour,
 		ptm->tm_min, ptm->tm_sec, ptime.tv_usec);
 	return (KsString)timestring;
@@ -991,7 +991,7 @@ KsString TimeSpanToAscii(const KsTimeSpan ptimesp)
 	minutes = secs % 3600;
 	secs -= minutes * 60;
 	hours = secs / 60;
-	sprintf(timestring, "%04d:%02d:%02d.%06u",
+	sprintf(timestring, "%04d:%02d:%02d.%06lu",
 		hours, minutes, seconds, ptimesp.tv_usec);
 	return (KsString)timestring;
 } // TimeSpanToAscii
@@ -1012,7 +1012,7 @@ KsTime GetTime(char *arg)
 	// check the format of the given string, which must be either
 	// YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
 	if(!arg) {
-		cout << "Error: Bad time format.\n";
+		cout << "Error 4: Bad time format.\n";
 		exit (-1);
 	}
 	for(pc1=format, pc2=arg; *pc1; pc1++, pc2++) {
@@ -1020,13 +1020,13 @@ KsTime GetTime(char *arg)
 			if((*pc1 == ' ') || (*pc1 == '.')) {
 				break;
 			}
-			cout << "Error: Bad time format.\n";
+			cout << "Error 5: Bad time format.\n";
 			exit (-1);
 		}
 		switch(*pc1) {
 		case '0':
 			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
-				cout << "Error: Bad time format.\n";
+				cout << "Error 6: Bad time format.\n";
 				exit (-1);
 			}
 			break;
@@ -1035,12 +1035,12 @@ KsTime GetTime(char *arg)
 		case ' ':
 		case '.':
 			if(*pc2 != *pc1) {
-				cout << "Error: Bad time format.\n";
+				cout << "Error 7: Bad time format.\n";
 				exit (-1);
 			}
 			break;
 		default:
-			cout << "Error: Bad time format.\n";
+			cout << "Error 8: Bad time format.\n";
 			exit (-1);
 		}
 	}
@@ -1055,7 +1055,7 @@ KsTime GetTime(char *arg)
 	secs = mktime(&tm);
 	secs -= timezone;
 	if(secs < 0) {
-		cout << "Error: Time conversion failed.\n";
+		cout << "Error 9: Time conversion failed.\n";
 		exit (-1);
 	}
 	// time is OK, return value
@@ -1078,7 +1078,7 @@ KsTimeSpan GetTimeSpan(char *arg)
 	// check the format of the given string, which must be either
 	// hhhh:mm:ss or hhhh:mm:ss.uuuuuu
 	if(!arg) {
-		cout << "Error: Bad time span format.\n";
+		cout << "Error 10: Bad time span format.\n";
 		exit (-1);
 	}
 	for(pc1=format, pc2=arg; *pc1; pc1++, pc2++) {
@@ -1086,25 +1086,25 @@ KsTimeSpan GetTimeSpan(char *arg)
 			if(*pc1 == '.') {
 				break;
 			}
-			cout << "Error: Bad time span format.\n";
+			cout << "Error 11: Bad time span format.\n";
 			exit (-1);
 		}
 		switch(*pc1) {
 		case '0':
 			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
-				cout << "Error: Bad time span format.\n";
+				cout << "Error 12: Bad time span format.\n";
 				exit (-1);
 			}
 			break;
 		case ':':
 		case '.':
 			if(*pc2 != *pc1) {
-				cout << "Error: Bad time span format.\n";
+				cout << "Error 13: Bad time span format.\n";
 				exit (-1);
 			}
 			break;
 		default:
-			cout << "Error: Bad time span format.\n";
+			cout << "Error 14: Bad time span format.\n";
 			exit (-1);
 		}
 	}
@@ -1118,7 +1118,7 @@ KsTimeSpan GetTimeSpan(char *arg)
 			minutes >= 0 && minutes <= 59 &&
 			hours >= 0 && hours <= 9999
 	  	)) {
-		cout << "Error: Time span conversion failed.\n";
+		cout << "Error 15: Time span conversion failed.\n";
 		exit (-1);
 	}
 	// time is OK, return value
@@ -1157,14 +1157,15 @@ KS_SEMANTIC_FLAGS GetSemFlags(KsString *ksarg)
 		}
 		i++;
 	}
-	if (i == strlen(arg)) {
-		free(arg);
-		return ret;
-	} else {
-		cout << "Error: Invalid semantic flags." << endl;
+	if (i != strlen(arg)) {
+		cout << "Error 16: Invalid semantic flags." << endl;
 		free(arg);
 		exit(-1);
 	}
+	
+	free(arg);
+	return ret;
+	
 } // GetSemFlags
 
 //-------------------------------------------------------------------------------
@@ -1174,6 +1175,7 @@ KS_SEMANTIC_FLAGS GetSemFlags(KsString *ksarg)
 bool compat_types(enum value_types &type1, KS_VAR_TYPE type2)
 {
 	type2 &= 0xFFFF;		// KS type mask
+	if (type2 == 0xFF) return true;
 	switch (type1) {
 		case DB_VT_BOOL			:	if (type2 == KS_VT_BOOL) {
 										return true;
@@ -1233,6 +1235,9 @@ bool compat_types(enum value_types &type1, KS_VAR_TYPE type2)
 									break;
 		default					:	return false;
 	}
+	
+	return false;
+	
 } // compat_types
 
 //-------------------------------------------------------------------------------
@@ -1350,7 +1355,7 @@ bool compat_classes(const LogPath &type1, const KsString &type2)
 	if (!start.Update()) {
 		KscVariable start(type2 + ".parentclass");
 		if (!start.getUpdate()) {
-			cout << "Error: Cannot check class compatibility for " << type2
+			cout << "Error 17: Cannot check class compatibility for " << type2
 				 << "!" << endl;
 			return false;
 		}
@@ -1398,7 +1403,7 @@ bool checkObjs(class instance *node)
 			}
 		} else {									// classes are incompatible
 			if (lopts & LO_ERROR_ON_INCOMPATIBLE) {
-				cout << "Error: Types of " << *(node->ident) << " are incompatible!" << endl;
+				cout << "Error 18: Types of " << *(node->ident) << " are incompatible!" << endl;
 				return false;
 			}
 			if (lopts & LO_OVERWRITE_INCOMPATIBLE) {	// force overwrite
@@ -1422,6 +1427,7 @@ bool check_objects()
 bool check_vendortree()
 {
 	instance										*vendor;
+	instance										*root;
 	PltHashIterator<PltString, variable_value *>	*act_var;
 	bool											ok;
 	KS_VAR_TYPE										vartype;
@@ -1430,12 +1436,14 @@ bool check_vendortree()
 	if (!vendor) {
 		return true;
 	}
-	act_var = vendor->var_block->newIterator();
+	root = parse_tree->search(&LogPath("/"));
+	root->children->remove(LogPath("/vendor"),vendor);
+/*	act_var = vendor->var_block->newIterator();
 
 	while (*act_var) {
 		KscVariable var(server + "/vendor/" + (*act_var)->a_key);
 		if (!var.getEngPropsUpdate()) {					// class variable not found in server
-			cout << "Error: Cannot access variable /vendor/" << (const char *)(*act_var)->a_key
+			cout << "Error 19: Cannot access variable /vendor/" << (const char *)(*act_var)->a_key
 				 << " in server!" << endl;
 		}
 		vartype = var.getEngProps()->type;
@@ -1445,7 +1453,7 @@ bool check_vendortree()
 			ok = compat_types((*act_var)->a_value->val->type, vartype);
 		}
 		if (!ok) {					// variable types are compatible
-			cout << "Error: Conflicting types for variable "
+			cout << "Error 20: Conflicting types for variable "
 				 << (const char*)(*act_var)->a_key << "!" << endl;
 			return false;
 		}
@@ -1453,7 +1461,7 @@ bool check_vendortree()
 			(*act_var)->a_value->val->v.bool_val = true;
 		}
 		++*act_var;
-	}
+	}*/
 	return true;
 
 } // check_vendortree
@@ -1482,12 +1490,12 @@ bool checkClassId(instance *node) {
 	KscDomain dom(domname);
 	if (!dom.getEngPropsUpdate()) {								// class not in server
 		if (!(lopts & LO_ADD_CLASSES)) {
-			cout << "Error: Class " << *(node->class_ident) << " not in server!" << endl;
+			cout << "Error 21: Class " << *(node->class_ident) << " not in server!" << endl;
 			return false;
 		} else {												// search class in parse tree
 			class_obj = parse_tree->search(node->class_ident);
 			if (!class_obj) {
-				cout << "Error: Class " << *(node->class_ident) << " not found!" << endl;
+				cout << "Error 22: Class " << *(node->class_ident) << " not found!" << endl;
 				return false;
 			}
 			if (node->var_block) {
@@ -1503,20 +1511,20 @@ bool checkClassId(instance *node) {
 											// of the object first, if not found search the base classes
 						act_cobj = parse_tree->search(&act_class_name);
 						if (! act_cobj) {
-							cout << "Error: Class " << act_class_name << " not found!" << endl;
+							cout << "Error 23: Class " << act_class_name << " not found!" << endl;
 							return false;
 						}
 						if (act_cobj->children) {
 							if (act_cobj->children->query(act_class_name + "/" + *((*act_var)->a_value->ident),
 														   var_inst)) {
 								if (!var_inst->var_block->query("vartype", var_type)) {
-									cout << "Error: Class " << *(node->class_ident) << "," << endl
+									cout << "Error 24: Class " << *(node->class_ident) << "," << endl
 										 << "       cannot get type of variable " << *((*act_var)->a_value->ident)
 										 << "!" << endl;
 									return false;
 								}
 								if (!var_inst->var_block->query("varprops", var_props)) {
-									cout << "Error: Class " << *(node->class_ident) << "," << endl
+									cout << "Error 25: Class " << *(node->class_ident) << "," << endl
 										 << "       cannot get props of variable " << *((*act_var)->a_value->ident)
 										 << "!" << endl;
 									return false;
@@ -1535,7 +1543,7 @@ bool checkClassId(instance *node) {
 									ret = 1;
 									break;
 								} else {
-									cout << "Error: Class " << *(node->class_ident) << "," << endl
+									cout << "Error 26: Class " << *(node->class_ident) << "," << endl
 										 << "       variable " << (const char*)(*act_var)->a_key << " not compatible!" << endl;
 									return false;
 								}
@@ -1551,14 +1559,14 @@ bool checkClassId(instance *node) {
 							}
 							continue;
 						} else {
-							cout << "Error: Cannot get base class of class " << act_class_name
+							cout << "Error 27: Cannot get base class of class " << act_class_name
 								 << "!" << endl;
 							return false;
 						}
 					} // while (!ret && act_class_name.isValid())
 
 					if (!ret) {
-						cout << "Error: Class " << *(node->class_ident) << "," << endl
+						cout << "Error 28: Class " << *(node->class_ident) << "," << endl
 							 << "       variable " << (const char*)(*act_var)->a_key << " not compatible!" << endl;
 						return false;
 					}
@@ -1586,7 +1594,7 @@ bool checkClassId(instance *node) {
 																// the variable definition
 						KscVariable parent(server + act_class_name + ".baseclass");
 						if (! parent.getUpdate() ) {
-							cout << "Error: Cannot get base class of " << act_class_name << "!" << endl;
+							cout << "Error 29: Cannot get base class of " << act_class_name << "!" << endl;
 							return false;
 						}
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
@@ -1599,19 +1607,19 @@ bool checkClassId(instance *node) {
 					} // while
 				}
 				if (!found) {
-					cout << "Error: Class " << *(node->class_ident) << "," << endl
+					cout << "Error 30: Class " << *(node->class_ident) << "," << endl
 						 << "       variable " << var.getName() << " does not exist!" << endl;
 					return false;
 				}
 				KscVariable vartype(server + act_class_name + "/" + (*act_var)->a_key + ".vartype");
 				if (! (vartype.getEngPropsUpdate() && vartype.getUpdate()) ) {
-					cout << "Error: Cannot get variable type of " << endl
+					cout << "Error 31: Cannot get variable type of " << endl
 						 << *(node->class_ident) << "/" << (const char*)(*act_var)->a_key << "!" << endl;
 					return false;
 				}
 				KscVariable varprops(server + act_class_name + "/" + (*act_var)->a_key + ".varprops");
 				if (! (varprops.getEngPropsUpdate() && varprops.getUpdate()) ) {
-					cout << "Error: Cannot get variable props of " << endl
+					cout << "Error 32: Cannot get variable props of " << endl
 						 << *(node->class_ident) << "/" << (const char*)(*act_var)->a_key << "!" << endl;
 					return false;
 				}
@@ -1630,7 +1638,7 @@ bool checkClassId(instance *node) {
 				}
 				if (!ok) {
 															// variable type not compatible
-					cout << "Error: Class " << *(node->class_ident) << "," << endl
+					cout << "Error 33: Class " << *(node->class_ident) << "," << endl
 						 << "       type of ." << (const char*)(*act_var)->a_key << " is not compatible!"
 						 << endl;
 					return false;
@@ -1649,7 +1657,7 @@ bool checkClassId(instance *node) {
 				while (!succ && act_class_name.isValid() ) {
 					KscVariable childlink(server + act_class_name + ".childassociation");
 					if (! childlink.getUpdate() ) {
-						cout << "Error: Class " << act_class_name << "," << endl
+						cout << "Error 34: Class " << act_class_name << "," << endl
 							 << "       cannot get childlink type!" << endl
 							 << endl;
 						return false;
@@ -1657,16 +1665,16 @@ bool checkClassId(instance *node) {
 					const KsVarCurrProps *childcprops = childlink.getCurrProps();
 					KscVariable parentlink(server + act_class_name + ".parentassociation");
 					if (! parentlink.getUpdate() ) {
-						cout << "Error: Class " << act_class_name << "," << endl
+						cout << "Error 35: Class " << act_class_name << "," << endl
 							 << "       cannot get parentlink type!" << endl
 							 << endl;
 						return false;
 					}
 					const KsVarCurrProps *parentcprops = parentlink.getCurrProps();
-					for(i = 0; i < ((KsStringVecValue &) *childcprops->value).size(); i++) {
+					for(i = 0; i < (int)((KsStringVecValue &) *childcprops->value).size(); i++) {
 						KscVariable p_role(server + ((KsStringVecValue &) *childcprops->value)[i] + ".parentrolename");
 						if (! (p_role.getEngPropsUpdate() && p_role.getUpdate()) ) {
-							cout << "Error: Class " << *(node->class_ident) << "," << endl
+							cout << "Error 36: Class " << *(node->class_ident) << "," << endl
 								 << "       cannot get parentrolename!" << endl
 								 << endl;
 							return false;
@@ -1677,10 +1685,10 @@ bool checkClassId(instance *node) {
 							break;
 						}
 					}
-					for(i = 0; !succ && i < ((KsStringVecValue &) *parentcprops->value).size(); i++) {
+					for(i = 0; !succ && i < (int)((KsStringVecValue &) *parentcprops->value).size(); i++) {
 						KscVariable c_role(server + ((KsStringVecValue &) *parentcprops->value)[i] + ".childrolename");
 						if (! (c_role.getEngPropsUpdate() && c_role.getUpdate()) ) {
-							cout << "Error: Class " << *(node->class_ident) << "," << endl
+							cout << "Error 37: Class " << *(node->class_ident) << "," << endl
 								 << "       cannot get childrolename!" << endl
 								 << endl;
 							return false;
@@ -1694,7 +1702,7 @@ bool checkClassId(instance *node) {
 					if (!succ) {
 						KscVariable parent(server + act_class_name + ".baseclass");
 						if (! parent.getUpdate() ) {
-							cout << "Error: Cannot get base class of " << act_class_name << "!" << endl;
+							cout << "Error 38: Cannot get base class of " << act_class_name << "!" << endl;
 							return false;
 						}
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
@@ -1702,7 +1710,7 @@ bool checkClassId(instance *node) {
 					}
 				} // while (!succ ...)
 				if (!succ) {
-					cout << "Error: Class " << *(node->class_ident) << ": link type of " << endl
+					cout << "Error 39: Class " << *(node->class_ident) << ": link type of " << endl
 						 << (const char*)(*act_link)->a_key << " is not compatible!" << endl;
 					return false;
 				}
@@ -1735,7 +1743,7 @@ bool checkClassId(instance *node) {
 																// the part definition
 						KscVariable parent(server + act_class_name + ".baseclass");
 						if (! parent.getUpdate() ) {
-							cout << "Error: Cannot get base class of " << act_class_name << "!" << endl;
+							cout << "Error 40: Cannot get base class of " << act_class_name << "!" << endl;
 							return false;
 						}
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
@@ -1748,14 +1756,14 @@ bool checkClassId(instance *node) {
 					} // while
 				}
 				if (!found) {
-					cout << "Error: Class " << *(node->class_ident) << "," << endl
+					cout << "Error 41: Class " << *(node->class_ident) << "," << endl
 						 << "       part " << part.getName() << " does not exist!" << endl;
 					return false;
 				}
 
 				KscVariable clid(server + act_class_name + "/" + help + ".partclass");
 				if (! clid.getUpdate() ) {
-					cout << "Error: Cannot get part class of " << act_class_name << "/"
+					cout << "Error 42: Cannot get part class of " << act_class_name << "/"
 						 << help << "!" << endl;
 					return false;
 				}
@@ -1763,7 +1771,7 @@ bool checkClassId(instance *node) {
 				KsString clname = KsString((KsStringValue &) *clidprops->value);
 
 				if (strcmp(clname, (PltString)*((*act_part)->a_value->class_ident)) != 0) {
-					cout << "Error: Class " << *(node->class_ident) << ": part class " << endl
+					cout << "Error 43: Class " << *(node->class_ident) << ": part class " << endl
 						 << help << " is not compatible!" << endl;
 					return false;
 				}
@@ -1808,16 +1816,16 @@ bool write_instance(instance *node)
 										  0,
 										  delete_params,
 										  delete_result)) {
-			cout << "Error deleting object " << *(node->ident) << "!" << endl;
+			cout << "Error 44: Error deleting object " << *(node->ident) << "!" << endl;
 			return false;
 		}
 		if (delete_result.result != KS_ERR_OK) {
-			cout << "Error " << delete_result.result << " deleting object " << *(node->ident)
+			cout << "Error 45: " << delete_result.result << " deleting object " << *(node->ident)
 				 << "!" << endl;
 			return false;
 		}
 		if (delete_result.results.size() != 1) {
-			cout << "Error: Out of memory in write_instance!" << endl;
+			cout << "Error 46: Out of memory in write_instance!" << endl;
 			return false;
 		}
 		node->cr_opts = CO_CREATE;
@@ -1826,7 +1834,7 @@ bool write_instance(instance *node)
 	if (node->cr_opts == CO_CREATE) {
 		create_params.items = KsArray<KsCreateObjItem>(1);
 		if (create_params.items.size() != 1) {
-			cout << "Error: Out of memory in write_instance!" << endl;
+			cout << "Error 47: Out of memory in write_instance!" << endl;
 			return false;
 		}
 		create_params.items[0].factory_path = PltString(*(node->class_ident));
@@ -1842,12 +1850,12 @@ bool write_instance(instance *node)
 										  0,
 										  create_params,
 										  create_result)) {
-			cout << "Error creating object " << *(node->ident) << "!" << endl;
+			cout << "Error 48: Error creating object " << *(node->ident) << "!" << endl;
 			return false;
 		}
 
 		if (create_result.result != KS_ERR_OK && create_result.result != KS_ERR_ALREADYEXISTS) {
-			cout << "Error " << create_result.result << " creating object " << *(node->ident)
+			cout << "Error 49: " << create_result.result << " creating object " << *(node->ident)
 				 << "!" << endl;
 			return false;
 		}
@@ -1855,12 +1863,12 @@ bool write_instance(instance *node)
 			cout << "Warning: Object " << *(node->ident) << " already exists!" << endl;
 		}
 		if (create_result.obj_results.size() != 1) {
-			cout << "Error: Out of memory!" << endl;
+			cout << "Error 50: Out of memory!" << endl;
 			return false;
 		}
 		if (create_result.obj_results[0].result != KS_ERR_OK &&
 				create_result.obj_results[0].result != KS_ERR_ALREADYEXISTS) {
-			cout << "Error " << create_result.obj_results[0].result << " creating object " << *(node->ident)
+			cout << "Error 51: " << create_result.obj_results[0].result << " creating object " << *(node->ident)
 				 << "!" << endl;
 			return false;
 		}
@@ -1883,7 +1891,7 @@ bool write_instance(instance *node)
 			}
 			KscVariable help(server + *(node->ident) + delimiter + (*it)->a_key);
 			if (!help.getEngPropsUpdate()) {
-				cout << "Error: Variable " << *(node->ident) << delimiter << (const char*)(*it)->a_key
+				cout << "Error 52: Variable " << *(node->ident) << delimiter << (const char*)(*it)->a_key
 					 << " does not exist!" << endl;
 				delete it;
 				return false;
@@ -2051,19 +2059,19 @@ bool write_instance(instance *node)
 							break;
 						}
 						case DB_VT_VECTOR: {
-							cout << "Error: nested vectors are not allowed! (" << (const char*)(*it)->a_key
+							cout << "Error 53: nested vectors are not allowed! (" << (const char*)(*it)->a_key
 								 << ")" << endl;
 							delete it;
 							return false;
 						}
 						case DB_VT_STRUCTURE: {
-							cout << "Error: variables of type structure are not yet supported! ("
+							cout << "Error 54: variables of type structure are not yet supported! ("
 								 << (const char*)(*it)->a_key << ")" << endl;
 							delete it;
 							return false;
 						}
 						default: {
-							cout << "Error: " << (const char*)(*it)->a_key << " has unknown variable type!"
+							cout << "Error 55: " << (const char*)(*it)->a_key << " has unknown variable type!"
 								 << endl;
 							delete it;
 							return false;
@@ -2071,7 +2079,7 @@ bool write_instance(instance *node)
 					}
 					break;
 				case DB_VT_STRUCTURE:
-					cout << "Error: variables of type structure are not yet supported! ("
+					cout << "Error 56: variables of type structure are not yet supported! ("
 						 << (const char*)(*it)->a_key << ")" << endl;
 					delete it;
 					return false;
@@ -2079,7 +2087,7 @@ bool write_instance(instance *node)
 					val = new KsVoidValue();
 					break;
 				default:
-					cout << "Error: " << (const char*)(*it)->a_key << " has unknown variable type!"
+					cout << "Error 57: " << (const char*)(*it)->a_key << " has unknown variable type!"
 						 << endl;
 					delete it;
 					return false;
@@ -2109,11 +2117,11 @@ bool write_instance(instance *node)
 			KsSetVarResult set_result(nr_v);
 			set_params.items = params;
 			if (!server_base->setVar(NULL, set_params, set_result)) {
-				cout << "Error setting variables of object " << *(node->ident) << "!" << endl;
+				cout << "Error 58: Error setting variables of object " << *(node->ident) << "!" << endl;
 				return false;
 			}
-			if (set_result.results.size() != nr_v) {
-				cout << "Error: Out of memory in write_instance!" << endl;
+			if ((int)set_result.results.size() != nr_v) {
+				cout << "Error 59: Out of memory in write_instance!" << endl;
 				return false;
 			}
 			for (i = 0; i < nr_v; i++) {
@@ -2130,7 +2138,7 @@ bool write_instance(instance *node)
 						}
 					} else {
 						if (set_result.results[i].result != KS_ERR_OK) {
-							cout << "Error " << set_result.results[i].result << " setting variable "
+							cout << "Error 60: Error " << set_result.results[i].result << " setting variable "
 								 << params[i].path_and_name << " of object " << *(node->ident) << "!" << endl;
 							return false;
 						}
@@ -2213,7 +2221,7 @@ bool write_links(instance *node)
 	for ( ; *it; ++*it) {
 		KscAnyCommObject help(server + *(node->ident) + "." + (*it)->a_key);
 		if (!help.getEngPropsUpdate()) {
-			cout << "Error: Link " << *(node->ident) << "." << (const char*)(*it)->a_key
+			cout << "Error 61: Link " << *(node->ident) << "." << (const char*)(*it)->a_key
 				 << " does not exist!" << endl;
 			delete it;
 			return false;
@@ -2241,11 +2249,11 @@ bool write_links(instance *node)
 										  0,
 										  link_params,
 										  link_result)) {
-			cout << "Error setting links of object " << *(node->ident) << "!" << endl;
+			cout << "Error 62: Error setting links of object " << *(node->ident) << "!" << endl;
 			return false;
 		}
-		if (link_result.results.size() != i) {
-			cout << "Error: Out of memory in write_links!" << endl;
+		if ((int)link_result.results.size() != i) {
+			cout << "Error 63: Out of memory in write_links!" << endl;
 			return false;
 		}
 		link_it->toStart();
@@ -2261,7 +2269,7 @@ bool write_links(instance *node)
 						 << " does not exist!" << endl;
 				}
 			} else {
-				cout << "Error " << link_result.results[j] << " setting link "
+				cout << "Error 64 " << link_result.results[j] << " setting link "
 					 << (const char*)(*it)->a_key << " of object " << *(node->ident)
 					 << "!" << endl;
 				return false;
@@ -2282,7 +2290,7 @@ bool write_database()
 	bool ok = true;
 
 	if (!parse_tree->forEach(&find_libraries)) {
-		cout << "Error: In function find_libraries!" << endl;
+		cout << "Error 65: In function find_libraries!" << endl;
 		return false;
 	}
 	KsArray<KsSetVarItem> params(1);
@@ -2298,26 +2306,26 @@ bool write_database()
 	KsSetVarResult set_result(1);
 	set_params.items = params;
 	if (!server_base->setVar(NULL, set_params, set_result)) {
-		cout << "Error setting activity_lock!" << endl;
+		cout << "Error 66: Error setting activity_lock!" << endl;
 		return false;
 	}
 	if (set_result.results.size() != 1) {
-		cout << "Error: Out of memory in write_database!" << endl;
+		cout << "Error 67: Out of memory in write_database!" << endl;
 		return false;
 	}
 	if (set_result.results[0].result != KS_ERR_OK) {
-		cout << "Error setting activity_lock!" << endl;
+		cout << "Error 68: Error setting activity_lock!" << endl;
 		return false;
 	}
 
 	PltListIterator<instance *> *lib_it = liblist.newIterator();
-	for (int i = 0; ok && i < liblist.size(); i++) {
+	for (int i = 0; ok && i < (int)liblist.size(); i++) {
 		lib_it->toStart();
 		while (ok && *lib_it) {
 			(**lib_it)->cr_opts = CO_CREATE;
 			if (!write_instance(**lib_it)) {
 				ok = false;
-				cout << "Error: Could not load all libraries needed!" << endl;
+				cout << "Error 69: Could not load all libraries needed!" << endl;
 			}
 			++*lib_it;
 		}
@@ -2326,27 +2334,27 @@ bool write_database()
 	sleep(lib_wait_time);
 
 	if (ok && !parse_tree->forEach(&write_instance)) {
-		cout << "Error: Could not write objects in server!" << endl;
+		cout << "Error 70: Could not write objects in server!" << endl;
 		ok = false;
 	}
 
 	// set actual link values
 	if (ok && !parse_tree->forEach(&write_links)) {
-		cout << "Error: Could not write links in server!" << endl;
+		cout << "Error 71: Could not write links in server!" << endl;
 		ok = false;
 	}
 
 	*val = KsBoolValue(0);
 	if (!server_base->setVar(NULL, set_params, set_result)) {
-		cout << "Error unsetting activity_lock!" << endl;
+		cout << "Error 72: Error unsetting activity_lock!" << endl;
 		return false;
 	}
 	if (set_result.results.size() != 1) {
-		cout << "Error: Out of memory in write_database!" << endl;
+		cout << "Error 73: Out of memory in write_database!" << endl;
 		return false;
 	}
 	if (set_result.results[0].result != KS_ERR_OK) {
-		cout << "Error unsetting activity_lock!" << endl;
+		cout << "Error 74: Error unsetting activity_lock!" << endl;
 		return false;
 	}
 	return ok;
@@ -2358,7 +2366,7 @@ bool write_database()
 // Get dump options from command line parameter
 int GetLoadOpts(char *arg)
 {
-	int		ret;
+	int		ret = 0;
 	int		i, j, k;
 	char	*constant[7];
 	char	x;
@@ -2369,7 +2377,7 @@ int GetLoadOpts(char *arg)
 		constant[j] = (char *)malloc(30);
 		k = sscanf(&arg[i], "%[A-Za-z_]%1[-]", constant[j], &x);	// verify parameter format
 		if (k == 0) {
-			cout << "Error: Invalid load options parameter." << endl;
+			cout << "Error 75: Invalid load options parameter." << endl;
 //			free(constant);											// TODO: crashes why?
 			exit(-1);
 		}
@@ -2410,7 +2418,7 @@ int GetLoadOpts(char *arg)
 			ret |= LO_DEFAULT;
 			continue;
 		}
-		cout << "Error: Invalid load options parameter." << endl;
+		cout << "Error 76: Invalid load options parameter." << endl;
 		exit(-1);
 	}
 //	free (constant);									// TODO: crashes why?

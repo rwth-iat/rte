@@ -93,10 +93,10 @@ KsString TimeToAscii(const KsTime ptime)
 
 	//convert the time to a string
 	ptm = gmtime(&secs);
-	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06u",
+	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06lu",
 		ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour,
 		ptm->tm_min, ptm->tm_sec, ptime.tv_usec);
-	return (KsString)timestring;
+	return KsString(timestring);
 } // TimeToAscii
 
 //---------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ KsString TimeSpanToAscii(const KsTimeSpan ptimesp)
 	minutes = secs % 3600;
 	secs -= minutes * 60;
 	hours = secs / 60;
-	sprintf(timestring, "%04d:%02d:%02d.%06u",
+	sprintf(timestring, "%04d:%02d:%02d.%06lu",
 		hours, minutes, seconds, ptimesp.tv_usec);
 	return (KsString)timestring;
 } // TimeSpanToAscii
@@ -912,12 +912,13 @@ KS_SEMANTIC_FLAGS GetSemFlags(char *arg)
 		}
 		i++;
 	}
-	if (i == strlen(arg)) {
-		return ret;
-	} else {
-		cout << "Error: Invalid semantic flags." << endl;
-		exit(-1);
+	if (i != strlen(arg)) {
+    	cout << "Error: Invalid semantic flags." << endl;
+    	exit(-1);
 	}
+	
+	return ret;
+
 } // GetSemFlags
 
 //---------------------------------------------------------------------------------
@@ -925,7 +926,7 @@ KS_SEMANTIC_FLAGS GetSemFlags(char *arg)
 // Get dump options from command line parameter
 dump_opt_t GetDumpOpts(char *arg)
 {
-	dump_opt_t	ret;
+	dump_opt_t	ret = 0;
 	int			i, j, k;
 	char		*constant[11];
 	char		x;

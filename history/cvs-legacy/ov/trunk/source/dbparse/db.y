@@ -266,7 +266,7 @@ value:	  BOOL_VALUE
 			{
 				$$ = new(value);
 				$$->type = DB_VT_VOID;
-				$$->v.pvoid_val = $1;
+				$$->v.pvoid_val = NULL;
 			}
 		| '{' vector_values '}'
 			{
@@ -492,5 +492,6 @@ part_inst:	  PART_INSTANCE PATH ':' CLASS PATH
 
 int yyerror(char *s)
 {
-	fprintf(stderr, "%s\n", s);
+    fprintf(stderr, "%s\n", s);
+    return EXIT_FAILURE;
 }
