@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.11 1999-09-20 09:36:11 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.12 2002-05-21 17:54:15 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -516,6 +516,7 @@ void xdrmemstream_get_fragments(XDR *xdrs,
 	    }
 	    desc->fragment = (caddr_t) &(fragment->dummy);
 	    desc->length   = fragment->used;
+	    ++desc;
 	    fragment       = fragment->next;
 	    if ( !fragment ) {
 		break;
