@@ -200,6 +200,7 @@ getrpcent()
 
 static struct rpcent *
 interpret(val, len)
+	char *val;
 {
 	register struct rpcdata *d = _rpcdata();
 	char *p;
