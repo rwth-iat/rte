@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.12 1998-09-22 09:05:35 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.13 1998-09-22 15:03:17 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -75,7 +75,7 @@ public:
     void normalize();
 
 #if PLT_DEBUG_INVARIANTS
-    bool invariant() const
+    bool invariant() const;
 #endif
 
     long tv_sec;

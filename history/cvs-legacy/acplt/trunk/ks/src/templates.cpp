@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.5 1997-09-15 13:08:06 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/templates.cpp,v 1.6 1998-09-22 15:04:11 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -46,6 +46,10 @@
 #include "ks/serviceparams.h"
 #include "ks/path.h"
 
+#if PLT_COMPILER_BORLAND
+#include "ks/histparams.h"
+#endif
+ 
 #if PLT_SEE_ALL_TEMPLATES
 
 #include "plt/priorityqueue.h"
@@ -297,6 +301,12 @@ template class Plt_AtNew<KsSetVarItem>;
 template class Plt_AtNew<KsString>;
 template class Plt_AtNew<KsTime>;
 template class Plt_AtNew<KsValue>;
+
+#if PLT_COMPILER_BORLAND
+template class PltListIterator<KsGetHistItem>;
+template class PltIterator<KsGetHistItem>;
+template class PltArray<KsGetHistItem>;
+#endif
 
 #endif
 

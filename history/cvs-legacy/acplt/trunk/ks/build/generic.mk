@@ -134,7 +134,9 @@ CXX_EXAMPLES_SOURCES = \
 	tserver1.cpp \
 	tshell.cpp \
 	ttree.cpp \
-	ttree1.cpp
+	ttree1.cpp \
+	tvalhist.cpp \
+	thistory.cpp
 
 EXAMPLES_OBJECTS = \
 	ext_sp$(O) \
@@ -150,7 +152,10 @@ EXAMPLES_OBJECTS = \
 	tserver1$(O) \
 	tshell$(O) \
 	ttree$(O) \
-	ttree1$(O)
+	ttree1$(O) \
+	tvalhist$(O) \
+	thistory$(O)
+
 
 EXAMPLES = \
 	pmobile$(EXE) \
@@ -195,5 +200,9 @@ ttree$(EXE) : ttree$(O) ttree1$(O) $(LIBKSCLN) $(LIBKS)
 tshell$(EXE) : tshell$(O) $(LIBKSCLN) $(LIBKS)
 
 tpackage$(EXE) : tpackage$(O) $(LIBKSCLN) $(LIBKS)
+
+tvalhist$(EXE) : tvalhist$(O) $(LIBKSCLN) $(LIBKS)
+
+thistory$(EXE) : thistory$(O) $(LIBKSCLN) $(LIBKS)
 
 

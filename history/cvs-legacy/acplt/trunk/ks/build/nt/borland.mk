@@ -220,12 +220,14 @@ ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 $(LIBKS) : $(LIBKS_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS1)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS2)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_OBJECTS3)
 
 
 $(LIBKSSVR) : $(LIBKSSVR_OBJECTS) $(LIBKS_NT_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS1)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS2)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS3)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS4)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_NT_OBJECTS)
 
 $(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
