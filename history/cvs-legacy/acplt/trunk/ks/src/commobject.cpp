@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.23 1998-07-09 08:53:02 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.24 1999-01-29 12:43:11 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -39,14 +39,14 @@
 /* Dumb comments, redesigned child iterator and improved error handling
    by: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
 
 #include "ks/commobject.h"
 #include "ks/client.h"
 
-//////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------
 // printing functions for debbugging
-//////////////////////////////////////////////////////////////////////
+//
 #if PLT_DEBUG
 
 void
@@ -57,48 +57,60 @@ KscCommObject::debugPrint(ostream &os) const
     os << "Last result:" << getLastResult() << endl;
 }
 
-//////////////////////////////////////////////////////////////////////
+
+void
+KscAnyCommObject::debugPrint(ostream &os) const
+{
+    os << "KscAnyCommObject object:" << endl;
+    KscCommObject::debugPrint(os);
+    if ( _hproj_props ) {
+	_hproj_props->debugPrint(os);
+    }
+} // KscAnyCommObject::debugPrint
+
 
 void
 KscVariable::debugPrint(ostream &os) const
 {
-    os << "KscVariable object :" << endl;
+    os << "KscVariable object:" << endl;
     KscCommObject::debugPrint(os);
-    os << "Dirty Flag : " << fDirty << endl;
+    os << "Dirty Flag: " << fDirty << endl;
     proj_props.debugPrint(os);
     curr_props.debugPrint(os);
 }
 
-//////////////////////////////////////////////////////////////////////
 
 void
 KscDomain::debugPrint(ostream &os) const
 {
-    os << "KscDomain object :" << endl;
+    os << "KscDomain object:" << endl;
     KscCommObject::debugPrint(os);
     proj_props.debugPrint(os);
 }
 
 #endif // PLT_DEBUG
 
-//////////////////////////////////////////////////////////////////////
-// end of debbugging section
-//////////////////////////////////////////////////////////////////////
 
-
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Implementation of RTTI
-//////////////////////////////////////////////////////////////////////
+//
 
 PLT_IMPL_RTTI0(KscCommObject);
+PLT_IMPL_RTTI1(KscAnyCommObject, KscCommObject);
 PLT_IMPL_RTTI1(KscVariable, KscCommObject);
 PLT_IMPL_RTTI1(KscDomain, KscCommObject);
 
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // class KscCommObject
-//////////////////////////////////////////////////////////////////////
+//
 
+// ---------------------------------------------------------------------------
+// Construct a communication object (which is rather a proxy object on the
+// client side within the ACPLT/KS world).
+//
 KscCommObject::KscCommObject(const char *object_path)
 : path(object_path),
   av_module(0),
@@ -129,8 +141,11 @@ KscCommObject::KscCommObject(const char *object_path)
 } // KscCommObject::KscCommObject
 
 
-//////////////////////////////////////////////////////////////////////
-// Clean up a communication object.
+// ---------------------------------------------------------------------------
+// Clean up a communication object. There isn't much to do here, with the
+// exception of releasing the reference to a ACPLT/KS server object, which
+// once was used for communication. This server object will clean up itself
+// after the last reference to it is gone.
 //
 KscCommObject::~KscCommObject()
 {
@@ -142,13 +157,13 @@ KscCommObject::~KscCommObject()
 } // KscCommObject::~KscCommObject
 
 
-//////////////////////////////////////////////////////////////////////
-// Creates a new server object for this communication object and
-// returns the pointer to this server object. In case it fails, then
-// _last_result will be set accordingly to the error reason.
-// Note that is function is only called *ONCE* from the constructor.
-// If you loose at this point, then you must throw away such a
-// communication object.
+// ---------------------------------------------------------------------------
+// Creates a new server object for this communication object and returns the
+// pointer to this server object. In case it fails, then _last_result will be
+// set accordingly to the error reason.
+// NOTE: this function is only called *ONCE* from the constructor. If you
+// loose the game at this point, then you must throw away the communication
+// object. **No Risk, No Fun.**
 //
 KscServerBase *
 KscCommObject::findServer()
@@ -161,11 +176,323 @@ KscCommObject::findServer()
     return pServer;
 } // KscCommObject::findServer
 
-//////////////////////////////////////////////////////////////////////
-// class KscDomain
-//////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
+// Query all the children of this domain object, which fit into the name mask
+// and type mask.
+// --aldi: the function now takes as its third argument a reference to
+// a result object pointer. The result object of a GetPP service
+// request contains already the list of the projected properties of
+// the children, so why should we build a second list? So we just
+// return the result object if we succeed with our query. The caller
+// is then responsible to destroy that result object later, when he's
+// not interested in it anymore. In fact, the ChildIterator local class
+// takes over the ownership of the result object and destroys it when
+// it gets destroyed itself.
+//
+bool
+KscCommObject::getChildPPUpdate(KS_OBJ_TYPE typeMask,
+                                KsString nameMask,
+                                KsGetPPResult *&result)
+{
+    //
+    // Just to make sure the caller is not trying (once) again to read
+    // a variable with a bad resource locator.
+    //
+    if ( !hasValidPath() ) {
+        _last_result = KS_ERR_MALFORMEDPATH;
+        return false;
+    }
+
+    //
+    // Get your hands on the server object which is responsible for the
+    // communication. If we get back a null pointer instead, then for
+    // some reason during construction of this object, no server object
+    // could be created. Because we can't yet determine what went wrong
+    // we just return a generic error indication. If you want to know
+    // exactly what happened, then you must immediately call getLastResult()
+    // after you've created a communication object.
+    //
+    KscServerBase *myServer = getServer();
+    if ( !myServer ) {
+        _last_result = KS_ERR_GENERIC;
+        return false;
+    }
+
+    //
+    // Set up the service parameters. Note that not all ACPLT/KS servers
+    // might support the GetPP service on all the variables they provide.
+    //
+    KsGetPPParams params;
+
+    result = new KsGetPPResult;
+    if ( !result ) {
+	_last_result = KS_ERR_GENERIC;
+	return false;
+    }
+
+    params.path = path.getPathAndName();
+    params.type_mask = typeMask;
+    params.name_mask = nameMask;
+
+    //
+    // Now query the ACPLT/KS server with the help of the server object. The
+    // server object will handle the request accordingly to whatever kind
+    // of ACPLT/KS server it is connected with.
+    //
+    bool ok = myServer->getPP(av_module,
+                              params,
+			      *result);
+
+    if ( !ok ) {
+	//
+        // The GetPP service request failed on the communication level.
+	// In this case, the server object supplies more precise information
+	// about the cause of the failure.
+	//
+	delete result;
+        _last_result = myServer->getLastResult();
+        return false;
+    }
+    //
+    // The request succeeded at least at the communication level. So
+    // check whether the request itself was granted by the ACPLT/KS
+    // server, otherwise bail out with the error code returned by the
+    // ACPLT/KS server.
+    //
+    _last_result = result->result;
+    if ( _last_result != KS_ERR_OK ) {
+	delete result;
+        return false;
+    }
+    return true;
+} // KscCommObject::getChildPPUpdate
+
+
+// ---------------------------------------------------------------------------
+// Return an iterator for iterating over the children of this domain
+// communication object which adhere to the given type and name masks.
+//
+KscChildIterator *
+KscCommObject::newChildIterator_(KS_OBJ_TYPE typeMask, KsString nameMask)
+{
+    KsGetPPResult *result = 0;
+
+    if ( getChildPPUpdate(typeMask, nameMask, result) ) {
+	if ( result ) {
+	    //
+	    // I'm really overchecking here, but you should already
+	    // know by now: defensive programming! It has saved my day
+	    // more than once. Yes!
+	    //
+	    ChildIterator *it = new ChildIterator(*result);
+	    if ( it ) {
+		return it;
+	    }
+	    delete result;
+	}
+	_last_result = KS_ERR_GENERIC;
+	return 0;
+    }
+    //
+    // _last_result has already been set by getChildPPUpdate(), so
+    // we can't set any better indication here. The result object has
+    // also been destroyed automatically by getChildPPUpdate(), if this
+    // function had created one before it failed.
+    //
+    return 0;
+} // KscCommObject::newChildIterator_
+
+
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// class KscCommObject::ChildIterator
+//
+
+// ---------------------------------------------------------------------------
+// This child iterator is an ordinary list iterator, which iterates
+// over handles for projected properties. But in addition to such an
+// ordinary PltListIterator, it also takes the ownership of a GetPP
+// result object. It will be freed lateron together with this
+// iterator object. The advantage is, that we can save an (possibly
+// expensive) list duplication only to get ownership of the list
+// of the projected properties of the children.
+//
+KscCommObject::ChildIterator::ChildIterator(KsGetPPResult &getPPResult)
+: PltListIterator<KsProjPropsHandle>(getPPResult.items),
+  _getPP_result(getPPResult)
+{
+} // KscCommObject::ChildIterator::ChildIterator
+
+
+// ---------------------------------------------------------------------------
+// If a child iterator is destroyed, then the result object must be
+// destroyed too. Remember that the result object contained the list
+// we have been iterating over.
+//
+KscCommObject::ChildIterator::~ChildIterator()
+{
+    delete &_getPP_result;
+} // KscCommObject::ChildIterator::~ChildIterator
+
+
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// class KscAnyCommObject
+//
+
+
+// ---------------------------------------------------------------------------
+// A hardly challenging destructor...
+//
+KscAnyCommObject::~KscAnyCommObject()
+{
+} // KscAnyCommObject::~KscAnyCommObject
+
+
+// ---------------------------------------------------------------------------
+// Just delegate the work of creating an interator to the internal method
+// in KscCommObject, which has just been hidden from programmers.
+//
+KscChildIterator *
+KscAnyCommObject::newChildIterator(KS_OBJ_TYPE typeMask, KsString nameMask)
+{
+    return newChildIterator_(typeMask, nameMask);
+} // KscAnyCommObject::newChildIterator
+
+
+// ---------------------------------------------------------------------------
+// Query the projected properties of the domain object (communication
+// object of type variable) within the ACPLT/KS server this object
+// refers to.
+//
+bool
+KscAnyCommObject::getProjPropsUpdate() 
+{
+    //
+    // Just to make sure the caller is not trying (once) again to read
+    // an object with a bad resource locator.
+    //
+    if ( !hasValidPath() ) {
+        _last_result = KS_ERR_MALFORMEDPATH;
+        return false;
+    }
+
+    //
+    // Get your hands on the server object which is responsible for the
+    // communication. If we get back a null pointer instead, then for
+    // some reason during construction of this object, no server object
+    // could be created. Because we can't yet determine what went wrong
+    // we just return a generic error indication. If you want to know
+    // exactly what happened, then you must immediately call getLastResult()
+    // after you've created a communication object. Lateron, the result
+    // might get lost.
+    //
+    KscServerBase *myServer = getServer();
+    if ( !myServer ) {
+        _last_result = KS_ERR_GENERIC;
+        return false;
+    }
+
+    //
+    // Set up the service parameters. We ask exactly for this particular
+    // communication object within the server. Note that not all ACPLT/KS
+    // servers might support the GetPP service on all the objects they
+    // provide.
+    //
+    KsGetPPParams params;
+    KsGetPPResult result;
+
+    params.path = path.getPathOnly(); // ###TODO CHECK "/"###
+    params.type_mask = KS_OT_ANY;
+    params.name_mask = path.getName();
+
+    //
+    // Now query the ACPLT/KS server with the help of the server object. The
+    // server object will handle the request accordingly to whatever kind
+    // of ACPLT/KS server it is connected with.
+    //
+    bool ok = myServer->getPP(av_module,
+                              params, 
+                              result);
+    if ( ok ) {
+	//
+	// The request succeeded at least at the communication level. So
+	// check whether the request itself was granted by the ACPLT/KS
+	// server.
+	//
+        if ( result.result == KS_ERR_OK ) {
+	    //
+            // Yes, the request was granted. Now check whether we've got
+	    // back the projected properties of exactly *ONE* object.
+	    // Otherwise something got really mixed up. Maybe some joker
+	    // included a wildcard character in the resource locator...
+            //
+            if ( result.items.size() == 1 ) { 
+                KsProjPropsHandle hpp = result.items.removeFirst();
+                if ( hpp ) {
+		    _hproj_props = hpp;
+		    return true;
+                } else {
+		    //
+                    // An unbound handle, so I presume: out of memory...
+		    //
+                    _last_result = KS_ERR_GENERIC;
+                }
+            } else {
+		//
+		// Either the ACPLT/KS server does not support the GetPP
+		// on this particular object, or there was a wildcard
+		// in the objects's name. So bail out with an error.
+		//
+                _last_result = KS_ERR_GENERIC;
+            }
+        } else {
+	    //
+	    // The request was *NOT* granted by the ACPLT/KS server. The
+	    // service reply contains the reason for the failure, so we
+	    // return this through the "last result" member variable. One
+	    // prominent reason for failing here is that the ACPLT/KS does
+	    // not support the GetPP service on this particular object.
+	    //
+	    _last_result = result.result;
+        }
+    } else {
+	//
+        // The GetPP service request failed on the communication level.
+	// In this case, the server object supplies more precise information
+	// about the cause of the failure.
+	//
+        _last_result = myServer->getLastResult();
+    }
+    return false;
+} // KscAnyCommObject::getProjPropsUpdate
+
+
+// ---------------------------------------------------------------------------
+// Set the projected properties of this comm object. This one is definetly
+// *UNSUPPORTED*, so never, NEVER, **NEVER** use it! Also it's of no use (yet).
+//
+bool
+KscAnyCommObject::setProjProps(KsProjPropsHandle hpp) 
+{
+    if ( hpp ) {
+        _hproj_props = hpp;
+        return true;
+    }
+    return false;
+} // KscAnyCommObject::setProjProps
+
+
+
+
+
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// class KscDomain
+//
+
+// ---------------------------------------------------------------------------
 // Destruct a domain object. Not much to do here...
 //
 KscDomain::~KscDomain()
@@ -173,7 +500,7 @@ KscDomain::~KscDomain()
 } // KscDomain::~KscDomain
 
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 // Query the projected properties of the domain object (communication
 // object of type variable) within the ACPLT/KS server this object
 // refers to.
@@ -291,10 +618,9 @@ KscDomain::getProjPropsUpdate()
 } // KscDomain::getProjPropsUpdate
 
 
-//////////////////////////////////////////////////////////////////////
-// Set the projected properties of this domain object. This one is
-// definetly *UNSUPPORTED*, so never, NEVER, **NEVER** use it! Also
-// it's of no use (yet).
+// ---------------------------------------------------------------------------
+// Set the projected properties of this domain object. This one is definetly
+// *UNSUPPORTED*, so never, NEVER, **NEVER** use it! Also it's of no use (yet).
 //
 bool
 KscDomain::setProjProps(KsProjPropsHandle hpp) 
@@ -308,171 +634,25 @@ KscDomain::setProjProps(KsProjPropsHandle hpp)
 } // KscDomain::setProjProps
 
 
-//////////////////////////////////////////////////////////////////////
-// Query all the children of this domain object, which fit into the
-// name mask and type mask.
-// --aldi: the function now takes as its third argument a reference to
-// a result object pointer. The result object of a GetPP service
-// request contains already the list of the projected properties of
-// the children, so why should we build a second list? So we just
-// return the result object if we succeed with our query. The caller
-// is then responsible to destroy that result object later, when he's
-// not interested in it anymore. In fact, the ChildIterator local class
-// takes over the ownership of the result object and destroys it when
-// it gets destroyed itself.
-//
-bool
-KscDomain::getChildPPUpdate(KS_OBJ_TYPE typeMask,
-                            KsString nameMask,
-                            KsGetPPResult *&result)
-{
-    //
-    // Just to make sure the caller is not trying (once) again to read
-    // a variable with a bad resource locator.
-    //
-    if ( !hasValidPath() ) {
-        _last_result = KS_ERR_MALFORMEDPATH;
-        return false;
-    }
-
-    //
-    // Get your hands on the server object which is responsible for the
-    // communication. If we get back a null pointer instead, then for
-    // some reason during construction of this object, no server object
-    // could be created. Because we can't yet determine what went wrong
-    // we just return a generic error indication. If you want to know
-    // exactly what happened, then you must immediately call getLastResult()
-    // after you've created a communication object.
-    //
-    KscServerBase *myServer = getServer();
-    if ( !myServer ) {
-        _last_result = KS_ERR_GENERIC;
-        return false;
-    }
-
-    //
-    // Set up the service parameters. Note that not all ACPLT/KS servers
-    // might support the GetPP service on all the variables they provide.
-    //
-    KsGetPPParams params;
-
-    result = new KsGetPPResult;
-    if ( !result ) {
-	_last_result = KS_ERR_GENERIC;
-	return false;
-    }
-
-    params.path = path.getPathAndName();
-    params.type_mask = typeMask;
-    params.name_mask = nameMask;
-
-    //
-    // Now query the ACPLT/KS server with the help of the server object. The
-    // server object will handle the request accordingly to whatever kind
-    // of ACPLT/KS server it is connected with.
-    //
-    bool ok = myServer->getPP(av_module,
-                              params,
-			      *result);
-
-    if ( !ok ) {
-	//
-        // The GetPP service request failed on the communication level.
-	// In this case, the server object supplies more precise information
-	// about the cause of the failure.
-	//
-	delete result;
-        _last_result = myServer->getLastResult();
-        return false;
-    }
-    //
-    // The request succeeded at least at the communication level. So
-    // check whether the request itself was granted by the ACPLT/KS
-    // server, otherwise bail out with the error code returned by the
-    // ACPLT/KS server.
-    //
-    _last_result = result->result;
-    if ( _last_result != KS_ERR_OK ) {
-	delete result;
-        return false;
-    }
-    return true;
-} // KscDomain::getChildPPUpdate
-
-
-//////////////////////////////////////////////////////////////////////
-// Return an iterator for iterating over the children of this domain
-// communication object which adhere to the given type and name masks.
+// ---------------------------------------------------------------------------
+// Just delegate the work of creating an interator to the internal method
+// in KscCommObject, which has just been hidden from programmers.
 //
 KscChildIterator *
 KscDomain::newChildIterator(KS_OBJ_TYPE typeMask, KsString nameMask)
 {
-    KsGetPPResult *result = 0;
-
-    if ( getChildPPUpdate(typeMask, nameMask, result) ) {
-	if ( result ) {
-	    //
-	    // I'm really overchecking here, but you should already
-	    // know by now: defensive programming! It has saved my day
-	    // more than once. Yes!
-	    //
-	    ChildIterator *it = new ChildIterator(*result);
-	    if ( it ) {
-		return it;
-	    }
-	    delete result;
-	}
-	_last_result = KS_ERR_GENERIC;
-	return 0;
-    }
-    //
-    // _last_result has already been set by getChildPPUpdate(), so
-    // we can't set any better indication here. The result object has
-    // also been destroyed automatically by getChildPPUpdate(), if this
-    // function had created one before it failed.
-    //
-    return 0;
+    return newChildIterator_(typeMask, nameMask);
 } // KscDomain::newChildIterator
 
 
-//////////////////////////////////////////////////////////////////////
-// class KscDomain::ChildIterator
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
-// This child iterator is an ordinary list iterator, which iterates
-// over handles for projected properties. But in addition to such an
-// ordinary PltListIterator, it also takes the ownership of a GetPP
-// result object. It will be freed lateron together with this
-// iterator object. The advantage is, that we can save an (possibly
-// expensive) list duplication only to get ownership of the list
-// of the projected properties of the children.
-//
-KscDomain::ChildIterator::ChildIterator(KsGetPPResult &getPPResult)
-: PltListIterator<KsProjPropsHandle>(getPPResult.items),
-  _getPP_result(getPPResult)
-{} // KscDomain::ChildIterator::ChildIterator
-
-
-//////////////////////////////////////////////////////////////////////
-// If a child iterator is destroyed, then the result object must be
-// destroyed too. Remember that the result object contained the list
-// we have been iterating over.
-//
-KscDomain::ChildIterator::~ChildIterator()
-{
-    delete &_getPP_result;
-} // KscDomain::ChildIterator::~ChildIterator
-
-
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // class KscVariable
-//////////////////////////////////////////////////////////////////////
+//
 
-//////////////////////////////////////////////////////////////////////
-// Query the projected properties of the variable object (communica-
-// tion object of type variable) within the ACPLT/KS server this
-// object refers to.
+// ---------------------------------------------------------------------------
+// Query the projected properties of the variable object (communication object
+// of type variable) within the ACPLT/KS server this object refers to.
 //
 bool
 KscVariable::getProjPropsUpdate()
@@ -826,12 +1006,20 @@ KscVariable::setCurrProps(KsVarCurrProps &cp)
     return true;
 } // KscVariable::setCurrProps
 
-//////////////////////////////////////////////////////////////////////
-// EOF commobject.cpp
-//////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// class KscLink
+//
+
+#if 0
+// ---------------------------------------------------------------------------
+// A hardly challenging destructor...
+//
+KscLink::~KscLink()
+{
+} // KscLink::~KscLink
+#endif
 
 
-
-
-
-
+// End of commobject.cpp
