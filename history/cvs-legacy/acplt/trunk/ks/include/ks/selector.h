@@ -2,7 +2,7 @@
 #ifndef KS_SELECTOR_INCLUDED
 #define KS_SELECTOR_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.7 1999-03-05 12:15:15 markusj Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.8 1999-07-16 09:06:22 markusj Exp $
  *
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -83,6 +83,8 @@ public:
     KsAbsRelTime(XDR *, bool &);
 
     KS_TIME_TYPE xdrTypeCode() const { return type; }
+    bool isAbsolute() const { return xdrTypeCode() == KS_TT_ABSOLUTE; }
+    bool isRelative() const { return xdrTypeCode() == KS_TT_RELATIVE; }
 
     operator PltTime () const;
     operator PltTimeSpan () const;
