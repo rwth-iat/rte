@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.3 1998-09-23 08:49:50 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -158,7 +158,12 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	if ( _cnx_type == CNX_TYPE_SERVER ) {
 #if !PLT_USE_XTI
     	    _client_address_len = sizeof(_client_address);
-	    received = recvfrom(_fd, _buffer, _buffer_size,
+	    received = recvfrom(_fd, 
+#if PLT_SYSTEM_NT
+                                (char *)
+#endif
+                                _buffer, 
+                                _buffer_size,
 		        	0, // no special flags
 	                	(struct sockaddr *) &_client_address,
 #if PLT_SYSTEM_OPENVMS
@@ -191,7 +196,12 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 	    // very much...
 	    //
 #if !PLT_USE_XTI
-	    received = recvfrom(_fd, _buffer, _buffer_size,
+	    received = recvfrom(_fd, 
+#if PLT_SYSTEM_NT
+                                (char *)
+#endif
+                                _buffer, 
+                                _buffer_size,
 		        	0, // no special flags
 		    	        0, 0);
 #else
@@ -322,7 +332,12 @@ KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
     for ( ;; ) {
 	tosend = (int) XDR_GETPOS(&_xdrs);
 #if !PLT_USE_XTI
-	sent = sendto(_fd, _buffer, tosend,
+	sent = sendto(_fd, 
+#if PLT_SYSTEM_NT
+                      (char *)
+#endif
+                      _buffer, 
+                      tosend,
 		      0,
 		      (struct sockaddr *) &_client_address,
 		      _client_address_len);

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.2 1998-06-30 11:29:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.3 1998-09-23 08:49:41 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -201,10 +201,11 @@ KS_RESULT KssXDRConnection::finishRequestDeserialization(KsAvTicket &avt, bool)
 bool KssXDRConnection::makeNonblocking()
 {
 #if PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS
-    int nbmode = 1;
+    u_long nbmode = 1;
 #if PLT_SYSTEM_NT
     return ioctlsocket(_fd, FIONBIO, &nbmode) != SOCKET_ERROR;
 #else
+    int nbmode = 1;
     return ioctl(_fd, FIONBIO, (char *) &nbmode) != -1;
 #endif
 #else
@@ -227,9 +228,15 @@ bool KssXDRConnection::enableKeepAlive()
 {
 #if !PLT_USE_XTI
     int mode = 1; // enable KEEP ALIVE
+#if PLT_SYSTEM_NT
+    return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE, 
+                      (char *) &mode, sizeof(mode))
+	       != -1;
+#else
     return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE, 
                       &mode, sizeof(mode))
 	       != -1;
+#endif
 #else
 #if 0
     struct t_kpalive {
