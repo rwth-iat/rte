@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.9 1998-12-14 18:01:39 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.10 1999-01-08 13:07:59 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -245,6 +245,7 @@ void DumpVar(KscVariable &var, int indent)
         cout << "bool "
              << ((bool) ((KsBoolValue &) *curr_props->value) ? "true" : "false")
              << endl;
+	break;
     case KS_VT_INT:
         cout << "integer " 
              << (long) ((KsIntValue &) *curr_props->value)
