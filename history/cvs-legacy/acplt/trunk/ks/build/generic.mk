@@ -38,6 +38,7 @@ CXX_LIBKSSVR_SOURCES = \
 	rpcproto.cpp \
 	connectionmgr.cpp \
 	connection.cpp \
+	interserver.cpp \
 	xdrudpcon.cpp \
 	xdrtcpcon.cpp \
 	histdomain.cpp
@@ -104,6 +105,7 @@ LIBKSSVR_OBJECTS3 = \
 
 LIBKSSVR_OBJECTS4 = \
 	xdrtcpcon$(O) \
+	interserver$(O) \
 	histdomain$(O) 
 
 LIBKSSVR_OBJECTS = $(LIBKSSVR_OBJECTS1) $(LIBKSSVR_OBJECTS2) $(LIBKSSVR_OBJECTS3) $(LIBKSSVR_OBJECTS4)
