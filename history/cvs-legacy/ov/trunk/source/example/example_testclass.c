@@ -1,5 +1,5 @@
 /*
-*   $Id: example_testclass.c,v 1.1 1999-07-19 15:02:11 dirk Exp $
+*   $Id: example_testclass.c,v 1.2 1999-07-27 17:43:47 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -101,6 +101,45 @@ OV_RESULT OV_DLLFNCEXPORT example_testclass_GetOrSetMeBool_set(
 ) {
 	ov_logfile_info("You set GetOrSetMeBool!");
 	ptest->v_GetOrSetMeBool = *pvalue;
+	return OV_ERR_OK;
+}
+
+OV_STRING* OV_DLLFNCEXPORT example_testclass_GetOrSetMeVirtual_get(
+	OV_INSTPTR_example_testclass	ptest,
+	OV_UINT							*pveclen
+) {
+	/*
+	*	local variables
+	*/
+	static OV_STRING stringvec[] = {
+		"This string is virtual.",
+		"It is not stored in the object."
+	};
+	/*
+	*	instructions
+	*/
+	ov_logfile_info("You asked for GetOrSetMeVirtual!");
+	*pveclen = sizeof(stringvec)/sizeof(OV_STRING);
+	return stringvec;
+}
+
+OV_RESULT OV_DLLFNCEXPORT example_testclass_GetOrSetMeVirtual_set(
+	OV_INSTPTR_example_testclass	ptest,
+	const OV_STRING*				pvalue,
+	const OV_UINT					veclen
+) {
+	/*
+	*	local variables
+	*/
+	OV_UINT	i;
+	/*
+	*	instructions
+	*/
+	ov_logfile_info("You set GetOrSetMeString!");
+	ov_logfile_info("The value is:");
+	for(i=0; i<veclen; i++) {
+		ov_logfile_info("GetOrSetMeVirtual[%ld] = \"%s\".", i, pvalue[i]);
+	}
 	return OV_ERR_OK;
 }
 
