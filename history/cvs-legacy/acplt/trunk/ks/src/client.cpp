@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.48 2003-10-15 15:29:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.49 2003-10-15 15:55:54 harald Exp $ */
 /*
  * Copyright (c) 1996, 2003
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -531,6 +531,19 @@ KscServer::getServerVersion(u_long &version)
     version = _svr_con->getProtocolVersion();
     return true;
 } // KscServer::getServerVersion
+
+// ----------------------------------------------------------------------------
+// Note: this is a *blocking* method
+u_short
+KscServer::getProtocolVersion()
+{
+    if ( _svr_con->getState() == KsServerConnection::ISC_STATE_CLOSED ) {
+	if ( !ping() ) {
+	    return 0;
+	}
+    }
+    return _svr_con->getProtocolVersion();
+}
 
 
 // ----------------------------------------------------------------------------
@@ -1170,8 +1183,24 @@ KscServer::async_attention(KsServerConnection::KsServerConnectionOperations op)
 #if DEBUG_CLN
 		PltLog::Debug("KscServer::async_attention: could not retrieve reply");
 #endif
-		finishAndNotify(_svr_con->getLastResult());
-		// TODO:??? retry???
+		if ( request->_service
+		     && shouldReconnectServer(_svr_con->getLastResult())
+		     && --_tries_remaining > 0 ) {
+		    //
+		    // Try once more...
+		    //
+		    _reconnect_timer->setTrigger(PltTime::now(_retry_wait));
+		    KsConnectionManager::getConnectionManagerObject()->
+			addTimerEvent(_reconnect_timer);
+		} else {
+		    //
+		    // Exhausted all attempts for this request.
+		    //
+#if DEBUG_CLN
+		    PltLog::Debug("KscServer::async_attention: no more retries, notifying owner");
+#endif
+		    finishAndNotify(_svr_con->getLastResult());
+		}
 	    } else {
 		//
 		// Got the reply and could successfully deserialize it into
@@ -1207,6 +1236,7 @@ KscServer::shouldReconnectServer(KS_RESULT result)
     switch ( result ) {
     case KS_ERR_HOSTUNKNOWN:
     case KS_ERR_SERVERUNKNOWN:
+    case KS_ERR_GENERIC:
 	return false;
     default:
 	return true;

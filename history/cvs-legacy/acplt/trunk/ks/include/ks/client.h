@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.33 2003-10-15 15:29:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.34 2003-10-15 15:55:54 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -213,9 +213,7 @@ public:
     KsString getHost() const;           // host
     KsString getName() const;           // name
     KsString getHostAndName() const;    // eg. "//host/name"
-    virtual u_short getProtocolVersion() const = 0;
-    virtual PltTime getExpiresAt() const = 0;
-    virtual bool isLiving() const = 0;
+    virtual u_short getProtocolVersion() = 0;
     KS_RESULT getLastResult() const;
 
 protected:
@@ -289,9 +287,7 @@ public:
     //
     // accessors
     //
-    u_short getProtocolVersion() const;
-    PltTime getExpiresAt() const;
-    bool isLiving() const;
+    u_short getProtocolVersion();
 
     //
     // new nonblocking stuff
@@ -433,40 +429,6 @@ KscServerBase::getLastResult() const
 // KscServer
 //////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-
-inline
-u_short
-KscServer::getProtocolVersion() const
-{
-    // FIXME & TODO
-    return 2;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-PltTime
-KscServer::getExpiresAt() const
-{
-    // FIXME & TODO
-    return PltTime::now(30);
-    // NOTE: without cast gcc reports internal
-    // compiler error
-    //
-//    return PltTime(server_info.expires_at);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-bool
-KscServer::isLiving() const
-{
-    // TODO & FIXME
-    return true;
-    // return server_info.living;
-}
 
 //////////////////////////////////////////////////////////////////////
 
