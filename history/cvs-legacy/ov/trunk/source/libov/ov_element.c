@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.c,v 1.8 2000-04-07 10:36:25 dirk Exp $
+*   $Id: ov_element.c,v 1.9 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -356,8 +356,41 @@ OV_RESULT ov_element_searchpart_variable(
 	OV_ELEM_TYPE			mask,
 	OV_STRING				identifier
 ) {
-	/* TODO! */
-	return OV_ERR_NOTIMPLEMENTED;
+	/*
+	*	local variables
+	*/
+	OV_INSTPTR_ov_structure			pstruct;
+
+	pstruct=Ov_GetParent(ov_construction, pvar);
+	if (!pstruct) goto NOPART;
+	if(mask & OV_ET_MEMBER) {
+		/*
+		*  search for variable or member
+		*/
+		ppart->elemunion.pobj = Ov_SearchChild(ov_containment, pstruct, identifier);
+		if(ppart->elemunion.pobj) {
+			/*
+			*	We found a part with the identifier, now check the type
+			*/
+			if (Ov_DynamicPtrCast(ov_variable, ppart->elemunion.pobj))
+			{
+				ppart->elemtype = OV_ET_MEMBER;
+				if(pvar->v_varprops & OV_VP_DERIVED) {
+					ppart->pvalue = NULL;
+				} else {
+					ppart->pvalue = pvalue + ppart->elemunion.pvar->v_offset;
+				}
+				return OV_ERR_OK;
+			}
+		}
+	}
+	/*
+	*	part not found
+	*/
+NOPART:
+	ppart->elemtype = OV_ET_NONE;
+	ppart->pobj = NULL;
+	return OV_ERR_OK;
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -528,8 +561,54 @@ OV_RESULT ov_element_getnextpart_variable(
 	OV_ELEMENT				*ppart,
 	OV_ELEM_TYPE			mask
 ) {
-	/* TODO! */
-	return OV_ERR_NOTIMPLEMENTED;
+	/*
+	*	local variables
+	*/
+	OV_INSTPTR_ov_structure		pstruct;
+	/*
+	*	there can only be members of a structure as parts of a variable
+	*/
+	if(mask & OV_ET_MEMBER) {
+		/*
+		*	switch based on the type of the part
+		*/
+		switch(ppart->elemtype) {
+		case OV_ET_NONE:
+			/*
+			*	get the very first part (first member of a structure)...
+			*/
+			pstruct=Ov_GetParent(ov_construction, pvar);
+			if (!pstruct) goto NOPART;
+			ppart->elemunion.pobj = Ov_GetFirstChild(ov_containment, pstruct);
+			break;
+		case OV_ET_MEMBER:
+			ppart->elemunion.pobj = Ov_GetNextChild(ov_containment,	ppart->elemunion.pobj);
+			break;
+		default:
+			/*
+			*	this is strange...
+			*/
+			Ov_Warning("internal error");
+			goto NOPART;
+		}
+		if (!ppart->elemunion.pobj) goto NOPART;
+		ppart->elemtype = OV_ET_MEMBER;
+
+		if(pvar->v_varprops & OV_VP_DERIVED) {
+			ppart->pvalue = NULL;
+		} else {
+			ppart->pvalue = pvalue + ppart->elemunion.pvar->v_offset;
+		}
+		return OV_ERR_OK;
+	}
+
+	/*
+	*	no more parts of a variable
+	*/
+NOPART:
+	ppart->elemtype = OV_ET_NONE;
+	ppart->pobj = NULL;
+	return OV_ERR_OK;
 }
 
 /*	----------------------------------------------------------------------	*/

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.10 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.11 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -124,7 +124,70 @@ void ov_ksserver_getvar(
 }
 
 /*	----------------------------------------------------------------------	*/
+/*
+*	Get a structure variable for the GetVar service (subroutine)
+*/
+#define GETSTRUCTCASE(vartype, VARTYPE)	\
+	case OV_VT_##VARTYPE##:	\
+		pstructelem->value.valueunion.val_##vartype## = *((OV_##VARTYPE##*) pvalue);	\
+		pvalue += pvar->v_size;	\
+		break;
 
+OV_NAMED_ELEMENT* ov_ksserver_getvar_getstruct(
+	OV_INSTPTR_ov_structure	pstruct,
+	OV_STRUCT		*povstruct
+) {
+	OV_INSTPTR_ov_object	pobj;
+	OV_INSTPTR_ov_variable	pvar;
+	OV_NAMED_ELEMENT	*pstructelem;
+	OV_NAMED_ELEMENT	*pstructelem2;
+	OV_UINT			num;
+	OV_BYTE			*pvalue;
+
+	num = 0;
+	Ov_ForEachChild(ov_containment, pstruct, pobj) num++;
+	povstruct->elements = num;
+	pvalue = povstruct->value;
+	pvar = Ov_StaticPtrCast(ov_variable, Ov_GetFirstChild(ov_containment, pstruct));
+	pstructelem = (OV_NAMED_ELEMENT*) ov_memstack_alloc(sizeof(OV_NAMED_ELEMENT)*num);
+	pstructelem2 = pstructelem;
+	while (pvar) {
+		pstructelem->identifier = (OV_STRING)ov_memstack_alloc(strlen(pvar->v_identifier));
+		pstructelem->value.vartype = pvar->v_vartype;
+		switch(pstructelem->value.vartype) {
+			GETSTRUCTCASE(bool, BOOL);
+			GETSTRUCTCASE(int, INT);
+			GETSTRUCTCASE(uint, UINT);
+			GETSTRUCTCASE(single, SINGLE);
+			GETSTRUCTCASE(double, DOUBLE);
+			GETSTRUCTCASE(time, TIME);
+			GETSTRUCTCASE(time_span, TIME_SPAN);
+			GETSTRUCTCASE(string, STRING);
+
+			GETSTRUCTCASE(bool_vec, BOOL_VEC);
+			GETSTRUCTCASE(int_vec, INT_VEC);
+			GETSTRUCTCASE(uint_vec, UINT_VEC);
+			GETSTRUCTCASE(single_vec, SINGLE_VEC);
+			GETSTRUCTCASE(double_vec, DOUBLE_VEC);
+			GETSTRUCTCASE(time_vec, TIME_VEC);
+			GETSTRUCTCASE(time_span_vec, TIME_SPAN_VEC);
+			GETSTRUCTCASE(string_vec, STRING_VEC);
+			case OV_VT_STRUCT:
+				pstructelem->value.valueunion.val_struct.value = 
+					(OV_BYTE*) ov_ksserver_getvar_getstruct(
+					Ov_GetParent(ov_construction, pvar), &pstructelem->value.valueunion.val_struct);
+				pvalue += Ov_GetParent(ov_construction, pvar)->v_size;
+				break;
+			default:
+				Ov_Warning("internal error");
+		}
+		pvar = Ov_StaticPtrCast(ov_variable, Ov_GetNextChild(ov_containment, pvar));
+		pstructelem++;
+	}
+	return pstructelem2;
+}
+
+/*	----------------------------------------------------------------------	*/
 /*
 *	Get a variable item of the GetVar service (subroutine)
 */
@@ -144,6 +207,8 @@ void ov_ksserver_getvar_getitem(
 	OV_UINT					i;
 	OV_STRING				*pstring;
 	OV_STRING				pathname;
+	OV_STRUCT				*povstruct;
+	OV_INSTPTR_ov_structure	pstruct;
 	Ov_Association_DefineIteratorNM(pit);
 	/*
 	*	get the vtable pointer of the object the variable belongs to
@@ -183,6 +248,12 @@ void ov_ksserver_getvar_getitem(
 		*/
 		pitem->result = (pvtable->m_getvar)(pobj, pelem, &pitem->var_current_props);
 		pitem->var_current_props.value.vartype &= OV_VT_KSMASK;
+		if (pitem->var_current_props.value.vartype == OV_VT_STRUCT) {
+			povstruct = &pitem->var_current_props.value.valueunion.val_struct;
+			pstruct = Ov_GetParent(ov_construction, (pelem->elemunion.pvar));
+			pitem->var_current_props.value.valueunion.val_struct.value = (OV_BYTE*) 
+				ov_ksserver_getvar_getstruct(pstruct, povstruct);
+		}
 		return;
 	case OV_ET_PARENTLINK:
 		/*

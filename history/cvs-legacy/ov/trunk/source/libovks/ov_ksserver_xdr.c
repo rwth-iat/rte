@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.c,v 1.8 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_ksserver_xdr.c,v 1.9 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -310,6 +310,10 @@ OV_KSSERVER_DECL_XDRFNC(OV_VAR_VALUE) {
 		return ov_ksserver_xdr_OV_TIME(xdrs, &objp->valueunion.val_time);
 	case OV_VT_TIME_SPAN:
 		return ov_ksserver_xdr_OV_TIME_SPAN(xdrs, &objp->valueunion.val_time_span);
+	case OV_VT_STRUCT:
+		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_struct.value,
+			&objp->valueunion.val_struct.elements, ~0, sizeof(OV_NAMED_ELEMENT),
+			(xdrproc_t)ov_ksserver_xdr_OV_NAMED_ELEMENT);
 	case OV_VT_BOOL_VEC:
 		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_bool_vec.value,
 			&objp->valueunion.val_bool_vec.veclen, ~0, sizeof(bool_t),
@@ -364,6 +368,18 @@ OV_KSSERVER_DECL_XDRFNC(OV_VAR_PROJECTED_PROPS) {
 		return FALSE;
 	}
 	return ov_ksserver_xdr_OV_VAR_TYPE(xdrs, &objp->vartype);
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_NAMED_ELEMENT
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_NAMED_ELEMENT) {
+	if(!ov_ksserver_xdr_string(xdrs, &objp->identifier, KS_NAME_MAXLEN)) {
+		return FALSE;
+	}
+	return ov_ksserver_xdr_OV_VAR_VALUE(xdrs, &objp->value);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -655,6 +671,14 @@ OV_KSSERVER_DECL_XDRFNC(OV_HISTORY_ENGINEERED_PROPS) {
 */
 OV_KSSERVER_DECL_XDRFNC(OV_DOMAIN_ENGINEERED_PROPS) {
 	return ov_ksserver_xdr_string(xdrs, &objp->class_identifier, ~0);
+}
+
+/*	----------------------------------------------------------------------	*/
+/*
+*	XDR routine for OV_STRUCT_ENGINEERED_PROPS
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_STRUCT_ENGINEERED_PROPS) {
+	return ov_ksserver_xdr_string(xdrs, &objp->type_identifier, ~0);
 }
 
 /*	----------------------------------------------------------------------	*/

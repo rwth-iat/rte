@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.16 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_ov.h,v 1.17 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -105,7 +105,21 @@ typedef OV_ENUM OV_STATE;
 
 #define OV_VT_BOOL_PV		(KS_VT_BOOL | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 #define OV_VT_INT_PV		(KS_VT_INT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_UINT_PV		(KS_VT_UINT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 #define OV_VT_SINGLE_PV		(KS_VT_SINGLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_DOUBLE_PV		(KS_VT_DOUBLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_STRING_PV		(KS_VT_STRING | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_PV		(KS_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_SPAN_PV	(KS_VT_TIME_SPAN | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+
+#define OV_VT_BOOL_VEC_PV	(KS_VT_BOOL_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_INT_VEC_PV	(KS_VT_INT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_UINT_VEC_PV	(KS_VT_UINT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_SINGLE_VEC_PV	(KS_VT_SINGLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_DOUBLE_VEC_PV	(KS_VT_DOUBLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_STRING_VEC_PV	(KS_VT_STRING_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_VEC_PV	(KS_VT_TIME_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_SPAN_VEC_PV	(KS_VT_TIME_SPAN_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 
 #define OV_VT_ANY		ENUMVAL(KS_VAR_TYPE, 0x000000ff)
 
@@ -221,11 +235,102 @@ typedef struct {				/* integer process value */
 	OV_TIME		time;
 }	OV_INT_PV;
 
+typedef struct {				/* unsigned integer process value */
+	OV_UINT		value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_UINT_PV;
+
 typedef struct {				/* single precision floating point process value */
 	OV_SINGLE	value;
 	OV_STATE	state;
 	OV_TIME		time;
 }	OV_SINGLE_PV;
+
+typedef struct {				/* double precision floating point process value */
+	OV_DOUBLE	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_DOUBLE_PV;
+
+typedef struct {				/* string process value */
+	OV_STRING	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_STRING_PV;
+
+typedef struct {				/* time process value */
+	OV_TIME		value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_TIME_PV;
+
+typedef struct {				/* time span process value */
+	OV_TIME_SPAN	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_TIME_SPAN_PV;
+
+/*
+*	Process vector value datatypes (PV-vectors)
+*/
+typedef struct {				/* boolean process value */
+	OV_BOOL_VEC	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_BOOL_VEC_PV;
+
+typedef struct {				/* integer process value */
+	OV_INT_VEC	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_INT_VEC_PV;
+
+typedef struct {				/* unsigned integer process value */
+	OV_UINT_VEC	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_UINT_VEC_PV;
+
+typedef struct {				/* single precision floating point process value */
+	OV_SINGLE_VEC	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_SINGLE_VEC_PV;
+
+typedef struct {				/* double precision floating point process value */
+	OV_DOUBLE_VEC	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_DOUBLE_VEC_PV;
+
+typedef struct {				/* string process value */
+	OV_STRING_VEC	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_STRING_VEC_PV;
+
+typedef struct {				/* time process value */
+	OV_TIME_VEC	value;
+	OV_STATE	state;
+	OV_TIME		time;
+}	OV_TIME_VEC_PV;
+
+typedef struct {				/* time span process value */
+	OV_TIME_SPAN_VEC value;
+	OV_STATE	 state;
+	OV_TIME		 time;
+}	OV_TIME_SPAN_VEC_PV;
+
+/*
+*	OV_STRUCT datatype
+*	------------------
+*/
+typedef struct {
+	OV_UINT			elements;
+	OV_BYTE			*value;
+} 	OV_STRUCT;
+
 
 /*
 *	OV_VAR_VALUE:
@@ -245,6 +350,7 @@ typedef struct {
 		OV_TIME				val_time;			/* if vartype == OV_VT_TIME */
 		OV_TIME_SPAN		val_time_span;		/* if vartype == OV_VT_TIME_SPAN */
 		OV_STATE			val_state;		/* if vartype == OV_VT_TIME_SPAN */
+		OV_STRUCT			val_struct;		/* if vartype == OV_VT_STRUCT */
 		/* vector datatypes */
 		OV_BYTE_VEC			val_byte_vec;		/* if vartype == OV_VT_BYTE_VEC */
 		OV_BOOL_VEC			val_bool_vec;		/* if vartype == OV_VT_BOOL_VEC */

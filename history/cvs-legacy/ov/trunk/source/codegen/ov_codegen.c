@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.17 2002-02-01 14:43:41 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.18 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -890,7 +890,7 @@ void ov_codegen_printstructtypedef(
 			/*
 			*	vector of dynamic length
 			*/
-			fprintf(fp, " \\\n    %s_VEC v_%s;", ov_codegen_getvartypetext(pvar->vartype),
+			fprintf(fp, "    %s_VEC v_%s;\n", ov_codegen_getvartypetext(pvar->vartype),
 				pvar->identifier);
 		}
 	}

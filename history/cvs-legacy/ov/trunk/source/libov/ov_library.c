@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.17 2002-02-06 17:00:12 ansgar Exp $
+*   $Id: ov_library.c,v 1.18 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -376,8 +376,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 			}
 			pc2--;
 		}
-		if ((!pc1) || (!pc2) || (strcmp(ovversion1, ovversion2))) 
+		if ((!pc1) || (!pc2) || (strcmp(ovversion1, ovversion2))) {
+			ov_logfile_error("Can't load library. OV-version of library (%s) too old for OV-server (%s)\n",ovversion1,ovversion2);
 			return OV_ERR_LIBDEFMISMATCH;
+		}
 	}
 	/*
 	*	if we load the OV metamodel, we have to prepare some things
@@ -823,4 +825,5 @@ OV_DLLFNCEXPORT OV_STRING ov_library_comment_get(
 /*
 *	End of file
 */
+
 

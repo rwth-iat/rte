@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.h,v 1.6 2001-07-09 12:49:13 ansgar Exp $
+*   $Id: ov_ksserver_xdr.h,v 1.7 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -127,6 +127,7 @@ typedef struct {
 	OV_OBJ_PROJECTED_PROPS	*plast;		/* only, if result == OV_ERR_OK */
 }	OV_GETPP_RES;
 
+
 /*
 *	OV_GETVAR_ITEM:
 *	---------------
@@ -136,6 +137,17 @@ typedef struct {
 	OV_RESULT				result;
 	OV_VAR_CURRENT_PROPS	var_current_props;	/* only, if result == OV_ERR_OK */
 }	OV_GETVAR_ITEM;
+
+
+/*
+*	OV_NAMED_ELEMENT:
+*	-----------------
+*/
+typedef struct {
+	OV_STRING			identifier;
+	OV_VAR_VALUE			value;
+}	OV_NAMED_ELEMENT;
+
 
 /*
 *	OV_GETVAR_PAR:
@@ -224,6 +236,15 @@ typedef struct {
 }	OV_DOMAIN_ENGINEERED_PROPS;
 
 /*
+*	OV_STRUCT_ENGINEERED_PROPS:
+*	-----------------------------
+*	Engineered properites of a structure.
+*/
+typedef struct {
+	OV_STRING	type_identifier;
+}	OV_STRUCT_ENGINEERED_PROPS;
+
+/*
 *	OV_VAR_ENGINEERED_PROPS:
 *	-----------------------
 *	Engineered properites of a variable.
@@ -268,6 +289,7 @@ struct OV_OBJ_ENGINEERED_PROPS {
 	OV_OBJ_TYPE	objtype;
 	union {
 		OV_DOMAIN_ENGINEERED_PROPS	domain_engineered_props;
+		OV_STRUCT_ENGINEERED_PROPS	struct_engineered_props;
 		OV_VAR_ENGINEERED_PROPS		var_engineered_props;
 		OV_LINK_ENGINEERED_PROPS	link_engineered_props;
 		OV_HISTORY_ENGINEERED_PROPS	history_engineered_props;
@@ -717,6 +739,7 @@ OV_KSSERVER_DECL_XDRFNC(OV_OBJ_PROJECTED_PROPS);
 
 OV_KSSERVER_DECL_XDRFNC(OV_HISTORY_ENGINEERED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_DOMAIN_ENGINEERED_PROPS);
+OV_KSSERVER_DECL_XDRFNC(OV_STRUCT_ENGINEERED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_VAR_ENGINEERED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_LINK_ENGINEERED_PROPS);
 OV_KSSERVER_DECL_XDRFNC(OV_OBJ_ENGINEERED_PROPS);
@@ -730,6 +753,7 @@ OV_KSSERVER_DECL_XDRFNC(OV_GETPP_RES);
 /*
 *	XDR routines for GetVar
 */
+OV_KSSERVER_DECL_XDRFNC(OV_NAMED_ELEMENT);
 OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_ITEM);
 OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_PAR);
 OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_RES);

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.9 2002-02-14 13:48:55 ansgar Exp $
+*   $Id: ov_server.c,v 1.10 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -163,6 +163,7 @@ int main(int argc, char **argv) {
 	*	local variables
 	*/
 	OV_STRING	filename = "database.ovd";
+	OV_STRING	backupfilename = NULL;
 	OV_STRING	servername = NULL;
 	OV_STRING	password = NULL;
 	OV_UINT		i;
@@ -192,6 +193,17 @@ int main(int argc, char **argv) {
 			i++;
 			if(i<argc) {
 				filename = argv[i];
+			} else {
+				goto HELP;
+			}
+		}
+		/*
+		*	set database backup filename option
+		*/
+		else if(!strcmp(argv[i], "-b") || !strcmp(argv[i], "--backup")) {
+			i++;
+			if(i<argc) {
+				backupfilename = argv[i];
 			} else {
 				goto HELP;
 			}
@@ -295,6 +307,7 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 				"\n"
 				"The following optional arguments are available:\n"
 				"-f FILE, --file FILE            Set database filename (*.ovd)\n"
+				"-b FILE, --backup FILE          Set backup database filename (*.ovd)\n"
 				"-s SERVER, --server-name SERVER Set server name\n"
 				"-a , --activity-lock            Locks OV activities (scheduler and accessorfnc)\n"
 				"-i ID, --identify ID            Set Ticket Identification for server access\n"
@@ -364,6 +377,12 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 	*/
 	ov_logfile_info("Mapping database \"%s\"...", filename);
 	result = ov_database_map(filename);
+	if (backupfilename) {
+		ov_logfile_error("Error: %s (error code 0x%4.4x).",
+			ov_result_getresulttext(result), result);
+		ov_logfile_info("Mapping backup-database \"%s\"...", backupfilename);
+		result = ov_database_map(backupfilename);
+	}
 	if(Ov_Fail(result)) {
 ERRORMSG:
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.11 2001-07-20 07:29:11 ansgar Exp $
+*   $Id: ov_ksserver_getep.c,v 1.12 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -171,11 +171,14 @@ void ov_ksserver_getep(
 		*	figure out the type mask
 		*/
 		mask = OV_ET_NONE;
+		if(params->type_mask & KS_OT_STRUCTURE) {
+			mask |= OV_ET_MEMBER;
+		}
 		if(params->type_mask & KS_OT_DOMAIN) {
-			mask |= OV_ET_OBJECT | OV_ET_VARIABLE | OV_ET_MEMBER;	/* FIXME! structures? */
+			mask |= OV_ET_OBJECT | OV_ET_VARIABLE | OV_ET_MEMBER; 
 		}
 		if(params->type_mask & KS_OT_VARIABLE) {
-			mask |= OV_ET_VARIABLE | OV_ET_MEMBER;	/* FIXME! structures? */
+			mask |= OV_ET_VARIABLE;
 		}
 		if(params->type_mask & KS_OT_LINK) {
 			mask |= OV_ET_PARENTLINK | OV_ET_CHILDLINK;
@@ -271,7 +274,7 @@ OV_RESULT ov_ksserver_getep_additem(
 	*	local variables
 	*/
 	OV_OBJ_ENGINEERED_PROPS	*pprops;
-	OV_OBJ_TYPE				objtype;
+	OV_OBJ_TYPE				objtype=0;
 	OV_ACCESS				access;
 	OV_INSTPTR_ov_object			pobj = pelem->pobj;
 	OV_VTBLPTR_ov_object			pvtable;
@@ -336,11 +339,8 @@ OV_RESULT ov_ksserver_getep_additem(
 		break;
 	case OV_ET_VARIABLE:
 	case OV_ET_MEMBER:
-		/*
-		*	FIXME! structure?
-		*/
 		if((pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
-			objtype = KS_OT_DOMAIN;
+			objtype = KS_OT_DOMAIN;  // *** KS_OT_STRUCTURE ***  ? KS ?
 		} else {
 			objtype = KS_OT_VARIABLE;
 		}
@@ -472,7 +472,13 @@ OV_RESULT ov_ksserver_getep_additem(
 				?(pelem->elemunion.pvar->v_vartype & OV_VT_KSMASK)
 				:(((OV_ANY*)pelem->pvalue)->value.vartype & OV_VT_KSMASK);
 			return OV_ERR_OK;
-		case KS_OT_DOMAIN:
+		case KS_OT_DOMAIN:   // *** KS_OT_STRUCTURE ***  ? KS ?
+//			pprops->OV_OBJ_ENGINEERED_PROPS_u.struct_engineered_props.type_identifier
+//				= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,
+//				Ov_GetParent(ov_instantiation, pobj)), version);
+			pprops->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier
+				= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,
+				Ov_GetParent(ov_instantiation, pobj)), version);
 			return OV_ERR_OK;
 		default:
 			break;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.11 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_ovmparser.y,v 1.12 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -280,6 +280,7 @@ structure:
 		{
 			$$ = Ov_Codegen_Malloc(OV_OVM_STRUCTURE_DEF);
 			$$->pnext = NULL;
+			$$->libname = NULL;
 			$$->identifier = $2;
 			$$->members = $3;
 			$$->defnum = defnum++;
@@ -577,6 +578,7 @@ member:
 			$$->flags = $5;
 			$$->tech_unit = $6;
 			$$->comment = $7;
+			$$->pinitvalue = NULL;
 			ov_codegen_free($4);
 		}
 ;
@@ -1429,7 +1431,7 @@ OV_BOOL ov_codegen_checksemantics_member(
 	*	if member is a structure, check the structure definition
 	*/
 	if(pvar->structurename) {
-		pvarstruct = ov_codegen_getstructdef(plib, pvar->structurename);
+		pvarstruct = ov_codegen_getstructdef(NULL, pvar->structurename);
 		if(pvarstruct) {
 			pvar->structurelibname = pvarstruct->libname;
 			if(pvarstruct->defnum == pstruct->defnum) {
@@ -1573,7 +1575,7 @@ OV_BOOL ov_codegen_checksemantics_variable(
 	*	if variable is a structure, check the structure definition
 	*/
 	if(pvar->structurename) {
-		pvarstruct = ov_codegen_getstructdef(plib, pvar->structurename);
+		pvarstruct = ov_codegen_getstructdef(NULL, pvar->structurename);
 		if(pvarstruct) {
 			pvar->structurelibname = pvarstruct->libname;
 			if(pvarstruct->defnum > pclass->defnum) {

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_variable.h,v 1.5 2002-01-23 13:44:14 ansgar Exp $
+*   $Id: ov_variable.h,v 1.6 2002-04-09 16:21:11 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -89,6 +89,7 @@ typedef struct OV_VARIABLE_DEF OV_VARIABLE_DEF;
 	OV_ANY* (*)(							\
 		OV_INSTPTR				pobj		\
 	)
+	
 	
 /*
 *	Function prototype for writing a variable value (scalar)
