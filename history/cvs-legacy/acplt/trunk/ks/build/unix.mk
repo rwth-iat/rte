@@ -40,7 +40,7 @@ include ../generic.mk
 
 all: manager
 
-examples: tmanager.exe tserver.exe tsclient.exe
+examples: tmanager.exe tserver.exe tsclient.exe ttree.exe
 
 $(LIBKS): $(LIBKS_OBJECTS)
 	ar r $@ $?
