@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.4 1999-08-28 13:45:56 dirk Exp $
+*   $Id: ov_version.h,v 1.5 1999-09-06 12:46:39 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,26 +34,26 @@
 *	Version information for different modules of ACPLT/OV
 *	-----------------------------------------------------
 */
-#define OV_VER_CODEGEN					"0.1.0pre7"
-#define OV_VER_LIBOV					"0.1.0pre7"
-#define OV_VER_DBUTIL 					"0.1.0pre7"
-#define OV_VER_LIBOVKS 					"0.1.0pre7"
-#define OV_VER_SERVER					"0.1.0pre7"
-#define OV_VER_NTSERVICE				"0.1.0pre7"
+#define OV_VER_CODEGEN					"1.0.0"
+#define OV_VER_LIBOV					"1.0.0"
+#define OV_VER_DBUTIL 					"1.0.0"
+#define OV_VER_LIBOVKS 					"1.0.0"
+#define OV_VER_SERVER					"1.0.0"
+#define OV_VER_NTSERVICE				"1.0.0"
 
-#define OV_VER_FILEVERSION_CODEGEN		0, 1, 0, 7
-#define OV_VER_FILEVERSION_LIBOV		0, 1, 0, 7
-#define OV_VER_FILEVERSION_DBUTIL 		0, 1, 0, 7
-#define OV_VER_FILEVERSION_LIBOVKS 		0, 1, 0, 7
-#define OV_VER_FILEVERSION_SERVER		0, 1, 0, 7
-#define OV_VER_FILEVERSION_NTSERVICE	0, 1, 0, 7
+#define OV_VER_FILEVERSION_CODEGEN		1, 0, 0, 0
+#define OV_VER_FILEVERSION_LIBOV		1, 0, 0, 0
+#define OV_VER_FILEVERSION_DBUTIL 		1, 0, 0, 0
+#define OV_VER_FILEVERSION_LIBOVKS 		1, 0, 0, 0
+#define OV_VER_FILEVERSION_SERVER		1, 0, 0, 0
+#define OV_VER_FILEVERSION_NTSERVICE	1, 0, 0, 0
 
-#define OV_VER_PRODUCTVERSION_CODEGEN	0, 1, 0, 7
-#define OV_VER_PRODUCTVERSION_LIBOV		0, 1, 0, 7
-#define OV_VER_PRODUCTVERSION_DBUTIL 	0, 1, 0, 7
-#define OV_VER_PRODUCTVERSION_LIBOVKS 	0, 1, 0, 7
-#define OV_VER_PRODUCTVERSION_SERVER	0, 1, 0, 7
-#define OV_VER_PRODUCTVERSION_NTSERVICE	0, 1, 0, 7
+#define OV_VER_PRODUCTVERSION_CODEGEN	1, 0, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBOV		1, 0, 0, 0
+#define OV_VER_PRODUCTVERSION_DBUTIL 	1, 0, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBOVKS 	1, 0, 0, 0
+#define OV_VER_PRODUCTVERSION_SERVER	1, 0, 0, 0
+#define OV_VER_PRODUCTVERSION_NTSERVICE	1, 0, 0, 0
 
 #define OV_VER_LICENSE															\
 	"Copyright (C) 1998-1999 "													\
