@@ -11,6 +11,10 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_SYSTEM_NT
+#include <time.h>
+#endif
+
 #include <iostream.h>
 #include <plt/debug.h>
 #include <plt/list.h>

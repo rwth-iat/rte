@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.11 1997-09-15 18:45:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.12 1997-09-15 19:38:35 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -122,8 +122,7 @@ public:
     typedef TestDomainIterator THISTYPE;
 #define TestDomainIterator_THISTYPE TestDomainIterator
 #else
-#define TestDomainIterator_THISTYPE PltIterator_<KssCommObjectHandle> 
-// KssDomainIterator_THISTYPE
+#define TestDomainIterator_THISTYPE KssDomainIterator_THISTYPE
 #endif
     virtual operator bool () const
         { return 0; } // no iteration

@@ -31,7 +31,7 @@ CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) \
 	-GR -DPLT_SYSTEM_NT=1 -DPLT_DEBUG_NEW=0 -DFD_SETSIZE=128
 CXX_LIBS = $(LIBKS) $(LIBPLT) $(LIBRPC) wsock32.lib advapi32.lib
 
-RC = echo
+RC = rc
 
 LIBKS_NT_OBJECTS = ntservice$(O)
 
@@ -68,15 +68,15 @@ examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 	$(CXX)	$(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)ntservice.cpp
 
-ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
-	echo " "> $@
+ntksmanagervc.res: $(EXAMPLESSRCDIR)ntksmanagervc.rc
+	$(RC) $@
 
-ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanager.res
+ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanagervc.res
 	@echo Linking $@
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
-		 ntksmanager.obj ntksmanager_templates.obj \
+		 ntksmanager.obj ntksmanagervc.res ntksmanager_templates.obj \
 		$(LIBKSSVR) $(CXX_LIBS)
-	$(RC) ntksmanager.res ntksmanager.exe
+#	$(RC) ntksmanager.res ntksmanager.exe
 
 
 $(LIBKS) : $(LIBKS_OBJECTS)
