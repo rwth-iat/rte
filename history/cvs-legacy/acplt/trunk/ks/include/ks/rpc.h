@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.7 1997-07-18 14:11:03 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.8 1997-08-18 13:41:37 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,6 +44,7 @@
 
 #if PLT_SYSTEM_HPUX
 extern "C" {
+#include <sys/socket.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 extern int get_myaddress(struct sockaddr_in *);
@@ -51,6 +52,7 @@ extern int get_myaddress(struct sockaddr_in *);
 #endif
 
 #if PLT_SYSTEM_LINUX
+#include <sys/socket.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 #endif
@@ -79,6 +81,7 @@ static KsNTOncRpc ks_nt_oncrpc;
 #endif // PLT_SYSTEM_NT
 
 #if PLT_SYSTEM_SOLARIS
+#include <sys/socket.h>
 #include <rpc/rpc.h>
 #include <rpc/svc.h>
 #include <rpc/svc_soc.h>
@@ -87,6 +90,7 @@ static KsNTOncRpc ks_nt_oncrpc;
 #endif
 
 #if PLT_SYSTEM_OPENVMS
+#include <sys/socket.h>
 #include <rpc/rpc.h>
 // #include <rpc/clnt.h>
 #include <rpc/pmap_clnt.h>

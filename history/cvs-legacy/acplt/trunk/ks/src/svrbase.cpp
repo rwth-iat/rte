@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.15 1997-07-18 14:11:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.16 1997-08-18 13:41:41 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -270,6 +270,17 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
                                          *pTicket, 
                                          pTicket->result());
         } else {
+            //
+            // Save the socket address of the sender
+            //
+            struct sockaddr_in *sin 
+                = (struct sockaddr_in *) &pTicket->_saddr;
+            *sin = transport->xp_raddr;
+#if PLT_DEBUG
+            char *from =  inet_ntoa(pTicket->getSenderInAddr());
+            cerr << "from: " << from << endl;
+#endif
+
             //
             // We're now ready to serve the service...
             //

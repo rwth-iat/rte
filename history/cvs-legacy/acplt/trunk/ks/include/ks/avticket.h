@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.12 1997-05-20 15:20:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.13 1997-08-18 13:41:37 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -93,6 +93,10 @@ typedef KsAvTicket * (*KsTicketConstructor)(XDR *);
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+// forward declaration
+extern "C" void 
+ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
+
 class KsAvTicket
 : public KsXdrUnion
 {
@@ -103,8 +107,11 @@ public:
 
     virtual enum_t xdrTypeCode() const = 0;
 
+    ////
+    //// Permissions
+    ////
     virtual KS_ACCESS getAccess(const KsString &name) const;
-
+    
     virtual bool isVisible(const KsString & name) const;
 
     virtual bool canReadVar(const KsString &name) const = 0;
@@ -115,10 +122,21 @@ public:
     
     virtual bool canWriteVars(const KsArray<KsString> & names,
                               KsArray<bool> &canRead) const;
-    
+    ////
+    //// sender address
+    ////
+    const struct sockaddr & getSenderAddress() const;
+    struct in_addr getSenderInAddr() const; // network byte order
+
+    ////
+    //// Ticket type registration
+    ////
     static bool registerAvTicketType(enum_t ticketType, KsTicketConstructor);
     static bool deregisterAvTicketType(enum_t ticketType);
 
+    ////
+    //// last resort ticket
+    ////
     static KsAvTicket * emergencyTicket();
 
 #if PLT_DEBUG_INVARIANTS
@@ -128,9 +146,10 @@ public:
 protected:
     virtual bool xdrEncodeVariant(XDR *) const = 0;
     virtual bool xdrDecodeVariant(XDR *)  = 0;
-
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
+    struct sockaddr _saddr;
+    friend void ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
 };
 
 
@@ -165,13 +184,61 @@ public:
 protected:
     bool xdrDecodeVariant(XDR *);
     bool xdrEncodeVariant(XDR *) const;
+    KS_ACCESS _access;
+    KS_RESULT _result;
 
 private:
     static KS_ACCESS _default_access;
-    KS_ACCESS _access;
-    KS_RESULT _result;
 };
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+class KsAvSimpleTicket
+: public KsAvNoneTicket
+{
+public:
+    KsAvSimpleTicket() { }
+
+    KsAvSimpleTicket(XDR *, bool &);
+
+    virtual enum_t xdrTypeCode() const { return KS_AUTH_SIMPLE; }
+
+    KsString getId() const { return _id; }
+protected:
+    bool xdrDecodeVariant(XDR *);
+    bool xdrEncodeVariant(XDR *) const;
+private:
+    KsString _id;
+};
+
+//////////////////////////////////////////////////////////////////////
+// INLINE IMPLEMENTATION
+//////////////////////////////////////////////////////////////////////
+
+inline const struct sockaddr &
+KsAvTicket::getSenderAddress() const
+{
+    return _saddr;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline struct in_addr
+KsAvTicket::getSenderInAddr() const
+{
+    struct in_addr inaddr;
+    if (_saddr.sa_family == AF_INET) {
+        inaddr = ((struct sockaddr_in *) & _saddr)->sin_addr;
+    } else {
+        inaddr.s_addr = INADDR_NONE;
+    }
+    return inaddr;
+}
 
 //////////////////////////////////////////////////////////////////////
 
 #endif /* EOF ks/avticket.h */
+
+
+

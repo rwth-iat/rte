@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.10 1997-04-14 15:30:16 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.11 1997-08-18 13:41:40 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -89,20 +89,19 @@ KsAvTicket::xdrNew(XDR * xdrs)
     KsAuthType typecode;                                           
     if ( typecode.xdrDecode(xdrs) ) {                       
         /* typecode successfully decoded */                    
-        switch(typecode) {                                     
-            
-            KS_XDR_MAP(KS_AUTH_NONE, KsAvNoneTicket);
-            
-        default:                                                
-            {
-                // not a fixed av-type: get c'tor at runtime
-                KsTicketConstructor ctor;
+        KsTicketConstructor ctor;
                 
-                if ( _factory.query(typecode, ctor) ) {
-                    // found it
-                    p = ctor(xdrs);
-                } else {
-                    // unknown auth
+        if ( _factory.query(typecode, ctor) ) {
+            // found a custom constructor for this av-typecode
+            p = ctor(xdrs);
+        } else {
+            // try builtins
+            switch(typecode) {                                     
+                KS_XDR_MAP(KS_AUTH_NONE, KsAvNoneTicket);
+            default:                                                
+                {
+                    // unknown auth:
+                    // We MUST generate a ticket (an invalid one in this case)
                     p = new KsAvNoneTicket(KS_ERR_UNKNOWNAUTH);
                 }
             }                                                      
@@ -210,7 +209,7 @@ KsAvNoneTicket::_default_access = KS_AC_NONE;
 //////////////////////////////////////////////////////////////////////
 
 KsAvNoneTicket::KsAvNoneTicket(XDR *, bool & ok)
-: _access(KS_AC_READ | KS_AC_WRITE), // TODO: defaults
+: _access(_default_access),
   _result(KS_ERR_OK)
 {
     ok = true;
@@ -273,5 +272,34 @@ KsAvNoneTicket::canWriteVar(const KsString &) const
 }
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+KsAvSimpleTicket::KsAvSimpleTicket(XDR *xdr, bool & ok)
+: KsAvNoneTicket(xdr,ok)
+{
+    if (ok) {
+        ok = _id.xdrDecode(xdr);
+    }
+    PLT_CHECK_INVARIANT();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsAvSimpleTicket::xdrDecodeVariant(XDR *xdr)
+{
+    return _id.xdrDecode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsAvSimpleTicket::xdrEncodeVariant(XDR *xdr) const
+{
+    return _id.xdrEncode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
 /* EOF ks/avticket.cpp */
 
