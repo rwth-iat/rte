@@ -1,8 +1,9 @@
 /* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/serviceparams.h,v 1.6 1999-09-06 06:57:29 harald Exp $ */
 #ifndef KS_SERVICEPARAMS_INCLUDED
 #define KS_SERVICEPARAMS_INCLUDED
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -38,20 +39,22 @@
 
 /* Author : Markus Juergens <plt@rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
 
 #include "ks/xdr.h"
 #include "ks/register.h"
 #include "ks/props.h"
+#include "ks/propsv1.h"
 #include "ks/list.h"
 #include "ks/array.h"
 
-//////////////////////////////////////////////////////////////////////
-// Classes for GetPP service
-//   - class KsGetPPParams
-//   - class KsGetPPResult
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Classes for the ACPLT/KS "GetPP" service. This service is now (as of proto-
+// col version 2) depreciated. The "GetEP" service superceedes this service.
+//   - class KsGetPPParams defines which parameters must be used for the
+//     service call.
+//   - class KsGetPPResult defines what is returned by the ACPLT/KS service.
+//
 class KsGetPPParams 
 : public KsXdrAble
 {
@@ -63,12 +66,14 @@ public:
     bool xdrDecode(XDR *);
     static KsGetPPParams *xdrNew(XDR *);
 
-    KsString path;
+    //
+    // And now for the real service parameters...
+    //
+    KsString    path;
     KS_OBJ_TYPE type_mask;
-    KsString name_mask;
-};
+    KsString    name_mask;
+}; // class KsGetPPParams
 
-//////////////////////////////////////////////////////////////////////
 
 class KsGetPPResult
 : public KsResult
@@ -81,8 +86,55 @@ public:
     bool xdrDecode(XDR *);
     static KsGetPPResult *xdrNew(XDR *);
 
-    KsList<KsProjPropsHandle> items;
-};
+    //
+    // The things returned by the service reply...
+    //
+    KsList<KsEngPropsV1Handle> items;
+}; // class KsGetPPResult
+
+
+// ----------------------------------------------------------------------------
+// Classes for the ACPLT/KS "GetEP" service. This service replaces the old
+// GetPP service from the version 1 core protocol.
+//   - class KsGetEPParams defines which parameters must be used for the
+//     service call.
+//   - class KsGetEPResult defines what is returned by the ACPLT/KS service.
+//
+class KsGetEPParams 
+: public KsXdrAble
+{
+public:
+    KsGetEPParams(XDR *, bool &);
+    KsGetEPParams();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsGetEPParams *xdrNew(XDR *);
+
+    //
+    // The service parameters...
+    //
+    KsString    path;
+    KS_OBJ_TYPE type_mask;
+    KsString    name_mask;
+    KS_EP_FLAGS scope_flags;
+}; // class KsGetEPParams
+
+
+class KsGetEPResult
+: public KsResult
+{
+public:
+    KsGetEPResult();
+    KsGetEPResult(XDR *, bool &);
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsGetEPResult *xdrNew(XDR *);
+
+    KsList<KsEngPropsHandle> items;
+}; // class KsGetEPResult
+
 
 //////////////////////////////////////////////////////////////////////
 // Classes for GetVar service
@@ -261,6 +313,16 @@ KsGetPPParams::KsGetPPParams()
 inline
 KsGetPPResult::KsGetPPResult()
 {}
+
+// ----------------------------------------------------------------------------
+
+inline
+KsGetEPParams::KsGetEPParams()
+{}
+
+inline
+KsGetEPResult::KsGetEPResult()
+{} // KsGetEPResult::KsGetEPResult
 
 //////////////////////////////////////////////////////////////////////
 

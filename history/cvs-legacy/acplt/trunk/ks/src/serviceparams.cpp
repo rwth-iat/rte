@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/src/serviceparams.cpp,v 1.6 1999-09-06 06:57:30 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -111,6 +111,86 @@ KsGetPPResult::xdrDecode(XDR *xdr)
 
     return true;
 }
+
+
+// ----------------------------------------------------------------------------
+// class KsGetEPParams
+//
+
+KS_IMPL_XDRNEW(KsGetEPParams);
+KS_IMPL_XDRCTOR(KsGetEPParams);
+
+
+bool 
+KsGetEPParams::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return path.xdrEncode(xdr)
+        && ks_xdre_enum(xdr, &type_mask)
+        && name_mask.xdrEncode(xdr)
+	&& ks_xdre_enum(xdr, &scope_flags);
+} // KsGetEPParams::xdrEncode
+
+
+bool 
+KsGetEPParams::xdrDecode(XDR *xdr) 
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return path.xdrDecode(xdr)
+        && ks_xdrd_enum(xdr, &type_mask)
+        && name_mask.xdrDecode(xdr)
+	&& ks_xdrd_enum(xdr, &scope_flags);
+} // KsGetEPParams::xdrDecode
+
+
+// ----------------------------------------------------------------------------
+// class KsGetEPResult
+//
+
+KS_IMPL_XDRNEW(KsGetEPResult);
+KS_IMPL_XDRCTOR(KsGetEPResult);
+
+
+bool
+KsGetEPResult::xdrEncode(XDR *xdr) const
+{
+    //
+    // First serialize the members of the base class.
+    //
+    if ( !KsResult::xdrEncode(xdr) ) return false;
+
+    //
+    // Check for valid information and only then encode the list's
+    // contents, that is, the engineered properties.
+    //
+    if ( result == KS_ERR_OK ) {
+        return items.xdrEncode(xdr);
+    }
+    
+    return true;
+} // KsGetEPResult::xdrEncode
+
+
+bool
+KsGetEPResult::xdrDecode(XDR *xdr)
+{
+    //
+    // First deserialize the members of the base class.
+    //
+    if ( !KsResult::xdrDecode(xdr) ) return false;
+
+    if ( result == KS_ERR_OK ) {
+	// 
+        // Decode additional information only if the ACPLT/KS service was
+	// fullfilled.
+        //
+        return items.xdrDecode(xdr);
+    }
+
+    return true;
+} // KsGetEPResult::xdrDecode
+
+
 
 //////////////////////////////////////////////////////////////////////
 // class KsGetVarParams
