@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmscanner.lex,v 1.9 2001-12-10 14:28:38 ansgar Exp $
+*   $Id: ov_ovmscanner.lex,v 1.10 2002-08-21 12:41:29 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -142,7 +142,12 @@ CPP_DIRECTIVE		\#{SPACE}{DIGIT}+{SPACE}\"[^ \t\n]+\"({SPACE}{DIGIT}+)?{SPACE_OPT
 "STRING"			{ yylval.vartype = OV_VT_STRING;	return TOK_VARTYPE; }
 "BOOL_PV"			{ yylval.vartype = OV_VT_BOOL_PV;	return TOK_VARTYPE; }
 "INT_PV"			{ yylval.vartype = OV_VT_INT_PV;	return TOK_VARTYPE; }
+"UINT_PV"			{ yylval.vartype = OV_VT_UINT_PV;	return TOK_VARTYPE; }
 "SINGLE_PV"			{ yylval.vartype = OV_VT_SINGLE_PV;	return TOK_VARTYPE; }
+"DOUBLE_PV"			{ yylval.vartype = OV_VT_DOUBLE_PV;	return TOK_VARTYPE; }
+"STRING_PV"			{ yylval.vartype = OV_VT_STRING_PV;	return TOK_VARTYPE; }
+"TIME_PV"			{ yylval.vartype = OV_VT_TIME_PV;	return TOK_VARTYPE; }
+"TIME_SPAN_PV"			{ yylval.vartype = OV_VT_TIME_SPAN_PV;	return TOK_VARTYPE; }
 "ANY"				{ yylval.vartype = OV_VT_ANY;		return TOK_VARTYPE; }
 
 "ONE_TO_ONE"		{ yylval.assoctype = OV_AT_ONE_TO_ONE;		return TOK_ASSOCTYPE; }
