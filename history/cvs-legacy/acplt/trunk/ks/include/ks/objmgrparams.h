@@ -2,7 +2,7 @@
 #ifndef KS_OBJMGRPARAMS_INCLUDED
 #define KS_OBJMGRPARAMS_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.3 1998-10-23 12:51:59 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.4 1998-12-03 17:05:04 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -170,7 +170,7 @@ public:
     static KsDeleteObjParams *xdrNew(XDR *);
 
     KsArray<KsString> paths;
-}; // class KsCreateObjParams
+}; // class KsDeleteObjParams
 
 
 class KsDeleteObjResult : public KsResult {
