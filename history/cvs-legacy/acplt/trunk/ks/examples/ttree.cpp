@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.4 1997-09-15 19:42:50 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree.cpp,v 1.5 1999-01-12 16:11:04 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.

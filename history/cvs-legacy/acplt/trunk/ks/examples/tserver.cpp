@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver.cpp,v 1.1 1997-04-14 16:52:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver.cpp,v 1.2 1999-01-12 16:11:03 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -38,6 +38,7 @@
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 #include "ks/server.h"
 #include "ks/simpleserver.h"
+#include "ks/histdomain.h"
 
 #include "plt/log.h"
 

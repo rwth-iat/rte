@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.20 1998-12-14 18:00:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.21 1999-01-12 16:11:03 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -41,6 +41,7 @@
 
 #include "ks/server.h"
 #include "ks/simpleserver.h"
+#include "ks/histdomain.h"
 
 #include "plt/log.h"
 #include <signal.h>
@@ -250,6 +251,42 @@ TestDomain::newIterator() const
     return new TestDomainIterator; 
 }
 
+
+
+
+// ----------------------------------------------------------------------------
+//
+class DummyHistory : public KssHistoryDomain
+{
+public:
+    DummyHistory(KsString id);
+
+    virtual void getHist(const KsGetHistParams &params,
+                         KsGetHistSingleResult &result);
+
+}; // class DummyHistory
+
+
+DummyHistory::DummyHistory(KsString id)
+    : KssHistoryDomain(id, KS_HT_SINGLE, KS_IPM_NONE, KS_IPM_NONE,
+		       KsTime::now(), "A (nearly) useless history")
+{
+    addPart("value", KS_VT_SINGLE, "value track");
+    addPart("t", KS_VT_TIME, "time stamp track");
+    addPart("state", KS_VT_STATE, "value state track");
+    addPart("whatever", KS_VT_STRING, "useless track");
+} // DummyHistory::DummyHistory
+
+
+void
+DummyHistory::getHist(const KsGetHistParams &params,
+		      KsGetHistSingleResult &result)
+{
+    result.result = KS_ERR_GENERIC;
+} // DummyHistory::getHist
+
+
+
 //////////////////////////////////////////////////////////////////////
 //
 // The constructor of the server.
@@ -329,6 +366,9 @@ TestServer::TestServer(int port)
     }
     _root_domain.addChild(big_dom);
     _root_domain.addChild(new TestDomain);
+
+    //
+    _root_domain.addChild(new DummyHistory("timeseries"));
     
     //
     // Now using convenience functions. No hard errors will happen

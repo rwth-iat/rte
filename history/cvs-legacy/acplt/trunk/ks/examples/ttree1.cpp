@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.10 1999-01-08 13:07:59 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.11 1999-01-12 16:11:04 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -145,6 +145,10 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
 	    break;
 	}
 
+    case KS_OT_HISTORY:
+	cout << "<HST> " << info;
+	break;
+
     case KS_OT_VARIABLE:
         {
             cout << "<VAR> " << info;
@@ -172,9 +176,9 @@ void DumpProjProps(KscCommObject &obj, int indent)
     const KsProjProps *proj_props;
 
     if ( !obj.getProjPropsUpdate() ) {
-        cout << "Can't retrieve \"" 
+        cout << "Can't retrieve proj. props for \"" 
              << obj.getName() 
-             << "\" for proj. props"
+             << "\""
              << endl;
         return;
     }
@@ -198,9 +202,9 @@ void DumpVar(KscVariable &var, int indent)
     const KsVarCurrProps *curr_props;
 
     if ( !var.getUpdate() ) {
-        cout << "Can't retrieve \""
+        cout << "Can't retrieve curr. props for \""
              << var.getName()
-             << "\" for curr. props"
+             << "\""
              << endl;
         return;
     }
@@ -426,6 +430,11 @@ void DumpBranch(KscDomain &branch, int indent)
                                    PltString(indent ? "/" : "") +
                                    current->identifier);
             DumpVar(child_var, indent + 2 * INDENTATION);
+            DumpBranch(child_domain, indent + INDENTATION);
+        } else if ( current->xdrTypeCode() == KS_OT_HISTORY ) {
+            KscDomain child_domain(PltString(branch.getFullPath()) + 
+                                   PltString(indent ? "/" : "") +
+                                   current->identifier);
             DumpBranch(child_domain, indent + INDENTATION);
         } else if ( current->xdrTypeCode() == KS_OT_VARIABLE ) {
             KscVariable var(PltString(branch.getFullPath()) + 
