@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_deleteobject.c,v 1.2 1999-08-30 15:24:57 dirk Exp $
+*   $Id: ov_ksserver_deleteobject.c,v 1.3 2000-04-04 15:12:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -103,8 +103,12 @@ void ov_ksserver_deleteobject(
 			pvtable = pclass_ov_object->v_pvtable;
 		}
 		/*
-		*	test if we have access to this variable
+		*	test if we have access to this object
 		*/
+		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_DELETEABLE)) {
+			*presult = OV_ERR_NOACCESS;
+			continue;
+		}
 		if(!(pvtable->m_getaccess(pobj, &path.elements[path.size-1], pticket)
 			& OV_AC_DELETEABLE)
 		) {

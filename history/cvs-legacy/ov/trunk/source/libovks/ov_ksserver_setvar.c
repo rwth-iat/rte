@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_setvar.c,v 1.4 2000-02-10 13:07:04 dirk Exp $
+*   $Id: ov_ksserver_setvar.c,v 1.5 2000-04-04 15:12:52 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -151,6 +151,9 @@ OV_RESULT ov_ksserver_setvar_setitem(
 		/*
 		*	we are at normal lifetime of the object
 		*/
+		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_WRITE)) {
+			return OV_ERR_NOACCESS;
+		}
 		if(!(pvtable->m_getaccess(pobj, pelem, pticket) & OV_AC_WRITE)) {
 			return OV_ERR_NOACCESS;
 		}

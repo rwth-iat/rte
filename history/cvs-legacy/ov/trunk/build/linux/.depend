@@ -653,7 +653,10 @@ ov_ksserver.o: ../../source/libovks/ov_ksserver.c \
  ../../../ks/include/ks/connection.h ../../../ks/include/ks/rpcproto.h \
  ../../../ks/include/ks/xdrtcpcon.h ../../include/libov/ov_object.h \
  ../../include/libov/ov_scheduler.h \
- ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_malloc.h \
  ../../../plt/include/plt/priorityqueue_impl.h \
  ../../../plt/include/plt/container_impl.h
 ov_ksserver_createobject.o: \

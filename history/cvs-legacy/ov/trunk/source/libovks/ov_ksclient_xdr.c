@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient_xdr.c,v 1.5 2000-02-10 13:07:04 dirk Exp $
+*   $Id: ov_ksclient_xdr.c,v 1.6 2000-04-04 15:12:47 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -156,14 +156,15 @@ OV_KSCLIENT_DECL_XDRFNC(KS_STRING) {
 *	XDR routine for KS_AVMODULE_PAR
 */
 OV_KSCLIENT_DECL_XDRFNC(KS_AVMODULE_PAR) {
-	if(!ov_ksclient_xdr_KS_TICKET_TYPE(xdrs, &objp->tickettype)) {
+	if(!ov_ksclient_xdr_KS_TICKET_TYPE(xdrs, &objp->type)) {
 		return FALSE;
 	}
-	switch(objp->tickettype) {
+	switch(objp->type) {
 	case KS_AUTH_NONE:
 		return TRUE;
 	case KS_AUTH_SIMPLE:
-		return xdr_string(xdrs, &objp->id, KS_SIMPLEID_MAXLEN);
+		return xdr_string(xdrs, &objp->ticketunion.simpleticket.id,
+			KS_SIMPLEID_MAXLEN);
 	default:
 		break;
 	}
@@ -176,7 +177,7 @@ OV_KSCLIENT_DECL_XDRFNC(KS_AVMODULE_PAR) {
 *	XDR routine for KS_AVMODULE_RES
 */
 OV_KSCLIENT_DECL_XDRFNC(KS_AVMODULE_RES) {
-	return ov_ksclient_xdr_KS_TICKET_TYPE(xdrs, &objp->tickettype);
+	return ov_ksclient_xdr_KS_TICKET_TYPE(xdrs, &objp->type);
 }
 
 /*	----------------------------------------------------------------------	*/

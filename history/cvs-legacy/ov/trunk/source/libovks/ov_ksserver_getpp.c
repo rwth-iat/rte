@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getpp.c,v 1.6 2000-02-10 13:07:04 dirk Exp $
+*   $Id: ov_ksserver_getpp.c,v 1.7 2000-04-04 15:12:50 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -144,9 +144,9 @@ void ov_ksserver_getpp(
 		}
 	}
 	/*
-	*	if looking for domains, search through the children
+	*	if looking for domains (or vendor variables), search through the children
 	*/
-	if(params->type_mask & KS_OT_DOMAIN) {
+	if(params->type_mask & (KS_OT_DOMAIN | KS_OT_VARIABLE)) {
 		child.elemtype = OV_ET_NONE;
 		while(TRUE) {
 			/*
@@ -212,8 +212,9 @@ OV_RESULT ov_ksserver_getpp_additem(
 	/*
 	*	test if we have access to this object
 	*/
-	access = (pvtable->m_getaccess)(pobj, pelem, pticket);
-	if(!(access & OV_AC_READWRITE)) {
+	access = pvtable->m_getaccess(pobj, pelem, pticket)
+		& pticket->vtbl->getaccess(pticket);
+	if(!(access & OV_AC_READ)) {
 		return OV_ERR_OK;	/* TODO! no access? */
 	}
 	/*

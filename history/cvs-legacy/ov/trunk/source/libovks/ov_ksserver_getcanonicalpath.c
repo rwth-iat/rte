@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getcanonicalpath.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_getcanonicalpath.c,v 1.2 2000-04-04 15:12:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -65,6 +65,13 @@ void ov_ksserver_getcanonicalpath(
 	*	if there are no items, we are done
 	*/
 	if(!len) {
+		return;
+	}
+	/*
+	*	check for access rights
+	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_READ)) {
+		result->result = OV_ERR_NOACCESS;
 		return;
 	}
 	/*

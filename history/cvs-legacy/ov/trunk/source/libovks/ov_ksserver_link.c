@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_link.c,v 1.3 1999-08-30 15:23:33 dirk Exp $
+*   $Id: ov_ksserver_link.c,v 1.4 2000-04-04 15:12:51 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -240,6 +240,9 @@ OV_RESULT ov_ksserver_link_linkitem(
 	/*
 	*	check for access rights
 	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_LINKABLE)) {
+		return OV_ERR_NOACCESS;
+	}
 	if(plinkelem->elemunion.passoc->v_getaccessfnc) {
 		if(!(plinkelem->elemunion.passoc->v_getaccessfnc(pparent, pchild, pticket)
 			& OV_AC_LINKABLE)

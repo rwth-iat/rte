@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_gethist.c,v 1.3 2000-02-10 13:07:04 dirk Exp $
+*   $Id: ov_ksserver_gethist.c,v 1.4 2000-04-04 15:12:50 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -54,6 +54,13 @@ void ov_ksserver_gethist(
 	OV_GETHISTRESULT_ITEM	*presultitem;
 	OV_UINT					i;
 	OV_TIME					from, to;
+	/*
+	*	check access rights
+	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_READ)) {
+		result->result = OV_ERR_NOACCESS;
+		return;
+	}
 	/*
 	*	for now, we only support one path: "/messages". This history is
 	*	a message log, which contains two tracks, "t" and "value".

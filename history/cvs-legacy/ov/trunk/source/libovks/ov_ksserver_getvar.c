@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.6 2000-02-10 13:07:04 dirk Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.7 2000-04-04 15:12:51 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -148,6 +148,10 @@ void ov_ksserver_getvar_getitem(
 	/*
 	*	test if we have access to this variable
 	*/
+	if(!(pticket->vtbl->getaccess(pticket) & OV_AC_READ)) {
+		pitem->result = OV_ERR_NOACCESS;
+		return;
+	}
 	if(!(pvtable->m_getaccess(pobj, pelem, pticket) & OV_AC_READ)) {
 		pitem->result = OV_ERR_NOACCESS;
 		return;

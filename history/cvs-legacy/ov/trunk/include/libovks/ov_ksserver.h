@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.4 1999-09-15 10:48:16 dirk Exp $
+*   $Id: ov_ksserver.h,v 1.5 2000-04-04 15:12:43 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -48,6 +48,49 @@ extern "C" {
 typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
 	int signal
 );
+
+/*
+*	OV_TICKET_VTBL:
+*	---------------
+*	VTable associated with an authentification/verification ticket (see ACPLT/KS)
+*/
+struct OV_TICKET_VTBL {
+	OV_TICKET	*(* createticket)(XDR *xdr, OV_TICKET_TYPE type);
+	void 		(* deleteticket)(OV_TICKET *pticket);
+	OV_BOOL		(* encodereply)(XDR *xdr, OV_TICKET *pticket);
+	OV_ACCESS	(* getaccess)(const OV_TICKET *pticket);
+};
+typedef struct OV_TICKET_VTBL	OV_TICKET_VTBL;
+
+/*
+*	Create a ticket from an incoming XDR stream (internal)
+*/
+OV_TICKET *ov_ksserver_ticket_create(XDR *xdr);
+
+/*
+*	Delete a given ticket (internal)
+*/
+void ov_ksserver_ticket_delete(OV_TICKET *pticket);
+
+/*
+*	Register a new ticket
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_ticket_register(
+	const OV_TICKET_TYPE	type,
+	const OV_TICKET_VTBL	*vtbl
+);
+
+/*
+*	Unregister a given ticket
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_ticket_unregister(
+	const OV_TICKET_TYPE	type
+);
+
+/*
+*	Set access rights for default tickets
+*/
+OV_DLLFNCEXPORT void ov_ksserver_ticket_setdefaultaccess(OV_ACCESS access);
 
 /*
 *	Terminate an ACPLT/KS server (RMOS only)
@@ -374,28 +417,42 @@ public:
 */
 class OvKsAvTicket : public KsAvTicket {
 public:
-	// constructor
+	// constructor & destructor
 	OvKsAvTicket(XDR *xdrs) {
 		ov_memstack_lock();
-		if(ov_ksserver_xdr_OV_TICKET_PAR(xdrs, &_ticket)) {
+		_pticket = ov_ksserver_ticket_create(xdrs);
+		if(_pticket) {
 			_result = OV_ERR_OK;
 		} else {
 			_result = OV_ERR_UNKNOWNAUTH;
 		}
 	}
-
+	virtual ~OvKsAvTicket() {
+		ov_ksserver_ticket_delete(_pticket);
+	}
+	
 	// accessors
-	virtual enum_t xdrTypeCode() const { return _ticket.tickettype; }
+	virtual enum_t xdrTypeCode() const {
+		if(_pticket) {
+			return _pticket->type;
+		}
+		return OV_TT_NONE;
+	}
 	bool xdrDecodeVariant(XDR *) { return TRUE; }
-	bool xdrEncodeVariant(XDR *) const { return TRUE; }
+	bool xdrEncodeVariant(XDR *xdrs) const {
+		if(_pticket) {
+			return _pticket->vtbl->encodereply(xdrs, _pticket);
+		}
+		return TRUE;
+	}
 	virtual KS_RESULT result() const { return _result; }
 	virtual bool canReadVar(const KsString &) const { return FALSE; }
 	virtual bool canWriteVar(const KsString &) const { return FALSE; }
-	OV_TICKET *ov_getTicket() { return &_ticket; }
+	OV_TICKET *ov_getTicket() { return _pticket; }
 
 protected:
 	OV_RESULT	_result;
-	OV_TICKET	_ticket;
+	OV_TICKET	*_pticket;
 };
 
 /*

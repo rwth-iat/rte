@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.c,v 1.5 2000-02-10 13:07:04 dirk Exp $
+*   $Id: ov_ksclient.c,v 1.6 2000-04-04 15:12:47 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -45,7 +45,7 @@ extern "C" {
 /*
 *	Global variables: none-A/V-module
 */
-static KS_AVMODULE	noneavmodule = { OV_TT_NONE, NULL };
+static KS_AVMODULE	noneavmodule = { NULL, OV_TT_NONE };
 
 /*	----------------------------------------------------------------------	*/
 
@@ -625,7 +625,7 @@ void OvKssInterKsServerConnection::async_attention(
 		}
 		ok = ov_ksclient_xdr_KS_AVMODULE_RES(xdr, &avresult);
 		if(ok) {
-			if(avresult.tickettype != psvc->pavmodule->tickettype) {
+			if(avresult.type != psvc->pavmodule->type) {
 				ok = FALSE;
 			}
 		}

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.7 2000-02-10 13:07:04 dirk Exp $
+*   $Id: ov_ksserver_getep.c,v 1.8 2000-04-04 15:12:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -132,7 +132,7 @@ void ov_ksserver_getep(
 			}
 		}
 	}
-	if((params->scope_flags & KS_EPF_CHILDREN) && (params->type_mask & KS_OT_DOMAIN)) {
+	if((params->scope_flags & KS_EPF_CHILDREN) && ((params->type_mask & (KS_OT_DOMAIN | KS_OT_VARIABLE)))) {
 		/*
 		*	search through the children
 		*/
@@ -201,8 +201,9 @@ OV_RESULT ov_ksserver_getep_additem(
 	/*
 	*	test if we have access to this object
 	*/
-	access = (pvtable->m_getaccess)(pobj, pelem, pticket);
-	if(!(access & OV_AC_READWRITE)) {
+	access = pvtable->m_getaccess(pobj, pelem, pticket)
+		& pticket->vtbl->getaccess(pticket);
+	if(!(access & OV_AC_READ)) {
 		return OV_ERR_OK;
 	}
 	/*

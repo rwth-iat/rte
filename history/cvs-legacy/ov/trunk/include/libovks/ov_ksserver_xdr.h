@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.h,v 1.4 2000-02-10 13:06:55 dirk Exp $
+*   $Id: ov_ksserver_xdr.h,v 1.5 2000-04-04 15:12:44 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -684,12 +684,6 @@ OV_KSSERVER_DECL_XDRFNC(OV_STRING);
 #define ov_ksserver_xdr_OV_TIME_TYPE			ov_ksserver_xdr_OV_ENUM
 #define ov_ksserver_xdr_OV_INTERPOLATION_MODE	ov_ksserver_xdr_OV_ENUM
 #define ov_ksserver_xdr_OV_HSEL_TYPE			ov_ksserver_xdr_OV_ENUM
-
-/*
-*	XDR routines for tickets
-*/
-OV_KSSERVER_DECL_XDRFNC(OV_TICKET_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_TICKET_RES);
 
 /*
 *	XDR routine for variable values

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.5 1999-09-21 12:10:27 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.6 2000-04-04 15:12:47 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,6 +34,7 @@
 #include "libov/ov_object.h"
 #include "libov/ov_scheduler.h"
 #include "libov/ov_vendortree.h"
+#include "libov/ov_macros.h"
 
 #if OV_SYSTEM_UNIX || OV_SYSTEM_NT || OV_SYSTEM_OPENVMS
 #ifndef __cplusplus
@@ -84,6 +85,183 @@ extern "C" {
 static OvKsServer	*pserver = NULL;
 static OvPltLog		*plog = NULL;
 #endif
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	internal default VTable and functions for a default ticket
+*/
+static OV_TICKET *ov_ksserver_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type);
+static void ov_ksserver_ticket_defaultticket_deleteticket(OV_TICKET *pticket);
+static OV_BOOL ov_ksserver_ticket_defaultticket_encodereply(XDR *xdr, OV_TICKET *pticket);
+static OV_ACCESS ov_ksserver_ticket_defaultticket_getaccess(const OV_TICKET *pticket);
+
+static OV_ACCESS defaultaccess = (OV_AC_READWRITE | OV_AC_INSTANTIABLE | OV_AC_DELETEABLE
+	| OV_AC_RENAMEABLE | OV_AC_LINKABLE | OV_AC_UNLINKABLE);
+
+static OV_TICKET_VTBL defaultticketvtbl = {
+	ov_ksserver_ticket_defaultticket_createticket,
+	ov_ksserver_ticket_defaultticket_deleteticket,
+	ov_ksserver_ticket_defaultticket_encodereply,
+	ov_ksserver_ticket_defaultticket_getaccess
+};
+
+static OV_TICKET *ov_ksserver_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type) {
+	static OV_TICKET ticket = { &defaultticketvtbl };
+	switch(type) {
+		case OV_TT_NONE:
+			break;
+		case OV_TT_SIMPLE:
+			if(!ov_ksserver_xdr_string(xdr, &ticket.ticketunion.simpleticket.id,
+				KS_SIMPLEID_MAXLEN)
+			) {
+				return NULL;
+			}
+			break;
+		default:
+			return NULL;
+	}
+	ticket.type = type;
+	return &ticket;
+}
+
+static void ov_ksserver_ticket_defaultticket_deleteticket(OV_TICKET *) {}
+
+static OV_BOOL ov_ksserver_ticket_defaultticket_encodereply(XDR *, OV_TICKET *) {
+	return TRUE;
+}
+
+static OV_ACCESS ov_ksserver_ticket_defaultticket_getaccess(const OV_TICKET *) {
+	return defaultaccess; 
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	List of registered tickets
+*/
+struct OV_TICKET_TABLE_ENTRY {
+	struct OV_TICKET_TABLE_ENTRY	*pnext;
+	OV_TICKET_TYPE					type;
+	const OV_TICKET_VTBL			*vtbl;
+};
+typedef struct OV_TICKET_TABLE_ENTRY OV_TICKET_TABLE_ENTRY;
+
+static OV_TICKET_TABLE_ENTRY	*pfirstentry = NULL;
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Create a ticket from an incoming XDR stream (internal)
+*/
+OV_TICKET *ov_ksserver_ticket_create(XDR *xdr) {
+	/*
+	*	local variables
+	*/
+	OV_TICKET_TYPE 			type;
+	OV_TICKET_TABLE_ENTRY	*pentry;
+	/*
+	*	instructions
+	*/
+	if(!ov_ksserver_xdr_OV_TICKET_TYPE(xdr, &type)) {
+		return NULL;
+	}
+	/* look up if a registered ticket */
+	for(pentry=pfirstentry; pentry; pentry=pentry->pnext) {
+		if(pentry->type == type) {
+			return pentry->vtbl->createticket(xdr, type);
+		}
+	}
+	/* use default ticket */
+	if((type == OV_TT_NONE) || (type == OV_TT_SIMPLE)) {
+		return ov_ksserver_ticket_defaultticket_createticket(xdr, type);
+	}
+	return NULL;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Delete a given ticket (internal)
+*/
+void ov_ksserver_ticket_delete(OV_TICKET *pticket) {
+	if(pticket) {
+		if(pticket->vtbl) {
+			pticket->vtbl->deleteticket(pticket);
+		}
+	}
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Register a new ticket
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_ticket_register(
+	const OV_TICKET_TYPE	type,
+	const OV_TICKET_VTBL	*vtbl
+) {
+	OV_TICKET_TABLE_ENTRY *pentry;
+	if(!vtbl) {
+		return OV_ERR_BADPARAM;
+	}
+	for(pentry=pfirstentry; pentry; pentry=pentry->pnext) {
+		if(pentry->type == type) {
+			/* ticket type already registered, modify vtable entry */
+			pentry->vtbl = vtbl;
+			return OV_ERR_OK;
+		}
+	}
+	/* add new entry at the beginning of the table */
+	pentry = Ov_HeapAlloc(OV_TICKET_TABLE_ENTRY);
+	if(pentry) {
+		pentry->type = type;
+		pentry->vtbl = vtbl;
+		pentry->pnext = pfirstentry;
+		pfirstentry = pentry;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_HEAPOUTOFMEMORY;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Unregister a given ticket
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_ticket_unregister(
+	const OV_TICKET_TYPE	type
+) {
+	OV_TICKET_TABLE_ENTRY *pentry, *plast;
+	plast = NULL;
+	for(pentry=pfirstentry; pentry; pentry=pentry->pnext) {
+		if(pentry->type == type) {
+			/* remove the entry from the list */
+			if(plast) {
+				plast->pnext = pentry->pnext;
+			} else {
+				pfirstentry = pentry->pnext;
+			}
+			/*
+			*	delete the entry object
+			*/
+			Ov_HeapFree(pentry);
+			return OV_ERR_OK;
+		}
+		plast = pentry;
+	}
+	/* no such ticket type registered */
+	return OV_ERR_BADPARAM;
+}
+
+/*
+*	Set access rights for default tickets
+*/
+OV_DLLFNCEXPORT void ov_ksserver_ticket_setdefaultaccess(OV_ACCESS access) {
+	defaultaccess = access & (OV_AC_READWRITE | OV_AC_INSTANTIABLE
+		| OV_AC_DELETEABLE | OV_AC_RENAMEABLE | OV_AC_LINKABLE
+		| OV_AC_UNLINKABLE);
+}
 
 /*	----------------------------------------------------------------------	*/
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.c,v 1.4 2000-02-10 13:07:04 dirk Exp $
+*   $Id: ov_ksserver_xdr.c,v 1.5 2000-04-04 15:12:53 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -280,35 +280,6 @@ OV_KSSERVER_DECL_XDRFNC(OV_TIME_SPAN) {
 */
 OV_KSSERVER_DECL_XDRFNC(OV_STRING) {
 	return ov_ksserver_xdr_string(xdrs, objp, ~0);
-}
-
-/*	----------------------------------------------------------------------	*/
-
-/*
-*	XDR routine for OV_TICKET_PAR
-*/
-OV_KSSERVER_DECL_XDRFNC(OV_TICKET_PAR) {
-	if(!ov_ksserver_xdr_OV_TICKET_TYPE(xdrs, &objp->tickettype)) {
-		return FALSE;
-	}
-	switch(objp->tickettype) {
-	case OV_TT_NONE:
-		return TRUE;
-	case OV_TT_SIMPLE:
-		return ov_ksserver_xdr_string(xdrs, &objp->id, KS_SIMPLEID_MAXLEN);
-	default:
-		break;
-	}
-	return FALSE;
-}
-
-/*	----------------------------------------------------------------------	*/
-
-/*
-*	XDR routine for OV_TICKET_RES
-*/
-OV_KSSERVER_DECL_XDRFNC(OV_TICKET_RES) {
-	return ov_ksserver_xdr_OV_TICKET_TYPE(xdrs, &objp->tickettype);
 }
 
 /*	----------------------------------------------------------------------	*/

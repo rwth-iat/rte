@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.4 1999-08-30 15:24:57 dirk Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.5 2000-04-04 15:12:48 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -131,6 +131,10 @@ void ov_ksserver_createobject(
 		/*
 		*	check access rights
 		*/
+		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_INSTANTIABLE)) {
+			presult->result = OV_ERR_NOACCESS;
+			continue;
+		}
 		if(!(ov_object_getaccess(path.elements[path.size-1].pobj,
 			&path.elements[path.size-1], pticket) & OV_AC_INSTANTIABLE)
 		) {

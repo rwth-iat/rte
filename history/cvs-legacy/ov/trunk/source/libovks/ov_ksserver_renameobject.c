@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_renameobject.c,v 1.2 1999-08-30 15:24:57 dirk Exp $
+*   $Id: ov_ksserver_renameobject.c,v 1.3 2000-04-04 15:12:52 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -101,6 +101,10 @@ void ov_ksserver_renameobject(
 		/*
 		*	test if we have rename access on the object
 		*/
+		if(!(pticket->vtbl->getaccess(pticket) & OV_AC_RENAMEABLE)) {
+			*presult = OV_ERR_NOACCESS;
+			continue;
+		}
 		Ov_GetVTablePtr(ov_object, pvtable, pobj);
 		if(!pvtable) {
 			pvtable = (OV_VTBLPTR_ov_object)pclass_ov_object->v_pvtable;
