@@ -182,6 +182,13 @@ typedef void ks_dummy_typedef
 
 //////////////////////////////////////////////////////////////////////
 
+#define KS_IMPL_XDRCTOR(classname)                         \
+    classname::classname(XDR *xdr, bool &ok) {             \
+        ok = xdrDecode(xdr);                               \
+    }
+
+//////////////////////////////////////////////////////////////////////
+
 #define KS_IMPL_XDRNEW(classname)                          \
     classname * classname::xdrNew(XDR * xdrs)              \
     {                                                      \
