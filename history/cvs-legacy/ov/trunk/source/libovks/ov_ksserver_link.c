@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_link.c,v 1.6 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_ksserver_link.c,v 1.7 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -263,8 +263,7 @@ OV_RESULT ov_ksserver_link_linkitem(
 		}
 		return plinkelem->elemunion.passoc->v_linkfnc(pparent, pchild, parenthint,
 			prelparent, childhint, prelchild);
-	}
-	return OV_ERR_NOACCESS;
+	} else	return ov_association_link(plinkelem->elemunion.passoc, pparent, pchild, parenthint,	prelparent, childhint, prelchild);
 }
 
 /*	----------------------------------------------------------------------	*/

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.6 2000-04-13 09:13:13 dirk Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.7 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -68,6 +68,7 @@ void ov_ksserver_createobject(
 	OV_INSTPTR_ov_domain			pdom;
 	OV_INSTPTR_ov_object			prelchild;
 	OV_INSTPTR_ov_object			pobj;
+	OV_VTBLPTR_ov_object			pvtableobj;
 	OV_STRING						objpath, identifier;
 	OV_PLACEMENT_HINT				hint;
 	OV_VTBLPTR_ov_domain			pvtable;
@@ -138,7 +139,9 @@ void ov_ksserver_createobject(
 		/*
 		*	check access rights
 		*/
-		if(!(ov_object_getaccess(path.elements[path.size-1].pobj,
+		Ov_GetVTablePtr(ov_object, pvtableobj, path.elements[path.size-1].pobj);
+		if (!pvtableobj) pvtableobj = pclass_ov_object->v_pvtable;
+		if(!(pvtableobj->m_getaccess(path.elements[path.size-1].pobj,
 			&path.elements[path.size-1], pticket) & OV_AC_INSTANTIABLE)
 		) {
 			presult->result = OV_ERR_BADFACTORY;

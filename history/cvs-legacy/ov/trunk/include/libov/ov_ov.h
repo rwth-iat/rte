@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.17 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_ov.h,v 1.18 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -112,14 +112,14 @@ typedef OV_ENUM OV_STATE;
 #define OV_VT_TIME_PV		(KS_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 #define OV_VT_TIME_SPAN_PV	(KS_VT_TIME_SPAN | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 
-#define OV_VT_BOOL_VEC_PV	(KS_VT_BOOL_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_INT_VEC_PV	(KS_VT_INT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_UINT_VEC_PV	(KS_VT_UINT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_SINGLE_VEC_PV	(KS_VT_SINGLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_DOUBLE_VEC_PV	(KS_VT_DOUBLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_STRING_VEC_PV	(KS_VT_STRING_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_TIME_VEC_PV	(KS_VT_TIME_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_TIME_SPAN_VEC_PV	(KS_VT_TIME_SPAN_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_BOOL_PV_VEC	(KS_VT_BOOL_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_INT_PV_VEC	(KS_VT_INT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_UINT_PV_VEC	(KS_VT_UINT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_SINGLE_PV_VEC	(KS_VT_SINGLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_DOUBLE_PV_VEC	(KS_VT_DOUBLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_STRING_PV_VEC	(KS_VT_STRING_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_PV_VEC	(KS_VT_TIME_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_SPAN_PV_VEC	(KS_VT_TIME_SPAN_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 
 #define OV_VT_ANY		ENUMVAL(KS_VAR_TYPE, 0x000000ff)
 
@@ -278,49 +278,49 @@ typedef struct {				/* boolean process value */
 	OV_BOOL_VEC	value;
 	OV_STATE	state;
 	OV_TIME		time;
-}	OV_BOOL_VEC_PV;
+}	OV_BOOL_PV_VEC;
 
 typedef struct {				/* integer process value */
 	OV_INT_VEC	value;
 	OV_STATE	state;
 	OV_TIME		time;
-}	OV_INT_VEC_PV;
+}	OV_INT_PV_VEC;
 
 typedef struct {				/* unsigned integer process value */
 	OV_UINT_VEC	value;
 	OV_STATE	state;
 	OV_TIME		time;
-}	OV_UINT_VEC_PV;
+}	OV_UINT_PV_VEC;
 
 typedef struct {				/* single precision floating point process value */
 	OV_SINGLE_VEC	value;
 	OV_STATE	state;
 	OV_TIME		time;
-}	OV_SINGLE_VEC_PV;
+}	OV_SINGLE_PV_VEC;
 
 typedef struct {				/* double precision floating point process value */
 	OV_DOUBLE_VEC	value;
 	OV_STATE	state;
 	OV_TIME		time;
-}	OV_DOUBLE_VEC_PV;
+}	OV_DOUBLE_PV_VEC;
 
 typedef struct {				/* string process value */
 	OV_STRING_VEC	value;
 	OV_STATE	state;
 	OV_TIME		time;
-}	OV_STRING_VEC_PV;
+}	OV_STRING_PV_VEC;
 
 typedef struct {				/* time process value */
 	OV_TIME_VEC	value;
 	OV_STATE	state;
 	OV_TIME		time;
-}	OV_TIME_VEC_PV;
+}	OV_TIME_PV_VEC;
 
 typedef struct {				/* time span process value */
 	OV_TIME_SPAN_VEC value;
 	OV_STATE	 state;
 	OV_TIME		 time;
-}	OV_TIME_SPAN_VEC_PV;
+}	OV_TIME_SPAN_PV_VEC;
 
 /*
 *	OV_STRUCT datatype

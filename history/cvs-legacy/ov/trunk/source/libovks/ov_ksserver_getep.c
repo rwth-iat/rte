@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.12 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_ksserver_getep.c,v 1.13 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -178,7 +178,7 @@ void ov_ksserver_getep(
 			mask |= OV_ET_OBJECT | OV_ET_VARIABLE | OV_ET_MEMBER; 
 		}
 		if(params->type_mask & KS_OT_VARIABLE) {
-			mask |= OV_ET_VARIABLE;
+			mask |= OV_ET_VARIABLE | OV_ET_MEMBER;
 		}
 		if(params->type_mask & KS_OT_LINK) {
 			mask |= OV_ET_PARENTLINK | OV_ET_CHILDLINK;
@@ -478,7 +478,7 @@ OV_RESULT ov_ksserver_getep_additem(
 //				Ov_GetParent(ov_instantiation, pobj)), version);
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier
 				= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,
-				Ov_GetParent(ov_instantiation, pobj)), version);
+				Ov_GetParent(ov_construction, pelem->elemunion.pvar)), version);
 			return OV_ERR_OK;
 		default:
 			break;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.18 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.19 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1501,10 +1501,18 @@ void ov_codegen_printmemberdefobj(
 		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
 		break;
 	default:
-		fprintf(fp, "    (OV_STRING)NULL,\n");
-		fprintf(fp, "    (OV_STRING)NULL,\n");
-		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
-			ov_codegen_getvartypetext(pvar->vartype));
+		if (pvar->veclen == 0) {
+			fprintf(fp, "    (OV_STRING)NULL,\n");
+			fprintf(fp, "    (OV_STRING)NULL,\n");
+			fprintf(fp, "    sizeof(%s_VEC),\n",
+				ov_codegen_getvartypetext(pvar->vartype));
+		}
+		else {
+			fprintf(fp, "    (OV_STRING)NULL,\n");
+			fprintf(fp, "    (OV_STRING)NULL,\n");
+			fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
+				ov_codegen_getvartypetext(pvar->vartype));
+		}
 		break;
 	}
 	fprintf(fp, "    offsetof(OV_STRUCT_%s_%s, v_%s),\n", plib->identifier,
@@ -1720,10 +1728,18 @@ void ov_codegen_printvardefobj(
 		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
 		break;
 	default:
-		fprintf(fp, "    (OV_STRING)NULL,\n");
-		fprintf(fp, "    (OV_STRING)NULL,\n");
-		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
-			ov_codegen_getvartypetext(pvar->vartype));
+		if (pvar->veclen == 0) {
+			fprintf(fp, "    (OV_STRING)NULL,\n");
+			fprintf(fp, "    (OV_STRING)NULL,\n");
+			fprintf(fp, "    sizeof(%s_VEC),\n",
+				ov_codegen_getvartypetext(pvar->vartype));
+		}
+		else {
+			fprintf(fp, "    (OV_STRING)NULL,\n");
+			fprintf(fp, "    (OV_STRING)NULL,\n");
+			fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
+				ov_codegen_getvartypetext(pvar->vartype));
+		}
 		break;
 	}
 	if(pvar->varprops & OV_VP_DERIVED) {
@@ -1833,12 +1849,30 @@ OV_STRING ov_codegen_getvartypetext(
 	case OV_VT_TIME_SPAN:
 	case OV_VT_TIME_SPAN_VEC:
 		return "OV_TIME_SPAN";
+	case OV_VT_BOOL_PV_VEC:
 	case OV_VT_BOOL_PV:
 		return "OV_BOOL_PV";
+	case OV_VT_INT_PV_VEC:
 	case OV_VT_INT_PV:
 		return "OV_INT_PV";
+	case OV_VT_UINT_PV_VEC:
+	case OV_VT_UINT_PV:
+		return "OV_UINT_PV";
+	case OV_VT_SINGLE_PV_VEC:
 	case OV_VT_SINGLE_PV:
 		return "OV_SINGLE_PV";
+	case OV_VT_DOUBLE_PV_VEC:
+	case OV_VT_DOUBLE_PV:
+		return "OV_DOUBLE_PV";
+	case OV_VT_STRING_PV_VEC:
+	case OV_VT_STRING_PV:
+		return "OV_STRING_PV";
+	case OV_VT_TIME_PV_VEC:
+	case OV_VT_TIME_PV:
+		return "OV_TIME_PV";
+	case OV_VT_TIME_SPAN_PV_VEC:
+	case OV_VT_TIME_SPAN_PV:
+		return "OV_TIME_SPAN_PV";
 	case OV_VT_ANY:
 		return "OV_ANY";
 	default:
@@ -1888,8 +1922,14 @@ OV_STRING ov_codegen_getvartypetextsmall(
 		return "bool_pv";
 	case OV_VT_INT_PV:
 		return "int_pv";
+	case OV_VT_UINT_PV:
+		return "uint_pv";
 	case OV_VT_SINGLE_PV:
 		return "single_pv";
+	case OV_VT_DOUBLE_PV:
+		return "double_pv";
+	case OV_VT_STRING_PV:
+		return "string_pv";
 	default:
 		fprintf(stderr, "internal error -- sorry.\n");
 		exit(EXIT_FAILURE);

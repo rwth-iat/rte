@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.9 2002-02-01 14:43:14 ansgar Exp $
+*   $Id: ov.ovm,v 1.10 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -29,7 +29,7 @@
 */
 
 LIBRARY ov
-	VERSION = "1.5.1";
+	VERSION = "1.6.0";
 	AUTHOR = "Dirk Meyer/Ansgar Münnemann";
 	COPYRIGHT = "Copyright (C) 1998-2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
 	COMMENT = "Metamodel of ACPLT/OV";
@@ -74,7 +74,6 @@ LIBRARY ov
 	*/
 	CLASS library : CLASS ov/domain
 		IS_INSTANTIABLE;
-		IS_FINAL;
 		VARIABLES
 			version : STRING HAS_GET_ACCESSOR;
 			author : STRING HAS_GET_ACCESSOR;
@@ -94,7 +93,6 @@ LIBRARY ov
 	*/
 	CLASS structure : CLASS ov/domain
 		IS_INSTANTIABLE;
-		IS_FINAL;
 		VARIABLES
 			size : UINT;
 		END_VARIABLES;
@@ -106,7 +104,6 @@ LIBRARY ov
 	*/	
 	CLASS class : CLASS ov/domain
 		IS_INSTANTIABLE;
-		IS_FINAL;
 		VARIABLES
 			comment : STRING HAS_GET_ACCESSOR;
 			flags : UINT HAS_GET_ACCESSOR;
@@ -124,7 +121,6 @@ LIBRARY ov
 	*/	
 	CLASS association : CLASS ov/object
 		IS_INSTANTIABLE;
-		IS_FINAL;
 		VARIABLES
 			assoctype : INT HAS_GET_ACCESSOR;
 			assocprops: INT HAS_GET_ACCESSOR;
@@ -148,7 +144,6 @@ LIBRARY ov
 	*/
 	CLASS variable : CLASS ov/object
 		IS_INSTANTIABLE;
-		IS_FINAL;
 		VARIABLES
 			vartype : INT HAS_GET_ACCESSOR;
 			ctypename : STRING HAS_GET_ACCESSOR;
@@ -171,7 +166,6 @@ LIBRARY ov
 	*/
 	CLASS part : CLASS ov/object
 		IS_INSTANTIABLE;
-		IS_FINAL;
 		VARIABLES
 			offset : UINT;
 			flags  : UINT HAS_GET_ACCESSOR;
@@ -184,7 +178,6 @@ LIBRARY ov
 	*/	
 	CLASS operation : CLASS ov/object
 		IS_INSTANTIABLE;
-		IS_FINAL;
 		VARIABLES
 			opprops : INT HAS_GET_ACCESSOR;
 			cfnctypename : STRING HAS_GET_ACCESSOR;

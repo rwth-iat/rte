@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.h,v 1.4 2000-12-15 15:40:14 dirk Exp $
+*   $Id: ov_element.h,v 1.5 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -70,6 +70,8 @@ typedef struct {
 	struct OV_INST_ov_object	*pobj;		/* object this element belongs to */
 	/* in case element is a variable or member of a variable: */
 	OV_BYTE						*pvalue;	/* pointer to variable value */
+	/* in case element is a member of a variable: */
+	struct OV_INST_ov_variable		*pvar;		/* pointer to class variable  */
 	/* in different cases: */
 	union {
 		/* generic definition object pointer */
@@ -98,7 +100,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_element_searchchild(
 *	Search part of an element ("parent.part" in a path)
 */
 OV_DLLFNCEXPORT OV_RESULT ov_element_searchpart(
-	const OV_ELEMENT	*pparent,
+	OV_ELEMENT	*pparent,
 	OV_ELEMENT			*ppart,
 	OV_ELEM_TYPE		mask,
 	OV_STRING			identifier
@@ -116,7 +118,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_element_getnextchild(
 *	Get next part of an element ("parent.part" in a path)
 */
 OV_DLLFNCEXPORT OV_RESULT ov_element_getnextpart(
-	const OV_ELEMENT	*pparent,
+	OV_ELEMENT	*pparent,
 	OV_ELEMENT			*ppart,
 	OV_ELEM_TYPE		mask
 );

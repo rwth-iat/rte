@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.8 2002-02-01 14:43:59 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.9 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -395,8 +395,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 	*/
 	OV_UINT					classes = 0;
 	OV_INSTPTR_ov_class		pclass;
+	OV_INSTPTR_ov_class		pderivedclass;
 	OV_STRING				*pstring = NULL;
 	OV_INSTPTR_ov_object	pclassobj;
+	OV_VTBLPTR_ov_object	pvtable;
 	OV_ELEMENT				element;
 	/*
 	*	count instantiable classes
@@ -407,6 +409,22 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 		element.pobj = pclassobj;
 		if(ov_object_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
 			classes++;
+		}
+	}
+	pderivedclass = pclass_ov_class;
+	Ov_ForEachChild(ov_inheritance, pclass_ov_class, pderivedclass) {
+		Ov_ForEachChild(ov_instantiation, pderivedclass, pclassobj) {
+			element.elemtype = OV_ET_OBJECT;
+			element.pobj = pclassobj;
+			Ov_GetVTablePtr(ov_object, pvtable, pclassobj);
+			if (pvtable) { 
+				if(pvtable->m_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE)
+					classes++;
+			}
+			else {
+				if(ov_object_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE)
+					classes++;
+			}
 		}
 	}
 	/*
@@ -434,6 +452,32 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 				return OV_ERR_HEAPOUTOFMEMORY;
 			}
 			pstring++;
+		}
+	}
+	pderivedclass = pclass_ov_class;
+	Ov_ForEachChild(ov_inheritance, pclass_ov_class, pderivedclass) {
+		Ov_ForEachChild(ov_instantiation, pderivedclass, pclassobj) {
+			element.elemtype = OV_ET_OBJECT;
+			element.pobj = pclassobj;
+			Ov_GetVTablePtr(ov_object, pvtable, pclassobj);
+			if (pvtable) { 
+				if(pvtable->m_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
+					*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pclassobj), 2);
+					if(!*pstring) {
+						return OV_ERR_HEAPOUTOFMEMORY;
+					}
+					pstring++;
+				}
+			}
+			else {
+				if(ov_object_getaccess(pclassobj, &element, NULL) & OV_AC_INSTANTIABLE) {
+					*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pclassobj), 2);
+					if(!*pstring) {
+						return OV_ERR_HEAPOUTOFMEMORY;
+					}
+					pstring++;
+				}
+			}
 		}
 	}
 	return OV_ERR_OK;
@@ -593,12 +637,19 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
 	*/
 	OV_UINT					libs = 0;
 	OV_INSTPTR_ov_library	plib;
+	OV_INSTPTR_ov_class	pclass;
 	OV_STRING				*pstring = NULL;
 	/*
 	*	count associations
 	*/
 	Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plib, ov_library) {
 		libs++;
+	}
+	pclass = pclass_ov_library;
+	Ov_ForEachChild(ov_inheritance, pclass_ov_library, pclass) {
+		Ov_ForEachChildEx(ov_instantiation, pclass, plib, ov_library) {
+			libs++;
+		}
 	}
 	/*
 	*	allocate memory for the library paths
@@ -621,6 +672,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
 			return OV_ERR_HEAPOUTOFMEMORY;
 		}
 		pstring++;
+	}
+	pclass = pclass_ov_library;
+	Ov_ForEachChild(ov_inheritance, pclass_ov_library, pclass) {
+		Ov_ForEachChildEx(ov_instantiation, pclass, plib, ov_library) {
+			*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, plib), 2);
+			if(!*pstring) {
+				return OV_ERR_HEAPOUTOFMEMORY;
+			}
+			pstring++;
+		}
 	}
 	return OV_ERR_OK;
 }
@@ -724,12 +785,19 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 	*/
 	OV_UINT					structs = 0;
 	OV_INSTPTR_ov_structure	pstruct;
+	OV_INSTPTR_ov_class	pclass;
 	OV_STRING				*pstring = NULL;
 	/*
 	*	count associations
 	*/
 	Ov_ForEachChildEx(ov_instantiation, pclass_ov_structure, pstruct, ov_structure) {
 		structs++;
+	}
+	pclass = pclass_ov_structure;
+	Ov_ForEachChild(ov_inheritance, pclass_ov_structure, pclass) {
+		Ov_ForEachChildEx(ov_instantiation, pclass, pstruct, ov_structure) {
+			structs++;
+		}
 	}
 	/*
 	*	allocate memory for the structure paths
@@ -752,6 +820,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 			return OV_ERR_HEAPOUTOFMEMORY;
 		}
 		pstring++;
+	}
+	pclass = pclass_ov_structure;
+	Ov_ForEachChild(ov_inheritance, pclass_ov_structure, pclass) {
+		Ov_ForEachChildEx(ov_instantiation, pclass, pstruct, ov_structure) {
+			*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pstruct), 2);
+			if(!*pstring) {
+				return OV_ERR_HEAPOUTOFMEMORY;
+			}
+			pstring++;
+		}
 	}
 	return OV_ERR_OK;
 }

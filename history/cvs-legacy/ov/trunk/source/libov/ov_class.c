@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.17 2002-01-24 16:37:00 ansgar Exp $
+*   $Id: ov_class.c,v 1.18 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1159,7 +1159,7 @@ void ov_class_deleteobject_cleanupstruct(
 	*/
 	while(TRUE) {
 		Ov_AbortIfNot(Ov_OK(ov_element_getnextpart(pelem, &child,
-			OV_ET_VARIABLE)));
+			OV_ET_MEMBER)));
 		if(child.elemtype == OV_ET_NONE) {
 			break;
 		}

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.28 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_object.c,v 1.29 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -109,7 +109,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
 		}
 		if (child.elemtype == OV_ET_VARIABLE) {
 			init = child.elemunion.pvar->v_initialvalue.value;
-			switch (init.vartype) {
+			switch (init.vartype & OV_VT_KSMASK) {
 				case OV_VT_VOID:
 					break;
 				case OV_VT_BYTE_VEC:
@@ -354,6 +354,7 @@ void OV_DLLFNCEXPORT ov_object_shutdown(
 *	Default method for getting the access rights
 *	of an object or one of its elements
 */
+
 OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 	OV_INSTPTR_ov_object		pobj,
 	const OV_ELEMENT			*pelem,
@@ -427,6 +428,18 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 		}
 		return access;
 	case OV_ET_MEMBER:
+		access = OV_AC_NONE;
+		if (!pelem->pvar) return access;
+		if (((activitylock) || (pelem->pvar->v_varprops & OV_VP_GETACCESSOR)) && (!(pelem->pvar->v_varprops & OV_VP_DERIVED))) {
+			access |= OV_AC_READ;
+		}
+		if((pelem->pvar->v_varprops & OV_VP_SETACCESSOR)
+			&& ((pobj->v_objectstate & OV_OS_INIT) 
+				|| !(pelem->pvar->v_varprops & OV_VP_STATIC))
+		) {
+			access |= OV_AC_WRITE;
+		}
+		return access;
 	case OV_ET_VARIABLE:
 		access = OV_AC_NONE;
 		if (activitylock) {
@@ -576,6 +589,22 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 		}																	\
 		return OV_ERR_OK
 
+#define Ov_Object_GetVarDynVecPVValue(vartype, VARTYPE)							\
+	case OV_VT_##VARTYPE##_PV_VEC: {											\
+			OV_##VARTYPE##_PV_VEC *pvalue; 										\
+			if((pelem->elemunion.pvar->v_getfnc) && (!activitylock)){							\
+				pvalue = ((OV_FNCPTR_GETPVVEC(VARTYPE))						\
+					pelem->elemunion.pvar->v_getfnc)(pobj);					\
+			} else {														\
+				pvalue = (OV_##VARTYPE##_PV_VEC*)pelem->pvalue;					\
+			}																\
+			if (pvalue) pvarcurrprops->value.valueunion.val_##vartype##_vec = pvalue->value;	\
+			if (pvalue) pvarcurrprops->state = (pvalue->state == OV_ST_NOTSUPPORTED)	\
+				?(OV_ST_UNKNOWN):(pvalue->state);							\
+			if (pvalue) pvarcurrprops->time = pvalue->time;								\
+		}																	\
+		return OV_ERR_OK
+
 #define Ov_Object_GetVarDynVecValue(vartype, VARTYPE)						\
 	case OV_VT_##VARTYPE##_VEC:												\
 		if((pelem->elemunion.pvar->v_getfnc) && (!activitylock)) {								\
@@ -620,7 +649,23 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 	const OV_ELEMENT		*pelem,
 	OV_ANY					*pvarcurrprops
 ) {
+//	OV_INSTPTR_ov_variable	 	pvar;
+	OV_ELEMENT			elem;
+	OV_BYTE*			retvalue;
+	OV_UINT				dist;
+
 	switch(pelem->elemtype) {
+	case OV_ET_MEMBER:
+		if (!pelem->pvar) return OV_ERR_GENERIC;
+		if((pelem->pvar->v_getfnc) && (!activitylock)) {
+			retvalue = (OV_BYTE*)((pelem->pvar->v_getfnc)(pobj));
+			elem.pobj = pobj;
+			elem.elemtype = OV_ET_VARIABLE;
+			elem.elemunion.pvar = pelem->elemunion.pvar;
+			dist = pelem->pvalue - (OV_BYTE*) pobj;
+			elem.pvalue = retvalue + dist  - pelem->pvar->v_offset;
+			return ov_object_getvar(pobj, &elem, pvarcurrprops);
+		}
 	case OV_ET_VARIABLE:
 		/*
 		*	enter default variable type, state and time stamp
@@ -694,14 +739,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 			Ov_Object_GetVarDynVecValue(string, STRING);
 			Ov_Object_GetVarDynVecValue(time, TIME);
 			Ov_Object_GetVarDynVecValue(time_span, TIME_SPAN);
-			Ov_Object_GetVarPVValue(bool_vec, BOOL_VEC);
-			Ov_Object_GetVarPVValue(int_vec, INT_VEC);
-			Ov_Object_GetVarPVValue(uint_vec, UINT_VEC);
-			Ov_Object_GetVarPVValue(single_vec, SINGLE_VEC);
-			Ov_Object_GetVarPVValue(double_vec, DOUBLE_VEC);
-			Ov_Object_GetVarPVValue(string_vec, STRING_VEC);
-			Ov_Object_GetVarPVValue(time_vec, TIME_VEC);
-			Ov_Object_GetVarPVValue(time_span_vec, TIME_SPAN_VEC);
+			Ov_Object_GetVarDynVecPVValue(bool, BOOL);
+			Ov_Object_GetVarDynVecPVValue(int, INT);
+			Ov_Object_GetVarDynVecPVValue(uint, UINT);
+			Ov_Object_GetVarDynVecPVValue(single, SINGLE);
+			Ov_Object_GetVarDynVecPVValue(double, DOUBLE);
+			Ov_Object_GetVarDynVecPVValue(string, STRING);
+			Ov_Object_GetVarDynVecPVValue(time, TIME);
+			Ov_Object_GetVarDynVecPVValue(time_span, TIME_SPAN);
 			case OV_VT_BYTE_VEC:
 				/*
 				*	dynamic vectors of C-type variables are not available
@@ -790,6 +835,25 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 		((OV_##VARTYPE##_PV*)pelem->pvalue)->time = pvarcurrprops->time;	\
 		return OV_ERR_OK
 		
+#define Ov_Object_SetVarDynVecPVValue(vartype, VARTYPE)							\
+	case OV_VT_##VARTYPE##_PV_VEC:												\
+		if((pelem->elemunion.pvar->v_setfnc) && (!activitylock)) {								\
+			OV_##VARTYPE##_PV_VEC var;											\
+			var.value = pvarcurrprops->value.valueunion.val_##vartype##_vec;		\
+			var.state = (pvarcurrprops->state == OV_ST_NOTSUPPORTED)		\
+				?(OV_ST_UNKNOWN):(pvarcurrprops->state);					\
+			var.time = pvarcurrprops->time;									\
+			return ((OV_FNCPTR_SETPVVEC(VARTYPE))pelem->elemunion.pvar			\
+				->v_setfnc)(pobj, &var);									\
+		}																	\
+		((OV_##VARTYPE##_PV_VEC*)pelem->pvalue)->value							\
+			= pvarcurrprops->value.valueunion.val_##vartype##_vec;				\
+		((OV_##VARTYPE##_PV_VEC*)pelem->pvalue)->state 							\
+			= (pvarcurrprops->state == OV_ST_NOTSUPPORTED)					\
+			?(OV_ST_UNKNOWN):(pvarcurrprops->state);						\
+		((OV_##VARTYPE##_PV_VEC*)pelem->pvalue)->time = pvarcurrprops->time;	\
+		return OV_ERR_OK
+		
 #define Ov_Object_SetVarDynVecValue(vartype, VARTYPE)						\
 	case OV_VT_##VARTYPE##_VEC:												\
 		if((pelem->elemunion.pvar->v_setfnc) && (!activitylock)) {								\
@@ -829,7 +893,34 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_setvar(
 	const OV_ELEMENT		*pelem,
 	const OV_ANY			*pvarcurrprops
 ) {
+//	OV_INSTPTR_ov_variable	 	pvar;
+	OV_ELEMENT			elem;
+	OV_BYTE*			value;
+	OV_BYTE*			oldvalue;
+	OV_UINT				i;
+	OV_UINT				dist;
+
 	switch(pelem->elemtype) {
+	case OV_ET_MEMBER:
+		if (!pelem->pvar) return  OV_ERR_GENERIC;
+		if((pelem->pvar->v_setfnc) && (!activitylock)) {
+			value = (OV_BYTE*) ov_memstack_alloc(pelem->pvar->v_size);
+
+			if((pelem->pvar->v_getfnc) && (!activitylock)) 
+				oldvalue = (OV_BYTE*)((pelem->pvar->v_getfnc)(pobj));
+			else oldvalue = (OV_BYTE*)pobj + pelem->pvar->v_offset;
+
+			for (i=0; i<pelem->pvar->v_size; i++) value[i] = oldvalue[i];
+
+			elem.pobj = pobj;
+			dist = value - (OV_BYTE*)pobj;
+			elem.pvalue = pelem->pvalue - pelem->pvar->v_offset + dist;
+			elem.elemtype = OV_ET_VARIABLE;
+			elem.elemunion.pvar = pelem->elemunion.pvar;
+			if (!Ov_Fail(ov_object_setvar(pobj, &elem, pvarcurrprops)))
+				return (pelem->pvar->v_setfnc) (pobj, value);
+			return OV_ERR_BADTYPE;
+		}
 	case OV_ET_VARIABLE:
 		/*
 		*	if not an ANY variable, check the variable type

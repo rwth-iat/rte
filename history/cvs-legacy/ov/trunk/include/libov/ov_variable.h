@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_variable.h,v 1.6 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_variable.h,v 1.7 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -74,6 +74,14 @@ typedef struct OV_VARIABLE_DEF OV_VARIABLE_DEF;
 	)
 	
 /*
+*	Function prototype for reading a variable value (vector-PV)
+*/
+#define OV_FNCPTR_GETPVVEC(VARTYPE)			\
+	OV_##VARTYPE##_PV_VEC* (*)(					\
+		OV_INSTPTR				pobj		\
+	)
+	
+/*
 *	Function prototype for reading a variable value (vector)
 */
 #define OV_FNCPTR_GETVEC(VARTYPE)			\
@@ -107,6 +115,15 @@ typedef struct OV_VARIABLE_DEF OV_VARIABLE_DEF;
 	OV_RESULT (*)(							\
 		OV_INSTPTR				pobj,		\
 		const OV_##VARTYPE##_PV	*pvalue		\
+	)
+
+/*
+*	Function prototype for writing a variable value (vector-PV)
+*/
+#define OV_FNCPTR_SETPVVEC(VARTYPE)			\
+	OV_RESULT (*)(							\
+		OV_INSTPTR				pobj,		\
+		const OV_##VARTYPE##_PV_VEC	*pvalue		\
 	)
 
 /*

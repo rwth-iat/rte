@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.c,v 1.9 2002-04-09 16:21:11 ansgar Exp $
+*   $Id: ov_element.c,v 1.10 2002-05-15 12:41:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -87,7 +87,7 @@ NOCHILD:
 *	Search part of an element ("parent.part" in a path)
 */
 OV_DLLFNCEXPORT OV_RESULT ov_element_searchpart(
-	const OV_ELEMENT	*pparent,
+	OV_ELEMENT	*pparent,
 	OV_ELEMENT			*ppart,
 	OV_ELEM_TYPE		mask,
 	OV_STRING			identifier
@@ -112,12 +112,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_element_searchpart(
 		/*
 		*	search part of a variable
 		*/
+		pparent->pvar = pparent->elemunion.pvar;
 		/* fall into... */
 	case OV_ET_MEMBER:
 		/*
 		*	search part of a structure member
 		*/
 		ppart->pobj = pparent->pobj;
+		ppart->pvar = pparent->pvar;
 		return ov_element_searchpart_variable(pparent->pobj,
 			pparent->elemunion.pvar, pparent->pvalue, ppart, mask, identifier);
 	default:
@@ -195,7 +197,7 @@ NOCHILD:
 *	Get next part of an element ("parent.part" in a path)
 */
 OV_DLLFNCEXPORT OV_RESULT ov_element_getnextpart(
-	const OV_ELEMENT	*pparent,
+	OV_ELEMENT	*pparent,
 	OV_ELEMENT			*ppart,
 	OV_ELEM_TYPE		mask
 ) {
@@ -220,11 +222,13 @@ OV_DLLFNCEXPORT OV_RESULT ov_element_getnextpart(
 		*	get next part of a variable
 		*/
 		/* fall into... */
+		pparent->pvar = pparent->elemunion.pvar;
 	case OV_ET_MEMBER:
 		/*
 		*	get next part of a structure member
 		*/
 		ppart->pobj = pparent->pobj;
+		ppart->pvar = pparent->pvar;
 		return ov_element_getnextpart_variable(pparent->pobj,
 			pparent->elemunion.pvar, pparent->pvalue, ppart, mask);
 	default:
@@ -607,7 +611,7 @@ OV_RESULT ov_element_getnextpart_variable(
 	*/
 NOPART:
 	ppart->elemtype = OV_ET_NONE;
-	ppart->pobj = NULL;
+	ppart->elemunion.pobj = NULL;
 	return OV_ERR_OK;
 }
 
