@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.3 1997-09-13 08:19:41 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.4 1997-09-15 10:57:13 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -180,7 +180,7 @@ KscPackage * buildPackage(const PltArray<PltString> & array,
 {
     KscPackage &pkg = *(new KscPackage);
     bool random = (maxsize!=0);
-    size_t size = random ? (size_t)(frand()*(maxsize+1)) : array.size();
+    size_t size = random ? (size_t)(frand()*maxsize+1) : array.size();
     if (verbosity > 1) {
         cout << "Building package with " << size << " variables..." ;
         cout.flush();
@@ -228,7 +228,7 @@ void keepSpinning(const PltArray<PltString> & names,
     int i=0;
     while (updates == -1 || i < updates) {
         ++i;
-        if (frand() > prand) {
+        if (frand() < prand) {
             // new package
             delete ppkg;
             ppkg = buildPackage(names, maxsize);
@@ -284,6 +284,7 @@ void keepSpinning(const PltArray<PltString> & names,
             cout << endl;
         }
     }
+    delete ppkg;
 } // keepSpinning
 
 

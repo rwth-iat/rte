@@ -2,7 +2,6 @@
 
 CXX_LIBKS_SOURCES = \
 	array.cpp \
-	avticket.cpp \
 	from_local.cpp \
 	path.cpp \
 	props.cpp \
@@ -20,6 +19,7 @@ CXX_LIBKS_SOURCES = \
 	templates.cpp
 
 CXX_LIBKSSVR_SOURCES = \
+	avticket.cpp \
 	inaddrset.cpp \
 	manager.cpp \
 	server.cpp \
@@ -41,7 +41,6 @@ CXX_LIBKSCLN_SOURCES= \
 
 LIBKS_OBJECTS1 = \
 	array$(O) \
-	avticket$(O) \
 	from_local$(O) \
 	path$(O) \
 	props$(O) \
@@ -62,6 +61,7 @@ LIBKS_OBJECTS2 = \
 LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2)
 
 LIBKSSVR_OBJECTS = \
+	avticket$(O) \
         inaddrset$(O) \
 	manager$(O) \
 	server$(O) \

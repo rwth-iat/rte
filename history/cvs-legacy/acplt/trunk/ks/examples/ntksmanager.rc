@@ -24,6 +24,7 @@ FILETYPE VFT_APP
    VALUE "FileVersion", "1.00\000"
    VALUE "InternalName", "ntksmanager\000"
    VALUE "LegalCopyright", "Copyright © PLT 1997\000\000"
+   VALUE "LegalTrademarks", "ACPLT"
    VALUE "OriginalFilename", "NTKSMANAGER.EXE\000"
    VALUE "ProductName", "ACPLT(TM) KS Manager\000"
    VALUE "ProductVersion", "1.00\000"
