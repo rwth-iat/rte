@@ -1,9 +1,10 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is the Version 1.02 of the C++ Communication Libary. It contains
+This is version 1.0.2 of the C++ Communication Libary. It contains
 bug-fixes and some small improvements behind the scenes. For details
-about bug-fixes and changes, see part 3 "Changes & Bug-Fixes" below.
+about bug-fixes and changes, see part 3 "Changes & Bug-Fixes" of
+this document below.
 
 But now, compile and enjoy --
   Your ACPLT/KS team <ks@plt.rwth-aachen.de>
@@ -84,7 +85,7 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.02
+Version 1.0.2
 - CLIENTS: Fixed a bug which crashed applications creating communication
   objects with an invalid host and/or server name like "//x//a/b/c".
 
@@ -95,15 +96,18 @@ Version 1.02
   manager's port address using the portmapper on the host specified in
   the resource locator. If the port number is specified (separated by
   a colon from the host name) then a client will contact the ACPLT/KS
-  manager directly at this port. The purpose of this is, that you can
-  now allow controlled access to ACPLT/KS servers through firewalls
-  without necessarily granting access to the portmapper.
+  manager directly at this port. The purpose of this is that you can
+  now controll the access to ACPLT/KS servers through firewalls without
+  necessarily granting access to the portmapper. If the optional port
+  number is used, a client will contact the ACPLT/KS manager using a
+  TCP/IP connection instead of UDP/IP. This makes firewall configurations
+  easier.
 
 - CLIENTS: Cleaned up error reporting for communication objects like
   variables and domains. If there is a communication level problem between
   client and server, an error code of KS_ERR_NETWORKERROR was issued in
-  the pre-1.02 releases of the C++ Communication Library. Beginning with
-  this release (1.02) the error code of the server is reported instead
+  releases before 1.0.2 of the C++ Communication Library. Beginning with
+  this release 1.0.2 the error code of the server is reported instead
   by the communication object, if you call getLastResult() on it. Thus,
   KS_ERR_NETWORKERROR no longer means that there were a problem either
   in the low-level communication **or** on the ACPLT/KS layer, but instead
