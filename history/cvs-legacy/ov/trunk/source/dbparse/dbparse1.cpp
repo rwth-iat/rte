@@ -469,12 +469,14 @@ bool parsetree::add(instance *inst) {
 bool parsetree::remove(LogPath *name)
 {
 	instance	*inst, *parent;
-
+	LogPath		lp;
+	
 	inst = search(name);
 	if (!inst) {
 		return false;
 	}
-	parent = search(&LogPath(*name, 0, name->size()-1));
+	lp = LogPath(*name, 0, name->size()-1);
+	parent = search(&lp);
 	// remove instance from hash table of parent
 	if (!parent->children->remove(*name, inst)) {
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
@@ -490,8 +492,10 @@ bool parsetree::remove(LogPath *name)
 bool parsetree::remove(instance *inst)
 {
 	instance	*parent;
+	LogPath		lp;
 
-	parent = search(&LogPath(*(inst->ident), 0, inst->ident->size()-1));
+	lp = LogPath(*(inst->ident), 0, inst->ident->size()-1);
+	parent = search(&lp);
 	
 	if (!parent->children->remove(*(inst->ident), inst)) {
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
@@ -1492,8 +1496,10 @@ bool check_vendortree()
 	PltHashIterator<PltString, variable_value *>	*act_var;
 	bool											ok;
 	KS_VAR_TYPE										vartype;
-
-	vendor = parse_tree->search(&LogPath("/vendor"));
+	LogPath											lp;
+	
+	lp = LogPath("/vendor");
+	vendor = parse_tree->search(&lp);
 	
 	if (!vendor) {										// no vendor branch in parse tree
 		return true;

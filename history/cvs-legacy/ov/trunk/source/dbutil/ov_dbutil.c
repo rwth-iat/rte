@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_dbutil.c,v 1.7 2004-10-27 13:32:32 ansgar Exp $
+*   $Id: ov_dbutil.c,v 1.8 2005-01-24 17:58:20 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -188,11 +188,11 @@ void ov_basevalueoutput(
                       break;
                 case OV_VT_INT:
                       i = *(OV_INT*)(pvalue);
-                      fprintf(handle, "%d", i);
+                      fprintf(handle, "%li", i);
                       break;
                 case OV_VT_UINT:
                       u = *(OV_UINT*)(pvalue);
-                      fprintf(handle, "%d", u);
+                      fprintf(handle, "%lu", u);
                       break;
                 case OV_VT_SINGLE:
                       s = *(OV_SINGLE*)(pvalue);

@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.13 2005-01-21 10:31:08 ansgar Exp $
+#   $Id: unix.mk,v 1.14 2005-01-24 17:58:20 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -204,6 +204,20 @@ db_y.o: db_y.c
 $(DBPARSE_EXE) : $(DBPARSE_OBJ)  
 	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
 
+#	ACPLT/OV OVI/XML parser
+
+db_y.h: db_y.c
+
+
+db_lex.o: db_lex.c
+	$(CXX_COMPILE) -o $@ $<
+
+db_y.o: db_y.c
+	$(CXX_COMPILE) -o $@ $<
+
+$(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)  
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
+
 #	ACPLT/OV makmak
 
 $(MAKMAK_EXE) : $(MAKMAK_OBJ)
@@ -270,7 +284,7 @@ install : all
 	@echo Installing files to '$(ACPLT_BIN_DIR)'
 	@-cp *.so $(ACPLT_BIN_DIR)
 	@-cp $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) $(OV_DBUTIL_EXE) $(OV_SERVER_EXE) \
-		 $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(ACPLT_BIN_DIR)
+		 $(DBDUMP_EXE) $(DBPARSE_EXE) $(OVXIPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(ACPLT_BIN_DIR)
 	@echo Installing files to '$(ACPLT_LIB_DIR)'
 	@-cp *.a $(ACPLT_LIB_DIR)
 	@echo Done.

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.9 2005-01-21 10:32:46 ansgar Exp $
+*   $Id: ov_builder.c,v 1.10 2005-01-24 17:58:20 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -432,7 +432,7 @@ int ov_builder_createsourcefiles(
 	 					        ptext3++;
 						    	*ptext=0;
 						    	ptext--;
-	        					while ((*ptext=='\t') || (*ptext==' ') && (ptext > ptext2)) {
+	        					while (((*ptext=='\t') || (*ptext==' ')) && (ptext > ptext2)) {
 							        *ptext=0;
 							        ptext--;
 						    	}

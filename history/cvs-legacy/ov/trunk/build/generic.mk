@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.17 2005-01-21 10:32:05 ansgar Exp $
+#   $Id: generic.mk,v 1.18 2005-01-24 17:58:20 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -55,6 +55,7 @@ OV_SOURCE_DYNOV_DIR			= $(OV_SOURCE_DIR)dynov/
 OV_SOURCE_TASKLIB_DIR			= $(OV_SOURCE_DIR)tasklib/
 OV_SOURCE_DBDUMP_DIR			= $(OV_SOURCE_DIR)dbdump/
 OV_SOURCE_DBPARSE_DIR			= $(OV_SOURCE_DIR)dbparse/
+OV_SOURCE_OVXIPARSE_DIR			= $(OV_SOURCE_DIR)ovxiparse/
 OV_SOURCE_MAKMAK_DIR			= $(OV_SOURCE_DIR)makmak/
 OV_SOURCE_DBINFO_DIR			= $(OV_SOURCE_DIR)dbinfo/
 OV_SOURCE_LIBINFO_DIR			= $(OV_SOURCE_DIR)libinfo/
@@ -114,6 +115,7 @@ SOURCE_DIRS	= \
 	$(OV_SOURCE_TASKLIB_DIR) \
 	$(OV_SOURCE_DBDUMP_DIR) \
 	$(OV_SOURCE_DBPARSE_DIR) \
+	$(OV_SOURCE_OVXIPARSE_DIR) \
 	$(OV_SOURCE_MAKMAK_DIR) \
 	$(OV_SOURCE_DBINFO_DIR) \
 	$(OV_SOURCE_LIBINFO_DIR) \
@@ -449,6 +451,14 @@ DBPARSE_OBJ  = $(foreach source, $(DBPARSE_SRC), $(basename $(notdir $(source)))
 DBPARSE_EXE  = ov_dbparse$(EXE)
 DBPARSE_RES  = $(basename $(DBPARSE_EXE))$(RES)
 
+#	ACPLT/OV OVXI parser
+#	--------------------
+
+OVXIPARSE_SRC := dbparse.cpp ovxiparse.cpp db_lex.c db_y.c
+OVXIPARSE_OBJ  = $(foreach source, $(OVXIPARSE_SRC), $(basename $(notdir $(source)))$(OBJ))
+OVXIPARSE_EXE  = ov_ovxiparse$(EXE)
+OVXIPARSE_RES  = $(basename $(OVXIPARSE_EXE))$(RES)
+
 #	ACPLT/OV makmak
 #	---------------
 
@@ -486,6 +496,7 @@ TARGETS = \
 	$(EXAMPLE_LIB) \
 	$(DBDUMP_EXE) \
 	$(DBPARSE_EXE) \
+	$(OVXIPARSE_EXE) \
 	$(MAKMAK_EXE) \
 	$(LIBINFO_EXE) \
 	$(OV_SERVER_EXE)
@@ -506,6 +517,7 @@ SOURCES = \
 	$(TASKLIB_SRC) \
 	$(DBDUMP_SRC) \
 	$(DBPARSE_SRC) \
+	$(OVXIPARSE_SRC) \
 	$(MAKMAK_SRC) \
 	$(LIBINFO_SRC) \
 	$(EXAMPLE_SRC)
