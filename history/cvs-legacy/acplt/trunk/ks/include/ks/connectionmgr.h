@@ -1,7 +1,7 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.6 1999-09-16 10:54:39 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.7 2003-10-13 11:22:25 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998, 1999
+ * Copyright (c) 1996, 2003
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -20,13 +20,12 @@
  */
 
 /*
- * connectionmgr.h -- Implements a connection manager which can handle
- *                    connection objects which in turn encapsulate XDR
- *                    streams. The connection manager makes it possible to
- *                    use so-called buffered XDR streams, which decouple
- *                    RPC I/O from service handling and thus serialization
- *                    and deserialization. In addition, the connection
- *                    manager can also handle other kinds of connections.
+ * connectionmgr.h -- Abstract base class for connection managers which can
+ *   handle connection objects, which in turn encapsulate XDR streams. The
+ *   connection manager makes it possible to use so-called buffered XDR
+ *   streams, which decouple RPC I/O from service handling and thus
+ *   serialization and deserialization. In addition, the connection manager
+ *   can also handle other kinds of connections.
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
@@ -34,12 +33,11 @@
 #ifndef KS_CONNECTIONMGR_H_INCLUDED
 #define KS_CONNECTIONMGR_H_INCLUDED
 
-#if PLT_USE_BUFFERED_STREAMS
+#include "ks/time.h"
+#include "ks/event.h"
 
-#include "plt/time.h"
-
-class KssConnection;
-class KssConnectionManager;
+class KsConnection;
+class KsConnectionManager;
 
 #ifndef KS_CONNECTION_H_INCLUDED
 #include "ks/connection.h"
@@ -47,143 +45,62 @@ class KssConnectionManager;
 
 
 // ---------------------------------------------------------------------------
-// This one was surely missing for long ;-) This is a basic implementation of
-// a doubly-linked list.
+// The Connection Manager: it manages the whole mess of glory/gory connections
 //
-struct _PltDLinkedListNode {
-public: // oh, M$ is sooooo dumb...
-    _PltDLinkedListNode *_next; // next node in list
-    _PltDLinkedListNode *_prev; // previous node in list
-
-    _PltDLinkedListNode() { _next = _prev = this; }
-    
-    void addBefore(_PltDLinkedListNode &n);
-    void addAfter(_PltDLinkedListNode &n);
-    void remove();
-}; // struct _PltDLinkedListNode
-
-
-// ---------------------------------------------------------------------------
-// The connection manager manages a lookup-table to quickly find the
-// connection object associated with a particular file descriptor. In
-// addition, each item in the table can also be linked into a list of
-// active connections (timeout) or connections waiting to be served.
-//
-struct _KssConnectionItem : public _PltDLinkedListNode {
-public: // oh, M$ is sooooo dumb...
-    KssConnection                   *_connection;
-    PltTime                          _best_before;
-    KssConnection::ConnectionIoMode  _last_io_mode;
-    int                              _fd; // optimization...
-
-    _KssConnectionItem() : _connection(0),
-                           _last_io_mode(KssConnection::CNX_IO_DORMANT),
-                           _fd(-1) { }
-}; // struct _KssConnectionItem
-
-
-#if PLT_CNX_MGR_USE_HT
-// ---------------------------------------------------------------------------
-// As some "new technology" uses crude handles instead of file descriptors,
-// there's no easy mapping between fds and connection items. So we're forced
-// to use a hash table instead, which is made of the following class.
-//
-struct _KssCnxHashTableItem {
-public: // oh, M$ is sooooo dumb...
-    _KssConnectionItem **_overflow_table; /* sorted table w/ references      */
-    int                  _size;           /* # of allocated entries in table */
-    int                  _used;           /* # of used entries               */
-    
-    _KssCnxHashTableItem() : _overflow_table(0), _size(0), _used(0) { }
-}; // class _KssCnxHashTableItem
-#endif
-
-
-// ---------------------------------------------------------------------------
-// The Connection Manager Itself(sm). It manages the whole mess of glory
-// connections.
-//
-class KssConnectionManager {
+class KsConnectionManager {
 public:
-    KssConnectionManager();
-    virtual ~KssConnectionManager();
-    
-    void shutdown(int deadline); // TODO
-    
+    KsConnectionManager();
+    virtual ~KsConnectionManager();
+
     bool isOk() const { return _is_ok; }
-    
-    // management of timeouts...
-    bool mayHaveTimeout()
-    	{ return _active_connections._next != &_active_connections; }
-    PltTime getEarliestTimeout();
-    PltTime getEarliestTimeoutSpan();
-    void processTimeout();
-    
-    int getFdSets(fd_set &readables, fd_set &writeables); // OpenVMS: do not inline!!!
-    int getFdSetSize() { return _fdset_size; }
 
-    // process incomming and outgoing data...
-    int processConnections(fd_set &readables, fd_set &writeables);
+    // Return connection manager singleton
+    static KsConnectionManager * getConnectionManagerObject();
     
-    // connections waiting to be served...or being served...
-    KssConnection *getNextServiceableConnection();
-    bool trackConnection(KssConnection &con);
+    // I/O and event management
+    virtual bool hasPendingEvents() const = 0;
+    virtual bool servePendingEvents(KsTime timeout = KsTime()) = 0;
+    virtual bool servePendingEvents(KsTime *pTimeout) = 0;
 
+    // Timeout event management
+    virtual bool addTimerEvent(KsTimerEvent *event) = 0;
+    virtual bool removeTimerEvent(KsTimerEvent *event) = 0;
+    virtual KsTimerEvent *removeNextTimerEvent() = 0;
+    virtual const KsTimerEvent *peekNextTimerEvent() const = 0;
+    
+    //
+    virtual bool shutdownConnections(long secs) = 0;
+    
     // connection management
-    bool addConnection(KssConnection &con);
-    bool removeConnection(KssConnection &con);
-    KssConnection *lookupConnection(int fd);
-    bool resetConnection(KssConnection &con);
-
-    // send out to the world your last bits...
-    bool shutdownConnections(long secs);
+    virtual bool addConnection(KsConnection &con) = 0;
+    virtual bool removeConnection(KsConnection &con) = 0;
+    virtual bool resetConnection(KsConnection &con) = 0;
+    virtual bool trackConnection(KsConnection &con) = 0;
 
     // damned lies & statistics
-    inline unsigned int getConnectionCount() { return _connection_count; }
-    inline unsigned int getIoErrorCount() { return _io_errors; }
-    inline unsigned int getIoRxErrorCount() { return _io_rx_errors; }
-    inline unsigned int getIoTxErrorCount() { return _io_tx_errors; }
+    virtual unsigned int getConnectionCount() = 0;
+    virtual unsigned int getIoErrorCount() = 0;
+    virtual unsigned int getIoRxErrorCount() = 0;
+    virtual unsigned int getIoTxErrorCount() = 0;
     
 protected:
-    friend class KssConnection;
-    void trackCnxIoMode(_KssConnectionItem &item, 
-                        KssConnection::ConnectionIoMode ioMode);
-    
-    // TODO: incomming notifications from dying connections
-    virtual void connectionShutdownNotification(KssConnection &) { }
-    
-private:
-    _KssConnectionItem *getConnectionItem(int fd);
+    friend class KsConnection;
 
-    bool                _is_ok;
-    
-    int                 _fdset_size;  // size of fd_sets on this host
-    _KssConnectionItem *_connections; // the connections per fd
-    unsigned int        _connection_count;
+    bool _is_ok;
 
-    fd_set              _readable_fdset;
-    fd_set              _writeable_fdset;
-    int                 _serviceable_count;
-    
-    unsigned int        _io_errors;
-    unsigned int        _io_rx_errors;
-    unsigned int        _io_tx_errors;
-        
-    _PltDLinkedListNode _active_connections; // for timeouts
-    _PltDLinkedListNode _serviceable_connections;  // waiting to be served
+    static KsConnectionManager *the_cnx_manager;
 
-#if PLT_CNX_MGR_USE_HT
-    _PltDLinkedListNode   _free_entries;
-    _KssCnxHashTableItem *_hash_table;
-    int                   _hash_table_size;
-    int                   _hash_table_mask;
-    
-    unsigned int getHash(int fd) const { return fd * 625842579; } // TODO!
-#endif    
-}; // class KssConnectionManager
+}; // class KsConnectionManager
 
 
-#endif /* PLT_USE_BUFFERED_STREAMS */
+// ---------------------------------------------------------------------------
+//
+inline KsConnectionManager *
+KsConnectionManager::getConnectionManagerObject()
+{
+    return the_cnx_manager;
+} // KsConnectionManager::getConnectionManagerObject
+
+
 #endif
-
 /* End of connectionmgr.h */
