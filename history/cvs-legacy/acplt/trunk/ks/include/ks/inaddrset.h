@@ -1,7 +1,7 @@
-/* -*-plt-c++-*- */
+/* -*-c++-*- */
 #ifndef KS_INADDRSET_INCLUDED
 #define KS_INADDRSET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/inaddrset.h,v 1.5 2003-09-25 12:10:37 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/inaddrset.h,v 1.6 2003-10-13 11:27:15 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/package.h,v 1.19 1999-09-16 10:54:40 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/package.h,v 1.20 2003-10-13 11:28:49 harald Exp $ */
 #ifndef KSC_PACKAGE_INCLUDED 
 #define KSC_PACKAGE_INCLUDED
 /*

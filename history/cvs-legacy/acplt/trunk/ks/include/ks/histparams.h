@@ -1,7 +1,7 @@
-/* -*-plt-c++-*- */
+/* -*-c++-*- */
 #ifndef KS_HISTPARAMS_INCLUDED
 #define KS_HISTPARAMS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/histparams.h,v 1.6 1999-09-16 10:54:39 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/histparams.h,v 1.7 2003-10-13 11:26:51 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
