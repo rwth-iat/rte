@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.6 1997-03-06 12:14:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.7 1997-03-10 17:07:47 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -192,41 +192,67 @@ public:
 // Implementation
 //////////////////////////////////////////////////////////////////////
 
+struct Plt_AllocTracker 
+{
+    unsigned count;
+    enum PltOwnership type;
+    Plt_AllocTracker() : count(1) {}
+    virtual void destroy(void * p) const = 0;
+};
 
-template<class T>
-class PltHandle
+struct Plt_AtMalloc
+: public Plt_AllocTracker
+{
+    virtual void destroy(void *p) const { free(p); }
+};
+
+template <class T>
+struct Plt_AtNew
+: public Plt_AllocTracker
+{
+    virtual void destroy(void *p) const
+        { 
+            delete (T*)p;
+        }
+};
+
+template <class T>
+struct Plt_AtArrayNew
+: public Plt_AllocTracker
+{
+    virtual void destroy (void *p) const
+        {
+            delete[] (T*) p;
+        }
+};
+
+//////////////////////////////////////////////////////////////////////
+
+class PltHandle_base
 {
 protected:
-    PltHandle(); 
-    PltHandle(const PltHandle &);
+    PltHandle_base(); 
+    PltHandle_base(const PltHandle_base &);
 #ifdef PLT_DEBUG_INVARIANTS
     virtual
 #endif
-    ~PltHandle();
+    ~PltHandle_base();
 
     // accessor
     operator bool () const;
-    T* getPtr() const; 
+    void * getPtr() const; 
     // ^^ CAUTION: DON'T STORE ANY REFERENCES TO THE REPRESENTATION
 
     // modifiers
-    PltHandle & operator=(PltHandle &rhs);
-    bool bindTo(T *, enum PltOwnership = PltOsNew);
+    PltHandle_base & operator=(PltHandle_base &rhs);
+    void bindTo(void *, Plt_AllocTracker * a);
 
     void addRef();
     void removeRef();
 
-    // static helper
-    void destroy(T *p, PltOwnership os);
-    
     // state representation
-    T *prep;
-    struct AllocTracker 
-        {
-            unsigned count;
-            enum PltOwnership type;
-            AllocTracker(enum PltOwnership t) : count(1), type(t) {}
-        } *palloc;
+    void *prep;
+    Plt_AllocTracker *palloc;
 
 #if PLT_DEBUG_INVARIANTS
 public:
@@ -234,12 +260,23 @@ public:
 #endif
 };
 
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+class PltHandle
+: public PltHandle_base
+{
+protected:
+    PltHandle() : PltHandle_base() { }
+    PltHandle(PltHandle &r) : PltHandle_base(r) { }
+    PltHandle(T *, enum PltOwnership);
+    bool bindTo(T *, enum PltOwnership);
+};
 
 //////////////////////////////////////////////////////////////////////
 
-template<class T>
 inline
-PltHandle<T>::operator bool() const
+PltHandle_base::operator bool() const
 {
     return prep != 0;
 }
@@ -248,9 +285,8 @@ PltHandle<T>::operator bool() const
 //////////////////////////////////////////////////////////////////////
 
 #if PLT_DEBUG_INVARIANTS
-template<class T>
 inline bool 
-PltHandle<T>::invariant() const 
+PltHandle_base::invariant() const 
 {
     return (prep==0 && palloc==0) 
         || (prep && (palloc ? palloc->count > 0 : true));
@@ -260,9 +296,8 @@ PltHandle<T>::invariant() const
 //////////////////////////////////////////////////////////////////////
 // Add one reference to the handled object
 
-template<class T>
 inline void 
-PltHandle<T>::addRef()
+PltHandle_base::addRef()
 {
     PLT_PRECONDITION(palloc ? palloc->count<UINT_MAX : true);
     if (*this && palloc) {
@@ -272,38 +307,15 @@ PltHandle<T>::addRef()
 }
 
 
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-inline void 
-PltHandle<T>::destroy(T *p, PltOwnership os) // static member fn
-{
-    if (p) {
-        switch (os) {
-        case PltOsNew:
-            delete p;
-            break;
-        case PltOsArrayNew:
-            delete[] p;
-            break;
-        case PltOsMalloc:
-            free(p);
-            break;
-        default:
-            PLT_ASSERT(0==1);
-        }
-    }
-}
 
 //////////////////////////////////////////////////////////////////////
 // Remove one reference to the handled object.
 
-template<class T>
 inline void
-PltHandle<T>::removeRef()
+PltHandle_base::removeRef()
 {
     if ( *this && palloc && --(palloc->count) == 0) {
-        destroy(prep, palloc->type);
+        palloc->destroy(prep);
         prep = 0;
         delete palloc; palloc = 0;
     }
@@ -316,38 +328,26 @@ PltHandle<T>::removeRef()
 // If binding succeeds p is no longer valid.
 // Returns true on success.
 
-template <class T>
-inline bool
-PltHandle<T>::bindTo(T* p, enum PltOwnership t)
+inline void
+PltHandle_base::bindTo(void * p, Plt_AllocTracker *a)
 {
-    bool ok = true;
-
     // unbind old handled object
     removeRef();
 
     PLT_ASSERT( palloc == 0 );
-
+    
     // bind new handled object
-    if (p && t != PltOsUnmanaged) {
-        // only managed non-NULL objects get an AllocTracker
-        palloc = new AllocTracker(t);
-        if (!palloc) {
-            ok = false;
-        }
-    }
-    if (ok) {
-        prep = p;
-    }
+    prep = p;
+    palloc = a;
+    
     PLT_CHECK_INVARIANT();
-    return ok;
 }
-        
+
 //////////////////////////////////////////////////////////////////////
 // Create a PltHandle
 
-template<class T>
 inline
-PltHandle<T>::PltHandle() 
+PltHandle_base::PltHandle_base() 
 : prep(0), 
   palloc(0)
 {
@@ -360,9 +360,8 @@ PltHandle<T>::PltHandle()
 // Copy constructor. The handled object -- if any -- gets an 
 // additional reference.
 
-template<class T>
 inline
-PltHandle<T>::PltHandle(const PltHandle &h)
+PltHandle_base::PltHandle_base(const PltHandle_base &h)
 : prep(h.prep), palloc(h.palloc)
 {
     if (h) {
@@ -375,19 +374,17 @@ PltHandle<T>::PltHandle(const PltHandle &h)
 // Destructor. If the handle is bound it removes one reference 
 // from the handled object.
 
-template<class T>
 inline
-PltHandle<T>::~PltHandle()
+PltHandle_base::~PltHandle_base()
 {
     removeRef();
-    PLT_CHECK_INVARIANT();
 }
 
 //////////////////////////////////////////////////////////////////////
 //  Assignment
-template<class T>
-inline PltHandle<T> & 
-PltHandle<T>::operator=(PltHandle &rhs) 
+
+inline PltHandle_base & 
+PltHandle_base::operator=(PltHandle_base &rhs) 
 {
     // order is important if called as 'handle = handle;'
     rhs.addRef();
@@ -400,13 +397,68 @@ PltHandle<T>::operator=(PltHandle &rhs)
     return *this;
 }
 
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline T * 
-PltHandle<T>::getPtr () const
+inline bool
+PltHandle<T>::bindTo(T * p, enum PltOwnership t)
 {
-    return prep;
+    PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
+                     || t==PltOsNew || t==PltOsArrayNew);
+    if (t == PltOsUnmanaged) {
+        PltHandle_base::bindTo(p,0);
+        return true;
+    } else {
+        Plt_AllocTracker *a;
+        switch (t) {
+        case PltOsMalloc:
+            a = new Plt_AtMalloc;
+            break;
+        case PltOsNew:
+            a = new Plt_AtNew<T>;
+            break;
+        case PltOsArrayNew:
+            a = new Plt_AtArrayNew<T>;
+            break;
+        case PltOsUnmanaged:
+            PLT_ASSERT(0==1);
+        }
+        if (a) {
+            PltHandle_base::bindTo(p,a);
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltHandle<T>::PltHandle(T *p, enum PltOwnership os) 
+{
+    PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
+                     || os==PltOsNew || os==PltOsArrayNew);
+    if (! bindTo(p, os)) {
+        switch (os) {
+        case PltOsMalloc:
+            free(p);
+            break;
+        case PltOsNew:
+            delete p;
+            break;
+        case PltOsArrayNew:
+            delete [] p;
+            break;
+        case PltOsUnmanaged:
+            // do nothing
+            break;
+        }
+    }
+    PLT_CHECK_INVARIANT();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -423,13 +475,10 @@ PltPtrHandle<T>::PltPtrHandle()
 template <class T>
 inline
 PltPtrHandle<T>::PltPtrHandle(T *p, enum PltOwnership os) 
+: PltHandle<T>(p, os)
 {
     PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
                      || os==PltOsNew);
-    if (! bindTo(p, os)) {
-        destroy(p, os);
-    }
-    PLT_CHECK_INVARIANT();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -437,7 +486,7 @@ PltPtrHandle<T>::PltPtrHandle(T *p, enum PltOwnership os)
 template <class T>
 inline
 PltPtrHandle<T>::PltPtrHandle(const PltPtrHandle &h)
-: PltHandle<T>(h)
+: PltHandle<T>( (PltHandle<T> &) h)
 {
 }
 
@@ -458,7 +507,7 @@ template <class T>
 inline T *
 PltPtrHandle<T>::getPtr () const
 {
-    return PltHandle<T>::getPtr();
+    return (T *) prep;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -519,12 +568,11 @@ PltArrayHandle<T>::PltArrayHandle()
 template <class T>
 inline
 PltArrayHandle<T>::PltArrayHandle(T *p, enum PltOwnership os) 
+: PltHandle<T>(p,os)
 {
     PLT_PRECONDITION(os==PltOsUnmanaged || os==PltOsMalloc 
                      || os==PltOsArrayNew);
-    if (! bindTo(p, os)) {
-        destroy(p, os);
-    }
+
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -532,7 +580,7 @@ PltArrayHandle<T>::PltArrayHandle(T *p, enum PltOwnership os)
 template <class T>
 inline
 PltArrayHandle<T>::PltArrayHandle(const PltArrayHandle & h)
-: PltHandle<T>(h)
+: PltHandle<T>( (PltHandle<T> &) h)
 {
 }
 
@@ -551,7 +599,8 @@ template <class T>
 inline T*
 PltArrayHandle<T>::getPtr () const
 {
-    return PltHandle<T>::getPtr();
+    return (T*) prep;
+    // static cast
 }
 
 //////////////////////////////////////////////////////////////////////
