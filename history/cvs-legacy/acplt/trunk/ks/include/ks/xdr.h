@@ -172,9 +172,11 @@ protected:
                     { }                                            \
             }                                                      \
         }                                                          \
-        PLT_ASSERT(p->xdrTypeCode() == typecode);                  \
-        if (!p->xdrDecodeCommon(xdrs)) {                           \
-            return 0;                                              \
+        if (p) {                                                   \
+            PLT_ASSERT(p->xdrTypeCode() == typecode);              \
+            if (!p->xdrDecodeCommon(xdrs)) {                       \
+                return 0;                                          \
+            }                                                      \
         }                                                          \
         return p;                                                  \
     }                                                              \
