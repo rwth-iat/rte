@@ -65,7 +65,30 @@ class KsArray
 
 
 //////////////////////////////////////////////////////////////////////
+
+class KsArray<bool>
+: public PltArray<bool>,
+  public KsXdrAble
+{
+ public:
+    KsArray(size_t size = 0); // array size          // [1]
+    KsArray(size_t size,      // array size 
+             bool * p,        // address of first element
+             enum PltOwnership);                      // [1]
+    
+    // KsXdrAble interface
+    KsArray(XDR *, bool & success);
+    virtual bool xdrEncode(XDR *) const;  // serialize
+    virtual bool xdrDecode(XDR *);        // deserialize
+    static KsArray * xdrNew(XDR *);   // deserialization factory meth. 
+};
+
+
+//////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION
+//////////////////////////////////////////////////////////////////////
+
+
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
@@ -168,5 +191,100 @@ KsArray<T>::xdrNew(XDR *xdrs)
 }                                                
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KsArray<bool>::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    // retrieve size
+    //
+    u_long sz;
+    if (! xdr_u_long(xdr, &sz) ) return false; // failed
+
+    // adjust array size (possibly losing contents)
+    //
+    if (size() != sz) {
+        // allocate sz elements
+        PltArrayHandle<bool> ha(new bool[sz], PltOsArrayNew);
+        if (!ha) return false; // failed
+        a_array = ha;
+        a_size = sz;
+    }
+    PLT_ASSERT(size() == sz);
+
+    // now deserialize elements
+    //
+    for (size_t i=0; i < a_size; ++i) {
+        if (! xdr_bool(xdr, & a_array[i] ) ) return false; // failed
+    }
+    
+    // success
+    //
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KsArray<bool>::xdrEncode(XDR *xdrs) const
+{
+    PLT_PRECONDITION(xdrs->x_op == XDR_ENCODE);
+    // serialize size
+    //
+    u_long sz = a_size;
+    if (! xdr_u_long(xdrs, &sz)) return false; // fail
+
+    // serialize elements
+    //
+    for (size_t i = 0; i < a_size; ++i) {
+        if (! xdr_bool(xdrs, & a_array[i]) ) return false; // fail
+    }
+
+    // success
+    //
+    return true;
+}
+            
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsArray<bool>::KsArray(size_t size, bool *p, enum PltOwnership os)
+: PltArray<bool>(size, p, os)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsArray<bool>::KsArray(size_t size)
+: PltArray<bool>(size)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsArray<bool>::KsArray(XDR * xdr, bool & ok)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    ok = xdrDecode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline KsArray<bool> *
+KsArray<bool>::xdrNew(XDR *xdrs)
+{
+    PLT_PRECONDITION(xdrs->x_op == XDR_DECODE);
+    bool ok;                                         
+    KsArray<bool> * p = new KsArray<bool>(xdrs, ok);     
+    if ( !ok && p) {                             
+        delete p;                                
+        p = 0;                                   
+    }                                            
+    return p;                                    
+}                                                
+
 
 #endif // KS_ARRAY_INCLUDED
