@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_string.h,v 1.2 1999-07-27 17:43:10 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -59,6 +59,30 @@ OV_RESULT OV_DLLFNCEXPORT ov_string_setvecvalue(
 OV_INT OV_DLLFNCEXPORT ov_string_compare(
 	const OV_STRING		string1,
 	const OV_STRING		string2
+);
+
+/*
+*	Get the length of a string
+*/
+OV_UINT OV_DLLFNCEXPORT ov_string_getlength(
+	const OV_STRING		string
+);
+
+/*
+*	Append a string to an existing one
+*/
+OV_RESULT OV_DLLFNCEXPORT ov_string_append(
+	OV_STRING			*pstring,
+	const OV_STRING		appstring
+);
+
+/*
+*	Formatted print to a string
+*/
+OV_RESULT OV_DLLFNCEXPORT ov_string_print(
+	OV_STRING		*pstring,
+	const OV_STRING	format,
+	...
 );
 
 /*

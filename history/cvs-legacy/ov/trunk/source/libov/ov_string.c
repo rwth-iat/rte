@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_string.c,v 1.2 1999-07-27 17:43:11 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -31,6 +31,9 @@
 
 #include "libov/ov_string.h"
 #include "libov/ov_database.h"
+#include "libov/ov_memstack.h"
+
+#include <stdarg.h>
 
 /*	----------------------------------------------------------------------	*/
 
@@ -149,6 +152,212 @@ OV_INT OV_DLLFNCEXPORT ov_string_compare(
 		return -1;							/* NULL < "xxx" */
 	}
 	return 0;								/* NULL == NULL */
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Get the length of a string
+*/
+OV_UINT OV_DLLFNCEXPORT ov_string_getlength(
+	const OV_STRING		string
+) {
+	if(string) {
+		return strlen(string);
+	}
+	return 0;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Append a string to an existing one
+*/
+OV_RESULT OV_DLLFNCEXPORT ov_string_append(
+	OV_STRING			*pstring,
+	const OV_STRING		appstring
+) {
+	/*
+	*	local variables
+	*/
+	OV_UINT		oldlength, newlength;
+	OV_STRING	newstring;
+	/*
+	*	check parameters
+	*/
+	if(!pstring || !appstring) {
+		return OV_ERR_BADPARAM;
+	}
+	/*
+	*	calculate old and new string length and reallocate memory
+	*/
+	if(*pstring) {
+		oldlength = strlen(*pstring);
+	} else {
+		oldlength = 0;
+	}
+	newlength = oldlength+strlen(appstring);
+	if(!newlength) {
+		return ov_string_setvalue(pstring, NULL);
+	}
+	newstring = (OV_STRING)ov_database_realloc(*pstring, newlength+1);
+	if(!newstring) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	/*
+	*	append new string
+	*/
+	strcpy(newstring+oldlength, appstring);
+	*pstring = newstring;
+	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Formatted print to a string
+*/
+OV_RESULT OV_DLLFNCEXPORT ov_string_print(
+	OV_STRING		*pstring,
+	const OV_STRING	format,
+	...
+) {
+	/*
+	*	local variables
+	*/
+	va_list		args;
+	OV_UINT		length;
+	OV_STRING	pc;
+	OV_RESULT	result;
+	/*
+	*	check parameters
+	*/
+	if(!pstring || !format) {
+		return OV_ERR_BADPARAM;
+	}
+	/*
+	*	calculate buffer size
+	*/
+	va_start(args, format);
+	length = strlen(format)+1;
+	pc = format;
+	while(*pc) {
+		if(*pc++ == '%') {
+			/*
+			*	handle flag characters
+			*/
+			while((*pc=='-') || (*pc=='+') || (*pc==' ') || (*pc=='#') || (*pc=='0')) {
+				pc++;
+			}
+			/*
+			*	handle width specifiers
+			*/
+			if(*pc == '*') {
+				pc++;
+				length += abs(va_arg(args, int));
+			} else {
+				length += strtoul(pc, &pc, 10);
+			}
+			/*
+			*	handle precision specifiers
+			*/
+			if(*pc == '.') {
+				pc++;
+				if(*pc == '*') {
+					pc++;
+					length += abs(va_arg(args, int));
+				} else {
+					length += strtoul(pc, &pc, 10);
+				}
+			}
+			/*
+			*	handle input size modifiers
+			*/
+			while((*pc=='h') || (*pc=='l') || (*pc=='L') || (*pc=='F') || (*pc=='N')) {
+				pc++;
+			}
+			/*
+			*	handle conversion type character
+			*/
+			switch(*pc) {
+				case 's':
+					length += strlen(va_arg(args, char*));
+					break;
+				case 'c':
+				case 'd':
+				case 'i':
+				case 'o':
+				case 'u':
+				case 'x':
+				case 'X':
+					/*
+					*	reserve space, 32 should be enough
+					*/
+					length += 32;
+					(void)va_arg(args, int);
+					break;
+				case 'e':
+				case 'f':
+				case 'g':
+				case 'E':
+				case 'G':
+					/*
+					*	reserve space; apart from the 32 bytes we take into
+					*	account another 308 bytes (308 is the largest possible
+					*	exponent of an IEEE double)
+					*/
+					length += 340;
+					(void)va_arg(args, double);
+					break;
+				case 'n':
+				case 'p':
+					/*
+					*	reserve space, 32 should be enough
+					*/
+					length += 32;
+					(void)va_arg(args, char*);
+					break;
+				case '%':
+					break;
+				default:
+					/*
+					*	should never happen, but reserve space (just in case...)
+					*/
+					length += 32;
+					break;
+			}
+		}
+	}
+	va_end(args);
+	/*
+	*	allocate memory for the string on the memory stack
+	*/
+	ov_memstack_lock();
+	pc = (OV_STRING)ov_memstack_alloc(length);
+	if(!pc) {
+		ov_memstack_unlock();
+		return OV_ERR_HEAPOUTOFMEMORY;
+	}
+	/*
+	*	create the actual string
+	*/
+	va_start(args, format);
+#if defined(OV_DEBUG) && OV_SYSTEM_UNIX
+	if(vsnprintf(pc, length, format, args) >= length) {
+		Ov_Warning("string buffer too small");
+		ov_memstack_unlock();
+		return OV_ERR_GENERIC;
+	}	
+#else
+	vsprintf(pc, format, args);
+#endif
+	va_end(args);
+	/*
+	*	set the string value
+	*/
+	result = ov_string_setvalue(pstring, pc);
+	ov_memstack_unlock();
+	return result;
 }
 
 /*	----------------------------------------------------------------------	*/
