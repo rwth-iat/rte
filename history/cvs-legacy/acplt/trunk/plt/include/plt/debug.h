@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.15 1997-09-09 15:33:04 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.16 1998-04-03 13:52:49 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -155,6 +155,14 @@ void plt_canthappen(const char *what, const char *file, int line);
 #define PLT_DEBUG_NEW_REPORT true
 #endif
 
+class PltDebugMemState {
+public:
+    size_t newcount;
+    size_t deletecount;
+    size_t newed;
+    size_t deleted;
+};
+    
 class PltDebugNewTracker
 {
     friend void * operator new(size_t);
@@ -168,6 +176,7 @@ public:
     PltDebugNewTracker();
     ~PltDebugNewTracker();
 
+    static void memState(PltDebugMemState &);
 private:
     static size_t refcount;
     static size_t newcount;

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.16 1997-09-13 08:19:48 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.17 1998-04-03 13:52:50 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -151,7 +151,7 @@ PltString
 PltString::fromInt(int i)
 {
     strstream s(conv_buffer, sizeof conv_buffer, ios::out);
-    s << i;
+    s << i << ends;
 #if PLT_COMPILER_GCC
     s.freeze();
 #endif

@@ -117,7 +117,10 @@ PltDebugNewTracker::~PltDebugNewTracker()
         size_t newcount = PltDebugNewTracker::newcount;
         size_t deletecount = PltDebugNewTracker::deletecount;
         size_t inuse = PltDebugNewTracker::inuse();
-        
+#if 0
+        // Under LINUX class ostrstream as base class of PltLogStream
+        // returned always zero strings. Therefore the implementation
+        // was changed.
         if (report_always || newed != deleted || newcount != deletecount) {
             plt_dlog << "Free store statistics:";
             plt_dlog.debug();
@@ -144,7 +147,44 @@ PltDebugNewTracker::~PltDebugNewTracker()
                 plt_dlog.debug();
             }
         }
+#else
+        if (report_always || newed != deleted || newcount != deletecount) {
+            char buf[500]; 
+            ostrstream str(buf, 500);
+            str << endl << "Free store statistics:" << endl;
+            str << "Max. bytes used:   " << setw(10) << max << endl;
+            str << "Calls to ::new:    " << setw(10) << newcount << endl;
+            if (deletecount != newcount) {
+                str << "Calls to ::delete: " 
+                    << setw(10) 
+                    << deletecount << endl;
+            }
+            str << "Bytes newed:       " << setw(10) << newed << endl;
+            if (newed != deleted) {
+                str << "Bytes deleted:     " 
+                    << setw(10) 
+                    << deleted << endl;
+                str << "Lost bytes:        " 
+                    << setw(10) 
+                    << inuse << endl;
+            }
+            str << ends;
+            // PltLog::Debug(str.str());
+            cerr << str.str() << endl;
+        }
+#endif
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void 
+PltDebugNewTracker::memState(PltDebugMemState &state)
+{
+    state.newcount = newcount;
+    state.deletecount = deletecount;
+    state.newed = newed;
+    state.deleted = deleted;
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOGSTREAM_INCLUDED
 #define PLT_LOGSTREAM_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.3 1997-09-09 15:33:05 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/logstream.h,v 1.4 1998-04-03 13:52:49 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -111,3 +111,8 @@ inline const char *PltLogStream::str()
 
 #endif
 /* End of logstream.h */
+
+
+
+
+
