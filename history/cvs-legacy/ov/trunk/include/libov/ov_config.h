@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.3 1999-09-15 10:48:14 dirk Exp $
+*   $Id: ov_config.h,v 1.4 1999-09-21 12:10:25 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -227,7 +227,7 @@ char *strdup(const char *s);
 *	Bool datatype
 *	-------------
 */
-#ifndef bool_t
+#if !OV_SYSTEM_UNIX
 #if OV_SYSTEM_MC164
 #define bool_t long
 #else
@@ -239,7 +239,7 @@ char *strdup(const char *s);
 *	Enum datatype
 *	-------------
 */
-#ifndef enum_t
+#if !OV_SYSTEM_UNIX
 #if OV_SYSTEM_MC164
 #define enum_t long
 #else

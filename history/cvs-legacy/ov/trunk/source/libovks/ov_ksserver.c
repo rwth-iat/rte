@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.4 1999-09-15 10:48:24 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.5 1999-09-21 12:10:27 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -60,7 +60,7 @@ template class PltPQIterator<PltPtrComparable<KsTimerEvent> >;
 template class PltIterator<PltPtrComparable<KsTimerEvent> >;
 template class PltIterator_<PltPtrComparable<KsTimerEvent> >;
 template class PltContainer_<PltPtrComparable<KsTimerEvent> >;
-#if PLT_COMPILER_CYGWIN || PLT_COMPILER_DECCXX
+#if PLT_COMPILER_CYGWIN || PLT_COMPILER_DECCXX || PLT_COMPILER_GCC
 template class PltContainer<PltPtrComparable<KsTimerEvent> >;
 #endif
 #endif
