@@ -2,7 +2,7 @@
 #ifndef KS_OBJMGRPARAMS_INCLUDED
 #define KS_OBJMGRPARAMS_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.1 1998-10-06 13:21:38 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.2 1998-10-14 09:27:45 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -130,6 +130,20 @@ public:
 // ---------------------------------------------------------------------------
 // The answer of the CreateObject service.
 //
+class KsCreateObjResultItem : public KsResult {
+public:
+    KsCreateObjResultItem(XDR *, bool &);
+    KsCreateObjResultItem();
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsCreateObjResultItem *xdrNew(XDR *);
+
+    KsArray<KS_RESULT> param_results;
+    KsArray<KS_RESULT> link_results;
+}; // class KsCreateObjResultItem
+
+
 class KsCreateObjResult : public KsResult {
 public:
     KsCreateObjResult(XDR *, bool &);
@@ -139,8 +153,7 @@ public:
     bool xdrDecode(XDR *);
     static KsCreateObjResult *xdrNew(XDR *);
 
-    KsArray<KS_RESULT> param_results;
-    KsArray<KS_RESULT> link_results;
+    KsArray<KsCreateObjResultItem> obj_results;
 }; // class KsCreateObjResult
 
 
@@ -188,6 +201,9 @@ KsCreateObjItem::KsCreateObjItem()
 
 KsCreateObjParams::KsCreateObjParams()
 {} // KsCreateObjParams::KsCreateObjParams
+
+KsCreateObjResultItem::KsCreateObjResultItem()
+{} // KsCreateObjResultItem::KsCreateObjResultItem
 
 KsCreateObjResult::KsCreateObjResult()
 {} // KsCreateObjResult::KsCreateObjResult

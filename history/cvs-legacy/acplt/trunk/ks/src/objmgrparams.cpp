@@ -1,6 +1,6 @@
 /* -*-plt-c++-*- */
 /*
- * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.1 1998-10-06 13:21:28 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/src/objmgrparams.cpp,v 1.2 1998-10-14 09:27:47 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -55,8 +55,8 @@ KsPlacementHint::xdrEncode(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     return ks_xdre_enum(xdr, &hint)
-        && ((hint == KS_PMH_BEFORE) ||
-            (hint == KS_PMH_AFTER) ?  place_path.xdrEncode(xdr) : true);
+        && (((hint == KS_PMH_BEFORE) ||
+             (hint == KS_PMH_AFTER)) ?  place_path.xdrEncode(xdr) : true);
 } // KsPlacementHint::xdrEncode
 
 
@@ -65,8 +65,8 @@ KsPlacementHint::xdrDecode(XDR *xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     return ks_xdrd_enum(xdr, &hint)
-        && ((hint == KS_PMH_BEFORE) ||
-            (hint == KS_PMH_AFTER) ? place_path.xdrDecode(xdr) : true);
+        && (((hint == KS_PMH_BEFORE) ||
+             (hint == KS_PMH_AFTER)) ? place_path.xdrDecode(xdr) : true);
 } // KsPlacementHint::xdrDecode
 
 
@@ -153,6 +153,34 @@ KsCreateObjParams::xdrDecode(XDR *xdr)
 
 
 //
+KS_IMPL_XDRNEW(KsCreateObjResultItem);
+KS_IMPL_XDRCTOR(KsCreateObjResultItem);
+
+
+bool
+KsCreateObjResultItem::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    return KsResult::xdrEncode(xdr)
+        && (result == KS_ERR_BADINITPARAM ?
+	        (   param_results.xdrEncode(xdr)
+	         && link_results.xdrEncode(xdr))
+	    : true);
+} // KsCreateObjResultItem::xdrEncode
+
+
+bool
+KsCreateObjResultItem::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    return KsResult::xdrDecode(xdr)
+        && (result == KS_ERR_BADINITPARAM ?
+	        (   param_results.xdrDecode(xdr)
+	         && link_results.xdrDecode(xdr))
+	    : true);
+} // KsCreateObjResultItem::xdrDecode
+
+
 KS_IMPL_XDRNEW(KsCreateObjResult);
 KS_IMPL_XDRCTOR(KsCreateObjResult);
 
@@ -162,10 +190,8 @@ KsCreateObjResult::xdrEncode(XDR *xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     return KsResult::xdrEncode(xdr)
-        && (result == KS_ERR_BADINITPARAM ?
-	           param_results.xdrEncode(xdr)
-	        && link_results.xdrEncode(xdr)
-	    : true);
+        && (result == KS_ERR_OK ? obj_results.xdrEncode(xdr)
+	                        : true);
 } // KsCreateObjResult::xdrEncode
 
 
@@ -174,10 +200,8 @@ KsCreateObjResult::xdrDecode(XDR *xdr)
 {
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
     return KsResult::xdrDecode(xdr)
-        && (result == KS_ERR_BADINITPARAM ?
-	           param_results.xdrDecode(xdr)
-	        && link_results.xdrDecode(xdr)
-	    : true);
+        && (result == KS_ERR_OK ? obj_results.xdrDecode(xdr)
+	                        : true);
 } // KsCreateObjResult::xdrDecode
 
 
