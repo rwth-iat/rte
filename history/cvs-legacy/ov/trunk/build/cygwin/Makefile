@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.1 1999-07-19 15:01:54 dirk Exp $
+#   $Id: Makefile,v 1.2 1999-08-06 09:35:14 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -92,7 +92,7 @@ include ../generic.mk
 #	Targets
 #	-------
 
-targets: $(TARGETS)
+targets: $(TARGETS) $(OV_NTSERVICE_EXE)
 
 example: $(EXAMPLE)
 	@
@@ -154,7 +154,7 @@ $(OV_LIBOVKS_LIB) : $(OV_LIBOVKS_DLL)
 
 $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(OV_LIBOV_LIB) $(ACPLTKS_LIBS) $(OV_LIBOVKS_RES)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(filter %$(OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@nm $(OV_LIBOVKS_OBJ) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(CXX_DLLWRAP) --def $(basename $@).def -o $@ $^ $(CXX_LIBS)
 
 ov_ksserver$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
@@ -181,6 +181,11 @@ $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(OV_DBUTIL_RES)
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVER_RES)
 	$(LINK) -o $@ $^ $(C_LIBS)
 
+#	ACPLT/KS-Server for ACPLT/OV as Windows NT service
+
+$(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_NTSERVICE_RES)
+	$(LINK) -mwindows -o $@ $^ $(C_LIBS)
+
 #	ACPLT/OV example library
 #	------------------------
 
@@ -199,17 +204,17 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-cp $(TARGETS) $(PLT_BIN_DIR)
+	@-cp $(ALL) $(OV_NTSERVICE_EXE) $(PLT_BIN_DIR)
 	@echo Done.
 
 #	Clean up
 #	--------
 
 clean :
-	rm -f core *.c *.h *$(OBJ) *$(RES) *$(DLL) *$(LIB) *$(EXE) *.def
+	@del *.c *.h *.bak *.map *.def *.s *.exp *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES)
 
 #	Include dependencies
 #	--------------------
 
 include depend.cyg
-
+	
