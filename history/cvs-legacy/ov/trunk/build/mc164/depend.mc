@@ -349,7 +349,8 @@ string.obj: ../../source/libov/ov_string.c \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h
 
 structur.obj: ../../source/libov/ov_structure.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_ov.h \
