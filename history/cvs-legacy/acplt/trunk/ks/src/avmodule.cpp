@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avmodule.cpp,v 1.7 2000-04-10 15:00:57 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avmodule.cpp,v 1.8 2000-04-14 08:44:59 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -42,7 +42,10 @@ KscNoneNegotiator KscAvNoneModule::the_negotiator;
 //
 KscAvModule::KscAvModule()
 {
-    _server_namelist = new PltList<KsString>;
+    _server_namelist = new ServernameNodePtr;
+    if ( _server_namelist ) {
+        *_server_namelist = 0;
+    }
 } // KscAvModule::KscAvModule
 
 
@@ -53,19 +56,24 @@ KscAvModule::KscAvModule()
 //
 KscAvModule::~KscAvModule()
 {
-    KsString       serverName;
-    KscServerBase *serverBase;
-    KscServer     *server;
+    KscServerBase  *serverBase;
+    KscServer      *server;
+    ServernameNode *node, *next;
 
-    while ( !_server_namelist->isEmpty() ) {
-	serverName = _server_namelist->removeFirst();
-	serverBase = KscClient::getClient()->getServer(serverName);
-	if ( serverBase && 
-             (server = PLT_DYNAMIC_PCAST(KscServer, serverBase)) ) {
-	    server->dismissNegotiator(this);
+    if ( _server_namelist ) {
+        node = *_server_namelist;
+        while ( node ) {
+	    serverBase = KscClient::getClient()->getServer(*node);
+	    next = node->_next;
+	    delete node;
+	    node = next;
+	    if ( serverBase && 
+		 (server = PLT_DYNAMIC_PCAST(KscServer, serverBase)) ) {
+	        server->dismissNegotiator(this);
+	    }
 	}
+	delete _server_namelist;
     }
-    delete _server_namelist;
 } // KscAvModule::~KscAvModule
 
 
@@ -76,7 +84,13 @@ KscNegotiatorHandle
 KscAvModule::getNegotiator(const KscServer *server) const {
     KscNegotiatorHandle hNegotiator =
 	_getNegotiator(server);
-    _server_namelist->addFirst(server->getHostAndName());
+    ServernameNode *node = new ServernameNode(server->getHostAndName());
+    if ( node ) {
+        node->_next = *_server_namelist;
+        *_server_namelist = node;
+    } else {
+        hNegotiator.bindTo(0);
+    }
     return hNegotiator;
 } // KscAvModule::getNegotiator
 

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.41 2000-04-12 07:23:14 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.42 2000-04-14 08:44:59 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -1699,7 +1699,7 @@ KscServer::getNegotiator(const KscAvModule *avm)
 	//
         // Try to find a negotiator in the cache of this server object.
         //
-        PltKeyCPtr<KscAvModule> tkey(avm);
+        PltKeyPlainConstPtr<KscAvModule> tkey(avm);
         KscNegotiatorHandle hneg;
 
         if ( neg_table.query(tkey, hneg) ) {
@@ -1752,7 +1752,7 @@ KscServer::dismissNegotiator(const KscAvModule *avm)
     // for a given A/V module and server connection.
     //
     if ( avm != 0 ) {
-	PltKeyCPtr<KscAvModule> key(avm);
+	PltKeyPlainConstPtr<KscAvModule> key(avm);
 	KscNegotiatorHandle hNegotiator;
     	neg_table.remove(key, hNegotiator);
     }

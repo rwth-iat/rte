@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KSC_AVMODULE_INCLUDED 
 #define KSC_AVMODULE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avmodule.h,v 1.9 2000-04-10 15:00:56 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avmodule.h,v 1.10 2000-04-14 08:44:58 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -67,9 +67,23 @@ public:
     bool operator == (const KscAvModule &) const;
 
 protected:
-    PltList<KsString> *_server_namelist;
+
+    class ServernameNode :
+    public PltString
+    {
+    public:
+        ServernameNode(PltString name)
+        : PltString(name), _next(0) { }
+        ServernameNode *_next;
+    };
+    typedef ServernameNode *ServernameNodePtr;
+
+    ServernameNodePtr *_server_namelist;
+
     virtual KscNegotiatorHandle _getNegotiator(const KscServer *) const = 0;
-};
+
+}; // class KscAvModule
+
 
 //////////////////////////////////////////////////////////////////////
 // class KscNoneNegotiator

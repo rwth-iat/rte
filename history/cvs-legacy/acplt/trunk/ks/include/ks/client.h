@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.28 2000-04-10 15:01:31 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.29 2000-04-14 08:44:58 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -338,7 +338,7 @@ protected:
     KSC_IP_TYPE last_ip;	
       	// last IP used to connect to server/manager   
 
-    PltHashTable<PltKeyCPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
+    PltHashTable<PltKeyPlainConstPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
     PltHashTable<KsString, u_long> ext_opcodes;
 
     friend class KscClient;
