@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is the Version 1.01 of the C++ Communication Libary. It contains
+This is the Version 1.02 of the C++ Communication Libary. It contains
 bug-fixes and some small improvements behind the scenes. For details
 about bug-fixes and changes, see part 3 "Changes & Bug-Fixes" below.
 
@@ -84,6 +84,49 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
+Version 1.02
+- CLIENTS: Fixed a bug which crashed applications creating communication
+  objects with an invalid host and/or server name like "//x//a/b/c".
+
+- CLIENTS: Cleaned up error reporting for communication objects like
+  variables and domains. If there is a communication level problem between
+  client and server, an error code of KS_ERR_NETWORKERROR was issued in
+  the pre-1.02 releases of the C++ Communication Library. Beginning with
+  this release (1.02) the error code of the server is reported instead
+  by the communication object, if you call getLastResult() on it. Thus,
+  KS_ERR_NETWORKERROR no longer means that there were a problem either
+  in the low-level communication **or** on the ACPLT/KS layer, but instead
+  now indicates **only** low-level communication problems. For instance, you
+  will get a KS_ERR_BADAUTH instead of KS_ERR_NETWORKERROR.
+
+- CLIENTS: Cleaned up error reporting through packages and data exchange
+  packages: when the communication with an ACPLT/KS server fails, then the
+  error code is propagated to all variable objects in a package which refer
+  to this server. Only in this case the package itself will return an error
+  code of KS_ERR_NETWORKERROR. So there are basically these cases:
+
+  * package.getUpdate() == true && package.getLastResult() == KS_ERR_OK
+    Everything is okay. The variables have been successfully read or
+    written.
+
+  * package.getUpdate() == false && package.getLastResult() == KS_ERR_OK
+    Communication with the ACPLT/KS server succeeded but some variables
+    could not be read/written. Reasons for this could be either invalid
+    path names or access restrictions for individual variables.
+
+  * package.getUpdate() == false && package.getLastResult() == KS_ERR_NETWORKERROR
+    Communication with one or more ACPLT/KS servers failed. Variables
+    located in other servers could be read/written nevertheless. The variable
+    objects whose values could not be read/written will return a more precise
+    error code indicating the cause for the failure.
+    
+  * package.getUpdate() == false && package.getLastResult() == some other error code
+    The package object failed to initiate the communication. Reasons for
+    this can be memory constraints. The error code returned by getLastResult()
+    specifies the reason for failure more precise.
+
+
+Version 1.01
 - SERVERS: The constructor sof the classes KsServer and KsSimpleServer now
   have an optional parameter "port" which can be used to "bind" a ACPLT/KS
   server to a specific port number. This is necessary when ACPLT/KS servers
