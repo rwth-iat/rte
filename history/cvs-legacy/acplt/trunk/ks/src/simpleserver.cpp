@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.20 1998-09-17 12:02:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.21 1998-10-01 09:59:12 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -41,6 +41,7 @@
 
 #include "ks/simpleserver.h"
 #include "ks/path.h"
+#include "ks/conversions.h"
 #include "plt/log.h"
 
 #include "ks/svrsimpleobjects.h"
@@ -229,7 +230,7 @@ KsSimpleServer::getVar(KsAvTicket &ticket,
         // Allocation ok.
         KsPath::resolvePaths(params.identifiers, paths, pathres);
         for (size_t i = 0; i < reqsz; ++i) {
-            if (pathres[i] == KS_ERR_OK) {
+            if( pathres[i] == KS_ERR_OK ) {
                 getVarItem(ticket, paths[i], result.items[i]);
             } else {
                 result.items[i].result = pathres[i];
@@ -286,8 +287,8 @@ KsSimpleServer::setVar(KsAvTicket &ticket,
 
 void
 KsSimpleServer::getVarItem(KsAvTicket &ticket, 
-                             const KsPath & path,
-                             KsGetVarItemResult & result)
+                           const KsPath & path,
+                           KsGetVarItemResult & result)
 {
     PLT_PRECONDITION(path.isValid() && path.isAbsolute());
     if (ticket.canReadVar(KsString(PltString(path)))) {
@@ -350,85 +351,112 @@ KsSimpleServer::setVarItem(KsAvTicket &ticket,
 //////////////////////////////////////////////////////////////////////
 
 void
+KsSimpleServer::getPPOfDomain(KssDomain *pd,
+                              const PltString &prefix,
+                              KsAvTicket &ticket,
+                              const KsGetPPParams &params,
+                              KsGetPPResult &result)
+{
+    PLT_PRECONDITION( pd );
+ 
+    if (params.name_mask == "") {
+        // We are being asked about the proj. props of the
+        // domain itself
+        KsProjPropsHandle h(pd->getPP());
+        if (h && result.items.addLast(h)) {
+            result.result = KS_ERR_OK;
+        } else {
+            result.result = KS_ERR_GENERIC;
+        }
+    } else {
+        // Convert mask
+        KsString mask;
+        result.result = ksStringFromPercent(params.name_mask, mask);
+        if( result.result == KS_ERR_OK ) {
+            // Iterate over its children.
+            KssDomainIterator *pit =
+                PLT_RETTYPE_CAST((KssDomainIterator *))
+                pd->newMaskedIterator(mask,params.type_mask);
+            if (pit) {
+                // We got an iterator. Use it.
+                for (KssDomainIterator &it = *pit; it; ++it) {
+                    if (*it) {
+                        // check if the child is visible
+                        PltString childname(prefix,
+                                            (*it)->getIdentifier());
+                        if (ticket.isVisible(childname)) {
+                            // Ask for proj properties
+                            KsProjPropsHandle hpp = (*it)->getPP();
+                            if (hpp) {
+                                hpp->access_mode &= 
+                                    ticket.getAccess(childname);
+                                hpp->identifier = 
+                                    ksStringToPercent(hpp->identifier);
+                                result.items.addLast(hpp);
+                            } else {
+                                // ignore error
+                            }
+                        } else {
+                            // not visible, do nothing
+                        }
+                    } else {
+                        // null handle, log error
+                        PltLog::Error("Child iterator returned"
+                                      " null handle");
+                    }
+                } // for
+                delete pit;
+            } else {
+                // no iterator: ignore error
+            }
+        } else {
+            // conversion error, code already set
+        }
+    }               
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void
 KsSimpleServer::getPP(KsAvTicket &ticket, 
                       const KsGetPPParams & params,
                       KsGetPPResult & result) 
 {
     KsPath path(params.path);
     PltString prefix;
-    if (path.isValid() && path.isAbsolute()) {
-        // Path is OK
-        if (ticket.isVisible(params.path)) {
-            KssCommObjectHandle hc;
-            KssDomain *pd = 0;
-            if (params.path == "/") {
-                prefix = params.path;
-                // root must be handled specially
-                pd = &_root_domain;
-            } else {
-                prefix = PltString(params.path,"/");
-                hc = _root_domain.getChildByPath(path);
-                if (hc) {
-                    // Child found. Is it a domain?
-                    pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
-                }
-            }
-            if (pd) {
-                // Yes! 
-                if (params.name_mask == "") {
-                    // We are being asked about the proj. props of the
-                    // domain itself
-                    KsProjPropsHandle h(pd->getPP());
-                    if (h && result.items.addLast(h)) {
-                        result.result = KS_ERR_OK;
-                    } else {
-                        result.result = KS_ERR_GENERIC;
-                    }
+
+    if( path.isValid() && path.isAbsolute() ) {
+        KS_RESULT convres = path.convert();
+        if( convres == KS_ERR_OK ) {
+            // Path is OK
+            if (ticket.isVisible(KsString(path))) {
+                KssCommObjectHandle hc;
+                KssDomain *pd = 0;
+                if (params.path == "/") {
+                    prefix = params.path;
+                    // root must be handled specially
+                    pd = &_root_domain;
                 } else {
-                    // Iterate over its children.
-                    result.result = KS_ERR_OK; // report no other errors
-                    KssDomainIterator *pit =
-                        PLT_RETTYPE_CAST((KssDomainIterator *))
-                            pd->newMaskedIterator(params.name_mask, 
-                                                  params.type_mask);
-                    if (pit) {
-                        // We got an iterator. Use it.
-                        for (KssDomainIterator &it = *pit; it; ++it) {
-                            if (*it) {
-                                // check if the child is visible
-                                PltString childname(prefix,
-                                                    (*it)->getIdentifier());
-                                if (ticket.isVisible(childname)) {
-                                    // Ask for proj properties
-                                    KsProjPropsHandle hpp = (*it)->getPP();
-                                    if (hpp) {
-                                        hpp->access_mode &= 
-                                            ticket.getAccess(childname);
-                                        result.items.addLast(hpp);
-                                    } else {
-                                        // ignore error
-                                    }
-                                } else {
-                                    // not visible, do nothing
-                                }
-                            } else {
-                                // null handle, log error
-                                PltLog::Error("Child iterator returned"
-                                              " null handle");
-                            }
-                        } // for
-                        delete pit;
-                    } else {
-                        // no iterator: ignore error
+                    prefix = PltString(PltString(path),"/");
+                    hc = _root_domain.getChildByPath(path);
+                    if (hc) {
+                        // Child found. Is it a domain?
+                        pd = PLT_DYNAMIC_PCAST(KssDomain, hc.getPtr());
                     }
-                } // needs iteration
+                }
+                if( pd ) {
+                    getPPOfDomain(pd, prefix, ticket, params, result);
+                } else {
+                    // not a domain or no such child
+                    result.result = KS_ERR_BADPATH;
+                }
             } else {
-                // not a domain or no such child
-                result.result = KS_ERR_BADPATH;
+                // domain invisible
+                result.result = KS_ERR_NOACCESS; // TODO or BADPATH?
             }
         } else {
-            // domain invisible
-            result.result = KS_ERR_NOACCESS; // TODO or BADPATH?
+            // failed to convert path
+            result.result = convres;
         }
     } else {
         // Path syntax error

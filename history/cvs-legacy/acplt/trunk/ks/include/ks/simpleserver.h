@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SIMPLESERVER_INCLUDED
 #define KS_SIMPLESERVER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.10 1998-08-28 13:21:19 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/simpleserver.h,v 1.11 1998-10-01 09:59:10 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -83,6 +83,12 @@ protected:
                             const KsPath & path,
                             const KsCurrPropsHandle & curr_props,
                             KsResult &result);
+
+    void getPPOfDomain(KssDomain *pd,
+                       const PltString &prefix,
+                       KsAvTicket &ticket,
+                       const KsGetPPParams &params,
+                       KsGetPPResult &result);
 
     bool addCommObject(const KsPath & dompath,
                        const KssCommObjectHandle & ho);

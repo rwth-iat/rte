@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.6 1998-07-22 12:43:42 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.7 1998-10-01 09:59:12 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,6 +45,7 @@
 #include "ks/string.h"
 //#include "ks/array.h"
 //#include "ks/serviceparams.h"
+#include "ks/conversions.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -332,7 +333,7 @@ KsPath::resolvePaths(const PltArray<KsString> & ids,
             if (current.isValid()) {
                 // resolve path based on the current path.
                 path = current.resolve(path);
-                current = path;
+                // current = path;
                 if ( path.isValid() ) {
                     res[i] = KS_ERR_OK;
                 } else {
@@ -353,6 +354,10 @@ KsPath::resolvePaths(const PltArray<KsString> & ids,
             res[i] = KS_ERR_BADPATH;
         }
         current = path;
+        // Do conversion if necessary
+        if( res[i] == KS_ERR_OK ) {
+            res[i] = path.convert();
+        }
     } // for each id
 }
 
@@ -465,6 +470,77 @@ bool checkPath(PltString &path, bool allow_slash, bool allow_point)
 } 
 
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+
+KS_RESULT
+KsPath::convert()
+{
+    KsString new_str;
+    KS_RESULT res = ksStringFromPercent(_str, new_str);
+
+#if PLT_DEBUG
+    cerr << "Old string: " << _str << endl;
+    cerr << "Slashes set at: ";
+    for(size_t j = 0; j < _slash.size(); j++) {
+        cerr << _slash[j] << "\t";
+    }
+    cerr << endl;
+#endif
+
+    if( res == KS_ERR_OK ) {
+        // Iterate over parts of path and adjust slash positions.
+        // Each percent found in the old string shortens the current
+        // path by two as "%xx" was converted to a single char.
+        // As the whole string was changed, we need to iterate over all
+        // slashes except the first and last one.
+        //
+        size_t count = 0;
+        size_t last_slash = _slash[0];
+        for(size_t i = 1; i < _slash.size() - 1; i++) {
+            for(size_t j = last_slash; j < _slash[i]; j++) {
+                if( _str[j] == '%' ) count++;
+            }
+            last_slash = _slash[i];
+            if( count ) {
+                _slash[i] -= 2 * count;
+            }
+        }
+
+#if PLT_DEBUG
+        bool error = false;
+        for(size_t i = 0; i < _slash.size() - 1 && !error; i++) {
+            if( new_str[_slash[i]-1] != '/' ) {
+                error = true;
+            }
+        }
+        if( error ) {
+            cerr << "Conversion of path failed." << endl;
+            cerr << "Original string: " << _str << endl;
+            cerr << "New string: " << new_str << endl;
+            cerr << "Slashes set at:" << endl;
+            for(size_t j = 0; j < _slash.size(); j++) {
+                cerr << _slash[j] << "\t";
+            }
+            cerr << endl;
+            PLT_ASSERT(0);
+        } else {
+            cerr << "Path was converted:" << endl;
+            cerr << "New string: " << new_str << endl;
+            cerr << "Slashes set at: ";
+            for(size_t j = 0; j < _slash.size(); j++) {
+                cerr << _slash[j] << "\t";
+            }
+            cerr << endl;
+        }
+#endif
+        _str = new_str;
+    }
+
+    return res;
+}
+                
 //////////////////////////////////////////////////////////////////////
 // EOF ks/path.cpp
+/////////////////////////////////////////////////////////////////////////////
 

@@ -359,6 +359,49 @@ KscHistory::getIntValue(KsString id, KsIntVecValue &val)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+
+KS_RESULT
+KscHistory::getStateValue(KsString id, KsStateVecValue &val)
+{
+    KsValueHandle hval;
+    KS_RESULT res = getSelectorValue(id, hval);
+    
+    if( res == KS_ERR_OK ) {
+        if( hval ) {
+            KsStateVecValue *uint_val = 
+                PLT_DYNAMIC_PCAST(KsStateVecValue, hval.getPtr());
+            if( uint_val ) {
+                val = *uint_val;
+                return KS_ERR_OK;
+            } else {
+                return KS_ERR_TYPEMISMATCH;
+            }
+        } else {
+            return  KS_ERR_GENERIC;
+        }
+    } else {
+        return res;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+KsSelectorHandle 
+KscHistory::getSelector(KsString id) const
+{
+    PltListIterator<KsGetHistItem> it(selectors);
+
+    while( it ) {
+        if( it->part_id == id ) {
+            return it->sel;
+        }
+        ++it;
+    }
+
+    return KsSelectorHandle();
+}
+
+/////////////////////////////////////////////////////////////////////////////
 // EOF history.cpp
 /////////////////////////////////////////////////////////////////////////////
 

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.13 1998-09-17 13:08:13 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.14 1998-10-01 09:58:15 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -64,6 +64,9 @@ public:
     PltString & operator = (const char *);
     PltString & operator = (const PltString &);
     static PltString fromInt(int );
+    // Constructs a new string which takes ownership of p
+    static PltString takeOwnership(char *p, size_t len);
+
 
 #if PLT_DEBUG_INVARIANTS
     virtual bool invariant() const;
@@ -181,6 +184,15 @@ PltString::operator const char * () const
 }
 
 //////////////////////////////////////////////////////////////////////
+
+inline
+PltString
+PltString::takeOwnership(char *s, size_t len) 
+{
+    return PltString(len, s);
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 inline bool
 operator == (const PltString & s1 , const PltString & s2)

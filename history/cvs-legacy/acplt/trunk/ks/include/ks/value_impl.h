@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_VALUE_IMPL_INCLUDED
 #define KS_VALUE_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/value_impl.h,v 1.3 1997-04-10 14:17:48 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/value_impl.h,v 1.4 1998-10-01 09:59:10 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -97,7 +97,6 @@ bool
 KsVecValueBase<T>::xdrDecodeVariant(XDR *xdr)
 {
     return KsArray<T>::xdrDecode(xdr);
-
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.16 1998-09-17 12:02:22 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.17 1998-10-01 09:59:10 markusj Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -64,6 +64,7 @@ enum KS_RESULT_ENUM {
     KS_ERR_UNKNOWNAUTH              = 0x0005,
     KS_ERR_NOTIMPLEMENTED           = 0x0003,
     KS_ERR_BADPARAM                 = 0x0004,
+    KS_ERR_TARGETGENERIC            = 0x0006,
    
     KS_ERR_BADNAME                  = 0x0010,
     KS_ERR_BADPATH                  = 0x0011,
@@ -71,6 +72,7 @@ enum KS_RESULT_ENUM {
     KS_ERR_NOACCESS                 = 0x0013,
     KS_ERR_BADTYPE                  = 0x0014,
     KS_ERR_CANTSYNC                 = 0x0015,
+    KS_ERR_BADSELECTOR              = 0x0016,
     
     KS_ERR_NOREMOTE                 = 0x0020,
     KS_ERR_SERVERUNKNOWN            = 0x0021,
@@ -129,22 +131,26 @@ enum KS_STATE_ENUM {
 typedef enum_t KS_STATE;
 
 enum KS_VAR_TYPE_ENUM {
-    KS_VT_VOID       = 0x00,
-    KS_VT_BOOL       = 0x02,
-    KS_VT_INT        = 0x10,
-    KS_VT_UINT       = 0x11,
-    KS_VT_SINGLE     = 0x20,
-    KS_VT_DOUBLE     = 0x21,
-    KS_VT_STRING     = 0x30,
-    KS_VT_TIME       = 0x31,
-    KS_VT_BYTE_VEC   = 0x81,
-    KS_VT_BOOL_VEC   = 0x82,
-    KS_VT_INT_VEC    = 0x90,
-    KS_VT_UINT_VEC   = 0x91,
-    KS_VT_SINGLE_VEC = 0xA0,
-    KS_VT_DOUBLE_VEC = 0xA1,
-    KS_VT_STRING_VEC = 0xB0,
-    KS_VT_TIME_VEC   = 0xB1
+    KS_VT_VOID          = 0x00,
+    KS_VT_BOOL          = 0x02,
+    KS_VT_INT           = 0x10,
+    KS_VT_UINT          = 0x11,
+    KS_VT_SINGLE        = 0x20,
+    KS_VT_DOUBLE        = 0x21,
+    KS_VT_STRING        = 0x30,
+    KS_VT_TIME          = 0x31,
+    KS_VT_TIME_SPAN     = 0x32,
+    KS_VT_STATE         = 0x38,
+    KS_VT_BYTE_VEC      = 0x81,
+    KS_VT_BOOL_VEC      = 0x82,
+    KS_VT_INT_VEC       = 0x90,
+    KS_VT_UINT_VEC      = 0x91,
+    KS_VT_SINGLE_VEC    = 0xA0,
+    KS_VT_DOUBLE_VEC    = 0xA1,
+    KS_VT_STRING_VEC    = 0xB0,
+    KS_VT_TIME_VEC      = 0xB1,
+    KS_VT_TIME_SPAN_VEC = 0xB2,
+    KS_VT_STATE_VEC     = 0xB8
 };
 typedef enum_t KS_VAR_TYPE;
 
@@ -171,4 +177,5 @@ enum KS_SVC_ENUM {
 };
     
 #endif
+
 /* End of ks/ks.h */

@@ -23,6 +23,8 @@ PLT_IMPL_RTTI1(KsSingleValue,KsValue);
 PLT_IMPL_RTTI1(KsDoubleValue,KsValue);
 PLT_IMPL_RTTI2(KsStringValue,KsValue,KsString);
 PLT_IMPL_RTTI2(KsTimeValue,KsValue,KsTime);
+PLT_IMPL_RTTI2(KsTimeSpanValue,KsValue,KsTimeSpan);
+PLT_IMPL_RTTI1(KsStateValue,KsValue);
 PLT_IMPL_RTTI1(KsVoidValue,KsValue);
 
 // RTTI skips KsVecValueBase!!!
@@ -35,6 +37,8 @@ PLT_IMPL_RTTI1(KsSingleVecValue, KsValue);
 PLT_IMPL_RTTI1(KsDoubleVecValue, KsValue);
 PLT_IMPL_RTTI1(KsStringVecValue, KsValue);
 PLT_IMPL_RTTI1(KsTimeVecValue, KsValue);
+PLT_IMPL_RTTI1(KsTimeSpanVecValue, KsValue);
+PLT_IMPL_RTTI1(KsStateVecValue, KsValue);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -46,6 +50,8 @@ KS_XDR_MAP(KS_VT_SINGLE,KsSingleValue);
 KS_XDR_MAP(KS_VT_DOUBLE,KsDoubleValue);
 KS_XDR_MAP(KS_VT_STRING,KsStringValue);
 KS_XDR_MAP(KS_VT_TIME,KsTimeValue);
+KS_XDR_MAP(KS_VT_TIME_SPAN,KsTimeSpanValue);
+KS_XDR_MAP(KS_VT_STATE,KsStateValue);
 KS_XDR_MAP(KS_VT_VOID,KsVoidValue);
 KS_XDR_MAP(KS_VT_BYTE_VEC, KsByteVecValue);
 KS_XDR_MAP(KS_VT_BOOL_VEC, KsBoolVecValue);
@@ -55,6 +61,8 @@ KS_XDR_MAP(KS_VT_SINGLE_VEC, KsSingleVecValue);
 KS_XDR_MAP(KS_VT_DOUBLE_VEC, KsDoubleVecValue);
 KS_XDR_MAP(KS_VT_STRING_VEC, KsStringVecValue);
 KS_XDR_MAP(KS_VT_TIME_VEC, KsTimeVecValue);
+KS_XDR_MAP(KS_VT_TIME_SPAN_VEC, KsTimeSpanVecValue);
+KS_XDR_MAP(KS_VT_STATE_VEC, KsStateVecValue);
 KS_END_IMPL_XDRUNION;
 
 //////////////////////////////////////////////////////////////////////
@@ -71,7 +79,9 @@ template class KsVecValueBase<u_long>;
 template class KsVecValueBase<float>;
 template class KsVecValueBase<double>;
 template class KsVecValueBase<KsTime>;
+template class KsVecValueBase<KsTimeSpan>;
 template class KsVecValueBase<KsString>;
+template class KsVecValueBase<int>;
 #endif
 
 
@@ -328,6 +338,47 @@ KsTimeValue::debugPrint(ostream & ostr) const
          << " = " << ctime(&sec) << "}";
 }
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+// class KsTimeSpanValue
+/////////////////////////////////////////////////////////////////////////////
+
+#if PLT_DEBUG
+void
+KsTimeSpanValue::debugPrint(ostream &os) const
+{
+    os << "KsTimeSpanValue{" << tv_sec << "," << tv_usec << "}";
+}
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+// class KsStateValue
+/////////////////////////////////////////////////////////////////////////////
+    
+#if PLT_DEBUG
+void 
+KsStateValue::debugPrint(ostream & os) const
+{
+    static char states[][13] = {
+        "NOTSUPPORTED",
+        "UNKNOWN",
+        "BAD",
+        "QUESTIONABLE",
+        "GOOD"
+    };
+
+    os << "KsStateValue{";
+    if( 0 <= val && val <= 4 ) {
+        os << states[val];
+    } else {
+        os << val;
+    }
+    os << "}";
+}
+ 
+#endif
+
+
 //////////////////////////////////////////////////////////////////////
 // class KsVoidValue
 //////////////////////////////////////////////////////////////////////
@@ -443,4 +494,15 @@ KsTimeVecValue::xdrTypeCode() const
 }
 
 //////////////////////////////////////////////////////////////////////
+
+enum_t
+KsTimeSpanVecValue::xdrTypeCode() const
+{
+    return KS_VT_TIME_SPAN_VEC;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// EOF value.cpp
+/////////////////////////////////////////////////////////////////////////////
+
 

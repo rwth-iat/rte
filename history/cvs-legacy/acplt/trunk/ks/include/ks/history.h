@@ -69,7 +69,10 @@ public:
     bool removeSelector(KsString id);
     // Add a string selector(convenience function)
     bool setStringSelector(KsString id, KsString mask);
+    // Add a none selector
     bool setNoneSelector(KsString id);
+    // Get a selector if exists
+    KsSelectorHandle getSelector(KsString id) const;
 
     // Read max entries at most
     void setMaxEntries(u_long max = ULONG_MAX);
@@ -91,6 +94,7 @@ public:
     KS_RESULT getDoubleValue(KsString selector, KsDoubleVecValue &val);
     KS_RESULT getUIntValue(KsString selector, KsUIntVecValue &val);
     KS_RESULT getIntValue(KsString selector, KsIntVecValue &val);
+    KS_RESULT getStateValue(KsString selector, KsStateVecValue &val);
 
 protected:
     u_long                 max_entries;

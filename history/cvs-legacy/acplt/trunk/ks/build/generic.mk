@@ -3,6 +3,7 @@
 
 CXX_LIBKS_SOURCES = \
 	array.cpp \
+	conversions.cpp \
 	path.cpp \
 	props.cpp \
 	register.cpp \
@@ -54,6 +55,7 @@ CXX_LIBKSCLN_SOURCES= \
 
 LIBKS_OBJECTS1 = \
 	array$(O) \
+	conversions$(O) \
 	path$(O) \
 	props$(O) \
 	register$(O) \
@@ -136,7 +138,8 @@ CXX_EXAMPLES_SOURCES = \
 	ttree.cpp \
 	ttree1.cpp \
 	tvalhist.cpp \
-	thistory.cpp
+	thistory.cpp \
+	tconversions.cpp
 
 EXAMPLES_OBJECTS = \
 	ext_sp$(O) \
@@ -154,7 +157,8 @@ EXAMPLES_OBJECTS = \
 	ttree$(O) \
 	ttree1$(O) \
 	tvalhist$(O) \
-	thistory$(O)
+	thistory$(O) \
+	tconversions$(O)
 
 
 EXAMPLES = \
@@ -204,5 +208,7 @@ tpackage$(EXE) : tpackage$(O) $(LIBKSCLN) $(LIBKS)
 tvalhist$(EXE) : tvalhist$(O) $(LIBKSCLN) $(LIBKS)
 
 thistory$(EXE) : thistory$(O) $(LIBKSCLN) $(LIBKS)
+
+tconversions$(EXE) : tconversions$(O) $(LIBKS)
 
 

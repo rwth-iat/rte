@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_PATH_INCLUDED
 #define KS_PATH_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.7 1998-09-17 13:13:11 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.8 1998-10-01 09:59:10 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -75,6 +75,10 @@ public:
     // Change path to be completely upper or lower case.
     void toUpper();
     void toLower();
+
+    // Convert path from network representation("%xx") to
+    // natural one.
+    KS_RESULT convert();
 
     KsPath resolve(const KsPath & rel);
     static void resolvePaths(const PltArray<KsString> & ids,
