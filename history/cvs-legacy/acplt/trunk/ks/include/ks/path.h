@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_PATH_INCLUDED
 #define KS_PATH_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.6 1998-07-30 10:24:29 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/path.h,v 1.7 1998-09-17 13:13:11 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -72,7 +72,9 @@ public:
     operator PltString () const;
     KsPath & operator = (const KsPath &);
 
+    // Change path to be completely upper or lower case.
     void toUpper();
+    void toLower();
 
     KsPath resolve(const KsPath & rel);
     static void resolvePaths(const PltArray<KsString> & ids,
@@ -140,6 +142,14 @@ inline void
 KsPath::toUpper()
 {
     _str.toUpper();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline void
+KsPath::toLower()
+{
+    _str.toLower();
 }
 
 /////////////////////////////////////////////////////////////////////////////
