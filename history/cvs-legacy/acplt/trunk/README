@@ -128,9 +128,13 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.2.0pre2
+Version 1.2.0pre3
 - SERVERS:
-  * Fixed compiling problems with egcs and new tool chain (linker).
+  * Fixed compiling problems with egcs and new tool chain (linker). This
+    concerned minor glibc2 related compiling problems (glibc2 is fortunately
+    much stronger typed) as well as the template linker perl script.
+  * Fixed a bug on OpenVMS concerning UDP-based buffered XDR streams acting
+    as client-side streams.
   * Fixed a bug in KsPath::resolvePaths() concerning handling of encoded
     characters ("%XX") when resolving paths.
   * Fixed a bug/memory leak when using more than one A/V module for the
