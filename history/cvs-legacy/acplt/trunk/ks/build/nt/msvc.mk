@@ -29,12 +29,12 @@ LD = link /nologo
 # LD_FLAGS = /DEBUG
 CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) \
 	-GR -DPLT_SYSTEM_NT=1 -DPLT_DEBUG_NEW=0 -DFD_SETSIZE=128
-CXX_LIBS = $(LIBKS) $(LIBPLT) $(LIBRPC) wsock32.lib advapi32.lib
+CXX_LIBS = $(LIBKS) $(LIBPLT) $(LIBRPC) wsock32.lib advapi32.lib user32.lib
 
 RC = rc
 RC_OPTS = /dPLT_RCMSVC=1
 
-LIBKS_NT_OBJECTS = ntservice$(O)
+LIBKS_NT_OBJECTS = ntservice$(O) w95service$(O)
 
 .SUFFIXES:
 
@@ -42,7 +42,7 @@ LIBKS_NT_OBJECTS = ntservice$(O)
 
 all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
-examples:       ntksmanager.exe tmanager.exe tserver.exe tclient.exe ttree.exe
+examples:       ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe tclient.exe ttree.exe
 
 # the tsclient.exe is not supported
 #examples:       ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
@@ -68,6 +68,10 @@ examples:       ntksmanager.exe tmanager.exe tserver.exe tclient.exe ttree.exe
 
 ###
 
+w95service$(O): ..\..\include\ks\w95service.h ..\..\src\w95service.cpp
+
+ntservice$(O): ..\..\include\ks\ntservice.h ..\..\src\ntservice.cpp
+
 ### explicit dependencies not covered by platform-dependend depent mechanism
 ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 	$(CXX)  $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)ntservice.cpp
@@ -81,12 +85,25 @@ ntksmanager.exe: ntksmanager.obj ntksmanager_templates.obj $(LIBKS) ntksmanager.
 		 ntksmanager.obj ntksmanager_templates.obj ntksmanager.res \
 		$(LIBKSSVR) $(CXX_LIBS)
 
+w95ksmanager$(O): $(EXAMPLESSRCDIR)ntksmanager.cpp $(KSDIR)\include\ks\ntservice.h
+	$(CXX) -DPLT_W95SERVICE $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -Fo$@ $(EXAMPLESSRCDIR)ntksmanager.cpp
+
+w95ksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
+	$(RC) $(RC_OPTS) /dPLT_W95SERVICE /fo w95ksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
+
+w95ksmanager.exe: w95ksmanager.obj ntksmanager_templates.obj $(LIBKS) w95ksmanager.res
+	@echo Linking $@
+	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
+		/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup \
+		 w95ksmanager.obj ntksmanager_templates.obj w95ksmanager.res \
+		$(LIBKSSVR) $(CXX_LIBS)
+
 
 $(LIBKS) : $(LIBKS_OBJECTS)
 	lib /OUT:$@ $(LIBKS_OBJECTS)
 
-$(LIBKSSVR) : $(LIBKSSVR_OBJECTS) ntservice$(O)
-	lib /OUT:$@ $(LIBKSSVR_OBJECTS) ntservice$(O)
+$(LIBKSSVR) : $(LIBKSSVR_OBJECTS) $(LIBKS_NT_OBJECTS)
+	lib /OUT:$@ $(LIBKSSVR_OBJECTS) $(LIBKS_NT_OBJECTS)
 
 $(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
 	lib /OUT:$@ $(LIBKSCLN_OBJECTS)
