@@ -51,7 +51,6 @@ OV_RESULT OV_DLLFNCEXPORT kshist_KsSimpleHistoryRO_gethist(
 	phistEO = Ov_GetParent(kshist_representation, phist);
 	if (phistEO) {
 	   for(i=0; i<items_len; i++, presultitem++, pitem++) {
-			
 		phisttrack = Ov_GetFirstChild(kshist_historytrackcontainment, phistEO);
 		while (phisttrack) {	
 			if (strcmp(pitem->part, phisttrack->v_identifier)==0)

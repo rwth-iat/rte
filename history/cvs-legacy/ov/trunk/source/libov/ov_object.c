@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.22 2001-07-20 07:21:42 ansgar Exp $
+*   $Id: ov_object.c,v 1.23 2001-12-10 14:28:41 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
+*	06-Dez-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: macro Ov_VarAddress for object_move changed.
 */
 /*
 *	Description:
@@ -71,6 +72,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
 	OV_VTBLPTR_ov_object	pvtable;
 	OV_ELEMENT				parent, child;
 	OV_RESULT				result;
+	OV_VAR_VALUE				init;
+	OV_STRING				*pstring;
+	OV_UINT					i;
 	/*
 	*	initialize
 	*/
@@ -81,17 +85,95 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
 	*	construct part objects
 	*/
 	while(TRUE) {
-		Ov_AbortIfNot(Ov_OK(ov_element_getnextpart(&parent, &child, OV_ET_OBJECT)));
+		Ov_AbortIfNot(Ov_OK(ov_element_getnextpart(&parent, &child, OV_ET_OBJECT | OV_ET_VARIABLE)));
 		if(child.elemtype == OV_ET_NONE) {
 			break;
 		}
-		Ov_GetVTablePtr(ov_object, pvtable, child.pobj);
-		if(!pvtable) {
-			pvtable = pclass_ov_object->v_pvtable;
+		if (child.elemtype == OV_ET_OBJECT) {
+			Ov_GetVTablePtr(ov_object, pvtable, child.pobj);
+			if(!pvtable) {
+				pvtable = pclass_ov_object->v_pvtable;
+			}
+			result = pvtable->m_constructor(child.pobj);
+			if(Ov_Fail(result)) {
+				return result;
+			}
 		}
-		result = pvtable->m_constructor(child.pobj);
-		if(Ov_Fail(result)) {
-			return result;
+		if (child.elemtype == OV_ET_VARIABLE) {
+			init = child.elemunion.pvar->v_initialvalue.value;
+			switch (init.vartype) {
+				case OV_VT_VOID:
+					break;
+				case OV_VT_BYTE_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_BYTE_VEC*)child.pvalue, init.valueunion.val_byte_vec.value, init.valueunion.val_byte_vec.veclen, BYTE);
+					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_BYTE*)child.pvalue)[i] = ((OV_BYTE*)init.valueunion.val_byte_vec.value)[i];
+					break;
+				case OV_VT_BOOL_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_BOOL_VEC*)child.pvalue, init.valueunion.val_bool_vec.value, init.valueunion.val_bool_vec.veclen, BOOL);
+					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_BOOL*)child.pvalue)[i] = ((OV_BOOL*)init.valueunion.val_bool_vec.value)[i];
+					break;
+				case OV_VT_INT_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_INT_VEC*)child.pvalue, init.valueunion.val_int_vec.value, init.valueunion.val_int_vec.veclen, INT);
+					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_INT*)child.pvalue)[i] = ((OV_INT*)init.valueunion.val_int_vec.value)[i];
+					break;
+				case OV_VT_UINT_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_UINT_VEC*)child.pvalue, init.valueunion.val_uint_vec.value, init.valueunion.val_uint_vec.veclen, UINT);
+					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_UINT*)child.pvalue)[i] = ((OV_UINT*)init.valueunion.val_uint_vec.value)[i];
+					break;
+				case OV_VT_SINGLE_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_SINGLE_VEC*)child.pvalue, init.valueunion.val_single_vec.value, init.valueunion.val_single_vec.veclen, SINGLE);
+					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_SINGLE*)child.pvalue)[i] = ((OV_SINGLE*)init.valueunion.val_single_vec.value)[i];
+					break;
+				case OV_VT_DOUBLE_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_DOUBLE_VEC*)child.pvalue, init.valueunion.val_double_vec.value, init.valueunion.val_double_vec.veclen, DOUBLE);
+					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_DOUBLE*)child.pvalue)[i] = ((OV_DOUBLE*)init.valueunion.val_double_vec.value)[i];
+					break;
+				case OV_VT_TIME_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_TIME_VEC*)child.pvalue, init.valueunion.val_time_vec.value, init.valueunion.val_time_vec.veclen, TIME);
+					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_TIME*)child.pvalue)[i] = ((OV_TIME*)init.valueunion.val_time_vec.value)[i];
+					break;
+				case OV_VT_TIME_SPAN_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_TIME_SPAN_VEC*)child.pvalue, init.valueunion.val_time_span_vec.value, init.valueunion.val_time_span_vec.veclen, TIME_SPAN);
+					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_TIME_SPAN*)child.pvalue)[i] = ((OV_TIME_SPAN*)init.valueunion.val_time_span_vec.value)[i];
+					break;
+				case OV_VT_STRING_VEC:
+					if (child.elemunion.pvar->v_veclen == 0) {
+						Ov_SetDynamicVectorLength((OV_STRING_VEC*)child.pvalue, init.valueunion.val_string_vec.veclen, STRING);
+						pstring = ((OV_STRING_VEC*)child.pvalue)->value;
+					}
+					else pstring = (OV_STRING*) child.pvalue;
+					for (i=0;i<init.valueunion.val_string_vec.veclen;i++) {
+						ov_string_setvalue(&pstring[i], init.valueunion.val_string_vec.value[i]);
+					}
+					break;
+				case OV_VT_STRING:
+					pstring = (OV_STRING*) child.pvalue;
+					ov_string_setvalue(pstring, init.valueunion.val_string);
+					break;
+				case OV_VT_BOOL:
+					*((OV_BOOL*)child.pvalue) = init.valueunion.val_bool;
+					break;
+				case OV_VT_INT:
+					*((OV_INT*)child.pvalue) = init.valueunion.val_int;
+					break;
+				case OV_VT_UINT:
+					*((OV_UINT*)child.pvalue) = init.valueunion.val_uint;
+					break;
+				case OV_VT_SINGLE:
+					*((OV_SINGLE*)child.pvalue) = init.valueunion.val_single;
+					break;
+				case OV_VT_DOUBLE:
+					*((OV_DOUBLE*)child.pvalue) = init.valueunion.val_double;
+					break;
+				case OV_VT_TIME:
+					*((OV_TIME*)child.pvalue) = init.valueunion.val_time;
+					break;
+				case OV_VT_TIME_SPAN:
+					*((OV_TIME_SPAN*)child.pvalue) = init.valueunion.val_time_span;
+					break;
+				default:
+					break;
+			}
 		}
 	}
 	/*
@@ -370,6 +452,9 @@ OV_UINT OV_DLLFNCEXPORT ov_object_getflags(
 ) {
 	switch(pelem->elemtype) {
 	case OV_ET_OBJECT:
+		if ((pelem->pobj)->v_pouterobject) {
+			return (pelem->elemunion.ppart)->v_flags;
+		}
 		return Ov_GetParent(ov_instantiation, pobj)->v_flags;
 	case OV_ET_VARIABLE:
 	case OV_ET_MEMBER:
@@ -553,7 +638,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 				if(pelem->elemunion.pvar->v_getfnc) {
 					*pvarcurrprops = *(((OV_FNCPTR_GETANY)pelem->elemunion.pvar->v_getfnc)(pobj));
 				} else {
-					*pvarcurrprops = *(OV_ANY*)pelem;
+					*pvarcurrprops = *(OV_ANY*)(pelem->pvalue);
 				}
 				if(pvarcurrprops->value.vartype & OV_VT_HAS_STATE) {
 					if(pvarcurrprops->state == OV_ST_NOTSUPPORTED) {
@@ -1008,7 +1093,7 @@ OV_ACCESS ov_object_getaccess_nostartup(
 	pelem))->v_identifier), OV_OBJNAME_PART))
 
 #define Ov_VarAddress(pobj, offset)											\
-	(*(OV_POINTER*)(((OV_BYTE*)(pobj))+(offset)))
+	((OV_POINTER)(((OV_BYTE*)(pobj))+(offset)))
 
 #define Ov_ObjAddress(pobj, offset)											\
 	((OV_INSTPTR_ov_object)(((OV_BYTE*)(pobj))+(offset)))
@@ -1093,7 +1178,7 @@ OV_RESULT ov_object_move(
 							*/
 							switch(pvar->v_vartype & OV_VT_KSMASK) {
 							case OV_VT_STRING:
-								Ov_Adjust(OV_STRING, Ov_VarAddress(pobj, pvar->v_offset));
+								Ov_Adjust(OV_STRING, *((OV_STRING*)Ov_VarAddress(pobj, pvar->v_offset)));
 								break;
 							case OV_VT_ANY:
 								pany = (OV_ANY*)Ov_VarAddress(pobj, pvar->v_offset);
@@ -1148,8 +1233,8 @@ OV_RESULT ov_object_move(
 							*/
 							if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 								for(i=0; i<pvar->v_veclen; i++) {
-									Ov_Adjust(OV_STRING, Ov_VarAddress(pobj,
-										pvar->v_offset+i*sizeof(OV_STRING)));
+									Ov_Adjust(OV_STRING, *((OV_STRING*) Ov_VarAddress(pobj,
+										pvar->v_offset+i*sizeof(OV_STRING))));
 								}
 							}
 							break;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.14 2001-07-20 07:21:40 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.15 2001-12-10 14:28:38 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -530,6 +530,90 @@ int ov_codegen_createheaderfile(
 /*	----------------------------------------------------------------------	*/
 
 /*
+*	Create initialvalues subfunctions in setglobalvars function in source file of a library
+*/
+void ov_codegen_printinitvalueelemdefobj(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	OV_OVM_VARIABLE_DEF	*pvar,
+	OV_VAR_VALUE		*pvalue,
+	OV_UINT			num,
+	FILE			*fp
+) {
+	if (!plib || !pclass || !pvar || !fp) exit(-1);
+	switch (pvalue->vartype) {
+		case OV_VT_SINGLE:
+			if (pvalue) fprintf(fp, " %f ", (OV_SINGLE) pvalue->valueunion.val_double);
+			break;
+		case OV_VT_DOUBLE:
+			if (pvalue) fprintf(fp, " %e ", pvalue->valueunion.val_double);
+			break;
+		case OV_VT_INT:
+			if (pvalue) fprintf(fp, " %ld ", pvalue->valueunion.val_int);
+			break;
+		case OV_VT_UINT:
+			if (pvalue) fprintf(fp, " %lu ", pvalue->valueunion.val_uint);
+			break;
+		case OV_VT_BOOL:
+			if (pvalue) fprintf(fp, pvalue->valueunion.val_bool ? " 1 " : " 0 ");
+			break;
+		case OV_VT_TIME:
+			if (pvalue) fprintf(fp, " { %lu , %lu } ", pvalue->valueunion.val_time.secs,pvalue->valueunion.val_time.usecs);
+			break;
+		case OV_VT_TIME_SPAN:
+			if (pvalue) fprintf(fp, " { %ld , %ld } ", pvalue->valueunion.val_time.secs,pvalue->valueunion.val_time.usecs);
+			break;
+		case OV_VT_STRING:
+			fprintf(fp, " OV_INITSTRING_DEF_%s_%s_%s_%ld ", plib->identifier,
+				pclass->identifier, pvar->identifier, num);
+			break;
+		default:
+			break;
+	}
+}
+
+void ov_codegen_printinitvaluedef(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	OV_OVM_VARIABLE_DEF	*pvar,
+	FILE			*fp
+) {
+	OV_OVM_STRUCTURE_DEF	*pstruct;
+
+	if (pvar->pinitvalue->value.vartype == OV_VT_STRING) {
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %lu;\n",OV_VT_STRING);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_string = ");
+		ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvar->pinitvalue->value, pvar->pinitvalue->num, fp);
+		fprintf(fp, ";\n");
+	}
+	else if (pvar->pinitvalue->pstructelem) {
+		pstruct = ov_codegen_getstructdef(plib, pvar->structurename);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %lu;\n",OV_VT_STRUCT);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.veclen = sizeof(OV_STRUCT_%s_%s);\n", pstruct->libname, pstruct->identifier);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.value  = &OV_INITSTRUCT_DEF_%s_%s_%s_%d;\n",plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
+	}
+	else if (pvar->pinitvalue->pvectorelem) {
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %lu;\n", pvar->pinitvalue->value.vartype);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.veclen = %u;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype), pvar->pinitvalue->value.valueunion.val_generic_vec.veclen);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.value  = OV_INITVECTOR_DEF_%s_%s_%s_%d;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
+	}
+	else {
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %lu;\n", pvar->pinitvalue->value.vartype);
+		if( (pvar->pinitvalue->value.vartype == OV_VT_TIME)||(pvar->pinitvalue->value.vartype == OV_VT_TIME_SPAN)) {
+			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.secs = %ld;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),pvar->pinitvalue->value.valueunion.val_time.secs );
+			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.usecs = %ld", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),pvar->pinitvalue->value.valueunion.val_time.usecs );
+		}
+		else {
+			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s =", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype) );
+			ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvar->pinitvalue->value, 0, fp);
+		}
+		fprintf(fp, ";\n");
+	}
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
 *	Create source file of a library
 */
 int ov_codegen_createsourcefile(
@@ -541,6 +625,7 @@ int ov_codegen_createsourcefile(
 	FILE					*fp;
 	OV_OVM_STRUCTURE_DEF	*pstruct;
 	OV_OVM_CLASS_DEF		*pclass;
+	OV_OVM_VARIABLE_DEF		*pvar;
 	OV_OVM_ASSOCIATION_DEF	*passoc;
 	/*
 	*	create output file
@@ -656,6 +741,7 @@ int ov_codegen_createsourcefile(
 	*/
 	fprintf(fp, "OV_RESULT ov_library_setglobalvars_%s(void) {\n", plib->identifier);
 	fprintf(fp, "    OV_INSTPTR_ov_library plib;\n");
+	fprintf(fp, "    OV_INSTPTR_ov_variable pvar;\n\n");
 	fprintf(fp, "    Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plib, ov_library) {\n");
 	fprintf(fp, "        if(!strcmp(plib->v_identifier, \"%s\")) {\n", plib->identifier);
 	for(pstruct=plib->structures; pstruct; pstruct=pstruct->pnext) {
@@ -674,6 +760,14 @@ int ov_codegen_createsourcefile(
 			pclass->identifier);
 		fprintf(fp, "                return OV_ERR_GENERIC;\n");
 		fprintf(fp, "            }\n");
+		for (pvar=pclass->variables; pvar; pvar=pvar->pnext) {
+			if (pvar->pinitvalue) {
+				fprintf(fp, "            pvar = Ov_SearchChildEx(ov_containment, "
+					"pclass_%s_%s, \"%s\", ov_variable);\n", plib->identifier, pclass->identifier, 
+					pvar->identifier);
+				ov_codegen_printinitvaluedef(plib, pclass, pvar, fp);
+			}
+		}
 	}
 	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
 		fprintf(fp, "            passoc_%s_%s = Ov_SearchChildEx(ov_containment, "
@@ -1274,6 +1368,13 @@ void ov_codegen_printclassdefobjs(
 	OV_OVM_OPERATION_DEF	*pop;
 	OV_UINT					i;
 	/*
+	*	print definition objects associated with all initialvalues of the variables
+	*/
+	ov_codegen_printinitstringsdefobj(plib, pclass, fp);
+	ov_codegen_printinitvecdefobj(plib, pclass, fp);
+	ov_codegen_printinitstructdefobj(plib, pclass, fp);
+
+	/*
 	*	print definition objects associated with all variables
 	*/
 	if(pclass->variables) {
@@ -1466,6 +1567,175 @@ void ov_codegen_printmemberdefobj(
 /*	----------------------------------------------------------------------	*/
 
 /*
+*	Print definition objects associated with the initialvalues of a variable of a class
+*/
+void ov_codegen_iterate_strings(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	OV_OVM_VARIABLE_DEF	*pvar,
+	OV_OVM_INITVALUE_DEF	*pval,
+	OV_UINT			*num,
+	FILE			*fp
+) {
+	while (pval) {
+		if (pval->value.vartype == OV_VT_STRING) {
+			fprintf(fp, "char OV_INITSTRING_DEF_%s_%s_%s_%d[] = %s;\n", plib->identifier,
+				pclass->identifier, pvar->identifier, *num, pval->value.valueunion.val_string);
+			pval->num = *num;
+			(*num)++;
+		}
+		if (pval->pstructelem) ov_codegen_iterate_strings(plib, pclass, pvar, pval->pstructelem, num, fp);
+		if (pval->pvectorelem) ov_codegen_iterate_strings(plib, pclass, pvar, pval->pvectorelem, num, fp);
+		pval=pval->pnext;
+	}
+}
+
+void ov_codegen_printinitstringsdefobj(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	FILE			*fp
+) {
+	OV_OVM_VARIABLE_DEF	*pvar;
+	OV_OVM_INITVALUE_DEF	*pvalue;
+	OV_UINT			num;
+
+	if(pclass->variables) {
+		for(pvar=pclass->variables; pvar; pvar=pvar->pnext) {
+			if (pvar->pinitvalue) {
+				num = 1;
+				pvalue = pvar->pinitvalue;
+				ov_codegen_iterate_strings(plib, pclass, pvar, pvalue, &num, fp);
+			}
+		}
+	}
+	fprintf(fp, "\n");
+}
+
+void ov_codegen_iterate_vectors(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	OV_OVM_VARIABLE_DEF	*pvar,
+	OV_OVM_INITVALUE_DEF	*pval,
+	OV_UINT			*num,
+	FILE			*fp
+) {
+	OV_OVM_INITVALUE_DEF		*pvec;
+
+	while (pval) {
+		if (pval->pvectorelem) {
+			fprintf(fp, "%s OV_INITVECTOR_DEF_%s_%s_%s_%d [] = {\n", ov_codegen_getvartypetext(pval->value.vartype) ,plib->identifier,
+				pclass->identifier, pvar->identifier, *num);
+			pval->num = *num;
+			(*num)++;
+			pvec = pval->pvectorelem;
+			while (pvec) {
+				if (pvec->value.vartype == OV_VT_STRING) ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvec->value, pvec->num, fp);
+				else ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvec->value, 0, fp);
+				if (pvec->pnext) fprintf(fp, " ,\n");
+				else fprintf(fp, "\n");
+				pvec = pvec->pnext;
+			}
+			fprintf(fp, "};\n\n");
+		}
+		if (pval->pstructelem) ov_codegen_iterate_vectors(plib, pclass, pvar, pval->pstructelem, num, fp);
+		pval=pval->pnext;
+	}
+}
+
+void ov_codegen_printinitvecdefobj(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	FILE			*fp
+) {
+	OV_OVM_VARIABLE_DEF		*pvar;
+	OV_OVM_INITVALUE_DEF		*pvalue;
+	OV_UINT				num;
+
+	if(pclass->variables) {
+		for(pvar=pclass->variables; pvar; pvar=pvar->pnext) {
+			if (pvar->pinitvalue) {
+				pvalue = pvar->pinitvalue;
+				num = 1;
+				ov_codegen_iterate_vectors(plib, pclass, pvar, pvalue, &num, fp);
+			}
+		}
+	}
+}
+
+void ov_codegen_iterate_structs (
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	OV_OVM_VARIABLE_DEF	*pvar,
+	OV_OVM_STRUCTURE_DEF	*pstruct,
+	OV_OVM_INITVALUE_DEF	*pval,
+	OV_UINT			*num,
+	FILE			*fp
+) {
+	OV_OVM_VARIABLE_DEF		*pmem;
+	OV_OVM_INITVALUE_DEF		*pstr;
+	OV_OVM_INITVALUE_DEF		*pvec;
+	OV_UINT				i;
+
+	while (pval) {
+		if (pval->pstructelem) {
+			fprintf(fp, "OV_STRUCT_%s_%s OV_INITSTRUCT_DEF_%s_%s_%s_%d\n", pstruct->libname, pstruct->identifier,
+				plib->identifier, pclass->identifier, pvar->identifier, *num);
+			pval->num = *num;
+			(*num)++;
+			pstr = pval->pstructelem;
+			while (pstr) {
+				if (pstr->value.vartype == OV_VT_STRING) ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pstr->value, pstr->num, fp);
+				else if (pstr->pvectorelem) {
+					pmem = ov_codegen_getmemberdef(plib, pstruct, pstr->identifier);
+					if (pmem->veclen > 1) {
+						pvec = pstr->pvectorelem;
+						for (i=0; (i<pmem->veclen) && (pvec);i++, pvec = pvec->pnext)
+							ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvec->value, 0, fp);
+					}
+					else 	{
+							fprintf(fp, "    { %d , ", pstr->value.valueunion.val_generic_vec.veclen);
+							fprintf(fp, "OV_INITVECTOR_DEF_%s_%s_%s_%d }", plib->identifier, pclass->identifier, pvar->identifier, pstr->num);
+						}
+				     }
+				else ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pstr->value, 0, fp);
+				if (pstr->pnext) fprintf(fp, " ,\n");
+				else fprintf(fp, "\n");
+				pstr = pstr->pnext;
+			}
+			fprintf(fp, "};\n\n");
+		}
+		pval=pval->pnext;
+	}
+}
+
+void ov_codegen_printinitstructdefobj(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	FILE			*fp
+) {
+	OV_OVM_VARIABLE_DEF		*pvar;
+	OV_OVM_INITVALUE_DEF		*pvalue;
+	OV_OVM_STRUCTURE_DEF		*pstruct;
+	OV_UINT				num;
+
+
+	if(pclass->variables) {
+		for(pvar=pclass->variables; pvar; pvar=pvar->pnext) {
+			if (pvar->pinitvalue) {
+				pvalue = pvar->pinitvalue;
+				if (pvar->structurename) {
+					pstruct = ov_codegen_getstructdef(plib, pvar->structurename);
+					ov_codegen_iterate_structs(plib, pclass, pvar, pstruct, pvalue, &num, fp);
+				}
+			}
+		}
+	}
+}
+
+
+/*	----------------------------------------------------------------------	*/
+
+/*
 *	Print definition object associated with a variable of a class
 */
 void ov_codegen_printvardefobj(
@@ -1550,6 +1820,7 @@ void ov_codegen_printpartdefobj(
 	}
 	fprintf(fp ,"    \"%s\",\n", ppart->identifier);
 	fprintf(fp ,"    \"%s\",\n", ppart->partclassname);
+	fprintf(fp ,"     %lu,\n", ppart->flags);
 	fprintf(fp ,"    offsetof(OV_INST_%s_%s, p_%s)\n", plib->identifier,
 		pclass->identifier, ppart->identifier);
 }
@@ -1623,6 +1894,192 @@ OV_STRING ov_codegen_getvartypetext(
 		exit(EXIT_FAILURE);
 	}
 	return NULL;
+}
+
+OV_STRING ov_codegen_getvartypetextsmall(
+	OV_VAR_TYPE	vartype
+) {
+	switch(vartype) {
+	case OV_VT_BOOL:
+		return "bool";
+	case OV_VT_BOOL_VEC:
+		return "bool_vec";
+	case OV_VT_INT:
+		return "int";
+	case OV_VT_INT_VEC:
+		return "int_vec";
+	case OV_VT_UINT:
+		return "uint";
+	case OV_VT_UINT_VEC:
+		return "uint_vec";
+	case OV_VT_SINGLE:
+		return "single";
+	case OV_VT_SINGLE_VEC:
+		return "single_vec";
+	case OV_VT_DOUBLE:
+		return "double";
+	case OV_VT_DOUBLE_VEC:
+		return "double_vec";
+	case OV_VT_STRING:
+		return "string";
+	case OV_VT_STRING_VEC:
+		return "string_vec";
+	case OV_VT_TIME:
+		return "time";
+	case OV_VT_TIME_VEC:
+		return "time_vec";
+	case OV_VT_TIME_SPAN:
+		return "time_span";
+	case OV_VT_TIME_SPAN_VEC:
+		return "time_span_vec";
+	case OV_VT_BOOL_PV:
+		return "bool_pv";
+	case OV_VT_INT_PV:
+		return "int_pv";
+	case OV_VT_SINGLE_PV:
+		return "single_pv";
+	default:
+		fprintf(stderr, "internal error -- sorry.\n");
+		exit(EXIT_FAILURE);
+	}
+	return NULL;
+}
+
+OV_STRING ov_codegen_getfulltypetext(
+	OV_VAR_TYPE	vartype
+) {
+	switch(vartype) {
+	case OV_VT_BOOL:
+		return "OV_VT_BOOL";
+	case OV_VT_BOOL_VEC:
+		return "OV_VT_BOOL_VEC";
+	case OV_VT_INT:
+		return "OV_VT_INT";
+	case OV_VT_INT_VEC:
+		return "OV_VT_INT_VEC";
+	case OV_VT_UINT:
+		return "OV_VT_UINT";
+	case OV_VT_UINT_VEC:
+		return "OV_VT_UINT_VEC";
+	case OV_VT_SINGLE:
+		return "OV_VT_SINGLE";
+	case OV_VT_SINGLE_VEC:
+		return "OV_VT_SINGLE_VEC";
+	case OV_VT_DOUBLE:
+		return "OV_VT_DOUBLE";
+	case OV_VT_DOUBLE_VEC:
+		return "OV_VT_DOUBLE_VEC";
+	case OV_VT_STRING:
+		return "OV_VT_STRING";
+	case OV_VT_STRING_VEC:
+		return "OV_VT_STRING_VEC";
+	case OV_VT_TIME:
+		return "OV_VT_TIME";
+	case OV_VT_TIME_VEC:
+		return "OV_VT_TIME_VEC";
+	case OV_VT_TIME_SPAN:
+		return "OV_VT_TIME_SPAN";
+	case OV_VT_TIME_SPAN_VEC:
+		return "OV_VT_TIME_SPAN_VEC";
+	case OV_VT_BOOL_PV:
+		return "OV_VT_BOOL_PV";
+	case OV_VT_INT_PV:
+		return "OV_VT_INT_PV";
+	case OV_VT_SINGLE_PV:
+		return "OV_VT_SINGLE_PV";
+	case OV_VT_ANY:
+		return "OV_VT_ANY";
+	default:
+		fprintf(stderr, "internal error -- sorry.\n");
+		exit(EXIT_FAILURE);
+	}
+	return NULL;
+}
+
+OV_VAR_TYPE ov_codegen_getvarelementtype(
+	OV_VAR_TYPE	vartype
+) {
+	switch(vartype) {
+	case OV_VT_BOOL:
+	case OV_VT_BOOL_VEC:
+		return OV_VT_BOOL;
+	case OV_VT_INT:
+	case OV_VT_INT_VEC:
+		return OV_VT_INT;
+	case OV_VT_UINT:
+	case OV_VT_UINT_VEC:
+		return OV_VT_UINT;
+	case OV_VT_SINGLE:
+	case OV_VT_SINGLE_VEC:
+		return OV_VT_SINGLE;
+	case OV_VT_DOUBLE:
+	case OV_VT_DOUBLE_VEC:
+		return OV_VT_DOUBLE;
+	case OV_VT_STRING:
+	case OV_VT_STRING_VEC:
+		return OV_VT_STRING;
+	case OV_VT_TIME:
+	case OV_VT_TIME_VEC:
+		return OV_VT_TIME;
+	case OV_VT_TIME_SPAN:
+	case OV_VT_TIME_SPAN_VEC:
+		return OV_VT_TIME_SPAN;
+	case OV_VT_BOOL_PV:
+		return OV_VT_BOOL_PV;
+	case OV_VT_INT_PV:
+		return OV_VT_INT_PV;
+	case OV_VT_SINGLE_PV:
+		return OV_VT_SINGLE_PV;
+	case OV_VT_ANY:
+		return OV_VT_ANY;
+	default:
+		fprintf(stderr, "! not an OV-datatype ! -- internal error -- sorry.\n");
+		exit(EXIT_FAILURE);
+	}
+	return OV_VT_VOID;
+}
+
+OV_VAR_TYPE ov_codegen_getvarvectortype(
+	OV_VAR_TYPE	vartype
+) {
+	switch(vartype) {
+	case OV_VT_BOOL:
+	case OV_VT_BOOL_VEC:
+		return OV_VT_BOOL_VEC;
+	case OV_VT_INT:
+	case OV_VT_INT_VEC:
+		return OV_VT_INT_VEC;
+	case OV_VT_UINT:
+	case OV_VT_UINT_VEC:
+		return OV_VT_UINT_VEC;
+	case OV_VT_SINGLE:
+	case OV_VT_SINGLE_VEC:
+		return OV_VT_SINGLE_VEC;
+	case OV_VT_DOUBLE:
+	case OV_VT_DOUBLE_VEC:
+		return OV_VT_DOUBLE_VEC;
+	case OV_VT_STRING:
+	case OV_VT_STRING_VEC:
+		return OV_VT_STRING_VEC;
+	case OV_VT_TIME:
+	case OV_VT_TIME_VEC:
+		return OV_VT_TIME_VEC;
+	case OV_VT_TIME_SPAN:
+	case OV_VT_TIME_SPAN_VEC:
+		return OV_VT_TIME_SPAN_VEC;
+	case OV_VT_BOOL_PV:
+		return OV_VT_BOOL_PV;
+	case OV_VT_INT_PV:
+		return OV_VT_INT_PV;
+	case OV_VT_SINGLE_PV:
+		return OV_VT_SINGLE_PV;
+	case OV_VT_ANY:
+		return OV_VT_ANY;
+	default:
+		fprintf(stderr, "! not an OV-datatype ! -- internal error -- sorry.\n");
+		exit(EXIT_FAILURE);
+	}
+	return OV_VT_VOID;
 }
 
 /*	----------------------------------------------------------------------	*/

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.c,v 1.9 2001-07-09 12:50:01 ansgar Exp $
+*   $Id: ov_ksclient.c,v 1.10 2001-12-10 14:28:42 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -671,10 +671,12 @@ void OvKssInterKsServerConnection::async_attention(
 				}
 				return;
 			}
+printf("674: Up to this line ...\n");
 			if (_sendrequestcallbackfnc) {
 				_sendrequestcallbackfnc(this, result, psvc, _userdata);
 				_sendrequestcallbackfnc = NULL;
 			}
+printf("679: Up to this line ...\n");
 		}
 		else Ov_Warning("attention operation encountered in an incorrect way");
 		return;
@@ -683,6 +685,7 @@ void OvKssInterKsServerConnection::async_attention(
 	default:
 		break;
 	}
+printf("689: Up to this line ...\n");
 	Ov_Warning("unknown attention operation encountered");
 }
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_part.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_part.c,v 1.2 2001-12-10 14:28:41 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -65,6 +65,7 @@ OV_RESULT ov_part_load(
 	*	set parameters
 	*/
 	ppart->v_offset = ppartdef->offset;
+	ppart->v_flags = ppartdef->flags;
 	/*
 	*	link with class of the component
 	*/
@@ -108,7 +109,8 @@ OV_RESULT ov_part_compare(
 	*	compare part attributes
 	*/
 	if(strcmp(ppart->v_identifier, ppartdef->identifier)
-		|| (ppart->v_offset != ppartdef->offset)
+		|| (ppart->v_offset != ppartdef->offset) || (ppart->v_flags != ppartdef->flags)
+
 	) {
 		goto ERRORMSG;
 	}
@@ -136,6 +138,12 @@ OV_BOOL ov_part_canunload(
 	OV_INSTPTR_ov_part	ppart
 ) {
 	return TRUE;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_part_flags_get(
+	OV_INSTPTR_ov_part	ppart
+) {
+	return ppart->v_flags;
 }
 
 /*	----------------------------------------------------------------------	*/

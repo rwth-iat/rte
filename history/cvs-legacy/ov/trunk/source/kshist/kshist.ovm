@@ -1,5 +1,5 @@
 /*
-*   $Id: kshist.ovm,v 1.3 2001-07-20 14:18:38 ansgar Exp $
+*   $Id: kshist.ovm,v 1.4 2001-12-10 14:28:39 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -95,7 +95,7 @@ LIBRARY kshist
 	CLASS KsSimpleStateTrack : CLASS kshist/KsSimpleValueTrack
 		IS_INSTANTIABLE;
 		VARIABLES
-			StateVec[]: INT HAS_ACCESSORS COMMENT = "";
+			StateVec[]: UINT HAS_ACCESSORS COMMENT = "";
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.h,v 1.1 2001-07-09 12:52:02 ansgar Exp $
+*   $Id: ov_builder.h,v 1.2 2001-12-10 14:28:37 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -80,6 +80,13 @@ OV_STRING ov_builder_getvartypevectext(
 	OV_VAR_TYPE	vartype
 );
 
+OV_VAR_TYPE ov_codegen_getvarelementtype(
+	OV_VAR_TYPE	vartype
+);
+
+OV_VAR_TYPE ov_codegen_getvarvectortype(
+	OV_VAR_TYPE	vartype
+);
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif

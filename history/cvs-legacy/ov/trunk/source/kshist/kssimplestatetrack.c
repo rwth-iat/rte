@@ -12,7 +12,7 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_INT * kshist_KsSimpleStateTrack_StateVec_get(
+OV_DLLFNCEXPORT OV_UINT * kshist_KsSimpleStateTrack_StateVec_get(
              OV_INSTPTR_kshist_KsSimpleStateTrack          pobj,
              OV_UINT *pveclen
 ) {
@@ -22,10 +22,10 @@ OV_DLLFNCEXPORT OV_INT * kshist_KsSimpleStateTrack_StateVec_get(
 
 OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleStateTrack_StateVec_set(
              OV_INSTPTR_kshist_KsSimpleStateTrack          pobj,
-             const OV_INT *pvalue,
+             const OV_UINT *pvalue,
              const OV_UINT veclen
 ) {
-             return Ov_SetDynamicVectorValue(&pobj->v_StateVec,pvalue,veclen,INT);
+             return Ov_SetDynamicVectorValue(&pobj->v_StateVec,pvalue,veclen,UINT);
 }
 
 OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleStateTrack_constructor(
@@ -34,7 +34,7 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleStateTrack_constructor(
 	OV_INSTPTR_kshist_KsSimpleStateTrack 	ptrack;
 
 	ptrack = Ov_StaticPtrCast(kshist_KsSimpleStateTrack, pobj);
-	ptrack->v_Type = OV_VT_INT;		
+	ptrack->v_Type = OV_VT_STATE;		
 	ov_string_setvalue(&ptrack->v_TechUnit, "State");
 	return OV_ERR_OK;
 }
@@ -48,13 +48,13 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleStateTrack_gettrackhist(
 	OV_INSTPTR_kshist_KsSimpleTimeTrack 	pTimeTrack;
 	OV_INSTPTR_kshist_KsSimpleStateTrack 	pStateTrack;
 	OV_TIME	from,to;
-	OV_INT *pint;
+	OV_STATE *pint;
 	OV_INT answers,i;
 
 	pStateTrack = Ov_StaticPtrCast(kshist_KsSimpleStateTrack, pobj);
-	pvarvalue->vartype = OV_VT_INT_VEC;
-	pvarvalue->valueunion.val_int_vec.value = (OV_INT*)ov_memstack_alloc(max_answers*sizeof(OV_INT));		
-	pint = pvarvalue->valueunion.val_int_vec.value;
+	pvarvalue->vartype = OV_VT_STATE_VEC;
+	pvarvalue->valueunion.val_state_vec.value = (OV_STATE*)ov_memstack_alloc(max_answers*sizeof(OV_STATE));		
+	pint = pvarvalue->valueunion.val_state_vec.value;
 	switch(phistsel->hseltype) {
 		case OV_HSELT_NONE:
 			/*
@@ -118,7 +118,7 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleStateTrack_gettrackhist(
 			}
 		}
 	}
-	pvarvalue->valueunion.val_int_vec.veclen = answers;
+	pvarvalue->valueunion.val_state_vec.veclen = answers;
 	return OV_ERR_OK;
 }
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.2 2001-07-20 07:21:38 ansgar Exp $
+*   $Id: ov_builder.c,v 1.3 2001-12-10 14:28:37 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -302,7 +302,7 @@ int ov_builder_createsourcefiles(
 					else {
 						if (pvar->veclen > 1) {
 							fprintf(fp,"             *pveclen = %d;\n",pvar->veclen);
-							fprintf(fp,"             return &pobj->v_%s;\n",pvar->identifier);
+							fprintf(fp,"             return pobj->v_%s;\n",pvar->identifier);
 							fprintf(fp,"}\n\n");
 						}
 						else {
@@ -346,7 +346,7 @@ int ov_builder_createsourcefiles(
 					}
 					else {
 						if (pvar->veclen > 1) {
-							fprintf(fp,"             return Ov_SetStaticVectorValue(&pobj->v_%s,pvalue,veclen,%s);\n",pvar->identifier,
+							fprintf(fp,"             return Ov_SetStaticVectorValue(pobj->v_%s,pvalue,veclen,%s);\n",pvar->identifier,
 								ov_builder_getvartypevectext(pvar->vartype));
 							fprintf(fp,"}\n\n");
 						}
@@ -672,6 +672,124 @@ OV_STRING ov_builder_getvartypevectext(
 	return NULL;
 }
 
+OV_VAR_TYPE ov_codegen_getvarelementtype(
+	OV_VAR_TYPE	vartype
+) {
+	switch(vartype) {
+	case OV_VT_BOOL:
+	case OV_VT_BOOL_VEC:
+		return OV_VT_BOOL;
+	case OV_VT_INT:
+	case OV_VT_INT_VEC:
+		return OV_VT_INT;
+	case OV_VT_UINT:
+	case OV_VT_UINT_VEC:
+		return OV_VT_UINT;
+	case OV_VT_SINGLE:
+	case OV_VT_SINGLE_VEC:
+		return OV_VT_SINGLE;
+	case OV_VT_DOUBLE:
+	case OV_VT_DOUBLE_VEC:
+		return OV_VT_DOUBLE;
+	case OV_VT_STRING:
+	case OV_VT_STRING_VEC:
+		return OV_VT_STRING;
+	case OV_VT_TIME:
+	case OV_VT_TIME_VEC:
+		return OV_VT_TIME;
+	case OV_VT_TIME_SPAN:
+	case OV_VT_TIME_SPAN_VEC:
+		return OV_VT_TIME_SPAN;
+	case OV_VT_BOOL_PV:
+		return OV_VT_BOOL_PV;
+	case OV_VT_INT_PV:
+		return OV_VT_INT_PV;
+	case OV_VT_SINGLE_PV:
+		return OV_VT_SINGLE_PV;
+	case OV_VT_ANY:
+		return OV_VT_ANY;
+	default:
+		fprintf(stderr, "! not an OV-datatype ! -- internal error -- sorry.\n");
+		exit(EXIT_FAILURE);
+	}
+	return OV_VT_VOID;
+}
+
+OV_VAR_TYPE ov_codegen_getvarvectortype(
+	OV_VAR_TYPE	vartype
+) {
+	switch(vartype) {
+	case OV_VT_BOOL:
+	case OV_VT_BOOL_VEC:
+		return OV_VT_BOOL_VEC;
+	case OV_VT_INT:
+	case OV_VT_INT_VEC:
+		return OV_VT_INT_VEC;
+	case OV_VT_UINT:
+	case OV_VT_UINT_VEC:
+		return OV_VT_UINT_VEC;
+	case OV_VT_SINGLE:
+	case OV_VT_SINGLE_VEC:
+		return OV_VT_SINGLE_VEC;
+	case OV_VT_DOUBLE:
+	case OV_VT_DOUBLE_VEC:
+		return OV_VT_DOUBLE_VEC;
+	case OV_VT_STRING:
+	case OV_VT_STRING_VEC:
+		return OV_VT_STRING_VEC;
+	case OV_VT_TIME:
+	case OV_VT_TIME_VEC:
+		return OV_VT_TIME_VEC;
+	case OV_VT_TIME_SPAN:
+	case OV_VT_TIME_SPAN_VEC:
+		return OV_VT_TIME_SPAN_VEC;
+	case OV_VT_BOOL_PV:
+		return OV_VT_BOOL_PV;
+	case OV_VT_INT_PV:
+		return OV_VT_INT_PV;
+	case OV_VT_SINGLE_PV:
+		return OV_VT_SINGLE_PV;
+	case OV_VT_ANY:
+		return OV_VT_ANY;
+	default:
+		fprintf(stderr, "! not an OV-datatype ! -- internal error -- sorry.\n");
+		exit(EXIT_FAILURE);
+	}
+	return OV_VT_VOID;
+}
+
+OV_STRING ov_codegen_getvartypetextsmall(
+	OV_VAR_TYPE	vartype
+) {
+	switch(vartype) {
+	case OV_VT_BOOL:
+		return "bool";
+	case OV_VT_INT:
+		return "int";
+	case OV_VT_UINT:
+		return "uint";
+	case OV_VT_SINGLE:
+		return "single";
+	case OV_VT_DOUBLE:
+		return "double";
+	case OV_VT_STRING:
+		return "string";
+	case OV_VT_TIME:
+		return "time";
+	case OV_VT_TIME_SPAN:
+		return "time_span";
+	case OV_VT_BOOL_PV:
+		return "bool_pv";
+	case OV_VT_INT_PV:
+		return "int_pv";
+	case OV_VT_SINGLE_PV:
+		return "single_pv";
+	default:
+		fprintf(stderr, "internal error -- sorry.\n");
+		exit(EXIT_FAILURE);
+	}
+	return NULL;
+}
 /*
 *	End of file
 */

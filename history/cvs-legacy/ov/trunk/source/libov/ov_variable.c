@@ -1,5 +1,5 @@
-/*
-*   $Id: ov_variable.c,v 1.3 2000-02-10 13:07:02 dirk Exp $
+/* 
+*   $Id: ov_variable.c,v 1.4 2001-12-10 14:28:41 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
+*	06-Dez-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: initialvalue of variable added.
 */
 
 #define OV_COMPILE_LIBOV
@@ -231,6 +232,12 @@ OV_DLLFNCEXPORT OV_STRING ov_variable_techunit_get(
 	OV_INSTPTR_ov_variable	pvar
 ) {
 	return pvar->v_techunit;
+}
+
+OV_DLLFNCEXPORT OV_ANY* ov_variable_initialvalue_get(
+	OV_INSTPTR_ov_variable	pvar
+) {
+	return &pvar->v_initialvalue;
 }
 
 /*	----------------------------------------------------------------------	*/

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.h,v 1.2 1999-08-28 14:18:19 dirk Exp $
+*   $Id: ov_codegen.h,v 1.3 2001-12-10 14:28:38 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -41,6 +41,7 @@
 #endif
 
 #ifdef WIN32
+#include <time.h>
 #undef sparc
 #endif
 
@@ -57,6 +58,7 @@ extern "C" {
 */
 #define MAX_INCLUDE_DEPTH	256
 #define MAX_INCLUDEPATHS	256
+#define MAX_INCLUDES		256
 #if OV_SYSTEM_NT
 #define OV_DIRPATHDELIMITER "\\"
 #elif OV_SYSTEM_OPENVMS
@@ -148,17 +150,18 @@ typedef struct OV_OVM_ASSOCIATION_DEF OV_OVM_ASSOCIATION_DEF;
 *	Definition of a variable used in codegen
 */
 struct OV_OVM_VARIABLE_DEF {
-	struct OV_OVM_VARIABLE_DEF		*pnext;
+	struct OV_OVM_VARIABLE_DEF				*pnext;
 	OV_STRING						identifier;
 	OV_UINT							veclen;
 	OV_VAR_TYPE						vartype;
 	OV_STRING						structurename;
 	OV_STRING						ctypename;
 	OV_STRING						structurelibname;
-	OV_VAR_PROPS					varprops;
+	OV_VAR_PROPS						varprops;
 	OV_UINT							flags;
 	OV_STRING						tech_unit;
 	OV_STRING						comment;
+	struct OV_OVM_INITVALUE_DEF				*pinitvalue;
 };
 typedef struct OV_OVM_VARIABLE_DEF OV_OVM_VARIABLE_DEF;
 
@@ -172,6 +175,7 @@ struct OV_OVM_PART_DEF {
 	OV_STRING						identifier;
 	OV_STRING						partclassname;
 	OV_STRING						partclasslibname;
+	OV_UINT							flags;
 };
 typedef struct OV_OVM_PART_DEF OV_OVM_PART_DEF;
 
@@ -202,6 +206,21 @@ struct OV_OVM_VARTYPE_DEF {
 	OV_STRING						ctypename;
 };
 typedef struct OV_OVM_VARTYPE_DEF OV_OVM_VARTYPE_DEF;
+
+/*
+*	OV_OVM_INITVALUE_DEF:
+*	---------------------
+* Definition of vectorvalues in the initialvalue
+*/
+struct OV_OVM_INITVALUE_DEF {
+	OV_STRING					identifier;
+	OV_UINT						num;
+	OV_VAR_VALUE					value;
+	struct OV_OVM_INITVALUE_DEF*			pvectorelem;
+	struct OV_OVM_INITVALUE_DEF*			pstructelem;
+	struct OV_OVM_INITVALUE_DEF*			pnext;
+};
+typedef struct OV_OVM_INITVALUE_DEF OV_OVM_INITVALUE_DEF;
 
 /*
 *	OV_STRINGSTACK:
@@ -626,12 +645,49 @@ void ov_codegen_printopdefobj(
 );
 
 /*
+*	Print definition object associated with an initialvalue of a variable
+*/
+void ov_codegen_printinitstringsdefobj(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	FILE			*fp
+);
+
+void ov_codegen_printinitvecdefobj(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	FILE			*fp
+);
+
+void ov_codegen_printinitstructdefobj(
+	OV_OVM_LIBRARY_DEF	*plib,
+	OV_OVM_CLASS_DEF	*pclass,
+	FILE			*fp
+);
+
+
+/*
 *	Return variable type name defined in ov/ov.h for a given vartype
 */
 OV_STRING ov_codegen_getvartypetext(
 	OV_VAR_TYPE	vartype
 );
 
+OV_STRING ov_codegen_getvartypetextsmall(
+	OV_VAR_TYPE	vartype
+);
+
+OV_VAR_TYPE ov_codegen_getvarelementtype(
+	OV_VAR_TYPE	vartype
+);
+
+OV_VAR_TYPE ov_codegen_getvarvectortype(
+	OV_VAR_TYPE	vartype
+);
+
+OV_STRING ov_codegen_getfulltypetext(
+	OV_VAR_TYPE	vartype
+);
 /*
 *	Return text defining a string
 */

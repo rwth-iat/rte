@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.15 2001-07-20 07:21:36 ansgar Exp $
+*   $Id: ov_macros.h,v 1.16 2001-12-10 14:28:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -340,7 +340,7 @@
 #define Ov_GetVTablePtr(class, pvtable, pobj)								\
 	pvtable = NULL;															\
 	if(pobj) {																\
-		OV_INSTPTR_ov_class pclass = Ov_GetClassPtr(Ov_PtrUpCast(class, 	\
+		OV_INSTPTR_ov_class pclass = Ov_GetClassPtr(Ov_PtrUpCast(##class, 	\
 			pobj));															\
 		if(pclass) {														\
 			pvtable = (OV_VTBLPTR_##class)(pclass->v_pvtable);				\
@@ -353,7 +353,7 @@
 */
 #define Ov_GetBaseclassVTablePtr(class, pvtable, pobj)						\
 	pvtable = ((OV_BVPT_##class)(Ov_GetParent(ov_inheritance, 				\
-	Ov_GetClassPtr(class, pobj))->v_pvtable))
+		Ov_GetClassPtr(Ov_PtrUpCast(##class,pobj)))->v_pvtable))
 
 /*
 *	Test, if a variable definition object defines a variable with a

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.9 2000-02-10 13:06:58 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.10 2001-12-10 14:28:38 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -49,21 +49,27 @@ OV_UINT				defnum = 0;
 
 %union {
 	OV_STRING				string;
+	OV_BOOL					bool;
 	OV_UINT					uint;
-	OV_CLASS_PROPS			classprops;
-	OV_ASSOC_TYPE			assoctype;
-	OV_ASSOC_PROPS			assocprops;
+	OV_INT					_int;
+	OV_DOUBLE				_double;
+	OV_TIME					time;
+	OV_TIME_SPAN				timespan;
+	OV_CLASS_PROPS				classprops;
+	OV_ASSOC_TYPE				assoctype;
+	OV_ASSOC_PROPS				assocprops;
 	OV_VAR_TYPE				vartype;
-	OV_VAR_PROPS			varprops;
+	OV_VAR_PROPS				varprops;
 	OV_OP_PROPS				opprops;
-	OV_OVM_LIBRARY_DEF		*plibdef;
-	OV_OVM_STRUCTURE_DEF	*pstructdef;
-	OV_OVM_CLASS_DEF		*pclassdef;
-	OV_OVM_ASSOCIATION_DEF	*passocdef;
-	OV_OVM_VARIABLE_DEF		*pvardef;
-	OV_OVM_PART_DEF			*ppartdef;
-	OV_OVM_OPERATION_DEF	*popdef;
-	OV_OVM_VARTYPE_DEF		*pvartypedef;
+	OV_OVM_LIBRARY_DEF			*plibdef;
+	OV_OVM_STRUCTURE_DEF			*pstructdef;
+	OV_OVM_CLASS_DEF			*pclassdef;
+	OV_OVM_ASSOCIATION_DEF			*passocdef;
+	OV_OVM_VARIABLE_DEF			*pvardef;
+	OV_OVM_PART_DEF				*ppartdef;
+	OV_OVM_OPERATION_DEF			*popdef;
+	OV_OVM_VARTYPE_DEF			*pvartypedef;
+	OV_OVM_INITVALUE_DEF			*pinitvalue;
 }
 
 %token TOK_LIBRARY TOK_VERSION TOK_AUTHOR TOK_COPYRIGHT TOK_COMMENT TOK_END_LIBRARY
@@ -96,7 +102,14 @@ OV_UINT				defnum = 0;
 %token <string>		TOK_IDENTIFIER
 %token <string>		TOK_IDENTIFIER_EX
 %token <string>		TOK_C_IDENTIFIER
+%token <bool>		TOK_BOOL
 %token <uint>		TOK_UINT
+%token <_int>		TOK_INT
+%token <_double>		TOK_REAL
+%token <time>		TOK_TIME
+%token <timespan>	TOK_TIMESPAN
+%token TOK_INITIALVALUE
+%token TOK_VOID
 
 %type <plibdef>		libraries library
 %type <string>		version_opt author_opt copyright_opt
@@ -127,9 +140,10 @@ OV_UINT				defnum = 0;
 
 %type <string>		comment_opt
 %type <uint>		vector_length_opt length_opt
-%type <pvartypedef> vartype
+%type <pvartypedef> 	vartype
 %type <string>		unit_opt varcomment_opt assoccomment_opt
 %type <uint>		varflags_opt assocflags_opt
+%type <pinitvalue>	initialvalue_opt vector_values structure_values varvalue
 
 %%
 
@@ -585,7 +599,7 @@ variables:
 ;
 
 variable:
-	TOK_IDENTIFIER vector_length_opt ':' vartype varprops_opt varflags_opt unit_opt varcomment_opt ';'
+	TOK_IDENTIFIER vector_length_opt ':' vartype varprops_opt varflags_opt unit_opt varcomment_opt initialvalue_opt ';'
 		{
 			$$ = Ov_Codegen_Malloc(OV_OVM_VARIABLE_DEF);
 			$$->pnext = NULL;
@@ -603,6 +617,7 @@ variable:
 			$$->flags = $6;
 			$$->tech_unit = $7;
 			$$->comment = $8;
+			$$->pinitvalue = $9;
 			ov_codegen_free($4);
 		}
 ;
@@ -629,6 +644,165 @@ varprops:
 		}
 ;
 
+
+initialvalue_opt:
+	/* empty */
+		{
+			$$ = NULL;
+		}
+	| TOK_INITIALVALUE '=' varvalue
+		{
+			$$ = $3;
+		}
+;
+
+varvalue: 
+	TOK_BOOL
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_BOOL;
+			$$->value.valueunion.val_bool = $1;
+		}
+	| TOK_INT
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_INT;
+			$$->value.valueunion.val_int = $1;
+		}
+	| TOK_UINT
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_UINT;
+			$$->value.valueunion.val_uint = $1;
+		}
+	| TOK_REAL
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_DOUBLE;
+			$$->value.valueunion.val_double = $1;
+		}
+	| TOK_TIME
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_TIME;
+			$$->value.valueunion.val_time = $1;
+		}
+	| TOK_TIMESPAN
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_TIME_SPAN;
+			$$->value.valueunion.val_time_span = $1;
+		}
+	| TOK_VOID
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_STRING;
+			$$->value.valueunion.val_string = NULL;
+		}
+	| TOK_STRING
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_STRING;
+			$$->value.valueunion.val_string = $1;
+		}
+	| '{' vector_values '}'
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = $2;
+			$$->pstructelem = NULL;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = ov_codegen_getvarvectortype($2->value.vartype);
+		}
+	| '{' structure_values '}'
+		{
+			$$ = Ov_Codegen_Malloc(OV_OVM_INITVALUE_DEF);
+			$$->pvectorelem = NULL;
+			$$->pstructelem = $2;
+			$$->pnext = NULL;
+			$$->num = 0;
+			$$->identifier = NULL;
+			$$->value.vartype = OV_VT_STRUCT;
+		}
+;
+
+vector_values:
+	/* empty */
+		{
+			$$ = NULL;
+		}
+	| varvalue
+		{
+			$$ = $1;
+		}
+	| vector_values ',' varvalue
+		{
+			OV_OVM_INITVALUE_DEF *ptr;
+
+			ptr = $1;
+			while (ptr->pnext) ptr = ptr->pnext;
+			ptr->pnext = $3;
+			$$ = $1;
+		}
+;
+structure_values:
+	TOK_IDENTIFIER '=' varvalue
+		{
+			$3->identifier = $1;
+			$$ = $3;
+		}
+	| structure_values ',' TOK_IDENTIFIER '=' varvalue
+		{
+			OV_OVM_INITVALUE_DEF *ptr;
+
+			ptr = $1;
+			while (ptr->pnext) ptr = ptr->pnext;
+			$5->identifier = $3;
+			ptr->pnext = $5;
+			$$ = $1;
+		}
+;
 /*	----------------------------------------------------------------------	*/
 
 /*
@@ -647,13 +821,14 @@ parts:
 ;
 
 part:
-	TOK_IDENTIFIER ':' TOK_CLASS TOK_IDENTIFIER_EX ';'
+	TOK_IDENTIFIER ':' TOK_CLASS TOK_IDENTIFIER_EX varflags_opt';'
 		{
 			$$ = Ov_Codegen_Malloc(OV_OVM_PART_DEF);
 			$$->pnext = NULL;
 			$$->identifier = $1;
 			$$->partclassname = $4;
 			$$->partclasslibname = NULL;
+			$$->flags = $5;
 		}
 ;
 
@@ -1278,6 +1453,43 @@ OV_BOOL ov_codegen_checksemantics_member(
 /*
 *	Check semantics of a variable of a class
 */
+OV_BOOL ov_codegen_checkinitialvector(
+	OV_OVM_VARIABLE_DEF	*vardef,
+	OV_OVM_INITVALUE_DEF	*initdef
+) {
+	OV_OVM_INITVALUE_DEF	*pvecelem;
+	OV_BOOL			result = TRUE;
+	OV_VAR_TYPE		type;
+	OV_UINT			veclen;
+
+	if ((vardef->vartype == OV_VT_INT_VEC) && (initdef->value.vartype == OV_VT_UINT_VEC))
+		initdef->value.vartype = OV_VT_INT_VEC;
+	if ((vardef->vartype == OV_VT_SINGLE_VEC) && (initdef->value.vartype == OV_VT_DOUBLE_VEC))
+		initdef->value.vartype = OV_VT_SINGLE_VEC;
+	if (vardef->vartype != initdef->value.vartype) {
+		result = FALSE;
+	}
+
+	type = ov_codegen_getvarelementtype(vardef->vartype);
+	veclen = 0;
+	pvecelem = initdef->pvectorelem;
+	while(pvecelem) {
+		if ((type == OV_VT_INT) && (pvecelem->value.vartype == OV_VT_UINT))
+			pvecelem->value.vartype = OV_VT_INT;
+		if ((type == OV_VT_SINGLE) && (pvecelem->value.vartype == OV_VT_DOUBLE))
+			pvecelem->value.vartype = OV_VT_SINGLE;
+		if (type != pvecelem->value.vartype) {
+			result = FALSE;
+		}
+		pvecelem = pvecelem->pnext;
+		veclen++;
+	}
+	initdef->value.valueunion.val_generic_vec.veclen = veclen;
+	if ((vardef->veclen) && (veclen!=vardef->veclen)) result = FALSE;
+	return result;
+}
+
+
 OV_BOOL ov_codegen_checksemantics_variable(
 	OV_OVM_LIBRARY_DEF	*plib,
 	OV_OVM_CLASS_DEF	*pclass,
@@ -1287,7 +1499,9 @@ OV_BOOL ov_codegen_checksemantics_variable(
 	*	local variables
 	*/
 	OV_BOOL					result = TRUE;
-	OV_OVM_STRUCTURE_DEF	*pvarstruct;
+	OV_OVM_STRUCTURE_DEF			*pvarstruct;
+	OV_OVM_INITVALUE_DEF 			*valuedef;
+	OV_OVM_VARIABLE_DEF 			*vardef;
 	/*
 	*	check for unique name
 	*/
@@ -1366,6 +1580,75 @@ OV_BOOL ov_codegen_checksemantics_variable(
 			fprintf(stderr, "class \"%s\", variable \"%s\": structure \"%s\" not "
 				"defined.\n", pclass->identifier, pvar->identifier, pvar->structurename);
 			result = FALSE;
+		}
+	}
+	/*
+	*	if variable defines a initialvalue, check if the values match to the variable definition
+	*/
+	if(pvar->pinitvalue) {
+		if (pvar->structurename) {	// check structure definition
+			if (pvar->pinitvalue->value.vartype != OV_VT_STRUCT) {
+				result = FALSE;
+				fprintf(stderr, "class \"%s\", variable \"%s\": bad initialvalue: wrong value type\n", pclass->identifier, pvar->identifier);
+			}
+			pvarstruct = ov_codegen_getstructdef(plib, pvar->structurename);
+			valuedef = pvar->pinitvalue->pstructelem;
+			vardef = pvarstruct->members;
+
+			while(valuedef && vardef) {
+				if (vardef->veclen !=1) {
+					if (!ov_codegen_checkinitialvector(vardef, valuedef)) {
+						result = FALSE;
+						fprintf(stderr, "class \"%s\", variable \"%s\": bad initialvalue: wrong datatype\n", pclass->identifier, pvar->identifier);
+					}
+				}
+				else {
+					if ((vardef->vartype == OV_VT_INT) && (valuedef->value.vartype == OV_VT_UINT))
+						valuedef->value.vartype = OV_VT_INT;
+					if ((vardef->vartype == OV_VT_SINGLE) && (valuedef->value.vartype == OV_VT_DOUBLE))
+						valuedef->value.vartype = OV_VT_SINGLE;
+					if (vardef->vartype != valuedef->value.vartype) {
+						result = FALSE;
+						fprintf(stderr, "class \"%s\", variable \"%s\": bad initialvalue: wrong datatype\n", pclass->identifier, pvar->identifier);
+					}
+					if (strcmp(vardef->identifier, valuedef->identifier)) {
+						result = FALSE;
+						fprintf(stderr, "class \"%s\", variable \"%s\": bad initialvalue: %s is not a member of structure\n", pclass->identifier, pvar->identifier, valuedef->identifier);
+					}
+				}
+				valuedef = valuedef->pnext;
+				vardef = vardef->pnext;
+			}
+			if (valuedef || vardef) {
+				result = FALSE;
+				fprintf(stderr, "class \"%s\", variable \"%s\": bad initialvalue: wrong number of structure elements\n", pclass->identifier, pvar->identifier);
+			}
+		}
+		if (pvar->veclen == 0) {	// check dynamic vector
+			OV_OVM_INITVALUE_DEF *valuedef = (OV_OVM_INITVALUE_DEF*) pvar->pinitvalue;
+
+			if (!ov_codegen_checkinitialvector(pvar, valuedef)) {
+				result = FALSE;
+				fprintf(stderr, "class \"%s\", variable \"%s\": bad initialvalue: wrong datatype\n", pclass->identifier, pvar->identifier);
+			}
+		}
+		else if (pvar->veclen != 1) {	// check static vector
+			OV_OVM_INITVALUE_DEF *valuedef = (OV_OVM_INITVALUE_DEF*) pvar->pinitvalue;
+
+			if (!ov_codegen_checkinitialvector(pvar, valuedef)) {
+				result = FALSE;
+				fprintf(stderr, "class \"%s\", variable \"%s\": bad initialvalue: wrong datatype\n", pclass->identifier, pvar->identifier);
+			}
+		}
+		else {				// check scalar value
+			if ((pvar->vartype == OV_VT_INT) && (pvar->pinitvalue->value.vartype == OV_VT_UINT))
+				pvar->pinitvalue->value.vartype = OV_VT_INT;
+			if ((pvar->vartype == OV_VT_SINGLE) && (pvar->pinitvalue->value.vartype == OV_VT_DOUBLE))
+				pvar->pinitvalue->value.vartype = OV_VT_SINGLE;
+			if (pvar->vartype != pvar->pinitvalue->value.vartype) {
+				result = FALSE;
+				fprintf(stderr, "class \"%s\", variable \"%s\": bad initialvalue: wrong datatype\n", pclass->identifier, pvar->identifier);
+			}
 		}
 	}
 	/*
@@ -1933,12 +2216,78 @@ OV_OVM_OPERATION_DEF *ov_codegen_getopdefbynum(
 /*
 *	Clean up memory
 */
+void ov_codegen_freeassoc(OV_OVM_ASSOCIATION_DEF *passocdef) {
+
+	if (passocdef->pnext) ov_codegen_freeassoc(passocdef->pnext);
+
+	ov_codegen_free(passocdef);
+}
+
+void ov_codegen_freepart(OV_OVM_PART_DEF *ppartdef) {
+
+	if (ppartdef->pnext) ov_codegen_freepart(ppartdef->pnext);
+
+	ov_codegen_free(ppartdef);
+}
+
+void ov_codegen_freeoperation(OV_OVM_OPERATION_DEF *poperationdef) {
+
+	if (poperationdef->pnext) ov_codegen_freeoperation(poperationdef->pnext);
+
+	ov_codegen_free(poperationdef);
+}
+
+void ov_codegen_freeinitvalue(OV_OVM_INITVALUE_DEF *pinitdef) {
+
+	if (pinitdef->pvectorelem) ov_codegen_freeinitvalue(pinitdef->pvectorelem);
+	if (pinitdef->pstructelem) ov_codegen_freeinitvalue(pinitdef->pstructelem);
+	if (pinitdef->pnext) ov_codegen_freeinitvalue(pinitdef->pnext);
+
+	ov_codegen_free(pinitdef);
+}
+
+
+void ov_codegen_freevariable(OV_OVM_VARIABLE_DEF *pvardef) {
+
+	if (pvardef->pinitvalue) ov_codegen_freeinitvalue(pvardef->pinitvalue);
+	if (pvardef->pnext) ov_codegen_freevariable(pvardef->pnext);
+
+	ov_codegen_free(pvardef);
+}
+
+void ov_codegen_freeclass(OV_OVM_CLASS_DEF *pclassdef) {
+
+	if (pclassdef->variables) ov_codegen_freevariable(pclassdef->variables);
+	if (pclassdef->parts) ov_codegen_freepart(pclassdef->parts);
+	if (pclassdef->operations) ov_codegen_freeoperation(pclassdef->operations);
+	if (pclassdef->pnext) ov_codegen_freeclass(pclassdef->pnext);
+
+	ov_codegen_free(pclassdef);
+}
+
+void ov_codegen_freestructure(OV_OVM_STRUCTURE_DEF *pstructdef) {
+
+	if (pstructdef->members) ov_codegen_freevariable(pstructdef->members);
+	if (pstructdef->pnext) ov_codegen_freestructure(pstructdef->pnext);
+
+	ov_codegen_free(pstructdef);
+}
+
+void ov_codegen_freelib(OV_OVM_LIBRARY_DEF *plibdef) {
+	if (plibdef->structures) ov_codegen_freestructure(plibdef->structures);
+	if (plibdef->classes) ov_codegen_freeclass(plibdef->classes);
+	if (plibdef->associations) ov_codegen_freeassoc(plibdef->associations);
+	if (plibdef->pnext) ov_codegen_freelib(plibdef->pnext);
+	ov_codegen_free(plibdef);
+}
+
 void ov_codegen_cleanup(void) {
 	/*
 	*	local variables
 	*/
-	/* TODO! delete all definition objects */
+
 	ov_codegen_freestrings();
+	ov_codegen_freelib(libraries);
 }
 
 /*	----------------------------------------------------------------------	*/

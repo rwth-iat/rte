@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmscanner.lex,v 1.8 2001-07-20 07:21:40 ansgar Exp $
+*   $Id: ov_ovmscanner.lex,v 1.9 2001-12-10 14:28:38 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -50,7 +50,9 @@ OV_STRING				includepath[MAX_INCLUDEPATHS];
 OV_INT					current_line = 1;
 OV_STRING				filename;
 OV_INT 					include_stack_ptr = 0;
+OV_INT 					includename_stack_ptr = 0;
 OV_STRING				filename_stack[MAX_INCLUDE_DEPTH];
+OV_STRING				includename_stack[MAX_INCLUDES];
 OV_INT					current_line_stack[MAX_INCLUDE_DEPTH];
 static YY_BUFFER_STATE	include_stack[MAX_INCLUDE_DEPTH];
 static OV_STRINGSTACK	*pstringstack = NULL;
@@ -64,20 +66,27 @@ static OV_BOOL			include_used = FALSE;
 */
 DIGIT			[0-9]
 ALPHA			[a-zA-Z]
+NALPHA			[^0-9a-zA-Z]
 SPACE			[ \t]+
 SPACE_OPT		[ \t]*
 
+VOID			"<void>"
 STRING			\"[^\"\n]*\"
-UINT			{DIGIT}+
+YEAR			[12]{DIGIT}{3}
+MONTH			("0"[1-9])|("1"[012])
+DAY			("0"[1-9])|([12]{DIGIT})|("3"[01])
+HOUR			([01]{DIGIT})|("2"[0-3])
+MINUTE			[0-5]{DIGIT}
+SECOND			{MINUTE}
+USEC			{DIGIT}{6}
+
 IDENTIFIER		{ALPHA}({ALPHA}|{DIGIT})*
-IDENTIFIER_EX	{IDENTIFIER}\/{IDENTIFIER}
-C_IDENTIFIER	\<({ALPHA}|_)({ALPHA}|{DIGIT}|_)*\>
-
+IDENTIFIER_EX		{IDENTIFIER}\/{IDENTIFIER}
+C_IDENTIFIER		\<({ALPHA}|_)({ALPHA}|{DIGIT}|_)*\>
 FLAGS			FLAGS{SPACE_OPT}={SPACE_OPT}\"{ALPHA}*\"
-
 COMMENT			\/\/.*\n
 INCLUDE			\#include{SPACE_OPT}\"[^\"\n]+\"{SPACE_OPT}\n
-CPP_DIRECTIVE	\#{SPACE}{UINT}{SPACE}\"[^ \t\n]+\"({SPACE}{UINT})?{SPACE_OPT}\n
+CPP_DIRECTIVE		\#{SPACE}{DIGIT}+{SPACE}\"[^ \t\n]+\"({SPACE}{DIGIT}+)?{SPACE_OPT}\n
 
 /*
 *   lex rules
@@ -108,6 +117,7 @@ CPP_DIRECTIVE	\#{SPACE}{UINT}{SPACE}\"[^ \t\n]+\"({SPACE}{UINT})?{SPACE_OPT}\n
 "C_TYPE"			return TOK_C_TYPE;
 "UNIT"				return TOK_UNIT;
 "C_FUNCTION"		return TOK_C_FUNCTION;
+"INITIALVALUE"		return TOK_INITIALVALUE;
 
 "IS_INSTANTIABLE"	{ yylval.classprops = OV_CP_INSTANTIABLE;	return TOK_CLASSPROPS; }
 "IS_FINAL"			{ yylval.classprops = OV_CP_FINAL;			return TOK_CLASSPROPS; }
@@ -139,6 +149,16 @@ CPP_DIRECTIVE	\#{SPACE}{UINT}{SPACE}\"[^ \t\n]+\"({SPACE}{UINT})?{SPACE_OPT}\n
 "ONE_TO_MANY"		{ yylval.assoctype = OV_AT_ONE_TO_MANY;		return TOK_ASSOCTYPE; }
 "MANY_TO_MANY"		{ yylval.assoctype = OV_AT_MANY_TO_MANY;	return TOK_ASSOCTYPE; }
 
+"TRUE" {
+	yylval.bool = TRUE;
+	return TOK_BOOL;
+}
+
+"FALSE" {
+	yylval.bool = FALSE;
+	return TOK_BOOL;
+}
+
 {FLAGS}	{
 	OV_STRING	pc;
 	yylval.uint = 0;
@@ -152,14 +172,135 @@ CPP_DIRECTIVE	\#{SPACE}{UINT}{SPACE}\"[^ \t\n]+\"({SPACE}{UINT})?{SPACE_OPT}\n
 	return TOK_FLAGS;
 }
 
+{YEAR}\/{MONTH}\/{DAY}({SPACE}{HOUR}":"{MINUTE}":"{SECOND}("."{USEC})?)? {
+	static char		format[] = "0000/00/00 00:00:00.000000";
+	char			*pc1, *pc2;
+	struct tm		tm;
+	time_t			secs;
+	OV_UINT			usecs;
+
+	if(!yytext) {
+		yyerror("Error: Bad time format.");
+		exit(EXIT_FAILURE);
+	}
+	for(pc1=format, pc2=yytext; *pc1; pc1++, pc2++) {
+		if(!*pc2) {
+			if((*pc1 == ' ') || (*pc1 == '.')) {
+				break;
+			}
+			yyerror("Error: Bad time format.");
+			exit(EXIT_FAILURE);
+		}
+		switch(*pc1) {
+		case '0':
+			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
+				yyerror("Error: Bad time format.");
+				exit(EXIT_FAILURE);
+			}
+			break;
+		case '/':
+		case ':':
+		case ' ':
+		case '.':
+			if(*pc2 != *pc1) {
+				yyerror("Error: Bad time format.");
+				exit(EXIT_FAILURE);
+			}
+			break;
+		default:
+			yyerror("Error: Bad time format.");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	memset(&tm, 0, sizeof(tm));
+	usecs = 0;
+	sscanf(yytext, "%d/%d/%d %d:%d:%d.%lu", &tm.tm_year, &tm.tm_mon,
+		&tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &usecs);
+	tm.tm_year -= 1900;
+	tm.tm_mon--;
+	secs = mktime(&tm);
+	if(secs == -1) {
+		yyerror("Error: Bad time.");
+		exit(EXIT_FAILURE);
+	}
+	yylval.time.secs = secs;
+	yylval.time.usecs = usecs;
+	return TOK_TIME;
+} 
+
+[+-]?{HOUR}":"{MINUTE}":"{SECOND}("."{USEC})? {
+	static char		format[] = "00:00:00.000000";
+	long			hour, min, sec, usecs;
+	char			*pc1, *pc2;
+	int			sign;
+
+	if(!yytext) {
+		yyerror("Error: Bad time span format.");
+		exit(EXIT_FAILURE);
+	}
+	sign = 1;
+	pc2=yytext;
+	if ((*pc2) == '-') { sign = -1; pc2++; }
+	if ((*pc2) == '+') pc2++;
+	for(pc1=format; *pc1; pc1++, pc2++) {
+		if(!*pc2) {
+			if((*pc1 == ' ') || (*pc1 == '.')) {
+				break;
+			}
+			yyerror("Error: Bad time span format.");
+			exit(EXIT_FAILURE);
+		}
+		switch(*pc1) {
+		case '0':
+			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
+				yyerror("Error: Bad time span format.");
+				exit(EXIT_FAILURE);
+			}
+			break;
+		case ':':
+		case ' ':
+		case '.':
+			if(*pc2 != *pc1) {
+				yyerror("Error: Bad time span format.");
+				exit(EXIT_FAILURE);
+			}
+			break;
+		default:
+			yyerror("Error: Bad time span format.");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	sscanf(yytext, "%d:%d:%d.%u", &hour, &min, &sec, &usecs);
+	if(sec == -1) {
+		yyerror("Error: Bad time span format.");
+		exit(EXIT_FAILURE);
+	}
+	yylval.timespan.secs = sign * (abs(hour) * 3600 + min * 60 + sec);
+	yylval.timespan.usecs = sign * usecs;
+	return TOK_TIMESPAN;
+} 
+
 {STRING} {
 	yylval.string = ov_codegen_getstring(yytext, yyleng);
 	return TOK_STRING;
 }
 
-{UINT} {
+
+[+-]?{DIGIT}+(("."{DIGIT}+[eE][+-]?{DIGIT}+)|("."{DIGIT}+)|([eE][+-]?{DIGIT}+)) {
+	yylval._double = strtod(yytext, NULL);
+	return TOK_REAL;
+}
+
+{DIGIT}+ {
 	yylval.uint = strtoul(yytext, NULL, 10);
 	return TOK_UINT;
+}
+
+[+-]?{DIGIT}+ {
+	yylval._int = strtol(yytext, NULL, 10);
+	return TOK_INT;
 }
 
 {IDENTIFIER_EX}	{
@@ -224,36 +365,49 @@ CPP_DIRECTIVE	\#{SPACE}{UINT}{SPACE}\"[^ \t\n]+\"({SPACE}{UINT})?{SPACE_OPT}\n
 	} else {
 		OV_STRING	fname = (OV_STRING)ov_codegen_malloc(yyleng);
 		char* includefilename;
-		int i = 0;
+		int i;
 		include_used = TRUE;
 		sscanf(yytext, "#include %s", fname);
+		if(includename_stack_ptr >= MAX_INCLUDES) {
+			yyerror("To many Includes");
+			exit(EXIT_FAILURE);
+		}
 		if(include_stack_ptr >= MAX_INCLUDE_DEPTH) {
 			yyerror("Includes nested too deeply");
 			exit(EXIT_FAILURE);
 		}
 		includefilename = ov_codegen_getstring(fname+1, strlen(fname)-2);
 		ov_codegen_free(fname);
-		yyin = fopen(includefilename, "r");
-		while((!yyin) && (i<includepath_ptr)) {
-			fname = (OV_STRING)ov_codegen_malloc(strlen(includepath[i])+
-				strlen(includefilename)+2);
-			sprintf(fname, "%s" OV_DIRPATHDELIMITER "%s", includepath[i],
-				includefilename);
-			i++;
-			yyin = fopen(fname, "r");
-			ov_codegen_free(fname);
+		i = includename_stack_ptr;
+		while (i>0) {
+			if (strcmp(includefilename, includename_stack[i-1])==0) break;
+			i--;
 		}
-		if(!yyin) {
-			yyerror("include file not found");
-			exit(EXIT_FAILURE);
+		if (i==0) {
+			yyin = fopen(includefilename, "r");
+			while((!yyin) && (i<includepath_ptr)) {
+				fname = (OV_STRING)ov_codegen_malloc(strlen(includepath[i])+
+					strlen(includefilename)+2);
+				sprintf(fname, "%s" OV_DIRPATHDELIMITER "%s", includepath[i],
+					includefilename);
+				i++;
+				yyin = fopen(fname, "r");
+				ov_codegen_free(fname);
+			}
+			if(!yyin) {
+				yyerror("include file not found");
+				exit(EXIT_FAILURE);
+			}
+			include_stack[include_stack_ptr] = YY_CURRENT_BUFFER;
+			includename_stack[includename_stack_ptr] = includefilename;
+			filename_stack[include_stack_ptr] = filename;
+			current_line_stack[include_stack_ptr] = current_line;
+			include_stack_ptr++;
+			includename_stack_ptr++;
+			filename = includefilename;
+			current_line = 1;
+			yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
 		}
-		include_stack[include_stack_ptr] = YY_CURRENT_BUFFER;
-		filename_stack[include_stack_ptr] = filename;
-		current_line_stack[include_stack_ptr] = current_line;
-		include_stack_ptr++;
-		filename = includefilename;
-		current_line = 1;
-		yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
 	}
 }
 

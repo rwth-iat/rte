@@ -67,7 +67,7 @@ OV_DLLFNCEXPORT OV_RESULT kshist_KsSimpleTimeTrack_gettrackhist(
 			/*
 			*	only get selected messages
 			*/
-			if(phistsel->OV_HISTSELECTOR_u.ths.ip_mode != OV_IPM_NONE) {
+			if((phistsel->OV_HISTSELECTOR_u.ths.ip_mode != OV_IPM_NONE) && (phistsel->OV_HISTSELECTOR_u.ths.ip_mode != OV_IPM_DEFAULT)) {
 				/* messages are change driven; no interpolation available */
 				return OV_ERR_BADSELECTOR;
 			}

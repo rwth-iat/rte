@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.15 2001-07-20 08:43:24 ansgar Exp $
+*   $Id: ov_version.h,v 1.16 2001-12-10 14:28:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,32 +34,32 @@
 *	Version information for different modules of ACPLT/OV
 *	-----------------------------------------------------
 */
-#define OV_VER_CODEGEN						"1.2.1"
-#define OV_VER_BUILDER 						"1.0.0"
-#define OV_VER_LIBOV						"1.2.2"
+#define OV_VER_CODEGEN						"1.4.0"
+#define OV_VER_BUILDER 						"1.0.1"
+#define OV_VER_LIBOV						"1.4.0"
 #define OV_VER_DBUTIL 						"1.2.0"
 #define OV_VER_LIBOVKS 						"1.3.0"
 #define OV_VER_SERVER						"1.2.0"
 #define OV_VER_NTSERVICE					"1.2.1"
 #define OV_VER_CONTROLPANEL					"1.2.0"
 
-#define OV_VER_FILEVERSION_CODEGEN			1, 2, 1, 0
-#define OV_VER_FILEVERSION_BUILDER			1, 0, 0, 0
-#define OV_VER_FILEVERSION_LIBOV			1, 2, 2, 0
+#define OV_VER_FILEVERSION_CODEGEN			1, 4, 0, 0
+#define OV_VER_FILEVERSION_BUILDER			1, 0, 1, 0
+#define OV_VER_FILEVERSION_LIBOV			1, 4, 0, 0
 #define OV_VER_FILEVERSION_DBUTIL 			1, 2, 0, 0
 #define OV_VER_FILEVERSION_LIBOVKS 			1, 3, 0, 0
 #define OV_VER_FILEVERSION_SERVER			1, 2, 0, 0
 #define OV_VER_FILEVERSION_NTSERVICE			1, 2, 1, 0
 #define OV_VER_FILEVERSION_CONTROLPANEL			1, 0, 0, 0
 
-#define OV_VER_PRODUCTVERSION_CODEGEN		1, 3, 0, 0
-#define OV_VER_PRODUCTVERSION_BUILDER		1, 3, 0, 0
-#define OV_VER_PRODUCTVERSION_LIBOV		1, 3, 0, 0
-#define OV_VER_PRODUCTVERSION_DBUTIL 		1, 3, 0, 0
-#define OV_VER_PRODUCTVERSION_LIBOVKS 		1, 3, 0, 0
-#define OV_VER_PRODUCTVERSION_SERVER		1, 3, 0, 0
-#define OV_VER_PRODUCTVERSION_NTSERVICE		1, 3, 0, 0
-#define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 3, 0, 0
+#define OV_VER_PRODUCTVERSION_CODEGEN		1, 4, 0, 0
+#define OV_VER_PRODUCTVERSION_BUILDER		1, 4, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBOV		1, 4, 0, 0
+#define OV_VER_PRODUCTVERSION_DBUTIL 		1, 4, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBOVKS 		1, 4, 0, 0
+#define OV_VER_PRODUCTVERSION_SERVER		1, 4, 0, 0
+#define OV_VER_PRODUCTVERSION_NTSERVICE		1, 4, 0, 0
+#define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 4, 0, 0
 
 #define OV_VER_LICENSE															\
 	"Copyright (C) 1998-2000 "													\

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.11 2001-07-09 12:49:39 ansgar Exp $
+*   $Id: ov_library.c,v 1.12 2001-12-10 14:28:41 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -51,7 +51,7 @@
 */
 #if OV_DYNAMIC_LIBRARIES
 #if OV_SYSTEM_UNIX
-#define Ov_Library_OpenDLL(filename)	dlopen(filename, RTLD_NOW)
+#define Ov_Library_OpenDLL(filename)	dlopen(filename, RTLD_NOW | RTLD_GLOBAL)
 #elif OV_SYSTEM_NT
 #define Ov_Library_OpenDLL(filename)	LoadLibrary(filename)
 #endif
@@ -124,6 +124,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_constructor(
 OV_DLLFNCEXPORT void ov_library_destructor(
 	OV_INSTPTR_ov_object	pobj
 ) {
+	OV_INSTPTR_ov_class	pclass;
+	OV_INSTPTR_ov_variable	pvar;
 	/*
 	*	local variables
 	*/
@@ -132,6 +134,16 @@ OV_DLLFNCEXPORT void ov_library_destructor(
 	*	close the library
 	*/
 	ov_library_close(plib);
+	/* 
+	* 	delete all initialvalues references by deleting the vartype
+	*/
+	Ov_ForEachChildEx(ov_containment, plib, pclass, ov_class) {
+		Ov_ForEachChildEx(ov_containment, pclass, pvar, ov_variable) {
+			pvar->v_initialvalue.value.vartype = 0;
+			
+		}
+	}
+
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -271,9 +283,9 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 					ov_library_close(plib);
 				}
 			}
-#if OV_SYSTEM_LINUX
+#if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
 			else {
-				ov_logfile_error("Can't load library. Reason: %s", dlerror());
+				if (!nextpath) ov_logfile_error("Can't load library. Reason: %s", dlerror());
 			}
 #endif
 			/*

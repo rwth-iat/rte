@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.c,v 1.6 2001-07-09 12:50:01 ansgar Exp $
+*   $Id: ov_ksserver_xdr.c,v 1.7 2001-12-10 14:28:42 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -297,6 +297,7 @@ OV_KSSERVER_DECL_XDRFNC(OV_VAR_VALUE) {
 		return ov_ksserver_xdr_OV_BOOL(xdrs, &objp->valueunion.val_bool);
 	case OV_VT_INT:
 		return ov_ksserver_xdr_OV_INT(xdrs, &objp->valueunion.val_int);
+	case OV_VT_STATE:
 	case OV_VT_UINT:
 		return ov_ksserver_xdr_OV_UINT(xdrs, &objp->valueunion.val_uint);
 	case OV_VT_SINGLE:
@@ -317,6 +318,7 @@ OV_KSSERVER_DECL_XDRFNC(OV_VAR_VALUE) {
 		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_int_vec.value,
 			&objp->valueunion.val_int_vec.veclen, ~0, sizeof(long),
 			(xdrproc_t)ov_ksserver_xdr_OV_INT);
+	case OV_VT_STATE_VEC:
 	case OV_VT_UINT_VEC:
 		return ov_ksserver_xdr_array(xdrs, (char **)&objp->valueunion.val_uint_vec.value,
 			&objp->valueunion.val_uint_vec.veclen, ~0, sizeof(u_long),

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_variable.h,v 1.3 2000-02-10 13:06:53 dirk Exp $
+*   $Id: ov_variable.h,v 1.4 2001-12-10 14:28:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
+*	06-Dez-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: initialvalue of variable added.
 */
 
 #ifndef OV_VARIABLE_H_INCLUDED1
@@ -42,7 +43,7 @@ struct OV_VARIABLE_DEF {
 	struct OV_VARIABLE_DEF	*pnext;
 	OV_STRING				identifier;
 	OV_UINT					veclen;
-	OV_VAR_PROPS			varprops;
+	OV_VAR_PROPS				varprops;
 	OV_VAR_TYPE				vartype;
 	OV_STRING				ctypename;
 	OV_STRING				structurename;
@@ -51,8 +52,8 @@ struct OV_VARIABLE_DEF {
 	OV_UINT					flags;
 	OV_STRING				techunit;
 	OV_STRING				comment;
-	OV_FNCPTR_GET			getfnc;
-	OV_FNCPTR_SET			setfnc;
+	OV_FNCPTR_GET				getfnc;
+	OV_FNCPTR_SET				setfnc;
 };
 typedef struct OV_VARIABLE_DEF OV_VARIABLE_DEF;
 

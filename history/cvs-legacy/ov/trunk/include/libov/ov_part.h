@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_part.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_part.h,v 1.2 2001-12-10 14:28:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -40,6 +40,7 @@ struct OV_PART_DEF {
 	struct OV_PART_DEF	*pnext;
 	OV_STRING			identifier;
 	OV_STRING			partclassname;
+	OV_UINT				flags;
 	OV_UINT				offset;
 };
 typedef struct OV_PART_DEF OV_PART_DEF;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.14 2001-07-09 12:48:57 ansgar Exp $
+*   $Id: ov_ov.h,v 1.15 2001-12-10 14:28:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -82,6 +82,7 @@ typedef OV_ENUM OV_STATE;
 #define OV_VT_STRING		KS_VT_STRING
 #define OV_VT_TIME			KS_VT_TIME
 #define OV_VT_TIME_SPAN		KS_VT_TIME_SPAN
+#define OV_VT_STATE		KS_VT_STATE
 
 #define OV_VT_BOOL_VEC		KS_VT_BOOL_VEC
 #define OV_VT_INT_VEC		KS_VT_INT_VEC
@@ -91,6 +92,7 @@ typedef OV_ENUM OV_STATE;
 #define OV_VT_STRING_VEC	KS_VT_STRING_VEC
 #define OV_VT_TIME_VEC		KS_VT_TIME_VEC
 #define OV_VT_TIME_SPAN_VEC	KS_VT_TIME_SPAN_VEC
+#define OV_VT_STATE_VEC		KS_VT_STATE_VEC
 
 #define OV_VT_STRUCT		KS_VT_STRUCT
 
@@ -105,7 +107,7 @@ typedef OV_ENUM OV_STATE;
 #define OV_VT_INT_PV		(KS_VT_INT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 #define OV_VT_SINGLE_PV		(KS_VT_SINGLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 
-#define OV_VT_ANY			ENUMVAL(KS_VAR_TYPE, 0x000000ff)
+#define OV_VT_ANY		ENUMVAL(KS_VAR_TYPE, 0x000000ff)
 
 typedef OV_ENUM OV_VAR_TYPE;
 
@@ -194,6 +196,11 @@ typedef struct {				/* dynamic time span (duration) value vector */
 	OV_TIME_SPAN	*value;
 }	OV_TIME_SPAN_VEC;
 
+typedef struct {				/* dynamic time span (duration) value vector */
+	OV_UINT			veclen;
+	OV_STATE		*value;
+}	OV_STATE_VEC;
+
 typedef struct {				/* generic dynamic value vector (internal use) */
 	OV_UINT			veclen;
 	OV_POINTER		value;
@@ -237,6 +244,7 @@ typedef struct {
 		OV_STRING			val_string;			/* if vartype == OV_VT_STRING */
 		OV_TIME				val_time;			/* if vartype == OV_VT_TIME */
 		OV_TIME_SPAN		val_time_span;		/* if vartype == OV_VT_TIME_SPAN */
+		OV_STATE			val_state;		/* if vartype == OV_VT_TIME_SPAN */
 		/* vector datatypes */
 		OV_BYTE_VEC			val_byte_vec;		/* if vartype == OV_VT_BYTE_VEC */
 		OV_BOOL_VEC			val_bool_vec;		/* if vartype == OV_VT_BOOL_VEC */
@@ -247,6 +255,7 @@ typedef struct {
 		OV_STRING_VEC		val_string_vec;		/* if vartype == OV_VT_STRING_VEC */
 		OV_TIME_VEC			val_time_vec;		/* if vartype == OV_VT_TIME_VEC */
 		OV_TIME_SPAN_VEC	val_time_span_vec;	/* if vartype == OV_VT_TIME_SPAN_VEC */
+		OV_STATE_VEC			val_state_vec;		/* if vartype == OV_VT_TIME_SPAN */
 		OV_GENERIC_VEC		val_generic_vec;	/* for internal use only */
 	}	valueunion;
 }	OV_VAR_VALUE;
