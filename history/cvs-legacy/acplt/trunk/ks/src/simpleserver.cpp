@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.11 1997-09-02 15:09:10 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.12 1997-09-03 14:10:13 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -193,15 +193,18 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
                       KsGetPPResult & result) 
 {
     KsPath path(params.path);
+    PltString prefix;
     if (path.isValid() && path.isAbsolute()) {
         // Path is OK
         if (ticket.isVisible(params.path)) {
             KssCommObjectHandle hc;
             KssDomain *pd = 0;
             if (params.path == "/") {
+                prefix = params.path;
                 // root must be handled specially
                 pd = &_root_domain;
             } else {
+                prefix = PltString(params.path,"/");
                 hc = _root_domain.getChildByPath(path);
                 if (hc) {
                     // Child found. Is it a domain?
@@ -231,8 +234,7 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
                         for (KssDomainIterator &it = *pit; it; ++it) {
                             if (*it) {
                                 // check if the child is visible
-                                PltString tmp(params.path,"/");
-                                PltString childname(tmp,
+                                PltString childname(prefix,
                                                     (*it)->getIdentifier());
                                 if (ticket.isVisible(childname)) {
                                     // Ask for proj properties
