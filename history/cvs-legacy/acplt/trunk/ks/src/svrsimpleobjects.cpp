@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.11 1998-12-14 18:04:10 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.12 1999-01-12 16:25:18 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -134,6 +134,16 @@ KssSimpleDomainIterator::KssSimpleDomainIterator(const KssSimpleDomain & d)
   _at_sister(false)
 {
 }
+
+
+KssSimpleDomainIterator::KssSimpleDomainIterator
+(const PltHashTable<KsString,KssCommObjectHandle> &ht)
+: _children_iter(ht),
+  _p_sister_iter(0),
+  _at_sister(false)
+{
+}
+
 
 //////////////////////////////////////////////////////////////////////
 

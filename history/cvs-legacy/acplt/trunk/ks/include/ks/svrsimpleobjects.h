@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.13 1998-12-14 18:03:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.14 1999-01-12 16:25:17 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -50,10 +50,13 @@ class KssSimpleDomainIterator;
 class KssSimpleDomain;
 typedef PltPtrHandle<KssSimpleDomain> KssSimpleDomainHandle;
 
-//////////////////////////////////////////////////////////////////////
-// class KssSimpleCommObject (mixin)
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// class KssSimpleCommObject (mixin). This is the root cause of derived
+// trouble. This base/mixin class is just responsible for knowing the
+// identifier, creation time and comment of an ACPLT/KS communication object
+// in a server. That's all. It doesn't do anything beyond this.
+//
 class KssSimpleCommObject
 {
     //// KssSimpleCommObject ////
@@ -79,13 +82,16 @@ public:
 private:
     KssSimpleCommObject(const KssSimpleCommObject &); // forbidden
     KssSimpleCommObject & operator = (const KssSimpleCommObject &); //forbidden
-    PltHashTable<KsString, KssCommObjectHandle> _table;
+//FIXME    PltHashTable<KsString, KssCommObjectHandle> _table;
     const KsString _identifier;
     KsTime         _creation_time;
     KsString       _comment;
 
     PLT_DECL_RTTI;
 };
+
+
+
 
 //////////////////////////////////////////////////////////////////////
 // KssSimpleDomainIterator
@@ -103,6 +109,7 @@ public:
 #endif
 
     KssSimpleDomainIterator(const KssSimpleDomain & d);
+    KssSimpleDomainIterator(const PltHashTable<KsString,KssCommObjectHandle> &ht);
     virtual ~KssSimpleDomainIterator();
 
     virtual operator bool () const;
