@@ -64,7 +64,7 @@ class KscSorterBucket
 {
 public:
     KscSorterBucket(const KscAvModule *,
-                    KscServer *);
+                    KscServerBase *);
 //    KscSorterBucket(const KscSorterBucket &);
 //    KscSorterBucket &operator = (const KscSorterBucket &);
 
@@ -74,7 +74,7 @@ public:
     // call only once
     PltArray<KscVariableHandle> getSortedVars();
 
-    KscServer *getServer() const;
+    KscServerBase *getServer() const;
     const KscAvModule *getAvModule() const;
 //    KscNegotiator *getNegotiator() const;
 
@@ -85,7 +85,7 @@ private:
     PltPriorityQueue<KscVariableHandle> var_lst;
 #endif
     const KscAvModule *av_module;
-    KscServer *server;
+    KscServerBase *server;
     size_t var_count;
 };
 
@@ -115,11 +115,11 @@ public:
     {
     public:
         Key(const KscAvModule *,
-            KscServer *);
+            KscServerBase *);
 
         const KscAvModule *getAvModule() const
             { return av_module; }
-        KscServer *getServer() const
+        KscServerBase *getServer() const
             { return server; }
 
         unsigned long hash() const;
@@ -127,7 +127,7 @@ public:
 
     private:
         const KscAvModule *av_module;
-        KscServer *server;
+        KscServerBase *server;
     };
 
     friend class Key;
@@ -171,7 +171,7 @@ private:
 
 inline
 KscSorter::Key::Key(const KscAvModule *avm,
-                    KscServer *svr)
+                    KscServerBase *svr)
 : av_module(avm),
   server(svr)
 {}
@@ -227,7 +227,7 @@ KscSorter::ValueIterator::toStart()
 
 inline
 KscSorterBucket::KscSorterBucket(const KscAvModule *avm,
-                                 KscServer *svr)
+                                 KscServerBase *svr)
 : av_module(avm),
   server(svr),
   var_count(0)
@@ -236,7 +236,7 @@ KscSorterBucket::KscSorterBucket(const KscAvModule *avm,
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscServer *
+KscServerBase *
 KscSorterBucket::getServer() const
 {
     return server;

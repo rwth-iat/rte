@@ -171,14 +171,14 @@ KscCommObject::operator = (const KscCommObject &other)
 
 KscCommObject::~KscCommObject()
 {
-    KscServer *myServer = getServer();
+    KscServerBase *myServer = getServer();
     PLT_ASSERT(myServer);
     myServer->decRefcount();
 }
 
 //////////////////////////////////////////////////////////////////////
    
-KscServer *
+KscServerBase *
 KscCommObject::findServer()
 {
     return KscClient::getClient()->
@@ -188,7 +188,7 @@ KscCommObject::findServer()
 
 //////////////////////////////////////////////////////////////////////
 
-KscServer *
+KscServerBase *
 KscCommObject::getServer() const
 {
     return server;
@@ -210,11 +210,11 @@ bool
 KscDomain::getProjPropsUpdate() 
 {
     if(!hasValidPath()) {
-        last_result = KS_ERR_MALFORMED_PATH;
+        last_result = KS_ERR_MALFORMEDPATH;
         return false;
     }
 
-    KscServer *myServer = getServer();
+    KscServerBase *myServer = getServer();
     PLT_ASSERT(myServer);
 
     KsGetPPParams params;
@@ -241,7 +241,7 @@ KscDomain::getProjPropsUpdate()
                         return true;
                     } else {
                         // type mismatch
-                        last_result = KS_ERR_TYPE_MISMATCH;
+                        last_result = KS_ERR_TYPEMISMATCH;
                     }
                 } else {
                     // out of mem
@@ -285,13 +285,13 @@ bool
 KscDomain::getChildPPUpdate()
 {
     if( !hasValidPath() ) {
-        last_result = KS_ERR_MALFORMED_PATH;
+        last_result = KS_ERR_MALFORMEDPATH;
         return false;
     }
 
     // locate server
     //
-    KscServer *myServer = getServer();
+    KscServerBase *myServer = getServer();
     PLT_ASSERT(myServer);
 
     // create and fill data structures
@@ -451,11 +451,11 @@ bool
 KscVariable::getProjPropsUpdate()
 {
     if( !hasValidPath() ) {
-        last_result = KS_ERR_MALFORMED_PATH;
+        last_result = KS_ERR_MALFORMEDPATH;
         return false;
     }
 
-    KscServer *myServer = getServer();
+    KscServerBase *myServer = getServer();
     PLT_ASSERT(myServer);
 
     KsGetPPParams params;
@@ -482,7 +482,7 @@ KscVariable::getProjPropsUpdate()
                         return true;
                     } else {
                         // type mismatch
-                        last_result = KS_ERR_TYPE_MISMATCH;
+                        last_result = KS_ERR_TYPEMISMATCH;
                     }
                 } else {
                     // out of mem
@@ -523,11 +523,11 @@ bool
 KscVariable::getUpdate() 
 {
     if( !hasValidPath() ) {
-        last_result = KS_ERR_MALFORMED_PATH;
+        last_result = KS_ERR_MALFORMEDPATH;
         return false;
     }
 
-    KscServer *myServer = getServer();
+    KscServerBase *myServer = getServer();
     PLT_ASSERT(myServer);
 
     KsGetVarParams params(1);
@@ -557,7 +557,7 @@ KscVariable::getUpdate()
                     return true;
                 } else {
                     // type mismatch
-                    last_result = KS_ERR_TYPE_MISMATCH;
+                    last_result = KS_ERR_TYPEMISMATCH;
                 }
             } else {
                 last_result = pitem->result;
@@ -565,7 +565,7 @@ KscVariable::getUpdate()
         }
     } else {
         // failed to do getVar
-        last_result = KS_ERR_NETWORK_ERROR;
+        last_result = KS_ERR_NETWORKERROR;
     }
 
     return false;
@@ -577,11 +577,11 @@ bool
 KscVariable::setUpdate()
 {
     if( !hasValidPath() ) {
-        last_result = KS_ERR_MALFORMED_PATH;
+        last_result = KS_ERR_MALFORMEDPATH;
         return false;
     }
 
-    KscServer *myServer = getServer();
+    KscServerBase *myServer = getServer();
     PLT_ASSERT(myServer);
 
     KsSetVarParams params(1);
@@ -617,7 +617,7 @@ KscVariable::setUpdate()
         }
     } else {
         // setVar failed
-        last_result = KS_ERR_NETWORK_ERROR;
+        last_result = KS_ERR_NETWORKERROR;
     }
 
     return false;

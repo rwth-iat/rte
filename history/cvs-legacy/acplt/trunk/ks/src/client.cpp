@@ -38,6 +38,8 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#include <plt/log.h>
+
 #include "ks/client.h"
 #include "ks/ks.h"
 
@@ -58,6 +60,14 @@ extern "C" {
 #include <iostream.h>
 #endif
 
+
+//////////////////////////////////////////////////////////////////////
+// RTTI Simulation
+//////////////////////////////////////////////////////////////////////
+
+PLT_IMPL_RTTI0(KscServerBase);
+PLT_IMPL_RTTI1(KscServer,KscServerBase);
+
 //////////////////////////////////////////////////////////////////////
 // initialize static data
 KscClient *KscClient::_the_client = 0;
@@ -68,7 +78,10 @@ KscClient::CleanUp KscClient::_clean_up;
 //////////////////////////////////////////////////////////////////////
 
 KscClient::KscClient()
-: av_module(0)
+: av_module(0),
+  _rpc_timeout(KSC_RPCCALL_TIMEOUT),
+  _retry_wait(0, 0),
+  _retries(0)
 {}
 
 //////////////////////////////////////////////////////////////////////
@@ -82,8 +95,8 @@ KscClient::~KscClient()
 
     // destroy related KscServer objects if any left
     //
-    PltHashIterator<KsString,KscServer *> it(server_table);
-    KscServer *pcurr;
+    PltHashIterator<KsString,KscServerBase *> it(server_table);
+    KscServerBase *pcurr;
     while(it) {
         pcurr = it->a_value;
         if( pcurr ) {
@@ -99,8 +112,10 @@ void
 KscClient::_createClient()
 {
     KscClient *cl = new KscClient();
-    // TODO: abort programm in none debugging mode if cl == 0 
-    PLT_ASSERT(cl);
+    if(!cl) {
+        PltLog::Alert("Cannot create client, going to abort program");
+        exit(-1);
+    }
     bool ok = setClient(cl, true);
     PLT_ASSERT(ok);
 }
@@ -121,10 +136,10 @@ KscClient::setClient(KscClient *cl, bool shutdownDelete)
 
 //////////////////////////////////////////////////////////////////////
 
-KscServer *
+KscServerBase *
 KscClient::getServer(const KsString &host_and_name) 
 {
-    KscServer *pServer;
+    KscServerBase *pServer;
 
     bool ok = server_table.query(host_and_name, pServer);
 
@@ -133,10 +148,10 @@ KscClient::getServer(const KsString &host_and_name)
 
 //////////////////////////////////////////////////////////////////////
 
-KscServer *
+KscServerBase *
 KscClient::createServer(KsString host_and_name) 
 {
-    KscServer *pServer = 0;
+    KscServerBase *pServer = 0;
 
     bool ok = server_table.query(host_and_name, pServer);
 
@@ -145,12 +160,14 @@ KscClient::createServer(KsString host_and_name)
         //
         KsString host, server;
         extractHostAndServer(host_and_name, host, server);
-        pServer = new KscServer(host, 
-                                KsServerDesc(server,
-                                             KS_PROTOCOL_VERSION));
-        if(pServer) {
+        KscServer *temp = new KscServer(host, 
+                                        KsServerDesc(server,
+                                                     KS_PROTOCOL_VERSION));
+        if(temp) {
             // object successfully created
             //
+            temp->setTimeouts(_rpc_timeout, _retry_wait, 2);
+            pServer = temp;
             server_table.add(host_and_name, pServer);
         }
     }
@@ -184,9 +201,9 @@ KscClient::extractHostAndServer(KsString host_and_server,
 //////////////////////////////////////////////////////////////////////
 
 void
-KscClient::deleteServer(KscServer *server)
+KscClient::deleteServer(KscServerBase *server)
 {
-    KscServer *temp = 0;
+    KscServerBase *temp = 0;
 
     // remove server from table
     //
@@ -200,12 +217,24 @@ KscClient::deleteServer(KscServer *server)
 
 //////////////////////////////////////////////////////////////////////
 
+void 
+KscClient::setTimeouts(const PltTime &rpc_timeout,        
+                       const PltTime &retry_wait,         
+                       size_t retries)
+{
+    _rpc_timeout = rpc_timeout;
+    _retry_wait = retry_wait;
+    _retries = retries;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 #if PLT_DEBUG
 
 void
 KscClient::printServers()
 {
-    PltHashIterator<KsString,KscServer *> it(server_table);
+    PltHashIterator<KsString,KscServerBase *> it(server_table);
 
     cout << "Client manages " 
          << server_table.size()
@@ -221,6 +250,47 @@ KscClient::printServers()
 }
 
 #endif
+
+//////////////////////////////////////////////////////////////////////
+// KscServerBase
+//////////////////////////////////////////////////////////////////////
+
+KscServerBase::KscServerBase(KsString host, KsString name)
+: host_name(host),
+  server_name(name),
+  host_and_name("//", host),
+  av_module(0),
+  ref_count(0),
+  _last_result(KS_ERR_OK)
+{
+    host_and_name += "/";
+    host_and_name += name;
+}
+
+//////////////////////////////////////////////////////////////////////
+// Section for handling of communication objects
+//
+
+void
+KscServerBase::incRefcount() 
+{
+    ref_count++;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KscServerBase::decRefcount()
+{
+    if( !(--ref_count) ) {
+        // no more referring objects left
+        // destroy this object
+        //
+        KscClient *the_client =
+            KscClient::getClient();
+        the_client->deleteServer(this);
+    }
+}
     
 //////////////////////////////////////////////////////////////////////
 // class KscServer
@@ -230,13 +300,14 @@ KscClient::printServers()
 //
 KscServer::KscServer(KsString host, 
                      const KsServerDesc &server)
-: host_name(host),
+: KscServerBase(host, server.name),
   server_desc(server),
   errcode(RPC_SUCCESS),
   status(KscNotInitiated),
   pClient(0),
-  ref_count(0),
-  av_module(0)
+  _rpc_timeout(KSC_RPCCALL_TIMEOUT),
+  _retry_wait(0, 0),
+  _retries(0)
 {
 }
 
@@ -249,18 +320,35 @@ KscServer::~KscServer()
     destroyTransport();
 }
 
+
+//////////////////////////////////////////////////////////////////////
+// set timeouts and retry parameters
+//
+void 
+KscServer::setTimeouts(const PltTime &rpc_timeout,        
+                       const PltTime &retry_wait,         
+                       size_t retries)
+{
+    _rpc_timeout = rpc_timeout;
+    _retry_wait = retry_wait;
+    _retries = retries;
+}
+
 //////////////////////////////////////////////////////////////////////
 // get IP of host
 //
 bool
 KscServer::getHostAddr(struct sockaddr_in *addr)
 {
-    const unsigned long INVALID_IP = 0xFFFFFFFFL;
+    const unsigned long INVALID_IP = INADDR_NONE;
 
     // clean up first
     //
     memset(addr, 0, sizeof(struct sockaddr_in));
 
+    // FIXME: (HPUX)
+    //        inet_addr() returns 0 if host_name is an empty string
+    //
     unsigned long ip = inet_addr(host_name);
 
     if( ip == INVALID_IP ) {
@@ -274,6 +362,7 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
                    hp->h_length);
             return true;
         } else {
+            PLT_DMSG("Failed to get IP of host " << host_name << endl);
             return false;
         }
     } else {
@@ -313,12 +402,14 @@ KscServer::createTransport()
         // dont change status set by getServerDescription()
         return false;
     }
+
     if( server_info.result != KS_ERR_OK ) {
         status = KscNoServer;
+        PLT_DMSG("Unknown server " << getHostAndName() << endl);
         return false;
     }
 
-#if PLT_DEBUG
+#if PLT_DEBUG_PEDANTIC
     cout << "Trying to connect server at port "
          << server_info.port
          << endl;
@@ -353,6 +444,7 @@ KscServer::destroyTransport()
 {
     if(pClient) {
         clnt_destroy(pClient);
+        pClient = 0;
     }
 }
 
@@ -387,11 +479,90 @@ KscServer::getStateUpdate()
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscServer::reconnectServer()
+KscServer::reconnectServer(size_t try_count, enum_t errcode)
 {
-    return createTransport();
+    // maximum number of tries reached ?
+    //
+    if(try_count > _retries) {
+        return false;
+    }
+    
+    if(errcode == RPC_CANTDECODERES ||
+       errcode == RPC_CANTSEND ||
+       errcode == RPC_CANTRECV ||
+       errcode == RPC_TIMEDOUT ||
+       errcode == RPC_FAILED )
+    {
+        wait(_retry_wait);
+        createTransport();  // ignore possible error
+        return true;
+    } else {
+        return false;
+    }
 }
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscServer::wait(PltTime howLong)
+{
+    if(howLong.tv_sec == 0 && howLong.tv_usec == 0) {
+        return true;
+    } else {
+        PltTime now(PltTime::now());
+        PltTime until(now);
+        until += howLong;
+
+        PLT_DMSG("Going to wait.." << endl);
         
+        do {
+            select(0, 0, 0, 0,
+                   (const struct timeval *)(&howLong));
+            now = PltTime::now();
+            howLong = until - now;
+        }  while(until < now);
+
+        PLT_DMSG("Finished waiting" << endl);
+
+        return true;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//
+void
+KscServer::setResultAfterService()
+{
+    switch(status) {
+    case KscHostNotFound : 
+        _last_result = KS_ERR_HOSTUNKNOWN;
+        return;
+    case KscCannotCreateClientHandle :
+        _last_result = KS_ERR_CANTCONTACT;
+        return;
+    case KscCannotCreateUDPClient :
+        if(errcode == RPC_PROGNOTREGISTERED ||
+           errcode == RPC_PROGUNAVAIL) {
+            _last_result = KS_ERR_NOMANAGER;
+        } else {
+            _last_result = KS_ERR_CANTCONTACT;
+        }
+        return;
+    case KscNoServer :
+        _last_result = KS_ERR_SERVERUNKNOWN;
+        return;
+    default:
+        ;     // behavior depends on errcode, see next switch
+    }
+
+    switch(errcode) {
+    case RPC_TIMEDOUT:
+        _last_result = KS_ERR_TIMEOUT;
+        return;
+    default:
+        _last_result = KS_ERR_GENERIC;
+    }
+}        
 //////////////////////////////////////////////////////////////////////
 // getServerDescription and helper structs and classes
 //
@@ -472,7 +643,7 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
 #endif
         return false;
     }
-#if PLT_DEBUG
+#if PLT_DEBUG_PEDANTIC
     // ping manager
     //
     errcode = clnt_call(pUDP, 0, 
@@ -510,9 +681,9 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
 
     if( errcode != RPC_SUCCESS ) {
         status = KscRPCCallFailed;
-#if PLT_DEBUG
-        cout << "function call failed, error code " << (unsigned) errcode << endl;
-#endif
+
+        PLT_DMSG("function call to MANAGER failed, error code " << (unsigned) errcode << endl);
+
         return false;
     }
 
@@ -587,11 +758,17 @@ KscServer::getPP(const KscAvModule *avm,
     //
     if(!pClient) {
         if( !createTransport() ) {
-            return false;
+            // dont try to reconnect if host
+            // cannot be located or server is not registered
+            //
+            if(status == KscHostNotFound 
+               || status == KscNoServer) 
+            {
+                setResultAfterService();
+                return false;
+            }
         }
     }
-
-    PLT_ASSERT(pClient);
 
 #if PLT_DEBUG
     cout << "Requesting server " 
@@ -611,13 +788,27 @@ KscServer::getPP(const KscAvModule *avm,
     KscGetPPInStruct inData(negotiator, &params);
     KscGetPPOutStruct outData(negotiator, &result);
 
-    errcode = clnt_call(pClient, KS_GETPP,
-                        (xdrproc_t) KscGetPPInHelper,
-                        (char *) &inData,
-                        (xdrproc_t) KscGetPPOutHelper,
-                        (char *) &outData,
-                        KSC_RPCCALL_TIMEOUT);
-
+    size_t try_count = 0;
+    
+    do {
+#if PLT_DEBUG
+        cout << "Trying for the " << (try_count+1) << ". time" << endl;
+#endif
+        if(pClient) {
+            errcode = clnt_call(pClient, KS_GETPP,
+                                (xdrproc_t) KscGetPPInHelper,
+                                (char *) &inData,
+                                (xdrproc_t) KscGetPPOutHelper,
+                                (char *) &outData,
+                                KSC_RPCCALL_TIMEOUT);
+        } else {
+            errcode = RPC_FAILED;
+        }
+    } while(errcode != RPC_SUCCESS 
+            && reconnectServer(++try_count, errcode));
+ 
+    setResultAfterService();
+        
 #if PLT_DEBUG
     if(errcode == RPC_SUCCESS) {
         cout << "request successfull" << endl;
@@ -626,31 +817,6 @@ KscServer::getPP(const KscAvModule *avm,
         cout << "request failed" << endl;
     }
 #endif
-
-    // reconnect if the call has failed due to a network error
-    //
-    if(errcode == RPC_CANTSEND
-       || errcode == RPC_CANTRECV
-       || errcode == RPC_TIMEDOUT) 
-    {
-        if(reconnectServer()) {
-            errcode = clnt_call(pClient, KS_GETPP,
-                                (xdrproc_t) KscGetPPInHelper,
-                                (char *) &inData,
-                                (xdrproc_t) KscGetPPOutHelper,
-                                (char *) &outData,
-                                KSC_RPCCALL_TIMEOUT);
-
-#if PLT_DEBUG
-            if(errcode == RPC_SUCCESS) {
-                cout << "request successfull after reconnection" << endl;
-            }
-            else {
-                cout << "request failed after reconnection too" << endl;
-            }
-#endif
-        }
-    }            
 
     return errcode == RPC_SUCCESS;
 }
@@ -721,11 +887,14 @@ KscServer::getVar(const KscAvModule *avm,
     //
     if(!pClient) {
         if( !createTransport() ) {
-            return false;
+            if(status == KscHostNotFound 
+               || status == KscNoServer) 
+            {
+                setResultAfterService();
+                return false;
+            }
         }
     }
-
-    PLT_ASSERT(pClient);
 
 #if PLT_DEBUG
     cout << "GetVar request to server "
@@ -736,13 +905,26 @@ KscServer::getVar(const KscAvModule *avm,
 
     KscGetVarInStruct inData(negotiator, &params);
     KscGetVarOutStruct outData(negotiator, &result);
+    size_t try_count = 0;
+    
+    do {
+#if PLT_DEBUG
+        cout << "Trying for the " << (try_count+1) << ". time" << endl;
+#endif
+        if(pClient) {
+            errcode = clnt_call(pClient, KS_GETVAR,
+                                (xdrproc_t) KscGetVarInHelper,
+                                (char *) &inData,
+                                (xdrproc_t) KscGetVarOutHelper,
+                                (char *) &outData,
+                                KSC_RPCCALL_TIMEOUT);
+        } else {
+            errcode = RPC_FAILED;
+        }
+    } while(errcode != RPC_SUCCESS
+            && reconnectServer(++try_count, errcode));
 
-    errcode = clnt_call(pClient, KS_GETVAR,
-                        (xdrproc_t) KscGetVarInHelper,
-                        (char *) &inData,
-                        (xdrproc_t) KscGetVarOutHelper,
-                        (char *) &outData,
-                        KSC_RPCCALL_TIMEOUT);
+    setResultAfterService();
 
 #if PLT_DEBUG
     if(errcode == RPC_SUCCESS) {
@@ -753,31 +935,6 @@ KscServer::getVar(const KscAvModule *avm,
         cout << clnt_sperror(pClient, "");
     }
 #endif
-
-    // reconnect if the call has failed due to a network error
-    //
-    if(errcode == RPC_CANTSEND
-       || errcode == RPC_CANTRECV
-       || errcode == RPC_TIMEDOUT) 
-    {
-        if(reconnectServer()) {
-            errcode = clnt_call(pClient, KS_GETVAR,
-                                (xdrproc_t) KscGetVarInHelper,
-                                (char *) &inData,
-                                (xdrproc_t) KscGetVarOutHelper,
-                                (char *) &outData,
-                                KSC_RPCCALL_TIMEOUT);
-#if PLT_DEBUG
-            if(errcode == RPC_SUCCESS) {
-                cout << "GetVar request successfull after reconnection" << endl;
-            }
-            else {
-                cout << "GetVar request failed after reconnection too" << endl;
-                cout << clnt_sperror(pClient, "");
-            }
-#endif
-        }
-    }
 
     return errcode == RPC_SUCCESS;
 }
@@ -848,11 +1005,14 @@ KscServer::setVar(const KscAvModule *avm,
     //
     if(!pClient) {
         if( !createTransport() ) {
-            return false;
+            if(status == KscHostNotFound 
+               || status == KscNoServer) {
+                setResultAfterService();
+                return false;
+            }
         }
     }
 
-    PLT_ASSERT(pClient);
 
 #if PLT_DEBUG
     cout << "SetVar request to server "
@@ -866,12 +1026,26 @@ KscServer::setVar(const KscAvModule *avm,
     KscSetVarInStruct inData(negotiator, &params);
     KscSetVarOutStruct outData(negotiator, &result);
 
-    errcode = clnt_call(pClient, KS_SETVAR,
-                        (xdrproc_t) KscSetVarInHelper,
-                        (char *) &inData,
-                        (xdrproc_t) KscSetVarOutHelper,
-                        (char *) &outData,
-                        KSC_RPCCALL_TIMEOUT);
+    size_t try_count = 0;
+
+    do {
+#if PLT_DEBUG
+        cout << "Trying for the " << (try_count+1) << ". time" << endl;
+#endif
+        if(pClient) {
+            errcode = clnt_call(pClient, KS_SETVAR,
+                                (xdrproc_t) KscSetVarInHelper,
+                                (char *) &inData,
+                                (xdrproc_t) KscSetVarOutHelper,
+                                (char *) &outData,
+                                KSC_RPCCALL_TIMEOUT);
+        } else {
+            errcode = RPC_FAILED;
+        }
+    } while(errcode != RPC_SUCCESS
+            && reconnectServer(++try_count, errcode));
+
+    setResultAfterService();
 
 #if PLT_DEBUG
     if( errcode == RPC_SUCCESS ) {
@@ -881,31 +1055,6 @@ KscServer::setVar(const KscAvModule *avm,
         cout << clnt_sperror(pClient, "");
     }
 #endif
-
-    // reconnect if the call has failed due to a network error
-    //
-    if(errcode == RPC_CANTSEND
-       || errcode == RPC_CANTRECV
-       || errcode == RPC_TIMEDOUT) 
-    {
-        if(reconnectServer()) {
-            errcode = clnt_call(pClient, KS_SETVAR,
-                                (xdrproc_t) KscSetVarInHelper,
-                                (char *) &inData,
-                                (xdrproc_t) KscSetVarOutHelper,
-                                (char *) &outData,
-                                KSC_RPCCALL_TIMEOUT);
-#if PLT_DEBUG
-            if( errcode == RPC_SUCCESS ) {
-                cout << "SetVar request successfull after reconnection" << endl;
-            } else {
-                cout << "SetVar request failed after reconnection too" << endl;
-                cout << clnt_sperror(pClient, "");
-            }
-#endif
-
-        }
-    }
 
     return errcode == RPC_SUCCESS;
 }
@@ -976,11 +1125,13 @@ KscServer::exgData(const KscAvModule *avm,
     //
     if(!pClient) {
         if( !createTransport() ) {
-            return false;
+            if(status == KscHostNotFound 
+               || status == KscNoServer) {
+                setResultAfterService();
+                return false;
+            }
         }
     }
-
-    PLT_ASSERT(pClient);
 
 #if PLT_DEBUG
     cout << "ExgData request to server "
@@ -994,12 +1145,26 @@ KscServer::exgData(const KscAvModule *avm,
     KscExgDataInStruct inData(negotiator, &params);
     KscExgDataOutStruct outData(negotiator, &result);
 
-    errcode = clnt_call(pClient, KS_EXGDATA,
-                        (xdrproc_t) KscExgDataInHelper,
-                        (char *) &inData,
-                        (xdrproc_t) KscExgDataOutHelper,
-                        (char *) &outData,
-                        KSC_RPCCALL_TIMEOUT);
+    size_t try_count = 0;
+
+    do {
+#if PLT_DEBUG
+        cout << "Trying for the " << (try_count+1) << ". time" << endl;
+#endif
+        if(pClient) {
+            errcode = clnt_call(pClient, KS_EXGDATA,
+                                (xdrproc_t) KscExgDataInHelper,
+                                (char *) &inData,
+                                (xdrproc_t) KscExgDataOutHelper,
+                                (char *) &outData,
+                                KSC_RPCCALL_TIMEOUT);
+        } else {
+            errcode = RPC_FAILED;
+        }
+    } while(errcode != RPC_SUCCESS
+            && reconnectServer(++try_count, errcode));
+
+    setResultAfterService();
 
 #if PLT_DEBUG
     if(errcode == RPC_SUCCESS) {
@@ -1010,59 +1175,10 @@ KscServer::exgData(const KscAvModule *avm,
         cout << clnt_sperror(pClient, "");
     }
 #endif
-    // reconnect if the call has failed due to a network error
-    //
-    if(errcode == RPC_CANTSEND
-       || errcode == RPC_CANTRECV
-       || errcode == RPC_TIMEDOUT) 
-    {
-        if(reconnectServer()) {
-            errcode = clnt_call(pClient, KS_EXGDATA,
-                                (xdrproc_t) KscExgDataInHelper,
-                                (char *) &inData,
-                                (xdrproc_t) KscExgDataOutHelper,
-                                (char *) &outData,
-                                KSC_RPCCALL_TIMEOUT);
 
-#if PLT_DEBUG
-            if(errcode == RPC_SUCCESS) {
-                cout << "ExgData request successfull after reconnection" << endl;
-            }
-            else {
-                cout << "ExgData request failed after reconnection too" << endl;
-                cout << clnt_sperror(pClient, "");
-            }
-#endif
-        }
-    }            
     return errcode == RPC_SUCCESS;
 }            
 
-
-//////////////////////////////////////////////////////////////////////
-// Section for handling of communication objects
-//
-
-void
-KscServer::incRefcount() 
-{
-    ref_count++;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void
-KscServer::decRefcount()
-{
-    if( !(--ref_count) ) {
-        // no more referring objects left
-        // destroy this object
-        //
-        KscClient *the_client =
-            KscClient::getClient();
-        the_client->deleteServer(this);
-    }
-}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -1110,3 +1226,4 @@ KscServer::getNegotiator(const KscAvModule *avm)
 //////////////////////////////////////////////////////////////////////
 // EOF client.cpp
 //////////////////////////////////////////////////////////////////////
+

@@ -71,9 +71,13 @@ enum KS_RESULT_ENUM {
 /*  
  *  errors occurring in the client part
  */
-    KS_ERR_MALFORMED_PATH           = 0x1001,
-    KS_ERR_NETWORK_ERROR            = 0x1002,
-    KS_ERR_TYPE_MISMATCH            = 0x1003
+    KS_ERR_MALFORMEDPATH            = 0x1001,
+    KS_ERR_NETWORKERROR             = 0x1002,
+    KS_ERR_TYPEMISMATCH             = 0x1003,
+    KS_ERR_HOSTUNKNOWN              = 0x1004,
+    KS_ERR_CANTCONTACT              = 0x1005,
+    KS_ERR_TIMEOUT                  = 0x1006,
+    KS_ERR_NOMANAGER                = 0x1007
 };
 typedef enum_t KS_RESULT;
 

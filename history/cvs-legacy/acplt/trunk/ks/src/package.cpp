@@ -302,7 +302,7 @@ KscPackage::getSimpleUpdate(KscBucketHandle bucket)
                                           result);
 
     if(!ok) {
-        _result = KS_ERR_NETWORK_ERROR;
+        _result = KS_ERR_NETWORKERROR;
         return false;
     }
 
@@ -389,7 +389,7 @@ KscPackage::setSimpleUpdate(KscBucketHandle bucket)
         result);
 
     if(!ok) {
-        _result = KS_ERR_NETWORK_ERROR;
+        _result = KS_ERR_NETWORKERROR;
         return false;
     }
     if(result.result != KS_ERR_OK) {
@@ -696,7 +696,7 @@ KscExchangePackage::doSimpleExchange(
 
     PltArray<KscVariableHandle> set_vars, get_vars;
     size_t get_size, set_size;
-    KscServer *server = 0;
+    KscServerBase *server = 0;
     const KscAvModule *avm = 0;
 
     if(get_bucket) {
@@ -748,7 +748,7 @@ KscExchangePackage::doSimpleExchange(
 #endif
 
     if(!ok) {
-        _result = KS_ERR_NETWORK_ERROR;
+        _result = KS_ERR_NETWORKERROR;
         return false;
     }
 
@@ -802,7 +802,7 @@ _KscPackageBase::copyGetVarResults(
                 sorted_vars[count]->last_result = KS_ERR_OK;
             } else {
                 // type mismatch
-                sorted_vars[count]->last_result = KS_ERR_TYPE_MISMATCH;
+                sorted_vars[count]->last_result = KS_ERR_TYPEMISMATCH;
                 ok = false;
             }
         } else {

@@ -56,7 +56,7 @@
 
 //////////////////////////////////////////////////////////////////////
 // forward declaration
-class KscServer;
+class KscServerBase;
 
 //////////////////////////////////////////////////////////////////////
 // timeout and max tries when contacting manager via UDP
@@ -97,10 +97,21 @@ public:
 
     // find server by name, maybe returns 0
     //
-    KscServer *getServer(const KsString &host_and_name); 
+    KscServerBase *getServer(const KsString &host_and_name); 
 
+    //
+    // AV related functions
+    //
     void setAvModule(const KscAvModule *);
     const KscAvModule *getAvModule() const;
+
+    //
+    // set timeout and numbers of retries
+    // (affects only server-objects that will be created later)
+    //
+    void setTimeouts(const PltTime &rpc_timeout,        // time to complete a RPC
+                     const PltTime &retry_wait,         // time between retries
+                     size_t retries);                   // number of retries
 
 //    KscNegotiator *getNegotiator(KscServer *forServer);
 
@@ -115,18 +126,22 @@ protected:
     // should only be used by KscCommObject objects
     //
     friend class KscCommObject;
-    KscServer *createServer(KsString host_and_name); 
+    virtual KscServerBase *createServer(KsString host_and_name); 
     void extractHostAndServer(KsString, KsString &, KsString &);
 
     // destroy an server, should only be used
     // by KscServer objects
     //
-    friend class KscServer;
-    void deleteServer(KscServer *);
+    friend class KscServerBase;
+    void deleteServer(KscServerBase *);
 
     const KscAvModule *av_module;
 
-    PltHashTable<KsString,KscServer *> server_table;
+    PltTime _rpc_timeout;
+    PltTime _retry_wait;
+    size_t _retries;
+
+    PltHashTable<KsString,KscServerBase *> server_table;
 
 private:
     KscClient(const KscClient &); // forbidden
@@ -152,10 +167,69 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////
+// class KscServerBase
+//
+class KscServerBase
+{
+    PLT_DECL_RTTI;
+public:
+    //
+    // service functions
+    //
+    virtual bool getPP(const KscAvModule *avm,
+                       const KsGetPPParams &params,
+                       KsGetPPResult &) = 0;
+
+    virtual bool getVar(const KscAvModule *avm,
+                        const KsGetVarParams &params,
+                        KsGetVarResult &result) = 0;
+
+    virtual bool setVar(const KscAvModule *avm,
+                        const KsSetVarParams &params,
+                        KsSetVarResult &result) = 0;
+
+    virtual bool exgData(const KscAvModule *avm,
+                         const KsExgDataParams &params,
+                         KsExgDataResult &result) = 0;
+
+    // AV related functions
+    //
+    virtual void setAvModule(const KscAvModule *);
+    virtual const KscAvModule *getAvModule() const;
+
+    // selectors
+    //
+    KsString getHost() const;
+    KsString getName() const;
+    KsString getHostAndName() const;
+    virtual u_short getProtocolVersion() const = 0;
+    virtual PltTime getExpiresAt() const = 0;
+    virtual bool isLiving() const = 0;
+    KS_RESULT getLastResult() const;
+
+protected:
+    KscServerBase(KsString host, KsString name);
+    virtual ~KscServerBase();
+    
+    friend class KscClient;              // for access to dtor
+    friend class KscCommObject;          // for access to the following functions
+    
+    void incRefcount();
+    void decRefcount();
+
+    KsString host_name, server_name, host_and_name;
+    const KscAvModule *av_module;
+    long ref_count;                // communication objects related to this server
+    KS_RESULT _last_result;
+};
+
+//////////////////////////////////////////////////////////////////////
 // class KscServer
 //
-class KscServer
+class KscServer 
+: public KscServerBase
 {
+    PLT_DECL_RTTI;
 public:
 
     enum TStatus {
@@ -199,19 +273,20 @@ public:
                  const KsExgDataParams &params,
                  KsExgDataResult &result);
 
-    // AV related functions
     //
-    void setAvModule(const KscAvModule *);
-    const KscAvModule *getAvModule() const;
-
-    // selectors
+    // accessors
     //
-    KsString getHost() const;
-    KsString getName() const;
-    KsString getHostAndName() const;
     u_short getProtocolVersion() const;
     PltTime getExpiresAt() const;
-    bool isLiving() const; 
+    bool isLiving() const;
+
+    //
+    // set timeout and numbers of retries
+    //
+    void setTimeouts(const PltTime &rpc_timeout,        // time to complete a RPC
+                     const PltTime &retry_wait,         // time between retries
+                     size_t retries);                   // number of retries
+ 
 
 protected:
     KscNegotiator *getNegotiator(const KscAvModule *);
@@ -222,31 +297,31 @@ protected:
                        const KsServerDesc &server,       // description
                        KsGetServerResult &server_info);  // result
 
-    friend class KscCommObject;          // for access to the following functions
-    void incRefcount();
-    void decRefcount();
 
     bool createTransport();
     void destroyTransport();
-    bool reconnectServer();
+    virtual bool reconnectServer(size_t try_count, enum_t errcode );
+    virtual bool wait(PltTime howLong);
     bool getHostAddr(struct sockaddr_in *addr);
+    void setResultAfterService();
 
-    KsString host_name;
     KsServerDesc server_desc;      // server description given by user
     KsGetServerResult server_info; // server description given by manager
     enum clnt_stat errcode;        // last RPC error code
     TStatus status;                // internal status
     CLIENT *pClient;               // RPC client handle
-    long ref_count;                // communication objects related to this server
-    const KscAvModule *av_module;
+
+    PltTime _rpc_timeout;
+    PltTime _retry_wait;
+    size_t _retries;
 
     PltHashTable<PltKeyCPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
 
-private:
     friend class KscClient;
     KscServer(KsString host, const KsServerDesc &server);
     ~KscServer();
 
+private:
     KscServer(const KscServer &);              // forbidden
     KscServer &operator = (const KscServer &); // forbidden
 };
@@ -254,6 +329,70 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
+//////////////////////////////////////////////////////////////////////
+// KscServerBase
+//////////////////////////////////////////////////////////////////////
+
+inline
+KscServerBase::~KscServerBase()
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+void 
+KscServerBase::setAvModule(const KscAvModule *avm)
+{
+    av_module = avm;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KscAvModule *
+KscServerBase::getAvModule() const
+{
+    return av_module;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsString 
+KscServerBase::getHost() const
+{
+    return host_name;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsString
+KscServerBase::getName() const
+{
+    return server_name;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsString
+KscServerBase::getHostAndName() const
+{
+    return host_and_name;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KS_RESULT
+KscServerBase::getLastResult() const
+{
+    return _last_result;
+}
+
+//////////////////////////////////////////////////////////////////////
+// KscServer
 //////////////////////////////////////////////////////////////////////
 
 inline 
@@ -289,38 +428,6 @@ KscServer::ping()
 //////////////////////////////////////////////////////////////////////
 
 inline
-KsString 
-KscServer::getHost() const
-{
-    return host_name;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KsString
-KscServer::getName() const
-{
-    return server_desc.name;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KsString
-KscServer::getHostAndName() const
-{
-    KsString temp("//");
-    temp += getHost();
-    temp += "/";
-    temp += getName();
-
-    return temp;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
 u_short
 KscServer::getProtocolVersion() const
 {
@@ -346,24 +453,6 @@ bool
 KscServer::isLiving() const
 {
     return server_info.living;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-void 
-KscServer::setAvModule(const KscAvModule *avm)
-{
-    av_module = avm;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-const KscAvModule *
-KscServer::getAvModule() const
-{
-    return av_module;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -421,6 +510,10 @@ KscClient::CleanUp::~CleanUp()
 //////////////////////////////////////////////////////////////////////
 // EOF client.h
 //////////////////////////////////////////////////////////////////////
+
+
+
+
 
 
 

@@ -53,7 +53,7 @@
 
 //////////////////////////////////////////////////////////////////////
 // forward declarations
-class KscServer;
+class KscServerBase;
 
 //////////////////////////////////////////////////////////////////////
 // class KscCommObject
@@ -76,7 +76,7 @@ public:
 
     virtual KS_OBJ_TYPE typeCode() const = 0;
 
-    KscServer *getServer() const;
+    KscServerBase *getServer() const;
 
     virtual const KsProjProps_THISTYPE *getProjProps() const = 0;
     virtual bool getProjPropsUpdate() = 0;
@@ -98,7 +98,7 @@ public:
     bool operator >= (const KscCommObject &);
 
 protected:
-    KscServer *findServer();
+    KscServerBase *findServer();
 
     // returns negotiator which is only apropriate for
     // single access to this object
@@ -108,7 +108,7 @@ protected:
     virtual bool setProjProps(KsProjPropsHandle) = 0;
 
     KscPathParser path;
-    KscServer *server;
+    KscServerBase *server;
     const KscAvModule *av_module;
     KS_RESULT last_result;
 
