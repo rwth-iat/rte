@@ -136,7 +136,10 @@ protected:
 #define KS_DECL_XDRUNION(base)                                    \
     public:                                                       \
     static base * xdrNew(XDR *);                                  \
-    virtual enum_t xdrTypeCode() const = 0 /*;  redeclaration */  
+    virtual enum_t xdrTypeCode() const = 0; /*redeclaration*/     \
+    protected:                                                    \
+    virtual bool xdrEncodeVariant(XDR *) const = 0; /*redecl.*/   \
+    virtual bool xdrDecodeVariant(XDR *) = 0 /*;     *redecl.*/          
 
 //////////////////////////////////////////////////////////////////////
 
@@ -153,8 +156,14 @@ protected:
 
 #define KS_XDR_MAP(constant,derived)                       \
             case constant:                                 \
-                p = derived::xdrNew(xdrs);                 \
-                break                                      \
+            {                                              \
+                bool ok=false;                             \
+                p = new derived(xdrs, ok);                 \
+                if (! ok && p) {                           \
+                    delete p;                              \
+                    p = 0;                                 \
+                }                                          \
+            } break                                        
 
 #define KS_END_IMPL_XDRUNION                                       \
            default:                                                \
