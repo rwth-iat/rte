@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.5 1997-04-02 14:52:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.6 1997-04-03 15:13:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -64,9 +64,9 @@ public:
 
     //// accessors
     // projected properties
-    KsString getIdentifier() const;
-    KsTime   getCreationTime() const;
-    KsString getComment() const;
+    KsString  getIdentifier() const;
+    KsTime    getCreationTime() const;
+    KsString  getComment() const;
 
 	//// modifiers
     // projected properties
@@ -169,9 +169,10 @@ public:
     //// KssCommObject
     //// accessors
     // projected properties
-    virtual KsString getIdentifier() const;
-    virtual KsTime   getCreationTime() const;
-    virtual KsString getComment() const;
+    virtual KsString  getIdentifier() const;
+    virtual KsTime    getCreationTime() const;
+    virtual KsString  getComment() const;
+    virtual KS_ACCESS getAccessMode() const;
 
     //// KssVariable ////
     //// accessors
@@ -207,10 +208,10 @@ public:
     bool isWriteable() const;
 
     //// modifier
-    void lock(bool l=true);
+    void lock();
 
 private:
-    bool          _writeable;
+    KS_ACCESS     _access_mode;
     KsString      _tech_unit;
     KsValueHandle _value;
     KsTime        _time;
@@ -233,6 +234,7 @@ public:
     virtual KsString getIdentifier() const;
     virtual KsTime   getCreationTime() const;
     virtual KsString getComment() const;
+    virtual KS_ACCESS getAccessMode() const;
 
     //// KssVariable ////
     //// accessors
@@ -361,6 +363,14 @@ inline KsString KssSimpleVariable::getComment() const
 
 /////////////////////////////////////////////////////////////////////////////
 
+inline KS_ACCESS
+KssSimpleVariable::getAccessMode() const
+{
+    return _access_mode;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 inline KsString
 KssSimpleVariable::getTechUnit() const
 {
@@ -397,15 +407,15 @@ KssSimpleVariable::getState() const
 inline bool
 KssSimpleVariable::isWriteable() const
 {
-    return _writeable;
+    return _access_mode & KS_AC_WRITE;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 inline void
-KssSimpleVariable::lock(bool l)
+KssSimpleVariable::lock()
 {
-    _writeable = !l;
+    _access_mode &= ~KS_AC_WRITE;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -454,6 +464,14 @@ inline KsString KssTimeNowVariable::getComment() const
 { return KsString("Current time"); }
 
 /////////////////////////////////////////////////////////////////////////////
+
+inline KS_ACCESS
+KssTimeNowVariable::getAccessMode() const
+{
+    return KS_AC_READ;
+}
+
+//////////////////////////////////////////////////////////////////////
 
 inline KsString
 KssTimeNowVariable::getTechUnit() const

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.5 1997-04-02 14:52:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.6 1997-04-03 15:13:11 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -61,9 +61,10 @@ public:
     // ^ optimization in absence of true RTTI
 
     // projected properties
-    virtual KsString getIdentifier() const = 0;
-    virtual KsTime   getCreationTime() const = 0;
-    virtual KsString getComment() const = 0;
+    virtual KsString  getIdentifier() const = 0;
+    virtual KsTime    getCreationTime() const = 0;
+    virtual KsString  getComment() const = 0;
+    virtual KS_ACCESS getAccessMode() const = 0;
     virtual KsProjPropsHandle getPP() const = 0;
 
     PLT_DECL_RTTI;
@@ -91,9 +92,10 @@ public:
     virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_DOMAIN; }
 
     // projected properties
-    virtual KsString getIdentifier() const = 0;
-    virtual KsTime   getCreationTime() const = 0;
-    virtual KsString getComment() const = 0;
+    virtual KsString  getIdentifier() const = 0;
+    virtual KsTime    getCreationTime() const = 0;
+    virtual KsString  getComment() const = 0;
+    virtual KS_ACCESS getAccessMode() const { return KS_AC_READ; }
     virtual KsProjPropsHandle getPP() const;
 
     //// KssDomain
@@ -150,9 +152,10 @@ public:
     virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_VARIABLE; } 
 
     // projected properties
-    virtual KsString getIdentifier() const = 0;
-    virtual KsTime   getCreationTime() const = 0;
-    virtual KsString getComment() const = 0;
+    virtual KsString  getIdentifier() const = 0;
+    virtual KsTime    getCreationTime() const = 0;
+    virtual KsString  getComment() const = 0;
+    virtual KS_ACCESS getAccessMode() const = 0;
     virtual KsProjPropsHandle getPP() const;
 
     //// KssVariable ////
