@@ -30,14 +30,14 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynpart_check(
         OV_INSTPTR_ov_object          pobj
 ) {
 	OV_INSTPTR_dynov_dynpart	pdynpart;
-	OV_INSTPTR_dynov_dynclass	pdynclass;
+	OV_INSTPTR_ov_class		pclass;
 
 	pdynpart = Ov_DynamicPtrCast(dynov_dynpart, pobj);
 	if (pdynpart) {
-		pdynclass = Ov_GetParent(dynov_dynembedment, pdynpart);
-		if (pdynclass) {
-			if (!pdynclass->v_isinstantiable) return FALSE;
-			if (!Ov_Fail(Ov_Link(ov_embedment, pdynclass, pdynpart))) return TRUE;
+		pclass = Ov_GetParent(dynov_dynembedment, pdynpart);
+		if (pclass) {
+			if (!(pclass->v_classprops & OV_CP_INSTANTIABLE)) return FALSE;
+			if (!Ov_Fail(Ov_Link(ov_embedment, pclass, pdynpart))) return TRUE;
 		}
 	}
 	return FALSE;
@@ -49,10 +49,10 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynpart_getaccess(
 	const OV_TICKET			*pticket
 ) {
 	OV_INSTPTR_dynov_dynclass	pdynclass;
-		
+
 	OV_ACCESS			access;
 	OV_ACCESS			access2;
-		
+
 	pdynclass = Ov_DynamicPtrCast(dynov_dynclass, Ov_GetParent(ov_containment, pobj));
 	if (pdynclass) {
   	    switch(pelem->elemtype) {
