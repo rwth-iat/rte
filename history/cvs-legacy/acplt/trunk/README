@@ -1,12 +1,12 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.2.0 of the C++ Communication Libary. As always, it
+This is version 1.2.1 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
 
-IMPORTANT: porting notes from 1.0.5 to 1.2.0, please see part 4
+IMPORTANT: porting notes from 1.0.5 to 1.2.x, please see part 4
 "Porting Notes" (sic!).
 
 IMPORTANT: since version 1.1.3 we now license the source code of the
@@ -132,6 +132,19 @@ Please note that code versions are numbered as x.y.z where the middle
 number y denoted the state of the code: even numbered y's denote stable
 releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
+
+Version 1.2.1
+- SERVERS:
+  * The listening sockets are now set to SO_REUSEADDR by default.
+  * Set FD_SETSIZE to 1024 on OpenVMS machines, overriding the
+    brain-damaged default of 32.
+
+- GENERIC:
+  * Fixed warnings from VC++ 6.0 grumbling about converting bool_t to bool.
+  * Removed /float=ieee option from OpenVMS Makefiles, as the UCX network
+    package now seems to rely on code linking to the ONC/RPC functions using
+    BigQ's proprietary floating point formats. It appears that it is
+    converting them to the network float format on-the-fly.
 
 Version 1.2.0
 - SERVERS:
