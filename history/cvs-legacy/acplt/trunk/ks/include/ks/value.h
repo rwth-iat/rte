@@ -4,6 +4,7 @@
  *  Author: Martin Kneissl <martin@plt.rwth-aachen.de>
  *
  *  03/06/97 Interfaces changed
+ *  03/07/97 New streaming ability implemented
  *
  */
 
@@ -14,12 +15,15 @@
 #include <plt/rtti.h>
 // #include <ks/rpc.h>
 #include <ks/xdr.h>
+#include <ks/ks.h>
 
 //////////////////////////////////////////////////////////////////////
 // KsValue is the base class of value objects. It is closely related
 // to struct KS_VAR_VALUE
 
-class KsValue : public KsXdrUnion {
+class KsValue : 
+public KsXdrUnion 
+{
     
 #if 0
     // accessors
@@ -52,19 +56,22 @@ class KsValue : public KsXdrUnion {
     virtual bool setFromStringAt(size_t n, const PltString &s);
     virtual bool setFromTimeAt(size_t n,   const PltTime &t);
 #endif
-public :
-    // XDR routines
-    virtual enum_t xdrTypeCode() const = 0;
-    virtual bool xdrEncode(XDR *) const = 0;
-    virtual bool xdrDecode(XDR *) = 0;
-    // static KsValue *xdrNew(XDR *) = 0;
+    
+    KS_DECL_XDRUNION(KsValue);
     
     PLT_DECL_RTTI;
+
+protected:
+    bool xdrEncodeCommon(XDR *) const;
+    bool xdrDecodeCommon(XDR *);
+
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class KsIntValue : public KsValue {
+class KsIntValue
+: public KsValue 
+{
 public:
     KsIntValue(long l = 0L);
 
@@ -75,52 +82,68 @@ public:
     KsIntValue & operator = (long v);
 
     virtual enum_t xdrTypeCode() const { return KS_VT_INT; }
-    virtual bool xdrEncode(XDR *xdr) const;
-    virtual bool xdrDecode(XDR *);
-    static KsIntValue *xdrNew(XDR *);
+
+protected:
+    virtual bool xdrEncodeVariant(XDR *xdr) const;
+    virtual bool xdrDecodeVariant(XDR *);
 
 private:
     long val;
+
+    friend KsValue;
+    KsIntValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class KsUIntValue : public KsValue {
+class KsUIntValue
+: public KsValue 
+{
 public:
     KsUIntValue(unsigned long l = 0L);
 
     void getUInt(unsigned long& v) const;
     void setUInt(unsigned long v);
 
-    virtual bool xdrEncode(XDR *) const;
-    virtual bool xdrDecode(XDR *);
-    static KsUIntValue *xdrNew(XDR *);
+    virtual enum_t xdrTypeCode() const { return KS_VT_UINT; }
+
+protected:
+    virtual bool xdrEncodeVariant(XDR *) const;
+    virtual bool xdrDecodeVariant(XDR *);
 
 private:
     unsigned long val;
+
+    friend KsValue;
+    KsUIntValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class KsSingleValue : public KsValue {
+class KsSingleValue
+: public KsValue 
+{
 public:
     KsSingleValue(float v = 0.0);
 
     void getSingle(float & v) const;
     void setSingle(float v);
 
-    virtual bool xdrEncode(XDR *) const;
-    virtual bool xdrDecode(XDR *);
-    static KsSingleValue *xdrNew(XDR *);
-
     virtual enum_t xdrTypeCode() const { return KS_VT_SINGLE; }
+
+protected:
+    virtual bool xdrEncodeVariant(XDR *) const;
+    virtual bool xdrDecodeVariant(XDR *);
 
 private:
     float val;
+
+    friend KsValue;
+    KsSingleValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
 };
@@ -128,19 +151,24 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class KsDoubleValue : public KsValue {
+class KsDoubleValue
+: public KsValue 
+{
 public:
     KsDoubleValue(double d = 0.0);
     void getDouble(double &v) const;
     void setDouble(double v);
-
-    virtual bool xdrEncode(XDR *) const;
-    virtual bool xdrDecode(XDR *);
-    static KsIntValue *xdrNew(XDR *);
     virtual enum_t xdrTypeCode() const { return KS_VT_DOUBLE; }
+
+protected:
+    virtual bool xdrEncodeVariant(XDR *) const;
+    virtual bool xdrDecodeVariant(XDR *);
 
 private:
     double val;
+
+    friend KsValue;
+    KsDoubleValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
 };
@@ -150,10 +178,34 @@ private:
 // Inline implementation
 //////////////////////////////////////////////////////////////////////
 
+inline bool
+KsValue::xdrEncodeCommon(XDR *) const
+{
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KsValue::xdrDecodeCommon(XDR *)
+{
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 inline
 KsIntValue::KsIntValue(long v) 
 : val(v)
 {
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsIntValue::KsIntValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -200,6 +252,14 @@ KsUIntValue::KsUIntValue(unsigned long v)
 
 //////////////////////////////////////////////////////////////////////
 
+inline
+KsUIntValue::KsUIntValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
 inline void
 KsUIntValue::getUInt(unsigned long & v) const
 {
@@ -221,6 +281,14 @@ inline
 KsSingleValue::KsSingleValue(float v)
 : val(v)
 {
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsSingleValue::KsSingleValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -250,6 +318,14 @@ KsDoubleValue::KsDoubleValue(double v)
 
 //////////////////////////////////////////////////////////////////////
 
+inline
+KsDoubleValue::KsDoubleValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
 inline void
 KsDoubleValue::getDouble(double & v) const
 {
@@ -268,4 +344,7 @@ KsDoubleValue::setDouble(double v)
 //////////////////////////////////////////////////////////////////////
 
 #endif
+
+
+
 

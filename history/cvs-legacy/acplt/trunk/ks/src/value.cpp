@@ -22,70 +22,77 @@ PLT_IMPL_RTTI1(KsDoubleValue,KsValue);
 
 //////////////////////////////////////////////////////////////////////
 
-KS_IMPL_XDRCTOR(KsIntValue);
-KS_IMPL_XDRNEW(KsIntValue);
+KS_BEGIN_IMPL_XDRUNION(KsValue);
+KS_XDR_MAP(KS_VT_INT,KsIntValue);
+KS_XDR_MAP(KS_VT_UINT,KsUIntValue);
+KS_XDR_MAP(KS_VT_SINGLE,KsSingleValue);
+KS_XDR_MAP(KS_VT_DOUBLE,KsDoubleValue);
+KS_END_IMPL_XDRUNION;
+
+// KS_IMPL_XDRCTOR(KsIntValue);
+// KS_IMPL_XDRNEW(KsIntValue);
 
 bool
-KsIntValue::xdrEncode(XDR *xdr) const {
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+KsIntValue::xdrEncodeVariant(XDR *xdr) const 
+{
     return xdr_long(xdr,&val);
 }
 
 bool
-KsIntValue::xdrDecode(XDR *xdr) {
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+KsIntValue::xdrDecodeVariant(XDR *xdr)
+{
     return xdr_long(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KS_IMPL_XDRCTOR(KsUIntValue);
-KS_IMPL_XDRNEW(KsUIntValue);
+// KS_IMPL_XDRCTOR(KsUIntValue);
+// KS_IMPL_XDRNEW(KsUIntValue);
 
 bool
-KsUIntValue::xdrEncode(XDR *xdr) const {
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+KsUIntValue::xdrEncodeVariant(XDR *xdr) const
+{
     return xdr_u_long(xdr,&val);
 }
 
 bool
-KsUIntValue::xdrDecode(XDR *xdr) {
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+KsUIntValue::xdrDecodeVariant(XDR *xdr) 
+{
     return xdr_u_long(xdr,&val);
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KS_IMPL_XDRCTOR(KsSingleValue);
-KS_IMPL_XDRNEW(KsSingleValue);
+// KS_IMPL_XDRCTOR(KsSingleValue);
+// KS_IMPL_XDRNEW(KsSingleValue);
 
 bool
-KsSingleValue::xdrEncode(XDR *xdr) const {
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+KsSingleValue::xdrEncodeVariant(XDR *xdr) const
+{
     return xdr_float(xdr,&val);
 }
 
 bool
-KsSingleValue::xdrDecode(XDR *xdr) {
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+KsSingleValue::xdrDecodeVariant(XDR *xdr)
+{
     return xdr_float(xdr,&val);
 }
 
 
 //////////////////////////////////////////////////////////////////////
 
-KS_IMPL_XDRCTOR(KsDoubleValue);
-KS_IMPL_XDRNEW(KsDoubleValue);
+// KS_IMPL_XDRCTOR(KsDoubleValue);
+// KS_IMPL_XDRNEW(KsDoubleValue);
 
 bool
-KsDoubleValue::xdrEncode(XDR *xdr) const {
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+KsDoubleValue::xdrEncodeVariant(XDR *xdr) const 
+{
     return xdr_double(xdr,&val);
 }
 
 bool
-KsDoubleValue::xdrDecode(XDR *xdr) {
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+KsDoubleValue::xdrDecodeVariant(XDR *xdr) 
+{
     return xdr_double(xdr,&val);
 }
 

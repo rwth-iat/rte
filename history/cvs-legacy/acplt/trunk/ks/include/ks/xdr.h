@@ -175,6 +175,7 @@ protected:
         if (p) {                                                   \
             PLT_ASSERT(p->xdrTypeCode() == typecode);              \
             if (!p->xdrDecodeCommon(xdrs)) {                       \
+                delete p;                                          \
                 return 0;                                          \
             }                                                      \
         }                                                          \
