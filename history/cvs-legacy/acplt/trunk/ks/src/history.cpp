@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/src/history.cpp,v 1.5 1999-01-29 12:44:52 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -37,9 +37,9 @@
 
 /* Author : Markus Juergens <markusj@plt.rwth-aachen.de> */
 
-/////////////////////////////////////////////////////////////////////////////
 
 #include "ks/history.h"
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -160,11 +160,8 @@ KscHistory::getHist(KsGetHistResult &result)
 
     // Request service
     //
-    bool ok = server->requestService(KS_HISTORY_PROTOCOL_NAME,
-                                     KS_GETHIST_MINOR_OPCODE,
-                                     av_module,
-                                     params,
-                                     result);
+    bool ok = server->requestByOpcode(KS_GETHIST, av_module,
+				      params, result);
 
     if( ok ) {
         _last_result = result.result;
