@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.21 1998-03-06 13:29:41 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.22 1998-03-10 13:50:17 markusj Exp $ */
 
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
@@ -550,6 +550,10 @@ KscClient::CleanUp::~CleanUp()
 //////////////////////////////////////////////////////////////////////
 // EOF client.h
 //////////////////////////////////////////////////////////////////////
+
+
+
+
 
 
 

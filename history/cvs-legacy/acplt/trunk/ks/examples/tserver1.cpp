@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.15 1997-12-11 17:18:09 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.16 1998-03-10 13:50:38 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,6 +37,8 @@
 
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
+#include "ext_sp.h"
+
 #include "ks/server.h"
 #include "ks/simpleserver.h"
 
@@ -52,6 +54,15 @@ extern "C" void handler(int) {
     KsServerBase::getServerObject().downServer();
 }
 
+
+/////////////////////////////////////////////////////////////////////////////
+// some constants needed for protocol extension
+//
+const u_long ext_major_opcode = 0x0012;
+const u_long KS_CREATEOBJECT = 
+  (ext_major_opcode << 16) | KS_CREATEOBJECT_MINOR_OPCODE;  
+
+/////////////////////////////////////////////////////////////////////////////
 //
 //  Our test server. It inherits SimpleServer behaviour in addition
 //  to the server behaviour.
@@ -82,6 +93,21 @@ public:
                           "RWTH Aachen"); }
 
     //
+    // To implement a protocol extension we have to override
+    // this function.
+    //   
+    void dispatch(u_long serviceId,
+                  SVCXPRT *xprt,
+                  XDR *xdrIn,
+                  KsAvTicket &ticket);
+
+    //
+    // The protocol extension allows to create new objects.
+    //
+    void createObject(KsAvTicket &ticket,
+                      const KsCreateParams &params,
+                      KsCreateResult &result);
+    //
     // To use data exchange, you must replace the exgdata service
     // method. The default exgData method returns 'not implemented'
     // which is not desired here...
@@ -106,6 +132,7 @@ private:
     KssSimpleVariable *pVar_x;
     KssSimpleVariable *pVar_xsquared;
 };
+
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -334,8 +361,24 @@ TestServer::TestServer(int port)
     } else {
         // Don't use pointers to nonexistant objects!
         pVar_x = pVar_xsquared =0;
-    }    
+    }
 
+    addDomain(KsPath("/"), "newobjects", 
+              "Area of dynamically created objects");
+    addDomain(KsPath("/vendor"), "extensions");
+    addDomain(KsPath("/vendor/extensions"), "ks_test");
+
+    KsPath ep("/vendor/extensions/ks_test");
+
+    KssSimpleVariable *tmp_var = new KssSimpleVariable("major_opcode");
+    tmp_var->setValue(new KsIntValue(ext_major_opcode));
+    addCommObject(ep, KssCommObjectHandle(tmp_var, KsOsNew));
+
+    tmp_var = new KssSimpleVariable("services");
+    KsStringVecValue *services_vec = new KsStringVecValue(1);
+    (*services_vec)[0] = KsString("createObject");
+    tmp_var->setValue(services_vec);
+    addCommObject(ep, KssCommObjectHandle(tmp_var, KsOsNew));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -407,6 +450,58 @@ TestServer::calculate()
         }
     }
     return false;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Simple protocol extension:
+//   KS_CREATEOBJECT creates a new variable with path /newobjects/<var_name>
+//
+void 
+TestServer::dispatch(u_long serviceId,
+                     SVCXPRT *xprt,
+                     XDR *xdrIn,
+                     KsAvTicket &ticket)
+{
+  switch(serviceId) {
+
+  case KS_CREATEOBJECT:
+    {
+      bool ok = false;
+      KsCreateParams params(xdrIn, ok);
+      if (ok) {
+        // execute service function
+        KsCreateResult result;
+        createObject(ticket, params, result);
+        // send back result
+        sendReply(xprt, ticket, result);
+      } else {
+        // not properly decoded
+        sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+      }
+    }
+  break;
+
+  default:
+    {
+      KsServer::dispatch(serviceId, xprt, xdrIn, ticket);
+    }
+ 
+  }
+}
+
+void 
+TestServer::createObject(KsAvTicket &ticket,
+                         const KsCreateParams &params,
+                         KsCreateResult &result)
+{
+  if( addStringVar(KsPath("/newobjects"),
+                   params.name,
+                   KsString("Newly created")) ) {
+    result.result = KS_ERR_OK;
+  } else {
+    result.result = KS_ERR_GENERIC;
+  }  
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -594,3 +689,15 @@ int main(int, char **) {
 }
 
 // EOF tserver1.cpp
+
+
+
+
+
+
+
+
+
+
+
+

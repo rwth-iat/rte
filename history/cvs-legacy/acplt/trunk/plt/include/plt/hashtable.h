@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.13 1998-03-06 13:22:32 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.14 1998-03-10 13:47:57 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -205,6 +205,13 @@ template <class K, class V>
 class PltHashTable
 : public PltHashTable_<K,V>
 {
+public:
+    PltHashTable(size_t mincap=11, 
+                 float highwater=0.8, 
+                 float lowwater=0.4)
+        : PltHashTable_<K,V>(mincap, highwater, lowwater) { }
+    virtual ~PltHashTable() {}
+
 protected:
     virtual unsigned long keyHash(const K & ) const ;
     virtual bool keyEqual(const K &, const K &) const;

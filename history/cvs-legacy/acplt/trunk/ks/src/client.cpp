@@ -1,6 +1,6 @@
 
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.30 1998-03-06 13:29:43 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.31 1998-03-10 13:50:19 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -610,6 +610,7 @@ KscServer::createTransport()
     // Delete the cached data as the server may have been restarted.
     //
     ext_opcodes.reset();
+    initExtTable();
 
     struct sockaddr_in host_addr; 
     int socket = RPC_ANYSOCK;
@@ -1312,7 +1313,7 @@ KscServer::requestByOpcode(u_long service,
 #if PLT_DEBUG
     cerr << "Requesting server " 
          << host_name << "/" << server_info.server.name 
-         << " for service " << service << "." << endl;
+         << " for service " << hex << service << dec << "." << endl;
     cerr << endl;
 #endif
 
