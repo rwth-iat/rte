@@ -9,20 +9,18 @@
 #define KS_VALUE_INCLUDED
 
 #include <plt/debug.h>
+#include <plt/rtti.hpp>
 #include <ks/rpc.hpp>
 #include <ks/xdr.hpp>
-
-#if PLT_DEBUG
-#include <iostream.h>
-#endif
 
 //////////////////////////////////////////////////////////////////////
 // KsValue is the base class of value objects. It is closely related
 // to struct KS_VAR_VALUE
 
 class KsValue;
-
 extern "C" bool_t xdr_KsValue(XDR *, KsValue **);
+
+////
 
 class KsValue : public KsXdrUnion {
     friend bool_t xdr_KsValue(XDR *, KsValue **);
@@ -30,28 +28,24 @@ protected:
     // XDR routines
     virtual enum_t xdrTypeCode() const = 0;
     virtual bool_t xdr(XDR *) = 0;
-#if PLT_DEBUG
-public:
-    friend ostream & operator<<(ostream &, const KsValue &);
-    virtual void printOn(ostream &) const = 0;
-#endif
-};
 
+    PLT_DECL_RTTI;
+};
 
 //////////////////////////////////////////////////////////////////////
 
 class KsIntValue : public KsValue {
 public:
     KsIntValue(long l = 0L);
+    void setInt(long l);
+    long getInt() const;
 protected:
     virtual enum_t xdrTypeCode() const { return KS_VT_INT; }
     virtual bool_t xdr(XDR *);
 private:
     long val;
-#if PLT_DEBUG
-public:
-    virtual void printOn(ostream &) const;
-#endif
+    
+    PLT_DECL_RTTI;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -59,15 +53,15 @@ public:
 class KsDoubleValue : public KsValue {
 public:
     KsDoubleValue(double d = 0.0);
+    void setDouble(double d);
+    double getDouble() const;
 protected:
     virtual enum_t xdrTypeCode() const { return KS_VT_DOUBLE; }
     virtual bool_t xdr(XDR *);
 private:
     double val;
-#if PLT_DEBUG
-public:
-    virtual void printOn(ostream &) const;
-#endif
+
+    PLT_DECL_RTTI;
 };
 
 
@@ -81,19 +75,21 @@ KsIntValue::KsIntValue(long l)
 {
 }
 
+//////////////////////////////////////////////////////////////////////
+
+inline void
+KsIntValue::setInt(long l) 
+{
+    val = l;
+}
 
 //////////////////////////////////////////////////////////////////////
 
-#if PLT_DEBUG
-
-inline ostream & 
-operator << (ostream & ostr, const KsValue &v)
+inline long
+KsIntValue::getInt() const
 {
-    v.printOn(ostr);
-    return ostr;
+    return val;
 }
-
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -104,6 +100,8 @@ KsIntValue::xdr(XDR * xdrs)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -114,11 +112,30 @@ KsDoubleValue::KsDoubleValue(double d)
 
 //////////////////////////////////////////////////////////////////////
 
+inline void
+KsDoubleValue::setDouble(double d) 
+{
+    val = d;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline double
+KsDoubleValue::getDouble() const 
+{
+    return val;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 inline bool_t
 KsDoubleValue::xdr(XDR * xdrs)
 {
     return xdr_double(xdrs, &val);
 }
 
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 #endif
 

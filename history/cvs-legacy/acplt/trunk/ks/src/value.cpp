@@ -15,27 +15,12 @@ KS_XDR_IF_BEGIN(KsValue)
     KS_XDR_IF_MAP(KS_VT_DOUBLE,    KsDoubleValue);
 KS_XDR_IF_END;
 
-//////////////////////////////////////////////////////////////////////
-
-#if PLT_DEBUG
-
-#include <iostream.h>
 
 
 //////////////////////////////////////////////////////////////////////
-
-void
-KsIntValue::printOn(ostream & ostr) const 
-{
-    ostr << val;
-}
-
+// RTTI Simulation
 //////////////////////////////////////////////////////////////////////
 
-void
-KsDoubleValue::printOn(ostream & ostr) const
-{
-    ostr << val;
-}
-
-#endif // PLT_DEBUG
+PLT_IMPL_RTTI0(KsValue);
+PLT_IMPL_RTTI1(KsIntValue,KsValue);
+PLT_IMPL_RTTI1(KsDoubleValue,KsValue);
