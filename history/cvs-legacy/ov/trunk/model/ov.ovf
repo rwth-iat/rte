@@ -1,0 +1,154 @@
+/*
+*   $Id: ov.ovf,v 1.1 1999-07-19 15:02:07 dirk Exp $
+*
+*   Copyright (C) 1998-1999
+*   Lehrstuhl fuer Prozessleittechnik,
+*   RWTH Aachen, D-52056 Aachen, Germany.
+*   All rights reserved.
+*
+*   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>
+*
+*   This file is part of the ACPLT/OV Package which is licensed as open
+*   source under the Artistic License; you can use, redistribute and/or
+*   modify it under the terms of that license.
+*
+*   You should have received a copy of the Artistic License along with
+*   this Package; see the file ARTISTIC-LICENSE. If not, write to the
+*   Copyright Holder.
+*
+*   THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+*   WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES
+*   OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
+/*
+*	History:
+*	--------
+*	15-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
+*	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*/
+/*
+*	Description:
+*	------------
+*	These are generic methods, which each object supports. Some of the 
+*	functions are designed for the use in the ACPLT/KS server of ACPLT/OV
+*	(libovks, server part), but may be used with other modules as well.
+*	Some of the methods return more than just a variable of a fixed size
+*	(e.g. an OV_STRING) or OV_VAR_CURRENT_PROPS). In this case, the memory 
+*	pointed to may be allocated in the database or on the memory stack 
+*	(ov_memstack_alloc()), but NEVER on the heap (using ov_malloc()). 
+*	This means, that you must use ov_memstack_lock() and ov_memstack_free()
+*	in the functions calling these methods. This ensures, that temporary
+*	memory is always freed. If you need the result of such a method for
+*	a longer time, you will have to copy it to memory allocated on the heap.
+*
+*	See also: ov_memstack.h.
+*/
+
+#ifndef OV_OVF_INCLUDED
+#define OV_OVF_INCLUDED
+
+#include "libov/ov_element.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*
+*	Function prototype for constructor of an object
+*/
+typedef OV_RESULT OV_DLLFNCEXPORT OV_FNC_CONSTRUCTOR(
+	OV_INSTPTR_ov_object 	pobj
+);
+
+/*
+*	Function prototype for destructor of an object
+*/
+typedef void OV_DLLFNCEXPORT OV_FNC_DESTRUCTOR(
+	OV_INSTPTR_ov_object 	pobj
+);
+
+/*
+*	Function prototype for method starting up an object 
+*	after creation/system startup
+*/
+typedef void OV_DLLFNCEXPORT OV_FNC_STARTUP(
+	OV_INSTPTR_ov_object 	pobj
+);
+
+/*
+*	Function prototype for method shutting down an object 
+*	before deletion/system shutdown
+*/
+typedef void OV_DLLFNCEXPORT OV_FNC_SHUTDOWN(
+	OV_INSTPTR_ov_object 	pobj
+);
+
+/*
+*	Function prototype for method reading the access rights
+*	of an object or one of its elements
+*/
+typedef OV_ACCESS OV_DLLFNCEXPORT OV_FNC_GETACCESS(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET			*pticket
+);
+
+/*
+*	Function prototype for method reading the semantical flags of an
+*	object or one of its elements (part of the engineered properties)
+*/
+typedef OV_UINT OV_DLLFNCEXPORT OV_FNC_GETFLAGS(
+	OV_INSTPTR_ov_object 	pobj,
+	const OV_ELEMENT		*pelem
+);
+
+/*
+*	Function prototype for method reading the comment of an
+*	object or one of its elements (part of the engineered props)
+*	NOTE: call ov_memstack_lock/unlock() outside of this function!
+*/
+typedef OV_STRING OV_DLLFNCEXPORT OV_FNC_GETCOMMENT(
+	OV_INSTPTR_ov_object 	pobj,
+	const OV_ELEMENT		*pelem
+);
+
+/*
+*	Function prototype for method reading the technical unit 
+*	of a variable of the object (part of the engineered props)
+*	NOTE: call ov_memstack_lock/unlock() outside of this function!
+*/
+typedef OV_STRING OV_DLLFNCEXPORT OV_FNC_GETTECHUNIT(
+	OV_INSTPTR_ov_object 	pobj,
+	const OV_ELEMENT		*pelem
+);
+
+/*
+*	Function prototype for method reading the current properties of
+*	a variable (value, state and timestamp, compare ACPLT/KS)
+*	NOTE: call ov_memstack_lock/unlock() outside of this function!
+*/
+typedef OV_RESULT OV_DLLFNCEXPORT OV_FNC_GETVAR(
+	OV_INSTPTR_ov_object 	pobj, 
+	const OV_ELEMENT		*pelem,
+	OV_VAR_CURRENT_PROPS	*pvarcurrprops
+);
+
+/*
+*	Function prototype for method writing the current properties of
+*	a variable (value, state and timestamp, compare ACPLT/KS)
+*/
+typedef OV_RESULT OV_DLLFNCEXPORT OV_FNC_SETVAR(
+	OV_INSTPTR_ov_object 		pobj,
+	const OV_ELEMENT			*pelem,
+	const OV_VAR_CURRENT_PROPS	*pvarcurrprops
+);
+
+#ifdef __cplusplus
+}	/* extern "C" */
+#endif
+
+#endif
+/*
+*	End of file
+*/
+
