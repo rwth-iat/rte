@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.15 1999-09-16 10:54:35 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.16 2000-04-14 08:42:50 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -32,6 +32,10 @@
 #include <iostream.h>
 #include <iomanip.h>
 #include <time.h>
+
+//##
+#include "ks/avmodule.h"
+#include "ks/avsimplemodule.h"
 
 #define INDENTATION 3
 
@@ -498,6 +502,7 @@ int main(int argc, char **argv)
     host_and_server = KsString("//") + argv[1];
     host_and_server += "/";
     KscAnyCommObject root(host_and_server);
+
     if ( !root.getEngPropsUpdate() ) {
         cerr << "Can't open /" << argv[1] << endl;
         return 42;
