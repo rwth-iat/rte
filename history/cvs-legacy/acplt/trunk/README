@@ -1,15 +1,12 @@
 ACPLT/KS C++ Communication Library
 ==================================
 
-This is the Version 1.01.
+This is the Version 1.01 of the C++ Communication Libary. It contains
+bug-fixes and some small improvements behind the scenes. For details
+about bug-fixes and changes, see part 3 "Changes & Bug-Fixes" below.
 
-For up-to-date information see
-    http://www.plt.rwth-aachen.de/ks/english
-or
-    http://www.plt.rwth-aachen.de/ks (German)
-
-From there, you can also download the "Technology Paper #8" which
-describes the "C++ Communication Library" in detail.
+But now, compile and enjoy --
+  Your ACPLT/KS team <ks@plt.rwth-aachen.de>
 
 
 1. Introduction
@@ -18,6 +15,14 @@ describes the "C++ Communication Library" in detail.
 The "C++ Communication Library" eases the integration of the open
 communication system ACPLT/KS into applications, thus enabling them to
 operate directly with process data.
+
+For up-to-date information see
+    http://www.plt.rwth-aachen.de/ks/english
+or
+    http://www.plt.rwth-aachen.de/ks (German)
+
+From there, you can also download the "Technology Paper #8" which
+describes the "C++ Communication Library" in detail.
 
 
 2. Compiling the Library
@@ -55,7 +60,61 @@ magic necessary to export variables from DLLs unter Windows NT/95, and
 this magic gets sometimes dazzled (bad magic, huh?).
 
 
-3. Suggested Readings
+3. Changes & Bug-Fixes
+----------------------
+
+- SERVERS: The constructor of the class KsServerBase now has a non-optional
+  parameter "port" which can be used to "bind" a ACPLT/KS server to a
+  specific port number. This is necessary when ACPLT/KS servers should be
+  accessed from outside a firewall. If you do not need to bind to a specific
+  port, then use the pre-defined constant KsServerBase::KS_ANYPORT.
+  Because KsServerBase is the virtual base class for every ACPLT/KS server,
+  you'll need to call its constructor explicitly from your server's constructor.
+
+  For example:
+
+    class MyServer : public KsServer, public KsSimpleServer {
+        MyServer();
+    }
+
+    MyServer::MyServer()
+      : KsServerBase(KS_ANYPORT), KsServer(30)
+    { ... }
+
+- SERVERS: New classes KsInAddrSet and KsHostInAddrSet for checking IP
+  addresses of incomming requests again a lists of allowed or forbidden IP
+  addresses.
+
+- SERVERS: ntksmanager.exe and tmanager.exe now deny register requests from
+  remote "servers". tmanager.exe now does this also on OpenVMS. (On un*x
+  operating systems this was never a problem from the early beginnings of
+  the ACPLT/KS C++ Communication Library, so guess which operating systems
+  are *true* server operating systems...)
+
+- CLIENTS: A bug in the KscPackageClass has been corrected which crashed ACPLT/KS
+  clients trying to remove a variable or package from a KscPackage object.
+
+- CLIENTS: See TP#8 for how to control the timeout and retry values, which
+  control how long a ACPLT/KS client will wait for an answer from a server and
+  if a connection breaks down how often the client will try to reconnect
+  automatically before the timeout is reported to the calling application.
+
+- ALL: The classes PltPtrHandle and PltArrayHandle now have operators for
+  tests on equality or non-equality implemented. The operator==() checks
+  whether both handles *point to the same* object or both are unbound.
+  In this case the operator returns true. The operator!=() is just the
+  opposite.
+
+- ALL: On Windows NT, the file ntksmanager.exe contains version information,
+  which indicates the release level, copyright, and more. Please note, that
+  due to a bug in Windows NT (*a* bug?!), you can't see this information
+  in the Explorer, if the file is located on a network drive.
+
+- For further information, peek at:
+  http://www.plt.rwth-aachen.de/ks/english/firstaid.html
+
+
+4. Suggested Readings
 ---------------------
 
 Well -- all "Technology Papers" of course. But for a quick start you
@@ -65,10 +124,8 @@ should read the "Technology Paper #3" too. In every case, you should
 take a look at the "Technology Paper #8", as it is the reference guide
 to the C++ communication library.
 
-Enjoy using the C++ communication library!
 
-
-4. Legal Stuff
+5. Legal Stuff
 --------------
 
 Copyright (c) 1996, 1997
