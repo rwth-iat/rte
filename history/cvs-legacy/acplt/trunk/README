@@ -1,14 +1,27 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.5pre8 of the C++ Communication Libary. As always, it
+This is version 1.0.5 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
 
-pre-Notes(sm):
-1.0.5pre8 fixes a bug in the GetPP lookup of children of histories and
-links. It also fixes compile problems with Microsoft Visual C++.
+Although this release is a minor release we suggest to upgrade to this
+release as especially a memory leak (from 1.0.4) was fixed and the
+buffered streams mechanism was enhanced and also a bug fixed which could
+cause "zombie" streams on slow machines.
+
+Currently, the following platforms and compilers are supported by the
+C++ Communication Library:
+
+  HP-UX 10.20                  g++ 2.8.x
+  IRIX 6.x                     g++ 2.7.2, g++ 2.8.x
+  Linux 2.0/2.2                g++ 2.7.2, g++ 2.8.x, egcs
+  OpenVMS 6.2/7.1              CXX DEC C++ 5.4
+  Solaris 2.6                  g++ 2.7.2, g++ 2.8.x
+  Windows NT/9x                Borland C++ 5.0,
+                               Microsoft VC++ 4.2, 5.0, 6.0
+                               Cygnus egcs 1.1.2
 
 But now, compile and enjoy --
   Your ACPLT/KS team <ks@plt.rwth-aachen.de>
@@ -93,7 +106,7 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Version 1.0.5pre8
+Version 1.0.5
 - SERVERS: interserver connections added (YESSS!). The tserver example shows
   how to send and receive ACPLT/KS service requests and replies in the
   background while the server is idle. This makes sending non-blocking
@@ -119,7 +132,16 @@ Version 1.0.5pre8
 - SERVERS: fixed a bug in the buffered streams which in rare circumstances
   could cause sending transports to stall.
 
-- BOTH: support for HP-UX 10.20.x added.
+- CLIENTS: fixed a memory leak in the KscServer class which caused a
+  KsString to not be properly released whenever the last communication object
+  proxy using this particular KscServer object was destroyed.
+
+- BOTH: support for HP-UX 10.20.x and g++ 2.8.x added.
+
+- BOTH: fixed the return value specification of an overloaded operator
+  of a derived class in the hashtable.h module. This allows the C++
+  Communication Library to be compiled with VC++ 6 (other compilers were
+  silently ignoring this buglet).
 
 Version 1.0.4
 - CLIENTS: Fixed a bug which caused A/V modules to be ignored which
