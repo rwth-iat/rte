@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.12 1999-09-16 10:54:58 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.13 2000-09-04 08:59:15 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -24,6 +24,10 @@
 
 #if PLT_SYSTEM_OS2 || PLT_SYSTEM_NT
 #include <sys/timeb.h>
+#endif
+
+#if !PLT_SYSTEM_NT
+#include <unistd.h>
 #endif
 
 #if PLT_SYSTEM_NT
