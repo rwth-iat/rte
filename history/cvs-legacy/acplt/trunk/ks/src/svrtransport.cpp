@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrtransport.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrtransport.cpp,v 1.3 1998-09-17 12:02:24 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -71,7 +71,7 @@ ks_c_get_deserializing_xdr_wrapper(XDR *xdr, void *obj_ptr)
 
 // ---------------------------------------------------------------------------
 // Associate (or better encapsulate) another ONC/RPC server transport with
-// this transport object. This is not much work with the exception, that we
+// this transport object. This is not much work with the exception that we
 // need to find out what XDR stream is used for deserializing a request.
 //
 void KssTransport::setNewRequest(SVCXPRT *t, svc_req *r)
@@ -81,7 +81,7 @@ void KssTransport::setNewRequest(SVCXPRT *t, svc_req *r)
     svc_getargs(t, 
                 (xdrproc_t) ks_c_get_deserializing_xdr_wrapper, 
                 (caddr_t) &_xdr);
-    PLT_ASSERT(xdr->x_op == XDR_DECODE);
+    PLT_ASSERT(_xdr->x_op == XDR_DECODE);
 } // KssTransport::setNewRequest
 
 
@@ -218,7 +218,7 @@ sockaddr *KssTransport::getPeerAddress(int &namelen)
     //
     // xp_raddr contains a valid sockaddr_in
     //
-    PLT_ASSERT(sa->sa_family == AF_INET);
+    PLT_ASSERT(((sockaddr *)svc_getcaller(_t))->sa_family == AF_INET);
     namelen = sizeof (sockaddr_in);
     return (sockaddr *) svc_getcaller(_t);
 #endif

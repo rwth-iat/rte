@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.10 1997-12-02 18:08:48 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.11 1998-09-17 12:02:22 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -477,7 +477,7 @@ inline KsTime KssTimeNowVariable::getCreationTime() const
 { return KssSimpleCommObject::getCreationTime(); }
 
 inline KsString KssTimeNowVariable::getComment() const
-{ return KsString("Current time"); }
+{ return KsString("current time"); }
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -547,3 +547,5 @@ KssTimeNowVariable::setState(KS_STATE)
 
 /////////////////////////////////////////////////////////////////////////////
 #endif // KS_SVROBJECTS_INCLUDED
+
+/* End of ks/svrsimpleobjects.h */

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrmemstream.h,v 1.1 1998-06-29 11:19:17 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrmemstream.h,v 1.2 1998-09-17 12:02:22 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -71,6 +71,9 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err);
  * Some statistics and control functions...
  */
 void   xdrmemstream_getusage(u_int *total, u_int *freepool);
+bool_t xdrmemstream_controlusage(u_int fragmentsize, u_int quota,
+	                         u_int watermark, u_int freepercentage);
+void   xdrmemstream_freegarbage();
 
 #ifdef __cplusplus
 }

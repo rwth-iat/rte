@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.15 1998-06-29 11:15:40 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.16 1998-09-17 12:02:22 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -42,7 +42,7 @@
 /*
  * Version string for use with banners, messages, etc.
  */
-#define KS_VERSION_STRING "1.0.4pre1"
+#define KS_VERSION_STRING "1.0.5pre1"
 	 
 /*
  * RPC program number reserved for ACPLT/KS library
@@ -171,3 +171,4 @@ enum KS_SVC_ENUM {
 };
     
 #endif
+/* End of ks/ks.h */

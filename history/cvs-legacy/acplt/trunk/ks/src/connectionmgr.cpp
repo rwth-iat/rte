@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.2 1998-06-30 11:29:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.3 1998-09-17 12:02:24 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -44,6 +44,8 @@
  */
 
 #include "ks/connectionmgr.h"
+
+#include <errno.h>
 
 #if !PLT_SYSTEM_NT
 #include <unistd.h>
@@ -97,6 +99,9 @@ void _PltDLinkedListNode::remove()
 // give us as information). Unfortunately, Microsoft's file descriptor sets
 // are different once again, so in that case we have to use a hash table...
 //
+// Check _is_ok to make sure the connection manager object could be ctor´ed
+// successfully.
+//
 KssConnectionManager::KssConnectionManager()
     : _is_ok(true),
       _connection_count(0), _serviceable_count(0),
@@ -122,16 +127,23 @@ KssConnectionManager::KssConnectionManager()
 #if PLT_CNXMGR_USE_HT
     //
     // For some "new technology" os(?) we´ll need to allocate a hash table
-    // to in order to speed up mapping from fds to connection items. In
+    // in order to speed up mapping from fds to connection items. In
     // addition, all entries of the _connections table are linked into a
-    // list of free entries. That speeds up finding a free slot quiet good.
+    // list of free entries. That speeds up finding a free slot quite good.
     //
     int i;
     for ( i = 0; i < _fdset_size; ++i ) {
     	_connections[i].addAfter(_free_entries);
     }
-    _hash_table_size = _fdset_size * 2;
-    _hash_table_mask = _hash_table_size - 1; // TODO
+    //
+    // Calculate the hash table size depending on the size of a fdset.
+    // We always use the next number to the power of two which is larger
+    // than the size of a fdset.
+    //
+    for ( i = 32; i < _fdset_size; i <<= 1 )
+	;
+    _hash_table_size = i;
+    _hash_table_mask = i - 1; // this has always the lower bits set...
     _hash_table = new _KssCnxHashTableItem[_hash_table_size];
     if ( !_hash_table ) {
 	_is_ok = false;
@@ -148,7 +160,6 @@ KssConnectionManager::~KssConnectionManager()
 {
     if ( _connections ) {
     	int i;
-	
 	for ( i = 0; i < _fdset_size; ++i ) {
 	    KssConnection *con = _connections[i]._connection;
 	    if ( con && con->isAutoDestroyable() ) {
@@ -170,7 +181,9 @@ KssConnectionManager::~KssConnectionManager()
 
 
 // ---------------------------------------------------------------------------
-//
+// Track state information for a particular connection. Whenever a connection
+// might change its io mode, than call this function, so the fdsets are
+// updated, etc.
 //
 void KssConnectionManager::trackCnxIoMode(_KssConnectionItem &item, 
                                           KssConnection::ConnectionIoMode ioMode)
@@ -452,6 +465,142 @@ int KssConnectionManager::processConnections(fd_set &readables,
     }
     return _serviceable_count;
 } // KssConnectionManager::processConnections
+
+
+// ---------------------------------------------------------------------------
+// Shut down all auto-destroyable connections but first try to flush all
+// sending connections. This way, the server can flush its streams. The
+// parameter "secs" specifies how long to wait for the streams to get fully
+// flushed.
+//
+// Note that we don´t obey timeouts here -- we´re just trying to get rid of
+// data to be sent within the time span the caller has specified as "secs".
+//
+bool KssConnectionManager::shutdownConnections(long secs)
+{
+    int     pending = 0;
+    int     i;
+
+    if ( !_connections ) {
+	return true; // nothing to shut down, so it´s okay.
+    }
+    //
+    // First close all auto-destroyable connections which are currently
+    // not sending. Count those that want to send, so we can later keep
+    // track of those pesky streams.
+    //
+    for ( i = 0; i < _fdset_size; ++i ) {
+	KssConnection *con = _connections[i]._connection;
+	if ( con ) {
+	    if ( con->getIoMode() & KssConnection::CNX_IO_WRITEABLE ) {
+		// count connections that want to send data
+		++pending;
+	    } else {
+	    	if ( con->isAutoDestroyable() ) {
+	    	    removeConnection(*con);
+	    	    con->shutdown();
+	    	    delete con;
+		}
+	    }
+	}
+    }
+    //
+    // Now try to get rid of the data the connections want to send...
+    //
+    PltTime                          doomsday = PltTime::now(secs);
+    PltTime                          sleep;
+    fd_set                           writeables;
+    _KssConnectionItem              *item;
+    KssConnection                   *con;
+    KssConnection::ConnectionIoMode  ioMode;
+#if !PLT_SYSTEM_NT
+    int                              fd_idx;
+#else
+    SOCKET                          *sock;
+#endif
+
+    for ( ; pending > 0 ; ) {
+    	sleep = PltTime::now();
+	if ( doomsday < sleep ) {
+	    //
+	    // timed out with connections still trying to send data, so
+	    // let the caller know that we´re closing connections...
+	    //
+	    return false;
+	}
+    	sleep = doomsday - sleep;
+    	writeables = _writeable_fdset;
+#if PLT_SYSTEM_HPUX
+	int res = select(_fdset_size,
+	        	 0, (int *) &writeables, 0,
+	        	 &sleep);
+#else
+    	int res = select(_fdset_size, 0, &writeables, 0, &sleep);
+#endif
+
+        if ( res == -1 ) {
+    	    // select reports an error
+#if PLT_SYSTEM_NT
+            if ( WSAGetLastError() == EINTR ) {
+		continue;
+	    }
+#else
+	    if ( errno == EINTR ) {
+		continue;
+	    }
+#endif
+	    return false;
+	}
+	
+	//
+	// serve pending connections...
+	//
+#if !PLT_SYSTEM_NT
+	for ( fd_idx = 0; fd_idx < _fdset_size; ++fd_idx ) {
+    	    //
+	    // Check whether this file descriptor is writeable. Then send
+	    // data from the appropriate connection object...
+	    //
+	    if ( FD_ISSET(fd_idx, &writeables) ) {
+#if !PLT_CNXMGR_USE_HT
+	    item = _connections + fd_idx;
+#else
+	    item = getConnectionItem(fd_idx);
+#endif
+#else
+	sock = writeables.fd_array;
+	for ( i = writeables.fd_count; i; --i, ++sock ) {
+    	    {
+		item = getConnectionItem(*sock);
+#endif
+		con    = item->_connection;
+		ioMode = con->send();
+		trackCnxIoMode(*item, ioMode);
+		if ( ioMode & KssConnection::CNX_IO_DEAD ||
+	             !(ioMode & KssConnection::CNX_IO_WRITEABLE) ) {
+		    //
+		    // The connection failed for some reason, so destroy it
+		    // if we´re allowed to do so. In any case, we won´t serve
+		    // it anymore. In case the connection has sent all its
+		    // data, the same applies too.
+		    //
+		    --pending;
+	    	    if ( con->isAutoDestroyable() ) {
+			removeConnection(*con);
+			con->shutdown();
+			delete con;
+		    } else {
+			trackCnxIoMode(*item, con->reset(false));
+		    }
+		}
+	    }
+	}
+    }
+    //
+    // All pending connections have been served. Fine.
+    //
+    return true;
+} // KssConnectionManager::shutdownConnections
 
 
 // ---------------------------------------------------------------------------

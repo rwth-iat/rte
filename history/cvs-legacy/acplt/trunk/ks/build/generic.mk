@@ -122,19 +122,15 @@ CXX_EXAMPLES_SOURCES = \
 	pmobile_code.cpp \
 	tclient.cpp \
 	tclient1.cpp \
-	texgpkg.cpp \
-	texgpkg1.cpp \
 	tmanager.cpp \
 	tmanager1.cpp \
-	thistory.cpp \
 	tsclient.cpp \
 	tsclient1.cpp \
 	tserver.cpp \
 	tserver1.cpp \
 	tshell.cpp \
 	ttree.cpp \
-	ttree1.cpp \
-	tvalhist.cpp
+	ttree1.cpp
 
 EXAMPLES_OBJECTS = \
 	ext_sp$(O) \
@@ -142,9 +138,6 @@ EXAMPLES_OBJECTS = \
 	pmobile_code$(O) \
 	tclient$(O) \
 	tclient1$(O) \
-	texgpkg$(O) \
-	texgpkg1$(O) \
-	thistory$(O) \
 	tmanager$(O) \
 	tmanager1$(O) \
 	tsclient$(O) \
@@ -153,8 +146,7 @@ EXAMPLES_OBJECTS = \
 	tserver1$(O) \
 	tshell$(O) \
 	ttree$(O) \
-	ttree1$(O) \
-	tvalhist$(O)
+	ttree1$(O)
 
 EXAMPLES = \
 	pmobile$(EXE) \
@@ -199,13 +191,5 @@ ttree$(EXE) : ttree$(O) ttree1$(O) $(LIBKSCLN) $(LIBKS)
 tshell$(EXE) : tshell$(O) $(LIBKSCLN) $(LIBKS)
 
 tpackage$(EXE) : tpackage$(O) $(LIBKSCLN) $(LIBKS)
-
-tbigpkg$(EXE) : tbigpkg$(O) $(LIBKSCLN) $(LIBKS)
-
-texgpkg$(EXE) :	texgpkg$(O) texgpkg1$(O) $(LIBKSCLN) $(LIBKS)
-
-thistory$(EXE) : thistory$(O) $(LIBKSCLN) $(LIBKS)
-
-tvalhist$(EXE) : tvalhist$(O) $(LIBKSCLN) $(LIBKS)
 
 

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.19 1998-08-28 13:21:20 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.20 1998-09-17 12:02:24 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -564,7 +564,7 @@ KsSimpleServer::initVendorTree()
     
     static KssSimpleVariable startup_time("startup_time",
 	                                  KsTime::now(),
-	                                  "Server startup time");
+	                                  "server startup time");
     startup_time.setValue(new KsTimeValue(KsTime::now()));
     startup_time.setTechUnit("UTC");
     startup_time.setState(KS_ST_GOOD);

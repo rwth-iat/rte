@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.2 1998-06-30 11:29:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.3 1998-09-17 12:02:24 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -113,6 +113,9 @@ static u_int MemStreamBufferSize      = DEFAULTFRAGMENTSIZE;
 static MemoryStreamFragment *FreeList = 0;
 static u_int FragmentCount            = 0; /* total number = used + free */
 static u_int FreeFragmentCount        = 0; /* number of free fragments   */
+static u_int FragmentQuota            = (u_int) -1;
+static u_int FragmentWatermark        = 0;
+static u_int FreePercentage           = 50;
 
 
 /* ---------------------------------------------------------------------------
@@ -132,6 +135,35 @@ void xdrmemstream_getusage(u_int *total, u_int *freepool)
                                          sizeof(double));
     }
 } /* xdrmemstream_getusage */
+
+
+/* ---------------------------------------------------------------------------
+ * Set the size of memory fragments, the watermark and the percentage of
+ * fragments to free for each freegarbage() step. The watermark indicates the
+ * amount of fragments which aren´t free. While fragmentsize is in bytes, the
+ * watermark is in fragments and the freepercentage is in percent (100 = 100%)
+ * quota is the maximum of fragments that can be allocated at any time.
+ */
+bool_t xdrmemstream_controlusage(u_int fragmentsize, u_int quota,
+	                         u_int watermark, u_int freepercentage)
+{
+    /*
+     * Make sure that the fragment size can not be changed after the first
+     * fragments have been allocated.
+     */
+    if ( (fragmentsize != MemStreamBufferSize) &&
+	 FragmentCount ) {
+	return false;
+    }
+    if ( fragmentsize < MINFRAGMENTSIZE ) {
+	fragmentsize = MINFRAGMENTSIZE;
+    }
+    MemStreamBufferSize = fragmentsize;
+    FragmentQuota       = quota;
+    FragmentWatermark   = watermark;
+    FreePercentage      = freepercentage;
+    return true;
+} /* xdrmemstream_controlusage */
 
 
 /* ---------------------------------------------------------------------------
@@ -158,7 +190,11 @@ static MemoryStreamFragment *AllocateMemoryStreamFragment(XDR *xdrs)
 	 * contains a dummy variable which just forces stright alignment.
 	 * This dummy isn't used but instead the we'll store the contents
 	 * beginning with this memory cell.
+	 * But first check for our quotas...
 	 */
+	if ( FragmentCount >= FragmentQuota ) {
+	    return 0;
+	}
 	fragment = (MemoryStreamFragment *)
 	               malloc(sizeof(MemoryStreamFragment) - sizeof(double)
 			   + MemStreamBufferSize);
@@ -190,8 +226,6 @@ static MemoryStreamFragment *AllocateMemoryStreamFragment(XDR *xdrs)
 /* ---------------------------------------------------------------------------
  * Free a fragment. Usually this will only result in the fragment
  * being put to the head of the free fragment list.
- *
- * TODO: more advanced strategies...
  */
 static void FreeMemoryStreamFragment(MemoryStreamFragment *fragment)
 {
@@ -201,6 +235,30 @@ static void FreeMemoryStreamFragment(MemoryStreamFragment *fragment)
         ++FreeFragmentCount;
     }
 } /* FreeMemoryStreamFragment */
+
+
+/* ---------------------------------------------------------------------------
+ * Free up left-over free fragments which are currently lurking around in the
+ * free list.
+ */
+void xdrmemstream_freegarbage()
+{
+    if ( FreeFragmentCount > FragmentWatermark ) {
+	MemoryStreamFragment *fragment;
+	u_int toFree = ((FreeFragmentCount - FragmentWatermark)
+		          * FreePercentage) / 100;
+	if ( toFree == 0 ) {
+	    toFree = FreeFragmentCount - FragmentWatermark;
+	}
+	for ( ; toFree; --toFree ) {
+	    fragment = FreeList;
+	    FreeList = fragment->next;
+	    free(fragment);
+	    --FreeFragmentCount;
+	    --FragmentCount;
+    	}
+    }
+} /* xdrmemstream_freegarbage */
 
 
 /* ---------------------------------------------------------------------------

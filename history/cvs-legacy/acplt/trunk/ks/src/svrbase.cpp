@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.30 1998-06-30 11:29:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.31 1998-09-17 12:02:24 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -71,6 +71,10 @@
 #include <netconfig.h>
 #endif
 
+#if PLT_USE_BUFFERED_STREAMS
+#include "ks/xdrmemstream.h"
+#endif
+
 #include "ks/svrbase.h"
 #include "plt/log.h"
 
@@ -125,6 +129,39 @@ KsTimerEvent::trigger()
 }
 
 
+#if PLT_USE_BUFFERED_STREAMS
+// ---------------------------------------------------------------------------
+// When working with buffered streams, we´re using a timer event to free up
+// free fragments from time to time. This way, memory from large requests or
+// replies can be reclaimed not only by the transports but also by the C++
+// objects.
+//
+class KsGarbageTimerEvent : public KsTimerEvent {
+public:
+    KsGarbageTimerEvent(unsigned long interval);
+    virtual void trigger();
+
+protected:
+    unsigned long _interval;
+}; // class KsGarbageTimerEvent
+
+
+KsGarbageTimerEvent::KsGarbageTimerEvent(unsigned long interval)
+    : KsTimerEvent(KsTime::now(interval)),
+      _interval(interval)
+{
+} // KsGarbageTimerEvent::KsGarbageTimerEvent
+
+
+void KsGarbageTimerEvent::trigger()
+{
+    xdrmemstream_freegarbage();
+    _trigger_at = KsTime::now(_interval);
+    KsServerBase::getServerObject().addTimerEvent(this);
+} // KsGarbageTimerEvent::trigger
+#endif
+
+
 // ---------------------------------------------------------------------------
 // There can be only one... KS server object. We need this pointer lateron
 // when redirecting (de-)serializing requests comming from the RPC level to
@@ -155,6 +192,15 @@ KsServerBase::KsServerBase()
     PLT_PRECONDITION( the_server == 0 );
     the_server = this;
     _is_ok = true;
+#if PLT_USE_BUFFERED_STREAMS
+    //
+    // Set some parameters of the dynamic XDR memory streams...
+    //
+    xdrmemstream_controlusage(4096, // 4k fragments
+	                      1024, // 4k*1024 = 4M maximum pool size
+	                      0,    // 4k*0 = 0k minimum free pool size
+	                      50);  // clean up 50% per "garbage collection"
+#endif
 } // KsServerBase::KsServerBase
 
 
@@ -850,6 +896,19 @@ KsServerBase::startServer()
             PltLog::Error("KsServerBase::startServer(): could not add TCP transport.");
             _is_ok = false;
 	}
+	//
+	// Register a timer event which will fire from time to time and triggers
+	// fragment garbage collection for the dynamic XDR memory streams.
+	//
+	KsGarbageTimerEvent *pGarbageEvent = new KsGarbageTimerEvent(10);
+	if ( !pGarbageEvent ) {
+            PltLog::Error("KsServerBase::startServer(): could not create garbage timer event.");
+    	    _is_ok = false;
+	}
+	if ( !addTimerEvent(pGarbageEvent) ) {
+            PltLog::Error("KsServerBase::startServer(): could not register garbage timer event.");
+    	    _is_ok = false;
+	}
 #endif
     } else {
         PltLog::Error("KsServerBase::startServer(): could not create TCP transport.");
@@ -876,6 +935,13 @@ void KsServerBase::downServer()
 //
 void KsServerBase::stopServer()
 {
+#if PLT_USE_BUFFERED_STREAMS
+    if ( _cnx_manager ) {
+	if ( !_cnx_manager->shutdownConnections(15) ) { // FIXME
+	    PltLog::Info("KsServerBase::stopServer(): could not flush all sending XDR streams.");
+	}
+    }
+#endif
     cleanup();
 }
 

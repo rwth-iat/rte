@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.2 1998-06-30 11:29:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connectionmgr.h,v 1.3 1998-09-17 12:02:22 harald Exp $ */
 /*
  * Copyright (c) 1998
  * Chair of Process Control Engineering,
@@ -86,6 +86,10 @@ public: // oh, M$ is sooooo dumb...
     PltTime                          _best_before;
     KssConnection::ConnectionIoMode  _last_io_mode;
     int                              _fd; // optimization...
+
+    _KssConnectionItem() : _connection(0),
+                           _last_io_mode(KssConnection::CNX_IO_DORMANT),
+                           _fd(-1) { }
 }; // struct _KssConnectionItem
 
 
@@ -119,7 +123,7 @@ public:
     
     bool isOk() const { return _is_ok; }
     
-// management of timeouts...
+    // management of timeouts...
     bool mayHaveTimeout()
     	{ return _active_connections._next != &_active_connections; }
     PltTime getEarliestTimeout();
@@ -141,6 +145,9 @@ public:
     bool removeConnection(KssConnection &con);
     KssConnection *lookupConnection(int fd);
     bool resetConnection(KssConnection &con);
+
+    // send out to the world your last bits...
+    bool shutdownConnections(long secs);
 
     // damned lies & statistics
     inline unsigned int getConnectionCount() { return _connection_count; }
