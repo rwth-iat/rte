@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.6 2000-04-10 12:47:10 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.7 2003-09-23 15:35:31 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -40,7 +40,11 @@
 #include "ks/xdrudpcon.h"
 #include "ks/register.h"
 
+#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
+#else
+#include <iostream>
+#endif
 
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_HOSTINADDRSET_INCLUDED
 #define KS_HOSTINADDRSET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/hostinaddrset.h,v 1.3 1999-09-16 10:54:39 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/hostinaddrset.h,v 1.4 2003-09-23 15:35:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -28,7 +28,7 @@ class KsHostInAddrSet:
     private KsInAddrSet_base {
 public:
     KsHostInAddrSet();
-    ~KsHostInAddrSet() { }
+    virtual ~KsHostInAddrSet() { }
 
     virtual bool isMember(in_addr addr) const;
 

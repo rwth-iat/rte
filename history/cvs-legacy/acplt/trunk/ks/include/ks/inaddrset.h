@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_INADDRSET_INCLUDED
 #define KS_INADDRSET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/inaddrset.h,v 1.3 1999-09-16 10:54:39 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/inaddrset.h,v 1.4 2003-09-23 15:35:31 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,7 +23,11 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
+#else
+#include <iostream>
+#endif
 #include "ks/rpc.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -68,7 +72,7 @@ class KsSimpleInAddrSet:
     private KsInAddrSet_base {
 public:
     KsSimpleInAddrSet(bool defaultIsAccept = false);
-    ~KsSimpleInAddrSet() { }
+    virtual ~KsSimpleInAddrSet() { }
 
     virtual bool isMember(in_addr addr) const;
 
@@ -84,7 +88,8 @@ protected:
     bool _defaultIsAccept;
 }; // class KsSimpleInAddrSet
 
-istream & operator >> (istream & istr, KsSimpleInAddrSet & set);
+// TODO!!!
+STDNS::istream & operator >> (STDNS::istream & istr, KsSimpleInAddrSet & set);
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION

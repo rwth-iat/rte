@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.43 2001-02-21 09:38:30 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.44 2003-09-23 15:35:31 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
- * Copyright (c) 1996, 1997, 1998, 1999, 2000
+ * Copyright (c) 1996, 2003
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -60,12 +60,12 @@ extern "C" {
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.2.3"
+#define KS_VERSION_STRING "1.4.0pre1"
 
 	 
 /* ----------------------------------------------------------------------------
  * RPC program number reserved for ACPLT/KS library. This had been aquired
- * from Sun Microsystems.
+ * from Sun Microsystems. Unfortunately, 0x42 was not available.
  */
 #define KS_RPC_PROGRAM_NUMBER 0x49678ul
 

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.10 1999-09-16 10:54:35 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.11 2003-09-23 15:36:23 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
             argsok = false;
             break;
         } else if ( strcmp(argv[idx], "--version") == 0 ) {
-            cerr << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << endl;
+            STDNS::cerr << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << STDNS::endl;
             return EXIT_FAILURE;
         } else if ( (strcmp(argv[idx], "-p") == 0) ||
                     (strcmp(argv[idx], "--port") == 0) ) {
@@ -111,12 +111,12 @@ int main(int argc, char **argv) {
     }
 
     if (!argsok) {
-        cerr << "Usage: " << PROG_NAME << "[options]" << endl
-             << "Runs the testing ACPLT/KS Manager process" << endl
-             << endl
-             << "  -p #, --port #  binds the testing ACPLT/KS manager to port number #" << endl
-             << "  --help          display this help and exit" << endl
-             << "  --version       output version information and exit" << endl;
+        STDNS::cerr << "Usage: " << PROG_NAME << "[options]" << STDNS::endl
+             << "Runs the testing ACPLT/KS Manager process" << STDNS::endl
+             << STDNS::endl
+             << "  -p #, --port #  binds the testing ACPLT/KS manager to port number #" << STDNS::endl
+             << "  --help          display this help and exit" << STDNS::endl
+             << "  --version       output version information and exit" << STDNS::endl;
         return EXIT_FAILURE;
     }
 
@@ -128,11 +128,11 @@ int main(int argc, char **argv) {
             m.run();
             PLT_DMSG("left service loop"<<endl);
         } else {
-            cerr << "The manager could not be initialized." << endl;
+            STDNS::cerr << "The manager could not be initialized." << STDNS::endl;
         }
         m.stopServer();
     } else {
-        cerr << "The manager could not be initialized." << endl;
+        STDNS::cerr << "The manager could not be initialized." << STDNS::endl;
     }
     return 0;
 }

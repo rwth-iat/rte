@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.44 2002-05-23 10:34:19 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.45 2003-09-23 15:36:02 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -33,7 +33,11 @@
 #include "ks/commobject.h"
 
 #if PLT_DEBUG
+#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
+#else
+#include <iostream>
+#endif
 #endif
 
 #if PLT_SYSTEM_NT
@@ -48,7 +52,11 @@ extern int ioctl(int d, int request, char *argp);
 #endif
 
 
+#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h> // FIXME
+#else
+#include <iostream>
+#endif
 
 
 //////////////////////////////////////////////////////////////////////
@@ -92,7 +100,9 @@ _ksc_extractHostAndServer(KsString host_and_server,
     // the host name (DNS) and the server name where the communication
     // object is located at.
     //
-#if PLT_COMPILER_MSVC || PLT_COMPILER_DECCXX
+    // 1.4.0: gcc: welcome to the pool of problems of ANSI
+    //
+#if PLT_COMPILER_MSVC || PLT_COMPILER_DECCXX || PLT_COMPILER_GCC
     if ( (host_and_server.len() < 5) ||
 	 (host_and_server.operator[](0) != '/') || 
          (host_and_server.operator[](1) != '/') ) {
@@ -1203,10 +1213,8 @@ KscServer::timedConnect(struct sockaddr_in host_addr, PltTime timeout)
 	    FD_ZERO(&readable_fds); FD_SET(socket, &readable_fds);
 	    FD_ZERO(&writeable_fds); FD_SET(socket, &writeable_fds);
 	
-cerr << "Sleeping...";
 	    PltTime sleep = timeout;
 	    int res = select(socket + 1, &readable_fds, &writeable_fds, 0, &sleep);
-cerr << "!" << endl;
 	    if ( res == -1 ) {
 	    	//
 	    	// Something went wrong while trying to wait for the socket and

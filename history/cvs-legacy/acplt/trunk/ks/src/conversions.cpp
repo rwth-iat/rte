@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/conversions.cpp,v 1.3 1999-09-16 10:54:47 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/conversions.cpp,v 1.4 2003-09-23 15:36:02 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -38,9 +38,9 @@ ksToPercent(char c, char *s)
 
     s[0] = '%';
 
-    unsigned d = c;
+    unsigned d = (unsigned char) c;
     unsigned upper = d >> 4;
-    unsigned lower = d % 16;
+    unsigned lower = d & 0x0F;
 
     s[1] = (char)upper + (upper < 10 ? '0' : '7');
 

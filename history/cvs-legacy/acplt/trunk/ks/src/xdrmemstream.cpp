@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.13 2002-05-23 10:30:26 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.14 2003-09-23 15:36:02 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -320,7 +320,7 @@ static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, u_int len);
 static bool_t MemStreamPutBytes(XDR *xdrs, PLT_CONST caddr_t caddr, u_int len);
 static u_int  MemStreamGetPos(PLT_CONST XDR *xdrs);
 static bool_t MemStreamSetPos(XDR *xdrs, u_int pos);
-static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, int len);
+static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, u_int len);
 static void   MemStreamDestroy(XDR *xdrs);
 
 /* ---------------------------------------------------------------------------
@@ -333,13 +333,16 @@ static void   MemStreamDestroy(XDR *xdrs);
  * signatures. There are sooo much ONC/RPC ports out there which can't agree
  * on function signatures.
  */
-#define FUNC(rt) (rt (*)(...))
+#define FUNC(rt, p) (rt (*) p)
 /*#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT || PLT_SYSTEM_LINUX*/
 /*#define FUNC(rt) (rt (*)(...))*/
 /*#else*/
 /*#define FUNC(rt)*/
 /*#endif*/
 
+#if defined(__cplusplus)
+extern "C" { /* switch to C binding */
+#endif
 static
 #if defined(__cplusplus)
                    /* Arrrghhh. Someone at Sun was soooo lazy and defined */
@@ -348,15 +351,18 @@ static
     struct xdr_ops /* with C, it will be -- naturally -- in a local name- */
 #endif             /* space with C++. Sigh.                               */
         memstream_operations = {
-    FUNC(bool_t) MemStreamGetLong,   /* retrieve a 32 bit integer in host order      */
-    FUNC(bool_t) MemStreamPutLong,   /* store a 32 bit integer in host order         */
-    FUNC(bool_t) MemStreamGetBytes,  /* retrieve some octets (multiple of 4)         */
-    FUNC(bool_t) MemStreamPutBytes,  /* store some octets (multiple of 4)            */
-    FUNC(u_int)  MemStreamGetPos,    /* */
-    FUNC(bool_t) MemStreamSetPos,    /* */
-    FUNC(XDR_INLINE_PTR) MemStreamInline,    /* get some space in the buffer for fast access */
-    FUNC(void)   MemStreamDestroy    /* clean up the mess                            */
+    FUNC(bool_t,(XDR*,long*)) MemStreamGetLong,   /* retrieve a 32 bit integer in host order      */
+    FUNC(bool_t,(XDR*,PLT_CONST long*)) MemStreamPutLong,   /* store a 32 bit integer in host order         */
+    FUNC(bool_t,(XDR*,caddr_t,u_int)) MemStreamGetBytes,  /* retrieve some octets (multiple of 4)         */
+    FUNC(bool_t,(XDR*,PLT_CONST char *,u_int)) MemStreamPutBytes,  /* store some octets (multiple of 4)            */
+    FUNC(u_int,(PLT_CONST XDR*)) MemStreamGetPos,    /* */
+    FUNC(bool_t,(XDR*,u_int)) MemStreamSetPos,    /* */
+    FUNC(XDR_INLINE_PTR,(XDR*,u_int)) MemStreamInline,    /* get some space in the buffer for fast access */
+    FUNC(void,(XDR*)) MemStreamDestroy    /* clean up the mess                            */
 }; /* memstream_operations */
+#if defined(__cplusplus)
+} /* leave C binding */
+#endif
 
 
 /* ---------------------------------------------------------------------------
@@ -558,7 +564,7 @@ static void MemStreamDestroy(XDR *xdrs)
  * or she/he will get in deep trouble the next time she/he
  * accesses the memory stream (due to misaligned pointers).
  */
-static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, int len)
+static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, u_int len)
 {
     if ( xdrs->x_handy == 0 ) {
 	/*

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.27 1999-09-16 10:54:46 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.28 2003-09-23 15:36:02 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -59,7 +59,7 @@ KscVariable::debugPrint(ostream &os) const
     os << "KscVariable object:" << endl;
     KscCommObject::debugPrint(os);
     os << "Dirty Flag: " << fDirty << endl;
-    proj_props.debugPrint(os);
+    eng_props.debugPrint(os);
     curr_props.debugPrint(os);
 }
 
@@ -69,7 +69,7 @@ KscDomain::debugPrint(ostream &os) const
 {
     os << "KscDomain object:" << endl;
     KscCommObject::debugPrint(os);
-    proj_props.debugPrint(os);
+    eng_props.debugPrint(os);
 }
 
 #endif // PLT_DEBUG
