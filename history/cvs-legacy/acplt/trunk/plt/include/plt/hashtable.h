@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.6 1997-03-19 12:27:00 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.7 1997-03-25 21:16:34 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -123,8 +123,8 @@ public:
     PltKeyPtr(T *p = 0);
     unsigned long hash() const;
     bool operator == (const PltKeyPtr & p) const;
-    T & operator * ();
-    T * operator ->();
+    T & operator * () const;
+    T * operator ->() const;
 private:
     T* _p;
 };
@@ -440,7 +440,7 @@ PltKeyPtr<T>::operator == (const PltKeyPtr & rhs) const
 
 template <class T>
 inline T *
-PltKeyPtr<T>::operator -> ()
+PltKeyPtr<T>::operator -> () const
 {
     return _p;
 }
@@ -449,7 +449,7 @@ PltKeyPtr<T>::operator -> ()
 
 template <class T>
 inline T &
-PltKeyPtr<T>::operator * ()
+PltKeyPtr<T>::operator * () const
 {
     return *_p;
 }
