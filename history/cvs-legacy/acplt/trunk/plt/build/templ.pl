@@ -49,7 +49,7 @@ do {
     open (MSGS, "$link 2>&1 |") || die('cant start linker');
     while (<MSGS>) {
 	print STDERR $_;
-	if (/(\w+<\s*\w+.*>)::\w+.*\s*\(code\)$/) {
+	if (/(\w+<\s*\w+.*>)::\w+.*\(.*\)/) {
 	    # member
 	    @new{$1} = 1;
 	    $needanother = 1;
