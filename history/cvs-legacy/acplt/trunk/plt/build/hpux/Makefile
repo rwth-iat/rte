@@ -42,6 +42,7 @@ CXX_LIBPLT_OBJECTS = \
 	hashtable.o
 
 CXX_TEST_SOURCES = \
+	tcomparable.cpp\
 	trtti.cpp \
 	tlist.cpp \
 	ipriorityqueue.cpp tpriorityqueue.cpp \
@@ -54,7 +55,8 @@ CXX_TEST_SOURCES = \
 
 CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 
-TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray thtname
+TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray\
+	thtname tcomparable
 
 all : libplt.a $(TESTS)
 
@@ -90,6 +92,9 @@ thashtable :	thashtable.o libplt.a
 thtname :	thtname.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
+tcomparable :	tcomparable.o
+	$(CXX_LINK) -o $@ $^
+
 tarray :	tarray.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
@@ -101,7 +106,6 @@ mrproper :	clean
 
 depend : $(CXX_SOURCES)
 	$(CXX_COMPILE) -M $^ > .depend
-
 
 .depend:
 	touch .depend
