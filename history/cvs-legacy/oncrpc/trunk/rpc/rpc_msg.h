@@ -50,6 +50,13 @@
 #ifndef __RPC_MSG_HEADER__
 #define __RPC_MSG_HEADER__
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 #define RPC_MSG_VERSION		((u_long) 2)
 #define RPC_SERVICE_PORT	((u_short) 2048)
 
@@ -174,7 +181,7 @@ struct rpc_msg {
  * 	XDR *xdrs;
  * 	struct rpc_msg *cmsg;
  */
-extern bool_t	xdr_callmsg();
+extern bool_t	xdr_callmsg(DOTS);
 
 /*
  * XDR routine to pre-serialize the static part of a rpc message.
@@ -182,7 +189,7 @@ extern bool_t	xdr_callmsg();
  * 	XDR *xdrs;
  * 	struct rpc_msg *cmsg;
  */
-extern bool_t	xdr_callhdr();
+extern bool_t	xdr_callhdr(DOTS);
 
 /*
  * XDR routine to handle a rpc reply.
@@ -190,7 +197,7 @@ extern bool_t	xdr_callhdr();
  * 	XDR *xdrs;
  * 	struct rpc_msg *rmsg;
  */
-extern bool_t	xdr_replymsg();
+extern bool_t	xdr_replymsg(DOTS);
 
 /*
  * Fills in the error part of a reply message.
@@ -198,7 +205,11 @@ extern bool_t	xdr_replymsg();
  * 	struct rpc_msg *msg;
  * 	struct rpc_err *error;
  */
-extern void	_seterr_reply();
+extern void	_seterr_reply(DOTS);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif	/*  __RPC_MSG_HEADER__ */
 

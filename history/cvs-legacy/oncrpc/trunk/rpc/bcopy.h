@@ -7,8 +7,16 @@
  * USE OF. USE ENTIRELY AT YOUR OWN RISK!!!
  *********************************************************************/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void bcopy(char *,char*,int);
 void bcopy_nf(char *,char *,int);
 void bcopy_fn(char *,char *,int);
 void bcopy_ff(char *,char *,int);
 void bzero(char*,int);
+#ifdef __cplusplus
+};
+#endif
+

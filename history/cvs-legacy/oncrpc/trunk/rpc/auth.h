@@ -52,6 +52,13 @@
 #ifndef __AUTH_HEADER__
 #define __AUTH_HEADER__
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 #define MAX_AUTH_BYTES	400
 #define MAXNETNAMELEN	255	/* maximum length of network user's name */
 
@@ -95,7 +102,7 @@ union des_block {
 };
 #endif
 typedef union des_block des_block;
-extern bool_t xdr_des_block();
+extern bool_t xdr_des_block(DOTS);
 
 /*
  * Authentication info.  Opaque to client.
@@ -115,11 +122,11 @@ typedef struct {
 	struct	opaque_auth	ah_verf;
 	union	des_block	ah_key;
 	struct auth_ops {
-		void	(*ah_nextverf)();
-		int	(*ah_marshal)();	/* nextverf & serialize */
-		int	(*ah_validate)();	/* validate varifier */
-		int	(*ah_refresh)();	/* refresh credentials */
-		void	(*ah_destroy)();	/* destroy this structure */
+		void	(*ah_nextverf)(DOTS);
+		int	(*ah_marshal)(DOTS);	/* nextverf & serialize */
+		int	(*ah_validate)(DOTS);	/* validate varifier */
+		int	(*ah_refresh)(DOTS);	/* refresh credentials */
+		void	(*ah_destroy)(DOTS);	/* destroy this structure */
 	} *ah_ops;
 	caddr_t ah_private;
 } AUTH;
@@ -186,16 +193,20 @@ extern struct opaque_auth _null_auth;
  *	int len;
  *	int *aup_gids;
  */
-extern AUTH *authunix_create();
-extern AUTH *authunix_create_default();	/* takes no parameters */
-extern AUTH *authnone_create();		/* takes no parameters */
-extern AUTH *authdes_create();
+extern AUTH *authunix_create(DOTS);
+extern AUTH *authunix_create_default(DOTS);	/* takes no parameters */
+extern AUTH *authnone_create(DOTS);		/* takes no parameters */
+extern AUTH *authdes_create(DOTS);
 
 #define AUTH_NONE	0		/* no authentication */
 #define	AUTH_NULL	0		/* backward compatibility */
 #define	AUTH_UNIX	1		/* unix style (uid, gids) */
 #define	AUTH_SHORT	2		/* short hand unix style */
 #define AUTH_DES	3		/* des style (encrypted timestamps) */
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif	/* __AUTH_HEADER__ */
 

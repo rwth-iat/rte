@@ -59,12 +59,23 @@
 #define WSAerrno (WSAGetLastError())
 #define gettimeofday(tv,tz) ((tv)->tv_sec = time(0), (tv)->tv_usec = 0)
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 extern int rpc_nt_init(void);
 extern int rpc_nt_exit(void);
-extern void nt_rpc_report();
+extern void nt_rpc_report(DOTS);
 
 #include <rpc/bcopy.h>
-extern int xdr_opaque_auth();
+extern int xdr_opaque_auth(DOTS);
+
+#ifdef __cplusplus
+};
+#endif
 
 #else
 #include <rpc/types.h>		/* some typedefs */

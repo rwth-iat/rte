@@ -48,6 +48,14 @@
 #ifndef __SVC_HEADER__
 #define __SVC_HEADER__
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
+
 /*
  * This interface must manage two items concerning remote procedure calling:
  *
@@ -83,12 +91,12 @@ typedef struct {
 	int		xp_sock;
 	u_short		xp_port;	 /* associated port number */
 	struct xp_ops {
-	    bool_t	(*xp_recv)();	 /* receive incomming requests */
-	    enum xprt_stat (*xp_stat)(); /* get transport status */
-	    bool_t	(*xp_getargs)(); /* get arguments */
-	    bool_t	(*xp_reply)();	 /* send reply */
-	    bool_t	(*xp_freeargs)();/* free mem allocated for args */
-	    void	(*xp_destroy)(); /* destroy this struct */
+	    bool_t	(*xp_recv)(DOTS);	 /* receive incomming requests */
+	    enum xprt_stat (*xp_stat)(DOTS); /* get transport status */
+	    bool_t	(*xp_getargs)(DOTS); /* get arguments */
+	    bool_t	(*xp_reply)(DOTS);	 /* send reply */
+	    bool_t	(*xp_freeargs)(DOTS);/* free mem allocated for args */
+	    void	(*xp_destroy)(DOTS); /* destroy this struct */
 	} *xp_ops;
 	int		xp_addrlen;	 /* length of remote address */
 	struct sockaddr_in xp_raddr;	 /* remote address */
@@ -161,10 +169,10 @@ struct svc_req {
  *	SVCXPRT *xprt;
  *	u_long prog;
  *	u_long vers;
- *	void (*dispatch)();
+ *	void (*dispatch)(DOTS);
  *	int protocol;  /* like TCP or UDP, zero means do not register 
  */
-extern bool_t	svc_register();
+extern bool_t	svc_register(DOTS);
 
 /*
  * Service un-registration
@@ -173,7 +181,7 @@ extern bool_t	svc_register();
  *	u_long prog;
  *	u_long vers;
  */
-extern void	svc_unregister();
+extern void	svc_unregister(DOTS);
 
 /*
  * Transport registration.
@@ -181,7 +189,7 @@ extern void	svc_unregister();
  * xprt_register(xprt)
  *	SVCXPRT *xprt;
  */
-extern void	xprt_register();
+extern void	xprt_register(DOTS);
 
 /*
  * Transport un-register
@@ -189,7 +197,7 @@ extern void	xprt_register();
  * xprt_unregister(xprt)
  *	SVCXPRT *xprt;
  */
-extern void	xprt_unregister();
+extern void	xprt_unregister(DOTS);
 
 
 
@@ -220,14 +228,14 @@ extern void	xprt_unregister();
  * deadlock the caller and server processes!
  */
 
-extern bool_t	svc_sendreply();
-extern void	svcerr_decode();
-extern void	svcerr_weakauth();
-extern void	svcerr_noproc();
-extern void	svcerr_progvers();
-extern void	svcerr_auth();
-extern void	svcerr_noprog();
-extern void	svcerr_systemerr();
+extern bool_t	svc_sendreply(DOTS);
+extern void	svcerr_decode(DOTS);
+extern void	svcerr_weakauth(DOTS);
+extern void	svcerr_noproc(DOTS);
+extern void	svcerr_progvers(DOTS);
+extern void	svcerr_auth(DOTS);
+extern void	svcerr_noprog(DOTS);
+extern void	svcerr_systemerr(DOTS);
     
 /*
  * Lowest level dispatching -OR- who owns this process anyway.
@@ -267,11 +275,11 @@ extern int svc_fds;
  * a small program implemented by the svc_rpc implementation itself;
  * also see clnt.h for protocol numbers.
  */
-extern void rpctest_service();
+extern void rpctest_service(DOTS);
 
-extern void	svc_getreq();
-extern void	svc_getreqset();	/* takes fdset instead of int */
-extern void	svc_run(); 	 /* never returns */
+extern void	svc_getreq(DOTS);
+extern void	svc_getreqset(DOTS);	/* takes fdset instead of int */
+extern void	svc_run(DOTS); 	 /* never returns */
 
 /*
  * Socket to use on svcxxx_create call to get default socket
@@ -285,19 +293,21 @@ extern void	svc_run(); 	 /* never returns */
 /*
  * Memory based rpc for testing and timing.
  */
-extern SVCXPRT *svcraw_create();
+extern SVCXPRT *svcraw_create(DOTS);
 
 /*
  * Udp based rpc.
  */
-extern SVCXPRT *svcudp_create();
-extern SVCXPRT *svcudp_bufcreate();
+extern SVCXPRT *svcudp_create(DOTS);
+extern SVCXPRT *svcudp_bufcreate(DOTS);
 
 /*
  * Tcp based rpc.
  */
-extern SVCXPRT *svctcp_create();
+extern SVCXPRT *svctcp_create(DOTS);
 
-
+#ifdef __cplusplus
+};
+#endif
 
 #endif /* __SVC_HEADER__ */

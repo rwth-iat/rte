@@ -50,4 +50,9 @@
 /*
  * Server side authenticator
  */
-extern enum auth_stat _authenticate();
+#ifdef __cplusplus
+extern "C" auth_stat _authenticate(...);
+#else
+extern struct auth_stat _authenticate();
+#endif
+

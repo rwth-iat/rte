@@ -39,6 +39,13 @@
  * Mountain View, California  94043
  */
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 /*
  * pmap_prot.h
  * Protocol for the local binder service, or pmap.
@@ -95,11 +102,16 @@ struct pmap {
 	long unsigned pm_port;
 };
 
-extern bool_t xdr_pmap();
+extern bool_t xdr_pmap(DOTS);
 
 struct pmaplist {
 	struct pmap	pml_map;
 	struct pmaplist *pml_next;
 };
 
-extern bool_t xdr_pmaplist();
+extern bool_t xdr_pmaplist(DOTS);
+
+#ifdef __cplusplus
+};
+#endif
+

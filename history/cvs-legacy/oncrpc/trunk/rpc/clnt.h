@@ -48,6 +48,13 @@
 #ifndef _CLNT_
 #define _CLNT_
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 /*
  * Rpc calls return an enum clnt_stat.  This should be looked at more,
  * since each implementation is required to live with this (implementation
@@ -124,12 +131,12 @@ struct rpc_err {
 typedef struct {
 	AUTH	*cl_auth;			/* authenticator */
 	struct clnt_ops {
-		enum clnt_stat	(*cl_call)();	/* call remote procedure */
-		void		(*cl_abort)();	/* abort a call */
-		void		(*cl_geterr)();	/* get specific error code */
-		bool_t		(*cl_freeres)(); /* frees results */
-		void		(*cl_destroy)();/* destroy this structure */
-		bool_t          (*cl_control)();/* the ioctl() of rpc */
+		enum clnt_stat	(*cl_call)(DOTS);	/* call remote procedure */
+		void		(*cl_abort)(DOTS);	/* abort a call */
+		void		(*cl_geterr)(DOTS);	/* get specific error code */
+		bool_t		(*cl_freeres)(DOTS); /* frees results */
+		void		(*cl_destroy)(DOTS);/* destroy this structure */
+		bool_t          (*cl_control)(DOTS);/* the ioctl() of rpc */
 	} *cl_ops;
 	caddr_t			cl_private;	/* private stuff */
 } CLIENT;
@@ -246,14 +253,14 @@ typedef struct {
  *	u_long prog;
  *	u_long vers;
  */
-extern CLIENT *clntraw_create();
+extern CLIENT *clntraw_create(DOTS);
 
 
 /*
  * Generic client creation routine. Supported protocols are "udp" and "tcp"
  */
 extern CLIENT *
-clnt_create(/*host, prog, vers, prot*/); /*
+clnt_create(/*host, prog, vers, prot*/DOTS); /*
 	char *host; 	-- hostname
 	u_long prog;	-- program number
 	u_long vers;	-- version number
@@ -274,7 +281,7 @@ clnt_create(/*host, prog, vers, prot*/); /*
  *	u_int sendsz;
  *	u_int recvsz;
  */
-extern CLIENT *clnttcp_create();
+extern CLIENT *clnttcp_create(DOTS);
 
 /*
  * UDP based rpc.
@@ -297,25 +304,25 @@ extern CLIENT *clnttcp_create();
  *	u_int sendsz;
  *	u_int recvsz;
  */
-extern CLIENT *clntudp_create();
-extern CLIENT *clntudp_bufcreate();
+extern CLIENT *clntudp_create(DOTS);
+extern CLIENT *clntudp_bufcreate(DOTS);
 
 /*
  * Print why creation failed
  */
-void clnt_pcreateerror(/* char *msg */);	/* stderr */
-char *clnt_spcreateerror(/* char *msg */);	/* string */
+void clnt_pcreateerror(/* char *msg */DOTS);	/* stderr */
+char *clnt_spcreateerror(/* char *msg */DOTS);	/* string */
 
 /*
  * Like clnt_perror(), but is more verbose in its output
  */ 
-void clnt_perrno(/* enum clnt_stat num */);	/* stderr */
+void clnt_perrno(/* enum clnt_stat num */DOTS);	/* stderr */
 
 /*
  * Print an English error message, given the client error code
  */
-void clnt_perror(/* CLIENT *clnt, char *msg */); 	/* stderr */
-char *clnt_sperror(/* CLIENT *clnt, char *msg */);	/* string */
+void clnt_perror(/* CLIENT *clnt, char *msg */DOTS); 	/* stderr */
+char *clnt_sperror(/* CLIENT *clnt, char *msg */DOTS);	/* string */
 
 /* 
  * If a creation fails, the following allows the user to figure out why.
@@ -343,11 +350,15 @@ extern struct rpc_createerr rpc_createerr;
 /*
  * Copy error message to buffer.
  */
-char *clnt_sperrno(/* enum clnt_stat num */);	/* string */
+char *clnt_sperrno(/* enum clnt_stat num */DOTS);	/* string */
 
 
 
 #define UDPMSGSIZE	8800	/* rpc imposed limit on udp msg size */
 #define RPCSMALLMSGSIZE	400	/* a more reasonable packet size */
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif /*!_CLNT_*/

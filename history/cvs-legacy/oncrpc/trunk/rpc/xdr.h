@@ -49,6 +49,13 @@
 #ifndef __XDR_HEADER__
 #define __XDR_HEADER__
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 /*
  * XDR provides a conventional way for converting between C data
  * types and an external bit-string representation.  Library supplied
@@ -106,7 +113,7 @@ enum xdr_op {
  * allocate dynamic storage of the appropriate size and return it.
  * bool_t	(*xdrproc_t)(XDR *, caddr_t *);
  */
-typedef	bool_t (*xdrproc_t)();
+typedef	bool_t (*xdrproc_t)(DOTS);
 
 /*
  * The XDR handle.
@@ -117,14 +124,14 @@ typedef	bool_t (*xdrproc_t)();
 typedef struct {
 	enum xdr_op	x_op;		/* operation; fast additional param */
 	struct xdr_ops {
-		bool_t	(*x_getlong)();	/* get a long from underlying stream */
-		bool_t	(*x_putlong)();	/* put a long to " */
-		bool_t	(*x_getbytes)();/* get some bytes from " */
-		bool_t	(*x_putbytes)();/* put some bytes to " */
-		u_int	(*x_getpostn)();/* returns bytes off from beginning */
-		bool_t  (*x_setpostn)();/* lets you reposition the stream */
-		long *	(*x_inline)();	/* buf quick ptr to buffered data */
-		void	(*x_destroy)();	/* free privates of this xdr_stream */
+		bool_t	(*x_getlong)(DOTS);	/* get a long from underlying stream */
+		bool_t	(*x_putlong)(DOTS);	/* put a long to " */
+		bool_t	(*x_getbytes)(DOTS);/* get some bytes from " */
+		bool_t	(*x_putbytes)(DOTS);/* put some bytes to " */
+		u_int	(*x_getpostn)(DOTS);/* returns bytes off from beginning */
+		bool_t  (*x_setpostn)(DOTS);/* lets you reposition the stream */
+		long *	(*x_inline)(DOTS);	/* buf quick ptr to buffered data */
+		void	(*x_destroy)(DOTS);	/* free privates of this xdr_stream */
 	} *x_ops;
 	caddr_t 	x_public;	/* users' data */
 	caddr_t		x_private;	/* pointer to private data */
@@ -232,28 +239,28 @@ struct xdr_discrim {
 /*
  * These are the "generic" xdr routines.
  */
-extern bool_t	xdr_void();
-extern bool_t	xdr_int();
-extern bool_t	xdr_u_int();
-extern bool_t	xdr_long();
-extern bool_t	xdr_u_long();
-extern bool_t	xdr_short();
-extern bool_t	xdr_u_short();
-extern bool_t	xdr_bool();
-extern bool_t	xdr_enum();
-extern bool_t	xdr_array();
-extern bool_t	xdr_bytes();
-extern bool_t	xdr_opaque();
-extern bool_t	xdr_string();
-extern bool_t	xdr_union();
-extern bool_t	xdr_char();
-extern bool_t	xdr_u_char();
-extern bool_t	xdr_vector();
-extern bool_t	xdr_float();
-extern bool_t	xdr_double();
-extern bool_t	xdr_reference();
-extern bool_t	xdr_pointer();
-extern bool_t	xdr_wrapstring();
+extern bool_t	xdr_void(DOTS);
+extern bool_t	xdr_int(DOTS);
+extern bool_t	xdr_u_int(DOTS);
+extern bool_t	xdr_long(DOTS);
+extern bool_t	xdr_u_long(DOTS);
+extern bool_t	xdr_short(DOTS);
+extern bool_t	xdr_u_short(DOTS);
+extern bool_t	xdr_bool(DOTS);
+extern bool_t	xdr_enum(DOTS);
+extern bool_t	xdr_array(DOTS);
+extern bool_t	xdr_bytes(DOTS);
+extern bool_t	xdr_opaque(DOTS);
+extern bool_t	xdr_string(DOTS);
+extern bool_t	xdr_union(DOTS);
+extern bool_t	xdr_char(DOTS);
+extern bool_t	xdr_u_char(DOTS);
+extern bool_t	xdr_vector(DOTS);
+extern bool_t	xdr_float(DOTS);
+extern bool_t	xdr_double(DOTS);
+extern bool_t	xdr_reference(DOTS);
+extern bool_t	xdr_pointer(DOTS);
+extern bool_t	xdr_wrapstring(DOTS);
 
 /*
  * Common opaque bytes objects used by many rpc protocols;
@@ -265,17 +272,21 @@ struct netobj {
 	char	*n_bytes;
 };
 typedef struct netobj netobj;
-extern bool_t   xdr_netobj();
+extern bool_t   xdr_netobj(DOTS);
 
 /*
  * These are the public routines for the various implementations of
  * xdr streams.
  */
-extern void   xdrmem_create();		/* XDR using memory buffers */
-extern void   xdrstdio_create();	/* XDR using stdio library */
-extern void   xdrrec_create();		/* XDR pseudo records for tcp */
-extern bool_t xdrrec_endofrecord();	/* make end of xdr record */
-extern bool_t xdrrec_skiprecord();	/* move to beginning of next record */
-extern bool_t xdrrec_eof();		/* true if no more input */
+extern void   xdrmem_create(DOTS);		/* XDR using memory buffers */
+extern void   xdrstdio_create(DOTS);	/* XDR using stdio library */
+extern void   xdrrec_create(DOTS);		/* XDR pseudo records for tcp */
+extern bool_t xdrrec_endofrecord(DOTS);	/* make end of xdr record */
+extern bool_t xdrrec_skiprecord(DOTS);	/* move to beginning of next record */
+extern bool_t xdrrec_eof(DOTS);		/* true if no more input */
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif /* __XDR_HEADER__ */

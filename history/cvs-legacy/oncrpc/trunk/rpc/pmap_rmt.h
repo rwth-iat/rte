@@ -39,6 +39,13 @@
  * Mountain View, California  94043
  */
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 /*
  * Structures and XDR routines for parameters to and replies from
  * the portmapper remote-call-service.
@@ -52,7 +59,7 @@ struct rmtcallargs {
 	xdrproc_t xdr_args;
 };
 
-bool_t xdr_rmtcall_args();
+bool_t xdr_rmtcall_args(DOTS);
 
 struct rmtcallres {
 	u_long *port_ptr;
@@ -61,4 +68,8 @@ struct rmtcallres {
 	xdrproc_t xdr_results;
 };
 
-bool_t xdr_rmtcallres();
+bool_t xdr_rmtcallres(DOTS);
+#ifdef __cplusplus
+};
+#endif
+

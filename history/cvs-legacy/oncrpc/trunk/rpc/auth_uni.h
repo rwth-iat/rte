@@ -56,6 +56,13 @@
 #ifndef __AUTH_UNIX_HEADER__
 #define __AUTH_UNIX_HEADER__
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 /* The machine name is part of a credential; it may not exceed 255 bytes */
 #define MAX_MACHINE_NAME 255
 
@@ -74,7 +81,7 @@ struct authunix_parms {
 	int	*aup_gids;
 };
 
-extern bool_t xdr_authunix_parms();
+extern bool_t xdr_authunix_parms(DOTS);
 
 /* 
  * If a response verifier has flavor AUTH_SHORT, 
@@ -84,6 +91,11 @@ extern bool_t xdr_authunix_parms();
 struct short_hand_verf {
 	struct opaque_auth new_cred;
 };
+
+#ifdef __cplusplus
+};
+#endif
+
 
 #endif	/* __AUTH_UNIX_HEADER__ */
 

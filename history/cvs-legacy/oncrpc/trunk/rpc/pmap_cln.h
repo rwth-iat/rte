@@ -46,6 +46,13 @@
  * Copyright (C) 1984, Sun Microsystems, Inc.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#define DOTS ...
+#else
+#define DOTS
+#endif
+
 /*
  * Usage:
  *	success = pmap_set(program, version, protocol, port);
@@ -68,9 +75,14 @@
  *		address if the responder to the broadcast.
  */
 
-extern bool_t		pmap_set();
-extern bool_t		pmap_unset();
-extern struct pmaplist	*pmap_getmaps();
-enum clnt_stat		pmap_rmtcall();
-enum clnt_stat		clnt_broadcast();
-extern u_short		pmap_getport();
+extern bool_t		pmap_set(DOTS);
+extern bool_t		pmap_unset(DOTS);
+extern struct pmaplist	*pmap_getmaps(DOTS);
+enum clnt_stat		pmap_rmtcall(DOTS);
+enum clnt_stat		clnt_broadcast(DOTS);
+extern u_short		pmap_getport(DOTS);
+
+#ifdef __cplusplus
+};
+#endif
+
