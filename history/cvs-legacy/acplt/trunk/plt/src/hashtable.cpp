@@ -11,28 +11,28 @@
 
 //////////////////////////////////////////////////////////////////////
 
-PLT_IMPL_RTTI0(PltHashKey);
+PLT_IMPL_RTTI0(PltKey);
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 // sentinel obj
 // TODO: should not require two additional singleton classes
 
-class PltNoHashKey : public PltHashKey
+class PltNoKey : public PltKey
 {
     virtual unsigned long hash() const { return 0; }
-    virtual bool operator == (const PltHashKey & ) const { return false; }
+    virtual bool operator == (const PltKey & ) const { return false; }
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class PltDeletedHashAssoc : public PltHashAssoc_base
+class PltDeletedHashAssoc : public PltAssoc_
 {
-    static PltNoHashKey noKey;
-    virtual const PltHashKey & key() const { return noKey; }
+    static PltNoKey noKey;
+    virtual const PltKey & key() const { return noKey; }
 };
 
-PltNoHashKey
+PltNoKey
 PltDeletedHashAssoc::noKey;
 
 //////////////////////////////////////////////////////////////////////
@@ -40,8 +40,8 @@ PltDeletedHashAssoc::noKey;
 
 static PltDeletedHashAssoc deleted_obj;
 
-PltHashAssoc_base *
-PltHashAssoc_base::deleted = &deleted_obj;
+static PltAssoc_ *
+deletedAssoc = &deleted_obj;
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -78,6 +78,15 @@ PltHashTable_base::collidx(size_t i, size_t j) const
 {
     const size_t k = i+j;
     return k % a_capacity;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+PltHashTable_base::usedSlot(const PltAssoc_ *p)
+{
+    return p && p != deletedAssoc;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -128,7 +137,7 @@ PltHashTable_base::invariant() const
     for (size_t j = 0; j < a_capacity; ++j) {
         if (a_table[j]) {
                 ++used;
-            if (a_table[j] == PltHashAssoc_base::deleted) {
+            if (a_table[j] == deletedAssoc) {
                 ++deld;
             }
         }
@@ -149,10 +158,8 @@ PltHashTable_base::invariant() const
     bool dupes = false;
     for (size_t k = 0; !dupes && k < a_capacity; ++k) {
         for (size_t l = k + 1; !dupes && l < a_capacity; ++l) {
-            if (   a_table[k] 
-                && a_table[k] != PltHashAssoc_base::deleted
-                && a_table[l]
-                && a_table[l] != PltHashAssoc_base::deleted
+            if (   usedSlot(a_table[k])
+                && usedSlot(a_table[l])
                 && a_table[k]->key() == a_table[l]->key()   ) {
                 dupes = true;
             }
@@ -198,11 +205,11 @@ bool PltHashTable_base::changeCapacity(size_t cap)
     }
 
     // rehash
-    PltHashAssoc_base ** oldTable = a_table;
+    PltAssoc_ ** oldTable = a_table;
     size_t oldCapacity = a_capacity;
     bool result;
 
-    PltHashAssoc_base ** newTable = new PltHashAssoc_base*[newCap];
+    PltAssoc_ ** newTable = new PltAssoc_*[newCap];
     if (newTable) {
         a_table = newTable; 
         a_used = 0; 
@@ -216,7 +223,7 @@ bool PltHashTable_base::changeCapacity(size_t cap)
         if (oldTable) {
             // insert entries from old table into new table
             for (i = 0; i<oldCapacity; ++i) {
-                if (oldTable[i] && oldTable[i] != PltHashAssoc_base::deleted) {
+                if ( usedSlot(oldTable[i]) ) {
                     bool b = insert(oldTable[i]);
                     PLT_ASSERT(b);
                 }
@@ -235,7 +242,7 @@ bool PltHashTable_base::changeCapacity(size_t cap)
 //////////////////////////////////////////////////////////////////////
 
 size_t
-PltHashTable_base::locate(const PltHashKey & key) const 
+PltHashTable_base::locate(const PltKey & key) const 
     // find the index of a key, return a_capacity if not found
 {
     PLT_PRECONDITION(a_used < a_capacity);
@@ -257,7 +264,7 @@ PltHashTable_base::locate(const PltHashKey & key) const
 //////////////////////////////////////////////////////////////////////
 
 bool
-PltHashTable_base::insert(PltHashAssoc_base * p) 
+PltHashTable_base::insert(PltAssoc_ * p) 
     // insert without size checking
 {
     PLT_PRECONDITION(a_used + 1 < a_capacity);
@@ -269,10 +276,10 @@ PltHashTable_base::insert(PltHashAssoc_base * p)
     bool dupe   = false;         // duplicate found?
     size_t deleted = a_capacity; // first matching deleted if any
     size_t ins;                  // insertion point
-    size_t i = p->hash();
+    size_t i = p->key().hash();
     size_t j = 0;
     for (i = collidx(i,0); !dupe && a_table[i]; i = collidx(i,++j)) {
-        if ( a_table[i] == PltHashAssoc_base::deleted ) {
+        if ( a_table[i] == deletedAssoc ) {
             // deleted entry while inserting
             deleted = i;
             // continue and check for duplicate
@@ -285,7 +292,7 @@ PltHashTable_base::insert(PltHashAssoc_base * p)
         if (deleted < a_capacity) {
             // use this deleted entry
             ins = deleted;
-            PLT_ASSERT(a_table[ins] == PltHashAssoc_base::deleted);
+            PLT_ASSERT(a_table[ins] == deletedAssoc);
             // not a deleted entry any more
             --a_deleted;
         } else {
@@ -304,7 +311,7 @@ PltHashTable_base::insert(PltHashAssoc_base * p)
 //////////////////////////////////////////////////////////////////////
 
 bool 
-PltHashTable_base::addAssoc(PltHashAssoc_base *p) 
+PltHashTable_base::addAssoc(PltAssoc_ *p) 
     // grow if needed and insert p
 {
     PLT_PRECONDITION(p);
@@ -325,20 +332,20 @@ PltHashTable_base::addAssoc(PltHashAssoc_base *p)
 
 //////////////////////////////////////////////////////////////////////
 
-PltHashAssoc_base *
-PltHashTable_base::removeAssoc(const PltHashKey & key)
+PltAssoc_ *
+PltHashTable_base::removeAssoc(const PltKey & key)
     // remove an assoc with key key and return it. return 0 if not found
 {
 #if PLT_DEBUG_POSTCONDITIONS
     size_t oldSize = size();
 #endif
     size_t i = locate(key);
-    PltHashAssoc_base *result;
+    PltAssoc_ *result;
     
     if ( i < a_capacity ) {
         // found
         result = a_table[i];
-        a_table[i] = PltHashAssoc_base::deleted;
+        a_table[i] = deletedAssoc;
         ++a_deleted;
         PLT_CHECK_INVARIANT();
         if ( size() < a_capacity * a_lowwater ) {
@@ -356,12 +363,12 @@ PltHashTable_base::removeAssoc(const PltHashKey & key)
 
 //////////////////////////////////////////////////////////////////////
 
-PltHashAssoc_base *
-PltHashTable_base::lookupAssoc(const PltHashKey & key) const
+PltAssoc_ *
+PltHashTable_base::lookupAssoc(const PltKey & key) const
     // return an assoc with key key or 0 if not found
 {
     size_t i = locate(key);
-    PltHashAssoc_base *result;
+    PltAssoc_ *result;
 
     if (i < a_capacity) {
         // found
@@ -372,7 +379,65 @@ PltHashTable_base::lookupAssoc(const PltHashKey & key) const
 
     return result;
 }
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+bool
+PltHashIterator_base::inRange() const
+{
+    return a_index < a_container.a_capacity;
+}
     
+//////////////////////////////////////////////////////////////////////
+
+PltHashIterator_base::PltHashIterator_base(const PltHashTable_base & t)
+: a_container(t), a_index(0)
+{
+    if (   inRange() 
+        && !PltHashTable_base::usedSlot(a_container.a_table[a_index]) ) {
+        advance();
+    }
+    PLT_CHECK_INVARIANT();
+}
+
+
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG_INVARIANTS
+
+bool
+PltHashIterator_base::invariant() const
+{
+    return !inRange() 
+        || PltHashTable_base::usedSlot(a_container.a_table[a_index]);
+}
+
+#endif
+//////////////////////////////////////////////////////////////////////
+
+void 
+PltHashIterator_base::advance()
+{
+    PLT_PRECONDITION(inRange());
+
+    do {
+        ++ a_index;
+    } while (inRange() && 
+             !PltHashTable_base::usedSlot(a_container.a_table[a_index]) );
+
+    PLT_CHECK_INVARIANT();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+PltAssoc_ &
+PltHashIterator_base::current() const
+{
+    PLT_PRECONDITION( inRange() );
+    return *a_container.a_table[a_index];
+}
+
 //////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////

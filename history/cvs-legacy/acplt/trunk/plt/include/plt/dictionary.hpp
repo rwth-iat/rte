@@ -9,6 +9,8 @@
 #define PLT_DICTIONARY_INCLUDED
 
 #include <plt/debug.h>
+#include <plt/key.hpp>
+#include <plt/assoc.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // abstract class PltDictionary<K,V>
@@ -43,7 +45,7 @@
 //////////////////////////////////////////////////////////////////////
 
 template <class K, class V>
-class PltDictionary : virtual public PltDebuggable {
+class PltDictionary {
 public:
     // accessors
     virtual bool query(const K&, V&) const = 0;
