@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.24 1998-07-22 09:38:36 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.25 1998-10-06 13:18:36 harald Exp $ */
 
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
@@ -201,7 +201,11 @@ public:
                         	u_short minor_opcode,
                         	const KscAvModule *avm,
                         	const KsXdrAble &params,
-                        	KsXdrAble &result) = 0;
+                        	KsResult &result) = 0;
+    virtual bool requestByOpcode(u_long service, 
+                                 const KscAvModule *avm,
+                                 const KsXdrAble &params,
+                                 KsResult &result) = 0;
 
     // AV related functions
     //
@@ -279,7 +283,12 @@ public:
                         	u_short minor_opcode,
                         	const KscAvModule *avm,
                         	const KsXdrAble &params,
-                        	KsXdrAble &result);
+                        	KsResult &result);
+    virtual bool requestByOpcode(u_long service, 
+                                 const KscAvModule *avm,
+                                 const KsXdrAble &params,
+                                 KsResult &result);
+
 
     //
     // accessors
@@ -305,11 +314,6 @@ protected:
                        unsigned short port,              // opt. port of manager
                        const KsServerDesc &server,       // description
                        KsGetServerResult &server_info);  // result
-
-    bool requestByOpcode(u_long service, 
-                         const KscAvModule *avm,
-                         const KsXdrAble &params,
-                         KsXdrAble &result);
 
 
     bool createTransport();

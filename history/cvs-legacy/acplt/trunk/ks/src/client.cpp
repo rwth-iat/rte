@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.34 1998-07-30 10:24:30 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.35 1998-10-06 13:18:37 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -1131,7 +1131,7 @@ KscServer::requestService(const KsString &extension,
                           u_short minor_opcode,
                           const KscAvModule *avm,
                           const KsXdrAble &params,
-                          KsXdrAble &result)
+                          KsResult &result)
 {
     u_long opcode = 0;
     //
@@ -1270,7 +1270,7 @@ bool
 KscServer::requestByOpcode(u_long service, 
                            const KscAvModule *avm,
                            const KsXdrAble &params,
-                           KsXdrAble &result) 
+                           KsResult &result) 
 {
     enum clnt_stat errcode;
 
