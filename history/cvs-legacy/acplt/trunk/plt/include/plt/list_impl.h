@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LIST_IMPL_INCLUDED
 #define PLT_LIST_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.3 1997-03-23 17:20:10 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.4 1997-03-26 17:06:34 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,6 +42,14 @@
 #include "plt/container_impl.h"
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+PltList<T>::~PltList() 
+{
+    while (!isEmpty()) removeFirst();
+}
+
 //////////////////////////////////////////////////////////////////////
 
 template<class T>
@@ -115,6 +123,13 @@ PltList<T>::remove(const T & t)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+template<class T>
+PltIList<T>::~PltIList() 
+{
+    while (!isEmpty()) removeFirst();
+}
+
+//////////////////////////////////////////////////////////////////////
 template<class T>
 PltIListIterator<T> *
 PltIList<T>::newIterator() const

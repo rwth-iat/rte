@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.4 1997-03-21 08:22:40 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.5 1997-03-26 17:06:33 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -82,6 +82,7 @@ class PltList
       friend class PltListIterator<T>;
 public:
     PltList();
+    ~PltList();
 
     // modifiers
     bool addFirst(const T & t);
@@ -111,7 +112,7 @@ class PltIList
     friend class PltIListIterator<T>;
 public:
     PltIList();
-
+    ~PltIList();
     // modifiers
     bool addFirst(T* p);
     bool addLast(T* p);
