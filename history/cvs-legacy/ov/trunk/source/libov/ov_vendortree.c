@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.2 1999-08-19 11:54:52 dirk Exp $
+*   $Id: ov_vendortree.c,v 1.3 1999-08-30 15:24:23 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -40,7 +40,6 @@
 /*
 *	Global variables
 */
-extern OV_VENDORTREE_INFO vendorinfo[];
 static OV_STRING	databasename = NULL;
 static OV_STRING	vendorname = NULL;
 static OV_STRING	serverdescription = NULL;
