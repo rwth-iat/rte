@@ -51,8 +51,8 @@ KsTime::xdrEncode(XDR *xdr) const {
 
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
 
-    return xdr_u_long(xdr, &tv_sec)
-	&& xdr_u_long(xdr, &tv_usec);
+    return xdr_long(xdr, &tv_sec)
+        && xdr_long(xdr, &tv_usec);
 }
 
 bool
@@ -60,8 +60,8 @@ KsTime::xdrDecode(XDR *xdr) {
 
     PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
 
-    return xdr_u_long(xdr, &tv_sec)
-	&& xdr_u_long(xdr, &tv_usec);
+    return xdr_long(xdr, &tv_sec)
+        && xdr_long(xdr, &tv_usec);
 }
 
 KsTime *
@@ -69,10 +69,10 @@ KsTime::xdrNew(XDR *xdr) {
     KsTime *p = new KsTime();
 
     if ( p && p->xdrDecode(xdr) ) {
-	return p;
+        return p;
     } else {
-	delete p;
-	return NULL;
+        delete p;
+        return NULL;
     }
 }
 

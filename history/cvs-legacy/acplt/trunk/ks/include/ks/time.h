@@ -51,12 +51,26 @@
 
 class KsTime : public PltTime, public KsXdrAble {
 public:
-    KsTime( unsigned long sec = 0L, unsigned long usec = 0L )
+    KsTime( long sec = 0L, long usec = 0L )
         : PltTime(sec, usec) {}
+    KsTime(XDR *, bool &);
     bool xdrEncode(XDR *xdr) const;
     bool xdrDecode(XDR *xdr);
     static KsTime *xdrNew(XDR *xdr);
 };
+
+
+//////////////////////////////////////////////////////////////////////
+// Inline Implementation
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsTime::KsTime(XDR *xdr, bool &ok)
+{
+    ok = KsTime::xdrDecode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
 
 #endif
 

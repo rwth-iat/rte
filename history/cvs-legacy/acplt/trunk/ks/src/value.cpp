@@ -19,6 +19,8 @@ PLT_IMPL_RTTI1(KsIntValue,KsValue);
 PLT_IMPL_RTTI1(KsUIntValue,KsValue);
 PLT_IMPL_RTTI1(KsSingleValue,KsValue);
 PLT_IMPL_RTTI1(KsDoubleValue,KsValue);
+// PLT_IMPL_RTTI2(KsStringValue,KsValue,KsString);
+// PLT_IMPL_RTTI2(KsTimeValue,KsValue,KsTime);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -27,6 +29,8 @@ KS_XDR_MAP(KS_VT_INT,KsIntValue);
 KS_XDR_MAP(KS_VT_UINT,KsUIntValue);
 KS_XDR_MAP(KS_VT_SINGLE,KsSingleValue);
 KS_XDR_MAP(KS_VT_DOUBLE,KsDoubleValue);
+KS_XDR_MAP(KS_VT_STRING,KsStringValue);
+KS_XDR_MAP(KS_VT_TIME,KsTimeValue);
 KS_END_IMPL_XDRUNION;
 
 // KS_IMPL_XDRCTOR(KsIntValue);
@@ -97,5 +101,91 @@ KsDoubleValue::xdrDecodeVariant(XDR *xdr)
 }
 
 //////////////////////////////////////////////////////////////////////
+// class KsStringValue
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsStringValue::xdrEncode(XDR *xdr) const
+{
+    return KsValue::xdrEncode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsStringValue::xdrDecode(XDR *xdr)
+{
+    return KsValue::xdrDecode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsStringValue::xdrTypeCode() const
+{
+    return KS_VT_STRING;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsStringValue::xdrEncodeVariant(XDR *xdr) const
+{
+    return KsString::xdrEncode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsStringValue::xdrDecodeVariant(XDR *xdr)
+{
+    return KsString::xdrDecode(xdr);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// class KsTimeValue
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsTimeValue::xdrEncode(XDR *xdr) const
+{
+    return KsValue::xdrEncode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsTimeValue::xdrDecode(XDR *xdr)
+{
+    return KsValue::xdrDecode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsTimeValue::xdrTypeCode() const
+{
+    return KS_VT_TIME;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsTimeValue::xdrEncodeVariant(XDR *xdr) const
+{
+    return KsTime::xdrEncode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsTimeValue::xdrDecodeVariant(XDR *xdr)
+{
+    return KsTime::xdrDecode(xdr);
+}
+
+
+
 
 

@@ -16,6 +16,8 @@
 // #include <ks/rpc.h>
 #include <ks/xdr.h>
 #include <ks/ks.h>
+#include <ks/string.h>
+#include <ks/time.h>
 
 //////////////////////////////////////////////////////////////////////
 // KsValue is the base class of value objects. It is closely related
@@ -109,6 +111,8 @@ public:
 
     virtual enum_t xdrTypeCode() const { return KS_VT_UINT; }
 
+    operator unsigned long () const { return val; }
+
 protected:
     virtual bool xdrEncodeVariant(XDR *) const;
     virtual bool xdrDecodeVariant(XDR *);
@@ -135,6 +139,8 @@ public:
 
     virtual enum_t xdrTypeCode() const { return KS_VT_SINGLE; }
 
+    operator float () const { return val; }
+
 protected:
     virtual bool xdrEncodeVariant(XDR *) const;
     virtual bool xdrDecodeVariant(XDR *);
@@ -160,6 +166,8 @@ public:
     void setDouble(double v);
     virtual enum_t xdrTypeCode() const { return KS_VT_DOUBLE; }
 
+    operator double () const { return val; }
+
 protected:
     virtual bool xdrEncodeVariant(XDR *) const;
     virtual bool xdrDecodeVariant(XDR *);
@@ -171,6 +179,58 @@ private:
     KsDoubleValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// class KsStringValue
+//////////////////////////////////////////////////////////////////////
+
+class KsStringValue : public KsString, public KsValue 
+{
+public:
+    KsStringValue();
+    KsStringValue(const char *);
+    
+    // redefinitions for resolving multiply function definitions 
+    // in base classes
+    virtual bool xdrEncode(XDR *) const;
+    virtual bool xdrDecode(XDR *);
+
+    virtual enum_t xdrTypeCode() const;
+
+protected:
+    virtual bool xdrEncodeVariant(XDR *) const;
+    virtual bool xdrDecodeVariant(XDR *);
+
+private:
+    friend KsValue;
+    KsStringValue(XDR *, bool &);
+}; 
+
+//////////////////////////////////////////////////////////////////////
+// class KsTimeValue
+//////////////////////////////////////////////////////////////////////
+
+class KsTimeValue : public KsTime, public KsValue
+{
+public:
+    KsTimeValue( long sec = 0L, long usec = 0L );
+    
+    // redefinitions for resolving multiply function definitions 
+    // in base classes
+    virtual bool xdrEncode(XDR *) const;
+    virtual bool xdrDecode(XDR *);
+
+    virtual enum_t xdrTypeCode() const;
+
+protected:
+    bool xdrEncodeVariant(XDR *) const;
+    bool xdrDecodeVariant(XDR *);
+
+private:
+    friend KsValue;
+    KsTimeValue(XDR *, bool &);
 };
 
 
@@ -339,6 +399,44 @@ KsDoubleValue::setDouble(double v)
 {
     val = v;
 }
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline 
+KsStringValue::KsStringValue() 
+: KsString()
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline 
+KsStringValue::KsStringValue(const char *sz)
+: KsString(sz)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsStringValue::KsStringValue(XDR *xdr, bool &ok)
+: KsString(xdr, ok)
+{}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline 
+KsTimeValue::KsTimeValue(long sec, long usec)
+: KsTime(sec,usec)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsTimeValue::KsTimeValue(XDR *xdr, bool &ok)
+: KsTime(xdr, ok)
+{}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
