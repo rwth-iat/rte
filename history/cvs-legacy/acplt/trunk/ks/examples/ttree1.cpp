@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.8 1998-12-10 17:25:38 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.9 1998-12-14 18:01:39 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -127,8 +127,12 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
     //
     switch ( proj_props.xdrTypeCode() ) {
     case KS_OT_DOMAIN:
+	cout << "<DOM> " << info;
+	break;
+        
+    case KS_OT_LINK:
         {
-	    cout << "<DOM> " << info;
+	    cout << "<LNK> " << info;
 
             const KsLinkProjProps *link_proj_props =
                 (const KsLinkProjProps *) &proj_props; // for msvc
@@ -141,10 +145,6 @@ void DumpProjProps(const KsProjProps &proj_props, int indent)
 	    break;
 	}
 
-    case KS_OT_LINK:
-	cout << "<LNK> " << info;
-	break;
-        
     case KS_OT_VARIABLE:
         {
             cout << "<VAR> " << info;
@@ -213,6 +213,7 @@ void DumpVar(KscVariable &var, int indent)
     }
 
     Indent(indent);
+    cout << "** ";
 
     value_time = curr_props->time.tv_sec;
     cout << PltString(ctime(&value_time)).substr(4, 15) << " ";
@@ -420,9 +421,11 @@ void DumpBranch(KscDomain &branch, int indent)
             KscDomain child_domain(PltString(branch.getFullPath()) + 
                                    PltString(indent ? "/" : "") +
                                    current->identifier);
-cout << "****" << endl;
+            KscVariable child_var(PltString(branch.getFullPath()) + 
+                                   PltString(indent ? "/" : "") +
+                                   current->identifier);
+            DumpVar(child_var, indent + 2 * INDENTATION);
             DumpBranch(child_domain, indent + INDENTATION);
-cout << "****" << endl;
         } else if ( current->xdrTypeCode() == KS_OT_VARIABLE ) {
             KscVariable var(PltString(branch.getFullPath()) + 
                                    PltString(indent ? "/" : "") +
