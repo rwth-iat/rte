@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.12 2003-10-13 12:08:27 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.13 2003-10-13 12:51:35 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -25,8 +25,6 @@
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
-
-#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdrudpcon.h"
 #include "ks/connectionmgr.h"
@@ -518,7 +516,5 @@ void KssUDPXDRConnection::sendRequest()
     }
 } // KssUDPXDRConnection::sendRequest
 
-
-#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of xdrudpcon.cpp */

@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.30 2003-10-13 12:11:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.31 2003-10-13 12:51:20 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -29,8 +29,6 @@
 
 #include "ks/svrsimpleobjects.h"
 
-
-#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdrmemstream.h"
 
@@ -185,8 +183,6 @@ bool KsSimpleServer::initStatistics()
     }
     return true;
 } // KsSimpleServer::initStatistics
-
-#endif
 
 
 // ---------------------------------------------------------------------------
@@ -887,9 +883,7 @@ KsSimpleServer::initVendorTree()
 
 	&& addCommObject(modks, fame_handle)
 
-#if PLT_USE_BUFFERED_STREAMS
     	&& initStatistics()
-#endif
 
         && addCommObject(vendor, startup_time_handle);
 } // KsSimpleServer::initVendorTree

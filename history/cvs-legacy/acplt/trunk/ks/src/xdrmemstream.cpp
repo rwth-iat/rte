@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.15 2003-10-13 12:07:37 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.16 2003-10-13 12:51:27 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -29,8 +29,6 @@
  */
 
 /*#define CNXDEBUG*/
-
-#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdrmemstream.h"
 #include <stdlib.h>
@@ -942,7 +940,5 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
     return TRUE;
 } /* xdrmemstream_write_to_fd */
 
-
-#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of xdrmemstream.c */
