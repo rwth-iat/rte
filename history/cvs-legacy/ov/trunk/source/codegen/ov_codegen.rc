@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.rc,v 1.2 1999-07-26 16:14:10 dirk Exp $
+*   $Id: ov_codegen.rc,v 1.3 2000-07-03 13:37:52 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -28,6 +28,11 @@
 */
 
 #include "libov/ov_version.h"
+
+#ifdef OV_USE_WINDRES
+#define RC_INVOKED
+#include <windows.h>
+#endif
 
 #define OV_ICON	1
 #define VERSIONINFO_1	1

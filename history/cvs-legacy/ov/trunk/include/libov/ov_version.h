@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.9 2000-06-14 18:05:09 dirk Exp $
+*   $Id: ov_version.h,v 1.10 2000-07-03 13:37:51 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,26 +34,29 @@
 *	Version information for different modules of ACPLT/OV
 *	-----------------------------------------------------
 */
-#define OV_VER_CODEGEN					"1.2.0"
-#define OV_VER_LIBOV					"1.2.1"
-#define OV_VER_DBUTIL 					"1.2.0"
-#define OV_VER_LIBOVKS 					"1.2.1"
-#define OV_VER_SERVER					"1.2.0"
-#define OV_VER_NTSERVICE				"1.2.0"
+#define OV_VER_CODEGEN						"1.2.0"
+#define OV_VER_LIBOV						"1.2.1"
+#define OV_VER_DBUTIL 						"1.2.0"
+#define OV_VER_LIBOVKS 						"1.2.1"
+#define OV_VER_SERVER						"1.2.0"
+#define OV_VER_NTSERVICE					"1.2.0"
+#define OV_VER_CONTROLPANEL					"1.0.0"
 
-#define OV_VER_FILEVERSION_CODEGEN		1, 2, 0, 0
-#define OV_VER_FILEVERSION_LIBOV		1, 2, 0, 1
-#define OV_VER_FILEVERSION_DBUTIL 		1, 2, 0, 0
-#define OV_VER_FILEVERSION_LIBOVKS 		1, 2, 0, 1
-#define OV_VER_FILEVERSION_SERVER		1, 2, 0, 0
-#define OV_VER_FILEVERSION_NTSERVICE	1, 2, 0, 0
+#define OV_VER_FILEVERSION_CODEGEN			1, 2, 0, 0
+#define OV_VER_FILEVERSION_LIBOV			1, 2, 0, 1
+#define OV_VER_FILEVERSION_DBUTIL 			1, 2, 0, 0
+#define OV_VER_FILEVERSION_LIBOVKS 			1, 2, 0, 1
+#define OV_VER_FILEVERSION_SERVER			1, 2, 0, 0
+#define OV_VER_FILEVERSION_NTSERVICE		1, 2, 0, 0
+#define OV_VER_FILEVERSION_CONTROLPANEL		1, 0, 0, 0
 
-#define OV_VER_PRODUCTVERSION_CODEGEN	1, 2, 0, 0
-#define OV_VER_PRODUCTVERSION_LIBOV		1, 2, 0, 1
-#define OV_VER_PRODUCTVERSION_DBUTIL 	1, 2, 0, 0
-#define OV_VER_PRODUCTVERSION_LIBOVKS 	1, 2, 0, 1
-#define OV_VER_PRODUCTVERSION_SERVER	1, 2, 0, 0
-#define OV_VER_PRODUCTVERSION_NTSERVICE	1, 2, 0, 0
+#define OV_VER_PRODUCTVERSION_CODEGEN		1, 2, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBOV			1, 2, 0, 1
+#define OV_VER_PRODUCTVERSION_DBUTIL 		1, 2, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBOVKS 		1, 2, 0, 1
+#define OV_VER_PRODUCTVERSION_SERVER		1, 2, 0, 0
+#define OV_VER_PRODUCTVERSION_NTSERVICE		1, 2, 0, 0
+#define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 0, 0, 0
 
 #define OV_VER_LICENSE															\
 	"Copyright (C) 1998-2000 "													\
@@ -72,26 +75,6 @@
 	"THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED "	\
 	"WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES "		\
 	"OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.\r\n"
-
-#ifdef OV_USE_WINDRES
-#define VOS_UNKNOWN			(0L)
-#define VOS_DOS				(0x10000L)
-#define VOS_OS216			(0x20000L)
-#define VOS_OS232			(0x30000L)
-#define VOS_NT				(0x40000L)
-#define VOS_DOS_WINDOWS16	(0x10001L)
-#define VOS_DOS_WINDOWS32	(0x10004L)
-#define VOS_OS216_PM16		(0x20002L)
-#define VOS_OS232_PM32		(0x30003L)
-#define VOS_NT_WINDOWS32	(0x40004L)
-#define VFT_UNKNOWN			(0L)
-#define VFT_APP				(0x1L)
-#define VFT_DLL				(0x2L)
-#define VFT_DRV				(0x3L)
-#define VFT_FONT			(0x4L)
-#define VFT_VXD				(0x5L)
-#define VFT_STATIC_LIB		(0x7L)
-#endif
 
 #endif
 /*

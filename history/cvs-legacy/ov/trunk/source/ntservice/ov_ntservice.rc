@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.rc,v 1.2 1999-08-06 09:39:27 dirk Exp $
+*   $Id: ov_ntservice.rc,v 1.3 2000-07-03 13:37:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -28,6 +28,11 @@
 
 #include "libov/ov_version.h"
 
+#ifdef OV_USE_WINDRES
+#define RC_INVOKED
+#include <windows.h>
+#endif
+
 #define OV_ICON1		1
 #define OV_ICON2		2
 #define VERSIONINFO_1	1
@@ -48,7 +53,7 @@ FILETYPE		VFT_DLL
    VALUE "FileDescription", "ACPLT/KS Server for ACPLT/OV (NT Service)\000"
    VALUE "FileVersion", OV_VER_NTSERVICE "\000\000"
    VALUE "InternalName", "ov_ntservice.exe\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-1999\000\000"
+   VALUE "LegalCopyright", "Copyright © PLT 1998-2000\000\000"
    VALUE "OriginalFilename", "ov_ntservice.exe\000"
    VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>\000"
    VALUE "License", OV_VER_LICENSE "\000"

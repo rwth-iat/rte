@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.4 1999-09-21 12:10:25 dirk Exp $
+*   $Id: ov_config.h,v 1.5 2000-07-03 13:37:51 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -80,15 +80,15 @@
 *	--------
 */
 #ifdef __GNUC__
-#if defined(__CYGWIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
-#define OV_COMPILER_CYGWIN 1
-#else
 #define OV_COMPILER_GCC __GNUC__
-#endif
 #endif
 
 #ifndef OV_COMPILER_GCC
 #define OV_COMPILER_GCC 0
+#endif
+
+#if defined(__CYGWIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define OV_COMPILER_CYGWIN 1
 #endif
 
 #ifndef OV_COMPILER_CYGWIN
