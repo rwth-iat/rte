@@ -63,13 +63,28 @@ public KsXdrUnion
     
     KS_DECL_XDRUNION(KsValue);
     
-    PLT_DECL_RTTI;
-
 protected:
     bool xdrEncodeCommon(XDR *) const;
     bool xdrDecodeCommon(XDR *);
+    PLT_DECL_RTTI;
 
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 };
+
+
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG
+inline ostream &
+operator << (ostream & ostr, const KsValue & v)
+{
+    v.debugPrint(ostr);
+    return ostr;
+}
+#endif
+//////////////////////////////////////////////////////////////////////
 
 typedef KsPtrHandle<KsValue> KsValueHandle;
 
@@ -100,6 +115,11 @@ private:
     KsIntValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -128,6 +148,11 @@ private:
     KsUIntValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -156,6 +181,11 @@ private:
     KsSingleValue(XDR *, bool &);
     
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 };
 
 
@@ -183,6 +213,11 @@ private:
     KsDoubleValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 };
 
 
@@ -212,6 +247,11 @@ private:
     KsStringValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 }; 
 
 //////////////////////////////////////////////////////////////////////
@@ -241,6 +281,10 @@ private:
 
     PLT_DECL_RTTI;
 
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 };
 
 
@@ -264,6 +308,10 @@ private:
 
     PLT_DECL_RTTI;
 
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 };
 
 
@@ -391,6 +439,11 @@ private:
     KsDoubleVecValue(XDR *, bool &);
 
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
 };
 
 //////////////////////////////////////////////////////////////////////
