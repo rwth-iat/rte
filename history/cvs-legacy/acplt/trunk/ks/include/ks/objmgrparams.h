@@ -2,7 +2,7 @@
 #ifndef KS_OBJMGRPARAMS_INCLUDED
 #define KS_OBJMGRPARAMS_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.2 1998-10-14 09:27:45 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/objmgrparams.h,v 1.3 1998-10-23 12:51:59 harald Exp $
  *
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -184,35 +184,6 @@ public:
 
     KsArray<KS_RESULT> results;
 }; // class KsDeleteObjResult
-
-
-// ---------------------------------------------------------------------------
-// inline stuff...
-//
-KsPlacementHint::KsPlacementHint()
-    : hint(KS_PMH_DEFAULT)
-{} // KsPlacementHint::KsPlacementHint
-
-KsLinkItem::KsLinkItem()
-{} // KsLinkItem::KsLinkItem
-
-KsCreateObjItem::KsCreateObjItem()
-{} // KsCreateObjItem::KsCreateObjItem
-
-KsCreateObjParams::KsCreateObjParams()
-{} // KsCreateObjParams::KsCreateObjParams
-
-KsCreateObjResultItem::KsCreateObjResultItem()
-{} // KsCreateObjResultItem::KsCreateObjResultItem
-
-KsCreateObjResult::KsCreateObjResult()
-{} // KsCreateObjResult::KsCreateObjResult
-
-KsDeleteObjParams::KsDeleteObjParams()
-{} // KsDeleteObjParams::KsDeleteObjParams
-
-KsDeleteObjResult::KsDeleteObjResult()
-{} // KsDeleteObjResult::KsDeleteObjResult
 
 
 #endif
