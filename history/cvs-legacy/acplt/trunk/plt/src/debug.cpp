@@ -148,8 +148,10 @@ PltDebugNewTracker::~PltDebugNewTracker()
 
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_AVOID_DELETE_BUG
 static const char HEADERSTART[] = "g++drivesmenuts";
 //---------------------------------0123456789ABCDEF
+#endif
 
 static const unsigned long 
 magic = 0x471142;
@@ -222,6 +224,7 @@ void operator delete(void * p) {
 }
 
 //////////////////////////////////////////////////////////////////////
+#if PLT_ARRAY_NEW_OVERLOADABLE
 
 void * operator new[](size_t sz) 
 {
@@ -235,6 +238,7 @@ void operator delete[](void * p)
     operator delete(p);
 }
 
+#endif
 //////////////////////////////////////////////////////////////////////
 #endif //PLT_DEBUG_NEW
 //////////////////////////////////////////////////////////////////////

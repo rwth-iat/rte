@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/handle.cpp,v 1.2 1997-03-23 14:31:46 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/handle.cpp,v 1.3 1997-04-01 11:24:13 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -129,5 +129,12 @@ PltHandle_base::operator=(const PltHandle_base &rhs)
     return *this;
 }
 
+#if !PLT_INSTANTIATE_TEMPLATES
+#include "plt/handle_impl.h"
+#endif
+
 //////////////////////////////////////////////////////////////////////
-// plt/handle.cpp
+// EOF plt/handle.cpp
+
+
+

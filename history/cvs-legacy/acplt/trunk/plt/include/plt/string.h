@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.8 1997-03-26 17:07:09 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.9 1997-04-01 11:21:05 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,6 +41,7 @@
 #include "plt/debug.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 //////////////////////////////////////////////////////////////////////
 // PltStrings reduce copying by reference counting. See 
@@ -115,7 +116,7 @@ PltString operator + (const PltString &s1, const char *s2);
 inline bool
 PltString::ok() const 
 {
-    return p;
+    return p != 0;
 }
 
 //////////////////////////////////////////////////////////////////////

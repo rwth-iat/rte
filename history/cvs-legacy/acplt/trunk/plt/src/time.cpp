@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.2 1997-03-19 17:16:50 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/time.cpp,v 1.3 1997-04-01 11:24:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,7 +38,69 @@
 
 #include "plt/time.h"
 
+#if PLT_SYSTEM_OS2
+#include <time.h>
+#endif
+
+#if PLT_SYSTEM_NT
+#include <time.h>
+#include <windows.h>
+#endif
+
 //////////////////////////////////////////////////////////////////////
+
+#if PLT_SYSTEM_OS2
+
+PltTime
+PltTime::now(long secs, long usecs)
+{
+    // TODO: better resolution (or another OS)
+    return PltTime(time(0)+secs, usecs);
+}
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
+#if PLT_SYSTEM_NT
+
+PltTime
+PltTime::now(long secs_arg, long usecs_arg)
+{
+    SYSTEMTIME st;
+    GetSystemTime(&st);
+    FILETIME ft;
+    if (SystemTimeToFileTime(&st,&ft)) {  
+        // not very efficient
+        static const DWORD loEpoch    = 3577643008;
+        static const DWORD loEpochNeg =  717324288; // 2^32 - loEpoch
+        static const DWORD hiEpoch =   27111902;
+        DWORD h = ft.dwHighDateTime;
+        DWORD l = ft.dwLowDateTime;
+
+        // let M==2^32, l1+M*h1<l0+M*h0
+        // calc. x = l1+M*h1 - l0+M*h0:
+        if (l >= loEpoch) {
+            l -= loEpoch;   // l1>=l0: x = (l1-l0)+ M(h1-h0)
+        } else {
+            --h;         // l1<l0: x = (l1+(M-l0))+M(h1-1-h0)
+            l += loEpochNeg;
+        }
+        h -= hiEpoch;
+        // (h*M+l) * 100ns(==0.1us) since epoch
+        double secs  = h*429.4967296+l/10000000.0;
+        PltTime res(secs+secs_arg, st.wMilliseconds*1000 + usecs_arg);
+        res.normalize();
+        return res;
+        }
+    else {
+        return PltTime(time(0)+secs_arg,usecs_arg);
+    }
+}
+#endif
+
+//////////////////////////////////////////////////////////////////////
+#if PLT_SYSTEM_LINUX || PLT_SYSTEM_HPUX || PLT_SYSTEM_SOLARIS
 
 PltTime
 PltTime::now(long secs, long usecs)
@@ -51,6 +113,7 @@ PltTime::now(long secs, long usecs)
     res.normalize();
     return res;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 /* EOF plt/time.cpp */

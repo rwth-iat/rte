@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.6 1997-03-19 17:16:45 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/time.h,v 1.7 1997-04-01 11:21:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,7 +40,20 @@
 
 #include "plt/debug.h"
 
+#if PLT_SYSTEM_NT
+// does not even have gettimeofday...
+#include <winsock.h>
+#elif PLT_SYSTEM_OS2
+// no comment
+struct timeval
+{
+    long tv_sec;
+    long tv_usec;
+};
+#else
+// Good.
 #include <sys/time.h>
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // a PltTime object is a timeval with some operations added
@@ -66,6 +79,7 @@ struct PltTime : public timeval {
     PltTime & operator -= (const PltTime &t);
 
     static PltTime now(long seconds=0, long useconds = 0);
+    static PltTime now(const PltTime &);
 };
 
 PltTime operator + (const PltTime &t1, const PltTime &t2);
@@ -280,5 +294,12 @@ operator - (const PltTime & t1, const PltTime & t2)
 
 //////////////////////////////////////////////////////////////////////
 
+inline PltTime
+PltTime::now(const PltTime & t)
+{
+    return PltTime::now(t.tv_sec, t.tv_usec);
+}
+
+//////////////////////////////////////////////////////////////////////
 #endif // PLT_TIME_INCLUDED
 

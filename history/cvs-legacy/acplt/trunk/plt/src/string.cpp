@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.12 1997-03-26 17:07:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.13 1997-04-01 11:24:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,8 +40,12 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "plt/string.h"
-#include <string.h>
+#if PLT_SYSTEM_NT
+// Thats ridiculous:
+#include <strstrea.h>
+#else
 #include <strstream.h>
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -141,9 +145,12 @@ static char conv_buffer[32];
 PltString
 PltString::fromInt(int i)
 {
-    strstream s(conv_buffer, sizeof conv_buffer);
+    strstream s(conv_buffer, sizeof conv_buffer, ios::out);
     s << i;
+#if !PLT_SYSTEM_NT && !PLT_SYSTEM_OS2
     s.freeze();
+#endif
+    // TODO
     return PltString(s.str());
 }
 
@@ -256,8 +263,12 @@ PltString::operator [] (size_t i)
         cloneIfNeeded();
     }
     PLT_CHECK_INVARIANT();
-    static char dummy = 'A';
-    return ok() ? (p->s)[i] : dummy;
+    if (ok()) {
+        return p->s[i];
+    } else {
+        static char dummy = 'A';
+        return dummy;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
