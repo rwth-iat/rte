@@ -51,9 +51,10 @@ class KsArray
   public KsXdrAble
 {
  public:
-    KsArray(size_t size = 0,  // array size 
-             T * p= 0,         // address of first element
-             enum PltOwnership = PltOsArrayNew);      // [1]
+    PltArray(size_t size = 0); // array size          // [1]
+    PltArray(size_t size,      // array size 
+             T * p,            // address of first element
+             enum PltOwnership);                      // [1]
     
     // KsXdrAble interface
     KsArray(XDR *, bool & success);
@@ -71,6 +72,15 @@ template <class T>
 inline
 KsArray<T>::KsArray(size_t size, T *p, enum PltOwnership os)
 : PltArray<T>(size, p, os)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+KsArray<T>::KsArray(size_t size)
+: PltArray<T>(size)
 {
 }
 
