@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.3 1997-04-03 10:07:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.4 1997-04-04 07:56:23 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -87,7 +87,7 @@ KsServer::createLocalClient()
     sin.sin_family = AF_INET;
     sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     KsTime wait(1,0);
-    int sock = -1;
+    int sock = RPC_ANYSOCK;
     return clntudp_create(&sin,
                           KS_RPC_PROGRAM_NUMBER,
                           KS_PROTOCOL_VERSION,
