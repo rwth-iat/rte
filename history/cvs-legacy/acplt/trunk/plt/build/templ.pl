@@ -16,7 +16,7 @@ if ($make eq "") {
 $compile = "$make $objname";
 $link = "@ARGV";
 
-print STDERR "Template linker (c) 1997 ACPLT\n";
+print STDERR "Template linker (c) 1997, 2000 ACPLT\n";
 
 #
 # Read include file
@@ -50,11 +50,13 @@ do {
     while (<MSGS>) {
         print STDERR $_;
 	if (!/In function.*:$/) {
-          if (/(\w+<\s*\w+.*>)::~?\w+.*\(.*\)/
-           || /(\w+<\s*\w+.*>).*\s+virtual table/) {
+          if (/undefined reference to [^\w]*(\w+<\s*\w+.*>)::~?\w+.*\(.*\)/
+           || /undefined reference to [^\w]*(\w+<\s*\w+.*>).*\s+virtual table/
+	      ) {
 	    # member
 	    @new{$1} = 1;
 	    #print STDERR ".";
+	    #print STDERR 1;
 	    $needanother = 1;
             }
 	} else {
