@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.2 1999-07-28 16:00:37 dirk Exp $
+#   $Id: Makefile,v 1.3 1999-09-06 12:16:28 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -241,7 +241,8 @@ KS_LIBOVKS_SRC = \
 	$(ACPLT_KS_SOURCE_DIR)time.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdr.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdrmemstream.cpp \
-	$(ACPLT_KS_SOURCE_DIR)xdrtcpcon.cpp
+	$(ACPLT_KS_SOURCE_DIR)xdrtcpcon.cpp \
+	$(ACPLT_KS_SOURCE_DIR)xdrudpcon.cpp
 KS_LIBOVKS_OBJ = $(foreach source, $(KS_LIBOVKS_SRC), \
 	$(basename $(notdir $(source)))$(OBJ))
 

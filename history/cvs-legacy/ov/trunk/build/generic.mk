@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.2 1999-07-26 16:13:59 dirk Exp $
+#   $Id: generic.mk,v 1.3 1999-09-06 12:16:27 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -248,7 +248,8 @@ KS_LIBOVKS_SRC = \
 	$(ACPLT_KS_SOURCE_DIR)time.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdr.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdrmemstream.cpp \
-	$(ACPLT_KS_SOURCE_DIR)xdrtcpcon.cpp
+	$(ACPLT_KS_SOURCE_DIR)xdrtcpcon.cpp \
+	$(ACPLT_KS_SOURCE_DIR)xdrudpcon.cpp
 KS_LIBOVKS_OBJ = $(foreach source, $(KS_LIBOVKS_SRC), \
 	$(basename $(notdir $(source)))$(OBJ))
 
