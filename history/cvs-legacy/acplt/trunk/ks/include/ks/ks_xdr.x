@@ -1,5 +1,5 @@
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/ks_xdr.x,v 1.3 1999-04-22 15:32:23 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/ks_xdr.x,v 1.4 1999-09-06 06:52:59 harald Exp $
  *
  * ks_xdr.x -- Specification of the ACPLT/KS protocol for use with the rpcgen
  *   protocol compiler for ONC/RPC. This ONC/RPC protocol specification is
@@ -82,6 +82,10 @@ enum KS_LINK_TYPE           { DUMMY = 0 };
 enum KS_HIST_TYPE           { DUMMY = 0 };
 enum KS_PLACEMENT_HINT      { DUMMY = 0 };
 enum KS_INTERPOLATION_MODE  { DUMMY = 0 };
+enum KS_STRUCTURE_FLAGS     { DUMMY = 0 };
+enum KS_EP_FLAGS            { DUMMY = 0 };
+
+typedef u_long KS_SEMANTIC_FLAGS;
 #endif
 
 
@@ -163,7 +167,7 @@ union KS_VAR_VALUE switch (KS_VAR_TYPE type) {
     case KS_VT_TIME_SPAN_VEC:  KS_TIME_SPAN  val_time_span_vec<>;
 };
 
-struct KS_VAR_PROJECTED_PROPS {
+struct KS_VAR_ENGINEERED_PROPS {
     string       tech_unit<KS_TECHUNIT_MAXLEN>;
     KS_VAR_TYPE  type;
 };
@@ -176,45 +180,66 @@ struct KS_VAR_CURRENT_PROPS {
 
 
 /* ----------------------------------------------------------------------------
- * The engineered properties stuff for links.
+ * The engineered properties stuff for domains.
  */
-struct KS_LINK_PROJECTED_PROPS {
-    KS_LINK_TYPE  type;
-    string        opposite_role_identifier<>;
-    string        class_identifier<>;
+struct KS_DOMAIN_ENGINEERED_PROPS {
+    string  class_identifier<>;
 };
 
 
 /* ----------------------------------------------------------------------------
- * The varying part of the projected properties.
+ * The engineered properties stuff for links.
  */
-union KS_OBJ_VARIANT_PROJECTED_PROPS switch (KS_OBJ_TYPE type) {
+struct KS_LINK_ENGINEERED_PROPS {
+    KS_LINK_TYPE  type;
+    string        opposite_role_identifier<>;
+    string        association_identifier<>;
+};
+
+
+/* ----------------------------------------------------------------------------
+ * The engineered properties stuff for domains.
+ */
+struct KS_STRUCTURE_ENGINEERED_PROPS {
+    KS_STRUCTURE_FLAGS  structure_flags;
+};
+
+
+/* ----------------------------------------------------------------------------
+ * The varying part of the engineered properties.
+ */
+union KS_OBJ_VARIANT_ENGINEERED_PROPS switch (KS_OBJ_TYPE type) {
     case KS_OT_DOMAIN:
-        void; /* FIXME */
+        KS_DOMAIN_PROJECTED_PROPS    domain_engineered_props;
     case KS_OT_VARIABLE:
-        KS_VAR_PROJECTED_PROPS  var_projected_props;
+        KS_VAR_PROJECTED_PROPS       var_engineered_props;
     case KS_OT_HISTORY:
         void; /* FIXME */
     case KS_OT_LINK:
-        KS_LINK_PROJECTED_PROPS link_projected_props;
+        KS_LINK_PROJECTED_PROPS      link_engineered_props;
+    case KS_OT_STRUCTURE:
+	void; /* FIXME */
+/*        KS_STRUCTURE_PROJECTED_PROPS structure_engineered_props; */
     default:
         void;
 };
 
 
 /* ----------------------------------------------------------------------------
- * This is THE structure that contains all PROJECTED properties within
+ * This is THE structure that contains all ENGINEERED properties within
  * a communication object of ANY type. The variant part must come first,
  * as the type code also indicates what (overall) type of proj. properties
  * will be waiting for us as we pull it off the wire.
  */
-struct KS_OBJ_PROJECTED_PROPS {
-    KS_OBJ_VARIANT_PROJECTED_PROPS  variant;
-    string                          identifier<KS_NAME_MAXLEN>;
-    KS_TIME                         creation_time;
-    string                          comment<KS_COMMENT_MAXLEN>;
-    KS_ACCESS                       access_mode;
+struct KS_OBJ_ENGINEERED_PROPS {
+    KS_OBJ_VARIANT_ENGINEERED_PROPS  variant;
+    string                           identifier<KS_NAME_MAXLEN>;
+    KS_TIME                          creation_time;
+    string                           comment<KS_COMMENT_MAXLEN>;
+    KS_ACCESS                        access_mode;
+    KS_SEMANTIC_FLAGS                semantic_flags;
 };
+
 
 union KS_OBJ_VARIANT_CURRENT_PROPS switch (KS_OBJ_TYPE type) {
     case KS_OT_DOMAIN:
@@ -224,6 +249,8 @@ union KS_OBJ_VARIANT_CURRENT_PROPS switch (KS_OBJ_TYPE type) {
     case KS_OT_HISTORY:
         void; /* FIXME */
     case KS_OT_LINK:
+        void; /* FIXME */
+    case KS_OT_STRUCTURE:
         void; /* FIXME */
     default:
         void;
@@ -342,30 +369,31 @@ struct KS_GETSERVER_REPLY { /* This is the full reply packet */
 /* ----------------------------------------------------------------------------
  * Service group for walking through the object tree.
  */
-struct KS_GETPP_PAR { /* The service's parameters */
+struct KS_GETEP_PAR { /* The service's parameters */
     string       path<>;
     KS_OBJ_TYPE  type_mask;
     string       name_mask<>;
+    KS_EP_FLAGS  scope_flags;
 };
 
 #ifndef SEPARATE_AUTH
-struct KS_GETPP_REQ { /* This is the full request packet */
+struct KS_GETEP_REQ { /* This is the full request packet */
     KS_AUTH_REQ   auth;
-    KS_GETPP_PAR  par;
+    KS_GETEP_PAR  par;
 };
 #endif
 
-union KS_GETPP_RET switch (KS_RESULT result) {
+union KS_GETEP_RET switch (KS_RESULT result) {
     case KS_ERR_OK:
-        KS_OBJ_PROJECTED_PROPS  items<>;
+        KS_OBJ_ENGINEERED_PROPS  items<>;
     default:
         void;
 };
 
 #ifndef SEPARATE_AUTH
-struct KS_GETPP_REPLY { /* This is the full reply packet */
+struct KS_GETEP_REPLY { /* This is the full reply packet */
     KS_AUTH_REPLY  auth;
-    KS_GETPP_RET   ret;
+    KS_GETEP_RET   ret;
 };
 #endif
 
@@ -485,6 +513,7 @@ struct KS_LINK_ITEM {
     string        link_path<>;
     string        element_path<>;
     KS_PLACEMENT  place;
+    KS_PLACEMENT  opposite_place;
 };
 
 struct KS_UNLINK_ITEM {
@@ -569,6 +598,78 @@ union KS_DELETEOBJECT_RET switch (KS_RESULT result) {
 struct KS_DELETEOBECT_REPLY { /* This is the full reply packet */
     KS_AUTH_REPLY        auth;
     KS_DELETEOBJECT_RET  ret;
+};
+#endif
+
+
+/* -----------------------------------------------------------------------------
+ * The RenameObject service.
+ */
+struct KS_RENAMEOBJECT_ITEM {
+    string        old_path<>;
+    string        new_path<>;
+    KS_PLACEMENT  place;
+};
+
+struct KS_RENAMEOBJECT_PAR {
+    KS_RENAMEOBJECT_ITEM  items<>;
+};
+
+#ifndef SEPARATE_AUTH
+struct KS_RENAMEOBJECT_REQ { /* This is the full request packet */
+    KS_AUTH_REQ          auth;
+    KS_RENAMEOBJECT_PAR  par;
+};
+#endif
+
+union KS_RENAMEOBJECT_RET switch (KS_RESULT result) {
+    case KS_ERR_OK:
+        KS_RESULT  results<>;
+    default:
+        void;
+};
+
+#ifndef SEPARATE_AUTH
+struct KS_RENAMEOBJECT_REPLY { /* This is the full reply packet */
+    KS_AUTH_REPLY        auth;
+    KS_RENAMEOBJECT_RET  ret;
+};
+#endif
+
+
+
+/* -----------------------------------------------------------------------------
+ * The GetCanonicalPath service.
+ */
+struct KS_GETCANONICALPATH_PAR {
+    KS_STRING  paths<>;
+};
+
+#ifndef SEPARATE_AUTH
+struct KS_UNLINK_REQ { /* This is the full request packet */
+    KS_AUTH_REQ              auth;
+    KS_GETCANONICALPATH_PAR  par;
+};
+#endif
+
+union KS_GETCANONICALPATHITEM_RET switch (KS_RESULT result) {
+    case KS_ERR_OK:
+        string  canonical_path<>;
+    default:
+        void;
+};
+
+union KS_GETCANONICALPATH_RET switch (KS_RESULT result) {
+    case KS_ERR_OK:
+        KS_GETCANONICALPATHITEM_RET  results<>;
+    default:
+        void;
+};
+
+#ifndef SEPARATE_AUTH
+struct KS_GETCANONICALPATH_REPLY { /* This is the full reply packet */
+    KS_AUTH_REPLY            auth;
+    KS_GETCANONICALPATH_RET  ret;
 };
 #endif
 
@@ -661,8 +762,8 @@ version KS_VERS_CURRENT {
     /*
      * The GetOD services group.
      */
-    KS_GETPP_REPLY KS_GETPP(KS_GETPP_REQ)
-        = 0x00000001;
+    KS_GETEP_REPLY KS_GETEP(KS_GETEP_REQ)
+        = 0x00000002;
     
     /*
      * The variable access service group.
@@ -674,10 +775,10 @@ version KS_VERS_CURRENT {
     KS_EXGDATA_REPLY KS_EXGDATA(KS_EXGDATA_REQ)
         = 0x00000103;
     
-} = 1;       /* end of version level */
+} = 2;       /* end of version level */
 } = 0x49678; /* Basic KS protocol */
 
-const KS_VERS = 1; /* this is the latest protocol revision */
+const KS_VERS = 2; /* this is the latest protocol revision */
 #endif
 
 
