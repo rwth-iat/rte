@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.15 2002-02-01 15:16:58 ansgar Exp $
+*   $Id: ov_library.c,v 1.16 2002-02-05 10:42:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -96,6 +96,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_constructor(
 	*/
 	OV_INSTPTR_ov_library	plib = Ov_StaticPtrCast(ov_library, pobj);
 	OV_LIBRARY_DEF			*plibdef;
+	OV_RESULT			result;
 	/*
 	*	ensure, that there is no other library with this identifier
 	*/
@@ -113,7 +114,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_constructor(
 	/*
 	*	load the library into the database
 	*/
-	return ov_library_load(plib, plibdef);
+	result = ov_library_load(plib, plibdef);
+	if (Ov_Fail(result)) {
+		ov_library_close(plib);
+	}
+	return result;
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -339,6 +344,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	OV_RESULT		result;
 	char			ovversion1[16];
 	char			ovversion2[16];
+	char			ovversion[]=OV_VER_LIBOV;
 	char*			pc1;
 	char*			pc2;
 	/*
@@ -351,9 +357,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	*	check ov version of library
 	*/
 	if (!plibdef->ov_version) return OV_ERR_LIBDEFMISMATCH;
-	if (strcmp(plibdef->ov_version, OV_VER_LIBOV)) {
+	if (strcmp(plibdef->ov_version, ovversion)) {
 		strncpy(ovversion1, plibdef->ov_version, 15);
-		strncpy(ovversion2, OV_VER_LIBOV, 15);
+		strncpy(ovversion2, ovversion, 15);
 		pc1 = (char*) ovversion1 + strlen(ovversion1)-1;
 		pc2 = (char*) ovversion2 + strlen(ovversion2)-1;
 		while (pc1>ovversion1) {
@@ -367,7 +373,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 		if ((!pc1) || (!pc2) || (strcmp(ovversion1, ovversion2))) 
 			return OV_ERR_LIBDEFMISMATCH;
 	}
-
 	/*
 	*	if we load the OV metamodel, we have to prepare some things
 	*/
@@ -414,7 +419,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	/*
 	*	load global variables of the library
 	*/
-	return (plibdef->setglobalvarsfnc)();
+	if (plibdef->setglobalvarsfnc) return (plibdef->setglobalvarsfnc)();
+	return OV_ERR_LIBDEFMISMATCH;
 }
 
 /*	----------------------------------------------------------------------	*/
