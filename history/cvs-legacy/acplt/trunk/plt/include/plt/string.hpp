@@ -24,7 +24,7 @@ public:
     PltString(const char *);
     PltString();
     PltString(const PltString &);
-    ~PltString();
+    virtual ~PltString();
     PltString & operator = (const char *);
     PltString & operator = (const PltString &);
 
