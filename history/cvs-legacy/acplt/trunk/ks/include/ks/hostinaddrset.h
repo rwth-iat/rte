@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_HOSTINADDRSET_INCLUDED
 #define KS_HOSTINADDRSET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/hostinaddrset.h,v 1.1 1997-10-28 10:39:39 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/hostinaddrset.h,v 1.2 1997-12-02 10:14:53 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -52,6 +52,10 @@ public:
 
 private:
     bool findLocalAddresses();
+#if PLT_SYSTEM_NT
+    bool findLocalAddressesNT();
+    bool findLocalAddressesW95();
+#endif
 }; // class KsHostInAddrSet
 
 inline bool
