@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.10 2002-05-23 10:28:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.11 2003-10-13 12:14:21 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -67,12 +67,13 @@ extern int ioctl(int d, int request, char *argp);
 // well as a attention method. If a connection needs attention, then you have
 // to set an attention handler later.
 //
-KssConnection::KssConnection(int fd, bool autoDestroyable,
+KsConnection::KsConnection(int fd, bool autoDestroyable,
                              unsigned long timeout,
 			     ConnectionType type)
     : _cnx_type(type), _timeout(timeout),
       _auto_destroyable(autoDestroyable),
       _fd(fd),
+      _close_fd(true),
       _client_address_len(0),
       _manager(0), // this is set later when putting this connection under
                    // control of the connection manager.
@@ -86,7 +87,15 @@ KssConnection::KssConnection(int fd, bool autoDestroyable,
     // in the passive state, because there's no i/o do be done yet at all.
     //
     _state = _cnx_type == CNX_TYPE_SERVER ? CNX_STATE_IDLE : CNX_STATE_PASSIVE;
-} // KssConnection::KssConnection
+} // KsConnection::KsConnection
+
+
+// ---------------------------------------------------------------------------
+// I'm soo destructive here...
+//
+KsConnection::~KsConnection()
+{
+} // KsConnection::~KsConnection
 
 
 // ---------------------------------------------------------------------------
@@ -94,7 +103,7 @@ KssConnection::KssConnection(int fd, bool autoDestroyable,
 // connection. This is necessary, so UDP-based connections can send their
 // data to the appropriate peer and receive data only from the right peer.
 //
-bool KssConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
+bool KsConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
 {
     if ( addrLen <= (int) sizeof(_client_address) ) {
 	memcpy(&_client_address, addr, addrLen);
@@ -103,7 +112,7 @@ bool KssConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
     } else {
 	return false;
     }
-} // KssConnection::setPeerAddr
+} // KsConnection::setPeerAddr
 
 
 // ---------------------------------------------------------------------------
@@ -111,7 +120,7 @@ bool KssConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
 // bound. Of course, calling this method only makes sense, if it's using the
 // IP protocols.
 //
-u_short KssConnection::getPort() const
+u_short KsConnection::getPort() const
 {
     struct sockaddr_in addr;
 #if defined(PLT_RUNTIME_GLIBC) && PLT_RUNTIME_GLIBC >= 0x2001
@@ -128,7 +137,19 @@ u_short KssConnection::getPort() const
     	return 0;
     }
     return ntohs(addr.sin_port);
-} //  KssConnection::getPort
+} //  KsConnection::getPort
+
+
+
+void KsConnection::setFdClose(bool close)
+{
+    _close_fd = close;
+}
+
+bool KsConnection::getFdClose() const
+{
+    return _close_fd;
+}
 
 
 // ---------------------------------------------------------------------------
@@ -137,16 +158,16 @@ u_short KssConnection::getPort() const
 // getTimeout(), as it is needed by the connection manager to calculate
 // timeouts.
 //
-long KssConnection::getTimeout() const
+long KsConnection::getTimeout() const
 {
     return _timeout;
-} // KssConnection::getTimeout
+} // KsConnection::getTimeout
 
 
-void KssConnection::setTimeout(unsigned long timeout)
+void KsConnection::setTimeout(unsigned long timeout)
 {
     _timeout = timeout;
-} // KssConnection::setTimeout
+} // KsConnection::setTimeout
 
 
 // ---------------------------------------------------------------------------
@@ -165,7 +186,7 @@ void KssConnection::setTimeout(unsigned long timeout)
 KssXDRConnection::KssXDRConnection(int fd, bool autoDestroyable, 
 	                           unsigned long timeout,
 	                           ConnectionType type)
-    : KssConnection(fd, autoDestroyable, timeout, type),
+    : KsConnection(fd, autoDestroyable, timeout, type),
       _cleanup_xdr_stream(true)
 {
 } // KssXDRConnection::KssXDRConnection
