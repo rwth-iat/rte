@@ -62,6 +62,9 @@ public:
                 const KsTime &ct,
                 const KsString &co,
                 KS_ACCESS am);
+    virtual ~KsProjProps() {}
+
+    KsProjProps &operator = (const KsProjProps &);
 
     KsString            identifier;
     KsTime              creation_time;
@@ -90,6 +93,9 @@ public:
                    KS_ACCESS am,
                    const KsString &tu,
                    KS_VAR_TYPE tp);
+    ~KsVarProjProps() {}
+
+    KsVarProjProps &operator = (const KsVarProjProps &);
 
     virtual enum_t xdrTypeCode() const;
     
@@ -116,6 +122,9 @@ public:
                       const KsTime &ct,
                       const KsString &co,
                       KS_ACCESS am);
+    ~KsDomainProjProps() {}
+
+    KsDomainProjProps &operator = (const KsDomainProjProps &);
  
     virtual enum_t xdrTypeCode() const;
 
@@ -136,6 +145,9 @@ private:
 class KsCurrProps : 
 public KsXdrUnion 
 {
+public:
+    virtual ~KsCurrProps() {}
+
     KS_DECL_XDRUNION(KsCurrProps);
 };
 
@@ -155,6 +167,9 @@ public:
     KsVarCurrProps(KsValueHandle v,
                    const KsTime &t,
                    KS_STATE s);
+    ~KsVarCurrProps() {}
+
+    KsVarCurrProps &operator = (KsVarCurrProps &); 
       
     virtual enum_t xdrTypeCode() const;
 
@@ -176,6 +191,7 @@ private:
 class KsDomainCurrProps : public KsCurrProps {
 public:
     KsDomainCurrProps() {}
+    ~KsDomainCurrProps() {}
 
     virtual enum_t xdrTypeCode() const;
 
@@ -214,6 +230,18 @@ KsProjProps::KsProjProps(const KsString &ident,
   access_mode(am)
 {}
 
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsProjProps &
+KsProjProps::operator = (const KsProjProps &other)
+{
+    identifier = other.identifier;
+    creation_time = other.creation_time;
+    comment = other.comment;
+    access_mode = other.access_mode;
+    return *this;
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -239,6 +267,17 @@ KsVarProjProps::KsVarProjProps(const KsString &ident,
   type(tp)
 {}
 
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsVarProjProps &
+KsVarProjProps::operator = (const KsVarProjProps &other)
+{
+    KsProjProps::operator = (other);
+    tech_unit = other.tech_unit;
+    type = other.type;
+    return *this;
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -257,6 +296,16 @@ KsDomainProjProps::KsDomainProjProps(const KsString &ident,
                                      KS_ACCESS am)
 : KsProjProps(ident, ct, co, am) 
 {}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsDomainProjProps &
+KsDomainProjProps::operator = (const KsDomainProjProps &other)
+{
+    KsProjProps::operator = (other);
+    return *this;
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -291,6 +340,18 @@ KsVarCurrProps::KsVarCurrProps( KsValueHandle v )
 {
     PLT_PRECONDITION(v);
     value = v;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsVarCurrProps &
+KsVarCurrProps::operator = (KsVarCurrProps &other)
+{
+    value = other.value;
+    time = other.time;
+    state = other.state;
+    return *this;
 }
 
 //////////////////////////////////////////////////////////////////////

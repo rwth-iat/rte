@@ -1,8 +1,5 @@
 /* -*-plt-c++-*- */
 
-#ifndef KSC_COMMOBJECT_INCLUDED 
-#define KSC_COMMOBJECT_INCLUDED
-
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -42,89 +39,64 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <ks/props.h>
+#include "ks/package.h"
+
+#include <plt/list_impl.h>
 
 //////////////////////////////////////////////////////////////////////
 
-class KscAvModule;
+template <class T>
+KscDirectIterator<T>::KscDirectIterator(const PltList<const T *> &lst)
+: it(lst)
+{}
 
 //////////////////////////////////////////////////////////////////////
-// class KscCommObject
-//////////////////////////////////////////////////////////////////////
-
-class KscCommObject
+ 
+template <class T>
+KscDirectIterator<T>::operator const void * () const
 {
-public:
-    KscCommObject(const char *object_name);
-    virtual ~KscCommObject();
-    virtual const char *getName() const;
-    virtual KS_OBJ_TYPE typeCode() const = 0;
-
-    //virtual bool getProjPropsUpdate();     // TODO
-
-    virtual void setAvModule(const KscAvModule *avm);
-    virtual const KscAvModule *getAvModule() const;
-
-protected:
-    PltString name;
-    const KscAvModule *av_module;
-};
-
+    return it.operator const void * ();
+}
 
 //////////////////////////////////////////////////////////////////////
-// class KscDomain
-//////////////////////////////////////////////////////////////////////
 
-class KscDomain
-: public KscCommObject
+template <class T>
+const T *
+KscDirectIterator<T>::operator -> () const
 {
-public:
-    KscDomain(const char *domain_name);
-    ~KscDomain();
-
-    KS_OBJ_TYPE typeCode() const;
-
-    const KsDomainProjProps *getProjProps() const;
-//    KscChildIterator *newChildIterator(KS_OBJ_TYPE mask); // TODO
-
-protected:
-    KsDomainProjProps *proj_props;
-};
+    return *it;
+}
 
 //////////////////////////////////////////////////////////////////////
-// class KscVariable
-//////////////////////////////////////////////////////////////////////
 
-class KscVariable
-: public KscCommObject
+template <class T>
+KscDirectIterator<T> &
+KscDirectIterator<T>::operator ++ ()
 {
-public:
-    KscVariable(const char *var_name);
-    ~KscVariable();
-
-    KS_OBJ_TYPE typeCode() const;
-
-    //virtual bool getUpdate();            // TODO
-    //virtual bool setUpdate();            // TODO
-    KsValueHandle getValue() const;      // TODO
-    const KsVarProjProps *getProjProps() const;
-    const KsVarCurrProps *getCurrProps() const;
-    bool setCurrProps(KsVarCurrProps &cp);
-    bool isDirty() const;
-   
-protected:
-
-    KsVarProjProps *proj_props;
-    KsVarCurrProps *curr_props;
-
-    bool fDirty;
-};
-
-#endif
+    ++it;
+    return *this;
+}
 
 //////////////////////////////////////////////////////////////////////
-// EOF CommObject.h
+ 
+template <class T>
+void
+KscDirectIterator<T>::operator ++ (int)
+{
+    ++it;
+}
+
 //////////////////////////////////////////////////////////////////////
+
+template <class T>
+void
+KscDirectIterator<T>::toStart()
+{
+    it.toStart();
+}
+
+//////////////////////////////////////////////////////////////////////
+
 
 
 

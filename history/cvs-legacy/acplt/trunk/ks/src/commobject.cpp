@@ -47,10 +47,9 @@
 // or linker error.
 //////////////////////////////////////////////////////////////////////
 
-
 KscCommObject::KscCommObject(const char *object_name)
 : name(object_name),
-  av_module(NULL)
+  av_module(0)
 {}
 
 //////////////////////////////////////////////////////////////////////
@@ -94,7 +93,7 @@ KscCommObject::getAvModule() const
 
 KscDomain::KscDomain(const char *domain_name)
 : KscCommObject(domain_name),
-  proj_props(NULL)
+  proj_props(0)
 {}
 
 //////////////////////////////////////////////////////////////////////
@@ -130,8 +129,8 @@ KscDomain::getProjProps() const
 
 KscVariable::KscVariable(const char *var_name)
 : KscCommObject(var_name),
-  proj_props(NULL),
-  curr_props(NULL),
+  proj_props(0),
+  curr_props(0),
   fDirty(false)
 {}
 
@@ -206,7 +205,7 @@ KscVariable::getValue() const
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscVariable::setCurrProps(const KsVarCurrProps &cp)
+KscVariable::setCurrProps(KsVarCurrProps &cp)
 {
     if( curr_props ) {
         // object already exists, just copy new data
