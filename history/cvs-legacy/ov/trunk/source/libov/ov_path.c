@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_path.c,v 1.5 2000-02-10 13:07:02 dirk Exp $
+*   $Id: ov_path.c,v 1.6 2002-07-02 05:59:01 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -57,6 +57,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 	*/
 	OV_UINT		size, relsize;
 	OV_STRING	pc;
+	OV_STRING       pathcopy;
 	char		del, nextdel;
 	OV_UINT		i;
 	OV_UINT		pathlen;
@@ -74,9 +75,15 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 		return OV_ERR_BADPATH;
 	}
 	/*
+	*       copy static pathname in memstack (beware of memory access to the codesegments!)  
+	*/
+	pathcopy = ov_memstack_alloc(strlen(pathname)+1);
+	strcpy(pathcopy, pathname);
+
+	/*
 	*	determine the count of path elements needed (relative part)
 	*/
-	pc = pathname;
+	pc = pathcopy;
 	if(*pc == '/') {
 		/*
 		*	path is absolute
