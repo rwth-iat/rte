@@ -2,9 +2,9 @@ CXX = g++
 
 CXX_EXTRA_FLAGS = -I../../include
 
-CXX_PLATFORM_FLAGS = -DPLT_SIMULATE_BOOL=0 -DPLT_SIMULATE_RTTI=1
+CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_HPUX=1
 
-CXX_FLAGS = -g -Wall -DPLT_DEBUG_PEDANTIC=1
+CXX_FLAGS = -g -Wall -DPLT_DEBUG_PEDANTIC=0
 #CXX_FLAGS = -O -Wall -DNDEBUG 
 #
 #
@@ -32,6 +32,7 @@ CXX_LIBPLT_SOURCES = \
 	priorityqueue.cpp \
 	string.cpp \
 	hashtable.cpp \
+	log.cpp \
 	key.cpp
 #	rbtreedict.cpp \
 
@@ -42,6 +43,7 @@ CXX_LIBPLT_OBJECTS = \
 	priorityqueue.o \
 	string.o \
 	hashtable.o \
+	log.o \
 	key.o
 #	rbtreedict.o \
 
@@ -55,13 +57,14 @@ CXX_TEST_SOURCES = \
 	ttime.cpp \
 	thashtable.cpp \
 	thtname.cpp \
+	tlog.cpp \
 	tarray.cpp
 #	trbtreedict.cpp
 
 CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 
 TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray\
-	thtname tcomparable thandle
+	thtname tcomparable thandle tlog
 
 all : libplt.a
 
@@ -75,6 +78,9 @@ thandle : thandle.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
 tlist : tlist.o libplt.a
+	$(CXX_LINK) -o $@ $^
+
+tlog : tlog.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
 trtti :	trtti.o libplt.a
