@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.3 1999-01-08 13:09:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.4 1999-01-29 12:42:21 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -107,14 +107,14 @@ protected:
     
     enum FragmentState { FRAGMENT_HEADER, FRAGMENT_BODY };
     
-    bool           _last_fragment;
-    FragmentState  _fragment_state;
-    u_long         _remaining_len;
-    char           _fragment_header[4];
+    bool              _last_fragment;
+    FragmentState     _fragment_state;
+    u_long            _remaining_len;
+    char              _fragment_header[4];
 #if !PLT_COMPILER_BORLAND && !PLT_COMPILER_DECCXX
-    void          *_ptr;
+    void             *_ptr;
 #else
-    char          *_ptr;
+    char             *_ptr;
 #endif
     
 private:
@@ -125,4 +125,4 @@ private:
 #endif /* PLT_USE_BUFFERED_STREAMS */
 #endif
 
-/* End of tcpudpcon.h */
+/* End of xdrtcpcon.h */
