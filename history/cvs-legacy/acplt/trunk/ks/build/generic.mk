@@ -25,11 +25,11 @@ CXX_LIBKS_SOURCES = \
 	manager.cpp \
 	mask.cpp \
 	event.cpp \
- 	svrbase.cpp \
+	svrbase.cpp \
 	svrobjects.cpp \
 	svrrpcctx.cpp \
 	svrsimpleobjects.cpp \
- 	server.cpp \
+	server.cpp \
 	simpleserver.cpp \
 	templates.cpp \
 
@@ -53,7 +53,7 @@ LIBKS_OBJECTS3 = \
 	manager$(O) \
 	mask$(O) \
 	event$(O) \
- 	svrbase$(O) \
+	svrbase$(O) \
 	svrobjects$(O) \
 	svrrpcctx$(O) \
 	svrsimpleobjects$(O)
