@@ -1,3 +1,5 @@
+MAKE = gmake
+RANLIB = ranlib
 CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_HPUX=1
 CXX_FLAGS = -g -Wall -DPLT_DEBUG_PEDANTIC=0
 include ../unix.mk

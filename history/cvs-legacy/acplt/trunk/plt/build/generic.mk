@@ -10,20 +10,25 @@ CXX_LIBPLT_SOURCES = \
 	$(SRCDIR)log.cpp \
 	$(SRCDIR)priorityqueue.cpp \
 	$(SRCDIR)rtti.cpp \
-	$(SRCDIR)string.cpp
+	$(SRCDIR)string.cpp \
+	$(SRCDIR)time.cpp
 
-LIBPLT_OBJECTS = \
+LIBPLT_OBJECTS1 = \
 	array$(O) \
 	container$(O) \
 	debug$(O) \
 	handle$(O) \
-	hashtable$(O) \
+	hashtable$(O)
+
+LIBPLT_OBJECTS2 = \
 	list$(O) \
 	log$(O) \
 	priorityqueue$(O) \
 	rtti$(O) \
-	time$(O) \
-	string$(O)
+	string$(O) \
+	time$(O)
+
+LIBPLT_OBJECTS = $(LIBPLT_OBJECTS1) $(LIBPLT_OBJECTS2)
 
 CXX_TEST_SOURCES = \
 	$(TESTSRCDIR)tarray.cpp \

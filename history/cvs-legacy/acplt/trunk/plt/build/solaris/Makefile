@@ -1,4 +1,5 @@
 CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_SOLARIS=1
 CXX_FLAGS = -g -Wall -DPLT_DEBUG_PEDANTIC=0
 MAKE=make
+RANLIB=ranlib
 include ../unix.mk
