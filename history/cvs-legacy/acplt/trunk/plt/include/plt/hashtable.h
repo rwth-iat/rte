@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.17 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.18 2000-04-14 08:47:25 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -241,6 +241,21 @@ public:
     PltKeyCPtr(const T *p = 0);
     unsigned long hash() const;
     bool operator == (const PltKeyCPtr & p) const;
+    const T & operator * () const;
+    const T * operator ->() const;
+private:
+    const T* _p;
+};
+    
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+class PltKeyPlainConstPtr
+{
+public:
+    PltKeyPlainConstPtr(const T *p = 0);
+    unsigned long hash() const;
+    bool operator == (const PltKeyPlainConstPtr & p) const;
     const T & operator * () const;
     const T * operator ->() const;
 private:
@@ -531,6 +546,58 @@ PltKeyCPtr<T>::operator -> () const
 template <class T>
 inline const T &
 PltKeyCPtr<T>::operator * () const
+{
+    return *_p;
+}
+
+//////////////////////////////////////////////////////////////////////
+// (template class PltKeyPlainConstPtr<T>)
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline 
+PltKeyPlainConstPtr<T>::PltKeyPlainConstPtr(const T *p)
+: _p(p)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline unsigned long
+PltKeyPlainConstPtr<T>::hash() const
+{
+    unsigned long h = (unsigned long) _p;
+    h = h ^ ((h >> 24) & 0xFF)
+          ^ ((h >> 16) & 0xFF)
+          ^ ((h >>  8) & 0xFF);
+    return h;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool 
+PltKeyPlainConstPtr<T>::operator == (const PltKeyPlainConstPtr & rhs) const
+{
+    return _p == rhs._p;
+}
+    
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline const T *
+PltKeyPlainConstPtr<T>::operator -> () const
+{
+    return _p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline const T &
+PltKeyPlainConstPtr<T>::operator * () const
 {
     return *_p;
 }
