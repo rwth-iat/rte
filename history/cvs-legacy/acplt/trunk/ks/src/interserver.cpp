@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.9 2001-02-09 08:17:44 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.10 2001-02-21 09:39:10 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -600,7 +600,7 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
     KssConnection::ConnectionState state = con.getState();
 
 #if DEBUG_STATES
-    cout << endl << "macro and sub connection state: ";
+    cout << "macro and sub connection state: ";
     switch ( _state ) {
     case ISC_STATE_CLOSED:
 	cout << "CLOSED."; break;
