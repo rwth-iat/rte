@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.8 2000-04-12 07:23:14 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.9 2001-02-09 08:17:44 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -39,6 +39,8 @@
 #if !PLT_SYSTEM_NT
 #include <unistd.h>
 #endif
+
+#define DEBUG_STATES 0
 
 
 // ---------------------------------------------------------------------------
@@ -456,6 +458,9 @@ bool KssInterKsServerConnection::openPortmapperConnection()
     // Okay. We now have the socket as well as the connection object, so we
     // can now enter the connection establishment state.
     //
+#if DEBUG_STATES
+    cout << "opening portmapper connection" << endl;
+#endif
     _result = KS_ERR_OK;
     _state = ISC_STATE_BUSY;
     activateConnection();
@@ -520,6 +525,9 @@ bool KssInterKsServerConnection::openManagerConnection(u_short port,
     // Okay. We now have the socket as well as the connection object, so we
     // can now enter the connection establishment state.
     //
+#if DEBUG_STATES
+    cout << "opening manager connection" << endl;
+#endif
     _result = KS_ERR_OK;
     _state = ISC_STATE_BUSY;
     activateConnection();
@@ -572,6 +580,9 @@ bool KssInterKsServerConnection::openServerConnection(u_short port)
     // Okay. We now have the socket as well as the connection object, so we
     // can now enter the connection establishment state.
     //
+#if DEBUG_STATES
+    cout << "opening server connection" << endl;
+#endif
     _result = KS_ERR_OK;
     _state = ISC_STATE_BUSY;
     activateConnection();
@@ -588,8 +599,34 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 {
     KssConnection::ConnectionState state = con.getState();
 
-#if 0
-    cout << endl << "connection state: ";
+#if DEBUG_STATES
+    cout << endl << "macro and sub connection state: ";
+    switch ( _state ) {
+    case ISC_STATE_CLOSED:
+	cout << "CLOSED."; break;
+    case ISC_STATE_OPEN:
+	cout << "OPEN."; break;
+    case ISC_STATE_BUSY:
+	cout << "BUSY."; break;
+    default:
+	cout << (int) _state;
+    }
+    cout << " ";
+    switch ( _sub_state ) {
+    case ISC_SUBSTATE_NONE:
+	cout << "(NONE)"; break;
+    case ISC_SUBSTATE_CONNECTING_PMAP:
+	cout << "(PMAP)"; break;
+    case ISC_SUBSTATE_CONNECTING_MANAGER:
+	cout << "(MANAGER)"; break;
+    case ISC_SUBSTATE_CONNECTING_SERVER:
+	cout << "(SERVER)"; break;
+    default:
+	cout << (int) _sub_state;
+    }
+    cout << endl;
+
+    cout << "micro (delegated) connection state: ";
     switch ( state ) {
     case KssConnection::CNX_STATE_CONNECTING:
 	cout << "CONNECTING."; break;
@@ -627,6 +664,14 @@ bool KssInterKsServerConnection::attention(KssConnection &con)
 	case ISC_SUBSTATE_CONNECTING_PMAP:
 	case ISC_SUBSTATE_CONNECTING_MANAGER:
 	    _result = KS_ERR_NOMANAGER;
+	    //
+	    // Note that when contacting the portmapper or the Manager
+	    // using UDP we never get CNX_STATE_CONN_FAILED, as UDP is
+	    // a connectionless transport, thus no connection phase which
+	    // could fail. When either the portmapper or the Manager do
+	    // not respond, we assume a failed "virtual connection".
+	    //
+	    state = KssConnection::CNX_STATE_CONN_FAILED;
 	    break;
 	default:
 	    _result = KS_ERR_NETWORKERROR;
