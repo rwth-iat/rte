@@ -112,7 +112,8 @@ protected:
 
 inline
 KscHistory::KscHistory(const char *object_path)
-    : KscCommObject(object_path)
+    : KscCommObject(object_path),
+      max_entries(ULONG_MAX)
 {}
 
 /////////////////////////////////////////////////////////////////////////////

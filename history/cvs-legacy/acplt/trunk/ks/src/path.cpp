@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.7 1998-10-01 09:59:12 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.8 1998-10-12 09:31:37 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -479,15 +479,6 @@ KsPath::convert()
     KsString new_str;
     KS_RESULT res = ksStringFromPercent(_str, new_str);
 
-#if PLT_DEBUG
-    cerr << "Old string: " << _str << endl;
-    cerr << "Slashes set at: ";
-    for(size_t j = 0; j < _slash.size(); j++) {
-        cerr << _slash[j] << "\t";
-    }
-    cerr << endl;
-#endif
-
     if( res == KS_ERR_OK ) {
         // Iterate over parts of path and adjust slash positions.
         // Each percent found in the old string shortens the current
@@ -507,33 +498,6 @@ KsPath::convert()
             }
         }
 
-#if PLT_DEBUG
-        bool error = false;
-        for(size_t i = 0; i < _slash.size() - 1 && !error; i++) {
-            if( new_str[_slash[i]-1] != '/' ) {
-                error = true;
-            }
-        }
-        if( error ) {
-            cerr << "Conversion of path failed." << endl;
-            cerr << "Original string: " << _str << endl;
-            cerr << "New string: " << new_str << endl;
-            cerr << "Slashes set at:" << endl;
-            for(size_t j = 0; j < _slash.size(); j++) {
-                cerr << _slash[j] << "\t";
-            }
-            cerr << endl;
-            PLT_ASSERT(0);
-        } else {
-            cerr << "Path was converted:" << endl;
-            cerr << "New string: " << new_str << endl;
-            cerr << "Slashes set at: ";
-            for(size_t j = 0; j < _slash.size(); j++) {
-                cerr << _slash[j] << "\t";
-            }
-            cerr << endl;
-        }
-#endif
         _str = new_str;
     }
 
