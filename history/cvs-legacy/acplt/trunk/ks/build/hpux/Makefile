@@ -24,7 +24,7 @@ CXX_LINK = g++
 .cpp.o:
 	$(CXX_COMPILE) -o $@ $<
 
-CXX_SOURCES = txdr2.cpp txdr.cpp string.cpp tregister.cpp register.cpp
+CXX_SOURCES = txdr2.cpp txdr.cpp xdr.cpp string.cpp tregister.cpp register.cpp
 #xdr.cpp
 # tvalue.cpp value.cpp
 
@@ -40,7 +40,7 @@ value.s : value.cpp
 tvalue :  tvalue.o value.o
 	$(CXX_LINK) -o $@ $^ $(LIBPLT)
 
-txdr2 :  txdr2.o $(LIBPLT)
+txdr2 :  txdr2.o xdr.o string.o $(LIBPLT)
 	$(CXX_LINK) -o $@ $^ 
 
 txdr :  txdr.o string.o $(LIBPLT)
