@@ -5,7 +5,7 @@ CXX = g++
 
 CXX_EXTRA_FLAGS = -I../../include -I$(PLT_DIR)/include
 
-CXX_PLATFORM_FLAGS = -DPLT_HAS_BOOL=1
+CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_HPUX=1
 
 CXX_FLAGS = -g -Wall
 
@@ -24,7 +24,9 @@ CXX_LINK = g++
 .cpp.o:
 	$(CXX_COMPILE) -o $@ $<
 
-CXX_SOURCES = txdr2.cpp txdr.cpp xdr.cpp string.cpp tregister.cpp register.cpp
+CXX_SOURCES = txdr2.cpp txdr.cpp xdr.cpp string.cpp tregister.cpp\
+	avticket.cpp register.cpp
+
 #xdr.cpp
 # tvalue.cpp value.cpp
 
@@ -44,6 +46,9 @@ txdr2 :  txdr2.o xdr.o string.o $(LIBPLT)
 	$(CXX_LINK) -o $@ $^ 
 
 txdr :  txdr.o string.o $(LIBPLT)
+	$(CXX_LINK) -o $@ $^
+
+tavticket :  avticket.o $(LIBPLT)
 	$(CXX_LINK) -o $@ $^
 
 tregister :	register.o tregister.o string.o $(LIBPLT)
