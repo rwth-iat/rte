@@ -1,7 +1,7 @@
 ### -*-makefile-*-
 ###
 ### Compiler & platform specific part for
-### MS VC++ 4.2 / nmake / Windows NT
+### MS VC++ / nmake / Windows NT
 
 ### Filename conventions
 O=.obj
@@ -25,10 +25,10 @@ CXX_FLAGS = -DNDEBUG -MT
 #CXX_FLAGS =
 
 ### LINKER
-LD = link /nologo
+LD = link /nologo /debug
 # LD_FLAGS = /DEBUG
 CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) \
-	-GR -DPLT_SYSTEM_NT=1 -DPLT_DEBUG_NEW=0 -DFD_SETSIZE=128
+	-GR -DPLT_SYSTEM_NT=1 -DPLT_USE_BUFFERED_STREAMS=1 -DPLT_DEBUG_NEW=0 -DFD_SETSIZE=128
 CXX_LIBS = $(LIBKS) $(LIBPLT) $(LIBRPC) wsock32.lib advapi32.lib user32.lib
 
 RC = rc
@@ -127,7 +127,7 @@ tmanager$(EXE): tmanager$(O) tmanager1$(O) $(LIBKSSVR) $(LIBKS)
 
 tserver$(EXE): tserver$(O) tserver1$(O) $(LIBKSSVR) $(LIBKS)
 	$(LD) $(LD_FLAGS) /NODEFAULTLIB:libc \
-		tserver$(O) tserver1$(O) \
+		tserver$(O) tserver1$(O) ext_sp$(O) \
 		$(LIBKSSVR) $(CXX_LIBS)
 
 tsclient$(EXE): tsclient$(O) tsclient1$(O) svrrpcctx$(O) $(LIBKSSVR) $(LIBKS)
