@@ -1,7 +1,7 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.9 1998-01-12 07:46:06 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.10 1999-01-29 12:21:54 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -133,7 +133,7 @@ print_value(KsValueHandle hv) {
 #if PLT_SYSTEM_OPENVMS
             unsigned long sec = pTime->tv_sec;
 #else
-            long sec = pTime->tv_sec;
+            time_t sec = pTime->tv_sec;
 #endif
             cout << "Time " << ctime(&sec) << endl;
         }
