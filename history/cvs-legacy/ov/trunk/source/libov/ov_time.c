@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.c,v 1.3 1999-08-18 13:11:27 dirk Exp $
+*   $Id: ov_time.c,v 1.4 1999-08-19 12:03:49 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -31,6 +31,8 @@
 
 #include "libov/ov_time.h"
 
+#include <time.h>
+
 #if OV_SYSTEM_UNIX
 #include <sys/time.h>
 #endif
@@ -44,7 +46,6 @@
 #endif
 
 #if OV_SYSTEM_RMOS
-#include "time.h"
 #include "rmtypes.h"
 #endif
 
