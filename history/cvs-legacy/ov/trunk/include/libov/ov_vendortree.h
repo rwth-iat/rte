@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.9 2002-06-26 07:13:02 ansgar Exp $
+*   $Id: ov_vendortree.h,v 1.10 2003-11-07 09:25:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -41,6 +41,13 @@ extern "C" {
 #define	OV_NUM_VENDOROBJECTS	24
 
 /*
+*	Number of configuration bits
+*/
+#define	OV_NUM_SERVER_CONFIG	2
+//	Boolean[0]: ov_activitylock
+//	Boolean[1]: ov_explain
+
+/*
 *	Global variables
 */
 #ifdef OV_COMPILE_LIBOV
@@ -48,8 +55,9 @@ extern "C" {
 #else
 #define OV_EXTERN OV_DLLVARIMPORT
 #endif
-OV_EXTERN OV_BOOL activitylock;
-OV_EXTERN OV_BOOL backup;
+OV_EXTERN OV_BOOL ov_activitylock;
+OV_EXTERN OV_BOOL ov_explain;
+OV_EXTERN OV_BOOL ov_backup;
 #undef OV_EXTERN
 
 /*
@@ -325,17 +333,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 );
 
 /*
-*	Get activitylock
+*	Get server configuration
 */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getactivitylock(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverconfiguration(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 );
 
 /*
-*	Set activitylock
+*	Set server configuration
 */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setactivitylock(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setserverconfiguration(
 	const OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 );

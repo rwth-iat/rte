@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.12 2003-01-31 10:04:46 ansgar Exp $
+*   $Id: ov.ovm,v 1.13 2003-11-07 09:25:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -29,7 +29,7 @@
 */
 
 LIBRARY ov
-	VERSION = "1.6.2";
+	VERSION = "1.6.4";
 	AUTHOR = "Dirk Meyer/Ansgar Münnemann";
 	COPYRIGHT = "Copyright (C) 1998-2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
 	COMMENT = "Metamodel of ACPLT/OV";
@@ -175,7 +175,7 @@ LIBRARY ov
 	/*
 	*	operation: an operation definition
 	*	----------------------------------
-	*/	
+	*/
 	CLASS operation : CLASS ov/object
 		IS_INSTANTIABLE;
 		VARIABLES
@@ -247,5 +247,6 @@ LIBRARY ov
 		PARENT partclass : CLASS ov/class;
 		CHILD part : CLASS ov/part;
 	END_ASSOCIATION;
+
 END_LIBRARY;
 

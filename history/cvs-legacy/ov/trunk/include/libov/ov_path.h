@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_path.h,v 1.3 1999-09-15 10:48:15 dirk Exp $
+*   $Id: ov_path.h,v 1.4 2003-11-07 09:25:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -77,7 +77,43 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_path_getobjectpointer(
 	const OV_STRING			pathname,
 	const OV_UINT			version
 );
-	
+
+/*
+*	Converts percent characters in asci characters
+*	Note: the memory for the returned string is allocated on the memory
+*	stack, use ov_memstack_lock()/unlock() outside of this function
+*/
+
+OV_DLLFNCEXPORT OV_STRING ov_path_frompercent (
+                OV_STRING org
+);
+
+/*
+*	Converts characters in an identifier-string to their percent representation
+*	Note: the memory for the returned string is allocated on the memory
+*	stack, use ov_memstack_lock()/unlock() outside of this function
+*/
+
+OV_DLLFNCEXPORT OV_STRING ov_path_topercent (
+                OV_STRING org
+);
+
+/*
+*	returns size of a string in respect to a percent conversion
+*/
+
+OV_DLLFNCEXPORT OV_UINT ov_path_percentsize (
+                OV_STRING org
+);
+
+/*
+*	Checks if characters in a valid one
+*/
+
+OV_DLLFNCEXPORT OV_BOOL ov_path_isvalidchar (
+                char pcurr
+);
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.24 2003-09-04 13:52:59 ansgar Exp $
+*   $Id: ov_version.h,v 1.25 2003-11-07 09:25:34 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -36,30 +36,30 @@
 */
 #define OV_VER_CODEGEN						"1.6.1"
 #define OV_VER_BUILDER 						"1.0.2"
-#define OV_VER_LIBOV						"1.6.3"
+#define OV_VER_LIBOV						"1.6.4"
 #define OV_VER_DBUTIL 						"1.2.0"
-#define OV_VER_LIBOVKS 						"1.3.3"
+#define OV_VER_LIBOVKS 						"1.3.4"
 #define OV_VER_SERVER						"1.3.1"
 #define OV_VER_NTSERVICE					"1.3.1"
 #define OV_VER_CONTROLPANEL					"1.2.0"
 
 #define OV_VER_FILEVERSION_CODEGEN			1, 6, 1, 0
 #define OV_VER_FILEVERSION_BUILDER			1, 0, 2, 0
-#define OV_VER_FILEVERSION_LIBOV			1, 6, 3, 0
+#define OV_VER_FILEVERSION_LIBOV			1, 6, 4, 0
 #define OV_VER_FILEVERSION_DBUTIL 			1, 2, 0, 0
-#define OV_VER_FILEVERSION_LIBOVKS 			1, 3, 3, 0
+#define OV_VER_FILEVERSION_LIBOVKS 			1, 3, 4, 0
 #define OV_VER_FILEVERSION_SERVER			1, 3, 1, 0
 #define OV_VER_FILEVERSION_NTSERVICE			1, 3, 1, 0
 #define OV_VER_FILEVERSION_CONTROLPANEL			1, 2, 0, 0
 
-#define OV_VER_PRODUCTVERSION_CODEGEN		1, 6, 3, 0
-#define OV_VER_PRODUCTVERSION_BUILDER		1, 6, 3, 0
-#define OV_VER_PRODUCTVERSION_LIBOV		1, 6, 3, 0
-#define OV_VER_PRODUCTVERSION_DBUTIL 		1, 6, 3, 0
-#define OV_VER_PRODUCTVERSION_LIBOVKS 		1, 6, 3, 0
-#define OV_VER_PRODUCTVERSION_SERVER		1, 6, 3, 0
-#define OV_VER_PRODUCTVERSION_NTSERVICE		1, 6, 3, 0
-#define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 6, 3, 0
+#define OV_VER_PRODUCTVERSION_CODEGEN		1, 6, 4, 0
+#define OV_VER_PRODUCTVERSION_BUILDER		1, 6, 4, 0
+#define OV_VER_PRODUCTVERSION_LIBOV		1, 6, 4, 0
+#define OV_VER_PRODUCTVERSION_DBUTIL 		1, 6, 4, 0
+#define OV_VER_PRODUCTVERSION_LIBOVKS 		1, 6, 4, 0
+#define OV_VER_PRODUCTVERSION_SERVER		1, 6, 4, 0
+#define OV_VER_PRODUCTVERSION_NTSERVICE		1, 6, 4, 0
+#define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 6, 4, 0
 
 #define OV_VER_LICENSE															\
 	"Copyright (C) 1998-2000 "													\
