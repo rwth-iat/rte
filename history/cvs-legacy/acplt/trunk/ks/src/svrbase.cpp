@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.24 1997-11-27 18:18:30 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.25 1997-12-02 10:19:41 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -52,7 +52,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if 0
+#if !PLT_SYSTEM_NT
 #include <unistd.h>
 #endif
 
@@ -137,20 +137,40 @@ KsServerBase::KsServerBase(int port)
     // Create transport: because the caller can specify the port to which we
     // should bind, this can be sometimes a lot of work...
     //
+#if PLT_SYSTEM_SOLARIS
+    int sock = t_open("/dev/tcp", O_RDWR, (struct t_info *) 0);
+#else
     int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#endif
     if ( sock >= 0 ) {
         struct sockaddr_in my_addr;
+
         memset(&my_addr, 0, sizeof(my_addr));
         my_addr.sin_family      = AF_INET;
         my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        my_addr.sin_port        = htons(_sock_port);
+        my_addr.sin_port        = htons((u_short) _sock_port);
+
+#if PLT_SYSTEM_SOLARIS
+        struct t_bind req;
+
+        req.addr.maxlen = sizeof(my_addr);
+        req.addr.len    = sizeof(my_addr);
+        req.addr.buf    = (char *) &my_addr;
+        req.qlen        = 5;
+
+        if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
+#else
         if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
+#endif
             // Failed.
 #if PLT_SYSTEM_NT
             closesocket(sock);
+#elif PLT_SYSTEM_SOLARIS
+            t_close(sock);
 #else
             close(sock);
 #endif
+            sock = -1;
         } else {
             _tcp_transport = svctcp_create(sock,
                                            _send_buffer_size,
