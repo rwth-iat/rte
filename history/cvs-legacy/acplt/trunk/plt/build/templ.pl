@@ -71,7 +71,7 @@ do {
 	print STDERR "$compile\n";
 	$err = system($compile);
 	if ($err) {
-            print STDERR "Could not remake main object.\n"
+            print STDERR "Could not remake main object.\n";
 	    exit($err);
 	}
     }
