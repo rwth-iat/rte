@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/history.h,v 1.7 1999-09-16 10:54:39 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/history.h,v 1.8 2003-10-13 11:26:23 harald Exp $ */
 #ifndef KS_HISTORY_INCLUDED
 #define KS_HISTORY_INCLUDED
 /*
