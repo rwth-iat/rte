@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.25 1999-09-16 10:54:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.26 2000-04-10 15:02:48 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -76,6 +76,7 @@ public:
 
     virtual bool isOk() const { return _is_ok; }
     virtual bool isGoingDown() const { return _shutdown_flag != 0; }
+    virtual void resetGoingDown() { _shutdown_flag = 0; }
 
     static KsServerBase & getServerObject();
 
