@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.5 1997-03-26 17:06:33 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list.h,v 1.6 1997-04-01 12:30:16 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -261,8 +261,9 @@ inline PltListNode_base *
 PltList_base::removeFirst() 
 {
     PLT_PRECONDITION( ! isEmpty() );
-    return remove(first);
+    PltListNode_base *res=remove(first);
     PLT_CHECK_INVARIANT();
+    return res;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -271,8 +272,9 @@ inline PltListNode_base *
 PltList_base::removeLast() 
 {
     PLT_PRECONDITION( ! isEmpty() );
-    return remove(last);
+    PltListNode_base *res=remove(last);
     PLT_CHECK_INVARIANT();
+    return res;
 }
 
 //////////////////////////////////////////////////////////////////////
