@@ -42,6 +42,10 @@
 
 ////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////
+// class KsServerDesc
+//////////////////////////////////////////////////////////////////
+
 bool 
 KsServerDesc::xdrDecode(XDR *xdr)
 {
@@ -84,7 +88,88 @@ KsServerDesc::xdrNew(XDR *xdr)
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// class KsResult
+////////////////////////////////////////////////////////////////////////////
+
+bool 
+KsResult::xdrEncode(XDR *xdr) {
+    
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    
+    return xdr_u_long( xdr, &result );
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+bool
+KsResult::xdrDecode(XDR *xdr) {
+
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+
+    return xdr_u_long( xdr, &result ):
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+KsResult *
+KsResult::xdrNew(XDR *xdr) {
+
+    KsResult *pksr = new KsResult();
+
+    if( (pksr != NULL) && (pksr->xdrDecode(xdr)) ) {
+
+        return pksr;
+    
+    } else {
+
+        delete pksr;
+        return NULL;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////
+// class KsRegistrationParams
+///////////////////////////////////////////////////////////////////////////
+
+KsRegistrationParams::KsRegistrationParams( const KsServerDesc &s, 
+  u_short p, u_long t ) : server(s), port(p), time_to_live(t) 
+{}
+    
+bool
+KsRegistrationParams::xdrEncode(XDR *xdr) const {
+
+    if( !(server.xdrEncode(xdr)) )
+        return false;
+
+    return xdr_u_short(&port, xdr) && xdr_u_long(&time_to_live, xdr);
+}
+
+bool 
+KsRegistrationParams::xdrDecode(XDR *xdr) {
+
+    if( !(server.xdrDecode(xdr)) )
+        return false;
+
+    return xdr_u_short(&port, xdr)  && xdr_u_long(&time_to_live, xdr);
+}
+
+////////////////////////////////////////////////////////////////////////
+
+KsRegistrationParams *KsRegistrationParams::xdrNew(XDR *xdr) {
+
+    KsRegistrationParams *prp = new KsRegistrationParams();
+
+    if( prp && prp->xdrDecode(xdr) ) {
+
+        return prp;
+
+    } else {
+
+        delete prp;
+        return NULL;
+    }
+}
+
 // End of file ks/register.cpp
-
-
 

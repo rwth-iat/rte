@@ -35,8 +35,14 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/////////////////////////////////////////////////////////////////////////
+
 #include "ks/xdr.h"
 #include "ks/string.h"
+
+////////////////////////////////////////////////////////////////////////
+// class KsServerDesc
+////////////////////////////////////////////////////////////////////////
 
 class KsServerDesc : public KsXdrAble {
 public:
@@ -50,6 +56,54 @@ public:
     
     KsString name;
     u_short   protocol_version;
+};
+
+////////////////////////////////////////////////////////////////////////////
+// class KsResult
+///////////////////////////////////////////////////////////////////////////
+
+class KsResult : public KsXdrAble {
+public:
+
+    KsResult( KS_RESULT res ) { result = res; }
+
+    bool xdrEncode(XDR *xdr) const;
+    bool xdrDecode(XDR *xdr);
+    static KsResult *xdrNew(XDR *);
+
+    u_long result;
+};
+
+//////////////////////////////////////////////////////////////////////////
+// class KsRegistrationParams
+//////////////////////////////////////////////////////////////////////////
+
+class KsRegistrationParams {
+public:
+    KsRegistrationParams() {}
+    KsRegistrationParams( const KsServerDesc &, u_short, u_long );
+    
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsRegistrationParams *xdrNew(XDR *);
+
+    KsServerDesc server;
+    u_short      port;
+    u_long       time_to_live;
+};
+
+//////////////////////////////////////////////////////////////////////////
+// class KsRegistrationResult
+//////////////////////////////////////////////////////////////////////////
+
+class KsRegistrationResult : public KsResult {
+public:
+
+    KsRegistrationResult( KS_RESULT res ) : KsResult( res ) {}
+
+    static KsRegistrationResult *xdrNew(XDR *xdr) {
+        return (KsRegistrationResult *)KsResult::xdrNew(xdr);
+    }
 };
 
 #endif /* end of register.h */

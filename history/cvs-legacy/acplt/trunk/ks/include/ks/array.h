@@ -114,7 +114,7 @@ template <class T>
 inline bool
 KsArray<T>::xdrEncode(XDR *xdrs) const
 {
-    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    PLT_PRECONDITION(xdrs->x_op == XDR_ENCODE);
     // serialize size
     //
     u_long sz = a_size;
@@ -147,7 +147,7 @@ template <class T>
 inline KsArray<T> *
 KsArray<T>::xdrNew(XDR *xdrs)
 {
-    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    PLT_PRECONDITION(xdrs->x_op == XDR_DECODE);
     bool ok;                                         
     KsArray<T> * p = new KsArray<T>(xdrs, ok);     
     if ( !ok && p) {                             

@@ -46,7 +46,7 @@ txdr2 :  txdr2.o $(LIBPLT)
 txdr :  txdr.o string.o $(LIBPLT)
 	$(CXX_LINK) -o $@ $^
 
-tregister : 	tregister.o register.o string.o $(LIBPLT)	
+tregister :	register.o tregister.o string.o $(LIBPLT)
 		$(CXX_LINK) -o $@ $^     
 
 depend : $(CXX_SOURCES)
@@ -56,5 +56,14 @@ depend : $(CXX_SOURCES)
 	touch .depend
 
 include .depend
+
+
+
+
+
+
+
+
+
 
 
