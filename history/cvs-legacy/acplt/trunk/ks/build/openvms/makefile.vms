@@ -45,7 +45,7 @@ LIBKSCLN = libkscln$(A)
 
 LIBPLT = [-.-.-.plt.build.openvms]libplt$(A)
 
-LIBRPC = dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr
+LIBRPC = sys$$sysdevice:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr
 
 .SUFFIXES:
 
@@ -128,7 +128,7 @@ libks$(A): $(LIBKS_OBJECTS)
 
 libkssvr$(A): $(LIBKSSVR_OBJECTS) ucx$$ioctl_routine$(O)
 	-del $@;*
-	$(AR) /create libkssvr$(A) $^,ucx$$ioctl_routine$(O)
+	$(AR) /create libkssvr$(A) $^
 
 libkscln$(A): $(LIBKSCLN_OBJECTS)
 	-del $@;*
@@ -137,7 +137,7 @@ libkscln$(A): $(LIBKSCLN_OBJECTS)
 clean:
 	-del *$(O);*
 	-del libks$(A);*
-	-del libkssrv$(A);*
+	-del libkssvr$(A);*
 	-del libkscln$(A);*
 	-del t*$(EXE);*
 
