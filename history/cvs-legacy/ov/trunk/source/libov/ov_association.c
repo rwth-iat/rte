@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.6 1999-08-30 15:23:31 dirk Exp $
+*   $Id: ov_association.c,v 1.7 1999-08-30 16:05:01 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -344,7 +344,6 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	OV_INSTPTR_ov_object	pcurrparent;
 	OV_PLACEMENT_HINT		parenthint2 = parenthint;
 	OV_PLACEMENT_HINT		childhint2 = childhint;
-	OV_INSTPTR_ov_object	prelparent2 = prelparent;
 	OV_INSTPTR_ov_object	prelchild2 = prelchild;
 	Ov_Association_DefineIteratorNM(pit);
 	Ov_Association_DefineIteratorNM(pparentit);
@@ -425,14 +424,14 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 			*	placement at the end is placement after the last parent
 			*/
 			parenthint2 = OV_PMH_AFTER;
-			prelparent2 = Ov_Association_GetLastParentNM(passoc, pparentit, pchild);
+			(void)Ov_Association_GetLastParentNM(passoc, pparentit, pchild);
 			break;
 		case OV_PMH_BEGIN:
 			/*
 			*	placement at the beginning is placement before the first parent
 			*/
 			parenthint2 = OV_PMH_BEFORE;
-			prelparent2 = Ov_Association_GetFirstParentNM(passoc, pparentit, pchild);
+			(void)Ov_Association_GetFirstParentNM(passoc, pparentit, pchild);
 			break;
 		case OV_PMH_AFTER:
 			/* fall through... */
@@ -508,14 +507,14 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 			*	placement at the end is placement after the last child
 			*/
 			childhint2 = OV_PMH_AFTER;
-			prelchild2 = Ov_Association_GetLastChildNM(passoc, pchildit, pparent);
+			(void)Ov_Association_GetLastChildNM(passoc, pchildit, pparent);
 			break;
 		case OV_PMH_BEGIN:
 			/*
 			*	placement at the beginning is placement before the first child
 			*/
 			childhint2 = OV_PMH_BEFORE;
-			prelchild2 = Ov_Association_GetFirstChildNM(passoc, pchildit, pparent);
+			(void)Ov_Association_GetFirstChildNM(passoc, pchildit, pparent);
 			break;
 		case OV_PMH_AFTER:
 			/* fall through... */

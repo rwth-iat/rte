@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.13 1999-08-30 15:23:31 dirk Exp $
+*   $Id: ov_object.c,v 1.14 1999-08-30 16:05:01 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -278,7 +278,7 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 		*	all other objects are readable and may be deleteable,
 		*	renameable or writeable
 		*/
-		access = OV_AC_READ		| OV_AC_DELETEABLE;
+		access = OV_AC_READ;
 		pclass = Ov_GetParent(ov_instantiation, pobj);
 		if(Ov_GetParent(ov_containment, pclass) != Ov_PtrUpCast(ov_domain, &pdb->ov)) {
 			if(!pobj->v_pouterobject) {
