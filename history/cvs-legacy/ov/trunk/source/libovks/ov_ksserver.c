@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.6 2000-04-04 15:12:47 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.7 2000-04-11 13:22:32 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -428,7 +428,7 @@ OV_DLLFNCEXPORT void ov_ksserver_run(void) {
 	/*
 	*	run the server
 	*/
-	pserver->setShutdownFlag(0);	/* FIXME! is this OK? (here we do the same as KS) */
+	pserver->setShutdownFlag(0);
 	if(pserver) {
 		while(!pserver->isGoingDown()) {
 #if OV_SYSTEM_RMOS
