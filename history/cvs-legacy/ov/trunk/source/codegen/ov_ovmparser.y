@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.4 1999-07-29 16:32:22 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.5 1999-08-27 16:37:06 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -54,7 +54,6 @@ OV_UINT				defnum = 0;
 	OV_VAR_TYPE				vartype;
 	OV_VAR_PROPS			varprops;
 	OV_OP_PROPS				opprops;
-	OV_ASSOC_TYPE			assoctype;
 	OV_OVM_LIBRARY_DEF		*plibdef;
 	OV_OVM_STRUCTURE_DEF	*pstructdef;
 	OV_OVM_CLASS_DEF		*pclassdef;
@@ -110,7 +109,6 @@ OV_UINT				defnum = 0;
 %type <popdef>		operations_block_opt operations_opt
 
 %type <passocdef>	associations_opt associations association
-%type <assoctype>	assoctype_opt
 %type <assocprops>	assocprops_opt assocprops
 
 %type <pvardef>		members member
@@ -462,7 +460,7 @@ associations:
 ;
 
 association:
-	TOK_ASSOCIATION TOK_IDENTIFIER assoctype_opt
+	TOK_ASSOCIATION TOK_IDENTIFIER
 	assocprops_opt
 	TOK_PARENT TOK_IDENTIFIER ':' TOK_CLASS TOK_IDENTIFIER_EX assocflags_opt assoccomment_opt ';'
 	TOK_CHILD TOK_IDENTIFIER ':' TOK_CLASS TOK_IDENTIFIER_EX assocflags_opt assoccomment_opt ';'
@@ -471,28 +469,17 @@ association:
 			$$ = Ov_Codegen_Malloc(OV_OVM_ASSOCIATION_DEF);
 			$$->pnext = NULL;
 			$$->identifier = $2;
-			$$->assoctype = $3;
-			$$->assocprops = $4;
-			$$->parentrolename = $6;
-			$$->parentclassname = $9;
-			$$->anchorflags = $10;
-			$$->anchorcomment = $11;
-			$$->childrolename = $14;
-			$$->childclassname = $17;
-			$$->headflags = $18;
-			$$->headcomment = $19;
+			$$->assoctype = OV_AT_1_TO_MANY;
+			$$->assocprops = $3;
+			$$->parentrolename = $5;
+			$$->parentclassname = $8;
+			$$->anchorflags = $9;
+			$$->anchorcomment = $10;
+			$$->childrolename = $13;
+			$$->childclassname = $16;
+			$$->headflags = $17;
+			$$->headcomment = $18;
 			$$->defnum = defnum++;
-		}
-;
-
-assoctype_opt:
-	/* empty */
-		{
-			$$ = OV_AT_ORDERED_LIST;
-		}
-	| ':' TOK_ASSOCTYPE
-		{
-			$$ = $2;
 		}
 ;
 
@@ -550,7 +537,7 @@ member:
 			$$->ctypename = $4->ctypename;
 			$$->structurename = $4->structurename;
 			$$->structurelibname = NULL;
-			$$->varprops = OV_AC_NONE;
+			$$->varprops = 0;
 			$$->flags = $5;
 			$$->tech_unit = $6;
 			$$->comment = $7;
@@ -601,7 +588,7 @@ variable:
 varprops_opt:
 	/* empty */
 		{
-			$$ = OV_AC_NONE;
+			$$ = 0;
 		}
 	| varprops
 		{

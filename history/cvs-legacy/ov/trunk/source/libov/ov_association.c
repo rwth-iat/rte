@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.1 1999-07-19 15:02:12 dirk Exp $
+*   $Id: ov_association.c,v 1.2 1999-08-27 16:37:07 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -221,7 +221,7 @@ OV_INSTPTR_ov_object OV_DLLFNCEXPORT ov_association_searchchild(
 	/*
 	*	search for child object if association is namebinding
 	*/
-	if(passoc->v_assocprops & OV_AP_NAMEBINDING) {
+	if(passoc->v_assocprops & OV_AP_LOCAL) {
 		OV_INSTPTR_ov_object pchild = Ov_Association_GetFirstChild(passoc, pparent);
 		while(pchild) {
 			if(!strcmp(identifier, pchild->v_identifier)) {
@@ -302,7 +302,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	/*
 	*	ensure, that there is no name clash
 	*/
-	if(passoc->v_assocprops & OV_AP_NAMEBINDING) {
+	if(passoc->v_assocprops & OV_AP_LOCAL) {
 		if(ov_association_searchchild(passoc, pparent, pchild->v_identifier)) {
 			return OV_ERR_ALREADYEXISTS;
 		}
@@ -311,7 +311,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_association_link(
 	*	handle placements which are not "before" or "after"
 	*/
 	switch(passoc->v_assoctype) {
-		case OV_AT_ORDERED_LIST:
+		case OV_AT_1_TO_MANY:
 			switch(hint2) {
 				case OV_PMH_DEFAULT:
 				case OV_PMH_END:

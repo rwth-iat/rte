@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getpp.c,v 1.2 1999-08-19 11:54:54 dirk Exp $
+*   $Id: ov_ksserver_getpp.c,v 1.3 1999-08-27 16:37:09 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -254,7 +254,7 @@ OV_RESULT ov_ksserver_getpp_additem(
 			if(version > 1) {
 				objtype = KS_OT_LINK;
 			} else {
-				objtype = (pelem->elemunion.passoc->v_assocprops & OV_AP_NAMEBINDING)?
+				objtype = (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
 					(KS_OT_DOMAIN):(KS_OT_VARIABLE);
 			}
 			access |= OV_AC_PART;
@@ -371,7 +371,7 @@ OV_RESULT ov_ksserver_getpp_additem(
 			switch(objtype) {
 				case KS_OT_LINK:
 					pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.linktype
-						= (pelem->elemunion.passoc->v_assocprops & OV_AP_NAMEBINDING)?
+						= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
 						(KS_LT_LOCAL_1_MANY):(KS_LT_GLOBAL_1_MANY);
 					pprops->OV_OBJ_PROJECTED_PROPS_u.link_projected_props.
 						opposite_role_identifier = pelem->elemunion.passoc

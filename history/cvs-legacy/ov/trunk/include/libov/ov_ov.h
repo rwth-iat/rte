@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.6 1999-07-29 16:32:21 dirk Exp $
+*   $Id: ov_ov.h,v 1.7 1999-08-27 16:37:04 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -261,7 +261,7 @@ typedef OV_ENUM OV_CLASS_PROPS;
 *	---------------
 *	Association properties.
 */
-#define OV_AP_NAMEBINDING	0x00000001			/* association is namebinding */
+#define OV_AP_LOCAL		0x00000001			/* association has local name scope */
 
 typedef OV_ENUM OV_ASSOC_PROPS;
 
@@ -384,7 +384,7 @@ typedef OV_ENUM OV_ACCESS;
 *	------------
 *	Association types.
 */
-#define OV_AT_ORDERED_LIST	0x00000001			/* ordered list */
+#define OV_AT_1_TO_MANY		0x00000001			/* 1:n association */
 
 typedef OV_ENUM OV_ASSOC_TYPE;
 

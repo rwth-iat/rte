@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.1 1999-07-19 15:02:07 dirk Exp $
+*   $Id: ov.ovm,v 1.2 1999-08-27 16:37:05 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -189,7 +189,7 @@ LIBRARY ov
 	*	-------------------------------------------
 	*/
 	ASSOCIATION containment
-		IS_NAMEBINDING;
+		IS_LOCAL;
 		PARENT parent : CLASS ov/domain;
 		CHILD child : CLASS ov/object;
 	END_ASSOCIATION;

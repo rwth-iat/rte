@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getep.c,v 1.3 1999-08-25 13:15:58 dirk Exp $
+*   $Id: ov_ksserver_getep.c,v 1.4 1999-08-27 16:37:09 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -336,7 +336,7 @@ OV_RESULT ov_ksserver_getep_additem(
 			break;
 		case OV_ET_HEAD:
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype
-				= (pelem->elemunion.passoc->v_assocprops & OV_AP_NAMEBINDING)?
+				= (pelem->elemunion.passoc->v_assocprops & OV_AP_LOCAL)?
 				(KS_LT_LOCAL_1_MANY):(KS_LT_GLOBAL_1_MANY);
 			pprops->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.
 				opposite_role_identifier = pelem->elemunion.passoc
