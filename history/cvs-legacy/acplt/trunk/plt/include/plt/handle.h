@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.13 1997-08-13 11:35:10 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.14 1997-09-10 14:51:50 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,7 +45,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include "plt/debug.h"
+#include "plt/alloc.h"
 
 //////////////////////////////////////////////////////////////////////
 // Plt...Handle<T>
@@ -148,6 +148,18 @@ struct Plt_AllocTracker
     enum PltOwnership type;
     Plt_AllocTracker() : count(1) {}
     virtual void destroy(void * p) const = 0;
+private:
+    static PltAllocator<Plt_AllocTracker> _allocator;
+public:
+    void * operator new(size_t sz)
+        {
+            PLT_ASSERT(sz==sizeof (Plt_AllocTracker));
+            return _allocator.alloc();
+        }
+    void operator delete(void * ptr)
+        {
+            _allocator.free(ptr);
+        }
 };
 
 struct Plt_AtMalloc
@@ -180,6 +192,7 @@ struct Plt_AtArrayNew
 
 class PltHandle_base
 {
+    static PltAllocator<PltHandle_base> _allocator;
 protected:
     PltHandle_base(); 
     PltHandle_base(const PltHandle_base &);
@@ -205,6 +218,16 @@ protected:
     void *prep;
     Plt_AllocTracker *palloc;
 
+    void * operator new(size_t sz)
+        {
+            PLT_ASSERT(sz==sizeof (PltHandle_base));
+            return _allocator.alloc();
+        }
+    void operator delete(void * ptr)
+        {
+            _allocator.free(ptr);
+        }
+    
 #if PLT_DEBUG_INVARIANTS
 public:
     virtual bool invariant() const;
@@ -251,6 +274,11 @@ public:
     // modifiers
     PltPtrHandle & operator =(const PltPtrHandle &rhs);
     bool bindTo(T *, enum PltOwnership = PltOsNew);
+
+    void * operator new (size_t size) 
+        { return PltHandle<T>::operator new(size); }
+    void operator delete (void * ptr) 
+        { PltHandle<T>::operator delete(ptr); }
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -272,6 +300,11 @@ public:
 
     PltArrayHandle & operator = (const PltArrayHandle &rhs);
     bool bindTo(T *, enum PltOwnership = PltOsArrayNew);
+
+    void * operator new (size_t size) 
+        { return PltHandle<T>::operator new(size); }
+    void operator delete (void * ptr) 
+        { PltHandle<T>::operator delete(ptr); }
 };
 
 //////////////////////////////////////////////////////////////////////

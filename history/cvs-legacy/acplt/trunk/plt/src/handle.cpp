@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/handle.cpp,v 1.4 1997-05-22 06:29:04 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/handle.cpp,v 1.5 1997-09-10 14:52:32 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -39,6 +39,24 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "plt/handle.h"
+
+//////////////////////////////////////////////////////////////////////
+
+PltAllocator<Plt_AllocTracker>
+Plt_AllocTracker::_allocator;
+
+#if PLT_INSTANTIATE_TEMPLATES
+template class PltAllocator<Plt_AllocTracker>;
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
+PltAllocator<PltHandle_base>
+PltHandle_base::_allocator;
+
+#if PLT_INSTANTIATE_TEMPLATES
+template class PltAllocator<PltHandle_base>;
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
