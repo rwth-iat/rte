@@ -37,6 +37,8 @@ LIBKSCLN = libkscln$(A)
 
 LIBPLT = [-.-.-.plt.build.openvms]libplt$(A)
 
+LIBRPC = dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr
+
 .SUFFIXES:
 
 .SUFFIXES: .cpp $(O) $(A) $(EXE)
@@ -71,13 +73,19 @@ $(EXAMPLES_OBJECTS): %.obj: [-.-.examples]%.cpp
 	$(CXX_COMPILE) $<
 
 tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
-	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
+	$(LD) $(LD_FLAGS) tmanager.obj,tmanager1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 tserver.exe: tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS)
-	$(LD) $(LD_FLAGS) tserver.obj,tserver1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
+	$(LD) $(LD_FLAGS) tserver.obj,tserver1.obj,$(LIBKSSVR)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
-tsclient.exe: tsclient.obj tsclient1.obj svrrpcctx$O $(LIBKS)
-	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,$(LIBKS)/lib,$(LIBPLT)/lib,dka0:[vms$$common.ucx$$lib.rpc]ucx$$rpcxdr/lib
+tsclient.exe : tsclient.obj tsclient1.obj svrrpcctx$O $(LIBKS)
+	$(LD) $(LD_FLAGS) tsclient.obj,tsclient1.obj,svrrpcctx.obj,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
+
+ttree.exe : ttree.obj ttree1.obj $(LIBKS) $(LIBKSCLN)
+	$(LD) $(LD_FLAGS) ttree.obj,ttree1.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
+
+tshell.exe : tshell.obj $(LIBKS) $(LIBKSCLN)
+	$(LD) $(LD_FLAGS) tshell.obj,$(LIBKSCLN)/lib,$(LIBKS)/lib,$(LIBPLT)/lib,$(LIBRPC)/lib
 
 libks$(A): $(LIBKS_OBJECTS)
 	$(AR) /create libks$(A) $^
@@ -86,7 +94,7 @@ libkssvr$(A): $(LIBKSSVR_OBJECTS)
 	$(AR) /create libkssvr$(A) $^
 
 libkscln$(A): $(LIBKSCLN_OBJECTS)
-	$(AR) /create libkssvr$(A) $^
+	$(AR) /create libkscln$(A) $^
 
 clean:
 	del *$(O);*
