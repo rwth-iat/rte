@@ -81,13 +81,40 @@ bool operator >= (const PltTime &t1, const PltTime &t2);
 // INLINE IMPLEMENTATION
 //////////////////////////////////////////////////////////////////////
 
+#if PLT_SYSTEM_HPUX
+#define PLT_TIME_TV_SEC_SIGNED 0
+#endif
+
+#if PLT_SYSTEM_HPUX
+#define PLT_TIME_TV_USEC_SIGNED 1
+#endif
+
+#ifndef PLT_TIME_TV_SEC_SIGNED
+#define PLT_TIME_TV_SEC_SIGNED 1
+#endif
+
+#ifndef PLT_TIME_TV_USEC_SIGNED
+#define PLT_TIME_TV_USEC_SIGNED 1
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
 #if PLT_DEBUG_INVARIANTS
 inline bool
 PltTime::invariant() const
 {
-    return 
-        tv_sec >= 0 
-        && 0 <= tv_usec && tv_usec < 1000000;
+    bool ok = true;
+
+#if PLT_TIME_TV_SEC_SIGNED
+    ok = ok && tv_sec >= 0;
+#endif
+
+#if PLT_TIME_TV_USEC_SIGNED
+    ok = ok && 0 <= tv_usec;
+#endif
+
+    ok = ok && tv_usec < 1000000;
+    return ok;
 }
 #endif
 
@@ -149,10 +176,14 @@ operator < (const PltTime &t1, const PltTime &t2)
 inline void
 PltTime::normalize() 
 {
+
+#if PLT_TIME_TV_USEC_SIGNED
     while (tv_usec < 0) {
         tv_usec += 1000000;
         tv_sec  -= 1;
     }
+#endif
+
     while (tv_usec >= 1000000) {
         tv_usec -= 1000000;
         tv_sec  += 1;
