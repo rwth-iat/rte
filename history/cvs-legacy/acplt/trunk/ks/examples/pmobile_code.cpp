@@ -1,5 +1,5 @@
 // -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.10 1999-01-29 12:21:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.11 1999-09-06 06:45:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -375,10 +375,10 @@ int main(int argc, char **argv)
 
     if (filename) {
         fstr.open(filename);
-        cin = fstr;
+        names = readNames(fstr);
+    } else {
+        names = readNames(cin);
     }
-
-    names = readNames(cin);
     if (verbosity > 0) {
         ls << names.size() << "names  read.";
         ls.debug();
