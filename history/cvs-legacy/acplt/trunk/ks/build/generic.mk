@@ -1,3 +1,4 @@
+# -*- MAKEFILE -*-
 # generic unix makefile
 
 CXX_LIBKS_SOURCES = \
@@ -84,6 +85,8 @@ LIBKSCLN_OBJECTS = \
 CXX_EXAMPLES_SOURCES = \
 	pmobile.cpp \
 	pmobile_code.cpp \
+	tclient.cpp \
+	tclient1.cpp \
 	tmanager.cpp \
 	tmanager1.cpp \
 	tsclient.cpp \
@@ -97,6 +100,8 @@ CXX_EXAMPLES_SOURCES = \
 EXAMPLES_OBJECTS = \
 	pmobile$(O) \
 	pmobile_code$(O) \
+	tclient$(O) \
+	tclient1$(O) \
 	tmanager$(O) \
 	tmanager1$(O) \
 	tsclient$(O) \
@@ -109,7 +114,8 @@ EXAMPLES_OBJECTS = \
 
 EXAMPLES = \
 	pmobile$(EXE) \
-	tmanager$(EXE) tserver$(EXE) tsclient$(EXE) \
+	tclient$(EXE) \
+	tmanager$(EXE) tserver$(EXE) \
 	tshell$(EXE) \
 	ttree$(EXE)
 
@@ -129,15 +135,20 @@ $(LIBKSSVR) : $(LIBKSSVR_OBJECTS)
 
 $(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
 
+pmobile$(EXE) : pmobile$(O) pmobile_code$(O) $(LIBKSCLN) $(LIBKS)
+
+tclient$(EXE) : tclient$(O) tclient1$(O) $(LIBKSCLN) $(LIBKS)
+
 tmanager$(EXE) : tmanager$(O) tmanager1$(O) $(LIBKSSVR) $(LIBKS)
 
-tserver$(EXE) : tserver$(O) tserver1$(O) $(LIBKSSVR) $(LIBKS)
-
 tsclient$(EXE) : tsclient$(O) tsclient1$(O) $(LIBKSSVR) $(LIBKS)
+
+tserver$(EXE) : tserver$(O) tserver1$(O) $(LIBKSSVR) $(LIBKS)
 
 ttree$(EXE) : ttree$(O) ttree1$(O) $(LIBKSCLN) $(LIBKS)
 
 tshell$(EXE) : tshell$(O) $(LIBKSCLN) $(LIBKS)
 
-pmobile$(EXE) : pmobile$(O) pmobile_code$(O) $(LIBKSCLN) $(LIBKS)
+
+
 
