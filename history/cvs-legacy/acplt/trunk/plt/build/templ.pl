@@ -35,7 +35,7 @@ if (open (IN, "<$cppname")) {
 close (IN);
 
 @olds = sort(keys(%old));
-    
+%new = %old;    
 #
 # iterate until finished or no change
 #
@@ -48,18 +48,22 @@ do {
     print STDERR "$link\n";
     open (MSGS, "$link 2>&1 |") || die('cant start linker');
     while (<MSGS>) {
-	print STDERR $_;
-	if (/(\w+<\s*\w+.*>)::\w+.*\(.*\)/) {
+        print STDERR $_;
+	if (!/In function.*:$/ && /(\w+<\s*\w+.*>)::~?\w+.*\(.*\)/) {
 	    # member
 	    @new{$1} = 1;
+	    #print STDERR ".";
 	    $needanother = 1;
-	} 
-    }
+	} else {
+#  	    print STDERR $_ unless (/In function.*:$/);
+        }
+    } 
+    print STDERR "\n";
     @news = sort(keys(%new));
 
     if ($needanother) {
 	if (@news eq @olds) {
-##DEBUG##   print "NEWLIST @news OLDLIST @olds";
+#           print "NEWLIST @news OLDLIST @olds";
 	    die("Last iteration resolved no new symbols");	
 	}
 	open (OUT, ">$cppname") || die('cant open output');
@@ -67,7 +71,9 @@ do {
 	    printf OUT "template class %s;\n", $templ;
 	}
 	close OUT;
+#	printf STDERR "%d new templates found, total %d\n", $#news-$#olds, $#news;
 	@olds = @news;
+	sleep 3;
 	print STDERR "$compile\n";
 	$err = system($compile);
 	if ($err) {

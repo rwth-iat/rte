@@ -1,0 +1,17 @@
+# Platform specific part for hpux
+
+CXX_FLAGS = -g -Wall
+CXX_PLATFORM_FLAGS = -DPLT_SYSTEM_SOLARIS=1
+PLATFORM = linux
+
+include ../unix.mk
+
+
+
+
+
+
+
+
+
+

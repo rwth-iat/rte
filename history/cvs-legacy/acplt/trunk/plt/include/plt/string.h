@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_STRING_INCLUDED
 #define PLT_STRING_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.5 1997-03-19 10:17:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/string.h,v 1.6 1997-03-23 14:30:48 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -75,7 +75,7 @@ public:
     const char & operator[] (size_t) const;
     operator const char *() const;
 
-    PltString substr(size_t first, size_t len) const;
+    PltString substr(size_t first, size_t len=PLT_SIZE_T_MAX) const;
     // modifiers
     char & operator[] (size_t);
     PltString & operator += ( const PltString & );

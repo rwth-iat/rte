@@ -148,24 +148,40 @@ PltDebugNewTracker::~PltDebugNewTracker()
 
 //////////////////////////////////////////////////////////////////////
 
-struct PltDebugNewHeader
-{
-    static const unsigned long magic_salt;
-    unsigned long magic;
-    size_t size;
-};
-const unsigned long 
-PltDebugNewHeader::magic_salt = 0x471142;
+static const char HEADERSTART[] = "g++drivesmenuts";
+//---------------------------------0123456789ABCDEF
+
+static const unsigned long 
+magic = 0x471142;
 
 //////////////////////////////////////////////////////////////////////
 
+struct PltDebugNewHeader
+{
+#if PLT_AVOID_DELETE_BUG
+    char headerstart[16];
+#endif
+    unsigned long magic;
+    size_t size;
+    double dummy;
+};
+
+ //////////////////////////////////////////////////////////////////////
+
 void * operator new(size_t sz) {
     PLT_ASSERT(sizeof(PltDebugNewHeader) % PLT_ALIGNMENT == 0);
+
+    if (sz == 0) sz = 1; // avoid malloc problems
+
     PltDebugNewHeader * p = 
         (PltDebugNewHeader *)
             malloc(sizeof(PltDebugNewHeader)+sz);
     if (p) {
-        p->magic = PltDebugNewHeader::magic_salt;
+#if PLT_AVOID_DELETE_BUG
+        PLT_ASSERT(sizeof(p->headerstart) == sizeof HEADERSTART);
+        memcpy(p->headerstart, HEADERSTART, sizeof HEADERSTART);
+#endif
+        p->magic = magic;
         p->size  = sz;
         ++PltDebugNewTracker::newcount;
         PltDebugNewTracker::newed += sz;
@@ -181,9 +197,18 @@ void * operator new(size_t sz) {
 //////////////////////////////////////////////////////////////////////
 
 void operator delete(void * p) {
-    if (p) {
-        PltDebugNewHeader * pheader = (PltDebugNewHeader*)p - 1;
-        PLT_ASSERT(pheader->magic == PltDebugNewHeader::magic_salt);
+    char *pc = (char*)p;
+    if (pc) {
+        pc -= sizeof (PltDebugNewHeader);
+#if PLT_AVOID_DELETE_BUG
+        // scan for start of header
+        while (0 != memcmp(pc,HEADERSTART,sizeof HEADERSTART) ) {
+            --pc;
+        }
+#endif
+        p = pc;
+        PltDebugNewHeader * pheader = (PltDebugNewHeader*)p;
+        PLT_ASSERT(pheader->magic == magic);
         size_t sz = pheader->size;
         PLT_ASSERT( PltDebugNewTracker::refcount == 0
                    || (      PltDebugNewTracker::deleted + sz
