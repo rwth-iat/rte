@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.20 1997-11-27 18:18:29 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.21 1997-12-02 10:18:02 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,7 +44,9 @@
 #include "plt/log.h"
 #include <ctype.h>
 #include <string.h>
+
 #if !PLT_SYSTEM_NT
+#include <unistd.h>
 #include <sys/socket.h>
 #endif
 
@@ -281,20 +283,40 @@ KsManager::KsManager(int port)
         //
         // create transports
         //
+#if PLT_SYSTEM_SOLARIS
+        int sock = t_open("/dev/udp", O_RDWR, (struct t_info *) 0);
+#else
         int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+#endif
         if ( sock >= 0 ) {
             struct sockaddr_in my_addr;
+
             memset(&my_addr, 0, sizeof(my_addr));
             my_addr.sin_family      = AF_INET;
             my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
             my_addr.sin_port        = htons(_sock_port);
+
+#if PLT_SYSTEM_SOLARIS
+            struct t_bind req;
+
+            req.addr.maxlen = sizeof(my_addr);
+            req.addr.len    = sizeof(my_addr);
+            req.addr.buf    = (char *) &my_addr;
+            req.qlen        = 5;
+
+            if ( t_bind(sock, &req, (struct t_bind *) 0) < 0 ) {
+#else
             if ( bind(sock, (struct sockaddr *) &my_addr, sizeof(my_addr)) < 0 ) {
+#endif
                 // Failed.
 #if PLT_SYSTEM_NT
                 closesocket(sock);
+#elif PLT_SYSTEM_SOLARIS
+                t_close(sock);
 #else
                 close(sock);
 #endif
+                sock = -1;
             } else {
                 _udp_transport = svcudp_create(sock);
             }
