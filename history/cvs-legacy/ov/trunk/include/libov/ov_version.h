@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.27 2004-10-27 12:09:06 ansgar Exp $
+*   $Id: ov_version.h,v 1.28 2005-01-21 10:32:26 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,11 +34,11 @@
 *	Version information for different modules of ACPLT/OV
 *	-----------------------------------------------------
 */
-#define OV_VER_CODEGEN						"1.6.2"
-#define OV_VER_BUILDER 						"1.0.3"
+#define OV_VER_CODEGEN						"1.6.3"
+#define OV_VER_BUILDER 						"1.0.4"
 #define OV_VER_MAKMAK 						"1.0.0"
 #define OV_VER_DBDUMP 						"1.3.4"
-#define OV_VER_DBPARSE						"1.1.4"
+#define OV_VER_DBPARSE						"1.1.5"
 #define OV_VER_LIBINFO 						"1.0.0"
 #define OV_VER_LIBOV						"1.6.5"
 #define OV_VER_DBUTIL 						"1.2.1"
@@ -47,11 +47,11 @@
 #define OV_VER_NTSERVICE					"1.3.1"
 #define OV_VER_CONTROLPANEL					"1.2.0"
 
-#define OV_VER_FILEVERSION_CODEGEN			1, 6, 2, 0
-#define OV_VER_FILEVERSION_BUILDER			1, 0, 3, 0
+#define OV_VER_FILEVERSION_CODEGEN			1, 6, 3, 0
+#define OV_VER_FILEVERSION_BUILDER			1, 0, 4, 0
 #define OV_VER_FILEVERSION_MAKMAK			1, 0, 0, 0
 #define OV_VER_FILEVERSION_DBDUMP			1, 3, 4, 0
-#define OV_VER_FILEVERSION_DBPARSE			1, 1, 4, 0
+#define OV_VER_FILEVERSION_DBPARSE			1, 1, 5, 0
 #define OV_VER_FILEVERSION_LIBINFO			1, 0, 0, 0
 #define OV_VER_FILEVERSION_LIBOV			1, 6, 5, 0
 #define OV_VER_FILEVERSION_DBUTIL 			1, 2, 1, 0

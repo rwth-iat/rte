@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.5 2004-10-29 09:09:31 ansgar Exp $
+#   $Id: msvc.mk,v 1.6 2005-01-21 10:31:42 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -187,6 +187,11 @@ $(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV
 $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ)  $(OV_CONTROLPANEL_RES)
 	$(LD) $^ ADVAPI32.LIB USER32.LIB COMDLG32.LIB /out:$(OV_CONTROLPANEL_CPL)
 
+#	NT-Service Installer
+
+$(NTSERVICE_INSTALL_EXE) : $(NTSERVICE_INSTALL_OBJ)
+	$(LINK)  $^ ADVAPI32.LIB USER32.LIB SHELL32.LIB $(LINK_FLAGS) /out:$(NTSERVICE_INSTALL_EXE)
+
 #	ACPLT/OV database dumper
 
 fnmatch.obj: fnmatch.c
@@ -262,10 +267,10 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	-------
 
 install : all
-	@echo Installing files to '$(PLT_BIN_DIR)'
-	@cmd /C for %i in ($(filter-out %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
-	@echo Installing files to '$(PLT_LIB_DIR)'
-	@cmd /C for %i in ($(filter %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(PLT_LIB_DIR))
+	@echo Installing files to '$(ACPLT_BIN_DIR)'
+	@cmd /C for %i in ($(filter-out %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(ACPLT_BIN_DIR))
+	@echo Installing files to '$(ACPLT_LIB_DIR)'
+	@cmd /C for %i in ($(filter %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(ACPLT_LIB_DIR))
 	@echo Done.
 
 #	Clean up

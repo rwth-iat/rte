@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.16 2004-10-29 09:21:06 ansgar Exp $
+#   $Id: generic.mk,v 1.17 2005-01-21 10:32:05 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -33,9 +33,9 @@
 
 #	generic part
 
-PLT_DIR						= ../../../../
-PLT_BIN_DIR					= $(PLT_DIR)bin/
-PLT_LIB_DIR					= $(PLT_DIR)base/lib/
+ACPLT_DIR					= ../../../../
+ACPLT_BIN_DIR					= $(ACPLT_DIR)bin/
+ACPLT_LIB_DIR					= $(ACPLT_DIR)base/lib/
 
 ACPLT_OV_DIR				= ../../
 OV_INCLUDE_DIR				= $(ACPLT_OV_DIR)include/
@@ -66,7 +66,7 @@ ACPLT_PLT_INCLUDE_DIR			= $(ACPLT_PLT_DIR)include/
 ACPLT_KS_INCLUDE_DIR			= $(ACPLT_KS_DIR)include/
 ACPLT_KS_INCLUDE_KS_DIR			= $(ACPLT_KS_INCLUDE_DIR)ks/
 ACPLT_KS_SOURCE_DIR			= $(ACPLT_KS_DIR)src/
-ACPLT_PLT_BUILD_DIR			= $(PLT_DIR)base/lib/
+ACPLT_PLT_BUILD_DIR			= $(ACPLT_LIB_DIR)
 
 LIBMPM_DIR				= ../../../libmpm/
 
@@ -74,7 +74,7 @@ LIBMPM_DIR				= ../../../libmpm/
 
 ONCRPC_DIR				= ../../../oncrpc/
 ONCRPC_INCLUDE_DIR			= $(ONCRPC_DIR)
-ONCRPC_BIN_DIR				= $(PLT_DIR)base/lib/
+ONCRPC_BIN_DIR				= $(ACPLT_LIB_DIR)
 
 #	Cygwin/MinGW stuff
 
@@ -235,6 +235,8 @@ else
 OV_INCLUDES = \
 	-I$(OV_INCLUDE_DIR) \
 	-I$(OV_MODEL_DIR) \
+	-I$(OV_SOURCE_CODEGEN_DIR) \
+	-I$(OV_SOURCE_BUILDER_DIR) \
 	-I$(OV_SOURCE_EXAMPLE_DIR) \
 	-I$(OV_SOURCE_KSHISTLIB_DIR) \
 	-I$(OV_SOURCE_DYNOV_DIR) \
@@ -381,6 +383,13 @@ OV_CONTROLPANEL_SRC = $(OV_SOURCE_NTSERVICE_DIR)ov_controlpanel.c
 OV_CONTROLPANEL_OBJ = $(foreach source, $(OV_CONTROLPANEL_SRC), $(basename $(notdir $(source)))$(OBJ))
 OV_CONTROLPANEL_CPL = ov_controlpanel$(CPL)
 OV_CONTROLPANEL_RES = ov_controlpanel$(RES)
+
+#	Windows NT service installer
+#   	----------------------------
+
+OV_NTSERVICE_SRC = $(OV_SOURCE_NTSERVICE_DIR)install_ntservice.c
+OV_NTSERVICE_OBJ = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(OBJ))
+OV_NTSERVICE_EXE = install_ntservice$(EXE)
 
 #	Table of statically linked ACPLT/OV libraries
 #	---------------------------------------------

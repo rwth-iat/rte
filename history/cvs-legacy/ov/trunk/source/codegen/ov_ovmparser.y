@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.14 2004-10-08 15:17:36 ansgar Exp $
+*   $Id: ov_ovmparser.y,v 1.15 2005-01-21 10:32:54 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1597,6 +1597,11 @@ OV_BOOL ov_codegen_checksemantics_variable(
 	*	if variable defines a initialvalue, check if the values match to the variable definition
 	*/
 	if(pvar->pinitvalue) {
+		if((pvar->varprops & OV_VP_DERIVED) || (pvar->varprops & OV_VP_STATIC)) {
+			fprintf(stderr, "class \"%s\", variable \"%s\": variable with initialvalues may not be "
+				"derived or static.\n", pclass->identifier, pvar->identifier);
+			result = FALSE;
+		}
 		if (pvar->structurename) {	// check structure definition
 			if (pvar->pinitvalue->value.vartype != OV_VT_STRUCT) {
 				result = FALSE;

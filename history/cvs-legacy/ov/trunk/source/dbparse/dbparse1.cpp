@@ -22,8 +22,8 @@
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
 //          Ansgar Münnemann <ansgar@plt.rwth-aachen.de>
 // dbparse1.cpp
-// Version : 1.14
-// last change: Mai 13, 2004
+// Version : 1.15
+// last change: Jan 10, 2005
 
 //-------------------------------------------------------------------------------
 // includes
@@ -2000,7 +2000,7 @@ bool write_variables(instance *node)
 				return false;
 			}
 			const KsVarEngProps *helpprops = (KsVarEngProps *) help.getEngProps();
-			if (helpprops->access_mode & KS_AC_WRITE) {		// count writable variables
+			if ((helpprops->access_mode & KS_AC_WRITE) || (use_activitylock)) {		// count writable variables
 				nr_v++;
 			} else {
 				(*it)->a_value->val->type = DB_VT_NONE;		// ignore read-only variables

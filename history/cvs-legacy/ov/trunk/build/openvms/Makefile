@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.3 1999-09-06 12:16:28 dirk Exp $
+#   $Id: Makefile,v 1.4 2005-01-21 10:31:48 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -450,8 +450,8 @@ $(OV_SERVER_OBJ) : %$(OBJ) : $(OV_SOURCE_SERVER_DIR)%.c
 #	-------
 
 #install : all
-#	@echo Installing files to '$(PLT_BIN_DIR)'
-#	@-for %i in ( $(TARGETS) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
+#	@echo Installing files to '$(ACPLT_BIN_DIR)'
+#	@-for %i in ( $(TARGETS) ) do copy %i $(subst /,\, $(ACPLT_BIN_DIR))
 #	@echo Done.
 
 #	Clean up

@@ -1,4 +1,4 @@
-#   $Id: Makefile,v 1.9 2004-10-27 12:21:11 ansgar Exp $
+#   $Id: Makefile,v 1.10 2005-01-21 10:31:20 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -320,7 +320,7 @@ include depend.cyg
 	
 =======
 
-#   $Id: Makefile,v 1.9 2004-10-27 12:21:11 ansgar Exp $
+#   $Id: Makefile,v 1.10 2005-01-21 10:31:20 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -625,8 +625,8 @@ tasklib.c tasklib.h : $(OV_CODEGEN_EXE)
 #	-------
 
 install : all
-	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-cp $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL) $(PLT_BIN_DIR)
+	@echo Installing files to '$(ACPLT_BIN_DIR)'
+	@-cp $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL) $(ACPLT_BIN_DIR)
 	@echo Done.
 
 #	Clean up

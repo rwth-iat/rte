@@ -1,5 +1,5 @@
 
-#   $Id: borland.mk,v 1.4 2004-10-25 15:20:48 ansgar Exp $
+#   $Id: borland.mk,v 1.5 2005-01-21 10:31:42 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -238,6 +238,12 @@ $(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV
 	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
 	$(RC) $(filter %$(RES), $^) $@
 
+#	NT-Service Installer
+
+$(NTSERVICE_INSTALL_EXE) : $(NTSERVICE_INSTALL_OBJ)
+	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+	$(RC) $(filter %$(RES), $^) $@
+
 #	ACPLT/OV Control Panel for the Windows NT service
 
 $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
@@ -337,10 +343,10 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	-------
 
 install : all
-	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-for %i in ($(filter-out %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
-	@echo Installing files to '$(PLT_LIB_DIR)'
-	@-for %i in ($(filter %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(PLT_LIB_DIR))
+	@echo Installing files to '$(ACPLT_BIN_DIR)'
+	@-for %i in ($(filter-out %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(ACPLT_BIN_DIR))
+	@echo Installing files to '$(ACPLT_LIB_DIR)'
+	@-for %i in ($(filter %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(ACPLT_LIB_DIR))
 	@echo Done.
 
 #	Clean up

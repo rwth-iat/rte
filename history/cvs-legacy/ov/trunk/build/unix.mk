@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.12 2004-10-27 12:09:05 ansgar Exp $
+#   $Id: unix.mk,v 1.13 2005-01-21 10:31:08 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -267,12 +267,12 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	-------
 
 install : all
-	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-cp *.so $(PLT_BIN_DIR)
+	@echo Installing files to '$(ACPLT_BIN_DIR)'
+	@-cp *.so $(ACPLT_BIN_DIR)
 	@-cp $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) $(OV_DBUTIL_EXE) $(OV_SERVER_EXE) \
-		 $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(PLT_BIN_DIR)
-	@echo Installing files to '$(PLT_LIB_DIR)'
-	@-cp *.a $(PLT_LIB_DIR)
+		 $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(ACPLT_BIN_DIR)
+	@echo Installing files to '$(ACPLT_LIB_DIR)'
+	@-cp *.a $(ACPLT_LIB_DIR)
 	@echo Done.
 
 #	Clean up

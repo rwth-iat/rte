@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.8 2004-10-29 09:06:39 ansgar Exp $
+*   $Id: ov_builder.c,v 1.9 2005-01-21 10:32:46 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -260,7 +260,7 @@ int ov_builder_createsourcefiles(
 	OV_STRING		class_ident;
 	char			text1[256];
 	char			text2[256];
-	char			*ptext;
+	char			*ptext, *ptext2, *ptext3;
 	OV_INT			pathcount;
 	OV_UINT			i;
 	/*
@@ -424,21 +424,33 @@ int ov_builder_createsourcefiles(
 			}
 			else {
 				while (fscanf(rfp, "%s", text1)!=EOF) {
-					if (strncmp(text1, pop->cfnctypename,strlen(pop->cfnctypename))==0) {
-						fprintf(fp,"OV_DLLFNCEXPORT %s %s_%s_%s",
-							text2,plib->identifier,pclass->identifier,pop->identifier);
-						ptext=strstr(text1, "(");
-						if (ptext) fprintf(fp,"%s",ptext);
-						else fprintf(fp,"(");
-						while ( (fscanf(rfp, "%c", &text1[0])!=EOF) && (text1[0]!=';')) {
-							fprintf(fp,"%c",text1[0]);
+				        ptext2 = strstr(text1,pop->cfnctypename);
+					if (ptext2!=NULL) {
+						ptext=strstr(ptext2, "(");
+						ptext3 = ptext;
+						if (ptext) {
+	 					        ptext3++;
+						    	*ptext=0;
+						    	ptext--;
+	        					while ((*ptext=='\t') || (*ptext==' ') && (ptext > ptext2)) {
+							        *ptext=0;
+							        ptext--;
+						    	}
 						}
-						fprintf(fp," {\n");
-						fprintf(fp,"             return (%s) 0;\n",text2);
-						fprintf(fp,"}\n\n");
+						if (strcmp(ptext2, pop->cfnctypename)==0)  {
+							fprintf(fp,"OV_DLLFNCEXPORT %s %s_%s_%s",
+								text2,plib->identifier,pclass->identifier,pop->identifier);
+							if (ptext3) fprintf(fp,"(%s",ptext3);
+							while ( (fscanf(rfp, "%c", &text1[0])!=EOF) && (text1[0]!=';')) {
+								fprintf(fp,"%c",text1[0]);
+							}
+							fprintf(fp," {\n");
+							fprintf(fp,"             return (%s) 0;\n",text2);
+							fprintf(fp,"}\n\n");
+						}
 					}
 					for (i=0; i<=strlen(text1);i++) text2[i]=text1[i];
-				}	
+				}
 				ov_builder_closefile(rfp);
 			}
 		}
@@ -466,33 +478,19 @@ int ov_builder_createsourcefiles(
 		fprintf(fp,"#include \"libov/ov_association.h\"\n\n");
 		fprintf(fp,"#include \"libov/ov_macros.h\"\n\n");
 
-		fprintf(fp,"OV_DLLFNCEXPORT OV_RESULT %s_%s_link(\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_PPT_%s_%s                 pparent,\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_CPT_%s_%s                 pchild,\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_PLACEMENT_HINT            parenthint,\n");
-		fprintf(fp,"        const OV_CPT_%s_%s                 prelparent,\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_PLACEMENT_HINT            childhint,\n");
-		fprintf(fp,"        const OV_CPT_%s_%s                 prelchild\n",plib->identifier,passoc->identifier);
-		fprintf(fp,") {\n");
+		fprintf(fp,"OV_DECL_LINK(%s_%s) {\n", plib->identifier,passoc->identifier);
 		fprintf(fp,"        return ov_association_link(passoc_%s_%s, Ov_PtrUpCast\n",plib->identifier,passoc->identifier);
 		fprintf(fp,"                       (ov_object, pparent), Ov_PtrUpCast(ov_object, pchild),\n");
 		fprintf(fp,"                      parenthint, Ov_PtrUpCast(ov_object, prelparent),\n");
 		fprintf(fp,"                      childhint, Ov_PtrUpCast(ov_object, prelchild));\n");
 		fprintf(fp,"}\n\n");
 
-		fprintf(fp,"OV_DLLFNCEXPORT void %s_%s_unlink(\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_PPT_%s_%s                 pparent,\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_CPT_%s_%s                 pchild\n",plib->identifier,passoc->identifier);
-		fprintf(fp,") {\n");
+		fprintf(fp,"OV_DECL_UNLINK(%s_%s) {\n",plib->identifier,passoc->identifier);
 		fprintf(fp,"        ov_association_unlink(passoc_%s_%s, Ov_PtrUpCast\n",plib->identifier,passoc->identifier);
 		fprintf(fp,"                      (ov_object, pparent), Ov_PtrUpCast(ov_object, pchild));\n");
 		fprintf(fp,"}\n\n");
 
-		fprintf(fp,"OV_DLLFNCEXPORT OV_ACCESS %s_%s_getaccess(\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_PPT_%s_%s                 pparent,\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_CPT_%s_%s                 pchild,\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_TICKET                    *pticket\n");
-		fprintf(fp,") {\n");
+		fprintf(fp,"OV_DECL_GETACCESS(%s_%s) {\n",plib->identifier,passoc->identifier);
 		fprintf(fp,"        return OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE;\n");
 		fprintf(fp,"}\n\n");
 
@@ -554,6 +552,16 @@ FILE *ov_builder_createfile(
 		+strlen(name)+strlen(extension)+1);
 	sprintf(filename, "%s" OV_DIRPATHDELIMITER "%s%s", outputpath,
 		name, extension);
+
+	fp = fopen(filename, "r");
+	if(fp) {
+		fprintf(stderr, "File already exists: \"%s%s\".\n",
+			name, extension);
+		free(filename);
+		fclose(fp);
+		return NULL;
+	}
+
 	fp = fopen(filename, "w");
 	free(filename);
 	if(!fp) {

@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.5 2004-08-04 15:17:03 ansgar Exp $
+#   $Id: Makefile,v 1.6 2005-01-21 10:31:54 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -227,8 +227,8 @@ $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBTABLE_OBJ) $(OV_LIBRARIES) $(OV_LIBO
 #	-------
 
 install : all
-	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-for %i in ( $(OV_LIBOV_LIB) $(OV_LIBOVKS_LIB) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
+	@echo Installing files to '$(ACPLT_BIN_DIR)'
+	@-for %i in ( $(OV_LIBOV_LIB) $(OV_LIBOVKS_LIB) ) do copy %i $(subst /,\, $(ACPLT_BIN_DIR))
 	@echo Done.
 	@echo Installing files to c:\siemens\step7\s7proj\test_m7\hrs
 	@copy ov_dbutil.exe c:\siemens\step7\s7proj\test_m7\hrs\p0000010\OVdbutil.exe
