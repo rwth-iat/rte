@@ -53,7 +53,8 @@ CXX_LIBKSCLN_SOURCES= \
 	history.cpp \
 	package.cpp \
 	sorter.cpp \
-	variables.cpp
+	variables.cpp \
+	clnrequest.cpp
 
 LIBKS_OBJECTS1 = \
 	array$(O) \
@@ -110,7 +111,8 @@ LIBKSCLN_OBJECTS1 = \
 	avmodule$(O) \
 	avsimplemodule$(O) \
 	client$(O) \
-	clntpath$(O)
+	clntpath$(O) \
+	clnrequest$(O)
 
 LIBKSCLN_OBJECTS2 = \
 	commobject$(O) \
