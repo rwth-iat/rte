@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.35 1998-10-06 13:18:37 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.36 1999-01-29 12:42:47 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -478,7 +478,7 @@ KscServer::setTimeouts(const PltTime &rpc_timeout,
     _tries = tries;
 
     if( _client_transport ) {
-#if PLT_SYSTEM_SOLARIS
+#if PLT_SYSTEM_SOLARIS || PLT_SYSTEM_HPUX
         bool ok = clnt_control(_client_transport,
                                CLSET_TIMEOUT,
                                (char *)((struct timeval *)(&_rpc_timeout)));
@@ -734,7 +734,7 @@ KscServer::createTransport()
     // Now set the timeout parameter for this particular communication
     // transport.
     //
-#if PLT_SYSTEM_SOLARIS
+#if PLT_SYSTEM_SOLARIS || PLT_SYSTEM_HPUX
     bool ok = clnt_control(_client_transport, CLSET_TIMEOUT, 
                            (char *)((struct timeval *)(&_rpc_timeout)));
 #else
