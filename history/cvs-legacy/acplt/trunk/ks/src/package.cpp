@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.21 1998-09-24 12:54:33 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.22 1999-09-06 06:55:29 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -43,6 +43,7 @@
 
 #include "ks/package.h"
 #include "ks/client.h"
+
 
 //////////////////////////////////////////////////////////////////////
 // printing functions for debbugging
@@ -1226,6 +1227,10 @@ _KscPackageBase::copySetVarResults(
 
 //////////////////////////////////////////////////////////////////////
 
+//#include <iostream.h>
+//#include <iomanip.h>
+//#define PLT_DEBUG_VERBOSE 1
+
 bool 
 _KscPackageBase::optimizePaths(
     const PltArray< KscSortVarPtr > &sorted_vars,
@@ -1238,8 +1243,8 @@ _KscPackageBase::optimizePaths(
 
 #if PLT_DEBUG_VERBOSE
     cout << "Optimizing paths:" << endl;
-    cout << setw(25) << "absolute" << setw(25) << "relative" << endl;
-    cout << setw(25) << paths[0] << endl;
+    cout << setw(35) << "absolute" << setw(35) << "relative" << endl;
+    cout << setw(35) << paths[0] << endl;
 #endif
 
     for(size_t count = 1; count < to_copy; count++) {
@@ -1247,8 +1252,8 @@ _KscPackageBase::optimizePaths(
             sorted_vars[count]->getPathAndName().relTo(
                 sorted_vars[count-1]->getPathAndName());
 #if PLT_DEBUG_VERBOSE
-        cout << setw(25) << sorted_vars[count]->getPathAndName()
-             << setw(25) << paths[count]
+        cout << setw(35) << sorted_vars[count]->getPathAndName()
+             << setw(35) << paths[count]
              << endl;
 #endif
      }
