@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.17 1998-06-29 11:17:04 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.18 1998-12-16 17:47:51 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -142,6 +142,10 @@ protected:
     // protected attributes
     bool _is_ok;
     int _sock_port; // RPC socket port number
+
+    // deserializes ticket or return 0 on failure. It can also return
+    // an emergency ticket with a result() != 0.
+    virtual KsAvTicket* getTicket(XDR* xdr);
 
 #if !PLT_USE_BUFFERED_STREAMS
     SVCXPRT *_tcp_transport; // RPC transport used to receive requests

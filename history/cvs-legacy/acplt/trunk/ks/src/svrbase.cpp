@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.31 1998-09-17 12:02:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.32 1998-12-16 17:47:58 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -286,6 +286,18 @@ PltString KsServerBase::getNetworkTransportDevice(const char *protocol)
 
 
 // ---------------------------------------------------------------------------
+// Retrieve the A/V ticket from the XDR stream. In case this fails, it is
+// okay to return a 0 pointer, because the dispatcher part will then use an
+// emergency ticket to send back at least an error reply.
+//
+KsAvTicket*
+KsServerBase::getTicket(XDR* xdr)
+{
+    return KsAvTicket::xdrNew(xdr);
+} // KsServerBase::getTicket
+
+
+// ---------------------------------------------------------------------------
 // Now comes the dispatcher section. Here we redirect and bounce request
 // forth and back until no-one knows where the request comes from and to
 // whom it should be send, and who's responsible for all this mess. Hey,
@@ -312,6 +324,11 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
 
 
 // ---------------------------------------------------------------------------
+// The is the "middle level" part of dispatching requests. This method is
+// called for instance from Sun's ONC/RPC dispatch mechanism through a
+// C wrapper function. This method is responsible for answering RPC pings,
+// deserializing the A/V ticket and finally dispatching to the ACPLT/KS
+// high-level dispatchers.
 //
 void KsServerBase::dispatchTransport(KssTransport &transp)
 {
@@ -338,7 +355,8 @@ void KsServerBase::dispatchTransport(KssTransport &transp)
 	// an invalid a/v header) take the emergency ticket, which has been
 	// statically allocated and is therefore always available.
 	//
-        KsAvTicket *pTicket = KsAvTicket::xdrNew(xdr);
+        //KsAvTicket *pTicket = KsAvTicket::xdrNew(xdr);
+	KsAvTicket *pTicket = getTicket(xdr);
         if ( !pTicket ) {
             pTicket = KsAvTicket::emergencyTicket();
         }
