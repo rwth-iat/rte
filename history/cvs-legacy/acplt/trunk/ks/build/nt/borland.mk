@@ -22,7 +22,7 @@ EXAMPLESSRCDIR = $(KSDIR)\examples\\
 ### Compiler
 CXX = bcc32
 #CXX_FLAGS = -D_BORLANDC -w
-CXX_FLAGS = -D_BORLANDC=1 -DNDEBUG -w
+CXX_FLAGS = -D_BORLANDC=1 -DNDEBUG -w -DPLT_USE_BUFFERED_STREAMS=1 -v
 #CXX_FLAGS =
 CXX_EXTRA_FLAGS = -a8 -I. -I$(EXAMPLESSRCDIR) -I$(PLTDIR)\include -I$(KSDIR)\include -I$(ONCDIR) -DPLT_SYSTEM_NT=1 -DFD_SETSIZE=128
 
@@ -135,7 +135,7 @@ pmobile.obj:    $(EXAMPLESSRCDIR)pmobile.cpp
 		$< $(LIBKS) $(LIBKSCLN) $(LIBKSSVR) $(LIBPLT) $(LIBRPC)
 !
 
-examples:       tclient.exe ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe ttree.exe
+examples:       ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe ttree.exe
 #
 # tslcient.exe and tshell.exe aren't supported.
 #examples:       tclient.exe ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
@@ -149,7 +149,7 @@ tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
 tserver.exe: tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS)
 	@echo Linking $@
 	$(CXX) @&&!
-		tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
+		-v tserver.obj tserver1.obj ext_sp.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
 
 tsclient.exe: tsclient.obj tsclient1.obj $(LIBKS)
@@ -218,6 +218,7 @@ $(LIBKS) : $(LIBKS_OBJECTS)
 $(LIBKSSVR) : $(LIBKSSVR_OBJECTS) $(LIBKS_NT_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS1)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS2)
+	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKSSVR_OBJECTS3)
 	$(PLTDIR)\build\nt\plt_ar tlib /P64 $@ $(LIBKS_NT_OBJECTS)
 
 $(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
