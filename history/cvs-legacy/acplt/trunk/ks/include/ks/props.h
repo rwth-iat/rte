@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/props.h,v 1.12 1998-12-10 17:26:18 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/props.h,v 1.13 1998-12-14 18:02:07 harald Exp $ */
 #ifndef KS_PROPS_INCLUDED
 #define KS_PROPS_INCLUDED
 /*
@@ -209,7 +209,8 @@ public:
 		    const KsString &co,
 		    KS_ACCESS am,
 		    KS_LINK_TYPE lt, 
-		    KsString &ori);
+		    KsString &ori,
+		    KsString &ci);
     virtual ~KsLinkProjProps() {}
 
     KsLinkProjProps &operator = (const KsLinkProjProps &);
@@ -221,6 +222,7 @@ public:
      */
     KS_LINK_TYPE  type;
     KsString      opposite_role_identifier;
+    KsString      class_identifier;
 
 protected:
     bool xdrEncodeVariant(XDR *) const;
@@ -450,7 +452,8 @@ KsLinkProjProps::KsLinkProjProps(const KsLinkProjProps &other)
 : KsProjProps(other.identifier, other.creation_time,
               other.comment, other.access_mode),
   type(other.type),
-  opposite_role_identifier(other.opposite_role_identifier)
+  opposite_role_identifier(other.opposite_role_identifier),
+  class_identifier(other.class_identifier)
 {} // KsLinkProjProps::KsLinkProjProps
 
 
@@ -460,9 +463,11 @@ KsLinkProjProps::KsLinkProjProps(const KsString &ident,
 				 const KsString &co,
 				 KS_ACCESS am,
 				 KS_LINK_TYPE lt, 
-				 KsString &ori)
+				 KsString &ori,
+				 KsString &ci)
 : KsProjProps(ident, ct, co, am),
-  type(lt), opposite_role_identifier(ori)
+  type(lt), opposite_role_identifier(ori),
+  class_identifier(ci)
 {} // KsLinkProjProps::KsLinkProjProps
 
 
@@ -473,6 +478,7 @@ KsLinkProjProps::operator=(const KsLinkProjProps &other)
     KsProjProps::operator=(other);
     type = other.type;
     opposite_role_identifier = other.opposite_role_identifier;
+    class_identifier = other.class_identifier;
     return *this;
 } // KsLinkProjProps::operator=
 
