@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.32 2003-09-23 08:18:50 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.33 2003-09-25 12:09:19 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -80,13 +80,6 @@
 
 #include <stddef.h>
 
-
-/* --------------------------------------------------------------------------
- * Enable or disable use of (now) depreciated header files
- */
-#ifndef PLT_USE_DEPRECIATED_HEADER
-#define PLT_USE_DEPRECIATED_HEADER 0
-#endif
 
 /* --------------------------------------------------------------------------
 *  Provide backwards compatibility with old ACPLT/KS applications written
@@ -391,6 +384,19 @@ enum { false=0, true=1 };
 #define PLT_POOL_BLOCK_COUNT 2048
 #endif
 
+
+/* --------------------------------------------------------------------------
+ * Enable or disable use of (now) depreciated header files. If this define
+ * has not been set and if we are compiling using certain newer compilers,
+ * then we automatically switch to the new C++ header files.
+ */
+#ifndef PLT_USE_DEPRECIATED_HEADER
+#if PLT_COMPILER_GCC >= 0x30000
+#define PLT_USE_DEPRECIATED_HEADER 0
+#else
+#define PLT_USE_DEPRECIATED_HEADER 1
+#endif
+#endif
 
 /*
  * Take care of namespace games played by Bjoern Syroup.
