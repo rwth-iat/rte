@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.3 2001-12-10 14:28:37 ansgar Exp $
+*   $Id: ov_builder.c,v 1.4 2002-08-21 12:46:09 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -637,6 +637,8 @@ OV_STRING ov_builder_getvartypetext(
 		return "OV_INT_PV *";
 	case OV_VT_SINGLE_PV:
 		return "OV_SINGLE_PV *";
+	case OV_VT_ANY:
+		return "OV_ANY *";
 	default:
 		fprintf(stderr, "internal error -- sorry.\n");
 		exit(EXIT_FAILURE);
@@ -665,6 +667,8 @@ OV_STRING ov_builder_getvartypevectext(
 		return "TIME";
 	case OV_VT_TIME_SPAN_VEC:
 		return "TIME_SPAN";
+	case OV_VT_ANY:
+		return "ANY";
 	default:
 		fprintf(stderr, "internal error -- sorry.\n");
 		exit(EXIT_FAILURE);
@@ -784,6 +788,8 @@ OV_STRING ov_codegen_getvartypetextsmall(
 		return "int_pv";
 	case OV_VT_SINGLE_PV:
 		return "single_pv";
+	case OV_VT_ANY:
+		return "any";
 	default:
 		fprintf(stderr, "internal error -- sorry.\n");
 		exit(EXIT_FAILURE);
