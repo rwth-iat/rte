@@ -62,8 +62,6 @@ extern "C" {
 // initialize static data
 KscClient *KscClient::_the_client = 0;
 KscClient::CleanUp KscClient::_clean_up;
-KscNegotiator *KscClient::none_negotiator = 0; 
-
 
 //////////////////////////////////////////////////////////////////////
 // class KscClient
@@ -71,9 +69,7 @@ KscNegotiator *KscClient::none_negotiator = 0;
 
 KscClient::KscClient()
 : av_module(0)
-{
-    none_negotiator = KscAvNoneModule::getStaticNegotiator();
-}
+{}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -86,7 +82,7 @@ KscClient::~KscClient()
 
     // destroy related KscServer objects if any left
     //
-    PltHashIterator<KscAbsPath,KscServer *> it(server_table);
+    PltHashIterator<KsString,KscServer *> it(server_table);
     KscServer *pcurr;
     while(it) {
         pcurr = it->a_value;
@@ -100,7 +96,7 @@ KscClient::~KscClient()
 //////////////////////////////////////////////////////////////////////
 
 void
-KscClient::createClient()
+KscClient::_createClient()
 {
     KscClient *cl = new KscClient();
     // TODO: abort programm in none debugging mode if cl == 0 
@@ -126,10 +122,8 @@ KscClient::setClient(KscClient *cl, bool shutdownDelete)
 //////////////////////////////////////////////////////////////////////
 
 KscServer *
-KscClient::getServer(const KscAbsPath &host_and_name) 
+KscClient::getServer(const KsString &host_and_name) 
 {
-    PLT_PRECONDITION(host_and_name.isValid());
-
     KscServer *pServer;
 
     bool ok = server_table.query(host_and_name, pServer);
@@ -140,10 +134,8 @@ KscClient::getServer(const KscAbsPath &host_and_name)
 //////////////////////////////////////////////////////////////////////
 
 KscServer *
-KscClient::createServer(const KscAbsPath &host_and_name) 
+KscClient::createServer(KsString host_and_name) 
 {
-    PLT_PRECONDITION(host_and_name.isValid());
-
     KscServer *pServer = 0;
 
     bool ok = server_table.query(host_and_name, pServer);
@@ -151,8 +143,10 @@ KscClient::createServer(const KscAbsPath &host_and_name)
     if(!ok) {
         // create new server
         //
-        pServer = new KscServer(host_and_name.getHost(), 
-                                KsServerDesc(host_and_name.getServer(),
+        KsString host, server;
+        extractHostAndServer(host_and_name, host, server);
+        pServer = new KscServer(host, 
+                                KsServerDesc(server,
                                              KS_PROTOCOL_VERSION));
         if(pServer) {
             // object successfully created
@@ -164,6 +158,27 @@ KscClient::createServer(const KscAbsPath &host_and_name)
     PLT_ASSERT(pServer);
 
     return pServer;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void
+KscClient::extractHostAndServer(KsString host_and_server,
+                                KsString &host,
+                                KsString &server)
+{
+    size_t pos = 2;
+
+    while(host_and_server[pos] && host_and_server[pos++] != '/') ;
+
+    if(host_and_server[pos]) {
+        // ok
+        //
+        host = host_and_server.substr(2, pos - 3);
+        server = host_and_server.substr(pos);
+    } else {
+        PLT_DMSG("Invalid server identification" << host_and_server << endl);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -185,31 +200,12 @@ KscClient::deleteServer(KscServer *server)
 
 //////////////////////////////////////////////////////////////////////
 
-KscNegotiator *
-KscClient::getNegotiator(KscServer *forServer)
-{
-    KscNegotiator *neg;
-
-    if(av_module) {
-        neg = av_module->getNegotiator(forServer);
-        if(neg) {
-            return neg;
-        }
-    }
-
-    // there is no special negotiator,
-    // return standard AvNoneNegotiator
-    return none_negotiator;
-}
-
-        
-//////////////////////////////////////////////////////////////////////
 #if PLT_DEBUG
 
 void
 KscClient::printServers()
 {
-    PltHashIterator<KscAbsPath,KscServer *> it(server_table);
+    PltHashIterator<KsString,KscServer *> it(server_table);
 
     cout << "Client manages " 
          << server_table.size()
@@ -550,7 +546,7 @@ KscGetPPOutHelper(XDR *xdr, void *p)
 
 
 bool 
-KscServer::getPP(KscNegotiator *negotiator,
+KscServer::getPP(const KscAvModule *avm,
                  const KsGetPPParams &params,
                  KsGetPPResult &result)
 {
@@ -574,6 +570,10 @@ KscServer::getPP(KscNegotiator *negotiator,
     cout << "\tName mask : " << params.name_mask << endl;
     cout << endl;
 #endif
+
+    // get negotiator
+    //
+    KscNegotiator *negotiator = getNegotiator(avm);
 
     KscGetPPInStruct inData(negotiator, &params);
     KscGetPPOutStruct outData(negotiator, &result);
@@ -655,7 +655,7 @@ KscGetVarOutHelper(XDR *xdr, void *p)
 
 
 bool 
-KscServer::getVar(KscNegotiator *negotiator,
+KscServer::getVar(const KscAvModule *avm,
                   const KsGetVarParams &params,
                   KsGetVarResult &result)
 {
@@ -673,6 +673,8 @@ KscServer::getVar(KscNegotiator *negotiator,
     cout << "GetVar request to server "
          << host_name << "/" << server_info.server.name << endl;
 #endif
+
+    KscNegotiator *negotiator = getNegotiator(avm);
 
     KscGetVarInStruct inData(negotiator, &params);
     KscGetVarOutStruct outData(negotiator, &result);
@@ -755,7 +757,7 @@ KscSetVarOutHelper(XDR *xdr, void *p)
 
 
 bool 
-KscServer::setVar(KscNegotiator *negotiator,
+KscServer::setVar(const KscAvModule *avm,
                   const KsSetVarParams &params,
                   KsSetVarResult &result)
 {
@@ -773,6 +775,10 @@ KscServer::setVar(KscNegotiator *negotiator,
     cout << "SetVar request to server "
          << host_name << "/" << server_info.server.name << endl;
 #endif
+
+    // get negotiator
+    //
+    KscNegotiator *negotiator = getNegotiator(avm);
 
     KscSetVarInStruct inData(negotiator, &params);
     KscSetVarOutStruct outData(negotiator, &result);
@@ -854,7 +860,7 @@ KscExgDataOutHelper(XDR *xdr, void *p)
 
 
 bool 
-KscServer::exgData(KscNegotiator *negotiator,
+KscServer::exgData(const KscAvModule *avm,
                    const KsExgDataParams &params,
                    KsExgDataResult &result)
 {
@@ -873,6 +879,10 @@ KscServer::exgData(KscNegotiator *negotiator,
          << host_name << "/" << server_info.server.name << endl;
 #endif
 
+    // get negotiator
+    //
+    KscNegotiator *negotiator = getNegotiator(avm);
+
     KscExgDataInStruct inData(negotiator, &params);
     KscExgDataOutStruct outData(negotiator, &result);
 
@@ -882,6 +892,16 @@ KscServer::exgData(KscNegotiator *negotiator,
                         (xdrproc_t) KscExgDataOutHelper,
                         &outData,
                         KSC_RPCCALL_TIMEOUT);
+
+#if PLT_DEBUG
+    if(errcode == RPC_SUCCESS) {
+        cout << "ExgData request successfull" << endl;
+    }
+    else {
+        cout << "ExgData request failed" << endl;
+        cout << clnt_sperror(pClient, "");
+    }
+#endif
 
     return errcode == RPC_SUCCESS;
 }            
@@ -915,23 +935,44 @@ KscServer::decRefcount()
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+// CAUTION :
+//   pointers returned by this function are for temporary use only
+//
 KscNegotiator *
-KscServer::getNegotiator()
+KscServer::getNegotiator(const KscAvModule *avm)
 {
-    KscNegotiator *neg;
-
-    if(av_module) {
-        neg = av_module->getNegotiator(this);
-        if(neg) {
-            return neg;
+    if(!avm) {
+        if(av_module) {
+            avm = av_module;
+        } else {
+            avm = KscClient::getClient()->getAvModule();
         }
     }
 
-    neg = KscClient::getClient()->getNegotiator(this);
+    if(avm) {
+        // try to find it at the cache
+        //
+        PltKeyCPtr<KscAvModule> tkey(avm);
+        KscNegotiatorHandle hneg;
+        if(neg_table.query(tkey, hneg)) {
+            // found
+            //
+            if(hneg) return hneg.getPtr();
+        } else {
+            // create one
+            //
+            hneg = avm->getNegotiator(this);
+            if(hneg) {
+                // ignore possible errror, since we cant do anything
+                neg_table.add(tkey, hneg);
+                return hneg.getPtr();
+            }
+        }
+    }
 
-    PLT_ASSERT(neg);
-
-    return neg;
+    // we failed to create a negotiator
+    //
+    return KscAvNoneModule::getStaticNegotiator(); 
 }        
         
 //////////////////////////////////////////////////////////////////////

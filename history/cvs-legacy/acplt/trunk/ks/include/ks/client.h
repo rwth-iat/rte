@@ -47,7 +47,6 @@
 #include "ks/register.h"
 #include "ks/serviceparams.h"
 #include "ks/avmodule.h"
-#include "ks/abspath.h"
 
 #include "plt/hashtable.h"
 
@@ -73,6 +72,8 @@ const struct timeval KSC_RPCCALL_TIMEOUT = {10, 0};  // or PltTime
 // should use KscClient::getClient() to access it, but you should not
 // delete the object pointed to, since it is managed internally.
 //
+// TODO: change server representation from pointers to handles
+//
 //////////////////////////////////////////////////////////////////////
 
 class KscClient
@@ -90,14 +91,14 @@ public:
     //
     static bool setClient(KscClient *cl, bool shutdownDelete);
 
-    // find server by name
+    // find server by name, maybe returns 0
     //
-    KscServer *getServer(const KscAbsPath &host_and_name); 
+    KscServer *getServer(const KsString &host_and_name); 
 
     void setAvModule(const KscAvModule *);
     const KscAvModule *getAvModule() const;
 
-    KscNegotiator *getNegotiator(KscServer *forServer);
+//    KscNegotiator *getNegotiator(KscServer *forServer);
 
 #if PLT_DEBUG
     void printServers();
@@ -110,7 +111,8 @@ protected:
     // should only be used by KscCommObject objects
     //
     friend class KscCommObject;
-    KscServer *createServer(const KscAbsPath &host_and_name); 
+    KscServer *createServer(KsString host_and_name); 
+    void extractHostAndServer(KsString, KsString &, KsString &);
 
     // destroy an server, should only be used
     // by KscServer objects
@@ -118,19 +120,15 @@ protected:
     friend class KscServer;
     void deleteServer(KscServer *);
 
-    static void createClient();
-
     const KscAvModule *av_module;
 
-    // this negotiator is used if no AV-module is set
-    // or if the creation of a negotiator failed
-    static KscNegotiator *none_negotiator;
-    
-    PltHashTable<KscAbsPath,KscServer *> server_table;
+    PltHashTable<KsString,KscServer *> server_table;
 
 private:
     KscClient(const KscClient &); // forbidden
     KscClient &operator = (const KscClient &); // forbidden
+
+    static void _createClient();
 
     // helper class to clean up memory
     // at end of programm
@@ -181,19 +179,19 @@ public:
 
     // service functions
     //
-    bool getPP(KscNegotiator *negotiator,
+    bool getPP(const KscAvModule *avm,
                const KsGetPPParams &params,
                KsGetPPResult &);
 
-    bool getVar(KscNegotiator *negotiator,
+    bool getVar(const KscAvModule *avm,
                 const KsGetVarParams &params,
                 KsGetVarResult &result);
 
-    bool setVar(KscNegotiator *negotiator,
+    bool setVar(const KscAvModule *avm,
                 const KsSetVarParams &params,
                 KsSetVarResult &result);
 
-    bool exgData(KscNegotiator *negotiator,
+    bool exgData(const KscAvModule *avm,
                  const KsExgDataParams &params,
                  KsExgDataResult &result);
 
@@ -201,18 +199,19 @@ public:
     //
     void setAvModule(const KscAvModule *);
     const KscAvModule *getAvModule() const;
-    KscNegotiator *getNegotiator();
 
     // selectors
     //
-    PltString getHost() const;
-    PltString getName() const;
-    KscAbsPath getHostAndName() const;
+    KsString getHost() const;
+    KsString getName() const;
+    KsString getHostAndName() const;
     u_short getProtocolVersion() const;
     PltTime getExpiresAt() const;
     bool isLiving() const; 
 
 protected:
+    KscNegotiator *getNegotiator(const KscAvModule *);
+
     // service functions
     //
     bool getServerDesc(struct hostent *hp,               // host 
@@ -235,7 +234,7 @@ protected:
     long ref_count;                // communication objects related to this server
     const KscAvModule *av_module;
 
-    // PltHashTable<KscAbsPath,KscCommObject *> object_table;
+    PltHashTable<PltKeyCPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
 
 private:
     friend class KscClient;
@@ -284,7 +283,7 @@ KscServer::ping()
 //////////////////////////////////////////////////////////////////////
 
 inline
-PltString 
+KsString 
 KscServer::getHost() const
 {
     return host_name;
@@ -293,7 +292,7 @@ KscServer::getHost() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-PltString
+KsString
 KscServer::getName() const
 {
     return server_desc.name;
@@ -302,15 +301,15 @@ KscServer::getName() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscAbsPath
+KsString
 KscServer::getHostAndName() const
 {
-    PltString temp("/");
+    KsString temp("//");
     temp += getHost();
     temp += "/";
     temp += getName();
 
-    return KscAbsPath(temp);
+    return temp;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -368,7 +367,7 @@ KscClient *
 KscClient::getClient() 
 {
     if(!_the_client) {
-        createClient();
+        _createClient();
     }
     return _the_client;
 }
@@ -416,4 +415,9 @@ KscClient::CleanUp::~CleanUp()
 //////////////////////////////////////////////////////////////////////
 // EOF client.h
 //////////////////////////////////////////////////////////////////////
+
+
+
+
+
 

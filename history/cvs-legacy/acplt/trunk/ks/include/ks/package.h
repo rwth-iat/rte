@@ -48,6 +48,28 @@
 #include "ks/sorter.h"
 
 //////////////////////////////////////////////////////////////////////
+// class _KscPackageBase
+//   encapsulates some copy routines to create service parameters and
+//   copy results back to KscVariable objects
+//
+class _KscPackageBase
+{
+protected:
+    _KscPackageBase() {}
+    
+    static bool fillGetVarParams(const PltArray<KscVariableHandle> &,
+                                 KsArray<KsString> &);
+    static bool copyGetVarResults(const PltArray<KscVariableHandle> &,
+                                  const KsArray<KsGetVarItemResult> &);
+    static bool fillSetVarParams(const PltArray<KscVariableHandle> &,
+                                 KsArray<KsSetVarItem> &);
+    static bool copySetVarResults(const PltArray<KscVariableHandle> &,
+                                  const KsArray<KsResult> &);
+    static bool optimizePaths(const PltArray<KscVariableHandle> &,
+                              KsArray<KsString> &);
+};                                 
+
+//////////////////////////////////////////////////////////////////////
 // class KscPackage
 //
 //   RESTRICTIONS:
@@ -56,16 +78,19 @@
 // 
 //////////////////////////////////////////////////////////////////////
 
+typedef PltPtrHandle<class KscPackage> KscPackageHandle;
+
 class KscPackage
+: private _KscPackageBase
 {
 public:
     KscPackage();
     ~KscPackage();
 
-    bool add(KscVariable &var);
-    bool add(KscPackage &pkg);
-    bool remove(KscVariable &var);
-    bool remove(KscPackage &pkg);
+    bool add(KscVariableHandle var);
+    bool add(KscPackageHandle pkg);
+    bool remove(KscVariableHandle var);
+    bool remove(KscPackageHandle pkg);
     
     size_t sizeVariables(bool deep = false) const;
     size_t sizeSubpackages() const;
@@ -75,22 +100,22 @@ public:
     bool getUpdate();
     bool setUpdate(bool force = false);
 
-    PltIterator<KscVariable> *newVariableIterator(bool deep=false) const;
-    PltIterator<KscPackage> *newSubpackageIterator() const;
+    PltIterator<KscVariableHandle> *newVariableIterator(bool deep=false) const;
+    PltIterator<KscPackageHandle> *newSubpackageIterator() const;
 
     void setAvModule(const KscAvModule *avm);
     const KscAvModule *getAvModule() const;
 
 protected:
-    KscNegotiator *getNegotiatorForBucket(const KscSorterBucket &);
+//    KscNegotiator *getNegotiatorForBucket(const KscSorterBucket &);
 
-    bool getSimpleUpdate(const KscSorterBucket &);
-    bool setSimpleUpdate(const KscSorterBucket &);
+    bool getSimpleUpdate(KscBucketHandle);
+    bool setSimpleUpdate(KscBucketHandle);
 
-    PltList<KscVariable *> vars;
+    PltList<KscVariableHandle> vars;
     size_t num_vars;
 
-    PltList<KscPackage *> pkgs;
+    PltList<KscPackageHandle> pkgs;
     size_t num_pkgs;
 
     const KscAvModule *av_module;
@@ -104,22 +129,22 @@ protected:
     // and his subpackages
     //
     class DeepIterator
-    : public PltIterator<KscVariable>
+    : public PltIterator<KscVariableHandle>
     {
     public:
         DeepIterator(const KscPackage &);
         ~DeepIterator();
         operator const void * () const;
-        const KscVariable & operator * () const;
-        KscVariable * operator -> () const;
+        const KscVariableHandle & operator * () const;
+        const KscVariableHandle * operator -> () const;
         DeepIterator & operator ++ ();
         void operator ++ (int);
         void toStart();
     protected:
         const KscPackage &pkg;
         DeepIterator *rek_it; // used to visit the subpackages recursively
-        PltListIterator <KscVariable *> vars_it;
-        PltListIterator <KscPackage *> pkgs_it;
+        PltListIterator <KscVariableHandle> vars_it;
+        PltListIterator <KscPackageHandle> pkgs_it;
     };
     // end of class DeepIterator
 
@@ -128,6 +153,8 @@ public:
     void debugPrint(ostream &, bool) const;
 #endif
 };
+
+# if 0
 
 //
 // class KscDirectIterator
@@ -151,32 +178,37 @@ protected:
 };
 // end of class KscDirectIterator
 
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // class KscExchangePackage
 //////////////////////////////////////////////////////////////////////
 
 class KscExchangePackage
+: private _KscPackageBase
 {
 public:
     KscExchangePackage();
-    KscExchangePackage(KscPackage &setPkg, 
-                       KscPackage &getPkg);
+    KscExchangePackage(KscPackageHandle setPkg, 
+                       KscPackageHandle getPkg);
     ~KscExchangePackage();
 
-    void setPackages(KscPackage &setPkg,
-                     KscPackage &getPkg);
-    void getPackages(KscPackage *&setPkg,
-                     KscPackage *&getPkg);
+    void setPackages(KscPackageHandle setPkg,
+                     KscPackageHandle getPkg);
+    void getPackages(KscPackageHandle &setPkg,
+                     KscPackageHandle &getPkg);
 
-//    bool doExchange(bool force = true); // TODO
+    bool doExchange(bool force = true);
 
     void setAvModule(const KscAvModule *avm);
     const KscAvModule *getAvModule() const;
 
 protected:
-    KscPackage *get_pkg, 
-               *set_pkg;
+    bool mergeSorters(KscSorter &, KscSorter &);
+    bool doSimpleExchange(KscBucketHandle, KscBucketHandle);
+
+    KscPackageHandle get_pkg,
+                     set_pkg;
 
     const KscAvModule *av_module;
 
@@ -230,18 +262,16 @@ KscPackage::getAvModule() const
 
 inline
 KscExchangePackage::KscExchangePackage()
-: get_pkg(0),
-  set_pkg(0),
-  av_module(0)
+: av_module(0)
 {}
 
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscExchangePackage::KscExchangePackage(KscPackage &getPkg,
-                                       KscPackage &setPkg)
-: get_pkg(&getPkg),
-  set_pkg(&setPkg),
+KscExchangePackage::KscExchangePackage(KscPackageHandle getPkg,
+                                       KscPackageHandle setPkg)
+: get_pkg(getPkg),
+  set_pkg(setPkg),
   av_module(0)
 {}
 
@@ -254,18 +284,18 @@ KscExchangePackage::~KscExchangePackage()
 //////////////////////////////////////////////////////////////////////
 
 inline void 
-KscExchangePackage::setPackages(KscPackage &getPkg,
-                                KscPackage &setPkg)
+KscExchangePackage::setPackages(KscPackageHandle getPkg,
+                                KscPackageHandle setPkg)
 {
-    get_pkg = &getPkg;
-    set_pkg = &setPkg;
+    get_pkg = getPkg;
+    set_pkg = setPkg;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 inline void
-KscExchangePackage::getPackages(KscPackage *&getPkg,
-                                KscPackage *&setPkg)
+KscExchangePackage::getPackages(KscPackageHandle &getPkg,
+                                KscPackageHandle &setPkg)
 {
     getPkg = get_pkg;
     setPkg = set_pkg;
@@ -289,6 +319,13 @@ KscExchangePackage::getAvModule() const
 }
 
 #endif
+
+
+
+
+
+
+
 
 
 

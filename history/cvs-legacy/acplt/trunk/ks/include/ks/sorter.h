@@ -44,6 +44,7 @@
 
 #include <plt/list.h>
 #include <plt/hashtable.h>
+#include <plt/priorityqueue.h>
 
 #include "ks/commobject.h"
 #include "ks/avmodule.h"
@@ -64,20 +65,24 @@ public:
 //    KscSorterBucket(const KscSorterBucket &);
 //    KscSorterBucket &operator = (const KscSorterBucket &);
 
-    bool add(KscVariable *);
+    bool add(KscVariableHandle);
     size_t size() const;
-    PltIterator<KscVariable *> *newVarIterator() const;
+    PltIterator<KscVariableHandle> *newVarIterator() const;
+    // call only once 
+    PltArray<KscVariableHandle> getSortedVars();
 
     KscServer *getServer() const;
     const KscAvModule *getAvModule() const;
-    KscNegotiator *getNegotiator() const;
+//    KscNegotiator *getNegotiator() const;
  
 private:
-    PltList<KscVariable *> var_lst;
+    PltPriorityQueue<KscVariableHandle> var_lst;
     const KscAvModule *av_module;
     KscServer *server;
     size_t var_count;
 };
+
+typedef PltPtrHandle<KscSorterBucket> KscBucketHandle;
 
 //////////////////////////////////////////////////////////////////////
 // This is a helper class for KscPackage/KscExchangePackage which
@@ -88,11 +93,14 @@ private:
 class KscSorter 
 {
 public:
-    KscSorter(PltIterator<KscVariable> &var_it, bool dirty_only = false);
+    KscSorter(PltIterator<KscVariableHandle> &var_it, bool dirty_only = false);
     ~KscSorter();
 
     bool isValid() const;
-    PltIterator<KscSorterBucket *> *newBucketIterator() const;
+    bool isEmpty() const;
+    KscBucketHandle removeFirst();
+    KscBucketHandle removeMatchingBucket(KscBucketHandle);
+    PltIterator<KscBucketHandle> *newBucketIterator() const;
 
 private:
     class Key
@@ -115,53 +123,31 @@ private:
     };
 
     class ValueIterator
-    : public PltIterator<KscSorterBucket *>
+    : public PltIterator<KscBucketHandle>
     {
     public:
-        typedef KscSorterBucket *T;
-
-        ValueIterator(const PltHashTable<Key, T> &);
+        ValueIterator(const PltHashTable<Key, KscBucketHandle> &);
 
         operator const void * () const;
-        const T * operator -> () const;
+        const KscBucketHandle * operator -> () const;
         ValueIterator & operator ++ ();
         void toStart();
     private:
-        PltHashIterator<Key,T> it;
+        PltHashIterator<Key,KscBucketHandle> it;
     };      
 
     friend class ValueIterator;
 
-    bool sortVars(PltIterator<KscVariable> &);
+    bool sortVars(PltIterator<KscVariableHandle> &);
 
     bool valid;
     bool fDirtyOnly;
-    PltHashTable<Key,KscSorterBucket *> table;
+    PltHashTable<Key,KscBucketHandle> table;
 };
 
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
-//////////////////////////////////////////////////////////////////////
-
-inline
-bool
-operator == (const KscSorter::Key &k1, const KscSorter::Key &k2)
-{
-    return k1.server == k2.server
-        && k1.av_module == k2.av_module;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-unsigned long
-KscSorter::Key::hash() const 
-{
-    return (unsigned long)av_module +
-        (unsigned long)server;
-}
-
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -176,7 +162,7 @@ KscSorter::Key::Key(const KscAvModule *avm,
 
 inline
 KscSorter::ValueIterator::ValueIterator(
-    const PltHashTable<Key, KscSorterBucket *> &table)
+    const PltHashTable<Key, KscBucketHandle> &table)
 : it(table)
 {}
 
@@ -191,7 +177,7 @@ KscSorter::ValueIterator::operator const void * () const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscSorterBucket * const * 
+const KscBucketHandle * 
 KscSorter::ValueIterator::operator -> () const 
 {
     return &(it->a_value);
@@ -250,9 +236,9 @@ KscSorterBucket::getAvModule() const
 
 inline
 bool
-KscSorterBucket::add(KscVariable *var)
+KscSorterBucket::add(KscVariableHandle var)
 {
-    bool ok = var_lst.addLast(var);
+    bool ok = var_lst.add(var);
 
     if(ok) {
         var_count++;
@@ -267,14 +253,13 @@ inline
 size_t
 KscSorterBucket::size() const
 {
-    PLT_ASSERT(var_count == var_lst.size());
     return var_count;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 inline
-PltIterator<KscVariable *> *
+PltIterator<KscVariableHandle> *
 KscSorterBucket::newVarIterator() const
 {
     return var_lst.newIterator();
@@ -284,7 +269,7 @@ KscSorterBucket::newVarIterator() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscSorter::KscSorter(PltIterator<KscVariable> &var_it,
+KscSorter::KscSorter(PltIterator<KscVariableHandle> &var_it,
                      bool dirty_only)
 : fDirtyOnly(dirty_only) 
 {
@@ -302,8 +287,17 @@ KscSorter::isValid() const
 
 //////////////////////////////////////////////////////////////////////
 
+inline 
+bool
+KscSorter::isEmpty() const
+{
+    return table.isEmpty();
+}
+
+//////////////////////////////////////////////////////////////////////
+
 inline
-PltIterator<KscSorterBucket *> *
+PltIterator<KscBucketHandle> *
 KscSorter::newBucketIterator() const
 {
     return new ValueIterator(table);

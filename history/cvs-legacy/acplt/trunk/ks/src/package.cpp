@@ -58,23 +58,23 @@ KscPackage::debugPrint(ostream &os, bool printAll) const
     if(printAll) {
         // print variables
         //
-        PltIterator<KscVariable> *varit =
+        PltIterator<KscVariableHandle> *varit =
             newVariableIterator(false);
         if(varit) {
             while(*varit) {
                 // os << (*varit)->getFullPath() << endl;
-                (*varit)->debugPrint(os);
+                (**varit)->debugPrint(os);
                 ++(*varit);
             }
             delete varit;
         }
         // print subpackages
         //
-        PltIterator<KscPackage> *pkgit =
+        PltIterator<KscPackageHandle> *pkgit =
             newSubpackageIterator();
         if(pkgit) {
             while(*pkgit) {
-                (*pkgit)->debugPrint(os,true);
+                (**pkgit)->debugPrint(os,true);
                 ++(*pkgit);
             }
             delete pkgit;
@@ -114,79 +114,74 @@ KscPackage::~KscPackage()
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::add(KscVariable &var)
+KscPackage::add(KscVariableHandle var)
 {
-#ifdef PLT_DEBUG
-    // check for duplicated pointers to variables
-    //
-    PltListIterator<KscVariable *> it(vars);
-    while(it) {
-        if( *it == &var ) {
-            return true;
-        }
-        ++it;
-    }
-#endif
-        
-    bool ok = vars.addLast(&var);
+    if(var) {
+        bool ok = vars.addLast(var);
     
-    if(ok) num_vars++;
+        if(ok) num_vars++;
 
-    return ok;
+        return ok;
+    } else {
+        return false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::add(KscPackage &pkg) 
+KscPackage::add(KscPackageHandle pkg) 
 {
-#ifdef PLT_DEBUG
-    // check for duplicated pointers to variables
-    //
-    PltListIterator<KscPackage *> it(pkgs);
-    while(it) {
-        if( *it == &pkg ) {
-            return true;
-        }
-        ++it;
-    }
-#endif
-
+#if 0
+    // TODO:
     // avoid cycles
     //
     if(&pkg == this) {
         return false;
     }
+#endif
 
-    bool ok = pkgs.addLast(&pkg);
+    if(pkg) {
+        bool ok = pkgs.addLast(pkg);
     
-    if(ok) num_pkgs++;
+        if(ok) num_pkgs++;
 
-    return ok;
+        return ok;
+    } else {
+        return false;
+    }
 }
     
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::remove(KscVariable &var) 
+KscPackage::remove(KscVariableHandle var) 
 {
-    bool ok = vars.remove(&var);
+    if(var) {
+        bool ok = vars.remove(var);
     
-    if(ok) num_vars--;
+        if(ok) num_vars--;
 
-    return ok;
+        return ok;
+    } else {
+        return false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::remove(KscPackage &pkg)
+KscPackage::remove(KscPackageHandle pkg)
 {
-    bool ok = pkgs.remove(&pkg);
+    if(pkg) {
+        bool ok = pkgs.remove(pkg);
 
-    if(ok) num_pkgs--;
+        if(ok) num_pkgs--;
 
-    return ok;
+        return ok;
+    } else {
+        return false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -198,7 +193,7 @@ KscPackage::sizeVariables(bool deep) const
         size_t count = 0;
         // iterate over subpackages
         //
-        PltListIterator<KscPackage *> it(pkgs);
+        PltListIterator<KscPackageHandle> it(pkgs);
         while(it) {
             count += (*it)->sizeVariables(true);
             ++it;
@@ -211,30 +206,27 @@ KscPackage::sizeVariables(bool deep) const
 
 //////////////////////////////////////////////////////////////////////
 
-PltIterator<KscVariable> *
+PltIterator<KscVariableHandle> *
 KscPackage::newVariableIterator(bool deep) const
 {
     if(deep) {
         return new DeepIterator(*this);
     } 
     else {
-        return new KscDirectIterator<KscVariable>(vars);
+        return new PltListIterator<KscVariableHandle>(vars);
     }
 }
 
 //////////////////////////////////////////////////////////////////////
 
-PltIterator<KscPackage> *
+PltIterator<KscPackageHandle> *
 KscPackage::newSubpackageIterator() const 
 {
-    return new KscDirectIterator<KscPackage>(pkgs);
+    return new PltListIterator<KscPackageHandle>(pkgs);
 }
 
 //////////////////////////////////////////////////////////////////////
-// TODO:
-//   change absolute path names to relative path names 
-//   in order to save space
-//
+
 bool
 KscPackage::getUpdate() 
 {
@@ -247,7 +239,7 @@ KscPackage::getUpdate()
         return false;
     }
 
-    PltIterator<KscSorterBucket *> *pit =
+    PltIterator<KscBucketHandle> *pit =
         sorter.newBucketIterator();
 
     if(!pit) return false;
@@ -257,8 +249,8 @@ KscPackage::getUpdate()
     // iterate over buckets and do the jobs
     //
     while(*pit) {
-        KscSorterBucket *curr_bucket = **pit;
-        ok &= getSimpleUpdate(*curr_bucket);
+        KscBucketHandle curr_bucket = **pit;
+        ok &= getSimpleUpdate(curr_bucket);
         ++(*pit);
     }
 
@@ -270,14 +262,19 @@ KscPackage::getUpdate()
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::getSimpleUpdate(const KscSorterBucket &bucket)
+KscPackage::getSimpleUpdate(KscBucketHandle bucket)
 {
     // create data structures for transfer
     //
     KsGetVarResult result;
-    KsGetVarParams params(bucket.size());
+    KsGetVarParams params(bucket->size());
 
-    if(params.identifiers.size() != bucket.size()) {
+    PltArray<KscVariableHandle> sorted_vars = 
+        bucket->getSortedVars();
+
+    if(params.identifiers.size() != bucket->size()
+       || sorted_vars.size() != bucket->size()) 
+    {
         // failed to allocate memory
         //
         return false;
@@ -285,53 +282,21 @@ KscPackage::getSimpleUpdate(const KscSorterBucket &bucket)
 
     // copy data to params
     //
-    PltIterator<KscVariable *> *bucket_it =
-        bucket.newVarIterator();
-    if(!bucket_it) return false;
-
-    size_t count = 0;
-    while(*bucket_it) {
-        params.identifiers[count++] =
-            (**bucket_it)->getName();
-        ++(*bucket_it);
+    if(!fillGetVarParams(sorted_vars, params.identifiers)) {
+        return false;
     }
-    PLT_ASSERT(count == bucket.size());
 
     // request service
     //
-    bool ok = bucket.getServer()->getVar(bucket.getNegotiator(),
-                                         params,
-                                         result);
+    bool ok = bucket->getServer()->getVar(bucket->getAvModule(),
+                                          params,
+                                          result);
 
     if(!ok || result.result != KS_ERR_OK) return false;
 
     // copy results 
     //
-    ok = true;
-    count = 0;
-    bucket_it->toStart();
-
-    while(*bucket_it) {
-        if(result.items[count].result == KS_ERR_OK) {
-            KsVarCurrProps *cp = 
-                PLT_DYNAMIC_PCAST(KsVarCurrProps,
-                                  result.items[count].item.getPtr()); 
-            if(cp) {
-                // TODO :  
-                ok &= ((KscVariable *)(**bucket_it))->setCurrProps(*cp);
-            } else {
-                ok = false;
-            }
-        }
-        ++count;
-        ++(*bucket_it);
-    }
-
-    PLT_ASSERT(count == bucket.size());
-
-    delete bucket_it;
-
-    return ok;
+    return copyGetVarResults(sorted_vars, result.items);
 }   
 
 //////////////////////////////////////////////////////////////////////
@@ -347,7 +312,7 @@ KscPackage::setUpdate(bool force)
         return false;
     }
 
-    PltIterator<KscSorterBucket *> *pit =
+    PltIterator<KscBucketHandle> *pit =
         sorter.newBucketIterator();
 
     if(!pit) {
@@ -358,8 +323,8 @@ KscPackage::setUpdate(bool force)
     bool ok = true;
 
     while(*pit) {
-        KscSorterBucket *curr_bucket = **pit;
-        ok &= setSimpleUpdate(*curr_bucket);
+        KscBucketHandle curr_bucket = **pit;
+        ok &= setSimpleUpdate(curr_bucket);
         ++*pit;
     }
 
@@ -371,84 +336,41 @@ KscPackage::setUpdate(bool force)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscPackage::setSimpleUpdate(const KscSorterBucket &bucket)
+KscPackage::setSimpleUpdate(KscBucketHandle bucket)
 {
-    KsSetVarParams params(bucket.size());
-    KsSetVarResult result(bucket.size());
+    KsSetVarParams params(bucket->size());
+    KsSetVarResult result(bucket->size());
 
-    if(params.items.size() != bucket.size() || 
-       result.results.size() != bucket.size()) 
+    PltArray<KscVariableHandle> sorted_vars = 
+        bucket->getSortedVars();
+
+    if(params.items.size() != bucket->size() || 
+       result.results.size() != bucket->size() ||
+       sorted_vars.size() != bucket->size()) 
     {
         // failed to allocate space
         //
         return false;
     }
 
-    PltIterator<KscVariable *> *pit =
-        bucket.newVarIterator();
-    if(!pit) {
-        return false;
-    }
-
     // copy data to params
     //
-    size_t count = 0;
-    while(*pit) {
-        params.items[count].path_and_name = 
-            (**pit)->getName();
-        params.items[count].curr_props =
-            (**pit)->getCurrPropsHandle();
-        ++count;
-        ++*pit;
+    if( !fillSetVarParams(sorted_vars, params.items) ) {
+        return false;
     }
 
     // request service
     //
-    bool ok = bucket.getServer()->setVar(
-        bucket.getNegotiator(),
+    bool ok = bucket->getServer()->setVar(
+        bucket->getAvModule(),
         params,
         result);
 
     if(!(ok && result.result == KS_ERR_OK)) {
-        delete pit;
         return false;
     }
 
-    // update state of variable objects
-    //
-    count = 0;
-    pit->toStart();
-    while(*pit) {
-        if(result.results[count++].result == KS_ERR_OK) {
-            KscVariable *pvar = **pit;
-            pvar->fDirty = false;
-        } else {
-            ok = false;
-        }
-        ++*pit;
-    }
-
-    delete pit;
-    return ok;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-KscNegotiator *
-KscPackage::getNegotiatorForBucket(
-    const KscSorterBucket &bucket)
-{
-    KscNegotiator *neg;
-
-    if(!bucket.getAvModule() && av_module) {
-        // if the bucket lacks an AVModule and 
-        // this package has an AVModule use it
-        //
-        neg = av_module->getNegotiator(bucket.getServer());
-        if(neg) return neg;
-    } 
-    
-    return bucket.getNegotiator();
+    return copySetVarResults(sorted_vars, result.results);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -493,7 +415,7 @@ const void *() const
 
 //////////////////////////////////////////////////////////////////////
 
-const KscVariable &
+const KscVariableHandle &
 KscPackage::DeepIterator::operator * () const
 {
     PLT_PRECONDITION(*this);
@@ -501,7 +423,7 @@ KscPackage::DeepIterator::operator * () const
     // check for elements in this package
     //
     if(vars_it) {
-        return **vars_it;
+        return *vars_it;
     }
 
     // check for elements in the subpackages
@@ -517,7 +439,7 @@ KscPackage::DeepIterator::operator * () const
     
 //////////////////////////////////////////////////////////////////////
     
-KscVariable *
+const KscVariableHandle *
 KscPackage::DeepIterator::operator -> () const
 {
     PLT_PRECONDITION(*this);
@@ -525,7 +447,7 @@ KscPackage::DeepIterator::operator -> () const
     // check for elements in this package
     //
     if(vars_it) {
-        return *vars_it;
+        return &(*vars_it);
     }
 
     // check for elements in the subpackages
@@ -647,7 +569,288 @@ KscPackage::DeepIterator::toStart()
     pkgs_it.toStart();
     vars_it.toStart();
 }
+
+
+//////////////////////////////////////////////////////////////////////
+// class KscExchangePackage
+//////////////////////////////////////////////////////////////////////
+
+bool 
+KscExchangePackage::doExchange(bool force)
+{
+    // if none of the packages exists we consider
+    // the operation to be succesfull
+    if( !get_pkg && !set_pkg ) {
+        return true;
+    }
+
+    // if one of the package does exist we use
+    // his functions
+    if( get_pkg && !set_pkg ) {
+        return get_pkg->getUpdate();
+    }
+
+    if( !get_pkg && set_pkg ) {
+        return set_pkg->setUpdate(force);
+    }
+
+    // both packages exist, now sort variables
+    //
+    PltIterator<KscVariableHandle> *get_it =
+        get_pkg->newVariableIterator(true);
+    PltIterator<KscVariableHandle> *set_it =
+        set_pkg->newVariableIterator(true);
+
+    if( get_it && set_it ) {
+        KscSorter get_sorter(*get_it);
+        KscSorter set_sorter(*set_it, !force);
+
+        if(get_sorter.isValid() && set_sorter.isValid()) {
+            return mergeSorters(get_sorter, set_sorter);
+        }
+    } else {
+        if(get_it) delete get_it;
+        if(set_it) delete set_it;
+
+        return false;
+    }
+
+    return false; // keep compiler happy
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscExchangePackage::mergeSorters(KscSorter &get_sorter,
+                                 KscSorter &set_sorter)
+{
+    bool ok = true;
+
+    // first use all buckets contained in get_sorter and 
+    // buckets out of set_sorter with similar AV/server type
+    //
+    while(!get_sorter.isEmpty()) {
+        KscBucketHandle curr_get(get_sorter.removeFirst());
+        KscBucketHandle curr_set(set_sorter.removeMatchingBucket(curr_get));
+        ok &= doSimpleExchange(curr_get, curr_set);
+    }
+
+    // get_sorter is flushed, now handle the remaining
+    // buckets in set_sorter
+    KscBucketHandle dummy_get;
+    while(!set_sorter.isEmpty()) {
+        KscBucketHandle curr_set(set_sorter.removeFirst());
+        ok &= doSimpleExchange(dummy_get, curr_set);
+    }
+
+    return ok;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscExchangePackage::doSimpleExchange(
+    KscBucketHandle get_bucket,
+    KscBucketHandle set_bucket)
+{
+    if(!get_bucket && !set_bucket) return false;
+
+    PltArray<KscVariableHandle> set_vars, get_vars;
+    size_t get_size, set_size;
+    KscServer *server = 0;
+    const KscAvModule *avm = 0;
+
+    if(get_bucket) {
+        get_size = get_bucket->size();
+        get_vars = get_bucket->getSortedVars();
+        server = get_bucket->getServer();
+        avm = get_bucket->getAvModule();
+    } else {
+        get_size = 0;
+    }
+
+    if(set_bucket) {
+        set_size = set_bucket->size();
+        set_vars = set_bucket->getSortedVars();
+        server = set_bucket->getServer();
+        avm = set_bucket->getAvModule();
+    } else {
+        set_size = 0;
+    }
     
+    KsExgDataParams params(set_size, get_size);
+    KsExgDataResult res(set_size, get_size);
+
+    if(params.set_vars.size() != set_size ||
+       params.get_vars.size() != get_size ||
+       res.results.size() != set_size ||
+       res.items.size() != get_size ||
+       get_vars.size() != get_size ||
+       set_vars.size() != set_size )
+    {
+        return false;
+    }
+
+    // copy data to params
+    //
+    bool ok = fillGetVarParams(get_vars, params.get_vars) &&
+        fillSetVarParams(set_vars, params.set_vars);
+
+    if(!ok) return false;
+
+    // request server for service
+    //
+    ok = server->exgData(avm, params, res);
+
+#if PLT_DEBUG
+    if(ok && res.result != KS_ERR_OK) {
+        PLT_DMSG("error code : " << res.result << endl);
+    }
+#endif
+
+    if(!ok || res.result != KS_ERR_OK) return false;
+
+    // copy results
+    //
+    ok = copyGetVarResults(get_vars, res.items) &&
+        copySetVarResults(set_vars, res.results);
+
+    return ok;
+}
+    
+//////////////////////////////////////////////////////////////////////
+// class _KscPackageBase
+//////////////////////////////////////////////////////////////////////
+
+bool 
+_KscPackageBase::fillGetVarParams(const PltArray<KscVariableHandle> &sorted_vars,
+                                  KsArray<KsString> &identifiers)
+{
+    return optimizePaths(sorted_vars, identifiers);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool 
+_KscPackageBase::copyGetVarResults(
+    const PltArray<KscVariableHandle> &sorted_vars,
+    const KsArray<KsGetVarItemResult> &res)
+{
+    PLT_PRECONDITION(sorted_vars.size() == res.size());
+
+    bool ok = true;
+    size_t count = 0,
+           to_copy = res.size();
+
+    while(count < to_copy) {
+        if(res[count].result == KS_ERR_OK) {
+            KsVarCurrProps *cp = 
+                PLT_DYNAMIC_PCAST(KsVarCurrProps,
+                                  res[count].item.getPtr()); 
+            if(cp) {
+                // TODO :  
+                ok &= sorted_vars[count]->setCurrProps(*cp);
+                sorted_vars[count]->fDirty = false;
+            } else {
+                ok = false;
+            }
+        }
+        ++count;
+    }
+
+    return ok;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool 
+_KscPackageBase::fillSetVarParams(
+    const PltArray<KscVariableHandle> &sorted_vars,
+    KsArray<KsSetVarItem> &items)
+{
+    PLT_PRECONDITION(sorted_vars.size() == items.size());
+
+    size_t to_copy = sorted_vars.size();
+ 
+    for(size_t count = 0; count < to_copy; count++) { 
+        items[count].path_and_name = 
+            sorted_vars[count]->getPathAndName();
+        items[count].curr_props =
+            sorted_vars[count]->getCurrPropsHandle();
+    }
+
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool 
+_KscPackageBase::copySetVarResults(const PltArray<KscVariableHandle> &sorted_vars,
+                                   const KsArray<KsResult> &res)
+{
+    PLT_PRECONDITION(sorted_vars.size() == res.size());
+
+    size_t size = sorted_vars.size();
+
+    for(size_t count = 0; count < size; count++) {
+        if(res[count].result == KS_ERR_OK) {
+            sorted_vars[count]->fDirty = false;
+        }
+    }
+
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+#if 0
+
+bool 
+_KscPackageBase::optimizePaths(
+    const PltArray<KscVariableHandle> &sorted_vars,
+    KsArray<KsString> &paths) 
+{
+    // TODO: implement use of relative paths
+    // currently we just copy the paths
+    //
+    PLT_PRECONDITION(sorted_vars.size() == paths.size());
+
+    size_t to_copy = sorted_vars.size();
+
+    for(size_t count = 0; count < to_copy; count++) {
+        paths[count] = sorted_vars[count]->getName();
+     }
+
+    return true;
+}
+
+#endif
+
+//////////////////////////////////////////////////////////////////////
+
+bool 
+_KscPackageBase::optimizePaths(
+    const PltArray<KscVariableHandle> &sorted_vars,
+    KsArray<KsString> &paths) 
+{
+    PLT_PRECONDITION(sorted_vars.size() == paths.size());
+
+    size_t to_copy = sorted_vars.size();
+    paths[0] = sorted_vars[0]->getPathAndName();
+
+    PLT_DMSG("Optimizing paths :" << endl);
+    PLT_DMSG("absolute\t\trelative" << endl);
+    PLT_DMSG(paths[0] << endl);
+
+    for(size_t count = 1; count < to_copy; count++) {
+        paths[count] = 
+            sorted_vars[count]->getPathAndName().relTo(
+                sorted_vars[count-1]->getPathAndName());
+        PLT_DMSG(sorted_vars[count]->getPathAndName() << "\t" << paths[count] << endl);
+     }
+
+    return true;
+}
 
 
 

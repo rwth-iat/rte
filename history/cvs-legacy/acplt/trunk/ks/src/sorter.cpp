@@ -43,35 +43,91 @@
 
 //////////////////////////////////////////////////////////////////////
 
-KscNegotiator *
-KscSorterBucket::getNegotiator() const
+bool
+operator == (const KscSorter::Key &k1, const KscSorter::Key &k2)
 {
-    if(av_module) {
-        KscNegotiator *neg = 
-            av_module->getNegotiator(server);
-        if(neg) return neg;
-    }
-    
-    return server->getNegotiator();
+    return k1.server == k2.server
+        && k1.av_module == k2.av_module;
 }
 
 //////////////////////////////////////////////////////////////////////
 
+unsigned long
+KscSorter::Key::hash() const 
+{
+    return (unsigned long)av_module 
+        + (unsigned long)server;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+PltArray<KscVariableHandle> 
+KscSorterBucket::getSortedVars()
+{
+    PltArray<KscVariableHandle> sv(size());
+
+    if(sv.size() != size()) {
+        // failed to allocate memory
+        return PltArray<KscVariableHandle>(0);
+    }
+
+    size_t count = 0;
+
+    while(!var_lst.isEmpty()) {
+        sv[count++] = var_lst.removeFirst();
+    }
+
+    PLT_ASSERT(count == size());
+
+    return sv;
+}       
+    
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 KscSorter::~KscSorter() 
 {
-    // clean up hash table
-    //
-    PltHashIterator<Key,KscSorterBucket*> it(table);
-    while(it) {
-        delete it->a_value;
-        ++it;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscBucketHandle 
+KscSorter::removeFirst()
+{
+    PltHashIterator<Key, KscBucketHandle> it(table);
+    KscBucketHandle bucket;
+
+    if(it) {
+        Key key = it->a_key;
+        bucket = it->a_value;
+
+        table.remove(key, bucket);
+    } else {
+        PLT_DMSG("KscSorter::removeFirst() called for empty object" << endl;);
     }
+
+    return bucket;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscBucketHandle 
+KscSorter::removeMatchingBucket(KscBucketHandle bucket)
+{
+    KscBucketHandle res;
+    Key key(bucket->getAvModule(), bucket->getServer());
+
+    table.remove(key, res);
+
+    return res;
 }
 
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscSorter::sortVars(PltIterator<KscVariable> &var_it)
+KscSorter::sortVars(PltIterator<KscVariableHandle> &var_it)
 {
     // iterate over variables and
     // (1) add a variable to the approbiate bucket if it exists
@@ -81,11 +137,11 @@ KscSorter::sortVars(PltIterator<KscVariable> &var_it)
     var_it.toStart();
 
     while(ok && var_it) {
-        KscVariable *current = &(*var_it);
+        KscVariableHandle current = *var_it;
         if( !fDirtyOnly || current->isDirty() ) { 
             Key key(current->getAvModule(),
                     current->getServer());
-            KscSorterBucket *bucket;
+            KscBucketHandle bucket;
             
             if(table.query(key, bucket)) {
                 // bucket found
@@ -94,8 +150,9 @@ KscSorter::sortVars(PltIterator<KscVariable> &var_it)
             } else {
                 // create bucket
                 //
-                bucket = new KscSorterBucket(key.getAvModule(),
-                                             key.getServer());
+                bucket.bindTo(new KscSorterBucket(key.getAvModule(),
+                                                  key.getServer()),
+                              PltOsNew);
                 if(bucket) {
                     ok = table.add(key, bucket)
                         && bucket->add(current);

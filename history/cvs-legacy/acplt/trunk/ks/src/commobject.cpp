@@ -50,7 +50,7 @@
 void
 KscCommObject::debugPrint(ostream &os) const
 {
-    os << "Path and Name: " << path << endl;
+    os << "Path and Name: " << PltString(path) << endl;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -77,10 +77,10 @@ KscDomain::debugPrint(ostream &os) const
 
     // iterate over childs and print them
     //
-    PltHashIterator<KscAbsPath, KscCommObject *> it(child_table);
+    PltListIterator<KsProjPropsHandle> it(child_table);
 
     while(it) {
-        it->a_value->debugPrint(os);
+        (*it)->debugPrint(os);
         ++it;
     }
 }
@@ -192,39 +192,12 @@ KscCommObject::getServer() const
 }
 
 //////////////////////////////////////////////////////////////////////
-
-KscNegotiator *
-KscCommObject::getNegotiator() 
-{
-    KscNegotiator *neg;
- 
-    // first try to get private negotiator
-    //
-    if(av_module) {
-        neg = av_module->getNegotiator(getServer());
-        if(neg) {
-            return neg;
-        }
-    }
-
-    // now request the server for negotiator,
-    // the server should ensure that we get
-    // a valid object 
-    //
-    neg = getServer()->getNegotiator();
-
-    PLT_ASSERT(neg);
-
-    return neg;
-}
-
-//////////////////////////////////////////////////////////////////////
 // class KscDomain
 //////////////////////////////////////////////////////////////////////
 
 KscDomain::~KscDomain()
 {
-    flushChilds(KS_OT_ANY);
+    flushChilds();
     PLT_POSTCONDITION(child_table.size() == 0);
 }
 
@@ -239,11 +212,11 @@ KscDomain::getProjPropsUpdate()
     KsGetPPParams params;
     KsGetPPResult result;
 
-    params.path = KsString(path.getPathOnly());
+    params.path = path.getPathOnly();
     params.type_mask = KS_OT_DOMAIN;
-    params.name_mask = KsString(path.getNameOnly());
+    params.name_mask = path.getName();
 
-    bool ok = myServer->getPP(getNegotiator(),
+    bool ok = myServer->getPP(av_module,
                               params, 
                               result);
 
@@ -289,14 +262,14 @@ KscDomain::getChildPPUpdate()
     // create and fill data structures
     //
     KsGetPPParams params;
-    params.path = PltString(path.getVarPath());
+    params.path = path.getPathAndName();
     params.type_mask = KS_OT_ANY;
     params.name_mask = KsString("*");
     KsGetPPResult result;
 
     // request service
     //
-    bool ok = myServer->getPP(getNegotiator(),
+    bool ok = myServer->getPP(av_module,
                               params, result);
 
     if( !(ok && result.result == KS_ERR_OK) ) {
@@ -305,42 +278,16 @@ KscDomain::getChildPPUpdate()
 
     // delete old childs and insert the new one
     //
-    flushChilds(KS_OT_ANY);
+    flushChilds();
 
     ok = true;
 
     while(!result.items.isEmpty() && ok) {
         KsProjPropsHandle hpp = result.items.removeFirst();
         if(hpp) {
-            KscAbsPath new_path =
-                path + hpp->identifier;
-
-            PLT_ASSERT(new_path.isValid());
-            
-            KscCommObject *new_var = 0;
-
-            switch(hpp->xdrTypeCode()) 
-            {
-            case KS_OT_VARIABLE:
-                new_var = new KscVariable(PltString(new_path)); // TODO
-                break;
-            case KS_OT_DOMAIN:
-                new_var = new KscDomain(PltString(new_path)); // TODO
-                break;
-            default:
-                PLT_DMSG("Unknown objectype in KscDomain::getChildPPUpdate" << endl);
-            }
-            
-            if(new_var) {
-                new_var->setProjProps(hpp);
-                ok = child_table.add(new_path, new_var);
-                if(!ok) {
-                    PLT_DMSG("KscDomain::getChildPPUpdate() : cannot add new commobject to child table" << endl);
-                }
-            }
-            else {
-                ok = false;
-                PLT_DMSG("KscDomain::getChildPPUpdate() : cannot create KscCommObject" << endl);
+            ok = child_table.addLast(hpp);
+            if(!ok) {            
+                PLT_DMSG("KscDomain::getChildPPUpdate() : cannot add new commobject to child table" << endl);
             }
         }
         else {
@@ -357,20 +304,10 @@ KscDomain::getChildPPUpdate()
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscDomain::flushChilds(KS_OBJ_TYPE typeMask)
+KscDomain::flushChilds()
 {
-    PltHashIterator<KscAbsPath,KscCommObject *> it(child_table);
-
-    while(it) {
-        if( it->a_value->typeCode() & typeMask ) {
-            KscCommObject *temp = 0;
-            child_table.remove(it->a_key, temp);
-            PLT_ASSERT(temp);
-            delete temp;
-            it.toStart(); // neccessary since we changed the table
-        } else {
-            ++it;
-        }
+    while(!child_table.isEmpty()) {
+        child_table.removeFirst();
     }
 
     fChildPPValid = false;
@@ -407,7 +344,7 @@ KscDomain::ChildIterator::ChildIterator(const KscDomain &domain,
     // move forward to the first element
     // matching with type_mask
     //
-    while( it && !(it->a_value->typeCode() & type_mask)) {
+    while( it && !((*it)->xdrTypeCode() & type_mask)) {
         ++it;
     }
 }
@@ -431,7 +368,7 @@ KscDomain::ChildIterator::operator ++ ()
         ++it;
     }
     while(it && 
-          !(it->a_value->typeCode() & type_mask));
+          !((*it)->xdrTypeCode() & type_mask));
     
     return *this;
 }
@@ -454,12 +391,12 @@ KscDomain::ChildIterator::toStart()
 
 //////////////////////////////////////////////////////////////////////
 
-const KsProjProps *
-KscDomain::ChildIterator::operator -> () const
+const KsProjPropsHandle &
+KscDomain::ChildIterator::operator * () const
 {
     PLT_PRECONDITION(*this);
 
-    return it->a_value->getProjProps();
+    return *it;
 }
 
 
@@ -476,11 +413,11 @@ KscVariable::getProjPropsUpdate()
     KsGetPPParams params;
     KsGetPPResult result;
 
-    params.path = KsString(path.getPathOnly());
+    params.path = path.getPathOnly();
     params.type_mask = KS_OT_VARIABLE;
-    params.name_mask = KsString(path.getNameOnly());
+    params.name_mask = path.getName();
 
-    bool ok = myServer->getPP(getNegotiator(),
+    bool ok = myServer->getPP(av_module,
                               params, result);
 
     if(ok &&
@@ -521,11 +458,11 @@ KscVariable::getUpdate()
     PLT_ASSERT(myServer);
 
     KsGetVarParams params(1);
-    params.identifiers[0] = getName();
+    params.identifiers[0] = path.getPathAndName();
 
     KsGetVarResult result(1);
 
-    bool ok = myServer->getVar(getNegotiator(),
+    bool ok = myServer->getVar(av_module,
                                params, 
                                result);
 
@@ -558,13 +495,13 @@ KscVariable::setUpdate()
     PLT_ASSERT(myServer);
 
     KsSetVarParams params(1);
-    params.items[0].path_and_name = PltString(path.getVarPath());
+    params.items[0].path_and_name = path.getPathAndName();
     params.items[0].curr_props = 
         KsCurrPropsHandle( &curr_props, KsOsUnmanaged);
 
     KsSetVarResult result(1);
 
-    bool ok = myServer->setVar(getNegotiator(),
+    bool ok = myServer->setVar(av_module,
                                params,
                                result);
 

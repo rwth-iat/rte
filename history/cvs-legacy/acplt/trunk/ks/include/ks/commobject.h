@@ -44,10 +44,10 @@
 
 #include <plt/debug.h>
 #include <plt/rtti.h>
-#include <plt/hashtable.h>
+#include <plt/list.h>
 
 #include "ks/props.h"
-#include "ks/abspath.h"
+#include "ks/clntpath.h"
 #include "ks/avmodule.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -62,15 +62,16 @@ class KscCommObject
 {
 public:
     KscCommObject(const char *object_path);
-//  KscCommObject(const KscAbsPath &object_path);
-
     virtual ~KscCommObject();
 
     // selectors
     //
-    PltString getName() const;
-    KscAbsPath getHostAndServer() const;
-    const KscAbsPath &getFullPath() const; 
+    bool hasValidPath() const;
+    KsString getName() const;
+    KsString getPathOnly() const;
+    const KscPath &getPathAndName() const;
+    KsString getHostAndServer() const;
+    KsString getFullPath() const; 
  
     virtual KS_OBJ_TYPE typeCode() const = 0;
 
@@ -92,7 +93,7 @@ protected:
     friend class KscDomain;
     virtual bool setProjProps(KsProjPropsHandle) = 0;
 
-    KscAbsPath path;
+    KscPathParser path;
     KscServer *server;
     const KscAvModule *av_module;
 
@@ -108,12 +109,13 @@ public:
 #endif
 };
 
+typedef PltPtrHandle<KscCommObject> KscCommObjectHandle;
 
 //////////////////////////////////////////////////////////////////////
 // class KscDomain
 //////////////////////////////////////////////////////////////////////
 
-typedef PltIterator<KsProjProps> KscChildIterator;
+typedef PltIterator<KsProjPropsHandle> KscChildIterator;
 
 class KscDomain
 : public KscCommObject
@@ -139,12 +141,12 @@ public:
 
 protected:
     // remove childs from table
-    bool flushChilds(KS_OBJ_TYPE typeMask);
+    bool flushChilds();
 
     bool setProjProps(KsProjPropsHandle);
 
     KsDomainProjProps proj_props;
-    PltHashTable<KscAbsPath, KscCommObject *> child_table;
+    PltList<KsProjPropsHandle> child_table;
     bool fChildPPValid;   // indicates wether PP's already have been read  
 
     class ChildIterator
@@ -156,9 +158,9 @@ protected:
         ChildIterator & operator ++ ();   // advance
         void operator ++ (int);           // (postfix)
         void toStart();                   // go to the beginning
-        const KsProjProps * operator -> () const;
+        const KsProjPropsHandle &operator * () const;
     private:
-        PltHashIterator<KscAbsPath, KscCommObject *> it;
+        PltListIterator<KsProjPropsHandle> it;
         enum_t type_mask;
     };
 
@@ -175,6 +177,8 @@ public:
     virtual void debugPrint(ostream &os) const;
 #endif
 };
+
+typedef PltPtrHandle<KscDomain> KscDomainHandle;
 
 //////////////////////////////////////////////////////////////////////
 // class KscVariable
@@ -205,7 +209,7 @@ protected:
     KsVarProjProps proj_props;
     KsVarCurrProps curr_props;
 
-    friend class KscPackage; // for access to fDirty 
+    friend class _KscPackageBase; // for access to fDirty 
     bool fDirty;
 
     bool setProjProps(KsProjPropsHandle);
@@ -222,22 +226,50 @@ public:
 #endif
 };
 
+typedef PltPtrHandle<KscVariable> KscVariableHandle;
 
 //////////////////////////////////////////////////////////////////////
 // Inline Implementation
 //
 
 inline
-PltString
-KscCommObject::getName() const
+bool
+KscCommObject::hasValidPath() const
 {
-    return path.getVarPath();
+    return path.isValid();
 }
 
 //////////////////////////////////////////////////////////////////////
 
 inline
-KscAbsPath
+KsString
+KscCommObject::getName() const
+{
+    return path.getName();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsString
+KscCommObject::getPathOnly() const
+{
+    return path.getPathOnly();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+const KscPath &
+KscCommObject::getPathAndName() const
+{
+    return path.getPathAndName();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsString
 KscCommObject::getHostAndServer() const
 {
     return path.getHostAndServer();
@@ -246,7 +278,7 @@ KscCommObject::getHostAndServer() const
 //////////////////////////////////////////////////////////////////////
 
 inline
-const KscAbsPath &
+KsString
 KscCommObject::getFullPath() const
 {
     return path;
