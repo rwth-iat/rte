@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.1 1997-03-12 16:19:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.2 1997-03-19 12:27:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -43,6 +43,21 @@
 #include "plt/hashtable.h"
 
 //////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+PltHashTable_<K,V>::~PltHashTable_()
+{
+    for (size_t i = 0; i<a_capacity; ++i) {
+        if ( usedSlot(a_table[i]) ) {
+                delete (PltAssoc<K,V> *) a_table[i];
+        }
+    }
+}
+        
+
+
+
+/////////////////////////////////////////////////////////////////////////////
 
 template <class K, class V>
 bool

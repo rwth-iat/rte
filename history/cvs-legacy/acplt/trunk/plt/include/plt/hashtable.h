@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HASHTABLE_INCLUDED
 #define PLT_HASHTABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.5 1997-03-12 16:19:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable.h,v 1.6 1997-03-19 12:27:00 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -100,20 +100,6 @@ protected:
     
 //////////////////////////////////////////////////////////////////////
 
-#if 0
-template <class K, class V>
-class PltHandleHashTable
-: public PltHashTable_< PltPtrHandle<K>, V >
-{
-protected:
-    virtual unsigned long keyHash(const PltPtrHandle<K> & ) const ;
-    virtual bool keyEqual(const PltPtrHandle<K> &, 
-                          const PltPtrHandle<K> &) const;
-};
-#endif
-
-//////////////////////////////////////////////////////////////////////
-
 template <class T>
 class PltKeyHandle
 : public PltPtrHandle<T>
@@ -126,6 +112,21 @@ public:
 
     unsigned long hash() const;
     bool operator == (const PltKeyHandle & h) const;
+};
+    
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+class PltKeyPtr
+{
+public:
+    PltKeyPtr(T *p = 0);
+    unsigned long hash() const;
+    bool operator == (const PltKeyPtr & p) const;
+    T & operator * ();
+    T * operator ->();
+private:
+    T* _p;
 };
     
 //////////////////////////////////////////////////////////////////////
@@ -155,10 +156,11 @@ class PltHashTable_
 {
     friend PltHashIterator_base::PltHashIterator_base(const PltHashTable_base &);
 public:
-
     PltHashTable_(size_t mincap=11, 
                  float highwater=0.8, 
                  float lowwater=0.4);
+    virtual ~PltHashTable_();
+
     // accessors
     virtual bool query(const K&, V&) const;
     
@@ -216,7 +218,7 @@ protected:
 
     virtual unsigned long keyHash(const void *) const = 0;
     virtual bool keyEqual(const void *, const void *) const = 0;
-private:
+
     PltAssoc_ **a_table;
     size_t a_capacity;       // current capacity of a_table
     size_t a_minCapacity;    // minimal capacity
@@ -402,6 +404,54 @@ inline bool
 PltKeyHandle<T>::operator == (const PltKeyHandle & rhs) const
 {
     return this->operator*() == *rhs;
+}
+
+//////////////////////////////////////////////////////////////////////
+// (template class PltKeyPtr<T>)
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline 
+PltKeyPtr<T>::PltKeyPtr(T *p)
+: _p(p)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline unsigned long
+PltKeyPtr<T>::hash() const
+{
+    return _p->hash();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline bool 
+PltKeyPtr<T>::operator == (const PltKeyPtr & rhs) const
+{
+    return *_p == *rhs._p;
+};
+    
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline T *
+PltKeyPtr<T>::operator -> ()
+{
+    return _p;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline T &
+PltKeyPtr<T>::operator * ()
+{
+    return *_p;
 }
 
 //////////////////////////////////////////////////////////////////////
