@@ -86,9 +86,10 @@ class PltArray
 : public PltContainer<T>
 {
 public:
-    PltArray(size_t size = 0,  // array size 
-             T * p= 0,         // address of first element
-             enum PltOwnership = PltOsArrayNew);      // [1]
+    PltArray(size_t size = 0); // array size          // [1]
+    PltArray(size_t size,      // array size 
+             T * p,           // address of first element
+             enum PltOwnership);                      // [1]
 
     // accessors
     const T & operator[] (size_t i) const;
@@ -97,7 +98,7 @@ public:
 
     // modifiers
     T & operator[] (size_t i);
-    PltArray<T> & operator = ( const PltArray<T> &);
+    PltArray<T> & operator = ( PltArray<T> &);
 
     // container interface
     virtual size_t size() const;
@@ -155,10 +156,31 @@ PltArray<T>::invariant() const
 template <class T>
 inline
 PltArray<T>::PltArray(size_t sz, T * p, enum PltOwnership os)
-: a_array(p ? p : ( sz>0 ? new T[sz] : 0 ), os)
+: a_array(p, os)
 {
-    PLT_PRECONDITION( sz==0 && p == 0 || sz > 0 );
+    PLT_PRECONDITION( sz > 0 && p );
     a_size = a_array ? sz : 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltArray<T>::PltArray(size_t sz)
+: a_array(sz>0 ? new T[sz] : 0 , PltOsArrayNew)
+{
+    a_size = a_array ? sz : 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline PltArray<T> &
+PltArray<T>::operator = (PltArray<T> & rhs)
+{
+    a_size = rhs.a_size;
+    a_array = rhs.a_array;
+    return *this;
 }
 
 //////////////////////////////////////////////////////////////////////
