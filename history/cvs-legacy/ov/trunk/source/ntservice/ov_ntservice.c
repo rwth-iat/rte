@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.c,v 1.6 2000-06-14 18:05:12 dirk Exp $
+*   $Id: ov_ntservice.c,v 1.7 2000-08-01 11:04:39 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -138,6 +138,7 @@ static SERVICE_STATUS_HANDLE	status_handle;
 static SERVICE_STATUS			status;
 static HANDLE					done_event;
 static HANDLE					one_shot_event;
+static HANDLE					exit_event;
 static HANDLE					work_thread;
 static DWORD					work_thread_id;
 static OV_STRING				username;
@@ -153,7 +154,7 @@ static OV_BOOL					version = FALSE;
 /*
 *	Open the service control manager
 */
-SC_HANDLE ov_ntservice_opencontrolmanager(void) {
+static SC_HANDLE ov_ntservice_opencontrolmanager(void) {
 	/*
 	*	local variables
 	*/
@@ -174,7 +175,7 @@ SC_HANDLE ov_ntservice_opencontrolmanager(void) {
 /*
 *	Install the service (registry)
 */
-int ov_ntservice_install(
+static int ov_ntservice_install(
 	OV_UINT		numargs,
 	OV_STRING	*args
 ) {
@@ -236,7 +237,7 @@ int ov_ntservice_install(
 /*
 *	Uninstall the service (registry)
 */
-int ov_ntservice_uninstall(void) {
+static int ov_ntservice_uninstall(void) {
 	/*
 	*	local variables
 	*/
@@ -274,7 +275,7 @@ int ov_ntservice_uninstall(void) {
 /*
 *	Parse the command line
 */
-OV_BOOL ov_ntservice_parseargs(
+static OV_BOOL ov_ntservice_parseargs(
 	int		argc,
 	char	**argv
 ) {
@@ -348,7 +349,7 @@ OV_BOOL ov_ntservice_parseargs(
 /*
 *	Add an icon to the task bar
 */
-void ov_ntservice_addtaskbaricon(
+static void ov_ntservice_addtaskbaricon(
 	HICON		hicon,
 	OV_STRING	tip
 ) {
@@ -373,7 +374,7 @@ void ov_ntservice_addtaskbaricon(
 /*
 *	Remove an icon from the task bar
 */
-void ov_ntservice_deletetaskbaricon(void) {
+static void ov_ntservice_deletetaskbaricon(void) {
 	/*
 	*	local variables
 	*/
@@ -392,7 +393,7 @@ void ov_ntservice_deletetaskbaricon(void) {
 /*
 *	Modify an icon in the task bar
 */
-void ov_ntservice_modifytaskbaricon(
+static void ov_ntservice_modifytaskbaricon(
 	HICON		hicon,
 	OV_STRING	tip
 ) {
@@ -417,7 +418,7 @@ void ov_ntservice_modifytaskbaricon(
 /*
 *	Create the one and only service server object.
 */
-OV_BOOL ov_ntservice_create(
+static OV_BOOL ov_ntservice_create(
 	const OV_STRING	servicename
 ) {
 	/*
@@ -447,6 +448,7 @@ OV_BOOL ov_ntservice_create(
 	status.dwWaitHint = 0;
 	done_event = NULL;
 	one_shot_event = NULL;
+	exit_event = NULL;
 	work_thread = NULL;
 	work_thread_id = 0;
 	return is_ok;
@@ -457,7 +459,7 @@ OV_BOOL ov_ntservice_create(
 /*
 *	Delete the one and only service server object.
 */
-OV_BOOL ov_ntservice_delete(void) {
+static OV_BOOL ov_ntservice_delete(void) {
 	if(!initialized) {
 		return FALSE;
 	}
@@ -469,6 +471,10 @@ OV_BOOL ov_ntservice_delete(void) {
 		CloseHandle(one_shot_event);
 		one_shot_event = NULL;
 	}
+	if(exit_event) {
+		CloseHandle(exit_event);
+		exit_event = NULL;
+	}
 	initialized = FALSE;
 	return is_ok;
 }
@@ -478,7 +484,7 @@ OV_BOOL ov_ntservice_delete(void) {
 /*
 *	Print message with last error (in hex code) to the logfile
 */
-void ov_ntservice_lasterror(
+static void ov_ntservice_lasterror(
 	const OV_STRING	msg
 ) {
 	ov_logfile_error("%s (last error: %08X).", msg, GetLastError());
@@ -490,7 +496,7 @@ void ov_ntservice_lasterror(
 *	Report the state of the service process to the operating system.
 */
 
-OV_BOOL ov_ntservice_reportservicestatus(
+static OV_BOOL ov_ntservice_reportservicestatus(
 	DWORD	curr_stat,
 	DWORD	exit_code,
 	DWORD	user_code,
@@ -519,7 +525,7 @@ OV_BOOL ov_ntservice_reportservicestatus(
 /*
 *	The service controller routine
 */
-void ov_ntservice_servicecontroller(
+static void ov_ntservice_servicecontroller(
 	DWORD	control_code
 ) {
 	/*
@@ -584,7 +590,7 @@ void ov_ntservice_servicecontroller(
 /*
 *	Main loop of the OV server thread
 */
-int ov_ntservice_servicerun(void) {
+static int ov_ntservice_servicerun(void) {
 	while(TRUE) {
 		/*
 		*	run one duty cycle of the server...
@@ -637,7 +643,7 @@ int ov_ntservice_servicerun(void) {
 /*
 *	Service main routine
 */
-void ov_ntservice_servicemain(
+static void ov_ntservice_servicemain(
 	DWORD	argc,
 	LPTSTR	*argv
 ) {
@@ -650,7 +656,8 @@ void ov_ntservice_servicemain(
 	*/
 	done_event = CreateEvent(0, FALSE, FALSE, 0);
 	one_shot_event = CreateEvent(0, FALSE, FALSE, 0);
-	if(!done_event || !one_shot_event) {
+	exit_event = CreateEvent(0, FALSE, FALSE, 0);
+	if(!done_event || !one_shot_event || !exit_event) {
 		ov_ntservice_lasterror("Can't initialize signaling mechanism");
 		return;
 	}
@@ -769,6 +776,10 @@ ERRORMSG:
 	*/
 	ov_logfile_close();
 	/*
+	*	raise exit event
+	*/
+	SetEvent(exit_event);
+	/*
 	*	simply terminate, it will throw us back to the main thread
 	*/
 	ov_ntservice_reportservicestatus(SERVICE_STOPPED, status.dwWin32ExitCode,
@@ -780,7 +791,7 @@ ERRORMSG:
 /*
 *	Run the service
 */
-void ov_ntservice_run(void) {
+static void ov_ntservice_run(void) {
 	/*
 	*	local variables
 	*/
@@ -806,6 +817,27 @@ void ov_ntservice_run(void) {
 /*	----------------------------------------------------------------------	*/
 
 /*
+*	Console Control Handler
+*/
+static BOOL ov_ntservice_consolectrlhandler(DWORD ctrltype) {
+	switch(ctrltype) {
+	case CTRL_SHUTDOWN_EVENT:
+		ov_ntservice_reportservicestatus(SERVICE_STOP_PENDING,
+			NO_ERROR, 0, 1, OV_TIMEOUT);
+		ov_ksserver_downserver();
+		if(WaitForSingleObject(exit_event, INFINITE) != WAIT_OBJECT_0) {
+			ov_logfile_warning("\"Exit\" signaling failed");
+		}
+		return TRUE;
+	default:
+		break;
+	}
+	return FALSE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
 *	Finally: the main function
 */
 int main(int argc, char **argv) {
@@ -824,13 +856,6 @@ int main(int argc, char **argv) {
 			return ov_ntservice_uninstall();
 		}
 	}
-	/*
-	*	load icons and set some global vars
-	*/
-	hinst = GetModuleHandle(NULL);
-	hwnd = GetForegroundWindow();
-	hicon[0] = LoadIcon(hinst, MAKEINTRESOURCE(1));
-	hicon[1] = LoadIcon(hinst, MAKEINTRESOURCE(2));
 	/*
 	*	parse the command line
 	*/
@@ -851,6 +876,19 @@ int main(int argc, char **argv) {
 	}
 	if(version) {
 		printf(OV_DISPLAY_NAME " " OV_VER_NTSERVICE "\n");
+	}
+	/*
+	*	load icons and set some global vars
+	*/
+	hinst = GetModuleHandle(NULL);
+	hwnd = GetForegroundWindow();
+	hicon[0] = LoadIcon(hinst, MAKEINTRESOURCE(1));
+	hicon[1] = LoadIcon(hinst, MAKEINTRESOURCE(2));
+	/*
+	*	Set the console control handler
+	*/
+	if(!SetConsoleCtrlHandler((PHANDLER_ROUTINE)ov_ntservice_consolectrlhandler, TRUE)) {
+		return EXIT_FAILURE;
 	}
 	/*
 	*	set vendor name, server description and server version
