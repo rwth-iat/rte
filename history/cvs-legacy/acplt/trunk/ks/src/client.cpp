@@ -39,8 +39,8 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <ks/client.h>
-#include <ks/ks.h>
+#include "ks/client.h"
+#include "ks/ks.h"
 
 #include <string.h>
 
@@ -64,7 +64,8 @@ KscNegotiator *KscClient::none_negotiator = 0;
 // class KscClient
 //////////////////////////////////////////////////////////////////////
 
-KscClient::KscClient() 
+KscClient::KscClient()
+: av_module(0)
 {
     none_negotiator = KscAvNoneModule::getStaticNegotiator();
 }
@@ -207,7 +208,8 @@ KscServer::KscServer(KsString host,
   errcode(RPC_SUCCESS),
   status(KscNotInitiated),
   pClient(0),
-  ref_count(0)
+  ref_count(0),
+  av_module(0)
 {
 }
 

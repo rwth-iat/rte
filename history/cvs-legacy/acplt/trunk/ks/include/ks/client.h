@@ -277,7 +277,7 @@ inline
 PltString
 KscServer::getName() const
 {
-    return server_info.server.name;
+    return server_desc.name;
 }
 
 //////////////////////////////////////////////////////////////////////
