@@ -8,6 +8,7 @@ CXX_LIBPLT_SOURCES = \
 	$(SRCDIR)hashtable.cpp \
 	$(SRCDIR)list.cpp \
 	$(SRCDIR)log.cpp \
+	$(SRCDIR)logstream.cpp \
 	$(SRCDIR)priorityqueue.cpp \
 	$(SRCDIR)rtti.cpp \
 	$(SRCDIR)string.cpp \
@@ -18,11 +19,12 @@ LIBPLT_OBJECTS1 = \
 	container$(O) \
 	debug$(O) \
 	handle$(O) \
-	hashtable$(O)
+	hashtable$(O) \
+	list$(O) \
 
 LIBPLT_OBJECTS2 = \
-	list$(O) \
 	log$(O) \
+	logstream$(O) \
 	priorityqueue$(O) \
 	rtti$(O) \
 	string$(O) \
