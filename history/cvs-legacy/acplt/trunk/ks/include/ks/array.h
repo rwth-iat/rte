@@ -317,7 +317,6 @@ KS_GEN_ARRAY(long);
 KS_GEN_ARRAY(u_long);
 KS_GEN_ARRAY(float);
 KS_GEN_ARRAY(double);
-KS_GEN_ARRAY(char);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -346,9 +345,63 @@ KsArray_xdr_bool(XDR *xdr, bool * pb)
     }
 }
 
+//////////////////////////////////////////////////////////////////////
+
 KS_DECL_ARRAY(bool);
 KS_IMPL_ARRAY_XDR(bool, KsArray_xdr_bool);
 KS_IMPL_ARRAY_BASICS(bool);
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+KS_DECL_ARRAY(char);
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KsArray<char>::xdrDecode(XDR *xdr)
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_DECODE);
+    /* retrieve size */
+    u_long sz;
+    if (! xdr_u_long(xdr, &sz) ) return false;
+
+    /* adjust array size (possibly losing contents) */
+
+    if (size() != sz) {
+        /* allocate sz elements */
+        PltArrayHandle<char> ha(new char[sz], PltOsArrayNew);
+        if (!ha) return false; /* failed */
+        a_array = ha;
+        a_size = sz;
+    }
+    PLT_ASSERT(size() == sz);
+
+    /* now deserialize elements */
+    char * p = a_array.getPtr();
+    return xdr_opaque(xdr, p, sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool
+KsArray<char>::xdrEncode(XDR *xdr) const
+{
+    PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
+    
+    char * p = a_array.getPtr();
+    u_long sz = a_size;
+
+    return xdr_u_long(xdr, &sz) 
+        && xdr_opaque(xdr, p, sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+KS_IMPL_ARRAY_BASICS(char);
 
 //////////////////////////////////////////////////////////////////////
 
