@@ -1,5 +1,5 @@
-// -*-plt-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.14 2003-09-23 15:36:23 harald Exp $ */
+// -*-c++-*-
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.15 2003-10-13 12:53:55 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
