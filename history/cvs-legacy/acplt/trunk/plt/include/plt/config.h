@@ -68,24 +68,18 @@
 
 #include <stddef.h>
 
-#if PLT_SYSTEM_LINUX
+#if PLT_SYSTEM_LINUX || PLT_SYSTEM_HPUX || PLT_SYSTEM_SOLARIS
+#ifndef PLT_USE_SYSLOG
 #define PLT_USE_SYSLOG 1
 #endif
-
-#if PLT_SYSTEM_HPUX
-#define PLT_USE_SYSLOG 1
-#endif
-
-#if PLT_SYSTEM_SOLARIS
-#define PLT_USE_SYSLOG 1
-#endif
-
-#if PLT_SYSTEM_NT
-#define PLT_USE_SYSLOG 0
 #endif
 
 #ifndef PLT_USE_SYSLOG
 #define PLT_USE_SYSLOG 0
+#endif
+
+#ifndef PLT_USE_CERRLOG
+#define PLT_USE_CERRLOG 1
 #endif
 
 #ifndef PLT_SIZE_T_MAX
@@ -100,11 +94,28 @@
 #define PLT_AVOID_DELETE_BUG 0
 #endif
 
-#if 0 /* _MSC_VER */
+#ifdef _MSC_VER
+#define PLT_COMPILER_MSVC 1
+#else
+#define PLT_COMPILER_MSVC 0
+#endif
+
+#if PLT_COMPILER_MSVC
 #define PLT_SIMULATE_BOOL 1
+#pragma warning (disable : 4237 )  /* disable warning about defining bool... */
+#pragma warning (disable : 4284 )  /* disable warning about operator ->      */
+                                   /* for non-struct data types              */
+#ifdef _CPPRTTI
 #define PLT_SIMULATE_RTTI 0
+#else
+#define PLT_SIMULATE_RTTI 1
+#endif
+
 #define PLT_ARRAY_NEW_OVERLOADABLE 0
-#define PLT_INSTANTIATE_TEMPLATES 1
+#define PLT_RETTYPE_OVERLOADABLE 0
+#define PLT_POSTFIX_OVERLOADABLE 0
+#define PLT_INSTANTIATE_TEMPLATES 0
+
 #endif
 
 #ifdef __WATCOMC__
@@ -135,9 +146,23 @@
 #define PLT_ARRAY_NEW_OVERLOADABLE 1
 #endif
 
+#ifndef PLT_POSTFIX_OVERLOADABLE      /* Can operator ++ (int) be overloaded */
+#define PLT_POSTFIX_OVERLOADABLE 1
+#endif
+
+#ifndef PLT_RETTYPE_OVERLOADABLE      /* Can a subclass redefine the return */
+#define PLT_RETTYPE_OVERLOADABLE 1    /* type  to a covariant one?          */
+#endif                                /* Every compiler should support this.*/
+
 #if PLT_SIMULATE_BOOL
 typedef int bool;
 enum { false=0, true=1 };
+#endif
+
+#if PLT_RETTYPE_OVERLOADABLE
+#define PLT_RETTYPE_CAST(typ,expr) (expr) 
+#else
+#define PLT_RETTYPE_CAST(typ,expr) (dynamic_cast< typ > (expr)) 
 #endif
 
 #endif /* PLT_CONFIG.H */
