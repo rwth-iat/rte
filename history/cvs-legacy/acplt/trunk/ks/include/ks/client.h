@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.23 1998-06-29 11:13:29 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.24 1998-07-22 09:38:36 markusj Exp $ */
 
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
@@ -127,7 +127,8 @@ protected:
     // find or create server, should only be used by KscCommObject objects
     //
     friend class KscCommObject;
-    virtual KS_RESULT createServer(KsString host_and_name, 
+    virtual KS_RESULT createServer(KsString host_and_name,
+                                   u_short protocol_version,
 				   KscServerBase *&pServer);
     //
     // destroy an server, should only be used
