@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.14 2002-06-18 10:46:55 ansgar Exp $
+*   $Id: ov_database.c,v 1.15 2002-06-19 08:38:09 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -882,7 +882,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_write(OV_STRING dbname) {
 
 	FILE				*backupfile;
 	
-	backupfile = fopen(dbname, "rb+");
+	backupfile = fopen(dbname, "wb+");
 	if(!backupfile) {
 		return OV_ERR_CANTOPENFILE;
 	}
