@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.7 1997-12-02 18:08:47 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.8 1997-12-11 17:18:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -137,12 +137,16 @@ int main(int argc, char **argv) {
     }
 
 	Manager m(port);
-    if (m.isOk()) {
+    if ( m.isOk() ) {
         m.startServer();
-	PLT_DMSG("entering service loop"<<endl);
-        m.run();
-	PLT_DMSG("left service loop"<<endl);
-	m.stopServer();
+        if ( m.isOk() ) {
+            PLT_DMSG("entering service loop"<<endl);
+            m.run();
+            PLT_DMSG("left service loop"<<endl);
+        } else {
+            cerr << "The manager could not be initialized." << endl;
+        }
+        m.stopServer();
     } else {
         cerr << "The manager could not be initialized." << endl;
     }

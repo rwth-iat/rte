@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.14 1997-12-02 18:08:47 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.15 1997-12-11 17:18:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -564,26 +564,33 @@ int main(int, char **) {
     // Create the server object
     //
 	TestServer ts;
-
+    if ( !ts.isOk() ) {
+        PltLog::Error("Could not initialize the tserver object.");
+        return 42;
+    }
     //
     // Start it.
     //
     ts.startServer();
-    PltLog::Info("Started.");
-    //
-    // Enter the service loop.
-    //
-	ts.run();
-    //
-    // After leaving the service loop clean up and stop serving.
-    //
-    PltLog::Info("Stopping...");
+    if ( ts.isOk() ) {
+        PltLog::Info("Started.");
+        //
+        // Enter the service loop.
+        //
+        ts.run();
+        //
+        // After leaving the service loop clean up and stop serving.
+        //
+        PltLog::Info("Stopping...");
+    } else {
+        PltLog::Error("Could not start the tserver object.");
+    }
     ts.stopServer();
     PltLog::Info("Stopped.");
     //
     // Return to the operating system.
     //
-    return 0;
+    return ts.isOk() ? 0 : 42;
 }
 
 // EOF tserver1.cpp
