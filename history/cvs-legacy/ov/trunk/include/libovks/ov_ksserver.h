@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.12 2002-06-18 11:34:47 ansgar Exp $
+*   $Id: ov_ksserver.h,v 1.13 2002-08-29 08:32:39 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -164,6 +164,15 @@ void ov_ksserver_dispatch(
 OV_DLLFNCEXPORT void ov_ksserver_sighandler(
 	int signal
 );
+
+/*
+*	signal handler for solaris server to catch broken pipes (subroutine)
+*/
+#if PLT_SYSTEM_SOLARIS
+OV_DLLFNCEXPORT void ov_ksserver_sighandler_solaris(
+	int signal
+);
+#endif
 
 /*
 *	Register Default signal handler (subroutine)
@@ -479,6 +488,9 @@ public:
 #if !PLT_SYSTEM_NT
 			signal(SIGHUP, sighandler);
 #endif
+#endif
+#if PLT_SYSTEM_SOLARIS
+			signal(SIGPIPE, ov_ksserver_sighandler_solaris);
 #endif
 		}
 	}

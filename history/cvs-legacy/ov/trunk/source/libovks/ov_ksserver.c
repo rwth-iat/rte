@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.15 2002-06-26 07:13:02 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.16 2002-08-29 08:33:04 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -584,6 +584,12 @@ OV_DLLFNCEXPORT void ov_ksserver_sighandler(int) {
 	}
 }
 
+#if PLT_SYSTEM_SOLARIS
+OV_DLLFNCEXPORT void ov_ksserver_sighandler_solaris(int) {
+	signal(SIGPIPE, ov_ksserver_sighandler_solaris);
+}
+#endif
+
 OV_DLLFNCEXPORT void ov_ksserver_sighandler_register()
 {
 			signal(SIGTERM, ov_ksserver_sighandler);
@@ -592,6 +598,9 @@ OV_DLLFNCEXPORT void ov_ksserver_sighandler_register()
 #if !PLT_SYSTEM_NT
 			signal(SIGHUP, ov_ksserver_sighandler);
 #endif
+#endif
+#if PLT_SYSTEM_SOLARIS
+			signal(SIGPIPE, ov_ksserver_sighandler_solaris);
 #endif
 }
 
@@ -791,6 +800,7 @@ OV_RESULT ov_supervised_server_run()
 	try {
 		ov_ksserver_run();
 		return OV_ERR_OK;
+
 	}
 	catch(...) {
 		return OV_ERR_GENERIC;
