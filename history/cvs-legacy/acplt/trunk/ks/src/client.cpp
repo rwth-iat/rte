@@ -45,17 +45,6 @@
 #include "ks/client.h"
 #include "ks/ks.h"
 
-#if PLT_SYSTEM_NT
-#include <winsock.h>
-#else
-extern "C" {
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-};
-#endif
-
 #if PLT_DEBUG
 #include <iostream.h>
 #endif

@@ -50,10 +50,6 @@
 #include "ks/serviceparams.h"
 #include "ks/avmodule.h"
 
-#if PLT_SYSTEM_OPENVMS
-#include <netdb.h>
-#endif
-
 //////////////////////////////////////////////////////////////////////
 // forward declaration
 class KscServerBase;

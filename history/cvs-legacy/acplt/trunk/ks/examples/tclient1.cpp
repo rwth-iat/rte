@@ -490,7 +490,7 @@ readPackage(KscPackageHandle hpkg)
         cout << "Failed to get update of package" << endl;
     }
 
-    dumpPackage(hpkg, !ok);
+    dumpPackage(hpkg, true);
 }
     
 //////////////////////////////////////////////////////////////////////

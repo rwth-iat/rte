@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.11 1997-09-09 14:19:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.12 1997-09-15 15:31:19 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -46,6 +46,7 @@
 extern "C" {
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
@@ -56,6 +57,7 @@ extern int get_myaddress(struct sockaddr_in *);
 #if PLT_SYSTEM_LINUX || PLT_SYSTEM_IRIX
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
@@ -87,6 +89,7 @@ static KsNTOncRpc ks_nt_oncrpc;
 #if PLT_SYSTEM_SOLARIS
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <rpc/rpc.h>
 #include <rpc/svc.h>
@@ -109,6 +112,7 @@ static KsNTOncRpc ks_nt_oncrpc;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 // #include <rpc/clnt.h>
 #endif
 
