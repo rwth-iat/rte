@@ -124,10 +124,11 @@ KscSorterBucket::getSortedVars()
 //////////////////////////////////////////////////////////////////////
 
 KscSorter::KscSorter(const KscPackage &pkg,
-                     bool dirty_only)
+                     bool dirty_only,
+                     const KscAvModule *avm_default)
 : fDirtyOnly(dirty_only)
 {
-    valid = sortVariables(pkg, pkg.getAvModule());
+    valid = sortVariables(pkg, avm_default);
 }
 
 //////////////////////////////////////////////////////////////////////

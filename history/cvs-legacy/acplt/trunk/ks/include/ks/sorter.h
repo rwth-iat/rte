@@ -123,7 +123,10 @@ class KscSorter
 {
 public:
     KscSorter(const KscPackage &pkg,
-              bool dirty_only = false);
+              bool dirty_only = false,
+              // This is used instead of pkg->getAvModule() 
+              // if the later one is NULL.
+              const KscAvModule *avm_default = 0);
     ~KscSorter();
 
     bool isValid() const;

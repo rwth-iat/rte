@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.19 1998-01-12 07:49:26 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.20 1998-07-15 10:02:34 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -816,17 +816,31 @@ KscExchangePackage::doExchange(bool force)
     //
     // If only one of the packages exists, then we will handle
     // this as either an ordinary getUpdate() or setUpdate() on
-    // the package that exists.
+    // the package that exists. If needed we set the AV-module temporary.
     //
     if ( get_pkg && !set_pkg ) {
+        bool temp_set = (get_pkg->getAvModule() == 0) 
+            && (av_module != 0);
+        if( temp_set ) get_pkg->setAvModule(av_module);
+
         bool ok = get_pkg->getUpdate();
         _last_result = get_pkg->getLastResult();
+
+        if( temp_set ) get_pkg->setAvModule(0);
+
         return ok;
     }
 
     if ( !get_pkg && set_pkg ) {
+        bool temp_set = (set_pkg->getAvModule() == 0) 
+            && (av_module != 0);
+        if( temp_set ) set_pkg->setAvModule(av_module);
+
         bool ok = set_pkg->setUpdate(force);
         _last_result = set_pkg->getLastResult();
+
+        if( temp_set ) set_pkg->setAvModule(0);
+
         return ok;
     }
 
@@ -834,8 +848,13 @@ KscExchangePackage::doExchange(bool force)
     // But now back to our real "destination": both packages exist,
     // now sort the variables.
     //
-    KscSorter get_sorter(*get_pkg);
-    KscSorter set_sorter(*set_pkg, !force);
+    const KscAvModule *avm_get_default = 
+        get_pkg->getAvModule() ? get_pkg->getAvModule() : av_module;
+    const KscAvModule *avm_set_default = 
+        set_pkg->getAvModule() ? set_pkg->getAvModule() : av_module;
+
+    KscSorter get_sorter(*get_pkg, false, avm_get_default);
+    KscSorter set_sorter(*set_pkg, !force, avm_set_default);
 
     if ( get_sorter.isValid() && set_sorter.isValid() ) {
 	//
@@ -1033,7 +1052,13 @@ bool
 _KscPackageBase::fillGetVarParams(const PltArray< KscSortVarPtr > &sorted_vars,
                                   KsArray<KsString> &identifiers)
 {
-    return optimizePaths(sorted_vars, identifiers);
+    PLT_PRECONDITION( sorted_vars.size() == identifiers.size() );
+
+    if( sorted_vars.size() ) {
+        return optimizePaths(sorted_vars, identifiers);
+    } else {
+        return true;
+    }
 }
 
 
@@ -1145,6 +1170,9 @@ _KscPackageBase::fillSetVarParams(
     PLT_PRECONDITION(sorted_vars.size() == items.size());
 
     size_t to_copy = sorted_vars.size();
+    
+    if( !to_copy ) return true;
+
     items[0].path_and_name = sorted_vars[0]->getPathAndName();
     items[0].curr_props = sorted_vars[0]->getCurrPropsHandle();
 
