@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.4 1997-03-13 16:51:42 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.5 1997-03-17 09:13:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -118,7 +118,7 @@ public:
     static bool registerAvTicketType(enum_t ticketType, KsTicketConstructor);
     static bool deregisterAvTicketType(enum_t ticketType);
 
-    static KsAvTicket * emergencyTicket();
+    static const KsAvTicket * emergencyTicket();
 
 private:
     static PltHashTable<KsAuthType, KsTicketConstructor> _factory;
