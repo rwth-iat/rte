@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.1 1999-07-19 15:02:17 dirk Exp $
+*   $Id: ov_server.c,v 1.2 1999-07-26 16:14:16 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -27,12 +27,25 @@
 *	21-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 */
 
-#include <stdio.h>
+#include <ctype.h>
 
 #include "libovks/ov_ksserver.h"
 #include "libov/ov_database.h"
 #include "libov/ov_result.h"
 #include "libov/ov_logfile.h"
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Constants
+*/
+#if OV_SYSTEM_UNIX
+#define OV_USERNAME getenv("USER")
+#elif OV_SYSTEM_NT
+#define OV_USERNAME getenv("USERNAME")
+#else
+#define OV_USERNAME NULL
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
@@ -56,7 +69,7 @@ int main(int argc, char **argv) {
 	*	local variables
 	*/
 	OV_STRING	filename = "database.ovd";
-	OV_STRING	servername = "ov_server";
+	OV_STRING	servername = NULL;
 	OV_UINT		i;
 	OV_RESULT	result;
 	OV_INT 		port = 0; /* KS_ANYPORT */
@@ -71,7 +84,7 @@ int main(int argc, char **argv) {
 	*	specified by the command line options)
 	*/
 #ifdef OV_DEBUG
-	ov_logfile_logtostderr();
+	ov_logfile_logtostderr(NULL);
 #endif
 	/*
 	*	parse command line arguments
@@ -117,15 +130,15 @@ int main(int argc, char **argv) {
 			i++;
 			if(i<argc) {
 				if(!strcmp(argv[i], "stdout")) {
-					ov_logfile_logtostdout();
+					ov_logfile_logtostdout(NULL);
 				} else if(!strcmp(argv[i], "stderr")) {
-					ov_logfile_logtostderr();
+					ov_logfile_logtostderr(NULL);
 #if OV_SYSTEM_NT
 				} else if(!strcmp(argv[i], "ntlog")) {
 					ov_logfile_logtontlog(NULL);
 #endif
 				} else {
-					if(Ov_Fail(ov_logfile_open(argv[i], "w"))) {
+					if(Ov_Fail(ov_logfile_open(NULL, argv[i], "w"))) {
 						ov_logfile_error("Could not open log file: \"%s\".\n", argv[i]);
 						return EXIT_FAILURE;
 					}
@@ -204,6 +217,21 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 	}
 #endif
 	/*
+	*	determine the servername
+	*/
+	if(!servername) {
+		if(OV_USERNAME) {
+			OV_STRING pc;
+			servername = (OV_STRING)malloc(strlen("ov_server_")+strlen(OV_USERNAME)+1);
+			sprintf(servername, "ov_server_%s", OV_USERNAME);
+			for(pc=servername; *pc; pc++) {
+				*pc = tolower(*pc);
+			}
+		} else {
+			servername = "ov_server";
+		}
+	}
+	/*
 	*	set vendor name, server description and server version
 	*/
 	ov_vendortree_setname("Chair of Process Control Engineering, "
@@ -238,11 +266,14 @@ ERRORMSG:
 	*   run server
 	*/
 	ov_logfile_info("Starting server...");
-	result = ov_ksserver_start(servername, port, ov_server_sighandler);
+	result = ov_ksserver_create(servername, port, ov_server_sighandler);
 	if(Ov_OK(result)) {
 		ov_logfile_info("Server started.");
+		ov_ksserver_start();
 		ov_ksserver_run();
+		ov_ksserver_stop();
 		ov_logfile_info("Server stopped.");
+		ov_ksserver_delete();
 	} else {
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 			ov_result_getresulttext(result), result);
@@ -255,12 +286,6 @@ ERRORMSG:
 		ov_logfile_info("Shutting down database...");
 		ov_database_shutdown();
 		ov_logfile_info("Database shut down.");
-	}
-	/*
-	*	delete the server object
-	*/
-	if(exit_status == EXIT_SUCCESS) {
-		ov_ksserver_stop();
 	}
 	/*
 	*   unmap the database

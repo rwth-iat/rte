@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.1 1999-07-19 15:01:52 dirk Exp $
+#   $Id: generic.mk,v 1.2 1999-07-26 16:13:59 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -43,6 +43,7 @@ OV_SOURCE_LIBOV_DIR			= $(OV_SOURCE_DIR)libov/
 OV_SOURCE_DBUTIL_DIR		= $(OV_SOURCE_DIR)dbutil/
 OV_SOURCE_LIBOVKS_DIR		= $(OV_SOURCE_DIR)libovks/
 OV_SOURCE_SERVER_DIR		= $(OV_SOURCE_DIR)server/
+OV_SOURCE_NTSERVICE_DIR		= $(OV_SOURCE_DIR)ntservice/
 OV_SOURCE_EXAMPLE_DIR		= $(OV_SOURCE_DIR)example/
 
 ACPLT_PLT_DIR				= ../../../plt/
@@ -80,6 +81,7 @@ SOURCE_DIRS	= \
 	$(OV_SOURCE_DBUTIL_DIR) \
 	$(OV_SOURCE_LIBOVKS_DIR) \
 	$(OV_SOURCE_SERVER_DIR) \
+	$(OV_SOURCE_NTSERVICE_DIR) \
 	$(OV_SOURCE_EXAMPLE_DIR) \
 	$(ACPLT_KS_SOURCE_DIR)
 
@@ -268,6 +270,14 @@ OV_SERVER_OBJ  = $(foreach source, $(OV_SERVER_SRC), $(basename $(notdir $(sourc
 OV_SERVER_EXE  = ov_server$(EXE)
 OV_SERVER_RES  = ov_server$(RES)
 
+#	ACPLT/KS-Server for ACPLT/OV as Windows NT service
+#   --------------------------------------------------
+
+OV_NTSERVICE_SRC := $(wildcard $(OV_SOURCE_NTSERVICE_DIR)*.c)
+OV_NTSERVICE_OBJ  = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(OBJ))
+OV_NTSERVICE_EXE  = ov_ntservice$(EXE)
+OV_NTSERVICE_RES  = ov_ntservice$(RES)
+
 #	Table of statically linked ACPLT/OV libraries
 #	---------------------------------------------
 
@@ -298,6 +308,10 @@ TARGETS = \
 EXAMPLE = \
 	$(EXAMPLE_DLL) \
 	$(EXAMPLE_LIB)
+
+ALL = \
+	$(TARGETS) \
+	$(EXAMPLE)
 
 SOURCES = \
 	$(OV_CODEGEN_SRC) \

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.h,v 1.1 1999-07-19 15:02:05 dirk Exp $
+*   $Id: ov_ksclient.h,v 1.2 1999-07-26 16:14:08 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -112,6 +112,7 @@ struct OV_KSCLIENT_SERVICE {
 		KS_LINK_PAR				link;
 		KS_UNLINK_PAR			unlink;
 		KS_GETCANONICALPATH_PAR	getcanonicalpath;
+		KS_GETHIST_PAR			gethist;
 	}	params;
 
 	/* the result of the service request */
@@ -127,6 +128,7 @@ struct OV_KSCLIENT_SERVICE {
 		KS_LINK_RES				link;
 		KS_UNLINK_RES			unlink;
 		KS_GETCANONICALPATH_RES	getcanonicalpath;
+		KS_GETHIST_RES			gethist;
 	}	result;
 
 	/* the A/V module used */

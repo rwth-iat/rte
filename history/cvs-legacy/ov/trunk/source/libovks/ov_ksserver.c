@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver.c,v 1.2 1999-07-26 16:14:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -35,7 +35,7 @@
 #include "libov/ov_scheduler.h"
 #include "libov/ov_vendortree.h"
 
-#if OV_SYSTEM_UNIX || OV_SYSTEM_NT
+#if OV_SYSTEM_UNIX || OV_SYSTEM_NT || OV_SYSTEM_OPENVMS
 #ifndef __cplusplus
 #error *** this file must be compiled using C++ on this platform ***
 #endif
@@ -66,14 +66,6 @@ template class PltContainer<PltPtrComparable<KsTimerEvent> >;
 #endif
 
 #endif	/* __cplusplus */
-
-#if OV_SYSTEM_MC164
-#include "mc164/Kachel.h"
-#include "mc164/rpcdef.h"
-#include <reg164.h>
-#include "..\..\..\..\S7\base\inc\ct2types.hs"
-#include "..\..\..\..\S7\Fmsdpg\inc\header.h"
-#endif
 
 #if OV_SYSTEM_RMOS
 #include <rmapi.h>
@@ -136,26 +128,16 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_terminate(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Start the ACPLT/KS server for ACPLT/OV
+*	Create the ACPLT/KS server for ACPLT/OV
 */
-OV_RESULT OV_DLLFNCEXPORT ov_ksserver_start(
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+OV_RESULT OV_DLLFNCEXPORT ov_ksserver_create(
 	OV_STRING			servername,
 	int					port,
 	OV_FNC_SIGHANDLER	*sighandler
 ) {
-#if OV_SYSTEM_MC164
-	/*
-	*	initialize CAN module
-	*/
-	/*
-	*	TODO!!!
-	*/
-	/*
-	*	initialize kachel memory
-	*/
-	array_mem_init();
-	return OV_ERR_OK;
-#else
 	if(!pserver) {
 		/*
 		*	check server name
@@ -168,8 +150,8 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_start(
 		*	create message queue
 		*/
 		if(RmCreateMessageQueue(NULL, RM_OWN_TASK) != RM_OK) {
-			Ov_Warning("Could not create message queue");
-			return OV_ERR_GENERIC;	/* FIXME: error code? */
+			Ov_Warning("Can not create message queue");
+			return OV_ERR_GENERIC;
 		}
 #endif
 		/*
@@ -187,83 +169,27 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_start(
 			pserver = new OvKsServer(servername, port, ov_ksserver_sighandler);
 		}
 		if(pserver) {
-			pserver->startServer();
 			ov_vendortree_setservername(servername);
-			ov_vendortree_setstartuptime(NULL);
 			return OV_ERR_OK;
 		}
 	}
 	return OV_ERR_GENERIC;
-#endif
 }
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Run the ACPLT/KS server for ACPLKT/OV
+*	Delete the ACPLT/KS server for ACPLT/OV
 */
-void OV_DLLFNCEXPORT ov_ksserver_run(void) {
-#if OV_SYSTEM_MC164
-	/*
-	*	local variables
-	*/
-	OV_TIME_SPAN	*ptimeout;
-	/*
-	*	run the server
-	*/
-	while(!ov_ksserver_isgoingdown()) {
-		ptimeout = ov_scheduler_schedulenextevent();
-		ov_ksserver_servependingevents(ptimeout);
-		Begin_CopyKachelToCAN_Frame();
-	}
+#ifndef __cplusplus
+/* function must be implemented separately */
 #else
-	/*
-	*	local variables
-	*/
-	OV_TIME_SPAN	*ptimeout;
-#if OV_SYSTEM_RMOS
-	uint			msg;
-	void			*param;
-#endif
-	/*
-	*	run the server
-	*/
-	if(pserver) {
-		while(!pserver->isGoingDown()) {
-#if OV_SYSTEM_RMOS
-			/*
-			*	get next message from the message queue
-			*/
-			if(RmReadMessage(RM_CONTINUE, &msg, &param) == RM_OK) {
-				if(msg == RM_MSG_USER) {
-					raise(SIGTERM);
-				}
-			}
-#endif
-			ptimeout = ov_scheduler_schedulenextevent();
-			pserver->servePendingEvents(KsTime(ptimeout->secs, ptimeout->usecs));
-		}
-	}
-#endif
-}
-
-/*	----------------------------------------------------------------------	*/
-
-/*
-*	Stop the ACPLT/KS server for ACPLKT/OV
-*/
-void OV_DLLFNCEXPORT ov_ksserver_stop(void) {
-#if OV_SYSTEM_MC164
-	/*
-	*   Nothing to do
-	*/
-	return;
-#else
+void OV_DLLFNCEXPORT ov_ksserver_delete(void) {
 	if(pserver) {
 		/*
-		*	stop the server
+		*	kill the server object
 		*/
-		pserver->stopServer();
 		delete pserver;
 		pserver = NULL;
 		/*
@@ -285,146 +211,141 @@ void OV_DLLFNCEXPORT ov_ksserver_stop(void) {
 		}
 #endif
 	}
-#endif
 }
+#endif
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Start the ACPLT/KS server for ACPLT/OV
+*/
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+void OV_DLLFNCEXPORT ov_ksserver_start(void) {
+	if(pserver) {
+		ov_vendortree_setstartuptime(NULL);
+		pserver->startServer();
+	}
+}
+#endif
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Run the ACPLT/KS server for ACPLKT/OV
+*/
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+void OV_DLLFNCEXPORT ov_ksserver_run(void) {
+	/*
+	*	local variables
+	*/
+	OV_TIME_SPAN	*ptimeout;
+#if OV_SYSTEM_RMOS
+	uint			msg;
+	void			*param;
+#endif
+	/*
+	*	run the server
+	*/
+	pserver->setShutdownFlag(0);	/* FIXME! is this OK? (here we do the same as KS) */
+	if(pserver) {
+		while(!pserver->isGoingDown()) {
+#if OV_SYSTEM_RMOS
+			/*
+			*	get next message from the message queue
+			*/
+			if(RmReadMessage(RM_CONTINUE, &msg, &param) == RM_OK) {
+				if(msg == RM_MSG_USER) {
+					raise(SIGTERM);
+				}
+			}
+#endif
+			ptimeout = ov_scheduler_schedulenextevent();
+			pserver->servePendingEvents(KsTime(ptimeout->secs, ptimeout->usecs));
+		}
+	}
+}
+#endif
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Stop the ACPLT/KS server for ACPLKT/OV
+*/
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+void OV_DLLFNCEXPORT ov_ksserver_stop(void) {
+	if(pserver) {
+		/*
+		*	stop the server
+		*/
+		pserver->stopServer();
+	}
+}
+#endif
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Tell the server to shut down
+*/
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+void OV_DLLFNCEXPORT ov_ksserver_downserver(void) {
+	if(pserver) {
+		pserver->downServer();
+	}
+}
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
 /*
 *	Test if the ACPLT/KS server for ACPLKT/OV is going down
 */
-OV_BOOL OV_DLLFNCEXPORT ov_ksserver_isgoingdown(void) {
-#if OV_SYSTEM_MC164
-	/*
-	*   for now, there's no shutdown signal
-	*/
-	return FALSE;
+#ifndef __cplusplus
+/* function must be implemented separately */
 #else
+OV_BOOL OV_DLLFNCEXPORT ov_ksserver_isgoingdown(void) {
 	if(pserver) {
 		return pserver->isGoingDown();
 	}
 	return TRUE;
-#endif
 }
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
 /*
 *	Test the ACPLT/KS server for ACPLKT/OV has pending I/O events
 */
-OV_BOOL OV_DLLFNCEXPORT ov_ksserver_haspendingevents(void) {
-#if OV_SYSTEM_MC164
-	/*
-	*   local variables
-	*/
-	XDR*	stream;
-	/*
-	*   instructions
-	*/
-	XP0IE = 0;  /* lock CAN interrupt */
-	stream = search_ptr_of_state(ARRAY_MEMORY_BASE_ADDRESS, XDR_DECODE);				   
-	XP0IE = 1;  /* unlock CAN-Interrupt */
-	if((stream)) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+#ifndef __cplusplus
+/* function must be implemented separately */
 #else
+OV_BOOL OV_DLLFNCEXPORT ov_ksserver_haspendingevents(void) {
 	if(pserver) {
 		return pserver->hasPendingEvents();
 	}
 	return FALSE;
-#endif
 }
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
 /*
 *	Serve pending I/O events of the ACPLT/KS server for ACPLKT/OV
 */
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
 OV_BOOL OV_DLLFNCEXPORT ov_ksserver_servependingevents(
 	OV_TIME_SPAN	*ptimeout
 ) {
-#if OV_SYSTEM_MC164
-	/*
-	*	local variables
-	*/
-	rpc_answer_t	decode_result;
-	Answer			encode_result;
-	XDR*			stream;
-	OV_TICKET 		ticket;
-	/*
-	*	instructions
-	*/
-	XP0IE = 0;  /* lock CAN interrupt */
-	stream = search_ptr_of_state(ARRAY_MEMORY_BASE_ADDRESS, XDR_DECODE);
-	XP0IE = 1;  /* unlock CAN interrupt */				   
-	if(!stream) {
-		return FALSE; /* no ready XDR stream */
-	}
- 	/*
-	*	decode RPC header
-	*/
-	decode_result = ov_ksserver_rpcheader_call_decode(stream);
-	if(decode_result == rpc_success) {
-		/* 
-		*	decode ticket 
-		*/
-		if(!ov_ksserver_xdr_OV_TICKET_PAR(stream, &ticket)) {
-			decode_result = rpc_garbage_args;
-		} else {
-			/*
-			*	execute service
-			*/
-			ov_memstack_lock();
-			ov_ksserver_dispatch(stream->service_id, stream->vers,
-			   &ticket, stream, stream);
-			ov_memstack_unlock();
-			/*
-			*	make reply ready for sending
-			*/
-			XP0IE = 0;  /* lock CAN interrupt */
-			set_state(ARRAY_MEMORY_BASE_ADDRESS, stream, CAN_new);
-			XP0IE = 1;  /* unlock CAN interrupt */
-		}
-	}
-	switch (decode_result) {
-		case rpc_success:
-			/*
-			*	no error decoding RPC header
-			*/
-			break;
-		case rpc_error:
-			/*
-			*	error in XDR routine, delete stream
-			*/
-			XP0IE = 0;  /* lock CAN interrupt */
-			delete_stream(ARRAY_MEMORY_BASE_ADDRESS, stream);
-			XP0IE = 1;  /* unlock CAN interrupt */
-			break;
-		default:
-			/*
-			*	any other RPC error, write RPC reply to stream
-			*/
-			encode_result = ov_ksserver_rpcheader_reply_encode(stream, decode_result);
-			if(encode_result == no) {
-				/*
-				*	delete stream
-				*/
-				XP0IE = 0;  /* lock CAN interrupt */
-				delete_stream(ARRAY_MEMORY_BASE_ADDRESS, stream);
-				XP0IE = 1;  /* unlock CAN interrupt */
-			} else {
-				/*
-				*	make reply ready for sending
-				*/
-				XP0IE = 0;  /* lock CAN interrupt */
-				set_state(ARRAY_MEMORY_BASE_ADDRESS, stream, CAN_new);
-				XP0IE = 1;  /* unlock CAN interrupt */
-			}
-	}
-	return TRUE;
-#else
 	if(pserver) {
 		if(ptimeout) {
 			return pserver->servePendingEvents(KsTime(ptimeout->secs,
@@ -434,15 +355,17 @@ OV_BOOL OV_DLLFNCEXPORT ov_ksserver_servependingevents(
 		}
 	}
 	return FALSE;
-#endif
 }
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
 /*
 *	Default signal handler for server shutdown
 */
-#if !OV_SYSTEM_MC164
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
 void OV_DLLFNCEXPORT ov_ksserver_sighandler(int) {
 	if(pserver) {
 		pserver->downServer();
@@ -470,7 +393,7 @@ void OV_DLLFNCEXPORT ov_ksserver_sighandler(int) {
 				*	properly decoded, call service function and send reply	\
 				*/															\
 				ov_ksserver_##service(version, povticket, &params, &result);\
-				ov_ksserver_sendreply(xdrout, pticket, (OV_POINTER)&result,	\
+				ov_ksserver_sendreply(xdrout, pticket, (OV_RESULT*)&result,	\
 					(xdrproc_t)ov_ksserver_xdr_OV_##SERVICE##_RES);			\
 				return;														\
 			}																\
@@ -492,6 +415,7 @@ void ov_ksserver_dispatch(
 	/*
 	*	local variables
 	*/
+    OV_RESULT   result;
 #ifdef __cplusplus
 	OV_TICKET	*povticket = ((OvKsAvTicket*)pticket)->ov_getTicket();
 #else
@@ -512,20 +436,21 @@ void ov_ksserver_dispatch(
 		Ov_KsServer_Dispatch(getcanonicalpath, GETCANONICALPATH);
 		Ov_KsServer_Dispatch(link, LINK);
 		Ov_KsServer_Dispatch(unlink, UNLINK);
+		Ov_KsServer_Dispatch(gethist, GETHIST);
 		default:
 			/*
 			*	unknown service id, send error reply and unlock memory stack
 			*/
-			ov_ksserver_sendreply(xdrout, pticket, (OV_POINTER)
-				OV_ERR_NOTIMPLEMENTED, NULL);
+            result = OV_ERR_NOTIMPLEMENTED;
+			ov_ksserver_sendreply(xdrout, pticket, &result, NULL);
 			return;
 	}
 	/*
 	*	error decoding
 	*/
 	Ov_Warning("error decoding request");
-	ov_ksserver_sendreply(xdrout, pticket, (OV_POINTER)
-		OV_ERR_GENERIC, NULL);
+	result = OV_ERR_GENERIC;
+	ov_ksserver_sendreply(xdrout, pticket, &result, NULL);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -533,13 +458,15 @@ void ov_ksserver_dispatch(
 /*
 *	Send a service reply (subroutine)
 */
+#ifndef __cplusplus
+/* function must be implemented separately; implementation could look like this: */
+#if 0
 void ov_ksserver_sendreply(
 	XDR			*xdrs,
 	OV_TICKET	*pticket,
-	OV_POINTER	result,
+	OV_RESULT	*presult,
 	xdrproc_t	encodefnc
 ) {
-#if OV_SYSTEM_MC164
 	/*
 	*	local variables
 	*/
@@ -547,7 +474,7 @@ void ov_ksserver_sendreply(
 	/*
 	*	write RPC reply header, ticket and result to XDR stream
 	*/
-   	ov_ksserver_rpcheader_reply_encode(xdrs, rpc_success);
+   	ov_ksserver_xdr_encode_rpcheader_reply(xdrs, rpc_success);
 	ov_ksserver_xdr_OV_TICKET_RES(xdrs, pticket);
 	if(encodefnc) {
 		/*
@@ -560,24 +487,31 @@ void ov_ksserver_sendreply(
 		*/
 		ov_ksserver_xdr_OV_RESULT(xdrs, &ovresult);
 	}
+}
+#endif
 #else
+void ov_ksserver_sendreply(
+	XDR			*xdrs,
+	OV_TICKET	*pticket,
+	OV_RESULT	*presult,
+	xdrproc_t	encodefnc
+) {
 	if(encodefnc) {
 		/*
 		*	send a normal reply
 		*/
-		OvKsResult kssvrresult(result, encodefnc);
+		OvKsResult kssvrresult(presult, encodefnc);
 		((KssTransport*)xdrs)->sendReply(*(OvKsAvTicket*)pticket, kssvrresult);
 	} else {
 		/*
 		*	send an error reply
 		*/
-		((KssTransport*)xdrs)->sendErrorReply(*(OvKsAvTicket*)pticket,
-			(OV_RESULT)result);
+		((KssTransport*)xdrs)->sendErrorReply(*(OvKsAvTicket*)pticket, *presult);
 	}
    	ov_memstack_unlock();
 	return;
-#endif
 }
+#endif
 
 /*	----------------------------------------------------------------------	*/
 

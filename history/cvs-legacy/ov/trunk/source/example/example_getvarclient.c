@@ -1,5 +1,5 @@
 /*
-*   $Id: example_getvarclient.c,v 1.1 1999-07-19 15:02:11 dirk Exp $
+*   $Id: example_getvarclient.c,v 1.2 1999-07-26 16:14:12 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -64,6 +64,7 @@ void example_getvarclient_message(
 #else
 	vsprintf(msg, format, args);
 #endif
+	va_end(args);
 	/*
 	*	print out the message
 	*/

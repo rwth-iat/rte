@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_debug.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_debug.h,v 1.2 1999-07-26 16:14:07 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -54,19 +54,19 @@ OV_STRING OV_DLLFNCEXPORT ov_debug_filename(
 *	If we are debugging, print information
 */
 #define Ov_Info(info) \
-	ov_logfile_info("%s:%d: " info, ov_debug_filename(__FILE__), __LINE__);
+	ov_logfile_debug("%s:%d: Info: " info, ov_debug_filename(__FILE__), __LINE__);
 
 /*
 *	If we are debugging, print a warning and continue.
 */
 #define Ov_Warning(warning) \
-	ov_logfile_warning("%s:%d: " warning, ov_debug_filename(__FILE__), __LINE__);
+	ov_logfile_debug("%s:%d: Warning: " warning, ov_debug_filename(__FILE__), __LINE__);
 
 /*
 *	If we are debugging, print an error and abort.
 */
 #define Ov_Error(err) \
-	ov_logfile_error("%s:%d: " err, ov_debug_filename(__FILE__), __LINE__);	\
+	ov_logfile_debug("%s:%d: Error: " err, ov_debug_filename(__FILE__), __LINE__);	\
 	ov_logfile_close();															\
 	exit(EXIT_FAILURE)
 

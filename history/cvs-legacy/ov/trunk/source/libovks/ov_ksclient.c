@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.c,v 1.1 1999-07-19 15:02:15 dirk Exp $
+*   $Id: ov_ksclient.c,v 1.2 1999-07-26 16:14:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -319,6 +319,9 @@ void OV_DLLFNCEXPORT ov_ksclient_service_freeresult(
 		case KS_GETCANONICALPATH:
 			ov_ksclient_xdr_KS_GETCANONICALPATH_RES(&xdrdummy, &psvc->result.getcanonicalpath);
 			break;
+		case KS_GETHIST:
+			ov_ksclient_xdr_KS_GETHIST_RES(&xdrdummy, &psvc->result.gethist);
+			break;
 		default:
 			break;
 	}
@@ -356,6 +359,8 @@ OV_BOOL ov_ksclient_service_encodeparams(
 			return ov_ksclient_xdr_KS_UNLINK_PAR(xdrout, &psvc->params.unlink);
 		case KS_GETCANONICALPATH:
 			return ov_ksclient_xdr_KS_GETCANONICALPATH_PAR(xdrout, &psvc->params.getcanonicalpath);
+		case KS_GETHIST:
+			return ov_ksclient_xdr_KS_GETHIST_PAR(xdrout, &psvc->params.gethist);
 		default:
 			break;
 	}
@@ -397,6 +402,8 @@ OV_BOOL ov_ksclient_service_decoderesult(
 			return ov_ksclient_xdr_KS_UNLINK_RES(xdrin, &psvc->result.unlink);
 		case KS_GETCANONICALPATH:
 			return ov_ksclient_xdr_KS_GETCANONICALPATH_RES(xdrin, &psvc->result.getcanonicalpath);
+		case KS_GETHIST:
+			return ov_ksclient_xdr_KS_GETHIST_RES(xdrin, &psvc->result.gethist);
 		default:
 			break;
 	}

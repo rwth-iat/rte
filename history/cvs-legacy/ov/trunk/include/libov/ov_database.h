@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_database.h,v 1.2 1999-07-26 16:14:07 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -42,14 +42,6 @@ extern "C" {
 #define OV_DATABASE_MAXSIZE	16777216	/* 16 MByte */
 
 /*
-*   Database properties for MC164
-*/
-#if OV_SYSTEM_MC164
-#define OV_DATABASE_BASE	(OV_DATABASE_INFO*)0x10000
-#define OV_DATABASE_SIZE	0x10000  /* 64 kByte */
-#endif
-
-/*
 *	OV_DATABASE_INFO:
 *	-----------------
 *	General information about a database
@@ -67,6 +59,13 @@ typedef struct {
 	OV_INST_ov_object	vendorobj[OV_NUM_VENDOROBJECTS];	/* vendor object */
 	OV_BOOL				started;	/* true, if database is started up */
 }	OV_DATABASE_INFO;
+
+/*
+*   Database properties for MC164
+*/
+#if OV_SYSTEM_MC164
+extern OV_DATABASE_INFO *pdbmem;
+#endif
 
 /*
 *	Global variable: database pointer

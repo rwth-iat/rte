@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.1 1999-07-19 15:02:12 dirk Exp $
+*   $Id: ov_database.c,v 1.2 1999-07-26 16:14:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -320,7 +320,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_database_create(
 	}
 #endif
 #if OV_SYSTEM_MC164
-	pdb = OV_DATABASE_BASE;
+	pdb = pdbmem;
 #endif
 #if OV_SYSTEM_RMOS
 	/*
@@ -574,7 +574,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_database_map(
 	}
 #endif
 #if OV_SYSTEM_MC164
-	pdb = OV_DATABASE_BASE;
+	pdb = pdbmem;
 #endif
 #if OV_SYSTEM_RMOS
 	/*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_time.c,v 1.2 1999-07-26 16:14:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -40,7 +40,6 @@
 #endif
 
 #if OV_SYSTEM_MC164
-#include <reg164.h>
 #include "mc164/time.h"
 #endif
 
@@ -99,10 +98,7 @@ void OV_DLLFNCEXPORT ov_time_gettime(
 	ptime->usecs = t.millitm*1000;
 #endif
 #if OV_SYSTEM_MC164
-    T3IE = 0 ;  /* lock the clock's interrrupt */
-    ptime->secs = (OV_UINT)TIREG;
-    ptime->usecs = (OV_UINT)USREG;
-    T3IE = 1;   /* unlock the clock's interrrupt */
+    MC164_GETTIME(ptime);
 #endif
 #if OV_SYSTEM_RMOS
 	RmAbsTimeStruct	abstime;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_macros.h,v 1.2 1999-07-26 16:14:07 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -284,6 +284,19 @@
 #endif
 #else
 #define Ov_HeapMalloc(size)	ov_malloc(size)
+#endif
+
+/*
+*	Rellocate memory on the heap
+*/
+#ifdef OV_COMPILE_LIBOV
+#if OV_SYSTEM_MC164
+#define Ov_HeapRealloc(ptr, size)	xrealloc(ptr, size)
+#else
+#define Ov_HeapRealloc(ptr, size)	realloc(ptr, size)
+#endif
+#else
+#define Ov_HeapRealloc(ptr, size)	ov_realloc(ptr, size)
 #endif
 
 /*

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_xdr.c,v 1.2 1999-07-26 16:14:15 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -254,10 +254,7 @@ OV_BOOL ov_ksserver_xdr_array(
 /*
 *	XDR routine for OV_TIME
 */
-OV_BOOL ov_ksserver_xdr_OV_TIME(
-	XDR		*xdrs,
-	OV_TIME	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_TIME) {
 	if(!ov_ksserver_xdr_OV_UINT(xdrs, &objp->secs)) {
 		return FALSE;
 	}
@@ -269,10 +266,7 @@ OV_BOOL ov_ksserver_xdr_OV_TIME(
 /*
 *	XDR routine for OV_TIME_SPAN
 */
-OV_BOOL ov_ksserver_xdr_OV_TIME_SPAN(
-	XDR				*xdrs,
-	OV_TIME_SPAN	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_TIME_SPAN) {
 	if(!ov_ksserver_xdr_OV_INT(xdrs, &objp->secs)) {
 		return FALSE;
 	}
@@ -284,10 +278,7 @@ OV_BOOL ov_ksserver_xdr_OV_TIME_SPAN(
 /*
 *	XDR routine for OV_STRING
 */
-OV_BOOL ov_ksserver_xdr_OV_STRING(
-	XDR			*xdrs,
-	OV_STRING	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_STRING) {
 	return ov_ksserver_xdr_string(xdrs, objp, ~0);
 }
 
@@ -296,10 +287,7 @@ OV_BOOL ov_ksserver_xdr_OV_STRING(
 /*
 *	XDR routine for OV_TICKET_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_TICKET_PAR(
-	XDR			*xdrs,
-	OV_TICKET	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_TICKET_PAR) {
 	if(!ov_ksserver_xdr_OV_TICKET_TYPE(xdrs, &objp->tickettype)) {
 		return FALSE;
 	}
@@ -319,10 +307,7 @@ OV_BOOL ov_ksserver_xdr_OV_TICKET_PAR(
 /*
 *	XDR routine for OV_TICKET_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_TICKET_RES(
-	XDR			*xdrs,
-	OV_TICKET	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_TICKET_RES) {
 	return ov_ksserver_xdr_OV_TICKET_TYPE(xdrs, &objp->tickettype);
 }
 
@@ -331,10 +316,7 @@ OV_BOOL ov_ksserver_xdr_OV_TICKET_RES(
 /*
 *	XDR routine for OV_VAR_VALUE
 */
-OV_BOOL ov_ksserver_xdr_OV_VAR_VALUE(
-	XDR				*xdrs,
-	OV_VAR_VALUE	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_VAR_VALUE) {
 	if(!ov_ksserver_xdr_OV_VAR_TYPE(xdrs, &objp->vartype)) {
 		return FALSE;
 	}
@@ -398,10 +380,7 @@ OV_BOOL ov_ksserver_xdr_OV_VAR_VALUE(
 /*
 *	XDR routine for OV_VAR_PROJECTED_PROPS
 */
-OV_BOOL ov_ksserver_xdr_OV_VAR_PROJECTED_PROPS(
-	XDR						*xdrs,
-	OV_VAR_PROJECTED_PROPS	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_VAR_PROJECTED_PROPS) {
 	if(!ov_ksserver_xdr_string(xdrs, &objp->tech_unit, KS_TECHUNIT_MAXLEN)) {
 		return FALSE;
 	}
@@ -413,10 +392,7 @@ OV_BOOL ov_ksserver_xdr_OV_VAR_PROJECTED_PROPS(
 /*
 *	XDR routine for OV_VAR_CURRENT_PROPS
 */
-OV_BOOL ov_ksserver_xdr_OV_VAR_CURRENT_PROPS(
-	XDR						*xdrs,
-	OV_VAR_CURRENT_PROPS	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_VAR_CURRENT_PROPS) {
 	if(!ov_ksserver_xdr_OV_VAR_VALUE(xdrs, &objp->value)) {
 		return FALSE;
 	}
@@ -431,10 +407,7 @@ OV_BOOL ov_ksserver_xdr_OV_VAR_CURRENT_PROPS(
 /*
 *	XDR routine for OV_LINK_PROJECTED_PROPS
 */
-OV_BOOL ov_ksserver_xdr_OV_LINK_PROJECTED_PROPS(
-	XDR									*xdrs,
-	OV_LINK_PROJECTED_PROPS	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_PROJECTED_PROPS) {
 	if(!ov_ksserver_xdr_OV_LINK_TYPE(xdrs, &objp->linktype)) {
 		return FALSE;
 	}
@@ -449,10 +422,7 @@ OV_BOOL ov_ksserver_xdr_OV_LINK_PROJECTED_PROPS(
 /*
 *	XDR routine for OV_OBJ_PROJECTED_PROPS
 */
-OV_BOOL ov_ksserver_xdr_OV_OBJ_PROJECTED_PROPS(
-	XDR						*xdrs,
-	OV_OBJ_PROJECTED_PROPS	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_OBJ_PROJECTED_PROPS) {
 	if(!ov_ksserver_xdr_OV_OBJ_TYPE(xdrs, &objp->objtype)) {
 		return FALSE;
 	}
@@ -491,10 +461,7 @@ OV_BOOL ov_ksserver_xdr_OV_OBJ_PROJECTED_PROPS(
 /*
 *	XDR routine for OV_GETPP_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_GETPP_PAR(
-	XDR				*xdrs,
-	OV_GETPP_PAR	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_GETPP_PAR) {
 	if(!ov_ksserver_xdr_string(xdrs, &objp->path, ~0)) {
 		return FALSE;
 	}
@@ -509,10 +476,7 @@ OV_BOOL ov_ksserver_xdr_OV_GETPP_PAR(
 /*
 *	XDR routine for OV_GETPP_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_GETPP_RES(
-	XDR				*xdrs,
-	OV_GETPP_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_GETPP_RES) {
 	/*
 	*	local variables
 	*/
@@ -562,10 +526,7 @@ OV_BOOL ov_ksserver_xdr_OV_GETPP_RES(
 /*
 *	XDR routine for OV_GETVAR_ITEM
 */
-OV_BOOL ov_ksserver_xdr_OV_GETVAR_ITEM(
-	XDR				*xdrs,
-	OV_GETVAR_ITEM	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_ITEM) {
 	OV_OBJ_TYPE	objtype = KS_OT_VARIABLE;
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
@@ -590,12 +551,8 @@ OV_BOOL ov_ksserver_xdr_OV_GETVAR_ITEM(
 /*
 *	XDR routine for OV_GETVAR_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_GETVAR_PAR(
-	XDR				*xdrs,
-	OV_GETVAR_PAR	*objp
-) {
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->identifiers_val,
-		&objp->identifiers_len, ~0, sizeof(OV_STRING), (xdrproc_t)ov_ksserver_xdr_OV_STRING);
+OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_PAR) {
+	return OV_KSSERVER_XDR_ARRAY(OV_STRING, identifiers);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -603,17 +560,13 @@ OV_BOOL ov_ksserver_xdr_OV_GETVAR_PAR(
 /*
 *	XDR routine for OV_GETVAR_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_GETVAR_RES(
-	XDR				*xdrs,
-	OV_GETVAR_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->items_val, &objp->items_len,
-				~0, sizeof(OV_GETVAR_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_GETVAR_ITEM);
+			return OV_KSSERVER_XDR_ARRAY(OV_GETVAR_ITEM, items);
 		default:
 			break;
 	}
@@ -625,10 +578,7 @@ OV_BOOL ov_ksserver_xdr_OV_GETVAR_RES(
 /*
 *	XDR routine for OV_SETVAR_ITEM
 */
-OV_BOOL ov_ksserver_xdr_OV_SETVAR_ITEM(
-	XDR				*xdrs,
-	OV_SETVAR_ITEM	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_ITEM) {
 	OV_OBJ_TYPE	objtype = KS_OT_VARIABLE;
 	if(!ov_ksserver_xdr_string(xdrs, &objp->path_and_name, ~0)) {
 		return FALSE;
@@ -647,12 +597,8 @@ OV_BOOL ov_ksserver_xdr_OV_SETVAR_ITEM(
 /*
 *	XDR routine for OV_SETVAR_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_SETVAR_PAR(
-	XDR				*xdrs,
-	OV_SETVAR_PAR	*objp
-) {
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->items_val, &objp->items_len, ~0,
-		sizeof(OV_SETVAR_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_SETVAR_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_PAR) {
+	return OV_KSSERVER_XDR_ARRAY(OV_SETVAR_ITEM, items);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -660,17 +606,13 @@ OV_BOOL ov_ksserver_xdr_OV_SETVAR_PAR(
 /*
 *	XDR routine for OV_SETVAR_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_SETVAR_RES(
-	XDR				*xdrs,
-	OV_SETVAR_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->results_val, &objp->results_len,
-				~0, sizeof(OV_RESULT), (xdrproc_t)ov_ksserver_xdr_OV_RESULT);
+			return OV_KSSERVER_XDR_ARRAY(OV_RESULT, results);
 		default:
 			break;
 	}
@@ -682,17 +624,11 @@ OV_BOOL ov_ksserver_xdr_OV_SETVAR_RES(
 /*
 *	XDR routine for OV_EXGDATA_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_EXGDATA_PAR(
-	XDR				*xdrs,
-	OV_EXGDATA_PAR	*objp
-) {
-	if(!ov_ksserver_xdr_array(xdrs, (char **)&objp->set_vars_val, &objp->set_vars_len,
-		~0, sizeof(OV_SETVAR_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_SETVAR_ITEM)
-	) {
+OV_KSSERVER_DECL_XDRFNC(OV_EXGDATA_PAR) {
+	if(!OV_KSSERVER_XDR_ARRAY(OV_SETVAR_ITEM, set_vars)) {
 		return FALSE;
 	}
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->get_vars_val, &objp->get_vars_len,
-		~0, sizeof(OV_STRING), (xdrproc_t)ov_ksserver_xdr_OV_STRING);
+	return OV_KSSERVER_XDR_ARRAY(OV_STRING, get_vars);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -700,22 +636,16 @@ OV_BOOL ov_ksserver_xdr_OV_EXGDATA_PAR(
 /*
 *	XDR routine for OV_EXGDATA_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_EXGDATA_RES(
-	XDR				*xdrs,
-	OV_EXGDATA_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_EXGDATA_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-			if(!ov_ksserver_xdr_array(xdrs, (char **)&objp->results_val, &objp->results_len,
-				~0, sizeof(OV_RESULT), (xdrproc_t)ov_ksserver_xdr_OV_RESULT)
-			) {
+			if(!OV_KSSERVER_XDR_ARRAY(OV_RESULT, results)) {
 				return FALSE;
 			}
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->items_val, &objp->items_len,
-				~0, sizeof(OV_GETVAR_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_GETVAR_ITEM);
+			return OV_KSSERVER_XDR_ARRAY(OV_GETVAR_ITEM, items);
 		default:
 			break;
 	}
@@ -727,10 +657,7 @@ OV_BOOL ov_ksserver_xdr_OV_EXGDATA_RES(
 /*
 *	XDR routine for OV_DOMAIN_ENGINEERED_PROPS
 */
-OV_BOOL ov_ksserver_xdr_OV_DOMAIN_ENGINEERED_PROPS(
-	XDR							*xdrs,
-	OV_DOMAIN_ENGINEERED_PROPS	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_DOMAIN_ENGINEERED_PROPS) {
 	return ov_ksserver_xdr_string(xdrs, &objp->class_identifier, ~0);
 }
 
@@ -739,10 +666,7 @@ OV_BOOL ov_ksserver_xdr_OV_DOMAIN_ENGINEERED_PROPS(
 /*
 *	XDR routine for OV_VAR_ENGINEERED_PROPS
 */
-OV_BOOL ov_ksserver_xdr_OV_VAR_ENGINEERED_PROPS(
-	XDR						*xdrs,
-	OV_VAR_ENGINEERED_PROPS	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_VAR_ENGINEERED_PROPS) {
 	if(!ov_ksserver_xdr_string(xdrs, &objp->tech_unit, KS_TECHUNIT_MAXLEN)) {
 		return FALSE;
 	}
@@ -754,10 +678,7 @@ OV_BOOL ov_ksserver_xdr_OV_VAR_ENGINEERED_PROPS(
 /*
 *	XDR routine for OV_LINK_ENGINEERED_PROPS
 */
-OV_BOOL ov_ksserver_xdr_OV_LINK_ENGINEERED_PROPS(
-	XDR							*xdrs,
-	OV_LINK_ENGINEERED_PROPS	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_ENGINEERED_PROPS) {
 	if(!ov_ksserver_xdr_OV_LINK_TYPE(xdrs, &objp->linktype)) {
 		return FALSE;
 	}
@@ -772,10 +693,7 @@ OV_BOOL ov_ksserver_xdr_OV_LINK_ENGINEERED_PROPS(
 /*
 *	XDR routine for OV_OBJ_ENGINEERED_PROPS
 */
-OV_BOOL ov_ksserver_xdr_OV_OBJ_ENGINEERED_PROPS(
-	XDR						*xdrs,
-	OV_OBJ_ENGINEERED_PROPS	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_OBJ_ENGINEERED_PROPS) {
 	if(!ov_ksserver_xdr_OV_OBJ_TYPE(xdrs, &objp->objtype)) {
 		return FALSE;
 	}
@@ -824,10 +742,7 @@ OV_BOOL ov_ksserver_xdr_OV_OBJ_ENGINEERED_PROPS(
 /*
 *	XDR routine for OV_GETEP_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_GETEP_PAR(
-	XDR				*xdrs,
-	OV_GETEP_PAR	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_GETEP_PAR) {
 	if(!ov_ksserver_xdr_string(xdrs, &objp->path, ~0)) {
 		return FALSE;
 	}
@@ -845,10 +760,7 @@ OV_BOOL ov_ksserver_xdr_OV_GETEP_PAR(
 /*
 *	XDR routine for OV_GETEP_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_GETEP_RES(
-	XDR				*xdrs,
-	OV_GETEP_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_GETEP_RES) {
 	/*
 	*	local variables
 	*/
@@ -898,10 +810,7 @@ OV_BOOL ov_ksserver_xdr_OV_GETEP_RES(
 /*
 *	XDR routine for OV_PLACEMENT
 */
-OV_BOOL ov_ksserver_xdr_OV_PLACEMENT(
-	XDR				*xdrs,
-	OV_PLACEMENT	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_PLACEMENT) {
 	if(!ov_ksserver_xdr_OV_PLACEMENT_HINT(xdrs, &objp->hint)) {
 		return FALSE;
 	}
@@ -920,10 +829,7 @@ OV_BOOL ov_ksserver_xdr_OV_PLACEMENT(
 /*
 *	XDR routine for OV_LINK_ITEM
 */
-OV_BOOL ov_ksserver_xdr_OV_LINK_ITEM(
-	XDR				*xdrs,
-	OV_LINK_ITEM	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_ITEM) {
 	if(!ov_ksserver_xdr_string(xdrs, &objp->link_path, ~0)) {
 		return FALSE;
 	}
@@ -941,10 +847,7 @@ OV_BOOL ov_ksserver_xdr_OV_LINK_ITEM(
 /*
 *	XDR routine for OV_UNLINK_ITEM
 */
-OV_BOOL ov_ksserver_xdr_OV_UNLINK_ITEM(
-	XDR				*xdrs,
-	OV_UNLINK_ITEM	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_ITEM) {
 	if(!ov_ksserver_xdr_string(xdrs, &objp->link_path, ~0)) {
 		return FALSE;
 	}
@@ -956,10 +859,7 @@ OV_BOOL ov_ksserver_xdr_OV_UNLINK_ITEM(
 /*
 *	XDR routine for OV_CREATEOBJ_ITEM
 */
-OV_BOOL ov_ksserver_xdr_OV_CREATEOBJ_ITEM(
-	XDR					*xdrs,
-	OV_CREATEOBJ_ITEM	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJ_ITEM) {
 	if(!ov_ksserver_xdr_string(xdrs, &objp->factory_path, ~0)) {
 		return FALSE;
 	}
@@ -969,13 +869,10 @@ OV_BOOL ov_ksserver_xdr_OV_CREATEOBJ_ITEM(
 	if(!ov_ksserver_xdr_OV_PLACEMENT(xdrs, &objp->place)) {
 		return FALSE;
 	}
-	if(!ov_ksserver_xdr_array(xdrs, (char **)&objp->parameters_val, &objp->parameters_len,
-		~0, sizeof(OV_SETVAR_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_SETVAR_ITEM)
-	) {
+	if(!OV_KSSERVER_XDR_ARRAY(OV_SETVAR_ITEM, parameters)) {
 		return FALSE;
 	}
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->links_val, &objp->links_len,
-		~0, sizeof(OV_LINK_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_LINK_ITEM);
+	return OV_KSSERVER_XDR_ARRAY(OV_LINK_ITEM, links);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -983,12 +880,8 @@ OV_BOOL ov_ksserver_xdr_OV_CREATEOBJ_ITEM(
 /*
 *	XDR routine for OV_CREATEOBJECT_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECT_PAR(
-	XDR					*xdrs,
-	OV_CREATEOBJECT_PAR	*objp
-) {
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->items_val, &objp->items_len,
-		~0, sizeof(OV_CREATEOBJ_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_CREATEOBJ_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECT_PAR) {
+	return OV_KSSERVER_XDR_ARRAY(OV_CREATEOBJ_ITEM, items);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -996,24 +889,16 @@ OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECT_PAR(
 /*
 *	XDR routine for OV_CREATEOBJECTITEM_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECTITEM_RES(
-	XDR						*xdrs,
-	OV_CREATEOBJECTITEM_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECTITEM_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_BADINITPARAM:
-			if(!ov_ksserver_xdr_array(xdrs, (char **)&objp->params_results_val,
-				&objp->params_results_len, ~0, sizeof(OV_RESULT),
-				(xdrproc_t)ov_ksserver_xdr_OV_RESULT)
-			) {
+			if(!OV_KSSERVER_XDR_ARRAY(OV_RESULT, params_results)) {
 				return FALSE;
 			}
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->link_results_val,
-				&objp->link_results_len, ~0, sizeof(OV_RESULT),
-				(xdrproc_t)ov_ksserver_xdr_OV_RESULT);
+			return OV_KSSERVER_XDR_ARRAY(OV_RESULT, link_results);
 		default:
 			break;
 	}
@@ -1025,18 +910,13 @@ OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECTITEM_RES(
 /*
 *	XDR routine for OV_CREATEOBJECT_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECT_RES(
-	XDR					*xdrs,
-	OV_CREATEOBJECT_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECT_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->obj_results_val,
-				&objp->obj_results_len, ~0, sizeof(OV_CREATEOBJECTITEM_RES),
-				(xdrproc_t)ov_ksserver_xdr_OV_CREATEOBJECTITEM_RES);
+			return OV_KSSERVER_XDR_ARRAY(OV_CREATEOBJECTITEM_RES, obj_results);
 		default:
 			break;
 	}
@@ -1048,12 +928,8 @@ OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECT_RES(
 /*
 *	XDR routine for OV_DELETEOBJECT_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_DELETEOBJECT_PAR(
-	XDR					*xdrs,
-	OV_DELETEOBJECT_PAR	*objp
-) {
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->paths_val, &objp->paths_len,
-		~0, sizeof(OV_STRING), (xdrproc_t)ov_ksserver_xdr_OV_STRING);
+OV_KSSERVER_DECL_XDRFNC(OV_DELETEOBJECT_PAR) {
+	return OV_KSSERVER_XDR_ARRAY(OV_STRING, paths);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -1061,18 +937,13 @@ OV_BOOL ov_ksserver_xdr_OV_DELETEOBJECT_PAR(
 /*
 *	XDR routine for OV_DELETEOBJECT_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_DELETEOBJECT_RES(
-	XDR					*xdrs,
-	OV_DELETEOBJECT_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_DELETEOBJECT_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->results_val,
-				&objp->results_len, ~0, sizeof(OV_RESULT),
-				(xdrproc_t)ov_ksserver_xdr_OV_RESULT);
+			return OV_KSSERVER_XDR_ARRAY(OV_RESULT, results);
 		default:
 			break;
 	}
@@ -1084,10 +955,7 @@ OV_BOOL ov_ksserver_xdr_OV_DELETEOBJECT_RES(
 /*
 *	XDR routine for OV_RENAMEOBJECT_ITEM
 */
-OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_ITEM(
-	XDR						*xdrs,
-	OV_RENAMEOBJECT_ITEM	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_ITEM) {
 	if(!ov_ksserver_xdr_string(xdrs, &objp->old_path, ~0)) {
 		return FALSE;
 	}
@@ -1102,13 +970,8 @@ OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_ITEM(
 /*
 *	XDR routine for OV_RENAMEOBJECT_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_PAR(
-	XDR					*xdrs,
-	OV_RENAMEOBJECT_PAR	*objp
-) {
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->items_val,
-		&objp->items_len, ~0, sizeof(OV_RENAMEOBJECT_ITEM),
-		(xdrproc_t)ov_ksserver_xdr_OV_RENAMEOBJECT_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_PAR) {
+	return OV_KSSERVER_XDR_ARRAY(OV_RENAMEOBJECT_ITEM, items);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -1116,18 +979,13 @@ OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_PAR(
 /*
 *	XDR routine for OV_RENAMEOBJECT_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_RES(
-	XDR					*xdrs,
-	OV_RENAMEOBJECT_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->results_val,
-				&objp->results_len, ~0, sizeof(OV_RESULT),
-				(xdrproc_t)ov_ksserver_xdr_OV_RESULT);
+			return OV_KSSERVER_XDR_ARRAY(OV_RESULT, results);
 		default:
 			break;
 	}
@@ -1139,12 +997,8 @@ OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_RES(
 /*
 *	XDR routine for OV_GETCANONICALPATH_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATH_PAR(
-	XDR						*xdrs,
-	OV_GETCANONICALPATH_PAR	*objp
-) {
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->paths_val, &objp->paths_len, ~0,
-		sizeof(OV_STRING), (xdrproc_t)ov_ksserver_xdr_OV_STRING);
+OV_KSSERVER_DECL_XDRFNC(OV_GETCANONICALPATH_PAR) {
+	return OV_KSSERVER_XDR_ARRAY(OV_STRING, paths);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -1152,10 +1006,7 @@ OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATH_PAR(
 /*
 *	XDR routine for OV_GETCANONICALPATHITEM_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATHITEM_RES(
-	XDR							*xdrs,
-	OV_GETCANONICALPATHITEM_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_GETCANONICALPATHITEM_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
@@ -1173,18 +1024,13 @@ OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATHITEM_RES(
 /*
 *	XDR routine for OV_GETCANONICALPATH_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATH_RES(
-	XDR						*xdrs,
-	OV_GETCANONICALPATH_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_GETCANONICALPATH_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-		return ov_ksserver_xdr_array(xdrs, (char **)&objp->results_val,
-			&objp->results_len, ~0, sizeof(OV_GETCANONICALPATHITEM_RES),
-			(xdrproc_t)ov_ksserver_xdr_OV_GETCANONICALPATHITEM_RES);
+			return OV_KSSERVER_XDR_ARRAY(OV_GETCANONICALPATHITEM_RES, results);
 		default:
 			break;
 	}
@@ -1196,12 +1042,8 @@ OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATH_RES(
 /*
 *	XDR routine for OV_LINK_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_LINK_PAR(
-	XDR			*xdrs,
-	OV_LINK_PAR	*objp
-) {
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->items_val, &objp->items_len,
-		~0, sizeof(OV_LINK_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_LINK_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_PAR) {
+	return OV_KSSERVER_XDR_ARRAY(OV_LINK_ITEM, items);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -1209,18 +1051,13 @@ OV_BOOL ov_ksserver_xdr_OV_LINK_PAR(
 /*
 *	XDR routine for OV_LINK_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_LINK_RES(
-	XDR			*xdrs,
-	OV_LINK_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->results_val,
-				&objp->results_len, ~0, sizeof(OV_RESULT),
-				(xdrproc_t)ov_ksserver_xdr_OV_RESULT);
+			return OV_KSSERVER_XDR_ARRAY(OV_RESULT, results);
 		default:
 			break;
 	}
@@ -1232,12 +1069,8 @@ OV_BOOL ov_ksserver_xdr_OV_LINK_RES(
 /*
 *	XDR routine for OV_UNLINK_PAR
 */
-OV_BOOL ov_ksserver_xdr_OV_UNLINK_PAR(
-	XDR				*xdrs,
-	OV_UNLINK_PAR	*objp
-) {
-	return ov_ksserver_xdr_array(xdrs, (char **)&objp->items_val, &objp->items_len,
-		~0, sizeof(OV_UNLINK_ITEM), (xdrproc_t)ov_ksserver_xdr_OV_UNLINK_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_PAR) {
+	return OV_KSSERVER_XDR_ARRAY(OV_UNLINK_ITEM, items);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -1245,18 +1078,167 @@ OV_BOOL ov_ksserver_xdr_OV_UNLINK_PAR(
 /*
 *	XDR routine for OV_UNLINK_RES
 */
-OV_BOOL ov_ksserver_xdr_OV_UNLINK_RES(
-	XDR				*xdrs,
-	OV_UNLINK_RES	*objp
-) {
+OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_RES) {
 	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
 		return FALSE;
 	}
 	switch(objp->result) {
 		case OV_ERR_OK:
-			return ov_ksserver_xdr_array(xdrs, (char **)&objp->results_val,
-				&objp->results_len, ~0, sizeof(OV_RESULT),
-				(xdrproc_t)ov_ksserver_xdr_OV_RESULT);
+			return OV_KSSERVER_XDR_ARRAY(OV_RESULT, results);
+		default:
+			break;
+	}
+	return TRUE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_ABSRELTIME
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_ABSRELTIME) {
+	if(!ov_ksserver_xdr_OV_TIME_TYPE(xdrs, &objp->timetype)) {
+		return FALSE;
+	}
+	switch(objp->timetype) {
+		case OV_TT_ABSOLUTE:
+			return ov_ksserver_xdr_OV_TIME(xdrs,
+				&objp->OV_ABSRELTIME_u.abstime);
+		case OV_TT_RELATIVE:
+			return ov_ksserver_xdr_OV_TIME_SPAN(xdrs,
+				&objp->OV_ABSRELTIME_u.reltime);
+		default:
+			break;
+	}
+	return FALSE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_TIMEHISTSELECTOR
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_TIMEHISTSELECTOR) {
+	if(!ov_ksserver_xdr_OV_INTERPOLATION_MODE(xdrs, &objp->ip_mode)) {
+		return FALSE;
+	}
+	if(!ov_ksserver_xdr_OV_ABSRELTIME(xdrs, &objp->from)) {
+		return FALSE;
+	}
+	if(!ov_ksserver_xdr_OV_ABSRELTIME(xdrs, &objp->to)) {
+		return FALSE;
+	}
+	return ov_ksserver_xdr_OV_TIME_SPAN(xdrs, &objp->delta);
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_STRINGHISTSELECTOR
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_STRINGHISTSELECTOR) {
+	return ov_ksserver_xdr_OV_STRING(xdrs, &objp->mask);
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_HISTSELECTOR
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_HISTSELECTOR) {
+	if(!ov_ksserver_xdr_OV_HSEL_TYPE(xdrs, &objp->hseltype)) {
+		return FALSE;
+	}
+	switch(objp->hseltype) {
+		case OV_HSELT_NONE:
+			return TRUE;
+		case OV_HSELT_TIME:
+			return ov_ksserver_xdr_OV_TIMEHISTSELECTOR(xdrs,
+				&objp->OV_HISTSELECTOR_u.ths);
+		case OV_HSELT_STRING:
+			return ov_ksserver_xdr_OV_STRINGHISTSELECTOR(xdrs,
+				&objp->OV_HISTSELECTOR_u.shs);
+		default:
+			break;
+	}
+	return FALSE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_GETHIST_ITEM
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_GETHIST_ITEM) {
+	if(!ov_ksserver_xdr_OV_STRING(xdrs, &objp->part)) {
+		return FALSE;
+	}
+	return ov_ksserver_xdr_OV_HISTSELECTOR(xdrs, &objp->selector);
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_GETHISTRESULT_ITEM
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_GETHISTRESULT_ITEM) {
+	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
+		return FALSE;
+	}
+	switch(objp->result) {
+		case OV_ERR_OK:
+			return ov_ksserver_xdr_OV_VAR_VALUE(xdrs, &objp->value);
+		default:
+			break;
+	}
+	return TRUE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_GETHISTSINGLERESULT
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_GETHISTSINGLERESULT) {
+	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
+		return FALSE;
+	}
+	switch(objp->result) {
+		case OV_ERR_OK:
+			return OV_KSSERVER_XDR_ARRAY(OV_GETHISTRESULT_ITEM, items);
+		default:
+			break;
+	}
+	return TRUE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_GETHIST_PAR
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_GETHIST_PAR) {
+	if(!OV_KSSERVER_XDR_ARRAY(OV_STRING, paths)) {
+		return FALSE;
+	}
+	if(!ov_ksserver_xdr_OV_UINT(xdrs, &objp->max_answers)) {
+		return FALSE;
+	}
+	return OV_KSSERVER_XDR_ARRAY(OV_GETHIST_ITEM, items);
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	XDR routine for OV_GETHIST_RES
+*/
+OV_KSSERVER_DECL_XDRFNC(OV_GETHIST_RES) {
+	if(!ov_ksserver_xdr_OV_RESULT(xdrs, &objp->result)) {
+		return FALSE;
+	}
+	switch(objp->result) {
+		case OV_ERR_OK:
+			return OV_KSSERVER_XDR_ARRAY(OV_GETHISTSINGLERESULT, results);
 		default:
 			break;
 	}

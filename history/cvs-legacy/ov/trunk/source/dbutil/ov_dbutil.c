@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_dbutil.c,v 1.1 1999-07-19 15:02:09 dirk Exp $
+*   $Id: ov_dbutil.c,v 1.2 1999-07-26 16:14:11 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
 	*	specified by the command line options)
 	*/
 #ifdef OV_DEBUG
-	ov_logfile_logtostderr();
+	ov_logfile_logtostderr(NULL);
 #endif
 	/*
 	*	parse command line arguments
@@ -99,15 +99,15 @@ int main(int argc, char **argv) {
 			i++;
 			if(i<argc) {
 				if(!strcmp(argv[i], "stdout")) {
-					ov_logfile_logtostdout();
+					ov_logfile_logtostdout(NULL);
 				} else if(!strcmp(argv[i], "stderr")) {
-					ov_logfile_logtostderr();
+					ov_logfile_logtostderr(NULL);
 #if OV_SYSTEM_NT
 				} else if(!strcmp(argv[i], "ntlog")) {
 					ov_logfile_logtontlog(NULL);
 #endif
 				} else {
-					if(Ov_Fail(ov_logfile_open(argv[i], "w"))) {
+					if(Ov_Fail(ov_logfile_open(NULL, argv[i], "w"))) {
 						fprintf(stderr, "Could not open log file: \"%s\".\n", argv[i]);
 						return EXIT_FAILURE;
 					}

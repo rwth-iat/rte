@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.1 1999-07-19 15:02:05 dirk Exp $
+*   $Id: ov_ksserver.h,v 1.2 1999-07-26 16:14:08 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -59,13 +59,23 @@ OV_RESULT OV_DLLFNCEXPORT ov_ksserver_terminate(
 #endif
 
 /*
-*	Start the ACPLT/KS server for ACPLT/OV
+*	Create the ACPLT/KS server for ACPLT/OV
 */
-OV_RESULT OV_DLLFNCEXPORT ov_ksserver_start(
+OV_RESULT OV_DLLFNCEXPORT ov_ksserver_create(
 	OV_STRING			servername,
 	int					port,
 	OV_FNC_SIGHANDLER	*sighandler
 );
+
+/*
+*	Delete the ACPLT/KS server for ACPLKT/OV
+*/
+void OV_DLLFNCEXPORT ov_ksserver_delete(void);
+
+/*
+*	Start the ACPLT/KS server for ACPLT/OV
+*/
+void OV_DLLFNCEXPORT ov_ksserver_start(void);
 
 /*
 *	Run the ACPLT/KS server for ACPLKT/OV
@@ -76,6 +86,11 @@ void OV_DLLFNCEXPORT ov_ksserver_run(void);
 *	Stop the ACPLT/KS server for ACPLKT/OV
 */
 void OV_DLLFNCEXPORT ov_ksserver_stop(void);
+
+/*
+*	Tell the server to shut down
+*/
+void OV_DLLFNCEXPORT ov_ksserver_downserver(void);
 
 /*
 *	Test if the ACPLT/KS server for ACPLKT/OV is going down
@@ -118,7 +133,7 @@ void OV_DLLFNCEXPORT ov_ksserver_sighandler(
 void ov_ksserver_sendreply(
 	XDR			*xdrs,
 	OV_TICKET	*pticket,
-	OV_POINTER	result,
+	OV_RESULT	*presult,
 	xdrproc_t	encodefnc
 );
 
@@ -306,6 +321,16 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 	OV_ELEMENT			*pelementelem
 );
 
+/*
+*	Execute the GetHist service (subroutine)
+*/
+void ov_ksserver_gethist(
+	const OV_UINT			version,
+	const OV_TICKET			*pticket,
+	const OV_GETHIST_PAR	*params,
+	OV_GETHIST_RES			*result
+);
+
 #ifdef __cplusplus
 }
 #endif
@@ -328,19 +353,19 @@ public:
     OvPltLog() {};
     ~OvPltLog() {};
     virtual void info(const char *msg) {
-    	ov_logfile_print("[ACPLT/KS Info] %s\n", msg);
+    	ov_logfile_info("ACPLT/KS: %s", msg);
     }
     virtual void debug(const char *msg) {
-    	ov_logfile_print("[ACPLT/KS Debug] %s\n", msg);
+    	ov_logfile_debug("ACPLT/KS: %s", msg);
     }
     virtual void warning(const char *msg) {
-    	ov_logfile_print("[ACPLT/KS Warning] %s\n", msg);
+    	ov_logfile_warning("ACPLT/KS: %s", msg);
     }
     virtual void error(const char *msg) {
-    	ov_logfile_print("[ACPLT/KS Error] %s\n", msg);
+    	ov_logfile_error("ACPLT/KS: %s", msg);
     }
     virtual void alert(const char *msg) {
-    	ov_logfile_print("[ACPLT/KS Alert] %s\n", msg);
+    	ov_logfile_alert("ACPLT/KS: %s", msg);
     }
 };
 
@@ -398,6 +423,9 @@ public:
 
 	// get A/V-Ticket
 	KsAvTicket* getTicket(XDR* xdr) { return new OvKsAvTicket(xdr); }
+
+	// set shutdown flag
+	void setShutdownFlag(sig_atomic_t flag) { _shutdown_flag = flag; }
 
 protected:
 	// dispatch a service

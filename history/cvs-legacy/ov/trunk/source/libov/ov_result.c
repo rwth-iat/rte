@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_result.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_result.c,v 1.2 1999-07-26 16:14:14 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -54,6 +54,7 @@ OV_STRING OV_DLLFNCEXPORT ov_result_getresulttext(
 		case OV_ERR_BADMASK:			return "bad mask";
 		case OV_ERR_NOACCESS:			return "no access";
 		case OV_ERR_BADTYPE:			return "bad type";
+		case OV_ERR_BADSELECTOR:		return "bad selector";
 		case OV_ERR_BADVALUE:			return "bad value";
 
 		case OV_ERR_BADFACTORY:			return "bad factory";

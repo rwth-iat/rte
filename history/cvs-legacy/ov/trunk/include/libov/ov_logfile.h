@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_logfile.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_logfile.h,v 1.2 1999-07-26 16:14:07 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -36,9 +36,15 @@ extern "C" {
 #endif
 
 /*
+*	Maximum number of messages to keep for ov_logfile_getmessages
+*/
+#define OV_LOGFILE_MAXMSGS	100
+
+/*
 *	Open/create a logfile
 */
 OV_RESULT OV_DLLFNCEXPORT ov_logfile_open(
+	const OV_STRING	ident,
 	OV_STRING	filename,
 	OV_STRING	mode
 );
@@ -51,12 +57,16 @@ void OV_DLLFNCEXPORT ov_logfile_close(void);
 /*
 *	Log to stdout
 */
-void OV_DLLFNCEXPORT ov_logfile_logtostdout(void);
+void OV_DLLFNCEXPORT ov_logfile_logtostdout(
+	const OV_STRING	ident
+);
 
 /*
 *	Log to stderr
 */
-void OV_DLLFNCEXPORT ov_logfile_logtostderr(void);
+void OV_DLLFNCEXPORT ov_logfile_logtostderr(
+	const OV_STRING	ident
+);
 
 /*
 *	Log to the NT logger (Windows NT only)
@@ -71,14 +81,22 @@ void OV_DLLFNCEXPORT ov_logfile_logtontlog(
 *	Print text to logfile
 */
 void OV_DLLFNCEXPORT ov_logfile_print(
-	const OV_STRING	format,
-	...
+	OV_MSG_TYPE		msgtype,
+	const OV_STRING	msg
 );
 
 /*
 *	Print info to logfile
 */
 void OV_DLLFNCEXPORT ov_logfile_info(
+	const OV_STRING	format,
+	...
+);
+
+/*
+*	Print debug info to logfile
+*/
+void OV_DLLFNCEXPORT ov_logfile_debug(
 	const OV_STRING	format,
 	...
 );
@@ -97,6 +115,27 @@ void OV_DLLFNCEXPORT ov_logfile_warning(
 void OV_DLLFNCEXPORT ov_logfile_error(
 	const OV_STRING	format,
 	...
+);
+
+/*
+*	Print alert to logfile
+*/
+void OV_DLLFNCEXPORT ov_logfile_alert(
+	const OV_STRING	format,
+	...
+);
+
+/*
+*	Get messages from the logfile
+*	Note: you must call ov_memstack_lock() and ov_memstack_unlock() outside
+*/
+OV_RESULT OV_DLLFNCEXPORT ov_logfile_getmessages(
+	OV_TIME		*from,
+	OV_TIME		*to,
+	OV_UINT		max_no_messages,
+	OV_STRING	**messages,
+	OV_TIME		**times,
+	OV_UINT		*no_messages
 );
 
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient_xdr.h,v 1.1 1999-07-19 15:02:05 dirk Exp $
+*   $Id: ov_ksclient_xdr.h,v 1.2 1999-07-26 16:14:08 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -81,6 +81,9 @@ typedef OV_TIME_SPAN			KS_TIME_SPAN;
 typedef OV_VAR_VALUE			KS_VAR_VALUE;
 typedef OV_TICKET				KS_AVMODULE;
 typedef OV_VAR_CURRENT_PROPS	KS_VAR_CURRENT_PROPS;
+
+typedef KS_AVMODULE				KS_AVMODULE_PAR;
+typedef KS_AVMODULE				KS_AVMODULE_RES;
 
 /*
 *	KS_VAR_PROJECTED_PROPS:
@@ -379,6 +382,71 @@ typedef OV_UNLINK_PAR	KS_UNLINK_PAR;
 typedef OV_UNLINK_RES	KS_UNLINK_RES;
 
 /*
+*	KS_ABSRELTIME:
+*	--------------
+*	Absolute or relative time.
+*/
+#define KS_ABSRELTIME_u	OV_ABSRELTIME_u
+typedef OV_ABSRELTIME	KS_ABSRELTIME;
+
+/*
+*	KS_TIMEHISTSELECTOR:
+*	--------------------
+*	Time selector for histories.
+*/
+typedef OV_TIMEHISTSELECTOR	KS_TIMEHISTSELECTOR;
+
+/*
+*	KS_STRINGHISTSELECTOR:
+*	----------------------
+*	String selector for histories.
+*/
+typedef OV_STRINGHISTSELECTOR	KS_STRINGHISTSELECTOR;
+
+/*
+*	KS_HISTSELECTOR:
+*	----------------
+*	Selector for histories.
+*/
+#define KS_HISTSELECTOR_u	OV_HISTSELECTOR_u
+typedef OV_HISTSELECTOR	KS_HISTSELECTOR;
+
+/*
+*	KS_GETHIST_ITEM:
+*	----------------
+*	Item of a GetHist service parameters.
+*/
+typedef OV_GETHIST_ITEM	KS_GETHIST_ITEM;
+
+/*
+*	KS_GETHISTRESULT_ITEM:
+*	----------------------
+*	Item of a single GetHist service result.
+*/
+typedef OV_GETHISTRESULT_ITEM	KS_GETHISTRESULT_ITEM;
+
+/*
+*	KS_GETHISTSINGLERESULT:
+*	-----------------------
+*	Single result of a GetHist service result.
+*/
+typedef OV_GETHISTSINGLERESULT	KS_GETHISTSINGLERESULT;
+
+/*
+*	KS_GETHIST_PAR:
+*	---------------
+*	Parameters of a GetHist service.
+*/
+typedef OV_GETHIST_PAR	KS_GETHIST_PAR;
+
+/*
+*	KS_GETHIST_RES:
+*	---------------
+*	Result of a GetHist service.
+*/
+typedef OV_GETHIST_RES	KS_GETHIST_RES;
+
+/*
 *	The following part is only visible inside the library
 *	-----------------------------------------------------
 */
@@ -407,444 +475,170 @@ OV_BOOL ov_ksclient_xdr_array(
 );
 
 /*
-*	XDR routine for KS_ENUM
+*	Macro: declare function prototype of an XDR routine
 */
-#define ov_ksclient_xdr_KS_ENUM	xdr_enum
+#define OV_KSCLIENT_DECL_XDRFNC(type)							\
+	OV_BOOL ov_ksclient_xdr_##type (							\
+		XDR		*xdrs,											\
+		type	*objp											\
+	)
 
 /*
-*	XDR routine for KS_BOOL
+*	Macro: XDR an array of given type
 */
-#define ov_ksclient_xdr_KS_BOOL	xdr_bool
+#define OV_KSCLIENT_XDR_ARRAY(type, member)						\
+	ov_ksclient_xdr_array(xdrs, (char **)&objp->member##_val,	\
+		&objp->member##_len, ~0, sizeof(type),					\
+		(xdrproc_t)ov_ksclient_xdr_##type)
 
 /*
-*	XDR routine for KS_INT
+*	XDR routines for basic datatypes
 */
-#define ov_ksclient_xdr_KS_INT	xdr_long
-
-/*
-*	XDR routine for KS_UINT
-*/
-#define ov_ksclient_xdr_KS_UINT	xdr_u_long
-
-/*
-*	XDR routine for KS_SINGLE
-*/
+#define ov_ksclient_xdr_KS_ENUM		xdr_enum
+#define ov_ksclient_xdr_KS_BOOL		xdr_bool
+#define ov_ksclient_xdr_KS_INT		xdr_long
+#define ov_ksclient_xdr_KS_UINT		xdr_u_long
 #define ov_ksclient_xdr_KS_SINGLE	xdr_float
-
-/*
-*	XDR routine for KS_DOUBLE
-*/
 #define ov_ksclient_xdr_KS_DOUBLE	xdr_double
-
-/*
-*	XDR routine for KS_TIME
-*/
-KS_BOOL ov_ksclient_xdr_KS_TIME(
-	XDR		*xdrs,
-	KS_TIME	*objp
-);
-
-/*
-*	XDR routine for KS_TIME_SPAN
-*/
-KS_BOOL ov_ksclient_xdr_KS_TIME_SPAN(
-	XDR				*xdrs,
-	KS_TIME_SPAN	*objp
-);
-
-/*
-*	XDR routine for KS_STRING
-*/
-KS_BOOL ov_ksclient_xdr_KS_STRING(
-	XDR			*xdrs,
-	KS_STRING	*objp
-);
-
-/*
-*	XDR routine for KS_RESULT
-*/
 #define ov_ksclient_xdr_KS_RESULT	ov_ksclient_xdr_KS_ENUM
 
-/*
-*	XDR routine for KS_TICKET_TYPE
-*/
-#define ov_ksclient_xdr_KS_TICKET_TYPE	ov_ksclient_xdr_KS_ENUM
+OV_KSCLIENT_DECL_XDRFNC(OV_TIME);
+OV_KSCLIENT_DECL_XDRFNC(OV_TIME_SPAN);
+OV_KSCLIENT_DECL_XDRFNC(OV_STRING);
 
-/*
-*	XDR routine for KS_VAR_TYPE
-*/
-#define ov_ksclient_xdr_KS_VAR_TYPE	ov_ksclient_xdr_KS_ENUM
-
-/*
-*	XDR routine for KS_STATE
-*/
-#define ov_ksclient_xdr_KS_STATE	ov_ksclient_xdr_KS_ENUM
-
-/*
-*	XDR routine for KS_OBJ_TYPE
-*/
-#define ov_ksclient_xdr_KS_OBJ_TYPE	ov_ksclient_xdr_KS_ENUM
-
-/*
-*	XDR routine for KS_ACCESS
-*/
-#define ov_ksclient_xdr_KS_ACCESS	ov_ksclient_xdr_KS_ENUM
-
-/*
-*	XDR routine for KS_LINK_TYPE
-*/
-#define ov_ksclient_xdr_KS_LINK_TYPE	ov_ksclient_xdr_KS_ENUM
-
-/*
-*	XDR routine for KS_PLACEMENT_HINT
-*/
-#define ov_ksclient_xdr_KS_PLACEMENT_HINT	ov_ksclient_xdr_KS_ENUM
-
-/*
-*	XDR routine for KS_SEMANTIC_FLAGS
-*/
 #define ov_ksclient_xdr_KS_SEMANTIC_FLAGS	xdr_u_long
 
 /*
-*	XDR routine for KS_EP_FLAGS
+*	XDR routines for enumeration values
 */
-#define ov_ksclient_xdr_KS_EP_FLAGS	ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_TICKET_TYPE			ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_VAR_TYPE				ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_STATE				ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_OBJ_TYPE				ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_ACCESS				ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_LINK_TYPE			ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_PLACEMENT_HINT		ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_EP_FLAGS				ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_TIME_TYPE			ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_INTERPOLATION_MODE	ov_ksclient_xdr_KS_ENUM
+#define ov_ksclient_xdr_KS_HSEL_TYPE			ov_ksclient_xdr_KS_ENUM
 
 /*
-*	XDR routine for KS_AVMODULE_PAR
+*	XDR routines for A/V modules
 */
-KS_BOOL ov_ksclient_xdr_KS_AVMODULE_PAR(
-	XDR			*xdrs,
-	KS_AVMODULE	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_AVMODULE_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_AVMODULE_RES);
 
 /*
-*	XDR routine for KS_AVMODLUE_RES
+*	XDR routine for variable values
 */
-KS_BOOL ov_ksclient_xdr_KS_AVMODULE_RES(
-	XDR			*xdrs,
-	KS_AVMODULE	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_VAR_VALUE);
 
 /*
-*	XDR routine for KS_VAR_VALUE
+*	XDR routines for properties
 */
-KS_BOOL ov_ksclient_xdr_KS_VAR_VALUE(
-	XDR				*xdrs,
-	KS_VAR_VALUE	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_VAR_CURRENT_PROPS);
+
+OV_KSCLIENT_DECL_XDRFNC(KS_VAR_PROJECTED_PROPS);
+OV_KSCLIENT_DECL_XDRFNC(KS_LINK_PROJECTED_PROPS);
+OV_KSCLIENT_DECL_XDRFNC(KS_OBJ_PROJECTED_PROPS);
+
+OV_KSCLIENT_DECL_XDRFNC(KS_DOMAIN_ENGINEERED_PROPS);
+OV_KSCLIENT_DECL_XDRFNC(KS_VAR_ENGINEERED_PROPS);
+OV_KSCLIENT_DECL_XDRFNC(KS_LINK_ENGINEERED_PROPS);
+OV_KSCLIENT_DECL_XDRFNC(KS_OBJ_ENGINEERED_PROPS);
 
 /*
-*	XDR routine for KS_VAR_PROJECTED_PROPS
+*	XDR routines for GetPP
 */
-KS_BOOL ov_ksclient_xdr_KS_VAR_PROJECTED_PROPS(
-	XDR						*xdrs,
-	KS_VAR_PROJECTED_PROPS	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETPP_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETPP_RES);
 
 /*
-*	XDR routine for KS_VAR_CURRENT_PROPS
+*	XDR routines for GetVar
 */
-KS_BOOL ov_ksclient_xdr_KS_VAR_CURRENT_PROPS(
-	XDR						*xdrs,
-	KS_VAR_CURRENT_PROPS	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETVAR_ITEM);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETVAR_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETVAR_RES);
 
 /*
-*	XDR routine for KS_LINK_PROJECTED_PROPS
+*	XDR routines for SetVar
 */
-KS_BOOL ov_ksclient_xdr_KS_LINK_PROJECTED_PROPS(
-	XDR						*xdrs,
-	KS_LINK_PROJECTED_PROPS	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_SETVAR_ITEM);
+OV_KSCLIENT_DECL_XDRFNC(KS_SETVAR_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_SETVAR_RES);
 
 /*
-*	XDR routine for KS_OBJ_PROJECTED_PROPS
+*	XDR routines for ExgData
 */
-KS_BOOL ov_ksclient_xdr_KS_OBJ_PROJECTED_PROPS(
-	XDR						*xdrs,
-	KS_OBJ_PROJECTED_PROPS	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_EXGDATA_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_EXGDATA_RES);
 
 /*
-*	XDR routine for KS_GETPP_PAR
+*	XDR routines for GetEP
 */
-KS_BOOL ov_ksclient_xdr_KS_GETPP_PAR(
-	XDR				*xdrs,
-	KS_GETPP_PAR	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETEP_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETEP_RES);
 
 /*
-*	XDR routine for KS_GETPP_RES
+*	XDR routines for links
 */
-KS_BOOL ov_ksclient_xdr_KS_GETPP_RES(
-	XDR				*xdrs,
-	KS_GETPP_RES	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_PLACEMENT);
+OV_KSCLIENT_DECL_XDRFNC(KS_LINK_ITEM);
+OV_KSCLIENT_DECL_XDRFNC(KS_UNLINK_ITEM);
 
 /*
-*	XDR routine for KS_GETVAR_ITEM
+*	XDR routines for CreateObject
 */
-KS_BOOL ov_ksclient_xdr_KS_GETVAR_ITEM(
-	XDR				*xdrs,
-	KS_GETVAR_ITEM	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_CREATEOBJ_ITEM);
+OV_KSCLIENT_DECL_XDRFNC(KS_CREATEOBJECT_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_CREATEOBJECTITEM_RES);
+OV_KSCLIENT_DECL_XDRFNC(KS_CREATEOBJECT_RES);
 
 /*
-*	XDR routine for KS_GETVAR_PAR
+*	XDR routines for DeleteObject
 */
-KS_BOOL ov_ksclient_xdr_KS_GETVAR_PAR(
-	XDR				*xdrs,
-	KS_GETVAR_PAR	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_DELETEOBJECT_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_DELETEOBJECT_RES);
 
 /*
-*	XDR routine for KS_GETVAR_RES
+*	XDR routines for RenameObject
 */
-KS_BOOL ov_ksclient_xdr_KS_GETVAR_RES(
-	XDR				*xdrs,
-	KS_GETVAR_RES	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_RENAMEOBJECT_ITEM);
+OV_KSCLIENT_DECL_XDRFNC(KS_RENAMEOBJECT_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_RENAMEOBJECT_RES);
 
 /*
-*	XDR routine for KS_SETVAR_ITEM
+*	XDR routines for GetCanonicalPath
 */
-KS_BOOL ov_ksclient_xdr_KS_SETVAR_ITEM(
-	XDR				*xdrs,
-	KS_SETVAR_ITEM	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETCANONICALPATH_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETCANONICALPATHITEM_RES);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETCANONICALPATH_RES);
 
 /*
-*	XDR routine for KS_SETVAR_PAR
+*	XDR routines for Link
 */
-KS_BOOL ov_ksclient_xdr_KS_SETVAR_PAR(
-	XDR				*xdrs,
-	KS_SETVAR_PAR	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_LINK_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_LINK_RES);
 
 /*
-*	XDR routine for KS_SETVAR_RES
+*	XDR routines for Unlink
 */
-KS_BOOL ov_ksclient_xdr_KS_SETVAR_RES(
-	XDR				*xdrs,
-	KS_SETVAR_RES	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_UNLINK_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_UNLINK_RES);
 
 /*
-*	XDR routine for KS_EXGDATA_PAR
+*	XDR routines for GetHist
 */
-KS_BOOL ov_ksclient_xdr_KS_EXGDATA_PAR(
-	XDR				*xdrs,
-	KS_EXGDATA_PAR	*objp
-);
-
-/*
-*	XDR routine for KS_EXGDATA_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_EXGDATA_RES(
-	XDR				*xdrs,
-	KS_EXGDATA_RES	*objp
-);
-
-/*
-*	XDR routine for KS_DOMAIN_ENGINEERED_PROPS
-*/
-KS_BOOL ov_ksclient_xdr_KS_DOMAIN_ENGINEERED_PROPS(
-	XDR							*xdrs,
-	KS_DOMAIN_ENGINEERED_PROPS	*objp
-);
-
-/*
-*	XDR routine for KS_VAR_ENGINEERED_PROPS
-*/
-KS_BOOL ov_ksclient_xdr_KS_VAR_ENGINEERED_PROPS(
-	XDR						*xdrs,
-	KS_VAR_ENGINEERED_PROPS	*objp
-);
-
-/*
-*	XDR routine for KS_LINK_ENGINEERED_PROPS
-*/
-KS_BOOL ov_ksclient_xdr_KS_LINK_ENGINEERED_PROPS(
-	XDR							*xdrs,
-	KS_LINK_ENGINEERED_PROPS	*objp
-);
-
-/*
-*	XDR routine for KS_OBJ_ENGINEERED_PROPS
-*/
-KS_BOOL ov_ksclient_xdr_KS_OBJ_ENGINEERED_PROPS(
-	XDR						*xdrs,
-	KS_OBJ_ENGINEERED_PROPS	*objp
-);
-
-/*
-*	XDR routine for KS_GETEP_PAR
-*/
-KS_BOOL ov_ksclient_xdr_KS_GETEP_PAR(
-	XDR				*xdrs,
-	KS_GETEP_PAR	*objp
-);
-
-/*
-*	XDR routine for KS_GETEP_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_GETEP_RES(
-	XDR				*xdrs,
-	KS_GETEP_RES	*objp
-);
-
-/*
-*	XDR routine for KS_PLACEMENT
-*/
-KS_BOOL ov_ksclient_xdr_KS_PLACEMENT(
-	XDR				*xdrs,
-	KS_PLACEMENT	*objp
-);
-
-/*
-*	XDR routine for KS_LINK_ITEM
-*/
-KS_BOOL ov_ksclient_xdr_KS_LINK_ITEM(
-	XDR				*xdrs,
-	KS_LINK_ITEM	*objp
-);
-
-/*
-*	XDR routine for KS_UNLINK_ITEM
-*/
-KS_BOOL ov_ksclient_xdr_KS_UNLINK_ITEM(
-	XDR				*xdrs,
-	KS_UNLINK_ITEM	*objp
-);
-
-/*
-*	XDR routine for KS_CREATEOBJ_ITEM
-*/
-KS_BOOL ov_ksclient_xdr_KS_CREATEOBJ_ITEM(
-	XDR					*xdrs,
-	KS_CREATEOBJ_ITEM	*objp
-);
-
-/*
-*	XDR routine for KS_KS_CREATEOBJECT_PAR
-*/
-KS_BOOL ov_ksclient_xdr_KS_CREATEOBJECT_PAR(
-	XDR					*xdrs,
-	KS_CREATEOBJECT_PAR	*objp
-);
-
-/*
-*	XDR routine for KS_CREATEOBJECTITEM_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_CREATEOBJECTITEM_RES(
-	XDR						*xdrs,
-	KS_CREATEOBJECTITEM_RES	*objp
-);
-
-/*
-*	XDR routine for KS_CREATEOBJECT_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_CREATEOBJECT_RES(
-	XDR					*xdrs,
-	KS_CREATEOBJECT_RES	*objp
-);
-
-/*
-*	XDR routine for KS_DELETEOBJECT_PAR
-*/
-KS_BOOL ov_ksclient_xdr_KS_DELETEOBJECT_PAR(
-	XDR					*xdrs,
-	KS_DELETEOBJECT_PAR	*objp
-);
-
-/*
-*	XDR routine for KS_DELETEOBJECT_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_DELETEOBJECT_RES(
-	XDR					*xdrs,
-	KS_DELETEOBJECT_RES	*objp
-);
-
-/*
-*	XDR routine for KS_RENAMEOBJECT_ITEM
-*/
-KS_BOOL ov_ksclient_xdr_KS_RENAMEOBJECT_ITEM(
-	XDR						*xdrs,
-	KS_RENAMEOBJECT_ITEM	*objp
-);
-
-/*
-*	XDR routine for KS_RENAMEOBJECT_PAR
-*/
-KS_BOOL ov_ksclient_xdr_KS_RENAMEOBJECT_PAR(
-	XDR					*xdrs,
-	KS_RENAMEOBJECT_PAR	*objp
-);
-
-/*
-*	XDR routine for KS_RENAMEOBJECT_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_RENAMEOBJECT_RES(
-	XDR					*xdrs,
-	KS_RENAMEOBJECT_RES	*objp
-);
-
-/*
-*	XDR routine for KS_GETCANONICALPATH_PAR
-*/
-KS_BOOL ov_ksclient_xdr_KS_GETCANONICALPATH_PAR(
-	XDR						*xdrs,
-	KS_GETCANONICALPATH_PAR	*objp
-);
-
-/*
-*	XDR routine for KS_GETCANONICALPATHITEM_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_GETCANONICALPATHITEM_RES(
-	XDR							*xdrs,
-	KS_GETCANONICALPATHITEM_RES	*objp
-);
-
-/*
-*	XDR routine for KS_GETCANONICALPATH_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_GETCANONICALPATH_RES(
-	XDR						*xdrs,
-	KS_GETCANONICALPATH_RES	*objp
-);
-
-/*
-*	XDR routine for KS_LINK_PAR
-*/
-KS_BOOL ov_ksclient_xdr_KS_LINK_PAR(
-	XDR			*xdrs,
-	KS_LINK_PAR	*objp
-);
-
-/*
-*	XDR routine for KS_LINK_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_LINK_RES(
-	XDR			*xdrs,
-	KS_LINK_RES	*objp
-);
-
-/*
-*	XDR routine for KS_UNLINK_PAR
-*/
-KS_BOOL ov_ksclient_xdr_KS_UNLINK_PAR(
-	XDR				*xdrs,
-	KS_UNLINK_PAR	*objp
-);
-
-/*
-*	XDR routine for KS_UNLINK_RES
-*/
-KS_BOOL ov_ksclient_xdr_KS_UNLINK_RES(
-	XDR				*xdrs,
-	KS_UNLINK_RES	*objp
-);
+OV_KSCLIENT_DECL_XDRFNC(KS_ABSRELTIME);
+OV_KSCLIENT_DECL_XDRFNC(KS_TIMEHISTSELECTOR);
+OV_KSCLIENT_DECL_XDRFNC(KS_STRINGHISTSELECTOR);
+OV_KSCLIENT_DECL_XDRFNC(KS_HISTSELECTOR);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETHIST_ITEM);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETHISTRESULT_ITEM);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETHISTSINGLERESULT);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETHIST_PAR);
+OV_KSCLIENT_DECL_XDRFNC(KS_GETHIST_RES);
 
 #endif	/* OV_COMPILE_LIBOVKS */
 

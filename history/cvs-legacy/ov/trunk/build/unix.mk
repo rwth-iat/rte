@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.1 1999-07-19 15:01:53 dirk Exp $
+#   $Id: unix.mk,v 1.2 1999-07-26 16:14:00 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -187,10 +187,9 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	Install
 #	-------
 
-install : targets
+install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-cp $(TARGETS) $(PLT_BIN_DIR)
-	@strip --strip-debug $(foreach target, $(TARGETS), $(PLT_BIN_DIR)$(target))
+	@-cp $(ALL) $(PLT_BIN_DIR)
 	@echo Done.
 
 #	Clean up

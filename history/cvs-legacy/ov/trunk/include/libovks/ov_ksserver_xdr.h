@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_xdr.h,v 1.1 1999-07-19 15:02:05 dirk Exp $
+*   $Id: ov_ksserver_xdr.h,v 1.2 1999-07-26 16:14:08 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -81,6 +81,9 @@ typedef KS_OBJ_TYPE			OV_OBJ_TYPE;
 typedef KS_SVC				OV_SVC;
 typedef KS_SEMANTIC_FLAGS	OV_SEMANTIC_FLAGS;
 typedef KS_EP_FLAGS			OV_EP_FLAGS;
+
+typedef OV_TICKET			OV_TICKET_PAR;
+typedef OV_TICKET			OV_TICKET_RES;
 
 /*
 *	OV_VAR_PROJECTED_PROPS:
@@ -518,6 +521,108 @@ typedef struct {
 }	OV_UNLINK_RES;
 
 /*
+*	OV_ABSRELTIME:
+*	--------------
+*	Absolute or relative time.
+*/
+typedef struct {
+	OV_TIME_TYPE	timetype;
+	union {
+		OV_TIME			abstime;
+		OV_TIME_SPAN	reltime;
+	}	OV_ABSRELTIME_u;
+}	OV_ABSRELTIME;
+
+/*
+*	OV_TIMEHISTSELECTOR:
+*	--------------------
+*	Time selector for histories.
+*/
+typedef struct {
+	OV_INTERPOLATION_MODE	ip_mode;
+	OV_ABSRELTIME			from;
+	OV_ABSRELTIME			to;
+	OV_TIME_SPAN			delta;
+}	OV_TIMEHISTSELECTOR;
+
+/*
+*	OV_STRINGHISTSELECTOR:
+*	----------------------
+*	String selector for histories.
+*/
+typedef struct {
+	OV_STRING	mask;
+}	OV_STRINGHISTSELECTOR;
+
+/*
+*	OV_HISTSELECTOR:
+*	----------------
+*	Selector for histories.
+*/
+typedef struct {
+	OV_HSEL_TYPE	hseltype;
+	union {
+		OV_TIMEHISTSELECTOR		ths;
+		OV_STRINGHISTSELECTOR	shs;
+	}	OV_HISTSELECTOR_u;
+}	OV_HISTSELECTOR;
+
+/*
+*	OV_GETHIST_ITEM:
+*	----------------
+*	Item of a GetHist service parameters.
+*/
+typedef struct {
+	OV_STRING		part;
+	OV_HISTSELECTOR	selector;
+}	OV_GETHIST_ITEM;
+
+/*
+*	OV_GETHISTRESULT_ITEM:
+*	----------------------
+*	Item of a single GetHist service result.
+*/
+typedef struct {
+	OV_RESULT		result;
+	OV_VAR_VALUE	value;				/* only, if result == OV_ERR_OK */
+}	OV_GETHISTRESULT_ITEM;
+
+/*
+*	OV_GETHISTSINGLERESULT:
+*	-----------------------
+*	Single result of a GetHist service result.
+*/
+typedef struct {
+	OV_RESULT				result;
+	OV_UINT					items_len;	/* only, if result == OV_ERR_OK */
+	OV_GETHISTRESULT_ITEM	*items_val;	/* only, if result == OV_ERR_OK */
+}	OV_GETHISTSINGLERESULT;
+
+/*
+*	OV_GETHIST_PAR:
+*	---------------
+*	Parameters of a GetHist service.
+*/
+typedef struct {
+	OV_UINT			paths_len;
+	OV_STRING		*paths_val;
+	OV_UINT			max_answers;
+	OV_UINT			items_len;
+	OV_GETHIST_ITEM	*items_val;
+}	OV_GETHIST_PAR;
+
+/*
+*	OV_GETHIST_RES:
+*	---------------
+*	Result of a GetHist service.
+*/
+typedef struct {
+	OV_RESULT				result;
+	OV_UINT					results_len;	/* only, if result == OV_ERR_OK */
+	OV_GETHISTSINGLERESULT	*results_val;	/* only, if result == OV_ERR_OK */
+}	OV_GETHIST_RES;
+
+/*
 *	The following part is only visible inside the library
 *	-----------------------------------------------------
 */
@@ -555,444 +660,170 @@ OV_BOOL ov_ksserver_xdr_array(
 );
 
 /*
-*	XDR routine for OV_ENUM
+*	Macro: declare function prototype of an XDR routine
 */
-#define ov_ksserver_xdr_OV_ENUM	xdr_enum
+#define OV_KSSERVER_DECL_XDRFNC(type)							\
+	OV_BOOL ov_ksserver_xdr_##type (							\
+		XDR		*xdrs,											\
+		type	*objp											\
+	)
 
 /*
-*	XDR routine for OV_BOOL
+*	Macro: XDR an array of given type
 */
-#define ov_ksserver_xdr_OV_BOOL	xdr_bool
+#define OV_KSSERVER_XDR_ARRAY(type, member)						\
+	ov_ksserver_xdr_array(xdrs, (char **)&objp->member##_val,	\
+		&objp->member##_len, ~0, sizeof(type),					\
+		(xdrproc_t)ov_ksserver_xdr_##type)
 
 /*
-*	XDR routine for OV_INT
+*	XDR routines for basic datatypes
 */
-#define ov_ksserver_xdr_OV_INT	xdr_long
-
-/*
-*	XDR routine for OV_UINT
-*/
-#define ov_ksserver_xdr_OV_UINT	xdr_u_long
-
-/*
-*	XDR routine for OV_SINGLE
-*/
+#define ov_ksserver_xdr_OV_ENUM		xdr_enum
+#define ov_ksserver_xdr_OV_BOOL		xdr_bool
+#define ov_ksserver_xdr_OV_INT		xdr_long
+#define ov_ksserver_xdr_OV_UINT		xdr_u_long
 #define ov_ksserver_xdr_OV_SINGLE	xdr_float
-
-/*
-*	XDR routine for OV_DOUBLE
-*/
 #define ov_ksserver_xdr_OV_DOUBLE	xdr_double
-
-/*
-*	XDR routine for OV_TIME
-*/
-OV_BOOL ov_ksserver_xdr_OV_TIME(
-	XDR		*xdrs,
-	OV_TIME	*objp
-);
-
-/*
-*	XDR routine for OV_TIME_SPAN
-*/
-OV_BOOL ov_ksserver_xdr_OV_TIME_SPAN(
-	XDR				*xdrs,
-	OV_TIME_SPAN	*objp
-);
-
-/*
-*	XDR routine for OV_STRING
-*/
-OV_BOOL ov_ksserver_xdr_OV_STRING(
-	XDR			*xdrs,
-	OV_STRING	*objp
-);
-
-/*
-*	XDR routine for OV_RESULT
-*/
 #define ov_ksserver_xdr_OV_RESULT	ov_ksserver_xdr_OV_ENUM
 
-/*
-*	XDR routine for OV_TICKET_TYPE
-*/
-#define ov_ksserver_xdr_OV_TICKET_TYPE	ov_ksserver_xdr_OV_ENUM
+OV_KSSERVER_DECL_XDRFNC(OV_TIME);
+OV_KSSERVER_DECL_XDRFNC(OV_TIME_SPAN);
+OV_KSSERVER_DECL_XDRFNC(OV_STRING);
 
-/*
-*	XDR routine for OV_VAR_TYPE
-*/
-#define ov_ksserver_xdr_OV_VAR_TYPE	ov_ksserver_xdr_OV_ENUM
-
-/*
-*	XDR routine for OV_STATE
-*/
-#define ov_ksserver_xdr_OV_STATE	ov_ksserver_xdr_OV_ENUM
-
-/*
-*	XDR routine for OV_OBJ_TYPE
-*/
-#define ov_ksserver_xdr_OV_OBJ_TYPE	ov_ksserver_xdr_OV_ENUM
-
-/*
-*	XDR routine for OV_ACCESS
-*/
-#define ov_ksserver_xdr_OV_ACCESS	ov_ksserver_xdr_OV_ENUM
-
-/*
-*	XDR routine for OV_LINK_TYPE
-*/
-#define ov_ksserver_xdr_OV_LINK_TYPE	ov_ksserver_xdr_OV_ENUM
-
-/*
-*	XDR routine for OV_PLACEMENT_HINT
-*/
-#define ov_ksserver_xdr_OV_PLACEMENT_HINT	ov_ksserver_xdr_OV_ENUM
-
-/*
-*	XDR routine for OV_SEMANTIC_FLAGS
-*/
 #define ov_ksserver_xdr_OV_SEMANTIC_FLAGS	xdr_u_long
 
 /*
-*	XDR routine for OV_EP_FLAGS
+*	XDR routines for enumeration values
 */
-#define ov_ksserver_xdr_OV_EP_FLAGS	ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_TICKET_TYPE			ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_VAR_TYPE				ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_STATE				ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_OBJ_TYPE				ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_ACCESS				ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_LINK_TYPE			ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_PLACEMENT_HINT		ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_EP_FLAGS				ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_TIME_TYPE			ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_INTERPOLATION_MODE	ov_ksserver_xdr_OV_ENUM
+#define ov_ksserver_xdr_OV_HSEL_TYPE			ov_ksserver_xdr_OV_ENUM
 
 /*
-*	XDR routine for OV_TICKET_PAR
+*	XDR routines for tickets
 */
-OV_BOOL ov_ksserver_xdr_OV_TICKET_PAR(
-	XDR			*xdrs,
-	OV_TICKET	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_TICKET_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_TICKET_RES);
 
 /*
-*	XDR routine for OV_TICKET_RES
+*	XDR routine for variable values
 */
-OV_BOOL ov_ksserver_xdr_OV_TICKET_RES(
-	XDR			*xdrs,
-	OV_TICKET	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_VAR_VALUE);
 
 /*
-*	XDR routine for OV_VAR_VALUE
+*	XDR routines for properties
 */
-OV_BOOL ov_ksserver_xdr_OV_VAR_VALUE(
-	XDR				*xdrs,
-	OV_VAR_VALUE	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_VAR_CURRENT_PROPS);
+
+OV_KSSERVER_DECL_XDRFNC(OV_VAR_PROJECTED_PROPS);
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_PROJECTED_PROPS);
+OV_KSSERVER_DECL_XDRFNC(OV_OBJ_PROJECTED_PROPS);
+
+OV_KSSERVER_DECL_XDRFNC(OV_DOMAIN_ENGINEERED_PROPS);
+OV_KSSERVER_DECL_XDRFNC(OV_VAR_ENGINEERED_PROPS);
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_ENGINEERED_PROPS);
+OV_KSSERVER_DECL_XDRFNC(OV_OBJ_ENGINEERED_PROPS);
 
 /*
-*	XDR routine for OV_VAR_PROJECTED_PROPS
+*	XDR routines for GetPP
 */
-OV_BOOL ov_ksserver_xdr_OV_VAR_PROJECTED_PROPS(
-	XDR						*xdrs,
-	OV_VAR_PROJECTED_PROPS	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_GETPP_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_GETPP_RES);
 
 /*
-*	XDR routine for OV_VAR_CURRENT_PROPS
+*	XDR routines for GetVar
 */
-OV_BOOL ov_ksserver_xdr_OV_VAR_CURRENT_PROPS(
-	XDR						*xdrs,
-	OV_VAR_CURRENT_PROPS	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_RES);
 
 /*
-*	XDR routine for OV_LINK_PROJECTED_PROPS
+*	XDR routines for SetVar
 */
-OV_BOOL ov_ksserver_xdr_OV_LINK_PROJECTED_PROPS(
-	XDR						*xdrs,
-	OV_LINK_PROJECTED_PROPS	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_RES);
 
 /*
-*	XDR routine for OV_OBJ_PROJECTED_PROPS
+*	XDR routines for ExgData
 */
-OV_BOOL ov_ksserver_xdr_OV_OBJ_PROJECTED_PROPS(
-	XDR						*xdrs,
-	OV_OBJ_PROJECTED_PROPS	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_EXGDATA_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_EXGDATA_RES);
 
 /*
-*	XDR routine for OV_GETPP_PAR
+*	XDR routines for GetEP
 */
-OV_BOOL ov_ksserver_xdr_OV_GETPP_PAR(
-	XDR				*xdrs,
-	OV_GETPP_PAR	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_GETEP_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_GETEP_RES);
 
 /*
-*	XDR routine for OV_GETPP_RES
+*	XDR routines for links
 */
-OV_BOOL ov_ksserver_xdr_OV_GETPP_RES(
-	XDR				*xdrs,
-	OV_GETPP_RES	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_PLACEMENT);
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_ITEM);
 
 /*
-*	XDR routine for OV_GETVAR_ITEM
+*	XDR routines for CreateObject
 */
-OV_BOOL ov_ksserver_xdr_OV_GETVAR_ITEM(
-	XDR				*xdrs,
-	OV_GETVAR_ITEM	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJ_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECT_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECTITEM_RES);
+OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECT_RES);
 
 /*
-*	XDR routine for OV_GETVAR_PAR
+*	XDR routines for DeleteObject
 */
-OV_BOOL ov_ksserver_xdr_OV_GETVAR_PAR(
-	XDR				*xdrs,
-	OV_GETVAR_PAR	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_DELETEOBJECT_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_DELETEOBJECT_RES);
 
 /*
-*	XDR routine for OV_GETVAR_RES
+*	XDR routines for RenameObject
 */
-OV_BOOL ov_ksserver_xdr_OV_GETVAR_RES(
-	XDR				*xdrs,
-	OV_GETVAR_RES	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_RES);
 
 /*
-*	XDR routine for OV_SETVAR_ITEM
+*	XDR routines for GetCanonicalPath
 */
-OV_BOOL ov_ksserver_xdr_OV_SETVAR_ITEM(
-	XDR				*xdrs,
-	OV_SETVAR_ITEM	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_GETCANONICALPATH_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_GETCANONICALPATHITEM_RES);
+OV_KSSERVER_DECL_XDRFNC(OV_GETCANONICALPATH_RES);
 
 /*
-*	XDR routine for OV_SETVAR_PAR
+*	XDR routines for Link
 */
-OV_BOOL ov_ksserver_xdr_OV_SETVAR_PAR(
-	XDR				*xdrs,
-	OV_SETVAR_PAR	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_LINK_RES);
 
 /*
-*	XDR routine for OV_SETVAR_RES
+*	XDR routines for Unlink
 */
-OV_BOOL ov_ksserver_xdr_OV_SETVAR_RES(
-	XDR				*xdrs,
-	OV_SETVAR_RES	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_RES);
 
 /*
-*	XDR routine for OV_EXGDATA_PAR
+*	XDR routines for GetHist
 */
-OV_BOOL ov_ksserver_xdr_OV_EXGDATA_PAR(
-	XDR				*xdrs,
-	OV_EXGDATA_PAR	*objp
-);
-
-/*
-*	XDR routine for OV_EXGDATA_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_EXGDATA_RES(
-	XDR				*xdrs,
-	OV_EXGDATA_RES	*objp
-);
-
-/*
-*	XDR routine for OV_DOMAIN_ENGINEERED_PROPS
-*/
-OV_BOOL ov_ksserver_xdr_OV_DOMAIN_ENGINEERED_PROPS(
-	XDR							*xdrs,
-	OV_DOMAIN_ENGINEERED_PROPS	*objp
-);
-
-/*
-*	XDR routine for OV_VAR_ENGINEERED_PROPS
-*/
-OV_BOOL ov_ksserver_xdr_OV_VAR_ENGINEERED_PROPS(
-	XDR						*xdrs,
-	OV_VAR_ENGINEERED_PROPS	*objp
-);
-
-/*
-*	XDR routine for OV_LINK_ENGINEERED_PROPS
-*/
-OV_BOOL ov_ksserver_xdr_OV_LINK_ENGINEERED_PROPS(
-	XDR							*xdrs,
-	OV_LINK_ENGINEERED_PROPS	*objp
-);
-
-/*
-*	XDR routine for OV_OBJ_ENGINEERED_PROPS
-*/
-OV_BOOL ov_ksserver_xdr_OV_OBJ_ENGINEERED_PROPS(
-	XDR						*xdrs,
-	OV_OBJ_ENGINEERED_PROPS	*objp
-);
-
-/*
-*	XDR routine for OV_GETEP_PAR
-*/
-OV_BOOL ov_ksserver_xdr_OV_GETEP_PAR(
-	XDR				*xdrs,
-	OV_GETEP_PAR	*objp
-);
-
-/*
-*	XDR routine for OV_GETEP_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_GETEP_RES(
-	XDR				*xdrs,
-	OV_GETEP_RES	*objp
-);
-
-/*
-*	XDR routine for OV_PLACEMENT
-*/
-OV_BOOL ov_ksserver_xdr_OV_PLACEMENT(
-	XDR				*xdrs,
-	OV_PLACEMENT	*objp
-);
-
-/*
-*	XDR routine for OV_LINK_ITEM
-*/
-OV_BOOL ov_ksserver_xdr_OV_LINK_ITEM(
-	XDR				*xdrs,
-	OV_LINK_ITEM	*objp
-);
-
-/*
-*	XDR routine for OV_UNLINK_ITEM
-*/
-OV_BOOL ov_ksserver_xdr_OV_UNLINK_ITEM(
-	XDR				*xdrs,
-	OV_UNLINK_ITEM	*objp
-);
-
-/*
-*	XDR routine for OV_CREATEOBJ_ITEM
-*/
-OV_BOOL ov_ksserver_xdr_OV_CREATEOBJ_ITEM(
-	XDR					*xdrs,
-	OV_CREATEOBJ_ITEM	*objp
-);
-
-/*
-*	XDR routine for OV_OV_CREATEOBJECT_PAR
-*/
-OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECT_PAR(
-	XDR					*xdrs,
-	OV_CREATEOBJECT_PAR	*objp
-);
-
-/*
-*	XDR routine for OV_CREATEOBJECTITEM_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECTITEM_RES(
-	XDR						*xdrs,
-	OV_CREATEOBJECTITEM_RES	*objp
-);
-
-/*
-*	XDR routine for OV_CREATEOBJECT_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECT_RES(
-	XDR					*xdrs,
-	OV_CREATEOBJECT_RES	*objp
-);
-
-/*
-*	XDR routine for OV_DELETEOBJECT_PAR
-*/
-OV_BOOL ov_ksserver_xdr_OV_DELETEOBJECT_PAR(
-	XDR					*xdrs,
-	OV_DELETEOBJECT_PAR	*objp
-);
-
-/*
-*	XDR routine for OV_DELETEOBJECT_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_DELETEOBJECT_RES(
-	XDR					*xdrs,
-	OV_DELETEOBJECT_RES	*objp
-);
-
-/*
-*	XDR routine for OV_RENAMEOBJECT_ITEM
-*/
-OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_ITEM(
-	XDR						*xdrs,
-	OV_RENAMEOBJECT_ITEM	*objp
-);
-
-/*
-*	XDR routine for OV_RENAMEOBJECT_PAR
-*/
-OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_PAR(
-	XDR					*xdrs,
-	OV_RENAMEOBJECT_PAR	*objp
-);
-
-/*
-*	XDR routine for OV_RENAMEOBJECT_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_RES(
-	XDR					*xdrs,
-	OV_RENAMEOBJECT_RES	*objp
-);
-
-/*
-*	XDR routine for OV_GETCANONICALPATH_PAR
-*/
-OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATH_PAR(
-	XDR						*xdrs,
-	OV_GETCANONICALPATH_PAR	*objp
-);
-
-/*
-*	XDR routine for OV_GETCANONICALPATHITEM_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATHITEM_RES(
-	XDR							*xdrs,
-	OV_GETCANONICALPATHITEM_RES	*objp
-);
-
-/*
-*	XDR routine for OV_GETCANONICALPATH_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_GETCANONICALPATH_RES(
-	XDR						*xdrs,
-	OV_GETCANONICALPATH_RES	*objp
-);
-
-/*
-*	XDR routine for OV_LINK_PAR
-*/
-OV_BOOL ov_ksserver_xdr_OV_LINK_PAR(
-	XDR			*xdrs,
-	OV_LINK_PAR	*objp
-);
-
-/*
-*	XDR routine for OV_LINK_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_LINK_RES(
-	XDR			*xdrs,
-	OV_LINK_RES	*objp
-);
-
-/*
-*	XDR routine for OV_UNLINK_PAR
-*/
-OV_BOOL ov_ksserver_xdr_OV_UNLINK_PAR(
-	XDR				*xdrs,
-	OV_UNLINK_PAR	*objp
-);
-
-/*
-*	XDR routine for OV_UNLINK_RES
-*/
-OV_BOOL ov_ksserver_xdr_OV_UNLINK_RES(
-	XDR				*xdrs,
-	OV_UNLINK_RES	*objp
-);
+OV_KSSERVER_DECL_XDRFNC(OV_ABSRELTIME);
+OV_KSSERVER_DECL_XDRFNC(OV_TIMEHISTSELECTOR);
+OV_KSSERVER_DECL_XDRFNC(OV_STRINGHISTSELECTOR);
+OV_KSSERVER_DECL_XDRFNC(OV_HISTSELECTOR);
+OV_KSSERVER_DECL_XDRFNC(OV_GETHIST_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_GETHISTRESULT_ITEM);
+OV_KSSERVER_DECL_XDRFNC(OV_GETHISTSINGLERESULT);
+OV_KSSERVER_DECL_XDRFNC(OV_GETHIST_PAR);
+OV_KSSERVER_DECL_XDRFNC(OV_GETHIST_RES);
 
 #endif	/* OV_COMPILE_LIBOVKS */
 

@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.1 1999-07-19 15:01:57 dirk Exp $
+#   $Id: Makefile,v 1.2 1999-07-26 16:14:03 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -53,9 +53,9 @@ OV_PLATFORM_DEFINES			= -DOV_DEBUG
 
 COMPILER		= BORLAND
 
-MKIMPDEF		= ../mkimpdef
-MKEXPDEF		= ../mkexpdef
-MKDLLDEF		= ../mkdlldef
+MKIMPDEF		= mkimpdef
+MKEXPDEF		= mkexpdef
+MKDLLDEF		= mkdlldef
 
 FLEX			= flex
 BISON			= bison
@@ -89,7 +89,7 @@ include ../generic.mk
 #	Targets
 #	-------
 
-targets: $(TARGETS)
+targets: $(TARGETS) $(OV_NTSERVICE_EXE)
 
 example: $(EXAMPLE)
 	@
@@ -190,6 +190,12 @@ $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVE
 	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
 	$(RC) $(filter %$(RES), $^) $@
 
+#	ACPLT/KS-Server for ACPLT/OV as Windows NT service
+
+$(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_NTSERVICE_RES)
+	$(LINK) -e$@ $(filter-out %$(RES), $^) $(C_LIBS)
+	$(RC) $(filter %$(RES), $^) $@
+
 #	ACPLT/OV example library
 #	------------------------
 
@@ -213,7 +219,7 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-for %i in ( $(TARGETS) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
+	@-for %i in ( $(ALL) $(OV_NTSERVICE_EXE) ) do copy %i $(subst /,\, $(PLT_BIN_DIR))
 	@echo Done.
 
 #	Clean up

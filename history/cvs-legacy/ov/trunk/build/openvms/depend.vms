@@ -190,7 +190,15 @@ ov_logfile.obj: [-.-.source.libov]ov_logfile.c \
  [-.-.include.libov]ov_config.h [-.-.include.libov]ov_version.h \
  [-.-.-.ks.include.ks]ks.h [-.-.-.ks.include.ks]rpc.h \
  [-.-.-.plt.include.plt]debug.h [-.-.-.plt.include.plt]config.h \
- [-.-.include.libov]ov_debug.h
+ [-.-.include.libov]ov_debug.h [-.-.include.libov]ov_time.h ov.h \
+ [-.-.include.libov]ov_library.h [-.-.include.libov]ov_structure.h \
+ [-.-.include.libov]ov_class.h [-.-.include.libov]ov_association.h \
+ [-.-.model]ov.ovt [-.-.include.libov]ov_variable.h \
+ [-.-.include.libov]ov_part.h [-.-.include.libov]ov_operation.h \
+ [-.-.model]ov.ovf [-.-.include.libov]ov_element.h \
+ [-.-.include.libov]ov_macros.h [-.-.include.libov]ov_database.h \
+ [-.-.include.libov]ov_vendortree.h [-.-.include.libov]ov_memstack.h \
+ [-.-.include.libov]ov_malloc.h
 ov_malloc.obj: [-.-.source.libov]ov_malloc.c \
  [-.-.include.libov]ov_malloc.h [-.-.include.libov]ov_ov.h \
  [-.-.include.libov]ov_config.h [-.-.include.libov]ov_version.h \
@@ -736,6 +744,36 @@ ov_ksserver_getep.obj: [-.-.source.libovks]ov_ksserver_getep.c \
  [-.-.include.libov]ov_string.h [-.-.include.libov]ov_vendortree.h \
  [-.-.include.libov]ov_macros.h [-.-.include.libov]ov_database.h \
  [-.-.include.libov]ov_malloc.h
+ov_ksserver_gethist.obj: [-.-.source.libovks]ov_ksserver_gethist.c \
+ [-.-.include.libovks]ov_ksserver.h \
+ [-.-.include.libovks]ov_ksserver_xdr.h [-.-.include.libov]ov_ov.h \
+ [-.-.include.libov]ov_config.h [-.-.include.libov]ov_version.h \
+ [-.-.-.ks.include.ks]ks.h [-.-.-.ks.include.ks]rpc.h \
+ [-.-.-.plt.include.plt]debug.h [-.-.-.plt.include.plt]config.h \
+ [-.-.include.libov]ov_debug.h [-.-.include.libov]ov_logfile.h \
+ [-.-.include.libov]ov_element.h ov.h \
+ [-.-.include.libov]ov_library.h [-.-.include.libov]ov_structure.h \
+ [-.-.include.libov]ov_class.h [-.-.include.libov]ov_association.h \
+ [-.-.model]ov.ovt [-.-.include.libov]ov_variable.h \
+ [-.-.include.libov]ov_part.h [-.-.include.libov]ov_operation.h \
+ [-.-.model]ov.ovf [-.-.include.libov]ov_memstack.h \
+ [-.-.-.plt.include.plt]log.h [-.-.-.ks.include.ks]server.h \
+ [-.-.-.ks.include.ks]svrbase.h [-.-.-.ks.include.ks]avticket.h \
+ [-.-.-.ks.include.ks]xdr.h [-.-.-.plt.include.plt]rtti.h \
+ [-.-.-.ks.include.ks]string.h [-.-.-.plt.include.plt]string.h \
+ [-.-.-.plt.include.plt]alloc.h [-.-.-.ks.include.ks]event.h \
+ [-.-.-.ks.include.ks]time.h [-.-.-.plt.include.plt]time.h \
+ [-.-.-.plt.include.plt]comparable.h \
+ [-.-.-.plt.include.plt]priorityqueue.h \
+ [-.-.-.plt.include.plt]container.h \
+ [-.-.-.plt.include.plt]handle.h \
+ [-.-.-.ks.include.ks]svrtransport.h [-.-.-.ks.include.ks]result.h \
+ [-.-.-.ks.include.ks]connectionmgr.h \
+ [-.-.-.ks.include.ks]connection.h [-.-.-.ks.include.ks]rpcproto.h \
+ [-.-.-.ks.include.ks]xdrtcpcon.h [-.-.include.libov]ov_path.h \
+ [-.-.include.libov]ov_string.h [-.-.include.libov]ov_time.h \
+ [-.-.include.libov]ov_macros.h [-.-.include.libov]ov_database.h \
+ [-.-.include.libov]ov_vendortree.h [-.-.include.libov]ov_malloc.h
 ov_ksserver_getpp.obj: [-.-.source.libovks]ov_ksserver_getpp.c \
  [-.-.include.libovks]ov_ksserver.h \
  [-.-.include.libovks]ov_ksserver_xdr.h [-.-.include.libov]ov_ov.h \

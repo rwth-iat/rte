@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.1 1999-07-19 15:02:04 dirk Exp $
+*   $Id: ov_ov.h,v 1.2 1999-07-26 16:14:07 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -270,6 +270,7 @@ typedef struct {
 #define OV_ERR_BADMASK				KS_ERR_BADMASK
 #define OV_ERR_NOACCESS				KS_ERR_NOACCESS
 #define OV_ERR_BADTYPE				KS_ERR_BADTYPE
+#define OV_ERR_BADSELECTOR			KS_ERR_BADSELECTOR
 #define OV_ERR_BADVALUE				KS_ERR_BADVALUE
     
 #define OV_ERR_BADFACTORY			KS_ERR_BADFACTORY
@@ -362,6 +363,82 @@ typedef OV_ENUM OV_PLACEMENT_HINT;
 #define OV_OS_ACTIVE	0x00000004		/* object is active */
 
 typedef OV_ENUM OV_OBJ_STATE;
+
+/*
+*	OV_TIME_TYPE:
+*	-------------
+*	Time types for use with ACPLT/KS histories
+*/
+#define KS_TT_ABSOLUTE	0x00000000		/* TODO! should be defined in ks.h... */
+#define KS_TT_RELATIVE	0x00000001		/* ...but is currently defined in selector.h */
+
+#define OV_TT_ABSOLUTE	KS_TT_ABSOLUTE
+#define OV_TT_RELATIVE	KS_TT_RELATIVE
+
+typedef OV_ENUM OV_TIME_TYPE;
+
+/*
+*	OV_HSEL_TYPE:
+*	-------------
+*	Selector types for use with ACPLT/KS histories
+*/
+#define KS_HSELT_NONE	0x00000000		/* TODO! should be defined in ks.h... */
+#define KS_HSELT_TIME	0x00000001		/* ...but is currently defined in selector.h */
+#define KS_HSELT_STRING	0x00000002		/* dto. */
+
+#define OV_HSELT_NONE	KS_HSELT_NONE
+#define OV_HSELT_TIME	KS_HSELT_TIME
+#define OV_HSELT_STRING	KS_HSELT_STRING
+
+typedef OV_ENUM OV_HSEL_TYPE;
+
+/*
+*	OV_HIST_TYPE:
+*	-------------
+*	History types for use with ACPLT/KS histories
+*/
+#define OV_HT_LOG			KS_HT_LOG
+#define OV_HT_BOOL			KS_HT_BOOL
+#define OV_HT_INT			KS_HT_INT
+#define OV_HT_UINT			KS_HT_UINT
+#define OV_HT_SINGLE		KS_HT_SINGLE
+#define OV_HT_DOUBLE		KS_HT_DOUBLE
+#define OV_HT_STRING		KS_HT_STRING
+#define OV_HT_TIME			KS_HT_TIME
+#define OV_HT_TIME_SPAN		KS_HT_TIME_SPAN
+#define OV_HT_TYPE_MASK		KS_HT_TYPE_MASK
+#define OV_HT_TIME_DRIVEN	KS_HT_TIME_DRIVEN
+#define OV_HT_CHANGE_DRIVEN	KS_HT_CHANGE_DRIVEN
+
+typedef OV_ENUM OV_HIST_TYPE;
+
+/*
+*	OV_INTERPOLATION_MODE:
+*	----------------------
+*	Interpolation modes for use with ACPLT/KS histories
+*/
+#define OV_IPM_NONE		KS_IPM_NONE
+#define OV_IPM_LINEAR	KS_IPM_LINEAR
+#define OV_IPM_MIN		KS_IPM_MIN
+#define OV_IPM_MAX		KS_IPM_MAX
+#define OV_IPM_HOLD		KS_IPM_HOLD
+#define OV_IPM_DEFAULT	KS_IPM_DEFAULT
+
+typedef OV_ENUM OV_INTERPOLATION_MODE;
+
+/*
+*	OV_MSG_TYPE:
+*	------------
+*	Type of a logfile message
+*/
+#define OV_MT_UNKNOWN	0x00000000
+#define OV_MT_INFO		0x00000001
+#define OV_MT_DEBUG		0x00000002
+#define OV_MT_WARNING	0x00000003
+#define OV_MT_ERROR		0x00000004
+#define OV_MT_ALERT		0x00000005
+
+typedef OV_ENUM OV_MSG_TYPE;
 
 /*
 *	different object name constants

@@ -1,5 +1,5 @@
 /*
-*   $Id: libov.rc,v 1.1 1999-07-19 15:02:12 dirk Exp $
+*   $Id: libov.rc,v 1.2 1999-07-26 16:14:13 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -29,14 +29,18 @@
 
 #include "libov/ov_version.h"
 
-#define OV_ICON	1
+#define OV_ICON			1
+#define OV_MESSAGE		1
 #define VERSIONINFO_1	1
+#define MESSAGE			11
 
 VERSIONINFO_1 VERSIONINFO 
-FILEVERSION 0, 0, 0, 0
-PRODUCTVERSION 0, 0, 0, 0
-FILEOS VOS_NT_WINDOWS32
-FILETYPE VFT_DLL
+
+FILEVERSION		OV_VER_FILEVERSION_LIBOV
+PRODUCTVERSION	OV_VER_PRODUCTVERSION_LIBOV
+
+FILEOS			VOS_NT_WINDOWS32
+FILETYPE		VFT_DLL
 {
  BLOCK "StringFileInfo"
  {
@@ -62,6 +66,9 @@ FILETYPE VFT_DLL
 }
 
 OV_ICON ICON "libov.ico"
+
+LANGUAGE 0x9,0x1
+OV_MESSAGE MESSAGE "libov.bin"
 
 /*
 *	End of file
