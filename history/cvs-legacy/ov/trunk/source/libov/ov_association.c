@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.13 2002-02-01 14:43:59 ansgar Exp $
+*   $Id: ov_association.c,v 1.14 2002-12-10 16:40:30 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -27,6 +27,7 @@
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 *	23-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Optimized (use of macros).
 *	17-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ONE_TO_ONE Link.
+*	10-Dec-2002 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (inheritance).
 */
 
 #define OV_COMPILE_LIBOV
@@ -107,15 +108,45 @@ CONTINUE:
 		*/
 
 		if (passoc->v_assoctype == OV_AT_ONE_TO_MANY) {
+
+			/*
+			*	if same class, memory for head and anchor of link must be allocated
+			*/
 			if (pparentclass==pchildclass) {
 				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
 			}
+			/*
+			*	if childclass is a superclass of parentclass, in parentclass the memory for head and anchor of link must be allocated
+			*	and in childclass only the memory for the link anchor
+			*/
+			else if (ov_class_cancastto(pparentclass, pchildclass)) {
+				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
+				if (Ov_Fail(result)) goto CONTINUEERR2;
+				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD) + sizeof(OV_ANCHOR));
+			}
+			/*
+			*	if parentclass is a superclass of childclass, in childclass memory for head and anchor of link must be allocated
+			*	and in parentclass only the memory for the link head
+			*/
+			else if (ov_class_cancastto(pchildclass, pparentclass)) {
+				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
+				if (Ov_Fail(result)) goto CONTINUEERR2;
+				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR) + sizeof(OV_HEAD));
+			}
+			/*
+			*	if parentclass and childclass have no common baseclass, in childclass memory for the anchor and
+			*	and in parentclass memory for the head must be allocated.
+			*/
 			else {
 				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_ANCHOR));
 				if (Ov_Fail(result)) goto CONTINUEERR2;
 				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_HEAD));
 			}
 			if (Ov_Fail(result)) goto CONTINUEERR1;
+			/*
+			*	after allocation, memory space is inserted for the new child/parent association and
+			*	and the offset parameter of the particular association objects is adapted.
+			*/
 			passoc->v_parentoffset = pparentclass->v_linktablesize;
 			ov_association_linktable_insert(pparentclass, pparentclass, sizeof(OV_HEAD), pparentclass->v_linktablesize);
 			passoc->v_childoffset = pchildclass->v_linktablesize;
@@ -123,6 +154,16 @@ CONTINUE:
 		}
 		if (passoc->v_assoctype == OV_AT_MANY_TO_MANY) {
 			if (pparentclass==pchildclass) {
+				result = ov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
+			}
+			else if (ov_class_cancastto(pparentclass, pchildclass)) {
+				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_NMHEAD));
+				if (Ov_Fail(result)) goto CONTINUEERR2;
+				result = ov_association_linktable_allocate(pparentclass, 2 * sizeof(OV_NMHEAD));
+			}
+			else if (ov_class_cancastto(pchildclass, pparentclass)) {
+				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_NMHEAD));
+				if (Ov_Fail(result)) goto CONTINUEERR2;
 				result = ov_association_linktable_allocate(pchildclass, 2 * sizeof(OV_NMHEAD));
 			}
 			else {
@@ -138,6 +179,16 @@ CONTINUE:
 		}
 		if (passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
 			if (pparentclass==pchildclass) {
+				result = ov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
+			}
+			else if (ov_class_cancastto(pparentclass, pchildclass)) {
+				result = ov_association_linktable_allocate(pchildclass, sizeof(OV_INSTPTR_ov_object));
+				if (Ov_Fail(result)) goto CONTINUEERR2;
+				result = ov_association_linktable_allocate(pparentclass,  2* sizeof(OV_INSTPTR_ov_object));
+			}
+			else if (ov_class_cancastto(pchildclass, pparentclass)) {
+				result = ov_association_linktable_allocate(pparentclass, sizeof(OV_INSTPTR_ov_object));
+				if (Ov_Fail(result)) goto CONTINUEERR2;
 				result = ov_association_linktable_allocate(pchildclass, 2* sizeof(OV_INSTPTR_ov_object));
 			}
 			else {
