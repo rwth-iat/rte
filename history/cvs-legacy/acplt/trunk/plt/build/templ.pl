@@ -1,3 +1,5 @@
+# Template linker
+
 if ("@ARGV" =~ m/\s(\w+)\.o\s/) {
     $objpref = $1;
     $objname = "$1.o";
@@ -6,8 +8,11 @@ if ("@ARGV" =~ m/\s(\w+)\.o\s/) {
     die('Cant find object file');
 }
 
-$compile = "gmake $objname";
+$make = $ENV{"MAKE"};
+$compile = "$make $objname";
 $link = "@ARGV";
+
+print STDERR "Template linker (c) 1997 ACPLT\n";
 
 #
 # Read include file
