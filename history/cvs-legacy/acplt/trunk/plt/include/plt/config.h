@@ -75,6 +75,9 @@
 #endif
 
 #if PLT_SYSTEM_NT
+#ifndef PLT_USE_NTLOG
+#define PLT_USE_NTLOG 1
+#endif
 #ifndef WIN32
 #define WIN32 1
 #endif
@@ -86,6 +89,10 @@
 
 #ifndef PLT_USE_CERRLOG
 #define PLT_USE_CERRLOG 1
+#endif
+
+#ifndef PLT_USE_NTLOG
+#define PLT_USE_NTLOG 0
 #endif
 
 #ifndef PLT_SIZE_T_MAX
