@@ -516,6 +516,7 @@ KscServer::wait(PltTime howLong)
         PLT_DMSG("Going to wait.." << endl);
         
         do {
+        		PLT_DMSG("Calling select" << endl);
             select(0, 0, 0, 0,
                    (const struct timeval *)(&howLong));
             now = PltTime::now();

@@ -7,7 +7,7 @@
  */
 
 #include "ks/value.h"
-#if PLT_DEBUG && PLT_COMPILER_MSVC
+#if PLT_DEBUG && (PLT_COMPILER_MSVC || PLT_COMPILER_BORLAND)
 #include <time.h>
 #endif
 

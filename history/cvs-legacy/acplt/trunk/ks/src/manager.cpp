@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.15 1997-09-04 12:36:01 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.16 1997-09-05 11:05:02 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -32,7 +32,7 @@
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-v * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
@@ -93,7 +93,7 @@ KsManager::getServerName() const
 KsString 
 KsManager::getServerDescription() const 
 { 
-    return KsString("ACPLT/KS Manager"); 
+    return KsString("ACPLT/KS Manager");
 }
 
 KsString 
@@ -114,13 +114,16 @@ class KsmServerIterator
 public:
 #if PLT_RETTYPE_OVERLOADABLE
     typedef KsmServerIterator THISTYPE;
+    #define KsmServerIterator_THISTYPE KsmServerIterator
+#else
+    #define KsmServerIterator_THISTYPE KssDomainIterator_THISTYPE
 #endif
     KsmServerIterator(const KsmServer & d)
         : _d(d), _what(0) { }
 
     virtual operator bool () const
         { return _what < STOP; }
-    
+
     virtual KssCommObjectHandle operator * () const;
 
     virtual THISTYPE & operator ++ ()
@@ -130,7 +133,7 @@ public:
         { _what = 0; }
 
 private:
-    enum { EXPIRES_AT, LIVING, PORT, STOP }; 
+    enum { EXPIRES_AT, LIVING, PORT, STOP };
     const KsmServer & _d;
     enum_t _what;
     static const char * _ids[4];
@@ -152,7 +155,8 @@ public:
 
     //// KssDomain
     //   accessors
-    virtual KsmServerIterator::THISTYPE * newIterator() const;
+    // virtual KsmServerIterator::THISTYPE * newIterator() const;
+    virtual KsmServerIterator_THISTYPE * newIterator() const;
 
 
 //  virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
@@ -178,31 +182,31 @@ PLT_IMPL_RTTI1(KsmServer, KssDomain);
 
 //////////////////////////////////////////////////////////////////////
 
-KsString 
+KsString
 KsmServer::getIdentifier() const
-{ 
-    return KsString::fromInt(desc.protocol_version); 
+{
+    return KsString::fromInt(desc.protocol_version);
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KsTime   
+KsTime
 KsmServer::getCreationTime() const
-{ 
-    return KsTime::now(); 
+{
+    return KsTime::now();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KsString 
+KsString
 KsmServer::getComment() const
-{ 
-    return KsString(); 
+{
+    return KsString();
 }
 
 //////////////////////////////////////////////////////////////////////
 
-KsmServerIterator::THISTYPE *
+KsmServerIterator_THISTYPE *
 KsmServer::newIterator() const
 {
     return new KsmServerIterator(*this);
@@ -211,7 +215,7 @@ KsmServer::newIterator() const
 //////////////////////////////////////////////////////////////////////
 
 
-const char * KsmServerIterator::_ids[4] = 
+const char * KsmServerIterator::_ids[4] =
 {
     "expires_at",
     "living",
@@ -221,8 +225,8 @@ const char * KsmServerIterator::_ids[4] =
 
 //////////////////////////////////////////////////////////////////////
 
-KssCommObjectHandle 
-KsmServerIterator::operator * () const 
+KssCommObjectHandle
+KsmServerIterator::operator * () const
 {
     KssSimpleVariable *pvar = new KssSimpleVariable(_ids[_what]);
     if (pvar) {
@@ -253,13 +257,13 @@ KsmServer::KsmServer(const KsServerDesc & d,
                      u_short p,
                      u_long ttl,
                      KsTime exp)
-: desc(d), 
-  port(p), 
-  expires_at(exp), 
+: desc(d),
+  port(p),
+  expires_at(exp),
   time_to_live(ttl),
-  living(true), 
-  pevent(0) 
-{ 
+  living(true),
+  pevent(0)
+{
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -280,8 +284,8 @@ KsManager::KsManager()
         // TODO: send/receive buff sz
         if (_udp_transport) {
             //
-            // Now register the dispatcher that should be called 
-            // whenever there is a request for the KS program id 
+            // Now register the dispatcher that should be called
+            // whenever there is a request for the KS program id
             // and the correct version number.
             //
             if ( !svc_register(_udp_transport,
@@ -306,10 +310,10 @@ KsManager::KsManager()
         // TODO: I'm lazy here with error checking...
         KssSimpleDomain *servers_manager =
             new KssSimpleDomain(getServerName());
-        
+
         KssSimpleDomain *servers_manager_version =
             new KssSimpleDomain(KsString::fromInt(getProtocolVersion()));
-        
+
         KssSimpleVariable *manager_port =
             new KssSimpleVariable("port");
 

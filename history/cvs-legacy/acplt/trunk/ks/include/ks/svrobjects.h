@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.7 1997-07-18 14:11:06 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.8 1997-09-05 11:04:57 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -76,6 +76,8 @@ typedef PltPtrHandle<KssCommObject> KssCommObjectHandle;
 // class KssDomainIterator
 //////////////////////////////////////////////////////////////////////
 
+#define KssDomainIterator_THISTYPE PltHandleIterator_THISTYPE(KssCommObject)
+
 typedef PltHandleIterator<KssCommObject> KssDomainIterator;
 
 //////////////////////////////////////////////////////////////////////
@@ -100,15 +102,15 @@ public:
 
     //// KssDomain
     //   accessors
-    virtual KssDomainIterator::THISTYPE * 
+    virtual KssDomainIterator_THISTYPE *
         newIterator() const = 0;
-    virtual KssDomainIterator::THISTYPE * 
+    virtual KssDomainIterator_THISTYPE *
         newMaskedIterator(const KsMask & name_mask,
-                          KS_OBJ_TYPE type_mask) 
+                          KS_OBJ_TYPE type_mask)
             const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
-    // ^ defaults to linear search on iterator, 
+    // ^ defaults to linear search on iterator,
     //   you should implement a more efficient version!!!
 
     virtual KssCommObjectHandle getChildByPath(const KsPath & path) const;
@@ -128,6 +130,9 @@ class KssMaskedDomainIterator
 public:
 #if PLT_RETTYPE_OVERLOADABLE
     typedef KssMaskedDomainIterator THISTYPE;
+    #define KssMaskedDomainIterator_THISTYPE KssMaskedDomainIterator
+#else
+	 #define KssMaskedDomainIterator_THISTYPE KssDomainIterator_THISTYPE
 #endif
 
     KssMaskedDomainIterator(const PltPtrHandle<KssDomainIterator> & hit,
@@ -155,7 +160,7 @@ class KssVariable
 public:
     //// KssCommObject
     ///  accessors
-    virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_VARIABLE; } 
+    virtual KS_OBJ_TYPE_ENUM typeCode() const { return KS_OT_VARIABLE; }
 
     // projected properties
     virtual KsString  getIdentifier() const = 0;
@@ -169,14 +174,14 @@ public:
     //   projected properties
     virtual KsString getTechUnit() const = 0;
     virtual KS_VAR_TYPE getType() const;
-    
+
     //   current properties
     virtual KsValueHandle getValue() const = 0;
     virtual KsTime        getTime() const;
     virtual KS_STATE      getState() const;
 
     KsCurrPropsHandle getCurrProps() const;
-    
+
     //// modifiers
     //   current properties
     virtual KS_RESULT     setValue(const KsValueHandle &) = 0;
@@ -193,6 +198,6 @@ public:
 
     PLT_DECL_RTTI;
 };
-        
+
 //////////////////////////////////////////////////////////////////////
 #endif // KS_SVROBJECTS_INCLUDED

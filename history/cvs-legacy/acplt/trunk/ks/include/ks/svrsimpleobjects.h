@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.8 1997-07-18 14:11:07 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.9 1997-09-05 11:04:58 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -33,7 +33,7 @@
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-v * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -94,6 +94,9 @@ class KssSimpleDomainIterator
 public:
 #if PLT_RETTYPE_OVERLOADABLE
     typedef KssSimpleDomainIterator THISTYPE;
+    #define KssSimpleDomainIterator_THISTYPE KssSimpleDomainIterator
+#else
+	 #define KssSimpleDomainIterator_THISTYPE KssDomainIterator_THISTYPE
 #endif
 
     KssSimpleDomainIterator(const KssSimpleDomain & d);
@@ -128,7 +131,7 @@ public:
 
     //// KssDomain ////
     //// accessors
-    virtual KssSimpleDomainIterator::THISTYPE * newIterator() const;
+    virtual KssSimpleDomainIterator_THISTYPE * newIterator() const;
 
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
 
@@ -141,9 +144,9 @@ public:
     size_t size() const;
 
     //// modifiers
-    bool                addChild(KssCommObjectHandle hChild); 
+    bool                addChild(KssCommObjectHandle hChild);
 
-    bool                addChild(KssCommObject *     pChild); 
+    bool                addChild(KssCommObject *     pChild);
     // implicit handle creation, usual caveats
 
     KssCommObjectHandle removeChild(const KsString &id);
@@ -182,12 +185,12 @@ public:
     //// accessors
     //   projected properties
     virtual KsString getTechUnit() const;
-    
+
     //   current properties
     virtual KsValueHandle getValue() const;
     virtual KsTime        getTime() const;
     virtual KS_STATE      getState() const;
-    
+
     //// modifiers
     //   projected properties
     void setTechUnit(const KsString &);
@@ -244,12 +247,12 @@ public:
     //// accessors
     //   projected properties
     virtual KsString getTechUnit() const;
-    
+
     //   current properties
     virtual KsValueHandle getValue() const;
     virtual KsTime        getTime() const;
     virtual KS_STATE      getState() const;
-    
+
     //// modifiers
     //   projected properties
     void setTechUnit(const KsString &);
@@ -305,7 +308,7 @@ KssSimpleCommObject::getComment() const
 
 //////////////////////////////////////////////////////////////////////
 
-inline void 
+inline void
 KssSimpleCommObject::setCreationTime(const KsTime &t)
 {
     _creation_time = t;
@@ -336,8 +339,8 @@ inline KsString KssSimpleDomain::getComment() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-inline KssSimpleDomainIterator::THISTYPE * 
-KssSimpleDomain::newIterator() const 
+inline KssSimpleDomainIterator_THISTYPE *
+KssSimpleDomain::newIterator() const
 {
     return new KssSimpleDomainIterator(*this);
 }

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.8 1997-07-18 14:11:17 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.9 1997-09-05 11:05:03 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -92,12 +92,12 @@ KssDomain::getPP() const
 
 //////////////////////////////////////////////////////////////////////
 
-KssDomainIterator::THISTYPE *
+KssDomainIterator_THISTYPE *
 KssDomain::newMaskedIterator(const KsMask & name_mask,
                              KS_OBJ_TYPE type_mask) const
 {
-    PltPtrHandle<KssDomainIterator> 
-        h(PLT_RETTYPE_CAST((KssDomainIterator *)) newIterator(), 
+    PltPtrHandle<KssDomainIterator>
+        h(PLT_RETTYPE_CAST((KssDomainIterator *)) newIterator(),
           PltOsNew);
     if (h) {
         return new KssMaskedDomainIterator(h, name_mask, type_mask);
@@ -109,7 +109,7 @@ KssDomain::newMaskedIterator(const KsMask & name_mask,
 //////////////////////////////////////////////////////////////////////
 
 KssCommObjectHandle
-KssDomain::getChildByPath(const KsPath & path) const 
+KssDomain::getChildByPath(const KsPath & path) const
 {
     PLT_PRECONDITION(path.isValid());
     // lookup child
@@ -134,7 +134,7 @@ KssDomain::getChildByPath(const KsPath & path) const
             }
         }
     } else {
-        // We don't know this child. 
+        // We don't know this child.
         return KssCommObjectHandle();
     }
 }
@@ -146,7 +146,7 @@ KssDomain::getChildByPath(const KsPath & path) const
 KssMaskedDomainIterator::KssMaskedDomainIterator
 (const PltPtrHandle<KssDomainIterator> & hit,
  const KsMask & name_mask,
- const KS_OBJ_TYPE type_mask) 
+ const KS_OBJ_TYPE type_mask)
 : _name_mask(name_mask),
   _type_mask(type_mask),
   _hit(hit),
@@ -172,7 +172,7 @@ KssMaskedDomainIterator::operator * () const
 
 //////////////////////////////////////////////////////////////////////
 
-KssMaskedDomainIterator::THISTYPE & 
+KssMaskedDomainIterator_THISTYPE	 &
 KssMaskedDomainIterator::operator ++ ()
 {
     ++_it;
@@ -194,9 +194,9 @@ KssMaskedDomainIterator::skipWhileNotMatching()
                 && 1==_name_mask.matches(obj.getIdentifier())) {
                 // Match! Stop skipping
                 return;
-            } 
+            }
         } else {
-            // Nullhandle. Mhmm. TODO: Is this a match? 
+            // Nullhandle. Mhmm. TODO: Is this a match?
             // For now, it is not.
         }
     }
@@ -204,7 +204,7 @@ KssMaskedDomainIterator::skipWhileNotMatching()
 
 //////////////////////////////////////////////////////////////////////
 
-void 
+void
 KssMaskedDomainIterator::toStart()
 {
     _it.toStart();
@@ -235,7 +235,7 @@ KssVariable::getPP() const
 /////////////////////////////////////////////////////////////////////////////
 
 KS_VAR_TYPE
-KssVariable::getType() const 
+KssVariable::getType() const
 {
     KsValueHandle vh = getValue();
     return vh ? vh->xdrTypeCode() : KS_VT_VOID;
@@ -270,7 +270,7 @@ KssVariable::getCurrProps() const
     KsValueHandle vh(getValue());
     if (vh) {
         // There was a value.
-        KsCurrPropsHandle hprops(new KsVarCurrProps(vh, 
+        KsCurrPropsHandle hprops(new KsVarCurrProps(vh,
                                                     getTime(),
                                                     getState()),
                                  KsOsNew);

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.8 1997-07-18 14:11:18 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.9 1997-09-05 11:05:04 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -167,7 +167,7 @@ KssSimpleDomainIterator::operator * () const
 
 //////////////////////////////////////////////////////////////////////
 
-KssSimpleDomainIterator::THISTYPE & 
+KssSimpleDomainIterator_THISTYPE &
 KssSimpleDomainIterator::operator ++ ()
 {
     PLT_ASSERT(*this);

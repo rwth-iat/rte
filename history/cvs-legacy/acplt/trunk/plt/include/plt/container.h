@@ -107,6 +107,9 @@ class PltHandleIterator
 public:
 #if PLT_RETTYPE_OVERLOADABLE
     typedef PltHandleIterator THISTYPE;
+    #define PltHandleIterator_THISTYPE(T) PltHandleIterator<T>
+#else
+    #define PltHandleIterator_THISTYPE(T) PltIterator_<T>
 #endif
     virtual PltPtrHandle<T> operator * () const = 0; // current element
     virtual THISTYPE & operator ++ () = 0;  // advance
@@ -162,7 +165,8 @@ class PltHandleContainer
 {
 public:
     virtual size_t size() const;
-    virtual PltHandleIterator<T>::THISTYPE * newIterator() const = 0;
+    // virtual PltHandleIterator<T>::THISTYPE * newIterator() const = 0;
+    virtual PltHandleIterator_THISTYPE(T) * newIterator() const = 0;
 };
 
 
