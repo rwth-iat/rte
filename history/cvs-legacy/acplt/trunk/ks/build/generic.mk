@@ -3,7 +3,6 @@
 
 CXX_LIBKS_SOURCES = \
 	array.cpp \
-	from_local.cpp \
 	path.cpp \
 	props.cpp \
 	register.cpp \
@@ -22,6 +21,7 @@ CXX_LIBKS_SOURCES = \
 CXX_LIBKSSVR_SOURCES = \
 	avticket.cpp \
 	inaddrset.cpp \
+	hostinaddrset.cpp \
 	manager.cpp \
 	server.cpp \
 	simpleserver.cpp \
@@ -42,7 +42,6 @@ CXX_LIBKSCLN_SOURCES= \
 
 LIBKS_OBJECTS1 = \
 	array$(O) \
-	from_local$(O) \
 	path$(O) \
 	props$(O) \
 	register$(O) \
@@ -64,6 +63,7 @@ LIBKS_OBJECTS = $(LIBKS_OBJECTS1) $(LIBKS_OBJECTS2)
 LIBKSSVR_OBJECTS1 = \
 	avticket$(O) \
         inaddrset$(O) \
+	hostinaddrset$(O) \
 	manager$(O) \
 	server$(O) \
 	simpleserver$(O)
