@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.6 2000-07-05 16:25:30 dirk Exp $
+*   $Id: ov_config.h,v 1.7 2002-07-09 09:45:42 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -222,7 +222,11 @@
 #define mc68000 0
 #define sparc 0
 #define vax 0
+#if PLT_USE_WINSOCK2
+#include <winsock2.h>
+#else
 #include <winsock.h>
+#endif
 #endif
 
 #if OV_SYSTEM_MC164
