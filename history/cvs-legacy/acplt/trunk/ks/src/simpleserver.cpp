@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.10 1997-07-18 14:11:16 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.11 1997-09-02 15:09:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -231,7 +231,8 @@ KsSimpleServer::getPP(KsAvTicket &ticket,
                         for (KssDomainIterator &it = *pit; it; ++it) {
                             if (*it) {
                                 // check if the child is visible
-                                PltString childname(params.path,
+                                PltString tmp(params.path,"/");
+                                PltString childname(tmp,
                                                     (*it)->getIdentifier());
                                 if (ticket.isVisible(childname)) {
                                     // Ask for proj properties
