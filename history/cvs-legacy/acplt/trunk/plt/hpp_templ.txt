@@ -1,0 +1,13 @@
+/* -*-plt-c++-*- */
+/* 
+ *  Copyright (c) 1996 PLT, RWTH-Aachen, Germany. See file copy_plt.txt!
+ *  Author: Martin Kneissl <martin@plt.rwth-aachen.de>
+ *
+ */
+
+#ifndef PLT_xxx_INCLUDED
+#define PLT_xxx_INCLUDED
+
+#include <plt/debug.h>
+
+#endif
