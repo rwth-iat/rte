@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.27 2000-10-27 07:49:12 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/simpleserver.cpp,v 1.28 2001-01-25 10:02:56 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -580,9 +580,14 @@ KsSimpleServer::addCommObject(const KsPath & dompath,
             PLT_DYNAMIC_PCAST(KssSimpleDomain, hd.getPtr());
         if (pd) {
             //
-            // It is a simple domain. Add the child.
-           //
-           return pd->addChild(ho);
+            // It is a simple domain. Add the child. But only add it
+            // if a child with the same name does not exist yet.
+            //
+            if ( !pd->getChildById(ho->getIdentifier()) ) {
+                return pd->addChild(ho);
+            } else {
+                return false;
+            }
         } else {
             //
             // Not a simple domain.
@@ -753,7 +758,7 @@ KsSimpleServer::initVendorTree()
     startup_time.lock();
     KssCommObjectHandle startup_time_handle(&startup_time, KsOsUnmanaged);
     //
-    // "Man soll den Esel der da drischt nicht das Maul verbinden."
+    // "Man soll dem Esel der da drischt nicht das Maul verbinden."
     //
     static KssSimpleVariable fame("ks_comm_lib_fame", KsTime::now(),
 				  "the people behind the ACPLT/KS "
@@ -771,17 +776,22 @@ KsSimpleServer::initVendorTree()
     KsPath vendor("/vendor");
     KsPath modules("/vendor/modules");
     KsPath modks("/vendor/modules/acpltks");
+    
+    //
+    // Add some domains but ignore errors for now, as they might have already
+    // been created earlier by someone, so we can just use them.
+    //
     addDomain(KsPath("/"), "vendor",
-              "vendor and server-specific information"); // ignore error, may already exist.
-
+              "vendor and server-specific information");
+    addDomain(vendor, "extensions", "protocol extension information");
+    addDomain(vendor, "modules", "information about server modules");
+    addDomain(vendor, "specific", "additional vendor-specific information");
+    
+    //
+    // But from here on we can not ignore any errors.
+    //
     return
-           addDomain(vendor, "extensions", "protocol extension information")
-
-        && addDomain(vendor, "modules", "information about server modules")
-
-        && addDomain(vendor, "specific", "additional vendor-specific information")
-
-        && addCommObject(vendor, server_time_handle)
+           addCommObject(vendor, server_time_handle)
 
         && addStringVar(vendor, "server_name",
                         getServerName(),
