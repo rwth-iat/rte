@@ -138,20 +138,28 @@ KscClient::_createClient()
         PltLog::Alert("Cannot create client, going to abort program");
         exit(-1);
     }
-    bool ok = setClient(cl, true);
+    bool ok = setClient(cl, KsOsNew);
     PLT_ASSERT(ok);
 }
 
 //////////////////////////////////////////////////////////////////////
 
 bool 
-KscClient::setClient(KscClient *cl, bool shutdownDelete)
+KscClient::setClient(KscClient *cl, KsOwnership os)
 {
     if(_the_client || !cl) {
         return false;
     } else {
+        if(os == KsOsNew) {
+            _clean_up.shutdown_delete = true;
+        } else if(KsOsUnmanaged) {
+            _clean_up.shutdown_delete = false;
+        } else {
+            // invalid ownership status
+            return false;
+        }
         _the_client = cl;
-        _clean_up.shutdown_delete = shutdownDelete;
+
         return true;
     }
 }
@@ -359,9 +367,15 @@ KscServer::setTimeouts(const PltTime &rpc_timeout,
     _retries = retries;
 
     if(pClient) {
+#if PLT_SYSTEM_SOLARIS
+        bool ok = clnt_control(pClient,
+                               CLSET_TIMEOUT,
+                               (char *)((struct timeval *)(&_rpc_timeout)));
+#else
         bool ok = clnt_control(pClient,
                                CLSET_TIMEOUT,
                                (struct timeval *)(&_rpc_timeout));
+#endif
         if(!ok) {
             PltLog::Warning("Failed to specifify timeout value for RPC");
         }
@@ -469,8 +483,13 @@ KscServer::createTransport()
 
     // set timeout 
     //
+#if PLT_SYSTEM_SOLARIS
+    bool ok = clnt_control(pClient, CLSET_TIMEOUT, 
+                           (char *)((struct timeval *)(&_rpc_timeout)));
+#else
     bool ok = clnt_control(pClient, CLSET_TIMEOUT, 
                            (struct timeval *)(&_rpc_timeout));
+#endif
     if(!ok) {
         PltLog::Warning("Failed to specify timeout value for RPC");
     }

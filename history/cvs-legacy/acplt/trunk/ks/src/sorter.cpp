@@ -123,6 +123,15 @@ KscSorterBucket::getSortedVars()
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+KscSorter::KscSorter(const KscPackage &pkg,
+                     bool dirty_only)
+: fDirtyOnly(dirty_only)
+{
+    valid = sortVariables(pkg, pkg.getAvModule());
+}
+
+//////////////////////////////////////////////////////////////////////
+
 KscSorter::~KscSorter() 
 {
 }
@@ -130,14 +139,15 @@ KscSorter::~KscSorter()
 //////////////////////////////////////////////////////////////////////
 
 const KscAvModule *
-KscSorter::findAvModule(const KscVariable *var)
+KscSorter::findAvModule(const KscVariable *var,
+                        const KscAvModule *avm_package)
 {
     const KscAvModule *temp = var->getAvModule();
 
     if( temp ) {
         return temp;
-    } else if( (temp = rel_pkg.getAvModule()) ) {
-        return temp;
+    } else if( avm_package ) {
+        return avm_package;
     } else if( (temp = var->getServer()->getAvModule()) ) {
         return temp;
     } else {
@@ -181,14 +191,21 @@ KscSorter::removeMatchingBucket(KscBucketHandle bucket)
 //////////////////////////////////////////////////////////////////////
 
 bool
-KscSorter::sortVars()
+KscSorter::sortVariables(const KscPackage &pkg,
+                         const KscAvModule *avm_default)
 {
+    // use AV-module of pkg if set
+    //
+    if(pkg.getAvModule()) {
+        avm_default = pkg.getAvModule();
+    }
+
     // iterate over variables and
     // (1) add a variable to the approbiate bucket if it exists
     // (2) create a new bucket if neccessary and add variable
     //
     PltIterator<KscVariableHandle> *var_it = 
-        rel_pkg.newVariableIterator(false);
+        pkg.newVariableIterator(false);
     if(!var_it) return false;
 
     bool ok = true;
@@ -197,7 +214,7 @@ KscSorter::sortVars()
     while(ok && *var_it) {
         KscVariableHandle current = **var_it;
         if( !fDirtyOnly || current->isDirty() ) { 
-            Key key(findAvModule(current.getPtr()),
+            Key key(findAvModule(current.getPtr(), avm_default),
                     current->getServer());
             KscBucketHandle bucket;
             
@@ -224,32 +241,31 @@ KscSorter::sortVars()
     }
 
     delete var_it;
-    var_it = 0;
 
-    if(!ok) return false;
+    if(ok) {
+        return sortSubpackages(pkg, avm_default);
+    } else {
+        return false;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KscSorter::sortSubpackages(const KscPackage &pkg,
+                           const KscAvModule *avm_default)
+{
+    bool ok = true;
 
     // iterate over the subpackages and sort their variables too
     //
     KscSubpackageIterator *pkg_it =
-        rel_pkg.newSubpackageIterator();
+        pkg.newSubpackageIterator();
     if(!pkg_it) return false;
 
     while(ok && *pkg_it) {
-        KscSorter sub_sorter(***pkg_it, fDirtyOnly);
+        ok = sortVariables(***pkg_it, avm_default);
         ++(*pkg_it);
-        if( (ok = sub_sorter.isValid()) ) {
-            while(!sub_sorter.isEmpty()) {
-                KscBucketHandle new_bucket = sub_sorter.removeFirst();
-                Key key(new_bucket->getAvModule(),
-                        new_bucket->getServer());
-                KscBucketHandle matching_bucket;
-                if(table.query(key, matching_bucket)) {
-                    ok = matching_bucket->add(new_bucket);
-                } else {
-                    ok = table.add(key, new_bucket);
-                }
-            }
-        }
     }
 
     delete pkg_it;

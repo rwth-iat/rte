@@ -464,11 +464,11 @@ buildAllPackage()
         KsString path(hostAndServer+"/restricted/writeme");
         KscVariableHandle hvar(new KscVariable(path), KsOsNew);
 //        result->add(hvar);
-//        hvar->setAvModule(&av_simple_write);
+        hvar->setAvModule(&av_simple_write);
         KscPackageHandle hsub(new KscPackage, KsOsNew);
         hsub->add(hvar);
         result->add(hsub);
-        hsub->setAvModule(&av_simple_write);
+//        hsub->setAvModule(&av_simple_write);
 #endif
     }
     return result;
@@ -513,6 +513,13 @@ main(int argc, char *argv[])
     cout << "************************************************************" << endl;
     cout << "Going to read package without AV-Module" << endl;
     readPackage(all);
+
+#if 0
+    all->setAvModule(&av_simple_write);
+    cout << "************************************************************" << endl;
+    cout << "Going to read package with AVSimple-Module" << endl;
+    readPackage(all);
+#endif
 
 #if 0
     // deletes package, creates a new one

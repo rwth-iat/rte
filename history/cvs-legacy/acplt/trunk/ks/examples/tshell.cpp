@@ -175,6 +175,10 @@ sz_var_type(KS_VAR_TYPE vt)
     case KS_VT_VOID :
         return "void\t\t";
         break;
+    
+    case KS_VT_BOOL :
+        return "bool\t\t";
+        break;
 
     case KS_VT_INT :
         return "int\t\t";
@@ -202,6 +206,10 @@ sz_var_type(KS_VAR_TYPE vt)
 
     case KS_VT_BYTE_VEC :
         return "byte vec\t";
+        break;
+
+    case KS_VT_BOOL_VEC :
+        return "bool vec\t";
         break;
 
     case KS_VT_INT_VEC :
@@ -311,6 +319,14 @@ print_value(KsValueHandle hv) {
             cout << "void" << endl;
         } 
         break;
+    case KS_VT_BOOL :
+        {
+            KsBoolValue *pBool =
+                PLT_DYNAMIC_PCAST(KsBoolValue, hv.getPtr());
+            check_pointer(pBool);
+            cout << "Bool " << ((bool)(*pBool) ? "true" : "false") << endl;
+        }
+        break;
     case KS_VT_INT : 
         {
             KsIntValue *pInt =
@@ -365,6 +381,7 @@ print_value(KsValueHandle hv) {
         }
         break;
     case KS_VT_BYTE_VEC :
+    case KS_VT_BOOL_VEC :
     case KS_VT_INT_VEC :
     case KS_VT_UINT_VEC :
     case KS_VT_SINGLE_VEC :

@@ -160,11 +160,14 @@ private:
 
     friend class ValueIterator;
 
-    bool sortVars();
-    const KscAvModule *findAvModule(const KscVariable *);
+    bool sortVariables(const KscPackage &, 
+                       const KscAvModule *);
+    bool sortSubpackages(const KscPackage &,
+                         const KscAvModule *);
+    const KscAvModule *findAvModule(const KscVariable *, 
+                                    const KscAvModule *);
 
     bool valid;
-    const KscPackage &rel_pkg;
     bool fDirtyOnly;
     PltHashTable<Key,KscBucketHandle> table;
 };
@@ -302,17 +305,6 @@ KscSorterBucket::newVarIterator() const
 }
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-inline
-KscSorter::KscSorter(const KscPackage &pkg,
-                     bool dirty_only)
-: rel_pkg(pkg), 
-  fDirtyOnly(dirty_only)
-{
-    valid = sortVars();
-}
-
 //////////////////////////////////////////////////////////////////////
 
 inline

@@ -92,8 +92,9 @@ public:
     // KscDomain object in order to use a class derived from
     // KscClient as client object
     // returns false if a client is already set
+    // os must be KsOsNew or KsOsUnmanaged
     //
-    static bool setClient(KscClient *cl, bool shutdownDelete);
+    static bool setClient(KscClient *cl, KsOwnership os);
 
     // find server by name, maybe returns 0
     //

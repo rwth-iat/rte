@@ -92,6 +92,37 @@ typedef KsPtrHandle<KsValue> KsValueHandle;
 
 //////////////////////////////////////////////////////////////////////
 
+class KsBoolValue
+: public KsValue 
+{
+public:
+    KsBoolValue(bool = false);
+
+    operator bool () const;
+    KsBoolValue & operator = (bool b);
+
+    virtual enum_t xdrTypeCode() const { return KS_VT_BOOL; }
+
+protected:
+    virtual bool xdrEncodeVariant(XDR *xdr) const;
+    virtual bool xdrDecodeVariant(XDR *);
+
+private:
+    bool val;
+
+    friend class KsValue;
+    KsBoolValue(XDR *, bool &);
+    
+    PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream & ostr) const;
+#endif
+};
+
+
+//////////////////////////////////////////////////////////////////////
 class KsIntValue
 : public KsValue 
 {
@@ -369,6 +400,25 @@ private:
 
 };
 
+//////////////////////////////////////////////////////////////////////
+// class KsBoolVecValue
+//////////////////////////////////////////////////////////////////////
+
+class KsBoolVecValue 
+: public KsVecValueBase<bool>
+{
+public:
+    KsBoolVecValue(size_t size = 0);
+    KsBoolVecValue(size_t size, bool *p, PltOwnership os);
+
+    enum_t xdrTypeCode() const;
+
+private:
+    friend class KsValue;
+    KsBoolVecValue(XDR *, bool &);
+
+    PLT_DECL_RTTI;
+};
 
 //////////////////////////////////////////////////////////////////////
 // class KsIntVecValue
@@ -514,6 +564,41 @@ KsValue::xdrDecodeCommon(XDR *)
     return true;
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsBoolValue::KsBoolValue(bool b) 
+: val(b)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsBoolValue::KsBoolValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline 
+KsBoolValue::operator bool () const
+{
+    return val;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline KsBoolValue &
+KsBoolValue::operator = (bool b)
+{
+    val = b;
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 inline
@@ -781,6 +866,29 @@ inline
 KsByteVecValue::KsByteVecValue(XDR *xdr, bool &ok)
 {
     ok = KsArray<char>::xdrDecode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsBoolVecValue::KsBoolVecValue(size_t size)
+: KsVecValueBase<bool>(size)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsBoolVecValue::KsBoolVecValue(size_t size, bool *p, PltOwnership os)
+: KsVecValueBase<bool>(size, p, os)
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsBoolVecValue::KsBoolVecValue(XDR *xdr, bool &ok)
+{
+    ok = xdrDecodeVariant(xdr);
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -16,6 +16,7 @@
 //////////////////////////////////////////////////////////////////////
 
 PLT_IMPL_RTTI1(KsValue,KsXdrUnion);
+PLT_IMPL_RTTI1(KsBoolValue,KsValue);
 PLT_IMPL_RTTI1(KsIntValue,KsValue);
 PLT_IMPL_RTTI1(KsUIntValue,KsValue);
 PLT_IMPL_RTTI1(KsSingleValue,KsValue);
@@ -27,6 +28,7 @@ PLT_IMPL_RTTI1(KsVoidValue,KsValue);
 // RTTI skips KsVecValueBase!!!
 
 PLT_IMPL_RTTI1(KsByteVecValue, KsValue);
+PLT_IMPL_RTTI1(KsBoolVecValue, KsValue);
 PLT_IMPL_RTTI1(KsIntVecValue, KsValue);
 PLT_IMPL_RTTI1(KsUIntVecValue, KsValue);
 PLT_IMPL_RTTI1(KsSingleVecValue, KsValue);
@@ -37,6 +39,7 @@ PLT_IMPL_RTTI1(KsTimeVecValue, KsValue);
 //////////////////////////////////////////////////////////////////////
 
 KS_BEGIN_IMPL_XDRUNION(KsValue);
+KS_XDR_MAP(KS_VT_BOOL,KsBoolValue);
 KS_XDR_MAP(KS_VT_INT,KsIntValue);
 KS_XDR_MAP(KS_VT_UINT,KsUIntValue);
 KS_XDR_MAP(KS_VT_SINGLE,KsSingleValue);
@@ -45,6 +48,7 @@ KS_XDR_MAP(KS_VT_STRING,KsStringValue);
 KS_XDR_MAP(KS_VT_TIME,KsTimeValue);
 KS_XDR_MAP(KS_VT_VOID,KsVoidValue);
 KS_XDR_MAP(KS_VT_BYTE_VEC, KsByteVecValue);
+KS_XDR_MAP(KS_VT_BOOL_VEC, KsBoolVecValue);
 KS_XDR_MAP(KS_VT_INT_VEC, KsIntVecValue);
 KS_XDR_MAP(KS_VT_UINT_VEC, KsUIntVecValue);
 KS_XDR_MAP(KS_VT_SINGLE_VEC, KsSingleVecValue);
@@ -61,13 +65,13 @@ KS_END_IMPL_XDRUNION;
 
 #if PLT_INSTANTIATE_TEMPLATES
 template class KsVecValueBase<char>;
+template class KsVecValueBase<bool>;
 template class KsVecValueBase<long>;
 template class KsVecValueBase<u_long>;
 template class KsVecValueBase<float>;
 template class KsVecValueBase<double>;
 template class KsVecValueBase<KsTime>;
 template class KsVecValueBase<KsString>;
-
 #endif
 
 
@@ -82,6 +86,32 @@ KsValue::debugPrint(ostream & ostr) const
 }
 
 #endif
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsBoolValue::xdrEncodeVariant(XDR *xdr) const 
+{
+    return ks_xdre_bool(xdr,&val);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsBoolValue::xdrDecodeVariant(XDR *xdr)
+{
+    return ks_xdrd_bool(xdr,&val);
+}
+
+//////////////////////////////////////////////////////////////////////
+#if PLT_DEBUG
+void
+KsBoolValue::debugPrint(ostream & ostr) const
+{
+    ostr << "KsBoolValue{" << (val ? "true" : "false") << "}";
+}
+#endif
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -339,6 +369,14 @@ enum_t
 KsByteVecValue::xdrTypeCode() const
 {
     return KS_VT_BYTE_VEC;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+enum_t
+KsBoolVecValue::xdrTypeCode() const
+{
+    return KS_VT_BOOL_VEC;
 }
 
 //////////////////////////////////////////////////////////////////////

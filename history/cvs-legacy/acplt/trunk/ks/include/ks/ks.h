@@ -123,6 +123,7 @@ typedef enum_t KS_STATE;
 
 enum KS_VAR_TYPE_ENUM {
     KS_VT_VOID       = 0x00,
+    KS_VT_BOOL       = 0x02,
     KS_VT_INT        = 0x10,
     KS_VT_UINT       = 0x11,
     KS_VT_SINGLE     = 0x20,
@@ -130,6 +131,7 @@ enum KS_VAR_TYPE_ENUM {
     KS_VT_STRING     = 0x30,
     KS_VT_TIME       = 0x31,
     KS_VT_BYTE_VEC   = 0x81,
+    KS_VT_BOOL_VEC   = 0x82,
     KS_VT_INT_VEC    = 0x90,
     KS_VT_UINT_VEC   = 0x91,
     KS_VT_SINGLE_VEC = 0xA0,
