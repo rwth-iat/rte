@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.14 2000-10-23 10:17:31 dirk Exp $
+*   $Id: ov_macros.h,v 1.15 2001-07-20 07:21:36 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -54,6 +54,12 @@
 	OV_CCI_##assoc))))
 
 /*
+*	Get child in a 1:1 association
+*/
+#define Ov_GetChild(assoc, pparent)									\
+	((OV_CPT_##assoc)((pparent)?((pparent)->OV_CRN_##assoc.pchild):(NULL)))
+
+/*
 *	Get first child in a 1:n association
 */
 #define Ov_GetFirstChild(assoc, pparent)									\
@@ -78,7 +84,7 @@
 	((OV_CPT_##assoc)((pchild)?((pchild)->OV_PRN_##assoc.pprevious):(NULL)))
 
 /*
-*	Get parent in a 1:n association
+*	Get parent in a 1:1 or in a 1:n association
 */
 #define Ov_GetParent(assoc, pchild)											\
 	((OV_PPT_##assoc)((pchild)?((pchild)->OV_PRN_##assoc.pparent):(NULL)))

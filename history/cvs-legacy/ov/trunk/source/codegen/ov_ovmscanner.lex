@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmscanner.lex,v 1.7 2000-02-10 13:06:58 dirk Exp $
+*   $Id: ov_ovmscanner.lex,v 1.8 2001-07-20 07:21:40 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -135,6 +135,7 @@ CPP_DIRECTIVE	\#{SPACE}{UINT}{SPACE}\"[^ \t\n]+\"({SPACE}{UINT})?{SPACE_OPT}\n
 "SINGLE_PV"			{ yylval.vartype = OV_VT_SINGLE_PV;	return TOK_VARTYPE; }
 "ANY"				{ yylval.vartype = OV_VT_ANY;		return TOK_VARTYPE; }
 
+"ONE_TO_ONE"		{ yylval.assoctype = OV_AT_ONE_TO_ONE;		return TOK_ASSOCTYPE; }
 "ONE_TO_MANY"		{ yylval.assoctype = OV_AT_ONE_TO_MANY;		return TOK_ASSOCTYPE; }
 "MANY_TO_MANY"		{ yylval.assoctype = OV_AT_MANY_TO_MANY;	return TOK_ASSOCTYPE; }
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.1 2001-07-09 12:52:02 ansgar Exp $
+*   $Id: ov_builder.c,v 1.2 2001-07-20 07:21:38 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -36,7 +36,6 @@
 /*
 *	Global variables
 */
-#define OV_VER_BUILDER "1.0"
 
 #if OV_SYSTEM_OPENVMS
 OV_STRING		outputpath = "";
@@ -272,6 +271,15 @@ int ov_builder_createsourcefiles(
 			return EXIT_FAILURE;
 		}
 		/*
+		*	insert OV_COMPILE_LIBRARY option
+		*/
+		fprintf(fp, "\n");
+		fprintf(fp, "#ifndef OV_COMPILE_LIBRARY_%s\n", plib->identifier);
+		fprintf(fp, "#define OV_COMPILE_LIBRARY_%s\n", plib->identifier);
+		fprintf(fp, "#endif\n");
+		fprintf(fp, "\n");
+
+		/*
 		*	insert include files
 		*/
 		fprintf(fp, "\n");
@@ -416,8 +424,9 @@ int ov_builder_createsourcefiles(
 			else {
 				while (fscanf(rfp, "%s", text1)!=EOF) {
 					if (strncmp(text1, pop->cfnctypename,strlen(pop->cfnctypename))==0) {
-						fprintf(fp,"OV_DLLFNCEXPORT %s %s_%s_%s(",
+						fprintf(fp,"OV_DLLFNCEXPORT %s %s_%s_%s",
 							text2,plib->identifier,pclass->identifier,pop->identifier);
+						if (text1[strlen(text1)-1] == '(') fprintf(fp,"(");
 						while ( (fscanf(rfp, "%c", &text1[0])!=EOF) && (text1[0]!=';')) {
 							fprintf(fp,"%c",text1[0]);
 						}
@@ -437,6 +446,15 @@ int ov_builder_createsourcefiles(
 		if(!fp) {
 			return EXIT_FAILURE;
 		}
+		/*
+		*	insert OV_COMPILE_LIBRARY option
+		*/
+		fprintf(fp, "\n");
+		fprintf(fp, "#ifndef OV_COMPILE_LIBRARY_%s\n", plib->identifier);
+		fprintf(fp, "#define OV_COMPILE_LIBRARY_%s\n", plib->identifier);
+		fprintf(fp, "#endif\n");
+		fprintf(fp, "\n");
+
 		/*
 		*	insert include files
 		*/

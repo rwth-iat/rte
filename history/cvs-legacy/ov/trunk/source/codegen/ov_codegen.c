@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.13 2001-07-09 12:23:45 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.14 2001-07-20 07:21:40 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -370,6 +370,10 @@ int ov_codegen_createheaderfile(
 	*/
 	for(passoc=plib->associations; passoc; passoc=passoc->pnext) {
 		switch(passoc->assoctype) {
+		case OV_AT_ONE_TO_ONE:
+			fprintf(fp, "OV_TYPEDEF_SLINKS(%s_%s);\n", plib->identifier,
+				passoc->identifier);
+			break;
 		case OV_AT_ONE_TO_MANY:
 			fprintf(fp, "OV_TYPEDEF_LINKS(%s_%s);\n", plib->identifier,
 				passoc->identifier);

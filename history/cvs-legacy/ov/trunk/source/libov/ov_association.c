@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.8 1999-09-15 10:48:21 dirk Exp $
+*   $Id: ov_association.c,v 1.9 2001-07-20 07:21:41 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -26,6 +26,7 @@
 *	19-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 *	23-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Optimized (use of macros).
+*	17-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ONE_TO_ONE Link.
 */
 
 #define OV_COMPILE_LIBOV
@@ -230,6 +231,12 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_association_searchchild(
 			pchild = Ov_Association_GetNextChild(passoc, pchild);
 		}
 	}
+	if((passoc->v_assocprops & OV_AP_LOCAL) && (passoc->v_assoctype == OV_AT_ONE_TO_ONE)) {
+		OV_INSTPTR_ov_object pchild = Ov_Association_GetChild(passoc, pparent);
+		if (pchild) {
+			if(!strcmp(identifier, pchild->v_identifier)) return pchild;
+		}
+	}
 	return NULL;
 }
 
@@ -257,6 +264,8 @@ OV_DLLFNCEXPORT OV_UINT ov_association_getparentcount(
 	*	switch based on the type of association
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		return Ov_Association_GetParent(passoc, pchild)?(1):(0);
 	case OV_AT_ONE_TO_MANY:
 		return Ov_Association_GetParent(passoc, pchild)?(1):(0);
 	case OV_AT_MANY_TO_MANY:
@@ -297,6 +306,8 @@ OV_DLLFNCEXPORT OV_UINT ov_association_getchildcount(
 	*	switch based on the type of association
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		return Ov_Association_GetChild(passoc, pparent)?(1):(0);
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*	count children
@@ -370,6 +381,13 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	*	check further conditions
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		if(Ov_Association_GetParent(passoc, pchild)) {
+			return OV_ERR_ALREADYEXISTS;
+		}
+		if(Ov_Association_GetChild(passoc, pparent)) {
+			return OV_ERR_ALREADYEXISTS;
+		}
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*	check, if there is not already a link between that parent and child;
@@ -405,6 +423,13 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	*	handle parent placements
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		if(!((parenthint == OV_PMH_DEFAULT) || (parenthint == OV_PMH_BEGIN)
+			|| (parenthint == OV_PMH_END))
+		) {
+			return OV_ERR_BADPLACEMENT;
+		}
+		break;
 	case OV_AT_ONE_TO_MANY:
 		if(!((parenthint == OV_PMH_DEFAULT) || (parenthint == OV_PMH_BEGIN)
 			|| (parenthint == OV_PMH_END))
@@ -459,6 +484,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	*	handle child placements
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		break;
 	case OV_AT_ONE_TO_MANY:
 		switch(childhint2) {
 		case OV_PMH_DEFAULT:
@@ -542,6 +569,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	*	determine parent predecessor and successor
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		break;
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*	there is no parent predecessor/successor
@@ -568,6 +597,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	*	determine child predecessor and successor
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		break;
 	case OV_AT_ONE_TO_MANY:
 		switch(childhint2) {
 		case OV_PMH_BEFORE:
@@ -605,6 +636,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	*	finally do the actual linkage
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		*( (OV_INSTPTR_ov_object*) (((OV_BYTE*)pparent)+parentoffset) ) = pchild;
+		*( (OV_INSTPTR_ov_object*) (((OV_BYTE*)pchild)+childoffset) ) = pparent;
+		break;
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*   set pointers of predecessor of parent object
@@ -726,6 +761,11 @@ OV_DLLFNCEXPORT void ov_association_unlink(
 	*	check, if there is a link between that parent and child
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		if(Ov_Association_GetParent(passoc, pchild) != pparent) {
+			return;
+		}
+		break;
 	case OV_AT_ONE_TO_MANY:
 		if(Ov_Association_GetParent(passoc, pchild) != pparent) {
 			return;
@@ -749,6 +789,8 @@ OV_DLLFNCEXPORT void ov_association_unlink(
 	*	determine parent predecessor and successor
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		break;
 	case OV_AT_ONE_TO_MANY:
 		break;
 	case OV_AT_MANY_TO_MANY:
@@ -764,6 +806,8 @@ OV_DLLFNCEXPORT void ov_association_unlink(
 	*	determine child predecessor and successor
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		break;
 	case OV_AT_ONE_TO_MANY:
 		ppreviouschild = Ov_Association_GetPreviousChild(passoc, pchild);
 		pnextchild = Ov_Association_GetNextChild(passoc, pchild);
@@ -781,6 +825,10 @@ OV_DLLFNCEXPORT void ov_association_unlink(
 	*	finally do the actual unlinkage
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		*( (OV_INSTPTR_ov_object*) (((OV_BYTE*)pparent)+parentoffset) )= NULL;
+		*( (OV_INSTPTR_ov_object*) (((OV_BYTE*)pchild)+childoffset) )= NULL;
+		break;
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*	if there's no child predecessor and no successor empty the parent's list
@@ -884,6 +932,9 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedparentlink(
 	*	instructions
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		if ( (OV_INSTPTR_ov_object) (((OV_BYTE*)pparent)+passoc->v_parentoffset) ) return TRUE;
+		return FALSE;
 	case OV_AT_ONE_TO_MANY:
 		/* fall into... */
 	case OV_AT_MANY_TO_MANY:
@@ -923,6 +974,9 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedchildlink(
 	*	instructions
 	*/
 	switch(passoc->v_assoctype) {
+	case OV_AT_ONE_TO_ONE:
+		if ( (OV_INSTPTR_ov_object) (((OV_BYTE*)pchild)+passoc->v_childoffset) ) return TRUE;
+		return FALSE;
 	case OV_AT_ONE_TO_MANY:
 		/*
 		*	get pointer to child link (anchor)

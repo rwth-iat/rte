@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.6 1999-09-15 10:48:14 dirk Exp $
+*   $Id: ov_association.h,v 1.7 2001-07-20 07:21:36 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -25,6 +25,7 @@
 *	--------
 *	19-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
+*	17-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ONE_TO_ONE Link.
 */
 
 #ifndef OV_ASSOCIATION_H_INCLUDED1
@@ -58,6 +59,17 @@ struct OV_ASSOCIATION_DEF {
 	OV_FNCPTR_GETACCESS			getaccessfnc;
 };
 typedef struct OV_ASSOCIATION_DEF OV_ASSOCIATION_DEF;
+
+/*
+*	Define the link connectors of a 1:1 association
+*/
+#define OV_TYPEDEF_SLINKS(assoc)		\
+	typedef struct {			\
+		OV_CPT_##assoc	pchild;		\
+	}   OV_PARENTLINK_##assoc;		\
+	typedef struct {			\
+		OV_PPT_##assoc	pparent;	\
+	}   OV_CHILDLINK_##assoc
 
 /*
 *	Define the link connectors of a 1:n association
@@ -247,6 +259,13 @@ OV_BOOL ov_association_canunload(
 );
 
 /*
+*	Get child in a 1:1 association
+*/
+#define Ov_Association_GetChild(passoc, pparent)		\
+	((OV_INSTPTR_ov_object)((pparent)?(*((OV_INSTPTR_ov_object*)(((OV_BYTE*)		\
+	(pparent))+(passoc)->v_parentoffset))):(NULL)))
+
+/*
 *	Get first child in a 1:n association
 */
 #define Ov_Association_GetFirstChild(passoc, pparent)				\
@@ -275,11 +294,14 @@ OV_BOOL ov_association_canunload(
 	(pchild))+(passoc)->v_childoffset))->pprevious):(NULL)))
 
 /*
-*	Get parent in a 1:n association
+*	Get parent in a 1:1 or in a 1:n association
 */
-#define Ov_Association_GetParent(passoc, pchild)					\
+#define Ov_Association_GetParent(passoc, pchild)		\
+	(((passoc)->v_assoctype==OV_AT_ONE_TO_ONE)?		\
+	((OV_INSTPTR_ov_object)((pchild)?(*((OV_INSTPTR_ov_object*)(((OV_BYTE*)		\
+	(pchild))+(passoc)->v_childoffset))):(NULL))):		\
 	((OV_INSTPTR_ov_object)((pchild)?(((OV_ANCHOR*)(((OV_BYTE*)		\
-	(pchild))+(passoc)->v_childoffset))->pparent):(NULL)))
+	(pchild))+(passoc)->v_childoffset))->pparent):(NULL))))
 
 /*
 *	Iterate over all children in an 1:n association

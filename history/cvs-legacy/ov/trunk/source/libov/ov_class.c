@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.13 2000-12-15 15:39:36 dirk Exp $
+*   $Id: ov_class.c,v 1.14 2001-07-20 07:21:41 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -933,6 +933,9 @@ void ov_class_deleteobject_cleanupinst(
 				*/
 				while(TRUE) {
 					switch(child.elemunion.passoc->v_assoctype) {
+					case OV_AT_ONE_TO_ONE:
+						pobj2 = Ov_Association_GetChild(child.elemunion.passoc, pobj);
+						break;
 					case OV_AT_ONE_TO_MANY:
 						pobj2 = Ov_Association_GetFirstChild(child.elemunion.passoc, pobj);
 						break;
@@ -962,6 +965,9 @@ void ov_class_deleteobject_cleanupinst(
 				if(child.elemunion.passoc != passoc_ov_instantiation) {
 					while(TRUE) {
 						switch(child.elemunion.passoc->v_assoctype) {
+						case OV_AT_ONE_TO_ONE:
+							pobj2 = Ov_Association_GetParent(child.elemunion.passoc, pobj);
+							break;
 						case OV_AT_ONE_TO_MANY:
 							pobj2 = Ov_Association_GetParent(child.elemunion.passoc, pobj);
 							break;

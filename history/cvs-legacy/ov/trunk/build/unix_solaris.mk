@@ -1,4 +1,4 @@
-#   $Id: unix_solaris.mk,v 1.1 2001-07-09 12:48:29 ansgar Exp $
+#   $Id: unix_solaris.mk,v 1.2 2001-07-20 07:21:33 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -180,7 +180,7 @@ $(KSHISTLIB_LIB) : $(KSHISTLIB_OBJ)
 $(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ)
 	$(LD) -o $@ $^ 
 
-kshistlib.c kshistlib.h : $(OV_CODEGEN_EXE)
+kshist.c kshist.h : $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV example library
 #	------------------------

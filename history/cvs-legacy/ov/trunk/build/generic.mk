@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.6 2001-07-09 12:40:04 ansgar Exp $
+#   $Id: generic.mk,v 1.7 2001-07-20 07:21:03 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -49,7 +49,7 @@ OV_SOURCE_LIBOVKS_DIR		= $(OV_SOURCE_DIR)libovks/
 OV_SOURCE_SERVER_DIR		= $(OV_SOURCE_DIR)server/
 OV_SOURCE_NTSERVICE_DIR		= $(OV_SOURCE_DIR)ntservice/
 OV_SOURCE_EXAMPLE_DIR		= $(OV_SOURCE_DIR)example/
-OV_SOURCE_KSHISTLIB_DIR		= $(OV_SOURCE_DIR)kshistlib/
+OV_SOURCE_KSHISTLIB_DIR		= $(OV_SOURCE_DIR)kshist/
 
 ACPLT_PLT_DIR				= ../../../plt/
 
@@ -338,10 +338,10 @@ EXAMPLE_DLL  = example$(DLL)
 #	ACPLT/OV KsHistory library
 #	--------------------------
 
-KSHISTLIB_SRC := kshistlib.c $(wildcard $(OV_SOURCE_KSHISTLIB_DIR)*.c)
+KSHISTLIB_SRC := kshist.c $(wildcard $(OV_SOURCE_KSHISTLIB_DIR)*.c)
 KSHISTLIB_OBJ  = $(foreach source, $(KSHISTLIB_SRC), $(basename $(notdir $(source)))$(OBJ))
-KSHISTLIB_LIB  = kshistlib$(LIB)
-KSHISTLIB_DLL  = kshistlib$(DLL)
+KSHISTLIB_LIB  = kshist$(LIB)
+KSHISTLIB_DLL  = kshist$(DLL)
 
 #	Targets and their sources
 #	-------------------------

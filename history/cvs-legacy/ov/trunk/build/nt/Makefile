@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.5 2001-07-09 12:40:51 ansgar Exp $
+#   $Id: Makefile,v 1.6 2001-07-20 07:21:35 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -235,7 +235,7 @@ $(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	$(MKDLLDEF) $(basename $@)_tmp.def $(basename $@).def
 	@del $(basename $@)_tmp.def
 
-kshistlib.c kshistlib.h : $(OV_CODEGEN_EXE)
+kshist.c kshist.h : $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV example library
 #	------------------------
