@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.6 1999-01-29 12:45:46 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.7 1999-02-22 15:13:08 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -315,12 +315,21 @@ static bool_t AdvanceToNextFragment(XDR *xdrs)
  * stream.
  *
  * First, some signatures of the stuff we'll need below...
+ * Unfortunately, the signatures are now really biting us, because every
+ * system has its very own set of XDR stream signatures. Sigh. And all this
+ * because this file can be compiled using the C++ compiler.
  */
+#if PLT_SYSTEM_LINUX
+#define PLT_CONST const
+#else
+#define PLT_CONST
+#endif
+
 static bool_t MemStreamGetLong(XDR *xdrs, long *lp);
-static bool_t MemStreamPutLong(XDR *xdrs, long *lp);
-static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, int len);
-static bool_t MemStreamPutBytes(XDR *xdrs, caddr_t addr, int len);
-static u_int  MemStreamGetPos(XDR *xdrs);
+static bool_t MemStreamPutLong(XDR *xdrs, PLT_CONST long *lp);
+static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, u_int len);
+static bool_t MemStreamPutBytes(XDR *xdrs, PLT_CONST caddr_t caddr, u_int len);
+static u_int  MemStreamGetPos(PLT_CONST XDR *xdrs);
 static bool_t MemStreamSetPos(XDR *xdrs, u_int pos);
 static long * MemStreamInline(XDR *xdrs, int len);
 static void   MemStreamDestroy(XDR *xdrs);
@@ -331,12 +340,16 @@ static void   MemStreamDestroy(XDR *xdrs);
  * bytes and integers from/to the stream's contents. When creating a new
  * memory stream, the stream object will get linked to this method table
  * (good morning, vtable!).
+ * Aldi: I've through with this stuff! Using signatures with old legacy C code
+ * *is* a nightmare. Take five systems and you'll face at least ten different
+ * signatures. There are sooo much ONC/RPC ports out there which can't agree
+ * on function signatures.
  */
-#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT
+/*#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT || PLT_SYSTEM_LINUX*/
 #define FUNC(rt) (rt (*)(...))
-#else
-#define FUNC(rt)
-#endif
+/*#else*/
+/*#define FUNC(rt)*/
+/*#endif*/
 
 static
 #if defined(__cplusplus)
@@ -477,6 +490,56 @@ void xdrmemstream_rewind(XDR *xdrs, enum xdr_op op)
 
 
 /* ---------------------------------------------------------------------------
+ *
+ */
+void xdrmemstream_get_fragments(XDR *xdrs, 
+                                xdrmemstream_fragment_description *desc,
+                                unsigned int *fragment_count)
+{
+    unsigned int         count = ((MemoryStreamInfo *) xdrs->x_base)->
+	                     fragment_count;
+    MemoryStreamFragment *fragment;
+    
+    fragment = ((MemoryStreamInfo *) xdrs->x_base)->first;
+    if ( !fragment->used ) {
+	--count;
+    }
+    if ( !desc ) {
+	/*
+	 * Count only how many fragments are in use by this stream.
+	 */
+	/* Really nothing to do here. Fine. */
+    } else {
+	/*
+	 * Fill in the fragment descriptions and return the number of
+	 * fragments used.
+	 */
+	unsigned int avail_count = *fragment_count;
+
+	for ( ; avail_count; --avail_count ) {
+	    if ( !fragment->used ) {
+		/*
+		 * Don't count this fragment, because it is completely
+		 * empty.
+		 */
+		break;
+	    }
+	    desc->fragment = (caddr_t) &(fragment->dummy);
+	    desc->length   = fragment->used;
+	    fragment = fragment->next;
+	    if ( !fragment ) {
+		break;
+	    }
+	}
+    }
+
+    if ( fragment_count ) {
+	*fragment_count = count;
+    }
+} /* xdrmemstream_get_fragments */
+
+
+/* ---------------------------------------------------------------------------
  * Clean up the mess after a stream has died. This involves freeing the
  * fragments as well as the information block associated with this XDR
  * stream.
@@ -562,7 +625,7 @@ static bool_t MemStreamGetLong(XDR *xdrs, long *lp)
 /* ---------------------------------------------------------------------------
  * Write a XDR int (as usual it's 32 bit wide integer) to the stream.
  */
-static bool_t MemStreamPutLong(XDR *xdrs, long *lp)
+static bool_t MemStreamPutLong(XDR *xdrs, PLT_CONST long *lp)
 {
     if ( xdrs->x_handy == 0 ) {
 	/*
@@ -605,10 +668,10 @@ static bool_t MemStreamPutLong(XDR *xdrs, long *lp)
  * a multiple of 4 bytes in total. Otherwise the next attempt to retrieve
  * a long might result in a bus error.
  */
-static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, int len)
+static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, u_int len)
 {
     while ( len != 0 ) {
-	int count;
+	u_int count;
 
 	if ( xdrs->x_handy == 0 ) {
 	    if ( !AdvanceToNextFragment(xdrs) ) {
@@ -634,10 +697,11 @@ static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, int len)
  * Store some bytes (some might prefer the term "octets") from the
  * XDR memory stream.
  */
-static bool_t MemStreamPutBytes(XDR *xdrs, caddr_t addr, int len)
+static bool_t MemStreamPutBytes(XDR *xdrs, PLT_CONST caddr_t caddr, u_int len)
 {
+    caddr_t addr = caddr;
     while ( len != 0 ) {
-	int count;
+	u_int count;
 	/*
 	 * If we have used up the current fragment, then we'll need to allocate
 	 * a fresh one to fill it up too.
@@ -666,7 +730,7 @@ static bool_t MemStreamPutBytes(XDR *xdrs, caddr_t addr, int len)
 /* ---------------------------------------------------------------------------
  * Yet to be implemented...
  */
-static u_int  MemStreamGetPos(XDR *)
+static u_int  MemStreamGetPos(PLT_CONST XDR *)
 {
     return 0;
 } /* MemStreamGetPos */

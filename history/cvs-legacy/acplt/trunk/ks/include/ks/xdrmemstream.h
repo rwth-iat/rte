@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrmemstream.h,v 1.3 1999-01-08 13:09:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrmemstream.h,v 1.4 1999-02-22 15:13:02 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -68,6 +68,18 @@ void   xdrmemstream_rewind(XDR *xdrs, enum xdr_op op);
 bool_t xdrmemstream_get_length(XDR *xdrs, int *len);
 bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err);
 bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err);
+
+/*
+ * Optimized reading and writing directly from the underlying buffering/
+ * fragments mechanism.
+ */
+typedef struct {
+    char          *fragment; /* points to begin of fragment */
+    unsigned long  length;   /* length of fragment */
+} xdrmemstream_fragment_description;
+void xdrmemstream_get_fragments(XDR *xdrs, 
+                                xdrmemstream_fragment_description *desc,
+                                unsigned int *fragment_count);
 
 /*
  * Some statistics and control functions...
