@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.26 1999-09-16 10:54:35 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.27 2000-04-10 12:52:04 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -315,6 +315,11 @@ void Wecker::trigger()
 	//
 	// Send an ACPLT/KS GETVAR request.
 	//
+    	PltLogStream ls;
+        ls << "Protocol version spoken by ACPLT/KS server="
+           << getProtocolVersion();
+        ls.info();
+    	
 	KsGetVarParams getvar(2);
 	getvar.identifiers[0] = "/vendor/name";
 	getvar.identifiers[1] = "/vendor/server_time";
