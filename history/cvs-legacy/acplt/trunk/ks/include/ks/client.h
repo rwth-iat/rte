@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.22 1998-03-10 13:50:17 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.23 1998-06-29 11:13:29 harald Exp $ */
 
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
@@ -82,10 +82,13 @@ class KscClient
 {
 public:
     virtual ~KscClient();
-
+    
+    //
     // returns a pointer to the client object
     //
     static KscClient *getClient();
+    
+    //
     // use this function before you create any KscVariable or 
     // KscDomain object in order to use a class derived from
     // KscClient as client object
@@ -94,6 +97,7 @@ public:
     //
     static bool setClient(KscClient *cl, KsOwnership os);
 
+    //
     // find server by name, maybe returns 0
     //
     KscServerBase *getServer(const KsString &host_and_name); 
@@ -108,9 +112,9 @@ public:
     // set timeout and numbers of retries
     // (affects only server-objects that will be created later)
     //
-    void setTimeouts(const PltTime &rpc_timeout,        // time to complete a RPC
-                     const PltTime &retry_wait,         // time between retries
-                     size_t tries);                     // number of tries
+    void setTimeouts(const PltTime &rpc_timeout, // time to complete a RPC
+                     const PltTime &retry_wait,  // time between retries
+                     size_t tries);              // number of tries
 
 #if PLT_DEBUG
     void printServers();
@@ -119,13 +123,13 @@ public:
 protected:
     KscClient();
 
-    // find or create server,
-    // should only be used by KscCommObject objects
+    //
+    // find or create server, should only be used by KscCommObject objects
     //
     friend class KscCommObject;
     virtual KS_RESULT createServer(KsString host_and_name, 
 				   KscServerBase *&pServer);
-
+    //
     // destroy an server, should only be used
     // by KscServer objects
     //
@@ -189,14 +193,14 @@ public:
                          const KsExgDataParams &params,
                          KsExgDataResult &result) = 0;
 
-  // 
-  // general service function
-  //
-  virtual bool requestService(const KsString &extension,
-                              unsigned minor_opcode,
-                              const KscAvModule *avm,
-                              const KsXdrAble *params,
-                              KsXdrAble *result) = 0;
+    // 
+    // general service function
+    //
+    virtual bool requestService(const KsString &extension,
+                        	u_short minor_opcode,
+                        	const KscAvModule *avm,
+                        	const KsXdrAble &params,
+                        	KsXdrAble &result) = 0;
 
     // AV related functions
     //
@@ -248,6 +252,7 @@ public:
     bool getStateUpdate();
 #endif
 
+    //
     // service functions
     //
     bool getPP(const KscAvModule *avm,
@@ -266,14 +271,14 @@ public:
                  const KsExgDataParams &params,
                  KsExgDataResult &result);
 
-  // 
-  // general service function
-  //
-  virtual bool requestService(const KsString &extension,
-                              unsigned minor_opcode,
-                              const KscAvModule *avm,
-                              const KsXdrAble *params,
-                              KsXdrAble *result);
+    // 
+    // general service function
+    //
+    virtual bool requestService(const KsString &extension,
+                        	u_short minor_opcode,
+                        	const KscAvModule *avm,
+                        	const KsXdrAble &params,
+                        	KsXdrAble &result);
 
     //
     // accessors
@@ -302,15 +307,14 @@ protected:
 
     bool requestByOpcode(u_long service, 
                          const KscAvModule *avm,
-                         const KsXdrAble *params,
-                         KsXdrAble *result);
+                         const KsXdrAble &params,
+                         KsXdrAble &result);
 
 
     bool createTransport();
     void destroyTransport();
     virtual bool reconnectServer(size_t try_count, enum clnt_stat errcode);
     virtual bool reconnectServer(KS_RESULT result);
-    virtual bool wait(PltTime howLong);
     bool getHostAddr(struct sockaddr_in *addr);
     void setResultAfterService(enum clnt_stat errcode);
 
@@ -468,12 +472,13 @@ KscClient::getClient()
 
 /////////////////////////////////////////////////////////////////////////////
 
+#if 0
 inline bool 
 KscServer::getPP(const KscAvModule *avm,
                  const KsGetPPParams &params,
                  KsGetPPResult &result)
 {
-  return requestByOpcode(KS_GETPP, avm, &params, &result);
+    return requestByOpcode(KS_GETPP, avm, &params, &result);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -483,7 +488,7 @@ KscServer::getVar(const KscAvModule *avm,
                   const KsGetVarParams &params,
                   KsGetVarResult &result)
 {
-  return requestByOpcode(KS_GETVAR, avm, &params, &result);
+    return requestByOpcode(KS_GETVAR, avm, &params, &result);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -493,7 +498,7 @@ KscServer::setVar(const KscAvModule *avm,
                   const KsSetVarParams &params,
                   KsSetVarResult &result)
 {
-  return requestByOpcode(KS_SETVAR, avm, &params, &result);
+    return requestByOpcode(KS_SETVAR, avm, &params, &result);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -503,8 +508,10 @@ KscServer::exgData(const KscAvModule *avm,
                    const KsExgDataParams &params,
                    KsExgDataResult &result)
 {
-  return requestByOpcode(KS_EXGDATA, avm, &params, &result);
+    return requestByOpcode(KS_EXGDATA, avm, &params, &result);
 }
+
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
