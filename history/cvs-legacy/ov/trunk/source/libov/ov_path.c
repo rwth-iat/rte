@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_path.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_path.c,v 1.2 1999-08-02 10:59:44 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -372,6 +372,43 @@ OV_STRING OV_DLLFNCEXPORT ov_path_getcanonicalpath(
 	return pathname;
 }
 
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Get the pointer to an object with given path name
+*	Note: you need NOT call ov_memstack_lock()/unlock() outside of this function
+*/
+OV_INSTPTR_ov_object OV_DLLFNCEXPORT ov_path_getobjectpointer(
+	const OV_STRING			pathname,
+	const OV_UINT			version
+) {
+	/*
+	*	local variables
+	*/
+	OV_PATH		path;
+	OV_ELEMENT	element;
+	/*
+	*	instructions
+	*/
+	ov_memstack_lock();
+	if(Ov_Fail(ov_path_resolve(&path, NULL, pathname, version))) {
+		/*
+		*	bad path
+		*/
+		ov_memstack_unlock();
+		return NULL;
+	}
+	element = path.elements[path.size-1];
+	ov_memstack_unlock();
+	if(element.elemtype == OV_ET_OBJECT) {
+		return element.pobj;
+	}
+	/*
+	*	not an object path
+	*/
+	return NULL;
+}
+	
 /*	----------------------------------------------------------------------	*/
 
 /*
