@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.50 2003-10-17 13:31:56 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.51 2003-10-21 14:46:59 harald Exp $ */
 /*
  * Copyright (c) 1996, 2003
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -41,17 +41,6 @@
 #else
 #include <iostream>
 #endif
-#endif
-
-#if PLT_SYSTEM_NT
-#include <fcntl.h>
-#elif PLT_SYSTEM_OPENVMS
-#include <ioctl.h>
-extern int ioctl(int d, int request, char *argp);
-#else
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
 #endif
 
 #include "ks/stdconnectionmgr.h"
@@ -354,6 +343,65 @@ KscClient::deleteServer(KscServerBase *server)
 
     delete server;
 }
+
+
+// ----------------------------------------------------------------------------
+// Similiar to createServer(), but public. This unconditionally always creates
+// a new server object and thus does not optimize connection usage.
+//
+KS_RESULT
+KscClient::newServer(KsString host_and_name,
+		     u_short protocol_version,
+		     KscServerBase *&pServer)
+{
+    KS_RESULT result = KS_ERR_OK;
+    pServer = 0; // Wipe it out...
+    KsString host, server;
+    if ( (result = _ksc_extractHostAndServer(host_and_name, host, server))
+	 != KS_ERR_OK ) {
+	//
+	// Gosh! The resource locator is invalid, so we can't extract
+	// the host name and the server name. Fall through and return
+	// a null pointer (that is, no server) together with the error
+	// code.
+	//
+    } else {
+	//
+	// The resource locator is valid but we don't have a suitable
+	// KscServer object now. So we create one.
+	//
+	KscServer *temp = new KscServer(host, 
+					KsServerDesc(server,
+						     protocol_version));
+	if ( temp ) {
+	    //
+	    // Server object successfully created. So inherit the
+	    // communication settings from this client object and add
+	    // the server object to the table of server objects. If
+	    // this operation fails, then we'll destroy the new server
+	    // object and return an error instead.
+	    //
+	    temp->setTimeouts(_rpc_timeout, _retry_wait, _tries);
+	    pServer = temp;
+	} else {
+	    //
+	    // Nope. We've lost. Game over. No memory. Did we trash
+	    // the free store, didn't we?
+	    //
+	    result = KS_ERR_GENERIC;
+	}
+    }
+    //
+    // Final note: do not throw an assertion here if pServer is null,
+    // because this is a run-time error and not a design or coding
+    // error. (There used to be an assertion here in former times...)
+    // Final final note: the only coding error which can happen here,
+    // is that ok is true, but pServer is not set properly. Guess what,
+    // I've really made it into this trap (--aldi)...
+    //
+    PLT_ASSERT(!ok || pServer);
+    return result;
+} // KscClient::newServer
 
 
 // ----------------------------------------------------------------------------
@@ -1519,7 +1567,7 @@ KscServer::exgData(const KscAvModule *avm,
 // ----------------------------------------------------------------------------
 // Now for something completely different... the A/V modules &
 // negotiator mechanism. "What's this?" you'll surely ask. Well --
-// that's something special... Okay, a someone better explanation:
+// that's something special... Okay, a somewhat better explanation:
 // A/V modules are the abstract view of A/V mechanisms. For every A/V
 // mechanism there is a suitable A/V module class. Instances of such
 // a class will mainly hold information necessary for the A/V mecha-
@@ -1595,7 +1643,7 @@ KscServer::getNegotiator(const KscAvModule *avm)
 
 
 // ----------------------------------------------------------------------------
-// Dismiss (aka as "fire") a negotiator when its A/V module is just about to
+// Dismiss (aka "fire") a negotiator when its A/V module is just about to
 // hit the bit bucket -- looks like my descriptions could directly stemm from
 // Monty Phyton's famous RAF sketches.
 //

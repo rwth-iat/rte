@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.36 2003-10-21 11:21:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.37 2003-10-21 14:46:59 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -105,6 +105,15 @@ public:
 
 protected:
     KscClient();
+
+    //
+    // Support for those who want to have several connections at the
+    // same time to the same KS server... Usually callers will want to
+    // specify KS_MINPROTOCOL_VERSION as the protocol_version...
+    //
+    virtual KS_RESULT newServer(KsString host_and_name,
+				u_short protocol_version,
+				KscServerBase *&pServer);
 
     //
     // find or create server, should only be used by KscCommObject objects
