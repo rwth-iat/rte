@@ -1,5 +1,5 @@
 /*
- * $Id: ovxiparse.cpp,v 1.4 2005-01-31 13:23:43 ansgar Exp $
+ * $Id: ovxiparse.cpp,v 1.5 2005-03-24 09:51:50 ansgar Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -1324,7 +1324,7 @@ bool write_value(value *val, enum value_types type)
 					break;
 				case DB_VT_VECTOR:
 					act_vec = val->v.pvector_val;
-					vec_t = act_vec->type;
+					vec_t = act_vec->content->type;
 					fprintf(fout, "{");
 					while (act_vec) {	
 						write_value(act_vec->content, vec_t);
@@ -1390,8 +1390,8 @@ bool write_instance_base(instance *node, u_int cnt)
 					write_flags((*it)->a_value->var_flags);
 					fprintf(fout, "\"");
 				}
-				if ((*it)->a_value->var_unit) fprintf(fout," Unit=\"%s\"",(const char*) (*it)->a_value->var_unit);
-				if ((*it)->a_value->var_comment) fprintf(fout," Comment=\"%s\"",(const char*) (*it)->a_value->var_comment);
+				if ((*it)->a_value->var_unit) fprintf(fout," Unit=\"%s\"",(const char*) *((*it)->a_value->var_unit));
+				if ((*it)->a_value->var_comment) fprintf(fout," Comment=\"%s\"",(const char*) *((*it)->a_value->var_comment));
 				fprintf(fout,">");	
 				write_value((*it)->a_value->val, (*it)->a_value->val->type);
 				fprintf(fout, "</VariableValue>\n");
