@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.1 1997-03-13 15:37:03 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.2 1997-03-13 16:51:44 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,7 +40,12 @@
 #include "ks/avticket.h"
 #include "ks/xdr.h"
 #include "ks/event.h"
+#include "plt/comparable.h"
 #include "plt/priorityqueue.h"
+
+
+//////////////////////////////////////////////////////////////////////
+class KsServerResult;
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -48,7 +53,7 @@
 class KsServerBase {
 public:
     KsServerBase(const char *svr_name,
-                 u_long prot_version = KsKsVersionNumber);
+                 u_long prot_version = KS_PROTOCOL_VERSION);
     virtual ~KsServerBase(); // make sure the destructor is virtual...
 
     void run();                // This is the main loop
@@ -62,7 +67,8 @@ public:
     bool addTimerEvent(KsTimerEvent *event);
     bool removeTimerEvent(KsTimerEvent *event);
     KsTimerEvent *getNextTimerEvent();
-
+    
+    static KsServerBase & getServerObject();
 protected:
     // The next one is the central dispatch routine, which you should
     // overwrite in derived classes (you may decide not to do this, but
@@ -75,12 +81,12 @@ protected:
     void sendReply(SVCXPRT *transport, KsAvTicket &ticket,
                    KsServerResult &result);
     void sendErrorReply(SVCXPRT *transport, KsAvTicket &ticket,
-                        KsResult result);
+                        KS_RESULT result);
 
     virtual void createTransports();
     virtual void destroyTransports();
 
-    KsResult result;
+    KS_RESULT result; // TODO: wofuer???
 
     PltString server_name;
     u_long protocol_version;
@@ -91,12 +97,12 @@ protected:
     bool shutdown_flag; // signal to the run() loop to quit
 
     SVCXPRT *tcp_transport; // RPC transport used to receive requests
-
+    void init();
 private:
-    static void dispatcher(struct svc_req request, SVCXPRT *transport);
+    static void dispatcher(struct svc_req *request, SVCXPRT *transport);
     void destroyLurkingTransports();
     static KsServerBase *the_server;
-} // class KsServerBase
+};
 
 
 
@@ -106,8 +112,8 @@ class KsServiceResult {
 public:
     virtual bool_t xdrEncode(XDR *xdr) = 0;
 
-    KsStatus result;
-} // class KsServiceResult
+    KS_RESULT result;
+};
 
 
 
@@ -118,7 +124,7 @@ public:
 inline bool
 KsServerBase::servePendingEvents(KsTime timeout) 
 {
-    return servePendingEvents(&t);
+    return servePendingEvents(&timeout);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -126,8 +132,7 @@ KsServerBase::servePendingEvents(KsTime timeout)
 // Return the next timer event that will trigger or 0, if there's none in
 // the timer event queue.
 //
-inline
-KsTimerEvent *
+inline KsTimerEvent *
 KsServerBase::getNextTimerEvent()
 {
     if ( timer_queue.isEmpty() ) {
@@ -137,6 +142,14 @@ KsServerBase::getNextTimerEvent()
     }
 } // KsServerBase::getNextTimerEvent
 
+//////////////////////////////////////////////////////////////////////
+
+inline KsServerBase &
+KsServerBase::getServerObject()
+{
+    PLT_PRECONDITION(the_server);
+    return *the_server;
+}
 //////////////////////////////////////////////////////////////////////
 
 #endif // PLT_SVRBASE_INCLUDED

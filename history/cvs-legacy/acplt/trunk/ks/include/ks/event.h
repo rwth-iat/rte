@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_EVENT_INCLUDED
 #define KS_EVENT_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.1 1997-03-13 15:37:08 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.2 1997-03-13 16:51:44 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,7 +37,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "plt/debug.h"
+#include "ks/time.h"
 
 //////////////////////////////////////////////////////////////////////
 
@@ -46,42 +46,43 @@ class KsEvent
 public:
     virtual void trigger() = 0;
     virtual ~KsEvent() { }
-}
+};
 
 //////////////////////////////////////////////////////////////////////
+class KsServerBase;
+class KsTimerEvent;
 
-typedef (KsServerBase::*KsTimerMethod)(KsTimerEvent *event);
+typedef void (KsServerBase::*KsTimerMethod)(KsTimerEvent *event);
 
 //////////////////////////////////////////////////////////////////////
 
 class KsTimerEvent
 {
 public:
-    KsTimerEvent(KsTime at, KsTimerMethod meth);
+    KsTimerEvent(const KsTime & at, KsTimerMethod meth);
     virtual void trigger();
     
     KsTime remainingTime() const;
+    friend bool operator == (const KsTimerEvent & lhs, const KsTimerEvent & rhs);
+    friend bool operator != (const KsTimerEvent & lhs, const KsTimerEvent & rhs);
+    friend bool operator <= (const KsTimerEvent & lhs, const KsTimerEvent & rhs);
+    friend bool operator >= (const KsTimerEvent & lhs, const KsTimerEvent & rhs);
+    friend bool operator <  (const KsTimerEvent & lhs, const KsTimerEvent & rhs);
+    friend bool operator >  (const KsTimerEvent & lhs, const KsTimerEvent & rhs);
+
     
     // public attributes
     KsTime trigger_at;
     KsTimerMethod method;
-}
+};
 
 //////////////////////////////////////////////////////////////////////
 
 inline
-KsTimerEvent::KsTimerEvent(KsTime at, KsTimerMethod m)
+KsTimerEvent::KsTimerEvent(const KsTime & at, KsTimerMethod m)
 : trigger_at(at),
   method(m)
 {
-}
-
-//////////////////////////////////////////////////////////////////////
-
-inline void
-KsTimerEvent::trigger()
-{
-    method(this);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -96,6 +97,60 @@ KsTimerEvent::remainingTime() const
         return KsTime(0,0);
     }
 }
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator == (const KsTimerEvent & lhs, const KsTimerEvent & rhs)
+{
+    return lhs.trigger_at == rhs.trigger_at;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator != (const KsTimerEvent & lhs, const KsTimerEvent & rhs)
+{
+    return lhs.trigger_at != rhs.trigger_at;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator <= (const KsTimerEvent & lhs, const KsTimerEvent & rhs)
+{
+    return lhs.trigger_at <= rhs.trigger_at;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator >= (const KsTimerEvent & lhs, const KsTimerEvent & rhs)
+{
+    return lhs.trigger_at >= rhs.trigger_at;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator < (const KsTimerEvent & lhs, const KsTimerEvent & rhs)
+{
+    return lhs.trigger_at < rhs.trigger_at;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+inline bool 
+operator > (const KsTimerEvent & lhs, const KsTimerEvent & rhs)
+{
+    return lhs.trigger_at > rhs.trigger_at;
+}
+
 
 //////////////////////////////////////////////////////////////////////
 #endif /* EOF blabla.h */

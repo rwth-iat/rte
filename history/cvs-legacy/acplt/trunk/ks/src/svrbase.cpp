@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.1 1997-03-13 15:36:56 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.2 1997-03-13 16:51:46 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,12 +40,25 @@
 // svrbase.cpp
 //
 
+extern "C" {
 #include <rpc/rpc.h>
+}
 #include <sys/errno.h>
 #include <sys/time.h>
+
 #include <unistd.h>
 
-#include "ks/time.h"
+#include "ks/svrbase.h"
+#include "plt/log.h"
+
+//////////////////////////////////////////////////////////////////////
+
+inline void
+KsTimerEvent::trigger()
+{
+    (KsServerBase::getServerObject().*method)(this);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // There can be only one... KS server object. We need this pointer lateron
@@ -96,7 +109,7 @@ KsServerBase::~KsServerBase()
 void KsServerBase::init()
 {
     createTransports();
-} // KsServerBase::init
+}
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -119,13 +132,13 @@ void KsServerBase::createTransports()
     if ( !svc_register(tcp_transport, // nothing more than just a dummy
 		                      //-- at least if you use the "0"
 		                      // as the protocol parameter...
-		       KsKsProgramNumber,
-		       KsKsVersionNumber,
+		       KS_RPC_PROGRAM_NUMBER,
+		       KS_PROTOCOL_VERSION,
 		       dispatcher,
 		       0) ) {         // Do not contact the portmapper!
-        PltLog::alert("KsServerBase: could not create transport");
+        PltLog::Alert("KsServerBase: could not create transport");
     }
-} // KsServerBase::createTransports
+} 
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -154,7 +167,7 @@ void KsServerBase::destroyLurkingTransports()
 
     set_size = _rpc_dtablesize();
     for ( fd = 0; fd < set_size; fd++ ) {
-        if ( FD_ISSET(fd, svc_fdset) ) {
+        if ( FD_ISSET(fd, &svc_fdset) ) {
             //
             // First shoot the transport's socket...
             //
@@ -181,7 +194,7 @@ void KsServerBase::destroyLurkingTransports()
 // This is the wrapper that redirects incomming requests issued by the RPC
 // layer up to the responsible server object.
 //
-void KsServerBase::dispatcher(struct svc_req request, SVCXPRT *transport)
+void KsServerBase::dispatcher(struct svc_req * request, SVCXPRT *transport)
 {
     PLT_PRECONDITION(the_server);
 
@@ -202,12 +215,12 @@ void KsServerBase::dispatcher(struct svc_req request, SVCXPRT *transport)
         }
         PLT_ASSERT(pTicket); // we have at least an error ticket
 
-        if ( ticket->result()!= KS_ERR_NONE ) {
+        if ( pTicket->result()!= KS_ERR_OK ) {
             //
             // Ups. Something went wrong when we created the A/V ticket. So
             // just send the error reply...
             //
-            the_server->sendErrorReply(transport, *ticket, ticket->result);
+            the_server->sendErrorReply(transport, *pTicket, pTicket->result);
         } else {
             //
             // We're now ready to serve the service...
@@ -244,12 +257,12 @@ void KsServerBase::dispatch(u_long serviceId, SVCXPRT *transport,
 // replys or you're in deep trouble, pals.
 //
 // C part
-static extern "C" bool_t 
+extern "C" bool_t 
 ks_c_get_xdr_for_transport(XDR *xdr, void *obj_ptr)
 {
     *((XDR **) obj_ptr) = xdr;
     return 1;
-} // getXdrForTransportHelper
+} 
 
 //////////////////////////////////////////////////////////////////////
 // C++ part
@@ -282,7 +295,7 @@ typedef struct {
 //////////////////////////////////////////////////////////////////////
 // C part
 //
-static extern "C" bool_t 
+extern "C" bool_t 
 ks_c_send_reply(XDR *xdr, void *reply_info)
 {
     KsXdrReplyInfo *info = (KsXdrReplyInfo *) reply_info;

@@ -54,6 +54,8 @@ public:
     KsTime( long sec = 0L, long usec = 0L )
         : PltTime(sec, usec) {}
     KsTime(XDR *, bool &);
+    KsTime(const PltTime &r)
+        : PltTime(r) { }
     bool xdrEncode(XDR *xdr) const;
     bool xdrDecode(XDR *xdr);
     static KsTime *xdrNew(XDR *xdr);
