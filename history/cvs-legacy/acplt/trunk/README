@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.4 of the C++ Communication Libary. As always, it
+This is version 1.0.5pre3 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
@@ -84,6 +84,9 @@ That's it. This will build the library as well as the examples.
 
 3. Changes & Bug-Fixes
 ----------------------
+
+Version 1.0.5
+- CLIENTS & SERVERS: links and archives added.
 
 Version 1.0.4
 - CLIENTS: Fixed a bug which caused A/V modules to be ignored which
