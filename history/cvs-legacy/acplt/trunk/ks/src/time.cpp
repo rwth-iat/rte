@@ -68,7 +68,7 @@ KsTime *
 KsTime::xdrNew(XDR *xdr) {
     KsTime *p = new KsTime();
 
-    if( p && p->xdrDecode(xdr) ) {
+    if ( p && p->xdrDecode(xdr) ) {
 	return p;
     } else {
 	delete p;
