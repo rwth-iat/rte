@@ -11,7 +11,7 @@ CXX_EXTRA_FLAGS = -I . -I../../include -I$(PLT_DIR)/include -fno-implicit-templa
 
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl g++
+CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl g++ $(LD_FLAGS)
 
 CXX_LIBS = -lstdc++
 
