@@ -14,6 +14,83 @@
 #include <stdlib.h>
 
 //////////////////////////////////////////////////////////////////////
+// forward declarations
+//////////////////////////////////////////////////////////////////////
+
+class PltHashAssoc_base;           // "private" implementation class
+class PltHashTable_base;           // "private" implementation class
+
+//////////////////////////////////////////////////////////////////////
+// class PltHashTable<K,V,H>
+//////////////////////////////////////////////////////////////////////
+//
+// A PltHashTable<K,V,H> maps from keys of class K to values of 
+// class V. It is a PltDictionary<K,V>.
+//
+// Helper
+// ------
+// H is a helper class which encapsulates the hash function and a
+// comparison function for K.
+//
+// H has to provide the following members:
+//    static unsigned long hash(const K & k); 
+//    static bool equal(const K & k1, const K & k2);
+//
+// H::hash and H::equal must have the following property:
+//    H::equal(k1,k2) => H::hash(k1) == H::hash(k2)
+//
+// H::hash should be 'almost injective'
+//
+// Constructor:
+// ------------
+// The constructor takes 3 optional arguments:
+//     mincap: 
+//         the minimum capacity of the table, it will never shrink
+//         below this limit
+//     highwater:
+//         when there are more than highwater * capacity elements in
+//         the table, the table will grow
+//     lowwater:
+//         when there are less then lowwater * capacity elements in
+//         the table, the table will shrink
+//
+// Operations:
+// -----------
+// see PltDictionary<K,V>
+//
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V, class H>
+class PltHashTable
+: public PltDictionary<K,V>,
+  protected PltHashTable_base
+{
+public:
+    PltHashTable(size_t mincap=11, 
+                 float highwater=0.8, 
+                 float lowwater=0.4);
+    // accessors
+    virtual bool query(const K&, V&) const;
+
+    // modifiers
+    virtual bool add(const K&, const V&);
+    virtual bool remove(const K&, V&);
+
+protected:
+    virtual unsigned long keyHash(const void *) const;
+    virtual unsigned long assocHash(const PltHashAssoc_base *) const;
+    virtual bool assocEqualAssoc(const PltHashAssoc_base *, 
+                                 const PltHashAssoc_base *) const;
+    virtual bool assocEqualKey(const PltHashAssoc_base *, 
+                               const void *) const;
+};
+    
+
+//////////////////////////////////////////////////////////////////////
+// IMPLEMENTATION PART -- clients should stop reading here...
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
 // (PltHashAssoc_base is a private class)
 //////////////////////////////////////////////////////////////////////
 
@@ -88,72 +165,6 @@ public:
     K a_key;
     V a_value;
 };
-
-//////////////////////////////////////////////////////////////////////
-// class PltHashTable<K,V,H>
-//////////////////////////////////////////////////////////////////////
-//
-// A PltHashTable<K,V,H> maps from keys of class K to values of 
-// class V. It is a PltDictionary<K,V>.
-//
-// Helper
-// ------
-// H is a helper class which encapsulates the hash function and a
-// comparison function for K.
-//
-// H has to provide the following members:
-//    static unsigned long hash(const K & k); 
-//    static bool equal(const K & k1, const K & k2);
-//
-// H::hash and H::equal must have the following property:
-//    H::equal(k1,k2) => H::hash(k1) == H::hash(k2)
-//
-// H::hash should be 'almost injective'
-//
-// Constructor:
-// ------------
-// The constructor takes 3 optional arguments:
-//     mincap: 
-//         the minimum capacity of the table, it will never shrink
-//         below this limit
-//     highwater:
-//         when there are more than highwater * capacity elements in
-//         the table, the table will grow
-//     lowwater:
-//         when there are less then lowwater * capacity elements in
-//         the table, the table will shrink
-//
-// Operations:
-// -----------
-// see PltDictionary<K,V>
-//
-//////////////////////////////////////////////////////////////////////
-
-template <class K, class V, class H>
-class PltHashTable
-: public PltDictionary<K,V>,
-  protected PltHashTable_base
-{
-public:
-    PltHashTable(size_t mincap=11, 
-                 float highwater=0.8, 
-                 float lowwater=0.4);
-    // accessors
-    virtual bool query(const K&, V&) const;
-
-    // modifiers
-    virtual bool add(const K&, const V&);
-    virtual bool remove(const K&, V&);
-
-protected:
-    virtual unsigned long keyHash(const void *) const;
-    virtual unsigned long assocHash(const PltHashAssoc_base *) const;
-    virtual bool assocEqualAssoc(const PltHashAssoc_base *, 
-                                 const PltHashAssoc_base *) const;
-    virtual bool assocEqualKey(const PltHashAssoc_base *, 
-                               const void *) const;
-};
-    
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
