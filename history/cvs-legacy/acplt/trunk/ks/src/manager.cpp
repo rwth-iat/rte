@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.14 1997-09-03 14:09:45 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.15 1997-09-04 12:36:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -665,6 +665,7 @@ KsManager::registerServer(KsAvTicket & /*ticket*/,
         //
         pserver->port = params.port;
         pserver->expires_at = expire_at;
+        pserver->living = true;
         pserver->pevent->pserver = 0; // inactivate old event
     } else {
         //
