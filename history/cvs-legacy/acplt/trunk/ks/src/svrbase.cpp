@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.27 1997-12-08 07:20:36 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.28 1997-12-11 17:19:18 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -741,6 +741,7 @@ KsServerBase::startServer()
             close(sock);
 #endif
             sock = -1;
+            PltLog::Error("KsServerBase::startServer(): could not bind the TCP socket.");
         } else {
             _tcp_transport = svctcp_create(sock,
                                            _send_buffer_size,
@@ -770,11 +771,11 @@ KsServerBase::startServer()
         } else {
             svc_destroy(_tcp_transport);
             _tcp_transport = 0;
-            PltLog::Error("KsServerBase::startServer(): could not register service");
+            PltLog::Error("KsServerBase::startServer(): could not register service.");
             _is_ok = false;
         }
     } else {
-        PltLog::Error("KsServerBase::startServer(): could not create TCP transport");
+        PltLog::Error("KsServerBase::startServer(): could not create TCP transport.");
         _is_ok = false;
     }
 }

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.23 1997-12-08 07:20:09 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.24 1997-12-11 17:19:11 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -536,6 +536,7 @@ KsManager::startServer()
                 close(sock);
 #endif
                 sock = -1;
+                PltLog::Error("KsManager::startServer(): could not bind the UDP socket.");
             } else {
                 _udp_transport = svcudp_create(sock);
             }
