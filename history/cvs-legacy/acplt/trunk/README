@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.0.2 of the C++ Communication Libary. It contains
+This is version 1.0.3 of the C++ Communication Libary. It contains
 bug-fixes and some small improvements behind the scenes. For details
 about bug-fixes and changes, see part 3 "Changes & Bug-Fixes" of
 this document below.
@@ -84,6 +84,13 @@ That's it. This will build the library as well as the examples.
 
 3. Changes & Bug-Fixes
 ----------------------
+
+Version 1.0.3
+- SERVERS: Fixed a bug which sometimes caused the port number setting
+  to be ignored.
+
+- CLIENTS: Fixed a small bug related to error handling when scanning a
+  resource locator for an explicit port number.
 
 Version 1.0.2
 - CLIENTS: Fixed a bug which crashed applications creating communication
