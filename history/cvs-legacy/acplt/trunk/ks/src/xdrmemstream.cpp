@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.5 1999-01-08 13:09:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.6 1999-01-29 12:45:46 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -44,6 +44,8 @@
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
 
+/*#define CNXDEBUG*/
+
 #if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdrmemstream.h"
@@ -79,6 +81,10 @@
 #include <string.h>
 #endif
 
+#endif
+
+#ifdef CNXDEBUG
+#include <iostream.h>
 #endif
 
 
@@ -761,7 +767,12 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
     	    if ( err ) {
 	    	*err = myerrno;
 	    }
-            return ((myerrno == EINTR) 
+	    /*
+             * Bark loud, if there was a real socket error when we tried
+             * to read data.
+             */
+            return ((myerrno == EINTR)
+                    || (myerrno == EAGAIN) 
                     || (myerrno == EWOULDBLOCK)) ? TRUE : FALSE;
         }
 	if ( count_read == 0 ) {
@@ -890,16 +901,43 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
     	    if ( err ) {
 	    	*err = myerrno;
 	    }
+#ifdef CNXDEBUG
+	    cout << "*** " << fd << ": could not send: ";
+	    switch ( myerrno ) {
+	    case EINTR:
+		cout << "EINTR"; break;
+	    case EWOULDBLOCK:
+		cout << "EWOULDBLOCK"; break;
+	    case EAGAIN:
+		cout << "EAGAIN"; break;
+	    default:
+		cout << "Exxx: " << myerrno;
+	    }
+	    cout << endl;
+#endif
+	    /*
+             * Bark loud, if there was a real socket error when we tried
+             * to write data. In case the network buffers are full and the
+             * system first needs to get rid off that data, we simply wait
+             * for the buffers to become free again.
+             */
             return ((myerrno == EINTR) 
+                    || (myerrno == EAGAIN)
                     || (myerrno == EWOULDBLOCK)) ? TRUE : FALSE;
         }
 	if ( count_written == 0 ) {
+#ifdef CNXDEBUG
+	    cout << "*** " << fd << ": could not send: 0 bytes sent" << endl;
+#endif
 	    if ( err ) {
 	    	*err = EPIPE; /* that's rather a fake error indication... */
 	    }
 	    return FALSE;
 	}
 
+#ifdef CNXDEBUG
+	    cout << "*** " << fd << ": sent " << count_written << " bytes" << endl;
+#endif
 	xdrs->x_private += count_written;
 	xdrs->x_handy   -= count_written;
 	*max            -= count_written;
