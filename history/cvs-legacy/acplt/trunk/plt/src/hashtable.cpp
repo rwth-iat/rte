@@ -395,11 +395,7 @@ PltHashIterator_base::inRange() const
 PltHashIterator_base::PltHashIterator_base(const PltHashTable_base & t)
 : a_container(t), a_index(0)
 {
-    if (   inRange() 
-        && !PltHashTable_base::usedSlot(a_container.a_table[a_index]) ) {
-        advance();
-    }
-    PLT_CHECK_INVARIANT();
+    restart();
 }
 
 
@@ -431,11 +427,24 @@ PltHashIterator_base::advance()
 
 //////////////////////////////////////////////////////////////////////
 
-PltAssoc_ &
-PltHashIterator_base::current() const
+void 
+PltHashIterator_base::restart()
+{
+    a_index=0;
+    if (   inRange() 
+        && !PltHashTable_base::usedSlot(a_container.a_table[a_index]) ) {
+        advance();
+    }
+    PLT_CHECK_INVARIANT();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+const PltAssoc_ *
+PltHashIterator_base::pCurrent() const
 {
     PLT_PRECONDITION( inRange() );
-    return *a_container.a_table[a_index];
+    return a_container.a_table[a_index];
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -9,6 +9,7 @@
 #define PLT_LIST_INCLUDED
     
 #include <plt/debug.h>
+#include <plt/iterator.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Overview
@@ -78,11 +79,8 @@ public:
 // Not useful for direct use.
 class PltListIterator_base {
 protected:
-    PltListNode_base *curr_elem;
-    PltList_base *list;
-public:
     PltListIterator_base(PltList_base &listarg, bool startAtEnd=false); 
-    operator void * () const;
+    operator const void * () const;
 
     PltListNode_base *getPtr() const;
 
@@ -90,6 +88,12 @@ public:
     PltListIterator_base & operator -- ();
     void operator ++(int);
     void operator --(int);
+
+    void toStart();
+    void toEnd();
+private:
+    PltListNode_base *curr_elem;
+    PltList_base *list;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -137,9 +141,16 @@ public:
 ////////////////////////////////////////////////////////////////////////
 // Iterator on PltList<T>
 template <class T>
-class PltListIterator : public PltListIterator_base {
+class PltListIterator 
+: public PltIterator<T>, 
+  private PltListIterator_base {
 public:
     PltListIterator(PltList<T> &list, bool startAtEnd=false);
+    virtual operator const void * () const;
+    virtual const T & operator * () const;
+    virtual PltListIterator<T> & operator ++ ();
+    virtual void reset();
+
     T get() const;
 #if 0
     T remove();
@@ -202,7 +213,23 @@ inline PltListIterator_base::PltListIterator_base (
 
 //////////////////////////////////////////////////////////////////////
 
-inline PltListIterator_base::operator void * () const 
+inline void
+PltListIterator_base::toStart()
+{
+    curr_elem = list->first;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline void
+PltListIterator_base::toEnd()
+{
+    curr_elem = list->last;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline PltListIterator_base::operator const void * () const 
 { 
     return curr_elem; 
 }
@@ -382,11 +409,49 @@ PltListIterator<T>::PltListIterator(PltList<T> &list, bool startAtEnd)
 }
 
 //////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltListIterator<T>::operator const void *() const
+{
+    return PltListIterator_base::operator const void * ();
+}
+
+//////////////////////////////////////////////////////////////////////
+
 template <class T>
 inline T 
 PltListIterator<T>::get() const 
 {
     return ( (PltListNode<T> *) PltListIterator_base::getPtr() ) -> info;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline PltIterator<T> &
+PltListIterator<T>::operator ++ ()
+{
+    PltListIterator_base::operator ++();
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline const T &
+PltListIterator<T>::operator * ()
+{
+    return ( (PltListNode<T> *) PltListIterator_base::getPtr() ) -> info;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline void
+PltListIterator<T>::toStart()
+{
+    PltListIterator_base::toStart();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -423,3 +488,6 @@ PltIListIterator<T>::getPtr() const
     return (T*) PltListIterator_base::getPtr(); 
 }
 #endif  
+
+
+

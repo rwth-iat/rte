@@ -60,8 +60,11 @@ class PltHashIterator_base;        // "private" implementation class
 template <class K, class V>
 class PltHashTable
 : public PltDictionary<K,V>,
-  public PltHashTable_base
+  private PltHashTable_base
 {
+    friend PltHashIterator_base::PltHashIterator_base
+        (const PltHashTable_base &);
+
 public:
     PltHashTable(size_t mincap=11, 
                  float highwater=0.8, 
@@ -83,13 +86,15 @@ public:
 template <class K, class V>
 class PltHashIterator 
 : public PltIterator< PltAssoc<K,V> >, 
-  protected PltHashIterator_base
+  private PltHashIterator_base
 {
 public:
     PltHashIterator(const PltHashTable<K,V> & t);
-    virtual operator const void * () const;         // remaining element?
-    virtual PltAssoc<K,V> operator * () const;      // current element
-    virtual PltIterator< PltAssoc<K,V> > & operator ++ ();   // advance
+    virtual operator const void * () const;                 // termination
+    virtual const PltAssoc<K,V> * operator -> () const;     // current element
+
+    virtual PltIterator< PltAssoc<K,V> > & operator ++ ();  // advance
+    virtual void restart();                                 // from beginning
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -104,7 +109,6 @@ public:
 
 class PltHashTable_base : virtual public PltDebuggable
 {
-    friend class PltHashTable;
     friend class PltHashIterator_base;
 protected:
     PltHashTable_base(size_t mincap=11, 
@@ -147,13 +151,12 @@ private:
 
 class PltHashIterator_base
 {
-public:
-    PltHashIterator_base(const PltHashTable_base &);
 protected:
+    PltHashIterator_base(const PltHashTable_base &);
     bool inRange() const;
-    PltAssoc_ & current() const;
+    const PltAssoc_ * pCurrent() const;
     void advance();
-
+    void restart();
 private:
     const PltHashTable_base & a_container;
     size_t a_index;
@@ -255,7 +258,7 @@ PltHashTable<K,V>::newIterator() const
 template <class K, class V>
 inline
 PltHashIterator<K,V>::PltHashIterator(const PltHashTable<K,V> &t)
-: PltHashIterator_base(t)
+: PltHashIterator_base( (const PltHashTable_base &) t)
 {
 }
 
@@ -271,10 +274,19 @@ PltHashIterator<K,V>::operator const void * () const
 //////////////////////////////////////////////////////////////////////
 
 template <class K, class V>
-inline PltAssoc<K,V> 
-PltHashIterator<K,V>::operator * () const
+inline const PltAssoc<K,V> *
+PltHashIterator<K,V>::operator -> () const
 {
-    return (PltAssoc<K,V>&) current();
+    return (const PltAssoc<K,V> *) pCurrent();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class K, class V>
+inline void
+PltHashIterator<K,V>::restart()
+{
+    PltHashIterator_base::restart();
 }
 
 //////////////////////////////////////////////////////////////////////

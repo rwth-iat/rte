@@ -12,7 +12,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
-PLT_IMPL_RTTI1(PltString, PltHashKey);
+PLT_IMPL_RTTI1(PltString, PltKey);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -236,7 +236,7 @@ PltString::hash() const
 //////////////////////////////////////////////////////////////////////
 
 bool
-PltString::operator == ( const PltHashKey & key ) const
+PltString::operator == ( const PltKey & key ) const
 {
     PltString *p = PLT_DYNAMIC_PCAST(PltString, &key);
     if (p) {

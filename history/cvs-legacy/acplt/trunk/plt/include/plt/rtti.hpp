@@ -63,13 +63,16 @@ PltRTTI::canCastFrom(const PltRTTI *p) const
     return isSame(p) || isBaseOf(p);
 }
 
-
 //////////////////////////////////////////////////////////////////////
 // MACROS
 //////////////////////////////////////////////////////////////////////
 
 #define PLT_DYNAMIC_PCAST(T,p)                                         \
            ((&T::RTTI)->canCastFrom((p)->getRTTI()) ? (T*)((p)) : 0)
+
+#define PLT_DYNAMIC_RCAST(T,r)                                         \
+           (PLT_ASSERT((&T::RTTI)->canCastFrom((&(r))->getRTTI())),    \
+           (T&)((r)))
 
 #define PLT_DECL_RTTI                                                  \
      public:                                                           \

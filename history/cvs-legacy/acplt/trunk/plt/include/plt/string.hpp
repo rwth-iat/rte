@@ -10,7 +10,7 @@
 
 #include <plt/debug.h>
 #include <plt/rtti.hpp>
-#include <plt/hashkey.hpp>
+#include <plt/key.hpp>
 #include <stdlib.h>
 
 
@@ -21,7 +21,7 @@
 // of the one in the book (Sec.7.11)
 //////////////////////////////////////////////////////////////////////
 
-class PltString : public PltHashKey, PltDebuggable {
+class PltString : public PltKey, PltDebuggable {
 public:
     PltString(const char *);
     PltString();
@@ -34,9 +34,9 @@ public:
     virtual bool invariant() const;
 #endif
 
-    // PltHashKey interface
+    // PltKey interface
     virtual unsigned long hash() const;
-    virtual bool operator == (const PltHashKey &) const;
+    virtual bool operator == (const PltKey &) const;
 
     // accessors
     bool ok() const;

@@ -4,14 +4,14 @@ CXX_EXTRA_FLAGS = -I../../include
 
 CXX_PLATFORM_FLAGS = -DPLT_SIMULATE_BOOL=0 -DPLT_SIMULATE_RTTI=1
 
-CXX_FLAGS = -g -Wall -DPLT_DEBUG_SLOW=1
+CXX_FLAGS = -g -Wall -DPLT_DEBUG_SLOW=0
 #CXX_FLAGS = -O -Wall -DNDEBUG 
 #
 #
 #
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = g++ 
+CXX_LINK = g++ -lstdc++
 
 VPATH = ../../tests ../../src
 
@@ -49,11 +49,12 @@ CXX_TEST_SOURCES = \
 	ttime.cpp \
 	trbtreedict.cpp \
 	thashtable.cpp \
+	thtname.cpp \
 	tarray.cpp
 
 CXX_SOURCES = $(CXX_LIBPLT_SOURCES) $(CXX_TEST_SOURCES)
 
-TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray
+TESTS = trtti tlist tpriorityqueue tstring ttime thashtable tarray thtname
 
 all : libplt.a $(TESTS)
 
@@ -77,13 +78,16 @@ tstring : tstring.o libplt.a
 trtti.i : trtti.cpp ../../include/plt/rtti.hpp
 	$(CXX_COMPILE) -E -o $@ $<
 
-ttime :	ttime.o
+ttime :	ttime.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
 trbtreedict :	trbtreedict.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
 thashtable :	thashtable.o libplt.a
+	$(CXX_LINK) -o $@ $^
+
+thtname :	thtname.o libplt.a
 	$(CXX_LINK) -o $@ $^
 
 tarray :	tarray.o libplt.a
