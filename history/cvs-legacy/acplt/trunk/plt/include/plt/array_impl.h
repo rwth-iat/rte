@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_ARRAY_IMPL_INCLUDED
 #define PLT_ARRAY_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/array_impl.h,v 1.1 1997-03-12 16:19:12 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array_impl.h,v 1.2 1997-03-23 17:20:07 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -45,6 +45,7 @@
 #include "plt/array.h"
 
 #include "plt/handle_impl.h"
+#include "plt/container_impl.h"
 
 //////////////////////////////////////////////////////////////////////
 
@@ -56,15 +57,6 @@ PltArray<T>::invariant() const
     return (a_size == 0 && ! a_array) || (a_size > 0 && a_array);
 }
 #endif
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-PltArrayIterator<T> *
-PltArray<T>::newIterator() const
-{
-    return new PltArrayIterator<T>(*this);
-}
 
 //////////////////////////////////////////////////////////////////////
 

@@ -94,8 +94,54 @@ public:
     virtual ~PltContainer() { }
 
     virtual bool isEmpty() const;
-    virtual size_t size() const = 0;
+    virtual size_t size() const;
     virtual PltIterator<T> * newIterator() const = 0;
+#if 0
+    virtual debugPrint(ostream &) const;
+#endif
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// Arrayed Container Interface
+//////////////////////////////////////////////////////////////////////
+
+template<class T> class PltArrayIterator;   // forward declaration
+
+template <class T>
+class PltArrayed
+: public PltContainer<T>
+{
+public:
+    virtual size_t size() const = 0;
+
+    virtual const T & operator[] (size_t idx) const = 0;
+
+    virtual PltArrayIterator<T> * newIterator() const;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// Array Iterator
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+class PltArrayIterator
+: public PltBidirIterator<T>
+{
+public:
+    PltArrayIterator(const PltArrayed<T> &);
+
+    // BidirIterator interface
+    virtual operator const void * () const;       // remaining element?
+    virtual const T & operator * () const;        // current element
+    virtual PltArrayIterator & operator ++ ();    // advance
+    virtual void toStart();                       // go to the beginning
+    virtual PltArrayIterator & operator -- ();    // step backwards
+    virtual void toEnd();                         // go to the end
+private:
+    const PltArrayed<T> & a_cont;
+    size_t a_idx;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -147,5 +193,85 @@ PltContainer<T>::isEmpty() const
 }
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
+template <class T>
+inline
+PltArrayIterator<T>::PltArrayIterator(const PltArrayed<T> & a)
+: a_cont(a), 
+  a_idx(0)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltArrayIterator<T>::operator const void * () const
+{
+    return ( a_idx != (size_t) -1 && a_idx < a_cont.size() ) 
+        ? this : 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline const T & 
+PltArrayIterator<T>::operator * () const 
+{
+    PLT_PRECONDITION(*this);
+    return a_cont[a_idx];
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline PltArrayIterator<T> & 
+PltArrayIterator<T>::operator ++ ()
+{
+    a_idx = ( a_idx == (size_t) -1 ) ?  0 : a_idx + 1;
+
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline void 
+PltArrayIterator<T>::toStart()
+{
+    a_idx = 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline PltArrayIterator<T> & 
+PltArrayIterator<T>::operator -- ()
+{
+    a_idx = ( a_idx == 0 ) ? (size_t) -1 : a_idx - 1;
+    
+    return *this;
+}
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline void 
+PltArrayIterator<T>::toEnd()
+{
+    size_t sz = a_cont.size();
+    a_idx = sz > 0 ? sz - 1 : (size_t) -1;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline PltArrayIterator<T> *
+PltArrayed<T>::newIterator() const
+{
+    return new PltArrayIterator<T>(*this);
+}
+
+//////////////////////////////////////////////////////////////////////
 #endif // PLT_CONTAINER_INCLUDED

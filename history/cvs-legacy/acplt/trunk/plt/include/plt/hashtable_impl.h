@@ -2,7 +2,7 @@
 #ifndef PLT_HASHTABLE_IMPL_INCLUDED
 #define PLT_HASHTABLE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.3 1997-03-23 14:30:22 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.4 1997-03-23 17:20:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -44,6 +44,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "plt/hashtable.h"
+#include "plt/container_impl.h"
 
 //////////////////////////////////////////////////////////////////////
 

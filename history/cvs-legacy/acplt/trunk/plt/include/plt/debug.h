@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_DEBUG_INCLUDED
 #define PLT_DEBUG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.11 1997-03-20 09:41:03 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/debug.h,v 1.12 1997-03-23 17:20:09 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -83,12 +83,19 @@
 
 #endif /* !PLT_DEBUG */
 
+
+/*****************************************************************/
+
+#if PLT_DEBUG
+
+#include <iostream.h>
+#include <iomanip.h>
+
 #ifdef __cplusplus
 extern "C"
 #endif
 void plt_canthappen(const char *what, const char *file, int line);
 
-#if PLT_DEBUG
 
 #define PLT_FAILED_ASSERTION(expr_str,file,line) \
      plt_canthappen("assertion failed: "##expr_str,file,line)

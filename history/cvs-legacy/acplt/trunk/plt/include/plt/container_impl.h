@@ -1,7 +1,6 @@
 /* -*-plt-c++-*- */
-#ifndef PLT_LIST_IMPL_INCLUDED
-#define PLT_LIST_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.3 1997-03-23 17:20:10 martin Exp $ */
+#ifndef PLT_CONTAINER_IMPL_INCLUDED
+#define PLT_CONTAINER_IMPL_INCLUDED
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -38,100 +37,46 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
-#include "plt/list.h"
-#include "plt/container_impl.h"
 
 //////////////////////////////////////////////////////////////////////
+// plt/container.h contains Container and Iterator interfaces
 //////////////////////////////////////////////////////////////////////
 
-template<class T>
-bool 
-PltList<T>::addFirst(const T& t) 
+#include "plt/container.h"
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+size_t 
+PltContainer<T>::size() const
 {
-    PltListNode<T> *p = new PltListNode<T>(t);
-    if (p) {
-        return PltList_base::addFirst(p); 
-    } else {
-        return false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-bool 
-PltList<T>::addLast(const T & t) 
-{ 
-    PltListNode<T> *p = new PltListNode<T>(t);
-    if (p) {
-        return PltList_base::addLast(p); 
-    } else {
-        return false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-T 
-PltList<T>::removeFirst() 
-{
-  PltListNode<T> * p = (PltListNode<T> *) PltList_base::removeFirst();
-  T t(p->info);
-  delete p;
-  return t;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-T 
-PltList<T>::removeLast() 
-{
-  PltListNode<T> * p = (PltListNode<T> *) PltList_base::removeLast();
-  T t(p->info);
-  delete p;
-  return t;
-}
-
-
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-bool
-PltList<T>::remove(const T & t) 
-{
-    for (PltListNode_base *p = first; p; ++p) {
-        PltListNode<T> *q = (PltListNode<T> *) p;
-        if (q->info == t) {
-            delete PltList_base::remove(p);
-            return true;
+    PltIterator<T> *pit = newIterator();
+    size_t count = 0;
+    if (pit) {
+        for (PltIterator<T> &it(*pit); it; ++it) {
+            ++count;
         }
     }
-    return false;
+    return count;
 }
 
-
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+#if 0
 
-template<class T>
-PltIListIterator<T> *
-PltIList<T>::newIterator() const
+template <class T>
+void 
+PltContainer<T>::debugPrint(ostream & ostr)
 {
-    return new PltIListIterator<T>(*this);
+    PltIterator<T> *pit = newIterator();
+    if (pit) {
+        ostr << "(";
+        for (PltIterator<T> &it(*pit); it; ++it) {
+            it->debugPrint();
+        }
+    }
 }
-
-//////////////////////////////////////////////////////////////////////
+    
 #endif
-// plt/list_impl.h
+//////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
-
-
-
-
+#endif // PLT_CONTAINER_IMPL_INCLUDED

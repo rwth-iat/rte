@@ -2,7 +2,7 @@
 #ifndef PLT_PRIORITYQUEUE_IMPL_INCLUDED
 #define PLT_PRIORITYQUEUE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.3 1997-03-23 14:30:23 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.4 1997-03-23 17:20:11 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -40,6 +40,7 @@
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
 #include "plt/priorityqueue.h"
+#include "plt/container_impl.h"
 
 //////////////////////////////////////////////////////////////////////
 

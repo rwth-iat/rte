@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_ARRAY_INCLUDED
 #define PLT_ARRAY_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.4 1997-03-12 16:19:12 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array.h,v 1.5 1997-03-23 17:20:06 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -75,16 +75,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-//////////////////////////////////////////////////////////////////////
-// forward declaration
-template <class T> class PltArrayIterator;
-//////////////////////////////////////////////////////////////////////
-
-
 template <class T>
 class PltArray
-: public PltContainer<T>
+: public PltArrayed<T>
 {
 public:
     PltArray(size_t size = 0); // array size          // [1]
@@ -103,7 +96,6 @@ public:
 
     // container interface
     virtual size_t size() const;
-    virtual PltArrayIterator<T> * newIterator() const;
 
 protected:
     PltArrayHandle<T> a_array;
@@ -116,26 +108,6 @@ public:
 #endif
 };
 
-//////////////////////////////////////////////////////////////////////
-
-template<class T>
-class PltArrayIterator
-: public PltBidirIterator<T>
-{
-public:
-    PltArrayIterator(const PltArray<T> &);
-
-    // BidirIterator interface
-    virtual operator const void * () const;       // remaining element?
-    virtual const T & operator * () const;        // current element
-    virtual PltArrayIterator & operator ++ ();    // advance
-    virtual void toStart();                       // go to the beginning
-    virtual PltArrayIterator & operator -- ();    // step backwards
-    virtual void toEnd();                         // go to the end
-private:
-    const PltArray<T> & a_cont;
-    size_t a_idx;
-};
 
 //////////////////////////////////////////////////////////////////////
 // INLINE IMPLEMENTATION
@@ -201,77 +173,4 @@ PltArray<T>::operator [] (size_t i) const
 }
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline
-PltArrayIterator<T>::PltArrayIterator(const PltArray<T> & a)
-: a_cont(a), 
-  a_idx(0)
-{
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline
-PltArrayIterator<T>::operator const void * () const
-{
-    return ( a_idx != (size_t) -1 && a_idx < a_cont.size() ) 
-        ? this : 0;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline const T & 
-PltArrayIterator<T>::operator * () const 
-{
-    PLT_PRECONDITION(*this);
-    return a_cont[a_idx];
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline PltArrayIterator<T> & 
-PltArrayIterator<T>::operator ++ ()
-{
-    a_idx = ( a_idx == (size_t) -1 ) ?  0 : a_idx + 1;
-
-    return *this;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline void 
-PltArrayIterator<T>::toStart()
-{
-    a_idx = 0;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline PltArrayIterator<T> & 
-PltArrayIterator<T>::operator -- ()
-{
-    a_idx = ( a_idx == 0 ) ? (size_t) -1 : a_idx - 1;
-    
-    return *this;
-}
-//////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline void 
-PltArrayIterator<T>::toEnd()
-{
-    size_t sz = a_cont.size();
-    a_idx = sz > 0 ? sz - 1 : (size_t) -1;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-
 #endif // PLT_ARRAY_INCLUDED
