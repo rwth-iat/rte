@@ -81,8 +81,8 @@ public:
     bool isSupported(KS_INTERPOLATION_MODE ipm) const;
 
     //// KssChildrenService stuff
-    virtual KssChildIterator * newIterator() const;
-    virtual KssChildIterator *
+    virtual KssChildIterator_THISTYPE * newIterator() const;
+    virtual KssChildIterator_THISTYPE *
         newMaskedIterator(const KsMask & name_mask,
                           KS_OBJ_TYPE type_mask) const;
     virtual KssCommObjectHandle getChildById(const KsString & id) const;
