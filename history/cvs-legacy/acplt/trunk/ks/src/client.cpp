@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.39 1999-09-16 10:54:46 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.40 2000-04-10 15:01:33 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -216,6 +216,7 @@ KscClient::getServer(const KsString &host_and_name)
 
     return ok ? pServer : 0;
 }
+
 
 //////////////////////////////////////////////////////////////////////
 // Create a server object for the given host&server name (of the form
@@ -789,11 +790,10 @@ KscServer::getHostAddr(struct sockaddr_in *addr)
 
 
 // ----------------------------------------------------------------------------
-// Try to establish a RPC connection to the ACPLT/KS server. This
-// includes querying the portmapper and ACPLT/KS manager on the host
-// where the server is supposed to reside. If this function succeeds
-// then it will return true, otherwise false. The last result will be
-// set accordingly.
+// Try to establish a RPC connection to the ACPLT/KS server. This includes
+// querying the portmapper and ACPLT/KS manager on the host where the server
+// is supposed to reside. If this function succeeds then it will return true,
+// otherwise false. The last result will be set accordingly.
 //
 bool
 KscServer::createTransport()
@@ -954,15 +954,30 @@ KscServer::createTransport()
     return true;
 } // KscServer::createTransport
 
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// Destroy the ONC/RPC transport, that is basically the connection to the
+// ACPLT/KS server this object is a proxy for. In addition to getting rid of
+// the transport, we also clear the negotiator cache, so no spurious nego-
+// tiator problems can occur due to fired negotiators getting in the way.
+//
 void 
 KscServer::destroyTransport()
 {
+    //
+    // Shut down the ONC/RPC client transport.
+    //
     if ( _client_transport ) {
         clnt_destroy(_client_transport);
         _client_transport = 0;
     }
+    //
+    // Get rid of all old negotiatiors which need to be fired whenever the
+    // connection is dropped (or closed). Old negotiators must not be reused
+    // for new reconnected transports as the A/V state is lost when a
+    // connection goes away.
+    //
+    neg_table.reset();
 } // KscServer::destroyTransport
 
 
@@ -1510,24 +1525,12 @@ KscServer::requestByOpcode(u_long service,
         }
     }
 
-    //
-    // Now locate the negotiator which will handle the A/V tickets for the
-    // service request and reply. Then set up the ingoing and outcomming
-    // service parameters, so the server object can lateron build the
-    // data packets.
-    //
-    // FIXME: this needs to be moved to createTransport() or whatever!
-    KscNegotiator *negotiator = getNegotiator(avm);
-
 #if PLT_DEBUG
     cerr << "Requesting server " 
          << host_name << "/" << server_info.server.name 
          << " for service " << hex << service << dec << "." << endl;
     cerr << endl;
 #endif
-
-    KscRequestInStruct inData(negotiator, &params);
-    KscRequestOutStruct outData(negotiator, &result);
 
     //
     // Try to issue a service request until either the communication
@@ -1539,6 +1542,26 @@ KscServer::requestByOpcode(u_long service,
         cerr << "Trying for the " << (try_count+1) << "th. time" << endl;
 #endif
         if ( _client_transport ) {
+	    //
+	    // Now if we have an ONC/RPC client transport, we can try to
+	    // make a call.
+	    //
+	    // But first we need to locate the negotiator which will handle
+	    // the A/V tickets for this service request and its reply. We
+	    // can query the negotiator not before this point as the transport
+	    // (connection) might have been killed just the last round so
+	    // we might get a fresh negotiator for the fresh connection.
+	    //
+	    KscNegotiator *negotiator = getNegotiator(avm);
+
+	    //
+	    // Set up the ingoing and outcomming service parameters and
+	    // result, so the server object can lateron build the complete
+	    // data packets.
+	    //
+	    KscRequestInStruct inData(negotiator, &params);
+	    KscRequestOutStruct outData(negotiator, &result);
+
             errcode = clnt_call(_client_transport, service,
 				(xdrproc_t) KscRequestInHelper,
 				(char *) &inData,
@@ -1631,7 +1654,7 @@ KscServer::exgData(const KscAvModule *avm,
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // Now for something completely different... the A/V modules &
 // negotiator mechanism. "What's this?" you'll surely ask. Well --
 // that's something special... Okay, a someone better explanation:
@@ -1708,7 +1731,32 @@ KscServer::getNegotiator(const KscAvModule *avm)
     return KscAvNoneModule::getStaticNegotiator(); 
 } // KscServer::getNegotiator
 
+
+// ----------------------------------------------------------------------------
+// Dismiss (aka as "fire") a negotiator when its A/V module is just about to
+// hit the bit bucket -- looks like my descriptions could directly stemm from
+// Monty Phyton's famous RAF sketches.
+//
+// Negotiators can only live as long as their corresponding A/V module or as
+// the server connection they're negotiating on is closed -- whichever comes
+// first. In case of the A/V module being destroyed ("dtor'd"), we need to
+// remove the negotiator from a server proxy's negotiator cache, because it
+// must not be used anymore.
+//
+void
+KscServer::dismissNegotiator(const KscAvModule *avm)
+{
+    //
+    // Try to find a negotiator in the cache of this server object for the
+    // given A/V module. Note that there can be only at most one negotiator
+    // for a given A/V module and server connection.
+    //
+    if ( avm != 0 ) {
+	PltKeyCPtr<KscAvModule> key(avm);
+	KscNegotiatorHandle hNegotiator;
+    	neg_table.remove(key, hNegotiator);
+    }
+} // KscServer::dismissNegotiator
+
         
-//////////////////////////////////////////////////////////////////////
-// EOF client.cpp
-//////////////////////////////////////////////////////////////////////
+// End of client.cpp

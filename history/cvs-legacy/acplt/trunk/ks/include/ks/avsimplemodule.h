@@ -1,10 +1,8 @@
 /* -*-plt-c++-*- */
-
 #ifndef KSC_AVSIMPLEMODULE_INCLUDED 
 #define KSC_AVSIMPLEMODULE_INCLUDED
-
 /*
- * Copyright (c) 1996, 1997, 1998, 1999
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -68,11 +66,13 @@ public:
     ~KscAvSimpleModule();
 
     virtual KS_AUTH_TYPE typeCode() const;
-    KscNegotiatorHandle getNegotiator(const KscServer *) const;
+
 
 protected:
     KsString _id;
     KscNegotiatorHandle _negotiator;
+
+    KscNegotiatorHandle _getNegotiator(const KscServer *) const;
 };
 
 //////////////////////////////////////////////////////////////////////

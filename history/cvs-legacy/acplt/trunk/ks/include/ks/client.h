@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.27 1999-09-16 10:54:38 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.28 2000-04-10 15:01:31 harald Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
- * Copyright (c) 1996, 1997, 1998, 1999
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -307,6 +307,9 @@ public:
 protected:
     KscNegotiator *getNegotiator(const KscAvModule *);
 
+    friend class KscAvModule;
+    void dismissNegotiator(const KscAvModule *);
+
     // service functions
     //
     bool getServerDesc(struct sockaddr_in *host_addr,    // host 
@@ -558,20 +561,4 @@ KscClient::CleanUp::~CleanUp()
 
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// EOF client.h
-//////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// End of ks/client.h

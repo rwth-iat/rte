@@ -52,7 +52,7 @@ KscSimpleNegotiator::xdrDecode(XDR *xdr)
 //////////////////////////////////////////////////////////////////////
 
 KscNegotiatorHandle
-KscAvSimpleModule::getNegotiator(const KscServer *) const
+KscAvSimpleModule::_getNegotiator(const KscServer *) const
 {
         return _negotiator;
 }

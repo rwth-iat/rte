@@ -1,10 +1,9 @@
 /* -*-plt-c++-*- */
-
 #ifndef KSC_AVMODULE_INCLUDED 
 #define KSC_AVMODULE_INCLUDED
-
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avmodule.h,v 1.9 2000-04-10 15:00:56 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998, 1999
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -27,9 +26,11 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <plt/handle.h>
+#include <plt/list.h>
 
 #include "ks/ks.h"
 #include "ks/xdr.h"
+#include "ks/string.h"
 
 //////////////////////////////////////////////////////////////////////
 // forward declaration
@@ -56,13 +57,18 @@ typedef PltPtrHandle<KscNegotiator> KscNegotiatorHandle;
 class KscAvModule
 {
 public:
-    virtual ~KscAvModule() {}
-    virtual KscNegotiatorHandle getNegotiator(const KscServer *) const = 0;
+    KscAvModule();
+    virtual ~KscAvModule();
+    KscNegotiatorHandle getNegotiator(const KscServer *) const;
 
     virtual KS_AUTH_TYPE typeCode() const = 0;
     
     virtual unsigned long hash() const;
     bool operator == (const KscAvModule &) const;
+
+protected:
+    PltList<KsString> *_server_namelist;
+    virtual KscNegotiatorHandle _getNegotiator(const KscServer *) const = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -93,9 +99,10 @@ class KscAvNoneModule
 public:
     virtual KS_AUTH_TYPE typeCode() const;
 
-    KscNegotiatorHandle getNegotiator(const KscServer *) const;
-
     static KscNegotiator *getStaticNegotiator();
+
+protected:
+    KscNegotiatorHandle _getNegotiator(const KscServer *) const;
 
 private:
     static KscNoneNegotiator the_negotiator;
@@ -152,12 +159,4 @@ KscNoneNegotiator::typeCode() const
 
 #endif
 
-
-//////////////////////////////////////////////////////////////////////
-// EOF avmodule.h
-//////////////////////////////////////////////////////////////////////
-
-
-
-
-
+// End of ks/avmodule.h

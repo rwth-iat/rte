@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-
+/* $Header: /home/david/cvs/acplt/ks/src/avmodule.cpp,v 1.7 2000-04-10 15:00:57 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998, 1999
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -24,11 +24,62 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "ks/avmodule.h"
+#include "ks/client.h"
 
 //////////////////////////////////////////////////////////////////////
 // define static data
 //
 KscNoneNegotiator KscAvNoneModule::the_negotiator;
+
+
+// ----------------------------------------------------------------------------
+// Construct a new av module (at least the base class part).
+//
+// Note that the list referencing servers (by name) for which negotiators have
+// been created is done by a dynamically allocated PltList object. Which is
+// used to circumvent all the const contrains imposed on several parts of the
+// code. Sigh.
+//
+KscAvModule::KscAvModule()
+{
+    _server_namelist = new PltList<KsString>;
+} // KscAvModule::KscAvModule
+
+
+// ----------------------------------------------------------------------------
+// Destroy an a/v module. This involves destroying a/v negotiators which once
+// have been created to maintain a/v state for particular ACPLT/KS server
+// connections.
+//
+KscAvModule::~KscAvModule()
+{
+    KsString       serverName;
+    KscServerBase *serverBase;
+    KscServer     *server;
+
+    while ( !_server_namelist->isEmpty() ) {
+	serverName = _server_namelist->removeFirst();
+	serverBase = KscClient::getClient()->getServer(serverName);
+	if ( serverBase && 
+             (server = PLT_DYNAMIC_PCAST(KscServer, serverBase)) ) {
+	    server->dismissNegotiator(this);
+	}
+    }
+    delete _server_namelist;
+} // KscAvModule::~KscAvModule
+
+
+// ----------------------------------------------------------------------------
+//
+//
+KscNegotiatorHandle
+KscAvModule::getNegotiator(const KscServer *server) const {
+    KscNegotiatorHandle hNegotiator =
+	_getNegotiator(server);
+    _server_namelist->addFirst(server->getHostAndName());
+    return hNegotiator;
+} // KscAvModule::getNegotiator
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -55,15 +106,10 @@ KscNoneNegotiator::xdrDecode(XDR *xdr)
 //////////////////////////////////////////////////////////////////////
 
 KscNegotiatorHandle
-KscAvNoneModule::getNegotiator(const KscServer *) const
+KscAvNoneModule::_getNegotiator(const KscServer *) const
 {
     return KscNegotiatorHandle(&the_negotiator, PltOsUnmanaged);
 }
 
-//////////////////////////////////////////////////////////////////////
-// EOF avmodule.cpp
-//////////////////////////////////////////////////////////////////////
 
-
-
-
+// End of avmodule.cpp
