@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.9 1997-12-02 18:08:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.10 1998-01-23 08:45:19 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -46,14 +46,57 @@
 //////////////////////////////////////////////////////////////////////
 
 const char PROG_NAME[] = "manager";
-const KsString KS_MANAGER_VERSION("1.01");
+const KsString KS_MANAGER_VERSION("1.0.2");
 
-//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// First, we'll now entering a very dangerous terrain of unix land: the
+// signals. Depending on the os vendor, we might be either running on top of
+// BSD or SYS V R4. Whereas the first one has made the signal() mechanism
+// reliable some time back in the good old days without changing the API,
+// SYS V R4 has still the old unreliable signal() interface. Bottom line: to
+// get reliable signals, we must use sigaction() (fortunately, all the
+// contemporary systems support this -- and those which don't are (by
+// conclusion) *not* contemporary.
+//
+typedef void (*reliableSignalHandler)(...);
 
-extern "C" void handler(int) 
+static bool reliableSignal(int signo, reliableSignalHandler handler)
 {
+    struct sigaction act;
+
+    act.sa_handler = handler;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = 0;
+#ifdef SA_INTERRUPT
+    act.sa_flags |= SA_INTERRUPT;
+#endif
+    return (sigaction(signo, &act, 0) >= 0) ? true : false;
+} // reliableSignal
+
+
+//////////////////////////////////////////////////////////////////////////////
+// If we catch a signal, we will tell the server object to graceously shut
+// down all services. Basically, the downServer() method just signals to end
+// the services as soon as possible. Eventually, after returning from the
+// signal handler, the kernel will terminate the current kernel call with an
+// EINTR error code. This then allows us very soon to check for the shutdown
+// flag.
+//
+extern "C" void shutDownSignalHandler() {
     KsServerBase::getServerObject().downServer();
-}
+} // shutDownSignalHandler
+
+
+//////////////////////////////////////////////////////////////////////////////
+// And now for that signal I like most: the SIGPIPE. We must catch it to
+// prevent bad clients from killing us. Although we don't do anything in this
+// signal handler, this will result in the affected communication getting
+// aborted. And that is, what we want.
+//
+extern "C" void brokenPipeSignalHandler() {
+    // Just do *nothing*
+} // brokenPipeSignalHandler
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -70,11 +113,28 @@ public:
 KsUnixManager::KsUnixManager(int port)
 : KsManager(port)
 {
-    if (_is_ok && initVendorTree()) {
-        signal(SIGINT, handler);
-        signal(SIGHUP, handler);
-        signal(SIGTERM, handler);
-        signal(SIGPIPE, SIG_IGN);
+    if ( _is_ok && initVendorTree() ) {
+        //
+        // We're catching some typical signals here which usually tell a process
+        // to "hit the road". In our case we'll eventually shut down the server
+        // graceously before exiting.
+        //
+        if ( !reliableSignal(SIGINT, shutDownSignalHandler) ) {
+            PltLog::Error("KsUnixManager::KsUnixManager(): can't install SIGINT handler. Continuing...");
+        }
+        if ( !reliableSignal(SIGHUP, shutDownSignalHandler) ) {
+            PltLog::Error("KsUnixManager::KsUnixManager(): can't install SIGHUP handler. Continuing...");
+        }
+        if ( !reliableSignal(SIGTERM, shutDownSignalHandler) ) {
+            PltLog::Error("KsUnixManager::KsUnixManager(): can't install SIGTERM handler. Continuing...");
+        }
+        //
+        // Also catch that infamous SIGPIPE.
+        //
+        if ( !reliableSignal(SIGPIPE, brokenPipeSignalHandler) ) {
+            PltLog::Error("KsUnixManager::KsUnixManager(): can't install SIGPIPE handler. "
+                          "Expect trouble with broken clients. Continuing...");
+        }
     }
 }
 
@@ -171,16 +231,18 @@ int main(int argc, char **argv) {
     //
     // Ok, let's go!
     //
-	KsUnixManager m(port);
+    KsUnixManager m(port);
     if (m.isOk()) {
         m.startServer();
-        PltLog::Info("started.");
-        m.run();
-        PltLog::Info("exiting...");
-	m.stopServer();
-	PltLog::Info("exited.");
+        if ( m.isOk() ) {
+            PltLog::Info("KsUnixManager started.");
+            m.run();
+            PltLog::Info("KsUnixManager exiting...");
+        }
+        m.stopServer();
+        PltLog::Info("exited.");
     } else {
-        PltLog::Error("could not initialize.");
+        PltLog::Error("KsUnixManager could not get initialized.");
     }
     if (pLog) delete pLog;
     return EXIT_SUCCESS;

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.24 1997-12-11 17:19:11 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.25 1998-01-23 08:45:19 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997
+ * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -53,7 +53,7 @@
 
 //////////////////////////////////////////////////////////////////////
 static char DISCLAIMER[] =
-"Copyright (c) 1996, 1997\n"
+"Copyright (c) 1996, 1997, 1998\n"
 "Chair of Process Control Engineering,\n"
 "Aachen University of Technology.\n"
 "All rights reserved.\n\n"
@@ -289,6 +289,14 @@ KsManager::KsManager(int port)
         KssSimpleDomain *servers_manager_version =
             new KssSimpleDomain(KsString::fromInt(getProtocolVersion()));
 
+        //
+        // The variable containing the manager's port address is
+        // only created but not set now. Instead it will receive its
+        // value when the manager is started and the port number is then
+        // known. As a matter of fact, the transports will be created
+        // first in the startServer() method and not any longer (v1.0.0)
+        // in the constructor.
+        //
         _manager_port =
             new KssSimpleVariable("port");
 
@@ -301,11 +309,7 @@ KsManager::KsManager(int port)
         manager_living->setValue(new KsIntValue(1));
         manager_living->setState(KS_ST_GOOD);
         manager_living->lock();
-#if 0
-        manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
-        manager_port->setState(KS_ST_GOOD);
-        manager_port->lock();
-#endif
+
         manager_expires_at->setValue(new KsTimeValue(LONG_MAX,0));
         manager_expires_at->setState(KS_ST_GOOD);
         manager_expires_at->lock();
@@ -358,9 +362,13 @@ KsManager::KsManager(int port)
         _is_ok =
                addStringVar(vendor, "disclaimer", KsString(DISCLAIMER))
             && addStringVar(vendor, "contact",
-                            "<ks@plt.rwth-aachen.de>")
+                            "eMail: <ks@plt.rwth-aachen.de> or "
+                            "snail mail: ACPLT/KS Group, "
+                            "c/o Chair of Process Control Engineering, "
+                            "RWTH Aachen, Aachen (Germany)")
             && addStringVar(vendor, "copyright",
-                            "(c) 1996, 1997 Chair of Process Control Engineering, Aachen University of Technology")
+                            "(c) 1996, 1997, 1998 Chair of Process Control Engineering, "
+                            "Aachen University of Technology")
             && addDomain(vendor, "extensions")
             && addDomain(KsPath("/vendor/extensions"), "ks_core")
             && addCommObject(KsPath("/vendor/extensions/ks_core"),
@@ -498,6 +506,19 @@ KsManager::startServer()
 
     if ( _is_ok ) {
         //
+        // If everything went okay, then the TCP/IP transport was created
+        // successfully and we can now "publish" the port number where
+        // the manager lurks around for incomming calls. We publish the
+        // TCP/IP port instead of the UDP/IP port because the port variable
+        // always represents the port for ordinary servers which only
+        // accept TCP/IP connections.
+        //
+        _manager_port->unlock();
+        _manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
+        _manager_port->setState(KS_ST_GOOD);
+        _manager_port->lock();
+
+        //
         // create transport (if the inherited startServer() method had
         // no problems). This transport (udp) is used especially by
         // servers on the same host to (re-) register with the manager.
@@ -544,13 +565,6 @@ KsManager::startServer()
 
         // TODO: send/receive buff sz
         if ( _udp_transport ) {
-            //
-            //
-            //
-            _manager_port->unlock();
-            _manager_port->setValue(new KsIntValue(_tcp_transport->xp_port));
-            _manager_port->setState(KS_ST_GOOD);
-            _manager_port->lock();
             //
             // Now register the dispatcher that should be called
             // whenever there is a request for the KS program id
