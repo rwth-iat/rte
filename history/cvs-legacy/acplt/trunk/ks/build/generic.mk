@@ -82,6 +82,8 @@ LIBKSCLN_OBJECTS = \
 	variables$(O)
 
 CXX_EXAMPLES_SOURCES = \
+	pmobile.cpp \
+	pmobile_code.cpp \
 	tmanager.cpp \
 	tmanager1.cpp \
 	tsclient.cpp \
@@ -93,6 +95,8 @@ CXX_EXAMPLES_SOURCES = \
 # NOT:	tshell.cpp \
 
 EXAMPLES_OBJECTS = \
+	pmobile$(O) \
+	pmobile_code$(O) \
 	tmanager$(O) \
 	tmanager1$(O) \
 	tsclient$(O) \
@@ -104,6 +108,7 @@ EXAMPLES_OBJECTS = \
 # NOT:	tshell$(O) \
 
 EXAMPLES = \
+	pmobiles.$(EXE) \
 	tmanager$(EXE) tserver$(EXE) tsclient$(EXE) \
 	ttree$(EXE)
 # NOT: tshell$(EXE)
@@ -134,5 +139,5 @@ ttree$(EXE) : ttree$(O) ttree1$(O) $(LIBKSCLN) $(LIBKS)
 
 tshell$(EXE) : tshell$(O) $(LIBKSCLN) $(LIBKS)
 
-
+pmobile$(EXE) : pmobile$(O) pmobile_code$(O) $(LIBKSCLN) $(LIBKS)
 
