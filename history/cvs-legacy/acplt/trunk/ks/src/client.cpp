@@ -1,5 +1,6 @@
+
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.29 1998-01-29 12:56:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.30 1998-03-06 13:29:43 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -46,6 +47,7 @@
 
 #include "ks/client.h"
 #include "ks/ks.h"
+#include "ks/commobject.h"
 
 #if PLT_DEBUG
 #include <iostream.h>
@@ -291,7 +293,7 @@ KscClient::createServer(KsString host_and_name, KscServerBase *&pServer)
     // is that ok is true, but pServer is not set properly. Guess what,
     // I've really made it into this trap (--aldi)...
     //
-    PLT_ASSERT(ok && !pServer);
+    PLT_ASSERT(!ok || pServer);
     return result;
 } // KscClient::createServer
 
@@ -417,6 +419,7 @@ KscServer::KscServer(KsString host,
   _tries(1),
   last_ip(INADDR_NONE)
 {
+  initExtTable(); // make mandatory services available
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -430,6 +433,17 @@ KscServer::KscServer(KsString hostAndName, u_short protocolVersion)
   _tries(1),
   last_ip(INADDR_NONE)
 {
+  initExtTable(); // make mandatory services available
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// initExtTable() fills ext_opcodes with all mandatory 
+// services. Currently this is ks_core only.
+//
+void
+KscServer::initExtTable()
+{
+  ext_opcodes.add(KsString("ks_core"), 0);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -591,6 +605,11 @@ KscServer::createTransport()
     // really wrong during a previous communication procedure.
     //
     destroyTransport();
+
+    //
+    // Delete the cached data as the server may have been restarted.
+    //
+    ext_opcodes.reset();
 
     struct sockaddr_in host_addr; 
     int socket = RPC_ANYSOCK;
@@ -1133,6 +1152,242 @@ KscServer::getServerDesc(struct sockaddr_in *host_addr,
     return true;
 } // KscServer::getServerDesc
 
+
+/////////////////////////////////////////////////////////////////////////////
+// requestService() implements a general service request.
+// The name of the protocol extension determines the major opcode which is
+// dynamically loaded from the server. The caller is responsible for
+// providing a valid minor opcode.
+// NOTE: Error reporting is currently poor. If the major opcode cannot be
+//       archieved for any reason the error code is always set to
+//       KS_ERR_NOTIMPLEMENTED.
+//
+bool 
+KscServer::requestService(const KsString &extension,
+                          unsigned minor_opcode,
+                          const KscAvModule *avm,
+                          const KsXdrAble *params,
+                          KsXdrAble *result)
+{
+  u_long opcode = 0;
+
+  // Lookup the major opcode in cache. 
+  // If lookup fails query server.
+  //
+  if( !ext_opcodes.query(extension, opcode) ) {
+    // get opcode from server
+    // NOTE: It is safe to use a KscVariable as
+    //       the services of ks_core are implemented
+    //       independent from requestService().
+    KsString path(getHostAndName());
+    path += "/vendor/extensions/";
+    path += extension;
+    path += "/major_opcode";
+    KscVariable var(path);
+    // Define all variables with constructor before first goto-statement occurs. 
+    KsValueHandle hval; 
+    
+    if(!(var.hasValidPath() && var.getUpdate())) goto FAILURE;
+    
+    hval = var.getValue();
+    
+    if(!hval) goto FAILURE;
+    
+    KsIntValue *pval = PLT_DYNAMIC_PCAST(KsIntValue, hval.getPtr());
+    
+    if(!pval) goto FAILURE;
+
+    // We succeeded in reading the opcode.
+    // 
+    opcode = (u_long)((long)(*pval));
+  } 
+
+  // We got the major opcode from the cache or from the server.
+  // Now mix the opcodes and call internal function for transfer.
+  opcode <<= 16;
+  opcode |= minor_opcode;
+  
+  return requestByOpcode(opcode, avm, params, result);
+
+FAILURE:
+  _last_result = KS_ERR_NOTIMPLEMENTED;
+  return false;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Some helper structs for requestByOpcode()
+//
+struct KscRequestInStruct
+{
+    KscRequestInStruct(KscNegotiator *avTicket,
+                       const KsXdrAble *params)
+    : avt(avTicket),
+      par(params)
+    {}
+
+    KscNegotiator *avt;
+    const KsXdrAble *par;
+}; // struct KscRequestInStruct
+
+struct KscRequestOutStruct
+{
+    KscRequestOutStruct(KscNegotiator *neg,
+                        KsXdrAble *result)
+    : avt(neg),
+      res(result)
+    {}
+
+    KscNegotiator *avt;
+    KsXdrAble *res;
+}; // struct KscRequestOutStruct
+
+//////////////////////////////////////////////////////////////////////
+// Following are the two XDR toplevel encoding and decoding functions.
+// They are responsible for sending and receiving the ACPLT/KS service
+// request and reply for a service.
+//
+static bool_t 
+KscRequestInHelper(XDR *xdr, void *p)
+{
+    PLT_PRECONDITION((xdr->x_op == XDR_ENCODE) && p);
+
+    KscRequestInStruct *data = (KscRequestInStruct *)p;
+    
+    PLT_ASSERT(data->par && data->avt);
+    
+    return data->avt->xdrEncode(xdr) 
+        && data->par->xdrEncode(xdr);
+} // KscRequestInHelper
+
+static bool_t
+KscRequestOutHelper(XDR *xdr, void *p)
+{
+    PLT_PRECONDITION((xdr->x_op == XDR_DECODE) && p);
+    
+    KscRequestOutStruct *data = 
+        (KscRequestOutStruct *)p;
+    
+    PLT_ASSERT(data->avt);
+    PLT_ASSERT(data->res);
+
+    bool ok = data->avt->xdrDecode(xdr)
+        && data->res->xdrDecode(xdr);
+
+    return ok;
+} // KscRequestOutHelper
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool
+KscServer::requestByOpcode(u_long service, 
+                           const KscAvModule *avm,
+                           const KsXdrAble *params,
+                           KsXdrAble *result) 
+{
+    enum clnt_stat errcode;
+
+    //
+    // Create client transport for the communication with the ACPLT/KS
+    // server if that hasn't been done already. If there is no such
+    // host or server then we will fail at this point and return to the
+    // caller immediately. It makes no sense here to try reconnects yet.
+    //
+    if ( !_client_transport ) {
+        if( !createTransport() ) {
+            if ( !reconnectServer(_last_result) ) {
+                return false;
+            }
+        }
+    }
+
+    //
+    // Now locate the negotiator which will handle the A/V tickets for the
+    // service request and reply. Then set up the ingoing and outcomming
+    // service parameters, so the server object can lateron build the
+    // data packets.
+    //
+    KscNegotiator *negotiator = getNegotiator(avm);
+
+#if PLT_DEBUG
+    cerr << "Requesting server " 
+         << host_name << "/" << server_info.server.name 
+         << " for service " << service << "." << endl;
+    cerr << endl;
+#endif
+
+    KscRequestInStruct inData(negotiator, params);
+    KscRequestOutStruct outData(negotiator, result);
+
+    //
+    // Try to issue a GetPP service request until either the communication
+    // succeeds or we've run out of tries.
+    //
+    size_t try_count = 0;
+    do {
+#if PLT_DEBUG
+        cerr << "Trying for the " << (try_count+1) << "th. time" << endl;
+#endif
+        if ( _client_transport ) {
+            errcode = clnt_call(_client_transport, service,
+				(xdrproc_t) KscRequestInHelper,
+				(char *) &inData,
+				(xdrproc_t) KscRequestOutHelper,
+				(char *) &outData,
+				KSC_RPCCALL_TIMEOUT);
+        } else {
+	    //
+	    // The reason why we're finding ourselves here at this branch is
+	    // that trying to establish a new communication transport might
+	    // have failed the last time.
+	    //
+            errcode = RPC_FAILED;
+        }
+    } while ( (errcode != RPC_SUCCESS)
+	      && reconnectServer(++try_count, errcode) );
+
+    //
+    // If the communication itself failed (*NOT* a failure on the ACPLT/KS
+    // level but on the RPC level), then destroy the transport. This has two
+    // important reasons: first, the caller can easily reissue the request
+    // with another call. Second, if the connection has timed out, then the
+    // server will soon see that the client won't receive any information
+    // and discard a potential service reply very soon.
+    //
+    if ( errcode != RPC_SUCCESS ) {
+        destroyTransport();
+    }
+
+    setResultAfterService(errcode);
+        
+#if PLT_DEBUG
+    if ( errcode == RPC_SUCCESS ) {
+        cerr << "request successfull" << endl;
+    }
+    else {
+        cerr << "request failed" << endl;
+    }
+#endif
+
+    //
+    // Quick Hint(tm): let the caller know whether something bad
+    // happened or not. It can get the details with getLastResult()
+    // later...
+    //
+    return _last_result == KS_ERR_OK;
+} // KscServer::requestByOpcode()
+
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+#if 0
+
+/////////////////////////////////////////////////////////////////////////////
+// getPP(), getVar(), setVar() and exgData() have become obsolete.
+// Now they are implemented as inline functions using requestService().
+/////////////////////////////////////////////////////////////////////////////
+ 
 
 //////////////////////////////////////////////////////////////////////
 // Here are the getPP() and helper structs and classes comming. They
@@ -1819,7 +2074,14 @@ KscServer::exgData(const KscAvModule *avm,
 } // KscServer::exgData
 
 
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// End of obsolete functions
+/////////////////////////////////////////////////////////////////////////////
+
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 // Now for something completely different... the A/V modules &

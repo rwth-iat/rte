@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.20 1998-01-14 16:35:51 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.21 1998-03-06 13:29:41 markusj Exp $ */
 
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
@@ -171,7 +171,7 @@ class KscServerBase
     PLT_DECL_RTTI;
 public:
     //
-    // service functions
+    // service functions defined in ks_core
     //
     virtual bool getPP(const KscAvModule *avm,
                        const KsGetPPParams &params,
@@ -188,6 +188,15 @@ public:
     virtual bool exgData(const KscAvModule *avm,
                          const KsExgDataParams &params,
                          KsExgDataResult &result) = 0;
+
+  // 
+  // general service function
+  //
+  virtual bool requestService(const KsString &extension,
+                              unsigned minor_opcode,
+                              const KscAvModule *avm,
+                              const KsXdrAble *params,
+                              KsXdrAble *result) = 0;
 
     // AV related functions
     //
@@ -257,6 +266,15 @@ public:
                  const KsExgDataParams &params,
                  KsExgDataResult &result);
 
+  // 
+  // general service function
+  //
+  virtual bool requestService(const KsString &extension,
+                              unsigned minor_opcode,
+                              const KscAvModule *avm,
+                              const KsXdrAble *params,
+                              KsXdrAble *result);
+
     //
     // accessors
     //
@@ -282,6 +300,11 @@ protected:
                        const KsServerDesc &server,       // description
                        KsGetServerResult &server_info);  // result
 
+    bool requestByOpcode(u_long service, 
+                         const KscAvModule *avm,
+                         const KsXdrAble *params,
+                         KsXdrAble *result);
+
 
     bool createTransport();
     void destroyTransport();
@@ -290,6 +313,9 @@ protected:
     virtual bool wait(PltTime howLong);
     bool getHostAddr(struct sockaddr_in *addr);
     void setResultAfterService(enum clnt_stat errcode);
+
+    void initExtTable();
+
 
     KsServerDesc server_desc;      // server description given by user
     KsGetServerResult server_info; // server description given by manager
@@ -302,6 +328,7 @@ protected:
       	// last IP used to connect to server/manager   
 
     PltHashTable<PltKeyCPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
+    PltHashTable<KsString, u_long> ext_opcodes;
 
     friend class KscClient;
     KscServer(KsString host, const KsServerDesc &server);
@@ -437,6 +464,46 @@ KscClient::getClient()
         _createClient();
     }
     return _the_client;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscServer::getPP(const KscAvModule *avm,
+                 const KsGetPPParams &params,
+                 KsGetPPResult &result)
+{
+  return requestByOpcode(KS_GETPP, avm, &params, &result);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscServer::getVar(const KscAvModule *avm,
+                  const KsGetVarParams &params,
+                  KsGetVarResult &result)
+{
+  return requestByOpcode(KS_GETVAR, avm, &params, &result);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscServer::setVar(const KscAvModule *avm,
+                  const KsSetVarParams &params,
+                  KsSetVarResult &result)
+{
+  return requestByOpcode(KS_SETVAR, avm, &params, &result);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool
+KscServer::exgData(const KscAvModule *avm,
+                   const KsExgDataParams &params,
+                   KsExgDataResult &result)
+{
+  return requestByOpcode(KS_EXGDATA, avm, &params, &result);
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.21 1998-01-12 07:49:26 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/commobject.cpp,v 1.22 1998-03-06 13:29:43 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -136,8 +136,7 @@ KscCommObject::~KscCommObject()
 {
     KscServerBase *myServer = getServer();
 
-    // FIXME markusj: is hasValidPath() necessary here??
-    if ( hasValidPath() && myServer ) {
+    if ( myServer ) {
         myServer->decRefcount();
     }
 } // KscCommObject::~KscCommObject
@@ -159,16 +158,6 @@ KscCommObject::findServer()
         createServer(path.getHostAndServer(), pServer);
     return pServer;
 } // KscCommObject::findServer
-
-
-//////////////////////////////////////////////////////////////////////
-// TODO: markusj, isn't this a good candidate for inlining, is it?
-KscServerBase *
-KscCommObject::getServer() const
-{
-    return server;
-} // KscCommObject::getServer
-
 
 //////////////////////////////////////////////////////////////////////
 // class KscDomain
@@ -820,19 +809,6 @@ KscVariable::setUpdate()
     return false;
 } // KscVariable::setUpdate
 
-
-//////////////////////////////////////////////////////////////////////
-// Okay, retrieving the value handle is easy. Just return the handle
-// contained in the current properties object.
-// TODO: markusj, isn't this a candidate for inlining, is it?
-//
-KsValueHandle
-KscVariable::getValue() const
-{
-    return curr_props.value; 
-} // KscVariable::getValue
-
-
 //////////////////////////////////////////////////////////////////////
 // Really, setting the current properties has not much ado about it.
 // Just copy the structure, er class, and set the dirty flag, so we
@@ -851,3 +827,9 @@ KscVariable::setCurrProps(KsVarCurrProps &cp)
 //////////////////////////////////////////////////////////////////////
 // EOF commobject.cpp
 //////////////////////////////////////////////////////////////////////
+
+
+
+
+
+

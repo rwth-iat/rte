@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.25 1998-01-12 07:49:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/commobject.h,v 1.26 1998-03-06 13:29:42 markusj Exp $ */
 
 #ifndef KSC_COMMOBJECT_INCLUDED 
 #define KSC_COMMOBJECT_INCLUDED
@@ -287,6 +287,15 @@ KscCommObject::hasValidPath() const
 //////////////////////////////////////////////////////////////////////
 
 inline
+KscServerBase *
+KscCommObject::getServer() const
+{
+    return server;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
 KsString
 KscCommObject::getName() const
 {
@@ -417,6 +426,15 @@ KscVariable::getProjProps() const
 //////////////////////////////////////////////////////////////////////
 
 inline
+KsValueHandle
+KscVariable::getValue() const
+{
+    return curr_props.value; 
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
 const KsVarCurrProps *
 KscVariable::getCurrProps() const
 {
@@ -450,6 +468,9 @@ KscVariable::isDirty() const
 //////////////////////////////////////////////////////////////////////
 // EOF CommObject.h
 //////////////////////////////////////////////////////////////////////
+
+
+
 
 
 
