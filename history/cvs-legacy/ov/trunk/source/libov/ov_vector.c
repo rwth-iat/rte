@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.7 2000-02-10 13:07:02 dirk Exp $
+*   $Id: ov_vector.c,v 1.8 2000-02-23 13:29:27 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -157,10 +157,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicveclen(
 		return OV_ERR_BADPARAM;
 	}
 	/*
-	*	calculate old size
-	*/
-	oldsize = (size/veclen)*pvector->veclen;
-	/*
 	*	manipulate memory
 	*/
 	if((vartype & OV_VT_KSMASK) == OV_VT_STRING) {
@@ -181,10 +177,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicveclen(
 		}
 		return OV_ERR_OK;
 	}
+	/*
+	*	calculate old size
+	*/
+	oldsize = (size/veclen)*pvector->veclen;
+	/*
+	*	vector length has changed, reallocate memory
+	*/
 	if(pvector->veclen != veclen) {
-		/*
-		*	vector length has changed, reallocate memory
-		*/
 		pnewvalue = ov_database_realloc(pvector->value, size);
 		if(!pnewvalue) {
 			return OV_ERR_DBOUTOFMEMORY;
