@@ -21,7 +21,7 @@ EXAMPLESSRCDIR = $(KSDIR)\examples\\
 ### Compiler
 CXX = cl /nologo
 #CXX_FLAGS = -Zi -MTd
-CXX_FLAGS = -DNDEBUG -MT
+CXX_FLAGS = -DNDEBUG -MT -GX
 #CXX_FLAGS =
 
 ### LINKER
@@ -42,7 +42,7 @@ LIBKS_NT_OBJECTS = ntservice$(O) w95service$(O)
 
 all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
-examples:       ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe tclient.exe ttree.exe
+examples:       ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe ttree.exe
 
 #examples:       ntksmanager.exe tmanager.exe tserver.exe ttree.exe
 

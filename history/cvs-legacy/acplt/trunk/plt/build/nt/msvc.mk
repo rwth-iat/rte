@@ -15,7 +15,7 @@ TESTDIR = $(PLTDIR)\tests\\
 ### Compiler
 CXX = cl /nologo
 #CXX_FLAGS = /Zi /MTd
-CXX_FLAGS = -DNDEBUG -MT
+CXX_FLAGS = -DNDEBUG -MT -GX
 CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include \
 	-GR -DPLT_SYSTEM_NT=1  -DPLT_DEBUG_NEW=0
 

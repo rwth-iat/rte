@@ -1,7 +1,7 @@
 /* -*-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.34 2003-10-13 11:11:38 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.35 2004-07-20 11:46:36 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -391,11 +391,19 @@ enum { false=0, true=1 };
  * then we automatically switch to the new C++ header files.
  */
 #ifndef PLT_USE_DEPRECIATED_HEADER
+
+#if PLT_COMPILER_GCC != 0
 #if PLT_COMPILER_GCC >= 0x30000
 #define PLT_USE_DEPRECIATED_HEADER 0
 #else
 #define PLT_USE_DEPRECIATED_HEADER 1
 #endif
+#endif
+
+#if PLT_COMPILER_MSVC != 0
+#define PLT_USE_DEPRECIATED_HEADER 1
+#endif
+
 #endif
 
 /*

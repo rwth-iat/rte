@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/inaddrset.cpp,v 1.6 2003-10-13 12:04:42 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/inaddrset.cpp,v 1.7 2004-07-20 11:44:42 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -113,6 +113,7 @@ KsSimpleInAddrSet::KsSimpleInAddrSet(bool defaultIsAccept)
 
 //////////////////////////////////////////////////////////////////////
 
+#if 0
 STDNS::istream & operator >> (STDNS::istream & istr, KsSimpleInAddrSet & set)
 {
     set.removeAll();
@@ -163,7 +164,7 @@ STDNS::istream & operator >> (STDNS::istream & istr, KsSimpleInAddrSet & set)
  success:
     return istr;
 }
-
+#endif
         
 /////////////////////////////////////////////////////////////////////////////
 /* EOF ks/inaddrset.cpp */

@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.17 2003-11-05 16:46:15 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.18 2004-07-20 11:44:43 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -340,7 +340,11 @@ static void   MemStreamDestroy(XDR *xdrs);
  * signatures. There are sooo much ONC/RPC ports out there which can't agree
  * on function signatures.
  */
+#if PLT_SYSTEM_NT
+#define FUNC(rt, p) (rt (*)(...))
+#else
 #define FUNC(rt, p) (rt (*) p)
+#endif
 /*#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT || PLT_SYSTEM_LINUX*/
 /*#define FUNC(rt) (rt (*)(...))*/
 /*#else*/

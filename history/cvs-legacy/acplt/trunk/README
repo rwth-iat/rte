@@ -1,7 +1,7 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.3.2 of the C++ Communication Libary. As always, it
+This is version 1.3.3 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
@@ -131,6 +131,10 @@ Please note that code versions are numbered as x.y.z where the middle
 number y denoted the state of the code: even numbered y's denote stable
 releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
+
+Version 1.3.3
+- BOTH
+  * Quick fixes for MSVC++ 6.0
 
 Version 1.3.2
 - BOTH:

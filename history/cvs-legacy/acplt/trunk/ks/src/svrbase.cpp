@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.45 2003-10-13 12:10:48 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.46 2004-07-20 11:44:42 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -529,6 +529,11 @@ KsServerBase::hasPendingEvents() const
 void
 KsServerBase::startServer()
 {
+    //
+    // See note above about the _is_ok flag: start with a clean state and
+    // let others indicate problems...
+    //
+    _is_ok = true;
     //
     // If the user didn't create his very own connection manager object
     // then we'll supply a default one. In case this can't be done or
