@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.15 1997-09-13 08:19:44 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.16 1997-11-27 09:38:24 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -277,7 +277,9 @@ public:
     T& operator*() const;
     T* operator->() const;
     T* getPtr() const;                                         // [1]
-  
+
+    bool operator == (const PltPtrHandle &rhs) const;
+    bool operator != (const PltPtrHandle &rhs) const;
     
     // modifiers
     PltPtrHandle & operator =(const PltPtrHandle &rhs);
@@ -306,6 +308,9 @@ public:
     T& operator[](size_t) const;
     T* getPtr() const;                                          // [1]
 
+    bool operator == (const PltArrayHandle &rhs) const;
+    bool operator != (const PltArrayHandle &rhs) const;
+    
     PltArrayHandle & operator = (const PltArrayHandle &rhs);
     bool bindTo(T *, enum PltOwnership = PltOsArrayNew);
 
@@ -438,6 +443,22 @@ PltPtrHandle<T>::operator*() const
 }
 
 //////////////////////////////////////////////////////////////////////
+// operators == and != compare the pointers the handles manage.
+template<class T>
+inline bool
+PltPtrHandle<T>::operator==(const PltPtrHandle &rhs) const
+{
+    return getPtr() == rhs.getPtr();
+}
+
+template<class T>
+inline bool
+PltPtrHandle<T>::operator!=(const PltPtrHandle &rhs) const
+{
+    return !(*this == rhs);
+}
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
@@ -504,6 +525,22 @@ PltArrayHandle<T>::bindTo(T * p, enum PltOwnership t)
     PLT_PRECONDITION(t==PltOsUnmanaged || t==PltOsMalloc 
                      || t==PltOsArrayNew );
     return PltHandle<T>::bindTo(p,t); // forward to parent
+}
+
+//////////////////////////////////////////////////////////////////////
+// operators == and != compare the pointers the handles manage.
+template<class T>
+inline bool
+PltArrayHandle<T>::operator==(const PltArrayHandle &rhs) const
+{
+    return getPtr() == rhs.getPtr();
+}
+
+template<class T>
+inline bool
+PltArrayHandle<T>::operator!=(const PltArrayHandle &rhs) const
+{
+    return !(*this == rhs);
 }
 
 //////////////////////////////////////////////////////////////////////
