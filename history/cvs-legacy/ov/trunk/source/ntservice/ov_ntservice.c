@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.c,v 1.7 2000-08-01 11:04:39 dirk Exp $
+*   $Id: ov_ntservice.c,v 1.8 2002-06-18 11:34:47 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -148,6 +148,8 @@ static OV_INT 					port = 0; /* KS_ANYPORT */
 static OV_BOOL					startup = TRUE;
 static OV_BOOL					help = FALSE;
 static OV_BOOL					version = FALSE;
+static OV_BOOL					reuse = FALSE;
+static OV_STRING				password = NULL;
 
 /*	----------------------------------------------------------------------	*/
 
@@ -310,6 +312,17 @@ static OV_BOOL ov_ntservice_parseargs(
 			}
 		}
 		/*
+		*	set identification
+		*/
+		else if(!strcmp(argv[i], "-i") || !strcmp(argv[i], "--identifiy")) {
+			i++;
+			if(i<argc) {
+				password = argv[i];
+			} else {
+				return FALSE;
+			}
+		}
+		/*
 		*	set port number option
 		*/
 		else if(!strcmp(argv[i], "-p") || !strcmp(argv[i], "--port-number")) {
@@ -321,16 +334,24 @@ static OV_BOOL ov_ntservice_parseargs(
 			}
 		}
 		/*
-		*	no startup option
-		*/
-		else if(!strcmp(argv[i], "-n") || !strcmp(argv[i], "--no-startup")) {
-			startup = FALSE;
-		}
-		/*
 		*	display version option
 		*/
 		else if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) {
 			version = TRUE;
+		}
+		/*
+		*	set activity lock
+		*/
+		else if(!strcmp(argv[i], "-a") || !strcmp(argv[i], "--activity-lock")) {
+			i++;
+			activitylock = TRUE;
+		}
+		/*
+		*	set reuse of socket address/port
+		*/
+		else if(!strcmp(argv[i], "-r") || !strcmp(argv[i], "--reuse-address")) {
+			i++;
+			reuse = TRUE;
 		}
 		/*
 		*	display help option
@@ -722,10 +743,14 @@ ERRORMSG:
 		ov_logfile_info("Database started up.");
 	}
 	/*
+	*	set the serverpassword of the database
+	*/
+	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
+	/*
 	*	create the server object and add task bar icon
 	*/
 	ov_logfile_info("Creating server object...");
-	result = ov_ksserver_create(servername, port, OV_SIGHANDLER_NONE);
+	result = ov_ksserver_create(servername, port, OV_SIGHANDLER_NONE, reuse);
 	if(Ov_Fail(result)) {
 		goto ERRORMSG;
 	}
@@ -841,6 +866,7 @@ static BOOL ov_ntservice_consolectrlhandler(DWORD ctrltype) {
 *	Finally: the main function
 */
 int main(int argc, char **argv) {
+
 	/*
 	*	local variables
 	*/
@@ -869,7 +895,9 @@ int main(int argc, char **argv) {
 				"-f FILE, --file FILE             Set database filename (*.ovd)\n"
 				"-s SERVER, --server-name SERVER  Set server name\n"
 				"-p PORT, --port-number PORT      Set server port number\n"
-				"-n, --no-startup                 Do not startup the database\n"
+				"-i ID, --identify ID             Set Ticket Identification for server access\n"
+				"-a , --activity-lock             Locks OV activities (scheduler and accessorfnc)\n"
+				"-r , --reuse-address             Reuses the socket address/port\n"
 				"-v, --version                    Display version information\n"
 				"-h, --help                       Display this help message\n");
 		return EXIT_FAILURE;
