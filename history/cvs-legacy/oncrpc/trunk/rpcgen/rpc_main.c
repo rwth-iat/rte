@@ -79,8 +79,13 @@ struct commandline {
 
 static char *cmdname;
 #ifdef WIN32
+#ifdef __BORLANDC__
+static char CPP[] = "cpp32";
+static char CPPFLAGS[] = "-C -P- -oCON";
+#else
 static char CPP[] = "cl";
 static char CPPFLAGS[] = "/C /EP /nologo";
+#endif
 #else
 static char CPP[] = "/lib/cpp";
 static char CPPFLAGS[] = "-C";
@@ -199,6 +204,10 @@ open_input(infile, define)
 	char *define;
 {
 #ifdef WIN32
+#ifdef __BORLANDC__
+#define _P_WAIT P_WAIT
+#define _spawnlp spawnlp
+#endif
 	int old;
 	int pd[2];
 
