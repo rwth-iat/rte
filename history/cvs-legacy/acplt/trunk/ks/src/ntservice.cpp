@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/ntservice.cpp,v 1.2 1997-07-18 14:11:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/ntservice.cpp,v 1.3 1997-12-02 10:19:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -301,7 +301,7 @@ void KsNtServiceServer::serviceMain(int argc, char **argv)
         0,                               // spin up thread immediately
         &_workhorse_thread_id);
 # else
-# error Don't know how to start threads
+#  error "Don't know how to start threads"
 # endif
 #endif
 
