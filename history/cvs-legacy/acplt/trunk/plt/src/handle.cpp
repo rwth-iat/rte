@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/handle.cpp,v 1.3 1997-04-01 11:24:13 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/handle.cpp,v 1.4 1997-05-22 06:29:04 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -128,6 +128,20 @@ PltHandle_base::operator=(const PltHandle_base &rhs)
     PLT_CHECK_INVARIANT();
     return *this;
 }
+
+//////////////////////////////////////////////////////////////////////
+
+unsigned
+PltHandle_base::getRefCount() const
+{
+    if(palloc) {
+        return palloc->count;
+    } else {
+        return 0;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
 
 #if !PLT_INSTANTIATE_TEMPLATES
 #include "plt/handle_impl.h"

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.11 1997-04-10 14:09:22 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.12 1997-05-22 06:29:01 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -241,6 +241,7 @@ protected:
 
     // accessor
     operator bool () const;
+    unsigned getRefCount() const;
     void * getPtr() const; 
     // ^^ CAUTION: DON'T STORE ANY REFERENCES TO THE REPRESENTATION
 
@@ -303,7 +304,6 @@ PltHandle_base::~PltHandle_base()
     removeRef();
 }
 
-
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -332,8 +332,6 @@ PltPtrHandle<T>::PltPtrHandle(const PltPtrHandle &h)
 : PltHandle<T>( (PltHandle<T> &) h)
 {
 }
-
-
 
 //////////////////////////////////////////////////////////////////////
 
