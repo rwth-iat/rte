@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.28 2000-04-10 15:09:38 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.29 2000-04-11 14:15:56 harald Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -186,6 +186,14 @@
 #define PLT_COMPILER_CYGWIN 1
 #else
 #define PLT_COMPILER_CYGWIN 0
+#endif
+
+#if defined(__GLIBC__)
+#if defined(__GLIBC_MINOR__)
+#define PLT_RUNTIME_GLIBC ((__GLIBC__ << 16) + __GLIBC_MINOR__)
+#else
+#define PLT_RUNTIME_GLIBC (__GLIBC__ << 16)
+#endif
 #endif
 
 #ifdef _MSC_VER
