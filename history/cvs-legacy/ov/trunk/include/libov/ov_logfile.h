@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_logfile.h,v 1.2 1999-07-26 16:14:07 dirk Exp $
+*   $Id: ov_logfile.h,v 1.3 1999-07-28 16:03:34 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,7 +38,9 @@ extern "C" {
 /*
 *	Maximum number of messages to keep for ov_logfile_getmessages
 */
-#define OV_LOGFILE_MAXMSGS	100
+#ifndef OV_LOGFILE_MAXMSGS
+#define OV_LOGFILE_MAXMSGS	((sizeof(int)>2)?(128):(16))
+#endif
 
 /*
 *	Open/create a logfile
