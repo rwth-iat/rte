@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.1 1997-03-17 19:58:15 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.2 1997-03-19 17:19:19 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,11 +41,14 @@
 
 #include "ks/manager.h"
 #include "plt/log.h"
-
+#if PLT_DEBUG
+#include <iostream.h>
+#include <iomanip.h>
+#endif
 //////////////////////////////////////////////////////////////////////
 
 KsManager::KsManager()
-: KsServerBase("Manager")
+: KsServerBase("MANAGER")
 {
 }
 
@@ -54,6 +57,17 @@ KsManager::KsManager()
 KsManager::~KsManager()
 {
     KsManager::destroyTransports();
+    // Every registered server has exactly one corresponding
+    // timer event in the queue. So we can delete the
+    // servers in the table by iterating the queue.
+    while (!timer_queue.isEmpty()) {
+        KsmExpireServerEvent *pevent =
+            (KsmExpireServerEvent *) (KsTimerEvent*)timer_queue.removeFirst();
+        if (pevent->pserver) {
+            delete pevent->pserver;
+        }
+        delete pevent;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -79,16 +93,25 @@ KsManager::dispatch(u_long serviceId,
                     XDR *xdrIn,
                     KsAvTicket &ticket)
 {
-    bool decodedOk;
+    bool decodedOk = true;
     switch(serviceId) {
         
     case KS_REGISTER: 
         {
             KsRegistrationParams params(xdrIn, decodedOk);
             if (decodedOk) {
+#if PLT_DEBUG
+                cerr << "REGISTER '";
+                cerr << params.server.name << "' ";
+                cerr << params.server.protocol_version << " ";
+                cerr << params.time_to_live << " >> ";
+#endif
                 if (isLocal(xprt)) {
                     KsRegistrationResult result;
                     registerServer(ticket, params, result);
+#if PLT_DEBUG
+                    cerr << hex << result.result << dec << endl;
+#endif
                     sendReply(xprt, ticket, result);
                 } else {
                     sendErrorReply(xprt, ticket, KS_ERR_NOREMOTE);
@@ -102,16 +125,54 @@ KsManager::dispatch(u_long serviceId,
 
     case KS_UNREGISTER:
         {
+#if PLT_DEBUG
+            cerr << "UNREGISTER .." << endl;
+#endif
             KsUnregistrationParams params(xdrIn, decodedOk);
             if (decodedOk) {
+#if PLT_DEBUG
+                cerr << ". '";
+                cerr << params.server.name << "' ";
+                cerr << params.server.protocol_version << endl;
+#endif
                 if (isLocal(xprt)) {
                     KsUnregistrationResult result;
                     unregisterServer(ticket, params, result);
+#if PLT_DEBUG
+                    cerr << hex << result.result << dec << endl;
+#endif
                     sendReply(xprt, ticket, result);
                 } else {
                     // not local
                     sendErrorReply(xprt, ticket, KS_ERR_NOREMOTE);
                 }
+            } else {
+                // not properly decoded
+                sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
+            }
+        }
+        break;
+
+    case KS_GETSERVER:
+        {
+            KsGetServerParams params(xdrIn, decodedOk);
+            if (decodedOk) {
+#if PLT_DEBUG
+                cerr << "GETSERVER '";
+                cerr << params.server.name << "' ";
+                cerr << params.server.protocol_version << endl;
+#endif
+                // properly decoded
+                KsGetServerResult result;
+                getServer(ticket, params, result);
+#if PLT_DEBUG
+                cerr << hex << result.result << dec << " ";
+                cerr << result.server.name << "' ";
+                cerr << result.server.protocol_version << " ";
+                cerr << ( result.living ? " living" : "dead" )
+                    << endl;
+#endif
+                sendReply(xprt, ticket, result);
             } else {
                 // not properly decoded
                 sendErrorReply(xprt, ticket, KS_ERR_GENERIC);
@@ -178,25 +239,201 @@ KsManager::destroyTransports()
 //////////////////////////////////////////////////////////////////////
 
 void
-KsManager::registerServer(KsAvTicket & ticket,
+KsManager::registerServer(KsAvTicket & /*ticket*/,
                     KsRegistrationParams & params,
                     KsRegistrationResult & result)
 {
-    result.result = KS_ERR_BADNAME;
+    // TODO use ticket, check params
+    
+    if (params.server.name == server_name) {
+        // Do not overwrite entry for myself!
+        result.result = KS_ERR_BADPARAM;
+        return;
+    }
+            
+    // calculate expiration time:
+    KsTime expire_at = KsTime::now(params.time_to_live);
+    
+    // create expiration event:
+    KsmExpireServerEvent * pevent =
+        new KsmExpireServerEvent(this,expire_at);
+    if (! pevent) {
+        result.result = KS_ERR_GENERIC; return;
+    }
+
+    // queue it
+    if (! addTimerEvent(PltPtrComparable<KsmExpireServerEvent>(pevent)) ) {
+        delete pevent;
+        result.result = KS_ERR_GENERIC; return;
+    }
+
+    // lookup server:
+    KsmServer *pserver;
+    PltKeyPtr<KsServerDesc> pdesc (&params.server);
+    if (_server_table.query(pdesc,pserver)) {
+        // 
+        // found it
+        //
+        pserver->port = params.port;
+        pserver->pevent->pserver = 0; // inactivate old event
+    } else {
+
+        //
+        // unknown server:
+        // create server registration object
+        //
+        pserver = new KsmServer(params.server, 
+                                params.port,
+                                params.time_to_live,
+                                expire_at);
+        if (!pserver) {
+            result.result = KS_ERR_GENERIC; return;
+        }
+
+        // add it to the table of all servers on this machine
+        pdesc = &pserver->desc;
+        if (! _server_table.add(pdesc, pserver)) {
+            delete pserver;
+            result.result = KS_ERR_GENERIC; return;
+        }
+    }
+    //
+    // Success: event created and queued, serverobj resides in the table.
+    // Now connect registration object and event
+    //
+    pserver->pevent = pevent;
+    pevent->pserver = pserver;
+    result.result = KS_ERR_OK;
+    return;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 
 void
-KsManager::unregisterServer(KsAvTicket & ticket,
-                    KsUnregistrationParams & params,
-                    KsUnregistrationResult & result)
+KsManager::unregisterServer(KsAvTicket & /*ticket*/,
+                            KsUnregistrationParams & params,
+                            KsUnregistrationResult & result)
 {
-    result.result = KS_ERR_BADNAME;
+    // TODO: check ticket and params
+    
+    if (params.server.name == server_name) {
+        // Do not remove entry for myself!
+        result.result = KS_ERR_BADPARAM;
+        return;
+    }
+    //
+    // try to remove server entry
+    //
+    PltKeyPtr<KsServerDesc> pdesc = &params.server;
+    KsmServer *pserver;
+    if (_server_table.remove(pdesc, pserver)) {
+        //
+        // found it
+        //
+        pserver->pevent->pserver = 0; // inactivate event
+        delete pserver; // destroy entry
+        result.result = KS_ERR_OK;
+    } else {
+        //
+        // not found
+        //
+        result.result = KS_ERR_SERVERUNKNOWN;
+    }
 }
 
+//////////////////////////////////////////////////////////////////////
 
+void
+KsManager::getServer(KsAvTicket & /*ticket*/,
+                     KsGetServerParams & params,
+                     KsGetServerResult & result)
+{
+    const KsServerDesc & reqdesc = params.server; // requested
+    if (reqdesc.protocol_version < 1) {
+        result.result = KS_ERR_BADPARAM;
+        return;
+    }
+    // TODO: check ticket and params
+
+    if (params.server.name == server_name) {
+        // Hey, that's me!!!
+        result.server.name = server_name;
+        result.server.protocol_version = protocol_version;
+        result.expires_at = KsTime::now(82400);
+        result.living = true;
+        result.result = KS_ERR_OK;
+        return;
+    }
+    //
+    // find best match
+    //
+    KsmServer *pbest = 0;
+    u_long best_version = 0;
+    for (PltHashIterator<PltKeyPtr<KsServerDesc>, KsmServer *> 
+             it(_server_table);
+         it;
+         ++it) {
+        const KsServerDesc & desc = it->a_value->desc; // current
+        if (desc.protocol_version >= reqdesc.protocol_version
+            && desc.name == reqdesc.name ) {
+                // this is a match
+                if (best_version < desc.protocol_version) {
+                    //  remember: this is the best match so far
+                    best_version = desc.protocol_version;
+                    pbest = it->a_value;
+                } // best match
+            } // match
+    } // iteration
+    
+    if (pbest) {
+        // success
+        // fill result structure
+        result.server      = pbest->desc;
+        result.port        = pbest->port;
+        result.expires_at  = pbest->expires_at;
+        result.living      = pbest->living;
+        result.result      = KS_ERR_OK;
+    } else {
+        result.result = KS_ERR_SERVERUNKNOWN;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+void 
+KsmExpireServerEvent::trigger()
+{
+    if (pserver) {
+        PLT_ASSERT(pserver->pevent == this);
+        if (pserver->living) {
+            // mark server dead
+            pserver->living = false;
+            // reschedule event
+            _trigger_at = KsTime::now(pserver->time_to_live);
+            _pmanager->addTimerEvent(this);
+        } else {
+            // remove server
+            PltKeyPtr<KsServerDesc> pdesc = &pserver->desc;
+            KsmServer *pdummy;
+            if (_pmanager->_server_table.remove(pdesc, pdummy)) {
+                // ok
+                PLT_ASSERT(pdummy == pserver);
+                delete pdummy;
+                delete this;
+            } else {
+                PltLog::Error("Could not expire server.");
+                // don't delete this. this is a memory leak,
+                // but this should not happen anyway.
+            }
+        }
+    } else {
+        // inactive
+        delete this;
+    }
+}
+                
 //////////////////////////////////////////////////////////////////////
 
 /* EOF ks/manager.cpp */

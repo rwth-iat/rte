@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.5 1997-03-17 19:58:14 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.6 1997-03-19 17:19:18 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -173,6 +173,8 @@ KsAvTicket::emergencyTicket()
 //////////////////////////////////////////////////////////////////////
 
 KsAvNoneTicket::KsAvNoneTicket(XDR *, bool & ok)
+: _access(KS_AC_READ || KS_AC_WRITE),
+  _result(KS_ERR_OK)
 {
     ok = true;
 }

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.1 1997-03-17 19:58:11 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.2 1997-03-19 17:19:35 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -47,6 +47,15 @@ extern "C" {
 #include <rpc/pmap_clnt.h>
 };
 
+#include "plt/hashtable.h"
+
+//////////////////////////////////////////////////////////////////////
+// forward declarations
+//////////////////////////////////////////////////////////////////////
+
+class KsmServer;
+class KsmExpireServerEvent;
+
 //////////////////////////////////////////////////////////////////////
 
 class KsManager
@@ -64,6 +73,7 @@ protected:
     virtual bool createTransports();
     virtual void destroyTransports();
 
+    // service functions
     void registerServer(KsAvTicket & ticket,
                   KsRegistrationParams & params,
                   KsRegistrationResult & result);
@@ -72,12 +82,97 @@ protected:
                     KsUnregistrationParams & params,
                     KsUnregistrationResult & result);
 
+    void getServer(KsAvTicket & ticket,
+                    KsGetServerParams & params,
+                    KsGetServerResult & result);
+#if 0
+    // timer events
+
+    virtual bool    hasQueuedTimerEvents() const;
+    virtual bool    hasPendingTimerEvents() const;
+    virtual bool    servePendingTimerEvents();
+    virtual KsTime  timeUntilTimerEvent() const;
+
+    bool addTimerEvent(KsTimerEvent *event);
+    bool removeTimerEvent(KsTimerEvent *event);
+#endif
 private:
+    friend KsmExpireServerEvent;
+    //
+    // object tree manipulation
+    //
+    void initObjectTree(); // initialize object tree with predefined values
+    bool addServerDescription(const KsString & ,
+                              u_long ,
+                              const KsTime,
+                              u_long) 
+    {
+        // TODO: does nothing
+        return true;
+    }
+    
+    bool removeServerDescription(const KsString &,
+                                 u_long)
+    {
+        return true;
+    }
+
     static bool isLocal(SVCXPRT *);
     SVCXPRT *_udp_transport;
+    PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> _server_table;
 };
     
+
+//////////////////////////////////////////////////////////////////////
+
     
+struct KsmServer
+{
+public:
+    KsmServer(const KsServerDesc & d,
+              u_short p,
+              u_long ttl,
+              KsTime exp);
+    KsServerDesc desc;
+    u_short port;
+    KsTime expires_at;
+    u_long time_to_live; // seconds
+    bool living;
+    KsmExpireServerEvent *pevent;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+
+class KsmExpireServerEvent
+: public KsTimerEvent
+{
+public:
+    KsmExpireServerEvent(KsManager *m, const KsTime & at, KsmServer * p = 0)
+        : KsTimerEvent(at), pserver(p), _pmanager(m) { }
+
+    virtual void trigger();
+    KsmServer * pserver;
+private:
+    KsManager * _pmanager;
+};
+
+//////////////////////////////////////////////////////////////////////
+// INLINE IMPLEMENTATION
+//////////////////////////////////////////////////////////////////////
+inline
+KsmServer::KsmServer(const KsServerDesc & d,
+                     u_short p,
+                     u_long ttl,
+                     KsTime exp)
+: desc(d), 
+  port(p), 
+  expires_at(exp), 
+  time_to_live(ttl),
+  living(true), 
+  pevent(0) 
+{ 
+}
 
 //////////////////////////////////////////////////////////////////////
 

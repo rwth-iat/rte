@@ -41,13 +41,16 @@
 #include "ks/xdr.h"
 #include "ks/ks.h"
 #include "ks/string.h"
+#include "ks/time.h"
 #include "ks/result.h"
 
 ////////////////////////////////////////////////////////////////////////
 // class KsServerDesc
 ////////////////////////////////////////////////////////////////////////
 
-class KsServerDesc : public KsXdrAble {
+class KsServerDesc 
+: public KsXdrAble 
+{
 public:
     KsServerDesc( const KsString &n, u_short pv )
         : name(n), protocol_version(pv) {}
@@ -59,13 +62,18 @@ public:
     
     KsString  name;
     u_short   protocol_version;
+
+    unsigned long hash() const;
+    bool operator ==(const KsServerDesc & rhs) const;
 };
 
 //////////////////////////////////////////////////////////////////////////
 // class KsRegistrationParams
 //////////////////////////////////////////////////////////////////////////
 
-class KsRegistrationParams {
+class KsRegistrationParams 
+: public KsXdrAble
+{
 public:
     KsRegistrationParams( const KsServerDesc &, u_short, u_long );
     KsRegistrationParams( XDR *, bool &);
@@ -83,7 +91,9 @@ public:
 // class KsUnregistrationParams
 //////////////////////////////////////////////////////////////////////////
 
-class KsUnregistrationParams {
+class KsUnregistrationParams 
+: KsXdrAble
+{
 public:
     KsUnregistrationParams( const KsServerDesc &);
     KsUnregistrationParams( XDR *, bool &);
@@ -94,6 +104,12 @@ public:
 
     KsServerDesc server;
 };
+
+//////////////////////////////////////////////////////////////////////
+// class KsGetServerParams
+//////////////////////////////////////////////////////////////////////
+
+typedef KsUnregistrationParams KsGetServerParams;
 
 //////////////////////////////////////////////////////////////////////////
 // class KsRegistrationResult
@@ -106,6 +122,27 @@ typedef KsResult KsRegistrationResult;
 //////////////////////////////////////////////////////////////////////////
 
 typedef KsResult KsUnregistrationResult;
+
+//////////////////////////////////////////////////////////////////////
+// class KsGetServerResult
+//////////////////////////////////////////////////////////////////////
+
+class KsGetServerResult
+: public KsResult
+{
+public:
+    KsGetServerResult(KS_RESULT res = KS_ERR_OK);
+    KsGetServerResult(XDR *, bool &);
+
+    bool xdrEncode(XDR *) const;
+    bool xdrDecode(XDR *);
+    static KsGetServerResult *xdrNew(XDR *);
+
+    KsServerDesc server;
+    u_short port;
+    KsTime expires_at;
+    bool living;
+};
 
 //////////////////////////////////////////////////////////////////////
 

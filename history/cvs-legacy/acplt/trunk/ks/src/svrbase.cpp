@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.4 1997-03-18 10:48:43 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrbase.cpp,v 1.5 1997-03-19 17:19:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -50,6 +50,10 @@
 #include "ks/svrbase.h"
 #include "plt/log.h"
 
+#if PLT_DEBUG
+#include <iostream.h>
+#include <iomanip.h>
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // utilities
@@ -66,11 +70,27 @@ ks_dtablesize()
 }
 
 //////////////////////////////////////////////////////////////////////
+//
+// Return the next timer event that will trigger or 0, if there's none in
+// the timer event queue.
+//
+inline KsTimerEvent *
+KsServerBase::getNextTimerEvent()
+{
+    if ( timer_queue.isEmpty() ) {
+        return 0;
+    } else {
+        return timer_queue.peek();
+    }
+}
+
+
+
+//////////////////////////////////////////////////////////////////////
 
 inline void
 KsTimerEvent::trigger()
 {
-    (_server.*method)(this);
 }
 
 
@@ -218,6 +238,9 @@ extern "C" void
 ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
 {
     PLT_PRECONDITION(KsServerBase::the_server);
+#if PLT_DEBUG
+    cerr << "Req: " << hex << request->rq_proc << dec << endl;
+#endif
     if ( request->rq_proc == 0 ) {
         //
         // This is just here for the compliance with ONC/RPC rules. If
@@ -252,7 +275,9 @@ ks_c_dispatch(struct svc_req * request, SVCXPRT *transport)
                                                xdr,
                                                *pTicket);
         }
-        // TODO destroy ticket????
+        if (pTicket && pTicket != KsAvTicket::emergencyTicket()) {
+            delete pTicket;
+        }
     }
 }
 
@@ -554,6 +579,5 @@ bool KsServerBase::removeTimerEvent(KsTimerEvent *event)
 {
     return timer_queue.remove(event);
 } // KsServerBase::removeTimerEvent
-
 
 

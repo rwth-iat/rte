@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_XDR_INCLUDED
 #define KS_XDR_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.8 1997-03-18 10:48:37 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdr.h,v 1.9 1997-03-19 17:19:15 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -222,7 +222,7 @@ typedef void ks_dummy_typedef
 #define KS_IMPL_XDRNEW(classname)                          \
     classname * classname::xdrNew(XDR * xdrs)              \
     {                                                      \
-        bool ok=false;                                     \
+        bool ok=true;                                      \
         classname * p = new classname(xdrs, ok);           \
         if ( !ok && p) {                                   \
             delete p;                                      \

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.4 1997-03-18 10:48:41 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.5 1997-03-19 17:19:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -41,6 +41,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // class KsResult
 ////////////////////////////////////////////////////////////////////////////
+
+KsResult::KsResult(KS_RESULT res)
+    : result(res)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 bool 
 KsResult::xdrEncode(XDR *xdr) const {

@@ -64,6 +64,22 @@ KsServerDesc::xdrEncode(XDR *xdr) const
 KS_IMPL_XDRCTOR(KsServerDesc);
 KS_IMPL_XDRNEW(KsServerDesc);
 
+//////////////////////////////////////////////////////////////////////
+
+unsigned long
+KsServerDesc::hash() const
+{
+    return name.hash() ^ protocol_version;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool 
+KsServerDesc::operator ==(const KsServerDesc & rhs) const
+{
+    return name == rhs.name && protocol_version == rhs.protocol_version;
+}
+
 ////////////////////////////////////////////////////////////////////////////
 // class KsRegistrationParams
 ///////////////////////////////////////////////////////////////////////////
@@ -158,6 +174,57 @@ KsUnregistrationParams::KsUnregistrationParams(XDR *xdr, bool &ok)
 //////////////////////////////////////////////////////////////////////
 
 KS_IMPL_XDRNEW(KsUnregistrationParams);
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+KsGetServerResult::KsGetServerResult(KS_RESULT res)
+: KsResult(res), 
+  server("",0)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KsGetServerResult::KsGetServerResult(XDR *xdr, bool &ok)
+: KsResult(xdr, ok),
+  server(xdr,ok)
+{
+    ok = ok 
+        && ks_xdrd_u_short(xdr, &port)
+            && expires_at.xdrDecode(xdr)
+                && ks_xdrd_bool(xdr, &living);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KS_IMPL_XDRNEW(KsGetServerResult);
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsGetServerResult::xdrDecode(XDR *xdr)
+{
+    return KsResult::xdrDecode(xdr)
+        && server.xdrDecode(xdr)
+            && ks_xdrd_u_short(xdr, &port)
+                && expires_at.xdrDecode(xdr)
+                    && ks_xdrd_bool(xdr, &living);
+}
+        
+
+/////////////////////////////////////////////////////////////////////////
+
+bool
+KsGetServerResult::xdrEncode(XDR *xdr) const
+{
+    return KsResult::xdrEncode(xdr)
+        && server.xdrEncode(xdr)
+            && ks_xdre_u_short(xdr, &port)
+                && expires_at.xdrEncode(xdr)
+                    && ks_xdre_bool(xdr, &living);
+}
 
 /////////////////////////////////////////////////////////////////////////
 // End of file ks/register.cpp
