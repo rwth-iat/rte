@@ -111,7 +111,7 @@ class KsGetVarItemResult
 : public KsResult
 {
 public:
-    KsGetVarItemResult();
+    KsGetVarItemResult() { } // silence compiler
     KsGetVarItemResult(XDR *, bool &);
 
     bool xdrEncode(XDR *) const;
@@ -149,7 +149,7 @@ class KsSetVarItem
 : public KsXdrAble
 {
 public:
-    KsSetVarItem();
+    KsSetVarItem() { } // silence compiler
     KsSetVarItem(XDR *, bool &);
 
     bool xdrEncode(XDR *) const;
@@ -236,6 +236,20 @@ public:
 // Inline Implementation
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+inline
+KsGetVarItemResult::KsGetVarItemResult()
+{}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+KsSetVarItem::KsSetVarItem()
+{}
+
+//////////////////////////////////////////////////////////////////////
+#endif
+
 inline
 KsGetPPParams::KsGetPPParams()
 {}
@@ -272,20 +286,8 @@ KsGetVarParams::xdrDecode(XDR *xdr)
 //////////////////////////////////////////////////////////////////////
 
 inline
-KsGetVarItemResult::KsGetVarItemResult()
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
 KsGetVarResult::KsGetVarResult(size_t nids)
 : items(nids)
-{}
-
-//////////////////////////////////////////////////////////////////////
-
-inline
-KsSetVarItem::KsSetVarItem()
 {}
 
 //////////////////////////////////////////////////////////////////////
