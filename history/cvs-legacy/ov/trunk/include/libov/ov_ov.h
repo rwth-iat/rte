@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.5 1999-07-29 08:57:49 dirk Exp $
+*   $Id: ov_ov.h,v 1.6 1999-07-29 16:32:21 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -201,7 +201,7 @@ typedef OV_ENUM OV_VAR_TYPE;
 #define OV_VP_GETACCESSOR	0x00000001			/* variable has a get accessor */
 #define OV_VP_SETACCESSOR	0x00000002			/* variable has a set accessor */
 #define OV_VP_ACCESSORS		(OV_VP_GETACCESSOR | OV_VP_SETACCESSOR)
-#define OV_VP_VIRTUAL		0x00000004			/* variable is virtual */
+#define OV_VP_DERIVED		0x00000004			/* variable is derived */
 
 typedef OV_ENUM OV_VAR_PROPS;
 

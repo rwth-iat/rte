@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.c,v 1.2 1999-07-27 17:41:13 dirk Exp $
+*   $Id: ov_element.c,v 1.3 1999-07-29 16:32:24 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -275,7 +275,7 @@ OV_RESULT ov_element_searchpart_object(
 					&& Ov_DynamicPtrCast(ov_variable, ppart->elemunion.pobj)
 				) {
 					ppart->elemtype = OV_ET_VARIABLE;
-					if(ppart->elemunion.pvar->v_varprops & OV_VP_VIRTUAL) {
+					if(ppart->elemunion.pvar->v_varprops & OV_VP_DERIVED) {
 						ppart->pvalue = NULL;
 					} else {
 						ppart->pvalue = ((OV_BYTE*)pobj)+ppart->elemunion.pvar->v_offset;
@@ -488,7 +488,7 @@ CONTINUE3:		if(ppart->elemunion.passoc) {
 			*/
 			switch(ppart->elemtype) {
 				case OV_ET_VARIABLE:
-					if(ppart->elemunion.pvar->v_varprops & OV_VP_VIRTUAL) {
+					if(ppart->elemunion.pvar->v_varprops & OV_VP_DERIVED) {
 						ppart->pvalue = NULL;
 					} else {
 						ppart->pvalue = ((OV_BYTE*)pobj)+ppart->elemunion.pvar->v_offset;

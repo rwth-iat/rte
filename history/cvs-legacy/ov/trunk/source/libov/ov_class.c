@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.4 1999-07-29 08:57:53 dirk Exp $
+*   $Id: ov_class.c,v 1.5 1999-07-29 16:32:24 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -826,7 +826,7 @@ void ov_class_deleteobject_cleanupobj(
 			}
 			switch(child.elemtype) {
 				case OV_ET_VARIABLE:
-					if(!(child.elemunion.pvar->v_varprops & OV_VP_VIRTUAL)) {
+					if(!(child.elemunion.pvar->v_varprops & OV_VP_DERIVED)) {
 						if(child.elemunion.pvar->v_vartype == OV_VT_STRUCT) {
 							ov_class_deleteobject_cleanupstruct(&child);
 						} else {

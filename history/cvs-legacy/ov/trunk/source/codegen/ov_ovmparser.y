@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.3 1999-07-28 16:01:38 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.4 1999-07-29 16:32:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1289,7 +1289,7 @@ OV_BOOL ov_codegen_checksemantics_variable(
 	/*
 	*	virtual variables need to have get and/or set accessors
 	*/
-	if((pvar->varprops & OV_VP_VIRTUAL) && !(pvar->varprops & OV_VP_ACCESSORS)) {
+	if((pvar->varprops & OV_VP_DERIVED) && !(pvar->varprops & OV_VP_ACCESSORS)) {
 		fprintf(stderr, "class \"%s\", variable \"%s\": virtual variables must "
 			"have get and/or set accessors.\n", pclass->identifier, pvar->identifier);
 		result = FALSE;

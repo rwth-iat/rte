@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmscanner.lex,v 1.2 1999-07-27 17:41:12 dirk Exp $
+*   $Id: ov_ovmscanner.lex,v 1.3 1999-07-29 16:32:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -116,7 +116,7 @@ CPP_DIRECTIVE	\#{SPACE}{UINT}{SPACE}\"[^ \t\n]+\"({SPACE}{UINT})?{SPACE_OPT}\n
 "HAS_GET_ACCESSOR"	{ yylval.varprops = OV_VP_GETACCESSOR;	return TOK_VARPROPS; }
 "HAS_SET_ACCESSOR"	{ yylval.varprops = OV_VP_SETACCESSOR;	return TOK_VARPROPS; }
 "HAS_ACCESSORS"		{ yylval.varprops = OV_VP_ACCESSORS;	return TOK_VARPROPS; }
-"IS_VIRTUAL"		{ yylval.varprops = OV_VP_VIRTUAL;		return TOK_VARPROPS; }
+"IS_DERIVED"		{ yylval.varprops = OV_VP_DERIVED;		return TOK_VARPROPS; }
 
 "IS_ABSTRACT"		{ yylval.opprops = OV_OP_ABSTRACT;			return TOK_OPPROPS; }
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.4 1999-07-29 08:57:50 dirk Exp $
+*   $Id: ov_codegen.c,v 1.5 1999-07-29 16:32:22 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -880,7 +880,7 @@ void ov_codegen_printclassinstdefines(
 	*	include new variables in define
 	*/
 	for(pvar = pclass->variables; pvar; pvar=pvar->pnext) {
-		if(!(pvar->varprops & OV_VP_VIRTUAL)) {
+		if(!(pvar->varprops & OV_VP_DERIVED)) {
 			if(pvar->veclen) {
 				/*
 				*	scalar or vector of fixed length
@@ -1447,7 +1447,7 @@ void ov_codegen_printvardefobj(
 				ov_codegen_getvartypetext(pvar->vartype));
 			break;
 	}
-	if(pvar->varprops & OV_VP_VIRTUAL) {
+	if(pvar->varprops & OV_VP_DERIVED) {
 		fprintf(fp, "    0,\n");
 	} else {
 		fprintf(fp ,"    offsetof(OV_INST_%s_%s, v_%s),\n", plib->identifier,

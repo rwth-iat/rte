@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.4 1999-07-29 08:57:53 dirk Exp $
+*   $Id: ov_object.c,v 1.5 1999-07-29 16:32:25 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -910,7 +910,7 @@ OV_ACCESS ov_object_getaccess_nostartup(
 	*/
 	switch(pelem->elemtype) {
 		case OV_ET_VARIABLE:
-			if(pelem->elemunion.pvar->v_varprops & OV_VP_VIRTUAL) {
+			if(pelem->elemunion.pvar->v_varprops & OV_VP_DERIVED) {
 				return OV_AC_NONE;
 			}
 			if(Ov_GetParent(ov_containment, Ov_GetParent(ov_containment,
@@ -1026,7 +1026,7 @@ OV_RESULT ov_object_move(
 		) {
 			if(Ov_IsVar(pelem)) {
 				pvar = Ov_StaticPtrCast(ov_variable, pelem);
-				if(!(pvar->v_varprops & OV_VP_VIRTUAL)) {
+				if(!(pvar->v_varprops & OV_VP_DERIVED)) {
 					if(pvar->v_vartype == OV_VT_STRUCT) {
 						/*
 						*	variable is a structure, move it
