@@ -62,6 +62,7 @@ template<class T>
 class PltIterator
 {
 public:
+    virtual ~PltIterator() { }
     virtual operator const void * () const = 0;   // remaining element?
     virtual const T & operator * () const;        //  /current element
     virtual const T * operator -> () const;       //  \override at least one!
