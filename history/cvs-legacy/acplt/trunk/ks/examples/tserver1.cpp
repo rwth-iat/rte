@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.18 1998-10-06 13:17:50 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.19 1998-12-10 17:25:07 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -287,6 +287,10 @@ TestServer::TestServer(int port)
 
     // a domain
     KssSimpleDomain * test_dom = new KssSimpleDomain("test");
+    KssDomainHandle htest_dom(test_dom, KsOsNew);
+    KssSimpleLinkAlias *test_dom_alias = 
+        new KssSimpleLinkAlias(htest_dom, "test_links");
+
     // a writable variable
     KssSimpleVariable * write_me = new KssSimpleVariable("write_me");
     // no value, yet
@@ -310,7 +314,8 @@ TestServer::TestServer(int port)
     double_var->setValue(new KsDoubleValue(42));
     double_var->lock();
     test_dom->addChild(double_var);
-    _root_domain.addChild(test_dom);
+    _root_domain.addChild(*(KssCommObjectHandle*)&htest_dom);
+    _root_domain.addChild(test_dom_alias);
 
     KssSimpleDomain *big_dom = new KssSimpleDomain("big");
     for (size_t j = 0; j < 1000; ++j) {
@@ -369,6 +374,12 @@ TestServer::TestServer(int port)
               "Area of dynamically created objects");
     addDomain(KsPath("/vendor"), "extensions");
     addDomain(KsPath("/vendor/extensions"), "ks_test");
+
+    KssCommObjectHandle hext_dom = _root_domain.getChildByPath(KsPath("/vendor/extensions"));
+    KssSimpleLinkAlias *vendorext_alias =
+        new KssSimpleLinkAlias(*(KssDomainHandle*)&hext_dom, 
+                               "extensions_link");
+    _root_domain.addChild(vendorext_alias);
 
     KsPath ep("/vendor/extensions/ks_test");
 
