@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.7 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_server.c,v 1.8 2002-01-31 16:28:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -230,6 +230,13 @@ int main(int argc, char **argv) {
 			}
 		}
 		/*
+		*	set activity lock
+		*/
+		else if(!strcmp(argv[i], "-a") || !strcmp(argv[i], "--activity-lock")) {
+			i++;
+			activitylock = TRUE;
+		}
+		/*
 		*	set logfile option
 		*/
 		else if(!strcmp(argv[i], "-l") || !strcmp(argv[i], "--logfile")) {
@@ -289,6 +296,7 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 				"The following optional arguments are available:\n"
 				"-f FILE, --file FILE            Set database filename (*.ovd)\n"
 				"-s SERVER, --server-name SERVER Set server name\n"
+				"-a , --activity-lock            Locks OV activities (scheduler and accessorfnc)\n"
 				"-i ID, --identify ID            Set Ticket Identification for server access\n"
 				"-p PORT, --port-number PORT     Set server port number\n"
 				"-l LOGFILE, --logfile LOGFILE   Set logfile name, you may use stdout"

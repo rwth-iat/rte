@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.h,v 1.6 2002-01-29 15:36:07 ansgar Exp $
+*   $Id: ov_vendortree.h,v 1.7 2002-01-31 16:28:50 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -100,8 +100,17 @@ OV_DLLFNCEXPORT OV_STRING ov_vendortree_getunit(
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getvar(
 	OV_INSTPTR_ov_object	pobj,
-	OV_ANY					*pvarcurrprops,
-	const OV_TICKET			*pticket
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET		*pticket
+);
+
+/*
+*	Set variable of a vendor object
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setvar(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ANY		*pvarcurrprops,
+	const OV_TICKET		*pticket
 );
 
 /*
