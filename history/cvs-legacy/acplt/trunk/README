@@ -1,12 +1,12 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.4.0 of the C++ Communication Libary. As always, it
+This is version 1.3.0 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
 
-IMPORTANT: With the 1.4.0 series we will be moving in the direction
+IMPORTANT: With the 1.3.x/1.4.x series we will be moving in the direction
 of non-blocking clients.
 
 IMPORTANT: since version 1.1.3 we now license the source code of the
@@ -132,11 +132,32 @@ number y denoted the state of the code: even numbered y's denote stable
 releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
 
-Version 1.4.0
+Version 1.3.0
 - BOTH:
   * Port to g++ 3.3 and new C++ standard compliant header files.
 
   * Fixed sign bug in encoding/decoding routines (aka "%XX").
+
+  * PLT_USE_BUFFERED_STREAMS has been completely removed; the library now uses
+    solely the so-called "buffered stream" (non-blocking) I/O subsystem. The
+    old blocking I/O stuff has been completely removed (to avoid code bloat).
+
+  * Moved all connection manager related code from the server-only part of the
+    library into the common library part. Also moved socket IO related code
+    parts from the server base to the same common library part under the
+    auspieces of the connection manager.
+
+  * connectionmgr.h/.cpp: now contains only the abstract base class
+    KsConnectionManager (the interface). Concrete implementations have to
+    derive from this class and implement IO and timer behavior.
+
+  * stdconnectionmgr.h/.cpp: new; contains standard connection manager
+    which uses select() for non-blocking I/O.
+
+  * Support for XTI has been removed because no-one really ever needed
+    that and even Solaris has an ordinary socket wrapper library. After
+    all, the XTI design was brain-dead from the beginning, so why
+    causing code-bloat by supporting this unnecessary piece?
 
 - SERVERS:
   * The tserver now accepts certain command line options, in
@@ -145,6 +166,10 @@ Version 1.4.0
 
   * The tmanager also now accepts socket address reusage through
     the -r command line option.
+
+  * The registration process of KS servers with their local KS Manager is now
+    carried out asynchronously in the background. For this, the KsServer class
+    now relies on the KsServerConnection class.
 
 - CLIENTS:
 
