@@ -451,8 +451,8 @@ inline
 KsCurrPropsHandle
 KscVariable::getCurrPropsHandle()
 {
-    return KsCurrPropsHandle(&curr_props,
-                             KsOsUnmanaged);
+    return KsCurrPropsHandle(new KsVarCurrProps(curr_props),
+                             KsOsNew);
 }
 
 //////////////////////////////////////////////////////////////////////

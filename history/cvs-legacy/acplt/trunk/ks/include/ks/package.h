@@ -191,8 +191,8 @@ protected:
     KscPackageHandle get_pkg,
                      set_pkg;
 
-    KS_RESULT _result;
     const KscAvModule *av_module;
+    KS_RESULT _result;
 
 #if PLT_DEBUG
 public:

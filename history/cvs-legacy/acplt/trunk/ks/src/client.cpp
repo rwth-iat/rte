@@ -612,6 +612,9 @@ KscServer::setResultAfterService()
     case RPC_TIMEDOUT:
         _last_result = KS_ERR_TIMEOUT;
         return;
+    case RPC_SUCCESS :
+        _last_result = KS_ERR_OK;
+        return;
     default:
         _last_result = KS_ERR_GENERIC;
     }
