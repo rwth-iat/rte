@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RESULT_INCLUDED
 #define KS_RESULT_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/result.h,v 1.1 1997-03-17 09:00:58 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/result.h,v 1.2 1997-03-17 09:02:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -37,7 +37,8 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "plt/debug.h"
+#include "ks/xdr.h"
+#include "ks/ks.h"
 
 ////////////////////////////////////////////////////////////////////////////
 // class KsResult
