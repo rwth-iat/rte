@@ -340,7 +340,7 @@ template<class T>
 inline bool 
 PltIList<T>::addLast(T* p) 
 { 
-    PltList_base::addLast(p); 
+    return PltList_base::addLast(p); 
 }
 
 //////////////////////////////////////////////////////////////////////
