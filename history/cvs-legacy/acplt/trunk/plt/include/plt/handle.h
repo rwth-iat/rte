@@ -224,6 +224,7 @@ protected:
         {
             unsigned count;
             enum PltOwnership type;
+            AllocTracker(enum PltOwnership t) : count(1), type(t) {}
         } *palloc;
 
 #if PLT_DEBUG_INVARIANTS
@@ -328,11 +329,8 @@ PltHandle<T>::bindTo(T* p, enum PltOwnership t)
     // bind new handled object
     if (p && t != PltOsUnmanaged) {
         // only managed non-NULL objects get an AllocTracker
-        palloc = new AllocTracker;
-        if (palloc) {
-            palloc->count = 1;
-            palloc->type = t;
-        } else {
+        palloc = new AllocTracker(t);
+        if (!palloc) {
             ok = false;
         }
     }
