@@ -1,5 +1,5 @@
 /*
-*   $Id: example_getvarclient.c,v 1.2 1999-07-26 16:14:12 dirk Exp $
+*   $Id: example_getvarclient.c,v 1.3 1999-08-28 13:46:00 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -33,7 +33,6 @@
 #include <stdarg.h>
 
 #include "example_getvarclient.h"
-#include "libov/ov_scheduler.h"
 #include "libov/ov_string.h"
 #include "libov/ov_result.h"
 #include "libov/ov_path.h"
@@ -161,26 +160,19 @@ void OV_DLLFNCEXPORT example_getvarclient_startup(
 	*	local variables
 	*/
 	OV_INSTPTR_example_getvarclient	pgvc = Ov_StaticPtrCast(example_getvarclient, pobj);
-	OV_VTBLPTR_example_getvarclient	pvtable;
 	/*
-	*	get the object's vtable pointer
+	*	do what the base class does first
 	*/
-	Ov_GetVTablePtr(example_getvarclient, pvtable, pgvc);
-	if(pvtable) {
-		/*
-		*	register the execute function with the scheduler
-		*/
-		Ov_WarnIfNot(Ov_OK(ov_scheduler_register(pobj, pvtable->m_execute)));
-	}
+	ov_object_startup(pobj);
+	/*
+	*	register the execute function with the scheduler
+	*/
+	Ov_WarnIfNot(Ov_OK(ov_scheduler_register(pobj, example_getvarclient_execute)));
 	/*
 	*	initialize the connection and the service object pointers
 	*/
 	pgvc->v_pconn = NULL;
 	pgvc->v_psvc = NULL;
-	/*
-	*	set the object's state to "started up"
-	*/	
-	pgvc->v_objectstate |= OV_OS_STARTED;
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -211,9 +203,9 @@ void OV_DLLFNCEXPORT example_getvarclient_shutdown(
 		pgvc->v_pconn = NULL;
 	}
 	/*
-	*	set the object's state to "shut down"
+	*	finally do what the base class does
 	*/	
-	pgvc->v_objectstate &= ~OV_OS_STARTED;
+	ov_object_shutdown(pobj);
 }
 
 /*	----------------------------------------------------------------------	*/

@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.2 1999-07-26 16:14:00 dirk Exp $
+#   $Id: unix.mk,v 1.3 1999-08-28 13:45:49 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -61,7 +61,6 @@ LD_LIB			= -ldl
 
 CXX				= g++
 CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates
-#CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates -DOV_USEMEMTEST
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 CXX_LINK		= $(CXX)
@@ -158,16 +157,10 @@ $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
 
 #	ACPLT/OV database utility
 
-#$(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(LIBMPM_LIB)
-#	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-
 $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_DLL)
 	$(LINK) -rdynamic -o $@ $^ $(C_LIBS) $(LD_LIB)
 
 #	ACPLT/KS-Server for ACPLT/OV
-
-#$(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(ACPLTKS_LIBS) $(LIBMPM_LIB)
-#	$(CXX_LINK) -rdynamic -o $@ $^ $(C_LIBS) $(LD_LIB)
 
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_DLL) $(OV_LIBOV_DLL)
 	$(CXX_LINK) -rdynamic -o $@ $^ $(C_LIBS) $(LD_LIB)

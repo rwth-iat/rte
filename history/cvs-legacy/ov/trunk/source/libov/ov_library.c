@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.3 1999-08-18 13:11:26 dirk Exp $
+*   $Id: ov_library.c,v 1.4 1999-08-28 13:46:01 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -599,16 +599,18 @@ OV_RESULT ov_library_prepare(
 	*	provisorically load class definitions
 	*/
 	for(pclassdef=plibdef->classes; pclassdef; pclassdef=pclassdef->pnext) {
-		pclass = Ov_DbMalloc(OV_INST_ov_class);
+		pclass = (OV_INSTPTR_ov_class)ov_database_malloc(
+			Ov_GetInstSize(ov_class)+pclassdef->staticsize);
 		if(!pclass) {
 			return OV_ERR_DBOUTOFMEMORY;
 		}
-		memset(pclass, 0, Ov_GetInstSize(ov_class));
+		memset(pclass, 0, Ov_GetInstSize(ov_class)+pclassdef->staticsize);
 		Ov_AbortIfNot(Ov_OK(ov_string_setvalue(&pclass->v_identifier,
 			pclassdef->identifier)));
 		pclass->v_creationtime.secs = OV_VL_MAXUINT;
 		pclass->v_classprops = pclassdef->classprops;
 		pclass->v_size = pclassdef->size;
+		pclass->v_staticsize = pclassdef->staticsize;
 		pclass->v_pvtable = (OV_VTBLPTR)pclassdef->pvtable;
 		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->ov, pclass)));
 	}

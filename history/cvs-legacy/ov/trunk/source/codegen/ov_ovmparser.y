@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.5 1999-08-27 16:37:06 dirk Exp $
+*   $Id: ov_ovmparser.y,v 1.6 1999-08-28 13:45:59 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1009,6 +1009,14 @@ OV_BOOL ov_codegen_checksemantics_class(
 		}
 	}
 	/*
+	*	final but not instaniable classes do not seem to make any sense
+	*/
+	if((pclass->classprops & OV_CP_FINAL) && !(pclass->classprops & OV_CP_INSTANTIABLE)) {
+		fprintf(stderr, "class \"%s\": final classes must be instantiable.\n",
+			pclass->identifier);
+		result = FALSE;
+	}
+	/*
 	*	check variable, part and operation definitions
 	*/
 	for(pvar=pclass->variables; pvar; pvar=pvar->pnext) {
@@ -1279,6 +1287,14 @@ OV_BOOL ov_codegen_checksemantics_variable(
 	if((pvar->varprops & OV_VP_DERIVED) && !(pvar->varprops & OV_VP_ACCESSORS)) {
 		fprintf(stderr, "class \"%s\", variable \"%s\": virtual variables must "
 			"have get and/or set accessors.\n", pclass->identifier, pvar->identifier);
+		result = FALSE;
+	}
+	/*
+	*	variables cannot be both derived and static
+	*/
+	if((pvar->varprops & OV_VP_DERIVED) && (pvar->varprops & OV_VP_STATIC)) {
+		fprintf(stderr, "class \"%s\", variable \"%s\": variable cannot be both "
+			"derived and static.\n", pclass->identifier, pvar->identifier);
 		result = FALSE;
 	}
 	/*

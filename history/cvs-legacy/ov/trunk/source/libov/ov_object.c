@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.8 1999-08-19 11:54:51 dirk Exp $
+*   $Id: ov_object.c,v 1.9 1999-08-28 13:46:02 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -87,7 +87,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_object_constructor(
 		if(!pvtable) {
 			pvtable = pclass_ov_object->v_pvtable;
 		}
-		result = (pvtable->m_constructor)(child.pobj);
+		result = pvtable->m_constructor(child.pobj);
 		if(Ov_Fail(result)) {
 			return result;
 		}
@@ -129,7 +129,7 @@ void OV_DLLFNCEXPORT ov_object_destructor(
 		if(!pvtable) {
 			pvtable = pclass_ov_object->v_pvtable;
 		}
-		(pvtable->m_destructor)(child.pobj);
+		pvtable->m_destructor(child.pobj);
 	}
 	/*
 	*	nothing else to do
@@ -168,7 +168,7 @@ void OV_DLLFNCEXPORT ov_object_startup(
 		if(!pvtable) {
 			pvtable = pclass_ov_object->v_pvtable;
 		}
-		(pvtable->m_startup)(child.pobj);
+		pvtable->m_startup(child.pobj);
 	}
 	/*
 	*	start up child objects
@@ -182,7 +182,7 @@ void OV_DLLFNCEXPORT ov_object_startup(
 		if(!pvtable) {
 			pvtable = pclass_ov_object->v_pvtable;
 		}
-		(pvtable->m_startup)(child.pobj);
+		pvtable->m_startup(child.pobj);
 	}
 	/*
 	*	set object state to "started up"
@@ -222,7 +222,7 @@ void OV_DLLFNCEXPORT ov_object_shutdown(
 		if(!pvtable) {
 			pvtable = pclass_ov_object->v_pvtable;
 		}
-		(pvtable->m_shutdown)(child.pobj);
+		pvtable->m_shutdown(child.pobj);
 	}
 	/*
 	*	shut down child objects
@@ -236,7 +236,7 @@ void OV_DLLFNCEXPORT ov_object_shutdown(
 		if(!pvtable) {
 			pvtable = pclass_ov_object->v_pvtable;
 		}
-		(pvtable->m_shutdown)(child.pobj);
+		pvtable->m_shutdown(child.pobj);
 	}
 	/*
 	*	set object state to "shut down"
@@ -325,14 +325,17 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 			if(pelem->elemunion.pvar->v_varprops & OV_VP_GETACCESSOR) {
 				access |= OV_AC_READ;
 			}
-			if(pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR) {
+			if((pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR)
+				&& ((pobj->v_objectstate & OV_OS_INIT) 
+					|| !(pelem->elemunion.pvar->v_varprops & OV_VP_STATIC))
+			) {
 				access |= OV_AC_WRITE;
 			}
 			return access;
 		case OV_ET_ANCHOR:
-			return (pelem->elemunion.passoc->v_getaccessfnc)(NULL, pobj, pticket);
+			return pelem->elemunion.passoc->v_getaccessfnc(NULL, pobj, pticket);
 		case OV_ET_HEAD:
-			return (pelem->elemunion.passoc->v_getaccessfnc)(pobj, NULL, pticket);
+			return pelem->elemunion.passoc->v_getaccessfnc(pobj, NULL, pticket);
 		case OV_ET_OPERATION:
 			return OV_AC_NONE;
 		default:

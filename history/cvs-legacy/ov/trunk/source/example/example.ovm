@@ -1,5 +1,5 @@
 /*
-*   $Id: example.ovm,v 1.4 1999-07-29 16:32:23 dirk Exp $
+*   $Id: example.ovm,v 1.5 1999-08-28 13:46:00 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -36,21 +36,21 @@ LIBRARY example
 
 	CLASS getvarclient : CLASS ov/object
 		IS_INSTANTIABLE;
+		IS_FINAL;
 		COMMENT = "ACPLT/KS client sending GetVar requests";
 		VARIABLES
-			host : STRING HAS_ACCESSORS
-				COMMENT = "hostanme of the ACPLT/KS server";
+			host   : STRING HAS_ACCESSORS
+				COMMENT = "name of the host where the ACPLT/KS server lives";
 			server : STRING HAS_ACCESSORS
 				COMMENT = "name of the ACPLT/KS server";
-			path : STRING HAS_ACCESSORS
-				COMMENT = "path of the variable in the ACPLT/KS server";
-			pconn : C_TYPE <OV_KSCLIENT_CONNECTION_PTR>;
-			psvc : C_TYPE <OV_KSCLIENT_SERVICE_PTR>;
+			path   : STRING HAS_ACCESSORS
+				COMMENT = "variable path";
+			pconn  : C_TYPE <OV_KSCLIENT_CONNECTION_PTR>;
+			psvc   : C_TYPE <OV_KSCLIENT_SERVICE_PTR>;
 		END_VARIABLES;
 		OPERATIONS
 			startup : C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
-			execute : C_FUNCTION <OV_FNC_EXECUTE>;
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -59,15 +59,17 @@ LIBRARY example
 		COMMENT = "test class";
 		VARIABLES
 			Single : SINGLE HAS_ACCESSORS
-				UNIT = "m/s" COMMENT = "single precision value";
+				UNIT = "m/s" COMMENT = "single precision floating point value";
 			String : STRING HAS_ACCESSORS
 				COMMENT = "string value";
+			Time : TIME HAS_ACCESSORS IS_STATIC
+				UNIT = "UTC" COMMENT="static time variable";
 			IntPV : INT_PV HAS_ACCESSORS
-				UNIT = "ticks" COMMENT = "integer precess value";
+				UNIT = "ticks" COMMENT = "integer process value";
 			UIntVec[] : UINT HAS_ACCESSORS
 				COMMENT = "dynamic unsigned integer vector value";
 			StringVec[] : STRING IS_DERIVED HAS_ACCESSORS
-				COMMENT = "virtual string vector value";
+				COMMENT = "string vector value";
 		END_VARIABLES;
 	END_CLASS;
 

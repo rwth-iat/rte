@@ -1,5 +1,5 @@
 /*
-*   $Id: example_getvarclient.h,v 1.1 1999-07-19 15:02:11 dirk Exp $
+*   $Id: example_getvarclient.h,v 1.2 1999-08-28 13:46:00 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -30,10 +30,16 @@
 #define EXAMPLE_GETVARCLIENT_H_INCLUDED
 
 #include "example.h"
+#include "libov/ov_scheduler.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+*	Execute function
+*/
+OV_FNC_EXECUTE example_getvarclient_execute;
 
 /*
 *	Open a connection

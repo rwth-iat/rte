@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.h,v 1.1 1999-07-19 15:02:03 dirk Exp $
+*   $Id: ov_class.h,v 1.2 1999-08-28 13:45:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -45,6 +45,7 @@ struct OV_CLASS_DEF {
 	OV_UINT					flags;
 	OV_STRING				comment;
 	OV_UINT					size;
+	OV_UINT					staticsize;
 	OV_POINTER				pvtable;
 	struct OV_VARIABLE_DEF	*variables;
 	struct OV_PART_DEF		*parts;
@@ -55,31 +56,53 @@ typedef struct OV_CLASS_DEF OV_CLASS_DEF;
 /*
 *	Define the instance data of a class
 */
-#define OV_TYPEDEF_INSTANCE(class)						\
-	struct OV_INST_##class {							\
-		OV_INSTBODY_##class								\
-		struct {										\
-			OV_CIB_##class								\
-		}	__classinfo;								\
-	};													\
-	typedef struct OV_INST_##class OV_INST_##class;		\
-	typedef OV_INST_##class* OV_INSTPTR_##class
+#define OV_TYPEDEF_INSTANCE(class)								\
+	struct OV_INST_##class {									\
+		OV_INSTBODY_##class										\
+		struct {												\
+			OV_CIB_##class										\
+		}	__classinfo;										\
+	};															\
+	typedef struct OV_INST_##class OV_INST_##class;				\
+	typedef OV_INST_##class* OV_INSTPTR_##class;				\
+	struct OV_STATICINST_##class {								\
+		OV_STATICINSTBODY_##class								\
+		struct {												\
+			OV_CIB_##class										\
+		}	__classinfo;										\
+	};															\
+	typedef struct OV_STATICINST_##class OV_STATICINST_##class;	\
+	typedef OV_STATICINST_##class* OV_STATICINSTPTR_##class
 
 /*
 *	Define the vtable of a class
 */
-#define OV_TYPEDEF_VTABLE(class)						\
-	struct OV_VTBL_##class {							\
-		OV_VTBLBODY_##class								\
-	};													\
-	typedef struct OV_VTBL_##class OV_VTBL_##class;		\
+#define OV_TYPEDEF_VTABLE(class)								\
+	struct OV_VTBL_##class {									\
+		OV_VTBLBODY_##class										\
+	};															\
+	typedef struct OV_VTBL_##class OV_VTBL_##class;				\
 	typedef OV_VTBL_##class* OV_VTBLPTR_##class
+
+/*
+*   Alignment macro, align must be a power of 2
+*/
+#define Ov_AlignTo(align, x) \
+	(((x)+(align-1))&~(align-1))
 
 /*
 *	Get size of an instance of a given class
 */
-#define Ov_GetInstSize(class)							\
-	offsetof(OV_INST_##class, __classinfo)
+#define Ov_GetInstSize(class)									\
+	Ov_AlignTo(sizeof(double), offsetof(OV_INST_##class,		\
+	__classinfo))
+
+/*
+*	Get static size of an instance of a given class
+*/
+#define Ov_GetStaticInstSize(class)								\
+	Ov_AlignTo(sizeof(double), offsetof(OV_STATICINST_##class,	\
+	__classinfo))
 
 #endif
 
@@ -195,8 +218,15 @@ void ov_class_createobject_setinit(
 /*
 *	Clean up of an object during deletion (subroutine)
 */
-void ov_class_deleteobject_cleanupobj(
+void ov_class_deleteobject_cleanupinst(
 	OV_INSTPTR_ov_object		pobj
+);
+
+/*
+*	Clean up of the static part of an object during deletion (subroutine)
+*/
+void ov_class_deleteobject_cleanupstaticinst(
+	OV_INSTPTR_ov_class			pclass
 );
 
 /*

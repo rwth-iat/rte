@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.5 1999-07-29 16:32:24 dirk Exp $
+*   $Id: ov_class.c,v 1.6 1999-08-28 13:46:01 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -107,7 +107,7 @@ OV_INSTPTR_ov_class ov_class_search(
 */
 OV_RESULT ov_class_load(
 	OV_CLASS_DEF*			pclassdef,
-	OV_INSTPTR_ov_domain		pparent
+	OV_INSTPTR_ov_domain	pparent
 ) {
 	/*
 	*	local variables
@@ -146,9 +146,12 @@ CONTINUE1:
 		}
 	}
 	/*
-	*	create class object
+	*	create class object; in the userdata parameter is a 
+	*	pointer to the size of static (class) variables
 	*/
-	result = Ov_CreateObject(ov_class, pclass, pparent, pclassdef->identifier);
+	result = ov_class_createobject(pclass_ov_class, pparent, 
+		pclassdef->identifier, OV_PMH_DEFAULT, NULL, NULL, 
+		&pclassdef->staticsize, (OV_INSTPTR_ov_object*)&pclass);
 	if(Ov_Fail(result)) {
 		return result;
 	}
@@ -161,6 +164,7 @@ CONTINUE2:
 	ov_string_setvalue(&pclass->v_comment, pclassdef->comment);
 	pclass->v_flags = pclassdef->flags;
 	pclass->v_size = pclassdef->size;
+	pclass->v_staticsize = pclassdef->staticsize;
 	pclass->v_pvtable = (OV_VTBLPTR)pclassdef->pvtable;
 	/*
 	*	load variables of the class
@@ -254,6 +258,7 @@ OV_RESULT ov_class_compare(
 	*/
 	if((pclass->v_classprops != pclassdef->classprops)
 		|| (pclass->v_size != pclassdef->size)
+		|| (pclass->v_staticsize != pclassdef->staticsize)
 	) {
 		goto ERRORMSG;
 	}
@@ -460,6 +465,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 	OV_VTBLPTR_ov_object	pvtable;
 	OV_TIME					time;
 	OV_RESULT				result;
+	OV_UINT					size;
 	/*
 	*	check parameters
 	*/
@@ -495,18 +501,23 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 	/*
 	*	allocate database memory for the new object and clear it
 	*/
-	pobj = (OV_INSTPTR_ov_object)ov_database_malloc(pclass->v_size);
+	if(ov_class_cancastto(pclass, pclass_ov_class)) {
+		size = pclass->v_size+(*(OV_UINT*)userdata);
+	} else {
+		size = pclass->v_size;
+	}
+	pobj = (OV_INSTPTR_ov_object)ov_database_malloc(size);
 	if(!pobj) {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
-	memset(pobj, 0, pclass->v_size);
+	memset(pobj, 0, size);
 	/*
 	*	preinitialize the object
 	*/
 	ov_time_gettime(&time);
 	result = ov_class_createobject_preinit(pclass, pobj, identifier, &time, NULL);
 	if(Ov_Fail(result)) {
-		ov_class_deleteobject_cleanupobj(pobj);
+		ov_class_deleteobject_cleanupinst(pobj);
 		return result;
 	}
 	/*
@@ -514,7 +525,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 	*/
 	result = Ov_LinkRelativePlaced(ov_containment, pparent, pobj, hint, prelchild);
 	if(Ov_Fail(result)) {
-		ov_class_deleteobject_cleanupobj(pobj);
+		ov_class_deleteobject_cleanupinst(pobj);
 		return result;
 	}
 	/*
@@ -523,7 +534,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 	if(initobjfnc) {
 		result = (initobjfnc)(pobj, userdata);
 		if(Ov_Fail(result)) {
-			ov_class_deleteobject_cleanupobj(pobj);
+			ov_class_deleteobject_cleanupinst(pobj);
 			ov_database_free(pobj);
 			return result;
 		}
@@ -535,19 +546,19 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_createobject(
 	/*
 	*	call the constructor of the object
 	*/
-	result = (pvtable->m_constructor)(pobj);
+	result = pvtable->m_constructor(pobj);
 	if(Ov_Fail(result)) {
 		/*
 		*	construction failed, delete object
 		*/
-		ov_class_deleteobject_cleanupobj(pobj);
+		ov_class_deleteobject_cleanupinst(pobj);
 		ov_database_free(pobj);
 		return result;
 	}
 	/*
 	*	start the object up
 	*/
-	(pvtable->m_startup)(pobj);
+	pvtable->m_startup(pobj);
 	/*
 	*	finished.
 	*/
@@ -586,7 +597,7 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_deleteobject(
 	/*
 	*	shut down the object
 	*/
-	(pvtable->m_shutdown)(pobj);
+	pvtable->m_shutdown(pobj);
 	/*
 	*	if the object is still active, unregister with the scheduler
 	*/
@@ -596,11 +607,11 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_deleteobject(
 	/*
 	*	call the destructor of the object
 	*/
-	(pvtable->m_destructor)(pobj);
+	pvtable->m_destructor(pobj);
 	/*
 	*	clean up object
 	*/
-	ov_class_deleteobject_cleanupobj(pobj);
+	ov_class_deleteobject_cleanupinst(pobj);
 	/*
 	*	free the memory used for the object
 	*/
@@ -639,6 +650,12 @@ OV_RESULT OV_DLLFNCEXPORT ov_class_renameobject(
 	}
 	if(!Ov_DynamicPtrCast(ov_domain, pparent)) {
 		return OV_ERR_BADPARAM;
+	}
+	/*
+	*	we can't rename part objects
+	*/
+	if(pobj->v_pouterobject) {
+		return OV_ERR_CANTMOVE;
 	}
 	/*
 	*	do we want to rename the object?
@@ -795,7 +812,7 @@ void ov_class_createobject_setinit(
 /*
 *	Clean up of an object during deletion (subroutine)
 */
-void ov_class_deleteobject_cleanupobj(
+void ov_class_deleteobject_cleanupinst(
 	OV_INSTPTR_ov_object		pobj
 ) {
 	/*
@@ -812,21 +829,36 @@ void ov_class_deleteobject_cleanupobj(
 	parent.pobj = pobj;
 	child.elemtype = OV_ET_NONE;
 	/*
-	*	free strings and unlink links of this object and its parts
+	*	free strings and vectors and unlink links of this object and its parts
 	*/
 	if(pclass) {
+		/*
+		*	if the object is a class, clean up the static variable part
+		*/
+		if(Ov_DynamicPtrCast(ov_class, pobj)) {
+			ov_class_deleteobject_cleanupstaticinst(Ov_StaticPtrCast(ov_class, pobj));
+		}
 		/*
 		*	iterate over class elements and free strings, unlink links
 		*/
 		while(TRUE) {
 			Ov_AbortIfNot(Ov_OK(ov_element_getnextpart(&parent, &child,
-				OV_ET_VARIABLE | OV_ET_HEAD | OV_ET_ANCHOR)));
+				OV_ET_OBJECT | OV_ET_VARIABLE | OV_ET_HEAD | OV_ET_ANCHOR)));
 			if(child.elemtype == OV_ET_NONE) {
 				break;
 			}
 			switch(child.elemtype) {
+				case OV_ET_OBJECT:
+					/*
+					*	clean up the part object as well
+					*/
+					ov_class_deleteobject_cleanupinst(child.pobj);
+					break;
 				case OV_ET_VARIABLE:
-					if(!(child.elemunion.pvar->v_varprops & OV_VP_DERIVED)) {
+					/*
+					*	free a variable only if it is a normal variable
+					*/
+					if(!(child.elemunion.pvar->v_varprops & (OV_VP_DERIVED | OV_VP_STATIC))) {
 						if(child.elemunion.pvar->v_vartype == OV_VT_STRUCT) {
 							ov_class_deleteobject_cleanupstruct(&child);
 						} else {
@@ -930,6 +962,85 @@ void ov_class_deleteobject_cleanupobj(
 /*	----------------------------------------------------------------------	*/
 
 /*
+*	Clean up of the static part of an object during deletion (subroutine)
+*/
+void ov_class_deleteobject_cleanupstaticinst(
+	OV_INSTPTR_ov_class			pclass
+) {
+	/*
+	*	local variables
+	*/
+	OV_INSTPTR_ov_variable	pvar;
+	OV_BYTE					*pvalue;
+	OV_ELEMENT				child;
+	/*
+	*	if there are not static variables we are finished
+	*/
+	if(!pclass->v_staticsize) {
+		return;
+	}
+	/*
+	*	iterate over all variable of the class
+	*/
+	Ov_ForEachChildEx(ov_containment, pclass, pvar, ov_variable) {
+		/*
+		*	free a variable only if it is a static variable
+		*/
+		if(pvar->v_varprops & OV_VP_STATIC) {
+			pvalue = ((OV_BYTE*)pclass)+Ov_GetInstSize(ov_class)+pvar->v_offset;
+			if(pvar->v_vartype == OV_VT_STRUCT) {
+				/*
+				*	prepare informatin for cleaning up the child and do it
+				*/
+				child.elemtype = OV_ET_VARIABLE;
+				child.pobj = NULL;					/* FIXME! is this OK? */
+				child.pvalue = pvalue;
+				child.elemunion.pvar = pvar;
+				ov_class_deleteobject_cleanupstruct(&child);
+			} else {
+				switch(pvar->v_veclen) {
+					case 1:
+						/*
+						*	scalar variable
+						*/
+						if(pvar->v_vartype == OV_VT_STRING) {
+							ov_string_setvalue((OV_STRING*)pvalue, NULL);
+							Ov_WarnIf(*(OV_STRING*)pvalue);									
+						}
+						break;
+					case 0:
+						/*
+						*	dynamic vector variable
+						*/
+						if(pvar->v_vartype == OV_VT_STRING_VEC) {
+							Ov_WarnIfNot(Ov_OK(Ov_SetDynamicVectorValue(
+								(OV_STRING_VEC*)pvalue, NULL, 0, STRING)));
+							Ov_WarnIf(((OV_GENERIC_VEC*)pvalue)->value);
+						} else {
+							if(((OV_GENERIC_VEC*)pvalue)->value) {
+								ov_database_free(((OV_GENERIC_VEC*)pvalue)->value);
+							}
+						}
+						break;
+					default:
+						/*
+						*	static vector variable
+						*/
+						if(pvar->v_vartype == OV_VT_STRING_VEC) {
+							Ov_WarnIfNot(Ov_OK(ov_string_setvecvalue(
+								(OV_STRING*)pvalue, NULL, pvar->v_veclen)));
+						}
+						break;
+				}
+			}
+		}
+	}
+	return;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
 *	Clean up of a structure during deletion (subroutine)
 */
 void ov_class_deleteobject_cleanupstruct(
@@ -1010,6 +1121,12 @@ OV_UINT OV_DLLFNCEXPORT ov_class_size_get(
 	OV_INSTPTR_ov_class	pclass
 ) {
 	return pclass->v_size;
+}
+
+OV_UINT OV_DLLFNCEXPORT ov_class_staticsize_get(
+	OV_INSTPTR_ov_class	pclass
+) {
+	return pclass->v_staticsize;
 }
 
 OV_STRING OV_DLLFNCEXPORT ov_class_comment_get(

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov.ovm,v 1.2 1999-08-27 16:37:05 dirk Exp $
+*   $Id: ov.ovm,v 1.3 1999-08-28 13:45:58 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -109,6 +109,7 @@ LIBRARY ov
 			flags : UINT HAS_GET_ACCESSOR;
 			classprops : INT HAS_GET_ACCESSOR;
 			size : UINT HAS_GET_ACCESSOR UNIT = "Byte";
+			staticsize : UINT HAS_GET_ACCESSOR UNIT = "Byte";
 			pvtable : C_TYPE <OV_VTBLPTR>;
 		END_VARIABLES;
 	END_CLASS;

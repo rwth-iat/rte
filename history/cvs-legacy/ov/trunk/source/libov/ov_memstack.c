@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_memstack.c,v 1.1 1999-07-19 15:02:14 dirk Exp $
+*   $Id: ov_memstack.c,v 1.2 1999-08-28 13:46:01 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -62,14 +62,6 @@ static OV_MEMSTACK	memstack;
 static OV_MEMSTACK	*pmemstack = &memstack;
 static OV_BYTE		*pmem = (OV_BYTE*)&memstack.memory;
 static OV_INT		refcount = 0;
-
-/*	----------------------------------------------------------------------	*/
-
-/*
-*   Alignment macro, align must be a power of 2
-*/
-#define Ov_AlignTo(align, x) \
-	(((x)+(align-1))&~(align-1))
 
 /*	----------------------------------------------------------------------	*/
 

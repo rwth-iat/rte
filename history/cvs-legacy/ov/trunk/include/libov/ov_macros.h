@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.7 1999-08-18 13:11:21 dirk Exp $
+*   $Id: ov_macros.h,v 1.8 1999-08-28 13:45:56 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -207,6 +207,13 @@
 */
 #define Ov_DeleteObject(pobj)												\
 	ov_class_deleteobject(Ov_PtrUpCast(ov_object, pobj))
+
+/*
+*	Get a pointer to the static part of an object
+*/
+#define Ov_GetStaticInstPtr(class, pobj)									\
+	((OV_STATICINSTPTR_##class)(Ov_PtrUpCast(ov_object, pobj)				\
+	?(((OV_BYTE*)pclass_##class)+Ov_GetInstSize(ov_class)):(NULL)))
 
 /*
 *	Get a pointer to a part object

@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.2 1999-08-18 13:11:19 dirk Exp $
+#   $Id: Makefile,v 1.3 1999-08-28 13:45:55 dirk Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,

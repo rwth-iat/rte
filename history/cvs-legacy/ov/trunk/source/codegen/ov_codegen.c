@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.5 1999-07-29 16:32:22 dirk Exp $
+*   $Id: ov_codegen.c,v 1.6 1999-08-28 13:45:59 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -880,7 +880,7 @@ void ov_codegen_printclassinstdefines(
 	*	include new variables in define
 	*/
 	for(pvar = pclass->variables; pvar; pvar=pvar->pnext) {
-		if(!(pvar->varprops & OV_VP_DERIVED)) {
+		if(!(pvar->varprops & (OV_VP_DERIVED | OV_VP_STATIC))) {
 			if(pvar->veclen) {
 				/*
 				*	scalar or vector of fixed length
@@ -944,7 +944,46 @@ void ov_codegen_printclassinstdefines(
 	if(pclass->baseclassname) {
 		fprintf(fp, "    OV_CIB_%s \\\n", ov_codegen_replace(pclass->baseclassname));
 	}
-	fprintf(fp, "    int is_of_class_%s_%s;\n", plib->identifier, pclass->identifier);
+	fprintf(fp, "    int is_of_class_%s_%s:1;\n", plib->identifier, pclass->identifier);
+	/*
+	*	defines for realizing static variables
+	*/
+	fprintf(fp, "#define OV_STATICINSTBODY_%s_%s", plib->identifier, pclass->identifier);
+	/*
+	*	include new static variables in define
+	*/
+	for(pvar = pclass->variables; pvar; pvar=pvar->pnext) {
+		if(pvar->varprops & OV_VP_STATIC) {
+			if(pvar->veclen) {
+				/*
+				*	scalar or vector of fixed length
+				*/
+				switch(pvar->vartype) {
+					case OV_VT_STRUCT:
+						fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
+							pvar->structurename), pvar->identifier);
+						break;
+					case OV_VT_BYTE_VEC:
+						fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
+						break;
+					default:
+						fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
+							pvar->vartype),	pvar->identifier);
+						break;
+				}
+				if(pvar->veclen > 1) {
+					fprintf(fp, "[%lu]", pvar->veclen);
+				}
+				fprintf(fp,";");
+			} else {
+				/*
+				*	vector of dynamic length
+				*/
+				fprintf(fp, " \\\n    %s_VEC v_%s;", ov_codegen_getvartypetext(pvar->vartype),
+					pvar->identifier);
+			}
+		}
+	}
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -1291,6 +1330,8 @@ void ov_codegen_printclassdefobjs(
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(pclass->comment));
 	fprintf(fp, "    Ov_GetInstSize(%s_%s),\n", plib->identifier,
 		pclass->identifier);
+	fprintf(fp, "    Ov_GetStaticInstSize(%s_%s),\n", plib->identifier,
+		pclass->identifier);
 	fprintf(fp, "    (OV_POINTER)&OV_VTABLE_%s_%s,\n", plib->identifier,
 		pclass->identifier);
 	if(pclass->variables) {
@@ -1449,6 +1490,9 @@ void ov_codegen_printvardefobj(
 	}
 	if(pvar->varprops & OV_VP_DERIVED) {
 		fprintf(fp, "    0,\n");
+	} else if(pvar->varprops & OV_VP_STATIC) {
+		fprintf(fp ,"    offsetof(OV_STATICINST_%s_%s, v_%s),\n", plib->identifier,
+			pclass->identifier, pvar->identifier);
 	} else {
 		fprintf(fp ,"    offsetof(OV_INST_%s_%s, v_%s),\n", plib->identifier,
 			pclass->identifier, pvar->identifier);
