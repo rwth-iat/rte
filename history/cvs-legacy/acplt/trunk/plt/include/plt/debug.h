@@ -13,7 +13,6 @@
  * 
  */
 
-#include <assert.h>
 #include <plt/config.h>
 
 #ifdef NDEBUG
@@ -27,6 +26,7 @@
 #define PLT_DEBUG_PRECONDITIONS 0
 #define PLT_DEBUG_POSTCONDITIONS 0
 #define PLT_DEBUG_INVARIANTS 0
+#define PLT_DEBUG_PARANOIA 0
 
 #else /* !PLT_DEBUG */
 
@@ -42,16 +42,39 @@
 #define PLT_DEBUG_INVARIANTS 1
 #endif
 
+#ifndef PLT_DEBUG_SLOW
+#define PLT_DEBUG_SLOW 0
+#endif
+
 #endif /* !PLT_DEBUG */
 
+#ifdef __cplusplus
+extern "C"
+#endif
+void plt_canthappen(const char *what, const char *file, int line);
+
+#if PLT_DEBUG
+
+#define PLT_FAILED_ASSERTION(expr_str,file,line) \
+     plt_canthappen("assertion failed: "##expr_str,file,line)
+
+#define PLT_ASSERT(expr) \
+  ((expr) ? (void)0 : PLT_FAILED_ASSERTION(#expr,__FILE__,__LINE__))
+
+#else
+
+#define PLT_ASSERT(x) ((void)0)
+
+#endif
+
 #if PLT_DEBUG_PRECONDITIONS
-#define PLT_PRECONDITION(x) assert(x)
+#define PLT_PRECONDITION(x) PLT_ASSERT(x)
 #else
 #define PLT_PRECONDITION(x) ((void)0)
 #endif
 
 #if PLT_DEBUG_POSTCONDITIONS
-#define PLT_POSTCONDITION(x) assert(x)
+#define PLT_POSTCONDITION(x) PLT_ASSERT(x)
 #else
 #define PLT_POSTCONDITION(x) ((void)0)
 #endif
@@ -78,7 +101,7 @@ protected:
 };
 
 #if PLT_DEBUG_INVARIANTS
-#define PLT_CHECK_INVARIANT() assert(this->invariant())
+#define PLT_CHECK_INVARIANT() PLT_ASSERT(this->invariant())
 #else
 #define PLT_CHECK_INVARIANT() ((void)0)
 #endif

@@ -14,7 +14,7 @@
 PltRTTI::PltRTTI(const char *name, const PltRTTI* bases[])
 : n(name), b(bases)
 {
-    assert(n);
+    PLT_ASSERT(n);
 }
 
 //////////////////////////////////////////////////////////////////////

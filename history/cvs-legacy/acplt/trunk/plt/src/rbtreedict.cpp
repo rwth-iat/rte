@@ -89,7 +89,7 @@ PltRbTreeDictionary_base::rotateNode(PltRbTreeNode_base *v,
     } else {
         y->l = gc;
     }
-    assert( *(y->l) < *y && *y < *(y->r) );
+    PLT_ASSERT( *(y->l) < *y && *y < *(y->r) );
     return gc;
 }
 
