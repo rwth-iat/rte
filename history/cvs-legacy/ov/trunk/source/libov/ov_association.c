@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.9 2001-07-20 07:21:41 ansgar Exp $
+*   $Id: ov_association.c,v 1.10 2001-07-20 14:09:54 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -933,7 +933,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedparentlink(
 	*/
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
-		if ( (OV_INSTPTR_ov_object) (((OV_BYTE*)pparent)+passoc->v_parentoffset) ) return TRUE;
+		if ( *(OV_INSTPTR_ov_object*) (((OV_BYTE*)pparent)+passoc->v_parentoffset) ) return TRUE;
 		return FALSE;
 	case OV_AT_ONE_TO_MANY:
 		/* fall into... */
@@ -975,7 +975,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedchildlink(
 	*/
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
-		if ( (OV_INSTPTR_ov_object) (((OV_BYTE*)pchild)+passoc->v_childoffset) ) return TRUE;
+		if ( *(OV_INSTPTR_ov_object*) (((OV_BYTE*)pchild)+passoc->v_childoffset) ) return TRUE;
 		return FALSE;
 	case OV_AT_ONE_TO_MANY:
 		/*

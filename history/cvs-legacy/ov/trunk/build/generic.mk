@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.7 2001-07-20 07:21:03 ansgar Exp $
+#   $Id: generic.mk,v 1.8 2001-07-20 14:08:56 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -183,6 +183,7 @@ OV_INCLUDES = \
 	-I$(OV_INCLUDE_DIR) \
 	-I$(OV_MODEL_DIR) \
 	-I$(OV_SOURCE_EXAMPLE_DIR) \
+	-I$(OV_SOURCE_KSHISTLIB_DIR) \
 	-I$(LIBMPM_DIR)
 endif
 endif
