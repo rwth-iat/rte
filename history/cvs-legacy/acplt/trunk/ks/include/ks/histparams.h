@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_HISTPARAMS_INCLUDED
 #define KS_HISTPARAMS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/histparams.h,v 1.4 1999-01-12 16:19:31 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/histparams.h,v 1.5 1999-01-29 12:41:43 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -37,9 +37,9 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Author : Markus Juergens <markusj@plt.rwth-aachen.de> */
+/* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
+/* v2 compliance by: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-/////////////////////////////////////////////////////////////////////////////
 
 #include <limits.h>
 
@@ -48,14 +48,6 @@
 #include "ks/array.h"
 #include "ks/result.h"
 #include "ks/selector.h"
-
-/////////////////////////////////////////////////////////////////////////////
-// Constants for GetHist service
-/////////////////////////////////////////////////////////////////////////////
-
-const KsString KS_HISTORY_PROTOCOL_NAME("plt_histories");
-
-const u_long KS_GETHIST_MINOR_OPCODE  = 0x00000001;
 
 
 // ----------------------------------------------------------------------------
@@ -177,9 +169,8 @@ KsGetHistResult::KsGetHistResult(size_t nitems)
     : replies(nitems)
 {}
 
-/////////////////////////////////////////////////////////////////////////////
 
 #endif // KS_HISTPARAMS_INCLUDED
-
+// End of histparams.h
 
 
