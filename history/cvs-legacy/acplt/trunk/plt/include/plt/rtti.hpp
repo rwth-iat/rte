@@ -106,8 +106,8 @@ PltRTTI::canCastFrom(const PltRTTI *p) const
 #define PLT_DECL_RTTI typedef void plt_rtti_dummy
 #define PLT_IMPL_RTTI0(c) typedef void plt_rtti_dummy
 #define PLT_IMPL_RTTI1(c,b1) typedef void plt_rtti_dummy
-#define PLT_IMPL_RTTI2(c,b2) typedef void plt_rtti_dummy
-#define PLT_IMPL_RTTI3(c,b3) typedef void plt_rtti_dummy
+#define PLT_IMPL_RTTI2(c,b1,b2) typedef void plt_rtti_dummy
+#define PLT_IMPL_RTTI3(c,b1,b2,b3) typedef void plt_rtti_dummy
 
 #define PLT_DYNAMIC_PCAST(T,p) \
            (dynamic_cast<T*> (p))
