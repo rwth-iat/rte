@@ -46,10 +46,32 @@
 //   abstract class KscTypedVar is skipped
 // 
 PLT_IMPL_RTTI1(KscIntVar,KscVariable);
+PLT_IMPL_RTTI1(KscUIntVar,KscVariable);
+PLT_IMPL_RTTI1(KscSingleVar,KscVariable);
 PLT_IMPL_RTTI1(KscDoubleVar,KscVariable);
 PLT_IMPL_RTTI1(KscStringVar,KscVariable);
 PLT_IMPL_RTTI1(KscTimeVar,KscVariable);
+PLT_IMPL_RTTI1(KscByteVecVar,KscVariable);
+PLT_IMPL_RTTI1(KscIntVecVar,KscVariable);
+PLT_IMPL_RTTI1(KscUIntVecVar,KscVariable);
+PLT_IMPL_RTTI1(KscSingleVecVar,KscVariable);
 PLT_IMPL_RTTI1(KscDoubleVecVar,KscVariable);
+PLT_IMPL_RTTI1(KscStringVecVar,KscVariable);
+PLT_IMPL_RTTI1(KscTimeVecVar,KscVariable);
+PLT_IMPL_RTTI1(KscVoidVar,KscVariable);
+
+//////////////////////////////////////////////////////////////////////
+// implementation of vector types
+//   must match with RTTI implementation beyond
+//
+PLT_IMPL_VEC_VAR(Byte);
+PLT_IMPL_VEC_VAR(Int);
+PLT_IMPL_VEC_VAR(UInt);
+PLT_IMPL_VEC_VAR(Single);
+PLT_IMPL_VEC_VAR(Double);
+PLT_IMPL_VEC_VAR(String);
+PLT_IMPL_VEC_VAR(Time);
+
 
 //////////////////////////////////////////////////////////////////////
 // class KscTypedVar
@@ -126,6 +148,8 @@ KscTypedVar::setCurrProps(KsVarCurrProps &cp)
 
 
 //////////////////////////////////////////////////////////////////////
+// class KscIntVar
+//////////////////////////////////////////////////////////////////////
 
 KsIntValue *
 KscIntVar::getCastedValue() 
@@ -176,6 +200,112 @@ KscIntVar::operator long()
 }
 
 //////////////////////////////////////////////////////////////////////
+// class KscUIntVar
+//////////////////////////////////////////////////////////////////////
+
+KsUIntValue *
+KscUIntVar::getCastedValue() 
+{
+    if(curr_props.value) {
+        if(curr_props.value->xdrTypeCode() == varType()) {
+            return (KsUIntValue *)(curr_props.value.getPtr());
+        }
+        else {
+            fTypeError = true;
+            return 0;
+        }
+    }
+    else {
+        KsUIntValue *val = new KsUIntValue(0);
+        curr_props.value = 
+            KsPtrHandle<KsValue>(val, KsOsNew);
+        return val;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscUIntVar &
+KscUIntVar::operator = (u_long newVal)
+{
+    KsUIntValue *val = getCastedValue(); 
+
+    if(isValid()) {
+        val->setUInt(newVal);
+        fDirty = true;
+    }
+    
+    return *this;
+}
+        
+//////////////////////////////////////////////////////////////////////
+
+KscUIntVar::operator u_long()
+{
+    KsUIntValue *val = getCastedValue();
+
+    if(isValid()) {
+        return *val;
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+// class KscSingleVar
+//////////////////////////////////////////////////////////////////////
+
+KsSingleValue *
+KscSingleVar::getCastedValue() 
+{
+    if(curr_props.value) {
+        if(curr_props.value->xdrTypeCode() == varType()) {
+            return (KsSingleValue *)(curr_props.value.getPtr());
+        }
+        else {
+            fTypeError = true;
+            return 0;
+        }
+    }
+    else {
+        KsSingleValue *val = new KsSingleValue(0);
+        curr_props.value = 
+            KsPtrHandle<KsValue>(val, KsOsNew);
+        return val;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+KscSingleVar &
+KscSingleVar::operator = (float newVal)
+{
+    KsSingleValue *val = getCastedValue(); 
+
+    if(isValid()) {
+        val->setSingle(newVal);
+
+        fDirty = true;
+    }
+    
+    return *this;
+}
+        
+//////////////////////////////////////////////////////////////////////
+
+KscSingleVar::operator float()
+{
+    KsSingleValue *val = getCastedValue();
+
+    if(isValid()) {
+        return *val;
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+// class KscDoubleVar
 //////////////////////////////////////////////////////////////////////
 
 KsDoubleValue *
@@ -334,6 +464,8 @@ KscTimeVar::operator KsTime()
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+#if 0
+
 KsDoubleVecValue * 
 KscDoubleVecVar::getCastedValue() 
 {
@@ -382,7 +514,7 @@ KscDoubleVecVar::operator KsDoubleVecValue()
     return KsDoubleVecValue(0);
 }
 
-
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // EOF variables.cpp
