@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.19 1998-10-23 12:50:53 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.20 1998-12-10 17:26:01 harald Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -36,13 +36,16 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+/* This mess was made by: Harald Albrecht <harald@plt.rwth-aachen.de> */
 
 /* ----------------------------------------------------------------------------
  * In case this code is included from the C++ communication library code, then
  * use the rpc header file provided by the C++ wrapper, because that particular
  * header file encapsulates different RPC header mumbo jumbo especially on
- * OpenVMS. When not using C++, then include the ordinary rpc headers.
+ * OpenVMS. If not using C++, then include the ordinary rpc headers. For
+ * instance, if compiling protocol functions with rpcgen, then the protocol
+ * specification can use the constants defined in this header file. Thus no
+ * need to maintain separate header files containing constant definitions.
  */
 #ifdef __cplusplus
 #include "ks/rpc.h"
@@ -55,23 +58,28 @@
 /* ----------------------------------------------------------------------------
  * Version string for use with banners, messages, etc. This is used for example
  * in the managers as well as in the test servers for the /vendor/version
- * communication object.
+ * communication object. You might want to use this version string to provide
+ * information about with which version of the C++ communication library your
+ * server was linked with.
  */
-#define KS_VERSION_STRING "1.0.5pre1"
+#define KS_VERSION_STRING "1.0.5pre2"
+
 	 
 /* ----------------------------------------------------------------------------
- * RPC program number reserved for ACPLT/KS library
+ * RPC program number reserved for ACPLT/KS library. This had been aquired
+ * from Sun Microsystems.
  */
 const unsigned long KS_RPC_PROGRAM_NUMBER = 0x49678; 
 
+
 /* ----------------------------------------------------------------------------
- * Default protocol version.
+ * Default ACPLT/KS protocol version.
  */ 
 const unsigned long KS_PROTOCOL_VERSION = 1;
 
 
 /* ----------------------------------------------------------------------------
- * ACPLT/KS error codes defined for the core protocol...
+ * ACPLT/KS error codes defined by the ACPLT/KS core protocol...
  */
 enum KS_RESULT_ENUM {
     KS_ERR_OK                       = 0x0000,
@@ -101,8 +109,10 @@ enum KS_RESULT_ENUM {
     KS_ERR_BADPLACEMENT             = 0x0033,
 
 /*  
- *  ... and errors which can occur in the client part of the
- *  C++ Communication Library.
+ * ... and errors which can occur in the client part of the
+ * C++ Communication Library. These error codes have been put into
+ * the range 0x1000-0x1FFF to distinguish them from core protocol
+ * errors.
  */
     KS_ERR_MALFORMEDPATH            = 0x1001,
     KS_ERR_NETWORKERROR             = 0x1002,
@@ -225,6 +235,18 @@ enum KS_HIST_TYPE_ENUM {
 };
 typedef enum_t KS_HIST_TYPE;
 
+
+/* ----------------------------------------------------------------------------
+ * Link types can be either 1:1 or 1:m and in addition with local scope or
+ * global scope (global = within the same ACPLT/KS server).
+ */
+enum KS_LINK_TYPE_ENUM {
+    KS_LT_LOCAL_1_1     = 1,
+    KS_LT_LOCAL_1_MANY  = 2,
+    KS_LT_GLOBAL_1_1    = 3,
+    KS_LT_GLOBAL_1_MANY = 4
+};
+typedef enum_t KS_LINK_TYPE;
 
 /* ----------------------------------------------------------------------------
  * Placement hint used with object management systems which support ordered
