@@ -35,7 +35,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# $Header: /home/david/cvs/acplt/Makefile,v 1.3 1997-04-29 13:45:31 harald Exp $
+# $Header: /home/david/cvs/acplt/Makefile,v 1.4 1997-05-20 15:13:19 harald Exp $
 #
 
 UNIXES	= linux hpux solaris
@@ -59,8 +59,8 @@ clean:
 	@echo "-------------------------------------------------------------"
 	@for i in $(UNIXES) $(SOME_OTHER_OS) ; \
 	    do \
-                (cd plt/build/$$i; make clean) ; \
-		(cd ks/build/$$i; make clean)  ; \
+                (cd plt/build/$$i; $(MAKE) clean) ; \
+		(cd ks/build/$$i; $(MAKE) clean)  ; \
 	    done
 
 
@@ -68,51 +68,51 @@ linux.acplt:
 	@echo "-------------------------------------------------------------"
 	@echo "Building the libPLT..."
 	@echo "-------------------------------------------------------------"
-	(cd plt/build/linux; make depend; make)
+	(cd plt/build/linux; $(MAKE) depend; $(MAKE))
 	@echo "-------------------------------------------------------------"
 	@echo "Building the libKS..."
 	@echo "-------------------------------------------------------------"
-	(cd ks/build/linux; make depend; make)
+	(cd ks/build/linux; $(MAKE) depend; $(MAKE))
 
 linux.all:	linux.acplt
 	@echo "-------------------------------------------------------------"
 	@echo "Building examples..."
 	@echo "-------------------------------------------------------------"
-	(cd ks/build/linux; make examples)
+	(cd ks/build/linux; $(MAKE) examples)
 
 
 hpux.acplt:
 	@echo "-------------------------------------------------------------"
 	@echo "Building the libPLT..."
 	@echo "-------------------------------------------------------------"
-	(cd plt/build/hpux; make depend; make)
+	(cd plt/build/hpux; $(MAKE) depend; $(MAKE))
 	@echo "-------------------------------------------------------------"
 	@echo "Building the libKS..."
 	@echo "-------------------------------------------------------------"
-	(cd ks/build/hpux; make depend; make)
+	(cd ks/build/hpux; $(MAKE) depend; $(MAKE))
 
 hpux.all:	hpux.acplt
 	@echo "-------------------------------------------------------------"
 	@echo "Building examples..."
 	@echo "-------------------------------------------------------------"
-	(cd ks/build/hpux; make examples)
+	(cd ks/build/hpux; $(MAKE) examples)
 
 
 solaris.acplt:
 	@echo "-------------------------------------------------------------"
 	@echo "Building the libPLT..."
 	@echo "-------------------------------------------------------------"
-	(cd plt/build/solaris; make depend; make)
+	(cd plt/build/solaris; $(MAKE) depend; $(MAKE))
 	@echo "-------------------------------------------------------------"
 	@echo "Building the libKS..."
 	@echo "-------------------------------------------------------------"
-	(cd ks/build/solaris; make depend; make)
+	(cd ks/build/solaris; $(MAKE) depend; $(MAKE))
 
 solaris.all:	solaris.acplt
 	@echo "-------------------------------------------------------------"
 	@echo "Building examples..."
 	@echo "-------------------------------------------------------------"
-	(cd ks/build/solaris; make examples)
+	(cd ks/build/solaris; $(MAKE) examples)
 
 
 #
@@ -123,8 +123,8 @@ export:		clean
 	@echo "-------------------------------------------------------------"
 	@echo "WARNING: EXPORTING FROM linux BUILD DIRECTORIES!!!"
 	@echo "-------------------------------------------------------------"
-	(cd plt/build/linux; make depend)
-	(cd ks/build/linux; make depend)
+	(cd plt/build/linux; $(MAKE) depend)
+	(cd ks/build/linux; $(MAKE) depend)
 	(cd plt/build/linux; cp *_inst.h ../nt)
 	(cd ks/build/linux; cp *_inst.h ../nt)
 
