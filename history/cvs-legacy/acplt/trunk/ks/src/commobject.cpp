@@ -266,13 +266,13 @@ KscDomain::getChildPPUpdate(KS_OBJ_TYPE typeMask,
     // TODO: extend KS_RESULT for more specific error indication
     //
     if(!ok) {
-        last_result = KS_ERR_NETWORK;
+        last_result = KS_ERR_NETWORKERROR;
         return false;
     } else {
         last_result = result.result;
     }
 
-    if(last_result != KS_ERR_OK) ) {
+    if(last_result != KS_ERR_OK) {
         return false;
     }
 
