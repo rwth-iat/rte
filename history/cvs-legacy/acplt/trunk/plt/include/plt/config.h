@@ -37,6 +37,19 @@
  */
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 
+#ifdef __OS2__
+#define PLT_SYSTEM_OS2 1
+#endif
+
+#ifdef __NT__
+#define PLT_SYSTEM_NT 1
+#define WIN32
+#define i386 1
+#define mc68000 0
+#define sparc 0
+#define vax 0
+#endif
+
 #ifndef PLT_SYSTEM_HPUX
 #define PLT_SYSTEM_HPUX 0
 #endif
@@ -45,11 +58,15 @@
 #define PLT_SYSTEM_NT 0
 #endif
 
-/* End of configuration section */
+#ifndef PLT_SYSTEM_OS2
+#define PLT_SYSTEM_OS2 0
+#endif
 
-#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_SOLARIS != 1
+#if PLT_SYSTEM_LINUX + PLT_SYSTEM_HPUX + PLT_SYSTEM_SOLARIS + PLT_SYSTEM_NT + PLT_SYSTEM_OS2 != 1
 #error Must define exactly one system!
 #endif
+
+#include <stddef.h>
 
 #if PLT_SYSTEM_LINUX
 #define PLT_USE_SYSLOG 1
@@ -61,6 +78,10 @@
 
 #if PLT_SYSTEM_SOLARIS
 #define PLT_USE_SYSLOG 1
+#endif
+
+#if PLT_SYSTEM_NT
+#define PLT_USE_SYSLOG 0
 #endif
 
 #ifndef PLT_USE_SYSLOG
@@ -79,7 +100,19 @@
 #define PLT_AVOID_DELETE_BUG 0
 #endif
 
+#if 0 /* _MSC_VER */
+#define PLT_SIMULATE_BOOL 1
+#define PLT_SIMULATE_RTTI 0
+#define PLT_ARRAY_NEW_OVERLOADABLE 0
+#define PLT_INSTANTIATE_TEMPLATES 1
+#endif
 
+#ifdef __WATCOMC__
+#define PLT_SIMULATE_BOOL 1
+#define PLT_SIMULATE_RTTI 1
+#define PLT_INSTANTIATE_TEMPLATES 0
+#define _declspec(x) __declspec(x)
+#endif
 
 #ifndef PLT_SIMULATE_BOOL
 #define PLT_SIMULATE_BOOL 0			/* Is bool not defined by the system? */
@@ -96,6 +129,11 @@
 #ifndef PLT_AVOID_DELETE_BUG         /* If you can't call delete through */
 #define PLT_AVOID_DELETE_BUG 0       /* a pointer to a base class object */
 #endif                               /* define this as 1.                */
+
+
+#ifndef PLT_ARRAY_NEW_OVERLOADABLE
+#define PLT_ARRAY_NEW_OVERLOADABLE 1
+#endif
 
 #if PLT_SIMULATE_BOOL
 typedef int bool;
