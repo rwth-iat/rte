@@ -61,6 +61,22 @@ PltContainer<T>::size() const
 }
 
 //////////////////////////////////////////////////////////////////////
+
+template <class T>
+size_t 
+PltHandleContainer<T>::size() const
+{
+    PltHandleIterator<T> *pit = newIterator();
+    size_t count = 0;
+    if (pit) {
+        for (PltHandleIterator<T> &it(*pit); it; ++it) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+//////////////////////////////////////////////////////////////////////
 #if 0
 
 template <class T>

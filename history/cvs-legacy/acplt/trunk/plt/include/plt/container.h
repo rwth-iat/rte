@@ -42,7 +42,7 @@
 // plt/container.h contains Container and Iterator interfaces
 //////////////////////////////////////////////////////////////////////
 
-#include "plt/debug.h"
+#include "plt/handle.h"
 
 #include <stdlib.h>
 
@@ -59,16 +59,41 @@
 //////////////////////////////////////////////////////////////////////
 
 template<class T>
-class PltIterator
+class PltIterator_
 {
 public:
-    virtual ~PltIterator() { }
+    virtual ~PltIterator_() { }
     virtual operator const void * () const = 0;   // remaining element?
+    virtual PltIterator_ & operator ++ () = 0;     // advance
+    virtual void operator ++ (int);               // (postfix)
+    virtual void toStart() = 0;                   // go to the beginning
+};
+
+
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+class PltIterator
+: public PltIterator_<T>
+{
+public:
     virtual const T & operator * () const;        //  /current element
     virtual const T * operator -> () const;       //  \override at least one!
     virtual PltIterator & operator ++ () = 0;     // advance
-    virtual void operator ++ (int);               // (postfix)
     virtual void toStart() = 0;                   // go to the beginning
+};
+
+
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+class PltHandleIterator
+: public PltIterator_<T>
+{
+public:
+    virtual PltPtrHandle<T> operator * () const = 0; // current element
+    virtual PltHandleIterator & operator ++ () = 0;  // advance
+    virtual void toStart() = 0;                      // go to the beginning
 };
 
 
@@ -88,17 +113,36 @@ public:
 //////////////////////////////////////////////////////////////////////
 
 template<class T>
-class PltContainer
+class PltContainer_
 {
 public:
-    virtual ~PltContainer() { }
+    virtual ~PltContainer_() { }
 
     virtual bool isEmpty() const;
+    virtual size_t size() const = 0;
+    virtual PltIterator_<T> * newIterator() const = 0;
+};
+
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+class PltContainer
+: public PltContainer_<T>
+{
+public:
     virtual size_t size() const;
     virtual PltIterator<T> * newIterator() const = 0;
-#if 0
-    virtual debugPrint(ostream &) const;
-#endif
+};
+
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+class PltHandleContainer
+: public PltContainer_<T>
+{
+public:
+    virtual size_t size() const;
+    virtual PltHandleIterator<T> * newIterator() const = 0;
 };
 
 
@@ -165,10 +209,11 @@ PltIterator<T>::operator * () const
 }
 
 //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 template <class T>
 inline void
-PltIterator<T>::operator ++ (int)
+PltIterator_<T>::operator ++ (int)
 {
     operator ++ ();
 }
@@ -187,7 +232,7 @@ PltBidirIterator<T>::operator -- (int)
 
 template <class T>
 inline bool
-PltContainer<T>::isEmpty() const
+PltContainer_<T>::isEmpty() const
 {
     return size() == 0;
 }
