@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRSIMPLEOBJECTS_INCLUDED
 #define KS_SVRSIMPLEOBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.3 1997-03-25 21:18:37 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrsimpleobjects.h,v 1.4 1997-03-26 17:20:11 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -96,7 +96,7 @@ public:
     virtual ~KssSimpleDomainIterator();
 
     virtual operator const void * () const;
-    virtual const KssCommObjectHandle & operator * () const;
+    virtual KssCommObjectHandle operator * () const;
     virtual KssSimpleDomainIterator& operator ++ ();
     virtual void toStart();
 private:
@@ -133,6 +133,8 @@ public:
     KssSimpleDomain(const KsString &id,
                     KsTime ctime = KsTime::now(),
                     KsString comment = KsString());
+    //// accessor
+    size_t size() const;
 
     //// modifiers
     bool                addChild(KssCommObjectHandle hChild); 

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.3 1997-03-25 21:18:40 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrsimpleobjects.cpp,v 1.4 1997-03-26 17:20:14 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -95,6 +95,14 @@ KssSimpleDomain::setNextSister(KssDomain * p)
 
 //////////////////////////////////////////////////////////////////////
 
+size_t 
+KssSimpleDomain::size() const
+{
+    return _children.size();
+}
+
+//////////////////////////////////////////////////////////////////////
+
 KssCommObjectHandle
 KssSimpleDomain::removeChild(const KsString &id)
 {
@@ -140,7 +148,7 @@ KssSimpleDomainIterator::operator const void * () const
 
 //////////////////////////////////////////////////////////////////////
 
-const KssCommObjectHandle & 
+KssCommObjectHandle
 KssSimpleDomainIterator::operator * () const
 {
     PLT_ASSERT(*this);

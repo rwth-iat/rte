@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.3 1997-03-25 21:18:39 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/svrobjects.cpp,v 1.4 1997-03-26 17:20:13 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -68,6 +68,7 @@ KssDomain::getChildById(const KsString &id) const
                 res = *it;
             }
         }
+        delete pit;
     }
     return res;
 }
@@ -93,9 +94,9 @@ KssDomainIterator *
 KssDomain::newMaskedIterator(const KsMask & name_mask,
                              KS_OBJ_TYPE type_mask) const
 {
-    KssDomainIterator *p = newIterator();
-    if (p) {
-        return new KssMaskedDomainIterator(*p, name_mask, type_mask);
+    PltPtrHandle<KssDomainIterator> h(newIterator(), PltOsNew);
+    if (h) {
+        return new KssMaskedDomainIterator(h, name_mask, type_mask);
     } else {
         return 0;
     }
@@ -139,12 +140,13 @@ KssDomain::getChildByPath(const KsPath & path) const
 //////////////////////////////////////////////////////////////////////
 
 KssMaskedDomainIterator::KssMaskedDomainIterator
-(KssDomainIterator & it,
+(const PltPtrHandle<KssDomainIterator> & hit,
  const KsMask & name_mask,
  const KS_OBJ_TYPE type_mask) 
 : _name_mask(name_mask),
   _type_mask(type_mask),
-  _it(it)
+  _hit(hit),
+  _it(*hit)
 {
     skipWhileNotMatching();
 }
@@ -158,7 +160,7 @@ KssMaskedDomainIterator::operator const void * () const
 
 //////////////////////////////////////////////////////////////////////
 
-const KssCommObjectHandle & 
+KssCommObjectHandle
 KssMaskedDomainIterator::operator * () const
 {
     return _it.operator *();

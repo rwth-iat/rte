@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVROBJECTS_INCLUDED
 #define KS_SVROBJECTS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.3 1997-03-25 21:18:36 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrobjects.h,v 1.4 1997-03-26 17:20:10 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -75,14 +75,15 @@ typedef PltPtrHandle<KssCommObject> KssCommObjectHandle;
 // class KssDomainIterator
 //////////////////////////////////////////////////////////////////////
 
-typedef PltIterator<KssCommObjectHandle> KssDomainIterator;
+typedef PltHandleIterator<KssCommObject> KssDomainIterator;
 
 //////////////////////////////////////////////////////////////////////
 // class KssDomain
 //////////////////////////////////////////////////////////////////////
 
 class KssDomain
-: public KssCommObject
+: public KssCommObject,
+  public PltHandleContainer<KssCommObject>
 {
 public:
     //// KssCommObject
@@ -121,18 +122,19 @@ class KssMaskedDomainIterator
 : public KssDomainIterator
 {
 public:
-    KssMaskedDomainIterator(KssDomainIterator & it,
+    KssMaskedDomainIterator(const PltPtrHandle<KssDomainIterator> & hit,
                             const KsMask & name_mask,
                             const KS_OBJ_TYPE type_mask);
     virtual operator const void * () const;
-    virtual const KssCommObjectHandle & operator * () const;
+    virtual KssCommObjectHandle operator * () const;
     virtual KssMaskedDomainIterator& operator ++ ();
     virtual void toStart();
 private:
     void skipWhileNotMatching();
     KsMask _name_mask;
     KS_OBJ_TYPE _type_mask;
-    KssDomainIterator & _it;
+    PltPtrHandle<KssDomainIterator> _hit; // used to hold the refence
+    KssDomainIterator & _it; // used for access
 };
 
 //////////////////////////////////////////////////////////////////////
