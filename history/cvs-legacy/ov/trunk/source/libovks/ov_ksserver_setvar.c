@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_setvar.c,v 1.2 1999-08-28 15:55:57 dirk Exp $
+*   $Id: ov_ksserver_setvar.c,v 1.3 1999-08-30 15:24:58 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -144,14 +144,14 @@ OV_RESULT ov_ksserver_setvar_setitem(
 		/*
 		*	we are during initialization (instantiation) and need read OR write access
 		*/
-		if(!(((pvtable->m_getaccess)(pobj, pelem, pticket)) & OV_AC_READWRITE)) {
+		if(!(pvtable->m_getaccess(pobj, pelem, pticket) & OV_AC_READWRITE)) {
 			return OV_ERR_NOACCESS;
 		}
 	} else {
 		/*
 		*	we are at normal lifetime of the object
 		*/
-		if(!(((pvtable->m_getaccess)(pobj, pelem, pticket)) & OV_AC_WRITE)) {
+		if(!(pvtable->m_getaccess(pobj, pelem, pticket) & OV_AC_WRITE)) {
 			return OV_ERR_NOACCESS;
 		}
 	}

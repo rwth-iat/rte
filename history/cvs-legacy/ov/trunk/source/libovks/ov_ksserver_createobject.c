@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.3 1999-08-19 11:54:53 dirk Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.4 1999-08-30 15:24:57 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -186,7 +186,7 @@ void ov_ksserver_createobject(
 		if(!pvtable) {
 			pvtable = (OV_VTBLPTR_ov_domain)pclass_ov_domain->v_pvtable;
 		}
-		if(!((pvtable->m_getaccess)(Ov_PtrUpCast(ov_object, pdom),
+		if(!(pvtable->m_getaccess(Ov_PtrUpCast(ov_object, pdom),
 			&path.elements[path.size-1], pticket) & OV_AC_WRITE)
 		) {
 			presult->result = OV_ERR_NOACCESS;

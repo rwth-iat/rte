@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_renameobject.c,v 1.1 1999-07-19 15:02:16 dirk Exp $
+*   $Id: ov_ksserver_renameobject.c,v 1.2 1999-08-30 15:24:57 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -105,7 +105,7 @@ void ov_ksserver_renameobject(
 		if(!pvtable) {
 			pvtable = (OV_VTBLPTR_ov_object)pclass_ov_object->v_pvtable;
 		}
-		if(!((pvtable->m_getaccess)(pobj, &path.elements[path.size-1],
+		if(!(pvtable->m_getaccess(pobj, &path.elements[path.size-1],
 			pticket) & OV_AC_RENAMEABLE)
 		) {
 			*presult = OV_ERR_NOACCESS;
@@ -123,7 +123,7 @@ void ov_ksserver_renameobject(
 		if(!pvtable) {
 			pvtable = (OV_VTBLPTR_ov_object)pclass_ov_object->v_pvtable;
 		}
-		if(!((pvtable->m_getaccess)(Ov_PtrUpCast(ov_object, pdom),
+		if(!(pvtable->m_getaccess(Ov_PtrUpCast(ov_object, pdom),
 			&path.elements[path.size-2], pticket) & OV_AC_WRITE)
 		) {
 			*presult = OV_ERR_NOACCESS;
@@ -178,7 +178,7 @@ void ov_ksserver_renameobject(
 		if(!pvtable) {
 			pvtable = (OV_VTBLPTR_ov_object)pclass_ov_object->v_pvtable;
 		}
-		if(!((pvtable->m_getaccess)(Ov_PtrUpCast(ov_object, pdom),
+		if(!(pvtable->m_getaccess(Ov_PtrUpCast(ov_object, pdom),
 			&newpath.elements[newpath.size-1], pticket) & OV_AC_WRITE)
 		) {
 			*presult = OV_ERR_NOACCESS;
