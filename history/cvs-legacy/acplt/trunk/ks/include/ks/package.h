@@ -1,9 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/package.h,v 1.17 1998-01-12 07:49:24 harald Exp $ */
-
+/* $Header: /home/david/cvs/acplt/ks/include/ks/package.h,v 1.18 1999-09-06 06:54:53 harald Exp $ */
 #ifndef KSC_PACKAGE_INCLUDED 
 #define KSC_PACKAGE_INCLUDED
-
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
