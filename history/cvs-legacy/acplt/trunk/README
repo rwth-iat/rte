@@ -144,6 +144,9 @@ Version 1.2.2
     a portmapper or a Manager, then async_attention() was called with
     a "call" indication instead of an "open" indication. This has been
     fixed to always indicate a failed "open".
+  * Added missing KssLink::getAssociationIdentifier(), which returns the
+    association identifier of a link communication object, when asked
+    for its engineered properties.
 
 Version 1.2.1
 - SERVERS:
