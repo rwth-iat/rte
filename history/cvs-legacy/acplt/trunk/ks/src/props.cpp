@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/props.cpp,v 1.9 1998-12-14 18:04:28 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/props.cpp,v 1.10 1999-01-12 16:22:08 harald Exp $ */
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -48,6 +48,7 @@ PLT_IMPL_RTTI1(KsProjProps, KsXdrUnion);
 PLT_IMPL_RTTI1(KsVarProjProps, KsProjProps);
 PLT_IMPL_RTTI1(KsDomainProjProps, KsProjProps);
 PLT_IMPL_RTTI1(KsLinkProjProps, KsProjProps);
+PLT_IMPL_RTTI1(KsHistoryProjProps, KsProjProps);
 
 PLT_IMPL_RTTI1(KsCurrProps, KsXdrUnion);
 PLT_IMPL_RTTI1(KsVarCurrProps, KsCurrProps);
@@ -104,6 +105,19 @@ KsLinkProjProps::debugPrint(ostream &os) const
 // ----------------------------------------------------------------------------
 
 void 
+KsHistoryProjProps::debugPrint(ostream &os) const
+{
+    os << "Projected Properties for history:" << endl;
+    KsProjProps::debugPrint(os);
+    os << "\thistory type: " << type << endl;
+    os << "\tdefault interpolation mode: " << default_interpolation << endl;
+    os << "\tsupported interpolation modes: " << supported_interpolations << endl;
+    os << "\ttype identifier: " << type_identifier << endl;
+} // KsHistoryProjProps::debugPrint
+
+// ----------------------------------------------------------------------------
+
+void 
 KsCurrProps::debugPrint(ostream &) const
 {
 }
@@ -148,6 +162,7 @@ KS_BEGIN_IMPL_XDRUNION(KsProjProps);
 KS_XDR_MAP(KS_OT_VARIABLE, KsVarProjProps);
 KS_XDR_MAP(KS_OT_DOMAIN, KsDomainProjProps);
 KS_XDR_MAP(KS_OT_LINK, KsLinkProjProps);
+KS_XDR_MAP(KS_OT_HISTORY, KsHistoryProjProps);
 KS_END_IMPL_XDRUNION;
 
 
@@ -287,6 +302,55 @@ KsLinkProjProps::xdrTypeCode() const {
 
     return KS_OT_LINK;
 } // KsLinkProjProps::xdrTypeCode
+
+
+// ----------------------------------------------------------------------------
+// Class KsHistoryProjProps: engineered properties of histories.
+//
+KsHistoryProjProps::KsHistoryProjProps(XDR *xdr, bool &ok)
+{
+    ok = ks_xdrd_enum(xdr, &type)
+      && ks_xdrd_enum(xdr, &default_interpolation)
+      && ks_xdrd_enum(xdr, &supported_interpolations)
+      && type_identifier.xdrDecode(xdr);
+} // KsHistoryProjProps::KsHistoryProjProps
+
+
+// ----------------------------------------------------------------------------
+// Serialize those fields which are new to the engineered properties of an
+// ACPLT/KS history.
+bool
+KsHistoryProjProps::xdrEncodeVariant(XDR *xdr) const
+{
+    return ks_xdre_enum(xdr, &type)
+        && ks_xdre_enum(xdr, &default_interpolation)
+        && ks_xdre_enum(xdr, &supported_interpolations)
+        && type_identifier.xdrEncode(xdr);
+} // KsHistoryProjProps::xdrEncodeVariant
+
+// ----------------------------------------------------------------------------
+// Deserialize those fields which are new to the engineered properties of an
+// ACPLT/KS history.
+bool
+KsHistoryProjProps::xdrDecodeVariant(XDR *xdr)
+{
+    return ks_xdrd_enum(xdr, &type)
+        && ks_xdrd_enum(xdr, &default_interpolation)
+        && ks_xdrd_enum(xdr, &supported_interpolations)
+        && type_identifier.xdrDecode(xdr);
+} // KsHistoryProjProps::xdrDecodeVariant
+
+
+// ----------------------------------------------------------------------------
+// Returns the object type these engineered properties belong to, in this case
+// this is for a history object.
+//
+enum_t
+KsHistoryProjProps::xdrTypeCode() const {
+
+    return KS_OT_HISTORY;
+} // KsHistoryProjProps::xdrTypeCode
+
 
 
 ////////////////////////////////////////////////////////////////////////////

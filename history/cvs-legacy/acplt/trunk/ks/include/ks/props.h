@@ -1,9 +1,9 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/props.h,v 1.13 1998-12-14 18:02:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/props.h,v 1.14 1999-01-12 16:22:07 harald Exp $ */
 #ifndef KS_PROPS_INCLUDED
 #define KS_PROPS_INCLUDED
 /*
- * Copyright (c) 1996, 1997, 1998
+ * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
  * Aachen University of Technology.
  * All rights reserved.
@@ -209,8 +209,8 @@ public:
 		    const KsString &co,
 		    KS_ACCESS am,
 		    KS_LINK_TYPE lt, 
-		    KsString &ori,
-		    KsString &ci);
+		    const KsString &ori,
+		    const KsString &ci);
     virtual ~KsLinkProjProps() {}
 
     KsLinkProjProps &operator = (const KsLinkProjProps &);
@@ -239,6 +239,58 @@ public:
 #endif
 }; // class KsLinkProjProps
 
+
+// ----------------------------------------------------------------------------
+// Engineered properties of history communication objects.
+//
+class KsHistoryProjProps :
+public KsProjProps
+{
+public:
+#if PLT_RETTYPE_OVERLOADABLE
+    typedef KsHistoryProjProps THISTYPE;
+    #define KsHistoryProjProps_THISTYPE KsHistoryProjProps
+#else
+    #define KsHistoryProjProps_THISTYPE KsProjProps
+#endif
+    KsHistoryProjProps() {}
+    KsHistoryProjProps(const KsHistoryProjProps &);
+    KsHistoryProjProps(const KsString &ident,
+		       const KsTime &ct,
+		       const KsString &co,
+		       KS_ACCESS am,
+		       KS_HIST_TYPE ht,
+		       KS_INTERPOLATION_MODE defaulti,
+		       KS_INTERPOLATION_MODE suppi,
+		       const KsString &ti);
+    virtual ~KsHistoryProjProps() {}
+
+    KsHistoryProjProps &operator = (const KsHistoryProjProps &);
+
+    virtual enum_t xdrTypeCode() const;
+
+    /*
+     * Additional Engineered Properties...
+     */
+    KS_HIST_TYPE           type;
+    KS_INTERPOLATION_MODE  default_interpolation;
+    KS_INTERPOLATION_MODE  supported_interpolations;
+    KsString               type_identifier;
+
+protected:
+    bool xdrEncodeVariant(XDR *) const;
+    bool xdrDecodeVariant(XDR *);
+
+private:
+    friend class KsProjProps;
+    KsHistoryProjProps(XDR *, bool &);
+    PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+public:
+    virtual void debugPrint(ostream &) const;
+#endif
+}; // class KsHistoryProjProps
 
 
 
@@ -463,8 +515,8 @@ KsLinkProjProps::KsLinkProjProps(const KsString &ident,
 				 const KsString &co,
 				 KS_ACCESS am,
 				 KS_LINK_TYPE lt, 
-				 KsString &ori,
-				 KsString &ci)
+				 const KsString &ori,
+				 const KsString &ci)
 : KsProjProps(ident, ct, co, am),
   type(lt), opposite_role_identifier(ori),
   class_identifier(ci)
@@ -483,6 +535,46 @@ KsLinkProjProps::operator=(const KsLinkProjProps &other)
 } // KsLinkProjProps::operator=
 
 
+// ----------------------------------------------------------------------------
+// KsHistoryProjProps inline stuff...
+//
+inline
+KsHistoryProjProps::KsHistoryProjProps(const KsHistoryProjProps &other)
+: KsProjProps(other.identifier, other.creation_time,
+              other.comment, other.access_mode),
+  type(other.type),
+  default_interpolation(other.default_interpolation),
+  supported_interpolations(other.supported_interpolations),
+  type_identifier(other.type_identifier)
+{} // KsHistoryProjProps::KsHistoryProjProps
+
+
+inline
+KsHistoryProjProps::KsHistoryProjProps(const KsString &ident,
+				       const KsTime &ct,
+				       const KsString &co,
+				       KS_ACCESS am,
+				       KS_HIST_TYPE ht,
+				       KS_INTERPOLATION_MODE defaulti,
+				       KS_INTERPOLATION_MODE suppi,
+				       const KsString &ti)
+: KsProjProps(ident, ct, co, am),
+  type(ht), default_interpolation(defaulti),
+  supported_interpolations(suppi), type_identifier(ti)
+{} // KsHistoryProjProps::KsHistoryProjProps
+
+
+inline
+KsHistoryProjProps &
+KsHistoryProjProps::operator=(const KsHistoryProjProps &other)
+{
+    KsProjProps::operator=(other);
+    type = other.type;
+    default_interpolation = other.default_interpolation;
+    supported_interpolations = other.supported_interpolations;
+    type_identifier = other.type_identifier;
+    return *this;
+} // KsHistoryProjProps::operator=
 
 
 
