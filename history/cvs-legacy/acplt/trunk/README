@@ -135,9 +135,14 @@ releases, which might not be stable: 1.1.0, etc.
 
 Version 1.2.1
 - SERVERS:
-  * The listening sockets are now set to SO_REUSEADDR by default.
+  * The listening sockets can now set to SO_REUSEADDR by calling
+    KsServerBase::setAddrReuse(true). This enables binding to a specific
+    port to which MS-based clients are still connected when starting a
+    new KS server (for instance, useful during the development cycle).
   * Set FD_SETSIZE to 1024 on OpenVMS machines, overriding the
     brain-damaged default of 32.
+  * Fixed strange setpgrp() parameter calling problem with Solaris which
+    prevented the Un*x-based KS Manager from properly entering daemon mode.
 
 - GENERIC:
   * Fixed warnings from VC++ 6.0 grumbling about converting bool_t to bool.
