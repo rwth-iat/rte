@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.20 2004-05-24 15:23:25 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.21 2004-06-28 16:53:23 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -792,6 +792,16 @@ OV_RESULT ov_supervised_database_map(
 	}
 }
 #endif
+#else
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+OV_RESULT ov_supervised_database_map(
+	OV_STRING 	dbname
+) {
+	return ov_database_map(dbname);
+}
+#endif
 #endif
 /*	----------------------------------------------------------------------	*/
 /*
@@ -802,7 +812,7 @@ OV_RESULT ov_supervised_database_map(
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-OV_RESULT ov_supervised_database_startup() 
+OV_RESULT ov_supervised_database_startup()
 {
 	try {
 		return ov_database_startup();
@@ -812,6 +822,15 @@ OV_RESULT ov_supervised_database_startup()
 	}
 }
 
+#endif
+#else
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+OV_RESULT ov_supervised_database_startup()
+{
+	return ov_database_startup();
+}
 #endif
 #endif
 /*	----------------------------------------------------------------------	*/
@@ -823,7 +842,7 @@ OV_RESULT ov_supervised_database_startup()
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-OV_RESULT ov_supervised_server_run() 
+OV_RESULT ov_supervised_server_run()
 {
 	try {
 		ov_ksserver_run();
@@ -833,6 +852,16 @@ OV_RESULT ov_supervised_server_run()
 	catch(...) {
 		return OV_ERR_GENERIC;
 	}
+}
+#endif
+#else
+#ifndef __cplusplus
+/* function must be implemented separately */
+#else
+OV_RESULT ov_supervised_server_run()
+{
+	ov_ksserver_run();
+	return OV_ERR_OK;
 }
 #endif
 #endif
