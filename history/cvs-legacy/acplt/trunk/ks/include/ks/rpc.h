@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.12 1997-09-15 15:31:19 markusj Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.13 1997-10-28 10:42:45 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -107,8 +107,8 @@ static KsNTOncRpc ks_nt_oncrpc;
 // This seems to be very order dependant!!!
 // Don't put the rpc below the socket headers.
 //
-#include <rpc/rpc.h>
-#include <rpc/pmap_clnt.h>
+#include <ucx$rpc:rpc.h>
+#include <ucx$rpc:pmap_clnt.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
