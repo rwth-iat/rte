@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.15 1999-04-22 15:32:54 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.16 1999-05-12 10:00:31 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -50,6 +50,7 @@ extern "C" {
 #include <arpa/inet.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
+#include <rpc/pmap_prot.h>
 extern int get_myaddress(struct sockaddr_in *);
 };
 #endif
@@ -61,6 +62,7 @@ extern int get_myaddress(struct sockaddr_in *);
 #include <arpa/inet.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
+#include <rpc/pmap_prot.h>
 #endif
 
 #if PLT_SYSTEM_NT
@@ -106,6 +108,7 @@ static KsNTOncRpc ks_nt_oncrpc;
 #include <rpc/svc_soc.h>
 #include <rpc/clnt_soc.h>
 #include <rpc/pmap_clnt.h>
+#include <rpc/pmap_prot.h>
 
 // missing in solaris:
 #define INADDR_NONE ((u_long)-1)
@@ -119,6 +122,7 @@ static KsNTOncRpc ks_nt_oncrpc;
 //
 #include <ucx$rpc:rpc.h>
 #include <ucx$rpc:pmap_clnt.h>
+#include <ucx$rpc:pmap_prot.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
