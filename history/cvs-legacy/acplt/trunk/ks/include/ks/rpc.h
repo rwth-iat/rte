@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_RPC_INCLUDED
 #define KS_RPC_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.14 1999-02-25 17:15:49 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpc.h,v 1.15 1999-04-22 15:32:54 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -64,6 +64,11 @@ extern int get_myaddress(struct sockaddr_in *);
 #endif
 
 #if PLT_SYSTEM_NT
+
+#if PLT_USE_WINSOCK2
+#include <winsock2.h>
+#endif
+
 typedef unsigned char u_char;
 #include <rpc/rpc.h>
 #include <rpc/pmap_pro.h>
