@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.18 2002-05-15 12:41:50 ansgar Exp $
+*   $Id: ov_class.c,v 1.19 2002-08-29 11:03:56 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -861,7 +861,8 @@ void ov_class_deleteobject_cleanupinst(
 	OV_INSTPTR_ov_domain		pparent = Ov_GetParent(ov_containment, pobj);
 	OV_INSTPTR_ov_object		pobj2 = NULL;
 	OV_INSTPTR_ov_association 	passoc;
-	OV_INSTPTR_ov_class		pparentclass, pchildclass;
+	OV_INSTPTR_ov_class		pparentclass = NULL;
+	OV_INSTPTR_ov_class		pchildclass = NULL;
 	OV_ELEMENT			parent, child;
 	Ov_Association_DefineIteratorNM(pit);
 	/*

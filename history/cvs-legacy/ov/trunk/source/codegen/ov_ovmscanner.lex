@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmscanner.lex,v 1.10 2002-08-21 12:41:29 ansgar Exp $
+*   $Id: ov_ovmscanner.lex,v 1.11 2002-08-29 11:03:56 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -236,7 +236,7 @@ CPP_DIRECTIVE		\#{SPACE}{DIGIT}+{SPACE}\"[^ \t\n]+\"({SPACE}{DIGIT}+)?{SPACE_OPT
 
 [+-]?{HOUR}":"{MINUTE}":"{SECOND}("."{USEC})? {
 	static char		format[] = "00:00:00.000000";
-	long			hour, min, sec, usecs;
+	unsigned long		hour, min, sec, usecs;
 	char			*pc1, *pc2;
 	int			sign;
 
@@ -277,11 +277,7 @@ CPP_DIRECTIVE		\#{SPACE}{DIGIT}+{SPACE}\"[^ \t\n]+\"({SPACE}{DIGIT}+)?{SPACE_OPT
 		}
 	}
 
-	sscanf(yytext, "%d:%d:%d.%u", &hour, &min, &sec, &usecs);
-	if(sec == -1) {
-		yyerror("Error: Bad time span format.");
-		exit(EXIT_FAILURE);
-	}
+	sscanf(yytext, "%lu:%lu:%lu.%lu", &hour, &min, &sec, &usecs);
 	yylval.timespan.secs = sign * (abs(hour) * 3600 + min * 60 + sec);
 	yylval.timespan.usecs = sign * usecs;
 	return TOK_TIMESPAN;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.4 2002-08-21 12:46:09 ansgar Exp $
+*   $Id: ov_builder.c,v 1.5 2002-08-29 11:03:56 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -301,7 +301,7 @@ int ov_builder_createsourcefiles(
 					}
 					else {
 						if (pvar->veclen > 1) {
-							fprintf(fp,"             *pveclen = %d;\n",pvar->veclen);
+							fprintf(fp,"             *pveclen = %lu;\n",pvar->veclen);
 							fprintf(fp,"             return pobj->v_%s;\n",pvar->identifier);
 							fprintf(fp,"}\n\n");
 						}
@@ -466,9 +466,9 @@ int ov_builder_createsourcefiles(
 		fprintf(fp,"OV_DLLFNCEXPORT OV_RESULT %s_%s_link(\n",plib->identifier,passoc->identifier);
 		fprintf(fp,"        const OV_PPT_%s_%s                 pparent,\n",plib->identifier,passoc->identifier);
 		fprintf(fp,"        const OV_CPT_%s_%s                 pchild,\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_PLACEMENT_HINT            parenthint,\n",plib->identifier,passoc->identifier);
+		fprintf(fp,"        const OV_PLACEMENT_HINT            parenthint,\n");
 		fprintf(fp,"        const OV_CPT_%s_%s                 prelparent,\n",plib->identifier,passoc->identifier);
-		fprintf(fp,"        const OV_PLACEMENT_HINT            childhint,\n",plib->identifier,passoc->identifier);
+		fprintf(fp,"        const OV_PLACEMENT_HINT            childhint,\n");
 		fprintf(fp,"        const OV_CPT_%s_%s                 prelchild\n",plib->identifier,passoc->identifier);
 		fprintf(fp,") {\n");
 		fprintf(fp,"        return ov_association_link(passoc_%s_%s, Ov_PtrUpCast\n",plib->identifier,passoc->identifier);

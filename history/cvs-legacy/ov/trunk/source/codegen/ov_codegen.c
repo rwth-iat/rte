@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.19 2002-05-15 12:41:50 ansgar Exp $
+*   $Id: ov_codegen.c,v 1.20 2002-08-29 11:03:56 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -556,24 +556,24 @@ void ov_codegen_printinitvaluedef(
 	OV_OVM_STRUCTURE_DEF	*pstruct;
 
 	if (pvar->pinitvalue->value.vartype == OV_VT_STRING) {
-		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %lu;\n",OV_VT_STRING);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %u;\n",OV_VT_STRING);
 		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_string = ");
 		ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvar->pinitvalue->value, pvar->pinitvalue->num, fp);
 		fprintf(fp, ";\n");
 	}
 	else if (pvar->pinitvalue->pstructelem) {
 		pstruct = ov_codegen_getstructdef(plib, pvar->structurename);
-		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %lu;\n",OV_VT_STRUCT);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %u;\n",OV_VT_STRUCT);
 		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.veclen = sizeof(OV_STRUCT_%s_%s);\n", pstruct->libname, pstruct->identifier);
-		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.value  = &OV_INITSTRUCT_DEF_%s_%s_%s_%d;\n",plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.value  = &OV_INITSTRUCT_DEF_%s_%s_%s_%lu;\n",plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
 	}
 	else if (pvar->pinitvalue->pvectorelem) {
-		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %lu;\n", pvar->pinitvalue->value.vartype);
-		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.veclen = %u;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype), pvar->pinitvalue->value.valueunion.val_generic_vec.veclen);
-		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.value  = OV_INITVECTOR_DEF_%s_%s_%s_%d;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %u;\n", pvar->pinitvalue->value.vartype);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.veclen = %lu;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype), pvar->pinitvalue->value.valueunion.val_generic_vec.veclen);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.value  = OV_INITVECTOR_DEF_%s_%s_%s_%ld;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
 	}
 	else {
-		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %lu;\n", pvar->pinitvalue->value.vartype);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %u;\n", pvar->pinitvalue->value.vartype);
 		if( (pvar->pinitvalue->value.vartype == OV_VT_TIME)||(pvar->pinitvalue->value.vartype == OV_VT_TIME_SPAN)) {
 			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.secs = %ld;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),pvar->pinitvalue->value.valueunion.val_time.secs );
 			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.usecs = %ld", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),pvar->pinitvalue->value.valueunion.val_time.usecs );
@@ -602,6 +602,7 @@ int ov_codegen_createsourcefile(
 	OV_OVM_CLASS_DEF		*pclass;
 	OV_OVM_VARIABLE_DEF		*pvar;
 	OV_OVM_ASSOCIATION_DEF	*passoc;
+	OV_BOOL			 usedinitvalue=FALSE;
 	/*
 	*	create output file
 	*/
@@ -717,7 +718,16 @@ int ov_codegen_createsourcefile(
 	*/
 	fprintf(fp, "OV_RESULT ov_library_setglobalvars_%s(void) {\n", plib->identifier);
 	fprintf(fp, "    OV_INSTPTR_ov_library plib;\n");
-	fprintf(fp, "    OV_INSTPTR_ov_variable pvar;\n\n");
+	for(pclass=plib->classes; pclass; pclass=pclass->pnext) {
+		for (pvar=pclass->variables; pvar; pvar=pvar->pnext) {
+			if (pvar->pinitvalue) {
+				usedinitvalue = TRUE;
+				fprintf(fp, "    OV_INSTPTR_ov_variable pvar;\n\n");
+			}
+			if (usedinitvalue) break;
+		}
+		if (usedinitvalue) break;
+	}
 	fprintf(fp, "    Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plib, ov_library) {\n");
 	fprintf(fp, "        if(!strcmp(plib->v_identifier, \"%s\")) {\n", plib->identifier);
 	for(pstruct=plib->structures; pstruct; pstruct=pstruct->pnext) {
@@ -1453,8 +1463,8 @@ void ov_codegen_printassocdefobj(
 	fprintf(fp, "    \"%s\",\n", passoc->childclassname);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->parentcomment));
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->childcomment));
-	fprintf(fp, "    0,\n", passoc->parentoffset);
-	fprintf(fp, "    0,\n", passoc->childoffset);
+	fprintf(fp, "    0,\n");
+	fprintf(fp, "    0,\n");
 	fprintf(fp, "    %lu,\n", passoc->parentflags);
 	fprintf(fp, "    %lu,\n", passoc->childflags);
 	fprintf(fp, "    (OV_FNCPTR_LINK)%s_%s_link,\n", plib->identifier,
@@ -1539,7 +1549,7 @@ void ov_codegen_iterate_strings(
 ) {
 	while (pval) {
 		if (pval->value.vartype == OV_VT_STRING) {
-			fprintf(fp, "char OV_INITSTRING_DEF_%s_%s_%s_%d[] = %s;\n", plib->identifier,
+			fprintf(fp, "char OV_INITSTRING_DEF_%s_%s_%s_%lu[] = %s;\n", plib->identifier,
 				pclass->identifier, pvar->identifier, *num, pval->value.valueunion.val_string);
 			pval->num = *num;
 			(*num)++;
@@ -1583,7 +1593,7 @@ void ov_codegen_iterate_vectors(
 
 	while (pval) {
 		if (pval->pvectorelem) {
-			fprintf(fp, "%s OV_INITVECTOR_DEF_%s_%s_%s_%d [] = {\n", ov_codegen_getvartypetext(pval->value.vartype) ,plib->identifier,
+			fprintf(fp, "%s OV_INITVECTOR_DEF_%s_%s_%s_%lu [] = {\n", ov_codegen_getvartypetext(pval->value.vartype) ,plib->identifier,
 				pclass->identifier, pvar->identifier, *num);
 			pval->num = *num;
 			(*num)++;
@@ -1638,7 +1648,7 @@ void ov_codegen_iterate_structs (
 
 	while (pval) {
 		if (pval->pstructelem) {
-			fprintf(fp, "OV_STRUCT_%s_%s OV_INITSTRUCT_DEF_%s_%s_%s_%d\n", pstruct->libname, pstruct->identifier,
+			fprintf(fp, "OV_STRUCT_%s_%s OV_INITSTRUCT_DEF_%s_%s_%s_%lu\n", pstruct->libname, pstruct->identifier,
 				plib->identifier, pclass->identifier, pvar->identifier, *num);
 			pval->num = *num;
 			(*num)++;
@@ -1653,8 +1663,8 @@ void ov_codegen_iterate_structs (
 							ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvec->value, 0, fp);
 					}
 					else 	{
-							fprintf(fp, "    { %d , ", pstr->value.valueunion.val_generic_vec.veclen);
-							fprintf(fp, "OV_INITVECTOR_DEF_%s_%s_%s_%d }", plib->identifier, pclass->identifier, pvar->identifier, pstr->num);
+							fprintf(fp, "    { %lu , ", pstr->value.valueunion.val_generic_vec.veclen);
+							fprintf(fp, "OV_INITVECTOR_DEF_%s_%s_%s_%lu }", plib->identifier, pclass->identifier, pvar->identifier, pstr->num);
 						}
 				     }
 				else ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pstr->value, 0, fp);
