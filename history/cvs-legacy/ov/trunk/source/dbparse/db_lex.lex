@@ -32,11 +32,7 @@
 %{
 #include "dbparse.h"			/* needed for type definitions */
 
-#if PLT_SYSTEM_NT
 #include "db_y.h"
-#else
-#include "db.y.h"
-#endif
 %}
 
 /*

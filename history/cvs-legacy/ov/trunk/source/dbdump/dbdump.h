@@ -34,11 +34,14 @@
 #include "ks/client.h"
 #include "ks/clntpath.h"
 #include "ks/commobject.h"
+#include "ks/stdconnectionmgr.h"
 
 #if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
 #include "plt/hashtable_impl.h"
 #include "plt/handle_impl.h"
 #include "plt/list_impl.h"
+#include "plt/priorityqueue_impl.h"
+#include "plt/container_impl.h"
 #endif
 
 #if PLT_COMPILER_BORLAND

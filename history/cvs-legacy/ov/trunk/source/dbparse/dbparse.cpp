@@ -40,6 +40,9 @@
 #include "plt/handle_impl.h"
 #include "ks/array_impl.h"
 #include "plt/list_impl.h"
+#include "plt/priorityqueue_impl.h"
+#include "plt/container_impl.h"
+
 #endif
 
 #if PLT_COMPILER_BORLAND

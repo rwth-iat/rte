@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.h,v 1.6 2004-05-19 14:25:41 ansgar Exp $
+*   $Id: ov_ksclient.h,v 1.7 2004-10-27 12:09:06 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

@@ -1,11 +1,11 @@
 
-#   $Id: Makefile,v 1.2 2004-08-04 15:16:05 ansgar Exp $
+#   $Id: Makefile,v 1.3 2004-10-27 12:09:06 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
 #   RWTH Aachen, D-52056 Aachen, Germany.
 #   All rights reserved.
-#   
+#
 #   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>
 #   
 #   This file is part of the ACPLT/OV Package which is licensed as open

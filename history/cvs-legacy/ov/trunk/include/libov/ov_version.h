@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.26 2004-10-14 14:17:32 ansgar Exp $
+*   $Id: ov_version.h,v 1.27 2004-10-27 12:09:06 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -74,7 +74,7 @@
 #define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 6, 5, 0
 
 #define OV_VER_LICENSE															\
-	"Copyright (C) 1998-2000 "													\
+	"Copyright (C) 1998-2004 "													\
 	"Lehrstuhl fuer Prozessleittechnik, "										\
 	"RWTH Aachen, D-52056 Aachen, Germany. "									\
 	"All rights reserved.\r\n"													\

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.18 2004-10-14 14:16:11 ansgar Exp $
+*   $Id: ov_database.c,v 1.19 2004-10-27 12:09:06 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -513,7 +513,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	/*
 	*	local variables
 	*/
-	OV_RESULT	result;
+	OV_RESULT	result = 0;
 	OV_POINTER	baseaddr = NULL;
 	OV_UINT		size = 0;
 #if OV_SYSTEM_NT

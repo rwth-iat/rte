@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.13 2004-10-21 15:02:30 ansgar Exp $
+#   $Id: generic.mk,v 1.14 2004-10-27 12:09:05 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -241,7 +241,8 @@ OV_INCLUDES = \
 	-I$(OV_SOURCE_TASKLIB_DIR) \
 	-I$(OV_SOURCE_DBPARSE_DIR) \
 	-I$(OV_SOURCE_DBDUMP_DIR) \
-	-I$(LIBMPM_DIR)
+	-I$(LIBMPM_DIR) \
+	-I.
 endif
 endif
 endif
@@ -426,7 +427,7 @@ TASKLIB_DLL  = tasklib$(DLL)
 #	ACPLT/OV database dumper
 #	------------------------
 
-DBDUMP_SRC := $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.c) $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.cpp)
+DBDUMP_SRC := $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.cpp) $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.c)
 DBDUMP_OBJ  = $(foreach source, $(DBDUMP_SRC), $(basename $(notdir $(source)))$(OBJ))
 DBDUMP_EXE  = ov_dbdump$(EXE)
 DBDUMP_RES  = $(basename $(DBDUMP_EXE))$(RES)
@@ -434,7 +435,7 @@ DBDUMP_RES  = $(basename $(DBDUMP_EXE))$(RES)
 #	ACPLT/OV database parser
 #	------------------------
 
-DBPARSE_SRC := db_lex.c db_y.c $(wildcard $(OV_SOURCE_DBPARSE_DIR)*.c) $(wildcard $(OV_SOURCE_DBPARSE_DIR)*.cpp)
+DBPARSE_SRC := dbparse.cpp dbparse1.cpp db_lex.c db_y.c
 DBPARSE_OBJ  = $(foreach source, $(DBPARSE_SRC), $(basename $(notdir $(source)))$(OBJ))
 DBPARSE_EXE  = ov_dbparse$(EXE)
 DBPARSE_RES  = $(basename $(DBPARSE_EXE))$(RES)

@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.11 2004-10-25 15:20:21 ansgar Exp $
+#   $Id: unix.mk,v 1.12 2004-10-27 12:09:05 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -55,16 +55,17 @@ CC_FLAGS		= -d -g -Wall -O2 -shared
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= $(CC)
-C_LIBS			= 
+C_LIBS			=
 
 LD				= $(CC) -shared
 LD_LIB			= -ldl
 
-CXX				= g++
+CXX			= gcc -x c++
 CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
-CXX_LINK		= $(CXX)
+# CXX_LINK		= $(CXX)
+CXX_LINK 		= MAKE=$(MAKE) perl ../templ.pl gcc
 CXX_LIBS		= $(C_LIBS) -lstdc++
 
 AR				= ar
@@ -187,12 +188,21 @@ $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_DLL) $(OV_LIBOV_DLL)
 #	ACPLT/OV database dumper
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS)
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
 
 #	ACPLT/OV database parser
 
-$(DBPARSE_EXE) : $(DBPASRE_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS)
+db_y.h: db_y.c
+
+
+db_lex.o: db_lex.c
+	$(CXX_COMPILE) -o $@ $<
+
+db_y.o: db_y.c
+	$(CXX_COMPILE) -o $@ $<
+
+$(DBPARSE_EXE) : $(DBPARSE_OBJ)  
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
 
 #	ACPLT/OV makmak
 
@@ -258,7 +268,11 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 install : all
 	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-cp $(ALL) $(PLT_BIN_DIR)
+	@-cp *.so $(PLT_BIN_DIR)
+	@-cp $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) $(OV_DBUTIL_EXE) $(OV_SERVER_EXE) \
+		 $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(PLT_BIN_DIR)
+	@echo Installing files to '$(PLT_LIB_DIR)'
+	@-cp *.a $(PLT_LIB_DIR)
 	@echo Done.
 
 #	Clean up
@@ -266,8 +280,10 @@ install : all
 
 clean :
 	@echo Cleaning up...
-	@rm -f core *.c *.h *$(LIB) *$(DLL) *$(OBJ) $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) \
-		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(DBDUMP_EXE) $(DBPARSE_EXE)
+	@rm -f core *.c ov.h example.h dynov.h kshist.h db_y.h db_lex.h \
+		*$(LIB) *$(DLL) *$(OBJ) $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) \
+		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE)
+	@for i in *_inst.h ; do echo > $$i ; done
 	@echo Done.
 
 #	Include dependencies

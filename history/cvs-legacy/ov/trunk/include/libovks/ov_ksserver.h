@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.17 2004-10-14 14:17:38 ansgar Exp $
+*   $Id: ov_ksserver.h,v 1.18 2004-10-27 12:09:06 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

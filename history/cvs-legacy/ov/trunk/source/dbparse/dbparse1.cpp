@@ -36,17 +36,13 @@
 #include "dbparse.h"
 #include "libov/ov_version.h"
 
-#if PLT_SYSTEM_NT
 #include "db_y.h"
-#else
-#include "db.y.h"
-#endif
 
 //-------------------------------------------------------------------------------
 // global variables
 
 ofstream			parselog;						// file logging parse results
-parsetree			*parse_tree = new(parsetree);	// parse tree
+parsetree			*parse_tree;			     	// parse tree
 int					lopts;							// load options
 KsString			server;							// target server name
 KscServerBase		*server_base;					// server base
@@ -496,6 +492,7 @@ bool parsetree::remove(instance *inst)
 	instance	*parent;
 
 	parent = search(&LogPath(*(inst->ident), 0, inst->ident->size()-1));
+	
 	if (!parent->children->remove(*(inst->ident), inst)) {
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
 		exit(-1);
@@ -1040,7 +1037,7 @@ KsString TimeToAscii(const KsTime ptime)
 
 	// convert the time to a string
 	ptm = gmtime(&secs);
-	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06u",
+	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06lu",
 		ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour,
 		ptm->tm_min, ptm->tm_sec, ptime.tv_usec);
 	return (KsString)timestring;
@@ -1062,7 +1059,7 @@ KsString TimeSpanToAscii(const KsTimeSpan ptimesp)
 	minutes = secs % 3600;
 	secs -= minutes * 60;
 	hours = secs / 60;
-	sprintf(timestring, "%04d:%02d:%02d.%06u",
+	sprintf(timestring, "%04d:%02d:%02d.%06lu",
 		hours, minutes, seconds, ptimesp.tv_usec);
 	return (KsString)timestring;
 } // TimeSpanToAscii
@@ -1304,6 +1301,7 @@ bool compat_types(enum value_types &type1, KS_VAR_TYPE type2)
 									break;
 		default					:	return false;
 	}
+	return false;
 } // compat_types
 
 //-------------------------------------------------------------------------------
@@ -1496,6 +1494,7 @@ bool check_vendortree()
 	KS_VAR_TYPE										vartype;
 
 	vendor = parse_tree->search(&LogPath("/vendor"));
+	
 	if (!vendor) {										// no vendor branch in parse tree
 		return true;
 	}
@@ -1889,10 +1888,6 @@ bool write_instance(instance *node)
 	KsDeleteObjParams		delete_params;
 	KsDeleteObjResult		delete_result;
 	KsPlacementHint			pmh;
-	vector					*act_vec;
-	int						vec_sz;
-	enum value_types		vec_t;
-	int						i;
 
 	if (verbose) cout << "write instance" << *node->ident << " in mode " << node->cr_opts << endl;
 	// instance shall be overwritten => delete old instance first
@@ -2342,7 +2337,7 @@ bool write_links(instance *node)
 			delete it;
 			return false;
 		}
-		const KsLinkEngProps *helpprops = (const KsLinkEngProps *)help.getEngProps();
+		//const KsLinkEngProps *helpprops = (const KsLinkEngProps *)help.getEngProps();
 		//if (! (helpprops->access_mode & KS_AC_LINKABLE)) {	// link cannot be changed
 		//	continue;
 		//}
@@ -2701,6 +2696,8 @@ int main(int argc, char **argv)
 		}
 	}
 
+	parse_tree = new(parsetree);
+	
 	yyin = fopen(infile, "r");						// open the input file read-only
 	if(!yyin) {
 		cout << "Error: File not found!" << endl;
