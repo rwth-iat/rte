@@ -17,7 +17,6 @@
 #else
 
 #define ERR(s, c)	if(opterr){\
-	extern int strlen(), _write();\
 	char errbuf[2];\
 	errbuf[0] = c; errbuf[1] = '\n';\
 	(void) write(2, argv[0], strlen(argv[0]));\
