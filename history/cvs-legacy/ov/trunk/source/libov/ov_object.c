@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.29 2002-05-15 12:41:50 ansgar Exp $
+*   $Id: ov_object.c,v 1.30 2002-06-20 08:47:36 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -114,35 +114,35 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
 					break;
 				case OV_VT_BYTE_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_BYTE_VEC*)child.pvalue, init.valueunion.val_byte_vec.value, init.valueunion.val_byte_vec.veclen, BYTE);
-					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_BYTE*)child.pvalue)[i] = ((OV_BYTE*)init.valueunion.val_byte_vec.value)[i];
+					else for (i=0;i<init.valueunion.val_byte_vec.veclen;i++) ((OV_BYTE*)child.pvalue)[i] = ((OV_BYTE*)init.valueunion.val_byte_vec.value)[i];
 					break;
 				case OV_VT_BOOL_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_BOOL_VEC*)child.pvalue, init.valueunion.val_bool_vec.value, init.valueunion.val_bool_vec.veclen, BOOL);
-					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_BOOL*)child.pvalue)[i] = ((OV_BOOL*)init.valueunion.val_bool_vec.value)[i];
+					else for (i=0;i<init.valueunion.val_bool_vec.veclen;i++) ((OV_BOOL*)child.pvalue)[i] = ((OV_BOOL*)init.valueunion.val_bool_vec.value)[i];
 					break;
 				case OV_VT_INT_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_INT_VEC*)child.pvalue, init.valueunion.val_int_vec.value, init.valueunion.val_int_vec.veclen, INT);
-					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_INT*)child.pvalue)[i] = ((OV_INT*)init.valueunion.val_int_vec.value)[i];
+					else for (i=0;i<init.valueunion.val_int_vec.veclen;i++) ((OV_INT*)child.pvalue)[i] = ((OV_INT*)init.valueunion.val_int_vec.value)[i];
 					break;
 				case OV_VT_UINT_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_UINT_VEC*)child.pvalue, init.valueunion.val_uint_vec.value, init.valueunion.val_uint_vec.veclen, UINT);
-					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_UINT*)child.pvalue)[i] = ((OV_UINT*)init.valueunion.val_uint_vec.value)[i];
+					else for (i=0;i<init.valueunion.val_uint_vec.veclen;i++) ((OV_UINT*)child.pvalue)[i] = ((OV_UINT*)init.valueunion.val_uint_vec.value)[i];
 					break;
 				case OV_VT_SINGLE_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_SINGLE_VEC*)child.pvalue, init.valueunion.val_single_vec.value, init.valueunion.val_single_vec.veclen, SINGLE);
-					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_SINGLE*)child.pvalue)[i] = ((OV_SINGLE*)init.valueunion.val_single_vec.value)[i];
+					else for (i=0;i<init.valueunion.val_single_vec.veclen;i++) ((OV_SINGLE*)child.pvalue)[i] = ((OV_SINGLE*)init.valueunion.val_single_vec.value)[i];
 					break;
 				case OV_VT_DOUBLE_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_DOUBLE_VEC*)child.pvalue, init.valueunion.val_double_vec.value, init.valueunion.val_double_vec.veclen, DOUBLE);
-					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_DOUBLE*)child.pvalue)[i] = ((OV_DOUBLE*)init.valueunion.val_double_vec.value)[i];
+					else for (i=0;i<init.valueunion.val_double_vec.veclen;i++) ((OV_DOUBLE*)child.pvalue)[i] = ((OV_DOUBLE*)init.valueunion.val_double_vec.value)[i];
 					break;
 				case OV_VT_TIME_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_TIME_VEC*)child.pvalue, init.valueunion.val_time_vec.value, init.valueunion.val_time_vec.veclen, TIME);
-					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_TIME*)child.pvalue)[i] = ((OV_TIME*)init.valueunion.val_time_vec.value)[i];
+					else for (i=0;i<init.valueunion.val_time_vec.veclen;i++) ((OV_TIME*)child.pvalue)[i] = ((OV_TIME*)init.valueunion.val_time_vec.value)[i];
 					break;
 				case OV_VT_TIME_SPAN_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) Ov_SetDynamicVectorValue((OV_TIME_SPAN_VEC*)child.pvalue, init.valueunion.val_time_span_vec.value, init.valueunion.val_time_span_vec.veclen, TIME_SPAN);
-					else for (i=0;i<child.elemunion.pvar->v_veclen;i++) ((OV_TIME_SPAN*)child.pvalue)[i] = ((OV_TIME_SPAN*)init.valueunion.val_time_span_vec.value)[i];
+					else for (i=0;i<init.valueunion.val_time_span_vec.veclen;i++) ((OV_TIME_SPAN*)child.pvalue)[i] = ((OV_TIME_SPAN*)init.valueunion.val_time_span_vec.value)[i];
 					break;
 				case OV_VT_STRING_VEC:
 					if (child.elemunion.pvar->v_veclen == 0) {

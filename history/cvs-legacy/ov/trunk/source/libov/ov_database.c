@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.15 2002-06-19 08:38:09 ansgar Exp $
+*   $Id: ov_database.c,v 1.16 2002-06-20 08:47:36 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -175,7 +175,9 @@ __ptr_t ov_database_morecore(
 	/*
 	*	test if we can get/release memory
 	*/
-	Ov_AbortIfNot(psoon>pdb->pstart);
+	if (psoon<pdb->pstart) {
+		return NULL;
+	}
 	if(psoon > pdb->pend) {
 #if OV_DYNAMIC_DATABASE
 		/*
@@ -719,7 +721,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map(
 	/*
 	*	test if we got the same filemapping size
 	*/
-	Ov_AbortIfNot(pdb);
+	if (!pdb) {
+		ov_database_unmap();
+		return OV_ERR_BADDATABASE;
+	}
 #if OV_SYSTEM_MC164
 	/* nothing to do */
 #else
@@ -778,50 +783,50 @@ OV_DLLFNCEXPORT void ov_database_unmap(void) {
 	/*
 	*	instructions
 	*/
-	if(pdb) {
-		/*
-		*	shut down database if not already done
-		*/
-		ov_database_shutdown();
+	/*
+	*	shut down database if not already done
+	*/
+	if (pdb)	ov_database_shutdown();
 #if OV_SYSTEM_UNIX
-		/*
-		*	unmap the file and close it
-		*/
+	/*
+	*	unmap the file and close it
+	*/
 #if OV_SYSTEM_SOLARIS
-		munmap((caddr_t )pdb, pdb->size);
+	if (pdb)	munmap((caddr_t )pdb, pdb->size);
 #else
-		munmap(pdb, pdb->size);
+	if (pdb) munmap(pdb, pdb->size);
 #endif
-		close(fd);
+	if (fd) close(fd);
 #endif
 #if OV_SYSTEM_NT
-		/*
-		*	unmap the file and close all handles
-		*/
-		UnmapViewOfFile(pdb);
-		CloseHandle(hmap);
-		CloseHandle(hfile);
+	/*
+	*	unmap the file and close all handles
+	*/
+	if (pdb)   UnmapViewOfFile(pdb);
+	if (hmap)  CloseHandle(hmap);
+	if (hfile) CloseHandle(hfile);
 #endif
 #if OV_SYSTEM_RMOS
-		/*
-		*	flush the database file, close it and free the database memory
-		*/
-		ov_database_flush();
-		fclose(file);
-		Ov_HeapFree(pdb);
+	/*
+	*	flush the database file, close it and free the database memory
+	*/
+	if (pdb)  ov_database_flush();
+	if (file) fclose(file);
+	if (pdb)  Ov_HeapFree(pdb);
 #endif
 #if OV_SYSTEM_OPENVMS
-		/*
-		*	delete virtual address space and close the channel
-		*/
+	/*
+	*	delete virtual address space and close the channel
+	*/
+	if (pdb) {
 		inaddr[0] = (OV_BYTE*)pdb;
 		inaddr[1] = inaddr[0]+pdb->size-1;
 		sys$deltva(inaddr, 0, 0);
-		sys$dassgn(channel);
-#endif
-		pdb = NULL;
-		ov_vendortree_setdatabasename(NULL);
 	}
+	if (channel) sys$dassgn(channel);
+#endif
+	pdb = NULL;
+	ov_vendortree_setdatabasename(NULL);
 }
 
 /*	----------------------------------------------------------------------	*/
