@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.30 1999-09-06 07:20:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.31 1999-09-06 08:41:36 dirk Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
@@ -47,17 +47,11 @@
  * specification can use the constants defined in this header file. Thus no
  * need to maintain separate header files containing constant definitions.
  */
-#ifdef __cplusplus
 
 #include "ks/rpc.h"
 
+#ifdef __cplusplus
 extern "C" {
-
-#else
-
-#include <rpc/rpc.h>
-#include <rpc/xdr.h>
-
 #endif
 
 
@@ -180,7 +174,7 @@ ENUMDEF(KS_ACCESS)
 #define KS_AC_NONE          ENUMVAL(KS_ACCESS, 0) /* no access at all      */
 #define KS_AC_READ          ENUMVAL(KS_ACCESS, 1) /* read access           */
 #define KS_AC_WRITE         ENUMVAL(KS_ACCESS, 2) /* write access          */
-#define KS_AC_READWRITE     ENUMVAL(KS_ACCESS, KS_AC_READ | KS_AC_WRITE)
+#define KS_AC_READWRITE     (KS_AC_READ | KS_AC_WRITE)
 
 #define KS_AC_DELETEABLE    ENUMVAL(KS_ACCESS, 0x10000000)
 #define KS_AC_RENAMEABLE    ENUMVAL(KS_ACCESS, 0x08000000)
