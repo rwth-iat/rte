@@ -35,7 +35,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# $Header: /home/david/cvs/acplt/Makefile,v 1.2 1997-04-29 13:18:49 harald Exp $
+# $Header: /home/david/cvs/acplt/Makefile,v 1.3 1997-04-29 13:45:31 harald Exp $
 #
 
 UNIXES	= linux hpux solaris
