@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.23 1999-09-16 10:54:49 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/package.cpp,v 1.24 2000-04-10 12:48:38 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,15 +23,14 @@
 /* Improved error code propagation and QC by:
            Harald Albrecht <harald@plt.rwth-aachen.de> */
 
-//////////////////////////////////////////////////////////////////////
 
 #include "ks/package.h"
 #include "ks/client.h"
 
 
-//////////////////////////////////////////////////////////////////////
-// printing functions for debbugging
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
+// printing functions for debugging
+//
 #if PLT_DEBUG
 
 void
@@ -87,29 +86,33 @@ KscExchangePackage::debugPrint(ostream &os, bool printAll) const
 // end of debbugging section               
 //////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-// class KscPackage
-//////////////////////////////////////////////////////////////////////
 
+// ----------------------------------------------------------------------------
+// class KscPackage: this class acts as a container for a couple of variables
+// and other (sub-) packages to read/write in one request. Well -- in case
+// variables from several servers are in a package, the request is broken
+// down into individual requests, one for each server referenced. In addition,
+// A/V modules are handled properly too.
+//
 KscPackage::KscPackage()
 : num_vars(0),
   num_pkgs(0),
   av_module(0),
   _is_dirty(false),
   _last_result(-1)
-{}
+{} // KscPackage::KscPackage
 
-//////////////////////////////////////////////////////////////////////
 
 KscPackage::~KscPackage()
-{}
+{} // KscPackage::~KscPackage
 
-//////////////////////////////////////////////////////////////////////
-// Pack another variable object into this bag. To be more precise, we
-// only pack a handle into our bag, but this ensures that the variable
-// object will live as long as we use it (except the programmer did
-// bull sh*t and destroyed the variable object itself after he put it
-// under the control of a handle...)
+
+// ----------------------------------------------------------------------------
+// Pack another variable object into this bag. To be more precise, we only
+// pack a handle into our bag, but this ensures that the variable object will
+// live as long as we use it (except when the programmer did bull sh*t and
+// destroyed the variable object itself after he put it under the control of
+// a handle...).
 //
 bool
 KscPackage::add(KscVariableHandle var)
@@ -131,16 +134,15 @@ KscPackage::add(KscVariableHandle var)
         }
         
         return ok;
-    } else {
-        return false;
     }
+    return false;
 } // KscPackage::add
 
 
-//////////////////////////////////////////////////////////////////////
-// Pack another bag into this bag. To be more precise, we only pack a
-// handle into our bag, but this ensures that the subbag object will
-// live as long as we use it (exceptions as explained above may apply)
+// ----------------------------------------------------------------------------
+// Pack another package into this bag. To be more precise, we only pack a
+// handle into our pacakge, but this ensures that the subpackage object will
+// live as long as we use it (exceptions as explained above may apply).
 //
 bool
 KscPackage::add(KscPackageHandle pkg) 
@@ -154,14 +156,14 @@ KscPackage::add(KscPackageHandle pkg)
         }
 
         return ok;
-    } else {
-        return false;
     }
+    return false;
 } // KscPackage::add
 
 
-//////////////////////////////////////////////////////////////////////
-// Remove a variable object from our bag.
+// ----------------------------------------------------------------------------
+// Remove a variable object from our bag. As before, we first make sure that
+// the handle is bound, so we have a variable to remove.
 //
 bool
 KscPackage::remove(KscVariableHandle var) 
@@ -175,13 +177,12 @@ KscPackage::remove(KscVariableHandle var)
         }
         
         return ok;
-    } else {
-        return false;
     }
+    return false;
 } // KscPackage::remove
 
 
-//////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 // Remove a subbag from our bag.
 //
 bool
