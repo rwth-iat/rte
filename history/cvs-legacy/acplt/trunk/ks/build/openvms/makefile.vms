@@ -22,11 +22,11 @@ LD_FLAGS = /repository=(acplt$$repository)
 
 # The following set of flags compiles with optimization and no PLT debugging
 # helpers (no alloc tracker, no debugging messages)
-CXX_DEFINES = PLT_USE_BUFFERED_STREAMS=1,PLT_SYSTEM_OPENVMS=1,NDEBUG=1
+CXX_DEFINES = PLT_USE_BUFFERED_STREAMS=1,PLT_SYSTEM_OPENVMS=1,NDEBUG=1,FD_SETSIZE=1024
 
 # Enable next set of flags when using the new server-side dynamic XDR
 # streams, which buffer client i/o. (Prevents servers from blocking in i/o).
-#CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1,PLT_USE_BUFFERED_STREAMS=1
+#CXX_DEFINES = PLT_SYSTEM_OPENVMS=1,NDEBUG=1,PLT_USE_BUFFERED_STREAMS=1,FD_SETSIZE=1024
 
 ###### no modification below this line ####################
 
