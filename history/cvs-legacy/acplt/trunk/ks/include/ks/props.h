@@ -76,6 +76,10 @@ protected:
     bool xdrDecodeCommon(XDR *xdr);
     KS_DECL_XDRUNION(KsProjProps);
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+    virtual void debugPrint(ostream &) const;
+#endif
 };
 
 typedef KsPtrHandle<KsProjProps> KsProjPropsHandle;
@@ -110,6 +114,10 @@ private:
     friend class KsProjProps;
     KsVarProjProps( XDR *, bool & );
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+    virtual void debugPrint(ostream &) const;
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -138,6 +146,10 @@ private:
     friend class KsProjProps;
     KsDomainProjProps( XDR *, bool & );
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+    virtual void debugPrint(ostream &) const;
+#endif
 };
 
 
@@ -153,6 +165,10 @@ public:
 
     KS_DECL_XDRUNION(KsCurrProps);
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+    virtual void debugPrint(ostream &) const;
+#endif
 };
 
 typedef KsPtrHandle<KsCurrProps> KsCurrPropsHandle;
@@ -189,6 +205,10 @@ private:
     friend class KsCurrProps;
     KsVarCurrProps( XDR *, bool & );
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+    virtual void debugPrint(ostream &) const;
+#endif
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -208,6 +228,10 @@ private:
     friend class KsCurrProps;
     KsDomainCurrProps(XDR *, bool &);
     PLT_DECL_RTTI;
+
+#if PLT_DEBUG
+    virtual void debugPrint(ostream &) const;
+#endif
 };
 
 
