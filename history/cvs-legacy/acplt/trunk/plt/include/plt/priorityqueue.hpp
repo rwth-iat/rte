@@ -13,11 +13,19 @@
 #include <plt/container.hpp>
 
 //////////////////////////////////////////////////////////////////////
+
+template <class T> class PltPQIterator;
+
+//////////////////////////////////////////////////////////////////////
 // T must be comparable
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-class PltPriorityQueue : PltDebuggable {
+class PltPriorityQueue 
+: public PltContainer<T>,
+  public PltDebuggable 
+{
+    friend class PltPQIterator<T>;
 public:
     enum { defaultGrowSize = 16 };
     PltPriorityQueue(size_t growsize = defaultGrowSize);
@@ -27,6 +35,7 @@ public:
     bool isEmpty() const;
     size_t size() const;
     T peek() const;
+    PltIterator<T> * newIterator() const;
 
     // modifiers
     bool add(T elem);
@@ -55,6 +64,25 @@ private:
     // modifiers
     void downheap(size_t k, T v);
     bool grow(size_t);
+};
+
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+class PltPQIterator
+: public PltIterator<T>
+{
+public:
+    PltPQIterator(const PltPriorityQueue<T> &);
+
+    virtual operator const void * () const;       // remaining element?
+    virtual const T & operator * () const;        // current element
+    virtual PltIterator<T> & operator ++ ();      // advance
+    virtual void toStart();                       // go to the beginning
+private:
+    const PltPriorityQueue<T> & a_container;
+    size_t a_index;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -89,4 +117,64 @@ PltPriorityQueue<T>::peek() const
 
 //////////////////////////////////////////////////////////////////////
 
+template <class T>
+inline PltIterator<T> *
+PltPriorityQueue<T>::newIterator() const
+{
+    return new PltPQIterator<T>(*this);
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltPQIterator<T>::PltPQIterator(const PltPriorityQueue<T> & pq)
+: a_container(pq), 
+  a_index(0)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline
+PltPQIterator<T>::operator const void * () const
+{
+    return a_index < a_container.a_size ? this : 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline const T & 
+PltPQIterator<T>::operator * () const
+{
+    PLT_PRECONDITION(*this);
+    return a_container.a_elems[a_index];
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline PltIterator<T> & 
+PltPQIterator<T>::operator ++ ()
+{
+    PLT_PRECONDITION(*this);
+    ++a_index;
+    return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline void
+PltPQIterator<T>::toStart()
+{
+    a_index=0;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 #endif
+
