@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/handle.cpp,v 1.1 1997-03-12 16:20:00 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/handle.cpp,v 1.2 1997-03-23 14:31:46 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -55,7 +55,7 @@ PltHandle_base::invariant() const
 // Add one reference to the handled object
 
 void 
-PltHandle_base::addRef()
+PltHandle_base::addRef() const
 {
     PLT_PRECONDITION(palloc ? palloc->count<UINT_MAX : true);
     if (*this && palloc) {
@@ -116,7 +116,7 @@ PltHandle_base::PltHandle_base(const PltHandle_base &h)
 //  Assignment
 
 PltHandle_base & 
-PltHandle_base::operator=(PltHandle_base &rhs) 
+PltHandle_base::operator=(const PltHandle_base &rhs) 
 {
     // order is important if called as 'handle = handle;'
     rhs.addRef();
