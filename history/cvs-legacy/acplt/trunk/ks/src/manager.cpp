@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.35 2001-01-25 10:00:41 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.36 2001-01-29 12:36:49 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -46,7 +46,7 @@
 // Arg... the usual legal stuff...
 //
 static char DISCLAIMER[] =
-"Copyright (c) 1996, 1997, 1998, 1999\n"
+"Copyright (c) 1996, 2001\n"
 "Chair of Process Control Engineering,\n"
 "Aachen University of Technology.\n"
 "All rights reserved.\n\n"
