@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.16 2002-08-29 08:33:04 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.17 2002-09-03 09:40:56 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -585,10 +585,24 @@ OV_DLLFNCEXPORT void ov_ksserver_sighandler(int) {
 }
 
 #if PLT_SYSTEM_SOLARIS
-OV_DLLFNCEXPORT void ov_ksserver_sighandler_solaris(int) {
-	signal(SIGPIPE, ov_ksserver_sighandler_solaris);
+
+/* Funktion zum reinstallieren des Signal-Handlers */
+void ov_ksserver_sighandler_solaris_reinstall() {
+    
+  (void) signal(SIGPIPE, ov_ksserver_sighandler_solaris);
+  
 }
+
+static void ov_ksserver_sighandler_solaris(
+	int signal
+) {
+  /* Signal-Bearbeitung reinstallieren */
+  (void) ov_ksserver_sighandler_solaris_reinstall();
+  
+}
+
 #endif
+
 
 OV_DLLFNCEXPORT void ov_ksserver_sighandler_register()
 {
