@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.3 1999-01-08 13:09:24 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.4 1999-01-29 12:46:14 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -41,6 +41,9 @@
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
+
+//#define CNXDEBUG
+
 
 #if PLT_USE_BUFFERED_STREAMS
 
@@ -233,12 +236,21 @@ KssTCPXDRConnection::KssTCPXDRConnection(int fd, unsigned long timeout,
 KssConnection::ConnectionIoMode KssTCPXDRConnection::getIoMode() const
 {
     switch ( _state ) {
-    case CNX_STATE_DEAD:      return CNX_IO_DEAD;
-    case CNX_STATE_IDLE:      return CNX_IO_READABLE;
-    case CNX_STATE_READY:     return (ConnectionIoMode)(CNX_IO_DORMANT | CNX_IO_ATTENTION);
-    case CNX_STATE_RECEIVING: return (ConnectionIoMode)(CNX_IO_READABLE | CNX_IO_NEED_TIMEOUT);
-    case CNX_STATE_SENDING:   return (ConnectionIoMode)(CNX_IO_WRITEABLE | CNX_IO_NEED_TIMEOUT);
-    default:                  return CNX_IO_READABLE;
+    case CNX_STATE_DEAD:
+	return CNX_IO_DEAD;
+    case CNX_STATE_IDLE:
+	return CNX_IO_READABLE;
+    case CNX_STATE_READY:
+	return (ConnectionIoMode)
+	    (CNX_IO_DORMANT | CNX_IO_ATTENTION);
+    case CNX_STATE_RECEIVING:
+	return (ConnectionIoMode)
+	    (CNX_IO_READABLE | CNX_IO_NEED_TIMEOUT);
+    case CNX_STATE_SENDING:
+	return (ConnectionIoMode)
+	    (CNX_IO_WRITEABLE | CNX_IO_NEED_TIMEOUT);
+    default:
+	return CNX_IO_READABLE;
     }
 } // KssTCPXDRConnection::getIoMode
 
@@ -377,6 +389,15 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		// the stage...
 	    	//
 	    	_state = CNX_STATE_DEAD;
+		if ( _remaining_len < 4 ) {
+		    //
+		    // Hey! Looks like the connection broke *during*
+		    // transmission. So bark. If the connection closes
+		    // before a new telegramme is transmitted, then it's
+		    // fine.
+		    //
+		    return (ConnectionIoMode)(getIoMode() | CNX_IO_HAD_RX_ERROR);
+		}
 	    	return getIoMode();
 	    } else if ( len_read < 0 ) {
 		//
@@ -392,11 +413,27 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		switch ( myerrno ) {
 		case EINTR:
 		    continue;
+		case ECONNRESET:
+		    //
+		    // In case the connection was closed before any data
+		    // was sent, we assume a gracious close...
+		    //
+		    if ( _remaining_len == 4 ) {
+			int len;
+			xdrmemstream_rewind(&_xdrs, XDR_DECODE);
+			xdrmemstream_get_length(&_xdrs, &len);
+			if ( len == 0 ) {
+			    // ...it was a gracious close indeed...
+			    _state = CNX_STATE_DEAD;
+			    return getIoMode();
+			}
+		    }
+		    break; // report rx error...
 		case EWOULDBLOCK:
 		    return getIoMode();
 		}
 	    	_state = CNX_STATE_DEAD;
-	    	return getIoMode();
+	    	return (ConnectionIoMode)(getIoMode() | CNX_IO_HAD_RX_ERROR);
 	    } else {
 		break; // okay, we´ve got data...
 	    }
@@ -463,7 +500,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 		return reset(false); // flush all incomming data...
 	    } else {
 		_state = CNX_STATE_DEAD;
-		return getIoMode();
+		return (ConnectionIoMode)(getIoMode() | CNX_IO_HAD_RX_ERROR);
 	    }
 	}
     }
@@ -507,7 +544,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 {
     //
     // Gotcha: that one took me one full day (much(!) more than eight hours)
-    // to find it. It´s simply no good first to write the fragment header to
+    // to find it. It´s simply not good first to write the fragment header to
     // the socket and then the body. This will usually result in two packets
     // on the wire and therefore cause large delays due to waiting for ACK´s.
     // This effectively slowed down communication quite a lot (with lots of
@@ -527,7 +564,7 @@ KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 	    // kill the connection.
 	    //
 	    _state = CNX_STATE_DEAD;
-	    return getIoMode();
+	    return (ConnectionIoMode)(getIoMode() | CNX_IO_HAD_TX_ERROR);
 	}
 	_remaining_len = rlen;
     }
