@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrmemstream.h,v 1.4 1999-02-22 15:13:02 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrmemstream.h,v 1.5 1999-03-01 14:15:05 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -79,7 +79,8 @@ typedef struct {
 } xdrmemstream_fragment_description;
 void xdrmemstream_get_fragments(XDR *xdrs, 
                                 xdrmemstream_fragment_description *desc,
-                                unsigned int *fragment_count);
+                                unsigned long *fragment_count,
+                                unsigned long *total_size);
 
 /*
  * Some statistics and control functions...

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.7 1999-02-22 15:13:08 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.8 1999-03-01 14:15:06 harald Exp $ */
 /*
  * Copyright (c) 1998, 1999
  * Chair of Process Control Engineering,
@@ -494,9 +494,10 @@ void xdrmemstream_rewind(XDR *xdrs, enum xdr_op op)
  */
 void xdrmemstream_get_fragments(XDR *xdrs, 
                                 xdrmemstream_fragment_description *desc,
-                                unsigned int *fragment_count)
+                                unsigned long *fragment_count,
+				unsigned long *total_size)
 {
-    unsigned int         count = ((MemoryStreamInfo *) xdrs->x_base)->
+    unsigned long        count = ((MemoryStreamInfo *) xdrs->x_base)->
 	                     fragment_count;
     MemoryStreamFragment *fragment;
     
@@ -514,7 +515,7 @@ void xdrmemstream_get_fragments(XDR *xdrs,
 	 * Fill in the fragment descriptions and return the number of
 	 * fragments used.
 	 */
-	unsigned int avail_count = *fragment_count;
+	unsigned long avail_count = *fragment_count;
 
 	for ( ; avail_count; --avail_count ) {
 	    if ( !fragment->used ) {
@@ -526,7 +527,7 @@ void xdrmemstream_get_fragments(XDR *xdrs,
 	    }
 	    desc->fragment = (caddr_t) &(fragment->dummy);
 	    desc->length   = fragment->used;
-	    fragment = fragment->next;
+	    fragment       = fragment->next;
 	    if ( !fragment ) {
 		break;
 	    }
@@ -535,6 +536,9 @@ void xdrmemstream_get_fragments(XDR *xdrs,
 
     if ( fragment_count ) {
 	*fragment_count = count;
+    }
+    if ( total_size ) {
+	*total_size = ((MemoryStreamInfo *) xdrs->x_base)->length;
     }
 } /* xdrmemstream_get_fragments */
 
