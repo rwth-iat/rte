@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.32 1998-06-29 11:13:36 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.33 1998-07-15 10:04:08 markusj Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998
  * Chair of Process Control Engineering,
@@ -230,7 +230,9 @@ KscClient::getServer(const KsString &host_and_name)
 // and set usefull error codes on its own behalf.
 //
 KS_RESULT
-KscClient::createServer(KsString host_and_name, KscServerBase *&pServer)
+KscClient::createServer(KsString host_and_name,
+                        u_short /*protocol_version*/, // for future use
+                        KscServerBase *&pServer)
 {
     KS_RESULT result = KS_ERR_OK;
 
