@@ -3,12 +3,24 @@
  * @(#) from_local.c 1.3 96/05/31 15:52:57 (Linux networking base)
  */
 
- /*
-  * Check if an address belongs to the local system. Adapted from:
-  * 
-  * @(#)pmap_svc.c 1.32 91/03/11 Copyright 1984,1990 Sun Microsystems, Inc.
-  * @(#)get_myaddress.c  2.1 88/07/29 4.0 RPCSRC.
-  */
+/*
+ * Extended for the "NT operating system" by Harald Albrecht of the
+ * Chair of Process Control Engineering. The idea of how to get all
+ * host IP addresses on NT was independently developed and then proofed
+ * by the NT port of nntp.
+ *
+ * Also, some minor changes made in the old functions to take advantage
+ * of the PltLog objects.
+ *
+ * $Header: /home/david/cvs/acplt/ks/src/from_local.cpp,v 1.8 1997-11-27 09:36:22 harald Exp $
+ */
+
+/*
+ * Check if an address belongs to the local system. Adapted from:
+ * 
+ * @(#)pmap_svc.c 1.32 91/03/11 Copyright 1984,1990 Sun Microsystems, Inc.
+ * @(#)get_myaddress.c  2.1 88/07/29 4.0 RPCSRC.
+ */
 
 /*
  * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -39,14 +51,22 @@
  * 2550 Garcia Avenue
  * Mountain View, California  94043
  */
-#include "plt/debug.h"
 
-#if PLT_SYSTEM_NT || PLT_SYSTEM_OPENVMS
-# if PLT_SYSTEM_OPENVMS
-# include <in.h>
-# else
-# include <winsock.h>
-# endif
+/*
+ * First, some PLT stuff which helps us to in the various os environments.
+ */
+#include "plt/debug.h"
+#include "plt/log.h"
+
+
+#ifdef TEST
+#undef perror
+#endif
+
+
+#if PLT_SYSTEM_OPENVMS
+
+#include <in.h>
 
 /* 
  * Currently we have no means to get this information.
@@ -64,9 +84,20 @@ int from_local(struct sockaddr_in *)
 #else
 
 
-#ifdef TEST
-#undef perror
-#endif
+#if PLT_SYSTEM_NT
+
+/*
+ * The Windooze stuff...
+ */
+#include <windows.h>
+#include <winsock.h>
+#include "plt/string.h"
+
+#else
+
+/*
+ * Now, finally for the Un*x stuff...
+ */
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -82,12 +113,7 @@ int from_local(struct sockaddr_in *)
 #include <net/if.h>
 #include <sys/ioctl.h>
 
-#include "plt/log.h"
-
-#ifndef TRUE
-#define	TRUE	1
-#define FALSE	0
-#endif
+#endif /* of all that Un*x, NT stuff */
 
  /*
   * With virtual hosting, each hardware network interface can have multiple
@@ -100,7 +126,7 @@ static struct in_addr *addrs;
 
 /* grow_addrs - extend list of local interface addresses */
 
-static int grow_addrs()
+static bool grow_addrs()
 {
     struct in_addr *new_addrs;
     int     new_num;
@@ -113,7 +139,7 @@ static int grow_addrs()
     new_addrs = (struct in_addr *) malloc(sizeof(*addrs) * new_num);
     if (new_addrs == 0) {
 	PltLog::Error("from_local: out of memory");
-	return (0);
+	return false;
     } else {
 	if (addrs != 0) {
 	    memcpy((char *) new_addrs, (char *) addrs,
@@ -122,12 +148,196 @@ static int grow_addrs()
 	}
 	num_addrs = new_num;
 	addrs = new_addrs;
-	return (1);
+	return true;
     }
 }
 
-/* find_local - find all IP addresses for this host */
+#if PLT_SYSTEM_NT
 
+/*
+ * This is the find_local() variant for Windooze NT. It is really
+ * brain-damaged, but -- honestly -- what else do you expect from Bill's
+ * operating systems after all? Interestingly enough, NT doesn't get along
+ * very well with the concept of network interfaces which can be brought up
+ * and down during normal operation without rebooting and other lousy
+ * problems. If Bill just have had a look at Linux, he would have thrown
+ * NT out of his "Windows"...
+ * ...like Marianne 013 said: "What a lousy system!"
+ */
+int find_local()
+{
+    //
+    // First, we must find out which devices (aka network cards) are
+    // currently bound to the TCP/IP protocol. This is a really strange
+    // way, because m$ has definetely NO CONCEPT about really how a
+    // real network OS should be structured. If Billy Boy thinks that
+    // the registry needs a change, everything will break, as there is
+    // no official way to determine the IP addresses, etc. This is just
+    // brain-damaged, thanks Bill!
+    //
+    HKEY   hLinkages;
+    DWORD  RegValueType, RegValueLength;
+    char  *TcpIpBindings;
+
+    if ( RegOpenKey(HKEY_LOCAL_MACHINE,
+		    "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Linkage", &hLinkages) 
+	 != ERROR_SUCCESS ) {
+	PltLog::Error("Can't open TCP/IP linkage registry key");
+	return 0;
+    }
+    //
+    // Next, find out how long the value of the "Bind" entry will be and
+    // allocate enough memory to hold the value. Then retrieve the value
+    // from the registry. Yeah, once again, programming NT is "easy as a
+    // pie"... well, HAL 9000 proves this.
+    //
+    if ( RegQueryValueEx(hLinkages, "Bind",
+			 0, &RegValueType,
+			 0, &RegValueLength) != ERROR_SUCCESS ) {
+	RegCloseKey(hLinkages);
+	PltLog::Error("Can't get TCP/IP linkage binding value from the registry");
+	return 0;
+    }
+    if ( RegValueType != REG_MULTI_SZ ) {
+	RegCloseKey(hLinkages);
+	PltLog::Alert("The TCP/IP linkage binding value is not of type REG_MULTI_SZ. Looks like your registry was corrupted.");
+	return 0;
+    }
+    TcpIpBindings = new char[RegValueLength];
+    if ( TcpIpBindings == 0 ) {
+	RegCloseKey(hLinkages);
+	PltLog::Error("Out of memory to get TCP/IP linkage binding value");
+	return 0;
+    }
+    if ( RegQueryValueEx(hLinkages, "Bind",
+			 0, 0,
+			 (LPBYTE) TcpIpBindings, &RegValueLength) != ERROR_SUCCESS ) {
+	RegCloseKey(hLinkages);
+	delete [] TcpIpBindings;
+	PltLog::Error("Can't get TCP/IP linkage binding value from the registry");
+	return 0;
+    }
+    RegCloseKey(hLinkages);
+    //
+    // Now that we've got the bindings, we must scan them to find out
+    // what services are bound to TCP/IP...
+    //
+    char  *device = TcpIpBindings;
+    char  *service;
+    int    serviceLength;
+    char  *IpAddresses = 0;
+    DWORD  IpAddressesLength, IpAddressesAllocated = 0;
+    HKEY   hService;
+
+    num_local = 0;
+    if ( addrs ) {
+	free((char *) addrs);
+    }
+    addrs = 0;
+    for ( ; *device ; device += serviceLength + 1 ) {
+	serviceLength = strlen(device);
+	service       = strrchr(device, '\\');
+	if ( service ) {
+	    //
+	    // Skip NDISWANxxx services as these are temporary interfaces
+	    // like RAS and we would not like to fight with all the
+	    // problems associated with such temporary things.
+	    //
+	    if ( (serviceLength >= 7) &&
+		 (strncmpi(service, "NDISWAN", 7) == 0) ) {
+		continue;
+	    }
+	    //
+	    // Okay, this seems to be a permanent service... We're silently
+	    // ignoring a failed access because we then can assume that it
+	    // is not a network card...
+	    //
+	    PltString TcpIp("SYSTEM\\CurrentControlSet\\Services", service);
+	    TcpIp += "\\Parameters\\Tcpip";
+	    if ( RegOpenKey(HKEY_LOCAL_MACHINE, TcpIp, &hService)
+		 != ERROR_SUCCESS ) {
+		continue;
+	    }
+	    //
+	    // First, get the list of IP addresses bound to this interface
+	    // (aka service, or whatever, who cares...). We do use here
+	    // dynamically allocated memory to hold the registry information.
+	    // This block of memory grows, if the current value is bigger
+	    // than the last. This way we can cope with (almost) arbitrary
+	    // sizes...
+	    //
+	    if ( RegQueryValueEx(hService, "IpAddress",
+				 0, &RegValueType,
+				 0, &IpAddressesLength) != ERROR_SUCCESS ) {
+		RegCloseKey(hService);
+		PltLog::Error("Can't get IP address for service");
+		PltLog::Error(service);
+		continue;
+	    }
+	    if ( RegValueType != REG_MULTI_SZ ) {
+		RegCloseKey(hService);
+		PltLog::Alert("The IP address' value is not of type REG_MULTI_SZ. Looks like your registry was corrupted.");
+		continue;
+	    }
+	    if ( IpAddressesLength > IpAddressesAllocated ) {
+		if ( IpAddresses ) {
+		    delete [] IpAddresses;
+		}
+		IpAddressesAllocated = IpAddressesLength;
+		IpAddresses = new char[IpAddressesAllocated];
+		if ( IpAddresses == 0 ) {
+		    break;
+		}
+	    }
+	    if ( RegQueryValueEx(hService, "IpAddress",
+				 0, 0,
+				 (LPBYTE) IpAddresses, &IpAddressesLength)
+		 != ERROR_SUCCESS ) {
+		RegCloseKey(hService);
+		PltLog::Error("Can't get IP address for service");
+		PltLog::Error(service);
+		continue;
+	    }
+	    RegCloseKey(hService);
+	    //
+	    // Now we can parse the IP addresses and store them into our
+	    // list of local addresses.
+	    //
+	    char          *pIp;
+	    int            IpLength;
+	    unsigned long  ip;
+
+	    for ( pIp = IpAddresses ; *pIp ; pIp += IpLength + 1 ) {
+		IpLength = strlen(pIp);
+		ip = inet_addr(pIp);
+		if ( ip == INADDR_NONE ) {
+		    continue;
+		}
+		if ( num_local >= num_addrs ) {
+		    if ( !grow_addrs() ) {
+			break;
+		    }
+		}
+		addrs[num_local].s_addr = ip;
+		num_local++;
+	    }
+	}
+    }
+
+    if ( IpAddresses ) {
+	delete [] IpAddresses;
+    }
+    delete [] TcpIpBindings;
+    return num_local;
+} // find_local
+
+#else
+
+/*
+ * find_local - find all IP addresses for this host the Un*x way. Compared
+ *              to what we need to do on "NT", this is considerably more
+ *              straight and secure against new os releases.
+ */
 int find_local()
 {
     struct ifconf ifc;
@@ -143,13 +353,13 @@ int find_local()
      */
 
     if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
-	perror("socket");
+	PltLog::Error("from_local: can't allocate socket");
 	return (0);
     }
     ifc.ifc_len = sizeof(buf);
     ifc.ifc_buf = buf;
     if (ioctl(sock, SIOCGIFCONF, (char *) &ifc) < 0) {
-	perror("SIOCGIFCONF");
+	PltLog::Error("from_local: SIOCGIFCONF: can't get interface configurations");
 	(void) close(sock);
 	return (0);
     }
@@ -161,13 +371,13 @@ int find_local()
 	if (ifr->ifr_addr.sa_family == AF_INET) {	/* IP net interface */
 	    ifreq = *ifr;
 	    if (ioctl(sock, SIOCGIFFLAGS, (char *) &ifreq) < 0) {
-		perror("SIOCGIFFLAGS");
+		PltLog::Error("from_local: SIOCGIFFLAGS: can't get interface configurations");
 	    } else if (ifreq.ifr_flags & IFF_UP) {	/* active interface */
 		if (ioctl(sock, SIOCGIFADDR, (char *) &ifreq) < 0) {
-		    perror("SIOCGIFADDR");
+		PltLog::Error("from_local: SIOCGIFADDR: can't get interface address");
 		} else {
 		    if (num_local >= num_addrs)
-			if (grow_addrs() == 0)
+			if ( !grow_addrs() )
 			    break;
 		    addrs[num_local++] = ((struct sockaddr_in *)
 					  & ifreq.ifr_addr)->sin_addr;
@@ -184,9 +394,11 @@ int find_local()
     return (num_local);
 }
 
+#endif /* Un*x from_local */
+
 /* from_local - determine whether request comes from the local system */
 
-int from_local(struct sockaddr_in *addr)
+bool from_local(struct sockaddr_in *addr)
 {
     int     i;
 
@@ -196,9 +408,9 @@ int from_local(struct sockaddr_in *addr)
     for (i = 0; i < num_local; i++) {
 	if (memcmp((char *) &(addr->sin_addr), (char *) &(addrs[i]),
 		   sizeof(struct in_addr)) == 0)
-	    return (TRUE);
+	    return true;
     }
-    return (FALSE);
+    return false;
 }
 
 #ifdef TEST
@@ -213,6 +425,6 @@ main()
 	printf("%s\n", inet_ntoa(addrs[i]));
 }
 
-#endif
+#endif /* TEST */
 #endif
 
