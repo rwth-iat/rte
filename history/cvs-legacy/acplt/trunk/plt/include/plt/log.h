@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LOG_INCLUDED
 #define PLT_LOG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.3 1997-04-07 09:33:02 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.4 1997-05-05 06:53:11 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -97,6 +97,7 @@ private:
 //////////////////////////////////////////////////////////////////////
 #endif // PLT_USE_SYSLOG
 //////////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////////////
 #if PLT_USE_CERRLOG
 //////////////////////////////////////////////////////////////////////
@@ -122,6 +123,38 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 #endif // PLT_USE_CERRLOG
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+#if PLT_USE_NTLOG
+//////////////////////////////////////////////////////////////////////
+
+#include <win32/windows.h>
+
+//
+// This is a specialised log object, which works only on NT. Yeah, big deal!
+// Of course it only works on NT, because NT isn't portable at all. And what
+// is NT at least? The biggest collection of programming mistakes. But now
+// enough quarrel...
+//
+class PltNtLog : public PltLog {
+public:
+    PltNtLog(const char * ident = 0);
+    virtual ~PltNtLog();
+    virtual void info(const char *msg);
+    virtual void debug(const char *msg);
+    virtual void warning(const char *msg);
+    virtual void error(const char *msg);
+    virtual void alert(const char *msg);
+
+private:
+    void log(WORD severity, const char *sevMsg, const char *msg);
+
+    HANDLE _event_source;
+}; // class PltNtLog
+
+//////////////////////////////////////////////////////////////////////
+#endif // PLT_USE_NTLOG
 //////////////////////////////////////////////////////////////////////
 
 #endif /* EOF plt/log.h */

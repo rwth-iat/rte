@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.4 1997-04-07 09:33:05 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.5 1997-05-05 06:52:45 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997
  * Chair of Process Control Engineering,
@@ -301,4 +301,99 @@ PltCerrLog::alert(const char *msg)
 #endif // PLT_USE_CERRLOG
 //////////////////////////////////////////////////////////////////////
 
-/* EOF blabla.cpp */
+
+//////////////////////////////////////////////////////////////////////
+#if PLT_USE_NTLOG
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// Constructing and destructing a NT logger object is fortunately
+// almost straightforward. We register/deregister an event source,
+// and then we can go on and bark at the user...
+//
+PltNtLog::PltNtLog(const char * ident)
+{
+    //
+    // If the caller didn't supplied an identification, we'll fall back
+    // on a generic one -- guess what...
+    //
+    if ( ident == 0 ) {
+    	ident = "ACPLT/KS";
+    }
+    _event_source = RegisterEventSource(0, ident);
+} // PltNtLog::PltNtLog
+
+PltNtLog::~PltNtLog()
+{
+    //
+    // If there's still an event source around, kill it! You know: only
+    // a dead event source is a good event source...
+    //
+    if ( _event_source ) {
+        DeregisterEventSource(_event_source);
+    }
+} // PltNtLog::~PltNtLog
+
+//////////////////////////////////////////////////////////////////////
+// This is the workhorse for barking at the user. Because NT doesn't
+// know of all the log levels, we've defined (well -- stolen from the
+// syslog(3) mechanism), we have to emulate some levels. We do this
+// by specifying a roughly equivalent severity level and then prefixing
+// the user msg by the sevMsg prefix text.
+//
+void PltNtLog::log(WORD severity, const char *sevMsg, const char *msg)
+{
+    LPCTSTR messages[2];
+    int     msgCount;
+
+    if ( _event_source ) {
+    	msgCount = 1;
+    	if ( sevMsg ) {
+            messages[0] = (LPCTSTR) sevMsg;
+            messages[1] = (LPCTSTR) msg;
+            msgCount = 2;
+        } else {
+            messages[0] = (LPCTSTR) msg;
+        }
+    	ReportEvent(_event_source,
+                    severity,
+                    0, // there are no special event categories available
+                    0, // no special event id
+                    0, // no security identifier required
+                    msgCount,
+                    0, // no event-specific raw data
+                    messages,
+                    0);
+    }
+} // PltNtLog::log
+
+void PltNtLog::info(const char *msg)
+{
+    log(EVENTLOG_INFORMATION_TYPE, 0, msg);
+} // PltNtLog::info
+
+void PltNtLog::debug(const char *msg)
+{
+    log(EVENTLOG_INFORMATION_TYPE, "[DEBUG] ", msg);
+} // PltNtLog::debug
+
+void PltNtLog::warning(const char *msg)
+{
+    log(EVENTLOG_WARNING_TYPE, 0, msg);
+} // PltNtLog::warning
+
+void PltNtLog::error(const char *msg)
+{
+    log(EVENTLOG_ERROR_TYPE, 0, msg);
+} // PltNtLog::error
+
+void PltNtLog::alert(const char *msg)
+{
+    log(EVENTLOG_INFORMATION_TYPE, "[ALERT] ", msg);
+} // PltNtLog::alert
+
+//////////////////////////////////////////////////////////////////////
+#endif // PLT_USE_NTLOG
+//////////////////////////////////////////////////////////////////////
+
+/* EOF log.cpp */
