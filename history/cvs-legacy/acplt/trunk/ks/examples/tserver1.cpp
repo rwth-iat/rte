@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.28 2000-10-27 07:47:23 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver1.cpp,v 1.29 2001-02-09 08:18:09 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -609,6 +609,7 @@ TestServer::TestServer(int port)
     // Note that error handling is incomplete here ( TODO )
     //
 
+#if 1
     // a domain
     KssSimpleDomain * test_dom = new KssSimpleDomain("test");
     KssDomainHandle htest_dom(test_dom, KsOsNew);
@@ -740,6 +741,32 @@ TestServer::TestServer(int port)
     tmp_var->setValue(core_services_val);
     tmp_var->lock();
     addCommObject(ec, KssCommObjectHandle(tmp_var, KsOsNew));
+#endif
+
+    KsPath encoded("/encoded");
+    addDomain(KsPath("/"), "encoded", "contains objects with dump names");
+    addStringVar(encoded, "slash/slash", "this has no value at all.",
+                 "object name contains a slash");
+    addStringVar(encoded, "slash/.dot", "./", "well-known rumor site");
+    addStringVar(encoded, "%AN-OPENVMS-COMPATIBLE-IDENT-$/{}~", "forget it",
+                 "no comment");
+    KsPath xx("/encoded/MessStellen/AA%2FAA");
+    KsPath xxx("/encoded/MessStellen/AA%2FAA/MW");
+    xx.decodePercents();
+    xxx.decodePercents();
+    addDomain(KsPath("/encoded"), "MessStellen");
+    addDomain(KsPath("/encoded/MessStellen"), "AA/AA");
+    addDomain(xx, "MW");
+    addStringVar(xxx, "Austrag", "nope, nothing, nada, niente, njet");
+    addStringVar(xxx, "Beschreibung", "Beschreibung");
+    addStringVar(xxx, "Einheit", "MI-5");
+    addStringVar(xxx, "Transformation", "XSLT, was sonst?!");
+    
+    KssSimpleVariable * state_var = new KssSimpleVariable("pv_with_state");
+    state_var->setValue(new KsDoubleValue(42));
+    state_var->setState(0x1234FFC3);
+    state_var->lock();
+    addCommObject(xxx, KssCommObjectHandle(state_var, KsOsNew));
 
 #if PLT_USE_BUFFERED_STREAMS
     addTimerEvent(new Wecker);
