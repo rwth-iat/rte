@@ -331,6 +331,8 @@ KsTimeValue::debugPrint(ostream & ostr) const
 {
 #if PLT_SYSTEM_OPENVMS
     unsigned long sec = tv_sec;
+#elif PLT_SYSTEM_HPUX
+    int sec = tv_sec;
 #else
     long sec = tv_sec;
 # endif

@@ -39,6 +39,8 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
+#include <stdlib.h>
+
 #include "ks/selector.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -139,6 +141,87 @@ KsTimeSel::xdrDecodeVariant(XDR *xdr)
         && to.xdrDecode(xdr)
         && delta.xdrDecode(xdr);
 }
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+#if PLT_DEBUG
+
+void
+KsAbsRelTime::print(ostream &os) const
+{
+    os << "KsAbsRelTime {";
+
+    switch( xdrTypeCode() ) {
+    case KS_TT_ABSOLUTE: {
+        char buf[200];
+        time_t temp = time.abs.sec;
+        struct tm *broken = gmtime(&temp);
+
+        strftime(buf, sizeof(buf), "UTC %c", broken);
+        os << buf << "or ";
+
+        broken = localtime(&temp);
+        strftime(buf, sizeof(buf), "%Z %c", broken);
+        os << buf;
+    } break;
+    case KS_TT_RELATIVE: {
+        u_long t = (u_long)labs( time.rel.sec );
+        long h = t / 3600,
+            m = (t % 3600) / 60,
+            s = t % 60;
+
+        os << "Time span ";
+        if( time.rel.sec < 0 ) {
+            os << "-";
+        }
+        if( h ) os << h << ":";
+        if( m ) os << m << ":";
+        os << s;
+    } break;
+    default: {
+        os << "Unknown typecode";
+    }
+    }
+
+    os << "}";
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void
+KsNoneSel::print(ostream &os) const
+{
+    os << "KsNoneSel";
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void
+KsStringSel::print(ostream &os) const
+{
+    os << "KsStringSel {"
+       << mask
+       << "}";
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void
+KsTimeSel::print(ostream &os) const
+{
+    os << "KsTimeSel {"
+       << ip_mode << endl;
+
+    from.print(os); 
+    os << endl;
+    to.print(os);
+    os << endl;
+    KsAbsRelTime(delta).print(os);
+    os << "}";
+}
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // EOF selector.cpp

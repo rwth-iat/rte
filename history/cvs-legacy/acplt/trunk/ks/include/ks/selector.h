@@ -2,7 +2,7 @@
 #ifndef KS_SELECTOR_INCLUDED
 #define KS_SELECTOR_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.6 1999-02-19 15:16:15 markusj Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.7 1999-03-05 12:15:15 markusj Exp $
  *
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -42,6 +42,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
+#include <plt/debug.h>
 #include <plt/rtti.h>
 
 #include "ks/ks.h"
@@ -93,6 +94,10 @@ public:
     virtual bool xdrDecode(XDR *) ;
     static KsAbsRelTime * xdrNew(XDR *);
 
+#if PLT_DEBUG
+    void print(ostream &os) const;
+#endif
+
 protected:
     virtual bool xdrEncodeCommon(XDR *) const
     { PLT_ASSERT(0); return false; }
@@ -128,6 +133,10 @@ public:
     KsSelector(XDR *, bool &);
     KsSelector() {}
 
+#if PLT_DEBUG
+    virtual void print(ostream &) const = 0;
+#endif
+
 protected:
     bool xdrEncodeCommon(XDR *) const { return true; }
     bool xdrDecodeCommon(XDR *) { return true; }
@@ -148,6 +157,10 @@ public:
     KsNoneSel() {}
 
     enum_t xdrTypeCode() const { return KS_HSELT_NONE; }
+
+#if PLT_DEBUG
+    virtual void print(ostream &) const;
+#endif
 
 protected:    
     bool xdrEncodeVariant(XDR *) const { return true; }
@@ -175,7 +188,11 @@ public:
     KsAbsRelTime           from;
     KsAbsRelTime           to;
     KsTimeSpan             delta;
-    
+
+#if PLT_DEBUG
+    virtual void print(ostream &) const;
+#endif
+
 protected:
     bool xdrEncodeVariant(XDR *) const;
     bool xdrDecodeVariant(XDR *);
@@ -202,6 +219,10 @@ public:
     enum_t xdrTypeCode() const { return KS_HSELT_STRING; }
 
     KsString mask;
+
+#if PLT_DEBUG
+    virtual void print(ostream &) const;
+#endif
 
 protected:
     bool xdrEncodeVariant(XDR *) const;
