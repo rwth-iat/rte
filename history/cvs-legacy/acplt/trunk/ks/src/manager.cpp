@@ -1,5 +1,5 @@
-/* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.38 2003-09-23 15:36:02 harald Exp $ */
+/* -*-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.39 2003-10-13 12:12:34 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -25,6 +25,7 @@
 
 #include "ks/manager.h"
 #include "ks/path.h"
+#include "plt/comparable.h"
 #include "plt/log.h"
 #include <ctype.h>
 #include <string.h>
@@ -46,7 +47,7 @@
 // Arg... the usual legal stuff...
 //
 static char DISCLAIMER[] =
-"Copyright (c) 1996, 2001\n"
+"Copyright (c) 1996, 2003\n"
 "Chair of Process Control Engineering,\n"
 "Aachen University of Technology.\n"
 "All rights reserved.\n\n"
@@ -662,7 +663,8 @@ KsManager::startServer()
 	    }
 #else
 	    _udp_transport->setAttentionPartner(&_attention_dispatcher);
-	    if ( _cnx_manager->addConnection(*_udp_transport) ) {
+	    if ( KsConnectionManager::getConnectionManagerObject()->
+		   addConnection(*_udp_transport) ) {
 		_is_ok = true;
 	    } else {
 		_udp_transport->shutdown();
@@ -756,13 +758,10 @@ KsManager::cleanup()
     }
     
     if ( _udp_transport ) {
-#if !PLT_USE_BUFFERED_STREAMS
-        svc_destroy(_udp_transport);
-#else
-	_cnx_manager->removeConnection(*_udp_transport);
+	KsConnectionManager::getConnectionManagerObject()->
+	    removeConnection(*_udp_transport);
 	_udp_transport->shutdown();
     	delete _udp_transport;
-#endif
         _udp_transport = 0;
     }
 } // KsManager::cleanup
