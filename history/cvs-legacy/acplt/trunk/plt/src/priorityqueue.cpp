@@ -11,13 +11,43 @@
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
-PltPriorityQueue<T>::PltPriorityQueue(size_t growsize) 
+inline size_t
+PltPriorityQueue<T>::leftChild(size_t i) const
+{
+    return 2 * i + 1;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline size_t
+PltPriorityQueue<T>::rightChild(size_t i) const
+{
+    return 2 * i + 2;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+inline size_t
+PltPriorityQueue<T>::parent(size_t i) const
+{
+    return (i-1)/2;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+PltPriorityQueue<T>::PltPriorityQueue(
+    bool (*pLtFunc)(const T, const T),
+    size_t growsize) 
 : a_growsize(growsize),
   a_capacity(0), 
   a_size(0), 
-  a_elems(0)
+  a_elems(0),
+  lessThan(pLtFunc)
 {
-    PLT_PRECONDITION( growsize > 0 );
+    PLT_PRECONDITION( pLtFunc && growsize > 0 );
     grow(a_growsize);
     PLT_CHECK_INVARIANT();
 }
@@ -44,12 +74,11 @@ PltPriorityQueue<T>::invariant() const
 
     // partial ordering
     for (size_t i = 0; i < (a_size+1)/2; ++i ) {
-        // first child must not be greater than parent
-        if ( 2*i+1 < a_size && lessThan(a_elems[2*i+1], a_elems[i]) ) {
+        const size_t lc = leftChild(i);
+        const size_t rc = rightChild(i);
+        if ( lc < a_size && lessThan(a_elems[lc], a_elems[i]) ) {
             return false;
-        }
-        // second child must not be greater than parent
-        if ( 2*i+2 < a_size && lessThan(a_elems[2*i+2], a_elems[i]) ) {
+        } else if ( rc < a_size && lessThan(a_elems[rc], a_elems[i]) ) {
             return false;
         }
     }
@@ -57,6 +86,44 @@ PltPriorityQueue<T>::invariant() const
 }
 
 #endif
+
+
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+size_t
+PltPriorityQueue<T>::locate(size_t node, T elem) const
+{
+    // root
+    if (elem == a_elems[node]) {
+        return node;
+    }
+    const size_t lc = leftChild(node);
+    if ( lc < a_size ) {
+        // left subtree exists
+        if ( !lessThan(elem,a_elems[lc]) ) {
+            // maybe in this subtree 
+            size_t lfound = locate(lc, elem);
+            if ( lfound < a_size ) {
+                return lfound;
+            }
+        }
+        const size_t rc = rightChild(node);
+        // right subtree
+        if ( rc < a_size ) {
+            // right subtree exists
+            if ( !lessThan(elem,a_elems[rc]) ) {
+                // maybe in this subtree
+                size_t rfound = locate(rc, elem);
+                if (rfound) {
+                    return rfound;
+                }
+            }
+        } // rc < a_size
+    } // lc < a_size
+    // not found
+    return a_size;
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -91,8 +158,37 @@ PltPriorityQueue<T>::grow(size_t cap)
 //////////////////////////////////////////////////////////////////////
 
 template <class T>
+void
+PltPriorityQueue<T>::downheap(size_t k, T v) {
+//
+// reestablish heap condition, starting at k, inserting v
+//
+    const size_t last_parent = parent(a_size-1);
+    while(k <= last_parent) {
+        size_t lc = leftChild(k);
+        size_t rc = lc+1;
+        size_t j =  
+            ( rc < a_size && lessThan(a_elems[rc] , a_elems[lc] ) ) 
+                ? rc : lc;
+        // j is smaller child of k
+        if ( ! lessThan( a_elems[j], v ) ) {
+            break;  // <<<<
+        } else {
+            a_elems[k] = a_elems[j];
+            k = j;
+        }
+    }
+    a_elems[k] = v;
+    PLT_CHECK_INVARIANT();
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+template <class T>
 bool
-PltPriorityQueue<T>::add(const T & x)
+PltPriorityQueue<T>::add(const T x)
 {
     if (a_size == a_capacity) {
         if (!grow(a_capacity+a_growsize)) {
@@ -104,7 +200,7 @@ PltPriorityQueue<T>::add(const T & x)
     // upheap
     size_t i = a_size++;
     while (i>0) {
-        size_t j = (i-1)/2; // parent of i
+        size_t j = parent(i);
         if ( lessThan(x, a_elems[j]) ) {
             // partial exchange
             a_elems[i] = a_elems[j];
@@ -126,34 +222,44 @@ T
 PltPriorityQueue<T>::removeFirst()
 {
     PLT_PRECONDITION( ! isEmpty() );
-
     T x(a_elems[0]);
-    T v(a_elems[a_size--]);
-    
+    T v(a_elems[--a_size]);
+
     // TODO: may shrink here
-    
-    // downheap
-    size_t j;
-    size_t k;
-    for ( k = 0; k <= (a_size+1)/2; k = j ) {
-        j = 2 * k + 1;
-        // j is first child of k
-        if ( j + 1 < a_size && lessThan(a_elems[j+1] , a_elems[j] ) )  {
-            ++j;
-        }
-        // j is smaller child of k
-        if ( ! lessThan( a_elems[j], v ) ) {
-            break;  // <<<<
-        } else {
-            a_elems[k] = a_elems[j];
-        }
-    }
-    a_elems[k] = v;
+
+    downheap(0,v);
 
     PLT_CHECK_INVARIANT();
     return x;
 }
 
+//////////////////////////////////////////////////////////////////////
+
+template <class T>
+bool
+PltPriorityQueue<T>::remove(const T elem)
+{
+    PLT_PRECONDITION( ! isEmpty() );
+    bool result;
+    size_t loc = locate(0, elem);
+    if ( loc < size() ) {
+        // found 
+        T v(a_elems[--a_size]);
+        
+        // TODO: may shrink here
+        
+        downheap(loc,v);
+        result = true;
+    } else {
+        result = false;
+    }
+    PLT_CHECK_INVARIANT();
+    return result;
+}
 
 //////////////////////////////////////////////////////////////////////
+
+
+
+
 
