@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ntservice.rc,v 1.1 1999-07-26 16:13:22 dirk Exp $
+*   $Id: ov_ntservice.rc,v 1.2 1999-08-06 09:39:27 dirk Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -45,7 +45,7 @@ FILETYPE		VFT_DLL
   BLOCK "040904E4"
   {
    VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
-   VALUE "FileDescription", "ACPLT/KS Server for ACPLT/OV as an NT Service\000"
+   VALUE "FileDescription", "ACPLT/KS Server for ACPLT/OV (NT Service)\000"
    VALUE "FileVersion", OV_VER_NTSERVICE "\000\000"
    VALUE "InternalName", "ov_ntservice.exe\000"
    VALUE "LegalCopyright", "Copyright © PLT 1998-1999\000\000"
