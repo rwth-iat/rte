@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.13 2000-04-10 15:07:52 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.14 2000-09-04 08:58:23 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -133,10 +133,11 @@ KsUnixManager::getServerVersion() const
 //////////////////////////////////////////////////////////////////////
 
 int main(int argc, char **argv) {
-    bool daemon = false;
-    bool argsok = true;
-    int  port   = KsServerBase::KS_ANYPORT;
-    int  idx    = 0;
+    bool daemon    = false;
+    bool argsok    = true;
+    int  port      = KsServerBase::KS_ANYPORT;
+    int  reuseaddr = false;
+    int  idx       = 0;
     PltLog * pLog = 0;
 
     //
@@ -165,6 +166,9 @@ int main(int argc, char **argv) {
                 argsok = false;
                 break;
             }
+        } else if ( (strcmp(argv[idx], "-r") == 0) ||
+                    (strcmp(argv[idx], "--reuseaddr") == 0) ) {
+            reuseaddr = true;
         } else {
             argsok = false;
             break;
@@ -175,10 +179,11 @@ int main(int argc, char **argv) {
         cerr << "Usage: " << PROG_NAME << "[options]" << endl
              << "Runs the ACPLT/KS Manager process for un*x operating systems" << endl
              << endl
-             << "  -d, --detach    sends ACPLT/KS manager process into background" << endl
-             << "  -p #, --port #  binds the ACPLT/KS manager to port number #" << endl
-             << "  --help          display this help and exit" << endl
-             << "  --version       output version information and exit" << endl;
+             << "  -d, --detach     sends ACPLT/KS manager process into background" << endl
+             << "  -p #, --port #   binds the ACPLT/KS manager to port number #" << endl
+             << "  -r, --reuseaddr  reuse socket address" << endl
+             << "  --help           display this help and exit" << endl
+             << "  --version        output version information and exit" << endl;
         return EXIT_FAILURE;
     }
 
@@ -194,7 +199,11 @@ int main(int argc, char **argv) {
             break;
         case 0:
             // child
-            for (int i = 0; i<FD_SETSIZE; ++i) close(i);
+//cerr << "fork passed (in child)" << endl;
+            for (int i = 0; i<FD_SETSIZE; ++i) {
+                close(i);
+            }
+//cerr << "about to setpgrp()" << endl;
 #if PLT_SYSTEM_FREEBSD
 	    setpgid(0, 0);
 #else
@@ -221,6 +230,7 @@ int main(int argc, char **argv) {
     //
     KsUnixManager m(port);
     if (m.isOk()) {
+        m.setReuseAddr(reuseaddr);
         m.startServer();
         if ( m.isOk() ) {
             PltLog::Info("KsUnixManager started.");
