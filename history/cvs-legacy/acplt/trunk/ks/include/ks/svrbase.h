@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.23 1999-09-06 06:58:14 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.24 1999-09-06 08:43:58 dirk Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Chair of Process Control Engineering,
@@ -178,6 +178,8 @@ protected:
     PltString getNetworkTransportDevice(const char *protocol);
 #endif
 
+    sig_atomic_t _shutdown_flag; // signal to the run() loop to quit
+
 private:
 #if !PLT_USE_BUFFERED_STREAMS
     friend void ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
@@ -187,8 +189,6 @@ private:
     KsServerBase & operator = (const KsServerBase &); // forbidden
 
     void cleanup();
-
-    sig_atomic_t _shutdown_flag; // signal to the run() loop to quit
 
     PltPriorityQueue< PltPtrComparable<KsTimerEvent> > _timer_queue;
 
