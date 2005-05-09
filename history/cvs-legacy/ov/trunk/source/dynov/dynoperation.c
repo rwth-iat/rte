@@ -36,8 +36,8 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynoperation_executeable_set(
              const OV_BOOL           value
 ) {
              OV_VTBLPTR_dynov_dynoperation          pvtable;
-             OV_INSTPTR_ov_class		    pclass;
-             OV_INSTPTR_ov_association		    passoc;
+             OV_INSTPTR_dynov_dynclass		    pclass;
+             OV_INSTPTR_dynov_dynassociation		    passoc;
 
 	     if ((value) && (!pobj->v_executeable)) {
 		     Ov_GetVTablePtr(dynov_dynoperation, pvtable, pobj);
@@ -46,7 +46,7 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynoperation_executeable_set(
 		     if (!pobj->v_executeable) return OV_ERR_OPDEFMISMATCH;
 	     }
 	     else if ((!value) && (pobj->v_executeable)) {
-	             pclass = Ov_DynamicPtrCast(ov_class, Ov_Getparent(ov_containment, pobj));
+	             pclass = Ov_DynamicPtrCast(dynov_dynclass, Ov_GetParent(ov_containment, pobj));
 	             if (pclass) if (pclass->v_isinstantiable) return OV_ERR_NOACCESS;
 	             passoc = Ov_GetParent(dynov_assocaccess, pobj);
 	             if (passoc) if (passoc->v_islinkable) return OV_ERR_NOACCESS;
@@ -54,9 +54,9 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynoperation_executeable_set(
 	             if (passoc) if (passoc->v_islinkable) return OV_ERR_NOACCESS;
 	             passoc = Ov_GetParent(dynov_isunlinkfnc, pobj);
 	             if (passoc) if (passoc->v_islinkable) return OV_ERR_NOACCESS;
-	             pclass = Ov_DynamicPtrCast(ov_class, Ov_Getparent(ov_containment, Ov_GetParent(dynov_isgetaccessor, pobj)));
+	             pclass = Ov_DynamicPtrCast(dynov_dynclass, Ov_GetParent(ov_containment, Ov_GetParent(dynov_isgetaccessor, pobj)));
 	             if (pclass) if (pclass->v_isinstantiable) return OV_ERR_NOACCESS;
-	             pclass = Ov_DynamicPtrCast(ov_class, Ov_Getparent(ov_containment, Ov_GetParent(dynov_issetaccessor, pobj)));
+	             pclass = Ov_DynamicPtrCast(dynov_dynclass, Ov_GetParent(ov_containment, Ov_GetParent(dynov_issetaccessor, pobj)));
 	             if (pclass) if (pclass->v_isinstantiable) return OV_ERR_NOACCESS;
 
 		     Ov_GetVTablePtr(dynov_dynoperation, pvtable, pobj);

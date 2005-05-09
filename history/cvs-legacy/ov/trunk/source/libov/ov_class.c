@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.21 2004-05-19 14:51:23 ansgar Exp $
+*   $Id: ov_class.c,v 1.22 2005-05-09 15:30:16 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -103,6 +103,8 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_class ov_class_search(
 
 /*	----------------------------------------------------------------------	*/
 
+#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
+
 /*
 *	Load a class into the database
 */
@@ -202,7 +204,7 @@ CONTINUE2:
 		if(Ov_GetParent(ov_inheritance, pclass)) {
 			Ov_WarnIfNot(pbaseclass == Ov_GetParent(ov_inheritance, pclass));
 		} else {
-			Ov_WarnIfNot(Ov_OK(Ov_Link(ov_inheritance, pbaseclass, pclass)));
+			DoLink(ov_inheritance, pbaseclass, pclass);
 		}
 	}
 	return OV_ERR_OK;
@@ -532,6 +534,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	result = ov_class_createobject_preinit(pclass, pobj, identifier, &time, NULL);
 	if(Ov_Fail(result)) {
 		ov_class_deleteobject_cleanupinst(pobj);
+		ov_database_free(pobj);
 		return result;
 	}
 	/*
@@ -540,6 +543,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	result = Ov_LinkRelativePlaced(ov_containment, pparent, pobj, hint, prelobj);
 	if(Ov_Fail(result)) {
 		ov_class_deleteobject_cleanupinst(pobj);
+		ov_database_free(pobj);
 		return result;
 	}
 	/*
@@ -790,7 +794,7 @@ OV_RESULT ov_class_createobject_preinit(
 	/*
 	*	link with class object
 	*/
-	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_instantiation, pclass, pobj)));
+	DoLink(ov_instantiation, pclass, pobj);
 	/*
 	*	iterate over the object's parts and preinitialize them
 	*/

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.8 2003-11-07 09:33:00 ansgar Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.9 2005-05-09 15:30:16 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -111,6 +111,8 @@ void ov_ksserver_createobject(
 		result->result = OV_ERR_TARGETGENERIC;	/* TODO! no heap memory */
 		return;
 	}
+	memset((char*)presult, 0, len*sizeof(OV_CREATEOBJECTITEM_RES));
+	
 	result->obj_results_val = presult;
 	result->obj_results_len = len;
 	/*

@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.11 2005-01-31 13:23:43 ansgar Exp $
+ * $Id: dbdump.cpp,v 1.12 2005-05-09 15:30:16 ansgar Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -35,6 +35,7 @@
 #include <ctype.h>
 #include <time.h>
 #include "libov/ov_version.h"
+#include "ks/conversions.h"
 
 #if PLT_SYSTEM_NT
 #include <stdio.h>
@@ -227,7 +228,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
            	            	break;
 						case KS_VT_STRING:
 							db_file << "\""
-									<< (const char *) ((KsStringValue &) *curr_props->value)
+									<< (const char *) ksStringToPercent((KsString)((KsStringValue &) *curr_props->value))
 									<< "\"" << endl;
 							break;
 						case KS_VT_TIME:
@@ -315,7 +316,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 							db_file << "{";
 							for ( i = 0; i < size; ++i ) {
 								db_file << "\""
-										<< (const char *) ((KsStringVecValue &) *curr_props->value)[i]
+										<< (const char *) ksStringToPercent((KsString)((KsStringVecValue &) *curr_props->value)[i])
 										<< "\"";
 								if (i < size-1) {
 									db_file << ", ";

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.21 2005-02-25 13:26:43 ansgar Exp $
+*   $Id: ov_association.c,v 1.22 2005-05-09 15:30:16 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -40,6 +40,7 @@
 #include "libov/ov_string.h"
 
 /*	----------------------------------------------------------------------	*/
+#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
 
 /*
 *	Load an association into the database
@@ -115,11 +116,20 @@ CONTINUE:
 		/*
 		*	link association with parent class
 		*/
-		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_parentrelationship, pparentclass, passoc)));
+		if(Ov_GetParent(ov_parentrelationship, passoc)) {
+			Ov_WarnIfNot(pparentclass == Ov_GetParent(ov_parentrelationship, passoc));
+		} else {
+			DoLink(ov_parentrelationship, pparentclass, passoc);
+		}
+
 		/*
 		*	link association with child class
 		*/
-		Ov_WarnIfNot(Ov_OK(Ov_Link(ov_childrelationship, pchildclass, passoc)));
+		if(Ov_GetParent(ov_childrelationship, passoc)) {
+			Ov_WarnIfNot(pchildclass == Ov_GetParent(ov_childrelationship, passoc));
+		} else {
+			DoLink(ov_childrelationship, pchildclass, passoc);
+		}
 	}
 
 	passoc->v_parentflags = passocdef->parentflags;
@@ -465,6 +475,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	if((!pparent) || (!pchild)) {
 		return OV_ERR_BADPARAM;
 	}
+	if (!Ov_Association_IsParentClass(passoc, pparent)) return OV_ERR_BADPARAM;
+	if (!Ov_Association_IsChildClass(passoc, pchild)) return OV_ERR_BADPARAM;
 	/*
 	*	initialize variables
 	*/
@@ -845,6 +857,8 @@ OV_DLLFNCEXPORT void ov_association_unlink(
 	if(!passoc || !pparent || !pchild) {
 		return;
 	}
+	if (!Ov_Association_IsParentClass(passoc, pparent)) return;
+	if (!Ov_Association_IsChildClass(passoc, pchild)) return;
 	/*
 	*	initialize variables
 	*/
@@ -1024,6 +1038,8 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedparentlink(
 	/*
 	*	instructions
 	*/
+	if (!Ov_Association_IsParentClass(passoc, pparent)) return FALSE;
+	
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
 		if ( *(OV_INSTPTR_ov_object*) ((pparent->v_linktable)+passoc->v_parentoffset) ) return TRUE;
@@ -1066,6 +1082,8 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_isusedchildlink(
 	/*
 	*	instructions
 	*/
+	if (!Ov_Association_IsChildClass(passoc, pchild)) return FALSE;
+
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
 		if ( *(OV_INSTPTR_ov_object*) ((pchild->v_linktable)+passoc->v_childoffset) ) return TRUE;
@@ -1582,6 +1600,38 @@ OV_DLLFNCEXPORT OV_BOOL ov_association_testpath(
 }
 
 
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	local subfunction for direct linking of 1:n associations of the ov meta model 
+*	(without type checking, which would already need the meta model)
+*/
+	
+void ov_association_dolink(OV_INSTPTR_ov_association passoc, 
+		   OV_INSTPTR_ov_object pparent, 
+		   OV_INSTPTR_ov_object pchild
+) {
+		OV_INSTPTR_ov_object 	ppreviouschild = NULL;
+		
+		ppreviouschild = ((OV_HEAD*)((pparent->v_linktable)+passoc->v_parentoffset))->plast;
+		/*
+		*   set pointers of predecessor of parent object
+		*/
+		if(ppreviouschild) {
+			((OV_ANCHOR*)((ppreviouschild->v_linktable)+passoc->v_childoffset))->pnext = pchild;
+		} else {
+			((OV_HEAD*)((pparent->v_linktable)+passoc->v_parentoffset))->pfirst = pchild;
+		}
+
+		((OV_HEAD*)((pparent->v_linktable)+passoc->v_parentoffset))->plast = pchild;
+		/*
+		*	set pointers of child object
+		*/
+		((OV_ANCHOR*)((pchild->v_linktable)+passoc->v_childoffset))->pprevious = ppreviouschild;
+		((OV_ANCHOR*)((pchild->v_linktable)+passoc->v_childoffset))->pnext = NULL;
+		((OV_ANCHOR*)((pchild->v_linktable)+passoc->v_childoffset))->pparent = pparent;
+}
+	
 /*	----------------------------------------------------------------------	*/
 
 /*

@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.14 2005-01-31 13:23:43 ansgar Exp $
+ * $Id: dbparse1.cpp,v 1.15 2005-05-09 15:30:16 ansgar Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -34,6 +34,7 @@
 #include <time.h>
 #include "dbparse.h"
 #include "libov/ov_version.h"
+#include "ks/conversions.h"
 
 #include "db_y.h"
 
@@ -1984,6 +1985,7 @@ bool write_variables(instance *node)
 	KsDeleteObjParams		delete_params;
 	KsDeleteObjResult		delete_result;
 	KsPlacementHint			pmh;
+	KsString				dummy;
 	vector					*act_vec;
 	int						vec_sz;
 	enum value_types		vec_t;
@@ -2039,7 +2041,9 @@ bool write_variables(instance *node)
 					val = new KsDoubleValue((double)(*it)->a_value->val->v.int_val);
 					break;
 				case DB_VT_STRING:
-					val = new KsStringValue(*((*it)->a_value->val->v.pstring_val));
+					if (ksStringFromPercent(*((*it)->a_value->val->v.pstring_val), dummy)==KS_ERR_OK)
+						val = new KsStringValue(dummy);
+					else val = new KsStringValue("");
 					break;
 				case DB_VT_TIME:
 					val = new KsTimeValue(*((*it)->a_value->val->v.ptime_val));
@@ -2108,7 +2112,9 @@ bool write_variables(instance *node)
 						case DB_VT_STRING: {
 							KsStringVecValue *stvec = new KsStringVecValue(vec_sz);
 							for (int j=0; j<vec_sz; j++) {
-								(*stvec)[j] = *(act_vec->content->v.pstring_val);
+								if (ksStringFromPercent(*(act_vec->content->v.pstring_val), dummy)==KS_ERR_OK)
+									(*stvec)[j] = dummy;
+								else (*stvec)[j] = KsString("");
 								act_vec = act_vec->next;
 							}
 							val = stvec;

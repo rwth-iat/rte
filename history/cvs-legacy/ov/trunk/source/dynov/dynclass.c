@@ -22,7 +22,6 @@ OV_DLLFNCEXPORT void dynov_dynclass_uncheck(
 	OV_INSTPTR_dynov_dynvariable          	pdynvar;
 	OV_INSTPTR_dynov_dynpart          	pdynpart;
 	OV_INSTPTR_dynov_dynoperation          	pdynop;
-        OV_INSTPTR_dynov_dynassociation	        pdynassoc;
 	OV_INSTPTR_dynov_dynclass		pdynclass;
 
 	pclass = Ov_DynamicPtrCast(ov_class, pobj);
@@ -54,7 +53,6 @@ OV_INT get_operation_offset(
 ) {
     OV_INSTPTR_ov_object		pobj;
 	OV_INSTPTR_ov_operation 	pobjop;
-	OV_INSTPTR_ov_class 		pbaseclass;
 	OV_INT				opcnt;
 	OV_BOOL				result;
 
@@ -66,14 +64,14 @@ OV_INT get_operation_offset(
 	                if (pobjop) { // class element is an operation
 	                        if (get_operation_offset(Ov_GetParent(ov_inheritance, pclass), pobjop)<0) { // pobjop operation is not overwritten
 		                        if ((pobjop->v_identifier==pop->v_identifier) && (pobjop->v_cfnctypename==pop->v_cfnctypename)) {
-		       				result = TRUE; // searched operation found
+		       						result = TRUE; // searched operation found
 		                        	break; // continue with counting operations of base classes
 		                        }
 		                        opcnt++;
-		                }
-			}
+		                	}
+					}
 		}
-	        pclass = Ov_GetParent(ov_inheritance, pclass); // get base class
+	    pclass = Ov_GetParent(ov_inheritance, pclass); // get base class
  	}
 	if (result) return (opcnt * sizeof(void*));
 	return -1;   // searched operation not found
@@ -82,16 +80,17 @@ OV_INT get_operation_offset(
 OV_DLLFNCEXPORT OV_BOOL dynov_dynclass_check(
         OV_INSTPTR_ov_object          pobj
 ) {
-        OV_INSTPTR_ov_object		        pchild;
-	OV_INSTPTR_ov_class			pclass;
-        OV_INSTPTR_dynov_dynassociation	        pdynassoc;
-	OV_INSTPTR_dynov_dynvariable          	pdynvar;
+    OV_INSTPTR_ov_object		        pchild;
+	OV_INSTPTR_ov_class			        pclass;
+    OV_INSTPTR_dynov_dynassociation	    pdynassoc;
+	OV_INSTPTR_dynov_dynvariable        pdynvar;
 	OV_INSTPTR_dynov_dynpart          	pdynpart;
-	OV_INSTPTR_dynov_dynoperation          	pdynop;
-	OV_INSTPTR_dynov_dynclass		pdynclass;
-	OV_INSTPTR_dynov_dynclass		pdynclass2;
-        OV_VTBLPTR_dynov_dynoperation           pvtable;
-        OV_INT					offset;
+	OV_INSTPTR_dynov_dynoperation       pdynop;
+	OV_INSTPTR_dynov_dynclass			pdynclass;
+	OV_INSTPTR_dynov_dynclass			pdynclass2;
+	OV_INSTPTR_ov_class 				pbaseclass;
+    OV_VTBLPTR_dynov_dynoperation       pvtable;
+    OV_UINT								offset;
 
 	pdynclass = Ov_DynamicPtrCast(dynov_dynclass, pobj);
 	if (!pdynclass) return FALSE;
@@ -128,14 +127,14 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynclass_check(
 			pdynclass->v_size += Ov_GetParent(ov_embedment, pdynpart)->v_size;
 		}
 		if (pdynop) {
-		     	Ov_GetVTablePtr(dynov_dynoperation, pvtable, pdynop);
-		     	if (pvtable) pdynop->v_executeable = pvtable->m_check(Ov_PtrUpCast(ov_object, pdynop));
+		    Ov_GetVTablePtr(dynov_dynoperation, pvtable, pdynop);
+		    if (pvtable) pdynop->v_executeable = pvtable->m_check(Ov_PtrUpCast(ov_object, pdynop));
 			if (!pdynop->v_executeable) return FALSE;
 			pbaseclass = Ov_GetParent(dynov_dyninheritance, pdynclass);
 			if (!pbaseclass) pbaseclass = pclass_dynov_dynobject;
 			offset = get_operation_offset(Ov_PtrUpCast(ov_class, pdynclass), Ov_PtrUpCast(ov_operation, pdynop));
 			if (offset>=0) {
-			        (void*) (*((OV_BYTE*) pdynclass->pvtable + offset))=
+			        (void*) (*((OV_BYTE*) pdynclass->v_pvtable + offset))=0;
 
 			}
 		}
@@ -172,13 +171,13 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynclass_isinstantiable_set(
 	     else if ((!value) && (pobj->v_isinstantiable)) {
 		     if (Ov_GetFirstChild(ov_instantiation, pobj)) return OV_ERR_NOACCESS;
 		     Ov_ForEachChild(ov_inheritance, pobj, pclass) {
-			     if (pclass->classprops & OV_CP_INSTANTIABLE) return OV_ERR_NOACCESS;
+			     if (pclass->v_classprops & OV_CP_INSTANTIABLE) return OV_ERR_NOACCESS;
 		     }
 		     dynov_dynclass_uncheck(Ov_PtrUpCast(ov_object, pobj));
 		     pobj->v_isinstantiable = FALSE;
 	     }
 
-       	     return OV_ERR_OK;
+       	 return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_ACCESS dynov_dynclass_getaccess(

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.32 2005-01-21 10:33:32 ansgar Exp $
+*   $Id: ov_object.c,v 1.33 2005-05-09 15:30:16 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -109,8 +109,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
 		}
 		if (child.elemtype == OV_ET_VARIABLE) {
 			init = child.elemunion.pvar->v_initialvalue.value;
-			if (child.elemunion.pvar->v_varprops & OV_VP_DERIVED) return OV_ERR_BADINITPARAM;
-			if (child.elemunion.pvar->v_varprops & OV_VP_STATIC) return OV_ERR_BADINITPARAM;
+			if ((init.vartype & OV_VT_KSMASK) && (child.elemunion.pvar->v_varprops & OV_VP_DERIVED)) return OV_ERR_BADINITPARAM;
+			if ((init.vartype & OV_VT_KSMASK) && (child.elemunion.pvar->v_varprops & OV_VP_STATIC)) return OV_ERR_BADINITPARAM;
 			switch (init.vartype & OV_VT_KSMASK) {
 				case OV_VT_VOID:
 					break;

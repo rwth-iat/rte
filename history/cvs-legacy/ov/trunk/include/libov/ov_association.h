@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.11 2005-02-04 15:42:33 ansgar Exp $
+*   $Id: ov_association.h,v 1.12 2005-05-09 15:30:16 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -249,49 +249,61 @@ OV_DLLFNCEXPORT void ov_association_unload(
 );
 
 /*
+*	Test if pparent object is instance of parent class of association passoc
+*/
+#define Ov_Association_IsParentClass(passoc, pparent) \
+    ov_class_cancastto(Ov_GetParent(ov_instantiation, pparent), Ov_GetParent(ov_parentrelationship, passoc))
+
+/*
+*	Test if pchild object is instance of child class of association passoc
+*/
+#define Ov_Association_IsChildClass(passoc, pchild) \
+    ov_class_cancastto(Ov_GetParent(ov_instantiation, pchild), Ov_GetParent(ov_childrelationship, passoc))
+
+/*
 *	Get child in a 1:1 association
 */
 #define Ov_Association_GetChild(passoc, pparent)		\
-	((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?(*((OV_INSTPTR_ov_object*)(((OV_BYTE*)		\
-	(pparent)->v_linktable)+(passoc)->v_parentoffset))):(NULL)):(NULL)))
+	((Ov_Association_IsParentClass(passoc, pparent))?((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?(*((OV_INSTPTR_ov_object*)(((OV_BYTE*)		\
+	(pparent)->v_linktable)+(passoc)->v_parentoffset))):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get first child in a 1:n association
 */
 #define Ov_Association_GetFirstChild(passoc, pparent)				\
-	((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?(((OV_HEAD*)(((OV_BYTE*)		\
-	(pparent)->v_linktable)+(passoc)->v_parentoffset))->pfirst):(NULL)):(NULL)))
+	((Ov_Association_IsParentClass(passoc, pparent))?((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?(((OV_HEAD*)(((OV_BYTE*)		\
+	(pparent)->v_linktable)+(passoc)->v_parentoffset))->pfirst):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get last child in a 1:n association
 */
 #define Ov_Association_GetLastChild(passoc, pparent)				\
-	((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?(((OV_HEAD*)(((OV_BYTE*)		\
-	(pparent)->v_linktable)+(passoc)->v_parentoffset))->plast):(NULL)):(NULL)))
+	((Ov_Association_IsParentClass(passoc, pparent))?((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?(((OV_HEAD*)(((OV_BYTE*)		\
+	(pparent)->v_linktable)+(passoc)->v_parentoffset))->plast):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get next child in a 1:n association
 */
 #define Ov_Association_GetNextChild(passoc, pchild)					\
-	((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)(((OV_BYTE*)		\
-	(pchild)->v_linktable)+(passoc)->v_childoffset))->pnext):(NULL)):(NULL)))
+	((Ov_Association_IsChildClass((passoc), (pchild)))?((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)(((OV_BYTE*)		\
+	(pchild)->v_linktable)+(passoc)->v_childoffset))->pnext):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get previous child in a 1:n association
 */
 #define Ov_Association_GetPreviousChild(passoc, pchild)				\
-	((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)(((OV_BYTE*)		\
-	(pchild)->v_linktable)+(passoc)->v_childoffset))->pprevious):(NULL)):(NULL)))
+	((Ov_Association_IsChildClass(passoc, pchild))?((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)(((OV_BYTE*)		\
+	(pchild)->v_linktable)+(passoc)->v_childoffset))->pprevious):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get parent in a 1:1 or in a 1:n association
 */
 #define Ov_Association_GetParent(passoc, pchild)		\
-	(((passoc)->v_assoctype==OV_AT_ONE_TO_ONE)?		\
+	((Ov_Association_IsChildClass(passoc, pchild))?(((passoc)->v_assoctype==OV_AT_ONE_TO_ONE)?		\
 	((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?(*((OV_INSTPTR_ov_object*)(((OV_BYTE*)		\
 	(pchild)->v_linktable)+(passoc)->v_childoffset))):(NULL)):(NULL))):		\
 	((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)(((OV_BYTE*)		\
-	(pchild)->v_linktable)+(passoc)->v_childoffset))->pparent):(NULL)):(NULL))))
+	(pchild)->v_linktable)+(passoc)->v_childoffset))->pparent):(NULL)):(NULL)))):(NULL))
 
 /*
 *	Iterate over all children in an 1:n association
@@ -311,17 +323,17 @@ OV_DLLFNCEXPORT void ov_association_unload(
 *	Get first child in an n:m assocation
 */
 #define Ov_Association_GetFirstChildNM(passoc, pit, pparent)		\
-	((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?((pit)=((OV_NMHEAD*)			\
+	((Ov_Association_IsParentClass(passoc, pparent))?((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?((pit)=((OV_NMHEAD*)			\
 	(((OV_BYTE*)(pparent)->v_linktable)+(passoc)->v_parentoffset))->pfirst,		\
-	(pit)?((pit)->child.pchild):(NULL)):(NULL)):(NULL)))
+	(pit)?((pit)->child.pchild):(NULL)):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get last child in an n:m assocation
 */
 #define Ov_Association_GetLastChildNM(passoc, pit, pparent)			\
-	((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?((pit)=((OV_NMHEAD*)			\
+	((Ov_Association_IsParentClass(passoc, pparent))?((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?((pit)=((OV_NMHEAD*)			\
 	(((OV_BYTE*)(pparent)->v_linktable)+(passoc)->v_parentoffset))->plast,		\
-	(pit)?((pit)->child.pchild):(NULL)):(NULL)):(NULL)))
+	(pit)?((pit)->child.pchild):(NULL)):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get next child in an n:m association
@@ -349,17 +361,17 @@ OV_DLLFNCEXPORT void ov_association_unload(
 *	Get first parent in an n:m assocation
 */
 #define Ov_Association_GetFirstParentNM(passoc, pit, pchild)		\
-	((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?((pit)=((OV_NMHEAD*)			\
+	((Ov_Association_IsChildClass(passoc, pchild))?((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?((pit)=((OV_NMHEAD*)			\
 	(((OV_BYTE*)(pchild)->v_linktable)+(passoc)->v_childoffset))->pfirst,		\
-	(pit)?((pit)->parent.pparent):(NULL)):(NULL)):(NULL)))
+	(pit)?((pit)->parent.pparent):(NULL)):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get last parent in an n:m assocation
 */
 #define Ov_Association_GetLastParentNM(passoc, pit, pchild)			\
-	((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?((pit)=((OV_NMHEAD*)			\
+	((Ov_Association_IsChildClass(passoc, pchild))?((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?((pit)=((OV_NMHEAD*)			\
 	(((OV_BYTE*)(pchild)->v_linktable)+(passoc)->v_childoffset))->plast,			\
-	(pit)?((pit)->parent.pparent):(NULL)):(NULL)):(NULL)))
+	(pit)?((pit)->parent.pparent):(NULL)):(NULL)):(NULL))):(NULL))
 
 /*
 *	Get next parent in an n:m association
@@ -462,6 +474,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_linktable_calculate(
 	OV_INSTPTR_ov_association	passoc,
 	OV_INSTPTR_ov_class		pparentclass,
 	OV_INSTPTR_ov_class		pchildclass
+);
+
+void ov_association_dolink(OV_INSTPTR_ov_association passoc, 
+		   OV_INSTPTR_ov_object pparent, 
+		   OV_INSTPTR_ov_object pchild
 );
 
 #ifdef __cplusplus

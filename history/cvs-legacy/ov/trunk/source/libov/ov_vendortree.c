@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.17 2004-10-29 09:08:10 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.18 2005-05-09 15:30:16 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -29,6 +29,7 @@
 #define OV_COMPILE_LIBOV
 
 #include "libov/ov_vendortree.h"
+#include "libov/ov_association.h"
 #include "libov/ov_string.h"
 #include "libov/ov_time.h"
 #include "libov/ov_database.h"
@@ -89,6 +90,8 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 
 /*	----------------------------------------------------------------------	*/
 
+#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
+
 /*
 *	Initialize the vendor tree
 */
@@ -109,8 +112,8 @@ OV_RESULT ov_vendortree_init(void) {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
 	memset(pdb->vendordom.v_linktable, 0, pclass_ov_domain->v_linktablesize);
-	Ov_Link(ov_containment, &pdb->root, &pdb->vendordom);
-	Ov_Link(ov_instantiation, pclass_ov_domain, &pdb->vendordom);
+	DoLink(ov_containment, &pdb->root, &pdb->vendordom);
+	DoLink(ov_instantiation, pclass_ov_domain, &pdb->vendordom);
 	/*
 	*	initialize the vendor objects
 	*/
@@ -124,8 +127,8 @@ OV_RESULT ov_vendortree_init(void) {
 			return OV_ERR_DBOUTOFMEMORY;
 		}
 		memset(pdb->vendorobj[i].v_linktable, 0, pclass_ov_object->v_linktablesize);
-		Ov_Link(ov_containment, &pdb->vendordom, &pdb->vendorobj[i]);
-		Ov_Link(ov_instantiation, pclass_ov_object, &pdb->vendorobj[i]);
+		DoLink(ov_containment, &pdb->vendordom, &pdb->vendorobj[i]);
+		DoLink(ov_instantiation, pclass_ov_object, &pdb->vendorobj[i]);
 	}
 	return OV_ERR_OK;
 }

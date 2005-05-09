@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.19 2002-05-15 12:59:23 ansgar Exp $
+*   $Id: ov_library.c,v 1.20 2005-05-09 15:30:16 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -463,6 +463,21 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_compare(
 		passoc_ov_containment = &pdb->containment;
 		passoc_ov_instantiation = &pdb->instantiation;
 		/*
+		*	the inheritance, childrelationship and parentrelationship association must be searched manually
+		*   because the Ov_SearchChild function uses these relations indirectly
+		*/
+		pobj = ((OV_HEAD*)(((&pdb->ov)->v_linktable)+passoc_ov_containment->v_parentoffset))->pfirst;
+		while (pobj) {
+			if (!strcmp(pobj->v_identifier, "inheritance")) passoc_ov_inheritance = Ov_StaticPtrCast(ov_association, pobj);
+			if (!strcmp(pobj->v_identifier, "childrelationship")) passoc_ov_childrelationship = Ov_StaticPtrCast(ov_association, pobj);
+			if (!strcmp(pobj->v_identifier, "parentrelationship")) passoc_ov_parentrelationship = Ov_StaticPtrCast(ov_association, pobj);
+			pobj = ((OV_ANCHOR*)((pobj->v_linktable)+passoc_ov_containment->v_childoffset))->pnext;
+		}
+		Ov_AbortIfNot(passoc_ov_inheritance);			
+		Ov_AbortIfNot(passoc_ov_childrelationship);			
+		Ov_AbortIfNot(passoc_ov_parentrelationship);			
+			
+		/*
 		*	get pointer to class "library"
 		*/
 		pclass_ov_library = (OV_INSTPTR_ov_class)
@@ -610,12 +625,15 @@ OV_DLLFNCEXPORT OV_BOOL ov_library_canunload(
 
 /*	----------------------------------------------------------------------	*/
 
+#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
+
 /*
 *	Prepare for loading the OV library into the database (subroutine)
 */
 OV_RESULT ov_library_prepare(
 	OV_LIBRARY_DEF*		plibdef
 ) {
+
 	/*
 	*	local variables
 	*/
@@ -624,6 +642,8 @@ OV_RESULT ov_library_prepare(
 	OV_INSTPTR_ov_association	passoc;
 	OV_CLASS_DEF				*pclassdef;
 	OV_ASSOCIATION_DEF			*passocdef;
+	OV_INSTPTR_ov_association	childrelationship=NULL;
+	OV_INSTPTR_ov_association	parentrelationship=NULL;
 	/*
 	*	simulate the containment and the instantiation association
 	*/
@@ -637,6 +657,30 @@ OV_RESULT ov_library_prepare(
 	pdb->instantiation.v_parentoffset = ov_association_getparentoffset (&OV_ASSOCIATION_DEF_ov_instantiation);
 	pdb->instantiation.v_childoffset = ov_association_getchildoffset (&OV_ASSOCIATION_DEF_ov_instantiation);
 	passoc_ov_instantiation = &pdb->instantiation;
+	/*
+	*	simulate the childrelationship and the parentrelationship association
+	*/
+	childrelationship = Ov_DbAlloc(OV_INST_ov_association);
+	if(!childrelationship) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	memset(childrelationship, 0, Ov_GetInstSize(ov_association));
+	childrelationship->v_assoctype = OV_ASSOCIATION_DEF_ov_childrelationship.assoctype;
+	childrelationship->v_assocprops = OV_ASSOCIATION_DEF_ov_childrelationship.assocprops;
+	childrelationship->v_parentoffset = ov_association_getparentoffset (&OV_ASSOCIATION_DEF_ov_childrelationship);
+	childrelationship->v_childoffset = ov_association_getchildoffset (&OV_ASSOCIATION_DEF_ov_childrelationship);
+	passoc_ov_childrelationship = childrelationship;
+	
+	parentrelationship = Ov_DbAlloc(OV_INST_ov_association);
+	if(!parentrelationship) {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	memset(parentrelationship, 0, Ov_GetInstSize(ov_association));
+	parentrelationship->v_assoctype = OV_ASSOCIATION_DEF_ov_parentrelationship.assoctype;
+	parentrelationship->v_assocprops = OV_ASSOCIATION_DEF_ov_parentrelationship.assocprops;
+	parentrelationship->v_parentoffset = ov_association_getparentoffset (&OV_ASSOCIATION_DEF_ov_parentrelationship);
+	parentrelationship->v_childoffset = ov_association_getchildoffset (&OV_ASSOCIATION_DEF_ov_parentrelationship);
+	passoc_ov_parentrelationship = parentrelationship;
 	/*
 	*	link library objekt with root domain
 	*/
@@ -655,8 +699,8 @@ OV_RESULT ov_library_prepare(
 		return OV_ERR_DBOUTOFMEMORY;
 	}
 	memset(pdb->ov.v_linktable, 0, ov_association_gettablesize(&OV_CLASS_DEF_ov_library));
-	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->root, &pdb->acplt)));
-	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->acplt, &pdb->ov)));
+	DoLink(ov_containment, &pdb->root, &pdb->acplt);
+	DoLink(ov_containment, &pdb->acplt, &pdb->ov);
 	/*
 	*	provisorically load class definitions
 	*/
@@ -680,38 +724,31 @@ OV_RESULT ov_library_prepare(
 			return OV_ERR_DBOUTOFMEMORY;
 		}
 		memset(pclass->v_linktable, 0, pclass->v_linktablesize);
-		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->ov, pclass)));
+		DoLink(ov_containment, &pdb->ov, pclass);
+		/*
+		*	initialize class pointers
+		*/
+		if (!strcmp(pclassdef->identifier, OV_OBJNAME_LIBRARY)) pclass_ov_library = pclass;
+		if (!strcmp(pclassdef->identifier, OV_OBJNAME_CLASS)) pclass_ov_class = pclass;
+		if (!strcmp(pclassdef->identifier, OV_OBJNAME_DOMAIN)) pclass_ov_domain = pclass;
+		if (!strcmp(pclassdef->identifier, OV_OBJNAME_ASSOCIATION)) pclass_ov_association = pclass;
+		if (!strcmp(pclassdef->identifier, OV_OBJNAME_OBJECT)) pclass_ov_object = pclass;
 	}
-	/*
-	*	initialize class pointers
-	*/
-	pclass_ov_library = Ov_StaticPtrCast(ov_class, Ov_SearchChild(ov_containment,
-		&pdb->ov, OV_OBJNAME_LIBRARY));
 	Ov_AbortIfNot(pclass_ov_library);
-	pclass_ov_class = Ov_StaticPtrCast(ov_class, Ov_SearchChild(ov_containment,
-		&pdb->ov, OV_OBJNAME_CLASS));
 	Ov_AbortIfNot(pclass_ov_class);
-	pclass_ov_association = Ov_StaticPtrCast(ov_class, Ov_SearchChild(ov_containment,
-		&pdb->ov, OV_OBJNAME_ASSOCIATION));
 	Ov_AbortIfNot(pclass_ov_association);
 	/*
 	*	link library object with class "library"
 	*/
-	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_instantiation, pclass_ov_library, &pdb->ov)));
-	/*
-	*	link all class objects with class "class"
-	*/
-	for(pclassdef=plibdef->classes; pclassdef; pclassdef=pclassdef->pnext) {
-		pobj = Ov_SearchChild(ov_containment, &pdb->ov, pclassdef->identifier);
-		Ov_AbortIfNot(pobj);
-		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_instantiation, pclass_ov_class, pobj)));
-	}
+	DoLink(ov_instantiation, pclass_ov_library, &pdb->ov);
 	/*
 	*	provisorically load association definitions and link with class "association"
 	*/
 	for(passocdef=plibdef->associations; passocdef; passocdef=passocdef->pnext) {
 		if (!strcmp(passocdef->identifier, "containment")) passoc = &pdb->containment;
 		else if (!strcmp(passocdef->identifier, "instantiation")) passoc = &pdb->instantiation;
+		else if (!strcmp(passocdef->identifier, "childrelationship")) passoc = childrelationship;
+		else if (!strcmp(passocdef->identifier, "parentrelationship")) passoc = parentrelationship;
 		else passoc = Ov_DbAlloc(OV_INST_ov_association);
 		if(!passoc) {
 			return OV_ERR_DBOUTOFMEMORY;
@@ -729,9 +766,45 @@ OV_RESULT ov_library_prepare(
 			return OV_ERR_DBOUTOFMEMORY;
 		}
 		memset(passoc->v_linktable, 0, pclass_ov_association->v_linktablesize);
-		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_containment, &pdb->ov, passoc)));
-		Ov_AbortIfNot(Ov_OK(Ov_Link(ov_instantiation, pclass_ov_association, passoc)));
+		DoLink(ov_containment, &pdb->ov, passoc);
+		DoLink(ov_instantiation, pclass_ov_association, passoc);
+		if (!strcmp(passocdef->identifier, "inheritance")) passoc_ov_inheritance = passoc;
 	}
+	/*
+	*	link all class objects with class "class"
+	*/
+	for(pclassdef=plibdef->classes; pclassdef; pclassdef=pclassdef->pnext) {
+		Ov_ForEachChild(ov_containment, &pdb->ov, pobj) {
+			if (!strcmp(pobj->v_identifier, pclassdef->identifier)) {
+				DoLink(ov_instantiation, pclass_ov_class, pobj);
+				break;
+			}
+		}
+	}
+	/*
+	*	realize the parentrelationship link of the "containment" association and the class "domain"
+	*/
+	DoLink(ov_parentrelationship, pclass_ov_domain, &pdb->containment);
+	/*
+	*	realize the childrelationship link of the "containment" association and the class "object"
+	*/
+	DoLink(ov_childrelationship, pclass_ov_object, &pdb->containment);
+	/*
+	*	realize the inheritance link between "object" and "domain"
+	*/
+	DoLink(ov_inheritance, pclass_ov_object, pclass_ov_domain);
+	/*
+	*	realize the inheritance link between "object" and "association"
+	*/
+	DoLink(ov_inheritance, pclass_ov_object, pclass_ov_association);
+	/*
+	*	realize the inheritance link between "domain" and "library"
+	*/
+	DoLink(ov_inheritance, pclass_ov_domain, pclass_ov_library);
+	/*
+	*	realize the inheritance link between "domain" and "class"
+	*/
+	DoLink(ov_inheritance, pclass_ov_domain, pclass_ov_class);
 	/*
 	*	set global variables of the OV model
 	*/
@@ -739,13 +812,18 @@ OV_RESULT ov_library_prepare(
 	/*
 	*	link root and acplt domain with their classes
 	*/
-	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_instantiation, pclass_ov_domain, &pdb->root)));
-	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_instantiation, pclass_ov_domain, &pdb->acplt)));
+	DoLink(ov_instantiation, pclass_ov_domain, &pdb->root);
+	DoLink(ov_instantiation, pclass_ov_domain, &pdb->acplt);
 	/*
-	*	realize inheritance relationships: object -- domain -- class
+	*	realize the inheritance link between "object" and "variable", "operation", "part"
 	*/
-	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_inheritance, pclass_ov_object, pclass_ov_domain)));
-	Ov_AbortIfNot(Ov_OK(Ov_Link(ov_inheritance, pclass_ov_domain, pclass_ov_class)));
+	DoLink(ov_inheritance, pclass_ov_object, pclass_ov_variable);
+	DoLink(ov_inheritance, pclass_ov_object, pclass_ov_operation);
+	DoLink(ov_inheritance, pclass_ov_object, pclass_ov_part);
+	/*
+	*	realize the inheritance link between "domain" and "structure"
+	*/
+	DoLink(ov_inheritance, pclass_ov_domain, pclass_ov_structure);
 	/*
 	*	preparation finished
 	*/

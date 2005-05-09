@@ -25,12 +25,6 @@
 */
 
 #include "libov/ov_library.h"
-#include "libov/ov_class.h"
-#include "libov/ov_part.h"
-#include "libov/ov_operation.h"
-#include "libov/ov_association.h"
-#include "libov/ov_variable.h"
-#include "libov/ov_structure.h"
 #include "libov/ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
@@ -38,12 +32,10 @@
 /*
 *	Makro wrapping function to open a DLL/shared library
 */
-#if OV_DYNAMIC_LIBRARIES
 #if OV_SYSTEM_UNIX
-#define Ov_Library_OpenDLL(filename)	dlopen(filename, RTLD_NOW | RTLD_GLOBAL)
+#define Ov_Library_OpenDLL(filename)	dlopen((filename), RTLD_LAZY)
 #elif OV_SYSTEM_NT
 #define Ov_Library_OpenDLL(filename)	LoadLibrary(filename)
-#endif
 #endif
 
 /*	----------------------------------------------------------------------	*/
@@ -51,12 +43,10 @@
 /*
 *	Makro wrapping function to close a DLL/shared library
 */
-#if OV_DYNAMIC_LIBRARIES
 #if OV_SYSTEM_UNIX
 #define Ov_Library_CloseDLL(handle)	dlclose(handle)
 #elif OV_SYSTEM_NT
 #define Ov_Library_CloseDLL(handle)	FreeLibrary(handle)
-#endif
 #endif
 
 /*	----------------------------------------------------------------------	*/
@@ -64,12 +54,10 @@
 /*
 *	Makro wrapping the address resolution of a symbol in a DLL/shared library
 */
-#if OV_DYNAMIC_LIBRARIES
 #if OV_SYSTEM_UNIX
 #define Ov_Library_GetAddr(handle, symbolname)	dlsym(handle, symbolname)
 #elif OV_SYSTEM_NT
 #define Ov_Library_GetAddr(handle, symbolname)	GetProcAddress(handle, symbolname)
-#endif
 #endif
 
 /*	----------------------------------------------------------------------	*/
@@ -208,7 +196,7 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
                         fprintf(stderr, "Usage: ov_libinfo [arguments]\n"
 			"\n"
 			"-l  LIBNAME     Set name of the library whose infos are listed\n"
-			"-f  FILENAME    Set name of the target file forthe listed informations\n"
+			"-f  FILENAME    Set name of the target file for the listed informations\n"
 			"-c              List class definitions\n"
 			"-a              List association definitions\n"
 			"-s              List structure definitions\n"
@@ -243,6 +231,7 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 			tmpenv =  Ov_HeapStrdup("");
 		}
 		if(!tmpenv) {
+			fprintf(stderr, "undefined environment variable: %s.\n", OV_LIBRARY_PATH_ENV);
 			return 0;
 		}
 		/*
@@ -271,6 +260,7 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 				+strlen(libname)+strlen(OV_DLLFLNSUFFIX)
 				+strlen(OV_CONST_OPENFNC_PREFIX)+1);
 			if(!tmpstring) {
+				fprintf(stderr, "no memory on heap free.\n");
 				return 0;
 			}
 			/*
@@ -292,6 +282,7 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 				openfnc = (OV_FNC_LIBRARY_OPEN*)Ov_Library_GetAddr(
 					handle, tmpstring);
 				if(!openfnc) {
+					fprintf(stderr, "undefined open function: %s.\n", tmpstring);
 					/*
 					*	we got no open function, close the DLL
 					*/
@@ -301,7 +292,7 @@ HELP:			fprintf(stderr, "OV-Library-Info: lists author, OV version, library vers
 			}
 #if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
 			else {
-				if (!nextpath) ov_logfile_error("Can't load library. Reason: %s", dlerror());
+				fprintf(stderr,"Can't load library. Reason: %s\n", dlerror());
 			}
 #endif
 		}
