@@ -1,5 +1,5 @@
 /* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.19 2003-10-13 12:12:07 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/server.cpp,v 1.20 2005-05-10 13:53:55 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -260,12 +260,12 @@ KsManagerRegistration::async_attention(KsServerConnectionOperations op)
 	case ISC_OP_CALL:
 #if DEBUG_REG
 	    PltLog::Debug("ISC_OP_CALL");
-#endif
-	    if ( getLastResult() == KS_ERR_OK ) {
+            if ( getLastResult() == KS_ERR_OK ) {
 		PltLog::Debug(_pendingOperationIsRegistration ?
 			      "KsServer: registration successfull." :
 		              "KsServer: unregistration successfull.");
 	    }
+#endif
 	    //
 	    // Don't forget to renew the registration automatically. If the
 	    // registration was unsuccessfull, then we retry more often.
