@@ -146,7 +146,7 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynvariable_check(
 	}
 	if (pdynvar->v_ctypename) return FALSE;
 	if ((pdynvar->v_initialvalue.value.vartype!=0) &&
-	   (pdynvar->v_vartype != (pdynvar->v_initialvalue.value.vartype & OV_VT_KSMASK))) return FALSE;
+	   ((pdynvar->v_vartype & OV_VT_KSMASK) != (pdynvar->v_initialvalue.value.vartype & OV_VT_KSMASK))) return FALSE;
 	if((pdynvar->v_varprops & OV_VP_STATIC) && (pdynvar->v_varprops & OV_VP_DERIVED)) return FALSE;
 
 	pdynop = Ov_GetChild(dynov_isgetaccessor, pdynvar);
@@ -206,7 +206,7 @@ OV_DLLFNCEXPORT OV_RESULT dynov_dynvariable_dynvartype_set(
              const OV_UINT           value
 ) {
 
-	     switch (pobj->v_initialvalue.value.vartype) {
+	     switch (pobj->v_initialvalue.value.vartype & OV_VT_KSMASK) {
 		case OV_VT_STRING: 
 			ov_string_setvalue(&pobj->v_initialvalue.value.valueunion.val_string, NULL);
 			break;
@@ -317,6 +317,8 @@ OV_DLLFNCEXPORT OV_ACCESS dynov_dynvariable_getaccess(
 			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "flags"))
 				return access;
 			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "techunit"))
+				return access;
+			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "size"))
 				return access;
 			if (!ov_string_compare(pelem->elemunion.pvar->v_identifier, "initialvalue"))
 				return access;

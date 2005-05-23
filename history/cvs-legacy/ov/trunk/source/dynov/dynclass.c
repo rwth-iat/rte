@@ -134,7 +134,7 @@ OV_DLLFNCEXPORT OV_BOOL dynov_dynclass_check(
 			if (!pbaseclass) pbaseclass = pclass_dynov_dynobject;
 			offset = get_operation_offset(Ov_PtrUpCast(ov_class, pdynclass), Ov_PtrUpCast(ov_operation, pdynop));
 			if (offset>=0) {
-			        (void*) (*((OV_BYTE*) pdynclass->v_pvtable + offset))=0;
+			        *((OV_BYTE*) (pdynclass->v_pvtable) + offset) = NULL;
 
 			}
 		}

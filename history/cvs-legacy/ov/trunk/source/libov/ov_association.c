@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.22 2005-05-09 15:30:16 ansgar Exp $
+*   $Id: ov_association.c,v 1.23 2005-05-23 12:20:12 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1201,7 +1201,7 @@ OV_UINT ov_association_getparentoffset(
 	return 0;
 }
 
-OV_DLLFNCEXPORT OV_UINT ov_association_getchildoffset(
+OV_UINT ov_association_getchildoffset(
 	OV_ASSOCIATION_DEF*	passocdef
 ) {
 	if (!strcmp(passocdef->identifier,"instantiation")) return 0;
