@@ -133,7 +133,9 @@ releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
 
 Version 1.3.4
-- BOTH
+- BOTH:
+  * fix for PltPriorityQueue which caused spurious crashes, especially
+    in connection with timer events.
   * Small virtual inline destructor fixes.
 
 Version 1.3.3
