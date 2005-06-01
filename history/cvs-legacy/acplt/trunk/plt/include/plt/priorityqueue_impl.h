@@ -2,7 +2,7 @@
 #ifndef PLT_PRIORITYQUEUE_IMPL_INCLUDED
 #define PLT_PRIORITYQUEUE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.7 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/priorityqueue_impl.h,v 1.8 2005-06-01 13:58:05 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -267,16 +267,16 @@ template <class T>
 bool
 PltPriorityQueue<T>::remove(T elem)
 {
-    PLT_PRECONDITION( ! isEmpty() );
     bool result;
     size_t loc = locate(0, elem);
     if ( loc < size() ) {
         // found 
-        if (--a_size > 0) { 
+        if ( (--a_size > 0) && (loc < a_size) ) {
             T v(a_elems[a_size]);
-            
-            // TODO: may shrink here
-            
+            // Martin once thought about shrinking the vector
+            // if possible, but we just pretend that we might need
+            // the free entries in the future, so we don't return
+            // what we had used ...
             downheap(loc,v);
         }
         result = true;

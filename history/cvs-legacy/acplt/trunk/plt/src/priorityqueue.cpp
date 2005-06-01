@@ -267,11 +267,14 @@ PltPriorityQueue<T>::remove(T elem)
     size_t loc = locate(0, elem);
     if ( loc < size() ) {
         // found 
-        T v(a_elems[--a_size]);
-        
-        // TODO: may shrink here
-        
-        downheap(loc,v);
+        if ( (--a_size > 0) && (loc < a_size) ) {
+            T v(a_elems[a_size]);
+            // Martin once thought about shrinking the vector
+            // if possible, but we just pretend that we might need
+            // the free entries in the future, so we don't return
+            // what we had used ...
+            downheap(loc,v);
+	}
         result = true;
     } else {
         result = false;
