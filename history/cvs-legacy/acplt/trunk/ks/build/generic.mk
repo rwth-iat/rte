@@ -183,7 +183,7 @@ tclient$(EXE) : tclient$(O) tclient1$(O) $(LIBKSCLN) $(LIBKS)
 
 tmanager$(EXE) : tmanager$(O) tmanager1$(O) $(LIBKSSVR) $(LIBKS)
 
-tserver$(EXE) : tserver$(O) tserver1$(O) ext_sp$(O) $(LIBKSSVR) $(LIBKS)
+tserver$(EXE) : tserver$(O) tserver1$(O) ext_sp$(O) $(LIBKSSVR) $(LIBKSCLN) $(LIBKS)
 
 tservice$(EXE) : tservice$(O) ext_sp$(O) $(LIBKSCLN) $(LIBKS)
 
