@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.10 2003-09-23 08:28:10 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.11 2005-06-16 11:38:13 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -28,8 +28,14 @@ PltLog *
 PltLog::_pLog;
 //////////////////////////////////////////////////////////////////////
 
-PltLog::PltLog()
+// ---------------------------------------------------------------------------
+// Creates/initializes a new logging object. The logMode parameter sets the
+// filter for filtering logging messages: only messages with a level/type
+// included in the logMode filter are logged.
+//
+PltLog::PltLog(int logMode)
 {
+    _logMode = logMode;
     if (! _pLog) {
         _pLog = this;
     }
@@ -50,7 +56,10 @@ PltLog::~PltLog()
 void
 PltLog::Info(const char * msg)
 {
-    if (_pLog) _pLog->info(msg);
+    if ( _pLog
+         && (_pLog->getLogMode() & LOGFILTER_INFO) ) {
+	_pLog->info(msg);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -58,7 +67,10 @@ PltLog::Info(const char * msg)
 void
 PltLog::Debug(const char * msg)
 {
-    if (_pLog) _pLog->debug(msg);
+    if ( _pLog
+         && (_pLog->getLogMode() & LOGFILTER_DEBUG) ) {
+	_pLog->debug(msg);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -66,7 +78,10 @@ PltLog::Debug(const char * msg)
 void
 PltLog::Warning(const char * msg)
 {
-    if (_pLog) _pLog->warning(msg);
+    if ( _pLog
+         && (_pLog->getLogMode() & LOGFILTER_WARNING) ) {
+	_pLog->warning(msg);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -74,7 +89,10 @@ PltLog::Warning(const char * msg)
 void
 PltLog::Error(const char * msg)
 {
-    if (_pLog) _pLog->error(msg);
+    if ( _pLog
+         && (_pLog->getLogMode() & LOGFILTER_ERROR) ) {
+	_pLog->error(msg);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -82,7 +100,10 @@ PltLog::Error(const char * msg)
 void
 PltLog::Alert(const char * msg)
 {
-    if (_pLog) _pLog->alert(msg);
+    if ( _pLog
+         && (_pLog->getLogMode() & LOGFILTER_ALERT) ) {
+	_pLog->alert(msg);
+    }
 }
 
 
@@ -101,6 +122,52 @@ PltLog::GetLog()
 {
     return _pLog;
 }
+
+
+
+// ---------------------------------------------------------------------------
+// Convenience functions for setting and getting the logging filter/mask for
+// the currently global logger object.
+int
+PltLog::SetLogMode(int logMode)
+{
+    if ( _pLog ) {
+	return _pLog->setLogMode(logMode);
+    }
+    return 0; // return empty mask/filter instead if no global logger present
+} // PltLog::SetLogMode
+
+int
+PltLog::GetLogMode()
+{
+    if ( _pLog ) {
+	return _pLog->getLogMode();
+    }
+    return 0; // return empty mask/filter instead if no global logger present
+} // PltLog::GetLogMode
+
+
+// ---------------------------------------------------------------------------
+// We provide default implementations for setting and retrieving the filter/
+// mask for logger objects. Derived classes might want to override them in
+// case they need to play tricks whenever the filter/mask is set or retrieved.
+// For all others, this default implementation should prove to be sufficient.
+int
+PltLog::setLogMode(int logMode)
+{
+    int oldMode = _logMode;
+    _logMode = logMode;
+    return oldMode;
+} // PltLog::setLogMode
+
+
+int
+PltLog::getLogMode()
+{
+    return _logMode;
+} // PltLog::getLogMode
+
+
 
 //////////////////////////////////////////////////////////////////////
 #if PLT_USE_SYSLOG
@@ -128,9 +195,11 @@ PltSyslog::_currLog = 0;
 
 //////////////////////////////////////////////////////////////////////
 
-PltSyslog::PltSyslog(const char *ident, int logopt, int facility)
-: _logopt(logopt), 
-  _facility(facility)
+PltSyslog::PltSyslog(const char *ident, int logopt, int facility,
+                     int logMode)
+    : PltLog(logMode),
+      _logopt(logopt), 
+      _facility(facility)
 {
     // make copy of ident just to be sure: 
     // The syslog facility stores only
@@ -158,7 +227,7 @@ PltSyslog::~PltSyslog()
 //////////////////////////////////////////////////////////////////////
 
 void 
-PltSyslog::log(int priority, const char * msg) 
+PltSyslog::log(int logtype, int priority, const char * msg) 
 {
     // switch log if necessary
     if (_currLog != this) {
@@ -171,8 +240,10 @@ PltSyslog::log(int priority, const char * msg)
         _currLog = this;
     }
     
-    // log message
-    syslog(priority, msg);
+    if ( getLogMode() & logtype ) {
+	// log message
+	syslog(priority, msg);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -180,7 +251,7 @@ PltSyslog::log(int priority, const char * msg)
 void
 PltSyslog::info(const char *msg)
 {
-    log(LOG_INFO, msg);
+    log(PltLog::LOGFILTER_INFO, LOG_INFO, msg);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -188,7 +259,7 @@ PltSyslog::info(const char *msg)
 void
 PltSyslog::debug(const char *msg)
 {
-    log(LOG_DEBUG, msg);
+    log(PltLog::LOGFILTER_DEBUG, LOG_DEBUG, msg);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -196,7 +267,7 @@ PltSyslog::debug(const char *msg)
 void
 PltSyslog::warning(const char *msg)
 {
-    log(LOG_WARNING, msg);
+    log(PltLog::LOGFILTER_WARNING, LOG_WARNING, msg);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -204,7 +275,7 @@ PltSyslog::warning(const char *msg)
 void
 PltSyslog::error(const char *msg)
 {
-    log(LOG_ERR, msg);
+    log(PltLog::LOGFILTER_ERROR, LOG_ERR, msg);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -212,7 +283,7 @@ PltSyslog::error(const char *msg)
 void
 PltSyslog::alert(const char *msg)
 {
-    log(LOG_ALERT, msg);
+    log(PltLog::LOGFILTER_ALERT, LOG_ALERT, msg);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -222,7 +293,8 @@ PltSyslog::alert(const char *msg)
 #if PLT_USE_CERRLOG
 //////////////////////////////////////////////////////////////////////
 
-PltCerrLog::PltCerrLog(const char *ident)
+PltCerrLog::PltCerrLog(const char *ident, const int logMode)
+    : PltLog(logMode)
 {
     // make copy of ident just to be sure: 
     // The syslog facility stores only
@@ -248,7 +320,9 @@ PltCerrLog::~PltCerrLog()
 void
 PltCerrLog::info(const char *msg)
 {
-    STDNS::cerr << (_ident?_ident:"") << " [Info]:" << msg << STDNS::endl;
+    if ( getLogMode() & PltLog::LOGFILTER_INFO ) {
+	STDNS::cerr << (_ident?_ident:"") << " [Info]:" << msg << STDNS::endl;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -256,7 +330,9 @@ PltCerrLog::info(const char *msg)
 void
 PltCerrLog::debug(const char *msg)
 {
-    STDNS::cerr << (_ident?_ident:"") << " [Debug]:" << msg << STDNS::endl;
+    if ( getLogMode() & PltLog::LOGFILTER_DEBUG ) {
+	STDNS::cerr << (_ident?_ident:"") << " [Debug]:" << msg << STDNS::endl;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -264,7 +340,9 @@ PltCerrLog::debug(const char *msg)
 void
 PltCerrLog::warning(const char *msg)
 {
-    STDNS::cerr << (_ident?_ident:"") << " [Warning]:" << msg << STDNS::endl;
+    if ( getLogMode() & PltLog::LOGFILTER_WARNING ) {
+	STDNS::cerr << (_ident?_ident:"") << " [Warning]:" << msg << STDNS::endl;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -272,7 +350,9 @@ PltCerrLog::warning(const char *msg)
 void
 PltCerrLog::error(const char *msg)
 {
-    STDNS::cerr << (_ident?_ident:"") << " [Error]:" << msg << STDNS::endl;
+    if ( getLogMode() & PltLog::LOGFILTER_ERROR ) {
+	STDNS::cerr << (_ident?_ident:"") << " [Error]:" << msg << STDNS::endl;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -280,7 +360,9 @@ PltCerrLog::error(const char *msg)
 void
 PltCerrLog::alert(const char *msg)
 {
-    STDNS::cerr << (_ident?_ident:"") << " [Alert]:" << msg << STDNS::endl;
+    if ( getLogMode() & PltLog::LOGFILTER_ALERT ) {
+	STDNS::cerr << (_ident?_ident:"") << " [Alert]:" << msg << STDNS::endl;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -316,7 +398,7 @@ PltNtLog::~PltNtLog()
     // a dead event source is a good event source...
     //
     if ( _event_source ) {
-        DeregisterEventSource(_event_source);
+        DeregisterEventSource(_event_source); _event_source = 0;
     }
 } // PltNtLog::~PltNtLog
 
@@ -355,27 +437,37 @@ void PltNtLog::log(WORD severity, const char *sevMsg, const char *msg)
 
 void PltNtLog::info(const char *msg)
 {
-    log(EVENTLOG_INFORMATION_TYPE, 0, msg);
+    if ( getLogMode() & PltLog::LOGFILTER_INFO ) {
+	log(EVENTLOG_INFORMATION_TYPE, 0, msg);
+    }
 } // PltNtLog::info
 
 void PltNtLog::debug(const char *msg)
 {
-    log(EVENTLOG_INFORMATION_TYPE, "[DEBUG] ", msg);
+    if ( getLogMode() & PltLog::LOGFILTER_DEBUG ) {
+	log(EVENTLOG_INFORMATION_TYPE, "[DEBUG] ", msg);
+    }
 } // PltNtLog::debug
 
 void PltNtLog::warning(const char *msg)
 {
-    log(EVENTLOG_WARNING_TYPE, 0, msg);
+    if ( getLogMode() & PltLog::LOGFILTER_WARNING ) {
+	log(EVENTLOG_WARNING_TYPE, 0, msg);
+    }
 } // PltNtLog::warning
 
 void PltNtLog::error(const char *msg)
 {
-    log(EVENTLOG_ERROR_TYPE, 0, msg);
+    if ( getLogMode() & PltLog::LOGFILTER_ERROR ) {
+	log(EVENTLOG_ERROR_TYPE, 0, msg);
+    }
 } // PltNtLog::error
 
 void PltNtLog::alert(const char *msg)
 {
-    log(EVENTLOG_INFORMATION_TYPE, "[ALERT] ", msg);
+    if ( getLogMode() & PltLog::LOGFILTER_ALERT ) {
+	log(EVENTLOG_INFORMATION_TYPE, "[ALERT] ", msg);
+    }
 } // PltNtLog::alert
 
 //////////////////////////////////////////////////////////////////////

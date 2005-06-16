@@ -1,7 +1,7 @@
 /* -*-c++-*- */
 #ifndef PLT_LOG_INCLUDED
 #define PLT_LOG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.10 2003-10-13 11:12:13 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.11 2005-06-16 11:38:31 harald Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -28,6 +28,29 @@
 class PltLog
 {
 public:
+
+    const static int LOGFILTER_INFO    = 0x01;
+    const static int LOGFILTER_DEBUG   = 0x02;
+    const static int LOGFILTER_WARNING = 0x04;
+    const static int LOGFILTER_ERROR   = 0x08;
+    const static int LOGFILTER_ALERT   = 0x10;
+
+    const static int LOG_UPTO_INFO = PltLog::LOGFILTER_INFO;
+    const static int LOG_UPTO_DEBUG = PltLog::LOG_UPTO_INFO
+                                        + PltLog::LOGFILTER_DEBUG;
+    const static int LOG_UPTO_WARNING = PltLog::LOG_UPTO_DEBUG
+                                          + PltLog::LOGFILTER_WARNING;
+    const static int LOG_UPTO_ERROR = PltLog::LOG_UPTO_WARNING
+                                        + PltLog::LOGFILTER_ERROR;
+    const static int LOG_UPTO_ALERT = PltLog::LOG_UPTO_ERROR
+                                        + PltLog::LOGFILTER_ALERT;
+
+    const static int LOG_ALL = PltLog::LOGFILTER_INFO
+                                 + PltLog::LOGFILTER_DEBUG
+                                 + PltLog::LOGFILTER_WARNING
+                                 + PltLog::LOGFILTER_ERROR
+                                 + PltLog::LOGFILTER_ALERT;
+
     static void SetLog(PltLog & log); 
     static PltLog * GetLog();
     static void Info(const char *msg);
@@ -36,13 +59,23 @@ public:
     static void Error(const char *msg);
     static void Alert(const char *msg);
 
-    PltLog();
+    static int SetLogMode(int logMode);
+    static int GetLogMode();
+
+    PltLog(int logMode = PltLog::LOG_ALL);
     virtual ~PltLog();
     virtual void info(const char *msg) = 0;
     virtual void debug(const char *msg) = 0;
     virtual void warning(const char *msg) = 0;
     virtual void error(const char *msg) = 0;
     virtual void alert(const char *msg) = 0;
+
+    virtual int setLogMode(int logMode);
+    virtual int getLogMode();
+
+protected:
+    int _logMode;
+
 private:
     static PltLog * _pLog;
 };
@@ -59,7 +92,8 @@ class PltSyslog
 public:
     PltSyslog(const char * ident = 0, 
               int logopt = LOG_PID, 
-              int facility = LOG_USER); // see openlog
+              int facility = LOG_USER, // see openlog
+	      int logMode = PltLog::LOG_ALL);
     virtual ~PltSyslog();
     virtual void info(const char *msg);
     virtual void debug(const char *msg);
@@ -70,7 +104,7 @@ private:
     PltSyslog(const PltSyslog &); // forbidden
     PltSyslog & operator = (const PltSyslog &); // forbidden
 
-    void log(int priority, const char *msg);
+    void log(int logtype, int priority, const char *msg);
 
     char * _ident;
     int _logopt;
@@ -95,7 +129,7 @@ class PltCerrLog
 : public PltLog
 {
 public:
-    PltCerrLog(const char * ident = 0);
+    PltCerrLog(const char * ident = 0, int logMode = LOG_ALL);
     ~PltCerrLog();
     virtual void info(const char *msg);
     virtual void debug(const char *msg);
@@ -127,7 +161,7 @@ private:
 //
 class PltNtLog : public PltLog {
 public:
-    PltNtLog(const char * ident = 0);
+    PltNtLog(const char * ident = 0, int logMode = LOG_ALL);
     virtual ~PltNtLog();
     virtual void info(const char *msg);
     virtual void debug(const char *msg);
