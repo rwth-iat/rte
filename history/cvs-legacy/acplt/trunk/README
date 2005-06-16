@@ -1,10 +1,17 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.3.4 of the C++ Communication Libary. As always, it
+This is version 1.3.5 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
+
+IMPORTANT: If you use interserver connections with the 1.3.x/1.4.x series
+you *NEED* to link against the KS client library. This *DOES NOT* apply to
+ACPLT/KS servers *WITHOUT* interserver connections. The reason for having
+to link against the KS client library when using interserver connections
+stems from the fact that code has been unified and interserver connections
+now support the usual KscAvModule mechanism.
 
 IMPORTANT: With the 1.3.x/1.4.x series we will be moving in the direction
 of non-blocking clients.
@@ -131,6 +138,16 @@ Please note that code versions are numbered as x.y.z where the middle
 number y denoted the state of the code: even numbered y's denote stable
 releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
 releases, which might not be stable: 1.1.0, etc.
+
+Version 1.3.5
+- BOTH
+  * Added filtering capabilities to PltLog. In particular, see 
+    PltLog::SetLogMode(mode) for controlling log message filtering for
+    the current global logger, as well as PltLog::setLogMode(mode) for
+    controlling filtering on arbitrary log objects.
+  * Fixed makefiles so tserver can be compiled again: it requires to
+    be linked against the ACPLT/KS client library since it uses inter-
+    server connections.
 
 Version 1.3.4
 - BOTH:
