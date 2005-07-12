@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.20 2005-05-09 15:30:16 ansgar Exp $
+*   $Id: ov_library.c,v 1.21 2005-07-12 14:24:19 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -290,7 +290,7 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 			}
 #if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
 			else {
-				if (!nextpath) ov_logfile_error("Can't load library. Reason: %s", dlerror());
+				ov_logfile_error("Can't load library. Reason: %s", dlerror());
 			}
 #endif
 			/*

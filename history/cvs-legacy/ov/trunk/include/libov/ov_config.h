@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.8 2004-05-19 14:25:34 ansgar Exp $
+*   $Id: ov_config.h,v 1.9 2005-07-12 14:24:19 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -167,7 +167,7 @@
 #define OV_DLLVARIMPORT 		_declspec(dllimport)
 #else
 #define OV_DLLFNCEXPORT 		__declspec(dllexport)
-#define OV_DLLVAREXPORT 		__declspec(dllexport)
+#define OV_DLLVAREXPORT 		extern __declspec(dllexport)
 #define OV_DLLVARIMPORT 		extern __declspec(dllimport)
 #endif
 #endif
