@@ -1,0 +1,6 @@
+exports
+  _RegisterService=RegisterService
+  _UnregisterService=UnregisterService
+  DllRegisterServer
+  DllUnregisterServer
+  

@@ -15,6 +15,7 @@ BC = c:\bc5
 CC      = $(BC)\bin\bcc32
 LINK    = $(BC)\bin\tlink32
 IMPLIB  = $(BC)\bin\implib
+RC	= $(BC)\bin\brcc32
 
 CC_FLAGS = -DWIN32 -w-pro -a8
 LD_FLAGS = -L$(BC)\lib -x
@@ -64,23 +65,26 @@ OBJS =          CLNT_RAW.OBJ \
 all: oncrpc.dll portmap.exe
 
 clean:
-	-del *.obj *.bak *.map
+	-del *.obj *.bak *.map *.*~
 	-del oncrpc.lib oncrpc.dll
 	-del portmap.exe
-	-del ..\rpcgen\oncrpc.dll
+#	-del ..\rpcgen\oncrpc.dll
 
 portmap.obj:    portmap.c
 	$(CC) -tW -I$(RPCINCLUDEPATH) $(CC_FLAGS) $(ARCH) -c portmap.c
 
 portmap.exe:    oncrpc.lib portmap.obj
-     $(LINK) -Tpe $(LD_FLAGS) c0x32.obj PORTMAP.obj,portmap.exe,,\
+     $(LINK) -Tpe $(LD_FLAGS) c0x32.obj portmap.obj,portmap.exe,,\
      $(RPCLIBPATH)oncrpc.lib import32.lib cw32.lib
      copy portmap.exe ..\bin\pm_ascii.exe
 
-oncrpc.dll:     $(OBJS) oncrpcbc.def oncbcimp.def
+oncrpc.res:	oncrpc.rc
+    $(RC) oncrpc.rc
+
+oncrpc.dll:     $(OBJS) oncrpcbc.def oncbcimp.def oncrpc.res
     $(LINK) -Tpd $(LD_FLAGS) @&&!
 c0d32.obj $(OBJS)
-!,oncrpc.dll,,import32.lib cw32.lib,oncrpcbc.def
+!,oncrpc.dll,,import32.lib cw32.lib,oncrpcbc.def,oncrpc.res
     $(IMPLIB) oncrpc.lib oncbcimp.def
     copy oncrpc.lib ..\bin
     copy oncrpc.dll ..\bin

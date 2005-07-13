@@ -1,121 +1,74 @@
-IMPORTANT NOTE:
----------------
+ONC/RPC for Windows NT
+----------------------
 
-This is a patched version of Martin Gergeleit's famous ONC/RPC for Windows NT
-package. The patches made to this sources are listed at the end of this
-README.TXT file.
+Version 1.15.1
 
+Welcome to the ONC/RPC package for Windows NT (and also for
+Windows 95/98). This Version is based on Martin Gergeleit's
+famous ONC/RPC package (last official version 1.11).
 
-Use the install.bat in the service subdirectory for easy installation.
-Don't forget to start the portmapper using "Control Panel|Services|Portmap".
+Unfortunately, Martin Gergeleit doesn't actively maintain the package
+any longer and has shut down his web pages, so the Chair of Process
+Control Engineering (of Aachen University of Technology) now hosts the
+ONC/RPC package.
 
+But first a message from our lawers:
 
-This patched package
-  IS PROVIDED AS IS WITH NO WARRANTIES OF ANY KIND INCLUDING THE
-  WARRANTIES OF DESIGN, MERCHANTIBILITY AND FITNESS FOR A PARTICULAR
-  PURPOSE, OR ARISING FROM A COURSE OF DEALING, USAGE OR TRADE PRACTICE.
-  In no event will Harald Albrecht be liable for any lost revenue
-  or profits or other special, indirect and consequential damages, even if
-  Harald Albrecht has been advised of the possibility of such damages.
+ * THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE CHAIR OF PROCESS CONTROL
+ * ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+What's new? (in descending order)
 
-The sources have been adapted to Borland C++ 5.0. Therefore, the binaries
-and executables contained in this package have been compiled with BC++ 5.0.
-The package is still compilable using VC++ 4.2.
+- v1.15: Changes in rpc.h, svc_auth and makefile in order to support
+  MS Visual C+ 6.0.
 
+- v1.14: Support for automatic installation via InstallShield Express
+  2.04 or later. This includes automatic installation of even updates
+  of the ONC/RPC NT portmap service! Just insert the installation
+  floppy, run the setup program and select the Custom mode, so you can
+  install the NT portmap service. That's it -- the portmapper is
+  installed or updated automatically.
 
-Changes made:
--------------
+  The magic is done behind the scenes by a DLL accompanying the
+  portmap.exe service executable. The DLL is named portmap.srg and
+  contains the necessary logic for self-registration (it misuses the
+  OLE server registration mechanism).
 
-README.TXT --
-  This readme file is new.
+  You can also register or deregister the portmapper from the command
+  line: just start the portmapper executable with either the command
+  line argument "/registerservice" or "/unregisterservice".
 
-MAKEBC.BAT --
-  Compiles everything using BC++. Enjoy!
+  Also added version information to the oncrpc.dll and the portmap.exe
+  binaries.
 
-RPC\SVC.H --
-  Corrected the line specifying import information when another application
-  includes the ONC/RPC header files:
-    _declspec(dllimport) fd_set svc_fdset;
-  Also added the necessary changes for BC++.
+- v1.12: The sources have been adapted to Borland C++ 5.0. The
+  binaries included in this packages have been compiled using
+  BC++. For the people insisting on using MS Visual C+, we're
+  providing the necessary import library as "bin\oncrpcms.lib". The
+  software is still compilable using VC+ 4.2. To compile the package
+  with Borland C++, use the makefile.bc makefiles or the makebc.bat
+  script in the root directory of this package.
 
-RPC\CLNT.H --
-  Added some stuff, such that the following variable is now properly
-  exported from the DLL and imported into other applications:
+- v1.12: Corrected rpc\svc.h, so the fdset used in a RPC server is
+  exported properly:
+    _declspec(dllimport) fd_set svc_fdset
+  Changed rpc\clnt.h accordingly to export a structure necessary to
+  check for client errors:
     struct rpc_createerr rpc_createerr;
-  Also added the necessary changes for BC++.
+  Also updated the def files accordingly, like oncrpc.def, so data
+  structures are properly exported.
 
-LIBRPC\ONCRPC.DEF --
-  Added the line "rpc_createerr DATA" at the end of this .DEF file.
-  Added the line "_null_auth DATA" at the end of this .DEF file.
+But now enjoy!
 
-LIBRPC\MAKEFILE.BC --
-TEST\MAKEFILE.BC --
-RPCINFO\MAKEFILE.BC --
-RPCGEN\MAKEFILE.BC --
-SERVICE\MAKEFILE.BC --
-  New Makefiles suitable for Borland C++. You must edit the BC makro to
-  addapt them to your local BC setup.
-
-SERVICE\INSTALL --
-  Installs the ONC/RPC package into %SystemRoot%\system32 and copies
-  the "RPC" file into %SystemRoot%\system32\drivers\etc. You only have
-  to start the service using "Control Panel|Services|Portmap".
-
-LIBRPC\ONCBCIMP.DEF --
-  Necessary to bypass the strange behaviour of Mikro$haft to export the
-  names of C functions in DLLs without the leading underscore! This file
-  is used by IMPLIB to create a import library which maps the real function
-  names containing the underscore to the names exported by the ONCRPC.DLL.
-
-LIBRPC\ONCRPCBC.DEF --
-  Necessary to be compatible with the brain damaged VC++. This exports the
-  names of the C functions from the DLL without the leading underscore.
-
-LIBRPC\RPC_PROT.C --
-  Changed to be compliant with BC++, which is behaves much better according
-  to the ANSI C++ spec:
-    #ifdef WIN32
-    extern
-    #endif
-    struct opaque_auth _null_auth;
-
-LIBRPC\RPC_COMM.C --
-  Same as above...
-    #if definded(WIN32) && defined(__BORLANDC__)
-    __declspec(dllexport)
-    #endif
-    struct opaque_auth _null_auth;
-    #ifdef FD_SETSIZE
-    #if definded(WIN32) && defined(__BORLANDC__)
-    __declspec(dllexport)
-    #endif
-    fd_set svc_fdset;
-    #else
-    int svc_fds;
-    #endif /* def FD_SETSIZE */
-    #if definded(WIN32) && defined(__BORLANDC__)
-    __declspec(dllexport)
-    #endif
-    struct rpc_createerr rpc_createerr;
-
-LIBRPC\GETRPCEN.C --
-  Corrected wrong prototype for "interpret()". It was missing the
-  "char *val"...
-    static struct rpcent *
-    interpret(val, len)
-        char *val;
-        {
-        ...
-
-RPCGEN\RPC_MAIN.C --
-  Addapted for Borland's CPP Makro Preprocessor.
-
-RPCINFO\GETOPT.C --
-  Removed strange "extern strlen(), _write();" which caused compilation
-  errors.
-
-Harald Albrecht
-harald@plt.rwth-aachen.de
-Chair of Process Control Engineering
-
+Your ACPLT/KS Team.
+email:ks@rwth-aachen.de
+http://www.plt.rwth-aachen.de/ks

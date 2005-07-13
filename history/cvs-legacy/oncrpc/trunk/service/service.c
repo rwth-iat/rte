@@ -7,17 +7,22 @@
  * USE OF. USE ENTIRELY AT YOUR OWN RISK!!!
  *********************************************************************/
 /*
-*  Added on suggestion from Martin Johnson (MJJ)
-*
-*  The -v flag means VERBOSE, i.e. generate NT Application
-*  Event Log messages in Portmap.c/find_service() when
-*  clients try to connect.
-*
-*  To enable VERBOSE mode the service has to be started manually from 
-*  Control Panel/Services, with something in the "Startup Parameters"
-*  field.  (Note: "NET START PORTMAP -V" won't work as the -V gets
-*  thrown away.)
-*/
+ *  Added on suggestion from Martin Johnson (MJJ)
+ *
+ *  The -v flag means VERBOSE, i.e. generate NT Application
+ *  Event Log messages in Portmap.c/find_service() when
+ *  clients try to connect.
+ *
+ *  To enable VERBOSE mode the service has to be started manually from
+ *  Control Panel/Services, with something in the "Startup Parameters"
+ *  field.  (Note: "NET START PORTMAP -V" won't work as the -V gets
+ *  thrown away.)
+ */
+/*
+ * Harald Albrecht: added self-registration and self-deregistration
+ * to ease automatic installation of the portmapper (especially in
+ * conjunction with installation programs).
+ */
 
 #include <rpc/rpc.h>
 #include <windows.h>
@@ -46,17 +51,39 @@ VOID    StopPortmapService(LPTSTR lpszMsg);
 VOID	Report(LPTSTR lpszMsg);
 
 
-VOID
-main() 
+
+/* --------------------------------------------------------------------------
+ * The self-registration magic begins here...
+ */
+#include "servregi.h"
+
+
+int main(int argc, char **argv)
 {
     SERVICE_TABLE_ENTRY dispatchTable[] = {
         { TEXT("PortmapService"), (LPSERVICE_MAIN_FUNCTION)service_main },
         { NULL, NULL }
     };
 
+    /*
+     * First check for some options when run manually from the command
+     * prompt...
+     */
+    if ( argc == 2 ) {
+        if ( (strcmpi(argv[1], "/registerservice") == 0) ||
+             (strcmpi(argv[1], "-registerservice") == 0) ) {
+            return RegisterService(GetModuleHandle(0), NtServiceRegistration);
+        }
+        if ( (strcmpi(argv[1], "/unregisterservice") == 0) ||
+             (strcmpi(argv[1], "-unregisterservice") == 0) ) {
+            return UnregisterService(GetModuleHandle(0), NtServiceRegistration);
+	    }
+    }
+
     if (!StartServiceCtrlDispatcher(dispatchTable)) {
         StopPortmapService("StartServiceCtrlDispatcher failed.");
     }
+    return 0;
 }
 
 

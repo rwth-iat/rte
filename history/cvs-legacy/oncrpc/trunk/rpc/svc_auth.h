@@ -53,6 +53,6 @@
 #ifdef __cplusplus
 extern "C" auth_stat _authenticate(...);
 #else
-extern struct auth_stat _authenticate();
+extern enum auth_stat _authenticate();
 #endif
 

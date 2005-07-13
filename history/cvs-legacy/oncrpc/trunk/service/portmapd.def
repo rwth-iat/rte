@@ -1,0 +1,13 @@
+;
+; Simple def file for use with the servreg.dll, which should be compiled
+; into something with the same name as the NT service it is responsible for.
+; But instead of .exe it should end with .srg
+;
+exports
+  RegisterService=_RegisterService
+  UnregisterService=_UnregisterService
+  Reset
+  DllRegisterServer
+  DllUnregisterServer
+; End of portmapd.def
+

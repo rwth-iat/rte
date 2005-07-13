@@ -52,7 +52,12 @@
 #define FD_SETSIZE	128
 
 #include <stdlib.h>
+#ifdef __BORLANDC__
 #include <winsock.h>
+#else
+#define _MSWSOCK_
+#include <winsock2.h>
+#endif
 #include <rpc/types.h>		/* some typedefs */
 #include <process.h>
 
