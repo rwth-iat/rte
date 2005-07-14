@@ -157,8 +157,8 @@ int main(int argc, char **argv) {
 			return ntservice_uninstall(argv[2]);
 		}
 	}
-	fprintf(stderr, "Usage: ntservice install \"<Service Name>\" \"<Display Name>\" \"<Dependency;Dependency;...>\" <fullpath\\filename> [arguments]\n");
-	fprintf(stderr, "or   : ntservice uninstall \"<Service Name>\"\n");
+	fprintf(stderr, "Usage: %s install \"<Service Name>\" \"<Display Name>\" \"<Dependency;Dependency;...>\" <fullpath\\filename> [arguments]\n", argv[0]);
+	fprintf(stderr, "or   : %s uninstall \"<Service Name>\"\n", argv[0]);
 	return 0;
 }
 

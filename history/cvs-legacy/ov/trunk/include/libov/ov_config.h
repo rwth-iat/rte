@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.9 2005-07-12 14:24:19 ansgar Exp $
+*   $Id: ov_config.h,v 1.10 2005-07-14 07:57:32 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -166,12 +166,17 @@
 #define OV_DLLVAREXPORT                 _declspec(dllexport)
 #define OV_DLLVARIMPORT 		_declspec(dllimport)
 #else
+#if OV_COMPILER_BORLAND
 #define OV_DLLFNCEXPORT 		__declspec(dllexport)
 #define OV_DLLVAREXPORT 		extern __declspec(dllexport)
 #define OV_DLLVARIMPORT 		extern __declspec(dllimport)
+#else
+#define OV_DLLFNCEXPORT
+#define OV_DLLVAREXPORT
+#define OV_DLLVARIMPORT 		extern
 #endif
 #endif
-
+#endif
 #if OV_SYSTEM_OPENVMS
 #define OV_DYNAMIC_DATABASE		0
 #define OV_STATIC_LIBRARIES		1

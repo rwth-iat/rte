@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.12 2005-05-09 15:30:16 ansgar Exp $
+ * $Id: dbdump.cpp,v 1.13 2005-07-14 07:58:41 ansgar Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -162,8 +162,8 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 			delimiter = ".";
 		}
 		KscVariable child_var(PltString(branch.getFullPath()) +		// create child variable object
-										delimiter +
-										current->identifier);
+							delimiter +
+							current->identifier);
 
 		const KsVarEngProps *var_eng_props = (const KsVarEngProps *) current.getPtr();
 
@@ -196,54 +196,47 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 								<< endl;
 					} else {							// dump variable value depending on type
 						Indent(indent + INDENTATION);
-                    	db_file << child_var.getName() << " = ";
+                    				db_file << child_var.getName() << " = ";
 						switch ( curr_props->value->xdrTypeCode() ) {
 						case KS_VT_VOID:
-							db_file << "<void>" << endl;
+							db_file << "<void>";
 							break;
 						case KS_VT_BOOL:
 							if (strcmp("/vendor/activity_lock", child_var.getPathAndName() ) == 0) {
 								// always enable activity lock flag in output file
-								db_file << "TRUE" << endl;
+								db_file << "TRUE";
 							} else {
-								db_file << ((bool) ((KsBoolValue &) *curr_props->value) ? "TRUE" : "FALSE")
-										<< endl;
+								db_file << ((bool) ((KsBoolValue &) *curr_props->value) ? "TRUE" : "FALSE");
 							}
 							break;
 						case KS_VT_INT:
-							db_file << (long) ((KsIntValue &) *curr_props->value)
-									<< endl;
+							db_file << (long) ((KsIntValue &) *curr_props->value);
 							break;
 						case KS_VT_UINT:
-            	        	db_file << (u_long) ((KsUIntValue &) *curr_props->value)
-									<< endl;
+            	        				db_file << (u_long) ((KsUIntValue &) *curr_props->value);
 							break;
 						case KS_VT_SINGLE:
-							db_file << (float) ((KsSingleValue &) *curr_props->value)
-									<< endl;
+							db_file << (float) ((KsSingleValue &) *curr_props->value);
 							break;
 						case KS_VT_DOUBLE:
-							db_file << (double) ((KsDoubleValue &) *curr_props->value)
-									<< endl;
-           	            	break;
+							db_file << (double) ((KsDoubleValue &) *curr_props->value);
+           	            				break;
 						case KS_VT_STRING:
 							db_file << "\""
 									<< (const char *) ksStringToPercent((KsString)((KsStringValue &) *curr_props->value))
-									<< "\"" << endl;
+									<< "\"";
 							break;
 						case KS_VT_TIME:
 							time = ((KsTimeValue &) *curr_props->value);
-							db_file << TimeToAscii(time)
-									<< endl;
+							db_file << TimeToAscii(time);
 							break;
 						case KS_VT_TIME_SPAN:
 							time_span = ((KsTimeSpanValue &) *curr_props->value);
-							db_file << TimeSpanToAscii(time_span)
-									<< endl;
+							db_file << TimeSpanToAscii(time_span);
 							break;
-                	    case KS_VT_BYTE_VEC:
+                	    			case KS_VT_BYTE_VEC:
 							size = ((KsByteVecValue &) *curr_props->value).size();
-                        	db_file << "{";
+                        				db_file << "{";
 							for ( i = 0; i < size; ++i ) {
 								db_file <<  hex << setfill('0') << setw(2)
 										<< (unsigned int) ((KsByteVecValue &) *curr_props->value)[i]
@@ -252,7 +245,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 									db_file << ", ";
 								}
 							}
-							db_file << "}" << endl;
+							db_file << "}";
 							break;
 						case KS_VT_BOOL_VEC:
 							size = ((KsByteVecValue &) *curr_props->value).size();
@@ -265,19 +258,19 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 									db_file << ", ";
 								}
 							}
-							db_file << "}" << endl;
-                    	    break;
+							db_file << "}";
+                    	    				break;
 						case KS_VT_INT_VEC:
 							size = ((KsIntVecValue &) *curr_props->value).size();
 							db_file << "{";
-            	            for ( i = 0; i < size; ++i ) {
+            	           				for ( i = 0; i < size; ++i ) {
 								db_file << ((KsIntVecValue &) *curr_props->value)[i];
 								if (i < size-1) {
 									db_file << ", ";
 								}
 							}
-	                    	db_file << "}" << endl;
-    	                    break;
+	                    				db_file << "}";
+    	                    				break;
 						case KS_VT_UINT_VEC:
 							size = ((KsUIntVecValue &) *curr_props->value).size();
 							db_file << "{";
@@ -286,8 +279,8 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 								if (i < size-1) {
 									db_file << ", ";
 								}
-	                        }
-							db_file << "}" << endl;
+	                        			}
+							db_file << "}";
 							break;
 						case KS_VT_SINGLE_VEC:
 							size = ((KsSingleVecValue &) *curr_props->value).size();
@@ -298,7 +291,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 									db_file << ", ";
 								}
 							}
-							db_file << "}" << endl;
+							db_file << "}";
 							break;
 						case KS_VT_DOUBLE_VEC:
 							size = ((KsDoubleVecValue &) *curr_props->value).size();
@@ -309,7 +302,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 									db_file << ", ";
 								}
 							}
-							db_file << "}" << endl;
+							db_file << "}";
 							break;
 						case KS_VT_STRING_VEC:
 							size = ((KsStringVecValue &) *curr_props->value).size();
@@ -322,7 +315,7 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 									db_file << ", ";
 								}
 							}
-							db_file << "}" << endl;
+							db_file << "}";
 							break;
 						case KS_VT_TIME_VEC:
 							size = ((KsTimeVecValue &) *curr_props->value).size();
@@ -333,9 +326,9 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 								if (i < size-1) {
 									db_file << ", ";
 								}
-	                    	}
-    	                    db_file << "}" << endl;
-        	                break;
+	                    				}
+    	                    				db_file << "}";
+        	                			break;
 						case KS_VT_TIME_SPAN_VEC:
 							size = ((KsTimeSpanVecValue &) *curr_props->value).size();
 							db_file << "{";
@@ -346,47 +339,46 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 									db_file << ", ";
 								}
 							}
-							db_file << "}" << endl;
+							db_file << "}";
 							break;
 						default:	// unknown variable type
-							db_file << "<???>" << endl;
+							db_file << "<???>";
 						} // switch
 
 						// evaluate dump options
 						if (*dop & KS_DO_VAR_TIME) {
 							Indent(indent + 2 * INDENTATION);
-							db_file << "TIME = ";
-							db_file << TimeToAscii(curr_props->time)
-									<< endl;
+							db_file << endl << "TIME = ";
+							db_file << TimeToAscii(curr_props->time);
 						}
 
 						if (*dop & KS_DO_VAR_STATE) {
 							Indent(indent + 2 * INDENTATION);
-							db_file << "STATE = ";
+							db_file <<  endl << "STATE = ";
 							switch ( curr_props->state ) {
 							case KS_ST_NOTSUPPORTED:
-								db_file << "NOT_SUPPORTED" << endl;
+								db_file << "NOT_SUPPORTED";
 								break;
 							case KS_ST_UNKNOWN:
-								db_file << "UNKNOWN" << endl;
+								db_file << "UNKNOWN";
 								break;
 							case KS_ST_BAD:
-								db_file << "BAD" << endl;
+								db_file << "BAD";
 								break;
 							case KS_ST_QUESTIONABLE:
-								db_file << "QUESTIONABLE" << endl;
+								db_file << "QUESTIONABLE";
 								break;
 							case KS_ST_GOOD:
-								db_file << "GOOD" << endl;
+								db_file << "GOOD";
 								break;
 							default:
-								db_file << "<???>" << endl;
+								db_file << "<???>";
 							}
 						}
 
 						if (*dop & KS_DO_VAR_SEM_FLAGS) {
 							Indent(indent + 2 * INDENTATION);
-							db_file << "FLAGS = \"";
+							db_file <<  endl << "FLAGS = \"";
 							// 'A': lowest bit set, ..., 'Z', 'a', ..., 'f': highest bit set
 							if (var_eng_props->semantic_flags) {
 								for (i = 0; i <= 25; i++) {
@@ -400,22 +392,23 @@ int DumpVars(KscAnyCommObject &branch, int indent)
 									}
 								}
 							}
-							db_file << "\"" << endl;
+							db_file << "\"";
 						}
 
 						if (*dop & KS_DO_VAR_TECH_UNIT) {
 							Indent(indent + 2 * INDENTATION);
-							db_file << "UNIT = \""
+							db_file <<  endl << "UNIT = \""
 									<< var_eng_props->tech_unit
-									<< "\"" << endl;
+									<< "\"";
 						}
 
 						if (*dop & KS_DO_VAR_COMMENT) {
 							Indent(indent + 2 * INDENTATION);
-    	    	            db_file << "COMMENT = \""
-									<< var_eng_props->comment
-									<< "\";" << endl;
+    	    	            				db_file <<  endl << "COMMENT = \""
+								<< var_eng_props->comment
+								<< "\"";
 						}
+						db_file << ";" << endl;
 					}
 				}
 			}
