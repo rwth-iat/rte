@@ -1,7 +1,7 @@
 /* -*-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.35 2004-07-20 11:46:36 harald Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.36 2005-08-15 16:34:38 ansgar Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -334,7 +334,7 @@ enum { false=0, true=1 };
  *  comes that /etc/protocols just defines a bunch of other protocols to
  *  be used through the socket API and esp. all that Linux apps can use
  *  IPX, etc...? It's just again plain Microsoft FUD.
- */ 
+ */
 #if PLT_SYSTEM_NT
 
 /*
