@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.11 2005-06-16 11:38:13 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.12 2005-08-15 08:49:53 markus Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -320,7 +320,7 @@ PltCerrLog::~PltCerrLog()
 void
 PltCerrLog::info(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_INFO ) {
+    if ( getLogMode() & LOGFILTER_INFO ) {
 	STDNS::cerr << (_ident?_ident:"") << " [Info]:" << msg << STDNS::endl;
     }
 }
@@ -330,7 +330,7 @@ PltCerrLog::info(const char *msg)
 void
 PltCerrLog::debug(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_DEBUG ) {
+    if ( getLogMode() & LOGFILTER_DEBUG ) {
 	STDNS::cerr << (_ident?_ident:"") << " [Debug]:" << msg << STDNS::endl;
     }
 }
@@ -340,7 +340,7 @@ PltCerrLog::debug(const char *msg)
 void
 PltCerrLog::warning(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_WARNING ) {
+    if ( getLogMode() & LOGFILTER_WARNING ) {
 	STDNS::cerr << (_ident?_ident:"") << " [Warning]:" << msg << STDNS::endl;
     }
 }
@@ -350,7 +350,7 @@ PltCerrLog::warning(const char *msg)
 void
 PltCerrLog::error(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_ERROR ) {
+    if ( getLogMode() & LOGFILTER_ERROR ) {
 	STDNS::cerr << (_ident?_ident:"") << " [Error]:" << msg << STDNS::endl;
     }
 }
@@ -360,7 +360,7 @@ PltCerrLog::error(const char *msg)
 void
 PltCerrLog::alert(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_ALERT ) {
+    if ( getLogMode() & LOGFILTER_ALERT ) {
 	STDNS::cerr << (_ident?_ident:"") << " [Alert]:" << msg << STDNS::endl;
     }
 }
@@ -379,7 +379,7 @@ PltCerrLog::alert(const char *msg)
 // almost straightforward. We register/deregister an event source,
 // and then we can go on and bark at the user...
 //
-PltNtLog::PltNtLog(const char * ident)
+PltNtLog::PltNtLog(const char * ident, int logMode)
 {
     //
     // If the caller didn't supplied an identification, we'll fall back
@@ -437,35 +437,35 @@ void PltNtLog::log(WORD severity, const char *sevMsg, const char *msg)
 
 void PltNtLog::info(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_INFO ) {
+    if ( getLogMode() & LOGFILTER_INFO ) {
 	log(EVENTLOG_INFORMATION_TYPE, 0, msg);
     }
 } // PltNtLog::info
 
 void PltNtLog::debug(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_DEBUG ) {
+    if ( getLogMode() & LOGFILTER_DEBUG ) {
 	log(EVENTLOG_INFORMATION_TYPE, "[DEBUG] ", msg);
     }
 } // PltNtLog::debug
 
 void PltNtLog::warning(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_WARNING ) {
+    if ( getLogMode() & LOGFILTER_WARNING ) {
 	log(EVENTLOG_WARNING_TYPE, 0, msg);
     }
 } // PltNtLog::warning
 
 void PltNtLog::error(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_ERROR ) {
+    if ( getLogMode() & LOGFILTER_ERROR ) {
 	log(EVENTLOG_ERROR_TYPE, 0, msg);
     }
 } // PltNtLog::error
 
 void PltNtLog::alert(const char *msg)
 {
-    if ( getLogMode() & PltLog::LOGFILTER_ALERT ) {
+    if ( getLogMode() & LOGFILTER_ALERT ) {
 	log(EVENTLOG_INFORMATION_TYPE, "[ALERT] ", msg);
     }
 } // PltNtLog::alert
