@@ -4,7 +4,7 @@
  * Users may use, copy or modify Sun RPC for the Windows NT Operating 
  * System according to the Sun copyright below.
  *
- * RPC for the Windows NT Operating System COMES WITH ABSOLUTELY NO 
+ * RPC for the Windows NT Operating System COMES WITH ABSOLUTELY NO
  * WARRANTY, NOR WILL I BE LIABLE FOR ANY DAMAGES INCURRED FROM THE 
  * USE OF. USE ENTIRELY AT YOUR OWN RISK!!!
  *********************************************************************/
@@ -56,7 +56,7 @@
 #include <winsock.h>
 #else
 #define _MSWSOCK_
-#include <winsock2.h>
+#include <windows.h>
 #endif
 #include <rpc/types.h>		/* some typedefs */
 #include <process.h>
