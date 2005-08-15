@@ -1,7 +1,7 @@
 /* -*-c++-*- */
 #ifndef PLT_LOG_INCLUDED
 #define PLT_LOG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.11 2005-06-16 11:38:31 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/log.h,v 1.12 2005-08-15 08:49:35 markus Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,35 +23,31 @@
 
 #include "plt/config.h"
 
-//////////////////////////////////////////////////////////////////////
-
-class PltLog
-{
-public:
-
-    const static int LOGFILTER_INFO    = 0x01;
+   const static int LOGFILTER_INFO    = 0x01;
     const static int LOGFILTER_DEBUG   = 0x02;
     const static int LOGFILTER_WARNING = 0x04;
     const static int LOGFILTER_ERROR   = 0x08;
     const static int LOGFILTER_ALERT   = 0x10;
 
-    const static int LOG_UPTO_INFO = PltLog::LOGFILTER_INFO;
-    const static int LOG_UPTO_DEBUG = PltLog::LOG_UPTO_INFO
-                                        + PltLog::LOGFILTER_DEBUG;
-    const static int LOG_UPTO_WARNING = PltLog::LOG_UPTO_DEBUG
-                                          + PltLog::LOGFILTER_WARNING;
-    const static int LOG_UPTO_ERROR = PltLog::LOG_UPTO_WARNING
-                                        + PltLog::LOGFILTER_ERROR;
-    const static int LOG_UPTO_ALERT = PltLog::LOG_UPTO_ERROR
-                                        + PltLog::LOGFILTER_ALERT;
+    const static int LOG_UPTO_INFO = LOGFILTER_INFO;
+    const static int LOG_UPTO_DEBUG = LOG_UPTO_INFO+LOGFILTER_DEBUG;
+    const static int LOG_UPTO_WARNING = LOG_UPTO_DEBUG+LOGFILTER_WARNING;
+    const static int LOG_UPTO_ERROR = LOG_UPTO_WARNING+LOGFILTER_ERROR;
+    const static int LOG_UPTO_ALERT = LOG_UPTO_ERROR+LOGFILTER_ALERT;
 
-    const static int LOG_ALL = PltLog::LOGFILTER_INFO
-                                 + PltLog::LOGFILTER_DEBUG
-                                 + PltLog::LOGFILTER_WARNING
-                                 + PltLog::LOGFILTER_ERROR
-                                 + PltLog::LOGFILTER_ALERT;
+    const static int LOG_ALL = LOGFILTER_INFO
+                                 + LOGFILTER_DEBUG
+                                 + LOGFILTER_WARNING
+                                 + LOGFILTER_ERROR
+                                 + LOGFILTER_ALERT;
 
-    static void SetLog(PltLog & log); 
+ //////////////////////////////////////////////////////////////////////
+
+class PltLog
+{
+public:
+
+    static void SetLog(PltLog & log);
     static PltLog * GetLog();
     static void Info(const char *msg);
     static void Debug(const char *msg);
@@ -62,7 +58,7 @@ public:
     static int SetLogMode(int logMode);
     static int GetLogMode();
 
-    PltLog(int logMode = PltLog::LOG_ALL);
+    PltLog(int logMode = LOG_ALL);
     virtual ~PltLog();
     virtual void info(const char *msg) = 0;
     virtual void debug(const char *msg) = 0;
@@ -93,7 +89,7 @@ public:
     PltSyslog(const char * ident = 0, 
               int logopt = LOG_PID, 
               int facility = LOG_USER, // see openlog
-	      int logMode = PltLog::LOG_ALL);
+	      int logMode = LOG_ALL);
     virtual ~PltSyslog();
     virtual void info(const char *msg);
     virtual void debug(const char *msg);
