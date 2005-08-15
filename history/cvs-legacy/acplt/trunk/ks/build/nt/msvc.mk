@@ -7,7 +7,7 @@
 O=.obj
 A=.lib
 EXE=.exe
-ONCDIR = ..\..\..\..\oncrpc
+ONCDIR = ..\..\..\oncrpc
 LIBRPC = $(ONCDIR)\bin\oncrpcms.lib
 PLTDIR = ..\..\..\plt
 LIBPLT = $(PLTDIR)\build\nt\libplt.lib
