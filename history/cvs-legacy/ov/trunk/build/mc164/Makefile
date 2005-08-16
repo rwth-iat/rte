@@ -48,9 +48,9 @@ SYSDIR = mc164
 #	Filename conventions
 #	--------------------
 
-OBJ = .obj
-LIB = .lib
-EXE =
+_OBJ = .obj
+_LIB = .lib
+_EXE =
 
 #	Platform-specific definitions
 #	-----------------------------
@@ -140,12 +140,12 @@ MC_COMM_SRC = \
 	$(MC164_SOURCE_DIR)mktime.c  \
 	$(MC164_SOURCE_DIR)gmtime.c 
 	
-MC_COMM_OBJ = $(addsuffix $(OBJ), $(shell ../shorten $(basename $(notdir $(MC_COMM_SRC)))))
+MC_COMM_OBJ = $(addsuffix $(_OBJ), $(shell ../shorten $(basename $(notdir $(MC_COMM_SRC)))))
 
-OV_LIBOV_OBJ = $(addsuffix $(OBJ), $(shell ../shorten $(basename $(notdir $(OV_LIBOV_SRC)))))
+OV_LIBOV_OBJ = $(addsuffix $(_OBJ), $(shell ../shorten $(basename $(notdir $(OV_LIBOV_SRC)))))
 
 OV_LIBOVKS_SRC := $(wildcard $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver*.c)
-OV_LIBOVKS_OBJ = $(addsuffix $(OBJ), $(shell ../shorten $(basename $(notdir $(OV_LIBOVKS_SRC)))))
+OV_LIBOVKS_OBJ = $(addsuffix $(_OBJ), $(shell ../shorten $(basename $(notdir $(OV_LIBOVKS_SRC)))))
 
 #	Generate rules for short filenames
 #	----------------------------------
@@ -194,7 +194,7 @@ $(OV_LIBTABLE_SRC) : $(OV_LIBRARIES)
 include ov_libov.in
 
 $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ) \
-	$(addsuffix $(OBJ), $(shell ../shorten time) $(shell ../shorten strdup) $(shell ../shorten strtoul) $(shell ../shorten gmtime) $(shell ../shorten mktime) $(shell ../shorten mc_div))
+	$(addsuffix $(_OBJ), $(shell ../shorten time) $(shell ../shorten strdup) $(shell ../shorten strtoul) $(shell ../shorten gmtime) $(shell ../shorten mktime) $(shell ../shorten mc_div))
 	@del $@
 	$(AR) create $@
 	@( $(foreach object, $^, echo $(AR) add $(object) to $@&) echo rem ) > $(basename $@).bat
@@ -206,7 +206,7 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ) \
 include ov_libovks.in
 
 $(OV_LIBOVKS_LIB) : $(OV_LIBOVKS_OBJ) \
-	$(addsuffix $(OBJ), $(shell ../shorten Kachel) $(shell ../shorten rpchead)  $(shell ../shorten CanKa) $(shell ../shorten mc_srvr))
+	$(addsuffix $(_OBJ), $(shell ../shorten Kachel) $(shell ../shorten rpchead)  $(shell ../shorten CanKa) $(shell ../shorten mc_srvr))
 	@del $@
 	$(AR) create $@
 	@( $(foreach object, $^, echo $(AR) add $(object) to $@&) echo rem ) > $(basename $@).bat
@@ -225,8 +225,8 @@ clean:
 	@del *.h
 	@del *.bak
 	@del *.lst
-	@del *$(LIB)
-	@del *$(OBJ)
+	@del *$(_LIB)
+	@del *$(_OBJ)
 
 #	Include dependencies
 #	--------------------

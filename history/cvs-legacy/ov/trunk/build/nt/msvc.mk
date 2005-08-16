@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.7 2005-02-25 13:26:42 ansgar Exp $
+#   $Id: msvc.mk,v 1.8 2005-08-16 13:00:31 markus Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -37,12 +37,12 @@ SYSDIR = nt
 #	Filename conventions
 #	--------------------
 
-OBJ = .obj
-LIB = .lib
-DLL = .dll
-EXE = .exe
-RES = .res
-CPL = .cpl
+_OBJ = .obj
+_LIB = .lib
+_DLL = .dll
+_EXE = .exe
+_RES = .res
+_CPL = .cpl
 
 #	Platform-specific definitions
 #	-----------------------------
@@ -97,13 +97,13 @@ all: targets
 #   Implicit Rules
 #   --------------
 
-.c$(OBJ):
+.c$(_OBJ):
 	$(COMPILE_C) $< -o$@
 
-.cpp$(OBJ):
+.cpp$(_OBJ):
 	$(CXX_COMPILE) $< -o$@
 
-.rc$(RES):
+.rc$(_RES):
 	$(RC) /fo$@ $<
 
 .lex.c:
@@ -143,11 +143,11 @@ $(OV_LIBOVKS_LIB) : $(OV_LIBOVKS_DLL)
 $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(OV_LIBOV_LIB) $(ACPLTKS_LIBS) $(LIBMPM_LIB) $(OV_LIBOVKS_RES)
 	$(LD) $^ wsock32.lib ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /NODEFAULTLIB:libc /out:$@ /implib:$(OV_LIBOVKS_LIB)
 
-ov_ksserver$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
-	$(CXX_COMPILE) $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c /out:ov_ksserver$(OBJ)
+ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
+	$(CXX_COMPILE) $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c /out:ov_ksserver$(_OBJ)
 
-ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
-	$(CXX_COMPILE) $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c /out:ov_ksclient$(OBJ)
+ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
+	$(CXX_COMPILE) $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c /out:ov_ksclient$(_OBJ)
 
 #	Executables
 #	-----------
@@ -195,7 +195,7 @@ $(NTSERVICE_INSTALL_EXE) : $(NTSERVICE_INSTALL_OBJ)
 #	ACPLT/OV database dumper
 
 fnmatch.obj: fnmatch.c
-	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  $(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ) $(DBDUMP_RES)
 	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
@@ -205,10 +205,10 @@ $(DBDUMP_EXE) : $(DBDUMP_OBJ) $(DBDUMP_RES)
 db_y.h: db_y.c
 
 db_y.obj: db_y.c
-	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  $(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
 
 db_lex.obj: db_lex.c
-	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  $(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
 
 $(DBPARSE_EXE) : $(DBPARSE_OBJ) $(DBPARSE_RES)
 	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
@@ -219,10 +219,10 @@ db_y.h: db_y.c
 
 
 db_lex.o: db_lex.c
-	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  $(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
 
 db_y.o: db_y.c
-	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  /I$(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  $(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $^
 
 $(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)  $(OVXIPARSE_RES)
 	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
@@ -282,16 +282,16 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 install : all
 	@echo Installing files to '$(ACPLT_BIN_DIR)'
-	@cmd /C for %i in ($(filter-out %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(ACPLT_BIN_DIR))
+	@cmd /C for %i in ($(filter-out %$(_LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(ACPLT_BIN_DIR))
 	@echo Installing files to '$(ACPLT_LIB_DIR)'
-	@cmd /C for %i in ($(filter %$(LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(ACPLT_LIB_DIR))
+	@cmd /C for %i in ($(filter %$(_LIB), $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)) ) do copy %i $(subst /,\, $(ACPLT_LIB_DIR))
 	@echo Done.
 
 #	Clean up
 #	--------
 
 clean:
-	@del *.c *.h *.bak *.map *.def *.exp *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES) *$(CPL) *.pdb *.ilk
+	@del *.c *.h *.bak *.map *.def *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL) *.pdb *.ilk
 
 #	Include dependencies
 #	--------------------

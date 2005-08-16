@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.6 2005-01-21 10:31:54 ansgar Exp $
+#   $Id: Makefile,v 1.7 2005-08-16 13:02:21 markus Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -35,11 +35,11 @@ SYSDIR = rmos
 #	Filename conventions
 #	--------------------
 
-OBJ = .obj
-LIB = .lib
-EXE = .exe
-DLL = .dll
-RES = .res
+_OBJ = .obj
+_LIB = .lib
+_EXE = .exe
+_DLL = .dll
+_RES = .res
 
 #	Platform-specific definitions
 #	-----------------------------
@@ -112,11 +112,11 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
+LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(_LIB)
 
-LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(LIB)
+LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 
-ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB) $(LIBRPC_LIB)
 
 #	Targets
 #	-------
@@ -212,14 +212,14 @@ $(KSHISTLIB_LIB) : $(KSHISTLIB_OBJ)
 #	ACPLT/OV database utility
 
 $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(LIBMPM_LIB)
-	@echo $(C_OBJS) $(filter %$(OBJ), $^), $@,, $(subst /,\, $(filter %$(LIB), $^ )) $(C_LIBS) > respfile
+	@echo $(C_OBJS) $(filter %$(_OBJ), $^), $@,, $(subst /,\, $(filter %$(_LIB), $^ )) $(C_LIBS) > respfile
 	$(LINK) @respfile
 	@del respfile
 
 #	ACPLT/KS-Server for ACPLT/OV
 
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBTABLE_OBJ) $(OV_LIBRARIES) $(OV_LIBOVKS_LIB) $(ACPLTKS_LIBS) $(OV_LIBOV_LIB) $(LIBMPM_LIB)
-	@echo $(C_OBJS) $(filter %$(OBJ), $^), $@,, $(subst /,\, $(filter %$(LIB), $^ )) $(C_LIBS) > respfile
+	@echo $(C_OBJS) $(filter %$(_OBJ), $^), $@,, $(subst /,\, $(filter %$(_LIB), $^ )) $(C_LIBS) > respfile
 	$(LINK) @respfile
 	@del respfile 
 
@@ -239,7 +239,7 @@ install : all
 #	--------
 
 clean:
-	@del *.c *.h *.bak *.map *$(LIB) *$(OBJ) *$(EXE) respfile
+	@del *.c *.h *.bak *.map *$(_LIB) *$(_OBJ) *$(_EXE) respfile
 
 #	Include dependencies
 #	--------------------

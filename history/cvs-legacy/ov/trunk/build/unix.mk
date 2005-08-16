@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.14 2005-01-24 17:58:20 ansgar Exp $
+#   $Id: unix.mk,v 1.15 2005-08-16 12:59:36 markus Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -31,10 +31,10 @@
 #	Filename conventions
 #	--------------------
 
-OBJ = .o
-LIB = .a
-DLL = .so
-EXE =
+_OBJ = .o
+_LIB = .a
+_DLL = .so
+_EXE =
 
 #	Platform-specific definitions
 #	-----------------------------
@@ -85,9 +85,9 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
+LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(_LIB)
 
-ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB) $(LIBRPC_LIB)
 
 #	Targets
 #	-------
@@ -102,10 +102,10 @@ all: targets example
 #   Implicit Rules
 #   --------------
 
-.c$(OBJ):
+.c$(_OBJ):
 	$(COMPILE_C) $< -o $@
 
-.cpp$(OBJ):
+.cpp$(_OBJ):
 	$(CXX_COMPILE) $< -o $@
 
 .lex.c:
@@ -295,7 +295,7 @@ install : all
 clean :
 	@echo Cleaning up...
 	@rm -f core *.c ov.h example.h dynov.h kshist.h db_y.h db_lex.h \
-		*$(LIB) *$(DLL) *$(OBJ) $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) \
+		*$(_LIB) *$(_DLL) *$(_OBJ) $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) \
 		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE)
 	@for i in *_inst.h ; do echo > $$i ; done
 	@echo Done.

@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.4 2005-01-21 10:31:48 ansgar Exp $
+#   $Id: Makefile,v 1.5 2005-08-16 13:02:15 markus Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -35,9 +35,9 @@ SYSDIR = openvms
 #	Filename conventions
 #	--------------------
 
-OBJ = .obj
-LIB = .olb
-EXE = .exe
+_OBJ = .obj
+_LIB = .olb
+_EXE = .exe
 
 #	Directories
 #	-----------
@@ -156,24 +156,24 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES) -
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
-LIBRPC_LIB			= $(LIBRPC_DIR)ucx$$rpcxdr$(LIB)
-LIBPLT_LIB			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) 
+LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(_LIB)
+LIBRPC_LIB			= $(LIBRPC_DIR)ucx$$rpcxdr$(_LIB)
+LIBPLT_LIB			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB)
 
 #	Rules
 #	-----
 
 .SUFFIXES:
 
-.SUFFIXES: .c .cpp .h $(LIB) $(OBJ) $(EXE) 
+.SUFFIXES: .c .cpp .h $(_LIB) $(_OBJ) $(_EXE)
 
 #	ACPLT/OV C code generator
 #	-------------------------
 
 OV_CODEGEN_SRC = $(OV_SOURCE_CODEGEN_DIR)ov_codegen.c	
 OV_CODEGEN_OBJ = $(foreach source, $(OV_CODEGEN_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_CODEGEN_EXE = ov_codegen$(EXE)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_CODEGEN_EXE = ov_codegen$(_EXE)
 
 #	ACPLT/OV library
 #	----------------
@@ -209,16 +209,16 @@ OV_LIBOV_SRC = \
 	$(OV_SOURCE_LIBOV_DIR)ov_vector.c \
 	$(OV_SOURCE_LIBOV_DIR)ov_vendortree.c
 OV_LIBOV_OBJ = $(foreach source, $(OV_LIBOV_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_LIBOV_LIB = libov$(LIB)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_LIBOV_LIB = libov$(_LIB)
 
 #	ACPLT/OV database utility
 #	-------------------------
 
 OV_DBUTIL_SRC = $(OV_SOURCE_DBUTIL_DIR)ov_dbutil.c	
 OV_DBUTIL_OBJ = $(foreach source, $(OV_DBUTIL_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_DBUTIL_EXE = ov_dbutil$(EXE)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_DBUTIL_EXE = ov_dbutil$(_EXE)
 
 #	ACPLT/OV library for ACPLT/KS integration, KS part
 #	--------------------------------------------------
@@ -244,7 +244,7 @@ KS_LIBOVKS_SRC = \
 	$(ACPLT_KS_SOURCE_DIR)xdrtcpcon.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdrudpcon.cpp
 KS_LIBOVKS_OBJ = $(foreach source, $(KS_LIBOVKS_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
+	$(basename $(notdir $(source)))$(_OBJ))
 
 #	ACPLT/OV library for ACPLT/KS integration, OV part
 #	--------------------------------------------------
@@ -264,21 +264,21 @@ OV_LIBOVKS_SRC = \
 	$(OV_SOURCE_LIBOVKS_DIR)ov_ksserver_unlink.c \
 	$(OV_SOURCE_LIBOVKS_DIR)ov_ksserver_xdr.c
 OV_LIBOVKS_OBJ = $(foreach source, $(OV_LIBOVKS_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_LIBOVKS_LIB = libovks$(LIB)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_LIBOVKS_LIB = libovks$(_LIB)
 
 #	ACPLT/KS-Server for ACPLT/OV
 #	----------------------------
 
 OV_SERVER_SRC = $(OV_SOURCE_SERVER_DIR)ov_server.c
-OV_SERVER_OBJ = $(foreach source, $(OV_SERVER_SRC), $(basename $(notdir $(source)))$(OBJ))
-OV_SERVER_EXE = ov_server$(EXE)
+OV_SERVER_OBJ = $(foreach source, $(OV_SERVER_SRC), $(basename $(notdir $(source)))$(_OBJ))
+OV_SERVER_EXE = ov_server$(_EXE)
 
 #	Table of statically linked ACPLT/OV libraries
 #	---------------------------------------------
 
 OV_LIBTABLE_SRC = ov_libtable.c
-OV_LIBTABLE_OBJ = ov_libtable$(OBJ)
+OV_LIBTABLE_OBJ = ov_libtable$(_OBJ)
 
 #
 #	ACPLT/OV example library
@@ -288,8 +288,8 @@ EXAMPLE_SRC = \
 	$(OV_SOURCE_EXAMPLE_DIR)example_gvc.c \
 	$(OV_SOURCE_EXAMPLE_DIR)example_testassoc.c \
 	$(OV_SOURCE_EXAMPLE_DIR)example_testclass.c				 
-EXAMPLE_OBJ = $(foreach source, $(EXAMPLE_SRC), $(basename $(notdir $(source)))$(OBJ))
-EXAMPLE_LIB = example$(LIB)
+EXAMPLE_OBJ = $(foreach source, $(EXAMPLE_SRC), $(basename $(notdir $(source)))$(_OBJ))
+EXAMPLE_LIB = example$(_LIB)
 
 #	Targets
 #	-------
@@ -307,11 +307,11 @@ all: $(TARGETS)
 #	Implicit Rules
 #	--------------
 
-.c$(OBJ):
+.c$(_OBJ):
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(COMPILE_C) $<
 
-.cpp$(OBJ):
+.cpp$(_OBJ):
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) $<
 
@@ -339,7 +339,7 @@ $(OV_LIBTABLE_SRC) : $(OV_LIBRARIES)
 
 #	ACPLT/OV library
 
-$(OV_LIBOV_LIB) : ov$(OBJ) $(OV_LIBOV_OBJ)
+$(OV_LIBOV_LIB) : ov$(_OBJ) $(OV_LIBOV_OBJ)
 	@if (f$$search("$@").eqs."") then $(AR) /create $@
 	$(AR) /repl $@ $?
 
@@ -347,39 +347,39 @@ ov.c : $(OV_MODEL_DIR)ov.ovm
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	mc []$(OV_CODEGEN_EXE) -f $^ 
 
-$(OV_LIBOV_OBJ) : %$(OBJ) : $(OV_SOURCE_LIBOV_DIR)%.c
+$(OV_LIBOV_OBJ) : %$(_OBJ) : $(OV_SOURCE_LIBOV_DIR)%.c
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(COMPILE_C) $<
 
 #	ACPLT/OV library for ACPLT/KS integration
 
-$(OV_LIBOVKS_LIB) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) ov_ksserver$(OBJ) ov_ksclient$(OBJ) ucx$$ioctl_routine$(OBJ) 
+$(OV_LIBOVKS_LIB) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) ov_ksserver$(_OBJ) ov_ksclient$(_OBJ) ucx$$ioctl_routine$(_OBJ)
 	@if (f$$search("$@").eqs."") then $(AR) /create $@
 	$(AR) /repl $@ $?
 
-$(KS_LIBOVKS_OBJ) : %$(OBJ) : $(ACPLT_KS_SOURCE_DIR)%.cpp
+$(KS_LIBOVKS_OBJ) : %$(_OBJ) : $(ACPLT_KS_SOURCE_DIR)%.cpp
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) $<
 
-$(OV_LIBOVKS_OBJ) : %$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)%.c
+$(OV_LIBOVKS_OBJ) : %$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)%.c
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(COMPILE_C) $<
 
-ov_ksserver$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
+ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) $<
 
-ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
+ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) $<
 
-ucx$$ioctl_routine$(OBJ) : 
+ucx$$ioctl_routine$(_OBJ) :
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(CXX_COMPILE) ucx$$examples:ucx$$ioctl_routine.c
 
 #	ACPLT/OV example library
 
-$(EXAMPLE_LIB) : example$(OBJ) $(EXAMPLE_OBJ)
+$(EXAMPLE_LIB) : example$(_OBJ) $(EXAMPLE_OBJ)
 	@if (f$$search("$@").eqs."") then $(AR) /create $@
 	$(AR) /repl $@ $?
 
@@ -387,7 +387,7 @@ example.c : $(OV_SOURCE_EXAMPLE_DIR)example.ovm
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	mc []$(OV_CODEGEN_EXE) -f $^ --include-path $(OV_MODEL_DIR) -l example 
 
-$(EXAMPLE_OBJ) : %$(OBJ) : $(OV_SOURCE_EXAMPLE_DIR)%.c
+$(EXAMPLE_OBJ) : %$(_OBJ) : $(OV_SOURCE_EXAMPLE_DIR)%.c
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(COMPILE_C) $<
 
@@ -396,9 +396,9 @@ $(EXAMPLE_OBJ) : %$(OBJ) : $(OV_SOURCE_EXAMPLE_DIR)%.c
 
 #	ACPLT/OV C code generator
 
-$(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ) ov_ovmscanner$(OBJ) ov_ovmparser$(OBJ)
+$(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ) ov_ovmscanner$(_OBJ) ov_ovmparser$(_OBJ)
 	@if (f$$search("$@").nes."") then del $@;* /nolog
-	$(LINK) $(LINK_FLAGS) /executable=$@ $^,sys$$library:vaxcrtl$(LIB)/lib
+	$(LINK) $(LINK_FLAGS) /executable=$@ $^,sys$$library:vaxcrtl$(_LIB)/lib
 
 ov_codegen.obj : $(OV_SOURCE_CODEGEN_DIR)ov_codegen.c
 	@if (f$$search("$@").nes."") then del $@;* /nolog
@@ -427,7 +427,7 @@ $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ)
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(LINK) $(LINK_FLAGS) /executable=$@ $^, $(OV_LIBOV_LIB)/lib, $(LIBMPM_LIB)/lib
 
-$(OV_DBUTIL_OBJ) : %$(OBJ) : $(OV_SOURCE_DBUTIL_DIR)%.c
+$(OV_DBUTIL_OBJ) : %$(_OBJ) : $(OV_SOURCE_DBUTIL_DIR)%.c
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(COMPILE_C) $<
 
@@ -442,7 +442,7 @@ $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBTABLE_OBJ)
 	[]$(OV_LIBOVKS_LIB)/lib, []$(OV_LIBOV_LIB)/lib, \
 	$(LIBPLT_LIB)/lib, $(LIBMPM_LIB)/lib, $(LIBRPC_LIB)/lib
 
-$(OV_SERVER_OBJ) : %$(OBJ) : $(OV_SOURCE_SERVER_DIR)%.c
+$(OV_SERVER_OBJ) : %$(_OBJ) : $(OV_SOURCE_SERVER_DIR)%.c
 	@if (f$$search("$@").nes."") then del $@;* /nolog
 	$(COMPILE_C) $<
 
@@ -461,9 +461,9 @@ clean:
 	if (f$$search("*.c").nes."") then del *.c;* /nolog
 	if (f$$search("*.h").nes."") then del *.h;* /nolog
 	if (f$$search("*.lis").nes."") then del *.lis;* /nolog
-	if (f$$search("*$(OBJ)").nes."") then del *$(OBJ);* /nolog
-	if (f$$search("*$(LIB)").nes."") then del *$(LIB);* /nolog
-	if (f$$search("*$(EXE)").nes."") then del *$(EXE);* /nolog
+	if (f$$search("*$(_OBJ)").nes."") then del *$(_OBJ);* /nolog
+	if (f$$search("*$(_LIB)").nes."") then del *$(_LIB);* /nolog
+	if (f$$search("*$(_EXE)").nes."") then del *$(_EXE);* /nolog
 
 #	Include dependencies
 #	--------------------

@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.18 2005-01-24 17:58:20 ansgar Exp $
+#   $Id: generic.mk,v 1.19 2005-08-16 12:59:36 markus Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -210,7 +210,8 @@ OV_INCLUDES = \
 	-I$(OV_SOURCE_TASKLIB_DIR) \
 	-I$(OV_SOURCE_DBPARSE_DIR) \
 	-I$(OV_SOURCE_DBDUMP_DIR) \
-	-I$(LIBMPM_DIR)
+	-I$(LIBMPM_DIR) \
+	-I.
 else
 ifeq ($(COMPILER), MSVC)
 OV_INCLUDES = \
@@ -225,14 +226,16 @@ OV_INCLUDES = \
 	/I$(OV_SOURCE_TASKLIB_DIR) \
 	/I$(OV_SOURCE_DBPARSE_DIR) \
 	/I$(OV_SOURCE_DBDUMP_DIR) \
-	/I$(LIBMPM_DIR)
+	/I$(LIBMPM_DIR) \
+	/I.
 else
 ifeq ($(COMPILER), KEIL)
 OV_INCLUDES = \
 	-I$(KEIL_INCLUDE_DIR) \
 	-I$(OV_INCLUDE_DIR) \
 	-I$(OV_MODEL_DIR) \
-	-I$(LIBMPM_DIR)
+	-I$(LIBMPM_DIR) \
+	-I.
 else
 OV_INCLUDES = \
 	-I$(OV_INCLUDE_DIR) \
@@ -254,37 +257,37 @@ endif
 #	---------------------------------
 
 DEFINES	 = $(LIBRPC_DEFINES) $(ACPLTKS_DEFINES) $(OV_DEFINES)
-INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES) -I.
+INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
+LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(_LIB)
 
 ifeq ($(SYSTEM), NT)
-LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(LIB)
+LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 endif
 
 ifeq ($(SYSTEM), RMOS)
-LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(LIB)
+LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 endif
 
 ifeq ($SYSTEM), OPENVMS)
 LIBRPC_LIB			= $(VMS_LIBRPC_DIR)ucx$$rpcxdr
 endif
 
-ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
+ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB) $(LIBRPC_LIB)
 
-LIBPLT_LIB			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB)
-LIBKS_LIB			= $(ACPLT_PLT_BUILD_DIR)libks$(LIB)
-LIBKSCLN_LIB			= $(ACPLT_PLT_BUILD_DIR)libkscln$(LIB)
+LIBPLT_LIB			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB)
+LIBKS_LIB			= $(ACPLT_PLT_BUILD_DIR)libks$(_LIB)
+LIBKSCLN_LIB			= $(ACPLT_PLT_BUILD_DIR)libkscln$(_LIB)
 
 #   Rules
 #   -----
 
 .SUFFIXES:
 
-.SUFFIXES: .c .cpp .h .y .lex .rc .ovm $(RES) $(LIB) $(OBJ) $(EXE) $(DLL)
+.SUFFIXES: .c .cpp .h .y .lex .rc .ovm $(_RES) $(_LIB) $(_OBJ) $(_EXE) $(_DLL)
 
 VPATH = $(SOURCE_DIRS) $(OV_MODEL_DIR) $(ACPLT_KS_INCLUDE_KS_DIR) .
 
@@ -294,9 +297,9 @@ VPATH = $(SOURCE_DIRS) $(OV_MODEL_DIR) $(ACPLT_KS_INCLUDE_KS_DIR) .
 OV_CODEGEN_SRC := ov_ovmparser.c ov_ovmscanner.c \
 	$(wildcard $(OV_SOURCE_CODEGEN_DIR)*.c)
 OV_CODEGEN_OBJ  = $(foreach source, $(OV_CODEGEN_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_CODEGEN_EXE  = ov_codegen$(EXE)
-OV_CODEGEN_RES	 = $(basename $(OV_CODEGEN_EXE))$(RES)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_CODEGEN_EXE  = ov_codegen$(_EXE)
+OV_CODEGEN_RES	 = $(basename $(OV_CODEGEN_EXE))$(_RES)
 
 #	ACPLT/OV framework builder
 #	--------------------------
@@ -304,28 +307,28 @@ OV_CODEGEN_RES	 = $(basename $(OV_CODEGEN_EXE))$(RES)
 OV_BUILDER_SRC := ov_ovmparser.c ov_ovmscanner.c \
 	$(wildcard $(OV_SOURCE_BUILDER_DIR)*.c)
 OV_BUILDER_OBJ  = $(foreach source, $(OV_BUILDER_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_BUILDER_EXE  = ov_builder$(EXE)
-OV_BUILDER_RES	= $(basename $(OV_BUILDER_EXE))$(RES)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_BUILDER_EXE  = ov_builder$(_EXE)
+OV_BUILDER_RES	= $(basename $(OV_BUILDER_EXE))$(_RES)
 
 #	ACPLT/OV library
 #	----------------
 
 OV_LIBOV_SRC := ov.c $(wildcard $(OV_SOURCE_LIBOV_DIR)*.c)
 OV_LIBOV_OBJ  = $(foreach source, $(OV_LIBOV_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_LIBOV_LIB  = libov$(LIB)
-OV_LIBOV_DLL  = libov$(DLL)
-OV_LIBOV_RES  = libov$(RES)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_LIBOV_LIB  = libov$(_LIB)
+OV_LIBOV_DLL  = libov$(_DLL)
+OV_LIBOV_RES  = libov$(_RES)
 
 #	ACPLT/OV database utility
 #	-------------------------
 
 OV_DBUTIL_SRC := $(wildcard $(OV_SOURCE_DBUTIL_DIR)*.c)
 OV_DBUTIL_OBJ  = $(foreach source, $(OV_DBUTIL_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_DBUTIL_EXE  = ov_dbutil$(EXE)
-OV_DBUTIL_RES  = ov_dbutil$(RES)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_DBUTIL_EXE  = ov_dbutil$(_EXE)
+OV_DBUTIL_RES  = ov_dbutil$(_RES)
 
 #	ACPLT/OV library for ACPLT/KS integration, KS part
 #	--------------------------------------------------
@@ -350,130 +353,130 @@ KS_LIBOVKS_SRC = \
 	$(ACPLT_KS_SOURCE_DIR)xdrtcpcon.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdrudpcon.cpp
 KS_LIBOVKS_OBJ = $(foreach source, $(KS_LIBOVKS_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
+	$(basename $(notdir $(source)))$(_OBJ))
 
 #	ACPLT/OV library for ACPLT/KS integration, OV part
 #	--------------------------------------------------
 
 OV_LIBOVKS_SRC := $(wildcard $(OV_SOURCE_LIBOVKS_DIR)*.c)
 OV_LIBOVKS_OBJ  = $(foreach source, $(OV_LIBOVKS_SRC), \
-	$(basename $(notdir $(source)))$(OBJ))
-OV_LIBOVKS_LIB  = libovks$(LIB)
-OV_LIBOVKS_DLL  = libovks$(DLL)
-OV_LIBOVKS_RES  = libovks$(RES)
+	$(basename $(notdir $(source)))$(_OBJ))
+OV_LIBOVKS_LIB  = libovks$(_LIB)
+OV_LIBOVKS_DLL  = libovks$(_DLL)
+OV_LIBOVKS_RES  = libovks$(_RES)
 
 #	ACPLT/KS-Server for ACPLT/OV
 #   	----------------------------
 
 OV_SERVER_SRC := $(wildcard $(OV_SOURCE_SERVER_DIR)*.c)
-OV_SERVER_OBJ  = $(foreach source, $(OV_SERVER_SRC), $(basename $(notdir $(source)))$(OBJ))
-OV_SERVER_EXE  = ov_server$(EXE)
-OV_SERVER_RES  = ov_server$(RES)
+OV_SERVER_OBJ  = $(foreach source, $(OV_SERVER_SRC), $(basename $(notdir $(source)))$(_OBJ))
+OV_SERVER_EXE  = ov_server$(_EXE)
+OV_SERVER_RES  = ov_server$(_RES)
 
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
 #   	--------------------------------------------------
 
 OV_NTSERVICE_SRC = $(OV_SOURCE_NTSERVICE_DIR)ov_ntservice.c
-OV_NTSERVICE_OBJ = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(OBJ))
-OV_NTSERVICE_EXE = ov_ntservice$(EXE)
-OV_NTSERVICE_RES = ov_ntservice$(RES)
+OV_NTSERVICE_OBJ = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(_OBJ))
+OV_NTSERVICE_EXE = ov_ntservice$(_EXE)
+OV_NTSERVICE_RES = ov_ntservice$(_RES)
 
 #	ACPLT/OV Control Panel for the Windows NT service
 #	-------------------------------------------------
 
 OV_CONTROLPANEL_SRC = $(OV_SOURCE_NTSERVICE_DIR)ov_controlpanel.c
-OV_CONTROLPANEL_OBJ = $(foreach source, $(OV_CONTROLPANEL_SRC), $(basename $(notdir $(source)))$(OBJ))
-OV_CONTROLPANEL_CPL = ov_controlpanel$(CPL)
-OV_CONTROLPANEL_RES = ov_controlpanel$(RES)
+OV_CONTROLPANEL_OBJ = $(foreach source, $(OV_CONTROLPANEL_SRC), $(basename $(notdir $(source)))$(_OBJ))
+OV_CONTROLPANEL_CPL = ov_controlpanel$(_CPL)
+OV_CONTROLPANEL_RES = ov_controlpanel$(_RES)
 
 #	Windows NT service installer
 #   	----------------------------
 
 OV_NTSERVICE_SRC = $(OV_SOURCE_NTSERVICE_DIR)install_ntservice.c
-OV_NTSERVICE_OBJ = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(OBJ))
-OV_NTSERVICE_EXE = install_ntservice$(EXE)
+OV_NTSERVICE_OBJ = $(foreach source, $(OV_NTSERVICE_SRC), $(basename $(notdir $(source)))$(_OBJ))
+OV_NTSERVICE_EXE = install_ntservice$(_EXE)
 
 #	Table of statically linked ACPLT/OV libraries
 #	---------------------------------------------
 
 OV_LIBTABLE_SRC = ov_libtable.c
-OV_LIBTABLE_OBJ = ov_libtable$(OBJ)
+OV_LIBTABLE_OBJ = ov_libtable$(_OBJ)
 
 #
 #	ACPLT/OV example library
 #	------------------------
 
 EXAMPLE_SRC := ov_expression_parser.c ov_expression_scanner.c example.c $(wildcard $(OV_SOURCE_EXAMPLE_DIR)*.c)
-EXAMPLE_OBJ  = $(foreach source, $(EXAMPLE_SRC), $(basename $(notdir $(source)))$(OBJ))
-EXAMPLE_LIB  = example$(LIB)
-EXAMPLE_DLL  = example$(DLL)
+EXAMPLE_OBJ  = $(foreach source, $(EXAMPLE_SRC), $(basename $(notdir $(source)))$(_OBJ))
+EXAMPLE_LIB  = example$(_LIB)
+EXAMPLE_DLL  = example$(_DLL)
 
 #
 #	ACPLT/OV KsHistory library
 #	--------------------------
 
 KSHISTLIB_SRC := kshist.c $(wildcard $(OV_SOURCE_KSHISTLIB_DIR)*.c)
-KSHISTLIB_OBJ  = $(foreach source, $(KSHISTLIB_SRC), $(basename $(notdir $(source)))$(OBJ))
-KSHISTLIB_LIB  = kshist$(LIB)
-KSHISTLIB_DLL  = kshist$(DLL)
+KSHISTLIB_OBJ  = $(foreach source, $(KSHISTLIB_SRC), $(basename $(notdir $(source)))$(_OBJ))
+KSHISTLIB_LIB  = kshist$(_LIB)
+KSHISTLIB_DLL  = kshist$(_DLL)
 
 #
 #	ACPLT/OV dynov library
 #	----------------------
 
 DYNOV_SRC := dynov.c $(wildcard $(OV_SOURCE_DYNOV_DIR)*.c)
-DYNOV_OBJ  = $(foreach source, $(DYNOV_SRC), $(basename $(notdir $(source)))$(OBJ))
-DYNOV_LIB  = dynov$(LIB)
-DYNOV_DLL  = dynov$(DLL)
+DYNOV_OBJ  = $(foreach source, $(DYNOV_SRC), $(basename $(notdir $(source)))$(_OBJ))
+DYNOV_LIB  = dynov$(_LIB)
+DYNOV_DLL  = dynov$(_DLL)
 
 #
 #	ACPLT/OV tasking library
 #	------------------------
 
 TASKLIB_SRC := tasklib.c $(wildcard $(OV_SOURCE_TASKLIB_DIR)*.c)
-TASKLIB_OBJ  = $(foreach source, $(TASKLIB_SRC), $(basename $(notdir $(source)))$(OBJ))
-TASKLIB_LIB  = tasklib$(LIB)
-TASKLIB_DLL  = tasklib$(DLL)
+TASKLIB_OBJ  = $(foreach source, $(TASKLIB_SRC), $(basename $(notdir $(source)))$(_OBJ))
+TASKLIB_LIB  = tasklib$(_LIB)
+TASKLIB_DLL  = tasklib$(_DLL)
 
 #	ACPLT/OV database dumper
 #	------------------------
 
 DBDUMP_SRC := $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.cpp) $(wildcard $(OV_SOURCE_DBDUMP_DIR)*.c)
-DBDUMP_OBJ  = $(foreach source, $(DBDUMP_SRC), $(basename $(notdir $(source)))$(OBJ))
-DBDUMP_EXE  = ov_dbdump$(EXE)
-DBDUMP_RES  = $(basename $(DBDUMP_EXE))$(RES)
+DBDUMP_OBJ  = $(foreach source, $(DBDUMP_SRC), $(basename $(notdir $(source)))$(_OBJ))
+DBDUMP_EXE  = ov_dbdump$(_EXE)
+DBDUMP_RES  = $(basename $(DBDUMP_EXE))$(_RES)
 
 #	ACPLT/OV database parser
 #	------------------------
 
 DBPARSE_SRC := dbparse.cpp dbparse1.cpp db_lex.c db_y.c
-DBPARSE_OBJ  = $(foreach source, $(DBPARSE_SRC), $(basename $(notdir $(source)))$(OBJ))
-DBPARSE_EXE  = ov_dbparse$(EXE)
-DBPARSE_RES  = $(basename $(DBPARSE_EXE))$(RES)
+DBPARSE_OBJ  = $(foreach source, $(DBPARSE_SRC), $(basename $(notdir $(source)))$(_OBJ))
+DBPARSE_EXE  = ov_dbparse$(_EXE)
+DBPARSE_RES  = $(basename $(DBPARSE_EXE))$(_RES)
 
 #	ACPLT/OV OVXI parser
 #	--------------------
 
 OVXIPARSE_SRC := dbparse.cpp ovxiparse.cpp db_lex.c db_y.c
-OVXIPARSE_OBJ  = $(foreach source, $(OVXIPARSE_SRC), $(basename $(notdir $(source)))$(OBJ))
-OVXIPARSE_EXE  = ov_ovxiparse$(EXE)
-OVXIPARSE_RES  = $(basename $(OVXIPARSE_EXE))$(RES)
+OVXIPARSE_OBJ  = $(foreach source, $(OVXIPARSE_SRC), $(basename $(notdir $(source)))$(_OBJ))
+OVXIPARSE_EXE  = ov_ovxiparse$(_EXE)
+OVXIPARSE_RES  = $(basename $(OVXIPARSE_EXE))$(_RES)
 
 #	ACPLT/OV makmak
 #	---------------
 
 MAKMAK_SRC := $(wildcard $(OV_SOURCE_MAKMAK_DIR)*.c)
-MAKMAK_OBJ  = $(foreach source, $(MAKMAK_SRC), $(basename $(notdir $(source)))$(OBJ))
-MAKMAK_EXE  = ov_makmak$(EXE)
-MAKMAK_RES  = $(basename $(MAKMAK_EXE))$(RES)
+MAKMAK_OBJ  = $(foreach source, $(MAKMAK_SRC), $(basename $(notdir $(source)))$(_OBJ))
+MAKMAK_EXE  = ov_makmak$(_EXE)
+MAKMAK_RES  = $(basename $(MAKMAK_EXE))$(_RES)
 
 #	ACPLT/OV library info
 #	---------------------
 
 LIBINFO_SRC := $(wildcard $(OV_SOURCE_LIBINFO_DIR)*.c)
-LIBINFO_OBJ  = $(foreach source, $(LIBINFO_SRC), $(basename $(notdir $(source)))$(OBJ))
-LIBINFO_EXE  = ov_libinfo$(EXE)
-LIBINFO_RES  = $(basename $(LIBINFO_EXE))$(RES)
+LIBINFO_OBJ  = $(foreach source, $(LIBINFO_SRC), $(basename $(notdir $(source)))$(_OBJ))
+LIBINFO_EXE  = ov_libinfo$(_EXE)
+LIBINFO_RES  = $(basename $(LIBINFO_EXE))$(_RES)
 
 #	Targets and their sources
 #	-------------------------
