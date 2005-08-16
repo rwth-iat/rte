@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.12 2005-08-15 08:49:53 markus Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/log.cpp,v 1.13 2005-08-16 14:56:17 markus Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -251,7 +251,7 @@ PltSyslog::log(int logtype, int priority, const char * msg)
 void
 PltSyslog::info(const char *msg)
 {
-    log(PltLog::LOGFILTER_INFO, LOG_INFO, msg);
+    log(LOGFILTER_INFO, LOG_INFO, msg);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ PltSyslog::info(const char *msg)
 void
 PltSyslog::debug(const char *msg)
 {
-    log(PltLog::LOGFILTER_DEBUG, LOG_DEBUG, msg);
+    log(LOGFILTER_DEBUG, LOG_DEBUG, msg);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -267,7 +267,7 @@ PltSyslog::debug(const char *msg)
 void
 PltSyslog::warning(const char *msg)
 {
-    log(PltLog::LOGFILTER_WARNING, LOG_WARNING, msg);
+    log(LOGFILTER_WARNING, LOG_WARNING, msg);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -275,7 +275,7 @@ PltSyslog::warning(const char *msg)
 void
 PltSyslog::error(const char *msg)
 {
-    log(PltLog::LOGFILTER_ERROR, LOG_ERR, msg);
+    log(LOGFILTER_ERROR, LOG_ERR, msg);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -283,7 +283,7 @@ PltSyslog::error(const char *msg)
 void
 PltSyslog::alert(const char *msg)
 {
-    log(PltLog::LOGFILTER_ALERT, LOG_ALERT, msg);
+    log(LOGFILTER_ALERT, LOG_ALERT, msg);
 }
 
 //////////////////////////////////////////////////////////////////////
