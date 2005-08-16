@@ -1,5 +1,5 @@
 
-#   $Id: borland.mk,v 1.5 2005-01-21 10:31:42 ansgar Exp $
+#   $Id: borland.mk,v 1.6 2005-08-16 12:27:47 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -87,36 +87,6 @@ RC 			= brc32 -i$(OV_INCLUDE_DIR)
 #	--------------------
 
 include ../generic.mk
-
-#	C-Includes
-#	----------
-
-C_INCLUDES =
-
-#	ONCRPC-Includes and defines
-#	---------------------------
-
-LIBRPC_DEFINES = \
-	$(LIBRPC_PLATFORM_DEFINES)\
-	-DWIN32
-LIBRPC_INCLUDES	= \
-	-I$(ONCRPC_INCLUDE_DIR)
-
-#	OV-Includes
-#	-----------
-
-OV_INCLUDES = $(OV_INCLUDES) \
-	-I.\
-	-I$(OV_SOURCE_CODEGEN_DIR) \
-	-I$(OV_SOURCE_BUILDER_DIR) \
-	-I$(OV_SOURCE_NTSERVICE_DIR)
-
-
-#	all defines and includes together
-#	---------------------------------
-
-DEFINES	 = $(LIBRPC_DEFINES) $(ACPLTKS_DEFINES) $(OV_DEFINES)
-INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 
 #	Targets
 #	-------
