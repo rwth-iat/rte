@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.7 2005-08-16 13:02:21 markus Exp $
+#   $Id: Makefile,v 1.8 2005-08-17 08:20:47 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -132,13 +132,13 @@ all: targets
 #   Implicit Rules
 #   --------------
 
-.c$(OBJ):
+.c$(_OBJ):
 	$(COMPILE_C) $< -o$@
 
-.cpp$(OBJ):
+.cpp$(_OBJ):
 	$(CXX_COMPILE) -Jgx $< -o$@
 
-.rc$(RES):
+.rc$(_RES):
 	$(RC) -r -fo$@ $<
 
 .lex.c:
@@ -186,10 +186,10 @@ $(OV_LIBOVKS_LIB) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ)
 	$(AR) $@ @respfile
 	@del respfile
 
-ov_ksserver$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
+ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	$(CXX_COMPILE) -Jgd $< -o$@
 
-ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
+ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 	$(CXX_COMPILE) -Jgx $< -o$@
 
 #	ACPLT/OV example library

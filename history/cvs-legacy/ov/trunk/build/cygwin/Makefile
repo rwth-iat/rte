@@ -1,4 +1,4 @@
-#   $Id: Makefile,v 1.11 2005-08-16 12:59:48 markus Exp $
+#   $Id: Makefile,v 1.12 2005-08-17 08:20:47 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -255,7 +255,7 @@ $(KSHISTLIB_LIB) : $(KSHISTLIB_DLL)
 
 $(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(filter %$(OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 kshist.c kshist.h : $(OV_CODEGEN_EXE)

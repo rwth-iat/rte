@@ -1,4 +1,4 @@
-#   $Id: unix_solaris.mk,v 1.9 2005-08-16 12:59:36 markus Exp $
+#   $Id: unix_solaris.mk,v 1.10 2005-08-17 08:20:47 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -159,10 +159,10 @@ $(OV_LIBOVKS_LIB) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ)
 $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(ACPLTKS_LIBS)
 	$(LD) -o $@ $^ 
 
-ov_ksserver$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
+ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	$(CXX_COMPILE) -o $@ $<
 
-ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
+ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 	$(CXX_COMPILE) -o $@ $<
 
 #	Executables

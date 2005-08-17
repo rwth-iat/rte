@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.15 2005-08-16 12:59:36 markus Exp $
+#   $Id: unix.mk,v 1.16 2005-08-17 08:20:47 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -51,7 +51,7 @@ FLEX			= flex
 BISON			= bison
 
 CC				= gcc
-CC_FLAGS		= -d -g -Wall -O2 -shared
+CC_FLAGS		= -g -Wall -O2 -shared
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= $(CC)
@@ -156,10 +156,10 @@ $(OV_LIBOVKS_LIB) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ)
 $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(ACPLTKS_LIBS)
 	$(LD) -o $@ $^ $(CXX_LIBS)
 
-ov_ksserver$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
+ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	$(CXX_COMPILE) -o $@ $<
 
-ov_ksclient$(OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
+ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 	$(CXX_COMPILE) -o $@ $<
 
 #	Executables

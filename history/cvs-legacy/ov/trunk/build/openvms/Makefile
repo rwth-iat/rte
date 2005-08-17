@@ -1,5 +1,5 @@
 
-#   $Id: Makefile,v 1.5 2005-08-16 13:02:15 markus Exp $
+#   $Id: Makefile,v 1.6 2005-08-17 08:20:47 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -328,8 +328,8 @@ OV_LIBRARIES = $(EXAMPLE_LIB)
 
 $(OV_LIBTABLE_SRC) : $(OV_LIBRARIES)
 	!# Generating static library table file '$@'
-	@if (f$$search("mklibtab$(OBJ)").nes."") then del mklibtab$(OBJ);* /nolog
-	@if (f$$search("mklibtab$(EXE)").nes."") then del mklibtab$(EXE);* /nolog
+	@if (f$$search("mklibtab$(_OBJ)").nes."") then del mklibtab$(_OBJ);* /nolog
+	@if (f$$search("mklibtab$(_EXE)").nes."") then del mklibtab$(_EXE);* /nolog
 	$(CC) [-]mklibtab.c
 	$(LINK) mklibtab
 	$(MKLIBTAB) $@ $(basename $^)	
