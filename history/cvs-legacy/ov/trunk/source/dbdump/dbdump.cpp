@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.13 2005-07-14 07:58:41 ansgar Exp $
+ * $Id: dbdump.cpp,v 1.14 2005-08-17 09:11:31 ansgar Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -1082,6 +1082,7 @@ int main(int argc, char **argv)						// command line arguments
 	int 		i;
 	KsString	start_path;			// domain specified as root object
 	bool		overwrite_output = false;	// overwrite output file without prompting
+	ifstream    test_file;
 
 	cout << "** ACPLT/OV database dumper, version " << OV_VER_DBDUMP << " **" << endl
 		 << "(c) 2002 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
@@ -1217,16 +1218,26 @@ int main(int argc, char **argv)						// command line arguments
 		}
 	}
 
-	db_file.open(outfile, ios::noreplace);	// open output file
-
-	if (! (overwrite_output || db_file.good() )) {
+	test_file.open(outfile, ios::in);	// test if output file exists
+	if (test_file.good()) {
 		cout << "Output file " << outfile << " already exists:" << endl
 			 << "choose another file name!" << endl;
+		test_file.close();
 		delete sp->kscpath;	
 		delete sp;
 		delete dop;
 		return -1;
 	}
+
+	db_file.open(outfile, ios::out);	// open file for output
+	if (!db_file.good()) {
+		cout << "Output file " << outfile << " could not be created!" << endl;
+		delete sp->kscpath;	
+		delete sp;
+		delete dop;
+		return -1;
+	}
+	
 	start_path = sp->host_and_server + sp->path;
 	KscAnyCommObject start_object(start_path);		// create comm. object to start with
 	if (!start_object.getEngPropsUpdate()) {
