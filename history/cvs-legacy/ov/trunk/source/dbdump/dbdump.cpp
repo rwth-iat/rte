@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.14 2005-08-17 09:11:31 ansgar Exp $
+ * $Id: dbdump.cpp,v 1.15 2005-08-17 09:47:42 markus Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -70,10 +70,10 @@ void Indent(int ind)
 int CompareKsStrings(KsString mask, KsString name, int no_case)
 {
 	char		*x, *y;
-	error_t		*err_c;					// Error code for Acplt_FNMatch()
+	error_tt	*err_c;					// Error code for Acplt_FNMatch()
 	int			ret;
 
-	err_c = new error_t;
+	err_c = new error_tt;
 	x = (char *)malloc((uint)mask.len() + 1);
 	y = (char *)malloc((uint)name.len() + 1);
 	strcpy(x, mask);					// Acplt_FNMatch requires char* arguments
@@ -1217,6 +1217,7 @@ int main(int argc, char **argv)						// command line arguments
 			return -1;
 		}
 	}
+
 
 	test_file.open(outfile, ios::in);	// test if output file exists
 	if (test_file.good()) {
