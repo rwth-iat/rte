@@ -1,5 +1,5 @@
 /*
- * $Id: fnmatch.h,v 1.3 2005-01-27 12:17:01 ansgar Exp $
+ * $Id: fnmatch.h,v 1.4 2005-08-17 09:40:10 markus Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -38,7 +38,7 @@ typedef enum error_type {ERR_OK,											/* Errorcodes */
 						 ERR_INVALID_MASK_CHAR,
 						 ERR_NO_MEM,
 						 ERR_INVALID_NAME
-						} error_t;
+						} error_tt;
 
 enum list_el_type {str_type, set_type, quest_type, ast_type};	/* Typ des Listenelements */
 
@@ -59,7 +59,7 @@ typedef struct list_struct {						   /* Typ für Elemente der Tokenliste */
 extern "C" {
 #endif
 
-list_t *Acplt_Compile_Mask (char *mask, error_t *err_c);
+list_t *Acplt_Compile_Mask (char *mask, error_tt *err_c);
 /* Wandelt Eingabestring in internes Maskenformat um */
 
 int Acplt_Compare(list_t *cmask, char *name);
@@ -68,7 +68,7 @@ int Acplt_Compare(list_t *cmask, char *name);
 void Acplt_Clear_Mask(list_t *cmask);
 /* Löschen des Speicherplatzes der Maske */
 
-int Acplt_FNMatch (char *mask, char *name, int no_case, error_t *err_c);
+int Acplt_FNMatch (char *mask, char *name, int no_case, error_tt *err_c);
 /* Vergleich der Maske mit gegebenem String "name"; falls no_case <> 0, keine Unter- */
 /* scheidung Gross- / Kleinschreibung. */
 /* Fuehrt alle obigen Prozeduren automatisch hintereinander aus. */

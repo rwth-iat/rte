@@ -1,5 +1,5 @@
 /*
- * $Id: fnmatch.c,v 1.5 2005-01-27 12:17:01 ansgar Exp $
+ * $Id: fnmatch.c,v 1.6 2005-08-17 09:40:10 markus Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -56,7 +56,7 @@ int is_valid_char(char c) {							/* prüft, ob c in A..Z, a..z, 0..9, _ */
 
 /******************************************************************************************/
 
-int get_hex(char *st, unsigned int j, error_t *err_c) {	/* liefert Zeichen zu Hexwert st[j]st[j+1] */
+int get_hex(char *st, unsigned int j, error_tt *err_c) {	/* liefert Zeichen zu Hexwert st[j]st[j+1] */
 
 /******************************************************************************************/
 
@@ -80,7 +80,7 @@ int get_hex(char *st, unsigned int j, error_t *err_c) {	/* liefert Zeichen zu He
 
 /******************************************************************************************/
 
-int save_set(char *st, list_t **pcmask, list_t **plast, unsigned int j, error_t *err_c) {
+int save_set(char *st, list_t **pcmask, list_t **plast, unsigned int j, error_tt *err_c) {
 													/* speichert Zeichenmenge als Bitfeld */
 
 /******************************************************************************************/
@@ -208,7 +208,7 @@ int save_set(char *st, list_t **pcmask, list_t **plast, unsigned int j, error_t 
 
 /******************************************************************************************/
 
-list_t *Acplt_Compile_Mask (char *mask, error_t *err_c) {
+list_t *Acplt_Compile_Mask (char *mask, error_tt *err_c) {
 									/* wandelt Eingabestring in internes Maskenformat um */
 
 /******************************************************************************************/
@@ -434,7 +434,7 @@ void Acplt_Clear_Mask(list_t *cmask) {			/* Löschen des Speicherplatzes der Mask
 
 /******************************************************************************************/
 
-int Acplt_FNMatch (char *mask, char *name, int no_case, error_t *err_c) {
+int Acplt_FNMatch (char *mask, char *name, int no_case, error_tt *err_c) {
 
 /******************************************************************************************/
 

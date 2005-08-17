@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ovmparser.y,v 1.15 2005-01-21 10:32:54 ansgar Exp $
+*   $Id: ov_ovmparser.y,v 1.16 2005-08-17 09:40:10 markus Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -94,7 +94,7 @@ OV_UINT				defnum = 0;
 
 %token <vartype>	TOK_VARTYPE
 %token <varprops>	TOK_VARPROPS
-%token <assoctype>	TOK_ASSOCTYPE
+/*%token <assoctype>	TOK_ASSOCTYPE*/
 
 %token <uint>		TOK_FLAGS
 
