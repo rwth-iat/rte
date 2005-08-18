@@ -1,4 +1,4 @@
-#   $Id: Makefile,v 1.12 2005-08-17 08:20:47 ansgar Exp $
+#   $Id: Makefile,v 1.13 2005-08-18 12:21:34 ansgar Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -10,7 +10,7 @@
 #   This file is part of the ACPLT/OV Package which is licensed as open
 #   source under the Artistic License; you can use, redistribute and/or
 #   modify it under the terms of that license.
-#   
+#
 #   You should have received a copy of the Artistic License along with
 #   this Package; see the file ARTISTIC-LICENSE. If not, write to the
 #   Copyright Holder.
@@ -228,13 +228,43 @@ $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
 
 #	ACPLT/OV database dumper
 
+dbdump.o : dbdump.cpp
+	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
+
+fnmatch.o : fnmatch.c
+	 $(CC) $(CC_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
+
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS)
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
 
 #	ACPLT/OV database parser
 
-$(DBPARSE_EXE) : $(DBPASRE_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS)
+db_y.h: db_y.c
+
+
+db_lex.o: db_lex.c
+	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
+
+
+db_y.o: db_y.c
+	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
+
+dbparse.o : dbparse.cpp
+	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
+
+dbparse1.o : dbparse1.cpp
+	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
+
+$(DBPARSE_EXE) : $(DBPARSE_OBJ)  
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
+
+#	ACPLT/OV OVI/XML parser
+
+ovxiparse.o : ovxiparse.cpp
+	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
+
+$(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)  
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
 
 #	ACPLT/OV makmak
 
