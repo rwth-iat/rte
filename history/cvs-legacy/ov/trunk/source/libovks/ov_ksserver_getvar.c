@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.12 2003-11-07 09:33:00 ansgar Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.13 2005-08-18 11:48:02 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -128,8 +128,8 @@ void ov_ksserver_getvar(
 *	Get a structure variable for the GetVar service (subroutine)
 */
 #define GETSTRUCTCASE(vartype, VARTYPE)	\
-	case OV_VT_##VARTYPE##:	\
-		pstructelem->value.valueunion.val_##vartype## = *((OV_##VARTYPE##*) pvalue);	\
+	case OV_VT_##VARTYPE:	\
+		pstructelem->value.valueunion.val_##vartype = *((OV_##VARTYPE*) pvalue);	\
 		pvalue += pvar->v_size;	\
 		break;
 
