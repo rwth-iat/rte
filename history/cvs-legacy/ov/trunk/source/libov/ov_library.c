@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.21 2005-07-12 14:24:19 ansgar Exp $
+*   $Id: ov_library.c,v 1.22 2005-08-24 08:49:43 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -723,7 +723,7 @@ OV_RESULT ov_library_prepare(
 		if(!pclass->v_linktable) {
 			return OV_ERR_DBOUTOFMEMORY;
 		}
-		memset(pclass->v_linktable, 0, pclass->v_linktablesize);
+		memset(pclass->v_linktable, 0, ov_association_gettablesize(&OV_CLASS_DEF_ov_class));
 		DoLink(ov_containment, &pdb->ov, pclass);
 		/*
 		*	initialize class pointers

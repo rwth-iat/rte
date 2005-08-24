@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_element.c,v 1.10 2002-05-15 12:41:50 ansgar Exp $
+*   $Id: ov_element.c,v 1.11 2005-08-24 08:49:43 ansgar Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -411,6 +411,7 @@ OV_RESULT ov_element_getnextpart_object(
 	*	local variables
 	*/
 	OV_INSTPTR_ov_class		pclass = NULL;
+OV_INSTPTR_ov_object pdum;
 	/*
 	*	try until we find the right thing
 	*/
@@ -432,8 +433,8 @@ CONTINUE4:	ppart->elemunion.pobj = Ov_GetFirstChild(ov_containment, pclass);
 			/*
 			*	get the next part (variable, part, operation)...
 			*/
-			pclass = Ov_DynamicPtrCast(ov_class, Ov_GetParent(ov_containment,
-				ppart->elemunion.pobj));
+			pdum = Ov_GetParent(ov_containment, ppart->elemunion.pobj);
+			pclass = Ov_DynamicPtrCast(ov_class, pdum);
 			if(!pclass) {
 				Ov_Warning("internal error");
 				return OV_ERR_GENERIC;
