@@ -42,12 +42,20 @@
 *
 *	Autoren:
 *	--------
-*	St						Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 1.2 $
+*	$Date: 2005-08-30 14:06:27 $
 *
 *	Historie:
 *	--------
-*	30-April-2004		St
+*	30-April-2004			St
 *		-	Erstellung
+*
+*	30-August-2005			St
+*		-	CVS-CheckIn
 *
 ***********************************************************************/
 

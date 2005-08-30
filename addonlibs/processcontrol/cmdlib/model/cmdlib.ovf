@@ -42,29 +42,37 @@
 *
 *	Autoren:
 *	--------
-*	MF						Murat Fedai <Murat@plt.rwth-aachen.de>
-*	MH						Michal Heeg <MichaelH@plt.rwth.aachen.de>
-*	St						Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*	MF							Murat Fedai <Murat@plt.rwth-aachen.de>
+*	MH							Michal Heeg <MichaelH@plt.rwth.aachen.de>
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 1.2 $
+*	$Date: 2005-08-30 14:06:27 $
 *
 *	Historie:
 *	--------
-*	10-August-1999		MF
+*	10-August-1999			MF
 *		- 	Erstellung, Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
 *
-* 	16-August-2002 	MH		manueller Versionsstand: 0.20
+* 	16-August-2002 		MH		manueller Versionsstand: 0.20
 *		-	Einchecken der cmdlib in CVS
 *
-*	07-Februar-2004	St
+*	07-Februar-2004		St
 *		-	Funktion TYPECOMMAND hat den Parameter pFB erhalten
 *
-*	11-Februar-2004	St
+*	11-Februar-2004		St
 *		-	Funktion TYPECOMMAND hat den Parameter *pstr erhalten;
 *			gleichzeitig den Rückgabetyp von OV_STRING auf void geändert
 *
-*	16-Februar-2004	St
+*	16-Februar-2004		St
 *		-	Einführung der setOrder-Methode
 *		-	Paramter pfb (jetzt ppc) von TYPECOMMAND als processcontrol
 *			ausgeführt
+*
+*	30-August-2005			St
+*		-	CVS-CheckIn
 *
 ***********************************************************************/
 

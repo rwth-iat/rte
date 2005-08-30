@@ -42,38 +42,43 @@
 *
 *	Autoren:
 *	--------
-*	MF						Murat Fedai <Murat@plt.rwth-aachen.de>
-*	MH						Michal Heeg <MichaelH@plt.rwth.aachen.de>
-*	St						Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*	MF							Murat Fedai <Murat@plt.rwth-aachen.de>
+*	MH							Michal Heeg <MichaelH@plt.rwth.aachen.de>
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 1.2 $
+*	$Date: 2005-08-30 14:02:57 $
 *
 *	Historie:
 *	--------
-*	10-August-1999		MF
+*	10-August-1999			MF
 *		- 	Erstellung, Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
 *
-* 	16-August-2002 	MH		manueller Versionsstand: 0.20
+* 	16-August-2002 		MH		manueller Versionsstand: 0.20
 *		-	Einchecken der cmdlib in CVS
 *
-*	16-Februar-2004 	St 
+*	16-Februar-2004 		St 
 *		-	Einführen der Methode setOrder, welche vom setAccessor von
 *			order aufgerufen wird (Diese Funktion ist nützlich, um spätere
 *			Änderungen zu erleichtern, da sie, im Gegensatz zum setAccessor
 *			überladen werden kann)
 *
-*	03-März-2004		St		manueller Versionsstand: 0.90
+*	03-März-2004			St		manueller Versionsstand: 0.90
 *		-	Auschecken der cmdlib aus CVS ;-)
 *		-	Manuelle Versionionierung
 *
-*	04-März-2004		St		V0.91
+*	04-März-2004			St		V0.91
 *		-	Testen des targets (send_comand) [vgl. send_comand.c]
 *
-*	22-März-2004		St		V0.92
+*	22-März-2004			St		V0.92
 *		-	Trennung der comlib in comlib (ab V0.7.0) und cmdlib
 *		-	Übernahme der Klasse cmdsend aus der ehemaligen comlib
 *			(comsendcommand)
 *		-	Unbenennung der Klasse cmdsend in CmdSender, Erweiterung dieser
 *
-*	26-April-2004		St		V0.93
+*	26-April-2004			St		V0.93
 *		-	Klasse CmdSender: Variable Active in Enabled umgenannt 
 *		-	Method setOrder so angepasst, dass nur das genaue Kommando
 *			akzeptiert wird. Bis dato wurden ein Teilvergleich gemacht,
@@ -81,15 +86,18 @@
 *			typspezifische Befehl 'abcdef' war
 *		-	Umbenennung von Makros, Defines...
 *
-*	03-Mai-2004			St		V0.94
+*	03-Mai-2004				St		V0.94
 *		-	Methode setOrder ebenso wie in V0.93 angepasst, allerdings für
 *			die generischen Kommandos
 *		-	generische und die typspezifischen Kommandos werden jetzt
 *			gleichzeitig verarbeitet
 *
-*	15-April-2005		St		V0.9.5
+*	15-April-2005			St		V0.9.5
 *		-	Erweiterung um ein Linux-Makefile
 *		-	Umstellung der Versionierung
+*
+*	30-August-2005			St		V0.9.6
+*		-	CVS-CheckIn
 *
 ***********************************************************************/
 
@@ -97,7 +105,7 @@
 
 LIBRARY cmdlib
 
-	VERSION   = "V0.9.5 (15-Apr-2004)";
+	VERSION   = "V0.9.6 (30-Aug-2005)";
 	AUTHOR    = "Murat Fedai, Stefan Schmitz";
 	COPYRIGHT = "Copyright (C) 2005 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
 	

@@ -42,16 +42,24 @@
 *
 *	Autoren:
 *	--------
-*	St						Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 1.2 $
+*	$Date: 2005-08-30 14:06:27 $
 *
 *	Historie:
 *	--------
-*	23-März-2004		St
+*	23-März-2004			St
 *		-	Erstellung
 *
-*	18-Juli-2005		St
+*	18-Juli-2005			St
 *		-	Belegungskommandos aus comlib (com.h) überführt
 *		-	FB_LOCAL hinzugefügt
+*
+*	30-August-2005			St
+*		-	CVS-CheckIn
 *
 ***********************************************************************/
 

@@ -42,37 +42,45 @@
 *
 *	Autoren:
 *	--------
-*	MF						Murat Fedai <Murat@plt.rwth-aachen.de>
-*	MH						Michal Heeg <MichaelH@plt.rwth.aachen.de>
-*	St						Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*	MF							Murat Fedai <Murat@plt.rwth-aachen.de>
+*	MH							Michal Heeg <MichaelH@plt.rwth.aachen.de>
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 1.2 $
+*	$Date: 2005-08-30 14:06:27 $
 *
 *	Historie:
 *	--------
-*	10-August-1999		MF
+*	10-August-1999			MF
 *		- 	Erstellung, Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
 *
-*	18-April-2000		MF
+*	18-April-2000			MF
 *		-	Umbenennung des Makros COM zu CMD
 *		-	Der Operator kann mit SETCMDR einen externen KG eintragen,
 *		-	Kommandos duerfen vom KG ueberschrieben werden
 *
-* 	16-August-2002 	MH		manueller Versionsstand: 0.20
+* 	16-August-2002 		MH		manueller Versionsstand: 0.20
 *		-	Einchecken der cmdlib in CVS
 *
-*	16-Februar-2004	St
+*	16-Februar-2004		St
 *		-	Einführung der Methode setOrder (vgl. auch cmdlib.ovm)
 *
-*	26-April-2004		St
+*	26-April-2004			St
 *		-	Methode setOrder so angepasst, dass nur das genaue Kommando
 *			akzeptiert wird. Bis dato wurden ein Teilvergleich gemacht,
 *			was zur Folge hat, dass 'abc' angenommen wurde, wenn der
 *			typspezifische Befehl 'abcdef' war
 *
-*	03-Mai-2004			St
+*	03-Mai-2004				St
 *		-	Methode setOrder ebenso wie in V0.93 angepasst, allerdings für
 *			die generischen Kommandos
 *		-	generische und die typspezifischen Kommandos werden jetzt
 *			gleichzeitig verarbeitet
+*
+*	30-August-2005			St
+*		-	CVS-CheckIn
 *
 ***********************************************************************/
 

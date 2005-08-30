@@ -42,27 +42,35 @@
 *
 *	Autoren:
 *	--------
-*	MF						Murat Fedai <Murat@plt.rwth-aachen.de>
-*	MH						Michal Heeg <MichaelH@plt.rwth.aachen.de>
-*	St						Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*	MF							Murat Fedai <Murat@plt.rwth-aachen.de>
+*	MH							Michal Heeg <MichaelH@plt.rwth.aachen.de>
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 1.2 $
+*	$Date: 2005-08-30 14:06:27 $
 *
 *	Historie:
 *	--------
-*	10-August-1999		MF
+*	10-August-1999			MF
 *		-	Erstellung, Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
 *
-*	10-September-1999	MF
+*	10-September-1999		MF
 *		-	Erstellung von Klientenstrukturen
 *
-*	16-August-2002		MH		manueller Versionsstand: 0.20
+*	16-August-2002			MH		manueller Versionsstand: 0.20
 *		-	Einchecken der cmdlib in CVS
 *
-*	04-März-2004 		St
+*	04-März-2004 			St
 *		-	Überprüfen des targets, ob dieses bereits
 *			/'FB_INSTANZ_CONTAINER/' enthält und entsprechende Reaktion
 *
-*	22-März-2004		St
+*	22-März-2004			St
 *		-	Versenden von Kommandos auch Serverübergreifend (Remote)
+*
+*	30-August-2005			St
+*		-	CVS-CheckIn
 *
 ***********************************************************************/
 
