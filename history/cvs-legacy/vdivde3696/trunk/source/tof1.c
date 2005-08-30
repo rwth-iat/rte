@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 1998, 1999, 2004
+*	Copyright (C) 2004
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -38,20 +38,16 @@
 *
 *	File
 *	-----
-*	xor.c						boolean exclusive OR
+*	tof1.c					Ausschaltverzögerung (off delay)
 *
 *	Autoren:
 *	--------
-*	MK							Michal Klamann
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	Historie:
 *	--------
-*	27-Mai-1999				MK
-*		-	Erstellung
-*	
 *	23-September-2004		St
-*		-	Logik gemäß IEC 1131-3
+*		-	Erstellung
 *
 ***********************************************************************/
 
@@ -70,43 +66,64 @@
 	Typemethod
 ***********************************************************************/
 
-void OV_DLLFNCEXPORT vdivde3696_xor_typemethod(
+void OV_DLLFNCEXPORT vdivde3696_tof1_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME								*pltc
 )	{
-	//	Local pointer
+	//	Local Pointer
 	//
-	OV_INSTPTR_vdivde3696_xor
-		port = Ov_StaticPtrCast(vdivde3696_xor, pfb);
+	OV_INSTPTR_fb_task
+		ptask = NULL;
+	OV_INSTPTR_vdivde3696_tof1
+		port = Ov_StaticPtrCast(vdivde3696_tof1, pfb);
 		
-	//	Local Vairables
+	//	Local Variables
 	//
-	int count = 0;
+	double cyctime;
 	
 	//	Logic
 	//
+	port->v_eno = port->v_en;
+	
 	if (port->v_en == TRUE)
 	{
-		//	check all eight inputs for TRUE status
+		//	get the cyctime of functionblock or parenttask
 		//
-		if (port->v_i1 == TRUE) count++;
-		if (port->v_i2 == TRUE) count++;
-		if (port->v_i3 == TRUE) count++;
-		if (port->v_i4 == TRUE) count++;
-		if (port->v_i5 == TRUE) count++;
-		if (port->v_i6 == TRUE) count++;
-		if (port->v_i7 == TRUE) count++;
-		if (port->v_i8 == TRUE) count++;
+		ptask = Ov_PtrUpCast(fb_task, pfb);
 		
-		//	even number of TRUE
-		//
-		if (count == 0 || count == 2 || count == 4 || count == 6 || count == 8)
+		while	(ptask->v_cyctime.secs == 0 && ptask->v_cyctime.usecs	== 0)
+			ptask = Ov_GetParent(fb_tasklist, ptask);
+	 	 
+	 	if (ptask == NULL)
+	 		cyctime = 1.0; 
+		else
+			Ov_TimeToDouble(ptask->v_cyctime, cyctime);
+			
+		switch (port->v_i)
 		{
-			port->v_q = FALSE;
-	  	} else {
-	    port->v_q = TRUE;
-	   };
+			case TRUE:
+				port->v_etime	= 0.0;
+				port->v_q		= TRUE;
+				break;
+				
+			case FALSE:
+				if (port->v_etime >= port->v_time)
+					port->v_q = FALSE;
+				else
+				{
+					port->v_etime = port->v_etime + cyctime;
+				};
+				break;
+				
+			default:
+				port->v_eno = FALSE;
+				break;
+		};
 	};
+
+	//	add 1 to counter
+	//
+	port->v_counter = (port->v_counter + 1) % 10000;
 	
 	return;
 };

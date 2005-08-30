@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 1998, 1999, 2004
+*	Copyright (C) 2004
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -38,20 +38,16 @@
 *
 *	File
 *	-----
-*	xor.c						boolean exclusive OR
+*	BaseClass.c				Basisklasse
 *
 *	Autoren:
 *	--------
-*	MK							Michal Klamann
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	Historie:
 *	--------
-*	27-Mai-1999				MK
+*	21-Dezember-2004		St
 *		-	Erstellung
-*	
-*	23-September-2004		St
-*		-	Logik gemäß IEC 1131-3
 *
 ***********************************************************************/
 
@@ -67,46 +63,63 @@
 #include "libov/ov_macros.h"
 
 /***********************************************************************
-	Typemethod
+	getAccessor counter
 ***********************************************************************/
 
-void OV_DLLFNCEXPORT vdivde3696_xor_typemethod(
-	OV_INSTPTR_fb_functionblock	pfb,
-	OV_TIME								*pltc
+OV_INT OV_DLLFNCEXPORT vdivde3696_BaseClass_counter_get(
+	OV_INSTPTR_vdivde3696_BaseClass	pfb
 )	{
-	//	Local pointer
+	return pfb->v_methcount;
+	//	Local Method Tables
 	//
-	OV_INSTPTR_vdivde3696_xor
-		port = Ov_StaticPtrCast(vdivde3696_xor, pfb);
-		
-	//	Local Vairables
-	//
-	int count = 0;
+	//OV_VTBLPTR_vdivde3696_BaseClass	pTable;
 	
-	//	Logic
+	//	get Method Table
 	//
-	if (port->v_en == TRUE)
-	{
-		//	check all eight inputs for TRUE status
-		//
-		if (port->v_i1 == TRUE) count++;
-		if (port->v_i2 == TRUE) count++;
-		if (port->v_i3 == TRUE) count++;
-		if (port->v_i4 == TRUE) count++;
-		if (port->v_i5 == TRUE) count++;
-		if (port->v_i6 == TRUE) count++;
-		if (port->v_i7 == TRUE) count++;
-		if (port->v_i8 == TRUE) count++;
-		
-		//	even number of TRUE
-		//
-		if (count == 0 || count == 2 || count == 4 || count == 6 || count == 8)
-		{
-			port->v_q = FALSE;
-	  	} else {
-	    port->v_q = TRUE;
-	   };
-	};
+	//Ov_GetVTablePtr(vdivde3696_BaseClass, pTable, pfb);
 	
-	return;
+	//	return specific eno
+	//
+	//return pTable->m_getcounter(pfb);
 };
+
+/***********************************************************************
+	getcounter
+***********************************************************************/
+
+/*OV_INT OV_DLLFNCEXPORT vdivde3696_BaseClass_getcounter(
+	OV_INSTPTR_vdivde3696_BaseClass	pfb
+)	{
+	return pfb->v_methcount;
+};*/
+
+/***********************************************************************
+	getAccessor eno
+***********************************************************************/
+
+OV_BOOL OV_DLLFNCEXPORT vdivde3696_BaseClass_eno_get(
+	OV_INSTPTR_vdivde3696_BaseClass	pfb
+)	{
+	return pfb->v_en;
+	//	Local Method Tables
+	//
+	//OV_VTBLPTR_vdivde3696_BaseClass	pTable;
+	
+	//	get Method Table
+	//
+	//Ov_GetVTablePtr(vdivde3696_BaseClass, pTable, pfb);
+	
+	//	return specific eno
+	//
+	//return pTable->m_geteno(pfb);
+};
+
+/***********************************************************************
+	geteno
+***********************************************************************/
+
+/*OV_BOOL OV_DLLFNCEXPORT vdivde3696_BaseClass_geteno(
+	OV_INSTPTR_vdivde3696_BaseClass	pfb
+)	{
+	return pfb->v_en;
+};*/

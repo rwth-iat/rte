@@ -1,54 +1,57 @@
 #
-# automatisch erzeugtes generic.mk mit makmak
-# (c) 2002 Lehrstuhl für Prozessleittechnik
-#
-
-#
 #	Name der Bibliothek
 #	-------------------
 #
 
 MYLIB_NAME = vdivde3696
-BASELIB0_NAME = fb
 
 #
 #	Directories
 #	-----------
 
-USER_MAIN_DIR           = d:\acplt\user/
-USER_LIBS_DIR           = $(USER_MAIN_DIR)libs/
+MAIN_DIR                = x:/apps_32/ov/
+BC5_MAIN_DIR            = $(MAIN_DIR)bc5/
+BC5_INCLUDE_DIR         = $(BC5_MAIN_DIR)include/
+BC5_LIB_DIR             = $(BC5_MAIN_DIR)lib/
 
-ACPLT_DIR               = x:\apps_32\ov\acplt/base/
-ACPLT_BIN_DIR           = x:\apps_32\ov\acplt/bin/
-ACPLT_LIB_DIR           = $(ACPLT_DIR)lib/
+USER_MAIN_DIR           = d:/acplt/
+USER_LIBS_DIR           = $(USER_MAIN_DIR)user/libs/
+
+ACPLT_DIR               = $(MAIN_DIR)acplt/
+ACPLT_BIN_DIR           = $(ACPLT_DIR)bin/
+ACPLT_LIB_DIR           = $(ACPLT_DIR)base/lib/
+ACPLT_USER_DIR          = $(ACPLT_DIR)user/
+ACPLT_SHAREDLIB_DIR     = $(MAIN_DIR)sharedlibs
+
+FB_DIR						= $(ACPLT_USER_DIR)fb/
+FB_MODEL_DIR				= $(FB_DIR)model/
+FB_INCLUDE_DIR				= $(FB_DIR)include/
+FB_LIB_DIR					= $(FB_DIR)lib/
+
 MYLIB_DIR               = ../../
 MYLIB_MODEL_DIR         = $(MYLIB_DIR)model/
 MYLIB_INCLUDE_DIR       = $(MYLIB_DIR)include/
 MYLIB_SOURCE_DIR        = $(MYLIB_DIR)source/
 
-BASELIB0_DIR           = ../../../fb/
-BASELIB0_MODEL_DIR     = $(BASELIB0_DIR)model/
-BASELIB0_INCLUDE_DIR   = $(BASELIB0_DIR)include/
-BASELIB0_SOURCE_DIR    = $(BASELIB0_DIR)source/
-BASELIB0_BUILD_DIR     = $(BASELIB0_DIR)build/$(SYSDIR)/
-
-ACPLT_OV_DIR            = $(ACPLT_DIR)ov/
+ACPLT_OV_DIR            = $(ACPLT_DIR)base/ov/
 ACPLT_OV_MODEL_DIR      = $(ACPLT_OV_DIR)model/
 ACPLT_OV_INCLUDE_DIR    = $(ACPLT_OV_DIR)include/
 
-ACPLT_PLT_DIR           = $(ACPLT_DIR)plt/
+ACPLT_PLT_DIR           = $(ACPLT_DIR)base/plt/
 ACPLT_PLT_INCLUDE_DIR   = $(ACPLT_PLT_DIR)include/
 
-ACPLT_KS_DIR            = $(ACPLT_DIR)ks/
+ACPLT_KS_DIR            = $(ACPLT_DIR)base/ks/
 ACPLT_KS_INCLUDE_DIR    = $(ACPLT_KS_DIR)include/
+
+ONCRPC_DIR 					= $(ACPLT_DIR)base/oncrpc/
 
 #	Includes and Defines
 
 MYLIB_INCLUDES = \
-	-I$(BASELIB0_MODEL_DIR) \
-	-I$(BASELIB0_INCLUDE_DIR) \
 	-I$(MYLIB_MODEL_DIR) \
-	-I$(MYLIB_INCLUDE_DIR)
+	-I$(MYLIB_INCLUDE_DIR) \
+	-I$(FB_MODEL_DIR) \
+	-I$(FB_INCLUDE_DIR)
 
 MYLIB_DEFINES = \
 	-DOV_DEBUG \
@@ -64,16 +67,15 @@ OV_DEFINES = \
 	-DOV_SYSTEM_$(SYSTEM)=1 \
 	-DPLT_SYSTEM_$(SYSTEM)=1
 
-INCLUDES = $(OV_INCLUDES) $(MYLIB_INCLUDES) -I.
+INCLUDES = $(OV_INCLUDES) $(MYLIB_INCLUDES) -I$(BC5_INCLUDE_DIR) -I.
 
 DEFINES = $(OV_DEFINES) $(MYLIB_DEFINES)
 
 #	Targets and their sources
 
 MYLIB_SRC = $(MYLIB_NAME).c $(wildcard $(MYLIB_SOURCE_DIR)*.c)
-MYLIB_OBJ = $(foreach source, $(MYLIB_SRC), $(basename $(notdir $(source)))$(OBJ_))
-MYLIB_DLL = $(MYLIB_NAME)$(DLL_)
-MYLIB_LIB = $(MYLIB_NAME)$(LIB_)
+MYLIB_OBJ = $(foreach source, $(MYLIB_SRC), $(basename $(notdir $(source)))$(OBJ))
+MYLIB_DLL = $(MYLIB_NAME)$(DLL)
 
 SOURCE_DIRS = $(MYLIB_SOURCE_DIR)
 
@@ -82,13 +84,13 @@ SOURCE_DIRS = $(MYLIB_SOURCE_DIR)
 
 .SUFFIXES:
 
-.SUFFIXES: .c .h .ovm $(LIB_) $(DLL_) $(OBJ_)
+.SUFFIXES: .c .h .ovm $(LIB) $(DLL) $(OBJ)
 
 VPATH = $(SOURCE_DIRS) $(ACPLT_OV_MODEL_DIR) $(MYLIB_MODEL_DIR) .
 
 TARGETS = \
-	fb.h \
 	ov.h \
+	fb.h \
 	$(MYLIB_LIB) \
 	$(MYLIB_DLL)
 
