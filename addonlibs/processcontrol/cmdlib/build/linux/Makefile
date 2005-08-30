@@ -1,31 +1,80 @@
-#*******************************************************************************
-#***                                                                         ***
-#***   G O V   -   G e n e r i s c h e   O b j e k t - V e r w a l t u n g   ***
-#***   ###################################################################   ***
-#***                                                                         ***
-#***   Implementierung des Objektmodells ACPLT/OV "Objektverwaltung"         ***
-#***   des Lehrstuhls fuer Prozessleittechnik, RWTH Aachen                   ***
-#***                                                                         ***
-#******************************************************************************/
-#/*
-#*   Datei
-#*   -----
-#*   Makefile - Makefile fuer die generische Objektverwaltung unter Linux
-#*/
-#/*
-#*   Historie
-#*   --------
-#*   17-Jun-1998 Dirk Meyer: Erstellung, Lehrstuhl fuer Prozessleittechnik, Aachen
-#*/
-#/*****************************************************************************/
-
-#   Plattform
-#   ---------
+#	Plattform
+#	---------
 
 SYSTEM = LINUX
 SYSDIR = linux
 
-#   Include Unix generic part
-#   -------------------------
+#	Filename conventions
+#	--------------------
 
-include ../unix.mk
+OBJ = .o
+LIB = .a
+DLL = .so
+EXE = 
+
+#	Include generic part
+#	--------------------
+
+include ../generic.mk
+
+
+#	Compiler
+#	--------
+
+OV_CODEGEN_EXE = $(ACPLT_BIN_DIR)ov_codegen$(EXE)
+
+CC             = gcc
+CC_FLAGS       = -g -Wall -O2 -shared
+COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
+LD             = $(CC) -shared
+
+
+#   Implicit Rules
+#   --------------
+
+.c$(OBJ):
+	$(COMPILE_C) -o$@ $<
+
+.ovm.c:
+	$(OV_CODEGEN_EXE) -I $(ACPLT_OV_MODEL_DIR) -I $(FB_INCLUDE_DIR) -f $< -l $(notdir $(basename $<))
+
+.ovm.h:
+	$(OV_CODEGEN_EXE) -I $(ACPLT_OV_MODEL_DIR) -I $(FB_INCLUDE_DIR) -f $< -l $(notdir $(basename $<))
+
+
+#   Dependencies
+#   ------------
+
+.depend:
+	touch $@
+
+depend : $(SOURCES)
+	$(COMPILE_C) -MM $^ > .depend
+
+
+#	Libraries
+#	---------
+
+ov.h : $(ACPLT_OV_MODEL_DIR)ov.ovm
+	$(OV_CODEGEN_EXE) -f $< -I $(ACPLT_OV_MODEL_DIR)
+
+fb.h : $(FB_INCLUDE_DIR)fb.ovm
+	$(OV_CODEGEN_EXE) -f $< -I $(ACPLT_OV_MODEL_DIR) -I $(FB_INCLUDE_DIR)
+
+comlib.h : $(COMLIB_MODEL_DIR)comlib.ovm
+	$(OV_CODEGEN_EXE) -f $< -I $(ACPLT_OV_MODEL_DIR) -I $(FB_INCLUDE_DIR) -I $(COMLIB_INCLUDE_DIR)
+
+$(MYLIB_DLL) : $(MYLIB_OBJ)
+	$(LD) -o $@ $^
+	-cp $(MYLIB_DLL) $(USER_LIBS_DIR)
+
+#	Aufraeumen
+#	----------
+
+clean:
+	@-rm -f *.c *.h *.o *.so
+
+#    Include dependencies
+#    --------------------
+
+include .depend

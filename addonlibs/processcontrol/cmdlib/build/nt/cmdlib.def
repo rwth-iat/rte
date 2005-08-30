@@ -1,8 +1,13 @@
 LIBRARY     CMDLIB.DLL
 
 EXPORTS
+cmdlib_CmdSender_ResultLocalTxt_get 
+cmdlib_CmdSender_ResultRemoteTxt_get 
+cmdlib_CmdSender_typemethod   
+cmdlib_processcontrol_generic_commands 
 cmdlib_processcontrol_order_set 
-cmdlib_processcontrol_univ_comands 
+cmdlib_processcontrol_setOrder 
 ov_library_open_cmdlib        
+pclass_cmdlib_CmdSender       
 pclass_cmdlib_processcontrol  
-send_comand                   
+send_command                  
