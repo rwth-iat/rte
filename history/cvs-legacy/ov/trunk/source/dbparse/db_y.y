@@ -61,9 +61,9 @@ extern parsetree *parse_tree;		/* the parse tree to be created */
 	value										*pvalue;
 	vector										*pvector;
 	structure									*pstructure;
-	PltHashTable<PltString, instance *>			*pinstlist;
-	PltHashTable<PltString, variable_value *>	*pvarlist;
-	PltHashTable<PltString, link_value *>		*plinklist;
+	PltList<instance *>							*pinstlist;
+	PltList<variable_value *>					*pvarlist;
+	PltList<link_value *>						*plinklist;
 	PltList<LogPath>							*ppathlist;
 };
 
@@ -152,9 +152,9 @@ inst:	  INSTANCE abs_or_rel_path ':' CLASS abs_or_rel_path
 				$$->creation_time = $6;
 				$$->sem_flags = $7;
 				$$->comment = $8;
-				$$->var_block = $9;
-				$$->link_block = $10;
-				$$->part_block = $11;
+				$$->var_block_list = $9;
+				$$->link_block_list = $10;
+				$$->part_block_list = $11;
 			}
 		;
 
@@ -208,11 +208,11 @@ variables_opt:
 			| variables_opt variable_value
 				{
 					if ($1 == NULL) {
-						$$ = new(PltHashTable<PltString, variable_value *>);
+						$$ = new(PltList<variable_value *>);
 					} else {
 						$$ = $1;
 					}
-					$$->add(*($2->ident), $2);
+					$$->addLast($2);
 				}
 			;
 
@@ -412,11 +412,11 @@ links_opt:
 			| links_opt link_value
 				{
 					if ($1 == NULL) {
-						$$ = new(PltHashTable<PltString, link_value *>);
+						$$ = new(PltList<link_value *>);
 					} else {
 						$$ = $1;
 					}
-					$$->add(*($2->ident), $2);
+					$$->addLast($2);
 				}
 			;
 
@@ -465,11 +465,11 @@ parts_opt:
 			| parts_opt part_inst
 				{
 					if ($1 == NULL) {
-						$$ = new(PltHashTable<PltString, instance *>);
+						$$ = new(PltList<instance *>);
 					} else {
 						$$ = $1;
 					}
-					$$->add(*($2->ident), $2);
+					$$->addLast($2);
 				}
 			;
 
@@ -489,9 +489,9 @@ part_inst:	  PART_INSTANCE abs_or_rel_path ':' CLASS abs_or_rel_path
 					$$->creation_time = $6;
 					$$->sem_flags = $7;
 					$$->comment = $8;
-					$$->var_block = $9;
-					$$->link_block = $10;
-					$$->part_block = $11;
+					$$->var_block_list = $9;
+					$$->link_block_list = $10;
+					$$->part_block_list = $11;
 					$$->children = NULL;
 					$$->cr_opts = CO_NONE;
 				}

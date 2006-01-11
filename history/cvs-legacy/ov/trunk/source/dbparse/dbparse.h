@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse.h,v 1.7 2005-01-31 13:23:43 ansgar Exp $
+ * $Id: dbparse.h,v 1.8 2006-01-11 16:27:47 markus Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -232,10 +232,11 @@ class instance {
 	KsTime										*creation_time;
 	uint										sem_flags;			// Semantic flags
 	KsString									*comment;
-	PltHashTable<PltString, variable_value *>	*var_block;
-	PltHashTable<PltString, link_value *>		*link_block;
-	PltHashTable<PltString, instance	*>		*part_block;
+	PltList<variable_value *>					*var_block_list;
+	PltList<link_value *>						*link_block_list;
+	PltList<instance *>							*part_block_list;
 	PltHashTable<PltString, instance *>			*children;
+	PltList<instance *>							*children_list;
 	enum create_options							cr_opts;
 };
 
@@ -272,9 +273,9 @@ ostream &operator << (ostream &log, structure *struc);
 ostream &operator << (ostream &log, value *val);
 ostream &operator << (ostream &log, variable_value *varval);
 ostream &operator << (ostream &log, link_value *linkval);
-ostream &operator << (ostream &log, PltHashTable<PltString, variable_value*> *var_block);
-ostream &operator << (ostream &log, PltHashTable<PltString, link_value*> *link_block);
-ostream &operator << (ostream &log, PltHashTable<PltString, instance*> *children);
+ostream &operator << (ostream &log, PltList<variable_value*> *var_block_list);
+ostream &operator << (ostream &log, PltList<link_value*> *link_block_list);
+ostream &operator << (ostream &log, PltList<instance*> *children_list);
 ostream &operator << (ostream &log, instance *inst);
 
 //-------------------------------------------------------------------------------
