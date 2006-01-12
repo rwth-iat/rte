@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.h,v 1.4 2004-10-20 16:31:19 ansgar Exp $
+*   $Id: ov_time.h,v 1.5 2006-01-12 14:10:13 markus Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,6 +34,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+*	OV_TIMECOMPARE:
+*	---------------
+*	Result of function ov_time_compare(t1, t2)
+*/
+#define	OV_TIMECMP_EQUAL	0		/* t1 = t2 */
+#define	OV_TIMECMP_AFTER	1		/* t1 > t2 */
+#define	OV_TIMECMP_BEFORE	-1		/* t1 < t2 */
 
 /*
 *	Get the current system time

@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.15 2005-08-17 09:47:42 markus Exp $
+ * $Id: dbdump.cpp,v 1.16 2006-01-12 14:10:13 markus Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -1218,8 +1218,13 @@ int main(int argc, char **argv)						// command line arguments
 		}
 	}
 
-
+#if OV_SYSTEM_NT
+	test_file.open(outfile, ios::nocreate);	// test if output file exists
+#elif OV_SYSTEM_LINUX
 	test_file.open(outfile, ios::in);	// test if output file exists
+#else
+	test_file.open(outfile, ios::nocreate);	// test if output file exists
+#endif
 	if (test_file.good()) {
 		cout << "Output file " << outfile << " already exists:" << endl
 			 << "choose another file name!" << endl;

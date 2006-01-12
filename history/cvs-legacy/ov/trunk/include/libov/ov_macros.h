@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.20 2005-01-21 10:32:26 ansgar Exp $
+*   $Id: ov_macros.h,v 1.21 2006-01-12 14:10:13 markus Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -412,17 +412,30 @@
 	+0*((pvalue2)-(OV_##type*)0), (veclen)*sizeof(OV_##type), OV_VT_##type)
 
 /*
-*	Convert a time (span) into a double variable
+*	Convert a time into a double variable
 */
 #define Ov_TimeToDouble(time, dbl)											\
 	dbl = (OV_DOUBLE)(time).secs + (OV_DOUBLE)(time).usecs/(OV_DOUBLE)1e6
 
 /*
-*	Convert a double into a time (span) variable
+*	Convert a double into a time variable
 */
 #define Ov_DoubleToTime(dbl, time)											\
-	(time).secs = (dbl);													\
-	(time).usecs = ((dbl)-(OV_DOUBLE)(time).secs)*(OV_DOUBLE)1e6
+	(time).secs = (OV_UINT) (dbl);													\
+	(time).usecs = (OV_UINT) (((dbl)-(OV_DOUBLE)(time).secs)*(OV_DOUBLE)1e6)
+
+/*
+*	Convert a time span into a double variable
+*/
+#define Ov_TimeSpanToDouble(timespan, dbl)											\
+	dbl = (OV_DOUBLE)(timespan).secs + (OV_DOUBLE)(timespan).usecs/(OV_DOUBLE)1e6
+
+/*
+*	Convert a double into a time span variable
+*/
+#define Ov_DoubleToTimeSpan(dbl, timespan)											\
+	(timespan).secs = (OV_INT)(dbl);													\
+	(timespan).usecs = (OV_INT)(((dbl)-(OV_DOUBLE)(timespan).secs)*(OV_DOUBLE)1e6)
 
 /*
 *	Allocate memory in the database

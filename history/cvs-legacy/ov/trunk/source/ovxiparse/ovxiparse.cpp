@@ -1,5 +1,5 @@
 /*
- * $Id: ovxiparse.cpp,v 1.5 2005-03-24 09:51:50 ansgar Exp $
+ * $Id: ovxiparse.cpp,v 1.6 2006-01-12 14:10:13 markus Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -393,14 +393,18 @@ bool parsetree::add(instance *inst) {
 			*(new_inst->creation_time) = (new_inst->creation_time)->now();
 			new_inst->sem_flags = 0;
 			new_inst->comment = NULL;
-			new_inst->var_block = NULL;
-			new_inst->link_block = NULL;
-			new_inst->part_block = NULL;
+			new_inst->var_block_list = NULL;
+			new_inst->link_block_list = NULL;
+			new_inst->part_block_list = NULL;
 			new_inst->cr_opts = CO_TREE;
 			if (!act_inst->children) {			// create new hash table for children
 				act_inst->children = new(PltHashTable<PltString, instance*>);
 			}
 			act_inst->children->add(*(new_inst->ident), new_inst);
+			if (!act_inst->children_list) {			// create new hash table for children
+				act_inst->children_list = new(PltList<instance *>);
+			}
+			act_inst->children_list->addLast(new_inst);
 		}
 		act_inst = new_inst;
 		if (act_tail.headIsPart() ) {			// NEW
@@ -425,6 +429,7 @@ bool parsetree::add(instance *inst) {
 				child->cr_opts = CO_NONE;
 				if (inst->is_part) {
 					act_inst->children->remove(*(inst->ident), inst);
+					act_inst->children_list->remove(inst);
 				} else {
 					return true;
 				}
@@ -436,23 +441,27 @@ bool parsetree::add(instance *inst) {
 	}
 
 	if (inst->is_part) {					// instance is a part
-		if (!act_inst->part_block) {		// no part list exists
-			act_inst->part_block = new(PltHashTable<PltString, instance*>);
+		if (!act_inst->part_block_list) {		// no part list exists
+			act_inst->part_block_list = new(PltList<instance *>);
 		}
-		if (act_inst->part_block->add(*(inst->ident), inst)) {
+		if (act_inst->part_block_list->addLast(inst)) {
 			return true;
 		} else {
-		       	cout << "Error: Could not add instance " << *inst->ident << " to part_block!" << endl;
+		       	cout << "Error: Could not add instance " << *(inst->ident) << " to part_block!" << endl;
 			return false;
 		}
 	} else {								// instance is a child
 		if (!act_inst->children) {			// no child list exists
 			act_inst->children = new(PltHashTable<PltString, instance*>);
 		}
+		if (!act_inst->children_list) {			// no child list exists
+			act_inst->children_list = new(PltList<instance *>);
+		}
 		if (act_inst->children->add(*(inst->ident), inst)) {
+		    act_inst->children_list->addLast(inst);
 			return true;
 		} else {
-		       	cout << "Error: Could not add instance " << (const char*) (PltString) *inst->ident << " to children!" << endl;
+		       	cout << "Error: Could not add instance " << *(inst->ident) << " to children!" << endl;
 			return false;
 		}
 	}
@@ -477,6 +486,10 @@ bool parsetree::remove(LogPath *name)
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
 		exit(-1);
 	}
+	if (!parent->children_list->remove(inst)) {
+		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		exit(-1);
+	}
 	delete inst;
 	return true;
 } // parsetree::remove
@@ -493,6 +506,10 @@ bool parsetree::remove(instance *inst)
 	parent = search(&lp);
 	
 	if (!parent->children->remove(*(inst->ident), inst)) {
+		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		exit(-1);
+	}
+	if (!parent->children_list->remove(inst)) {
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
 		exit(-1);
 	}
@@ -553,20 +570,25 @@ instance *parsetree::search(LogPath *search_path) {
 bool parsetree::depthFirstSearch(instance *start, exec_function func) {
 	bool	ret = true;
 
-	if (!func(start)) {								// func execution failed
+	if (!func(start)) {
+	    // func execution failed
 		return false;
 	}
-	if (start->children){
-		PltHashIterator<PltString, instance *> *it = (PltHashIterator<PltString, instance *> *) start->children->newIterator();
-		while(*it) {								// iterate over children
-			ret &= depthFirstSearch((**it).a_value, func);
+
+	if (start->children_list) {
+		PltListIterator<instance *> *it = (PltListIterator<instance *> *) start->children_list->newIterator();
+		//	iterate over children
+		while(*it) {
+			ret &= depthFirstSearch((**it), func);
 			++*it;
 		}
 	}
-	if (start->part_block) {
-		PltHashIterator<PltString, instance *> *it = (PltHashIterator<PltString, instance *> *) start->part_block->newIterator();
-		while(*it) {								// iterate over parts
-			ret &= depthFirstSearch((**it).a_value, func);
+
+	if (start->part_block_list) {
+		PltListIterator<instance *> *it = (PltListIterator<instance *> *) start->part_block_list->newIterator();
+		//	iterate over parts
+		while(*it) {
+			ret &= depthFirstSearch((**it), func);
 			++*it;
 		}
 	}
@@ -706,10 +728,11 @@ instance::instance() {
 	creation_time = NULL;
 	sem_flags = 0;
 	comment = NULL;
-	var_block = NULL;
-	link_block = NULL;
-	part_block = NULL;
+	var_block_list = NULL;
+	link_block_list = NULL;
+	part_block_list = NULL;
 	children = NULL;
+	children_list = NULL;
 	cr_opts = CO_NONE;
 }
 
@@ -721,10 +744,11 @@ instance::~instance() {
 	delete(class_ident);
 	_DELETE(creation_time);
 	_DELETE(comment);
-	_DELETE(var_block);
-	_DELETE(link_block);
-	_DELETE(part_block);
-	_DELETE (children);
+	_DELETE(var_block_list);
+	_DELETE(link_block_list);
+	_DELETE(part_block_list);
+	_DELETE(children);
+	_DELETE(children_list);
 }
 
 //-------------------------------------------------------------------------------
@@ -733,11 +757,19 @@ instance::~instance() {
 variable_value *instance::search_var(KsString *name) {
 	variable_value *p = NULL;
 
-	if (!var_block || !var_block->query(*name, p)) {
-		return NULL;
-	} else {
-		return p;
-	}
+	if (var_block_list) {
+	    PltListIterator<variable_value *> *it = (PltListIterator<variable_value *>*) var_block_list->newIterator();
+	    while (*it) {
+			p = (**it);
+			if (strcmp(*p->ident,*name) == 0) {
+				delete it;
+				return p;
+   			}
+			++*it;
+     	} // end WHILE there are more variables
+     	delete it;
+	} // end IF
+ 	return NULL;
 };
 
 //-------------------------------------------------------------------------------
@@ -746,11 +778,19 @@ variable_value *instance::search_var(KsString *name) {
 link_value *instance::search_link(KsString *name) {
 	link_value *p = NULL;
 
-	if (!link_block || !link_block->query(*name, p)) {
-		return NULL;
-	} else {
-		return p;
-	}
+	if (link_block_list) {
+	    PltListIterator<link_value *> *it = (PltListIterator<link_value *>*) link_block_list->newIterator();
+	    while (*it) {
+			p = (**it);
+			if (strcmp((PltString) *(p->ident),*name) == 0) {
+				delete it;
+				return p;
+   			}
+			++*it;
+     	} // end WHILE there are more variables
+     	delete it;
+	} // end IF
+ 	return NULL;
 };
 
 //-------------------------------------------------------------------------------
@@ -759,11 +799,19 @@ link_value *instance::search_link(KsString *name) {
 instance *instance::search_part(KsString *name) {
 	instance *p = NULL;
 
-	if (!part_block || !part_block->query(*name, p)) {
-		return NULL;
-	} else {
-		return p;
-	}
+	if (part_block_list) {
+	    PltListIterator<instance *> *it = (PltListIterator<instance *>*) part_block_list->newIterator();
+	    while (*it) {
+			p = (**it);
+            if (strcmp((PltString) *(p->ident),*name) == 0) {
+				delete it;
+				return p;
+   			}
+			++*it;
+     	} // end WHILE there are more variables
+     	delete it;
+	} // end IF
+ 	return NULL;
 };
 
 //-------------------------------------------------------------------------------
@@ -971,6 +1019,22 @@ ostream &operator << (ostream &log, PltHashTable<PltString, variable_value*> *va
 
 //-------------------------------------------------------------------------------
 
+ostream &operator << (ostream &log, PltList<variable_value *> *var_block_list) {
+    PltListIterator<variable_value *> *it;
+
+	if(var_block_list) {
+	    it = (PltListIterator<variable_value *> *) var_block_list->newIterator();
+	    while(*it) {
+	        log << (**it);
+	        ++*it;
+     	}
+     	delete it;
+    }
+	return log;
+}
+
+//-------------------------------------------------------------------------------
+
 ostream &operator << (ostream &log, PltHashTable<PltString, link_value*> *link_block) {
 	PltHashIterator<PltString, link_value *> *it;
 
@@ -982,6 +1046,38 @@ ostream &operator << (ostream &log, PltHashTable<PltString, link_value*> *link_b
 		}
 		delete it;
 	}
+	return log;
+}
+
+//-------------------------------------------------------------------------------
+
+ostream &operator << (ostream &log, PltList<link_value *> *link_block_list) {
+    PltListIterator<link_value *> *it;
+
+	if(link_block_list) {
+	    it = (PltListIterator<link_value *> *) link_block_list->newIterator();
+	    while(*it) {
+	        log << (**it);
+	        ++*it;
+     	}
+     	delete it;
+    }
+	return log;
+}
+
+//-------------------------------------------------------------------------------
+
+ostream &operator << (ostream &log, PltList<instance*> *children_list) {
+    PltListIterator<instance *> *it;
+
+	if(children_list) {
+	    it = (PltListIterator<instance *> *) children_list->newIterator();
+	    while(*it) {
+	        log << (**it);
+	        ++*it;
+     	}
+     	delete it;
+    }
 	return log;
 }
 
@@ -1011,12 +1107,12 @@ ostream &operator << (ostream &log, instance *inst) {
 				   << "Creation Time: " << inst->creation_time << endl
 				   << "Semantic Flags: " << inst->sem_flags << endl
 				   << "Comment: " << inst->comment << endl
-				   << "Variable block:" << endl
-				   << inst->var_block
-				   << "Link block:" << endl
-				   << inst->link_block
-				   << "Part block:" << endl
-				   << inst->part_block
+				   << "Variable block list:" << endl
+				   << inst->var_block_list
+				   << "Link block list:" << endl
+				   << inst->link_block_list
+				   << "Part block list:" << endl
+				   << inst->part_block_list
 				   << endl
 				   << inst->children;
 	} else {
@@ -1368,70 +1464,76 @@ bool write_instance_base(instance *node, u_int cnt)
 	}
 	fprintf(fout, ">\n");
 	
-	if (node->var_block) {
-		PltHashIterator<PltString, variable_value *> *it = (PltHashIterator<PltString, variable_value *> *) node->var_block->newIterator();
+	if (node->var_block_list) {
+		PltListIterator<variable_value *> *it = (PltListIterator<variable_value *> *) node->var_block_list->newIterator();
 		while (*it) {
-			if (strncmp(node->ident->getHead(), "vendor", 6) != 0) {	//do not write variables of vendor tree 
-				if (verbose) cout << "write variable " << (*it)->a_key << endl;
+			if (strncmp(node->ident->getHead(), "vendor", 6) != 0) {	//do not write variables of vendor tree
+				if (verbose) cout << "write variable " << *((**it)->ident) << endl;
 				for (i=0;i<cnt;i++) fprintf(fout, "\t");
-				fprintf(fout, "\t<VariableValue ID=\"%s\"", (const char*)(*it)->a_key);
-				if ((*it)->a_value->var_time) {
+				fprintf(fout, "\t<VariableValue ID=\"%s\"", (const char *) *((**it)->ident) );
+				if ((**it)->var_time) {
 					fprintf(fout, " Time=\"");
-					write_time((*it)->a_value->var_time);
+					write_time((**it)->var_time);
 					fprintf(fout, "\"");
 				}
-				if ((*it)->a_value->var_state != KS_ST_UNKNOWN) {
+				if ((**it)->var_state != KS_ST_UNKNOWN) {
 					fprintf(fout, " State=\"");
-					write_state((*it)->a_value->var_state);
+					write_state((**it)->var_state);
 					fprintf(fout, "\"");
 				}
-				if ((*it)->a_value->var_flags) {
+				if ((**it)->var_flags) {
 					fprintf(fout, " Flags=\"");
-					write_flags((*it)->a_value->var_flags);
+					write_flags((**it)->var_flags);
 					fprintf(fout, "\"");
 				}
-				if ((*it)->a_value->var_unit) fprintf(fout," Unit=\"%s\"",(const char*) *((*it)->a_value->var_unit));
-				if ((*it)->a_value->var_comment) fprintf(fout," Comment=\"%s\"",(const char*) *((*it)->a_value->var_comment));
-				fprintf(fout,">");	
-				write_value((*it)->a_value->val, (*it)->a_value->val->type);
+				if ((**it)->var_unit) fprintf(fout," Unit=\"%s\"",(const char *) *((**it)->var_unit) );
+				if ((**it)->var_comment) fprintf(fout," Comment=\"%s\"",(const char *) *((**it)->var_comment) );
+				fprintf(fout,">");
+				write_value((**it)->val, (**it)->val->type );
 				fprintf(fout, "</VariableValue>\n");
 			}
 			++*it;
 		}
+		delete it;
 	}
 
-	if (node->part_block) {    	// now iterate over parts
-		PltHashIterator<PltString, instance *> *itpart = (PltHashIterator<PltString, instance *> *) node->part_block->newIterator();
+	if (node->part_block_list) {    	// now iterate over parts
+		PltListIterator<instance *> *itpart = (PltListIterator<instance *> *) node->part_block_list->newIterator();
 		while(*itpart) {								
-			if (verbose) cout << "write part " << (*itpart)->a_key << endl;
-			ok = write_instance_base((*itpart)->a_value, cnt+1);
-			if (!ok) return ok;
+			if (verbose) cout << "write part " << *((**itpart)->ident) << endl;
+			ok = write_instance_base( (**itpart) , cnt+1);
+			if (!ok) {
+			    delete itpart;
+				return ok;
+   			}
 			++*itpart;
 		}
-		
+		delete itpart;
 	}
 
-	if (node->link_block) {
-		PltHashIterator<PltString, link_value *> *itlink = (PltHashIterator<PltString, link_value *> *) node->link_block->newIterator();
+	if (node->link_block_list) {
+		PltListIterator<link_value *> *itlink = (PltListIterator<link_value *> *) node->link_block_list->newIterator();
 		while (*itlink) {
-			if (verbose) cout << "write link " << (*itlink)->a_key << endl;
+			if (verbose) cout << "write link " << *((**itlink)->ident) << endl;
 			for (i=0;i<cnt;i++) fprintf(fout, "\t");
-			fprintf(fout, "\t<LinkValue ID=\"%s\">", (const char*) (*itlink)->a_key);
+			fprintf(fout, "\t<LinkValue ID=\"%s\">", (const char *) *(**itlink)->ident);
 			
 			// iterate over link targets
-			if ((*itlink)->a_value->link_paths) {
-				PltListIterator<LogPath> *link_it = (PltListIterator<LogPath> *) (*itlink)->a_value->link_paths->newIterator();
-				for (j = 0; j < (*itlink)->a_value->link_paths->size(); j++) {
-					fprintf(fout, "%s", (const char*) PltString(**link_it));		// link target
+			if ((**itlink)->link_paths) {
+				PltListIterator<LogPath> *link_it = (PltListIterator<LogPath> *) (**itlink)->link_paths->newIterator();
+				for (j = 0; j < (**itlink)->link_paths->size(); j++) {
+				    fprintf(fout, "%s", (const char *) PltString(**link_it));		// link target
 					++*link_it;
 					if (*link_it) fprintf(fout, ",");
 				}
+				delete link_it;
 			}
 
 			fprintf(fout, "</LinkValue>\n");
 			
 			++*itlink;
 		}
+		delete itlink;
 	}
 			
 	for (i=0;i<cnt;i++) fprintf(fout, "\t");
@@ -1496,9 +1598,9 @@ int main(int argc, char **argv)
 	}
 
 	if (argc < 3){
-		cout << "Error: Missing parameter \"//host/server\"." << endl
+		cout << "Error: Missing arguments." << endl << endl
 			 << "Usage: " << argv[0] << " input_file output_file" << endl
-			 << "[-v] print verbode information" << endl
+			 << "[-v] print verbose information" << endl
 			 << "[-h] print help information" << endl
 			 << "[-pPATH] convert relative pathes to PATH/relative path" << endl;
 		return -1;

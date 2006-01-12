@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_time.c,v 1.9 2004-10-20 16:32:00 ansgar Exp $
+*   $Id: ov_time.c,v 1.10 2006-01-12 14:10:13 markus Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -182,18 +182,18 @@ OV_DLLFNCEXPORT OV_INT ov_time_compare(
 	const OV_TIME		*ptime2
 ) {
 	if(ptime1->secs > ptime2->secs) {
-		return 1;
+		return OV_TIMECMP_AFTER;
 	}
 	if(ptime1->secs < ptime2->secs) {
-		return -1;
+		return OV_TIMECMP_BEFORE;
 	}
 	if(ptime1->usecs > ptime2->usecs) {
-		return 1;
+		return OV_TIMECMP_AFTER;
 	}
 	if(ptime1->usecs < ptime2->usecs) {
-		return -1;
+		return OV_TIMECMP_BEFORE;
 	}
-	return 0;
+	return OV_TIMECMP_EQUAL;
 }
 
 /*	----------------------------------------------------------------------	*/

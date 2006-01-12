@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.32 2005-07-14 07:56:05 ansgar Exp $
+*   $Id: ov_version.h,v 1.33 2006-01-12 14:10:13 markus Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -37,11 +37,11 @@
 #define OV_VER_CODEGEN						"1.6.3"
 #define OV_VER_BUILDER 						"1.0.4"
 #define OV_VER_MAKMAK 						"1.0.1"
-#define OV_VER_DBDUMP 						"1.3.5"
-#define OV_VER_DBPARSE						"1.1.6"
-#define OV_VER_OVXIPARSE					"1.0.0"
+#define OV_VER_DBDUMP 						"1.3.6"
+#define OV_VER_DBPARSE						"1.1.7"
+#define OV_VER_OVXIPARSE					"1.0.2"
 #define OV_VER_LIBINFO 						"1.0.0"
-#define OV_VER_LIBOV						"1.6.5"
+#define OV_VER_LIBOV						"1.6.6 beta"
 #define OV_VER_DBUTIL 						"1.2.1"
 #define OV_VER_LIBOVKS 						"1.3.4"
 #define OV_VER_SERVER						"1.3.2"

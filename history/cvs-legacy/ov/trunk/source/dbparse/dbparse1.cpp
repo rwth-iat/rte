@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.15 2005-05-09 15:30:16 ansgar Exp $
+ * $Id: dbparse1.cpp,v 1.16 2006-01-12 14:10:13 markus Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -37,7 +37,6 @@
 #include "ks/conversions.h"
 
 #include "db_y.h"
-
 //-------------------------------------------------------------------------------
 // global variables
 
@@ -400,13 +399,17 @@ bool parsetree::add(instance *inst) {
 			*(new_inst->creation_time) = (new_inst->creation_time)->now();
 			new_inst->sem_flags = 0;
 			new_inst->comment = NULL;
-			new_inst->var_block = NULL;
-			new_inst->link_block = NULL;
-			new_inst->part_block = NULL;
+			new_inst->var_block_list = NULL;
+			new_inst->link_block_list = NULL;
+			new_inst->part_block_list = NULL;
 			new_inst->cr_opts = CO_TREE;
 			if (!act_inst->children) {			// create new hash table for children
 				act_inst->children = new(PltHashTable<PltString, instance*>);
 			}
+			if (!act_inst->children_list) {
+			    act_inst->children_list = new(PltList<instance *>);
+   			}
+   			act_inst->children_list->addLast(new_inst);
 			act_inst->children->add(*(new_inst->ident), new_inst);
 		}
 		act_inst = new_inst;
@@ -432,6 +435,7 @@ bool parsetree::add(instance *inst) {
 				child->cr_opts = CO_NONE;
 				if (inst->is_part) {
 					act_inst->children->remove(*(inst->ident), inst);
+					act_inst->children_list->remove(inst);
 				} else {
 					return true;
 				}
@@ -443,23 +447,27 @@ bool parsetree::add(instance *inst) {
 	}
 
 	if (inst->is_part) {					// instance is a part
-		if (!act_inst->part_block) {		// no part list exists
-			act_inst->part_block = new(PltHashTable<PltString, instance*>);
-		}
-		if (act_inst->part_block->add(*(inst->ident), inst)) {
+		if (!act_inst->part_block_list) {	// no part list exists
+		    act_inst->part_block_list = new(PltList<instance *>);
+  		}
+		if (act_inst->part_block_list->addLast(inst)) {
 			return true;
 		} else {
-		       	cout << "Error: Could not add instance " << *inst->ident << " to part_block!" << endl;
+		       	cout << "Error: Could not add instance " << *(inst->ident) << " to part_block!" << endl;
 			return false;
 		}
 	} else {								// instance is a child
 		if (!act_inst->children) {			// no child list exists
 			act_inst->children = new(PltHashTable<PltString, instance*>);
 		}
+		if (!act_inst->children_list) {
+		    act_inst->children_list = new(PltList<instance *>);
+		}
 		if (act_inst->children->add(*(inst->ident), inst)) {
+			act_inst->children_list->addLast(inst);
 			return true;
 		} else {
-		       	cout << "Error: Could not add instance " << (const char*) (PltString) *inst->ident << " to children!" << endl;
+		       	cout << "Error: Could not add instance " << *(inst->ident) << " to children!" << endl;
 			return false;
 		}
 	}
@@ -472,7 +480,7 @@ bool parsetree::remove(LogPath *name)
 {
 	instance	*inst, *parent;
 	LogPath		lp;
-	
+
 	inst = search(name);
 	if (!inst) {
 		return false;
@@ -481,6 +489,10 @@ bool parsetree::remove(LogPath *name)
 	parent = search(&lp);
 	// remove instance from hash table of parent
 	if (!parent->children->remove(*name, inst)) {
+		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		exit(-1);
+	}
+	if (!parent->children_list->remove(inst)) {
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
 		exit(-1);
 	}
@@ -498,8 +510,12 @@ bool parsetree::remove(instance *inst)
 
 	lp = LogPath(*(inst->ident), 0, inst->ident->size()-1);
 	parent = search(&lp);
-	
+
 	if (!parent->children->remove(*(inst->ident), inst)) {
+		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		exit(-1);
+	}
+	if (!parent->children_list->remove(inst)) {
 		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
 		exit(-1);
 	}
@@ -560,20 +576,25 @@ instance *parsetree::search(LogPath *search_path) {
 bool parsetree::depthFirstSearch(instance *start, exec_function func) {
 	bool	ret = true;
 
-	if (!func(start)) {								// func execution failed
+	if (!func(start)) {
+		//	func execution failed
 		return false;
 	}
-	if (start->children) {
-		PltHashIterator<PltString, instance *> *it = (PltHashIterator<PltString, instance *> *) start->children->newIterator();
-		while(*it) {								// iterate over children
-			ret &= depthFirstSearch((**it).a_value, func);
+	
+	if (start->children_list) {
+		PltListIterator<instance *> *it = (PltListIterator<instance *> *) start->children_list->newIterator();
+		//	iterate over children
+		while(*it) {
+			ret &= depthFirstSearch((**it), func);
 			++*it;
 		}
 	}
-	if (start->part_block) {
-		PltHashIterator<PltString, instance *> *it = (PltHashIterator<PltString, instance *> *) start->part_block->newIterator();
-		while(*it) {								// iterate over parts
-			ret &= depthFirstSearch((**it).a_value, func);
+
+	if (start->part_block_list) {
+		PltListIterator<instance *> *it = (PltListIterator<instance *> *) start->part_block_list->newIterator();
+		//	iterate over parts
+		while(*it) {
+			ret &= depthFirstSearch((**it), func);
 			++*it;
 		}
 	}
@@ -713,10 +734,11 @@ instance::instance() {
 	creation_time = NULL;
 	sem_flags = 0;
 	comment = NULL;
-	var_block = NULL;
-	link_block = NULL;
-	part_block = NULL;
+	var_block_list = NULL;
+	link_block_list = NULL;
+	part_block_list = NULL;
 	children = NULL;
+	children_list = NULL;
 	cr_opts = CO_NONE;
 }
 
@@ -728,10 +750,11 @@ instance::~instance() {
 	delete(class_ident);
 	_DELETE(creation_time);
 	_DELETE(comment);
-	_DELETE(var_block);
-	_DELETE(link_block);
-	_DELETE(part_block);
-	_DELETE (children);
+	_DELETE(var_block_list);
+	_DELETE(link_block_list);
+	_DELETE(part_block_list);
+	_DELETE(children);
+	_DELETE(children_list);
 }
 
 //-------------------------------------------------------------------------------
@@ -740,11 +763,19 @@ instance::~instance() {
 variable_value *instance::search_var(KsString *name) {
 	variable_value *p = NULL;
 
-	if (!var_block || !var_block->query(*name, p)) {
-		return NULL;
-	} else {
-		return p;
-	}
+	if (var_block_list) {
+	    PltListIterator<variable_value *> *it = (PltListIterator<variable_value *>*) var_block_list->newIterator();
+	    while (*it) {
+			p = (**it);
+			if (strcmp(*p->ident,*name) == 0) {
+				delete it;
+				return p;
+   			}
+			++*it;
+     	} // end WHILE there are more variables
+     	delete it;
+	} // end IF
+ 	return NULL;
 };
 
 //-------------------------------------------------------------------------------
@@ -753,11 +784,19 @@ variable_value *instance::search_var(KsString *name) {
 link_value *instance::search_link(KsString *name) {
 	link_value *p = NULL;
 
-	if (!link_block || !link_block->query(*name, p)) {
-		return NULL;
-	} else {
-		return p;
-	}
+	if (link_block_list) {
+	    PltListIterator<link_value *> *it = (PltListIterator<link_value *>*) link_block_list->newIterator();
+	    while (*it) {
+			p = (**it);
+			if (strcmp((PltString) *(p->ident),*name) == 0) {
+				delete it;
+				return p;
+   			}
+			++*it;
+     	} // end WHILE there are more variables
+     	delete it;
+	} // end IF
+ 	return NULL;
 };
 
 //-------------------------------------------------------------------------------
@@ -766,11 +805,19 @@ link_value *instance::search_link(KsString *name) {
 instance *instance::search_part(KsString *name) {
 	instance *p = NULL;
 
-	if (!part_block || !part_block->query(*name, p)) {
-		return NULL;
-	} else {
-		return p;
-	}
+	if (part_block_list) {
+	    PltListIterator<instance *> *it = (PltListIterator<instance *>*) part_block_list->newIterator();
+	    while (*it) {
+			p = (**it);
+            if (strcmp((PltString) *(p->ident),*name) == 0) {
+				delete it;
+				return p;
+   			}
+			++*it;
+     	} // end WHILE there are more variables
+     	delete it;
+	} // end IF
+ 	return NULL;
 };
 
 //-------------------------------------------------------------------------------
@@ -978,6 +1025,22 @@ ostream &operator << (ostream &log, PltHashTable<PltString, variable_value*> *va
 
 //-------------------------------------------------------------------------------
 
+ostream &operator << (ostream &log, PltList<variable_value *> *var_block_list) {
+    PltListIterator<variable_value *> *it;
+
+	if(var_block_list) {
+	    it = (PltListIterator<variable_value *> *) var_block_list->newIterator();
+	    while(*it) {
+	        log << (**it);
+	        ++*it;
+     	}
+     	delete it;
+    }
+	return log;
+}
+
+//-------------------------------------------------------------------------------
+
 ostream &operator << (ostream &log, PltHashTable<PltString, link_value*> *link_block) {
 	PltHashIterator<PltString, link_value *> *it;
 
@@ -989,6 +1052,21 @@ ostream &operator << (ostream &log, PltHashTable<PltString, link_value*> *link_b
 		}
 		delete it;
 	}
+	return log;
+}
+//-------------------------------------------------------------------------------
+
+ostream &operator << (ostream &log, PltList<link_value *> *link_block_list) {
+    PltListIterator<link_value *> *it;
+
+	if(link_block_list) {
+	    it = (PltListIterator<link_value *> *) link_block_list->newIterator();
+	    while(*it) {
+	        log << (**it);
+	        ++*it;
+     	}
+     	delete it;
+    }
 	return log;
 }
 
@@ -1010,6 +1088,22 @@ ostream &operator << (ostream &log, PltHashTable<PltString, instance*> *children
 
 //-------------------------------------------------------------------------------
 
+ostream &operator << (ostream &log, PltList<instance*> *children_list) {
+    PltListIterator<instance *> *it;
+
+	if(children_list) {
+	    it = (PltListIterator<instance *> *) children_list->newIterator();
+	    while(*it) {
+	        log << (**it);
+	        ++*it;
+     	}
+     	delete it;
+    }
+	return log;
+}
+
+//-------------------------------------------------------------------------------
+
 ostream &operator << (ostream &log, instance *inst) {
 	if (inst) {
 		return log << "Identifier: " << *(inst->ident) << endl
@@ -1018,12 +1112,12 @@ ostream &operator << (ostream &log, instance *inst) {
 				   << "Creation Time: " << inst->creation_time << endl
 				   << "Semantic Flags: " << inst->sem_flags << endl
 				   << "Comment: " << inst->comment << endl
-				   << "Variable block:" << endl
-				   << inst->var_block
-				   << "Link block:" << endl
-				   << inst->link_block
-				   << "Part block:" << endl
-				   << inst->part_block
+				   << "Variable block list:" << endl
+				   << inst->var_block_list
+				   << "Link block list:" << endl
+				   << inst->link_block_list
+				   << "Part block list:" << endl
+				   << inst->part_block_list
 				   << endl
 				   << inst->children;
 	} else {
@@ -1430,7 +1524,7 @@ bool compat_classes(const LogPath &type1, const KsString &type2)
 			return false;
 		}
 	}
-	parent_path = (KsStringValue &)start.getCurrProps()->value;
+	parent_path = (KsStringValue &) start.getCurrProps()->value;
 	KscDomain parent_dom(parent_path);
 #endif
 	return false;							// require full compatibility by now
@@ -1486,7 +1580,7 @@ bool check_objects()
 {
  	if (verbose) cout << "Checking objects ..." << endl;
 	return (parse_tree->forEach(&checkObjs));
-} // check_objects
+} //
 
 //-------------------------------------------------------------------------------
 
@@ -1495,38 +1589,38 @@ bool check_objects()
 bool check_vendortree()
 {
 	instance										*vendor;
-	PltHashIterator<PltString, variable_value *>	*act_var;
+	PltListIterator<variable_value *>				*act_var;
 	bool											ok;
 	KS_VAR_TYPE										vartype;
 	LogPath											lp;
 	
 	lp = LogPath("/vendor");
 	vendor = parse_tree->search(&lp);
-	
+
 	if (!vendor) {										// no vendor branch in parse tree
 		return true;
 	}
-	act_var = (PltHashIterator<PltString, variable_value *>	*) vendor->var_block->newIterator();
+	act_var = (PltListIterator<variable_value *>	*) vendor->var_block_list->newIterator();
 
 	while (*act_var) {
-		KscVariable var(server + "/vendor/" + (*act_var)->a_key);
+		KscVariable var(server + "/vendor/" + *((**act_var)->ident));
 		if (!var.getEngPropsUpdate()) {					// variable not found in server
-			cout << "Error: Cannot access variable /vendor/" << (const char *)(*act_var)->a_key
+			cout << "Error: Cannot access variable /vendor/" << *((**act_var)->ident)
 				 << " in server!" << endl;
 		}
 		vartype = ((KsVarEngProps*) var.getEngProps())->type;
-		if ((*act_var)->a_value->val->type == DB_VT_VECTOR) {
-			ok = compat_vectors((*act_var)->a_value->val->v.pvector_val, vartype);
+		if ((**act_var)->val->type == DB_VT_VECTOR) {
+			ok = compat_vectors((**act_var)->val->v.pvector_val, vartype);
 		} else {
-			ok = compat_types((*act_var)->a_value->val->type, vartype);
+			ok = compat_types((**act_var)->val->type, vartype);
 		}
 		if (!ok) {										// variable types are incompatible
 			cout << "Error: Conflicting types for variable "
-				 << (const char*)(*act_var)->a_key << "!" << endl;
+				 << *((**act_var)->ident) << "!" << endl;
 			return false;
 		}
-		if (strcmp ((*act_var)->a_key, "/vendor/activity_lock") == 0) {
-			(*act_var)->a_value->val->v.bool_val = true;	// always set activity lock in parse tree
+		if (strcmp ( *((**act_var)->ident) , "/vendor/activity_lock" ) == 0) {
+			(**act_var)->val->v.bool_val = true;	// always set activity lock in parse tree
 		}
 		++*act_var;
 	}
@@ -1540,14 +1634,14 @@ bool check_vendortree()
 bool checkClassId(instance *node) {
 
 	int												ret;
-	PltHashIterator<PltString, variable_value *>	*act_var;
-	PltHashIterator<PltString, link_value *>		*act_link;
-	PltHashIterator<PltString, instance *>			*act_part;
+	PltListIterator<variable_value *>				*act_var;
+	PltListIterator<link_value *>					*act_link;
+	PltListIterator<instance *>						*act_part;
 	int												i;
 	bool											found = true;
 	bool											ok = false;
 	instance										*class_obj, *act_cobj, *var_inst;
-	variable_value									*var_type, *var_props, *dummy;
+	variable_value									*var_type, *var_props; //, *dummy;
 	link_value										*bc;
 	bool											succ;
 
@@ -1567,8 +1661,8 @@ bool checkClassId(instance *node) {
 				cout << "Error: Class " << *(node->class_ident) << " not found!" << endl;
 				return false;
 			}
-			if (node->var_block) {
-				act_var = (PltHashIterator<PltString, variable_value *>	*) node->var_block->newIterator();		// check variables of instance for
+			if (node->var_block_list) {
+				act_var = (PltListIterator<variable_value *>	*) node->var_block_list->newIterator();		// check variables of instance for
 																// compliance to class definition
 				while (*act_var) {							// for all variables of the instance
 					ret = 0;
@@ -1584,41 +1678,46 @@ bool checkClassId(instance *node) {
 							return false;
 						}
 						if (act_cobj->children) {
-							if (act_cobj->children->query(act_class_name + "/" + *((*act_var)->a_value->ident),
-														   var_inst)) {
-								if (!var_inst->var_block->query("vartype", var_type)) {
+							if (act_cobj->children->query(act_class_name + "/" + ((PltString) *((**act_var)->ident)), var_inst)) {
+								KsString ksvar("vartype");
+								var_type = var_inst->search_var(&ksvar);
+								if (!var_type) {
 									cout << "Error: Class " << *(node->class_ident) << "," << endl
-										 << "       cannot get type of variable " << *((*act_var)->a_value->ident)
+										 << "       cannot get type of variable " << *((**act_var)->ident)
 										 << "!" << endl;
 									return false;
 								}
-								if (!var_inst->var_block->query("varprops", var_props)) {
+								KsString ksvarprop("varprops");
+								var_props = var_inst->search_var(&ksvarprop);
+								if (!var_props) {
 									cout << "Error: Class " << *(node->class_ident) << "," << endl
-										 << "       cannot get props of variable " << *((*act_var)->a_value->ident)
+										 << "       cannot get props of variable " << *((**act_var)->ident)
 										 << "!" << endl;
 									return false;
 								}
 								if (var_props->val->v.int_val & 0x4) {		// variable is derived, must not be set
-									node->var_block->remove((*act_var)->a_key, dummy);
+									node->var_block_list->remove((**act_var));
 									ret = 1;
 									break;
 								}
-								if ((*act_var)->a_value->val->type == DB_VT_VECTOR) {
-									ok = compat_vectors((*act_var)->a_value->val->v.pvector_val, var_type->val->v.int_val);
+								if ((**act_var)->val->type == DB_VT_VECTOR) {
+									ok = compat_vectors((**act_var)->val->v.pvector_val, var_type->val->v.int_val);
 								} else {
-									ok = compat_types((*act_var)->a_value->val->type, var_type->val->v.int_val);
+									ok = compat_types((**act_var)->val->type, var_type->val->v.int_val);
 								}
 								if (ok) {					// variable types are compatible
 									ret = 1;
 									break;
 								} else {
 									cout << "Error: Class " << *(node->class_ident) << "," << endl
-										 << "       variable " << (const char*)(*act_var)->a_key << " not compatible!" << endl;
+										 << "       variable " << *((**act_var)->ident) << " not compatible!" << endl;
 									return false;
 								}
 							} // if (var_inst)
 						} // if (act_cobj->children)
-						if (act_cobj->link_block->query("baseclass", bc)) {
+						KsString ksbcstr("baseclass");
+						bc = act_cobj->search_link(&ksbcstr);
+						if (bc) {
 							if (bc->link_paths) {
 								PltListIterator<LogPath> *it = (PltListIterator<LogPath> *) bc->link_paths->newIterator();
 								act_class_name = **it;					// path of the base class
@@ -1636,13 +1735,13 @@ bool checkClassId(instance *node) {
 
 					if (!ret) {
 						cout << "Error: Class " << *(node->class_ident) << "," << endl
-							 << "       variable " << (const char*)(*act_var)->a_key << " not compatible!" << endl;
+							 << "       variable " << *((**act_var)->ident) << " not compatible!" << endl;
 						return false;
 					}
 					++*act_var;
 				} // while (*act_var)
 				delete act_var;
-			} // if (node->var_block)
+			} // if (node->var_block_list)
 
 		} // if (!lopts ..)
 		node->cr_opts = CO_CREATE;
@@ -1652,12 +1751,12 @@ bool checkClassId(instance *node) {
 	} else {										// class in server, compatible?
 
 		// check variables
-		if (node->var_block) {
-			act_var = (PltHashIterator<PltString, variable_value *>	*) node->var_block->newIterator();
+		if (node->var_block_list) {
+			act_var = (PltListIterator<variable_value *>	*) node->var_block_list->newIterator();
 			while (*act_var) {						// for all variables of the instance
-				if (verbose) cout << "      check variable " << (PltString)(*act_var)->a_key << endl;
+				if (verbose) cout << "      check variable " << *((**act_var)->ident) << endl;
 				LogPath act_class_name = LogPath(*(node->class_ident));
-				KsString domname(server + act_class_name + "/" + (*act_var)->a_key);
+				KsString domname(server + act_class_name + "/" + *((**act_var)->ident));
 				KscDomain var(domname);		// meta information about variable is stored in domain object
 				if (!var.getEngPropsUpdate()) {					// class variable not found in server
 					found = false;
@@ -1671,7 +1770,7 @@ bool checkClassId(instance *node) {
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
 						act_class_name = (KsStringValue &) *parentprops->value;
 						if (act_class_name.isValid()) {
-							KscDomain var(server + act_class_name + "/" + (*act_var)->a_key);
+							KscDomain var(server + act_class_name + "/" + *((**act_var)->ident));
 							if (var.getEngPropsUpdate()) {			// variable in class definition
 								found = true;
 								break;
@@ -1685,48 +1784,48 @@ bool checkClassId(instance *node) {
 					return false;
 				}
 				// variable description is found in server, check compatibility now
-				KscVariable vartype(server + act_class_name + "/" + (*act_var)->a_key + ".vartype");
+				KscVariable vartype(server + act_class_name + "/" + *((**act_var)->ident) + ".vartype");
 				if (! (vartype.getEngPropsUpdate() && vartype.getUpdate()) ) {
 					cout << "Error: Cannot get variable type of " << endl
-						 << *(node->class_ident) << "/" << (const char*)(*act_var)->a_key << "!" << endl;
+						 << *(node->class_ident) << "/" << *((**act_var)->ident) << "!" << endl;
 					return false;
 				}
-				KscVariable varprops(server + act_class_name + "/" + (*act_var)->a_key + ".varprops");
+				KscVariable varprops(server + act_class_name + "/" + *((**act_var)->ident) + ".varprops");
 				if (! (varprops.getEngPropsUpdate() && varprops.getUpdate()) ) {
 					cout << "Error: Cannot get variable props of " << endl
-						 << *(node->class_ident) << "/" << (const char*)(*act_var)->a_key << "!" << endl;
+						 << *(node->class_ident) << "/" << *((**act_var)->ident) << "!" << endl;
 					return false;
 				}
 				const KsVarCurrProps *currprops = varprops.getCurrProps();
 				if (((int)((KsIntValue &) *currprops->value)) & 0x4) {		// variable is derived, must not be set
-					node->var_block->remove((*act_var)->a_key, dummy);
+					node->var_block_list->remove((**act_var));
 					++*act_var;
 					continue;
 				}
 				currprops = vartype.getCurrProps();
-				if ((*act_var)->a_value->val->type == DB_VT_VECTOR) {
+				if ((**act_var)->val->type == DB_VT_VECTOR) {
 					// check variable types for compatibility
-					ok = compat_vectors((*act_var)->a_value->val->v.pvector_val, (int)((KsIntValue &) *currprops->value));
+					ok = compat_vectors((**act_var)->val->v.pvector_val, (int)((KsIntValue &) *currprops->value));
 				} else {
-					ok = compat_types((*act_var)->a_value->val->type, (int)((KsIntValue &) *currprops->value));
+					ok = compat_types((**act_var)->val->type, (int)((KsIntValue &) *currprops->value));
 				}
 				if (!ok) {												// variable type not compatible
 					cout << "Error: Class " << *(node->class_ident) << "," << endl
-						 << "       type of ." << (const char*)(*act_var)->a_key << " is not compatible!"
+						 << "       type of ." << *((**act_var)->ident) << " is not compatible!"
 						 << endl;
 					return false;
 				}
 				++*act_var;
 			} // while (*act_var)
 			delete act_var;
-		} // if (node->var_block);
+		} // if (node->var_block_list);
 
 		// check links
-		if (node->link_block) {
-			act_link = (PltHashIterator<PltString, link_value *>*) node->link_block->newIterator();
+		if (node->link_block_list) {
+			act_link = (PltListIterator<link_value *>*) node->link_block_list->newIterator();
 
 			while (*act_link) {								// for all links of the instance
-				if (verbose) cout << "      check link " << (PltString) (*act_link)->a_key << endl;
+				if (verbose) cout << "      check link " << *((**act_link)->ident) << endl;
 				succ = false;
 				LogPath act_class_name = *(node->class_ident);
 				// 1. Get the contents of the variables "childassociation" and "parentassociation"
@@ -1764,7 +1863,7 @@ bool checkClassId(instance *node) {
 							return false;
 						}
 						const KsVarCurrProps *p_role_props = p_role.getCurrProps();
-						if (strcmp((*act_link)->a_key, (KsStringValue &) *p_role_props->value) == 0) {
+						if (strcmp(*((**act_link)->ident), (KsStringValue &) *p_role_props->value) == 0) {
 							succ = true;
 							break;
 						}
@@ -1779,7 +1878,7 @@ bool checkClassId(instance *node) {
 							return false;
 						}
 						const KsVarCurrProps *c_role_props = c_role.getCurrProps();
-						if (strcmp((*act_link)->a_key, (KsStringValue &) *c_role_props->value) == 0) {
+						if (strcmp(*((**act_link)->ident), (KsStringValue &) *c_role_props->value) == 0) {
 							succ = true;
 							break;
 						}
@@ -1797,36 +1896,37 @@ bool checkClassId(instance *node) {
 				} // while (!succ ...)
 				if (!succ) {
 					cout << "Error: Class " << *(node->class_ident) << ": link type of " << endl
-						 << (const char*)(*act_link)->a_key << " is not compatible!" << endl;
+						 << *((**act_link)->ident) << " is not compatible!" << endl;
 					return false;
 				}
 				++*act_link;
 			} // while (*act_link)
 			delete act_link;
-		} // if (node->link_block)
+		} // if (node->link_block_list)
 
 		// check class type of parts
-		if (node->part_block) {
-			act_part = (PltHashIterator<PltString, instance *>*) node->part_block->newIterator();
+		if (node->part_block_list) {
+			act_part = (PltListIterator<instance *>*) node->part_block_list->newIterator();
+
+			PltString * helpString;
 
 			while (*act_part) {									// for all parts of the instance
-				if (verbose) cout << "      check part " << (PltString) (*act_part)->a_key << endl;
+				if (verbose) cout << "      check part " << *((**act_part)->ident) << endl;
 				LogPath act_class_name = LogPath(*(node->class_ident));
 
 				// get part name
 				int j;
-				for (j = (*act_part)->a_key.len() - 1; j >= 0; j--) {
-					if ( ((const char*) (*act_part)->a_key) [j] == '.') {
+				helpString = (PltString *) (**act_part)->ident;
+				for (j = helpString->len() - 1; j >= 0; j--) {
+					if ( ((const char *) *helpString)[j] == '.') {
 						break;
 					}
 				}
-				KsString help = KsString(& ((const char*) (*act_part)->a_key)[j+1] );
-
+				KsString help = KsString(& ((const char *) *helpString)[j+1] );
 				// info about part is stored in domain "class_name/part_name"
 				KsString domname(server + act_class_name + "/" + help);
 				KscDomain part(domname);
 				found = true;
-
 				if (!part.getEngPropsUpdate()) {				// class part not found in server
 					found = false;
 					while (act_class_name.isValid() ) {			// search the base classes for
@@ -1862,7 +1962,7 @@ bool checkClassId(instance *node) {
 				const KsVarCurrProps *clidprops = clid.getCurrProps();
 				KsString clname = KsString((KsStringValue &) *clidprops->value);
 
-				if (strcmp(clname, (PltString)*((*act_part)->a_value->class_ident)) != 0) {
+				if (strcmp(clname, (PltString) *((**act_part)->class_ident) ) != 0) {
 					cout << "Error: Class " << *(node->class_ident) << ": part class " << endl
 						 << help << " is not compatible!" << endl;
 					return false;
@@ -1870,7 +1970,7 @@ bool checkClassId(instance *node) {
 				++*act_part;
 			} // while (*act_part)
 			delete act_part;
-		} // if (node->part_block)
+		} // if (node->part_block_list)
 
 	} // if (!dom.get ...
 
@@ -1991,29 +2091,29 @@ bool write_variables(instance *node)
 	enum value_types		vec_t;
 	unsigned int						i;
 	// iterate over all variables of the instance to be changed
-	if (node->cr_opts == CO_CHANGE && node->var_block) {
-		PltHashIterator<PltString, variable_value *> *it = (PltHashIterator<PltString, variable_value *> *) node->var_block->newIterator();
+	if (node->cr_opts == CO_CHANGE && node->var_block_list) {
+		PltListIterator<variable_value *> *it = (PltListIterator<variable_value *> *) node->var_block_list->newIterator();
 		unsigned int nr_v = 0;
 		while (*it) {
-			PltString delimiter;
+		    PltString delimiter;
 			if (strncmp(node->ident->getHead(), "vendor", 6) != 0) {	//do not write variables of vendor tree // different var. format
 //				delimiter = "/";
 //			} else {
 				delimiter = ".";
 //			}
-			KscVariable help(server + *(node->ident) + delimiter + (*it)->a_key);
-			if (!help.getEngPropsUpdate()) {
-				cout << "Error: Variable " << *(node->ident) << delimiter << (const char*)(*it)->a_key
-					 << " does not exist!" << endl;
-				delete it;
-				return false;
-			}
-			const KsVarEngProps *helpprops = (KsVarEngProps *) help.getEngProps();
-			if ((helpprops->access_mode & KS_AC_WRITE) || (use_activitylock)) {		// count writable variables
-				nr_v++;
-			} else {
-				(*it)->a_value->val->type = DB_VT_NONE;		// ignore read-only variables
-			}
+				KscVariable help(server + *(node->ident) + delimiter + *((**it)->ident) );
+				if (!help.getEngPropsUpdate()) {
+					cout << "Error: Variable " << *(node->ident) << delimiter << *((**it)->ident)
+						 << " does not exist!" << endl;
+					delete it;
+					return false;
+				}
+				const KsVarEngProps *helpprops = (KsVarEngProps *) help.getEngProps();
+				if ((helpprops->access_mode & KS_AC_WRITE) || (use_activitylock)) {		// count writable variables
+					nr_v++;
+				} else {
+					(**it)->val->type = DB_VT_NONE;		// ignore read-only variables
+				}
 			} // end of do not write vendor tree variables
 			++*it;
 		} // while (*it)
@@ -2023,60 +2123,60 @@ bool write_variables(instance *node)
 		i = 0;
 		// create and set variable value depending on data type
 		while (*it) {
-			KsValue *val;
-			switch((*it)->a_value->val->type) {
+		    KsValue *val;
+			switch((**it)->val->type) {
 				case DB_VT_NONE:					// skip read-only variables
 					++*it;
 					continue;
 				case DB_VT_BOOL:
-					val = new KsBoolValue((*it)->a_value->val->v.bool_val);
+					val = new KsBoolValue( (**it)->val->v.bool_val);
 					break;
 				case DB_VT_INT:
-					val = new KsIntValue((*it)->a_value->val->v.int_val);
+					val = new KsIntValue( (**it)->val->v.int_val);
 					break;
 				case DB_VT_DOUBLE:
-					val = new KsDoubleValue((*it)->a_value->val->v.double_val);
+					val = new KsDoubleValue( (**it)->val->v.double_val);
 					break;
 				case DB_VT_INT_TO_DOUBLE:			// convert to double
-					val = new KsDoubleValue((double)(*it)->a_value->val->v.int_val);
+					val = new KsDoubleValue((double) (**it)->val->v.int_val);
 					break;
 				case DB_VT_STRING:
-					if (ksStringFromPercent(*((*it)->a_value->val->v.pstring_val), dummy)==KS_ERR_OK)
+					if (ksStringFromPercent(*((**it)->val->v.pstring_val), dummy)==KS_ERR_OK)
 						val = new KsStringValue(dummy);
 					else val = new KsStringValue("");
 					break;
 				case DB_VT_TIME:
-					val = new KsTimeValue(*((*it)->a_value->val->v.ptime_val));
+					val = new KsTimeValue(*((**it)->val->v.ptime_val) );
 					break;
 				case DB_VT_TIME_SPAN:
-					val = new KsTimeSpanValue(*((*it)->a_value->val->v.ptime_span_val));
+					val = new KsTimeSpanValue(*((**it)->val->v.ptime_span_val) );
 					break;
 				case DB_VT_UINT:
-					val = new KsUIntValue((u_int)(*it)->a_value->val->v.int_val);
+					val = new KsUIntValue((u_int) (**it)->val->v.int_val);
 					break;
 				case DB_VT_INT_TO_SINGLE:			// convert to single
-					val = new KsSingleValue((float)(*it)->a_value->val->v.int_val);
+					val = new KsSingleValue((float) (**it)->val->v.int_val);
 					break;
 				case DB_VT_DOUBLE_TO_SINGLE:		// convert to single
-					val = new KsSingleValue((float)(*it)->a_value->val->v.double_val);
+					val = new KsSingleValue((float) (**it)->val->v.double_val);
 					break;
 				case DB_VT_TIME_TO_TIME_SPAN:		// convert to time span
-					val = new KsTimeSpanValue((*it)->a_value->val->v.ptime_val->tv_sec,
-											  (*it)->a_value->val->v.ptime_val->tv_usec);
+					val = new KsTimeSpanValue( (**it)->val->v.ptime_val->tv_sec,
+											   (**it)->val->v.ptime_val->tv_usec);
 					break;
 				case DB_VT_TIME_SPAN_TO_TIME:		// convert to time
-					val = new KsTimeValue((*it)->a_value->val->v.ptime_span_val->tv_sec,
-										  (*it)->a_value->val->v.ptime_span_val->tv_usec);
+					val = new KsTimeValue( (**it)->val->v.ptime_span_val->tv_sec,
+										   (**it)->val->v.ptime_span_val->tv_usec);
 					break;
 				case DB_VT_VECTOR:
-					act_vec = (*it)->a_value->val->v.pvector_val;
+					act_vec = (**it)->val->v.pvector_val;
 					vec_t = act_vec->type;
 					vec_sz = 0;
 					while(act_vec && act_vec->content) {	// count vector elements
 						vec_sz++;
 						act_vec = act_vec->next;
 					}
-					act_vec = (*it)->a_value->val->v.pvector_val;
+					act_vec = (**it)->val->v.pvector_val;
 					switch(vec_t) {
 						case DB_VT_BOOL: {
 							KsBoolVecValue *bvec = new KsBoolVecValue(vec_sz);
@@ -2177,19 +2277,19 @@ bool write_variables(instance *node)
 							break;
 						}
 						case DB_VT_VECTOR: {
-							cout << "Error: nested vectors are not allowed! (" << (const char*)(*it)->a_key
+							cout << "Error: nested vectors are not allowed! (" << *((**it)->ident)
 								 << ")" << endl;
 							delete it;
 							return false;
 						}
 						case DB_VT_STRUCTURE: {
 							cout << "Error: variables of type structure are not yet supported! ("
-								 << (const char*)(*it)->a_key << ")" << endl;
+								 << *((**it)->ident) << ")" << endl;
 							delete it;
 							return false;
 						}
 						default: {
-							cout << "Error: " << (const char*)(*it)->a_key << " has unknown variable type!"
+							cout << "Error: " << *((**it)->ident) << " has unknown variable type!"
 								 << endl;
 							delete it;
 							return false;
@@ -2198,14 +2298,14 @@ bool write_variables(instance *node)
 					break;
 				case DB_VT_STRUCTURE:
 					cout << "Error: variables of type structure are not yet supported! ("
-						 << (const char*)(*it)->a_key << ")" << endl;
+						 << *((**it)->ident) << ")" << endl;
 					delete it;
 					return false;
 				case DB_VT_VOID:
 					val = new KsVoidValue();
 					break;
 				default:
-					cout << "Error: " << (const char*)(*it)->a_key << " has unknown variable type!"
+					cout << "Error: " << *((**it)->ident) << " has unknown variable type!"
 						 << endl;
 					delete it;
 					return false;
@@ -2213,10 +2313,10 @@ bool write_variables(instance *node)
 
 			KsValueHandle hvalue(val, KsOsNew);
 			KsVarCurrProps *cprops;
-			if ((*it)->a_value->var_time)
-				cprops = new KsVarCurrProps(hvalue, *((*it)->a_value->var_time), (*it)->a_value->var_state);
+			if ((**it)->var_time)
+				cprops = new KsVarCurrProps(hvalue, *((**it)->var_time), (**it)->var_state);
 			else
-				cprops = new KsVarCurrProps(hvalue, KsTime(0,0), (*it)->a_value->var_state);
+				cprops = new KsVarCurrProps(hvalue, KsTime(0,0), (**it)->var_state);
 
 			KsCurrPropsHandle hcprops(cprops, KsOsNew);
 
@@ -2226,7 +2326,7 @@ bool write_variables(instance *node)
 			} else {
 				delimiter = ".";
 			}
-			params[i].path_and_name = *(node->ident) + delimiter + (*it)->a_key;
+			params[i].path_and_name = *(node->ident) + delimiter + *((**it)->ident);
 			params[i].curr_props = hcprops;
 
 			++*it;
@@ -2283,16 +2383,18 @@ bool write_variables(instance *node)
 // Find and create all libraries before the other objects
 bool find_libraries(instance *node)
 {
-	if (*(node->class_ident) == LogPath("/acplt/ov/library")) {
-		if (strcmp((PltString)*(node->ident), "/acplt/ov") == 0) {		// skip /acplt/ov branch
+	if ( *(node->class_ident) == LogPath("/acplt/ov/library") ) {
+		if (strcmp( (PltString) *(node->ident), "/acplt/ov") == 0) {		// skip /acplt/ov branch
 			delete node->children;			// skip contents of library,
 			node->children = NULL;
-			delete node->var_block;			// which is created automatically
-			node->var_block = NULL;
-			delete node->link_block;
-			node->link_block = NULL;
-			delete node->part_block;
-			node->part_block = NULL;
+			delete node->children_list;		// which is created automatically
+			node->children_list = NULL;
+			delete node->var_block_list;
+			node->var_block_list = NULL;
+			delete node->link_block_list;
+			node->link_block_list = NULL;
+			delete node->part_block_list;
+			node->part_block_list = NULL;
 			return true;
 		}
 		if (! node->class_ident->isSingle() ) {
@@ -2310,12 +2412,14 @@ bool find_libraries(instance *node)
 		}
 		delete node->children;			// skip contents of library,
 		node->children = NULL;
-		delete node->var_block;			// which is created automatically
-		node->var_block = NULL;
-		delete node->link_block;
-		node->link_block = NULL;
-		delete node->part_block;
-		node->part_block = NULL;
+		delete node->children_list;		// which is created automatically
+		node->children_list = NULL;
+		delete node->var_block_list;
+		node->var_block_list = NULL;
+		delete node->link_block_list;
+		node->link_block_list = NULL;
+		delete node->part_block_list;
+		node->part_block_list = NULL;
 		if (liblist.addLast(node)) {	// add node to the list of library instances
 			return true;
 		} else {
@@ -2336,16 +2440,16 @@ bool write_links(instance *node)
 	KsLinkParams		link_params;
 	KsLinkResult		link_result;
 
-	if (! (node->cr_opts == CO_CHANGE && node->link_block)) {
-		return true;				// nothing to be done
+	if (! (node->cr_opts == CO_CHANGE && node->link_block_list)) {
+        return true;				// nothing to be done
 	}
 
-	PltHashIterator<PltString, link_value *> *it = (PltHashIterator<PltString, link_value *> *) node->link_block->newIterator();
+	PltListIterator<link_value *> *it = (PltListIterator<link_value *> *) node->link_block_list->newIterator();
 
-	for ( ; *it; ++*it) {
-		KscAnyCommObject help(server + *(node->ident) + "." + (*it)->a_key);
+	while (*it) {
+	    KscAnyCommObject help(server + *(node->ident) + "." + *((**it)->ident) );
 		if (!help.getEngPropsUpdate()) {
-			cout << "Error: Link " << *(node->ident) << "." << (const char*)(*it)->a_key
+			cout << "Error: Link " << *(node->ident) << "." << *((**it)->ident)
 				 << " does not exist!" << endl;
 			delete it;
 			return false;
@@ -2354,16 +2458,16 @@ bool write_links(instance *node)
 		//if (! (helpprops->access_mode & KS_AC_LINKABLE)) {	// link cannot be changed
 		//	continue;
 		//}
-		if (! (*it)->a_value->link_paths) {					// empty link
+		if (! (**it)->link_paths ) {					// empty link
 			continue;
 		}
-		i = (*it)->a_value->link_paths->size();
+		i = (**it)->link_paths->size();
 		KsArray<KsLinkItem> l_items(i);
 
-		PltListIterator<LogPath> *link_it = (PltListIterator<LogPath> *) (*it)->a_value->link_paths->newIterator();
+		PltListIterator<LogPath> *link_it = (PltListIterator<LogPath> *) (**it)->link_paths->newIterator();
 		// iterate over link targets
 		for (j = 0; j < i; j++) {
-			l_items[j].link_path = *(node->ident) + "." + (*it)->a_key;		// link name
+			l_items[j].link_path = *(node->ident) + "." + *((**it)->ident);		// link name
 			l_items[j].element_path = PltString(**link_it);		// link target
 			l_items[j].place = pmh;
 			l_items[j].opposite_place = pmh;
@@ -2390,13 +2494,13 @@ bool write_links(instance *node)
 			}
 			if (link_result.results[j] == KS_ERR_BADPATH) {		// TODO: ???
 				if (verbose) {
-					cout << "Warning: Link " << (const char*)(*it)->a_key << " of object " << *(node->ident)
+					cout << "Warning: Link " << *((**it)->ident) << " of object " << *(node->ident)
 						 << " could not be set," << endl << "    target " << (PltString)**link_it
 						 << " does not exist!" << endl;
 				}
 			} else {
 				cout << "Error " << link_result.results[j] << " setting link "
-					 << (const char*)(*it)->a_key << " of object " << *(node->ident)
+					 << *((**it)->ident) << " of object " << *(node->ident)
 					 << "!" << endl;
 				return false;
 			}
@@ -2404,7 +2508,8 @@ bool write_links(instance *node)
 		} //for
 		delete link_it;
 
-	} // for
+		++*it;
+	} // while
 	delete it;
 	if (verbose) {
 		cout << "Wrote links of " << *(node->ident) << " successfully!" << endl;
@@ -2719,7 +2824,7 @@ int main(int argc, char **argv)
 	}
 
 	parse_tree = new(parsetree);
-	
+
 	yyin = fopen(infile, "r");						// open the input file read-only
 	if(!yyin) {
 		cout << "Error: File not found!" << endl;

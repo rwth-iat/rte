@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.h,v 1.5 1999-09-15 10:48:15 dirk Exp $
+*   $Id: ov_string.h,v 1.6 2006-01-12 14:10:13 markus Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -35,6 +35,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+*	OV_STRINGCOMPARE:
+*	----------------
+*	Result of function ov_string_compare(s1, s2)
+*/
+#define	OV_STRCMP_EQUAL	0		/* s1 = s2 */
+#define	OV_STRCMP_MORE		1		/* s1 > s2 */
+#define	OV_STRCMP_LESS		-1		/* s1 < s2 */
 
 /*
 *	Set value of a string in the database

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.c,v 1.8 2001-07-09 12:50:00 ansgar Exp $
+*   $Id: ov_string.c,v 1.9 2006-01-12 14:10:13 markus Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -156,17 +156,17 @@ OV_DLLFNCEXPORT OV_INT ov_string_compare(
 			return strcmp(string1, string2);
 		}
 		if(!*string1) {
-			return 0;						/* "" == NULL */
+			return OV_STRCMP_EQUAL;		/* "" == NULL */
 		}
-		return 1;							/* "xxx" > NULL */
+		return OV_STRCMP_MORE;			/* "xxx" > NULL */
 	}
 	if(string2) {
 		if(!*string2) {
-			return 0;						/* NULL == "" */
+			return OV_STRCMP_EQUAL;		/* NULL == "" */
 		}
-		return -1;							/* NULL < "xxx" */
+		return OV_STRCMP_LESS;			/* NULL < "xxx" */
 	}
-	return 0;								/* NULL == NULL */
+	return OV_STRCMP_EQUAL;				/* NULL == NULL */
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -451,46 +451,60 @@ OV_DLLFNCEXPORT OV_BOOL ov_string_match(
 	/*
 	*	implementation
 	*/
-	while(mask[i] && string[j]) {
-		switch(mask[i]) {
-		case '[':
-			if(mask[i+1] != '^') {
-				r = ov_string_match_set(mask, string, &i, &j);
-			} else {
-				i++;
-				r = !(ov_string_match_set(mask, string, &i, &j));
-			}
-			if(!r) {
-				return FALSE;
-			}
-			i++;
-			j++;
-			break;
-
-		case '*':
-			r = ov_string_match_joker(mask, string, &i, &j);
-			if(r) {
-				return TRUE;
-			}
-			return FALSE;
-
-		case '?':
-			i++;
-			j++;
-			break;
-
-		case '\\':
-			i++;
-			/* no break */
-
-		default:
-			if(mask[i] == string[j]) {
+	if (string == NULL || mask == NULL)
+	{
+		if (string == NULL)
+		{
+			if (mask == NULL)
+				return TRUE;		/* NULL == NULL */
+				
+			return FALSE;			/* NULL != "xxx" */
+		};
+		return FALSE;				/* "xxx" != NULL */
+	};
+	
+	while(mask[i] && string[j])
+	{
+		switch(mask[i])
+		{
+			case '[':
+				if(mask[i+1] != '^') {
+					r = ov_string_match_set(mask, string, &i, &j);
+				} else {
+					i++;
+					r = !(ov_string_match_set(mask, string, &i, &j));
+				}
+				if(!r) {
+					return FALSE;
+				}
 				i++;
 				j++;
-			} else {
+				break;
+	
+			case '*':
+				r = ov_string_match_joker(mask, string, &i, &j);
+				if(r) {
+					return TRUE;
+				}
 				return FALSE;
-			}
-			break;
+	
+			case '?':
+				i++;
+				j++;
+				break;
+	
+			case '\\':
+				i++;
+				/* no break */
+	
+			default:
+				if(mask[i] == string[j]) {
+					i++;
+					j++;
+				} else {
+					return FALSE;
+				}
+				break;
 		} /* switch */
 	} /* while */
 	
