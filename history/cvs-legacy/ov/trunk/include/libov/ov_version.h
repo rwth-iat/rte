@@ -1,7 +1,7 @@
 /*
-*   $Id: ov_version.h,v 1.33 2006-01-12 14:10:13 markus Exp $
+*   $Id: ov_version.h,v 1.34 2006-01-25 10:13:45 markus Exp $
 *
-*   Copyright (C) 1998-1999
+*   Copyright (C) 1998-2006
 *   Lehrstuhl fuer Prozessleittechnik,
 *   RWTH Aachen, D-52056 Aachen, Germany.
 *   All rights reserved.
@@ -41,7 +41,7 @@
 #define OV_VER_DBPARSE						"1.1.7"
 #define OV_VER_OVXIPARSE					"1.0.2"
 #define OV_VER_LIBINFO 						"1.0.0"
-#define OV_VER_LIBOV						"1.6.6 beta"
+#define OV_VER_LIBOV						"1.6.7"
 #define OV_VER_DBUTIL 						"1.2.1"
 #define OV_VER_LIBOVKS 						"1.3.4"
 #define OV_VER_SERVER						"1.3.2"
@@ -51,33 +51,33 @@
 #define OV_VER_FILEVERSION_CODEGEN			1, 6, 3, 0
 #define OV_VER_FILEVERSION_BUILDER			1, 0, 4, 0
 #define OV_VER_FILEVERSION_MAKMAK			1, 0, 1, 0
-#define OV_VER_FILEVERSION_DBDUMP			1, 3, 5, 0
-#define OV_VER_FILEVERSION_DBPARSE			1, 1, 6, 0
-#define OV_VER_FILEVERSION_OVXIPARSE		1, 0, 0, 0
+#define OV_VER_FILEVERSION_DBDUMP			1, 3, 6, 0
+#define OV_VER_FILEVERSION_DBPARSE			1, 1, 7, 0
+#define OV_VER_FILEVERSION_OVXIPARSE		1, 0, 2, 0
 #define OV_VER_FILEVERSION_LIBINFO			1, 0, 0, 0
-#define OV_VER_FILEVERSION_LIBOV			1, 6, 5, 0
+#define OV_VER_FILEVERSION_LIBOV			1, 6, 7, 0
 #define OV_VER_FILEVERSION_DBUTIL 			1, 2, 1, 0
 #define OV_VER_FILEVERSION_LIBOVKS 			1, 3, 4, 0
 #define OV_VER_FILEVERSION_SERVER			1, 3, 2, 0
 #define OV_VER_FILEVERSION_NTSERVICE		1, 3, 1, 0
 #define OV_VER_FILEVERSION_CONTROLPANEL		1, 2, 0, 0
 
-#define OV_VER_PRODUCTVERSION_CODEGEN		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_BUILDER		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_MAKMAK		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_DBDUMP		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_DBPARSE		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_OVXIPARSE		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_LIBINFO		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_LIBOV			1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_DBUTIL 		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_LIBOVKS 		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_SERVER		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_NTSERVICE		1, 6, 5, 0
-#define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 6, 5, 0
+#define OV_VER_PRODUCTVERSION_CODEGEN		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_BUILDER		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_MAKMAK		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_DBDUMP		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_DBPARSE		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_OVXIPARSE		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBINFO		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBOV			1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_DBUTIL 		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_LIBOVKS 		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_SERVER		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_NTSERVICE		1, 7, 0, 0
+#define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 7, 0, 0
 
 #define OV_VER_LICENSE															\
-	"Copyright (C) 1998-2004 "													\
+	"Copyright (C) 1998-2006 "													\
 	"Lehrstuhl fuer Prozessleittechnik, "										\
 	"RWTH Aachen, D-52056 Aachen, Germany. "									\
 	"All rights reserved.\r\n"													\
