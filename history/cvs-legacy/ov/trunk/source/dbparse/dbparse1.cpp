@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.16 2006-01-12 14:10:13 markus Exp $
+ * $Id: dbparse1.cpp,v 1.17 2006-02-01 16:06:49 markus Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -2321,13 +2321,16 @@ bool write_variables(instance *node)
 			KsCurrPropsHandle hcprops(cprops, KsOsNew);
 
 			PltString delimiter;
-			if (strncmp(node->ident->getHead(), "vendor", 6) == 0) {
-				delimiter = "/";
-			} else {
+			if (strncmp(node->ident->getHead(), "vendor", 6) != 0) { //do not write variables of vendor tree
+			//if (strncmp(node->ident->getHead(), "vendor", 6) 0= 0) { //different handling for vendor tree
+			//	delimiter = "/";
+			//} else {
+			//	delimiter = ".";
+			//}
 				delimiter = ".";
-			}
-			params[i].path_and_name = *(node->ident) + delimiter + *((**it)->ident);
-			params[i].curr_props = hcprops;
+				params[i].path_and_name = *(node->ident) + delimiter + *((**it)->ident);
+				params[i].curr_props = hcprops;
+  			} // end if not vendor tree
 
 			++*it;
 			++i;
