@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.34 2006-01-25 10:13:45 markus Exp $
+*   $Id: ov_version.h,v 1.35 2006-02-03 12:51:11 markus Exp $
 *
 *   Copyright (C) 1998-2006
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -38,7 +38,7 @@
 #define OV_VER_BUILDER 						"1.0.4"
 #define OV_VER_MAKMAK 						"1.0.1"
 #define OV_VER_DBDUMP 						"1.3.6"
-#define OV_VER_DBPARSE						"1.1.7"
+#define OV_VER_DBPARSE						"1.1.8"
 #define OV_VER_OVXIPARSE					"1.0.2"
 #define OV_VER_LIBINFO 						"1.0.0"
 #define OV_VER_LIBOV						"1.6.7"
@@ -52,7 +52,7 @@
 #define OV_VER_FILEVERSION_BUILDER			1, 0, 4, 0
 #define OV_VER_FILEVERSION_MAKMAK			1, 0, 1, 0
 #define OV_VER_FILEVERSION_DBDUMP			1, 3, 6, 0
-#define OV_VER_FILEVERSION_DBPARSE			1, 1, 7, 0
+#define OV_VER_FILEVERSION_DBPARSE			1, 1, 8, 0
 #define OV_VER_FILEVERSION_OVXIPARSE		1, 0, 2, 0
 #define OV_VER_FILEVERSION_LIBINFO			1, 0, 0, 0
 #define OV_VER_FILEVERSION_LIBOV			1, 6, 7, 0
