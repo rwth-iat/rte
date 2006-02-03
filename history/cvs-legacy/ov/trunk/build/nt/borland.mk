@@ -1,5 +1,5 @@
 
-#   $Id: borland.mk,v 1.7 2005-08-16 13:02:08 markus Exp $
+#   $Id: borland.mk,v 1.8 2006-02-03 12:53:13 markus Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -48,7 +48,7 @@ _CPL = .cpl
 #	-----------------------------
 
 ACPLTKS_PLATFORM_DEFINES		= -DFD_SETSIZE=128
-OV_PLATFORM_DEFINES			= -DOV_DEBUG -DOV_CATCH_EXCEPTIONS
+OV_PLATFORM_DEFINES			= -DOV_DEBUG -DOV_CATCH_EXCEPTIONS -DOV_SYSTEM_NT
 
 #	Compiler
 #	--------

@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.9 2005-08-18 12:22:05 ansgar Exp $
+#   $Id: msvc.mk,v 1.10 2006-02-03 12:53:13 markus Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -217,7 +217,7 @@ dbparse.obj: dbparse.cpp
 	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  $(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $<
 
 dbparse1.obj: dbparse1.cpp
-	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  $(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $<
+	cl /GR /DNDEBUG /nologo /DFD_SETSIZE=128 /W3 /MT /GX /DPLT_USE_BUFFERED_STREAMS /DPLT_SYSTEM_NT=1 /DOV_SYSTEM_NT=1 /DPLT_DEBUG_NEW=0  $(INCLUDES) /I$(OV_SOURCE_DBPARSE_DIR)nt/ /TP /c $<
 
 $(DBPARSE_EXE) : $(DBPARSE_OBJ) $(DBPARSE_RES)
 	link /MACHINE:I386 /NOLOGO $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(LIBRPC_LIB) ADVAPI32.LIB USER32.LIB wsock32.lib /out:$@
