@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.17 2006-02-01 16:06:49 markus Exp $
+ * $Id: dbparse1.cpp,v 1.18 2006-02-03 12:54:48 markus Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -35,6 +35,7 @@
 #include "dbparse.h"
 #include "libov/ov_version.h"
 #include "ks/conversions.h"
+#include "libov/ov_ov.h"
 
 #include "db_y.h"
 //-------------------------------------------------------------------------------
@@ -1342,6 +1343,16 @@ KS_SEMANTIC_FLAGS GetSemFlags(KsString *ksarg)
 bool compat_types(enum value_types &type1, KS_VAR_TYPE type2)
 {
 	type2 &= 0xFFFF;		// KS type mask
+	
+	// the variabletype in the database is ANY (defined by OV not by KS)
+	// so any variabletype is allowed here
+	// for OV_VT_ANY we need ov_ov.h
+	if (type2 == OV_VT_ANY) {
+	    if (verbose) cout << "Found variabletype: ANY!" << endl;
+		return true;
+ 	}
+ 	
+ 	// if ANY type is not allowed, you have to check the types
 	switch (type1) {
 		case DB_VT_BOOL			:	if (type2 == KS_VT_BOOL) {
 										return true;
@@ -2720,7 +2731,7 @@ int main(int argc, char **argv)
 
 	// print info on startup
 	cout << "** ACPLT/OV text file parser, version " << OV_VER_DBPARSE << " **" << endl
-		 << "(c) 2002/2004 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
+		 << "(c) 2002/2006 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
 		 << endl;
 
 	if (argc < 2) {
