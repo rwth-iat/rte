@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.18 2006-02-03 12:54:48 markus Exp $
+ * $Id: dbparse1.cpp,v 1.19 2006-03-10 15:25:23 markus Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -1810,7 +1810,9 @@ bool checkClassId(instance *node) {
 				const KsVarCurrProps *currprops = varprops.getCurrProps();
 				if (((int)((KsIntValue &) *currprops->value)) & 0x4) {		// variable is derived, must not be set
 					node->var_block_list->remove((**act_var));
-					++*act_var;
+					// create new iterator, because the variable is removed from the list
+					// otherwise a nullpointer occurs in act_var
+					act_var = (PltListIterator<variable_value *>	*) node->var_block_list->newIterator();
 					continue;
 				}
 				currprops = vartype.getCurrProps();
@@ -1830,7 +1832,6 @@ bool checkClassId(instance *node) {
 			} // while (*act_var)
 			delete act_var;
 		} // if (node->var_block_list);
-
 		// check links
 		if (node->link_block_list) {
 			act_link = (PltListIterator<link_value *>*) node->link_block_list->newIterator();
