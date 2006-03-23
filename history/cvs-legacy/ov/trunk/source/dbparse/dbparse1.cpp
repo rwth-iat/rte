@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.19 2006-03-10 15:25:23 markus Exp $
+ * $Id: dbparse1.cpp,v 1.20 2006-03-23 12:33:10 markus Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -1410,6 +1410,23 @@ bool compat_types(enum value_types &type1, KS_VAR_TYPE type2)
 										return true;
 									}
 									break;
+		// added for multiple runs in proof handling
+		case DB_VT_DOUBLE_TO_SINGLE : if (type2 == KS_VT_SINGLE) {
+										return true;
+									}
+									break;
+		case DB_VT_UINT			:	if (type2 == KS_VT_UINT) {
+										return true;
+									}
+									break;
+		case DB_VT_INT_TO_SINGLE:	if (type2 == KS_VT_SINGLE) {
+										return true;
+									}
+									break;
+		case DB_VT_INT_TO_DOUBLE:	if (type2 == KS_VT_DOUBLE) {
+										return true;
+									}
+									break;
 		default					:	return false;
 	}
 	return false;
@@ -1506,6 +1523,27 @@ bool compat_vectors(vector *vec, KS_VAR_TYPE type2)
 										}
 										if (type2 == KS_VT_TIME_VEC) {
 											*type1 = DB_VT_TIME;
+											act = act->next;
+											continue;
+										}
+										return false;
+			// added for multiple runs in proof handling
+			case DB_VT_UINT			:	if (type2 == KS_VT_UINT_VEC) {
+											act = act->next;
+											continue;
+										}
+										return false;
+			case DB_VT_INT_TO_SINGLE :	if (type2 == KS_VT_SINGLE_VEC) {
+											act = act->next;
+											continue;
+										}
+										return false;
+			case DB_VT_INT_TO_DOUBLE :	if (type2 == KS_VT_DOUBLE_VEC) {
+											act = act->next;
+											continue;
+										}
+										return false;
+			case DB_VT_DOUBLE_TO_SINGLE:if (type2 == KS_VT_SINGLE_VEC) {
 											act = act->next;
 											continue;
 										}
@@ -1812,6 +1850,7 @@ bool checkClassId(instance *node) {
 					node->var_block_list->remove((**act_var));
 					// create new iterator, because the variable is removed from the list
 					// otherwise a nullpointer occurs in act_var
+					delete act_var;
 					act_var = (PltListIterator<variable_value *>	*) node->var_block_list->newIterator();
 					continue;
 				}
@@ -2460,7 +2499,6 @@ bool write_links(instance *node)
 	}
 
 	PltListIterator<link_value *> *it = (PltListIterator<link_value *> *) node->link_block_list->newIterator();
-
 	while (*it) {
 	    KscAnyCommObject help(server + *(node->ident) + "." + *((**it)->ident) );
 		if (!help.getEngPropsUpdate()) {
@@ -2474,6 +2512,7 @@ bool write_links(instance *node)
 		//	continue;
 		//}
 		if (! (**it)->link_paths ) {					// empty link
+			++*it;
 			continue;
 		}
 		i = (**it)->link_paths->size();
@@ -2494,10 +2533,14 @@ bool write_links(instance *node)
 										  link_params,
 										  link_result)) {
 			cout << "Error setting links of object " << *(node->ident) << "!" << endl;
+			delete link_it;
+			delete it;
 			return false;
 		}
 		if (link_result.results.size() != i) {
 			cout << "Error: Out of memory in write_links!" << endl;
+			delete link_it;
+			delete it;
 			return false;
 		}
 		link_it->toStart();
@@ -2517,6 +2560,8 @@ bool write_links(instance *node)
 				cout << "Error " << link_result.results[j] << " setting link "
 					 << *((**it)->ident) << " of object " << *(node->ident)
 					 << "!" << endl;
+				delete link_it;
+				delete it;
 				return false;
 			}
 			++*link_it;
@@ -2629,7 +2674,7 @@ bool write_database()
 		cout << "Warning: Could not write all links in server!" << endl;
 		ok = false;
 	}
-
+	
 	// finally disable activity lock
 	if (use_activitylock) {
 		((KsBoolVecValue &) *cprops.value)[0] = FALSE;
