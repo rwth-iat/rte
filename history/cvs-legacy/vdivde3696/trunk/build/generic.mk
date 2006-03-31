@@ -15,7 +15,7 @@ BASELIB0_NAME = fb
 #	Directories
 #	-----------
 
-USER_MAIN_DIR           = d:\acplt\user/
+USER_MAIN_DIR           = D:\acplt\user/
 USER_LIBS_DIR           = $(USER_MAIN_DIR)libs/
 
 ACPLT_DIR               = x:\apps_32\ov\acplt/base/
