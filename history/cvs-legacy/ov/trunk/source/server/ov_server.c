@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_server.c,v 1.16 2004-10-29 09:08:32 ansgar Exp $
+*   $Id: ov_server.c,v 1.17 2006-09-19 15:02:14 markus Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -438,6 +438,7 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 	ov_vendortree_setname("Lehrstuhl fuer Prozessleittechnik, RWTH Aachen");
 	ov_vendortree_setserverdescription("generic ACPLT/OV server");
 	ov_vendortree_setserverversion(OV_VER_SERVER);
+	ov_vendortree_setservername(servername);	//02.04.06 add by Senad
 	/*
 	*	map existing database
 	*/
