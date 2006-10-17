@@ -6,7 +6,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="ovi:Instance"/>
+				<xs:element ref="Instance"/>
 			</xs:sequence>
 			<xs:attribute name="GenerationDate" type="xs:dateTime" use="optional"/>
 			<xs:attribute name="SourceHost" type="xs:string" use="optional"/>
