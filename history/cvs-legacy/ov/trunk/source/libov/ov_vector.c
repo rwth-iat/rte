@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.8 2000-02-23 13:29:27 dirk Exp $
+*   $Id: ov_vector.c,v 1.9 2006-10-17 11:30:44 stefan Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -233,16 +233,16 @@ OV_DLLFNCEXPORT OV_INT ov_vector_compare(
 						return result;
 					}
 				}
-				return 0;
+				return OV_VECCMP_EQUAL;
 			}
 			return memcmp(pvalue1, pvalue2, size);
 		}
-		return 1;
+		return OV_VECCMP_MORE;
 	}
 	if(pvalue2) {
-		return -1;
+		return OV_VECCMP_LESS;
 	}
-	return 0;
+	return OV_VECCMP_EQUAL;
 }
 
 /*	----------------------------------------------------------------------	*/

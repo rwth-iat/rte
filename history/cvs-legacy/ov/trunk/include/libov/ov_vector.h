@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.h,v 1.5 1999-09-15 10:48:15 dirk Exp $
+*   $Id: ov_vector.h,v 1.6 2006-10-17 11:30:12 stefan Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,6 +34,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+*	OV_VECTORCOMPARE:
+*	-----------------
+*	Result of function ov_vector_compare(s1, s2, ...)
+*/
+#define	OV_VECCMP_EQUAL	0		/* s1 = s2 */
+#define	OV_VECCMP_MORE		1		/* s1 > s2 */
+#define	OV_VECCMP_LESS		-1		/* s1 < s2 */
 
 /*
 *	Set the value of a static vector variable
