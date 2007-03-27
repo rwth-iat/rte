@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 1998, 1999
+*	Copyright (C) 2007
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
