@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.11 2005-01-27 12:17:00 ansgar Exp $
+*   $Id: ov_builder.c,v 1.12 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-2001
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -360,7 +360,7 @@ int ov_builder_createsourcefiles(
 				}
 				else {
 					if (pvar->vartype >= OV_VT_BOOL_PV) {
-						fprintf(fp,"             const %spvalue,\n",ov_builder_getvartypetext(pvar->vartype));
+						fprintf(fp,"             const %spvalue\n",ov_builder_getvartypetext(pvar->vartype));
 					}
 					else {
 						fprintf(fp,"             const %s           value\n",ov_builder_getvartypetext(pvar->vartype));

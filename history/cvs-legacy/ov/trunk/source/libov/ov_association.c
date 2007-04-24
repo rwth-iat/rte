@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.23 2005-05-23 12:20:12 ansgar Exp $
+*   $Id: ov_association.c,v 1.24 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -40,7 +40,6 @@
 #include "libov/ov_string.h"
 
 /*	----------------------------------------------------------------------	*/
-#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
 
 /*
 *	Load an association into the database

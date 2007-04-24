@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_path.c,v 1.7 2003-11-07 09:33:00 ansgar Exp $
+*   $Id: ov_path.c,v 1.8 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -470,8 +470,8 @@ OV_DLLFNCEXPORT OV_STRING ov_path_topercent (
     unsigned int upper, lower;
 
     newstring = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(org)+1);
-    d = org;
-    s = newstring;
+    d = (unsigned char *)org;
+    s = (unsigned char *)newstring;
     while (*d) {
           if (!ov_path_isvalidchar(*d)) {
               upper = (*d) >> 4;

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.22 2005-05-09 15:30:16 ansgar Exp $
+*   $Id: ov_class.c,v 1.23 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -102,8 +102,6 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_class ov_class_search(
 }
 
 /*	----------------------------------------------------------------------	*/
-
-#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
 
 /*
 *	Load a class into the database
@@ -485,6 +483,18 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	*	check parameters
 	*/
 	if(!ppobj || !pclass || !pparent || !identifier) {
+if(!ppobj) {
+  fprintf(stderr, " (1)\n");
+}
+if(!pclass) {
+  fprintf(stderr, " (2)\n");
+}
+if(!pparent) {
+  fprintf(stderr, " (3)\n");
+}
+if(!identifier) {
+  fprintf(stderr, " (4)\n");
+}
 		return OV_ERR_BADPARAM;
 	}
 	if(!Ov_DynamicPtrCast(ov_class, pclass)) {

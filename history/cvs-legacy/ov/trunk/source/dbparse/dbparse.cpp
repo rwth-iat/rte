@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse.cpp,v 1.5 2005-01-27 12:17:01 ansgar Exp $
+ * $Id: dbparse.cpp,v 1.6 2007-04-24 14:11:29 martin Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -42,7 +42,7 @@
 #include "plt/handle_impl.h"
 #include "ks/array_impl.h"
 #include "plt/list_impl.h"
-#include "plt/priorityqueue_impl.h"
+//#include "plt/priorityqueue_impl.h"
 #include "plt/container_impl.h"
 
 #endif

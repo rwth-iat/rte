@@ -1,5 +1,5 @@
 
-#   $Id: borland.mk,v 1.8 2006-02-03 12:53:13 markus Exp $
+#   $Id: borland.mk,v 1.9 2007-04-24 14:11:29 martin Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -48,7 +48,7 @@ _CPL = .cpl
 #	-----------------------------
 
 ACPLTKS_PLATFORM_DEFINES		= -DFD_SETSIZE=128
-OV_PLATFORM_DEFINES			= -DOV_DEBUG -DOV_CATCH_EXCEPTIONS -DOV_SYSTEM_NT
+OV_PLATFORM_DEFINES			= -DOV_CATCH_EXCEPTIONS -DOV_DEBUG
 
 #	Compiler
 #	--------
@@ -64,7 +64,7 @@ BISON			= bison
 CPP 			= cpp
 
 CC				= bcc32
-CC_FLAGS		= -w -v -pc -wsig- -a8 -O2 -d $(OV_PLATFORM_DEFINES)
+CC_FLAGS		= -w -v- -pc -wsig- -a8 -O2 -d $(OV_PLATFORM_DEFINES)
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c 
 
 LINK			= $(CC) $(CC_FLAGS)
@@ -146,6 +146,7 @@ $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
 	$(RC) $(filter %$(_RES), $^) $@
 	$(MKDLLDEF) $(basename $@)_tmp.def $(basename $@).def
 	@del $(basename $@)_tmp.def
+	@tdstrp32 $(OV_LIBOV_DLL)
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
@@ -163,6 +164,7 @@ $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(OV_LIBOV_LIB) $(ACPLTK
 	$(RC) $(filter %$(_RES), $^) $@
 	$(MKDLLDEF) $(basename $@)_tmp.def $(basename $@).def
 	@del $(basename $@)_tmp.def
+	@tdstrp32 $(OV_LIBOVKS_DLL)
 
 ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	$(CXX_COMPILE) -Jgd $< -o$@
@@ -178,34 +180,38 @@ ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ) $(OV_CODEGEN_RES)
 	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
 	$(RC) $(filter %$(_RES), $^) $@
+	@tdstrp32 $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV framework builder
 
-$(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
+$(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ) $(OV_BUILDER_RES)
 	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+	$(RC) $(filter %$(_RES), $^) $@
+	@tdstrp32 $(OV_BUILDER_EXE)
 
 #	ACPLT/OV database utility
 
-$(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB) $(OV_DBUTIL_RES)
-	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+$(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_DBUTIL_RES)
+	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(OV_LIBOV_LIB) $(C_LIBS)
 	$(RC) $(filter %$(_RES), $^) $@
 
 #	ACPLT/KS-Server for ACPLT/OV
 
-$(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVER_RES)
-	$(CXX_LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+$(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_SERVER_RES)
+	$(CXX_LINK) -e$@ $(filter-out %$(_RES), $^) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(C_LIBS)
 	$(RC) $(filter %$(_RES), $^) $@
 
 #	ACPLT/KS-Server for ACPLT/OV (Demo version)
 
-ovserver_demo.exe : quitmsgwnd.obj $(OV_SERVER_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_SERVER_RES)
-	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+ovserver_demo.exe : quitmsgwnd.obj $(OV_SERVER_OBJ) $(OV_SERVER_RES)
+	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(C_LIBS)
 	$(RC) $(filter %$(_RES), $^) $@
+	@tdstrp32 ovserver_demo.exe
 
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
 
-$(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(OV_NTSERVICE_RES)
-	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+$(OV_NTSERVICE_EXE) : $(OV_NTSERVICE_OBJ) $(OV_NTSERVICE_RES)
+	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB) $(C_LIBS)
 	$(RC) $(filter %$(_RES), $^) $@
 
 #	NT-Service Installer
@@ -222,23 +228,48 @@ $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
 
 #	ACPLT/OV database dumper
 
+dbdump_templ$(_OBJ) :  $(OV_SOURCE_DBDUMP_DIR)dbdump_templ.cpp
+	$(CXX) -Jgd $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c $< -o$@
+
 $(DBDUMP_EXE) : $(DBDUMP_OBJ) $(DBDUMP_RES)
-	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(LIBRPC_LIB) $(C_LIBS)
+	$(RC) $(filter %$(_RES), $^) $@
+	@tdstrp32 $(DBDUMP_EXE)
 
 #	ACPLT/OV database parser
 
+db_lex.obj : db_lex.c
+	$(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -I$(OV_SOURCE_DBPARSE_DIR)nt -c $< -o$@
+
+db_y.obj : db_y.c
+	$(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -I$(OV_SOURCE_DBPARSE_DIR)nt -c $< -o$@
+
+dbparse$(_OBJ) :  $(OV_SOURCE_DBPARSE_DIR)dbparse.cpp
+	$(CXX) -Jgd $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c $< -o$@
+
 $(DBPARSE_EXE) : $(DBPARSE_OBJ) $(DBPARSE_RES)
-	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(LIBRPC_LIB) $(C_LIBS)
+	$(RC) $(filter %$(_RES), $^) $@
+	@tdstrp32 $(DBPARSE_EXE)
+
+#	ACPLT/OV ovxi parser
+
+$(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ) $(OVXIPARSE_RES)
+	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(LIBRPC_LIB) $(C_LIBS)
+	$(RC) $(filter %$(_RES), $^) $@
+	@tdstrp32 $(OVXIPARSE_EXE)
+
 
 #	ACPLT/OV makmak
 
 $(MAKMAK_EXE) : $(MAKMAK_OBJ) $(MAKMAK_RES)
 	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+	@tdstrp32 $(MAKMAK_EXE)
 
 #	ACPLT/OV library informations tool
 
-$(LIBINFO_EXE) : $(LIBINFO_OBJ) $(OV_LIBOV_LIB) $(LIBINFO_RES)
-	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(C_LIBS)
+$(LIBINFO_EXE) : $(LIBINFO_OBJ) $(LIBINFO_RES)
+	$(LINK) -e$@ $(filter-out %$(_RES), $^) $(OV_LIBOV_LIB) $(C_LIBS)
 	$(RC) $(filter %$(_RES), $^) $@
 
 #	ACPLT/OV KsHistory library

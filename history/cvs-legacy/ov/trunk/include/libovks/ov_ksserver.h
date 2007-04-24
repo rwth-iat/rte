@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.h,v 1.19 2004-10-27 13:32:32 ansgar Exp $
+*   $Id: ov_ksserver.h,v 1.20 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -384,6 +384,7 @@ void ov_ksserver_gethist(
 	OV_GETHIST_RES			*result
 );
 
+#ifdef OV_CATCH_EXCEPTIONS
 OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_startup(void);
 
 OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_map(
@@ -391,6 +392,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_map(
 );
 
 OV_DLLFNCEXPORT OV_RESULT ov_supervised_server_run(void) ;
+#endif
 
 #ifdef __cplusplus
 }
@@ -405,7 +407,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_supervised_server_run(void) ;
 
 #include "plt/log.h"
 #include "ks/server.h"
-#include "ks/stdconnectionmgr.h"
 
 /*
 *	Class OvPltLog
@@ -549,8 +550,34 @@ protected:
 
 #endif
 
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
+/*
+*	OV_SVCLOG_VTBL:
+*	---------------
+*	VTable for service logging
+*/
+struct OV_SVCLOG_VTBL {
+	void 		(* logsvc)(OV_TICKET *pticket, OV_SVC svc, void* ppar, OV_RESULT *pres, OV_RESULT svcres);
+};
+typedef struct OV_SVCLOG_VTBL	OV_SVCLOG_VTBL;
+
+/* Register service logging */
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_svclog_register(
+	const OV_SVCLOG_VTBL	*vtbl
+);
+/* Unregister service logging */
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_svclog_unregister(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif
 /*
 *	End of file
 */

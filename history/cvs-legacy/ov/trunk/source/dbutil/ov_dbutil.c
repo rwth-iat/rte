@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_dbutil.c,v 1.8 2005-01-24 17:58:20 ansgar Exp $
+*   $Id: ov_dbutil.c,v 1.9 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -300,8 +300,8 @@ void ov_valueoutput(
                  	if (((OV_ANY*)pvalue)->value.vartype & OV_VT_ISVECTOR) veclength = 0;
                  	else veclength = 1;
                    	ov_valueoutput(partelem, (((OV_ANY*)pvalue)->value.vartype & OV_VT_KSMASK), veclength, &(((OV_ANY*)pvalue)->value.valueunion.val_byte), handle);
-	                break;
                         fprintf(handle, ";");
+	                break;
                  case OV_VT_STRUCT:
 	                fprintf(handle, "{ ");
 			ov_element_getnextpart(&thiselem, &partelem, OV_ET_VARIABLE);

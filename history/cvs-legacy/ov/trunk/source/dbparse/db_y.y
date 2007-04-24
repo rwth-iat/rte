@@ -539,10 +539,10 @@ int yyerror(char *s)		/* required standard function */
 {
 	 switch (type) {
 	        case STRING_VALUE:
-	        	cout << " " << value.pstringval << " ";
+	        	OUT_STREAM << " " << value.pstringval << " ";
 	        	break;
 	        case PATH:
-	        	cout << " " << *(value.ppathval) << " ";
+	        	OUT_STREAM << " " << *(value.ppathval) << " ";
 	        	break;
 	 }
 }*/

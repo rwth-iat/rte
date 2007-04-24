@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.38 2006-10-17 11:29:43 stefan Exp $
+*   $Id: ov_version.h,v 1.39 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-2006
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -41,7 +41,7 @@
 #define OV_VER_DBPARSE						"1.1.8"
 #define OV_VER_OVXIPARSE					"1.0.2"
 #define OV_VER_LIBINFO 						"1.0.0"
-#define OV_VER_LIBOV							"1.6.7"
+#define OV_VER_LIBOV						"1.6.8"
 #define OV_VER_DBUTIL 						"1.2.1"
 #define OV_VER_LIBOVKS 						"1.3.4"
 #define OV_VER_SERVER						"1.3.2"
@@ -69,7 +69,7 @@
 #define OV_VER_PRODUCTVERSION_DBPARSE			1, 6, 7, 0
 #define OV_VER_PRODUCTVERSION_OVXIPARSE		1, 6, 7, 0
 #define OV_VER_PRODUCTVERSION_LIBINFO			1, 6, 7, 0
-#define OV_VER_PRODUCTVERSION_LIBOV				1, 6, 7, 0
+#define OV_VER_PRODUCTVERSION_LIBOV				1, 6, 8, 0
 #define OV_VER_PRODUCTVERSION_DBUTIL 			1, 6, 7, 0
 #define OV_VER_PRODUCTVERSION_LIBOVKS 			1, 6, 7, 0
 #define OV_VER_PRODUCTVERSION_SERVER			1, 6, 7, 0
@@ -77,7 +77,7 @@
 #define OV_VER_PRODUCTVERSION_CONTROLPANEL	1, 6, 7, 0
 
 #define OV_VER_LICENSE															\
-	"Copyright (C) 1998-2006 "													\
+	"Copyright (C) 1998-2007 "													\
 	"Lehrstuhl fuer Prozessleittechnik, "										\
 	"RWTH Aachen, D-52056 Aachen, Germany. "									\
 	"All rights reserved.\r\n"													\

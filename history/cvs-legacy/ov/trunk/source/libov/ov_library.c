@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.22 2005-08-24 08:49:43 ansgar Exp $
+*   $Id: ov_library.c,v 1.23 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -290,7 +290,7 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 			}
 #if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
 			else {
-				ov_logfile_error("Can't load library. Reason: %s", dlerror());
+				if (!nextpath) ov_logfile_error("Can't load library. Reason: %s", dlerror());
 			}
 #endif
 			/*
@@ -624,8 +624,6 @@ OV_DLLFNCEXPORT OV_BOOL ov_library_canunload(
 }
 
 /*	----------------------------------------------------------------------	*/
-
-#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
 
 /*
 *	Prepare for loading the OV library into the database (subroutine)

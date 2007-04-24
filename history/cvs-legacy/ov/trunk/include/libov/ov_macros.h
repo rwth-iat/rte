@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.21 2006-01-12 14:10:13 markus Exp $
+*   $Id: ov_macros.h,v 1.22 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -315,10 +315,17 @@
 /*
 *	Create an object of a given class
 */
+#if OV_SYSTEM_LINUX
+#define Ov_CreateObject(class, pobj, pparent, ident)						\
+	ov_class_createobject(pclass_##class, Ov_PtrUpCast(ov_domain, pparent),	\
+	ident, OV_PMH_DEFAULT, NULL, NULL, NULL, ((OV_INSTPTR_ov_object*)		\
+	&(pobj)))
+#else
 #define Ov_CreateObject(class, pobj, pparent, ident)						\
 	ov_class_createobject(pclass_##class, Ov_PtrUpCast(ov_domain, pparent),	\
 	ident, OV_PMH_DEFAULT, NULL, NULL, NULL, ((OV_INSTPTR_ov_object*)		\
 	&(pobj))+(0*((pobj)->__classinfo.is_of_class_##class)))
+#endif
 
 /*
 *	Delete an object
@@ -376,10 +383,16 @@
 /*
 *	Set the value of a static vector variable
 */
+#if OV_SYSTEM_LINUX
+#define Ov_SetStaticVectorValue(pvector, pvalue, veclen, type)				\
+	ov_vector_setstaticvalue((pvector), (const OV_POINTER)(pvalue),			\
+		(veclen), (veclen)*sizeof(OV_##type), OV_VT_##type)
+#else
 #define Ov_SetStaticVectorValue(pvector, pvalue, veclen, type)				\
 	ov_vector_setstaticvalue((pvector), (const OV_POINTER)(pvalue),			\
 		(veclen)+0*((pvector)-(OV_##type*)0), (veclen)*sizeof(OV_##type),	\
 		OV_VT_##type)
+#endif
 
 /*
 *	Set the value of a dynamic vector variable
@@ -406,10 +419,16 @@
 /*
 *	Compare two vector variable values
 */
+#if OV_SYSTEM_LINUX
+#define Ov_CompareVectorValues(pvalue1, pvalue2, veclen, type)				\
+	ov_vector_compare((const OV_POINTER)(pvalue1),							\
+	(const OV_POINTER)(pvalue2), (veclen), (veclen)*sizeof(OV_##type), OV_VT_##type)
+#else
 #define Ov_CompareVectorValues(pvalue1, pvalue2, veclen, type)				\
 	ov_vector_compare((const OV_POINTER)(pvalue1),							\
 	(const OV_POINTER)(pvalue2), (veclen)+0*((pvalue1)-(OV_##type*)0)		\
 	+0*((pvalue2)-(OV_##type*)0), (veclen)*sizeof(OV_##type), OV_VT_##type)
+#endif
 
 /*
 *	Convert a time into a double variable

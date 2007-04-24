@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.19 2005-08-16 12:59:36 markus Exp $
+#   $Id: generic.mk,v 1.20 2007-04-24 14:11:29 martin Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -35,7 +35,7 @@
 
 ACPLT_DIR					= ../../../../
 ACPLT_BIN_DIR					= $(ACPLT_DIR)bin/
-ACPLT_LIB_DIR					= $(ACPLT_DIR)base/lib/
+ACPLT_LIB_DIR					= $(ACPLT_DIR)bin/$(SYSDIR)/
 
 ACPLT_OV_DIR				= ../../
 OV_INCLUDE_DIR				= $(ACPLT_OV_DIR)include/
@@ -69,11 +69,11 @@ ACPLT_KS_INCLUDE_KS_DIR			= $(ACPLT_KS_INCLUDE_DIR)ks/
 ACPLT_KS_SOURCE_DIR			= $(ACPLT_KS_DIR)src/
 ACPLT_PLT_BUILD_DIR			= $(ACPLT_LIB_DIR)
 
-LIBMPM_DIR				= ../../../libmpm/
+LIBMPM_DIR				= ../../../../libmpm/
 
 #	platforms requiring ONC/RPC
 
-ONCRPC_DIR				= ../../../oncrpc/
+ONCRPC_DIR				= ../../../../oncrpc/
 ONCRPC_INCLUDE_DIR			= $(ONCRPC_DIR)
 ONCRPC_BIN_DIR				= $(ACPLT_LIB_DIR)
 
@@ -262,7 +262,7 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(_LIB)
+LIBMPM_LIB			= $(ACPLT_LIB_DIR)libmpm$(_LIB)
 
 ifeq ($(SYSTEM), NT)
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
@@ -343,10 +343,11 @@ KS_LIBOVKS_SRC = \
 	$(ACPLT_KS_SOURCE_DIR)rpc.cpp \
 	$(ACPLT_KS_SOURCE_DIR)rpcproto.cpp \
 	$(ACPLT_KS_SOURCE_DIR)server.cpp \
-	$(ACPLT_KS_SOURCE_DIR)serverconnection.cpp \
-	$(ACPLT_KS_SOURCE_DIR)stdconnectionmgr.cpp \
+	$(ACPLT_KS_SOURCE_DIR)interserver.cpp \
+	$(ACPLT_KS_SOURCE_DIR)svrtransport.cpp \
 	$(ACPLT_KS_SOURCE_DIR)string.cpp \
 	$(ACPLT_KS_SOURCE_DIR)svrbase.cpp \
+	$(ACPLT_KS_SOURCE_DIR)svrrpcctx.cpp \
 	$(ACPLT_KS_SOURCE_DIR)time.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdr.cpp \
 	$(ACPLT_KS_SOURCE_DIR)xdrmemstream.cpp \
@@ -449,7 +450,7 @@ DBDUMP_RES  = $(basename $(DBDUMP_EXE))$(_RES)
 #	ACPLT/OV database parser
 #	------------------------
 
-DBPARSE_SRC := dbparse.cpp dbparse1.cpp db_lex.c db_y.c
+DBPARSE_SRC := db_y.c db_lex.c dbparse.cpp dbparse1.cpp
 DBPARSE_OBJ  = $(foreach source, $(DBPARSE_SRC), $(basename $(notdir $(source)))$(_OBJ))
 DBPARSE_EXE  = ov_dbparse$(_EXE)
 DBPARSE_RES  = $(basename $(DBPARSE_EXE))$(_RES)
@@ -457,7 +458,7 @@ DBPARSE_RES  = $(basename $(DBPARSE_EXE))$(_RES)
 #	ACPLT/OV OVXI parser
 #	--------------------
 
-OVXIPARSE_SRC := dbparse.cpp ovxiparse.cpp db_lex.c db_y.c
+OVXIPARSE_SRC := db_y.c db_lex.c dbparse.cpp ovxiparse.cpp
 OVXIPARSE_OBJ  = $(foreach source, $(OVXIPARSE_SRC), $(basename $(notdir $(source)))$(_OBJ))
 OVXIPARSE_EXE  = ov_ovxiparse$(_EXE)
 OVXIPARSE_RES  = $(basename $(OVXIPARSE_EXE))$(_RES)
@@ -489,6 +490,7 @@ TARGETS = \
 	$(OV_DBUTIL_EXE) \
 	$(OV_LIBOVKS_DLL) \
 	$(OV_LIBOVKS_LIB) \
+	$(MAKMAK_EXE) \
 	$(KSHISTLIB_DLL) \
 	$(KSHISTLIB_LIB) \
 	$(DYNOV_DLL) \
@@ -497,13 +499,12 @@ TARGETS = \
 	$(TASKLIB_LIB) \
 	$(EXAMPLE_DLL) \
 	$(EXAMPLE_LIB) \
+	$(OV_SERVER_EXE) \
 	$(DBDUMP_EXE) \
 	$(DBPARSE_EXE) \
 	$(OVXIPARSE_EXE) \
-	$(MAKMAK_EXE) \
-	$(LIBINFO_EXE) \
-	$(OV_SERVER_EXE)
-
+	$(LIBINFO_EXE)
+	
 ALL = \
 	$(TARGETS)
 

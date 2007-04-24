@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_getvar.c,v 1.13 2005-08-18 11:48:02 ansgar Exp $
+*   $Id: ov_ksserver_getvar.c,v 1.14 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

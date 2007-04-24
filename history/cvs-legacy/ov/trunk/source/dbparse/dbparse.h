@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse.h,v 1.8 2006-01-11 16:27:47 markus Exp $
+ * $Id: dbparse.h,v 1.9 2007-04-24 14:11:29 martin Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -31,6 +31,12 @@
 #define KS_DBPARSE_H_INCLUDED
 
 #include <ctype.h>
+#if PLT_USE_DEPRECIATED_HEADER
+    #include <iostream.h>
+#else
+    #include <iostream>
+#endif
+
 #include <iostream.h>
 #include <malloc.h>
 #include <fstream.h>
@@ -39,7 +45,7 @@
 #include "ks/avsimplemodule.h"
 #include "ks/objmgrparams.h"
 #include "ks/path.h"
-#include "ks/stdconnectionmgr.h"
+//#include "ks/stdconnectionmgr.h"
 
 
 #if PLT_SYSTEM_NT
@@ -53,6 +59,16 @@
 #if PLT_COMPILER_MSVC
 #define sleep Sleep
 #include <io.h>
+#endif
+
+//-------------------------------------------------------------------------------
+// defines
+#if PLT_USE_DEPRECIATED_HEADER
+    #define OUT_STREAM  cerr
+    #define NEW_LINE    endl
+#else
+    #define OUT_STREAM  STDNS::cerr
+    #define NEW_LINE    STDNS::endl
 #endif
 
 //-------------------------------------------------------------------------------

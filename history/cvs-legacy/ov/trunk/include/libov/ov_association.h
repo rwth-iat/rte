@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.h,v 1.13 2005-05-12 13:18:28 ansgar Exp $
+*   $Id: ov_association.h,v 1.14 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -480,6 +480,10 @@ void ov_association_dolink(OV_INSTPTR_ov_association passoc,
 		   OV_INSTPTR_ov_object pparent, 
 		   OV_INSTPTR_ov_object pchild
 );
+
+#ifdef OV_COMPILE_LIBOV
+#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
+#endif
 
 #ifdef __cplusplus
 }	/* extern "C" */

@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.10 2005-07-14 07:57:32 ansgar Exp $
+*   $Id: ov_config.h,v 1.11 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -163,12 +163,12 @@
 #define OV_DLLFLNSUFFIX			".dll"
 #if OV_COMPILER_MSVC
 #define OV_DLLFNCEXPORT 		_declspec(dllexport)
-#define OV_DLLVAREXPORT                 _declspec(dllexport)
+#define OV_DLLVAREXPORT         _declspec(dllexport)
 #define OV_DLLVARIMPORT 		_declspec(dllimport)
 #else
 #if OV_COMPILER_BORLAND
 #define OV_DLLFNCEXPORT 		__declspec(dllexport)
-#define OV_DLLVAREXPORT 		extern __declspec(dllexport)
+#define OV_DLLVAREXPORT 		__declspec(dllexport)
 #define OV_DLLVARIMPORT 		extern __declspec(dllimport)
 #else
 #define OV_DLLFNCEXPORT

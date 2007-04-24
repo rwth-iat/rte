@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.h,v 1.5 2005-01-27 12:17:01 ansgar Exp $
+ * $Id: dbdump.h,v 1.6 2007-04-24 14:11:29 martin Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -36,7 +36,7 @@
 #include "ks/client.h"
 #include "ks/clntpath.h"
 #include "ks/commobject.h"
-#include "ks/stdconnectionmgr.h"
+//#include "ks/stdconnectionmgr.h"
 #include "ks/path.h"
 
 #if PLT_COMPILER_GCC || PLT_COMPILER_DECCXX
@@ -55,7 +55,7 @@
 #endif
 
 #if PLT_INSTANTIATE_TEMPLATES
-#include "dbdump_inst.h"
+//#include "dbdump_inst.h"
 #endif
 
 #if PLT_COMPILER_MSVC

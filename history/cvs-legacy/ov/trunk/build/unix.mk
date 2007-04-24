@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.18 2006-02-03 12:52:45 markus Exp $
+#   $Id: unix.mk,v 1.19 2007-04-24 14:11:29 martin Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -141,9 +141,11 @@ depend : $(SOURCES)
 $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
+	strip --strip-debug $(OV_LIBOV_LIB)
 
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB)
 	$(LD) -o $@ $^
+	strip --strip-debug $(OV_LIBOV_DLL)
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
@@ -152,9 +154,11 @@ ov.c ov.h : $(OV_CODEGEN_EXE)
 $(OV_LIBOVKS_LIB) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
+	strip --strip-debug $(OV_LIBOVKS_LIB)
 
 $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(ACPLTKS_LIBS)
 	$(LD) -o $@ $^ $(CXX_LIBS)
+	strip --strip-debug $(OV_LIBOVKS_DLL)
 
 ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	$(CXX_COMPILE) -o $@ $<
@@ -169,11 +173,13 @@ ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS)
+	strip --strip-debug $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV framework builder
 
 $(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS)
+	strip --strip-debug $(OV_BUILDER_EXE)
 
 #	ACPLT/OV database utility
 
@@ -194,7 +200,8 @@ fnmatch.o : fnmatch.c
 	 $(CC) $(CC_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
-	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
+	$(CXX_LINK) -o $@ $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(CXX_LIBS)
+	strip --strip-debug $(DBDUMP_EXE)
 
 #	ACPLT/OV database parser
 
@@ -229,6 +236,7 @@ $(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)
 
 $(MAKMAK_EXE) : $(MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS)
+	strip --strip-debug $(MAKMAK_EXE)
 
 #	ACPLT/OV library informations tool
 

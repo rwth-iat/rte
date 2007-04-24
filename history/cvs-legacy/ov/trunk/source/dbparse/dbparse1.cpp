@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.20 2006-03-23 12:33:10 markus Exp $
+ * $Id: dbparse1.cpp,v 1.21 2007-04-24 14:11:29 martin Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -38,6 +38,7 @@
 #include "libov/ov_ov.h"
 
 #include "db_y.h"
+
 //-------------------------------------------------------------------------------
 // global variables
 
@@ -365,7 +366,7 @@ bool parsetree::add(instance *inst) {
 	int			i, j;
 	KsString	delimiter;
 
-	if (verbose) cout << "Adding " << *inst->ident << " to parsetree!" << endl;
+	if (verbose) OUT_STREAM << "Adding " << *inst->ident << " to parsetree!" << NEW_LINE;
 	j = inst->ident->size();					// nr. of path components
 	if (*(inst->ident) == LogPath("/")) {		// root domain always exists
 		*(root->creation_time) = *(inst->creation_time);
@@ -441,7 +442,7 @@ bool parsetree::add(instance *inst) {
 					return true;
 				}
 			} else {
-				cout << "Error: Duplicate instance identifier in input file!" << endl;
+				OUT_STREAM << "Error: Duplicate instance identifier in input file!" << NEW_LINE;
 				return false;
 			}
 		}
@@ -454,7 +455,7 @@ bool parsetree::add(instance *inst) {
 		if (act_inst->part_block_list->addLast(inst)) {
 			return true;
 		} else {
-		       	cout << "Error: Could not add instance " << *(inst->ident) << " to part_block!" << endl;
+		       	OUT_STREAM << "Error: Could not add instance " << *(inst->ident) << " to part_block!" << NEW_LINE;
 			return false;
 		}
 	} else {								// instance is a child
@@ -468,7 +469,7 @@ bool parsetree::add(instance *inst) {
 			act_inst->children_list->addLast(inst);
 			return true;
 		} else {
-		       	cout << "Error: Could not add instance " << *(inst->ident) << " to children!" << endl;
+		       	OUT_STREAM << "Error: Could not add instance " << *(inst->ident) << " to children!" << NEW_LINE;
 			return false;
 		}
 	}
@@ -490,11 +491,11 @@ bool parsetree::remove(LogPath *name)
 	parent = search(&lp);
 	// remove instance from hash table of parent
 	if (!parent->children->remove(*name, inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		OUT_STREAM << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << NEW_LINE;
 		exit(-1);
 	}
 	if (!parent->children_list->remove(inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		OUT_STREAM << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << NEW_LINE;
 		exit(-1);
 	}
 	delete inst;
@@ -513,11 +514,11 @@ bool parsetree::remove(instance *inst)
 	parent = search(&lp);
 
 	if (!parent->children->remove(*(inst->ident), inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		OUT_STREAM << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << NEW_LINE;
 		exit(-1);
 	}
 	if (!parent->children_list->remove(inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		OUT_STREAM << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << NEW_LINE;
 		exit(-1);
 	}
 	delete inst;
@@ -873,7 +874,7 @@ ostream &operator << (ostream &log, LogPath path) {
 			log << path.getTail();
 		}
 	} else {
-		cout << "Warning: Invalid path!" << endl;
+		OUT_STREAM << "Warning: Invalid path!" << NEW_LINE;
 	}
 	return log;
 }
@@ -977,13 +978,13 @@ ostream &operator << (ostream &log, variable_value *varval) {
 			case KS_ST_QUESTIONABLE	: state = KsString("KS_ST_QUESTIONABLE"); break;
 			case KS_ST_GOOD			: state = KsString("KS_ST_GOOD"); break;
 		}
-		return log << "   Identifier: " << *(varval->ident) << endl
-				   << "   Value: " << varval->val << endl
-				   << "   Time: " << varval->var_time << endl
-				   << "   State: " << state << endl
-				   << "   Flags: " << varval->var_flags << endl
-				   << "   Unit: " << varval->var_unit << endl
-				   << "   Comment: " << varval->var_comment << endl;
+		return log << "   Identifier: " << *(varval->ident) << NEW_LINE
+				   << "   Value: " << varval->val << NEW_LINE
+				   << "   Time: " << varval->var_time << NEW_LINE
+				   << "   State: " << state << NEW_LINE
+				   << "   Flags: " << varval->var_flags << NEW_LINE
+				   << "   Unit: " << varval->var_unit << NEW_LINE
+				   << "   Comment: " << varval->var_comment << NEW_LINE;
 	} else {
 		return log;
 	}
@@ -995,14 +996,14 @@ ostream &operator << (ostream &log, link_value *linkval) {
 
 	if (linkval && linkval->link_paths) {
 		it = (PltListIterator<LogPath> *) linkval->link_paths->newIterator();
-		log << "   Identifier: " << *(linkval->ident) << endl
+		log << "   Identifier: " << *(linkval->ident) << NEW_LINE
 			<< "   Paths: ";
 		while(*it) {	// iterate over link targets
 			log << LogPath(**it) << ",";
 			++*it;
 		}
 		delete it;
-		return log << endl;
+		return log << NEW_LINE;
 	} else {
 		return log;
 	}
@@ -1107,19 +1108,19 @@ ostream &operator << (ostream &log, PltList<instance*> *children_list) {
 
 ostream &operator << (ostream &log, instance *inst) {
 	if (inst) {
-		return log << "Identifier: " << *(inst->ident) << endl
-				   << "Part: " << inst->is_part << endl
-				   << "Class Identifier: " << *(inst->class_ident) << endl
-				   << "Creation Time: " << inst->creation_time << endl
-				   << "Semantic Flags: " << inst->sem_flags << endl
-				   << "Comment: " << inst->comment << endl
-				   << "Variable block list:" << endl
+		return log << "Identifier: " << *(inst->ident) << NEW_LINE
+				   << "Part: " << inst->is_part << NEW_LINE
+				   << "Class Identifier: " << *(inst->class_ident) << NEW_LINE
+				   << "Creation Time: " << inst->creation_time << NEW_LINE
+				   << "Semantic Flags: " << inst->sem_flags << NEW_LINE
+				   << "Comment: " << inst->comment << NEW_LINE
+				   << "Variable block list:" << NEW_LINE
 				   << inst->var_block_list
-				   << "Link block list:" << endl
+				   << "Link block list:" << NEW_LINE
 				   << inst->link_block_list
-				   << "Part block list:" << endl
+				   << "Part block list:" << NEW_LINE
 				   << inst->part_block_list
-				   << endl
+				   << NEW_LINE
 				   << inst->children;
 	} else {
 		return log;
@@ -1181,7 +1182,7 @@ KsTime GetTime(char *arg)
 	// check the format of the given string, which must be either
 	// YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
 	if(!arg) {
-		cout << "Error: Bad time format." << endl;
+		OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 		exit (-1);
 	}
 	for(pc1=format, pc2=arg; *pc1; pc1++, pc2++) {
@@ -1189,13 +1190,13 @@ KsTime GetTime(char *arg)
 			if((*pc1 == ' ') || (*pc1 == '.')) {
 				break;
 			}
-			cout << "Error: Bad time format." << endl;
+			OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 			exit (-1);
 		}
 		switch(*pc1) {
 		case '0':
 			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
-				cout << "Error: Bad time format." << endl;
+				OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 				exit (-1);
 			}
 			break;
@@ -1204,12 +1205,12 @@ KsTime GetTime(char *arg)
 		case ' ':
 		case '.':
 			if(*pc2 != *pc1) {
-				cout << "Error: Bad time format." << endl;
+				OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 				exit (-1);
 			}
 			break;
 		default:
-			cout << "Error: Bad time format." << endl;
+			OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 			exit (-1);
 		}
 	}
@@ -1224,7 +1225,7 @@ KsTime GetTime(char *arg)
 	secs = mktime(&tm);
 	secs -= timezone;	// compensate time zone shift
 	if(secs < 0) {
-		cout << "Error: Time conversion failed." << endl;
+		OUT_STREAM << "Error: Time conversion failed." << NEW_LINE;
 		exit (-1);
 	}
 	// time is OK, return value
@@ -1247,7 +1248,7 @@ KsTimeSpan GetTimeSpan(char *arg)
 	// check the format of the given string, which must be either
 	// hhhh:mm:ss or hhhh:mm:ss.uuuuuu
 	if(!arg) {
-		cout << "Error: Bad time span format." << endl;
+		OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 		exit (-1);
 	}
 	for(pc1=format, pc2=arg; *pc1; pc1++, pc2++) {
@@ -1255,25 +1256,25 @@ KsTimeSpan GetTimeSpan(char *arg)
 			if(*pc1 == '.') {
 				break;
 			}
-			cout << "Error: Bad time span format." << endl;
+			OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 			exit (-1);
 		}
 		switch(*pc1) {
 		case '0':
 			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
-				cout << "Error: Bad time span format." << endl;
+				OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 				exit (-1);
 			}
 			break;
 		case ':':
 		case '.':
 			if(*pc2 != *pc1) {
-				cout << "Error: Bad time span format." << endl;
+				OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 				exit (-1);
 			}
 			break;
 		default:
-			cout << "Error: Bad time span format." << endl;
+			OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 			exit (-1);
 		}
 	}
@@ -1287,7 +1288,7 @@ KsTimeSpan GetTimeSpan(char *arg)
 			minutes >= 0 && minutes <= 59 &&
 			hours >= 0 && hours <= 9999
 	  	)) {
-		cout << "Error: Time span conversion failed." << endl;
+		OUT_STREAM << "Error: Time span conversion failed." << NEW_LINE;
 		exit (-1);
 	}
 	// time is OK, return value
@@ -1328,12 +1329,13 @@ KS_SEMANTIC_FLAGS GetSemFlags(KsString *ksarg)
 	}
 	if (i == strlen(arg)) {
 		free(arg);
-		return ret;
 	} else {
-		cout << "Error: Invalid semantic flags." << endl;
+		OUT_STREAM << "Error: Invalid semantic flags." << NEW_LINE;
 		free(arg);
 		exit(-1);
 	}
+	
+	return ret;
 } // GetSemFlags
 
 //-------------------------------------------------------------------------------
@@ -1348,7 +1350,7 @@ bool compat_types(enum value_types &type1, KS_VAR_TYPE type2)
 	// so any variabletype is allowed here
 	// for OV_VT_ANY we need ov_ov.h
 	if (type2 == OV_VT_ANY) {
-	    if (verbose) cout << "Found variabletype: ANY!" << endl;
+	    if (verbose) OUT_STREAM << "Found variabletype: ANY!" << NEW_LINE;
 		return true;
  	}
  	
@@ -1568,8 +1570,8 @@ bool compat_classes(const LogPath &type1, const KsString &type2)
 	if (!start.Update()) {
 		KscVariable start(type2 + ".parentclass");
 		if (!start.getUpdate()) {
-			cout << "Error: Cannot check class compatibility for " << type2
-				 << "!" << endl;
+			OUT_STREAM << "Error: Cannot check class compatibility for " << type2
+				 << "!" << NEW_LINE;
 			return false;
 		}
 	}
@@ -1586,14 +1588,14 @@ bool checkObjs(instance *node)
 {
 	KsString domname = server + KsString(*node->ident);
 	KscDomain dom(domname);
-	if (verbose) cout << "..." << *node->ident << endl;
+	if (verbose) OUT_STREAM << "..." << *node->ident << NEW_LINE;
 	if (node->is_part) {
 	        node->cr_opts = CO_CHANGE;
 	        return TRUE;
 	}
 	if (!dom.getEngPropsUpdate()) {					// object not in server
 		if (!(lopts & LO_ADD_DOMAINS) && node->cr_opts == CO_TREE) {
-			cout << "Error: Parent domain of " << *(node->ident) << " not in server!" << endl;
+			OUT_STREAM << "Error: Parent domain of " << *(node->ident) << " not in server!" << NEW_LINE;
 			return false;
 		} else {
 			node->cr_opts = CO_CREATE;				// => must be created
@@ -1611,7 +1613,7 @@ bool checkObjs(instance *node)
 			}
 		} else {									// classes are incompatible
 			if (lopts & LO_ERROR_ON_INCOMPATIBLE) {
-				cout << "Error: Types of " << *(node->ident) << " are incompatible!" << endl;
+				OUT_STREAM << "Error: Types of " << *(node->ident) << " are incompatible!" << NEW_LINE;
 				return false;
 			}
 			if (lopts & LO_OVERWRITE_INCOMPATIBLE) {	// force overwrite
@@ -1627,8 +1629,8 @@ bool checkObjs(instance *node)
 // Search and compare objects in target server
 bool check_objects()
 {
- 	if (verbose) cout << "Checking objects ..." << endl;
-	return (parse_tree->forEach(&checkObjs));
+ 	if (verbose) OUT_STREAM << "Checking objects ..." << NEW_LINE;
+ 	return (parse_tree->forEach(&checkObjs));
 } //
 
 //-------------------------------------------------------------------------------
@@ -1654,8 +1656,8 @@ bool check_vendortree()
 	while (*act_var) {
 		KscVariable var(server + "/vendor/" + *((**act_var)->ident));
 		if (!var.getEngPropsUpdate()) {					// variable not found in server
-			cout << "Error: Cannot access variable /vendor/" << *((**act_var)->ident)
-				 << " in server!" << endl;
+			OUT_STREAM << "Error: Cannot access variable /vendor/" << *((**act_var)->ident)
+				 << " in server!" << NEW_LINE;
 		}
 		vartype = ((KsVarEngProps*) var.getEngProps())->type;
 		if ((**act_var)->val->type == DB_VT_VECTOR) {
@@ -1664,8 +1666,8 @@ bool check_vendortree()
 			ok = compat_types((**act_var)->val->type, vartype);
 		}
 		if (!ok) {										// variable types are incompatible
-			cout << "Error: Conflicting types for variable "
-				 << *((**act_var)->ident) << "!" << endl;
+			OUT_STREAM << "Error: Conflicting types for variable "
+				 << *((**act_var)->ident) << "!" << NEW_LINE;
 			return false;
 		}
 		if (strcmp ( *((**act_var)->ident) , "/vendor/activity_lock" ) == 0) {
@@ -1699,15 +1701,15 @@ bool checkClassId(instance *node) {
 	}
 	KsString domname(server + KsString(*(node->class_ident)));
 	KscDomain dom(domname);
-	if (verbose) cout << "..." << *node->class_ident << endl;
+	if (verbose) OUT_STREAM << "..." << *node->class_ident << NEW_LINE;
 	if (!dom.getEngPropsUpdate()) {								// class not in server
 		if (!(lopts & LO_ADD_CLASSES)) {
-			cout << "Error: Class " << *(node->class_ident) << " not in server!" << endl;
+			OUT_STREAM << "Error: Class " << *(node->class_ident) << " not in server!" << NEW_LINE;
 			return false;
 		} else {												// search class in parse tree
 			class_obj = parse_tree->search(node->class_ident);
 			if (!class_obj) {
-				cout << "Error: Class " << *(node->class_ident) << " not found!" << endl;
+				OUT_STREAM << "Error: Class " << *(node->class_ident) << " not found!" << NEW_LINE;
 				return false;
 			}
 			if (node->var_block_list) {
@@ -1723,7 +1725,7 @@ bool checkClassId(instance *node) {
 											// of the object first, if not found search the base classes
 						act_cobj = parse_tree->search(&act_class_name);
 						if (! act_cobj) {
-							cout << "Error: Class " << act_class_name << " not found!" << endl;
+							OUT_STREAM << "Error: Class " << act_class_name << " not found!" << NEW_LINE;
 							return false;
 						}
 						if (act_cobj->children) {
@@ -1731,17 +1733,17 @@ bool checkClassId(instance *node) {
 								KsString ksvar("vartype");
 								var_type = var_inst->search_var(&ksvar);
 								if (!var_type) {
-									cout << "Error: Class " << *(node->class_ident) << "," << endl
+									OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
 										 << "       cannot get type of variable " << *((**act_var)->ident)
-										 << "!" << endl;
+										 << "!" << NEW_LINE;
 									return false;
 								}
 								KsString ksvarprop("varprops");
 								var_props = var_inst->search_var(&ksvarprop);
 								if (!var_props) {
-									cout << "Error: Class " << *(node->class_ident) << "," << endl
+									OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
 										 << "       cannot get props of variable " << *((**act_var)->ident)
-										 << "!" << endl;
+										 << "!" << NEW_LINE;
 									return false;
 								}
 								if (var_props->val->v.int_val & 0x4) {		// variable is derived, must not be set
@@ -1758,8 +1760,8 @@ bool checkClassId(instance *node) {
 									ret = 1;
 									break;
 								} else {
-									cout << "Error: Class " << *(node->class_ident) << "," << endl
-										 << "       variable " << *((**act_var)->ident) << " not compatible!" << endl;
+									OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
+										 << "       variable " << *((**act_var)->ident) << " not compatible!" << NEW_LINE;
 									return false;
 								}
 							} // if (var_inst)
@@ -1776,15 +1778,15 @@ bool checkClassId(instance *node) {
 							}
 							continue;
 						} else {
-							cout << "Error: Cannot get base class of class " << act_class_name
-								 << "!" << endl;
+							OUT_STREAM << "Error: Cannot get base class of class " << act_class_name
+								 << "!" << NEW_LINE;
 							return false;
 						}
 					} // while (!ret && act_class_name.isValid())
 
 					if (!ret) {
-						cout << "Error: Class " << *(node->class_ident) << "," << endl
-							 << "       variable " << *((**act_var)->ident) << " not compatible!" << endl;
+						OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
+							 << "       variable " << *((**act_var)->ident) << " not compatible!" << NEW_LINE;
 						return false;
 					}
 					++*act_var;
@@ -1803,7 +1805,7 @@ bool checkClassId(instance *node) {
 		if (node->var_block_list) {
 			act_var = (PltListIterator<variable_value *>	*) node->var_block_list->newIterator();
 			while (*act_var) {						// for all variables of the instance
-				if (verbose) cout << "      check variable " << *((**act_var)->ident) << endl;
+				if (verbose) OUT_STREAM << "      check variable " << *((**act_var)->ident) << NEW_LINE;
 				LogPath act_class_name = LogPath(*(node->class_ident));
 				KsString domname(server + act_class_name + "/" + *((**act_var)->ident));
 				KscDomain var(domname);		// meta information about variable is stored in domain object
@@ -1813,7 +1815,7 @@ bool checkClassId(instance *node) {
 																// the variable definition
 						KscVariable parent(server + act_class_name + ".baseclass");
 						if (! parent.getUpdate() ) {
-							cout << "Error: Cannot get base class of " << act_class_name << "!" << endl;
+							OUT_STREAM << "Error: Cannot get base class of " << act_class_name << "!" << NEW_LINE;
 							return false;
 						}
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
@@ -1828,21 +1830,21 @@ bool checkClassId(instance *node) {
 					} // while
 				}
 				if (!found) {
-					cout << "Error: Class " << *(node->class_ident) << "," << endl
-						 << "       variable " << var.getName() << " does not exist!" << endl;
+					OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
+						 << "       variable " << var.getName() << " does not exist!" << NEW_LINE;
 					return false;
 				}
 				// variable description is found in server, check compatibility now
 				KscVariable vartype(server + act_class_name + "/" + *((**act_var)->ident) + ".vartype");
 				if (! (vartype.getEngPropsUpdate() && vartype.getUpdate()) ) {
-					cout << "Error: Cannot get variable type of " << endl
-						 << *(node->class_ident) << "/" << *((**act_var)->ident) << "!" << endl;
+					OUT_STREAM << "Error: Cannot get variable type of " << NEW_LINE
+						 << *(node->class_ident) << "/" << *((**act_var)->ident) << "!" << NEW_LINE;
 					return false;
 				}
 				KscVariable varprops(server + act_class_name + "/" + *((**act_var)->ident) + ".varprops");
 				if (! (varprops.getEngPropsUpdate() && varprops.getUpdate()) ) {
-					cout << "Error: Cannot get variable props of " << endl
-						 << *(node->class_ident) << "/" << *((**act_var)->ident) << "!" << endl;
+					OUT_STREAM << "Error: Cannot get variable props of " << NEW_LINE
+						 << *(node->class_ident) << "/" << *((**act_var)->ident) << "!" << NEW_LINE;
 					return false;
 				}
 				const KsVarCurrProps *currprops = varprops.getCurrProps();
@@ -1862,9 +1864,9 @@ bool checkClassId(instance *node) {
 					ok = compat_types((**act_var)->val->type, (int)((KsIntValue &) *currprops->value));
 				}
 				if (!ok) {												// variable type not compatible
-					cout << "Error: Class " << *(node->class_ident) << "," << endl
+					OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
 						 << "       type of ." << *((**act_var)->ident) << " is not compatible!"
-						 << endl;
+						 << NEW_LINE;
 					return false;
 				}
 				++*act_var;
@@ -1876,7 +1878,7 @@ bool checkClassId(instance *node) {
 			act_link = (PltListIterator<link_value *>*) node->link_block_list->newIterator();
 
 			while (*act_link) {								// for all links of the instance
-				if (verbose) cout << "      check link " << *((**act_link)->ident) << endl;
+				if (verbose) OUT_STREAM << "      check link " << *((**act_link)->ident) << NEW_LINE;
 				succ = false;
 				LogPath act_class_name = *(node->class_ident);
 				// 1. Get the contents of the variables "childassociation" and "parentassociation"
@@ -1889,18 +1891,18 @@ bool checkClassId(instance *node) {
 
 					KscVariable childlink(server + act_class_name + ".childassociation");
 					if (! childlink.getUpdate() ) {
-						cout << "Error: Class " << act_class_name << "," << endl
-							 << "       cannot get childlink type!" << endl
-							 << endl;
+						OUT_STREAM << "Error: Class " << act_class_name << "," << NEW_LINE
+							 << "       cannot get childlink type!" << NEW_LINE
+							 << NEW_LINE;
 						return false;
 					}
 					const KsVarCurrProps *childcprops = childlink.getCurrProps();
 
 					KscVariable parentlink(server + act_class_name + ".parentassociation");
 					if (! parentlink.getUpdate() ) {
-						cout << "Error: Class " << act_class_name << "," << endl
-							 << "       cannot get parentlink type!" << endl
-							 << endl;
+						OUT_STREAM << "Error: Class " << act_class_name << "," << NEW_LINE
+							 << "       cannot get parentlink type!" << NEW_LINE
+							 << NEW_LINE;
 						return false;
 					}
 					const KsVarCurrProps *parentcprops = parentlink.getCurrProps();
@@ -1908,9 +1910,9 @@ bool checkClassId(instance *node) {
 					for(i = 0; (unsigned int) i < ((KsStringVecValue &) *childcprops->value).size(); i++) {
 						KscVariable p_role(server + ((KsStringVecValue &) *childcprops->value)[i] + ".parentrolename");
 						if (! (p_role.getEngPropsUpdate() && p_role.getUpdate()) ) {
-							cout << "Error: Class " << *(node->class_ident) << "," << endl
-								 << "       cannot get parentrolename!" << endl
-								 << endl;
+							OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
+								 << "       cannot get parentrolename!" << NEW_LINE
+								 << NEW_LINE;
 							return false;
 						}
 						const KsVarCurrProps *p_role_props = p_role.getCurrProps();
@@ -1923,9 +1925,9 @@ bool checkClassId(instance *node) {
 					for(i = 0; !succ && (unsigned int) i < ((KsStringVecValue &) *parentcprops->value).size(); i++) {
 						KscVariable c_role(server + ((KsStringVecValue &) *parentcprops->value)[i] + ".childrolename");
 						if (! (c_role.getEngPropsUpdate() && c_role.getUpdate()) ) {
-							cout << "Error: Class " << *(node->class_ident) << "," << endl
-								 << "       cannot get childrolename!" << endl
-								 << endl;
+							OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
+								 << "       cannot get childrolename!" << NEW_LINE
+								 << NEW_LINE;
 							return false;
 						}
 						const KsVarCurrProps *c_role_props = c_role.getCurrProps();
@@ -1938,7 +1940,7 @@ bool checkClassId(instance *node) {
 					if (!succ) {
 						KscVariable parent(server + act_class_name + ".baseclass");
 						if (! parent.getUpdate() ) {
-							cout << "Error: Cannot get base class of " << act_class_name << "!" << endl;
+							OUT_STREAM << "Error: Cannot get base class of " << act_class_name << "!" << NEW_LINE;
 							return false;
 						}
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
@@ -1946,8 +1948,8 @@ bool checkClassId(instance *node) {
 					}
 				} // while (!succ ...)
 				if (!succ) {
-					cout << "Error: Class " << *(node->class_ident) << ": link type of " << endl
-						 << *((**act_link)->ident) << " is not compatible!" << endl;
+					OUT_STREAM << "Error: Class " << *(node->class_ident) << ": link type of " << NEW_LINE
+						 << *((**act_link)->ident) << " is not compatible!" << NEW_LINE;
 					return false;
 				}
 				++*act_link;
@@ -1962,7 +1964,7 @@ bool checkClassId(instance *node) {
 			PltString * helpString;
 
 			while (*act_part) {									// for all parts of the instance
-				if (verbose) cout << "      check part " << *((**act_part)->ident) << endl;
+				if (verbose) OUT_STREAM << "      check part " << *((**act_part)->ident) << NEW_LINE;
 				LogPath act_class_name = LogPath(*(node->class_ident));
 
 				// get part name
@@ -1984,7 +1986,7 @@ bool checkClassId(instance *node) {
 																// the part definition
 						KscVariable parent(server + act_class_name + ".baseclass");
 						if (! parent.getUpdate() ) {
-							cout << "Error: Cannot get base class of " << act_class_name << "!" << endl;
+							OUT_STREAM << "Error: Cannot get base class of " << act_class_name << "!" << NEW_LINE;
 							return false;
 						}
 						const KsVarCurrProps *parentprops = parent.getCurrProps();
@@ -1999,23 +2001,23 @@ bool checkClassId(instance *node) {
 					} // while
 				}
 				if (!found) {
-					cout << "Error: Class " << *(node->class_ident) << "," << endl
-						 << "       part " << part.getName() << " does not exist!" << endl;
+					OUT_STREAM << "Error: Class " << *(node->class_ident) << "," << NEW_LINE
+						 << "       part " << part.getName() << " does not exist!" << NEW_LINE;
 					return false;
 				}
 				// part found, now compare class identifiers
 				KscVariable clid(server + act_class_name + "/" + help + ".partclass");
 				if (! clid.getUpdate() ) {
-					cout << "Error: Cannot get partclass of " << act_class_name << "/"
-						 << help << "!" << endl;
+					OUT_STREAM << "Error: Cannot get partclass of " << act_class_name << "/"
+						 << help << "!" << NEW_LINE;
 					return false;
 				}
 				const KsVarCurrProps *clidprops = clid.getCurrProps();
 				KsString clname = KsString((KsStringValue &) *clidprops->value);
 
 				if (strcmp(clname, (PltString) *((**act_part)->class_ident) ) != 0) {
-					cout << "Error: Class " << *(node->class_ident) << ": part class " << endl
-						 << help << " is not compatible!" << endl;
+					OUT_STREAM << "Error: Class " << *(node->class_ident) << ": part class " << NEW_LINE
+						 << help << " is not compatible!" << NEW_LINE;
 					return false;
 				}
 				++*act_part;
@@ -2033,7 +2035,7 @@ bool checkClassId(instance *node) {
 // Are all necessary classes available in target server?
 bool check_class_tree()
 {
-	if (verbose) cout << "Checking classes..." << endl;
+	if (verbose) OUT_STREAM << "Checking classes..." << NEW_LINE;
 	return parse_tree->forEach(&checkClassId);
 } // check_class_tree
 
@@ -2048,7 +2050,7 @@ bool write_instance(instance *node)
 	KsDeleteObjResult		delete_result;
 	KsPlacementHint			pmh;
 
-	if (verbose) cout << "write instance" << *node->ident << " in mode " << node->cr_opts << endl;
+	if (verbose) OUT_STREAM << "write instance" << *node->ident << " in mode " << node->cr_opts << NEW_LINE;
 	// instance shall be overwritten => delete old instance first
 	if (node->cr_opts == CO_OVERWRITE) {
 		KsArray<KsString> del_path(1);
@@ -2058,16 +2060,16 @@ bool write_instance(instance *node)
 										  0,
 										  delete_params,
 										  delete_result)) {
-			cout << "Error deleting object " << *(node->ident) << "!" << endl;
+			OUT_STREAM << "Error deleting object " << *(node->ident) << "!" << NEW_LINE;
 			return false;
 		}
 		if (delete_result.result != KS_ERR_OK) {
-			cout << "Error " << delete_result.result << " deleting object " << *(node->ident)
-				 << "!" << endl;
+			OUT_STREAM << "Error " << delete_result.result << " deleting object " << *(node->ident)
+				 << "!" << NEW_LINE;
 			return false;
 		}
 		if (delete_result.results.size() != 1) {
-			cout << "Error: Out of memory in write_instance!" << endl;
+			OUT_STREAM << "Error: Out of memory in write_instance!" << NEW_LINE;
 			return false;
 		}
 		node->cr_opts = CO_CREATE;		// now new instance can be created
@@ -2077,7 +2079,7 @@ bool write_instance(instance *node)
 	if (node->cr_opts == CO_CREATE) {
 		create_params.items = KsArray<KsCreateObjItem>(1);
 		if (create_params.items.size() != 1) {
-			cout << "Error: Out of memory in write_instance!" << endl;
+			OUT_STREAM << "Error: Out of memory in write_instance!" << NEW_LINE;
 			return false;
 		}
 		create_params.items[0].factory_path = PltString(*(node->class_ident));
@@ -2093,30 +2095,30 @@ bool write_instance(instance *node)
 										  0,
 										  create_params,
 										  create_result)) {
-			cout << "Error creating object " << *(node->ident) << "!" << endl;
+			OUT_STREAM << "Error creating object " << *(node->ident) << "!" << NEW_LINE;
 			return false;
 		}
 
 		if (create_result.result != KS_ERR_OK && create_result.result != KS_ERR_ALREADYEXISTS) {
-			cout << "Error " << create_result.result << " creating object " << *(node->ident)
-				 << "!" << endl;
+			OUT_STREAM << "Error " << create_result.result << " creating object " << *(node->ident)
+				 << "!" << NEW_LINE;
 			return false;
 		}
 		if (verbose && create_result.result == KS_ERR_ALREADYEXISTS) {
-			cout << "Warning: Object " << *(node->ident) << " already exists!" << endl;
+			OUT_STREAM << "Warning: Object " << *(node->ident) << " already exists!" << NEW_LINE;
 		}
 		if (create_result.obj_results.size() != 1) {
-			cout << "Error: Out of memory!" << endl;
+			OUT_STREAM << "Error: Out of memory!" << NEW_LINE;
 			return false;
 		}
 		if (create_result.obj_results[0].result != KS_ERR_OK &&
 				create_result.obj_results[0].result != KS_ERR_ALREADYEXISTS) {
-			cout << "Error " << create_result.obj_results[0].result << " creating object " << *(node->ident)
-				 << "!" << endl;
+			OUT_STREAM << "Error " << create_result.obj_results[0].result << " creating object " << *(node->ident)
+				 << "!" << NEW_LINE;
 			return false;
 		}
 		if (verbose) {
-			cout << "Created object " << *(node->ident) << " successfully!" << endl;
+			OUT_STREAM << "Created object " << *(node->ident) << " successfully!" << NEW_LINE;
 		}
 		node->cr_opts = CO_CHANGE;		// values of new instance must still be set
 	} // if (node->cr_opts == CO_CREATE)
@@ -2154,8 +2156,8 @@ bool write_variables(instance *node)
 //			}
 				KscVariable help(server + *(node->ident) + delimiter + *((**it)->ident) );
 				if (!help.getEngPropsUpdate()) {
-					cout << "Error: Variable " << *(node->ident) << delimiter << *((**it)->ident)
-						 << " does not exist!" << endl;
+					OUT_STREAM << "Error: Variable " << *(node->ident) << delimiter << *((**it)->ident)
+						 << " does not exist!" << NEW_LINE;
 					delete it;
 					return false;
 				}
@@ -2328,47 +2330,50 @@ bool write_variables(instance *node)
 							break;
 						}
 						case DB_VT_VECTOR: {
-							cout << "Error: nested vectors are not allowed! (" << *((**it)->ident)
-								 << ")" << endl;
+							OUT_STREAM << "Error: nested vectors are not allowed! (" << *((**it)->ident)
+								 << ")" << NEW_LINE;
 							delete it;
 							return false;
 						}
 						case DB_VT_STRUCTURE: {
-							cout << "Error: variables of type structure are not yet supported! ("
-								 << *((**it)->ident) << ")" << endl;
+							OUT_STREAM << "Error: variables of type structure are not yet supported! ("
+								 << *((**it)->ident) << ")" << NEW_LINE;
 							delete it;
 							return false;
 						}
 						default: {
-							cout << "Error: " << *((**it)->ident) << " has unknown variable type!"
-								 << endl;
+							OUT_STREAM << "Error: " << *((**it)->ident) << " has unknown variable type!"
+								 << NEW_LINE;
 							delete it;
 							return false;
 						}
 					}
 					break;
 				case DB_VT_STRUCTURE:
-					cout << "Error: variables of type structure are not yet supported! ("
-						 << *((**it)->ident) << ")" << endl;
+					OUT_STREAM << "Error: variables of type structure are not yet supported! ("
+						 << *((**it)->ident) << ")" << NEW_LINE;
 					delete it;
 					return false;
 				case DB_VT_VOID:
 					val = new KsVoidValue();
 					break;
 				default:
-					cout << "Error: " << *((**it)->ident) << " has unknown variable type!"
-						 << endl;
+					OUT_STREAM << "Error: " << *((**it)->ident) << " has unknown variable type!"
+						 << NEW_LINE;
 					delete it;
 					return false;
 			} // switch
 
 			KsValueHandle hvalue(val, KsOsNew);
 			KsVarCurrProps *cprops;
-			if ((**it)->var_time)
+			if ((**it)->var_time) {
 				cprops = new KsVarCurrProps(hvalue, *((**it)->var_time), (**it)->var_state);
-			else
-				cprops = new KsVarCurrProps(hvalue, KsTime(0,0), (**it)->var_state);
-
+			} else {
+			    KsTime t;
+			    t.tv_sec = 0;
+			    t.tv_usec = 0;
+				cprops = new KsVarCurrProps(hvalue, t, (**it)->var_state);
+            }
 			KsCurrPropsHandle hcprops(cprops, KsOsNew);
 
 			PltString delimiter;
@@ -2394,36 +2399,36 @@ bool write_variables(instance *node)
 			KsSetVarResult set_result(nr_v);
 			set_params.items = params;
 			if (!server_base->setVar(NULL, set_params, set_result)) {
-				cout << "Error setting variables of object " << *(node->ident) << "!" << endl;
+				OUT_STREAM << "Error setting variables of object " << *(node->ident) << "!" << NEW_LINE;
 				return false;
 			}
 			if (set_result.results.size() != nr_v) {
-				cout << "Error: Out of memory in write_variables!" << endl;
+				OUT_STREAM << "Error: Out of memory in write_variables!" << NEW_LINE;
 				return false;
 			}
 			for (i = 0; i < nr_v; i++) {
 				if (set_result.results[i].result == KS_ERR_NOACCESS) {	// ignore inaccessible variables TODO: ???
 					if (verbose) {
-						cout << "Warning: No access to variable " << params[i].path_and_name
-							 << " of object " << *(node->ident) << "!" << endl;
+						OUT_STREAM << "Warning: No access to variable " << params[i].path_and_name
+							 << " of object " << *(node->ident) << "!" << NEW_LINE;
 					}
 				} else {
 					if (set_result.results[i].result == KS_ERR_BADVALUE) {	// TODO: ???
 						if (verbose) {
-							cout << "Warning: Bad value for variable " << params[i].path_and_name
-								 << " of object " << *(node->ident) << "! Value not set." << endl;
+							OUT_STREAM << "Warning: Bad value for variable " << params[i].path_and_name
+								 << " of object " << *(node->ident) << "! Value not set." << NEW_LINE;
 						}
 					} else {
 						if (set_result.results[i].result != KS_ERR_OK) {
-							cout << "Error " << set_result.results[i].result << " setting variable "
-								 << params[i].path_and_name << " of object " << *(node->ident) << "!" << endl;
+							OUT_STREAM << "Error " << set_result.results[i].result << " setting variable "
+								 << params[i].path_and_name << " of object " << *(node->ident) << "!" << NEW_LINE;
 							return false;
 						}
 					}
 				}
 			}
 			if (verbose) {
-				cout << "Wrote variables of " << *(node->ident) << " successfully!" << endl;
+				OUT_STREAM << "Wrote variables of " << *(node->ident) << " successfully!" << NEW_LINE;
 			}
 		} // if (nr_v != 0)
 
@@ -2502,8 +2507,8 @@ bool write_links(instance *node)
 	while (*it) {
 	    KscAnyCommObject help(server + *(node->ident) + "." + *((**it)->ident) );
 		if (!help.getEngPropsUpdate()) {
-			cout << "Error: Link " << *(node->ident) << "." << *((**it)->ident)
-				 << " does not exist!" << endl;
+			OUT_STREAM << "Error: Link " << *(node->ident) << "." << *((**it)->ident)
+				 << " does not exist!" << NEW_LINE;
 			delete it;
 			return false;
 		}
@@ -2532,13 +2537,13 @@ bool write_links(instance *node)
 										  0,
 										  link_params,
 										  link_result)) {
-			cout << "Error setting links of object " << *(node->ident) << "!" << endl;
+			OUT_STREAM << "Error setting links of object " << *(node->ident) << "!" << NEW_LINE;
 			delete link_it;
 			delete it;
 			return false;
 		}
 		if (link_result.results.size() != i) {
-			cout << "Error: Out of memory in write_links!" << endl;
+			OUT_STREAM << "Error: Out of memory in write_links!" << NEW_LINE;
 			delete link_it;
 			delete it;
 			return false;
@@ -2552,14 +2557,14 @@ bool write_links(instance *node)
 			}
 			if (link_result.results[j] == KS_ERR_BADPATH) {		// TODO: ???
 				if (verbose) {
-					cout << "Warning: Link " << *((**it)->ident) << " of object " << *(node->ident)
-						 << " could not be set," << endl << "    target " << (PltString)**link_it
-						 << " does not exist!" << endl;
+					OUT_STREAM << "Warning: Link " << *((**it)->ident) << " of object " << *(node->ident)
+						 << " could not be set," << NEW_LINE << "    target " << (PltString)**link_it
+						 << " does not exist!" << NEW_LINE;
 				}
 			} else {
-				cout << "Error " << link_result.results[j] << " setting link "
+				OUT_STREAM << "Error " << link_result.results[j] << " setting link "
 					 << *((**it)->ident) << " of object " << *(node->ident)
-					 << "!" << endl;
+					 << "!" << NEW_LINE;
 				delete link_it;
 				delete it;
 				return false;
@@ -2572,7 +2577,7 @@ bool write_links(instance *node)
 	} // while
 	delete it;
 	if (verbose) {
-		cout << "Wrote links of " << *(node->ident) << " successfully!" << endl;
+		OUT_STREAM << "Wrote links of " << *(node->ident) << " successfully!" << NEW_LINE;
 	}
 	return true;
 } // write_links
@@ -2594,7 +2599,7 @@ bool write_database()
 
 	// identify library objects and add them to "liblist"
 	if (!parse_tree->forEach(&find_libraries)) {
-		cout << "Error: In function find_libraries!" << endl;
+		OUT_STREAM << "Error: In function find_libraries!" << NEW_LINE;
 		return false;
 	}
 	// enable activity lock: all activities of the server are suspended
@@ -2604,11 +2609,11 @@ bool write_database()
 
 		get_params.identifiers = params;
 	        if (!server_base->getVar(NULL, get_params, get_result)) {
-			cout << "Error getting server_configuration!" << endl;
+			OUT_STREAM << "Error getting server_configuration!" << NEW_LINE;
 			return false;
 		}
 		if (get_result.items[0].result != KS_ERR_OK) {
-			cout << "Error getting server_configuration!" << endl;
+			OUT_STREAM << "Error getting server_configuration!" << NEW_LINE;
 			return false;
 		}
 		hcprops = get_result.items[0].item;
@@ -2620,15 +2625,15 @@ bool write_database()
 		paramsset[0].curr_props = hcprops;
 		set_params.items = paramsset;
 		if (!server_base->setVar(NULL, set_params, set_result)) {
-			cout << "Error setting activity_lock!" << endl;
+			OUT_STREAM << "Error setting activity_lock!" << NEW_LINE;
 			return false;
 		}
 		if (set_result.results.size() != 1) {
-			cout << "Error: Out of memory in write_database!" << endl;
+			OUT_STREAM << "Error: Out of memory in write_database!" << NEW_LINE;
 			return false;
 		}
 		if (set_result.results[0].result != KS_ERR_OK) {
-			cout << "Error setting activity_lock!" << endl;
+			OUT_STREAM << "Error setting activity_lock!" << NEW_LINE;
 			return false;
 		}
  	}
@@ -2651,7 +2656,7 @@ bool write_database()
 	}
 
 	if (nr_libs != 0) {												// NEW
-		cout << "Warning: Could not load all libraries needed!" << endl;
+		OUT_STREAM << "Warning: Could not load all libraries needed!" << NEW_LINE;
 		ok = false;
 	}
 
@@ -2659,19 +2664,19 @@ bool write_database()
 
 	// Write instances into database
 	if (!parse_tree->forEach(&write_instance)) {
-		cout << "Warning: Could not write all objects in server!" << endl;
+		OUT_STREAM << "Warning: Could not write all objects in server!" << NEW_LINE;
 		ok = false;
 	}
 
 	// Write variables of instances
 	if (!parse_tree->forEach(&write_variables)) {
-		cout << "Warning: Could not write all variables in server!" << endl;
+		OUT_STREAM << "Warning: Could not write all variables in server!" << NEW_LINE;
 		ok = false;
 	}
 
 	// set link values
 	if (!parse_tree->forEach(&write_links)) {
-		cout << "Warning: Could not write all links in server!" << endl;
+		OUT_STREAM << "Warning: Could not write all links in server!" << NEW_LINE;
 		ok = false;
 	}
 	
@@ -2680,15 +2685,15 @@ bool write_database()
 		((KsBoolVecValue &) *cprops.value)[0] = FALSE;
 
 		if (!server_base->setVar(NULL, set_params, set_result)) {
-			cout << "Error unsetting activity_lock!" << endl;
+			OUT_STREAM << "Error unsetting activity_lock!" << NEW_LINE;
 			return false;
 		}
 		if (set_result.results.size() != 1) {
-			cout << "Error: Out of memory in write_database!" << endl;
+			OUT_STREAM << "Error: Out of memory in write_database!" << NEW_LINE;
 			return false;
 		}
 		if (set_result.results[0].result != KS_ERR_OK) {
-			cout << "Error unsetting activity_lock!" << endl;
+			OUT_STREAM << "Error unsetting activity_lock!" << NEW_LINE;
 			return false;
 		}
 	}
@@ -2712,7 +2717,7 @@ int GetLoadOpts(char *arg)
 		constant[j] = (char *)malloc(30);
 		k = sscanf(&arg[i], "%[A-Za-z_]%1[-]", constant[j], &x);	// verify parameter format
 		if (k == 0) {
-			cout << "Error: Invalid load options parameter." << endl;
+			OUT_STREAM << "Error: Invalid load options parameter." << NEW_LINE;
 //			free(constant);											// TODO: crashes why?
 			exit(-1);
 		}
@@ -2753,7 +2758,7 @@ int GetLoadOpts(char *arg)
 			ret |= LO_DEFAULT;
 			continue;
 		}
-		cout << "Error: Invalid load options parameter." << endl;
+		OUT_STREAM << "Error: Invalid load options parameter." << NEW_LINE;
 		exit(-1);
 	}
 //	free (constant);									// TODO: crashes why?
@@ -2776,55 +2781,55 @@ int main(int argc, char **argv)
 	//	yydebug = 1;
 
 	// print info on startup
-	cout << "** ACPLT/OV text file parser, version " << OV_VER_DBPARSE << " **" << endl
-		 << "(c) 2002/2006 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
-		 << endl;
+	OUT_STREAM << "** ACPLT/OV text file parser, version " << OV_VER_DBPARSE << " **" << NEW_LINE
+		 << "(c) 2002/2006 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << NEW_LINE
+		 << NEW_LINE;
 
 	if (argc < 2) {
-		cout << "Error: Missing parameter \"//host/server\"." << endl
-			 << "Usage: " << argv[0] << " //host/server [-finput_file]" << endl
-			 << "[-lload_option[-load_option][-..]]" << endl
-			 << "[-wlib_wait_time]" << endl
-			 << "[-v]" << endl
-			 << "[-a]" << endl
-			 << endl << "For more help type \"" << argv[0] << " -?\"" << endl;
+		OUT_STREAM << "Error: Missing parameter \"//host/server\"." << NEW_LINE
+			 << "Usage: " << argv[0] << " //host/server [-finput_file]" << NEW_LINE
+			 << "[-lload_option[-load_option][-..]]" << NEW_LINE
+			 << "[-wlib_wait_time]" << NEW_LINE
+			 << "[-v]" << NEW_LINE
+			 << "[-a]" << NEW_LINE
+			 << NEW_LINE << "For more help type \"" << argv[0] << " -?\"" << NEW_LINE;
 		return -1;
 	}
 
 	// print extended usage info
 	if ((argc == 2 && (strcmp(argv[1], "-?") == 0))) {							// print help
-		cout << "Usage: " << argv[0] << " //host/server [-finput_file]" << endl
-			 << "[-lload_option[-load_option][-..]]" << endl
-			 << "[-wlib_wait_time]" << endl
-			 << "[-v]" << endl
-			 << "[-a]" << endl
-			 << endl
-			 << "Options:" << endl
-			 << "//host/server : name of the OV host and server" << endl
-			 << "-finput_file : name of the input file, default: dbdump.txt" << endl
-			 << "-lload_option[-load_option][-..] :" << endl
-			 << "   valid options:" << endl
-			 << "      LO_ADD_CLASSES              add missing classes to server" << endl
-			 << "      LO_OVERWRITE_EXACT          overwrite objects of exactly matching type" << endl
-			 << "      LO_OVERWRITE_INHERITED      overwrite objects of inheritance compatible" << endl
-			 << "                                  type" << endl
-			 << "      LO_OVERWRITE_INCOMPATIBLE   overwrite objects of incompatible type" << endl
-			 << "      LO_ERROR_ON_INCOMPATIBLE    generate error when encountering incompatible" << endl
-			 << "                                  objects" << endl
-			 << "      LO_ADD_DOMAINS              add missing parent domains" << endl
-			 << "      LO_DEFAULT                  = LO_ADD_CLASSES | LO_OVERWRITE_EXACT |" << endl
-			 << "                                    LO_ADD_DOMAINS" << endl
-			 << "      Options may be combined, separated by \"-\"" << endl
-			 << "-wlib_wait_time : time to wait after loading the libraries in s, default: 0 s" << endl
-			 << "-v : print verbose status information" << endl
-			 << "-pPATH : write instances and links with relative path to PATH" << endl
-			 << "-a : use activitylock (OV version > 1.6.4)" << endl
-			 << endl;
+		OUT_STREAM << "Usage: " << argv[0] << " //host/server [-finput_file]" << NEW_LINE
+			 << "[-lload_option[-load_option][-..]]" << NEW_LINE
+			 << "[-wlib_wait_time]" << NEW_LINE
+			 << "[-v]" << NEW_LINE
+			 << "[-a]" << NEW_LINE
+			 << NEW_LINE
+			 << "Options:" << NEW_LINE
+			 << "//host/server : name of the OV host and server" << NEW_LINE
+			 << "-finput_file : name of the input file, default: dbdump.txt" << NEW_LINE
+			 << "-lload_option[-load_option][-..] :" << NEW_LINE
+			 << "   valid options:" << NEW_LINE
+			 << "      LO_ADD_CLASSES              add missing classes to server" << NEW_LINE
+			 << "      LO_OVERWRITE_EXACT          overwrite objects of exactly matching type" << NEW_LINE
+			 << "      LO_OVERWRITE_INHERITED      overwrite objects of inheritance compatible" << NEW_LINE
+			 << "                                  type" << NEW_LINE
+			 << "      LO_OVERWRITE_INCOMPATIBLE   overwrite objects of incompatible type" << NEW_LINE
+			 << "      LO_ERROR_ON_INCOMPATIBLE    generate error when encountering incompatible" << NEW_LINE
+			 << "                                  objects" << NEW_LINE
+			 << "      LO_ADD_DOMAINS              add missing parent domains" << NEW_LINE
+			 << "      LO_DEFAULT                  = LO_ADD_CLASSES | LO_OVERWRITE_EXACT |" << NEW_LINE
+			 << "                                    LO_ADD_DOMAINS" << NEW_LINE
+			 << "      Options may be combined, separated by \"-\"" << NEW_LINE
+			 << "-wlib_wait_time : time to wait after loading the libraries in s, default: 0 s" << NEW_LINE
+			 << "-v : print verbose status information" << NEW_LINE
+			 << "-pPATH : write instances and links with relative path to PATH" << NEW_LINE
+			 << "-a : use activitylock (OV version > 1.6.4)" << NEW_LINE
+			 << NEW_LINE;
 		return 0;
 	}
 
 	if (argc > 7) {
-		cout << "Error: Too many parameters." << endl;
+		OUT_STREAM << "Error: Too many parameters." << NEW_LINE;
 		return -1;
 	}
 
@@ -2832,7 +2837,7 @@ int main(int argc, char **argv)
 
 															// Check host and server name
 	if (sscanf(argv[1], "%1[/]%1[/]%[a-zA-Z0-9_.:-]%1[/]%[a-zA-Z0-9_]%s", x, x, x, x, x, x) != 5) {
-		cout << "Error: Invalid host and server name." << endl;
+		OUT_STREAM << "Error: Invalid host and server name." << NEW_LINE;
 		free(x);
 		return -1;
 	} else {
@@ -2860,7 +2865,7 @@ int main(int argc, char **argv)
 					  break;
 			case 'w':
 			case 'W': if (sscanf(&argv[i][2], "%u", &lib_wait_time) != 1) {
-						  cout << "Error: Invalid parameter for lib_wait_time." << endl;
+						  OUT_STREAM << "Error: Invalid parameter for lib_wait_time." << NEW_LINE;
 						  return -1;
 					  }
 					  break;
@@ -2874,11 +2879,11 @@ int main(int argc, char **argv)
 			case 'a':
 			case 'A': use_activitylock = true;
 					  break;
-			default	: cout << "Invalid parameter: " << argv[i] << "." << endl;
+			default	: OUT_STREAM << "Invalid parameter: " << argv[i] << "." << NEW_LINE;
 					  return -1;
 			}
 		} else {
-			cout << "Invalid parameter: " << argv[i] << "." << endl;
+			OUT_STREAM << "Invalid parameter: " << argv[i] << "." << NEW_LINE;
 			return -1;
 		}
 	}
@@ -2887,7 +2892,7 @@ int main(int argc, char **argv)
 
 	yyin = fopen(infile, "r");						// open the input file read-only
 	if(!yyin) {
-		cout << "Error: File not found!" << endl;
+		OUT_STREAM << "Error: File not found!" << NEW_LINE;
 		return -1;
 	}
 	ret = yyparse();								// call parser
@@ -2906,7 +2911,7 @@ int main(int argc, char **argv)
 	if (ok) {
 		KscDomain rootdom(rootname);
 		if (!rootdom.getEngPropsUpdate()) {
-			cout << "Error: Unable to open server " << server << "!" << endl;
+			OUT_STREAM << "Error: Unable to open server " << server << "!" << NEW_LINE;
 			ok = false;
 		} else {	// server found
 			ok = check_class_tree();	// check class compatibility
@@ -2923,16 +2928,16 @@ int main(int argc, char **argv)
 		if (hrootdomain && hrootdomain->hasValidPath()) {
 			server_base = hrootdomain->getServer();
 		} else {
-			cout << "Error: Cannot find server " << server << "!" << endl;
+			OUT_STREAM << "Error: Cannot find server " << server << "!" << NEW_LINE;
 			return false;
 		}
 		ok = write_database();							// write parse tree into server database
 	}
 
 	if (ok) {
-		cout << "Success." << endl;
+		OUT_STREAM << "Success." << NEW_LINE;
 	} else {
-		cout << "Some Warnings have occurred." << endl;
+		OUT_STREAM << "Some Warnings have occurred." << NEW_LINE;
 	}
 	delete(parse_tree);									// clean up
 	return ret;											// return parser result

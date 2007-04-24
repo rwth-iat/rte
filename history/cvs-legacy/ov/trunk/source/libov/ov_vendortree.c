@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.18 2005-05-09 15:30:16 ansgar Exp $
+*   $Id: ov_vendortree.c,v 1.19 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -57,6 +57,7 @@ static OV_STRING	semantic_flag[32] = {
 OV_DLLVAREXPORT OV_BOOL ov_activitylock;
 OV_DLLVAREXPORT OV_BOOL ov_backup;
 OV_DLLVAREXPORT OV_BOOL ov_explain;
+OV_DLLVAREXPORT OV_STRING db_backup_filename;
 /*
 *	Global variables
 */
@@ -90,7 +91,6 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 
 /*	----------------------------------------------------------------------	*/
 
-#define DoLink(assoc, pparent, pchild) ov_association_dolink(passoc_##assoc, Ov_StaticPtrCast(ov_object, pparent), Ov_StaticPtrCast(ov_object, pchild))
 
 /*
 *	Initialize the vendor tree

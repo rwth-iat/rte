@@ -1,5 +1,5 @@
 /*
- * $Id: ovxiparse.cpp,v 1.6 2006-01-12 14:10:13 markus Exp $
+ * $Id: ovxiparse.cpp,v 1.7 2007-04-24 14:11:29 martin Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -358,7 +358,7 @@ bool parsetree::add(instance *inst) {
 	int			i, j;
 	KsString	delimiter;
 
-	if (verbose) cout << "Adding " << *inst->ident << " to parsetree!" << endl;
+	if (verbose) OUT_STREAM << "Adding " << *inst->ident << " to parsetree!" << NEW_LINE;
 	j = inst->ident->size();					// nr. of path components
 	if (*(inst->ident) == LogPath("/")) {		// root domain always exists
 		*(root->creation_time) = *(inst->creation_time);
@@ -434,7 +434,7 @@ bool parsetree::add(instance *inst) {
 					return true;
 				}
 			} else {
-				cout << "Error: Duplicate instance identifier in input file!" << endl;
+				OUT_STREAM << "Error: Duplicate instance identifier in input file!" << NEW_LINE;
 				return false;
 			}
 		}
@@ -447,7 +447,7 @@ bool parsetree::add(instance *inst) {
 		if (act_inst->part_block_list->addLast(inst)) {
 			return true;
 		} else {
-		       	cout << "Error: Could not add instance " << *(inst->ident) << " to part_block!" << endl;
+		       	OUT_STREAM << "Error: Could not add instance " << *(inst->ident) << " to part_block!" << NEW_LINE;
 			return false;
 		}
 	} else {								// instance is a child
@@ -461,7 +461,7 @@ bool parsetree::add(instance *inst) {
 		    act_inst->children_list->addLast(inst);
 			return true;
 		} else {
-		       	cout << "Error: Could not add instance " << *(inst->ident) << " to children!" << endl;
+		       	OUT_STREAM << "Error: Could not add instance " << *(inst->ident) << " to children!" << NEW_LINE;
 			return false;
 		}
 	}
@@ -483,11 +483,11 @@ bool parsetree::remove(LogPath *name)
 	parent = search(&lp);
 	// remove instance from hash table of parent
 	if (!parent->children->remove(*name, inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		OUT_STREAM << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << NEW_LINE;
 		exit(-1);
 	}
 	if (!parent->children_list->remove(inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		OUT_STREAM << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << NEW_LINE;
 		exit(-1);
 	}
 	delete inst;
@@ -506,11 +506,11 @@ bool parsetree::remove(instance *inst)
 	parent = search(&lp);
 	
 	if (!parent->children->remove(*(inst->ident), inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		OUT_STREAM << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << NEW_LINE;
 		exit(-1);
 	}
 	if (!parent->children_list->remove(inst)) {
-		cout << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << endl;
+		OUT_STREAM << "Error: Cannot remove " << *(inst->ident) << " from parse tree!" << NEW_LINE;
 		exit(-1);
 	}
 	delete inst;
@@ -866,7 +866,7 @@ ostream &operator << (ostream &log, LogPath path) {
 			log << path.getTail();
 		}
 	} else {
-		cout << "Warning: Invalid path!" << endl;
+		OUT_STREAM << "Warning: Invalid path!" << NEW_LINE;
 	}
 	return log;
 }
@@ -970,13 +970,13 @@ ostream &operator << (ostream &log, variable_value *varval) {
 			case KS_ST_QUESTIONABLE	: state = KsString("KS_ST_QUESTIONABLE"); break;
 			case KS_ST_GOOD			: state = KsString("KS_ST_GOOD"); break;
 		}
-		return log << "   Identifier: " << *(varval->ident) << endl
-				   << "   Value: " << varval->val << endl
-				   << "   Time: " << varval->var_time << endl
-				   << "   State: " << state << endl
-				   << "   Flags: " << varval->var_flags << endl
-				   << "   Unit: " << varval->var_unit << endl
-				   << "   Comment: " << varval->var_comment << endl;
+		return log << "   Identifier: " << *(varval->ident) << NEW_LINE
+				   << "   Value: " << varval->val << NEW_LINE
+				   << "   Time: " << varval->var_time << NEW_LINE
+				   << "   State: " << state << NEW_LINE
+				   << "   Flags: " << varval->var_flags << NEW_LINE
+				   << "   Unit: " << varval->var_unit << NEW_LINE
+				   << "   Comment: " << varval->var_comment << NEW_LINE;
 	} else {
 		return log;
 	}
@@ -988,14 +988,14 @@ ostream &operator << (ostream &log, link_value *linkval) {
 
 	if (linkval && linkval->link_paths) {
 		it = (PltListIterator<LogPath> *) linkval->link_paths->newIterator();
-		log << "   Identifier: " << *(linkval->ident) << endl
+		log << "   Identifier: " << *(linkval->ident) << NEW_LINE
 			<< "   Paths: ";
 		while(*it) {	// iterate over link targets
 			log << LogPath(**it) << ",";
 			++*it;
 		}
 		delete it;
-		return log << endl;
+		return log << NEW_LINE;
 	} else {
 		return log;
 	}
@@ -1101,19 +1101,19 @@ ostream &operator << (ostream &log, PltHashTable<PltString, instance*> *children
 
 ostream &operator << (ostream &log, instance *inst) {
 	if (inst) {
-		return log << "Identifier: " << *(inst->ident) << endl
-				   << "Part: " << inst->is_part << endl
-				   << "Class Identifier: " << *(inst->class_ident) << endl
-				   << "Creation Time: " << inst->creation_time << endl
-				   << "Semantic Flags: " << inst->sem_flags << endl
-				   << "Comment: " << inst->comment << endl
-				   << "Variable block list:" << endl
+		return log << "Identifier: " << *(inst->ident) << NEW_LINE
+				   << "Part: " << inst->is_part << NEW_LINE
+				   << "Class Identifier: " << *(inst->class_ident) << NEW_LINE
+				   << "Creation Time: " << inst->creation_time << NEW_LINE
+				   << "Semantic Flags: " << inst->sem_flags << NEW_LINE
+				   << "Comment: " << inst->comment << NEW_LINE
+				   << "Variable block list:" << NEW_LINE
 				   << inst->var_block_list
-				   << "Link block list:" << endl
+				   << "Link block list:" << NEW_LINE
 				   << inst->link_block_list
-				   << "Part block list:" << endl
+				   << "Part block list:" << NEW_LINE
 				   << inst->part_block_list
-				   << endl
+				   << NEW_LINE
 				   << inst->children;
 	} else {
 		return log;
@@ -1175,7 +1175,7 @@ KsTime GetTime(char *arg)
 	// check the format of the given string, which must be either
 	// YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
 	if(!arg) {
-		cout << "Error: Bad time format." << endl;
+		OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 		exit (-1);
 	}
 	for(pc1=format, pc2=arg; *pc1; pc1++, pc2++) {
@@ -1183,13 +1183,13 @@ KsTime GetTime(char *arg)
 			if((*pc1 == ' ') || (*pc1 == '.')) {
 				break;
 			}
-			cout << "Error: Bad time format." << endl;
+			OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 			exit (-1);
 		}
 		switch(*pc1) {
 		case '0':
 			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
-				cout << "Error: Bad time format." << endl;
+				OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 				exit (-1);
 			}
 			break;
@@ -1198,12 +1198,12 @@ KsTime GetTime(char *arg)
 		case ' ':
 		case '.':
 			if(*pc2 != *pc1) {
-				cout << "Error: Bad time format." << endl;
+				OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 				exit (-1);
 			}
 			break;
 		default:
-			cout << "Error: Bad time format." << endl;
+			OUT_STREAM << "Error: Bad time format." << NEW_LINE;
 			exit (-1);
 		}
 	}
@@ -1218,7 +1218,7 @@ KsTime GetTime(char *arg)
 	secs = mktime(&tm);
 	secs -= timezone;	// compensate time zone shift
 	if(secs < 0) {
-		cout << "Error: Time conversion failed." << endl;
+		OUT_STREAM << "Error: Time conversion failed." << NEW_LINE;
 		exit (-1);
 	}
 	// time is OK, return value
@@ -1241,7 +1241,7 @@ KsTimeSpan GetTimeSpan(char *arg)
 	// check the format of the given string, which must be either
 	// hhhh:mm:ss or hhhh:mm:ss.uuuuuu
 	if(!arg) {
-		cout << "Error: Bad time span format." << endl;
+		OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 		exit (-1);
 	}
 	for(pc1=format, pc2=arg; *pc1; pc1++, pc2++) {
@@ -1249,25 +1249,25 @@ KsTimeSpan GetTimeSpan(char *arg)
 			if(*pc1 == '.') {
 				break;
 			}
-			cout << "Error: Bad time span format." << endl;
+			OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 			exit (-1);
 		}
 		switch(*pc1) {
 		case '0':
 			if(!((*pc2 >= '0') && (*pc2 <= '9'))) {
-				cout << "Error: Bad time span format." << endl;
+				OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 				exit (-1);
 			}
 			break;
 		case ':':
 		case '.':
 			if(*pc2 != *pc1) {
-				cout << "Error: Bad time span format." << endl;
+				OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 				exit (-1);
 			}
 			break;
 		default:
-			cout << "Error: Bad time span format." << endl;
+			OUT_STREAM << "Error: Bad time span format." << NEW_LINE;
 			exit (-1);
 		}
 	}
@@ -1281,7 +1281,7 @@ KsTimeSpan GetTimeSpan(char *arg)
 			minutes >= 0 && minutes <= 59 &&
 			hours >= 0 && hours <= 9999
 	  	)) {
-		cout << "Error: Time span conversion failed." << endl;
+		OUT_STREAM << "Error: Time span conversion failed." << NEW_LINE;
 		exit (-1);
 	}
 	// time is OK, return value
@@ -1324,7 +1324,7 @@ KS_SEMANTIC_FLAGS GetSemFlags(KsString *ksarg)
 		free(arg);
 		return ret;
 	} else {
-		cout << "Error: Invalid semantic flags." << endl;
+		OUT_STREAM << "Error: Invalid semantic flags." << NEW_LINE;
 		free(arg);
 		exit(-1);
 	}
@@ -1430,7 +1430,7 @@ bool write_value(value *val, enum value_types type)
 					fprintf(fout, "}");
 					break;
 				default:
-					cout << "Error: unknown variable type!" << type << endl;
+					OUT_STREAM << "Error: unknown variable type!" << type << NEW_LINE;
 					return false;
 			} // switch
 			return TRUE;
@@ -1445,7 +1445,7 @@ bool write_instance_base(instance *node, u_int cnt)
 	u_int i,j;
 	bool ok;
 	
-	if (verbose) cout << "write instance" << *node->ident << endl;
+	if (verbose) OUT_STREAM << "write instance" << *node->ident << NEW_LINE;
 	
 	for (i=0;i<cnt;i++) fprintf(fout, "\t");
 	fprintf(fout, "<Instance ID = \"%s\" ClassID = \"%s\"", (const char*) PltString(*node->ident), (const char*) PltString(*node->class_ident));
@@ -1468,7 +1468,7 @@ bool write_instance_base(instance *node, u_int cnt)
 		PltListIterator<variable_value *> *it = (PltListIterator<variable_value *> *) node->var_block_list->newIterator();
 		while (*it) {
 			if (strncmp(node->ident->getHead(), "vendor", 6) != 0) {	//do not write variables of vendor tree
-				if (verbose) cout << "write variable " << *((**it)->ident) << endl;
+				if (verbose) OUT_STREAM << "write variable " << *((**it)->ident) << NEW_LINE;
 				for (i=0;i<cnt;i++) fprintf(fout, "\t");
 				fprintf(fout, "\t<VariableValue ID=\"%s\"", (const char *) *((**it)->ident) );
 				if ((**it)->var_time) {
@@ -1500,7 +1500,7 @@ bool write_instance_base(instance *node, u_int cnt)
 	if (node->part_block_list) {    	// now iterate over parts
 		PltListIterator<instance *> *itpart = (PltListIterator<instance *> *) node->part_block_list->newIterator();
 		while(*itpart) {								
-			if (verbose) cout << "write part " << *((**itpart)->ident) << endl;
+			if (verbose) OUT_STREAM << "write part " << *((**itpart)->ident) << NEW_LINE;
 			ok = write_instance_base( (**itpart) , cnt+1);
 			if (!ok) {
 			    delete itpart;
@@ -1514,7 +1514,7 @@ bool write_instance_base(instance *node, u_int cnt)
 	if (node->link_block_list) {
 		PltListIterator<link_value *> *itlink = (PltListIterator<link_value *> *) node->link_block_list->newIterator();
 		while (*itlink) {
-			if (verbose) cout << "write link " << *((**itlink)->ident) << endl;
+			if (verbose) OUT_STREAM << "write link " << *((**itlink)->ident) << NEW_LINE;
 			for (i=0;i<cnt;i++) fprintf(fout, "\t");
 			fprintf(fout, "\t<LinkValue ID=\"%s\">", (const char *) *(**itlink)->ident);
 			
@@ -1563,7 +1563,7 @@ bool write_file()
 				  "xsi:noNamespaceSchemaLocation=\"www.plt.rwth-aachen.de/ov/xml/ovi.xsd\">\n");
 	// Write instances into database
 	if (!parse_tree->forEach(&write_instance)) {
-		cout << "Warning: Could not write all objects in OVXI/XML file!" << endl;
+		OUT_STREAM << "Warning: Could not write all objects in OVXI/XML file!" << NEW_LINE;
 		ok = false;
 	}
 	fprintf(fout, "</ACPLT_OV_InstanceModel>\n");
@@ -1585,24 +1585,24 @@ int main(int argc, char **argv)
 //	yydebug = 1;
 
 	// print info on startup
-	cout << "** ACPLT/OVXI text file parser, version " << OV_VER_OVXIPARSE << " **" << endl
-		 << "(c) 2005 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << endl
-		 << endl;
+	OUT_STREAM << "** ACPLT/OVXI text file parser, version " << OV_VER_OVXIPARSE << " **" << NEW_LINE
+		 << "(c) 2005 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen" << NEW_LINE
+		 << NEW_LINE;
 
 	if ((argc == 2) && (strcmp(argv[1], "-h") == 0)) {
-		cout << "OVI text file parser generates a OVXI/XML file as output." << endl
-			 << "Usage: " << argv[0] << " input_file output_file" << endl
-			 << "[-h] print help information" << endl
-			 << "[-pPATH] convert relative pathes to PATH/relative path" << endl;
+		OUT_STREAM << "OVI text file parser generates a OVXI/XML file as output." << NEW_LINE
+			 << "Usage: " << argv[0] << " input_file output_file" << NEW_LINE
+			 << "[-h] print help information" << NEW_LINE
+			 << "[-pPATH] convert relative pathes to PATH/relative path" << NEW_LINE;
 		return 0;
 	}
 
 	if (argc < 3){
-		cout << "Error: Missing arguments." << endl << endl
-			 << "Usage: " << argv[0] << " input_file output_file" << endl
-			 << "[-v] print verbose information" << endl
-			 << "[-h] print help information" << endl
-			 << "[-pPATH] convert relative pathes to PATH/relative path" << endl;
+		OUT_STREAM << "Error: Missing arguments." << NEW_LINE << NEW_LINE
+			 << "Usage: " << argv[0] << " input_file output_file" << NEW_LINE
+			 << "[-v] print verbose information" << NEW_LINE
+			 << "[-h] print help information" << NEW_LINE
+			 << "[-pPATH] convert relative pathes to PATH/relative path" << NEW_LINE;
 		return -1;
 	}
 
@@ -1623,11 +1623,11 @@ int main(int argc, char **argv)
 			case 'P': relative = true;
 					  *path =  KscPath(KsString(&argv[i][2]));
 					  break;
-			default	: cout << "Invalid parameter: " << argv[i] << "." << endl;
+			default	: OUT_STREAM << "Invalid parameter: " << argv[i] << "." << NEW_LINE;
 					  return -1;
 			}
 		} else {
-			cout << "Invalid parameter: " << argv[i] << "." << endl;
+			OUT_STREAM << "Invalid parameter: " << argv[i] << "." << NEW_LINE;
 			return -1;
 		}
 	}
@@ -1636,7 +1636,7 @@ int main(int argc, char **argv)
 	
 	yyin = fopen(infile, "r");						// open the input file read-only
 	if(!yyin) {
-		cout << "Error: File not found!" << endl;
+		OUT_STREAM << "Error: File not found!" << NEW_LINE;
 		return -1;
 	}
 	ret = yyparse();								// call parser
@@ -1653,16 +1653,16 @@ int main(int argc, char **argv)
 
 	fout = fopen(outfile, "w");						// open the output file for writing
 	if(!fout) {
-		cout << "Error: Could not create file!" << endl;
+		OUT_STREAM << "Error: Could not create file!" << NEW_LINE;
 		return -1;
 	}
 
 	if (ok) ok = write_file();						  		// write parse tree into OVXI/XML target file
 
 	if (ok) {
-		cout << "Success." << endl;
+		OUT_STREAM << "Success." << NEW_LINE;
 	} else {
-		cout << "Some Warnings have occurred." << endl;
+		OUT_STREAM << "Some Warnings have occurred." << NEW_LINE;
 	}
 	delete(parse_tree);									// clean up
 	return ret;											// return parser result

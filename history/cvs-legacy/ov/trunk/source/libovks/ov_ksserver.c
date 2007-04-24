@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver.c,v 1.21 2004-06-28 16:53:23 ansgar Exp $
+*   $Id: ov_ksserver.c,v 1.22 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -86,7 +86,6 @@ extern "C" {
 #ifdef __cplusplus
 static OvKsServer	*pserver = NULL;
 static OvPltLog		*plog = NULL;
-static KsConnectionManager *OvKsConnectionManager = NULL;
 #endif
 
 /*	----------------------------------------------------------------------	*/
@@ -383,10 +382,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 		if(pserver) {
 			ov_vendortree_setservername(servername);
 			if (reuse) pserver->setReuseAddr(reuse);
-		        OvKsConnectionManager = KsConnectionManager::getConnectionManagerObject();
-			if (!OvKsConnectionManager) {
-			        OvKsConnectionManager = new KsStdConnectionManager();
-			}
 			return OV_ERR_OK;
 		}
 	}
@@ -404,11 +399,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_create(
 #else
 OV_DLLFNCEXPORT void ov_ksserver_delete(void) {
 	if(pserver) {
-		/*
-		*	kill the KsConnectionManager object
-		*/
-		delete OvKsConnectionManager;
-		OvKsConnectionManager = NULL;
 		/*
 		*	kill the server object
 		*/
@@ -486,7 +476,7 @@ OV_DLLFNCEXPORT void ov_ksserver_run(void) {
 			}
 #endif
 			ptimeout = ov_scheduler_schedulenextevent();
-			OvKsConnectionManager->servePendingEvents(KsTime(ptimeout->secs, ptimeout->usecs));
+			pserver->servePendingEvents(KsTime(ptimeout->secs, ptimeout->usecs));
 		}
 	}
 }
@@ -570,10 +560,10 @@ OV_DLLFNCEXPORT OV_BOOL ov_ksserver_servependingevents(
 ) {
 	if(pserver) {
 		if(ptimeout) {
-			return OvKsConnectionManager->servePendingEvents(KsTime(ptimeout->secs,
+			return pserver->servePendingEvents(KsTime(ptimeout->secs,
 				ptimeout->usecs));
 		} else {
-			return OvKsConnectionManager->servePendingEvents();
+			return pserver->servePendingEvents();
 		}
 	}
 	return FALSE;
@@ -634,6 +624,75 @@ OV_DLLFNCEXPORT void ov_ksserver_sighandler_register()
 /*	----------------------------------------------------------------------	*/
 
 /*
+*	Service log
+*/
+struct OV_SVCLOG_TABLE_ENTRY {
+	const OV_SVCLOG_VTBL			*vtbl;
+};
+typedef struct OV_SVCLOG_TABLE_ENTRY OV_SVCLOG_TABLE_ENTRY;
+
+static OV_SVCLOG_TABLE_ENTRY	*plogentry = NULL;
+
+/*
+*	Register a new service logging
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_svclog_register(
+	const OV_SVCLOG_VTBL	*vtbl
+) {
+	if(!vtbl) {
+		return OV_ERR_BADPARAM;
+	}
+	if(plogentry) {
+		/* Svclog already registered, modify vtable entry */
+		plogentry->vtbl = vtbl;
+		return OV_ERR_OK;
+	}
+	/* Create new entry */
+	plogentry = Ov_HeapAlloc(OV_SVCLOG_TABLE_ENTRY);
+	if(plogentry) {
+		plogentry->vtbl = vtbl;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_HEAPOUTOFMEMORY;
+}
+
+/*
+*	Unregister the service logging
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_ksserver_svclog_unregister() {
+
+	if(plogentry) {
+		Ov_HeapFree(plogentry);
+		plogentry = NULL;
+		return OV_ERR_OK;
+	}
+	/* no service logging registered */
+	return OV_ERR_BADPARAM;
+}
+
+/*
+*	Log the service
+*/
+void ov_ksserver_svclog_log(
+    OV_TICKET	*pticket,
+    OV_SVC		service,
+    void*		pparams,
+    OV_RESULT	*presult,
+    OV_RESULT   svcresult
+) {
+	/* Service logging registered? */
+	if(!plogentry) {
+		/* no service logging registered */
+		return;
+	}
+	
+	plogentry->vtbl->logsvc(pticket, service, pparams, presult, svcresult);
+	return;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
 *	Helper macro for implementing the service dispatcher
 */
 #define Ov_KsServer_Dispatch(service, SERVICE)								\
@@ -647,10 +706,13 @@ OV_DLLFNCEXPORT void ov_ksserver_sighandler_register()
 			*	decode the parameters										\
 			*/																\
 			if(ov_ksserver_xdr_OV_##SERVICE##_PAR(xdrin, &params)) {		\
-				/*															\
-				*	properly decoded, call service function and send reply	\
-				*/															\
+				/* properly decoded, call service... */						\
 				ov_ksserver_##service(version, povticket, &params, &result);\
+				/* log the service... */									\
+				ov_ksserver_svclog_log(pticket, ks_svc,						\
+                                       (void*)&params, (OV_RESULT*)&result,	\
+                                       OV_ERR_OK);							\
+				/* and send reply */										\
 				ov_ksserver_sendreply(xdrout, pticket, (OV_RESULT*)&result,	\
 					(xdrproc_t)ov_ksserver_xdr_OV_##SERVICE##_RES);			\
 				return;														\
@@ -664,7 +726,7 @@ OV_DLLFNCEXPORT void ov_ksserver_sighandler_register()
 *	Dispatch a service (subroutine)
 */
 void ov_ksserver_dispatch(
-	OV_SVC		service,
+	OV_SVC		ks_svc,
 	OV_UINT		version,
 	OV_TICKET	*pticket,
 	XDR			*xdrin,
@@ -678,12 +740,15 @@ void ov_ksserver_dispatch(
 	OV_TICKET	*povticket = ((OvKsAvTicket*)pticket)->ov_getTicket();
 #else
 	OV_TICKET	*povticket = pticket;
-	printf("just C\n");
+	/*
+    printf("just C\n");
+    */
 #endif
+
 	/*
 	*	dispatch the service
 	*/
-	switch(service) {
+	switch(ks_svc) {
 	Ov_KsServer_Dispatch(getpp, GETPP);
 	Ov_KsServer_Dispatch(getvar, GETVAR);
 	Ov_KsServer_Dispatch(setvar, SETVAR);
@@ -698,9 +763,16 @@ void ov_ksserver_dispatch(
 	Ov_KsServer_Dispatch(gethist, GETHIST);
 	default:
 		/*
-		*	unknown service id, send error reply and unlock memory stack
+		*	unknown service id
 		*/
         result = OV_ERR_NOTIMPLEMENTED;
+		/*
+		*	logging
+		*/
+        ov_ksserver_svclog_log(pticket, ks_svc, NULL, NULL,  result);
+		/*
+		*	send error reply and unlock memory stack
+		*/
 		ov_ksserver_sendreply(xdrout, pticket, &result, NULL);
 		return;
 	}
@@ -709,6 +781,7 @@ void ov_ksserver_dispatch(
 	*/
 	Ov_Warning("error decoding request");
 	result = OV_ERR_GENERIC;
+	ov_ksserver_svclog_log(pticket, ks_svc, NULL, NULL,  result);
 	ov_ksserver_sendreply(xdrout, pticket, &result, NULL);
 }
 
@@ -812,7 +885,7 @@ OV_RESULT ov_supervised_database_map(
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-OV_RESULT ov_supervised_database_startup()
+OV_RESULT ov_supervised_database_startup() 
 {
 	try {
 		return ov_database_startup();
@@ -821,7 +894,6 @@ OV_RESULT ov_supervised_database_startup()
 		return OV_ERR_GENERIC;
 	}
 }
-
 #endif
 #else
 #ifndef __cplusplus
@@ -842,7 +914,7 @@ OV_RESULT ov_supervised_database_startup()
 #ifndef __cplusplus
 /* function must be implemented separately */
 #else
-OV_RESULT ov_supervised_server_run()
+OV_RESULT ov_supervised_server_run() 
 {
 	try {
 		ov_ksserver_run();

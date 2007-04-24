@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.23 2005-07-12 14:24:19 ansgar Exp $
+*   $Id: ov_database.c,v 1.24 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -1058,6 +1058,10 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 	*	shut down database
 	*/
 	if(pdb->started) {
+        /*
+        *	Flush the contents of a database
+        */
+	    ov_database_flush();
 		/*
 		*	call shutdown method of root object
 		*/

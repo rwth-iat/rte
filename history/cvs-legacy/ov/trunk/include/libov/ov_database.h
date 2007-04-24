@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.h,v 1.12 2004-10-14 14:17:32 ansgar Exp $
+*   $Id: ov_database.h,v 1.13 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -40,7 +40,8 @@ extern "C" {
 *	Maximum size of a database file
 */
 #ifndef OV_DATABASE_MAXSIZE
-#define OV_DATABASE_MAXSIZE	2147483648	/* 2 GByte */
+/* #define OV_DATABASE_MAXSIZE	2147483648  2 GByte */
+#define OV_DATABASE_MAXSIZE	524288000UL	/* 500 MByte */
 #endif
 
 /*
@@ -77,10 +78,16 @@ extern OV_DATABASE_INFO OV_MEMSPEC	*pdbmem;
 *	Global variable: database pointer and database backup file name
 */
 #ifdef OV_COMPILE_LIBOV
+/* Manual fix */
+#if OV_COMPILER_BORLAND
+#define OV_EXTERN extern
+#else
 #define OV_EXTERN OV_DLLVAREXPORT
+#endif
 #else
 #define OV_EXTERN OV_DLLVARIMPORT
 #endif
+
 OV_EXTERN OV_DATABASE_INFO OV_MEMSPEC	*pdb;
 OV_EXTERN OV_STRING db_backup_filename;
 #undef OV_EXTERN

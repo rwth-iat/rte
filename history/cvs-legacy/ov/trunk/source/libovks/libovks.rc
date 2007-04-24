@@ -1,5 +1,5 @@
 /*
-*   $Id: libovks.rc,v 1.6 2004-10-27 12:09:06 ansgar Exp $
+*   $Id: libovks.rc,v 1.7 2007-04-24 14:11:29 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -55,9 +55,9 @@ FILETYPE		VFT_DLL
    VALUE "FileDescription", "ACPLT/KS Integration Library of ACPLT/OV\000"
    VALUE "FileVersion", OV_VER_LIBOVKS "\000\000"
    VALUE "InternalName", "libovks.dll\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-2004\000\000"
+   VALUE "LegalCopyright", "Copyright © PLT 1998-1999\000\000"
    VALUE "OriginalFilename", "libovks.dll\000"
-   VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>, Ansgar Münnemann <ansgar@plt.rwth-aachen.de>\000"
+   VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>\000"
    VALUE "License", OV_VER_LICENSE "\000"
   }
 
