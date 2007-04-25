@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.8 2003-10-13 11:19:38 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.9 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -43,12 +43,12 @@
 // If the attention() method returns true, the connection will the reactivated,
 // otherwise it won't be touched anymore.
 //
-class KsConnection;
+class KssConnection;
 
-class KsConnectionAttentionInterface {
+class KssConnectionAttentionInterface {
 public:
-    virtual bool attention(KsConnection &conn) = 0;
-}; // class KsConnectionAttentionInterface
+    virtual bool attention(KssConnection &conn) = 0;
+}; // class KssConnectionAttentionInterface
 
 
 // ---------------------------------------------------------------------------
@@ -60,9 +60,7 @@ public:
 // interface can handle the attention request of a connection, so there's no
 // need for a connection class to implement this interface itself.
 //
-class KsConnectionManager;
-
-class KsConnection {
+class KssConnection {
 public:
     //
     // type of connection, either acting as a server's connection waiting
@@ -73,9 +71,9 @@ public:
 	CNX_TYPE_CLIENT     	// it´s on the client side
     };
 	
-    KsConnection(int fd, bool autoDestroyable, unsigned long timeout,
+    KssConnection(int fd, bool autoDestroyable, unsigned long timeout,
 	          ConnectionType type);
-    virtual ~KsConnection();
+    virtual ~KssConnection() { }
 
     //
     // Shuts down the real connection encapsulated by this object. This is
@@ -89,9 +87,9 @@ public:
     // KssConnectionAttentionInterface interface and handling the attention
     // request of this connection.
     //
-    KsConnectionAttentionInterface *getAttentionPartner() const
+    KssConnectionAttentionInterface *getAttentionPartner() const
         { return _attention_partner; }
-    void setAttentionPartner(KsConnectionAttentionInterface *partner)
+    void setAttentionPartner(KssConnectionAttentionInterface *partner)
         { _attention_partner = partner; }
         
     //
@@ -137,9 +135,6 @@ public:
     inline ConnectionType getCnxType() const { return _cnx_type; }
     u_short getPort() const;
 
-    void setFdClose(bool close);
-    bool getFdClose() const;
-
     virtual long getTimeout() const;
     virtual void setTimeout(unsigned long timeout);
     
@@ -150,11 +145,12 @@ public:
     	{ addrLen = _client_address_len; return &_client_address; }
     bool setPeerAddr(struct sockaddr_in *addr, int addrLen);
 
-
+protected:
     //
     // These methods are called by the connection manager whenever there
     // is i/o to carry out.
     //
+    friend class KssConnectionManager;
     virtual ConnectionIoMode receive() = 0;
     virtual ConnectionIoMode send() = 0;
     //
@@ -166,20 +162,13 @@ public:
     //
     virtual ConnectionIoMode reset() = 0;
     
-    //
-    // The connection manager reference is necessary so that connection
-    // that create new connections (such as TCP listening connections) can
-    // put their new connections under proper control.
-    //
-    void thisIsMyConnectionManager(KsConnectionManager *mgr)
+    void thisIsMyConnectionManager(KssConnectionManager *mgr)
     	{ _manager = mgr; }
 
-protected:
     ConnectionType                   _cnx_type;    
     unsigned long                    _timeout;
     bool                             _auto_destroyable;
     int                              _fd;
-    bool                             _close_fd;
     ConnectionState                  _state;
     struct sockaddr_in               _client_address;
 #if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
@@ -189,9 +178,9 @@ protected:
 #else
     int                              _client_address_len;
 #endif
-    KsConnectionManager            *_manager;
-    KsConnectionAttentionInterface *_attention_partner;
-}; // class KsConnection
+    KssConnectionManager            *_manager;
+    KssConnectionAttentionInterface *_attention_partner;
+}; // class KssConnection
 
 
 // ---------------------------------------------------------------------------
@@ -199,7 +188,7 @@ protected:
 // XDR stream encapsulated by instances of this class, the proper shutdown
 // of such XDR streams, and how to get your hands on them.
 //
-class KssXDRConnection : public KsConnection {
+class KssXDRConnection : public KssConnection {
 public:
     KssXDRConnection(int fd, bool autoDestroyable, unsigned long timeout,
 	             ConnectionType type);

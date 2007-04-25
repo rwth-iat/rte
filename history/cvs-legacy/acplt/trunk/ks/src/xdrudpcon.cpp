@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.13 2003-10-13 12:51:35 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrudpcon.cpp,v 1.14 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -25,6 +25,8 @@
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
+
+#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdrudpcon.h"
 #include "ks/connectionmgr.h"
@@ -135,7 +137,7 @@ KssUDPXDRConnection::~KssUDPXDRConnection()
 // Ask an UDP XDR connection about its i/o mode: this way, a connection
 // manager can find out in what fdsets it must put the connection.
 //
-KsConnection::ConnectionIoMode KssUDPXDRConnection::getIoMode() const
+KssConnection::ConnectionIoMode KssUDPXDRConnection::getIoMode() const
 {
     switch ( _state ) {
     case CNX_STATE_DEAD:
@@ -181,9 +183,13 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::getIoMode() const
 // socket signalled a possible blocking condition, then the connection will
 // remain in the CNX_STATE_IDLE state.
 //
-KsConnection::ConnectionIoMode KssUDPXDRConnection::receive()
+KssConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 {
     int received;
+#if PLT_USE_XTI
+    int  flags;
+    bool flush = false;
+#endif
 
     //
     // First, we don't want to deal with dead connections -- it just makes
@@ -204,7 +210,8 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 
     for ( ;; ) {
 	if ( _cnx_type == CNX_TYPE_SERVER ) {
-	    _client_address_len = sizeof(_client_address);
+#if !PLT_USE_XTI
+    	    _client_address_len = sizeof(_client_address);
 	    received = recvfrom(_fd, 
 #if PLT_SYSTEM_NT
                                 (char *)
@@ -214,6 +221,23 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 		        	0, // no special flags
 	                	(struct sockaddr *) &_client_address,
 		        	&_client_address_len);
+#else
+    	    struct t_unitdata udta;
+    	    _client_address_len = sizeof(_client_address);
+	    udta.addr.maxlen  = _client_address_len;
+	    udta.addr.buf     = (char *) &_client_address;
+	    udta.opt.maxlen   = 0;
+	    udta.udata.maxlen = _buffer_size;
+	    udta.udata.buf    = (char *) _recvbuffer;
+	    received = t_rcvudata(_fd, &udta, &flags);
+	    if ( received == 0 ) {
+	    	//
+		// Make this piece of code behave like the socket functions:
+		// return number of bytes read or -1 as an error indication.
+		//
+	    	received = udta.udata.len;
+	    }
+#endif
 	} else {
 	    //
 	    // In case of a client-side connection, don´t overwrite the
@@ -232,7 +256,8 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 #endif
 	    dummy_addr_len = sizeof(dummy_addr);
 
-	    received = recvfrom(_fd,
+#if !PLT_USE_XTI
+	    received = recvfrom(_fd, 
 #if PLT_SYSTEM_NT
                                 (char *)
 #endif
@@ -241,6 +266,19 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 		        	0, // no special flags
 		    	        &dummy_addr,
 				&dummy_addr_len);
+#else
+    	    struct t_unitdata udta;
+	    udta.addr.maxlen  = 0; // Not interested in the sender's
+	    udta.opt.maxlen   = 0; // address...
+	    udta.udata.maxlen = _buffer_size;
+	    udta.udata.len    = 0;
+	    udta.udata.buf    = (char *) _recvbuffer;
+	    received = t_rcvudata(_fd, &udta, &flags);
+	    if ( received == 0 ) {
+	    	// Same as above...
+	    	received = udta.udata.len;
+	    }
+#endif
 	}
 	if ( received < 0 ) {
 	    //
@@ -254,12 +292,50 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 #else
             int myerrno = errno;
 #endif
+#if PLT_USE_XTI
+    	    //
+	    // Make sure that a pending event on the XTI endpoint is read.
+	    //
+    	    switch ( t_errno ) {
+	    case TLOOK: {
+	    	int events = t_look(_fd);
+		if ( events & T_UDERR ) {
+		    t_rcvuderr(_fd, 0); // clear error for previous datagram
+		}
+	    	if ( events & T_DATA ) {
+		    continue; // next try...
+		}
+		break; // fall through and return an io error indication
+		}
+	    case TNODATA:
+	    	return getIoMode();
+	    case TSYSERR:
+	    	break; // leave the XTI stuff and let the code below handle it
+	    default:
+		return getIoMode();
+	    }
+#endif
 	    switch ( myerrno ) {
 	    case EINTR:
 		continue;
 	    case EWOULDBLOCK:
 	    	return getIoMode();
 	    }
+#if PLT_USE_XTI
+	} else if ( flags & T_MORE ) {
+	    //
+	    // When flushing and there is more data to read, then just
+	    // take the next loop slurping in the data...
+	    //
+	    flush = true;
+	    continue;
+    	} else if ( flush ) {
+	    //
+	    // Silently ignore this oversized packet and just remember one
+	    // more io error by falling out of the loop.
+	    //
+	    break;
+#endif
 	} else if ( received >= 4 ) {
 	    //
 	    // There seems to be enough data to process at least the first
@@ -304,7 +380,7 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::receive()
 // there was some trouble and the socket signalled a possible blocking
 // condition, then the connection will remain in the CNX_STATE_SENDING state.
 //
-KsConnection::ConnectionIoMode KssUDPXDRConnection::send()
+KssConnection::ConnectionIoMode KssUDPXDRConnection::send()
 {
     int sent;
     
@@ -320,7 +396,8 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::send()
     }
     
     for ( ;; ) {
-	sent = sendto(_fd,
+#if !PLT_USE_XTI
+	sent = sendto(_fd, 
 #if PLT_SYSTEM_NT
                       (char *)
 #endif
@@ -329,12 +406,42 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::send()
 		      0,
 		      (struct sockaddr *) &_client_address,
 		      _client_address_len);
+#else
+    	    struct t_unitdata udta;
+	    udta.addr.len     = _client_address_len;
+	    udta.addr.buf     = (char *) &_client_address;
+	    udta.opt.maxlen   = 0;
+	    udta.udata.len    = tosend;
+	    udta.udata.buf    = (char *) _sendbuffer;
+	    sent = t_sndudata(_fd, &udta);
+#endif
 	if ( sent < 0 ) {
 #if PLT_SYSTEM_NT
     	    int myerrno;
 	    myerrno = WSAGetLastError(); /* MSVC++ 4.2 */
 #else
             int myerrno = errno;
+#endif
+#if PLT_USE_XTI
+    	    //
+	    // Make sure that a pending event on the XTI endpoint is read.
+	    //
+    	    switch ( t_errno ) {
+	    case TLOOK: {
+	    	int events = t_look(_fd);
+		if ( events & T_UDERR ) {
+		    t_rcvuderr(_fd, 0); // clear error for previous datagram
+		    continue;
+		}
+		break; // fall through and return an io error indication
+		}
+	    case TFLOW:
+	    	continue;
+	    case TSYSERR:
+	    	break; // leave the XTI stuff and let the code below handle it
+	    default:
+		return getIoMode();
+	    }
 #endif
 	    switch ( myerrno ) {
 	    case EINTR:
@@ -361,7 +468,7 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::send()
 // Reset this connection to a well-known state, which is in our case the
 // CNX_STATE_IDLE state where we'll wait for arriving datagrams.
 //
-KsConnection::ConnectionIoMode KssUDPXDRConnection::reset()
+KssConnection::ConnectionIoMode KssUDPXDRConnection::reset()
 {
     if ( _state == CNX_STATE_DEAD ) {
     	//
@@ -381,7 +488,7 @@ KsConnection::ConnectionIoMode KssUDPXDRConnection::reset()
 // we're playing the role of a client connection and we've sent a request and
 // are now waiting for a reply.
 //
-KsConnection::ConnectionIoMode KssUDPXDRConnection::timedOut()
+KssConnection::ConnectionIoMode KssUDPXDRConnection::timedOut()
 {
     if ( _cnx_type == CNX_TYPE_CLIENT ) {
 	if ( (_time_passed += _timeout) >= _total_timeout ) {
@@ -516,5 +623,7 @@ void KssUDPXDRConnection::sendRequest()
     }
 } // KssUDPXDRConnection::sendRequest
 
+
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of xdrudpcon.cpp */

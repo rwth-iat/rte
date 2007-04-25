@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KSC_AVMODULE_INCLUDED 
 #define KSC_AVMODULE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avmodule.h,v 1.11 2005-08-18 11:32:38 ansgar Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avmodule.h,v 1.12 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -32,12 +32,10 @@
 #include "ks/xdr.h"
 #include "ks/string.h"
 
-#if !PLT_SERVER_TRUNC_ONLY
 //////////////////////////////////////////////////////////////////////
 // forward declaration
 //
 class KscServer;
-#endif
 
 //////////////////////////////////////////////////////////////////////
 // class KscNegotiator
@@ -50,8 +48,6 @@ public:
     virtual bool xdrEncode(XDR *) = 0;
     virtual bool xdrDecode(XDR *) = 0;
 };
-
-#if !PLT_SERVER_TRUNC_ONLY
 
 typedef PltPtrHandle<KscNegotiator> KscNegotiatorHandle;
 
@@ -175,7 +171,6 @@ KscNoneNegotiator::typeCode() const
 
 //////////////////////////////////////////////////////////////////////
 
-#endif  // !PLT_SERVER_TRUNC_ONLY
 #endif
 
 // End of ks/avmodule.h

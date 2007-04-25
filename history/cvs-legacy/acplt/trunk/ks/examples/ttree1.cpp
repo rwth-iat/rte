@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.18 2003-10-14 17:38:03 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ttree1.cpp,v 1.19 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -29,16 +29,9 @@
  */
 
 #include "ks/commobject.h"
-#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
 #include <iomanip.h>
-#else
-#include <iostream>
-#include <iomanip>
-#endif
 #include <time.h>
-
-#include "plt/log.h"
 
 //##
 #include "ks/avmodule.h"
@@ -50,7 +43,7 @@
 void Indent(int ind)
 {
     while ( --ind >= 0 ) {
-	STDNS::cout << ' ';
+	cout << ' ';
     }
 } // Indent
 
@@ -58,23 +51,23 @@ void Indent(int ind)
 void DumpVarType(const int var_type)
 {
     switch ( var_type ) {
-    case KS_VT_VOID:       STDNS::cout << "void "; break;
-    case KS_VT_BOOL:       STDNS::cout << "bool "; break;
-    case KS_VT_INT:        STDNS::cout << "int "; break;
-    case KS_VT_UINT:       STDNS::cout << "uint "; break;
-    case KS_VT_SINGLE:     STDNS::cout << "single "; break;
-    case KS_VT_DOUBLE:     STDNS::cout << "double "; break;
-    case KS_VT_STRING:     STDNS::cout << "string "; break;
-    case KS_VT_TIME:       STDNS::cout << "time "; break;
-    case KS_VT_BYTE_VEC:   STDNS::cout << "byte vector "; break;
-    case KS_VT_BOOL_VEC:   STDNS::cout << "bool vector "; break;
-    case KS_VT_INT_VEC:    STDNS::cout << "int vector "; break;
-    case KS_VT_UINT_VEC:   STDNS::cout << "uint vector "; break;
-    case KS_VT_SINGLE_VEC: STDNS::cout << "single vector "; break;
-    case KS_VT_DOUBLE_VEC: STDNS::cout << "double vector "; break;
-    case KS_VT_STRING_VEC: STDNS::cout << "string vector "; break;
-    case KS_VT_TIME_VEC:   STDNS::cout << "time vector "; break;
-    default:               STDNS::cout << "<unknown type> "; break;
+    case KS_VT_VOID:       cout << "void "; break;
+    case KS_VT_BOOL:       cout << "bool "; break;
+    case KS_VT_INT:        cout << "int "; break;
+    case KS_VT_UINT:       cout << "uint "; break;
+    case KS_VT_SINGLE:     cout << "single "; break;
+    case KS_VT_DOUBLE:     cout << "double "; break;
+    case KS_VT_STRING:     cout << "string "; break;
+    case KS_VT_TIME:       cout << "time "; break;
+    case KS_VT_BYTE_VEC:   cout << "byte vector "; break;
+    case KS_VT_BOOL_VEC:   cout << "bool vector "; break;
+    case KS_VT_INT_VEC:    cout << "int vector "; break;
+    case KS_VT_UINT_VEC:   cout << "uint vector "; break;
+    case KS_VT_SINGLE_VEC: cout << "single vector "; break;
+    case KS_VT_DOUBLE_VEC: cout << "double vector "; break;
+    case KS_VT_STRING_VEC: cout << "string vector "; break;
+    case KS_VT_TIME_VEC:   cout << "time vector "; break;
+    default:               cout << "<unknown type> "; break;
     }
 } // DumpVarType
 
@@ -82,11 +75,11 @@ void DumpVarType(const int var_type)
 void DumpLinkType(const int link_type)
 {
     switch ( link_type ) {
-    case KS_LT_LOCAL_1_1:     STDNS::cout << "local 1:1 "; break;
-    case KS_LT_LOCAL_1_MANY:  STDNS::cout << "local 1:m "; break;
-    case KS_LT_GLOBAL_1_1:    STDNS::cout << "global 1:1 "; break;
-    case KS_LT_GLOBAL_1_MANY: STDNS::cout << "global 1:m "; break;
-    default:                  STDNS::cout << "<unknown type> "; break;
+    case KS_LT_LOCAL_1_1:     cout << "local 1:1 "; break;
+    case KS_LT_LOCAL_1_MANY:  cout << "local 1:m "; break;
+    case KS_LT_GLOBAL_1_1:    cout << "global 1:1 "; break;
+    case KS_LT_GLOBAL_1_MANY: cout << "global 1:m "; break;
+    default:                  cout << "<unknown type> "; break;
     }
 } // DumpLinkType
 
@@ -101,9 +94,9 @@ void DumpEngProps(const KsEngProps &proj_props, int indent)
     //
     Indent(indent);
     if ( proj_props.access_mode & KS_AC_PART ) {
-	STDNS::cout << ".";
+	cout << ".";
     }
-    STDNS::cout << proj_props.identifier << " ";
+    cout << proj_props.identifier << " ";
 
     //
     // Set up some info, which consists of the creation time and the access
@@ -125,18 +118,18 @@ void DumpEngProps(const KsEngProps &proj_props, int indent)
     //
     switch ( proj_props.xdrTypeCode() ) {
     case KS_OT_DOMAIN:
-	STDNS::cout << "<DOM> " << info;
+	cout << "<DOM> " << info;
 	break;
         
     case KS_OT_LINK:
         {
-	    STDNS::cout << "<LNK> " << info;
+	    cout << "<LNK> " << info;
 
             const KsLinkEngProps *link_proj_props =
                 (const KsLinkEngProps *) &proj_props; // for msvc
 
             if( !link_proj_props ) {
-                STDNS::cout << "<unknown projected properties>";
+                cout << "<unknown projected properties>";
             } else {
 		DumpLinkType(link_proj_props->type);
 	    }
@@ -144,28 +137,28 @@ void DumpEngProps(const KsEngProps &proj_props, int indent)
 	}
 
     case KS_OT_HISTORY:
-	STDNS::cout << "<HST> " << info;
+	cout << "<HST> " << info;
 	break;
 
     case KS_OT_VARIABLE:
         {
-            STDNS::cout << "<VAR> " << info;
+            cout << "<VAR> " << info;
             
             const KsVarEngProps *var_proj_props =
                 (const KsVarEngProps *) &proj_props; // for msvc
 // replaced:            PLT_DYNAMIC_PCAST(KsVarEngProps, &proj_props);
             if( !var_proj_props ) {
-                STDNS::cout << "<unknown projected properties>";
+                cout << "<unknown projected properties>";
             } else {
                 DumpVarType(var_proj_props->type);
             }
             break;
         }
     default:
-        STDNS::cout << "<-?-> " << info;
+        cout << "<???> " << info;
     }
 
-    STDNS::cout << STDNS::endl;
+    cout << endl;
 } // DumpEngProps
 
 
@@ -174,18 +167,18 @@ void DumpEngProps(KscCommObject &obj, int indent)
     const KsEngProps *proj_props;
 
     if ( !obj.getEngPropsUpdate() ) {
-        STDNS::cout << "Can't retrieve proj. props for \"" 
+        cout << "Can't retrieve proj. props for \"" 
              << obj.getName() 
              << "\""
-             << STDNS::endl;
+             << endl;
         return;
     }
     proj_props = obj.getEngProps();
     if ( !proj_props ) {
-        STDNS::cout << "Can't get hands on \"" 
+        cout << "Can't get hands on \"" 
              << obj.getName() 
              << "\" for proj. props"
-             << STDNS::endl;
+             << endl;
         return;
     }
     DumpEngProps(*proj_props, indent);
@@ -200,200 +193,200 @@ void DumpVar(KscVariable &var, int indent)
     const KsVarCurrProps *curr_props;
 
     if ( !var.getUpdate() ) {
-        STDNS::cout << "Can't retrieve curr. props for \""
+        cout << "Can't retrieve curr. props for \""
              << var.getName()
              << "\""
-             << STDNS::endl;
+             << endl;
         return;
     }
     curr_props = var.getCurrProps();
     if ( !curr_props ) {
-        STDNS::cout << "Can't get hands on \""
+        cout << "Can't get hands on \""
              << var.getName()
              << "\" for curr. props"
-             << STDNS::endl;
+             << endl;
     }
 
     Indent(indent);
-    STDNS::cout << "** ";
+    cout << "** ";
 
     value_time = curr_props->time.tv_sec;
-    STDNS::cout << PltString(ctime(&value_time)).substr(4, 15) << " ";
+    cout << PltString(ctime(&value_time)).substr(4, 15) << " ";
     switch ( curr_props->state ) {
     case KS_ST_NOTSUPPORTED:
-        STDNS::cout << "(no state supported) ";
+        cout << "(no state supported) ";
         break;
     case KS_ST_UNKNOWN:
-        STDNS::cout << "(state unknown) ";
+        cout << "(state unknown) ";
         break;
     case KS_ST_BAD:
-        STDNS::cout << "(state bad) ";
+        cout << "(state bad) ";
         break;
     case KS_ST_QUESTIONABLE:
-        STDNS::cout << "(state questionable) ";
+        cout << "(state questionable) ";
         break;
     case KS_ST_GOOD:
-        STDNS::cout << "(state good) ";
+        cout << "(state good) ";
         break;
     default:
-        STDNS::cout << "(state -?-) ";
+        cout << "(state ???) ";
     }
 
     switch ( curr_props->value->xdrTypeCode() ) {
     case KS_VT_VOID:
-        STDNS::cout << "void" << STDNS::endl;
+        cout << "void" << endl;
         break;
     case KS_VT_BOOL:
-        STDNS::cout << "bool "
+        cout << "bool "
              << ((bool) ((KsBoolValue &) *curr_props->value) ? "true" : "false")
-             << STDNS::endl;
+             << endl;
 	break;
     case KS_VT_INT:
-        STDNS::cout << "integer " 
+        cout << "integer " 
              << (long) ((KsIntValue &) *curr_props->value)
-             << STDNS::endl;
+             << endl;
         break;
     case KS_VT_UINT:
-        STDNS::cout << "unsigned integer " 
+        cout << "unsigned integer " 
              << (u_long) ((KsUIntValue &) *curr_props->value)
-             << STDNS::endl;
+             << endl;
         break;
     case KS_VT_SINGLE:
-        STDNS::cout << "single " 
+        cout << "single " 
              << (float) ((KsSingleValue &) *curr_props->value)
-             << STDNS::endl;
+             << endl;
         break;
     case KS_VT_DOUBLE:
-        STDNS::cout << "double " 
+        cout << "double " 
              << (double) ((KsDoubleValue &) *curr_props->value)
-             << STDNS::endl;
+             << endl;
         break;
     case KS_VT_STRING:
-        STDNS::cout << "string \"";
+        cout << "string \"";
         if ( ((KsStringValue &) *curr_props->value).len() > 40 ) {
-            STDNS::cout << ((KsStringValue &) *curr_props->value).substr(0, 40)
+            cout << ((KsStringValue &) *curr_props->value).substr(0, 40)
                  << "...";
         } else {
-            STDNS::cout << (const char *) ((KsStringValue &) *curr_props->value);
+            cout << (const char *) ((KsStringValue &) *curr_props->value);
         }
-        STDNS::cout << "\"" << STDNS::endl;
+        cout << "\"" << endl;
         break;
     case KS_VT_TIME:
         time = ((KsTimeValue &) *curr_props->value);
         value_time = time.tv_sec;
-        STDNS::cout << "time " 
+        cout << "time " 
              << PltString(ctime(&value_time)).substr(4, 15)
-             << STDNS::endl;
+             << endl;
         break;
     case KS_VT_BYTE_VEC:
         size = ((KsByteVecValue &) *curr_props->value).size();
-        STDNS::cout << "byte vector <" << size << "> {";
+        cout << "byte vector <" << size << "> {";
         if ( size > 5 ) {
             size = 5;
         }
         for ( i = 0; i < size; ++i ) {
-            STDNS::cout <<  STDNS::hex << STDNS::setfill('0') << STDNS::setw(2)
+            cout <<  hex << setfill('0') << setw(2)
                  << (unsigned int) ((KsByteVecValue &) *curr_props->value)[i]
-                 << STDNS::dec << ",";
+                 << dec << ",";
         }
-        STDNS::cout << "...}" << STDNS::endl;
+        cout << "...}" << endl;
         break;
     case KS_VT_BOOL_VEC:
         size = ((KsByteVecValue &) *curr_props->value).size();
-        STDNS::cout << "bool vector <" << size << "> {";
+        cout << "bool vector <" << size << "> {";
         if ( size > 5 ) {
             size = 5;
         }
         for ( i = 0; i < size; ++i ) {
-            STDNS::cout <<  STDNS::hex << STDNS::setfill('0') << STDNS::setw(2)
+            cout <<  hex << setfill('0') << setw(2)
                  << ((bool) ((KsBoolVecValue &) *curr_props->value)[i] ? "true" : "false")
-                 << STDNS::dec << ",";
+                 << dec << ",";
         }
-        STDNS::cout << "...}" << STDNS::endl;
+        cout << "...}" << endl;
         break;
     case KS_VT_INT_VEC:
         size = ((KsIntVecValue &) *curr_props->value).size();
-        STDNS::cout << "integer vector <" << size << "> {";
+        cout << "integer vector <" << size << "> {";
         if ( size > 5 ) {
             size = 5;
         }
         for ( i = 0; i < size; ++i ) {
-            STDNS::cout << ((KsIntVecValue &) *curr_props->value)[i]
+            cout << ((KsIntVecValue &) *curr_props->value)[i]
                  << ",";
         }
-        STDNS::cout << "...}" << STDNS::endl;
+        cout << "...}" << endl;
         break;
     case KS_VT_UINT_VEC:
         size = ((KsUIntVecValue &) *curr_props->value).size();
-        STDNS::cout << "unsigned integer vector <" << size << "> {";
+        cout << "unsigned integer vector <" << size << "> {";
         if ( size > 5 ) {
             size = 5;
         }
         for ( i = 0; i < size; ++i ) {
-            STDNS::cout << ((KsUIntVecValue &) *curr_props->value)[i]
+            cout << ((KsUIntVecValue &) *curr_props->value)[i]
                  << ",";
         }
-        STDNS::cout << "...}" << STDNS::endl;
+        cout << "...}" << endl;
         break;
     case KS_VT_SINGLE_VEC:
         size = ((KsSingleVecValue &) *curr_props->value).size();
-        STDNS::cout << "single vector <" << size << "> {";
+        cout << "single vector <" << size << "> {";
         if ( size > 5 ) {
             size = 5;
         }
         for ( i = 0; i < size; ++i ) {
-            STDNS::cout << ((KsSingleVecValue &) *curr_props->value)[i]
+            cout << ((KsSingleVecValue &) *curr_props->value)[i]
                  << ",";
         }
-        STDNS::cout << "...}" << STDNS::endl;
+        cout << "...}" << endl;
         break;
     case KS_VT_DOUBLE_VEC:
         size = ((KsDoubleVecValue &) *curr_props->value).size();
-        STDNS::cout << "double vector <" << size << "> {";
+        cout << "double vector <" << size << "> {";
         if ( size > 5 ) {
             size = 5;
         }
         for ( i = 0; i < size; ++i ) {
-            STDNS::cout << ((KsDoubleVecValue &) *curr_props->value)[i]
+            cout << ((KsDoubleVecValue &) *curr_props->value)[i]
                  << ",";
         }
-        STDNS::cout << "...}" << STDNS::endl;
+        cout << "...}" << endl;
         break;
     case KS_VT_STRING_VEC:
         size = ((KsStringVecValue &) *curr_props->value).size();
-        STDNS::cout << "string vector <" << size << "> {";
+        cout << "string vector <" << size << "> {";
         if ( size > 5 ) {
             size = 5;
         }
         for ( i = 0; i < size; ++i ) {
             if ( ((KsStringVecValue &) *curr_props->value)[i].len() > 40 ) {
-                STDNS::cout << ((KsStringVecValue &) *curr_props->value)[i].substr(0, 40)
+                cout << ((KsStringVecValue &) *curr_props->value)[i].substr(0, 40)
                      << "...";
             } else {
-                STDNS::cout << (const char *) ((KsStringVecValue &) *curr_props->value)[i];
+                cout << (const char *) ((KsStringVecValue &) *curr_props->value)[i];
             }
-            STDNS::cout << ",";
+            cout << ",";
         }
-        STDNS::cout << "...}" << STDNS::endl;
+        cout << "...}" << endl;
 
         break;
     case KS_VT_TIME_VEC:
         size = ((KsTimeVecValue &) *curr_props->value).size();
-        STDNS::cout << "time vector <" << size << "> {";
+        cout << "time vector <" << size << "> {";
         if ( size > 5 ) {
             size = 5;
         }
         for ( i = 0; i < size; ++i ) {
             time = ((KsTimeVecValue &) *curr_props->value)[i];
             value_time = time.tv_sec;
-            STDNS::cout << PltString(ctime(&value_time)).substr(4, 15)
+            cout << PltString(ctime(&value_time)).substr(4, 15)
                  << ",";
         }
-        STDNS::cout << "...}" << STDNS::endl;
+        cout << "...}" << endl;
 
         break;
     default:
-        STDNS::cout << "-?-" << STDNS::endl;
+        cout << "???" << endl;
     }
 } // DumpVar
 
@@ -404,7 +397,7 @@ void DumpBranch(KscAnyCommObject &branch, int indent)
 
     children = branch.newChildIterator(KS_OT_ANY);
     if ( !children ) {
-        STDNS::cout << "Can't allocate child iterator" << STDNS::endl;
+        cout << "Can't allocate child iterator" << endl;
         return;
     }
     //
@@ -446,7 +439,7 @@ void DumpBranch(KscAnyCommObject &branch, int indent)
                                    current->identifier);
 #if 0
 	    Indent(indent);
-	    STDNS::cout << "##" << var.getFullPath() << "##" << STDNS::endl;
+	    cout << "##" << var.getFullPath() << "##" << endl;
 #endif
             DumpVar(var, indent + 2 * INDENTATION);
         }
@@ -462,8 +455,6 @@ void DumpBranch(KscAnyCommObject &branch, int indent)
 int main(int argc, char **argv)
 {
     KsString host_and_server;
-
-    PltCerrLog log("ttree");    
 
 #if 0
     KscPathParser pp1("//host");
@@ -504,7 +495,7 @@ int main(int argc, char **argv)
 
 
     if ( argc != 2 ) {
-        STDNS::cerr << "usage: ttree <host>/<server>" << STDNS::endl;
+        cerr << "usage: ttree <host>/<server>" << endl;
         return 1;
     }
 
@@ -513,7 +504,7 @@ int main(int argc, char **argv)
     KscAnyCommObject root(host_and_server);
 
     if ( !root.getEngPropsUpdate() ) {
-        STDNS::cerr << "Can't open /" << argv[1] << STDNS::endl;
+        cerr << "Can't open /" << argv[1] << endl;
         return 42;
     }
 
@@ -521,8 +512,8 @@ int main(int argc, char **argv)
 #if 0
     KscAnyCommObject test1(host_and_server + ".X");
     if ( !test1.hasValidPath() ) {
-	STDNS::cerr << "Invalid path: " << (const char *) test1.getFullPath()
-	     << STDNS::endl;
+	cerr << "Invalid path: " << (const char *) test1.getFullPath()
+	     << endl;
 	return 43;
     }
     cout << (const char *) test1.getPathOnly() << " # "
@@ -530,22 +521,22 @@ int main(int argc, char **argv)
 	 << (test1.isNamePart() ? "part" : "child") << endl;
     KscAnyCommObject test2(host_and_server + "A.B/C.X");
     if ( !test2.hasValidPath() ) {
-	STDNS::cerr << "Invalid path: " << (const char *) test2.getFullPath()
-	     << STDNS::endl;
+	cerr << "Invalid path: " << (const char *) test2.getFullPath()
+	     << endl;
 	return 43;
     }
-    STDNS::cout << (const char *) test2.getPathOnly() << " # "
+    cout << (const char *) test2.getPathOnly() << " # "
 	 << (const char *) test2.getName() << " # "
-	 << (test2.isNamePart() ? "part" : "child") << STDNS::endl;
+	 << (test2.isNamePart() ? "part" : "child") << endl;
     KscAnyCommObject test3(host_and_server + "A.B/C/X");
     if ( !test3.hasValidPath() ) {
-	STDNS::cerr << "Invalid path: " << (const char *) test3.getFullPath()
-	     << STDNS::endl;
+	cerr << "Invalid path: " << (const char *) test3.getFullPath()
+	     << endl;
 	return 43;
     }
-    STDNS::cout << (const char *) test3.getPathOnly() << " # "
+    cout << (const char *) test3.getPathOnly() << " # "
 	 << (const char *) test3.getName() << " # "
-	 << (test3.isNamePart() ? "part" : "child") << STDNS::endl;
+	 << (test3.isNamePart() ? "part" : "child") << endl;
 
     return 0;
 #endif

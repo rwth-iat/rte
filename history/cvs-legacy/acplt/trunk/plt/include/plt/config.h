@@ -1,7 +1,7 @@
-/* -*-c++-*- */
+/* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.36 2005-08-15 16:34:38 ansgar Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.37 2007-04-25 10:57:02 martin Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -334,7 +334,7 @@ enum { false=0, true=1 };
  *  comes that /etc/protocols just defines a bunch of other protocols to
  *  be used through the socket API and esp. all that Linux apps can use
  *  IPX, etc...? It's just again plain Microsoft FUD.
- */
+ */ 
 #if PLT_SYSTEM_NT
 
 /*
@@ -384,7 +384,6 @@ enum { false=0, true=1 };
 #define PLT_POOL_BLOCK_COUNT 2048
 #endif
 
-
 /* --------------------------------------------------------------------------
  * Enable or disable use of (now) depreciated header files. If this define
  * has not been set and if we are compiling using certain newer compilers,
@@ -403,6 +402,12 @@ enum { false=0, true=1 };
 #if PLT_COMPILER_MSVC != 0
 #define PLT_USE_DEPRECIATED_HEADER 1
 #endif
+
+
+#if PLT_COMPILER_BORLAND
+#define PLT_USE_DEPRECIATED_HEADER 1
+#endif
+
 
 #endif
 

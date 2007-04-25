@@ -1,7 +1,7 @@
-/* -*-c++-*- */
+/* -*-plt-c++-*- */
 #ifndef KS_EVENT_INCLUDED
 #define KS_EVENT_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.8 2003-10-13 11:24:44 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/event.h,v 1.9 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -52,8 +52,6 @@ public:
     friend bool operator >  (const KsTimerEvent & lhs, const KsTimerEvent & rhs);
 
     KsTime triggersAt() const;
-    void setTrigger(const KsTime & at);
-
 protected:
     KsTime _trigger_at;
     PLT_DECL_RTTI;
@@ -76,13 +74,6 @@ KsTimerEvent::triggersAt() const
 { 
     return _trigger_at; 
 } 
-
-
-inline void
-KsTimerEvent::setTrigger(const KsTime & at)
-{
-    _trigger_at = at;
-}
 
 //////////////////////////////////////////////////////////////////////
 

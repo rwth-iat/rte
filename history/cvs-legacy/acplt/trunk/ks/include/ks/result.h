@@ -1,7 +1,7 @@
-/* -*-c++-*- */
+/* -*-plt-c++-*- */
 #ifndef KS_RESULT_INCLUDED
 #define KS_RESULT_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/result.h,v 1.6 2005-02-14 13:53:53 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/result.h,v 1.7 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -34,7 +34,6 @@ class KsResult
 public:
     KsResult( KS_RESULT res = -1 ); // default is no result...
     KsResult( XDR *, bool &);
-    virtual ~KsResult();
 
     bool xdrEncode(XDR *xdr) const;
     bool xdrDecode(XDR *xdr);

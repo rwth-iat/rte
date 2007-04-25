@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MANAGER_INCLUDED
 #define KS_MANAGER_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.16 2003-10-13 12:52:34 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/manager.h,v 1.17 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -32,7 +32,10 @@
 #include "ks/rpc.h"
 #include "ks/hostinaddrset.h"
 #include "plt/hashtable.h"
+
+#if PLT_USE_BUFFERED_STREAMS
 #include "ks/xdrudpcon.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // forward declarations
@@ -96,7 +99,11 @@ private:
     void removeServer(KsmServer *p);
     bool isLocal(KssTransport &t);
 
+#if !PLT_USE_BUFFERED_STREAMS
+    SVCXPRT *_udp_transport;
+#else
     KssXDRConnection *_udp_transport;
+#endif
     bool _registered;
     PltHashTable<PltKeyPtr<KsServerDesc>, KsmServer *> _server_table;
     KssSimpleDomain _servers_domain;

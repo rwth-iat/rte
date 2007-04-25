@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avmodule.cpp,v 1.8 2000-04-14 08:44:59 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avmodule.cpp,v 1.9 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

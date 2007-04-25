@@ -1,4 +1,4 @@
-/* -*-c++-*- */
+/* -*- plt-c++ -*- */
 #ifndef KS_REGISTER_INCLUDED
 #define KS_REGISTER_INCLUDED
 /*

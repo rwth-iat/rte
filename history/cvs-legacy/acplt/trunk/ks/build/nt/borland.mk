@@ -19,8 +19,9 @@ LIBKSCLN = libkscln.lib
 SRCDIR = $(KSDIR)\src\\
 EXAMPLESSRCDIR = $(KSDIR)\examples\\
 
+
 ### Compiler
-CXX = bcc32
+CXX = bcc32 -v-
 # The following set of flags compiles with optimization and no PLT debugging
 # helpers (no alloc tracker, no debugging messages)
 #CXX_FLAGS = -D_BORLANDC=1 -w -DNDEBUG
@@ -42,7 +43,7 @@ LIBKS_NT_OBJECTS = ntservice$(O) w95service$(O)
 
 .SUFFIXES:      .cpp .obj .lib .exe
 
-all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
+all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN) examples
 
 # FIXME -Jgx for 5.0, -Jg for 5.3
 {$(SRCDIR)}.cpp{}.obj:
@@ -113,6 +114,12 @@ tserver.obj:    $(EXAMPLESSRCDIR)tserver.cpp
 		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tserver.cpp
 !
 
+tsclient.obj:   $(EXAMPLESSRCDIR)tsclient.cpp
+	@echo Compiling $<
+	@$(CXX) @&&!
+		-Jgd $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $(EXAMPLESSRCDIR)tsclient.cpp
+!
+
 ntksmanager_templates.obj:      $(EXAMPLESSRCDIR)ntksmanager_templates.cpp
 	@echo Compiling $<
 	@$(CXX) @&&!
@@ -148,6 +155,13 @@ pmobile.obj:    $(EXAMPLESSRCDIR)pmobile.cpp
 # end of template instantiation files
 ###############################################################################
 
+examples:   ntksmanager.exe tmanager.exe
+	tdstrp32 ntksmanager.exe
+	tdstrp32 tmanager.exe
+
+#     ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe ttree.exe
+!
+
 ### Include generic part
 
 !INCLUDE ..\generic.mk
@@ -163,16 +177,19 @@ pmobile.obj:    $(EXAMPLESSRCDIR)pmobile.cpp
 		$< $(LIBKS) $(LIBKSCLN) $(LIBKSSVR) $(LIBPLT) $(LIBRPC)
 !
 
-examples:       ntksmanager.exe w95ksmanager.exe tmanager.exe tserver.exe ttree.exe
 #
 # tslcient.exe and tshell.exe aren't supported.
 #examples:       tclient.exe ntksmanager.exe tmanager.exe tserver.exe tsclient.exe ttree.exe
 
-tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS)
+tmanager.res: $(EXAMPLESSRCDIR)tmanager.rc
+	$(RC) -r -fotmanager.res $(EXAMPLESSRCDIR)tmanager.rc
+
+tmanager.exe: tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS) tmanager.res
 	@echo Linking $@
 	$(CXX) @&&!
 		tmanager.obj tmanager1.obj $(LIBKSSVR) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
+	$(RC) -fetmanager.exe tmanager.res
 
 tserver.exe: tserver.obj tserver1.obj $(LIBKSSVR) $(LIBKS)
 	@echo Linking $@
@@ -191,7 +208,6 @@ pmobile.exe: pmobile.obj pmobile_code.obj $(LIBKS) $(LIBKSCLN)
 	$(CXX) @&&!
 		pmobile.obj pmobile_code.obj $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBRPC)
 !
-
 
 ntksmanager.res: $(EXAMPLESSRCDIR)ntksmanager.rc
 	$(RC) -r -fontksmanager.res $(EXAMPLESSRCDIR)ntksmanager.rc
@@ -248,7 +264,8 @@ $(LIBKS) : $(LIBKS_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKS_OBJECTS1)
 	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKS_OBJECTS2)
 	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKS_OBJECTS3)
-
+	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKS_OBJECTS4)
+!
 
 $(LIBKSSVR) : $(LIBKSSVR_OBJECTS) $(LIBKS_NT_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKSSVR_OBJECTS1)
@@ -256,10 +273,12 @@ $(LIBKSSVR) : $(LIBKSSVR_OBJECTS) $(LIBKS_NT_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKSSVR_OBJECTS3)
 	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKSSVR_OBJECTS4)
 	$(PLTDIR)\build\nt\plt_ar tlib /P256 $@ $(LIBKS_NT_OBJECTS)
+!
 
 $(LIBKSCLN) : $(LIBKSCLN_OBJECTS)
 	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKSCLN_OBJECTS1)
 	$(PLTDIR)\build\nt\plt_ar tlib /P128 $@ $(LIBKSCLN_OBJECTS2)
+!
 
 
 
@@ -267,10 +286,10 @@ clean :
 	del *.obj
 	del *.exe
 	del *.map
+	del *.bak
 
 mrproper : clean
 	del *.lib
 	del *.err
 	del *.sym
 	del *.mbr
-

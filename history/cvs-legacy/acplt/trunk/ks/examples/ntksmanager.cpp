@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.7 1999-09-16 10:54:34 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/ntksmanager.cpp,v 1.8 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -64,6 +64,9 @@
 #include "plt/log.h"
 
 #include <string.h>
+
+// Globale Variable
+int Global_PortNummer = -1;
 
 // -------------------------------------------------------------------------
 // We're using here a global logger object, which gets initialized right
@@ -145,6 +148,10 @@ KsServerBase *NtManagerService::createServer(int argc, char **argv)
     int idx;
     int port = KsServerBase::KS_ANYPORT;
 
+    if(Global_PortNummer > 0) {
+        port = Global_PortNummer;
+    }
+    
     for ( idx = 1; idx < argc; idx++ ) {
         if ( (stricmp(argv[idx], "-v") == 0) ||
              (stricmp(argv[idx], "--verbose") == 0) ) {
@@ -192,9 +199,21 @@ int main(int argc, char **argv)
 {
     NtManagerService nt_service(argc, argv);
 #else
-int main(int, char **)
+int main(int argc, char **argv)
 {
     NtManagerService nt_service;
+    int i;
+ 
+    // BP-Problem: Port 
+    for(i=0; i<argc; i++) {
+        if(!strcmp(argv[i], "-p") ) {
+            i++;
+            if(i<argc) {
+                Global_PortNummer = (int)atoi(argv[i]);
+            }
+        }
+    }
+    
 #endif
 
     if ( nt_service.isOk() ) {

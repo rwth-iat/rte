@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.8 2005-08-15 16:33:18 ansgar Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/hostinaddrset.cpp,v 1.9 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -89,11 +89,7 @@
 // The Windooze stuff...
 //
 #include <windows.h>
-#if PLT_USE_WINSOCK2
-#include <winsock2.h>
-#else
 #include <winsock.h>
-#endif
 #include "plt/string.h"
 
 #if PLT_COMPILER_MSVC || PLT_COMPILER_CYGWIN

@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/inaddrset.cpp,v 1.7 2004-07-20 11:44:42 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/inaddrset.cpp,v 1.8 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -22,6 +22,7 @@
 /* Devastated by Harald Albrecht <harald@plt.rwth-aachen.de> */
 
 #include <stdlib.h>
+
 #include "ks/inaddrset.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -114,7 +115,7 @@ KsSimpleInAddrSet::KsSimpleInAddrSet(bool defaultIsAccept)
 //////////////////////////////////////////////////////////////////////
 
 #if 0
-STDNS::istream & operator >> (STDNS::istream & istr, KsSimpleInAddrSet & set)
+istream & operator >> (istream & istr, KsSimpleInAddrSet & set)
 {
     set.removeAll();
     while (istr) {
@@ -164,7 +165,8 @@ STDNS::istream & operator >> (STDNS::istream & istr, KsSimpleInAddrSet & set)
  success:
     return istr;
 }
+
 #endif
         
 /////////////////////////////////////////////////////////////////////////////
-/* EOF ks/inaddrset.cpp */
+/* EOF ks/event.cpp */

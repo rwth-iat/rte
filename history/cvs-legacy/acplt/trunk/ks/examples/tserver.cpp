@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tserver.cpp,v 1.4 2005-06-16 11:40:29 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tserver.cpp,v 1.5 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -21,7 +21,6 @@
 
 /* Author: Martin Kneissl <martin@plt.rwth-aachen.de> */
 #include "ks/server.h"
-#include "ks/client.h"
 #include "ks/simpleserver.h"
 #include "ks/histdomain.h"
 

@@ -1,5 +1,6 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array.h,v 1.16 2003-10-13 11:15:53 harald Exp $ */
+/* -*-plt-c++-*- */
+#ifndef KS_ARRAY_INCLUDED
+#define KS_ARRAY_INCLUDED
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,9 +24,6 @@
 // Author: Martin Kneissl <martin@plt.rwth-aachen.de>
 //////////////////////////////////////////////////////////////////////
 // uses array_impl.h / template.cpp mechanism
-
-#ifndef KS_ARRAY_INCLUDED
-#define KS_ARRAY_INCLUDED
 
 #include "plt/array.h"
 #include "ks/xdr.h"

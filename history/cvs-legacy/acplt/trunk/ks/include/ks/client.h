@@ -1,9 +1,9 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.37 2003-10-21 14:46:59 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.38 2007-04-25 10:57:01 martin Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
- * Copyright (c) 1996, 2003
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -22,27 +22,29 @@
  */
 
 /* Author: Markus Juergens <markusj@plt.rwth-aachen.de> */
-/* updated to work with nonblocking IO by Albrecht boshi */
 
 //////////////////////////////////////////////////////////////////////
 
 #include <plt/hashtable.h>
 
 #include "ks/rpc.h"
+#include "ks/hostent.h"
 #include "ks/xdr.h"
 #include "ks/register.h"
 #include "ks/serviceparams.h"
 #include "ks/avmodule.h"
-#include "ks/clnrequest.h"
-#include "ks/serverconnection.h"
 
 //////////////////////////////////////////////////////////////////////
 // forward declaration
 class KscServerBase;
 
-
-const PltTime KSC_RPCCALL_TIMEOUT(30);
-
+//////////////////////////////////////////////////////////////////////
+// timeout and max tries when contacting manager via UDP
+// timeout when calling rpc function via TCP
+//
+const int KSC_UDP_MAX_TRIES = 5;
+const struct timeval KSC_UDP_TIMEOUT = {10, 0};      // DONT USE KsTime 
+const struct timeval KSC_RPCCALL_TIMEOUT = {30, 0};  // or PltTime
 
 //////////////////////////////////////////////////////////////////////
 // class KscClient
@@ -105,15 +107,6 @@ public:
 
 protected:
     KscClient();
-
-    //
-    // Support for those who want to have several connections at the
-    // same time to the same KS server... Usually callers will want to
-    // specify KS_MINPROTOCOL_VERSION as the protocol_version...
-    //
-    virtual KS_RESULT newServer(KsString host_and_name,
-				u_short protocol_version,
-				KscServerBase *&pServer);
 
     //
     // find or create server, should only be used by KscCommObject objects
@@ -217,7 +210,9 @@ public:
     KsString getHost() const;           // host
     KsString getName() const;           // name
     KsString getHostAndName() const;    // eg. "//host/name"
-    virtual u_short getProtocolVersion() = 0;
+    virtual u_short getProtocolVersion() const = 0;
+    virtual PltTime getExpiresAt() const = 0;
+    virtual bool isLiving() const = 0;
     KS_RESULT getLastResult() const;
 
 protected:
@@ -238,10 +233,6 @@ protected:
 };
 
 
-class KscServerConnection;
-class KscServerReconnectTimer;
-
-
 //////////////////////////////////////////////////////////////////////
 // class KscServer
 //
@@ -252,6 +243,13 @@ class KscServer
 public:
     // ping server
     bool ping();
+
+#if 0
+    // reread server description and state 
+    // from manager
+    //
+    bool getStateUpdate();
+#endif
 
     //
     // service functions
@@ -291,16 +289,9 @@ public:
     //
     // accessors
     //
-    u_short getProtocolVersion();
-
-    //
-    // new nonblocking stuff
-    void terminateRequests();
-    bool requestAsyncByOpcode(KscServiceRequestHandle hreq);
-
-    bool open(); // this is async
-    bool openOnlyAndWait(); // this is sync
-    void close(); // this is sync and immediately closes the connection
+    u_short getProtocolVersion() const;
+    PltTime getExpiresAt() const;
+    bool isLiving() const;
 
     //
     // set timeout and numbers of retries
@@ -314,45 +305,38 @@ public:
 
 
 protected:
-    void init();
-
     KscNegotiator *getNegotiator(const KscAvModule *);
 
     friend class KscAvModule;
     void dismissNegotiator(const KscAvModule *);
 
-
+    // service functions
     //
-    // new nonblocking transport stuff
-    friend class KscServerConnection;
-    friend class KscServerReconnectTimer;
+    bool getServerDesc(struct sockaddr_in *host_addr,    // host 
+                       unsigned short port,              // opt. port of manager
+                       const KsServerDesc &server,       // description
+                       KsGetServerResult &server_info);  // result
 
-    KsServerConnection *_svr_con;
-    KscServiceRequestHandle _current_request;
-    PltList<KscServiceRequestHandle> _request_queue;
-    
-    // manage requests queue and request initiation
-    void initiateRequestIfPossible(KscServiceRequestHandle newRequest);
 
-    // blocking wait for request to become finished
-    void waitForRequest(KscServiceRequestHandle newRequest);
-
-    // manage events from the server connection and from the timer queue
-    void async_attention(KsServerConnection::KsServerConnectionOperations op);
-    void reconnectTimerTrigger();
-
-    // reconnect control stuff
-    KscServerReconnectTimer *_reconnect_timer;
-    PltTime _rpc_timeout;
-    PltTime _retry_wait;
-    size_t _tries;
-    size_t _tries_remaining;
-
-    virtual bool shouldReconnectServer(KS_RESULT result);
-    void finishAndNotify(KS_RESULT result);
+    bool createTransport();
+    void destroyTransport();
+    virtual bool reconnectServer(size_t try_count, enum clnt_stat errcode);
+    virtual bool reconnectServer(KS_RESULT result);
+    bool getHostAddr(struct sockaddr_in *addr);
+    void setResultAfterService(enum clnt_stat errcode);
 
     void initExtTable();
 
+
+    KsServerDesc server_desc;      // server description given by user
+    KsGetServerResult server_info; // server description given by manager
+    CLIENT *_client_transport;     // RPC client handle
+
+    PltTime _rpc_timeout;
+    PltTime _retry_wait;
+    size_t _tries;
+    KSC_IP_TYPE last_ip;	
+      	// last IP used to connect to server/manager   
 
     PltHashTable<PltKeyPlainConstPtr<KscAvModule>,KscNegotiatorHandle> neg_table;
     PltHashTable<KsString, u_long> ext_opcodes;
@@ -436,6 +420,50 @@ KscServerBase::getLastResult() const
 // KscServer
 //////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+
+inline
+bool
+KscServer::ping()
+{
+    enum clnt_stat errcode;
+    errcode = clnt_call(_client_transport, 0, 
+			(xdrproc_t) xdr_void, 0, 
+			(xdrproc_t) xdr_void, 0, 
+			KSC_RPCCALL_TIMEOUT);
+
+    return errcode == RPC_SUCCESS;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+u_short
+KscServer::getProtocolVersion() const
+{
+    return server_info.server.protocol_version;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+PltTime
+KscServer::getExpiresAt() const
+{
+    // NOTE: without cast gcc reports internal
+    // compiler error
+    //
+    return PltTime(server_info.expires_at);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+inline
+bool
+KscServer::isLiving() const
+{
+    return server_info.living;
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -449,7 +477,48 @@ KscClient::getClient()
     return _the_client;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 
+#if 0
+inline bool 
+KscServer::getPP(const KscAvModule *avm,
+                 const KsGetPPParams &params,
+                 KsGetPPResult &result)
+{
+    return requestByOpcode(KS_GETPP, avm, &params, &result);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscServer::getVar(const KscAvModule *avm,
+                  const KsGetVarParams &params,
+                  KsGetVarResult &result)
+{
+    return requestByOpcode(KS_GETVAR, avm, &params, &result);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool 
+KscServer::setVar(const KscAvModule *avm,
+                  const KsSetVarParams &params,
+                  KsSetVarResult &result)
+{
+    return requestByOpcode(KS_SETVAR, avm, &params, &result);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+inline bool
+KscServer::exgData(const KscAvModule *avm,
+                   const KsExgDataParams &params,
+                   KsExgDataResult &result)
+{
+    return requestByOpcode(KS_EXGDATA, avm, &params, &result);
+}
+
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

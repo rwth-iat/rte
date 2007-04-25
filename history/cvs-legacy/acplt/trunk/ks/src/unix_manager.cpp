@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.16 2003-10-13 12:06:49 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/unix_manager.cpp,v 1.17 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -48,7 +48,7 @@ static bool reliableSignal(int signo, reliableSignalHandler handler)
 {
     struct sigaction act;
 
-    act.sa_handler = (void(*)(int)) handler;
+    act.sa_handler = handler;
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
 #ifdef SA_INTERRUPT
@@ -66,7 +66,7 @@ static bool reliableSignal(int signo, reliableSignalHandler handler)
 // EINTR error code. This then allows us very soon to check for the shutdown
 // flag.
 //
-extern "C" void shutDownSignalHandler(...) {
+extern "C" void shutDownSignalHandler() {
     KsServerBase::getServerObject().downServer();
 } // shutDownSignalHandler
 
@@ -115,7 +115,7 @@ KsUnixManager::KsUnixManager(int port)
         //
         // Also catch that infamous SIGPIPE.
         //
-        if ( !reliableSignal(SIGPIPE, (void(*)(...)) brokenPipeSignalHandler) ) {
+        if ( !reliableSignal(SIGPIPE, brokenPipeSignalHandler) ) {
             PltLog::Error("KsUnixManager::KsUnixManager(): can't install SIGPIPE handler. "
                           "Expect trouble with broken clients. Continuing...");
         }
@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
             argsok = false;
             break;
         } else if ( strcmp(argv[idx], "--version") == 0 ) {
-            STDNS::cerr << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << STDNS::endl;
+            cerr << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << endl;
             return EXIT_FAILURE;
         } else if ( (strcmp(argv[idx], "-d") == 0) ||
                     (strcmp(argv[idx], "--detach") == 0) ) {
@@ -176,14 +176,14 @@ int main(int argc, char **argv) {
     }
 
     if (!argsok) {
-        STDNS::cerr << "Usage: " << PROG_NAME << "[options]" << STDNS::endl
-             << "Runs the ACPLT/KS Manager process for un*x operating systems" << STDNS::endl
-             << STDNS::endl
-             << "  -d, --detach     sends ACPLT/KS manager process into background" << STDNS::endl
-             << "  -p #, --port #   binds the ACPLT/KS manager to port number #" << STDNS::endl
-             << "  -r, --reuseaddr  reuse socket address" << STDNS::endl
-             << "  --help           display this help and exit" << STDNS::endl
-             << "  --version        output version information and exit" << STDNS::endl;
+        cerr << "Usage: " << PROG_NAME << "[options]" << endl
+             << "Runs the ACPLT/KS Manager process for un*x operating systems" << endl
+             << endl
+             << "  -d, --detach     sends ACPLT/KS manager process into background" << endl
+             << "  -p #, --port #   binds the ACPLT/KS manager to port number #" << endl
+             << "  -r, --reuseaddr  reuse socket address" << endl
+             << "  --help           display this help and exit" << endl
+             << "  --version        output version information and exit" << endl;
         return EXIT_FAILURE;
     }
 
@@ -194,16 +194,16 @@ int main(int argc, char **argv) {
         switch (fork()) {
         case -1:
             // error
-            STDNS::cerr << "fork failed: " << strerror(errno) << STDNS::endl;
+            cerr << "fork failed: " << strerror(errno) << endl;
             return EXIT_FAILURE;
             break;
         case 0:
             // child
-//STDNS::cerr << "fork passed (in child)" << STDNS::endl;
+//cerr << "fork passed (in child)" << endl;
             for (int i = 0; i<FD_SETSIZE; ++i) {
                 close(i);
             }
-//STDNS::cerr << "about to setpgrp()" << STDNS::endl;
+//cerr << "about to setpgrp()" << endl;
 #if PLT_SYSTEM_FREEBSD
 	    setpgid(0, 0);
 #else
@@ -221,7 +221,7 @@ int main(int argc, char **argv) {
         //
         pLog = new PltCerrLog(PROG_NAME);
         if (!pLog) {
-            STDNS::cerr << "Could not create log." << STDNS::endl;
+            cerr << "Could not create log." << endl;
         }
     }
 

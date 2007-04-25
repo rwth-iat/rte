@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.9 2003-10-13 12:52:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/xdrtcpcon.h,v 1.10 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -28,6 +28,8 @@
 
 #ifndef XDRTCPCON_H_INCLUDED
 #define XDRTCPCON_H_INCLUDED
+
+#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/connection.h"
 
@@ -104,6 +106,7 @@ private:
 }; // class KssTCPXDRConnection
 
 
+#endif /* PLT_USE_BUFFERED_STREAMS */
 #endif
 
 /* End of xdrtcpcon.h */

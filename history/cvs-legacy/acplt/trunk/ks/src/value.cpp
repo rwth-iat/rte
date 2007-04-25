@@ -1,24 +1,9 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/value.cpp,v 1.18 2003-10-13 12:08:46 harald Exp $ */
-/*
- * Copyright (c) 1996, 1997, 1998, 1999
- * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
- * D-52064 Aachen, Germany.
- * All rights reserved.
+/* -*-plt-c++-*- */
+/* 
+ *  Copyright (c) 1996 PLT, RWTH-Aachen, Germany. See file copy_plt.txt!
+ *  Author: Martin Kneissl <martin@plt.rwth-aachen.de>
  *
- * This file is part of the ACPLT/KS Package which is licensed as open
- * source under the Artistic License; you can use, redistribute and/or
- * modify it under the terms of that license.
- *
- * You should have received a copy of the Artistic License along with
- * this Package; see the file ARTISTIC-LICENSE. If not, write to the
- * Copyright Holder.
- *
- * THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES
- * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Author: Martin Kneissl <martin@plt.rwth-aachen.de>
+ *  03/06/97 Interfaces changed, xdrEncode/xdrDecode implemented
  */
 
 #include "ks/value.h"
@@ -98,7 +83,6 @@ template class KsVecValueBase<KsTimeSpan>;
 template class KsVecValueBase<KsString>;
 template class KsVecValueBase<int>;
 #endif
-
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

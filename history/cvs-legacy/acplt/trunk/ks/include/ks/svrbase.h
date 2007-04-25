@@ -1,5 +1,7 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.29 2003-10-13 12:52:55 harald Exp $ */
+/* -*-plt-c++-*- */
+#ifndef KS_SVRBASE_INCLUDED
+#define KS_SVRBASE_INCLUDED
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.30 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -19,15 +21,15 @@
  * OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef KS_SVRBASE_INCLUDED
-#define KS_SVRBASE_INCLUDED
-
 #include "ks/rpc.h"
 #include "ks/avticket.h"
 #include "ks/event.h"
 #if !PLT_SERVER_TRUNC_ONLY
 #include "ks/serviceparams.h"
 #endif
+#include "plt/comparable.h"
+#include "plt/priorityqueue.h"
+#include "ks/svrtransport.h"
 
 #include <signal.h>
 
@@ -36,12 +38,20 @@
 typedef int sig_atomic_t;
 #endif
 
-#include "ks/connection.h"
+#if PLT_USE_BUFFERED_STREAMS
 #include "ks/connectionmgr.h"
 #include "ks/xdrtcpcon.h"
+#endif
 
 
-typedef KssXDRConnection KssTransport;
+// ---------------------------------------------------------------------------
+// PRIVATE! forward declaration
+// This dispatcher is only used with the genuine ONC/RPC package.
+//
+#if !PLT_USE_BUFFERED_STREAMS
+extern "C" void 
+ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
+#endif
 
 
 // ---------------------------------------------------------------------------
@@ -79,11 +89,13 @@ public:
     virtual void downServer();     // stop answering requests asap
     virtual void stopServer();     // shut down request handling finally
  
-    // retained for compatibility with older version of the library
+    // serve pending events
+    bool servePendingEvents(KsTime timeout = KsTime()); 
+    bool servePendingEvents(KsTime *pTimeout); 
+
     bool addTimerEvent(KsTimerEvent *event);
     bool removeTimerEvent(KsTimerEvent *event);
     KsTimerEvent *removeNextTimerEvent();
-
 
     // address reuse
     bool getReuseAddr() { return _reuse_addr; }
@@ -108,6 +120,10 @@ public:
                          KsExgDataResult &result);
 #endif
 
+#if PLT_USE_BUFFERED_STREAMS
+    KssConnectionManager *getConnectionManager() const
+	{ return _cnx_manager; }
+#endif
 
     inline void setBufferSizes(int rxBuffSize, int txBuffSize)
     	{ _receive_buffer_size = rxBuffSize;
@@ -132,25 +148,39 @@ protected:
     // an emergency ticket with a result() != 0.
     virtual KsAvTicket* getTicket(XDR* xdr);
 
+#if !PLT_USE_BUFFERED_STREAMS
+    SVCXPRT *_tcp_transport; // RPC transport used to receive requests
+    KssTransport _transport; // SVCXPRT wrapper for ONC/RPC
+#else
     class KssAttentionXDRDispatcher:
-        public KsConnectionAttentionInterface {
+        public KssConnectionAttentionInterface {
     public:
-        virtual bool attention(KsConnection &conn);
+        virtual bool attention(KssConnection &conn);
     };
 
     KssAttentionXDRDispatcher  _attention_dispatcher;
+    KssConnectionManager      *_cnx_manager;
     KssXDRConnection          *_tcp_transport;
+#endif
 
+#if PLT_USE_XTI
+    // ...and now for something completely different: Solaris & XTI!!!
+    PltString getNetworkTransportDevice(const char *protocol);
+#endif
 
     sig_atomic_t _shutdown_flag; // signal to the run() loop to quit
 
 private:
+#if !PLT_USE_BUFFERED_STREAMS
+    friend void ks_c_dispatch(struct svc_req * request, SVCXPRT *transport);
+#endif
 
     KsServerBase(const KsServerBase &); // forbidden
     KsServerBase & operator = (const KsServerBase &); // forbidden
 
     void cleanup();
 
+    PltPriorityQueue< PltPtrComparable<KsTimerEvent> > _timer_queue;
 
     int _send_buffer_size;
     int _receive_buffer_size;
@@ -178,6 +208,13 @@ public:
 // INLINE IMPLEMENTATION
 //
 
+inline bool
+KsServerBase::servePendingEvents(KsTime timeout) 
+{
+    return servePendingEvents(&timeout);
+} // KsServerBase::servePendingEvents
+
+// ---------------------------------------------------------------------------
 
 inline KsServerBase &
 KsServerBase::getServerObject()

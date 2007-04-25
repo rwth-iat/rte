@@ -2,7 +2,7 @@
 #ifndef PLT_HASHTABLE_IMPL_INCLUDED
 #define PLT_HASHTABLE_IMPL_INCLUDED
 
-/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.10 1999-09-16 10:54:55 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/hashtable_impl.h,v 1.11 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

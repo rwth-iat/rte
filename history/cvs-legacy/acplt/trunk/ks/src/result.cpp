@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.8 2005-02-14 13:49:31 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/result.cpp,v 1.9 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -30,14 +30,6 @@ KsResult::KsResult(KS_RESULT res)
     : result(res)
 {
 }
-
-// ---------------------------------------------------------------------------
-// Sigh. Made virtual destructor non-inline to avoid diverse problems with
-// diverse compilers. Gosh.
-//
-KsResult::~KsResult()
-{
-} // KsResult::~KsResult
 
 /////////////////////////////////////////////////////////////////////////////
 

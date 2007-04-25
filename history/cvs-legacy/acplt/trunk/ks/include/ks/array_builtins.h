@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_BUILTINS_INCLUDED
 #define KS_ARRAY_BUILTINS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.5 2000-09-04 06:22:05 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.6 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

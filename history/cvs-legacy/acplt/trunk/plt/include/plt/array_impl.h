@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_ARRAY_IMPL_INCLUDED
 #define PLT_ARRAY_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/array_impl.h,v 1.4 1999-09-16 10:54:53 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/array_impl.h,v 1.5 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

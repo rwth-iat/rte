@@ -52,6 +52,7 @@ include ../generic.mk
 libplt.a: $(LIBPLT_OBJECTS)
 	ar r $@ $?
 	$(RANLIB) $@
+	strip --strip-debug libplt.a
 
 depend : $(CXX_SOURCES)
 	$(CXX_COMPILE) -MM $^ > .depend

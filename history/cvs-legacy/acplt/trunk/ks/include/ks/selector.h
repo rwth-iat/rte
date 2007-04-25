@@ -1,8 +1,8 @@
-/* -*-c++-*- */
+/* -*-plt-c++-*- */
 #ifndef KS_SELECTOR_INCLUDED
 #define KS_SELECTOR_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.10 2003-10-13 11:30:10 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.11 2007-04-25 10:57:02 martin Exp $
  *
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

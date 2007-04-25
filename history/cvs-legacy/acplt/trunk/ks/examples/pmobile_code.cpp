@@ -1,5 +1,5 @@
-// -*-c++-*-
-/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.15 2003-10-13 12:53:55 harald Exp $ */
+// -*-plt-c++-*-
+/* $Header: /home/david/cvs/acplt/ks/examples/pmobile_code.cpp,v 1.16 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -25,30 +25,17 @@
 #include "plt/config.h"
 
 #include <stdlib.h>
-#if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
 #include <iomanip.h>
-#else
-#include <iostream>
-#include <iomanip>
-#endif
 
 #if PLT_SYSTEM_NT
 #include <strstrea.h>
 #include <time.h>
 #else
-#if PLT_USE_DEPRECIATED_HEADER
 #include <strstream.h>
-#else
-#include <sstream>
-#endif
 #endif
 
-#if PLT_USE_DEPRECIATED_HEADER
 #include <fstream.h>
-#else
-#include <fstream>
-#endif
 
 #include "ks/commobject.h"
 #include "ks/package.h"
@@ -72,14 +59,14 @@ void
 print_value(KsValueHandle hv) {
 /// Stolen from Markus' tshell.cpp ....
     if(!hv) {
-        STDNS::cout << "no value" << STDNS::endl;
+        cout << "no value" << endl;
         return;
     }
 
     switch(hv->xdrTypeCode()) {
     case KS_VT_VOID : 
         {
-            STDNS::cout << "void" << STDNS::endl;
+            cout << "void" << endl;
         } 
         break;
     case KS_VT_INT : 
@@ -87,7 +74,7 @@ print_value(KsValueHandle hv) {
             KsIntValue *pInt =
                 PLT_DYNAMIC_PCAST(KsIntValue, hv.getPtr());
             check_pointer(pInt);
-            STDNS::cout << "Int " << (long)(*pInt) << STDNS::endl;
+            cout << "Int " << (long)(*pInt) << endl;
         }
         break;
     case KS_VT_UINT :
@@ -95,7 +82,7 @@ print_value(KsValueHandle hv) {
             KsUIntValue *pUInt =
                 PLT_DYNAMIC_PCAST(KsUIntValue, hv.getPtr());
             check_pointer(pUInt);
-            STDNS::cout << "UInt " << (u_long)(*pUInt) << STDNS::endl;
+            cout << "UInt " << (u_long)(*pUInt) << endl;
         }
         break;
     case KS_VT_SINGLE :
@@ -103,7 +90,7 @@ print_value(KsValueHandle hv) {
             KsSingleValue *pSingle =
                 PLT_DYNAMIC_PCAST(KsSingleValue, hv.getPtr());
             check_pointer(pSingle);
-            STDNS::cout << "Single " << (float)(*pSingle) << STDNS::endl;
+            cout << "Single " << (float)(*pSingle) << endl;
         }
         break;
     case KS_VT_DOUBLE :
@@ -111,7 +98,7 @@ print_value(KsValueHandle hv) {
             KsDoubleValue *pDouble =
                 PLT_DYNAMIC_PCAST(KsDoubleValue, hv.getPtr());
             check_pointer(pDouble);
-            STDNS::cout << "Double " << (double)(*pDouble) << STDNS::endl;
+            cout << "Double " << (double)(*pDouble) << endl;
         }
         break;
     case KS_VT_STRING :
@@ -119,7 +106,7 @@ print_value(KsValueHandle hv) {
             KsStringValue *pStr =
                 PLT_DYNAMIC_PCAST(KsStringValue, hv.getPtr());
             check_pointer(pStr);
-            STDNS::cout << "String " << (const char *)(*pStr) << STDNS::endl;
+            cout << "String " << (const char *)(*pStr) << endl;
         }
         break;
     case KS_VT_TIME :
@@ -132,7 +119,7 @@ print_value(KsValueHandle hv) {
 #else
             time_t sec = pTime->tv_sec;
 #endif
-            STDNS::cout << "Time " << ctime(&sec) << STDNS::endl;
+            cout << "Time " << ctime(&sec) << endl;
         }
         break;
     case KS_VT_BYTE_VEC :
@@ -143,12 +130,12 @@ print_value(KsValueHandle hv) {
     case KS_VT_STRING_VEC :
     case KS_VT_TIME_VEC :
         {
-            STDNS::cout << "Vector value" << STDNS::endl;
+            cout << "Vector value" << endl;
         }
         break;
     default:
         {
-            STDNS::cout << "unknown typecode" << STDNS::endl;
+            cout << "unknown typecode" << endl;
         }
     }
 }
@@ -161,7 +148,7 @@ PltLogStream ls;
 
 // ----------------------------------------------------------------------------
 //
-PltArray<PltString> readNames(STDNS::istream & istr)
+PltArray<PltString> readNames(istream & istr)
 {
     PltList<PltString> list;
     while (istr) {
@@ -189,8 +176,8 @@ KscPackage * buildPackage(const PltArray<PltString> & array,
     bool random = (maxsize!=0);
     size_t size = random ? (size_t)(frand()*maxsize+1) : array.size();
     if (verbosity > 1) {
-        STDNS::cout << "Building package with " << size << " variables..." ;
-        STDNS::cout.flush();
+        cout << "Building package with " << size << " variables..." ;
+        cout.flush();
     }
     for (size_t i=0; i < size; ++i) {
         size_t index = random ? (size_t)(frand()*array.size()) : i; 
@@ -216,7 +203,7 @@ KscPackage * buildPackage(const PltArray<PltString> & array,
         }
     }
     if (verbosity>1) {
-        STDNS::cout << " done." << STDNS::endl;
+        cout << " done." << endl;
     }
     return &pkg;
 } // buildPackage
@@ -241,27 +228,27 @@ void keepSpinning(const PltArray<PltString> & names,
             ppkg = buildPackage(names, maxsize);
         }
         if (verbosity>1) {
-            STDNS::cerr << "starting getUpdate() ..." << STDNS::endl;
+            cerr << "starting getUpdate() ..." << endl;
         }
         PltTime start(PltTime::now());
         if ( !ppkg->getUpdate() ) {
             ls << "Oops: couldn't update the package, reason 0x"
-	       << STDNS::hex << STDNS::setfill('0') << STDNS::setw(4)
-	       << ppkg->getLastResult() << STDNS::dec;
+	       << hex << setfill('0') << setw(4)
+	       << ppkg->getLastResult() << dec;
             ls.error();
         }
         PltTime elapsed = PltTime::now() - start;
         if (verbosity>1) {
-            STDNS::cerr << "getUpdate() finished" << STDNS::endl;
+            cerr << "getUpdate() finished" << endl;
         }
         if (verbosity>0) {
             double secs = elapsed.tv_sec + elapsed.tv_usec / 1.0e6;
             size_t size = ppkg->sizeVariables();
-            STDNS::cout << "Elapsed: " << secs << "s "
+            cout << "Elapsed: " << secs << "s "
                  << "Variables: " << size
                  << " Avg: "    << secs / size << " s/var "
                  <<                size / secs << " var/s "
-                 << STDNS::endl;
+                 << endl;
         }
 
         if (verbosity>2) {
@@ -269,16 +256,16 @@ void keepSpinning(const PltArray<PltString> & names,
                 PLT_RETTYPE_CAST((PltIterator<KscVariableHandle> *))
                     ppkg->newVariableIterator();
             if ( pit ) {
-                STDNS::cout << "My shopping bag contains..." << STDNS::endl;
+                cout << "My shopping bag contains..." << endl;
                 for (PltIterator<KscVariableHandle> & it = *pit;
                      it;
                      ++it) {
-                    STDNS::cout << "  " << (*it)->getFullPath();
+                    cout << "  " << (*it)->getFullPath();
                     if (verbosity>3) {
-                        STDNS::cout << " ";
+                        cout << " ";
                         print_value((*it)->getValue());
                     }
-                    STDNS::cout << STDNS::endl;
+                    cout << endl;
                 }
                 delete pit;
             } else {
@@ -287,12 +274,12 @@ void keepSpinning(const PltArray<PltString> & names,
             }
         }
         if (verbosity>1) {
-            STDNS::cout << "Sleeping...";
-            STDNS::cout.flush();
+            cout << "Sleeping...";
+            cout.flush();
         }
         delay.sleep();
         if (verbosity>1) {
-            STDNS::cout << STDNS::endl;
+            cout << endl;
         }
     }
     delete ppkg;
@@ -309,7 +296,7 @@ int main(int argc, char **argv)
     int updates = -1;
     int randomperc = 0;
     size_t maxsize = 0;
-    STDNS::ifstream fstr;
+    ifstream fstr;
     PltArray<PltString> names;
 
     for (int argi=1; argi < argc; ++argi) {
@@ -324,12 +311,7 @@ int main(int argc, char **argv)
             case 'r' :
             case 'm' : 
                 if (++argi < argc) {
-#if PLT_USE_DEPRECIATED_HEADER
-		    istrstream
-#else
-                    STDNS::istringstream
-#endif
-			str(argv[argi]);
+                    istrstream str(argv[argi]);
                     str >> val;
                     if (!str) goto usage;
                     if (-1 != str.get()) goto usage;
@@ -379,7 +361,7 @@ int main(int argc, char **argv)
         fstr.open(filename);
         names = readNames(fstr);
     } else {
-        names = readNames(STDNS::cin);
+        names = readNames(cin);
     }
     if (verbosity > 0) {
         ls << names.size() << "names  read.";
@@ -392,8 +374,8 @@ int main(int argc, char **argv)
     return 0;
 
  usage:
-    STDNS::cerr << argv[0] << " [-v verbosity] [-c updates] [-s secs_between_updates] [-r random_perc [-m max_pkg_size]] [filename]"
-        << STDNS::endl;
+    cerr << argv[0] << " [-v verbosity] [-c updates] [-s secs_between_updates] [-r random_perc [-m max_pkg_size]] [filename]"
+        << endl;
     return 1;
 
 } // main

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.11 2003-10-13 12:14:21 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connection.cpp,v 1.12 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -67,13 +67,12 @@ extern int ioctl(int d, int request, char *argp);
 // well as a attention method. If a connection needs attention, then you have
 // to set an attention handler later.
 //
-KsConnection::KsConnection(int fd, bool autoDestroyable,
+KssConnection::KssConnection(int fd, bool autoDestroyable,
                              unsigned long timeout,
 			     ConnectionType type)
     : _cnx_type(type), _timeout(timeout),
       _auto_destroyable(autoDestroyable),
       _fd(fd),
-      _close_fd(true),
       _client_address_len(0),
       _manager(0), // this is set later when putting this connection under
                    // control of the connection manager.
@@ -87,15 +86,7 @@ KsConnection::KsConnection(int fd, bool autoDestroyable,
     // in the passive state, because there's no i/o do be done yet at all.
     //
     _state = _cnx_type == CNX_TYPE_SERVER ? CNX_STATE_IDLE : CNX_STATE_PASSIVE;
-} // KsConnection::KsConnection
-
-
-// ---------------------------------------------------------------------------
-// I'm soo destructive here...
-//
-KsConnection::~KsConnection()
-{
-} // KsConnection::~KsConnection
+} // KssConnection::KssConnection
 
 
 // ---------------------------------------------------------------------------
@@ -103,7 +94,7 @@ KsConnection::~KsConnection()
 // connection. This is necessary, so UDP-based connections can send their
 // data to the appropriate peer and receive data only from the right peer.
 //
-bool KsConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
+bool KssConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
 {
     if ( addrLen <= (int) sizeof(_client_address) ) {
 	memcpy(&_client_address, addr, addrLen);
@@ -112,7 +103,7 @@ bool KsConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
     } else {
 	return false;
     }
-} // KsConnection::setPeerAddr
+} // KssConnection::setPeerAddr
 
 
 // ---------------------------------------------------------------------------
@@ -120,7 +111,11 @@ bool KsConnection::setPeerAddr(struct sockaddr_in *addr, int addrLen)
 // bound. Of course, calling this method only makes sense, if it's using the
 // IP protocols.
 //
-u_short KsConnection::getPort() const
+#if PLT_USE_XTI && PLT_SYSTEM_SOLARIS
+extern int t_getname(int fd, struct netbuf *namep, int type);
+#endif
+
+u_short KssConnection::getPort() const
 {
     struct sockaddr_in addr;
 #if defined(PLT_RUNTIME_GLIBC) && PLT_RUNTIME_GLIBC >= 0x2001
@@ -132,24 +127,47 @@ u_short KsConnection::getPort() const
 #endif
     
     addr_len = sizeof(addr);
+#if !PLT_USE_XTI
     if ( (getsockname(_fd, (struct sockaddr *) &addr, &addr_len) < 0) ||
          (addr.sin_family != AF_INET) ) {
     	return 0;
     }
+#else
+#if PLT_SYSTEM_SOLARIS
+    //
+    // This hack is for Solaris with TLI instead of XTI (SunOS 2.4 etc)
+    //
+    // Credit where credit is due: Richard Stevens saved my day once more again.
+    // I asked in comp.protocols.tcp-ip for this undocumented function prototype
+    // and he helped me out within the time zone difference between Europe and
+    // the United States...
+    //
+    struct netbuf local;
+    
+    local.maxlen = sizeof(addr);
+    local.buf    = (char *) &addr;
+    if ( (t_getname(_fd, &local, LOCALNAME) < 0) ||
+         (addr.sin_family != AF_INET) ) {
+    	return 0;
+    }
+#else
+    struct t_bind local, peer;
+    
+    local.addr.maxlen = addr_len;
+    local.addr.buf    = (char *) &addr;
+    peer.addr.maxlen  = 0;
+    
+    if ( t_getprotaddr(_fd, &local, &peer) < 0 ) {
+    	return 0;
+    }
+    if ( (local.addr.len != addr_len) ||
+    	 (addr.sin_familiy != AF_INET) ) {
+    	return 0;
+    }
+#endif
+#endif
     return ntohs(addr.sin_port);
-} //  KsConnection::getPort
-
-
-
-void KsConnection::setFdClose(bool close)
-{
-    _close_fd = close;
-}
-
-bool KsConnection::getFdClose() const
-{
-    return _close_fd;
-}
+} //  KssConnection::getPort
 
 
 // ---------------------------------------------------------------------------
@@ -158,16 +176,16 @@ bool KsConnection::getFdClose() const
 // getTimeout(), as it is needed by the connection manager to calculate
 // timeouts.
 //
-long KsConnection::getTimeout() const
+long KssConnection::getTimeout() const
 {
     return _timeout;
-} // KsConnection::getTimeout
+} // KssConnection::getTimeout
 
 
-void KsConnection::setTimeout(unsigned long timeout)
+void KssConnection::setTimeout(unsigned long timeout)
 {
     _timeout = timeout;
-} // KsConnection::setTimeout
+} // KssConnection::setTimeout
 
 
 // ---------------------------------------------------------------------------
@@ -186,7 +204,7 @@ void KsConnection::setTimeout(unsigned long timeout)
 KssXDRConnection::KssXDRConnection(int fd, bool autoDestroyable, 
 	                           unsigned long timeout,
 	                           ConnectionType type)
-    : KsConnection(fd, autoDestroyable, timeout, type),
+    : KssConnection(fd, autoDestroyable, timeout, type),
       _cleanup_xdr_stream(true)
 {
 } // KssXDRConnection::KssXDRConnection
@@ -220,6 +238,8 @@ void KssXDRConnection::shutdown()
     //
 #if PLT_SYSTEM_NT
     closesocket(_fd); // Ouch!!!
+#elif PLT_USE_XTI
+    t_close(_fd); // one more "Ouch!!!"
 #else
     close(_fd);
 #endif
@@ -264,6 +284,9 @@ bool KssXDRConnection::makeNonblocking()
     int nbmode = 1;
     return ioctl(_fd, FIONBIO, (char *) &nbmode) != -1;
 #else
+    //
+    // This works even with XTI...
+    //
     int mode = fcntl(_fd, F_GETFL);
     if ( mode == -1 ) {
     	return false;
@@ -280,10 +303,61 @@ bool KssXDRConnection::makeNonblocking()
 //
 bool KssXDRConnection::enableKeepAlive()
 {
+#if !PLT_USE_XTI
     int mode = 1; // enable KEEP ALIVE
-    return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE,
+#if PLT_SYSTEM_NT
+    return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE, 
                       (char *) &mode, sizeof(mode))
 	       != -1;
+#else
+    return setsockopt(_fd, SOL_SOCKET, SO_KEEPALIVE, 
+                      (char *) &mode, sizeof(mode))
+	       != -1;
+#endif
+#else
+#if 0
+    struct t_kpalive {
+    	t_scalar_t kp_onoff;
+	t_scalar_t kp_timeout;
+    };
+    struct t_opthdr
+
+    struct t_optmgmt request, result;
+    struct {
+    	struct t_opthdr  header;
+	struct t_kpalive keepalive;
+    } reqopt, resopt;
+    
+    request.opt.len           = sizeof(reqopt);
+    request.opt.maxlen        = request.len;
+    request.opt.buf           = &reqopt;
+    request.flags             = T_NEGOTIATE;
+    
+    reqopt.header.len         = sizeof(header) + sizeof(keepalive);
+    reqopt.header.level       = T_INET_TCP;
+    reqopt.header.name        = T_TCP_KEEPALIVE;
+    reqopt.keepalive.l_onoff  = T_YES;
+    reqopt.keepalive.l_linger = T_UNSPEC;
+    
+    result.opt.len            = sizeof(header) + sizeof(keepalive);
+    result.opt.maxlen         = result.len;
+    result.opt.buf            = &resopt;
+    result.flags              = T_CURRENT;
+    
+    resopt.header.len         = sizeof(resopt);
+    resopt.header.level       = T_INET_TCP;
+    resopt.header.name        = T_TCP_KEEPALIVE;
+    
+    if ( t_optmgmt(_fd, &request, &result) < 0 ) {
+    	return false;
+    }
+    return (result.status == T_SUCCESS) &&
+           (resopt.header.status == T_SUCCESS) &&
+	   (resopt.keepalive.l_onoff == T_YES);
+#else
+    return true;
+#endif
+#endif
 } // KssXDRConnection::enableKeepAlive
 
 

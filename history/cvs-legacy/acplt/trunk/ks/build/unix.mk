@@ -26,6 +26,7 @@ CXX_LIBS = -lstdc++
 
 .o.exe:
 	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) $(CXX_LIBS)
+	strip --strip-debug $@
 
 .cpp.i:
 	$(CXX_COMPILE) -E > $@ $<
@@ -42,17 +43,18 @@ VPATH = ../../src ../../examples
 
 include ../generic.mk
 
-all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN) manager
 
 $(LIBKS): $(LIBKS_OBJECTS)
 	ar r $@ $?
+	strip --strip-debug $(LIBKS)
 
 $(LIBKSSVR): $(LIBKSSVR_OBJECTS)
 	ar r $@ $?
+	strip --strip-debug $(LIBKSSVR)
 
 $(LIBKSCLN): $(LIBKSCLN_OBJECTS)
 	ar r $@ $?
-
+	strip --strip-debug $(LIBKSCLN)
 
 depend : $(CXX_SOURCES) unix_manager.cpp
 	$(CXX_COMPILE) -MM $^ > .depend
@@ -77,8 +79,6 @@ mrproper :	clean
 		.depend \
 		manager $(TESTS)
 	for i in t*_inst.h ; do echo > $$i ; done
-
-
 
 
 

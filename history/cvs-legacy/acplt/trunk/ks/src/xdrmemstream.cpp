@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.18 2004-07-20 11:44:43 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.19 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -29,6 +29,8 @@
  */
 
 /*#define CNXDEBUG*/
+
+#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdrmemstream.h"
 #include <stdlib.h>
@@ -312,14 +314,19 @@ static bool_t AdvanceToNextFragment(XDR *xdrs)
 #define PLT_CONST
 #endif
 
+
+
 #ifdef PLT_RUNTIME_GLIBC
 #if PLT_RUNTIME_GLIBC < 0x00020003
-#define PLT_MEMSTREAMINLINE_LEN int
+//#define PLT_MEMSTREAMINLINE_LEN int
+#define PLT_MEMSTREAMINLINE_LEN u_int
 #endif
 #endif
 #ifndef PLT_MEMSTREAMINLINE_LEN
 #define PLT_MEMSTREAMINLINE_LEN u_int
 #endif
+
+
 
 static bool_t MemStreamGetLong(XDR *xdrs, long *lp);
 static bool_t MemStreamPutLong(XDR *xdrs, PLT_CONST long *lp);
@@ -327,7 +334,7 @@ static bool_t MemStreamGetBytes(XDR *xdrs, caddr_t addr, u_int len);
 static bool_t MemStreamPutBytes(XDR *xdrs, PLT_CONST caddr_t caddr, u_int len);
 static u_int  MemStreamGetPos(PLT_CONST XDR *xdrs);
 static bool_t MemStreamSetPos(XDR *xdrs, u_int pos);
-static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, PLT_MEMSTREAMINLINE_LEN len);
+static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, int len);
 static void   MemStreamDestroy(XDR *xdrs);
 
 /* ---------------------------------------------------------------------------
@@ -340,20 +347,48 @@ static void   MemStreamDestroy(XDR *xdrs);
  * signatures. There are sooo much ONC/RPC ports out there which can't agree
  * on function signatures.
  */
-#if PLT_SYSTEM_NT
-#define FUNC(rt, p) (rt (*)(...))
-#else
-#define FUNC(rt, p) (rt (*) p)
-#endif
+ 
+#if 0
+
+#define FUNC(rt) (rt (*)(...))
 /*#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT || PLT_SYSTEM_LINUX*/
 /*#define FUNC(rt) (rt (*)(...))*/
 /*#else*/
 /*#define FUNC(rt)*/
 /*#endif*/
 
+static
+#if defined(__cplusplus)
+                   /* Arrrghhh. Someone at Sun was soooo lazy and defined */
+    XDR::xdr_ops   /* the xdr operations structure within the XDR struct. */
+#else              /* While this is will get into the global namespace    */
+    struct xdr_ops /* with C, it will be -- naturally -- in a local name- */
+#endif             /* space with C++. Sigh.                               */
+        memstream_operations = {
+    FUNC(bool_t) MemStreamGetLong,   /* retrieve a 32 bit integer in host order      */
+    FUNC(bool_t) MemStreamPutLong,   /* store a 32 bit integer in host order         */
+    FUNC(bool_t) MemStreamGetBytes,  /* retrieve some octets (multiple of 4)         */
+    FUNC(bool_t) MemStreamPutBytes,  /* store some octets (multiple of 4)            */
+    FUNC(u_int)  MemStreamGetPos,    /* */
+    FUNC(bool_t) MemStreamSetPos,    /* */
+    FUNC(XDR_INLINE_PTR) MemStreamInline,    /* get some space in the buffer for fast access */
+    FUNC(void)   MemStreamDestroy    /* clean up the mess                            */
+}; /* memstream_operations */
+
+#endif
+
+
+#define FUNC(rt, p) (rt (*) p)
+
+#if PLT_SYSTEM_NT
+ #undef FUNC(rt, p)
+ #define FUNC(rt, p) (rt (*)(...))
+#endif
+
 #if defined(__cplusplus)
 extern "C" { /* switch to C binding */
 #endif
+
 static
 #if defined(__cplusplus)
                    /* Arrrghhh. Someone at Sun was soooo lazy and defined */
@@ -371,6 +406,7 @@ static
     FUNC(XDR_INLINE_PTR,(XDR*,PLT_MEMSTREAMINLINE_LEN)) MemStreamInline,    /* get some space in the buffer for fast access */
     FUNC(void,(XDR*)) MemStreamDestroy    /* clean up the mess                            */
 }; /* memstream_operations */
+
 #if defined(__cplusplus)
 } /* leave C binding */
 #endif
@@ -533,7 +569,6 @@ void xdrmemstream_get_fragments(XDR *xdrs,
 	    }
 	    desc->fragment = (caddr_t) &(fragment->dummy);
 	    desc->length   = fragment->used;
-	    ++desc;
 	    fragment       = fragment->next;
 	    if ( !fragment ) {
 		break;
@@ -575,7 +610,7 @@ static void MemStreamDestroy(XDR *xdrs)
  * or she/he will get in deep trouble the next time she/he
  * accesses the memory stream (due to misaligned pointers).
  */
-static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, PLT_MEMSTREAMINLINE_LEN len)
+static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, int len)
 {
     if ( xdrs->x_handy == 0 ) {
 	/*
@@ -760,6 +795,10 @@ static bool_t MemStreamSetPos(XDR *, u_int)
  */
 bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
 {
+#if PLT_USE_XTI
+    int flags;
+#endif
+
     if ( xdrs->x_op != XDR_ENCODE ) {
     	if ( err ) {
 	    *err = EINVAL;
@@ -790,7 +829,11 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
 	if ( *max < count ) {
 	    count = *max;
 	}
+#if !PLT_USE_XTI
         count_read = read(fd, xdrs->x_private, count);
+#else
+    	count_read = t_rcv(fd, xdrs->x_private, count, &flags);
+#endif
         if ( count_read < 0 ) {
             /*
              * Do not choke on interrupted system calls and not-yet-available
@@ -801,6 +844,36 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
 	    myerrno = WSAGetLastError(); /* MS VC++4.2 is brain damaged... */
 #else
             int myerrno = errno;
+#endif
+#if PLT_USE_XTI
+    	    /*
+	     * Make sure that a pending event on the XTI endpoint is read.
+	     * Especially handle connection release or disconnection. Yeah,
+	     * with XTI you'll have to handle all things yourself. What a
+	     * great deal.
+	     */
+    	    switch ( t_errno ) {
+	    case TLOOK: {
+	    	int events = t_look(fd);
+		myerrno = EIO;
+		if ( events & T_DISCONNECT ) {
+		    t_rcvdis(fd, 0);
+		    myerrno = EIO;
+		}
+		if ( events & T_ORDREL ) {
+		    t_rcvrel(fd);
+		    myerrno = EIO;
+		}
+		break;
+	    	}
+	    case TNODATA:
+		myerrno = EWOULDBLOCK;
+		return TRUE;
+	    case TSYSERR:
+		break; /* just take the ordinary errno */
+	    default:
+	    	myerrno = 0; /* indicate XTI error */
+	    }
 #endif
     	    if ( err ) {
 	    	*err = myerrno;
@@ -829,7 +902,11 @@ bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)
 	 * XTI, the transport has already indicated whether there is more
 	 * data waiting to be read (some of the quite few goodies in XTI).
          */
+#if !PLT_USE_XTI
         if ( count != count_read ) {
+#else
+    	if ( !(flags & T_MORE) ) {
+#endif
             return TRUE;
         }
     }
@@ -887,7 +964,11 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
 	if ( *max <= count ) {
 	    count = *max;
 	}
+#if !PLT_USE_XTI
         count_written = write(fd, xdrs->x_private, count);
+#else
+	count_written = t_snd(fd, xdrs->x_private, count, 0);
+#endif
         if ( count_written < 0 ) {
             /*
              * Do not choke on interrupted system calls and not-yet-free
@@ -898,6 +979,36 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
 	    myerrno = WSAGetLastError(); /* MS VC++4.2 is brain damaged... */
 #else
             int myerrno = errno;
+#endif
+#if PLT_USE_XTI
+    	    /*
+	     * Make sure that a pending event on the XTI endpoint is read.
+	     * Especially handle connection release or disconnection. Yeah,
+	     * with XTI you'll have to handle all things yourself. What a
+	     * great deal.
+	     */
+    	    switch ( t_errno ) {
+	    case TLOOK: {
+	    	int events = t_look(fd);
+		myerrno = EIO;
+		if ( events & T_DISCONNECT ) {
+		    t_rcvdis(fd, 0);
+		    myerrno = EPIPE;
+		}
+		if ( events & T_ORDREL ) {
+		    t_rcvrel(fd);
+		    myerrno = EPIPE;
+		}
+		break;
+	    	}
+	    case TFLOW:
+		myerrno = EWOULDBLOCK;
+		return TRUE;
+	    case TSYSERR:
+		break; /* just take the ordinary errno */
+	    default:
+	    	myerrno = 0; /* indicate XTI error */
+	    }
 #endif
     	    if ( err ) {
 	    	*err = myerrno;
@@ -953,5 +1064,7 @@ bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err)
     return TRUE;
 } /* xdrmemstream_write_to_fd */
 
+
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of xdrmemstream.c */

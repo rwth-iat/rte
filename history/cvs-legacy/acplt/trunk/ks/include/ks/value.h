@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */ 
-/* $Header: /home/david/cvs/acplt/ks/include/ks/value.h,v 1.18 1999-09-16 10:54:43 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/value.h,v 1.19 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

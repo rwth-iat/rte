@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.24 2003-09-23 08:28:10 harald Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.25 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -341,7 +341,7 @@ PltString::toUpper()
 
     if(p) {
         for(size_t i = 0; i < len(); i++) {
-            (p->s)[i] = toupper( (p->s)[i] );
+            (p->s)[i] = (char)toupper( (p->s)[i] );
         }
     }
 }
@@ -355,7 +355,7 @@ PltString::toUpper() const
         char *upper = new char[p->len+1];
         if(upper) {
             for(size_t i = 0; i < p->len; i++) {
-                upper[i] = toupper( (p->s)[i] );
+                upper[i] = (char)toupper( (p->s)[i] );
             }
             upper[p->len] = 0;
             return PltString(p->len, upper);
@@ -376,7 +376,7 @@ PltString::toLower()
 
     if(p) {
         for(size_t i = 0; i < len(); i++) {
-            (p->s)[i] = tolower( (p->s)[i] );
+            (p->s)[i] = (char)tolower( (p->s)[i] );
         }
     }
 }
@@ -390,7 +390,7 @@ PltString::toLower() const
         char *lower = new char[p->len+1];
         if(lower) {
             for(size_t i = 0; i < p->len; i++) {
-                lower[i] = tolower( (p->s)[i] );
+                lower[i] = (char)tolower( (p->s)[i] );
             }
             lower[p->len] = 0;
             return PltString(p->len, lower);
@@ -442,7 +442,8 @@ PltString::hash() const
 
         while( *s ) {
             res = (res << 4) + *(s++);
-            if( (g = res & 0xf0000000) ) {
+            g = res & 0xf0000000;
+            if( g ) {
                 res = (res ^ (g >> 24)) ^ g;
             }
         }

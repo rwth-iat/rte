@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.18 2003-10-13 12:08:22 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrtcpcon.cpp,v 1.19 2007-04-25 10:57:02 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -31,6 +31,8 @@
 #else
 #include <iostream>
 #endif
+
+#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/xdrtcpcon.h"
 #include "ks/xdrmemstream.h"
@@ -79,9 +81,13 @@ KssListenTCPXDRConnection::KssListenTCPXDRConnection(int fd,
 	_state = CNX_STATE_DEAD;
 	return;
     }
+#if !PLT_USE_XTI
     if ( listen(_fd, 5) < 0 ) {
 	_state = CNX_STATE_DEAD;
     }
+#else
+    // TODO: already be configured by server code
+#endif
 } // KssListenTCPXDRConnection::KssListenTCPXDRConnection
         
 
@@ -89,7 +95,7 @@ KssListenTCPXDRConnection::KssListenTCPXDRConnection(int fd,
 // A TCP rendevouser connection is always in the readable state so it can
 // accept incomming connections. Otherwise it can only be dead.
 //
-KsConnection::ConnectionIoMode KssListenTCPXDRConnection::getIoMode() const
+KssConnection::ConnectionIoMode KssListenTCPXDRConnection::getIoMode() const
 {
     return _state == CNX_STATE_DEAD ? CNX_IO_DEAD : CNX_IO_READABLE;
 } // KssListenTCPXDRConnection::ConnectionIoMode
@@ -122,7 +128,7 @@ void KssListenTCPXDRConnection::sendRequest()
 // When a TCP rendevouser "receives" data, this means that there are new
 // incomming connections waiting to be served.
 //
-KsConnection::ConnectionIoMode KssListenTCPXDRConnection::receive()
+KssConnection::ConnectionIoMode KssListenTCPXDRConnection::receive()
 {
     struct sockaddr_in saddr;
 #if defined(PLT_RUNTIME_GLIBC) && (PLT_RUNTIME_GLIBC >= 0x20001)
@@ -147,7 +153,7 @@ KsConnection::ConnectionIoMode KssListenTCPXDRConnection::receive()
 	//
 	return CNX_IO_READABLE;
     } else {
-	KsConnection *con = new KssTCPXDRConnection(newfd, _timeout, 
+	KssConnection *con = new KssTCPXDRConnection(newfd, _timeout, 
 		                                     saddr, saddr_len,
 		                                     _cnx_type);
         if ( !con ) {
@@ -175,7 +181,7 @@ KsConnection::ConnectionIoMode KssListenTCPXDRConnection::receive()
 // ---------------------------------------------------------------------------
 // A TCP rendevouser can´t send anything...
 //
-KsConnection::ConnectionIoMode KssListenTCPXDRConnection::send()
+KssConnection::ConnectionIoMode KssListenTCPXDRConnection::send()
 {
     return getIoMode();
 } // KssListenTCPXDRConnection::send
@@ -185,12 +191,12 @@ KsConnection::ConnectionIoMode KssListenTCPXDRConnection::send()
 // And a TCP rendevouser can't get reset -- it's always "reset" in some
 // respect. And we also don't care of time outs.
 //
-KsConnection::ConnectionIoMode KssListenTCPXDRConnection::reset()
+KssConnection::ConnectionIoMode KssListenTCPXDRConnection::reset()
 {
     return getIoMode();
 } // KssListenTCPXDRConnection::reset
 
-KsConnection::ConnectionIoMode KssListenTCPXDRConnection::timedOut()
+KssConnection::ConnectionIoMode KssListenTCPXDRConnection::timedOut()
 {
     return getIoMode();
 } // KssListenTCPXDRConnection::timedOut
@@ -250,7 +256,7 @@ KssTCPXDRConnection::KssTCPXDRConnection(int fd, unsigned long timeout,
 	    // So this situation will be pretty rare. But even if it should
 	    // show up, we just remain in the connecting state. Because the
 	    // socket will then get at least writeable (because there is now
-	    // free space in the write buffer), the send() method will
+	    // free space in the write buffer), the receive() method will
 	    // be called the next time we run a select(), so we will be
 	    // notified in every case that the connection has been
 	    // established.
@@ -293,7 +299,7 @@ KssTCPXDRConnection::KssTCPXDRConnection(int fd, unsigned long timeout,
 // able, writeable (or both) and whether it wants to time out after a certain
 // time of inactivity.
 //
-KsConnection::ConnectionIoMode KssTCPXDRConnection::getIoMode() const
+KssConnection::ConnectionIoMode KssTCPXDRConnection::getIoMode() const
 {
     switch ( _state ) {
     case CNX_STATE_DEAD:
@@ -374,7 +380,7 @@ KsConnection::ConnectionIoMode KssTCPXDRConnection::getIoMode() const
 // After a reply has been serialized into the underlaying XDR dynamic memory
 // stream, this helper function puts the connection into the sending state.
 //
-KsConnection::ConnectionIoMode KssTCPXDRConnection::enterSendingState()
+KssConnection::ConnectionIoMode KssTCPXDRConnection::enterSendingState()
 {
     int len;
     
@@ -513,7 +519,7 @@ void KssTCPXDRConnection::freeStreamMemory()
 // We have data... so let´s see what to do with it and fight with RPC tele-
 // gramme headers and bodies.
 //
-KsConnection::ConnectionIoMode KssTCPXDRConnection::receive()
+KssConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 {
     switch ( _state ) {
     case CNX_STATE_CONNECTING: {
@@ -782,7 +788,7 @@ KsConnection::ConnectionIoMode KssTCPXDRConnection::receive()
 // is just fine. Another note: we can also send a request to another server,
 // so we need to make sure that the automata does work the right way(tm).
 //
-KsConnection::ConnectionIoMode KssTCPXDRConnection::send()
+KssConnection::ConnectionIoMode KssTCPXDRConnection::send()
 {
     switch ( _state ) {
     case CNX_STATE_CONNECTING: {
@@ -896,7 +902,7 @@ KsConnection::ConnectionIoMode KssTCPXDRConnection::send()
 // flushing the pipe and try to send back an error indication in case we're a
 // server connection. Otherwise we'll just beg for attention.
 //
-KsConnection::ConnectionIoMode KssTCPXDRConnection::timedOut()
+KssConnection::ConnectionIoMode KssTCPXDRConnection::timedOut()
 {
     if ( _state == CNX_STATE_DEAD ) {
     	//
@@ -946,7 +952,7 @@ KsConnection::ConnectionIoMode KssTCPXDRConnection::timedOut()
 // Reset a TCP connection. This usually just results in clearing the under-
 // lying XDR dynamic memory stream and falling back into the idle mode.
 //
-KsConnection::ConnectionIoMode KssTCPXDRConnection::reset()
+KssConnection::ConnectionIoMode KssTCPXDRConnection::reset()
 {
     if ( _state == CNX_STATE_DEAD ) {
     	//
@@ -1009,5 +1015,7 @@ KsConnection::ConnectionIoMode KssTCPXDRConnection::reset()
     return getIoMode();
 } // KssTCPXDRConnection::reset
 
+
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
 /* End of xdrtcpcon.cpp */

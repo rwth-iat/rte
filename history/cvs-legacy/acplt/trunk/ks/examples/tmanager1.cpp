@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.13 2003-10-13 12:54:02 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.14 2007-04-25 10:57:01 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -78,9 +78,16 @@ int main(int argc, char **argv) {
     PltCerrLog log(PROG_NAME);
 
     bool argsok = true;
-    int port = KsServerBase::KS_ANYPORT;
-    bool reuseaddr = false;
-    int idx = 0;
+    int  port   = KsServerBase::KS_ANYPORT;
+    int  idx    = 0;
+
+#if PLT_USE_DEPRECIATED_HEADER
+    #define OUT_STREAM  cerr
+    #define NEW_LINE    endl
+#else
+    #define OUT_STREAM  STDNS::cerr
+    #define NEW_LINE    STDNS::endl
+#endif
 
     //
     // parse command line
@@ -90,7 +97,7 @@ int main(int argc, char **argv) {
             argsok = false;
             break;
         } else if ( strcmp(argv[idx], "--version") == 0 ) {
-            STDNS::cerr << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << STDNS::endl;
+            OUT_STREAM << PROG_NAME << " version " << (const char *) KS_MANAGER_VERSION << NEW_LINE;
             return EXIT_FAILURE;
         } else if ( (strcmp(argv[idx], "-p") == 0) ||
                     (strcmp(argv[idx], "--port") == 0) ) {
@@ -105,9 +112,6 @@ int main(int argc, char **argv) {
                 argsok = false;
                 break;
             }
-        } else if ( (strcmp(argv[idx], "-r") == 0) ||
-                    (strcmp(argv[idx], "--reuseaddr") == 0) ) {
-            reuseaddr = true;
         } else {
             argsok = false;
             break;
@@ -115,30 +119,28 @@ int main(int argc, char **argv) {
     }
 
     if (!argsok) {
-        STDNS::cerr << "Usage: " << PROG_NAME << "[options]" << STDNS::endl
-             << "Runs the testing ACPLT/KS Manager process" << STDNS::endl
-             << STDNS::endl
-             << "  -p #, --port #  binds the testing ACPLT/KS manager to port number #" << STDNS::endl
-             << "  -r, --reuseaddr  reuse socket address" << STDNS::endl
-             << "  --help          display this help and exit" << STDNS::endl
-             << "  --version       output version information and exit" << STDNS::endl;
+        OUT_STREAM  << "Usage: " << PROG_NAME << "[options]" << NEW_LINE
+                    << "Runs the testing ACPLT/KS Manager process" << NEW_LINE
+                    << NEW_LINE
+                    << "  -p #, --port #  binds the testing ACPLT/KS manager to port number #" << NEW_LINE
+                    << "  --help          display this help and exit" << NEW_LINE
+                    << "  --version       output version information and exit" << NEW_LINE;
         return EXIT_FAILURE;
     }
 
 	Manager m(port);
     if ( m.isOk() ) {
-	m.setReuseAddr(reuseaddr);
         m.startServer();
         if ( m.isOk() ) {
-            PLT_DMSG("entering service loop"<<endl);
+            PLT_DMSG("entering service loop"<<NEW_LINE);
             m.run();
-            PLT_DMSG("left service loop"<<endl);
+            PLT_DMSG("left service loop"<<NEW_LINE);
         } else {
-            STDNS::cerr << "The manager could not be initialized." << STDNS::endl;
+            OUT_STREAM << "The manager could not be initialized." << NEW_LINE;
         }
         m.stopServer();
     } else {
-        STDNS::cerr << "The manager could not be initialized." << STDNS::endl;
+        OUT_STREAM << "The manager could not be initialized." << NEW_LINE;
     }
     return 0;
 }

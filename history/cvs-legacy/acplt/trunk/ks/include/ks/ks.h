@@ -1,9 +1,9 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.48 2005-02-14 13:52:57 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/ks.h,v 1.49 2007-04-25 10:57:01 martin Exp $ */
 #ifndef KS_KS_INCLUDED
 #define KS_KS_INCLUDED
 /*
- * Copyright (c) 1996, 2003
+ * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
  * All rights reserved.
@@ -60,12 +60,12 @@ extern "C" {
  * information about with which version of the C++ communication library your
  * server was linked with.
  */
-#define KS_VERSION_STRING "1.3.4"
+#define KS_VERSION_STRING "1.2.4"
 
 	 
 /* ----------------------------------------------------------------------------
  * RPC program number reserved for ACPLT/KS library. This had been aquired
- * from Sun Microsystems. Unfortunately, 0x42 was not available.
+ * from Sun Microsystems.
  */
 #define KS_RPC_PROGRAM_NUMBER 0x49678ul
 
@@ -123,7 +123,6 @@ ENUMDEF(KS_RESULT)
 #define KS_ERR_CANTCONTACT               ENUMVAL(KS_RESULT, 0x1005)
 #define KS_ERR_TIMEOUT                   ENUMVAL(KS_RESULT, 0x1006)
 #define KS_ERR_NOMANAGER                 ENUMVAL(KS_RESULT, 0x1007)
-#define KS_ERR_TERMINATED                ENUMVAL(KS_RESULT, 0x1008)
 
 
 /* ----------------------------------------------------------------------------
