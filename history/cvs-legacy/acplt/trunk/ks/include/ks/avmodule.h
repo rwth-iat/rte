@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KSC_AVMODULE_INCLUDED 
 #define KSC_AVMODULE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avmodule.h,v 1.12 2007-04-25 10:57:01 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avmodule.h,v 1.13 2007-04-25 12:04:25 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

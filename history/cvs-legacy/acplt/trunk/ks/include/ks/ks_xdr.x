@@ -1,5 +1,5 @@
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/ks_xdr.x,v 1.4 1999-09-06 06:52:59 harald Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/ks_xdr.x,v 1.5 2007-04-25 12:04:25 martin Exp $
  *
  * ks_xdr.x -- Specification of the ACPLT/KS protocol for use with the rpcgen
  *   protocol compiler for ONC/RPC. This ONC/RPC protocol specification is

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/w95service.h,v 1.3 2007-04-25 10:57:02 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/w95service.h,v 1.4 2007-04-25 12:04:25 martin Exp $ */
 
 #ifndef KS_W95SERVICE_INCLUDED
 #define KS_W95SERVICE_INCLUDED

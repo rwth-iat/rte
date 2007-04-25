@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.38 2007-04-25 10:57:01 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.39 2007-04-25 12:04:25 martin Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*

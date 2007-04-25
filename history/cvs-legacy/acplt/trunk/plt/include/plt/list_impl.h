@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_LIST_IMPL_INCLUDED
 #define PLT_LIST_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.9 2007-04-25 10:57:02 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/list_impl.h,v 1.10 2007-04-25 12:05:24 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
