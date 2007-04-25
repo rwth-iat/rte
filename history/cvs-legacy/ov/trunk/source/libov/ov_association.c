@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_association.c,v 1.24 2007-04-24 14:11:29 martin Exp $
+*   $Id: ov_association.c,v 1.25 2007-04-25 13:59:03 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,

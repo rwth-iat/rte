@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksclient.c,v 1.13 2004-05-19 14:51:47 ansgar Exp $
+*   $Id: ov_ksclient.c,v 1.14 2007-04-25 13:59:03 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -161,11 +161,11 @@ OV_DLLFNCEXPORT OV_KSCLIENT_CONNECTION_STATE ov_ksclient_connection_getstate(
 ) {
 	if(pconn) {
 		switch(pconn->getState()) {
-		case KsServerConnection::ISC_STATE_CLOSED:
+		case KssInterKsServerConnection::ISC_STATE_CLOSED:
 			return OV_CCS_CLOSED;
-		case KsServerConnection::ISC_STATE_OPEN:
+		case KssInterKsServerConnection::ISC_STATE_OPEN:
 			return OV_CCS_OPEN;
-		case KsServerConnection::ISC_STATE_BUSY:
+		case KssInterKsServerConnection::ISC_STATE_BUSY:
 			return OV_CCS_BUSY;
 		default:
 			break;
@@ -570,7 +570,7 @@ KS_RESULT OvKssInterKsServerConnection::sendrequest(
 *	Class OvKssInterKsServerConnection: asynchronously pay attention
 */
 void OvKssInterKsServerConnection::async_attention(
-	KsServerConnectionOperations op
+	KssInterKsServerConnectionOperations op
 ) {
 	/*
 	*	local variables

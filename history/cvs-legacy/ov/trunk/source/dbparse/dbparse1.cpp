@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse1.cpp,v 1.21 2007-04-24 14:11:29 martin Exp $
+ * $Id: dbparse1.cpp,v 1.22 2007-04-25 13:59:03 martin Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

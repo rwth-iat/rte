@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.h,v 1.6 2007-04-24 14:11:29 martin Exp $
+ * $Id: dbdump.h,v 1.7 2007-04-25 13:59:03 martin Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

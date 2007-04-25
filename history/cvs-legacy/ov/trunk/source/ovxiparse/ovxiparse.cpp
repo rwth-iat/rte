@@ -1,5 +1,5 @@
 /*
- * $Id: ovxiparse.cpp,v 1.7 2007-04-24 14:11:29 martin Exp $
+ * $Id: ovxiparse.cpp,v 1.8 2007-04-25 13:59:03 martin Exp $
  *
  * Copyright (c) 1996-2004
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
