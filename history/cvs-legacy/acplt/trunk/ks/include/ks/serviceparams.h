@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/serviceparams.h,v 1.9 2007-04-25 12:04:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/serviceparams.h,v 1.10 2007-04-25 12:57:20 martin Exp $ */
 #ifndef KS_SERVICEPARAMS_INCLUDED
 #define KS_SERVICEPARAMS_INCLUDED
 /*

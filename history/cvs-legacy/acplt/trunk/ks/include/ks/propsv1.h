@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/propsv1.h,v 1.4 2007-04-25 12:04:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/propsv1.h,v 1.5 2007-04-25 12:57:20 martin Exp $ */
 #ifndef KS_PROPSV1_INCLUDED
 #define KS_PROPSV1_INCLUDED
 /*

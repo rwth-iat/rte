@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/serverconnection.h,v 1.4 2003-10-15 15:27:01 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/interserver.h,v 1.9 2007-04-25 12:57:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -20,26 +20,25 @@
  */
 
 /*
- * serverconnection.h -- implements a connection object which can
+ * interserver.h -- implements an interserver connection object which can
  *                  send ACPLT/KS service requests to other ACPLT/KS
  *                  servers and receive the service replies. This i/o is
  *                  done in the background using the connection manager
  *                  magic. Therefore it's only available when the buffered
  *                  XDR streams have been enabled.
  *
- * Up to the 1.2.x series, this has been interserver.h
- *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
 
-#ifndef KSSERVERCONNECTION_H_INCLUDED
-#define KSSERVERCONNECTION_H_INCLUDED
+#ifndef KSINTERSERVER_H_INCLUDED
+#define KSINTERSERVER_H_INCLUDED
+
+#if PLT_USE_BUFFERED_STREAMS
 
 #include "ks/svrbase.h"
 #include "ks/xdrtcpcon.h"
 #include "ks/xdrudpcon.h"
 #include "ks/register.h"
-#include "ks/avmodule.h"
 
 #if PLT_USE_DEPRECIATED_HEADER
 #include <iostream.h>
@@ -49,22 +48,21 @@
 
 
 // ---------------------------------------------------------------------------
-// The class KsServerConnection provides client functionality to
+// The class KssInterKsServerConnection provides client functionality to
 // ACPLT/KS server, so servers can send ACPLT/KS service requests to other
 // ACPLT/KS servers. This is done asynchronous during the i/o or idle slot
 // and thus appears in the background.
 //
-class KsServerConnection : protected KsConnectionAttentionInterface
+class KssInterKsServerConnection : protected KssConnectionAttentionInterface
 {
 public:
-    KsServerConnection(KsString host, KsString server);
-    KsServerConnection(KsString host); // contact Manager
-    virtual ~KsServerConnection();
+    KssInterKsServerConnection(KsString host, KsString server);
+    virtual ~KssInterKsServerConnection();
 
     //
     // Macro state of the connection.
     //
-    enum KsServerConnectionState {
+    enum KssInterKsServerConnectionState {
 	ISC_STATE_CLOSED, // c. is closed
 	ISC_STATE_OPEN,   // c. is open
 	ISC_STATE_BUSY    // c. may be open and is currently in use (e.g. a
@@ -75,7 +73,7 @@ public:
     // Available asynchronous operations. You'll need them to find out what
     // has happened when this inter-server connection needs attention.
     //
-    enum KsServerConnectionOperations {
+    enum KssInterKsServerConnectionOperations {
 	ISC_OP_OPEN, // open operation has been completed/failed
 	ISC_OP_CALL  // service request has been completed/failed
     };
@@ -100,28 +98,24 @@ public:
     //   send() is just a C++ convenience,
     //   C-lovers please take the beginSend()/.../endSend() route.
     //
-    bool send(u_long serviceid, const KsXdrAble &params);
-    bool send(u_long serviceid, KscNegotiator *neg, const KsXdrAble &params);
+    bool send(u_long serviceid, KsXdrAble &params);
     bool beginSend(u_long serviceid);
     bool endSend();
-    bool sendPing();
 
     //
     // Receive an ACPLT/KS reply from the wire. Note that the same rules
     // for C++ versus C applies as mentioned just before.
     //
     bool receive(KsResult &result);
-    bool receive(KscNegotiator *neg, KsResult &result);
     bool beginReceive();
     bool endReceive();
-    bool receivePing();
 
     //
     // This method needs to be implemented in derived classes.
     //
-    virtual void async_attention(KsServerConnectionOperations op) = 0;
+    virtual void async_attention(KssInterKsServerConnectionOperations op) = 0;
 
-    KsServerConnectionState getState() const { return _state; }
+    KssInterKsServerConnectionState getState() const { return _state; }
     KS_RESULT getLastResult() const { return _result; }
 
     //
@@ -139,8 +133,6 @@ public:
         { connectto = _connect_timeout; callto = _call_timeout; }
 
 protected:
-    void init(KsString host, KsString server, bool isManager);
-
     //
     // Substate of the connection. This state indicates what kind of
     // underlying connection is currently in use.
@@ -155,7 +147,7 @@ protected:
     //
     // handler which is called by the internal connection
     //
-    virtual bool attention(KsConnection &con);
+    virtual bool attention(KssConnection &con);
 
     u_long makeXid();
 
@@ -168,12 +160,10 @@ protected:
 
     KssXDRConnection                *_cln_con;
     bool                             _cln_con_once_closed;
-    KsServerConnectionState  _state;
+    KssInterKsServerConnectionState  _state;
     ISCSubState                      _sub_state;
 
     KS_RESULT                        _result;
-
-    bool                             _is_manager;
 
     KsString                         _host;
     u_short                          _host_port;
@@ -186,9 +176,11 @@ protected:
     unsigned long                    _call_timeout;
 
     unsigned short                   _protocol_version;
-}; // class KsServerConnection
+}; // class KssInterKsServerConnection
 
 
-#endif /* KSSERVERCONNECTION_H_INCLUDED */
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
-// End of ks/serverconnection.h
+#endif /* KSINTERSERVER_H_INCLUDED */
+
+// End of ks/interserver.h

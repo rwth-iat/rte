@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/serverconnection.cpp,v 1.3 2003-10-15 15:27:01 harald Exp $ */
+/* -*-plt-c++-*- */
+/* $Header: /home/david/cvs/acplt/ks/src/interserver.cpp,v 1.12 2007-04-25 12:57:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -20,22 +20,21 @@
  */
 
 /*
- * serverconnection.cpp -- implements a connection object which can
- *                  send ACPLT/KS service requests to other ACPLT/KS
- *                  servers and receive the service replies. This i/o is
- *                  done in the background using the connection manager
- *                  magic. Therefore it's only available when the buffered
- *                  XDR streams have been enabled.
- *
- * Up to the 1.2.x series, this has been interserver.cpp
+ * interserver.cpp -- implements an interserver connection object which can
+ *                    send ACPLT/KS service requests to other ACPLT/KS
+ *                    servers and receive the service replies. This i/o is
+ *                    done in the background using the connection manager
+ *                    magic. Therefore it's only available when the buffered
+ *                    XDR streams have been enabled.
  *
  * Written by Harald Albrecht <harald@plt.rwth-aachen.de>
  */
 
 /* Historical sidenote: somehow "interserver" sounds like "intershop"... */
-/* Now, that sidenote is history too; as is the GDR... */
 
-#include "ks/serverconnection.h"
+#if PLT_USE_BUFFERED_STREAMS
+
+#include "ks/interserver.h"
 
 #if !PLT_SYSTEM_NT
 #include <unistd.h>
@@ -48,43 +47,18 @@
 // Construct a new inter server connection object. This involves parsing the
 // given host and server names for optional port numbers.
 //
-KsServerConnection::KsServerConnection(KsString host, KsString server)
+KssInterKsServerConnection::KssInterKsServerConnection(
+    KsString host, KsString server)
+    : _cln_con(0),
+      _cln_con_once_closed(false),
+      _state(ISC_STATE_CLOSED),
+      _sub_state(ISC_SUBSTATE_NONE),
+      _result(KS_ERR_OK),
+      _host(host), _host_port(0),
+      _server(server), _server_port(0),
+      _connect_timeout(15), _call_timeout(30),
+      _protocol_version(0)
 {
-    init(host, server, false);
-} // KsServerConnection::KsServerConnection
-
-
-// ---------------------------------------------------------------------------
-// Connect to the ACPLT/KS Manager on a given host.
-//
-KsServerConnection::KsServerConnection(KsString host)
-{
-    init(host, "", true);
-} // KsServerConnection::KsServerConnection
-
-
-
-// ---------------------------------------------------------------------------
-// Construct a new inter server connection object. This involves parsing the
-// given host and server names for optional port numbers.
-//
-void
-KsServerConnection::init(KsString host, KsString server, bool isManager)
-{
-    _cln_con = 0;
-    _cln_con_once_closed = false;
-    _state = ISC_STATE_CLOSED;
-    _sub_state = ISC_SUBSTATE_NONE;
-    _result = KS_ERR_OK;
-    _is_manager = isManager;
-    _host = host;
-    _host_port = 0;
-    _server = server;
-    _server_port = 0;
-    _connect_timeout = 15;
-    _call_timeout = 30;
-    _protocol_version = 0;
-
     const char *pColon;
 
     memset(&_old_ip, 0, sizeof(_old_ip));
@@ -120,28 +94,28 @@ KsServerConnection::init(KsString host, KsString server, bool isManager)
             _result = KS_ERR_MALFORMEDPATH;
         }
     }
-} // KsServerConnection::KsServerConnection
+} // KssInterKsServerConnection::KssInterKsServerConnection
 
 
 // ---------------------------------------------------------------------------
 // Clean up the mess we've made during runtime...
 //
-KsServerConnection::~KsServerConnection()
+KssInterKsServerConnection::~KssInterKsServerConnection()
 {
     closeConnection(); // just in case...
-} // KsServerConnection::~KsServerConnection
+} // KssInterKsServerConnection::~KssInterKsServerConnection
 
 
 // ---------------------------------------------------------------------------
 // Return a new transaction id for use with ONC/RPC. This one is identical
 // with the algorithm used by the Sun ONC/RPC package.
 //
-u_long KsServerConnection::makeXid()
+u_long KssInterKsServerConnection::makeXid()
 {
     PltTime now(PltTime::now());
 
     return getpid() ^ now.tv_sec ^ now.tv_usec;
-} // KsServerConnection::makeXid
+} // KssInterKsServerConnection::makeXid
 
 
 // ---------------------------------------------------------------------------
@@ -149,24 +123,24 @@ u_long KsServerConnection::makeXid()
 // incomming attentions on this connection and put the connection under
 // control of the connection manager.
 //
-void KsServerConnection::activateConnection()
+void KssInterKsServerConnection::activateConnection()
 {
     if ( _cln_con ) {
 	_cln_con->setAttentionPartner(this);
-	KsConnectionManager::getConnectionManagerObject()->
+	KsServerBase::getServerObject().getConnectionManager()->
 	    addConnection(*_cln_con);
     }
-} // KsServerConnection::activateConnection
+} // KssInterKsServerConnection::activateConnection
 
 
 // ---------------------------------------------------------------------------
 // Helper: remove a connection from the control of the connection manager and
 // then shut the connection down. Finally delete the connection object.
 //
-void KsServerConnection::closeConnection()
+void KssInterKsServerConnection::closeConnection()
 {
     if ( _cln_con ) {
-	KsConnectionManager::getConnectionManagerObject()->
+	KsServerBase::getServerObject().getConnectionManager()->
 	    removeConnection(*_cln_con);    
 	_cln_con->shutdown();
 	delete _cln_con;
@@ -174,7 +148,7 @@ void KsServerConnection::closeConnection()
     }
     _cln_con_once_closed = true;
     _state = ISC_STATE_CLOSED;
-} // KsServerConnection::closeConnection
+} // KssInterKsServerConnection::closeConnection
 
 
 // ---------------------------------------------------------------------------
@@ -183,7 +157,7 @@ void KsServerConnection::closeConnection()
 // state). We also take care of optionally contacting the ACPLT/KS manager
 // behind a firewall using TCP/IP.
 //
-bool KsServerConnection::open()
+bool KssInterKsServerConnection::open()
 {
     if ( _state != ISC_STATE_CLOSED ) {
 	_result = KS_ERR_OK;
@@ -206,8 +180,6 @@ bool KsServerConnection::open()
     ip.s_addr = inet_addr(_host);
     ip_none.s_addr = INADDR_NONE;
     ip_any.s_addr = INADDR_ANY;
-
-    // TODO: handle HPUX idiosyncrasies
 
     if ( (memcmp(&ip, &ip_none, sizeof(ip)) == 0)
 	 || (memcmp(&ip, &ip_any, sizeof(ip)) == 0) ) {
@@ -252,51 +224,42 @@ bool KsServerConnection::open()
 	return openManagerConnection(_host_port, IPPROTO_TCP);
     }
     return openPortmapperConnection();
-} // KsServerConnection::open
+} // KssInterKsServerConnection::open
 
 
 // ---------------------------------------------------------------------------
 // Close a connection. This can be done even when the connection is dead, or
 // busy, or whatever...
 //
-void KsServerConnection::close()
+void KssInterKsServerConnection::close()
 {
     closeConnection();
-} // KsServerConnection::close
+} // KssInterKsServerConnection::close
 
 
 // ---------------------------------------------------------------------------
 // Return the XDR stream for this connection or 0 if no XDR stream is
 // currently allocated to this interserver connection.
 //
-XDR *KsServerConnection::getXdr() const
+XDR *KssInterKsServerConnection::getXdr() const
 {
     if ( _cln_con ) {
 	return _cln_con->getXdr();
+    } else {
+	return 0;
     }
-    return 0;
-} // KsServerConnection::getXdr
+} // KssInterKsServerConnection::getXdr
 
 
 // ---------------------------------------------------------------------------
 // Return the ACPLT/KS protocol version spoken by server.
 //
-u_short KsServerConnection::getProtocolVersion() const {
+u_short KssInterKsServerConnection::getProtocolVersion() const {
     if ( _state != ISC_STATE_OPEN ) {
 	return 0;
     }
     return _protocol_version;
 }
-
-
-// ---------------------------------------------------------------------------
-// Convenience function for pinging ONC/RPC servers.
-//
-bool KsServerConnection::sendPing()
-{
-    return beginSend(0)
-	   && endSend();
-} // KsServerConnection::sendPing
 
 
 // ---------------------------------------------------------------------------
@@ -306,7 +269,7 @@ bool KsServerConnection::sendPing()
 // endSend() to finish the telegramme and do the actual i/o -- well, it's more
 // "o" than "i" in the case of the request...
 //
-bool KsServerConnection::beginSend(u_long serviceid)
+bool KssInterKsServerConnection::beginSend(u_long serviceid)
 {
     if ( _state != ISC_STATE_OPEN ) {
 	_result = KS_ERR_OK;
@@ -324,14 +287,14 @@ bool KsServerConnection::beginSend(u_long serviceid)
     }
     _result = KS_ERR_OK;
     return true;
-} // KsServerConnection::beginSend
+} // KssInterKsServerConnection::beginSend
 
 
 // ---------------------------------------------------------------------------
 // Finish building the request telegramme and put the connection into sending
 // mode. Make sure to use the right timeout span.
 //
-bool KsServerConnection::endSend()
+bool KssInterKsServerConnection::endSend()
 {
     if ( _state != ISC_STATE_OPEN ) {
 	_result = KS_ERR_OK;
@@ -340,7 +303,7 @@ bool KsServerConnection::endSend()
 
     _cln_con->sendRequest();
     _cln_con->setTimeout(_call_timeout);
-    if ( !KsConnectionManager::getConnectionManagerObject()->
+    if ( !KsServerBase::getServerObject().getConnectionManager()->
 	 trackConnection(*_cln_con) ) {
 	_result = KS_ERR_GENERIC;
 	return false;
@@ -348,68 +311,37 @@ bool KsServerConnection::endSend()
     _state = ISC_STATE_BUSY;
     _result = KS_ERR_OK;
     return true;
-} // KsServerConnection::endSend
+} // KssInterKsServerConnection::endSend
 
 
 // ---------------------------------------------------------------------------
 //
-bool KsServerConnection::send(u_long serviceid, const KsXdrAble &params)
+bool KssInterKsServerConnection::send(u_long serviceid, KsXdrAble &params)
 {
-    return send(serviceid, 0, params);
-} // KsServerConnection::send
-
-
-bool KsServerConnection::send(u_long serviceid, 
-			      KscNegotiator *neg,
-			      const KsXdrAble &params)
-{
-    //
-    // Put the connection into sending mode (create the RPC header)
-    //
     if ( !beginSend(serviceid) ) {
 	return false;
     }
-    bool ok = true;
-    if ( !neg ) {
-	//
-	// Use the A/V NONE scheme, if no suitable negotiator has been
-	// supplied.
-	//
-	enum_t avscheme = KS_AUTH_NONE;
-	ok = xdr_enum(_cln_con->getXdr(), &avscheme);
+    //
+    // Use the A/V NONE scheme at this time...
+    //
+    enum_t avscheme = 0;
+    bool ok = xdr_enum(_cln_con->getXdr(), &avscheme);
+    if ( avscheme == KS_AUTH_NONE ) {
 	ok &= params.xdrEncode(_cln_con->getXdr());
     } else {
-	//
-	// Use the negotiator supplied by the requestor.
-	//
-	ok = neg->xdrEncode(_cln_con->getXdr());
-	ok &= params.xdrEncode(_cln_con->getXdr());
+	ok = false;
     }
-    //
-    // Do the final check and finish the request. The data then can be
-    // sent whenever the system gets idle time or a multithreaded connection
-    // manager is used.
-    //
     if ( !ok ) {
 	_result = KS_ERR_GENERIC;
 	return false;
     }
     return endSend();
-} // KsServerConnection::send
+} // KssInterKsServerConnection::send
 
 
 // ---------------------------------------------------------------------------
 //
-bool KsServerConnection::receivePing()
-{
-    return beginReceive()
-	   && endReceive();
-} // KsServerConnection::receivePing
-
-
-// ---------------------------------------------------------------------------
-//
-bool KsServerConnection::beginReceive()
+bool KssInterKsServerConnection::beginReceive()
 {
     if ( _state != ISC_STATE_OPEN ) {
 	_result = KS_ERR_OK;
@@ -427,24 +359,24 @@ bool KsServerConnection::beginReceive()
     }
     _result = KS_ERR_OK;
     return true;
-} // KsServerConnection::beginReceive
+} // KssInterKsServerConnection::beginReceive
 
 
 // ---------------------------------------------------------------------------
 // Afterwards reset the connection and thus the underlying XDR stream to free
 // up some memory (at least free it for the fragment cache).
 //
-bool KsServerConnection::endReceive()
+bool KssInterKsServerConnection::endReceive()
 {
     if ( _state != ISC_STATE_OPEN ) {
 	_result = KS_ERR_OK;
 	return false;
     }
-    KsConnectionManager::getConnectionManagerObject()->
+    KsServerBase::getServerObject().getConnectionManager()->
 	resetConnection(*_cln_con);
     _result = KS_ERR_OK;
     return true;
-} // KsServerConnection::endReceive
+} // KssInterKsServerConnection::endReceive
 
 
 // ---------------------------------------------------------------------------
@@ -452,45 +384,36 @@ bool KsServerConnection::endReceive()
 // an error on the RPC level, or we run out of memory or into trouble, this
 // function returns false. If everything succeeds, it'll return true.
 //
-bool KsServerConnection::receive(KsResult &result)
-{
-    return receive(0, result);
-} // KsServerConnection::receive
-
-
-bool KsServerConnection::receive(KscNegotiator *neg, KsResult &result)
+bool KssInterKsServerConnection::receive(KsResult &result)
 {
     if ( !beginReceive() ) {
 	return false; // _result already set.
     }
-    bool ok;
-    if ( !neg ) {
-	//
-	// Use the A/V NONE scheme if no negotiator was given, and then
-	// deserialize the result into an appropriate object.
-	//
-	u_long avdummy = 0;
-	ok = xdr_u_long(_cln_con->getXdr(), &avdummy);
-	ok &= result.xdrDecode(_cln_con->getXdr());
-    } else {
-	//
-	// Otherwise, use the negotiator specified by the requestor for
-	// retrieving the answer from the server.
-	//
-	ok = neg->xdrDecode(_cln_con->getXdr());
-	ok &= result.xdrDecode(_cln_con->getXdr());
+    //
+    // Use the A/V NONE scheme at this time, and then deserialize the
+    // result into an appropriate object.
+    //
+    u_long avdummy = 0;
+    bool ok = xdr_u_long(_cln_con->getXdr(), &avdummy);
+    ok &= result.xdrDecode(_cln_con->getXdr());
+    if ( !ok ) {
+	endReceive();
+	_result = KS_ERR_GENERIC;
+	return false;
     }
-    ok &= endReceive();
-    _result = ok ? KS_ERR_OK : KS_ERR_GENERIC;
+    if ( !endReceive() ) {
+	return false;
+    }
+    _result = KS_ERR_OK;
     return true;
-} // KsServerConnection::receive
+} // KssInterKsServerConnection::receive
 
 
 // ---------------------------------------------------------------------------
 // Initiate the connection establishment sequence to the portmapper. If some-
 // thing goes wrong, then we'll return false, otherwise true.
 //
-bool KsServerConnection::openPortmapperConnection()
+bool KssInterKsServerConnection::openPortmapperConnection()
 {
     //
     // Now initiate the opening sequence to the portmapper...
@@ -514,9 +437,9 @@ bool KsServerConnection::openPortmapperConnection()
 				       2, /* secs between consecutive
                                              retries */
 				       &_host_addr, sizeof(_host_addr),
-				       KsConnection::CNX_TYPE_CLIENT);
+				       KssConnection::CNX_TYPE_CLIENT);
     if ( !_cln_con || 
-	 (_cln_con->getState() == KsConnection::CNX_STATE_DEAD) ) {
+	 (_cln_con->getState() == KssConnection::CNX_STATE_DEAD) ) {
 	if ( _cln_con ) {
 	    _cln_con->shutdown();
 	    delete _cln_con;
@@ -536,21 +459,21 @@ bool KsServerConnection::openPortmapperConnection()
     // can now enter the connection establishment state.
     //
 #if DEBUG_STATES
-    STDNS::cerr << "opening portmapper connection" << STDNS::endl;
+    cout << "opening portmapper connection" << endl;
 #endif
     _result = KS_ERR_OK;
     _state = ISC_STATE_BUSY;
     activateConnection();
     return true;
-} // KsServerConnection::openPortmapperConnection
+} // KssInterKsServerConnection::openPortmapperConnection
 
 
 // ---------------------------------------------------------------------------
 // Initiate the connection establishment sequence to the manager. If something
 // goes boing, then we'll return false, otherwise true.
 //
-bool KsServerConnection::openManagerConnection(u_short port,
-					       int protocol)
+bool KssInterKsServerConnection::openManagerConnection(u_short port,
+						       int protocol)
 {
     //
     // Now initiate the opening sequence to the ACPLT/KS manager...
@@ -576,14 +499,14 @@ bool KsServerConnection::openManagerConnection(u_short port,
 					   5, /* secs between
                                                  consecutive retries */
 					   &_host_addr, sizeof(_host_addr),
-					   KsConnection::CNX_TYPE_CLIENT);
+					   KssConnection::CNX_TYPE_CLIENT);
     } else {
 	_cln_con = new KssTCPXDRConnection(sock, _connect_timeout, 
 					   _host_addr, sizeof(_host_addr),
-					   KsConnection::CNX_TYPE_CLIENT);
+					   KssConnection::CNX_TYPE_CLIENT);
     }
     if ( !_cln_con || 
-	 (_cln_con->getState() == KsConnection::CNX_STATE_DEAD) ) {
+	 (_cln_con->getState() == KssConnection::CNX_STATE_DEAD) ) {
 	if ( _cln_con ) {
 	    _cln_con->shutdown();
 	    delete _cln_con;
@@ -603,20 +526,20 @@ bool KsServerConnection::openManagerConnection(u_short port,
     // can now enter the connection establishment state.
     //
 #if DEBUG_STATES
-    STDNS::cerr << "opening manager connection" << STDNS::endl;
+    cout << "opening manager connection" << endl;
 #endif
     _result = KS_ERR_OK;
     _state = ISC_STATE_BUSY;
     activateConnection();
     return true;
-} // KsServerConnection::openManagerConnection
+} // KssInterKsServerConnection::openManagerConnection
 
 
 // ---------------------------------------------------------------------------
 // Initiate the connection establishment sequence to the manager. If something
 // goes boing, then we'll return false, otherwise true.
 //
-bool KsServerConnection::openServerConnection(u_short port)
+bool KssInterKsServerConnection::openServerConnection(u_short port)
 {
     //
     // Now initiate the opening sequence to an ACPLT/KS server...
@@ -636,9 +559,9 @@ bool KsServerConnection::openServerConnection(u_short port)
     _sub_state = ISC_SUBSTATE_CONNECTING_SERVER;
     _cln_con = new KssTCPXDRConnection(sock, _connect_timeout, 
 				       _host_addr, sizeof(_host_addr),
-				       KsConnection::CNX_TYPE_CLIENT);
+				       KssConnection::CNX_TYPE_CLIENT);
     if ( !_cln_con || 
-	 (_cln_con->getState() == KsConnection::CNX_STATE_DEAD) ) {
+	 (_cln_con->getState() == KssConnection::CNX_STATE_DEAD) ) {
 	if ( _cln_con ) {
 	    _cln_con->shutdown();
 	    delete _cln_con;
@@ -658,13 +581,13 @@ bool KsServerConnection::openServerConnection(u_short port)
     // can now enter the connection establishment state.
     //
 #if DEBUG_STATES
-    STDNS::cerr << "opening server connection" << STDNS::endl;
+    cout << "opening server connection" << endl;
 #endif
     _result = KS_ERR_OK;
     _state = ISC_STATE_BUSY;
     activateConnection();
     return true;
-} // KsServerConnection::openServerConnection
+} // KssInterKsServerConnection::openServerConnection
 
 
 // ---------------------------------------------------------------------------
@@ -672,53 +595,53 @@ bool KsServerConnection::openServerConnection(u_short port)
 // (sometimes) finite automata. Here we control the connection sequences as
 // well as sending and receiving RPC telegrammes.
 //
-bool KsServerConnection::attention(KsConnection &con)
+bool KssInterKsServerConnection::attention(KssConnection &con)
 {
-    KsConnection::ConnectionState state = con.getState();
+    KssConnection::ConnectionState state = con.getState();
 
 #if DEBUG_STATES
-    STDNS::cerr << "macro and sub connection state: ";
+    cout << "macro and sub connection state: ";
     switch ( _state ) {
     case ISC_STATE_CLOSED:
-	STDNS::cerr << "CLOSED."; break;
+	cout << "CLOSED."; break;
     case ISC_STATE_OPEN:
-	STDNS::cerr << "OPEN."; break;
+	cout << "OPEN."; break;
     case ISC_STATE_BUSY:
-	STDNS::cerr << "BUSY."; break;
+	cout << "BUSY."; break;
     default:
-	STDNS::cerr << (int) _state;
+	cout << (int) _state;
     }
-    STDNS::cerr << " ";
+    cout << " ";
     switch ( _sub_state ) {
     case ISC_SUBSTATE_NONE:
-	STDNS::cerr << "(NONE)"; break;
+	cout << "(NONE)"; break;
     case ISC_SUBSTATE_CONNECTING_PMAP:
-	STDNS::cerr << "(PMAP)"; break;
+	cout << "(PMAP)"; break;
     case ISC_SUBSTATE_CONNECTING_MANAGER:
-	STDNS::cerr << "(MANAGER)"; break;
+	cout << "(MANAGER)"; break;
     case ISC_SUBSTATE_CONNECTING_SERVER:
-	STDNS::cerr << "(SERVER)"; break;
+	cout << "(SERVER)"; break;
     default:
-	STDNS::cerr << (int) _sub_state;
+	cout << (int) _sub_state;
     }
-    STDNS::cerr << STDNS::endl;
+    cout << endl;
 
-    STDNS::cerr << "micro (delegated) connection state: ";
+    cout << "micro (delegated) connection state: ";
     switch ( state ) {
-    case KsConnection::CNX_STATE_CONNECTING:
-	STDNS::cerr << "CONNECTING."; break;
-    case KsConnection::CNX_STATE_CONNECTED:
-	STDNS::cerr << "CONNECTED."; break;
-    case KsConnection::CNX_STATE_CONN_FAILED:
-	STDNS::cerr << "CONNECTION NOT ESTABLISHED."; break;
-    case KsConnection::CNX_STATE_READY:
-	STDNS::cerr << "READY."; break;
-    case KsConnection::CNX_STATE_READY_FAILED:
-	STDNS::cerr << "READY FAILED."; break;
+    case KssConnection::CNX_STATE_CONNECTING:
+	cout << "CONNECTING."; break;
+    case KssConnection::CNX_STATE_CONNECTED:
+	cout << "CONNECTED."; break;
+    case KssConnection::CNX_STATE_CONN_FAILED:
+	cout << "CONNECTION NOT ESTABLISHED."; break;
+    case KssConnection::CNX_STATE_READY:
+	cout << "READY."; break;
+    case KssConnection::CNX_STATE_READY_FAILED:
+	cout << "READY FAILED."; break;
     default:
-	STDNS::cerr << (int) state;
+	cout << (int) state;
     }
-    STDNS::cerr << STDNS::endl;
+    cout << endl;
 #endif
 
     //
@@ -727,9 +650,9 @@ bool KsServerConnection::attention(KsConnection &con)
     // either connection establishment or sending requests/receiving replies
     // fails, then we enter the closed mode.
     //
-    if ( (state == KsConnection::CNX_STATE_CONN_FAILED)
-	 || (state == KsConnection::CNX_STATE_READY_FAILED)
-	 || (state == KsConnection::CNX_STATE_DEAD) ) {
+    if ( (state == KssConnection::CNX_STATE_CONN_FAILED)
+	 || (state == KssConnection::CNX_STATE_READY_FAILED)
+	 || (state == KssConnection::CNX_STATE_DEAD) ) {
 	//
 	// The macro state of the connection is now "closed". We use the
 	// substate to determine the exact error result we want to show the
@@ -748,13 +671,13 @@ bool KsServerConnection::attention(KsConnection &con)
 	    // could fail. When either the portmapper or the Manager do
 	    // not respond, we assume a failed "virtual connection".
 	    //
-	    state = KsConnection::CNX_STATE_CONN_FAILED;
+	    state = KssConnection::CNX_STATE_CONN_FAILED;
 	    break;
 	default:
 	    _result = KS_ERR_NETWORKERROR;
 	}
 	closeConnection();
-	async_attention(state == KsConnection::CNX_STATE_READY_FAILED ?
+	async_attention(state == KssConnection::CNX_STATE_READY_FAILED ?
 	                    ISC_OP_CALL : ISC_OP_OPEN);
 	return false; // do *not* "reactivate" the connection in _cln_con!
     }
@@ -767,7 +690,7 @@ bool KsServerConnection::attention(KsConnection &con)
 	// to find out where the ACPLT/KS manager lives.
 	//
 	switch ( state ) {
-	case KsConnection::CNX_STATE_CONNECTED: {
+	case KssConnection::CNX_STATE_CONNECTED: {
 	    //
 	    // The connection to the portmapper is established, so try to
 	    // ask for the ACPLT/KS manager. This is the usual query for
@@ -794,7 +717,7 @@ bool KsServerConnection::attention(KsConnection &con)
 	    return true; // "reactivate" connection (...to watch it...)
 	}
 
-	case KsConnection::CNX_STATE_READY: {
+	case KssConnection::CNX_STATE_READY: {
 	    //
 	    // We got an answer from the portmapper. So check whether we
 	    // got a realy reply without errors and then fetch the port
@@ -863,55 +786,32 @@ bool KsServerConnection::attention(KsConnection &con)
 	// the server in question.
 	//
 	switch ( state ) {
-	case KsConnection::CNX_STATE_CONNECTED: {
+	case KssConnection::CNX_STATE_CONNECTED: {
 	    //
 	    // The connection with the ACPLT/KS manager has been established.
-	    // In case we're just a Manager-only connection, we're finished
-	    // here; otherwise we need to query the Manager for a KS server.
+	    // We can now ask it for the server we're looking for.
 	    //
-	    if ( _is_manager ) {
-		//
-		// The connection to a particular ACPLT/KS (here: the Manager)
-		// server has been established. We are now notifying the user
-		// of this connection.
-		// The problem now is that the user is allowed to close the
-		// connection at this time and reopen it (for whatever obscure
-		// reasons). In this case we're not allowed to reactivate the
-		// (old) connection (or...bang!). So we track a possible close
-		// on this connection.
-		//
-		_state = ISC_STATE_OPEN;
-		_sub_state = ISC_SUBSTATE_CONNECTING_SERVER;
-		_result = KS_ERR_OK;
-		_cln_con_once_closed = false;
-		async_attention(ISC_OP_OPEN);
-		return !_cln_con_once_closed;
-	    } else {
-		//
-		// We can now ask it for the server we're looking for.
-		//
-		KsServerDesc serverdesc(_server, _protocol_version);
+	    KsServerDesc serverdesc(_server, _protocol_version);
 
-		bool ok = _cln_con->beginRequest(makeXid(),
-						 KS_RPC_PROGRAM_NUMBER,
-						 _protocol_version,
-						 KS_GETSERVER);
-		//
-		// Always use the A/V NONE mechanism when asking the manager.
-		//
-		u_long avdummy = 0;
-		ok = ok && xdr_u_long(_cln_con->getXdr(), &avdummy);
-		ok = ok && serverdesc.xdrEncode(_cln_con->getXdr());
-		if ( !ok ) {
-		    _result = KS_ERR_GENERIC;
-		    break;
-		}
-		_cln_con->sendRequest();
-		return true; // "reactivate" connection (...watch it...)
+	    bool ok = _cln_con->beginRequest(makeXid(),
+					     KS_RPC_PROGRAM_NUMBER,
+					     _protocol_version,
+					     KS_GETSERVER);
+	    //
+	    // Always use the A/V NONE mechanism when asking the manager.
+	    //
+	    u_long avdummy = 0;
+	    ok = ok && xdr_u_long(_cln_con->getXdr(), &avdummy);
+	    ok = ok && serverdesc.xdrEncode(_cln_con->getXdr());
+	    if ( !ok ) {
+		_result = KS_ERR_GENERIC;
+		break;
 	    }
+	    _cln_con->sendRequest();
+	    return true; // "reactivate" connection (...watch it...)
 	}
 
-	case KsConnection::CNX_STATE_READY: {
+	case KssConnection::CNX_STATE_READY: {
 	    //
 	    // We got an answer from the ACPLT/KS manager. So let's see
 	    // where the ACPLT/KS server in question lives.
@@ -938,9 +838,9 @@ bool KsServerConnection::attention(KsConnection &con)
 
 		if ( ok && (serverresult.result == KS_ERR_OK) ) {
 #if 0
-		    STDNS::cerr << "server = " << serverresult.server.name << STDNS::endl;
-		    STDNS::cerr << "port = " << serverresult.port << STDNS::endl;
-		    STDNS::cerr << "protocol version = " << _protocol_version << STDNS::endl;
+		    cout << "server = " << serverresult.server.name << endl;
+		    cout << "port = " << serverresult.port << endl;
+		    cout << "protocol version = " << _protocol_version << endl;
 #endif
 		    //
 		    // Phew. Now we can try to connect to the server as
@@ -1002,7 +902,7 @@ bool KsServerConnection::attention(KsConnection &con)
 	// We have finally reached step 3:
 	//
 	switch ( state ) {
-	case KsConnection::CNX_STATE_CONNECTED: {
+	case KssConnection::CNX_STATE_CONNECTED: {
 	    //
 	    // The connection to a particular ACPLT/KS server has been
 	    // established. We are now notifying the user of this connection.
@@ -1019,7 +919,7 @@ bool KsServerConnection::attention(KsConnection &con)
 	    return !_cln_con_once_closed;
 	}
 
-	case KsConnection::CNX_STATE_READY: {
+	case KssConnection::CNX_STATE_READY: {
 	    //
 	    // An answer for a RPC request sent a long time ago has been
 	    // arrived. We leave it up to the async_attention() handler
@@ -1050,10 +950,12 @@ bool KsServerConnection::attention(KsConnection &con)
     // to the user of this connection.
     //
     closeConnection();
-    async_attention(state == KsConnection::CNX_STATE_READY_FAILED ?
+    async_attention(state == KssConnection::CNX_STATE_READY_FAILED ?
 		    ISC_OP_CALL : ISC_OP_OPEN);
     return false; // do not reactivate...
-} // KsServerConnection::attention
+} // KssInterKsServerConnection::attention
 
+
+#endif /* PLT_USE_BUFFERED_STREAMS */
 
 // End of ks/interserver.cpp

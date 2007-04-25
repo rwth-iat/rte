@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_HISTDOMAIN_INCLUDED
 #define KS_HISTDOMAIN_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/histdomain.h,v 1.9 2007-04-25 12:04:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/histdomain.h,v 1.10 2007-04-25 12:57:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

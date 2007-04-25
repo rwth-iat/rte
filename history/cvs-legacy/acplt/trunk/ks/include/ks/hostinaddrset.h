@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_HOSTINADDRSET_INCLUDED
 #define KS_HOSTINADDRSET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/hostinaddrset.h,v 1.6 2007-04-25 12:04:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/hostinaddrset.h,v 1.7 2007-04-25 12:57:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

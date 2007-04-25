@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_COMPARABLE_INCLUDED
 #define PLT_COMPARABLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/comparable.h,v 1.8 2007-04-25 12:05:23 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/comparable.h,v 1.9 2007-04-25 12:57:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

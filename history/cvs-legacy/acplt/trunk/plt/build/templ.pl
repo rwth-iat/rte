@@ -16,7 +16,7 @@ if ($make eq "") {
 $compile = "$make $objname";
 $link = "@ARGV";
 
-print STDERR "Template linker (c) 1997, 2003 ACPLT\n";
+print STDERR "Template linker (c) 1997, 2000 ACPLT\n";
 
 #
 # Read include file
@@ -30,7 +30,7 @@ if (open (IN, "<$cppname")) {
 	}
     }
 } else {
-    open (IN, ">>$cppname") || die("can not read nor touch $cppname");
+    open (IN, ">>$cppname") || die("cant read nor touch $cppname");
 }
 close (IN);
 
@@ -46,19 +46,17 @@ do {
     ++ $iter;
     print STDERR  "Starting run $iter...\n";
     print STDERR "$link\n";
-    open (MSGS, "$link 2>&1 |") || die('can not start linker');
+    open (MSGS, "$link 2>&1 |") || die('cant start linker');
     while (<MSGS>) {
         print STDERR $_;
 	if (!/In function.*:$/) {
           if (/undefined reference to [^\w]*(\w+<\s*\w+.*>)::~?\w+.*\(.*\)/
            || /undefined reference to [^\w]*(\w+<\s*\w+.*>).*\s+virtual table/
-	   || /undefined reference to [^\w]*vtable for (\w+<\s*\w+.*>)/
-	   || /undefined reference to [^\w]*typeinfo for (\w+<\s*\w+.*>)/
 	      ) {
 	    # member
-	    @new{$1} = $1;
+	    @new{$1} = 1;
 	    #print STDERR ".";
-	    #print STDERR "****" . $1 . "****\n";
+	    #print STDERR 1;
 	    $needanother = 1;
             }
 	} else {
@@ -73,7 +71,7 @@ do {
 #           print "NEWLIST @news OLDLIST @olds";
 	    die("Last iteration resolved no new symbols");	
 	}
-	open (OUT, ">$cppname") || die('can not open output');
+	open (OUT, ">$cppname") || die('cant open output');
 	foreach $templ (@news) {
 	    printf OUT "template class %s;\n", $templ;
 	}

@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.14 2007-04-25 12:04:26 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/path.cpp,v 1.15 2007-04-25 12:57:21 martin Exp $ */
 /*
  * Copyright (c) 1996, 2001
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_MASK_INCLUDED
 #define KS_MASK_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/mask.h,v 1.5 2007-04-25 12:04:25 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/mask.h,v 1.6 2007-04-25 12:57:20 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen

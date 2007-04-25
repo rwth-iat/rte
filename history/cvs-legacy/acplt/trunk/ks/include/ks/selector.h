@@ -2,7 +2,7 @@
 #ifndef KS_SELECTOR_INCLUDED
 #define KS_SELECTOR_INCLUDED
 /*
- * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.12 2007-04-25 12:04:25 martin Exp $
+ * $Header: /home/david/cvs/acplt/ks/include/ks/selector.h,v 1.13 2007-04-25 12:57:20 martin Exp $
  *
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
