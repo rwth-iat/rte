@@ -19,7 +19,7 @@ Instructions:
 
 3. Compile oncrpc, libmpm and copy the libs to bin/[OS_Compiler_Name]
 
-4. Compile ks nd copy the libs to bin/[OS_Compiler_Name]
+4. Compile first plt and then ks, copy the libs to bin/[OS_Compiler_Name]
 
 5. Compile ov and copy the binaries to wherever you want to use them.
 
