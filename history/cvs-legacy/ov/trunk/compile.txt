@@ -1,0 +1,28 @@
+Instructions:
+
+1. Check out the modules in the following directories:
+
+- Module "acplt"
+	- Module ov
+- Module oncrpc
+- Module libmpm
+
+2. Create a directory bin/[OS_Compiler_Name] at the same level as
+ acplt, for example:
+
+- acplt
+	- ov
+- oncrpc
+- libmpm
+- bin
+	-ntvc (or linux, nt, ...)
+
+3. Compile oncrpc, libmpm and copy the libs to bin/[OS_Compiler_Name]
+
+4. Compile ks nd copy the libs to bin/[OS_Compiler_Name]
+
+5. Compile ov and copy the binaries to wherever you want to use them.
+
+
+For further information (except the changed directory structure) please
+look at the installation guide.
