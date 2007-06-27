@@ -1,79 +1,84 @@
+/*
+*	Copyright (C) 2007
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*/
+/***********************************************************************
+*
+*	File:
+*	------
+*	hmi-generic.js
+*
+*	Editors:
+*	--------
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 1.1.1.2 $
+*	$Date: 2007-06-27 15:35:29 $
+*
+*	History:
+*	--------
+*	21-June-2007			St
+*		-	General Revision
+*
+***********************************************************************/
+
 /*********************************
 	Global Variables
 *********************************/
 
-var HMI = new HMI();
+var HMI = new HMI(false, true, true, true, true, true);
 
 /*********************************
-	Add SVGComponent
+	Functions - $
 *********************************/
 
-function fncOnClickAddVarValue() {
-	var d1 = new Date();
-	
-	//	init Communication
-	//
-	HMI.KSClient.init(document.getElementById('idHostAndServer').value, document.getElementById('idTCLKSGateway').value) != null
-   if (HMI.KSClient.TCLKSHandle != null)
-   {
-	   HMI.addComponent('idNewPlayground', document.getElementById('idPath0').value);
-	   HMI.addComponent('idNewPlayground', document.getElementById('idPath1').value);
-	   
-	   HMI.initGestures();
-	};
-	
-	var d2 = new Date();	
-   document.getElementById('idCalcTime').value = d2.getTime() - d1.getTime();
-   
-   delete d1;
- 	delete d2;
-};
+function $(id) {
+	return document.getElementById(id)
+}
 
 /*********************************
-	Replace Component
+	Functions - deleteChilds
 *********************************/
 
-function fncOnClickRefresh() {	
-	var d1 = new Date();
+function deleteChilds(ParentNode) {
+	HMI.hmi_log_trace("deleteChilds - Start");
 	
-   if (HMI.KSClient.TCLKSHandle != null)
-   {
-		HMI.replaceComponent('idNewPlayground', document.getElementById('idPath0').value);
-		HMI.replaceComponent('idNewPlayground', document.getElementById('idPath1').value);
-		HMI.initGestures();
-   } else {
-   	fncOnClickAddVarValue();
-	};
-		
-   var d2 = new Date();
-   document.getElementById('idCalcTime').value = d2.getTime() - d1.getTime();
- 
- 	delete d1;
- 	delete d2;
-};
-
-/*********************************
-	Replace Component automatically
-*********************************/
-
-function fncOnClickAutoRefresh() {	
-	var d1 = new Date();
+	while (ParentNode.childNodes.length > 0)
+		ParentNode.removeChild(ParentNode.lastChild);
 	
-   if (HMI.KSClient.TCLKSHandle != null)
-   {
-		HMI.replaceComponent('idNewPlayground', document.getElementById('idPath0').value);
-		HMI.replaceComponent('idNewPlayground', document.getElementById('idPath1').value);
-		HMI.initGestures();
-	 	   
-	   HMI.RefreshTimeoutID = setTimeout("fncOnClickAutoRefresh()", document.getElementById('idRefreshTime').value);
-   } else {
-   	fncOnClickAddVarValue();
-   	fncOnClickAutoRefresh();
-	};
-		
-   var d2 = new Date();
-   document.getElementById('idCalcTime').value = d2.getTime() - d1.getTime();
- 
- 	delete d1;
- 	delete d2;
-};
+	HMI.hmi_log_trace("deleteChilds - End");
+}

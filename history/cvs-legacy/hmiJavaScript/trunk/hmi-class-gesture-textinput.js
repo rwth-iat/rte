@@ -38,7 +38,7 @@
 *
 *	File:
 *	------
-*	hmi-class-gesture-doubleclick.js
+*	hmi-class-gesture-textinput.js
 *
 *	Editors:
 *	--------
@@ -46,13 +46,13 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.2 $
+*	$Revision: 1.1.1.1 $
 *	$Date: 2007-06-27 15:35:29 $
 *
 *	History:
 *	--------
-*	21-June-2007			St
-*		-	General Revision
+*	26-June-2007			St
+*		-	File created
 *
 ***********************************************************************/
 
@@ -60,7 +60,7 @@
 	constructor
 ***********************************************************************/
 
-function DoubleClick (Component, Controller) {
+function TextInput (Component, Controller) {
 	this.arm(Component);
 };
 
@@ -68,35 +68,49 @@ function DoubleClick (Component, Controller) {
 	prototype
 ***********************************************************************/
 
-DoubleClick.prototype = {
+TextInput.prototype = {
 	/*********************************
 		arm
 	*********************************/
 	arm : function (Component) {
-		this._registerOnDoubleClick(Component, false, this);
-		Component.setAttribute("cursor", "pointer");
+		this._registerOnClick(Component, false, this);
+		Component.setAttribute("cursor", "text");
 	},
 	
 	/*********************************
-		_registerOnDoubleClick
+		_registerOnClick
 	*********************************/
-	_registerOnDoubleClick: function(Component, capture, listener) {
-		this._onDoubleClickThunk = function (evt) { listener.onDoubleClick(evt); };
-		Component.addEventListener("dblclick", this._onDoubleClickThunk, capture);
+	_registerOnClick: function(Component, capture, listener) {
+		this._onClickThunk = function (evt) { listener.onClick(evt); };
+		Component.addEventListener("click", this._onClickThunk, capture);
 	},
 	
 	/*********************************
-		onDoubleClick
+		onClick
 	*********************************/
-	_onDoubleClickThunk: null,
-	onDoubleClick: function (evt) {
-		this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-doubleclick'));
+	_onClickThunk: null,
+	onClick: function (evt) {		
+		if (evt.detail == 2)
+		{
+			//	doubleclick => STOP
+			//
+			return;
+		};
+
+		var text = evt.target.textContent;
+		var input = prompt('Geben Sie bitte einen neuen Wert ein', text);
+		if(	input	!= null
+			&&	input	!= ""
+			&&	input != text)
+		{
+			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
+		};
 	},
 	
 	/*********************************
 		_sendCommand
 	*********************************/
-	_sendCommand : function (evt, Component) {
+	_sendCommand : function (evt, Component, input) {
 		var Command = null;
 		
 		if (Component != null)
@@ -105,9 +119,8 @@ DoubleClick.prototype = {
 				'{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
 				'{' + Component.getAttribute('id') + '} ' + 
-				'{DOUBLECLICK} ' +
-				'{' + evt.layerX + '} ' +
-				'{' + evt.layerY + '}' +
+				'{TEXTINPUT} ' +
+				'{' + input + '} ' +
 				'}';
 			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
