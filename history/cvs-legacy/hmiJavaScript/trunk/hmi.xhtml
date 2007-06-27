@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="iso8859-1"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+/*
+*	Copyright (C) 2007
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*/
+/***********************************************************************
+*
+*	File:
+*	hmi.xhtml
+*
+*	Editors:
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	CVS:
+*	$Revision: 1.1.1.1 $
+*	$Date: 2007-06-27 15:37:43 $
+*
+*	History:
+*	21-June-2007			St
+*		-	General Revision
+*
+***********************************************************************/
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg">
+	<head>
+		<title>HMI-Startcenter - hmi.xhtml</title>
+		
+		<script type="text/javascript" src="./JavaScript/hmi-class-HMIJavaScriptKSClient.js"/>
+		<script type="text/javascript" src="./JavaScript/hmi-class-HMIDOMParser.js"/>
+		<script type="text/javascript" src="./JavaScript/hmi-class-HMI.js"/>
+		<script type="text/javascript" src="./JavaScript/hmi-class-gesture-click.js"/>
+		<script type="text/javascript" src="./JavaScript/hmi-class-gesture-doubleclick.js"/>
+		<script type="text/javascript" src="./JavaScript/hmi-class-gesture-rightclick.js"/>
+	   <script type="text/javascript" src="./JavaScript/hmi-class-gesture-move.js"/>
+	   <script type="text/javascript" src="./JavaScript/hmi-class-gesture-textinput.js"/>
+		<script type="text/javascript" src="./JavaScript/hmi-generic.js"/>
+	</head>
+	
+	<!-- 
+		/*********************************
+			Body
+		*********************************/
+	-->
+	<body oncontextmenu="return false" onunload="HMI.unload()">
+		<h1>
+			<table>
+				<colgroup>
+    				<col width="50%"/>
+    				<col width="50%"/>
+  				</colgroup>
+				<tr>
+					<td align="left">HMI - Startcenter</td>
+					<td align="center">
+						<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik"/>
+					</td>
+				</tr>
+				<tr>
+					<td/>
+					<td align="center" style="font-size: 8pt;">Copyright Lehrstuhl für Prozessleittechnik (Stefan Schmitz) 2007</td>
+				</tr>
+			</table>
+		</h1>
+		
+		<div>
+			<hr color="blue"/>
+		
+			<table>
+				<colgroup>
+    				<col width="150px"/>
+    				<col width="200px"/>
+    				<col width="100px"/>
+  				</colgroup>
+				<tr>
+					<td>Host</td>
+					<td><input id="idHost" type="text" style="width: 200px;" value="localhost"/></td>
+				</tr>
+				<tr>
+					<td>Refresh Time [ms]</td>
+					<td><input id="idRefreshTime" type="text" style="width: 200px;" value="1000"/></td>
+				</tr>
+				<tr>
+					<td>Server</td>
+					<td><select id="idServers" name="Sheets" size="1" style="width:200px;"></select></td>
+					<td>
+						<input type="button" value="ShowServers"
+							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
+					</td>
+				</tr>
+				<tr>
+					<td>Sheets</td>
+					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
+				</tr>
+			</table>
+				
+			<hr color="blue"/>
+		</div>
+		
+		<p id="idPlayground">
+		</p>
+	</body>
+</html>
