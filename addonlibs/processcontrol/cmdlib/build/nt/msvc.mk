@@ -85,6 +85,7 @@ $(MYLIB_LIB) : $(MYLIB_DLL)
 $(MYLIB_DLL) : $(MYLIB_OBJ) $(OVLIBS) $(BASELIBS)
 	$(LD) /out:$@ /implib:$(MYLIB_LIB) $(filter-out $(RES_), $^)
 	copy $(MYLIB_DLL) $(subst /,\\, $(USER_LIBS_DIR))
+	copy $(MYLIB_DLL) $(subst /,\\, $(IFBS_HOME)\server\user\libs)
 
 #   Aufraeumen
 #   ----------
