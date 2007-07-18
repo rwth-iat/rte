@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2007-07-18 08:45:49 $
 *
 *	History:
 *	--------
@@ -314,15 +314,24 @@ HMIJavaScriptKSClient.prototype = {
 		var Node = null;
 		var i = 0;
 		
-		while (	Response != null
-				&&	Response.indexOf('}') != -1)
+		if (Response.indexOf('{{') == -1)
 		{
-			Sheet[i] = Response.substring(1, Response.indexOf('}'));
-			Response = Response.substring(Response.indexOf('}') + 2, Response.length);
-			i = i + 1;
-			
-			if (Response.indexOf('}') == -1)
+			Response = Response.substring(Response.indexOf('{') + 1, Response.indexOf('}'));
+		} else {
+			Response = Response.substring(Response.indexOf('{{') + 2, Response.indexOf('}}'));
+		};
+		
+		while (Response != null)
+		{
+			if (Response.indexOf(' ') == -1)
+			{
+				Sheet[i] = Response;
 				Response = null;
+			} else {
+				Sheet[i] = Response.substring(0, Response.indexOf(' '));
+				Response = Response.substring(Response.indexOf(' ') + 1, Response.length);
+			};
+			i = i + 1;
 		};
 		
 		if (Sheet.length > 0)

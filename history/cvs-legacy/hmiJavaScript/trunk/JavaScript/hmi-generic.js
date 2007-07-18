@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2007-07-18 08:45:49 $
 *
 *	History:
 *	--------
@@ -60,7 +60,7 @@
 	Global Variables
 *********************************/
 
-var HMI = new HMI(false, true, true, true, true, true);
+var HMI = new HMI(false, true, true, true, true, false);
 
 /*********************************
 	Functions - $
