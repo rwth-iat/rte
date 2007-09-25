@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.54 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/client.cpp,v 1.55 2007-09-25 13:25:57 martin Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -1513,7 +1513,11 @@ KscServer::requestByOpcode(u_long service,
                            KsResult &result) 
 {
     enum clnt_stat errcode;
-
+    //
+    // Init
+    //
+    _last_result = KS_ERR_OK;
+    
     //
     // Create client transport for the communication with the ACPLT/KS
     // server if that hasn't been done already. If there is no such
@@ -1544,6 +1548,7 @@ KscServer::requestByOpcode(u_long service,
 #if PLT_DEBUG
         cerr << "Trying for the " << (try_count+1) << "th. time" << endl;
 #endif
+
         if ( _client_transport ) {
 	    //
 	    // Now if we have an ONC/RPC client transport, we can try to
@@ -1565,6 +1570,7 @@ KscServer::requestByOpcode(u_long service,
 	    KscRequestInStruct inData(negotiator, &params);
 	    KscRequestOutStruct outData(negotiator, &result);
 
+            _last_result = KS_ERR_OK;
             errcode = clnt_call(_client_transport, service,
 				(xdrproc_t) KscRequestInHelper,
 				(char *) &inData,
@@ -1594,8 +1600,10 @@ KscServer::requestByOpcode(u_long service,
         destroyTransport();
     }
 
-    setResultAfterService(errcode);
-        
+    if(_last_result == KS_ERR_OK) {
+        setResultAfterService(errcode);
+    }
+    
 #if PLT_DEBUG
     if ( errcode == RPC_SUCCESS ) {
         cerr << "request successfull" << endl;
