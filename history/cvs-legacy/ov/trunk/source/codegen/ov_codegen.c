@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.27 2007-04-25 13:59:03 martin Exp $
+*   $Id: ov_codegen.c,v 1.28 2007-09-25 13:13:50 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -348,7 +348,7 @@ int ov_codegen_createheaderfile(
 
 	fprintf(fp, "#ifdef OV_COMPILE_LIBRARY_%s\n", plib->identifier);
 	/* Manual fix */
-	fprintf(fp, "#if OV_COMPILER_BORLAND\n");
+	fprintf(fp, "#if OV_COMPILER_BORLAND || OV_COMPILER_CYGWIN\n");
 	fprintf(fp, "#define OV_VAREXTERN extern\n");
 	fprintf(fp, "#else\n");
 	fprintf(fp, "#define OV_VAREXTERN OV_DLLVAREXPORT\n");
