@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.24 2007-04-25 13:59:03 martin Exp $
+*   $Id: ov_class.c,v 1.25 2007-09-25 13:19:41 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -483,18 +483,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	*	check parameters
 	*/
 	if(!ppobj || !pclass || !pparent || !identifier) {
-if(!ppobj) {
-  fprintf(stderr, " (1)\n");
-}
-if(!pclass) {
-  fprintf(stderr, " (2)\n");
-}
-if(!pparent) {
-  fprintf(stderr, " (3)\n");
-}
-if(!identifier) {
-  fprintf(stderr, " (4)\n");
-}
 		return OV_ERR_BADPARAM;
 	}
 	if(!Ov_DynamicPtrCast(ov_class, pclass)) {

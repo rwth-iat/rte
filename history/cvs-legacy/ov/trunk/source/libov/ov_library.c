@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_library.c,v 1.24 2007-04-25 13:59:03 martin Exp $
+*   $Id: ov_library.c,v 1.25 2007-09-25 13:19:41 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -429,7 +429,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 	/*
 	*	load global variables of the library
 	*/
-	if (plibdef->setglobalvarsfnc) return (plibdef->setglobalvarsfnc)();
+	if (plibdef->setglobalvarsfnc) {
+    
+        result = plibdef->setglobalvarsfnc();
+        return result;
+    }
+
 	return OV_ERR_LIBDEFMISMATCH;
 }
 
