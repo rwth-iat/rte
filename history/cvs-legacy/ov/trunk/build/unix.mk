@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.19 2007-04-24 14:11:29 martin Exp $
+#   $Id: unix.mk,v 1.20 2007-09-25 11:55:16 wolfram Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -50,7 +50,7 @@ COMPILER		= GNU
 FLEX			= flex
 BISON			= bison
 
-CC			= gcc
+CC			= gcc-2.95
 CC_FLAGS		= -g -Wall -O2 -shared
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
@@ -60,12 +60,12 @@ C_LIBS			=
 LD				= $(CC) -shared
 LD_LIB			= -ldl
 
-CXX			= gcc -x c++
+CXX			= gcc-2.95 -x c++
 CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates -Wno-deprecated
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 # CXX_LINK		= $(CXX)
-CXX_LINK 		= MAKE=$(MAKE) perl ../templ.pl gcc
+CXX_LINK 		= MAKE=$(MAKE) perl ../templ.pl gcc-2.95
 CXX_LIBS		= $(C_LIBS) -lstdc++
 
 AR				= ar
