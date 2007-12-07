@@ -46,13 +46,17 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.2 $
-*	$Date: 2007-07-18 08:45:49 $
+*	$Revision: 1.3 $
+*	$Date: 2007-12-07 10:47:00 $
 *
 *	History:
 *	--------
 *	21-June-2007			St
 *		-	General Revision
+*
+*	22-November-2007		St
+*		-	added more information if MANAGER, server or sheet is not
+*			available
 *
 ***********************************************************************/
 
@@ -182,7 +186,7 @@ HMIJavaScriptKSClient.prototype = {
 		if (Server.length > 0)
 		{
 			Node = document.createElement('option');
-			Node.innerHTML = '- select Server -';
+			Node.innerHTML = '- select server -';
 			HMI.PossServers.appendChild(Node);
 			
 			for (i = 0; i < Server.length; i++)
@@ -195,6 +199,13 @@ HMIJavaScriptKSClient.prototype = {
 				};
 			};
 			HMI.PossServers.addEventListener('change', function () {HMI.showSheets(this.options[this.selectedIndex].value)}, false);
+			
+			if (Node.innerHTML == '- select server -')
+				Node.innerHTML = '- no server available -';
+		} else {
+			Node = document.createElement('option');
+			Node.innerHTML = '- no MANAGER available-';
+			HMI.PossServers.appendChild(Node);
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - End");
@@ -321,7 +332,7 @@ HMIJavaScriptKSClient.prototype = {
 			Response = Response.substring(Response.indexOf('{{') + 2, Response.indexOf('}}'));
 		};
 		
-		while (Response != null)
+		while (Response != null && Response != "")
 		{
 			if (Response.indexOf(' ') == -1)
 			{
@@ -337,7 +348,7 @@ HMIJavaScriptKSClient.prototype = {
 		if (Sheet.length > 0)
 		{
 			Node = document.createElement('option');
-			Node.innerHTML = '- select Sheet -';
+			Node.innerHTML = '- select sheet -';
 			HMI.PossSheets.appendChild(Node);
 			
 			for (i = 0; i < Sheet.length; i++)
@@ -347,6 +358,10 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.PossSheets.appendChild(Node);
 			};
 			HMI.PossSheets.addEventListener('change', function () {HMI.showSheet(this.options[this.selectedIndex].value)}, false);
+		} else {
+			Node = document.createElement('option');
+			Node.innerHTML = '- no sheets available -';
+			HMI.PossSheets.appendChild(Node);
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - End");

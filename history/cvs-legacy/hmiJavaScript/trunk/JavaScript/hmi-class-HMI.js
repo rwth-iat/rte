@@ -46,13 +46,16 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2007-12-07 10:47:00 $
 *
 *	History:
 *	--------
 *	21-June-2007			St
 *		-	General Revision
+*
+*	22-November-2007		St
+*		-	test console-existing on logging
 *
 ***********************************************************************/
 
@@ -121,7 +124,7 @@ HMI.prototype = {
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if (Server == '- select Server -')
+		if (Server == '- select server -')
 			return;
 		
 		this.KSClient.init(this.KSClient.KSServer.substring(0, this.KSClient.KSServer.indexOf('/')) + '/' + Server, location.host);
@@ -140,7 +143,7 @@ HMI.prototype = {
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if (Sheet == '- select Sheet -')
+		if (Sheet == '- select sheet -')
 			return;
 		
 		if (HMI.KSClient.TCLKSHandle != null)
@@ -494,43 +497,48 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.unload - End");
 	},
 	
+   /********************************************************************
+		logging
+			requires console of firebug
+   ********************************************************************/
+	
 	/*********************************
 		hmi_log_debug
 	*********************************/
 	hmi_log_debug: function (text) {
-		if (this.debug == true)
-			console.debug("HMI_DEBUG: %s", text);
+		if (window.console != null && this.debug == true)
+			window.console.debug("HMI_DEBUG: %s", text);
 	},
 	
 	/*********************************
 		hmi_log_error
 	*********************************/
 	hmi_log_error: function (text) {
-		if (this.error == true)
-			console.error("HMI_ERROR: %s", text);
+		if (window.console != null && this.error == true)
+			window.console.error("HMI_ERROR: %s", text);
 	},
 	
 	/*********************************
 		hmi_log_warning
 	*********************************/
 	hmi_log_warning: function (text) {
-		if (this.warning == true)
-			console.warn("HMI_WARNING: %s", text);
+		if (window.console != null && this.warning == true)
+			window.console.warn("HMI_WARNING: %s", text);
 	},
 	
 	/*********************************
 		hmi_log_info
 	*********************************/
 	hmi_log_info: function (text) {
-		if (this.info == true)
-			console.info("HMI_INFO: %s", text);
+		if (window.console != null && this.info == true)
+			window.console.info("HMI_INFO: %s", text);
 	},
 	
 	/*********************************
 		hmi_log_trace
 	*********************************/
 	hmi_log_trace: function (text) {
-		if (this.trace == true)
-			console.debug("HMI_TRACE: %s", text);
+		if (window.console != null && this.trace == true)
+			window.console.debug("HMI_TRACE: %s", text);
 	}
 };
