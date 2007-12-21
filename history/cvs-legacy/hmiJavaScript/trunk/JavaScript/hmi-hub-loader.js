@@ -37,15 +37,15 @@
 /***********************************************************************
 *
 *	File:
-*	hmi.xhtml
+*	hmi-hub-loader.js
 *
 *	Editors:
 *	HA							Harald Albrecht <harald@plt.rwth-aachen.de>
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.1 $
-*	$Date: 2007-07-18 08:46:02 $
+*	$Revision: 1.2 $
+*	$Date: 2007-12-21 06:31:01 $
 *
 *	History:
 *	01-March-2005			HA
