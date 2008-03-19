@@ -1,0 +1,37 @@
+<html>
+<!-- 
+http://www.lipfert-malik.de/webdesign/tutorial/bsp/browser_js_test.html?alph#Detail
+-->
+
+<script type="text/javascript">
+	var str_browser = "";
+	var int_version = parseInt(navigator.appVersion.substr(0,3));
+	if (document.innerHeight == "undefined") {
+		if (document.getElementById != "undefined") {
+			str_browser = "ie";
+		} else {
+			str_browser = "ie4_alt";
+		}
+	} else if (window.pkcs11 != "undefined" || window.updateCommands != "undefined") {
+		if (int_version >= 4) {
+			str_browser = "gecko";
+			window.location.href = "hmi.xhtml";
+		} else {
+			str_browser = "gecko_alt";
+		}
+	}else if (window.opera != "undefined") {
+		if (int_version >= 4) {
+			str_browser = "opera";
+		} else {
+			str_browser = "opera_alt";
+		}
+	} else {
+		str_browser = "irgendwas_alt";
+	}
+	alert(str_browser);
+	
+	<!-- window.location.href = 'newhmi.html?browser='+str_browser; -->
+</script>
+</head>
+<body/>
+</html>

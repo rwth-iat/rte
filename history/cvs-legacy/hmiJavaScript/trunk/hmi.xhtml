@@ -48,8 +48,8 @@
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.2 $
-*	$Date: 2007-07-18 08:45:49 $
+*	$Revision: 1.3 $
+*	$Date: 2008-03-19 09:01:10 $
 *
 *	History:
 *	21-June-2007			St
@@ -65,6 +65,26 @@
 	<head>
 		<title>HMI-Startcenter - hmi.xhtml</title>
 		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js"/>
+		<script type="text/javascript">
+			var showMenu = true;
+			
+			function Menue (){
+			  if (showMenu)
+			  {
+			  		//menue ausschalten
+			      document.getElementById("hmi_header").style.display = "none";
+			      showMenu = false;
+			      document.getElementById("pfeile").innerHTML = "&darr;";
+			      document.getElementById("knopftext").innerHTML = "HMI-Header einblenden";
+			  } else {
+			  		//menue einschalten
+			  	document.getElementById("hmi_header").style.display = "block";
+				showMenu = true;
+				document.getElementById("pfeile").innerHTML = "&uarr;";
+				document.getElementById("knopftext").innerHTML = "HMI-Header ausblenden";
+			  };
+			};
+		</script>
 	</head>
 	
 	<!-- 
@@ -73,6 +93,9 @@
 		*********************************/
 	-->
 	<body oncontextmenu="return false" onunload="HMI.unload()">
+		<div style="padding: 10px; float: right;">
+			<span style="font-size:large;" id="pfeile">&uarr;</span> <a href="javascript:Menue()"><span id="knopftext">HMI-Header ausblenden</span></a>
+		</div>
 		<h1>
 			<table>
 				<colgroup>
@@ -90,11 +113,10 @@
 					<td align="center" style="font-size: 8pt;">Copyright Lehrstuhl für Prozessleittechnik (Stefan Schmitz) 2007</td>
 				</tr>
 			</table>
+			<hr color="blue"/>
 		</h1>
 		
-		<div>
-			<hr color="blue"/>
-		
+		<div id="hmi_header">		
 			<table>
 				<colgroup>
     				<col width="150px"/>
