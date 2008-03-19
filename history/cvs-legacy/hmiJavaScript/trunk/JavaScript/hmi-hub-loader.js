@@ -44,8 +44,8 @@
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.2 $
-*	$Date: 2007-12-21 06:31:01 $
+*	$Revision: 1.3 $
+*	$Date: 2008-03-19 09:02:12 $
 *
 *	History:
 *	01-March-2005			HA
