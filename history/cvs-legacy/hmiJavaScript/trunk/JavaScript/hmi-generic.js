@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.2 $
-*	$Date: 2007-07-18 08:45:49 $
+*	$Revision: 1.3 $
+*	$Date: 2008-03-27 16:46:17 $
 *
 *	History:
 *	--------
@@ -81,4 +81,23 @@ function deleteChilds(ParentNode) {
 		ParentNode.removeChild(ParentNode.lastChild);
 	
 	HMI.hmi_log_trace("deleteChilds - End");
+}
+
+/*********************************
+	Functions - hideHeader
+*********************************/
+function hideHeader (){
+	if (showHeader){
+		//menue ausschalten
+		showHeader = false;
+		document.getElementById("hmi_header").style.display = "none";
+		document.getElementById("knopftext").innerHTML = "HMI-Header einblenden";
+		document.getElementById("pfeile").innerHTML = "&#8659;";
+	} else {
+		//menue einschalten
+		showHeader = true;
+		document.getElementById("hmi_header").style.display = "block";
+		document.getElementById("knopftext").innerHTML = "HMI-Header ausblenden";
+		document.getElementById("pfeile").innerHTML = "&#8657;";
+	}
 }

@@ -47,9 +47,11 @@
 *	Editors:
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
 *	CVS:
-*	$Revision: 1.1 $
-*	$Date: 2008-03-19 16:48:00 $
+*	$Revision: 1.2 $
+*	$Date: 2008-03-27 16:46:17 $
 *
 *	History:
 *	21-June-2007			St
@@ -58,71 +60,47 @@
 *	03-July-2007			St
 *		-	added hmi-hub-loader.js
 *
+*	26-March-2008			Je
+*		-	Header hidable
+*
 ***********************************************************************/
 -->
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg">
 	<head>
-		<title>HMI-Startcenter - hmi.xhtml</title>
+		<title>HMI-Startcenter - Gecko Version</title>
 		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js"/>
 		<script type="text/javascript">
-			var showMenu = true;
-			
-			function Menue (){
-			  if (showMenu)
-			  {
-			  		//menue ausschalten
-			      document.getElementById("hmi_header").style.display = "none";
-			      showMenu = false;
-			      document.getElementById("pfeile").innerHTML = "&darr;";
-			      document.getElementById("knopftext").innerHTML = "HMI-Header einblenden";
-			  } else {
-			  		//menue einschalten
-			  	document.getElementById("hmi_header").style.display = "block";
-				showMenu = true;
-				document.getElementById("pfeile").innerHTML = "&uarr;";
-				document.getElementById("knopftext").innerHTML = "HMI-Header ausblenden";
-			  };
-			};
+			//Initialize variable
+			var showHeader = true;
 		</script>
 	</head>
-	
 	<!-- 
 		/*********************************
 			Body
 		*********************************/
 	-->
-	<body oncontextmenu="return false" onunload="HMI.unload()">
-		<div style="padding: 10px; float: right;">
-			<span style="font-size:large;" id="pfeile">&uarr;</span> <a href="javascript:Menue()"><span id="knopftext">HMI-Header ausblenden</span></a>
-		</div>
-		<h1>
+	<body oncontextmenu="return false" style="margin:0px;" onunload="HMI.unload()">
+		<table width="100%">
+			<tr>
+				<td align="left" style="padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">HMI - Startcenter</td>
+				<td align="center" style="padding:0px;width:125px;" >
+					<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik"/>
+				</td>
+				<td align="center" style="font-size: 8pt;">&copy; Lehrstuhl für Prozessleittechnik (Stefan Schmitz) 2008</td>
+				<td style="white-space:nowrap;">
+					<span style="font-size:large;" id="pfeile">&#8657;</span> <a href="javascript:hideHeader()"><span id="knopftext">HMI-Header ausblenden</span></a>
+				</td>
+			</tr>
+		</table>
+		<hr style="margin:0px; background-color:blue;height:2px;"/>
+		<div id="hmi_header">
 			<table>
 				<colgroup>
-    				<col width="50%"/>
-    				<col width="50%"/>
-  				</colgroup>
-				<tr>
-					<td align="left">HMI - Startcenter</td>
-					<td align="center">
-						<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik"/>
-					</td>
-				</tr>
-				<tr>
-					<td/>
-					<td align="center" style="font-size: 8pt;">Copyright Lehrstuhl für Prozessleittechnik (Stefan Schmitz) 2007</td>
-				</tr>
-			</table>
-			<hr color="blue"/>
-		</h1>
-		
-		<div id="hmi_header">		
-			<table>
-				<colgroup>
-    				<col width="150px"/>
-    				<col width="200px"/>
-    				<col width="100px"/>
-  				</colgroup>
+					<col width="150px"/>
+					<col width="200px"/>
+					<col width="100px"/>
+				</colgroup>
 				<tr>
 					<td>Host</td>
 					<td><input id="idHost" type="text" style="width: 200px;" value="localhost"/></td>
@@ -144,10 +122,8 @@
 					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
 				</tr>
 			</table>
-				
-			<hr color="blue"/>
+		<hr style="background-color:blue;height:2px;"/>
 		</div>
-		
 		<p id="idPlayground">
 		</p>
 	</body>
