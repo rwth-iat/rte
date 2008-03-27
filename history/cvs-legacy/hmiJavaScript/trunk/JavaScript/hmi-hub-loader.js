@@ -44,8 +44,8 @@
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.3 $
-*	$Date: 2008-03-19 09:02:12 $
+*	$Revision: 1.4 $
+*	$Date: 2008-03-27 16:52:42 $
 *
 *	History:
 *	01-March-2005			HA
@@ -62,7 +62,11 @@
 ***********************************************************************/
 
 function SCRIPT_HUB_SEARCH(node, elementName, result) {
-	if (	(node.nodeType == Node.ELEMENT_NODE)
+	if (node.ELEMENT_NODE == undefined){
+//		alert("kein element node attribut");
+		node.ELEMENT_NODE = 1;
+	}
+	if (	(node.nodeType == node.ELEMENT_NODE)
 		&&	(node.nodeName == elementName))
 	{
 		result.push(node);
@@ -73,7 +77,7 @@ function SCRIPT_HUB_SEARCH(node, elementName, result) {
 	{
 		SCRIPT_HUB_SEARCH(children[idx], elementName, result);
 	};
-};
+}
 
 /***********************************************************************
 	Loads the specified list of script files by creating the necessary
@@ -88,7 +92,7 @@ function SCRIPT_HUB_SEARCH(node, elementName, result) {
 function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	
 	/********************************************************************
-   	We first try to find from where this hub file has been loaded.
+		We first try to find from where this hub file has been loaded.
 		Our strategy is comparable simple: we scan all script elements until
 		we find the one that is referencing us -- but since we can't
 		know our name (we don't now which script element referenced us),
