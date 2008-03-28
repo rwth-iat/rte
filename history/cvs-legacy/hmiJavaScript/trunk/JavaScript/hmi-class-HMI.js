@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.3 $
-*	$Date: 2008-03-28 09:33:41 $
+*	$Revision: 1.4 $
+*	$Date: 2008-03-28 16:38:37 $
 *
 *	History:
 *	--------
@@ -508,24 +508,33 @@ HMI.prototype = {
 		hmi_log_debug
 	*********************************/
 	hmi_log_debug: function (text) {
-		if (window.console != null && this.debug == true)
+		if (window.console != null && this.debug == true){
 			window.console.debug("HMI_DEBUG: %s", text);
+		}else if (opera.postError != null && this.debug == true){
+			opera.postError("HMI_DEBUG: "+ text);
+		}
 	},
 	
 	/*********************************
 		hmi_log_error
 	*********************************/
 	hmi_log_error: function (text) {
-		if (window.console != null && this.error == true)
+		if (window.console != null && this.error == true){
 			window.console.error("HMI_ERROR: %s", text);
+		}else if (opera.postError != null && this.error == true){
+			opera.postError("HMI_DEBUG: "+ text);
+		}
 	},
 	
 	/*********************************
 		hmi_log_warning
 	*********************************/
 	hmi_log_warning: function (text) {
-		if (window.console != null && this.warning == true)
+		if (window.console != null && this.warning == true){
 			window.console.warn("HMI_WARNING: %s", text);
+		}else if (opera.postError != null && this.warning == true){
+			opera.postError("HMI_DEBUG: "+ text);
+		}
 	},
 	
 	/*********************************
