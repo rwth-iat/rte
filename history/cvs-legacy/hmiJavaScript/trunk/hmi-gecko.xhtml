@@ -42,7 +42,7 @@
 /***********************************************************************
 *
 *	File:
-*	hmi.xhtml
+*	hmi-gecko.xhtml
 *
 *	Editors:
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.2 $
-*	$Date: 2008-03-27 16:46:17 $
+*	$Revision: 1.3 $
+*	$Date: 2008-03-28 09:33:41 $
 *
 *	History:
 *	21-June-2007			St
@@ -80,7 +80,7 @@
 			Body
 		*********************************/
 	-->
-	<body oncontextmenu="return false" style="margin:0px;" onunload="HMI.unload()">
+	<body style="margin:0px;" onunload="HMI.unload()">
 		<table width="100%">
 			<tr>
 				<td align="left" style="padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">HMI - Startcenter</td>
@@ -124,7 +124,7 @@
 			</table>
 		<hr style="background-color:blue;height:2px;"/>
 		</div>
-		<p id="idPlayground">
+		<p oncontextmenu="return false" id="idPlayground">
 		</p>
 	</body>
 </html>

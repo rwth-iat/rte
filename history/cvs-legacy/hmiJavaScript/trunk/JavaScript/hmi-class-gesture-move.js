@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2008-03-28 09:33:41 $
 *
 *	History:
 *	--------
@@ -240,7 +240,9 @@ Dragger.prototype = {
 	/*********************************
 		startDrag
 	*********************************/
-	startDrag: function (evt) {		
+	startDrag: function (evt) {
+		this.hmi_log_trace("Dragger.prototype.startDrag - Start");
+		
 		//	DOUBLECLICK
 		//
 		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-doubleclick') == true
@@ -308,7 +310,9 @@ Dragger.prototype = {
 			
 			Node._xxx = null; delete Node._xxx; delete Node;
 			SVGComponent._xxx = null; delete SVGComponent._xxx; delete SVGComponent;
-		};
+		};		
+		
+		this.hmi_log_trace("Dragger.prototype.startDrag - End");
 	},
 	
 	/*********************************
@@ -316,7 +320,9 @@ Dragger.prototype = {
 	*********************************/
 	stopDragThunk: function() {
 	},
-	stopDrag: function (evt) {
+	stopDrag: function (evt) {		
+		this.hmi_log_trace("Dragger.prototype.stopDrag - Start");
+		
 		var Clone = document.getElementById(HMI.HMI_Constants.NODE_NAME_CLONE);
 		
 		this._controller._currentDragger = null;
@@ -364,12 +370,16 @@ Dragger.prototype = {
 		};
 		
 		Clone._xxx = null; delete Clone._xxx; delete Clone;
+		
+		this.hmi_log_trace("Dragger.prototype.stopDrag - End");
 	},
 	
 	/*********************************
 		switchGround
 	*********************************/
 	switchGround: function (evt, ground) {
+		this.hmi_log_trace("Dragger.prototype.switchGround - Start");
+		
 		//	impossible to be own ground
 		//
 		if (this._node == ground._node)
@@ -433,6 +443,8 @@ Dragger.prototype = {
 			
 			delete node;
 		};
+		
+		this.hmi_log_trace("Dragger.prototype.switchGround - End");
 	},
 	
 	/*********************************

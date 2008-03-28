@@ -44,17 +44,22 @@
 *	--------
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
 *	CVS:
 *	----
-*	$Revision: 1.3 $
-*	$Date: 2008-03-27 16:46:17 $
+*	$Revision: 1.4 $
+*	$Date: 2008-03-28 09:33:41 $
 *
 *	History:
 *	--------
 *	21-June-2007			St
 *		-	General Revision
 *
-***********************************************************************/
+*	26-March-2008			Je
+*		-	Header hidable
+*
+************************************************************************/
 
 /*********************************
 	Global Variables

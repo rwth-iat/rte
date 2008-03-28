@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.2 $
-*	$Date: 2007-12-07 10:47:00 $
+*	$Revision: 1.3 $
+*	$Date: 2008-03-28 09:33:41 $
 *
 *	History:
 *	--------
@@ -383,6 +383,8 @@ HMI.prototype = {
 		Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		for (var idx = 0; idx < Elements.length; ++idx)
 		{
+			HMI.hmi_log_trace("%u %u "+ idx + Elements.length);
+			window.console.debug("%u %u", idx, Elements.length);
 			HMI._initGestures(Elements[idx]);
 		};
 		
