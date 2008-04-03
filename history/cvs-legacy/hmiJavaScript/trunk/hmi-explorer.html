@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!--
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 /*
 *	Copyright (C) 2007
 *	Chair of Process Control Engineering,
@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.2 $
-*	$Date: 2008-03-27 17:17:35 $
+*	$Revision: 1.3 $
+*	$Date: 2008-04-03 14:31:11 $
 *
 *	History:
 *	21-June-2007			St
@@ -63,73 +63,94 @@
 ***********************************************************************/
 -->
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xml:lang="en">
 	<head>
+		<meta http-equiv="Content-Style-Type" content="text/css">
+		<meta http-equiv="Content-Script-Type" content="text/javascript">
 		<title>HMI-Startcenter - Internet Explorer Version</title>
-<!--		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js"/>
+<!--		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js">
 -->
+		<object id="AdobeSVG" classid="clsid:78156a80-c6a1-4bbf-8e6a-3cd390eeb4e2"></object>
+		<?import namespace="svg" implementation="#AdobeSVG"?>
 		<script type="text/javascript">
 			var showHeader = true;
 			
 			function hideHeader (){
-			  if (showHeader)
-			  {
-			  		//menue ausschalten
-			      document.getElementById("hmi_header").style.display = "none";
-			      showHeader = false;
-			      document.getElementById("pfeile").innerHTML = "&darr;";
-			      document.getElementById("knopftext").innerHTML = "HMI-Header einblenden";
-			  } else {
-			  		//menue einschalten
-			  	document.getElementById("hmi_header").style.display = "block";
-				showHeader = true;
-				document.getElementById("pfeile").innerHTML = "&uarr;";
-				document.getElementById("knopftext").innerHTML = "HMI-Header ausblenden";
-			  };
-			};
+				if (showHeader){
+					//menue ausschalten
+					document.getElementById("hmi_header").style.display = "none";
+					showHeader = false;
+					document.getElementById("hmi_header").style.display = "none";
+					document.getElementById("arrowdown1").style.visibility="visible";
+					document.getElementById("arrowdown2").style.visibility="visible";
+					document.getElementById("arrowup1").style.visibility="hidden";
+					document.getElementById("arrowup2").style.visibility="hidden";
+				} else {
+					//menue einschalten
+					document.getElementById("hmi_header").style.display = "block";
+					showHeader = true;
+					document.getElementById("hmi_header").style.display = "block";
+					document.getElementById("arrowdown1").style.visibility="hidden";
+					document.getElementById("arrowdown2").style.visibility="hidden";
+					document.getElementById("arrowup1").style.visibility="visible";
+					document.getElementById("arrowup2").style.visibility="visible";
+				}
+			}
 		</script>
 	</head>
-	
 	<!-- 
-		/*********************************
+		*********************************
 			Body
-		*********************************/
+		*********************************
 	-->
-	<body style="margin:0px;" oncontextmenu="return false" onunload="HMI.unload()">
+	<body onunload="HMI.unload()">
 		<table width="100%">
-			<tr>
-				<td align="left" style="padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">HMI - Startcenter</td>
-				<td align="center" style="padding:0px;width:125px;" >
-					<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik"/>
+			<colgroup>
+				<col width="4%"/>
+				<col width="32%"/>
+				<col width="32%"/>
+				<col width="32%"/>
+			</colgroup>
+			<tr onclick="hideHeader()" style="cursor:pointer;">
+				<td style="text-align:center;">
+					<svg:svg width="25" height="22">
+						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="stroke:blue;fill:none;stroke-width:1px;visibility:visible;"/>
+						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="stroke:blue;fill:none;stroke-width:1px;visibility:visible;"/>
+						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="stroke:blue;fill:none;stroke-width:1px;visibility:hidden;"/>
+						<svg:polyline id="arrowdown2" points="0,10 8,20 16,10" style="stroke:blue;fill:none;stroke-width:1px;visibility:hidden;"/>
+					</svg:svg>
 				</td>
-				<td align="center" style="font-size: 8pt;">&copy; Lehrstuhl für Prozessleittechnik (Stefan Schmitz) 2008</td>
-				<td style="white-space:nowrap;">
-					<span style="font-size:large;" id="pfeile">&uarr;</span> <a href="javascript:hideHeader()"><span id="knopftext">HMI-Header ausblenden</span></a>
+				<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
+					HMI - Startcenter
 				</td>
+				<td style="text-align:center;">
+					<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik">
+				</td>
+				<td style="text-align:center;font-size:8pt;">&#169; Lehrstuhl für Prozessleittechnik 2008</td>
 			</tr>
 		</table>
 		<hr color="blue"/>
-		<div id="hmi_header">		
+		<div id="hmi_header">
 			<table>
 				<colgroup>
-    				<col width="150px"/>
-    				<col width="200px"/>
-    				<col width="100px"/>
-  				</colgroup>
+					<col width="150px">
+					<col width="200px">
+					<col width="100px">
+				</colgroup>
 				<tr>
 					<td>Host</td>
-					<td><input id="idHost" type="text" style="width: 200px;" value="localhost"/></td>
+					<td><input id="idHost" type="text" style="width: 200px;" value="localhost"></td>
 				</tr>
 				<tr>
 					<td>Refresh Time [ms]</td>
-					<td><input id="idRefreshTime" type="text" style="width: 200px;" value="1000"/></td>
+					<td><input id="idRefreshTime" type="text" style="width: 200px;" value="1000"></td>
 				</tr>
 				<tr>
 					<td>Server</td>
 					<td><select id="idServers" name="Sheets" size="1" style="width:200px;"></select></td>
 					<td>
 						<input type="button" value="ShowServers"
-							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
+							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))">
 					</td>
 				</tr>
 				<tr>
@@ -137,11 +158,9 @@
 					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
 				</tr>
 			</table>
-				
-		<hr color="blue"/>
+		<hr color="blue">
 		</div>
-		
-		<p id="idPlayground">
+		<p oncontextmenu="return false" id="idPlayground">
 		</p>
 	</body>
 </html>
