@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.3 $
-*	$Date: 2007-12-07 10:47:00 $
+*	$Revision: 1.4 $
+*	$Date: 2008-04-03 16:14:22 $
 *
 *	History:
 *	--------
@@ -345,14 +345,17 @@ HMIJavaScriptKSClient.prototype = {
 			i = i + 1;
 		};
 		
-		if (Sheet.length > 0)
-		{
+		if (Sheet.length == 1){
+			Node = document.createElement('option');
+			Node.innerHTML = Sheet[0];
+			HMI.PossSheets.appendChild(Node);
+			HMI.showSheet(Sheet[0]);
+		}else if (Sheet.length > 1){
 			Node = document.createElement('option');
 			Node.innerHTML = '- select sheet -';
 			HMI.PossSheets.appendChild(Node);
 			
-			for (i = 0; i < Sheet.length; i++)
-			{
+			for (i = 0; i < Sheet.length; i++){
 				Node = document.createElement('option');
 				Node.innerHTML = Sheet[i];
 				HMI.PossSheets.appendChild(Node);
