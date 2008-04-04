@@ -44,10 +44,12 @@
 *	--------
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
 *	CVS:
 *	----
-*	$Revision: 1.4 $
-*	$Date: 2008-04-03 16:14:22 $
+*	$Revision: 1.5 $
+*	$Date: 2008-04-04 15:42:02 $
 *
 *	History:
 *	--------
@@ -57,6 +59,9 @@
 *	22-November-2007		St
 *		-	added more information if MANAGER, server or sheet is not
 *			available
+*
+*	04-April-2008			Je
+*		-	auto select if only one server and Sheet
 *
 ***********************************************************************/
 
@@ -183,8 +188,18 @@ HMIJavaScriptKSClient.prototype = {
 				Response = null;
 		};
 		
-		if (Server.length > 0)
-		{
+		if (Server.length == 2){
+			if (HMIJavaScriptKSClient.prototype.pingServer(Server[0]) == true){
+				Node = document.createElement('option');
+				Node.innerHTML = Server[0];
+				HMI.PossServers.appendChild(Node);
+			} else {
+				Node = document.createElement('option');
+				Node.innerHTML = '- no MANAGER available-';
+				HMI.PossServers.appendChild(Node);
+			}
+			HMI.showSheets(Server[0]);
+		}else if (Server.length > 2){
 			Node = document.createElement('option');
 			Node.innerHTML = '- select server -';
 			HMI.PossServers.appendChild(Node);
