@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.4 $
-*	$Date: 2008-04-03 14:31:11 $
+*	$Revision: 1.5 $
+*	$Date: 2008-04-07 16:37:45 $
 *
 *	History:
 *	21-June-2007			St
@@ -77,6 +77,7 @@
 		<script type="text/javascript">
 			//Initialize variable
 			var showHeader = true;
+			var autoKeepHeader = false;
 		</script>
 	</head>
 	<!-- 
@@ -94,12 +95,12 @@
 			</colgroup>
 			<tr onclick="hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
-				  <svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25px" height="22px" version="1.1">
-						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="stroke:blue;fill:none;stroke-width:1px;visibility:visible;"/>
-						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="stroke:blue;fill:none;stroke-width:1px;visibility:visible;"/>
-						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="stroke:blue;fill:none;stroke-width:1px;visibility:hidden;"/>
-						<svg:polyline id="arrowdown2" points="0,10 8,20 16,10" style="stroke:blue;fill:none;stroke-width:1px;visibility:hidden;"/>
-				  </svg:svg> 
+					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25px" height="22px" version="1.1" stroke="blue" fill="none" stroke-width="1px">
+						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="visibility:visible;"/>
+						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="visibility:visible;"/>
+						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="visibility:hidden;"/>
+						<svg:polyline id="arrowdown2" points="0,10 8,20 16,10" style="visibility:hidden;"/>
+					</svg:svg> 
 				</td>
 				<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
 					HMI - Startcenter
@@ -113,18 +114,15 @@
 		<hr style="background-color:blue;height:2px;"/>
 		<div id="hmi_header">
 			<table>
-				<colgroup>
-					<col width="150px"/>
-					<col width="200px"/>
-					<col width="100px"/>
-				</colgroup>
 				<tr>
 					<td>Host</td>
 					<td><input id="idHost" type="text" style="width: 200px;" value="localhost"/></td>
+					<td></td>
 				</tr>
 				<tr>
-					<td>Refresh Time [ms]</td>
+					<td style="padding-right:20px">Refresh Time [ms]</td>
 					<td><input id="idRefreshTime" type="text" style="width: 200px;" value="1000"/></td>
+					<td></td>
 				</tr>
 				<tr>
 					<td>Server</td>
@@ -137,6 +135,7 @@
 				<tr>
 					<td>Sheets</td>
 					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
+					<td><input type="checkbox" id="checkbox_keepheader" value="true" onclick="ChangeKeepHeader()"/> keep this header visible</td>
 				</tr>
 			</table>
 		<hr style="background-color:blue;height:2px;"/>

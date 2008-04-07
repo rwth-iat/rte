@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2008-04-04 15:42:02 $
+*	$Revision: 1.6 $
+*	$Date: 2008-04-07 16:37:45 $
 *
 *	History:
 *	--------
@@ -187,7 +187,7 @@ HMIJavaScriptKSClient.prototype = {
 			if (Response.indexOf('}') == -1)
 				Response = null;
 		};
-		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of potential servers: "+Server.length);
 		if (Server.length == 2){
 			if (HMIJavaScriptKSClient.prototype.pingServer(Server[0]) == true){
 				Node = document.createElement('option');
@@ -359,12 +359,15 @@ HMIJavaScriptKSClient.prototype = {
 			};
 			i = i + 1;
 		};
-		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		if (Sheet.length == 1){
 			Node = document.createElement('option');
 			Node.innerHTML = Sheet[0];
 			HMI.PossSheets.appendChild(Node);
 			HMI.showSheet(Sheet[0]);
+			if (autoKeepHeader == false){
+				hideHeader();
+			}
 		}else if (Sheet.length > 1){
 			Node = document.createElement('option');
 			Node.innerHTML = '- select sheet -';
@@ -380,6 +383,7 @@ HMIJavaScriptKSClient.prototype = {
 			Node = document.createElement('option');
 			Node.innerHTML = '- no sheets available -';
 			HMI.PossSheets.appendChild(Node);
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - End");

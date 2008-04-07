@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2008-04-03 14:31:11 $
+*	$Revision: 1.6 $
+*	$Date: 2008-04-07 16:37:45 $
 *
 *	History:
 *	--------
@@ -108,6 +108,13 @@ function hideHeader (){
 		document.getElementById("arrowdown2").style.visibility="hidden";
 		document.getElementById("arrowup1").style.visibility="visible";
 		document.getElementById("arrowup2").style.visibility="visible";
+	}
+}
+function ChangeKeepHeader(){
+	if (document.getElementById("checkbox_keepheader").checked == true) {
+		autoKeepHeader = true;
+	}else{
+		autoKeepHeader = false;
 	}
 }
 

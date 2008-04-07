@@ -45,8 +45,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.3 $
-*	$Date: 2008-03-28 09:33:41 $
+*	$Revision: 1.4 $
+*	$Date: 2008-04-07 16:37:45 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
@@ -160,21 +160,26 @@
 	
 	};
 	BrowserDetect.init();
-	
-	if ("Firefox" == BrowserDetect.browser) {
+	if ("Explorer" == BrowserDetect.browser && 7 >= BrowserDetect.version ) {
+		window.location.href = "hmi-explorer.html";
+	}else if ("Explorer" == BrowserDetect.browser && 7 < BrowserDetect.version ) {
+		//IE8 könnte firefox Datei lesen, noch ungetestet
+		window.location.href = "hmi-gecko.xhtml";
+	}else if ("Mozilla" == BrowserDetect.browser) {
+		window.location.href = "hmi-gecko.xhtml";
+	}else if ("Firefox" == BrowserDetect.browser) {
 		window.location.href = "hmi-gecko.xhtml";
 	}else if ("Opera" == BrowserDetect.browser) {
 		window.location.href = "hmi-gecko.xhtml";
-	}else if ("Explorer" == BrowserDetect.browser && 7 >= BrowserDetect.version ) {
-		window.location.href = "hmi-explorer.html";
 	}else if ("Explorer" == BrowserDetect.browser && 7 < BrowserDetect.version ) {
 		//IE8 könnte firefox Datei lesen, noch ungetestet
 		window.location.href = "hmi-gecko.xhtml";
 	}else if ("Safari" == BrowserDetect.browser ) {
 		window.location.href = "hmi-gecko.xhtml";
 	}else{
-		document.write("Browsererkennung war nicht erfolgreich. Vielleicht ist Ihr Browser standardkonform und kann die Seite &auml;hnlich anzeigen, wie der Mozilla Firefox.<br />" );
-		document.write("Dies k&ouml;nnen sie selber <a href='hmi-gecko.xhtml'> testen." );
+		window.location.href = "hmi-gecko.xhtml";
+//		document.write("Browsererkennung war nicht erfolgreich. Vielleicht ist Ihr Browser standardkonform und kann die Seite &auml;hnlich anzeigen, wie der Mozilla Firefox.<br />" );
+//		document.write("Dies k&ouml;nnen sie selber <a href='hmi-gecko.xhtml'> testen." );
 	}
 </script>
 </head>
