@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.4 $
-*	$Date: 2008-03-28 16:38:37 $
+*	$Revision: 1.5 $
+*	$Date: 2008-04-08 15:37:22 $
 *
 *	History:
 *	--------
@@ -501,7 +501,7 @@ HMI.prototype = {
 	
    /********************************************************************
 		logging
-			requires console of firebug
+			requires console of firebug or Opera
    ********************************************************************/
 	
 	/*********************************
@@ -510,8 +510,10 @@ HMI.prototype = {
 	hmi_log_debug: function (text) {
 		if (window.console != null && this.debug == true){
 			window.console.debug("HMI_DEBUG: %s", text);
-		}else if (opera.postError != null && this.debug == true){
-			opera.postError("HMI_DEBUG: "+ text);
+		}else if(window.opera){
+			if (opera.postError != null && this.debug == true){
+				opera.postError("HMI_DEBUG: "+ text);
+			}
 		}
 	},
 	
@@ -521,8 +523,10 @@ HMI.prototype = {
 	hmi_log_error: function (text) {
 		if (window.console != null && this.error == true){
 			window.console.error("HMI_ERROR: %s", text);
-		}else if (opera.postError != null && this.error == true){
-			opera.postError("HMI_DEBUG: "+ text);
+		}else if(window.opera){
+			if (opera.postError != null && this.error == true){
+				opera.postError("HMI_ERROR: "+ text);
+			}
 		}
 	},
 	
@@ -532,8 +536,10 @@ HMI.prototype = {
 	hmi_log_warning: function (text) {
 		if (window.console != null && this.warning == true){
 			window.console.warn("HMI_WARNING: %s", text);
-		}else if (opera.postError != null && this.warning == true){
-			opera.postError("HMI_DEBUG: "+ text);
+		}else if(window.opera){
+			if (opera.postError != null && this.warning == true){
+				opera.postError("HMI_WARNING: "+ text);
+			}
 		}
 	},
 	
@@ -541,15 +547,25 @@ HMI.prototype = {
 		hmi_log_info
 	*********************************/
 	hmi_log_info: function (text) {
-		if (window.console != null && this.info == true)
+		if (window.console != null && this.info == true){
 			window.console.info("HMI_INFO: %s", text);
+		}else if(window.opera){
+			if (opera.postError != null && this.info == true){
+				opera.postError("HMI_INFO: "+ text);
+			}
+		}
 	},
 	
 	/*********************************
 		hmi_log_trace
 	*********************************/
 	hmi_log_trace: function (text) {
-		if (window.console != null && this.trace == true)
+		if (window.console != null && this.trace == true){
 			window.console.debug("HMI_TRACE: %s", text);
+		}else if(window.opera){
+			if (opera.postError != null && this.trace == true){
+				opera.postError("HMI_TRACE: "+ text);
+			}
+		}
 	}
 };
