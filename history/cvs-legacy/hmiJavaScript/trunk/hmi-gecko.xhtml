@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.5 $
-*	$Date: 2008-04-07 16:37:45 $
+*	$Revision: 1.6 $
+*	$Date: 2008-04-08 16:38:41 $
 *
 *	History:
 *	21-June-2007			St
@@ -72,6 +72,7 @@
 	<head>
 		<meta http-equiv="Content-Style-Type" content="text/css"/>
 		<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
 		<title>HMI-Startcenter - Gecko Version</title>
 		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js"/>
 		<script type="text/javascript">
@@ -115,27 +116,24 @@
 		<div id="hmi_header">
 			<table>
 				<tr>
-					<td>Host</td>
-					<td><input id="idHost" type="text" style="width: 200px;" value="localhost"/></td>
-					<td></td>
+					<td style="text-align:right;">Host:</td>
+					<td><input id="idHost" type="text" size="29" value="localhost"/></td>
+					<td style="text-align:center;">Refresh Time:</td>
+					<td><input id="idRefreshTime" type="text" size="5" value="1000"/>ms</td>
 				</tr>
 				<tr>
-					<td style="padding-right:20px">Refresh Time [ms]</td>
-					<td><input id="idRefreshTime" type="text" style="width: 200px;" value="1000"/></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Server</td>
+					<td style="text-align:right;">Server:</td>
 					<td><select id="idServers" name="Sheets" size="1" style="width:200px;"></select></td>
-					<td>
-						<input type="button" value="ShowServers"
+					<td style="padding-left:20px;padding-right:20px;text-align:center;">
+						<input type="button" value="Show Servers"
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
+					<td></td>
 				</tr>
 				<tr>
-					<td>Sheets</td>
+					<td style="text-align:right;">Sheets:</td>
 					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
-					<td><input type="checkbox" id="checkbox_keepheader" value="true" onclick="ChangeKeepHeader()"/> keep this header visible</td>
+					<td colspan="2"><input type="checkbox" id="checkbox_keepheader" value="true" onclick="ChangeKeepHeader()"/> keep this header visible</td>
 				</tr>
 			</table>
 		<hr style="background-color:blue;height:2px;"/>
