@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.6 $
-*	$Date: 2008-04-07 16:37:45 $
+*	$Revision: 1.7 $
+*	$Date: 2008-04-08 09:37:19 $
 *
 *	History:
 *	--------
@@ -188,18 +188,8 @@ HMIJavaScriptKSClient.prototype = {
 				Response = null;
 		};
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of potential servers: "+Server.length);
-		if (Server.length == 2){
-			if (HMIJavaScriptKSClient.prototype.pingServer(Server[0]) == true){
-				Node = document.createElement('option');
-				Node.innerHTML = Server[0];
-				HMI.PossServers.appendChild(Node);
-			} else {
-				Node = document.createElement('option');
-				Node.innerHTML = '- no MANAGER available-';
-				HMI.PossServers.appendChild(Node);
-			}
-			HMI.showSheets(Server[0]);
-		}else if (Server.length > 2){
+		var valid_servers = 0;
+		if (Server.length > 0){
 			Node = document.createElement('option');
 			Node.innerHTML = '- select server -';
 			HMI.PossServers.appendChild(Node);
@@ -211,10 +201,14 @@ HMIJavaScriptKSClient.prototype = {
 					Node = document.createElement('option');
 					Node.innerHTML = Server[i];
 					HMI.PossServers.appendChild(Node);
+					valid_servers ++;
 				};
 			};
-			HMI.PossServers.addEventListener('change', function () {HMI.showSheets(this.options[this.selectedIndex].value)}, false);
-			
+			if (valid_servers == 1){
+				HMI.showSheets(Server[0]);
+			}else{
+				HMI.PossServers.addEventListener('change', function () {HMI.showSheets(this.options[this.selectedIndex].value)}, false);
+			}
 			if (Node.innerHTML == '- select server -')
 				Node.innerHTML = '- no server available -';
 		} else {
