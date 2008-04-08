@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.7 $
-*	$Date: 2008-04-08 09:37:19 $
+*	$Revision: 1.8 $
+*	$Date: 2008-04-08 16:34:05 $
 *
 *	History:
 *	--------
@@ -204,13 +204,17 @@ HMIJavaScriptKSClient.prototype = {
 					valid_servers ++;
 				};
 			};
-			if (valid_servers == 1){
-				HMI.showSheets(Server[0]);
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+valid_servers);
+			if (valid_servers == 0){
+				Node.innerHTML = '- no server available -';
+			}else if (valid_servers == 1){
+				//Server[1] ist richtig, da [0] der Text "select Server" ist
+				HMI.showSheets(Server[1]);
+				HMI.PossServers.addEventListener('change', function () {HMI.showSheets(this.options[this.selectedIndex].value)}, false);
+//TODO den richtigen option auswählen. 
 			}else{
 				HMI.PossServers.addEventListener('change', function () {HMI.showSheets(this.options[this.selectedIndex].value)}, false);
 			}
-			if (Node.innerHTML == '- select server -')
-				Node.innerHTML = '- no server available -';
 		} else {
 			Node = document.createElement('option');
 			Node.innerHTML = '- no MANAGER available-';
@@ -354,15 +358,7 @@ HMIJavaScriptKSClient.prototype = {
 			i = i + 1;
 		};
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
-		if (Sheet.length == 1){
-			Node = document.createElement('option');
-			Node.innerHTML = Sheet[0];
-			HMI.PossSheets.appendChild(Node);
-			HMI.showSheet(Sheet[0]);
-			if (autoKeepHeader == false){
-				hideHeader();
-			}
-		}else if (Sheet.length > 1){
+		if (Sheet.length > 0){
 			Node = document.createElement('option');
 			Node.innerHTML = '- select sheet -';
 			HMI.PossSheets.appendChild(Node);
@@ -372,7 +368,15 @@ HMIJavaScriptKSClient.prototype = {
 				Node.innerHTML = Sheet[i];
 				HMI.PossSheets.appendChild(Node);
 			};
-			HMI.PossSheets.addEventListener('change', function () {HMI.showSheet(this.options[this.selectedIndex].value)}, false);
+			if (Sheet.length == 1){
+				HMI.showSheet(Sheet[0]);
+//TODO den richtigen option auswählen. nur optik
+				if (autoKeepHeader == false){
+					hideHeader();
+				}
+			}else{
+				HMI.PossSheets.addEventListener('change', function () {HMI.showSheet(this.options[this.selectedIndex].value)}, false);
+			}
 		} else {
 			Node = document.createElement('option');
 			Node.innerHTML = '- no sheets available -';
