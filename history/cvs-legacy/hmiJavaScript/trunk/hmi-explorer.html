@@ -48,8 +48,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.5 $
-*	$Date: 2008-04-08 16:38:41 $
+*	$Revision: 1.6 $
+*	$Date: 2008-04-09 15:55:46 $
 *
 *	History:
 *	21-June-2007			St
@@ -152,10 +152,14 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 				<tr>
 					<td style="text-align:right;">Sheets:</td>
 					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
-					<td colspan="2"><input type="checkbox" id="checkbox_keepheader" value="true" onclick="ChangeKeepHeader()"/> keep this header visible</td>
+					<td colspan="2"><input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible</td>
 				</tr>
 			</table>
-		<hr color="blue">
+			<script type="text/javascript">
+				//Window-Reload does not reset the checkbox, so we update the javascript variable
+				UpdateKeepHeader();
+			</script>
+			<hr color="blue">
 		</div>
 		<p oncontextmenu="return false" id="idPlayground">
 		</p>

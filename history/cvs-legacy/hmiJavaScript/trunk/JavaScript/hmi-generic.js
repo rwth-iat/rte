@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.7 $
-*	$Date: 2008-04-09 14:38:38 $
+*	$Revision: 1.8 $
+*	$Date: 2008-04-09 15:55:46 $
 *
 *	History:
 *	--------
@@ -102,6 +102,9 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 /*********************************
 	Functions - hideHeader
 *********************************/
+//Initialize variable
+showHeader = true;
+
 function hideHeader (){
 	if (showHeader){
 		//menue ausschalten
@@ -121,7 +124,7 @@ function hideHeader (){
 		document.getElementById("arrowup2").style.visibility="visible";
 	}
 }
-function ChangeKeepHeader(){
+function UpdateKeepHeader(){
 	if (document.getElementById("checkbox_keepheader").checked == true) {
 		autoKeepHeader = true;
 	}else{
