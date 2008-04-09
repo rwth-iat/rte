@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.9 $
-*	$Date: 2008-04-09 14:38:38 $
+*	$Revision: 1.10 $
+*	$Date: 2008-04-09 15:36:10 $
 *
 *	History:
 *	--------
@@ -188,7 +188,8 @@ HMIJavaScriptKSClient.prototype = {
 				Response = null;
 		};
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of potential servers: "+Server.length);
-		var valid_servers = 0;
+		var ValidServers = 0;
+		var IdLastValidServer;
 		if (Server.length > 0){
 			Node = document.createElement('option');
 			Node.innerHTML = '- select server -';
@@ -201,19 +202,22 @@ HMIJavaScriptKSClient.prototype = {
 					Node = document.createElement('option');
 					Node.innerHTML = Server[i];
 					HMI.PossServers.appendChild(Node);
-					valid_servers ++;
+					ValidServers ++;
+					IdLastValidServer = i;
 				};
 			};
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+valid_servers);
-			if (valid_servers == 0){
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+ValidServers);
+			if (ValidServers == 0){
 				Node.innerHTML = '- no server available -';
-			}else if (valid_servers == 1){
-				//Server[1] ist richtig, da [0] der Text "select Server" ist
-				HMI.showSheets(Server[1]);
-				HMI.PossServers.addEventListener('change', function () {HMI.showSheets(this.options[this.selectedIndex].value)}, false);
-//TODO den richtigen option auswählen. 
 			}else{
 				HMI.PossServers.addEventListener('change', function () {HMI.showSheets(this.options[this.selectedIndex].value)}, false);
+				if (ValidServers == 1){
+					//selecting the option does not trigger the EventListener
+					//it is allways the second <option>...
+					$("idServers").selectedIndex = 1;
+					//...but the right ServerID can vary.
+					HMI.showSheets(Server[IdLastValidServer]);
+				}
 			}
 		} else {
 			Node = document.createElement('option');
@@ -374,8 +378,8 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.PossSheets.appendChild(Node);
 			};
 			if (Sheet.length == 1){
+				$("idSheets").selectedIndex = 1;
 				HMI.showSheet(Sheet[0]);
-//TODO den richtigen option auswählen. nur optik
 				if (autoKeepHeader == false){
 					hideHeader();
 				}

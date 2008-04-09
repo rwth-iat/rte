@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2008-04-08 15:37:22 $
+*	$Revision: 1.6 $
+*	$Date: 2008-04-09 15:36:10 $
 *
 *	History:
 *	--------
@@ -115,7 +115,7 @@ HMI.prototype = {
 		showSheets
 	*********************************/
 	showSheets: function (Server) {
-		this.hmi_log_trace("HMI.prototype.showSheets - Start");
+		this.hmi_log_trace("HMI.prototype.showSheets - Start, requested Server: "+Server);
 		
 		var i = 0;
 		
