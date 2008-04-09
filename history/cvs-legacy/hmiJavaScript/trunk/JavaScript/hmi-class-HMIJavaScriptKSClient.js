@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.8 $
-*	$Date: 2008-04-08 16:34:05 $
+*	$Revision: 1.9 $
+*	$Date: 2008-04-09 14:38:38 $
 *
 *	History:
 *	--------
@@ -228,7 +228,8 @@ HMIJavaScriptKSClient.prototype = {
 		_simpleRequest
 	*********************************/
 	_simpleRequest: function(obj, args) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._simpleRequest - Start");
+//		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._simpleRequest - Start");
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._simpleRequest - Start, requested: "+'http://'+ HMI.KSClient.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
 		
 		var req = new XMLHttpRequest();
 		
@@ -276,8 +277,12 @@ HMIJavaScriptKSClient.prototype = {
 				
 			this._simpleRequest(TCLKSHandle,
 				'destroy');
-			
-			if (/\bTksS-\b/.exec(ManagerResponse))
+
+			// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
+			if (ManagerResponse.length == 0){
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f+Operabug");
+				return false;
+			}else if (/\bTksS-\b/.exec(ManagerResponse))
 			{
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f");
 				return false;
@@ -415,7 +420,9 @@ HMIJavaScriptKSClient.prototype = {
 		_sendRequest
 	*********************************/
 	_sendRequest: function(Client, method, async, obj, args, cbfnc) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start");
+//		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start");
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, requested: "+'http://'+ this.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
+
 		
 		var req = new XMLHttpRequest();
 		

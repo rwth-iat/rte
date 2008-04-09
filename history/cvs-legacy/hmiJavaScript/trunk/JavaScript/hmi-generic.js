@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.6 $
-*	$Date: 2008-04-07 16:37:45 $
+*	$Revision: 1.7 $
+*	$Date: 2008-04-09 14:38:38 $
 *
 *	History:
 *	--------
@@ -89,6 +89,17 @@ function deleteChilds(ParentNode) {
 }
 
 /*********************************
+	Feature - emulate XMLHttpRequest of old IEs with new API
+*********************************/
+if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
+	try{ return new ActiveXObject("Msxml2.XMLHTTP.6.0") }catch(e){}
+	try{ return new ActiveXObject("Msxml2.XMLHTTP.3.0") }catch(e){}
+	try{ return new ActiveXObject("Msxml2.XMLHTTP") }catch(e){}
+	try{ return new ActiveXObject("Microsoft.XMLHTTP") }catch(e){}
+	throw new Error("Could not find an XMLHttpRequest alternative.")
+};
+
+/*********************************
 	Functions - hideHeader
 *********************************/
 function hideHeader (){
@@ -123,6 +134,7 @@ function ChangeKeepHeader(){
 		BrowserDetect.browser
 		BrowserDetect.version
 		BrowserDetect.OS
+	from www.quirksmode.org
 *********************************/
 var BrowserDetect = {
 	init: function () {
