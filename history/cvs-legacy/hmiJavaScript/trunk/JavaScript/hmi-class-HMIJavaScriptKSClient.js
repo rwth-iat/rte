@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.10 $
-*	$Date: 2008-04-09 15:36:10 $
+*	$Revision: 1.11 $
+*	$Date: 2008-04-09 16:05:54 $
 *
 *	History:
 *	--------
@@ -377,14 +377,13 @@ HMIJavaScriptKSClient.prototype = {
 				Node.innerHTML = Sheet[i];
 				HMI.PossSheets.appendChild(Node);
 			};
+			HMI.PossSheets.addEventListener('change', function () {HMI.showSheet(this.options[this.selectedIndex].value)}, false);
 			if (Sheet.length == 1){
 				$("idSheets").selectedIndex = 1;
 				HMI.showSheet(Sheet[0]);
 				if (autoKeepHeader == false){
 					hideHeader();
 				}
-			}else{
-				HMI.PossSheets.addEventListener('change', function () {HMI.showSheet(this.options[this.selectedIndex].value)}, false);
 			}
 		} else {
 			Node = document.createElement('option');
