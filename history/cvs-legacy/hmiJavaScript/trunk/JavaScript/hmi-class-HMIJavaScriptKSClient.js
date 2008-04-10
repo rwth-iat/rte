@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.11 $
-*	$Date: 2008-04-09 16:05:54 $
+*	$Revision: 1.12 $
+*	$Date: 2008-04-10 14:03:39 $
 *
 *	History:
 *	--------
@@ -440,6 +440,7 @@ HMIJavaScriptKSClient.prototype = {
 				
 			if (async == true)
 			{
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - entering async communication");
 				//	Asynchron Communication
 				//
 				req.onreadystatechange = function () {
@@ -467,15 +468,12 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent. Is the gateway started?');
 				return false;
 			};
-			
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
 			return true;
-
 		} catch (e) {
 			HMI.hmi_log_error("HMIJavaScriptKSClient._sendRequest: Error during request.");
 			return false;
-	   };
-	   
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
+		};
 	},
 	
 	/*********************************

@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2008-04-10 14:03:39 $
 *
 *	History:
 *	--------
@@ -73,6 +73,7 @@ HMIDOMParser.prototype = {
 		parse
 	*********************************/
 	parse: function(GraphicDescription, StyleDescription, BehaviourDescription) {
+		HMI.hmi_log_trace("HMIDOMParser.parse - Start");
 		var Parser = new DOMParser();
 		var GraphicElement;
 		var StyleElement;
@@ -104,10 +105,11 @@ HMIDOMParser.prototype = {
 		};
 		
 		Return = GraphicElement.firstChild;
-	   
-	   delete Parser;
-	   delete GraphicElement;
-	   delete StyleElement;
+		
+		delete Parser;
+		delete GraphicElement;
+		delete StyleElement;
+		HMI.hmi_log_trace("HMIDOMParser.parse - End");
 		
 		return Return;
 	}

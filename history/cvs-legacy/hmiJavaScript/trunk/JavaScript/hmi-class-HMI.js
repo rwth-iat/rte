@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.6 $
-*	$Date: 2008-04-09 15:36:10 $
+*	$Revision: 1.7 $
+*	$Date: 2008-04-10 14:03:39 $
 *
 *	History:
 *	--------
@@ -147,10 +147,9 @@ HMI.prototype = {
 			return;
 		
 		if (HMI.KSClient.TCLKSHandle != null)
-	   {
-	   	HMI.Path = Sheet;
-	   	
-	   	this._getAndImportComponent(HMI.Path, HMI.Playground, true);
+		{
+			HMI.Path = Sheet;
+			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
@@ -163,8 +162,8 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.refreshSheet - Start");
 		
 		if (HMI.KSClient.TCLKSHandle != null)
-	   	this._getAndImportComponent(HMI.Path, HMI.Playground, false);
-	   	
+			this._getAndImportComponent(HMI.Path, HMI.Playground, false);
+		
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
 	},
 	
@@ -253,7 +252,9 @@ HMI.prototype = {
 			};
 			var template = Component;
 			Component = document.importNode(template, true);
+			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now initGestures");
 			HMI.initGestures(Component);
+			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now Playground.appendChild");
 			HMI.Playground.appendChild(Component);
 			
 			//	set TimeoutID
@@ -305,10 +306,11 @@ HMI.prototype = {
 	*********************************/	
 	_importComponent: function(ComponentText) {
 		this.hmi_log_trace("HMI.prototype._importComponent - Start");
-		
-		return (new HMIDOMParser().parse(ComponentText[0], ComponentText[1], null));
-		
+
+		var parsedComponentText = new HMIDOMParser().parse(ComponentText[0], ComponentText[1], null);
+
 		this.hmi_log_trace("HMI.prototype._importComponent - End");
+		return (parsedComponentText);
 	},
 	
 	/*********************************
@@ -379,12 +381,12 @@ HMI.prototype = {
 		var Elements;
 		
 		HMI._initGestures(Fragment);
+//		this.hmi_log_trace("HMI.prototype.initGestures - done _initGestures(Fragment) ");
 		
 		Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		for (var idx = 0; idx < Elements.length; ++idx)
 		{
-			HMI.hmi_log_trace("%u %u "+ idx + Elements.length);
-			window.console.debug("%u %u", idx, Elements.length);
+			HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
 			HMI._initGestures(Elements[idx]);
 		};
 		
