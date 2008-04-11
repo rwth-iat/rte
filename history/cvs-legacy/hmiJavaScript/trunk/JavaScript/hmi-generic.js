@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.8 $
-*	$Date: 2008-04-09 15:55:46 $
+*	$Revision: 1.9 $
+*	$Date: 2008-04-11 14:39:08 $
 *
 *	History:
 *	--------
@@ -65,7 +65,7 @@
 	Global Variables
 *********************************/
 
-var HMI = new HMI(false, true, true, true, true, false);
+var HMI = new HMI(false, true, true, true, true, true);
 
 /*********************************
 	Functions - $
@@ -110,18 +110,20 @@ function hideHeader (){
 		//menue ausschalten
 		showHeader = false;
 		document.getElementById("hmi_header").style.display = "none";
-		document.getElementById("arrowdown1").style.visibility="visible";
+/*		document.getElementById("arrowdown1").style.visibility="visible";
 		document.getElementById("arrowdown2").style.visibility="visible";
 		document.getElementById("arrowup1").style.visibility="hidden";
 		document.getElementById("arrowup2").style.visibility="hidden";
+*/
 	} else {
 		//menue einschalten
 		showHeader = true;
 		document.getElementById("hmi_header").style.display = "block";
-		document.getElementById("arrowdown1").style.visibility="hidden";
+/*		document.getElementById("arrowdown1").style.visibility="hidden";
 		document.getElementById("arrowdown2").style.visibility="hidden";
 		document.getElementById("arrowup1").style.visibility="visible";
 		document.getElementById("arrowup2").style.visibility="visible";
+*/
 	}
 }
 function UpdateKeepHeader(){
