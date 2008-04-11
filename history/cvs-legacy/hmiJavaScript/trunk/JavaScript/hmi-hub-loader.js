@@ -44,8 +44,8 @@
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.4 $
-*	$Date: 2008-03-27 16:52:42 $
+*	$Revision: 1.5 $
+*	$Date: 2008-04-11 14:35:12 $
 *
 *	History:
 *	01-March-2005			HA
@@ -62,8 +62,7 @@
 ***********************************************************************/
 
 function SCRIPT_HUB_SEARCH(node, elementName, result) {
-	if (node.ELEMENT_NODE == undefined){
-//		alert("kein element node attribut");
+	if (node.ELEMENT_NODE == undefined){//Opera und IE kennen ELEMENT_NODE nicht
 		node.ELEMENT_NODE = 1;
 	}
 	if (	(node.nodeType == node.ELEMENT_NODE)
