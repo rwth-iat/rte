@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.12 $
-*	$Date: 2008-04-10 14:03:39 $
+*	$Revision: 1.13 $
+*	$Date: 2008-04-28 14:03:34 $
 *
 *	History:
 *	--------
@@ -145,6 +145,12 @@ HMIJavaScriptKSClient.prototype = {
 				+ 'Gateway responded:'
 				+ '\n\n'
 				+ req.responseText);
+			Node = document.createElement('option');
+			Node.innerHTML = '- no valid server response -';
+			HMI.PossServers.appendChild(Node);
+			Node = document.createElement('option');
+			Node.innerHTML = req.responseText;
+			HMI.PossServers.appendChild(Node);
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - End");
@@ -159,9 +165,10 @@ HMIJavaScriptKSClient.prototype = {
 		if (this.TCLKSHandle != null)
 		{
 			this._sendRequest(this, 'GET', false, this.TCLKSHandle, 'getep /servers * -output $::TKS::OP_NAME', this._cbGetServers);
-		} else
+		} else {
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End - No TCLKSHandle");
 			return null;
-		
+		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End");
 	},
 	
@@ -424,8 +431,7 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	_sendRequest: function(Client, method, async, obj, args, cbfnc) {
 //		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start");
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, requested: "+'http://'+ this.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
-
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+", requested: "+'http://'+ this.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
 		
 		var req = new XMLHttpRequest();
 		
