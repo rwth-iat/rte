@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.7 $
-*	$Date: 2008-04-10 14:03:39 $
+*	$Revision: 1.8 $
+*	$Date: 2008-04-28 15:08:31 $
 *
 *	History:
 *	--------
@@ -170,7 +170,7 @@ HMI.prototype = {
 	/*********************************
 		getComponent
 	*********************************/
-	getComponent : function (evt, class) {
+	getComponent: function (evt, cssclass) {
 		this.hmi_log_trace("HMI.prototype.getComponent - Start");
 		
 		var Component = null;
@@ -178,7 +178,7 @@ HMI.prototype = {
 		Component = evt.target;
 		while (	Component != null
 				&&	Component != document
-				&&	HMI.instanceOf(Component, class) == false)
+				&&	HMI.instanceOf(Component, cssclass) == false)
 		{
 			Component = Component.ownerSVGElement;
 			if (	Component != null
