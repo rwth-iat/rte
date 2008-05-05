@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.5 $
-*	$Date: 2008-04-08 08:49:03 $
+*	$Revision: 1.6 $
+*	$Date: 2008-05-05 09:18:38 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
@@ -162,11 +162,11 @@
 	
 	};
 	BrowserDetect.init();
-	if ("Explorer" == BrowserDetect.browser && 7 >= BrowserDetect.version ) {
+	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
 		window.location.href = "hmi-explorer.html";
-	}else if ("Explorer" == BrowserDetect.browser && 7 < BrowserDetect.version ) {
-		//IE8 könnte firefox Datei lesen, noch ungetestet
-		window.location.href = "hmi-gecko.xhtml";
+	}else if ("Explorer" == BrowserDetect.browser && 8 < BrowserDetect.version ) {
+		//IE9 kann vielleicht firefox Datei lesen, noch ungetestet, da noch in weiter Ferne
+		window.location.href = "hmi-explorer.html";
 	}else if ("Mozilla" == BrowserDetect.browser) {
 		window.location.href = "hmi-gecko.xhtml";
 	}else if ("Firefox" == BrowserDetect.browser) {

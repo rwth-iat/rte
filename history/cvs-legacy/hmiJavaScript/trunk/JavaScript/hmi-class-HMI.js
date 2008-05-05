@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.8 $
-*	$Date: 2008-04-28 15:08:31 $
+*	$Revision: 1.9 $
+*	$Date: 2008-05-05 09:18:38 $
 *
 *	History:
 *	--------
@@ -104,6 +104,7 @@ HMI.prototype = {
 		deleteChilds(this.PossServers);
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
+		deleteChilds(document.getElementById("ErrorOutput"));
 		
 		this.KSClient.init(Host + '/MANAGER', location.host);
 		this.KSClient.getServers();
@@ -121,6 +122,7 @@ HMI.prototype = {
 		
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
+		deleteChilds(document.getElementById("ErrorOutput"));
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		

@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.8 $
-*	$Date: 2008-04-11 14:39:08 $
+*	$Revision: 1.9 $
+*	$Date: 2008-05-05 09:18:38 $
 *
 *	History:
 *	21-June-2007			St
@@ -91,13 +91,12 @@
 			</colgroup>
 			<tr onclick="hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
-				<!--<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25px" height="22px" version="1.1" stroke="blue" fill="none" stroke-width="1px">
-						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="visibility:visible;"/>
-						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="visibility:visible;"/>
-						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="visibility:hidden;"/>
-						<svg:polyline id="arrowdown2" points="0,10 8,20 16,10" style="visibility:hidden;"/>
+				<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25px" height="22px" version="1.1">
+						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
+						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
+						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
+						<svg:polyline id="arrowdown2" points="0,10 8,20 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
 					</svg:svg> 
-				-->
 				</td>
 				<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
 					HMI - Startcenter
@@ -115,7 +114,8 @@
 					<td style="text-align:right;">Host:</td>
 					<td><input id="idHost" type="text" size="29" value="localhost"/></td>
 					<td style="text-align:center;">Refresh Time:</td>
-					<td><input id="idRefreshTime" type="text" size="5" value="1000"/>ms</td>
+					<td><input id="idRefreshTime" type="text" size="5" value="1000"/>ms <strong id="ErrorOutput"> </strong>
+					</td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">Server:</td>
@@ -124,7 +124,14 @@
 						<input type="button" value="Show Servers"
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
-					<td></td>
+					<td>
+						<input type="button" value="Refresh Sheet Now"
+							onclick="HMI.refreshSheet()"/>
+						<input type="button" value="Stop Autorefresh"
+							onclick="clearTimeout(HMI.RefreshTimeoutID)"/>
+						<input type="button" value="Start Autorefresh"
+							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
+					</td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">Sheets:</td>

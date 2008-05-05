@@ -48,8 +48,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.6 $
-*	$Date: 2008-04-09 15:55:46 $
+*	$Revision: 1.7 $
+*	$Date: 2008-05-05 09:18:38 $
 *
 *	History:
 *	21-June-2007			St
@@ -70,35 +70,17 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		<meta http-equiv="Content-Script-Type" content="text/javascript">
 		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 		<title>HMI-Startcenter - Internet Explorer Version</title>
-<!--		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js">
--->
 		<object id="AdobeSVG" classid="clsid:78156a80-c6a1-4bbf-8e6a-3cd390eeb4e2"></object>
 		<?import namespace="svg" implementation="#AdobeSVG"?>
-		<script type="text/javascript">
-			var showHeader = true;
-			
-			function hideHeader (){
-				if (showHeader){
-					//menue ausschalten
-					document.getElementById("hmi_header").style.display = "none";
-					showHeader = false;
-					document.getElementById("hmi_header").style.display = "none";
-					document.getElementById("arrowdown1").style.visibility="visible";
-					document.getElementById("arrowdown2").style.visibility="visible";
-					document.getElementById("arrowup1").style.visibility="hidden";
-					document.getElementById("arrowup2").style.visibility="hidden";
-				} else {
-					//menue einschalten
-					document.getElementById("hmi_header").style.display = "block";
-					showHeader = true;
-					document.getElementById("hmi_header").style.display = "block";
-					document.getElementById("arrowdown1").style.visibility="hidden";
-					document.getElementById("arrowdown2").style.visibility="hidden";
-					document.getElementById("arrowup1").style.visibility="visible";
-					document.getElementById("arrowup2").style.visibility="visible";
-				}
-			}
-		</script>
+		<script type="text/javascript" src="./JavaScript/hmi-class-HMIJavaScriptKSClient.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-class-HMIDOMParser.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-class-HMI.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-class-gesture-click.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-class-gesture-doubleclick.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-class-gesture-rightclick.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-class-gesture-move.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-class-gesture-textinput.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-generic.js"></script>
 	</head>
 	<!-- 
 		*********************************
@@ -131,14 +113,17 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 				<td style="text-align:center;font-size:8pt;">&#169; Lehrstuhl für Prozessleittechnik 2008</td>
 			</tr>
 		</table>
-		<hr color="blue"/>
+		<hr color="blue">
 		<div id="hmi_header">
 			<table>
 				<tr>
 					<td style="text-align:right;">Host:</td>
 					<td><input id="idHost" type="text" size="29" value="localhost"/></td>
 					<td style="text-align:center;">Refresh Time:</td>
-					<td><input id="idRefreshTime" type="text" size="5" value="1000"/>ms</td>
+					<td>
+						<input id="idRefreshTime" type="text" size="5" value="1000"/>ms 
+						<strong id="ErrorOutput"> </strong>
+					</td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">Server:</td>

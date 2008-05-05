@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.13 $
-*	$Date: 2008-04-28 14:03:34 $
+*	$Revision: 1.14 $
+*	$Date: 2008-05-05 09:18:38 $
 *
 *	History:
 *	--------
@@ -148,9 +148,9 @@ HMIJavaScriptKSClient.prototype = {
 			Node = document.createElement('option');
 			Node.innerHTML = '- no valid server response -';
 			HMI.PossServers.appendChild(Node);
-			Node = document.createElement('option');
-			Node.innerHTML = req.responseText;
-			HMI.PossServers.appendChild(Node);
+			var ErrorText = document.createTextNode("Error: " + req.responseText);
+			deleteChilds(document.getElementById("ErrorOutput"));
+			document.getElementById("ErrorOutput").appendChild(ErrorText);
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - End");
