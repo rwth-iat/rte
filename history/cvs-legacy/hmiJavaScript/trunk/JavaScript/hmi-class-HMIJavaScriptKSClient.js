@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.15 $
-*	$Date: 2008-05-07 09:19:57 $
+*	$Revision: 1.16 $
+*	$Date: 2008-05-07 12:32:22 $
 *
 *	History:
 *	--------
@@ -147,6 +147,7 @@ HMIJavaScriptKSClient.prototype = {
 				+ req.responseText);
 			Node = document.createElement('option');
 			Node.innerHTML = '- no valid server response -';
+			Node.value = 'no server';
 			HMI.PossServers.appendChild(Node);
 			var ErrorText = document.createTextNode("Error: " + req.responseText);
 			deleteChilds(document.getElementById("ErrorOutput"));
@@ -200,6 +201,7 @@ HMIJavaScriptKSClient.prototype = {
 		if (Server.length > 0){
 			Node = document.createElement('option');
 			Node.innerHTML = '- select server -';
+			Node.value = 'no server';
 			HMI.PossServers.appendChild(Node);
 			
 			for (i = 0; i < Server.length; i++)
@@ -207,7 +209,8 @@ HMIJavaScriptKSClient.prototype = {
 				if (HMIJavaScriptKSClient.prototype.pingServer(Server[i]) == true)
 				{
 					Node = document.createElement('option');
-					Node.innerHTML = Server[i];
+					Node.innerHTML = "server: "+Server[i];
+					Node.value = Server[i];
 					HMI.PossServers.appendChild(Node);
 					ValidServers ++;
 					IdLastValidServer = i;
@@ -216,8 +219,9 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+ValidServers);
 			if (ValidServers == 0){
 				Node.innerHTML = '- no server available -';
+				Node.value = 'no server';
 			}else{
-				//'this' is here not PossServers, but refers to the window and is completely useless in Internet Explorer
+				//'this' is not PossServers here, but refers to the window and is completely useless in Internet Explorer
 				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
 				if (ValidServers == 1){
 					//selecting the option does not trigger the EventListener
@@ -230,6 +234,7 @@ HMIJavaScriptKSClient.prototype = {
 		} else {
 			Node = document.createElement('option');
 			Node.innerHTML = '- no MANAGER available-';
+			Node.value = 'no server';
 			HMI.PossServers.appendChild(Node);
 		};
 		
@@ -378,14 +383,16 @@ HMIJavaScriptKSClient.prototype = {
 		if (Sheet.length > 0){
 			Node = document.createElement('option');
 			Node.innerHTML = '- select sheet -';
+			Node.value = 'no sheet';
 			HMI.PossSheets.appendChild(Node);
 			
 			for (i = 0; i < Sheet.length; i++){
 				Node = document.createElement('option');
-				Node.innerHTML = Sheet[i];
+				Node.innerHTML = "Sheet: "+Sheet[i];
+				Node.value = Sheet[i];
 				HMI.PossSheets.appendChild(Node);
 			};
-			//'this' is here not PossSheets, but refers to the window and is completely useless in Internet Explorer
+			//'this' is not PossSheets here, but refers to the window and is completely useless in Internet Explorer
 			addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
 			if (Sheet.length == 1){
 				$("idSheets").selectedIndex = 1;
@@ -397,6 +404,7 @@ HMIJavaScriptKSClient.prototype = {
 		} else {
 			Node = document.createElement('option');
 			Node.innerHTML = '- no sheets available -';
+			Node.value = 'no sheet';
 			HMI.PossSheets.appendChild(Node);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		};

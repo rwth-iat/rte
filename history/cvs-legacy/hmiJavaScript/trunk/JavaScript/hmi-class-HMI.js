@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.9 $
-*	$Date: 2008-05-05 09:18:38 $
+*	$Revision: 1.10 $
+*	$Date: 2008-05-07 12:32:22 $
 *
 *	History:
 *	--------
@@ -126,7 +126,7 @@ HMI.prototype = {
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if (Server == '- select server -')
+		if (Server == 'no server')
 			return;
 		
 		this.KSClient.init(this.KSClient.KSServer.substring(0, this.KSClient.KSServer.indexOf('/')) + '/' + Server, location.host);
@@ -145,7 +145,7 @@ HMI.prototype = {
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if (Sheet == '- select sheet -')
+		if (Sheet == 'no sheet')
 			return;
 		
 		if (HMI.KSClient.TCLKSHandle != null)

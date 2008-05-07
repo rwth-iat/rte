@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.11 $
-*	$Date: 2008-05-07 09:19:57 $
+*	$Revision: 1.12 $
+*	$Date: 2008-05-07 12:32:22 $
 *
 *	History:
 *	--------
@@ -80,7 +80,7 @@ function $(id) {
 *********************************/
 
 function deleteChilds(ParentNode) {
-	HMI.hmi_log_trace("deleteChilds - Start");
+	HMI.hmi_log_trace("deleteChilds with id: "+ParentNode.id+" - Start");
 	
 	while (ParentNode.childNodes.length > 0)
 		ParentNode.removeChild(ParentNode.lastChild);
