@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.10 $
-*	$Date: 2008-04-11 15:11:37 $
+*	$Revision: 1.11 $
+*	$Date: 2008-05-07 09:19:57 $
 *
 *	History:
 *	--------
@@ -100,6 +100,23 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 };
 
 /*********************************
+	Crossbrowser Eventhandling
+	http://www.quirksmode.org/js/eventSimple.html
+*********************************/
+function addEventSimple(obj,evt,fn) {
+	if (obj.addEventListener)
+		obj.addEventListener(evt,fn,false);
+	else if (obj.attachEvent)
+		obj.attachEvent('on'+evt,fn);
+}
+function removeEventSimple(obj,evt,fn) {
+	if (obj.removeEventListener)
+		obj.removeEventListener(evt,fn,false);
+	else if (obj.detachEvent)
+		obj.detachEvent('on'+evt,fn);
+}
+
+/*********************************
 	Functions - hideHeader
 *********************************/
 //Initialize variable
@@ -110,20 +127,18 @@ function hideHeader (){
 		//menue ausschalten
 		showHeader = false;
 		document.getElementById("hmi_header").style.display = "none";
-/*		document.getElementById("arrowdown1").style.visibility="visible";
+		document.getElementById("arrowdown1").style.visibility="visible";
 		document.getElementById("arrowdown2").style.visibility="visible";
 		document.getElementById("arrowup1").style.visibility="hidden";
 		document.getElementById("arrowup2").style.visibility="hidden";
-*/
 	} else {
 		//menue einschalten
 		showHeader = true;
 		document.getElementById("hmi_header").style.display = "block";
-/*		document.getElementById("arrowdown1").style.visibility="hidden";
+		document.getElementById("arrowdown1").style.visibility="hidden";
 		document.getElementById("arrowdown2").style.visibility="hidden";
 		document.getElementById("arrowup1").style.visibility="visible";
 		document.getElementById("arrowup2").style.visibility="visible";
-*/
 	}
 }
 function UpdateKeepHeader(){

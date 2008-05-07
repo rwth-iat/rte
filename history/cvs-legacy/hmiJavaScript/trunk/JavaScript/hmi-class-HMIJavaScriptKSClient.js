@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.14 $
-*	$Date: 2008-05-05 09:18:38 $
+*	$Revision: 1.15 $
+*	$Date: 2008-05-07 09:19:57 $
 *
 *	History:
 *	--------
@@ -217,7 +217,8 @@ HMIJavaScriptKSClient.prototype = {
 			if (ValidServers == 0){
 				Node.innerHTML = '- no server available -';
 			}else{
-				HMI.PossServers.addEventListener('change', function () {HMI.showSheets(this.options[this.selectedIndex].value)}, false);
+				//'this' is here not PossServers, but refers to the window and is completely useless in Internet Explorer
+				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
 				if (ValidServers == 1){
 					//selecting the option does not trigger the EventListener
 					//it is allways the second <option>...
@@ -384,7 +385,8 @@ HMIJavaScriptKSClient.prototype = {
 				Node.innerHTML = Sheet[i];
 				HMI.PossSheets.appendChild(Node);
 			};
-			HMI.PossSheets.addEventListener('change', function () {HMI.showSheet(this.options[this.selectedIndex].value)}, false);
+			//'this' is here not PossSheets, but refers to the window and is completely useless in Internet Explorer
+			addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
 			if (Sheet.length == 1){
 				$("idSheets").selectedIndex = 1;
 				HMI.showSheet(Sheet[0]);
