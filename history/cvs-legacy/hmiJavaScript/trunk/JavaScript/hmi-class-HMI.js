@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.10 $
-*	$Date: 2008-05-07 12:32:22 $
+*	$Revision: 1.11 $
+*	$Date: 2008-05-13 15:15:57 $
 *
 *	History:
 *	--------
@@ -139,7 +139,7 @@ HMI.prototype = {
 		showSheet
 	*********************************/
 	showSheet: function (Sheet) {
-		this.hmi_log_trace("HMI.prototype.showSheet - Start");
+		this.hmi_log_trace("HMI.prototype.showSheet - Start with Sheet: "+Sheet);
 			
 		deleteChilds(this.Playground);
 		clearTimeout(HMI.RefreshTimeoutID);

@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2008-05-07 12:32:22 $
+*	$Revision: 1.17 $
+*	$Date: 2008-05-13 15:15:57 $
 *
 *	History:
 *	--------
@@ -249,6 +249,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._simpleRequest - Start, requested: "+'http://'+ HMI.KSClient.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
 		
 		var req = new XMLHttpRequest();
+		var DatePreventsCaching = new Date();
 		
 		req.open('GET',
 			'http://'
@@ -256,7 +257,9 @@ HMIJavaScriptKSClient.prototype = {
 			+ '/tks?obj='
 			+ obj
 			+ '&args='
-			+ args, false);
+			+ args
+			+ '&preventCaching='
+			+DatePreventsCaching.getTime(), false);
 		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		req.send('empty');
 		
@@ -441,9 +444,10 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	_sendRequest: function(Client, method, async, obj, args, cbfnc) {
 //		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start");
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+", requested: "+'http://'+ this.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+'http://'+ this.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
 		
 		var req = new XMLHttpRequest();
+		var DatePreventsCaching = new Date();
 		
 		try {
 			req.open(method,
@@ -452,7 +456,9 @@ HMIJavaScriptKSClient.prototype = {
 				+ '/tks?obj='
 				+ obj
 				+ '&args='
-				+ args, async);
+				+ args
+				+ '&preventCaching='
+				+DatePreventsCaching.getTime(), async);
 				
 			if (async == true)
 			{
@@ -472,6 +478,18 @@ HMIJavaScriptKSClient.prototype = {
 				} else {
 					req.send(null);
 				};
+
+/*
+HMI.hmi_log_info('http://'
+				+ this.TCLKSGateway
+				+ '/tks?obj='
+				+ obj
+				+ '&args='
+				+ args
+				+ '&preventCaching='
+				+DatePreventsCaching.getTime() + "###########"+req.responseText);
+*/
+
 				
 				if (async == false)
 				{

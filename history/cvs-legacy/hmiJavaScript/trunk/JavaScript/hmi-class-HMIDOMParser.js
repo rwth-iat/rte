@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.2 $
-*	$Date: 2008-04-10 14:03:39 $
+*	$Revision: 1.3 $
+*	$Date: 2008-05-13 15:15:57 $
 *
 *	History:
 *	--------
@@ -74,35 +74,87 @@ HMIDOMParser.prototype = {
 	*********************************/
 	parse: function(GraphicDescription, StyleDescription, BehaviourDescription) {
 		HMI.hmi_log_trace("HMIDOMParser.parse - Start");
-		var Parser = new DOMParser();
 		var GraphicElement;
 		var StyleElement;
 		var Return;
-		
-		try {
-			GraphicElement = Parser.parseFromString(GraphicDescription, "text/xml");
-		} catch (e) {
-			HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse GraphicDescription');
-			return null;
-		};
-		if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml")
-		{
-			HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on GraphicDescription');
-			return null;
-		};
+//TODO
+//		debugger;
+		//Mozilla has the DOMParser Object
+		if (typeof DOMParser != "undefined"){
+			var Parser = new DOMParser();
+			try {
+				GraphicElement = Parser.parseFromString(GraphicDescription, "text/xml");
+			} catch (e) {
+				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: Could not parse GraphicDescription");
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse GraphicDescription');
+				return null;
+			};
+			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
+				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: ParseError on GraphicDescription");
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on GraphicDescription');
+				return null;
+			};
 			
-		try {
-			StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
-		} catch (e) {
-			HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription');
-			return null;
-		};
-		if (StyleElement.documentElement.namespaceURI != "http://www.mozilla.org/newlayout/xml/parsererror.xml")
-		{	
-			GraphicElement.firstChild.appendChild(StyleElement.firstChild);
-		} else {
-			HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
-		};
+			try {
+				StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
+			} catch (e) {
+				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: Could not parse StyleDescription");
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription');
+				return null;
+			};
+			if (StyleElement.documentElement.namespaceURI != "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
+				GraphicElement.firstChild.appendChild(StyleElement.firstChild);
+			} else {
+				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: ParseError on StyleDescription");
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
+			};
+		//building an XML Tree works a bit different in IE
+		}else{
+			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
+			try {
+				GraphicElement.loadXML(GraphicDescription);
+			} catch (e) {
+				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: Could not parse GraphicDescription");
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse GraphicDescription');
+				return null;
+			};
+			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
+				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: ParseError on GraphicDescription");
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on GraphicDescription');
+				return null;
+			};
+
+			var StyleElement = new ActiveXObject("Microsoft.XMLDOM");
+			try {
+				StyleElement.loadXML(StyleDescription);
+			} catch (e) {
+				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: Could not parse StyleDescription");
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription');
+				return null;
+			};
+			if (StyleElement.documentElement.namespaceURI != "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
+				GraphicElement.firstChild.appendChild(StyleElement.firstChild);
+			} else {
+				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: ParseError on StyleDescription");
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
+			};
+		}
 		
 		Return = GraphicElement.firstChild;
 		
