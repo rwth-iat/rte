@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.3 $
-*	$Date: 2008-05-13 15:15:57 $
+*	$Revision: 1.4 $
+*	$Date: 2008-05-15 12:57:21 $
 *
 *	History:
 *	--------
@@ -77,8 +77,6 @@ HMIDOMParser.prototype = {
 		var GraphicElement;
 		var StyleElement;
 		var Return;
-//TODO
-//		debugger;
 		//Mozilla has the DOMParser Object
 		if (typeof DOMParser != "undefined"){
 			var Parser = new DOMParser();
@@ -116,6 +114,8 @@ HMIDOMParser.prototype = {
 				document.getElementById("ErrorOutput").appendChild(ErrorText);
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
 			};
+			
+			delete Parser;
 		//building an XML Tree works a bit different in IE
 		}else{
 			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
@@ -128,6 +128,7 @@ HMIDOMParser.prototype = {
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse GraphicDescription');
 				return null;
 			};
+			//TODO: XML Parserfehler hier müssen abgefangen werden
 			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
 				var ErrorText = document.createTextNode("Error: HMIDOMParser.prototype.parse: ParseError on GraphicDescription");
 				deleteChilds(document.getElementById("ErrorOutput"));
@@ -158,7 +159,6 @@ HMIDOMParser.prototype = {
 		
 		Return = GraphicElement.firstChild;
 		
-		delete Parser;
 		delete GraphicElement;
 		delete StyleElement;
 		HMI.hmi_log_trace("HMIDOMParser.parse - End");
