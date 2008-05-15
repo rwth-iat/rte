@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.17 $
-*	$Date: 2008-05-13 15:15:57 $
+*	$Revision: 1.18 $
+*	$Date: 2008-05-15 12:56:49 $
 *
 *	History:
 *	--------
@@ -489,25 +489,23 @@ HMI.hmi_log_info('http://'
 				+ '&preventCaching='
 				+DatePreventsCaching.getTime() + "###########"+req.responseText);
 */
-
-				
-				if (async == false)
-				{
-					//	Synchron Communication
-					//
-					if (cbfnc != null)
-						cbfnc(this, req);
-				};
 			} catch (e) {
 				HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent. Is the gateway started?');
 				return false;
 			};
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
-			return true;
 		} catch (e) {
 			HMI.hmi_log_error("HMIJavaScriptKSClient._sendRequest: Error during request.");
 			return false;
 		};
+		if (async == false)
+		{
+			//	Synchron Communication
+			//
+			if (cbfnc != null)
+				cbfnc(this, req);
+		};
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
+		return true;
 	},
 	
 	/*********************************
