@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.11 $
-*	$Date: 2008-05-13 15:15:57 $
+*	$Revision: 1.12 $
+*	$Date: 2008-05-16 08:50:13 $
 *
 *	History:
 *	--------
@@ -255,13 +255,19 @@ HMI.prototype = {
 			var template = Component;
 			Component = document.importNode(template, true);
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now initGestures");
-			HMI.initGestures(Component);
+//FIXME initgestures klappen nicht im IE
+			if ("Explorer" != BrowserDetect.browser ) {
+				HMI.initGestures(Component);
+			}
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now Playground.appendChild");
 			HMI.Playground.appendChild(Component);
 			
 			//	set TimeoutID
 			//
-			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+//FIXME refresh klappt nicht im IE
+			if ("Explorer" != BrowserDetect.browser ) {
+				HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+			}
 		};
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - End");

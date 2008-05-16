@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.12 $
-*	$Date: 2008-05-07 12:32:22 $
+*	$Revision: 1.13 $
+*	$Date: 2008-05-16 08:50:13 $
 *
 *	History:
 *	--------
@@ -98,6 +98,37 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 	try{ return new ActiveXObject("Microsoft.XMLHTTP") }catch(e){}
 	throw new Error("Could not find an XMLHttpRequest alternative.")
 };
+
+/*********************************
+	Feature - emulate document.importNode if not available native
+	http://www.alistapart.com/articles/crossbrowserscripting
+*********************************/
+if (!document.importNode) {
+	document.importNode = function(node, allChildren) {
+		switch (node.nodeType) {
+		case 1:  //document.ELEMENT_NODE
+			/* create a new element */
+			var newNode = document.createElement(node.nodeName);
+			/* does the node have any attributes to add? */
+			if (node.attributes && node.attributes.length > 0)
+				/* add all of the attributes */
+				for (var i = 0, il = node.attributes.length; i < il;)
+					newNode.setAttribute(node.attributes[i].nodeName, node.getAttribute(node.attributes[i++].nodeName));
+			/* are we going after children too, and does the node have any? */
+			if (allChildren && node.childNodes && node.childNodes.length > 0)
+				/* recursively get all of the child nodes */
+				for (var i = 0, il = node.childNodes.length; i < il;)
+					newNode.appendChild(document.importNode(node.childNodes[i++], allChildren));
+			return newNode;
+			break;
+		case 3: //document.TEXT_NODE
+		case 4: //document.CDATA_SECTION_NODE
+		case 8: //document.COMMENT_NODE
+			return document.createTextNode(node.nodeValue);
+			break;
+		}
+	};
+}
 
 /*********************************
 	Crossbrowser Eventhandling
