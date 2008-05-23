@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.12 $
-*	$Date: 2008-05-16 08:50:13 $
+*	$Revision: 1.13 $
+*	$Date: 2008-05-23 08:59:24 $
 *
 *	History:
 *	--------
@@ -263,11 +263,7 @@ HMI.prototype = {
 			HMI.Playground.appendChild(Component);
 			
 			//	set TimeoutID
-			//
-//FIXME refresh klappt nicht im IE
-			if ("Explorer" != BrowserDetect.browser ) {
-				HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
-			}
+			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
 		};
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - End");
@@ -297,13 +293,19 @@ HMI.prototype = {
 			
 			var template = Component;
 			Component = document.importNode(template, true);
-			HMI.initGestures(Component);
+//FIXME initgestures klappen nicht im IE
+//			if ("Explorer" != BrowserDetect.browser ) {
+				HMI.initGestures(Component);
+//			}
 			HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			//HMI.Playground.replaceChild(Component, $(HMI.Path));
 			
-			template._xxx = null; delete template._xxx; delete template;
-			Component._xxx = null; delete Component._xxx; delete Component;
-			ComponentText._xxx = null; delete ComponentText._xxx; delete ComponentText;
+			delete template;
+			delete Component;
+			delete ComponentText;
+//FIXME:			template._xxx = null; delete template._xxx; delete template;
+//FIXME:			Component._xxx = null; delete Component._xxx; delete Component;
+//FIXME:			ComponentText._xxx = null; delete ComponentText._xxx; delete ComponentText;
 		};
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - End");
@@ -391,6 +393,7 @@ HMI.prototype = {
 		HMI._initGestures(Fragment);
 //		this.hmi_log_trace("HMI.prototype.initGestures - done _initGestures(Fragment) ");
 		
+		//TODO http://code.google.com/apis/ajaxfeeds/documentation/ hat CrossBrowser getElementsByTagNameNS
 		Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		for (var idx = 0; idx < Elements.length; ++idx)
 		{
@@ -398,7 +401,8 @@ HMI.prototype = {
 			HMI._initGestures(Elements[idx]);
 		};
 		
-		Elements._xxx = null; delete Elements._xxx; delete Elements;
+		delete Elements;
+//FIXME:		Elements._xxx = null; delete Elements._xxx; delete Elements;
 		
 		this.hmi_log_trace("HMI.prototype.initGestures - End");
 	},
@@ -461,8 +465,10 @@ HMI.prototype = {
 			};
 		};
 		
-		Classes._xxx = null; delete Classes._xxx; delete Classes;
-		idx._xxx = null; delete idx._xxx; delete idx;
+		delete Classes;
+		delete idx;
+//FIXME:		Classes._xxx = null; delete Classes._xxx; delete Classes;
+//FIXME:		idx._xxx = null; delete idx._xxx; delete idx;
 		
 		this.hmi_log_trace("HMI.prototype._instanceOf - Endf");
 		
@@ -475,11 +481,16 @@ HMI.prototype = {
 	_setLayerPosition: function (Element) {
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start");
 		
-		var LayerX = Element.x.animVal.value;
-		var LayerY = Element.y.animVal.value;
+		//debugger;
+		if (Element.x.animVal != undefined){
+			var LayerX = Element.x.animVal.value;
+			var LayerY = Element.y.animVal.value;
+		}else{
+			var LayerX = Element.x;
+			var LayerY = Element.y;
+		}
 		
-		if (	Element.ownerSVGElement != null
-			&&	Element.ownerSVGElement != document)
+		if (	Element.ownerSVGElement != null && Element.ownerSVGElement != document)
 		{
 			LayerX += parseInt(Element.ownerSVGElement.getAttribute("layerX"));
 			LayerY += parseInt(Element.ownerSVGElement.getAttribute("layerY"));
@@ -488,8 +499,10 @@ HMI.prototype = {
 		Element.setAttribute("layerX", LayerX);
 		Element.setAttribute("layerY", LayerY);
 		
-		LayerX._xxx = null; delete LayerX._xxx; delete LayerX;
-		LayerY._xxx = null; delete LayerY._xxx; delete LayerY;
+		delete LayerX;
+		delete LayerY;
+//FIXME:		LayerX._xxx = null; delete LayerX._xxx; delete LayerX;
+//FIXME:		LayerY._xxx = null; delete LayerY._xxx; delete LayerY;
 		
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - End");
 	},	

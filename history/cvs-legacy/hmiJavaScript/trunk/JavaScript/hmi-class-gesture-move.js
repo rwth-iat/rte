@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.3 $
-*	$Date: 2008-04-11 15:12:38 $
+*	$Revision: 1.4 $
+*	$Date: 2008-05-23 08:59:24 $
 *
 *	History:
 *	--------
@@ -308,8 +308,10 @@ Dragger.prototype = {
 			this.registerOnMouseMove(document, true, this);
 			this.registerOnMouseUp(document, true, this);
 			
-			Node._xxx = null; delete Node._xxx; delete Node;
-			SVGComponent._xxx = null; delete SVGComponent._xxx; delete SVGComponent;
+			delete Node;
+			delete SVGComponent;
+//FIXME:			Node._xxx = null; delete Node._xxx; delete Node;
+//FIXME:			SVGComponent._xxx = null; delete SVGComponent._xxx; delete SVGComponent;
 		};		
 		
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - End");
@@ -369,7 +371,8 @@ Dragger.prototype = {
 			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
 		};
 		
-		Clone._xxx = null; delete Clone._xxx; delete Clone;
+		delete Clone;
+//FIXME:		Clone._xxx = null; delete Clone._xxx; delete Clone;
 		
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - End");
 	},
