@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.6 $
-*	$Date: 2008-05-05 09:18:38 $
+*	$Revision: 1.7 $
+*	$Date: 2008-05-23 08:56:41 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
@@ -56,6 +56,8 @@
 *
 ***********************************************************************/
 -->
+<script language="JavaScript" src="JavaScript/adobesvgcheck.js"></script>
+<script language="VBScript" src="JavaScript/adobesvgcheck.vbs"></script>
 <script type="text/javascript">
 	var BrowserDetect = {
 		init: function () {
@@ -163,10 +165,16 @@
 	};
 	BrowserDetect.init();
 	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
-		window.location.href = "hmi-explorer.html";
+		checkAndGetSVGViewer();
+		if(true == window.svgInstalled){
+			window.location.href = "hmi-explorer.html";
+		}
 	}else if ("Explorer" == BrowserDetect.browser && 8 < BrowserDetect.version ) {
 		//IE9 kann vielleicht firefox Datei lesen, noch ungetestet, da noch in weiter Ferne
-		window.location.href = "hmi-explorer.html";
+		checkAndGetSVGViewer();
+		if(true == window.svgInstalled){
+			window.location.href = "hmi-explorer.html";
+		}
 	}else if ("Mozilla" == BrowserDetect.browser) {
 		window.location.href = "hmi-gecko.xhtml";
 	}else if ("Firefox" == BrowserDetect.browser) {
@@ -201,14 +209,23 @@
 				<td style="text-align:center;font-size:8pt;">&#169; Lehrstuhl für Prozessleittechnik 2008</td>
 			</tr>
 		</table>
-<noscript>
-<p>Leider haben sie in ihrem Browser kein Javascript aktiviert. Für die HMI Funktionalität ist jedoch zwingend aktiviertes Javaskript, sowie SVG Unterstützung des Browsers nötig.</p>
-<ul>
-	<li><a href="http://www.mozilla-europe.org/de/products/firefox/">Firefox</a> hat ab Version 2.0 SVG Support intergiert.</li>
-	<li><a href="http://www.microsoft.com/germany/windows/products/winfamily/ie/default.mspx">Internet Explorer</a> benötigt ein <a href="http://www.adobe.com/svg/viewer/install/mainframed.html">SVG Plugin</a> von Adobe. Der Lehrstuhl arbeitet jedoch noch an der Unterstützung dieser Kombination.</li>
-	<li><a href="http://www.opera.com/download/">Opera</a> unterstützt ab Version 9.0 SVG und Javaskript</li>
-</ul>
-<p>Bitte aktivieren sie Javascript in ihrem Browser und laden sie die Seite neu.</p>
-</noscript>
-</body>
+		<noscript>
+			<h2>Leider haben sie in ihrem Browser kein Javascript aktiviert. </h2>
+			<p>Für die HMI Funktionalität ist jedoch zwingend aktiviertes Javascript nötig</p>
+			<strong>Bitte aktivieren sie Javascript in ihrem Browser und laden sie die Seite neu.</strong>
+			<h3>Bei Firefox</h3>
+			Klicken Sie in der obersten Men&uuml;leiste auf <b>Extras</b> / <b>Einstellungen</b>. Hier aktivieren Sie unter <b>Inhalt</b> bzw. <b>Web-Features</b> den Punkt <b>JavaScript aktivieren</b> und klicken Sie <b>OK</b>.
+			<h3>Beim Internet Explorer</h3>
+			Klicken Sie in der obersten Men&uuml;leiste auf <b>Extras</b> / <b>Internetoptionen</b>.<br>
+			Dort klicken Sie unter <b>Sicherheit</b> <i>entweder</i> auf <b>Standardstufe</b>, <i>oder</i> Sie w&auml;hlen <b>Stufe anpassen</b> und aktivieren dann unter <b>Scripting</b> den Punkt <b>Active Scripting Aktivieren</b>. Best&auml;tigen Sie mit <b>OK</b>.
+			<h3>Bei Opera</h3>
+			Klicken Sie in der obersten Men&uuml;leiste auf <b>Datei</b> / <b>Einstellungen</b>. Unter <b>Multimedia</b> setzen Sie ein H&auml;kchen bei <b>JavaScript aktivieren</b> und klicken Sie dann <b>OK</b>.
+		</noscript>
+		<p>Für die HMI Funktionalität ist SVG Unterstützung des Browsers nötig.</p>
+		<ul>
+			<li><a href="http://www.mozilla-europe.org/de/products/firefox/">Firefox</a> hat ab Version 2.0 SVG Support integiert.</li>
+			<li><a href="http://www.microsoft.com/germany/windows/products/winfamily/ie/default.mspx">Internet Explorer</a> benötigt ein <a href="http://www.adobe.com/svg/viewer/install/mainframed.html">SVG Plugin</a> von Adobe. Bisher ist mit dieser Kombination nur ein eingeschränktes Monitoring möglich.</li>
+			<li><a href="http://www.opera.com/download/">Opera</a> unterstützt ab Version 9.0 SVG und Javascript</li>
+		</ul>
+	</body>
 </html>
