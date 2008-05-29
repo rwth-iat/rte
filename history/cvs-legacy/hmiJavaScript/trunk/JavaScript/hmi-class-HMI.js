@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.13 $
-*	$Date: 2008-05-23 08:59:24 $
+*	$Revision: 1.14 $
+*	$Date: 2008-05-29 10:11:03 $
 *
 *	History:
 *	--------
@@ -294,9 +294,9 @@ HMI.prototype = {
 			var template = Component;
 			Component = document.importNode(template, true);
 //FIXME initgestures klappen nicht im IE
-//			if ("Explorer" != BrowserDetect.browser ) {
+			if ("Explorer" != BrowserDetect.browser ) {
 				HMI.initGestures(Component);
-//			}
+			}
 			HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			//HMI.Playground.replaceChild(Component, $(HMI.Path));
 			
@@ -481,7 +481,6 @@ HMI.prototype = {
 	_setLayerPosition: function (Element) {
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start");
 		
-		//debugger;
 		if (Element.x.animVal != undefined){
 			var LayerX = Element.x.animVal.value;
 			var LayerY = Element.y.animVal.value;

@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.9 $
-*	$Date: 2008-05-05 09:18:38 $
+*	$Revision: 1.10 $
+*	$Date: 2008-05-29 10:11:03 $
 *
 *	History:
 *	21-June-2007			St
@@ -91,7 +91,7 @@
 			</colgroup>
 			<tr onclick="hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
-				<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25px" height="22px" version="1.1">
+				<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
 						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
 						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
 						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
@@ -119,7 +119,10 @@
 				</tr>
 				<tr>
 					<td style="text-align:right;">Server:</td>
-					<td><select id="idServers" name="Sheets" size="1" style="width:200px;"></select></td>
+					<td><select id="idServers" name="Sheets" size="1" style="width:200px;">
+							<option>please push "Show Servers"</option>
+						</select>
+					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;">
 						<input type="button" value="Show Servers"
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
@@ -135,7 +138,10 @@
 				</tr>
 				<tr>
 					<td style="text-align:right;">Sheets:</td>
-					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
+					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;">
+							<option>please push "Show Servers"</option>
+						</select>
+					</td>
 					<td colspan="2"><input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible</td>
 				</tr>
 			</table>

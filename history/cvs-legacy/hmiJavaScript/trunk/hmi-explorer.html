@@ -48,8 +48,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.8 $
-*	$Date: 2008-05-07 09:19:57 $
+*	$Revision: 1.9 $
+*	$Date: 2008-05-29 10:11:03 $
 *
 *	History:
 *	21-June-2007			St
@@ -127,7 +127,10 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 				</tr>
 				<tr>
 					<td style="text-align:right;">Server:</td>
-					<td><select id="idServers" name="Sheets" size="1" style="width:200px;"></select></td>
+					<td><select id="idServers" name="Sheets" size="1" style="width:200px;">
+							<option>please push "Show Servers"</option>
+						</select>
+					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;">
 						<input type="button" value="Show Servers"
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
@@ -143,7 +146,10 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 				</tr>
 				<tr>
 					<td style="text-align:right;">Sheets:</td>
-					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
+					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;">
+							<option>please push "Show Servers"</option>
+						</select>
+					</td>
 					<td colspan="2"><input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible</td>
 				</tr>
 			</table>
