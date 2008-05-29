@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.15 $
-*	$Date: 2008-05-29 12:49:25 $
+*	$Revision: 1.16 $
+*	$Date: 2008-05-29 13:12:31 $
 *
 *	History:
 *	--------
@@ -253,9 +253,7 @@ HMI.prototype = {
 			Component = HMI._importComponent(ComponentText);
 			if (Component == null){
 				HMI.hmi_log_error("HMI.prototype._cbGetAndImportComponent: Could not import component");
-				var ErrorText = document.createTextNode('Could not import component.');
-				deleteChilds(document.getElementById("ErrorOutput"));
-				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_onwebsite("Could not import component");
 				return;
 			};
 			var template = Component;
@@ -296,9 +294,7 @@ HMI.prototype = {
 			if (Component == null)
 			{
 				HMI.hmi_log_error("HMI.prototype._cbGetAndReplaceComponent: Could not import component");
-				var ErrorText = document.createTextNode('Could not import component.');
-				deleteChilds(document.getElementById("ErrorOutput"));
-				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_onwebsite("Could not import component");
 				clearTimeout(HMI.RefreshTimeoutID);
 				HMI.RefreshTimeoutID = null;
 				return;
@@ -602,5 +598,14 @@ HMI.prototype = {
 				opera.postError("HMI_TRACE: "+ text);
 			}
 		}
+	},
+	
+	/*********************************
+		hmi_log_onwebsite
+	*********************************/
+	hmi_log_onwebsite: function (text) {
+		var ErrorTextNode = document.createTextNode(text);
+		deleteChilds(document.getElementById("ErrorOutput"));
+		document.getElementById("ErrorOutput").appendChild(ErrorTextNode);
 	}
 };

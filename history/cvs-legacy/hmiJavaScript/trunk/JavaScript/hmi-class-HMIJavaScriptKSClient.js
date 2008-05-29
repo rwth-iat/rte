@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.19 $
-*	$Date: 2008-05-29 12:49:25 $
+*	$Revision: 1.20 $
+*	$Date: 2008-05-29 13:12:31 $
 *
 *	History:
 *	--------
@@ -123,10 +123,8 @@ HMIJavaScriptKSClient.prototype = {
 		{
 			this._sendRequest(this, method, this.Asynchron, this.TCLKSHandle, service + ' ' + args, cbfnc);
 		} else {
-			var ErrorText = document.createTextNode('TCLKSGateway not initialized.');
-			deleteChilds(document.getElementById("ErrorOutput"));
-			document.getElementById("ErrorOutput").appendChild(ErrorText);
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.sendRequest - TCLKSGateway not initialized.');
+			HMI.hmi_log_onwebsite('TCLKSGateway not initialized.');
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.sendRequest - End");
@@ -143,18 +141,16 @@ HMIJavaScriptKSClient.prototype = {
 			Client.TCLKSHandle = req.responseText;
 		} else {
 			Client.KSServer = null;
+			Node = document.createElement('option');
+			Node.innerHTML = '- no valid server response -';
+			Node.value = 'no server';
+			HMI.PossServers.appendChild(Node);
 			HMI.hmi_log_error('HMIJavaScriptKSClient._cbinit: Could not initialize TCLKSGateway.'
 				+ '\n'
 				+ 'Gateway responded:'
 				+ '\n\n'
 				+ req.responseText);
-			Node = document.createElement('option');
-			Node.innerHTML = '- no valid server response -';
-			Node.value = 'no server';
-			HMI.PossServers.appendChild(Node);
-			var ErrorText = document.createTextNode("Error: " + req.responseText);
-			deleteChilds(document.getElementById("ErrorOutput"));
-			document.getElementById("ErrorOutput").appendChild(ErrorText);
+			HMI.hmi_log_onwebsite('Error: ' + req.responseText);
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - End");
@@ -494,16 +490,12 @@ HMI.hmi_log_info('http://'
 */
 			} catch (e) {
 				HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent. Is the gateway started?');
-				var ErrorText = document.createTextNode('Request could not be sent. Is the gateway started?');
-				deleteChilds(document.getElementById("ErrorOutput"));
-				document.getElementById("ErrorOutput").appendChild(ErrorText);
+				HMI.hmi_log_onwebsite('Request could not be sent. Is the gateway started?');
 				return false;
 			};
 		} catch (e) {
 			HMI.hmi_log_error("HMIJavaScriptKSClient._sendRequest: Error during request.");
-			var ErrorText = document.createTextNode('Error during request.');
-			deleteChilds(document.getElementById("ErrorOutput"));
-			document.getElementById("ErrorOutput").appendChild(ErrorText);
+			HMI.hmi_log_onwebsite("Error during request.");
 			return false;
 		};
 		if (async == false)
@@ -532,9 +524,7 @@ HMI.hmi_log_info('http://'
 		if (/\bTksS-\b/.exec(ComponentText))
 		{
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
-			var ErrorText = document.createTextNode("Server lost: "+ComponentText);
-			deleteChilds(document.getElementById("ErrorOutput"));
-			document.getElementById("ErrorOutput").appendChild(ErrorText);
+			HMI.hmi_log_onwebsite('Server lost: ' + ComponentText)
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			return null;
