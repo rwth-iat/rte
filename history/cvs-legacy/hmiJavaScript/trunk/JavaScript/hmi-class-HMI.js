@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2008-05-29 13:12:31 $
+*	$Revision: 1.17 $
+*	$Date: 2008-05-29 13:25:33 $
 *
 *	History:
 *	--------
@@ -607,5 +607,10 @@ HMI.prototype = {
 		var ErrorTextNode = document.createTextNode(text);
 		deleteChilds(document.getElementById("ErrorOutput"));
 		document.getElementById("ErrorOutput").appendChild(ErrorTextNode);
+		//if header in not visible: show it
+		if (showHeader == false){
+			hideHeader();
+		}
+
 	}
 };
