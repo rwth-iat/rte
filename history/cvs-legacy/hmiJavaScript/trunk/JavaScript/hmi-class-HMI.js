@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.14 $
-*	$Date: 2008-05-29 10:11:03 $
+*	$Revision: 1.15 $
+*	$Date: 2008-05-29 12:49:25 $
 *
 *	History:
 *	--------
@@ -245,11 +245,17 @@ HMI.prototype = {
 		if (req.responseText != "")
 		{
 			ComponentText = HMI.KSClient.prepareComponentText(req.responseText);
-			Component = HMI._importComponent(ComponentText);
+			if (ComponentText == null){
+				//logging not required, allready done by prepareComponentText
+				return;
+			}
 			
-			if (Component == null)
-			{
+			Component = HMI._importComponent(ComponentText);
+			if (Component == null){
 				HMI.hmi_log_error("HMI.prototype._cbGetAndImportComponent: Could not import component");
+				var ErrorText = document.createTextNode('Could not import component.');
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
 				return;
 			};
 			var template = Component;
@@ -281,11 +287,18 @@ HMI.prototype = {
 		if (req.responseText != "")
 		{
 			ComponentText = HMI.KSClient.prepareComponentText(req.responseText);
+			if (ComponentText == null){
+				//logging not required, allready done by prepareComponentText
+				return;
+			}
+
 			Component = HMI._importComponent(ComponentText);
-			
 			if (Component == null)
 			{
 				HMI.hmi_log_error("HMI.prototype._cbGetAndReplaceComponent: Could not import component");
+				var ErrorText = document.createTextNode('Could not import component.');
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
 				clearTimeout(HMI.RefreshTimeoutID);
 				HMI.RefreshTimeoutID = null;
 				return;

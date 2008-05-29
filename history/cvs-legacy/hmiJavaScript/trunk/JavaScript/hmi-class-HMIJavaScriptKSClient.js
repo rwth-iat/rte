@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.18 $
-*	$Date: 2008-05-15 12:56:49 $
+*	$Revision: 1.19 $
+*	$Date: 2008-05-29 12:49:25 $
 *
 *	History:
 *	--------
@@ -123,6 +123,9 @@ HMIJavaScriptKSClient.prototype = {
 		{
 			this._sendRequest(this, method, this.Asynchron, this.TCLKSHandle, service + ' ' + args, cbfnc);
 		} else {
+			var ErrorText = document.createTextNode('TCLKSGateway not initialized.');
+			deleteChilds(document.getElementById("ErrorOutput"));
+			document.getElementById("ErrorOutput").appendChild(ErrorText);
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.sendRequest - TCLKSGateway not initialized.');
 		};
 		
@@ -491,10 +494,16 @@ HMI.hmi_log_info('http://'
 */
 			} catch (e) {
 				HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent. Is the gateway started?');
+				var ErrorText = document.createTextNode('Request could not be sent. Is the gateway started?');
+				deleteChilds(document.getElementById("ErrorOutput"));
+				document.getElementById("ErrorOutput").appendChild(ErrorText);
 				return false;
 			};
 		} catch (e) {
 			HMI.hmi_log_error("HMIJavaScriptKSClient._sendRequest: Error during request.");
+			var ErrorText = document.createTextNode('Error during request.');
+			deleteChilds(document.getElementById("ErrorOutput"));
+			document.getElementById("ErrorOutput").appendChild(ErrorText);
 			return false;
 		};
 		if (async == false)
@@ -523,6 +532,9 @@ HMI.hmi_log_info('http://'
 		if (/\bTksS-\b/.exec(ComponentText))
 		{
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
+			var ErrorText = document.createTextNode("Server lost: "+ComponentText);
+			deleteChilds(document.getElementById("ErrorOutput"));
+			document.getElementById("ErrorOutput").appendChild(ErrorText);
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			return null;
