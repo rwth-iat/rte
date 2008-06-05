@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2008-05-29 13:12:31 $
+*	$Revision: 1.6 $
+*	$Date: 2008-06-05 15:32:11 $
 *
 *	History:
 *	--------
@@ -111,34 +111,26 @@ HMIDOMParser.prototype = {
 		//building an XML Tree works a bit different in IE
 		}else{
 			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
-			try {
-				GraphicElement.loadXML(GraphicDescription);
-			} catch (e) {
-				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse GraphicDescription');
-				HMI.hmi_log_onwebsite('Could not parse GraphicDescription');
-				return null;
-			};
-			//TODO: XML Parserfehler hier müssen abgefangen werden
-			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
+			var loadXMLresult;
+			loadXMLresult = GraphicElement.loadXML(GraphicDescription);
+			if (loadXMLresult == false){
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on GraphicDescription');
 				HMI.hmi_log_onwebsite('ParseError on GraphicDescription');
 				return null;
 			};
 
 			var StyleElement = new ActiveXObject("Microsoft.XMLDOM");
-			try {
-				StyleElement.loadXML(StyleDescription);
-			} catch (e) {
-				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription');
-				HMI.hmi_log_onwebsite('Could not parse StyleDescription');
-				return null;
-			};
-			if (StyleElement.documentElement.namespaceURI != "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
-				GraphicElement.firstChild.appendChild(StyleElement.firstChild);
+			loadXMLresult = StyleElement.loadXML(StyleDescription);
+			if (loadXMLresult == true){
+				//attach styles
+//				GraphicElement.firstChild.appendChild(StyleElement.firstChild);
+				//or put them in front
+				GraphicElement.firstChild.insertBefore(StyleElement.firstChild, GraphicElement.firstChild.firstChild);
 			} else {
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
 				HMI.hmi_log_onwebsite('ParseError on StyleDescription');
 			};
+			delete loadXMLresult;
 		}
 		
 		Return = GraphicElement.firstChild;
