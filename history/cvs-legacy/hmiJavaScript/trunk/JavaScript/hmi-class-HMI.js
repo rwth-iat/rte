@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.17 $
-*	$Date: 2008-05-29 13:25:33 $
+*	$Revision: 1.18 $
+*	$Date: 2008-06-10 08:54:14 $
 *
 *	History:
 *	--------
@@ -253,7 +253,7 @@ HMI.prototype = {
 			Component = HMI._importComponent(ComponentText);
 			if (Component == null){
 				HMI.hmi_log_error("HMI.prototype._cbGetAndImportComponent: Could not import component");
-				HMI.hmi_log_onwebsite("Could not import component");
+				HMI.hmi_log_onwebsite("Could not import component in _cbGetAndImportComponent");
 				return;
 			};
 			var template = Component;
@@ -294,7 +294,7 @@ HMI.prototype = {
 			if (Component == null)
 			{
 				HMI.hmi_log_error("HMI.prototype._cbGetAndReplaceComponent: Could not import component");
-				HMI.hmi_log_onwebsite("Could not import component");
+				HMI.hmi_log_onwebsite("Could not import component in _cbGetAndReplaceComponent");
 				clearTimeout(HMI.RefreshTimeoutID);
 				HMI.RefreshTimeoutID = null;
 				return;
@@ -309,12 +309,23 @@ HMI.prototype = {
 			HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			//HMI.Playground.replaceChild(Component, $(HMI.Path));
 			
+			try{
+				/**
+				* Gecko does not garbage collect things correct in any cases.
+				* The hack here is to reassign the additional properties attached to the
+				* JS wrapper object in order to ensure it becomes dirty. Well,
+				* considering that it becomes dirty from getting it from itself ...
+				* I think this source code can't be exported to the US anymore
+				* because of undecent language and probably thoughts.
+				*/
+				template._xxx = null; delete template._xxx;
+				Component._xxx = null; delete Component._xxx;
+				ComponentText._xxx = null; delete ComponentText._xxx;
+			} catch (e) {   //IE does not like this hack
+			}
 			delete template;
 			delete Component;
 			delete ComponentText;
-//FIXME:			template._xxx = null; delete template._xxx; delete template;
-//FIXME:			Component._xxx = null; delete Component._xxx; delete Component;
-//FIXME:			ComponentText._xxx = null; delete ComponentText._xxx; delete ComponentText;
 		};
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - End");
@@ -410,8 +421,19 @@ HMI.prototype = {
 			HMI._initGestures(Elements[idx]);
 		};
 		
+		try{
+			/**
+			* Gecko does not garbage collect things correct in any cases.
+			* The hack here is to reassign the additional properties attached to the
+			* JS wrapper object in order to ensure it becomes dirty. Well,
+			* considering that it becomes dirty from getting it from itself ...
+			* I think this source code can't be exported to the US anymore
+			* because of undecent language and probably thoughts.
+			*/
+			Elements._xxx = null; delete Elements._xxx;
+		} catch (e) {   //IE does not like this hack
+		}
 		delete Elements;
-//FIXME:		Elements._xxx = null; delete Elements._xxx; delete Elements;
 		
 		this.hmi_log_trace("HMI.prototype.initGestures - End");
 	},
@@ -474,10 +496,21 @@ HMI.prototype = {
 			};
 		};
 		
+		try{
+			/**
+			* Gecko does not garbage collect things correct in any cases.
+			* The hack here is to reassign the additional properties attached to the
+			* JS wrapper object in order to ensure it becomes dirty. Well,
+			* considering that it becomes dirty from getting it from itself ...
+			* I think this source code can't be exported to the US anymore
+			* because of undecent language and probably thoughts.
+			*/
+			Classes._xxx = null; delete Classes._xxx;
+			idx._xxx = null; delete idx._xxx;
+		} catch (e) {   //IE does not like this hack
+		}
 		delete Classes;
 		delete idx;
-//FIXME:		Classes._xxx = null; delete Classes._xxx; delete Classes;
-//FIXME:		idx._xxx = null; delete idx._xxx; delete idx;
 		
 		this.hmi_log_trace("HMI.prototype._instanceOf - Endf");
 		
@@ -507,10 +540,21 @@ HMI.prototype = {
 		Element.setAttribute("layerX", LayerX);
 		Element.setAttribute("layerY", LayerY);
 		
+		try{
+			/**
+			* Gecko does not garbage collect things correct in any cases.
+			* The hack here is to reassign the additional properties attached to the
+			* JS wrapper object in order to ensure it becomes dirty. Well,
+			* considering that it becomes dirty from getting it from itself ...
+			* I think this source code can't be exported to the US anymore
+			* because of undecent language and probably thoughts.
+			*/
+			LayerX._xxx = null; delete LayerX._xxx;
+			LayerY._xxx = null; delete LayerY._xxx;
+		} catch (e) {   //IE does not like this hack
+		}
 		delete LayerX;
 		delete LayerY;
-//FIXME:		LayerX._xxx = null; delete LayerX._xxx; delete LayerX;
-//FIXME:		LayerY._xxx = null; delete LayerY._xxx; delete LayerY;
 		
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - End");
 	},	

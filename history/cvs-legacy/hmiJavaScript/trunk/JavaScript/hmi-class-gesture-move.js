@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.4 $
-*	$Date: 2008-05-23 08:59:24 $
+*	$Revision: 1.5 $
+*	$Date: 2008-06-10 08:54:14 $
 *
 *	History:
 *	--------
@@ -308,11 +308,22 @@ Dragger.prototype = {
 			this.registerOnMouseMove(document, true, this);
 			this.registerOnMouseUp(document, true, this);
 			
+			try{
+				/**
+				* Gecko does not garbage collect things correct in any cases.
+				* The hack here is to reassign the additional properties attached to the
+				* JS wrapper object in order to ensure it becomes dirty. Well,
+				* considering that it becomes dirty from getting it from itself ...
+				* I think this source code can't be exported to the US anymore
+				* because of undecent language and probably thoughts.
+				*/
+				Node._xxx = null; delete Node._xxx;
+				SVGComponent._xxx = null; delete SVGComponent._xxx;
+			} catch (e) {   //IE does not like this hack
+			}
 			delete Node;
 			delete SVGComponent;
-//FIXME:			Node._xxx = null; delete Node._xxx; delete Node;
-//FIXME:			SVGComponent._xxx = null; delete SVGComponent._xxx; delete SVGComponent;
-		};		
+		};
 		
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - End");
 	},
@@ -370,9 +381,19 @@ Dragger.prototype = {
 		{
 			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
 		};
-		
+		try{
+			/**
+			* Gecko does not garbage collect things correct in any cases.
+			* The hack here is to reassign the additional properties attached to the
+			* JS wrapper object in order to ensure it becomes dirty. Well,
+			* considering that it becomes dirty from getting it from itself ...
+			* I think this source code can't be exported to the US anymore
+			* because of undecent language and probably thoughts.
+			*/
+			Clone._xxx = null; delete Clone._xxx;
+		} catch (e) {   //IE does not like this hack
+		}
 		delete Clone;
-//FIXME:		Clone._xxx = null; delete Clone._xxx; delete Clone;
 		
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - End");
 	},
