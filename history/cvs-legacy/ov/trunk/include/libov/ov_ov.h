@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.20 2007-10-02 17:04:10 wolfram Exp $
+*   $Id: ov_ov.h,v 1.21 2008-06-12 13:15:23 henning Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -34,8 +34,7 @@
 #include "libov/ov_config.h"
 #include "libov/ov_version.h"
 
-/* #include "ks/ks.h" */
-#include "internalks.h" /* Von Wolf: sollte es Probleme geben sage man mir bescheid ^^ */
+#include "ks/ks.h"
 
 #ifdef __cplusplus
 extern "C" {
