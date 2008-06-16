@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.6 $
-*	$Date: 2008-06-05 15:32:11 $
+*	$Revision: 1.7 $
+*	$Date: 2008-06-16 13:45:01 $
 *
 *	History:
 *	--------
@@ -100,14 +100,13 @@ HMIDOMParser.prototype = {
 				HMI.hmi_log_onwebsite('Could not parse StyleDescription');
 				return null;
 			};
-			if (StyleElement.documentElement.namespaceURI != "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
-				GraphicElement.firstChild.appendChild(StyleElement.firstChild);
-			} else {
+			if (StyleElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
 				HMI.hmi_log_onwebsite('ParseError on StyleDescription');
-			};
-			
+			}
 			delete Parser;
+			//GraphicElement has another DOM ownerDocument
+			var StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 		//building an XML Tree works a bit different in IE
 		}else{
 			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
@@ -118,23 +117,21 @@ HMIDOMParser.prototype = {
 				HMI.hmi_log_onwebsite('ParseError on GraphicDescription');
 				return null;
 			};
-
 			var StyleElement = new ActiveXObject("Microsoft.XMLDOM");
 			loadXMLresult = StyleElement.loadXML(StyleDescription);
-			if (loadXMLresult == true){
-				//attach styles
-//				GraphicElement.firstChild.appendChild(StyleElement.firstChild);
-				//or put them in front
-				GraphicElement.firstChild.insertBefore(StyleElement.firstChild, GraphicElement.firstChild.firstChild);
-			} else {
+			if (loadXMLresult == false){
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
 				HMI.hmi_log_onwebsite('ParseError on StyleDescription');
 			};
 			delete loadXMLresult;
+			//IE doesnot provide importNode and does not need it for the appendChild
+			var StyleElementNode = StyleElement.firstChild;
 		}
+		GraphicElement.firstChild.appendChild(StyleElementNode);
 		
 		Return = GraphicElement.firstChild;
 		
+		delete StyleElementNode;
 		delete GraphicElement;
 		delete StyleElement;
 		HMI.hmi_log_trace("HMIDOMParser.parse - End");

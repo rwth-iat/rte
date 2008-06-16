@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.13 $
-*	$Date: 2008-05-16 08:50:13 $
+*	$Revision: 1.14 $
+*	$Date: 2008-06-16 13:45:01 $
 *
 *	History:
 *	--------
@@ -112,8 +112,14 @@ if (!document.importNode) {
 			/* does the node have any attributes to add? */
 			if (node.attributes && node.attributes.length > 0)
 				/* add all of the attributes */
-				for (var i = 0, il = node.attributes.length; i < il;)
-					newNode.setAttribute(node.attributes[i].nodeName, node.getAttribute(node.attributes[i++].nodeName));
+				for (var i = 0, il = node.attributes.length; i < il;i++){
+					if (node.attributes[i].nodeName == "style"){
+						//IE has problems assigning the style by setAttribute
+						newNode.style.cssText = node.getAttribute(node.attributes[i].nodeName);
+					}else{
+						newNode.setAttribute(node.attributes[i].nodeName, node.getAttribute(node.attributes[i].nodeName));
+					}
+				}
 			/* are we going after children too, and does the node have any? */
 			if (allChildren && node.childNodes && node.childNodes.length > 0)
 				/* recursively get all of the child nodes */
