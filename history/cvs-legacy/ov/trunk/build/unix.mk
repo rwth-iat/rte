@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.21 2007-09-25 11:58:49 wolfram Exp $
+#   $Id: unix.mk,v 1.22 2008-06-17 14:53:27 martin Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -200,7 +200,7 @@ fnmatch.o : fnmatch.c
 	 $(CC) $(CC_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
-	$(CXX_LINK) -o $@ $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(CXX_LIBS)
+	$(CXX_LINK) -o $@ $^   $(LIBKSCLN_LIB) $(LIBPLT_LIB) $(LIBKS_LIB) $(CXX_LIBS)
 	strip --strip-debug $(DBDUMP_EXE)
 
 #	ACPLT/OV database parser
