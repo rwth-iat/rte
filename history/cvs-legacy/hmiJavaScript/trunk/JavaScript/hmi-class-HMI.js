@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.18 $
-*	$Date: 2008-06-10 08:54:14 $
+*	$Revision: 1.19 $
+*	$Date: 2008-06-18 15:51:58 $
 *
 *	History:
 *	--------
@@ -413,13 +413,21 @@ HMI.prototype = {
 		HMI._initGestures(Fragment);
 //		this.hmi_log_trace("HMI.prototype.initGestures - done _initGestures(Fragment) ");
 		
-		//TODO http://code.google.com/apis/ajaxfeeds/documentation/ hat CrossBrowser getElementsByTagNameNS
-		Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-		for (var idx = 0; idx < Elements.length; ++idx)
-		{
-			HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
-			HMI._initGestures(Elements[idx]);
-		};
+		if (Fragment.getElementsByTagNameNS){
+			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			for (var idx = 0; idx < Elements.length; ++idx){
+				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
+				HMI._initGestures(Elements[idx]);
+			}
+		}else{
+			Elements = Fragment.getElementsByTagName('svg');
+			for (var idx = 0; idx < Elements.length; ++idx){
+				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
+				if (Elements[idx].tagUrn == HMI.HMI_Constants.NAMESPACE_SVG){
+					HMI._initGestures(Elements[idx]);
+				}
+			}
+		}
 		
 		try{
 			/**
