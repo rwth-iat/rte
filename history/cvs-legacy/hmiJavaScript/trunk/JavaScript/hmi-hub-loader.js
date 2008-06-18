@@ -44,8 +44,8 @@
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.5 $
-*	$Date: 2008-04-11 14:35:12 $
+*	$Revision: 1.6 $
+*	$Date: 2008-06-18 08:41:12 $
 *
 *	History:
 *	01-March-2005			HA
@@ -66,7 +66,7 @@ function SCRIPT_HUB_SEARCH(node, elementName, result) {
 		node.ELEMENT_NODE = 1;
 	}
 	if (	(node.nodeType == node.ELEMENT_NODE)
-		&&	(node.nodeName == elementName))
+		&&	(node.nodeName.toLowerCase() == elementName))
 	{
 		result.push(node);
 	};
@@ -123,6 +123,19 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			//	Support for HTML and SVG <script> elements.
 			//
 			case null:
+			//Internet Explorer doesnot have namespaceURI
+			case undefined:
+				switch (scriptNode.tagUrn){
+					//HTML Nodes have an empty tagUrn
+					case "":
+						var match = p.exec(scriptNode.getAttribute("src"));
+						break;
+					case "http://www.w3.org/2000/svg":
+						var match = p.exec(scriptNode.getAttributeNS(
+							"http://www.w3.org/1999/xlink", "href"));
+						break;
+				}
+				break;
 			case "http://www.w3.org/1999/xhtml":
 				var match = p.exec(scriptNode.getAttribute("src"));
 				break;
@@ -182,6 +195,28 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 					source);
 				return node;
 			};
+			break;
+		case undefined:
+			switch (scriptAnchor.tagUrn){
+				case "":
+					createScriptNode = function(document, source)
+					{
+						var node = document.createElement("script");
+						node.setAttribute("src", source);
+						return node;
+					};
+					break;
+				case "http://www.w3.org/2000/svg":
+					createScriptNode = function(document, source)
+					{
+						var node = document.createElementNS(
+							scriptAnchor.namespaceURI, "script");
+						node.setAttributeNS("http://www.w3.org/1999/xlink", "href",
+							source);
+						return node;
+					};
+					break;
+			}
 			break;
 	};
 	
