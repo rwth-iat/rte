@@ -1,28 +1,42 @@
-Instructions:
+--------------------------------------------------------------------------------
+CVS Checkout:
+	Module acplt, Tag "ACPLT_KS_1_2_4"
+	Module oncrpc, Head
+	Module libml, Head
+	Module ov, Tag "Release1_6_9"
 
-1. Check out the modules in the following directories:
+--------------------------------------------------------------------------------
 
-- Module "acplt"
-	- Module ov
-- Module oncrpc
-- Module libmpm
+Path structure to use:
+[path]/acplt
+[path]/acplt/ov
+[path]/libml
+[path]/oncrpc
 
-2. Create a directory bin/[OS_Compiler_Name] at the same level as
- acplt, for example:
+The directory
+	[path]/bin/[comp]
+has to be created manually. where [comp] is the system or compiler specific path,
+for example ntvc.
 
-- acplt
-	- ov
-- oncrpc
-- libmpm
-- bin
-	-ntvc (or linux, nt, ...)
+Example for the directory structure:
 
-3. Compile oncrpc, libmpm and copy the libs to bin/[OS_Compiler_Name]
+c:\acplt
+c:\acplt\ov
+c:\acplt\bin\ntvc
+c:\acplt\libml
+c:\acplt\oncrpc
 
-4. Compile first plt and then ks, copy the libs to bin/[OS_Compiler_Name]
+--------------------------------------------------------------------------------
 
-5. Compile ov and copy the binaries to wherever you want to use them.
+Order of compilation:
+
+1. libplt
+2. oncrpc, copy the static lib to [path]/bin/[comp]
+3. ks, copy the static libs "libks", "libkssvr", "libkscln" to [path]/bin/[comp]
+4. libml
+5. ov
 
 
-For further information (except the changed directory structure) please
-look at the installation guide.
+
+
+

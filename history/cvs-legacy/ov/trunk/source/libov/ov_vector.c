@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vector.c,v 1.9 2006-10-17 11:30:44 stefan Exp $
+*   $Id: ov_vector.c,v 1.10 2008-06-18 15:08:47 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -163,11 +163,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicveclen(
 		/*
 		*	free strings that will be erased
 		*/
-		for(i=veclen, pstring=(OV_STRING*)pvector->value;
-			i<pvector->veclen; i++, pstring++
-		) {
-			Ov_WarnIfNot(Ov_OK(ov_string_setvalue(pstring, NULL)));
-		}
+		if(veclen<pvector->veclen) {
+    		for(i=veclen; i<pvector->veclen; i++) {
+        	    pstring=((OV_STRING*)pvector->value) + i;
+            	Ov_WarnIfNot(Ov_OK(ov_string_setvalue(pstring, NULL)));
+        	}
+        }
 	}
 	if(!veclen) {
 		if(pvector->value) {

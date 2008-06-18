@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ksserver_createobject.c,v 1.11 2007-04-25 13:59:03 martin Exp $
+*   $Id: ov_ksserver_createobject.c,v 1.12 2008-06-18 15:08:47 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -155,6 +155,7 @@ void ov_ksserver_createobject(
 		*	and the identifier of the new object.
 		*/
 		objpath = pitem->new_path;
+
 		for(identifier=objpath+strlen(objpath)-1; identifier>objpath; identifier--) {
 			if(*identifier == '/') {
 				*identifier = 0;
@@ -163,8 +164,13 @@ void ov_ksserver_createobject(
 			}
 		}
 		if(identifier==objpath) {
-			presult->result = OV_ERR_BADPATH;
-			continue;
+		    if(*identifier == '/') {
+				*identifier = 0;
+				identifier++;
+			} else {
+    			presult->result = OV_ERR_BADPATH;
+    			continue;
+    		}
 		}
 		if(!*objpath) {
 			/*

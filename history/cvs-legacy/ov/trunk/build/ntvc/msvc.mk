@@ -1,5 +1,5 @@
 
-#   $Id: msvc.mk,v 1.1 2007-04-24 14:11:29 martin Exp $
+#   $Id: msvc.mk,v 1.2 2008-06-18 15:08:47 martin Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -67,7 +67,8 @@ CC			= cl
 CC_FLAGS		= /W3 /c $(OV_PLATFORM_DEFINES)
 COMPILE_C		= $(CC) $(CC_FLAGS) /TC $(DEFINES) $(INCLUDES)
 
-LINK_FLAGS              = /nologo /debug
+LINK_FLAGS              = /nologo
+# /debug
 LINK			= link
 LD			= link /DLL
 

@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.21 2007-09-25 11:55:16 wolfram Exp $
+#   $Id: generic.mk,v 1.22 2008-06-18 15:08:47 martin Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -33,9 +33,9 @@
 
 #	generic part
 
-ACPLT_DIR					= ../../../
+ACPLT_DIR					= ../../../../
 ACPLT_BIN_DIR					= $(ACPLT_DIR)bin/
-ACPLT_LIB_DIR					= $(ACPLT_DIR)lib/
+ACPLT_LIB_DIR					= $(ACPLT_DIR)bin/$(SYSDIR)/
 
 ACPLT_OV_DIR				= ../../
 OV_INCLUDE_DIR				= $(ACPLT_OV_DIR)include/
@@ -69,7 +69,8 @@ ACPLT_KS_INCLUDE_KS_DIR			= $(ACPLT_KS_INCLUDE_DIR)ks/
 ACPLT_KS_SOURCE_DIR			= $(ACPLT_KS_DIR)src/
 ACPLT_PLT_BUILD_DIR			= $(ACPLT_LIB_DIR)
 
-LIBMPM_DIR				= ../../../libmpm/
+#LIBMPM_DIR				= ../../../../libmpm/
+LIBMPM_DIR				= ../../../../libml/
 
 #	platforms requiring ONC/RPC
 
@@ -262,7 +263,13 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(ACPLT_LIB_DIR)libmpm$(_LIB)
+#LIBMPM_LIB			= $(ACPLT_LIB_DIR)libmpm$(_LIB)
+
+ifeq ($(COMPILER), MSVC)
+LIBMPM_LIB			= $(LIBMPM_DIR)libml_vc$(_LIB)
+else
+LIBMPM_LIB			= $(LIBMPM_DIR)libml$(_LIB)
+endif
 
 ifeq ($(SYSTEM), NT)
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)

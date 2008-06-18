@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_database.c,v 1.25 2007-04-25 13:59:03 martin Exp $
+*   $Id: ov_database.c,v 1.26 2008-06-18 15:08:47 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -23,8 +23,9 @@
 /*
 *	History:
 *	--------
-*	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
-*	07-Jun-2001 J.Nagelmann <nagelmann@ltsoft.de>: Changes for Sun Solaris.
+*	13-Apr-1999 Dirk Meyer   <dirk@plt.rwth-aachen.de>: File created.
+*	07-Jun-2001 J.Nagelmann  <nagelmann@ltsoft.de>: Changes for Sun Solaris.
+*	30-Apr-2008 A.Neugebauer <neugebauer@ltsoft.de>: Changes for libml.
 */
 
 #define OV_COMPILE_LIBOV
@@ -61,7 +62,6 @@ int flock (int filedes, int oper)
   the_lock.l_len=0;
   return (fcntl(filedes,F_SETLKW, &the_lock));
 }
-
 #endif
 
 #if OV_SYSTEM_UNIX
@@ -86,10 +86,10 @@ int flock (int filedes, int oper)
 
 #ifndef __STDC__
 #define __STDC__ 1
-#include "mp_malloc.h"
+#include "ml_malloc.h"
 #undef __STDC__
 #else
-#include "mp_malloc.h"
+#include "ml_malloc.h"
 #endif
 
 #if OV_SYSTEM_MC164
@@ -154,23 +154,25 @@ static OV_VTBL_ov_object nostartupvtable = {
 /*
 *	Macro: pointer to memory pool info structure
 */
-#define pmpinfo ((mp_info OV_MEMSPEC *)(pdb+1))
+#define pmpinfo ((ml_info OV_MEMSPEC *)(pdb+1))
 
 /*	----------------------------------------------------------------------	*/
 
 /*
 *	Get more core memory from the memory pool (subroutine)
 */
-__ptr_t ov_database_morecore(
-	__malloc_ptrdiff_t	size
+__ml_ptr ov_database_morecore(
+	__ml_size_t	size
 ) {
 	/*
 	*	local variables
 	*/
-	__ptr_t	pmem = (__ptr_t)(pdb->pcurr);
+	__ml_ptr	pmem = (__ml_ptr)(pdb->pcurr);
 	OV_BYTE	OV_MEMSPEC *psoon = pdb->pcurr+size;
+#if OV_DYNAMIC_DATABASE
 #if OV_SYSTEM_UNIX
 	char	null = 0;
+#endif
 #endif
 	/*
 	*	test if we can get/release memory
@@ -220,14 +222,22 @@ __ptr_t ov_database_morecore(
 	*	yes we can. get/release it.
 	*/
 	pdb->pcurr = psoon;
-	return (__ptr_t)pmem;
+	return (__ml_ptr)pmem;
 }
 
 /*	----------------------------------------------------------------------	*/
 
 /*
 *	Create a new database
+*	
+* 0                                4096
+* |--------------------------------|----------------/ ... /-------------------|
+* | OV_DATABASE_INFO | ml_info |   |                                          |
+* |--------------------------------|----------------/ ... /-------------------|
+* |<- pdb->baseaddr                |<- pdb->pstart                  pdb->end->|
+* 
 */
+
 OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	OV_STRING	filename,
 	OV_UINT		size
@@ -236,6 +246,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*	local variables
 	*/
 	OV_RESULT		result;
+	
 #if !OV_SYSTEM_MC164
 	FILE			*fp;
 #endif
@@ -256,6 +267,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	if(!size || (size > (OV_UINT) OV_DATABASE_MAXSIZE) || !filename) {
 		return OV_ERR_BADPARAM;
 	}
+		
 #if !OV_SYSTEM_MC164
 	/*
 	*	check, if file already exists
@@ -435,17 +447,25 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*	initialize database structure
 	*/
 	Ov_AbortIfNot(pdb);
+#if OV_DYNAMIC_DATABASE
 	memset(pdb, 0, sizeof(OV_DATABASE_INFO));
+#else
+	memset(pdb, 0, Ov_Roundup(size));
+#endif
 	pdb->baseaddr = (OV_POINTER)pdb;
 	pdb->size = Ov_Roundup(size);
-	pdb->pstart = pdb->pcurr = (OV_BYTE*)Ov_Roundup(pmpinfo+1);
+	
+    pdb->pstart = pdb->pcurr = (OV_BYTE*)((OV_BYTE*)pdb->baseaddr + BLOCKIFY(sizeof(OV_DATABASE_INFO) + sizeof(ml_info)) * BLOCKSIZE);
+
 	pdb->pend = (OV_BYTE*)((long)pdb+Ov_Roundup(size));
 	pdb->started = FALSE;
+
 	/*
 	*	initialize the database memory pool
-	*/
-	if(!mp_initialize(pmpinfo, ov_database_morecore)) {
-		ov_database_unmap();
+	*	    
+	*/	
+	if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
+    	ov_database_unmap();
 		return OV_ERR_DBOUTOFMEMORY;
 	}
 	/*
@@ -485,6 +505,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*/
 	ov_database_flush();
 #endif
+
 	return OV_ERR_OK;
 }
 
@@ -518,7 +539,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	/*
 	*	local variables
 	*/
-	OV_RESULT	result = 0;
+	OV_RESULT	result;
 	OV_POINTER	baseaddr = NULL;
 	OV_UINT		size = 0;
 #if OV_SYSTEM_NT
@@ -775,7 +796,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	/*
 	*	restart the database memory pool
 	*/
-	if(!mp_restart(pmpinfo, ov_database_morecore)) {
+	if(!ml_restart(pmpinfo, pdb->pstart, ov_database_morecore)) {
 		ov_database_unmap();
 		return OV_ERR_BADDATABASE;
 	}
@@ -1085,7 +1106,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
 	OV_UINT		size
 ) {
 	if(pdb) {
-		return mp_malloc(size);
+	    return ml_malloc(size);
 	}
 	return NULL;
 }
@@ -1100,7 +1121,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	OV_UINT		size
 ) {
 	if(pdb) {
-		return mp_realloc(ptr, size);
+	    return ml_realloc(ptr, size);
 	}
 	return NULL;
 }
@@ -1114,7 +1135,7 @@ OV_DLLFNCEXPORT void ov_database_free(
 	OV_POINTER	ptr
 ) {
 	if(pdb) {
-		mp_free(ptr);
+		ml_free(ptr);
 	}
 }
 
@@ -1137,7 +1158,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
 */
 OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 	if(pdb) {
-		return pdb->pend-pdb->pcurr+pmpinfo->bytes_free;
+		return (OV_UINT)pdb->pend - (OV_UINT)pdb->pcurr + (OV_UINT)pmpinfo->bytes_free;
 	}
 	return 0;
 }
@@ -1149,7 +1170,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 */
 OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
 	if(pdb) {
-		return pdb->pstart-(OV_BYTE OV_MEMSPEC*)pdb+pmpinfo->bytes_used;
+		return (OV_UINT)pdb->pstart - (OV_UINT)pdb->baseaddr + (OV_UINT)pmpinfo->bytes_used - (OV_UINT)pmpinfo->bytes_free;
 	}
 	return 0;
 }
@@ -1163,9 +1184,9 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void) {
 	/*
 	*	local variables
 	*/
-	OV_UINT					i, num, sumsize, avgsize, logavgsize, sum;
-	OV_INSTPTR_ov_class		pclass;
-	struct list OV_MEMSPEC	*pnext;
+	OV_UINT					     i, num, sumsize, avgsize, logavgsize, sum;
+	OV_INSTPTR_ov_class		     pclass;
+	struct __ml_list OV_MEMSPEC	*pnext;
 	/*
 	*	calculate average instance size
 	*/
@@ -1230,8 +1251,7 @@ OV_RESULT ov_database_move(
 	*/
 	OV_DATABASE_INFO	*pdbcopy;
 	int					i;
-	struct list			*phead;
-	struct alignlist	*pblock;
+	struct __ml_list	*phead;
 	OV_RESULT			result;
 	OV_INSTPTR_ov_object 		pobj;
 	OV_INST_ov_association 		assoc_inheritance;
@@ -1290,19 +1310,17 @@ OV_RESULT ov_database_move(
 	/*
 	*	adjust pointers of the memory pool
 	*/
-	Ov_Adjust(char*, pmpinfo->heapbase);
-	Ov_Adjust(malloc_info*, pmpinfo->heapinfo);
+	Ov_Adjust(__ml_byte_t*, pmpinfo->heapbase);
+	Ov_Adjust(__ml_byte_t*, pmpinfo->heapend);
 	for(i=0; i<BLOCKLOG; i++) {
 		for(phead=&pmpinfo->fraghead[i]; phead; phead=phead->next) {
-			Ov_Adjust(struct list*, phead->next);
-			Ov_Adjust(struct list*, phead->prev);
+			Ov_Adjust(struct __ml_list*, phead->next);
+			Ov_Adjust(struct __ml_list*, phead->prev);
 		}
 	}
-	Ov_Adjust(struct alignlist*, pmpinfo->aligned_blocks);
-	for(pblock=pmpinfo->aligned_blocks; pblock; pblock=pblock->next) {
-		Ov_Adjust(struct alignlist*, pblock->next);
-		Ov_Adjust(__ptr_t, pblock->aligned);
-		Ov_Adjust(__ptr_t, pblock->exact);
+	for(phead=&pmpinfo->free_blocks; phead; phead=phead->next) {
+	   Ov_Adjust(struct __ml_list*, phead->next);
+	   Ov_Adjust(struct __ml_list*, phead->prev);
 	}
 	/*
 	*	adjust pointers of the ACPLT/OV objects

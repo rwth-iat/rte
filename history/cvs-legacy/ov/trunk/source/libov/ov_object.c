@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_object.c,v 1.36 2007-09-25 13:19:41 martin Exp $
+*   $Id: ov_object.c,v 1.37 2008-06-18 15:08:47 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -370,21 +370,6 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 	*/
 	OV_ACCESS			access;
 	OV_INSTPTR_ov_class	pclass;
-	/*
-	*   global access
-	*/
-    if( ov_string_compare(pdb->serverpassword, "") ) {
-        /* Server password set. Check ticket. */
-        if(!pticket) {
-            return OV_AC_READ;
-        }
-        if(pticket->type == OV_TT_NONE) {
-            return OV_AC_READ;
-        }
-        if( ov_string_compare(pticket->ticketunion.simpleticket.id, pdb->serverpassword) ) {
-            return OV_AC_READ;
-        }
-    }
 	/*
 	*	switch based on the element's type
 	*/
