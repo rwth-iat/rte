@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.12 $
-*	$Date: 2008-06-18 08:41:12 $
+*	$Revision: 1.13 $
+*	$Date: 2008-06-20 07:46:31 $
 *
 *	History:
 *	21-June-2007			St
@@ -147,7 +147,11 @@
 			</table>
 			<script type="text/javascript">
 				//Window-Reload does not reset the checkbox, so we update the javascript variable
-				UpdateKeepHeader();
+				if (document.getElementById("checkbox_keepheader").checked == true) {
+					autoKeepHeader = true;
+				}else{
+					autoKeepHeader = false;
+				}
 			</script>
 			<hr style="background-color:blue;height:2px;"/>
 		</div>

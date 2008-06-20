@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2008-06-20 07:46:31 $
 *
 *	History:
 *	--------
@@ -78,7 +78,7 @@ RightClick.prototype = {
 	},
 	
 	/*********************************
-		_registerOnClick
+		_registerOnRightClick
 	*********************************/
 	_registerOnRightClick: function(Component, capture, listener) {
 		this._onRightClickThunk = function (evt) { listener.onRightClick(evt); };
