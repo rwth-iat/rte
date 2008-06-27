@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.7 $
-*	$Date: 2008-06-16 13:45:01 $
+*	$Revision: 1.8 $
+*	$Date: 2008-06-27 16:23:33 $
 *
 *	History:
 *	--------
@@ -76,6 +76,7 @@ HMIDOMParser.prototype = {
 		HMI.hmi_log_trace("HMIDOMParser.parse - Start");
 		var GraphicElement;
 		var StyleElement;
+		var StyleElementNode;
 		var Return;
 		//Mozilla has the DOMParser Object
 		if (typeof DOMParser != "undefined"){
@@ -106,8 +107,16 @@ HMIDOMParser.prototype = {
 			}
 			delete Parser;
 			//GraphicElement has another DOM ownerDocument
-			var StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
+			StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 		//building an XML Tree works a bit different in IE
+		}else if(HMI.svgWindow.navigator.appName == "Adobe SVG Viewer"){
+			GraphicElement = HMI.svgWindow.parseXML(GraphicDescription,HMI.svgDocument);
+			HMI.PlaygroundEmbedNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
+			HMI.PlaygroundEmbedNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
+			HMI.Playground.setAttribute('onmousedown', "evt.preventDefault()");
+//			HMI.Playground.setAttribute('onmouseup', "evt.preventDefault()");
+			StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
+			StyleElementNode = StyleElement.firstChild;
 		}else{
 			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
 			var loadXMLresult;
@@ -125,7 +134,7 @@ HMIDOMParser.prototype = {
 			};
 			delete loadXMLresult;
 			//IE doesnot provide importNode and does not need it for the appendChild
-			var StyleElementNode = StyleElement.firstChild;
+			StyleElementNode = StyleElement.firstChild;
 		}
 		GraphicElement.firstChild.appendChild(StyleElementNode);
 		

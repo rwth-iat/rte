@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.19 $
-*	$Date: 2008-06-18 15:51:58 $
+*	$Revision: 1.20 $
+*	$Date: 2008-06-27 16:23:33 $
 *
 *	History:
 *	--------
@@ -99,7 +99,14 @@ HMI.prototype = {
 		this.RefreshTime = RefreshTime;
 		this.PossServers = PossServers;
 		this.PossSheets = PossSheets;
-		this.Playground = Playground
+		if (Playground.tagName.toLowerCase() == "embed"){
+			this.svgWindow = Playground.getWindow();
+			this.svgDocument = Playground.getSVGDocument();
+			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
+			this.PlaygroundEmbedNode= Playground;
+		}else{
+			this.Playground = Playground;
+		}
 		
 		deleteChilds(this.PossServers);
 		deleteChilds(this.PossSheets);
@@ -257,7 +264,9 @@ HMI.prototype = {
 				return;
 			};
 			var template = Component;
-			Component = document.importNode(template, true);
+			if(HMI.svgWindow && HMI.svgWindow.navigator.appName != "Adobe SVG Viewer"){
+				Component = document.importNode(template, true);
+			}
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now initGestures");
 //FIXME initgestures klappen nicht im IE
 			if ("Explorer" != BrowserDetect.browser ) {
@@ -301,7 +310,9 @@ HMI.prototype = {
 			};
 			
 			var template = Component;
-			Component = document.importNode(template, true);
+			if(HMI.svgWindow && HMI.svgWindow.navigator.appName != "Adobe SVG Viewer"){
+				Component = document.importNode(template, true);
+			}
 //FIXME initgestures klappen nicht im IE
 			if ("Explorer" != BrowserDetect.browser ) {
 				HMI.initGestures(Component);
@@ -531,12 +542,14 @@ HMI.prototype = {
 	_setLayerPosition: function (Element) {
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start");
 		
-		if (Element.x.animVal != undefined){
+		if (Element.x && Element.x.animVal){
 			var LayerX = Element.x.animVal.value;
 			var LayerY = Element.y.animVal.value;
-		}else{
+		}else if (Element.x){
 			var LayerX = Element.x;
 			var LayerY = Element.y;
+		}else{
+			debugger;
 		}
 		
 		if (	Element.ownerSVGElement != null && Element.ownerSVGElement != document)
