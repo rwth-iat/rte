@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.3 $
-*	$Date: 2008-07-02 14:31:11 $
+*	$Revision: 1.4 $
+*	$Date: 2008-07-02 15:25:02 $
 *
 *	History:
 *	--------
@@ -82,6 +82,8 @@ RightClick.prototype = {
 	*********************************/
 	_registerOnRightClick: function(Component, capture, listener) {
 		this._onRightClickThunk = function (evt) { listener.onRightClick(evt); };
+		//Needed for Internet Explorer without embeded Adobe Plugin
+		//addEventSimple(Component, "mouseup", this._onClickThunk);
 		Component.addEventListener("mouseup", this._onRightClickThunk, capture);
 	},
 	

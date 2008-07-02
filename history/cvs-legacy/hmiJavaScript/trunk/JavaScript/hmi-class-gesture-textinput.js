@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.3 $
-*	$Date: 2008-07-02 14:31:11 $
+*	$Revision: 1.4 $
+*	$Date: 2008-07-02 15:25:02 $
 *
 *	History:
 *	--------
@@ -82,6 +82,8 @@ TextInput.prototype = {
 	*********************************/
 	_registerOnClick: function(Component, capture, listener) {
 		this._onClickThunk = function (evt) { listener.onClick(evt); };
+		//Needed for Internet Explorer without embeded Adobe Plugin
+		//addEventSimple(Component, "click", this._onClickThunk);
 		Component.addEventListener("click", this._onClickThunk, capture);
 	},
 	
