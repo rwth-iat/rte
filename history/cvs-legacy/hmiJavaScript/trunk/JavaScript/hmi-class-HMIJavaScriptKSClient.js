@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.21 $
-*	$Date: 2008-06-10 08:54:14 $
+*	$Revision: 1.22 $
+*	$Date: 2008-07-02 12:10:37 $
 *
 *	History:
 *	--------
@@ -150,7 +150,7 @@ HMIJavaScriptKSClient.prototype = {
 				+ 'Gateway responded:'
 				+ '\n\n'
 				+ req.responseText);
-			HMI.hmi_log_onwebsite('Error: ' + req.responseText);
+			HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + req.responseText);
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - End");

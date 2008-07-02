@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.20 $
-*	$Date: 2008-06-27 16:23:33 $
+*	$Revision: 1.21 $
+*	$Date: 2008-07-02 12:10:37 $
 *
 *	History:
 *	--------
@@ -104,8 +104,10 @@ HMI.prototype = {
 			this.svgDocument = Playground.getSVGDocument();
 			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
 			this.PlaygroundEmbedNode= Playground;
+			this.EmbedAdobePlugin= true;
 		}else{
 			this.Playground = Playground;
+			this.EmbedAdobePlugin= false;
 		}
 		
 		deleteChilds(this.PossServers);
@@ -264,7 +266,7 @@ HMI.prototype = {
 				return;
 			};
 			var template = Component;
-			if(HMI.svgWindow && HMI.svgWindow.navigator.appName != "Adobe SVG Viewer"){
+			if(!HMI.EmbedAdobePlugin){
 				Component = document.importNode(template, true);
 			}
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now initGestures");
@@ -310,7 +312,7 @@ HMI.prototype = {
 			};
 			
 			var template = Component;
-			if(HMI.svgWindow && HMI.svgWindow.navigator.appName != "Adobe SVG Viewer"){
+			if(!HMI.EmbedAdobePlugin){
 				Component = document.importNode(template, true);
 			}
 //FIXME initgestures klappen nicht im IE
@@ -424,13 +426,19 @@ HMI.prototype = {
 		HMI._initGestures(Fragment);
 //		this.hmi_log_trace("HMI.prototype.initGestures - done _initGestures(Fragment) ");
 		
-		if (Fragment.getElementsByTagNameNS){
+		if (HMI.EmbedAdobePlugin){
+			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			for (var idx = 0; idx < Elements.length; ++idx){
+				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
+				HMI._initGestures(Elements.item(idx));
+			}
+		}else if (Fragment.getElementsByTagNameNS){   //gecko
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			for (var idx = 0; idx < Elements.length; ++idx){
 				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
 				HMI._initGestures(Elements[idx]);
 			}
-		}else{
+		}else{   // IE if svg inline
 			Elements = Fragment.getElementsByTagName('svg');
 			for (var idx = 0; idx < Elements.length; ++idx){
 				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
@@ -542,21 +550,24 @@ HMI.prototype = {
 	_setLayerPosition: function (Element) {
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start");
 		
-		if (Element.x && Element.x.animVal){
+		if (Element.x && Element.x.animVal){  //gecko
 			var LayerX = Element.x.animVal.value;
 			var LayerY = Element.y.animVal.value;
-		}else if (Element.x){
+		}else if (Element.x){  //ie adobe inline
 			var LayerX = Element.x;
 			var LayerY = Element.y;
-		}else{
-			debugger;
+		}else{   //ie adobe embed
+			var LayerX = Element.getAttribute("x");
+			var LayerY = Element.getAttribute("y");
 		}
 		
-		if (	Element.ownerSVGElement != null && Element.ownerSVGElement != document)
-		{
+		if ( Element.ownerSVGElement != null && Element.ownerSVGElement != document){
 			LayerX += parseInt(Element.ownerSVGElement.getAttribute("layerX"));
 			LayerY += parseInt(Element.ownerSVGElement.getAttribute("layerY"));
-		};
+		}else if (Element.parentNode != null && Element.parentNode.attributes != null){
+			LayerX += parseInt(Element.parentNode.getAttribute("layerX"));
+			LayerY += parseInt(Element.parentNode.getAttribute("layerY"));
+		}
 		
 		Element.setAttribute("layerX", LayerX);
 		Element.setAttribute("layerY", LayerY);

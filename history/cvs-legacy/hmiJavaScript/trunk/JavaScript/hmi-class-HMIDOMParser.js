@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.8 $
-*	$Date: 2008-06-27 16:23:33 $
+*	$Revision: 1.9 $
+*	$Date: 2008-07-02 12:10:37 $
 *
 *	History:
 *	--------
@@ -109,11 +109,11 @@ HMIDOMParser.prototype = {
 			//GraphicElement has another DOM ownerDocument
 			StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 		//building an XML Tree works a bit different in IE
-		}else if(HMI.svgWindow.navigator.appName == "Adobe SVG Viewer"){
+		}else if(HMI.EmbedAdobePlugin){
 			GraphicElement = HMI.svgWindow.parseXML(GraphicDescription,HMI.svgDocument);
 			HMI.PlaygroundEmbedNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
 			HMI.PlaygroundEmbedNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
-			HMI.Playground.setAttribute('onmousedown', "evt.preventDefault()");
+//			HMI.Playground.setAttribute('onmousedown', "evt.preventDefault()");
 //			HMI.Playground.setAttribute('onmouseup', "evt.preventDefault()");
 			StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
 			StyleElementNode = StyleElement.firstChild;
