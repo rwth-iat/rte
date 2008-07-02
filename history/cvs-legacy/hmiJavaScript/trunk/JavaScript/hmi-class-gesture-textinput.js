@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.2 $
-*	$Date: 2008-07-02 13:41:26 $
+*	$Revision: 1.3 $
+*	$Date: 2008-07-02 14:31:11 $
 *
 *	History:
 *	--------
@@ -82,7 +82,7 @@ TextInput.prototype = {
 	*********************************/
 	_registerOnClick: function(Component, capture, listener) {
 		this._onClickThunk = function (evt) { listener.onClick(evt); };
-		addEventSimple(Component, "click", this._onClickThunk);
+		Component.addEventListener("click", this._onClickThunk, capture);
 	},
 	
 	/*********************************
@@ -106,6 +106,7 @@ TextInput.prototype = {
 			&&	input != text)
 		{
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
+			HMI.refreshSheet();
 		};
 	},
 	

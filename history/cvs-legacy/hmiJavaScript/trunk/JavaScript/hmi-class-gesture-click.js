@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2008-07-02 14:31:11 $
 *
 *	History:
 *	--------
@@ -98,6 +98,7 @@ Click.prototype = {
 		};
 		
 		this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
+		HMI.refreshSheet();
 	},
 	
 	/*********************************

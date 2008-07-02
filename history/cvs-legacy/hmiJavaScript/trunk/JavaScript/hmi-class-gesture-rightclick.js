@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.2 $
-*	$Date: 2008-06-20 07:46:31 $
+*	$Revision: 1.3 $
+*	$Date: 2008-07-02 14:31:11 $
 *
 *	History:
 *	--------
@@ -93,6 +93,7 @@ RightClick.prototype = {
 		if (evt.button == 2)
 		{
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-rightclick'));
+			HMI.refreshSheet();
 		};
 	},
 	
