@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2008-07-02 13:41:26 $
 *
 *	History:
 *	--------
@@ -82,7 +82,7 @@ TextInput.prototype = {
 	*********************************/
 	_registerOnClick: function(Component, capture, listener) {
 		this._onClickThunk = function (evt) { listener.onClick(evt); };
-		Component.addEventListener("click", this._onClickThunk, capture);
+		addEventSimple(Component, "click", this._onClickThunk);
 	},
 	
 	/*********************************
@@ -93,11 +93,13 @@ TextInput.prototype = {
 		if (evt.detail == 2)
 		{
 			//	doubleclick => STOP
-			//
 			return;
 		};
-
-		var text = evt.target.textContent;
+		if (evt.target.textContent != undefined){
+			var text = evt.target.textContent;
+		}else{  //Adobe Plugin
+			var text = evt.target.childNodes.item(0).nodeValue;
+		}
 		var input = prompt('Geben Sie bitte einen neuen Wert ein', text);
 		if(	input	!= null
 			&&	input	!= ""

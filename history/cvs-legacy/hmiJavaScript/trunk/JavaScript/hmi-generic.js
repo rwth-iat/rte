@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.14 $
-*	$Date: 2008-06-16 13:45:01 $
+*	$Revision: 1.15 $
+*	$Date: 2008-07-02 13:41:26 $
 *
 *	History:
 *	--------
@@ -141,13 +141,13 @@ if (!document.importNode) {
 	http://www.quirksmode.org/js/eventSimple.html
 *********************************/
 function addEventSimple(obj,evt,fn) {
-	if (obj.addEventListener)
+	if (obj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG || obj.addEventListener)
 		obj.addEventListener(evt,fn,false);
 	else if (obj.attachEvent)
 		obj.attachEvent('on'+evt,fn);
 }
 function removeEventSimple(obj,evt,fn) {
-	if (obj.removeEventListener)
+	if (obj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG || obj.removeEventListener)
 		obj.removeEventListener(evt,fn,false);
 	else if (obj.detachEvent)
 		obj.detachEvent('on'+evt,fn);

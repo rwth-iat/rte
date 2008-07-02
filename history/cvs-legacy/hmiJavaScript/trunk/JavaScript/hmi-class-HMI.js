@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.21 $
-*	$Date: 2008-07-02 12:10:37 $
+*	$Revision: 1.22 $
+*	$Date: 2008-07-02 13:41:26 $
 *
 *	History:
 *	--------
@@ -191,13 +191,15 @@ HMI.prototype = {
 				&&	Component != document
 				&&	HMI.instanceOf(Component, cssclass) == false)
 		{
-			Component = Component.ownerSVGElement;
-			if (	Component != null
-				&&	Component.id == HMI.HMI_Constants.NODE_NAME_CLONE)
-			{
+			if (Component.ownerSVGElement != undefined){
+				Component = Component.ownerSVGElement;
+			}else if (Component.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
+				Component = Component.parentNode;
+			}
+			if ( Component != null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
 				Component = $(Component.getAttribute('clonedID'));
-			};
-		};
+			}
+		}
 		
 		this.hmi_log_trace("HMI.prototype.getComponent - End");
 		
@@ -270,10 +272,10 @@ HMI.prototype = {
 				Component = document.importNode(template, true);
 			}
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now initGestures");
-//FIXME initgestures klappen nicht im IE
-			if ("Explorer" != BrowserDetect.browser ) {
+//FIXME initgestures klappen nicht immer im IE
+//			if ("Explorer" != BrowserDetect.browser ) {
 				HMI.initGestures(Component);
-			}
+//			}
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now Playground.appendChild");
 			HMI.Playground.appendChild(Component);
 			
@@ -315,10 +317,10 @@ HMI.prototype = {
 			if(!HMI.EmbedAdobePlugin){
 				Component = document.importNode(template, true);
 			}
-//FIXME initgestures klappen nicht im IE
-			if ("Explorer" != BrowserDetect.browser ) {
+//FIXME initgestures klappen nicht immer im IE
+//			if ("Explorer" != BrowserDetect.browser ) {
 				HMI.initGestures(Component);
-			}
+//			}
 			HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			//HMI.Playground.replaceChild(Component, $(HMI.Path));
 			
