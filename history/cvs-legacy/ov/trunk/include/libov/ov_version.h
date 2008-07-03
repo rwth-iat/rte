@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_version.h,v 1.39 2007-04-24 14:11:29 martin Exp $
+*   $Id: ov_version.h,v 1.40 2008-07-03 14:56:06 martin Exp $
 *
 *   Copyright (C) 1998-2006
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -41,7 +41,7 @@
 #define OV_VER_DBPARSE						"1.1.8"
 #define OV_VER_OVXIPARSE					"1.0.2"
 #define OV_VER_LIBINFO 						"1.0.0"
-#define OV_VER_LIBOV						"1.6.8"
+#define OV_VER_LIBOV						"1.6.9"
 #define OV_VER_DBUTIL 						"1.2.1"
 #define OV_VER_LIBOVKS 						"1.3.4"
 #define OV_VER_SERVER						"1.3.2"
