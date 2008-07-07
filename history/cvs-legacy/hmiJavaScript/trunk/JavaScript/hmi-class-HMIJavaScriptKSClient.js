@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.22 $
-*	$Date: 2008-07-02 12:10:37 $
+*	$Revision: 1.23 $
+*	$Date: 2008-07-07 09:42:42 $
 *
 *	History:
 *	--------
@@ -253,7 +253,7 @@ HMIJavaScriptKSClient.prototype = {
 		req.open('GET',
 			'http://'
 			+ HMI.KSClient.TCLKSGateway
-			+ '/tks?obj='
+			+ '?obj='
 			+ obj
 			+ '&args='
 			+ args
@@ -443,7 +443,7 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	_sendRequest: function(Client, method, async, obj, args, cbfnc) {
 //		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start");
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+'http://'+ this.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+'http://'+ this.TCLKSGateway + '?obj=' + obj + '&args='+ args );
 		
 		var req = new XMLHttpRequest();
 		var DatePreventsCaching = new Date();
@@ -452,7 +452,7 @@ HMIJavaScriptKSClient.prototype = {
 			req.open(method,
 				'http://'
 				+ this.TCLKSGateway
-				+ '/tks?obj='
+				+ '?obj='
 				+ obj
 				+ '&args='
 				+ args

@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.22 $
-*	$Date: 2008-07-02 13:41:26 $
+*	$Revision: 1.23 $
+*	$Date: 2008-07-07 09:42:42 $
 *
 *	History:
 *	--------
@@ -93,7 +93,7 @@ HMI.prototype = {
 	/*********************************
 		showServers
 	*********************************/
-	showServers: function (Host, RefreshTime, PossServers, PossSheets, Playground) {
+	showServers: function (KSGateway, KSGateway_Path, Host, RefreshTime, PossServers, PossSheets, Playground) {
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
 		this.RefreshTime = RefreshTime;
@@ -109,13 +109,18 @@ HMI.prototype = {
 			this.Playground = Playground;
 			this.EmbedAdobePlugin= false;
 		}
-		
+		if (KSGateway == ""){
+			KSGateway = window.location.host;
+		}
+		if (KSGateway_Path == ""){
+			KSGateway_Path = "/tks";
+		}
 		deleteChilds(this.PossServers);
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
 		deleteChilds(document.getElementById("ErrorOutput"));
 		
-		this.KSClient.init(Host + '/MANAGER', location.host);
+		this.KSClient.init(Host + '/MANAGER', KSGateway + KSGateway_Path);
 		this.KSClient.getServers();
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
@@ -135,10 +140,11 @@ HMI.prototype = {
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if (Server == 'no server')
+		if (Server == 'no server'){
 			return;
+		}
 		
-		this.KSClient.init(this.KSClient.KSServer.substring(0, this.KSClient.KSServer.indexOf('/')) + '/' + Server, location.host);
+		this.KSClient.init(this.KSClient.KSServer.substring(0, this.KSClient.KSServer.indexOf('/')) + '/' + Server, this.KSClient.TCLKSGateway);
 		this.KSClient.getSheets();
 		
 		this.hmi_log_trace("HMI.prototype.showSheets - End");
