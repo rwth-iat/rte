@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.15 $
-*	$Date: 2008-07-02 13:41:26 $
+*	$Revision: 1.16 $
+*	$Date: 2008-07-10 10:45:04 $
 *
 *	History:
 *	--------
@@ -164,18 +164,22 @@ function hideHeader (){
 		//menue ausschalten
 		showHeader = false;
 		document.getElementById("hmi_header").style.display = "none";
-		document.getElementById("arrowdown1").style.visibility="visible";
-		document.getElementById("arrowdown2").style.visibility="visible";
-		document.getElementById("arrowup1").style.visibility="hidden";
-		document.getElementById("arrowup2").style.visibility="hidden";
+		if (document.getElementById("arrowdown1") != null){
+			document.getElementById("arrowdown1").style.visibility="visible";
+			document.getElementById("arrowdown2").style.visibility="visible";
+			document.getElementById("arrowup1").style.visibility="hidden";
+			document.getElementById("arrowup2").style.visibility="hidden";
+		}
 	} else {
 		//menue einschalten
 		showHeader = true;
 		document.getElementById("hmi_header").style.display = "block";
-		document.getElementById("arrowdown1").style.visibility="hidden";
-		document.getElementById("arrowdown2").style.visibility="hidden";
-		document.getElementById("arrowup1").style.visibility="visible";
-		document.getElementById("arrowup2").style.visibility="visible";
+		if (document.getElementById("arrowdown1") != null){
+			document.getElementById("arrowdown1").style.visibility="hidden";
+			document.getElementById("arrowdown2").style.visibility="hidden";
+			document.getElementById("arrowup1").style.visibility="visible";
+			document.getElementById("arrowup2").style.visibility="visible";
+		}
 	}
 }
 function UpdateKeepHeader(){
