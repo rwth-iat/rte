@@ -1,3 +1,4 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xml:lang="en">
 <!--
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzeigen...
@@ -48,8 +49,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.14 $
-*	$Date: 2008-07-07 09:42:42 $
+*	$Revision: 1.15 $
+*	$Date: 2008-07-23 11:51:01 $
 *
 *	History:
 *	21-June-2007			St
@@ -63,8 +64,6 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *
 ***********************************************************************/
 -->
-
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xml:lang="en">
 	<head>
 		<meta http-equiv="Content-Style-Type" content="text/css">
 		<meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -76,9 +75,9 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		<script type="text/javascript" src="./firebug/firebug.js"></script>
 	</head>
 	<!-- 
-		*********************************
+		/*********************************
 			Body
-		*********************************
+		*********************************/
 	-->
 	<body onunload="HMI.unload()">
 		<table width="100%">
@@ -110,25 +109,21 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		<div id="hmi_header">
 			<table>
 				<tr>
-					<td style="text-align:right;">KSGateway:</td>
-					<td colspan="3"><input id="idKSGateway" type="text" size="29" value=""/><input id="idKSGateway_Path" type="text" size="10" value="/tks"/></td>
-				</tr>
-				<tr>
 					<td style="text-align:right;" title="Vom KSGateway gesehen">FB-Host:</td>
-					<td><input id="idHost" type="text" size="29" value="localhost"/></td>
+					<td><input id="idHost" type="text" size="29" value="localhost" tabindex="2"/></td>
 					<td style="text-align:center;">Refresh Time:</td>
-					<td><input id="idRefreshTime" type="text" size="5" value="1000"/>ms <strong id="ErrorOutput"> </strong>
+					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4"/>ms <strong id="ErrorOutput"> </strong>
 					</td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">Server:</td>
-					<td><select id="idServers" name="Sheets" size="1" style="width:200px;">
+					<td><select id="idServers" name="Sheets" size="1" style="width:200px;" tabindex="3">
 							<option>please push "Show Servers"</option>
 						</select>
 					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;">
-						<input type="button" value="Show Servers"
-							onclick="HMI.showServers($('idKSGateway').value, $('idKSGateway_Path').value, $('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
+						<input type="button" value="Show Servers" id="idShowServers" tabindex="1"
+							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
 					<td>
 						<input type="button" value="Refresh Sheet Now"
@@ -141,7 +136,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 				</tr>
 				<tr>
 					<td style="text-align:right;">Sheets:</td>
-					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;">
+					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;" tabindex="5">
 							<option>please push "Show Servers"</option>
 						</select>
 					</td>
@@ -155,7 +150,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 				}else{
 					autoKeepHeader = false;
 				}
-				document.getElementById("idKSGateway").value = window.location.host;
+				document.getElementById("idShowServers").focus();
 			</script>
 			<hr color="blue">
 		</div>
