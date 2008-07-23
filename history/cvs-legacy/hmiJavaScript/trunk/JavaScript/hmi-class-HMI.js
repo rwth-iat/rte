@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.24 $
-*	$Date: 2008-07-23 12:15:36 $
+*	$Revision: 1.25 $
+*	$Date: 2008-07-23 14:18:13 $
 *
 *	History:
 *	--------
@@ -450,28 +450,11 @@ HMI.prototype = {
 		HMI._initGestures(Fragment);
 //		this.hmi_log_trace("HMI.prototype.initGestures - done _initGestures(Fragment) ");
 		
-		if (false){
-			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			if (Elements.length == 0 ){
-				//Have no idea, why Adobe sometimes does not get getElementsByTagNameNS with 'svg' right
-//				Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-//debugger;
-			} else {
-				for (var idx = 0; idx < Elements.length; ++idx){
-					HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
-if (Elements.item(idx)== null){
-//	debugger;
-}
-					HMI._initGestures(Elements.item(idx));
-				}
-			}
-		}else if (HMI.EmbedAdobePlugin){
-			var Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			
-			for (var idx = 0; idx < Elements.length; ++idx){
-				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
-				if (Elements.item(idx).namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-					HMI._initGestures(Elements.item(idx));
+		if (HMI.EmbedAdobePlugin){
+			//getElementsByTagNameNS in Adobe is often not complete
+			for (var idx = 0; idx < Fragment.childNodes.length; ++idx){
+				if (Fragment.childNodes.item(idx).namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG && Fragment.childNodes.item(idx).id != ""){
+					HMI._initGestures(Fragment.childNodes.item(idx));
 				}
 			}
 		}else if (Fragment.getElementsByTagNameNS){   //gecko
