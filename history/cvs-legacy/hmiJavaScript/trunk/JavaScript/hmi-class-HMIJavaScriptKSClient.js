@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.23 $
-*	$Date: 2008-07-07 09:42:42 $
+*	$Revision: 1.24 $
+*	$Date: 2008-07-23 12:15:36 $
 *
 *	History:
 *	--------
@@ -108,20 +108,24 @@ HMIJavaScriptKSClient.prototype = {
 		this.TCLKSGateway	= TCLKSGateway;
 		this.TCLKSHandle	= null;
 		
-		this._sendRequest(this, 'GET', false, 'tks-server', this.KSServer, this._cbInit);
+//		this._sendRequest(this, 'GET', false, 'tks-server', this.KSServer, this._cbInit);
+		this.send2Request(null, 'newHandle', '', this.KSServer, '', '', this._cbInit);
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.init - End");
 	},
 	
 	/*********************************
-		sendRequest
+		sendRequest replaced by send2Request
 	*********************************/
 	sendRequest: function(service, method, args, cbfnc) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.sendRequest - Start");
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.sendRequest - Start: "+service+" Meth: "+method+" "+args);
 		
-		if (/\bTksS-\b/.exec(this.TCLKSHandle))
-		{
-			this._sendRequest(this, method, this.Asynchron, this.TCLKSHandle, service + ' ' + args, cbfnc);
+		if (/\bTksS-\b/.exec(this.TCLKSHandle)){
+			if (HMI.GatewayTypeTCL == true){
+				this._sendRequest(this, method, this.Asynchron, this.TCLKSHandle, service + ' ' + args, cbfnc);
+			}else if (HMI.GatewayTypePHP == true){
+				this._sendRequest(this, method, this.Asynchron, this.TCLKSHandle, '&cmd=' + service + args, cbfnc);
+			}
 		} else {
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.sendRequest - TCLKSGateway not initialized.');
 			HMI.hmi_log_onwebsite('TCLKSGateway not initialized.');
@@ -131,13 +135,107 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/*********************************
+		send2Request
+		Handle:	requires own Handle, null if uses the normal global Handle
+		method:	GET, POST or 'newHandle' if a new handle is required (if no callbackfunction is given, 
+			the	new handle is given as a return value, otherwise the new handle is set globally
+		command:	command to process (often zero, than the args includes the command - requirement of the TCLgateway design)
+		args:	command to process or parameter of the command
+		path:	especially for the getep command
+		suffix:	things like "* -output $::TKS::OP_NAME" not suitable for the PHP gateway
+		cbfnc: callback function
+	*********************************/
+	send2Request: function(Handle, method, command, args, path, suffix, cbfnc) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.send2Request - Start: "+command+" Meth: "+method+" "+args);
+		
+		if (HMI.GatewayTypeTCL == true){
+			if (Handle == null){
+				Handle = this.TCLKSHandle
+			}
+			if (command != ''){
+				command = '&args=' + command + ' ' + args;
+				args = '';
+			}else{
+				if (args != ''){
+					args = '&args=' + args;
+				}
+			}
+			if (path != ''){
+				path = ' ' + path;
+			}
+		}else if (HMI.GatewayTypePHP == true){
+			if (command != ''){
+				command = '&cmd=' + command;
+			}
+			if (args != ''){
+				args = '&args=' + args;
+			}
+			if (path != ''){
+				path = '&path=' + path;
+			}
+			suffix = '';
+		}
+		if (method == 'newHandle'){
+			if (cbfnc != null){
+				this._send2Request(this, 'GET', false, 'obj=tks-server'+args, cbfnc);
+			}else{
+				var Return = this._send2Request(this, 'GET', false, 'obj=tks-server'+args, cbfnc);
+				return Return;
+			}
+		}else if (/\bTksS-\b/.exec(Handle)){
+			var urlparameter = 'obj='+Handle + command + args + path+suffix;
+			if (cbfnc != null){
+				this._send2Request(this, method, this.Asynchron, urlparameter, cbfnc);
+			}else{
+				var Return = this._send2Request(this, method, false, urlparameter, null);
+				return Return;
+			}
+		} else {
+			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.send2Request - TCLKSGateway not initialized.');
+			HMI.hmi_log_onwebsite('TCLKSGateway not initialized.');
+		};
+		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.send2Request - End");
+	},
+	
+	/*********************************
+		simple2Request never used => delme soon
+	*********************************/
+	simple2Request: function(obj, args, suffix) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.simple2Request - Start, requested: "+'http://'+ HMI.KSClient.TCLKSGateway + '?obj=' + obj + '&args='+ args );
+		
+		if (HMI.GatewayTypeTCL == true){
+			if (obj != ''){
+				obj = 'obj=' + obj;
+			}
+			if (args != ''){
+				args = '&args=' + args;
+			}
+		}else if (HMI.GatewayTypePHP == true){
+			if (obj != ''){
+				obj = 'obj=' + obj;
+			}
+			if (args != ''){
+				args = '&args=' + args;
+			}
+			suffix = '';
+		}
+		
+		var urlparameter = obj + args + suffix;
+		this._send2Request(this, 'GET', false, urlparameter, null);
+		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.simple2Request - End");
+		
+		return req.responseText;
+	},
+	
+	/*********************************
 		_cbinit
 	*********************************/
 	_cbInit: function(Client, req) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - Start");
 		
-		if (/\bTksS-\b/.exec(req.responseText))
-		{
+		if (/\bTksS-\b/.exec(req.responseText)){
 			Client.TCLKSHandle = req.responseText;
 		} else {
 			Client.KSServer = null;
@@ -151,7 +249,7 @@ HMIJavaScriptKSClient.prototype = {
 				+ '\n\n'
 				+ req.responseText);
 			HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + req.responseText);
-		};
+		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - End");
 	},
@@ -162,9 +260,15 @@ HMIJavaScriptKSClient.prototype = {
 	getServers: function() {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - Start");
 		
-		if (this.TCLKSHandle != null)
-		{
-			this._sendRequest(this, 'GET', false, this.TCLKSHandle, 'getep /servers * -output $::TKS::OP_NAME', this._cbGetServers);
+		if (this.TCLKSHandle != null){
+			this.send2Request(null, 'GET', 'getep', '', '/servers', ' * -output $::TKS::OP_NAME', this._cbGetServers);
+/*
+			if (HMI.GatewayTypeTCL == true){
+				this._sendRequest(this, 'GET', false, this.TCLKSHandle, 'getep /servers * -output $::TKS::OP_NAME', this._cbGetServers);
+			}else if (HMI.GatewayTypePHP == true){
+				this._sendRequest(this, 'GET', false, this.TCLKSHandle, '&cmd=getep&path=/servers', this._cbGetServers);
+			}
+*/
 		} else {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End - No TCLKSHandle");
 			return null;
@@ -241,10 +345,9 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/*********************************
-		_simpleRequest
+		_simpleRequest replaced by send2Request
 	*********************************/
 	_simpleRequest: function(obj, args) {
-//		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._simpleRequest - Start");
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._simpleRequest - Start, requested: "+'http://'+ HMI.KSClient.TCLKSGateway + '/tks?obj=' + obj + '&args='+ args );
 		
 		var req = new XMLHttpRequest();
@@ -268,41 +371,36 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/*********************************
-		_cbSimpleRequest
-	*********************************/
-	_cbSimpleRequest: function(Client, req) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbSimpleRequest - Start");
-		
-		return req.responseText;
-		
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbSimpleRequest - End");
-	},
-	
-	/*********************************
 		pingServer
 	*********************************/
 	pingServer: function(Server) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Start");
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Start: "+Server);
 		
 		var TCLKSHandle = null;
 		var ManagerResponse = null;
 		
 		try {
-			TCLKSHandle = this._simpleRequest('tks-server',
-				HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server);
-				
-			ManagerResponse = this._simpleRequest(TCLKSHandle,
-				'getep ' + HMI.HMI_Constants.HMIMANAGER_PATH + ' * -output $::TKS::OP_NAME');
-				
-			this._simpleRequest(TCLKSHandle,
-				'destroy');
-
+//			TCLKSHandle = this._simpleRequest('tks-server', HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server);
+			TCLKSHandle = this.send2Request('', 'newHandle', '', HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, '', '', null);
+			
+			ManagerResponse = this.send2Request(TCLKSHandle, 'GET', 'getep', '', HMI.HMI_Constants.HMIMANAGER_PATH, ' * -output $::TKS::OP_NAME', null);
+			
+/*			if (HMI.GatewayTypeTCL == true){
+				ManagerResponse = this._simpleRequest(TCLKSHandle,
+					'getep ' + HMI.HMI_Constants.HMIMANAGER_PATH + ' * -output $::TKS::OP_NAME');
+			}else if (HMI.GatewayTypePHP == true){
+				ManagerResponse = this._simpleRequest(TCLKSHandle,
+					'&cmd=getep&path=' + HMI.HMI_Constants.HMIMANAGER_PATH);
+			}
+*/
+			this.send2Request(TCLKSHandle, 'GET', 'destroy', '', '', '', null);
+//			this._simpleRequest(TCLKSHandle, 'destroy');
+			
 			// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 			if (ManagerResponse.length == 0){
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f+Operabug");
 				return false;
-			}else if (/\bTksS-\b/.exec(ManagerResponse))
-			{
+			}else if (/\bTksS-\b/.exec(ManagerResponse)){
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f");
 				return false;
 			} else {
@@ -331,7 +429,15 @@ HMIJavaScriptKSClient.prototype = {
 			'{' + HMI.HMI_Constants.HMIMANAGER_PATH + '} ' + 
 			'{SHOWSHEETS}' +
 			'}';
-		
+		this.send2Request(null, 'POST', 'setvar', '{'
+				+ HMI.HMI_Constants.HMIMANAGER_PATH
+				+ '.Command '
+				+ Command
+				+ '}', '', '', null);
+		this.send2Request(null, 'GET', 'getvar', '{'
+				+ HMI.HMI_Constants.HMIMANAGER_PATH
+				+ '.CommandReturn} ', '', ' -output $::TKS::OP_VALUE', this._cbGetSheets);
+/*
 		this._sendRequest(this, 'POST', false, this.TCLKSHandle, 'setvar '
 			+ '{'
 			+ HMI.HMI_Constants.HMIMANAGER_PATH
@@ -344,7 +450,7 @@ HMIJavaScriptKSClient.prototype = {
 			+ HMI.HMI_Constants.HMIMANAGER_PATH
 			+ '.CommandReturn} '
 			+ '-output $::TKS::OP_VALUE', this._cbGetSheets);
-		
+*/
 		delete Command;
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
@@ -439,15 +545,16 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/*********************************
-		_sendRequest
+		_sendRequest replaced by send2Request
 	*********************************/
 	_sendRequest: function(Client, method, async, obj, args, cbfnc) {
-//		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start");
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+'http://'+ this.TCLKSGateway + '?obj=' + obj + '&args='+ args );
 		
 		var req = new XMLHttpRequest();
 		var DatePreventsCaching = new Date();
 		
+		//netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
+		//does not work in other browsers than mozillabased
 		try {
 			req.open(method,
 				'http://'
@@ -494,7 +601,7 @@ HMI.hmi_log_info('http://'
 				return false;
 			};
 		} catch (e) {
-			HMI.hmi_log_error("HMIJavaScriptKSClient._sendRequest: Error during request.");
+			HMI.hmi_log_error("HMIJavaScriptKSClient._sendRequest: Error during request. "+e);
 			HMI.hmi_log_onwebsite("Error during request.");
 			return false;
 		};
@@ -506,6 +613,69 @@ HMI.hmi_log_info('http://'
 				cbfnc(this, req);
 		};
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
+		return true;
+	},
+	
+	/*********************************
+		_send2Request
+	*********************************/
+	_send2Request: function(Client, method, async, urlparameter, cbfnc) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._send2Request - Start, Async:"+async+" Meth:"+method+", requested: "+'http://'+ HMI.KSClient.TCLKSGateway + '?' + urlparameter);
+		
+		var req = new XMLHttpRequest();
+		var DatePreventsCaching = new Date();
+		
+		//netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
+		//does not work in other browsers than mozillabased
+		try {
+			req.open(method,
+				'http://'
+				+ HMI.KSClient.TCLKSGateway
+				+ '?'
+				+ urlparameter
+				+ '&preventCaching2='
+				+DatePreventsCaching.getTime(), async);
+				
+			if (async == true)
+			{
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._send2Request - entering async communication");
+				//	Asynchron Communication
+				//
+				req.onreadystatechange = function () {
+					Client._handleStateChange(req, cbfnc);
+				}
+			}
+							
+			try {
+				if (method == 'POST') 
+				{
+					req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+					req.send('empty');
+				} else {
+					req.send(null);
+				}
+			} catch (e) {
+				HMI.hmi_log_error('HMIJavaScriptKSClient._send2Request: Request could not be sent. Is the gateway started?');
+				HMI.hmi_log_onwebsite('Request could not be sent. Is the gateway started?');
+				return false;
+			}
+		} catch (e) {
+			HMI.hmi_log_error("HMIJavaScriptKSClient._send2Request: Error during request. "+e);
+			HMI.hmi_log_onwebsite("Error during request.");
+			return false;
+		}
+		if (async == false)
+		{
+			//	Synchron Communication
+			//
+			if (cbfnc != null){
+				cbfnc(this, req);
+			}else{
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._send2Request - End");
+				return req.responseText;
+			}
+		}
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._send2Request - End");
 		return true;
 	},
 	
@@ -546,7 +716,8 @@ HMI.hmi_log_info('http://'
 		
 		if (this.TCLKSHandle != null)
 		{
-			this._sendRequest(this, 'POST', false, this.TCLKSHandle, 'destroy', null);
+//			this._sendRequest(this, 'POST', false, this.TCLKSHandle, 'destroy', null);
+			this.send2Request(null, 'GET', 'destroy', '', '', '', null);
 		};
 		this.KSServer = null;
 		this.TCLKSHandle = null;

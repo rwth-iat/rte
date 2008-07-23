@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2008-06-10 08:54:14 $
+*	$Revision: 1.6 $
+*	$Date: 2008-07-23 12:15:36 $
 *
 *	History:
 *	--------
@@ -362,7 +362,10 @@ Dragger.prototype = {
 					'{' + this._ground._node.id +  '} ' +
 					'{' + this._node.x.baseVal.value + '} ' +
 					'{' + this._node.y.baseVal.value + '}' + '}';
-				HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}', null);
+				HMI.KSClient.send2Request(null, 'POST', 'setvar', 
+					'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
+					'', '', null);
+//				HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}', null);
 			};
 		} else {
 			//	CLICK

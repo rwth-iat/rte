@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.4 $
-*	$Date: 2008-07-02 15:25:02 $
+*	$Revision: 1.5 $
+*	$Date: 2008-07-23 12:15:36 $
 *
 *	History:
 *	--------
@@ -127,7 +127,10 @@ TextInput.prototype = {
 				'{TEXTINPUT} ' +
 				'{' + input + '} ' +
 				'}';
-			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
+			HMI.KSClient.send2Request(null, 'POST', 'setvar', 
+				'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
+				'', '', null);
+//			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		
 		delete Command;

@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.23 $
-*	$Date: 2008-07-07 09:42:42 $
+*	$Revision: 1.24 $
+*	$Date: 2008-07-23 12:15:36 $
 *
 *	History:
 *	--------
@@ -93,7 +93,7 @@ HMI.prototype = {
 	/*********************************
 		showServers
 	*********************************/
-	showServers: function (KSGateway, KSGateway_Path, Host, RefreshTime, PossServers, PossSheets, Playground) {
+	showServers: function (Host, RefreshTime, PossServers, PossSheets, Playground) {
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
 		this.RefreshTime = RefreshTime;
@@ -109,12 +109,18 @@ HMI.prototype = {
 			this.Playground = Playground;
 			this.EmbedAdobePlugin= false;
 		}
-		if (KSGateway == ""){
-			KSGateway = window.location.host;
-		}
-		if (KSGateway_Path == ""){
+		KSGateway = window.location.host;
+		
+		if (false){
+			KSGateway_Path = "/tks.php";
+			this.GatewayTypeTCL = false;
+			this.GatewayTypePHP = true;
+		}else{
 			KSGateway_Path = "/tks";
+			this.GatewayTypeTCL = true;
+			this.GatewayTypePHP = false;
 		}
+		
 		deleteChilds(this.PossServers);
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
@@ -230,10 +236,25 @@ HMI.prototype = {
 	_getAndImportComponent: function (ComponentPath, ParentNode, Insert) {
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - Start");
 		
-		if (Insert == true)
-		{
-			//	import and append
+		if (Insert == true){
+		//	import and append
+		//
+			this.KSClient.send2Request(null, 'GET', 'getvar', 
+				'{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}',
+				'', ' -output $::TKS::OP_VALUE', 
+				this._cbGetAndAddComponent);
+		} else {			
+			//	import and replace
 			//
+			this.KSClient.send2Request(null, 'GET', 'getvar', 
+				'{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}',
+				'', ' -output $::TKS::OP_VALUE', 
+				this._cbGetAndReplaceComponent);
+		}
+/*
+		if (Insert == true){
+		//	import and append
+		//
 			this.KSClient.sendRequest('getvar', 'GET',
 				'{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}' + ' ' + '-output $::TKS::OP_VALUE',
 				this._cbGetAndAddComponent);
@@ -243,7 +264,8 @@ HMI.prototype = {
 			this.KSClient.sendRequest('getvar', 'GET',
 				'{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}' + ' ' + '-output $::TKS::OP_VALUE',
 				this._cbGetAndReplaceComponent);
-		};
+		}
+*/
 		
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - End");
 		
@@ -273,15 +295,12 @@ HMI.prototype = {
 				HMI.hmi_log_onwebsite("Could not import component in _cbGetAndImportComponent");
 				return;
 			};
-			var template = Component;
 			if(!HMI.EmbedAdobePlugin){
+				var template = Component;
 				Component = document.importNode(template, true);
 			}
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now initGestures");
-//FIXME initgestures klappen nicht immer im IE
-//			if ("Explorer" != BrowserDetect.browser ) {
-				HMI.initGestures(Component);
-//			}
+			HMI.initGestures(Component);
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now Playground.appendChild");
 			HMI.Playground.appendChild(Component);
 			
@@ -319,14 +338,11 @@ HMI.prototype = {
 				return;
 			};
 			
-			var template = Component;
 			if(!HMI.EmbedAdobePlugin){
+				var template = Component;
 				Component = document.importNode(template, true);
 			}
-//FIXME initgestures klappen nicht immer im IE
-//			if ("Explorer" != BrowserDetect.browser ) {
-				HMI.initGestures(Component);
-//			}
+			HMI.initGestures(Component);
 			HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			//HMI.Playground.replaceChild(Component, $(HMI.Path));
 			
@@ -368,7 +384,7 @@ HMI.prototype = {
 		_initGestures
 	*********************************/
 	_initGestures: function (Element) {
-		this.hmi_log_trace("HMI.prototype._initGestures - Start");
+		this.hmi_log_trace("HMI.prototype._initGestures - Start: "+Element.id);
 		
 		//	HMI-COMPONENT
 		//
@@ -386,8 +402,8 @@ HMI.prototype = {
 		};
 		
 		//	MOVE
-		//
-		if (this.instanceOf(Element, "hmi-component-gesture-move"))
+		// FIXME AdobePlugin raus
+		if (this.instanceOf(Element, "hmi-component-gesture-move") && !HMI.EmbedAdobePlugin)
 		{
 			var dragger = new Dragger(Element, this);
 		} else {			
@@ -434,11 +450,29 @@ HMI.prototype = {
 		HMI._initGestures(Fragment);
 //		this.hmi_log_trace("HMI.prototype.initGestures - done _initGestures(Fragment) ");
 		
-		if (HMI.EmbedAdobePlugin){
+		if (false){
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			if (Elements.length == 0 ){
+				//Have no idea, why Adobe sometimes does not get getElementsByTagNameNS with 'svg' right
+//				Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+//debugger;
+			} else {
+				for (var idx = 0; idx < Elements.length; ++idx){
+					HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
+if (Elements.item(idx)== null){
+//	debugger;
+}
+					HMI._initGestures(Elements.item(idx));
+				}
+			}
+		}else if (HMI.EmbedAdobePlugin){
+			var Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			
 			for (var idx = 0; idx < Elements.length; ++idx){
 				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
-				HMI._initGestures(Elements.item(idx));
+				if (Elements.item(idx).namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+					HMI._initGestures(Elements.item(idx));
+				}
 			}
 		}else if (Fragment.getElementsByTagNameNS){   //gecko
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');

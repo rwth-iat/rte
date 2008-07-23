@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.1.1.1 $
-*	$Date: 2007-06-27 15:37:43 $
+*	$Revision: 1.2 $
+*	$Date: 2008-07-23 12:15:36 $
 *
 *	History:
 *	--------
@@ -109,7 +109,10 @@ DoubleClick.prototype = {
 				'{' + evt.layerX + '} ' +
 				'{' + evt.layerY + '}' +
 				'}';
-			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
+			HMI.KSClient.send2Request(null, 'POST', 'setvar', 
+				'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
+				'', '', null);
+//			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		
 		delete Command;
