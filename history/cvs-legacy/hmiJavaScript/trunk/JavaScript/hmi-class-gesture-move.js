@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.6 $
-*	$Date: 2008-07-23 12:15:36 $
+*	$Revision: 1.7 $
+*	$Date: 2008-07-25 12:20:06 $
 *
 *	History:
 *	--------
@@ -267,18 +267,29 @@ Dragger.prototype = {
 		if (evt.button == 0)
 		{
 			var SVGComponent = evt.target;
-			while (	!(SVGComponent instanceof SVGSVGElement)
+//			while (	!(SVGComponent instanceof SVGSVGElement)
+			while (	SVGComponent.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG
 					&&	SVGComponent != null
-					&&	SVGComponent != document
-					&&	/\bhmi-component-gesture-move\b/.exec(SVGComponent.className.animVal) == null)
+					&&	SVGComponent != HMI.svgDocument.documentElement
+					&&	/\bhmi-component-gesture-move\b/.exec(SVGComponent.getAttribute('class')) == null)
+//					&&	/\bhmi-component-gesture-move\b/.exec(SVGComponent.className.animVal) == null)
 			{
-				SVGComponent = SVGComponent.ownerSVGElement;
-			};
+				if (SVGComponent.ownerSVGElement != undefined){
+					SVGComponent = SVGComponent.ownerSVGElement;
+				}else if(SVGComponent.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+					SVGComponent = SVGComponent.parentNode;
+				}
+			}
 			//	Save innerCursor-Position inside actual SVGComponent
-			//
-			this._innerCursorX = (evt.layerX - SVGComponent.getAttribute("layerX"));
-			this._innerCursorY = (evt.layerY - SVGComponent.getAttribute("layerY"));
-			
+			//FIXME evt.layerX nicht da, screenX ist was anderes
+			//MSIE	MSIE	offsetX / offsetY  nicht nutzbar, da adobe js
+			if ("number" == typeof evt.layerX){
+				this._innerCursorX = (evt.layerX - SVGComponent.getAttribute("layerX"));
+				this._innerCursorY = (evt.layerY - SVGComponent.getAttribute("layerY"));
+			}else{
+				this._innerCursorX = (evt.screenX - SVGComponent.getAttribute("layerX"));
+				this._innerCursorY = (evt.screenY - SVGComponent.getAttribute("layerY"));
+			}
 			if (HMI.RefreshTimeoutID != null)
 				clearTimeout(HMI.RefreshTimeoutID);
 			
@@ -305,8 +316,13 @@ Dragger.prototype = {
 	
 			this._node.setAttribute("pointer-events", "none");
 			
-			this.registerOnMouseMove(document, true, this);
-			this.registerOnMouseUp(document, true, this);
+			if (HMI.svgDocument.addEventListener != undefined){
+				this.registerOnMouseMove(HMI.svgDocument, true, this);
+				this.registerOnMouseUp(HMI.svgDocument, true, this);
+			}else{
+				this.registerOnMouseMove(HMI.svgDocument.documentElement, true, this);
+				this.registerOnMouseUp(HMI.svgDocument.documentElement, true, this);
+			}
 			
 			try{
 				/**
@@ -336,7 +352,7 @@ Dragger.prototype = {
 	stopDrag: function (evt) {		
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - Start");
 		
-		var Clone = document.getElementById(HMI.HMI_Constants.NODE_NAME_CLONE);
+		var Clone = HMI.svgDocument.getElementById(HMI.HMI_Constants.NODE_NAME_CLONE);
 		
 		this._controller._currentDragger = null;
 		
@@ -410,16 +426,24 @@ Dragger.prototype = {
 		//
 		if (this._node == ground._node)
 		{
-			ground._node = ground._node.ownerSVGElement
+			if (ground._node.ownerSVGElement != undefined){
+				ground._node = ground._node.ownerSVGElement;
+			}else if (ground._node.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
+				ground._node = ground._node.parentNode;
+			}
 			while (	ground._node != null
 					&&	ground._node != document
 					&&	HMI.instanceOf(ground._node, 'hmi-component-ground') == false)
 			{
-				ground._node = ground._node.ownerSVGElement;
+				if (ground._node.ownerSVGElement != undefined){
+					ground._node = ground._node.ownerSVGElement;
+				}else if (ground._node.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
+					ground._node = ground._node.parentNode;
+				}
 				if (	ground._node != null
 					&&	ground._node.id == HMI.HMI_Constants.NODE_NAME_CLONE)
 				{
-					ground._node = document.getElementById(ground._node.getAttribute('clonedID'));
+					ground._node = HMI.svgDocument.getElementById(ground._node.getAttribute('clonedID'));
 				};
 			};
 		};
@@ -433,8 +457,8 @@ Dragger.prototype = {
 			var node = this._node.parentNode.removeChild(this._node);
 			ground._node.insertBefore(node, ground._node.firstChild);
 			
-			var SVGx = evt.layerX - node.ownerSVGElement.getAttribute("layerX") + (-1)*this._innerCursorX;
-			var SVGy = evt.layerY - node.ownerSVGElement.getAttribute("layerY") + (-1)*this._innerCursorY;
+			var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
+			var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
 			node.setAttribute("x", SVGx);
 			node.setAttribute("y", SVGy);
 			delete SVGx;
@@ -458,8 +482,8 @@ Dragger.prototype = {
 				ground._node.insertBefore(node, ground._node.firstChild);
 			};
 			
-			var SVGx = evt.layerX - node.ownerSVGElement.getAttribute("layerX") + (-1)*this._innerCursorX;
-			var SVGy = evt.layerY - node.ownerSVGElement.getAttribute("layerY") + (-1)*this._innerCursorY;
+			var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
+			var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
 			node.setAttribute("x", SVGx);
 			node.setAttribute("y", SVGy);
 			delete SVGx;
@@ -494,7 +518,11 @@ Dragger.prototype = {
 		_getLayerPosition
 	*********************************/
 	_getLayerPosition: function () {
-		var SVGElement = node.ownerSVGElement;
+		if (node.ownerSVGElement != undefined){
+			SVGElement = node.ownerSVGElement;
+		}else if (node.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
+			SVGElement = node.parentNode;
+		}
 		var SVGx = 0;
 		var SVGy = 0;
 		while (	SVGElement != null
