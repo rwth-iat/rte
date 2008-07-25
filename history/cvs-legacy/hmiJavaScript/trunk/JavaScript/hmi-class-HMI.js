@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.26 $
-*	$Date: 2008-07-25 10:53:39 $
+*	$Revision: 1.27 $
+*	$Date: 2008-07-25 11:26:04 $
 *
 *	History:
 *	--------
@@ -210,7 +210,7 @@ HMI.prototype = {
 				Component = Component.parentNode;
 			}
 			if ( Component != null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
-				Component = HMI.svgDocument.documentElement.getElementById(Component.getAttribute('clonedID'));
+				Component = HMI.svgDocument.getElementById(Component.getAttribute('clonedID'));
 			}
 		}
 		
