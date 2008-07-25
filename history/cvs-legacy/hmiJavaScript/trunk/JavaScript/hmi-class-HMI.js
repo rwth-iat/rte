@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.25 $
-*	$Date: 2008-07-23 14:18:13 $
+*	$Revision: 1.26 $
+*	$Date: 2008-07-25 10:53:39 $
 *
 *	History:
 *	--------
@@ -108,6 +108,7 @@ HMI.prototype = {
 		}else{
 			this.Playground = Playground;
 			this.EmbedAdobePlugin= false;
+			this.svgDocument = document;
 		}
 		KSGateway = window.location.host;
 		
@@ -209,7 +210,7 @@ HMI.prototype = {
 				Component = Component.parentNode;
 			}
 			if ( Component != null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
-				Component = $(Component.getAttribute('clonedID'));
+				Component = HMI.svgDocument.documentElement.getElementById(Component.getAttribute('clonedID'));
 			}
 		}
 		
