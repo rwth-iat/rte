@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.24 $
-*	$Date: 2008-07-23 12:15:36 $
+*	$Revision: 1.25 $
+*	$Date: 2008-07-29 13:06:55 $
 *
 *	History:
 *	--------
@@ -312,7 +312,7 @@ HMIJavaScriptKSClient.prototype = {
 				if (HMIJavaScriptKSClient.prototype.pingServer(Server[i]) == true)
 				{
 					Node = document.createElement('option');
-					Node.innerHTML = "Server: "+Server[i];
+					Node.innerHTML = Server[i];
 					Node.value = Server[i];
 					HMI.PossServers.appendChild(Node);
 					ValidServers ++;
