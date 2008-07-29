@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.2 $
-*	$Date: 2008-07-23 12:15:36 $
+*	$Revision: 1.3 $
+*	$Date: 2008-07-29 13:27:18 $
 *
 *	History:
 *	--------
@@ -82,7 +82,7 @@ DoubleClick.prototype = {
 	*********************************/
 	_registerOnDoubleClick: function(Component, capture, listener) {
 		this._onDoubleClickThunk = function (evt) { listener.onDoubleClick(evt); };
-		Component.addEventListener("dblclick", this._onDoubleClickThunk, capture);
+		Component.addEventListener("click", this._onDoubleClickThunk, capture);
 	},
 	
 	/*********************************
@@ -90,7 +90,9 @@ DoubleClick.prototype = {
 	*********************************/
 	_onDoubleClickThunk: null,
 	onDoubleClick: function (evt) {
-		this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-doubleclick'));
+		if (evt.button == 0 && evt.detail ==2){
+			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-doubleclick'));
+		}
 	},
 	
 	/*********************************

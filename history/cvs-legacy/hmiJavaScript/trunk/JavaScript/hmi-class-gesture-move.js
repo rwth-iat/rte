@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.7 $
-*	$Date: 2008-07-25 12:20:06 $
+*	$Revision: 1.8 $
+*	$Date: 2008-07-29 13:27:18 $
 *
 *	History:
 *	--------
@@ -207,6 +207,7 @@ Dragger.prototype = {
 		registerOnMouseMove
 	*********************************/
 	registerOnMouseMove: function(element, capture, listener) {
+//FIXME mousemove is never called in IE...
 		this.onMouseMoveThunk = function (evt) { listener.onMouseMove(evt); };
 		element.addEventListener("mousemove", this.onMouseMoveThunk, capture);
 	},
@@ -284,11 +285,13 @@ Dragger.prototype = {
 			//FIXME evt.layerX nicht da, screenX ist was anderes
 			//MSIE	MSIE	offsetX / offsetY  nicht nutzbar, da adobe js
 			if ("number" == typeof evt.layerX){
+				//Firefox and Safari/Webkit
 				this._innerCursorX = (evt.layerX - SVGComponent.getAttribute("layerX"));
 				this._innerCursorY = (evt.layerY - SVGComponent.getAttribute("layerY"));
 			}else{
-				this._innerCursorX = (evt.screenX - SVGComponent.getAttribute("layerX"));
-				this._innerCursorY = (evt.screenY - SVGComponent.getAttribute("layerY"));
+				//Opera
+				this._innerCursorX = (evt.clientX - evt.offsetX);
+				this._innerCursorY = (evt.clientX - evt.offsetX);
 			}
 			if (HMI.RefreshTimeoutID != null)
 				clearTimeout(HMI.RefreshTimeoutID);
@@ -317,9 +320,11 @@ Dragger.prototype = {
 			this._node.setAttribute("pointer-events", "none");
 			
 			if (HMI.svgDocument.addEventListener != undefined){
+				//Firefox and co
 				this.registerOnMouseMove(HMI.svgDocument, true, this);
 				this.registerOnMouseUp(HMI.svgDocument, true, this);
 			}else{
+				//adobe plugin
 				this.registerOnMouseMove(HMI.svgDocument.documentElement, true, this);
 				this.registerOnMouseUp(HMI.svgDocument.documentElement, true, this);
 			}
