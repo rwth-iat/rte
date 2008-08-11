@@ -49,8 +49,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.15 $
-*	$Date: 2008-07-23 11:51:01 $
+*	$Revision: 1.16 $
+*	$Date: 2008-08-11 13:28:43 $
 *
 *	History:
 *	21-June-2007			St
@@ -140,7 +140,10 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 							<option>please push "Show Servers"</option>
 						</select>
 					</td>
-					<td colspan="2"><input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible</td>
+					<td colspan="2">
+						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible
+						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+					</td>
 				</tr>
 			</table>
 			<script type="text/javascript">

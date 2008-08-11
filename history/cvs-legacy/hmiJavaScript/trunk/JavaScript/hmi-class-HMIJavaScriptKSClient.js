@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.25 $
-*	$Date: 2008-07-29 13:06:55 $
+*	$Revision: 1.26 $
+*	$Date: 2008-08-11 13:28:43 $
 *
 *	History:
 *	--------
@@ -306,6 +306,7 @@ HMIJavaScriptKSClient.prototype = {
 			Node.innerHTML = '- select server -';
 			Node.value = 'no server';
 			HMI.PossServers.appendChild(Node);
+			var OptionNameLength = 0;
 			
 			for (i = 0; i < Server.length; i++)
 			{
@@ -317,8 +318,18 @@ HMIJavaScriptKSClient.prototype = {
 					HMI.PossServers.appendChild(Node);
 					ValidServers ++;
 					IdLastValidServer = i;
+					if (OptionNameLength < Server[i].length){
+						OptionNameLength = Server[i].length;
+					}
 				};
 			};
+			if ("Explorer" == BrowserDetect.browser){
+				var OptimumWidth = OptionNameLength * 7.5 ;
+				if (OptimumWidth > parseInt(HMI.PossServers.style.width)){
+					HMI.PossSheets.style.width = OptimumWidth + "px";
+					HMI.PossServers.style.width = OptimumWidth + "px";
+				}
+			}
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+ValidServers);
 			if (ValidServers == 0){
 				Node.innerHTML = '- no server available -';
@@ -423,17 +434,31 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
 		
 		var Command = null;
-		Command = '{' + 
-			'{' + HMI.KSClient.getMessageID() + '} ' +
-			'{010} ' +
-			'{' + HMI.HMI_Constants.HMIMANAGER_PATH + '} ' + 
-			'{SHOWSHEETS}' +
-			'}';
-		this.send2Request(null, 'POST', 'setvar', '{'
-				+ HMI.HMI_Constants.HMIMANAGER_PATH
-				+ '.Command '
-				+ Command
-				+ '}', '', '', null);
+		if ($("checkbox_showcomponents") && $("checkbox_showcomponents").checked){
+			Command = '{' + 
+				'{' + HMI.KSClient.getMessageID() + '} ' +
+				'{010} ' +
+				'{' + HMI.HMI_Constants.HMIMANAGER_PATH + '} ' + 
+				'{SHOWCOMPONENTS}' +
+				'}';
+			this.send2Request(null, 'POST', 'setvar', '{'
+					+ HMI.HMI_Constants.HMIMANAGER_PATH
+					+ '.Command '
+					+ Command
+					+ '}', '', '', null);
+		}else{
+			Command = '{' + 
+				'{' + HMI.KSClient.getMessageID() + '} ' +
+				'{010} ' +
+				'{' + HMI.HMI_Constants.HMIMANAGER_PATH + '} ' + 
+				'{SHOWSHEETS}' +
+				'}';
+			this.send2Request(null, 'POST', 'setvar', '{'
+					+ HMI.HMI_Constants.HMIMANAGER_PATH
+					+ '.Command '
+					+ Command
+					+ '}', '', '', null);
+		}
 		this.send2Request(null, 'GET', 'getvar', '{'
 				+ HMI.HMI_Constants.HMIMANAGER_PATH
 				+ '.CommandReturn} ', '', ' -output $::TKS::OP_VALUE', this._cbGetSheets);
@@ -493,14 +518,23 @@ HMIJavaScriptKSClient.prototype = {
 			Node.innerHTML = '- select sheet -';
 			Node.value = 'no sheet';
 			HMI.PossSheets.appendChild(Node);
-			
+			var OptionNameLength = 0;
 			for (i = 0; i < Sheet.length; i++){
 				Node = document.createElement('option');
-				Node.innerHTML = "Sheet: "+Sheet[i];
+				Node.innerHTML = Sheet[i];
 				Node.value = Sheet[i];
 				HMI.PossSheets.appendChild(Node);
-			};
-			//'this' is not PossSheets here, but refers to the window and is completely useless in Internet Explorer
+				if (OptionNameLength < Sheet[i].length){
+					OptionNameLength = Sheet[i].length;
+				}
+			}
+			if ("Explorer" == BrowserDetect.browser){
+				var OptimumWidth = OptionNameLength * 7.5 ;
+				if (OptimumWidth > parseInt(HMI.PossSheets.style.width)){
+					HMI.PossSheets.style.width = OptimumWidth + "px";
+					HMI.PossServers.style.width = OptimumWidth + "px";
+				}
+			}
 			addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
 			if (Sheet.length == 1){
 				$("idSheets").selectedIndex = 1;
@@ -628,7 +662,9 @@ HMI.hmi_log_info('http://'
 		//netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
 		//does not work in other browsers than mozillabased
 		try {
-			req.open(method,
+			//FireFox 3 sends in a POST a content-encoding header killing the TCL Webserver
+			//real POST is not nessessary, therefor GET is forced
+			req.open('GET',
 				'http://'
 				+ HMI.KSClient.TCLKSGateway
 				+ '?'
