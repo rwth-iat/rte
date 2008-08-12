@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.27 $
-*	$Date: 2008-07-25 11:26:04 $
+*	$Revision: 1.28 $
+*	$Date: 2008-08-12 16:07:00 $
 *
 *	History:
 *	--------
@@ -292,10 +292,9 @@ HMI.prototype = {
 			
 			Component = HMI._importComponent(ComponentText);
 			if (Component == null){
-				HMI.hmi_log_error("HMI.prototype._cbGetAndImportComponent: Could not import component");
-				HMI.hmi_log_onwebsite("Could not import component in _cbGetAndImportComponent");
+				//logging not required, allready done by _importComponent
 				return;
-			};
+			}
 			if(!HMI.EmbedAdobePlugin){
 				var template = Component;
 				Component = document.importNode(template, true);
