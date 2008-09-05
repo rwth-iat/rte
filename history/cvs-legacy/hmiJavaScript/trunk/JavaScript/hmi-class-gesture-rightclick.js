@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2008-07-23 12:15:36 $
+*	$Revision: 1.6 $
+*	$Date: 2008-09-05 13:11:03 $
 *
 *	History:
 *	--------
@@ -85,6 +85,8 @@ RightClick.prototype = {
 		//Needed for Internet Explorer without embeded Adobe Plugin
 		//addEventSimple(Component, "mouseup", this._onClickThunk);
 		Component.addEventListener("mouseup", this._onRightClickThunk, capture);
+		//safari@mac does not fire mouseup!
+		Component.addEventListener("contextmenu", this._onRightClickThunk, capture);
 	},
 	
 	/*********************************

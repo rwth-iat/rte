@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.27 $
-*	$Date: 2008-08-12 16:07:00 $
+*	$Revision: 1.28 $
+*	$Date: 2008-09-05 13:11:03 $
 *
 *	History:
 *	--------
@@ -542,6 +542,8 @@ HMIJavaScriptKSClient.prototype = {
 				if (autoKeepHeader == false && document.getElementById("ErrorOutput").innerHTML.length == 0){
 					hideHeader();
 				}
+				$("idSheets").blur();
+				$("idServers").blur();
 			}
 		} else {
 			Node = document.createElement('option');

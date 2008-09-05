@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.28 $
-*	$Date: 2008-08-12 16:07:00 $
+*	$Revision: 1.29 $
+*	$Date: 2008-09-05 13:11:03 $
 *
 *	History:
 *	--------
@@ -402,10 +402,16 @@ HMI.prototype = {
 		};
 		
 		//	MOVE
-		// FIXME AdobePlugin raus
-		if (this.instanceOf(Element, "hmi-component-gesture-move") && !HMI.EmbedAdobePlugin)
+		//
+		if (this.instanceOf(Element, "hmi-component-gesture-move"))
 		{
-			var dragger = new Dragger(Element, this);
+			if (!HMI.EmbedAdobePlugin)
+			{
+				var dragger = new Dragger(Element, this);
+			}else{
+				//FIXME Adobe move gesture buggy
+				HMI.hmi_log_onwebsite('Move-Gesture disabled!');
+			}
 		} else {			
 			//	RIGHTCLICK
 			//

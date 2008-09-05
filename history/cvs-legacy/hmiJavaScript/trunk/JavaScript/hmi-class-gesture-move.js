@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.8 $
-*	$Date: 2008-07-29 13:27:18 $
+*	$Revision: 1.9 $
+*	$Date: 2008-09-05 13:11:03 $
 *
 *	History:
 *	--------
@@ -358,7 +358,12 @@ Dragger.prototype = {
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - Start");
 		
 		var Clone = HMI.svgDocument.getElementById(HMI.HMI_Constants.NODE_NAME_CLONE);
-		
+//HMI.hmi_log_info("Dragger.prototype.stopDrag "+this._node+" Clone: "+Clone);
+/*		if(Clone == null){
+			HMI.hmi_log_info("clone zero: "+Clone);
+			debugger;
+		}
+*/
 		this._controller._currentDragger = null;
 		
 		this._node.setAttribute("pointer-events", "all");
@@ -509,6 +514,11 @@ Dragger.prototype = {
 		var x = parseInt(this._node.getAttribute("x"));
 		var y = parseInt(this._node.getAttribute("y"));
 		
+/*if (this._node.getAttribute("x") == null){
+		debugger;
+	}
+*/
+// this._node.x.animVal.value
 		x += dx;
 		y += dy;
 
