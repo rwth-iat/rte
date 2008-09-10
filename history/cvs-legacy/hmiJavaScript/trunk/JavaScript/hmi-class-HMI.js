@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.29 $
-*	$Date: 2008-09-05 13:11:03 $
+*	$Revision: 1.30 $
+*	$Date: 2008-09-10 13:57:51 $
 *
 *	History:
 *	--------
@@ -500,7 +500,8 @@ HMI.prototype = {
 		instanceOf
 	*********************************/
 	instanceOf: function (Node, ClassName) {
-		this.hmi_log_trace("HMI.prototype.instanceOf - Start");
+		//logging deactivated, causes too much noise and performanceproblem in a production system
+//		this.hmi_log_trace("HMI.prototype.instanceOf - Start");
 		
 		if (Node.getAttribute("class") != null)
 		{
@@ -508,28 +509,28 @@ HMI.prototype = {
 			//
 			if (this._instanceOf(Node, ClassName, " ") == true)
 			{
-				this.hmi_log_trace("HMI.prototype.instanceOf - Endt1");
+//				this.hmi_log_trace("HMI.prototype.instanceOf - Endt1");
 				return true;
 			} else {
 				// COMMA delimeter
 				//
 				if (this._instanceOf(Node, ClassName, ",") == true)
 				{
-					this.hmi_log_trace("HMI.prototype.instanceOf - Endt2");
+//					this.hmi_log_trace("HMI.prototype.instanceOf - Endt2");
 					return true;
 				} else {
 					// SEMICOLON delimeter
 					//
 					if (this._instanceOf(Node, ClassName, ";") == true)
 					{
-						this.hmi_log_trace("HMI.prototype.instanceOf - Endt3");
+//						this.hmi_log_trace("HMI.prototype.instanceOf - Endt3");
 						return true;
 					};
 				};
 			};
 		};
 		
-		this.hmi_log_trace("HMI.prototype.instanceOf - Endf");
+//		this.hmi_log_trace("HMI.prototype.instanceOf - Endf");
 	
 		return false;
 	},
@@ -538,7 +539,7 @@ HMI.prototype = {
 		_instanceOf
 	*********************************/
 	_instanceOf: function (Node, ClassName, Delimiter) {
-		this.hmi_log_trace("HMI.prototype._instanceOf - Start");
+//		this.hmi_log_trace("HMI.prototype._instanceOf - Start");
 		
 		var Classes;
 		var idx;
@@ -548,7 +549,7 @@ HMI.prototype = {
 		{
 			if (ClassName == Classes[idx])
 			{
-				this.hmi_log_trace("HMI.prototype._instanceOf - Endt");
+//				this.hmi_log_trace("HMI.prototype._instanceOf - Endt");
 				
 				return true;
 			};
@@ -570,7 +571,7 @@ HMI.prototype = {
 		delete Classes;
 		delete idx;
 		
-		this.hmi_log_trace("HMI.prototype._instanceOf - Endf");
+//		this.hmi_log_trace("HMI.prototype._instanceOf - Endf");
 		
 		return false		
 	},
