@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2008-07-10 10:45:04 $
+*	$Revision: 1.17 $
+*	$Date: 2008-09-17 09:55:02 $
 *
 *	History:
 *	--------
@@ -224,6 +224,11 @@ var BrowserDetect = {
 		return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
 	},
 	dataBrowser: [
+		{
+			string: navigator.userAgent,
+			subString: "Chrome",
+			identity: "Chrome"
+		},
 		{ 	string: navigator.userAgent,
 			subString: "OmniWeb",
 			versionSearch: "OmniWeb/",
