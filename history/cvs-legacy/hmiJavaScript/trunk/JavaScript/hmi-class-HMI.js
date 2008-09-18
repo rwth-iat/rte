@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.30 $
-*	$Date: 2008-09-10 13:57:51 $
+*	$Revision: 1.31 $
+*	$Date: 2008-09-18 16:29:00 $
 *
 *	History:
 *	--------
@@ -175,7 +175,7 @@ HMI.prototype = {
 			HMI.Path = Sheet;
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
-		
+		document.title = this.KSClient.KSServer.replace(/localhost\//, "")+":"+Sheet+" - ACPLT/HMI";
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
 	
