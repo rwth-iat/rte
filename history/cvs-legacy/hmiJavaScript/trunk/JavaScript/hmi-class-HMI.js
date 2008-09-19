@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.31 $
-*	$Date: 2008-09-18 16:29:00 $
+*	$Revision: 1.32 $
+*	$Date: 2008-09-19 11:02:47 $
 *
 *	History:
 *	--------
@@ -94,6 +94,11 @@ HMI.prototype = {
 		showServers
 	*********************************/
 	showServers: function (Host, RefreshTime, PossServers, PossSheets, Playground) {
+		
+		if (window.loadFirebugConsole){
+			window.loadFirebugConsole();
+		}
+		
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
 		this.RefreshTime = RefreshTime;
@@ -699,7 +704,7 @@ HMI.prototype = {
 		hmi_log_trace
 	*********************************/
 	hmi_log_trace: function (text) {
-		if (window.console != null && this.trace == true){
+		if (this.trace == true && window.console != null){
 			window.console.debug("HMI_TRACE: %s", text);
 		}else if(window.opera){
 			if (opera.postError != null && this.trace == true){
