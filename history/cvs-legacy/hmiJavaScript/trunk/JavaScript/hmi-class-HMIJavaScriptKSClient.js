@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.29 $
-*	$Date: 2008-09-22 08:20:51 $
+*	$Revision: 1.30 $
+*	$Date: 2008-09-22 09:29:05 $
 *
 *	History:
 *	--------
@@ -77,6 +77,7 @@ function HMIJavaScriptKSClient(async) {
 	this.KSServer;
 	this.TCLKSGateway;
 	this.TCLKSHandle;
+	this.HMIMANAGER_PATH;
 	
 	this.Asynchron = async;
 	
@@ -110,6 +111,7 @@ HMIJavaScriptKSClient.prototype = {
 		this.KSServer		= HostAndServer;
 		this.TCLKSGateway	= TCLKSGateway;
 		this.TCLKSHandle	= null;
+		this.HMIMANAGER_PATH	= null;
 		
 //		this._sendRequest(this, 'GET', false, 'tks-server', this.KSServer, this._cbInit);
 		//this.send2Request(null, 'newHandle', '', this.KSServer, '', '', this._cbInit);
@@ -545,16 +547,16 @@ HMIJavaScriptKSClient.prototype = {
 			//TCLKSHandle = this.send2Request('', 'newHandle', '', HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, '', '', null);
 			TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
 			
-			//ManagerResponse = this.send2Request(TCLKSHandle, 'GET', 'getep', '', HMI.HMI_Constants.HMIMANAGER_PATH, ' * -output $::TKS::OP_NAME', null);
+			//ManagerResponse = this.send2Request(TCLKSHandle, 'GET', 'getep', '', this.HMIMANAGER_PATH, ' * -output $::TKS::OP_NAME', null);
 			//ManagerResponse = this.send2Request(TCLKSHandle, 'GET', 'getvar', '', "/Libraries/hmi/Manager.instance", ' -output $::TKS::OP_VALUE', null);
 			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null)
 			
 /*			if (HMI.GatewayTypeTCL == true){
 				ManagerResponse = this._simpleRequest(TCLKSHandle,
-					'getep ' + HMI.HMI_Constants.HMIMANAGER_PATH + ' * -output $::TKS::OP_NAME');
+					'getep ' + this.HMIMANAGER_PATH + ' * -output $::TKS::OP_NAME');
 			}else if (HMI.GatewayTypePHP == true){
 				ManagerResponse = this._simpleRequest(TCLKSHandle,
-					'&cmd=getep&path=' + HMI.HMI_Constants.HMIMANAGER_PATH);
+					'&cmd=getep&path=' + this.HMIMANAGER_PATH);
 			}
 */
 			//this.send2Request(TCLKSHandle, 'GET', 'destroy', '', '', '', null);
@@ -588,25 +590,26 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	getSheets: function() {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
+		this.HMIMANAGER_PATH = this.getVar(null, "/Libraries/hmi/Manager.instance", null).replace(/{/g, "").replace(/}/g, "");
 		
 		var Command = null;
 		if ($("checkbox_showcomponents") && $("checkbox_showcomponents").checked){
 			//Command = '{' + 
 			//	'{' + HMI.KSClient.getMessageID() + '} ' +
 			//	'{010} ' +
-			//	'{' + HMI.HMI_Constants.HMIMANAGER_PATH + '} ' + 
+			//	'{' + this.HMIMANAGER_PATH + '} ' + 
 			//	'{SHOWCOMPONENTS}' +
 			//	'}';
 			//this.send2Request(null, 'POST', 'setvar', '{'
-			//		+ HMI.HMI_Constants.HMIMANAGER_PATH
+			//		+ this.HMIMANAGER_PATH
 			//		+ '.Command '
 			//		+ Command
 			//		+ '}', '', '', null);
 			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
-				'{' + HMI.HMI_Constants.HMIMANAGER_PATH + '} ' + 
+				'{' + this.HMIMANAGER_PATH + '} ' + 
 				'{SHOWCOMPONENTS}';
-			this.setVar(null, HMI.HMI_Constants.HMIMANAGER_PATH
+			this.setVar(null, this.HMIMANAGER_PATH
 					+ '.Command ',
 					Command,
 					null);
@@ -614,38 +617,38 @@ HMIJavaScriptKSClient.prototype = {
 			//Command = '{' + 
 			//	'{' + HMI.KSClient.getMessageID() + '} ' +
 			//	'{010} ' +
-			//	'{' + HMI.HMI_Constants.HMIMANAGER_PATH + '} ' + 
+			//	'{' + this.HMIMANAGER_PATH + '} ' + 
 			//	'{SHOWSHEETS}' +
 			//	'}';
 			//this.send2Request(null, 'POST', 'setvar', '{'
-			//		+ HMI.HMI_Constants.HMIMANAGER_PATH
+			//		+ this.HMIMANAGER_PATH
 			//		+ '.Command '
 			//		+ Command
 			//		+ '}', '', '', null);
 			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
-				'{' + HMI.HMI_Constants.HMIMANAGER_PATH + '} ' + 
+				'{' + this.HMIMANAGER_PATH + '} ' + 
 				'{SHOWSHEETS}';
-			this.setVar(null, HMI.HMI_Constants.HMIMANAGER_PATH
+			this.setVar(null, this.HMIMANAGER_PATH
 					+ '.Command ',
 					Command,
 					null);
 		}
 		//this.send2Request(null, 'GET', 'getvar', '{'
-		//		+ HMI.HMI_Constants.HMIMANAGER_PATH
+		//		+ this.HMIMANAGER_PATH
 		//		+ '.CommandReturn} ', '', ' -output $::TKS::OP_VALUE', this._cbGetSheets);
-		this.getVar(null, HMI.HMI_Constants.HMIMANAGER_PATH + '.CommandReturn', this._cbGetSheets);
+		this.getVar(null, this.HMIMANAGER_PATH + '.CommandReturn', this._cbGetSheets);
 /*
 		this._sendRequest(this, 'POST', false, this.TCLKSHandle, 'setvar '
 			+ '{'
-			+ HMI.HMI_Constants.HMIMANAGER_PATH
+			+ this.HMIMANAGER_PATH
 			+ '.Command '
 			+ Command
 			+ '}' , null);
 			
 		this._sendRequest(this, 'GET', false, this.TCLKSHandle, 'getvar '
 			+ '{'
-			+ HMI.HMI_Constants.HMIMANAGER_PATH
+			+ this.HMIMANAGER_PATH
 			+ '.CommandReturn} '
 			+ '-output $::TKS::OP_VALUE', this._cbGetSheets);
 */

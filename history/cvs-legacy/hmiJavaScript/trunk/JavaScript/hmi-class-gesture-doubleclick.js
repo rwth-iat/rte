@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.4 $
-*	$Date: 2008-09-22 08:20:51 $
+*	$Revision: 1.5 $
+*	$Date: 2008-09-22 09:29:05 $
 *
 *	History:
 *	--------
@@ -120,7 +120,7 @@ DoubleClick.prototype = {
 				'{DOUBLECLICK} ' +
 				'{' + evt.layerX + '} ' +
 				'{' + evt.layerY + '}';
-			HMI.KSClient.setVar(null, '/TechUnits/HMIManager' + '.Command', Command, null);
+			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
 //			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		

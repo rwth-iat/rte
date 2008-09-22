@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.33 $
-*	$Date: 2008-09-22 08:20:51 $
+*	$Revision: 1.34 $
+*	$Date: 2008-09-22 09:29:05 $
 *
 *	History:
 *	--------
@@ -67,8 +67,6 @@ function HMI(async, debug, error, warning, info, trace) {
 	this.HMI_Constants = Object();
 	this.HMI_Constants.NAMESPACE_SVG = "http://www.w3.org/2000/svg";
 	this.HMI_Constants.NODE_NAME_CLONE = "HMI_CLONE";
-	this.HMI_Constants.HMIMANAGER_PATH = "/TechUnits/HMIManager";
-	// //localhost/fb_hmi1/Libraries/hmi/Manager.instance
 	
 	this.debug = debug;
 	this.error = error;
