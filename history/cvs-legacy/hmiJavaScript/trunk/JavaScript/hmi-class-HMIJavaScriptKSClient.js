@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.30 $
-*	$Date: 2008-09-22 09:29:05 $
+*	$Revision: 1.31 $
+*	$Date: 2008-09-22 12:02:42 $
 *
 *	History:
 *	--------
@@ -104,6 +104,9 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	init: function(HostAndServer, TCLKSGateway) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.init - Start");
+		
+		clearTimeout(HMI.RefreshTimeoutID);
+		HMI.RefreshTimeoutID = null;
 		
 		if (this.TCLKSHandle != null)
 			this.destroy();
