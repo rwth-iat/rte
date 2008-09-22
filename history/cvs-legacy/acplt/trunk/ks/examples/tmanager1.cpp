@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.15 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/examples/tmanager1.cpp,v 1.16 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -79,6 +79,7 @@ int main(int argc, char **argv) {
 
     bool argsok = true;
     int  port   = KsServerBase::KS_ANYPORT;
+    bool reuseaddr = false;
     int  idx    = 0;
 
 #if PLT_USE_DEPRECIATED_HEADER
@@ -112,6 +113,9 @@ int main(int argc, char **argv) {
                 argsok = false;
                 break;
             }
+        } else if ( (strcmp(argv[idx], "-r") == 0) ||
+                    (strcmp(argv[idx], "--reuseaddr") == 0) ) {
+                reuseaddr = true;
         } else {
             argsok = false;
             break;
@@ -124,12 +128,14 @@ int main(int argc, char **argv) {
                     << NEW_LINE
                     << "  -p #, --port #  binds the testing ACPLT/KS manager to port number #" << NEW_LINE
                     << "  --help          display this help and exit" << NEW_LINE
+                    << "  -r, --reuseaddr reuse socket address" << NEW_LINE
                     << "  --version       output version information and exit" << NEW_LINE;
         return EXIT_FAILURE;
     }
 
 	Manager m(port);
     if ( m.isOk() ) {
+        m.setReuseAddr(reuseaddr);
         m.startServer();
         if ( m.isOk() ) {
             PLT_DMSG("entering service loop"<<NEW_LINE);

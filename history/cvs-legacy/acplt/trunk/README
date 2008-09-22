@@ -1,20 +1,10 @@
 The ACPLT/KS C++ Communication Library
 ======================================
 
-This is version 1.3.5 of the C++ Communication Libary. As always, it
+This is version 1.2.5 of the C++ Communication Libary. As always, it
 contains bug-fixes and some small improvements behind the scenes. For
 details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
 of this document below.
-
-IMPORTANT: If you use interserver connections with the 1.3.x/1.4.x series
-you *NEED* to link against the KS client library. This *DOES NOT* apply to
-ACPLT/KS servers *WITHOUT* interserver connections. The reason for having
-to link against the KS client library when using interserver connections
-stems from the fact that code has been unified and interserver connections
-now support the usual KscAvModule mechanism.
-
-IMPORTANT: With the 1.3.x/1.4.x series we will be moving in the direction
-of non-blocking clients.
 
 IMPORTANT: since version 1.1.3 we now license the source code of the
 ACPLT/KS package under the Artistic License (see file ARTISTIC-LICENSE
@@ -26,22 +16,22 @@ OpenSource and allows you to use ACPLT/KS for all your projects,
 either commercial or not. Like before, you can tweak the code to suit
 your needs, etc.
 
-The latest and greatest stable release (as if this developer's release
-were not stable...) is 1.2.4.
 
 Currently, the following platforms and compilers are supported by the
 C++ Communication Library:
 
-  HP-UX 10.20                  g++ 2.8.x
-  Linux 2.2/2.4                g++ 2.7.2, g++ 2.8.x, egcs 2.95.x, g++ 3.3
-  OpenVMS 6.2/7.1              CXX DEC C++ 5.4
-  Solaris 2.6                  g++ 2.7.2, g++ 2.8.x
+  Linux 2.6                    g++ 4.2.3
   Windows NT/9x                Borland C++ 5.0,
                                Microsoft VC++ 4.2, 5.0, 6.0
                                Cygnus egcs 1.1.2 (first attempt)
+Partly supported are:
+  HP-UX 10.20                  g++ 2.8.x
+  IRIX 6.x                     g++ 2.7.2, g++ 2.8.x
+  OpenVMS 6.2/7.1              CXX DEC C++ 5.4
+  Solaris 2.6                  g++ 2.7.2, g++ 2.8.x
 
 But now, compile and enjoy --
-  Your ACPLT/KS team <ks@plt.rwth-aachen.de>
+  Your ACPLT/KS team <@plt.rwth-aachen.de>
 
 
 1. Introduction
@@ -134,140 +124,9 @@ That's it. This will build the library as well as the examples.
 3. Changes & Bug-Fixes
 ----------------------
 
-Please note that code versions are numbered as x.y.z where the middle
-number y denoted the state of the code: even numbered y's denote stable
-releases, like 1.0.2, 1.0.5 or 1.2.0. Odd numbered y's denote development
-releases, which might not be stable: 1.1.0, etc.
-
-Version 1.3.5
-- BOTH
-  * Added filtering capabilities to PltLog. In particular, see 
-    PltLog::SetLogMode(mode) for controlling log message filtering for
-    the current global logger, as well as PltLog::setLogMode(mode) for
-    controlling filtering on arbitrary log objects.
-  * Fixed makefiles so tserver can be compiled again: it requires to
-    be linked against the ACPLT/KS client library since it uses inter-
-    server connections.
-
-Version 1.3.4
-- BOTH:
-  * fix for PltPriorityQueue which caused spurious crashes, especially
-    in connection with timer events.
-  * Small virtual inline destructor fixes.
-
-Version 1.3.3
-- BOTH
-  * Quick fixes for MSVC++ 6.0
-
-Version 1.3.2
-- BOTH:
-  * Fix of compiling problem with older glibc versions in xdrmemstream.cpp.
-
-- CLIENTS:
-  * KscClient got a new method newServer(...): this method can be used
-    to create an arbitrary number of KscServerBase-derived server proxies.
-    This way, an application can circumvent the automatic connection
-    optimization that otherwise occurs. Destroy server proxies created
-    through KscClient::newServer() later directly using the delete operator
-    and do *not* use KscClient::destroyServer().
-
-Version 1.3.1
-- BOTH:
-  * Port to g++ 3.3 and new C++ standard compliant header files.
-
-  * Fixed sign bug in encoding/decoding routines (aka "%XX").
-
-  * PLT_USE_BUFFERED_STREAMS has been completely removed; the library now uses
-    solely the so-called "buffered stream" (non-blocking) I/O subsystem. The
-    old blocking I/O stuff has been completely removed (to avoid code bloat).
-
-  * Moved all connection manager related code from the server-only part of the
-    library into the common library part. Also moved socket IO related code
-    parts from the server base to the same common library part under the
-    auspieces of the connection manager.
-
-  * connectionmgr.h/.cpp: now contains only the abstract base class
-    KsConnectionManager (the interface). Concrete implementations have to
-    derive from this class and implement IO and timer behavior.
-
-  * stdconnectionmgr.h/.cpp: new; contains standard connection manager
-    which uses select() for non-blocking I/O.
-
-  * Support for XTI has been removed because no-one really ever needed
-    that and even Solaris has an ordinary socket wrapper library. After
-    all, the XTI design was brain-dead from the beginning, so why
-    causing code-bloat by supporting this unnecessary piece?
-
-  * Removed several obsolete source code files from the src/, include/ks/,
-    and example/ directories.
-
-- SERVERS:
-  * The tserver now accepts certain command line options, in
-    particular: -p for controlling the port number and -r for
-    enabling reusing the socket address.
-
-  * The tmanager also now accepts socket address reusage through
-    the -r command line option.
-
-  * The registration process of KS servers with their local KS Manager is now
-    carried out asynchronously in the background. For this, the KsServer class
-    now relies on the KsServerConnection class.
-
-  * Under normal circumstances you *CAN NOT* register timer events before
-    KsServerBase::startServer() has been called. This is the way it is,
-    because no connection manager object exists before
-    KsServerBase::startServer() has been called. In other related news, it
-    does not make sense to register timer events before you are even clear
-    that they can be delivered later (when the startup fails, the timers will
-    never expire and never be handled!).
-
-- CLIENTS:
-  * Finally: code for KS clients with nonblocking IO have been landed. In this
-    release, the nonblocking stuff is accessible through KscServer's
-    requestAsyncByOpcode() method.
-
-  * New method KscServer::requestAsyncByOpcode(): give it a KscClientRequest
-    object and it will queue it for asynchronous processing. If the request
-    is done and a reply was received or an error occurs asynchronously, then
-    the attention() method of the KscClientRequest will be triggered. Overload
-    this method to do your own processing.
-
-  * The existing KscServer::requestByOpcode() method falls back to its async
-    cousin but waits for its request to complete before returning. Since it
-    yields cpu cycles, other asynchronous requests which are outstanding and
-    complete before the blocking request completes, these other requests are
-    notified first.
-
-  * Requests can be either done by (full) opcode or by minor + major
-    opcode. In the latter case, if the major opcode is not known but only
-    the clear-text name of the extension, fill in only the minor opcode
-    and set the name of the extension in KscClientRequest. The server
-    proxy then will be automatically retrieve the major opcode from the
-    KS server in the background.
-
-  * Added new error KS_ERR_TERMINATED which indicates that a KS service
-    request has been terminated by the client application.
-
-Version 1.2.4
-- CLIENTS:
-  * implemented timed connecting to ACPLT/KS servers. Whenever a
-    connection needs to be set up, the the RPC timeout set on a
-    particular KscServer proxy object will control the largest
-    amount of time to wait for the connection setup to succeed.
-
-- SERVERS:
-  * Fixed a bug in xdrmemstream_get_fragments() (from xdrmemstream.cpp)
-    which caused only the final fragment description to be returned.
-  * Cleaned up source code and removed TLI/XTI-related code, which has
-    become obsolete.
-
-- BOTH:
-  * Fixed sign extension bug in ksToPercent() (from conversions.cpp)
-    which caused wrong percent encodings to be generated for
-    characters with the bit 7 set (such as German umlaut characters).
-
-  * Fixed xxx::debugPrint() methods, which still used proj_props instead
-    of eng_props (old v1 stuff).
+Version 1.2.5
+* Fixed for compiling with Linux/GCC4 
+  Thanks goes to Syte (www.syte.ch) for their contribution 
 
 Version 1.2.3
 - SERVERS:

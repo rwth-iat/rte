@@ -16,7 +16,6 @@ CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl g++ $(LD_FLAGS)
 CXX_LIBS = -lstdc++
 
 .SUFFIXES:
-
 .SUFFIXES: .cpp .o .exe .i
 
 .PRECIOUS: .o .a
@@ -42,7 +41,6 @@ LIBKSCLN = libkscln.a
 VPATH = ../../src ../../examples
 
 include ../generic.mk
-
 
 $(LIBKS): $(LIBKS_OBJECTS)
 	ar r $@ $?
@@ -79,8 +77,4 @@ mrproper :	clean
 		.depend \
 		manager $(TESTS)
 	for i in t*_inst.h ; do echo > $$i ; done
-
-
-
-
 

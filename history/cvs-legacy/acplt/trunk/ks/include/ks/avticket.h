@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_AVTICKET_INCLUDED
 #define KS_AVTICKET_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.22 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/avticket.h,v 1.23 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -96,7 +96,7 @@ public:
     ////
 #if !PLT_SERVER_TRUNC_ONLY
     virtual bool isVisible(const KsString & name) const
-        { return getAccess(name) != KS_AC_NONE; }
+        { return (getAccess(name) & (KS_AC_READ|KS_AC_WRITE)) != KS_AC_NONE; }
 
     virtual bool canReadVar(const KsString &name) const = 0;    
 
@@ -203,6 +203,7 @@ public:
     KsString getId() const { return _id; }
 protected:
     bool xdrDecodeVariant(XDR *);
+    bool xdrEncodeVariant(XDR *) const;
     KsString _id;
 };
 

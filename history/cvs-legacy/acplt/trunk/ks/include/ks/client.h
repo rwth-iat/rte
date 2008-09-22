@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.40 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/client.h,v 1.41 2008-09-22 08:26:09 henning Exp $ */
 #ifndef KSC_CLIENT_INCLUDED
 #define KSC_CLIENT_INCLUDED
 /*
@@ -25,6 +25,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
+#include <stdio.h>
 #include <plt/hashtable.h>
 
 #include "ks/rpc.h"
@@ -427,6 +428,14 @@ bool
 KscServer::ping()
 {
     enum clnt_stat errcode;
+    
+    if ( !_client_transport ) {
+        if( !createTransport() ) {
+            if ( !reconnectServer(_last_result) ) {
+                return false;
+            }
+        }
+    }
     errcode = clnt_call(_client_transport, 0, 
 			(xdrproc_t) xdr_void, 0, 
 			(xdrproc_t) xdr_void, 0, 

@@ -8,7 +8,7 @@ O=.obj
 A=.lib
 EXE=.exe
 ONCDIR = ..\..\..\..\oncrpc
-LIBRPC = $(ONCDIR)\bin\oncrpc.lib
+LIBRPC = $(ONCDIR)\bin\oncrpcms.lib
 PLTDIR = ..\..\..\plt
 LIBPLT = $(PLTDIR)\build\ntvc\libplt.lib
 KSDIR = ..\..
@@ -37,13 +37,13 @@ RC_OPTS = /dPLT_RCMSVC=1
 LIBKS_NT_OBJECTS = ntservice$(O) w95service$(O)
 
 .SUFFIXES:
-
 .SUFFIXES:      .cpp .obj .lib .exe .i
 
 all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
 # the tsclient.exe is not supported
 examples:       ntksmanager.exe tmanager.exe tserver.exe
+
 # tsclient.exe ttree.exe
 
 {$(SRCDIR)}.cpp{}.obj:
@@ -52,17 +52,13 @@ examples:       ntksmanager.exe tmanager.exe tserver.exe
 {$(SRCDIR)}.cpp{}.i:
 	$(CXX)  $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) /P $<
 
-
 {$(EXAMPLESSRCDIR)}.cpp{}.obj:
 	$(CXX) $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c  $<
 
-
 ### Include generic part
-
 !INCLUDE ..\generic.mk
 
 ### Include auto dependencies (built with gcc)
-
 !INCLUDE ..\depend.nt
 
 ###
@@ -72,6 +68,7 @@ w95service$(O): $(KSDIR)\include\ks\w95service.h $(KSDIR)\src\w95service.cpp
 ntservice$(O): $(KSDIR)\include\ks\ntservice.h $(KSDIR)\src\ntservice.cpp
 
 ### explicit dependencies not covered by platform-dependend depent mechanism
+
 ntservice$(O): $(SRCDIR)ntservice.cpp $(KSDIR)\include\ks\ntservice.h
 	$(CXX)  $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c $(SRCDIR)ntservice.cpp
 
@@ -96,7 +93,6 @@ w95ksmanager.exe: w95ksmanager.obj ntksmanager_templates.obj $(LIBKS) w95ksmanag
 		/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup \
 		 w95ksmanager.obj ntksmanager_templates.obj w95ksmanager.res \
 		$(LIBKSSVR) $(CXX_LIBS)
-
 
 $(LIBKS) : $(LIBKS_OBJECTS)
 	lib /OUT:$@ $(LIBKS_OBJECTS)
@@ -145,7 +141,6 @@ ttree$(EXE): ttree$(O) ttree1$(O) $(LIBKS) $(LIBKSCLN)
 		ttree$(O) ttree1$(O) \
 		$(LIBKSCLN) $(CXX_LIBS)
 
-
 clean :
 	del *.obj
 	del *.exe
@@ -157,3 +152,4 @@ mrproper : clean
 	del *.err
 	del *.sym
 	del *.mbr
+

@@ -4,10 +4,12 @@
 ### Microsoft VisualC++ / nmake / Windows NT
 ### $id
 ###
+
 ### Filename conventions
 O=.obj
 A=.lib
 EXE=.exe
+
 PLTDIR = ..\..
 SRCDIR = $(PLTDIR)\src\\
 TESTDIR = $(PLTDIR)\tests\\
@@ -20,7 +22,6 @@ CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include \
 	-GR -DPLT_SYSTEM_NT=1  -DPLT_DEBUG_NEW=0
 
 .SUFFIXES:	
-
 .SUFFIXES:	.cpp .obj .lib .exe
 
 {$(SRCDIR)}.cpp{}.obj:
@@ -30,11 +31,9 @@ CXX_EXTRA_FLAGS = -I. -I$(PLTDIR)\include \
 	$(CXX) $(CXX_EXTRA_FLAGS) $(CXX_FLAGS) -c -o$@ $< 
 
 ### Include generic part
-
 !INCLUDE ..\generic.mk
 
 ### Include auto dependencies (built with gcc)
-
 !INCLUDE ..\depend.nt
 
 ### How to build things
@@ -48,10 +47,10 @@ clean :
 	del *.obj
 	del *.exe
 
+
+
 mrproper : clean
 	del *.lib
 	del *.err
 	del *.sym
 	del *.mbr
-
-

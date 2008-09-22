@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */ 
-/* $Header: /home/david/cvs/acplt/ks/include/ks/value.h,v 1.21 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/value.h,v 1.22 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -41,6 +41,10 @@
 #include "ks/handle.h"
 
 #if PLT_COMPILER_CYGWIN
+#include "ks/array_builtins.h"
+#endif
+
+#if PLT_COMPILER_GCC && PLT_COMPILER_GCC >= 0x40000
 #include "ks/array_builtins.h"
 #endif
 

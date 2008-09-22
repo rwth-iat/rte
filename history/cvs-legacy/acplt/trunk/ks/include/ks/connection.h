@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.11 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/connection.h,v 1.12 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -44,10 +44,12 @@
 // otherwise it won't be touched anymore.
 //
 class KssConnection;
+class KssConnectionManager;
 
 class KssConnectionAttentionInterface {
 public:
     virtual bool attention(KssConnection &conn) = 0;
+    virtual ~KssConnectionAttentionInterface() {}
 }; // class KssConnectionAttentionInterface
 
 
@@ -67,8 +69,8 @@ public:
     // for requests, or as a client's connection.
     //
     enum ConnectionType {
-    	CNX_TYPE_SERVER,    	// it´s on the server side
-	CNX_TYPE_CLIENT     	// it´s on the client side
+    	CNX_TYPE_SERVER,    	// itï¿½s on the server side
+	CNX_TYPE_CLIENT     	// itï¿½s on the client side
     };
 	
     KssConnection(int fd, bool autoDestroyable, unsigned long timeout,

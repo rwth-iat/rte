@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.44 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/manager.cpp,v 1.45 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -698,7 +698,7 @@ KsManager::startServer()
         } else {
             PltLog::Error("KsManager::startServer(): "
                           "could not register TCP transport with portmap.");
-            _is_ok = false;
+        //    _is_ok = false;
         }
 
         if ( pmap_set(KS_RPC_PROGRAM_NUMBER, 
@@ -709,15 +709,15 @@ KsManager::startServer()
         } else {
             PltLog::Error("KsManager::startServer(): "
                           "could not register UDP transport with portmap.");
-            _is_ok = false;
+        //    _is_ok = false;
         }
 
-        if ( _is_ok ) {
+        //if ( _is_ok ) {
             KsmExpireManagerEvent * pevent = new KsmExpireManagerEvent(*this);
             if ( pevent ) {
                 addTimerEvent(pevent);
             }
-        }
+        //}
     }
 } // KsManager::startServer
 
@@ -1089,7 +1089,7 @@ KsmExpireManagerEvent::trigger()
     }
     if(_manager._registered == false) {
         // Reschedule event.
-        _trigger_at = KsTime::now(10);
+        _trigger_at = KsTime::now(60);
         _manager.addTimerEvent(this);
         
         return;

@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_BUILTINS_INCLUDED
 #define KS_ARRAY_BUILTINS_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.8 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_builtins.h,v 1.9 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -26,10 +26,15 @@
 #if PLT_COMPILER_MSVC || PLT_COMPILER_CYGWIN
 #define PLT_PSEUDO_INLINE inline
 #else
+#if PLT_COMPILER_GCC && PLT_COMPILER_GCC >= 0x40000
+#define PLT_PSEUDO_INLINE inline
+#else
 #define PLT_PSEUDO_INLINE
+#endif
 #endif
 
 #define KS_IMPL_ARRAY_XDR(elem,xdre_elem,xdrd_elem)                     \
+FEATURE_TEMPL_SPEC                                              \
 PLT_PSEUDO_INLINE bool                                                  \
 KsArray<elem>::xdrDecode(XDR *xdr)                                      \
 {                                                                       \
@@ -62,6 +67,7 @@ KsArray<elem>::xdrDecode(XDR *xdr)                                      \
                                                                         \
 /****************************************************************/      \
                                                                         \
+FEATURE_TEMPL_SPEC                                              \
 PLT_PSEUDO_INLINE bool                                                  \
 KsArray<elem>::xdrEncode(XDR *xdrs) const                               \
 {                                                                       \
@@ -90,7 +96,7 @@ typedef void ks_dummy_typedef
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-
+FEATURE_TEMPL_SPEC
 PLT_PSEUDO_INLINE bool
 KsArray<char>::xdrDecode(XDR *xdr)
 {
@@ -118,6 +124,7 @@ KsArray<char>::xdrDecode(XDR *xdr)
 
 //////////////////////////////////////////////////////////////////////
 
+FEATURE_TEMPL_SPEC
 PLT_PSEUDO_INLINE bool
 KsArray<char>::xdrEncode(XDR *xdr) const
 {

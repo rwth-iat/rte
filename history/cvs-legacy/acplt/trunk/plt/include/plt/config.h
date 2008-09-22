@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.39 2007-04-25 12:57:21 martin Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.40 2008-09-22 08:26:09 henning Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -95,7 +95,7 @@
 
 /* --------------------------------------------------------------------------
 *  Enable/disable use of the connection manager class and the buffered
-*  (aka dynamic) XDR memory strams. Disabled by default if the user didn´t
+*  (aka dynamic) XDR memory strams. Disabled by default if the user didnï¿½t
 *  specified otherwise.
 */
 #ifndef PLT_USE_BUFFERED_STREAMS
@@ -105,7 +105,7 @@
 /* --------------------------------------------------------------------------
 *  When running on top of NT, we always need to compile the connection
 *  manager class with a hash table due to NT's habbit of allocating file
-*  descriptors (aka handles). For other platforms this hash table isn´t
+*  descriptors (aka handles). For other platforms this hash table isnï¿½t
 *  necessary, so don't enable them.
 */
 #if PLT_SYSTEM_NT
@@ -227,6 +227,11 @@
 #define PLT_SIMULATE_RTTI 1
 #define PLT_INSTANTIATE_TEMPLATES 1
 #define PLT_AVOID_DELETE_BUG 0
+
+#if PLT_COMPILER_GCC >= 0x40000
+#define FEATURE_TEMPL_SPEC template <>
+#endif
+
 #endif
 
 #if PLT_COMPILER_MSVC
@@ -235,7 +240,7 @@
 # pragma warning (disable : 4237 )  /* disable warning about defining bool   */
 # else
 # define PLT_SIMULATE_BOOL 0
-#endif
+# endif
 
 #pragma warning (disable : 4284 )  /* disable warning about operator ->      */
                                    /* for non-struct data types              */
@@ -314,6 +319,10 @@
 #ifndef PLT_RETTYPE_OVERLOADABLE      /* Can a subclass redefine the return */
 #define PLT_RETTYPE_OVERLOADABLE 1    /* type  to a covariant one?          */
 #endif                                /* Every compiler should support this.*/
+
+#ifndef FEATURE_TEMPL_SPEC
+#define FEATURE_TEMPL_SPEC
+#endif
 
 #if PLT_SIMULATE_BOOL
 typedef int bool;

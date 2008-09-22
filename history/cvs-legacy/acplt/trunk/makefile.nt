@@ -35,7 +35,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# $Header: /home/david/cvs/acplt/makefile.nt,v 1.3 2006-01-12 15:03:38 markus Exp $
+# $Header: /home/david/cvs/acplt/makefile.nt,v 1.4 2008-09-22 08:26:09 henning Exp $
 #
 
 !ifdef __MAKE__
@@ -50,9 +50,8 @@ nothing:
 	@echo (n)make mrproper   -- like clean, but removes even libraries, etc.
 	@echo (n)make nt.all     -- build libraries and examples
 	@echo (n)make nt.acplt   -- build the libraries only
-	@echo  
+	@echo ï¿½
 	@echo development environment is: $(DEVENV)
-	@echo MAKE environment is: $(MAKE)
 
 clean:
 	@echo -------------------------------------------------------------

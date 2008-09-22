@@ -160,17 +160,21 @@ EXAMPLES_OBJECTS = \
 	ttree$(O) \
 	ttree1$(O)
 
-
 EXAMPLES = \
 	tmanager$(EXE)
+
 	
+
 #	pmobile$(EXE) \
 #	tserver$(EXE) \
 #	ttree$(EXE)
 #
+
 # The following examples are not supported.
 #	tclient$(EXE)
 #	tshell$(EXE)
+
+
 
 CXX_SOURCES = \
 	$(CXX_LIBKS_SOURCES) \
@@ -186,6 +190,7 @@ TARGETS = \
 	$(LIBKSSVR) \
 	$(LIBKSCLN) \
 	$(EXAMPLES)
+
 
 all: $(TARGETS)
 

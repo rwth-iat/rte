@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.21 2007-04-25 12:57:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/xdrmemstream.cpp,v 1.22 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -76,7 +76,6 @@
 #include <iostream.h>
 #endif
 
-
 /* ---------------------------------------------------------------------------
  * Some constants which control default settings of the fragment (pool)
  */
@@ -115,7 +114,7 @@ typedef struct {
  * The following variables hold some module-wide information about the
  * free fragments, fragment size (thus configurable at run-time), memory
  * usage and other unimportant things. You should only set them *BEFORE*
- * creating the first XDR dynamic stream, or you´ll be in deep trouble, pal.
+ * creating the first XDR dynamic stream, or youï¿½ll be in deep trouble, pal.
  */
 static u_int MemStreamBufferSize      = DEFAULTFRAGMENTSIZE;
 static MemoryStreamFragment *FreeList = 0;
@@ -148,7 +147,7 @@ void xdrmemstream_getusage(u_int *total, u_int *freepool)
 /* ---------------------------------------------------------------------------
  * Set the size of memory fragments, the watermark and the percentage of
  * fragments to free for each freegarbage() step. The watermark indicates the
- * amount of fragments which aren´t free. While fragmentsize is in bytes, the
+ * amount of fragments which arenï¿½t free. While fragmentsize is in bytes, the
  * watermark is in fragments and the freepercentage is in percent (100 = 100%)
  * quota is the maximum of fragments that can be allocated at any time.
  */
@@ -348,7 +347,7 @@ static void   MemStreamDestroy(XDR *xdrs);
  * on function signatures.
  */
  
-#if 0
+#if PLT_SYSTEM_SOLARIS
 
 #define FUNC(rt) (rt (*)(...))
 /*#if PLT_SYSTEM_OPENVMS || PLT_SYSTEM_NT || PLT_SYSTEM_LINUX*/
@@ -375,7 +374,7 @@ static
     FUNC(void)   MemStreamDestroy    /* clean up the mess                            */
 }; /* memstream_operations */
 
-#endif
+#else   // Nicht Solaris
 
 
 #define FUNC(rt, p) (rt (*) p)
@@ -410,6 +409,8 @@ static
 #if defined(__cplusplus)
 } /* leave C binding */
 #endif
+
+#endif  // Solaris/Nicht Solaris
 
 
 /* ---------------------------------------------------------------------------
@@ -622,7 +623,7 @@ static XDR_INLINE_PTR MemStreamInline(XDR *xdrs, int len)
 	    return 0;
 	}
     }
-    if ( len <= xdrs->x_handy ) {
+    if ( len <= (int)(xdrs->x_handy) ) {
 	XDR_INLINE_PTR space = (XDR_INLINE_PTR) xdrs->x_private;
 	xdrs->x_private += len;
 	xdrs->x_handy   -= len;
@@ -656,14 +657,11 @@ static bool_t MemStreamGetLong(XDR *xdrs, long *lp)
      * macro here to retrieve the 32 bit int as this macro is the only
      * way to do it platform-independent.
      */
-#if PLT_COMPILER_DECCXX || PLT_COMPILER_MSVC
     long *ppp = (long *) xdrs->x_private;
     *lp = IXDR_GET_LONG(ppp);
     xdrs->x_private = (caddr_t) ppp;
-#else
-    *lp = IXDR_GET_LONG(((XDR_INLINE_PTR) xdrs->x_private));
-#endif
     xdrs->x_handy -= 4;
+
     return TRUE;
 } /* MemStreamGetLong */
 
@@ -695,14 +693,11 @@ static bool_t MemStreamPutLong(XDR *xdrs, PLT_CONST long *lp)
      * to a suitable pointer type in order to access a 32 bit integer
      * quantity.
      */
-#if PLT_COMPILER_DECCXX || PLT_COMPILER_MSVC
     long *ppp = (long *) xdrs->x_private;
     IXDR_PUT_LONG(ppp, *lp);
     xdrs->x_private = (caddr_t) ppp;
-#else
-    IXDR_PUT_LONG(((XDR_INLINE_PTR) xdrs->x_private), *lp);
-#endif
     xdrs->x_handy -= 4;
+
     return TRUE;
 } /* MemStreamPutLong */
 
@@ -788,9 +783,9 @@ static bool_t MemStreamSetPos(XDR *, u_int)
 
 
 /* ---------------------------------------------------------------------------
- * Read as much data as possible from a file descriptor. But don´t read more
+ * Read as much data as possible from a file descriptor. But donï¿½t read more
  * than *max bytes. Upon return *max is updated to reflect the amount of data
- * that couldn´t be read this time. So it´s easy for a caller to call us again
+ * that couldnï¿½t be read this time. So itï¿½s easy for a caller to call us again
  * the next time with the outcomming of this call.
  */
 bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err)

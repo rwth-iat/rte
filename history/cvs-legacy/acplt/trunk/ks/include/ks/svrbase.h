@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_SVRBASE_INCLUDED
 #define KS_SVRBASE_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.32 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/svrbase.h,v 1.33 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -156,6 +156,7 @@ protected:
         public KssConnectionAttentionInterface {
     public:
         virtual bool attention(KssConnection &conn);
+        virtual ~KssAttentionXDRDispatcher() {}
     };
 
     KssAttentionXDRDispatcher  _attention_dispatcher;
@@ -198,6 +199,7 @@ private:
 class KsServiceResult {
 public:
     virtual bool_t xdrEncode(XDR *xdr) = 0;
+    virtual ~KsServiceResult() {}
 
     KS_RESULT result;
 }; // class KsServiceResult

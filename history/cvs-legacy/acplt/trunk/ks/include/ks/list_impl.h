@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_LIST_IMPL_INCLUDED
 #define KS_LIST_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.8 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/list_impl.h,v 1.9 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -36,7 +36,7 @@ KsList<T>::xdrEncode(XDR * xdr) const
 {
     PLT_PRECONDITION(xdr->x_op == XDR_ENCODE);
     // write size
-    u_long sz = size();
+    u_long sz = KsList<T>::size();
     if (! ks_xdre_u_long(xdr, &sz) ) return false;
 
     // write elements
@@ -60,8 +60,8 @@ KsList<T>::xdrDecode(XDR * xdr)
     if ( ! ks_xdrd_u_long(xdr, &count) ) return false;
     
     // flush old elements
-    while (! isEmpty() ) {
-        removeFirst();
+    while (! KsList<T>::isEmpty() ) {
+        KsList<T>::removeFirst();
     }
 
     for ( u_long i=0; i < count; ++i) {

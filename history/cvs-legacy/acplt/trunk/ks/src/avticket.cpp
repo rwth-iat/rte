@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.21 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.22 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -310,6 +310,14 @@ bool
 KsAvSimpleTicket::xdrDecodeVariant(XDR *xdr)
 {
     return _id.xdrDecode(xdr);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+bool
+KsAvSimpleTicket::xdrEncodeVariant(XDR *xdr) const
+{
+    return _id.xdrEncode(xdr);
 }
 
 //////////////////////////////////////////////////////////////////////

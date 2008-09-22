@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef KS_ARRAY_IMPL_INCLUDED
 #define KS_ARRAY_IMPL_INCLUDED
-/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.11 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/array_impl.h,v 1.12 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -49,19 +49,19 @@ KsArray<T>::xdrDecode(XDR *xdr)
 
     // adjust array size (possibly losing contents)
     //
-    if (size() != sz) {
+    if (KsArray<T>::size() != sz) {
         // allocate sz elements
         PltArrayHandle<T> ha(new T[sz], PltOsArrayNew);
         if (!ha) return false; // failed
-        a_array = ha;
-        a_size = sz;
+        KsArray<T>::a_array = ha;
+        KsArray<T>::a_size = sz;
     }
     PLT_ASSERT(size() == sz);
 
     // now deserialize elements
     //
-    for (size_t i=0; i < a_size; ++i) {
-        if (! (a_array[i]).xdrDecode(xdr) ) return false; // failed
+    for (size_t i=0; i < KsArray<T>::a_size; ++i) {
+        if (! (KsArray<T>::a_array[i]).xdrDecode(xdr) ) return false; // failed
     }
 
     // success
@@ -78,13 +78,13 @@ KsArray<T>::xdrEncode(XDR *xdrs) const
     PLT_PRECONDITION(xdrs->x_op == XDR_ENCODE);
     // serialize size
     //
-    u_long sz = a_size;
+    u_long sz = KsArray<T>::a_size;
     if (! ks_xdre_u_long(xdrs, &sz)) return false; // fail
 
     // serialize elements
     //
-    for (size_t i = 0; i < a_size; ++i) {
-        if (! (a_array[i]).xdrEncode(xdrs)) return false; // fail
+    for (size_t i = 0; i < KsArray<T>::a_size; ++i) {
+        if (! (KsArray<T>::a_array[i]).xdrEncode(xdrs)) return false; // fail
     }
 
     // success

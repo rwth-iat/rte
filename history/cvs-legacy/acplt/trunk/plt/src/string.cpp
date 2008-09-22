@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.27 2007-04-25 12:57:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/src/string.cpp,v 1.28 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -25,6 +25,7 @@
 
 #include "plt/string.h"
 #include <ctype.h>
+#include <stdio.h>
 
 #if PLT_SYSTEM_NT && !PLT_COMPILER_CYGWIN
 // That's ridiculous:
@@ -141,28 +142,12 @@ PltString::PltString(size_t sz, char *s)
 
 //////////////////////////////////////////////////////////////////////
 
-static char conv_buffer[32];
-
 PltString
 PltString::fromInt(int i)
 {
-#if PLT_USE_DEPRECIATED_HEADER
-    strstream s(conv_buffer, sizeof conv_buffer, ios::out);
-    s << i << ends;
-#if PLT_COMPILER_GCC
-    s.freeze();
-#endif
-    // TODO
-    return PltString(s.str());
-#else
-    //
-    // We can now use the new stringstream interface, which makes some
-    // things really more easy.
-    //
-    std::ostringstream s;
-    s << i;
-    return PltString(s.str().c_str());
-#endif
+    static char buffer[64];
+    sprintf(buffer, "%d", i);
+    return PltString(buffer);
 }
 
 //////////////////////////////////////////////////////////////////////

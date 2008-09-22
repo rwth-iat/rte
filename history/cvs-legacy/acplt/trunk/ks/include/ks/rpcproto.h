@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/include/ks/rpcproto.h,v 1.6 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/include/ks/rpcproto.h,v 1.7 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -39,6 +39,7 @@ public:
     static KsRpcHeader *xdrNew(XDR *xdrs);
     virtual bool xdrEncode(XDR *xdrs) const;
     virtual bool xdrDecode(XDR *xdrs);
+    virtual ~KsRpcHeader() {}
 
     void acceptCall();
     void setAuthRefusialError(u_long why);

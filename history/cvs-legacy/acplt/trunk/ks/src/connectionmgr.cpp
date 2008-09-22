@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.14 2007-04-25 12:57:20 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/connectionmgr.cpp,v 1.15 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -101,7 +101,7 @@ void _PltDLinkedListNode::remove()
 // give us as information). Unfortunately, Microsoft's file descriptor sets
 // are different once again, so in that case we have to use a hash table...
 //
-// Check _is_ok to make sure the connection manager object could be ctor´ed
+// Check _is_ok to make sure the connection manager object could be ctorï¿½ed
 // successfully.
 //
 KssConnectionManager::KssConnectionManager()
@@ -128,7 +128,7 @@ KssConnectionManager::KssConnectionManager()
     }
 #if PLT_CNX_MGR_USE_HT
     //
-    // For some "new technology" os(?) we´ll need to allocate a hash table
+    // For some "new technology" os(?) weï¿½ll need to allocate a hash table
     // in order to speed up mapping fds to connection items. In addition,
     // all entries of the _connections table are linked into a list of
     // free entries. That speeds up finding a free slot quite a bit.
@@ -170,12 +170,12 @@ KssConnectionManager::~KssConnectionManager()
 	        delete con;
 	    }
 	}
-    	delete _connections;
+    	delete [] _connections;
 	_connections = 0;
     }
 #if PLT_CNX_MGR_USE_HT
     if ( _hash_table ) {
-	delete _hash_table;
+	delete [] _hash_table;
 	_hash_table = 0;
     }
 #endif
@@ -348,7 +348,7 @@ PltTime KssConnectionManager::getEarliestTimeout()
 
 
 // ---------------------------------------------------------------------------
-// Nearly same as above, but this time we´ll return a time span instead of a
+// Nearly same as above, but this time weï¿½ll return a time span instead of a
 // point somewhere in time.
 //
 PltTime KssConnectionManager::getEarliestTimeoutSpan()
@@ -542,7 +542,7 @@ int KssConnectionManager::processConnections(fd_set &readables,
 // parameter "secs" specifies how long to wait for the streams to get fully
 // flushed.
 //
-// Note that we don´t obey timeouts here -- we´re just trying to get rid of
+// Note that we donï¿½t obey timeouts here -- weï¿½re just trying to get rid of
 // data to be sent within the time span the caller has specified as "secs".
 //
 bool KssConnectionManager::shutdownConnections(long secs)
@@ -551,7 +551,7 @@ bool KssConnectionManager::shutdownConnections(long secs)
     int     i;
 
     if ( !_connections ) {
-	return true; // nothing to shut down, so it´s okay.
+	return true; // nothing to shut down, so itï¿½s okay.
     }
     //
     // First close all auto-destroyable connections which are currently
@@ -594,7 +594,7 @@ bool KssConnectionManager::shutdownConnections(long secs)
 	if ( doomsday < sleep ) {
 	    //
 	    // timed out with connections still trying to send data, so
-	    // let the caller know that we´re closing connections...
+	    // let the caller know that weï¿½re closing connections...
 	    //
 	    return false;
 	}
@@ -650,7 +650,7 @@ bool KssConnectionManager::shutdownConnections(long secs)
 	             !(ioMode & KssConnection::CNX_IO_WRITEABLE) ) {
 		    //
 		    // The connection failed for some reason, so destroy it
-		    // if we´re allowed to do so. In any case, we won´t serve
+		    // if weï¿½re allowed to do so. In any case, we wonï¿½t serve
 		    // it anymore. In case the connection has sent all its
 		    // data, the same applies too.
 		    //

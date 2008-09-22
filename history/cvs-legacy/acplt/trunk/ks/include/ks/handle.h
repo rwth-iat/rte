@@ -179,7 +179,7 @@ template <class T>
 inline bool
 KsPtrHandle<T>::xdrEncode(XDR *xdr) const
 {
-    return *this ? getPtr()->xdrEncode(xdr) : false;
+    return *this ? KsPtrHandle<T>::getPtr()->xdrEncode(xdr) : false;
 }
 
 //////////////////////////////////////////////////////////////////////

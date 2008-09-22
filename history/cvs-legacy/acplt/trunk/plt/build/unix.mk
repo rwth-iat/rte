@@ -30,7 +30,6 @@ CXX_LINK = perl ../templ.pl g++
 CXX_LIBS = -lstdc++
 
 .SUFFIXES:
-
 .SUFFIXES: .cpp .a .o .s .exe
 
 .cpp.o:
@@ -42,11 +41,9 @@ CXX_LIBS = -lstdc++
 .o.exe:
 	$(CXX) -o $@ $< $(LIBPLT) $(PLATFORM_LIBS) -lstdc++
 
-
 VPATH = $(SRCDIR)
 
 ### Include generic part
-
 include ../generic.mk
 
 libplt.a: $(LIBPLT_OBJECTS)
@@ -61,6 +58,8 @@ depend : $(CXX_SOURCES)
 
 .depend:
 	touch .depend
+
+
 
 clean :
 	rm -f *.o

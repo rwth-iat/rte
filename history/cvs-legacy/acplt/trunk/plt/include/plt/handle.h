@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_HANDLE_INCLUDED
 #define PLT_HANDLE_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.20 2007-04-25 12:57:21 martin Exp $ */
+/* $Header: /home/david/cvs/acplt/plt/include/plt/handle.h,v 1.21 2008-09-22 08:26:09 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -379,7 +379,7 @@ template <class T>
 inline T *
 PltPtrHandle<T>::getPtr () const
 {
-    return (T *) prep;
+    return (T *) PltPtrHandle<T>::prep;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -487,7 +487,7 @@ template <class T>
 inline T*
 PltArrayHandle<T>::getPtr () const
 {
-    return (T*) prep;
+    return (T*) PltArrayHandle<T>::prep;
     // static cast
 }
 
