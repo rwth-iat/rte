@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.6 $
-*	$Date: 2008-09-05 13:11:03 $
+*	$Revision: 1.7 $
+*	$Date: 2008-09-22 08:20:51 $
 *
 *	History:
 *	--------
@@ -109,17 +109,24 @@ RightClick.prototype = {
 		
 		if (Component != null)
 		{
-			Command = '{' + 
-				'{' + HMI.KSClient.getMessageID() + '} ' +
+			//Command = '{' + 
+			//	'{' + HMI.KSClient.getMessageID() + '} ' +
+			//	'{010} ' +
+			//	'{' + Component.getAttribute('id') + '} ' + 
+			//	'{RIGHTCLICK} ' +
+			//	'{' + evt.layerX + '} ' +
+			//	'{' + evt.layerY + '}' +
+			//	'}';
+			//HMI.KSClient.send2Request(null, 'POST', 'setvar', 
+			//	'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
+			//	'', '', null);
+			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
 				'{' + Component.getAttribute('id') + '} ' + 
 				'{RIGHTCLICK} ' +
 				'{' + evt.layerX + '} ' +
-				'{' + evt.layerY + '}' +
-				'}';
-			HMI.KSClient.send2Request(null, 'POST', 'setvar', 
-				'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
-				'', '', null);
+				'{' + evt.layerY + '}';
+			HMI.KSClient.setVar(null, '/TechUnits/HMIManager' + '.Command', Command, null);
 //			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		

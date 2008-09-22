@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2008-07-23 12:15:36 $
+*	$Revision: 1.6 $
+*	$Date: 2008-09-22 08:20:51 $
 *
 *	History:
 *	--------
@@ -120,16 +120,22 @@ TextInput.prototype = {
 		
 		if (Component != null)
 		{
-			Command = '{' + 
-				'{' + HMI.KSClient.getMessageID() + '} ' +
+			//Command = '{' + 
+			//	'{' + HMI.KSClient.getMessageID() + '} ' +
+			//	'{010} ' +
+			//	'{' + Component.getAttribute('id') + '} ' + 
+			//	'{TEXTINPUT} ' +
+			//	'{' + input + '} ' +
+			//	'}';
+			//HMI.KSClient.send2Request(null, 'POST', 'setvar', 
+			//	'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
+			//	'', '', null);
+			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
 				'{' + Component.getAttribute('id') + '} ' + 
 				'{TEXTINPUT} ' +
-				'{' + input + '} ' +
-				'}';
-			HMI.KSClient.send2Request(null, 'POST', 'setvar', 
-				'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
-				'', '', null);
+				'{' + input + '}';
+			HMI.KSClient.setVar(null, '/TechUnits/HMIManager' + '.Command', Command, null);
 //			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		
