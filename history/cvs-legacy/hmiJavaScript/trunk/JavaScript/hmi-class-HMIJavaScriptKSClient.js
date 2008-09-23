@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.31 $
-*	$Date: 2008-09-22 12:02:42 $
+*	$Revision: 1.32 $
+*	$Date: 2008-09-23 14:57:49 $
 *
 *	History:
 *	--------
@@ -115,6 +115,8 @@ HMIJavaScriptKSClient.prototype = {
 		this.TCLKSGateway	= TCLKSGateway;
 		this.TCLKSHandle	= null;
 		this.HMIMANAGER_PATH	= null;
+		
+		document.title = "Startcenter - ACPLT/HMI";
 		
 //		this._sendRequest(this, 'GET', false, 'tks-server', this.KSServer, this._cbInit);
 		//this.send2Request(null, 'newHandle', '', this.KSServer, '', '', this._cbInit);
