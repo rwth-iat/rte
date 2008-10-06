@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.17 $
-*	$Date: 2008-09-25 11:35:10 $
+*	$Revision: 1.18 $
+*	$Date: 2008-10-06 14:29:53 $
 *
 *	History:
 *	21-June-2007			St
@@ -92,7 +92,7 @@
 -->
 			<tr onclick="hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
-				<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
+					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
 						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
 						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
 						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
@@ -129,12 +129,13 @@
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
 					<td>
-						<input type="button" value="Refresh Sheet Now"
+<!--						<input type="button" value="Refresh Sheet Now"
 							onclick="HMI.refreshSheet()"/>
 						<input type="button" value="Stop Autorefresh"
 							onclick="clearTimeout(HMI.RefreshTimeoutID)"/>
 						<input type="button" value="Start Autorefresh"
 							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
+-->
 					</td>
 				</tr>
 				<tr>
@@ -145,7 +146,8 @@
 					</td>
 					<td colspan="2">
 						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible
-						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+<!--						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+-->
 					</td>
 				</tr>
 			</table>

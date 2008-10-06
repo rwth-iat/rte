@@ -49,8 +49,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.17 $
-*	$Date: 2008-09-25 11:35:10 $
+*	$Revision: 1.18 $
+*	$Date: 2008-10-06 14:29:53 $
 *
 *	History:
 *	21-June-2007			St
@@ -127,12 +127,13 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
 					<td>
-						<input type="button" value="Refresh Sheet Now"
+<!--						<input type="button" value="Refresh Sheet Now"
 							onclick="HMI.refreshSheet()"/>
 						<input type="button" value="Stop Autorefresh"
 							onclick="clearTimeout(HMI.RefreshTimeoutID)"/>
 						<input type="button" value="Start Autorefresh"
 							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
+-->
 					</td>
 				</tr>
 				<tr>
@@ -143,7 +144,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 					</td>
 					<td colspan="2">
 						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible
-						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+<!--						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+-->
 					</td>
 				</tr>
 			</table>
