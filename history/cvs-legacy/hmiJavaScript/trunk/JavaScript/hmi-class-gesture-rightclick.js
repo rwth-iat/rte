@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.8 $
-*	$Date: 2008-09-22 09:29:05 $
+*	$Revision: 1.9 $
+*	$Date: 2008-10-09 12:02:02 $
 *
 *	History:
 *	--------
@@ -82,11 +82,8 @@ RightClick.prototype = {
 	*********************************/
 	_registerOnRightClick: function(Component, capture, listener) {
 		this._onRightClickThunk = function (evt) { listener.onRightClick(evt); };
-		//Needed for Internet Explorer without embeded Adobe Plugin
-		//addEventSimple(Component, "mouseup", this._onClickThunk);
-		Component.addEventListener("mouseup", this._onRightClickThunk, capture);
-		//safari@mac does not fire mouseup!
-		Component.addEventListener("contextmenu", this._onRightClickThunk, capture);
+		//mouseup is to different in browsers (especially on safari@mac)
+		Component.addEventListener("mousedown", this._onRightClickThunk, capture);
 	},
 	
 	/*********************************
@@ -97,7 +94,6 @@ RightClick.prototype = {
 		if (evt.button == 2)
 		{
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-rightclick'));
-			HMI.refreshSheet();
 		};
 	},
 	

@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.7 $
-*	$Date: 2008-09-22 09:29:05 $
+*	$Revision: 1.8 $
+*	$Date: 2008-10-09 12:02:02 $
 *
 *	History:
 *	--------
@@ -108,7 +108,6 @@ TextInput.prototype = {
 			&&	input != text)
 		{
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
-			HMI.refreshSheet();
 		};
 	},
 	
