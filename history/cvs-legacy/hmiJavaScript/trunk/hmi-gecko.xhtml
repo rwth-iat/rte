@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.18 $
-*	$Date: 2008-10-06 14:29:53 $
+*	$Revision: 1.19 $
+*	$Date: 2008-10-15 15:44:46 $
 *
 *	History:
 *	21-June-2007			St
@@ -125,7 +125,7 @@
 						</select>
 					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;">
-						<input type="button" value="Show Servers" id="idShowServers" tabindex="1"
+						<input type="button" value="Show Servers" id="idShowServers" tabindex="1" disabled="disabled"
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
 					<td>
@@ -136,6 +136,7 @@
 						<input type="button" value="Start Autorefresh"
 							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
 -->
+						<a id="idBookmark" href="" style="display:none;">Link to Sheet</a>
 					</td>
 				</tr>
 				<tr>
@@ -151,18 +152,17 @@
 					</td>
 				</tr>
 			</table>
-			<script type="text/javascript">
-				//Window-Reload does not reset the checkbox, so we update the javascript variable
-				if (document.getElementById("checkbox_keepheader").checked == true) {
-					autoKeepHeader = true;
-				}else{
-					autoKeepHeader = false;
-				}
-				document.getElementById("idShowServers").focus();
-			</script>
 			<hr style="background-color:blue;height:2px;"/>
 		</div>
 		<p oncontextmenu="return false" id="idPlayground">
 		</p>
+		<script type="text/javascript">
+			//some browsers parse the external files and some the inline js first, so try at two places and check if init is possible
+			// <![CDATA[
+			if(typeof HMI != "undefined" && HMI.HMI_initialized != true){
+				HMI.init();
+			}
+			// ]]>
+		</script>
 	</body>
 </html>

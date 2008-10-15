@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.33 $
-*	$Date: 2008-10-06 14:29:53 $
+*	$Revision: 1.34 $
+*	$Date: 2008-10-15 15:44:46 $
 *
 *	History:
 *	--------
@@ -117,6 +117,7 @@ HMIJavaScriptKSClient.prototype = {
 		this.HMIMANAGER_PATH	= null;
 		
 		document.title = "Startcenter - ACPLT/HMI";
+		$("idBookmark").style.cssText = "display:none;";
 		
 //		this._sendRequest(this, 'GET', false, 'tks-server', this.KSServer, this._cbInit);
 		//this.send2Request(null, 'newHandle', '', this.KSServer, '', '', this._cbInit);

@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.36 $
-*	$Date: 2008-10-09 09:20:11 $
+*	$Revision: 1.37 $
+*	$Date: 2008-10-15 15:44:46 $
 *
 *	History:
 *	--------
@@ -89,6 +89,39 @@ function HMI(async, debug, error, warning, info, trace) {
 ***********************************************************************/
 
 HMI.prototype = {
+	/*********************************
+		init
+	*********************************/
+	init: function () {
+		this.hmi_log_trace("HMI.prototype.init - Start");
+		
+		//Window-Reload does not reset the checkbox, so we update the javascript variable
+		if (document.getElementById("checkbox_keepheader").checked == true) {
+			autoKeepHeader = true;
+		}else{
+			autoKeepHeader = false;
+		}
+		document.getElementById("idShowServers").disabled = false;
+		document.getElementById("idShowServers").focus();
+		
+		if (window.location.search.length != 0){
+			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length != 0){
+				$('idHost').value = HMI_Parameter_Liste.Host;
+			}
+			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length != 0){
+				$('idRefreshTime').value = HMI_Parameter_Liste.RefreshTime;
+			}
+			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length != 0){
+				HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'));
+				HMI.showSheets(HMI_Parameter_Liste.Server);
+			}
+			if (HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0){
+				HMI.showSheet(HMI_Parameter_Liste.Sheet);
+			}
+		}
+		this.HMI_initialized = true;
+		this.hmi_log_trace("HMI.prototype.init - End");
+	},
 	/*********************************
 		showServers
 	*********************************/
@@ -148,6 +181,7 @@ HMI.prototype = {
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
 		deleteChilds(document.getElementById("ErrorOutput"));
+		$("idBookmark").style.cssText = "display:none;";
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
@@ -168,6 +202,7 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.showSheet - Start with Sheet: "+Sheet);
 			
 		deleteChilds(this.Playground);
+		$("idBookmark").style.cssText = "display:none;";
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
@@ -185,6 +220,8 @@ HMI.prototype = {
 		}
 		$("idSheets").blur();
 		$("idServers").blur();
+		$("idBookmark").style.cssText = "display:inline;";
+		$("idBookmark").setAttribute("href", "http://"+window.location.host+window.location.pathname+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+HMI.PossServers.value+"&Sheet="+HMI.PossSheets.value);
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},

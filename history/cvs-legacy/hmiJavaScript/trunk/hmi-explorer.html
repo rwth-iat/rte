@@ -49,8 +49,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.18 $
-*	$Date: 2008-10-06 14:29:53 $
+*	$Revision: 1.19 $
+*	$Date: 2008-10-15 15:44:46 $
 *
 *	History:
 *	21-June-2007			St
@@ -123,7 +123,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 						</select>
 					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;">
-						<input type="button" value="Show Servers" id="idShowServers" tabindex="1"
+						<input type="button" value="Show Servers" id="idShowServers" tabindex="1" disabled="disabled"
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
 					<td>
@@ -134,6 +134,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 						<input type="button" value="Start Autorefresh"
 							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
 -->
+						<a id="idBookmark" href="" style="display:none;">Link to Sheet</a>
 					</td>
 				</tr>
 				<tr>
@@ -149,18 +150,16 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 					</td>
 				</tr>
 			</table>
-			<script type="text/javascript">
-				//Window-Reload does not reset the checkbox, so we update the javascript variable
-				if (document.getElementById("checkbox_keepheader").checked == true) {
-					autoKeepHeader = true;
-				}else{
-					autoKeepHeader = false;
-				}
-				document.getElementById("idShowServers").focus();
-			</script>
 			<hr color="blue">
 		</div>
 		<embed id="idPlayground" type="image/svg+xml" src="container.svg"></embed>
 		<p oncontextmenu="return false" id="idPlayground-p"></p>
+		<script type="text/javascript">
+			//some browsers parse the external files and some the inline js first, so try at two places and check if init is possible
+			if(typeof HMI != "undefined" && HMI.HMI_initialized != true){
+				//IE gives SVG Plugin control after loading, not in first run, so delay init a few ms
+				window.setTimeout("HMI.init()", 500);
+			}
+		</script>
 	</body>
 </html>
