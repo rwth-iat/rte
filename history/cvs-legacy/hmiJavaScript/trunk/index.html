@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.8 $
-*	$Date: 2008-09-17 09:55:02 $
+*	$Revision: 1.9 $
+*	$Date: 2008-10-16 09:20:30 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
@@ -172,32 +172,27 @@ var BrowserDetect = {
 	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
 		checkAndGetSVGViewer();
 		if(true == window.svgInstalled){
-			window.location.href = "hmi-explorer.html";
+			window.location.href = "hmi-explorer.html"+window.location.search;
 		}
 	}else if ("Explorer" == BrowserDetect.browser && 8 < BrowserDetect.version ) {
 		//IE9 kann vielleicht firefox Datei lesen, noch ungetestet, da noch in weiter Ferne
 		checkAndGetSVGViewer();
 		if(true == window.svgInstalled){
-			window.location.href = "hmi-explorer.html";
+			window.location.href = "hmi-explorer.html"+window.location.search;
 		}
 	}else if ("Mozilla" == BrowserDetect.browser) {
-		window.location.href = "hmi-gecko.xhtml";
+		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Firefox" == BrowserDetect.browser) {
-		window.location.href = "hmi-gecko.xhtml";
+		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Opera" == BrowserDetect.browser) {
-		window.location.href = "hmi-gecko.xhtml";
-	}else if ("Explorer" == BrowserDetect.browser && 7 < BrowserDetect.version ) {
-		//IE8 könnte firefox Datei lesen, noch ungetestet
-		window.location.href = "hmi-gecko.xhtml";
+		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Safari" == BrowserDetect.browser ) {
-		window.location.href = "hmi-gecko.xhtml";
+		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Konqueror" == BrowserDetect.browser ) {
 		//Version 3.5.9 arbeitet mit dem HMI trotzdem nicht
-		window.location.href = "hmi-xslt.xml";
+		window.location.href = "hmi-xslt.xml"+window.location.search;
 	}else{
-		window.location.href = "hmi-gecko.xhtml";
-//		document.write("Browsererkennung war nicht erfolgreich. Vielleicht ist Ihr Browser standardkonform und kann die Seite &auml;hnlich anzeigen, wie der Mozilla Firefox.<br />" );
-//		document.write("Dies k&ouml;nnen sie selber <a href='hmi-gecko.xhtml'> testen." );
+		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}
 </script>
 	<title>HMI Browserweiche</title>

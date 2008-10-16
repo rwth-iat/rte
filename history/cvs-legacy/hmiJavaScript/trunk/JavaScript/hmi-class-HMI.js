@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.37 $
-*	$Date: 2008-10-15 15:44:46 $
+*	$Revision: 1.38 $
+*	$Date: 2008-10-16 09:20:30 $
 *
 *	History:
 *	--------
@@ -221,7 +221,7 @@ HMI.prototype = {
 		$("idSheets").blur();
 		$("idServers").blur();
 		$("idBookmark").style.cssText = "display:inline;";
-		$("idBookmark").setAttribute("href", "http://"+window.location.host+window.location.pathname+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+HMI.PossServers.value+"&Sheet="+HMI.PossSheets.value);
+		$("idBookmark").setAttribute("href", "http://"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+HMI.PossServers.value+"&Sheet="+HMI.PossSheets.value);
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
