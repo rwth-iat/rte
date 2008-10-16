@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.1 $
-*	$Date: 2008-07-02 15:25:02 $
+*	$Revision: 1.2 $
+*	$Date: 2008-10-16 08:52:35 $
 *
 *	History:
 *	26-March-2008			Je
@@ -86,15 +86,16 @@
 	-->
 	<body onunload="HMI.unload()">
 		<table width="100%">
-			<colgroup>
+<!--			<colgroup>
 				<col width="4%"/>
 				<col width="42%"/>
 				<col width="12%"/>
 				<col width="42%"/>
 			</colgroup>
+-->
 			<tr onclick="hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
-				<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
+					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
 						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
 						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
 						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
@@ -114,51 +115,57 @@
 		<div id="hmi_header">
 			<table>
 				<tr>
-					<td style="text-align:right;">Host:</td>
-					<td><input id="idHost" type="text" size="29" value="localhost"/></td>
+					<td style="text-align:right;" title="As seen from KSGateway">FB-Host:</td>
+					<td><input id="idHost" type="text" size="29" value="localhost" tabindex="2"/></td>
 					<td style="text-align:center;">Refresh Time:</td>
-					<td><input id="idRefreshTime" type="text" size="5" value="1000"/>ms <strong id="ErrorOutput"> </strong>
+					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4"/>ms <strong id="ErrorOutput"> </strong>
 					</td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">Server:</td>
-					<td><select id="idServers" name="Sheets" size="1" style="width:200px;">
+					<td><select id="idServers" name="Sheets" size="1" style="width:200px;" tabindex="3">
 							<option>please push "Show Servers"</option>
 						</select>
 					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;">
-						<input type="button" value="Show Servers"
+						<input type="button" value="Show Servers" id="idShowServers" tabindex="1" disabled="disabled"
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
 					<td>
-						<input type="button" value="Refresh Sheet Now"
+<!--						<input type="button" value="Refresh Sheet Now"
 							onclick="HMI.refreshSheet()"/>
 						<input type="button" value="Stop Autorefresh"
 							onclick="clearTimeout(HMI.RefreshTimeoutID)"/>
 						<input type="button" value="Start Autorefresh"
 							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
+-->
+						<a id="idBookmark" href="" style="display:none;">Link to Sheet</a>
 					</td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">Sheets:</td>
-					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;">
+					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;" tabindex="5">
 							<option>please push "Show Servers"</option>
 						</select>
 					</td>
-					<td colspan="2"><input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible</td>
+					<td colspan="2">
+						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible
+<!--						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+-->
+					</td>
 				</tr>
 			</table>
-			<script type="text/javascript">
-				//Window-Reload does not reset the checkbox, so we update the javascript variable
-				if (document.getElementById("checkbox_keepheader").checked == true) {
-					autoKeepHeader = true;
-				}else{
-					autoKeepHeader = false;
-				}
-			</script>
 			<hr style="background-color:blue;height:2px;"/>
 		</div>
 		<p oncontextmenu="return false" id="idPlayground">
 		</p>
+		<script type="text/javascript">
+			//some browsers parse the external files and some the inline js first, so try at two places and check if init is possible
+			// <![CDATA[
+			if(typeof HMI != "undefined" && HMI.HMI_initialized != true){
+				HMI.init();
+			}
+			// ]]>
+		</script>
 	</body>
 </html>
