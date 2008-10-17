@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.40 $
-*	$Date: 2008-10-17 12:00:26 $
+*	$Revision: 1.41 $
+*	$Date: 2008-10-17 13:07:23 $
 *
 *	History:
 *	--------
@@ -113,6 +113,7 @@ HMI.prototype = {
 			}
 			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length != 0){
 				HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'));
+				//FIXME
 				HMI.showSheets(HMI_Parameter_Liste.Server);
 			}
 			if (HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0){
@@ -226,7 +227,7 @@ HMI.prototype = {
 		$("idSheets").blur();
 		$("idServers").blur();
 		$("idBookmark").style.cssText = "display:inline;";
-		$("idBookmark").setAttribute("href", "http://"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+HMI.PossServers.value+"&Sheet="+HMI.PossSheets.value);
+		$("idBookmark").setAttribute("href", "http://"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+this.KSClient.KSServer.replace(/localhost\//, "")+"&Sheet="+HMI.PossSheets.value);
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
@@ -328,10 +329,10 @@ HMI.prototype = {
 	},
 	
 	/*********************************
-		_cbGetAndAddComponent
+		_cbGetAndShowComponent
 	*********************************/	
-	_cbGetAndAddComponent: function (Client, req) {
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - Start");
+	_cbGetAndShowComponent: function (Client, req, replace) {
+		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Start");
 		
 		var ComponentText = new Array(2);
 		var Component;
@@ -353,13 +354,17 @@ HMI.prototype = {
 				var template = Component;
 				Component = document.importNode(template, true);
 			}
-			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now initGestures");
+			HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent: now initGestures");
 			HMI.initGestures(Component);
-			HMI.hmi_log_trace("HMI.prototype._cbGetAndImportComponent: now Playground.appendChild");
-			HMI.Playground.appendChild(Component);
-			
-			//	set TimeoutID
-			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+			HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent: now Playground.append/replaceChild");
+			if(replace == true){
+				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
+			}else{
+				HMI.Playground.appendChild(Component);
+				
+				//	set TimeoutID
+				HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+			}
 			try{
 				/**
 				* Gecko does not garbage collect things correct in any cases.
@@ -378,6 +383,16 @@ HMI.prototype = {
 			delete Component;
 			delete ComponentText;
 		};
+		
+		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - End");
+	},
+	/*********************************
+		_cbGetAndAddComponent
+	*********************************/	
+	_cbGetAndAddComponent: function (Client, req) {
+		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - Start");
+		
+		HMI._cbGetAndShowComponent(Client, req, false);
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - End");
 	},
@@ -388,50 +403,7 @@ HMI.prototype = {
 	_cbGetAndReplaceComponent: function (Client, req) {
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - Start");
 		
-		var ComponentText = new Array(2);
-		var Component;
-		
-		if (req.responseText != "")
-		{
-			ComponentText = HMI.KSClient.prepareComponentText(req.responseText);
-			if (ComponentText == null){
-				//logging not required, allready done by prepareComponentText
-				return;
-			}
-
-			Component = HMI._importComponent(ComponentText);
-			if (Component == null)
-			{
-				//logging not required, allready done by _importComponent
-				return;
-			}
-			if(!HMI.EmbedAdobePlugin){
-				var template = Component;
-				Component = document.importNode(template, true);
-			}
-			HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent: now initGestures");
-			HMI.initGestures(Component);
-			HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent: now Playground.appendChild");
-			HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
-			
-			try{
-				/**
-				* Gecko does not garbage collect things correct in any cases.
-				* The hack here is to reassign the additional properties attached to the
-				* JS wrapper object in order to ensure it becomes dirty. Well,
-				* considering that it becomes dirty from getting it from itself ...
-				* I think this source code can't be exported to the US anymore
-				* because of undecent language and probably thoughts.
-				*/
-				template._xxx = null; delete template._xxx;
-				Component._xxx = null; delete Component._xxx;
-				ComponentText._xxx = null; delete ComponentText._xxx;
-			} catch (e) {   //IE does not like this hack
-			}
-			delete template;
-			delete Component;
-			delete ComponentText;
-		};
+		HMI._cbGetAndShowComponent(Client, req, true);
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - End");
 	},
