@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.39 $
-*	$Date: 2008-10-17 11:29:00 $
+*	$Revision: 1.40 $
+*	$Date: 2008-10-17 12:00:26 $
 *
 *	History:
 *	--------
@@ -360,6 +360,23 @@ HMI.prototype = {
 			
 			//	set TimeoutID
 			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+			try{
+				/**
+				* Gecko does not garbage collect things correct in any cases.
+				* The hack here is to reassign the additional properties attached to the
+				* JS wrapper object in order to ensure it becomes dirty. Well,
+				* considering that it becomes dirty from getting it from itself ...
+				* I think this source code can't be exported to the US anymore
+				* because of undecent language and probably thoughts.
+				*/
+				template._xxx = null; delete template._xxx;
+				Component._xxx = null; delete Component._xxx;
+				ComponentText._xxx = null; delete ComponentText._xxx;
+			} catch (e) {   //IE does not like this hack
+			}
+			delete template;
+			delete Component;
+			delete ComponentText;
 		};
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - End");
@@ -385,20 +402,17 @@ HMI.prototype = {
 			Component = HMI._importComponent(ComponentText);
 			if (Component == null)
 			{
-				HMI.hmi_log_error("HMI.prototype._cbGetAndReplaceComponent: Could not import component");
-				HMI.hmi_log_onwebsite("Could not import component in _cbGetAndReplaceComponent");
-				clearTimeout(HMI.RefreshTimeoutID);
-				HMI.RefreshTimeoutID = null;
+				//logging not required, allready done by _importComponent
 				return;
-			};
-			
+			}
 			if(!HMI.EmbedAdobePlugin){
 				var template = Component;
 				Component = document.importNode(template, true);
 			}
+			HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent: now initGestures");
 			HMI.initGestures(Component);
+			HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent: now Playground.appendChild");
 			HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
-			//HMI.Playground.replaceChild(Component, $(HMI.Path));
 			
 			try{
 				/**
