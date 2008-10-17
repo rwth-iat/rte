@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.38 $
-*	$Date: 2008-10-16 09:20:30 $
+*	$Revision: 1.39 $
+*	$Date: 2008-10-17 11:29:00 $
 *
 *	History:
 *	--------
@@ -133,7 +133,12 @@ HMI.prototype = {
 		
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
-		this.RefreshTime = RefreshTime;
+		if (RefreshTime < 100){
+			$('idRefreshTime').value = 100;
+			this.RefreshTime = 100;
+		}else{
+			this.RefreshTime = RefreshTime;
+		}
 		this.PossServers = PossServers;
 		this.PossSheets = PossSheets;
 		if (Playground.tagName.toLowerCase() == "embed"){
