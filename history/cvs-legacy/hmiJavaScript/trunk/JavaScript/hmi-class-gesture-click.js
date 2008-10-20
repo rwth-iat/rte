@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.7 $
-*	$Date: 2008-10-09 12:02:02 $
+*	$Revision: 1.8 $
+*	$Date: 2008-10-20 11:15:41 $
 *
 *	History:
 *	--------
@@ -81,23 +81,49 @@ Click.prototype = {
 		_registerOnClick
 	*********************************/
 	_registerOnClick: function(Component, capture, listener) {
+		this._onMouseDownThunk = function (evt) { listener.onMouseDown(evt); };
 		this._onClickThunk = function (evt) { listener.onClick(evt); };
+		this._onMouseUpThunk = function (evt) { listener.onMouseUp(evt); };
+		Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
 		Component.addEventListener("click", this._onClickThunk, capture);
+		Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
 		//Needed for Internet Explorer without embeded Adobe Plugin
 		//addEventSimple(Component, "click", this._onClickThunk);
+	},
+	
+	/*********************************
+		onMouseDown
+	*********************************/
+	_onMouseDownThunk: null,
+	onMouseDown: function (evt) {
+		if (HMI.RefreshTimeoutID != null)
+			clearTimeout(HMI.RefreshTimeoutID);
+	},
+	
+	/*********************************
+		onMouseUp
+	*********************************/
+	_onMouseUpThunk: null,
+	onMouseUp: function (evt) {
+		if (HMI.RefreshTimeoutID != null)
+		{
+			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+		};
 	},
 	
 	/*********************************
 		onClick
 	*********************************/
 	_onClickThunk: null,
-	onClick: function (evt) {		
+	onClick: function (evt) {
 		if (evt.detail == 2)
 		{
+		HMI.hmi_log_info("Event double");
 			//	doubleclick => STOP
 			//
 			return;
 		};
+		HMI.hmi_log_info("Event single");
 		
 		this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
 	},
