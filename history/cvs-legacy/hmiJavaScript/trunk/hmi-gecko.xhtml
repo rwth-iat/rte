@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.20 $
-*	$Date: 2008-10-16 08:52:35 $
+*	$Revision: 1.21 $
+*	$Date: 2008-10-20 09:48:25 $
 *
 *	History:
 *	21-June-2007			St
@@ -158,6 +158,7 @@
 		</p>
 		<script type="text/javascript">
 			//some browsers parse the external files and some the inline js first, so try at two places and check if init is possible
+			//Firefox 3 (with and without jit) parses html and external files parallel 8-/
 			// <![CDATA[
 			if(typeof HMI != "undefined" && HMI.HMI_initialized != true){
 				HMI.init();

@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.18 $
-*	$Date: 2008-10-15 15:44:46 $
+*	$Revision: 1.19 $
+*	$Date: 2008-10-20 09:48:25 $
 *
 *	History:
 *	--------
@@ -308,20 +308,8 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-function HMI_Werteliste(querystring) {
-	if(querystring == '') return;
-		var wertestring = unescape(querystring);
-		wertestring = wertestring.slice(1);
-		var paare = wertestring.split("&");
-		for (var i=0; i < paare.length; i++) {
-			var name = paare[i].substring(0, paare[i].indexOf("="));
-			var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
-		this[name] = wert;
-	}
-};
-var HMI_Parameter_Liste = new HMI_Werteliste(window.location.search);
-
 //some browsers parse the external files and some the inline js first, so try at two places and check if init is possible
+//Firefox 3.1 does both simultaniously 8-/
 if($('idPlayground') != null && typeof HMI != "undefined" && HMI.HMI_initialized != true){
 	HMI.init();
 }

@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.41 $
-*	$Date: 2008-10-17 13:07:23 $
+*	$Revision: 1.42 $
+*	$Date: 2008-10-20 09:48:25 $
 *
 *	History:
 *	--------
@@ -105,6 +105,16 @@ HMI.prototype = {
 		document.getElementById("idShowServers").focus();
 		
 		if (window.location.search.length != 0){
+			var HMI_Parameter_Liste = new Array();
+			var wertestring = unescape(window.location.search);
+			wertestring = wertestring.slice(1);
+			var paare = wertestring.split("&");
+			for (var i=0; i < paare.length; i++) {
+				var name = paare[i].substring(0, paare[i].indexOf("="));
+				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
+				HMI_Parameter_Liste[name] = wert;
+			}
+			
 			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length != 0){
 				$('idHost').value = HMI_Parameter_Liste.Host;
 			}
@@ -113,14 +123,20 @@ HMI.prototype = {
 			}
 			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length != 0){
 				HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'));
-				//FIXME
+				for (var i=0; i < HMI.PossServers.options.length; i++){
+					if (HMI.PossServers.options[i].value == HMI_Parameter_Liste.Server){
+						HMI.PossServers.options[i].selected = true;
+					}
+				}
 				HMI.showSheets(HMI_Parameter_Liste.Server);
 			}
 			if (HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0){
-				HMI.showSheet(HMI_Parameter_Liste.Sheet);
+				if ($('idSheets').options[$('idSheets').selectedIndex].value != HMI_Parameter_Liste.Sheet){
+					HMI.showSheet(HMI_Parameter_Liste.Sheet);
+				}
 			}
 		}
-		this.HMI_initialized = true;
+		HMI.HMI_initialized = true;
 		this.hmi_log_trace("HMI.prototype.init - End");
 	},
 	/*********************************
