@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.43 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.44 $
+*	$Date: 2008-10-22 09:59:52 $
 *
 *	History:
 *	--------
@@ -265,6 +265,13 @@ HMI.prototype = {
 		if (HMI.KSClient.TCLKSHandle != null)
 			this._getAndImportComponent(HMI.Path, HMI.Playground, false);
 		
+		//reload scroll setting
+		//wheelsupport is not supported by the HMI Team and probably firefox only
+		if(this.scrollComponent)
+		{
+			document.getElementById(this.scrollComponent).setAttribute("y", this.currY);
+			document.getElementById(this.scrollComponent).setAttribute("x", this.currX);	
+		}
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
 	},
 	
@@ -514,6 +521,14 @@ HMI.prototype = {
 			if (this.instanceOf(Element, 'hmi-component-gesture-textinput'))
 			{
 				var textinput = new TextInput(Element, this);
+			};
+			
+			//	WHEEL-SCROLL
+			//
+			//wheelsupport is not supported by the HMI Team and probably firefox only
+			if (this.instanceOf(Element, 'hmi-component-gesture-wheelscroll'))
+			{
+				var wheelscroll = new WheelScroll(Element, this);
 			};
 		};
 		

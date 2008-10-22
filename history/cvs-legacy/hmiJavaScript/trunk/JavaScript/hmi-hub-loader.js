@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2007
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.7 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.8 $
+*	$Date: 2008-10-22 09:59:52 $
 *
 *	History:
 *	01-March-2005			HA
@@ -258,6 +258,8 @@ SCRIPT_HUB(
 		"./hmi-class-gesture-rightclick.js",
 		"./hmi-class-gesture-move.js",
 		"./hmi-class-gesture-textinput.js",
+		//wheelsupport is not supported by the HMI Team and probably firefox only
+		"./hmi-class-gesture-wheelscroll.js",
 		"./hmi-generic.js",
 	]
 );
