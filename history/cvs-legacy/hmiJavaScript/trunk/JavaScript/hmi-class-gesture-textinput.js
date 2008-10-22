@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.9 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.10 $
+*	$Date: 2008-10-22 10:25:27 $
 *
 *	History:
 *	--------
@@ -86,7 +86,29 @@ TextInput.prototype = {
 		this._onClickThunk = function (evt) { listener.onClick(evt); };
 		//Needed for Internet Explorer without embeded Adobe Plugin
 		//addEventSimple(Component, "click", this._onClickThunk);
+		Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
 		Component.addEventListener("click", this._onClickThunk, capture);
+		Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
+	},
+	
+	/*********************************
+		onMouseDown
+	*********************************/
+	_onMouseDownThunk: null,
+	onMouseDown: function (evt) {
+		if (HMI.RefreshTimeoutID != null)
+			clearTimeout(HMI.RefreshTimeoutID);
+	},
+	
+	/*********************************
+		onMouseUp
+	*********************************/
+	_onMouseUpThunk: null,
+	onMouseUp: function (evt) {
+		if (HMI.RefreshTimeoutID != null)
+		{
+			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+		};
 	},
 	
 	/*********************************

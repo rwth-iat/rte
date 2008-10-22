@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.6 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.7 $
+*	$Date: 2008-10-22 10:25:27 $
 *
 *	History:
 *	--------
@@ -88,7 +88,29 @@ DoubleClick.prototype = {
 	*********************************/
 	_registerOnDoubleClick: function(Component, capture, listener) {
 		this._onDoubleClickThunk = function (evt) { listener.onDoubleClick(evt); };
+		Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
 		Component.addEventListener("click", this._onDoubleClickThunk, capture);
+		Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
+	},
+	
+	/*********************************
+		onMouseDown
+	*********************************/
+	_onMouseDownThunk: null,
+	onMouseDown: function (evt) {
+		if (HMI.RefreshTimeoutID != null)
+			clearTimeout(HMI.RefreshTimeoutID);
+	},
+	
+	/*********************************
+		onMouseUp
+	*********************************/
+	_onMouseUpThunk: null,
+	onMouseUp: function (evt) {
+		if (HMI.RefreshTimeoutID != null)
+		{
+			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+		};
 	},
 	
 	/*********************************
@@ -96,6 +118,7 @@ DoubleClick.prototype = {
 	*********************************/
 	_onDoubleClickThunk: null,
 	onDoubleClick: function (evt) {
+		//possible that a screen refresh between two clicks doesnot trigger a double click
 		if (evt.button == 0 && evt.detail ==2){
 			evt.stopPropagation();
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-doubleclick'));

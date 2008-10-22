@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.9 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.10 $
+*	$Date: 2008-10-22 10:25:27 $
 *
 *	History:
 *	--------
@@ -125,12 +125,10 @@ Click.prototype = {
 		evt.stopPropagation();
 		if (evt.detail == 2)
 		{
-		HMI.hmi_log_info("Event double");
 			//	doubleclick => STOP
 			//
 			return;
 		};
-		HMI.hmi_log_info("Event single");
 		
 		this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
 	},
