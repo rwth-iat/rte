@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2008
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -44,10 +44,14 @@
 *	--------
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
+*	NH							Nikolas Hansen <Nikolas.Hansen@plt.rwth-aachen.de>
+*
 *	CVS:
 *	----
-*	$Revision: 1.42 $
-*	$Date: 2008-10-20 09:48:25 $
+*	$Revision: 1.43 $
+*	$Date: 2008-10-22 09:22:12 $
 *
 *	History:
 *	--------
@@ -56,6 +60,8 @@
 *
 *	22-November-2007		St
 *		-	test console-existing on logging
+*	31-August-2008			NH
+*		-	Sheet refresh after click
 *
 ***********************************************************************/
 
@@ -156,6 +162,8 @@ HMI.prototype = {
 		}else{
 			this.RefreshTime = RefreshTime;
 		}
+		clearTimeout(HMI.RefreshTimeoutID);
+		HMI.RefreshTimeoutID = null;
 		this.PossServers = PossServers;
 		this.PossSheets = PossSheets;
 		if (Playground.tagName.toLowerCase() == "embed"){
@@ -258,6 +266,17 @@ HMI.prototype = {
 			this._getAndImportComponent(HMI.Path, HMI.Playground, false);
 		
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
+	},
+	
+	/*********************************
+		cbrefreshSheet
+	*********************************/
+	cbrefreshSheet: function (client, req) {
+		HMI.hmi_log_trace("HMI.prototype.cbrefreshSheet - Start");
+		
+		HMI.refreshSheet();
+		
+		HMI.hmi_log_trace("HMI.prototype.refreshSheet - End");
 	},
 	
 	/*********************************

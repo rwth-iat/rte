@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2008
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.34 $
-*	$Date: 2008-10-15 15:44:46 $
+*	$Revision: 1.35 $
+*	$Date: 2008-10-22 09:22:12 $
 *
 *	History:
 *	--------

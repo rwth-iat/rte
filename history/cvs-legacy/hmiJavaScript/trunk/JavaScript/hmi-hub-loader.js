@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2008
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -41,11 +41,14 @@
 *
 *	Editors:
 *	HA							Harald Albrecht <harald@plt.rwth-aachen.de>
+*
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
 *	CVS:
-*	$Revision: 1.6 $
-*	$Date: 2008-06-18 08:41:12 $
+*	$Revision: 1.7 $
+*	$Date: 2008-10-22 09:22:12 $
 *
 *	History:
 *	01-March-2005			HA

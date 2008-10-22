@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2008
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -44,15 +44,21 @@
 *	--------
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
+*	NH							Nikolas Hansen <Nikolas.Hansen@plt.rwth-aachen.de>
+*
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2008-09-22 09:29:05 $
+*	$Revision: 1.6 $
+*	$Date: 2008-10-22 09:22:12 $
 *
 *	History:
 *	--------
 *	21-June-2007			St
 *		-	General Revision
+*	31-August-2008			NH
+*		-	Sheet refresh after click, event bubbling deactivated
 *
 ***********************************************************************/
 
@@ -91,6 +97,7 @@ DoubleClick.prototype = {
 	_onDoubleClickThunk: null,
 	onDoubleClick: function (evt) {
 		if (evt.button == 0 && evt.detail ==2){
+			evt.stopPropagation();
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-doubleclick'));
 		}
 	},
@@ -120,7 +127,7 @@ DoubleClick.prototype = {
 				'{DOUBLECLICK} ' +
 				'{' + evt.layerX + '} ' +
 				'{' + evt.layerY + '}';
-			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
+			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
 //			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		

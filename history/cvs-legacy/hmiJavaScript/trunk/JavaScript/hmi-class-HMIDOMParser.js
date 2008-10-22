@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2008
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -44,10 +44,12 @@
 *	--------
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
 *	CVS:
 *	----
-*	$Revision: 1.9 $
-*	$Date: 2008-07-02 12:10:37 $
+*	$Revision: 1.10 $
+*	$Date: 2008-10-22 09:22:12 $
 *
 *	History:
 *	--------

@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2008
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -44,10 +44,12 @@
 *	--------
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
 *	CVS:
 *	----
-*	$Revision: 1.9 $
-*	$Date: 2008-10-09 12:02:02 $
+*	$Revision: 1.10 $
+*	$Date: 2008-10-22 09:22:12 $
 *
 *	History:
 *	--------
@@ -122,7 +124,7 @@ RightClick.prototype = {
 				'{RIGHTCLICK} ' +
 				'{' + evt.layerX + '} ' +
 				'{' + evt.layerY + '}';
-			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
+			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
 //			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		
