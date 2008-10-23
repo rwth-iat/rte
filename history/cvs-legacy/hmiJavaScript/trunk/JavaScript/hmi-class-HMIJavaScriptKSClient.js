@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.35 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.36 $
+*	$Date: 2008-10-23 09:26:45 $
 *
 *	History:
 *	--------
@@ -252,11 +252,12 @@ HMIJavaScriptKSClient.prototype = {
 			response: "TksS-0042"
 	*********************************/
 	getHandle: function(host, cbfnc) {
+		var urlparameter;
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - Start");
 		if (HMI.GatewayTypeTCL == true){
-			var urlparameter = 'obj=tks-server&args='+host;
-		}else if (HMI.GatewayTypePHP == true){
-			var urlparameter = 'obj=tks-server&args='+host;
+			urlparameter = 'obj=tks-server&args='+host;
+		}else if(HMI.GatewayTypePHP == true){
+			urlparameter = 'cmd=tks-server&args='+host;
 		}
 		if (cbfnc != null){
 			this._send2Request(this, 'GET', false, urlparameter, cbfnc);
@@ -291,7 +292,7 @@ HMIJavaScriptKSClient.prototype = {
 			var urlparameter = 'obj='+Handle + '&args=getvar ' +path;
 		}else if (HMI.GatewayTypePHP == true){
 			path = path;
-			var urlparameter = 'obj='+Handle + '&args=getvar ' +path;
+			var urlparameter = 'obj='+Handle + '&cmd=getvar&path=' + path;
 		}
 		if (cbfnc != null){
 			this._send2Request(this, 'GET', false, urlparameter, cbfnc);
@@ -323,8 +324,7 @@ HMIJavaScriptKSClient.prototype = {
 			path = '{'+path+' {'+value+'}}';
 			var urlparameter = 'obj='+Handle + '&args=setvar ' +path;
 		}else if (HMI.GatewayTypePHP == true){
-			path = path;
-			var urlparameter = 'obj='+Handle + '&args=setvar ' +path;
+			var urlparameter = 'obj='+Handle + '&cmd=setvar&path=' + path + "&val=" + value;
 		}
 		if (cbfnc != null){
 			this._send2Request(this, 'GET', false, urlparameter, cbfnc);
@@ -349,7 +349,7 @@ HMIJavaScriptKSClient.prototype = {
 		if (HMI.GatewayTypeTCL == true){
 			var urlparameter = 'obj='+Handle + '&args=destroy';
 		}else if (HMI.GatewayTypePHP == true){
-			var urlparameter = 'obj='+Handle + '&args=destroy';
+			var urlparameter = 'obj='+Handle + '&cmd=destroy';
 		}
 		this._send2Request(this, 'GET', false, urlparameter);
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - End");
@@ -396,10 +396,12 @@ HMIJavaScriptKSClient.prototype = {
 			Client.TCLKSHandle = req.responseText;
 		} else {
 			Client.KSServer = null;
-			Node = document.createElement('option');
-			Node.innerHTML = '- no valid server response -';
-			Node.value = 'no server';
-			HMI.PossServers.appendChild(Node);
+			//Node = document.createElement('option');
+			//Node.innerHTML = '- no valid server response -';
+			//Node.value = 'no server';
+			//HMI.PossServers.appendChild(Node);
+			//more Crossbrowser compatible
+			HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no valid server response -', 'no server');
 			HMI.hmi_log_error('HMIJavaScriptKSClient._cbinit: Could not initialize TCLKSGateway.'
 				+ '\n'
 				+ 'Gateway responded:'
@@ -460,20 +462,22 @@ HMIJavaScriptKSClient.prototype = {
 		var ValidServers = 0;
 		var IdLastValidServer;
 		if (Server.length > 0){
-			Node = document.createElement('option');
-			Node.innerHTML = '- select server -';
-			Node.value = 'no server';
-			HMI.PossServers.appendChild(Node);
+			//Node = document.createElement('option');
+			//Node.innerHTML = '- select server -';
+			//Node.value = 'no server';
+			//HMI.PossServers.appendChild(Node);
+			HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- select server -', 'no server');
 			var OptionNameLength = 0;
 			
 			for (i = 0; i < Server.length; i++)
 			{
 				if (HMIJavaScriptKSClient.prototype.pingServer(Server[i]) == true)
 				{
-					Node = document.createElement('option');
-					Node.innerHTML = Server[i];
-					Node.value = Server[i];
-					HMI.PossServers.appendChild(Node);
+					//Node = document.createElement('option');
+					//Node.innerHTML = Server[i];
+					//Node.value = Server[i];
+					//HMI.PossServers.appendChild(Node);
+					HMI.PossServers.options[HMI.PossServers.options.length] = new Option(Server[i], Server[i]);
 					ValidServers ++;
 					IdLastValidServer = i;
 					if (OptionNameLength < Server[i].length){
@@ -490,8 +494,8 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+ValidServers);
 			if (ValidServers == 0){
-				Node.innerHTML = '- no server available -';
-				Node.value = 'no server';
+				HMI.PossServers.options[0].innerHTML = '- no server available -';
+				HMI.PossServers.options[0].value = 'no server';
 			}else{
 				//'this' is not PossServers here, but refers to the window and is completely useless in Internet Explorer
 				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
@@ -504,10 +508,11 @@ HMIJavaScriptKSClient.prototype = {
 				}
 			}
 		} else {
-			Node = document.createElement('option');
-			Node.innerHTML = '- no MANAGER available-';
-			Node.value = 'no server';
-			HMI.PossServers.appendChild(Node);
+			//Node = document.createElement('option');
+			//Node.innerHTML = '- no MANAGER available-';
+			//Node.value = 'no server';
+			//HMI.PossServers.appendChild(Node);
+			HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no MANAGER available-', 'no server');
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - End");
@@ -696,16 +701,18 @@ HMIJavaScriptKSClient.prototype = {
 		};
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		if (Sheet.length > 0){
-			Node = document.createElement('option');
-			Node.innerHTML = '- select sheet -';
-			Node.value = 'no sheet';
-			HMI.PossSheets.appendChild(Node);
+			//Node = document.createElement('option');
+			//Node.innerHTML = '- select sheet -';
+			//Node.value = 'no sheet';
+			//HMI.PossSheets.appendChild(Node);
+			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
 			var OptionNameLength = 0;
 			for (i = 0; i < Sheet.length; i++){
-				Node = document.createElement('option');
-				Node.innerHTML = Sheet[i];
-				Node.value = Sheet[i];
-				HMI.PossSheets.appendChild(Node);
+				//Node = document.createElement('option');
+				//Node.innerHTML = Sheet[i];
+				//Node.value = Sheet[i];
+				//HMI.PossSheets.appendChild(Node);
+				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(Sheet[i], Sheet[i]);
 				if (OptionNameLength < Sheet[i].length){
 					OptionNameLength = Sheet[i].length;
 				}
@@ -723,10 +730,11 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.showSheet(Sheet[0]);
 			}
 		} else {
-			Node = document.createElement('option');
-			Node.innerHTML = '- no sheets available -';
-			Node.value = 'no sheet';
-			HMI.PossSheets.appendChild(Node);
+			//Node = document.createElement('option');
+			//Node.innerHTML = '- no sheets available -';
+			//Node.value = 'no sheet';
+			//HMI.PossSheets.appendChild(Node);
+			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- no sheets available -', 'no sheet');
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		};
 		

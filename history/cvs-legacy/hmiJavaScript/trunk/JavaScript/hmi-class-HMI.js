@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.44 $
-*	$Date: 2008-10-22 09:59:52 $
+*	$Revision: 1.45 $
+*	$Date: 2008-10-23 09:26:45 $
 *
 *	History:
 *	--------
@@ -180,7 +180,8 @@ HMI.prototype = {
 		KSGateway = window.location.host;
 		
 		if (false){
-			KSGateway_Path = "/tks.php";
+			//tks.php is always in the same subdir as the html files
+			KSGateway_Path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ "tks.php";
 			this.GatewayTypeTCL = false;
 			this.GatewayTypePHP = true;
 		}else{
