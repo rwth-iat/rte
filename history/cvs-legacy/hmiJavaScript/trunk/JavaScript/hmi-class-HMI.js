@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.46 $
-*	$Date: 2008-10-24 12:49:42 $
+*	$Revision: 1.47 $
+*	$Date: 2008-10-24 13:36:50 $
 *
 *	History:
 *	--------
@@ -534,7 +534,7 @@ HMI.prototype = {
 			//wheelsupport is not supported by the HMI Team and probably firefox only
 			if (this.instanceOf(Element, 'hmi-component-gesture-wheelscroll'))
 			{
-				var wheelscroll = new WheelScroll(Element, this);
+				this.wheelscroll = new WheelScroll(Element, this); //**diff
 			};
 		};
 		
@@ -556,7 +556,7 @@ HMI.prototype = {
 			//getElementsByTagNameNS in Adobe is often not complete
 			for (var idx = 0; idx < Fragment.childNodes.length; ++idx){
 				if (Fragment.childNodes.item(idx).namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG && Fragment.childNodes.item(idx).id != ""){
-					HMI._initGestures(Fragment.childNodes.item(idx));
+					HMI.initGestures(Fragment.childNodes.item(idx)); //**diff NH recurse!
 				}
 			}
 		}else if (Fragment.getElementsByTagNameNS){   //gecko
