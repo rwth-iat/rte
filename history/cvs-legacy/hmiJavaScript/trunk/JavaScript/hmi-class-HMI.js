@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.45 $
-*	$Date: 2008-10-23 09:26:45 $
+*	$Revision: 1.46 $
+*	$Date: 2008-10-24 12:49:42 $
 *
 *	History:
 *	--------
@@ -270,8 +270,13 @@ HMI.prototype = {
 		//wheelsupport is not supported by the HMI Team and probably firefox only
 		if(this.scrollComponent)
 		{
-			document.getElementById(this.scrollComponent).setAttribute("y", this.currY);
-			document.getElementById(this.scrollComponent).setAttribute("x", this.currX);	
+			if(document.getElementById(this.scrollComponent) != null){ //opera, ff
+				var Component = document.getElementById(this.scrollComponent);
+			} else if(this.Playground.getElementById(this.scrollComponent) != null){ //ie
+				var Component = this.Playground.getElementById(this.scrollComponent);
+			}
+			Component.setAttribute("y", this.currY);
+			Component.setAttribute("x", this.currX);
 		}
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
 	},

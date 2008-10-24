@@ -47,8 +47,8 @@
 *	CVS:
 *	----
 *	
-*	$Revision: 1.1 $
-*	$Date: 2008-10-22 09:59:52 $
+*	$Revision: 1.2 $
+*	$Date: 2008-10-24 12:49:42 $
 *
 *	History:
 *	--------
@@ -98,15 +98,14 @@ WheelScroll.prototype = {
 		//evt.stopPropagation();	
 		var wheelData = evt.detail ? evt.detail * -1 : evt.wheelDelta / 40;
 		//get and translate parent svg object
-		//alert("works");
 		var Scrollframe = HMI.getComponent(evt, 'hmi-component-scrollframe');
 		//alert(Scrollframe.id);
 		var Component = Scrollframe.firstChild;
 		while (	Component != null && HMI.instanceOf(Component, "hmi-component-scrollcontent") == false){
 			Component = Component.nextSibling;
 		}
-		
-		if(!window.currY){
+
+		if(!HMI.currY){
 			HMI.currY = parseInt(Component.getAttribute('y'));
 			HMI.scrollComponent = Component.id;
 		}
@@ -143,17 +142,18 @@ WheelScroll.prototype = {
 	},
 	
 	scroll: function (evt, orientation){
-		var Scrollframe = HMI.getComponent(evt, 'hmi-component').ownerSVGElement;
+		evt = evt ? evt : window.event;
+		var Scrollframe = HMI.getComponent(evt, 'hmi-component-scrollframe');
 		var Component = Scrollframe.firstChild;
 		while (	Component != null && HMI.instanceOf(Component, "hmi-component-scrollcontent") == false){
 			Component = Component.nextSibling;
 		}
-		
-		if(!window.currY){
+
+		if(!HMI.currY){
 			HMI.currY = parseInt(Component.getAttribute('y'));
 			HMI.scrollComponent = Component.id;
 		}
-		if(!window.currX){
+		if(!HMI.currX){
 			HMI.currX = parseInt(Component.getAttribute('x'));
 			HMI.scrollComponent = Component.id;
 		}
