@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.7 $
-*	$Date: 2008-10-22 10:25:27 $
+*	$Revision: 1.8 $
+*	$Date: 2008-10-24 14:08:16 $
 *
 *	History:
 *	--------
@@ -87,7 +87,9 @@ DoubleClick.prototype = {
 		_registerOnDoubleClick
 	*********************************/
 	_registerOnDoubleClick: function(Component, capture, listener) {
+		this._onMouseDownThunk = function (evt) { listener.onMouseDown(evt); };
 		this._onDoubleClickThunk = function (evt) { listener.onDoubleClick(evt); };
+		this._onMouseUpThunk = function (evt) { listener.onMouseUp(evt); };
 		Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
 		Component.addEventListener("click", this._onDoubleClickThunk, capture);
 		Component.addEventListener("mouseup", this._onMouseUpThunk, capture);

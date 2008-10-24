@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.10 $
-*	$Date: 2008-10-22 10:25:27 $
+*	$Revision: 1.11 $
+*	$Date: 2008-10-24 14:08:16 $
 *
 *	History:
 *	--------
@@ -83,9 +83,9 @@ TextInput.prototype = {
 		_registerOnClick
 	*********************************/
 	_registerOnClick: function(Component, capture, listener) {
+		this._onMouseDownThunk = function (evt) { listener.onMouseDown(evt); };
 		this._onClickThunk = function (evt) { listener.onClick(evt); };
-		//Needed for Internet Explorer without embeded Adobe Plugin
-		//addEventSimple(Component, "click", this._onClickThunk);
+		this._onMouseUpThunk = function (evt) { listener.onMouseUp(evt); };
 		Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
 		Component.addEventListener("click", this._onClickThunk, capture);
 		Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
