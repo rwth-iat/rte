@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.20 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.21 $
+*	$Date: 2008-10-28 14:47:41 $
 *
 *	History:
 *	--------
@@ -307,9 +307,3 @@ var BrowserDetect = {
 
 };
 BrowserDetect.init();
-
-//some browsers parse the external files and some the inline js first, so try at two places and check if init is possible
-//Firefox 3.1 does both simultaniously 8-/
-if($('idPlayground') != null && typeof HMI != "undefined" && HMI.HMI_initialized != true){
-	HMI.init();
-}

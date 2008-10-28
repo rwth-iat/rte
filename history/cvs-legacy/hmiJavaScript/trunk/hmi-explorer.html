@@ -49,8 +49,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.21 $
-*	$Date: 2008-10-22 09:59:15 $
+*	$Revision: 1.22 $
+*	$Date: 2008-10-28 14:47:41 $
 *
 *	History:
 *
@@ -74,7 +74,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 			Body
 		*********************************/
 	-->
-	<body onunload="HMI.unload()">
+	<body onunload="HMI.unload()" onload="HMI.init()">
 		<table width="100%">
 <!--			<colgroup>
 				<col width="4%"/>
@@ -149,12 +149,5 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		</div>
 		<embed id="idPlayground" type="image/svg+xml" src="container.svg"></embed>
 		<p oncontextmenu="return false" id="idPlayground-p"></p>
-		<script type="text/javascript">
-			//some browsers parse the external files and some the inline js first, so try at two places and check if init is possible
-			if(typeof HMI != "undefined" && HMI.HMI_initialized != true){
-				//IE gives SVG Plugin control after loading, not in first run, so delay init a few ms
-				window.setTimeout("HMI.init()", 500);
-			}
-		</script>
 	</body>
 </html>
