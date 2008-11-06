@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.2 $
-*	$Date: 2008-10-16 08:52:35 $
+*	$Revision: 1.3 $
+*	$Date: 2008-11-06 14:55:35 $
 *
 *	History:
 *	26-March-2008			Je
@@ -84,7 +84,7 @@
 			Body
 		*********************************/
 	-->
-	<body onunload="HMI.unload()">
+	<body onunload="HMI.unload()" onload="HMI.init()">
 		<table width="100%">
 <!--			<colgroup>
 				<col width="4%"/>
@@ -159,13 +159,5 @@
 		</div>
 		<p oncontextmenu="return false" id="idPlayground">
 		</p>
-		<script type="text/javascript">
-			//some browsers parse the external files and some the inline js first, so try at two places and check if init is possible
-			// <![CDATA[
-			if(typeof HMI != "undefined" && HMI.HMI_initialized != true){
-				HMI.init();
-			}
-			// ]]>
-		</script>
 	</body>
 </html>

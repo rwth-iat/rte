@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.47 $
-*	$Date: 2008-10-24 13:36:50 $
+*	$Revision: 1.48 $
+*	$Date: 2008-11-06 14:55:35 $
 *
 *	History:
 *	--------
@@ -142,7 +142,6 @@ HMI.prototype = {
 				}
 			}
 		}
-		HMI.HMI_initialized = true;
 		this.hmi_log_trace("HMI.prototype.init - End");
 	},
 	/*********************************
