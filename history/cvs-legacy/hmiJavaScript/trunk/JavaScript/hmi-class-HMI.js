@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.48 $
-*	$Date: 2008-11-06 14:55:35 $
+*	$Revision: 1.49 $
+*	$Date: 2008-11-13 12:06:22 $
 *
 *	History:
 *	--------
@@ -99,6 +99,9 @@ HMI.prototype = {
 		init
 	*********************************/
 	init: function () {
+		if (window.loadFirebugConsole){
+			window.loadFirebugConsole();
+		}
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
 		//Window-Reload does not reset the checkbox, so we update the javascript variable
@@ -148,10 +151,6 @@ HMI.prototype = {
 		showServers
 	*********************************/
 	showServers: function (Host, RefreshTime, PossServers, PossSheets, Playground) {
-		
-		if (window.loadFirebugConsole){
-			window.loadFirebugConsole();
-		}
 		
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
