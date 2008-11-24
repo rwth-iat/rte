@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.49 $
-*	$Date: 2008-11-13 12:06:22 $
+*	$Revision: 1.50 $
+*	$Date: 2008-11-24 12:46:49 $
 *
 *	History:
 *	--------
@@ -532,7 +532,7 @@ HMI.prototype = {
 			//wheelsupport is not supported by the HMI Team and probably firefox only
 			if (this.instanceOf(Element, 'hmi-component-gesture-wheelscroll'))
 			{
-				this.wheelscroll = new WheelScroll(Element, this); //**diff
+				this.wheelscroll = new WheelScroll(Element, this);
 			};
 		};
 		
@@ -554,13 +554,15 @@ HMI.prototype = {
 			//getElementsByTagNameNS in Adobe is often not complete
 			for (var idx = 0; idx < Fragment.childNodes.length; ++idx){
 				if (Fragment.childNodes.item(idx).namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG && Fragment.childNodes.item(idx).id != ""){
-					HMI.initGestures(Fragment.childNodes.item(idx)); //**diff NH recurse!
+					//recursive init necessary
+					HMI.initGestures(Fragment.childNodes.item(idx));
 				}
 			}
 		}else if (Fragment.getElementsByTagNameNS){   //gecko
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			for (var idx = 0; idx < Elements.length; ++idx){
 				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
+				//recursive init not necessary, getElementsByTagNameNS is recursive by itself
 				HMI._initGestures(Elements[idx]);
 			}
 		}else{   // IE if svg inline

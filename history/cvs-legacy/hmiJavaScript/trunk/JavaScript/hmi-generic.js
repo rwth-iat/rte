@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.21 $
-*	$Date: 2008-10-28 14:47:41 $
+*	$Revision: 1.22 $
+*	$Date: 2008-11-24 12:46:49 $
 *
 *	History:
 *	--------
@@ -100,7 +100,7 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 };
 
 /*********************************
-	Feature - emulate document.importNode if not available native
+	Feature - emulate document.importNode if not available native, based on
 	http://www.alistapart.com/articles/crossbrowserscripting
 *********************************/
 if (!document.importNode) {
