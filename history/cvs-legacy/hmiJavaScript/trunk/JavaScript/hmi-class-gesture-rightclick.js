@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.10 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.11 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	--------
@@ -107,17 +107,6 @@ RightClick.prototype = {
 		
 		if (Component != null)
 		{
-			//Command = '{' + 
-			//	'{' + HMI.KSClient.getMessageID() + '} ' +
-			//	'{010} ' +
-			//	'{' + Component.getAttribute('id') + '} ' + 
-			//	'{RIGHTCLICK} ' +
-			//	'{' + evt.layerX + '} ' +
-			//	'{' + evt.layerY + '}' +
-			//	'}';
-			//HMI.KSClient.send2Request(null, 'POST', 'setvar', 
-			//	'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
-			//	'', '', null);
 			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
 				'{' + Component.getAttribute('id') + '} ' + 
@@ -125,7 +114,6 @@ RightClick.prototype = {
 				'{' + evt.layerX + '} ' +
 				'{' + evt.layerY + '}';
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
-//			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		
 		delete Command;

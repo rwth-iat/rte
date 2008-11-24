@@ -47,8 +47,8 @@
 *	CVS:
 *	----
 *	
-*	$Revision: 1.2 $
-*	$Date: 2008-10-24 12:49:42 $
+*	$Revision: 1.3 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	--------
@@ -99,7 +99,6 @@ WheelScroll.prototype = {
 		var wheelData = evt.detail ? evt.detail * -1 : evt.wheelDelta / 40;
 		//get and translate parent svg object
 		var Scrollframe = HMI.getComponent(evt, 'hmi-component-scrollframe');
-		//alert(Scrollframe.id);
 		var Component = Scrollframe.firstChild;
 		while (	Component != null && HMI.instanceOf(Component, "hmi-component-scrollcontent") == false){
 			Component = Component.nextSibling;
@@ -202,10 +201,6 @@ WheelScroll.prototype = {
 		} else {
 			HMI.currX = 0;
 		}
-		//alert(HMI.currX);
-		//alert(x);
-		//alert(parseInt(Component.getAttribute('width')));
-		//alert(parseInt(Scrollframe.getAttribute('width')));
 		Component.setAttribute("y", HMI.currY);
 		Component.setAttribute("x", HMI.currX);
 		

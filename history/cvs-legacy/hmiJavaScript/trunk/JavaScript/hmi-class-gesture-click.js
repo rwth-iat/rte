@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.10 $
-*	$Date: 2008-10-22 10:25:27 $
+*	$Revision: 1.11 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	--------
@@ -93,8 +93,6 @@ Click.prototype = {
 		Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
 		Component.addEventListener("click", this._onClickThunk, capture);
 		Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
-		//Needed for Internet Explorer without embeded Adobe Plugin
-		//addEventSimple(Component, "click", this._onClickThunk);
 	},
 	
 	/*********************************
@@ -141,17 +139,6 @@ Click.prototype = {
 		
 		if (Component != null)
 		{
-			//Command = '{' + 
-			//	'{' + HMI.KSClient.getMessageID() + '} ' +
-			//	'{010} ' +
-			//	'{' + Component.getAttribute('id') + '} ' + 
-			//	'{CLICK} ' +
-			//	'{' + evt.layerX + '} ' +
-			//	'{' + evt.layerY + '}' +
-			//	'}';
-			//HMI.KSClient.send2Request(null, 'POST', 'setvar', 
-			//	'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
-			//	'', '', null);
 			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
 				'{' + Component.getAttribute('id') + '} ' + 
@@ -159,7 +146,6 @@ Click.prototype = {
 				'{' + evt.layerX + '} ' +
 				'{' + evt.layerY + '}';
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
-//			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		
 		delete Command;

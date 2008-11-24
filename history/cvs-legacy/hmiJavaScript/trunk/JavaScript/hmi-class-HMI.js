@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.50 $
-*	$Date: 2008-11-24 12:46:49 $
+*	$Revision: 1.51 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	--------
@@ -339,35 +339,12 @@ HMI.prototype = {
 		if (Insert == true){
 		//	import and append
 		//
-			//this.KSClient.send2Request(null, 'GET', 'getvar', 
-			//	'{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}',
-			//	'', ' -output $::TKS::OP_VALUE', 
-			//	this._cbGetAndAddComponent);
 			this.KSClient.getVar(null, '{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}', this._cbGetAndAddComponent);
 		} else {			
 			//	import and replace
 			//
-			//this.KSClient.send2Request(null, 'GET', 'getvar', 
-			//	'{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}',
-			//	'', ' -output $::TKS::OP_VALUE', 
-			//	this._cbGetAndReplaceComponent);
 			this.KSClient.getVar(null, '{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}', this._cbGetAndReplaceComponent);
 		}
-/*
-		if (Insert == true){
-		//	import and append
-		//
-			this.KSClient.sendRequest('getvar', 'GET',
-				'{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}' + ' ' + '-output $::TKS::OP_VALUE',
-				this._cbGetAndAddComponent);
-		} else {			
-			//	import and replace
-			//
-			this.KSClient.sendRequest('getvar', 'GET',
-				'{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}' + ' ' + '-output $::TKS::OP_VALUE',
-				this._cbGetAndReplaceComponent);
-		}
-*/
 		
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - End");
 		
@@ -736,7 +713,7 @@ HMI.prototype = {
 	
    /********************************************************************
 		logging
-			requires console of firebug or Opera
+			requires console (Firebug, Opera, Safari...)
    ********************************************************************/
 	
 	/*********************************

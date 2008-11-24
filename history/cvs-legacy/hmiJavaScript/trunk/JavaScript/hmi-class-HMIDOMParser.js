@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.10 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.11 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	--------
@@ -110,15 +110,14 @@ HMIDOMParser.prototype = {
 			delete Parser;
 			//GraphicElement has another DOM ownerDocument
 			StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
-		//building an XML Tree works a bit different in IE
+		//building an XML Tree works a bit different in Adobe SVG Viewer
 		}else if(HMI.EmbedAdobePlugin){
 			GraphicElement = HMI.svgWindow.parseXML(GraphicDescription,HMI.svgDocument);
 			HMI.PlaygroundEmbedNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
 			HMI.PlaygroundEmbedNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
-//			HMI.Playground.setAttribute('onmousedown', "evt.preventDefault()");
-//			HMI.Playground.setAttribute('onmouseup', "evt.preventDefault()");
 			StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
 			StyleElementNode = StyleElement.firstChild;
+		//building an XML Tree works a bit different in IE
 		}else{
 			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
 			var loadXMLresult;

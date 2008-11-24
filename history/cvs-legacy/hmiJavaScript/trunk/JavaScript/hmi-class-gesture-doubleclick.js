@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.8 $
-*	$Date: 2008-10-24 14:08:16 $
+*	$Revision: 1.9 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	--------
@@ -135,17 +135,6 @@ DoubleClick.prototype = {
 		
 		if (Component != null)
 		{
-			//Command = '{' + 
-			//	'{' + HMI.KSClient.getMessageID() + '} ' +
-			//	'{010} ' +
-			//	'{' + Component.getAttribute('id') + '} ' + 
-			//	'{DOUBLECLICK} ' +
-			//	'{' + evt.layerX + '} ' +
-			//	'{' + evt.layerY + '}' +
-			//	'}';
-			//HMI.KSClient.send2Request(null, 'POST', 'setvar', 
-			//	'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
-			//	'', '', null);
 			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
 				'{' + Component.getAttribute('id') + '} ' + 
@@ -153,7 +142,6 @@ DoubleClick.prototype = {
 				'{' + evt.layerX + '} ' +
 				'{' + evt.layerY + '}';
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
-//			HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}');
 		};
 		
 		delete Command;

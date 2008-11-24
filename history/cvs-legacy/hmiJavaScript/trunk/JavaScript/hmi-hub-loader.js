@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2008
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.8 $
-*	$Date: 2008-10-22 09:59:52 $
+*	$Revision: 1.9 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	01-March-2005			HA

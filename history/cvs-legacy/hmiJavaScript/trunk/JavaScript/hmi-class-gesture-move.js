@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.12 $
-*	$Date: 2008-10-22 09:22:12 $
+*	$Revision: 1.13 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	--------
@@ -382,17 +382,6 @@ Dragger.prototype = {
 			{
 				//	MOVE / DRAG'N'DROP
 				//
-				//Command = '{' +
-				//	'{' + HMI.KSClient.getMessageID() + '} ' +
-				//	'{010} ' +
-				//	'{' + this._node.id + '} ' +
-				//	'{MOVE} ' +
-				//	'{' + this._ground._node.id +  '} ' +
-				//	'{' + this._node.x.baseVal.value + '} ' +
-				//	'{' + this._node.y.baseVal.value + '}' + '}';
-				//HMI.KSClient.send2Request(null, 'POST', 'setvar', 
-				//	'{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}',
-				//	'', '', null);
 				Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 					'{010} ' +
 					'{' + this._node.id + '} ' +
@@ -401,7 +390,6 @@ Dragger.prototype = {
 					'{' + this._node.x.baseVal.value + '} ' +
 					'{' + this._node.y.baseVal.value + '}';
 				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
-//				HMI.KSClient.sendRequest('setvar', 'POST', '{' + '/TechUnits/HMIManager' + '.Command ' + Command + '}', null);
 			};
 		} else {
 			//	CLICK

@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.22 $
-*	$Date: 2008-11-24 12:46:49 $
+*	$Revision: 1.23 $
+*	$Date: 2008-11-24 16:28:55 $
 *
 *	History:
 *	--------
@@ -139,6 +139,7 @@ if (!document.importNode) {
 /*********************************
 	Crossbrowser Eventhandling
 	http://www.quirksmode.org/js/eventSimple.html
+	used for the Select Menus. Adobe SVG Viewer uses addEventListener, so the gestures did not need a change
 *********************************/
 function addEventSimple(obj,evt,fn) {
 	if (obj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG || obj.addEventListener)
