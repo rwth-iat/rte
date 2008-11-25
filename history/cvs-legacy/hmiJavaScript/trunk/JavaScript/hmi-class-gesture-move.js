@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.13 $
-*	$Date: 2008-11-24 16:28:55 $
+*	$Revision: 1.14 $
+*	$Date: 2008-11-25 17:27:09 $
 *
 *	History:
 *	--------
@@ -465,8 +465,19 @@ Dragger.prototype = {
 			var node = this._node.parentNode.removeChild(this._node);
 			ground._node.insertBefore(node, ground._node.firstChild);
 			
-			var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
-			var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+			if (evt.layerX != undefined){
+				//Firefox, Webkit
+				var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
+				var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+			}else if (evt.offsetX != undefined){
+				//Opera
+				var SVGx = evt.offsetX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
+				var SVGy = evt.offsetY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+			}else{
+				//IE Adobe SVG Viewer
+				var SVGx = 0;
+				var SVGy = 0;
+			}
 			node.setAttribute("x", SVGx);
 			node.setAttribute("y", SVGy);
 			delete SVGx;
