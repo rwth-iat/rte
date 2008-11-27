@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.11 $
-*	$Date: 2008-11-24 16:28:55 $
+*	$Revision: 1.12 $
+*	$Date: 2008-11-27 15:12:40 $
 *
 *	History:
 *	--------
@@ -149,3 +149,9 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
+var filedate = "$Date: 2008-11-27 15:12:40 $";
+if ("undefined" == typeof HMIdate){
+	HMIdate = filedate.substring(7, filedate.length-2);
+}else if (HMIdate < filedate){
+	HMIdate = filedate.substring(7, filedate.length-2);
+}

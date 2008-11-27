@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.37 $
-*	$Date: 2008-11-24 16:28:55 $
+*	$Revision: 1.38 $
+*	$Date: 2008-11-27 15:12:40 $
 *
 *	History:
 *	--------
@@ -642,3 +642,9 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
+var filedate = "$Date: 2008-11-27 15:12:40 $";
+if ("undefined" == typeof HMIdate){
+	HMIdate = filedate.substring(7, filedate.length-2);
+}else if (HMIdate < filedate){
+	HMIdate = filedate.substring(7, filedate.length-2);
+}

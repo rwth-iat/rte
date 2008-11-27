@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.51 $
-*	$Date: 2008-11-24 16:28:55 $
+*	$Revision: 1.52 $
+*	$Date: 2008-11-27 15:12:40 $
 *
 *	History:
 *	--------
@@ -112,6 +112,19 @@ HMI.prototype = {
 		}
 		document.getElementById("idShowServers").disabled = false;
 		document.getElementById("idShowServers").focus();
+		HMI.HMI_Constants.HMIdate = HMIdate;
+		delete HMIdate;
+		
+		var dateTextNode = document.createTextNode("Version: 2.0");
+		var titlenode = document.createAttribute("title");
+		titlenode.nodeValue = "Datum: "+HMI.HMI_Constants.HMIdate;
+		
+		if (document.getElementById("idDateOutput")){
+			document.getElementById("idDateOutput").appendChild(dateTextNode);
+			document.getElementById("idDateOutput").parentNode.setAttributeNode(titlenode);
+		}
+		delete dateTextNode;
+		delete titlenode;
 		
 		if (window.location.search.length != 0){
 			var HMI_Parameter_Liste = new Array();
@@ -795,3 +808,9 @@ HMI.prototype = {
 
 	}
 };
+var filedate = "$Date: 2008-11-27 15:12:40 $";
+if ("undefined" == typeof HMIdate){
+	HMIdate = filedate.substring(7, filedate.length-2);
+}else if (HMIdate < filedate){
+	HMIdate = filedate.substring(7, filedate.length-2);
+}
