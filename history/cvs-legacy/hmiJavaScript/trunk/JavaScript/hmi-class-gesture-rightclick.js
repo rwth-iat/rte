@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.11 $
-*	$Date: 2008-11-24 16:28:55 $
+*	$Revision: 1.12 $
+*	$Date: 2008-11-27 13:34:10 $
 *
 *	History:
 *	--------
@@ -107,12 +107,25 @@ RightClick.prototype = {
 		
 		if (Component != null)
 		{
+			if (evt.layerX != undefined){
+				//Firefox, Webkit
+				var xpos = evt.layerX;
+				var ypos = evt.layerY;
+			}else if (evt.offsetX != undefined){
+				//Opera
+				var xpos = evt.offsetX;
+				var ypos = evt.offsetY;
+			}else{
+				//IE Adobe SVG Viewer
+				var xpos = evt.clientX;
+				var ypos = evt.clientY;
+			}
 			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
 				'{' + Component.getAttribute('id') + '} ' + 
 				'{RIGHTCLICK} ' +
-				'{' + evt.layerX + '} ' +
-				'{' + evt.layerY + '}';
+				'{' + xpos + '} ' +
+				'{' + ypos + '}';
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
 		};
 		
