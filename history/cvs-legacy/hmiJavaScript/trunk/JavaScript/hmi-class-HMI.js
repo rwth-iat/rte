@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.52 $
-*	$Date: 2008-11-27 15:12:40 $
+*	$Revision: 1.53 $
+*	$Date: 2008-11-27 16:16:22 $
 *
 *	History:
 *	--------
@@ -117,7 +117,7 @@ HMI.prototype = {
 		
 		var dateTextNode = document.createTextNode("Version: 2.0");
 		var titlenode = document.createAttribute("title");
-		titlenode.nodeValue = "Datum: "+HMI.HMI_Constants.HMIdate;
+		titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate;
 		
 		if (document.getElementById("idDateOutput")){
 			document.getElementById("idDateOutput").appendChild(dateTextNode);
@@ -675,14 +675,20 @@ HMI.prototype = {
 			var LayerX = Element.x;
 			var LayerY = Element.y;
 		}else{   //ie adobe embed
-			var LayerX = Element.getAttribute("x");
-			var LayerY = Element.getAttribute("y");
+			var LayerX = parseInt(Element.getAttribute("x"));
+			var LayerY = parseInt(Element.getAttribute("y"));
 		}
 		
-		if ( Element.ownerSVGElement != null && Element.ownerSVGElement != document){
-			LayerX += parseInt(Element.ownerSVGElement.getAttribute("layerX"));
-			LayerY += parseInt(Element.ownerSVGElement.getAttribute("layerY"));
-		}else if (Element.parentNode != null && Element.parentNode.attributes != null){
+		//Firefox, Safari and Opera
+		if (Element.ownerSVGElement != undefined){
+			if ( Element.ownerSVGElement != null && Element.ownerSVGElement != document){
+				LayerX += parseInt(Element.ownerSVGElement.getAttribute("layerX"));
+				LayerY += parseInt(Element.ownerSVGElement.getAttribute("layerY"));
+			}else if (Element.parentNode != null && Element.parentNode.attributes != null){
+				LayerX += parseInt(Element.parentNode.getAttribute("layerX"));
+				LayerY += parseInt(Element.parentNode.getAttribute("layerY"));
+			}
+		}else if(HMI.EmbedAdobePlugin && Element.parentNode != null && Element.parentNode.attributes != null && Element.parentNode.attributes.length != 0){
 			LayerX += parseInt(Element.parentNode.getAttribute("layerX"));
 			LayerY += parseInt(Element.parentNode.getAttribute("layerY"));
 		}
@@ -808,7 +814,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2008-11-27 15:12:40 $";
+var filedate = "$Date: 2008-11-27 16:16:22 $";
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate.substring(7, filedate.length-2);
 }else if (HMIdate < filedate){

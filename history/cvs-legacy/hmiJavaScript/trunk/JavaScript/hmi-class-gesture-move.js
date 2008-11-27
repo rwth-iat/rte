@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.15 $
-*	$Date: 2008-11-27 15:12:40 $
+*	$Revision: 1.16 $
+*	$Date: 2008-11-27 16:16:22 $
 *
 *	History:
 *	--------
@@ -209,7 +209,6 @@ Dragger.prototype = {
 		registerOnMouseMove
 	*********************************/
 	registerOnMouseMove: function(element, capture, listener) {
-//FIXME mousemove is never called in IE...
 		this.onMouseMoveThunk = function (evt) { listener.onMouseMove(evt); };
 		element.addEventListener("mousemove", this.onMouseMoveThunk, capture);
 	},
@@ -270,12 +269,10 @@ Dragger.prototype = {
 		if (evt.button == 0)
 		{
 			var SVGComponent = evt.target;
-//			while (	!(SVGComponent instanceof SVGSVGElement)
 			while (	SVGComponent.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG
 					&&	SVGComponent != null
 					&&	SVGComponent != HMI.svgDocument.documentElement
 					&&	/\bhmi-component-gesture-move\b/.exec(SVGComponent.getAttribute('class')) == null)
-//					&&	/\bhmi-component-gesture-move\b/.exec(SVGComponent.className.animVal) == null)
 			{
 				if (SVGComponent.ownerSVGElement != undefined){
 					SVGComponent = SVGComponent.ownerSVGElement;
@@ -284,16 +281,19 @@ Dragger.prototype = {
 				}
 			}
 			//	Save innerCursor-Position inside actual SVGComponent
-			//FIXME evt.layerX nicht da, screenX ist was anderes
-			//MSIE	MSIE	offsetX / offsetY  nicht nutzbar, da adobe js
-			if ("number" == typeof evt.layerX){
-				//Firefox and Safari/Webkit
+			if (evt.layerX != undefined){
+				//Firefox, Webkit
 				this._innerCursorX = (evt.layerX - SVGComponent.getAttribute("layerX"));
 				this._innerCursorY = (evt.layerY - SVGComponent.getAttribute("layerY"));
-			}else{
+			}else if (evt.x != undefined){
 				//Opera
-				this._innerCursorX = (evt.clientX - evt.offsetX);
-				this._innerCursorY = (evt.clientX - evt.offsetX);
+				this._innerCursorX = (evt.x - SVGComponent.getAttribute("layerX"));
+				this._innerCursorY = (evt.y - SVGComponent.getAttribute("layerY"));
+			}else{
+				//TODO x != clientX
+				//IE Adobe SVG Viewer
+				this._innerCursorX = (evt.clientX - SVGComponent.getAttribute("layerX"));
+				this._innerCursorY = (evt.clientY - SVGComponent.getAttribute("layerY"));
 			}
 			if (HMI.RefreshTimeoutID != null)
 				clearTimeout(HMI.RefreshTimeoutID);
@@ -327,8 +327,8 @@ Dragger.prototype = {
 				this.registerOnMouseUp(HMI.svgDocument, true, this);
 			}else{
 				//adobe plugin
-				this.registerOnMouseMove(HMI.svgDocument.documentElement, true, this);
-				this.registerOnMouseUp(HMI.svgDocument.documentElement, true, this);
+				this.registerOnMouseMove(HMI.svgDocument.documentElement, false, this);
+				this.registerOnMouseUp(HMI.svgDocument.documentElement, false, this);
 			}
 			
 			try{
@@ -360,18 +360,19 @@ Dragger.prototype = {
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - Start");
 		
 		var Clone = HMI.svgDocument.getElementById(HMI.HMI_Constants.NODE_NAME_CLONE);
-//HMI.hmi_log_info("Dragger.prototype.stopDrag "+this._node+" Clone: "+Clone);
-/*		if(Clone == null){
-			HMI.hmi_log_info("clone zero: "+Clone);
-			debugger;
-		}
-*/
 		this._controller._currentDragger = null;
 		
 		this._node.setAttribute("pointer-events", "all");
 		
-		this.deregisterOnMouseUp(document, true, this);
-		this.deregisterOnMouseMove(document, true, this);
+		if (HMI.svgDocument.addEventListener != undefined){
+			//Firefox and co
+			this.deregisterOnMouseUp(document, true, this);
+			this.deregisterOnMouseMove(document, true, this);
+		}else{
+			//adobe plugin
+			this.deregisterOnMouseMove(HMI.svgDocument.documentElement, false, this);
+			this.deregisterOnMouseUp(HMI.svgDocument.documentElement, false, this);
+		}
 		
 		this.stopDragThunk();
 		
@@ -382,16 +383,25 @@ Dragger.prototype = {
 			{
 				//	MOVE / DRAG'N'DROP
 				//
+				//todo
+				if(!HMI.EmbedAdobePlugin){
+					var xvalue = this._node.x.baseVal.value;
+					var yvalue = this._node.y.baseVal.value;
+				}else{
+					var xvalue = evt.clientX;
+					var yvalue = evt.clientY;
+				}
 				Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 					'{010} ' +
 					'{' + this._node.id + '} ' +
 					'{MOVE} ' +
 					'{' + this._ground._node.id +  '} ' +
-					'{' + this._node.x.baseVal.value + '} ' +
-					'{' + this._node.y.baseVal.value + '}';
+					'{' + xvalue + '} ' +
+					'{' + yvalue + '}';
 				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
 			};
 		} else {
+			HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement => click");
 			//	CLICK
 			//
 			if (HMI.instanceOf(this._node, 'hmi-component-gesture-click') == true)
@@ -429,7 +439,7 @@ Dragger.prototype = {
 		switchGround
 	*********************************/
 	switchGround: function (evt, ground) {
-		HMI.hmi_log_trace("Dragger.prototype.switchGround - Start");
+		HMI.hmi_log_trace("Dragger.prototype.switchGround - Start, Evt: "+evt.type+", Ground: "+ground._node.id);
 		//	impossible to be own ground
 		//
 		if (this._node == ground._node)
@@ -469,10 +479,10 @@ Dragger.prototype = {
 				//Firefox, Webkit
 				var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
 				var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
-			}else if (evt.offsetX != undefined){
+			}else if (evt.x != undefined){
 				//Opera
-				var SVGx = evt.offsetX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
-				var SVGy = evt.offsetY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+				var SVGx = evt.x - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
+				var SVGy = evt.y - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
 			}else{
 				//IE Adobe SVG Viewer
 				var SVGx = 0;
@@ -523,11 +533,6 @@ Dragger.prototype = {
 		var x = parseInt(this._node.getAttribute("x"));
 		var y = parseInt(this._node.getAttribute("y"));
 		
-/*if (this._node.getAttribute("x") == null){
-		debugger;
-	}
-*/
-// this._node.x.animVal.value
 		x += dx;
 		y += dy;
 
@@ -567,7 +572,7 @@ Dragger.prototype = {
 		delete SVGy;
 	}
 };
-var filedate = "$Date: 2008-11-27 15:12:40 $";
+var filedate = "$Date: 2008-11-27 16:16:22 $";
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate.substring(7, filedate.length-2);
 }else if (HMIdate < filedate){
