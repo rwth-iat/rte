@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2008-11-27 16:16:22 $
+*	$Revision: 1.17 $
+*	$Date: 2008-11-27 16:25:46 $
 *
 *	History:
 *	--------
@@ -572,9 +572,10 @@ Dragger.prototype = {
 		delete SVGy;
 	}
 };
-var filedate = "$Date: 2008-11-27 16:16:22 $";
+var filedate = "$Date: 2008-11-27 16:25:46 $";
+filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
-	HMIdate = filedate.substring(7, filedate.length-2);
+	HMIdate = filedate;
 }else if (HMIdate < filedate){
-	HMIdate = filedate.substring(7, filedate.length-2);
+	HMIdate = filedate;
 }

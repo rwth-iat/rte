@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.10 $
-*	$Date: 2008-11-27 15:12:40 $
+*	$Revision: 1.11 $
+*	$Date: 2008-11-27 16:25:46 $
 *
 *	History:
 *	01-March-2005			HA
@@ -263,9 +263,10 @@ SCRIPT_HUB(
 		"./hmi-generic.js",
 	]
 );
-var filedate = "$Date: 2008-11-27 15:12:40 $";
+var filedate = "$Date: 2008-11-27 16:25:46 $";
+filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
-	HMIdate = filedate.substring(7, filedate.length-2);
+	HMIdate = filedate;
 }else if (HMIdate < filedate){
-	HMIdate = filedate.substring(7, filedate.length-2);
+	HMIdate = filedate;
 }
