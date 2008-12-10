@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.23 $
-*	$Date: 2008-11-27 15:12:40 $
+*	$Revision: 1.24 $
+*	$Date: 2008-12-10 14:05:26 $
 *
 *	History:
 *	21-June-2007			St
@@ -132,10 +132,11 @@
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
 					<td>
-<!--						<input type="button" value="Refresh Sheet Now"
+<!--
+						<input type="button" value="Refresh Sheet Now"
 							onclick="HMI.refreshSheet()"/>
 						<input type="button" value="Stop Autorefresh"
-							onclick="clearTimeout(HMI.RefreshTimeoutID)"/>
+							onclick="clearTimeout(HMI.RefreshTimeoutID);HMI.RefreshTimeoutID = null;"/>
 						<input type="button" value="Start Autorefresh"
 							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
 -->
@@ -150,7 +151,8 @@
 					</td>
 					<td colspan="2">
 						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible
-<!--						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+<!--
+						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
 -->
 					</td>
 				</tr>
