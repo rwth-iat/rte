@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.13 $
-*	$Date: 2008-12-10 14:01:40 $
+*	$Revision: 1.14 $
+*	$Date: 2008-12-10 14:44:32 $
 *
 *	History:
 *	--------
@@ -111,7 +111,9 @@ DoubleClick.prototype = {
 	*********************************/
 	_onMouseUpThunk: null,
 	onMouseUp: function (evt) {
-		HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+		if (HMI.RefreshTimeoutID == null){
+			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+		}
 	},
 	
 	/*********************************
@@ -159,7 +161,7 @@ DoubleClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2008-12-10 14:01:40 $";
+var filedate = "$Date: 2008-12-10 14:44:32 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

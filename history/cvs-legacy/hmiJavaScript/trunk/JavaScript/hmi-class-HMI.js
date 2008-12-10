@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.56 $
-*	$Date: 2008-12-10 14:02:37 $
+*	$Revision: 1.57 $
+*	$Date: 2008-12-10 14:44:32 $
 *
 *	History:
 *	--------
@@ -400,7 +400,9 @@ HMI.prototype = {
 				HMI.Playground.appendChild(Component);
 				
 				//	set TimeoutID
-				HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+				if (HMI.RefreshTimeoutID == null){
+					HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+				}
 			}
 			try{
 				/**
@@ -815,7 +817,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2008-12-10 14:02:37 $";
+var filedate = "$Date: 2008-12-10 14:44:32 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
