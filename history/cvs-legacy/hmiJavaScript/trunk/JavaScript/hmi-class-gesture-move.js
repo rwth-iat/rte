@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.17 $
-*	$Date: 2008-11-27 16:25:46 $
+*	$Revision: 1.18 $
+*	$Date: 2008-12-10 14:01:40 $
 *
 *	History:
 *	--------
@@ -295,8 +295,10 @@ Dragger.prototype = {
 				this._innerCursorX = (evt.clientX - SVGComponent.getAttribute("layerX"));
 				this._innerCursorY = (evt.clientY - SVGComponent.getAttribute("layerY"));
 			}
-			if (HMI.RefreshTimeoutID != null)
+			if (HMI.RefreshTimeoutID != null){
 				clearTimeout(HMI.RefreshTimeoutID);
+				HMI.RefreshTimeoutID = null;
+			}
 			
 			this._controller._currentDragger = this;
 	
@@ -414,10 +416,7 @@ Dragger.prototype = {
 		this._node.setAttribute('x', Clone.getAttribute('x'));
 		this._node.setAttribute('y', Clone.getAttribute('y'));
 		
-		if (HMI.RefreshTimeoutID != null)
-		{
-			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
-		};
+		HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
 		try{
 			/**
 			* Gecko does not garbage collect things correct in any cases.
@@ -572,7 +571,7 @@ Dragger.prototype = {
 		delete SVGy;
 	}
 };
-var filedate = "$Date: 2008-11-27 16:25:46 $";
+var filedate = "$Date: 2008-12-10 14:01:40 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
