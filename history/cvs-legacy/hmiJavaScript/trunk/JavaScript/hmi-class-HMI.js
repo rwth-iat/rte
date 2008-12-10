@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.54 $
-*	$Date: 2008-11-27 16:25:46 $
+*	$Revision: 1.55 $
+*	$Date: 2008-12-10 13:52:58 $
 *
 *	History:
 *	--------
@@ -115,7 +115,7 @@ HMI.prototype = {
 		HMI.HMI_Constants.HMIdate = HMIdate;
 		delete HMIdate;
 		
-		var dateTextNode = document.createTextNode("Version: 2.0");
+		var dateTextNode = document.createTextNode("Version: 2.0 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
 		var titlenode = document.createAttribute("title");
 		titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate;
 		
@@ -242,8 +242,9 @@ HMI.prototype = {
 	*********************************/
 	showSheet: function (Sheet) {
 		this.hmi_log_trace("HMI.prototype.showSheet - Start with Sheet: "+Sheet);
-			
+		
 		deleteChilds(this.Playground);
+		deleteChilds(document.getElementById("ErrorOutput"));
 		$("idBookmark").style.cssText = "display:none;";
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
@@ -814,7 +815,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2008-11-27 16:25:46 $";
+var filedate = "$Date: 2008-12-10 13:52:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
