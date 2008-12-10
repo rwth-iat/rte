@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.55 $
-*	$Date: 2008-12-10 13:52:58 $
+*	$Revision: 1.56 $
+*	$Date: 2008-12-10 14:02:37 $
 *
 *	History:
 *	--------
@@ -117,7 +117,7 @@ HMI.prototype = {
 		
 		var dateTextNode = document.createTextNode("Version: 2.0 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
 		var titlenode = document.createAttribute("title");
-		titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate;
+		titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate+" UTC";
 		
 		if (document.getElementById("idDateOutput")){
 			document.getElementById("idDateOutput").appendChild(dateTextNode);
@@ -815,7 +815,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2008-12-10 13:52:58 $";
+var filedate = "$Date: 2008-12-10 14:02:37 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
