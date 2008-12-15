@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="iso8859-1"?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
 <!--
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2008
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -47,9 +45,11 @@
 *	Editors:
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
 *	CVS:
-*	$Revision: 1.4 $
-*	$Date: 2008-07-29 08:21:41 $
+*	$Revision: 1.5 $
+*	$Date: 2008-12-15 10:12:03 $
 *
 *	History:
 *	21-June-2007			St
@@ -58,100 +58,19 @@
 *	03-July-2007			St
 *		-	added hmi-hub-loader.js
 *
+*	15-December-2008			Je
+*		-	redirect to modern hmi-gecko.xhtml
+*
 ***********************************************************************/
 -->
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg">
 	<head>
 		<title>HMI-Startcenter - hmi.xhtml</title>
-		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js"/>
-		<script type="text/javascript">
-			var showMenu = true;
-			
-			function Menue (){
-			  if (showMenu)
-			  {
-			  		//menue ausschalten
-			      document.getElementById("hmi_header").style.display = "none";
-			      showMenu = false;
-			      document.getElementById("pfeile").innerHTML = "&darr;";
-			      document.getElementById("knopftext").innerHTML = "HMI-Header einblenden";
-			  } else {
-			  		//menue einschalten
-			  	document.getElementById("hmi_header").style.display = "block";
-				showMenu = true;
-				document.getElementById("pfeile").innerHTML = "&uarr;";
-				document.getElementById("knopftext").innerHTML = "HMI-Header ausblenden";
-			  };
-			};
-		</script>
+		<meta http-equiv="refresh" content="0; URL=./" />
 	</head>
-	
-	<!-- 
-		/*********************************
-			Body
-		*********************************/
-	-->
-	<body oncontextmenu="return false" onunload="HMI.unload()">
-		<div style="padding: 10px; float: right;">
-			<span style="font-size:large;" id="pfeile">&uarr;</span> <a href="javascript:Menue()"><span id="knopftext">HMI-Header ausblenden</span></a>
-		</div>
-		<h1>
-			<table>
-				<colgroup>
-    				<col width="50%"/>
-    				<col width="50%"/>
-  				</colgroup>
-				<tr>
-					<td align="left">HMI - Startcenter</td>
-					<td align="center">
-						<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik"/>
-					</td>
-				</tr>
-				<tr>
-					<td/>
-					<td align="center" style="font-size: 8pt;">Copyright Lehrstuhl für Prozessleittechnik (Stefan Schmitz) 2007</td>
-				</tr>
-			</table>
-			<hr color="blue"/>
-		</h1>
-		
-		<div id="hmi_header">		
-			<table>
-				<colgroup>
-    				<col width="150px"/>
-    				<col width="200px"/>
-    				<col width="100px"/>
-  				</colgroup>
-				<tr>
-					<td>Host</td>
-					<td><input id="idHost" type="text" style="width: 200px;" value="localhost"/></td>
-					<td><strong id="ErrorOutput"> </strong></td>
-				</tr>
-				<tr>
-					<td>Refresh Time [ms]</td>
-					<td><input id="idRefreshTime" type="text" style="width: 200px;" value="1000"/></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Server</td>
-					<td><select id="idServers" name="Sheets" size="1" style="width:200px;"></select></td>
-					<td>
-						<input type="button" value="ShowServers"
-							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
-					</td>
-				</tr>
-				<tr>
-					<td>Sheets</td>
-					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;"></select></td>
-					<td></td>
-				</tr>
-			</table>
-				
-			<hr color="blue"/>
-		</div>
-		
-		<p id="idPlayground">
-		</p>
+	<body>
+		<h1>Die Adresse hat sich geändert</h1>
+		<p>Bitte besuchen Sie die neue Adresse:<a href="./">hmi-gecko.xhtml</a></p>
 	</body>
 </html>
