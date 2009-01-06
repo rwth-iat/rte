@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.58 $
-*	$Date: 2009-01-06 15:08:43 $
+*	$Revision: 1.59 $
+*	$Date: 2009-01-06 16:29:30 $
 *
 *	History:
 *	--------
@@ -371,6 +371,7 @@ HMI.prototype = {
 	_cbGetAndShowComponent: function (Client, req, replace) {
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Start");
 		
+		//only one entry in array if no styledescription is requested
 		var ComponentText = new Array(2);
 		var Component;
 		
@@ -817,7 +818,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-01-06 15:08:43 $";
+var filedate = "$Date: 2009-01-06 16:29:30 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

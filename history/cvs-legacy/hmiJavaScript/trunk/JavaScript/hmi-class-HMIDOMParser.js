@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.13 $
-*	$Date: 2008-11-27 16:25:46 $
+*	$Revision: 1.14 $
+*	$Date: 2009-01-06 16:29:30 $
 *
 *	History:
 *	--------
@@ -95,28 +95,31 @@ HMIDOMParser.prototype = {
 				HMI.hmi_log_onwebsite('ParseError on GraphicDescription');
 				return null;
 			};
-			
-			try {
-				StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
-			} catch (e) {
-				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription');
-				HMI.hmi_log_onwebsite('Could not parse StyleDescription');
-				return null;
-			};
-			if (StyleElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
-				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
-				HMI.hmi_log_onwebsite('ParseError on StyleDescription');
+			if (StyleDescription.length != 0){
+				try {
+					StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
+				} catch (e) {
+					HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription');
+					HMI.hmi_log_onwebsite('Could not parse StyleDescription');
+					return null;
+				};
+				if (StyleElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
+					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
+					HMI.hmi_log_onwebsite('ParseError on StyleDescription');
+				}
+				//GraphicElement has another DOM ownerDocument
+				StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 			}
 			delete Parser;
-			//GraphicElement has another DOM ownerDocument
-			StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 		//building an XML Tree works a bit different in Adobe SVG Viewer
 		}else if(HMI.EmbedAdobePlugin){
 			GraphicElement = HMI.svgWindow.parseXML(GraphicDescription,HMI.svgDocument);
 			HMI.PlaygroundEmbedNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
 			HMI.PlaygroundEmbedNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
-			StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
-			StyleElementNode = StyleElement.firstChild;
+			if (StyleDescription.length != 0){
+				StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
+				StyleElementNode = StyleElement.firstChild;
+			}
 		//building an XML Tree works a bit different in IE
 		}else{
 			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
@@ -127,20 +130,26 @@ HMIDOMParser.prototype = {
 				HMI.hmi_log_onwebsite('ParseError on GraphicDescription');
 				return null;
 			};
-			var StyleElement = new ActiveXObject("Microsoft.XMLDOM");
-			loadXMLresult = StyleElement.loadXML(StyleDescription);
-			if (loadXMLresult == false){
-				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
-				HMI.hmi_log_onwebsite('ParseError on StyleDescription');
-			};
+			if (StyleDescription.length != 0){
+				var StyleElement = new ActiveXObject("Microsoft.XMLDOM");
+				loadXMLresult = StyleElement.loadXML(StyleDescription);
+				if (loadXMLresult == false){
+					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
+					HMI.hmi_log_onwebsite('ParseError on StyleDescription');
+				};
+				//IE doesnot provide importNode and does not need it for the appendChild
+				StyleElementNode = StyleElement.firstChild;
+			}
 			delete loadXMLresult;
-			//IE doesnot provide importNode and does not need it for the appendChild
-			StyleElementNode = StyleElement.firstChild;
 		}
-		GraphicElement.firstChild.appendChild(StyleElementNode);
+		if (StyleDescription.length != 0){
+			GraphicElement.firstChild.appendChild(StyleElementNode);
+		}
 		
 		Return = GraphicElement.firstChild;
 		
+		delete StyleDescription;
+		delete GraphicDescription;
 		delete StyleElementNode;
 		delete GraphicElement;
 		delete StyleElement;
@@ -149,7 +158,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2008-11-27 16:25:46 $";
+var filedate = "$Date: 2009-01-06 16:29:30 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

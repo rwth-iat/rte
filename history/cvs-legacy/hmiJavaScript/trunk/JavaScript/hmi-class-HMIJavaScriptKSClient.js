@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.40 $
-*	$Date: 2009-01-06 15:08:43 $
+*	$Revision: 1.41 $
+*	$Date: 2009-01-06 16:29:30 $
 *
 *	History:
 *	--------
@@ -603,6 +603,7 @@ HMIJavaScriptKSClient.prototype = {
 	prepareComponentText: function(ComponentText) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.prepareComponentText - Start");
 		
+		//only one entry in array if no styledescription is requested
 		var Return = new Array(2);
 		
 		//	ComponentText should look like:
@@ -618,7 +619,13 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		} else {			
 			Return[0] = ComponentText.substring(ComponentText.indexOf('{{') + 2, ComponentText.indexOf('}}'));
-			Return[1] = ComponentText.substring(ComponentText.indexOf('}} {{') + 5, ComponentText.length - 2);
+			//StyleDescription requested?
+			if (ComponentText.indexOf('}} {{') != -1 ){
+				Return[1] = ComponentText.substring(ComponentText.indexOf('}} {{') + 5, ComponentText.length - 2);
+			}else{
+				//put variable to defined state
+				Return[1] = "";
+			}
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.prepareComponentText - End");
@@ -642,7 +649,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-01-06 15:08:43 $";
+var filedate = "$Date: 2009-01-06 16:29:30 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
