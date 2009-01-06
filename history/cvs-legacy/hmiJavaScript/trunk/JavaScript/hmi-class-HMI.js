@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.57 $
-*	$Date: 2008-12-10 14:44:32 $
+*	$Revision: 1.58 $
+*	$Date: 2009-01-06 15:08:43 $
 *
 *	History:
 *	--------
@@ -264,7 +264,7 @@ HMI.prototype = {
 		$("idSheets").blur();
 		$("idServers").blur();
 		$("idBookmark").style.cssText = "display:inline;";
-		$("idBookmark").setAttribute("href", "http://"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+this.KSClient.KSServer.replace(/localhost\//, "")+"&Sheet="+HMI.PossSheets.value);
+		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+this.KSClient.KSServer.replace(/localhost\//, "")+"&Sheet="+HMI.PossSheets.value);
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
@@ -817,7 +817,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2008-12-10 14:44:32 $";
+var filedate = "$Date: 2009-01-06 15:08:43 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

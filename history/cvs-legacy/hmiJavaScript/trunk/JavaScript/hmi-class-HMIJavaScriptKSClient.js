@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.39 $
-*	$Date: 2008-11-27 16:25:46 $
+*	$Revision: 1.40 $
+*	$Date: 2009-01-06 15:08:43 $
 *
 *	History:
 *	--------
@@ -536,7 +536,7 @@ HMIJavaScriptKSClient.prototype = {
 		_sendRequest
 	*********************************/
 	_sendRequest: function(Client, method, async, urlparameter, cbfnc) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+'http://'+ HMI.KSClient.TCLKSGateway + '?' + urlparameter);
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+window.location.protocol+'//'+ HMI.KSClient.TCLKSGateway + '?' + urlparameter);
 		
 		var req = new XMLHttpRequest();
 		var DatePreventsCaching = new Date();
@@ -547,7 +547,7 @@ HMIJavaScriptKSClient.prototype = {
 			//FireFox 3 sends in a POST a content-encoding header killing the TCL Webserver
 			//real POST is not nessessary, therefor GET is forced
 			req.open('GET',
-				'http://'
+				window.location.protocol+'//'
 				+ HMI.KSClient.TCLKSGateway
 				+ '?'
 				+ urlparameter
@@ -642,7 +642,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2008-11-27 16:25:46 $";
+var filedate = "$Date: 2009-01-06 15:08:43 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
