@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.59 $
-*	$Date: 2009-01-06 16:29:30 $
+*	$Revision: 1.60 $
+*	$Date: 2009-01-14 09:29:39 $
 *
 *	History:
 *	--------
@@ -150,10 +150,12 @@ HMI.prototype = {
 						HMI.PossServers.options[i].selected = true;
 					}
 				}
-				HMI.showSheets(HMI_Parameter_Liste.Server);
+				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && HMI.PossServers.selectedIndex != 0){
+					HMI.showSheets(HMI_Parameter_Liste.Server);
+				}
 			}
-			if (HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0){
-				if ($('idSheets').options[$('idSheets').selectedIndex].value != HMI_Parameter_Liste.Sheet){
+			if (HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet.length != 0 && HMI_Parameter_Liste.Sheet){
+				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && $('idSheets').options[$('idSheets').selectedIndex].value != HMI_Parameter_Liste.Sheet){
 					HMI.showSheet(HMI_Parameter_Liste.Sheet);
 				}
 			}
@@ -178,7 +180,13 @@ HMI.prototype = {
 		this.PossServers = PossServers;
 		this.PossSheets = PossSheets;
 		if (Playground.tagName.toLowerCase() == "embed"){
-			this.svgWindow = Playground.getWindow();
+			if (Playground.getWindow){
+				//Adobe
+				this.svgWindow = Playground.getWindow();
+			}else{
+				//Renesis
+				this.svgWindow = Playground.window;
+			}
 			this.svgDocument = Playground.getSVGDocument();
 			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
 			this.PlaygroundEmbedNode= Playground;
@@ -207,7 +215,9 @@ HMI.prototype = {
 		deleteChilds(document.getElementById("ErrorOutput"));
 		
 		this.KSClient.init(Host + '/MANAGER', KSGateway + KSGateway_Path);
-		this.KSClient.getServers();
+		if (document.getElementById("ErrorOutput").innerHTML.length == 0){
+			this.KSClient.getServers();
+		}
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
@@ -818,7 +828,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-01-06 16:29:30 $";
+var filedate = "$Date: 2009-01-14 09:29:39 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

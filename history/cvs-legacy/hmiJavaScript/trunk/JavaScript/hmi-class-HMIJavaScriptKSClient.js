@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.42 $
-*	$Date: 2009-01-08 12:40:30 $
+*	$Revision: 1.43 $
+*	$Date: 2009-01-14 09:29:39 $
 *
 *	History:
 *	--------
@@ -275,17 +275,18 @@ HMIJavaScriptKSClient.prototype = {
 	_cbInit: function(Client, req) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - Start");
 		
-		if (/\bTksS-\b/.exec(req.responseText)){
+		if (/\bTksS-\b/.exec(req.responseText) && req.responseText.length < 20){
 			Client.TCLKSHandle = req.responseText;
 		} else {
 			Client.KSServer = null;
-			HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no valid server response -', 'no server');
-			HMI.hmi_log_error('HMIJavaScriptKSClient._cbinit: Could not initialize TCLKSGateway.'
-				+ '\n'
+			if (HMI.PossServers.length == 0){
+				HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no valid server response -', 'no server');
+			}
+			HMI.hmi_log_error('HMIJavaScriptKSClient._cbinit: Could not initialize TCLKSGateway. '
 				+ 'Gateway responded:'
 				+ '\n\n'
 				+ req.responseText);
-			HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + req.responseText);
+			HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded (first 250 characters): ' + req.responseText.substr(0,250));
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - End");
@@ -403,8 +404,7 @@ HMIJavaScriptKSClient.prototype = {
 			} else {
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1t");
 				return true;
-			};
-						
+			}
 		} catch (e) {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End2");
 			return false;
@@ -605,17 +605,22 @@ HMIJavaScriptKSClient.prototype = {
 		var Return = new Array(2);
 		
 		//	ComponentText should look like:
-		//		{{GraphicDescription}} {{BehaviourDescription}}
+		//		{{GraphicDescription}} {{StyleDescription}}
 		//	TksS-XXXX indicates error
 		//
-		if (/\bTksS-\b/.exec(ComponentText))
-		{
+		if (/\bTksS-\b/.exec(ComponentText) && /KS_ERR/.exec(ComponentText)){
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
-			HMI.hmi_log_onwebsite('Server lost: ' + ComponentText)
+			HMI.hmi_log_onwebsite('Server lost. First 250 characters of reply: ' + ComponentText.substr(0,250))
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			return null;
-		} else {			
+		}else if ("{{" != ComponentText.substr(0,2)){
+			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
+			HMI.hmi_log_onwebsite('Server did not responded valid. First 250 characters: ' + ComponentText.substr(0,250))
+			clearTimeout(HMI.RefreshTimeoutID);
+			HMI.RefreshTimeoutID = null;
+			return null;
+		} else {
 			Return[0] = ComponentText.substring(ComponentText.indexOf('{{') + 2, ComponentText.indexOf('}}'));
 			//StyleDescription requested?
 			if (ComponentText.indexOf('}} {{') != -1 ){
@@ -647,7 +652,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-01-08 12:40:30 $";
+var filedate = "$Date: 2009-01-14 09:29:39 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
