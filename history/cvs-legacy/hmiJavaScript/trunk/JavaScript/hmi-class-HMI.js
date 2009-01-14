@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.60 $
-*	$Date: 2009-01-14 09:29:39 $
+*	$Revision: 1.61 $
+*	$Date: 2009-01-14 14:30:05 $
 *
 *	History:
 *	--------
@@ -180,13 +180,7 @@ HMI.prototype = {
 		this.PossServers = PossServers;
 		this.PossSheets = PossSheets;
 		if (Playground.tagName.toLowerCase() == "embed"){
-			if (Playground.getWindow){
-				//Adobe
-				this.svgWindow = Playground.getWindow();
-			}else{
-				//Renesis
-				this.svgWindow = Playground.window;
-			}
+			this.svgWindow = Playground.window;
 			this.svgDocument = Playground.getSVGDocument();
 			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
 			this.PlaygroundEmbedNode= Playground;
@@ -828,7 +822,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-01-14 09:29:39 $";
+var filedate = "$Date: 2009-01-14 14:30:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
