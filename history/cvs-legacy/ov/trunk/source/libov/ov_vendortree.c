@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.20 2007-04-25 13:59:03 martin Exp $
+*   $Id: ov_vendortree.c,v 1.21 2009-01-19 10:23:06 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -940,20 +940,26 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setserverpassword_ext(
 	const OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 ) {
-	if (pdb->serverpassword) {
+	if (ov_string_compare(pdb->serverpassword,NULL)) {
 		if (pticket->type == OV_TT_SIMPLE) {
-			if(!strcmp(pticket->ticketunion.simpleticket.id, pdb->serverpassword)) goto CONTINUE1;
+			if(!ov_string_compare(pticket->ticketunion.simpleticket.id, pdb->serverpassword)) goto CONTINUE1;
 		}
 		return OV_ERR_NOACCESS;
 	}
 CONTINUE1:
 	if (pvarcurrprops->value.vartype == OV_VT_STRING) {
-		if ((pdb->serverpassword)&&(pvarcurrprops->value.valueunion.val_string)) {
+		if (pdb->serverpassword) {
 			ov_database_free(pdb->serverpassword);
-			pdb->serverpassword = (OV_STRING)ov_database_malloc(strlen(pvarcurrprops->value.valueunion.val_string)+1);
-			strcpy(pdb->serverpassword, pvarcurrprops->value.valueunion.val_string);
-			return OV_ERR_OK;
+			pdb->serverpassword = NULL;
 		}
+		if (ov_string_compare(pvarcurrprops->value.valueunion.val_string, NULL)) {
+			pdb->serverpassword = (OV_STRING)ov_database_malloc(ov_string_getlength(pvarcurrprops->value.valueunion.val_string)+1);
+		    if (!pdb->serverpassword) {
+				return OV_ERR_DBOUTOFMEMORY;
+			}
+			strcpy(pdb->serverpassword, pvarcurrprops->value.valueunion.val_string);
+		}
+		return OV_ERR_OK;
 	}
 	return OV_ERR_BADTYPE;
 }
@@ -968,7 +974,9 @@ OV_DLLFNCEXPORT void ov_vendortree_setserverpassword(
 	}
 	if(password) {
 		pdb->serverpassword = (OV_STRING)ov_database_malloc(strlen(password)+1);
-		strcpy(pdb->serverpassword, password);
+		if(pdb->serverpassword) {
+		    strcpy(pdb->serverpassword, password);
+		}
 	}
 }
 
@@ -981,14 +989,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverpassword(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 ) {
-	if (pdb->serverpassword) {
+	pvarcurrprops->value.vartype = OV_VT_STRING;
+	if (ov_string_compare(pdb->serverpassword,NULL)) {
 		if (pticket->type == OV_TT_SIMPLE) {
-			if(!strcmp(pticket->ticketunion.simpleticket.id, pdb->serverpassword)) goto CONTINUE1;
+			if(!ov_string_compare(pticket->ticketunion.simpleticket.id, pdb->serverpassword)) goto CONTINUE1;
 		}
 		return OV_ERR_NOACCESS;
 	}
 CONTINUE1:
-	pvarcurrprops->value.vartype = OV_VT_STRING;
 	pvarcurrprops->value.valueunion.val_string = pdb->serverpassword;
 	return OV_ERR_OK;
 }
