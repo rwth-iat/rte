@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.43 $
-*	$Date: 2009-01-14 09:29:39 $
+*	$Revision: 1.44 $
+*	$Date: 2009-01-19 10:53:58 $
 *
 *	History:
 *	--------
@@ -349,7 +349,7 @@ HMIJavaScriptKSClient.prototype = {
 			};
 			if ("Explorer" == BrowserDetect.browser){
 				var OptimumWidth = OptionNameLength * 7.5 ;
-				if (OptimumWidth > parseInt(HMI.PossServers.style.width)){
+				if (OptimumWidth > parseInt(HMI.PossServers.style.width, 10)){
 					HMI.PossSheets.style.width = OptimumWidth + "px";
 					HMI.PossServers.style.width = OptimumWidth + "px";
 				}
@@ -488,7 +488,7 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			if ("Explorer" == BrowserDetect.browser){
 				var OptimumWidth = OptionNameLength * 7.5 ;
-				if (OptimumWidth > parseInt(HMI.PossSheets.style.width)){
+				if (OptimumWidth > parseInt(HMI.PossSheets.style.width, 10)){
 					HMI.PossSheets.style.width = OptimumWidth + "px";
 					HMI.PossServers.style.width = OptimumWidth + "px";
 				}
@@ -652,7 +652,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-01-14 09:29:39 $";
+var filedate = "$Date: 2009-01-19 10:53:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

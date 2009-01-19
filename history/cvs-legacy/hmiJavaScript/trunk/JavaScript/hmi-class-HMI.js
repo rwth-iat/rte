@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.61 $
-*	$Date: 2009-01-14 14:30:05 $
+*	$Revision: 1.62 $
+*	$Date: 2009-01-19 10:53:58 $
 *
 *	History:
 *	--------
@@ -683,22 +683,22 @@ HMI.prototype = {
 			var LayerX = Element.x;
 			var LayerY = Element.y;
 		}else{   //ie adobe embed
-			var LayerX = parseInt(Element.getAttribute("x"));
-			var LayerY = parseInt(Element.getAttribute("y"));
+			var LayerX = parseInt(Element.getAttribute("x"), 10);
+			var LayerY = parseInt(Element.getAttribute("y"), 10);
 		}
 		
 		//Firefox, Safari and Opera
 		if (Element.ownerSVGElement != undefined){
 			if ( Element.ownerSVGElement != null && Element.ownerSVGElement != document){
-				LayerX += parseInt(Element.ownerSVGElement.getAttribute("layerX"));
-				LayerY += parseInt(Element.ownerSVGElement.getAttribute("layerY"));
+				LayerX += parseInt(Element.ownerSVGElement.getAttribute("layerX"), 10);
+				LayerY += parseInt(Element.ownerSVGElement.getAttribute("layerY"), 10);
 			}else if (Element.parentNode != null && Element.parentNode.attributes != null){
-				LayerX += parseInt(Element.parentNode.getAttribute("layerX"));
-				LayerY += parseInt(Element.parentNode.getAttribute("layerY"));
+				LayerX += parseInt(Element.parentNode.getAttribute("layerX"), 10);
+				LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
 			}
 		}else if(HMI.EmbedAdobePlugin && Element.parentNode != null && Element.parentNode.attributes != null && Element.parentNode.attributes.length != 0){
-			LayerX += parseInt(Element.parentNode.getAttribute("layerX"));
-			LayerY += parseInt(Element.parentNode.getAttribute("layerY"));
+			LayerX += parseInt(Element.parentNode.getAttribute("layerX"), 10);
+			LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
 		}
 		
 		Element.setAttribute("layerX", LayerX);
@@ -822,7 +822,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-01-14 14:30:05 $";
+var filedate = "$Date: 2009-01-19 10:53:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

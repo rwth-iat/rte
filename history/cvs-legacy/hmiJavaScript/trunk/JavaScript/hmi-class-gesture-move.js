@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.19 $
-*	$Date: 2008-12-10 14:44:32 $
+*	$Revision: 1.20 $
+*	$Date: 2009-01-19 10:53:58 $
 *
 *	History:
 *	--------
@@ -232,8 +232,8 @@ Dragger.prototype = {
 		this._totalDY += dy;
 
 		this._moveRelative(dx, dy);
-		this._lastX = parseInt(evt.clientX);
-		this._lastY = parseInt(evt.clientY);
+		this._lastX = parseInt(evt.clientX, 10);
+		this._lastY = parseInt(evt.clientY, 10);
 		
 		delete dx;
 		delete dy;
@@ -302,8 +302,8 @@ Dragger.prototype = {
 			
 			this._controller._currentDragger = this;
 	
-			this._lastX = parseInt(evt.clientX);
-			this._lastY = parseInt(evt.clientY);
+			this._lastX = parseInt(evt.clientX, 10);
+			this._lastY = parseInt(evt.clientY, 10);
 	
 			this._totalDX = 0;
 			this._totalDY = 0;
@@ -487,11 +487,13 @@ Dragger.prototype = {
 			}else{
 				//IE Adobe SVG Viewer
 				//TODO
-				var SVGx = 0;
-				var SVGy = 0;
+				var SVGx = null;
+				var SVGy = null;
 			}
-			node.setAttribute("x", SVGx);
-			node.setAttribute("y", SVGy);
+			if (SVGx != null){
+				node.setAttribute("x", SVGx);
+				node.setAttribute("y", SVGy);
+			}
 			delete SVGx;
 			delete SVGy;
 			
@@ -513,8 +515,20 @@ Dragger.prototype = {
 				ground._node.insertBefore(node, ground._node.firstChild);
 			};
 			
-			var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
-			var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+			if (evt.layerX != undefined){
+				//Firefox, Webkit
+				var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
+				var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+			}else if (evt.x != undefined){
+				//Opera
+				var SVGx = evt.x - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
+				var SVGy = evt.y - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+			}else{
+				//TODO x != clientX
+				//IE Adobe SVG Viewer
+				var SVGx = evt.clientX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
+				var SVGy = evt.clientY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+			}
 			node.setAttribute("x", SVGx);
 			node.setAttribute("y", SVGy);
 			delete SVGx;
@@ -532,8 +546,8 @@ Dragger.prototype = {
 		_moveRelative
 	*********************************/
 	_moveRelative: function (dx, dy) {
-		var x = parseInt(this._node.getAttribute("x"));
-		var y = parseInt(this._node.getAttribute("y"));
+		var x = parseInt(this._node.getAttribute("x"), 10);
+		var y = parseInt(this._node.getAttribute("y"), 10);
 		
 		x += dx;
 		y += dy;
@@ -564,8 +578,20 @@ Dragger.prototype = {
 			
 			SVGElement = SVGElement.ownerSVGElement;
 		};
-		SVGx = evt.layerX - SVGx;
-		SVGy = evt.layerY - SVGy;
+		if (evt.layerX != undefined){
+			//Firefox, Webkit
+			SVGx = evt.layerX - SVGx;
+			SVGy = evt.layerY - SVGy;
+		}else if (evt.x != undefined){
+			//Opera
+			SVGx = evt.x - SVGx;
+			SVGy = evt.y - SVGy;
+		}else{
+			//TODO x != clientX
+			//IE Adobe SVG Viewer
+			SVGx = SVGx;
+			SVGy = SVGy;
+		}
 		node.setAttribute("x", SVGx);
 		node.setAttribute("y", SVGy);
 		
@@ -574,7 +600,7 @@ Dragger.prototype = {
 		delete SVGy;
 	}
 };
-var filedate = "$Date: 2008-12-10 14:44:32 $";
+var filedate = "$Date: 2009-01-19 10:53:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
