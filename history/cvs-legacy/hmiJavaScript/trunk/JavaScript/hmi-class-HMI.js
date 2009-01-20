@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.63 $
-*	$Date: 2009-01-20 14:59:40 $
+*	$Revision: 1.64 $
+*	$Date: 2009-01-20 15:23:38 $
 *
 *	History:
 *	--------
@@ -154,7 +154,7 @@ HMI.prototype = {
 					HMI.showSheets(HMI_Parameter_Liste.Server);
 				}
 			}
-			if (HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet.length != 0 && HMI_Parameter_Liste.Sheet){
+			if (HMI.PossServers && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0 && HMI_Parameter_Liste.Sheet){
 				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && $('idSheets').options[$('idSheets').selectedIndex].value != HMI_Parameter_Liste.Sheet){
 					HMI.showSheet(HMI_Parameter_Liste.Sheet);
 				}
@@ -822,7 +822,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-01-20 14:59:40 $";
+var filedate = "$Date: 2009-01-20 15:23:38 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

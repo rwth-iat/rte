@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.44 $
-*	$Date: 2009-01-19 10:53:58 $
+*	$Revision: 1.45 $
+*	$Date: 2009-01-20 15:23:38 $
 *
 *	History:
 *	--------
@@ -286,7 +286,11 @@ HMIJavaScriptKSClient.prototype = {
 				+ 'Gateway responded:'
 				+ '\n\n'
 				+ req.responseText);
-			HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded (first 250 characters): ' + req.responseText.substr(0,250));
+			if (req.responseText.length < 250){
+				HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + req.responseText);
+			}else{
+				HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded (first 250 characters): ' + req.responseText.substr(0,250));
+			}
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - End");
@@ -610,13 +614,21 @@ HMIJavaScriptKSClient.prototype = {
 		//
 		if (/\bTksS-\b/.exec(ComponentText) && /KS_ERR/.exec(ComponentText)){
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
-			HMI.hmi_log_onwebsite('Server lost. First 250 characters of reply: ' + ComponentText.substr(0,250))
+			if (ComponentText.length < 250){
+				HMI.hmi_log_onwebsite('Server lost. Gateway reply: ' + ComponentText)
+			}else{
+				HMI.hmi_log_onwebsite('Server lost. First 250 characters of reply: ' + ComponentText.substr(0,250))
+			}
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			return null;
 		}else if ("{{" != ComponentText.substr(0,2)){
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
-			HMI.hmi_log_onwebsite('Server did not responded valid. First 250 characters: ' + ComponentText.substr(0,250))
+			if (ComponentText.length < 250){
+				HMI.hmi_log_onwebsite('Server did not responded valid. Gateway reply: ' + ComponentText)
+			}else{
+				HMI.hmi_log_onwebsite('Server did not responded valid. First 250 characters: ' + ComponentText.substr(0,250))
+			}
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			return null;
@@ -652,7 +664,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-01-19 10:53:58 $";
+var filedate = "$Date: 2009-01-20 15:23:38 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
