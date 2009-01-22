@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.64 $
-*	$Date: 2009-01-20 15:23:38 $
+*	$Revision: 1.65 $
+*	$Date: 2009-01-22 16:12:58 $
 *
 *	History:
 *	--------
@@ -175,6 +175,10 @@ HMI.prototype = {
 		}else{
 			this.RefreshTime = RefreshTime;
 		}
+		if (Host.length == 0){
+			Host = "localhost";
+			$('idHost').value = Host;
+		}
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		this.PossServers = PossServers;
@@ -212,6 +216,8 @@ HMI.prototype = {
 		if (document.getElementById("ErrorOutput").innerHTML.length == 0){
 			this.KSClient.getServers();
 		}
+		$("idBookmark").style.cssText = "display:inline;";
+		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime);
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
@@ -822,7 +828,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-01-20 15:23:38 $";
+var filedate = "$Date: 2009-01-22 16:12:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
