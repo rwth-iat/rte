@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.45 $
-*	$Date: 2009-01-20 15:23:38 $
+*	$Revision: 1.46 $
+*	$Date: 2009-02-02 14:06:38 $
 *
 *	History:
 *	--------
@@ -577,6 +577,8 @@ HMIJavaScriptKSClient.prototype = {
 			} catch (e) {
 				HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent. Is the gateway started?');
 				HMI.hmi_log_onwebsite('Request could not be sent. Is the gateway started?');
+				clearTimeout(HMI.RefreshTimeoutID);
+				HMI.RefreshTimeoutID = null;
 				return false;
 			}
 		} catch (e) {
@@ -664,7 +666,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-01-20 15:23:38 $";
+var filedate = "$Date: 2009-02-02 14:06:38 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
