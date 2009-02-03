@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.65 $
-*	$Date: 2009-01-22 16:12:58 $
+*	$Revision: 1.66 $
+*	$Date: 2009-02-03 09:30:03 $
 *
 *	History:
 *	--------
@@ -155,7 +155,13 @@ HMI.prototype = {
 				}
 			}
 			if (HMI.PossServers && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0 && HMI_Parameter_Liste.Sheet){
-				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && $('idSheets').options[$('idSheets').selectedIndex].value != HMI_Parameter_Liste.Sheet){
+				//no error and more than one sheet. If there is only one Sheet, showSheets has allready shown Sheet
+				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value != HMI_Parameter_Liste.Sheet){
+					for (var i=0; i < HMI.PossSheets.options.length; i++){
+						if (HMI.PossSheets.options[i].value == HMI_Parameter_Liste.Sheet){
+							HMI.PossSheets.options[i].selected = true;
+						}
+					}
 					HMI.showSheet(HMI_Parameter_Liste.Sheet);
 				}
 			}
@@ -828,7 +834,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-01-22 16:12:58 $";
+var filedate = "$Date: 2009-02-03 09:30:03 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
