@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.67 $
-*	$Date: 2009-02-05 09:10:12 $
+*	$Revision: 1.68 $
+*	$Date: 2009-02-05 13:54:59 $
 *
 *	History:
 *	--------
@@ -103,6 +103,23 @@ HMI.prototype = {
 			window.loadFirebugConsole();
 		}
 		this.hmi_log_trace("HMI.prototype.init - Start");
+		
+		//IE sometimes uses a cached version, without server Header
+		var DatePreventsCaching = new Date();
+		var req = new XMLHttpRequest();
+		req.open("GET", window.location.pathname+'?preventCaching2='+DatePreventsCaching.getTime(), false);
+		req.send(null);
+		var RescponseServerString = req.getResponseHeader('server');
+		if (-1 != RescponseServerString.indexOf('Tcl-Webserver')){
+			HMI.HMI_Constants.ServerType = "tcl";
+			this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
+		}else if (-1 != RescponseServerString.indexOf('PHP')){
+			HMI.HMI_Constants.ServerType = "php";
+			this.hmi_log_trace("HMI.prototype.init - detected PHP Gateway");
+		}
+		delete req;
+		delete RescponseServerString;
+		delete DatePreventsCaching;
 		
 		//Window-Reload does not reset the checkbox, so we update the javascript variable
 		if (document.getElementById("checkbox_keepheader").checked == true) {
@@ -206,15 +223,22 @@ HMI.prototype = {
 		}
 		KSGateway = window.location.host;
 		
-		if (false){
+		if ("php" == HMI.HMI_Constants.ServerType){
 			//tks.php is always in the same subdir as the html files
 			KSGateway_Path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ "tks.php";
 			this.GatewayTypeTCL = false;
 			this.GatewayTypePHP = true;
-		}else{
+		}else if("tcl" == HMI.HMI_Constants.ServerType){
 			KSGateway_Path = "/tks";
 			this.GatewayTypeTCL = true;
 			this.GatewayTypePHP = false;
+		}else{
+			HMI.hmi_log_onwebsite('Could not detect type of KSGateway. Please configure in hmi-class-HMI.js. Fallback to PHP.');
+			alert('Could not detect type of KSGateway. Please configure in hmi-class-HMI.js. Fallback to PHP.');
+			//tks.php is always in the same subdir as the html files
+			KSGateway_Path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ "tks.php";
+			this.GatewayTypeTCL = false;
+			this.GatewayTypePHP = true;
 		}
 		
 		deleteChilds(this.PossServers);
@@ -849,7 +873,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-02-05 09:10:12 $";
+var filedate = "$Date: 2009-02-05 13:54:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
