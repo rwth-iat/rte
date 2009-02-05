@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.21 $
-*	$Date: 2009-02-05 09:10:12 $
+*	$Revision: 1.22 $
+*	$Date: 2009-02-05 10:08:00 $
 *
 *	History:
 *	--------
@@ -128,8 +128,6 @@ function Dragger (node, controller) {
 	//	Internal Variables
 	//
 	this._ground			= null;
-	this._innerCursorX	= null;
-	this._innerCursorY	= null;
 	this._lastX				= null;
 	this._lastY				= null;
 	this._totalDX			= null;
@@ -268,50 +266,23 @@ Dragger.prototype = {
 		//
 		if (evt.button == 0)
 		{
-			var SVGComponent = evt.target;
-			while (	SVGComponent.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG
-					&&	SVGComponent != null
-					&&	SVGComponent != HMI.svgDocument.documentElement
-					&&	/\bhmi-component-gesture-move\b/.exec(SVGComponent.getAttribute('class')) == null)
-			{
-				if (SVGComponent.ownerSVGElement != undefined){
-					SVGComponent = SVGComponent.ownerSVGElement;
-				}else if(SVGComponent.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-					SVGComponent = SVGComponent.parentNode;
-				}
-			}
-			//	Save innerCursor-Position inside actual SVGComponent
-			if (evt.layerX != undefined){
-				//Firefox, Webkit
-				this._innerCursorX = (evt.layerX - SVGComponent.getAttribute("layerX"));
-				this._innerCursorY = (evt.layerY - SVGComponent.getAttribute("layerY"));
-			}else if (evt.x != undefined){
-				//Opera
-				this._innerCursorX = (evt.x - SVGComponent.getAttribute("layerX"));
-				this._innerCursorY = (evt.y - SVGComponent.getAttribute("layerY"));
-			}else{
-				//TODO x != clientX
-				//IE Adobe SVG Viewer
-				this._innerCursorX = (evt.clientX - SVGComponent.getAttribute("layerX"));
-				this._innerCursorY = (evt.clientY - SVGComponent.getAttribute("layerY"));
-			}
 			if (HMI.RefreshTimeoutID != null){
 				clearTimeout(HMI.RefreshTimeoutID);
 				HMI.RefreshTimeoutID = null;
 			}
 			
 			this._controller._currentDragger = this;
-	
+			
 			this._lastX = parseInt(evt.clientX, 10);
 			this._lastY = parseInt(evt.clientY, 10);
-	
+			
 			this._totalDX = 0;
 			this._totalDY = 0;
 			
 			if (this._node != this._node.parentNode.firstChild)
 			{
 				this._node.parentNode.insertBefore(this._node, this._node.parentNode.firstChild);
-			};	
+			};
 			
 			var Node = this._node.cloneNode(true);
 			Node.setAttribute('id', HMI.HMI_Constants.NODE_NAME_CLONE);
@@ -320,7 +291,7 @@ Dragger.prototype = {
 			Node.setAttribute('stroke-opacity', '0.25');
 			Node.setAttribute('clonedID', this._node.getAttribute('id'));
 			this._node.parentNode.appendChild(Node);
-	
+			
 			this._node.setAttribute("pointer-events", "none");
 			
 			if (HMI.svgDocument.addEventListener != undefined){
@@ -343,11 +314,9 @@ Dragger.prototype = {
 				* because of undecent language and probably thoughts.
 				*/
 				Node._xxx = null; delete Node._xxx;
-				SVGComponent._xxx = null; delete SVGComponent._xxx;
 			} catch (e) {   //IE does not like this hack
 			}
 			delete Node;
-			delete SVGComponent;
 		};
 		
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - End");
@@ -409,7 +378,8 @@ Dragger.prototype = {
 			};
 		};
 		
-		//Renesis does not clean Display, so this could be called with a empty Clone
+		// Renesis 1.1.1.0 does not clean Display, so this could be called with a empty Clone
+		// http://tickets.examotion.com/public/view.php?id=83
 		if (Clone && Clone.parentNode){
 			Clone.parentNode.replaceChild(this._node, Clone);
 			this._node.setAttribute('x', Clone.getAttribute('x'));
@@ -481,22 +451,6 @@ Dragger.prototype = {
 			var node = this._node.parentNode.removeChild(this._node);
 			ground._node.insertBefore(node, ground._node.firstChild);
 			
-			/*
-			if (evt.layerX != undefined){
-				//Firefox, Webkit
-				var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
-				var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
-			}else if (evt.x != undefined){
-				//Opera
-				var SVGx = evt.x - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
-				var SVGy = evt.y - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
-			}else{
-				//IE Adobe SVG Viewer
-				//TODO
-				var SVGx = null;
-				var SVGy = null;
-			}
-			*/
 			if (SVGx != null){
 				node.setAttribute("x", SVGx);
 				node.setAttribute("y", SVGy);
@@ -528,22 +482,7 @@ Dragger.prototype = {
 				var node = this._ground._node.removeChild(this._node);
 				ground._node.insertBefore(node, ground._node.firstChild);
 			};
-/*
-			if (evt.layerX != undefined){
-				//Firefox, Webkit
-				var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
-				var SVGy = evt.layerY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
-			}else if (evt.x != undefined){
-				//Opera
-				var SVGx = evt.x - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
-				var SVGy = evt.y - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
-			}else{
-				//IE Adobe SVG Viewer
-				//TODO
-				var SVGx = null;
-				var SVGy = null;
-			}
-*/
+			
 			node.setAttribute("x", SVGx);
 			node.setAttribute("y", SVGy);
 			delete SVGx;
@@ -572,59 +511,9 @@ Dragger.prototype = {
 		
 		delete x;
 		delete y;
-	},
-	
-	/*********************************
-		_getLayerPosition unused
-	*********************************/
-	_getLayerPosition: function () {
-		if (node.ownerSVGElement != undefined){
-			SVGElement = node.ownerSVGElement;
-		}else if (node.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
-			SVGElement = node.parentNode;
-		}
-		var SVGx = 0;
-		var SVGy = 0;
-		while (	SVGElement != null
-				&&	SVGElement != document)
-		{
-			if (Element.x && Element.x.animVal){  //gecko
-				SVGx += SVGElement.x.animVal.value;
-				SVGy += SVGElement.y.animVal.value;
-			}else{   //ie adobe embed
-				SVGx += parseInt(Element.getAttribute("x"), 10);
-				SVGy += parseInt(Element.getAttribute("y"), 10);
-			}
-			
-			if (node.ownerSVGElement != undefined){
-				SVGElement = SVGElement.ownerSVGElement;
-			}else if (SVGElement.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
-				SVGElement = SVGElement.parentNode;
-			}
-		};
-		if (evt.layerX != undefined){
-			//Firefox, Webkit
-			SVGx = evt.layerX - SVGx;
-			SVGy = evt.layerY - SVGy;
-		}else if (evt.x != undefined){
-			//Opera
-			SVGx = evt.x - SVGx;
-			SVGy = evt.y - SVGy;
-		}else{
-			//TODO x != clientX
-			//IE Adobe SVG Viewer
-			SVGx = SVGx;
-			SVGy = SVGy;
-		}
-		node.setAttribute("x", SVGx);
-		node.setAttribute("y", SVGy);
-		
-		delete SVGElement;
-		delete SVGx;
-		delete SVGy;
 	}
 };
-var filedate = "$Date: 2009-02-05 09:10:12 $";
+var filedate = "$Date: 2009-02-05 10:08:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
