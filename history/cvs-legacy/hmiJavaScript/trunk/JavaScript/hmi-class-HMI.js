@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.66 $
-*	$Date: 2009-02-03 09:30:03 $
+*	$Revision: 1.67 $
+*	$Date: 2009-02-05 09:10:12 $
 *
 *	History:
 *	--------
@@ -195,6 +195,10 @@ HMI.prototype = {
 			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
 			this.PlaygroundEmbedNode= Playground;
 			this.EmbedAdobePlugin= true;
+			this.PluginVendor = HMI.svgWindow.getSVGViewerVersion();
+			if (-1 != this.PluginVendor.indexOf('Adobe')){
+				this.PluginVendor = 'Adobe';
+			}
 		}else{
 			this.Playground = Playground;
 			this.EmbedAdobePlugin= false;
@@ -324,7 +328,7 @@ HMI.prototype = {
 		getComponent
 	*********************************/
 	getComponent: function (evt, cssclass) {
-		this.hmi_log_trace("HMI.prototype.getComponent - Start");
+		this.hmi_log_trace("HMI.prototype.getComponent - Start - Target:"+evt.target.id);
 		
 		var Component = null;
 		
@@ -352,7 +356,7 @@ HMI.prototype = {
 		switchGround
 	*********************************/
 	switchGround: function (evt, ground) {
-		this.hmi_log_trace("HMI.prototype.switchGround - Start");
+		this.hmi_log_trace("HMI.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+evt.target.id+", Evt.nodeName: "+evt.target.nodeName+", Ground: "+ground._node.id);
 		
 		if (this._currentDragger != null)
 			this._currentDragger.switchGround(evt, ground);
@@ -410,6 +414,19 @@ HMI.prototype = {
 			}
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent: now initGestures");
 			HMI.initGestures(Component);
+			//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
+			if (HMI.AdobeMoveFixNeeded && HMI.PluginVendor == 'Adobe'){
+				var dummyRect = HMI.svgDocument.createElementNS('http://www.w3.org/2000/svg', 'rect');
+				dummyRect.setAttributeNS(null, 'x', '0');
+				dummyRect.setAttributeNS(null, 'y', '0');
+				//Dimension of EmbedNode set in DOMParser
+				dummyRect.setAttributeNS(null, 'width', HMI.PlaygroundEmbedNode.getAttribute('width'));
+				dummyRect.setAttributeNS(null, 'height', HMI.PlaygroundEmbedNode.getAttribute('height'));
+				dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
+				Component.insertBefore(dummyRect, Component.firstChild);
+				delete dummyRect;
+				HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
+			}
 			HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent: now Playground.append/replaceChild");
 			if(replace == true){
 				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
@@ -501,12 +518,10 @@ HMI.prototype = {
 		//
 		if (this.instanceOf(Element, "hmi-component-gesture-move"))
 		{
-			if (!HMI.EmbedAdobePlugin)
+			var dragger = new Dragger(Element, this);
+			if (HMI.EmbedAdobePlugin)
 			{
-				var dragger = new Dragger(Element, this);
-			}else{
-				//FIXME Adobe move gesture buggy
-				HMI.hmi_log_onwebsite('Move-Gesture disabled!');
+				HMI.AdobeMoveFixNeeded = true;
 			}
 		} else {			
 			//	RIGHTCLICK
@@ -834,7 +849,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-02-03 09:30:03 $";
+var filedate = "$Date: 2009-02-05 09:10:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

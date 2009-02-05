@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.20 $
-*	$Date: 2009-01-19 10:53:58 $
+*	$Revision: 1.21 $
+*	$Date: 2009-02-05 09:10:12 $
 *
 *	History:
 *	--------
@@ -385,14 +385,9 @@ Dragger.prototype = {
 			{
 				//	MOVE / DRAG'N'DROP
 				//
-				//todo
-				if(!HMI.EmbedAdobePlugin){
-					var xvalue = this._node.x.baseVal.value;
-					var yvalue = this._node.y.baseVal.value;
-				}else{
-					var xvalue = evt.clientX;
-					var yvalue = evt.clientY;
-				}
+				var xvalue = this._node.getAttribute("x");
+				var yvalue = this._node.getAttribute("y");
+			
 				Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 					'{010} ' +
 					'{' + this._node.id + '} ' +
@@ -401,6 +396,8 @@ Dragger.prototype = {
 					'{' + xvalue + '} ' +
 					'{' + yvalue + '}';
 				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
+				delete xvalue;
+				delete yvalue;
 			};
 		} else {
 			HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement => click");
@@ -412,9 +409,12 @@ Dragger.prototype = {
 			};
 		};
 		
-		Clone.parentNode.replaceChild(this._node, Clone);
-		this._node.setAttribute('x', Clone.getAttribute('x'));
-		this._node.setAttribute('y', Clone.getAttribute('y'));
+		//Renesis does not clean Display, so this could be called with a empty Clone
+		if (Clone && Clone.parentNode){
+			Clone.parentNode.replaceChild(this._node, Clone);
+			this._node.setAttribute('x', Clone.getAttribute('x'));
+			this._node.setAttribute('y', Clone.getAttribute('y'));
+		}
 		
 		if (HMI.RefreshTimeoutID == null){
 			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
@@ -440,11 +440,12 @@ Dragger.prototype = {
 		switchGround
 	*********************************/
 	switchGround: function (evt, ground) {
-		HMI.hmi_log_trace("Dragger.prototype.switchGround - Start, Evt: "+evt.type+", Ground: "+ground._node.id);
+		HMI.hmi_log_trace("Dragger.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+evt.target.id+", Evt.nodeName: "+evt.target.nodeName+", Ground: "+ground._node.id);
 		//	impossible to be own ground
 		//
 		if (this._node == ground._node)
 		{
+			HMI.hmi_log_trace("Dragger.prototype.switchGround - own ground: "+ground._node.id);
 			if (ground._node.ownerSVGElement != undefined){
 				ground._node = ground._node.ownerSVGElement;
 			}else if (ground._node.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
@@ -471,11 +472,16 @@ Dragger.prototype = {
 		//
 		if (this._ground == null)
 		{			
+			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground: "+ground._node.id);
 			this._ground = ground;
+			
+			SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._node.parentNode.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
+			SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._node.parentNode.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 			
 			var node = this._node.parentNode.removeChild(this._node);
 			ground._node.insertBefore(node, ground._node.firstChild);
 			
+			/*
 			if (evt.layerX != undefined){
 				//Firefox, Webkit
 				var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
@@ -490,6 +496,7 @@ Dragger.prototype = {
 				var SVGx = null;
 				var SVGy = null;
 			}
+			*/
 			if (SVGx != null){
 				node.setAttribute("x", SVGx);
 				node.setAttribute("y", SVGy);
@@ -504,17 +511,24 @@ Dragger.prototype = {
 		//
 		if (this._ground != ground)
 		{			
+			HMI.hmi_log_trace("Dragger.prototype.switchGround - new ground: "+ground._node.id);
 			if (this._ground._node.firstChild.localName == "g")
 			{
 				// firstChild == <g></g>
 				//
+				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
+				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
+				
 				var node = this._ground._node.firstChild.removeChild(this._node);
 				ground._node.firstChild.insertBefore(node, ground._node.firstChild.firstChild);
 			} else {
+				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
+				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
+				
 				var node = this._ground._node.removeChild(this._node);
 				ground._node.insertBefore(node, ground._node.firstChild);
 			};
-			
+/*
 			if (evt.layerX != undefined){
 				//Firefox, Webkit
 				var SVGx = evt.layerX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
@@ -524,11 +538,12 @@ Dragger.prototype = {
 				var SVGx = evt.x - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
 				var SVGy = evt.y - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
 			}else{
-				//TODO x != clientX
 				//IE Adobe SVG Viewer
-				var SVGx = evt.clientX - node.parentNode.getAttribute("layerX") + (-1)*this._innerCursorX;
-				var SVGy = evt.clientY - node.parentNode.getAttribute("layerY") + (-1)*this._innerCursorY;
+				//TODO
+				var SVGx = null;
+				var SVGy = null;
 			}
+*/
 			node.setAttribute("x", SVGx);
 			node.setAttribute("y", SVGy);
 			delete SVGx;
@@ -560,7 +575,7 @@ Dragger.prototype = {
 	},
 	
 	/*********************************
-		_getLayerPosition
+		_getLayerPosition unused
 	*********************************/
 	_getLayerPosition: function () {
 		if (node.ownerSVGElement != undefined){
@@ -573,10 +588,19 @@ Dragger.prototype = {
 		while (	SVGElement != null
 				&&	SVGElement != document)
 		{
-			SVGx += SVGElement.x.animVal.value;
-			SVGy += SVGElement.y.animVal.value;
+			if (Element.x && Element.x.animVal){  //gecko
+				SVGx += SVGElement.x.animVal.value;
+				SVGy += SVGElement.y.animVal.value;
+			}else{   //ie adobe embed
+				SVGx += parseInt(Element.getAttribute("x"), 10);
+				SVGy += parseInt(Element.getAttribute("y"), 10);
+			}
 			
-			SVGElement = SVGElement.ownerSVGElement;
+			if (node.ownerSVGElement != undefined){
+				SVGElement = SVGElement.ownerSVGElement;
+			}else if (SVGElement.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
+				SVGElement = SVGElement.parentNode;
+			}
 		};
 		if (evt.layerX != undefined){
 			//Firefox, Webkit
@@ -600,7 +624,7 @@ Dragger.prototype = {
 		delete SVGy;
 	}
 };
-var filedate = "$Date: 2009-01-19 10:53:58 $";
+var filedate = "$Date: 2009-02-05 09:10:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
