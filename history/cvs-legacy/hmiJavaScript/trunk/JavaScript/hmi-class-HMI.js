@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.68 $
-*	$Date: 2009-02-05 13:54:59 $
+*	$Revision: 1.69 $
+*	$Date: 2009-02-16 15:43:56 $
 *
 *	History:
 *	--------
@@ -220,6 +220,7 @@ HMI.prototype = {
 			this.Playground = Playground;
 			this.EmbedAdobePlugin= false;
 			this.svgDocument = document;
+			this.svgWindow = window;
 		}
 		KSGateway = window.location.host;
 		
@@ -873,7 +874,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-02-05 13:54:59 $";
+var filedate = "$Date: 2009-02-16 15:43:56 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
