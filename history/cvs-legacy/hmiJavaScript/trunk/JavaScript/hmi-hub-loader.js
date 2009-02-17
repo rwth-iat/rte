@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.11 $
-*	$Date: 2008-11-27 16:25:46 $
+*	$Revision: 1.12 $
+*	$Date: 2009-02-17 17:05:58 $
 *
 *	History:
 *	01-March-2005			HA
@@ -181,6 +181,8 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 				var node = document.createElementNS(
 					scriptAnchor.namespaceURI, "script");
 				node.setAttributeNS(null, "src", source);
+				node.setAttributeNS(null, "charset", "ISO-8859-1");
+				node.setAttributeNS(null, "type", "text/javascript");
 				return node;
 			};
 			break;
@@ -206,6 +208,8 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 					{
 						var node = document.createElement("script");
 						node.setAttribute("src", source);
+						node.setAttribute("charset", "ISO-8859-1");
+						node.setAttribute("type", "text/javascript");
 						return node;
 					};
 					break;
@@ -263,7 +267,7 @@ SCRIPT_HUB(
 		"./hmi-generic.js",
 	]
 );
-var filedate = "$Date: 2008-11-27 16:25:46 $";
+var filedate = "$Date: 2009-02-17 17:05:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
