@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.14 $
-*	$Date: 2009-01-06 16:29:30 $
+*	$Revision: 1.15 $
+*	$Date: 2009-02-18 12:35:12 $
 *
 *	History:
 *	--------
@@ -80,8 +80,8 @@ HMIDOMParser.prototype = {
 		var StyleElement;
 		var StyleElementNode;
 		var Return;
-		//Mozilla has the DOMParser Object
 		if (typeof DOMParser != "undefined"){
+			//Mozilla has the DOMParser Object
 			var Parser = new DOMParser();
 			try {
 				GraphicElement = Parser.parseFromString(GraphicDescription, "text/xml");
@@ -111,17 +111,26 @@ HMIDOMParser.prototype = {
 				StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 			}
 			delete Parser;
-		//building an XML Tree works a bit different in Adobe SVG Viewer
-		}else if(HMI.EmbedAdobePlugin){
+		}else if(HMI.svgWindow.parseXML && HMI.PlaygroundEmbedNode){
+			//building an XML Tree works a bit different in Adobe SVG Viewer
 			GraphicElement = HMI.svgWindow.parseXML(GraphicDescription,HMI.svgDocument);
-			HMI.PlaygroundEmbedNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
-			HMI.PlaygroundEmbedNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
-			if (StyleDescription.length != 0){
-				StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
-				StyleElementNode = StyleElement.firstChild;
+			if(GraphicElement !== null){
+				//Renesis' reaction to an iso-8859-1
+				//http://tickets.examotion.com/public/view.php?id=32
+				HMI.PlaygroundEmbedNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
+				HMI.PlaygroundEmbedNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
+				if (StyleDescription.length != 0){
+					StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
+					StyleElementNode = StyleElement.firstChild;
+				}
+			}else{
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on GraphicDescription');
+				HMI.hmi_log_onwebsite('ParseError on GraphicDescription or umlaut problem');
+				return null;
 			}
-		//building an XML Tree works a bit different in IE
 		}else{
+			//building an XML Tree works a bit different in IE
+			//inline SVG with AdobePlugin, not capable of proper events! http://schepers.cc/inlinesvg.html
 			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
 			var loadXMLresult;
 			loadXMLresult = GraphicElement.loadXML(GraphicDescription);
@@ -158,7 +167,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2009-01-06 16:29:30 $";
+var filedate = "$Date: 2009-02-18 12:35:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
