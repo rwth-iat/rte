@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.70 $
-*	$Date: 2009-02-25 09:29:19 $
+*	$Revision: 1.71 $
+*	$Date: 2009-02-25 15:11:51 $
 *
 *	History:
 *	--------
@@ -801,16 +801,8 @@ HMI.prototype = {
 		
 		//LayerX and LayerY are HMI specific SVG Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
-		if (Element.x && Element.x.animVal){  //gecko
-			var LayerX = Element.x.animVal.value;
-			var LayerY = Element.y.animVal.value;
-		}else if (Element.x){  //ie adobe inline
-			var LayerX = Element.x;
-			var LayerY = Element.y;
-		}else{   //ie adobe embed
-			var LayerX = parseInt(Element.getAttribute("x"), 10);
-			var LayerY = parseInt(Element.getAttribute("y"), 10);
-		}
+		var LayerX = parseInt(Element.getAttribute("x"), 10);
+		var LayerY = parseInt(Element.getAttribute("y"), 10);
 		
 		//Firefox, Safari and Opera
 		if (Element.ownerSVGElement != undefined){
@@ -947,7 +939,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-02-25 09:29:19 $";
+var filedate = "$Date: 2009-02-25 15:11:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
