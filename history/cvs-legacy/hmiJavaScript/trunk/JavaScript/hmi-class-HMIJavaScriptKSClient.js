@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.47 $
-*	$Date: 2009-02-25 09:29:19 $
+*	$Revision: 1.48 $
+*	$Date: 2009-02-25 10:09:35 $
 *
 *	History:
 *	--------
@@ -404,6 +404,11 @@ HMIJavaScriptKSClient.prototype = {
 			//we need a new handle since we talk to another OV server
 			TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
 			
+			if (/KS_ERR/.exec(TCLKSHandle)){
+				//the server is not available anymore
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Endf");
+				return false;
+			}
 			//Try to get the Name of HMI Manager to test the existence
 			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null)
 			
@@ -694,7 +699,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-02-25 09:29:19 $";
+var filedate = "$Date: 2009-02-25 10:09:35 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
