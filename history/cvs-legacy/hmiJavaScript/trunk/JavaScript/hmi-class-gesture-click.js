@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2008-12-10 14:44:32 $
+*	$Revision: 1.17 $
+*	$Date: 2009-02-25 09:29:19 $
 *
 *	History:
 *	--------
@@ -59,6 +59,9 @@
 *		-	General Revision
 *	31-August-2008			NH
 *		-	Sheet refresh after click, event bubbling deactivated
+*
+*	25-February-2009			Je
+*		-	General Revision and full commented
 *
 ***********************************************************************/
 
@@ -101,6 +104,8 @@ Click.prototype = {
 	_onMouseDownThunk: null,
 	onMouseDown: function (evt) {
 		if (HMI.RefreshTimeoutID != null){
+			//deactivate the Refresh
+			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 		}
@@ -112,6 +117,7 @@ Click.prototype = {
 	_onMouseUpThunk: null,
 	onMouseUp: function (evt) {
 		if (HMI.RefreshTimeoutID == null){
+			//reactivate the Refresh
 			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
 		}
 	},
@@ -140,18 +146,22 @@ Click.prototype = {
 		
 		if (Component != null)
 		{
+			//detect the mouse position relative to the component
 			if (evt.layerX != undefined){
 				//Firefox, Webkit
 				var xpos = evt.layerX;
 				var ypos = evt.layerY;
+				//this is a mouse offset provided by the mouse event
+				//not related with the HMI specific SVG-Attribute LayerX!
 			}else if (evt.offsetX != undefined){
 				//Opera
 				var xpos = evt.offsetX;
 				var ypos = evt.offsetY;
 			}else{
 				//IE Adobe SVG Viewer
-				var xpos = evt.clientX;
-				var ypos = evt.clientY;
+				//FIXME auch in den anderen click gesten
+				var xpos = 1;
+				var ypos = 1;
 			}
 			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
@@ -165,7 +175,7 @@ Click.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2008-12-10 14:44:32 $";
+var filedate = "$Date: 2009-02-25 09:29:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

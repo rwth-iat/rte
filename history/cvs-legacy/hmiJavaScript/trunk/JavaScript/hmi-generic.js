@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.25 $
-*	$Date: 2008-11-27 16:25:46 $
+*	$Revision: 1.26 $
+*	$Date: 2009-02-25 09:29:19 $
 *
 *	History:
 *	--------
@@ -59,10 +59,15 @@
 *	26-March-2008			Je
 *		-	Header hidable
 *
+*	25-February-2009			Je
+*		-	General Revision and full commented
+*
 ************************************************************************/
 
 /*********************************
 	Global Variables
+	
+	HMI(async, debug, error, warning, info, trace) {
 *********************************/
 
 var HMI = new HMI(false, true, true, true, true, false);
@@ -102,6 +107,9 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 /*********************************
 	Feature - emulate document.importNode if not available native, based on
 	http://www.alistapart.com/articles/crossbrowserscripting
+	
+	used in the SVG inline code in IE
+	now we use SVG in a Embed-Tag which does not need a importNode
 *********************************/
 if (!document.importNode) {
 	document.importNode = function(node, allChildren) {
@@ -139,7 +147,8 @@ if (!document.importNode) {
 /*********************************
 	Crossbrowser Eventhandling
 	http://www.quirksmode.org/js/eventSimple.html
-	used for the Select Menus. Adobe SVG Viewer uses addEventListener, so the gestures did not need a change
+	used for the Select Menus
+	Adobe SVG Viewer supports addEventListener, so the gestures did not need a change
 *********************************/
 function addEventSimple(obj,evt,fn) {
 	if (obj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG || obj.addEventListener)
@@ -157,12 +166,12 @@ function removeEventSimple(obj,evt,fn) {
 /*********************************
 	Functions - hideHeader
 *********************************/
-//Initialize variable
+//Initialize global variable
 showHeader = true;
 
 function hideHeader (){
 	if (showHeader){
-		//menue ausschalten
+		//hide menu
 		showHeader = false;
 		document.getElementById("hmi_header").style.display = "none";
 		if (document.getElementById("arrowdown1") != null){
@@ -172,7 +181,7 @@ function hideHeader (){
 			document.getElementById("arrowup2").style.visibility="hidden";
 		}
 	} else {
-		//menue einschalten
+		//show menu
 		showHeader = true;
 		document.getElementById("hmi_header").style.display = "block";
 		if (document.getElementById("arrowdown1") != null){
@@ -183,6 +192,12 @@ function hideHeader (){
 		}
 	}
 }
+
+/*********************************
+	Functions - UpdateKeepHeader
+	
+	called with a onclick handler of the checkbox and in HMI.init
+*********************************/
 function UpdateKeepHeader(){
 	if (document.getElementById("checkbox_keepheader").checked == true) {
 		autoKeepHeader = true;
@@ -309,7 +324,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2008-11-27 16:25:46 $";
+var filedate = "$Date: 2009-02-25 09:29:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

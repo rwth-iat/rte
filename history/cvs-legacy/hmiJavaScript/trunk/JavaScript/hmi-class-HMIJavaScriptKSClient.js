@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.46 $
-*	$Date: 2009-02-02 14:06:38 $
+*	$Revision: 1.47 $
+*	$Date: 2009-02-25 09:29:19 $
 *
 *	History:
 *	--------
@@ -65,6 +65,9 @@
 *
 *	22-September-2008			Je
 *		-	HMI Requests changed to getEP, getVar, setVar, getHandle, delHandle
+*
+*	25-February-2009			Je
+*		-	General Revision and full commented
 *
 ***********************************************************************/
 
@@ -271,11 +274,14 @@ HMIJavaScriptKSClient.prototype = {
 	
 	/*********************************
 		_cbinit
+		
+		got a Handle of the KS-Gateway
 	*********************************/
 	_cbInit: function(Client, req) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - Start");
 		
-		if (/\bTksS-\b/.exec(req.responseText) && req.responseText.length < 20){
+		//The handle must have the right format aka start with "TksS-"
+		if (/^TksS-\b/.exec(req.responseText)){
 			Client.TCLKSHandle = req.responseText;
 		} else {
 			Client.KSServer = null;
@@ -303,6 +309,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - Start");
 		
 		if (this.TCLKSHandle != null){
+			//The Handle points to the Manager wich can provide us with a list of OV servers (detection of HMI Servers are made in the callback)
 			this.getEP(null, '/servers *', this._cbGetServers);
 		} else {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End - No TCLKSHandle");
@@ -317,15 +324,19 @@ HMIJavaScriptKSClient.prototype = {
 	_cbGetServers: function(Client, req) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - Start");
 		
+		//responseText should be something like: {fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi5} {fb_hmi4}
 		var Response = req.responseText;
 		var Server = new Array();
 		
 		var i = 0;
 		
+		//build an Array of potential servers
 		while (	Response != null
 				&&	Response.indexOf('}') != -1)
 		{
+			//cut the servername out of the surrounding { }
 			Server[i] = Response.substring(1, Response.indexOf('}'));
+			//preserve the rest for another servertest
 			Response = Response.substring(Response.indexOf('}') + 2, Response.length);
 			i = i + 1;
 			
@@ -333,24 +344,26 @@ HMIJavaScriptKSClient.prototype = {
 				Response = null;
 		};
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of potential servers: "+Server.length);
-		var ValidServers = 0;
-		var IdLastValidServer;
+		
 		if (Server.length > 0){
-			HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- select server -', 'no server');
-			var OptionNameLength = 0;
+			//put first select option with a description
+			HMI.PossServers.options[0] = new Option('- select server -', 'no server');
 			
+			var OptionNameLength = 0;
 			for (i = 0; i < Server.length; i++)
 			{
+				//test all potential servers if they are HMI Servers
 				if (HMIJavaScriptKSClient.prototype.pingServer(Server[i]) == true)
 				{
+					//put server into the dropdown box
 					HMI.PossServers.options[HMI.PossServers.options.length] = new Option(Server[i], Server[i]);
-					ValidServers ++;
-					IdLastValidServer = i;
+					//keep longest name for expanding the width in Internet Explorer
 					if (OptionNameLength < Server[i].length){
 						OptionNameLength = Server[i].length;
 					}
 				};
 			};
+			//IE does not show a long elementname in dropdown => make the dropdown wider
 			if ("Explorer" == BrowserDetect.browser){
 				var OptimumWidth = OptionNameLength * 7.5 ;
 				if (OptimumWidth > parseInt(HMI.PossServers.style.width, 10)){
@@ -358,25 +371,23 @@ HMIJavaScriptKSClient.prototype = {
 					HMI.PossServers.style.width = OptimumWidth + "px";
 				}
 			}
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+ValidServers);
-			if (ValidServers == 0){
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+(HMI.PossServers.length-1));
+			if (HMI.PossServers.length == 1){
 				HMI.PossServers.options[0].innerHTML = '- no server available -';
 				HMI.PossServers.options[0].value = 'no server';
 			}else{
 				//'this' is not PossServers here, but refers to the window and is completely useless in Internet Explorer
 				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
-				if (ValidServers == 1){
+				if (HMI.PossServers.length == 2){
 					//selecting the option does not trigger the EventListener
-					//it is allways the second <option>...
-					$("idServers").selectedIndex = 1;
-					//...but the right ServerID can vary.
-					HMI.showSheets(Server[IdLastValidServer]);
+					//it is allways the second/last <option>...
+					HMI.PossServers.selectedIndex = 1;
+					HMI.showSheets(HMI.PossServers.lastChild.value);
 				}
 			}
 		} else {
-			HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no MANAGER available-', 'no server');
+			HMI.PossServers.options[0] = new Option('- no MANAGER available-', 'no server');
 		};
-		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - End");
 	},
 	
@@ -390,19 +401,22 @@ HMIJavaScriptKSClient.prototype = {
 		var ManagerResponse = null;
 		
 		try {
+			//we need a new handle since we talk to another OV server
 			TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
 			
+			//Try to get the Name of HMI Manager to test the existence
 			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null)
 			
 			this.delHandle(TCLKSHandle);
 			
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - got "+ManagerResponse);
 			
-			// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 			if (ManagerResponse.length == 0){
+				// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f+Operabug");
 				return false;
-			}else if (/\bTksS-\b/.exec(ManagerResponse)){
+			}else if (/KS_ERR/.exec(ManagerResponse)){
+				//error could be: TksS-0174::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f");
 				return false;
 			} else {
@@ -422,6 +436,8 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	getSheets: function() {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
+		
+		//the path of the HMI Manager could be different in every OV Server
 		this.HMIMANAGER_PATH = this.getVar(null, "/Libraries/hmi/Manager.instance", null).replace(/{/g, "").replace(/}/g, "");
 		
 		var Command = null;
@@ -461,10 +477,13 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var i = 0;
 		
+		//cut the sheetlist out of brackets
 		if (Response.indexOf('{{') == -1)
 		{
+			//could be {/TechUnits/Sheet1}
 			Response = Response.substring(Response.indexOf('{') + 1, Response.indexOf('}'));
 		} else {
+			//could be {{/TechUnits/Sheet1 /TechUnits/Sheet2 /TechUnits/Sheet3}}
 			Response = Response.substring(Response.indexOf('{{') + 2, Response.indexOf('}}'));
 		};
 		
@@ -472,9 +491,11 @@ HMIJavaScriptKSClient.prototype = {
 		{
 			if (Response.indexOf(' ') == -1)
 			{
+				//only one Sheet
 				Sheet[i] = Response;
 				Response = null;
 			} else {
+				//multiple Sheets
 				Sheet[i] = Response.substring(0, Response.indexOf(' '));
 				Response = Response.substring(Response.indexOf(' ') + 1, Response.length);
 			};
@@ -490,6 +511,7 @@ HMIJavaScriptKSClient.prototype = {
 					OptionNameLength = Sheet[i].length;
 				}
 			}
+			//IE does not show a long elementname in dropdown => make the dropdown wider
 			if ("Explorer" == BrowserDetect.browser){
 				var OptimumWidth = OptionNameLength * 7.5 ;
 				if (OptimumWidth > parseInt(HMI.PossSheets.style.width, 10)){
@@ -499,11 +521,12 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
 			if (Sheet.length == 1){
-				$("idSheets").selectedIndex = 1;
+				//selecting the option does not trigger the EventListener
+				HMI.PossSheets.selectedIndex = 1;
 				HMI.showSheet(Sheet[0]);
 			}
 		} else {
-			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- no sheets available -', 'no sheet');
+			HMI.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		};
 		
@@ -547,6 +570,10 @@ HMIJavaScriptKSClient.prototype = {
 		//does not work in other browsers than mozillabased
 		try {
 			//FireFox 3 sends in a POST a content-encoding header killing the TCL Webserver
+			//http://wiki.tcl.tk/2085 entry "nb Dec 18, 2008"
+			//patch accepted but commented out in 
+			// TCL-HTTPD\tcllib-1.6\modules\ncgi\ncgi.tcl
+			
 			//real POST is not nessessary, therefor GET is forced
 			req.open('GET',
 				window.location.protocol+'//'
@@ -635,6 +662,7 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.RefreshTimeoutID = null;
 			return null;
 		} else {
+			//cut the GraphicDescription and StyleDescription out of the response
 			Return[0] = ComponentText.substring(ComponentText.indexOf('{{') + 2, ComponentText.indexOf('}}'));
 			//StyleDescription requested?
 			if (ComponentText.indexOf('}} {{') != -1 ){
@@ -666,7 +694,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-02-02 14:06:38 $";
+var filedate = "$Date: 2009-02-25 09:29:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

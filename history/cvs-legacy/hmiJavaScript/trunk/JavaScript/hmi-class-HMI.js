@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.69 $
-*	$Date: 2009-02-16 15:43:56 $
+*	$Revision: 1.70 $
+*	$Date: 2009-02-25 09:29:19 $
 *
 *	History:
 *	--------
@@ -62,6 +62,9 @@
 *		-	test console-existing on logging
 *	31-August-2008			NH
 *		-	Sheet refresh after click
+*
+*	25-February-2009			Je
+*		-	General Revision and full commented
 *
 ***********************************************************************/
 
@@ -75,9 +78,11 @@ function HMI(async, debug, error, warning, info, trace) {
 	this.HMI_Constants.NODE_NAME_CLONE = "HMI_CLONE";
 	
 	this.debug = debug;
+	//log critical errors to console
 	this.error = error;
 	this.warning = warning;
 	this.info = info;
+	//log trace info to console
 	this.trace = trace;
 	
 	this.PossServers = null;
@@ -104,6 +109,9 @@ HMI.prototype = {
 		}
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
+		//Try to detect the Servertype (TCL or PHP capable)
+		//make a request to sniff the HTTP-Serverstring
+		
 		//IE sometimes uses a cached version, without server Header
 		var DatePreventsCaching = new Date();
 		var req = new XMLHttpRequest();
@@ -121,17 +129,19 @@ HMI.prototype = {
 		delete RescponseServerString;
 		delete DatePreventsCaching;
 		
-		//Window-Reload does not reset the checkbox, so we update the javascript variable
-		if (document.getElementById("checkbox_keepheader").checked == true) {
-			autoKeepHeader = true;
-		}else{
-			autoKeepHeader = false;
-		}
-		document.getElementById("idShowServers").disabled = false;
-		document.getElementById("idShowServers").focus();
-		HMI.HMI_Constants.HMIdate = HMIdate;
-		delete HMIdate;
+		//The state of the Checkbox is preserved at a reload from cache, so
+		//we have to update the variable to reflect the userchoice
+		UpdateKeepHeader();
 		
+		//reactivate the ShowServer button. It was disabled to prevent a click during initialisation of HMI
+		document.getElementById("idShowServers").disabled = false;
+		
+		//focus the ShowServer button for convenience with keyboard interaction
+		document.getElementById("idShowServers").focus();
+		
+		//HMIdate was populated in every js-file with the date of CVS commit
+		//publish this date on website
+		HMI.HMI_Constants.HMIdate = HMIdate;
 		var dateTextNode = document.createTextNode("Version: 2.0 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
 		var titlenode = document.createAttribute("title");
 		titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate+" UTC";
@@ -140,10 +150,13 @@ HMI.prototype = {
 			document.getElementById("idDateOutput").appendChild(dateTextNode);
 			document.getElementById("idDateOutput").parentNode.setAttributeNode(titlenode);
 		}
+		delete HMIdate;
 		delete dateTextNode;
 		delete titlenode;
 		
+		//jump to a "deep link" of a sheet
 		if (window.location.search.length != 0){
+			//collect parameter given by the deep link
 			var HMI_Parameter_Liste = new Array();
 			var wertestring = unescape(window.location.search);
 			wertestring = wertestring.slice(1);
@@ -154,23 +167,30 @@ HMI.prototype = {
 				HMI_Parameter_Liste[name] = wert;
 			}
 			
+			//correct host in website with user wish
 			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length != 0){
 				$('idHost').value = HMI_Parameter_Liste.Host;
 			}
+			//correct RefreshTime in website with user wish
 			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length != 0){
 				$('idRefreshTime').value = HMI_Parameter_Liste.RefreshTime;
 			}
+			//a server is specified in "deep link"
 			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length != 0){
+				//get list of servers
 				HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'));
+				//select server in drop-down box from deep link
 				for (var i=0; i < HMI.PossServers.options.length; i++){
 					if (HMI.PossServers.options[i].value == HMI_Parameter_Liste.Server){
 						HMI.PossServers.options[i].selected = true;
 					}
 				}
+				//if showServers encountered an error don't load the Sheet list
 				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && HMI.PossServers.selectedIndex != 0){
 					HMI.showSheets(HMI_Parameter_Liste.Server);
 				}
 			}
+			
 			if (HMI.PossServers && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0 && HMI_Parameter_Liste.Sheet){
 				//no error and more than one sheet. If there is only one Sheet, showSheets has allready shown Sheet
 				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value != HMI_Parameter_Liste.Sheet){
@@ -204,32 +224,47 @@ HMI.prototype = {
 		}
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
+		
+		//Object of Server-Selectbox
 		this.PossServers = PossServers;
+		//Object of Sheet-Selectbox
 		this.PossSheets = PossSheets;
+		
+		//detect type of SVG display
 		if (Playground.tagName.toLowerCase() == "embed"){
+			//via a embed plugin tag
 			this.svgWindow = Playground.window;
 			this.svgDocument = Playground.getSVGDocument();
+			//switch the target Playground to the embed SVG-Plugin DOM
 			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
 			this.PlaygroundEmbedNode= Playground;
+			//sometimes feature detection is not possible
 			this.EmbedAdobePlugin= true;
 			this.PluginVendor = HMI.svgWindow.getSVGViewerVersion();
 			if (-1 != this.PluginVendor.indexOf('Adobe')){
 				this.PluginVendor = 'Adobe';
+			}else if (-1 != this.PluginVendor.indexOf('examotion')){
+				this.PluginVendor = 'Examotion';
 			}
 		}else{
+			//inline SVG in XHTML DOM
 			this.Playground = Playground;
 			this.EmbedAdobePlugin= false;
 			this.svgDocument = document;
 			this.svgWindow = window;
 		}
+		
+		//Gateway could not be another host without violating Same Origin Policy
 		KSGateway = window.location.host;
 		
+		//the guessed servertype is used for communication
 		if ("php" == HMI.HMI_Constants.ServerType){
 			//tks.php is always in the same subdir as the html files
 			KSGateway_Path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ "tks.php";
 			this.GatewayTypeTCL = false;
 			this.GatewayTypePHP = true;
 		}else if("tcl" == HMI.HMI_Constants.ServerType){
+			//tcl gateway is hardcoded in the Gateway via TCL-HTTPD\tclhttpd3.5.1\custom\tkshttpserver.tcl
 			KSGateway_Path = "/tks";
 			this.GatewayTypeTCL = true;
 			this.GatewayTypePHP = false;
@@ -242,15 +277,18 @@ HMI.prototype = {
 			this.GatewayTypePHP = true;
 		}
 		
+		//clean old Server and Sheet entrys, an old SVG display and displayed errors in website
 		deleteChilds(this.PossServers);
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
 		deleteChilds(document.getElementById("ErrorOutput"));
 		
+		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(Host + '/MANAGER', KSGateway + KSGateway_Path);
 		if (document.getElementById("ErrorOutput").innerHTML.length == 0){
 			this.KSClient.getServers();
 		}
+		//present a deep link to the Host setting
 		$("idBookmark").style.cssText = "display:inline;";
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime);
 		
@@ -265,6 +303,7 @@ HMI.prototype = {
 		
 		var i = 0;
 		
+		//clean old Sheet entrys, an old SVG display and displayed errors in website
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
 		deleteChilds(document.getElementById("ErrorOutput"));
@@ -272,10 +311,12 @@ HMI.prototype = {
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
+		//nothing selected
 		if (Server == 'no server'){
 			return;
 		}
 		
+		//an init generates a new Handle, needed cause we communicate to this server the first time
 		this.KSClient.init(this.KSClient.KSServer.substring(0, this.KSClient.KSServer.indexOf('/')) + '/' + Server, this.KSClient.TCLKSGateway);
 		this.KSClient.getSheets();
 		
@@ -288,14 +329,17 @@ HMI.prototype = {
 	showSheet: function (Sheet) {
 		this.hmi_log_trace("HMI.prototype.showSheet - Start with Sheet: "+Sheet);
 		
+		//clean an old SVG display and displayed errors in website
 		deleteChilds(this.Playground);
 		deleteChilds(document.getElementById("ErrorOutput"));
 		$("idBookmark").style.cssText = "display:none;";
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if (Sheet == 'no sheet')
+		//nothing selected
+		if (Sheet == 'no sheet'){
 			return;
+		}
 		
 		if (HMI.KSClient.TCLKSHandle != null)
 		{
@@ -306,8 +350,11 @@ HMI.prototype = {
 		if (autoKeepHeader == false && document.getElementById("ErrorOutput").innerHTML.length == 0){
 			hideHeader();
 		}
+		
+		//blur the buttons for convenience with keyboard interaction
 		$("idSheets").blur();
 		$("idServers").blur();
+		//present a "deep link" to the sheet
 		$("idBookmark").style.cssText = "display:inline;";
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+this.KSClient.KSServer.substr(this.KSClient.KSServer.indexOf('/')+1)+"&Sheet="+HMI.PossSheets.value);
 		
@@ -357,17 +404,21 @@ HMI.prototype = {
 		
 		var Component = null;
 		
+		//get the Component itself which contained the triggered gesture
 		Component = evt.target;
 		while (	Component != null
 				&&	Component != document
 				&&	HMI.instanceOf(Component, cssclass) == false)
 		{
 			if (Component.ownerSVGElement != undefined){
+				//firefox and co
 				Component = Component.ownerSVGElement;
 			}else if (Component.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
+				//Adobe+Renesis
 				Component = Component.parentNode;
 			}
 			if ( Component != null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
+				//in the move-gesture the original element has to be discovered
 				Component = HMI.svgDocument.getElementById(Component.getAttribute('clonedID'));
 			}
 		}
@@ -379,10 +430,13 @@ HMI.prototype = {
 	
 	/*********************************
 		switchGround
+		
+		global function for finding a new ground with a mouse move into an element
 	*********************************/
 	switchGround: function (evt, ground) {
 		this.hmi_log_trace("HMI.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+evt.target.id+", Evt.nodeName: "+evt.target.nodeName+", Ground: "+ground._node.id);
 		
+		//is there a move gesture in action?
 		if (this._currentDragger != null)
 			this._currentDragger.switchGround(evt, ground);
 		
@@ -444,9 +498,8 @@ HMI.prototype = {
 				var dummyRect = HMI.svgDocument.createElementNS('http://www.w3.org/2000/svg', 'rect');
 				dummyRect.setAttributeNS(null, 'x', '0');
 				dummyRect.setAttributeNS(null, 'y', '0');
-				//Dimension of EmbedNode set in DOMParser
-				dummyRect.setAttributeNS(null, 'width', HMI.PlaygroundEmbedNode.getAttribute('width'));
-				dummyRect.setAttributeNS(null, 'height', HMI.PlaygroundEmbedNode.getAttribute('height'));
+				dummyRect.setAttributeNS(null, 'width', Component.getAttribute('width'));
+				dummyRect.setAttributeNS(null, 'height', Component.getAttribute('height'));
 				dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
 				Component.insertBefore(dummyRect, Component.firstChild);
 				delete dummyRect;
@@ -490,6 +543,7 @@ HMI.prototype = {
 	_cbGetAndAddComponent: function (Client, req) {
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - Start");
 		
+		//call unique function with parameter to appendChild the SVG
 		HMI._cbGetAndShowComponent(Client, req, false);
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - End");
@@ -501,6 +555,7 @@ HMI.prototype = {
 	_cbGetAndReplaceComponent: function (Client, req) {
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - Start");
 		
+		//call unique function with parameter to replaceChild the SVG
 		HMI._cbGetAndShowComponent(Client, req, true);
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - End");
@@ -511,9 +566,10 @@ HMI.prototype = {
 	*********************************/	
 	_importComponent: function(ComponentText) {
 		this.hmi_log_trace("HMI.prototype._importComponent - Start");
-
+		
+		//build a DOM fragment with the SVG String
 		var parsedComponentText = new HMIDOMParser().parse(ComponentText[0], ComponentText[1], null);
-
+		
 		this.hmi_log_trace("HMI.prototype._importComponent - End");
 		return (parsedComponentText);
 	},
@@ -529,6 +585,8 @@ HMI.prototype = {
 		if (this.instanceOf(Element, "hmi-component"))
 		{
 			Element.setAttribute('pointer-events', 'all');
+			
+			//calculate and save absolute offset of the Components
 			this._setLayerPosition(Element);
 		};
 		
@@ -543,16 +601,21 @@ HMI.prototype = {
 		//
 		if (this.instanceOf(Element, "hmi-component-gesture-move"))
 		{
+			//initialize drag&drop handling
 			var dragger = new Dragger(Element, this);
 			if (HMI.EmbedAdobePlugin)
 			{
+				//Adobe needs a hack for the move-gesture
 				HMI.AdobeMoveFixNeeded = true;
 			}
-		} else {			
+		//the move handler calls the Leftclick by himself if no movement was detected
+		//so there is no further initialisation of move-gesture components needed
+		} else {
 			//	RIGHTCLICK
 			//
 			if (this.instanceOf(Element, 'hmi-component-gesture-rightclick'))
 			{
+				//initialize click handling
 				var rightclick = new RightClick(Element, this);
 			};
 			
@@ -560,6 +623,7 @@ HMI.prototype = {
 			//
 			if (this.instanceOf(Element, 'hmi-component-gesture-click'))
 			{
+				//initialize click handling
 				var click = new Click(Element, this);
 			};
 			
@@ -567,6 +631,7 @@ HMI.prototype = {
 			//
 			if (this.instanceOf(Element, 'hmi-component-gesture-doubleclick'))
 			{
+				//initialize click handling
 				var doubleclick = new DoubleClick(Element, this);
 			};
 			
@@ -574,6 +639,7 @@ HMI.prototype = {
 			//
 			if (this.instanceOf(Element, 'hmi-component-gesture-textinput'))
 			{
+				//initialize textinput handling
 				var textinput = new TextInput(Element, this);
 			};
 			
@@ -582,6 +648,7 @@ HMI.prototype = {
 			//wheelsupport is not supported by the HMI Team and probably firefox only
 			if (this.instanceOf(Element, 'hmi-component-gesture-wheelscroll'))
 			{
+				//initialize wheel handling
 				this.wheelscroll = new WheelScroll(Element, this);
 			};
 		};
@@ -598,7 +665,7 @@ HMI.prototype = {
 		var Elements;
 		
 		HMI._initGestures(Fragment);
-//		this.hmi_log_trace("HMI.prototype.initGestures - done _initGestures(Fragment) ");
+		// _initGesture does no recursive init, therefor this es done here
 		
 		if (HMI.EmbedAdobePlugin){
 			//getElementsByTagNameNS in Adobe is often not complete
@@ -608,14 +675,14 @@ HMI.prototype = {
 					HMI.initGestures(Fragment.childNodes.item(idx));
 				}
 			}
-		}else if (Fragment.getElementsByTagNameNS){   //gecko
+		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			for (var idx = 0; idx < Elements.length; ++idx){
 				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
 				//recursive init not necessary, getElementsByTagNameNS is recursive by itself
 				HMI._initGestures(Elements[idx]);
 			}
-		}else{   // IE if svg inline
+		}else{   // IE if svg inline, useless since svg inline does not work with gestures
 			Elements = Fragment.getElementsByTagName('svg');
 			for (var idx = 0; idx < Elements.length; ++idx){
 				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
@@ -644,9 +711,12 @@ HMI.prototype = {
 	
 	/*********************************
 		instanceOf
+		
+		checks if a svg element is instanceOf a class
 	*********************************/
 	instanceOf: function (Node, ClassName) {
-		//logging deactivated, causes too much noise and performanceproblem in a production system
+		
+		//trace log deactivated, causes too much noise and performanceproblem in a production system
 //		this.hmi_log_trace("HMI.prototype.instanceOf - Start");
 		
 		if (Node.getAttribute("class") != null)
@@ -677,7 +747,7 @@ HMI.prototype = {
 		};
 		
 //		this.hmi_log_trace("HMI.prototype.instanceOf - Endf");
-	
+		
 		return false;
 	},
 	
@@ -685,6 +755,7 @@ HMI.prototype = {
 		_instanceOf
 	*********************************/
 	_instanceOf: function (Node, ClassName, Delimiter) {
+		//trace log deactivated, causes too much noise and performanceproblem in a production system
 //		this.hmi_log_trace("HMI.prototype._instanceOf - Start");
 		
 		var Classes;
@@ -719,7 +790,7 @@ HMI.prototype = {
 		
 //		this.hmi_log_trace("HMI.prototype._instanceOf - Endf");
 		
-		return false		
+		return false;
 	},
 	
 	/*********************************
@@ -728,6 +799,8 @@ HMI.prototype = {
 	_setLayerPosition: function (Element) {
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start");
 		
+		//LayerX and LayerY are HMI specific SVG Attributes!
+		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 		if (Element.x && Element.x.animVal){  //gecko
 			var LayerX = Element.x.animVal.value;
 			var LayerY = Element.y.animVal.value;
@@ -874,7 +947,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-02-16 15:43:56 $";
+var filedate = "$Date: 2009-02-25 09:29:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

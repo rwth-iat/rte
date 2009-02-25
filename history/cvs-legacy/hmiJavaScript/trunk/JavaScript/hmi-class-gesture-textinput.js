@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,13 +48,16 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2008-12-10 14:44:32 $
+*	$Revision: 1.17 $
+*	$Date: 2009-02-25 09:29:19 $
 *
 *	History:
 *	--------
 *	26-June-2007			St
 *		-	File created
+*
+*	25-February-2009			Je
+*		-	General Revision and full commented
 *
 ***********************************************************************/
 
@@ -97,6 +100,8 @@ TextInput.prototype = {
 	_onMouseDownThunk: null,
 	onMouseDown: function (evt) {
 		if (HMI.RefreshTimeoutID != null){
+			//deactivate the Refresh 
+			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 		}
@@ -108,6 +113,7 @@ TextInput.prototype = {
 	_onMouseUpThunk: null,
 	onMouseUp: function (evt) {
 		if (HMI.RefreshTimeoutID == null){
+			//reactivate the Refresh
 			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
 		}
 	},
@@ -155,7 +161,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2008-12-10 14:44:32 $";
+var filedate = "$Date: 2009-02-25 09:29:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

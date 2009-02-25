@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.12 $
-*	$Date: 2009-02-17 17:05:58 $
+*	$Revision: 1.13 $
+*	$Date: 2009-02-25 09:29:19 $
 *
 *	History:
 *	01-March-2005			HA
@@ -56,6 +56,9 @@
 *
 *	03-July-2007			St
 *		-	General Revision
+*
+*	25-February-2009			Je
+*		-	General Revision and full commented
 *
 ***********************************************************************/
 
@@ -65,7 +68,7 @@
 ***********************************************************************/
 
 function SCRIPT_HUB_SEARCH(node, elementName, result) {
-	if (node.ELEMENT_NODE == undefined){//Opera und IE kennen ELEMENT_NODE nicht
+	if (node.ELEMENT_NODE == undefined){//Opera and IE doesnot have ELEMENT_NODE
 		node.ELEMENT_NODE = 1;
 	}
 	if (	(node.nodeType == node.ELEMENT_NODE)
@@ -126,19 +129,6 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			//	Support for HTML and SVG <script> elements.
 			//
 			case null:
-			//Internet Explorer doesnot have namespaceURI
-			case undefined:
-				switch (scriptNode.tagUrn){
-					//HTML Nodes have an empty tagUrn
-					case "":
-						var match = p.exec(scriptNode.getAttribute("src"));
-						break;
-					case "http://www.w3.org/2000/svg":
-						var match = p.exec(scriptNode.getAttributeNS(
-							"http://www.w3.org/1999/xlink", "href"));
-						break;
-				}
-				break;
 			case "http://www.w3.org/1999/xhtml":
 				var match = p.exec(scriptNode.getAttribute("src"));
 				break;
@@ -150,6 +140,21 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			case "http://www.w3.org/2000/svg":
 				var match = p.exec(scriptNode.getAttributeNS(
 					"http://www.w3.org/1999/xlink", "href"));
+			
+			//Internet Explorer doesnot have namespaceURI
+			case undefined:
+				switch (scriptNode.tagUrn){
+					//HTML Nodes have an empty tagUrn
+					case "":
+						var match = p.exec(scriptNode.getAttribute("src"));
+						break;
+					//this code is untested since unused at this time
+					case "http://www.w3.org/2000/svg":
+						var match = p.exec(scriptNode.getAttributeNS(
+							"http://www.w3.org/1999/xlink", "href"));
+						break;
+				}
+				break;
 		};
 		
 		if (match)
@@ -201,8 +206,10 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 				return node;
 			};
 			break;
+		//IE does not have namespaceURI but the equal tagUrn with a SVG Plugin
 		case undefined:
 			switch (scriptAnchor.tagUrn){
+				//HTML Nodes have an empty tagUrn
 				case "":
 					createScriptNode = function(document, source)
 					{
@@ -213,6 +220,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 						return node;
 					};
 					break;
+				//this code is untested since unused at this time
 				case "http://www.w3.org/2000/svg":
 					createScriptNode = function(document, source)
 					{
@@ -267,7 +275,7 @@ SCRIPT_HUB(
 		"./hmi-generic.js",
 	]
 );
-var filedate = "$Date: 2009-02-17 17:05:58 $";
+var filedate = "$Date: 2009-02-25 09:29:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

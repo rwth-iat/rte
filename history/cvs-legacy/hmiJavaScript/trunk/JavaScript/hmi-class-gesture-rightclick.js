@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2008
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,13 +48,16 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.14 $
-*	$Date: 2008-11-27 16:25:46 $
+*	$Revision: 1.15 $
+*	$Date: 2009-02-25 09:29:19 $
 *
 *	History:
 *	--------
 *	21-June-2007			St
 *		-	General Revision
+*
+*	25-February-2009			Je
+*		-	General Revision and full commented
 *
 ***********************************************************************/
 
@@ -84,7 +87,7 @@ RightClick.prototype = {
 	*********************************/
 	_registerOnRightClick: function(Component, capture, listener) {
 		this._onRightClickThunk = function (evt) { listener.onRightClick(evt); };
-		//mouseup is to different in browsers (especially on safari@mac)
+		//mouseup is to different in browsers (especially safari@mac)
 		Component.addEventListener("mousedown", this._onRightClickThunk, capture);
 	},
 	
@@ -107,18 +110,21 @@ RightClick.prototype = {
 		
 		if (Component != null)
 		{
+			//detect the mouse position relative to the component
 			if (evt.layerX != undefined){
 				//Firefox, Webkit
 				var xpos = evt.layerX;
 				var ypos = evt.layerY;
+				//this is a mouse offset provided by the mouse event
+				//not related with the HMI specific SVG-Attribute LayerX!
 			}else if (evt.offsetX != undefined){
 				//Opera
 				var xpos = evt.offsetX;
 				var ypos = evt.offsetY;
 			}else{
 				//IE Adobe SVG Viewer
-				var xpos = evt.clientX;
-				var ypos = evt.clientY;
+				var xpos = 1;
+				var ypos = 1;
 			}
 			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 				'{010} ' +
@@ -132,7 +138,7 @@ RightClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2008-11-27 16:25:46 $";
+var filedate = "$Date: 2009-02-25 09:29:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

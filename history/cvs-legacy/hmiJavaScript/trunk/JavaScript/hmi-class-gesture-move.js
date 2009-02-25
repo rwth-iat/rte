@@ -48,13 +48,16 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.22 $
-*	$Date: 2009-02-05 10:08:00 $
+*	$Revision: 1.23 $
+*	$Date: 2009-02-25 09:29:19 $
 *
 *	History:
 *	--------
 *	21-June-2007			St
 *		-	General Revision
+*
+*	25-February-2009			Je
+*		-	General Revision and full commented
 *
 ***********************************************************************/
 
@@ -270,20 +273,23 @@ Dragger.prototype = {
 				clearTimeout(HMI.RefreshTimeoutID);
 				HMI.RefreshTimeoutID = null;
 			}
-			
+			//mark that there is an active drag for HMI.switchGround
 			this._controller._currentDragger = this;
 			
+			//initialize mouse starting position
 			this._lastX = parseInt(evt.clientX, 10);
 			this._lastY = parseInt(evt.clientY, 10);
 			
 			this._totalDX = 0;
 			this._totalDY = 0;
 			
+			//move dragNode to the back of SVG
 			if (this._node != this._node.parentNode.firstChild)
 			{
 				this._node.parentNode.insertBefore(this._node, this._node.parentNode.firstChild);
 			};
 			
+			//make a Clone and paint it with opacity
 			var Node = this._node.cloneNode(true);
 			Node.setAttribute('id', HMI.HMI_Constants.NODE_NAME_CLONE);
 			Node.setAttribute('class', '');
@@ -292,6 +298,7 @@ Dragger.prototype = {
 			Node.setAttribute('clonedID', this._node.getAttribute('id'));
 			this._node.parentNode.appendChild(Node);
 			
+			//the dragged Node must not receive events while dragged
 			this._node.setAttribute("pointer-events", "none");
 			
 			if (HMI.svgDocument.addEventListener != undefined){
@@ -299,7 +306,7 @@ Dragger.prototype = {
 				this.registerOnMouseMove(HMI.svgDocument, true, this);
 				this.registerOnMouseUp(HMI.svgDocument, true, this);
 			}else{
-				//adobe plugin
+				//adobe plugin, feature detection not possible 8-/
 				this.registerOnMouseMove(HMI.svgDocument.documentElement, false, this);
 				this.registerOnMouseUp(HMI.svgDocument.documentElement, false, this);
 			}
@@ -325,12 +332,11 @@ Dragger.prototype = {
 	/*********************************
 		stopDrag
 	*********************************/
-	stopDragThunk: function() {
-	},
 	stopDrag: function (evt) {		
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - Start");
 		
 		var Clone = HMI.svgDocument.getElementById(HMI.HMI_Constants.NODE_NAME_CLONE);
+		//disable drag for HMI.switchGround
 		this._controller._currentDragger = null;
 		
 		this._node.setAttribute("pointer-events", "all");
@@ -340,23 +346,23 @@ Dragger.prototype = {
 			this.deregisterOnMouseUp(document, true, this);
 			this.deregisterOnMouseMove(document, true, this);
 		}else{
-			//adobe plugin
+			//adobe plugin, feature detection not possible 8-/
 			this.deregisterOnMouseMove(HMI.svgDocument.documentElement, false, this);
 			this.deregisterOnMouseUp(HMI.svgDocument.documentElement, false, this);
 		}
 		
-		this.stopDragThunk();
-		
+		//was there a move?
 		if (	this._totalDX != 0
 			||	this._totalDY != 0)
 		{
+			//every move has to have a ground as a target
 			if (this._ground != null)
 			{
 				//	MOVE / DRAG'N'DROP
 				//
 				var xvalue = this._node.getAttribute("x");
 				var yvalue = this._node.getAttribute("y");
-			
+				
 				Command = '{' + HMI.KSClient.getMessageID() + '} ' +
 					'{010} ' +
 					'{' + this._node.id + '} ' +
@@ -411,6 +417,9 @@ Dragger.prototype = {
 	*********************************/
 	switchGround: function (evt, ground) {
 		HMI.hmi_log_trace("Dragger.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+evt.target.id+", Evt.nodeName: "+evt.target.nodeName+", Ground: "+ground._node.id);
+		
+		//detect the ground under the mouse
+		
 		//	impossible to be own ground
 		//
 		if (this._node == ground._node)
@@ -426,8 +435,10 @@ Dragger.prototype = {
 					&&	HMI.instanceOf(ground._node, 'hmi-component-ground') == false)
 			{
 				if (ground._node.ownerSVGElement != undefined){
+					//firefox
 					ground._node = ground._node.ownerSVGElement;
 				}else if (ground._node.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
+					//adobe + renesis
 					ground._node = ground._node.parentNode;
 				}
 				if (	ground._node != null
@@ -441,16 +452,22 @@ Dragger.prototype = {
 		//	first ground
 		//
 		if (this._ground == null)
-		{			
+		{
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground: "+ground._node.id);
 			this._ground = ground;
 			
+			//LayerX and LayerY are HMI specific SVG Attributes!
+			//They are ignored by the SVG Renderer but used for position calculation in the move gesture
+			
+			//new position is old coordinate + position of old parent - position of new parent (=ground)
 			SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._node.parentNode.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
 			SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._node.parentNode.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 			
+			//move dragged Node into the new ground
 			var node = this._node.parentNode.removeChild(this._node);
 			ground._node.insertBefore(node, ground._node.firstChild);
 			
+			//set new position inside the ground
 			if (SVGx != null){
 				node.setAttribute("x", SVGx);
 				node.setAttribute("y", SVGy);
@@ -470,12 +487,17 @@ Dragger.prototype = {
 			{
 				// firstChild == <g></g>
 				//
+				//LayerX and LayerY are HMI specific SVG Attributes!
+				//They are ignored by the SVG Renderer but used for position calculation in the move gesture
+				
+				//new position is old coordinate + position of old parent(=ground) - position of new parent (=ground)
 				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
 				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 				
 				var node = this._ground._node.firstChild.removeChild(this._node);
 				ground._node.firstChild.insertBefore(node, ground._node.firstChild.firstChild);
 			} else {
+				//new position is old coordinate + position of old parent(=ground) - position of new parent (=ground)
 				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
 				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 				
@@ -483,11 +505,12 @@ Dragger.prototype = {
 				ground._node.insertBefore(node, ground._node.firstChild);
 			};
 			
+			//set new position inside the ground
 			node.setAttribute("x", SVGx);
 			node.setAttribute("y", SVGy);
 			delete SVGx;
 			delete SVGy;
-
+			
 			this._ground = ground;
 			
 			delete node;
@@ -505,7 +528,7 @@ Dragger.prototype = {
 		
 		x += dx;
 		y += dy;
-
+		
 		this._node.setAttribute("x", x)
 		this._node.setAttribute("y", y)
 		
@@ -513,7 +536,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-02-05 10:08:00 $";
+var filedate = "$Date: 2009-02-25 09:29:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
