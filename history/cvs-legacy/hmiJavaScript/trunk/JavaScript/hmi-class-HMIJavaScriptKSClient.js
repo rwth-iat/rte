@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.48 $
-*	$Date: 2009-02-25 10:09:35 $
+*	$Revision: 1.49 $
+*	$Date: 2009-02-27 07:21:52 $
 *
 *	History:
 *	--------
@@ -364,7 +364,7 @@ HMIJavaScriptKSClient.prototype = {
 				};
 			};
 			//IE does not show a long elementname in dropdown => make the dropdown wider
-			if ("Explorer" == BrowserDetect.browser){
+			if (BrowserDetect && "Explorer" == BrowserDetect.browser){
 				var OptimumWidth = OptionNameLength * 7.5 ;
 				if (OptimumWidth > parseInt(HMI.PossServers.style.width, 10)){
 					HMI.PossSheets.style.width = OptimumWidth + "px";
@@ -517,7 +517,7 @@ HMIJavaScriptKSClient.prototype = {
 				}
 			}
 			//IE does not show a long elementname in dropdown => make the dropdown wider
-			if ("Explorer" == BrowserDetect.browser){
+			if (BrowserDetect && "Explorer" == BrowserDetect.browser){
 				var OptimumWidth = OptionNameLength * 7.5 ;
 				if (OptimumWidth > parseInt(HMI.PossSheets.style.width, 10)){
 					HMI.PossSheets.style.width = OptimumWidth + "px";
@@ -699,7 +699,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-02-25 10:09:35 $";
+var filedate = "$Date: 2009-02-27 07:21:52 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
