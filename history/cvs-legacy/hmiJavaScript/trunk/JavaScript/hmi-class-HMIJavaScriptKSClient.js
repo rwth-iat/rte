@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.49 $
-*	$Date: 2009-02-27 07:21:52 $
+*	$Revision: 1.50 $
+*	$Date: 2009-02-27 09:54:49 $
 *
 *	History:
 *	--------
@@ -405,7 +405,7 @@ HMIJavaScriptKSClient.prototype = {
 			TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
 			
 			if (/KS_ERR/.exec(TCLKSHandle)){
-				//the server is not available anymore
+				//the server is not available. Could be the case if there is an active KS-Bridge and its destination is not available
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Endf");
 				return false;
 			}
@@ -699,7 +699,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-02-27 07:21:52 $";
+var filedate = "$Date: 2009-02-27 09:54:49 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

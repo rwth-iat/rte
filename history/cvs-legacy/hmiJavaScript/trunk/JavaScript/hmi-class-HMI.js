@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.71 $
-*	$Date: 2009-02-25 15:11:51 $
+*	$Revision: 1.72 $
+*	$Date: 2009-02-27 09:54:49 $
 *
 *	History:
 *	--------
@@ -771,20 +771,6 @@ HMI.prototype = {
 				return true;
 			};
 		};
-		
-		try{
-			/**
-			* Gecko does not garbage collect things correct in any cases.
-			* The hack here is to reassign the additional properties attached to the
-			* JS wrapper object in order to ensure it becomes dirty. Well,
-			* considering that it becomes dirty from getting it from itself ...
-			* I think this source code can't be exported to the US anymore
-			* because of undecent language and probably thoughts.
-			*/
-			Classes._xxx = null; delete Classes._xxx;
-			idx._xxx = null; delete idx._xxx;
-		} catch (e) {   //IE does not like this hack
-		}
 		delete Classes;
 		delete idx;
 		
@@ -939,7 +925,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-02-25 15:11:51 $";
+var filedate = "$Date: 2009-02-27 09:54:49 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
