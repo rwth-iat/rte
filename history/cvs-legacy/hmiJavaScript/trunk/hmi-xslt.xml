@@ -1,9 +1,17 @@
-<?xml version="1.0" encoding="iso8859-1"?>
-<?xml-stylesheet type="text/xsl" href="JavaScript/svgMathMlXhtml.xsl"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="JavaScript/svg-MathMl-Xhtml-xsl.xml"?>
+<!DOCTYPE html PUBLIC
+    "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+    "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd"[
+	<!ENTITY % MATHML.prefixed "INCLUDE" >
+	<!ENTITY % MATHML.prefix   "math" >
+	<!ENTITY % SVG.prefixed "INCLUDE" >
+	<!ENTITY % SVG.prefix "svg" >
+]>
 <!--
 <![CDATA[
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -47,11 +55,13 @@
 *	Sadly IE6 till IE8 is horribly slow at the first start, so no further development was done.
 *
 *	Editors:
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.5 $
-*	$Date: 2008-12-10 14:05:26 $
+*	$Revision: 1.6 $
+*	$Date: 2009-02-27 07:53:59 $
 *
 *	History:
 *	26-March-2008			Je
@@ -60,39 +70,25 @@
 ***********************************************************************/
 ]]>
 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
-	"http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd"[
-	<!ENTITY % MATHML.prefixed "INCLUDE" >
-	<!ENTITY % MATHML.prefix   "math" >
-	<!ENTITY % SVG.prefixed "INCLUDE" >
-	<!ENTITY % SVG.prefix "svg" >
-]>
 <html 
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:svg="http://www.w3.org/2000/svg"
-	xmlns:math="http://www.w3.org/1998/Math/MathML"
 	xml:lang="en">
 	<head>
+		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
 		<meta http-equiv="Content-Style-Type" content="text/css"/>
 		<meta http-equiv="Content-Script-Type" content="text/javascript"/>
 		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
 		<title>HMI-Startcenter - XSLT Version</title>
-		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js" charset="ISO-8859-1"></script>
 	</head>
 	<!-- 
 		/*********************************
 			Body
 		*********************************/
 	-->
-	<body onunload="HMI.unload()" onload="HMI.init()">
+	<body>
 		<table width="100%">
-<!--			<colgroup>
-				<col width="4%"/>
-				<col width="42%"/>
-				<col width="12%"/>
-				<col width="42%"/>
-			</colgroup>
--->
 			<tr onclick="hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
 					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
@@ -135,7 +131,8 @@
 							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
 					</td>
 					<td>
-<!--						<input type="button" value="Refresh Sheet Now"
+<!--
+						<input type="button" value="Refresh Sheet Now"
 							onclick="HMI.refreshSheet()"/>
 						<input type="button" value="Stop Autorefresh"
 							onclick="clearTimeout(HMI.RefreshTimeoutID);HMI.RefreshTimeoutID = null;"/>
@@ -153,7 +150,8 @@
 					</td>
 					<td colspan="2">
 						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible
-<!--						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+<!--
+						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
 -->
 					</td>
 				</tr>
