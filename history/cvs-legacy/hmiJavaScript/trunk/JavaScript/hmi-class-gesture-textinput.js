@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.17 $
-*	$Date: 2009-02-25 09:29:19 $
+*	$Revision: 1.18 $
+*	$Date: 2009-02-27 15:30:00 $
 *
 *	History:
 *	--------
@@ -150,18 +150,20 @@ TextInput.prototype = {
 		
 		if (Component != null)
 		{
-			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
-				'{010} ' +
-				'{' + Component.getAttribute('id') + '} ' + 
-				'{TEXTINPUT} ' +
-				'{' + input + '}';
+			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
+				'{010}%20' +
+				'{' + Component.getAttribute('id') + '}%20' + 
+				'{TEXTINPUT}%20' +
+				//urlencode the UTF8 String in ISO-8859-1 Format
+				//change the %u20AC of the &euro; Symbol to windows-1252 (accepted by all Browsers, not Adobe SVG)
+				'{' + escape(input).replace(/%u20AC/g, "%80") + '}';
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
 		};
 		
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-02-25 09:29:19 $";
+var filedate = "$Date: 2009-02-27 15:30:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

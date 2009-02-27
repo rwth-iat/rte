@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.23 $
-*	$Date: 2009-02-25 09:29:19 $
+*	$Revision: 1.24 $
+*	$Date: 2009-02-27 15:30:00 $
 *
 *	History:
 *	--------
@@ -363,12 +363,12 @@ Dragger.prototype = {
 				var xvalue = this._node.getAttribute("x");
 				var yvalue = this._node.getAttribute("y");
 				
-				Command = '{' + HMI.KSClient.getMessageID() + '} ' +
-					'{010} ' +
-					'{' + this._node.id + '} ' +
-					'{MOVE} ' +
-					'{' + this._ground._node.id +  '} ' +
-					'{' + xvalue + '} ' +
+				Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
+					'{010}%20' +
+					'{' + this._node.id + '}%20' +
+					'{MOVE}%20' +
+					'{' + this._ground._node.id +  '}%20' +
+					'{' + xvalue + '}%20' +
 					'{' + yvalue + '}';
 				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
 				delete xvalue;
@@ -536,7 +536,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-02-25 09:29:19 $";
+var filedate = "$Date: 2009-02-27 15:30:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

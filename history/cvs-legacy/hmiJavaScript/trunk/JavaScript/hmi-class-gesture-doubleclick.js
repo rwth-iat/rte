@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.15 $
-*	$Date: 2009-02-25 09:29:19 $
+*	$Revision: 1.16 $
+*	$Date: 2009-02-27 15:30:00 $
 *
 *	History:
 *	--------
@@ -159,11 +159,11 @@ DoubleClick.prototype = {
 				var xpos = 1;
 				var ypos = 1;
 			}
-			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
-				'{010} ' +
-				'{' + Component.getAttribute('id') + '} ' + 
-				'{DOUBLECLICK} ' +
-				'{' + xpos + '} ' +
+			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
+				'{010}%20' +
+				'{' + Component.getAttribute('id') + '}%20' + 
+				'{DOUBLECLICK}%20' +
+				'{' + xpos + '}%20' +
 				'{' + ypos + '}';
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
 		};
@@ -171,7 +171,7 @@ DoubleClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-02-25 09:29:19 $";
+var filedate = "$Date: 2009-02-27 15:30:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.72 $
-*	$Date: 2009-02-27 09:54:49 $
+*	$Revision: 1.73 $
+*	$Date: 2009-02-27 15:30:00 $
 *
 *	History:
 *	--------
@@ -452,11 +452,11 @@ HMI.prototype = {
 		if (Insert == true){
 		//	import and append
 		//
-			this.KSClient.getVar(null, '{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}', this._cbGetAndAddComponent);
+			this.KSClient.getVar(null, '{' + ComponentPath + '.GraphicDescription' + '%20' + ComponentPath + '.StyleDescription' + '}', this._cbGetAndAddComponent);
 		} else {			
 			//	import and replace
 			//
-			this.KSClient.getVar(null, '{' + ComponentPath + '.GraphicDescription' + ' ' + ComponentPath + '.StyleDescription' + '}', this._cbGetAndReplaceComponent);
+			this.KSClient.getVar(null, '{' + ComponentPath + '.GraphicDescription' + '%20' + ComponentPath + '.StyleDescription' + '}', this._cbGetAndReplaceComponent);
 		}
 		
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - End");
@@ -925,7 +925,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-02-27 09:54:49 $";
+var filedate = "$Date: 2009-02-27 15:30:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

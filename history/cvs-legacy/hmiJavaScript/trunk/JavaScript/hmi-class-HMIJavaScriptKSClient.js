@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.50 $
-*	$Date: 2009-02-27 09:54:49 $
+*	$Revision: 1.51 $
+*	$Date: 2009-02-27 15:30:00 $
 *
 *	History:
 *	--------
@@ -133,7 +133,7 @@ HMIJavaScriptKSClient.prototype = {
 		path:	command to process of the command
 		cbfnc: callback function
 		usage example:
-			this.getEP(null, '/servers *', this._cbGetServers);
+			this.getEP(null, '/servers%20*', this._cbGetServers);
 			response: "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}"
 	*********************************/
 	getEP: function(Handle, path, cbfnc) {
@@ -142,8 +142,8 @@ HMIJavaScriptKSClient.prototype = {
 			Handle = this.TCLKSHandle
 		}
 		if (HMI.GatewayTypeTCL == true){
-			path = path + " -output $::TKS::OP_NAME";
-			var urlparameter = 'obj='+Handle + '&args=getep ' +path;
+			path = path + "%20-output%20$::TKS::OP_NAME";
+			var urlparameter = 'obj='+Handle + '&args=getep%20' +path;
 		}else if (HMI.GatewayTypePHP == true){
 			path = path;
 			var urlparameter = 'obj='+Handle + '&cmd=getep&path=' +path;
@@ -205,8 +205,8 @@ HMIJavaScriptKSClient.prototype = {
 			Handle = this.TCLKSHandle
 		}
 		if (HMI.GatewayTypeTCL == true){
-			path = path + " -output $::TKS::OP_VALUE";
-			var urlparameter = 'obj='+Handle + '&args=getvar ' +path;
+			path = path + "%20-output%20$::TKS::OP_VALUE";
+			var urlparameter = 'obj='+Handle + '&args=getvar%20' +path;
 		}else if (HMI.GatewayTypePHP == true){
 			path = path;
 			var urlparameter = 'obj='+Handle + '&cmd=getvar&path=' + path;
@@ -238,8 +238,8 @@ HMIJavaScriptKSClient.prototype = {
 			Handle = this.TCLKSHandle
 		}
 		if (HMI.GatewayTypeTCL == true){
-			path = '{'+path+' {'+value+'}}';
-			var urlparameter = 'obj='+Handle + '&args=setvar ' +path;
+			path = '{'+path+'%20{'+value+'}}';
+			var urlparameter = 'obj='+Handle + '&args=setvar%20' +path;
 		}else if (HMI.GatewayTypePHP == true){
 			var urlparameter = 'obj='+Handle + '&cmd=setvar&path=' + path + "&val=" + value;
 		}
@@ -310,7 +310,7 @@ HMIJavaScriptKSClient.prototype = {
 		
 		if (this.TCLKSHandle != null){
 			//The Handle points to the Manager wich can provide us with a list of OV servers (detection of HMI Servers are made in the callback)
-			this.getEP(null, '/servers *', this._cbGetServers);
+			this.getEP(null, '/servers%20*', this._cbGetServers);
 		} else {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End - No TCLKSHandle");
 			return null;
@@ -447,21 +447,21 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var Command = null;
 		if ($("checkbox_showcomponents") && $("checkbox_showcomponents").checked){
-			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
-				'{010} ' +
-				'{' + this.HMIMANAGER_PATH + '} ' + 
+			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
+				'{010}%20' +
+				'{' + this.HMIMANAGER_PATH + '}%20' + 
 				'{SHOWCOMPONENTS}';
 			this.setVar(null, this.HMIMANAGER_PATH
-					+ '.Command ',
+					+ '.Command%20',
 					Command,
 					null);
 		}else{
-			Command = '{' + HMI.KSClient.getMessageID() + '} ' +
-				'{010} ' +
-				'{' + this.HMIMANAGER_PATH + '} ' + 
+			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
+				'{010}%20' +
+				'{' + this.HMIMANAGER_PATH + '}%20' + 
 				'{SHOWSHEETS}';
 			this.setVar(null, this.HMIMANAGER_PATH
-					+ '.Command ',
+					+ '.Command%20',
 					Command,
 					null);
 		}
@@ -585,7 +585,7 @@ HMIJavaScriptKSClient.prototype = {
 				+ HMI.KSClient.TCLKSGateway
 				+ '?'
 				+ urlparameter
-				+ '&preventCaching2='
+				+ '&preventCaching='
 				+DatePreventsCaching.getTime(), async);
 				
 			if (async == true)
@@ -699,7 +699,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-02-27 09:54:49 $";
+var filedate = "$Date: 2009-02-27 15:30:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
