@@ -49,8 +49,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.28 $
-*	$Date: 2009-02-27 07:41:46 $
+*	$Revision: 1.29 $
+*	$Date: 2009-03-03 10:50:04 $
 *
 *	History:
 *
@@ -77,7 +77,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 	-->
 	<body>
 		<table width="100%">
-			<tr onclick="hideHeader()" style="cursor:pointer;">
+			<tr onclick="HMI.hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
 					<svg:svg width="25" height="22">
 						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="stroke:blue;fill:none;stroke-width:1px;visibility:visible;"/>
@@ -136,7 +136,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 						</select>
 					</td>
 					<td colspan="2">
-						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible
+						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="HMI.updateKeepHeader()"/> keep this header visible
 <!--						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
 -->
 					</td>

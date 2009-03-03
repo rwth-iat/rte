@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.73 $
-*	$Date: 2009-02-27 15:30:00 $
+*	$Revision: 1.74 $
+*	$Date: 2009-03-03 10:50:04 $
 *
 *	History:
 *	--------
@@ -109,6 +109,9 @@ HMI.prototype = {
 		}
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
+		//Initialize global variable
+		HMI.showHeader = true;
+		
 		//Try to detect the Servertype (TCL or PHP capable)
 		//make a request to sniff the HTTP-Serverstring
 		
@@ -117,21 +120,21 @@ HMI.prototype = {
 		var req = new XMLHttpRequest();
 		req.open("GET", window.location.pathname+'?preventCaching2='+DatePreventsCaching.getTime(), false);
 		req.send(null);
-		var RescponseServerString = req.getResponseHeader('server');
-		if (-1 != RescponseServerString.indexOf('Tcl-Webserver')){
+		var ResponseServerString = req.getResponseHeader('server');
+		if (-1 != ResponseServerString.indexOf('Tcl-Webserver')){
 			HMI.HMI_Constants.ServerType = "tcl";
 			this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
-		}else if (-1 != RescponseServerString.indexOf('PHP')){
+		}else if (-1 != ResponseServerString.indexOf('PHP')){
 			HMI.HMI_Constants.ServerType = "php";
 			this.hmi_log_trace("HMI.prototype.init - detected PHP Gateway");
 		}
 		delete req;
-		delete RescponseServerString;
+		delete ResponseServerString;
 		delete DatePreventsCaching;
 		
 		//The state of the Checkbox is preserved at a reload from cache, so
 		//we have to update the variable to reflect the userchoice
-		UpdateKeepHeader();
+		HMI.updateKeepHeader();
 		
 		//reactivate the ShowServer button. It was disabled to prevent a click during initialisation of HMI
 		document.getElementById("idShowServers").disabled = false;
@@ -205,6 +208,46 @@ HMI.prototype = {
 		}
 		this.hmi_log_trace("HMI.prototype.init - End");
 	},
+	
+	/*********************************
+		Functions - updateKeepHeader
+		
+		called with a onclick handler of the checkbox and in HMI.init
+	*********************************/
+	updateKeepHeader: function (){
+		if (document.getElementById("checkbox_keepheader").checked == true) {
+			HMI.autoKeepHeader = true;
+		}else{
+			HMI.autoKeepHeader = false;
+		}
+	},
+	/*********************************
+		Functions - hideHeader
+	*********************************/
+	hideHeader: function(){
+		if (HMI.showHeader){
+			//hide menu
+			HMI.showHeader = false;
+			document.getElementById("hmi_header").style.display = "none";
+			if (document.getElementById("arrowdown1") != null){
+				document.getElementById("arrowdown1").style.visibility="visible";
+				document.getElementById("arrowdown2").style.visibility="visible";
+				document.getElementById("arrowup1").style.visibility="hidden";
+				document.getElementById("arrowup2").style.visibility="hidden";
+			}
+		} else {
+			//show menu
+			HMI.showHeader = true;
+			document.getElementById("hmi_header").style.display = "block";
+			if (document.getElementById("arrowdown1") != null){
+				document.getElementById("arrowdown1").style.visibility="hidden";
+				document.getElementById("arrowdown2").style.visibility="hidden";
+				document.getElementById("arrowup1").style.visibility="visible";
+				document.getElementById("arrowup2").style.visibility="visible";
+			}
+		}
+	},
+	
 	/*********************************
 		showServers
 	*********************************/
@@ -347,8 +390,8 @@ HMI.prototype = {
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
-		if (autoKeepHeader == false && document.getElementById("ErrorOutput").innerHTML.length == 0){
-			hideHeader();
+		if (HMI.autoKeepHeader == false && document.getElementById("ErrorOutput").innerHTML.length == 0){
+			HMI.hideHeader();
 		}
 		
 		//blur the buttons for convenience with keyboard interaction
@@ -919,13 +962,13 @@ HMI.prototype = {
 		deleteChilds(document.getElementById("ErrorOutput"));
 		document.getElementById("ErrorOutput").appendChild(ErrorTextNode);
 		//if header in not visible: show it
-		if (showHeader == false){
-			hideHeader();
+		if (HMI.showHeader == false){
+			HMI.hideHeader();
 		}
 
 	}
 };
-var filedate = "$Date: 2009-02-27 15:30:00 $";
+var filedate = "$Date: 2009-03-03 10:50:04 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

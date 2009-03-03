@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.27 $
-*	$Date: 2009-02-27 07:41:46 $
+*	$Revision: 1.28 $
+*	$Date: 2009-03-03 10:50:04 $
 *
 *	History:
 *	--------
@@ -187,49 +187,6 @@ function removeEventSimple(obj,evt,fn) {
 }
 
 /*********************************
-	Functions - hideHeader
-*********************************/
-//Initialize global variable
-showHeader = true;
-
-function hideHeader (){
-	if (showHeader){
-		//hide menu
-		showHeader = false;
-		document.getElementById("hmi_header").style.display = "none";
-		if (document.getElementById("arrowdown1") != null){
-			document.getElementById("arrowdown1").style.visibility="visible";
-			document.getElementById("arrowdown2").style.visibility="visible";
-			document.getElementById("arrowup1").style.visibility="hidden";
-			document.getElementById("arrowup2").style.visibility="hidden";
-		}
-	} else {
-		//show menu
-		showHeader = true;
-		document.getElementById("hmi_header").style.display = "block";
-		if (document.getElementById("arrowdown1") != null){
-			document.getElementById("arrowdown1").style.visibility="hidden";
-			document.getElementById("arrowdown2").style.visibility="hidden";
-			document.getElementById("arrowup1").style.visibility="visible";
-			document.getElementById("arrowup2").style.visibility="visible";
-		}
-	}
-}
-
-/*********************************
-	Functions - UpdateKeepHeader
-	
-	called with a onclick handler of the checkbox and in HMI.init
-*********************************/
-function UpdateKeepHeader(){
-	if (document.getElementById("checkbox_keepheader").checked == true) {
-		autoKeepHeader = true;
-	}else{
-		autoKeepHeader = false;
-	}
-}
-
-/*********************************
 	BrowserDetect solution provides:
 		BrowserDetect.browser
 		BrowserDetect.version
@@ -347,7 +304,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2009-02-27 07:41:46 $";
+var filedate = "$Date: 2009-03-03 10:50:04 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

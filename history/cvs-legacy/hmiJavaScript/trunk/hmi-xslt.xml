@@ -60,8 +60,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.6 $
-*	$Date: 2009-02-27 07:53:59 $
+*	$Revision: 1.7 $
+*	$Date: 2009-03-03 10:50:04 $
 *
 *	History:
 *	26-March-2008			Je
@@ -89,7 +89,7 @@
 	-->
 	<body>
 		<table width="100%">
-			<tr onclick="hideHeader()" style="cursor:pointer;">
+			<tr onclick="HMI.hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
 					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
 						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
@@ -149,7 +149,7 @@
 						</select>
 					</td>
 					<td colspan="2">
-						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="UpdateKeepHeader()"/> keep this header visible
+						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="HMI.updateKeepHeader()"/> keep this header visible
 <!--
 						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
 -->
