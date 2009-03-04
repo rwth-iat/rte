@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.51 $
-*	$Date: 2009-02-27 15:30:00 $
+*	$Revision: 1.52 $
+*	$Date: 2009-03-04 15:01:20 $
 *
 *	History:
 *	--------
@@ -420,9 +420,12 @@ HMIJavaScriptKSClient.prototype = {
 				// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f+Operabug");
 				return false;
+			}else if (ManagerResponse == "{{}}"){
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End2f");
+				return false;
 			}else if (/KS_ERR/.exec(ManagerResponse)){
 				//error could be: TksS-0174::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f");
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End3f");
 				return false;
 			} else {
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1t");
@@ -699,7 +702,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-02-27 15:30:00 $";
+var filedate = "$Date: 2009-03-04 15:01:20 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
