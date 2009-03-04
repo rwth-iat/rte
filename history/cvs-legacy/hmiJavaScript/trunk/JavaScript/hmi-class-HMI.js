@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.74 $
-*	$Date: 2009-03-03 10:50:04 $
+*	$Revision: 1.75 $
+*	$Date: 2009-03-04 15:04:00 $
 *
 *	History:
 *	--------
@@ -508,10 +508,10 @@ HMI.prototype = {
 	},
 	
 	/*********************************
-		_cbGetAndShowComponent
+		_GetAndShowComponent
 	*********************************/	
-	_cbGetAndShowComponent: function (Client, req, replace) {
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Start");
+	_GetAndShowComponent: function (Client, req, replace) {
+		HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - Start");
 		
 		//only one entry in array if no styledescription is requested
 		var ComponentText = new Array(2);
@@ -534,7 +534,7 @@ HMI.prototype = {
 				var template = Component;
 				Component = document.importNode(template, true);
 			}
-			HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent: now initGestures");
+			HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent: now initGestures");
 			HMI.initGestures(Component);
 			//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
 			if (HMI.AdobeMoveFixNeeded && HMI.PluginVendor == 'Adobe'){
@@ -546,9 +546,9 @@ HMI.prototype = {
 				dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
 				Component.insertBefore(dummyRect, Component.firstChild);
 				delete dummyRect;
-				HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
+				HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
 			}
-			HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent: now Playground.append/replaceChild");
+			HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent: now Playground.append/replaceChild");
 			if(replace == true){
 				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			}else{
@@ -578,7 +578,7 @@ HMI.prototype = {
 			delete ComponentText;
 		};
 		
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - End");
+		HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - End");
 	},
 	/*********************************
 		_cbGetAndAddComponent
@@ -587,7 +587,7 @@ HMI.prototype = {
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - Start");
 		
 		//call unique function with parameter to appendChild the SVG
-		HMI._cbGetAndShowComponent(Client, req, false);
+		HMI._GetAndShowComponent(Client, req, false);
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - End");
 	},
@@ -599,7 +599,7 @@ HMI.prototype = {
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - Start");
 		
 		//call unique function with parameter to replaceChild the SVG
-		HMI._cbGetAndShowComponent(Client, req, true);
+		HMI._GetAndShowComponent(Client, req, true);
 		
 		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - End");
 	},
@@ -708,7 +708,7 @@ HMI.prototype = {
 		var Elements;
 		
 		HMI._initGestures(Fragment);
-		// _initGesture does no recursive init, therefor this es done here
+		// _initGesture does no recursive init, therefor this is done here
 		
 		if (HMI.EmbedAdobePlugin){
 			//getElementsByTagNameNS in Adobe is often not complete
@@ -968,7 +968,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-03 10:50:04 $";
+var filedate = "$Date: 2009-03-04 15:04:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
