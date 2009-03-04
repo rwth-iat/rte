@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.13 $
-*	$Date: 2009-02-25 09:29:19 $
+*	$Revision: 1.14 $
+*	$Date: 2009-03-04 15:03:07 $
 *
 *	History:
 *	01-March-2005			HA
@@ -61,28 +61,6 @@
 *		-	General Revision and full commented
 *
 ***********************************************************************/
-
-
-/***********************************************************************
-	Temporary workaround for Mozilla bug #276037
-***********************************************************************/
-
-function SCRIPT_HUB_SEARCH(node, elementName, result) {
-	if (node.ELEMENT_NODE == undefined){//Opera and IE doesnot have ELEMENT_NODE
-		node.ELEMENT_NODE = 1;
-	}
-	if (	(node.nodeType == node.ELEMENT_NODE)
-		&&	(node.nodeName.toLowerCase() == elementName))
-	{
-		result.push(node);
-	};
-	
-	var children = node.childNodes;
-	for (var idx = 0, len = children.length; idx < len; ++idx )
-	{
-		SCRIPT_HUB_SEARCH(children[idx], elementName, result);
-	};
-}
 
 /***********************************************************************
 	Loads the specified list of script files by creating the necessary
@@ -112,8 +90,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			- <svg:script type="" xlink:href="">, where the svg
 				namespace is "http://www.w3.org/2000/svg".
 	********************************************************************/
-	var scripts = new Array();
-	SCRIPT_HUB_SEARCH(document, "script", scripts);
+	scripts = document.getElementsByTagName("script");
 	
 	var p = new RegExp(hubFilePattern);
 	var base = null;
@@ -275,7 +252,7 @@ SCRIPT_HUB(
 		"./hmi-generic.js",
 	]
 );
-var filedate = "$Date: 2009-02-25 09:29:19 $";
+var filedate = "$Date: 2009-03-04 15:03:07 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
