@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.18 $
-*	$Date: 2009-02-27 15:30:00 $
+*	$Revision: 1.19 $
+*	$Date: 2009-03-10 09:15:21 $
 *
 *	History:
 *	--------
@@ -80,6 +80,22 @@ TextInput.prototype = {
 	arm : function (Component) {
 		this._registerOnClick(Component, false, this);
 		Component.setAttribute("cursor", "text");
+		
+		//not clickable if the String is only white spaces
+		for (var idx = 0; idx < Component.childNodes.length; ++idx){
+			if (Component.childNodes.item(idx).nodeName == "svg:text" && !/\S+/.exec(Component.childNodes.item(idx).firstChild.nodeValue)){
+				//build transparent dummy rect to allow input of new text
+				var dummyRect = HMI.svgDocument.createElementNS('http://www.w3.org/2000/svg', 'rect');
+				dummyRect.setAttributeNS(null, 'x', Component.childNodes.item(idx).getAttribute("x"));
+				dummyRect.setAttributeNS(null, 'y', Component.childNodes.item(idx).getAttribute("y")-15);
+				dummyRect.setAttributeNS(null, 'width', '15');
+				dummyRect.setAttributeNS(null, 'height', '20');
+				dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
+				dummyRect.setAttributeNS(null, 'class', 'dummyTextinputRect');
+				Component.appendChild(dummyRect);
+				delete dummyRect;
+			}
+		}
 	},
 	
 	/*********************************
@@ -128,10 +144,15 @@ TextInput.prototype = {
 			//	doubleclick => STOP
 			return;
 		};
-		if (evt.target.textContent != undefined){
+		if (evt.target.getAttribute("class") == "dummyTextinputRect"){
+			var text = "";
+		}else if (evt.target.textContent){
 			var text = evt.target.textContent;
-		}else{  //Adobe Plugin
-			var text = evt.target.childNodes.item(0).nodeValue;
+		}else if (evt.target.firstChild.nodeValue){  //Adobe Plugin
+			var text = evt.target.firstChild.nodeValue;
+		}else{
+			var text = "";
+			HMI.hmi_log_error('HMI.textinput.onclick Error: old Textinfo not found.');
 		}
 		var input = prompt('Geben Sie bitte einen neuen Wert ein', text);
 		if(	input	!= null
@@ -163,7 +184,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-02-27 15:30:00 $";
+var filedate = "$Date: 2009-03-10 09:15:21 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
