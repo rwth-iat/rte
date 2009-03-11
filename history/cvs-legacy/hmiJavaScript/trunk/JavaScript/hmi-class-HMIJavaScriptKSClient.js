@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.52 $
-*	$Date: 2009-03-04 15:01:20 $
+*	$Revision: 1.53 $
+*	$Date: 2009-03-11 10:17:33 $
 *
 *	History:
 *	--------
@@ -343,6 +343,7 @@ HMIJavaScriptKSClient.prototype = {
 			if (Response.indexOf('}') == -1)
 				Response = null;
 		};
+		Server = Server.sort();
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of potential servers: "+Server.length);
 		
 		if (Server.length > 0){
@@ -509,6 +510,7 @@ HMIJavaScriptKSClient.prototype = {
 			};
 			i = i + 1;
 		};
+		Sheet = Sheet.sort();
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		if (Sheet.length > 0){
 			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
@@ -702,7 +704,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-03-04 15:01:20 $";
+var filedate = "$Date: 2009-03-11 10:17:33 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
