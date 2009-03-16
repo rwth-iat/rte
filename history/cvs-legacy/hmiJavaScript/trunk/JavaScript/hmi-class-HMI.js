@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.76 $
-*	$Date: 2009-03-16 11:07:06 $
+*	$Revision: 1.77 $
+*	$Date: 2009-03-16 13:09:57 $
 *
 *	History:
 *	--------
@@ -182,7 +182,7 @@ HMI.prototype = {
 		//HMIdate was populated in every js-file with the date of CVS commit
 		//publish this date on website
 		HMI.HMI_Constants.HMIdate = HMIdate;
-		var dateTextNode = document.createTextNode("Version: 2.0 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
+		var dateTextNode = document.createTextNode("Version: 2.1 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
 		var titlenode = document.createAttribute("title");
 		titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate+" UTC";
 		
@@ -226,14 +226,14 @@ HMI.prototype = {
 					}
 				}
 				//if showServers encountered an error don't load the Sheet list
-				if (HMI.ErrorOutput.innerHTML.length == 0 && HMI.PossServers.selectedIndex != 0){
+				if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex != 0){
 					HMI.showSheets(HMI_Parameter_Liste.Server);
 				}
 			}
 			
 			if (HMI.PossServers && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0 && HMI_Parameter_Liste.Sheet){
 				//no error and more than one sheet. If there is only one Sheet, showSheets has allready shown Sheet
-				if (HMI.ErrorOutput.innerHTML.length == 0 && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value != HMI_Parameter_Liste.Sheet){
+				if (!HMI.ErrorOutput.firstChild && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value != HMI_Parameter_Liste.Sheet){
 					for (var i=0; i < HMI.PossSheets.options.length; i++){
 						if (HMI.PossSheets.options[i].value == HMI_Parameter_Liste.Sheet){
 							HMI.PossSheets.options[i].selected = true;
@@ -252,6 +252,7 @@ HMI.prototype = {
 		called with a onclick handler of the checkbox and in HMI.init
 	*********************************/
 	updateKeepHeader: function (){
+		this.hmi_log_trace("HMI.prototype.updateKeepHeader - change requested");
 		if (document.getElementById("checkbox_keepheader").checked == true) {
 			HMI.autoKeepHeader = true;
 		}else{
@@ -291,6 +292,10 @@ HMI.prototype = {
 	showServers: function (Host, RefreshTime) {
 		
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
+		
+		//disable double click by user
+		document.getElementById("idShowServers").disabled = true;
+		document.getElementById("idShowServers").value = "Please wait...";
 		
 		if (RefreshTime < 100){
 			$('idRefreshTime').value = 100;
@@ -345,12 +350,16 @@ HMI.prototype = {
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(Host + '/MANAGER', KSGateway + KSGateway_Path);
-		if (HMI.ErrorOutput.innerHTML.length == 0){
+		if (!HMI.ErrorOutput.firstChild){
 			this.KSClient.getServers();
 		}
 		//present a deep link to the Host setting
 		$("idBookmark").style.cssText = "display:inline;";
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime);
+		
+		//reenable click by user
+		document.getElementById("idShowServers").disabled = false;
+		document.getElementById("idShowServers").value = "Show Servers";
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
@@ -377,7 +386,7 @@ HMI.prototype = {
 		
 		//nothing selected
 		if (Server == 'no server'){
-			HMI.PossSheets.options[0] = new Option('please select Server', 'no sheet');
+			HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
 			return;
 		}
 		
@@ -412,7 +421,7 @@ HMI.prototype = {
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
-		if (HMI.autoKeepHeader == false && HMI.ErrorOutput.innerHTML.length == 0){
+		if (HMI.autoKeepHeader == false && !HMI.ErrorOutput.firstChild){
 			HMI.hideHeader();
 		}
 		
@@ -990,7 +999,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-16 11:07:06 $";
+var filedate = "$Date: 2009-03-16 13:09:57 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

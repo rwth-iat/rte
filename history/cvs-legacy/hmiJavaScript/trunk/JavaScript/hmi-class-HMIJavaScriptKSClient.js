@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.54 $
-*	$Date: 2009-03-16 11:07:06 $
+*	$Revision: 1.55 $
+*	$Date: 2009-03-16 13:09:57 $
 *
 *	History:
 *	--------
@@ -382,7 +382,7 @@ HMIJavaScriptKSClient.prototype = {
 					HMI.showSheets(HMI.PossServers.lastChild.value);
 				}
 			}
-			HMI.PossSheets.options[0] = new Option('please select Server', 'no sheet');
+			HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
 			HMI.PossServers.disabled = false;
 		} else {
 			HMI.PossServers.options[0] = new Option('- no MANAGER available-', 'no server');
@@ -703,7 +703,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-03-16 11:07:06 $";
+var filedate = "$Date: 2009-03-16 13:09:57 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
