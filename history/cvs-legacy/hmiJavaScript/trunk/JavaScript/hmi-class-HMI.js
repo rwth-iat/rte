@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.78 $
-*	$Date: 2009-03-16 16:34:06 $
+*	$Revision: 1.79 $
+*	$Date: 2009-03-16 18:34:19 $
 *
 *	History:
 *	--------
@@ -112,19 +112,62 @@ HMI.prototype = {
 	init: function () {
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
-		//Object of ErrorOutput
-		this.ErrorOutput = $('idErrorOutput');
+		var ErrorDetail = "";
 		//Object of ShowServer-Button
-		this.ButShowServers = $('idShowServers');
+		if (this.ButShowServers = $('idShowServers')){
+			addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
+		}else{
+			ErrorDetail += "HTML Button with the ID: idShowServers not found.\n";
+		}
+		//Object of ErrorOutput
+		if (!(this.ErrorOutput = $('idErrorOutput'))){
+			ErrorDetail += "HTML Tag with the ID: idErrorOutput not found.\n";
+		}
 		//Object of Server-Selectbox
-		this.PossServers = $('idServers');
+		if (!(this.PossServers = $('idServers'))){
+			ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
+		}
 		//Object of Sheet-Selectbox
-		this.PossSheets = $('idSheets');
+		if (!(this.PossSheets = $('idSheets'))){
+			ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
+		}
+		//Object of SVG insertion (p for firefox, embed for IE)
+		if (!(this.Playground = $('idPlayground'))){
+			ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
+		}
+		//Object of RefreshTime
+		if (!($('idRefreshTime'))){
+			ErrorDetail += "HTML Input with the ID: idRefreshTime not found.\n";
+		}
+		//Object of Server-Hostname
+		if (!($('idHost'))){
+			ErrorDetail += "HTML Input with the ID: idHost not found.\n";
+		}
+		//Object of the Deep Link
+		if (!($('idBookmark'))){
+			ErrorDetail += "HTML Input with the ID: idBookmark not found.\n";
+		}
+		//Object of the hideable header
+		if (!($('idHideableHeader'))){
+			ErrorDetail += "HTML Div with the ID: idHideableHeader not found.\n";
+		}
 		
 		//init the plain HTML website with events
-		addEventSimple($('idHeaderRow'),'click',function(){HMI.hideHeader();});
-		addEventSimple($('idKeepHeader'),'click',function(){HMI.updateKeepHeader();});
-		addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
+		if ($('idHeaderRow')){
+			addEventSimple($('idHeaderRow'),'click',function(){HMI.hideHeader();});
+		}else{
+			ErrorDetail += "HTML object with the ID: idHeaderRow not found.\n";
+		}
+		if ($('idKeepHeader')){
+			addEventSimple($('idKeepHeader'),'click',function(){HMI.updateKeepHeader();});
+		}else{
+			ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found.\n";
+		}
+		
+		if(ErrorDetail != ""){
+			alert ("Error initialising HMI Website:\n"+ErrorDetail);
+			return;
+		}
 		
 		//init the optional Buttons
 		if ($('idRefresh')){
@@ -162,8 +205,6 @@ HMI.prototype = {
 		delete ResponseServerString;
 		delete DatePreventsCaching;
 		
-		//Object of SVG insertion
-		this.Playground = $('idPlayground');
 		//detect type of SVG display
 		if (this.Playground.tagName.toLowerCase() == "embed"){
 			//via a embed plugin tag
@@ -288,7 +329,7 @@ HMI.prototype = {
 		if (HMI.showHeader){
 			//hide menu
 			HMI.showHeader = false;
-			document.getElementById("hmi_header").style.display = "none";
+			document.getElementById("idHideableHeader").style.display = "none";
 			if (document.getElementById("arrowdown1") != null){
 				document.getElementById("arrowdown1").style.visibility="visible";
 				document.getElementById("arrowdown2").style.visibility="visible";
@@ -298,7 +339,7 @@ HMI.prototype = {
 		} else {
 			//show menu
 			HMI.showHeader = true;
-			document.getElementById("hmi_header").style.display = "block";
+			document.getElementById("idHideableHeader").style.display = "block";
 			if (document.getElementById("arrowdown1") != null){
 				document.getElementById("arrowdown1").style.visibility="hidden";
 				document.getElementById("arrowdown2").style.visibility="hidden";
@@ -448,8 +489,8 @@ HMI.prototype = {
 		}
 		
 		//blur the buttons for convenience with keyboard interaction
-		$("idSheets").blur();
-		$("idServers").blur();
+		HMI.PossSheets.blur();
+		HMI.PossServers.blur();
 		//present a "deep link" to the sheet
 		$("idBookmark").style.cssText = "display:inline;";
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+this.KSClient.KSServer.substr(this.KSClient.KSServer.indexOf('/')+1)+"&Sheet="+HMI.PossSheets.value);
@@ -1021,7 +1062,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-16 16:34:06 $";
+var filedate = "$Date: 2009-03-16 18:34:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
