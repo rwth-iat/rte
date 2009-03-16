@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.77 $
-*	$Date: 2009-03-16 13:09:57 $
+*	$Revision: 1.78 $
+*	$Date: 2009-03-16 16:34:06 $
 *
 *	History:
 *	--------
@@ -112,6 +112,35 @@ HMI.prototype = {
 	init: function () {
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
+		//Object of ErrorOutput
+		this.ErrorOutput = $('idErrorOutput');
+		//Object of ShowServer-Button
+		this.ButShowServers = $('idShowServers');
+		//Object of Server-Selectbox
+		this.PossServers = $('idServers');
+		//Object of Sheet-Selectbox
+		this.PossSheets = $('idSheets');
+		
+		//init the plain HTML website with events
+		addEventSimple($('idHeaderRow'),'click',function(){HMI.hideHeader();});
+		addEventSimple($('idKeepHeader'),'click',function(){HMI.updateKeepHeader();});
+		addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
+		
+		//init the optional Buttons
+		if ($('idRefresh')){
+			addEventSimple($('idRefresh'),'click',function(){HMI.refreshSheet();});
+		}
+		if ($('idStopRefresh')){
+			addEventSimple($('idStopRefresh'),'click',function(){
+				clearTimeout(HMI.RefreshTimeoutID);
+				HMI.RefreshTimeoutID = null;
+				}
+			);
+		}
+		if ($('idStartRefresh')){
+			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)});
+		}
+		
 		//Try to detect the Servertype (TCL or PHP capable)
 		//make a request to sniff the HTTP-Serverstring
 		//This fails in some cases, with Safari and Chrome, try manually to reload the page in that case
@@ -132,13 +161,6 @@ HMI.prototype = {
 		delete req;
 		delete ResponseServerString;
 		delete DatePreventsCaching;
-		
-		//Object of ErrorOutput
-		this.ErrorOutput = $('idErrorOutput');
-		//Object of Server-Selectbox
-		this.PossServers = $('idServers');
-		//Object of Sheet-Selectbox
-		this.PossSheets = $('idSheets');
 		
 		//Object of SVG insertion
 		this.Playground = $('idPlayground');
@@ -174,10 +196,10 @@ HMI.prototype = {
 		HMI.PossSheets.disabled = true;
 		
 		//reactivate the ShowServer button. It was disabled to prevent a click during initialisation of HMI
-		document.getElementById("idShowServers").disabled = false;
+		HMI.ButShowServers.disabled = false;
 		
 		//focus the ShowServer button for convenience with keyboard interaction
-		document.getElementById("idShowServers").focus();
+		HMI.ButShowServers.focus();
 		
 		//HMIdate was populated in every js-file with the date of CVS commit
 		//publish this date on website
@@ -218,7 +240,7 @@ HMI.prototype = {
 			//a server is specified in "deep link"
 			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length != 0){
 				//get list of servers
-				HMI.showServers($('idHost').value, $('idRefreshTime').value);
+				HMI.showServers();
 				//select server in drop-down box from deep link
 				for (var i=0; i < HMI.PossServers.options.length; i++){
 					if (HMI.PossServers.options[i].value == HMI_Parameter_Liste.Server){
@@ -253,7 +275,7 @@ HMI.prototype = {
 	*********************************/
 	updateKeepHeader: function (){
 		this.hmi_log_trace("HMI.prototype.updateKeepHeader - change requested");
-		if (document.getElementById("checkbox_keepheader").checked == true) {
+		if (document.getElementById("idKeepHeader").checked == true) {
 			HMI.autoKeepHeader = true;
 		}else{
 			HMI.autoKeepHeader = false;
@@ -289,23 +311,23 @@ HMI.prototype = {
 	/*********************************
 		showServers
 	*********************************/
-	showServers: function (Host, RefreshTime) {
+	showServers: function () {
 		
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
 		//disable double click by user
-		document.getElementById("idShowServers").disabled = true;
-		document.getElementById("idShowServers").value = "Please wait...";
+		HMI.ButShowServers.disabled = true;
+		HMI.ButShowServers.value = "Please wait...";
 		
-		if (RefreshTime < 100){
+		
+		if ($('idRefreshTime').value < 100){
 			$('idRefreshTime').value = 100;
 			this.RefreshTime = 100;
 		}else{
-			this.RefreshTime = RefreshTime;
+			this.RefreshTime = $('idRefreshTime').value;
 		}
-		if (Host.length == 0){
-			Host = "localhost";
-			$('idHost').value = Host;
+		if ($('idHost').value.length == 0){
+			$('idHost').value = "localhost";
 		}
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
@@ -349,7 +371,7 @@ HMI.prototype = {
 		KSGateway = window.location.host;
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
-		this.KSClient.init(Host + '/MANAGER', KSGateway + KSGateway_Path);
+		this.KSClient.init($('idHost').value + '/MANAGER', KSGateway + KSGateway_Path);
 		if (!HMI.ErrorOutput.firstChild){
 			this.KSClient.getServers();
 		}
@@ -358,8 +380,8 @@ HMI.prototype = {
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime);
 		
 		//reenable click by user
-		document.getElementById("idShowServers").disabled = false;
-		document.getElementById("idShowServers").value = "Show Servers";
+		HMI.ButShowServers.disabled = false;
+		HMI.ButShowServers.value = "Show Servers";
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
@@ -999,7 +1021,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-16 13:09:57 $";
+var filedate = "$Date: 2009-03-16 16:34:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

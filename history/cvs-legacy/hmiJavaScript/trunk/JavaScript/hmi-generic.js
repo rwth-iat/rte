@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.28 $
-*	$Date: 2009-03-03 10:50:04 $
+*	$Revision: 1.29 $
+*	$Date: 2009-03-16 16:34:06 $
 *
 *	History:
 *	--------
@@ -174,13 +174,13 @@ if (!document.importNode) {
 	Adobe SVG Viewer supports addEventListener, so the gestures did not need a change
 *********************************/
 function addEventSimple(obj,evt,fn) {
-	if (obj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG || obj.addEventListener)
+	if (obj.addEventListener)
 		obj.addEventListener(evt,fn,false);
 	else if (obj.attachEvent)
 		obj.attachEvent('on'+evt,fn);
 }
 function removeEventSimple(obj,evt,fn) {
-	if (obj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG || obj.removeEventListener)
+	if (obj.removeEventListener)
 		obj.removeEventListener(evt,fn,false);
 	else if (obj.detachEvent)
 		obj.detachEvent('on'+evt,fn);
@@ -304,7 +304,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2009-03-03 10:50:04 $";
+var filedate = "$Date: 2009-03-16 16:34:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

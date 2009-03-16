@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.55 $
-*	$Date: 2009-03-16 13:09:57 $
+*	$Revision: 1.56 $
+*	$Date: 2009-03-16 16:34:06 $
 *
 *	History:
 *	--------
@@ -448,7 +448,7 @@ HMIJavaScriptKSClient.prototype = {
 		this.HMIMANAGER_PATH = this.getVar(null, "/Libraries/hmi/Manager.instance", null).replace(/{/g, "").replace(/}/g, "");
 		
 		var Command = null;
-		if ($("checkbox_showcomponents") && $("checkbox_showcomponents").checked){
+		if ($("idShowcomponents") && $("idShowcomponents").checked){
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
 				'{' + this.HMIMANAGER_PATH + '}%20' + 
@@ -703,7 +703,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-03-16 13:09:57 $";
+var filedate = "$Date: 2009-03-16 16:34:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

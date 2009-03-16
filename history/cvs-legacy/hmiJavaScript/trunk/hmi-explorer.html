@@ -1,6 +1,5 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xml:lang="en">
 <!--
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzeigen...
 /*
 *	Copyright (C) 2009
@@ -49,8 +48,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.31 $
-*	$Date: 2009-03-16 13:09:57 $
+*	$Revision: 1.32 $
+*	$Date: 2009-03-16 16:34:06 $
 *
 *	History:
 *
@@ -77,7 +76,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 	-->
 	<body>
 		<table width="100%">
-			<tr onclick="HMI.hideHeader()" style="cursor:pointer;">
+			<tr id="idHeaderRow" style="cursor:pointer;">
 				<td style="text-align:center;">
 					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
 						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
@@ -103,9 +102,9 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 			<table>
 				<tr>
 					<td style="text-align:right;" title="As seen from KSGateway">FB-Host:</td>
-					<td><input id="idHost" type="text" size="29" value="" tabindex="2"/></td>
+					<td><input id="idHost" type="text" size="29" value="" tabindex="2"></td>
 					<td style="text-align:center;">Refresh Time:</td>
-					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4"/>ms <strong id="idErrorOutput"> </strong>
+					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4">ms <strong id="idErrorOutput"> </strong>
 					</td>
 				</tr>
 				<tr>
@@ -115,17 +114,13 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 						</select>
 					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;">
-						<input type="button" value="Show Servers" id="idShowServers" tabindex="1" disabled="disabled"
-							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value)">
+						<input type="button" value="Show Servers" id="idShowServers" tabindex="1" disabled="disabled">
 					</td>
 					<td>
 <!--
-						<input type="button" value="Refresh Sheet Now"
-							onclick="HMI.refreshSheet()"/>
-						<input type="button" value="Stop Autorefresh"
-							onclick="clearTimeout(HMI.RefreshTimeoutID);HMI.RefreshTimeoutID = null;"/>
-						<input type="button" value="Start Autorefresh"
-							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
+						<input type="button" id="idRefresh" value="Refresh Sheet Now">
+						<input type="button" id="idStopRefresh" value="Stop Autorefresh">
+						<input type="button" id="idStartRefresh" value="Start Autorefresh">
 -->
 						<a id="idBookmark" href="" style="display:none;">Link to Sheet</a>
 					</td>
@@ -137,9 +132,9 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 						</select>
 					</td>
 					<td colspan="2">
-						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="HMI.updateKeepHeader()"/> keep this header visible
+						<input type="checkbox" id="idKeepHeader" value="true"> keep this header visible
 <!--
-						<input type="checkbox" id="checkbox_showcomponents" value="true"> Show Components
+						<input type="checkbox" id="idShowcomponents" value="true"> Show Components
 -->
 					</td>
 				</tr>
