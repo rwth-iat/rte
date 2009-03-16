@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.75 $
-*	$Date: 2009-03-04 15:04:00 $
+*	$Revision: 1.76 $
+*	$Date: 2009-03-16 11:07:06 $
 *
 *	History:
 *	--------
@@ -88,11 +88,17 @@ function HMI(async, debug, error, warning, info, trace) {
 	this.PossServers = null;
 	this.PossSheets = null;
 	this.Playground = null;
-	
-	//var _currentDragger = null;
+	this.ErrorOutput = null;
 	
 	this.KSClient = new HMIJavaScriptKSClient(async);
 	this.RefreshTime = null;
+	
+	this.showHeader = true;
+	
+	//the modern firebugconsole wants to be activated
+	if (window.loadFirebugConsole){
+		window.loadFirebugConsole();
+	}
 };
 
 /***********************************************************************
@@ -104,21 +110,16 @@ HMI.prototype = {
 		init
 	*********************************/
 	init: function () {
-		if (window.loadFirebugConsole){
-			window.loadFirebugConsole();
-		}
 		this.hmi_log_trace("HMI.prototype.init - Start");
-		
-		//Initialize global variable
-		HMI.showHeader = true;
 		
 		//Try to detect the Servertype (TCL or PHP capable)
 		//make a request to sniff the HTTP-Serverstring
+		//This fails in some cases, with Safari and Chrome, try manually to reload the page in that case
 		
-		//IE sometimes uses a cached version, without server Header
+		//IE sometimes uses a cached version, without server Header, so prevent caching
 		var DatePreventsCaching = new Date();
 		var req = new XMLHttpRequest();
-		req.open("GET", window.location.pathname+'?preventCaching2='+DatePreventsCaching.getTime(), false);
+		req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
 		req.send(null);
 		var ResponseServerString = req.getResponseHeader('server');
 		if (-1 != ResponseServerString.indexOf('Tcl-Webserver')){
@@ -132,9 +133,45 @@ HMI.prototype = {
 		delete ResponseServerString;
 		delete DatePreventsCaching;
 		
+		//Object of ErrorOutput
+		this.ErrorOutput = $('idErrorOutput');
+		//Object of Server-Selectbox
+		this.PossServers = $('idServers');
+		//Object of Sheet-Selectbox
+		this.PossSheets = $('idSheets');
+		
+		//Object of SVG insertion
+		this.Playground = $('idPlayground');
+		//detect type of SVG display
+		if (this.Playground.tagName.toLowerCase() == "embed"){
+			//via a embed plugin tag
+			this.svgWindow = this.Playground.window;
+			this.svgDocument = this.Playground.getSVGDocument();
+			//switch the target Playground to the embed SVG-Plugin DOM
+			this.PlaygroundEmbedNode= this.Playground;
+			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
+			//sometimes feature detection is not possible
+			this.EmbedAdobePlugin= true;
+			this.PluginVendor = HMI.svgWindow.getSVGViewerVersion();
+			if (-1 != this.PluginVendor.indexOf('Adobe')){
+				this.PluginVendor = 'Adobe';
+			}else if (-1 != this.PluginVendor.indexOf('examotion')){
+				this.PluginVendor = 'Examotion';
+			}
+		}else{
+			//inline SVG in XHTML DOM
+			this.EmbedAdobePlugin= false;
+			this.svgDocument = document;
+			this.svgWindow = window;
+		}
+		
 		//The state of the Checkbox is preserved at a reload from cache, so
 		//we have to update the variable to reflect the userchoice
 		HMI.updateKeepHeader();
+		
+		//deactivate the Select-Boxes, because there is no usefull content now
+		HMI.PossServers.disabled = true;
+		HMI.PossSheets.disabled = true;
 		
 		//reactivate the ShowServer button. It was disabled to prevent a click during initialisation of HMI
 		document.getElementById("idShowServers").disabled = false;
@@ -181,7 +218,7 @@ HMI.prototype = {
 			//a server is specified in "deep link"
 			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length != 0){
 				//get list of servers
-				HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'));
+				HMI.showServers($('idHost').value, $('idRefreshTime').value);
 				//select server in drop-down box from deep link
 				for (var i=0; i < HMI.PossServers.options.length; i++){
 					if (HMI.PossServers.options[i].value == HMI_Parameter_Liste.Server){
@@ -189,14 +226,14 @@ HMI.prototype = {
 					}
 				}
 				//if showServers encountered an error don't load the Sheet list
-				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && HMI.PossServers.selectedIndex != 0){
+				if (HMI.ErrorOutput.innerHTML.length == 0 && HMI.PossServers.selectedIndex != 0){
 					HMI.showSheets(HMI_Parameter_Liste.Server);
 				}
 			}
 			
 			if (HMI.PossServers && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0 && HMI_Parameter_Liste.Sheet){
 				//no error and more than one sheet. If there is only one Sheet, showSheets has allready shown Sheet
-				if (document.getElementById("ErrorOutput").innerHTML.length == 0 && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value != HMI_Parameter_Liste.Sheet){
+				if (HMI.ErrorOutput.innerHTML.length == 0 && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value != HMI_Parameter_Liste.Sheet){
 					for (var i=0; i < HMI.PossSheets.options.length; i++){
 						if (HMI.PossSheets.options[i].value == HMI_Parameter_Liste.Sheet){
 							HMI.PossSheets.options[i].selected = true;
@@ -251,7 +288,7 @@ HMI.prototype = {
 	/*********************************
 		showServers
 	*********************************/
-	showServers: function (Host, RefreshTime, PossServers, PossSheets, Playground) {
+	showServers: function (Host, RefreshTime) {
 		
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
@@ -267,38 +304,6 @@ HMI.prototype = {
 		}
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
-		
-		//Object of Server-Selectbox
-		this.PossServers = PossServers;
-		//Object of Sheet-Selectbox
-		this.PossSheets = PossSheets;
-		
-		//detect type of SVG display
-		if (Playground.tagName.toLowerCase() == "embed"){
-			//via a embed plugin tag
-			this.svgWindow = Playground.window;
-			this.svgDocument = Playground.getSVGDocument();
-			//switch the target Playground to the embed SVG-Plugin DOM
-			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
-			this.PlaygroundEmbedNode= Playground;
-			//sometimes feature detection is not possible
-			this.EmbedAdobePlugin= true;
-			this.PluginVendor = HMI.svgWindow.getSVGViewerVersion();
-			if (-1 != this.PluginVendor.indexOf('Adobe')){
-				this.PluginVendor = 'Adobe';
-			}else if (-1 != this.PluginVendor.indexOf('examotion')){
-				this.PluginVendor = 'Examotion';
-			}
-		}else{
-			//inline SVG in XHTML DOM
-			this.Playground = Playground;
-			this.EmbedAdobePlugin= false;
-			this.svgDocument = document;
-			this.svgWindow = window;
-		}
-		
-		//Gateway could not be another host without violating Same Origin Policy
-		KSGateway = window.location.host;
 		
 		//the guessed servertype is used for communication
 		if ("php" == HMI.HMI_Constants.ServerType){
@@ -324,11 +329,23 @@ HMI.prototype = {
 		deleteChilds(this.PossServers);
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
-		deleteChilds(document.getElementById("ErrorOutput"));
+		deleteChilds(this.ErrorOutput);
+		
+		//deactivate the Select-Boxes, because there is no usefull content
+		HMI.PossServers.disabled = true;
+		HMI.PossSheets.disabled = true;
+		
+		//Set a neutral title
+		document.title = "Startcenter - ACPLT/HMI";
+		
+		$("idBookmark").style.cssText = "display:none;";
+		
+		//Gateway could not be another host without violating Same Origin Policy
+		KSGateway = window.location.host;
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(Host + '/MANAGER', KSGateway + KSGateway_Path);
-		if (document.getElementById("ErrorOutput").innerHTML.length == 0){
+		if (HMI.ErrorOutput.innerHTML.length == 0){
 			this.KSClient.getServers();
 		}
 		//present a deep link to the Host setting
@@ -349,13 +366,18 @@ HMI.prototype = {
 		//clean old Sheet entrys, an old SVG display and displayed errors in website
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
-		deleteChilds(document.getElementById("ErrorOutput"));
+		deleteChilds(this.ErrorOutput);
+		
+		HMI.PossSheets.disabled = true;
 		$("idBookmark").style.cssText = "display:none;";
+		document.title = "Startcenter - ACPLT/HMI";
+		
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		//nothing selected
 		if (Server == 'no server'){
+			HMI.PossSheets.options[0] = new Option('please select Server', 'no sheet');
 			return;
 		}
 		
@@ -374,7 +396,7 @@ HMI.prototype = {
 		
 		//clean an old SVG display and displayed errors in website
 		deleteChilds(this.Playground);
-		deleteChilds(document.getElementById("ErrorOutput"));
+		deleteChilds(this.ErrorOutput);
 		$("idBookmark").style.cssText = "display:none;";
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
@@ -390,7 +412,7 @@ HMI.prototype = {
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
-		if (HMI.autoKeepHeader == false && document.getElementById("ErrorOutput").innerHTML.length == 0){
+		if (HMI.autoKeepHeader == false && HMI.ErrorOutput.innerHTML.length == 0){
 			HMI.hideHeader();
 		}
 		
@@ -959,8 +981,8 @@ HMI.prototype = {
 	*********************************/
 	hmi_log_onwebsite: function (text) {
 		var ErrorTextNode = document.createTextNode(text);
-		deleteChilds(document.getElementById("ErrorOutput"));
-		document.getElementById("ErrorOutput").appendChild(ErrorTextNode);
+		deleteChilds(HMI.ErrorOutput);
+		HMI.ErrorOutput.appendChild(ErrorTextNode);
 		//if header in not visible: show it
 		if (HMI.showHeader == false){
 			HMI.hideHeader();
@@ -968,7 +990,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-04 15:04:00 $";
+var filedate = "$Date: 2009-03-16 11:07:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

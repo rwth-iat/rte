@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.53 $
-*	$Date: 2009-03-11 10:17:33 $
+*	$Revision: 1.54 $
+*	$Date: 2009-03-16 11:07:06 $
 *
 *	History:
 *	--------
@@ -118,9 +118,6 @@ HMIJavaScriptKSClient.prototype = {
 		this.TCLKSGateway	= TCLKSGateway;
 		this.TCLKSHandle	= null;
 		this.HMIMANAGER_PATH	= null;
-		
-		document.title = "Startcenter - ACPLT/HMI";
-		$("idBookmark").style.cssText = "display:none;";
 		
 		this.getHandle(this.KSServer, this._cbInit);
 		
@@ -374,8 +371,7 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+(HMI.PossServers.length-1));
 			if (HMI.PossServers.length == 1){
-				HMI.PossServers.options[0].innerHTML = '- no server available -';
-				HMI.PossServers.options[0].value = 'no server';
+				HMI.PossServers.options[0] = new Option('- no server available -', 'no server');
 			}else{
 				//'this' is not PossServers here, but refers to the window and is completely useless in Internet Explorer
 				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
@@ -386,6 +382,8 @@ HMIJavaScriptKSClient.prototype = {
 					HMI.showSheets(HMI.PossServers.lastChild.value);
 				}
 			}
+			HMI.PossSheets.options[0] = new Option('please select Server', 'no sheet');
+			HMI.PossServers.disabled = false;
 		} else {
 			HMI.PossServers.options[0] = new Option('- no MANAGER available-', 'no server');
 		};
@@ -535,6 +533,7 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.PossSheets.selectedIndex = 1;
 				HMI.showSheet(Sheet[0]);
 			}
+			HMI.PossSheets.disabled = false;
 		} else {
 			HMI.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
@@ -704,7 +703,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-03-11 10:17:33 $";
+var filedate = "$Date: 2009-03-16 11:07:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

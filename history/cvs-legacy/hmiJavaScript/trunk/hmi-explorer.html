@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzeigen...
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -49,8 +49,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.29 $
-*	$Date: 2009-03-03 10:50:04 $
+*	$Revision: 1.30 $
+*	$Date: 2009-03-16 11:07:06 $
 *
 *	History:
 *
@@ -79,11 +79,11 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		<table width="100%">
 			<tr onclick="HMI.hideHeader()" style="cursor:pointer;">
 				<td style="text-align:center;">
-					<svg:svg width="25" height="22">
-						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="stroke:blue;fill:none;stroke-width:1px;visibility:visible;"/>
-						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="stroke:blue;fill:none;stroke-width:1px;visibility:visible;"/>
-						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="stroke:blue;fill:none;stroke-width:1px;visibility:hidden;"/>
-						<svg:polyline id="arrowdown2" points="0,10 8,20 16,10" style="stroke:blue;fill:none;stroke-width:1px;visibility:hidden;"/>
+					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
+						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
+						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
+						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
+						<svg:polyline id="arrowdown2" points="0,10 8,20 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
 					</svg:svg>
 				</td>
 				<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
@@ -105,7 +105,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 					<td style="text-align:right;" title="As seen from KSGateway">FB-Host:</td>
 					<td><input id="idHost" type="text" size="29" value="" tabindex="2"/></td>
 					<td style="text-align:center;">Refresh Time:</td>
-					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4"/>ms <strong id="ErrorOutput"> </strong>
+					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4"/>ms <strong id="idErrorOutput"> </strong>
 					</td>
 				</tr>
 				<tr>
@@ -115,11 +115,12 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 						</select>
 					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;">
-						<input type="button" value="Show Servers" id="idShowServers" tabindex="1" disabled="disabled"
-							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value, $('idServers'), $('idSheets'), $('idPlayground'))"/>
+						<input type="button" value="Show Servers" id="idShowServers" tabindex="1"
+							onclick="HMI.showServers($('idHost').value, $('idRefreshTime').value)">
 					</td>
 					<td>
-<!--						<input type="button" value="Refresh Sheet Now"
+<!--
+						<input type="button" value="Refresh Sheet Now"
 							onclick="HMI.refreshSheet()"/>
 						<input type="button" value="Stop Autorefresh"
 							onclick="clearTimeout(HMI.RefreshTimeoutID);HMI.RefreshTimeoutID = null;"/>
@@ -131,20 +132,21 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 				</tr>
 				<tr>
 					<td style="text-align:right;">Sheets:</td>
-					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;" tabindex="5">
+					<td><select id="idSheets" name="Sheets" size="1" style="width:200px;" tabindex="5" disabled="disabled">
 							<option>please push "Show Servers"</option>
 						</select>
 					</td>
 					<td colspan="2">
 						<input type="checkbox" id="checkbox_keepheader" value="true" onclick="HMI.updateKeepHeader()"/> keep this header visible
-<!--						<input type="checkbox" id="checkbox_showcomponents" value="true"/> Show Components
+<!--
+						<input type="checkbox" id="checkbox_showcomponents" value="true"> Show Components
 -->
 					</td>
 				</tr>
 			</table>
 			<hr color="blue">
 		</div>
-		<embed id="idPlayground" type="image/svg+xml" src="container.svg"></embed>
-		<p oncontextmenu="return false" id="idPlayground-p"></p>
+		<embed id="idPlayground" type="image/svg+xml" src="container.svg">
+		</embed>
 	</body>
 </html>
