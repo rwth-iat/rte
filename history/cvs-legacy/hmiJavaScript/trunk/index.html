@@ -3,7 +3,7 @@
 <html>
 <!--
 /*
-*	Copyright (C) 2007
+*	Copyright (C) 2009
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.9 $
-*	$Date: 2008-10-16 09:20:30 $
+*	$Revision: 1.10 $
+*	$Date: 2009-03-16 11:06:05 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
@@ -56,8 +56,8 @@
 *
 ***********************************************************************/
 -->
-<script language="JavaScript" src="JavaScript/adobesvgcheck.js"></script>
-<script language="VBScript" src="JavaScript/adobesvgcheck.vbs"></script>
+<script type="text/javascript" src="JavaScript/adobesvgcheck.js"></script>
+<script type="text/vbscript" src="JavaScript/adobesvgcheck.vbs"></script>
 <script type="text/javascript">
 var BrowserDetect = {
 	init: function () {
@@ -189,8 +189,8 @@ var BrowserDetect = {
 	}else if ("Safari" == BrowserDetect.browser ) {
 		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Konqueror" == BrowserDetect.browser ) {
-		//Version 3.5.9 arbeitet mit dem HMI trotzdem nicht
-		window.location.href = "hmi-xslt.xml"+window.location.search;
+		//Version 4.2 arbeitet mit dem HMI trotzdem nicht
+		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else{
 		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}
@@ -214,21 +214,23 @@ var BrowserDetect = {
 		</table>
 		<noscript>
 			<h2>Leider haben sie in ihrem Browser kein Javascript aktiviert. </h2>
-			<p>Für die HMI Funktionalität ist jedoch zwingend aktiviertes Javascript nötig</p>
-			<strong>Bitte aktivieren sie Javascript in ihrem Browser und laden sie die Seite neu.</strong>
+			<p>Für die HMI Funktionalität ist jedoch zwingend aktiviertes Javascript nötig.</p>
+			<p><strong>Bitte aktivieren sie Javascript in ihrem Browser und laden sie die Seite neu.</strong></p>
 			<h3>Bei Firefox</h3>
-			Klicken Sie in der obersten Men&uuml;leiste auf <b>Extras</b> / <b>Einstellungen</b>. Hier aktivieren Sie unter <b>Inhalt</b> bzw. <b>Web-Features</b> den Punkt <b>JavaScript aktivieren</b> und klicken Sie <b>OK</b>.
+			<p>Klicken Sie in der obersten Men&uuml;leiste auf <b>Extras</b> / <b>Einstellungen</b>. Hier aktivieren Sie unter <b>Inhalt</b> bzw. <b>Web-Features</b> den Punkt <b>JavaScript aktivieren</b> und klicken Sie <b>OK</b>.</p>
 			<h3>Beim Internet Explorer</h3>
-			Klicken Sie in der obersten Men&uuml;leiste auf <b>Extras</b> / <b>Internetoptionen</b>.<br>
-			Dort klicken Sie unter <b>Sicherheit</b> <i>entweder</i> auf <b>Standardstufe</b>, <i>oder</i> Sie w&auml;hlen <b>Stufe anpassen</b> und aktivieren dann unter <b>Scripting</b> den Punkt <b>Active Scripting Aktivieren</b>. Best&auml;tigen Sie mit <b>OK</b>.
+			<p>Klicken Sie in der obersten Men&uuml;leiste auf <b>Extras</b> / <b>Internetoptionen</b>.<br>
+			Dort klicken Sie unter <b>Sicherheit</b> <i>entweder</i> auf <b>Standardstufe</b>, <i>oder</i> Sie w&auml;hlen <b>Stufe anpassen</b> und aktivieren dann unter <b>Scripting</b> den Punkt <b>Active Scripting Aktivieren</b>. Best&auml;tigen Sie mit <b>OK</b>.</p>
 			<h3>Bei Opera</h3>
-			Klicken Sie in der obersten Men&uuml;leiste auf <b>Datei</b> / <b>Einstellungen</b>. Unter <b>Multimedia</b> setzen Sie ein H&auml;kchen bei <b>JavaScript aktivieren</b> und klicken Sie dann <b>OK</b>.
+			<p>Klicken Sie in der obersten Men&uuml;leiste auf <b>Datei</b> / <b>Einstellungen</b>. Unter <b>Multimedia</b> setzen Sie ein H&auml;kchen bei <b>JavaScript aktivieren</b> und klicken Sie dann <b>OK</b>.</p>
 		</noscript>
 		<p>Für die HMI Funktionalität ist SVG Unterstützung des Browsers nötig.</p>
 		<ul>
 			<li><a href="http://www.mozilla-europe.org/de/products/firefox/">Firefox</a> hat ab Version 2.0 SVG Support integiert.</li>
-			<li><a href="http://www.microsoft.com/germany/windows/products/winfamily/ie/default.mspx">Internet Explorer</a> benötigt ein <a href="http://www.adobe.com/svg/viewer/install/mainframed.html">SVG Plugin</a> von Adobe. Bisher ist mit dieser Kombination nur ein eingeschränktes Monitoring möglich.</li>
+			<li><a href="http://www.microsoft.com/germany/windows/products/winfamily/ie/default.mspx">Internet Explorer</a> benötigt ein <a href="http://www.adobe.com/svg/viewer/install/mainframed.html">SVG Plugin</a> von Adobe.</li>
 			<li><a href="http://www.opera.com/download/">Opera</a> unterstützt ab Version 9.0 SVG und Javascript</li>
+			<li><a href="http://www.apple.com/safari/">Safari</a> unterstützt ab Version 3.0 SVG und Javascript</li>
+			<li><a href="http://www.google.com/chrome">Google Chrome</a> unterstützt ab Version 1.0 SVG und Javascript</li>
 		</ul>
 	</body>
 </html>
