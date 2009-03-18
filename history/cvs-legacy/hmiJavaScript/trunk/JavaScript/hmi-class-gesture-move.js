@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.24 $
-*	$Date: 2009-02-27 15:30:00 $
+*	$Revision: 1.25 $
+*	$Date: 2009-03-18 09:25:23 $
 *
 *	History:
 *	--------
@@ -179,8 +179,32 @@ Dragger.prototype = {
 	*********************************/
 	onMouseDownThunk: null,
 	onMouseDown: function (evt) {
-		this.startDrag(evt);
-		evt.stopPropagation();
+		//	DOUBLECLICK
+		//
+		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-doubleclick') == true
+			&&	evt.detail == 2
+			&&	evt.button == 0)
+		{
+			DoubleClick.prototype.onDoubleClick(evt);
+			return;
+		};		
+		
+		//	RIGHTCLICK
+		//
+		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-rightclick') == true
+			&&	evt.button == 2)
+		{
+			RightClick.prototype.onRightClick(evt);
+			return;
+		};	
+		
+		//	MOVE
+		//
+		if (evt.button == 0)
+		{
+			this.startDrag(evt);
+			evt.stopPropagation();
+		}
 	},
 	
 	/*********************************
@@ -246,85 +270,61 @@ Dragger.prototype = {
 	startDrag: function (evt) {
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - Start");
 		
-		//	DOUBLECLICK
-		//
-		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-doubleclick') == true
-			&&	evt.detail == 2
-			&&	evt.button == 0)
-		{
-			DoubleClick.prototype.onDoubleClick(evt);
-			return;
-		};		
+		if (HMI.RefreshTimeoutID != null){
+			clearTimeout(HMI.RefreshTimeoutID);
+			HMI.RefreshTimeoutID = null;
+		}
+		//mark that there is an active drag for HMI.switchGround
+		this._controller._currentDragger = this;
 		
-		//	RIGHTCLICK
-		//
-		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-rightclick') == true
-			&&	evt.button == 2)
-		{
-			RightClick.prototype.onRightClick(evt);
-			return;
-		};	
+		//initialize mouse starting position
+		this._lastX = parseInt(evt.clientX, 10);
+		this._lastY = parseInt(evt.clientY, 10);
 		
-		//	MOVE
-		//
-		if (evt.button == 0)
+		this._totalDX = 0;
+		this._totalDY = 0;
+		
+		//move dragNode to the back of SVG
+		if (this._node != this._node.parentNode.firstChild)
 		{
-			if (HMI.RefreshTimeoutID != null){
-				clearTimeout(HMI.RefreshTimeoutID);
-				HMI.RefreshTimeoutID = null;
-			}
-			//mark that there is an active drag for HMI.switchGround
-			this._controller._currentDragger = this;
-			
-			//initialize mouse starting position
-			this._lastX = parseInt(evt.clientX, 10);
-			this._lastY = parseInt(evt.clientY, 10);
-			
-			this._totalDX = 0;
-			this._totalDY = 0;
-			
-			//move dragNode to the back of SVG
-			if (this._node != this._node.parentNode.firstChild)
-			{
-				this._node.parentNode.insertBefore(this._node, this._node.parentNode.firstChild);
-			};
-			
-			//make a Clone and paint it with opacity
-			var Node = this._node.cloneNode(true);
-			Node.setAttribute('id', HMI.HMI_Constants.NODE_NAME_CLONE);
-			Node.setAttribute('class', '');
-			Node.setAttribute('fill-opacity', '0.25');
-			Node.setAttribute('stroke-opacity', '0.25');
-			Node.setAttribute('clonedID', this._node.getAttribute('id'));
-			this._node.parentNode.appendChild(Node);
-			
-			//the dragged Node must not receive events while dragged
-			this._node.setAttribute("pointer-events", "none");
-			
-			if (HMI.svgDocument.addEventListener != undefined){
-				//Firefox and co
-				this.registerOnMouseMove(HMI.svgDocument, true, this);
-				this.registerOnMouseUp(HMI.svgDocument, true, this);
-			}else{
-				//adobe plugin, feature detection not possible 8-/
-				this.registerOnMouseMove(HMI.svgDocument.documentElement, false, this);
-				this.registerOnMouseUp(HMI.svgDocument.documentElement, false, this);
-			}
-			
-			try{
-				/**
-				* Gecko does not garbage collect things correct in any cases.
-				* The hack here is to reassign the additional properties attached to the
-				* JS wrapper object in order to ensure it becomes dirty. Well,
-				* considering that it becomes dirty from getting it from itself ...
-				* I think this source code can't be exported to the US anymore
-				* because of undecent language and probably thoughts.
-				*/
-				Node._xxx = null; delete Node._xxx;
-			} catch (e) {   //IE does not like this hack
-			}
-			delete Node;
+			this._node.parentNode.insertBefore(this._node, this._node.parentNode.firstChild);
 		};
+		
+		//make a Clone and paint it with opacity
+		var Node = this._node.cloneNode(true);
+		Node.setAttribute('id', HMI.HMI_Constants.NODE_NAME_CLONE);
+		Node.setAttribute('class', '');
+		Node.setAttribute('fill-opacity', '0.25');
+		Node.setAttribute('stroke-opacity', '0.25');
+		Node.setAttribute('clonedID', this._node.getAttribute('id'));
+		this._node.parentNode.appendChild(Node);
+		
+		//the dragged Node must not receive events while dragged
+		this._node.setAttribute("pointer-events", "none");
+		
+		if (HMI.svgDocument.addEventListener != undefined){
+			//Firefox and co
+			this.registerOnMouseMove(HMI.svgDocument, true, this);
+			this.registerOnMouseUp(HMI.svgDocument, true, this);
+		}else{
+			//adobe plugin, feature detection not possible 8-/
+			this.registerOnMouseMove(HMI.svgDocument.documentElement, false, this);
+			this.registerOnMouseUp(HMI.svgDocument.documentElement, false, this);
+		}
+		
+		try{
+			/**
+			* Gecko does not garbage collect things correct in any cases.
+			* The hack here is to reassign the additional properties attached to the
+			* JS wrapper object in order to ensure it becomes dirty. Well,
+			* considering that it becomes dirty from getting it from itself ...
+			* I think this source code can't be exported to the US anymore
+			* because of undecent language and probably thoughts.
+			*/
+			Node._xxx = null; delete Node._xxx;
+		} catch (e) {   //IE does not like this hack
+		}
+		delete Node;
 		
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - End");
 	},
@@ -536,7 +536,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-02-27 15:30:00 $";
+var filedate = "$Date: 2009-03-18 09:25:23 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
