@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.56 $
-*	$Date: 2009-03-16 16:34:06 $
+*	$Revision: 1.57 $
+*	$Date: 2009-03-18 12:35:21 $
 *
 *	History:
 *	--------
@@ -281,6 +281,7 @@ HMIJavaScriptKSClient.prototype = {
 		if (/^TksS-\b/.exec(req.responseText)){
 			Client.TCLKSHandle = req.responseText;
 		} else {
+			Client.TCLKSHandle = null;
 			Client.KSServer = null;
 			if (HMI.PossServers.length == 0){
 				HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no valid server response -', 'no server');
@@ -703,7 +704,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-03-16 16:34:06 $";
+var filedate = "$Date: 2009-03-18 12:35:21 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

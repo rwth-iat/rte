@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.79 $
-*	$Date: 2009-03-16 18:34:19 $
+*	$Revision: 1.80 $
+*	$Date: 2009-03-18 12:35:21 $
 *
 *	History:
 *	--------
@@ -413,7 +413,7 @@ HMI.prototype = {
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init($('idHost').value + '/MANAGER', KSGateway + KSGateway_Path);
-		if (!HMI.ErrorOutput.firstChild){
+		if (this.KSClient.TCLKSHandle != null){
 			this.KSClient.getServers();
 		}
 		//present a deep link to the Host setting
@@ -455,7 +455,9 @@ HMI.prototype = {
 		
 		//an init generates a new Handle, needed cause we communicate to this server the first time
 		this.KSClient.init(this.KSClient.KSServer.substring(0, this.KSClient.KSServer.indexOf('/')) + '/' + Server, this.KSClient.TCLKSGateway);
-		this.KSClient.getSheets();
+		if (this.KSClient.TCLKSHandle != null){
+			this.KSClient.getSheets();
+		}
 		
 		this.hmi_log_trace("HMI.prototype.showSheets - End");
 	},
@@ -1062,7 +1064,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-16 18:34:19 $";
+var filedate = "$Date: 2009-03-18 12:35:21 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
