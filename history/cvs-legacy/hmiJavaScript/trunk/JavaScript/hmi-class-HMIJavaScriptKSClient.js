@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.57 $
-*	$Date: 2009-03-18 12:35:21 $
+*	$Revision: 1.58 $
+*	$Date: 2009-03-18 12:58:29 $
 *
 *	History:
 *	--------
@@ -282,13 +282,12 @@ HMIJavaScriptKSClient.prototype = {
 			Client.TCLKSHandle = req.responseText;
 		} else {
 			Client.TCLKSHandle = null;
-			Client.KSServer = null;
 			if (HMI.PossServers.length == 0){
 				HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no valid server response -', 'no server');
 			}
 			HMI.hmi_log_error('HMIJavaScriptKSClient._cbinit: Could not initialize TCLKSGateway. '
 				+ 'Gateway responded:'
-				+ '\n\n'
+				+ '\n'
 				+ req.responseText);
 			if (req.responseText.length < 250){
 				HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + req.responseText);
@@ -704,7 +703,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-03-18 12:35:21 $";
+var filedate = "$Date: 2009-03-18 12:58:29 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
