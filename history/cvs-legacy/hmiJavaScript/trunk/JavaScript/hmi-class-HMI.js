@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.80 $
-*	$Date: 2009-03-18 12:35:21 $
+*	$Revision: 1.81 $
+*	$Date: 2009-03-18 15:53:53 $
 *
 *	History:
 *	--------
@@ -544,7 +544,12 @@ HMI.prototype = {
 		var Component = null;
 		
 		//get the Component itself which contained the triggered gesture
-		Component = evt.target;
+		if (evt.target){
+			Component = evt.target;
+		}else if(evt.srcElement){
+			//native IE code
+			Component = evt.srcElement;
+		}
 		while (	Component != null
 				&&	Component != document
 				&&	HMI.instanceOf(Component, cssclass) == false)
@@ -554,6 +559,9 @@ HMI.prototype = {
 				Component = Component.ownerSVGElement;
 			}else if (Component.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
 				//Adobe+Renesis
+				Component = Component.parentNode;
+			}else if (Component.parentNode.tagUrn == HMI.HMI_Constants.NAMESPACE_SVG ){
+				//Inline IE Code inline
 				Component = Component.parentNode;
 			}
 			if ( Component != null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
@@ -1064,7 +1072,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-18 12:35:21 $";
+var filedate = "$Date: 2009-03-18 15:53:53 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
