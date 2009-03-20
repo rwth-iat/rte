@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2009-02-27 15:30:00 $
+*	$Revision: 1.17 $
+*	$Date: 2009-03-20 13:42:12 $
 *
 *	History:
 *	--------
@@ -88,7 +88,13 @@ RightClick.prototype = {
 	_registerOnRightClick: function(Component, capture, listener) {
 		this._onRightClickThunk = function (evt) { listener.onRightClick(evt); };
 		//mouseup is to different in browsers (especially safari@mac)
-		Component.addEventListener("mousedown", this._onRightClickThunk, capture);
+		if("unknown" == typeof Component.addEventListener || Component.addEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			Component.addEventListener("mousedown", this._onRightClickThunk, capture);
+		}else if (Component.attachEvent){
+			//Native IE
+			Component.attachEvent("onmousedown", this._onRightClickThunk);
+		}
 	},
 	
 	/*********************************
@@ -138,7 +144,7 @@ RightClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-02-27 15:30:00 $";
+var filedate = "$Date: 2009-03-20 13:42:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

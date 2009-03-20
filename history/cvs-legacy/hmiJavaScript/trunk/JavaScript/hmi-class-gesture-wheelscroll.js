@@ -47,8 +47,8 @@
 *	CVS:
 *	----
 *	
-*	$Revision: 1.5 $
-*	$Date: 2008-11-27 16:25:46 $
+*	$Revision: 1.6 $
+*	$Date: 2009-03-20 13:42:12 $
 *
 *	History:
 *	--------
@@ -82,11 +82,15 @@ WheelScroll.prototype = {
 	*********************************/
 	_registerOnScroll: function(Component, capture, listener) {
 		this._onScrollThunk = function (evt) { listener.onScroll(evt); };
+		//Hide addEventListener from nativ IE
+		if("unknown" == typeof Component.addEventListener || Component.addEventListener){
 			//mozilla
 			Component.addEventListener('DOMMouseScroll', this._onScrollThunk, capture); 
 			//opera
 			Component.addEventListener('mousewheel', this._onScrollThunk, capture);
 			//Adobe SVG Viewer has no wheelsupport
+			//Renesis unknown
+		}
 	},
 	
 	/*********************************
@@ -207,7 +211,7 @@ WheelScroll.prototype = {
 		return;
 	}
 };
-var filedate = "$Date: 2008-11-27 16:25:46 $";
+var filedate = "$Date: 2009-03-20 13:42:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

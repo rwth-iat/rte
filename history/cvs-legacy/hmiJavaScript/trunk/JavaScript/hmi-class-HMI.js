@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.81 $
-*	$Date: 2009-03-18 15:53:53 $
+*	$Revision: 1.82 $
+*	$Date: 2009-03-20 13:42:12 $
 *
 *	History:
 *	--------
@@ -164,7 +164,8 @@ HMI.prototype = {
 			ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found.\n";
 		}
 		
-		if(ErrorDetail != ""){
+		if(ErrorDetail != "" && document.documentElement.namespaceURI != "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
+			//do not complain if Firefox 3.5 Beta 3 is not displaying anything
 			alert ("Error initialising HMI Website:\n"+ErrorDetail);
 			return;
 		}
@@ -539,7 +540,8 @@ HMI.prototype = {
 		getComponent
 	*********************************/
 	getComponent: function (evt, cssclass) {
-		this.hmi_log_trace("HMI.prototype.getComponent - Start - Target:"+evt.target.id);
+		//This event could be called from nativ IE, so evt.target is not available
+		this.hmi_log_trace("HMI.prototype.getComponent - Start - Target:"+(evt.target ? evt.target.id : evt.srcElement.id));
 		
 		var Component = null;
 		
@@ -581,7 +583,8 @@ HMI.prototype = {
 		global function for finding a new ground with a mouse move into an element
 	*********************************/
 	switchGround: function (evt, ground) {
-		this.hmi_log_trace("HMI.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+evt.target.id+", Evt.nodeName: "+evt.target.nodeName+", Ground: "+ground._node.id);
+		//This event could be called from nativ IE, so evt.target is not available
+		this.hmi_log_trace("HMI.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+(evt.target ? evt.target.id : evt.srcElement.id)+", Evt.nodeName: "+(evt.target ? evt.target.nodeName : evt.srcElement.nodeName)+", Ground: "+ground._node.id);
 		
 		//is there a move gesture in action?
 		if (this._currentDragger != null)
@@ -1072,7 +1075,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-18 15:53:53 $";
+var filedate = "$Date: 2009-03-20 13:42:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

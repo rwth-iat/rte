@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.20 $
-*	$Date: 2009-03-18 15:53:53 $
+*	$Revision: 1.21 $
+*	$Date: 2009-03-20 13:42:12 $
 *
 *	History:
 *	--------
@@ -105,9 +105,17 @@ TextInput.prototype = {
 		this._onMouseDownThunk = function (evt) { listener.onMouseDown(evt); };
 		this._onClickThunk = function (evt) { listener.onClick(evt); };
 		this._onMouseUpThunk = function (evt) { listener.onMouseUp(evt); };
-		Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
-		Component.addEventListener("click", this._onClickThunk, capture);
-		Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
+		if("unknown" == typeof Component.addEventListener || Component.addEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
+			Component.addEventListener("click", this._onClickThunk, capture);
+			Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
+		}else if (Component.attachEvent){
+			//Native IE
+			Component.attachEvent("onmousedown", this._onMouseDownThunk);
+			Component.attachEvent("onclick", this._onClickThunk);
+			Component.attachEvent("onmouseup", this._onMouseUpThunk);
+		}
 	},
 	
 	/*********************************
@@ -193,7 +201,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-03-18 15:53:53 $";
+var filedate = "$Date: 2009-03-20 13:42:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

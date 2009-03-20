@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.25 $
-*	$Date: 2009-03-18 09:25:23 $
+*	$Revision: 1.26 $
+*	$Date: 2009-03-20 13:42:12 $
 *
 *	History:
 *	--------
@@ -101,14 +101,26 @@ Ground.prototype = {
 		this.onMouseInThunk = function (evt) {
 			listener.onMouseIn(evt);
 		};
-		element.addEventListener("mouseover", this.onMouseInThunk, capture);
+		if("unknown" == typeof element.addEventListener || element.addEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			element.addEventListener("mouseover", this.onMouseInThunk, capture);
+		}else if (element.attachEvent){
+			//Native IE
+			element.attachEvent("onmouseover", this.onMouseInThunk);
+		}
 	},
 
 	/*********************************
 		unregisterOnMouseIn
 	*********************************/
 	unregisterOnMouseIn: function (element, capture, listener) {
-		element.removeEventListener("mouseover", this.onMouseInThunk, capture);
+		if("unknown" == typeof element.removeEventListener || element.removeEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			element.removeEventListener("mouseover", this.onMouseInThunk, capture);
+		}else if (element.attachEvent){
+			//Native IE
+			element.detachEvent("onmouseover", this.onMouseInThunk);
+		}
 	},
 
 	/*********************************
@@ -164,14 +176,26 @@ Dragger.prototype = {
 		this.onMouseDownThunk = function (evt) {
 			listener.onMouseDown(evt);
 		};
-		element.addEventListener("mousedown", this.onMouseDownThunk, capture);
+		if("unknown" == typeof element.addEventListener || element.addEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			element.addEventListener("mousedown", this.onMouseDownThunk, capture);
+		}else if (element.attachEvent){
+			//Native IE
+			element.attachEvent("onmousedown", this.onMouseDownThunk);
+		}
 	},
 	
 	/*********************************
 		unregisterOnMouseDown
 	*********************************/
 	unregisterOnMouseDown: function (element, capture, listener) {
-		element.removeEventListener("mousedown", this.onMouseDownThunk, capture);
+		if("unknown" == typeof element.removeEventListener || element.removeEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			element.removeEventListener("mousedown", this.onMouseDownThunk, capture);
+		}else if (element.attachEvent){
+			//Native IE
+			element.detachEvent("onmousedown", this.onMouseDownThunk);
+		}
 	},
 
 	/*********************************
@@ -212,14 +236,26 @@ Dragger.prototype = {
 	*********************************/
 	registerOnMouseUp: function(element, capture, listener) {
 		this.onMouseUpThunk = function (evt) { listener.onMouseUp(evt); };
-		element.addEventListener("mouseup", this.onMouseUpThunk, capture);
+		if("unknown" == typeof element.addEventListener || element.addEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			element.addEventListener("mouseup", this.onMouseUpThunk, capture);
+		}else if (element.attachEvent){
+			//Native IE
+			element.attachEvent("onmouseup", this.onMouseUpThunk);
+		}
 	},
 	
 	/*********************************
 		deregisterOnMouseUp
 	*********************************/
 	deregisterOnMouseUp: function (element, capture, listener) {
-		element.removeEventListener("mouseup", this.onMouseUpThunk, capture);
+		if("unknown" == typeof element.removeEventListener || element.removeEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			element.removeEventListener("mouseup", this.onMouseUpThunk, capture);
+		}else if (element.attachEvent){
+			//Native IE
+			element.detachEvent("onmouseup", this.onMouseUpThunk);
+		}
 	},
 	
 	/*********************************
@@ -235,14 +271,26 @@ Dragger.prototype = {
 	*********************************/
 	registerOnMouseMove: function(element, capture, listener) {
 		this.onMouseMoveThunk = function (evt) { listener.onMouseMove(evt); };
-		element.addEventListener("mousemove", this.onMouseMoveThunk, capture);
+		if("unknown" == typeof element.addEventListener || element.addEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			element.addEventListener("mousemove", this.onMouseMoveThunk, capture);
+		}else if (element.attachEvent){
+			//Native IE
+			element.attachEvent("onmousemove", this.onMouseMoveThunk);
+		}
 	},
 	
 	/*********************************
 		deregisterOnMouseMove
 	*********************************/
 	deregisterOnMouseMove: function (element, capture, listener) {
-		element.removeEventListener("mousemove", this.onMouseMoveThunk, capture);
+		if("unknown" == typeof element.removeEventListener || element.removeEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			element.removeEventListener("mousemove", this.onMouseMoveThunk, capture);
+		}else if (element.attachEvent){
+			//Native IE
+			element.detachEvent("onmousemove", this.onMouseMoveThunk);
+		}
 	},
 
 	/*********************************
@@ -302,12 +350,16 @@ Dragger.prototype = {
 		//the dragged Node must not receive events while dragged
 		this._node.setAttribute("pointer-events", "none");
 		
-		if (HMI.svgDocument.addEventListener != undefined){
+		if (HMI.svgDocument.addEventListener){
 			//Firefox and co
 			this.registerOnMouseMove(HMI.svgDocument, true, this);
 			this.registerOnMouseUp(HMI.svgDocument, true, this);
-		}else{
-			//adobe plugin, feature detection not possible 8-/
+		}else if("unknown" == typeof HMI.svgDocument.documentElement.addEventListener){
+			//adobe plugin
+			this.registerOnMouseMove(HMI.svgDocument.documentElement, false, this);
+			this.registerOnMouseUp(HMI.svgDocument.documentElement, false, this);
+		}else if(HMI.svgDocument.documentElement.addEventListener){
+			//Renesis Plugin
 			this.registerOnMouseMove(HMI.svgDocument.documentElement, false, this);
 			this.registerOnMouseUp(HMI.svgDocument.documentElement, false, this);
 		}
@@ -341,12 +393,16 @@ Dragger.prototype = {
 		
 		this._node.setAttribute("pointer-events", "all");
 		
-		if (HMI.svgDocument.addEventListener != undefined){
+		if (HMI.svgDocument.addEventListener){
 			//Firefox and co
 			this.deregisterOnMouseUp(document, true, this);
 			this.deregisterOnMouseMove(document, true, this);
-		}else{
-			//adobe plugin, feature detection not possible 8-/
+		}else if("unknown" == typeof HMI.svgDocument.documentElement.removeEventListener){
+			//adobe plugin
+			this.deregisterOnMouseMove(HMI.svgDocument.documentElement, false, this);
+			this.deregisterOnMouseUp(HMI.svgDocument.documentElement, false, this);
+		}else if(HMI.svgDocument.documentElement.removeEventListener){
+			//Renesis Plugin
 			this.deregisterOnMouseMove(HMI.svgDocument.documentElement, false, this);
 			this.deregisterOnMouseUp(HMI.svgDocument.documentElement, false, this);
 		}
@@ -536,7 +592,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-03-18 09:25:23 $";
+var filedate = "$Date: 2009-03-20 13:42:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

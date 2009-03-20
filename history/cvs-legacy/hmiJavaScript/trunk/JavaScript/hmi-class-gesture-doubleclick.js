@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2009-02-27 15:30:00 $
+*	$Revision: 1.17 $
+*	$Date: 2009-03-20 13:42:12 $
 *
 *	History:
 *	--------
@@ -94,9 +94,17 @@ DoubleClick.prototype = {
 		this._onMouseDownThunk = function (evt) { listener.onMouseDown(evt); };
 		this._onDoubleClickThunk = function (evt) { listener.onDoubleClick(evt); };
 		this._onMouseUpThunk = function (evt) { listener.onMouseUp(evt); };
-		Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
-		Component.addEventListener("click", this._onDoubleClickThunk, capture);
-		Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
+		if("unknown" == typeof Component.addEventListener || Component.addEventListener){
+			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
+			Component.addEventListener("mousedown", this._onMouseDownThunk, capture);
+			Component.addEventListener("click", this._onDoubleClickThunk, capture);
+			Component.addEventListener("mouseup", this._onMouseUpThunk, capture);
+		}else if (Component.attachEvent){
+			//Native IE
+			Component.attachEvent("onmousedown", this._onMouseDownThunk);
+			Component.attachEvent("onclick", this._onDoubleClickThunk);
+			Component.attachEvent("onmouseup", this._onMouseUpThunk);
+		}
 	},
 	
 	/*********************************
@@ -171,7 +179,7 @@ DoubleClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-02-27 15:30:00 $";
+var filedate = "$Date: 2009-03-20 13:42:12 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
