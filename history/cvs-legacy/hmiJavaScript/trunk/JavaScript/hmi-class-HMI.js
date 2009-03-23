@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.83 $
-*	$Date: 2009-03-23 08:55:14 $
+*	$Revision: 1.84 $
+*	$Date: 2009-03-23 09:30:50 $
 *
 *	History:
 *	--------
@@ -182,7 +182,7 @@ HMI.prototype = {
 			);
 		}
 		if ($('idStartRefresh')){
-			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)});
+			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, $('idRefreshTime').value)});
 		}
 		
 		//Try to detect the Servertype (TCL or PHP capable)
@@ -663,7 +663,7 @@ HMI.prototype = {
 				
 				//	set TimeoutID
 				if (HMI.RefreshTimeoutID == null){
-					HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+					HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 				}
 			}
 			try{
@@ -831,19 +831,25 @@ HMI.prototype = {
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			var ElementLength = Elements.length;
 			for (var idx = 0; idx < ElementLength; ++idx){
-				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
+				//trace log deactivated, causes performanceproblem in a production system
+				//HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ ElementLength);
+				
 				//recursive init not necessary, getElementsByTagNameNS is recursive by itself
 				HMI._initGestures(Elements[idx]);
 			}
 			delete ElementLength;
 		}else{   // IE if svg inline, useless since svg inline does not work with gestures
 			Elements = Fragment.getElementsByTagName('svg');
-			for (var idx = 0; idx < Elements.length; ++idx){
-				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
+			var ElementLength = Elements.length;
+			for (var idx = 0; idx < ElementLength; ++idx){
+				//trace log deactivated, causes performanceproblem in a production system
+				//HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ ElementLength);
+				
 				if (Elements[idx].tagUrn == HMI.HMI_Constants.NAMESPACE_SVG){
 					HMI._initGestures(Elements[idx]);
 				}
 			}
+			delete ElementLength;
 		}
 		
 		try{
@@ -1081,7 +1087,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-23 08:55:14 $";
+var filedate = "$Date: 2009-03-23 09:30:50 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

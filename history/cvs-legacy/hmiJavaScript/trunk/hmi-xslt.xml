@@ -53,6 +53,8 @@
 *	This file is an XML conform version of the HMI-Startcenter with dynamic 
 *	conversion from XML to XHTML. With it IE is capable to render SVG in standard compliance mode.
 *	Sadly IE6 till IE8 is horribly slow at the first start, so no further development was done.
+*	Attention: Mozilla parses the JavaScript twice:
+*	https://bugzilla.mozilla.org/show_bug.cgi?id=380828
 *
 *	Editors:
 *	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
@@ -60,8 +62,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.12 $
-*	$Date: 2009-03-17 09:06:02 $
+*	$Revision: 1.13 $
+*	$Date: 2009-03-23 09:30:50 $
 *
 *	History:
 *	26-March-2008			Je
@@ -133,12 +135,9 @@
 					</td>
 					<td>
 <!--
-						<input type="button" value="Refresh Sheet Now"
-							onclick="HMI.refreshSheet()"/>
-						<input type="button" value="Stop Autorefresh"
-							onclick="clearTimeout(HMI.RefreshTimeoutID);HMI.RefreshTimeoutID = null;"/>
-						<input type="button" value="Start Autorefresh"
-							onclick="HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', $('idRefreshTime').value)"/>
+						<input type="button" id="idRefresh" value="Refresh Sheet Now"/>
+						<input type="button" id="idStopRefresh" value="Stop Autorefresh"/>
+						<input type="button" id="idStartRefresh" value="Start Autorefresh"/>
 -->
 						<a id="idBookmark" href="" style="display:none;">Link to Sheet</a>
 					</td>

@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.26 $
-*	$Date: 2009-03-20 13:42:12 $
+*	$Revision: 1.27 $
+*	$Date: 2009-03-23 09:30:50 $
 *
 *	History:
 *	--------
@@ -449,7 +449,7 @@ Dragger.prototype = {
 		}
 		
 		if (HMI.RefreshTimeoutID == null){
-			HMI.RefreshTimeoutID = setInterval('HMI.refreshSheet()', HMI.RefreshTime);
+			HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 		}
 		try{
 			/**
@@ -592,7 +592,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-03-20 13:42:12 $";
+var filedate = "$Date: 2009-03-23 09:30:50 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
