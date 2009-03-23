@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.82 $
-*	$Date: 2009-03-20 13:42:12 $
+*	$Revision: 1.83 $
+*	$Date: 2009-03-23 08:55:14 $
 *
 *	History:
 *	--------
@@ -819,19 +819,23 @@ HMI.prototype = {
 		
 		if (HMI.EmbedAdobePlugin){
 			//getElementsByTagNameNS in Adobe is often not complete
-			for (var idx = 0; idx < Fragment.childNodes.length; ++idx){
+			var ChildNodesLength = Fragment.childNodes.length;
+			for (var idx = 0; idx < ChildNodesLength; ++idx){
 				if (Fragment.childNodes.item(idx).namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG && Fragment.childNodes.item(idx).id != ""){
 					//recursive init necessary
 					HMI.initGestures(Fragment.childNodes.item(idx));
 				}
 			}
+			delete ChildNodesLength;
 		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			for (var idx = 0; idx < Elements.length; ++idx){
+			var ElementLength = Elements.length;
+			for (var idx = 0; idx < ElementLength; ++idx){
 				HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ Elements.length);
 				//recursive init not necessary, getElementsByTagNameNS is recursive by itself
 				HMI._initGestures(Elements[idx]);
 			}
+			delete ElementLength;
 		}else{   // IE if svg inline, useless since svg inline does not work with gestures
 			Elements = Fragment.getElementsByTagName('svg');
 			for (var idx = 0; idx < Elements.length; ++idx){
@@ -912,7 +916,8 @@ HMI.prototype = {
 		var idx;
 		
 		Classes = Node.getAttribute("class").split(Delimiter);
-		for (idx = 0; idx < Classes.length; idx++)
+		var ClassesLength = Classes.length;
+		for (idx = 0; idx < ClassesLength; idx++)
 		{
 			if (ClassName == Classes[idx])
 			{
@@ -921,6 +926,7 @@ HMI.prototype = {
 				return true;
 			};
 		};
+		delete ClassesLength;
 		delete Classes;
 		delete idx;
 		
@@ -1075,7 +1081,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-20 13:42:12 $";
+var filedate = "$Date: 2009-03-23 08:55:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
