@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.84 $
-*	$Date: 2009-03-23 09:30:50 $
+*	$Revision: 1.85 $
+*	$Date: 2009-03-24 13:22:30 $
 *
 *	History:
 *	--------
@@ -645,7 +645,7 @@ HMI.prototype = {
 			HMI.initGestures(Component);
 			//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
 			if (HMI.AdobeMoveFixNeeded && HMI.PluginVendor == 'Adobe'){
-				var dummyRect = HMI.svgDocument.createElementNS('http://www.w3.org/2000/svg', 'rect');
+				var dummyRect = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
 				dummyRect.setAttributeNS(null, 'x', '0');
 				dummyRect.setAttributeNS(null, 'y', '0');
 				dummyRect.setAttributeNS(null, 'width', Component.getAttribute('width'));
@@ -821,7 +821,7 @@ HMI.prototype = {
 			//getElementsByTagNameNS in Adobe is often not complete
 			var ChildNodesLength = Fragment.childNodes.length;
 			for (var idx = 0; idx < ChildNodesLength; ++idx){
-				if (Fragment.childNodes.item(idx).namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG && Fragment.childNodes.item(idx).id != ""){
+				if (Fragment.childNodes.item(idx).tagName == "svg:svg"){
 					//recursive init necessary
 					HMI.initGestures(Fragment.childNodes.item(idx));
 				}
@@ -1087,7 +1087,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-23 09:30:50 $";
+var filedate = "$Date: 2009-03-24 13:22:30 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
