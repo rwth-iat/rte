@@ -1,170 +1,50 @@
-// Copyright 2000 Adobe Systems Incorporated. All rights reserved. Permission
-// to use, modify, distribute, and publicly display this file is hereby
-// granted. This file is provided "AS-IS" with absolutely no warranties of any
-// kind. Portions (C) Netscape Communications 1999.
-
-// If you modify this file, please share your changes with Adobe and other SVG
-// developers at http://www.adobe.com/svg/.
-
-// Version 3/23/00
-
-function getBrowser()
+//Modern script-based SVG detection by
+//http://thomas.tanrei.ca/modern-script-based-svg-detection
+function detectSVG()
 {
-var agt=navigator.userAgent.toLowerCase();
-var v_maj=parseInt(navigator.appVersion);
-var v_min=parseFloat(navigator.appVersion);
-is_nav=((agt.indexOf('mozilla')!=-1)&&(agt.indexOf('spoofer')==-1)&&
-	(agt.indexOf('compatible')==-1)&&(agt.indexOf('opera')==-1)&&
-	(agt.indexOf('webtv')==-1));
-is_nav3=(is_nav&&(v_maj==3));
-is_nav4up=(is_nav&&(v_maj>=4));
-is_nav407up=(is_nav&&(v_min>=4.07));
-is_nav408up=(is_nav&&(v_min>=4.08));
-is_ie=(agt.indexOf("msie")!=-1);
-is_ie3=(is_ie&&(v_maj<4));
-is_ie4=(is_ie&&(v_maj==4)&&(agt.indexOf("msie 5.0")==-1));
-is_ie4up=(is_ie&&(v_maj>=4));
-is_ie5=(is_ie&&(v_maj==4)&&(agt.indexOf("msie 5.0")!=-1)); 
-is_ie5up=(is_ie&&!is_ie3&&!is_ie4);
-is_win=((agt.indexOf("win")!=-1)||(agt.indexOf("16bit")!=-1));
-is_win95=((agt.indexOf("win95")!=-1)||(agt.indexOf("windows 95")!=-1));
-is_win98=((agt.indexOf("win98")!=-1)||(agt.indexOf("windows 98")!=-1));
-is_winnt=((agt.indexOf("winnt")!=-1)||(agt.indexOf("windows nt")!=-1));
-is_win32=(is_win95||is_winnt||is_win98||
-	((v_maj>=4)&&(navigator.platform=="Win32"))||
-	(agt.indexOf("win32")!=-1)||(agt.indexOf("32bit")!=-1));
-is_mac=(agt.indexOf("mac")!=-1);
-is_macPPC=(is_mac&&((agt.indexOf("ppc")!=-1)||(agt.indexOf("powerpc")!=-1)));
-}
-
-function setCookie(name, value, expires, path, domain, secure) {
-var curCookie=name+"="+escape(value)+
-	((expires)?"; expires="+expires.toGMTString():"")+
-	((path)?"; path="+path:"")+
-	((domain)?"; domain="+domain:"")+
-	((secure)?"; secure":"");
-document.cookie=curCookie;
-}
-
-// returns null if cookie not found
-function getCookie(name) {
-var dc=document.cookie;
-var prefix=name+"=";
-var begin=dc.indexOf("; "+prefix);
-if(begin==-1) {
-	begin=dc.indexOf(prefix);
-	if(begin!=0)
-		return null;
+	var results = { support:null, plugin:null, builtin:null };
+	var obj = null;
+	if ( navigator && navigator.mimeTypes && navigator.mimeTypes.length )
+	{
+		for ( var mime in { "image/svg+xml":null, "image/svg":null, "image/svg-xml":null } )
+		{
+			if ( navigator.mimeTypes[ mime ] && ( obj = navigator.mimeTypes[ mime ].enabledPlugin ) && obj )
+				results = { plugin:( obj = obj.name.toLowerCase()) && obj.indexOf( "adobe" ) >= 0 ? "Adobe" : ( obj.indexOf( "renesis" ) >= 0 ? "Renesis" : "Unknown" ) };
+		}
 	}
-else
-	begin+=2;
-var end=document.cookie.indexOf(";",begin);
-if(end==-1)
-end=dc.length;
-return unescape(dc.substring(begin+prefix.length,end));
-}
-
-function deleteCookie(name, path, domain) {
-if(getCookie(name))
-	document.cookie=name+"="+((path)?"; path="+path:"")+
-	((domain)?"; domain="+domain:"")+"; expires=Thu, 01-Jan-70 00:00:01 GMT";
-}
-
-function fixDate(date) {
-var base=new Date(0);
-var skew=base.getTime();
-if(skew>0)
-	date.setTime(date.getTime()-skew);
-}
-
-var svgInstallBase="http://www.adobe.com/svg/viewer/install/";
-var svgInstallPage=svgInstallBase+"auto/";
-var svgInfoPage="http://www.adobe.com/svg/";
-var svgDownloadPage=svgInstallBase;
-var checkIntervalDays=30;
-var firstSVG=true; // Ask only once per page even without cookies
-
-function getSVGInstallPage() {
-return svgInstallPage+"?"+location;
-}
-
-function getCheckInterval() {
-return checkIntervalDays*24*60*60*1000;
-}
-
-// The value of the cookie is '0'. We need some value, but it doesn't matter what.
-// We set the cookie for the entire site by specifying the path '/'.
-// We could include something from adobe.com and set the cookie for that site.
-// This would enable only asking once no matter how many sites a user encounters
-// with SVG.
-function setSVGCookie() {
-if(getCheckInterval()>0) {
-	var expires=new Date();
-	fixDate(expires); // NN2/Mac bug
-	expires.setTime(expires.getTime()+getCheckInterval());
-	setCookie('SVGCheck','0',expires,'/')
+	else if ( ( obj = document.createElement( "object" )) && obj && typeof obj.setAttribute( "type", "image/svg+xml" ))
+	{
+		if ( typeof obj.USE_SVGZ == "string" )
+			results = { plugin:"Adobe", IID:"Adobe.SVGCtl", pluginVersion:obj.window && obj.window._window_impl ? ( obj.window.evalScript ? 6 : 3 ) : 2 };
+		else if ( typeof obj.ReadyState == "number" && obj.ReadyState == 0 )
+			results = { plugin:"Renesis", IID:"RenesisX.RenesisCtrl.1", pluginVersion:">=1.0" };
+		else if ( obj.window && obj.window.getSVGViewerVersion().indexOf( "enesis" ) > 0 )
+			results = { plugin:"Renesis", IID:"RenesisX.RenesisCtrl.1", pluginVersion:"<1.0" };
 	}
+	results.IID = ( results.plugin == "Adobe" ? "Adobe.SVGCtl" : ( results.plugin == "Renesis" ? "renesisX.RenesisCtrl.1" : null ));
+	
+	// Does the browser support SVG natively? Gecko claims no support if a plugin is active, but still gives back an NSI interface. Safari 3 does not claim support but does - use devicePixelRatio
+	var claimed = !!window.devicePixelRatio || ( typeof SVGAngle == "object" || ( document && document.implementation && document.implementation.hasFeature( "org.w3c.dom.svg", "1.0" )));
+	var nsi = window.Components && window.Components.interfaces && !!Components.interfaces.nsIDOMGetSVGDocument;
+	results.builtin = claimed ? ( !!window.opera ? "Opera" : ( nsi ? "Gecko" : "Safari" )) : ( !!window.opera && window.opera.version ? "Opera" : ( nsi ? "Gecko" : null ));
+	results.builtinVersion = results.builtin && !!window.opera ? parseFloat( window.opera.version()) : ( nsi ? ( typeof Iterator == "function" ? ( Array.reduce ? 3.0 : 2.0 ) : 1.5 ) : null );
+
+	// Which is active, the plugin or native support? Opera 9 makes it hard to tell..
+	if ( !!window.opera && results.builtinVersion >= 9 && ( obj = document.createElement( "object" )) && obj && typeof obj.setAttribute( "type", "image/svg+xml" ) != "undefined" && document.appendChild( obj ))
+	{
+		results.support = obj.offsetWidth ? "Plugin" : "Builtin";
+		document.removeChild( obj );
+	}
+	else	results.support = results.plugin && !claimed ? "Plugin" : ( results.builtin && claimed ? "Builtin" : null );
+
+	return results;
 }
 
-function isSVGPluginInstalled() {
-return (navigator.mimeTypes["image/svg"]&&navigator.mimeTypes["image/svg"].enabledPlugin!=null)||
-       (navigator.mimeTypes["image/svg-xml"]&&navigator.mimeTypes["image/svg-xml"].enabledPlugin!=null);
-}
 
-function checkSVGViewer() {
-window.askForSVGViewer=false;
-if(window.svgInstalled)
-	return;
-getBrowser();
-if(is_win32 && is_ie4up) {
-	window.svgViewerAvailable=true;
-	window.svgInstalled=isSVGControlInstalled();
-	if(!window.svgInstalled)
-		window.askForSVGViewer=true;
-	}
-else if((is_win32 && is_nav4up) || (is_macPPC && is_nav407up)) {
-	window.svgViewerAvailable=true;
-	window.svgInstalled=isSVGPluginInstalled();
-	if(!window.svgInstalled&&is_nav408up&&navigator.javaEnabled())
-		window.askForSVGViewer=true;
-	}
-else if(is_macPPC && is_ie5up)
-	window.svgViewerAvailable=true;
-}
+var AdobeSVGInstallPage="http://www.adobe.com/svg/viewer/install/auto/";
 
 function getSVGViewer() {
-if(confirm('The Adobe SVG Viewer is not installed. Download now?'))
-	location=getSVGInstallPage();
+	if(confirm('The Adobe SVG Viewer is not installed. Download now?\n(To install the Renesis Plugin please Cancel now)'))
+		location=AdobeSVGInstallPage+"?"+location;
 }
 
-function checkAndGetSVGViewer() {
-checkSVGViewer();
-var svgCookie=getCookie('SVGCheck');
-if(firstSVG&&!svgCookie) {
-	if(window.askForSVGViewer) {
-		setSVGCookie();
-		getSVGViewer();
-		}
-	firstSVG=false;
-	}
-}
-
-function emitSVG(embedAttrs) {
-if(window.svgInstalled)
-	document.writeln('<embed '+embedAttrs+'>');
-else if(window.askForSVGViewer)	{
-	if(navigator.appName=='Netscape') {
-		document.writeln('<p>To view this page you need an SVG viewer.');
-		document.writeln('<a href="'+getSVGInstallPage()+'">Click here</a> for more information.</p>');
-		}
-	else
-		document.writeln('<embed '+embedAttrs+' pluginspage="'+getSVGInstallPage()+'">');
-	}
-else if(window.svgViewerAvailable)
-	document.writeln('<embed '+embedAttrs+' pluginspage="'+svgDownloadPage+'">');
-else {
-	document.writeln('<p>To view this page you need an SVG viewer. There is currently no Adobe SVG ');
-	document.writeln('Viewer available for your browser. ');
-	document.writeln('<a href="'+svgInfoPage+'">Click here</a> for more information.</p>');
-	}
-}

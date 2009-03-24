@@ -47,17 +47,21 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.10 $
-*	$Date: 2009-03-16 11:06:05 $
+*	$Revision: 1.11 $
+*	$Date: 2009-03-24 14:10:07 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
 *		-	Initial Release with Code from http://www.quirksmode.org/js/detect.html
 *
+*	20-Mar-2009			Je
+*		-	changed the SVG detection to support a renesis-only install
+*		-	IE8 has to be forced to the old behavior for this
+*
 ***********************************************************************/
 -->
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
 <script type="text/javascript" src="JavaScript/adobesvgcheck.js"></script>
-<script type="text/vbscript" src="JavaScript/adobesvgcheck.vbs"></script>
 <script type="text/javascript">
 var BrowserDetect = {
 	init: function () {
@@ -170,15 +174,19 @@ var BrowserDetect = {
 };
 	BrowserDetect.init();
 	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
-		checkAndGetSVGViewer();
-		if(true == window.svgInstalled){
+		var results = detectSVG();
+		if(results.support){
 			window.location.href = "hmi-explorer.html"+window.location.search;
+		}else{
+			getSVGViewer();
 		}
 	}else if ("Explorer" == BrowserDetect.browser && 8 < BrowserDetect.version ) {
-		//IE9 kann vielleicht firefox Datei lesen, noch ungetestet, da noch in weiter Ferne
-		checkAndGetSVGViewer();
-		if(true == window.svgInstalled){
+		//IE9 could use the gecko.xhtml file, this is untested, because ie9 is not in sight now
+		var results = detectSVG();
+		if(results.support){
 			window.location.href = "hmi-explorer.html"+window.location.search;
+		}else{
+			getSVGViewer();
 		}
 	}else if ("Mozilla" == BrowserDetect.browser) {
 		window.location.href = "hmi-gecko.xhtml"+window.location.search;
@@ -189,7 +197,7 @@ var BrowserDetect = {
 	}else if ("Safari" == BrowserDetect.browser ) {
 		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Konqueror" == BrowserDetect.browser ) {
-		//Version 4.2 arbeitet mit dem HMI trotzdem nicht
+		//Version 4.2 arbeitet mit dem HMI trotzdem nicht, parst das SVG als XML und zeigt die Textkomponenten an
 		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else{
 		window.location.href = "hmi-gecko.xhtml"+window.location.search;
@@ -227,7 +235,10 @@ var BrowserDetect = {
 		<p>Für die HMI Funktionalität ist SVG Unterstützung des Browsers nötig.</p>
 		<ul>
 			<li><a href="http://www.mozilla-europe.org/de/products/firefox/">Firefox</a> hat ab Version 2.0 SVG Support integiert.</li>
-			<li><a href="http://www.microsoft.com/germany/windows/products/winfamily/ie/default.mspx">Internet Explorer</a> benötigt ein <a href="http://www.adobe.com/svg/viewer/install/mainframed.html">SVG Plugin</a> von Adobe.</li>
+			<li><a href="http://www.microsoft.com/germany/windows/internet-explorer/">Internet Explorer</a> benötigt ein SVG Plugin von 
+				<a href="http://www.adobe.com/svg/viewer/install/mainframed.html">Adobe (Adobe SVG Viewer)</a> (automatische 
+				<a href="http://www.adobe.com/svg/viewer/install/auto/">Installation</a>)
+			oder <a href="http://www.examotion.com/index.php?id=product_player_download">Examotion (Renesis Player)</a>.</li>
 			<li><a href="http://www.opera.com/download/">Opera</a> unterstützt ab Version 9.0 SVG und Javascript</li>
 			<li><a href="http://www.apple.com/safari/">Safari</a> unterstützt ab Version 3.0 SVG und Javascript</li>
 			<li><a href="http://www.google.com/chrome">Google Chrome</a> unterstützt ab Version 1.0 SVG und Javascript</li>
