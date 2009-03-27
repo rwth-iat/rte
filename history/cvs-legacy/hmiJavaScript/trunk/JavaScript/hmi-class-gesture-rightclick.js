@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.17 $
-*	$Date: 2009-03-20 13:42:12 $
+*	$Revision: 1.18 $
+*	$Date: 2009-03-27 15:32:45 $
 *
 *	History:
 *	--------
@@ -58,6 +58,9 @@
 *
 *	25-February-2009			Je
 *		-	General Revision and full commented
+*
+*	27-March-2009			Je
+*		-	correct click position transfered to the server
 *
 ***********************************************************************/
 
@@ -117,34 +120,55 @@ RightClick.prototype = {
 		if (Component != null)
 		{
 			//detect the mouse position relative to the component
-			if (evt.layerX != undefined){
-				//Firefox, Webkit
-				var xpos = evt.layerX;
-				var ypos = evt.layerY;
-				//this is a mouse offset provided by the mouse event
-				//not related with the HMI specific SVG-Attribute LayerX!
-			}else if (evt.offsetX != undefined){
-				//Opera
-				var xpos = evt.offsetX;
-				var ypos = evt.offsetY;
-			}else{
-				//IE Adobe SVG Viewer
-				var xpos = 1;
-				var ypos = 1;
+			//see technology paper "Human Model Interface - JavaScript" for full details of crossbrowser problems
+			
+			//First we have to find the offset of the svg-element in the XHTML
+			var obj = HMI.Playground;
+			var svgOffsetX = svgOffsetY = 0;
+			//The Plugin in IE has no offsetParent, but clientX is relative to its own scope, not HTML page
+			if (obj.offsetParent) {
+				//code for native SVG. Loop upwards till there is no parent
+				do {
+					svgOffsetX += obj.offsetLeft;
+					svgOffsetY += obj.offsetTop;
+				} while (obj = obj.offsetParent);
 			}
+			
+			if (evt.pageX || evt.pageY) {
+				//code for native SVG. pageX based on the full XHTML Document
+				var mousePosX = evt.pageX;
+				var mousePosY = evt.pageY;
+			}else{
+				//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
+				var mousePosX = evt.clientX;
+				var mousePosY = evt.clientY;
+			}
+			
+			//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
+			var xpos = mousePosX - parseInt(Component.getAttribute("layerX"), 10) - svgOffsetX;
+			var ypos = mousePosY - parseInt(Component.getAttribute("layerY"), 10) - svgOffsetY;
+			
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
 				'{' + Component.getAttribute('id') + '}%20' + 
 				'{RIGHTCLICK}%20' +
 				'{' + xpos + '}%20' +
 				'{' + ypos + '}';
+			delete xpos;
+			delete ypos;
+			delete mousePosX;
+			delete mousePosY;
+			delete svgOffsetX;
+			delete svgOffsetY;
+			delete obj;
+			
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
 		};
 		
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-03-20 13:42:12 $";
+var filedate = "$Date: 2009-03-27 15:32:45 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
