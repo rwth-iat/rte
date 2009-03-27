@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.58 $
-*	$Date: 2009-03-18 12:58:29 $
+*	$Revision: 1.59 $
+*	$Date: 2009-03-27 17:05:06 $
 *
 *	History:
 *	--------
@@ -148,9 +148,9 @@ HMIJavaScriptKSClient.prototype = {
 		if (cbfnc != null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
-			var Return = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - End");
-			return Return;
+			return ReturnText;
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - End");
@@ -176,9 +176,9 @@ HMIJavaScriptKSClient.prototype = {
 		if (cbfnc != null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
-			var Return = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - End");
-			return Return;
+			return ReturnText;
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - End");
 	},
@@ -211,9 +211,9 @@ HMIJavaScriptKSClient.prototype = {
 		if (cbfnc != null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
-			var Return = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - End");
-			return Return;
+			return ReturnText;
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - End");
@@ -243,9 +243,9 @@ HMIJavaScriptKSClient.prototype = {
 		if (cbfnc != null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
-			var Return = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - End");
-			return Return;
+			return ReturnText;
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - End");
@@ -644,7 +644,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.prepareComponentText - Start");
 		
 		//only one entry in array if no styledescription is requested
-		var Return = new Array(2);
+		var ReturnText = new Array(2);
 		
 		//	ComponentText should look like:
 		//		{{GraphicDescription}} {{StyleDescription}}
@@ -659,7 +659,7 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
-			return null;
+			ReturnText = null;
 		}else if ("{{" != ComponentText.substr(0,2)){
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
 			if (ComponentText.length < 250){
@@ -669,22 +669,27 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
-			return null;
+			ReturnText = null;
 		} else {
 			//cut the GraphicDescription and StyleDescription out of the response
-			Return[0] = ComponentText.substring(ComponentText.indexOf('{{') + 2, ComponentText.indexOf('}}'));
+			ReturnText[0] = ComponentText.substring(ComponentText.indexOf('{{') + 2, ComponentText.indexOf('}}'));
 			//StyleDescription requested?
 			if (ComponentText.indexOf('}} {{') != -1 ){
-				Return[1] = ComponentText.substring(ComponentText.indexOf('}} {{') + 5, ComponentText.length - 2);
+				ReturnText[1] = ComponentText.substring(ComponentText.indexOf('}} {{') + 5, ComponentText.length - 2);
 			}else{
 				//put variable to defined state
-				Return[1] = "";
+				ReturnText[1] = "";
+			}
+			if (ReturnText[1] == ""){
+				ReturnText = null;
+				HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
+				HMI.hmi_log_onwebsite('Gateway reply was empty.')
 			}
 		};
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.prepareComponentText - End");
 		
-		return Return;
+		return ReturnText;
 	},
 	
 	/*********************************
@@ -703,7 +708,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-03-18 12:58:29 $";
+var filedate = "$Date: 2009-03-27 17:05:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
