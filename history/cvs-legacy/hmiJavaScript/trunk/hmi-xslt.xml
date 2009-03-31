@@ -62,8 +62,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.13 $
-*	$Date: 2009-03-23 09:30:50 $
+*	$Revision: 1.14 $
+*	$Date: 2009-03-31 11:48:09 $
 *
 *	History:
 *	26-March-2008			Je
@@ -80,7 +80,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
 		<meta http-equiv="Content-Style-Type" content="text/css"/>
 		<meta http-equiv="Content-Script-Type" content="text/javascript"/>
-		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
 		<object id="AdobeSVG" classid="clsid:78156a80-c6a1-4bbf-8e6a-3cd390eeb4e2"></object>
 		<?import namespace="svg" implementation="#AdobeSVG"?>
 		<title>HMI-Startcenter - XSLT Version</title>
