@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.18 $
-*	$Date: 2009-03-27 15:32:45 $
+*	$Revision: 1.19 $
+*	$Date: 2009-04-01 07:09:52 $
 *
 *	History:
 *	--------
@@ -134,14 +134,16 @@ RightClick.prototype = {
 				} while (obj = obj.offsetParent);
 			}
 			
+			var mousePosX;
+			var mousePosY;
 			if (evt.pageX || evt.pageY) {
 				//code for native SVG. pageX based on the full XHTML Document
-				var mousePosX = evt.pageX;
-				var mousePosY = evt.pageY;
+				mousePosX = evt.pageX;
+				mousePosY = evt.pageY;
 			}else{
 				//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
-				var mousePosX = evt.clientX;
-				var mousePosY = evt.clientY;
+				mousePosX = evt.clientX;
+				mousePosY = evt.clientY;
 			}
 			
 			//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
@@ -168,7 +170,7 @@ RightClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-03-27 15:32:45 $";
+var filedate = "$Date: 2009-04-01 07:09:52 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

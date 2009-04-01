@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.22 $
-*	$Date: 2009-03-23 09:30:50 $
+*	$Revision: 1.23 $
+*	$Date: 2009-04-01 07:09:52 $
 *
 *	History:
 *	--------
@@ -152,23 +152,24 @@ TextInput.prototype = {
 			//	doubleclick => STOP
 			return;
 		};
+		var text;
 		if (evt.target && evt.target.textContent){
 			//TextContent is the summ of Text
-			var text = evt.target.textContent;
+			text = evt.target.textContent;
 		}else if (evt.target && evt.target.firstChild.nodeValue){  
 			//Adobe Plugin
-			var text = evt.target.firstChild.nodeValue;
+			text = evt.target.firstChild.nodeValue;
 		}else if (evt.target && evt.target.getAttribute("class") == "dummyTextinputRect"){
 			//the TextInput was empty, so the user clicked on the dummyRect
-			var text = "";
+			text = "";
 		}else if (evt.srcElement && evt.srcElement.firstChild.nodeValue){  //Native IE Code
 			//native IE eventhandling
-			var text = evt.srcElement.firstChild.nodeValue;
+			text = evt.srcElement.firstChild.nodeValue;
 		}else if (evt.srcElement && evt.srcElement.getAttribute("class") == "dummyTextinputRect"){
 			//native IE eventhandling
-			var text = "";
+			text = "";
 		}else{
-			var text = "";
+			text = "";
 			HMI.hmi_log_error('HMI.textinput.onclick Error: old Textinfo not found.');
 		}
 		var input = prompt('Geben Sie bitte einen neuen Wert ein', text);
@@ -201,7 +202,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-03-23 09:30:50 $";
+var filedate = "$Date: 2009-04-01 07:09:52 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

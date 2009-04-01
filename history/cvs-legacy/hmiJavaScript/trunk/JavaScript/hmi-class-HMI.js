@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.86 $
-*	$Date: 2009-03-25 08:40:09 $
+*	$Revision: 1.87 $
+*	$Date: 2009-04-01 07:09:52 $
 *
 *	History:
 *	--------
@@ -515,10 +515,11 @@ HMI.prototype = {
 		//wheelsupport is not supported by the HMI Team and probably firefox only
 		if(this.scrollComponent)
 		{
+			var Component;
 			if(document.getElementById(this.scrollComponent) != null){ //opera, ff
-				var Component = document.getElementById(this.scrollComponent);
+				Component = document.getElementById(this.scrollComponent);
 			} else if(this.Playground.getElementById(this.scrollComponent) != null){ //ie
-				var Component = this.Playground.getElementById(this.scrollComponent);
+				Component = this.Playground.getElementById(this.scrollComponent);
 			}
 			Component.setAttribute("y", this.currY);
 			Component.setAttribute("x", this.currX);
@@ -1088,7 +1089,7 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-03-25 08:40:09 $";
+var filedate = "$Date: 2009-04-01 07:09:52 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

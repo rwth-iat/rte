@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.60 $
-*	$Date: 2009-03-30 08:57:31 $
+*	$Revision: 1.61 $
+*	$Date: 2009-04-01 07:09:52 $
 *
 *	History:
 *	--------
@@ -138,12 +138,13 @@ HMIJavaScriptKSClient.prototype = {
 		if (Handle == null){
 			Handle = this.TCLKSHandle
 		}
+		var urlparameter;
 		if (HMI.GatewayTypeTCL == true){
 			path = path + "%20-output%20$::TKS::OP_NAME";
-			var urlparameter = 'obj='+Handle + '&args=getep%20' +path;
+			urlparameter = 'obj='+Handle + '&args=getep%20' +path;
 		}else if (HMI.GatewayTypePHP == true){
 			path = path;
-			var urlparameter = 'obj='+Handle + '&cmd=getep&path=' +path;
+			urlparameter = 'obj='+Handle + '&cmd=getep&path=' +path;
 		}
 		if (cbfnc != null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -201,12 +202,13 @@ HMIJavaScriptKSClient.prototype = {
 		if (Handle == null){
 			Handle = this.TCLKSHandle
 		}
+		var urlparameter;
 		if (HMI.GatewayTypeTCL == true){
 			path = path + "%20-output%20$::TKS::OP_VALUE";
-			var urlparameter = 'obj='+Handle + '&args=getvar%20' +path;
+			urlparameter = 'obj='+Handle + '&args=getvar%20' +path;
 		}else if (HMI.GatewayTypePHP == true){
 			path = path;
-			var urlparameter = 'obj='+Handle + '&cmd=getvar&path=' + path;
+			urlparameter = 'obj='+Handle + '&cmd=getvar&path=' + path;
 		}
 		if (cbfnc != null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -234,11 +236,12 @@ HMIJavaScriptKSClient.prototype = {
 		if (Handle == null){
 			Handle = this.TCLKSHandle
 		}
+		var urlparameter;
 		if (HMI.GatewayTypeTCL == true){
 			path = '{'+path+'%20{'+value+'}}';
-			var urlparameter = 'obj='+Handle + '&args=setvar%20' +path;
+			urlparameter = 'obj='+Handle + '&args=setvar%20' +path;
 		}else if (HMI.GatewayTypePHP == true){
-			var urlparameter = 'obj='+Handle + '&cmd=setvar&path=' + path + "&val=" + value;
+			urlparameter = 'obj='+Handle + '&cmd=setvar&path=' + path + "&val=" + value;
 		}
 		if (cbfnc != null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -260,10 +263,11 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	delHandle: function(Handle) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - Start Handle: "+Handle);
+		var urlparameter;
 		if (HMI.GatewayTypeTCL == true){
-			var urlparameter = 'obj='+Handle + '&args=destroy';
+			urlparameter = 'obj='+Handle + '&args=destroy';
 		}else if (HMI.GatewayTypePHP == true){
-			var urlparameter = 'obj='+Handle + '&cmd=destroy';
+			urlparameter = 'obj='+Handle + '&cmd=destroy';
 		}
 		this._sendRequest(this, 'GET', false, urlparameter);
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - End");
@@ -707,7 +711,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-03-30 08:57:31 $";
+var filedate = "$Date: 2009-04-01 07:09:52 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
