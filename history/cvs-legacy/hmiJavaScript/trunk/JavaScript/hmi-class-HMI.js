@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.88 $
-*	$Date: 2009-04-06 09:26:56 $
+*	$Revision: 1.89 $
+*	$Date: 2009-04-06 13:15:06 $
 *
 *	History:
 *	--------
@@ -1099,7 +1099,7 @@ HMI.prototype = {
 /*********************************
 	Global Variables
 	
-	HMI(debug, error, warning, info, trace) {
+	HMI(debug, error, warning, info, trace)
 *********************************/
 
 var HMI = new HMI(true, true, true, true, false);
@@ -1126,7 +1126,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onunload',function(){HMI.unload()});
 }
 
-var filedate = "$Date: 2009-04-06 09:26:56 $";
+var filedate = "$Date: 2009-04-06 13:15:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

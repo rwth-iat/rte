@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.31 $
-*	$Date: 2009-04-06 09:26:56 $
+*	$Revision: 1.32 $
+*	$Date: 2009-04-06 13:15:06 $
 *
 *	History:
 *	--------
@@ -63,6 +63,13 @@
 *		-	General Revision and full commented
 *
 ************************************************************************/
+
+
+/***************************************************
+				Attention
+	The HMI is parametrised in hmi-class-HMI.js
+****************************************************/
+
 
 /*********************************
 	Functions - $
@@ -273,7 +280,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2009-04-06 09:26:56 $";
+var filedate = "$Date: 2009-04-06 13:15:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
