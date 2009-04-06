@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.30 $
-*	$Date: 2009-03-17 08:20:46 $
+*	$Revision: 1.31 $
+*	$Date: 2009-04-06 09:26:56 $
 *
 *	History:
 *	--------
@@ -63,37 +63,6 @@
 *		-	General Revision and full commented
 *
 ************************************************************************/
-
-/*********************************
-	Global Variables
-	
-	HMI(async, debug, error, warning, info, trace) {
-*********************************/
-
-var HMI = new HMI(false, true, true, true, true, false);
-
-if( window.addEventListener ) {
-	//window is the wrong place for the eventlistener, but available at the most browsers
-	//http://www.howtocreate.co.uk/tutorials/javascript/domevents
-	window.addEventListener('load',function(){HMI.init();},false);
-} else if( document.addEventListener ) {
-	//document is the right place for the eventlistener
-	//but not supported by mozilla https://bugzilla.mozilla.org/show_bug.cgi?id=99820
-	//and Webkit
-	document.addEventListener('load',function(){HMI.init();},false);
-} else if( window.attachEvent ) {
-	//ie is a special case as usual
-	window.attachEvent('onload',function(){HMI.init();});
-}
-
-if( window.addEventListener ) {
-	window.addEventListener('unload',function(){HMI.unload()},false);
-} else if( document.addEventListener ) {
-	document.addEventListener('unload',function(){HMI.unload()},false);
-} else if( window.attachEvent ) {
-	window.attachEvent('onunload',function(){HMI.unload()});
-}
-
 
 /*********************************
 	Functions - $
@@ -304,7 +273,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2009-03-17 08:20:46 $";
+var filedate = "$Date: 2009-04-06 09:26:56 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

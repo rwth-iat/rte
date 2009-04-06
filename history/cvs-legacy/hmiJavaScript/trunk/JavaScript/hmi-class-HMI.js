@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.87 $
-*	$Date: 2009-04-01 07:09:52 $
+*	$Revision: 1.88 $
+*	$Date: 2009-04-06 09:26:56 $
 *
 *	History:
 *	--------
@@ -70,9 +70,11 @@
 
 /***********************************************************************
 	constructor
+	
+	called at construction time, has to be independent from other js files
 ***********************************************************************/
 
-function HMI(async, debug, error, warning, info, trace) {
+function HMI(debug, error, warning, info, trace) {
 	this.HMI_Constants = Object();
 	this.HMI_Constants.NAMESPACE_SVG = "http://www.w3.org/2000/svg";
 	this.HMI_Constants.NODE_NAME_CLONE = "HMI_CLONE";
@@ -90,7 +92,6 @@ function HMI(async, debug, error, warning, info, trace) {
 	this.Playground = null;
 	this.ErrorOutput = null;
 	
-	this.KSClient = new HMIJavaScriptKSClient(async);
 	this.RefreshTime = null;
 	
 	this.showHeader = true;
@@ -108,6 +109,8 @@ function HMI(async, debug, error, warning, info, trace) {
 HMI.prototype = {
 	/*********************************
 		init
+		
+		called from "load" event, all js files are available
 	*********************************/
 	init: function () {
 		this.hmi_log_trace("HMI.prototype.init - Start");
@@ -228,6 +231,9 @@ HMI.prototype = {
 			this.svgDocument = document;
 			this.svgWindow = window;
 		}
+		
+		//Init KSClient
+		this.KSClient = new HMIJavaScriptKSClient();
 		
 		//The state of the Checkbox is preserved at a reload from cache, so
 		//we have to update the variable to reflect the userchoice
@@ -1089,7 +1095,38 @@ HMI.prototype = {
 
 	}
 };
-var filedate = "$Date: 2009-04-01 07:09:52 $";
+
+/*********************************
+	Global Variables
+	
+	HMI(debug, error, warning, info, trace) {
+*********************************/
+
+var HMI = new HMI(true, true, true, true, false);
+
+if( window.addEventListener ) {
+	//window is the wrong place for the eventlistener, but available at the most browsers
+	//http://www.howtocreate.co.uk/tutorials/javascript/domevents
+	window.addEventListener('load',function(){HMI.init();},false);
+} else if( document.addEventListener ) {
+	//document is the right place for the eventlistener
+	//but not supported by mozilla https://bugzilla.mozilla.org/show_bug.cgi?id=99820
+	//and Webkit
+	document.addEventListener('load',function(){HMI.init();},false);
+} else if( window.attachEvent ) {
+	//ie is a special case as usual
+	window.attachEvent('onload',function(){HMI.init();});
+}
+
+if( window.addEventListener ) {
+	window.addEventListener('unload',function(){HMI.unload()},false);
+} else if( document.addEventListener ) {
+	document.addEventListener('unload',function(){HMI.unload()},false);
+} else if( window.attachEvent ) {
+	window.attachEvent('onunload',function(){HMI.unload()});
+}
+
+var filedate = "$Date: 2009-04-06 09:26:56 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

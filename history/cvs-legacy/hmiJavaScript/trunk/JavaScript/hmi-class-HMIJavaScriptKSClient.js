@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.61 $
-*	$Date: 2009-04-01 07:09:52 $
+*	$Revision: 1.62 $
+*	$Date: 2009-04-06 09:26:56 $
 *
 *	History:
 *	--------
@@ -75,14 +75,12 @@
 	constructor
 ***********************************************************************/
 
-function HMIJavaScriptKSClient(async) {
+function HMIJavaScriptKSClient() {
 	/** Public **********************/
 	this.KSServer;
 	this.TCLKSGateway;
 	this.TCLKSHandle;
 	this.HMIMANAGER_PATH;
-	
-	this.Asynchron = async;
 	
 	/** Private *********************/
 	var MessageID = 0;	
@@ -711,7 +709,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-04-01 07:09:52 $";
+var filedate = "$Date: 2009-04-06 09:26:56 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
