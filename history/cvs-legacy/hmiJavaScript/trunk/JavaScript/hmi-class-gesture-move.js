@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.27 $
-*	$Date: 2009-03-23 09:30:50 $
+*	$Revision: 1.28 $
+*	$Date: 2009-04-07 09:27:45 $
 *
 *	History:
 *	--------
@@ -298,15 +298,16 @@ Dragger.prototype = {
 	*********************************/
 	onMouseMoveThunk: null,
 	onMouseMove: function (evt) {
-		var dx = (evt.clientX - this._lastX);
-		var dy = (evt.clientY - this._lastY);
+		//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
+		var dx = ((evt.pageX || evt.clientX) - this._lastX);
+		var dy = ((evt.pageY || evt.clientY) - this._lastY);
 		
 		this._totalDX += dx;
 		this._totalDY += dy;
 
 		this._moveRelative(dx, dy);
-		this._lastX = parseInt(evt.clientX, 10);
-		this._lastY = parseInt(evt.clientY, 10);
+		this._lastX = parseInt((evt.pageX || evt.clientX), 10);
+		this._lastY = parseInt((evt.pageY || evt.clientY), 10);
 		
 		delete dx;
 		delete dy;
@@ -326,8 +327,9 @@ Dragger.prototype = {
 		this._controller._currentDragger = this;
 		
 		//initialize mouse starting position
-		this._lastX = parseInt(evt.clientX, 10);
-		this._lastY = parseInt(evt.clientY, 10);
+		//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
+		this._lastX = parseInt((evt.pageX || evt.clientX), 10);
+		this._lastY = parseInt((evt.pageY || evt.clientY), 10);
 		
 		this._totalDX = 0;
 		this._totalDY = 0;
@@ -592,7 +594,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-03-23 09:30:50 $";
+var filedate = "$Date: 2009-04-07 09:27:45 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
