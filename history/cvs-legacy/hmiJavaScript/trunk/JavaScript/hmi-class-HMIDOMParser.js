@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.16 $
-*	$Date: 2009-02-25 09:29:19 $
+*	$Revision: 1.17 $
+*	$Date: 2009-04-08 12:55:00 $
 *
 *	History:
 *	--------
@@ -77,6 +77,7 @@ HMIDOMParser.prototype = {
 	/*********************************
 		parse
 	*********************************/
+	//[StyleDescription] adjust this if no ACPLT/HMI Server has a StyleDescription anymore
 	parse: function(GraphicDescription, StyleDescription, BehaviourDescription) {
 		HMI.hmi_log_trace("HMIDOMParser.parse - Start");
 		var GraphicElement;
@@ -179,7 +180,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2009-02-25 09:29:19 $";
+var filedate = "$Date: 2009-04-08 12:55:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

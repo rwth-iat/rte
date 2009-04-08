@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.89 $
-*	$Date: 2009-04-06 13:15:06 $
+*	$Revision: 1.90 $
+*	$Date: 2009-04-08 12:55:00 $
 *
 *	History:
 *	--------
@@ -87,12 +87,22 @@ function HMI(debug, error, warning, info, trace) {
 	//log trace info to console
 	this.trace = trace;
 	
+	this.ButShowServers = null;
 	this.PossServers = null;
 	this.PossSheets = null;
 	this.Playground = null;
 	this.ErrorOutput = null;
 	
+	this.KSClient = null;
+	
+	this.svgWindow = null;
+	this.svgDocument = null;
+	this.EmbedAdobePlugin= null;
+	this.GatewayTypeTCL = null;
+	this.GatewayTypePHP = null;
+	
 	this.RefreshTime = null;
+	this.SheetHasStyleDescription = null;
 	
 	this.showHeader = true;
 	
@@ -368,7 +378,6 @@ HMI.prototype = {
 		HMI.ButShowServers.disabled = true;
 		HMI.ButShowServers.value = "Please wait...";
 		
-		
 		if ($('idRefreshTime').value < 100){
 			$('idRefreshTime').value = 100;
 			this.RefreshTime = 100;
@@ -381,6 +390,7 @@ HMI.prototype = {
 		clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
+		var KSGateway_Path;
 		//the guessed servertype is used for communication
 		if ("php" == HMI.HMI_Constants.ServerType){
 			//tks.php is always in the same subdir as the html files
@@ -417,7 +427,7 @@ HMI.prototype = {
 		$("idBookmark").style.cssText = "display:none;";
 		
 		//Gateway could not be another host without violating Same Origin Policy
-		KSGateway = window.location.host;
+		var KSGateway = window.location.host;
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init($('idHost').value + '/MANAGER', KSGateway + KSGateway_Path);
@@ -491,6 +501,10 @@ HMI.prototype = {
 		if (HMI.KSClient.TCLKSHandle != null)
 		{
 			HMI.Path = Sheet;
+			
+			//[StyleDescription] remove this line if no ACPLT/HMI Server has a StyleDescription anymore
+			HMI.SheetHasStyleDescription = HMI.KSClient.checkStyleDescription(HMI.Path);
+			
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
@@ -607,15 +621,25 @@ HMI.prototype = {
 	_getAndImportComponent: function (ComponentPath, ParentNode, Insert) {
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - Start");
 		
+		var SVGDescription;
+		
+		//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
+		if (HMI.SheetHasStyleDescription){
+			SVGDescription = '{' + ComponentPath + '.GraphicDescription' + '%20' + ComponentPath + '.StyleDescription' + '}';
+		}else{
+			SVGDescription = '{' + ComponentPath + '.GraphicDescription' + '}';
+		}
+		
 		if (Insert == true){
 		//	import and append
 		//
-			this.KSClient.getVar(null, '{' + ComponentPath + '.GraphicDescription' + '%20' + ComponentPath + '.StyleDescription' + '}', this._cbGetAndAddComponent);
+			this.KSClient.getVar(null, SVGDescription, this._cbGetAndAddComponent);
 		} else {			
 			//	import and replace
 			//
-			this.KSClient.getVar(null, '{' + ComponentPath + '.GraphicDescription' + '%20' + ComponentPath + '.StyleDescription' + '}', this._cbGetAndReplaceComponent);
+			this.KSClient.getVar(null, SVGDescription, this._cbGetAndReplaceComponent);
 		}
+		delete SVGDescription;
 		
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - End");
 		
@@ -628,7 +652,7 @@ HMI.prototype = {
 	_GetAndShowComponent: function (Client, req, replace) {
 		HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - Start");
 		
-		//only one entry in array if no styledescription is requested
+		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
 		var ComponentText = new Array(2);
 		var Component;
 		
@@ -725,6 +749,7 @@ HMI.prototype = {
 	_importComponent: function(ComponentText) {
 		this.hmi_log_trace("HMI.prototype._importComponent - Start");
 		
+		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
 		//build a DOM fragment with the SVG String
 		var parsedComponentText = new HMIDOMParser().parse(ComponentText[0], ComponentText[1], null);
 		
@@ -1126,7 +1151,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onunload',function(){HMI.unload()});
 }
 
-var filedate = "$Date: 2009-04-06 13:15:06 $";
+var filedate = "$Date: 2009-04-08 12:55:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

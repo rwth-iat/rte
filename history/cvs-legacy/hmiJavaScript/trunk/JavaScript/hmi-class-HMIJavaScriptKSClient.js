@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.63 $
-*	$Date: 2009-04-08 11:51:36 $
+*	$Revision: 1.64 $
+*	$Date: 2009-04-08 12:55:00 $
 *
 *	History:
 *	--------
@@ -198,7 +198,7 @@ HMIJavaScriptKSClient.prototype = {
 	getVar: function(Handle, path, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path+" Handle: "+Handle);
 		if (Handle == null){
-			Handle = this.TCLKSHandle
+			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
 		if (HMI.GatewayTypeTCL == true){
@@ -232,7 +232,7 @@ HMIJavaScriptKSClient.prototype = {
 	setVar: function(Handle, path, value, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path+" Handle: "+Handle);
 		if (Handle == null){
-			Handle = this.TCLKSHandle
+			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
 		if (HMI.GatewayTypeTCL == true){
@@ -645,7 +645,7 @@ HMIJavaScriptKSClient.prototype = {
 	prepareComponentText: function(ComponentText) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.prepareComponentText - Start");
 		
-		//only one entry in array if no styledescription is requested
+		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
 		var ReturnText = new Array(2);
 		
 		//	ComponentText should look like:
@@ -694,6 +694,23 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/*********************************
+		checkStyleDescription
+	*********************************/
+	checkStyleDescription: function(ComponentPath) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkStyleDescription - Start");
+		
+		var StyleResponse = this.getVar(null, '{' + ComponentPath + '.StyleDescription' + '}', null);
+		
+		if (/KS_ERR_BADPATH/.exec(StyleResponse)){
+			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkStyleDescription - Endf");
+			return false;
+		}else{
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkStyleDescription - Endt");
+			return true;
+		}
+	},	
+	/*********************************
 		destroy
 	*********************************/
 	destroy: function () {
@@ -709,7 +726,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-04-08 11:51:36 $";
+var filedate = "$Date: 2009-04-08 12:55:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
