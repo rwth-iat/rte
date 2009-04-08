@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.62 $
-*	$Date: 2009-04-06 09:26:56 $
+*	$Revision: 1.63 $
+*	$Date: 2009-04-08 11:51:36 $
 *
 *	History:
 *	--------
@@ -679,10 +679,10 @@ HMIJavaScriptKSClient.prototype = {
 			if (ComponentText.indexOf('}} {{') != -1 ){
 				ReturnText[1] = ComponentText.substring(ComponentText.indexOf('}} {{') + 5, ComponentText.length - 2);
 			}else{
-				//put variable to defined state
+				//put StyleVariable to defined state
 				ReturnText[1] = "";
 			}
-			if (ReturnText[1] == ""){
+			if (ReturnText[0] == ""){
 				ReturnText = null;
 				HMI.hmi_log_onwebsite('Gateway reply was empty.')
 			}
@@ -709,7 +709,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-04-06 09:26:56 $";
+var filedate = "$Date: 2009-04-08 11:51:36 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
