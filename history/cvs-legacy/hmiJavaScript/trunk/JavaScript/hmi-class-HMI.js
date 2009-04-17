@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.92 $
-*	$Date: 2009-04-17 13:14:51 $
+*	$Revision: 1.93 $
+*	$Date: 2009-04-17 13:40:46 $
 *
 *	History:
 *	--------
@@ -429,14 +429,15 @@ HMI.prototype = {
 		//Gateway could not be another host without violating Same Origin Policy
 		var KSGateway = window.location.host;
 		
+		//present a deep link to the Host setting
+		$("idBookmark").style.cssText = "display:inline;";
+		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime);
+		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init($('idHost').value + '/MANAGER', KSGateway + KSGateway_Path);
 		if (this.KSClient.TCLKSHandle != null){
 			this.KSClient.getServers();
 		}
-		//present a deep link to the Host setting
-		$("idBookmark").style.cssText = "display:inline;";
-		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime);
 		
 		//reenable click by user
 		HMI.ButShowServers.disabled = false;
@@ -1153,7 +1154,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onunload',function(){HMI.unload()});
 }
 
-var filedate = "$Date: 2009-04-17 13:14:51 $";
+var filedate = "$Date: 2009-04-17 13:40:46 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
