@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.91 $
-*	$Date: 2009-04-17 11:36:58 $
+*	$Revision: 1.92 $
+*	$Date: 2009-04-17 13:14:51 $
 *
 *	History:
 *	--------
@@ -767,7 +767,9 @@ HMI.prototype = {
 		//
 		if (this.instanceOf(Element, "hmi-component"))
 		{
-			Element.setAttribute('pointer-events', 'all');
+			if (null == Element.getAttribute('pointer-events')){
+				Element.setAttribute('pointer-events', 'all');
+			}
 			
 			//calculate and save absolute offset of the Components
 			this._setLayerPosition(Element);
@@ -1151,7 +1153,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onunload',function(){HMI.unload()});
 }
 
-var filedate = "$Date: 2009-04-17 11:36:58 $";
+var filedate = "$Date: 2009-04-17 13:14:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
