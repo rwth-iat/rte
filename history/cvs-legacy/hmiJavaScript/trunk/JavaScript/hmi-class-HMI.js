@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.90 $
-*	$Date: 2009-04-08 12:55:00 $
+*	$Revision: 1.91 $
+*	$Date: 2009-04-17 11:36:58 $
 *
 *	History:
 *	--------
@@ -102,7 +102,7 @@ function HMI(debug, error, warning, info, trace) {
 	this.GatewayTypePHP = null;
 	
 	this.RefreshTime = null;
-	this.SheetHasStyleDescription = null;
+	this.ServerProperty = {SheetHasStyleDescription:null};
 	
 	this.showHeader = true;
 	
@@ -503,7 +503,7 @@ HMI.prototype = {
 			HMI.Path = Sheet;
 			
 			//[StyleDescription] remove this line if no ACPLT/HMI Server has a StyleDescription anymore
-			HMI.SheetHasStyleDescription = HMI.KSClient.checkStyleDescription(HMI.Path);
+			HMI.KSClient.checkSheetProperty(HMI.Path);
 			
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
@@ -624,7 +624,7 @@ HMI.prototype = {
 		var SVGDescription;
 		
 		//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
-		if (HMI.SheetHasStyleDescription){
+		if (HMI.ServerProperty.SheetHasStyleDescription){
 			SVGDescription = '{' + ComponentPath + '.GraphicDescription' + '%20' + ComponentPath + '.StyleDescription' + '}';
 		}else{
 			SVGDescription = '{' + ComponentPath + '.GraphicDescription' + '}';
@@ -1151,7 +1151,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onunload',function(){HMI.unload()});
 }
 
-var filedate = "$Date: 2009-04-08 12:55:00 $";
+var filedate = "$Date: 2009-04-17 11:36:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

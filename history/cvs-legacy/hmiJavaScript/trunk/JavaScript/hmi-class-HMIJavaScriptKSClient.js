@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.65 $
-*	$Date: 2009-04-15 10:56:05 $
+*	$Revision: 1.66 $
+*	$Date: 2009-04-17 11:36:59 $
 *
 *	History:
 *	--------
@@ -695,21 +695,22 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/*********************************
-		checkStyleDescription
+		checkSheetProperty
 	*********************************/
-	checkStyleDescription: function(ComponentPath) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkStyleDescription - Start");
+	checkSheetProperty: function(ComponentPath) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Start");
 		
 		var StyleResponse = this.getVar(null, '{' + ComponentPath + '.StyleDescription' + '}', null);
 		
 		if (/KS_ERR_BADPATH/.exec(StyleResponse)){
 			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkStyleDescription - Endf");
-			return false;
+			HMI.ServerProperty.SheetHasStyleDescription = false;
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endf");
 		}else{
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkStyleDescription - Endt");
-			return true;
+			HMI.ServerProperty.SheetHasStyleDescription = true;
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endt");
 		}
+		return;
 	},	
 	/*********************************
 		destroy
@@ -727,7 +728,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-04-15 10:56:05 $";
+var filedate = "$Date: 2009-04-17 11:36:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
