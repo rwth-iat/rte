@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.93 $
-*	$Date: 2009-04-17 13:40:46 $
+*	$Revision: 1.94 $
+*	$Date: 2009-04-28 08:28:03 $
 *
 *	History:
 *	--------
@@ -88,10 +88,12 @@ function HMI(debug, error, warning, info, trace) {
 	this.trace = trace;
 	
 	this.ButShowServers = null;
+	this.InputRefreshTime = null;
 	this.PossServers = null;
 	this.PossSheets = null;
 	this.Playground = null;
 	this.ErrorOutput = null;
+	this.InfoOutput = null;
 	
 	this.KSClient = null;
 	
@@ -149,7 +151,9 @@ HMI.prototype = {
 			ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
 		}
 		//Object of RefreshTime
-		if (!($('idRefreshTime'))){
+		if (this.InputRefreshTime = $('idRefreshTime')){
+			addEventSimple(HMI.InputRefreshTime,'change',function(){HMI.ChangeRefreshTime();});
+		}else{
 			ErrorDetail += "HTML Input with the ID: idRefreshTime not found.\n";
 		}
 		//Object of Server-Hostname
@@ -194,9 +198,13 @@ HMI.prototype = {
 				}
 			);
 		}
+		
 		if ($('idStartRefresh')){
-			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, $('idRefreshTime').value)});
+			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value)});
 		}
+		
+		//Object of InfoOutput, optional, not necessary
+		this.InfoOutput = $('idInfoOutput');
 		
 		//Try to detect the Servertype (TCL or PHP capable)
 		//make a request to sniff the HTTP-Serverstring
@@ -294,7 +302,7 @@ HMI.prototype = {
 			}
 			//correct RefreshTime in website with user wish
 			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length != 0){
-				$('idRefreshTime').value = HMI_Parameter_Liste.RefreshTime;
+				HMI.InputRefreshTime.value = HMI_Parameter_Liste.RefreshTime;
 			}
 			//a server is specified in "deep link"
 			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length != 0){
@@ -366,6 +374,32 @@ HMI.prototype = {
 			}
 		}
 	},
+	/*********************************
+		Functions - ChangeRefreshTime
+	*********************************/
+	ChangeRefreshTime: function(){
+		
+		if (HMI.InputRefreshTime.value < 100){
+			HMI.InputRefreshTime.value = 100;
+			this.RefreshTime = 100;
+		}else{
+			this.RefreshTime = HMI.InputRefreshTime.value;
+		}
+		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
+			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
+			"?Host="+$('idHost').value+
+			"&RefreshTime="+HMI.RefreshTime+
+			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
+			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : ""));
+		
+		//if an auto refresh is active, reset to new value
+		if (HMI.RefreshTimeoutID != null){
+			clearTimeout(HMI.RefreshTimeoutID);
+			HMI.refreshSheet();
+			HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+			HMI.hmi_log_info_onwebsite('Refreshtime set to '+(HMI.RefreshTime/1000)+'s.');
+		}
+	},
 	
 	/*********************************
 		showServers
@@ -378,17 +412,14 @@ HMI.prototype = {
 		HMI.ButShowServers.disabled = true;
 		HMI.ButShowServers.value = "Please wait...";
 		
-		if ($('idRefreshTime').value < 100){
-			$('idRefreshTime').value = 100;
-			this.RefreshTime = 100;
-		}else{
-			this.RefreshTime = $('idRefreshTime').value;
-		}
+		clearTimeout(HMI.RefreshTimeoutID);
+		HMI.RefreshTimeoutID = null;
+		
 		if ($('idHost').value.length == 0){
 			$('idHost').value = "localhost";
 		}
-		clearTimeout(HMI.RefreshTimeoutID);
-		HMI.RefreshTimeoutID = null;
+		
+		HMI.ChangeRefreshTime();
 		
 		var KSGateway_Path;
 		//the guessed servertype is used for communication
@@ -431,7 +462,12 @@ HMI.prototype = {
 		
 		//present a deep link to the Host setting
 		$("idBookmark").style.cssText = "display:inline;";
-		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime);
+		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
+			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
+			"?Host="+$('idHost').value+
+			"&RefreshTime="+HMI.RefreshTime+
+			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
+			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : ""));
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init($('idHost').value + '/MANAGER', KSGateway + KSGateway_Path);
@@ -518,7 +554,12 @@ HMI.prototype = {
 		HMI.PossServers.blur();
 		//present a "deep link" to the sheet
 		$("idBookmark").style.cssText = "display:inline;";
-		$("idBookmark").setAttribute("href", window.location.protocol+"//"+window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+"?Host="+$('idHost').value+"&RefreshTime="+HMI.RefreshTime+"&Server="+this.KSClient.KSServer.substr(this.KSClient.KSServer.indexOf('/')+1)+"&Sheet="+HMI.PossSheets.value);
+		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
+			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
+			"?Host="+$('idHost').value+
+			"&RefreshTime="+HMI.RefreshTime+
+			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
+			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : ""));
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
@@ -529,6 +570,9 @@ HMI.prototype = {
 	refreshSheet: function () {
 		this.hmi_log_trace("HMI.prototype.refreshSheet - Start");
 		
+		if (this.InfoOutput){
+			deleteChilds(this.InfoOutput);
+		}
 		if (HMI.KSClient.TCLKSHandle != null)
 			this._getAndImportComponent(HMI.Path, HMI.Playground, false);
 		
@@ -1120,7 +1164,21 @@ HMI.prototype = {
 		if (HMI.showHeader == false){
 			HMI.hideHeader();
 		}
-
+	},
+	
+	/*********************************
+		hmi_log_info_onwebsite
+	*********************************/
+	hmi_log_info_onwebsite: function (text) {
+		if (this.InfoOutput){
+			var InfoTextNode = document.createTextNode(text);
+			deleteChilds(HMI.InfoOutput);
+			HMI.InfoOutput.appendChild(InfoTextNode);
+			//if header in not visible: show it
+			if (HMI.showHeader == false){
+				HMI.hideHeader();
+			}
+		}
 	}
 };
 
@@ -1154,7 +1212,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onunload',function(){HMI.unload()});
 }
 
-var filedate = "$Date: 2009-04-17 13:40:46 $";
+var filedate = "$Date: 2009-04-28 08:28:03 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
