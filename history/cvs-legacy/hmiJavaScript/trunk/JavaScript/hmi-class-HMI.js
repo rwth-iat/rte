@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.94 $
-*	$Date: 2009-04-28 08:28:03 $
+*	$Revision: 1.95 $
+*	$Date: 2009-04-29 13:01:33 $
 *
 *	History:
 *	--------
@@ -78,6 +78,9 @@ function HMI(debug, error, warning, info, trace) {
 	this.HMI_Constants = Object();
 	this.HMI_Constants.NAMESPACE_SVG = "http://www.w3.org/2000/svg";
 	this.HMI_Constants.NODE_NAME_CLONE = "HMI_CLONE";
+	
+	this.HMI_Constants.HMIdate = null;
+	this.HMI_Constants.ServerType = null;
 	
 	this.debug = debug;
 	//log critical errors to console
@@ -206,26 +209,46 @@ HMI.prototype = {
 		//Object of InfoOutput, optional, not necessary
 		this.InfoOutput = $('idInfoOutput');
 		
+		//detect if the file is called from http or https, but not from filesystem
+		if (-1 == window.location.protocol.indexOf('http')){
+			this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
+			this.hmi_log_onwebsite("Communication to Server failed. This website has to be transfered via HTTP.");
+			return false;
+		}
 		//Try to detect the Servertype (TCL or PHP capable)
 		//make a request to sniff the HTTP-Serverstring
-		//This fails in some cases, with Safari and Chrome, try manually to reload the page in that case
 		
 		//IE sometimes uses a cached version, without server Header, so prevent caching
 		var DatePreventsCaching = new Date();
-		var req = new XMLHttpRequest();
-		req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
-		req.send(null);
-		var ResponseServerString = req.getResponseHeader('server');
-		if (-1 != ResponseServerString.indexOf('Tcl-Webserver')){
-			HMI.HMI_Constants.ServerType = "tcl";
-			this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
-		}else if (-1 != ResponseServerString.indexOf('PHP')){
-			HMI.HMI_Constants.ServerType = "php";
-			this.hmi_log_trace("HMI.prototype.init - detected PHP Gateway");
+		try{
+			var req = new XMLHttpRequest();
+			req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
+			req.send(null);
+			var ResponseServerString = req.getResponseHeader('server');
+			if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
+				HMI.HMI_Constants.ServerType = "tcl";
+				this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
+			}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('PHP')){
+				HMI.HMI_Constants.ServerType = "php";
+				this.hmi_log_trace("HMI.prototype.init - detected PHP Gateway");
+			}
+		}catch(e){
+			this.hmi_log_error("HMI.prototype.init - Gatewaydetection failed: "+e.message);
+			this.hmi_log_onwebsite("Gatewaydetection failed. ");
+			return false;
 		}
 		delete req;
 		delete ResponseServerString;
 		delete DatePreventsCaching;
+		
+		//call function at unload to clean up
+		if( window.addEventListener ) {
+			window.addEventListener('unload',function(){HMI.unload()},false);
+		} else if( document.addEventListener ) {
+			document.addEventListener('unload',function(){HMI.unload()},false);
+		} else if( window.attachEvent ) {
+			window.attachEvent('onunload',function(){HMI.unload()});
+		}
 		
 		//detect type of SVG display
 		if (this.Playground.tagName.toLowerCase() == "embed"){
@@ -434,12 +457,9 @@ HMI.prototype = {
 			this.GatewayTypeTCL = true;
 			this.GatewayTypePHP = false;
 		}else{
-			HMI.hmi_log_onwebsite('Could not detect type of KSGateway. Please configure in hmi-class-HMI.js. Fallback to PHP.');
-			alert('Could not detect type of KSGateway. Please configure in hmi-class-HMI.js. Fallback to PHP.');
-			//tks.php is always in the same subdir as the html files
-			KSGateway_Path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ "tks.php";
-			this.GatewayTypeTCL = false;
-			this.GatewayTypePHP = true;
+			HMI.hmi_log_onwebsite('This website has to be transfered via HTTP. Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
+			alert('This website has to be transfered via HTTP. Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
+			return false;
 		}
 		
 		//clean old Server and Sheet entrys, an old SVG display and displayed errors in website
@@ -1074,12 +1094,14 @@ HMI.prototype = {
 	unload: function () {
 		this.hmi_log_trace("HMI.prototype.unload - Start");
 		
-		HMI.PossServers = null;
-		HMI.PossSheets = null;
-		
-		if (HMI.KSClient.TCLKSHandle != null)
-			HMI.KSClient.destroy();
+		if (HMI){
+			HMI.PossServers = null;
+			HMI.PossSheets = null;
 			
+			if (HMI.KSClient && HMI.KSClient.TCLKSHandle != null){
+				HMI.KSClient.destroy();
+			}
+		}
 		this.hmi_log_trace("HMI.prototype.unload - End");
 	},
 	
@@ -1092,7 +1114,7 @@ HMI.prototype = {
 		hmi_log_debug
 	*********************************/
 	hmi_log_debug: function (text) {
-		if (window.console != null && this.debug == true){
+		if (window.console && this.debug == true){
 			window.console.debug("HMI_DEBUG: %s", text);
 		}else if(window.opera){
 			if (opera.postError != null && this.debug == true){
@@ -1105,7 +1127,7 @@ HMI.prototype = {
 		hmi_log_error
 	*********************************/
 	hmi_log_error: function (text) {
-		if (window.console != null && this.error == true){
+		if (window.console && this.error == true){
 			window.console.error("HMI_ERROR: %s", text);
 		}else if(window.opera){
 			if (opera.postError != null && this.error == true){
@@ -1118,7 +1140,7 @@ HMI.prototype = {
 		hmi_log_warning
 	*********************************/
 	hmi_log_warning: function (text) {
-		if (window.console != null && this.warning == true){
+		if (window.console && this.warning == true){
 			window.console.warn("HMI_WARNING: %s", text);
 		}else if(window.opera){
 			if (opera.postError != null && this.warning == true){
@@ -1131,7 +1153,7 @@ HMI.prototype = {
 		hmi_log_info
 	*********************************/
 	hmi_log_info: function (text) {
-		if (window.console != null && this.info == true){
+		if (window.console && this.info == true){
 			window.console.info("HMI_INFO: %s", text);
 		}else if(window.opera){
 			if (opera.postError != null && this.info == true){
@@ -1144,7 +1166,7 @@ HMI.prototype = {
 		hmi_log_trace
 	*********************************/
 	hmi_log_trace: function (text) {
-		if (this.trace == true && window.console != null){
+		if (window.console && this.trace == true ){
 			window.console.debug("HMI_TRACE: %s", text);
 		}else if(window.opera){
 			if (opera.postError != null && this.trace == true){
@@ -1190,6 +1212,7 @@ HMI.prototype = {
 
 var HMI = new HMI(true, true, true, true, false);
 
+//init HMI after all js-files are loaded (not guaranteed at construction time)
 if( window.addEventListener ) {
 	//window is the wrong place for the eventlistener, but available at the most browsers
 	//http://www.howtocreate.co.uk/tutorials/javascript/domevents
@@ -1200,19 +1223,11 @@ if( window.addEventListener ) {
 	//and Webkit
 	document.addEventListener('load',function(){HMI.init();},false);
 } else if( window.attachEvent ) {
-	//ie is a special case as usual
+	//Internet Explorer is a special case as usual
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-if( window.addEventListener ) {
-	window.addEventListener('unload',function(){HMI.unload()},false);
-} else if( document.addEventListener ) {
-	document.addEventListener('unload',function(){HMI.unload()},false);
-} else if( window.attachEvent ) {
-	window.attachEvent('onunload',function(){HMI.unload()});
-}
-
-var filedate = "$Date: 2009-04-28 08:28:03 $";
+var filedate = "$Date: 2009-04-29 13:01:33 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
