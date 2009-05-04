@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.95 $
-*	$Date: 2009-04-29 13:01:33 $
+*	$Revision: 1.96 $
+*	$Date: 2009-05-04 11:30:46 $
 *
 *	History:
 *	--------
@@ -497,7 +497,7 @@ HMI.prototype = {
 		
 		//reenable click by user
 		HMI.ButShowServers.disabled = false;
-		HMI.ButShowServers.value = "Show Servers";
+		HMI.ButShowServers.value = "Reload Serverlist";
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
@@ -1227,7 +1227,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-04-29 13:01:33 $";
+var filedate = "$Date: 2009-05-04 11:30:46 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
