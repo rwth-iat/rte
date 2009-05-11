@@ -1,6 +1,15 @@
 <?
 // Basis-Funktionen bekanntgeben
-include("../phpks/phpks.inc.php");
+
+header("Content-Type: text/html; charset=Windows-1252");
+$phpKSIncludeFile = "../phpks/phpks.inc.php";
+
+if (is_file($phpKSIncludeFile)){
+	include($phpKSIncludeFile);
+}else{
+	echo "KS PHP Helperfile not found: ".$phpKSIncludeFile;
+	exit;
+}
 
 // Parameter holen
 function expQsData(&$data) {
