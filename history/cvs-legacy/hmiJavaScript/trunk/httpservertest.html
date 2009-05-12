@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.1 $
-*	$Date: 2009-05-12 08:36:17 $
+*	$Revision: 1.2 $
+*	$Date: 2009-05-12 10:33:00 $
 *
 *	Hlistory:
 *	12-May-2009			Je
@@ -62,12 +62,20 @@
 	<meta http-equiv="Content-Script-Type" content="text/javascript">
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <style type="text/css">
-.true{
+.green{
 	color:green;
-	
+	font-weight:bold;
+	font-family:monospace;
 }
-.false{
+.orange{
+	color:#CC9900;
+	font-weight:bold;
+	font-family:monospace;
+}
+.red{
 	color:red;
+	font-weight:bold;
+	font-family:monospace;
 }
 </style>
 </head>
@@ -81,9 +89,9 @@ ACPLT/HMI detects two KS/HTTP-Gatewaytypes: TCL and PHP.
 </p>
 <table>
 <tr><th>function</th><th>result</th></tr>
-<tr><td>Server detected:</td><td class="false" id="idServerType">not tested</td></tr>
-<tr><td>Server send charset:</td><td class="false" id="idServerHasCharset">not tested</td></tr>
-<tr><td>Server send correct charset:</td><td class="false" id="idServerCorrectCharset">not tested</td></tr>
+<tr><td>Server detected:</td><td class="red" id="idServerType">not tested</td></tr>
+<tr><td>Server send charset:</td><td class="red" id="idServerHasCharset">not tested</td></tr>
+<tr><td>Server send correct charset:</td><td class="red" id="idServerCorrectCharset">not tested</td></tr>
 </table>
 <script type="text/javascript">
 /*********************************
@@ -110,7 +118,7 @@ if (-1 == window.location.protocol.indexOf('http')){
 	req.send(null);
 	ResponseServerString = req.getResponseHeader('server');
 	if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
-		document.getElementById("idServerType").className = "true";
+		document.getElementById("idServerType").className = "green";
 		document.getElementById("idServerType").firstChild.nodeValue = "TCL";
 		
 		//check charset encoding
@@ -119,10 +127,10 @@ if (-1 == window.location.protocol.indexOf('http')){
 		req.send(null);
 		ResponseServerString = req.getResponseHeader('Content-Type');
 		if (ResponseServerString && -1 != ResponseServerString.indexOf('charset')){
-			document.getElementById("idServerHasCharset").className = "true";
+			document.getElementById("idServerHasCharset").className = "green";
 			document.getElementById("idServerHasCharset").firstChild.nodeValue = "true";
 			if (ResponseServerString && -1 != ResponseServerString.indexOf('indows-1252')){
-				document.getElementById("idServerCorrectCharset").className = "true";
+				document.getElementById("idServerCorrectCharset").className = "green";
 				document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "true";
 			}else{
 				document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "false. Server send: '"+ResponseServerString+"'";
@@ -132,7 +140,7 @@ if (-1 == window.location.protocol.indexOf('http')){
 			document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "false";
 		}
 	}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('PHP')){
-		document.getElementById("idServerType").className = "true";
+		document.getElementById("idServerType").className = "green";
 		document.getElementById("idServerType").firstChild.nodeValue = "PHP";
 		
 		//check charset encoding
@@ -141,10 +149,32 @@ if (-1 == window.location.protocol.indexOf('http')){
 		req.send(null);
 		ResponseServerString = req.getResponseHeader('Content-Type');
 		if (ResponseServerString && -1 != ResponseServerString.indexOf('charset')){
-			document.getElementById("idServerHasCharset").className = "true";
+			document.getElementById("idServerHasCharset").className = "green";
 			document.getElementById("idServerHasCharset").firstChild.nodeValue = "true";
 			if (ResponseServerString && -1 != ResponseServerString.indexOf('indows-1252')){
-				document.getElementById("idServerCorrectCharset").className = "true";
+				document.getElementById("idServerCorrectCharset").className = "green";
+				document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "true";
+			}else{
+				document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "false. Server send: '"+ResponseServerString+"'";
+			}
+		}else{
+			document.getElementById("idServerHasCharset").firstChild.nodeValue = "false. The Server did not send a charset information.";
+			document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "false";
+		}
+	}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('Apache')){
+		document.getElementById("idServerType").className = "orange";
+		document.getElementById("idServerType").firstChild.nodeValue = "Apache, so the Gateway ist probably PHP";
+		
+		//check charset encoding
+		var req = new XMLHttpRequest();
+		req.open("GET", window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ 'tks.php?preventCaching='+DatePreventsCaching.getTime(), false);
+		req.send(null);
+		ResponseServerString = req.getResponseHeader('Content-Type');
+		if (ResponseServerString && -1 != ResponseServerString.indexOf('charset')){
+			document.getElementById("idServerHasCharset").className = "green";
+			document.getElementById("idServerHasCharset").firstChild.nodeValue = "true";
+			if (ResponseServerString && -1 != ResponseServerString.indexOf('indows-1252')){
+				document.getElementById("idServerCorrectCharset").className = "green";
 				document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "true";
 			}else{
 				document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "false. Server send: '"+ResponseServerString+"'";

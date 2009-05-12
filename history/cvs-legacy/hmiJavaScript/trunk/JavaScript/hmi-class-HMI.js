@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.96 $
-*	$Date: 2009-05-04 11:30:46 $
+*	$Revision: 1.97 $
+*	$Date: 2009-05-12 10:33:00 $
 *
 *	History:
 *	--------
@@ -231,6 +231,9 @@ HMI.prototype = {
 			}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('PHP')){
 				HMI.HMI_Constants.ServerType = "php";
 				this.hmi_log_trace("HMI.prototype.init - detected PHP Gateway");
+			}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('Apache')){
+				HMI.HMI_Constants.ServerType = "php";
+				this.hmi_log_trace("HMI.prototype.init - detected Apache Webserver, so probably a PHP Gateway");
 			}
 		}catch(e){
 			this.hmi_log_error("HMI.prototype.init - Gatewaydetection failed: "+e.message);
@@ -1227,7 +1230,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-05-04 11:30:46 $";
+var filedate = "$Date: 2009-05-12 10:33:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
