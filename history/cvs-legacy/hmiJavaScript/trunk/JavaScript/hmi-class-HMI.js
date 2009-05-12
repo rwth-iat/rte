@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.97 $
-*	$Date: 2009-05-12 10:33:00 $
+*	$Revision: 1.98 $
+*	$Date: 2009-05-12 11:18:37 $
 *
 *	History:
 *	--------
@@ -460,8 +460,18 @@ HMI.prototype = {
 			this.GatewayTypeTCL = true;
 			this.GatewayTypePHP = false;
 		}else{
-			HMI.hmi_log_onwebsite('This website has to be transfered via HTTP. Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
-			alert('This website has to be transfered via HTTP. Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
+			HMI.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
+			
+			var ErrorNode = document.createElement('br');
+			HMI.ErrorOutput.appendChild(ErrorNode);
+			
+			ErrorNode = document.createElement("a");
+			ErrorNode.setAttribute('href', 'httpservertest.html');
+			ErrorNode.appendChild(document.createTextNode('Servertest available'));
+			HMI.ErrorOutput.appendChild(ErrorNode);
+			
+			delete ErrorNode;
+//			alert('This website has to be transfered via HTTP. Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
 			return false;
 		}
 		
@@ -1230,7 +1240,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-05-12 10:33:00 $";
+var filedate = "$Date: 2009-05-12 11:18:37 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
