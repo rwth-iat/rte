@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.66 $
-*	$Date: 2009-04-17 11:36:59 $
+*	$Revision: 1.67 $
+*	$Date: 2009-05-19 10:22:19 $
 *
 *	History:
 *	--------
@@ -374,17 +374,13 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+(HMI.PossServers.length-1));
 			if (HMI.PossServers.length == 1){
 				HMI.PossServers.options[0] = new Option('- no server available -', 'no server');
+			}else if (HMI.PossServers.length == 2){
+				//selecting the option does not trigger the EventListener
+				//it is allways the second/last <option>...
+				HMI.PossServers.selectedIndex = 1;
+				HMI.showSheets(HMI.PossServers.lastChild.value);
 			}else{
-				//'this' is not PossServers here, but refers to the window and is completely useless in Internet Explorer
-				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
-				if (HMI.PossServers.length == 2){
-					//selecting the option does not trigger the EventListener
-					//it is allways the second/last <option>...
-					HMI.PossServers.selectedIndex = 1;
-					HMI.showSheets(HMI.PossServers.lastChild.value);
-				}else{
-					HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
-				}
+				HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
 			}
 			HMI.PossServers.disabled = false;
 		} else {
@@ -448,7 +444,15 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
 		
 		//the path of the HMI Manager could be different in every OV Server
-		this.HMIMANAGER_PATH = this.getVar(null, "/Libraries/hmi/Manager.instance", null).replace(/{/g, "").replace(/}/g, "");
+		this.HMIMANAGER_PATH = this.getVar(null, "/Libraries/hmi/Manager.instance", null);
+		var PointOfSpace = this.HMIMANAGER_PATH.indexOf(' ');
+		if (PointOfSpace == -1){
+			this.HMIMANAGER_PATH = this.HMIMANAGER_PATH.replace(/{/g, "").replace(/}/g, "");
+		}else{
+			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+this.HMIMANAGER_PATH.replace(/{/g, "").replace(/}/g, "")+"). Using first Server.");
+			this.HMIMANAGER_PATH = this.HMIMANAGER_PATH.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, "");
+		}
+		delete PointOfSpace;
 		
 		var Command = null;
 		if ($("idShowcomponents") && $("idShowcomponents").checked){
@@ -530,7 +534,6 @@ HMIJavaScriptKSClient.prototype = {
 					HMI.PossServers.style.width = OptimumWidth + "px";
 				}
 			}
-			addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
 			if (Sheet.length == 1){
 				//selecting the option does not trigger the EventListener
 				HMI.PossSheets.selectedIndex = 1;
@@ -728,7 +731,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-04-17 11:36:59 $";
+var filedate = "$Date: 2009-05-19 10:22:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

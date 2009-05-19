@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.98 $
-*	$Date: 2009-05-12 11:18:37 $
+*	$Revision: 1.99 $
+*	$Date: 2009-05-19 10:22:19 $
 *
 *	History:
 *	--------
@@ -144,10 +144,14 @@ HMI.prototype = {
 		//Object of Server-Selectbox
 		if (!(this.PossServers = $('idServers'))){
 			ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
+		}else{
+			addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
 		}
 		//Object of Sheet-Selectbox
 		if (!(this.PossSheets = $('idSheets'))){
 			ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
+		}else{
+			addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
 		}
 		//Object of SVG insertion (p for firefox, embed for IE)
 		if (!(this.Playground = $('idPlayground'))){
@@ -578,7 +582,7 @@ HMI.prototype = {
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
-		if (HMI.autoKeepHeader == false && !HMI.ErrorOutput.firstChild){
+		if (HMI.autoKeepHeader == false && !HMI.ErrorOutput.firstChild && !HMI.InfoOutput.firstChild){
 			HMI.hideHeader();
 		}
 		
@@ -1240,7 +1244,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-05-12 11:18:37 $";
+var filedate = "$Date: 2009-05-19 10:22:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
