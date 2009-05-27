@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.99 $
-*	$Date: 2009-05-19 10:22:19 $
+*	$Revision: 1.100 $
+*	$Date: 2009-05-27 09:13:58 $
 *
 *	History:
 *	--------
@@ -325,6 +325,8 @@ HMI.prototype = {
 				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
 				HMI_Parameter_Liste[name] = wert;
 			}
+			delete paare;
+			delete wertestring;
 			
 			//correct host in website with user wish
 			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length != 0){
@@ -347,20 +349,34 @@ HMI.prototype = {
 				//if showServers encountered an error don't load the Sheet list
 				if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex != 0){
 					HMI.showSheets(HMI_Parameter_Liste.Server);
+				}else if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex == 0){
+					HMI.hmi_log_onwebsite('Requested Server not available.');
 				}
 			}
-			
-			if (HMI.PossServers && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0 && HMI_Parameter_Liste.Sheet){
-				//no error and more than one sheet. If there is only one Sheet, showSheets has allready shown Sheet
-				if (!HMI.ErrorOutput.firstChild && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value != HMI_Parameter_Liste.Sheet){
+			//no error and a sheet was requested
+			if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0){
+				//If there is only one Sheet, showSheets has allready shown Sheet, if this was the wrong one => inform
+				if (HMI.PossSheets.options.length == 2 && HMI.PossSheets.options[1].value != HMI_Parameter_Liste.Sheet){
+					clearTimeout(HMI.RefreshTimeoutID);
+					HMI.RefreshTimeoutID = null;
+					HMI.PossSheets.options[0].selected = true;
+					deleteChilds(this.Playground);
+					HMI.hmi_log_onwebsite('Requested Sheet not available.');
+				//more than one sheet. select requested sheet
+				}else if (HMI.PossSheets.options.length > 2){
 					for (var i=0; i < HMI.PossSheets.options.length; i++){
 						if (HMI.PossSheets.options[i].value == HMI_Parameter_Liste.Sheet){
 							HMI.PossSheets.options[i].selected = true;
 						}
 					}
-					HMI.showSheet(HMI_Parameter_Liste.Sheet);
+					if (HMI.PossSheets.selectedIndex == 0){
+						HMI.hmi_log_onwebsite('Requested Sheet not available.');
+					}else{
+						HMI.showSheet(HMI_Parameter_Liste.Sheet);
+					}
 				}
 			}
+			delete HMI_Parameter_Liste;
 		}
 		this.hmi_log_trace("HMI.prototype.init - End");
 	},
@@ -1244,7 +1260,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-05-19 10:22:19 $";
+var filedate = "$Date: 2009-05-27 09:13:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
