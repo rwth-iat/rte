@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.100 $
-*	$Date: 2009-05-27 09:13:58 $
+*	$Revision: 1.101 $
+*	$Date: 2009-05-27 10:49:51 $
 *
 *	History:
 *	--------
@@ -211,7 +211,9 @@ HMI.prototype = {
 		}
 		
 		//Object of InfoOutput, optional, not necessary
-		this.InfoOutput = $('idInfoOutput');
+		if (this.InfoOutput = $('idInfoOutput')){
+			deleteChilds(HMI.InfoOutput);
+		}
 		
 		//detect if the file is called from http or https, but not from filesystem
 		if (-1 == window.location.protocol.indexOf('http')){
@@ -598,8 +600,14 @@ HMI.prototype = {
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
-		if (HMI.autoKeepHeader == false && !HMI.ErrorOutput.firstChild && !HMI.InfoOutput.firstChild){
-			HMI.hideHeader();
+		if (HMI.autoKeepHeader == false && !HMI.ErrorOutput.firstChild){
+			//no info output available
+			if (!HMI.InfoOutput){
+				HMI.hideHeader();
+			//info output with no content
+			}else if (HMI.InfoOutput && !HMI.InfoOutput.firstChild){
+				HMI.hideHeader();
+			}
 		}
 		
 		//blur the buttons for convenience with keyboard interaction
@@ -1260,7 +1268,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-05-27 09:13:58 $";
+var filedate = "$Date: 2009-05-27 10:49:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
