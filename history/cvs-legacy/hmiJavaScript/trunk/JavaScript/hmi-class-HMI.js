@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.101 $
-*	$Date: 2009-05-27 10:49:51 $
+*	$Revision: 1.102 $
+*	$Date: 2009-06-29 14:13:50 $
 *
 *	History:
 *	--------
@@ -464,7 +464,15 @@ HMI.prototype = {
 		HMI.RefreshTimeoutID = null;
 		
 		if ($('idHost').value.length == 0){
-			$('idHost').value = "localhost";
+			$('idHost').value = window.location.hostname;
+		}
+		
+		//if the hostname is identical to the http server, translate into "localhost"
+		var KSServer;
+		if ($('idHost').value == window.location.hostname){
+			KSServer = "localhost";
+		}else{
+			KSServer = $('idHost').value;
 		}
 		
 		HMI.ChangeRefreshTime();
@@ -525,10 +533,11 @@ HMI.prototype = {
 			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : ""));
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
-		this.KSClient.init($('idHost').value + '/MANAGER', KSGateway + KSGateway_Path);
+		this.KSClient.init(KSServer + '/MANAGER', KSGateway + KSGateway_Path);
 		if (this.KSClient.TCLKSHandle != null){
 			this.KSClient.getServers();
 		}
+		delete KSServer;
 		
 		//reenable click by user
 		HMI.ButShowServers.disabled = false;
@@ -1268,7 +1277,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-05-27 10:49:51 $";
+var filedate = "$Date: 2009-06-29 14:13:50 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
