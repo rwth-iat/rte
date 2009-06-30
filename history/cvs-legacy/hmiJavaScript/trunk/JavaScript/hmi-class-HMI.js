@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.102 $
-*	$Date: 2009-06-29 14:13:50 $
+*	$Revision: 1.103 $
+*	$Date: 2009-06-30 08:12:44 $
 *
 *	History:
 *	--------
@@ -1139,6 +1139,55 @@ HMI.prototype = {
 	},	
 	
 	/*********************************
+		getClickPosition
+	*********************************/
+	getClickPosition: function (evt, Component) {
+		this.hmi_log_trace("HMI.prototype.getClickPosition - Start");
+		
+		var clickPosition = new Array(2);
+		//detect the mouse position relative to the component
+		//see technology paper "Human Model Interface - JavaScript" for full details of crossbrowser problems
+		
+		//First we have to find the offset of the svg-element in the XHTML
+		var obj = HMI.Playground;
+		var svgOffsetX = svgOffsetY = 0;
+		//The Plugin in IE has no offsetParent, but clientX is relative to its own scope, not HTML page
+		if (obj.offsetParent) {
+			//code for native SVG. Loop upwards till there is no parent
+			do {
+				svgOffsetX += obj.offsetLeft;
+				svgOffsetY += obj.offsetTop;
+			} while (obj = obj.offsetParent);
+		}
+		
+		var mousePosX;
+		var mousePosY;
+		if (evt.pageX || evt.pageY) {
+			//code for native SVG. pageX based on the full XHTML Document
+			mousePosX = evt.pageX;
+			mousePosY = evt.pageY;
+		}else{
+			//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
+			mousePosX = evt.clientX;
+			mousePosY = evt.clientY;
+		}
+		
+		//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
+		clickPosition[0] = mousePosX - parseInt(Component.getAttribute("layerX"), 10) - svgOffsetX;
+		clickPosition[1] = mousePosY - parseInt(Component.getAttribute("layerY"), 10) - svgOffsetY;
+		
+		delete mousePosX;
+		delete mousePosY;
+		delete svgOffsetX;
+		delete svgOffsetY;
+		delete obj;
+		
+		this.hmi_log_trace("HMI.prototype.getClickPosition - End");
+		
+		return clickPosition;
+	},
+	
+	/*********************************
 		unload
 	*********************************/
 	unload: function () {
@@ -1277,7 +1326,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-06-29 14:13:50 $";
+var filedate = "$Date: 2009-06-30 08:12:44 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
