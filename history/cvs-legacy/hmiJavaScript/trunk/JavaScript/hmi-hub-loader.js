@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.14 $
-*	$Date: 2009-03-04 15:03:07 $
+*	$Revision: 1.15 $
+*	$Date: 2009-07-06 12:33:27 $
 *
 *	History:
 *	01-March-2005			HA
@@ -239,9 +239,9 @@ SCRIPT_HUB(
 	
 	//	List of script files to load
 	[	
+		"./hmi-generic.js",
 		"./hmi-class-HMIJavaScriptKSClient.js",
 		"./hmi-class-HMIDOMParser.js",
-		"./hmi-class-HMI.js",
 		"./hmi-class-gesture-click.js",
 		"./hmi-class-gesture-doubleclick.js",
 		"./hmi-class-gesture-rightclick.js",
@@ -249,10 +249,10 @@ SCRIPT_HUB(
 		"./hmi-class-gesture-textinput.js",
 		//wheelsupport is not supported by the HMI Team and probably firefox only
 		"./hmi-class-gesture-wheelscroll.js",
-		"./hmi-generic.js",
+		"./hmi-class-HMI.js",
 	]
 );
-var filedate = "$Date: 2009-03-04 15:03:07 $";
+var filedate = "$Date: 2009-07-06 12:33:27 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
