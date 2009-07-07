@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.28 $
-*	$Date: 2009-04-07 09:27:45 $
+*	$Revision: 1.29 $
+*	$Date: 2009-07-07 09:18:45 $
 *
 *	History:
 *	--------
@@ -211,7 +211,7 @@ Dragger.prototype = {
 		{
 			DoubleClick.prototype.onDoubleClick(evt);
 			return;
-		};		
+		};
 		
 		//	RIGHTCLICK
 		//
@@ -263,7 +263,11 @@ Dragger.prototype = {
 	*********************************/
 	onMouseUpThunk: null,
 	onMouseUp: function (evt) {
-		this.stopDrag(evt);
+		if (evt.button == 2){
+			this.stopDrag(evt, false);
+		}else{
+			this.stopDrag(evt, true);
+		}
 	},
 	
 	/*********************************
@@ -287,7 +291,7 @@ Dragger.prototype = {
 		if("unknown" == typeof element.removeEventListener || element.removeEventListener){
 			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
 			element.removeEventListener("mousemove", this.onMouseMoveThunk, capture);
-		}else if (element.attachEvent){
+		}else if (element.detachEvent){
 			//Native IE
 			element.detachEvent("onmousemove", this.onMouseMoveThunk);
 		}
@@ -320,7 +324,7 @@ Dragger.prototype = {
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - Start");
 		
 		if (HMI.RefreshTimeoutID != null){
-			clearTimeout(HMI.RefreshTimeoutID);
+			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 		}
 		//mark that there is an active drag for HMI.switchGround
@@ -386,7 +390,7 @@ Dragger.prototype = {
 	/*********************************
 		stopDrag
 	*********************************/
-	stopDrag: function (evt) {		
+	stopDrag: function (evt, validMove) {		
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - Start");
 		
 		var Clone = HMI.svgDocument.getElementById(HMI.HMI_Constants.NODE_NAME_CLONE);
@@ -410,8 +414,8 @@ Dragger.prototype = {
 		}
 		
 		//was there a move?
-		if (	this._totalDX != 0
-			||	this._totalDY != 0)
+		if (validMove && (this._totalDX != 0
+			||	this._totalDY != 0))
 		{
 			//every move has to have a ground as a target
 			if (this._ground != null)
@@ -432,6 +436,8 @@ Dragger.prototype = {
 				delete xvalue;
 				delete yvalue;
 			};
+		} else if(!validMove){
+			HMI.hmi_log_trace("Dragger.prototype.stopDrag - move aborted");
 		} else {
 			HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement => click");
 			//	CLICK
@@ -451,7 +457,7 @@ Dragger.prototype = {
 		}
 		
 		if (HMI.RefreshTimeoutID == null){
-			HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 		}
 		try{
 			/**
@@ -594,7 +600,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-04-07 09:27:45 $";
+var filedate = "$Date: 2009-07-07 09:18:45 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
