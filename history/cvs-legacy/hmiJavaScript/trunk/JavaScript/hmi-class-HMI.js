@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.104 $
-*	$Date: 2009-07-07 11:54:23 $
+*	$Revision: 1.105 $
+*	$Date: 2009-07-07 14:22:30 $
 *
 *	History:
 *	--------
@@ -131,65 +131,92 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
 		var ErrorDetail = "";
-		//Object of ShowServer-Button
-		if (this.ButShowServers = $('idShowServers')){
-			addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
-		}else{
-			ErrorDetail += "HTML Button with the ID: idShowServers not found.\n";
+		if (typeof Click != "function"){
+			ErrorDetail += "hmi-class-gesture-click.js not loaded.\n";
 		}
-		//Object of ErrorOutput
-		if (!(this.ErrorOutput = $('idErrorOutput'))){
-			ErrorDetail += "HTML Tag with the ID: idErrorOutput not found.\n";
+		if (typeof DoubleClick != "function"){
+			ErrorDetail += "hmi-class-gesture-doubleclick.js not loaded.\n";
 		}
-		//Object of Server-Selectbox
-		if (!(this.PossServers = $('idServers'))){
-			ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
-		}else{
-			addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
+		if (typeof Dragger != "function"){
+			ErrorDetail += "hmi-class-gesture-move.js not loaded.\n";
 		}
-		//Object of Sheet-Selectbox
-		if (!(this.PossSheets = $('idSheets'))){
-			ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
-		}else{
-			addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
+		if (typeof RightClick != "function"){
+			ErrorDetail += "hmi-class-gesture-rightclick.js not loaded.\n";
 		}
-		//Object of SVG insertion (p for firefox, embed for IE)
-		if (!(this.Playground = $('idPlayground'))){
-			ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
+		if (typeof TextInput != "function"){
+			ErrorDetail += "hmi-class-gesture-textinput.js not loaded.\n";
 		}
-		//Object of RefreshTime
-		if (this.InputRefreshTime = $('idRefreshTime')){
-			addEventSimple(HMI.InputRefreshTime,'change',function(){HMI.ChangeRefreshTime();});
-		}else{
-			ErrorDetail += "HTML Input with the ID: idRefreshTime not found.\n";
+		if (typeof HMIDOMParser != "function"){
+			ErrorDetail += "hmi-class-HMIDOMParser.js not loaded.\n";
 		}
-		//Object of Server-Hostname
-		if (!($('idHost'))){
-			ErrorDetail += "HTML Input with the ID: idHost not found.\n";
+		if (typeof deleteChilds != "function"){
+			ErrorDetail += "hmi-generic.js not loaded.\n";
 		}
-		//Object of the Deep Link
-		if (!($('idBookmark'))){
-			ErrorDetail += "HTML Input with the ID: idBookmark not found.\n";
-		}
-		//Object of the hideable header
-		if (!($('idHideableHeader'))){
-			ErrorDetail += "HTML Div with the ID: idHideableHeader not found.\n";
+		if (typeof HMIJavaScriptKSClient != "function"){
+			ErrorDetail += "hmi-class-HMIJavaScriptKSClient.js not loaded.\n";
 		}
 		
-		//init the plain HTML website with events
-		if ($('idHeaderRow')){
-			addEventSimple($('idHeaderRow'),'click',function(){HMI.hideHeader();});
-		}else{
-			ErrorDetail += "HTML object with the ID: idHeaderRow not found.\n";
-		}
-		if ($('idKeepHeader')){
-			addEventSimple($('idKeepHeader'),'click',function(){HMI.updateKeepHeader();});
-		}else{
-			ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found.\n";
-		}
+		if(ErrorDetail == ""){
+			//all js files loaded, continue testing of the website
 		
-		if(ErrorDetail != "" && document.documentElement.namespaceURI != "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
-			//do not complain if Firefox 3.5 Beta 3 is not displaying anything
+			//Object of ShowServer-Button
+			if (this.ButShowServers = $('idShowServers')){
+				addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
+			}else{
+				ErrorDetail += "HTML Button with the ID: idShowServers not found.\n";
+			}
+			//Object of ErrorOutput
+			if (!(this.ErrorOutput = $('idErrorOutput'))){
+				ErrorDetail += "HTML Tag with the ID: idErrorOutput not found.\n";
+			}
+			//Object of Server-Selectbox
+			if (!(this.PossServers = $('idServers'))){
+				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
+			}else{
+				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
+			}
+			//Object of Sheet-Selectbox
+			if (!(this.PossSheets = $('idSheets'))){
+				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
+			}else{
+				addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
+			}
+			//Object of SVG insertion (p for firefox, embed for IE)
+			if (!(this.Playground = $('idPlayground'))){
+				ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
+			}
+			//Object of RefreshTime
+			if (this.InputRefreshTime = $('idRefreshTime')){
+				addEventSimple(HMI.InputRefreshTime,'change',function(){HMI.ChangeRefreshTime();});
+			}else{
+				ErrorDetail += "HTML Input with the ID: idRefreshTime not found.\n";
+			}
+			//Object of Server-Hostname
+			if (!($('idHost'))){
+				ErrorDetail += "HTML Input with the ID: idHost not found.\n";
+			}
+			//Object of the Deep Link
+			if (!($('idBookmark'))){
+				ErrorDetail += "HTML Input with the ID: idBookmark not found.\n";
+			}
+			//Object of the hideable header
+			if (!($('idHideableHeader'))){
+				ErrorDetail += "HTML Div with the ID: idHideableHeader not found.\n";
+			}
+			
+			//init the plain HTML website with events
+			if ($('idHeaderRow')){
+				addEventSimple($('idHeaderRow'),'click',function(){HMI.hideHeader();});
+			}else{
+				ErrorDetail += "HTML object with the ID: idHeaderRow not found.\n";
+			}
+			if ($('idKeepHeader')){
+				addEventSimple($('idKeepHeader'),'click',function(){HMI.updateKeepHeader();});
+			}else{
+				ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found.\n";
+			}
+		}
+		if(ErrorDetail != ""){
 			alert ("Error initialising HMI Website:\n"+ErrorDetail);
 			return;
 		}
@@ -1353,7 +1380,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-07-07 11:54:23 $";
+var filedate = "$Date: 2009-07-07 14:22:30 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
