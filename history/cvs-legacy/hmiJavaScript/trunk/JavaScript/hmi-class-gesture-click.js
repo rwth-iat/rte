@@ -50,13 +50,14 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.23 $
-*	$Date: 2009-06-30 08:12:44 $
+*	$Revision: 1.24 $
+*	$Date: 2009-07-07 11:54:23 $
 *
 *	History:
 *	--------
 *	21-June-2007			St
 *		-	General Revision
+*
 *	31-August-2008			NH
 *		-	Sheet refresh after click, event bubbling deactivated
 *
@@ -117,8 +118,23 @@ Click.prototype = {
 		if (HMI.RefreshTimeoutID != null){
 			//deactivate the Refresh
 			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
-			clearTimeout(HMI.RefreshTimeoutID);
+			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
+			
+			//provide a fallback for the case the mouseup do not fire
+			if(HMI.svgDocument.addEventListener){
+				//Firefox, Safari, Opera...
+				HMI.svgDocument.addEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+			}else if("unknown" == typeof HMI.svgDocument.documentElement.addEventListener){
+				//Adobe Plugin
+				HMI.svgDocument.documentElement.addEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+			}else if (HMI.svgDocument.attachEvent){
+				//Native IE
+				HMI.svgDocument.attachEvent("mousemove", HMI.reactivateRefreshInterval);
+			}else if(HMI.svgDocument.documentElement.addEventListener){
+				//Renesis Plugin
+				HMI.svgDocument.documentElement.addEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+			}
 		}
 	},
 	
@@ -127,10 +143,7 @@ Click.prototype = {
 	*********************************/
 	_onMouseUpThunk: null,
 	onMouseUp: function (evt) {
-		if (HMI.RefreshTimeoutID == null){
-			//reactivate the Refresh
-			HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
-		}
+		HMI.reactivateRefreshInterval(evt);
 	},
 	
 	/*********************************
@@ -175,7 +188,7 @@ Click.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-06-30 08:12:44 $";
+var filedate = "$Date: 2009-07-07 11:54:23 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

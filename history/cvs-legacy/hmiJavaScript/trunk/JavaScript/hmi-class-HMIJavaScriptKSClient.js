@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.67 $
-*	$Date: 2009-05-19 10:22:19 $
+*	$Revision: 1.68 $
+*	$Date: 2009-07-07 11:54:23 $
 *
 *	History:
 *	--------
@@ -106,7 +106,7 @@ HMIJavaScriptKSClient.prototype = {
 	init: function(HostAndServer, TCLKSGateway) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.init - Start");
 		
-		clearTimeout(HMI.RefreshTimeoutID);
+		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		if (this.TCLKSHandle != null)
@@ -619,7 +619,7 @@ HMIJavaScriptKSClient.prototype = {
 			} catch (e) {
 				HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent. Is the gateway started?');
 				HMI.hmi_log_onwebsite('Request could not be sent. Is the gateway started?');
-				clearTimeout(HMI.RefreshTimeoutID);
+				window.clearInterval(HMI.RefreshTimeoutID);
 				HMI.RefreshTimeoutID = null;
 				return false;
 			}
@@ -663,7 +663,7 @@ HMIJavaScriptKSClient.prototype = {
 			}else{
 				HMI.hmi_log_onwebsite('Server lost. First 250 characters of reply: ' + ComponentText.substr(0,250))
 			}
-			clearTimeout(HMI.RefreshTimeoutID);
+			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			ReturnText = null;
 		}else if ("{{" != ComponentText.substr(0,2)){
@@ -673,7 +673,7 @@ HMIJavaScriptKSClient.prototype = {
 			}else{
 				HMI.hmi_log_onwebsite('Server did not responded valid. First 250 characters: ' + ComponentText.substr(0,250))
 			}
-			clearTimeout(HMI.RefreshTimeoutID);
+			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			ReturnText = null;
 		} else {
@@ -731,7 +731,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-05-19 10:22:19 $";
+var filedate = "$Date: 2009-07-07 11:54:23 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

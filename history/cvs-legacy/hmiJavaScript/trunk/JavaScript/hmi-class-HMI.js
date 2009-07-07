@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.103 $
-*	$Date: 2009-06-30 08:12:44 $
+*	$Revision: 1.104 $
+*	$Date: 2009-07-07 11:54:23 $
 *
 *	History:
 *	--------
@@ -200,14 +200,14 @@ HMI.prototype = {
 		}
 		if ($('idStopRefresh')){
 			addEventSimple($('idStopRefresh'),'click',function(){
-				clearTimeout(HMI.RefreshTimeoutID);
+				window.clearInterval(HMI.RefreshTimeoutID);
 				HMI.RefreshTimeoutID = null;
 				}
 			);
 		}
 		
 		if ($('idStartRefresh')){
-			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value)});
+			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value)});
 		}
 		
 		//Object of InfoOutput, optional, not necessary
@@ -359,7 +359,7 @@ HMI.prototype = {
 			if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0){
 				//If there is only one Sheet, showSheets has allready shown Sheet, if this was the wrong one => inform
 				if (HMI.PossSheets.options.length == 2 && HMI.PossSheets.options[1].value != HMI_Parameter_Liste.Sheet){
-					clearTimeout(HMI.RefreshTimeoutID);
+					window.clearInterval(HMI.RefreshTimeoutID);
 					HMI.RefreshTimeoutID = null;
 					HMI.PossSheets.options[0].selected = true;
 					deleteChilds(this.Playground);
@@ -442,9 +442,9 @@ HMI.prototype = {
 		
 		//if an auto refresh is active, reset to new value
 		if (HMI.RefreshTimeoutID != null){
-			clearTimeout(HMI.RefreshTimeoutID);
+			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.refreshSheet();
-			HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 			HMI.hmi_log_info_onwebsite('Refreshtime set to '+(HMI.RefreshTime/1000)+'s.');
 		}
 	},
@@ -460,7 +460,7 @@ HMI.prototype = {
 		HMI.ButShowServers.disabled = true;
 		HMI.ButShowServers.value = "Please wait...";
 		
-		clearTimeout(HMI.RefreshTimeoutID);
+		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		if ($('idHost').value.length == 0){
@@ -563,7 +563,7 @@ HMI.prototype = {
 		$("idBookmark").style.cssText = "display:none;";
 		document.title = "Startcenter - ACPLT/HMI";
 		
-		clearTimeout(HMI.RefreshTimeoutID);
+		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		//nothing selected
@@ -591,7 +591,7 @@ HMI.prototype = {
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
 		$("idBookmark").style.cssText = "display:none;";
-		clearTimeout(HMI.RefreshTimeoutID);
+		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		//nothing selected
@@ -671,6 +671,33 @@ HMI.prototype = {
 		HMI.refreshSheet();
 		
 		HMI.hmi_log_trace("HMI.prototype.refreshSheet - End");
+	},
+	
+	/*********************************
+		reactivateRefreshInterval
+	*********************************/
+	reactivateRefreshInterval: function (evt) {
+		HMI.hmi_log_trace("HMI.prototype.reactivateRefreshInterval- Start");
+		
+		if (HMI.RefreshTimeoutID == null){
+			//reactivate the Refresh
+			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+		}
+		if(HMI.svgDocument.removeEventListener){
+			//Firefox, Safari, Opera...
+			HMI.svgDocument.removeEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+		}else if("unknown" == typeof HMI.svgDocument.documentElement.removeEventListener){
+			//Adobe Plugin
+			HMI.svgDocument.documentElement.removeEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+		}else if (HMI.svgDocument.detachEvent){
+			//Native IE
+			HMI.svgDocument.detachEvent("mousemove", HMI.reactivateRefreshInterval);
+		}else if(HMI.svgDocument.documentElement.removeEventListener){
+			//Renesis Plugin
+			HMI.svgDocument.documentElement.removeEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+		}
+		
+		HMI.hmi_log_trace("HMI.prototype.reactivateRefreshInterval - End");
 	},
 	
 	/*********************************
@@ -810,7 +837,7 @@ HMI.prototype = {
 				
 				//	set TimeoutID
 				if (HMI.RefreshTimeoutID == null){
-					HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+					HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 				}
 			}
 			try{
@@ -1326,7 +1353,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-06-30 08:12:44 $";
+var filedate = "$Date: 2009-07-07 11:54:23 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

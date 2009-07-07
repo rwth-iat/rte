@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.23 $
-*	$Date: 2009-04-01 07:09:52 $
+*	$Revision: 1.24 $
+*	$Date: 2009-07-07 11:54:23 $
 *
 *	History:
 *	--------
@@ -124,10 +124,25 @@ TextInput.prototype = {
 	_onMouseDownThunk: null,
 	onMouseDown: function (evt) {
 		if (HMI.RefreshTimeoutID != null){
-			//deactivate the Refresh 
+			//deactivate the Refresh
 			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
-			clearTimeout(HMI.RefreshTimeoutID);
+			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
+			
+			//provide a fallback for the case the mouseup do not fire
+			if(HMI.svgDocument.addEventListener){
+				//Firefox, Safari, Opera...
+				HMI.svgDocument.addEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+			}else if("unknown" == typeof HMI.svgDocument.documentElement.addEventListener){
+				//Adobe Plugin
+				HMI.svgDocument.documentElement.addEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+			}else if (HMI.svgDocument.attachEvent){
+				//Native IE
+				HMI.svgDocument.attachEvent("mousemove", HMI.reactivateRefreshInterval);
+			}else if(HMI.svgDocument.documentElement.addEventListener){
+				//Renesis Plugin
+				HMI.svgDocument.documentElement.addEventListener("mousemove", HMI.reactivateRefreshInterval, false);
+			}
 		}
 	},
 	
@@ -136,20 +151,18 @@ TextInput.prototype = {
 	*********************************/
 	_onMouseUpThunk: null,
 	onMouseUp: function (evt) {
-		if (HMI.RefreshTimeoutID == null){
-			//reactivate the Refresh
-			HMI.RefreshTimeoutID = setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
-		}
+		HMI.reactivateRefreshInterval(evt);
 	},
 	
 	/*********************************
 		onClick
 	*********************************/
 	_onClickThunk: null,
-	onClick: function (evt) {		
+	onClick: function (evt) {
 		if (evt.detail == 2)
 		{
 			//	doubleclick => STOP
+			//
 			return;
 		};
 		var text;
@@ -179,6 +192,10 @@ TextInput.prototype = {
 		{
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
 		};
+		if (HMI.RefreshTimeoutID == null){
+			//reactivate the Refresh
+			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+		}
 	},
 	
 	/*********************************
@@ -202,7 +219,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-04-01 07:09:52 $";
+var filedate = "$Date: 2009-07-07 11:54:23 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
