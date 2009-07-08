@@ -1,5 +1,5 @@
 /* -*-plt-c++-*- */
-/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.22 2008-09-22 08:26:09 henning Exp $ */
+/* $Header: /home/david/cvs/acplt/ks/src/avticket.cpp,v 1.23 2009-07-08 06:23:50 henning Exp $ */
 /*
  * Copyright (c) 1996, 1997, 1998, 1999
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -317,7 +317,13 @@ KsAvSimpleTicket::xdrDecodeVariant(XDR *xdr)
 bool
 KsAvSimpleTicket::xdrEncodeVariant(XDR *xdr) const
 {
+#if 1
+    return true;
+#else
+    // @ Martin: Seit wann hat SimpleTicket eigenen EncodeVariant()
+    //           und noch in dieser Form ???
     return _id.xdrEncode(xdr);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
