@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.106 $
-*	$Date: 2009-07-15 08:12:13 $
+*	$Revision: 1.107 $
+*	$Date: 2009-07-15 08:21:31 $
 *
 *	History:
 *	--------
@@ -952,6 +952,7 @@ HMI.prototype = {
 		if (this.instanceOf(Element, "hmi-component-ground"))
 		{
 			var ground = new Ground(Element, this);
+			this.hmi_log_trace("HMI.prototype._initGestures - Ground initialised: "+Element.id);
 		};
 		
 		//	MOVE
@@ -965,6 +966,7 @@ HMI.prototype = {
 				//Adobe needs a hack for the move-gesture
 				HMI.AdobeMoveFixNeeded = true;
 			}
+			this.hmi_log_trace("HMI.prototype._initGestures - Move initialised: "+Element.id);
 		//the move handler calls the Leftclick by himself if no movement was detected
 		//so there is no further initialisation of move-gesture components needed
 		} else {
@@ -974,6 +976,7 @@ HMI.prototype = {
 			{
 				//initialize click handling
 				var rightclick = new RightClick(Element, this);
+				this.hmi_log_trace("HMI.prototype._initGestures - RightClick initialised: "+Element.id);
 			};
 			
 			//	(LEFT)CLICK
@@ -982,6 +985,7 @@ HMI.prototype = {
 			{
 				//initialize click handling
 				var click = new Click(Element, this);
+				this.hmi_log_trace("HMI.prototype._initGestures - Click initialised: "+Element.id);
 			};
 			
 			//	DOUBLECLICK
@@ -990,6 +994,7 @@ HMI.prototype = {
 			{
 				//initialize click handling
 				var doubleclick = new DoubleClick(Element, this);
+				this.hmi_log_trace("HMI.prototype._initGestures - DoubleClick initialised: "+Element.id);
 			};
 			
 			//	TEXTINPUT
@@ -998,6 +1003,7 @@ HMI.prototype = {
 			{
 				//initialize textinput handling
 				var textinput = new TextInput(Element, this);
+				this.hmi_log_trace("HMI.prototype._initGestures - TextInput initialised: "+Element.id);
 			};
 			
 			//	WHEEL-SCROLL
@@ -1007,6 +1013,7 @@ HMI.prototype = {
 			{
 				//initialize wheel handling
 				this.wheelscroll = new WheelScroll(Element, this);
+				this.hmi_log_trace("HMI.prototype._initGestures - WheelScroll initialised: "+Element.id);
 			};
 		};
 		
@@ -1386,7 +1393,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-07-15 08:12:13 $";
+var filedate = "$Date: 2009-07-15 08:21:31 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
