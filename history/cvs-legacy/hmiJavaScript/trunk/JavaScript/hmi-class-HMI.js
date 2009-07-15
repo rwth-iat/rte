@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.107 $
-*	$Date: 2009-07-15 08:21:31 $
+*	$Revision: 1.108 $
+*	$Date: 2009-07-15 09:00:58 $
 *
 *	History:
 *	--------
@@ -376,7 +376,7 @@ HMI.prototype = {
 					}
 				}
 				//if showServers encountered an error don't load the Sheet list
-				if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex != 0){
+				if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex != 0 && HMI.PossSheets.options.length < 2){
 					HMI.showSheets(HMI_Parameter_Liste.Server);
 				}else if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex == 0){
 					HMI.hmi_log_onwebsite('Requested Server not available.');
@@ -1393,7 +1393,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-07-15 08:21:31 $";
+var filedate = "$Date: 2009-07-15 09:00:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
