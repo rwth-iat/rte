@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.105 $
-*	$Date: 2009-07-07 14:22:30 $
+*	$Revision: 1.106 $
+*	$Date: 2009-07-15 08:12:13 $
 *
 *	History:
 *	--------
@@ -465,7 +465,8 @@ HMI.prototype = {
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : ""));
+			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : "")+
+			(HMI.trace==true?"&trace=true":""));
 		
 		//if an auto refresh is active, reset to new value
 		if (HMI.RefreshTimeoutID != null){
@@ -557,7 +558,8 @@ HMI.prototype = {
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : ""));
+			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : "")+
+			(HMI.trace==true?"&trace=true":""));
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(KSServer + '/MANAGER', KSGateway + KSGateway_Path);
@@ -656,7 +658,8 @@ HMI.prototype = {
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : ""));
+			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : "")+
+			(HMI.trace==true?"&trace=true":""));
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
@@ -1362,8 +1365,11 @@ HMI.prototype = {
 	
 	HMI(debug, error, warning, info, trace)
 *********************************/
-
-var HMI = new HMI(true, true, true, true, false);
+if (window.location.search && -1 != unescape(window.location.search).indexOf("trace=true")){
+	var HMI = new HMI(true, true, true, true, true);
+}else{
+	var HMI = new HMI(true, true, true, true, false);
+}
 
 //init HMI after all js-files are loaded (not guaranteed at construction time)
 if( window.addEventListener ) {
@@ -1380,7 +1386,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2009-07-07 14:22:30 $";
+var filedate = "$Date: 2009-07-15 08:12:13 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
