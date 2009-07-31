@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.108 $
-*	$Date: 2009-07-15 09:00:58 $
+*	$Revision: 1.109 $
+*	$Date: 2009-07-31 11:04:40 $
 *
 *	History:
 *	--------
@@ -127,7 +127,7 @@ HMI.prototype = {
 		
 		called from "load" event, all js files are available
 	*********************************/
-	init: function () {
+	init: function (firstLoad) {
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
 		var ErrorDetail = "";
@@ -217,6 +217,11 @@ HMI.prototype = {
 			}
 		}
 		if(ErrorDetail != ""){
+			if (firstLoad == true){
+				//Safari calls addEventListener('load') before all files are loaded, so give him a second chance in 2 seconds
+				window.setTimeout(function(){HMI.init(false);}, 2000);
+				return;
+			}
 			alert ("Error initialising HMI Website:\n"+ErrorDetail);
 			return;
 		}
@@ -1382,18 +1387,18 @@ if (window.location.search && -1 != unescape(window.location.search).indexOf("tr
 if( window.addEventListener ) {
 	//window is the wrong place for the eventlistener, but available at the most browsers
 	//http://www.howtocreate.co.uk/tutorials/javascript/domevents
-	window.addEventListener('load',function(){HMI.init();},false);
+	window.addEventListener('load',function(){HMI.init(true);},false);
 } else if( document.addEventListener ) {
 	//document is the right place for the eventlistener
 	//but not supported by mozilla https://bugzilla.mozilla.org/show_bug.cgi?id=99820
 	//and Webkit
-	document.addEventListener('load',function(){HMI.init();},false);
+	document.addEventListener('load',function(){HMI.init(true);},false);
 } else if( window.attachEvent ) {
 	//Internet Explorer is a special case as usual
-	window.attachEvent('onload',function(){HMI.init();});
+	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-07-15 09:00:58 $";
+var filedate = "$Date: 2009-07-31 11:04:40 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
