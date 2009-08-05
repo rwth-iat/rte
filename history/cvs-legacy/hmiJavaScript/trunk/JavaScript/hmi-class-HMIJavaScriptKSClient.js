@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.68 $
-*	$Date: 2009-07-07 11:54:23 $
+*	$Revision: 1.69 $
+*	$Date: 2009-08-05 13:03:55 $
 *
 *	History:
 *	--------
@@ -449,7 +449,7 @@ HMIJavaScriptKSClient.prototype = {
 		if (PointOfSpace == -1){
 			this.HMIMANAGER_PATH = this.HMIMANAGER_PATH.replace(/{/g, "").replace(/}/g, "");
 		}else{
-			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+this.HMIMANAGER_PATH.replace(/{/g, "").replace(/}/g, "")+"). Using first Server.");
+			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+this.HMIMANAGER_PATH.replace(/{/g, "").replace(/}/g, "")+"). Using first Manager.");
 			this.HMIMANAGER_PATH = this.HMIMANAGER_PATH.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, "");
 		}
 		delete PointOfSpace;
@@ -731,7 +731,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-07-07 11:54:23 $";
+var filedate = "$Date: 2009-08-05 13:03:55 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
