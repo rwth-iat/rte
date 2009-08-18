@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.109 $
-*	$Date: 2009-07-31 11:04:40 $
+*	$Revision: 1.110 $
+*	$Date: 2009-08-18 08:12:36 $
 *
 *	History:
 *	--------
@@ -222,7 +222,7 @@ HMI.prototype = {
 				window.setTimeout(function(){HMI.init(false);}, 2000);
 				return;
 			}
-			alert ("Error initialising HMI Website:\n"+ErrorDetail);
+			window.alert ("Error initialising HMI Website:\n"+ErrorDetail);
 			return;
 		}
 		
@@ -705,7 +705,7 @@ HMI.prototype = {
 		
 		HMI.refreshSheet();
 		
-		HMI.hmi_log_trace("HMI.prototype.refreshSheet - End");
+		HMI.hmi_log_trace("HMI.prototype.cbrefreshSheet - End");
 	},
 	
 	/*********************************
@@ -714,10 +714,17 @@ HMI.prototype = {
 	reactivateRefreshInterval: function (evt) {
 		HMI.hmi_log_trace("HMI.prototype.reactivateRefreshInterval- Start");
 		
+		//inform the user if screen update is reactivated after loss of server
+		if (HMI.ErrorOutput.firstChild){
+			deleteChilds(HMI.ErrorOutput);
+			HMI.hmi_log_info_onwebsite("Screenrefresh reactivated.");
+		}
 		if (HMI.RefreshTimeoutID == null){
 			//reactivate the Refresh
 			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 		}
+		
+		//this function is called by mouseup event or mousemove => cleanup
 		if(HMI.svgDocument.removeEventListener){
 			//Firefox, Safari, Opera...
 			HMI.svgDocument.removeEventListener("mousemove", HMI.reactivateRefreshInterval, false);
@@ -1398,7 +1405,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-07-31 11:04:40 $";
+var filedate = "$Date: 2009-08-18 08:12:36 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
