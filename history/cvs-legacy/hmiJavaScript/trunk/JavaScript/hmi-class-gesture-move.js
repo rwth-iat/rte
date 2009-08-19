@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.29 $
-*	$Date: 2009-07-07 09:18:45 $
+*	$Revision: 1.30 $
+*	$Date: 2009-08-19 13:17:50 $
 *
 *	History:
 *	--------
@@ -350,11 +350,12 @@ Dragger.prototype = {
 		Node.setAttribute('class', '');
 		Node.setAttribute('fill-opacity', '0.25');
 		Node.setAttribute('stroke-opacity', '0.25');
+		Node.setAttribute('pointer-events', 'none');
 		Node.setAttribute('clonedID', this._node.getAttribute('id'));
 		this._node.parentNode.appendChild(Node);
 		
 		//the dragged Node must not receive events while dragged
-		this._node.setAttribute("pointer-events", "none");
+		this._node.setAttribute('pointer-events', 'none');
 		
 		if (HMI.svgDocument.addEventListener){
 			//Firefox and co
@@ -600,7 +601,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-07-07 09:18:45 $";
+var filedate = "$Date: 2009-08-19 13:17:50 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
