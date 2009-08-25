@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.27 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.28 $
+*	$Date: 2009-08-25 16:27:51 $
 *
 *	History:
 *	--------
@@ -176,8 +176,10 @@ TextInput.prototype = {
 	*********************************/
 	_onClickThunk: null,
 	onClick: function (evt) {
+		HMI.hmi_log_trace("TextInput.prototype.onClick - Start");
 		if (evt.detail == 2)
 		{
+			HMI.hmi_log_trace("TextInput.prototype.onClick - End - DoubleClick detected");
 			//	doubleclick => STOP
 			//
 			return;
@@ -215,6 +217,7 @@ TextInput.prototype = {
 			//reactivate the Refresh
 			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 		}
+		HMI.hmi_log_trace("TextInput.prototype.onClick - End");
 	},
 	
 	/*********************************
@@ -238,7 +241,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date: 2009-08-25 16:27:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

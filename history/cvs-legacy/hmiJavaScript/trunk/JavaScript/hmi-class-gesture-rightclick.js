@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.21 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.22 $
+*	$Date: 2009-08-25 16:27:51 $
 *
 *	History:
 *	--------
@@ -107,7 +107,9 @@ RightClick.prototype = {
 	onRightClick: function (evt) {
 		if (evt.button == 2)
 		{
+			HMI.hmi_log_trace("RightClick.prototype.onRightClick - Start");
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-rightclick'));
+			HMI.hmi_log_trace("RightClick.prototype.onRightClick - End");
 		};
 	},
 	
@@ -137,7 +139,7 @@ RightClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date: 2009-08-25 16:27:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

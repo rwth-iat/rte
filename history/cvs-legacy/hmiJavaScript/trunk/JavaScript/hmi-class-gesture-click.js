@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.25 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.26 $
+*	$Date: 2009-08-25 16:27:51 $
 *
 *	History:
 *	--------
@@ -115,6 +115,7 @@ Click.prototype = {
 	*********************************/
 	_onMouseDownThunk: null,
 	onMouseDown: function (evt) {
+		HMI.hmi_log_trace("Click.prototype.onMouseDown: "+(evt.target ? evt.target.id : evt.srcElement.id));
 		if (HMI.RefreshTimeoutID !== null){
 			//deactivate the Refresh
 			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
@@ -143,6 +144,7 @@ Click.prototype = {
 	*********************************/
 	_onMouseUpThunk: null,
 	onMouseUp: function (evt) {
+		HMI.hmi_log_trace("Click.prototype.onMouseUp");
 		HMI.reactivateRefreshInterval(evt);
 	},
 	
@@ -151,21 +153,25 @@ Click.prototype = {
 	*********************************/
 	_onClickThunk: null,
 	onClick: function (evt) {
+		HMI.hmi_log_trace("Click.prototype.onClick - Start");
 		evt.stopPropagation();
 		if (evt.detail == 2)
 		{
+			HMI.hmi_log_trace("Click.prototype.onClick - End - DoubleClick detected");
 			//	doubleclick => STOP
 			//
 			return;
 		};
 		
 		this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
+		HMI.hmi_log_trace("Click.prototype.onClick - End");
 	},
 	
 	/*********************************
 		_sendCommand
 	*********************************/
 	_sendCommand : function (evt, Component) {
+		HMI.hmi_log_trace("Click.prototype._sencCommand - Component: "+Component.id);
 		var Command = null;
 		
 		if (Component !== null)
@@ -188,7 +194,7 @@ Click.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date: 2009-08-25 16:27:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

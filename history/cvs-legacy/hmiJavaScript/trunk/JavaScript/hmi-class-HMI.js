@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.111 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.112 $
+*	$Date: 2009-08-25 16:27:51 $
 *
 *	History:
 *	--------
@@ -162,7 +162,7 @@ HMI.prototype = {
 			//all js files loaded, continue testing of the website
 		
 			//Object of ShowServer-Button
-			if (this.ButShowServers = $('idShowServers')){
+			if ((this.ButShowServers = $('idShowServers'))){
 				addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
 			}else{
 				ErrorDetail += "HTML Button with the ID: idShowServers not found.\n";
@@ -188,7 +188,7 @@ HMI.prototype = {
 				ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
 			}
 			//Object of RefreshTime
-			if (this.InputRefreshTime = $('idRefreshTime')){
+			if ((this.InputRefreshTime = $('idRefreshTime'))){
 				addEventSimple(HMI.InputRefreshTime,'change',function(){HMI.ChangeRefreshTime();});
 			}else{
 				ErrorDetail += "HTML Input with the ID: idRefreshTime not found.\n";
@@ -245,7 +245,7 @@ HMI.prototype = {
 		}
 		
 		//Object of InfoOutput, optional, not necessary
-		if (this.InfoOutput = $('idInfoOutput')){
+		if ((this.InfoOutput = $('idInfoOutput'))){
 			deleteChilds(HMI.InfoOutput);
 		}
 		
@@ -340,7 +340,7 @@ HMI.prototype = {
 		var titlenode = document.createAttribute("title");
 		titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate+" UTC";
 		
-		if (DateOutput = document.getElementById("idDateOutput")){
+		if ((DateOutput = document.getElementById("idDateOutput"))){
 			DateOutput.appendChild(dateTextNode);
 			DateOutput.parentNode.setAttributeNode(titlenode);
 		}
@@ -1407,7 +1407,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date: 2009-08-25 16:27:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

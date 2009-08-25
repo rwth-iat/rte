@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.23 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.24 $
+*	$Date: 2009-08-25 16:27:51 $
 *
 *	History:
 *	--------
@@ -152,9 +152,13 @@ DoubleClick.prototype = {
 	_onDoubleClickThunk: null,
 	onDoubleClick: function (evt) {
 		//possible that a screen refresh between two clicks doesnot trigger a double click
+		HMI.hmi_log_trace("DoubleClick.prototype.onDoubleClick - Start");
 		if (evt.button === 0 && evt.detail ==2){
+			HMI.hmi_log_trace("DoubleClick.prototype.onDoubleClick - Doubleclick detected");
 			evt.stopPropagation();
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-doubleclick'));
+		}else{
+			HMI.hmi_log_trace("DoubleClick.prototype.onDoubleClick - no Doubleclick detected");
 		}
 	},
 	
@@ -184,7 +188,7 @@ DoubleClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date: 2009-08-25 16:27:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

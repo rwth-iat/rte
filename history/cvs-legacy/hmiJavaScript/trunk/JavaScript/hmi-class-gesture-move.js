@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.31 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.32 $
+*	$Date: 2009-08-25 16:27:51 $
 *
 *	History:
 *	--------
@@ -264,8 +264,10 @@ Dragger.prototype = {
 	onMouseUpThunk: null,
 	onMouseUp: function (evt) {
 		if (evt.button == 2){
+			//right mouse button cancels move
 			this.stopDrag(evt, false);
 		}else{
+			//left mouse button => valid move
 			this.stopDrag(evt, true);
 		}
 	},
@@ -302,6 +304,7 @@ Dragger.prototype = {
 	*********************************/
 	onMouseMoveThunk: null,
 	onMouseMove: function (evt) {
+		HMI.hmi_log_trace("Dragger.prototype.onMouseMove active");
 		//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
 		var dx = ((evt.pageX || evt.clientX) - this._lastX);
 		var dy = ((evt.pageY || evt.clientY) - this._lastY);
@@ -440,13 +443,15 @@ Dragger.prototype = {
 		} else if(!validMove){
 			HMI.hmi_log_trace("Dragger.prototype.stopDrag - move aborted");
 		} else {
-			HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement => click");
 			//	CLICK
 			//
 			if (HMI.instanceOf(this._node, 'hmi-component-gesture-click') === true)
 			{
+				HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement => click");
 				Click.prototype.onClick(evt);
-			};
+			}else{
+				HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement and no clickhandler on this element");
+			}
 		};
 		
 		// Renesis 1.1.1.0 does not clean Display, so this could be called with a empty Clone
@@ -455,10 +460,6 @@ Dragger.prototype = {
 			Clone.parentNode.replaceChild(this._node, Clone);
 			this._node.setAttribute('x', Clone.getAttribute('x'));
 			this._node.setAttribute('y', Clone.getAttribute('y'));
-		}
-		
-		if (HMI.RefreshTimeoutID == null){
-			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 		}
 		try{
 			/**
@@ -473,6 +474,7 @@ Dragger.prototype = {
 		} catch (e) {   //IE does not like this hack
 		}
 		delete Clone;
+		HMI.reactivateRefreshInterval(evt);
 		
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - End");
 	},
@@ -607,7 +609,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date: 2009-08-25 16:27:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
