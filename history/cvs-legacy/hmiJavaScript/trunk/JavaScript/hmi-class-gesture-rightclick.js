@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.20 $
-*	$Date: 2009-06-30 08:12:44 $
+*	$Revision: 1.21 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -117,7 +117,7 @@ RightClick.prototype = {
 	_sendCommand : function (evt, Component) {
 		var Command = null;
 		
-		if (Component != null)
+		if (Component !== null)
 		{
 			var clickPosition;
 			//detect the mouse position relative to the component
@@ -137,7 +137,7 @@ RightClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-06-30 08:12:44 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.22 $
-*	$Date: 2009-07-07 11:54:23 $
+*	$Revision: 1.23 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -115,7 +115,7 @@ DoubleClick.prototype = {
 	*********************************/
 	_onMouseDownThunk: null,
 	onMouseDown: function (evt) {
-		if (HMI.RefreshTimeoutID != null){
+		if (HMI.RefreshTimeoutID !== null){
 			//deactivate the Refresh
 			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
 			window.clearInterval(HMI.RefreshTimeoutID);
@@ -152,7 +152,7 @@ DoubleClick.prototype = {
 	_onDoubleClickThunk: null,
 	onDoubleClick: function (evt) {
 		//possible that a screen refresh between two clicks doesnot trigger a double click
-		if (evt.button == 0 && evt.detail ==2){
+		if (evt.button === 0 && evt.detail ==2){
 			evt.stopPropagation();
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-doubleclick'));
 		}
@@ -164,7 +164,7 @@ DoubleClick.prototype = {
 	_sendCommand : function (evt, Component) {
 		var Command = null;
 		
-		if (Component != null)
+		if (Component !== null)
 		{
 			var clickPosition;
 			//detect the mouse position relative to the component
@@ -184,7 +184,7 @@ DoubleClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-07-07 11:54:23 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

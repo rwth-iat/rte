@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.24 $
-*	$Date: 2009-07-07 11:54:23 $
+*	$Revision: 1.25 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -115,7 +115,7 @@ Click.prototype = {
 	*********************************/
 	_onMouseDownThunk: null,
 	onMouseDown: function (evt) {
-		if (HMI.RefreshTimeoutID != null){
+		if (HMI.RefreshTimeoutID !== null){
 			//deactivate the Refresh
 			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
 			window.clearInterval(HMI.RefreshTimeoutID);
@@ -168,7 +168,7 @@ Click.prototype = {
 	_sendCommand : function (evt, Component) {
 		var Command = null;
 		
-		if (Component != null)
+		if (Component !== null)
 		{
 			var clickPosition;
 			//detect the mouse position relative to the component
@@ -188,7 +188,7 @@ Click.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-07-07 11:54:23 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.17 $
-*	$Date: 2009-04-08 12:55:00 $
+*	$Revision: 1.18 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -103,7 +103,7 @@ HMIDOMParser.prototype = {
 				return null;
 			};
 			//StyleDescription is optional
-			if (StyleDescription.length != 0){
+			if (StyleDescription.length !== 0){
 				try {
 					StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
 				} catch (e) {
@@ -130,7 +130,7 @@ HMIDOMParser.prototype = {
 				HMI.PlaygroundEmbedNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
 				HMI.PlaygroundEmbedNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
 				//StyleDescription is optional
-				if (StyleDescription.length != 0){
+				if (StyleDescription.length !== 0){
 					StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
 					//the SVG Plugin does not need importNode for the appendChild
 					StyleElementNode = StyleElement.firstChild;
@@ -143,19 +143,19 @@ HMIDOMParser.prototype = {
 		}else if(window.ActiveXObject){
 			//building an XML Tree works a bit different in IE
 			//inline SVG with AdobePlugin, not capable of proper events! http://schepers.cc/inlinesvg.html
-			var GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
+			GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
 			var loadXMLresult;
 			loadXMLresult = GraphicElement.loadXML(GraphicDescription);
-			if (loadXMLresult == false){
+			if (loadXMLresult === false){
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on GraphicDescription');
 				HMI.hmi_log_onwebsite('ParseError on GraphicDescription');
 				return null;
 			};
 			//StyleDescription is optional
-			if (StyleDescription.length != 0){
-				var StyleElement = new ActiveXObject("Microsoft.XMLDOM");
+			if (StyleDescription.length !== 0){
+				StyleElement = new ActiveXObject("Microsoft.XMLDOM");
 				loadXMLresult = StyleElement.loadXML(StyleDescription);
-				if (loadXMLresult == false){
+				if (loadXMLresult === false){
 					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
 					HMI.hmi_log_onwebsite('ParseError on StyleDescription');
 				};
@@ -164,7 +164,7 @@ HMIDOMParser.prototype = {
 			}
 			delete loadXMLresult;
 		}
-		if (StyleDescription.length != 0){
+		if (StyleDescription.length !== 0){
 			GraphicElement.firstChild.appendChild(StyleElementNode);
 		}
 		
@@ -180,7 +180,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2009-04-08 12:55:00 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

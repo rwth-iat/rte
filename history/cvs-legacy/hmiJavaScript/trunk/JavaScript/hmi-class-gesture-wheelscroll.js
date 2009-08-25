@@ -47,8 +47,8 @@
 *	CVS:
 *	----
 *	
-*	$Revision: 1.6 $
-*	$Date: 2009-03-20 13:42:12 $
+*	$Revision: 1.7 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -104,20 +104,20 @@ WheelScroll.prototype = {
 		//get and translate parent svg object
 		var Scrollframe = HMI.getComponent(evt, 'hmi-component-scrollframe');
 		var Component = Scrollframe.firstChild;
-		while (	Component != null && HMI.instanceOf(Component, "hmi-component-scrollcontent") == false){
+		while (	Component !== null && HMI.instanceOf(Component, "hmi-component-scrollcontent") === false){
 			Component = Component.nextSibling;
 		}
 
 		if(!HMI.currY){
-			HMI.currY = parseInt(Component.getAttribute('y'));
+			HMI.currY = parseInt(Component.getAttribute('y'),10);
 			HMI.scrollComponent = Component.id;
 		}
 		
 		//HMI.currY = eval(HMI.currY - wheelData * 4);
-		var y = parseInt(wheelData * 4);
-		if(parseInt(Component.getAttribute('height'))>parseInt(Scrollframe.getAttribute('height'))){
-			if (HMI.currY + y + parseInt(Component.getAttribute('height')) < parseInt(Scrollframe.getAttribute('height'))){
-				HMI.currY = parseInt(Scrollframe.getAttribute('height')) - parseInt(Component.getAttribute('height'));
+		var y = parseInt(wheelData * 4,10);
+		if(parseInt(Component.getAttribute('height'),10)>parseInt(Scrollframe.getAttribute('height'),10)){
+			if (HMI.currY + y + parseInt(Component.getAttribute('height'),10) < parseInt(Scrollframe.getAttribute('height'),10)){
+				HMI.currY = parseInt(Scrollframe.getAttribute('height'),10) - parseInt(Component.getAttribute('height'),10);
 			} else if(HMI.currY + y > 0){
 				HMI.currY = 0;
 			} else {
@@ -148,16 +148,16 @@ WheelScroll.prototype = {
 		evt = evt ? evt : window.event;
 		var Scrollframe = HMI.getComponent(evt, 'hmi-component-scrollframe');
 		var Component = Scrollframe.firstChild;
-		while (	Component != null && HMI.instanceOf(Component, "hmi-component-scrollcontent") == false){
+		while (	Component !== null && HMI.instanceOf(Component, "hmi-component-scrollcontent") === false){
 			Component = Component.nextSibling;
 		}
 
 		if(!HMI.currY){
-			HMI.currY = parseInt(Component.getAttribute('y'));
+			HMI.currY = parseInt(Component.getAttribute('y'),10);
 			HMI.scrollComponent = Component.id;
 		}
 		if(!HMI.currX){
-			HMI.currX = parseInt(Component.getAttribute('x'));
+			HMI.currX = parseInt(Component.getAttribute('x'),10);
 			HMI.scrollComponent = Component.id;
 		}
 		
@@ -181,9 +181,9 @@ WheelScroll.prototype = {
 		}
 		
 		//calculate y
-		if(parseInt(Component.getAttribute('height'))>parseInt(Scrollframe.getAttribute('height'))){
-			if (HMI.currY + y + parseInt(Component.getAttribute('height')) < parseInt(Scrollframe.getAttribute('height'))){
-				HMI.currY = parseInt(Scrollframe.getAttribute('height')) - parseInt(Component.getAttribute('height'));
+		if(parseInt(Component.getAttribute('height'),10)>parseInt(Scrollframe.getAttribute('height'),10)){
+			if (HMI.currY + y + parseInt(Component.getAttribute('height'),10) < parseInt(Scrollframe.getAttribute('height'),10)){
+				HMI.currY = parseInt(Scrollframe.getAttribute('height'),10) - parseInt(Component.getAttribute('height'),10);
 			} else if(HMI.currY + y > 0){
 				HMI.currY = 0;
 			} else {
@@ -194,9 +194,9 @@ WheelScroll.prototype = {
 		}
 		
 		//calculate  x
-		if(parseInt(Component.getAttribute('width'))>parseInt(Scrollframe.getAttribute('width'))){
-			if (HMI.currX + x + parseInt(Component.getAttribute('width')) < parseInt(Scrollframe.getAttribute('width'))){
-				HMI.currX = parseInt(Scrollframe.getAttribute('width')) - parseInt(Component.getAttribute('width'));
+		if(parseInt(Component.getAttribute('width'),10)>parseInt(Scrollframe.getAttribute('width')),10){
+			if (HMI.currX + x + parseInt(Component.getAttribute('width'),10) < parseInt(Scrollframe.getAttribute('width'),10)){
+				HMI.currX = parseInt(Scrollframe.getAttribute('width'),10) - parseInt(Component.getAttribute('width'),10);
 			} else if (HMI.currX + x > 0){
 				HMI.currX = 0;
 			} else {
@@ -211,7 +211,7 @@ WheelScroll.prototype = {
 		return;
 	}
 };
-var filedate = "$Date: 2009-03-20 13:42:12 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

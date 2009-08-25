@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.32 $
-*	$Date: 2009-04-06 13:15:06 $
+*	$Revision: 1.33 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -76,7 +76,7 @@
 *********************************/
 
 function $(id) {
-	return document.getElementById(id)
+	return document.getElementById(id);
 }
 
 /*********************************
@@ -96,11 +96,11 @@ function deleteChilds(ParentNode) {
 	Feature - emulate XMLHttpRequest of old IEs with new API
 *********************************/
 if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
-	try{ return new ActiveXObject("Msxml2.XMLHTTP.6.0") }catch(e){}
-	try{ return new ActiveXObject("Msxml2.XMLHTTP.3.0") }catch(e){}
-	try{ return new ActiveXObject("Msxml2.XMLHTTP") }catch(e){}
-	try{ return new ActiveXObject("Microsoft.XMLHTTP") }catch(e){}
-	throw new Error("Could not find an XMLHttpRequest alternative.")
+	try{ return new ActiveXObject("Msxml2.XMLHTTP.6.0"); }catch(e){}
+	try{ return new ActiveXObject("Msxml2.XMLHTTP.3.0"); }catch(e){}
+	try{ return new ActiveXObject("Msxml2.XMLHTTP"); }catch(e){}
+	try{ return new ActiveXObject("Microsoft.XMLHTTP"); }catch(e){}
+	throw new Error("Could not find an XMLHttpRequest alternative.");
 };
 
 /*********************************
@@ -117,7 +117,7 @@ if (!document.importNode) {
 			/* create a new element */
 			var newNode = document.createElement(node.nodeName);
 			/* does the node have any attributes to add? */
-			if (node.attributes && node.attributes.length > 0)
+			if (node.attributes && node.attributes.length > 0){
 				/* add all of the attributes */
 				for (var i = 0, il = node.attributes.length; i < il;i++){
 					if (node.attributes[i].nodeName == "style"){
@@ -127,18 +127,17 @@ if (!document.importNode) {
 						newNode.setAttribute(node.attributes[i].nodeName, node.getAttribute(node.attributes[i].nodeName));
 					}
 				}
+			}
 			/* are we going after children too, and does the node have any? */
 			if (allChildren && node.childNodes && node.childNodes.length > 0)
 				/* recursively get all of the child nodes */
 				for (var i = 0, il = node.childNodes.length; i < il;)
 					newNode.appendChild(document.importNode(node.childNodes[i++], allChildren));
 			return newNode;
-			break;
 		case 3: //document.TEXT_NODE
 		case 4: //document.CDATA_SECTION_NODE
 		case 8: //document.COMMENT_NODE
 			return document.createTextNode(node.nodeValue);
-			break;
 		}
 	};
 }
@@ -280,7 +279,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2009-04-06 13:15:06 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

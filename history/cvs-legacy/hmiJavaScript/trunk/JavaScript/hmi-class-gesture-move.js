@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.30 $
-*	$Date: 2009-08-19 13:17:50 $
+*	$Revision: 1.31 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -145,8 +145,8 @@ function Dragger (node, controller) {
 	this._ground			= null;
 	this._lastX				= null;
 	this._lastY				= null;
-	this._totalDX			= null;
-	this._totalDY			= null;
+	this._totalDX			= 0;
+	this._totalDY			= 0;
 	
 	this._node = node;
 	this._controller = controller;
@@ -205,9 +205,9 @@ Dragger.prototype = {
 	onMouseDown: function (evt) {
 		//	DOUBLECLICK
 		//
-		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-doubleclick') == true
-			&&	evt.detail == 2
-			&&	evt.button == 0)
+		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-doubleclick') === true
+			&&	evt.detail === 2
+			&&	evt.button === 0)
 		{
 			DoubleClick.prototype.onDoubleClick(evt);
 			return;
@@ -215,7 +215,7 @@ Dragger.prototype = {
 		
 		//	RIGHTCLICK
 		//
-		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-rightclick') == true
+		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-rightclick') === true
 			&&	evt.button == 2)
 		{
 			RightClick.prototype.onRightClick(evt);
@@ -224,7 +224,7 @@ Dragger.prototype = {
 		
 		//	MOVE
 		//
-		if (evt.button == 0)
+		if (evt.button === 0)
 		{
 			this.startDrag(evt);
 			evt.stopPropagation();
@@ -323,7 +323,7 @@ Dragger.prototype = {
 	startDrag: function (evt) {
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - Start");
 		
-		if (HMI.RefreshTimeoutID != null){
+		if (HMI.RefreshTimeoutID !== null){
 			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 		}
@@ -415,18 +415,18 @@ Dragger.prototype = {
 		}
 		
 		//was there a move?
-		if (validMove && (this._totalDX != 0
-			||	this._totalDY != 0))
+		if (validMove && (this._totalDX !== 0
+			||	this._totalDY !== 0))
 		{
 			//every move has to have a ground as a target
-			if (this._ground != null)
+			if (this._ground !== null)
 			{
 				//	MOVE / DRAG'N'DROP
 				//
 				var xvalue = this._node.getAttribute("x");
 				var yvalue = this._node.getAttribute("y");
 				
-				Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
+				var Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 					'{010}%20' +
 					'{' + this._node.id + '}%20' +
 					'{MOVE}%20' +
@@ -443,7 +443,7 @@ Dragger.prototype = {
 			HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement => click");
 			//	CLICK
 			//
-			if (HMI.instanceOf(this._node, 'hmi-component-gesture-click') == true)
+			if (HMI.instanceOf(this._node, 'hmi-component-gesture-click') === true)
 			{
 				Click.prototype.onClick(evt);
 			};
@@ -483,6 +483,10 @@ Dragger.prototype = {
 	switchGround: function (evt, ground) {
 		HMI.hmi_log_trace("Dragger.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+evt.target.id+", Evt.nodeName: "+evt.target.nodeName+", Ground: "+ground._node.id);
 		
+		var node;
+		var SVGx = Number.NaN;
+		var SVGy = Number.NaN;
+		
 		//detect the ground under the mouse
 		
 		//	impossible to be own ground
@@ -490,23 +494,23 @@ Dragger.prototype = {
 		if (this._node == ground._node)
 		{
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - own ground: "+ground._node.id);
-			if (ground._node.ownerSVGElement != undefined){
+			if (ground._node.ownerSVGElement !== undefined){
 				ground._node = ground._node.ownerSVGElement;
 			}else if (ground._node.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
 				ground._node = ground._node.parentNode;
 			}
-			while (	ground._node != null
+			while (	ground._node !== null
 					&&	ground._node != document
-					&&	HMI.instanceOf(ground._node, 'hmi-component-ground') == false)
+					&&	HMI.instanceOf(ground._node, 'hmi-component-ground') === false)
 			{
-				if (ground._node.ownerSVGElement != undefined){
+				if (ground._node.ownerSVGElement !== undefined){
 					//firefox
 					ground._node = ground._node.ownerSVGElement;
 				}else if (ground._node.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
 					//adobe + renesis
 					ground._node = ground._node.parentNode;
 				}
-				if (	ground._node != null
+				if (	ground._node !== null
 					&&	ground._node.id == HMI.HMI_Constants.NODE_NAME_CLONE)
 				{
 					ground._node = HMI.svgDocument.getElementById(ground._node.getAttribute('clonedID'));
@@ -516,7 +520,7 @@ Dragger.prototype = {
 		
 		//	first ground
 		//
-		if (this._ground == null)
+		if (this._ground === null)
 		{
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground: "+ground._node.id);
 			this._ground = ground;
@@ -529,11 +533,11 @@ Dragger.prototype = {
 			SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._node.parentNode.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 			
 			//move dragged Node into the new ground
-			var node = this._node.parentNode.removeChild(this._node);
+			node = this._node.parentNode.removeChild(this._node);
 			ground._node.insertBefore(node, ground._node.firstChild);
 			
 			//set new position inside the ground
-			if (SVGx != null){
+			if (!isNaN(SVGx) && !isNaN(SVGy)){
 				node.setAttribute("x", SVGx);
 				node.setAttribute("y", SVGy);
 			}
@@ -546,7 +550,7 @@ Dragger.prototype = {
 		//	new ground
 		//
 		if (this._ground != ground)
-		{			
+		{	
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - new ground: "+ground._node.id);
 			if (this._ground._node.firstChild.localName == "g")
 			{
@@ -559,20 +563,22 @@ Dragger.prototype = {
 				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
 				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 				
-				var node = this._ground._node.firstChild.removeChild(this._node);
+				node = this._ground._node.firstChild.removeChild(this._node);
 				ground._node.firstChild.insertBefore(node, ground._node.firstChild.firstChild);
 			} else {
 				//new position is old coordinate + position of old parent(=ground) - position of new parent (=ground)
 				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
 				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 				
-				var node = this._ground._node.removeChild(this._node);
+				node = this._ground._node.removeChild(this._node);
 				ground._node.insertBefore(node, ground._node.firstChild);
 			};
 			
 			//set new position inside the ground
-			node.setAttribute("x", SVGx);
-			node.setAttribute("y", SVGy);
+			if (!isNaN(SVGx) && !isNaN(SVGy)){
+				node.setAttribute("x", SVGx);
+				node.setAttribute("y", SVGy);
+			}
 			delete SVGx;
 			delete SVGy;
 			
@@ -594,14 +600,14 @@ Dragger.prototype = {
 		x += dx;
 		y += dy;
 		
-		this._node.setAttribute("x", x)
-		this._node.setAttribute("y", y)
+		this._node.setAttribute("x", x);
+		this._node.setAttribute("y", y);
 		
 		delete x;
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-08-19 13:17:50 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

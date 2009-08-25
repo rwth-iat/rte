@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.110 $
-*	$Date: 2009-08-18 08:12:36 $
+*	$Revision: 1.111 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -98,6 +98,8 @@ function HMI(debug, error, warning, info, trace) {
 	this.ErrorOutput = null;
 	this.InfoOutput = null;
 	
+	this.RefreshTimeoutID = null;
+	this._currentDragger = null;
 	this.KSClient = null;
 	
 	this.svgWindow = null;
@@ -156,7 +158,7 @@ HMI.prototype = {
 			ErrorDetail += "hmi-class-HMIJavaScriptKSClient.js not loaded.\n";
 		}
 		
-		if(ErrorDetail == ""){
+		if(ErrorDetail === ""){
 			//all js files loaded, continue testing of the website
 		
 			//Object of ShowServer-Button
@@ -173,13 +175,13 @@ HMI.prototype = {
 			if (!(this.PossServers = $('idServers'))){
 				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
 			}else{
-				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value)});
+				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value);});
 			}
 			//Object of Sheet-Selectbox
 			if (!(this.PossSheets = $('idSheets'))){
 				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
 			}else{
-				addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)});
+				addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);});
 			}
 			//Object of SVG insertion (p for firefox, embed for IE)
 			if (!(this.Playground = $('idPlayground'))){
@@ -216,8 +218,8 @@ HMI.prototype = {
 				ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found.\n";
 			}
 		}
-		if(ErrorDetail != ""){
-			if (firstLoad == true){
+		if(ErrorDetail !== ""){
+			if (firstLoad === true){
 				//Safari calls addEventListener('load') before all files are loaded, so give him a second chance in 2 seconds
 				window.setTimeout(function(){HMI.init(false);}, 2000);
 				return;
@@ -239,7 +241,7 @@ HMI.prototype = {
 		}
 		
 		if ($('idStartRefresh')){
-			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value)});
+			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value);});
 		}
 		
 		//Object of InfoOutput, optional, not necessary
@@ -284,11 +286,11 @@ HMI.prototype = {
 		
 		//call function at unload to clean up
 		if( window.addEventListener ) {
-			window.addEventListener('unload',function(){HMI.unload()},false);
+			window.addEventListener('unload',function(){HMI.unload();},false);
 		} else if( document.addEventListener ) {
-			document.addEventListener('unload',function(){HMI.unload()},false);
+			document.addEventListener('unload',function(){HMI.unload();},false);
 		} else if( window.attachEvent ) {
-			window.attachEvent('onunload',function(){HMI.unload()});
+			window.attachEvent('onunload',function(){HMI.unload();});
 		}
 		
 		//detect type of SVG display
@@ -348,7 +350,7 @@ HMI.prototype = {
 		delete titlenode;
 		
 		//jump to a "deep link" of a sheet
-		if (window.location.search.length != 0){
+		if (window.location.search.length !== 0){
 			//collect parameter given by the deep link
 			var HMI_Parameter_Liste = new Array();
 			var wertestring = unescape(window.location.search);
@@ -363,15 +365,15 @@ HMI.prototype = {
 			delete wertestring;
 			
 			//correct host in website with user wish
-			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length != 0){
+			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
 				$('idHost').value = HMI_Parameter_Liste.Host;
 			}
 			//correct RefreshTime in website with user wish
-			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length != 0){
+			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length !== 0){
 				HMI.InputRefreshTime.value = HMI_Parameter_Liste.RefreshTime;
 			}
 			//a server is specified in "deep link"
-			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length != 0){
+			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length !== 0){
 				//get list of servers
 				HMI.showServers();
 				//select server in drop-down box from deep link
@@ -381,14 +383,14 @@ HMI.prototype = {
 					}
 				}
 				//if showServers encountered an error don't load the Sheet list
-				if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex != 0 && HMI.PossSheets.options.length < 2){
+				if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex !== 0 && HMI.PossSheets.options.length < 2){
 					HMI.showSheets(HMI_Parameter_Liste.Server);
-				}else if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex == 0){
+				}else if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex === 0){
 					HMI.hmi_log_onwebsite('Requested Server not available.');
 				}
 			}
 			//no error and a sheet was requested
-			if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex != 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length != 0){
+			if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex !== 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length !== 0){
 				//If there is only one Sheet, showSheets has allready shown Sheet, if this was the wrong one => inform
 				if (HMI.PossSheets.options.length == 2 && HMI.PossSheets.options[1].value != HMI_Parameter_Liste.Sheet){
 					window.clearInterval(HMI.RefreshTimeoutID);
@@ -403,7 +405,7 @@ HMI.prototype = {
 							HMI.PossSheets.options[i].selected = true;
 						}
 					}
-					if (HMI.PossSheets.selectedIndex == 0){
+					if (HMI.PossSheets.selectedIndex === 0){
 						HMI.hmi_log_onwebsite('Requested Sheet not available.');
 					}else{
 						HMI.showSheet(HMI_Parameter_Liste.Sheet);
@@ -422,7 +424,7 @@ HMI.prototype = {
 	*********************************/
 	updateKeepHeader: function (){
 		this.hmi_log_trace("HMI.prototype.updateKeepHeader - change requested");
-		if (document.getElementById("idKeepHeader").checked == true) {
+		if (document.getElementById("idKeepHeader").checked === true) {
 			HMI.autoKeepHeader = true;
 		}else{
 			HMI.autoKeepHeader = false;
@@ -436,7 +438,7 @@ HMI.prototype = {
 			//hide menu
 			HMI.showHeader = false;
 			document.getElementById("idHideableHeader").style.display = "none";
-			if (document.getElementById("arrowdown1") != null){
+			if (document.getElementById("arrowdown1") !== null){
 				document.getElementById("arrowdown1").style.visibility="visible";
 				document.getElementById("arrowdown2").style.visibility="visible";
 				document.getElementById("arrowup1").style.visibility="hidden";
@@ -446,7 +448,7 @@ HMI.prototype = {
 			//show menu
 			HMI.showHeader = true;
 			document.getElementById("idHideableHeader").style.display = "block";
-			if (document.getElementById("arrowdown1") != null){
+			if (document.getElementById("arrowdown1") !== null){
 				document.getElementById("arrowdown1").style.visibility="hidden";
 				document.getElementById("arrowdown2").style.visibility="hidden";
 				document.getElementById("arrowup1").style.visibility="visible";
@@ -470,11 +472,11 @@ HMI.prototype = {
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : "")+
-			(HMI.trace==true?"&trace=true":""));
+			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
+			(HMI.trace===true?"&trace=true":""));
 		
 		//if an auto refresh is active, reset to new value
-		if (HMI.RefreshTimeoutID != null){
+		if (HMI.RefreshTimeoutID !== null){
 			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.refreshSheet();
 			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
@@ -496,7 +498,7 @@ HMI.prototype = {
 		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if ($('idHost').value.length == 0){
+		if ($('idHost').value.length === 0){
 			$('idHost').value = window.location.hostname;
 		}
 		
@@ -563,12 +565,12 @@ HMI.prototype = {
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : "")+
-			(HMI.trace==true?"&trace=true":""));
+			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
+			(HMI.trace===true?"&trace=true":""));
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(KSServer + '/MANAGER', KSGateway + KSGateway_Path);
-		if (this.KSClient.TCLKSHandle != null){
+		if (this.KSClient.TCLKSHandle !== null){
 			this.KSClient.getServers();
 		}
 		delete KSServer;
@@ -585,8 +587,6 @@ HMI.prototype = {
 	*********************************/
 	showSheets: function (Server) {
 		this.hmi_log_trace("HMI.prototype.showSheets - Start, requested Server: "+Server);
-		
-		var i = 0;
 		
 		//clean old Sheet entrys, an old SVG display and displayed errors in website
 		deleteChilds(this.PossSheets);
@@ -608,7 +608,7 @@ HMI.prototype = {
 		
 		//an init generates a new Handle, needed cause we communicate to this server the first time
 		this.KSClient.init(this.KSClient.KSServer.substring(0, this.KSClient.KSServer.indexOf('/')) + '/' + Server, this.KSClient.TCLKSGateway);
-		if (this.KSClient.TCLKSHandle != null){
+		if (this.KSClient.TCLKSHandle !== null){
 			this.KSClient.getSheets();
 		}
 		
@@ -633,7 +633,7 @@ HMI.prototype = {
 			return;
 		}
 		
-		if (HMI.KSClient.TCLKSHandle != null)
+		if (HMI.KSClient.TCLKSHandle !== null)
 		{
 			HMI.Path = Sheet;
 			
@@ -643,7 +643,7 @@ HMI.prototype = {
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
-		if (HMI.autoKeepHeader == false && !HMI.ErrorOutput.firstChild){
+		if (HMI.autoKeepHeader === false && !HMI.ErrorOutput.firstChild){
 			//no info output available
 			if (!HMI.InfoOutput){
 				HMI.hideHeader();
@@ -663,8 +663,8 @@ HMI.prototype = {
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex != 0 ? HMI.PossSheets.value : "")+
-			(HMI.trace==true?"&trace=true":""));
+			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
+			(HMI.trace===true?"&trace=true":""));
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
@@ -678,7 +678,7 @@ HMI.prototype = {
 		if (this.InfoOutput){
 			deleteChilds(this.InfoOutput);
 		}
-		if (HMI.KSClient.TCLKSHandle != null)
+		if (HMI.KSClient.TCLKSHandle !== null)
 			this._getAndImportComponent(HMI.Path, HMI.Playground, false);
 		
 		//reload scroll setting
@@ -719,7 +719,7 @@ HMI.prototype = {
 			deleteChilds(HMI.ErrorOutput);
 			HMI.hmi_log_info_onwebsite("Screenrefresh reactivated.");
 		}
-		if (HMI.RefreshTimeoutID == null){
+		if (HMI.RefreshTimeoutID === null){
 			//reactivate the Refresh
 			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 		}
@@ -758,11 +758,11 @@ HMI.prototype = {
 			//native IE code
 			Component = evt.srcElement;
 		}
-		while (	Component != null
+		while (	Component !== null
 				&&	Component != document
-				&&	HMI.instanceOf(Component, cssclass) == false)
+				&&	HMI.instanceOf(Component, cssclass) === false)
 		{
-			if (Component.ownerSVGElement != undefined){
+			if (Component.ownerSVGElement !== undefined){
 				//firefox and co
 				Component = Component.ownerSVGElement;
 			}else if (Component.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
@@ -772,7 +772,7 @@ HMI.prototype = {
 				//Inline IE Code inline
 				Component = Component.parentNode;
 			}
-			if ( Component != null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
+			if ( Component !== null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
 				//in the move-gesture the original element has to be discovered
 				Component = HMI.svgDocument.getElementById(Component.getAttribute('clonedID'));
 			}
@@ -793,7 +793,7 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+(evt.target ? evt.target.id : evt.srcElement.id)+", Evt.nodeName: "+(evt.target ? evt.target.nodeName : evt.srcElement.nodeName)+", Ground: "+ground._node.id);
 		
 		//is there a move gesture in action?
-		if (this._currentDragger != null)
+		if (this._currentDragger !== null)
 			this._currentDragger.switchGround(evt, ground);
 		
 		this.hmi_log_trace("HMI.prototype.switchGround - End");
@@ -814,7 +814,7 @@ HMI.prototype = {
 			SVGDescription = '{' + ComponentPath + '.GraphicDescription' + '}';
 		}
 		
-		if (Insert == true){
+		if (Insert === true){
 		//	import and append
 		//
 			this.KSClient.getVar(null, SVGDescription, this._cbGetAndAddComponent);
@@ -840,16 +840,16 @@ HMI.prototype = {
 		var ComponentText = new Array(2);
 		var Component;
 		
-		if (req.responseText != "")
+		if (req.responseText !== "")
 		{
 			ComponentText = HMI.KSClient.prepareComponentText(req.responseText);
-			if (ComponentText == null){
+			if (ComponentText === null){
 				//logging not required, allready done by prepareComponentText
 				return;
 			}
 			
 			Component = HMI._importComponent(ComponentText);
-			if (Component == null){
+			if (Component === null){
 				//logging not required, allready done by _importComponent
 				return;
 			}
@@ -872,13 +872,13 @@ HMI.prototype = {
 				HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
 			}
 			HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent: now Playground.append/replaceChild");
-			if(replace == true){
+			if(replace === true){
 				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			}else{
 				HMI.Playground.appendChild(Component);
 				
 				//	set TimeoutID
-				if (HMI.RefreshTimeoutID == null){
+				if (HMI.RefreshTimeoutID === null){
 					HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 				}
 			}
@@ -951,7 +951,7 @@ HMI.prototype = {
 		//
 		if (this.instanceOf(Element, "hmi-component"))
 		{
-			if (null == Element.getAttribute('pointer-events')){
+			if (null === Element.getAttribute('pointer-events') || "" === Element.getAttribute('pointer-events')){
 				Element.setAttribute('pointer-events', 'all');
 			}
 			
@@ -1039,6 +1039,7 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.initGestures - Start");
 		
 		var Elements;
+		var ElementLength;
 		
 		HMI._initGestures(Fragment);
 		// _initGesture does no recursive init, therefor this is done here
@@ -1055,7 +1056,7 @@ HMI.prototype = {
 			delete ChildNodesLength;
 		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			var ElementLength = Elements.length;
+			ElementLength = Elements.length;
 			for (var idx = 0; idx < ElementLength; ++idx){
 				//trace log deactivated, causes performanceproblem in a production system
 				//HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ ElementLength);
@@ -1063,10 +1064,9 @@ HMI.prototype = {
 				//recursive init not necessary, getElementsByTagNameNS is recursive by itself
 				HMI._initGestures(Elements[idx]);
 			}
-			delete ElementLength;
 		}else{   // IE if svg inline, useless since svg inline does not work with gestures
 			Elements = Fragment.getElementsByTagName('svg');
-			var ElementLength = Elements.length;
+			ElementLength = Elements.length;
 			for (var idx = 0; idx < ElementLength; ++idx){
 				//trace log deactivated, causes performanceproblem in a production system
 				//HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ ElementLength);
@@ -1075,8 +1075,8 @@ HMI.prototype = {
 					HMI._initGestures(Elements[idx]);
 				}
 			}
-			delete ElementLength;
 		}
+		delete ElementLength;
 		
 		try{
 			/**
@@ -1105,25 +1105,26 @@ HMI.prototype = {
 		//trace log deactivated, causes too much noise and performanceproblem in a production system
 //		this.hmi_log_trace("HMI.prototype.instanceOf - Start");
 		
+		//conform to the standard would be "", but browser return null. not tested both because of speed
 		if (Node.getAttribute("class") != null)
 		{
 			//	Space Delimiter
 			//
-			if (this._instanceOf(Node, ClassName, " ") == true)
+			if (this._instanceOf(Node, ClassName, " ") === true)
 			{
 //				this.hmi_log_trace("HMI.prototype.instanceOf - Endt1");
 				return true;
 			} else {
 				// COMMA delimeter
 				//
-				if (this._instanceOf(Node, ClassName, ",") == true)
+				if (this._instanceOf(Node, ClassName, ",") === true)
 				{
 //					this.hmi_log_trace("HMI.prototype.instanceOf - Endt2");
 					return true;
 				} else {
 					// SEMICOLON delimeter
 					//
-					if (this._instanceOf(Node, ClassName, ";") == true)
+					if (this._instanceOf(Node, ClassName, ";") === true)
 					{
 //						this.hmi_log_trace("HMI.prototype.instanceOf - Endt3");
 						return true;
@@ -1179,15 +1180,15 @@ HMI.prototype = {
 		var LayerY = parseInt(Element.getAttribute("y"), 10);
 		
 		//Firefox, Safari and Opera
-		if (Element.ownerSVGElement != undefined){
-			if ( Element.ownerSVGElement != null && Element.ownerSVGElement != document){
+		if (Element.ownerSVGElement !== undefined){
+			if ( Element.ownerSVGElement !== null && Element.ownerSVGElement != document){
 				LayerX += parseInt(Element.ownerSVGElement.getAttribute("layerX"), 10);
 				LayerY += parseInt(Element.ownerSVGElement.getAttribute("layerY"), 10);
-			}else if (Element.parentNode != null && Element.parentNode.attributes != null){
+			}else if (Element.parentNode !== null && Element.parentNode.attributes !== null){
 				LayerX += parseInt(Element.parentNode.getAttribute("layerX"), 10);
 				LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
 			}
-		}else if(HMI.EmbedAdobePlugin && Element.parentNode != null && Element.parentNode.attributes != null && Element.parentNode.attributes.length != 0){
+		}else if(HMI.EmbedAdobePlugin && Element.parentNode !== null && Element.parentNode.attributes !== null && Element.parentNode.attributes.length !== 0){
 			LayerX += parseInt(Element.parentNode.getAttribute("layerX"), 10);
 			LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
 		}
@@ -1226,7 +1227,8 @@ HMI.prototype = {
 		
 		//First we have to find the offset of the svg-element in the XHTML
 		var obj = HMI.Playground;
-		var svgOffsetX = svgOffsetY = 0;
+		var svgOffsetX = 0;
+		var svgOffsetY = 0;
 		//The Plugin in IE has no offsetParent, but clientX is relative to its own scope, not HTML page
 		if (obj.offsetParent) {
 			//code for native SVG. Loop upwards till there is no parent
@@ -1273,7 +1275,7 @@ HMI.prototype = {
 			HMI.PossServers = null;
 			HMI.PossSheets = null;
 			
-			if (HMI.KSClient && HMI.KSClient.TCLKSHandle != null){
+			if (HMI.KSClient && HMI.KSClient.TCLKSHandle !== null){
 				HMI.KSClient.destroy();
 			}
 		}
@@ -1289,10 +1291,10 @@ HMI.prototype = {
 		hmi_log_debug
 	*********************************/
 	hmi_log_debug: function (text) {
-		if (window.console && this.debug == true){
+		if (window.console && this.debug === true){
 			window.console.debug("HMI_DEBUG: %s", text);
 		}else if(window.opera){
-			if (opera.postError != null && this.debug == true){
+			if (opera.postError !== undefined && this.debug === true){
 				opera.postError("HMI_DEBUG: "+ text);
 			}
 		}
@@ -1302,10 +1304,10 @@ HMI.prototype = {
 		hmi_log_error
 	*********************************/
 	hmi_log_error: function (text) {
-		if (window.console && this.error == true){
+		if (window.console && this.error === true){
 			window.console.error("HMI_ERROR: %s", text);
 		}else if(window.opera){
-			if (opera.postError != null && this.error == true){
+			if (opera.postError !== undefined && this.error === true){
 				opera.postError("HMI_ERROR: "+ text);
 			}
 		}
@@ -1315,10 +1317,10 @@ HMI.prototype = {
 		hmi_log_warning
 	*********************************/
 	hmi_log_warning: function (text) {
-		if (window.console && this.warning == true){
+		if (window.console && this.warning === true){
 			window.console.warn("HMI_WARNING: %s", text);
 		}else if(window.opera){
-			if (opera.postError != null && this.warning == true){
+			if (opera.postError !== undefined && this.warning === true){
 				opera.postError("HMI_WARNING: "+ text);
 			}
 		}
@@ -1328,10 +1330,10 @@ HMI.prototype = {
 		hmi_log_info
 	*********************************/
 	hmi_log_info: function (text) {
-		if (window.console && this.info == true){
+		if (window.console && this.info === true){
 			window.console.info("HMI_INFO: %s", text);
 		}else if(window.opera){
-			if (opera.postError != null && this.info == true){
+			if (opera.postError !== undefined && this.info === true){
 				opera.postError("HMI_INFO: "+ text);
 			}
 		}
@@ -1341,10 +1343,10 @@ HMI.prototype = {
 		hmi_log_trace
 	*********************************/
 	hmi_log_trace: function (text) {
-		if (window.console && this.trace == true ){
+		if (window.console && this.trace === true ){
 			window.console.debug("HMI_TRACE: %s", text);
 		}else if(window.opera){
-			if (opera.postError != null && this.trace == true){
+			if (opera.postError !== undefined && this.trace === true){
 				opera.postError("HMI_TRACE: "+ text);
 			}
 		}
@@ -1358,7 +1360,7 @@ HMI.prototype = {
 		deleteChilds(HMI.ErrorOutput);
 		HMI.ErrorOutput.appendChild(ErrorTextNode);
 		//if header in not visible: show it
-		if (HMI.showHeader == false){
+		if (HMI.showHeader === false){
 			HMI.hideHeader();
 		}
 	},
@@ -1372,7 +1374,7 @@ HMI.prototype = {
 			deleteChilds(HMI.InfoOutput);
 			HMI.InfoOutput.appendChild(InfoTextNode);
 			//if header in not visible: show it
-			if (HMI.showHeader == false){
+			if (HMI.showHeader === false){
 				HMI.hideHeader();
 			}
 		}
@@ -1405,7 +1407,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-08-18 08:12:36 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

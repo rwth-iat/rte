@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.26 $
-*	$Date: 2009-08-18 07:46:25 $
+*	$Revision: 1.27 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -101,11 +101,11 @@ TextInput.prototype = {
 				buildDummyRect = true;
 			}
 		}
-		if (buildDummyRect == true){
+		if (buildDummyRect === true){
 			//build transparent dummy rect to allow input of new text
 			var dummyRect = HMI.svgDocument.createElementNS('http://www.w3.org/2000/svg', 'rect');
-			dummyRect.setAttributeNS(null, 'x', Component.getElementsByTagName("svg:text").length != 0?(Component.getElementsByTagName("svg:text").item(0).getAttribute("x")):0);
-			dummyRect.setAttributeNS(null, 'y', Component.getElementsByTagName("svg:text").length != 0?(Component.getElementsByTagName("svg:text").item(0).getAttribute("y")-15):0);
+			dummyRect.setAttributeNS(null, 'x', Component.getElementsByTagName("svg:text").length !== 0?(Component.getElementsByTagName("svg:text").item(0).getAttribute("x")):0);
+			dummyRect.setAttributeNS(null, 'y', Component.getElementsByTagName("svg:text").length !== 0?(Component.getElementsByTagName("svg:text").item(0).getAttribute("y")-15):0);
 			dummyRect.setAttributeNS(null, 'width', '15');
 			dummyRect.setAttributeNS(null, 'height', '20');
 			dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
@@ -140,7 +140,7 @@ TextInput.prototype = {
 	*********************************/
 	_onMouseDownThunk: null,
 	onMouseDown: function (evt) {
-		if (HMI.RefreshTimeoutID != null){
+		if (HMI.RefreshTimeoutID !== null){
 			//deactivate the Refresh
 			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
 			window.clearInterval(HMI.RefreshTimeoutID);
@@ -206,12 +206,12 @@ TextInput.prototype = {
 			text = "";
 		}
 		var input = window.prompt('Geben Sie bitte einen neuen Wert ein', text);
-		if(	input	!= null
-			&&	input != text)
+		if(	input	!== null
+			&&	input !== text)
 		{
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
 		};
-		if (HMI.RefreshTimeoutID == null){
+		if (HMI.RefreshTimeoutID === null){
 			//reactivate the Refresh
 			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 		}
@@ -223,7 +223,7 @@ TextInput.prototype = {
 	_sendCommand : function (evt, Component, input) {
 		var Command = null;
 		
-		if (Component != null)
+		if (Component !== null)
 		{
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
@@ -238,7 +238,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-18 07:46:25 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

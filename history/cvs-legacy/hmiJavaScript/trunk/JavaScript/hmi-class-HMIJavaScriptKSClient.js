@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.69 $
-*	$Date: 2009-08-05 13:03:55 $
+*	$Revision: 1.70 $
+*	$Date: 2009-08-25 12:11:41 $
 *
 *	History:
 *	--------
@@ -79,7 +79,7 @@ function HMIJavaScriptKSClient() {
 	/** Public **********************/
 	this.KSServer;
 	this.TCLKSGateway;
-	this.TCLKSHandle;
+	this.TCLKSHandle = null;
 	this.HMIMANAGER_PATH;
 	
 	/** Private *********************/
@@ -109,7 +109,7 @@ HMIJavaScriptKSClient.prototype = {
 		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if (this.TCLKSHandle != null)
+		if (this.TCLKSHandle !== null)
 			this.destroy();
 		
 		this.KSServer		= HostAndServer;
@@ -133,18 +133,18 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	getEP: function(Handle, path, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path+" Handle: "+Handle);
-		if (Handle == null){
-			Handle = this.TCLKSHandle
+		if (Handle === null){
+			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
-		if (HMI.GatewayTypeTCL == true){
+		if (HMI.GatewayTypeTCL === true){
 			path = path + "%20-output%20$::TKS::OP_NAME";
 			urlparameter = 'obj='+Handle + '&args=getep%20' +path;
-		}else if (HMI.GatewayTypePHP == true){
+		}else if (HMI.GatewayTypePHP === true){
 			path = path;
 			urlparameter = 'obj='+Handle + '&cmd=getep&path=' +path;
 		}
-		if (cbfnc != null){
+		if (cbfnc !== null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -167,12 +167,12 @@ HMIJavaScriptKSClient.prototype = {
 	getHandle: function(host, cbfnc) {
 		var urlparameter;
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - Start");
-		if (HMI.GatewayTypeTCL == true){
+		if (HMI.GatewayTypeTCL === true){
 			urlparameter = 'obj=tks-server&args='+host;
-		}else if(HMI.GatewayTypePHP == true){
+		}else if(HMI.GatewayTypePHP === true){
 			urlparameter = 'cmd=tks-server&args='+host;
 		}
-		if (cbfnc != null){
+		if (cbfnc !== null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -197,18 +197,18 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	getVar: function(Handle, path, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path+" Handle: "+Handle);
-		if (Handle == null){
+		if (Handle === null){
 			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
-		if (HMI.GatewayTypeTCL == true){
+		if (HMI.GatewayTypeTCL === true){
 			path = path + "%20-output%20$::TKS::OP_VALUE";
 			urlparameter = 'obj='+Handle + '&args=getvar%20' +path;
-		}else if (HMI.GatewayTypePHP == true){
+		}else if (HMI.GatewayTypePHP === true){
 			path = path;
 			urlparameter = 'obj='+Handle + '&cmd=getvar&path=' + path;
 		}
-		if (cbfnc != null){
+		if (cbfnc !== null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -231,17 +231,17 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	setVar: function(Handle, path, value, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path+" Handle: "+Handle);
-		if (Handle == null){
+		if (Handle === null){
 			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
-		if (HMI.GatewayTypeTCL == true){
+		if (HMI.GatewayTypeTCL === true){
 			path = '{'+path+'%20{'+value+'}}';
 			urlparameter = 'obj='+Handle + '&args=setvar%20' +path;
-		}else if (HMI.GatewayTypePHP == true){
+		}else if (HMI.GatewayTypePHP === true){
 			urlparameter = 'obj='+Handle + '&cmd=setvar&path=' + path + "&val=" + value;
 		}
-		if (cbfnc != null){
+		if (cbfnc !== null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -262,12 +262,12 @@ HMIJavaScriptKSClient.prototype = {
 	delHandle: function(Handle) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - Start Handle: "+Handle);
 		var urlparameter;
-		if (HMI.GatewayTypeTCL == true){
+		if (HMI.GatewayTypeTCL === true){
 			urlparameter = 'obj='+Handle + '&args=destroy';
-		}else if (HMI.GatewayTypePHP == true){
+		}else if (HMI.GatewayTypePHP === true){
 			urlparameter = 'obj='+Handle + '&cmd=destroy';
 		}
-		this._sendRequest(this, 'GET', false, urlparameter);
+		this._sendRequest(this, 'GET', false, urlparameter, null);
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - End");
 	},
 	
@@ -284,7 +284,7 @@ HMIJavaScriptKSClient.prototype = {
 			Client.TCLKSHandle = req.responseText;
 		} else {
 			Client.TCLKSHandle = null;
-			if (HMI.PossServers.length == 0){
+			if (HMI.PossServers.length === 0){
 				HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no valid server response -', 'no server');
 			}
 			HMI.hmi_log_error('HMIJavaScriptKSClient._cbinit: Could not initialize TCLKSGateway. '
@@ -307,7 +307,7 @@ HMIJavaScriptKSClient.prototype = {
 	getServers: function() {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - Start");
 		
-		if (this.TCLKSHandle != null){
+		if (this.TCLKSHandle !== null){
 			//The Handle points to the Manager wich can provide us with a list of OV servers (detection of HMI Servers are made in the callback)
 			this.getEP(null, '/servers%20*', this._cbGetServers);
 		} else {
@@ -330,7 +330,7 @@ HMIJavaScriptKSClient.prototype = {
 		var i = 0;
 		
 		//build an Array of potential servers
-		while (	Response != null
+		while (	Response !== null
 				&&	Response.indexOf('}') != -1)
 		{
 			//cut the servername out of the surrounding { }
@@ -353,7 +353,7 @@ HMIJavaScriptKSClient.prototype = {
 			for (i = 0; i < Server.length; i++)
 			{
 				//test all potential servers if they are HMI Servers
-				if (HMIJavaScriptKSClient.prototype.pingServer(Server[i]) == true)
+				if (HMIJavaScriptKSClient.prototype.pingServer(Server[i]) === true)
 				{
 					//put server into the dropdown box
 					HMI.PossServers.options[HMI.PossServers.options.length] = new Option(Server[i], Server[i]);
@@ -408,13 +408,13 @@ HMIJavaScriptKSClient.prototype = {
 				return false;
 			}
 			//Try to get the Name of HMI Manager to test the existence
-			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null)
+			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null);
 			
 			this.delHandle(TCLKSHandle);
 			
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - got "+ManagerResponse);
 			
-			if (ManagerResponse.length == 0){
+			if (ManagerResponse.length === 0){
 				// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f+Operabug");
 				return false;
@@ -501,7 +501,7 @@ HMIJavaScriptKSClient.prototype = {
 			Response = Response.substring(Response.indexOf('{{') + 2, Response.indexOf('}}'));
 		};
 		
-		while (Response != null && Response != "")
+		while (Response !== null && Response !== "")
 		{
 			if (Response.indexOf(' ') == -1)
 			{
@@ -561,7 +561,7 @@ HMIJavaScriptKSClient.prototype = {
 			case 3 : // INTERACTIVE
 				break;
 			case 4 : // COMPLETED
-				if (cbfnc != null)
+				if (cbfnc !== null)
 				{
 					cbfnc(this, req);
 				};
@@ -598,14 +598,14 @@ HMIJavaScriptKSClient.prototype = {
 				+ '&preventCaching='
 				+DatePreventsCaching.getTime(), async);
 				
-			if (async == true)
+			if (async === true)
 			{
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - entering async communication");
 				//	Asynchron Communication
 				//
 				req.onreadystatechange = function () {
 					Client._handleStateChange(req, cbfnc);
-				}
+				};
 			}
 							
 			try {
@@ -628,11 +628,11 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_onwebsite("Error during request.");
 			return false;
 		}
-		if (async == false)
+		if (async === false)
 		{
 			//	Synchron Communication
 			//
-			if (cbfnc != null){
+			if (cbfnc !== null){
 				cbfnc(this, req);
 			}else{
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
@@ -657,21 +657,21 @@ HMIJavaScriptKSClient.prototype = {
 		//	TksS-XXXX indicates error
 		//
 		if (/\bTksS-\b/.exec(ComponentText) && /KS_ERR/.exec(ComponentText)){
-			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
+			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText);
 			if (ComponentText.length < 250){
-				HMI.hmi_log_onwebsite('Server lost. Gateway reply: ' + ComponentText)
+				HMI.hmi_log_onwebsite('Server lost. Gateway reply: ' + ComponentText);
 			}else{
-				HMI.hmi_log_onwebsite('Server lost. First 250 characters of reply: ' + ComponentText.substr(0,250))
+				HMI.hmi_log_onwebsite('Server lost. First 250 characters of reply: ' + ComponentText.substr(0,250));
 			}
 			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			ReturnText = null;
 		}else if ("{{" != ComponentText.substr(0,2)){
-			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText)
+			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText);
 			if (ComponentText.length < 250){
-				HMI.hmi_log_onwebsite('Server did not responded valid. Gateway reply: ' + ComponentText)
+				HMI.hmi_log_onwebsite('Server did not responded valid. Gateway reply: ' + ComponentText);
 			}else{
-				HMI.hmi_log_onwebsite('Server did not responded valid. First 250 characters: ' + ComponentText.substr(0,250))
+				HMI.hmi_log_onwebsite('Server did not responded valid. First 250 characters: ' + ComponentText.substr(0,250));
 			}
 			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
@@ -686,9 +686,9 @@ HMIJavaScriptKSClient.prototype = {
 				//put StyleVariable to defined state
 				ReturnText[1] = "";
 			}
-			if (ReturnText[0] == ""){
+			if (ReturnText[0] === ""){
 				ReturnText = null;
-				HMI.hmi_log_onwebsite('Gateway reply was empty.')
+				HMI.hmi_log_onwebsite('Gateway reply was empty.');
 			}
 		};
 		
@@ -721,7 +721,7 @@ HMIJavaScriptKSClient.prototype = {
 	destroy: function () {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - Start");
 		
-		if (this.TCLKSHandle != null)
+		if (this.TCLKSHandle !== null)
 		{
 			this.delHandle(this.TCLKSHandle);
 		};
@@ -731,7 +731,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-08-05 13:03:55 $";
+var filedate = "$Date: 2009-08-25 12:11:41 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
