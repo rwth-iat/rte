@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.28 $
-*	$Date: 2009-08-25 16:27:51 $
+*	$Revision: 1.29 $
+*	$Date: 2009-08-26 12:37:14 $
 *
 *	History:
 *	--------
@@ -161,6 +161,8 @@ TextInput.prototype = {
 				HMI.svgDocument.documentElement.addEventListener("mousemove", HMI.reactivateRefreshInterval, false);
 			}
 		}
+		//kill handling of this event for gesture at a parentNode
+		evt.stopPropagation();
 	},
 	
 	/*********************************
@@ -184,6 +186,9 @@ TextInput.prototype = {
 			//
 			return;
 		};
+		//kill handling of this event for gesture at a parentNode
+		evt.stopPropagation();
+		
 		var text;
 		if (evt.target && evt.target.getAttribute("class") == "dummyTextinputRect"){
 			//the TextInput was empty, so the user clicked on the dummyRect
@@ -241,7 +246,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-25 16:27:51 $";
+var filedate = "$Date: 2009-08-26 12:37:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

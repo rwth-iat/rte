@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.26 $
-*	$Date: 2009-08-25 16:27:51 $
+*	$Revision: 1.27 $
+*	$Date: 2009-08-26 12:37:14 $
 *
 *	History:
 *	--------
@@ -137,6 +137,8 @@ Click.prototype = {
 				HMI.svgDocument.documentElement.addEventListener("mousemove", HMI.reactivateRefreshInterval, false);
 			}
 		}
+		//kill handling of this event for gesture at a parentNode
+		evt.stopPropagation();
 	},
 	
 	/*********************************
@@ -154,7 +156,6 @@ Click.prototype = {
 	_onClickThunk: null,
 	onClick: function (evt) {
 		HMI.hmi_log_trace("Click.prototype.onClick - Start");
-		evt.stopPropagation();
 		if (evt.detail == 2)
 		{
 			HMI.hmi_log_trace("Click.prototype.onClick - End - DoubleClick detected");
@@ -164,6 +165,8 @@ Click.prototype = {
 		};
 		
 		this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
+		//kill handling of this event for gesture at a parentNode
+		evt.stopPropagation();
 		HMI.hmi_log_trace("Click.prototype.onClick - End");
 	},
 	
@@ -194,7 +197,7 @@ Click.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-25 16:27:51 $";
+var filedate = "$Date: 2009-08-26 12:37:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

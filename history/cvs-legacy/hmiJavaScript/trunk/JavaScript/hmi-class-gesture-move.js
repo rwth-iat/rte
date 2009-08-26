@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.32 $
-*	$Date: 2009-08-25 16:27:51 $
+*	$Revision: 1.33 $
+*	$Date: 2009-08-26 12:37:14 $
 *
 *	History:
 *	--------
@@ -220,13 +220,16 @@ Dragger.prototype = {
 		{
 			RightClick.prototype.onRightClick(evt);
 			return;
-		};	
+		};
+		//	CLICK is handled in StopDrag, when no movement is detected
+		//	TEXTINPUT is not usefull at a complex dragable element
 		
 		//	MOVE
 		//
 		if (evt.button === 0)
 		{
 			this.startDrag(evt);
+			//kill handling of this event for gesture at a parentNode
 			evt.stopPropagation();
 		}
 	},
@@ -270,6 +273,8 @@ Dragger.prototype = {
 			//left mouse button => valid move
 			this.stopDrag(evt, true);
 		}
+		//kill handling of this event for gesture at a parentNode
+		evt.stopPropagation();
 	},
 	
 	/*********************************
@@ -609,7 +614,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-08-25 16:27:51 $";
+var filedate = "$Date: 2009-08-26 12:37:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

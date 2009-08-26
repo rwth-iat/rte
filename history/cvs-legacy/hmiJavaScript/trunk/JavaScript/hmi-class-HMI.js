@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.112 $
-*	$Date: 2009-08-25 16:27:51 $
+*	$Revision: 1.113 $
+*	$Date: 2009-08-26 12:37:14 $
 *
 *	History:
 *	--------
@@ -979,7 +979,7 @@ HMI.prototype = {
 				HMI.AdobeMoveFixNeeded = true;
 			}
 			this.hmi_log_trace("HMI.prototype._initGestures - Move initialised: "+Element.id);
-		//the move handler calls the Leftclick by himself if no movement was detected
+		//the move handler calls the other clicks by himself if no movement was detected
 		//so there is no further initialisation of move-gesture components needed
 		} else {
 			//	RIGHTCLICK
@@ -1407,7 +1407,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-08-25 16:27:51 $";
+var filedate = "$Date: 2009-08-26 12:37:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
