@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.33 $
-*	$Date: 2009-08-26 12:37:14 $
+*	$Revision: 1.34 $
+*	$Date: 2009-08-26 13:01:57 $
 *
 *	History:
 *	--------
@@ -230,7 +230,10 @@ Dragger.prototype = {
 		{
 			this.startDrag(evt);
 			//kill handling of this event for gesture at a parentNode
-			evt.stopPropagation();
+			//cancelBubble for IE Bubbling with native IE handling (not used)
+			//stopPropagation for W3C Bubbling
+			evt.cancelBubble = true;
+			if (evt.stopPropagation) evt.stopPropagation();
 		}
 	},
 	
@@ -274,7 +277,10 @@ Dragger.prototype = {
 			this.stopDrag(evt, true);
 		}
 		//kill handling of this event for gesture at a parentNode
-		evt.stopPropagation();
+		//cancelBubble for IE Bubbling with native IE handling (not used)
+		//stopPropagation for W3C Bubbling
+		evt.cancelBubble = true;
+		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	
 	/*********************************
@@ -614,7 +620,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-08-26 12:37:14 $";
+var filedate = "$Date: 2009-08-26 13:01:57 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

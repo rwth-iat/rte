@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.23 $
-*	$Date: 2009-08-26 12:37:14 $
+*	$Revision: 1.24 $
+*	$Date: 2009-08-26 13:01:57 $
 *
 *	History:
 *	--------
@@ -111,7 +111,10 @@ RightClick.prototype = {
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-rightclick'));
 			HMI.hmi_log_trace("RightClick.prototype.onRightClick - End");
 			//kill handling of this event for gesture at a parentNode
-			evt.stopPropagation();
+			//cancelBubble for IE Bubbling with native IE handling (not used)
+			//stopPropagation for W3C Bubbling
+			evt.cancelBubble = true;
+			if (evt.stopPropagation) evt.stopPropagation();
 		};
 	},
 	
@@ -141,7 +144,7 @@ RightClick.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-26 12:37:14 $";
+var filedate = "$Date: 2009-08-26 13:01:57 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.27 $
-*	$Date: 2009-08-26 12:37:14 $
+*	$Revision: 1.28 $
+*	$Date: 2009-08-26 13:01:57 $
 *
 *	History:
 *	--------
@@ -138,7 +138,10 @@ Click.prototype = {
 			}
 		}
 		//kill handling of this event for gesture at a parentNode
-		evt.stopPropagation();
+		//cancelBubble for IE Bubbling with native IE handling (not used)
+		//stopPropagation for W3C Bubbling
+		evt.cancelBubble = true;
+		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	
 	/*********************************
@@ -166,7 +169,10 @@ Click.prototype = {
 		
 		this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
 		//kill handling of this event for gesture at a parentNode
-		evt.stopPropagation();
+		//cancelBubble for IE Bubbling with native IE handling (not used)
+		//stopPropagation for W3C Bubbling
+		evt.cancelBubble = true;
+		if (evt.stopPropagation) evt.stopPropagation();
 		HMI.hmi_log_trace("Click.prototype.onClick - End");
 	},
 	
@@ -197,7 +203,7 @@ Click.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-26 12:37:14 $";
+var filedate = "$Date: 2009-08-26 13:01:57 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
