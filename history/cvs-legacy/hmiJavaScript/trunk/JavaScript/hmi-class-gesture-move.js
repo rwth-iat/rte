@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.34 $
-*	$Date: 2009-08-26 13:01:57 $
+*	$Revision: 1.35 $
+*	$Date: 2009-09-02 22:24:54 $
 *
 *	History:
 *	--------
@@ -130,6 +130,11 @@ Ground.prototype = {
 	onMouseIn: function (evt) {
 		this._node = HMI.getComponent(evt, 'hmi-component-ground');
 		this._controller.switchGround(evt, this);
+		//kill handling of this event for gesture at a parentNode
+		//cancelBubble for IE Bubbling with native IE handling (not used)
+		//stopPropagation for W3C Bubbling
+		evt.cancelBubble = true;
+		if (evt.stopPropagation) evt.stopPropagation();
 	}
 };
 
@@ -620,7 +625,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-08-26 13:01:57 $";
+var filedate = "$Date: 2009-09-02 22:24:54 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
