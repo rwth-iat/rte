@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.113 $
-*	$Date: 2009-08-26 12:37:14 $
+*	$Revision: 1.114 $
+*	$Date: 2009-09-09 12:58:38 $
 *
 *	History:
 *	--------
@@ -331,7 +331,10 @@ HMI.prototype = {
 		HMI.ButShowServers.disabled = false;
 		
 		//focus the ShowServer button for convenience with keyboard interaction
-		HMI.ButShowServers.focus();
+		//try because the button could be non visible
+		try{
+			HMI.ButShowServers.focus();
+		}catch(e){ }
 		
 		//HMIdate was populated in every js-file with the date of CVS commit
 		//publish this date on website
@@ -1407,7 +1410,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-08-26 12:37:14 $";
+var filedate = "$Date: 2009-09-09 12:58:38 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
