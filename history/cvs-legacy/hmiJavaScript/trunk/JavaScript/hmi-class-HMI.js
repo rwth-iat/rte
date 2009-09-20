@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.114 $
-*	$Date: 2009-09-09 12:58:38 $
+*	$Revision: 1.115 $
+*	$Date: 2009-09-20 02:54:16 $
 *
 *	History:
 *	--------
@@ -689,9 +689,9 @@ HMI.prototype = {
 		if(this.scrollComponent)
 		{
 			var Component;
-			if(document.getElementById(this.scrollComponent) != null){ //opera, ff
+			if(document.getElementById(this.scrollComponent) !== null){ //opera, ff
 				Component = document.getElementById(this.scrollComponent);
-			} else if(this.Playground.getElementById(this.scrollComponent) != null){ //ie
+			} else if(this.Playground.getElementById(this.scrollComponent) !== null){ //ie
 				Component = this.Playground.getElementById(this.scrollComponent);
 			}
 			Component.setAttribute("y", this.currY);
@@ -762,7 +762,7 @@ HMI.prototype = {
 			Component = evt.srcElement;
 		}
 		while (	Component !== null
-				&&	Component != document
+				&&	Component !== document
 				&&	HMI.instanceOf(Component, cssclass) === false)
 		{
 			if (Component.ownerSVGElement !== undefined){
@@ -1043,6 +1043,7 @@ HMI.prototype = {
 		
 		var Elements;
 		var ElementLength;
+		var idx;
 		
 		HMI._initGestures(Fragment);
 		// _initGesture does no recursive init, therefor this is done here
@@ -1050,7 +1051,7 @@ HMI.prototype = {
 		if (HMI.EmbedAdobePlugin){
 			//getElementsByTagNameNS in Adobe is often not complete
 			var ChildNodesLength = Fragment.childNodes.length;
-			for (var idx = 0; idx < ChildNodesLength; ++idx){
+			for (idx = 0; idx < ChildNodesLength; ++idx){
 				if (Fragment.childNodes.item(idx).tagName == "svg:svg"){
 					//recursive init necessary
 					HMI.initGestures(Fragment.childNodes.item(idx));
@@ -1060,7 +1061,7 @@ HMI.prototype = {
 		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			ElementLength = Elements.length;
-			for (var idx = 0; idx < ElementLength; ++idx){
+			for (idx = 0; idx < ElementLength; ++idx){
 				//trace log deactivated, causes performanceproblem in a production system
 				//HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ ElementLength);
 				
@@ -1070,7 +1071,7 @@ HMI.prototype = {
 		}else{   // IE if svg inline, useless since svg inline does not work with gestures
 			Elements = Fragment.getElementsByTagName('svg');
 			ElementLength = Elements.length;
-			for (var idx = 0; idx < ElementLength; ++idx){
+			for (idx = 0; idx < ElementLength; ++idx){
 				//trace log deactivated, causes performanceproblem in a production system
 				//HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ ElementLength);
 				
@@ -1080,6 +1081,8 @@ HMI.prototype = {
 			}
 		}
 		delete ElementLength;
+		delete Elements;
+		delete idx;
 		
 		try{
 			/**
@@ -1389,10 +1392,11 @@ HMI.prototype = {
 	
 	HMI(debug, error, warning, info, trace)
 *********************************/
+var HMI;
 if (window.location.search && -1 != unescape(window.location.search).indexOf("trace=true")){
-	var HMI = new HMI(true, true, true, true, true);
+	HMI = new HMI(true, true, true, true, true);
 }else{
-	var HMI = new HMI(true, true, true, true, false);
+	HMI = new HMI(true, true, true, true, false);
 }
 
 //init HMI after all js-files are loaded (not guaranteed at construction time)
@@ -1410,7 +1414,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-09-09 12:58:38 $";
+var filedate = "$Date: 2009-09-20 02:54:16 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
