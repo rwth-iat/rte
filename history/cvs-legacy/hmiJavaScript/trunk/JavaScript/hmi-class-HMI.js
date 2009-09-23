@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.115 $
-*	$Date: 2009-09-20 02:54:16 $
+*	$Revision: 1.116 $
+*	$Date: 2009-09-23 15:44:14 $
 *
 *	History:
 *	--------
@@ -375,6 +375,13 @@ HMI.prototype = {
 			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length !== 0){
 				HMI.InputRefreshTime.value = HMI_Parameter_Liste.RefreshTime;
 			}
+			//correct ShowComponents Status in website with user wish
+			if (HMI_Parameter_Liste.ShowComp && HMI_Parameter_Liste.ShowComp.length !== 0){
+				if (HMI_Parameter_Liste.ShowComp == "true" && $("idShowcomponents")){
+					$("idShowcomponents").checked = true;
+				}
+			}
+			
 			//a server is specified in "deep link"
 			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length !== 0){
 				//get list of servers
@@ -476,7 +483,9 @@ HMI.prototype = {
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
 			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
-			(HMI.trace===true?"&trace=true":""));
+			(HMI.trace===true?"&trace=true":"")+
+			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
+			);
 		
 		//if an auto refresh is active, reset to new value
 		if (HMI.RefreshTimeoutID !== null){
@@ -569,7 +578,9 @@ HMI.prototype = {
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
 			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
-			(HMI.trace===true?"&trace=true":""));
+			(HMI.trace===true?"&trace=true":"")+
+			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
+			);
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(KSServer + '/MANAGER', KSGateway + KSGateway_Path);
@@ -667,7 +678,9 @@ HMI.prototype = {
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
 			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
-			(HMI.trace===true?"&trace=true":""));
+			(HMI.trace===true?"&trace=true":"")+
+			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
+			);
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
@@ -1414,7 +1427,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-09-20 02:54:16 $";
+var filedate = "$Date: 2009-09-23 15:44:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
