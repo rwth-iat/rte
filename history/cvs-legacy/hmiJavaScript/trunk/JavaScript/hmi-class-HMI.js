@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.116 $
-*	$Date: 2009-09-23 15:44:14 $
+*	$Revision: 1.117 $
+*	$Date: 2009-10-05 09:28:59 $
 *
 *	History:
 *	--------
@@ -734,6 +734,9 @@ HMI.prototype = {
 		if (HMI.ErrorOutput.firstChild){
 			deleteChilds(HMI.ErrorOutput);
 			HMI.hmi_log_info_onwebsite("Screenrefresh reactivated.");
+			if (HMI.autoKeepHeader === false && HMI.showHeader === true){
+				HMI.hideHeader();
+			}
 		}
 		if (HMI.RefreshTimeoutID === null){
 			//reactivate the Refresh
@@ -1427,7 +1430,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-09-23 15:44:14 $";
+var filedate = "$Date: 2009-10-05 09:28:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
