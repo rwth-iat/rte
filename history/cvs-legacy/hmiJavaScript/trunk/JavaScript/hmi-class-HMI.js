@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.117 $
-*	$Date: 2009-10-05 09:28:59 $
+*	$Revision: 1.118 $
+*	$Date: 2009-10-07 13:15:57 $
 *
 *	History:
 *	--------
@@ -101,6 +101,8 @@ function HMI(debug, error, warning, info, trace) {
 	this.RefreshTimeoutID = null;
 	this._currentDragger = null;
 	this.KSClient = null;
+	this.Path = null;
+	this.KSGateway_Path = null;
 	
 	this.svgWindow = null;
 	this.svgDocument = null;
@@ -284,6 +286,33 @@ HMI.prototype = {
 		delete ResponseServerString;
 		delete DatePreventsCaching;
 		
+		//the guessed servertype is used for communication
+		if ("php" == HMI.HMI_Constants.ServerType){
+			//tks.php is always in the same subdir as the html files
+			this.KSGateway_Path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ "tks.php";
+			this.GatewayTypeTCL = false;
+			this.GatewayTypePHP = true;
+		}else if("tcl" == HMI.HMI_Constants.ServerType){
+			//tcl gateway is hardcoded in the Gateway via TCL-HTTPD\tclhttpd3.5.1\custom\tkshttpserver.tcl
+			this.KSGateway_Path = "/tks";
+			this.GatewayTypeTCL = true;
+			this.GatewayTypePHP = false;
+		}else{
+			HMI.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
+			
+			var ErrorNode = document.createElement('br');
+			HMI.ErrorOutput.appendChild(ErrorNode);
+			
+			ErrorNode = document.createElement("a");
+			ErrorNode.setAttribute('href', 'httpservertest.html');
+			ErrorNode.appendChild(document.createTextNode('Servertest available'));
+			HMI.ErrorOutput.appendChild(ErrorNode);
+			
+			delete ErrorNode;
+//			alert('This website has to be transfered via HTTP. Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
+			return false;
+		}
+		
 		//call function at unload to clean up
 		if( window.addEventListener ) {
 			window.addEventListener('unload',function(){HMI.unload();},false);
@@ -331,7 +360,7 @@ HMI.prototype = {
 		HMI.ButShowServers.disabled = false;
 		
 		//focus the ShowServer button for convenience with keyboard interaction
-		//try because the button could be non visible
+		//try because the button could be nonvisible
 		try{
 			HMI.ButShowServers.focus();
 		}catch(e){ }
@@ -374,6 +403,7 @@ HMI.prototype = {
 			//correct RefreshTime in website with user wish
 			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length !== 0){
 				HMI.InputRefreshTime.value = HMI_Parameter_Liste.RefreshTime;
+				HMI.ChangeRefreshTime();
 			}
 			//correct ShowComponents Status in website with user wish
 			if (HMI_Parameter_Liste.ShowComp && HMI_Parameter_Liste.ShowComp.length !== 0){
@@ -382,45 +412,40 @@ HMI.prototype = {
 				}
 			}
 			
-			//a server is specified in "deep link"
-			if (HMI_Parameter_Liste.Server && HMI_Parameter_Liste.Server.length !== 0){
-				//get list of servers
-				HMI.showServers();
-				//select server in drop-down box from deep link
-				for (var i=0; i < HMI.PossServers.options.length; i++){
-					if (HMI.PossServers.options[i].value == HMI_Parameter_Liste.Server){
-						HMI.PossServers.options[i].selected = true;
-					}
+			//a server and sheet is specified in "deep link"
+			if (	HMI_Parameter_Liste.Server
+				&&	HMI_Parameter_Liste.Server.length !== 0
+				&&	HMI_Parameter_Liste.Sheet
+				&&	HMI_Parameter_Liste.Sheet.length !== 0)
+			{
+				//clean old Server and Sheet entrys, an old SVG display and displayed errors in website
+				deleteChilds(this.PossServers);
+				deleteChilds(this.PossSheets);
+				deleteChilds(this.Playground);
+				deleteChilds(this.ErrorOutput);
+				
+				HMI.PossServers.options[0] = new Option('- list not loaded -', 'no server');
+				HMI.PossSheets.options[0] = new Option('- list not loaded -', 'no sheet');
+				
+				//deactivate the Select-Boxes, because there is no usefull content
+				HMI.PossServers.disabled = true;
+				HMI.PossSheets.disabled = true;
+				
+				//reenable click by user (should be no problem, because init without server search should be fast)
+				HMI.ButShowServers.disabled = false;
+				HMI.ButShowServers.value = "Reload Serverlist";
+				
+				//an init generates a new Handle, needed cause we communicate to the Server the first time
+				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+				if (this.KSClient.TCLKSHandle === null){
+						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
+					return false;
 				}
-				//if showServers encountered an error don't load the Sheet list
-				if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex !== 0 && HMI.PossSheets.options.length < 2){
-					HMI.showSheets(HMI_Parameter_Liste.Server);
-				}else if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex === 0){
-					HMI.hmi_log_onwebsite('Requested Server not available.');
-				}
-			}
-			//no error and a sheet was requested
-			if (!HMI.ErrorOutput.firstChild && HMI.PossServers.selectedIndex !== 0 && HMI_Parameter_Liste.Sheet && HMI_Parameter_Liste.Sheet.length !== 0){
-				//If there is only one Sheet, showSheets has allready shown Sheet, if this was the wrong one => inform
-				if (HMI.PossSheets.options.length == 2 && HMI.PossSheets.options[1].value != HMI_Parameter_Liste.Sheet){
-					window.clearInterval(HMI.RefreshTimeoutID);
-					HMI.RefreshTimeoutID = null;
-					HMI.PossSheets.options[0].selected = true;
-					deleteChilds(this.Playground);
-					HMI.hmi_log_onwebsite('Requested Sheet not available.');
-				//more than one sheet. select requested sheet
-				}else if (HMI.PossSheets.options.length > 2){
-					for (var i=0; i < HMI.PossSheets.options.length; i++){
-						if (HMI.PossSheets.options[i].value == HMI_Parameter_Liste.Sheet){
-							HMI.PossSheets.options[i].selected = true;
-						}
-					}
-					if (HMI.PossSheets.selectedIndex === 0){
-						HMI.hmi_log_onwebsite('Requested Sheet not available.');
-					}else{
-						HMI.showSheet(HMI_Parameter_Liste.Sheet);
-					}
-				}
+				
+				//the path of the HMI Manager could be different in every OV Server
+				this.KSClient.getHMIManagerPointer();
+				
+				HMI.showSheet(HMI_Parameter_Liste.Sheet);
 			}
 			delete HMI_Parameter_Liste;
 		}
@@ -475,14 +500,16 @@ HMI.prototype = {
 			HMI.InputRefreshTime.value = 100;
 			this.RefreshTime = 100;
 		}else{
-			this.RefreshTime = HMI.InputRefreshTime.value;
+			this.RefreshTime = parseInt(HMI.InputRefreshTime.value,10);
+			//make input variable number-only
+			HMI.InputRefreshTime.value = this.RefreshTime;
 		}
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
+			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
 			);
@@ -524,34 +551,6 @@ HMI.prototype = {
 		
 		HMI.ChangeRefreshTime();
 		
-		var KSGateway_Path;
-		//the guessed servertype is used for communication
-		if ("php" == HMI.HMI_Constants.ServerType){
-			//tks.php is always in the same subdir as the html files
-			KSGateway_Path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ "tks.php";
-			this.GatewayTypeTCL = false;
-			this.GatewayTypePHP = true;
-		}else if("tcl" == HMI.HMI_Constants.ServerType){
-			//tcl gateway is hardcoded in the Gateway via TCL-HTTPD\tclhttpd3.5.1\custom\tkshttpserver.tcl
-			KSGateway_Path = "/tks";
-			this.GatewayTypeTCL = true;
-			this.GatewayTypePHP = false;
-		}else{
-			HMI.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
-			
-			var ErrorNode = document.createElement('br');
-			HMI.ErrorOutput.appendChild(ErrorNode);
-			
-			ErrorNode = document.createElement("a");
-			ErrorNode.setAttribute('href', 'httpservertest.html');
-			ErrorNode.appendChild(document.createTextNode('Servertest available'));
-			HMI.ErrorOutput.appendChild(ErrorNode);
-			
-			delete ErrorNode;
-//			alert('This website has to be transfered via HTTP. Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
-			return false;
-		}
-		
 		//clean old Server and Sheet entrys, an old SVG display and displayed errors in website
 		deleteChilds(this.PossServers);
 		deleteChilds(this.PossSheets);
@@ -565,8 +564,6 @@ HMI.prototype = {
 		//Set a neutral title
 		document.title = "Startcenter - ACPLT/HMI";
 		
-		$("idBookmark").style.cssText = "display:none;";
-		
 		//Gateway could not be another host without violating Same Origin Policy
 		var KSGateway = window.location.host;
 		
@@ -576,14 +573,12 @@ HMI.prototype = {
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
-			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
 			);
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
-		this.KSClient.init(KSServer + '/MANAGER', KSGateway + KSGateway_Path);
+		this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
 		if (this.KSClient.TCLKSHandle !== null){
 			this.KSClient.getServers();
 		}
@@ -677,7 +672,7 @@ HMI.prototype = {
 			"?Host="+$('idHost').value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.PossSheets.selectedIndex !== 0 ? HMI.PossSheets.value : "")+
+			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
 			);
@@ -1430,7 +1425,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-10-05 09:28:59 $";
+var filedate = "$Date: 2009-10-07 13:15:57 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

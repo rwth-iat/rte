@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.70 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.71 $
+*	$Date: 2009-10-07 13:15:58 $
 *
 *	History:
 *	--------
@@ -438,11 +438,9 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/*********************************
-		getSheets
+		getHMIManagerPointer
 	*********************************/
-	getSheets: function() {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
-		
+	getHMIManagerPointer: function() {
 		//the path of the HMI Manager could be different in every OV Server
 		this.HMIMANAGER_PATH = this.getVar(null, "/Libraries/hmi/Manager.instance", null);
 		var PointOfSpace = this.HMIMANAGER_PATH.indexOf(' ');
@@ -453,6 +451,16 @@ HMIJavaScriptKSClient.prototype = {
 			this.HMIMANAGER_PATH = this.HMIMANAGER_PATH.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, "");
 		}
 		delete PointOfSpace;
+	},
+	
+	/*********************************
+		getSheets
+	*********************************/
+	getSheets: function() {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
+		
+		//the path of the HMI Manager could be different in every OV Server
+		this.getHMIManagerPointer();
 		
 		var Command = null;
 		if ($("idShowcomponents") && $("idShowcomponents").checked){
@@ -731,7 +739,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date: 2009-10-07 13:15:58 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
