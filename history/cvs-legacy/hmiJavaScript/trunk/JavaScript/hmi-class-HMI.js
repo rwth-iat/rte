@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.118 $
-*	$Date: 2009-10-07 13:15:57 $
+*	$Revision: 1.119 $
+*	$Date: 2009-10-08 08:51:45 $
 *
 *	History:
 *	--------
@@ -412,8 +412,10 @@ HMI.prototype = {
 				}
 			}
 			
-			//a server and sheet is specified in "deep link"
-			if (	HMI_Parameter_Liste.Server
+			//a host, server and sheet is specified in "deep link"
+			if (	HMI_Parameter_Liste.Host
+				&&	HMI_Parameter_Liste.Host.length !== 0
+				&&	HMI_Parameter_Liste.Server
 				&&	HMI_Parameter_Liste.Server.length !== 0
 				&&	HMI_Parameter_Liste.Sheet
 				&&	HMI_Parameter_Liste.Sheet.length !== 0)
@@ -446,6 +448,9 @@ HMI.prototype = {
 				this.KSClient.getHMIManagerPointer();
 				
 				HMI.showSheet(HMI_Parameter_Liste.Sheet);
+			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
+				//no server and sheet specified, but a host => load serverlist
+				HMI.showServers();
 			}
 			delete HMI_Parameter_Liste;
 		}
@@ -1425,7 +1430,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-10-07 13:15:57 $";
+var filedate = "$Date: 2009-10-08 08:51:45 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
