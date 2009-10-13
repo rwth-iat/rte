@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.119 $
-*	$Date: 2009-10-08 08:51:45 $
+*	$Revision: 1.120 $
+*	$Date: 2009-10-13 13:19:20 $
 *
 *	History:
 *	--------
@@ -441,13 +441,15 @@ HMI.prototype = {
 				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
 				if (this.KSClient.TCLKSHandle === null){
 						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
-					return false;
+				}else{
+					//the path of the HMI Manager could be different in every OV Server
+					this.KSClient.getHMIManagerPointer();
+					if (HMI.KSClient.HMIMANAGER_PATH === null){
+						HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
+					}else{
+						HMI.showSheet(HMI_Parameter_Liste.Sheet);
+					}
 				}
-				
-				//the path of the HMI Manager could be different in every OV Server
-				this.KSClient.getHMIManagerPointer();
-				
-				HMI.showSheet(HMI_Parameter_Liste.Sheet);
 			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
 				//no server and sheet specified, but a host => load serverlist
 				HMI.showServers();
@@ -1430,7 +1432,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-10-08 08:51:45 $";
+var filedate = "$Date: 2009-10-13 13:19:20 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

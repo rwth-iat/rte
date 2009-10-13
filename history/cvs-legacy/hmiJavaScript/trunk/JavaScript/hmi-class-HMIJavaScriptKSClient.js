@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.71 $
-*	$Date: 2009-10-07 13:15:58 $
+*	$Revision: 1.72 $
+*	$Date: 2009-10-13 13:19:20 $
 *
 *	History:
 *	--------
@@ -80,7 +80,7 @@ function HMIJavaScriptKSClient() {
 	this.KSServer;
 	this.TCLKSGateway;
 	this.TCLKSHandle = null;
-	this.HMIMANAGER_PATH;
+	this.HMIMANAGER_PATH = null;
 	
 	/** Private *********************/
 	var MessageID = 0;	
@@ -442,14 +442,32 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	getHMIManagerPointer: function() {
 		//the path of the HMI Manager could be different in every OV Server
-		this.HMIMANAGER_PATH = this.getVar(null, "/Libraries/hmi/Manager.instance", null);
-		var PointOfSpace = this.HMIMANAGER_PATH.indexOf(' ');
-		if (PointOfSpace == -1){
-			this.HMIMANAGER_PATH = this.HMIMANAGER_PATH.replace(/{/g, "").replace(/}/g, "");
-		}else{
-			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+this.HMIMANAGER_PATH.replace(/{/g, "").replace(/}/g, "")+"). Using first Manager.");
-			this.HMIMANAGER_PATH = this.HMIMANAGER_PATH.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, "");
+		var ManagerResponse = this.getVar(null, "/Libraries/hmi/Manager.instance", null);
+		
+		if (ManagerResponse.length === 0){
+			// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Empty Response");
+			this.HMIMANAGER_PATH = null;
+			return false;
+		}else if (ManagerResponse == "{{}}"){
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - no instance found");
+			this.HMIMANAGER_PATH = null;
+			return false;
+		}else if (/KS_ERR/.exec(ManagerResponse)){
+			//error could be: TksS-0174::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - KS_ERR");
+			this.HMIMANAGER_PATH = null;
+			return false;
 		}
+		
+		var PointOfSpace = ManagerResponse.indexOf(' ');
+		if (PointOfSpace == -1){
+			this.HMIMANAGER_PATH = ManagerResponse.replace(/{/g, "").replace(/}/g, "");
+		}else{
+			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+ManagerResponse.replace(/{/g, "").replace(/}/g, "")+"). Using first Manager.");
+			this.HMIMANAGER_PATH = ManagerResponse.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, "");
+		}
+		delete ManagerResponse;
 		delete PointOfSpace;
 	},
 	
@@ -461,6 +479,11 @@ HMIJavaScriptKSClient.prototype = {
 		
 		//the path of the HMI Manager could be different in every OV Server
 		this.getHMIManagerPointer();
+		if (HMI.KSClient.HMIMANAGER_PATH === null){
+			HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End with error");
+			return false;
+		}
 		
 		var Command = null;
 		if ($("idShowcomponents") && $("idShowcomponents").checked){
@@ -739,7 +762,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-10-07 13:15:58 $";
+var filedate = "$Date: 2009-10-13 13:19:20 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
