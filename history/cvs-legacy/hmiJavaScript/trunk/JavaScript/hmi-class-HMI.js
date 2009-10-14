@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.124 $
-*	$Date: 2009-10-14 12:06:15 $
+*	$Revision: 1.125 $
+*	$Date: 2009-10-14 13:17:30 $
 *
 *	History:
 *	--------
@@ -884,7 +884,6 @@ HMI.prototype = {
 				var template = Component;
 				Component = document.importNode(template, true);
 			}
-			HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent: now initGestures");
 			HMI.initGestures(Component);
 			//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
 			if (HMI.AdobeMoveFixNeeded && HMI.PluginVendor == 'Adobe'){
@@ -1438,7 +1437,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-10-14 12:06:15 $";
+var filedate = "$Date: 2009-10-14 13:17:30 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

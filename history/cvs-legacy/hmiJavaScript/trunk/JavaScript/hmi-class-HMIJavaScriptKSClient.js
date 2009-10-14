@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.72 $
-*	$Date: 2009-10-13 13:19:20 $
+*	$Revision: 1.73 $
+*	$Date: 2009-10-14 13:17:30 $
 *
 *	History:
 *	--------
@@ -412,8 +412,6 @@ HMIJavaScriptKSClient.prototype = {
 			
 			this.delHandle(TCLKSHandle);
 			
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - got "+ManagerResponse);
-			
 			if (ManagerResponse.length === 0){
 				// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f+Operabug");
@@ -446,16 +444,16 @@ HMIJavaScriptKSClient.prototype = {
 		
 		if (ManagerResponse.length === 0){
 			// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Empty Response");
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Empty Response");
 			this.HMIMANAGER_PATH = null;
 			return false;
 		}else if (ManagerResponse == "{{}}"){
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - no instance found");
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - no instance found");
 			this.HMIMANAGER_PATH = null;
 			return false;
 		}else if (/KS_ERR/.exec(ManagerResponse)){
 			//error could be: TksS-0174::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - KS_ERR");
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - KS_ERR");
 			this.HMIMANAGER_PATH = null;
 			return false;
 		}
@@ -481,7 +479,7 @@ HMIJavaScriptKSClient.prototype = {
 		this.getHMIManagerPointer();
 		if (HMI.KSClient.HMIMANAGER_PATH === null){
 			HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End with error");
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getSheets - No Manager found on this Server.");
 			return false;
 		}
 		
@@ -762,7 +760,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-10-13 13:19:20 $";
+var filedate = "$Date: 2009-10-14 13:17:30 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
