@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.120 $
-*	$Date: 2009-10-13 13:19:20 $
+*	$Revision: 1.121 $
+*	$Date: 2009-10-14 09:00:00 $
 *
 *	History:
 *	--------
@@ -403,8 +403,9 @@ HMI.prototype = {
 			//correct RefreshTime in website with user wish
 			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length !== 0){
 				HMI.InputRefreshTime.value = HMI_Parameter_Liste.RefreshTime;
-				HMI.ChangeRefreshTime();
 			}
+			HMI.ChangeRefreshTime();
+			
 			//correct ShowComponents Status in website with user wish
 			if (HMI_Parameter_Liste.ShowComp && HMI_Parameter_Liste.ShowComp.length !== 0){
 				if (HMI_Parameter_Liste.ShowComp == "true" && $("idShowcomponents")){
@@ -442,7 +443,7 @@ HMI.prototype = {
 				if (this.KSClient.TCLKSHandle === null){
 						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
 				}else{
-					//the path of the HMI Manager could be different in every OV Server
+					//the path of the HMI Manager could be different in every OV Server (manager needed for all gestures)
 					this.KSClient.getHMIManagerPointer();
 					if (HMI.KSClient.HMIMANAGER_PATH === null){
 						HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
@@ -839,7 +840,7 @@ HMI.prototype = {
 		//	import and append
 		//
 			this.KSClient.getVar(null, SVGDescription, this._cbGetAndAddComponent);
-		} else {			
+		} else {
 			//	import and replace
 			//
 			this.KSClient.getVar(null, SVGDescription, this._cbGetAndReplaceComponent);
@@ -1432,7 +1433,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-10-13 13:19:20 $";
+var filedate = "$Date: 2009-10-14 09:00:00 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
