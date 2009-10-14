@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.123 $
-*	$Date: 2009-10-14 12:03:35 $
+*	$Revision: 1.124 $
+*	$Date: 2009-10-14 12:06:15 $
 *
 *	History:
 *	--------
@@ -401,7 +401,7 @@ HMI.prototype = {
 				//we faked the host to the hostname in some cases (empty input field)
 				$('idHost').value = HMI_Parameter_Liste.Host;
 				HMI_Parameter_Liste.Host = "localhost";
-			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){{
+			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
 				$('idHost').value = HMI_Parameter_Liste.Host;
 			}else{
 				//allow shorten of the deep link, fall back to localhost (server view)
@@ -1438,7 +1438,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-10-14 12:03:35 $";
+var filedate = "$Date: 2009-10-14 12:06:15 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
