@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.35 $
-*	$Date: 2009-09-02 22:24:54 $
+*	$Revision: 1.36 $
+*	$Date: 2009-10-21 14:59:54 $
 *
 *	History:
 *	--------
@@ -588,19 +588,24 @@ Dragger.prototype = {
 				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
 				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 				
-				node = this._ground._node.removeChild(this._node);
-				ground._node.insertBefore(node, ground._node.firstChild);
+				try{
+					node = this._ground._node.removeChild(this._node);
+					ground._node.insertBefore(node, ground._node.firstChild);
+				}catch(e){
+					HMI.hmi_log_warning("Dragger.prototype.switchGround - ground status confused.");
+				}
 			};
 			
 			//set new position inside the ground
-			if (!isNaN(SVGx) && !isNaN(SVGy)){
+			if (!isNaN(SVGx) && !isNaN(SVGy) && node !== undefined){
 				node.setAttribute("x", SVGx);
 				node.setAttribute("y", SVGy);
+				
+				delete SVGx;
+				delete SVGy;
+				
+				this._ground = ground;
 			}
-			delete SVGx;
-			delete SVGy;
-			
-			this._ground = ground;
 			
 			delete node;
 		};
@@ -625,7 +630,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-09-02 22:24:54 $";
+var filedate = "$Date: 2009-10-21 14:59:54 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
