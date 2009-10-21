@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.125 $
-*	$Date: 2009-10-14 13:17:30 $
+*	$Revision: 1.126 $
+*	$Date: 2009-10-21 08:33:49 $
 *
 *	History:
 *	--------
@@ -420,7 +420,7 @@ HMI.prototype = {
 				}
 			}
 			
-			//a host, server and sheet is specified in "deep link"
+			//a server and sheet is specified in "deep link" (host is allways there)
 			if (	HMI_Parameter_Liste.Server
 				&&	HMI_Parameter_Liste.Server.length !== 0
 				&&	HMI_Parameter_Liste.Sheet
@@ -454,6 +454,30 @@ HMI.prototype = {
 						HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
 					}else{
 						HMI.showSheet(HMI_Parameter_Liste.Sheet);
+					}
+				}
+			}else if (	HMI_Parameter_Liste.Server
+				&&	HMI_Parameter_Liste.Server.length !== 0){
+				//only a server is specified in "deep link" => showSheets
+				
+				HMI.PossServers.options[0] = new Option('- list not loaded -', 'no server');
+				HMI.PossSheets.options[0] = new Option('- list not loaded -', 'no sheet');
+				
+				//reenable click by user (should be no problem, because init without server search should be fast)
+				HMI.ButShowServers.disabled = false;
+				HMI.ButShowServers.value = "Reload Serverlist";
+				
+				//an init generates a new Handle, needed cause we communicate to the Server the first time
+				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+				if (this.KSClient.TCLKSHandle === null){
+						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
+				}else{
+					//the path of the HMI Manager could be different in every OV Server (manager needed for all gestures)
+					this.KSClient.getHMIManagerPointer();
+					if (HMI.KSClient.HMIMANAGER_PATH === null){
+						HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
+					}else{
+						HMI.showSheets(HMI_Parameter_Liste.Server);
 					}
 				}
 			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
@@ -1437,7 +1461,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-10-14 13:17:30 $";
+var filedate = "$Date: 2009-10-21 08:33:49 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
