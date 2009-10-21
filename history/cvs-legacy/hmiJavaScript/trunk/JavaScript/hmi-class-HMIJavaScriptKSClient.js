@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.74 $
-*	$Date: 2009-10-21 07:48:05 $
+*	$Revision: 1.75 $
+*	$Date: 2009-10-21 14:58:59 $
 *
 *	History:
 *	--------
@@ -608,14 +608,6 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+window.location.protocol+'//'+ HMI.KSClient.TCLKSGateway + '?' + urlparameter);
 		
 		var req = new XMLHttpRequest();
-		var preventCaching = "";
-		
-		//IE sometimes uses a cached version, without server Header => prevent caching in IE
-		if ("Explorer" == BrowserDetect.browser){
-			var DatePreventsCaching = new Date();
-			preventCaching = '&preventCaching='
-				+DatePreventsCaching.getTime()
-		}
 		
 		//netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
 		//does not work in other browsers than mozillabased
@@ -630,9 +622,11 @@ HMIJavaScriptKSClient.prototype = {
 				window.location.protocol+'//'
 				+ HMI.KSClient.TCLKSGateway
 				+ '?'
-				+ urlparameter
-				+ preventCaching, async);
-				
+				+ urlparameter, async);
+			
+			//prevent caching of request in all browsers (ie was the problem - as usual
+			req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT");
+			
 			if (async === true)
 			{
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - entering async communication");
@@ -642,7 +636,7 @@ HMIJavaScriptKSClient.prototype = {
 					Client._handleStateChange(req, cbfnc);
 				};
 			}
-							
+			
 			try {
 				if (method == 'POST') 
 				{
@@ -766,7 +760,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-10-21 07:48:05 $";
+var filedate = "$Date: 2009-10-21 14:58:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
