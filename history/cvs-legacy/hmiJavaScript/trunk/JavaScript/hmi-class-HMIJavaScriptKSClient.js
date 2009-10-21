@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.73 $
-*	$Date: 2009-10-14 13:17:30 $
+*	$Revision: 1.74 $
+*	$Date: 2009-10-21 07:48:05 $
 *
 *	History:
 *	--------
@@ -608,7 +608,14 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+window.location.protocol+'//'+ HMI.KSClient.TCLKSGateway + '?' + urlparameter);
 		
 		var req = new XMLHttpRequest();
-		var DatePreventsCaching = new Date();
+		var preventCaching = "";
+		
+		//IE sometimes uses a cached version, without server Header => prevent caching in IE
+		if ("Explorer" == BrowserDetect.browser){
+			var DatePreventsCaching = new Date();
+			preventCaching = '&preventCaching='
+				+DatePreventsCaching.getTime()
+		}
 		
 		//netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
 		//does not work in other browsers than mozillabased
@@ -624,8 +631,7 @@ HMIJavaScriptKSClient.prototype = {
 				+ HMI.KSClient.TCLKSGateway
 				+ '?'
 				+ urlparameter
-				+ '&preventCaching='
-				+DatePreventsCaching.getTime(), async);
+				+ preventCaching, async);
 				
 			if (async === true)
 			{
@@ -760,7 +766,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-10-14 13:17:30 $";
+var filedate = "$Date: 2009-10-21 07:48:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
