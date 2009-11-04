@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.127 $
-*	$Date: 2009-10-21 14:58:58 $
+*	$Revision: 1.128 $
+*	$Date: 2009-11-04 13:55:39 $
 *
 *	History:
 *	--------
@@ -92,6 +92,7 @@ function HMI(debug, error, warning, info, trace) {
 	
 	this.ButShowServers = null;
 	this.InputRefreshTime = null;
+	this.InputHost = null;
 	this.PossServers = null;
 	this.PossSheets = null;
 	this.Playground = null;
@@ -196,7 +197,9 @@ HMI.prototype = {
 				ErrorDetail += "HTML Input with the ID: idRefreshTime not found.\n";
 			}
 			//Object of Server-Hostname
-			if (!($('idHost'))){
+			if ((this.InputHost = $('idHost'))){
+				addEventSimple(HMI.InputHost,'change',function(){HMI.showServers();});
+			}else{
 				ErrorDetail += "HTML Input with the ID: idHost not found.\n";
 			}
 			//Object of the Deep Link
@@ -397,10 +400,10 @@ HMI.prototype = {
 			//correct host in website with user wish
 			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0 && HMI_Parameter_Liste.Host == window.location.hostname){
 				//we faked the host to the hostname in some cases (empty input field)
-				$('idHost').value = HMI_Parameter_Liste.Host;
+				HMI.InputHost.value = HMI_Parameter_Liste.Host;
 				HMI_Parameter_Liste.Host = "localhost";
 			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
-				$('idHost').value = HMI_Parameter_Liste.Host;
+				HMI.InputHost.value = HMI_Parameter_Liste.Host;
 			}else{
 				//allow shorten of the deep link, fall back to localhost (server view)
 				HMI_Parameter_Liste.Host = "localhost";
@@ -541,7 +544,7 @@ HMI.prototype = {
 		}
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
-			"?Host="+$('idHost').value+
+			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
 			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
@@ -572,16 +575,16 @@ HMI.prototype = {
 		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		if ($('idHost').value.length === 0){
-			$('idHost').value = window.location.hostname;
+		if (HMI.InputHost.value.length === 0){
+			HMI.InputHost.value = window.location.hostname;
 		}
 		
 		//if the hostname is identical to the http server, translate into "localhost"
 		var KSServer;
-		if ($('idHost').value == window.location.hostname){
+		if (HMI.InputHost.value == window.location.hostname){
 			KSServer = "localhost";
 		}else{
-			KSServer = $('idHost').value;
+			KSServer = HMI.InputHost.value;
 		}
 		
 		HMI.ChangeRefreshTime();
@@ -606,7 +609,7 @@ HMI.prototype = {
 		$("idBookmark").style.cssText = "display:inline;";
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
-			"?Host="+$('idHost').value+
+			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
@@ -704,7 +707,7 @@ HMI.prototype = {
 		$("idBookmark").style.cssText = "display:inline;";
 		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
-			"?Host="+$('idHost').value+
+			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
 			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
@@ -1459,7 +1462,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-10-21 14:58:58 $";
+var filedate = "$Date: 2009-11-04 13:55:39 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
