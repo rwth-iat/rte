@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.128 $
-*	$Date: 2009-11-04 13:55:39 $
+*	$Revision: 1.129 $
+*	$Date: 2009-11-06 16:12:23 $
 *
 *	History:
 *	--------
@@ -263,10 +263,11 @@ HMI.prototype = {
 		//Try to detect the Servertype (TCL or PHP capable)
 		//make a request to sniff the HTTP-Serverstring
 		
+		//IE sometimes uses a cached version, without server Header, so prevent caching
+		var DatePreventsCaching = new Date();
 		try{
 			var req = new XMLHttpRequest();
-			req.open("GET", window.location.pathname, false);
-			req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT"); //prevent caching even in IE
+			req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
 			req.send(null);
 			var ResponseServerString = req.getResponseHeader('server');
 			if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
@@ -286,6 +287,7 @@ HMI.prototype = {
 		}
 		delete req;
 		delete ResponseServerString;
+		delete DatePreventsCaching;
 		
 		//the guessed servertype is used for communication
 		if ("php" == HMI.HMI_Constants.ServerType){
@@ -1462,7 +1464,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-11-04 13:55:39 $";
+var filedate = "$Date: 2009-11-06 16:12:23 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
