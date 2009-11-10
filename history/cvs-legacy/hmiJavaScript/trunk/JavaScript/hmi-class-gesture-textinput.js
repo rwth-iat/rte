@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.30 $
-*	$Date: 2009-08-26 13:01:57 $
+*	$Revision: 1.31 $
+*	$Date: 2009-11-10 13:50:44 $
 *
 *	History:
 *	--------
@@ -83,9 +83,9 @@ TextInput.prototype = {
 		
 		//not clickable if the String is only white spaces
 		var buildDummyRect = false;
-		//Gecko, opera and Webkit are able to use textContent or innerText to find all Text
-		if ( (typeof Component.textContent != "undefined" && !/\S+/.exec(Component.textContent) )
-		  || (typeof Component.innerText != "undefined" && !/\S+/.exec(Component.innerText)) ){
+		//Gecko, Opera and Webkit are able to use textContent or innerText to find all Text
+		if (	(typeof Component.textContent != "undefined" && !/\S+/.exec(Component.textContent) )
+			||	(typeof Component.innerText != "undefined" && !/\S+/.exec(Component.innerText)) ){
 			buildDummyRect = true;
 		}else{
 			//other browsers has to iterate over all elements
@@ -252,7 +252,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-26 13:01:57 $";
+var filedate = "$Date: 2009-11-10 13:50:44 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

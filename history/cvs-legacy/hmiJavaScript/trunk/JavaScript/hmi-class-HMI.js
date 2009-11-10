@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.129 $
-*	$Date: 2009-11-06 16:12:23 $
+*	$Revision: 1.130 $
+*	$Date: 2009-11-10 13:50:44 $
 *
 *	History:
 *	--------
@@ -1235,6 +1235,13 @@ HMI.prototype = {
 		var LayerX = parseInt(Element.getAttribute("x"), 10);
 		var LayerY = parseInt(Element.getAttribute("y"), 10);
 		
+		if (isNaN(LayerX)){
+			LayerX = 0;
+		}
+		if (isNaN(LayerY)){
+			LayerY = 0;
+		}
+		
 		//Firefox, Safari and Opera
 		if (Element.ownerSVGElement !== undefined){
 			if ( Element.ownerSVGElement !== null && Element.ownerSVGElement != document){
@@ -1464,7 +1471,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-11-06 16:12:23 $";
+var filedate = "$Date: 2009-11-10 13:50:44 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

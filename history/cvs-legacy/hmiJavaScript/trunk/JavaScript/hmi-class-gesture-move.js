@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.36 $
-*	$Date: 2009-10-21 14:59:54 $
+*	$Revision: 1.37 $
+*	$Date: 2009-11-10 13:50:44 $
 *
 *	History:
 *	--------
@@ -620,6 +620,13 @@ Dragger.prototype = {
 		var x = parseInt(this._node.getAttribute("x"), 10);
 		var y = parseInt(this._node.getAttribute("y"), 10);
 		
+		if (isNaN(x)){
+			x = 0;
+		}
+		if (isNaN(x)){
+			y = 0;
+		}
+		
 		x += dx;
 		y += dy;
 		
@@ -630,7 +637,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-10-21 14:59:54 $";
+var filedate = "$Date: 2009-11-10 13:50:44 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
