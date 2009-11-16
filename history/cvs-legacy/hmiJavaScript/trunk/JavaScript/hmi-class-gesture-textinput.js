@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.31 $
-*	$Date: 2009-11-10 13:50:44 $
+*	$Revision: 1.32 $
+*	$Date: 2009-11-16 17:35:28 $
 *
 *	History:
 *	--------
@@ -202,6 +202,14 @@ TextInput.prototype = {
 		}else if (evt.srcElement && evt.srcElement.getAttribute("class") == "dummyTextinputRect"){
 			//native IE eventhandling
 			text = "";
+		}else if (evt.currentTarget && typeof evt.currentTarget.textContent != "undefined"){
+			//currentTarget is the Component
+			//TextContent is the sum of Text
+			text = evt.currentTarget.textContent;
+		}else if (evt.currentTarget && evt.currentTarget.firstChild && evt.currentTarget.firstChild.firstChild && evt.currentTarget.firstChild.firstChild.nodeValue ){
+			//currentTarget is the Component
+			//Adobe Plugin
+			text = evt.currentTarget.firstChild.firstChild.nodeValue;
 		}else if (evt.target && typeof evt.target.textContent != "undefined"){
 			//TextContent is the sum of Text
 			text = evt.target.textContent;
@@ -252,7 +260,7 @@ TextInput.prototype = {
 		delete Command;
 	}
 };
-var filedate = "$Date: 2009-11-10 13:50:44 $";
+var filedate = "$Date: 2009-11-16 17:35:28 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
