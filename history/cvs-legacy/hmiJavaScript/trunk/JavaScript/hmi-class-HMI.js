@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.130 $
-*	$Date: 2009-11-10 13:50:44 $
+*	$Revision: 1.131 $
+*	$Date: 2009-11-17 17:30:53 $
 *
 *	History:
 *	--------
@@ -1256,8 +1256,14 @@ HMI.prototype = {
 			LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
 		}
 		
-		Element.setAttribute("layerX", LayerX);
-		Element.setAttribute("layerY", LayerY);
+		if (isNaN(LayerX) || isNaN(LayerY)){
+			this.hmi_log_warning("SVG-ERROR - ownerSVGElement/parentNode of\n"+Element.id+"\n is no hmi-component (has no layerX or layerY). The move-Gesture will not work on child elements!");
+			Element.setAttribute("layerX", 0);
+			Element.setAttribute("layerY", 0);
+		}else{
+			Element.setAttribute("layerX", LayerX);
+			Element.setAttribute("layerY", LayerY);
+		}
 		
 		try{
 			/**
@@ -1471,7 +1477,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-11-10 13:50:44 $";
+var filedate = "$Date: 2009-11-17 17:30:53 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
