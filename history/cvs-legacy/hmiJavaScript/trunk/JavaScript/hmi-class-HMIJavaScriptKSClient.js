@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.75 $
-*	$Date: 2009-10-21 14:58:59 $
+*	$Revision: 1.76 $
+*	$Date: 2009-11-23 12:19:50 $
 *
 *	History:
 *	--------
@@ -326,6 +326,7 @@ HMIJavaScriptKSClient.prototype = {
 		//responseText should be something like: {fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi5} {fb_hmi4}
 		var Response = req.responseText;
 		var Server = new Array();
+		var ServerList = "";
 		
 		var i = 0;
 		
@@ -335,6 +336,8 @@ HMIJavaScriptKSClient.prototype = {
 		{
 			//cut the servername out of the surrounding { }
 			Server[i] = Response.substring(1, Response.indexOf('}'));
+			ServerList = Server[i] + ", " + ServerList;
+			
 			//preserve the rest for another servertest
 			Response = Response.substring(Response.indexOf('}') + 2, Response.length);
 			i = i + 1;
@@ -344,6 +347,9 @@ HMIJavaScriptKSClient.prototype = {
 		};
 		Server = Server.sort();
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of potential servers: "+Server.length);
+		
+		HMI.PossServers.setAttribute("title", "available OV-Servers: "+ServerList.substring(0, ServerList.length-2));
+		delete ServerList;
 		
 		if (Server.length > 0){
 			//put first select option with a description
@@ -760,7 +766,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-10-21 14:58:59 $";
+var filedate = "$Date: 2009-11-23 12:19:50 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
