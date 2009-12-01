@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.32 $
-*	$Date: 2009-11-16 17:35:28 $
+*	$Revision: 1.33 $
+*	$Date: 2009-12-01 13:57:02 $
 *
 *	History:
 *	--------
@@ -243,10 +243,10 @@ TextInput.prototype = {
 		_sendCommand
 	*********************************/
 	_sendCommand : function (evt, Component, input) {
-		var Command = null;
-		
+		HMI.hmi_log_trace("TextInput.prototype._sendCommand - Component: "+(Component===null?"null":Component.id));
 		if (Component !== null)
 		{
+			var Command = null;
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
 				'{' + Component.getAttribute('id') + '}%20' + 
@@ -255,12 +255,11 @@ TextInput.prototype = {
 				//change the %u20AC of the &euro; Symbol to windows-1252 (accepted by all Browsers, not Adobe SVG)
 				'{' + escape(input).replace(/%u20AC/g, "%80") + '}';
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
+			delete Command;
 		};
-		
-		delete Command;
 	}
 };
-var filedate = "$Date: 2009-11-16 17:35:28 $";
+var filedate = "$Date: 2009-12-01 13:57:02 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

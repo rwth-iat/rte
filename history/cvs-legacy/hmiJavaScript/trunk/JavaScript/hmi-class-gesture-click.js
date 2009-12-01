@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.28 $
-*	$Date: 2009-08-26 13:01:57 $
+*	$Revision: 1.29 $
+*	$Date: 2009-12-01 13:57:02 $
 *
 *	History:
 *	--------
@@ -180,11 +180,10 @@ Click.prototype = {
 		_sendCommand
 	*********************************/
 	_sendCommand : function (evt, Component) {
-		HMI.hmi_log_trace("Click.prototype._sencCommand - Component: "+Component.id);
-		var Command = null;
-		
+		HMI.hmi_log_trace("Click.prototype._sendCommand - Component: "+(Component===null?"null":Component.id));
 		if (Component !== null)
 		{
+			var Command = null;
 			var clickPosition;
 			//detect the mouse position relative to the component
 			clickPosition = HMI.getClickPosition(evt, Component);
@@ -198,12 +197,11 @@ Click.prototype = {
 			delete clickPosition;
 			
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
+			delete Command;
 		};
-		
-		delete Command;
 	}
 };
-var filedate = "$Date: 2009-08-26 13:01:57 $";
+var filedate = "$Date: 2009-12-01 13:57:02 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
