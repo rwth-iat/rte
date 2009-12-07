@@ -48,8 +48,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.36 $
-*	$Date: 2009-04-28 08:28:03 $
+*	$Revision: 1.37 $
+*	$Date: 2009-12-07 16:29:22 $
 *
 *	History:
 *
@@ -62,11 +62,17 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 		<meta http-equiv="Content-Style-Type" content="text/css">
 		<meta http-equiv="Content-Script-Type" content="text/javascript">
+		<meta http-equiv="Content-Style-Type" content="text/css">
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 		<title>HMI-Startcenter - Internet Explorer Version</title>
 		<object id="AdobeSVG" classid="clsid:78156a80-c6a1-4bbf-8e6a-3cd390eeb4e2"></object>
 		<?import namespace="svg" implementation="#AdobeSVG"?>
 		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js" charset="ISO-8859-1"></script>
+		<style type="text/css">
+			@media print {
+				.doNotPrintThis{ display:none; }
+			}
+		</style>
 	</head>
 	<!-- 
 		/*********************************
@@ -74,7 +80,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		*********************************/
 	-->
 	<body>
-		<table width="100%">
+		<table width="100%" class="doNotPrintThis">
 			<tr id="idHeaderRow" style="cursor:pointer;">
 				<td style="text-align:center;">
 					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
@@ -96,8 +102,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 				</td>
 			</tr>
 		</table>
-		<hr color="blue">
-		<div id="idHideableHeader">
+		<hr color="blue" class="doNotPrintThis">
+		<div id="idHideableHeader" class="doNotPrintThis">
 			<table>
 				<tr>
 					<td style="text-align:right;" title="As seen from KSGateway">FB-Host:</td>

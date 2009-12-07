@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.131 $
-*	$Date: 2009-11-17 17:30:53 $
+*	$Revision: 1.132 $
+*	$Date: 2009-12-07 16:29:22 $
 *
 *	History:
 *	--------
@@ -186,9 +186,12 @@ HMI.prototype = {
 			}else{
 				addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);});
 			}
-			//Object of SVG insertion (p for firefox, embed for IE)
+			//Element of SVG insertion (p for firefox, embed for IE)
 			if (!(this.Playground = $('idPlayground'))){
 				ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
+			}else{
+				//prevent right click in supported Browsers (no Opera, no IE6-8)
+				addEventSimple(HMI.Playground, "contextmenu", function (evt) {if (evt.preventDefault) evt.preventDefault();});
 			}
 			//Object of RefreshTime
 			if ((this.InputRefreshTime = $('idRefreshTime'))){
@@ -1477,7 +1480,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-11-17 17:30:53 $";
+var filedate = "$Date: 2009-12-07 16:29:22 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
