@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.33 $
-*	$Date: 2009-12-01 13:57:02 $
+*	$Revision: 1.34 $
+*	$Date: 2010-01-04 07:59:14 $
 *
 *	History:
 *	--------
@@ -228,6 +228,7 @@ TextInput.prototype = {
 		}
 		var input = window.prompt('Geben Sie bitte einen neuen Wert ein', text);
 		if(	input	!== null
+			&&	input	!== undefined
 			&&	input !== text)
 		{
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
@@ -259,7 +260,7 @@ TextInput.prototype = {
 		};
 	}
 };
-var filedate = "$Date: 2009-12-01 13:57:02 $";
+var filedate = "$Date: 2010-01-04 07:59:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
