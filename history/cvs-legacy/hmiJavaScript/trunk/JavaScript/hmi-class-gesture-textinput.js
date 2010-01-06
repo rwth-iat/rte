@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.34 $
-*	$Date: 2010-01-04 07:59:14 $
+*	$Revision: 1.35 $
+*	$Date: 2010-01-06 13:28:31 $
 *
 *	History:
 *	--------
@@ -226,7 +226,14 @@ TextInput.prototype = {
 		}else{
 			text = "";
 		}
-		var input = window.prompt('Geben Sie bitte einen neuen Wert ein', text);
+		var input;
+		
+		if (evt.currentTarget && ("unknown" == typeof evt.currentTarget.hasAttributeNS || evt.currentTarget.hasAttributeNS) && evt.currentTarget.hasAttributeNS("http://www.acplt.de/hmi", "textinputcaption")) {
+			//	supported in Firefox 2+3, Opera 10, Webkit, Adobe SVG Viewer 3, Renesis 1.1
+			input = window.prompt(evt.currentTarget.getAttributeNS("http://www.acplt.de/hmi", "textinputcaption"), text);
+		}else{
+			input = window.prompt('Geben Sie bitte einen neuen Wert ein', text);
+		}
 		if(	input	!== null
 			&&	input	!== undefined
 			&&	input !== text)
@@ -260,7 +267,7 @@ TextInput.prototype = {
 		};
 	}
 };
-var filedate = "$Date: 2010-01-04 07:59:14 $";
+var filedate = "$Date: 2010-01-06 13:28:31 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
