@@ -62,8 +62,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.15 $
-*	$Date: 2009-04-28 08:28:03 $
+*	$Revision: 1.16 $
+*	$Date: 2010-01-18 14:46:06 $
 *
 *	History:
 *	26-March-2008			Je
@@ -85,6 +85,11 @@
 		<?import namespace="svg" implementation="#AdobeSVG"?>
 		<title>HMI-Startcenter - XSLT Version</title>
 		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js" charset="ISO-8859-1"></script>
+		<style type="text/css">
+			@media print {
+				.doNotPrintThis{ display:none; }
+			}
+		</style>
 	</head>
 	<!-- 
 		/*********************************
@@ -92,7 +97,7 @@
 		*********************************/
 	-->
 	<body>
-		<table width="100%">
+		<table width="100%" class="doNotPrintThis">
 			<tr id="idHeaderRow" style="cursor:pointer;">
 				<td style="text-align:center;">
 					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
@@ -114,8 +119,8 @@
 				</td>
 			</tr>
 		</table>
-		<hr style="background-color:blue;height:2px;"/>
-		<div id="idHideableHeader">
+		<hr style="background-color:blue;height:2px;" class="doNotPrintThis"/>
+		<div id="idHideableHeader" class="doNotPrintThis">
 			<table>
 				<tr>
 					<td style="text-align:right;" title="As seen from KSGateway">FB-Host:</td>
@@ -131,10 +136,11 @@
 							<option>please push "Show Servers"</option>
 						</select>
 					</td>
-					<td style="padding-left:20px;padding-right:20px;text-align:center;">
+					<td style="padding-left:20px;padding-right:20px;text-align:center;white-space:nowrap;">
 						<input type="button" value="Show Servers" id="idShowServers" tabindex="1" disabled="disabled"/>
 					</td>
 					<td>
+						<img id="idThrobbler" src="throbbler.gif" />
 <!--
 						<input type="button" id="idRefresh" value="Refresh Sheet Now"/>
 						<input type="button" id="idStopRefresh" value="Stop Autorefresh"/>
@@ -159,7 +165,7 @@
 			</table>
 			<hr style="background-color:blue;height:2px;"/>
 		</div>
-		<p oncontextmenu="return false" id="idPlayground">
+		<p id="idPlayground">
 		</p>
 	</body>
 </html>

@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.132 $
-*	$Date: 2009-12-07 16:29:22 $
+*	$Revision: 1.133 $
+*	$Date: 2010-01-18 14:46:06 $
 *
 *	History:
 *	--------
@@ -362,30 +362,24 @@ HMI.prototype = {
 		HMI.PossServers.disabled = true;
 		HMI.PossSheets.disabled = true;
 		
-		//reactivate the ShowServer button. It was disabled to prevent a click during initialisation of HMI
-		HMI.ButShowServers.disabled = false;
-		
-		//focus the ShowServer button for convenience with keyboard interaction
-		//try because the button could be nonvisible
-		try{
-			HMI.ButShowServers.focus();
-		}catch(e){ }
-		
 		//HMIdate was populated in every js-file with the date of CVS commit
 		//publish this date on website
-		HMI.HMI_Constants.HMIdate = HMIdate;
-		var dateTextNode = document.createTextNode("Version: 2.1 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
-		var titlenode = document.createAttribute("title");
-		titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate+" UTC";
-		
-		if ((DateOutput = document.getElementById("idDateOutput"))){
-			DateOutput.appendChild(dateTextNode);
-			DateOutput.parentNode.setAttributeNode(titlenode);
+		if ("undefined" != typeof HMIdate){
+			HMI.HMI_Constants.HMIdate = HMIdate;
+			var dateTextNode = document.createTextNode("Version: 2.1 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
+			var titlenode = document.createAttribute("title");
+			titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate+" UTC";
+			
+			var DateOutput;
+			if ((DateOutput = document.getElementById("idDateOutput"))){
+				DateOutput.appendChild(dateTextNode);
+				DateOutput.parentNode.setAttributeNode(titlenode);
+			}
+			delete DateOutput;
+			delete HMIdate;
+			delete dateTextNode;
+			delete titlenode;
 		}
-		delete DateOutput;
-		delete HMIdate;
-		delete dateTextNode;
-		delete titlenode;
 		
 		//jump to a "deep link" of a sheet
 		if (window.location.search.length !== 0){
@@ -445,8 +439,6 @@ HMI.prototype = {
 				HMI.PossServers.disabled = true;
 				HMI.PossSheets.disabled = true;
 				
-				//reenable click by user (should be no problem, because init without server search should be fast)
-				HMI.ButShowServers.disabled = false;
 				HMI.ButShowServers.value = "Reload Serverlist";
 				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
@@ -469,9 +461,7 @@ HMI.prototype = {
 				HMI.PossServers.options[0] = new Option('- list not loaded -', 'no server');
 				HMI.PossSheets.options[0] = new Option('- list not loaded -', 'no sheet');
 				
-				//reenable click by user (should be no problem, because init without server search should be fast)
-				HMI.ButShowServers.disabled = false;
-				HMI.ButShowServers.value = "Reload Serverlist";
+				HMI.ButShowServers.value = "load Serverlist";
 				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
 				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
@@ -491,6 +481,18 @@ HMI.prototype = {
 				HMI.showServers();
 			}
 			delete HMI_Parameter_Liste;
+		}
+		//reenable click by user
+		HMI.ButShowServers.disabled = false;
+		
+		//focus the ShowServer button for convenience with keyboard interaction
+		//try because the button could be nonvisible
+		try{
+			HMI.ButShowServers.focus();
+		}catch(e){ }
+		
+		if (document.getElementById("idThrobbler") !== null){
+			document.getElementById("idThrobbler").style.display = "none";
 		}
 		this.hmi_log_trace("HMI.prototype.init - End");
 	},
@@ -576,6 +578,9 @@ HMI.prototype = {
 		//disable double click by user
 		HMI.ButShowServers.disabled = true;
 		HMI.ButShowServers.value = "Please wait...";
+		if (document.getElementById("idThrobbler") !== null){
+			document.getElementById("idThrobbler").style.display = "inline";
+		}
 		
 		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
@@ -630,6 +635,9 @@ HMI.prototype = {
 		//reenable click by user
 		HMI.ButShowServers.disabled = false;
 		HMI.ButShowServers.value = "Reload Serverlist";
+		if (document.getElementById("idThrobbler") !== null){
+			document.getElementById("idThrobbler").style.display = "none";
+		}
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
@@ -1480,7 +1488,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init(true);});
 }
 
-var filedate = "$Date: 2009-12-07 16:29:22 $";
+var filedate = "$Date: 2010-01-18 14:46:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
