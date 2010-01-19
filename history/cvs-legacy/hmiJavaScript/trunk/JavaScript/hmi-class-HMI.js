@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.133 $
-*	$Date: 2010-01-18 14:46:06 $
+*	$Revision: 1.134 $
+*	$Date: 2010-01-19 16:12:05 $
 *
 *	History:
 *	--------
@@ -89,6 +89,7 @@ function HMI(debug, error, warning, info, trace) {
 	this.info = info;
 	//log trace info to console
 	this.trace = trace;
+	this.initialised = false;
 	
 	this.ButShowServers = null;
 	this.InputRefreshTime = null;
@@ -132,7 +133,14 @@ HMI.prototype = {
 		
 		called from "load" event, all js files are available
 	*********************************/
-	init: function (firstLoad) {
+	init: function () {
+		//garantee uniq initialisation
+		if (this.initialised === true){
+			return true;
+		}else{
+			this.initialised = true;
+		}
+		
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
 		var ErrorDetail = "";
@@ -227,11 +235,6 @@ HMI.prototype = {
 			}
 		}
 		if(ErrorDetail !== ""){
-			if (firstLoad === true){
-				//Safari calls addEventListener('load') before all files are loaded, so give him a second chance in 2 seconds
-				window.setTimeout(function(){HMI.init(false);}, 2000);
-				return;
-			}
 			window.alert ("Error initialising HMI Website:\n"+ErrorDetail);
 			return;
 		}
@@ -1477,18 +1480,23 @@ if (window.location.search && -1 != unescape(window.location.search).indexOf("tr
 if( window.addEventListener ) {
 	//window is the wrong place for the eventlistener, but available at the most browsers
 	//http://www.howtocreate.co.uk/tutorials/javascript/domevents
-	window.addEventListener('load',function(){HMI.init(true);},false);
+	window.addEventListener('load',function(){HMI.init();},false);
 } else if( document.addEventListener ) {
 	//document is the right place for the eventlistener
 	//but not supported by mozilla https://bugzilla.mozilla.org/show_bug.cgi?id=99820
 	//and Webkit
-	document.addEventListener('load',function(){HMI.init(true);},false);
+	document.addEventListener('load',function(){HMI.init();},false);
 } else if( window.attachEvent ) {
 	//Internet Explorer is a special case as usual
-	window.attachEvent('onload',function(){HMI.init(true);});
+	window.attachEvent('onload',function(){HMI.init();});
 }
 
-var filedate = "$Date: 2010-01-18 14:46:06 $";
+//fallback for stupid browsers (mostly Google Chrome) which fires onload to early, so our init code is never called
+//
+window.setTimeout(function(){HMI.init();}, 1000);
+window.setTimeout(function(){HMI.init();}, 5000);
+
+var filedate = "$Date: 2010-01-19 16:12:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
