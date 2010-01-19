@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.134 $
-*	$Date: 2010-01-19 16:12:05 $
+*	$Revision: 1.135 $
+*	$Date: 2010-01-19 16:35:15 $
 *
 *	History:
 *	--------
@@ -171,7 +171,7 @@ HMI.prototype = {
 		
 		if(ErrorDetail === ""){
 			//all js files loaded, continue testing of the website
-		
+			
 			//Object of ShowServer-Button
 			if ((this.ButShowServers = $('idShowServers'))){
 				addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
@@ -1494,9 +1494,8 @@ if( window.addEventListener ) {
 //fallback for stupid browsers (mostly Google Chrome) which fires onload to early, so our init code is never called
 //
 window.setTimeout(function(){HMI.init();}, 1000);
-window.setTimeout(function(){HMI.init();}, 5000);
 
-var filedate = "$Date: 2010-01-19 16:12:05 $";
+var filedate = "$Date: 2010-01-19 16:35:15 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
