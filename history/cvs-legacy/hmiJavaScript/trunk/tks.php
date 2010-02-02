@@ -1,4 +1,4 @@
-<?
+<?php
 // Basis-Funktionen bekanntgeben
 
 header("Content-Type: text/html; charset=Windows-1252");
