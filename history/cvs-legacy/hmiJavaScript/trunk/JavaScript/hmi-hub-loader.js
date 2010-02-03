@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.16 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.17 $
+*	$Date: 2010-02-03 11:47:01 $
 *
 *	History:
 *	01-March-2005			HA
@@ -60,14 +60,17 @@
 *	25-February-2009			Je
 *		-	General Revision and full commented
 *
+*	03-February-2010			Je
+*		-	rewritten with object detection
+*		-	dropped SVG DOM support
+*
 ***********************************************************************/
 
 /***********************************************************************
 	Loads the specified list of script files by creating the necessary
 	<script> elements in the current document's DOM tree.
-	Supported XML-based languages are HTML, XHTML, SVG.
+	Supported XML-based languages are HTML, XHTML.
 	
-	@param hubLoaderName
 	@param hubFilePattern
 	@param hubFilelist
 ***********************************************************************/
@@ -87,8 +90,6 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 				associated namespace. Yes, this is good old HTML.
 			- <xhtml:script type="" src="">, where the xhtml
 				namespace is "http://www.w3.org/1999/xhtml".
-			- <svg:script type="" xlink:href="">, where the svg
-				namespace is "http://www.w3.org/2000/svg".
 	********************************************************************/
 	var scripts = document.getElementsByTagName("script");
 	
@@ -99,44 +100,21 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	var scriptNode = null;
 	var idx;
 	
+	/********************************************************************
+		search our scriptNode for path of the JS-files and <head> element
+	********************************************************************/
 	for ( idx = 0; idx < scripts.length; ++idx )
 	{
 		scriptNode = scripts[idx];
 		match = null;
-	
-		switch (scriptNode.namespaceURI)
-		{
-			//	Support for HTML and SVG <script> elements.
-			//
-			case null:
-			case "http://www.w3.org/1999/xhtml":
-				match = p.exec(scriptNode.getAttribute("src"));
-				break;
-	
-			//	Support for SVG <script> elements is slightly different from
-			//	HTML and XHTML: no "src" attribute in the empty namespace but
-			//	instead an xlink:href attribute. Sigh.
-			//		
-			case "http://www.w3.org/2000/svg":
-				match = p.exec(scriptNode.getAttributeNS(
-					"http://www.w3.org/1999/xlink", "href"));
-				break;
-			
-			//Internet Explorer doesnot have namespaceURI
-			case undefined:
-				switch (scriptNode.tagUrn){
-					//HTML Nodes have an empty tagUrn
-					case "":
-						match = p.exec(scriptNode.getAttribute("src"));
-						break;
-					//this code is untested since unused at this time
-					case "http://www.w3.org/2000/svg":
-						match = p.exec(scriptNode.getAttributeNS(
-							"http://www.w3.org/1999/xlink", "href"));
-						break;
-				}
-				break;
-		};
+		
+		if (scriptNode.getAttribute !== undefined && (scriptNode.getAttribute("src") !== null || scriptNode.getAttribute("src") !== "") ){
+			match = p.exec(scriptNode.getAttribute("src"));
+		}else if(scriptNode.hasAttributeNS !== undefined && scriptNode.getAttributeNS !== undefined){
+			if (scriptNode.hasAttributeNS("http://www.w3.org/1999/xlink", "href") ){
+				match = p.exec(scriptNode.getAttributeNS("http://www.w3.org/1999/xlink", "href"));
+			}
+		}
 		
 		if (match)
 		{
@@ -153,85 +131,34 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	};
 	
 	/********************************************************************
-		Now decide on the proper way of creating a script element.
+		Decide on the proper way of creating a script element.
 	********************************************************************/
-	var createScriptNode = null;
 	var node = null;
-	switch ( scriptAnchor.namespaceURI )
-	{
-		//	Support for HTML and SVG <script> elements.
-		//
-		case null:
-		case "http://www.w3.org/1999/xhtml":
-			createScriptNode = function(document, source)
-			{
-				node = document.createElementNS(
-					scriptAnchor.namespaceURI, "script");
-				node.setAttributeNS(null, "src", source);
-				node.setAttributeNS(null, "charset", "ISO-8859-1");
-				node.setAttributeNS(null, "type", "text/javascript");
-				return node;
-			};
-			break;
-			
-		//	Support for SVG <script> elements is slightly different from
-		//	HTML and XHTML: no "src" attribute in the empty namespace but
-		//	instead an xlink:href attribute. Sigh.
-		//
-		case "http://www.w3.org/2000/svg":
-			createScriptNode = function(document, source)
-			{
-				node = document.createElementNS(
-					scriptAnchor.namespaceURI, "script");
-				node.setAttributeNS("http://www.w3.org/1999/xlink", "href",
-					source);
-				return node;
-			};
-			break;
-		//IE does not have namespaceURI but the equal tagUrn with a SVG Plugin
-		case undefined:
-			switch (scriptAnchor.tagUrn){
-				//HTML Nodes have an empty tagUrn
-				case "":
-					createScriptNode = function(document, source)
-					{
-						node = document.createElement("script");
-						node.setAttribute("src", source);
-						node.setAttribute("charset", "ISO-8859-1");
-						node.setAttribute("type", "text/javascript");
-						return node;
-					};
-					break;
-				//this code is untested since unused at this time
-				case "http://www.w3.org/2000/svg":
-					createScriptNode = function(document, source)
-					{
-						node = document.createElementNS(
-							scriptAnchor.namespaceURI, "script");
-						node.setAttributeNS("http://www.w3.org/1999/xlink", "href",
-							source);
-						return node;
-					};
-					break;
-			}
-			break;
-	};
-	
-	/********************************************************************
-   	Now load all script files that have been specified in the second
-   	parameter (that is, the list of file names relative to the base
-   	URL of this hub script).
-   	
-   	When it comes to the question of where to place the new scripting
-   	elements within the DOM: just append them to the same parent
-   	where we found our script element.
-	********************************************************************/
-	for ( idx in hubFilelist )
-	{
-		scriptAnchor.appendChild(
-			createScriptNode(document, base + hubFilelist[idx]));
-	};
-};
+	for ( idx in hubFilelist ){
+		if (document.createElementNS !== undefined){
+			node = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
+			node.setAttributeNS(null, "src", base+hubFilelist[idx]);
+			node.setAttributeNS(null, "charset", "ISO-8859-1");
+			node.setAttributeNS(null, "type", "text/javascript");
+		}else if (document.createElement !== undefined){
+			node = document.createElement("script");
+			node.setAttribute("src", base+hubFilelist[idx]);
+			node.setAttribute("charset", "ISO-8859-1");
+			node.setAttribute("type", "text/javascript");
+		}else{
+			window.alert("Fatal error: script hub loader unable to create new script node in document");
+			throw new Error("hub loader script node creation error");
+			return false;
+		}
+		if (scriptAnchor.appendChild !== undefined){
+			scriptAnchor.appendChild(node);
+		}else{
+			window.alert("Fatal error: script hub loader unable to append new script node into document");
+			throw new Error("hub loader script node append error");
+			return false;
+		}
+	}
+}
 
 /***********************************************************************
 	Finally let the whole strange magic commence.
@@ -257,7 +184,10 @@ SCRIPT_HUB(
 		"./hmi-class-HMI.js"
 	]
 );
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+
+var HMIdate;	//this is the first file, so the var declaration is allowed
+
+var filedate = "$Date: 2010-02-03 11:47:01 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
