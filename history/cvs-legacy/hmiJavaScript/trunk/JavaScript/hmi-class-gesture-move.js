@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2009
+*	Copyright (C) 2010
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.37 $
-*	$Date: 2009-11-10 13:50:44 $
+*	$Revision: 1.38 $
+*	$Date: 2010-02-04 16:21:36 $
 *
 *	History:
 *	--------
@@ -327,7 +327,7 @@ Dragger.prototype = {
 		
 		this._totalDX += dx;
 		this._totalDY += dy;
-
+		
 		this._moveRelative(dx, dy);
 		this._lastX = parseInt((evt.pageX || evt.clientX), 10);
 		this._lastY = parseInt((evt.pageY || evt.clientY), 10);
@@ -341,7 +341,6 @@ Dragger.prototype = {
 	*********************************/
 	startDrag: function (evt) {
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - Start");
-		
 		if (HMI.RefreshTimeoutID !== null){
 			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
@@ -351,6 +350,7 @@ Dragger.prototype = {
 		
 		//initialize mouse starting position
 		//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
+		
 		this._lastX = parseInt((evt.pageX || evt.clientX), 10);
 		this._lastY = parseInt((evt.pageY || evt.clientY), 10);
 		
@@ -464,7 +464,9 @@ Dragger.prototype = {
 			if (HMI.instanceOf(this._node, 'hmi-component-gesture-click') === true)
 			{
 				HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement => click");
-				Click.prototype.onClick(evt);
+				//call internal function to use correct component (evt.target is likely to be wrong in this mouseup-event)
+				//
+				Click.prototype._sendCommand(evt, this._node);
 			}else{
 				HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement and no clickhandler on this element");
 			}
@@ -637,7 +639,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2009-11-10 13:50:44 $";
+var filedate = "$Date: 2010-02-04 16:21:36 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
