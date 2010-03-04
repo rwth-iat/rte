@@ -53,7 +53,7 @@
 *	This file is an XML conform version of the HMI-Startcenter with dynamic 
 *	conversion from XML to XHTML. With it IE is capable to render SVG in standard compliance mode.
 *	Sadly IE6 till IE8 is horribly slow at the first start, so no further development was done.
-*	Attention: Mozilla parses the JavaScript twice:
+*	Attention: Mozilla parses the JavaScript twice (no problem since hmi-class-HMI.js v1.134)
 *	https://bugzilla.mozilla.org/show_bug.cgi?id=380828
 *
 *	Editors:
@@ -62,8 +62,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.16 $
-*	$Date: 2010-01-18 14:46:06 $
+*	$Revision: 1.17 $
+*	$Date: 2010-03-04 15:37:08 $
 *
 *	History:
 *	26-March-2008			Je
@@ -80,6 +80,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
 		<meta http-equiv="Content-Style-Type" content="text/css"/>
 		<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+		<meta http-equiv="Content-Style-Type" content="text/css"/>
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
 		<object id="AdobeSVG" classid="clsid:78156a80-c6a1-4bbf-8e6a-3cd390eeb4e2"></object>
 		<?import namespace="svg" implementation="#AdobeSVG"?>
@@ -89,6 +90,23 @@
 			@media print {
 				.doNotPrintThis{ display:none; }
 			}
+			body{
+				margin:0;
+			}
+			#idPlayground{
+				padding-left:5px;
+				padding-top:0px;
+			}
+			#idHeaderRow{
+				cursor:pointer;
+				text-align:center;
+				margin:0;
+				padding:0;
+				background-color:#C6C6C6;
+			}
+			#idHeaderRow:hover{
+				background-color:#3060C0;
+			}
 		</style>
 	</head>
 	<!-- 
@@ -97,30 +115,34 @@
 		*********************************/
 	-->
 	<body>
-		<table width="100%" class="doNotPrintThis">
-			<tr id="idHeaderRow" style="cursor:pointer;">
-				<td style="text-align:center;">
-					<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="22" version="1.1">
-						<svg:polyline id="arrowup1"   points="0,20 8,10 16,20" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
-						<svg:polyline id="arrowup2"   points="0,10 8,00 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
-						<svg:polyline id="arrowdown1" points="0,00 8,10 16,00" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
-						<svg:polyline id="arrowdown2" points="0,10 8,20 16,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
-					</svg:svg>
-				</td>
-				<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
-					HMI - Startcenter
-				</td>
-				<td style="text-align:center;">
-					<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik"/>
-				</td>
-				<td style="text-align:center;font-size:8pt;">
-				&#169; Lehrstuhl für Prozessleittechnik
-				<div id="idDateOutput"></div>
-				</td>
-			</tr>
-		</table>
-		<hr style="background-color:blue;height:2px;" class="doNotPrintThis"/>
+		<div id="idHeaderRow">
+			<div style="margin-left:10px;float:left;">
+				<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="11">
+					<svg:polyline id="arrowup1"   points="0,10 4,05 8,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
+					<svg:polyline id="arrowup2"   points="0,05 4,00 8,05" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
+					<svg:polyline id="arrowdown1" points="0,00 4,05 8,00" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
+					<svg:polyline id="arrowdown2" points="0,05 4,10 8,05" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
+				</svg:svg>
+			</div>
+			<small style="padding:0;margin:0;">click to toggle controls or press esc key</small>
+			<div style="clear:both;"></div>
+		</div>
 		<div id="idHideableHeader" class="doNotPrintThis">
+			<table width="100%" class="doNotPrintThis">
+				<tr>
+					<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
+						HMI - Startcenter
+					</td>
+					<td style="text-align:center;">
+						<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik"/>
+					</td>
+					<td style="text-align:center;font-size:8pt;">
+					&#169; Lehrstuhl für Prozessleittechnik
+					<div id="idDateOutput"></div>
+					</td>
+				</tr>
+			</table>
+			<hr style="background-color:blue;height:1px;margin-top:0;" class="doNotPrintThis"/>
 			<table>
 				<tr>
 					<td style="text-align:right;" title="As seen from KSGateway">FB-Host:</td>
@@ -163,9 +185,9 @@
 					</td>
 				</tr>
 			</table>
-			<hr style="background-color:blue;height:2px;"/>
+			<hr style="background-color:blue;height:1px;"/>
 		</div>
-		<p id="idPlayground">
-		</p>
+		<div id="idPlayground">
+		</div>
 	</body>
 </html>
