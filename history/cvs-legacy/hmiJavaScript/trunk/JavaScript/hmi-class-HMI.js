@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.135 $
-*	$Date: 2010-01-19 16:35:15 $
+*	$Revision: 1.136 $
+*	$Date: 2010-03-04 15:07:26 $
 *
 *	History:
 *	--------
@@ -94,6 +94,7 @@ function HMI(debug, error, warning, info, trace) {
 	this.ButShowServers = null;
 	this.InputRefreshTime = null;
 	this.InputHost = null;
+	this.HideableHeader = null;
 	this.PossServers = null;
 	this.PossSheets = null;
 	this.Playground = null;
@@ -115,7 +116,7 @@ function HMI(debug, error, warning, info, trace) {
 	this.RefreshTime = null;
 	this.ServerProperty = {SheetHasStyleDescription:null};
 	
-	this.showHeader = true;
+	this.HeaderIsVisible = true;
 	
 	//the modern firebugconsole wants to be activated
 	if (window.loadFirebugConsole){
@@ -218,13 +219,13 @@ HMI.prototype = {
 				ErrorDetail += "HTML Input with the ID: idBookmark not found.\n";
 			}
 			//Object of the hideable header
-			if (!($('idHideableHeader'))){
+			if (!(this.HideableHeader = $('idHideableHeader'))){
 				ErrorDetail += "HTML Div with the ID: idHideableHeader not found.\n";
 			}
 			
 			//init the plain HTML website with events
 			if ($('idHeaderRow')){
-				addEventSimple($('idHeaderRow'),'click',function(){HMI.hideHeader();});
+				addEventSimple($('idHeaderRow'),'click',function(){HMI.hideHeader(null);});
 			}else{
 				ErrorDetail += "HTML object with the ID: idHeaderRow not found.\n";
 			}
@@ -245,20 +246,30 @@ HMI.prototype = {
 		}
 		if ($('idStopRefresh')){
 			addEventSimple($('idStopRefresh'),'click',function(){
-				window.clearInterval(HMI.RefreshTimeoutID);
-				HMI.RefreshTimeoutID = null;
+					window.clearInterval(HMI.RefreshTimeoutID);
+					HMI.RefreshTimeoutID = null;
 				}
 			);
 		}
 		
 		if ($('idStartRefresh')){
-			addEventSimple($('idStartRefresh'),'click',function(){HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value);});
+			addEventSimple($('idStartRefresh'),'click',function(){
+				HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value);});
 		}
 		
 		//Object of InfoOutput, optional, not necessary
 		if ((this.InfoOutput = $('idInfoOutput'))){
 			deleteChilds(HMI.InfoOutput);
 		}
+		
+		// prepare smooth hiding
+		HMI.HideableHeader.style.overflow = "hidden";
+		
+		addEventSimple(document, 'keyup',function(evt){
+				if (evt.keyCode === 27){	// escape key
+					HMI.hideHeader(false);
+				}
+			});
 		
 		//detect if the file is called from http or https, but not from filesystem
 		if (-1 == window.location.protocol.indexOf('http')){
@@ -516,11 +527,16 @@ HMI.prototype = {
 	/*********************************
 		Functions - hideHeader
 	*********************************/
-	hideHeader: function(){
-		if (HMI.showHeader){
+	hideHeader: function(hide){
+		if (hide === true || (hide === null && HMI.HeaderIsVisible === true)){
 			//hide menu
-			HMI.showHeader = false;
-			document.getElementById("idHideableHeader").style.display = "none";
+			
+			//	iterate hiding function
+			//
+			HMI.smoothHeaderTimeID = window.setInterval(this.smoothHeaderHide, 30);
+			
+			//switch arrow orientation
+			//
 			if (document.getElementById("arrowdown1") !== null){
 				document.getElementById("arrowdown1").style.visibility="visible";
 				document.getElementById("arrowdown2").style.visibility="visible";
@@ -529,14 +545,36 @@ HMI.prototype = {
 			}
 		} else {
 			//show menu
-			HMI.showHeader = true;
-			document.getElementById("idHideableHeader").style.display = "block";
+			HMI.HeaderIsVisible = true;
+			
+			//repaint header
+			HMI.HideableHeader.style.height = "";
+			
+			//switch arrow orientation
+			//
 			if (document.getElementById("arrowdown1") !== null){
 				document.getElementById("arrowdown1").style.visibility="hidden";
 				document.getElementById("arrowdown2").style.visibility="hidden";
 				document.getElementById("arrowup1").style.visibility="visible";
 				document.getElementById("arrowup2").style.visibility="visible";
 			}
+		}
+	},
+	/*********************************
+		Functions - smoothHeaderHide
+	*********************************/
+	smoothHeaderHide: function(){
+		var HeaderActualheight = parseInt(HMI.HideableHeader.offsetHeight, 10)
+		if (HeaderActualheight <= 20){
+			// last iteration, complete hiding and disable iteration
+			//
+			HMI.HideableHeader.style.height = '1px';	// ie < v8 renders 0px like fully visible
+			window.clearInterval(HMI.smoothHeaderTimeID);
+			//HMI.smoothHeaderTimeID = null;
+			HMI.HeaderIsVisible = false;
+		}else{
+			HeaderActualheight -= 20;
+			HMI.HideableHeader.style.height = HeaderActualheight + 'px';
 		}
 	},
 	/*********************************
@@ -707,12 +745,12 @@ HMI.prototype = {
 		};
 		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
 		if (HMI.autoKeepHeader === false && !HMI.ErrorOutput.firstChild){
-			//no info output available
 			if (!HMI.InfoOutput){
-				HMI.hideHeader();
-			//info output with no content
+				//no info output available => hide
+				HMI.hideHeader(true);
 			}else if (HMI.InfoOutput && !HMI.InfoOutput.firstChild){
-				HMI.hideHeader();
+				//info output with no content => hide
+				HMI.hideHeader(true);
 			}
 		}
 		
@@ -783,9 +821,7 @@ HMI.prototype = {
 		if (HMI.ErrorOutput.firstChild){
 			deleteChilds(HMI.ErrorOutput);
 			HMI.hmi_log_info_onwebsite("Screenrefresh reactivated.");
-			if (HMI.autoKeepHeader === false && HMI.showHeader === true){
-				HMI.hideHeader();
-			}
+			HMI.hideHeader(false);
 		}
 		if (HMI.RefreshTimeoutID === null){
 			//reactivate the Refresh
@@ -1442,10 +1478,8 @@ HMI.prototype = {
 		var ErrorTextNode = document.createTextNode(text);
 		deleteChilds(HMI.ErrorOutput);
 		HMI.ErrorOutput.appendChild(ErrorTextNode);
-		//if header in not visible: show it
-		if (HMI.showHeader === false){
-			HMI.hideHeader();
-		}
+		//show header
+		HMI.hideHeader(false);
 	},
 	
 	/*********************************
@@ -1456,10 +1490,8 @@ HMI.prototype = {
 			var InfoTextNode = document.createTextNode(text);
 			deleteChilds(HMI.InfoOutput);
 			HMI.InfoOutput.appendChild(InfoTextNode);
-			//if header in not visible: show it
-			if (HMI.showHeader === false){
-				HMI.hideHeader();
-			}
+			//show header
+			HMI.hideHeader(false);
 		}
 	}
 };
@@ -1495,7 +1527,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-01-19 16:35:15 $";
+var filedate = "$Date: 2010-03-04 15:07:26 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
