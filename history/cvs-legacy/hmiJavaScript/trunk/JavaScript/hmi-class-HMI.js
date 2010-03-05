@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.136 $
-*	$Date: 2010-03-04 15:07:26 $
+*	$Revision: 1.137 $
+*	$Date: 2010-03-05 13:37:36 $
 *
 *	History:
 *	--------
@@ -1411,7 +1411,7 @@ HMI.prototype = {
 	*********************************/
 	hmi_log_debug: function (text) {
 		if (window.console && this.debug === true){
-			window.console.debug("HMI_DEBUG: %s", text);
+			window.console.debug("HMI_DEBUG: "+text);
 		}else if(window.opera){
 			if (opera.postError !== undefined && this.debug === true){
 				opera.postError("HMI_DEBUG: "+ text);
@@ -1424,7 +1424,7 @@ HMI.prototype = {
 	*********************************/
 	hmi_log_error: function (text) {
 		if (window.console && this.error === true){
-			window.console.error("HMI_ERROR: %s", text);
+			window.console.error("HMI_ERROR: "+text);
 		}else if(window.opera){
 			if (opera.postError !== undefined && this.error === true){
 				opera.postError("HMI_ERROR: "+ text);
@@ -1437,7 +1437,7 @@ HMI.prototype = {
 	*********************************/
 	hmi_log_warning: function (text) {
 		if (window.console && this.warning === true){
-			window.console.warn("HMI_WARNING: %s", text);
+			window.console.warn("HMI_WARNING: "+text);
 		}else if(window.opera){
 			if (opera.postError !== undefined && this.warning === true){
 				opera.postError("HMI_WARNING: "+ text);
@@ -1450,7 +1450,7 @@ HMI.prototype = {
 	*********************************/
 	hmi_log_info: function (text) {
 		if (window.console && this.info === true){
-			window.console.info("HMI_INFO: %s", text);
+			window.console.info("HMI_INFO: "+text);
 		}else if(window.opera){
 			if (opera.postError !== undefined && this.info === true){
 				opera.postError("HMI_INFO: "+ text);
@@ -1463,7 +1463,7 @@ HMI.prototype = {
 	*********************************/
 	hmi_log_trace: function (text) {
 		if (window.console && this.trace === true ){
-			window.console.debug("HMI_TRACE: %s", text);
+			window.console.debug("HMI_TRACE: "+text);
 		}else if(window.opera){
 			if (opera.postError !== undefined && this.trace === true){
 				opera.postError("HMI_TRACE: "+ text);
@@ -1527,7 +1527,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-03-04 15:07:26 $";
+var filedate = "$Date: 2010-03-05 13:37:36 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
