@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.38 $
-*	$Date: 2010-02-04 16:21:36 $
+*	$Revision: 1.39 $
+*	$Date: 2010-03-05 14:44:06 $
 *
 *	History:
 *	--------
@@ -184,6 +184,9 @@ Dragger.prototype = {
 		if("unknown" == typeof element.addEventListener || element.addEventListener){
 			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
 			element.addEventListener("mousedown", this.onMouseDownThunk, capture);
+			
+			//	todo:touch device developing:
+			//element.addEventListener("touchstart", this.onMouseDownThunk, capture);
 		}else if (element.attachEvent){
 			//Native IE
 			element.attachEvent("onmousedown", this.onMouseDownThunk);
@@ -208,11 +211,18 @@ Dragger.prototype = {
 	*********************************/
 	onMouseDownThunk: null,
 	onMouseDown: function (evt) {
+		//	todo:touch device developing:
+		/*
+		if (evt.type == "touchstart"){
+			HMI.hmi_log_trace("Touch event detected, legacy events are disabled.");
+			this.unregisterOnMouseDown(this._node, false, this);
+		}
+		*/
 		//	DOUBLECLICK
 		//
-		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-doubleclick') === true
-			&&	evt.detail === 2
-			&&	evt.button === 0)
+		if (	evt.detail === 2
+			&&	evt.button === 0
+			&&	HMI.instanceOf(this._node, 'hmi-component-gesture-doubleclick') === true)
 		{
 			DoubleClick.prototype.onDoubleClick(evt);
 			return;
@@ -220,8 +230,8 @@ Dragger.prototype = {
 		
 		//	RIGHTCLICK
 		//
-		if (	HMI.instanceOf(this._node, 'hmi-component-gesture-rightclick') === true
-			&&	evt.button == 2)
+		if (	evt.button == 2
+			&&	HMI.instanceOf(this._node, 'hmi-component-gesture-rightclick') === true)
 		{
 			RightClick.prototype.onRightClick(evt);
 			return;
@@ -231,7 +241,7 @@ Dragger.prototype = {
 		
 		//	MOVE
 		//
-		if (evt.button === 0)
+		if (evt.button === 0 || evt.button === undefined)	//	touch devices does not have a button
 		{
 			this.startDrag(evt);
 			//kill handling of this event for gesture at a parentNode
@@ -240,6 +250,10 @@ Dragger.prototype = {
 			evt.cancelBubble = true;
 			if (evt.stopPropagation) evt.stopPropagation();
 		}
+		
+		//	todo:touch device developing:
+		// no scroll on iPhone
+		//return false;
 	},
 	
 	/*********************************
@@ -250,6 +264,8 @@ Dragger.prototype = {
 		if("unknown" == typeof element.addEventListener || element.addEventListener){
 			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
 			element.addEventListener("mouseup", this.onMouseUpThunk, capture);
+			//	todo:touch device developing:
+			//element.addEventListener("touchend", this.onMouseUpThunk, capture);
 		}else if (element.attachEvent){
 			//Native IE
 			element.attachEvent("onmouseup", this.onMouseUpThunk);
@@ -263,6 +279,8 @@ Dragger.prototype = {
 		if("unknown" == typeof element.removeEventListener || element.removeEventListener){
 			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
 			element.removeEventListener("mouseup", this.onMouseUpThunk, capture);
+			//	todo:touch device developing:
+			//element.removeEventListener("touchend", this.onMouseUpThunk, capture);
 		}else if (element.attachEvent){
 			//Native IE
 			element.detachEvent("onmouseup", this.onMouseUpThunk);
@@ -286,6 +304,10 @@ Dragger.prototype = {
 		//stopPropagation for W3C Bubbling
 		evt.cancelBubble = true;
 		if (evt.stopPropagation) evt.stopPropagation();
+		
+		//	todo:touch device developing:
+		// no scroll on iPhone
+		//return false;
 	},
 	
 	/*********************************
@@ -296,6 +318,8 @@ Dragger.prototype = {
 		if("unknown" == typeof element.addEventListener || element.addEventListener){
 			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
 			element.addEventListener("mousemove", this.onMouseMoveThunk, capture);
+			//	todo:touch device developing:
+			//element.addEventListener("touchmove", this.onMouseMoveThunk, capture);
 		}else if (element.attachEvent){
 			//Native IE
 			element.attachEvent("onmousemove", this.onMouseMoveThunk);
@@ -309,6 +333,8 @@ Dragger.prototype = {
 		if("unknown" == typeof element.removeEventListener || element.removeEventListener){
 			//Adobe Plugin, Renesis, Firefox, Safari, Opera...
 			element.removeEventListener("mousemove", this.onMouseMoveThunk, capture);
+			//	todo:touch device developing:
+			//element.removeEventListener("touchmove", this.onMouseMoveThunk, capture);
 		}else if (element.detachEvent){
 			//Native IE
 			element.detachEvent("onmousemove", this.onMouseMoveThunk);
@@ -321,16 +347,34 @@ Dragger.prototype = {
 	onMouseMoveThunk: null,
 	onMouseMove: function (evt) {
 		HMI.hmi_log_trace("Dragger.prototype.onMouseMove active");
-		//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
-		var dx = ((evt.pageX || evt.clientX) - this._lastX);
-		var dy = ((evt.pageY || evt.clientY) - this._lastY);
+		
+		var newX;
+		var newY;
+		//	todo:touch device developing:
+		/*
+		if (evt.touches && evt.touches.length) { 	// iPhone
+			newX = evt.touches[0].clientX;
+			newY = evt.touches[0].clientY;
+		}else 
+		*/
+		if(evt.pageX !== undefined){
+			newX = evt.pageX;
+			newY = evt.pageY;
+		}else{
+			//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
+			newX = evt.clientX;
+			newY = evt.clientY;
+		}
+		
+		var dx = (newX - this._lastX);
+		var dy = (newY - this._lastY);
 		
 		this._totalDX += dx;
 		this._totalDY += dy;
 		
 		this._moveRelative(dx, dy);
-		this._lastX = parseInt((evt.pageX || evt.clientX), 10);
-		this._lastY = parseInt((evt.pageY || evt.clientY), 10);
+		this._lastX = parseInt(newX, 10);
+		this._lastY = parseInt(newY, 10);
 		
 		delete dx;
 		delete dy;
@@ -351,8 +395,26 @@ Dragger.prototype = {
 		//initialize mouse starting position
 		//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
 		
-		this._lastX = parseInt((evt.pageX || evt.clientX), 10);
-		this._lastY = parseInt((evt.pageY || evt.clientY), 10);
+		var newX;
+		var newY;
+		//	todo:touch device developing:
+		/*
+		if (evt.touches && evt.touches.length) { 	// iPhone
+			newX = evt.touches[0].clientX;
+			newY = evt.touches[0].clientY;
+		}else 
+		*/
+		if(evt.pageX !== undefined){
+			newX = evt.pageX;
+			newY = evt.pageY;
+		}else{
+			//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
+			newX = evt.clientX;
+			newY = evt.clientY;
+		}
+		
+		this._lastX = parseInt(newX, 10);
+		this._lastY = parseInt(newY, 10);
 		
 		this._totalDX = 0;
 		this._totalDY = 0;
@@ -639,7 +701,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2010-02-04 16:21:36 $";
+var filedate = "$Date: 2010-03-05 14:44:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
