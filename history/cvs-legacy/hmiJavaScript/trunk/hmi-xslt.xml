@@ -62,8 +62,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.18 $
-*	$Date: 2010-03-10 10:17:05 $
+*	$Revision: 1.19 $
+*	$Date: 2010-03-10 16:25:16 $
 *
 *	History:
 *	26-March-2008			Je
@@ -94,8 +94,7 @@
 				margin:0;
 			}
 			#idPlayground{
-				padding-left:5px;
-				padding-top:0px;
+				margin:3px;
 			}
 			#idHeaderRow{
 				cursor:pointer;
