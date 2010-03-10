@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.76 $
-*	$Date: 2009-11-23 12:19:50 $
+*	$Revision: 1.77 $
+*	$Date: 2010-03-10 10:17:05 $
 *
 *	History:
 *	--------
@@ -466,10 +466,11 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var PointOfSpace = ManagerResponse.indexOf(' ');
 		if (PointOfSpace == -1){
-			this.HMIMANAGER_PATH = ManagerResponse.replace(/{/g, "").replace(/}/g, "");
+			//spaces in objectname are encoded as %20 within OV
+			this.HMIMANAGER_PATH = encodeURI(ManagerResponse.replace(/{/g, "").replace(/}/g, ""));
 		}else{
 			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+ManagerResponse.replace(/{/g, "").replace(/}/g, "")+"). Using first Manager.");
-			this.HMIMANAGER_PATH = ManagerResponse.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, "");
+			this.HMIMANAGER_PATH = encodeURI(ManagerResponse.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, ""));
 		}
 		delete ManagerResponse;
 		delete PointOfSpace;
@@ -556,7 +557,8 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
 			var OptionNameLength = 0;
 			for (i = 0; i < Sheet.length; i++){
-				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(Sheet[i], Sheet[i]);
+				//spaces in objectname are encoded as %20 within OV
+				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(Sheet[i]), Sheet[i]);
 				if (OptionNameLength < Sheet[i].length){
 					OptionNameLength = Sheet[i].length;
 				}
@@ -738,7 +740,8 @@ HMIJavaScriptKSClient.prototype = {
 	checkSheetProperty: function(ComponentPath) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Start");
 		
-		var StyleResponse = this.getVar(null, '{' + ComponentPath + '.StyleDescription' + '}', null);
+		//spaces in objectname are encoded as %20 within OV
+		var StyleResponse = this.getVar(null, '{' + encodeURI(ComponentPath) + '.StyleDescription' + '}', null);
 		
 		if (/KS_ERR_BADPATH/.exec(StyleResponse)){
 			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
@@ -766,7 +769,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2009-11-23 12:19:50 $";
+var filedate = "$Date: 2010-03-10 10:17:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

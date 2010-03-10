@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.137 $
-*	$Date: 2010-03-05 13:37:36 $
+*	$Revision: 1.138 $
+*	$Date: 2010-03-10 10:17:05 $
 *
 *	History:
 *	--------
@@ -465,7 +465,8 @@ HMI.prototype = {
 					if (HMI.KSClient.HMIMANAGER_PATH === null){
 						HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
 					}else{
-						HMI.showSheet(HMI_Parameter_Liste.Sheet);
+						//spaces in objectname are encoded as %20 within OV
+						HMI.showSheet(encodeURI(HMI_Parameter_Liste.Sheet));
 					}
 				}
 			}else if (	HMI_Parameter_Liste.Server
@@ -743,7 +744,8 @@ HMI.prototype = {
 			
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
-		document.title = "//"+this.KSClient.KSServer+Sheet+" - ACPLT/HMI";
+		//spaces in objectname are encoded as %20 within OV
+		document.title = "//"+this.KSClient.KSServer+decodeURI(Sheet)+" - ACPLT/HMI";
 		if (HMI.autoKeepHeader === false && !HMI.ErrorOutput.firstChild){
 			if (!HMI.InfoOutput){
 				//no info output available => hide
@@ -913,9 +915,11 @@ HMI.prototype = {
 		
 		//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
 		if (HMI.ServerProperty.SheetHasStyleDescription){
-			SVGDescription = '{' + ComponentPath + '.GraphicDescription' + '%20' + ComponentPath + '.StyleDescription' + '}';
+			//spaces in objectname are encoded as %20 within OV
+			SVGDescription = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '%20' + encodeURI(ComponentPath) + '.StyleDescription' + '}';
 		}else{
-			SVGDescription = '{' + ComponentPath + '.GraphicDescription' + '}';
+			//spaces in objectname are encoded as %20 within OV
+			SVGDescription = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '}';
 		}
 		
 		if (Insert === true){
@@ -1527,7 +1531,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-03-05 13:37:36 $";
+var filedate = "$Date: 2010-03-10 10:17:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
