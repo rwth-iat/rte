@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.138 $
-*	$Date: 2010-03-10 10:17:05 $
+*	$Revision: 1.139 $
+*	$Date: 2010-03-18 17:21:01 $
 *
 *	History:
 *	--------
@@ -1414,11 +1414,13 @@ HMI.prototype = {
 		hmi_log_debug
 	*********************************/
 	hmi_log_debug: function (text) {
-		if (window.console && this.debug === true){
-			window.console.debug("HMI_DEBUG: "+text);
-		}else if(window.opera){
-			if (opera.postError !== undefined && this.debug === true){
-				opera.postError("HMI_DEBUG: "+ text);
+		if (this.debug === true){
+			if(window.console && window.console.debug){
+				window.console.debug("HMI_DEBUG: "+text);
+			}else if(window.opera && window.opera.postError){
+				window.opera.postError("HMI_DEBUG: "+ text);
+			}else if(window.console && window.console.info){
+				window.console.info("HMI_DEBUG: "+text);
 			}
 		}
 	},
@@ -1427,11 +1429,11 @@ HMI.prototype = {
 		hmi_log_error
 	*********************************/
 	hmi_log_error: function (text) {
-		if (window.console && this.error === true){
-			window.console.error("HMI_ERROR: "+text);
-		}else if(window.opera){
-			if (opera.postError !== undefined && this.error === true){
-				opera.postError("HMI_ERROR: "+ text);
+		if (this.error === true){
+			if(window.console && window.console.error){
+				window.console.error("HMI_ERROR: "+text);
+			}else if(window.opera && window.opera.postError){
+				window.opera.postError("HMI_ERROR: "+ text);
 			}
 		}
 	},
@@ -1440,10 +1442,10 @@ HMI.prototype = {
 		hmi_log_warning
 	*********************************/
 	hmi_log_warning: function (text) {
-		if (window.console && this.warning === true){
-			window.console.warn("HMI_WARNING: "+text);
-		}else if(window.opera){
-			if (opera.postError !== undefined && this.warning === true){
+		if (this.warning === true){
+			if(window.console && window.console.warn){
+				window.console.warn("HMI_WARNING: "+text);
+			}else if(window.opera && window.opera.postError){
 				opera.postError("HMI_WARNING: "+ text);
 			}
 		}
@@ -1453,10 +1455,10 @@ HMI.prototype = {
 		hmi_log_info
 	*********************************/
 	hmi_log_info: function (text) {
-		if (window.console && this.info === true){
-			window.console.info("HMI_INFO: "+text);
-		}else if(window.opera){
-			if (opera.postError !== undefined && this.info === true){
+		if (this.info === true){
+			if(window.console && window.console.info){
+				window.console.info("HMI_INFO: "+text);
+			}else if(window.opera && window.opera.postError){
 				opera.postError("HMI_INFO: "+ text);
 			}
 		}
@@ -1466,11 +1468,13 @@ HMI.prototype = {
 		hmi_log_trace
 	*********************************/
 	hmi_log_trace: function (text) {
-		if (window.console && this.trace === true ){
-			window.console.debug("HMI_TRACE: "+text);
-		}else if(window.opera){
-			if (opera.postError !== undefined && this.trace === true){
+		if (this.trace === true){
+			if(window.console && window.console.debug){
+				window.console.debug("HMI_TRACE: "+text);
+			}else if(window.opera && window.opera.postError){
 				opera.postError("HMI_TRACE: "+ text);
+			}else if(window.console && window.console.info){
+				window.console.info("HMI_TRACE: "+text);
 			}
 		}
 	},
@@ -1531,7 +1535,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-03-10 10:17:05 $";
+var filedate = "$Date: 2010-03-18 17:21:01 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
