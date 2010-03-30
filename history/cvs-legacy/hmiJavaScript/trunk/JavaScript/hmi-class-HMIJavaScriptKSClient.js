@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.77 $
-*	$Date: 2010-03-10 10:17:05 $
+*	$Revision: 1.78 $
+*	$Date: 2010-03-30 08:29:18 $
 *
 *	History:
 *	--------
@@ -469,7 +469,7 @@ HMIJavaScriptKSClient.prototype = {
 			//spaces in objectname are encoded as %20 within OV
 			this.HMIMANAGER_PATH = encodeURI(ManagerResponse.replace(/{/g, "").replace(/}/g, ""));
 		}else{
-			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+ManagerResponse.replace(/{/g, "").replace(/}/g, "")+"). Using first Manager.");
+			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+ManagerResponse.replace(/{/g, "").replace(/}/g, "")+"). Using first Manager. It is perfectly safe to delete all but one instances.");
 			this.HMIMANAGER_PATH = encodeURI(ManagerResponse.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, ""));
 		}
 		delete ManagerResponse;
@@ -769,7 +769,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-03-10 10:17:05 $";
+var filedate = "$Date: 2010-03-30 08:29:18 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
