@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.17 $
-*	$Date: 2010-02-03 11:47:01 $
+*	$Revision: 1.18 $
+*	$Date: 2010-04-02 09:28:23 $
 *
 *	History:
 *	01-March-2005			HA
@@ -137,9 +137,9 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	for ( idx in hubFilelist ){
 		if (document.createElementNS !== undefined){
 			node = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
-			node.setAttributeNS(null, "src", base+hubFilelist[idx]);
-			node.setAttributeNS(null, "charset", "ISO-8859-1");
-			node.setAttributeNS(null, "type", "text/javascript");
+			node.setAttributeNS("http://www.w3.org/1999/xhtml", "src", base+hubFilelist[idx]);
+			node.setAttributeNS("http://www.w3.org/1999/xhtml", "charset", "ISO-8859-1");
+			node.setAttributeNS("http://www.w3.org/1999/xhtml", "type", "text/javascript");
 		}else if (document.createElement !== undefined){
 			node = document.createElement("script");
 			node.setAttribute("src", base+hubFilelist[idx]);
@@ -187,7 +187,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2010-02-03 11:47:01 $";
+var filedate = "$Date: 2010-04-02 09:28:23 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
