@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.12 $
-*	$Date: 2009-03-31 11:48:09 $
+*	$Revision: 1.13 $
+*	$Date: 2010-04-06 11:20:00 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
@@ -173,21 +173,17 @@ var BrowserDetect = {
 
 };
 	BrowserDetect.init();
-	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
+	if ("Explorer" == BrowserDetect.browser && 8 <= BrowserDetect.version ) {
+		//IE6, 7 and 8 needs a plugin (Adobe or Renesis)
 		var results = detectSVG();
 		if(results.support){
 			window.location.href = "hmi-explorer.html"+window.location.search;
 		}else{
 			getSVGViewer();
 		}
-	}else if ("Explorer" == BrowserDetect.browser && 8 < BrowserDetect.version ) {
-		//IE9 could use the gecko.xhtml file, this is untested, because ie9 is not in sight now
-		var results = detectSVG();
-		if(results.support){
-			window.location.href = "hmi-explorer.html"+window.location.search;
-		}else{
-			getSVGViewer();
-		}
+	}else if ("Explorer" == BrowserDetect.browser && 8 > BrowserDetect.version ) {
+		//IE9 can use the gecko.xhtml file
+		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Mozilla" == BrowserDetect.browser) {
 		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Firefox" == BrowserDetect.browser) {
@@ -234,6 +230,11 @@ var BrowserDetect = {
 			<p>Klicken Sie in der obersten Men&uuml;leiste auf <b>Datei</b> / <b>Einstellungen</b>. Unter <b>Multimedia</b> setzen Sie ein H&auml;kchen bei <b>JavaScript aktivieren</b> und klicken Sie dann <b>OK</b>.</p>
 		</noscript>
 		<p>Für die HMI Funktionalität ist SVG Unterstützung des Browsers nötig.</p>
+		
+		<p>Wenn die Erkennung des Browsers nicht erfolgreich war, k&ouml;nnen sie hier die passende HMI Seite selber auswählen:</p>
+		<table>
+			<tr><td style="padding-right:30px;"><a href="hmi-gecko.xhtml" id="idW3CLink">W3C Standard Website</a></td><td><a href="hmi-explorer.html" id="idIELink">Internet Explorer 6 - 8 Website</a></td></tr>
+		</table>
 		<ul>
 			<li><a href="http://www.mozilla-europe.org/de/products/firefox/">Firefox</a> hat ab Version 2.0 SVG Support integiert.</li>
 			<li><a href="http://www.microsoft.com/germany/windows/internet-explorer/">Internet Explorer</a> benötigt ein SVG Plugin von 
@@ -244,5 +245,16 @@ var BrowserDetect = {
 			<li><a href="http://www.apple.com/safari/">Safari</a> unterstützt ab Version 3.0 SVG und Javascript</li>
 			<li><a href="http://www.google.com/chrome">Google Chrome</a> unterstützt ab Version 1.0 SVG und Javascript</li>
 		</ul>
+		<script type="text/javascript">
+			//correct link
+			var aNode = document.getElementById("idIELink");
+			if(aNode && aNode.href){
+				aNode.href = aNode.href + window.location.search;
+			}
+			aNode = document.getElementById("idW3CLink");
+			if(aNode && aNode.href){
+				aNode.href = aNode.href + window.location.search;
+			}
+		</script>
 	</body>
 </html>
