@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.19 $
-*	$Date: 2010-04-06 09:33:55 $
+*	$Revision: 1.20 $
+*	$Date: 2010-04-07 08:08:47 $
 *
 *	History:
 *	01-March-2005			HA
@@ -135,21 +135,24 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	********************************************************************/
 	var node = null;
 	for ( idx in hubFilelist ){
-		if (false && document.createElementNS !== undefined){
+		if (document.createElementNS !== undefined){
 			node = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
-/*
-			node.setAttributeNS(null, "src", base+hubFilelist[idx]);
-			node.setAttributeNS(null, "charset", "ISO-8859-1");
-			node.setAttributeNS(null, "type", "text/javascript");
-*/
-			node.setAttributeNS("http://www.w3.org/1999/xhtml", "src", base+hubFilelist[idx]);
-			node.setAttributeNS("http://www.w3.org/1999/xhtml", "type", "text/javascript");
-			node.setAttributeNS("http://www.w3.org/1999/xhtml", "charset", "ISO-8859-1");
+			if (node.type !== undefined){
+				node.type = "text/javascript";
+			}else{
+				node.setAttribute("type", "text/javascript");
+			}
+			if (node.src !== undefined){
+				node.src = base+hubFilelist[idx];
+			}else{
+				node.setAttribute("src", base+hubFilelist[idx]);
+			}
+			node.setAttribute("charset", "ISO-8859-1");
 		}else if (document.createElement !== undefined){
 			node = document.createElement("script");
+			node.setAttribute("type", "text/javascript");
 			node.setAttribute("src", base+hubFilelist[idx]);
 			node.setAttribute("charset", "ISO-8859-1");
-			node.setAttribute("type", "text/javascript");
 		}else{
 			window.alert("Fatal error: script hub loader unable to create new script node in document");
 			throw new Error("hub loader script node creation error");
@@ -192,7 +195,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2010-04-06 09:33:55 $";
+var filedate = "$Date: 2010-04-07 08:08:47 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
