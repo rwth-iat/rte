@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.3 $
-*	$Date: 2009-05-12 11:18:37 $
+*	$Revision: 1.4 $
+*	$Date: 2010-04-07 08:51:06 $
 *
 *	Hlistory:
 *	12-May-2009			Je
@@ -183,6 +183,8 @@ if (-1 == window.location.protocol.indexOf('http')){
 			document.getElementById("idServerHasCharset").firstChild.nodeValue = "false. The Server did not send a charset information.";
 			document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "false";
 		}
+	}else if (ResponseServerString === undefined{
+		document.getElementById("idServerType").firstChild.nodeValue = "JavaScript interpreter on client does not support HTTP-Server detection.";
 	}else{
 		document.getElementById("idServerType").firstChild.nodeValue = "no detectable HTTP-Server: '"+ResponseServerString+"'";
 	}
