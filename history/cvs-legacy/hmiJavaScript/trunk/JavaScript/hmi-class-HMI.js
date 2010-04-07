@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.139 $
-*	$Date: 2010-03-18 17:21:01 $
+*	$Revision: 1.140 $
+*	$Date: 2010-04-07 13:15:19 $
 *
 *	History:
 *	--------
@@ -195,7 +195,7 @@ HMI.prototype = {
 			}else{
 				addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);});
 			}
-			//Element of SVG insertion (p for firefox, embed for IE)
+			//Element of SVG insertion (div for firefox, container for IE < v9)
 			if (!(this.Playground = $('idPlayground'))){
 				ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
 			}else{
@@ -271,41 +271,64 @@ HMI.prototype = {
 				}
 			});
 		
+		//analyse a "deep link" of a sheet
+		var HMI_Parameter_Liste = null;
+		if (window.location.search.length !== 0){
+			//collect parameter given by the deep link
+			HMI_Parameter_Liste = new Array();
+			var wertestring = unescape(window.location.search);
+			wertestring = wertestring.slice(1);
+			var paare = wertestring.split("&");
+			for (var i=0; i < paare.length; i++) {
+				var name = paare[i].substring(0, paare[i].indexOf("="));
+				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
+				HMI_Parameter_Liste[name] = wert;
+			}
+			delete paare;
+			delete wertestring;
+		}
+		
 		//detect if the file is called from http or https, but not from filesystem
 		if (-1 == window.location.protocol.indexOf('http')){
 			this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
 			this.hmi_log_onwebsite("Communication to Server failed. This website has to be transfered via HTTP.");
 			return false;
-		}
-		//Try to detect the Servertype (TCL or PHP capable)
-		//make a request to sniff the HTTP-Serverstring
-		
-		//IE sometimes uses a cached version, without server Header, so prevent caching
-		var DatePreventsCaching = new Date();
-		try{
-			var req = new XMLHttpRequest();
-			req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
-			req.send(null);
-			var ResponseServerString = req.getResponseHeader('server');
-			if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
+		}else if (HMI_Parameter_Liste !== null && HMI_Parameter_Liste.ServerType !== undefined){
+			if (HMI_Parameter_Liste.ServerType == "php"){
+				HMI.HMI_Constants.ServerType = "php";
+			}else if (HMI_Parameter_Liste.ServerType == "tcl"){
 				HMI.HMI_Constants.ServerType = "tcl";
-				this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
-			}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('PHP')){
-				HMI.HMI_Constants.ServerType = "php";
-				this.hmi_log_trace("HMI.prototype.init - detected PHP Gateway");
-			}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('Apache')){
-				HMI.HMI_Constants.ServerType = "php";
-				this.hmi_log_trace("HMI.prototype.init - detected Apache Webserver, so probably a PHP Gateway");
 			}
-		}catch(e){
-			this.hmi_log_error("HMI.prototype.init - Gatewaydetection failed: "+e.message);
-			this.hmi_log_onwebsite("Gatewaydetection failed. ");
-			return false;
+		}else{
+			//Try to detect the Servertype (TCL or PHP capable)
+			//make a request to sniff the HTTP-Serverstring
+			
+			//IE sometimes uses a cached version, without server Header, so prevent caching
+			var DatePreventsCaching = new Date();
+			try{
+				var req = new XMLHttpRequest();
+				req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
+				req.send(null);
+				var ResponseServerString = req.getResponseHeader('server');
+				if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
+					HMI.HMI_Constants.ServerType = "tcl";
+					this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
+				}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('PHP')){
+					HMI.HMI_Constants.ServerType = "php";
+					this.hmi_log_trace("HMI.prototype.init - detected PHP Gateway");
+				}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('Apache')){
+					HMI.HMI_Constants.ServerType = "php";
+					this.hmi_log_trace("HMI.prototype.init - detected Apache Webserver, so probably a PHP Gateway");
+				}
+			}catch(e){
+				this.hmi_log_error("HMI.prototype.init - Gatewaydetection failed: "+e.message);
+				this.hmi_log_onwebsite("Gatewaydetection failed. ");
+				return false;
+			}
+			delete req;
+			delete ResponseServerString;
+			delete DatePreventsCaching;
 		}
-		delete req;
-		delete ResponseServerString;
-		delete DatePreventsCaching;
-		
 		//the guessed servertype is used for communication
 		if ("php" == HMI.HMI_Constants.ServerType){
 			//tks.php is always in the same subdir as the html files
@@ -326,6 +349,7 @@ HMI.prototype = {
 			ErrorNode = document.createElement("a");
 			ErrorNode.setAttribute('href', 'httpservertest.html');
 			ErrorNode.appendChild(document.createTextNode('Servertest available'));
+			
 			HMI.ErrorOutput.appendChild(ErrorNode);
 			
 			delete ErrorNode;
@@ -396,20 +420,7 @@ HMI.prototype = {
 		}
 		
 		//jump to a "deep link" of a sheet
-		if (window.location.search.length !== 0){
-			//collect parameter given by the deep link
-			var HMI_Parameter_Liste = new Array();
-			var wertestring = unescape(window.location.search);
-			wertestring = wertestring.slice(1);
-			var paare = wertestring.split("&");
-			for (var i=0; i < paare.length; i++) {
-				var name = paare[i].substring(0, paare[i].indexOf("="));
-				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
-				HMI_Parameter_Liste[name] = wert;
-			}
-			delete paare;
-			delete wertestring;
-			
+		if (HMI_Parameter_Liste !== null){
 			//correct host in website with user wish
 			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0 && HMI_Parameter_Liste.Host == window.location.hostname){
 				//we faked the host to the hostname in some cases (empty input field)
@@ -852,7 +863,7 @@ HMI.prototype = {
 		getComponent
 	*********************************/
 	getComponent: function (evt, cssclass) {
-		//This event could be called from nativ IE, so evt.target is not available
+		//This event could be called from native IE < 9, so evt.target is not available
 		this.hmi_log_trace("HMI.prototype.getComponent - Start - Target:"+(evt.target ? evt.target.id : evt.srcElement.id));
 		
 		var Component = null;
@@ -1162,7 +1173,7 @@ HMI.prototype = {
 				}
 			}
 			delete ChildNodesLength;
-		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit
+		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit   IE9 does not support this in march 2010
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			ElementLength = Elements.length;
 			for (idx = 0; idx < ElementLength; ++idx){
@@ -1284,7 +1295,7 @@ HMI.prototype = {
 	_setLayerPosition: function (Element) {
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start");
 		
-		//LayerX and LayerY are HMI specific SVG Attributes!
+		//LayerX and LayerY are HMI specific DOM Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 		var LayerX = parseInt(Element.getAttribute("x"), 10);
 		var LayerY = parseInt(Element.getAttribute("y"), 10);
@@ -1535,7 +1546,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-03-18 17:21:01 $";
+var filedate = "$Date: 2010-04-07 13:15:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
