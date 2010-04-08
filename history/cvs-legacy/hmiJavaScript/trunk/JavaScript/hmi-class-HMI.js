@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.140 $
-*	$Date: 2010-04-07 13:15:19 $
+*	$Revision: 1.141 $
+*	$Date: 2010-04-08 10:53:37 $
 *
 *	History:
 *	--------
@@ -236,6 +236,9 @@ HMI.prototype = {
 			}
 		}
 		if(ErrorDetail !== ""){
+			if (document.getElementById("idThrobbler") !== null){
+				document.getElementById("idThrobbler").style.display = "none";
+			}
 			window.alert ("Error initialising HMI Website:\n"+ErrorDetail);
 			return;
 		}
@@ -292,6 +295,9 @@ HMI.prototype = {
 		if (-1 == window.location.protocol.indexOf('http')){
 			this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
 			this.hmi_log_onwebsite("Communication to Server failed. This website has to be transfered via HTTP.");
+			if (document.getElementById("idThrobbler") !== null){
+				document.getElementById("idThrobbler").style.display = "none";
+			}
 			return false;
 		}else if (HMI_Parameter_Liste !== null && HMI_Parameter_Liste.ServerType !== undefined){
 			if (HMI_Parameter_Liste.ServerType == "php"){
@@ -323,6 +329,9 @@ HMI.prototype = {
 			}catch(e){
 				this.hmi_log_error("HMI.prototype.init - Gatewaydetection failed: "+e.message);
 				this.hmi_log_onwebsite("Gatewaydetection failed. ");
+				if (document.getElementById("idThrobbler") !== null){
+					document.getElementById("idThrobbler").style.display = "none";
+				}
 				return false;
 			}
 			delete req;
@@ -343,17 +352,41 @@ HMI.prototype = {
 		}else{
 			HMI.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
 			
-			var ErrorNode = document.createElement('br');
-			HMI.ErrorOutput.appendChild(ErrorNode);
+			var NewURLBasename = null;
+			if (window.location.search === null || window.location.search.length === 0){
+				NewURLBasename = window.location+"?ServerType=";
+			}else if (-1 === window.location.search.search(/ServerType/)){
+				NewURLBasename = window.location+window.location.search+"&ServerType=";
+			}
 			
-			ErrorNode = document.createElement("a");
+			HMI.ErrorOutput.appendChild(document.createElement('br'));
+			
+			var ErrorNode = document.createElement("a");
 			ErrorNode.setAttribute('href', 'httpservertest.html');
-			ErrorNode.appendChild(document.createTextNode('Servertest available'));
+			ErrorNode.appendChild(document.createTextNode('Servertest available.'));
 			
 			HMI.ErrorOutput.appendChild(ErrorNode);
 			
+			if (NewURLBasename !== null){
+				HMI.ErrorOutput.appendChild(document.createElement('br'));
+				
+				ErrorNode = document.createElement("a");
+				ErrorNode.setAttribute('href', NewURLBasename+'tcl');
+				ErrorNode.appendChild(document.createTextNode('Force TCL.'));
+				
+				HMI.ErrorOutput.appendChild(ErrorNode);
+				HMI.ErrorOutput.appendChild(document.createTextNode(' '));
+				
+				ErrorNode = document.createElement("a");
+				ErrorNode.setAttribute('href', NewURLBasename+'php');
+				ErrorNode.appendChild(document.createTextNode('Force PHP. '));
+				
+				HMI.ErrorOutput.appendChild(ErrorNode);
+			}
 			delete ErrorNode;
-//			alert('This website has to be transfered via HTTP. Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
+			if (document.getElementById("idThrobbler") !== null){
+				document.getElementById("idThrobbler").style.display = "none";
+			}
 			return false;
 		}
 		
@@ -420,7 +453,13 @@ HMI.prototype = {
 		}
 		
 		//jump to a "deep link" of a sheet
-		if (HMI_Parameter_Liste !== null){
+		if (	HMI_Parameter_Liste !== null &&
+			 (	HMI_Parameter_Liste.Host !== undefined
+			||	HMI_Parameter_Liste.RefreshTime !== undefined
+			||	HMI_Parameter_Liste.ShowComp !== undefined
+			||	HMI_Parameter_Liste.Server !== undefined
+			||	HMI_Parameter_Liste.Sheet !== undefined)
+			){
 			//correct host in website with user wish
 			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0 && HMI_Parameter_Liste.Host == window.location.hostname){
 				//we faked the host to the hostname in some cases (empty input field)
@@ -756,7 +795,7 @@ HMI.prototype = {
 			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
 		};
 		//spaces in objectname are encoded as %20 within OV
-		document.title = "//"+this.KSClient.KSServer+decodeURI(Sheet)+" - ACPLT/HMI";
+		document.title = "//"+HMI.InputHost.value+decodeURI(Sheet)+" - ACPLT/HMI";
 		if (HMI.autoKeepHeader === false && !HMI.ErrorOutput.firstChild){
 			if (!HMI.InfoOutput){
 				//no info output available => hide
@@ -1546,7 +1585,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-04-07 13:15:19 $";
+var filedate = "$Date: 2010-04-08 10:53:37 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
