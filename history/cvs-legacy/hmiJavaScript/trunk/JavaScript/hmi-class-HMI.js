@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.141 $
-*	$Date: 2010-04-08 10:53:37 $
+*	$Revision: 1.142 $
+*	$Date: 2010-04-08 11:21:31 $
 *
 *	History:
 *	--------
@@ -210,7 +210,12 @@ HMI.prototype = {
 			}
 			//Object of Server-Hostname
 			if ((this.InputHost = $('idHost'))){
-				addEventSimple(HMI.InputHost,'change',function(){HMI.showServers();});
+				//change is wrong here, since a click on the "reload"-button is a change here and a click there => duplicate action
+				addEventSimple(HMI.InputHost, 'keyup',function(evt){
+						if (evt.keyCode === 13){	// return key
+							HMI.showServers();
+						}
+					});
 			}else{
 				ErrorDetail += "HTML Input with the ID: idHost not found.\n";
 			}
@@ -1585,7 +1590,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-04-08 10:53:37 $";
+var filedate = "$Date: 2010-04-08 11:21:31 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
