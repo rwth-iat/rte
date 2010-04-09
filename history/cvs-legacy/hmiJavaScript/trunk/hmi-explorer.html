@@ -48,8 +48,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.41 $
-*	$Date: 2010-03-10 16:25:16 $
+*	$Revision: 1.42 $
+*	$Date: 2010-04-09 09:31:19 $
 *
 *	History:
 *
@@ -130,6 +130,9 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 					<td><input id="idHost" type="text" size="29" value="" tabindex="2"></td>
 					<td style="text-align:center;">Refresh Time:</td>
 					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4">ms
+						<noscript>
+							<strong>Error: ACPLT/HMI needs activated JavaScript in your browser.</strong>
+						</noscript>
 						<span style="color:green;" id="idInfoOutput"> </span> <strong id="idErrorOutput"> </strong>
 					</td>
 				</tr>
@@ -140,7 +143,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 						</select>
 					</td>
 					<td style="padding-left:20px;padding-right:20px;text-align:center;white-space:nowrap;">
-						<input type="button" value="Show Servers" id="idShowServers" tabindex="1" disabled="disabled">
+						<input type="button" value="Initialising HMI..." id="idShowServers" tabindex="1" disabled="disabled">
 					</td>
 					<td>
 						<img id="idThrobbler" src="throbbler.gif">

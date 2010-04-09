@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.13 $
-*	$Date: 2010-04-06 11:20:00 $
+*	$Revision: 1.14 $
+*	$Date: 2010-04-09 09:31:20 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
@@ -173,7 +173,7 @@ var BrowserDetect = {
 
 };
 	BrowserDetect.init();
-	if ("Explorer" == BrowserDetect.browser && 8 <= BrowserDetect.version ) {
+	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
 		//IE6, 7 and 8 needs a plugin (Adobe or Renesis)
 		var results = detectSVG();
 		if(results.support){
@@ -181,7 +181,7 @@ var BrowserDetect = {
 		}else{
 			getSVGViewer();
 		}
-	}else if ("Explorer" == BrowserDetect.browser && 8 > BrowserDetect.version ) {
+	}else if ("Explorer" == BrowserDetect.browser && 8 < BrowserDetect.version ) {
 		//IE9 can use the gecko.xhtml file
 		window.location.href = "hmi-gecko.xhtml"+window.location.search;
 	}else if ("Mozilla" == BrowserDetect.browser) {

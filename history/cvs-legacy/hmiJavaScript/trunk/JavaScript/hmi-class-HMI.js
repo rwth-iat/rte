@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.142 $
-*	$Date: 2010-04-08 11:21:31 $
+*	$Revision: 1.143 $
+*	$Date: 2010-04-09 09:31:19 $
 *
 *	History:
 *	--------
@@ -531,7 +531,7 @@ HMI.prototype = {
 				HMI.PossServers.options[0] = new Option('- list not loaded -', 'no server');
 				HMI.PossSheets.options[0] = new Option('- list not loaded -', 'no sheet');
 				
-				HMI.ButShowServers.value = "load Serverlist";
+				HMI.ButShowServers.value = "Show Servers";
 				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
 				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
@@ -551,6 +551,9 @@ HMI.prototype = {
 				HMI.showServers();
 			}
 			delete HMI_Parameter_Liste;
+		}
+		if (HMI.ButShowServers.value == "Initialising HMI..."){
+			HMI.ButShowServers.value = "Show Servers";
 		}
 		//reenable click by user
 		HMI.ButShowServers.disabled = false;
@@ -1219,7 +1222,7 @@ HMI.prototype = {
 			delete ChildNodesLength;
 		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit   IE9 does not support this in march 2010
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			ElementLength = Elements.length;
+			ElementLength = Elements === null? 0 : Elements.length;
 			for (idx = 0; idx < ElementLength; ++idx){
 				//trace log deactivated, causes performanceproblem in a production system
 				//HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ ElementLength);
@@ -1229,7 +1232,7 @@ HMI.prototype = {
 			}
 		}else{   // IE if svg inline, useless since svg inline does not work with gestures
 			Elements = Fragment.getElementsByTagName('svg');
-			ElementLength = Elements.length;
+			ElementLength = Elements === null? 0 : Elements.length;
 			for (idx = 0; idx < ElementLength; ++idx){
 				//trace log deactivated, causes performanceproblem in a production system
 				//HMI.hmi_log_trace("HMI.initGestures - idx: "+ idx +" Element.length: "+ ElementLength);
@@ -1313,7 +1316,11 @@ HMI.prototype = {
 		var Classes;
 		var idx;
 		
-		Classes = Node.getAttribute("class").split(Delimiter);
+		Classes = Node.getAttribute("class");
+		if (Classes === null){
+			return false;
+		}
+		Classes = Classes.split(Delimiter);
 		var ClassesLength = Classes.length;
 		for (idx = 0; idx < ClassesLength; idx++)
 		{
@@ -1590,7 +1597,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-04-08 11:21:31 $";
+var filedate = "$Date: 2010-04-09 09:31:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
