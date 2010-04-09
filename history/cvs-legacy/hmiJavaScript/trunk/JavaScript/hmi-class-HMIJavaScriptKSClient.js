@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.79 $
-*	$Date: 2010-04-09 07:53:30 $
+*	$Revision: 1.80 $
+*	$Date: 2010-04-09 09:12:47 $
 *
 *	History:
 *	--------
@@ -422,7 +422,10 @@ HMIJavaScriptKSClient.prototype = {
 			
 			this.delHandle(TCLKSHandle);
 			
-			if (ManagerResponse.length === 0){
+			if (ManagerResponse === null){
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Response was null");
+				return false;
+			}else if (ManagerResponse.length === 0){
 				// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f+Operabug");
 				return false;
@@ -452,7 +455,11 @@ HMIJavaScriptKSClient.prototype = {
 		//the path of the HMI Manager could be different in every OV Server
 		var ManagerResponse = this.getVar(null, "/Libraries/hmi/Manager.instance", null);
 		
-		if (ManagerResponse.length === 0){
+		if (ManagerResponse === null){
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Response was null");
+			this.HMIMANAGER_PATH = null;
+			return false;
+		}else if (ManagerResponse.length === 0){
 			// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Empty Response");
 			this.HMIMANAGER_PATH = null;
@@ -693,6 +700,11 @@ HMIJavaScriptKSClient.prototype = {
 		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
 		var ReturnText = new Array(2);
 		
+		if (ComponentText === null){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.prepareComponentText - parameter was null");
+			return null;
+		}
+		
 		//	ComponentText should look like:
 		//		{{GraphicDescription}} {{StyleDescription}}
 		//	TksS-XXXX indicates error
@@ -773,7 +785,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-04-09 07:53:30 $";
+var filedate = "$Date: 2010-04-09 09:12:47 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
