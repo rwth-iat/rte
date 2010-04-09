@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.78 $
-*	$Date: 2010-03-30 08:29:18 $
+*	$Revision: 1.79 $
+*	$Date: 2010-04-09 07:53:30 $
 *
 *	History:
 *	--------
@@ -291,10 +291,14 @@ HMIJavaScriptKSClient.prototype = {
 				+ 'Gateway responded:'
 				+ '\n'
 				+ req.responseText);
-			if (req.responseText.length < 250){
+			if (req.readyState != 4){
+				HMI.hmi_log_onwebsite('This Browser does not support synchronous XMLHttpRequest.');
+			}else if (req.responseText.length < 250){
 				HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + req.responseText);
-			}else{
+			}else if (req.responseText){
 				HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded (first 250 characters): ' + req.responseText.substr(0,250));
+			}else{
+				HMI.hmi_log_onwebsite('Could not analyse server response.');
 			}
 		}
 		
@@ -769,7 +773,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-03-30 08:29:18 $";
+var filedate = "$Date: 2010-04-09 07:53:30 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
