@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.5 $
-*	$Date: 2010-04-08 12:20:28 $
+*	$Revision: 1.6 $
+*	$Date: 2010-04-09 12:05:21 $
 *
 *	Hlistory:
 *	12-May-2009			Je
@@ -117,7 +117,9 @@ if (-1 == window.location.protocol.indexOf('http')){
 	req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
 	req.send(null);
 	ResponseServerString = req.getResponseHeader('server');
-	if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
+	if (req.readyState != 4){
+		document.getElementById("idServerType").firstChild.nodeValue = "This Browser does not support synchronous XMLHttpRequest, which is required for ACPLT/HMI.";
+	}else if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
 		document.getElementById("idServerType").className = "green";
 		document.getElementById("idServerType").firstChild.nodeValue = "TCL";
 		
