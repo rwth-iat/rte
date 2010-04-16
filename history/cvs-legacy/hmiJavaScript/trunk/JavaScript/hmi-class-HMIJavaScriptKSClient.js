@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.80 $
-*	$Date: 2010-04-09 09:12:47 $
+*	$Revision: 1.81 $
+*	$Date: 2010-04-16 13:22:42 $
 *
 *	History:
 *	--------
@@ -359,7 +359,6 @@ HMIJavaScriptKSClient.prototype = {
 			//put first select option with a description
 			HMI.PossServers.options[0] = new Option('- select server -', 'no server');
 			
-			var OptionNameLength = 0;
 			for (i = 0; i < Server.length; i++)
 			{
 				//test all potential servers if they are HMI Servers
@@ -367,28 +366,15 @@ HMIJavaScriptKSClient.prototype = {
 				{
 					//put server into the dropdown box
 					HMI.PossServers.options[HMI.PossServers.options.length] = new Option(Server[i], Server[i]);
-					//keep longest name for expanding the width in Internet Explorer
-					if (OptionNameLength < Server[i].length){
-						OptionNameLength = Server[i].length;
-					}
 				};
 			};
-			//IE does not show a long elementname in dropdown => make the dropdown wider
-			if (BrowserDetect && "Explorer" == BrowserDetect.browser){
-				var OptimumWidth = OptionNameLength * 7.5 ;
-				if (OptimumWidth > parseInt(HMI.PossServers.style.width, 10)){
-					HMI.PossSheets.style.width = OptimumWidth + "px";
-					HMI.PossServers.style.width = OptimumWidth + "px";
-				}
-			}
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of valid servers: "+(HMI.PossServers.length-1));
 			if (HMI.PossServers.length == 1){
 				HMI.PossServers.options[0] = new Option('- no server available -', 'no server');
 			}else if (HMI.PossServers.length == 2){
 				//selecting the option does not trigger the EventListener
 				//it is allways the second/last <option>...
 				HMI.PossServers.selectedIndex = 1;
-				HMI.showSheets(HMI.PossServers.lastChild.value);
+				HMI.showSheets(HMI.PossServers.options[1].value);
 			}else{
 				HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
 			}
@@ -566,21 +552,9 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		if (Sheet.length > 0){
 			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
-			var OptionNameLength = 0;
 			for (i = 0; i < Sheet.length; i++){
 				//spaces in objectname are encoded as %20 within OV
 				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(Sheet[i]), Sheet[i]);
-				if (OptionNameLength < Sheet[i].length){
-					OptionNameLength = Sheet[i].length;
-				}
-			}
-			//IE does not show a long elementname in dropdown => make the dropdown wider
-			if (BrowserDetect && "Explorer" == BrowserDetect.browser){
-				var OptimumWidth = OptionNameLength * 7.5 ;
-				if (OptimumWidth > parseInt(HMI.PossSheets.style.width, 10)){
-					HMI.PossSheets.style.width = OptimumWidth + "px";
-					HMI.PossServers.style.width = OptimumWidth + "px";
-				}
 			}
 			if (Sheet.length == 1){
 				//selecting the option does not trigger the EventListener
@@ -785,7 +759,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-04-09 09:12:47 $";
+var filedate = "$Date: 2010-04-16 13:22:42 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

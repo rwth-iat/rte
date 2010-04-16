@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.39 $
-*	$Date: 2010-03-05 14:44:06 $
+*	$Revision: 1.40 $
+*	$Date: 2010-04-16 13:22:42 $
 *
 *	History:
 *	--------
@@ -419,24 +419,23 @@ Dragger.prototype = {
 		this._totalDX = 0;
 		this._totalDY = 0;
 		
-		//move dragNode to the back of SVG
-		if (this._node != this._node.parentNode.firstChild)
-		{
-			this._node.parentNode.insertBefore(this._node, this._node.parentNode.firstChild);
-		};
+		//the dragged Node and cloned node must not receive events while dragged
+		this._node.setAttribute('pointer-events', 'none');
 		
-		//make a Clone and paint it with opacity
+		//make a Clone, place it under on the position of original and paint it with opacity
 		var Node = this._node.cloneNode(true);
 		Node.setAttribute('id', HMI.HMI_Constants.NODE_NAME_CLONE);
 		Node.setAttribute('class', '');
 		Node.setAttribute('fill-opacity', '0.25');
 		Node.setAttribute('stroke-opacity', '0.25');
-		Node.setAttribute('pointer-events', 'none');
 		Node.setAttribute('clonedID', this._node.getAttribute('id'));
-		this._node.parentNode.appendChild(Node);
+		this._node.parentNode.insertBefore(Node, this._node);
 		
-		//the dragged Node must not receive events while dragged
-		this._node.setAttribute('pointer-events', 'none');
+		//move dragNode to the front of SVG, so it is visible in all cases
+		if (this._node != this._node.parentNode.lastChild)
+		{
+			this._node.parentNode.appendChild(this._node);
+		};
 		
 		if (HMI.svgDocument.addEventListener){
 			//Firefox and co
@@ -450,19 +449,6 @@ Dragger.prototype = {
 			//Renesis Plugin
 			this.registerOnMouseMove(HMI.svgDocument.documentElement, false, this);
 			this.registerOnMouseUp(HMI.svgDocument.documentElement, false, this);
-		}
-		
-		try{
-			/**
-			* Gecko does not garbage collect things correct in any cases.
-			* The hack here is to reassign the additional properties attached to the
-			* JS wrapper object in order to ensure it becomes dirty. Well,
-			* considering that it becomes dirty from getting it from itself ...
-			* I think this source code can't be exported to the US anymore
-			* because of undecent language and probably thoughts.
-			*/
-			Node._xxx = null; delete Node._xxx;
-		} catch (e) {   //IE does not like this hack
 		}
 		delete Node;
 		
@@ -534,24 +520,12 @@ Dragger.prototype = {
 			}
 		};
 		
-		// Renesis 1.1.1.0 does not clean Display, so this could be called with a empty Clone
+		// Renesis 1.1.1.0 does not clean display, so this could be called with a empty Clone
 		// http://tickets.examotion.com/public/view.php?id=83
 		if (Clone && Clone.parentNode){
 			Clone.parentNode.replaceChild(this._node, Clone);
 			this._node.setAttribute('x', Clone.getAttribute('x'));
 			this._node.setAttribute('y', Clone.getAttribute('y'));
-		}
-		try{
-			/**
-			* Gecko does not garbage collect things correct in any cases.
-			* The hack here is to reassign the additional properties attached to the
-			* JS wrapper object in order to ensure it becomes dirty. Well,
-			* considering that it becomes dirty from getting it from itself ...
-			* I think this source code can't be exported to the US anymore
-			* because of undecent language and probably thoughts.
-			*/
-			Clone._xxx = null; delete Clone._xxx;
-		} catch (e) {   //IE does not like this hack
 		}
 		delete Clone;
 		HMI.reactivateRefreshInterval(evt);
@@ -616,7 +590,7 @@ Dragger.prototype = {
 			
 			//move dragged Node into the new ground
 			node = this._node.parentNode.removeChild(this._node);
-			ground._node.insertBefore(node, ground._node.firstChild);
+			ground._node.appendChild(node);
 			
 			//set new position inside the ground
 			if (!isNaN(SVGx) && !isNaN(SVGy)){
@@ -626,6 +600,7 @@ Dragger.prototype = {
 			delete SVGx;
 			delete SVGy;
 			
+			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground - End");
 			return;
 		};
 
@@ -646,7 +621,7 @@ Dragger.prototype = {
 				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
 				
 				node = this._ground._node.firstChild.removeChild(this._node);
-				ground._node.firstChild.insertBefore(node, ground._node.firstChild.firstChild);
+				ground._node.firstChild.appendChild(node);
 			} else {
 				//new position is old coordinate + position of old parent(=ground) - position of new parent (=ground)
 				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
@@ -654,7 +629,7 @@ Dragger.prototype = {
 				
 				try{
 					node = this._ground._node.removeChild(this._node);
-					ground._node.insertBefore(node, ground._node.firstChild);
+					ground._node.appendChild(node);
 				}catch(e){
 					HMI.hmi_log_warning("Dragger.prototype.switchGround - ground status confused.");
 				}
@@ -701,7 +676,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2010-03-05 14:44:06 $";
+var filedate = "$Date: 2010-04-16 13:22:42 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
