@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.40 $
-*	$Date: 2010-04-16 13:22:42 $
+*	$Revision: 1.41 $
+*	$Date: 2010-05-03 10:59:03 $
 *
 *	History:
 *	--------
@@ -495,9 +495,9 @@ Dragger.prototype = {
 				
 				var Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 					'{010}%20' +
-					'{' + this._node.id + '}%20' +
+					'{' + encodeURI(this._node.id) + '}%20' +
 					'{MOVE}%20' +
-					'{' + this._ground._node.id +  '}%20' +
+					'{' + encodeURI(this._ground._node.id) +  '}%20' +
 					'{' + xvalue + '}%20' +
 					'{' + yvalue + '}';
 				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
@@ -676,7 +676,7 @@ Dragger.prototype = {
 		delete y;
 	}
 };
-var filedate = "$Date: 2010-04-16 13:22:42 $";
+var filedate = "$Date: 2010-05-03 10:59:03 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
