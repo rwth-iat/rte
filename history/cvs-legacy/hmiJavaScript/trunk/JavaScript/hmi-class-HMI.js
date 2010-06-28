@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2009
+*	Copyright (C) 2010
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.143 $
-*	$Date: 2010-04-09 09:31:19 $
+*	$Revision: 1.144 $
+*	$Date: 2010-06-28 08:52:05 $
 *
 *	History:
 *	--------
@@ -109,7 +109,7 @@ function HMI(debug, error, warning, info, trace) {
 	
 	this.svgWindow = null;
 	this.svgDocument = null;
-	this.EmbedAdobePlugin= null;
+	this.SVGPlugin = null;
 	this.GatewayTypeTCL = null;
 	this.GatewayTypePHP = null;
 	
@@ -405,24 +405,41 @@ HMI.prototype = {
 		}
 		
 		//detect type of SVG display
-		if (this.Playground.tagName.toLowerCase() == "embed"){
-			//via a embed plugin tag
-			this.svgWindow = this.Playground.window;
-			this.svgDocument = this.Playground.getSVGDocument();
-			//switch the target Playground to the embed SVG-Plugin DOM
-			this.PlaygroundEmbedNode= this.Playground;
-			this.Playground=HMI.svgDocument.getElementById("svgcontainer");
+		if (this.Playground.tagName.toLowerCase() == "embed" || this.Playground.tagName.toLowerCase() == "object"){
+			//via a container plugin tag
+			
+			//remember ContainerNode for resizing
+			this.PlaygroundContainerNode = this.Playground;
+			if (this.Playground.window){
+				//get inner window
+				this.svgWindow = this.Playground.window;
+			}else{
+				this.svgWindow = window;
+			}
+			if (typeof this.Playground.getSVGDocument != "undefined"){
+				//get inner document
+				this.svgDocument = this.Playground.getSVGDocument();
+			}else{
+				this.svgDocument = this.Playground.document;
+			}
+			//switch the target Playground to the container SVG-Plugin DOM
+			if (HMI.svgDocument.getElementById("svgcontainer") !== null){
+				//get inner document
+				this.Playground=HMI.svgDocument.getElementById("svgcontainer");
+			}
 			//sometimes feature detection is not possible
-			this.EmbedAdobePlugin= true;
-			this.PluginVendor = HMI.svgWindow.getSVGViewerVersion();
-			if (-1 != this.PluginVendor.indexOf('Adobe')){
-				this.PluginVendor = 'Adobe';
-			}else if (-1 != this.PluginVendor.indexOf('examotion')){
-				this.PluginVendor = 'Examotion';
+			if (typeof HMI.svgWindow.getSVGViewerVersion != "undefined"){
+				this.SVGPlugin = true;
+				this.PluginVendor = HMI.svgWindow.getSVGViewerVersion();
+				if (-1 != this.PluginVendor.indexOf('Adobe')){
+					this.PluginVendor = 'Adobe';
+				}else if (-1 != this.PluginVendor.indexOf('examotion')){
+					this.PluginVendor = 'Examotion';
+				}
 			}
 		}else{
 			//inline SVG in XHTML DOM
-			this.EmbedAdobePlugin= false;
+			this.SVGPlugin = false;
 			this.svgDocument = document;
 			this.svgWindow = window;
 		}
@@ -672,7 +689,6 @@ HMI.prototype = {
 		showServers
 	*********************************/
 	showServers: function () {
-		
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
 		//disable double click by user
@@ -1019,13 +1035,13 @@ HMI.prototype = {
 				//logging not required, allready done by _importComponent
 				return;
 			}
-			if(!HMI.EmbedAdobePlugin){
+			if(!HMI.SVGPlugin){
 				var template = Component;
 				Component = document.importNode(template, true);
 			}
 			HMI.initGestures(Component);
 			//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
-			if (HMI.AdobeMoveFixNeeded && HMI.PluginVendor == 'Adobe'){
+			if (HMI.AdobeMoveFixNeeded){
 				var dummyRect = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
 				dummyRect.setAttributeNS(null, 'x', '0');
 				dummyRect.setAttributeNS(null, 'y', '0');
@@ -1046,20 +1062,6 @@ HMI.prototype = {
 				if (HMI.RefreshTimeoutID === null){
 					HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 				}
-			}
-			try{
-				/**
-				* Gecko does not garbage collect things correct in any cases.
-				* The hack here is to reassign the additional properties attached to the
-				* JS wrapper object in order to ensure it becomes dirty. Well,
-				* considering that it becomes dirty from getting it from itself ...
-				* I think this source code can't be exported to the US anymore
-				* because of undecent language and probably thoughts.
-				*/
-				template._xxx = null; delete template._xxx;
-				Component._xxx = null; delete Component._xxx;
-				ComponentText._xxx = null; delete ComponentText._xxx;
-			} catch (e) {   //IE does not like this hack
 			}
 			delete template;
 			delete Component;
@@ -1138,7 +1140,7 @@ HMI.prototype = {
 		{
 			//initialize drag&drop handling
 			var dragger = new Dragger(Element, this);
-			if (HMI.EmbedAdobePlugin)
+			if (HMI.PluginVendor == 'Adobe')
 			{
 				//Adobe needs a hack for the move-gesture
 				HMI.AdobeMoveFixNeeded = true;
@@ -1210,7 +1212,7 @@ HMI.prototype = {
 		HMI._initGestures(Fragment);
 		// _initGesture does no recursive init, therefor this is done here
 		
-		if (HMI.EmbedAdobePlugin){
+		if (HMI.SVGPlugin){
 			//getElementsByTagNameNS in Adobe is often not complete
 			var ChildNodesLength = Fragment.childNodes.length;
 			for (idx = 0; idx < ChildNodesLength; ++idx){
@@ -1246,18 +1248,6 @@ HMI.prototype = {
 		delete Elements;
 		delete idx;
 		
-		try{
-			/**
-			* Gecko does not garbage collect things correct in any cases.
-			* The hack here is to reassign the additional properties attached to the
-			* JS wrapper object in order to ensure it becomes dirty. Well,
-			* considering that it becomes dirty from getting it from itself ...
-			* I think this source code can't be exported to the US anymore
-			* because of undecent language and probably thoughts.
-			*/
-			Elements._xxx = null; delete Elements._xxx;
-		} catch (e) {   //IE does not like this hack
-		}
 		delete Elements;
 		
 		this.hmi_log_trace("HMI.prototype.initGestures - End");
@@ -1367,7 +1357,7 @@ HMI.prototype = {
 				LayerX += parseInt(Element.parentNode.getAttribute("layerX"), 10);
 				LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
 			}
-		}else if(HMI.EmbedAdobePlugin && Element.parentNode !== null && Element.parentNode.attributes !== null && Element.parentNode.attributes.length !== 0){
+		}else if(Element.parentNode !== null && Element.parentNode.attributes !== null && Element.parentNode.attributes.length !== 0){
 			LayerX += parseInt(Element.parentNode.getAttribute("layerX"), 10);
 			LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
 		}
@@ -1379,20 +1369,6 @@ HMI.prototype = {
 		}else{
 			Element.setAttribute("layerX", LayerX);
 			Element.setAttribute("layerY", LayerY);
-		}
-		
-		try{
-			/**
-			* Gecko does not garbage collect things correct in any cases.
-			* The hack here is to reassign the additional properties attached to the
-			* JS wrapper object in order to ensure it becomes dirty. Well,
-			* considering that it becomes dirty from getting it from itself ...
-			* I think this source code can't be exported to the US anymore
-			* because of undecent language and probably thoughts.
-			*/
-			LayerX._xxx = null; delete LayerX._xxx;
-			LayerY._xxx = null; delete LayerY._xxx;
-		} catch (e) {   //IE does not like this hack
 		}
 		delete LayerX;
 		delete LayerY;
@@ -1597,7 +1573,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-04-09 09:31:19 $";
+var filedate = "$Date: 2010-06-28 08:52:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

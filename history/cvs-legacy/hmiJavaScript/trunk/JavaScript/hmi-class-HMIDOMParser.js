@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.19 $
-*	$Date: 2009-10-22 08:04:35 $
+*	$Revision: 1.20 $
+*	$Date: 2010-06-28 08:52:05 $
 *
 *	History:
 *	--------
@@ -119,7 +119,7 @@ HMIDOMParser.prototype = {
 				StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 			}
 			delete Parser;
-		}else if(HMI.svgWindow.parseXML && HMI.PlaygroundEmbedNode){
+		}else if(HMI.svgWindow.parseXML){
 			//building an XML Tree works a bit different in Adobe SVG Viewer and Renesis
 			GraphicElement = HMI.svgWindow.parseXML(GraphicDescription,HMI.svgDocument);
 			if(GraphicElement !== null){
@@ -127,8 +127,8 @@ HMIDOMParser.prototype = {
 				//http://tickets.examotion.com/public/view.php?id=32
 				
 				//the displayed size is calculated from the embed-Node in the html, so we correct the dimension of it
-				HMI.PlaygroundEmbedNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
-				HMI.PlaygroundEmbedNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
+				HMI.PlaygroundContainerNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
+				HMI.PlaygroundContainerNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
 				//StyleDescription is optional
 				if (StyleDescription.length !== 0){
 					StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
@@ -184,7 +184,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2009-10-22 08:04:35 $";
+var filedate = "$Date: 2010-06-28 08:52:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
