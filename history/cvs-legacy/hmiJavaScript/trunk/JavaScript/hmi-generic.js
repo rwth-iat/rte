@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.33 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision: 1.34 $
+*	$Date: 2010-06-28 09:03:10 $
 *
 *	History:
 *	--------
@@ -102,45 +102,6 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 	try{ return new ActiveXObject("Microsoft.XMLHTTP"); }catch(e){}
 	throw new Error("Could not find an XMLHttpRequest alternative.");
 };
-
-/*********************************
-	Feature - emulate document.importNode if not available native, based on
-	http://www.alistapart.com/articles/crossbrowserscripting
-	
-	used in the SVG inline code in IE
-	now we use SVG in a Embed-Tag which does not need a importNode
-*********************************/
-if (!document.importNode) {
-	document.importNode = function(node, allChildren) {
-		switch (node.nodeType) {
-		case 1:  //document.ELEMENT_NODE
-			/* create a new element */
-			var newNode = document.createElement(node.nodeName);
-			/* does the node have any attributes to add? */
-			if (node.attributes && node.attributes.length > 0){
-				/* add all of the attributes */
-				for (var i = 0, il = node.attributes.length; i < il;i++){
-					if (node.attributes[i].nodeName == "style"){
-						//IE has problems assigning the style by setAttribute
-						newNode.style.cssText = node.getAttribute(node.attributes[i].nodeName);
-					}else{
-						newNode.setAttribute(node.attributes[i].nodeName, node.getAttribute(node.attributes[i].nodeName));
-					}
-				}
-			}
-			/* are we going after children too, and does the node have any? */
-			if (allChildren && node.childNodes && node.childNodes.length > 0)
-				/* recursively get all of the child nodes */
-				for (var i = 0, il = node.childNodes.length; i < il;)
-					newNode.appendChild(document.importNode(node.childNodes[i++], allChildren));
-			return newNode;
-		case 3: //document.TEXT_NODE
-		case 4: //document.CDATA_SECTION_NODE
-		case 8: //document.COMMENT_NODE
-			return document.createTextNode(node.nodeValue);
-		}
-	};
-}
 
 /*********************************
 	Crossbrowser Eventhandling
@@ -279,7 +240,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date: 2010-06-28 09:03:10 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

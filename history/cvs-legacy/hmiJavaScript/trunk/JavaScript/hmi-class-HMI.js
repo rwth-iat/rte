@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.144 $
-*	$Date: 2010-06-28 08:52:05 $
+*	$Revision: 1.145 $
+*	$Date: 2010-06-28 09:03:10 $
 *
 *	History:
 *	--------
@@ -1035,10 +1035,6 @@ HMI.prototype = {
 				//logging not required, allready done by _importComponent
 				return;
 			}
-			if(!HMI.SVGPlugin){
-				var template = Component;
-				Component = document.importNode(template, true);
-			}
 			HMI.initGestures(Component);
 			//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
 			if (HMI.AdobeMoveFixNeeded){
@@ -1053,6 +1049,13 @@ HMI.prototype = {
 				HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
 			}
 			HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent: now Playground.append/replaceChild");
+			
+			if(HMI.PlaygroundContainerNode){
+				//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
+				HMI.PlaygroundContainerNode.setAttribute('height', Component.getAttribute('height'));
+				HMI.PlaygroundContainerNode.setAttribute('width', Component.getAttribute('width'));
+			}
+			
 			if(replace === true){
 				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			}else{
@@ -1573,7 +1576,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-06-28 08:52:05 $";
+var filedate = "$Date: 2010-06-28 09:03:10 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

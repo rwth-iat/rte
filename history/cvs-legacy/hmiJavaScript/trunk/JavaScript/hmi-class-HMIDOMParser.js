@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.20 $
-*	$Date: 2010-06-28 08:52:05 $
+*	$Revision: 1.21 $
+*	$Date: 2010-06-28 09:03:10 $
 *
 *	History:
 *	--------
@@ -126,9 +126,6 @@ HMIDOMParser.prototype = {
 				//Renesis' reaction to an iso-8859-1
 				//http://tickets.examotion.com/public/view.php?id=32
 				
-				//the displayed size is calculated from the embed-Node in the html, so we correct the dimension of it
-				HMI.PlaygroundContainerNode.setAttribute('height', GraphicElement.firstChild.getAttribute('height'));
-				HMI.PlaygroundContainerNode.setAttribute('width', GraphicElement.firstChild.getAttribute('width'));
 				//StyleDescription is optional
 				if (StyleDescription.length !== 0){
 					StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
@@ -172,7 +169,11 @@ HMIDOMParser.prototype = {
 		GraphicElement.firstChild.setAttribute('x', 0);
 		GraphicElement.firstChild.setAttribute('y', 0);
 		
-		Return = GraphicElement.firstChild;
+		if(document.importNode){
+			Return = document.importNode(GraphicElement.firstChild, true);
+		}else{
+			Return = GraphicElement.firstChild;
+		}
 		
 		delete StyleDescription;
 		delete GraphicDescription;
@@ -184,7 +185,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2010-06-28 08:52:05 $";
+var filedate = "$Date: 2010-06-28 09:03:10 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
