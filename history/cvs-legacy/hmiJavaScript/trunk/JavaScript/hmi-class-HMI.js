@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.145 $
-*	$Date: 2010-06-28 09:03:10 $
+*	$Revision: 1.146 $
+*	$Date: 2010-06-29 15:39:08 $
 *
 *	History:
 *	--------
@@ -703,6 +703,12 @@ HMI.prototype = {
 		
 		if (HMI.InputHost.value.length === 0){
 			HMI.InputHost.value = window.location.hostname;
+		}else if(HMI.InputHost.value.trim){
+			HMI.InputHost.value = HMI.InputHost.value.trim();
+		}else if(HMI.InputHost.value.replace){
+			//very fast in IE 6-8, newer browsers have native trim
+			//http://blog.stevenlevithan.com/archives/faster-trim-javascript
+			HMI.InputHost.value = HMI.InputHost.value.replace(/^\s*((?:[\S\s]*\S)?)\s*$/, '$1');
 		}
 		
 		//if the hostname is identical to the http server, translate into "localhost"
@@ -1576,7 +1582,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-06-28 09:03:10 $";
+var filedate = "$Date: 2010-06-29 15:39:08 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

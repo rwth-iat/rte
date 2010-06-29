@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.21 $
-*	$Date: 2010-06-28 09:03:10 $
+*	$Revision: 1.22 $
+*	$Date: 2010-06-29 15:39:08 $
 *
 *	History:
 *	--------
@@ -115,8 +115,6 @@ HMIDOMParser.prototype = {
 					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
 					HMI.hmi_log_onwebsite('ParseError on StyleDescription');
 				}
-				//GraphicElement has another DOM ownerDocument
-				StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 			}
 			delete Parser;
 		}else if(HMI.svgWindow.parseXML){
@@ -129,8 +127,6 @@ HMIDOMParser.prototype = {
 				//StyleDescription is optional
 				if (StyleDescription.length !== 0){
 					StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
-					//the SVG Plugin does not need importNode for the appendChild
-					StyleElementNode = StyleElement.firstChild;
 				}
 			}else{
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on GraphicDescription');
@@ -139,7 +135,9 @@ HMIDOMParser.prototype = {
 			}
 		}else if(window.ActiveXObject){
 			//building an XML Tree works a bit different in IE
-			//inline SVG with AdobePlugin, not capable of proper events! http://schepers.cc/inlinesvg.html
+			//inline SVG native or with AdobePlugin (not capable of proper events! http://schepers.cc/inlinesvg.html)
+			
+			//todo: find domparser for IE9
 			GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
 			var loadXMLresult;
 			loadXMLresult = GraphicElement.loadXML(GraphicDescription);
@@ -156,12 +154,23 @@ HMIDOMParser.prototype = {
 					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
 					HMI.hmi_log_onwebsite('ParseError on StyleDescription');
 				};
-				//IE doesnot provide importNode and does not need it for the appendChild
-				StyleElementNode = StyleElement.firstChild;
 			}
 			delete loadXMLresult;
 		}
+		
 		if (StyleDescription.length !== 0){
+			//GraphicElement has another DOM ownerDocument
+			if("unknown" == typeof GraphicElement.importNode){
+				//adobe plugin is buggy
+				StyleElementNode = StyleElement.firstChild;
+			}else if (GraphicElement.importNode){
+				try{
+					StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
+				}catch(e){
+					//ie9 jun 2010 throws exception due to wrong DOMParser
+					StyleElementNode = StyleElement.firstChild
+				}
+			}
 			GraphicElement.firstChild.appendChild(StyleElementNode);
 		}
 		
@@ -169,8 +178,16 @@ HMIDOMParser.prototype = {
 		GraphicElement.firstChild.setAttribute('x', 0);
 		GraphicElement.firstChild.setAttribute('y', 0);
 		
-		if(document.importNode){
-			Return = document.importNode(GraphicElement.firstChild, true);
+		if("unknown" == typeof HMI.svgDocument.importNode){
+			//adobe plugin is buggy, but does not need importNode
+			Return = GraphicElement.firstChild;
+		}else if(HMI.svgDocument.importNode){
+			try{
+				Return = HMI.svgDocument.importNode(GraphicElement.firstChild, true);
+			}catch(e){
+				//FIXME ie9 jun 2010 throws exception due to wrong DOMParser
+				Return = HMI.svgDocument.importNodeIE9(GraphicElement.firstChild, true);
+			}
 		}else{
 			Return = GraphicElement.firstChild;
 		}
@@ -185,7 +202,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2010-06-28 09:03:10 $";
+var filedate = "$Date: 2010-06-29 15:39:08 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
