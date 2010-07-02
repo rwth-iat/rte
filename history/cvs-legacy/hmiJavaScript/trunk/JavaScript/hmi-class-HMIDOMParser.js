@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2009
+*	Copyright (C) 2010
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.22 $
-*	$Date: 2010-06-29 15:39:08 $
+*	$Revision: 1.23 $
+*	$Date: 2010-07-02 08:25:06 $
 *
 *	History:
 *	--------
@@ -116,7 +116,7 @@ HMIDOMParser.prototype = {
 					HMI.hmi_log_onwebsite('ParseError on StyleDescription');
 				}
 			}
-			delete Parser;
+			Parser = null;
 		}else if(HMI.svgWindow.parseXML){
 			//building an XML Tree works a bit different in Adobe SVG Viewer and Renesis
 			GraphicElement = HMI.svgWindow.parseXML(GraphicDescription,HMI.svgDocument);
@@ -155,7 +155,7 @@ HMIDOMParser.prototype = {
 					HMI.hmi_log_onwebsite('ParseError on StyleDescription');
 				};
 			}
-			delete loadXMLresult;
+			loadXMLresult = null;
 		}
 		
 		if (StyleDescription.length !== 0){
@@ -192,17 +192,17 @@ HMIDOMParser.prototype = {
 			Return = GraphicElement.firstChild;
 		}
 		
-		delete StyleDescription;
-		delete GraphicDescription;
-		delete StyleElementNode;
-		delete GraphicElement;
-		delete StyleElement;
+		StyleDescription = null;
+		GraphicDescription = null;
+		StyleElementNode = null;
+		GraphicElement = null;
+		StyleElement = null;
 		HMI.hmi_log_trace("HMIDOMParser.parse - End");
 		
 		return Return;
 	}
 };
-var filedate = "$Date: 2010-06-29 15:39:08 $";
+var filedate = "$Date: 2010-07-02 08:25:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

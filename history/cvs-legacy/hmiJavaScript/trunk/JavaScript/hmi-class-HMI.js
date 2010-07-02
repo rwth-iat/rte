@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.147 $
-*	$Date: 2010-07-02 08:07:14 $
+*	$Revision: 1.148 $
+*	$Date: 2010-07-02 08:25:06 $
 *
 *	History:
 *	--------
@@ -293,8 +293,8 @@ HMI.prototype = {
 				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
 				HMI_Parameter_Liste[name] = wert;
 			}
-			delete paare;
-			delete wertestring;
+			paare = null;
+			wertestring = null;
 		}
 		
 		//detect if the file is called from http or https, but not from filesystem
@@ -389,7 +389,7 @@ HMI.prototype = {
 				
 				HMI.ErrorOutput.appendChild(ErrorNode);
 			}
-			delete ErrorNode;
+			ErrorNode = null;
 			if (document.getElementById("idThrobbler") !== null){
 				document.getElementById("idThrobbler").style.display = "none";
 			}
@@ -469,10 +469,10 @@ HMI.prototype = {
 				DateOutput.appendChild(dateTextNode);
 				DateOutput.parentNode.setAttributeNode(titlenode);
 			}
-			delete DateOutput;
-			delete HMIdate;
-			delete dateTextNode;
-			delete titlenode;
+			DateOutput = null;
+			HMIdate = null;
+			dateTextNode = null;
+			titlenode = null;
 		}
 		
 		//jump to a "deep link" of a sheet
@@ -568,7 +568,7 @@ HMI.prototype = {
 				//no server and sheet specified, but a host => load serverlist
 				HMI.showServers();
 			}
-			delete HMI_Parameter_Liste;
+			HMI_Parameter_Liste = null;
 		}
 		if (HMI.ButShowServers.value == "Initialising HMI..."){
 			HMI.ButShowServers.value = "Show Servers";
@@ -1047,7 +1047,7 @@ HMI.prototype = {
 			//
 			this.KSClient.getVar(null, SVGDescription, this._cbGetAndReplaceComponent);
 		}
-		delete SVGDescription;
+		SVGDescription = null;
 		
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - End");
 		
@@ -1087,7 +1087,7 @@ HMI.prototype = {
 				dummyRect.setAttributeNS(null, 'height', Component.getAttribute('height'));
 				dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
 				Component.insertBefore(dummyRect, Component.firstChild);
-				delete dummyRect;
+				dummyRect = null;
 				HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
 			}
 			HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent: now Playground.append/replaceChild");
@@ -1108,9 +1108,9 @@ HMI.prototype = {
 					HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 				}
 			}
-			delete template;
-			delete Component;
-			delete ComponentText;
+			template = null;
+			Component = null;
+			ComponentText = null;
 		};
 		
 		HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - End");
@@ -1266,7 +1266,7 @@ HMI.prototype = {
 					HMI.initGestures(Fragment.childNodes.item(idx));
 				}
 			}
-			delete ChildNodesLength;
+			ChildNodesLength = null;
 		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit   IE9 does not support this in march 2010
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			ElementLength = Elements === null? 0 : Elements.length;
@@ -1289,11 +1289,11 @@ HMI.prototype = {
 				}
 			}
 		}
-		delete ElementLength;
-		delete Elements;
-		delete idx;
+		ElementLength = null;
+		Elements = null;
+		idx = null;
 		
-		delete Elements;
+		Elements = null;
 		
 		this.hmi_log_trace("HMI.prototype.initGestures - End");
 	},
@@ -1366,9 +1366,9 @@ HMI.prototype = {
 				return true;
 			};
 		};
-		delete ClassesLength;
-		delete Classes;
-		delete idx;
+		ClassesLength = null;
+		Classes = null;
+		idx = null;
 		
 //		this.hmi_log_trace("HMI.prototype._instanceOf - Endf");
 		
@@ -1415,8 +1415,8 @@ HMI.prototype = {
 			Element.setAttribute("layerX", LayerX);
 			Element.setAttribute("layerY", LayerY);
 		}
-		delete LayerX;
-		delete LayerY;
+		LayerX = null;
+		LayerY = null;
 		
 		this.hmi_log_trace("HMI.prototype._setLayerPosition - End");
 	},	
@@ -1460,11 +1460,11 @@ HMI.prototype = {
 		clickPosition[0] = mousePosX - parseInt(Component.getAttribute("layerX"), 10) - svgOffsetX;
 		clickPosition[1] = mousePosY - parseInt(Component.getAttribute("layerY"), 10) - svgOffsetY;
 		
-		delete mousePosX;
-		delete mousePosY;
-		delete svgOffsetX;
-		delete svgOffsetY;
-		delete obj;
+		mousePosX = null;
+		mousePosY = null;
+		svgOffsetX = null;
+		svgOffsetY = null;
+		obj = null;
 		
 		this.hmi_log_trace("HMI.prototype.getClickPosition - End");
 		
@@ -1618,7 +1618,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-07-02 08:07:14 $";
+var filedate = "$Date: 2010-07-02 08:25:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

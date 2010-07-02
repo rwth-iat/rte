@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2009
+*	Copyright (C) 2010
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.38 $
-*	$Date: 2010-05-03 10:59:03 $
+*	$Revision: 1.39 $
+*	$Date: 2010-07-02 08:25:06 $
 *
 *	History:
 *	--------
@@ -111,7 +111,7 @@ TextInput.prototype = {
 			dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
 			dummyRect.setAttributeNS(null, 'class', 'dummyTextinputRect');
 			Component.appendChild(dummyRect);
-			delete dummyRect;
+			dummyRect = null;
 		}
 	},
 	
@@ -262,11 +262,11 @@ TextInput.prototype = {
 				//change the %u20AC of the &euro; Symbol to windows-1252 (accepted by all Browsers, not Adobe SVG)
 				'{' + escape(input).replace(/%u20AC/g, "%80") + '}';
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
-			delete Command;
+			Command = null;
 		};
 	}
 };
-var filedate = "$Date: 2010-05-03 10:59:03 $";
+var filedate = "$Date: 2010-07-02 08:25:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

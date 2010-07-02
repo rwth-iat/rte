@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.41 $
-*	$Date: 2010-05-03 10:59:03 $
+*	$Revision: 1.42 $
+*	$Date: 2010-07-02 08:25:06 $
 *
 *	History:
 *	--------
@@ -376,8 +376,8 @@ Dragger.prototype = {
 		this._lastX = parseInt(newX, 10);
 		this._lastY = parseInt(newY, 10);
 		
-		delete dx;
-		delete dy;
+		dx = null;
+		dy = null;
 	},
 	
 	/*********************************
@@ -450,7 +450,7 @@ Dragger.prototype = {
 			this.registerOnMouseMove(HMI.svgDocument.documentElement, false, this);
 			this.registerOnMouseUp(HMI.svgDocument.documentElement, false, this);
 		}
-		delete Node;
+		Node = null;
 		
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - End");
 	},
@@ -501,8 +501,8 @@ Dragger.prototype = {
 					'{' + xvalue + '}%20' +
 					'{' + yvalue + '}';
 				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
-				delete xvalue;
-				delete yvalue;
+				xvalue = null;
+				yvalue = null;
 			};
 		} else if(!validMove){
 			HMI.hmi_log_trace("Dragger.prototype.stopDrag - move aborted");
@@ -527,7 +527,7 @@ Dragger.prototype = {
 			this._node.setAttribute('x', Clone.getAttribute('x'));
 			this._node.setAttribute('y', Clone.getAttribute('y'));
 		}
-		delete Clone;
+		Clone = null;
 		HMI.reactivateRefreshInterval(evt);
 		
 		HMI.hmi_log_trace("Dragger.prototype.stopDrag - End");
@@ -597,8 +597,8 @@ Dragger.prototype = {
 				node.setAttribute("x", SVGx);
 				node.setAttribute("y", SVGy);
 			}
-			delete SVGx;
-			delete SVGy;
+			SVGx = null;
+			SVGy = null;
 			
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground - End");
 			return;
@@ -640,13 +640,13 @@ Dragger.prototype = {
 				node.setAttribute("x", SVGx);
 				node.setAttribute("y", SVGy);
 				
-				delete SVGx;
-				delete SVGy;
+				SVGx = null;
+				SVGy = null;
 				
 				this._ground = ground;
 			}
 			
-			delete node;
+			node = null;
 		};
 		
 		HMI.hmi_log_trace("Dragger.prototype.switchGround - End");
@@ -672,11 +672,11 @@ Dragger.prototype = {
 		this._node.setAttribute("x", x);
 		this._node.setAttribute("y", y);
 		
-		delete x;
-		delete y;
+		x = null;
+		y = null;
 	}
 };
-var filedate = "$Date: 2010-05-03 10:59:03 $";
+var filedate = "$Date: 2010-07-02 08:25:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2009
+*	Copyright (C) 2010
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.81 $
-*	$Date: 2010-04-16 13:22:42 $
+*	$Revision: 1.82 $
+*	$Date: 2010-07-02 08:25:06 $
 *
 *	History:
 *	--------
@@ -353,7 +353,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of potential servers: "+Server.length);
 		
 		HMI.PossServers.setAttribute("title", "available OV-Servers: "+ServerList.substring(0, ServerList.length-2));
-		delete ServerList;
+		ServerList = null;
 		
 		if (Server.length > 0){
 			//put first select option with a description
@@ -469,8 +469,8 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+ManagerResponse.replace(/{/g, "").replace(/}/g, "")+"). Using first Manager. It is perfectly safe to delete all but one instances.");
 			this.HMIMANAGER_PATH = encodeURI(ManagerResponse.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, ""));
 		}
-		delete ManagerResponse;
-		delete PointOfSpace;
+		ManagerResponse = null;
+		PointOfSpace = null;
 	},
 	
 	/*********************************
@@ -508,7 +508,7 @@ HMIJavaScriptKSClient.prototype = {
 					null);
 		}
 		this.getVar(null, this.HMIMANAGER_PATH + '.CommandReturn', this._cbGetSheets);
-		delete Command;
+		Command = null;
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
 	},
@@ -759,7 +759,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-04-16 13:22:42 $";
+var filedate = "$Date: 2010-07-02 08:25:06 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
