@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.148 $
-*	$Date: 2010-07-02 08:25:06 $
+*	$Revision: 1.149 $
+*	$Date: 2010-07-02 09:58:40 $
 *
 *	History:
 *	--------
@@ -592,7 +592,7 @@ HMI.prototype = {
 			req.open("GET", path, false);
 			req.send(null);
 			
-			if (req.status != 200 || (req.responseText && req.responseText.indexOf("Not Found") == -1)){
+			if (req.status != 200 || (req.responseText && req.responseText.length > 300 && req.responseText.indexOf("Not Found") == -1)){
 				this.WebmagellanPath = path;
 			}
 			path = ksmagellanPath.shift();
@@ -614,6 +614,7 @@ HMI.prototype = {
 			MagellanLink.appendChild(document.createTextNode('See in Webmagellan'));
 			
 			$("idBookmark").parentNode.insertBefore(MagellanLink, $("idBookmark").parentNode.firstChild);
+			MagellanLink = null;
 		}
 		
 		this.hmi_log_trace("HMI.prototype.init - End");
@@ -1618,7 +1619,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-07-02 08:25:06 $";
+var filedate = "$Date: 2010-07-02 09:58:40 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
