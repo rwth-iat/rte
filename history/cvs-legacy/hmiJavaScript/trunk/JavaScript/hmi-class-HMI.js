@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.146 $
-*	$Date: 2010-06-29 15:39:08 $
+*	$Revision: 1.147 $
+*	$Date: 2010-07-02 08:07:14 $
 *
 *	History:
 *	--------
@@ -117,6 +117,7 @@ function HMI(debug, error, warning, info, trace) {
 	this.ServerProperty = {SheetHasStyleDescription:null};
 	
 	this.HeaderIsVisible = true;
+	this.WebmagellanPath = null;
 	
 	//the modern firebugconsole wants to be activated
 	if (window.loadFirebugConsole){
@@ -339,9 +340,9 @@ HMI.prototype = {
 				}
 				return false;
 			}
-			delete req;
-			delete ResponseServerString;
-			delete DatePreventsCaching;
+			req = null;
+			ResponseServerString = null;
+			DatePreventsCaching = null;
 		}
 		//the guessed servertype is used for communication
 		if ("php" == HMI.HMI_Constants.ServerType){
@@ -367,7 +368,7 @@ HMI.prototype = {
 			HMI.ErrorOutput.appendChild(document.createElement('br'));
 			
 			var ErrorNode = document.createElement("a");
-			ErrorNode.setAttribute('href', 'httpservertest.html');
+			ErrorNode.href = 'httpservertest.html';
 			ErrorNode.appendChild(document.createTextNode('Servertest available.'));
 			
 			HMI.ErrorOutput.appendChild(ErrorNode);
@@ -376,14 +377,14 @@ HMI.prototype = {
 				HMI.ErrorOutput.appendChild(document.createElement('br'));
 				
 				ErrorNode = document.createElement("a");
-				ErrorNode.setAttribute('href', NewURLBasename+'tcl');
+				ErrorNode.href = NewURLBasename + 'tcl';
 				ErrorNode.appendChild(document.createTextNode('Force TCL.'));
 				
 				HMI.ErrorOutput.appendChild(ErrorNode);
 				HMI.ErrorOutput.appendChild(document.createTextNode(' '));
 				
 				ErrorNode = document.createElement("a");
-				ErrorNode.setAttribute('href', NewURLBasename+'php');
+				ErrorNode.href = NewURLBasename+'php';
 				ErrorNode.appendChild(document.createTextNode('Force PHP. '));
 				
 				HMI.ErrorOutput.appendChild(ErrorNode);
@@ -584,6 +585,37 @@ HMI.prototype = {
 		if (document.getElementById("idThrobbler") !== null){
 			document.getElementById("idThrobbler").style.display = "none";
 		}
+		var ksmagellanPath = new Array("/magellan", "/webmagellan");
+		var path = ksmagellanPath.shift();
+		while(this.WebmagellanPath === null && path !== undefined){
+			req = new XMLHttpRequest();
+			req.open("GET", path, false);
+			req.send(null);
+			
+			if (req.status != 200 || (req.responseText && req.responseText.indexOf("Not Found") == -1)){
+				this.WebmagellanPath = path;
+			}
+			path = ksmagellanPath.shift();
+		}
+		req = null;
+		path = null;
+		
+		if (this.WebmagellanPath !== null){
+			var MagellanLink = document.createElement('a');
+			if (HMI.InputHost.value.length === 0){
+				MagellanLink.href = this.WebmagellanPath;
+				MagellanLink.style.display = 'none';
+			}else{
+				MagellanLink.href = this.WebmagellanPath + '?cmd=start&arg1='+HMI.InputHost.value;
+			}
+			MagellanLink.target = 'TargetWebmagellan';
+			MagellanLink.id = 'idWebmagellan';
+			MagellanLink.style.paddingRight = '10px';
+			MagellanLink.appendChild(document.createTextNode('See in Webmagellan'));
+			
+			$("idBookmark").parentNode.insertBefore(MagellanLink, $("idBookmark").parentNode.firstChild);
+		}
+		
 		this.hmi_log_trace("HMI.prototype.init - End");
 	},
 	
@@ -666,15 +698,14 @@ HMI.prototype = {
 			//make input variable number-only
 			HMI.InputRefreshTime.value = this.RefreshTime;
 		}
-		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
+		$("idBookmark").href = window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
 			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
 			(HMI.trace===true?"&trace=true":"")+
-			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
-			);
+			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
 		
 		//if an auto refresh is active, reset to new value
 		if (HMI.RefreshTimeoutID !== null){
@@ -738,21 +769,19 @@ HMI.prototype = {
 		var KSGateway = window.location.host;
 		
 		//present a deep link to the Host setting
-		$("idBookmark").style.cssText = "display:inline;";
-		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
+		$("idBookmark").style.display = "";
+		$("idBookmark").href = window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
 			(HMI.trace===true?"&trace=true":"")+
-			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
-			);
+			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
 		if (this.KSClient.TCLKSHandle !== null){
 			this.KSClient.getServers();
 		}
-		delete KSServer;
 		
 		//reenable click by user
 		HMI.ButShowServers.disabled = false;
@@ -760,6 +789,14 @@ HMI.prototype = {
 		if (document.getElementById("idThrobbler") !== null){
 			document.getElementById("idThrobbler").style.display = "none";
 		}
+		//correct magellan URL
+		//
+		if (this.WebmagellanPath !== null){
+			$("idWebmagellan").style.display = '';
+			//todo gefälscher ksserver dings
+			$("idWebmagellan").href = HMI.WebmagellanPath + (HMI.InputHost.value.length !== 0 ? '?cmd=start&arg1='+KSServer : "");
+		}
+		KSServer = null;
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
@@ -776,7 +813,7 @@ HMI.prototype = {
 		deleteChilds(this.ErrorOutput);
 		
 		HMI.PossSheets.disabled = true;
-		$("idBookmark").style.cssText = "display:none;";
+		$("idBookmark").style.display = "none";
 		document.title = "Startcenter - ACPLT/HMI";
 		
 		window.clearInterval(HMI.RefreshTimeoutID);
@@ -806,7 +843,7 @@ HMI.prototype = {
 		//clean an old SVG display and displayed errors in website
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
-		$("idBookmark").style.cssText = "display:none;";
+		$("idBookmark").style.display = "none";
 		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
@@ -840,16 +877,15 @@ HMI.prototype = {
 		HMI.PossSheets.blur();
 		HMI.PossServers.blur();
 		//present a "deep link" to the sheet
-		$("idBookmark").style.cssText = "display:inline;";
-		$("idBookmark").setAttribute("href", window.location.protocol+"//"+
+		$("idBookmark").style.display = "inline";
+		$("idBookmark").href = window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
 			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
 			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
 			(HMI.trace===true?"&trace=true":"")+
-			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"")
-			);
+			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
@@ -1582,7 +1618,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-06-29 15:39:08 $";
+var filedate = "$Date: 2010-07-02 08:07:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
