@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.42 $
-*	$Date: 2010-07-02 08:25:06 $
+*	$Revision: 1.43 $
+*	$Date: 2010-07-13 13:30:02 $
 *
 *	History:
 *	--------
@@ -429,7 +429,10 @@ Dragger.prototype = {
 		Node.setAttribute('fill-opacity', '0.25');
 		Node.setAttribute('stroke-opacity', '0.25');
 		Node.setAttribute('clonedID', this._node.getAttribute('id'));
-		this._node.parentNode.insertBefore(Node, this._node);
+		if (BrowserDetect.version != 9 && BrowserDetect.browser != "Explorer"){
+			//todo: ie 9 jun 2010 crashes if inserted
+			this._node.parentNode.insertBefore(Node, this._node);
+		}
 		
 		//move dragNode to the front of SVG, so it is visible in all cases
 		if (this._node != this._node.parentNode.lastChild)
@@ -520,8 +523,6 @@ Dragger.prototype = {
 			}
 		};
 		
-		// Renesis 1.1.1.0 does not clean display, so this could be called with a empty Clone
-		// http://tickets.examotion.com/public/view.php?id=83
 		if (Clone && Clone.parentNode){
 			Clone.parentNode.replaceChild(this._node, Clone);
 			this._node.setAttribute('x', Clone.getAttribute('x'));
@@ -581,7 +582,7 @@ Dragger.prototype = {
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground: "+ground._node.id);
 			this._ground = ground;
 			
-			//LayerX and LayerY are HMI specific SVG Attributes!
+			//LayerX and LayerY are HMI specific DOM Attributes!
 			//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 			
 			//new position is old coordinate + position of old parent - position of new parent (=ground)
@@ -613,7 +614,7 @@ Dragger.prototype = {
 			{
 				// firstChild == <g></g>
 				//
-				//LayerX and LayerY are HMI specific SVG Attributes!
+				//LayerX and LayerY are HMI specific DOM Attributes!
 				//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 				
 				//new position is old coordinate + position of old parent(=ground) - position of new parent (=ground)
@@ -676,7 +677,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2010-07-02 08:25:06 $";
+var filedate = "$Date: 2010-07-13 13:30:02 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
