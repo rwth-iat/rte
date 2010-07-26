@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.16 2006-01-12 14:10:13 markus Exp $
+ * $Id: dbdump.cpp,v 1.17 2010-07-26 13:29:19 henning Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -23,19 +23,20 @@
 // This programme writes the contents of an ACPLT/OV server into a text file.
 //
 // Author : Christian Poensgen <chris@plt.rwth-aachen.de>
-//			Ansgar Münnemann <ansgar@plt.rwth-aachen.de>
+//			Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>
 
 /////////////////////////////////////////////////////////////////////////////
 
 #include "dbdump.h"
 #include "fnmatch.h"					// for string matching routines
-#include <iostream.h>
-#include <iomanip.h>
-#include <fstream.h>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
 #include <ctype.h>
 #include <time.h>
 #include "libov/ov_version.h"
 #include "ks/conversions.h"
+using namespace std;
 
 #if PLT_SYSTEM_NT
 #include <stdio.h>

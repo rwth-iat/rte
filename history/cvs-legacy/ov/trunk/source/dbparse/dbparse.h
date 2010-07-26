@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse.h,v 1.10 2007-04-25 13:59:03 martin Exp $
+ * $Id: dbparse.h,v 1.11 2010-07-26 13:29:19 henning Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -37,16 +37,16 @@
     #include <iostream>
 #endif
 
-#include <iostream.h>
+#include <iostream>
 #include <malloc.h>
-#include <fstream.h>
+#include <fstream>
 #include "ks/commobject.h"
 #include "ks/avmodule.h"
 #include "ks/avsimplemodule.h"
 #include "ks/objmgrparams.h"
 #include "ks/path.h"
 //#include "ks/stdconnectionmgr.h"
-
+using namespace std;
 
 #if PLT_SYSTEM_NT
 #include <time.h>

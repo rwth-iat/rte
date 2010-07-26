@@ -1,5 +1,5 @@
 
-#   $Id: unix.mk,v 1.23 2008-06-18 15:08:47 martin Exp $
+#   $Id: unix.mk,v 1.24 2010-07-26 13:29:19 henning Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -24,7 +24,7 @@
 #	--------
 #	17-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
-#	09-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
+#	09-Jul-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
 
 
 
@@ -199,7 +199,7 @@ fnmatch.o : fnmatch.c
 	 $(CC) $(CC_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
-	$(CXX_LINK) -o $@ $^ $(LIBPLT_LIB) $(LIBKS_LIB) $(LIBKSCLN_LIB) $(CXX_LIBS)
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
 	strip --strip-debug $(DBDUMP_EXE)
 
 #	ACPLT/OV database parser

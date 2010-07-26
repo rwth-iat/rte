@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump_templ.cpp,v 1.1 2007-04-25 13:59:03 martin Exp $
+ * $Id: dbdump_templ.cpp,v 1.2 2010-07-26 13:29:19 henning Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -103,5 +103,6 @@ template class PltIterator_<PltString>;
 template class Plt_AtArrayNew<KscNegotiator>;
 template class Plt_AtNew<KscNegotiator>;
 template class PltIterator<PltString>;
-
+template class PltHashIterator<KscSorter::Key, PltPtrHandle<KscSorterBucket> >;  
+template class PltIterator<PltAssoc<KscSorter::Key, PltPtrHandle<KscSorterBucket> > >;
 #endif
