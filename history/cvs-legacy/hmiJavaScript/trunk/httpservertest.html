@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.6 $
-*	$Date: 2010-04-09 12:05:21 $
+*	$Revision: 1.7 $
+*	$Date: 2010-07-27 14:54:07 $
 *
 *	Hlistory:
 *	12-May-2009			Je
@@ -166,6 +166,28 @@ if (-1 == window.location.protocol.indexOf('http')){
 	}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('Apache')){
 		document.getElementById("idServerType").className = "orange";
 		document.getElementById("idServerType").firstChild.nodeValue = "Apache, so the Gateway ist probably PHP";
+		
+		//check charset encoding
+		var req = new XMLHttpRequest();
+		req.open("GET", window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ 'tks.php?preventCaching='+DatePreventsCaching.getTime(), false);
+		req.send(null);
+		ResponseServerString = req.getResponseHeader('Content-Type');
+		if (ResponseServerString && -1 != ResponseServerString.indexOf('charset')){
+			document.getElementById("idServerHasCharset").className = "green";
+			document.getElementById("idServerHasCharset").firstChild.nodeValue = "true";
+			if (ResponseServerString && -1 != ResponseServerString.indexOf('indows-1252')){
+				document.getElementById("idServerCorrectCharset").className = "green";
+				document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "true";
+			}else{
+				document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "false. Server send: '"+ResponseServerString+"'";
+			}
+		}else{
+			document.getElementById("idServerHasCharset").firstChild.nodeValue = "false. The Server did not send a charset information.";
+			document.getElementById("idServerCorrectCharset").firstChild.nodeValue = "false";
+		}
+	}else if (ResponseServerString === null){
+		document.getElementById("idServerType").className = "red";
+		document.getElementById("idServerType").firstChild.nodeValue = "Server did not send an Server-Info or this information is not available to the interpreter (Opera Turbo active?). Assuming PHP Gateway (just for the test).";
 		
 		//check charset encoding
 		var req = new XMLHttpRequest();
