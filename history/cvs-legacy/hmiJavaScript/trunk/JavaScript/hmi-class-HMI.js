@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.149 $
-*	$Date: 2010-07-02 09:58:40 $
+*	$Revision: 1.150 $
+*	$Date: 2010-07-27 13:38:37 $
 *
 *	History:
 *	--------
@@ -592,7 +592,7 @@ HMI.prototype = {
 			req.open("GET", path, false);
 			req.send(null);
 			
-			if (req.status != 200 || (req.responseText && req.responseText.length > 300 && req.responseText.indexOf("Not Found") == -1)){
+			if (req.status == 200 && req.responseText && req.responseText.length > 300 && req.responseText.indexOf("Not Found") == -1){
 				this.WebmagellanPath = path;
 			}
 			path = ksmagellanPath.shift();
@@ -1619,7 +1619,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-07-02 09:58:40 $";
+var filedate = "$Date: 2010-07-27 13:38:37 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
