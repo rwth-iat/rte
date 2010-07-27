@@ -48,8 +48,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.43 $
-*	$Date: 2010-04-16 13:22:42 $
+*	$Revision: 1.44 $
+*	$Date: 2010-07-27 16:35:32 $
 *
 *	History:
 *
@@ -126,10 +126,10 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 			<hr color="blue" style="height:2px;margin-top:0;" class="doNotPrintThis">
 			<table>
 				<tr>
-					<td style="text-align:right;" title="As seen from KSGateway">FB-Host:</td>
-					<td><input id="idHost" type="text" size="29" value="" tabindex="2"></td>
-					<td style="text-align:center;">Refresh Time:</td>
-					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4">ms
+					<td style="text-align:right;" title="As seen from KSGateway"><label for="idHost">FB-Host:</label></td>
+					<td><input id="idHost" type="text" size="29" value="" tabindex="2"/></td>
+					<td style="text-align:center;"><label for="idRefreshTime">Refresh Time:</label></td>
+					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4"><label for="idRefreshTime">ms</label>
 						<noscript>
 							<strong>Error: ACPLT/HMI needs activated JavaScript in your browser.</strong>
 						</noscript>
@@ -137,7 +137,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align:right;">Server:</td>
+					<td style="text-align:right;"><label for="idServers">Server:</label></td>
 					<td><select id="idServers" name="Sheets" size="1" tabindex="3">
 							<option>please push "Show Servers"</option>
 						</select>
@@ -156,13 +156,13 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align:right;">Sheets:</td>
+					<td style="text-align:right;"><label for="idSheets">Sheets:</label></td>
 					<td><select id="idSheets" name="Sheets" size="1" tabindex="5">
 							<option>please push "Show Servers"</option>
 						</select>
 					</td>
 					<td colspan="2">
-						<input type="checkbox" id="idKeepHeader" value="true"> keep this header visible
+						<input type="checkbox" id="idKeepHeader" value="true"><label for="idKeepHeader"> keep this header visible</label>
 <!--
 						<input type="checkbox" id="idShowcomponents" value="true"> Show Components
 -->
