@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.150 $
-*	$Date: 2010-07-27 13:38:37 $
+*	$Revision: 1.151 $
+*	$Date: 2010-07-28 09:37:31 $
 *
 *	History:
 *	--------
@@ -1309,6 +1309,11 @@ HMI.prototype = {
 		//trace log deactivated, causes too much noise and performanceproblem in a production system
 //		this.hmi_log_trace("HMI.prototype.instanceOf - Start");
 		
+		//html5 classList saves us very much work
+		if (Node.classList && Node.classList.contains){
+			return Node.classList.contains(ClassName);
+		}
+		
 		//conform to the standard would be "", but browser return null. not tested both because of speed
 		if (Node.getAttribute("class") != null)
 		{
@@ -1619,7 +1624,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-07-27 13:38:37 $";
+var filedate = "$Date: 2010-07-28 09:37:31 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
