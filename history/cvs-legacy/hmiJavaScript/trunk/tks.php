@@ -1,13 +1,23 @@
 <?php
 // Basis-Funktionen bekanntgeben
 
+//setting right charset for umlauts in HMI grafics
 header("Content-Type: text/html; charset=Windows-1252");
-$phpKSIncludeFile = "../phpks/phpks.inc.php";
 
-if (is_file($phpKSIncludeFile)){
+$phpKSIncludePath = "../phpks/";
+$phpKSIncludeFile = "phpks.inc.php";
+
+if (!extension_loaded ('phpks')){
+	echo "KS PHP library not loaded.";
+	exit;
+}elseif (is_file($phpKSIncludePath.$phpKSIncludeFile)){
+	//found file in shared folder
+	include($phpKSIncludePath.$phpKSIncludeFile);
+}elseif (is_file($phpKSIncludeFile)){
+	//found file in own folder
 	include($phpKSIncludeFile);
 }else{
-	echo "KS PHP Helperfile not found: ".$phpKSIncludeFile;
+	echo "KS PHP Helperfile not found: ".$phpKSIncludePath.$phpKSIncludeFile;
 	exit;
 }
 
