@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.20 $
-*	$Date: 2010-04-07 08:08:47 $
+*	$Revision: 1.21 $
+*	$Date: 2010-08-26 09:50:14 $
 *
 *	History:
 *	01-March-2005			HA
@@ -166,6 +166,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			return false;
 		}
 	}
+	return true;
 }
 
 /***********************************************************************
@@ -195,7 +196,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2010-04-07 08:08:47 $";
+var filedate = "$Date: 2010-08-26 09:50:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

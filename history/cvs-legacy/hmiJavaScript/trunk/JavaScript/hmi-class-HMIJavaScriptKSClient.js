@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.82 $
-*	$Date: 2010-07-02 08:25:06 $
+*	$Revision: 1.83 $
+*	$Date: 2010-08-26 09:50:14 $
 *
 *	History:
 *	--------
@@ -316,9 +316,10 @@ HMIJavaScriptKSClient.prototype = {
 			this.getEP(null, '/servers%20*', this._cbGetServers);
 		} else {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End - No TCLKSHandle");
-			return null;
+			return false;
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End");
+		return true;
 	},
 	
 	/*********************************
@@ -429,9 +430,10 @@ HMIJavaScriptKSClient.prototype = {
 		} catch (e) {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End2");
 			return false;
-	   };
-	   
-	   HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End3");
+		};
+		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End3");
+		return false;
 	},
 	
 	/*********************************
@@ -471,6 +473,7 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		ManagerResponse = null;
 		PointOfSpace = null;
+		return true;
 	},
 	
 	/*********************************
@@ -511,6 +514,7 @@ HMIJavaScriptKSClient.prototype = {
 		Command = null;
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
+		return true;
 	},
 	
 	/*********************************
@@ -759,7 +763,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-07-02 08:25:06 $";
+var filedate = "$Date: 2010-08-26 09:50:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

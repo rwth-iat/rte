@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.35 $
-*	$Date: 2010-06-29 15:39:08 $
+*	$Revision: 1.36 $
+*	$Date: 2010-08-26 09:50:14 $
 *
 *	History:
 *	--------
@@ -142,6 +142,7 @@ if (!document.importNodeIE9) {
 		case 8: //document.COMMENT_NODE
 			return document.createTextNode(node.nodeValue);
 		}
+		return null;
 	};
 }
 
@@ -282,7 +283,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2010-06-29 15:39:08 $";
+var filedate = "$Date: 2010-08-26 09:50:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

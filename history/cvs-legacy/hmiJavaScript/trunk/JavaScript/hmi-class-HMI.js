@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.151 $
-*	$Date: 2010-07-28 09:37:31 $
+*	$Revision: 1.152 $
+*	$Date: 2010-08-26 09:50:11 $
 *
 *	History:
 *	--------
@@ -246,7 +246,7 @@ HMI.prototype = {
 				document.getElementById("idThrobbler").style.display = "none";
 			}
 			window.alert ("Error initialising HMI Website:\n"+ErrorDetail);
-			return;
+			return false;
 		}
 		
 		//init the optional Buttons
@@ -288,6 +288,7 @@ HMI.prototype = {
 			var wertestring = unescape(window.location.search);
 			wertestring = wertestring.slice(1);
 			var paare = wertestring.split("&");
+			//todo calc backwards
 			for (var i=0; i < paare.length; i++) {
 				var name = paare[i].substring(0, paare[i].indexOf("="));
 				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
@@ -585,7 +586,7 @@ HMI.prototype = {
 		if (document.getElementById("idThrobbler") !== null){
 			document.getElementById("idThrobbler").style.display = "none";
 		}
-		var ksmagellanPath = new Array("/magellan", "/webmagellan");
+		var ksmagellanPath = new Array("/magellan", "/webmagellan", "webksmagellan");
 		var path = ksmagellanPath.shift();
 		while(this.WebmagellanPath === null && path !== undefined){
 			req = new XMLHttpRequest();
@@ -618,6 +619,7 @@ HMI.prototype = {
 		}
 		
 		this.hmi_log_trace("HMI.prototype.init - End");
+		return true;
 	},
 	
 	/*********************************
@@ -823,7 +825,7 @@ HMI.prototype = {
 		//nothing selected
 		if (Server == 'no server'){
 			HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
-			return;
+			return false;
 		}
 		
 		//an init generates a new Handle, needed cause we communicate to this server the first time
@@ -833,6 +835,7 @@ HMI.prototype = {
 		}
 		
 		this.hmi_log_trace("HMI.prototype.showSheets - End");
+		return true;
 	},
 	
 	/*********************************
@@ -1363,6 +1366,7 @@ HMI.prototype = {
 		}
 		Classes = Classes.split(Delimiter);
 		var ClassesLength = Classes.length;
+		//todo count backwards saving one variable
 		for (idx = 0; idx < ClassesLength; idx++)
 		{
 			if (ClassName == Classes[idx])
@@ -1624,7 +1628,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-07-28 09:37:31 $";
+var filedate = "$Date: 2010-08-26 09:50:11 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
