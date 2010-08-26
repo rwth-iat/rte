@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.152 $
-*	$Date: 2010-08-26 09:50:11 $
+*	$Revision: 1.153 $
+*	$Date: 2010-08-26 10:39:59 $
 *
 *	History:
 *	--------
@@ -586,7 +586,7 @@ HMI.prototype = {
 		if (document.getElementById("idThrobbler") !== null){
 			document.getElementById("idThrobbler").style.display = "none";
 		}
-		var ksmagellanPath = new Array("/magellan", "/webmagellan", "webksmagellan");
+		var ksmagellanPath = new Array("/magellan", "/webmagellan", "/webksmagellan");
 		var path = ksmagellanPath.shift();
 		while(this.WebmagellanPath === null && path !== undefined){
 			req = new XMLHttpRequest();
@@ -1628,7 +1628,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-08-26 09:50:11 $";
+var filedate = "$Date: 2010-08-26 10:39:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
