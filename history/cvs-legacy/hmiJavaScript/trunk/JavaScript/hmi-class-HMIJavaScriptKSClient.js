@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.84 $
-*	$Date: 2010-09-09 11:01:45 $
+*	$Revision: 1.85 $
+*	$Date: 2010-09-09 13:16:10 $
 *
 *	History:
 *	--------
@@ -232,7 +232,6 @@ HMIJavaScriptKSClient.prototype = {
 	setVar: function(Handle, path, value, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path+" Handle: "+Handle);
 		
-		HMI.displayGestureReactionWindow();
 		if (Handle === null){
 			Handle = this.TCLKSHandle;
 		}
@@ -660,7 +659,7 @@ HMIJavaScriptKSClient.prototype = {
 		{
 			//	Synchron Communication
 			//
-			if (cbfnc !== null){
+			if (cbfnc !== null && cbfnc !== undefined){
 				cbfnc(this, req);
 			}else{
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
@@ -765,7 +764,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-09-09 11:01:45 $";
+var filedate = "$Date: 2010-09-09 13:16:10 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

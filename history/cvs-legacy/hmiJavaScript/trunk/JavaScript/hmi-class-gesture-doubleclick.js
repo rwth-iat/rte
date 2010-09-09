@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.29 $
-*	$Date: 2010-07-02 08:25:06 $
+*	$Revision: 1.30 $
+*	$Date: 2010-09-09 13:16:10 $
 *
 *	History:
 *	--------
@@ -193,11 +193,14 @@ DoubleClick.prototype = {
 			
 			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
 			Command = null;
+			
+			//mark changed Component
+			HMI.displaygestureReactionMarker(Component);
 		};
 		
 	}
 };
-var filedate = "$Date: 2010-07-02 08:25:06 $";
+var filedate = "$Date: 2010-09-09 13:16:10 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

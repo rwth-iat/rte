@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.154 $
-*	$Date: 2010-09-09 11:01:45 $
+*	$Revision: 1.155 $
+*	$Date: 2010-09-09 13:16:10 $
 *
 *	History:
 *	--------
@@ -100,8 +100,8 @@ function HMI(debug, error, warning, info, trace) {
 	this.Playground = null;
 	this.ErrorOutput = null;
 	this.InfoOutput = null;
-	this.gestureReactionWindow = null;
-	this.gestureReactionWindowTimeoutID = null;
+	this.gestureReactionMarker = null;
+	this.gestureReactionMarkerTimeoutID = null;
 	
 	this.RefreshTimeoutID = null;
 	this._currentDragger = null;
@@ -623,71 +623,44 @@ HMI.prototype = {
 			MagellanLink = null;
 		}
 		
-		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		//create a div with an infotext for gesture sent
-		HMI.gestureReactionWindow = document.createElement("div");
-		HMI.gestureReactionWindow.appendChild(document.createTextNode("processing user input..."));
-		
-		//set position and dimension
-		HMI.gestureReactionWindow.style.position = "absolute";
-		HMI.gestureReactionWindow.style.textAlign = "center";
-		HMI.gestureReactionWindow.style.width = "100%";
-		HMI.gestureReactionWindow.style.height = "50px";
-		HMI.gestureReactionWindow.style.paddingTop = "20px";
-		HMI.gestureReactionWindow.style.fontSize = "20px";
-		
-		//try to disable pointer Events (not in HTML standard, good will of browsers needed)
-		HMI.gestureReactionWindow.style.pointerEvents = "none";
-		
-		//color things for ff 2 and ie < 9
-		HMI.gestureReactionWindow.style.backgroundColor = "rgb(209, 225, 250)";
-		
-		//ff 2 will ignore this one, IE < 9 even throws exeption
-		try{
-			HMI.gestureReactionWindow.style.backgroundColor = "rgba(209, 225, 250, 0.6)";
-		}catch(e){};
-		
-		if(-1 == HMI.gestureReactionWindow.style.backgroundColor.indexOf("rgba")){
-			//for browsers who does not allow alpha trans for the background, render the whole div transparent (incl text)
-			if (HMI.gestureReactionWindow.style.opacity !== undefined){
-				//firefox 2
-				HMI.gestureReactionWindow.style.opacity = ".5";
-			}else if (HMI.gestureReactionWindow.style.filter !== undefined){
-				//IE 5-7		filter: alpha(opacity=60);
-				//IE 8		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-				//But ie8 supports the old syntax via JS
-				HMI.gestureReactionWindow.style.filter = 'alpha(opacity=70)';
-			}
-		}
-		
-		//hide in default view
-		HMI.gestureReactionWindow.style.display = "none";
-		
-		HMI.HideableHeader.parentNode.insertBefore(HMI.gestureReactionWindow, HMI.HideableHeader);
-		
 		this.hmi_log_trace("HMI.prototype.init - End");
 		return true;
 	},
 	
 	/*********************************
-		Functions - displayGestureReactionWindow
+		Functions - displaygestureReactionMarker
 		
-		called with FIXME
+		called after sending a gesture request
 	*********************************/
-	displayGestureReactionWindow: function (){
-		this.hmi_log_trace("HMI.prototype.displayGestureReactionWindow");
+	displaygestureReactionMarker: function (Component){
+		this.hmi_log_trace("HMI.prototype.displaygestureReactionMarker");
+		
+		//warning: This function is called after the refresh, so this Component is NOT displayed anymore! (but probably another similar Component)
 		
 		//disable old timeout
-		if (HMI.gestureReactionWindowTimeoutID !== null) {
-			window.clearTimeout(HMI.gestureReactionWindowTimeoutID);
+		if (HMI.gestureReactionMarkerTimeoutID !== null) {
+			HMI.gestureReactionMarker.style.display = "none";
 		}
-		//show popup
-		HMI.gestureReactionWindow.style.display = "block";
+		
+		//build info rect around affected component
+		HMI.gestureReactionMarker = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
+		HMI.gestureReactionMarker.setAttributeNS(null, 'x', Component.getAttribute('layerX'));
+		HMI.gestureReactionMarker.setAttributeNS(null, 'y', Component.getAttribute('layerY'));
+		HMI.gestureReactionMarker.setAttributeNS(null, 'width', Component.getAttribute('width'));
+		HMI.gestureReactionMarker.setAttributeNS(null, 'height', Component.getAttribute('height'));
+		HMI.gestureReactionMarker.setAttributeNS(null, 'fill', '#D1E1FA');
+		HMI.gestureReactionMarker.setAttributeNS(null, 'opacity', '0.6');
+		
+		//disable pointer Events
+		HMI.gestureReactionMarker.setAttributeNS(null, 'pointer-events', 'none');
+		
+		//append this rect into svg
+		HMI.Playground.firstChild.appendChild(HMI.gestureReactionMarker);
 		
 		//clear display in a few milliseconds
-		HMI.gestureReactionWindowTimeoutID = window.setTimeout(
+		HMI.gestureReactionMarkerTimeoutID = window.setTimeout(
 			function(){
-				HMI.gestureReactionWindow.style.display = "none";
+				HMI.gestureReactionMarker.style.display = "none";
 			}, 800);
 	},
 	
@@ -1697,7 +1670,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-09-09 11:01:45 $";
+var filedate = "$Date: 2010-09-09 13:16:10 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
