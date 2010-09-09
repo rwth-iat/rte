@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.153 $
-*	$Date: 2010-08-26 10:39:59 $
+*	$Revision: 1.154 $
+*	$Date: 2010-09-09 11:01:45 $
 *
 *	History:
 *	--------
@@ -100,6 +100,8 @@ function HMI(debug, error, warning, info, trace) {
 	this.Playground = null;
 	this.ErrorOutput = null;
 	this.InfoOutput = null;
+	this.gestureReactionWindow = null;
+	this.gestureReactionWindowTimeoutID = null;
 	
 	this.RefreshTimeoutID = null;
 	this._currentDragger = null;
@@ -586,6 +588,9 @@ HMI.prototype = {
 		if (document.getElementById("idThrobbler") !== null){
 			document.getElementById("idThrobbler").style.display = "none";
 		}
+		
+		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//try to search for webmagellan and provide a link
 		var ksmagellanPath = new Array("/magellan", "/webmagellan", "/webksmagellan");
 		var path = ksmagellanPath.shift();
 		while(this.WebmagellanPath === null && path !== undefined){
@@ -618,8 +623,72 @@ HMI.prototype = {
 			MagellanLink = null;
 		}
 		
+		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//create a div with an infotext for gesture sent
+		HMI.gestureReactionWindow = document.createElement("div");
+		HMI.gestureReactionWindow.appendChild(document.createTextNode("processing user input..."));
+		
+		//set position and dimension
+		HMI.gestureReactionWindow.style.position = "absolute";
+		HMI.gestureReactionWindow.style.textAlign = "center";
+		HMI.gestureReactionWindow.style.width = "100%";
+		HMI.gestureReactionWindow.style.height = "50px";
+		HMI.gestureReactionWindow.style.paddingTop = "20px";
+		HMI.gestureReactionWindow.style.fontSize = "20px";
+		
+		//try to disable pointer Events (not in HTML standard, good will of browsers needed)
+		HMI.gestureReactionWindow.style.pointerEvents = "none";
+		
+		//color things for ff 2 and ie < 9
+		HMI.gestureReactionWindow.style.backgroundColor = "rgb(209, 225, 250)";
+		
+		//ff 2 will ignore this one, IE < 9 even throws exeption
+		try{
+			HMI.gestureReactionWindow.style.backgroundColor = "rgba(209, 225, 250, 0.6)";
+		}catch(e){};
+		
+		if(-1 == HMI.gestureReactionWindow.style.backgroundColor.indexOf("rgba")){
+			//for browsers who does not allow alpha trans for the background, render the whole div transparent (incl text)
+			if (HMI.gestureReactionWindow.style.opacity !== undefined){
+				//firefox 2
+				HMI.gestureReactionWindow.style.opacity = ".5";
+			}else if (HMI.gestureReactionWindow.style.filter !== undefined){
+				//IE 5-7		filter: alpha(opacity=60);
+				//IE 8		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+				//But ie8 supports the old syntax via JS
+				HMI.gestureReactionWindow.style.filter = 'alpha(opacity=70)';
+			}
+		}
+		
+		//hide in default view
+		HMI.gestureReactionWindow.style.display = "none";
+		
+		HMI.HideableHeader.parentNode.insertBefore(HMI.gestureReactionWindow, HMI.HideableHeader);
+		
 		this.hmi_log_trace("HMI.prototype.init - End");
 		return true;
+	},
+	
+	/*********************************
+		Functions - displayGestureReactionWindow
+		
+		called with FIXME
+	*********************************/
+	displayGestureReactionWindow: function (){
+		this.hmi_log_trace("HMI.prototype.displayGestureReactionWindow");
+		
+		//disable old timeout
+		if (HMI.gestureReactionWindowTimeoutID !== null) {
+			window.clearTimeout(HMI.gestureReactionWindowTimeoutID);
+		}
+		//show popup
+		HMI.gestureReactionWindow.style.display = "block";
+		
+		//clear display in a few milliseconds
+		HMI.gestureReactionWindowTimeoutID = window.setTimeout(
+			function(){
+				HMI.gestureReactionWindow.style.display = "none";
+			}, 800);
 	},
 	
 	/*********************************
@@ -1628,7 +1697,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-08-26 10:39:59 $";
+var filedate = "$Date: 2010-09-09 11:01:45 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
