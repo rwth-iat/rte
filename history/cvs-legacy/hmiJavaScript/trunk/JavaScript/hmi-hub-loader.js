@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.21 $
-*	$Date: 2010-08-26 09:50:14 $
+*	$Revision: 1.22 $
+*	$Date: 2010-10-08 12:36:26 $
 *
 *	History:
 *	01-March-2005			HA
@@ -137,27 +137,35 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	for ( idx in hubFilelist ){
 		if (document.createElementNS !== undefined){
 			node = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
-			if (node.type !== undefined){
-				node.type = "text/javascript";
-			}else{
-				node.setAttribute("type", "text/javascript");
-			}
-			if (node.src !== undefined){
-				node.src = base+hubFilelist[idx];
-			}else{
-				node.setAttribute("src", base+hubFilelist[idx]);
-			}
-			node.setAttribute("charset", "ISO-8859-1");
 		}else if (document.createElement !== undefined){
 			node = document.createElement("script");
-			node.setAttribute("type", "text/javascript");
-			node.setAttribute("src", base+hubFilelist[idx]);
-			node.setAttribute("charset", "ISO-8859-1");
 		}else{
 			window.alert("Fatal error: script hub loader unable to create new script node in document");
 			throw new Error("hub loader script node creation error");
 			return false;
 		}
+		
+		if (node.type !== undefined){
+			node.type = "text/javascript";
+		}else{
+			node.setAttribute("type", "text/javascript");
+		}
+		if (node.src !== undefined){
+			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
+			node.src = base+hubFilelist[idx];
+		}else{
+			//not supported by Firefox 3.6 and Chrome 5
+			node.setAttribute("src", base+hubFilelist[idx]);
+		}
+		node.setAttribute("charset", "ISO-8859-1");
+		if (node.async !== undefined){
+			//load files async and execute immediately
+			node.async = true;
+		}else if (node.defer !== undefined){
+			//load files async and execute in the right order
+			node.defer = true;
+		}
+		
 		if (scriptAnchor.appendChild !== undefined){
 			scriptAnchor.appendChild(node);
 		}else{
@@ -196,7 +204,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2010-08-26 09:50:14 $";
+var filedate = "$Date: 2010-10-08 12:36:26 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
