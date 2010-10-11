@@ -62,8 +62,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.23 $
-*	$Date: 2010-10-08 12:57:30 $
+*	$Revision: 1.24 $
+*	$Date: 2010-10-11 11:28:51 $
 *
 *	History:
 *	26-March-2008			Je
@@ -84,7 +84,7 @@
 		<object id="AdobeSVG" classid="clsid:78156a80-c6a1-4bbf-8e6a-3cd390eeb4e2"></object>
 		<?import namespace="svg" implementation="#AdobeSVG"?>
 		<title>HMI-Startcenter - XSLT Version</title>
-		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js" charset="ISO-8859-1" defer="defer" async="async"></script>
+		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js" charset="ISO-8859-1"></script>
 		<style type="text/css">
 			@media print {
 				.doNotPrintThis{ display:none; }

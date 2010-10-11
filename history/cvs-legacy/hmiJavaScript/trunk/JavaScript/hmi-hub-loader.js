@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.22 $
-*	$Date: 2010-10-08 12:36:26 $
+*	$Revision: 1.23 $
+*	$Date: 2010-10-11 11:28:51 $
 *
 *	History:
 *	01-March-2005			HA
@@ -158,14 +158,6 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			node.setAttribute("src", base+hubFilelist[idx]);
 		}
 		node.setAttribute("charset", "ISO-8859-1");
-		if (node.async !== undefined){
-			//load files async and execute immediately
-			node.async = true;
-		}else if (node.defer !== undefined){
-			//load files async and execute in the right order
-			node.defer = true;
-		}
-		
 		if (scriptAnchor.appendChild !== undefined){
 			scriptAnchor.appendChild(node);
 		}else{
@@ -204,7 +196,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2010-10-08 12:36:26 $";
+var filedate = "$Date: 2010-10-11 11:28:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
