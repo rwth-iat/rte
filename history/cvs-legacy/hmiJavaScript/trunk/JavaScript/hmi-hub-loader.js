@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.23 $
-*	$Date: 2010-10-11 11:28:51 $
+*	$Revision: 1.24 $
+*	$Date: 2010-10-15 09:49:47 $
 *
 *	History:
 *	01-March-2005			HA
@@ -160,6 +160,14 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 		node.setAttribute("charset", "ISO-8859-1");
 		if (scriptAnchor.appendChild !== undefined){
 			scriptAnchor.appendChild(node);
+			//some blackberrys kill scriptAnchor, so HMI will not work after that
+			if (scriptAnchor === undefined){
+				window.setTimeout(function(){
+					if (document.getElementById('idErrorOutput')){
+						document.getElementById('idErrorOutput').appendChild(document.createTextNode('Sorry, Browser not supported.'));
+					}
+				}, 5000);
+			}
 		}else{
 			window.alert("Fatal error: script hub loader unable to append new script node into document");
 			throw new Error("hub loader script node append error");
@@ -196,7 +204,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2010-10-11 11:28:51 $";
+var filedate = "$Date: 2010-10-15 09:49:47 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
