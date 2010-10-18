@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.23 $
-*	$Date: 2010-07-02 08:25:06 $
+*	$Revision: 1.24 $
+*	$Date: 2010-10-18 16:01:32 $
 *
 *	History:
 *	--------
@@ -85,11 +85,12 @@ HMIDOMParser.prototype = {
 		var StyleElementNode;
 		var Return;
 		if (typeof DOMParser != "undefined"){
-			//Mozilla has the DOMParser Object
+			//Mozilla, Opera, Webkit and IE9 have the DOMParser Object
 			var Parser = new DOMParser();
 			try {
 				GraphicElement = Parser.parseFromString(GraphicDescription, "text/xml");
 			} catch (e) {
+				//IE9 throws a SYNTAX_ERR DOM Exception: http://blogs.msdn.com/b/ie/archive/2010/10/15/domparser-and-xmlserializer-in-ie9-beta.aspx
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse GraphicDescription');
 				HMI.hmi_log_onwebsite('Could not parse GraphicDescription');
 				return null;
@@ -107,11 +108,14 @@ HMIDOMParser.prototype = {
 				try {
 					StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
 				} catch (e) {
+					//IE9 throws a SYNTAX_ERR DOM Exception: http://blogs.msdn.com/b/ie/archive/2010/10/15/domparser-and-xmlserializer-in-ie9-beta.aspx
 					HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription');
 					HMI.hmi_log_onwebsite('Could not parse StyleDescription');
-					return null;
 				};
 				if (StyleElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
+				//Mozilla has a very strange way of presenting an error
+				//supported by Opera
+				//not supported by Webkit https://bugs.webkit.org/show_bug.cgi?id=13057
 					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on StyleDescription');
 					HMI.hmi_log_onwebsite('ParseError on StyleDescription');
 				}
@@ -164,12 +168,7 @@ HMIDOMParser.prototype = {
 				//adobe plugin is buggy
 				StyleElementNode = StyleElement.firstChild;
 			}else if (GraphicElement.importNode){
-				try{
-					StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
-				}catch(e){
-					//ie9 jun 2010 throws exception due to wrong DOMParser
-					StyleElementNode = StyleElement.firstChild
-				}
+				StyleElementNode = GraphicElement.importNode(StyleElement.firstChild, true);
 			}
 			GraphicElement.firstChild.appendChild(StyleElementNode);
 		}
@@ -182,12 +181,7 @@ HMIDOMParser.prototype = {
 			//adobe plugin is buggy, but does not need importNode
 			Return = GraphicElement.firstChild;
 		}else if(HMI.svgDocument.importNode){
-			try{
-				Return = HMI.svgDocument.importNode(GraphicElement.firstChild, true);
-			}catch(e){
-				//FIXME ie9 jun 2010 throws exception due to wrong DOMParser
-				Return = HMI.svgDocument.importNodeIE9(GraphicElement.firstChild, true);
-			}
+			Return = HMI.svgDocument.importNode(GraphicElement.firstChild, true);
 		}else{
 			Return = GraphicElement.firstChild;
 		}
@@ -202,7 +196,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2010-07-02 08:25:06 $";
+var filedate = "$Date: 2010-10-18 16:01:32 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

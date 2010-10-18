@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.155 $
-*	$Date: 2010-09-09 13:16:10 $
+*	$Revision: 1.156 $
+*	$Date: 2010-10-18 16:01:32 $
 *
 *	History:
 *	--------
@@ -1313,7 +1313,7 @@ HMI.prototype = {
 				}
 			}
 			ChildNodesLength = null;
-		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit   IE9 does not support this in march 2010
+		}else if (Fragment.getElementsByTagNameNS){   //gecko, opera, webkit, ie9
 			Elements = Fragment.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			ElementLength = Elements === null? 0 : Elements.length;
 			for (idx = 0; idx < ElementLength; ++idx){
@@ -1323,7 +1323,7 @@ HMI.prototype = {
 				//recursive init not necessary, getElementsByTagNameNS is recursive by itself
 				HMI._initGestures(Elements[idx]);
 			}
-		}else{   // IE if svg inline, useless since svg inline does not work with gestures
+		}else{   // IE<9 if svg inline, useless since svg inline does not work with gestures
 			Elements = Fragment.getElementsByTagName('svg');
 			ElementLength = Elements === null? 0 : Elements.length;
 			for (idx = 0; idx < ElementLength; ++idx){
@@ -1670,7 +1670,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-09-09 13:16:10 $";
+var filedate = "$Date: 2010-10-18 16:01:32 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
