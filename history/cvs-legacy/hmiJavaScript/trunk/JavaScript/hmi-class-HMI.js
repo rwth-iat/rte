@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.156 $
-*	$Date: 2010-10-18 16:01:32 $
+*	$Revision: 1.157 $
+*	$Date: 2010-11-02 13:47:16 $
 *
 *	History:
 *	--------
@@ -735,14 +735,27 @@ HMI.prototype = {
 	*********************************/
 	ChangeRefreshTime: function(){
 		
-		if (HMI.InputRefreshTime.value < 100){
+		var newInputRefreshTime;
+		//html5 forms give us the value for free
+		if (HMI.InputRefreshTime.valueAsNumber !== undefined){
+			newInputRefreshTime = HMI.InputRefreshTime.valueAsNumber;
+		}else{
+			newInputRefreshTime = parseInt(HMI.InputRefreshTime.value,10);
+		}
+		
+		if (isNaN(newInputRefreshTime)){
+			//there was non number characters in the form
+			HMI.InputRefreshTime.value = 1000;
+			this.RefreshTime = 1000;
+		}else if (newInputRefreshTime < 100){
 			HMI.InputRefreshTime.value = 100;
 			this.RefreshTime = 100;
 		}else{
-			this.RefreshTime = parseInt(HMI.InputRefreshTime.value,10);
+			this.RefreshTime = newInputRefreshTime;
 			//make input variable number-only
-			HMI.InputRefreshTime.value = this.RefreshTime;
+			HMI.InputRefreshTime.value = newInputRefreshTime;
 		}
+		newInputRefreshTime = null;
 		$("idBookmark").href = window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
@@ -1670,7 +1683,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-10-18 16:01:32 $";
+var filedate = "$Date: 2010-11-02 13:47:16 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
