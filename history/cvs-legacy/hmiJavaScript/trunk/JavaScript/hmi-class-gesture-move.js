@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.43 $
-*	$Date: 2010-07-13 13:30:02 $
+*	$Revision: 1.44 $
+*	$Date: 2010-11-04 11:54:49 $
 *
 *	History:
 *	--------
@@ -236,8 +236,7 @@ Dragger.prototype = {
 			RightClick.prototype.onRightClick(evt);
 			return;
 		};
-		//	CLICK is handled in StopDrag, when no movement is detected
-		//	TEXTINPUT is not usefull at a complex dragable element
+		//	CLICK and TEXTINPUT is handled in StopDrag, when no movement is detected
 		
 		//	MOVE
 		//
@@ -518,6 +517,21 @@ Dragger.prototype = {
 				//call internal function to use correct component (evt.target is likely to be wrong in this mouseup-event)
 				//
 				Click.prototype._sendCommand(evt, this._node);
+			}else
+			//	TEXTINPUT
+			//
+			if (HMI.instanceOf(this._node, 'hmi-component-gesture-textinput') === true)
+			{
+				HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement => textinput");
+				//call internal function to use correct component (evt.target is likely to be wrong in this mouseup-event)
+				//
+				var input = TextInput.prototype.getTextContent(evt);
+				if(	input	!== null
+					&&	input	!== undefined)
+				{
+					TextInput.prototype._sendCommand(evt, this._node, input);
+				}
+				input = null;
 			}else{
 				HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement and no clickhandler on this element");
 			}
@@ -677,7 +691,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2010-07-13 13:30:02 $";
+var filedate = "$Date: 2010-11-04 11:54:49 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

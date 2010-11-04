@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.40 $
-*	$Date: 2010-09-09 13:16:10 $
+*	$Revision: 1.41 $
+*	$Date: 2010-11-04 11:54:49 $
 *
 *	History:
 *	--------
@@ -195,6 +195,25 @@ TextInput.prototype = {
 		evt.cancelBubble = true;
 		if (evt.stopPropagation) evt.stopPropagation();
 		
+		var input;
+		input = this.getTextContent(evt);
+		
+		if(	input	!== null
+			&&	input	!== undefined)
+		{
+			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
+		};
+		if (HMI.RefreshTimeoutID === null){
+			//reactivate the Refresh
+			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+		}
+		HMI.hmi_log_trace("TextInput.prototype.onClick - End");
+	},
+	
+	/*********************************
+		_sendCommand
+	*********************************/
+	getTextContent : function (evt) {
 		var text;
 		if (evt.target && evt.target.getAttribute("class") == "dummyTextinputRect"){
 			//the TextInput was empty, so the user clicked on the dummyRect
@@ -226,6 +245,9 @@ TextInput.prototype = {
 		}else{
 			text = "";
 		}
+		if (text === null || text === undefined){
+			text = "";
+		}
 		var input;
 		
 		if (evt.currentTarget && ("unknown" == typeof evt.currentTarget.hasAttributeNS || evt.currentTarget.hasAttributeNS) && evt.currentTarget.hasAttributeNS("http://www.acplt.de/hmi", "textinputcaption")) {
@@ -234,16 +256,10 @@ TextInput.prototype = {
 		}else{
 			input = window.prompt('Please input a new value', text);
 		}
-		if(	input	!== null
-			&&	input	!== undefined)
-		{
-			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
-		};
-		if (HMI.RefreshTimeoutID === null){
-			//reactivate the Refresh
-			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
-		}
-		HMI.hmi_log_trace("TextInput.prototype.onClick - End");
+		
+		text = null;
+		
+		return input;
 	},
 	
 	/*********************************
@@ -269,7 +285,7 @@ TextInput.prototype = {
 		};
 	}
 };
-var filedate = "$Date: 2010-09-09 13:16:10 $";
+var filedate = "$Date: 2010-11-04 11:54:49 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
