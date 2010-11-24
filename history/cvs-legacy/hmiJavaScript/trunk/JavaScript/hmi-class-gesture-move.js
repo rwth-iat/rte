@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.44 $
-*	$Date: 2010-11-04 11:54:49 $
+*	$Revision: 1.45 $
+*	$Date: 2010-11-24 10:59:08 $
 *
 *	History:
 *	--------
@@ -425,8 +425,7 @@ Dragger.prototype = {
 		var Node = this._node.cloneNode(true);
 		Node.setAttribute('id', HMI.HMI_Constants.NODE_NAME_CLONE);
 		Node.setAttribute('class', '');
-		Node.setAttribute('fill-opacity', '0.25');
-		Node.setAttribute('stroke-opacity', '0.25');
+		Node.setAttribute('opacity', '0.25');
 		Node.setAttribute('clonedID', this._node.getAttribute('id'));
 		if (BrowserDetect.version != 9 && BrowserDetect.browser != "Explorer"){
 			//todo: ie 9 jun 2010 crashes if inserted
@@ -691,7 +690,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2010-11-04 11:54:49 $";
+var filedate = "$Date: 2010-11-24 10:59:08 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
