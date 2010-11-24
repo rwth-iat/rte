@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.85 $
-*	$Date: 2010-09-09 13:16:10 $
+*	$Revision: 1.86 $
+*	$Date: 2010-11-24 10:30:04 $
 *
 *	History:
 *	--------
@@ -357,9 +357,13 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.PossServers.setAttribute("title", "available OV-Servers: "+ServerList.substring(0, ServerList.length-2));
 		ServerList = null;
 		
-		if (Server.length > 0){
+		if (Server.length === 0){
+			HMI.PossServers.options[0] = new Option('- no MANAGER available-', 'no server');
+		}else if (Server.length === 1){
+			HMI.PossServers.options[0] = new Option('- no server available -', 'no server');
+		}else{
 			//put first select option with a description
-			HMI.PossServers.options[0] = new Option('- select server -', 'no server');
+			HMI.PossServers.options[0] = new Option('loading...', 'no server');
 			
 			for (i = 0; i < Server.length; i++)
 			{
@@ -370,20 +374,23 @@ HMIJavaScriptKSClient.prototype = {
 					HMI.PossServers.options[HMI.PossServers.options.length] = new Option(Server[i], Server[i]);
 				};
 			};
-			if (HMI.PossServers.length == 1){
-				HMI.PossServers.options[0] = new Option('- no server available -', 'no server');
+			if (HMI.PossServers.length === 1){
+				HMI.PossServers.options[0] = new Option('- no HMI server available -', 'no server');
 			}else if (HMI.PossServers.length == 2){
+				HMI.PossServers.options[0] = new Option('- select server -', 'no server');
 				//selecting the option does not trigger the EventListener
 				//it is allways the second/last <option>...
 				HMI.PossServers.selectedIndex = 1;
+				HMI.PossServers.disabled = false;
 				HMI.showSheets(HMI.PossServers.options[1].value);
 			}else{
+				HMI.PossServers.options[0] = new Option('- select server -', 'no server');
+				//replacing option[0] drops us into the first server
+				HMI.PossServers.selectedIndex = 0;
+				HMI.PossServers.disabled = false;
 				HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
 			}
-			HMI.PossServers.disabled = false;
-		} else {
-			HMI.PossServers.options[0] = new Option('- no MANAGER available-', 'no server');
-		};
+		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - End");
 	},
 	
@@ -552,25 +559,24 @@ HMIJavaScriptKSClient.prototype = {
 				Response = Response.substring(Response.indexOf(' ') + 1, Response.length);
 			};
 			i = i + 1;
-		};
-		Sheet = Sheet.sort();
+		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
-		if (Sheet.length > 0){
+		if (Sheet.length === 0){
+			HMI.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
+		} else {
 			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
+			Sheet = Sheet.sort();
 			for (i = 0; i < Sheet.length; i++){
 				//spaces in objectname are encoded as %20 within OV
 				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(Sheet[i]), Sheet[i]);
 			}
-			if (Sheet.length == 1){
+			if (Sheet.length === 1){
 				//selecting the option does not trigger the EventListener
 				HMI.PossSheets.selectedIndex = 1;
 				HMI.showSheet(Sheet[0]);
 			}
 			HMI.PossSheets.disabled = false;
-		} else {
-			HMI.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
-		};
+		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - End");
 	},
@@ -764,7 +770,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-09-09 13:16:10 $";
+var filedate = "$Date: 2010-11-24 10:30:04 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

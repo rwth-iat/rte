@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.41 $
-*	$Date: 2010-11-04 11:54:49 $
+*	$Revision: 1.42 $
+*	$Date: 2010-11-24 10:30:04 $
 *
 *	History:
 *	--------
@@ -211,7 +211,7 @@ TextInput.prototype = {
 	},
 	
 	/*********************************
-		_sendCommand
+		getTextContent
 	*********************************/
 	getTextContent : function (evt) {
 		var text;
@@ -285,7 +285,7 @@ TextInput.prototype = {
 		};
 	}
 };
-var filedate = "$Date: 2010-11-04 11:54:49 $";
+var filedate = "$Date: 2010-11-24 10:30:04 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
