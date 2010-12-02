@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.45 $
-*	$Date: 2010-11-24 10:59:08 $
+*	$Revision: 1.46 $
+*	$Date: 2010-12-02 15:20:20 $
 *
 *	History:
 *	--------
@@ -534,7 +534,12 @@ Dragger.prototype = {
 			}else{
 				HMI.hmi_log_trace("Dragger.prototype.stopDrag - no movement and no clickhandler on this element");
 			}
-		};
+		}
+		
+		//clear special cursor on ground
+		if (this._ground !== null){
+			this._ground._node.setAttribute("cursor", "");
+		}
 		
 		if (Clone && Clone.parentNode){
 			Clone.parentNode.replaceChild(this._node, Clone);
@@ -593,6 +598,7 @@ Dragger.prototype = {
 		if (this._ground === null)
 		{
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground: "+ground._node.id);
+			ground._node.setAttribute("cursor", "crosshair");
 			this._ground = ground;
 			
 			//LayerX and LayerY are HMI specific DOM Attributes!
@@ -657,6 +663,8 @@ Dragger.prototype = {
 				SVGx = null;
 				SVGy = null;
 				
+				this._ground._node.setAttribute("cursor", "");
+				ground._node.setAttribute("cursor", "crosshair");
 				this._ground = ground;
 			}
 			
@@ -690,7 +698,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2010-11-24 10:59:08 $";
+var filedate = "$Date: 2010-12-02 15:20:20 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
