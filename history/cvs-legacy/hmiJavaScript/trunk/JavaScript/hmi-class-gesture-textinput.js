@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.42 $
-*	$Date: 2010-11-24 10:30:04 $
+*	$Revision: 1.43 $
+*	$Date: 2010-12-07 15:18:26 $
 *
 *	History:
 *	--------
@@ -84,9 +84,14 @@ TextInput.prototype = {
 		//not clickable if the String is only white spaces
 		var buildDummyRect = false;
 		//Gecko, Opera and Webkit are able to use textContent or innerText to find all Text
-		if (	(typeof Component.textContent != "undefined" && !/\S+/.exec(Component.textContent) )
-			||	(typeof Component.innerText != "undefined" && !/\S+/.exec(Component.innerText)) ){
-			buildDummyRect = true;
+		if (typeof Component.textContent != "undefined" ){
+			if (!/\S+/.exec(Component.textContent)) {
+				buildDummyRect = true;
+			}
+		}else if (typeof Component.innerText != "undefined" ){
+			if (!/\S+/.exec(Component.innerText)) {
+				buildDummyRect = true;
+			}
 		}else{
 			//other browsers has to iterate over all elements
 			var Text;
@@ -103,7 +108,7 @@ TextInput.prototype = {
 		}
 		if (buildDummyRect === true){
 			//build transparent dummy rect to allow input of new text
-			var dummyRect = HMI.svgDocument.createElementNS('http://www.w3.org/2000/svg', 'rect');
+			var dummyRect = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
 			dummyRect.setAttributeNS(null, 'x', Component.getElementsByTagName("svg:text").length !== 0?(Component.getElementsByTagName("svg:text").item(0).getAttribute("x")):0);
 			dummyRect.setAttributeNS(null, 'y', Component.getElementsByTagName("svg:text").length !== 0?(Component.getElementsByTagName("svg:text").item(0).getAttribute("y")-15):0);
 			dummyRect.setAttributeNS(null, 'width', '15');
@@ -221,6 +226,13 @@ TextInput.prototype = {
 		}else if (evt.srcElement && evt.srcElement.getAttribute("class") == "dummyTextinputRect"){
 			//native IE eventhandling
 			text = "";
+		}else if (evt.currentTarget &&
+			//currentTarget is the Component
+			evt.currentTarget.getElementsByTagNameNS &&
+			evt.currentTarget.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "text").item(0) &&
+			evt.currentTarget.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "text").item(0).firstChild){
+			//catch first text element, ignore the rest
+			text = evt.currentTarget.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "text").item(0).firstChild.nodeValue;
 		}else if (evt.currentTarget && typeof evt.currentTarget.textContent != "undefined"){
 			//currentTarget is the Component
 			//TextContent is the sum of Text
@@ -285,7 +297,7 @@ TextInput.prototype = {
 		};
 	}
 };
-var filedate = "$Date: 2010-11-24 10:30:04 $";
+var filedate = "$Date: 2010-12-07 15:18:26 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
