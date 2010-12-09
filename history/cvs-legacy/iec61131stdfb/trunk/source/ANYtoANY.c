@@ -30,7 +30,7 @@
 #include <float.h>
 #include <stdlib.h>
 
-
+#include <stdio.h>
 
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ANYtoANY_IN_set(
@@ -76,6 +76,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
     unsigned int i;
 	unsigned int length;
 	char * c_temp;
+	double d_temp;
 	
 	OV_STRING s_temp = 0;
 	
@@ -745,7 +746,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 4:		//INT
 					pinst->v_OUT.value.vartype = OV_VT_INT;
-					if(pinst->v_IN.value.valueunion.val_single > OV_VL_MAXINT)	
+					if(pinst->v_IN.value.valueunion.val_single > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single < -(int) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
 					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_single;
 					if((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_int) > 0.5)		//round up
@@ -795,10 +796,11 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 9:		//TIME_SPAN
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
-					if(pinst->v_IN.value.valueunion.val_single > (float) OV_VL_MAXINT)	
+					if(pinst->v_IN.value.valueunion.val_single > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single < -(float) OV_VL_MAXINT)	
 						ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
 					pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_single;
 					pinst->v_OUT.value.valueunion.val_time_span.usecs = (pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;	//subtracting seconds and converting to microseconds
+					
 				break;
 				
 				case 17:	//BYTE_VEC		byte vector with length of 4  represents a DWORD
@@ -840,13 +842,13 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 								ov_logfile_error("%s: value exceeds range of unsigned int", pinst->v_identifier);
 							pinst->v_OUT.value.valueunion.val_uint_vec.value[0] = pinst->v_IN.value.valueunion.val_single;
 							if((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_uint_vec.value[0]) > 0.5)		//round up
-								pinst->v_OUT.value.valueunion.val_uint++;
+								pinst->v_OUT.value.valueunion.val_uint_vec.value[0]++;
 							else
 								if(((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_uint_vec.value[0]) == 0.5) && (pinst->v_OUT.value.valueunion.val_uint_vec.value[0] % 2 != 0))	//round up, if this is even
-									pinst->v_OUT.value.valueunion.val_uint++;
+									pinst->v_OUT.value.valueunion.val_uint_vec.value[0]++;
 						}
-					else
-						ov_logfile_error("%s: trying to convert engative value to unsigned integer", pinst->v_identifier);
+						else
+							ov_logfile_error("%s: trying to convert engative value to unsigned integer", pinst->v_identifier);
 					}
 					else
 					{
@@ -946,11 +948,12 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_span_vec, 1, TIME_SPAN)))
 					{
-						if(pinst->v_IN.value.valueunion.val_single > (float) OV_VL_MAXINT)	
+						if(pinst->v_IN.value.valueunion.val_single > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single < -(float) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
 						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = pinst->v_IN.value.valueunion.val_single;
 						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = 
 							(pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs) * 1000000;	//subtracting seconds and converting to microseconds
+							
 					}
 					else
 					{
@@ -1052,10 +1055,11 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 9:		//TIME_SPAN
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
-					if(pinst->v_IN.value.valueunion.val_double > (double) OV_VL_MAXINT)	
+					if(pinst->v_IN.value.valueunion.val_double > (double) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_double < -(double) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
 					pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_double;
 					pinst->v_OUT.value.valueunion.val_time_span.usecs = (pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					
 				break;
 				
 				case 17:	//BYTE_VEC		byte vector with length of 8  represents a QWORD
@@ -1206,11 +1210,12 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_span_vec, 1, TIME_SPAN)))
 					{
-						if(pinst->v_IN.value.valueunion.val_double > (float) OV_VL_MAXINT)	
+						if(pinst->v_IN.value.valueunion.val_double > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_double < -(float) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
 						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = pinst->v_IN.value.valueunion.val_double;	
 						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = 
 							(pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs) * 1000000;	
+						
 					}
 					else
 					{
@@ -1282,11 +1287,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 9:		//TIME_SPAN
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
-					pinst->v_OUT.value.valueunion.val_time_span.secs = strtol(pinst->v_IN.value.valueunion.val_string, &c_temp, 10);
-					if(c_temp && c_temp != pinst->v_IN.value.valueunion.val_string && (*c_temp == '.' || *c_temp == ','))
-						pinst->v_OUT.value.valueunion.val_time_span.usecs = strtol(c_temp+1, NULL, 10);
-					else
-						pinst->v_OUT.value.valueunion.val_time_span.usecs = 0;
+					d_temp = strtod(pinst->v_IN.value.valueunion.val_string, NULL);
+					pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					
 				break;
 				
 				case 17:	//BYTE_VEC
@@ -1480,11 +1484,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_span_vec, 1, TIME_SPAN)))
 					{
-						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = strtol(pinst->v_IN.value.valueunion.val_string, &c_temp, 10);
-						if(c_temp && c_temp != pinst->v_IN.value.valueunion.val_string && (*c_temp == '.' || *c_temp == ','))
-							pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = strtol(c_temp+1, NULL, 10);
-						else
-							pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = 0;
+						d_temp = strtod(pinst->v_IN.value.valueunion.val_string, NULL);
+						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = d_temp;
+						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+						
 					}
 				break;
 				
@@ -1541,8 +1544,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 7:		//STRING
 					pinst->v_OUT.value.vartype = OV_VT_STRING;
-					pinst->v_OUT.value.valueunion.val_string = ov_time_timetoascii(&pinst->v_IN.value.valueunion.val_time);
-					if(!pinst->v_OUT.value.valueunion.val_string)
+					c_temp = ov_time_timetoascii(&pinst->v_IN.value.valueunion.val_time);
+					if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT.value.valueunion.val_string, c_temp)))
 					{
 						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
 						return;
@@ -1649,8 +1652,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_STRING_VEC;
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_string_vec, 1, STRING)))
 					{
-						pinst->v_OUT.value.valueunion.val_string_vec.value[0] = ov_time_timetoascii(&pinst->v_IN.value.valueunion.val_time);
-						if(!pinst->v_OUT.value.valueunion.val_string_vec.value[0])
+						c_temp = ov_time_timetoascii(&pinst->v_IN.value.valueunion.val_time);
+						if(Ov_Fail(ov_string_setvalue(&(pinst->v_OUT.value.valueunion.val_string_vec.value[0]), c_temp)))
 						{
 							ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
 							return;
@@ -1745,8 +1748,11 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 7:		//STRING
 					pinst->v_OUT.value.vartype = OV_VT_STRING;
+					d_temp = (double) pinst->v_IN.value.valueunion.val_time_span.secs * 1000000;
+					d_temp += (double) pinst->v_IN.value.valueunion.val_time_span.usecs;
+					d_temp /= 1000000;
 					if(Ov_Fail(ov_string_print(&pinst->v_OUT.value.valueunion.val_string, 
-						"%d.%06d", pinst->v_IN.value.valueunion.val_time_span.secs, pinst->v_IN.value.valueunion.val_time_span.usecs)))
+						"%f", d_temp)))
 					{
 						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
 						return;
@@ -1854,8 +1860,11 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_STRING_VEC;
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_string_vec, 1, STRING)))
 					{
+						d_temp = (double) pinst->v_IN.value.valueunion.val_time_span.secs * 1000000;
+						d_temp += (double) pinst->v_IN.value.valueunion.val_time_span.usecs;
+						d_temp /= 1000000;
 						if(Ov_Fail(ov_string_print(&pinst->v_OUT.value.valueunion.val_string_vec.value[0], 
-							"%d.%06d", pinst->v_IN.value.valueunion.val_time_span.secs, pinst->v_IN.value.valueunion.val_time_span.usecs)))
+							"%f", d_temp)))
 						{
 							ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
 							return;
@@ -2459,27 +2468,64 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 4:		//INT
-					
+					pinst->v_OUT.value.vartype = OV_VT_INT;
+					if(pinst->v_IN.value.valueunion.val_single_vec.value[0] > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single_vec.value[0] < -(int)OV_VL_MAXINT)	
+							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
+					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_single_vec.value[0];
+					if((pinst->v_IN.value.valueunion.val_single_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) > 0.5)		//round up
+						pinst->v_OUT.value.valueunion.val_int++;
+					else
+						if((pinst->v_IN.value.valueunion.val_single_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) < -0.5)		//round down
+							pinst->v_OUT.value.valueunion.val_int--;
+						else
+							if(((pinst->v_IN.value.valueunion.val_single_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) == 0.5) && (pinst->v_OUT.value.valueunion.val_int % 2 != 0))	//round up, if this is even
+								pinst->v_OUT.value.valueunion.val_int++;
+							else
+								if(((pinst->v_IN.value.valueunion.val_single_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) == -0.5) && (pinst->v_OUT.value.valueunion.val_int % 2 != 0))
+									pinst->v_OUT.value.valueunion.val_int--;
 				break;
 				
 				case 5:		//SINGLE
-					
+					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_single_vec.value[0];
 				break;
 				
 				case 6:		//DOUBLE
-					
+					pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
+					pinst->v_OUT.value.valueunion.val_double = pinst->v_IN.value.valueunion.val_single_vec.value[0];
 				break;
 				
 				case 7:		//STRING
-					
+					pinst->v_OUT.value.vartype = OV_VT_STRING;
+					if(Ov_Fail(ov_string_print(&pinst->v_OUT.value.valueunion.val_string, "%f", pinst->v_IN.value.valueunion.val_single_vec.value[0])))
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 8:		//TIME
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME;
+					if(pinst->v_IN.value.valueunion.val_single_vec.value[0] >= 0)
+					{			
+						if(pinst->v_IN.value.valueunion.val_single_vec.value[0] > (float) OV_VL_MAXUINT)	
+							ov_logfile_error("%s: value exceeds range of time", pinst->v_identifier);
+						pinst->v_OUT.value.valueunion.val_time.secs = pinst->v_IN.value.valueunion.val_single_vec.value[0];
+						pinst->v_OUT.value.valueunion.val_time.usecs = (pinst->v_IN.value.valueunion.val_single_vec.value[0] - pinst->v_OUT.value.valueunion.val_time.secs ) * 1000000;	//subtracting seconds and converting to microseconds
+					}
+					else
+						ov_logfile_error("%s: trying to convert negative value to time, this is not possible", pinst->v_identifier);
+					
 				break;
 				
 				case 9:		//TIME_SPAN
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					if(pinst->v_IN.value.valueunion.val_single_vec.value[0] > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single_vec.value[0] < -(float) OV_VL_MAXINT)	
+						ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
+					pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_single_vec.value[0];
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (pinst->v_IN.value.valueunion.val_single_vec.value[0]
+						- pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;	//subtracting seconds and converting to microseconds
+					
 				break;
 				
 				case 17:	//BYTE_VEC
@@ -2491,15 +2537,74 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 19:	//UINT_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_UINT_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_uint_vec, pinst->v_IN.value.valueunion.val_single_vec.veclen, UINT)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_single_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_single_vec.value[i] >= 0)
+							{
+								if(pinst->v_IN.value.valueunion.val_single_vec.value[i] > OV_VL_MAXUINT)	
+									ov_logfile_error("%s: value in element %u exceeds range of unsigned int", pinst->v_identifier, i);
+								pinst->v_OUT.value.valueunion.val_uint_vec.value[i] = pinst->v_IN.value.valueunion.val_single_vec.value[i];
+								if((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_uint_vec.value[i]) > 0.5)		//round up
+									pinst->v_OUT.value.valueunion.val_uint_vec.value[i]++;
+								else
+									if(((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_uint_vec.value[i]) == 0.5) && (pinst->v_OUT.value.valueunion.val_uint_vec.value[i] % 2 != 0))	//round up, if this is even
+										pinst->v_OUT.value.valueunion.val_uint_vec.value[i]++;
+							}
+							else
+								ov_logfile_error("%s: trying to convert negative value in element %u to unsigned integer", pinst->v_identifier, i);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 20:	//INT_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_INT_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_int_vec, pinst->v_IN.value.valueunion.val_single_vec.veclen, INT)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_single_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_single_vec.value[i] > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single_vec.value[i] < -(int)OV_VL_MAXINT)	
+								ov_logfile_error("%s: value in element %u exceeds range of int", pinst->v_identifier, i);
+							pinst->v_OUT.value.valueunion.val_int_vec.value[i] = pinst->v_IN.value.valueunion.val_single_vec.value[i];
+							if((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) > 0.5)		//round up
+								pinst->v_OUT.value.valueunion.val_int_vec.value[i]++;
+							else
+								if((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) < -0.5)		//round down
+									pinst->v_OUT.value.valueunion.val_int_vec.value[i]--;
+								else
+									if(((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) == 0.5) && (pinst->v_OUT.value.valueunion.val_int_vec.value[i] % 2 != 0))	//round up, if this is even
+										pinst->v_OUT.value.valueunion.val_int_vec.value[i]++;
+									else
+										if(((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) == -0.5) && (pinst->v_OUT.value.valueunion.val_int_vec.value[i] % 2 != 0))
+											pinst->v_OUT.value.valueunion.val_int_vec.value[i]--;
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 21:	//SINGLE_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_SINGLE_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_single_vec, pinst->v_IN.value.valueunion.val_single_vec.veclen, SINGLE)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_single_vec.veclen; i++)
+							pinst->v_OUT.value.valueunion.val_single_vec.value[i] = pinst->v_IN.value.valueunion.val_single_vec.value[i];
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 22:	//DOUBLE_VEC
@@ -2507,15 +2612,67 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 23:	//STRING_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_STRING_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_string_vec, pinst->v_IN.value.valueunion.val_single_vec.veclen, STRING)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_single_vec.veclen; i++)
+							if(Ov_Fail(ov_string_print(&pinst->v_OUT.value.valueunion.val_string_vec.value[i], "%f", pinst->v_IN.value.valueunion.val_single_vec.value[i])))
+							{
+								ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+								return;
+							}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 24:	//TIME_VEC
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_vec, pinst->v_IN.value.valueunion.val_single_vec.veclen, TIME)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_single_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_single_vec.value[i] >= 0)
+							{			
+								if(pinst->v_IN.value.valueunion.val_single_vec.value[i] > (float) OV_VL_MAXUINT)	
+									ov_logfile_error("%s: value in element %u exceeds range of time", pinst->v_identifier, i);
+								pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs = pinst->v_IN.value.valueunion.val_single_vec.value[i];
+								pinst->v_OUT.value.valueunion.val_time_vec.value[i].usecs = 
+									(pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs ) * 1000000;	//subtracting seconds and converting to microseconds
+							}
+							else
+								ov_logfile_error("%s: trying to convert negative value in element %u to time, this is not possible", pinst->v_identifier, i);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 25:	//TIME_SPAN_VEC
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_span_vec, pinst->v_IN.value.valueunion.val_single_vec.veclen, TIME_SPAN)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_single_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_single_vec.value[i] > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single_vec.value[i] < -(float) OV_VL_MAXINT)	
+								ov_logfile_error("%s: value in element %u exceeds range of time_span", pinst->v_identifier, i);
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = pinst->v_IN.value.valueunion.val_single_vec.value[i];
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = (pinst->v_IN.value.valueunion.val_single_vec.value[i]
+								- pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000;	//subtracting seconds and converting to microseconds
+							
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				default:
@@ -2548,27 +2705,67 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 4:		//INT
-					
+					pinst->v_OUT.value.vartype = OV_VT_INT;
+					if(pinst->v_IN.value.valueunion.val_double_vec.value[0] > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_double_vec.value[0] < -(int)OV_VL_MAXINT)	
+							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
+					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_double_vec.value[0];
+					if((pinst->v_IN.value.valueunion.val_double_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) > 0.5)		//round up
+						pinst->v_OUT.value.valueunion.val_int++;
+					else
+						if((pinst->v_IN.value.valueunion.val_double_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) < -0.5)		//round down
+							pinst->v_OUT.value.valueunion.val_int--;
+						else
+							if(((pinst->v_IN.value.valueunion.val_double_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) == 0.5) && (pinst->v_OUT.value.valueunion.val_int % 2 != 0))	//round up, if this is even
+								pinst->v_OUT.value.valueunion.val_int++;
+							else
+								if(((pinst->v_IN.value.valueunion.val_double_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) == -0.5) && (pinst->v_OUT.value.valueunion.val_int % 2 != 0))
+									pinst->v_OUT.value.valueunion.val_int--;
 				break;
 				
 				case 5:		//SINGLE
-					
+					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+					if(pinst->v_IN.value.valueunion.val_double_vec.value[0] < FLT_MAX && pinst->v_IN.value.valueunion.val_double_vec.value[0] > -FLT_MAX)
+						pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_double_vec.value[0];
+					else
+						ov_logfile_error("%s: value exceeds range of single", pinst->v_identifier);
 				break;
 				
 				case 6:		//DOUBLE
-					
+					pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
+					pinst->v_OUT.value.valueunion.val_double = pinst->v_IN.value.valueunion.val_double_vec.value[0];
 				break;
 				
 				case 7:		//STRING
-					
+					pinst->v_OUT.value.vartype = OV_VT_STRING;
+					if(Ov_Fail(ov_string_print(&pinst->v_OUT.value.valueunion.val_string, "%f", pinst->v_IN.value.valueunion.val_double_vec.value[0])))
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 8:		//TIME
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME;
+					if(pinst->v_IN.value.valueunion.val_double_vec.value[0] >= 0)
+					{			
+						if(pinst->v_IN.value.valueunion.val_double_vec.value[0] > (double) OV_VL_MAXUINT)	
+							ov_logfile_error("%s: value exceeds range of time", pinst->v_identifier);
+						pinst->v_OUT.value.valueunion.val_time.secs = pinst->v_IN.value.valueunion.val_double_vec.value[0];
+						pinst->v_OUT.value.valueunion.val_time.usecs = (pinst->v_IN.value.valueunion.val_double_vec.value[0] - pinst->v_OUT.value.valueunion.val_time.secs ) * 1000000;	//subtracting seconds and converting to microseconds
+					}
+					else
+						ov_logfile_error("%s: trying to convert negative value to time, this is not possible", pinst->v_identifier);
 				break;
 				
 				case 9:		//TIME_SPAN
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					if(pinst->v_IN.value.valueunion.val_double_vec.value[0] > (double) OV_VL_MAXINT 
+						|| pinst->v_IN.value.valueunion.val_double_vec.value[0] < -(double) OV_VL_MAXINT)	
+							ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
+					pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_double_vec.value[0];
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (pinst->v_IN.value.valueunion.val_double_vec.value[0]
+						- pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;	//subtracting seconds and converting to microseconds
+					
 				break;
 				
 				case 17:	//BYTE_VEC
@@ -2580,15 +2777,81 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 19:	//UINT_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_UINT_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_uint_vec, pinst->v_IN.value.valueunion.val_double_vec.veclen, UINT)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_double_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_double_vec.value[i] >= 0)
+							{
+								if(pinst->v_IN.value.valueunion.val_double_vec.value[i] > OV_VL_MAXUINT)	
+									ov_logfile_error("%s: value in element %u exceeds range of unsigned int", pinst->v_identifier, i);
+								pinst->v_OUT.value.valueunion.val_uint_vec.value[i] = pinst->v_IN.value.valueunion.val_double_vec.value[i];
+								if((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_uint_vec.value[i]) > 0.5)		//round up
+									pinst->v_OUT.value.valueunion.val_uint_vec.value[i]++;
+								else
+									if(((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_uint_vec.value[i]) == 0.5) && (pinst->v_OUT.value.valueunion.val_uint_vec.value[i] % 2 != 0))	//round up, if this is even
+										pinst->v_OUT.value.valueunion.val_uint_vec.value[i]++;
+							}
+							else
+								ov_logfile_error("%s: trying to convert negative value in element %u to unsigned integer", pinst->v_identifier, i);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 20:	//INT_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_INT_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_int_vec, pinst->v_IN.value.valueunion.val_double_vec.veclen, INT)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_double_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_double_vec.value[i] > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_double_vec.value[i] < -(int)OV_VL_MAXINT)	
+								ov_logfile_error("%s: value in element %u exceeds range of int", pinst->v_identifier, i);
+							pinst->v_OUT.value.valueunion.val_int_vec.value[i] = pinst->v_IN.value.valueunion.val_double_vec.value[i];
+							if((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) > 0.5)		//round up
+								pinst->v_OUT.value.valueunion.val_int_vec.value[i]++;
+							else
+								if((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) < -0.5)		//round down
+									pinst->v_OUT.value.valueunion.val_int_vec.value[i]--;
+								else
+									if(((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) == 0.5) && (pinst->v_OUT.value.valueunion.val_int_vec.value[i] % 2 != 0))	//round up, if this is even
+										pinst->v_OUT.value.valueunion.val_int_vec.value[i]++;
+									else
+										if(((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) == -0.5) && (pinst->v_OUT.value.valueunion.val_int_vec.value[i] % 2 != 0))
+											pinst->v_OUT.value.valueunion.val_int_vec.value[i]--;
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 21:	//SINGLE_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_SINGLE_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_single_vec, pinst->v_IN.value.valueunion.val_double_vec.veclen, SINGLE)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_double_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_double_vec.value[i] < FLT_MAX || pinst->v_IN.value.valueunion.val_double_vec.value[i] > -FLT_MAX)	
+							{
+								pinst->v_OUT.value.valueunion.val_single_vec.value[i] = pinst->v_IN.value.valueunion.val_double_vec.value[i];
+							}
+							else
+								ov_logfile_error("%s: value in element %u exceeds range of single", pinst->v_identifier, i);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 22:	//DOUBLE_VEC
@@ -2596,15 +2859,68 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 23:	//STRING_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_STRING_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_string_vec, pinst->v_IN.value.valueunion.val_double_vec.veclen, STRING)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_double_vec.veclen; i++)
+							if(Ov_Fail(ov_string_print(&pinst->v_OUT.value.valueunion.val_string_vec.value[i], "%f", pinst->v_IN.value.valueunion.val_double_vec.value[i])))
+							{
+								ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+								return;
+							}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 24:	//TIME_VEC
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_vec, pinst->v_IN.value.valueunion.val_double_vec.veclen, TIME)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_double_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_double_vec.value[i] >= 0)
+							{			
+								if(pinst->v_IN.value.valueunion.val_double_vec.value[i] > (double) OV_VL_MAXUINT)	
+									ov_logfile_error("%s: value in element %u exceeds range of time", pinst->v_identifier, i);
+								pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs = pinst->v_IN.value.valueunion.val_double_vec.value[i];
+								pinst->v_OUT.value.valueunion.val_time_vec.value[i].usecs = 
+									(pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs ) * 1000000;	//subtracting seconds and converting to microseconds
+							}
+							else
+								ov_logfile_error("%s: trying to convert negative value in element %u to time, this is not possible", pinst->v_identifier, i);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 25:	//TIME_SPAN_VEC
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_span_vec, pinst->v_IN.value.valueunion.val_double_vec.veclen, TIME_SPAN)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_double_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_double_vec.value[i] > (double) OV_VL_MAXINT 
+								|| pinst->v_IN.value.valueunion.val_double_vec.value[i] < -(double) OV_VL_MAXINT)	
+									ov_logfile_error("%s: value in element %u exceeds range of time_span", pinst->v_identifier, i);
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = pinst->v_IN.value.valueunion.val_double_vec.value[i];
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = (pinst->v_IN.value.valueunion.val_double_vec.value[i]
+								- pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000;	//subtracting seconds and converting to microseconds
+							
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				default:
@@ -2627,10 +2943,6 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 			if(pinst->v_IN.value.valueunion.val_string_vec.veclen)
 			switch(pinst->v_K)
 			{
-				case 1:		//BYTE
-					
-				break;
-				
 				case 2:		//BOOL
 					STDFB_VEC_TO_BOOL(string);
 				break;
@@ -2640,31 +2952,54 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 4:		//INT
-					
+					pinst->v_OUT.value.vartype = OV_VT_INT;
+					pinst->v_OUT.value.valueunion.val_int = strtol(pinst->v_IN.value.valueunion.val_string_vec.value[0], NULL, 10);
 				break;
 				
 				case 5:		//SINGLE
-					
+					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+					pinst->v_OUT.value.valueunion.val_single = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[0], NULL);
 				break;
 				
 				case 6:		//DOUBLE
-					
+					pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
+					pinst->v_OUT.value.valueunion.val_double = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[0], NULL);
 				break;
 				
 				case 7:		//STRING
-					
+					pinst->v_OUT.value.vartype = OV_VT_STRING;
+					if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT.value.valueunion.val_string, pinst->v_IN.value.valueunion.val_string_vec.value[0])))
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 8:		//TIME
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME;
+					ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time, pinst->v_IN.value.valueunion.val_string_vec.value[0]);
 				break;
 				
 				case 9:		//TIME_SPAN
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					d_temp = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[0], NULL);
+					pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
 				break;
 				
 				case 17:	//BYTE_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_BYTE_VEC;
+					length = ov_string_getlength(pinst->v_IN.value.valueunion.val_string_vec.value[0]);
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_byte_vec, length, BYTE)))
+					{
+						for(i=0; i < length; i++)
+							pinst->v_OUT.value.valueunion.val_byte_vec.value[i] = (pinst->v_IN.value.valueunion.val_string_vec.value[0])[i];
+					}
+					else
+					{
+						ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 18:	//BOOL_VEC
@@ -2672,31 +3007,121 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 19:	//UINT_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_UINT_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_uint_vec, pinst->v_IN.value.valueunion.val_string_vec.veclen, UINT)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
+						{
+							pinst->v_OUT.value.valueunion.val_uint_vec.value[i] = strtoul(pinst->v_IN.value.valueunion.val_string_vec.value[i], NULL, 10);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 20:	//INT_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_INT_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_int_vec, pinst->v_IN.value.valueunion.val_string_vec.veclen, INT)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
+						{
+							pinst->v_OUT.value.valueunion.val_int_vec.value[i] = strtol(pinst->v_IN.value.valueunion.val_string_vec.value[i], NULL, 10);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 21:	//SINGLE_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_SINGLE_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_single_vec, pinst->v_IN.value.valueunion.val_string_vec.veclen, SINGLE)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
+						{
+							pinst->v_OUT.value.valueunion.val_single_vec.value[i] = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[i], NULL);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 22:	//DOUBLE_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_DOUBLE_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_double_vec, pinst->v_IN.value.valueunion.val_string_vec.veclen, DOUBLE)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
+						{
+							pinst->v_OUT.value.valueunion.val_double_vec.value[i] = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[i], NULL);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 23:	//STRING_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_STRING_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_string_vec, pinst->v_IN.value.valueunion.val_string_vec.veclen, STRING)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
+						{
+							if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT.value.valueunion.val_string_vec.value[i], pinst->v_IN.value.valueunion.val_string_vec.value[i])))
+							{
+								ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+								return;
+							}
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 24:	//TIME_VEC
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_vec, pinst->v_IN.value.valueunion.val_string_vec.veclen, TIME)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
+							ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time_vec.value[i], pinst->v_IN.value.valueunion.val_string_vec.value[i]);
+					}
+					else
+					{
+						ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 25:	//TIME_SPAN_VEC
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_span_vec, pinst->v_IN.value.valueunion.val_string_vec.veclen, TIME_SPAN)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
+						{
+							d_temp = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[i], NULL);
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = d_temp;
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = 
+								(d_temp - pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000;
+							
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: memory allocation failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				default:
@@ -2728,27 +3153,53 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 4:		//INT
-					
+					pinst->v_OUT.value.vartype = OV_VT_INT;
+					if(pinst->v_IN.value.valueunion.val_time_vec.value[0].secs <= OV_VL_MAXINT)
+						pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_time_vec.value[0].secs;
+					else
+						ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
 				break;
 				
 				case 5:		//SINGLE
-					
+					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+					if(pinst->v_IN.value.valueunion.val_time_vec.value[0].secs > 10000000)
+						ov_logfile_warning("%s: converting large integer to single, possible loss of precision", pinst->v_identifier);
+					pinst->v_OUT.value.valueunion.val_single = (float) pinst->v_IN.value.valueunion.val_time_vec.value[0].secs * 1000000;
+					pinst->v_OUT.value.valueunion.val_single += (float) pinst->v_IN.value.valueunion.val_time_vec.value[0].usecs;
+					pinst->v_OUT.value.valueunion.val_single /= 1000000;
 				break;
 				
 				case 6:		//DOUBLE
-					
+					pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
+					pinst->v_OUT.value.valueunion.val_double = (double) pinst->v_IN.value.valueunion.val_time_vec.value[0].secs * 1000000;
+					pinst->v_OUT.value.valueunion.val_double += (double) pinst->v_IN.value.valueunion.val_time_vec.value[0].usecs;
+					pinst->v_OUT.value.valueunion.val_double /= 1000000;
 				break;
 				
 				case 7:		//STRING
-					
+					pinst->v_OUT.value.vartype = OV_VT_STRING;
+					c_temp = ov_time_timetoascii(&(pinst->v_IN.value.valueunion.val_time_vec.value[0]));
+					if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT.value.valueunion.val_string, c_temp)))
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 8:		//TIME
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME;
+					pinst->v_OUT.value.valueunion.val_time = pinst->v_IN.value.valueunion.val_time_vec.value[0];
 				break;
 				
 				case 9:		//TIME_SPAN
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					if(pinst->v_IN.value.valueunion.val_time_vec.value[0].secs < OV_VL_MAXINT)
+					{
+						pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_time_vec.value[0].secs;
+						pinst->v_OUT.value.valueunion.val_time_span.usecs = pinst->v_IN.value.valueunion.val_time_vec.value[0].usecs;
+					}
+					else
+						ov_logfile_error("%s: value exceeds range of time span", pinst->v_identifier);
 				break;
 				
 				case 17:	//BYTE_VEC
@@ -2756,35 +3207,149 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				break;
 				
 				case 18:	//BOOL_VEC
-					
+					pinst->v_OUT.value.vartype= OV_VT_BOOL_VEC;	
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_bool_vec, pinst->v_IN.value.valueunion.val_time_vec.veclen, BOOL)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_time_vec.veclen; i++)
+							if(pinst->v_IN.value.valueunion.val_time_vec.value[i].secs || pinst->v_IN.value.valueunion.val_time_vec.value[i].usecs)
+								pinst->v_OUT.value.valueunion.val_bool_vec.value[i] = TRUE;
+							else
+								pinst->v_OUT.value.valueunion.val_bool_vec.value[i] = FALSE;
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 19:	//UINT_VEC
-					
+					pinst->v_OUT.value.vartype= OV_VT_UINT_VEC;	
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_uint_vec, pinst->v_IN.value.valueunion.val_time_vec.veclen, UINT)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_time_vec.veclen; i++)
+							pinst->v_OUT.value.valueunion.val_uint_vec.value[i] = pinst->v_IN.value.valueunion.val_time_vec.value[i].secs;
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 20:	//INT_VEC
-					
+					pinst->v_OUT.value.vartype= OV_VT_INT_VEC;	
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_int_vec, pinst->v_IN.value.valueunion.val_time_vec.veclen, INT)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_time_vec.veclen; i++)
+							if(pinst->v_IN.value.valueunion.val_time_vec.value[i].secs <= OV_VL_MAXINT)
+								pinst->v_OUT.value.valueunion.val_int_vec.value[i] = pinst->v_IN.value.valueunion.val_time_vec.value[i].secs;
+							else
+								ov_logfile_error("%s: value in element %u exceeds range of int", pinst->v_identifier, i);
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 21:	//SINGLE_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_SINGLE_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_single_vec, pinst->v_IN.value.valueunion.val_time_vec.veclen, SINGLE)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_time_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_time_vec.value[i].secs > 10000000)
+								ov_logfile_warning("%s: converting large integer in element %u to single, possible loss of precision", pinst->v_identifier, i);
+							pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (float) pinst->v_IN.value.valueunion.val_time_vec.value[i].secs * 1000000;
+							pinst->v_OUT.value.valueunion.val_single_vec.value[i] += (float) pinst->v_IN.value.valueunion.val_time_vec.value[i].usecs;
+							pinst->v_OUT.value.valueunion.val_single_vec.value[i] /= 1000000;
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 22:	//DOUBLE_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_DOUBLE_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_double_vec, pinst->v_IN.value.valueunion.val_time_vec.veclen, DOUBLE)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_time_vec.veclen; i++)
+						{
+							pinst->v_OUT.value.valueunion.val_double_vec.value[i] = (double) pinst->v_IN.value.valueunion.val_time_vec.value[i].secs * 1000000;
+							pinst->v_OUT.value.valueunion.val_double_vec.value[i] += (double) pinst->v_IN.value.valueunion.val_time_vec.value[i].usecs;
+							pinst->v_OUT.value.valueunion.val_double_vec.value[i] /= 1000000;
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 23:	//STRING_VEC
-					
+					pinst->v_OUT.value.vartype = OV_VT_STRING_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_string_vec, pinst->v_IN.value.valueunion.val_time_vec.veclen, STRING)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_time_vec.veclen; i++)
+						{
+							c_temp = ov_time_timetoascii(&(pinst->v_IN.value.valueunion.val_time_vec.value[i]));
+							if(Ov_Fail(ov_string_setvalue(&(pinst->v_OUT.value.valueunion.val_string_vec.value[i]), c_temp)))
+							{
+								ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+								return;
+							}
+							
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 24:	//TIME_VEC
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_vec, pinst->v_IN.value.valueunion.val_time_vec.veclen, TIME)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_time_vec.veclen; i++)
+						{
+							pinst->v_OUT.value.valueunion.val_time_vec.value[i] = pinst->v_IN.value.valueunion.val_time_vec.value[i];
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 25:	//TIME_SPAN_VEC
-				
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
+					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_span_vec, pinst->v_IN.value.valueunion.val_time_vec.veclen, TIME_SPAN)))
+					{
+						for(i=0; i < pinst->v_IN.value.valueunion.val_time_vec.veclen; i++)
+						{
+							if(pinst->v_IN.value.valueunion.val_time_vec.value[i].secs < OV_VL_MAXINT)
+							{
+								pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = pinst->v_IN.value.valueunion.val_time_vec.value[i].secs;
+								pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = pinst->v_IN.value.valueunion.val_time_vec.value[i].usecs;
+							}
+							else
+								ov_logfile_error("%s: value in element %u exceeds range of time span", pinst->v_identifier, i);
+						}
+					}
+					else
+					{
+						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				default:
@@ -2889,7 +3454,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 		break;
 		
 		default:
-			ov_logfile_error("%s: non-standart datatype specified, no conversion implemented", pinst->v_identifier);
+			ov_logfile_error("%s: non-standard datatype specified, no conversion implemented", pinst->v_identifier);
 			pinst->v_OUT.value.vartype = OV_VT_BOOL;
 			pinst->v_OUT.value.valueunion.val_bool = FALSE;
 			return;
