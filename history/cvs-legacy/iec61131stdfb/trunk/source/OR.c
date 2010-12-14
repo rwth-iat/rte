@@ -127,7 +127,12 @@ OV_DLLFNCEXPORT void iec61131stdfb_OR_typemethod(
 				break;
 			}
 		}
+	
+		/************** handling states and timestamps ********************************/
 		
+#include "state_2in.c"	
+
+	
 	}
 	else
 	{

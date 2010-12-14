@@ -146,6 +146,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_SIN_typemethod(
 			}
 		}
 		
+	/****************** handling states nad timestamp ******************/
+	STDFB_STATE(IN);
+	STDFB_TIMESTAMP(IN);
+		
     return;
 }
 

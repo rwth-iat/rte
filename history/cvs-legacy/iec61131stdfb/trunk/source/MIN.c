@@ -450,6 +450,12 @@ OV_DLLFNCEXPORT void iec61131stdfb_MIN_typemethod(
 		{
 			STDFB_TIMESTAMP_NEW;
 		}
+	
+	/*********** handling states and timestamps **********************/
+	STDFB_TIMESTAMP_NEW
+	
+	
+	
 	}
 	else
 	{

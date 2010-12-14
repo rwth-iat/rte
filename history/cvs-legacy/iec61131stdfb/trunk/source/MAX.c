@@ -448,6 +448,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_MAX_typemethod(
 		{
 			STDFB_TIMESTAMP_NEW;
 		}
+	
+	/************** handling states and timestamps ********************************/
+	STDFB_TIMESTAMP_NEW	
+	
 	}
 	else
 	{

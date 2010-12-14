@@ -184,6 +184,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN2_typemethod(
 			}
 		}
 		
+/************** handling states and timesdtamps ********************************/
+		
+#include "state_2in.c"	
+	
 	}
 	else
 	{

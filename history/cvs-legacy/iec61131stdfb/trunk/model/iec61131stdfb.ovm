@@ -1,0 +1,956 @@
+/*
+*   Copyright (C) 2008
+*   Chair of Process Control Engineering,
+*   Aachen University of Technology.
+*   All rights reserved.
+*
+*   Redistribution and use in source and binary forms, with or without
+*   modification, are permitted provided that the following conditions
+*   are met:
+*   1. Redistributions of source code must retain the above copyright
+*      notice, this list of conditions and the following disclaimer.
+*   2. Redistributions in binary form must print or display the above
+*      copyright notice either during startup or must have a means for
+*      the user to view the copyright notice.
+*   3. Redistributions in binary form must reproduce the above copyright
+*      notice, this list of conditions and the following disclaimer in
+*       the documentation and/or other materials provided with the
+*       distribution.
+*   4. Neither the name of the Chair of Process Control Engineering nor
+*       the name of the Aachen University of Technology may be used to
+*       endorse or promote products derived from this software without
+*       specific prior written permission.
+*
+*   THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*   PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*   INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*   BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*   OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*   AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*   WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*   POSSIBILITY OF SUCH DAMAGE.
+*/
+/*****************************************************************************
+*                                                                            *
+*   Datei :                                                                  *
+*   =======                                                                  *
+*   IEC61131stdfb.ovm                                                        *
+*                                                                            *
+*   Editors:                                                                 *
+*   --------                                                                 *
+*   tk                  Tina Krausser <t.krausser@plt.rwth-aachen.de>        *
+*   le					Lars Evertz	<l.evertz@plt.rwth-aachen.de>			 *
+* 	                                                                         *
+*   History:                                                                 *
+*   --------                                                                 *
+*   17.11.10            tk      V0.1.0                                       *
+*       -   File created 												     *
+*	18.11.10			le		V0.1.1										 *
+*		-	typemethods added                                                *
+*****************************************************************************/
+
+#include "fb.ovm"
+
+LIBRARY iec61131stdfb
+
+	VERSION   = "1.0";
+	AUTHOR    = "T. Krausser";
+	COPYRIGHT = "Copyright (C) 2010, ACPLT";
+	COMMENT   = "Implementation of IEC 61131-3 standard FBDs";
+    
+	
+
+
+/******************************************************************************
+	TypeConversion Functions
+******************************************************************************/	
+
+
+ CLASS ANYtoANY : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Typeconversion ANY to ANY";
+    VARIABLES
+    	K	:	UINT					HAS_SET_ACCESSOR
+			FLAGS = "p"
+			COMMENT = "Output type: BYTE: 1, BOOL: 2, UINT: 3, INT: 4, SINGLE: 5, DOUBLE: 6, STRING: 7, TIME: 8, TIME_SPAN: 9, BYTE_VEC: 17, BOOL_VEC: 18, UINT_VEC: 19, INT_VEC: 20, SINGLE_VEC: 21, DOUBLE_VEC: 22, STRING_VEC: 23, TIME_VEC: 24, TIME_SPAN_VEC: 25";
+		IN  :	ANY           			HAS_SET_ACCESSOR
+            FLAGS = "i"
+            COMMENT = "ANY Value";
+		OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "ANY Value";
+    END_VARIABLES;
+		OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+/******************************************************************************
+	Standard Functions of one numeric variable (Features)
+******************************************************************************/	
+
+ CLASS ABS : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Absolute value";
+    VARIABLES
+    	IN1 :	ANY	     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY         			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "Absolute value of IN1";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS SQRT : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "squareroot of value";
+    VARIABLES
+    	IN :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "squareroot of IN1";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+    
+ CLASS LN : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "natural logarithm of value";
+    VARIABLES
+    	IN :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "natural logarithm of IN";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+	
+ CLASS LOG : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "logarithm base 10 of value";
+    VARIABLES
+    	IN :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "logarithm base 10 of IN";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ CLASS EXP : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "natural exponential of value";
+    VARIABLES
+    	IN :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "natural exponential of IN";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ CLASS SIN : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "sine of input in radians";
+    VARIABLES
+    	IN  :	ANY				     		HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "sine of input IN in radians";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+  
+ CLASS COS : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "cosine of input in radians";
+    VARIABLES
+    	IN  :	ANY				     		HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "cosine of input IN in radians";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+  
+ CLASS TAN : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "tanget of input in radians";
+    VARIABLES
+    	IN  :	ANY				     		HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "tangent of input IN in radians";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS ASIN : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "arc sine of input in radians";
+    VARIABLES
+    	IN  :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "arc sine of input IN in radians";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ CLASS ACOS : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "arc cosine of input in radians";
+    VARIABLES
+    	IN  :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "arc cosine of input IN in radians";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS ATAN : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "arc tangent of input in radians";
+    VARIABLES
+    	IN  :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "arc tangent of input IN in radians";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS ATAN2 : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "arc tangent2 of input in radians";
+    VARIABLES
+    	IN1  :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+		IN2  :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "arc tangent2 of input IN1 and IN2 in radians ATAN(IN2 / IN1)";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+/******************************************************************************
+	Standard arithmetic functions (Features)
+******************************************************************************/	
+
+// beliebig viele Eingänge nicht realisiert
+ CLASS ADD : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Addition";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 + IN2 + ...";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// beliebig viele Eingänge nicht realisiert
+ CLASS MUL : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Multiplication";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 * IN2 * ...";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS SUB : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Substraction";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 - IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS DIV : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Division";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 / IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS MOD : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Modulo";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 modulo IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS EXPT : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Exponentiation";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 ^ IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS MOVE : CLASS fb/functionblock							/*???*/
+    IS_INSTANTIABLE;
+    COMMENT = "Move";
+    VARIABLES
+    	IN  :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT := IN";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+/******************************************************************************
+	Standard bit shift functions (Features)
+******************************************************************************/	
+// Auf UINT Basis
+
+/******************************************************************************
+	Standard bitwise Boolean functions (Features)
+******************************************************************************/	
+// ANY_BIT durch ANY ersetzt, BOOl BYTE und UINT verwendet
+// beliebig viele Eingänge nicht realisiert
+ CLASS AND : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "And";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           		 		HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 AND IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+
+// beliebig viele Eingänge nicht realisiert
+ CLASS OR : CLASS fb/functionblock						
+    IS_INSTANTIABLE;
+    COMMENT = "Or";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           				HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 OR IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+
+// beliebig viele Eingänge nicht realisiert
+ CLASS XOR : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Exclusive OR";
+    VARIABLES
+    	IN1 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           				HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN1 XOR IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ CLASS NOT : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Not";
+    VARIABLES
+    	IN  :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY           				HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = NOT IN";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+/******************************************************************************
+	Standard selection functions (Features)
+******************************************************************************/	
+//gibt es nochmal für enums
+ CLASS SEL : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Binary Selection";
+    VARIABLES
+    	G	:	BOOL		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN0 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN0 if G = 0, OUT = IN1 if G = 1";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+// ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS MAX : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Maximum Selection Function";
+    VARIABLES
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = MAX(IN1, IN2)";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS MIN : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Minimum Selection Function";
+    VARIABLES
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = MIN(IN1, IN2)";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS LIMIT : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Limiting Function";
+    VARIABLES
+    	MN :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	MX :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = Limited Output";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS; 
+
+//gibt es nochmal für enums
+// ANY_INT -> UINT
+// auf acht festgelegt beschraenkt 
+ CLASS MUX : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Multiplexer Function";
+    VARIABLES
+    	K	:	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN3 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN4 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN5 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN6 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN7 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN8 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY		           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = Demultiplexed Output";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS; 
+ 
+/******************************************************************************
+	Standard comparison functions (Features)
+******************************************************************************/	
+// ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS GT : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Decreasing Sequence";
+    VARIABLES
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	BOOL	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "IN1 > IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS GE : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Monotonic Sequence";
+    VARIABLES
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	BOOL	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "IN1 >= IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ // ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS EQ : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Equality";
+    VARIABLES
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	BOOL	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "IN1 == IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ // ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS LE : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Monotinic Sequence";
+    VARIABLES
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	BOOL	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "IN1 <= IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ // ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS LT : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Increasing Sequence";
+    VARIABLES
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	BOOL	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "IN1 < IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+// ANY_ELEMENARY -> ANY
+// auf zwei beschraenkt 
+ CLASS NE : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Inequality";
+    VARIABLES
+    	IN1 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	ANY			     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	BOOL	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "IN1 <> IN2";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+/******************************************************************************
+	Standard character string functions (Features)
+******************************************************************************/	
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+ CLASS LEN : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "String length";
+    VARIABLES
+    	IN1 :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	UINT	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "String length";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+ CLASS LEFT : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Left";
+    VARIABLES
+    	IN  :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	L   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	STRING	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "the leftmost L characters";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+ CLASS RIGHT : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Right";
+    VARIABLES
+    	IN  :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	L   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	STRING	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "the rightmost L characters";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+ CLASS MID : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Mid";
+    VARIABLES
+    	IN  :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	L   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	P   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	STRING	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "L characters, at p-th character position";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+// gibt es schon in reSFCbased
+//auf zwei beschraenkt
+ CLASS CONCAT : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Concat";
+    VARIABLES
+    	IN1  :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2   :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	STRING	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "Concatination of Strings";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+ CLASS INSERT : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Insertion of String";
+    VARIABLES
+    	IN1 :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	P   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	STRING	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "Insert IN2 in IN1 at the p-th character position";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+ CLASS DELETE : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Deletion of SubString";
+    VARIABLES
+    	IN  :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	L   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	P   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	STRING	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "Deletion of L characters beginning at the p-th character position";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+ CLASS REPLACE : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Replace of SubString";
+    VARIABLES
+    	IN1 :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	L   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	P   :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	STRING	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "Replace";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+// ANY_STRING -> STRING => kein CHAR
+// ANY_INT -> UINT
+ CLASS FIND : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Find a SubString";
+    VARIABLES
+    	IN1 :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2 :	STRING		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	UINT	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "Postion of first occurence";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+/******************************************************************************
+	Functions of time datatypes (Features)
+******************************************************************************/	
+
+
+/******************************************************************************
+	Additional functions of time datatypes functions (Features)				???
+******************************************************************************/	
+/******************************************************************************
+	Endian Conversions (Features)											???
+******************************************************************************/	
+/******************************************************************************
+	Validate Functions (Features)											???
+******************************************************************************/	 
+END_LIBRARY;

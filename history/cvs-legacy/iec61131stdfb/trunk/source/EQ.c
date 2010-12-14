@@ -130,7 +130,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_EQ_typemethod(
 			}
 		}
 		
-		//implement status and timestamp here
+
+
+
 	}
 	else
 	{

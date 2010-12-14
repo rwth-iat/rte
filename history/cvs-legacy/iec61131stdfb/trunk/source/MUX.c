@@ -138,34 +138,51 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUX_typemethod(
 	{
 		case 1:
 			STDFB_DEMUX(1);
+			STDFB_STATE(IN1);
+			STDFB_TIMESTAMP(IN1);
+		
 		break;
 		
 		case 2:
 			STDFB_DEMUX(2);
+			STDFB_STATE(IN2);
+			STDFB_TIMESTAMP(IN2);
 		break;
 		
 		case 3:
 			STDFB_DEMUX(3);
+			STDFB_STATE(IN3);
+			STDFB_TIMESTAMP(IN3);
 		break;
 		
 		case 4:
 			STDFB_DEMUX(4);
+			STDFB_STATE(IN4);
+			STDFB_TIMESTAMP(IN4);
 		break;
 		
 		case 5:
 			STDFB_DEMUX(5);
+			STDFB_STATE(IN5);
+			STDFB_TIMESTAMP(IN5);
 		break;
 		
 		case 6:
 			STDFB_DEMUX(6);
+			STDFB_STATE(IN6);
+			STDFB_TIMESTAMP(IN6);
 		break;
 		
 		case 7:
 			STDFB_DEMUX(7);
+			STDFB_STATE(IN7);
+			STDFB_TIMESTAMP(IN7);
 		break;
 		
 		case 8:
 			STDFB_DEMUX(8);
+			STDFB_STATE(IN8);
+			STDFB_TIMESTAMP(IN8);
 		break;
 		
 		default:

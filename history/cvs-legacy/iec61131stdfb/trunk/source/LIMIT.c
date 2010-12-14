@@ -442,6 +442,14 @@ OV_DLLFNCEXPORT void iec61131stdfb_LIMIT_typemethod(
 				pinst->v_OUT.value.valueunion.val_bool = 0;
 				return;
 			}
+		
+			/************** handling states ********************************/
+		
+	STDFB_STATE(IN);
+	
+	/***************** handling timestamps ************************/
+	STDFB_TIMESTAMP(IN);
+		
 		}
 		else
 		{

@@ -3607,6 +3607,14 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 			
 	}
 	
+		/************** handling states ********************************/
+		
+	STDFB_STATE(IN);
+	
+	/***************** handling timestamps ************************/
+	STDFB_TIMESTAMP(IN);
+	
+	
     return;
 }
 

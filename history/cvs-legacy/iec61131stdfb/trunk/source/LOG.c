@@ -172,6 +172,14 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 			}
 		}
 		
+		
+		/************** handling states ********************************/
+		
+	STDFB_STATE(IN);
+	
+	/***************** handling timestamps ************************/
+	STDFB_TIMESTAMP(IN);
+		
     return;
 }
 

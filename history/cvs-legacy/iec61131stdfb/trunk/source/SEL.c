@@ -125,6 +125,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_SEL_typemethod(
 			
 		}
 		
+		/****************** handling states nad timestamp ******************/
+	STDFB_STATE(IN1);
+	STDFB_TIMESTAMP(IN1);
+		
 	}
 	else
 	{
@@ -162,6 +166,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_SEL_typemethod(
 				pinst->v_OUT.value.valueunion.val_bool = 0;
 			break;
 		}
+		
+		/****************** handling states nad timestamp ******************/
+	STDFB_STATE(IN0);
+	STDFB_TIMESTAMP(IN0);
 		
 	}
 	

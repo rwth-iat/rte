@@ -132,7 +132,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_LE_typemethod(
 			}
 		}
 		
-		//implement status and timestamp here
+	
+
+
 	}
 	else
 	{

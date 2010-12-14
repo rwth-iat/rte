@@ -179,6 +179,11 @@ OV_DLLFNCEXPORT void iec61131stdfb_TAN_typemethod(
 				break;
 			}
 		}
+		
+	/****************** handling states nad timestamp ******************/
+	STDFB_STATE(IN);
+	STDFB_TIMESTAMP(IN);	
+	
     return;
 }
 
