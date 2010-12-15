@@ -98,7 +98,7 @@ LIBRARY iec61131stdfb
     IS_INSTANTIABLE;
     COMMENT = "Absolute value";
     VARIABLES
-    	IN1 :	ANY	     			HAS_SET_ACCESSOR
+    	IN :	ANY	     			HAS_SET_ACCESSOR
             FLAGS = "i";
     	OUT :	ANY         			HAS_GET_ACCESSOR
             FLAGS = "o"
@@ -422,7 +422,79 @@ LIBRARY iec61131stdfb
 	Standard bit shift functions (Features)
 ******************************************************************************/	
 // Auf UINT Basis
-
+CLASS SHL : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Bit Shift Left";
+    VARIABLES
+    	IN :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	N :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	UINT           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN << N";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ CLASS SHR : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Bit Shift Right";
+    VARIABLES
+    	IN :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	N :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	UINT           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = IN >> N";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ 
+ CLASS ROL : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Bit Rotation Left";
+    VARIABLES
+    	IN :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	N :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	UINT           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = ROL(IN, N)";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ CLASS ROR : CLASS fb/functionblock
+    IS_INSTANTIABLE;
+    COMMENT = "Bit Rotation Right";
+    VARIABLES
+    	IN :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	N :	UINT		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	UINT           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "OUT = ROR(IN, N)";
+    END_VARIABLES;
+	OPERATIONS
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
 /******************************************************************************
 	Standard bitwise Boolean functions (Features)
 ******************************************************************************/	

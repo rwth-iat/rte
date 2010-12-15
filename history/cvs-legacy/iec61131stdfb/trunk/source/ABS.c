@@ -64,11 +64,11 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
-OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ABS_IN1_set(
+OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ABS_IN_set(
     OV_INSTPTR_iec61131stdfb_ABS          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN1, value);
+    return ov_variable_setanyvalue(&pobj->v_IN, value);
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ABS_OUT_get(
@@ -83,7 +83,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_shutdown(OV_INSTPTR_ov_object pobj) {
 	
 	OV_INSTPTR_iec61131stdfb_ABS pinst = Ov_StaticPtrCast(iec61131stdfb_ABS, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN1);
+	STDFB_FREE_VEC(pinst->v_IN);
 	STDFB_FREE_VEC(pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
@@ -101,44 +101,44 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_typemethod(
     OV_INSTPTR_iec61131stdfb_ABS pinst = Ov_StaticPtrCast(iec61131stdfb_ABS, pfb);
 	
 	STDFB_FREE_VEC(pinst->v_OUT);
-	if(!(pinst->v_IN1.value.vartype & OV_VT_ISVECTOR))
+	if(!(pinst->v_IN.value.vartype & OV_VT_ISVECTOR))
 	{
-		switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
+		switch(pinst->v_IN.value.vartype & OV_VT_KSMASK)
 		{
 			
 			case OV_VT_INT:
 				pinst->v_OUT.value.vartype = OV_VT_INT;
-				if(pinst->v_IN1.value.valueunion.val_int < 0)
-					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN1.value.valueunion.val_int * (-1.0);
+				if(pinst->v_IN.value.valueunion.val_int < 0)
+					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_int * (-1.0);
 				else
-					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN1.value.valueunion.val_int;
+					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_int;
 			break;
 			
 			case OV_VT_UINT:
 				pinst->v_OUT.value.vartype = OV_VT_UINT;
-				pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN1.value.valueunion.val_uint;
+				pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN.value.valueunion.val_uint;
 				ov_logfile_warning("%s: unsigned integer is always positiv, this block is not necessary", pinst->v_identifier); 
 			break;
 			
 			case OV_VT_SINGLE:
 				pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-				if(pinst->v_IN1.value.valueunion.val_single < 0)
-					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN1.value.valueunion.val_single * (-1.0);
+				if(pinst->v_IN.value.valueunion.val_single < 0)
+					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_single * (-1.0);
 				else
-					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN1.value.valueunion.val_single;
+					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_single;
 			break;
 			
 			case OV_VT_DOUBLE:
 				pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
-				if(pinst->v_IN1.value.valueunion.val_double < 0)
-					pinst->v_OUT.value.valueunion.val_double = pinst->v_IN1.value.valueunion.val_double * (-1.0);
+				if(pinst->v_IN.value.valueunion.val_double < 0)
+					pinst->v_OUT.value.valueunion.val_double = pinst->v_IN.value.valueunion.val_double * (-1.0);
 				else
-					pinst->v_OUT.value.valueunion.val_double = pinst->v_IN1.value.valueunion.val_double;
+					pinst->v_OUT.value.valueunion.val_double = pinst->v_IN.value.valueunion.val_double;
 			break;
 
 			case OV_VT_BYTE:
 				pinst->v_OUT.value.vartype = OV_VT_BYTE;
-				pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN1.value.valueunion.val_byte;
+				pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN.value.valueunion.val_byte;
 				ov_logfile_warning("%s: bitstring given, treating as unsigned integer: performing no operation", pinst->v_identifier);
 			break;
 				
@@ -153,7 +153,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_typemethod(
 	}
 	else
 	{
-		switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
+		switch(pinst->v_IN.value.vartype & OV_VT_KSMASK)
 		{
 			
 			case OV_VT_INT_VEC:
@@ -190,10 +190,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_typemethod(
 	
 	/************** handling states ********************************/
 		
-	STDFB_STATE(IN1);
+	STDFB_STATE(IN);
 	
 	/***************** handling timestamps ************************/
-	STDFB_TIMESTAMP(IN1);
+	STDFB_TIMESTAMP(IN);
 		
 	
 		

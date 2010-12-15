@@ -90,14 +90,14 @@
 	
 #define STDFB_VEC_ABS(idcap, idsmall) \
 	pinst->v_OUT.value.vartype = OV_VT_##idcap##_VEC;	\
-	if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
+	if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
 	{	\
-		for(i=0; i<pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
+		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
-			if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] < 0) \
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] * - 1.0;	\
+			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] < 0) \
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] * - 1.0;	\
 			else	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i];	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i];	\
 		}	\
 	}	\
 	else	\
