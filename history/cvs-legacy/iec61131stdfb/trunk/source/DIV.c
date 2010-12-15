@@ -106,6 +106,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
     *   local variables
     */
 	unsigned int i;
+	double d_temp;
 	
     OV_INSTPTR_iec61131stdfb_DIV pinst = Ov_StaticPtrCast(iec61131stdfb_DIV, pfb);
 	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))
@@ -249,11 +250,88 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 	}
 	else
 	{
-		pinst->v_OUT.value.vartype = OV_VT_BOOL;
-		pinst->v_OUT.value.valueunion.val_bool = FALSE;
-		STDFB_FREE_VEC(pinst->v_OUT);
-		ov_logfile_error("%s: trying to use inputs of different types for DIV-block", pinst->v_identifier); 
+		if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN)
+		{
+			switch(pinst->v_IN2.value.vartype & OV_VT_KSMASK)
+			{
+				case OV_VT_UINT:
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					if( pinst->v_IN2.value.valueunion.val_uint)
+					{
+						d_temp = ((double)pinst->v_IN1.value.valueunion.val_time_span.usecs / pinst->v_IN2.value.valueunion.val_uint);
+						d_temp += (double)((double)pinst->v_IN1.value.valueunion.val_time_span.secs / pinst->v_IN2.value.valueunion.val_uint) * 1000000;
+						d_temp /= 1000000;
+						pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
+						pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					}
+					else
+						ov_logfile_error("%s: division by 0", pinst->v_identifier);
+				break;
+				
+				case OV_VT_INT:
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					if( pinst->v_IN2.value.valueunion.val_int)
+					{
+						d_temp = ((double)pinst->v_IN1.value.valueunion.val_time_span.usecs / pinst->v_IN2.value.valueunion.val_int);
+						d_temp += (double)((double)pinst->v_IN1.value.valueunion.val_time_span.secs / pinst->v_IN2.value.valueunion.val_int) * 1000000;
+						d_temp /= 1000000;
+						pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
+						pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					}
+					else
+						ov_logfile_error("%s: division by 0", pinst->v_identifier);	
+				break;
+				
+				case OV_VT_SINGLE:
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					if( pinst->v_IN2.value.valueunion.val_single)
+					{
+						d_temp = ((double)pinst->v_IN1.value.valueunion.val_time_span.usecs / pinst->v_IN2.value.valueunion.val_single);
+						d_temp += (double)((double)pinst->v_IN1.value.valueunion.val_time_span.secs / pinst->v_IN2.value.valueunion.val_single) * 1000000;
+						d_temp /= 1000000;
+						pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
+						pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					}
+					else
+						ov_logfile_error("%s: division by 0", pinst->v_identifier);		
+				break;
+				
+				case OV_VT_DOUBLE:
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					if( pinst->v_IN2.value.valueunion.val_double)
+					{
+						d_temp = ((double)pinst->v_IN1.value.valueunion.val_time_span.usecs / pinst->v_IN2.value.valueunion.val_double);
+						d_temp += (double)((double)pinst->v_IN1.value.valueunion.val_time_span.secs / pinst->v_IN2.value.valueunion.val_double) * 1000000;
+						d_temp /= 1000000;
+						pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
+						pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					}
+					else
+						ov_logfile_error("%s: division by 0", pinst->v_identifier);	
+				break;
+				
+				default:
+					pinst->v_OUT.value.vartype = OV_VT_BOOL;
+					pinst->v_OUT.value.valueunion.val_bool = FALSE;
+					STDFB_FREE_VEC(pinst->v_OUT);
+					ov_logfile_error("%s: trying to use inputs of different types for DIV-block", pinst->v_identifier); 
+					return;
+				
+			}
+		}
+		else
+		{
+			pinst->v_OUT.value.vartype = OV_VT_BOOL;
+			pinst->v_OUT.value.valueunion.val_bool = FALSE;
+			STDFB_FREE_VEC(pinst->v_OUT);
+			ov_logfile_error("%s: trying to use inputs of different types for DIV-block", pinst->v_identifier); 
+			return;
+		}
 	}
+	
+				/************** handling states and timestamps ********************************/
+		
+#include "state_2in.c"
 	
     return;
 }

@@ -114,7 +114,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ADD_typemethod(
 	
 	
 		
-	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))
+	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))	//only variables of the same type can be added, save for time and tims_span
 	{
 		
 		STDFB_FREE_VEC(pinst->v_OUT);		//free memory of preexisting out-vector
@@ -162,6 +162,14 @@ OV_DLLFNCEXPORT void iec61131stdfb_ADD_typemethod(
 					ov_logfile_warning("%s: addition of boolean, applying logical OR", pinst->v_identifier);
 				break;
 						
+				case OV_VT_TIME_SPAN:
+					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+					dbl_temp = (pinst->v_IN1.value.valueunion.val_time_span.usecs + pinst->v_IN2.value.valueunion.val_time_span.usecs);
+					dbl_temp += (double)(pinst->v_IN1.value.valueunion.val_time_span.secs + pinst->v_IN2.value.valueunion.val_time_span.secs) * 1000000;
+					dbl_temp /= 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = dbl_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+				break;
 				
 				default:
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
@@ -231,24 +239,34 @@ OV_DLLFNCEXPORT void iec61131stdfb_ADD_typemethod(
 				break;
 			}
 		}
-		
-		
+	}
+	else
+	{	//timespan can be added to time. this is the only allowed case fpr different types
+		if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == OV_VT_TIME && (pinst->v_IN2.value.vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN)
+		{
+			pinst->v_OUT.value.vartype = OV_VT_TIME;
+			dbl_temp = (pinst->v_IN1.value.valueunion.val_time.usecs + pinst->v_IN2.value.valueunion.val_time_span.usecs);
+			dbl_temp += (double)(pinst->v_IN1.value.valueunion.val_time.secs + pinst->v_IN2.value.valueunion.val_time_span.secs) * 1000000;
+			dbl_temp /= 1000000;
+			pinst->v_OUT.value.valueunion.val_time.secs = dbl_temp;
+			pinst->v_OUT.value.valueunion.val_time.usecs = (dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+			if(dbl_temp < 0)
+				ov_logfile_error("%s: result time negativ", pinst->v_identifier);
+		}
+		else
+		{
+			ov_logfile_error("%s: trying to use inputs of different types for ADD-block", pinst->v_identifier); 
+			STDFB_FREE_VEC(pinst->v_OUT);
+			pinst->v_OUT.value.vartype = OV_VT_BOOL;
+			pinst->v_OUT.value.valueunion.val_bool = FALSE;
+			return;
+		}
+	}
+
 /************** handling states and timesdtamps ********************************/
 		
 #include "state_2in.c"
-		
-		
-
-		
-	}
-	else
-	{
-		ov_logfile_error("%s: trying to use inputs of different types for ADD-block", pinst->v_identifier); 
-		STDFB_FREE_VEC(pinst->v_OUT);
-		pinst->v_OUT.value.vartype = OV_VT_BOOL;
-		pinst->v_OUT.value.valueunion.val_bool = FALSE;
-	}
-	
-    return;
+    
+	return;
 }
 
