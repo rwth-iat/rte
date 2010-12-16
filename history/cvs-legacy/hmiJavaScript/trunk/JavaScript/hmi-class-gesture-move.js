@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.46 $
-*	$Date: 2010-12-02 15:20:20 $
+*	$Revision: 1.47 $
+*	$Date: 2010-12-16 23:09:31 $
 *
 *	History:
 *	--------
@@ -70,6 +70,10 @@
 function Ground (node, controller) {
 	this._node = node;
 	this._controller = controller;
+	
+	if (!HMI.dropcursorStyle){
+		HMI.dropcursorStyle = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADBQTFRF////M2bMP2/PS3jSVoHUYorXbpPaepvdhqTgka3inLblqL/owNDuzNnx1+Lz4+v2CpBZCQAAAAF0Uk5TAEDm2GYAAABRSURBVAhbY2AAgZXzwdQTkQsgilexAMy9JAYk+Bn4De2B9FEGNsEDQLpxwkaQMIOhlKEciBYUFAwA0RsFBTeAaG5BIbBmBogyoIAUhGbYCyIAUTsNEExoQVIAAAAASUVORK5CYII=) 5 12, crosshair";
+	}
 	
 	this.arm();
 };
@@ -501,7 +505,7 @@ Dragger.prototype = {
 					'{' + encodeURI(this._ground._node.id) +  '}%20' +
 					'{' + xvalue + '}%20' +
 					'{' + yvalue + '}';
-				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null);
+				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
 				xvalue = null;
 				yvalue = null;
 			};
@@ -598,7 +602,7 @@ Dragger.prototype = {
 		if (this._ground === null)
 		{
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground: "+ground._node.id);
-			ground._node.setAttribute("cursor", "crosshair");
+			ground._node.style.cursor = HMI.dropcursorStyle;
 			this._ground = ground;
 			
 			//LayerX and LayerY are HMI specific DOM Attributes!
@@ -663,8 +667,8 @@ Dragger.prototype = {
 				SVGx = null;
 				SVGy = null;
 				
-				this._ground._node.setAttribute("cursor", "");
-				ground._node.setAttribute("cursor", "crosshair");
+				this._ground._node.style.cursor = "none";
+				ground._node.style.cursor = HMI.dropcursorStyle;
 				this._ground = ground;
 			}
 			
@@ -698,7 +702,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2010-12-02 15:20:20 $";
+var filedate = "$Date: 2010-12-16 23:09:31 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
