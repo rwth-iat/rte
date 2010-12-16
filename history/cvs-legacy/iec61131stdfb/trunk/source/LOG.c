@@ -200,8 +200,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 				break;
 			
 				default:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL_VEC;
-					Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_bool_vec, 0, BOOL);
+					pinst->v_OUT.value.vartype = OV_VT_BOOL;
+					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: log of given datatypes senseless", pinst->v_identifier);
 				break;
 			}
