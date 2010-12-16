@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.87 $
-*	$Date: 2010-12-15 16:16:26 $
+*	$Revision: 1.88 $
+*	$Date: 2010-12-16 19:01:44 $
 *
 *	History:
 *	--------
@@ -408,15 +408,16 @@ HMIJavaScriptKSClient.prototype = {
 			TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
 			
 			if (/KS_ERR_SERVERUNKNOWN/.exec(TCLKSHandle)){
-				//the server is not available. Could be the case if there is an active KS-Bridge and its destination is not available
+				//the Manager sometimes reject connection to a valid server, so retry once
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - got KS_ERR_SERVERUNKNOWN but do not trust");
 				TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
 				if (/KS_ERR/.exec(TCLKSHandle)){
+					//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
 					HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Server really not there Handlemessage: "+TCLKSHandle);
 					return false;
 				}
 			}else if (/KS_ERR/.exec(TCLKSHandle)){
-				//the server is not available. Could be the case if there is an active KS-Bridge and its destination is not available
+				//generic error
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End Handlemessage: "+TCLKSHandle);
 				return false;
 			}
@@ -778,7 +779,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-12-15 16:16:26 $";
+var filedate = "$Date: 2010-12-16 19:01:44 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
