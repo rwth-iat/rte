@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.24 $
-*	$Date: 2010-10-18 16:01:32 $
+*	$Revision: 1.25 $
+*	$Date: 2010-12-17 12:20:05 $
 *
 *	History:
 *	--------
@@ -173,10 +173,6 @@ HMIDOMParser.prototype = {
 			GraphicElement.firstChild.appendChild(StyleElementNode);
 		}
 		
-		//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)
-		GraphicElement.firstChild.setAttribute('x', 0);
-		GraphicElement.firstChild.setAttribute('y', 0);
-		
 		if("unknown" == typeof HMI.svgDocument.importNode){
 			//adobe plugin is buggy, but does not need importNode
 			Return = GraphicElement.firstChild;
@@ -196,7 +192,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2010-10-18 16:01:32 $";
+var filedate = "$Date: 2010-12-17 12:20:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

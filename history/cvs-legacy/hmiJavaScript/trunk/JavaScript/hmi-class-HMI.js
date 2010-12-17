@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.157 $
-*	$Date: 2010-11-02 13:47:16 $
+*	$Revision: 1.158 $
+*	$Date: 2010-12-17 12:20:05 $
 *
 *	History:
 *	--------
@@ -918,7 +918,7 @@ HMI.prototype = {
 			//[StyleDescription] remove this line if no ACPLT/HMI Server has a StyleDescription anymore
 			HMI.KSClient.checkSheetProperty(HMI.Path);
 			
-			this._getAndImportComponent(HMI.Path, HMI.Playground, true);
+			this.refreshSheet();
 		};
 		//spaces in objectname are encoded as %20 within OV
 		document.title = "//"+HMI.InputHost.value+decodeURI(Sheet)+" - ACPLT/HMI";
@@ -958,8 +958,9 @@ HMI.prototype = {
 		if (this.InfoOutput){
 			deleteChilds(this.InfoOutput);
 		}
-		if (HMI.KSClient.TCLKSHandle !== null)
-			this._getAndImportComponent(HMI.Path, HMI.Playground, false);
+		if (HMI.KSClient.TCLKSHandle !== null){
+			this._getAndImportComponent(HMI.Path);
+		}
 		
 		//reload scroll setting
 		//wheelsupport is not supported by the HMI Team and probably firefox only
@@ -1083,7 +1084,7 @@ HMI.prototype = {
 	/*********************************
 		_getAndImportComponent
 	*********************************/
-	_getAndImportComponent: function (ComponentPath, ParentNode, Insert) {
+	_getAndImportComponent: function (ComponentPath) {
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - Start");
 		
 		var SVGDescription;
@@ -1097,15 +1098,10 @@ HMI.prototype = {
 			SVGDescription = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '}';
 		}
 		
-		if (Insert === true){
-		//	import and append
+		//	import and show
 		//
-			this.KSClient.getVar(null, SVGDescription, this._cbGetAndAddComponent);
-		} else {
-			//	import and replace
-			//
-			this.KSClient.getVar(null, SVGDescription, this._cbGetAndReplaceComponent);
-		}
+		this.KSClient.getVar(null, SVGDescription, this._cbGetAndShowComponent);
+		
 		SVGDescription = null;
 		
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - End");
@@ -1114,10 +1110,10 @@ HMI.prototype = {
 	},
 	
 	/*********************************
-		_GetAndShowComponent
+		_cbGetAndShowComponent
 	*********************************/	
-	_GetAndShowComponent: function (Client, req, replace) {
-		HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - Start");
+	_cbGetAndShowComponent: function (Client, req) {
+		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Start");
 		
 		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
 		var ComponentText = new Array(2);
@@ -1147,9 +1143,9 @@ HMI.prototype = {
 				dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
 				Component.insertBefore(dummyRect, Component.firstChild);
 				dummyRect = null;
-				HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
+				HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
 			}
-			HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent: now Playground.append/replaceChild");
+			HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent: now Playground.append/replaceChild");
 			
 			if(HMI.PlaygroundContainerNode){
 				//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
@@ -1157,45 +1153,28 @@ HMI.prototype = {
 				HMI.PlaygroundContainerNode.setAttribute('width', Component.getAttribute('width'));
 			}
 			
-			if(replace === true){
-				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
-			}else{
+			if(HMI.Playground.firstChild === null){
+				//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)
+				Component.firstChild.setAttribute('x', 0);
+				Component.firstChild.setAttribute('y', 0);
+				
+				//we have no display => append
 				HMI.Playground.appendChild(Component);
 				
 				//	set TimeoutID
 				if (HMI.RefreshTimeoutID === null){
 					HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 				}
+			}else if(HMI.Playground.firstChild !== null){
+				//we have a display => replace
+				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			}
 			template = null;
 			Component = null;
 			ComponentText = null;
 		};
 		
-		HMI.hmi_log_trace("HMI.prototype._GetAndShowComponent - End");
-	},
-	/*********************************
-		_cbGetAndAddComponent
-	*********************************/	
-	_cbGetAndAddComponent: function (Client, req) {
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - Start");
-		
-		//call unique function with parameter to appendChild the SVG
-		HMI._GetAndShowComponent(Client, req, false);
-		
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndAddComponent - End");
-	},
-	
-	/*********************************
-		_cbGetAndReplaceComponent
-	*********************************/	
-	_cbGetAndReplaceComponent: function (Client, req) {
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - Start");
-		
-		//call unique function with parameter to replaceChild the SVG
-		HMI._GetAndShowComponent(Client, req, true);
-		
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndReplaceComponent - End");
+		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - End");
 	},
 	
 	/*********************************
@@ -1683,7 +1662,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-11-02 13:47:16 $";
+var filedate = "$Date: 2010-12-17 12:20:05 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
