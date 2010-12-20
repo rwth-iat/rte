@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.c,v 1.9 2006-01-12 14:10:13 markus Exp $
+*   $Id: ov_string.c,v 1.10 2010-12-20 13:23:06 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -33,6 +33,7 @@
 #include "libov/ov_string.h"
 #include "libov/ov_database.h"
 #include "libov/ov_memstack.h"
+#include "libov/ov_macros.h"
 
 #include <stdarg.h>
 #include <ctype.h>
@@ -257,7 +258,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	length = strlen(format)+1;
 	pc = format;
 	while(*pc) {
+	    /*
+	    *	Skip first '%'
+	    */	    
 		if(*pc++ == '%') {
+		    /*
+		    *	Ignore '%%'
+		    */		    
+		    if(*pc == '%') {
+		        pc++;
+		        continue;
+		    }
 			/*
 			*	handle flag characters
 			*/
@@ -511,6 +522,15 @@ OV_DLLFNCEXPORT OV_BOOL ov_string_match(
 	if(mask[i] == string[j]) {
 		return TRUE;
 	}
+	if(!string[j]) {
+        while(mask[i]) {
+            if(mask[i] != '*') {
+                return FALSE;
+            }
+            i++;
+        }
+        return TRUE;
+    }
 	return FALSE;
 }
 
@@ -710,6 +730,104 @@ int ov_string_match_joker(
 	}
 	return (0);
 }
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*   Split a string
+*/
+OV_DLLFNCEXPORT OV_STRING *ov_string_split(
+	const OV_STRING		str,
+	const OV_STRING		sep,
+	OV_UINT             *len
+) {
+	/*
+	*	local variables
+	*/
+	OV_STRING  pStr;
+	OV_STRING  pC;
+	OV_UINT    i,size,sepLen,strLen;
+	OV_STRING  *ret;
+	/*
+	*	instructions
+	*/
+    *len  = 0;
+
+    if(!str || !(*str)) {
+        return (OV_STRING*)0;
+    }
+    
+    /*
+    * Figure out how much space to allocate.  There must be enough
+    * space for both the array of pointers and also for a copy of
+    * the list.
+    */
+    sepLen = ov_string_getlength(sep);
+    strLen = ov_string_getlength(str);
+    if(sepLen == 0) {
+        *len = strLen;
+        size = strLen * (2 + sizeof(OV_STRING)) + 1;
+        ret  = (OV_STRING *)Ov_HeapMalloc(size);
+        if(!ret) {
+            *len = 0;
+            return ret;            
+        }
+        pStr = str;
+        pC = (OV_STRING)ret;
+        pC += strLen * sizeof(OV_STRING);
+        i = 0;
+        while(pStr && (*pStr)) {
+            *pC = *pStr;
+            ret[i] = pC;
+            pC++; *pC = '\0';
+
+            i++;
+            pC++;
+            pStr++;            
+        }
+        return ret;
+    }
+    
+    size = 1;
+    pStr = str;
+    while( (pC = strstr(pStr, sep)) != NULL ) {
+        size++;
+        pStr = pC;
+        pStr += sepLen;
+    }
+
+    *len = size;
+    size = size * sizeof(OV_STRING) + strLen + 1;
+    ret  = (OV_STRING *)Ov_HeapMalloc(size);
+    if(!ret) {
+        *len = 0;
+        return ret;            
+    }
+    pStr = (OV_STRING)ret;
+    pStr += (*len) * sizeof(OV_STRING);
+    strcpy(pStr, str);
+    
+    ret[0] = pStr;
+    i = 1;
+    while( (pC = strstr(pStr, sep)) != NULL ) {
+        *pC = '\0';
+        pC += sepLen;
+        pStr = pC;            
+        ret[i++] = pC;
+    }
+    
+    return ret;
+}
+
+OV_DLLFNCEXPORT void ov_string_freelist(
+    OV_STRING *plist
+) {
+    if( plist && (*plist) ) {
+    	Ov_HeapFree((OV_POINTER)plist);
+    }
+    return;
+}
+
 
 /*	----------------------------------------------------------------------	*/
 

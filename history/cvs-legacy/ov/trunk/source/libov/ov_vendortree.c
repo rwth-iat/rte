@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_vendortree.c,v 1.21 2009-01-19 10:23:06 martin Exp $
+*   $Id: ov_vendortree.c,v 1.22 2010-12-20 13:23:06 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -487,7 +487,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getclasses(
 	/*
 	*	local variables
 	*/
-	OV_UINT					classes = 0;
+	OV_UINT					classes;
 	OV_STRING				*pstring = NULL;
 	/*
 	*	count instantiable classes
@@ -674,7 +674,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
 	Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plib, ov_library) {
 		libs++;
 	}
-	pclass = pclass_ov_library;
 	Ov_ForEachChild(ov_inheritance, pclass_ov_library, pclass) {
 		Ov_ForEachChildEx(ov_instantiation, pclass, plib, ov_library) {
 			libs++;
@@ -702,7 +701,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibraries(
 		}
 		pstring++;
 	}
-	pclass = pclass_ov_library;
 	Ov_ForEachChild(ov_inheritance, pclass_ov_library, pclass) {
 		Ov_ForEachChildEx(ov_instantiation, pclass, plib, ov_library) {
 			*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, plib), 2);
@@ -822,7 +820,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 	Ov_ForEachChildEx(ov_instantiation, pclass_ov_structure, pstruct, ov_structure) {
 		structs++;
 	}
-	pclass = pclass_ov_structure;
 	Ov_ForEachChild(ov_inheritance, pclass_ov_structure, pclass) {
 		Ov_ForEachChildEx(ov_instantiation, pclass, pstruct, ov_structure) {
 			structs++;
@@ -850,7 +847,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
 		}
 		pstring++;
 	}
-	pclass = pclass_ov_structure;
 	Ov_ForEachChild(ov_inheritance, pclass_ov_structure, pclass) {
 		Ov_ForEachChildEx(ov_instantiation, pclass, pstruct, ov_structure) {
 			*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pstruct), 2);

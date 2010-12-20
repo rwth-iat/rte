@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_codegen.c,v 1.28 2007-09-25 13:13:50 martin Exp $
+*   $Id: ov_codegen.c,v 1.29 2010-12-20 13:23:06 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -348,7 +348,7 @@ int ov_codegen_createheaderfile(
 
 	fprintf(fp, "#ifdef OV_COMPILE_LIBRARY_%s\n", plib->identifier);
 	/* Manual fix */
-	fprintf(fp, "#if OV_COMPILER_BORLAND || OV_COMPILER_CYGWIN\n");
+	fprintf(fp, "#if OV_COMPILER_BORLAND\n");
 	fprintf(fp, "#define OV_VAREXTERN extern\n");
 	fprintf(fp, "#else\n");
 	fprintf(fp, "#define OV_VAREXTERN OV_DLLVAREXPORT\n");
@@ -565,30 +565,30 @@ void ov_codegen_printinitvaluedef(
 	OV_OVM_STRUCTURE_DEF	*pstruct;
 
 	if (pvar->pinitvalue->value.vartype == OV_VT_STRING) {
-		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %u;\n",OV_VT_STRING);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = OV_VT_STRING;\n");
 		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_string = ");
 		ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvar->pinitvalue->value, pvar->pinitvalue->num, fp);
 		fprintf(fp, ";\n");
 	}
 	else if (pvar->pinitvalue->pstructelem) {
 		pstruct = ov_codegen_getstructdef(plib, pvar->structurename);
-		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %u;\n",OV_VT_STRUCT);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = OV_VT_STRUCT;\n");
 		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.veclen = sizeof(OV_STRUCT_%s_%s);\n", pstruct->libname, pstruct->identifier);
 		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.value  = &OV_INITSTRUCT_DEF_%s_%s_%s_%lu;\n",plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
 	}
 	else if (pvar->pinitvalue->pvectorelem) {
-		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %u;\n", pvar->pinitvalue->value.vartype);
-		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.veclen = %lu;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype), pvar->pinitvalue->value.valueunion.val_generic_vec.veclen);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %s;\n", ov_codegen_getfulltypetext( (pvar->vartype & OV_VT_KSMASK) ) );
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.veclen = %lu;\n", ov_codegen_getvartypetextsmall( (pvar->vartype & OV_VT_KSMASK) ), pvar->pinitvalue->value.valueunion.val_generic_vec.veclen);
 		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.value  = OV_INITVECTOR_DEF_%s_%s_%s_%ld;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
 	}
 	else {
-		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %u;\n", pvar->pinitvalue->value.vartype);
+		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %s;\n", ov_codegen_getfulltypetext( (pvar->vartype & OV_VT_KSMASK) ) );
 		if( (pvar->pinitvalue->value.vartype == OV_VT_TIME)||(pvar->pinitvalue->value.vartype == OV_VT_TIME_SPAN)) {
-			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.secs = %ld;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),pvar->pinitvalue->value.valueunion.val_time.secs );
+			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.secs = %ld;\n", ov_codegen_getvartypetextsmall( (pvar->vartype & OV_VT_KSMASK) ),pvar->pinitvalue->value.valueunion.val_time.secs );
 			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.usecs = %ld", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),pvar->pinitvalue->value.valueunion.val_time.usecs );
 		}
 		else {
-			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s =", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype) );
+			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s =", ov_codegen_getvartypetextsmall( (pvar->vartype & OV_VT_KSMASK) ) );
 			ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvar->pinitvalue->value, 0, fp);
 		}
 		fprintf(fp, ";\n");
@@ -982,15 +982,15 @@ void ov_codegen_printclassinstdefines(
 				*/
 				switch(pvar->vartype) {
 				case OV_VT_STRUCT:
-					fprintf(fp, " \\\n    OV_STRUCT_%s v_%s", ov_codegen_replace(
-						pvar->structurename), pvar->identifier);
+					fprintf(fp, " \\\n    OV_STRUCT_%s v_%s",
+						 ov_codegen_replace(pvar->structurename), pvar->identifier);
 					break;
 				case OV_VT_CTYPE:
 					fprintf(fp, " \\\n    %s v_%s", pvar->ctypename, pvar->identifier);
 					break;
 				default:
-					fprintf(fp, " \\\n    %s v_%s", ov_codegen_getvartypetext(
-						pvar->vartype),	pvar->identifier);
+					fprintf(fp, " \\\n    %s v_%s",
+						 ov_codegen_getvartypetext(pvar->vartype),	pvar->identifier);
 					break;
 				}
 				if(pvar->veclen > 1) {
@@ -1148,14 +1148,27 @@ void ov_codegen_printclassaccessorfncdecls(
 			case OV_VT_CTYPE:
 				fprintf(fp, "%s *", pvar->ctypename);
 				break;
+			case OV_VT_TIME:
+			case OV_VT_TIME_SPAN:
 			case OV_VT_BOOL_PV:
 			case OV_VT_INT_PV:
+			case OV_VT_UINT_PV:
 			case OV_VT_SINGLE_PV:
+			case OV_VT_DOUBLE_PV:
+			case OV_VT_STRING_PV:
+			case OV_VT_TIME_PV:
+			case OV_VT_TIME_SPAN_PV:
 			case OV_VT_ANY:
 				fprintf(fp, "%s *", ov_codegen_getvartypetext(pvar->vartype));
 				break;
 			default:
-				fprintf(fp, "%s ", ov_codegen_getvartypetext(pvar->vartype));
+				fprintf(fp, "%s", ov_codegen_getvartypetext(pvar->vartype));
+				if(pvar->veclen != 1) {
+				    if( pvar->vartype & OV_VT_HAS_STATE ) {
+					   fprintf(fp, "_VEC");
+					}
+				}
+				fprintf(fp, " ");
 				if(pvar->veclen != 1) {
 					fprintf(fp, "*");
 				}
@@ -1165,7 +1178,7 @@ void ov_codegen_printclassaccessorfncdecls(
 				pclass->identifier, pvar->identifier);
 			fprintf(fp, "    OV_INSTPTR_%s_%s pobj", plib->identifier,
 				pclass->identifier);
-			if(pvar->veclen!=1) {
+			if( (pvar->veclen!=1) && (!(pvar->vartype & OV_VT_HAS_STATE)) ) {
 				fprintf(fp, ",\n    OV_UINT *pveclen");
 			}
 			fprintf(fp, "\n);\n");
@@ -1183,9 +1196,16 @@ void ov_codegen_printclassaccessorfncdecls(
 			case OV_VT_STRUCT:
 				fprintf(fp, "    const OV_STRUCT_%s *p", ov_codegen_replace(pvar->structurename));
 				break;
+			case OV_VT_TIME:
+			case OV_VT_TIME_SPAN:
 			case OV_VT_BOOL_PV:
 			case OV_VT_INT_PV:
+			case OV_VT_UINT_PV:
 			case OV_VT_SINGLE_PV:
+			case OV_VT_DOUBLE_PV:
+			case OV_VT_STRING_PV:
+			case OV_VT_TIME_PV:
+			case OV_VT_TIME_SPAN_PV:
 			case OV_VT_ANY:
 				fprintf(fp, "    const %s *p", ov_codegen_getvartypetext(pvar->vartype));
 				break;
@@ -1193,14 +1213,20 @@ void ov_codegen_printclassaccessorfncdecls(
 				fprintf(fp, "    const %s *p", pvar->ctypename);
 				break;
 			default:
-				fprintf(fp, "    const %s ", ov_codegen_getvartypetext(pvar->vartype));
+				fprintf(fp, "    const %s", ov_codegen_getvartypetext(pvar->vartype));
+				if(pvar->veclen != 1) {
+    			    if( pvar->vartype & OV_VT_HAS_STATE ) {
+    				   fprintf(fp, "_VEC");
+    				}
+    			}
+    			fprintf(fp, " ");
 				if(pvar->veclen != 1) {
 					fprintf(fp, "*p");
 				}
 				break;
 			}
 			fprintf(fp, "value");
-			if(pvar->veclen!=1) {
+			if( (pvar->veclen!=1) && (!(pvar->vartype & OV_VT_HAS_STATE)) ) {
 				fprintf(fp, ",\n    const OV_UINT veclen");
 			}
 			fprintf(fp, "\n);\n");
@@ -1254,12 +1280,12 @@ void ov_codegen_printclassvtbldef(
 		} else {
 			pclass2 = ov_codegen_getclassdef(NULL, pop->classname);
 			if(!pclass2) {
-				fprintf(stderr, "internal error -- sorry.\n");
+				fprintf(stderr, "Class '%s' not found.\n", pop->classname);
 				exit(EXIT_FAILURE);
 			}
 			plib2 = ov_codegen_getlibdef(pclass2->libname);
 			if(!plib2) {
-				fprintf(stderr, "internal error -- sorry.\n");
+				fprintf(stderr, "Library '%s' not found.\n", pclass2->libname);
 				exit(EXIT_FAILURE);
 			}
 			fprintf(fp, "    %s_%s_%s", plib2->identifier, pclass2->identifier,
@@ -1868,34 +1894,31 @@ OV_STRING ov_codegen_getvartypetext(
 	case OV_VT_TIME_SPAN:
 	case OV_VT_TIME_SPAN_VEC:
 		return "OV_TIME_SPAN";
-	case OV_VT_BOOL_PV_VEC:
-	case OV_VT_BOOL_PV:
-		return "OV_BOOL_PV";
-	case OV_VT_INT_PV_VEC:
-	case OV_VT_INT_PV:
-		return "OV_INT_PV";
-	case OV_VT_UINT_PV_VEC:
-	case OV_VT_UINT_PV:
-		return "OV_UINT_PV";
-	case OV_VT_SINGLE_PV_VEC:
-	case OV_VT_SINGLE_PV:
-		return "OV_SINGLE_PV";
-	case OV_VT_DOUBLE_PV_VEC:
-	case OV_VT_DOUBLE_PV:
-		return "OV_DOUBLE_PV";
-	case OV_VT_STRING_PV_VEC:
-	case OV_VT_STRING_PV:
-		return "OV_STRING_PV";
-	case OV_VT_TIME_PV_VEC:
-	case OV_VT_TIME_PV:
-		return "OV_TIME_PV";
-	case OV_VT_TIME_SPAN_PV_VEC:
-	case OV_VT_TIME_SPAN_PV:
-		return "OV_TIME_SPAN_PV";
+		
 	case OV_VT_ANY:
 		return "OV_ANY";
+		
+	case OV_VT_BOOL_PV:
+		return "OV_BOOL_PV";
+	case OV_VT_INT_PV:
+		return "OV_INT_PV";
+	case OV_VT_UINT_PV:
+		return "OV_UINT_PV";
+	case OV_VT_SINGLE_PV:
+		return "OV_SINGLE_PV";
+	case OV_VT_DOUBLE_PV:
+		return "OV_DOUBLE_PV";
+	case OV_VT_STRING_PV:
+		return "OV_STRING_PV";
+	case OV_VT_TIME_PV:
+		return "OV_TIME_PV";
+	case OV_VT_TIME_SPAN_PV:
+		return "OV_TIME_SPAN_PV";
+    
+    /* PV vectors are not supported */
+    
 	default:
-		fprintf(stderr, "internal error -- sorry.\n");
+		fprintf(stderr, "unknown variable type.\n");
 		exit(EXIT_FAILURE);
 	}
 	return NULL;
@@ -1907,50 +1930,57 @@ OV_STRING ov_codegen_getvartypetextsmall(
 	switch(vartype) {
 	case OV_VT_BOOL:
 		return "bool";
-	case OV_VT_BOOL_VEC:
-		return "bool_vec";
 	case OV_VT_INT:
 		return "int";
-	case OV_VT_INT_VEC:
-		return "int_vec";
 	case OV_VT_UINT:
 		return "uint";
-	case OV_VT_UINT_VEC:
-		return "uint_vec";
 	case OV_VT_SINGLE:
 		return "single";
-	case OV_VT_SINGLE_VEC:
-		return "single_vec";
 	case OV_VT_DOUBLE:
 		return "double";
-	case OV_VT_DOUBLE_VEC:
-		return "double_vec";
 	case OV_VT_STRING:
 		return "string";
-	case OV_VT_STRING_VEC:
-		return "string_vec";
 	case OV_VT_TIME:
 		return "time";
-	case OV_VT_TIME_VEC:
-		return "time_vec";
 	case OV_VT_TIME_SPAN:
 		return "time_span";
+		
+	case OV_VT_BOOL_VEC:
+		return "bool_vec";
+	case OV_VT_INT_VEC:
+		return "int_vec";
+	case OV_VT_UINT_VEC:
+		return "uint_vec";
+	case OV_VT_SINGLE_VEC:
+		return "single_vec";
+	case OV_VT_DOUBLE_VEC:
+		return "double_vec";
+	case OV_VT_STRING_VEC:
+		return "string_vec";
+	case OV_VT_TIME_VEC:
+		return "time_vec";
 	case OV_VT_TIME_SPAN_VEC:
 		return "time_span_vec";
+
 	case OV_VT_BOOL_PV:
-		return "bool_pv";
+		return "bool";
 	case OV_VT_INT_PV:
-		return "int_pv";
+		return "int";
 	case OV_VT_UINT_PV:
-		return "uint_pv";
+		return "uint";
 	case OV_VT_SINGLE_PV:
-		return "single_pv";
+		return "single";
 	case OV_VT_DOUBLE_PV:
-		return "double_pv";
+		return "double";
 	case OV_VT_STRING_PV:
-		return "string_pv";
+		return "string";
+	case OV_VT_TIME_PV:
+		return "time";
+	case OV_VT_TIME_SPAN_PV:
+		return "time_span";
+
 	default:
-		fprintf(stderr, "internal error -- sorry.\n");
+		fprintf(stderr, "unknown variable type.\n");
 		exit(EXIT_FAILURE);
 	}
 	return NULL;
@@ -1962,46 +1992,78 @@ OV_STRING ov_codegen_getfulltypetext(
 	switch(vartype) {
 	case OV_VT_BOOL:
 		return "OV_VT_BOOL";
-	case OV_VT_BOOL_VEC:
-		return "OV_VT_BOOL_VEC";
 	case OV_VT_INT:
 		return "OV_VT_INT";
-	case OV_VT_INT_VEC:
-		return "OV_VT_INT_VEC";
 	case OV_VT_UINT:
 		return "OV_VT_UINT";
-	case OV_VT_UINT_VEC:
-		return "OV_VT_UINT_VEC";
 	case OV_VT_SINGLE:
 		return "OV_VT_SINGLE";
-	case OV_VT_SINGLE_VEC:
-		return "OV_VT_SINGLE_VEC";
 	case OV_VT_DOUBLE:
 		return "OV_VT_DOUBLE";
-	case OV_VT_DOUBLE_VEC:
-		return "OV_VT_DOUBLE_VEC";
 	case OV_VT_STRING:
 		return "OV_VT_STRING";
-	case OV_VT_STRING_VEC:
-		return "OV_VT_STRING_VEC";
 	case OV_VT_TIME:
 		return "OV_VT_TIME";
-	case OV_VT_TIME_VEC:
-		return "OV_VT_TIME_VEC";
 	case OV_VT_TIME_SPAN:
 		return "OV_VT_TIME_SPAN";
+		
+	case OV_VT_BOOL_VEC:
+		return "OV_VT_BOOL_VEC";
+	case OV_VT_INT_VEC:
+		return "OV_VT_INT_VEC";
+	case OV_VT_UINT_VEC:
+		return "OV_VT_UINT_VEC";
+	case OV_VT_SINGLE_VEC:
+		return "OV_VT_SINGLE_VEC";
+	case OV_VT_DOUBLE_VEC:
+		return "OV_VT_DOUBLE_VEC";
+	case OV_VT_STRING_VEC:
+		return "OV_VT_STRING_VEC";
+	case OV_VT_TIME_VEC:
+		return "OV_VT_TIME_VEC";
 	case OV_VT_TIME_SPAN_VEC:
 		return "OV_VT_TIME_SPAN_VEC";
+			
+	case OV_VT_ANY:
+		return "OV_VT_ANY";
+		
+		
 	case OV_VT_BOOL_PV:
 		return "OV_VT_BOOL_PV";
 	case OV_VT_INT_PV:
 		return "OV_VT_INT_PV";
+	case OV_VT_UINT_PV:
+		return "OV_VT_UINT_PV";
 	case OV_VT_SINGLE_PV:
 		return "OV_VT_SINGLE_PV";
-	case OV_VT_ANY:
-		return "OV_VT_ANY";
+	case OV_VT_DOUBLE_PV:
+		return "OV_VT_DOUBLE_PV";
+	case OV_VT_STRING_PV:
+		return "OV_VT_STRING_PV";
+	case OV_VT_TIME_PV:
+		return "OV_VT_TIME_PV";
+	case OV_VT_TIME_SPAN_PV:
+		return "OV_VT_TIME_SPAN_PV";
+		
+	case OV_VT_BOOL_PV_VEC:
+		return "OV_VT_BOOL_PV_VEC";
+	case OV_VT_INT_PV_VEC:
+		return "OV_VT_INT_PV_VEC";
+	case OV_VT_UINT_PV_VEC:
+		return "OV_VT_UINT_PV_VEC";
+	case OV_VT_SINGLE_PV_VEC:
+		return "OV_VT_SINGLE_PV_VEC";
+	case OV_VT_DOUBLE_PV_VEC:
+		return "OV_VT_DOUBLE_PV_VEC";
+	case OV_VT_STRING_PV_VEC:
+		return "OV_VT_STRING_PV_VEC";
+	case OV_VT_TIME_PV_VEC:
+		return "OV_VT_TIME_PV_VEC";
+	case OV_VT_TIME_SPAN_PV_VEC:
+		return "OV_VT_TIME_SPAN_PV_VEC";
+		
 	default:
-		fprintf(stderr, "internal error -- sorry.\n");
+		fprintf(stderr, "unknown variable type.\n");
 		exit(EXIT_FAILURE);
 	}
 	return NULL;
@@ -2011,41 +2073,51 @@ OV_VAR_TYPE ov_codegen_getvarelementtype(
 	OV_VAR_TYPE	vartype
 ) {
 	switch(vartype) {
-	case OV_VT_BOOL:
-	case OV_VT_BOOL_VEC:
-		return OV_VT_BOOL;
-	case OV_VT_INT:
-	case OV_VT_INT_VEC:
-		return OV_VT_INT;
-	case OV_VT_UINT:
-	case OV_VT_UINT_VEC:
-		return OV_VT_UINT;
-	case OV_VT_SINGLE:
-	case OV_VT_SINGLE_VEC:
-		return OV_VT_SINGLE;
-	case OV_VT_DOUBLE:
-	case OV_VT_DOUBLE_VEC:
-		return OV_VT_DOUBLE;
-	case OV_VT_STRING:
-	case OV_VT_STRING_VEC:
-		return OV_VT_STRING;
-	case OV_VT_TIME:
-	case OV_VT_TIME_VEC:
-		return OV_VT_TIME;
-	case OV_VT_TIME_SPAN:
-	case OV_VT_TIME_SPAN_VEC:
-		return OV_VT_TIME_SPAN;
-	case OV_VT_BOOL_PV:
-		return OV_VT_BOOL_PV;
-	case OV_VT_INT_PV:
-		return OV_VT_INT_PV;
-	case OV_VT_SINGLE_PV:
-		return OV_VT_SINGLE_PV;
-	case OV_VT_ANY:
-		return OV_VT_ANY;
-	default:
-		fprintf(stderr, "! not an OV-datatype ! -- internal error -- sorry.\n");
-		exit(EXIT_FAILURE);
+    	case OV_VT_BOOL:
+    	case OV_VT_BOOL_VEC:
+    	case OV_VT_BOOL_PV:
+    	case OV_VT_BOOL_PV_VEC:
+    		return OV_VT_BOOL;
+    	case OV_VT_INT:
+    	case OV_VT_INT_VEC:
+    	case OV_VT_INT_PV:
+    	case OV_VT_INT_PV_VEC:
+    		return OV_VT_INT;
+    	case OV_VT_UINT:
+    	case OV_VT_UINT_VEC:
+    	case OV_VT_UINT_PV:
+    	case OV_VT_UINT_PV_VEC:
+    		return OV_VT_UINT;
+    	case OV_VT_SINGLE:
+    	case OV_VT_SINGLE_VEC:
+    	case OV_VT_SINGLE_PV:
+    	case OV_VT_SINGLE_PV_VEC:
+    		return OV_VT_SINGLE;
+    	case OV_VT_DOUBLE:
+    	case OV_VT_DOUBLE_VEC:
+    	case OV_VT_DOUBLE_PV:
+    	case OV_VT_DOUBLE_PV_VEC:
+    		return OV_VT_DOUBLE;
+    	case OV_VT_STRING:
+    	case OV_VT_STRING_VEC:
+    	case OV_VT_STRING_PV:
+    	case OV_VT_STRING_PV_VEC:
+    		return OV_VT_STRING;
+    	case OV_VT_TIME:
+    	case OV_VT_TIME_VEC:
+    	case OV_VT_TIME_PV:
+    	case OV_VT_TIME_PV_VEC:
+    		return OV_VT_TIME;
+    	case OV_VT_TIME_SPAN:
+    	case OV_VT_TIME_SPAN_VEC:
+    	case OV_VT_TIME_SPAN_PV:
+    	case OV_VT_TIME_SPAN_PV_VEC:
+    		return OV_VT_TIME_SPAN;		
+    	case OV_VT_ANY:
+    		return OV_VT_ANY;
+    	default:
+    		fprintf(stderr, "! not an OV-datatype ! -- internal error -- .\n");
+    		exit(EXIT_FAILURE);
 	}
 	return OV_VT_VOID;
 }
@@ -2056,38 +2128,48 @@ OV_VAR_TYPE ov_codegen_getvarvectortype(
 	switch(vartype) {
 	case OV_VT_BOOL:
 	case OV_VT_BOOL_VEC:
+	case OV_VT_BOOL_PV:
+	case OV_VT_BOOL_PV_VEC:
 		return OV_VT_BOOL_VEC;
 	case OV_VT_INT:
 	case OV_VT_INT_VEC:
+	case OV_VT_INT_PV:
+	case OV_VT_INT_PV_VEC:
 		return OV_VT_INT_VEC;
 	case OV_VT_UINT:
 	case OV_VT_UINT_VEC:
+	case OV_VT_UINT_PV:
+	case OV_VT_UINT_PV_VEC:
 		return OV_VT_UINT_VEC;
 	case OV_VT_SINGLE:
 	case OV_VT_SINGLE_VEC:
+	case OV_VT_SINGLE_PV:
+	case OV_VT_SINGLE_PV_VEC:
 		return OV_VT_SINGLE_VEC;
 	case OV_VT_DOUBLE:
 	case OV_VT_DOUBLE_VEC:
+	case OV_VT_DOUBLE_PV:
+	case OV_VT_DOUBLE_PV_VEC:
 		return OV_VT_DOUBLE_VEC;
 	case OV_VT_STRING:
 	case OV_VT_STRING_VEC:
+	case OV_VT_STRING_PV:
+	case OV_VT_STRING_PV_VEC:
 		return OV_VT_STRING_VEC;
 	case OV_VT_TIME:
 	case OV_VT_TIME_VEC:
+	case OV_VT_TIME_PV:
+	case OV_VT_TIME_PV_VEC:
 		return OV_VT_TIME_VEC;
 	case OV_VT_TIME_SPAN:
 	case OV_VT_TIME_SPAN_VEC:
+	case OV_VT_TIME_SPAN_PV:
+	case OV_VT_TIME_SPAN_PV_VEC:
 		return OV_VT_TIME_SPAN_VEC;
-	case OV_VT_BOOL_PV:
-		return OV_VT_BOOL_PV;
-	case OV_VT_INT_PV:
-		return OV_VT_INT_PV;
-	case OV_VT_SINGLE_PV:
-		return OV_VT_SINGLE_PV;
 	case OV_VT_ANY:
 		return OV_VT_ANY;
 	default:
-		fprintf(stderr, "! not an OV-datatype ! -- internal error -- sorry.\n");
+		fprintf(stderr, "! not an OV-datatype ! -- internal error -- .\n");
 		exit(EXIT_FAILURE);
 	}
 	return OV_VT_VOID;

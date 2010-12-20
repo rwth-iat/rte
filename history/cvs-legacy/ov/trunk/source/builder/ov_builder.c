@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_builder.c,v 1.13 2007-04-25 13:59:03 martin Exp $
+*   $Id: ov_builder.c,v 1.14 2010-12-20 13:23:06 martin Exp $
 *
 *   Copyright (C) 1998-2001
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -237,7 +237,91 @@ int ov_builder_backend(void) {
 	
 
 /*	----------------------------------------------------------------------	*/
+/*
+*	Return value type of getAccessor
+*/
+OV_STRING ov_builder_getResultValueType(
+	OV_VAR_TYPE	vartype
+) {
+	switch(vartype) {
+	case OV_VT_BOOL:
+		return "OV_BOOL";
+	case OV_VT_INT:
+		return "OV_INT";
+	case OV_VT_UINT:
+		return "OV_UINT";
+	case OV_VT_SINGLE:
+		return "OV_SINGLE";
+	case OV_VT_DOUBLE:
+		return "OV_DOUBLE";
+	case OV_VT_STRING:
+		return "OV_STRING";
+	case OV_VT_TIME:
+		return "OV_TIME*";
+	case OV_VT_TIME_SPAN:
+		return "OV_TIME_SPAN*";
+		
+	case OV_VT_BOOL_VEC:
+		return "OV_BOOL*";
+	case OV_VT_INT_VEC:
+		return "OV_INT*";
+	case OV_VT_UINT_VEC:
+		return "OV_UINT*";
+	case OV_VT_SINGLE_VEC:
+		return "OV_SINGLE*";
+	case OV_VT_DOUBLE_VEC:
+		return "OV_DOUBLE*";
+	case OV_VT_STRING_VEC:
+		return "OV_STRING*";
+	case OV_VT_TIME_VEC:
+		return "OV_TIME*";
+	case OV_VT_TIME_SPAN_VEC:
+		return "OV_TIME_SPAN*";
+		
+	case OV_VT_BOOL_PV:
+		return "OV_BOOL_PV*";
+	case OV_VT_INT_PV:
+		return "OV_INT_PV*";
+	case OV_VT_UINT_PV:
+		return "OV_UINT_PV*";
+	case OV_VT_SINGLE_PV:
+		return "OV_SINGLE_PV*";
+	case OV_VT_DOUBLE_PV:
+		return "OV_DOUBLE_PV*";
+	case OV_VT_STRING_PV:
+		return "OV_STRING_PV*";
+	case OV_VT_TIME_PV:
+		return "OV_TIME_PV*";
+	case OV_VT_TIME_SPAN_PV:
+		return "OV_TIME_SPAN_PV*";
 
+	case OV_VT_BOOL_PV_VEC:
+		return "OV_BOOL_PV_VEC*";
+	case OV_VT_INT_PV_VEC:
+		return "OV_INT_PV_VEC*";
+	case OV_VT_UINT_PV_VEC:
+		return "OV_UINT_PV_VEC*";
+	case OV_VT_SINGLE_PV_VEC:
+		return "OV_SINGLE_PV_VEC*";
+	case OV_VT_DOUBLE_PV_VEC:
+		return "OV_DOUBLE_PV_VEC*";
+	case OV_VT_STRING_PV_VEC:
+		return "OV_STRING_PV_VEC*";
+	case OV_VT_TIME_PV_VEC:
+		return "OV_TIME_PV_VEC*";
+	case OV_VT_TIME_SPAN_PV_VEC:
+		return "OV_TIME_SPAN_PV_VEC*";
+
+	case OV_VT_ANY:
+		return "OV_ANY*";
+	default:
+		fprintf(stderr, "Unknown value type.\n");
+		exit(EXIT_FAILURE);
+	}
+	return NULL;
+}
+
+/*	----------------------------------------------------------------------	*/
 /*
 *	Create source files of a library
 */
@@ -289,26 +373,27 @@ int ov_builder_createsourcefiles(
 
 		fprintf(fp, "\n");
 		for(pvar=pclass->variables;pvar;pvar=pvar->pnext) {
+
 			if (pvar->varprops & OV_VP_GETACCESSOR) {
-				fprintf(fp,"OV_DLLFNCEXPORT %s %s_%s_%s_get(\n",ov_builder_getvartypetext(pvar->vartype),
+				fprintf(fp,"OV_DLLFNCEXPORT %s %s_%s_%s_get(\n", ov_builder_getResultValueType(pvar->vartype),
 					plib->identifier,pclass->identifier,pvar->identifier);
-				fprintf(fp,"             OV_INSTPTR_%s_%s          pobj",plib->identifier,pclass->identifier);
+				fprintf(fp,"    OV_INSTPTR_%s_%s          pobj",plib->identifier,pclass->identifier);
 				if (pvar->veclen != 1) {
-			     		fprintf(fp,",\n             OV_UINT *pveclen");
+			     		fprintf(fp,",\n    OV_UINT *pveclen");
 					fprintf(fp,"\n) {\n");
 					if (pvar->varprops & (OV_VP_DERIVED | OV_VP_STATIC)) {
-						fprintf(fp,"             return (%s) 0;\n",ov_builder_getvartypetext(pvar->vartype));
+						fprintf(fp,"    return (%s) 0;\n",ov_builder_getvartypetext(pvar->vartype));
 						fprintf(fp,"}\n\n");
 					}
 					else {
 						if (pvar->veclen > 1) {
-							fprintf(fp,"             *pveclen = %lu;\n",pvar->veclen);
-							fprintf(fp,"             return pobj->v_%s;\n",pvar->identifier);
+							fprintf(fp,"    *pveclen = %lu;\n",pvar->veclen);
+							fprintf(fp,"    return pobj->v_%s;\n",pvar->identifier);
 							fprintf(fp,"}\n\n");
 						}
 						else {
-							fprintf(fp,"             *pveclen = pobj->v_%s.veclen;\n",pvar->identifier);
-							fprintf(fp,"             return pobj->v_%s.value;\n",pvar->identifier);
+							fprintf(fp,"    *pveclen = pobj->v_%s.veclen;\n",pvar->identifier);
+							fprintf(fp,"    return pobj->v_%s.value;\n",pvar->identifier);
 							fprintf(fp,"}\n\n");
 						}
 					}
@@ -317,16 +402,16 @@ int ov_builder_createsourcefiles(
 					fprintf(fp,"\n");
 					fprintf(fp,") {\n");
 					if (pvar->varprops & (OV_VP_DERIVED | OV_VP_STATIC)) {
-						fprintf(fp,"             return (%s) 0;\n",ov_builder_getvartypetext(pvar->vartype));
+						fprintf(fp,"    return (%s) 0;\n",ov_builder_getvartypetext(pvar->vartype));
 						fprintf(fp,"}\n\n");
 					}
 					else {
 						if (pvar->vartype >= OV_VT_BOOL_PV) {
-							fprintf(fp,"             return &pobj->v_%s;\n",pvar->identifier);
+							fprintf(fp,"    return &pobj->v_%s;\n",pvar->identifier);
 							fprintf(fp,"}\n\n");
 						}
 						else {
-							fprintf(fp,"             return pobj->v_%s;\n",pvar->identifier);
+							fprintf(fp,"    return pobj->v_%s;\n",pvar->identifier);
 							fprintf(fp,"}\n\n");
 						}
 					}
@@ -335,57 +420,65 @@ int ov_builder_createsourcefiles(
 			if (pvar->varprops & OV_VP_SETACCESSOR) {
 				fprintf(fp,"OV_DLLFNCEXPORT OV_RESULT %s_%s_%s_set(\n",
 					plib->identifier,pclass->identifier,pvar->identifier);
-				fprintf(fp,"             OV_INSTPTR_%s_%s          pobj,\n",plib->identifier,pclass->identifier);
+				fprintf(fp,"    OV_INSTPTR_%s_%s          pobj,\n",plib->identifier,pclass->identifier);
+				fprintf(fp,"    const %s  value", ov_builder_getResultValueType(pvar->vartype));
+				
 				if (pvar->veclen != 1) {
-					fprintf(fp,"             const %spvalue,\n",ov_builder_getvartypetext(pvar->vartype));
-					fprintf(fp,"             const OV_UINT veclen\n");
-					fprintf(fp,") {\n");
+    				if( !(pvar->vartype & OV_VT_HAS_STATE) ) {
+    				    fprintf(fp,",\n    const OV_UINT veclen");
+                    }
+                }
+ 				fprintf(fp,"\n) {\n");
 
-					if (pvar->varprops & (OV_VP_DERIVED | OV_VP_STATIC)) {
-						fprintf(fp,"             return OV_ERR_OK;\n");
+				if (pvar->varprops & (OV_VP_DERIVED | OV_VP_STATIC)) {
+					fprintf(fp,"    return OV_ERR_OK;\n");
+					fprintf(fp,"}\n\n");
+				} else {
+				    
+				    if (pvar->veclen == 1) {
+					    switch(pvar->vartype) {
+					        case OV_VT_STRING:
+    							fprintf(fp,"    return ov_string_setvalue(&pobj->v_%s,value);\n",pvar->identifier);
+    							break;
+                			case OV_VT_ANY:
+							     fprintf(fp,"    return ov_variable_setanyvalue(&pobj->v_%s, value);\n",pvar->identifier);
+                			     break;
+                			     
+                			case OV_VT_STRING_PV:
+    							fprintf(fp,"    pobj->v_%s.time = value->time;\n",pvar->identifier);
+    							fprintf(fp,"    pobj->v_%s.state = value->state;\n",pvar->identifier);
+    							fprintf(fp,"    return ov_string_setvalue(&pobj->v_%s.value,value->value);\n",pvar->identifier);
+    							break;
+                			case OV_VT_TIME:
+                			case OV_VT_TIME_SPAN:
+                			case OV_VT_BOOL_PV:
+                			case OV_VT_INT_PV:
+                			case OV_VT_UINT_PV:
+                			case OV_VT_SINGLE_PV:
+                			case OV_VT_DOUBLE_PV:
+                			case OV_VT_TIME_PV:
+                			case OV_VT_TIME_SPAN_PV:
+							    fprintf(fp,"    pobj->v_%s = *value;\n",pvar->identifier);
+							    fprintf(fp,"    return OV_ERR_OK;\n");
+							    break;
+							default:
+							    fprintf(fp,"    pobj->v_%s = value;\n",pvar->identifier);
+							    fprintf(fp,"    return OV_ERR_OK;\n");
+							    break;
+                        
+                        }
 						fprintf(fp,"}\n\n");
-					}
-					else {
-						if (pvar->veclen > 1) {
-							fprintf(fp,"             return Ov_SetStaticVectorValue(pobj->v_%s,pvalue,veclen,%s);\n",pvar->identifier,
+				        
+					} else {
+						if (pvar->veclen > 1) {						    				        
+							fprintf(fp,"    return Ov_SetStaticVectorValue(pobj->v_%s,value,veclen,%s);\n",pvar->identifier,
+								ov_builder_getvartypevectext(pvar->vartype));
+							fprintf(fp,"}\n\n");
+						} else {
+							fprintf(fp,"    return Ov_SetDynamicVectorValue(&pobj->v_%s,value,veclen,%s);\n",pvar->identifier,
 								ov_builder_getvartypevectext(pvar->vartype));
 							fprintf(fp,"}\n\n");
 						}
-						else {
-							fprintf(fp,"             return Ov_SetDynamicVectorValue(&pobj->v_%s,pvalue,veclen,%s);\n",pvar->identifier,
-								ov_builder_getvartypevectext(pvar->vartype));
-							fprintf(fp,"}\n\n");
-						}
-					}
-				}
-				else {
-					if (pvar->vartype >= OV_VT_BOOL_PV) {
-						fprintf(fp,"             const %spvalue\n",ov_builder_getvartypetext(pvar->vartype));
-					}
-					else {
-						fprintf(fp,"             const %s           value\n",ov_builder_getvartypetext(pvar->vartype));
-					}
-					fprintf(fp,") {\n");
-
-					if (pvar->varprops & (OV_VP_DERIVED | OV_VP_STATIC)) {
-						fprintf(fp,"             return OV_ERR_OK;\n");
-						fprintf(fp,"}\n\n");
-					}
-					else {
-						if (pvar->vartype >= OV_VT_BOOL_PV) {
-							fprintf(fp,"             pobj->v_%s = *pvalue;\n",pvar->identifier);
-							fprintf(fp,"             return OV_ERR_OK;\n");
-						}
-						else {
-							if (pvar->vartype == OV_VT_STRING) {
-								fprintf(fp,"             return ov_string_setvalue(&pobj->v_%s,value);\n",pvar->identifier);
-							}
-							else {
-								fprintf(fp,"             pobj->v_%s = value;\n",pvar->identifier);
-								fprintf(fp,"             return OV_ERR_OK;\n");
-							}
-						}
-						fprintf(fp,"}\n\n");
 					}
 				}
 			}
@@ -807,6 +900,7 @@ OV_STRING ov_codegen_getvartypetextsmall(
 	}
 	return NULL;
 }
+
 /*
 *	End of file
 */

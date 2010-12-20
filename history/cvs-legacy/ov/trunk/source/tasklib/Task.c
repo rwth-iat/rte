@@ -70,18 +70,18 @@ OV_DLLFNCEXPORT void tasklib_Task_activate(
 	}
 }
 
-OV_DLLFNCEXPORT OV_TIME_SPAN tasklib_Task_cycletime_get(
+OV_DLLFNCEXPORT OV_TIME_SPAN* tasklib_Task_cycletime_get(
              OV_INSTPTR_tasklib_Task          pobj
 ) {
-             return pobj->v_cycletime;
+             return &pobj->v_cycletime;
 }
 
 OV_DLLFNCEXPORT OV_RESULT tasklib_Task_cycletime_set(
              OV_INSTPTR_tasklib_Task          pobj,
-             const OV_TIME_SPAN           value
+             const OV_TIME_SPAN           *value
 ) {
 	if (pobj->v_actimode==0) {
-		pobj->v_cycletime = value;
+		pobj->v_cycletime = *value;
 		return OV_ERR_OK;
 	}
 	return OV_ERR_NOACCESS;     
@@ -110,25 +110,25 @@ OV_DLLFNCEXPORT OV_RESULT tasklib_Task_supervised_set(
 	return OV_ERR_NOACCESS;
 }
 
-OV_DLLFNCEXPORT OV_TIME tasklib_Task_proctime_get(
+OV_DLLFNCEXPORT OV_TIME* tasklib_Task_proctime_get(
              OV_INSTPTR_tasklib_Task          pobj
 ) {
-             return pobj->v_proctime;
+             return &pobj->v_proctime;
 }
 
-OV_DLLFNCEXPORT OV_TIME tasklib_Task_alarmtime_get(
+OV_DLLFNCEXPORT OV_TIME* tasklib_Task_alarmtime_get(
              OV_INSTPTR_tasklib_Task          pobj
 ) {
-             return pobj->v_alarmtime;
+             return &pobj->v_alarmtime;
 }
 
 OV_DLLFNCEXPORT OV_RESULT tasklib_Task_alarmtime_set(
              OV_INSTPTR_tasklib_Task          pobj,
-             const OV_TIME           value
+             const OV_TIME           *value
 ) {
 
 	if (pobj->v_actimode==0) {
-		pobj->v_alarmtime = value;
+		pobj->v_alarmtime = *value;
 		return OV_ERR_OK;
 	}
 	return OV_ERR_NOACCESS;

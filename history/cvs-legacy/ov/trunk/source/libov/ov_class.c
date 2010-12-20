@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_class.c,v 1.25 2007-09-25 13:19:41 martin Exp $
+*   $Id: ov_class.c,v 1.26 2010-12-20 13:23:06 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -520,6 +520,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	} else {
 		size = pclass->v_size;
 	}
+	
 	pobj = (OV_INSTPTR_ov_object)ov_database_malloc(size);
 	if(!pobj) {
 		return OV_ERR_DBOUTOFMEMORY;

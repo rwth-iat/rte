@@ -1,5 +1,5 @@
 /*
-*   $Id: example_testclass.c,v 1.9 2004-10-29 09:07:45 ansgar Exp $
+*   $Id: example_testclass.c,v 1.10 2010-12-20 13:23:06 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -76,22 +76,22 @@ OV_DLLFNCEXPORT OV_RESULT example_testclass_String_set(
 /*
 *	Accessor functions for "Time"
 */
-OV_DLLFNCEXPORT OV_TIME example_testclass_Time_get(
+OV_DLLFNCEXPORT OV_TIME* example_testclass_Time_get(
 	OV_INSTPTR_example_testclass	ptest
 ) {
 	OV_STATICINSTPTR_example_testclass	pstatictest
 		= Ov_GetStaticInstPtr(example_testclass, ptest);
 	ov_logfile_info("You asked for Time!");
-	return pstatictest->v_Time;
+	return &pstatictest->v_Time;
 }
 
 OV_DLLFNCEXPORT OV_RESULT example_testclass_Time_set(
 	OV_INSTPTR_example_testclass	ptest,
-	const OV_TIME			value
+	const OV_TIME			*value
 ) {
 	OV_STATICINSTPTR_example_testclass	pstatictest
 		= Ov_GetStaticInstPtr(example_testclass, ptest);
-	pstatictest->v_Time = value;
+	pstatictest->v_Time = *value;
 	ov_logfile_info("You set Time!");
 	return OV_ERR_OK;
 }
