@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_macros.h,v 1.22 2007-04-24 14:11:29 martin Exp $
+*   $Id: ov_macros.h,v 1.23 2011-01-18 14:27:34 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -318,8 +318,7 @@
 #if OV_SYSTEM_LINUX
 #define Ov_CreateObject(class, pobj, pparent, ident)						\
 	ov_class_createobject(pclass_##class, Ov_PtrUpCast(ov_domain, pparent),	\
-	ident, OV_PMH_DEFAULT, NULL, NULL, NULL, ((OV_INSTPTR_ov_object*)		\
-	&(pobj)))
+	ident, OV_PMH_DEFAULT, NULL, NULL, NULL, ((OV_INSTPTR_ov_object*)&(pobj)))
 #else
 #define Ov_CreateObject(class, pobj, pparent, ident)						\
 	ov_class_createobject(pclass_##class, Ov_PtrUpCast(ov_domain, pparent),	\

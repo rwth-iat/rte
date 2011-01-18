@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_ov.h,v 1.21 2008-06-12 13:15:23 henning Exp $
+*   $Id: ov_ov.h,v 1.22 2011-01-18 14:27:34 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -354,30 +354,30 @@ typedef struct {
 	OV_VAR_TYPE				vartype;			/* actual vartype, may be OV_VT_VOID */
 	union {
 		/* basic datatypes */
-		OV_BOOL				val_bool;		/* if vartype == OV_VT_BOOL */
-		OV_BYTE				val_byte;		/* if vartype == OV_VT_BYTE */
-		OV_INT				val_int;		/* if vartype == OV_VT_INT */
-		OV_UINT				val_uint;		/* if vartype == OV_VT_UINT */
-		OV_SINGLE			val_single;		/* if vartype == OV_VT_SINGLE */
-		OV_DOUBLE			val_double;		/* if vartype == OV_VT_DOUBLE */
-		OV_STRING			val_string;		/* if vartype == OV_VT_STRING */
-		OV_TIME				val_time;		/* if vartype == OV_VT_TIME */
-		OV_TIME_SPAN			val_time_span;		/* if vartype == OV_VT_TIME_SPAN */
-		OV_STATE			val_state;		/* if vartype == OV_VT_TIME_SPAN */
-		OV_STRUCT			val_struct;		/* if vartype == OV_VT_STRUCT */
+		OV_BOOL				val_bool;			/* if vartype == OV_VT_BOOL */
+		OV_BYTE				val_byte;			/* if vartype == OV_VT_BYTE */
+		OV_INT				val_int;			/* if vartype == OV_VT_INT */
+		OV_UINT				val_uint;			/* if vartype == OV_VT_UINT */
+		OV_SINGLE			val_single;			/* if vartype == OV_VT_SINGLE */
+		OV_DOUBLE			val_double;			/* if vartype == OV_VT_DOUBLE */
+		OV_STRING			val_string;			/* if vartype == OV_VT_STRING */
+		OV_TIME				val_time;			/* if vartype == OV_VT_TIME */
+		OV_TIME_SPAN		val_time_span;		/* if vartype == OV_VT_TIME_SPAN */
+		OV_STATE			val_state;			/* if vartype == OV_VT_TIME_SPAN */
+		OV_STRUCT			val_struct;			/* if vartype == OV_VT_STRUCT */
 		/* vector datatypes */
 		OV_BYTE_VEC			val_byte_vec;		/* if vartype == OV_VT_BYTE_VEC or OV_VT_CTYPE*/
 		OV_BOOL_VEC			val_bool_vec;		/* if vartype == OV_VT_BOOL_VEC */
 		OV_INT_VEC			val_int_vec;		/* if vartype == OV_VT_INT_VEC */
 		OV_UINT_VEC			val_uint_vec;		/* if vartype == OV_VT_UINT_VEC */
-		OV_SINGLE_VEC			val_single_vec;		/* if vartype == OV_VT_SINGLE_VEC */
-		OV_DOUBLE_VEC			val_double_vec;		/* if vartype == OV_VT_DOUBLE_VEC */
-		OV_STRING_VEC			val_string_vec;		/* if vartype == OV_VT_STRING_VEC */
+		OV_SINGLE_VEC		val_single_vec;		/* if vartype == OV_VT_SINGLE_VEC */
+		OV_DOUBLE_VEC		val_double_vec;		/* if vartype == OV_VT_DOUBLE_VEC */
+		OV_STRING_VEC		val_string_vec;		/* if vartype == OV_VT_STRING_VEC */
 		OV_TIME_VEC			val_time_vec;		/* if vartype == OV_VT_TIME_VEC */
-		OV_TIME_SPAN_VEC		val_time_span_vec;	/* if vartype == OV_VT_TIME_SPAN_VEC */
-		OV_STATE_VEC			val_state_vec;		/* if vartype == OV_VT_TIME_SPAN */
-		OV_GENERIC_VEC			val_generic_vec;	/* for internal use only */
-		OV_STRUCT_VEC			val_struct_vec;		/* if vartype == OV_VT_STRUCT_VEC */
+		OV_TIME_SPAN_VEC	val_time_span_vec;	/* if vartype == OV_VT_TIME_SPAN_VEC */
+		OV_STATE_VEC		val_state_vec;		/* if vartype == OV_VT_TIME_SPAN */
+		OV_GENERIC_VEC		val_generic_vec;	/* for internal use only */
+		OV_STRUCT_VEC		val_struct_vec;		/* if vartype == OV_VT_STRUCT_VEC */
 	}	valueunion;
 }	OV_VAR_VALUE;
 

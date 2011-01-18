@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.22 2008-06-18 15:08:47 martin Exp $
+#   $Id: generic.mk,v 1.23 2011-01-18 14:27:34 martin Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -67,7 +67,6 @@ ACPLT_PLT_INCLUDE_DIR			= $(ACPLT_PLT_DIR)include/
 ACPLT_KS_INCLUDE_DIR			= $(ACPLT_KS_DIR)include/
 ACPLT_KS_INCLUDE_KS_DIR			= $(ACPLT_KS_INCLUDE_DIR)ks/
 ACPLT_KS_SOURCE_DIR			= $(ACPLT_KS_DIR)src/
-ACPLT_PLT_BUILD_DIR			= $(ACPLT_LIB_DIR)
 
 #LIBMPM_DIR				= ../../../../libmpm/
 LIBMPM_DIR				= ../../../../libml/
@@ -76,7 +75,7 @@ LIBMPM_DIR				= ../../../../libml/
 
 ONCRPC_DIR				= ../../../../oncrpc/
 ONCRPC_INCLUDE_DIR			= $(ONCRPC_DIR)
-ONCRPC_BIN_DIR				= $(ACPLT_LIB_DIR)
+ONCRPC_BIN_DIR				= $(ONCRPC_DIR)/bin/
 
 #	Cygwin/MinGW stuff
 
@@ -272,9 +271,12 @@ LIBMPM_LIB			= $(LIBMPM_DIR)libml$(_LIB)
 endif
 
 ifeq ($(SYSTEM), NT)
+ifeq ($(COMPILER), MSVC)
+LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpcms$(_LIB)
+else
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 endif
-
+endif
 ifeq ($(SYSTEM), RMOS)
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 endif
@@ -283,11 +285,12 @@ ifeq ($SYSTEM), OPENVMS)
 LIBRPC_LIB			= $(VMS_LIBRPC_DIR)ucx$$rpcxdr
 endif
 
-ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB) $(LIBRPC_LIB)
 
-LIBPLT_LIB			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB)
-LIBKS_LIB			= $(ACPLT_PLT_BUILD_DIR)libks$(_LIB)
-LIBKSCLN_LIB			= $(ACPLT_PLT_BUILD_DIR)libkscln$(_LIB)
+LIBPLT_LIB			= $(ACPLT_PLT_DIR)build/$(SYSDIR)/libplt$(_LIB)
+LIBKS_LIB			= $(ACPLT_KS_DIR)build/$(SYSDIR)/libks$(_LIB)
+LIBKSCLN_LIB		= $(ACPLT_KS_DIR)build/$(SYSDIR)/libkscln$(_LIB)
+
+ACPLTKS_LIBS		= $(LIBPLT_LIB) $(LIBRPC_LIB)
 
 #   Rules
 #   -----

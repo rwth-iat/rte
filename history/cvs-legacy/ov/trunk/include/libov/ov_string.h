@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_string.h,v 1.6 2006-01-12 14:10:13 markus Exp $
+*   $Id: ov_string.h,v 1.7 2011-01-18 14:27:34 martin Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -136,6 +136,27 @@ int ov_string_match_joker(
 	const OV_STRING		chain,
 	int					*pm,
 	int					*pk
+);
+
+/*
+*	Split a string.
+*	---------------
+*	OV_STRING *plist;
+*	OV_UINT    i,len;
+*	
+*	plist = ov_string_split("a;b;c",";",&len);
+*   for(i=0; i<len; i++) {
+*      fprintf(stderr, "%lu : %s\n", i, plist[i]);
+*   }
+*   ov_string_freelist(plist);
+*/
+OV_DLLFNCEXPORT OV_STRING *ov_string_split(
+	const OV_STRING		str,
+	const OV_STRING		sep,
+	OV_UINT             *len
+);
+OV_DLLFNCEXPORT void ov_string_freelist(
+    OV_STRING *plist
 );
 
 #ifdef __cplusplus
