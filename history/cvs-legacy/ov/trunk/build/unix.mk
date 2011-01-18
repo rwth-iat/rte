@@ -1,5 +1,5 @@
-
-#   $Id: unix.mk,v 1.24 2010-07-26 13:29:19 henning Exp $
+﻿
+#   $Id: unix.mk,v 1.25 2011-01-18 15:15:57 martin Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -86,7 +86,7 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	---------------------
 #LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(_LIB)
 
-ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB) $(LIBRPC_LIB)
+#ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB) $(LIBRPC_LIB)
 
 #	Targets
 #	-------
