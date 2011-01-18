@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.2 $
-*	$Date: 2005-08-30 14:06:27 $
+*	$Revision: 1.3 $
+*	$Date: 2011-01-18 15:22:13 $
 *
 *	Historie:
 *	--------
@@ -319,7 +319,17 @@ OV_RESULT OV_DLLFNCEXPORT cmdlib_processcontrol_setOrder(
 			
 		if (ov_string_compare(order, FB_FREE) == 0) 
 		{
-			ov_string_setvalue(&ppc->v_commander, NULL);
+			if(ov_string_compare(ppc->v_OldCommander, NULL) != 0)		//if there is an OldCommander reestablish and delete it, otherwise free unit
+			{
+				if(ov_string_compare(ppc->v_OldCommander, ppc->v_commander) == 0)	//if FREE-ing Commander is OldCommander, OldCommander is deleted
+					ov_string_setvalue(&ppc->v_OldCommander, NULL);
+					
+				ov_string_setvalue(&ppc->v_commander, ppc->v_OldCommander);
+				ov_string_setvalue(&ppc->v_OldCommander, NULL);
+			}
+			else
+				ov_string_setvalue(&ppc->v_commander, NULL);
+				
 			ov_string_setvalue(&ppc->v_sender, NULL);
 			ov_string_setvalue(&ppc->v_order, NULL);
 			ov_string_setvalue(&ppc->v_value, NULL);
@@ -346,6 +356,10 @@ OV_RESULT OV_DLLFNCEXPORT cmdlib_processcontrol_setOrder(
 
 	   if (ov_string_compare(order, FB_OCCUPY) == 0) 
 	   {
+			if(ov_string_compare(ppc->v_commander, FB_OPERATOR) != 0
+				&& ov_string_compare(ppc->v_OldCommander, NULL) == 0)	//if Unit is not already Occupied by FB_OPERATOR and there is no OldCommander save last commander to OldCommander
+				ov_string_setvalue(&ppc->v_OldCommander, ppc->v_commander);
+				
 			ov_string_setvalue(&ppc->v_commander, FB_OPERATOR);
 			ov_string_setvalue(&ppc->v_sender, NULL);
 			ov_string_setvalue(&ppc->v_order, NULL);
@@ -358,6 +372,10 @@ OV_RESULT OV_DLLFNCEXPORT cmdlib_processcontrol_setOrder(
 	   } else if (ov_string_compare(order, "SETCMDR") == 0) {
 	   
 			/* externe Kommandovergabe durch den Operator */   
+			if(ov_string_compare(ppc->v_commander, FB_OPERATOR) != 0
+				&& ov_string_compare(ppc->v_OldCommander, NULL) == 0)							//if Unit is not already Occupied by FB_OPERATOR and there is no OldCommander save last commander to OldCommander
+				ov_string_setvalue(&ppc->v_OldCommander, ppc->v_commander);
+			
 			ov_string_setvalue(&ppc->v_commander, value);
 			ov_string_setvalue(&ppc->v_sender, NULL);
 			ov_string_setvalue(&ppc->v_order, NULL);
@@ -422,5 +440,5 @@ OV_RESULT OV_DLLFNCEXPORT cmdlib_processcontrol_setOrder(
 
 OV_STRING OV_DLLFNCEXPORT cmdlib_processcontrol_generic_commands()
 {
-  return "TIOP,TOOP,STOP,RES";
+  return "STOP,RES";				//TIOP and TOOP are not implemented anymore
 };

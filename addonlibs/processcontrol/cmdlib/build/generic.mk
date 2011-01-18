@@ -12,23 +12,20 @@
 #	Directories
 #	-----------
 
-ROOT_DIR               = ../../../../
-MODEL_DIR              = ../../model/
-SOURCE_DIR             = ../../source/
-INCLUDE_DIR            = ../../include/
-USERLIB_DIR            = ../../../libs
-BASE_DIR               = $(ROOT_DIR)base/
-FBS_DIR                = $(BASE_DIR)fbs/
-FBS_INCLUDE_DIR        = $(FBS_DIR)include/
-ACPLT_DIR              = $(BASE_DIR)acplt/
-ACPLT_KS_INCLUDE_DIR   = $(ACPLT_DIR)ks/include/
-ACPLT_PLT_INCLUDE_DIR  = $(ACPLT_DIR)plt/include/
-ACPLT_OV_INCLUDE_DIR   = $(ACPLT_DIR)ov/include/
-OV_LIBS_DIR            = $(ACPLT_DIR)ov/lib/
-FBS_LIBS_DIR           = $(FBS_DIR)lib/
-BIN_DIR                = $(ROOT_DIR)bin/
-comlib_MODEL_DIR           = ../../../comlib/model/
-comlib_INCLUDE_DIR         = ../../../comlib/include/
+MODEL_DIR         = ../../model/
+SOURCE_DIR        = ../../source/
+INCLUDE_DIR       = ../../include/
+USER_DIR          = ../../../
+USERLIB_DIR       = $(USER_DIR)libs
+ROOT_DIR          = ../../../../
+BASE_DIR          = $(ROOT_DIR)base/
+BASE_INC_DIR      = $(BASE_DIR)include/
+FBS_INC_DIR       = $(BASE_INC_DIR)fb/
+BASE_LIB_DIR      = $(BASE_DIR)lib/
+BASE_MODEL_DIR    = $(BASE_DIR)model/
+BIN_DIR           = $(ROOT_DIR)bin/
+COMLIB_MODEL_DIR           = $(USER_DIR)comlib/model/
+COMLIB_INCLUDE_DIR         = $(USER_DIR)comlib/include/
 #   Rules
 #   -----
 
@@ -39,18 +36,18 @@ comlib_INCLUDE_DIR         = ../../../comlib/include/
 #	-----------------
 
 ifeq ($(COMPILER), MSVC)
-INCLUDES   = /I$(ACPLT_OV_INCLUDE_DIR) /I$(ACPLT_PLT_INCLUDE_DIR) /I$(ACPLT_KS_INCLUDE_DIR) \
-			/I$(comlib_MODEL_DIR) /I$(comlib_INCLUDE_DIR) \
-			/I$(FBS_INCLUDE_DIR) /I$(MODEL_DIR) /I$(INCLUDE_DIR)
+INCLUDES  = /I$(BASE_INC_DIR) /I$(FBS_INC_DIR) /I$(BASE_MODEL_DIR) \
+			/I$(COMLIB_MODEL_DIR) /I$(COMLIB_INCLUDE_DIR) \
+			/I$(MODEL_DIR) /I$(INCLUDE_DIR)
 else
-INCLUDES   = -I$(ACPLT_OV_INCLUDE_DIR) -I$(ACPLT_PLT_INCLUDE_DIR) -I$(ACPLT_KS_INCLUDE_DIR) \
-			-I$(comlib_MODEL_DIR) -I$(comlib_INCLUDE_DIR) \
-			-I$(FBS_INCLUDE_DIR) -I$(MODEL_DIR) -I$(INCLUDE_DIR)
+INCLUDES  = -I$(BASE_INC_DIR) -I$(FBS_INC_DIR) -I$(BASE_MODEL_DIR)\
+			-I$(COMLIB_MODEL_DIR) -I$(COMLIB_INCLUDE_DIR) \
+			-I$(MODEL_DIR) -I$(INCLUDE_DIR)
 endif
 
-VPATH      = $(MODEL_DIR) $(SOURCE_DIR) $(INCLUDE_DIR) $(FBS_INCLUDE_DIR) \
-			 $(comlib_MODEL_DIR)  $(comlib_INCLUDE_DIR) \
-			$(ACPLT_OV_INCLUDE_DIR) $(ACPLT_PLT_INCLUDE_DIR) $(ACPLT_KS_INCLUDE_DIR)
+VPATH     = $(MODEL_DIR) $(SOURCE_DIR) $(INCLUDE_DIR) $(FBS_INC_DIR) \
+			$(COMLIB_MODEL_DIR) $(COMLIB_INCLUDE_DIR) \
+			$(BASE_INC_DIR) $(BASE_MODEL_DIR)
 
 ifeq ($(COMPILER), MSVC)
 DEFINES    = /DOV_SYSTEM_$(SYSTEM)=1 /DPLT_SYSTEM_$(SYSTEM)=1
@@ -70,6 +67,7 @@ USERLIB_DLL    = $(LIBRARY)$(_DLL)
 #	-------
 USERLIB_SRC = $(USERLIB_C) $(wildcard $(SOURCE_DIR)*$(_C))
 USERLIB_OBJ = $(foreach source, $(USERLIB_SRC), $(basename $(notdir $(source)))$(_OBJ))
+
 TARGETS = \
 	ov.h \
 	fb.h \
@@ -77,6 +75,7 @@ TARGETS = \
 	cmdlib.h \
 	$(USERLIB_LIB) \
 	$(USERLIB_DLL)
+
 SOURCES = \
 	ov.h \
 	fb.h \
