@@ -1,5 +1,4 @@
-﻿
-#   $Id: unix.mk,v 1.25 2011-01-18 15:15:57 martin Exp $
+#   $Id: unix.mk,v 1.26 2011-01-19 12:54:11 henning Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
