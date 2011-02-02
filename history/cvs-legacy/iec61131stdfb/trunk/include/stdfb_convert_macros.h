@@ -73,7 +73,7 @@
 
 	
 #define BOOL_TO(anycap, anysmall)	\
-	pinst->v_OUT.value.vartype = OV_VT_##anycap##;	\
+	pinst->v_OUT.value.vartype = OV_VT_##anycap;	\
 	if(pinst->v_IN.value.valueunion.val_bool)	\
 		pinst->v_OUT.value.valueunion.val_##anysmall = 1;	\
 	else	\
