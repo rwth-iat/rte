@@ -209,21 +209,21 @@ switch(pobj.value.vartype & OV_VT_KSMASK) { \
 /************** Statusbehandlung für einen Input ********************************/
 
 #define STDFB_STATE(num_in)	\
-	if(pinst->v_##num_in##.value.vartype & OV_VT_HAS_STATE)	\
+	if(pinst->v_##num_in.value.vartype & OV_VT_HAS_STATE)	\
 	{	\
 		pinst->v_OUT.value.vartype = pinst->v_OUT.value.vartype | OV_VT_HAS_STATE;	\
-		pinst->v_OUT.state = pinst->v_##num_in##.state;	\
+		pinst->v_OUT.state = pinst->v_##num_in.state;	\
 	}
 
 	
 /***************** Zeitstempelbehandlung für einen input ************************/
 
 #define STDFB_TIMESTAMP(num_in)	\
-	if(pinst->v_##num_in##.value.vartype & OV_VT_HAS_TIMESTAMP)	\
+	if(pinst->v_##num_in.value.vartype & OV_VT_HAS_TIMESTAMP)	\
 	{	\
 		pinst->v_OUT.value.vartype = pinst->v_OUT.value.vartype | OV_VT_HAS_TIMESTAMP;	\
-		pinst->v_OUT.time.secs = pinst->v_##num_in##.time.secs;	\
-		pinst->v_OUT.time.usecs = pinst->v_##num_in##.time.usecs;	\
+		pinst->v_OUT.time.secs = pinst->v_##num_in.time.secs;	\
+		pinst->v_OUT.time.usecs = pinst->v_##num_in.time.usecs;	\
 	}
 		
 /***************** Zeitstempelbehandlung für neu generierung ************************/
@@ -238,7 +238,7 @@ switch(pobj.value.vartype & OV_VT_KSMASK) { \
 /************************ vergleich von zeitspannen *********************************************/
 
 #define STDFB_LE_TIME_SPAN(one, two)	\
-	((one##.secs < two##.secs) || ((one##.secs == two##.secs ) && (one##.usecs <= two##.usecs)))
+	((one.secs < two.secs) || ((one.secs == two.secs ) && (one.usecs <= two.usecs)))
 	
 /************* Einschließen der weiteren Macro-dateien**************/		
 

@@ -59,18 +59,18 @@
 #define STDFB_SEL(idcap, idsmall, sel_in)	\
 	case OV_VT_##idcap:	\
 		pinst->v_OUT.value.vartype = OV_VT_##idcap;	\
-		pinst->v_OUT.value.valueunion.val_##idsmall = pinst->v_##sel_in##.value.valueunion.val_##idsmall;	\
+		pinst->v_OUT.value.valueunion.val_##idsmall = pinst->v_##sel_in.value.valueunion.val_##idsmall;	\
 	break;	
 		
 		
 #define STDFB_SEL_VEC(idcap, idsmall, sel_in)	\
 	case OV_VT_##idcap##_VEC:	\
 		pinst->v_OUT.value.vartype = OV_VT_##idcap##_VEC;	\
-		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_##sel_in##.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
+		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_##sel_in.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
 		{	\
-			for(i=0; i<pinst->v_##sel_in##.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
+			for(i=0; i<pinst->v_##sel_in.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_##sel_in##.value.valueunion.val_##idsmall##_vec.value[i];	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_##sel_in.value.valueunion.val_##idsmall##_vec.value[i];	\
 			}	\
 		}	\
 		else	\
@@ -85,7 +85,7 @@
 #define STDFB_SEL_STR(sel_in)	\
 	case OV_VT_STRING:	\
 				pinst->v_OUT.value.vartype = OV_VT_STRING;	\
-				if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT.value.valueunion.val_string, pinst->v_##sel_in##.value.valueunion.val_string)))	\
+				if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT.value.valueunion.val_string, pinst->v_##sel_in.value.valueunion.val_string)))	\
 				{	\
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
 					return;	\
@@ -95,18 +95,18 @@
 #define STDFB_SEL_TIME(idcap, idsmall, sel_in)	\
 	case OV_VT_##idcap:	\
 					pinst->v_OUT.value.vartype = OV_VT_##idcap;	\
-					pinst->v_OUT.value.valueunion.val_##idsmall##.secs = pinst->v_##sel_in##.value.valueunion.val_##idsmall##.secs;	\
-					pinst->v_OUT.value.valueunion.val_##idsmall##.usecs = pinst->v_##sel_in##.value.valueunion.val_##idsmall##.usecs;	\
+					pinst->v_OUT.value.valueunion.val_##idsmall.secs = pinst->v_##sel_in.value.valueunion.val_##idsmall.secs;	\
+					pinst->v_OUT.value.valueunion.val_##idsmall.usecs = pinst->v_##sel_in.value.valueunion.val_##idsmall.usecs;	\
 			break;
 			
 #define STDFB_SEL_STRING_VEC(sel_in)	\
 	case OV_VT_STRING_VEC:	\
 	pinst->v_OUT.value.vartype = OV_VT_STRING_VEC;	\
-		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_string_vec, pinst->v_##sel_in##.value.valueunion.val_string_vec.veclen, STRING)))	\
+		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_string_vec, pinst->v_##sel_in.value.valueunion.val_string_vec.veclen, STRING)))	\
 		{	\
-			for(i=0; i<pinst->v_##sel_in##.value.valueunion.val_string_vec.veclen; i++)	\
+			for(i=0; i<pinst->v_##sel_in.value.valueunion.val_string_vec.veclen; i++)	\
 			{	\
-				if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT.value.valueunion.val_string_vec.value[i], pinst->v_##sel_in##.value.valueunion.val_string_vec.value[i])))	\
+				if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT.value.valueunion.val_string_vec.value[i], pinst->v_##sel_in.value.valueunion.val_string_vec.value[i])))	\
 				{	\
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
 					return;	\
@@ -123,12 +123,12 @@
 #define STDFB_SEL_TIME_VEC(idcap, idsmall, sel_in)	\
 	case OV_VT_##idcap##_VEC:	\
 		pinst->v_OUT.value.vartype = OV_VT_##idcap##_VEC;	\
-		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_##sel_in##.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
+		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_##sel_in.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
 		{	\
-			for(i=0; i<pinst->v_##sel_in##.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
+			for(i=0; i<pinst->v_##sel_in.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i].secs = pinst->v_##sel_in##.value.valueunion.val_##idsmall##_vec.value[i].secs;	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i].usecs = pinst->v_##sel_in##.value.valueunion.val_##idsmall##_vec.value[i].usecs;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i].secs = pinst->v_##sel_in.value.valueunion.val_##idsmall##_vec.value[i].secs;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i].usecs = pinst->v_##sel_in.value.valueunion.val_##idsmall##_vec.value[i].usecs;	\
 			}	\
 		}	\
 		else	\
@@ -142,7 +142,7 @@
 /*****************************Demux**************************/
 
 #define STDFB_DEMUX(num)	\
-	switch(pinst->v_IN##num##.value.vartype & OV_VT_KSMASK)	\
+	switch(pinst->v_IN##num.value.vartype & OV_VT_KSMASK)	\
 		{	\
 			STDFB_SEL(BYTE, byte, IN##num);	\
 			STDFB_SEL(BOOL, bool, IN##num);	\
