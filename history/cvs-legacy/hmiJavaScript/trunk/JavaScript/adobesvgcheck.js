@@ -44,7 +44,7 @@ function detectSVG()
 var AdobeSVGInstallPage="http://www.adobe.com/svg/viewer/install/auto/";
 
 function getSVGViewer() {
-	if(confirm('The Adobe SVG Viewer is not installed. Download now?\n(To install the Renesis Plugin please Cancel now)'))
+	if(confirm('The Adobe SVG Viewer is not installed. Download now?'))
 		location=AdobeSVGInstallPage+"?"+location;
 }
 

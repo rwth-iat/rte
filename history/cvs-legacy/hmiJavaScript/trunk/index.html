@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.15 $
-*	$Date: 2010-10-20 09:21:10 $
+*	$Revision: 1.16 $
+*	$Date: 2011-02-24 17:12:14 $
 *
 *	Hlistory:
 *	20-Mar-2008			Je
@@ -61,7 +61,12 @@
 ***********************************************************************/
 -->
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"><!-- IE8 does not allow detection of adobe Plugin in standard mode -->
+<!-- IE8 does not allow detection of adobe Plugin in standard mode -->
+<!--[if IE 8]>
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+<![endif]-->
+<!-- IE9+ should render in standard mode. Internet Explorer respects only the first X-UA-Compatible header in a webpage, so ie8 will ignore this. -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <script type="text/javascript" src="JavaScript/adobesvgcheck.js"></script>
 <script type="text/javascript">
 var BrowserDetect = {
@@ -175,7 +180,7 @@ var BrowserDetect = {
 };
 	BrowserDetect.init();
 	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
-		//IE6, 7 and 8 needs a plugin (Adobe or Renesis)
+		//IE6, 7 and 8 needs a plugin (from Adobe)
 		var results = detectSVG();
 		if(results.support){
 			window.location.href = "hmi-explorer.html"+window.location.search;
@@ -240,8 +245,7 @@ var BrowserDetect = {
 			<li><a href="http://www.mozilla-europe.org/de/products/firefox/">Firefox</a> hat ab Version 2.0 SVG Support integiert.</li>
 			<li><a href="http://www.microsoft.com/germany/windows/internet-explorer/">Internet Explorer</a> benötigt ein SVG Plugin von 
 				<a href="http://www.adobe.com/svg/viewer/install/mainframed.html">Adobe (Adobe SVG Viewer)</a> (automatische 
-				<a href="http://www.adobe.com/svg/viewer/install/auto/">Installation</a>)
-			oder <a href="http://www.examotion.com/index.php?id=product_player_download">Examotion (Renesis Player)</a>.</li>
+				<a href="http://www.adobe.com/svg/viewer/install/auto/">Installation</a>).</li>
 			<li><a href="http://www.opera.com/download/">Opera</a> unterstützt ab Version 9.0 SVG und Javascript</li>
 			<li><a href="http://www.apple.com/safari/">Safari</a> unterstützt ab Version 3.0 SVG und Javascript</li>
 			<li><a href="http://www.google.com/chrome">Google Chrome</a> unterstützt ab Version 1.0 SVG und Javascript</li>
