@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.158 $
-*	$Date: 2010-12-17 12:20:05 $
+*	$Revision: 1.159 $
+*	$Date: 2011-03-11 15:33:22 $
 *
 *	History:
 *	--------
@@ -571,7 +571,6 @@ HMI.prototype = {
 				//no server and sheet specified, but a host => load serverlist
 				HMI.showServers();
 			}
-			HMI_Parameter_Liste = null;
 		}
 		if (HMI.ButShowServers.value == "Initialising HMI..."){
 			HMI.ButShowServers.value = "Show Servers";
@@ -622,6 +621,25 @@ HMI.prototype = {
 			$("idBookmark").parentNode.insertBefore(MagellanLink, $("idBookmark").parentNode.firstChild);
 			MagellanLink = null;
 		}
+		
+		//append html5 datalist if supported and provided
+		if(this.InputHost.list !== undefined & HMI_Parameter_Liste !== null && HMI_Parameter_Liste.hostlist !== undefined){
+			this.InputHost.setAttribute("list", "InputHost");
+			var datalistNode = document.createElement("datalist");
+			datalistNode.setAttribute("id", "InputHost");
+			debugger;
+			var optionNode;
+			
+			var hostlist = HMI_Parameter_Liste.hostlist.split(",");
+			for (var i=0;i < hostlist.length;i++){
+				optionNode = document.createElement("option");
+				optionNode.setAttribute("value", hostlist[i]);
+				datalistNode.appendChild(optionNode);
+			}
+			
+			this.InputHost.parentNode.appendChild(datalistNode);
+		}
+		HMI_Parameter_Liste = null;
 		
 		this.hmi_log_trace("HMI.prototype.init - End");
 		return true;
@@ -1207,7 +1225,7 @@ HMI.prototype = {
 			
 			//calculate and save absolute offset of the Components
 			this._setLayerPosition(Element);
-		};
+		}
 		
 		//	GROUND
 		//
@@ -1662,7 +1680,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2010-12-17 12:20:05 $";
+var filedate = "$Date: 2011-03-11 15:33:22 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
