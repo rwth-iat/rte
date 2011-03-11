@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.47 $
-*	$Date: 2010-12-16 23:09:31 $
+*	$Revision: 1.48 $
+*	$Date: 2011-03-11 15:19:01 $
 *
 *	History:
 *	--------
@@ -603,6 +603,9 @@ Dragger.prototype = {
 		{
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground: "+ground._node.id);
 			ground._node.style.cursor = HMI.dropcursorStyle;
+			if (ground._node.style.cursor.length < 50){
+					ground._node.style.cursor = "crosshair";
+			}
 			this._ground = ground;
 			
 			//LayerX and LayerY are HMI specific DOM Attributes!
@@ -669,6 +672,9 @@ Dragger.prototype = {
 				
 				this._ground._node.style.cursor = "none";
 				ground._node.style.cursor = HMI.dropcursorStyle;
+				if (ground._node.style.cursor.length < 50){
+					ground._node.style.cursor = "crosshair";
+				}
 				this._ground = ground;
 			}
 			
@@ -702,7 +708,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2010-12-16 23:09:31 $";
+var filedate = "$Date: 2011-03-11 15:19:01 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
