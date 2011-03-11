@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.25 $
-*	$Date: 2010-12-17 12:20:05 $
+*	$Revision: 1.26 $
+*	$Date: 2011-03-11 15:20:21 $
 *
 *	History:
 *	--------
@@ -141,7 +141,6 @@ HMIDOMParser.prototype = {
 			//building an XML Tree works a bit different in IE
 			//inline SVG native or with AdobePlugin (not capable of proper events! http://schepers.cc/inlinesvg.html)
 			
-			//todo: find domparser for IE9
 			GraphicElement = new ActiveXObject("Microsoft.XMLDOM");
 			var loadXMLresult;
 			loadXMLresult = GraphicElement.loadXML(GraphicDescription);
@@ -192,7 +191,7 @@ HMIDOMParser.prototype = {
 		return Return;
 	}
 };
-var filedate = "$Date: 2010-12-17 12:20:05 $";
+var filedate = "$Date: 2011-03-11 15:20:21 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
