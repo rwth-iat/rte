@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.159 $
-*	$Date: 2011-03-11 15:33:22 $
+*	$Revision: 1.160 $
+*	$Date: 2011-03-14 22:25:16 $
 *
 *	History:
 *	--------
@@ -627,16 +627,13 @@ HMI.prototype = {
 			this.InputHost.setAttribute("list", "InputHost");
 			var datalistNode = document.createElement("datalist");
 			datalistNode.setAttribute("id", "InputHost");
-			debugger;
-			var optionNode;
 			
 			var hostlist = HMI_Parameter_Liste.hostlist.split(",");
 			for (var i=0;i < hostlist.length;i++){
-				optionNode = document.createElement("option");
+				var optionNode = document.createElement("option");
 				optionNode.setAttribute("value", hostlist[i]);
 				datalistNode.appendChild(optionNode);
 			}
-			
 			this.InputHost.parentNode.appendChild(datalistNode);
 		}
 		HMI_Parameter_Liste = null;
@@ -1680,7 +1677,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-03-11 15:33:22 $";
+var filedate = "$Date: 2011-03-14 22:25:16 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
