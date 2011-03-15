@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.160 $
-*	$Date: 2011-03-14 22:25:16 $
+*	$Revision: 1.161 $
+*	$Date: 2011-03-15 01:03:39 $
 *
 *	History:
 *	--------
@@ -429,7 +429,7 @@ HMI.prototype = {
 			//switch the target Playground to the container SVG-Plugin DOM
 			if (HMI.svgDocument.getElementById("svgcontainer") !== null){
 				//get inner document
-				this.Playground=HMI.svgDocument.getElementById("svgcontainer");
+				this.Playground = HMI.svgDocument.getElementById("svgcontainer");
 			}
 			//sometimes feature detection is not possible
 			if (typeof HMI.svgWindow.getSVGViewerVersion != "undefined"){
@@ -1487,44 +1487,46 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.getClickPosition - Start");
 		
 		var clickPosition = new Array(2);
-		//detect the mouse position relative to the component
-		//see technology paper "Human Model Interface - JavaScript" for full details of crossbrowser problems
-		
-		//First we have to find the offset of the svg-element in the XHTML
-		var obj = HMI.Playground;
-		var svgOffsetX = 0;
-		var svgOffsetY = 0;
-		//The Plugin in IE has no offsetParent, but clientX is relative to its own scope, not HTML page
-		if (obj.offsetParent) {
-			//code for native SVG. Loop upwards till there is no parent
-			do {
-				svgOffsetX += obj.offsetLeft;
-				svgOffsetY += obj.offsetTop;
-			} while (obj = obj.offsetParent);
+		if (Component !== null)
+		{
+			//detect the mouse position relative to the component
+			//see technology paper "Human Model Interface - JavaScript" for full details of crossbrowser problems
+			
+			//First we have to find the offset of the svg-element in the XHTML
+			var obj = HMI.Playground;
+			var svgOffsetX = 0;
+			var svgOffsetY = 0;
+			//The Plugin in IE has no offsetParent, but clientX is relative to its own scope, not HTML page
+			if (obj.offsetParent) {
+				//code for native SVG. Loop upwards till there is no parent
+				do {
+					svgOffsetX += obj.offsetLeft;
+					svgOffsetY += obj.offsetTop;
+				} while (obj = obj.offsetParent);
+			}
+			
+			var mousePosX;
+			var mousePosY;
+			if (evt.pageX || evt.pageY) {
+				//code for native SVG. pageX based on the full XHTML Document
+				mousePosX = evt.pageX;
+				mousePosY = evt.pageY;
+			}else{
+				//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
+				mousePosX = evt.clientX;
+				mousePosY = evt.clientY;
+			}
+			
+			//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
+			clickPosition[0] = mousePosX - parseInt(Component.getAttribute("layerX"), 10) - svgOffsetX;
+			clickPosition[1] = mousePosY - parseInt(Component.getAttribute("layerY"), 10) - svgOffsetY;
+			
+			mousePosX = null;
+			mousePosY = null;
+			svgOffsetX = null;
+			svgOffsetY = null;
+			obj = null;
 		}
-		
-		var mousePosX;
-		var mousePosY;
-		if (evt.pageX || evt.pageY) {
-			//code for native SVG. pageX based on the full XHTML Document
-			mousePosX = evt.pageX;
-			mousePosY = evt.pageY;
-		}else{
-			//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
-			mousePosX = evt.clientX;
-			mousePosY = evt.clientY;
-		}
-		
-		//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
-		clickPosition[0] = mousePosX - parseInt(Component.getAttribute("layerX"), 10) - svgOffsetX;
-		clickPosition[1] = mousePosY - parseInt(Component.getAttribute("layerY"), 10) - svgOffsetY;
-		
-		mousePosX = null;
-		mousePosY = null;
-		svgOffsetX = null;
-		svgOffsetY = null;
-		obj = null;
-		
 		this.hmi_log_trace("HMI.prototype.getClickPosition - End");
 		
 		return clickPosition;
@@ -1669,7 +1671,7 @@ if( window.addEventListener ) {
 	//and Webkit
 	document.addEventListener('load',function(){HMI.init();},false);
 } else if( window.attachEvent ) {
-	//Internet Explorer is a special case as usual
+	//Internet Explorer < 9 is a special case as usual
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
@@ -1677,7 +1679,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-03-14 22:25:16 $";
+var filedate = "$Date: 2011-03-15 01:03:39 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
