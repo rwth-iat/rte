@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.161 $
-*	$Date: 2011-03-15 01:03:39 $
+*	$Revision: 1.162 $
+*	$Date: 2011-03-16 15:48:50 $
 *
 *	History:
 *	--------
@@ -421,13 +421,16 @@ HMI.prototype = {
 				this.svgWindow = window;
 			}
 			if (typeof this.Playground.getSVGDocument != "undefined"){
-				//get inner document
+				//get inner document (Adobe SVG Viewer, Renesis Plugin
 				this.svgDocument = this.Playground.getSVGDocument();
+			}else if (this.Playground.documentElement){
+				//get inner document (Ssrc svg Plugin)
+				this.svgDocument = this.Playground.documentElement;
 			}else{
 				this.svgDocument = this.Playground.document;
 			}
 			//switch the target Playground to the container SVG-Plugin DOM
-			if (HMI.svgDocument.getElementById("svgcontainer") !== null){
+			if (this.svgDocument.getElementById("svgcontainer") !== null){
 				//get inner document
 				this.Playground = HMI.svgDocument.getElementById("svgcontainer");
 			}
@@ -442,7 +445,7 @@ HMI.prototype = {
 				}
 			}
 		}else{
-			//inline SVG in XHTML DOM
+			//inline SVG in XHTML DOM, we have only one document and window
 			this.SVGPlugin = false;
 			this.svgDocument = document;
 			this.svgWindow = window;
@@ -1147,6 +1150,14 @@ HMI.prototype = {
 				//logging not required, allready done by _importComponent
 				return;
 			}
+			
+			//if this will be the Sheet (first viewed sheet or comoponent is same as active view)
+			if(HMI.Playground.firstChild === null || HMI.Playground.firstChild.id === Component.id){
+				//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)
+				Component.setAttribute('x', 0);
+				Component.setAttribute('y', 0);
+			}
+			
 			HMI.initGestures(Component);
 			//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
 			if (HMI.AdobeMoveFixNeeded){
@@ -1169,10 +1180,6 @@ HMI.prototype = {
 			}
 			
 			if(HMI.Playground.firstChild === null){
-				//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)
-				Component.firstChild.setAttribute('x', 0);
-				Component.firstChild.setAttribute('y', 0);
-				
 				//we have no display => append
 				HMI.Playground.appendChild(Component);
 				
@@ -1679,7 +1686,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-03-15 01:03:39 $";
+var filedate = "$Date: 2011-03-16 15:48:50 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
