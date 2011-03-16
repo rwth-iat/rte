@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.162 $
-*	$Date: 2011-03-16 15:48:50 $
+*	$Revision: 1.163 $
+*	$Date: 2011-03-16 16:39:43 $
 *
 *	History:
 *	--------
@@ -77,6 +77,7 @@
 function HMI(debug, error, warning, info, trace) {
 	this.HMI_Constants = Object();
 	this.HMI_Constants.NAMESPACE_SVG = "http://www.w3.org/2000/svg";
+	this.HMI_Constants.NODE_NAME_REACTIONMARKER = "HMI_REACTIONMARKER";
 	this.HMI_Constants.NODE_NAME_CLONE = "HMI_CLONE";
 	
 	this.HMI_Constants.HMIdate = null;
@@ -100,7 +101,6 @@ function HMI(debug, error, warning, info, trace) {
 	this.Playground = null;
 	this.ErrorOutput = null;
 	this.InfoOutput = null;
-	this.gestureReactionMarker = null;
 	this.gestureReactionMarkerTimeoutID = null;
 	
 	this.RefreshTimeoutID = null;
@@ -653,32 +653,46 @@ HMI.prototype = {
 	displaygestureReactionMarker: function (Component){
 		this.hmi_log_trace("HMI.prototype.displaygestureReactionMarker");
 		
+		//build info rect around affected component
+		
 		//warning: This function is called after the refresh, so this Component is NOT displayed anymore! (but probably another similar Component)
 		
-		//disable old timeout
-		if (HMI.gestureReactionMarkerTimeoutID !== null) {
-			HMI.gestureReactionMarker.style.display = "none";
+		var gestureReactionMarker;
+		
+		//find old marker and remove from dom
+		if (HMI.Playground.firstChild.lastChild.id == HMI.HMI_Constants.NODE_NAME_REACTIONMARKER){
+			gestureReactionMarker = HMI.Playground.firstChild.removeChild(HMI.Playground.firstChild.lastChild);
+			if (HMI.gestureReactionMarkerTimeoutID !== null){
+				window.clearTimeout(HMI.gestureReactionMarkerTimeoutID);
+				HMI.gestureReactionMarkerTimeoutID = null;
+			}
+		}else{
+			//build new marker
+			gestureReactionMarker = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
+			gestureReactionMarker.id = HMI.HMI_Constants.NODE_NAME_REACTIONMARKER;
+			gestureReactionMarker.setAttributeNS(null, 'fill', '#D1E1FA');
+			gestureReactionMarker.setAttributeNS(null, 'opacity', '0.6');
+			
+			//disable pointer Events
+			gestureReactionMarker.setAttributeNS(null, 'pointer-events', 'none');
 		}
-		
-		//build info rect around affected component
-		HMI.gestureReactionMarker = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
-		HMI.gestureReactionMarker.setAttributeNS(null, 'x', Component.getAttribute('layerX'));
-		HMI.gestureReactionMarker.setAttributeNS(null, 'y', Component.getAttribute('layerY'));
-		HMI.gestureReactionMarker.setAttributeNS(null, 'width', Component.getAttribute('width'));
-		HMI.gestureReactionMarker.setAttributeNS(null, 'height', Component.getAttribute('height'));
-		HMI.gestureReactionMarker.setAttributeNS(null, 'fill', '#D1E1FA');
-		HMI.gestureReactionMarker.setAttributeNS(null, 'opacity', '0.6');
-		
-		//disable pointer Events
-		HMI.gestureReactionMarker.setAttributeNS(null, 'pointer-events', 'none');
+		gestureReactionMarker.setAttributeNS(null, 'x', Component.getAttribute('layerX'));
+		gestureReactionMarker.setAttributeNS(null, 'y', Component.getAttribute('layerY'));
+		gestureReactionMarker.setAttributeNS(null, 'width', Component.getAttribute('width'));
+		gestureReactionMarker.setAttributeNS(null, 'height', Component.getAttribute('height'));
 		
 		//append this rect into svg
-		HMI.Playground.firstChild.appendChild(HMI.gestureReactionMarker);
+		HMI.Playground.firstChild.appendChild(gestureReactionMarker);
+		
+		gestureReactionMarker = null;
 		
 		//clear display in a few milliseconds
 		HMI.gestureReactionMarkerTimeoutID = window.setTimeout(
 			function(){
-				HMI.gestureReactionMarker.style.display = "none";
+				if (HMI.Playground.firstChild.lastChild.id == HMI.HMI_Constants.NODE_NAME_REACTIONMARKER){
+					HMI.Playground.firstChild.removeChild(HMI.Playground.firstChild.lastChild);
+					HMI.gestureReactionMarkerTimeoutID = null
+				}
 			}, 800);
 	},
 	
@@ -1686,7 +1700,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-03-16 15:48:50 $";
+var filedate = "$Date: 2011-03-16 16:39:43 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
