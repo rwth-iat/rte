@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.163 $
-*	$Date: 2011-03-16 16:39:43 $
+*	$Revision: 1.164 $
+*	$Date: 2011-03-21 12:54:22 $
 *
 *	History:
 *	--------
@@ -337,7 +337,7 @@ HMI.prototype = {
 				}
 			}catch(e){
 				this.hmi_log_error("HMI.prototype.init - Gatewaydetection failed: "+e.message);
-				this.hmi_log_onwebsite("Gatewaydetection failed. ");
+				this.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
 				if (document.getElementById("idThrobbler") !== null){
 					document.getElementById("idThrobbler").style.display = "none";
 				}
@@ -1073,7 +1073,7 @@ HMI.prototype = {
 			Component = evt.srcElement;
 		}
 		while (	Component !== null
-				&&	Component !== document
+				&&	Component !== HMI.svgDocument
 				&&	HMI.instanceOf(Component, cssclass) === false)
 		{
 			if (Component.ownerSVGElement !== undefined){
@@ -1083,8 +1083,11 @@ HMI.prototype = {
 				//Adobe+Renesis
 				Component = Component.parentNode;
 			}else if (Component.parentNode.tagUrn == HMI.HMI_Constants.NAMESPACE_SVG ){
-				//Inline IE Code inline
+				//Inline IE6-8 Code inline
 				Component = Component.parentNode;
+			}else{
+				//there is no svg parent and whe checked this object last loop, break
+				Component = null;
 			}
 			if ( Component !== null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
 				//in the move-gesture the original element has to be discovered
@@ -1700,7 +1703,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-03-16 16:39:43 $";
+var filedate = "$Date: 2011-03-21 12:54:22 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
