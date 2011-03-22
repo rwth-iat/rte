@@ -233,7 +233,7 @@
 	{	\
 		for(i = 0; i < pinst->v_IN.value.valueunion.val_##anysmall##_vec.veclen; i++)	\
 		{	\
-			pinst->v_OUT.value.valueunion.val_single_vec.value[i] = pinst->v_IN.value.valueunion.val_##anysmall##_vec.value[i];	\
+			pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) pinst->v_IN.value.valueunion.val_##anysmall##_vec.value[i];	\
 			if(pinst->v_IN.value.valueunion.val_##anysmall##_vec.value[i] > 10000000)	\
 				ov_logfile_warning("%s: converting large integer value in element %d to single, possible loss of precision", pinst->v_identifier, i);	\
 		}	\
