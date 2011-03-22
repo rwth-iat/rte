@@ -112,7 +112,7 @@ switch(pobj.value.vartype & OV_VT_KSMASK) { \
 		ov_logfile_error("%s: Value exceeds range of single", pinst->v_identifier);	\
 	}	\
 	else	\
-		flt = dbl;
+		flt = (OV_SINGLE) dbl;
 		
 		
 

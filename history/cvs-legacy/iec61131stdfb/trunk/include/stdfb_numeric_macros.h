@@ -57,21 +57,21 @@
 	
 
 #define STDFB_VEC_ATAN2(idcap, idsmall) \
-	pinst->v_OUT.value.vartype = OV_VT_##idcap##_VEC;	\
+	pinst->v_OUT.value.vartype = OV_VT_SINGLE_VEC;	\
 	if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen == pinst->v_IN2.value.valueunion.val_##idsmall##_vec.veclen)	\
 	{	\
-		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
+		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_single_vec, pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen, SINGLE)))	\
 		{	\
 			for(i=0; i<pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 			{	\
 				if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i])	\
-					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = atan(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i] / \
-						pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i]);	\
+					pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) (atan(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i] / \
+						pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i]));	\
 				else	\
 					if(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i] < 0)	\
-						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = -0.5 * Pi;	\
+						pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) (-0.5 * Pi);	\
 					else	\
-						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0.5 * Pi;	\
+						pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) (0.5 * Pi);	\
 			}	\
 		}	\
 		else	\
@@ -86,6 +86,37 @@
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
 	}
 
+	
+	#define STDFB_VEC_ATAN2_D(idcap, idsmall) \
+	pinst->v_OUT.value.vartype = OV_VT_DOUBLE_VEC;	\
+	if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen == pinst->v_IN2.value.valueunion.val_##idsmall##_vec.veclen)	\
+	{	\
+		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_double_vec, pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen, DOUBLE)))	\
+		{	\
+			for(i=0; i<pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
+			{	\
+				if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i])	\
+					pinst->v_OUT.value.valueunion.val_double_vec.value[i] = (atan(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i] / \
+						pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i]));	\
+				else	\
+					if(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i] < 0)	\
+						pinst->v_OUT.value.valueunion.val_double_vec.value[i] = (-0.5 * Pi);	\
+					else	\
+						pinst->v_OUT.value.valueunion.val_double_vec.value[i] = (0.5 * Pi);	\
+			}	\
+		}	\
+		else	\
+		{	\
+		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		return;	\
+		}	\
+	}	\
+	else	\
+	{	\
+		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
+		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+	}
+	
 /********Betrag von vektorlementen*********/
 	
 #define STDFB_VEC_ABS(idcap, idsmall) \
@@ -95,7 +126,7 @@
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] < 0) \
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] * - 1.0;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) (pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] * - 1.0);	\
 			else	\
 				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i];	\
 		}	\
@@ -121,7 +152,7 @@
 				ov_logfile_error("%s: trying to calculate the squareroot of a negative value", pinst->v_identifier);	\
 			}	\
 			else	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = sqrt(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) sqrt(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -143,7 +174,7 @@
 				ov_logfile_error("%s: trying to calculate the squareroot of a negative value", pinst->v_identifier);	\
 			}	\
 			else	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = sqrt(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -166,7 +197,7 @@
 				ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);	\
 			}	\
 			else	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = log(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) log(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -188,7 +219,7 @@
 				ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);	\
 			}	\
 			else	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = log(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) log(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -211,7 +242,7 @@
 				ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);	\
 			}	\
 			else	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = log10(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) log10(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -233,7 +264,7 @@
 				ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);	\
 			}	\
 			else	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = log10(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -309,7 +340,7 @@
 	{	\
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
-			pinst->v_OUT.value.valueunion.val_single_vec.value[i] = sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+			pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -324,7 +355,7 @@
 	{	\
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
-			pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+			pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -343,7 +374,7 @@
 	{	\
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
-			pinst->v_OUT.value.valueunion.val_single_vec.value[i] = cos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+			pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) cos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -358,7 +389,7 @@
 	{	\
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
-			pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = cos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+			pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) cos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -379,7 +410,7 @@
 		{	\
 			cosine = cos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			if(cosine)	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]) / cosine;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) (sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]) / cosine);	\
 			else	\
 			{	\
 				ov_logfile_error("%s: tangens not steady for vector-element %d", pinst->v_identifier, i);	\
@@ -401,7 +432,7 @@
 		{	\
 			cosine = cos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			if(cosine)	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]) / cosine;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_SINGLE) (sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]) / cosine);	\
 			else	\
 			{	\
 				ov_logfile_error("%s: tangens not steady for vector-element %d", pinst->v_identifier, i);	\
@@ -416,6 +447,27 @@
 	}
 	
 	
+	#define STDFB_VEC_TAN_D(idcap, idsmall) \
+	pinst->v_OUT.value.vartype = OV_VT_##idcap##_VEC;	\
+	if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
+	{	\
+		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
+		{	\
+			cosine = cos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+			if(cosine)	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = sin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]) / cosine;	\
+			else	\
+			{	\
+				ov_logfile_error("%s: tangens not steady for vector-element %d", pinst->v_identifier, i);	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+			}	\
+		}	\
+	}	\
+	else	\
+	{	\
+		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		return;	\
+	}
 	
 /******************arcsin von Vektorelementen***************/
 
@@ -428,7 +480,7 @@
 		{	\
 			if((pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] >= -1)	\
 				&& (pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 1))	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE)asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
@@ -450,7 +502,7 @@
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 1)	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
@@ -472,7 +524,7 @@
 		{	\
 			if((pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] >= -1)	\
 				&& (pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 1))	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap)asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
 				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
@@ -498,7 +550,7 @@
 		{	\
 			if((pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] >= -1)	\
 				&& (pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 1))	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
@@ -520,7 +572,7 @@
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 1)	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
@@ -542,7 +594,7 @@
 		{	\
 			if((pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] >= -1)	\
 				&& (pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 1))	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
 				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
@@ -566,7 +618,7 @@
 	{	\
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
-			pinst->v_OUT.value.valueunion.val_single_vec.value[i] = atan(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+			pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) atan(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -581,7 +633,7 @@
 	{	\
 		for(i=0; i<pinst->v_IN.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 		{	\
-			pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = atan(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+			pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) atan(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 		}	\
 	}	\
 	else	\
@@ -872,7 +924,7 @@
 		{	\
 			for(i=0; i<pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pow(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i], \
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) pow(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i], \
 					pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			}	\
 		}	\
@@ -904,7 +956,7 @@
 					pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
 				}	\
 				else	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = dbl_temp;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) dbl_temp;	\
 			}	\
 		}	\
 		else	\

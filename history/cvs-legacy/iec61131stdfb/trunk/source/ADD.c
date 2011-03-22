@@ -167,8 +167,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ADD_typemethod(
 					dbl_temp = (pinst->v_IN1.value.valueunion.val_time_span.usecs + pinst->v_IN2.value.valueunion.val_time_span.usecs);
 					dbl_temp += (double)(pinst->v_IN1.value.valueunion.val_time_span.secs + pinst->v_IN2.value.valueunion.val_time_span.secs) * 1000000;
 					dbl_temp /= 1000000;
-					pinst->v_OUT.value.valueunion.val_time_span.secs = dbl_temp;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) dbl_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) (dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
 				break;
 				
 				default:
@@ -248,8 +248,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ADD_typemethod(
 			dbl_temp = (pinst->v_IN1.value.valueunion.val_time.usecs + pinst->v_IN2.value.valueunion.val_time_span.usecs);
 			dbl_temp += (double)(pinst->v_IN1.value.valueunion.val_time.secs + pinst->v_IN2.value.valueunion.val_time_span.secs) * 1000000;
 			dbl_temp /= 1000000;
-			pinst->v_OUT.value.valueunion.val_time.secs = dbl_temp;
-			pinst->v_OUT.value.valueunion.val_time.usecs = (dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+			pinst->v_OUT.value.valueunion.val_time.secs = (OV_UINT) dbl_temp;
+			pinst->v_OUT.value.valueunion.val_time.usecs = (OV_UINT) (dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
 			if(dbl_temp < 0)
 				ov_logfile_error("%s: result time negativ", pinst->v_identifier);
 		}

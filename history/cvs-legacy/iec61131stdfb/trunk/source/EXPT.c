@@ -123,12 +123,12 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXPT_typemethod(
 				
 				case OV_VT_INT:
 					pinst->v_OUT.value.vartype = OV_VT_INT;
-					pinst->v_OUT.value.valueunion.val_int = pow(pinst->v_IN1.value.valueunion.val_int, pinst->v_IN2.value.valueunion.val_int);
+					pinst->v_OUT.value.valueunion.val_int = (OV_INT) pow(pinst->v_IN1.value.valueunion.val_int, pinst->v_IN2.value.valueunion.val_int);
 				break;
 				
 				case OV_VT_UINT:
 					pinst->v_OUT.value.vartype = OV_VT_UINT;
-					pinst->v_OUT.value.valueunion.val_uint = pow(pinst->v_IN1.value.valueunion.val_uint, pinst->v_IN2.value.valueunion.val_uint);
+					pinst->v_OUT.value.valueunion.val_uint = (OV_UINT) pow(pinst->v_IN1.value.valueunion.val_uint, pinst->v_IN2.value.valueunion.val_uint);
 				break;
 				
 				case OV_VT_SINGLE:
@@ -151,7 +151,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXPT_typemethod(
 
 				case OV_VT_BYTE:
 					pinst->v_OUT.value.vartype = OV_VT_BYTE;
-					pinst->v_OUT.value.valueunion.val_byte = pow(pinst->v_IN1.value.valueunion.val_byte, pinst->v_IN2.value.valueunion.val_byte);
+					pinst->v_OUT.value.valueunion.val_byte = (OV_BYTE) pow(pinst->v_IN1.value.valueunion.val_byte, pinst->v_IN2.value.valueunion.val_byte);
 					ov_logfile_warning("%s: exponentiation of bitstrings", pinst->v_identifier);
 				break;
 				

@@ -117,14 +117,14 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 						
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_single = log10(pinst->v_IN.value.valueunion.val_int);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_int);
 				break;
 				
 				case OV_VT_UINT:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					ov_logfile_warning("%s: input value is unsigned integer, output is set to single to prevent data loss", pinst->v_identifier);
 					if(pinst->v_IN.value.valueunion.val_uint > 0)
-						pinst->v_OUT.value.valueunion.val_single = log10(pinst->v_IN.value.valueunion.val_uint);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_uint);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;
@@ -140,7 +140,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 						ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_single = log10(pinst->v_IN.value.valueunion.val_single);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_single);
 				break;
 				
 				case OV_VT_DOUBLE:
@@ -159,7 +159,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					ov_logfile_warning("%s: input value is byte, output is set to single to prevent data loss", pinst->v_identifier);
 					if(pinst->v_IN.value.valueunion.val_byte > 0)
-						pinst->v_OUT.value.valueunion.val_single = log10(pinst->v_IN.value.valueunion.val_byte);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_byte);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;

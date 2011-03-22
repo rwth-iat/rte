@@ -109,7 +109,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_typemethod(
 			case OV_VT_INT:
 				pinst->v_OUT.value.vartype = OV_VT_INT;
 				if(pinst->v_IN.value.valueunion.val_int < 0)
-					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_int * (-1.0);
+					pinst->v_OUT.value.valueunion.val_int = (OV_INT) (pinst->v_IN.value.valueunion.val_int * (-1.0));
 				else
 					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_int;
 			break;
@@ -123,7 +123,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_typemethod(
 			case OV_VT_SINGLE:
 				pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 				if(pinst->v_IN.value.valueunion.val_single < 0)
-					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_single * (-1.0);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (pinst->v_IN.value.valueunion.val_single * (-1.0));
 				else
 					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_single;
 			break;

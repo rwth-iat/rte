@@ -113,7 +113,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_TAN_typemethod(
 					ov_logfile_warning("%s: tangens of integer value, setting out to single to prevent data loss", pinst->v_identifier);
 					cosine = cos(pinst->v_IN.value.valueunion.val_int);
 					if(cosine)
-						pinst->v_OUT.value.valueunion.val_single = sin(pinst->v_IN.value.valueunion.val_int) / cosine;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (sin(pinst->v_IN.value.valueunion.val_int) / cosine);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;
@@ -126,7 +126,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_TAN_typemethod(
 					ov_logfile_warning("%s: tangens of integer value, setting out to single to prevent data loss", pinst->v_identifier);
 					cosine = cos(pinst->v_IN.value.valueunion.val_uint);
 					if(cosine)
-						pinst->v_OUT.value.valueunion.val_single = sin(pinst->v_IN.value.valueunion.val_uint) / cosine;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (sin(pinst->v_IN.value.valueunion.val_uint) / cosine);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;
@@ -138,7 +138,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_TAN_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					cosine = cos(pinst->v_IN.value.valueunion.val_single);
 					if(cosine)
-						pinst->v_OUT.value.valueunion.val_single = sin(pinst->v_IN.value.valueunion.val_single) / cosine;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (sin(pinst->v_IN.value.valueunion.val_single) / cosine);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;
@@ -163,7 +163,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_TAN_typemethod(
 					ov_logfile_warning("%s: bitstring given, treating as unsigned integer, setting out to single to prevent data loss", pinst->v_identifier);
 					cosine = cos(pinst->v_IN.value.valueunion.val_byte);
 					if(cosine)
-						pinst->v_OUT.value.valueunion.val_single = sin(pinst->v_IN.value.valueunion.val_byte) / cosine;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (sin(pinst->v_IN.value.valueunion.val_byte) / cosine);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;
@@ -199,7 +199,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_TAN_typemethod(
 				break;
 		
 				case OV_VT_DOUBLE_VEC:
-					STDFB_VEC_TAN_R(DOUBLE, double);
+					STDFB_VEC_TAN_D(DOUBLE, double);
 				break;
 
 				case OV_VT_BYTE_VEC:

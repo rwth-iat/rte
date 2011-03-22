@@ -247,8 +247,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					d_temp = ((double)pinst->v_IN1.value.valueunion.val_time_span.usecs * pinst->v_IN2.value.valueunion.val_uint);
 					d_temp += (double)((double)pinst->v_IN1.value.valueunion.val_time_span.secs * pinst->v_IN2.value.valueunion.val_uint) * 1000000;
 					d_temp /= 1000000;
-					pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) d_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 				break;
 				
 				case OV_VT_INT:
@@ -256,8 +256,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					d_temp = ((double)pinst->v_IN1.value.valueunion.val_time_span.usecs * pinst->v_IN2.value.valueunion.val_int);
 					d_temp += (double)(pinst->v_IN1.value.valueunion.val_time_span.secs * pinst->v_IN2.value.valueunion.val_int) * 1000000;
 					d_temp /= 1000000;
-					pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) d_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 				break;
 				
 				case OV_VT_SINGLE:
@@ -265,8 +265,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					d_temp = ((double)pinst->v_IN1.value.valueunion.val_time_span.usecs * pinst->v_IN2.value.valueunion.val_single);
 					d_temp += (double)(pinst->v_IN1.value.valueunion.val_time_span.secs * pinst->v_IN2.value.valueunion.val_single) * 1000000;
 					d_temp /= 1000000;
-					pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) d_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 				break;
 				
 				case OV_VT_DOUBLE:
@@ -274,8 +274,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					d_temp = ((double)pinst->v_IN1.value.valueunion.val_time_span.usecs * pinst->v_IN2.value.valueunion.val_double);
 					d_temp += (double)(pinst->v_IN1.value.valueunion.val_time_span.secs * pinst->v_IN2.value.valueunion.val_double) * 1000000;
 					d_temp /= 1000000;
-					pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) d_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 				break;
 				
 				default:

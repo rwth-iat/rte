@@ -116,12 +116,12 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
 						
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_single = sqrt(pinst->v_IN.value.valueunion.val_int);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_int);
 				break;
 				
 				case OV_VT_UINT:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					pinst->v_OUT.value.valueunion.val_single = sqrt(pinst->v_IN.value.valueunion.val_uint);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_uint);
 					ov_logfile_warning("%s: input value is integer, output is set to single to prevent data loss", pinst->v_identifier);
 				break;
 				
@@ -133,7 +133,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
 						ov_logfile_error("%s: trying to calculate the squareroot of a negative value", pinst->v_identifier);
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_single = sqrt(pinst->v_IN.value.valueunion.val_single);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_single);
 				break;
 				
 				case OV_VT_DOUBLE:
@@ -150,7 +150,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
 				
 				case OV_VT_BYTE:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					pinst->v_OUT.value.valueunion.val_single = sqrt(pinst->v_IN.value.valueunion.val_byte);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_byte);
 					ov_logfile_warning("%s: input value is integer, output is set to single to prevent data loss", pinst->v_identifier);
 				break;
 

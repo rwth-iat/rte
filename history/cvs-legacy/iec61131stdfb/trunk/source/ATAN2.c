@@ -123,35 +123,35 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN2_typemethod(
 					ov_logfile_warning("%s: atan2 of integers, setting out to single to prevent data loss", pinst->v_identifier);
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if((pinst->v_IN1.value.valueunion.val_int))
-						pinst->v_OUT.value.valueunion.val_single = atan(pinst->v_IN2.value.valueunion.val_int / pinst->v_IN1.value.valueunion.val_int);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN2.value.valueunion.val_int / pinst->v_IN1.value.valueunion.val_int);
 					else
 						if(pinst->v_IN2.value.valueunion.val_int < 0)
-							pinst->v_OUT.value.valueunion.val_single = -0.5 * Pi;
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (-0.5 * Pi);
 						else
-							pinst->v_OUT.value.valueunion.val_single = 0.5 * Pi;
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (0.5 * Pi);
 				break;
 				
 				case OV_VT_UINT:
 					ov_logfile_warning("%s: atan2 of unsigned integers, setting out to single to prevent data loss", pinst->v_identifier);
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if((pinst->v_IN1.value.valueunion.val_uint))
-						pinst->v_OUT.value.valueunion.val_single = atan(pinst->v_IN2.value.valueunion.val_uint / pinst->v_IN1.value.valueunion.val_uint);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN2.value.valueunion.val_uint / pinst->v_IN1.value.valueunion.val_uint);
 					else
 						if(pinst->v_IN2.value.valueunion.val_uint < 0)
-							pinst->v_OUT.value.valueunion.val_single = -0.5 * Pi;
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (-0.5 * Pi);
 						else
-							pinst->v_OUT.value.valueunion.val_single = 0.5 * Pi;
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (0.5 * Pi);
 				break;
 				
 				case OV_VT_SINGLE:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if((pinst->v_IN1.value.valueunion.val_single))
-						pinst->v_OUT.value.valueunion.val_single = atan(pinst->v_IN2.value.valueunion.val_single / pinst->v_IN1.value.valueunion.val_single);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN2.value.valueunion.val_single / pinst->v_IN1.value.valueunion.val_single);
 					else
 						if(pinst->v_IN2.value.valueunion.val_single < 0)
-							pinst->v_OUT.value.valueunion.val_single = -0.5 * Pi;
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (-0.5 * Pi);
 						else
-							pinst->v_OUT.value.valueunion.val_single = 0.5 * Pi;
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (0.5 * Pi);
 				break;
 				
 				case OV_VT_DOUBLE:
@@ -169,12 +169,12 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN2_typemethod(
 					ov_logfile_warning("%s: atan2 of bitstrings, setting out to single to prevent data loss", pinst->v_identifier);
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if((pinst->v_IN1.value.valueunion.val_byte))
-						pinst->v_OUT.value.valueunion.val_single = atan(pinst->v_IN2.value.valueunion.val_byte / pinst->v_IN1.value.valueunion.val_byte);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN2.value.valueunion.val_byte / pinst->v_IN1.value.valueunion.val_byte);
 					else
 						if(pinst->v_IN2.value.valueunion.val_byte < 0)
-							pinst->v_OUT.value.valueunion.val_single = -0.5 * Pi;
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (-0.5 * Pi);
 						else
-							pinst->v_OUT.value.valueunion.val_single = 0.5 * Pi;
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (0.5 * Pi);
 					
 				break;
 				
@@ -191,10 +191,12 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN2_typemethod(
 			{
 				
 				case OV_VT_INT_VEC:
+					ov_logfile_warning("%s: arctan2 of integers requested, setting out to single to prevent data loss", pinst->v_identifier);
 					STDFB_VEC_ATAN2(INT, int);
 				break;
 				
 				case OV_VT_UINT_VEC:
+					ov_logfile_warning("%s: arctan2 of unsigned integers requested, setting out to single to prevent data loss", pinst->v_identifier);
 					STDFB_VEC_ATAN2(UINT, uint);
 				break;
 				
@@ -203,11 +205,11 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN2_typemethod(
 				break;
 				
 				case OV_VT_DOUBLE_VEC:
-					STDFB_VEC_ATAN2(DOUBLE, double);
+					STDFB_VEC_ATAN2_D(DOUBLE, double);
 				break;
 
 				case OV_VT_BYTE_VEC:
-					ov_logfile_warning("%s: arctan2 of bitstrings requested", pinst->v_identifier);
+					ov_logfile_warning("%s: arctan2 of bitstrings requested, setting out to single to prevent data loss", pinst->v_identifier);
 					STDFB_VEC_ATAN2(BYTE, byte);
 				break;
 				

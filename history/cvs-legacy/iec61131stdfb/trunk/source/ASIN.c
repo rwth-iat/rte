@@ -115,7 +115,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ASIN_typemethod(
 					ov_logfile_warning("%s: arc sine of integer value -> not reasonable, setting out to single to prevent data loss", pinst->v_identifier);
 					if((pinst->v_IN.value.valueunion.val_int >= -1)
 						&& (pinst->v_IN.value.valueunion.val_int <= 1))
-						pinst->v_OUT.value.valueunion.val_single = asin(pinst->v_IN.value.valueunion.val_int);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) asin(pinst->v_IN.value.valueunion.val_int);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;
@@ -127,7 +127,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ASIN_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					ov_logfile_warning("%s: arc sine of integer value -> not reasonable, setting out to single to prevent data loss", pinst->v_identifier);
 					if(pinst->v_IN.value.valueunion.val_uint <= 1)
-						pinst->v_OUT.value.valueunion.val_single = asin(pinst->v_IN.value.valueunion.val_uint);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) asin(pinst->v_IN.value.valueunion.val_uint);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;
@@ -139,7 +139,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ASIN_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if((pinst->v_IN.value.valueunion.val_single >= -1)
 						&& (pinst->v_IN.value.valueunion.val_single <= 1))
-						pinst->v_OUT.value.valueunion.val_single = asin(pinst->v_IN.value.valueunion.val_single);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) asin(pinst->v_IN.value.valueunion.val_single);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;
@@ -164,7 +164,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ASIN_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					ov_logfile_warning("%s: bitstring given, treating as unsigned integer, setting out to single to prevent data loss", pinst->v_identifier);
 					if(pinst->v_IN.value.valueunion.val_byte <= 1)
-						pinst->v_OUT.value.valueunion.val_single = asin(pinst->v_IN.value.valueunion.val_byte);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) asin(pinst->v_IN.value.valueunion.val_byte);
 					else
 					{
 						pinst->v_OUT.value.valueunion.val_single = 0;

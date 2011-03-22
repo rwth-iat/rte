@@ -111,18 +111,18 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN_typemethod(
 				case OV_VT_INT:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					ov_logfile_warning("%s: tan of integer value, setting out to single to prevent data loss", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_single = atan(pinst->v_IN.value.valueunion.val_int);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN.value.valueunion.val_int);
 				break;
 				
 				case OV_VT_UINT:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					ov_logfile_warning("%s: tan of integer value, setting out to single to prevent data loss", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_single = atan(pinst->v_IN.value.valueunion.val_uint); 
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN.value.valueunion.val_uint); 
 				break;
 				
 				case OV_VT_SINGLE:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					pinst->v_OUT.value.valueunion.val_single = atan(pinst->v_IN.value.valueunion.val_single);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN.value.valueunion.val_single);
 				break;
 				
 				case OV_VT_DOUBLE:
@@ -133,7 +133,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN_typemethod(
 
 				case OV_VT_BYTE:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					pinst->v_OUT.value.valueunion.val_byte = atan(pinst->v_IN.value.valueunion.val_byte);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN.value.valueunion.val_byte);
 					ov_logfile_warning("%s: bitstring given, treating as unsigned integer, setting out to single to prevent data loss", pinst->v_identifier);
 				break;
 				

@@ -341,10 +341,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					if(pinst->v_IN.value.valueunion.val_uint > 255)
 					{
 						ov_logfile_error("%s: value exceeds range of byte", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_byte = (pinst->v_IN.value.valueunion.val_uint & 0xFF);
+						pinst->v_OUT.value.valueunion.val_byte = (OV_BYTE) (pinst->v_IN.value.valueunion.val_uint & 0xFF);
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN.value.valueunion.val_uint;
+						pinst->v_OUT.value.valueunion.val_byte = (OV_BYTE) pinst->v_IN.value.valueunion.val_uint;
 				break;
 				
 				case 2:		//BOOL
@@ -375,7 +375,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if(pinst->v_IN.value.valueunion.val_uint >= 10000000 || pinst->v_IN.value.valueunion.val_uint < -10000000)	//7 Digits precision ok
 						ov_logfile_warning("%s: large integer value, possible loss of precision due to conversion to single", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_uint;
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) pinst->v_IN.value.valueunion.val_uint;
 				break;
 				
 				case 6:		//DOUBLE
@@ -468,7 +468,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					
 					if(pinst->v_IN.value.valueunion.val_uint > 10000000)
 						ov_logfile_warning("%s: possibly loss of precision", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_single_vec.value[0] = pinst->v_IN.value.valueunion.val_uint;
+					pinst->v_OUT.value.valueunion.val_single_vec.value[0] = (OV_SINGLE) pinst->v_IN.value.valueunion.val_uint;
 				break;
 				
 				case 22:	//DOUBLE_VEC
@@ -546,7 +546,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 							pinst->v_OUT.value.valueunion.val_byte = (pinst->v_IN.value.valueunion.val_int & 0xFF);
 						}
 						else
-							pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN.value.valueunion.val_int;
+							pinst->v_OUT.value.valueunion.val_byte = (OV_BYTE) pinst->v_IN.value.valueunion.val_int;
 				break;
 				
 				case 2:		//BOOL
@@ -573,7 +573,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if(pinst->v_IN.value.valueunion.val_int >= 10000000)	//7 Digits precision ok
 						ov_logfile_warning("%s: large integer value, possible loss of precision due to conversion to single", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_int;
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) pinst->v_IN.value.valueunion.val_int;
 				break;
 				
 				case 6:		//DOUBLE
@@ -676,7 +676,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						if(pinst->v_IN.value.valueunion.val_int > 10000000)
 							ov_logfile_warning("%s: large integer value, possible loss of precision due to conversion to single", pinst->v_identifier);
 						
-						pinst->v_OUT.value.valueunion.val_single_vec.value[0] = pinst->v_IN.value.valueunion.val_int;
+						pinst->v_OUT.value.valueunion.val_single_vec.value[0] = (OV_SINGLE) pinst->v_IN.value.valueunion.val_int;
 					}
 					else
 					{
@@ -768,7 +768,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{
 						if(pinst->v_IN.value.valueunion.val_single > OV_VL_MAXUINT)	
 							ov_logfile_error("%s: value exceeds range of unsigned int", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN.value.valueunion.val_single;
+						pinst->v_OUT.value.valueunion.val_uint = (OV_UINT) pinst->v_IN.value.valueunion.val_single;
 						if((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_uint) > 0.5)		//round up
 							pinst->v_OUT.value.valueunion.val_uint++;
 						else
@@ -783,7 +783,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_INT;
 					if(pinst->v_IN.value.valueunion.val_single > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single < -(int) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_single;
+					pinst->v_OUT.value.valueunion.val_int = (OV_INT) pinst->v_IN.value.valueunion.val_single;
 					if((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_int) > 0.5)		//round up
 						pinst->v_OUT.value.valueunion.val_int++;
 					else
@@ -822,8 +822,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{			
 						if(pinst->v_IN.value.valueunion.val_single > (float) OV_VL_MAXUINT)	
 							ov_logfile_error("%s: value exceeds range of time", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_time.secs = pinst->v_IN.value.valueunion.val_single;
-						pinst->v_OUT.value.valueunion.val_time.usecs = (pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time.secs ) * 1000000;	//subtracting seconds and converting to microseconds
+						pinst->v_OUT.value.valueunion.val_time.secs = (OV_UINT) pinst->v_IN.value.valueunion.val_single;
+						pinst->v_OUT.value.valueunion.val_time.usecs = (OV_UINT) (pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time.secs ) * 1000000;	//subtracting seconds and converting to microseconds
 					}
 					else
 						ov_logfile_error("%s: trying to convert negative value to time, this is not possible", pinst->v_identifier);
@@ -833,8 +833,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
 					if(pinst->v_IN.value.valueunion.val_single > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single < -(float) OV_VL_MAXINT)	
 						ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_single;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;	//subtracting seconds and converting to microseconds
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) pinst->v_IN.value.valueunion.val_single;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) (pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;	//subtracting seconds and converting to microseconds
 					
 				break;
 				
@@ -875,7 +875,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						{
 							if(pinst->v_IN.value.valueunion.val_single > OV_VL_MAXUINT)	
 								ov_logfile_error("%s: value exceeds range of unsigned int", pinst->v_identifier);
-							pinst->v_OUT.value.valueunion.val_uint_vec.value[0] = pinst->v_IN.value.valueunion.val_single;
+							pinst->v_OUT.value.valueunion.val_uint_vec.value[0] = (OV_UINT) pinst->v_IN.value.valueunion.val_single;
 							if((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_uint_vec.value[0]) > 0.5)		//round up
 								pinst->v_OUT.value.valueunion.val_uint_vec.value[0]++;
 							else
@@ -898,7 +898,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{
 						if(pinst->v_IN.value.valueunion.val_single > OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_int_vec.value[0] = pinst->v_IN.value.valueunion.val_single;
+						pinst->v_OUT.value.valueunion.val_int_vec.value[0] = (OV_INT) pinst->v_IN.value.valueunion.val_single;
 						if((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_int_vec.value[0]) > 0.5)		//round up
 							pinst->v_OUT.value.valueunion.val_int_vec.value[0]++;
 						else
@@ -965,9 +965,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						{			
 							if(pinst->v_IN.value.valueunion.val_single > (float) OV_VL_MAXUINT)	
 								ov_logfile_error("%s: value exceeds range of time", pinst->v_identifier);
-							pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs = pinst->v_IN.value.valueunion.val_single;	
-							pinst->v_OUT.value.valueunion.val_time_vec.value[0].usecs = 
-								(pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs) * 1000000;	//subtracting seconds and converting to microseconds
+							pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs = (OV_UINT) pinst->v_IN.value.valueunion.val_single;	
+							pinst->v_OUT.value.valueunion.val_time_vec.value[0].usecs = (OV_UINT)
+								((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs) * 1000000);	//subtracting seconds and converting to microseconds
 						}
 					else
 						ov_logfile_error("%s: trying to convert negative value to time, this is not possible", pinst->v_identifier);
@@ -985,9 +985,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{
 						if(pinst->v_IN.value.valueunion.val_single > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single < -(float) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = pinst->v_IN.value.valueunion.val_single;
-						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = 
-							(pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs) * 1000000;	//subtracting seconds and converting to microseconds
+						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = (OV_INT) pinst->v_IN.value.valueunion.val_single;
+						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = (OV_INT)
+							((pinst->v_IN.value.valueunion.val_single - pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs) * 1000000);	//subtracting seconds and converting to microseconds
 							
 					}
 					else
@@ -1024,7 +1024,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{
 						if(pinst->v_IN.value.valueunion.val_double > OV_VL_MAXUINT)	
 							ov_logfile_error("%s: value exceeds range of unsigned int", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN.value.valueunion.val_double;
+						pinst->v_OUT.value.valueunion.val_uint = (OV_UINT) pinst->v_IN.value.valueunion.val_double;
 						if((pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_uint) > 0.5)		//round up
 							pinst->v_OUT.value.valueunion.val_uint++;
 						else
@@ -1039,7 +1039,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_INT;
 					if(pinst->v_IN.value.valueunion.val_double > OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_double;
+					pinst->v_OUT.value.valueunion.val_int = (OV_INT) pinst->v_IN.value.valueunion.val_double;
 					if((pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_int) > 0.5)		//round up
 						pinst->v_OUT.value.valueunion.val_int++;
 					else
@@ -1056,7 +1056,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				case 5:		//SINGLE
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if(pinst->v_IN.value.valueunion.val_double <= FLT_MAX)
-						pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_double;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) pinst->v_IN.value.valueunion.val_double;
 					else
 						ov_logfile_error("%s: value exceeds range of single", pinst->v_identifier);
 				break;
@@ -1081,8 +1081,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{			
 						if(pinst->v_IN.value.valueunion.val_double > (double) OV_VL_MAXUINT)	
 							ov_logfile_error("%s: value exceeds range of time", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_time.secs = pinst->v_IN.value.valueunion.val_double;	
-						pinst->v_OUT.value.valueunion.val_time.usecs = (pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time.secs) * 1000000;	//subtracting seconds and converting to microseconds
+						pinst->v_OUT.value.valueunion.val_time.secs = (OV_UINT) pinst->v_IN.value.valueunion.val_double;	
+						pinst->v_OUT.value.valueunion.val_time.usecs = (OV_UINT) ((pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time.secs) * 1000000);	//subtracting seconds and converting to microseconds
 					}
 					else
 						ov_logfile_error("%s: trying to convert negative value to time, this is not possible", pinst->v_identifier);
@@ -1092,8 +1092,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
 					if(pinst->v_IN.value.valueunion.val_double > (double) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_double < -(double) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_double;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) pinst->v_IN.value.valueunion.val_double;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 					
 				break;
 				
@@ -1135,7 +1135,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						{
 							if(pinst->v_IN.value.valueunion.val_double > OV_VL_MAXUINT)	
 								ov_logfile_error("%s: value exceeds range of unsigned int", pinst->v_identifier);
-							pinst->v_OUT.value.valueunion.val_uint_vec.value[0] = pinst->v_IN.value.valueunion.val_double;
+							pinst->v_OUT.value.valueunion.val_uint_vec.value[0] = (OV_UINT) pinst->v_IN.value.valueunion.val_double;
 							if((pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_uint_vec.value[0]) > 0.5)		//round up
 								pinst->v_OUT.value.valueunion.val_uint++;
 							else
@@ -1158,7 +1158,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{
 						if(pinst->v_IN.value.valueunion.val_double > OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_int_vec.value[0] = pinst->v_IN.value.valueunion.val_double;
+						pinst->v_OUT.value.valueunion.val_int_vec.value[0] = (OV_INT) pinst->v_IN.value.valueunion.val_double;
 						if((pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_int_vec.value[0]) > 0.5)		//round up
 							pinst->v_OUT.value.valueunion.val_int_vec.value[0]++;
 						else
@@ -1181,7 +1181,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				case 21:	//SINGLE_VEC
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE_VEC;
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_single_vec, 1, SINGLE)))
-						pinst->v_OUT.value.valueunion.val_single_vec.value[0] = pinst->v_IN.value.valueunion.val_double;
+						pinst->v_OUT.value.valueunion.val_single_vec.value[0] = (OV_SINGLE) pinst->v_IN.value.valueunion.val_double;
 					else
 					{
 						ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
@@ -1227,9 +1227,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						{			
 							if(pinst->v_IN.value.valueunion.val_double > (float) OV_VL_MAXUINT)	
 								ov_logfile_error("%s: value exceeds range of time", pinst->v_identifier);
-							pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs = pinst->v_IN.value.valueunion.val_double;	
-							pinst->v_OUT.value.valueunion.val_time_vec.value[0].usecs = 
-								(pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs) * 1000000;	
+							pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs = (OV_UINT) pinst->v_IN.value.valueunion.val_double;	
+							pinst->v_OUT.value.valueunion.val_time_vec.value[0].usecs = (OV_UINT)
+								((pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs) * 1000000);	
 						}
 					else
 						ov_logfile_error("%s: trying to convert negative value to time, this is not possible", pinst->v_identifier);
@@ -1247,9 +1247,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{
 						if(pinst->v_IN.value.valueunion.val_double > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_double < -(float) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = pinst->v_IN.value.valueunion.val_double;	
-						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = 
-							(pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs) * 1000000;	
+						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = (OV_INT) pinst->v_IN.value.valueunion.val_double;	
+						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = (OV_INT)
+							((pinst->v_IN.value.valueunion.val_double - pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs) * 1000000);	
 						
 					}
 					else
@@ -1297,7 +1297,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 5:		//SINGLE
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					pinst->v_OUT.value.valueunion.val_single = strtod(pinst->v_IN.value.valueunion.val_string, NULL);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) strtod(pinst->v_IN.value.valueunion.val_string, NULL);
 				break;
 				
 				case 6:		//DOUBLE
@@ -1323,8 +1323,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				case 9:		//TIME_SPAN
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
 					d_temp = strtod(pinst->v_IN.value.valueunion.val_string, NULL);
-					pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) d_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 					
 				break;
 				
@@ -1429,7 +1429,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{
 						if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_single_vec, i, SINGLE)))
 						{
-							pinst->v_OUT.value.valueunion.val_single_vec.value[i-1] = strtod(c_temp, &c_temp);
+							pinst->v_OUT.value.valueunion.val_single_vec.value[i-1] = (OV_SINGLE) strtod(c_temp, &c_temp);
 							if(c_temp)	//skip whitespaces
 								while(*c_temp == ' ' || *c_temp == '\t')
 									c_temp += sizeof(char);
@@ -1520,8 +1520,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_span_vec, 1, TIME_SPAN)))
 					{
 						d_temp = strtod(pinst->v_IN.value.valueunion.val_string, NULL);
-						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = d_temp;
-						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].secs = (OV_INT) d_temp;
+						pinst->v_OUT.value.valueunion.val_time_span_vec.value[0].usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 						
 					}
 				break;
@@ -2164,7 +2164,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 5:		//SINGLE
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_uint_vec.value[0];
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) pinst->v_IN.value.valueunion.val_uint_vec.value[0];
 					if(pinst->v_IN.value.valueunion.val_uint_vec.value[0] > 10000000)
 						ov_logfile_warning("%s: converting large integer to single, possible loss of precision", pinst->v_identifier);
 				break;
@@ -2339,7 +2339,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 5:		//SINGLE
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_int_vec.value[0];
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) pinst->v_IN.value.valueunion.val_int_vec.value[0];
 					if(pinst->v_IN.value.valueunion.val_int_vec.value[0] > 10000000 || pinst->v_IN.value.valueunion.val_int_vec.value[0] < -10000000)
 						ov_logfile_warning("%s: converting large integer value to single, possible loss of precision", pinst->v_identifier);
 				break;
@@ -2506,7 +2506,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_INT;
 					if(pinst->v_IN.value.valueunion.val_single_vec.value[0] > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single_vec.value[0] < -(int)OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_single_vec.value[0];
+					pinst->v_OUT.value.valueunion.val_int = (OV_INT) pinst->v_IN.value.valueunion.val_single_vec.value[0];
 					if((pinst->v_IN.value.valueunion.val_single_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) > 0.5)		//round up
 						pinst->v_OUT.value.valueunion.val_int++;
 					else
@@ -2545,8 +2545,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{			
 						if(pinst->v_IN.value.valueunion.val_single_vec.value[0] > (float) OV_VL_MAXUINT)	
 							ov_logfile_error("%s: value exceeds range of time", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_time.secs = pinst->v_IN.value.valueunion.val_single_vec.value[0];
-						pinst->v_OUT.value.valueunion.val_time.usecs = (pinst->v_IN.value.valueunion.val_single_vec.value[0] - pinst->v_OUT.value.valueunion.val_time.secs ) * 1000000;	//subtracting seconds and converting to microseconds
+						pinst->v_OUT.value.valueunion.val_time.secs = (OV_UINT) pinst->v_IN.value.valueunion.val_single_vec.value[0];
+						pinst->v_OUT.value.valueunion.val_time.usecs = (OV_UINT) ((pinst->v_IN.value.valueunion.val_single_vec.value[0] - pinst->v_OUT.value.valueunion.val_time.secs ) * 1000000);	//subtracting seconds and converting to microseconds
 					}
 					else
 						ov_logfile_error("%s: trying to convert negative value to time, this is not possible", pinst->v_identifier);
@@ -2557,9 +2557,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
 					if(pinst->v_IN.value.valueunion.val_single_vec.value[0] > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single_vec.value[0] < -(float) OV_VL_MAXINT)	
 						ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_single_vec.value[0];
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (pinst->v_IN.value.valueunion.val_single_vec.value[0]
-						- pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;	//subtracting seconds and converting to microseconds
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) pinst->v_IN.value.valueunion.val_single_vec.value[0];
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((pinst->v_IN.value.valueunion.val_single_vec.value[0]
+						- pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);	//subtracting seconds and converting to microseconds
 					
 				break;
 				
@@ -2581,7 +2581,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 							{
 								if(pinst->v_IN.value.valueunion.val_single_vec.value[i] > OV_VL_MAXUINT)	
 									ov_logfile_error("%s: value in element %u exceeds range of unsigned int", pinst->v_identifier, i);
-								pinst->v_OUT.value.valueunion.val_uint_vec.value[i] = pinst->v_IN.value.valueunion.val_single_vec.value[i];
+								pinst->v_OUT.value.valueunion.val_uint_vec.value[i] = (OV_UINT) pinst->v_IN.value.valueunion.val_single_vec.value[i];
 								if((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_uint_vec.value[i]) > 0.5)		//round up
 									pinst->v_OUT.value.valueunion.val_uint_vec.value[i]++;
 								else
@@ -2607,7 +2607,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						{
 							if(pinst->v_IN.value.valueunion.val_single_vec.value[i] > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single_vec.value[i] < -(int)OV_VL_MAXINT)	
 								ov_logfile_error("%s: value in element %u exceeds range of int", pinst->v_identifier, i);
-							pinst->v_OUT.value.valueunion.val_int_vec.value[i] = pinst->v_IN.value.valueunion.val_single_vec.value[i];
+							pinst->v_OUT.value.valueunion.val_int_vec.value[i] = (OV_INT) pinst->v_IN.value.valueunion.val_single_vec.value[i];
 							if((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) > 0.5)		//round up
 								pinst->v_OUT.value.valueunion.val_int_vec.value[i]++;
 							else
@@ -2674,9 +2674,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 							{			
 								if(pinst->v_IN.value.valueunion.val_single_vec.value[i] > (float) OV_VL_MAXUINT)	
 									ov_logfile_error("%s: value in element %u exceeds range of time", pinst->v_identifier, i);
-								pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs = pinst->v_IN.value.valueunion.val_single_vec.value[i];
-								pinst->v_OUT.value.valueunion.val_time_vec.value[i].usecs = 
-									(pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs ) * 1000000;	//subtracting seconds and converting to microseconds
+								pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs = (OV_UINT) pinst->v_IN.value.valueunion.val_single_vec.value[i];
+								pinst->v_OUT.value.valueunion.val_time_vec.value[i].usecs = (OV_UINT)
+									((pinst->v_IN.value.valueunion.val_single_vec.value[i] - pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs ) * 1000000);	//subtracting seconds and converting to microseconds
 							}
 							else
 								ov_logfile_error("%s: trying to convert negative value in element %u to time, this is not possible", pinst->v_identifier, i);
@@ -2697,9 +2697,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						{
 							if(pinst->v_IN.value.valueunion.val_single_vec.value[i] > (float) OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_single_vec.value[i] < -(float) OV_VL_MAXINT)	
 								ov_logfile_error("%s: value in element %u exceeds range of time_span", pinst->v_identifier, i);
-							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = pinst->v_IN.value.valueunion.val_single_vec.value[i];
-							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = (pinst->v_IN.value.valueunion.val_single_vec.value[i]
-								- pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000;	//subtracting seconds and converting to microseconds
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = (OV_INT) pinst->v_IN.value.valueunion.val_single_vec.value[i];
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = (OV_INT) ((pinst->v_IN.value.valueunion.val_single_vec.value[i]
+								- pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000);	//subtracting seconds and converting to microseconds
 							
 						}
 					}
@@ -2743,7 +2743,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_INT;
 					if(pinst->v_IN.value.valueunion.val_double_vec.value[0] > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_double_vec.value[0] < -(int)OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of int", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN.value.valueunion.val_double_vec.value[0];
+					pinst->v_OUT.value.valueunion.val_int = (OV_INT) pinst->v_IN.value.valueunion.val_double_vec.value[0];
 					if((pinst->v_IN.value.valueunion.val_double_vec.value[0] - pinst->v_OUT.value.valueunion.val_int) > 0.5)		//round up
 						pinst->v_OUT.value.valueunion.val_int++;
 					else
@@ -2760,7 +2760,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				case 5:		//SINGLE
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if(pinst->v_IN.value.valueunion.val_double_vec.value[0] < FLT_MAX && pinst->v_IN.value.valueunion.val_double_vec.value[0] > -FLT_MAX)
-						pinst->v_OUT.value.valueunion.val_single = pinst->v_IN.value.valueunion.val_double_vec.value[0];
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) pinst->v_IN.value.valueunion.val_double_vec.value[0];
 					else
 						ov_logfile_error("%s: value exceeds range of single", pinst->v_identifier);
 				break;
@@ -2785,8 +2785,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{			
 						if(pinst->v_IN.value.valueunion.val_double_vec.value[0] > (double) OV_VL_MAXUINT)	
 							ov_logfile_error("%s: value exceeds range of time", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_time.secs = pinst->v_IN.value.valueunion.val_double_vec.value[0];
-						pinst->v_OUT.value.valueunion.val_time.usecs = (pinst->v_IN.value.valueunion.val_double_vec.value[0] - pinst->v_OUT.value.valueunion.val_time.secs ) * 1000000;	//subtracting seconds and converting to microseconds
+						pinst->v_OUT.value.valueunion.val_time.secs = (OV_UINT) pinst->v_IN.value.valueunion.val_double_vec.value[0];
+						pinst->v_OUT.value.valueunion.val_time.usecs = (OV_UINT) (pinst->v_IN.value.valueunion.val_double_vec.value[0] - pinst->v_OUT.value.valueunion.val_time.secs ) * 1000000;	//subtracting seconds and converting to microseconds
 					}
 					else
 						ov_logfile_error("%s: trying to convert negative value to time, this is not possible", pinst->v_identifier);
@@ -2797,9 +2797,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					if(pinst->v_IN.value.valueunion.val_double_vec.value[0] > (double) OV_VL_MAXINT 
 						|| pinst->v_IN.value.valueunion.val_double_vec.value[0] < -(double) OV_VL_MAXINT)	
 							ov_logfile_error("%s: value exceeds range of time_span", pinst->v_identifier);
-					pinst->v_OUT.value.valueunion.val_time_span.secs = pinst->v_IN.value.valueunion.val_double_vec.value[0];
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (pinst->v_IN.value.valueunion.val_double_vec.value[0]
-						- pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;	//subtracting seconds and converting to microseconds
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) pinst->v_IN.value.valueunion.val_double_vec.value[0];
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((pinst->v_IN.value.valueunion.val_double_vec.value[0]
+						- pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);	//subtracting seconds and converting to microseconds
 					
 				break;
 				
@@ -2821,7 +2821,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 							{
 								if(pinst->v_IN.value.valueunion.val_double_vec.value[i] > OV_VL_MAXUINT)	
 									ov_logfile_error("%s: value in element %u exceeds range of unsigned int", pinst->v_identifier, i);
-								pinst->v_OUT.value.valueunion.val_uint_vec.value[i] = pinst->v_IN.value.valueunion.val_double_vec.value[i];
+								pinst->v_OUT.value.valueunion.val_uint_vec.value[i] = (OV_UINT) pinst->v_IN.value.valueunion.val_double_vec.value[i];
 								if((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_uint_vec.value[i]) > 0.5)		//round up
 									pinst->v_OUT.value.valueunion.val_uint_vec.value[i]++;
 								else
@@ -2847,7 +2847,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						{
 							if(pinst->v_IN.value.valueunion.val_double_vec.value[i] > OV_VL_MAXINT || pinst->v_IN.value.valueunion.val_double_vec.value[i] < -(int)OV_VL_MAXINT)	
 								ov_logfile_error("%s: value in element %u exceeds range of int", pinst->v_identifier, i);
-							pinst->v_OUT.value.valueunion.val_int_vec.value[i] = pinst->v_IN.value.valueunion.val_double_vec.value[i];
+							pinst->v_OUT.value.valueunion.val_int_vec.value[i] = (OV_INT) pinst->v_IN.value.valueunion.val_double_vec.value[i];
 							if((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_int_vec.value[i]) > 0.5)		//round up
 								pinst->v_OUT.value.valueunion.val_int_vec.value[i]++;
 							else
@@ -2876,7 +2876,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						{
 							if(pinst->v_IN.value.valueunion.val_double_vec.value[i] < FLT_MAX || pinst->v_IN.value.valueunion.val_double_vec.value[i] > -FLT_MAX)	
 							{
-								pinst->v_OUT.value.valueunion.val_single_vec.value[i] = pinst->v_IN.value.valueunion.val_double_vec.value[i];
+								pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) pinst->v_IN.value.valueunion.val_double_vec.value[i];
 							}
 							else
 								ov_logfile_error("%s: value in element %u exceeds range of single", pinst->v_identifier, i);
@@ -2921,9 +2921,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 							{			
 								if(pinst->v_IN.value.valueunion.val_double_vec.value[i] > (double) OV_VL_MAXUINT)	
 									ov_logfile_error("%s: value in element %u exceeds range of time", pinst->v_identifier, i);
-								pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs = pinst->v_IN.value.valueunion.val_double_vec.value[i];
-								pinst->v_OUT.value.valueunion.val_time_vec.value[i].usecs = 
-									(pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs ) * 1000000;	//subtracting seconds and converting to microseconds
+								pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs = (OV_UINT) pinst->v_IN.value.valueunion.val_double_vec.value[i];
+								pinst->v_OUT.value.valueunion.val_time_vec.value[i].usecs = (OV_UINT)
+									((pinst->v_IN.value.valueunion.val_double_vec.value[i] - pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs ) * 1000000);	//subtracting seconds and converting to microseconds
 							}
 							else
 								ov_logfile_error("%s: trying to convert negative value in element %u to time, this is not possible", pinst->v_identifier, i);
@@ -2945,9 +2945,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 							if(pinst->v_IN.value.valueunion.val_double_vec.value[i] > (double) OV_VL_MAXINT 
 								|| pinst->v_IN.value.valueunion.val_double_vec.value[i] < -(double) OV_VL_MAXINT)	
 									ov_logfile_error("%s: value in element %u exceeds range of time_span", pinst->v_identifier, i);
-							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = pinst->v_IN.value.valueunion.val_double_vec.value[i];
-							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = (pinst->v_IN.value.valueunion.val_double_vec.value[i]
-								- pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000;	//subtracting seconds and converting to microseconds
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = (OV_INT) pinst->v_IN.value.valueunion.val_double_vec.value[i];
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = (OV_INT) ((pinst->v_IN.value.valueunion.val_double_vec.value[i]
+								- pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000);	//subtracting seconds and converting to microseconds
 							
 						}
 					}
@@ -2993,7 +2993,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 5:		//SINGLE
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					pinst->v_OUT.value.valueunion.val_single = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[0], NULL);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) strtod(pinst->v_IN.value.valueunion.val_string_vec.value[0], NULL);
 				break;
 				
 				case 6:		//DOUBLE
@@ -3018,8 +3018,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				case 9:		//TIME_SPAN
 					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
 					d_temp = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[0], NULL);
-					pinst->v_OUT.value.valueunion.val_time_span.secs = d_temp;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
+					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) d_temp;
+					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 				break;
 				
 				case 17:	//BYTE_VEC
@@ -3079,7 +3079,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					{
 						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
 						{
-							pinst->v_OUT.value.valueunion.val_single_vec.value[i] = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[i], NULL);
+							pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) strtod(pinst->v_IN.value.valueunion.val_string_vec.value[i], NULL);
 						}
 					}
 					else
@@ -3146,9 +3146,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
 						{
 							d_temp = strtod(pinst->v_IN.value.valueunion.val_string_vec.value[i], NULL);
-							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = d_temp;
-							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = 
-								(d_temp - pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000;
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs = (OV_INT) d_temp;
+							pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].usecs = (OV_INT) 
+								((d_temp - pinst->v_OUT.value.valueunion.val_time_span_vec.value[i].secs) * 1000000);
 							
 						}
 					}

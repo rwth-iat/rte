@@ -117,7 +117,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LN_typemethod(
 						
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_single = log(pinst->v_IN.value.valueunion.val_int);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log(pinst->v_IN.value.valueunion.val_int);
 				break;
 				
 				case OV_VT_UINT:
@@ -130,7 +130,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LN_typemethod(
 						
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_single = log(pinst->v_IN.value.valueunion.val_uint);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log(pinst->v_IN.value.valueunion.val_uint);
 				break;
 				
 				case OV_VT_SINGLE:
@@ -141,7 +141,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LN_typemethod(
 						ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_single = log(pinst->v_IN.value.valueunion.val_single);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log(pinst->v_IN.value.valueunion.val_single);
 				break;
 				
 				case OV_VT_DOUBLE:
@@ -165,7 +165,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LN_typemethod(
 						ov_logfile_error("%s: trying to calculate the logarithm of 0", pinst->v_identifier);
 					}
 					else
-						pinst->v_OUT.value.valueunion.val_single = log(pinst->v_IN.value.valueunion.val_byte);
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log(pinst->v_IN.value.valueunion.val_byte);
 				break;
 
 				default:
