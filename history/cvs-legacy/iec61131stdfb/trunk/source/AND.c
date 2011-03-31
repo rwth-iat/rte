@@ -61,19 +61,61 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
+OV_BOOL 
+iec61131stdfb_isConnected 
+(OV_INSTPTR_fb_functionblock fb)
+{
+  if (Ov_GetFirstChild (fb_inputconnections, fb)) return TRUE;
+  if (Ov_GetFirstChild (fb_outputconnections, fb)) return TRUE;
+  return FALSE;
+}
+
+OV_RESULT
+iec61131stdfb_AND_setType
+(OV_INSTPTR_iec61131stdfb_AND pobj, OV_VAR_TYPE type)
+{
+  if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+    return OV_ERR_NOACCESS;
+  else
+  {
+    /* TODO: check if type is allowed */
+    pobj->v_IN1.value.vartype = type;
+    pobj->v_IN2.value.vartype = type;
+    pobj->v_OUT.value.vartype = type;
+    return OV_ERR_OK;
+  }
+}
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_AND_IN1_set(
     OV_INSTPTR_iec61131stdfb_AND          pobj,
     const OV_ANY*  value
-) {
-    return ov_variable_setanyvalue(&pobj->v_IN1, value);
+) 
+{
+  if (value->value.vartype == pobj->v_IN1.value.vartype)
+    return ov_variable_setanyvalue (&pobj->v_IN1, value);
+  else
+  {
+    OV_RESULT res = iec61131stdfb_AND_setType (pobj, value->value.vartype); 
+    if (Ov_OK (res))
+      return ov_variable_setanyvalue (&pobj->v_IN1, value);
+    else return res;
+  }
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_AND_IN2_set(
     OV_INSTPTR_iec61131stdfb_AND          pobj,
     const OV_ANY*  value
-) {
-    return ov_variable_setanyvalue(&pobj->v_IN2, value);
+) 
+{
+  if (value->value.vartype == pobj->v_IN2.value.vartype)
+    return ov_variable_setanyvalue (&pobj->v_IN2, value);
+  else
+  {
+    OV_RESULT res = iec61131stdfb_AND_setType (pobj, value->value.vartype); 
+    if (Ov_OK (res))
+      return ov_variable_setanyvalue (&pobj->v_IN2, value);
+    else return res;
+  }
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_AND_OUT_get(
