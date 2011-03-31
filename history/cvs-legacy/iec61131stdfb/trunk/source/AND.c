@@ -91,7 +91,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_AND_IN1_set(
     const OV_ANY*  value
 ) 
 {
-  if (value->value.vartype == pobj->v_IN1.value.vartype)
+  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN1.value.vartype & OV_VT_KSMASK))
     return ov_variable_setanyvalue (&pobj->v_IN1, value);
   else
   {
@@ -107,7 +107,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_AND_IN2_set(
     const OV_ANY*  value
 ) 
 {
-  if (value->value.vartype == pobj->v_IN2.value.vartype)
+  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK))
     return ov_variable_setanyvalue (&pobj->v_IN2, value);
   else
   {
