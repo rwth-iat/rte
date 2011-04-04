@@ -60,15 +60,9 @@
 #include "stdfb_macros.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
+#include "helper.h"
 
-OV_BOOL 
-iec61131stdfb_isConnected 
-(OV_INSTPTR_fb_functionblock fb)
-{
-  if (Ov_GetFirstChild (fb_inputconnections, fb)) return TRUE;
-  if (Ov_GetFirstChild (fb_outputconnections, fb)) return TRUE;
-  return FALSE;
-}
+
 
 OV_RESULT
 iec61131stdfb_AND_setType
@@ -78,11 +72,23 @@ iec61131stdfb_AND_setType
     return OV_ERR_NOACCESS;
   else
   {
-    /* TODO: check if type is allowed */
-    pobj->v_IN1.value.vartype = type;
-    pobj->v_IN2.value.vartype = type;
-    pobj->v_OUT.value.vartype = type;
-    return OV_ERR_OK;
+    
+    switch(type & OV_VT_KSMASK)
+	{
+		case OV_VT_BOOL:
+		case OV_VT_UINT:
+		case OV_VT_BYTE:
+		case OV_VT_BOOL_VEC:
+		case OV_VT_UINT_VEC:
+		case OV_VT_BYTE_VEC:
+			pobj->v_IN1.value.vartype = type;
+			pobj->v_IN2.value.vartype = type;
+			pobj->v_OUT.value.vartype = type;
+			return OV_ERR_OK;
+		default:
+			return OV_ERR_BADPARAM;
+	}
+		return OV_ERR_GENERIC;
   }
 }
 
@@ -91,11 +97,16 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_AND_IN1_set(
     const OV_ANY*  value
 ) 
 {
+  OV_RESULT res;
+  
   if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN1.value.vartype & OV_VT_KSMASK))
     return ov_variable_setanyvalue (&pobj->v_IN1, value);
   else
   {
-    OV_RESULT res = iec61131stdfb_AND_setType (pobj, value->value.vartype); 
+    iec61131stdfb_freeVec(&pobj->v_IN1);
+	iec61131stdfb_freeVec(&pobj->v_IN2);
+	iec61131stdfb_freeVec(&pobj->v_OUT);		//free memory of preexisting out-vector
+	res = iec61131stdfb_AND_setType (pobj, value->value.vartype); 
     if (Ov_OK (res))
       return ov_variable_setanyvalue (&pobj->v_IN1, value);
     else return res;
@@ -107,11 +118,16 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_AND_IN2_set(
     const OV_ANY*  value
 ) 
 {
-  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK))
+OV_RESULT res;
+
+ if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK))
     return ov_variable_setanyvalue (&pobj->v_IN2, value);
   else
   {
-    OV_RESULT res = iec61131stdfb_AND_setType (pobj, value->value.vartype); 
+    iec61131stdfb_freeVec(&pobj->v_IN1);
+	iec61131stdfb_freeVec(&pobj->v_IN2);
+	iec61131stdfb_freeVec(&pobj->v_OUT);		//free memory of preexisting out-vector
+	res = iec61131stdfb_AND_setType (pobj, value->value.vartype); 
     if (Ov_OK (res))
       return ov_variable_setanyvalue (&pobj->v_IN2, value);
     else return res;
@@ -130,9 +146,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_AND_shutdown(OV_INSTPTR_ov_object pobj) {
 	
 	OV_INSTPTR_iec61131stdfb_AND pinst = Ov_StaticPtrCast(iec61131stdfb_AND, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN1);
-	STDFB_FREE_VEC(pinst->v_IN2);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN1);
+	iec61131stdfb_freeVec(&pinst->v_IN2);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -149,73 +165,63 @@ OV_DLLFNCEXPORT void iec61131stdfb_AND_typemethod(
 	
 	OV_INSTPTR_iec61131stdfb_AND pinst = Ov_StaticPtrCast(iec61131stdfb_AND, pfb);
 	
-	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))
+	iec61131stdfb_freeVec(&pinst->v_OUT);		//free memory of preexisting out-vector
+	if(!(pinst->v_IN1.value.vartype & OV_VT_ISVECTOR))
 	{
-		
-		STDFB_FREE_VEC(pinst->v_OUT);		//free memory of preexisting out-vector
-		if(!(pinst->v_IN1.value.vartype & OV_VT_ISVECTOR))
+		switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
 		{
-			switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
-			{
-				case OV_VT_BOOL:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL;
-					pinst->v_OUT.value.valueunion.val_bool = pinst->v_IN1.value.valueunion.val_bool & pinst->v_IN2.value.valueunion.val_bool;
-				break;
-				
-				case OV_VT_UINT:
-					pinst->v_OUT.value.vartype = OV_VT_UINT;
-					pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN1.value.valueunion.val_uint & pinst->v_IN2.value.valueunion.val_uint;
-				break;
-				
-				case OV_VT_BYTE:
-					pinst->v_OUT.value.vartype = OV_VT_BYTE;
-					pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN1.value.valueunion.val_byte & pinst->v_IN2.value.valueunion.val_byte;
-				break;
-				
-				default:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL;
-					pinst->v_OUT.value.valueunion.val_bool = FALSE;
-					ov_logfile_alert("%s: logic AND of given datatypes senseless", pinst->v_identifier);
-				break;
-			}
+			case OV_VT_BOOL:
+				pinst->v_OUT.value.vartype = OV_VT_BOOL;
+				pinst->v_OUT.value.valueunion.val_bool = pinst->v_IN1.value.valueunion.val_bool && pinst->v_IN2.value.valueunion.val_bool;
+			break;
+			
+			case OV_VT_UINT:
+				pinst->v_OUT.value.vartype = OV_VT_UINT;
+				pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN1.value.valueunion.val_uint & pinst->v_IN2.value.valueunion.val_uint;
+			break;
+			
+			case OV_VT_BYTE:
+				pinst->v_OUT.value.vartype = OV_VT_BYTE;
+				pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN1.value.valueunion.val_byte & pinst->v_IN2.value.valueunion.val_byte;
+			break;
+			
+			default:			//should never happen due to control of type setting, but just to make sure...
+				pinst->v_OUT.value.vartype = OV_VT_BOOL;
+				pinst->v_OUT.value.valueunion.val_bool = FALSE;
+				ov_logfile_alert("%s: logic AND of given datatypes senseless", pinst->v_identifier);
+			break;
 		}
-		else
+	}
+	else
+	{
+		switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
 		{
-			switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
-			{
-				
-				case OV_VT_BOOL_VEC:
-					STDFB_VEC_AND(BOOL, bool);
-				break;
-				
-				case OV_VT_UINT_VEC:
-					STDFB_VEC_AND(UINT, uint);
-				break;
-				
-				case OV_VT_BYTE_VEC:
-					STDFB_VEC_AND(BYTE, byte);
-				break;
-				
-				default:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL;
-					pinst->v_OUT.value.valueunion.val_bool = FALSE;
-					ov_logfile_alert("%s: logic AND of given datatypes senseless", pinst->v_identifier);
-				break;
-			}
+			
+			case OV_VT_BOOL_VEC:
+				STDFB_VEC_AND(BOOL, bool);
+			break;
+			
+			case OV_VT_UINT_VEC:
+				STDFB_VEC_AND(UINT, uint);
+			break;
+			
+			case OV_VT_BYTE_VEC:
+				STDFB_VEC_AND(BYTE, byte);
+			break;
+			
+			default:
+				pinst->v_OUT.value.vartype = OV_VT_BOOL;
+				pinst->v_OUT.value.valueunion.val_bool = FALSE;
+				ov_logfile_alert("%s: logic AND of given datatypes senseless", pinst->v_identifier);
+			break;
 		}
+	}
 		
 	/************** handling states and timesdtamps ********************************/
 		
 #include "state_2in.c"
 	
-	}
-	else
-	{
-		pinst->v_OUT.value.vartype = OV_VT_BOOL;
-		pinst->v_OUT.value.valueunion.val_bool = FALSE;
-		STDFB_FREE_VEC(pinst->v_OUT);
-		ov_logfile_error("%s: trying to use inputs of different types for AND-block", pinst->v_identifier); 
-	}
+	
 	
     return;
 }

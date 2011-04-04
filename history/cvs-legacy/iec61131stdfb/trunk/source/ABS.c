@@ -63,12 +63,61 @@
 #include "stdfb_macros.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
+#include "helper.h"
+
+
+
+
+OV_RESULT
+iec61131stdfb_ABS_setType
+(OV_INSTPTR_iec61131stdfb_ABS pobj, OV_VAR_TYPE type)
+{
+  if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+    return OV_ERR_NOACCESS;
+  else
+  {
+    
+    switch(type & OV_VT_KSMASK)
+	{
+		case OV_VT_INT:
+		case OV_VT_UINT:
+		case OV_VT_SINGLE:
+		case OV_VT_DOUBLE:
+		case OV_VT_BYTE:
+		case OV_VT_INT_VEC:
+		case OV_VT_UINT_VEC:
+		case OV_VT_SINGLE_VEC:
+		case OV_VT_DOUBLE_VEC:
+		case OV_VT_BYTE_VEC:
+			pobj->v_IN.value.vartype = type;
+			pobj->v_OUT.value.vartype = type;
+			return OV_ERR_OK;
+		default:
+			return OV_ERR_BADPARAM;
+	}
+		return OV_ERR_GENERIC;
+  }
+}
+
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ABS_IN_set(
     OV_INSTPTR_iec61131stdfb_ABS          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN, value);
+    OV_RESULT res;
+	
+	if((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN, value);
+	else
+	{
+	    iec61131stdfb_freeVec(&pobj->v_IN);
+		iec61131stdfb_freeVec(&pobj->v_OUT);		//free memory of preexisting out-vector
+		res = iec61131stdfb_ABS_setType (pobj, value->value.vartype); 
+		if (Ov_OK (res))
+			return ov_variable_setanyvalue (&pobj->v_IN, value);
+		else return res;
+	}
+	
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ABS_OUT_get(
@@ -79,12 +128,10 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ABS_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_ABS_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_ABS pinst = Ov_StaticPtrCast(iec61131stdfb_ABS, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -100,7 +147,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_typemethod(
 	unsigned int i;
     OV_INSTPTR_iec61131stdfb_ABS pinst = Ov_StaticPtrCast(iec61131stdfb_ABS, pfb);
 	
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	if(!(pinst->v_IN.value.vartype & OV_VT_ISVECTOR))
 	{
 		switch(pinst->v_IN.value.vartype & OV_VT_KSMASK)
@@ -144,7 +191,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_typemethod(
 				
 				
 					
-			default:
+			default:		//should never happen due to controlled type change, but just to make sure...
 				pinst->v_OUT.value.vartype = OV_VT_BOOL;
 				pinst->v_OUT.value.valueunion.val_bool = FALSE;
 				ov_logfile_alert("%s: operation cannot be done on given datatype", pinst->v_identifier);

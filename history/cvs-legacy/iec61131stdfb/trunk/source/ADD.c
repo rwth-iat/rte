@@ -61,24 +61,96 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_string.h"
+#include "helper.h"
+
 
 #include <math.h>
 #include <float.h>
 
 #define OV_DEBUG
 
+OV_RESULT
+iec61131stdfb_ADD_setType
+(OV_INSTPTR_iec61131stdfb_ADD pobj, OV_VAR_TYPE type)
+{
+  if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+    return OV_ERR_NOACCESS;
+  else
+  {
+    
+    switch(type & OV_VT_KSMASK)
+	{
+		case OV_VT_INT:
+		case OV_VT_UINT:
+		case OV_VT_SINGLE:
+		case OV_VT_DOUBLE:
+		case OV_VT_BYTE:
+		case OV_VT_TIME_SPAN:
+		case OV_VT_INT_VEC:
+		case OV_VT_UINT_VEC:
+		case OV_VT_SINGLE_VEC:
+		case OV_VT_DOUBLE_VEC:
+		case OV_VT_BYTE_VEC:
+		case OV_VT_TIME_SPAN_VEC:
+			pobj->v_IN1.value.vartype = type;
+			pobj->v_IN2.value.vartype = type;
+			pobj->v_OUT.value.vartype = type;
+			return OV_ERR_OK;
+		default:
+			return OV_ERR_BADPARAM;
+	}
+		return OV_ERR_GENERIC;
+  }
+}
+
+
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ADD_IN1_set(
     OV_INSTPTR_iec61131stdfb_ADD          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN1, value);
+    OV_RESULT res;
+	if((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN1.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN1, value);
+	else
+	{
+		iec61131stdfb_freeVec(&pobj->v_IN1);
+		iec61131stdfb_freeVec(&pobj->v_IN2);
+		iec61131stdfb_freeVec(&pobj->v_OUT);		//free memory of preexisting out-vector
+		if((value->value.vartype & OV_VT_KSMASK) != OV_VT_TIME)		//Time-variables can be only added to Time-Span variables
+			res = iec61131stdfb_ADD_setType (pobj, value->value.vartype); 
+		else
+		{
+			if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+				return OV_ERR_NOACCESS;
+			
+			pobj->v_IN1.value.vartype = OV_VT_TIME;
+			pobj->v_IN2.value.vartype = OV_VT_TIME_SPAN;
+			pobj->v_OUT.value.vartype = OV_VT_TIME;
+			res = OV_ERR_OK;
+		}
+		if (Ov_OK (res))
+		  return ov_variable_setanyvalue (&pobj->v_IN1, value);
+		else return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ADD_IN2_set(
     OV_INSTPTR_iec61131stdfb_ADD          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN2, value);
+    OV_RESULT res;
+	if((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN2, value);
+	else
+	{
+		iec61131stdfb_freeVec(&pobj->v_IN1);
+		iec61131stdfb_freeVec(&pobj->v_IN2);
+		iec61131stdfb_freeVec(&pobj->v_OUT);		//free memory of preexisting out-vector
+		res = iec61131stdfb_ADD_setType (pobj, value->value.vartype); 
+		if (Ov_OK (res))
+		  return ov_variable_setanyvalue (&pobj->v_IN2, value);
+		else return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ADD_OUT_get(
@@ -93,9 +165,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_ADD_shutdown(OV_INSTPTR_ov_object pobj) {
 	
 	OV_INSTPTR_iec61131stdfb_ADD pinst = Ov_StaticPtrCast(iec61131stdfb_ADD, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN1);
-	STDFB_FREE_VEC(pinst->v_IN2);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN1);
+	iec61131stdfb_freeVec(&pinst->v_IN2);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -114,154 +186,128 @@ OV_DLLFNCEXPORT void iec61131stdfb_ADD_typemethod(
 	
 	
 		
-	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))	//only variables of the same type can be added, save for time and tims_span
-	{
+	
 		
-		STDFB_FREE_VEC(pinst->v_OUT);		//free memory of preexisting out-vector
-		if(!(pinst->v_IN1.value.vartype & OV_VT_ISVECTOR))		//handling scalars
-		{
-			switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
-			{
-				
-				case OV_VT_INT:
-					pinst->v_OUT.value.vartype = OV_VT_INT;
-					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN1.value.valueunion.val_int + pinst->v_IN2.value.valueunion.val_int;
-				break;
-				
-				case OV_VT_UINT:
-					pinst->v_OUT.value.vartype = OV_VT_UINT;
-					pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN1.value.valueunion.val_uint + pinst->v_IN2.value.valueunion.val_uint;
-				break;
-				
-				case OV_VT_SINGLE:
-					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
-					dbl_temp = pinst->v_IN1.value.valueunion.val_single + pinst->v_IN2.value.valueunion.val_single;
-					STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single);
-				break;
-				
-				case OV_VT_DOUBLE:
-					pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
-					dbl_temp = pinst->v_IN1.value.valueunion.val_double + pinst->v_IN2.value.valueunion.val_double;
-					if((dbl_temp == HUGE_VAL) || (dbl_temp == -HUGE_VAL))
-					{
-						ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);
-						dbl_temp = 0;
-					}
-					pinst->v_OUT.value.valueunion.val_double = dbl_temp;
-				break;
-
-				case OV_VT_BYTE:
-					pinst->v_OUT.value.vartype = OV_VT_BYTE;
-					pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN1.value.valueunion.val_byte + pinst->v_IN2.value.valueunion.val_byte;
-					ov_logfile_warning("%s: addition of bitstring", pinst->v_identifier);
-				break;
-				
-				case OV_VT_BOOL:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL;
-					pinst->v_OUT.value.valueunion.val_bool = pinst->v_IN1.value.valueunion.val_bool | pinst->v_IN2.value.valueunion.val_bool;
-					ov_logfile_warning("%s: addition of boolean, applying logical OR", pinst->v_identifier);
-				break;
-						
-				case OV_VT_TIME_SPAN:
-					pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
-					dbl_temp = (pinst->v_IN1.value.valueunion.val_time_span.usecs + pinst->v_IN2.value.valueunion.val_time_span.usecs);
-					dbl_temp += (double)(pinst->v_IN1.value.valueunion.val_time_span.secs + pinst->v_IN2.value.valueunion.val_time_span.secs) * 1000000;
-					dbl_temp /= 1000000;
-					pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) dbl_temp;
-					pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) (dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
-				break;
-				
-				default:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL;
-					pinst->v_OUT.value.valueunion.val_bool = FALSE;
-					ov_logfile_alert("%s: addition of given datatypes senseless", pinst->v_identifier);
-				break;
-			}
-		}
-		else		//handling vectors
+	iec61131stdfb_freeVec(&pinst->v_OUT);		//free memory of preexisting out-vector
+	if(!(pinst->v_IN1.value.vartype & OV_VT_ISVECTOR))		//handling scalars
+	{
+		switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
 		{
 			
-			switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
-			{
-				
-				case OV_VT_INT_VEC:
-					STDFB_VEC_ADD(INT, int);
-				break;
-				
-				case OV_VT_UINT_VEC:
-					STDFB_VEC_ADD(UINT, uint);
-				break;
-				
-				case OV_VT_SINGLE_VEC:
-					STDFB_VEC_ADD_F(SINGLE, single);
-				break;
-				
-				case OV_VT_DOUBLE_VEC:
-					STDFB_VEC_ADD_F(DOUBLE, double);
-				break;
+			case OV_VT_INT:
+				pinst->v_OUT.value.vartype = OV_VT_INT;
+				pinst->v_OUT.value.valueunion.val_int = pinst->v_IN1.value.valueunion.val_int + pinst->v_IN2.value.valueunion.val_int;
+			break;
+			
+			case OV_VT_UINT:
+				pinst->v_OUT.value.vartype = OV_VT_UINT;
+				pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN1.value.valueunion.val_uint + pinst->v_IN2.value.valueunion.val_uint;
+			break;
+			
+			case OV_VT_SINGLE:
+				pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+				dbl_temp = pinst->v_IN1.value.valueunion.val_single + pinst->v_IN2.value.valueunion.val_single;
+				STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single);
+			break;
+			
+			case OV_VT_DOUBLE:
+				pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
+				dbl_temp = pinst->v_IN1.value.valueunion.val_double + pinst->v_IN2.value.valueunion.val_double;
+				if((dbl_temp == HUGE_VAL) || (dbl_temp == -HUGE_VAL))
+				{
+					ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);
+					dbl_temp = 0;
+				}
+				pinst->v_OUT.value.valueunion.val_double = dbl_temp;
+			break;
 
-				case OV_VT_BYTE_VEC:
-					ov_logfile_warning("%s: addition of bitstrings requested", pinst->v_identifier);
-					STDFB_VEC_ADD(BYTE, byte);
-				break;
+			case OV_VT_BYTE:
+				pinst->v_OUT.value.vartype = OV_VT_BYTE;
+				pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN1.value.valueunion.val_byte + pinst->v_IN2.value.valueunion.val_byte;
+				ov_logfile_warning("%s: addition of bitstring", pinst->v_identifier);
+			break;
 				
-				case OV_VT_BOOL_VEC:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL_VEC;
-					ov_logfile_warning("%s: addition of boolean, applying logical OR", pinst->v_identifier);
-					if(pinst->v_IN1.value.valueunion.val_bool_vec.veclen == pinst->v_IN2.value.valueunion.val_bool_vec.veclen)
-					{
-						if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_bool_vec, pinst->v_IN1.value.valueunion.val_bool_vec.veclen, BOOL)))
-						{
-							for(i=0; i<pinst->v_IN1.value.valueunion.val_bool_vec.veclen; i++)
-							{
-								pinst->v_OUT.value.valueunion.val_bool_vec.value[i] = pinst->v_IN1.value.valueunion.val_bool_vec.value[i] | 
-									pinst->v_IN2.value.valueunion.val_bool_vec.value[i];
-							}
-						}
-						else
-						{
-							ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-							return;
-						}
-					}
-					else
-					{
-						ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);
-						Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_bool_vec, 0, BOOL);
-					}
-					
-				break;
-						
-				default:
+			case OV_VT_BOOL:
+				pinst->v_OUT.value.vartype = OV_VT_BOOL;
+				pinst->v_OUT.value.valueunion.val_bool = pinst->v_IN1.value.valueunion.val_bool | pinst->v_IN2.value.valueunion.val_bool;
+				ov_logfile_warning("%s: addition of boolean, applying logical OR", pinst->v_identifier);
+			break;
+
+			case OV_VT_TIME:
+				if((pinst->v_IN2.value.vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN)
+				{
+					pinst->v_OUT.value.vartype = OV_VT_TIME;
+					dbl_temp = (pinst->v_IN1.value.valueunion.val_time.usecs + pinst->v_IN2.value.valueunion.val_time_span.usecs);
+					dbl_temp += (double)(pinst->v_IN1.value.valueunion.val_time.secs + pinst->v_IN2.value.valueunion.val_time_span.secs) * 1000000;
+					dbl_temp /= 1000000;
+					pinst->v_OUT.value.valueunion.val_time.secs = (OV_UINT) dbl_temp;
+					pinst->v_OUT.value.valueunion.val_time.usecs = (OV_UINT) ((dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
+					if(dbl_temp < 0)
+						ov_logfile_error("%s: result time negativ", pinst->v_identifier);
+				}
+				else
+				{
+					ov_logfile_error("%s: trying to ADD a time to something different than TIME_SPAN", pinst->v_identifier); 
+					iec61131stdfb_freeVec(&pinst->v_OUT);
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
-					ov_logfile_alert("%s: addition of given datatypes senseless", pinst->v_identifier);
-				break;
-			}
+					return;
+				}
+			break;
+			
+			case OV_VT_TIME_SPAN:
+				pinst->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+				dbl_temp = (pinst->v_IN1.value.valueunion.val_time_span.usecs + pinst->v_IN2.value.valueunion.val_time_span.usecs);
+				dbl_temp += (double)(pinst->v_IN1.value.valueunion.val_time_span.secs + pinst->v_IN2.value.valueunion.val_time_span.secs) * 1000000;
+				dbl_temp /= 1000000;
+				pinst->v_OUT.value.valueunion.val_time_span.secs = (OV_INT) dbl_temp;
+				pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
+			break;
+				
+			default:
+				pinst->v_OUT.value.vartype = OV_VT_BOOL;
+				pinst->v_OUT.value.valueunion.val_bool = FALSE;
+				ov_logfile_alert("%s: addition of given datatypes senseless", pinst->v_identifier);
+			break;
 		}
 	}
-	else
-	{	//timespan can be added to time. this is the only allowed case fpr different types
-		if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == OV_VT_TIME && (pinst->v_IN2.value.vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN)
+	else		//handling vectors
+	{
+		
+		switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
 		{
-			pinst->v_OUT.value.vartype = OV_VT_TIME;
-			dbl_temp = (pinst->v_IN1.value.valueunion.val_time.usecs + pinst->v_IN2.value.valueunion.val_time_span.usecs);
-			dbl_temp += (double)(pinst->v_IN1.value.valueunion.val_time.secs + pinst->v_IN2.value.valueunion.val_time_span.secs) * 1000000;
-			dbl_temp /= 1000000;
-			pinst->v_OUT.value.valueunion.val_time.secs = (OV_UINT) dbl_temp;
-			pinst->v_OUT.value.valueunion.val_time.usecs = (OV_UINT) (dbl_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000;
-			if(dbl_temp < 0)
-				ov_logfile_error("%s: result time negativ", pinst->v_identifier);
-		}
-		else
-		{
-			ov_logfile_error("%s: trying to use inputs of different types for ADD-block", pinst->v_identifier); 
-			STDFB_FREE_VEC(pinst->v_OUT);
-			pinst->v_OUT.value.vartype = OV_VT_BOOL;
-			pinst->v_OUT.value.valueunion.val_bool = FALSE;
-			return;
+			
+			case OV_VT_INT_VEC:
+				STDFB_VEC_ADD(INT, int);
+			break;
+			
+			case OV_VT_UINT_VEC:
+				STDFB_VEC_ADD(UINT, uint);
+			break;
+			
+			case OV_VT_SINGLE_VEC:
+				STDFB_VEC_ADD_F(SINGLE, single);
+			break;
+				
+			case OV_VT_DOUBLE_VEC:
+				STDFB_VEC_ADD_F(DOUBLE, double);
+			break;
+
+			case OV_VT_BYTE_VEC:
+				ov_logfile_warning("%s: addition of bitstrings requested", pinst->v_identifier);
+				STDFB_VEC_ADD(BYTE, byte);
+			break;
+				
+			default:
+				pinst->v_OUT.value.vartype = OV_VT_BOOL;
+				pinst->v_OUT.value.valueunion.val_bool = FALSE;
+				ov_logfile_alert("%s: addition of given datatypes senseless", pinst->v_identifier);
+			break;
 		}
 	}
+	
+
+
 
 /************** handling states and timesdtamps ********************************/
 		

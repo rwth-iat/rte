@@ -62,40 +62,41 @@
 #include <float.h>
 
 /*****Speicher von vektor freigeben und union nullen (pointer!); benötig iterator i******/
+/**************** Neu als Funktion aufgesetzt um speicherbedarf zu verringern OV_RESULT iec61131stdfb_freeVec(OV_ANY* pobj) ***/
 
 #define STDFB_FREE_VEC(pobj) \
 switch(pobj.value.vartype & OV_VT_KSMASK) { \
 	case OV_VT_BYTE_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_byte_vec, 0, BYTE); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_byte_vec, NULL, 0, BYTE); \
 	break;	\
 	case OV_VT_BOOL_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_bool_vec, 0, BOOL); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_bool_vec, NULL, 0, BOOL); \
 	break;	\
 	case OV_VT_INT_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_int_vec, 0, INT); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_int_vec, NULL, 0, INT); \
 	break;	\
 	case OV_VT_UINT_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_uint_vec, 0, UINT); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_uint_vec, NULL, 0, UINT); \
 	break;	\
 	case OV_VT_SINGLE_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_single_vec, 0, SINGLE); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_single_vec, NULL, 0, SINGLE); \
 	break;	\
 	case OV_VT_DOUBLE_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_double_vec, 0, DOUBLE); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_double_vec, NULL, 0, DOUBLE); \
 	break;	\
 	case OV_VT_STRING_VEC:	\
 		for(i=0; i<pobj.value.valueunion.val_string_vec.veclen; i++)	\
 			ov_string_setvalue(&pobj.value.valueunion.val_string_vec.value[i], "");	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_string_vec, 0, STRING);	\
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_string_vec, NULL, 0, STRING);	\
 	break;	\
 	case OV_VT_TIME_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_time_vec, 0, TIME); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_time_vec, NULL, 0, TIME); \
 	break;	\
 	case OV_VT_TIME_SPAN_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_time_span_vec, 0, TIME_SPAN); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_time_span_vec, NULL, 0, TIME_SPAN); \
 	break;	\
 	case OV_VT_STATE_VEC:	\
-		Ov_SetDynamicVectorLength(&pobj.value.valueunion.val_state_vec, 0, STATE); \
+		Ov_SetDynamicVectorValue(&pobj.value.valueunion.val_state_vec, NULL, 0, STATE); \
 	break;	\
 	case OV_VT_STRING:	\
 		ov_string_setvalue(&pobj.value.valueunion.val_string, "");	\

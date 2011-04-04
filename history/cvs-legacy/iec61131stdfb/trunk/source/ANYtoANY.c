@@ -61,6 +61,7 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_string.h"
 #include "stdfb_macros.h"
+#include "helper.h"
 
 #include <float.h>
 #include <stdlib.h>
@@ -72,15 +73,223 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ANYtoANY_IN_set(
     OV_INSTPTR_iec61131stdfb_ANYtoANY          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN, value);
+    if((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN, value);
+	else
+	{
+		if(iec61131stdfb_isConnected(Ov_PtrUpCast(fb_functionblock, pobj)))
+			return OV_ERR_NOACCESS;
+		else
+		{			//only allow a different type, if the conversion from this type into the type specified by K is implemented
+			switch(value->value.vartype & OV_VT_KSMASK)
+			{
+				case OV_VT_BYTE:
+				case OV_VT_BYTE_VEC:
+					switch(pobj->v_K)
+					{
+						case 1:
+						case 2:
+						case 3:
+						case 4:
+						case 5:
+						case 6:
+						case 7:
+						case 17:
+						case 18:
+						case 19:
+						case 20:
+						case 21:
+						case 22:
+						case 23:
+							return ov_variable_setanyvalue(&pobj->v_IN, value);
+						default:
+							return OV_ERR_BADPARAM;
+					}
+				break;
+				
+				case OV_VT_BOOL:
+					switch(pobj->v_K)
+					{
+						case 1:
+						case 2:
+						case 3:
+						case 4:
+						case 5:
+						case 6:
+						case 7:
+						case 17:
+						case 18:
+						case 19:
+						case 20:
+						case 21:
+						case 22:
+						case 23:
+							return ov_variable_setanyvalue(&pobj->v_IN, value);
+						default:
+							return OV_ERR_BADPARAM;
+					}
+				break;
+				
+				case OV_VT_UINT:
+				case OV_VT_INT:
+				case OV_VT_STRING:
+					return ov_variable_setanyvalue(&pobj->v_IN, value);
+				break;
+				
+				case OV_VT_SINGLE:
+				case OV_VT_DOUBLE:
+				case OV_VT_INT_VEC:
+				case OV_VT_UINT_VEC:
+				case OV_VT_SINGLE_VEC:
+				case OV_VT_DOUBLE_VEC:
+				case OV_VT_STRING_VEC:
+				case OV_VT_TIME_VEC:
+				case OV_VT_TIME_SPAN_VEC:
+					switch(pobj->v_K)
+					{
+						case 2:
+						case 3:
+						case 4:
+						case 5:
+						case 6:
+						case 7:
+						case 8:
+						case 9:
+						case 17:
+						case 18:
+						case 19:
+						case 20:
+						case 21:
+						case 22:
+						case 23:
+						case 24:
+						case 25:
+							return ov_variable_setanyvalue(&pobj->v_IN, value);
+						default:
+							return OV_ERR_BADPARAM;
+					}
+				break;
+				
+				case OV_VT_TIME:
+				case OV_VT_TIME_SPAN:
+					switch(pobj->v_K)
+					{
+						case 2:
+						case 3:
+						case 4:
+						case 5:
+						case 6:
+						case 7:
+						case 8:
+						case 9:
+						case 18:
+						case 19:
+						case 20:
+						case 21:
+						case 22:
+						case 23:
+						case 24:
+						case 25:
+							return ov_variable_setanyvalue(&pobj->v_IN, value);
+						default:
+							return OV_ERR_BADPARAM;
+					}
+				break;
+				
+				case OV_VT_BOOL_VEC:
+					switch(pobj->v_K)
+					{
+						case 2:
+						case 3:
+						case 17:
+						case 18:
+							return ov_variable_setanyvalue(&pobj->v_IN, value);
+						default:
+							return OV_ERR_BADPARAM;
+					}
+				break;
+				
+				default:
+					return OV_ERR_GENERIC;
+			}
+		}
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ANYtoANY_K_set(
     OV_INSTPTR_iec61131stdfb_ANYtoANY          pobj,
     const OV_UINT  value
 ) {
-    pobj->v_K = value;
-    return OV_ERR_OK;
+    if(pobj->v_K != value)
+	{
+		if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+			return OV_ERR_NOACCESS;
+		else
+		{
+			pobj->v_K = value;
+			iec61131stdfb_freeVec(&pobj->v_OUT);
+			switch(pobj->v_K)
+			{
+				case 1:
+					pobj->v_OUT.value.vartype = OV_VT_BYTE;
+				break;
+				case 2:
+					pobj->v_OUT.value.vartype = OV_VT_BOOL;
+				break;
+				case 3:
+					pobj->v_OUT.value.vartype = OV_VT_UINT;
+				break;
+				case 4:
+					pobj->v_OUT.value.vartype = OV_VT_INT;
+				break;
+				case 5:
+					pobj->v_OUT.value.vartype = OV_VT_SINGLE;
+				break;
+				case 6:
+					pobj->v_OUT.value.vartype = OV_VT_DOUBLE;
+				break;
+				case 7:
+					pobj->v_OUT.value.vartype = OV_VT_STRING;
+				break;
+				case 8:
+					pobj->v_OUT.value.vartype = OV_VT_TIME;
+				break;
+				case 9:
+					pobj->v_OUT.value.vartype = OV_VT_TIME_SPAN;
+				break;
+				
+				case 17:
+					pobj->v_OUT.value.vartype = OV_VT_BYTE_VEC;
+				break;
+				case 18:
+					pobj->v_OUT.value.vartype = OV_VT_BOOL_VEC;
+				break;
+				case 19:
+					pobj->v_OUT.value.vartype = OV_VT_UINT_VEC;
+				break;
+				case 20:
+					pobj->v_OUT.value.vartype = OV_VT_INT_VEC;
+				break;
+				case 21:
+					pobj->v_OUT.value.vartype = OV_VT_SINGLE_VEC;
+				break;
+				case 22:
+					pobj->v_OUT.value.vartype = OV_VT_DOUBLE_VEC;
+				break;
+				case 23:
+					pobj->v_OUT.value.vartype = OV_VT_STRING_VEC;
+				break;
+				case 24:
+					pobj->v_OUT.value.vartype = OV_VT_TIME_VEC;
+				break;
+				case 25:
+					pobj->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
+				break;
+			}
+		}
+	}
+    
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ANYtoANY_OUT_get(
@@ -92,12 +301,10 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ANYtoANY_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_ANYtoANY pinst = Ov_StaticPtrCast(iec61131stdfb_ANYtoANY, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -117,7 +324,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 	
 	OV_INSTPTR_iec61131stdfb_ANYtoANY pinst = Ov_StaticPtrCast(iec61131stdfb_ANYtoANY, pfb);
 	
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	
 	switch(pinst->v_IN.value.vartype & OV_VT_KSMASK)		//conversion from
 	{
