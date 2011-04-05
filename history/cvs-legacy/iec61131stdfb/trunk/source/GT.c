@@ -62,19 +62,84 @@
 #include "libov/ov_logfile.h"
 
 #define OV_DEBUG
+#include "helper.h"
+
+
+OV_RESULT
+iec61131stdfb_GT_setType
+(OV_INSTPTR_iec61131stdfb_GT pobj, OV_VAR_TYPE type)
+{
+  if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+    return OV_ERR_NOACCESS;
+  else
+  {
+    
+    switch(type & OV_VT_KSMASK)
+	{
+		case OV_VT_BOOL:
+		case OV_VT_INT:
+		case OV_VT_UINT:
+		case OV_VT_BYTE:
+		case OV_VT_SINGLE:
+		case OV_VT_DOUBLE:
+		case OV_VT_STRING:
+		case OV_VT_TIME:
+		case OV_VT_TIME_SPAN:
+		case OV_VT_BOOL_VEC:
+		case OV_VT_INT_VEC:
+		case OV_VT_UINT_VEC:
+		case OV_VT_BYTE_VEC:
+		case OV_VT_SINGLE_VEC:
+		case OV_VT_DOUBLE_VEC:
+		case OV_VT_STRING_VEC:
+		case OV_VT_TIME_VEC:
+		case OV_VT_TIME_SPAN_VEC:
+			pobj->v_IN1.value.vartype = type;
+			pobj->v_IN2.value.vartype = type;
+			return OV_ERR_OK;
+		default:
+			return OV_ERR_BADPARAM;
+	}
+		return OV_ERR_GENERIC;
+  }
+}
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_GT_IN1_set(
     OV_INSTPTR_iec61131stdfb_GT          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN1, value);
+    OV_RESULT res;
+  
+	  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN1.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue (&pobj->v_IN1, value);
+	  else
+	  {
+		iec61131stdfb_freeVec(&pobj->v_IN1);
+		iec61131stdfb_freeVec(&pobj->v_IN2);
+		res = iec61131stdfb_GT_setType (pobj, value->value.vartype); 
+		if (Ov_OK (res))
+		  return ov_variable_setanyvalue (&pobj->v_IN1, value);
+		else return res;
+	  }
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_GT_IN2_set(
     OV_INSTPTR_iec61131stdfb_GT          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN2, value);
+    OV_RESULT res;
+  
+	  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue (&pobj->v_IN2, value);
+	  else
+	  {
+		iec61131stdfb_freeVec(&pobj->v_IN1);
+		iec61131stdfb_freeVec(&pobj->v_IN2);
+		res = iec61131stdfb_GT_setType (pobj, value->value.vartype); 
+		if (Ov_OK (res))
+		  return ov_variable_setanyvalue (&pobj->v_IN2, value);
+		else return res;
+	  }
 }
 
 OV_DLLFNCEXPORT OV_BOOL iec61131stdfb_GT_OUT_get(
@@ -86,12 +151,10 @@ OV_DLLFNCEXPORT OV_BOOL iec61131stdfb_GT_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_GT_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_GT pinst = Ov_StaticPtrCast(iec61131stdfb_GT, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN1);
-	STDFB_FREE_VEC(pinst->v_IN2);
+	iec61131stdfb_freeVec(&pinst->v_IN1);
+	iec61131stdfb_freeVec(&pinst->v_IN2);
 	ov_object_shutdown(pobj);
 }
 

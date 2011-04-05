@@ -60,20 +60,84 @@
 #include "stdfb_macros.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
+#include "helper.h"
 
+
+OV_RESULT
+iec61131stdfb_EQ_setType
+(OV_INSTPTR_iec61131stdfb_EQ pobj, OV_VAR_TYPE type)
+{
+  if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+    return OV_ERR_NOACCESS;
+  else
+  {
+    
+    switch(type & OV_VT_KSMASK)
+	{
+		case OV_VT_BOOL:
+		case OV_VT_INT:
+		case OV_VT_UINT:
+		case OV_VT_BYTE:
+		case OV_VT_SINGLE:
+		case OV_VT_DOUBLE:
+		case OV_VT_STRING:
+		case OV_VT_TIME:
+		case OV_VT_TIME_SPAN:
+		case OV_VT_BOOL_VEC:
+		case OV_VT_INT_VEC:
+		case OV_VT_UINT_VEC:
+		case OV_VT_BYTE_VEC:
+		case OV_VT_SINGLE_VEC:
+		case OV_VT_DOUBLE_VEC:
+		case OV_VT_STRING_VEC:
+		case OV_VT_TIME_VEC:
+		case OV_VT_TIME_SPAN_VEC:
+			pobj->v_IN1.value.vartype = type;
+			pobj->v_IN2.value.vartype = type;
+			return OV_ERR_OK;
+		default:
+			return OV_ERR_BADPARAM;
+	}
+		return OV_ERR_GENERIC;
+  }
+}
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_EQ_IN1_set(
     OV_INSTPTR_iec61131stdfb_EQ          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN1, value);
+    OV_RESULT res;
+  
+	  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN1.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue (&pobj->v_IN1, value);
+	  else
+	  {
+		iec61131stdfb_freeVec(&pobj->v_IN1);
+		iec61131stdfb_freeVec(&pobj->v_IN2);
+		res = iec61131stdfb_EQ_setType (pobj, value->value.vartype); 
+		if (Ov_OK (res))
+		  return ov_variable_setanyvalue (&pobj->v_IN1, value);
+		else return res;
+	  }
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_EQ_IN2_set(
     OV_INSTPTR_iec61131stdfb_EQ          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN2, value);
+    OV_RESULT res;
+  
+	  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue (&pobj->v_IN2, value);
+	  else
+	  {
+		iec61131stdfb_freeVec(&pobj->v_IN1);
+		iec61131stdfb_freeVec(&pobj->v_IN2);
+		res = iec61131stdfb_EQ_setType (pobj, value->value.vartype); 
+		if (Ov_OK (res))
+		  return ov_variable_setanyvalue (&pobj->v_IN2, value);
+		else return res;
+	  }
 }
 
 OV_DLLFNCEXPORT OV_BOOL iec61131stdfb_EQ_OUT_get(
@@ -85,12 +149,11 @@ OV_DLLFNCEXPORT OV_BOOL iec61131stdfb_EQ_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_EQ_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
 	
 	OV_INSTPTR_iec61131stdfb_EQ pinst = Ov_StaticPtrCast(iec61131stdfb_EQ, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN1);
-	STDFB_FREE_VEC(pinst->v_IN2);
+	iec61131stdfb_freeVec(&pinst->v_IN1);
+	iec61131stdfb_freeVec(&pinst->v_IN2);
 	ov_object_shutdown(pobj);
 }
 
@@ -103,79 +166,67 @@ OV_DLLFNCEXPORT void iec61131stdfb_EQ_typemethod(
     */
     OV_INSTPTR_iec61131stdfb_EQ pinst = Ov_StaticPtrCast(iec61131stdfb_EQ, pfb);
 	
-	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))
+	if(!(pinst->v_IN1.value.vartype & OV_VT_ISVECTOR))
 	{
-		if(!(pinst->v_IN1.value.vartype & OV_VT_ISVECTOR))
+		switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
 		{
-			switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
-			{
-				STDFB_EQ(BOOL, bool);
-				STDFB_EQ(BYTE, byte);
-				STDFB_EQ(UINT, uint);
-				STDFB_EQ(INT, int);
-				STDFB_EQ(SINGLE, single);
-				STDFB_EQ(DOUBLE, double);
-				
-				case OV_VT_STRING:
-					if(ov_string_compare(pinst->v_IN1.value.valueunion.val_string, pinst->v_IN2.value.valueunion.val_string) == 0)
-						pinst->v_OUT = TRUE;
-					else
-						pinst->v_OUT = FALSE;
-				break;
-				
-				case OV_VT_TIME:
-					if(STDFB_EQ_TIME(pinst->v_IN1.value.valueunion.val_time, pinst->v_IN2.value.valueunion.val_time))
-						pinst->v_OUT = TRUE;
-					else
-						pinst->v_OUT = FALSE;
-				break;
-				
-				case OV_VT_TIME_SPAN:
-					if(STDFB_EQ_TIME(pinst->v_IN1.value.valueunion.val_time_span, pinst->v_IN2.value.valueunion.val_time_span))
-						pinst->v_OUT = TRUE;
-					else
-						pinst->v_OUT = FALSE;
-				break;
-				
-				default:
-					ov_logfile_error("%s: comparison of given datatype not implementes", pinst->v_identifier);
+			STDFB_EQ(BOOL, bool);
+			STDFB_EQ(BYTE, byte);
+			STDFB_EQ(UINT, uint);
+			STDFB_EQ(INT, int);
+			STDFB_EQ(SINGLE, single);
+			STDFB_EQ(DOUBLE, double);
+			
+			case OV_VT_STRING:
+				if(ov_string_compare(pinst->v_IN1.value.valueunion.val_string, pinst->v_IN2.value.valueunion.val_string) == 0)
+					pinst->v_OUT = TRUE;
+				else
 					pinst->v_OUT = FALSE;
-					return;
-			}
+			break;
+			
+			case OV_VT_TIME:
+				if(STDFB_EQ_TIME(pinst->v_IN1.value.valueunion.val_time, pinst->v_IN2.value.valueunion.val_time))
+					pinst->v_OUT = TRUE;
+				else
+					pinst->v_OUT = FALSE;
+			break;
+			
+			case OV_VT_TIME_SPAN:
+				if(STDFB_EQ_TIME(pinst->v_IN1.value.valueunion.val_time_span, pinst->v_IN2.value.valueunion.val_time_span))
+					pinst->v_OUT = TRUE;
+				else
+					pinst->v_OUT = FALSE;
+			break;
+			
+			default:
+				ov_logfile_error("%s: comparison of given datatype not implementes", pinst->v_identifier);
+				pinst->v_OUT = FALSE;
+				return;
 		}
-		else
-		{
-			ov_logfile_warning("%s: comparison of vectors concerns their length only", pinst->v_identifier);
-			switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
-			{
-				STDFB_EQ_VEC(BOOL, bool);
-				STDFB_EQ_VEC(BYTE, byte);
-				STDFB_EQ_VEC(UINT, uint);
-				STDFB_EQ_VEC(INT, int);
-				STDFB_EQ_VEC(SINGLE, single);
-				STDFB_EQ_VEC(DOUBLE, double);
-				STDFB_EQ_VEC(STRING, string);
-				STDFB_EQ_VEC(TIME, time);
-				STDFB_EQ_VEC(TIME_SPAN, time_span);
-				
-				default:
-						ov_logfile_error("%s: comparison of given datatype not implementes", pinst->v_identifier);
-						pinst->v_OUT = FALSE;
-						return;
-			}
-		}
-		
-
-
-
 	}
 	else
 	{
-		ov_logfile_error("%s: trying to use inputs of different type on EQ-block", pinst->v_identifier);
-		pinst->v_OUT = 0;
-		return;
+		ov_logfile_warning("%s: comparison of vectors concerns their length only", pinst->v_identifier);
+		switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
+		{
+			STDFB_EQ_VEC(BOOL, bool);
+			STDFB_EQ_VEC(BYTE, byte);
+			STDFB_EQ_VEC(UINT, uint);
+			STDFB_EQ_VEC(INT, int);
+			STDFB_EQ_VEC(SINGLE, single);
+			STDFB_EQ_VEC(DOUBLE, double);
+			STDFB_EQ_VEC(STRING, string);
+			STDFB_EQ_VEC(TIME, time);
+			STDFB_EQ_VEC(TIME_SPAN, time_span);
+			
+			default:
+					ov_logfile_error("%s: comparison of given datatype not implementes", pinst->v_identifier);
+					pinst->v_OUT = FALSE;
+					return;
+		}
 	}
-
+		
+	
     return;
 }
 

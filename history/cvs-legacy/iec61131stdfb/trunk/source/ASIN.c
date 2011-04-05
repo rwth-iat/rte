@@ -61,6 +61,8 @@
 #include "stdfb_macros.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
+#include "helper.h"
+
 
 #include <math.h>
 
@@ -69,7 +71,46 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ASIN_IN_set(
     OV_INSTPTR_iec61131stdfb_ASIN          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN, value);
+	if((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN.value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN, value);
+	else
+	{
+		if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+			return OV_ERR_NOACCESS;
+		else
+		{
+			iec61131stdfb_freeVec(&pobj->v_IN);
+			iec61131stdfb_freeVec(&pobj->v_OUT);
+			switch(value->value.vartype & OV_VT_KSMASK)
+			{
+				case OV_VT_INT:
+				case OV_VT_UINT:
+				case OV_VT_BYTE:
+				case OV_VT_SINGLE:
+					pobj->v_OUT.value.vartype = OV_VT_SINGLE;
+				return ov_variable_setanyvalue(&pobj->v_IN, value);
+				
+				case OV_VT_DOUBLE:
+					pobj->v_OUT.value.vartype = OV_VT_DOUBLE;
+				return ov_variable_setanyvalue(&pobj->v_IN, value);
+				
+				case OV_VT_INT_VEC:
+				case OV_VT_UINT_VEC:
+				case OV_VT_BYTE_VEC:
+				case OV_VT_SINGLE_VEC:
+					pobj->v_OUT.value.vartype = OV_VT_SINGLE_VEC;
+				return ov_variable_setanyvalue(&pobj->v_IN, value);
+				
+				case OV_VT_DOUBLE_VEC:
+					pobj->v_OUT.value.vartype = OV_VT_DOUBLE_VEC;
+				return ov_variable_setanyvalue(&pobj->v_IN, value);
+				
+				default:
+					return OV_ERR_BADPARAM;
+			}
+			return OV_ERR_GENERIC;
+		}
+	}
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ASIN_OUT_get(
@@ -84,8 +125,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ASIN_shutdown(OV_INSTPTR_ov_object pobj) {
 	
 	OV_INSTPTR_iec61131stdfb_ASIN pinst = Ov_StaticPtrCast(iec61131stdfb_ASIN, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -103,7 +144,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ASIN_typemethod(
 	
     OV_INSTPTR_iec61131stdfb_ASIN pinst = Ov_StaticPtrCast(iec61131stdfb_ASIN, pfb);
 	
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	
 	if(!(pinst->v_IN.value.vartype & OV_VT_ISVECTOR))
 		{

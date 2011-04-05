@@ -59,6 +59,7 @@
 #include "iec61131stdfb.h"
 #include "libov/ov_macros.h"
 #include "stdfb_macros.h"
+#include "helper.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MOVE_IN_set(
@@ -77,12 +78,10 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_MOVE_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_MOVE_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_MOVE pinst = Ov_StaticPtrCast(iec61131stdfb_MOVE, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -96,7 +95,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOVE_typemethod(
     */
     OV_INSTPTR_iec61131stdfb_MOVE pinst = Ov_StaticPtrCast(iec61131stdfb_MOVE, pfb);
 	
-	pinst->v_OUT.value = pinst->v_IN.value;
+	ov_variable_setanyvalue(&pinst->v_OUT, &pinst->v_IN);
 
     return;
 }
