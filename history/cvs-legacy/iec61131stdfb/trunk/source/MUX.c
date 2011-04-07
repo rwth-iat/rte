@@ -60,6 +60,42 @@
 #include "stdfb_macros.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
+#include "helper.h"
+
+OV_RESULT
+iec61131stdfb_MUX_setType
+(OV_INSTPTR_iec61131stdfb_MUX pobj, OV_VAR_TYPE type)
+{
+  if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+    return OV_ERR_NOACCESS;
+  else
+  {
+	if(type == OV_VT_VOID)
+		return OV_ERR_BADPARAM;
+	else
+	{
+		iec61131stdfb_freeVec(&pobj->v_IN1);
+		iec61131stdfb_freeVec(&pobj->v_IN2);
+		iec61131stdfb_freeVec(&pobj->v_IN3);
+		iec61131stdfb_freeVec(&pobj->v_IN4);
+		iec61131stdfb_freeVec(&pobj->v_IN5);
+		iec61131stdfb_freeVec(&pobj->v_IN6);
+		iec61131stdfb_freeVec(&pobj->v_IN7);
+		iec61131stdfb_freeVec(&pobj->v_IN8);
+		pobj->v_IN1.value.vartype = type;
+		pobj->v_IN2.value.vartype = type;
+		pobj->v_IN3.value.vartype = type;
+		pobj->v_IN4.value.vartype = type;
+		pobj->v_IN5.value.vartype = type;
+		pobj->v_IN6.value.vartype = type;
+		pobj->v_IN7.value.vartype = type;
+		pobj->v_IN8.value.vartype = type;
+		return OV_ERR_OK;
+	}
+    
+  }
+}
+
 
 
 
@@ -67,64 +103,157 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_K_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_UINT  value
 ) {
-    pobj->v_K = value;
-    return OV_ERR_OK;
+    if(value >= 1 && value <= 8)
+	{
+		pobj->v_K = value;
+		return OV_ERR_OK;
+	}
+	else
+		return OV_ERR_BADPARAM;
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_IN1_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN1, value);
+	OV_RESULT res;
+	
+	if((pobj->v_IN1.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN1, value);
+	else
+	{
+		res = iec61131stdfb_MUX_setType(pobj, value->value.vartype);
+		if(Ov_OK(res))
+			return ov_variable_setanyvalue(&pobj->v_IN1, value);
+		else
+			return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_IN2_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN2, value);
+    OV_RESULT res;
+	
+	if((pobj->v_IN2.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN2, value);
+	else
+	{
+		res = iec61131stdfb_MUX_setType(pobj, value->value.vartype);
+		if(Ov_OK(res))
+			return ov_variable_setanyvalue(&pobj->v_IN2, value);
+		else
+			return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_IN3_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN3, value);
+    OV_RESULT res;
+	
+	if((pobj->v_IN3.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN3, value);
+	else
+	{
+		res = iec61131stdfb_MUX_setType(pobj, value->value.vartype);
+		if(Ov_OK(res))
+			return ov_variable_setanyvalue(&pobj->v_IN3, value);
+		else
+			return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_IN4_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN4, value);
+    OV_RESULT res;
+	
+	if((pobj->v_IN4.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN4, value);
+	else
+	{
+		res = iec61131stdfb_MUX_setType(pobj, value->value.vartype);
+		if(Ov_OK(res))
+			return ov_variable_setanyvalue(&pobj->v_IN4, value);
+		else
+			return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_IN5_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN5, value);
+    OV_RESULT res;
+	
+	if((pobj->v_IN5.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN5, value);
+	else
+	{
+		res = iec61131stdfb_MUX_setType(pobj, value->value.vartype);
+		if(Ov_OK(res))
+			return ov_variable_setanyvalue(&pobj->v_IN5, value);
+		else
+			return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_IN6_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN6, value);
+    OV_RESULT res;
+	
+	if((pobj->v_IN6.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN6, value);
+	else
+	{
+		res = iec61131stdfb_MUX_setType(pobj, value->value.vartype);
+		if(Ov_OK(res))
+			return ov_variable_setanyvalue(&pobj->v_IN6, value);
+		else
+			return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_IN7_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN7, value);
+    OV_RESULT res;
+	
+	if((pobj->v_IN7.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN7, value);
+	else
+	{
+		res = iec61131stdfb_MUX_setType(pobj, value->value.vartype);
+		if(Ov_OK(res))
+			return ov_variable_setanyvalue(&pobj->v_IN7, value);
+		else
+			return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_IN8_set(
     OV_INSTPTR_iec61131stdfb_MUX          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN8, value);
+    OV_RESULT res;
+	
+	if((pobj->v_IN8.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN8, value);
+	else
+	{
+		res = iec61131stdfb_MUX_setType(pobj, value->value.vartype);
+		if(Ov_OK(res))
+			return ov_variable_setanyvalue(&pobj->v_IN8, value);
+		else
+			return res;
+	}
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_MUX_OUT_get(
@@ -136,20 +265,17 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_MUX_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_MUX_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_MUX pinst = Ov_StaticPtrCast(iec61131stdfb_MUX, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN1);
-	STDFB_FREE_VEC(pinst->v_IN2);
-	STDFB_FREE_VEC(pinst->v_IN3);
-	STDFB_FREE_VEC(pinst->v_IN3);
-	STDFB_FREE_VEC(pinst->v_IN4);
-	STDFB_FREE_VEC(pinst->v_IN5);
-	STDFB_FREE_VEC(pinst->v_IN6);
-	STDFB_FREE_VEC(pinst->v_IN7);
-	STDFB_FREE_VEC(pinst->v_IN8);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN1);
+	iec61131stdfb_freeVec(&pinst->v_IN2);
+	iec61131stdfb_freeVec(&pinst->v_IN3);
+	iec61131stdfb_freeVec(&pinst->v_IN4);
+	iec61131stdfb_freeVec(&pinst->v_IN5);
+	iec61131stdfb_freeVec(&pinst->v_IN6);
+	iec61131stdfb_freeVec(&pinst->v_IN7);
+	iec61131stdfb_freeVec(&pinst->v_IN8);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -167,7 +293,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUX_typemethod(
 	
     OV_INSTPTR_iec61131stdfb_MUX pinst = Ov_StaticPtrCast(iec61131stdfb_MUX, pfb);
 
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	
 	switch(pinst->v_K)
 	{

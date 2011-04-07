@@ -60,6 +60,7 @@
 #include "stdfb_macros.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
+#include "helper.h"
 
 
 
@@ -77,14 +78,50 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_SEL_IN0_set(
     OV_INSTPTR_iec61131stdfb_SEL          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN0, value);
+    if((pobj->v_IN0.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN0, value);
+	else
+	{
+		if(iec61131stdfb_isConnected(Ov_PtrUpCast(fb_functionblock, pobj)))
+			return OV_ERR_NOACCESS;
+		else if((value->value.vartype & OV_VT_KSMASK) == OV_VT_VOID)
+			return OV_ERR_BADPARAM;
+		else
+		{
+			iec61131stdfb_freeVec(&pobj->v_IN0);
+			iec61131stdfb_freeVec(&pobj->v_IN1);
+			iec61131stdfb_freeVec(&pobj->v_OUT);
+			pobj->v_IN0.value.vartype = value->value.vartype;
+			pobj->v_IN1.value.vartype = value->value.vartype;
+			pobj->v_OUT.value.vartype = value->value.vartype;
+			return ov_variable_setanyvalue(&pobj->v_IN0, value);
+		}
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_SEL_IN1_set(
     OV_INSTPTR_iec61131stdfb_SEL          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN1, value);
+    if((pobj->v_IN1.value.vartype & OV_VT_KSMASK) == (value->value.vartype & OV_VT_KSMASK))
+		return ov_variable_setanyvalue(&pobj->v_IN1, value);
+	else
+	{
+		if(iec61131stdfb_isConnected(Ov_PtrUpCast(fb_functionblock, pobj)))
+			return OV_ERR_NOACCESS;
+		else if((value->value.vartype & OV_VT_KSMASK) == OV_VT_VOID)
+			return OV_ERR_BADPARAM;
+		else
+		{
+			iec61131stdfb_freeVec(&pobj->v_IN0);
+			iec61131stdfb_freeVec(&pobj->v_IN1);
+			iec61131stdfb_freeVec(&pobj->v_OUT);
+			pobj->v_IN0.value.vartype = value->value.vartype;
+			pobj->v_IN1.value.vartype = value->value.vartype;
+			pobj->v_OUT.value.vartype = value->value.vartype;
+			return ov_variable_setanyvalue(&pobj->v_IN1, value);
+		}
+	}
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_SEL_OUT_get(
@@ -96,13 +133,11 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_SEL_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_SEL_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_SEL pinst = Ov_StaticPtrCast(iec61131stdfb_SEL, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN0);
-	STDFB_FREE_VEC(pinst->v_IN1);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN0);
+	iec61131stdfb_freeVec(&pinst->v_IN1);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -119,7 +154,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SEL_typemethod(
 	
     OV_INSTPTR_iec61131stdfb_SEL pinst = Ov_StaticPtrCast(iec61131stdfb_SEL, pfb);
 	
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	
 		
 	if(pinst->v_G)

@@ -668,7 +668,8 @@ CLASS SHL : CLASS fb/functionblock
     COMMENT = "Multiplexer Function";
     VARIABLES
     	K	:	UINT		     			HAS_SET_ACCESSOR
-            FLAGS = "i";
+            FLAGS = "i"
+			INITIALVALUE = 1;
     	IN1 :	ANY			     			HAS_SET_ACCESSOR
             FLAGS = "i";
     	IN2 :	ANY			     			HAS_SET_ACCESSOR

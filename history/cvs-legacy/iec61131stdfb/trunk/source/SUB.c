@@ -62,21 +62,91 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_string.h"
+#include "helper.h"
 
 #include <math.h>
+
+OV_RESULT
+iec61131stdfb_SUB_setType
+(OV_INSTPTR_iec61131stdfb_SUB pobj, OV_VAR_TYPE type)
+{
+  if (iec61131stdfb_isConnected (Ov_PtrUpCast (fb_functionblock, pobj)))
+    return OV_ERR_NOACCESS;
+  else
+  {
+    
+    switch(type & OV_VT_KSMASK)
+	{
+		case OV_VT_INT:
+		case OV_VT_UINT:
+		case OV_VT_SINGLE:
+		case OV_VT_DOUBLE:
+		case OV_VT_BYTE:
+		case OV_VT_TIME_SPAN:
+		case OV_VT_INT_VEC:
+		case OV_VT_UINT_VEC:
+		case OV_VT_SINGLE_VEC:
+		case OV_VT_DOUBLE_VEC:
+		case OV_VT_BYTE_VEC:
+			pobj->v_IN1.value.vartype = type;
+			pobj->v_IN2.value.vartype = type;
+			pobj->v_OUT.value.vartype = type;
+			return OV_ERR_OK;
+		default:
+			return OV_ERR_BADPARAM;
+	}
+		return OV_ERR_GENERIC;
+  }
+}
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_SUB_IN1_set(
     OV_INSTPTR_iec61131stdfb_SUB          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN1, value);
+    OV_RESULT res;
+  
+  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN1.value.vartype & OV_VT_KSMASK))
+    return ov_variable_setanyvalue (&pobj->v_IN1, value);
+  else	if((value->value.vartype & OV_VT_KSMASK) != OV_VT_TIME)
+  {
+    iec61131stdfb_freeVec(&pobj->v_IN1);
+	iec61131stdfb_freeVec(&pobj->v_IN2);
+	iec61131stdfb_freeVec(&pobj->v_OUT);		//free memory of preexisting out-vector
+	res = iec61131stdfb_SUB_setType (pobj, value->value.vartype); 
+    if (Ov_OK (res))
+      return ov_variable_setanyvalue (&pobj->v_IN1, value);
+    else return res;
+  }
+  else	if(!iec61131stdfb_isConnected(Ov_PtrUpCast(fb_functionblock, pobj)))
+	{
+		iec61131stdfb_freeVec(&pobj->v_IN2);
+		iec61131stdfb_freeVec(&pobj->v_OUT);		//free memory of preexisting out-vector
+		pobj->v_IN2.value.vartype = OV_VT_TIME_SPAN;
+		pobj->v_OUT.value.vartype = OV_VT_TIME;
+		return ov_variable_setanyvalue (&pobj->v_IN1, value);
+	}
+	else
+		return OV_ERR_NOACCESS;
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_SUB_IN2_set(
     OV_INSTPTR_iec61131stdfb_SUB          pobj,
     const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_IN2, value);
+     OV_RESULT res;
+  
+  if ((value->value.vartype & OV_VT_KSMASK) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK))
+    return ov_variable_setanyvalue (&pobj->v_IN2, value);
+  else
+  {
+    iec61131stdfb_freeVec(&pobj->v_IN1);
+	iec61131stdfb_freeVec(&pobj->v_IN2);
+	iec61131stdfb_freeVec(&pobj->v_OUT);		//free memory of preexisting out-vector
+	res = iec61131stdfb_SUB_setType (pobj, value->value.vartype); 
+    if (Ov_OK (res))
+      return ov_variable_setanyvalue (&pobj->v_IN2, value);
+    else return res;
+  }
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_SUB_OUT_get(
@@ -88,13 +158,11 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_SUB_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_SUB_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_SUB pinst = Ov_StaticPtrCast(iec61131stdfb_SUB, pobj);
 	
-	STDFB_FREE_VEC(pinst->v_IN1);
-	STDFB_FREE_VEC(pinst->v_IN2);
-	STDFB_FREE_VEC(pinst->v_OUT);
+	iec61131stdfb_freeVec(&pinst->v_IN1);
+	iec61131stdfb_freeVec(&pinst->v_IN2);
+	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
 }
 
@@ -113,7 +181,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SUB_typemethod(
 	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))
 	{
 		
-		STDFB_FREE_VEC(pinst->v_OUT);		//free memory of preexisting out-vector
+		iec61131stdfb_freeVec(&pinst->v_OUT);		//free memory of preexisting out-vector
 		if(!(pinst->v_IN1.value.vartype & OV_VT_ISVECTOR))
 		{
 			switch(pinst->v_IN1.value.vartype & OV_VT_KSMASK)
@@ -153,12 +221,6 @@ OV_DLLFNCEXPORT void iec61131stdfb_SUB_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_BYTE;
 					pinst->v_OUT.value.valueunion.val_byte = pinst->v_IN1.value.valueunion.val_byte - pinst->v_IN2.value.valueunion.val_byte;
 					ov_logfile_warning("%s: subtraction of bitstring", pinst->v_identifier);
-				break;
-				
-				case OV_VT_BOOL:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL;
-					pinst->v_OUT.value.valueunion.val_bool = pinst->v_IN1.value.valueunion.val_bool ^ pinst->v_IN2.value.valueunion.val_bool;
-					ov_logfile_warning("%s: subtraction of boolean, applying logical XOR", pinst->v_identifier);
 				break;
 				
 				case OV_VT_TIME_SPAN:
@@ -204,33 +266,6 @@ OV_DLLFNCEXPORT void iec61131stdfb_SUB_typemethod(
 					STDFB_VEC_SUB(BYTE, byte);
 				break;
 				
-				case OV_VT_BOOL_VEC:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL_VEC;
-					ov_logfile_warning("%s: subtraction of boolean, applying logical XOR", pinst->v_identifier);
-					if(pinst->v_IN1.value.valueunion.val_bool_vec.veclen == pinst->v_IN2.value.valueunion.val_bool_vec.veclen)
-					{
-						if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_bool_vec, pinst->v_IN1.value.valueunion.val_bool_vec.veclen, BOOL)))
-						{
-							for(i=0; i<pinst->v_IN1.value.valueunion.val_bool_vec.veclen; i++)
-							{
-								pinst->v_OUT.value.valueunion.val_bool_vec.value[i] = pinst->v_IN1.value.valueunion.val_bool_vec.value[i] ^ 
-									pinst->v_IN2.value.valueunion.val_bool_vec.value[i];
-							}
-						}
-						else
-						{
-							ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-							return;
-						}
-					}
-					else
-					{
-						ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);
-						Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_bool_vec, 0, BOOL);
-					}
-					
-				break;
-						
 				default:
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
@@ -257,7 +292,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SUB_typemethod(
 		{
 			pinst->v_OUT.value.vartype = OV_VT_BOOL;
 			pinst->v_OUT.value.valueunion.val_bool = FALSE;
-			STDFB_FREE_VEC(pinst->v_OUT);
+			iec61131stdfb_freeVec(&pinst->v_OUT);
 			ov_logfile_error("%s: trying to use inputs of different types for SUB-block", pinst->v_identifier); 
 			return;
 		}
