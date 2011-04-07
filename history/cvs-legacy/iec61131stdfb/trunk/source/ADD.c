@@ -161,14 +161,32 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ADD_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_ADD_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_ADD pinst = Ov_StaticPtrCast(iec61131stdfb_ADD, pobj);
 	
 	iec61131stdfb_freeVec(&pinst->v_IN1);
 	iec61131stdfb_freeVec(&pinst->v_IN2);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
+}
+
+OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ADD_constructor(OV_INSTPTR_ov_object pobj) {
+
+	OV_RESULT res;
+	OV_INSTPTR_iec61131stdfb_ADD pinst = Ov_StaticPtrCast(iec61131stdfb_ADD, pobj);
+	
+	res = ov_object_constructor(pobj);
+	if(Ov_OK(res))
+	{
+		pinst->v_IN1.value.valueunion.val_double = 0;
+		pinst->v_IN2.value.valueunion.val_double = 0;
+		pinst->v_OUT.value.valueunion.val_double = 0;
+		pinst->v_IN1.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN2.value.vartype = OV_VT_SINGLE;
+		pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+		return OV_ERR_OK;
+	}
+	else
+		return res;
 }
 
 

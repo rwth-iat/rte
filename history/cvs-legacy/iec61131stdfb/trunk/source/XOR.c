@@ -151,6 +151,27 @@ OV_DLLFNCEXPORT void iec61131stdfb_XOR_shutdown(OV_INSTPTR_ov_object pobj) {
 }
 
 
+OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_XOR_constructor(OV_INSTPTR_ov_object pobj) {
+
+	OV_RESULT res;
+	OV_INSTPTR_iec61131stdfb_XOR pinst = Ov_StaticPtrCast(iec61131stdfb_XOR, pobj);
+	
+	res = ov_object_constructor(pobj);
+	
+	if(Ov_OK(res))
+	{
+		pinst->v_IN1.value.valueunion.val_double = 0;
+		pinst->v_IN2.value.valueunion.val_double = 0;
+		pinst->v_OUT.value.valueunion.val_double = 0;
+		pinst->v_IN1.value.vartype = OV_VT_BOOL;
+		pinst->v_IN2.value.vartype = OV_VT_BOOL;
+		pinst->v_OUT.value.vartype = OV_VT_BOOL;
+		return OV_ERR_OK;
+	}
+	else
+		return res;
+}
+
 OV_DLLFNCEXPORT void iec61131stdfb_XOR_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc

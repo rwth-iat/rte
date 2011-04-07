@@ -280,6 +280,39 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUX_shutdown(OV_INSTPTR_ov_object pobj) {
 }
 
 
+OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_MUX_constructor(OV_INSTPTR_ov_object pobj) {
+
+	OV_RESULT res;
+	OV_INSTPTR_iec61131stdfb_MUX pinst = Ov_StaticPtrCast(iec61131stdfb_MUX, pobj);
+	
+	res = ov_object_constructor(pobj);
+	
+	if(Ov_OK(res))
+	{
+		pinst->v_IN1.value.valueunion.val_double = 0;
+		pinst->v_IN2.value.valueunion.val_double = 0;
+		pinst->v_IN3.value.valueunion.val_double = 0;
+		pinst->v_IN4.value.valueunion.val_double = 0;
+		pinst->v_IN5.value.valueunion.val_double = 0;
+		pinst->v_IN6.value.valueunion.val_double = 0;
+		pinst->v_IN7.value.valueunion.val_double = 0;
+		pinst->v_IN8.value.valueunion.val_double = 0;
+		pinst->v_OUT.value.valueunion.val_double = 0;
+		pinst->v_IN1.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN2.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN3.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN4.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN5.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN6.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN7.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN8.value.vartype = OV_VT_SINGLE;
+		pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+		return OV_ERR_OK;
+	}
+	else
+		return res;
+}
+
 OV_DLLFNCEXPORT void iec61131stdfb_MUX_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc

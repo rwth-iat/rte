@@ -211,6 +211,29 @@ OV_DLLFNCEXPORT void iec61131stdfb_LIMIT_shutdown(OV_INSTPTR_ov_object pobj) {
 }
 
 
+OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_LIMIT_constructor(OV_INSTPTR_ov_object pobj) {
+
+	OV_RESULT res;
+	OV_INSTPTR_iec61131stdfb_LIMIT pinst = Ov_StaticPtrCast(iec61131stdfb_LIMIT, pobj);
+	
+	res = ov_object_constructor(pobj);
+	
+	if(Ov_OK(res))
+	{
+		pinst->v_IN.value.valueunion.val_double = 0;
+		pinst->v_MX.value.valueunion.val_double = 0;
+		pinst->v_MN.value.valueunion.val_double = 0;
+		pinst->v_OUT.value.valueunion.val_double = 0;
+		pinst->v_IN.value.vartype = OV_VT_SINGLE;
+		pinst->v_MX.value.vartype = OV_VT_SINGLE;
+		pinst->v_MN.value.vartype = OV_VT_SINGLE;
+		pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+		return OV_ERR_OK;
+	}
+	else
+		return res;
+}
+
 OV_DLLFNCEXPORT void iec61131stdfb_LIMIT_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc

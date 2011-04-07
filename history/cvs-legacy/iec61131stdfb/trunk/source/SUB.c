@@ -167,6 +167,27 @@ OV_DLLFNCEXPORT void iec61131stdfb_SUB_shutdown(OV_INSTPTR_ov_object pobj) {
 }
 
 
+OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_SUB_constructor(OV_INSTPTR_ov_object pobj) {
+
+	OV_RESULT res;
+	OV_INSTPTR_iec61131stdfb_SUB pinst = Ov_StaticPtrCast(iec61131stdfb_SUB, pobj);
+	
+	res = ov_object_constructor(pobj);
+	
+	if(Ov_OK(res))
+	{
+		pinst->v_IN1.value.valueunion.val_double = 0;
+		pinst->v_IN2.value.valueunion.val_double = 0;
+		pinst->v_OUT.value.valueunion.val_double = 0;
+		pinst->v_IN1.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN2.value.vartype = OV_VT_SINGLE;
+		pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+		return OV_ERR_OK;
+	}
+	else
+		return res;
+}
+
 OV_DLLFNCEXPORT void iec61131stdfb_SUB_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc

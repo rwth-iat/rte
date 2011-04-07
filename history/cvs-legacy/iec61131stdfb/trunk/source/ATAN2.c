@@ -81,13 +81,17 @@ iec61131stdfb_ATAN2_setType
 		case OV_VT_UINT:
 		case OV_VT_BYTE:
 		case OV_VT_SINGLE:
+			pobj->v_IN1.value.vartype = type;
+			pobj->v_IN2.value.vartype = type;
+			pobj->v_OUT.value.vartype = OV_VT_SINGLE;
+			return OV_ERR_OK;
 		case OV_VT_INT_VEC:
 		case OV_VT_UINT_VEC:
 		case OV_VT_BYTE_VEC:
 		case OV_VT_SINGLE_VEC:
 			pobj->v_IN1.value.vartype = type;
 			pobj->v_IN2.value.vartype = type;
-			pobj->v_OUT.value.vartype = OV_VT_SINGLE;
+			pobj->v_OUT.value.vartype = OV_VT_SINGLE_VEC;
 			return OV_ERR_OK;
 		case OV_VT_DOUBLE:
 		case OV_VT_DOUBLE_VEC:
@@ -160,6 +164,27 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN2_shutdown(OV_INSTPTR_ov_object pobj) {
 	iec61131stdfb_freeVec(&pinst->v_IN2);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
 	ov_object_shutdown(pobj);
+}
+
+OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ATAN2_constructor(OV_INSTPTR_ov_object pobj) {
+
+	OV_RESULT res;
+	OV_INSTPTR_iec61131stdfb_ATAN2 pinst = Ov_StaticPtrCast(iec61131stdfb_ATAN2, pobj);
+	
+	res = ov_object_constructor(pobj);
+	
+	if(Ov_OK(res))
+	{
+		pinst->v_IN1.value.valueunion.val_double = 0;
+		pinst->v_IN2.value.valueunion.val_double = 0;
+		pinst->v_OUT.value.valueunion.val_double = 0;
+		pinst->v_IN1.value.vartype = OV_VT_SINGLE;
+		pinst->v_IN2.value.vartype = OV_VT_SINGLE;
+		pinst->v_OUT.value.vartype = OV_VT_SINGLE;
+		return OV_ERR_OK;
+	}
+	else
+		return res;
 }
 
 
