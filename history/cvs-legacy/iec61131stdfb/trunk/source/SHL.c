@@ -88,8 +88,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SHL_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec61131stdfb_SHL pinst = Ov_StaticPtrCast(iec61131stdfb_SHL, pobj);
-
+    
     /* do what */
 
     /* set the object's state to "shut down" */

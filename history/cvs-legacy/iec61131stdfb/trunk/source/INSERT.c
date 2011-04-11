@@ -187,14 +187,22 @@ OV_DLLFNCEXPORT void iec61131stdfb_INSERT_typemethod(
 	else
 	{
 		if(Ov_OK(ov_string_setvalue(&pinst->v_OUT, pinst->v_IN1)))
+		{
 			if(Ov_OK(ov_string_append(&pinst->v_OUT, pinst->v_IN2)))
+			{	
 				;
+			}
 			else
+			{
 				if(ov_string_getlength(pinst->v_IN2) > 0)
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+			}
+		}
 		else
+		{
 			if(ov_string_getlength(pinst->v_IN1) > 0)
 				ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
+		}
 		
 		if(pinst->v_P > in_length)
 			ov_logfile_alert("%s: position is not inside input string, concatinating", pinst->v_identifier);

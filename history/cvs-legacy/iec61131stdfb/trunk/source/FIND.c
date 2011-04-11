@@ -86,8 +86,6 @@ OV_DLLFNCEXPORT OV_UINT iec61131stdfb_FIND_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_FIND_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	unsigned int i;
-	
 	OV_INSTPTR_iec61131stdfb_FIND pinst = Ov_StaticPtrCast(iec61131stdfb_FIND, pobj);
 	
 	ov_string_setvalue(&pinst->v_IN1, "");

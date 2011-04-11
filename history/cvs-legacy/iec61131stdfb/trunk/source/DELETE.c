@@ -116,8 +116,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 	unsigned int in_length;
 	unsigned int end_length;
 	
-	OV_STRING p_begin;
-	OV_STRING p_end;
+	OV_STRING p_begin = NULL;
+	OV_STRING p_end = NULL;
 	
 	
     OV_INSTPTR_iec61131stdfb_DELETE pinst = Ov_StaticPtrCast(iec61131stdfb_DELETE, pfb);
@@ -145,7 +145,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				}
 				for(i=0; i < pinst->v_P - 1; i++)
 					p_begin[i] = pinst->v_IN[i];
-				p_begin[i] = 0;
+				p_begin[i] = '\0';
 				
 				if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT, p_begin)))
 				{
@@ -169,7 +169,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				
 				for(i=0; i < end_length; i++)
 					p_end[i] = pinst->v_IN[i + pinst->v_P + pinst->v_L - 1];
-				p_end[i] = 0;
+				p_end[i] = '\0';
 				
 				if(Ov_Fail(ov_string_append(&pinst->v_OUT, p_end)))
 				{
@@ -180,14 +180,13 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				ov_free(p_end);
 			}
 			else
-				ov_logfile_warning("%s: requested deletion over the end of inpust string", pinst->v_identifier);
+				ov_logfile_warning("%s: requested deletion over the end of input string", pinst->v_identifier);
 		}
 		else
 		{
 			if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT, pinst->v_IN)))
 			{
 				ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-				ov_free(p_begin);
 				return;
 			}
 		}
