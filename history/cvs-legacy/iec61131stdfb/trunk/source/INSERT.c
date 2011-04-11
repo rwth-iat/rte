@@ -188,11 +188,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_INSERT_typemethod(
 	{
 		if(Ov_OK(ov_string_setvalue(&pinst->v_OUT, pinst->v_IN1)))
 		{
-			if(Ov_OK(ov_string_append(&pinst->v_OUT, pinst->v_IN2)))
-			{	
-				;
-			}
-			else
+			if(Ov_Fail(ov_string_append(&pinst->v_OUT, pinst->v_IN2)))
 			{
 				if(ov_string_getlength(pinst->v_IN2) > 0)
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
