@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.164 $
-*	$Date: 2011-03-21 12:54:22 $
+*	$Revision: 1.165 $
+*	$Date: 2011-04-12 15:39:59 $
 *
 *	History:
 *	--------
@@ -953,7 +953,7 @@ HMI.prototype = {
 			this.refreshSheet();
 		};
 		//spaces in objectname are encoded as %20 within OV
-		document.title = "//"+HMI.InputHost.value+decodeURI(Sheet)+" - ACPLT/HMI";
+		document.title = "//"+HMI.PossServers.options[HMI.PossServers.selectedIndex].value+decodeURI(Sheet)+" - ACPLT/HMI";
 		if (HMI.autoKeepHeader === false && !HMI.ErrorOutput.firstChild){
 			if (!HMI.InfoOutput){
 				//no info output available => hide
@@ -1703,7 +1703,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-03-21 12:54:22 $";
+var filedate = "$Date: 2011-04-12 15:39:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
