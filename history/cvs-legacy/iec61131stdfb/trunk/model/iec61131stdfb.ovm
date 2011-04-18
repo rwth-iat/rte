@@ -1062,4 +1062,337 @@ CLASS SHL : CLASS fb/functionblock
 /******************************************************************************
 	Validate Functions (Features)											???
 ******************************************************************************/	 
+
+/******************************************************************************
+	Standard bistable Blocks
+******************************************************************************/	
+
+CLASS SR : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "FlipFlop (set dominant)";
+    VARIABLES
+    	S1 :	BOOL
+            FLAGS = "i"
+			COMMENT = "Set"
+			INITIALVALUE = FALSE;
+    	R :	BOOL
+            FLAGS = "i"
+			COMMENT = "Reset"
+			INITIALVALUE = FALSE;
+    	Q1 :	BOOL
+            FLAGS = "o"
+            COMMENT = "Output"
+			INITIALVALUE = FALSE;
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ 
+ CLASS RS : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "FlipFlop (reset dominant)";
+    VARIABLES
+    	S :	BOOL
+            FLAGS = "i"
+			COMMENT = "Set"
+			INITIALVALUE = FALSE;
+    	R1 :	BOOL
+            FLAGS = "i"
+			COMMENT = "Reset"
+			INITIALVALUE = FALSE;
+    	Q1 :	BOOL
+            FLAGS = "o"
+            COMMENT = "Output"
+			INITIALVALUE = FALSE;
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ 
+ /******************************************************************************
+	Edge detection
+******************************************************************************/	
+
+CLASS RTRIG : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Rising Edge Trigger";
+    VARIABLES
+    	CLK :	BOOL
+            FLAGS = "i"
+			COMMENT = "Clock"
+			INITIALVALUE = FALSE;
+    	Q :	BOOL
+            FLAGS = "o"
+            COMMENT = "Output"
+			INITIALVALUE = FALSE;
+		LastCLK	:	BOOL
+			FLAGS = "n"
+			COMMENT = "CLK in last cycle"
+			INITIALVALUE = FALSE;
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ 
+ CLASS FTRIG : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Falling Edge Trigger";
+    VARIABLES
+    	CLK :	BOOL
+            FLAGS = "i"
+			COMMENT = "Clock"
+			INITIALVALUE = FALSE;
+    	Q :	BOOL
+            FLAGS = "o"
+            COMMENT = "Output"
+			INITIALVALUE = FALSE;
+		LastCLK	:	BOOL
+			FLAGS = "n"
+			COMMENT = "CLK in last cycle"
+			INITIALVALUE = FALSE;
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ 
+ 
+ /******************************************************************************
+	Counters
+******************************************************************************/	
+
+CLASS CTU : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Up Counter";
+    VARIABLES
+    	CU :	BOOL
+            FLAGS = "i"
+			COMMENT = "Cunting signal"
+			INITIALVALUE = FALSE;
+    	Q :	BOOL
+            FLAGS = "o"
+            COMMENT = "Quality Output (Q >= PV)"
+			INITIALVALUE = FALSE;
+		LastCLK	:	BOOL
+			FLAGS = "n"
+			COMMENT = "CU in last cycle"
+			INITIALVALUE = FALSE;
+		R	:	BOOL
+			FLAGS = "i"
+			COMMENT = "Reset Counter"
+			INITIALVALUE = FALSE;
+		PV	:	INT
+			FLAGS = "i"
+			COMMENT = "Compare Value"
+			INITIALVALUE = 100;
+		PVmax	:	INT
+			FLAGS = "i"
+			COMMENT = "MaxValue"
+			INITIALVALUE = 1000000000;
+		CV	:	INT
+			FLAGS = "o"
+			COMMENT = "Counter Value"
+			INITIALVALUE = 0;
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ 
+ CLASS CTD : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Down Counter";
+    VARIABLES
+    	CD :	BOOL
+            FLAGS = "i"
+			COMMENT = "Cunting signal"
+			INITIALVALUE = FALSE;
+    	Q :	BOOL
+            FLAGS = "o"
+            COMMENT = "Quality Output (Q <= 0)"
+			INITIALVALUE = FALSE;
+		LastCLK	:	BOOL
+			FLAGS = "n"
+			COMMENT = "CD in last cycle"
+			INITIALVALUE = FALSE;
+		LD	:	BOOL
+			FLAGS = "i"
+			COMMENT = "Reset Counter to PV"
+			INITIALVALUE = FALSE;
+		PV	:	INT
+			FLAGS = "i"
+			COMMENT = "ResetValue"
+			INITIALVALUE = 100;
+		PVmin	:	INT
+			FLAGS = "i"
+			COMMENT = "MinValue"
+			INITIALVALUE = -1000000000;
+		CV	:	INT
+			FLAGS = "o"
+			COMMENT = "Counter Value"
+			INITIALVALUE = 0;
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ CLASS CTUD : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Up-Down Counter";
+    VARIABLES
+    	CU :	BOOL
+            FLAGS = "i"
+			COMMENT = "Cunting signal Up"
+			INITIALVALUE = FALSE;
+		CD :	BOOL
+            FLAGS = "i"
+			COMMENT = "Cunting signal Down"
+			INITIALVALUE = FALSE;
+    	QD :	BOOL
+            FLAGS = "o"
+            COMMENT = "Quality Output (Q <= 0)"
+			INITIALVALUE = FALSE;
+		QU	:	BOOL
+			FLAGS = "o"
+			COMMENT = "Quality Output (Q >= PV)"
+			INITIALVALUE = FALSE;
+		LastCLKU	:	BOOL
+			FLAGS = "n"
+			COMMENT = "CU in last cycle"
+			INITIALVALUE = FALSE;
+		LastCLKD	:	BOOL
+			FLAGS = "n"
+			COMMENT = "CD in last cycle"
+			INITIALVALUE = FALSE;
+		R	:	BOOL
+			FLAGS = "i"
+			COMMENT = "Reset Counter to 0 (dominant over LD)"
+			INITIALVALUE = FALSE;
+		LD	:	BOOL
+			FLAGS = "i"
+			COMMENT = "Reset Counter to PV"
+			INITIALVALUE = FALSE;
+		PV	:	INT
+			FLAGS = "i"
+			COMMENT = "ResetValue"
+			INITIALVALUE = 100;
+		PVmax	:	INT
+			FLAGS = "i"
+			COMMENT = "MaxValue"
+			INITIALVALUE = 1000000000;
+		PVmin	:	INT
+			FLAGS = "i"
+			COMMENT = "MinValue"
+			INITIALVALUE = -1000000000;
+		CV	:	INT
+			FLAGS = "o"
+			COMMENT = "Counter Value"
+			INITIALVALUE = 0;
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ 
+/******************************************************************************
+	Timers
+******************************************************************************/	
+
+CLASS TP : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Timed Pulse";
+    VARIABLES
+    	IN :	BOOL
+            FLAGS = "i"
+			COMMENT = "Triggering signal"
+			INITIALVALUE = FALSE;
+    	Q :	BOOL
+            FLAGS = "o"
+            COMMENT = "Output"
+			INITIALVALUE = FALSE;
+		TriggerTime	:	TIME
+			FLAGS = "n"
+			COMMENT = "Time of Triggering";
+		PT	:	TIME_SPAN
+			FLAGS = "i"
+			COMMENT = "Pulse Time";
+		ET	:	TIME_SPAN
+			FLAGS = "o"
+			COMMENT = "Elapsed Time since Triggering";
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+
+ 
+ CLASS TON : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "On-Delay";
+    VARIABLES
+    	IN :	BOOL
+            FLAGS = "i"
+			COMMENT = "Triggering signal"
+			INITIALVALUE = FALSE;
+    	Q :	BOOL
+            FLAGS = "o"
+            COMMENT = "Output"
+			INITIALVALUE = FALSE;
+		TriggerTime	:	TIME
+			FLAGS = "n"
+			COMMENT = "Time of Triggering";
+		PT	:	TIME_SPAN
+			FLAGS = "i"
+			COMMENT = "Pulse Time";
+		ET	:	TIME_SPAN
+			FLAGS = "o"
+			COMMENT = "Elapsed Time since Triggering";
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
+ 
+ CLASS TOFF : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Off-Delay";
+    VARIABLES
+    	IN :	BOOL
+            FLAGS = "i"
+			COMMENT = "Triggering signal"
+			INITIALVALUE = FALSE;
+    	Q :	BOOL
+            FLAGS = "o"
+            COMMENT = "Output"
+			INITIALVALUE = FALSE;
+		TriggerTime	:	TIME
+			FLAGS = "n"
+			COMMENT = "Time of Triggering";
+		PT	:	TIME_SPAN
+			FLAGS = "i"
+			COMMENT = "Pulse Time";
+		ET	:	TIME_SPAN
+			FLAGS = "o"
+			COMMENT = "Elapsed Time since Triggering";
+		Invert	:	BOOL
+			FLAGS = "p"
+			COMMENT = "TRUE: Trigger on falliung edge"
+			INITIALVALUE = FALSE;
+    END_VARIABLES;
+	OPERATIONS
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
+ 
 END_LIBRARY;
