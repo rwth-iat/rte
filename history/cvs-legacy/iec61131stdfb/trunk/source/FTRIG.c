@@ -68,7 +68,14 @@ OV_DLLFNCEXPORT void iec61131stdfb_FTRIG_typemethod(
     *   local variables
     */
     OV_INSTPTR_iec61131stdfb_FTRIG pinst = Ov_StaticPtrCast(iec61131stdfb_FTRIG, pfb);
-
+	
+	if((!pinst->v_CLK) && pinst->v_LastCLK)
+		pinst->v_Q = TRUE;
+	else
+		pinst->v_Q = FALSE;
+	
+	pinst->v_LastCLK = pinst->v_CLK;
+	
     return;
 }
 

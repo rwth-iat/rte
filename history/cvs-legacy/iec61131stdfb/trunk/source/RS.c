@@ -68,7 +68,13 @@ OV_DLLFNCEXPORT void iec61131stdfb_RS_typemethod(
     *   local variables
     */
     OV_INSTPTR_iec61131stdfb_RS pinst = Ov_StaticPtrCast(iec61131stdfb_RS, pfb);
-
+	
+	if(pinst->v_R1)
+		pinst->v_Q1 = FALSE;
+	else
+		if(pinst->v_S)
+			pinst->v_Q1 = TRUE;
+	
     return;
 }
 
