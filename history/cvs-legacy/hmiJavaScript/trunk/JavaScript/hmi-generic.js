@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.37 $
-*	$Date: 2010-10-18 16:01:32 $
+*	$Revision: 1.38 $
+*	$Date: 2011-04-20 15:05:08 $
 *
 *	History:
 *	--------
@@ -102,6 +102,17 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 	try{ return new ActiveXObject("Microsoft.XMLHTTP"); }catch(e){}
 	throw new Error("Could not find an XMLHttpRequest alternative.");
 };
+/*********************************
+	Feature - emulate String trim() in old browsers
+	trim is native on: Firefox 3.5, Internet Explorer 9, Webkit since Okt 2009, Opera since 2010
+*********************************/
+if (!String.prototype.trim) {
+	String.prototype.trim = function(){
+		//performance test:
+		//http://blog.stevenlevithan.com/archives/faster-trim-javascript
+		return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+	};
+}
 
 /*********************************
 	Crossbrowser Eventhandling
@@ -240,7 +251,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2010-10-18 16:01:32 $";
+var filedate = "$Date: 2011-04-20 15:05:08 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

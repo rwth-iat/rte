@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.166 $
-*	$Date: 2011-04-12 15:47:22 $
+*	$Revision: 1.167 $
+*	$Date: 2011-04-20 15:05:08 $
 *
 *	History:
 *	--------
@@ -822,14 +822,10 @@ HMI.prototype = {
 		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
+		//get rid of spaces in the textinput
+		HMI.InputHost.value = HMI.InputHost.value.trim();
 		if (HMI.InputHost.value.length === 0){
 			HMI.InputHost.value = window.location.hostname;
-		}else if(HMI.InputHost.value.trim){
-			HMI.InputHost.value = HMI.InputHost.value.trim();
-		}else if(HMI.InputHost.value.replace){
-			//very fast in IE 6-8, newer browsers have native trim
-			//http://blog.stevenlevithan.com/archives/faster-trim-javascript
-			HMI.InputHost.value = HMI.InputHost.value.replace(/^\s*((?:[\S\s]*\S)?)\s*$/, '$1');
 		}
 		
 		//if the hostname is identical to the http server, translate into "localhost"
@@ -1589,6 +1585,7 @@ HMI.prototype = {
 			}else if(window.opera && window.opera.postError){
 				window.opera.postError("HMI_DEBUG: "+ text);
 			}else if(window.console && window.console.info){
+				//some consoles (like ie9) does not implement debug but info
 				window.console.info("HMI_DEBUG: "+text);
 			}
 		}
@@ -1704,7 +1701,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-04-12 15:47:22 $";
+var filedate = "$Date: 2011-04-20 15:05:08 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
