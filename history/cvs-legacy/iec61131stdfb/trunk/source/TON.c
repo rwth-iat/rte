@@ -68,7 +68,47 @@ OV_DLLFNCEXPORT void iec61131stdfb_TON_typemethod(
     *   local variables
     */
     OV_INSTPTR_iec61131stdfb_TON pinst = Ov_StaticPtrCast(iec61131stdfb_TON, pfb);
-
-    return;
+	OV_TIME tTime;
+	OV_TIME_SPAN tTimeSpan;
+	
+	if(pinst->v_IN && (!pinst->v_Counting))
+	{
+		ov_time_gettime(&pinst->v_TriggerTime);
+		pinst->v_Counting = TRUE;
+	}
+	
+	if(pinst->v_Counting)
+	{
+		if(pinst->v_IN)
+		{
+			ov_time_gettime(&tTime);
+			ov_time_diff(&tTimeSpan, &tTime, &pinst->v_TriggerTime);
+					//set ET to time since triggering, if this is not longer than PT
+			if((tTimeSpan.secs < pinst->v_PT.secs) || ((tTimeSpan.secs == pinst->v_PT.secs) && (tTimeSpan.usecs < pinst->v_PT.usecs)))
+			{
+				pinst->v_ET.secs = tTimeSpan.secs;
+				pinst->v_ET.usecs = tTimeSpan.usecs;
+			}
+			else		//reset Q
+			{
+				pinst->v_Q = TRUE;
+				pinst->v_ET.secs = pinst->v_PT.secs;
+				pinst->v_ET.usecs = pinst->v_PT.usecs;
+				
+			}
+		}
+		else
+		{
+			pinst->v_ET.secs = 0;
+			pinst->v_ET.secs = 0;
+			pinst->v_Counting = FALSE;
+			pinst->v_Q = FALSE;
+		}
+	}
+	else
+		if(!pinst->v_IN)		//could be necessary on startup
+			pinst->v_Q = FALSE;
+	
+	return;
 }
 

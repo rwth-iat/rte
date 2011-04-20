@@ -68,7 +68,52 @@ OV_DLLFNCEXPORT void iec61131stdfb_TP_typemethod(
     *   local variables
     */
     OV_INSTPTR_iec61131stdfb_TP pinst = Ov_StaticPtrCast(iec61131stdfb_TP, pfb);
-
+	OV_TIME tTime;
+	OV_TIME_SPAN tTimeSpan;
+	
+	if(pinst->v_IN && (!pinst->v_Counting))
+	{
+		ov_time_gettime(&pinst->v_TriggerTime);
+		pinst->v_Counting = TRUE;
+		pinst->v_Released = FALSE;
+		pinst->v_Q = TRUE;
+	}
+	
+	if(pinst->v_Counting)
+	{
+			//set Released if IN was FALSE during counting 
+		if(!pinst->v_Released)
+			pinst->v_Released = !pinst->v_IN;
+		
+		ov_time_gettime(&tTime);
+		ov_time_diff(&tTimeSpan, &tTime, &pinst->v_TriggerTime);
+				//set ET to time since triggering, if this is not longer than PT
+		if((tTimeSpan.secs < pinst->v_PT.secs) || ((tTimeSpan.secs == pinst->v_PT.secs) && (tTimeSpan.usecs < pinst->v_PT.usecs)))
+		{
+			pinst->v_ET.secs = tTimeSpan.secs;
+			pinst->v_ET.usecs = tTimeSpan.usecs;
+		}
+		else		//reset Q
+		{
+			pinst->v_Q = FALSE;
+			
+				//if IN was not released leave ET = PT
+			if(!pinst->v_Released)
+			{
+				pinst->v_ET.secs = pinst->v_PT.secs;
+				pinst->v_ET.usecs = pinst->v_PT.usecs;
+			}
+			else	//else set ET to 0 and reset counting flag
+			{
+				pinst->v_ET.secs = 0;
+				pinst->v_ET.usecs = 0;
+				
+				pinst->v_Counting = FALSE;
+			}
+		}
+	}
+	
+	
     return;
 }
 

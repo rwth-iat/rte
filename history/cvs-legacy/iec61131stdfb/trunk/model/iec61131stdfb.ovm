@@ -1329,6 +1329,14 @@ CLASS TP : CLASS fb/functionblock
 		ET	:	TIME_SPAN
 			FLAGS = "o"
 			COMMENT = "Elapsed Time since Triggering";
+		Counting	:	BOOL
+			FLAGS = "n"
+			COMMENT = "Timer is currently counting"
+			INITIALVALUE = FALSE;
+		Released	:	BOOL
+			FLAGS = "n"
+			COMMENT = "IN went FALSE during counting"
+			INITIALVALUE = TRUE;
     END_VARIABLES;
 	OPERATIONS
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -1357,7 +1365,11 @@ CLASS TP : CLASS fb/functionblock
 		ET	:	TIME_SPAN
 			FLAGS = "o"
 			COMMENT = "Elapsed Time since Triggering";
-    END_VARIABLES;
+		Counting	:	BOOL
+			FLAGS = "n"
+			COMMENT = "Timer is currently counting"
+			INITIALVALUE = FALSE;
+	END_VARIABLES;
 	OPERATIONS
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -1385,11 +1397,11 @@ CLASS TP : CLASS fb/functionblock
 		ET	:	TIME_SPAN
 			FLAGS = "o"
 			COMMENT = "Elapsed Time since Triggering";
-		Invert	:	BOOL
-			FLAGS = "p"
-			COMMENT = "TRUE: Trigger on falliung edge"
+		Counting	:	BOOL
+			FLAGS = "n"
+			COMMENT = "Timer is currently counting"
 			INITIALVALUE = FALSE;
-    END_VARIABLES;
+	END_VARIABLES;
 	OPERATIONS
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
