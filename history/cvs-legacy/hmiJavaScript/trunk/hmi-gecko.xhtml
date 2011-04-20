@@ -4,7 +4,7 @@
     "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">
 <!--
 /*
-*	Copyright (C) 2010
+*	Copyright (C) 2011
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.48 $
-*	$Date: 2011-03-22 14:28:03 $
+*	$Revision: 1.49 $
+*	$Date: 2011-04-20 09:07:05 $
 *
 *	History:
 *	21-June-2007			St
@@ -80,11 +80,23 @@
 		<title>HMI-Startcenter - XHTML+SVG Version</title>
 		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js" charset="ISO-8859-1"></script>
 		<style type="text/css">
-			@media print {
-				.doNotPrintThis{ display:none; }
-			}
 			body{
 				margin:0;
+			}
+			#idHeaderLeft{
+				text-align:left;
+				padding-left:5px;
+				font-weight:bold;
+				letter-spacing:0.5em;
+				font-size:1.2em;
+				font-family:sans-serif;
+			}
+			#idHeaderMiddle{
+				text-align:center;
+			}
+			#idHeaderRight{
+				text-align:center;
+				font-size:8pt;
 			}
 			#idPlayground{
 				margin:3px;
@@ -98,6 +110,42 @@
 			}
 			#idHeaderRow:hover{
 				background-color:#D1E1FA;
+			}
+			/*
+				style for printing
+			*/
+			@media print {
+				.doNotPrintThis{
+					display:none;
+				}
+			}
+			/*
+				Opera Speed Dial
+			*/
+			@media screen and (view-mode: minimized) {
+				#idHeaderLeft{
+					padding-left:0px;
+					letter-spacing:normal;
+					font-size:small;
+				}
+				#idRefreshTime{
+					display:none;
+				}
+				#idThrobbler{
+					display:none;
+				}
+				#idHost{
+					width:40px;
+					display:none;
+				}
+				#idServers{
+					width:40px;
+					display:none;
+				}
+				#idSheets{
+					width:40px;
+					display:none;
+				}
 			}
 		</style>
 	</head>
@@ -122,13 +170,13 @@
 		<div id="idHideableHeader" class="doNotPrintThis">
 			<table style="width:100%;" class="doNotPrintThis">
 				<tr>
-					<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
+					<td id="idHeaderLeft">
 						HMI - Startcenter
 					</td>
-					<td style="text-align:center;">
+					<td id="idHeaderMiddle">
 						<img src="ACPLT-Logo.gif" alt=""/>
 					</td>
-					<td style="text-align:center;font-size:8pt;">
+					<td id="idHeaderRight">
 					&#169; Lehrstuhl für Prozessleittechnik
 					<div id="idDateOutput"></div>
 					</td>

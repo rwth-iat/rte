@@ -2,7 +2,7 @@
 <!--
 Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzeigen...
 /*
-*	Copyright (C) 2010
+*	Copyright (C) 2011
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.46 $
-*	$Date: 2010-10-08 12:57:30 $
+*	$Revision: 1.47 $
+*	$Date: 2011-04-20 09:07:05 $
 *
 *	History:
 *
@@ -68,11 +68,23 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		<?import namespace="svg" implementation="#AdobeSVG"?>
 		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js" charset="ISO-8859-1" defer async></script>
 		<style type="text/css">
-			@media print {
-				.doNotPrintThis{ display:none; }
-			}
 			body{
 				margin:0;
+			}
+			#idHeaderLeft{
+				text-align:left;
+				padding-left:5px;
+				font-weight:bold;
+				letter-spacing:0.5em;
+				font-size:1.2em;
+				font-family:sans-serif;
+			}
+			#idHeaderMiddle{
+				text-align:center;
+			}
+			#idHeaderRight{
+				text-align:center;
+				font-size:8pt;
 			}
 			#idPlayground{
 				margin:3px;
@@ -86,6 +98,14 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 			}
 			#idHeaderRow:hover{
 				background-color:#D1E1FA;
+			}
+			/*
+				style for printing
+			*/
+			@media print {
+				.doNotPrintThis{
+					display:none;
+				}
 			}
 		</style>
 	</head>
@@ -110,13 +130,13 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 		<div id="idHideableHeader" class="doNotPrintThis">
 			<table style="width:100%;" class="doNotPrintThis">
 				<tr>
-					<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
+					<td id="idHeaderLeft">
 						HMI - Startcenter
 					</td>
-					<td style="text-align:center;">
-						<img src="ACPLT-Logo.gif" alt=""/>
+					<td id="idHeaderMiddle">
+						<img src="ACPLT-Logo.gif" alt="">
 					</td>
-					<td style="text-align:center;font-size:8pt;">
+					<td id="idHeaderRight">
 					&#169; Lehrstuhl für Prozessleittechnik
 					<div id="idDateOutput"></div>
 					</td>
@@ -126,7 +146,7 @@ Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzei
 			<table>
 				<tr>
 					<td style="text-align:right;" title="As seen from KSGateway"><label for="idHost">FB-Host:</label></td>
-					<td><input id="idHost" type="text" size="29" value="" tabindex="2"/></td>
+					<td><input id="idHost" type="text" size="29" value="" tabindex="2" placeholder="as seen from gateway"></td>
 					<td style="text-align:center;"><label for="idRefreshTime">Refresh Time:</label></td>
 					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4"><label for="idRefreshTime">ms</label>
 						<noscript>
