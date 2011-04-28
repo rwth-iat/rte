@@ -107,9 +107,14 @@ switch(pobj.value.vartype & OV_VT_KSMASK) { \
 /*************Umwandlung double in single mit wertebereichsprüfung*****/
 	
 #define STDFB_CONV_DBL_FLT(dbl, flt)	\
-	if((dbl > FLT_MAX) || (dbl < - FLT_MAX))	\
+	if(dbl > FLT_MAX)	\
 	{	\
-		flt = 0;	\
+		flt = (OV_SINGLE) HUGE_VAL;	\
+		ov_logfile_error("%s: Value exceeds range of single", pinst->v_identifier);	\
+	}	\
+	else if(dbl < - FLT_MAX)	\
+	{	\
+		flt = (OV_SINGLE) -HUGE_VAL;	\
 		ov_logfile_error("%s: Value exceeds range of single", pinst->v_identifier);	\
 	}	\
 	else	\
@@ -210,11 +215,15 @@ switch(pobj.value.vartype & OV_VT_KSMASK) { \
 /************** Statusbehandlung für einen Input ********************************/
 
 #define STDFB_STATE(num_in)	\
+	if(STDFB_bad_operation)	\
+		pinst->v_OUT.value.vartype = pinst->v_OUT.value.vartype | OV_VT_HAS_STATE;	\
+		pinst->v_OUT.state = OV_ST_BAD;	\
+/*	else	\
 	if(pinst->v_##num_in.value.vartype & OV_VT_HAS_STATE)	\
 	{	\
 		pinst->v_OUT.value.vartype = pinst->v_OUT.value.vartype | OV_VT_HAS_STATE;	\
 		pinst->v_OUT.state = pinst->v_##num_in.state;	\
-	}
+	}*/		//states are not passed on
 
 	
 /***************** Zeitstempelbehandlung für einen input ************************/

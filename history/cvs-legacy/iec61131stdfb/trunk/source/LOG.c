@@ -155,6 +155,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
     *   local variables
     */
 	unsigned int i;
+	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_LOG pinst = Ov_StaticPtrCast(iec61131stdfb_LOG, pfb);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
@@ -168,9 +169,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 					ov_logfile_warning("%s: input value is integer, output is set to single to prevent data loss", pinst->v_identifier);
 					if(pinst->v_IN.value.valueunion.val_int <= 0)
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_int);
 						ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);
-						
+						STDFB_bad_operation = TRUE;
 					}
 					else
 						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_int);
@@ -183,8 +184,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_uint);
 					else
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) -HUGE_VAL;
 						ov_logfile_error("%s: trying to calculate the logarithm of 0", pinst->v_identifier);
+						STDFB_bad_operation = TRUE;
 					}
 				break;
 				
@@ -192,8 +194,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if(pinst->v_IN.value.valueunion.val_single <= 0)
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_single);
 						ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);
+						STDFB_bad_operation = TRUE;
 					}
 					else
 						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_single);
@@ -203,8 +206,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
 					if(pinst->v_IN.value.valueunion.val_double <= 0)
 					{
-						pinst->v_OUT.value.valueunion.val_double = 0;
+						pinst->v_OUT.value.valueunion.val_double = log10(pinst->v_IN.value.valueunion.val_double);
 						ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);
+						STDFB_bad_operation = TRUE;
 					}
 					else
 						pinst->v_OUT.value.valueunion.val_double = log10(pinst->v_IN.value.valueunion.val_double);
@@ -218,8 +222,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_byte);
 					else
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_byte);
 						ov_logfile_error("%s: trying to calculate the logarithm of 0", pinst->v_identifier);
+						STDFB_bad_operation = TRUE;
 					}
 				break;
 
@@ -227,6 +232,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: operation cannot be done on given datatype", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}
@@ -259,6 +265,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LOG_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: log of given datatypes senseless", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}

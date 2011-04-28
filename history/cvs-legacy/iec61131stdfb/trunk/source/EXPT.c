@@ -186,7 +186,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXPT_typemethod(
     */
 	unsigned int i;
 	double dbl_temp;
-	
+
+#define STDFB_STATE_CHECK
+	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_EXPT pinst = Ov_StaticPtrCast(iec61131stdfb_EXPT, pfb);
 	
@@ -210,6 +212,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXPT_typemethod(
 				pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 				dbl_temp = pow(pinst->v_IN1.value.valueunion.val_single, pinst->v_IN2.value.valueunion.val_single);
 				STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single);
+				if((pinst->v_OUT.value.valueunion.val_single == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single == -HUGE_VAL))
+					STDFB_bad_operation = TRUE;
 			break;
 			
 			case OV_VT_DOUBLE:
@@ -217,8 +221,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXPT_typemethod(
 				dbl_temp = pow(pinst->v_IN1.value.valueunion.val_double, pinst->v_IN2.value.valueunion.val_double);
 				if((dbl_temp == HUGE_VAL) || (dbl_temp == -HUGE_VAL))
 				{
-					ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);	\
-					dbl_temp = 0;	\
+					ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);	
+					STDFB_bad_operation = TRUE;
 				}
 				pinst->v_OUT.value.valueunion.val_double = dbl_temp;
 			break;
@@ -233,6 +237,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXPT_typemethod(
 				pinst->v_OUT.value.vartype = OV_VT_BOOL;
 				pinst->v_OUT.value.valueunion.val_bool = FALSE;
 				ov_logfile_alert("%s: exponentiation of given datatypes senseless", pinst->v_identifier);
+				STDFB_bad_operation = TRUE;
 			break;
 		}
 	}
@@ -266,6 +271,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXPT_typemethod(
 				pinst->v_OUT.value.vartype = OV_VT_BOOL;
 				pinst->v_OUT.value.valueunion.val_bool = FALSE;
 				ov_logfile_alert("%s: exponentiation of given datatypes senseless", pinst->v_identifier);
+				STDFB_bad_operation = TRUE;
 			break;
 		}
 	}

@@ -170,6 +170,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
     */
 	
 	unsigned int i;
+
+	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_ACOS pinst = Ov_StaticPtrCast(iec61131stdfb_ACOS, pfb);
 	
@@ -187,7 +189,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
 						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_int);
 					else
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_int);
+						STDFB_bad_operation = TRUE;
 						ov_logfile_error("%s: trying to calculate arc cosine of value larger than 1 or smaller than -1", pinst->v_identifier);
 					}
 				break;
@@ -199,7 +202,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
 						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_uint);
 					else
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_uint);
+						STDFB_bad_operation = TRUE;
 						ov_logfile_error("%s: trying to calculate arc cosine of value larger than 1", pinst->v_identifier);
 					}
 				break;
@@ -211,7 +215,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
 						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_single);
 					else
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_single);
+						STDFB_bad_operation = TRUE;
 						ov_logfile_error("%s: trying to calculate arc cosine of value larger than 1 or smaller than -1", pinst->v_identifier);
 					}
 				break;
@@ -223,7 +228,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
 						pinst->v_OUT.value.valueunion.val_double = acos(pinst->v_IN.value.valueunion.val_double);
 					else
 					{
-						pinst->v_OUT.value.valueunion.val_double = 0;
+						pinst->v_OUT.value.valueunion.val_double = acos(pinst->v_IN.value.valueunion.val_double);
+						STDFB_bad_operation = TRUE;
 						ov_logfile_error("%s: trying to calculate arc cosine of value larger than 1 or smaller than -1", pinst->v_identifier);
 					}
 				
@@ -236,7 +242,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
 						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_byte);
 					else
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_byte);
+						STDFB_bad_operation = TRUE;
 						ov_logfile_error("%s: trying to calculate arc cosine of value larger than 1 or smaller than -1", pinst->v_identifier);
 					}
 				break;
@@ -247,6 +254,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: operation cannot be done on given datatype", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}
@@ -280,6 +288,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: arccos of given datatypes senseless", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}

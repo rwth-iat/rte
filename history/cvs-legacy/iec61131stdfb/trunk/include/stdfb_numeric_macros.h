@@ -148,8 +148,9 @@
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] < 0) \
 			{	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) sqrt(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate the squareroot of a negative value", pinst->v_identifier);	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 			else	\
 				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) sqrt(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
@@ -158,6 +159,7 @@
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}
 
@@ -170,8 +172,9 @@
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] < 0) \
 			{	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate the squareroot of a negative value", pinst->v_identifier);	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 			else	\
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
@@ -180,6 +183,7 @@
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 
@@ -193,7 +197,8 @@
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 0) \
 			{	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) log(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				STDFB_bad_operation = TRUE;	\
 				ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);	\
 			}	\
 			else	\
@@ -203,6 +208,7 @@
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}
 
@@ -215,7 +221,8 @@
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 0) \
 			{	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) log(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
+				STDFB_bad_operation = TRUE;	\
 				ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);	\
 			}	\
 			else	\
@@ -225,6 +232,7 @@
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 	
@@ -238,8 +246,9 @@
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 0) \
 			{	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) log10(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 			else	\
 				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) log10(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
@@ -248,6 +257,7 @@
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}
 
@@ -260,8 +270,9 @@
 		{	\
 			if(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i] <= 0) \
 			{	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate the logarithm of 0 or a negative value", pinst->v_identifier);	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 			else	\
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) log10(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
@@ -270,6 +281,7 @@
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 	
@@ -285,7 +297,7 @@
 			if((dbl_temp == HUGE_VAL) || (dbl_temp == -HUGE_VAL))	\
 			{	\
 				ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);	\
-				dbl_temp = 0;	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 			pinst->v_OUT.value.valueunion.val_double_vec.value[i] = dbl_temp;	\
 		}	\
@@ -293,6 +305,7 @@
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}
 
@@ -305,11 +318,14 @@
 		{	\
 			dbl_temp = exp(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single_vec.value[i]);	\
+			if((pinst->v_OUT.value.valueunion.val_single_vec.value[i] == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single_vec.value[i] == -HUGE_VAL))	\
+				STDFB_bad_operation = TRUE;	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 	
@@ -321,11 +337,14 @@
 		{	\
 			dbl_temp = exp(pinst->v_IN.value.valueunion.val_single_vec.value[i]);	\
 			STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single_vec.value[i]);	\
+			if((pinst->v_OUT.value.valueunion.val_single_vec.value[i] == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single_vec.value[i] == -HUGE_VAL))	\
+				STDFB_bad_operation = TRUE;	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 	
@@ -483,14 +502,16 @@
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE)asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE)asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate arc sine of value larger than 1 or smaller than -1, vector-element %d", pinst->v_identifier, i);	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 	
@@ -505,14 +526,16 @@
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate arc sine of value larger than 1, vector-element %d", pinst->v_identifier, i);	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 	
@@ -527,14 +550,16 @@
 				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap)asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap)asin(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate arc sine of value larger than 1 or smaller than -1, vector-element %d", pinst->v_identifier, i);	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}
 	
@@ -553,14 +578,16 @@
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate arc cosine of value larger than 1 or smaller than -1, vector-element %d", pinst->v_identifier, i);	\
+				STDFB_bad_operation = TRUE;	\
 			}	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 	
@@ -575,14 +602,16 @@
 				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate arc sine of value larger than 1, vector-element %d", pinst->v_identifier, i);	\
+			STDFB_bad_operation = TRUE;	\
 			}	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}	
 	
@@ -597,14 +626,16 @@
 				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 			else	\
 			{	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) acos(pinst->v_IN.value.valueunion.val_##idsmall##_vec.value[i]);	\
 				ov_logfile_error("%s: trying to calculate arc sine of value larger than 1 or smaller than -1, vector-element %d", pinst->v_identifier, i);	\
+			STDFB_bad_operation = TRUE;	\
 			}	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 	}
 	
@@ -659,6 +690,7 @@
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -666,6 +698,7 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 
 #define STDFB_VEC_ADD_F(idcap, idsmall) \
@@ -681,13 +714,14 @@
 					if((pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == -HUGE_VAL))	\
 					{	\
 						ov_logfile_error("%s: result in vector-element %d exceeds range of " #idsmall, pinst->v_identifier, i);	\
-						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+						STDFB_bad_operation = TRUE;	\
 					}	\
 			}	\
 		}	\
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -695,6 +729,7 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 
 	
@@ -716,6 +751,7 @@
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -723,6 +759,7 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 
 	
@@ -739,13 +776,14 @@
 					if((pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == -HUGE_VAL))	\
 					{	\
 						ov_logfile_error("%s: result in vector-element %d exceeds range of " #idsmall, pinst->v_identifier, i);	\
-						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+						STDFB_bad_operation = TRUE;	\
 					}	\
 			}	\
 		}	\
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -753,6 +791,7 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 	
 /******Multiplikation von vektorelementen******/
@@ -773,6 +812,7 @@
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -780,8 +820,10 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 	
+
 	
 #define STDFB_VEC_MUL_F(idcap, idsmall) \
 	pinst->v_OUT.value.vartype = OV_VT_##idcap##_VEC;	\
@@ -796,13 +838,14 @@
 					if((pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == -HUGE_VAL))	\
 					{	\
 						ov_logfile_error("%s: result in vector-element %d exceeds range of " #idsmall, pinst->v_identifier, i);	\
-						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+						STDFB_bad_operation = TRUE;	\
 					}	\
 			}	\
 		}	\
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -810,6 +853,7 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 	
 
@@ -825,18 +869,25 @@
 			for(i=0; i<pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 			{	\
 				if(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i])	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] / \
-					pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i];	\
+					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] / \
+						pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i];	\
 				else	\
 				{	\
-					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
-					ov_logfile_error("%s: division by 0 in vector-element %d, setting result to 0", pinst->v_identifier, i);	\
+					if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] > 0)	\
+						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = LONG_MAX;	\
+					else if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] < 0)	\
+						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = LONG_MIN;	\
+					else	\
+						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+					ov_logfile_error("%s: division by 0 in vector-element %d", pinst->v_identifier, i);	\
+					STDFB_bad_operation = TRUE;	\
 				}	\
 			}	\
 		}	\
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -844,6 +895,43 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
+	}
+	
+#define STDFB_VEC_DIVU(idcap, idsmall) \
+	pinst->v_OUT.value.vartype = OV_VT_##idcap##_VEC;	\
+	if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen == pinst->v_IN2.value.valueunion.val_##idsmall##_vec.veclen)	\
+	{	\
+		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
+		{	\
+			for(i=0; i<pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
+			{	\
+				if(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i])	\
+					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] / \
+						pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i];	\
+				else	\
+				{	\
+					if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i])	\
+						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) ULONG_MAX;	\
+					else	\
+						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+					ov_logfile_error("%s: division by 0 in vector-element %d", pinst->v_identifier, i);	\
+					STDFB_bad_operation = TRUE;	\
+				}	\
+			}	\
+		}	\
+		else	\
+		{	\
+		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
+		return;	\
+		}	\
+	}	\
+	else	\
+	{	\
+		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
+		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 	
 #define STDFB_VEC_DIV_F(idcap, idsmall) \
@@ -855,23 +943,32 @@
 			for(i=0; i<pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
 			{	\
 				if(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i])	\
-				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] / \
-					pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i];	\
+				{	\
+					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] / \
+						pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i];	\
+					if((pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == -HUGE_VAL))	\
+					{	\
+						ov_logfile_error("%s: result in vector-element %d exceeds range of " #idsmall, pinst->v_identifier, i);	\
+						STDFB_bad_operation = TRUE;	\
+					}	\
+				}	\
 				else	\
 				{	\
-					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
 					ov_logfile_error("%s: division by 0 in vector-element %d, setting result to 0", pinst->v_identifier, i);	\
-				}	\
-				if((pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] == -HUGE_VAL))	\
-				{	\
-					ov_logfile_error("%s: result in vector-element %d exceeds range of " #idsmall, pinst->v_identifier, i);	\
-					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+					if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] > 0)	\
+						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) HUGE_VAL;	\
+					else if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] < 0)	\
+						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) -HUGE_VAL;	\
+					else	\
+						pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+					STDFB_bad_operation = TRUE;	\
 				}	\
 			}	\
 		}	\
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -879,6 +976,7 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 	
 
@@ -897,12 +995,16 @@
 				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] % \
 					pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i];	\
 				else	\
-					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = 0;	\
+				{	\
+					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) ULONG_MAX;	\
+					STDFB_bad_operation = TRUE;	\
+				}	\
 			}	\
 		}	\
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -910,8 +1012,40 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 	
+#define STDFB_VEC_MODS(idcap, idsmall) \
+	pinst->v_OUT.value.vartype = OV_VT_##idcap##_VEC;	\
+	if(pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen == pinst->v_IN2.value.valueunion.val_##idsmall##_vec.veclen)	\
+	{	\
+		if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen, idcap)))	\
+		{	\
+			for(i=0; i<pinst->v_IN1.value.valueunion.val_##idsmall##_vec.veclen; i++)	\
+			{	\
+				if(pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i])	\
+				pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = pinst->v_IN1.value.valueunion.val_##idsmall##_vec.value[i] % \
+					pinst->v_IN2.value.valueunion.val_##idsmall##_vec.value[i];	\
+				else	\
+				{	\
+					pinst->v_OUT.value.valueunion.val_##idsmall##_vec.value[i] = (OV_##idcap) LONG_MAX;	\
+					STDFB_bad_operation = TRUE;	\
+				}	\
+			}	\
+		}	\
+		else	\
+		{	\
+		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
+		return;	\
+		}	\
+	}	\
+	else	\
+	{	\
+		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
+		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
+	}
 	
 /******Exponenzieren von vektorelementen******/
 	
@@ -930,14 +1064,16 @@
 		}	\
 		else	\
 		{	\
-		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
-		return;	\
+			ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+			STDFB_bad_operation = TRUE;	\
+			return;	\
 		}	\
 	}	\
 	else	\
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##idsmall##_vec, 0, idcap);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 	
 #define STDFB_VEC_EXPT_S	\
@@ -950,18 +1086,26 @@
 			{	\
 				dbl_temp = pow(pinst->v_IN1.value.valueunion.val_single_vec.value[i], \
 					pinst->v_IN2.value.valueunion.val_single_vec.value[i]);	\
-				if((dbl_temp > FLT_MAX) || (dbl_temp < -FLT_MAX))	\
+				if(dbl_temp > FLT_MAX)	\
 				{	\
 					ov_logfile_error("%s: result in vector-element %d exceeds range of single", pinst->v_identifier, i);	\
-					pinst->v_OUT.value.valueunion.val_single_vec.value[i] = 0;	\
+					pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) HUGE_VAL;	\
+					STDFB_bad_operation = TRUE;	\
+				}	\
+				else if(dbl_temp < FLT_MIN)	\
+				{	\
+					ov_logfile_error("%s: result in vector-element %d exceeds range of single", pinst->v_identifier, i);	\
+					pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) -HUGE_VAL;	\
+					STDFB_bad_operation = TRUE;	\
 				}	\
 				else	\
-				pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) dbl_temp;	\
+					pinst->v_OUT.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) dbl_temp;	\
 			}	\
 		}	\
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -969,6 +1113,7 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_single_vec, 0, SINGLE);	\
+		STDFB_bad_operation = TRUE;	\
 	}
 	
 	
@@ -985,7 +1130,7 @@
 				if((dbl_temp == HUGE_VAL) || (dbl_temp == -HUGE_VAL))	\
 				{	\
 					ov_logfile_error("%s: result in vector-element %d exceeds range of double", pinst->v_identifier, i);	\
-					pinst->v_OUT.value.valueunion.val_double_vec.value[i] = 0;	\
+					STDFB_bad_operation = TRUE;	\
 				}	\
 				else	\
 				pinst->v_OUT.value.valueunion.val_double_vec.value[i] = dbl_temp;	\
@@ -994,6 +1139,7 @@
 		else	\
 		{	\
 		ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);	\
+		STDFB_bad_operation = TRUE;	\
 		return;	\
 		}	\
 	}	\
@@ -1001,4 +1147,5 @@
 	{	\
 		ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);	\
 		Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_double_vec, 0, DOUBLE);	\
+		STDFB_bad_operation = TRUE;	\
 	}

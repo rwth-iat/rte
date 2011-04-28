@@ -62,6 +62,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 #include "helper.h"
+#include <limits.h>
 
 OV_RESULT
 iec61131stdfb_MOD_setType
@@ -181,6 +182,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
     *   local variables
     */
 	unsigned int i;
+
+#define STDFB_STATE_CHECK
+	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_MOD pinst = Ov_StaticPtrCast(iec61131stdfb_MOD, pfb);
 	
@@ -196,7 +200,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
 				if((pinst->v_IN2.value.valueunion.val_int))
 					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN1.value.valueunion.val_int % pinst->v_IN2.value.valueunion.val_int;
 				else
-					pinst->v_OUT.value.valueunion.val_int = 0;
+				{
+					pinst->v_OUT.value.valueunion.val_int = LONG_MAX;
+					STDFB_bad_operation = TRUE;
+				}
 			break;
 			
 			case OV_VT_UINT:
@@ -204,7 +211,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
 				if((pinst->v_IN2.value.valueunion.val_uint))
 					pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN1.value.valueunion.val_uint % pinst->v_IN2.value.valueunion.val_uint;
 				else
-					pinst->v_OUT.value.valueunion.val_uint = 0;
+				{
+					pinst->v_OUT.value.valueunion.val_uint = ULONG_MAX;
+					STDFB_bad_operation = TRUE;
+				}
 			break;
 			
 			case OV_VT_BYTE:
@@ -215,8 +225,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
 					ov_logfile_warning("%s: division of bitstring", pinst->v_identifier);
 				}				
 				else
-					pinst->v_OUT.value.valueunion.val_int = 0;
-				
+				{
+					pinst->v_OUT.value.valueunion.val_int = 0xff;
+					STDFB_bad_operation = TRUE;
+				}
 			break;
 			
 			
@@ -224,6 +236,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
 				pinst->v_OUT.value.vartype = OV_VT_BOOL;
 				pinst->v_OUT.value.valueunion.val_bool = FALSE;
 				ov_logfile_alert("%s: modulo can be used on integer types only", pinst->v_identifier);
+				STDFB_bad_operation = TRUE;
 			break;
 		}
 	}
@@ -233,7 +246,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
 		{
 			
 			case OV_VT_INT_VEC:
-				STDFB_VEC_MOD(INT, int);
+				STDFB_VEC_MODS(INT, int);
 			break;
 			
 			case OV_VT_UINT_VEC:
@@ -250,6 +263,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
 				pinst->v_OUT.value.vartype = OV_VT_BOOL;
 				pinst->v_OUT.value.valueunion.val_bool = FALSE;
 				ov_logfile_alert("%s: modulo permitted on integer datatypes only", pinst->v_identifier);
+				STDFB_bad_operation = TRUE;
 			break;
 		}
 	}

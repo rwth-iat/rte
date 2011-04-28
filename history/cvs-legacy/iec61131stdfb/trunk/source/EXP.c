@@ -161,6 +161,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXP_typemethod(
 	unsigned int i;
 	double dbl_temp;
 
+	OV_BOOL STDFB_bad_operation = FALSE;
 		
 	OV_INSTPTR_iec61131stdfb_EXP pinst = Ov_StaticPtrCast(iec61131stdfb_EXP, pfb);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
@@ -175,6 +176,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXP_typemethod(
 				ov_logfile_warning("%s: natural exponential of integer value, setting out to single to prevent data loss", pinst->v_identifier);
 				dbl_temp = exp(pinst->v_IN.value.valueunion.val_int);
 				STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single);		//	in case range of single is excceded, it's set to 0
+				if((pinst->v_OUT.value.valueunion.val_single == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single == -HUGE_VAL))
+					STDFB_bad_operation = TRUE;
 			break;
 				
 			case OV_VT_UINT:
@@ -182,12 +185,16 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXP_typemethod(
 				ov_logfile_warning("%s: natural exponential of integer value, setting out to single to prevent data loss", pinst->v_identifier);
 				dbl_temp = exp(pinst->v_IN.value.valueunion.val_uint); 
 				STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single);
+				if((pinst->v_OUT.value.valueunion.val_single == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single == -HUGE_VAL))
+					STDFB_bad_operation = TRUE;
 			break;
 			
 			case OV_VT_SINGLE:
 				pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 				dbl_temp = exp(pinst->v_IN.value.valueunion.val_single);
 				STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single);
+				if((pinst->v_OUT.value.valueunion.val_single == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single == -HUGE_VAL))
+					STDFB_bad_operation = TRUE;
 			break;
 			
 			case OV_VT_DOUBLE:
@@ -196,7 +203,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXP_typemethod(
 				if((dbl_temp == HUGE_VAL) || (dbl_temp == -HUGE_VAL))
 				{
 					ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);
-					dbl_temp = 0;
+					STDFB_bad_operation = TRUE;
 				}
 				pinst->v_OUT.value.valueunion.val_double = dbl_temp;	
 			break;
@@ -206,6 +213,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXP_typemethod(
 				dbl_temp = exp(pinst->v_IN.value.valueunion.val_byte);
 				STDFB_CONV_DBL_FLT(dbl_temp, pinst->v_OUT.value.valueunion.val_single);
 				ov_logfile_warning("%s: bitstring given, treating as unsigned integer, setting out to single to prevent data loss", pinst->v_identifier);
+				if((pinst->v_OUT.value.valueunion.val_single == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single == -HUGE_VAL))
+					STDFB_bad_operation = TRUE;
 			break;
 			
 			
@@ -214,6 +223,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXP_typemethod(
 				pinst->v_OUT.value.vartype = OV_VT_BOOL;
 				pinst->v_OUT.value.valueunion.val_bool = FALSE;
 				ov_logfile_alert("%s: operation cannot be done on given datatype", pinst->v_identifier);
+				STDFB_bad_operation = TRUE;
 			break;
 		}
 	}
@@ -246,6 +256,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_EXP_typemethod(
 				pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 				ov_logfile_alert("%s: exp of given datatypes senseless", pinst->v_identifier);
+				STDFB_bad_operation = TRUE;
 			break;
 		}
 	}

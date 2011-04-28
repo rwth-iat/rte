@@ -52,8 +52,8 @@
 *
 ***********************************************************************/
 
-
-		if((pinst->v_IN1.value.vartype & OV_VT_HAS_STATE)
+		//	states won't be passed on through blocks
+	/*	if((pinst->v_IN1.value.vartype & OV_VT_HAS_STATE)
 			&& (pinst->v_IN2.value.vartype & OV_VT_HAS_STATE))		//TRUE if both inputs' STATE FLAGs are set
 		{
 			pinst->v_OUT.value.vartype = pinst->v_OUT.value.vartype | OV_VT_HAS_STATE;
@@ -91,6 +91,15 @@
 
 			}
 		}			
+		*/
+		
+#ifdef STDFB_STATE_CHECK
+	if(STDFB_bad_operation)
+	{
+		pinst->v_OUT.value.vartype = pinst->v_OUT.value.vartype | OV_VT_HAS_STATE;
+		pinst->v_OUT.state = OV_ST_BAD;
+	}
+#endif
 		
 		
 		

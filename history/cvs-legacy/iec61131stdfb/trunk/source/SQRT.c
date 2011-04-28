@@ -155,6 +155,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
     *   local variables
     */
 	unsigned int i;
+	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_SQRT pinst = Ov_StaticPtrCast(iec61131stdfb_SQRT, pfb);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
@@ -168,8 +169,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
 					ov_logfile_warning("%s: input value is integer, output is set to single to prevent data loss", pinst->v_identifier);
 					if(pinst->v_IN.value.valueunion.val_int < 0)
 					{
-						pinst->v_OUT.value.valueunion.val_int = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_int);
 						ov_logfile_error("%s: trying to calculate the squareroot of a negative value", pinst->v_identifier);
+						STDFB_bad_operation = TRUE;
 						
 					}
 					else
@@ -186,7 +188,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if(pinst->v_IN.value.valueunion.val_single < 0)
 					{
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_single);
+						STDFB_bad_operation = TRUE;
 						ov_logfile_error("%s: trying to calculate the squareroot of a negative value", pinst->v_identifier);
 					}
 					else
@@ -197,7 +200,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
 					if(pinst->v_IN.value.valueunion.val_double < 0)
 					{
-						pinst->v_OUT.value.valueunion.val_double = 0;
+						pinst->v_OUT.value.valueunion.val_double = sqrt(pinst->v_IN.value.valueunion.val_double);
+						STDFB_bad_operation = TRUE;
 						ov_logfile_error("%s: trying to calculate the squareroot of a negative value", pinst->v_identifier);
 					}
 					else
@@ -209,12 +213,14 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) sqrt(pinst->v_IN.value.valueunion.val_byte);
 					ov_logfile_warning("%s: input value is integer, output is set to single to prevent data loss", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 
 				default:
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: operation cannot be done on given datatype", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}
@@ -247,6 +253,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: sqrt of given datatypes senseless", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}

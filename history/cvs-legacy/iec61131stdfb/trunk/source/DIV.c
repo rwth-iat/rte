@@ -63,6 +63,7 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_string.h"
 #include "helper.h"
+#include <limits.h>
 
 
 #include <math.h>
@@ -237,6 +238,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
     */
 	unsigned int i;
 	double d_temp;
+
+#define STDFB_STATE_CHECK
+	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_DIV pinst = Ov_StaticPtrCast(iec61131stdfb_DIV, pfb);
 	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))
@@ -253,7 +257,17 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 					if((pinst->v_IN2.value.valueunion.val_int))
 						pinst->v_OUT.value.valueunion.val_int = pinst->v_IN1.value.valueunion.val_int / pinst->v_IN2.value.valueunion.val_int;
 					else
+					{
 						ov_logfile_error("%s: division of int by 0", pinst->v_identifier);
+						if(pinst->v_IN1.value.valueunion.val_int > 0)
+							pinst->v_OUT.value.valueunion.val_int = LONG_MAX;
+						else if(pinst->v_IN1.value.valueunion.val_int < 0)
+							pinst->v_OUT.value.valueunion.val_int = LONG_MIN;
+						else
+							pinst->v_OUT.value.valueunion.val_int = 0;
+							
+						STDFB_bad_operation = TRUE;
+					}
 				break;
 				
 				case OV_VT_UINT:
@@ -261,32 +275,61 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 					if((pinst->v_IN2.value.valueunion.val_uint))
 						pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN1.value.valueunion.val_uint / pinst->v_IN2.value.valueunion.val_uint;
 					else
+					{
 						ov_logfile_error("%s: division of uint by 0", pinst->v_identifier);
+						if(pinst->v_IN1.value.valueunion.val_uint)
+							pinst->v_OUT.value.valueunion.val_uint = ULONG_MAX;
+						else
+							pinst->v_OUT.value.valueunion.val_uint = 0;
+						STDFB_bad_operation = TRUE;
+					}
 				break;
 				
 				case OV_VT_SINGLE:
 					pinst->v_OUT.value.vartype = OV_VT_SINGLE;
 					if((pinst->v_IN2.value.valueunion.val_single))
+					{
 						pinst->v_OUT.value.valueunion.val_single = pinst->v_IN1.value.valueunion.val_single / pinst->v_IN2.value.valueunion.val_single;
+						if((pinst->v_OUT.value.valueunion.val_single == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single == -HUGE_VAL))	
+						{	
+							ov_logfile_error("%s: result exceeds range of single", pinst->v_identifier);
+							STDFB_bad_operation = TRUE;
+						}
+					}
 					else
+					{
 						ov_logfile_error("%s: division of single by 0", pinst->v_identifier);
-					if((pinst->v_OUT.value.valueunion.val_single == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single == -HUGE_VAL))	
-					{	
-						ov_logfile_error("%s: result exceeds range of single", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						if(pinst->v_IN1.value.valueunion.val_single > 0)
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) HUGE_VAL;
+						else if(pinst->v_IN1.value.valueunion.val_single < 0)
+							pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) -HUGE_VAL;
+						else
+							pinst->v_OUT.value.valueunion.val_int = 0;
+						STDFB_bad_operation = TRUE;
 					}
 				break;
 				
 				case OV_VT_DOUBLE:
 					pinst->v_OUT.value.vartype = OV_VT_DOUBLE;
 					if((pinst->v_IN2.value.valueunion.val_double))
+					{
 						pinst->v_OUT.value.valueunion.val_double = pinst->v_IN1.value.valueunion.val_double / pinst->v_IN2.value.valueunion.val_double;
+						if((pinst->v_OUT.value.valueunion.val_double == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_double == -HUGE_VAL))	
+						{	
+							ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);
+							STDFB_bad_operation = TRUE;
+						}
+					}
 					else
+					{
 						ov_logfile_error("%s: division of double by 0", pinst->v_identifier);
-					if((pinst->v_OUT.value.valueunion.val_double == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_double == -HUGE_VAL))	
-					{	
-						ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_double = 0;
+						if(pinst->v_IN1.value.valueunion.val_double > 0)
+							pinst->v_OUT.value.valueunion.val_double = HUGE_VAL;
+						else if(pinst->v_IN1.value.valueunion.val_double < 0)
+							pinst->v_OUT.value.valueunion.val_double = -HUGE_VAL;
+						else
+							pinst->v_OUT.value.valueunion.val_int = 0;
+						STDFB_bad_operation = TRUE;
 					}
 				break;
 
@@ -298,21 +341,18 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 						ov_logfile_warning("%s: division of bitstring", pinst->v_identifier);
 					}				
 					else
+					{
 						ov_logfile_error("%s: division of bitstring by 0", pinst->v_identifier);
+						STDFB_bad_operation = TRUE;
+					}
 					
 				break;
-				
-				case OV_VT_BOOL:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL;
-					pinst->v_OUT.value.valueunion.val_bool = pinst->v_IN1.value.valueunion.val_bool ^ pinst->v_IN2.value.valueunion.val_bool;
-					ov_logfile_warning("%s: division of boolean, applying logical XOR", pinst->v_identifier);
-				break;
-						
 				
 				default:
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: division of given datatypes senseless", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}
@@ -326,7 +366,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 				break;
 				
 				case OV_VT_UINT_VEC:
-					STDFB_VEC_DIV(UINT, uint);
+					STDFB_VEC_DIVU(UINT, uint);
 				break;
 				
 				case OV_VT_SINGLE_VEC:
@@ -339,40 +379,14 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 
 				case OV_VT_BYTE_VEC:
 					ov_logfile_warning("%s: division of bitstrings requested", pinst->v_identifier);
-					STDFB_VEC_DIV(BYTE, byte);
+					STDFB_VEC_DIVU(BYTE, byte);
 				break;
 				
-				case OV_VT_BOOL_VEC:
-					pinst->v_OUT.value.vartype = OV_VT_BOOL_VEC;
-					ov_logfile_warning("%s: division of boolean, applying logical XOR", pinst->v_identifier);
-					if(pinst->v_IN1.value.valueunion.val_bool_vec.veclen == pinst->v_IN2.value.valueunion.val_bool_vec.veclen)
-					{
-						if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_bool_vec, pinst->v_IN1.value.valueunion.val_bool_vec.veclen, BOOL)))
-						{
-							for(i=0; i<pinst->v_IN1.value.valueunion.val_bool_vec.veclen; i++)
-							{
-								pinst->v_OUT.value.valueunion.val_bool_vec.value[i] = pinst->v_IN1.value.valueunion.val_bool_vec.value[i] ^ 
-									pinst->v_IN2.value.valueunion.val_bool_vec.value[i];
-							}
-						}
-						else
-						{
-							ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-							return;
-						}
-					}
-					else
-					{
-						ov_logfile_error("%s: vectors have different lengths, operation not possible", pinst->v_identifier);
-						Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_bool_vec, 0, BOOL);
-					}
-					
-				break;
-						
 				default:
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: division of given datatypes senseless", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}
@@ -395,7 +409,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 						pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 					}
 					else
+					{
 						ov_logfile_error("%s: division by 0", pinst->v_identifier);
+						STDFB_bad_operation = TRUE;
+					}
 				break;
 				
 				case OV_VT_INT:
@@ -409,7 +426,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 						pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 					}
 					else
+					{
 						ov_logfile_error("%s: division by 0", pinst->v_identifier);	
+						STDFB_bad_operation = TRUE;
+					}
 				break;
 				
 				case OV_VT_SINGLE:
@@ -423,7 +443,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 						pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 					}
 					else
+					{
 						ov_logfile_error("%s: division by 0", pinst->v_identifier);		
+						STDFB_bad_operation = TRUE;
+					}
 				break;
 				
 				case OV_VT_DOUBLE:
@@ -437,14 +460,18 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 						pinst->v_OUT.value.valueunion.val_time_span.usecs = (OV_INT) ((d_temp - pinst->v_OUT.value.valueunion.val_time_span.secs) * 1000000);
 					}
 					else
+					{
 						ov_logfile_error("%s: division by 0", pinst->v_identifier);	
+						STDFB_bad_operation = TRUE;
+					}
 				break;
 				
 				default:
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					iec61131stdfb_freeVec(&pinst->v_OUT);
-					ov_logfile_error("%s: trying to divide TIME_SPAN by a varible of forbidden type", pinst->v_identifier); 
+					ov_logfile_error("%s: trying to divide TIME_SPAN by a varible of forbidden type", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 					return;
 				
 			}
@@ -454,7 +481,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 			pinst->v_OUT.value.vartype = OV_VT_BOOL;
 			pinst->v_OUT.value.valueunion.val_bool = FALSE;
 			iec61131stdfb_freeVec(&pinst->v_OUT);
-			ov_logfile_error("%s: trying to use inputs of different types for DIV-block", pinst->v_identifier); 
+			ov_logfile_error("%s: trying to use inputs of different types for DIV-block", pinst->v_identifier);
+			STDFB_bad_operation = TRUE;
 			return;
 		}
 	}

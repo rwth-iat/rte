@@ -63,6 +63,7 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_string.h"
 #include "helper.h"
+#include <limits.h>
 
 #include <math.h>
 
@@ -226,6 +227,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 	unsigned int i;
 	double d_temp;
 	
+#define STDFB_STATE_CHECK
+	OV_BOOL STDFB_bad_operation = FALSE;
+	
     OV_INSTPTR_iec61131stdfb_MUL pinst = Ov_StaticPtrCast(iec61131stdfb_MUL, pfb);
 	
 	if((pinst->v_IN1.value.vartype & OV_VT_KSMASK) == (pinst->v_IN2.value.vartype & OV_VT_KSMASK))
@@ -253,7 +257,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					if((pinst->v_OUT.value.valueunion.val_single == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_single == -HUGE_VAL))
 					{
 						ov_logfile_error("%s: result exceeds range of single", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_single = 0;
+						STDFB_bad_operation = TRUE;
 					}
 				break;
 				
@@ -263,7 +267,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					if((pinst->v_OUT.value.valueunion.val_double == HUGE_VAL) || (pinst->v_OUT.value.valueunion.val_double == -HUGE_VAL))
 					{
 						ov_logfile_error("%s: result exceeds range of double", pinst->v_identifier);
-						pinst->v_OUT.value.valueunion.val_double = 0;
+						STDFB_bad_operation = TRUE;
 					}
 				break;
 
@@ -278,6 +282,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: multiplication of given datatypes senseless", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}
@@ -311,6 +316,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
 					ov_logfile_alert("%s: multiplication of given datatypes senseless", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 				break;
 			}
 		}
@@ -364,7 +370,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 					iec61131stdfb_freeVec(&pinst->v_OUT);
 					pinst->v_OUT.value.vartype = OV_VT_BOOL;
 					pinst->v_OUT.value.valueunion.val_bool = FALSE;
-					ov_logfile_error("%s: trying to use inputs of different types for MUL-block", pinst->v_identifier); 
+					ov_logfile_error("%s: trying to use inputs of different types for MUL-block", pinst->v_identifier);
+					STDFB_bad_operation = TRUE;
 					return;
 				
 			}
@@ -374,7 +381,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUL_typemethod(
 			pinst->v_OUT.value.vartype = OV_VT_BOOL;
 			pinst->v_OUT.value.valueunion.val_bool = FALSE;
 			iec61131stdfb_freeVec(&pinst->v_OUT);
-			ov_logfile_error("%s: trying to use inputs of different types for MUL-block", pinst->v_identifier); 
+			ov_logfile_error("%s: trying to use inputs of different types for MUL-block", pinst->v_identifier);
+			STDFB_bad_operation = TRUE;
 			return;
 		}
 	}
