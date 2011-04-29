@@ -1407,4 +1407,63 @@ CLASS TP : CLASS fb/functionblock
 	END_OPERATIONS;
  END_CLASS;
  
+ /***********************************************************************************
+	Statewatch to catch bad or questionable states
+*************************************************************************************/
+
+CLASS StateWatch	:	CLASS fb/functionblock
+	IS_INSTANTIABLE;
+	COMMENT = "Watch to catch bad variable states";
+	VARIABLES
+		IN	:	ANY
+			HAS_SET_ACCESSOR
+			FLAGS = "i"
+			COMMENT = "Variable to watch";
+		Reset	:	BOOL
+			HAS_SET_ACCESSOR
+			FLAGS = "i"
+			COMMENT = "Reset hold states"
+			INITIALVALUE = FALSE;
+		OUT	:	ANY
+			FLAGS = "o"
+			COMMENT = "Input variable passed through";
+		HasState	:	BOOL
+			FLAGS = "o"
+			COMMENT = "TRUE = Input variable carries a state";
+		CurState	:	UINT
+			FLAGS = "o"
+			COMMENT = "Current Status Flags";
+		CBad	:	BOOL
+			FLAGS = "o"
+			COMMENT = "TRUE = State currently bad";
+		CGood	:	BOOL
+			FLAGS = "o"
+			COMMENT = "TRUE = State currently good";
+		CQuestionable	:	BOOL
+			FLAGS = "o"
+			COMMENT = "TRUE = State currently questionable";
+		CUnknown	:	BOOL
+			FLAGS = "o"
+			COMMENT = "TRUE = State currently unknown";
+		HBad	:	BOOL
+			FLAGS = "o"
+			COMMENT = "Holds TRUE after a bad State until Reset";
+		HGood	:	BOOL
+			FLAGS = "o"
+			COMMENT = "Holds TRUE after a good State until Reset";
+		HQuestionable	:	BOOL
+			FLAGS = "o"
+			COMMENT = "Holds TRUE after a questionable State until Reset";
+		HUnknown	:	BOOL
+			FLAGS = "o"
+			COMMENT = "Holds TRUE after an unknown State until Reset";
+	END_VARIABLES;
+	OPERATIONS
+		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod	:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+END_CLASS;
+
+	
 END_LIBRARY;
