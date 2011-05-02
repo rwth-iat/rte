@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.88 $
-*	$Date: 2010-12-16 19:01:44 $
+*	$Revision: 1.89 $
+*	$Date: 2011-05-02 09:03:51 $
 *
 *	History:
 *	--------
@@ -77,8 +77,8 @@
 
 function HMIJavaScriptKSClient() {
 	/** Public **********************/
-	this.KSServer;
-	this.TCLKSGateway;
+	this.KSServer = null;
+	this.TCLKSGateway = null;
 	this.TCLKSHandle = null;
 	this.HMIMANAGER_PATH = null;
 	
@@ -779,7 +779,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2010-12-16 19:01:44 $";
+var filedate = "$Date: 2011-05-02 09:03:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

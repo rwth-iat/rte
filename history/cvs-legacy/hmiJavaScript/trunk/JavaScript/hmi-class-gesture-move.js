@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.48 $
-*	$Date: 2011-03-11 15:19:01 $
+*	$Revision: 1.49 $
+*	$Date: 2011-05-02 09:03:51 $
 *
 *	History:
 *	--------
@@ -71,9 +71,7 @@ function Ground (node, controller) {
 	this._node = node;
 	this._controller = controller;
 	
-	if (!HMI.dropcursorStyle){
-		HMI.dropcursorStyle = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADBQTFRF////M2bMP2/PS3jSVoHUYorXbpPaepvdhqTgka3inLblqL/owNDuzNnx1+Lz4+v2CpBZCQAAAAF0Uk5TAEDm2GYAAABRSURBVAhbY2AAgZXzwdQTkQsgilexAMy9JAYk+Bn4De2B9FEGNsEDQLpxwkaQMIOhlKEciBYUFAwA0RsFBTeAaG5BIbBmBogyoIAUhGbYCyIAUTsNEExoQVIAAAAASUVORK5CYII=) 5 12, crosshair";
-	}
+	this.dropcursorStyle = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADBQTFRF////M2bMP2/PS3jSVoHUYorXbpPaepvdhqTgka3inLblqL/owNDuzNnx1+Lz4+v2CpBZCQAAAAF0Uk5TAEDm2GYAAABRSURBVAhbY2AAgZXzwdQTkQsgilexAMy9JAYk+Bn4De2B9FEGNsEDQLpxwkaQMIOhlKEciBYUFAwA0RsFBTeAaG5BIbBmBogyoIAUhGbYCyIAUTsNEExoQVIAAAAASUVORK5CYII=) 5 12, crosshair";
 	
 	this.arm();
 };
@@ -602,7 +600,7 @@ Dragger.prototype = {
 		if (this._ground === null)
 		{
 			HMI.hmi_log_trace("Dragger.prototype.switchGround - first ground: "+ground._node.id);
-			ground._node.style.cursor = HMI.dropcursorStyle;
+			ground._node.style.cursor = ground.dropcursorStyle;
 			if (ground._node.style.cursor.length < 50){
 					ground._node.style.cursor = "crosshair";
 			}
@@ -671,7 +669,7 @@ Dragger.prototype = {
 				SVGy = null;
 				
 				this._ground._node.style.cursor = "none";
-				ground._node.style.cursor = HMI.dropcursorStyle;
+				ground._node.style.cursor = ground.dropcursorStyle;
 				if (ground._node.style.cursor.length < 50){
 					ground._node.style.cursor = "crosshair";
 				}
@@ -708,7 +706,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2011-03-11 15:19:01 $";
+var filedate = "$Date: 2011-05-02 09:03:51 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

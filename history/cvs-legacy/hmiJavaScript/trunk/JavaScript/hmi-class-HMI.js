@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.168 $
-*	$Date: 2011-05-02 08:31:07 $
+*	$Revision: 1.169 $
+*	$Date: 2011-05-02 09:03:50 $
 *
 *	History:
 *	--------
@@ -118,6 +118,8 @@ function HMI(debug, error, warning, info, trace) {
 	this.RefreshTime = null;
 	this.ServerProperty = {SheetHasStyleDescription:null};
 	
+	this.smoothHeaderTimeID = null;
+	this.autoKeepHeader = false;
 	this.HeaderIsVisible = true;
 	this.WebmagellanPath = null;
 	
@@ -1237,7 +1239,6 @@ HMI.prototype = {
 				//we have a display => replace
 				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
 			}
-			template = null;
 			Component = null;
 			ComponentText = null;
 		};
@@ -1733,7 +1734,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-05-02 08:31:07 $";
+var filedate = "$Date: 2011-05-02 09:03:50 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
