@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.167 $
-*	$Date: 2011-04-20 15:05:08 $
+*	$Revision: 1.168 $
+*	$Date: 2011-05-02 08:31:07 $
 *
 *	History:
 *	--------
@@ -640,6 +640,38 @@ HMI.prototype = {
 			this.InputHost.parentNode.appendChild(datalistNode);
 		}
 		HMI_Parameter_Liste = null;
+		
+		/*	TODO reimplement event handling based on document with this code
+		if (this.svgDocument.addEventListener) {  // Firefox, Google Chrome, Safari, Opera, ie9
+			this.svgDocument.addEventListener ("mousedown", 
+				function(evt){
+					var myDragger = HMI.getComponent(evt, 'hmi-component-gesture-move');
+					if (myDragger !== null){
+						HMI.hmi_log_info("document ### found: "+myDragger.id);
+					}
+					//HMI.ProtoDragger.startDrag(evt, HMI.getComponent(evt, 'hmi-component-gesture-move'));
+				}
+			, true);
+			this.svgDocument.addEventListener ("click", 
+				function(evt){
+					//HMI.ProtoClick._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
+				}
+			, true);
+			alert("events registered on document");
+		}else if (typeof HMI.Playground.addEventListener == "unknown"){
+			//adobe plugin
+			HMI.Playground.addEventListener ("mousedown", 
+				function(evt){
+					var myDragger = HMI.getComponent(evt, 'hmi-component-gesture-move');
+					if (myDragger !== null){
+						HMI.hmi_log_info("document ### found: "+myDragger.id);
+					}
+					//HMI.ProtoDragger.startDrag(evt, HMI.getComponent(evt, 'hmi-component-gesture-move'));
+				}
+			, false);
+			alert("event registered on playground");
+		}
+		*/
 		
 		this.hmi_log_trace("HMI.prototype.init - End");
 		return true;
@@ -1701,7 +1733,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-04-20 15:05:08 $";
+var filedate = "$Date: 2011-05-02 08:31:07 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
