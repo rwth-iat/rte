@@ -155,6 +155,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_SQRT_typemethod(
     *   local variables
     */
 	unsigned int i;
+	#define STDFB_STATE_CHECK
 	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_SQRT pinst = Ov_StaticPtrCast(iec61131stdfb_SQRT, pfb);

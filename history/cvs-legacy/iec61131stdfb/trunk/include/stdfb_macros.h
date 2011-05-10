@@ -213,11 +213,19 @@ switch(pobj.value.vartype & OV_VT_KSMASK) { \
 		
 	
 /************** Statusbehandlung für einen Input ********************************/
+#ifdef STDFB_STATE_CHECK
 
 #define STDFB_STATE(num_in)	\
 	if(STDFB_bad_operation)	\
 		pinst->v_OUT.value.vartype = pinst->v_OUT.value.vartype | OV_VT_HAS_STATE;	\
 		pinst->v_OUT.state = OV_ST_BAD;	\
+
+#else
+
+	#define STDFB_STATE(num_in)	;
+	
+#endif
+		
 /*	else	\
 	if(pinst->v_##num_in.value.vartype & OV_VT_HAS_STATE)	\
 	{	\

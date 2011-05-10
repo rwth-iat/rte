@@ -171,6 +171,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_typemethod(
 	
 	unsigned int i;
 
+	#define STDFB_STATE_CHECK
 	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_ACOS pinst = Ov_StaticPtrCast(iec61131stdfb_ACOS, pfb);

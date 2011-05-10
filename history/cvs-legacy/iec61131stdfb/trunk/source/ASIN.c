@@ -156,6 +156,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ASIN_typemethod(
     */
 	
 	unsigned int i;
+	#define STDFB_STATE_CHECK
 	OV_BOOL STDFB_bad_operation = FALSE;
 	
     OV_INSTPTR_iec61131stdfb_ASIN pinst = Ov_StaticPtrCast(iec61131stdfb_ASIN, pfb);
