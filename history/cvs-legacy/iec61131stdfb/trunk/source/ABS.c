@@ -166,6 +166,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_ABS_typemethod(
 	unsigned int i;
     OV_INSTPTR_iec61131stdfb_ABS pinst = Ov_StaticPtrCast(iec61131stdfb_ABS, pfb);
 	
+	OV_BOOL STDFB_bad_operation = FALSE;
+	
 	iec61131stdfb_freeVec(&pinst->v_OUT);
 	if(!(pinst->v_IN.value.vartype & OV_VT_ISVECTOR))
 	{
