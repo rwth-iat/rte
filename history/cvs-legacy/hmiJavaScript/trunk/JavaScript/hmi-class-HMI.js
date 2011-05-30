@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.170 $
-*	$Date: 2011-05-30 06:50:04 $
+*	$Revision: 1.171 $
+*	$Date: 2011-05-30 14:24:44 $
 *
 *	History:
 *	--------
@@ -1420,45 +1420,21 @@ HMI.prototype = {
 			return Node.classList.contains(ClassName);
 		}
 		
-		//conform to the standard would be "", but browser return null. not tested both because of speed
-		//thus do not change to !==
-		if (Node.getAttribute("class") != null){
-			return this._instanceOf(Node, ClassName);
-		}
-		
-//		this.hmi_log_trace("HMI.prototype.instanceOf - Endf");
-		
-		return false;
-	},
-	
-	/*********************************
-		_instanceOf
-	*********************************/
-	_instanceOf: function (Node, ClassName) {
-		//trace log deactivated, causes too much noise and performanceproblem in a production system
-//		this.hmi_log_trace("HMI.prototype._instanceOf - Start");
-		
-		var Classes;
 		var idx;
-		
-		Classes = Node.getAttribute("class");
+		var Classes = Node.getAttribute("class");
+		//conform to the standard would be "", but browser return null. not tested both because of speed
 		if (Classes === null){
 			return false;
 		}
 		Classes = Classes.split(" ");
-		var ClassesLength = Classes.length;
-		//todo count backwards saving one variable
-		for (idx = 0; idx < ClassesLength; idx++){
+		for (idx = Classes.length -1; idx <= 0; idx--){
 			if (ClassName === Classes[idx]){
 //				this.hmi_log_trace("HMI.prototype._instanceOf - Endt");
 				return true;
 			}
 		}
-		ClassesLength = null;
-		Classes = null;
-		idx = null;
 		
-//		this.hmi_log_trace("HMI.prototype._instanceOf - Endf");
+//		this.hmi_log_trace("HMI.prototype.instanceOf - Endf");
 		
 		return false;
 	},
@@ -1709,7 +1685,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-05-30 06:50:04 $";
+var filedate = "$Date: 2011-05-30 14:24:44 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
