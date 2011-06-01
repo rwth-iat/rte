@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.171 $
-*	$Date: 2011-05-30 14:24:44 $
+*	$Revision: 1.172 $
+*	$Date: 2011-06-01 09:59:35 $
 *
 *	History:
 *	--------
@@ -1427,7 +1427,7 @@ HMI.prototype = {
 			return false;
 		}
 		Classes = Classes.split(" ");
-		for (idx = Classes.length -1; idx <= 0; idx--){
+		for (idx = Classes.length -1; idx >= 0; idx--){
 			if (ClassName === Classes[idx]){
 //				this.hmi_log_trace("HMI.prototype._instanceOf - Endt");
 				return true;
@@ -1685,7 +1685,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-05-30 14:24:44 $";
+var filedate = "$Date: 2011-06-01 09:59:35 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
