@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2010
+*	Copyright (C) 2011
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.43 $
-*	$Date: 2010-12-07 15:18:26 $
+*	$Revision: 1.44 $
+*	$Date: 2011-06-01 11:35:46 $
 *
 *	History:
 *	--------
@@ -220,20 +220,21 @@ TextInput.prototype = {
 	*********************************/
 	getTextContent : function (evt) {
 		var text;
+		//if we are called from the move gesture evt.target and evt.currentTarget could be document or the sheet
 		if (evt.target && evt.target.getAttribute("class") == "dummyTextinputRect"){
 			//the TextInput was empty, so the user clicked on the dummyRect
 			text = "";
 		}else if (evt.srcElement && evt.srcElement.getAttribute("class") == "dummyTextinputRect"){
 			//native IE eventhandling
 			text = "";
-		}else if (evt.currentTarget &&
+		}else if (evt.currentTarget && evt.currentTarget != HMI.svgDocument &&
 			//currentTarget is the Component
 			evt.currentTarget.getElementsByTagNameNS &&
 			evt.currentTarget.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "text").item(0) &&
 			evt.currentTarget.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "text").item(0).firstChild){
 			//catch first text element, ignore the rest
 			text = evt.currentTarget.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "text").item(0).firstChild.nodeValue;
-		}else if (evt.currentTarget && typeof evt.currentTarget.textContent != "undefined"){
+		}else if (evt.currentTarget && evt.currentTarget != HMI.svgDocument && typeof evt.currentTarget.textContent != "undefined"){
 			//currentTarget is the Component
 			//TextContent is the sum of Text
 			text = evt.currentTarget.textContent;
@@ -241,16 +242,16 @@ TextInput.prototype = {
 			//currentTarget is the Component
 			//Adobe Plugin
 			text = evt.currentTarget.firstChild.firstChild.nodeValue;
-		}else if (evt.target && typeof evt.target.textContent != "undefined"){
+		}else if (evt.target && evt.target != HMI.Playground.firstChild && typeof evt.target.textContent != "undefined"){
 			//TextContent is the sum of Text
 			text = evt.target.textContent;
-		}else if (evt.target && evt.target.firstChild && evt.target.firstChild.nodeValue){
+		}else if (evt.target && evt.target != HMI.Playground.firstChild && evt.target.firstChild && evt.target.firstChild.nodeValue){
 			//Adobe Plugin
 			text = evt.target.firstChild.nodeValue;
 		}else if (evt.srcElement && evt.srcElement.firstChild && evt.srcElement.firstChild.nodeValue){  //Native IE Code
 			//native IE eventhandling
 			text = evt.srcElement.firstChild.nodeValue;
-		}else if (evt.target.parentNode.getElementsByTagName("svg:text").item(0)){
+		}else if (evt.target && evt.target != HMI.Playground.firstChild && evt.target.parentNode && evt.target.parentNode.getElementsByTagName && evt.target.parentNode.getElementsByTagName("svg:text").item(0)){
 			//we clicked a svg object and need the first Textcontent
 			//Gecko and co should be catched via textContent
 			text = evt.target.parentNode.getElementsByTagName("svg:text").item(0).nodeValue;
@@ -297,7 +298,7 @@ TextInput.prototype = {
 		};
 	}
 };
-var filedate = "$Date: 2010-12-07 15:18:26 $";
+var filedate = "$Date: 2011-06-01 11:35:46 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
