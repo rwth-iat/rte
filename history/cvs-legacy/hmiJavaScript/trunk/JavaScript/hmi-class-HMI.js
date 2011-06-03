@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.173 $
-*	$Date: 2011-06-03 10:49:32 $
+*	$Revision: 1.174 $
+*	$Date: 2011-06-03 11:07:04 $
 *
 *	History:
 *	--------
@@ -1015,7 +1015,6 @@ HMI.prototype = {
 		HMI.PossSheets.blur();
 		HMI.PossServers.blur();
 		//present a "deep link" to the sheet
-		$("idBookmark").style.display = "inline";
 		$("idBookmark").href = window.location.protocol+"//"+
 			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
@@ -1028,6 +1027,9 @@ HMI.prototype = {
 		//add sheet to html5 Session history management, if new
 		if (window.history.pushState && $("idBookmark").href != window.location.href){
 			window.history.pushState("", "", $("idBookmark").href);
+		}else{
+			//show deeplink if history management is not available
+			$("idBookmark").style.display = "inline";
 		}
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
@@ -1706,7 +1708,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-06-03 10:49:32 $";
+var filedate = "$Date: 2011-06-03 11:07:04 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
