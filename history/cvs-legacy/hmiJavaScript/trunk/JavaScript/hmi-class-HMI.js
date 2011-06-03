@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.172 $
-*	$Date: 2011-06-01 09:59:35 $
+*	$Revision: 1.173 $
+*	$Date: 2011-06-03 10:49:32 $
 *
 *	History:
 *	--------
@@ -244,6 +244,10 @@ HMI.prototype = {
 			}else{
 				ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found.\n";
 			}
+			
+			//html5 Session history management
+			//reload sheet on history navigation event
+			window.onpopstate = function(){ HMI.interpreteUrlParameter(); };
 		}
 		if(ErrorDetail !== ""){
 			if (document.getElementById("idThrobbler") !== null){
@@ -284,24 +288,6 @@ HMI.prototype = {
 				}
 			});
 		
-		//analyse a "deep link" of a sheet
-		var HMI_Parameter_Liste = null;
-		if (window.location.search.length !== 0){
-			//collect parameter given by the deep link
-			HMI_Parameter_Liste = new Array();
-			var wertestring = unescape(window.location.search);
-			wertestring = wertestring.slice(1);
-			var paare = wertestring.split("&");
-			//todo calc backwards
-			for (var i=0; i < paare.length; i++) {
-				var name = paare[i].substring(0, paare[i].indexOf("="));
-				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
-				HMI_Parameter_Liste[name] = wert;
-			}
-			paare = null;
-			wertestring = null;
-		}
-		
 		//detect if the file is called from http or https, but not from filesystem
 		if (-1 == window.location.protocol.indexOf('http')){
 			this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
@@ -310,10 +296,10 @@ HMI.prototype = {
 				document.getElementById("idThrobbler").style.display = "none";
 			}
 			return false;
-		}else if (HMI_Parameter_Liste !== null && HMI_Parameter_Liste.ServerType !== undefined){
-			if (HMI_Parameter_Liste.ServerType == "php"){
+		}else if (window.location.search.length !== 0 && -1 !== window.location.search.search(/ServerType=/)){
+			if ( -1 !== window.location.search.search(/ServerType=php/)){
 				HMI.HMI_Constants.ServerType = "php";
-			}else if (HMI_Parameter_Liste.ServerType == "tcl"){
+			}else if ( -1 !== window.location.search.search(/ServerType=tcl/)){
 				HMI.HMI_Constants.ServerType = "tcl";
 			}
 		}else{
@@ -365,9 +351,9 @@ HMI.prototype = {
 			
 			var NewURLBasename = null;
 			if (window.location.search === null || window.location.search.length === 0){
-				NewURLBasename = window.location+"?ServerType=";
+				NewURLBasename = window.location.href+"?ServerType=";
 			}else if (-1 === window.location.search.search(/ServerType/)){
-				NewURLBasename = window.location+window.location.search+"&ServerType=";
+				NewURLBasename = window.location.href+"&ServerType=";
 			}
 			
 			HMI.ErrorOutput.appendChild(document.createElement('br'));
@@ -483,6 +469,102 @@ HMI.prototype = {
 			titlenode = null;
 		}
 		
+		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//try to search for webmagellan and provide a link
+		var ksmagellanPath = new Array("/magellan", "/webmagellan", "/webksmagellan");
+		var path = ksmagellanPath.shift();
+		while(this.WebmagellanPath === null && path !== undefined){
+			req = new XMLHttpRequest();
+			req.open("GET", path, false);
+			req.send(null);
+			
+			if (req.status == 200 && req.responseText && req.responseText.length > 300 && req.responseText.indexOf("Not Found") == -1){
+				this.WebmagellanPath = path;
+			}
+			path = ksmagellanPath.shift();
+		}
+		req = null;
+		path = null;
+		
+		if (this.WebmagellanPath !== null){
+			var MagellanLink = document.createElement('a');
+			if (HMI.InputHost.value.length === 0){
+				MagellanLink.href = this.WebmagellanPath;
+				MagellanLink.style.display = 'none';
+			}else{
+				MagellanLink.href = this.WebmagellanPath + '?cmd=start&arg1='+HMI.InputHost.value;
+			}
+			MagellanLink.target = 'TargetWebmagellan';
+			MagellanLink.id = 'idWebmagellan';
+			MagellanLink.style.paddingRight = '10px';
+			MagellanLink.appendChild(document.createTextNode('See in Webmagellan'));
+			
+			$("idBookmark").parentNode.insertBefore(MagellanLink, $("idBookmark").parentNode.firstChild);
+			MagellanLink = null;
+		}
+		
+		//make deep links work
+		this.interpreteUrlParameter();
+		
+		/*	TODO reimplement event handling based on document with this code
+		if (this.svgDocument.addEventListener) {  // Firefox, Google Chrome, Safari, Opera, ie9
+			this.svgDocument.addEventListener ("mousedown", 
+				function(evt){
+					var myDragger = HMI.getComponent(evt, 'hmi-component-gesture-move');
+					if (myDragger !== null){
+						HMI.hmi_log_info("document ### found: "+myDragger.id);
+					}
+					//HMI.ProtoDragger.startDrag(evt, HMI.getComponent(evt, 'hmi-component-gesture-move'));
+				}
+			, true);
+			this.svgDocument.addEventListener ("click", 
+				function(evt){
+					//HMI.ProtoClick._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
+				}
+			, true);
+			alert("events registered on document");
+		}else if (typeof HMI.Playground.addEventListener == "unknown"){
+			//adobe plugin
+			HMI.Playground.addEventListener ("mousedown", 
+				function(evt){
+					var myDragger = HMI.getComponent(evt, 'hmi-component-gesture-move');
+					if (myDragger !== null){
+						HMI.hmi_log_info("document ### found: "+myDragger.id);
+					}
+					//HMI.ProtoDragger.startDrag(evt, HMI.getComponent(evt, 'hmi-component-gesture-move'));
+				}
+			, false);
+			alert("event registered on playground");
+		}
+		*/
+		
+		this.hmi_log_trace("HMI.prototype.init - End");
+		return true;
+	},
+	
+	/*********************************
+		Functions - interpreteUrlParameter
+	*********************************/
+	interpreteUrlParameter: function (){
+		this.hmi_log_trace("HMI.prototype.interpreteUrlParameter");
+		
+		//analyse a "deep link" of a sheet
+		var HMI_Parameter_Liste = null;
+		if (window.location.search.length !== 0){
+			//collect parameter given by the deep link
+			HMI_Parameter_Liste = new Array();
+			var wertestring = unescape(window.location.search);
+			wertestring = wertestring.slice(1);
+			var paare = wertestring.split("&");
+			//todo calc backwards
+			for (var i=0; i < paare.length; i++) {
+				var name = paare[i].substring(0, paare[i].indexOf("="));
+				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
+				HMI_Parameter_Liste[name] = wert;
+			}
+			paare = null;
+			wertestring = null;
+		}
 		//jump to a "deep link" of a sheet
 		if (	HMI_Parameter_Liste !== null &&
 			 (	HMI_Parameter_Liste.Host !== undefined
@@ -515,7 +597,7 @@ HMI.prototype = {
 				}
 			}
 			
-			//a server and sheet is specified in "deep link" (host is allways there)
+			//a server and sheet is specified in "deep link" (host is always there)
 			if (	HMI_Parameter_Liste.Server
 				&&	HMI_Parameter_Liste.Server.length !== 0
 				&&	HMI_Parameter_Liste.Sheet
@@ -593,40 +675,6 @@ HMI.prototype = {
 			document.getElementById("idThrobbler").style.display = "none";
 		}
 		
-		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		//try to search for webmagellan and provide a link
-		var ksmagellanPath = new Array("/magellan", "/webmagellan", "/webksmagellan");
-		var path = ksmagellanPath.shift();
-		while(this.WebmagellanPath === null && path !== undefined){
-			req = new XMLHttpRequest();
-			req.open("GET", path, false);
-			req.send(null);
-			
-			if (req.status == 200 && req.responseText && req.responseText.length > 300 && req.responseText.indexOf("Not Found") == -1){
-				this.WebmagellanPath = path;
-			}
-			path = ksmagellanPath.shift();
-		}
-		req = null;
-		path = null;
-		
-		if (this.WebmagellanPath !== null){
-			var MagellanLink = document.createElement('a');
-			if (HMI.InputHost.value.length === 0){
-				MagellanLink.href = this.WebmagellanPath;
-				MagellanLink.style.display = 'none';
-			}else{
-				MagellanLink.href = this.WebmagellanPath + '?cmd=start&arg1='+HMI.InputHost.value;
-			}
-			MagellanLink.target = 'TargetWebmagellan';
-			MagellanLink.id = 'idWebmagellan';
-			MagellanLink.style.paddingRight = '10px';
-			MagellanLink.appendChild(document.createTextNode('See in Webmagellan'));
-			
-			$("idBookmark").parentNode.insertBefore(MagellanLink, $("idBookmark").parentNode.firstChild);
-			MagellanLink = null;
-		}
-		
 		//append html5 datalist if supported and provided
 		if(this.InputHost.list !== undefined & HMI_Parameter_Liste !== null && HMI_Parameter_Liste.hostlist !== undefined){
 			this.InputHost.setAttribute("list", "InputHost");
@@ -643,40 +691,8 @@ HMI.prototype = {
 		}
 		HMI_Parameter_Liste = null;
 		
-		/*	TODO reimplement event handling based on document with this code
-		if (this.svgDocument.addEventListener) {  // Firefox, Google Chrome, Safari, Opera, ie9
-			this.svgDocument.addEventListener ("mousedown", 
-				function(evt){
-					var myDragger = HMI.getComponent(evt, 'hmi-component-gesture-move');
-					if (myDragger !== null){
-						HMI.hmi_log_info("document ### found: "+myDragger.id);
-					}
-					//HMI.ProtoDragger.startDrag(evt, HMI.getComponent(evt, 'hmi-component-gesture-move'));
-				}
-			, true);
-			this.svgDocument.addEventListener ("click", 
-				function(evt){
-					//HMI.ProtoClick._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
-				}
-			, true);
-			alert("events registered on document");
-		}else if (typeof HMI.Playground.addEventListener == "unknown"){
-			//adobe plugin
-			HMI.Playground.addEventListener ("mousedown", 
-				function(evt){
-					var myDragger = HMI.getComponent(evt, 'hmi-component-gesture-move');
-					if (myDragger !== null){
-						HMI.hmi_log_info("document ### found: "+myDragger.id);
-					}
-					//HMI.ProtoDragger.startDrag(evt, HMI.getComponent(evt, 'hmi-component-gesture-move'));
-				}
-			, false);
-			alert("event registered on playground");
-		}
-		*/
-		
-		this.hmi_log_trace("HMI.prototype.init - End");
-		return true;
+		this.hmi_log_trace("HMI.prototype.interpreteUrlParameter - End");
+		return;
 	},
 	
 	/*********************************
@@ -1008,6 +1024,11 @@ HMI.prototype = {
 			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
+		
+		//add sheet to html5 Session history management, if new
+		if (window.history.pushState && $("idBookmark").href != window.location.href){
+			window.history.pushState("", "", $("idBookmark").href);
+		}
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
@@ -1685,7 +1706,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-06-01 09:59:35 $";
+var filedate = "$Date: 2011-06-03 10:49:32 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
