@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.175 $
-*	$Date: 2011-06-03 11:21:22 $
+*	$Revision: 1.176 $
+*	$Date: 2011-06-21 11:55:52 $
 *
 *	History:
 *	--------
@@ -347,7 +347,7 @@ HMI.prototype = {
 			this.GatewayTypeTCL = true;
 			this.GatewayTypePHP = false;
 		}else{
-			HMI.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
+			HMI.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway (Is a manipulating Proxy like Opera Turbo active?). Please configure in hmi-class-HMI.js');
 			
 			var NewURLBasename = null;
 			if (window.location.search === null || window.location.search.length === 0){
@@ -1710,7 +1710,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-06-03 11:21:22 $";
+var filedate = "$Date: 2011-06-21 11:55:52 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
