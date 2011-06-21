@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.176 $
-*	$Date: 2011-06-21 11:55:52 $
+*	$Revision: 1.177 $
+*	$Date: 2011-06-21 13:01:16 $
 *
 *	History:
 *	--------
@@ -76,6 +76,7 @@
 
 function HMI(debug, error, warning, info, trace) {
 	this.HMI_Constants = Object();
+	this.HMI_Constants.NAMESPACE_XHTML = "http://www.w3.org/1999/xhtml";
 	this.HMI_Constants.NAMESPACE_SVG = "http://www.w3.org/2000/svg";
 	this.HMI_Constants.NODE_NAME_REACTIONMARKER = "HMI_REACTIONMARKER";
 	this.HMI_Constants.NODE_NAME_CLONE = "HMI_CLONE";
@@ -487,7 +488,12 @@ HMI.prototype = {
 		path = null;
 		
 		if (this.WebmagellanPath !== null){
-			var MagellanLink = document.createElement('a');
+			var MagellanLink;
+			if (document.createElementNS){
+				MagellanLink = document.createElementNS(this.HMI_Constants.NAMESPACE_XHTML, 'a');
+			}else{
+				MagellanLink = document.createElement('a');
+			}
 			if (HMI.InputHost.value.length === 0){
 				MagellanLink.href = this.WebmagellanPath;
 				MagellanLink.style.display = 'none';
@@ -1710,7 +1716,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-06-21 11:55:52 $";
+var filedate = "$Date: 2011-06-21 13:01:16 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
