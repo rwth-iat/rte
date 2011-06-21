@@ -50,8 +50,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.52 $
-*	$Date: 2011-06-20 15:47:26 $
+*	$Revision: 1.53 $
+*	$Date: 2011-06-21 14:20:03 $
 *
 *	History:
 *	21-June-2007			St
@@ -145,7 +145,7 @@
 				Mobile devices
 			***************************************************/
 			@media all and (max-width: 400px) {
-				td,th{
+				td,th{	/* rearrange the table for small displays */
 					display:block;
 				}
 				.inputlabel{
@@ -194,6 +194,9 @@
 				#idSheets{
 					width:40px;
 					display:none;
+				}
+				td,th{ /* in speed dial the table should be a table */
+					display:table-cell;
 				}
 			}
 		</style>
