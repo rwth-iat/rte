@@ -1,0 +1,82 @@
+/******************************************************************************
+***                                                                         ***
+***   iFBSpro   -   Funktionsbaustein-Model                                 ***
+***   #####################################                                 ***
+***                                                                         ***
+***   L T S o f t                                                           ***
+***   Agentur für Leittechnik Software GmbH                                 ***
+***   Brabanterstr. 13                                                      ***
+***   D-50171 Kerpen                                                        ***
+***   Tel : 02237/92869-2                                                   ***
+***   Fax : 02237/92869-9                                                   ***
+***   e-Mail   : ltsoft@ltsoft.de                                           ***
+***   Internet : http://www.ltsoft.de                                       ***
+***                                                                         ***
+***   -------------------------------------------------------------------   ***
+***                                                                         ***
+***   Implementierung des Funktionsbausteinsystems IFBSpro                  ***
+***   RWTH,   Aachen                                                        ***
+***   LTSoft, Kerpen                                                        ***
+***                                                                         ***
+*******************************************************************************
+*                                                                             *
+*   Datei                                                                     *
+*   -----                                                                     *
+*   fb.ovf                                                                    *
+*                                                                             *
+*   Historie                                                                  *
+*   --------                                                                  *
+*   08-07-1999 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
+*                                    Lehrstuhl fuer Prozessleittechnik, Aachen*
+*                                                                             *
+*   Beschreibung                                                              *
+*   ------------                                                              *
+*   Funktion-Prototypen fuer Objekt-Methoden                                  *
+*                                                                             *
+******************************************************************************/
+
+#ifndef FB_OVF_INCLUDED
+#define FB_OVF_INCLUDED
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*
+*	Execute method of a task object
+*/
+typedef OV_DLLFNCEXPORT void FB_FNC_EXECUTE(
+	OV_INSTPTR_fb_task	ptask,
+	OV_TIME				*pltc
+);
+
+/*
+*	Checkelement method of a connection object
+*/
+typedef OV_DLLFNCEXPORT OV_BOOL FB_FNC_CHECKELEMENTS(
+	OV_INSTPTR_fb_connection	pconn
+);
+
+/*
+*	Trigger method of a connection object
+*/
+typedef OV_DLLFNCEXPORT void FB_FNC_TRIGGER(
+	OV_INSTPTR_fb_connection	pconn
+);
+
+/*
+*	Type method of a functionblock object
+*/
+typedef OV_DLLFNCEXPORT void FB_FNC_TYPEMETHOD(
+	OV_INSTPTR_fb_functionblock	pfb,
+	OV_TIME						*pltc
+);
+
+#ifdef __cplusplus
+}	/* extern "C" */
+#endif
+
+#endif
+/*
+*	End of file
+*/
