@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.44 $
-*	$Date: 2011-06-01 11:35:46 $
+*	$Revision: 1.45 $
+*	$Date: 2011-06-29 09:13:59 $
 *
 *	History:
 *	--------
@@ -285,7 +285,7 @@ TextInput.prototype = {
 			var Command = null;
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
-				'{' + encodeURI(Component.getAttribute('id')) + '}%20' + 
+				'{' + encodeURI(Component.id) + '}%20' + 
 				'{TEXTINPUT}%20' +
 				//urlencode the UTF8 String in ISO-8859-1 Format
 				//change the %u20AC of the &euro; Symbol to windows-1252 (accepted by all Browsers, not Adobe SVG)
@@ -298,7 +298,7 @@ TextInput.prototype = {
 		};
 	}
 };
-var filedate = "$Date: 2011-06-01 11:35:46 $";
+var filedate = "$Date: 2011-06-29 09:13:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

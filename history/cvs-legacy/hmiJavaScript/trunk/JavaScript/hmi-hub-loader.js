@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.24 $
-*	$Date: 2010-10-15 09:49:47 $
+*	$Revision: 1.25 $
+*	$Date: 2011-06-29 09:13:59 $
 *
 *	History:
 *	01-March-2005			HA
@@ -108,7 +108,10 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 		scriptNode = scripts[idx];
 		match = null;
 		
-		if (scriptNode.getAttribute !== undefined && (scriptNode.getAttribute("src") !== null || scriptNode.getAttribute("src") !== "") ){
+		if (scriptNode.src !== undefined){
+			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
+			match = p.exec(scriptNode.src);
+		}else if (scriptNode.getAttribute !== undefined && (scriptNode.getAttribute("src") !== null || scriptNode.getAttribute("src") !== "") ){
 			match = p.exec(scriptNode.getAttribute("src"));
 		}else if(scriptNode.hasAttributeNS !== undefined && scriptNode.getAttributeNS !== undefined){
 			if (scriptNode.hasAttributeNS("http://www.w3.org/1999/xlink", "href") ){
@@ -204,7 +207,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2010-10-15 09:49:47 $";
+var filedate = "$Date: 2011-06-29 09:13:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

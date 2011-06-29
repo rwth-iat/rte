@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.28 $
-*	$Date: 2010-09-09 13:16:10 $
+*	$Revision: 1.29 $
+*	$Date: 2011-06-29 09:13:59 $
 *
 *	History:
 *	--------
@@ -132,7 +132,7 @@ RightClick.prototype = {
 			
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
-				'{' + encodeURI(Component.getAttribute('id')) + '}%20' + 
+				'{' + encodeURI(Component.id) + '}%20' + 
 				'{RIGHTCLICK}%20' +
 				'{' + clickPosition[0] + '}%20' +
 				'{' + clickPosition[1] + '}';
@@ -146,7 +146,7 @@ RightClick.prototype = {
 		};
 	}
 };
-var filedate = "$Date: 2010-09-09 13:16:10 $";
+var filedate = "$Date: 2011-06-29 09:13:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

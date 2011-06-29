@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.30 $
-*	$Date: 2010-09-09 13:16:10 $
+*	$Revision: 1.31 $
+*	$Date: 2011-06-29 09:13:59 $
 *
 *	History:
 *	--------
@@ -185,7 +185,7 @@ DoubleClick.prototype = {
 			
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
-				'{' + encodeURI(Component.getAttribute('id')) + '}%20' + 
+				'{' + encodeURI(Component.id) + '}%20' + 
 				'{DOUBLECLICK}%20' +
 				'{' + clickPosition[0] + '}%20' +
 				'{' + clickPosition[1] + '}';
@@ -200,7 +200,7 @@ DoubleClick.prototype = {
 		
 	}
 };
-var filedate = "$Date: 2010-09-09 13:16:10 $";
+var filedate = "$Date: 2011-06-29 09:13:59 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
