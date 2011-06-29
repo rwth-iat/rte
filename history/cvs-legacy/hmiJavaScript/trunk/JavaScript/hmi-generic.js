@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.38 $
-*	$Date: 2011-04-20 15:05:08 $
+*	$Revision: 1.39 $
+*	$Date: 2011-06-29 08:06:24 $
 *
 *	History:
 *	--------
@@ -86,8 +86,9 @@ function $(id) {
 function deleteChilds(ParentNode) {
 	HMI.hmi_log_trace("deleteChilds with id: "+ParentNode.id+" - Start");
 	
-	while (ParentNode.childNodes.length > 0)
+	while (ParentNode.hasChildNodes() === true){
 		ParentNode.removeChild(ParentNode.lastChild);
+	}
 	
 	HMI.hmi_log_trace("deleteChilds - End");
 }
@@ -251,7 +252,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2011-04-20 15:05:08 $";
+var filedate = "$Date: 2011-06-29 08:06:24 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
