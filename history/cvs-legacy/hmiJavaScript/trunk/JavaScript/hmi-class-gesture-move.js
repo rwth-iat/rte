@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.49 $
-*	$Date: 2011-05-02 09:03:51 $
+*	$Revision: 1.50 $
+*	$Date: 2011-06-29 11:21:24 $
 *
 *	History:
 *	--------
@@ -429,10 +429,7 @@ Dragger.prototype = {
 		Node.setAttribute('class', '');
 		Node.setAttribute('opacity', '0.25');
 		Node.setAttribute('clonedID', this._node.getAttribute('id'));
-		if (BrowserDetect.version != 9 && BrowserDetect.browser != "Explorer"){
-			//todo: ie 9 jun 2010 crashes if inserted
-			this._node.parentNode.insertBefore(Node, this._node);
-		}
+		this._node.parentNode.insertBefore(Node, this._node);
 		
 		//move dragNode to the front of SVG, so it is visible in all cases
 		if (this._node != this._node.parentNode.lastChild)
@@ -706,7 +703,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2011-05-02 09:03:51 $";
+var filedate = "$Date: 2011-06-29 11:21:24 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
