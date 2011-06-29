@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.51 $
-*	$Date: 2011-06-29 11:27:11 $
+*	$Revision: 1.52 $
+*	$Date: 2011-06-29 11:34:14 $
 *
 *	History:
 *	--------
@@ -665,7 +665,7 @@ Dragger.prototype = {
 				SVGx = null;
 				SVGy = null;
 				
-				this._ground._node.style.cursor = "none";
+				this._ground._node.style.cursor = "";
 				ground._node.style.cursor = ground.dropcursorStyle;
 				if (ground._node.style.cursor.length < 50){
 					ground._node.style.cursor = "crosshair";
@@ -703,7 +703,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2011-06-29 11:27:11 $";
+var filedate = "$Date: 2011-06-29 11:34:14 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
