@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.50 $
-*	$Date: 2011-06-29 11:21:24 $
+*	$Revision: 1.51 $
+*	$Date: 2011-06-29 11:27:11 $
 *
 *	History:
 *	--------
@@ -425,10 +425,10 @@ Dragger.prototype = {
 		
 		//make a Clone, place it under on the position of original and paint it with opacity
 		var Node = this._node.cloneNode(true);
-		Node.setAttribute('id', HMI.HMI_Constants.NODE_NAME_CLONE);
+		Node.id = HMI.HMI_Constants.NODE_NAME_CLONE;
 		Node.setAttribute('class', '');
 		Node.setAttribute('opacity', '0.25');
-		Node.setAttribute('clonedID', this._node.getAttribute('id'));
+		Node.setAttribute('clonedID', this._node.id);
 		this._node.parentNode.insertBefore(Node, this._node);
 		
 		//move dragNode to the front of SVG, so it is visible in all cases
@@ -703,7 +703,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2011-06-29 11:21:24 $";
+var filedate = "$Date: 2011-06-29 11:27:11 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
