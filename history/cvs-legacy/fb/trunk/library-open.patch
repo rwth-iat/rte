@@ -1,0 +1,11 @@
+--- build/generic.mk
++++ build/generic.mk.patched
+@@ -57,7 +57,7 @@
+ 
+ INCLUDES = $(OV_INCLUDES) $(MYLIB_INCLUDES) -I.
+ 
+-DEFINES = $(OV_DEFINES) $(MYLIB_DEFINES)
++DEFINES = $(OV_DEFINES) $(MYLIB_DEFINES) -Dov_library_open_$(MYLIB_NAME)=ov_library_open_$(MYLIB_NAME)_old
+ 
+ #	Targets and their sources
+ 
