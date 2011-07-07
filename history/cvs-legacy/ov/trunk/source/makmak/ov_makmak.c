@@ -157,7 +157,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"\n");
 	fprintf(fp,"ACPLT_DIR               = %s/\n",apath);
 	fprintf(fp,"ACPLT_BIN_DIR           = %s/\n",bpath);
-	fprintf(fp,"ACPLT_LIB_DIR           = $(ACPLT_DIR)lib/\n");
+	fprintf(fp,"ACPLT_LIB_DIR           = $(ACPLT_DIR)../lib/\n");
 	fprintf(fp,"MYLIB_DIR               = ../../\n");
 	fprintf(fp,"MYLIB_MODEL_DIR         = $(MYLIB_DIR)model/\n");
 	fprintf(fp,"MYLIB_INCLUDE_DIR       = $(MYLIB_DIR)include/\n");
@@ -289,7 +289,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	//
 	fprintf(fp,"#   Oncrpc\n");
 	fprintf(fp,"#   ------\n\n");
-	fprintf(fp,"ONCRPC_DIR              = $(ACPLT_DIR)oncrpc/\n\n");
+	fprintf(fp,"ONCRPC_DIR              = $(ACPLT_DIR)../oncrpc/\n\n");
 	fprintf(fp,"#   Libraries\n");
 	fprintf(fp,"#   ---------\n\n");
 	fprintf(fp,"OVLIBS = $(ACPLT_LIB_DIR)libov$(LIB_) $(ACPLT_LIB_DIR)libovks$(LIB_)\n\n");
@@ -369,7 +369,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"\t$(LD) -e$@ $(filter-out %$(RES_), $^)\n");
 	fprintf(fp,"\t$(MKDLLDEF) $(basename $@)_tmp.def $(basename $@).def\n");
 	fprintf(fp,"\t@-del $(basename $@)_tmp.def\n");
-	fprintf(fp,"\tcopy $(MYLIB_DLL) $(subst /,\\\\, $(USER_LIBS_DIR))\n\n");
+	fprintf(fp,"\tcmd /c copy $(MYLIB_DLL) $(subst /,\\\\, $(USER_LIBS_DIR))\n\n");
         k = 0;
 	while (k < n) {
   	      fprintf(fp,"\t-cp $(MYLIB_DLL) $(subst /,\\\\, $(COPY_DIR%d))\n",k);
@@ -380,7 +380,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"#   Shared Lib\n");
 	fprintf(fp,"#   ----------\n");
 	fprintf(fp,"shared: $(TARGETS)\n");
-	fprintf(fp,"\tcopy $(MYLIB_DLL) $(subst /,\\\\, $(ACPLT_SHAREDLIB_DIR))\n\n");
+	fprintf(fp,"\tcmd /c copy $(MYLIB_DLL) $(subst /,\\\\, $(ACPLT_SHAREDLIB_DIR))\n\n");
 	fprintf(fp,"#   Executables\n");
 	fprintf(fp,"#   -----------\n\n");
 	fprintf(fp,"#   Aufraeumen\n");
@@ -430,7 +430,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"include ../generic.mk\n\n");
 	fprintf(fp,"#   Oncrpc\n");
 	fprintf(fp,"#   ------\n\n");
-	fprintf(fp,"ONCRPC_DIR              = $(ACPLT_DIR)oncrpc/\n\n");
+	fprintf(fp,"ONCRPC_DIR              = $(ACPLT_DIR)../oncrpc/\n\n");
 	fprintf(fp,"#   Libraries\n");
 	fprintf(fp,"#   ---------\n\n");
 	fprintf(fp,"OVLIBS = $(ACPLT_LIB_DIR)libov$(LIB_) $(ACPLT_LIB_DIR)libovks$(LIB_)\n\n");
@@ -501,7 +501,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"$(MYLIB_LIB) : $(MYLIB_DLL)\n\n");
 	fprintf(fp,"$(MYLIB_DLL) : $(MYLIB_OBJ) $(OVLIBS) $(BASELIBS)\n");
 	fprintf(fp,"\t$(LD) /out:$@ /implib:$(MYLIB_LIB) $(filter-out %$(RES_), $^)\n");
-	fprintf(fp,"\tcopy $(MYLIB_DLL) $(subst /,\\\\, $(USER_LIBS_DIR))\n\n");
+	fprintf(fp,"\tcmd /c copy $(MYLIB_DLL) $(subst /,\\\\, $(USER_LIBS_DIR))\n\n");
 	fprintf(fp,"#   Aufraeumen\n");
 	fprintf(fp,"#   ----------\n\n");
 	fprintf(fp,"clean:\n");
