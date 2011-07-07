@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.17 2010-07-26 13:29:19 henning Exp $
+ * $Id: dbdump.cpp,v 1.18 2011-07-07 13:33:53 gustavo Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -29,18 +29,27 @@
 
 #include "dbdump.h"
 #include "fnmatch.h"					// for string matching routines
+
+#if PLT_SYSTEM_NT
+#include <iostream.h>
+#include <iomanip.h>
+#include <fstream.h>
+#else
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#endif
+
 #include <ctype.h>
 #include <time.h>
 #include "libov/ov_version.h"
 #include "ks/conversions.h"
-using namespace std;
 
 #if PLT_SYSTEM_NT
 #include <stdio.h>
 #define uint unsigned int
+#else
+using namespace std;
 #endif
 
 // Global variables
