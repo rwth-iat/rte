@@ -5,6 +5,15 @@
 
 set basedir [pwd]
 
+set env(ACPLT_HOME) $basedir/acplt
+
+set logfile acplt_build.log
+
+if {![info exists env(CVSROOT)]} then {
+    puts stderr "Please set the environment variable CVSROOT and try again."
+    exit 1
+}
+
 # Determine operating system
 if {$tcl_platform(os) == "Linux"} then { 
     set os "linux" 
@@ -16,17 +25,22 @@ if {$tcl_platform(os) == "Linux"} then {
     exit 1
 }
 
+file delete -force $logfile
+
 proc print_msg {msg} {
     puts stderr "\[$msg\]"
 }
 
 # Execute a command
 proc execute {args} {
-    set cmd [concat {exec -ignorestderr} $args]
+    global logfile
+    #set cmd [concat {exec -ignorestderr} $args]
+    set cmd [concat {exec } $args { >>& $logfile}]
     #puts $cmd
     if { [catch $cmd msg] } {
-        puts stderr "error: $::errorInfo"
-        #exit 1
+        puts stderr "error: $msg"
+        puts stderr "Consult the file '$logfile'"
+        exit 1
     }
 }
 
@@ -42,7 +56,7 @@ proc create_dirs {} {
 proc checkout {module {dirname ""}} {
     print_msg "Checking out $module"
     if {$dirname == ""} then { set dirname $module }
-    execute cvs -d plt:/usr/src/cvs checkout -P -d $dirname $module
+    execute cvs checkout -P -d $dirname $module
 }
 
 # Checkout sources
@@ -193,3 +207,11 @@ if { $os == "nt" } then {
 }
 build_lib iec61131stdfb fb 0 ""
 #start_server
+
+if { $os == "nt" } then {
+    puts "Build finished, set the environment variable ACPLT_HOME to '$basedir\\acplt'."
+    puts "Also, include the directories '%ACPLT_HOME%\\bin' and 'ACPLT_HOME\\user\\libs' in your path."
+} else {
+    puts "Build finished, set the environment variable ACPLT_HOME to '$basedir/acplt'."
+    puts "Also, include the directory '\$ACPLT_HOME/bin' in PATH, and '\$ACPLT_HOME/bin:\$ACPLT_HOME/user/libs' in LD_LIBRARY_PATH."
+}
