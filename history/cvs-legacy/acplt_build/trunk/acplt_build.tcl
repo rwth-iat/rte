@@ -210,7 +210,7 @@ build_lib iec61131stdfb fb 0 ""
 
 if { $os == "nt" } then {
     puts "Build finished, set the environment variable ACPLT_HOME to '[string map {/ \\} $basedir
-]\acplt'."
+]\\acplt'."
     puts "Also, include the directories '%ACPLT_HOME%\\bin' and '%ACPLT_HOME%\\user\\libs' in your path."
 } else {
     puts "Build finished, set the environment variable ACPLT_HOME to '$basedir/acplt'."
