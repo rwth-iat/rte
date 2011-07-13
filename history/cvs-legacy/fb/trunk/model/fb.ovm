@@ -130,6 +130,7 @@ LIBRARY fb
 	
 
 	CLASS connection : CLASS ov/object
+		IS_INSTANTIABLE;
 		COMMENT = "FB Connection";
 		VARIABLES
 			on           : BOOL   HAS_SET_ACCESSOR FLAGS = "p" COMMENT = "true, if connection is active";
@@ -151,23 +152,6 @@ LIBRARY fb
 		END_OPERATIONS;
 	END_CLASS;
 
-  CLASS localconnection : CLASS fb/connection
-		IS_INSTANTIABLE;
-  	COMMENT = "local connection for function blocks and function charts";
-    OPERATIONS
-			trigger       : C_FUNCTION <FB_FNC_TRIGGER>;
-			checkelements : C_FUNCTION <FB_FNC_CHECKELEMENTS>;
-    END_OPERATIONS;
-  END_CLASS;
-
-  CLASS remoteconnection : CLASS fb/connection
-		IS_INSTANTIABLE;
-  	COMMENT = "remote connection for function blocks and function charts";
-		VARIABLES
-      sourceaddr : STRING HAS_ACCESSORS COMMENT = "address of the source function block";
-    END_VARIABLES;
-  END_CLASS;
-
   /* Function Charts */
 
   CLASS functionchart : CLASS fb/functionblock
@@ -178,6 +162,8 @@ LIBRARY fb
     END_PARTS;
     OPERATIONS
 			typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      preintask : C_FUNCTION <FB_FNC_PREINTASK>;
+      postintask : C_FUNCTION <FB_FNC_POSTINTASK>;
     END_OPERATIONS;
   END_CLASS;
 
@@ -186,7 +172,7 @@ LIBRARY fb
   CLASS variable : CLASS ov/object
   	COMMENT = "variable for function charts";
     VARIABLES
-      flags   : STRING HAS_ACCESSORS FLAGS = "p" COMMENT = "semantic flags of the variable";
+      flags   : UINT HAS_ACCESSORS FLAGS = "p" COMMENT = "semantic flags of the variable";
       unit    : STRING HAS_ACCESSORS FLAGS = "p" COMMENT = "physical unit of the variable";
       comment : STRING HAS_ACCESSORS FLAGS = "p" COMMENT = "comment that describes the variable";
     END_VARIABLES;

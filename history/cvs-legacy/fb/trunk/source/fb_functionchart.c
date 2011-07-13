@@ -42,13 +42,20 @@ fb_functionchart_typemethod
       Ov_Call0 (fb_connection, pcon, trigger);
   }
 
-  /* Activate, execute and deactivate internal task */
+  /* Call preintask  */
+
+  Ov_Call1 (fb_functionchart, pinst, preintask, pltc);
+
+  /* Activate and execute internal task */
 
   intask->v_actimode = 1;
-
+  intask->v_cyctime.secs = 0;
+  intask->v_cyctime.usecs = 0;
   Ov_Call1 (fb_task, intask, execute, pltc);
   
-  intask->v_actimode = 0;
+  /* Call postintask  */
+
+  Ov_Call1 (fb_functionchart, pinst, postintask, pltc);
 
   /* Trigger final connections */
 
@@ -58,4 +65,16 @@ fb_functionchart_typemethod
       Ov_Call0 (fb_connection, pcon, trigger);
   }
 
+}
+
+OV_DLLFNCEXPORT void
+fb_functionchart_preintask
+(OV_INSTPTR_fb_functionchart pfc, OV_TIME * pltc)
+{
+}
+
+OV_DLLFNCEXPORT void
+fb_functionchart_postintask
+(OV_INSTPTR_fb_functionchart pfc, OV_TIME * pltc)
+{
 }

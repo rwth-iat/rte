@@ -33,7 +33,7 @@ fb_varvalue_changed
 (const OV_ELEMENT *pelem, const OV_ANY *pvarcurrprops, OV_BOOL *changed);
 
 
-OV_DLLFNCEXPORT OV_STRING fb_variable_flags_get(
+OV_DLLFNCEXPORT OV_UINT fb_variable_flags_get(
     OV_INSTPTR_fb_variable          pobj
 ) {
     return pobj->v_flags;
@@ -41,9 +41,10 @@ OV_DLLFNCEXPORT OV_STRING fb_variable_flags_get(
 
 OV_DLLFNCEXPORT OV_RESULT fb_variable_flags_set(
     OV_INSTPTR_fb_variable          pobj,
-    const OV_STRING  value
+    const OV_UINT  value
 ) {
-    return ov_string_setvalue(&pobj->v_flags,value);
+    pobj->v_flags = value;
+    return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_STRING fb_variable_unit_get(

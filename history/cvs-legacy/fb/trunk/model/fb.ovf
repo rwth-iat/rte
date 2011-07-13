@@ -72,6 +72,22 @@ typedef OV_DLLFNCEXPORT void FB_FNC_TYPEMETHOD(
 	OV_TIME						*pltc
 );
 
+/*
+*	Pre-intask method of a functionchart object
+*/
+typedef OV_DLLFNCEXPORT void FB_FNC_PREINTASK(
+	OV_INSTPTR_fb_functionchart	pfc,
+	OV_TIME						*pltc
+);
+
+/*
+*	Post-intask method of a functionchart object
+*/
+typedef OV_DLLFNCEXPORT void FB_FNC_POSTINTASK(
+	OV_INSTPTR_fb_functionchart	pfc,
+	OV_TIME						*pltc
+);
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif
