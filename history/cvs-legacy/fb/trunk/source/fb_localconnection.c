@@ -273,7 +273,7 @@ checkTargetElement
       {
         if (plinkedvar) 
         {
-          Ov_Unlink (fb_targetvariable, pinst, ptargetvar);
+          Ov_Unlink (fb_targetvariable, pinst, plinkedvar);
           pinst->v_on = TRUE; /* Unlinking disables connection, enable it */
         }
         Ov_Link (fb_targetvariable, pinst, ptargetvar);
