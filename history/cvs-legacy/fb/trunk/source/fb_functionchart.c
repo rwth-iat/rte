@@ -46,11 +46,8 @@ fb_functionchart_typemethod
 
   Ov_Call1 (fb_functionchart, pinst, preintask, pltc);
 
-  /* Activate and execute internal task */
+  /* Execute internal task */
 
-  intask->v_actimode = 1;
-  intask->v_cyctime.secs = 0;
-  intask->v_cyctime.usecs = 0;
   Ov_Call1 (fb_task, intask, execute, pltc);
   
   /* Call postintask  */
@@ -71,6 +68,10 @@ OV_DLLFNCEXPORT void
 fb_functionchart_preintask
 (OV_INSTPTR_fb_functionchart pfc, OV_TIME * pltc)
 {
+  OV_INSTPTR_fb_task intask = &pfc->p_intask;
+  intask->v_actimode = 1;
+  intask->v_cyctime.secs = 0;
+  intask->v_cyctime.usecs = 0;
 }
 
 OV_DLLFNCEXPORT void
