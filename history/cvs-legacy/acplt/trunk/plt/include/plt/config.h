@@ -1,7 +1,7 @@
 /* -*-plt-c++-*- */
 #ifndef PLT_CONFIG_INCLUDED
 #define PLT_CONFIG_INCLUDED
-/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.40 2008-09-22 08:26:09 henning Exp $ *//*
+/* $Header: /home/david/cvs/acplt/plt/include/plt/config.h,v 1.41 2011-07-15 13:26:55 sten Exp $ *//*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
  * D-52064 Aachen, Germany.
@@ -27,7 +27,9 @@
 
 #ifdef __NT__
 #define PLT_SYSTEM_NT 1
+#ifndef WIN32			/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
 #define WIN32
+#endif				/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
 #define i386 1
 #define mc68000 0
 #define sparc 0
