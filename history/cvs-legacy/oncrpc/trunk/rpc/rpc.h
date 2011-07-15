@@ -49,6 +49,9 @@
 #define __RPC_HEADER__
 
 #ifdef WIN32
+#ifdef FD_SETSIZE 		/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
+#undef FD_SETSIZE 		/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
+#endif 				/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
 #define FD_SETSIZE	128
 
 #include <stdlib.h>
