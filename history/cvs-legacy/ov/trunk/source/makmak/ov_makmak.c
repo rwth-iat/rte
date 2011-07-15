@@ -527,7 +527,7 @@ HELP:			fprintf(stderr, "Makefile-Generator: creates generic.mk and makefile for
 	fprintf(fp,"#	--------\n\n");
 	fprintf(fp,"OV_CODEGEN_EXE = $(ACPLT_BIN_DIR)ov_codegen$(EXE_)\n\n");
 	fprintf(fp,"CC             = gcc\n");
-	fprintf(fp,"CC_FLAGS       = -g -Wall -O2 -shared\n");
+	fprintf(fp,"CC_FLAGS       = -g -Wall -O2 -shared -std=c99\n");
 	fprintf(fp,"COMPILE_C	   = $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c\n");
 	fprintf(fp,"LD             = $(CC) -shared\n");
         fprintf(fp,"AR             = ar\n");
