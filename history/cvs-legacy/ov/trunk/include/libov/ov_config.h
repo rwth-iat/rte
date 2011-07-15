@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_config.h,v 1.12 2008-06-18 15:08:47 martin Exp $
+*   $Id: ov_config.h,v 1.13 2011-07-15 13:36:46 gustavo Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -153,6 +153,7 @@
 #define OV_DLLFNCEXPORT
 #define OV_DLLVAREXPORT
 #define OV_DLLVARIMPORT 		extern
+#define _POSIX_SOURCE                      /* Require IEEE Std. 1003.1 (Needed for sigjmp) */
 #endif
 
 #if OV_SYSTEM_NT

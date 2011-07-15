@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_supervise.h,v 1.2 1999-09-15 10:48:15 dirk Exp $
+*   $Id: ov_supervise.h,v 1.3 2011-07-15 13:36:46 gustavo Exp $
 *
 *   Copyright (C) 1998-1999
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -56,6 +56,10 @@
 *	Side effects:
 *	currently unknown -- it seems to work, but you should NOT RELY ON IT.
 */
+
+#ifndef OV_SUPERVISE_H_INCLUDED
+#define OV_SUPERVISE_H_INCLUDED
+
 /*
 *	Example code:
 */
@@ -82,8 +86,8 @@
 	}
 #endif
 
-#include <setjmp.h>
 #include "libov/ov_ov.h"
+#include <setjmp.h>
 
 /*
 *	OV_JUMPBUFFER:
@@ -129,3 +133,4 @@ OV_DLLFNCEXPORT OV_BOOL ov_supervise_end(void);
 *	End of file
 */
 
+#endif
