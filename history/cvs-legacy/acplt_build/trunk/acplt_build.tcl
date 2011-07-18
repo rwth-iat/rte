@@ -2,10 +2,12 @@
 # ACPLT Build Script
 # (c) 2011 Chair of Process Control Engineering, RWTH Aachen University
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
+# Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
 
 set basedir [pwd]
 
-set env(ACPLT_HOME) $basedir/acplt
+set builddir $basedir/acplt.build
+set releasedir $basedir/acplt
 
 set logfile $basedir/acplt_build.log
 
@@ -46,10 +48,10 @@ proc execute {args} {
 
 # Create directory structure
 proc create_dirs {} {
-    global basedir
+    global builddir
     global os
     print_msg "Creating directory structure"
-    file mkdir $basedir/acplt $basedir/acplt/bin $basedir/acplt/user $basedir/acplt/user/libs $basedir/acplt/database $basedir/acplt/lib
+    file mkdir $builddir $builddir/bin $builddir/user $builddir/user/libs $builddir/database $builddir/lib
 }
 
 # Checkout a CVS module
@@ -61,18 +63,20 @@ proc checkout {module {dirname ""}} {
 
 # Checkout sources
 proc checkout_acplt {} {
+    global builddir
     global basedir
     global os
-    cd $basedir/acplt
+    cd $builddir
     checkout libml
     if { $os == "nt" } then { checkout oncrpc }
     checkout acplt base
-    cd $basedir/acplt/base
+    cd $builddir/base
     checkout libmpm
     checkout ov
-    cd $basedir/acplt/user
-    checkout fb
-    checkout iec61131stdfb
+    checkout acplt_makmak
+    #cd $builddir/user
+    #checkout fb
+    #checkout iec61131stdfb
     cd $basedir
 }
 
@@ -84,34 +88,35 @@ proc build {package args} {
 
 # Build ACPLT
 proc build_acplt {} {
-    global basedir
+    global builddir
     global os
     if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
-    build libml make -C $basedir/acplt/libml -f $makefile
+    build libml make -C $builddir/libml -f $makefile
     if { $os == "nt" } then { 
-        cd $basedir/acplt/oncrpc
+        cd $builddir/oncrpc
         execute make.bat
-        file copy -force $basedir/acplt/oncrpc/bin/oncrpc.lib $basedir/acplt/oncrpc/bin/oncrpcms.lib
+        file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpcms.lib
         cd $basedir
     }
-    build libmpm make -C $basedir/acplt/base/libmpm -f $makefile
+    build libmpm make -C $builddir/base/libmpm -f $makefile
     if { $os == "nt" } then {
-        cd $basedir/acplt/base/plt/build/ntvc
+        cd $builddir/base/plt/build/ntvc
         build plt nmake /f $makefile
-        cd $basedir/acplt/base/ks/build/ntvc
+        cd $builddir/base/ks/build/ntvc
         build ks nmake /f $makefile
-        cd $basedir/acplt/base/ov/build/ntvc
+        cd $builddir/base/ov/build/ntvc
         build ov make -f $makefile -k
         cd $basedir
     } else {
-        build plt make -C $basedir/acplt/base/plt/build/$os
-        build ks make -C $basedir/acplt/base/ks/build/$os
-        build ov make -C $basedir/acplt/base/ov/build/$os
+        build plt make -C $builddir/base/plt/build/$os
+        build ks make -C $builddir/base/ks/build/$os
+        build ov make -C $builddir/base/ov/build/$os
    }
+   build acplt_makmak make -C $builddir/base/acplt_makmak
 }
 
 proc install {dir} {
-    global basedir
+    global builddir
     global os
     print_msg "Installing from $dir"
     if { $os == "linux" } then {
@@ -123,43 +128,45 @@ proc install {dir} {
         set libfiles [concat [glob -nocomplain $dir/*.lib]]
     }
     foreach file $binfiles {
-	file copy -force $file $basedir/acplt/bin
+	file copy -force $file $builddir/bin
     }
     foreach file $libfiles {
-	file copy -force $file $basedir/acplt/lib
+	file copy -force $file $builddir/lib
     }
     # execute make -C $dir install
 } 
 
 proc install_acplt {} {
-    global basedir
+    global builddir
     global os
     if { $os == "nt" } then { set target "ntvc" } else { set target $os }
-    install $basedir/acplt/oncrpc/bin
-    install $basedir/acplt/base/plt/build/$target
-    install $basedir/acplt/base/ks/build/$target
-    install $basedir/acplt/base/ov/build/$target
+    install $builddir/oncrpc/bin
+    install $builddir/base/plt/build/$target
+    install $builddir/base/ks/build/$target
+    install $builddir/base/ov/build/$target
+    install $builddir/base/acplt_makmak
 }
 
 proc makmak {library opts} {
+    global builddir
     global basedir
     global os
-    set makmak $basedir/acplt/bin/ov_makmak
-    cd $basedir/acplt/user/$library/build/$os
+    set makmak $builddir/bin/ov_makmak
+    cd $builddir/user/$library/build/$os
     eval [concat "execute \"$makmak\" -l $library -pu \"../../..\" -pa \"../../../../base\" -pb \"../../../../bin\"" $opts]
     cd $basedir
 }
 
 proc build_lib {libname deps patch baselibs} {
-    global basedir
+    global builddir
     global os
-    file mkdir $basedir/acplt/user/$libname/build/$os
+    file mkdir $builddir/user/$libname/build/$os
     set depopts ""
     foreach dep $deps { append depopts "-d $dep" }
     makmak $libname $depopts
     if $patch then {
 	# Temporary solution for ov_library_open problem
-	execute patch $basedir/acplt/user/fb/build/generic.mk library-open.patch
+	execute patch $builddir/user/fb/build/generic.mk library-open.patch
     }
     if { $os == "nt" } then { 
         set makefile "msvc.mk"
@@ -169,45 +176,102 @@ proc build_lib {libname deps patch baselibs} {
 	set lib $libname.so
     }
     if { $baselibs != "" } then { set baselibs "BASELIBS=$baselibs" } 
-    eval [concat "build $libname make -C \"$basedir/acplt/user/$libname/build/$os\" -f $makefile" $baselibs]
-    file copy -force $basedir/acplt/user/$libname/build/$os/$lib $basedir/acplt/user/libs
+    eval [concat "build $libname make -C \"$builddir/user/$libname/build/$os\" -f $makefile" $baselibs]
+    file copy -force $builddir/user/$libname/build/$os/$lib $builddir/user/libs
 }
 
 proc dbutil {args} {
-    global basedir
+    global releasedir
     global os
-    set dbutil $basedir/acplt/bin/ov_dbutil
+    set dbutil $releasedir/bin/ov_dbutil
     eval "execute $dbutil $args"
 }
 
 proc start_server {} {
-    global basedir
+    global releasedir
     global os
-    set database $basedir/acplt/database/database.ovd
+    set database $releasedir/database/database.ovd
     if [file exists $database] then {
     } else {
         dbutil -f $database -c [expr 1024 * 1024]
     }
-    execute $basedir/acplt/bin/tmanager.exe &
+    execute $releasedir/bin/tmanager.exe &
     if { $os == "linux" } then {
         global env
-        set env(LD_LIBRARY_PATH) $basedir/acplt/bin
+        set env(LD_LIBRARY_PATH) $releasedir/bin
     }
-    execute $basedir/acplt/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
+    execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
 }
 
 create_dirs
 checkout_acplt
 build_acplt
 install_acplt
-if { $os == "nt" } then { 
-    build_lib fb "" 1 "../../../../lib/oncrpcms.lib"
-} else {
-    build_lib fb "" 1 ""
-}
-build_lib iec61131stdfb fb 0 ""
-#start_server
+#if { $os == "nt" } then { 
+#    build_lib fb "" 1 "../../../../lib/oncrpcms.lib"
+#} else {
+#    build_lib fb "" 1 ""
+#}
+#build_lib iec61131stdfb fb 0 ""
 
+#create a release
+set env(ACPLT_HOME) $releasedir
+file delete -force $releasedir
+file mkdir $releasedir
+#bin dir
+file copy $builddir/bin $releasedir/bin
+#lib dir
+file copy $builddir/lib $releasedir/lib
+if { $os == "nt" } then {
+    set libfiles [concat [glob -nocomplain $releasedir/lib/*.lib]]
+    foreach file $libfiles {
+	set rootname [file rootname $file]
+	file copy -force $file $rootname.a
+    }
+}
+#model dir
+file mkdir $releasedir/model
+set libfiles [concat [glob -nocomplain $builddir/base/ov/model/ov.*]]
+foreach file $libfiles {
+    file copy -force $file $releasedir/model
+}
+#database dir
+file mkdir $releasedir/database
+#database include
+file mkdir $releasedir/include
+file mkdir $releasedir/include/ks
+set headers [concat [glob -nocomplain $builddir/base/ks/include/ks/*.h]]
+foreach file $headers {
+    file copy -force $file $releasedir/include/ks
+}
+file mkdir $releasedir/include/libov
+set headers [concat [glob -nocomplain $builddir/base/ov/include/libov/*.h]]
+foreach file $headers {
+    file copy -force $file $releasedir/include/libov
+}
+file mkdir $releasedir/include/libovks
+set headers [concat [glob -nocomplain $builddir/base/ov/include/libovks/*.h]]
+foreach file $headers {
+    file copy -force $file $releasedir/include/libovks
+}
+file mkdir $releasedir/include/plt
+set headers [concat [glob -nocomplain $builddir/base/plt/include/plt/*.h]]
+foreach file $headers {
+    file copy -force $file $releasedir/include/plt
+}
+#user dir
+file mkdir $releasedir/user
+file mkdir $releasedir/user/libs
+-#fb
+cd $releasedir/user/
+checkout fb
+execute $releasedir/bin/acplt_makmak -l fb
+cd $releasedir/user/fb/build/$os/
+execute make all
+file copy $releasedir/user/fb/ $releasedir/user/fb.build
+
+
+#start_server
 if { $os == "nt" } then {
     puts "Build finished, set the environment variable ACPLT_HOME to '[string map {/ \\} $basedir
 ]\\acplt'."
