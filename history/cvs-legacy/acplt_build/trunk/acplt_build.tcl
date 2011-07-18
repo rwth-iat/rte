@@ -208,15 +208,14 @@ proc start_server {} {
     execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
 }
 
-proc release_lib {libname parallel} {
+proc release_lib {libname} {
     global releasedir
     global os
     global make
     cd $releasedir/user/
     checkout $libname
-    execute acplt_makmak -l $libname
     cd $releasedir/user/$libname/build/$os/
-    build $libname $make all $parallel
+    build $libname $make all
     print_msg "Deploying $libname"
     file delete -force $releasedir/user/$libname.build/
     file copy -force $releasedir/user/$libname/ $releasedir/user/$libname.build/
@@ -309,9 +308,9 @@ if { $os == "nt" } then {
 file mkdir $releasedir/user
 file mkdir $releasedir/user/libs
 #-fb
-release_lib fb ""
+release_lib fb
 #-iec61131stdfb
-release_lib iec61131stdfb ""
+release_lib iec61131stdfb
 
 
 #start_server
