@@ -298,6 +298,13 @@ set headers [concat [glob -nocomplain $builddir/base/plt/include/plt/*.h]]
 foreach file $headers {
     file copy -force $file $releasedir/include/plt
 }
+if { $os == "nt" } then {
+    file mkdir $releasedir/include/rpc
+    set headers [concat [glob -nocomplain $builddir/oncrpc/rpc/*.h]]
+    foreach file $headers {
+        file copy -force $file $releasedir/include/rpc
+    }
+}
 #user dir
 file mkdir $releasedir/user
 file mkdir $releasedir/user/libs
