@@ -94,6 +94,7 @@ proc build_acplt {} {
     global base
     global os
     global make
+    global basedir
     if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
     build libml make -C $builddir/libml -f $makefile
     if { $os == "nt" } then { 
