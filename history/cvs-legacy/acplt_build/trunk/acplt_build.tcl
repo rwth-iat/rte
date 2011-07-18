@@ -302,9 +302,9 @@ foreach file $headers {
 file mkdir $releasedir/user
 file mkdir $releasedir/user/libs
 #-fb
-release_lib fb "-j"
+release_lib fb ""
 #-iec61131stdfb
-release_lib iec61131stdfb "-j"
+release_lib iec61131stdfb ""
 
 
 #start_server
