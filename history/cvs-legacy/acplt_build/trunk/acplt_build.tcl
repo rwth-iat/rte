@@ -249,7 +249,7 @@ install_acplt
 #create a release
 set env(ACPLT_HOME) $releasedir
 if { $os == "nt" } then {
-    set env(PATH) $env(PATH);$releasedir/bin/
+    set env(PATH) $env(PATH)\;$releasedir/bin/
 } else {
     set env(PATH) $env(PATH):$releasedir/bin/
 }
