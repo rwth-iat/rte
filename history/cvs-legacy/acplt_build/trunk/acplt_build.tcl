@@ -20,7 +20,7 @@ if {![info exists env(CVSROOT)]} then {
 if {$tcl_platform(os) == "Linux"} then { 
     set os "linux" 
     set make "make"
-} elseif {[lsearch $tcl_platform(os) \"Windows\"] >= 0} then {
+} elseif {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
     set os "nt"
     set make "mingw32-make"
     set env(CYGWIN) "nodosfilewarning" 
