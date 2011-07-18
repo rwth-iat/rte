@@ -19,8 +19,10 @@ if {![info exists env(CVSROOT)]} then {
 # Determine operating system
 if {$tcl_platform(os) == "Linux"} then { 
     set os "linux" 
-} elseif {$tcl_platform(os) == "Windows NT"} then { 
+    set make "make"
+} elseif {[lsearch $tcl_platform(os) \"Windows\"] >= 0} then {
     set os "nt"
+    set make "mingw32-make"
     set env(CYGWIN) "nodosfilewarning" 
 } else {
     puts stderr "error: unsupported operating system: $tcl_platform(os)"
@@ -89,7 +91,9 @@ proc build {package args} {
 # Build ACPLT
 proc build_acplt {} {
     global builddir
+    global base
     global os
+    global make
     if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
     build libml make -C $builddir/libml -f $makefile
     if { $os == "nt" } then { 
@@ -112,7 +116,7 @@ proc build_acplt {} {
         build ks make -C $builddir/base/ks/build/$os
         build ov make -C $builddir/base/ov/build/$os
    }
-   build acplt_makmak make -C $builddir/base/acplt_makmak
+   build acplt_makmak $make -C $builddir/base/acplt_makmak
 }
 
 proc install {dir} {
@@ -122,7 +126,7 @@ proc install {dir} {
     if { $os == "linux" } then {
         set binfiles [concat [glob -nocomplain $dir/*.so] [glob -nocomplain -type {f x} $dir/*]]
 	set libfiles [concat [glob -nocomplain $dir/*.a]]
-    }
+    } 
     if { $os == "nt" } then {
         set binfiles [concat [glob -nocomplain $dir/*.dll $dir/*.exe]]
         set libfiles [concat [glob -nocomplain $dir/*.lib]]
@@ -206,16 +210,12 @@ proc start_server {} {
 proc release_lib {libname parallel} {
     global releasedir
     global os
+    global make
     cd $releasedir/user/
     checkout $libname
-    print_msg "Compiling $libname"
     execute acplt_makmak -l $libname
     cd $releasedir/user/$libname/build/$os/
-    if { $os == "nt" } then {
-        execute mingw32-make all $parallel
-    } else {
-        execute make all $parallel
-    }
+    build $libname $make all $parallel
     print_msg "Deploying $libname"
     file delete -force $releasedir/user/$libname.build/
     file copy -force $releasedir/user/$libname/ $releasedir/user/$libname.build/
