@@ -18,6 +18,7 @@ POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
 
 %:
+	acplt_makmak -l fb $(MAKMAKOPTIONS)
 	-tclsh $(PREBUILD) fb $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(COMPILER_LO).mk $*
 	-tclsh $(POSTBUILD) fb
