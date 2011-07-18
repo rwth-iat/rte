@@ -203,6 +203,37 @@ proc start_server {} {
     execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
 }
 
+proc release_lib {libname parallel} {
+    global releasedir
+    global os
+    cd $releasedir/user/
+    checkout $libname
+    print_msg "Compiling $libname"
+    execute acplt_makmak -l $libname
+    cd $releasedir/user/$libname/build/$os/
+    if { $os == "nt" } then {
+        execute mingw32-make all $parallel
+    } else {
+        execute make all $parallel
+    }
+    print_msg "Deploying $libname"
+    file delete -force $releasedir/user/$libname.build/
+    file copy -force $releasedir/user/$libname/ $releasedir/user/$libname.build/
+    file delete -force $releasedir/user/$libname/
+    file mkdir $releasedir/user/$libname/
+    file mkdir $releasedir/user/$libname/model/
+    set models [concat [glob -nocomplain $releasedir/user/$libname.build/model/*.ov?]]
+    foreach file $models {
+        file copy -force $file $releasedir/user/$libname/model/
+    }
+    #export libname.a file for compiling under windows
+    if { $os == "nt" } then {
+        file mkdir $releasedir/user/$libname/build/nt/
+        file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/fb/build/$libname/
+    }
+    file delete -force $releasedir/user/$libname.build/
+}
+
 create_dirs
 checkout_acplt
 build_acplt
@@ -216,6 +247,13 @@ install_acplt
 
 #create a release
 set env(ACPLT_HOME) $releasedir
+if { $os == "nt" } then {
+    set env(PATH) $env(PATH);$releasedir/bin/
+} else {
+    set env(PATH) $env(PATH):$releasedir/bin/
+}
+
+print_msg "Creating release in $releasedir"
 file delete -force $releasedir
 file mkdir $releasedir
 #bin dir
@@ -262,13 +300,10 @@ foreach file $headers {
 #user dir
 file mkdir $releasedir/user
 file mkdir $releasedir/user/libs
--#fb
-cd $releasedir/user/
-checkout fb
-execute $releasedir/bin/acplt_makmak -l fb
-cd $releasedir/user/fb/build/$os/
-execute make all
-file copy $releasedir/user/fb/ $releasedir/user/fb.build
+#-fb
+release_lib fb "-j"
+#-iec61131stdfb
+release_lib iec61131stdfb "-j"
 
 
 #start_server
