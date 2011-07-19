@@ -130,7 +130,7 @@ proc install {dir} {
     } 
     if { $os == "nt" } then {
         set binfiles [concat [glob -nocomplain $dir/*.dll $dir/*.exe]]
-        set libfiles [concat [glob -nocomplain $dir/*.lib]]
+        set libfiles [concat [glob -nocomplain $dir/*.lib] [glob -nocomplain $dir/*.a]]
     }
     foreach file $binfiles {
 	file copy -force $file $builddir/bin
