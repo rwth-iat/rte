@@ -226,6 +226,11 @@ proc release_lib {libname} {
     foreach file $models {
         file copy -force $file $releasedir/user/$libname/model/
     }
+    file mkdir $releasedir/user/$libname/include/
+    set headers [concat [glob -nocomplain $releasedir/user/$libname.build/model/*.h]]
+    foreach file $headers {
+        file copy -force $file $releasedir/user/$libname/include/
+    }
     #export libname.a file for compiling under windows
     if { $os == "nt" } then {
         file mkdir $releasedir/user/$libname/build/nt/
