@@ -229,7 +229,12 @@ proc release_lib {libname} {
     #export libname.a file for compiling under windows
     if { $os == "nt" } then {
         file mkdir $releasedir/user/$libname/build/nt/
-        file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/fb/build/$libname/
+	if { file exists $releasedir/user/$libname.build/build/nt/$libname.a } {
+	        file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/fb/build/$libname/
+	}
+	if { file exists $releasedir/user/$libname.build/build/nt/$libname.lib } {
+		file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/fb/build/$libname/
+	}
     }
     file delete -force $releasedir/user/$libname.build/
 }
@@ -260,12 +265,12 @@ file mkdir $releasedir
 file copy $builddir/bin $releasedir/bin
 #lib dir
 file copy $builddir/lib $releasedir/lib
-if { $os == "nt" } then {
-    set libfiles [concat [glob -nocomplain $releasedir/lib/*.lib]]
-    foreach file $libfiles {
-	set rootname [file rootname $file]
-	file copy -force $file $rootname.a
-    }
+#if { $os == "nt" } then {
+#    set libfiles [concat [glob -nocomplain $releasedir/lib/*.lib]]
+#    foreach file $libfiles {
+#	set rootname [file rootname $file]
+#	file copy -force $file $rootname.a
+#   }
 }
 #model dir
 file mkdir $releasedir/model
