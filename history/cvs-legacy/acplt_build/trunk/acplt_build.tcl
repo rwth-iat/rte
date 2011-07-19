@@ -271,7 +271,7 @@ file copy $builddir/lib $releasedir/lib
 #	set rootname [file rootname $file]
 #	file copy -force $file $rootname.a
 #   }
-}
+#}
 #model dir
 file mkdir $releasedir/model
 set libfiles [concat [glob -nocomplain $builddir/base/ov/model/ov.*]]
