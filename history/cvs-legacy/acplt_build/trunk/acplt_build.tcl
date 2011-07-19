@@ -236,7 +236,7 @@ proc release_lib {libname} {
 		file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/fb/build/nt/
 	}
     }
-    file delete -force $releasedir/user/$libname.build/
+    #file delete -force $releasedir/user/$libname.build/
 }
 
 create_dirs
