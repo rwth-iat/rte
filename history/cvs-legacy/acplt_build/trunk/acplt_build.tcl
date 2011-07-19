@@ -229,10 +229,10 @@ proc release_lib {libname} {
     #export libname.a file for compiling under windows
     if { $os == "nt" } then {
         file mkdir $releasedir/user/$libname/build/nt/
-	if { file exists $releasedir/user/$libname.build/build/nt/$libname.a } {
+	if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
 	        file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/fb/build/$libname/
 	}
-	if { file exists $releasedir/user/$libname.build/build/nt/$libname.lib } {
+	if { [file exists $releasedir/user/$libname.build/build/nt/$libname.lib] } {
 		file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/fb/build/$libname/
 	}
     }
