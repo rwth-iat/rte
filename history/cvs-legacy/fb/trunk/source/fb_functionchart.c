@@ -79,3 +79,82 @@ fb_functionchart_postintask
 (OV_INSTPTR_fb_functionchart pfc, OV_TIME * pltc)
 {
 }
+
+/*
+ * Search and return an instance of fb_variable with given id
+ */
+OV_DLLFNCEXPORT OV_INSTPTR_fb_variable
+fb_functionchart_searchvariable
+(OV_INSTPTR_fb_functionchart pfc, OV_STRING id)
+{
+  OV_INSTPTR_fb_variable pvar;
+
+  Ov_ForEachChild (fb_variables, pfc, pvar)
+  {
+    if (ov_string_compare (id, pvar->v_identifier) == 0)
+    {
+      return pvar;
+    }
+  }
+
+  return NULL;
+}
+
+/*
+ * Auxiliary procedure for getvariable/setvariable
+ */
+static OV_RESULT
+fb_functionchart_getorsetvariable 
+(OV_INSTPTR_fb_functionchart pfc,
+ const OV_STRING varname,
+ OV_ANY *pvarcurrprops,
+ OV_BOOL getorset)
+{
+  OV_ELEMENT objelem, varelem;
+  OV_INSTPTR_fb_variable pvar;
+  OV_STRING varid;
+
+  objelem.elemtype = OV_ET_OBJECT;
+
+  if ((pvar = fb_functionchart_searchvariable (pfc, varname))) {
+    objelem.pobj = Ov_PtrUpCast (ov_object, pvar);
+    varid = "value";
+  } else {
+    objelem.pobj = Ov_PtrUpCast (ov_object, pfc);
+    varid = varname;
+  }
+  
+  if (Ov_OK (ov_element_searchpart (&objelem, &varelem, OV_ET_VARIABLE, varid))) {
+    if (getorset) {
+      return Ov_Call2 (ov_object, objelem.pobj, getvar, &varelem, pvarcurrprops);
+    } else {
+      return Ov_Call2 (ov_object, objelem.pobj, setvar, &varelem, pvarcurrprops);
+    }
+  } else {
+    return OV_ERR_BADPARAM;
+  }
+}
+
+/*
+ * Get variable value (object variable or real variable) by name
+ */
+OV_DLLFNCEXPORT OV_RESULT
+fb_functionchart_getvariable 
+(OV_INSTPTR_fb_functionchart pfc,
+ const OV_STRING varname,
+ OV_ANY *pvarcurrprops)
+{
+  return fb_functionchart_getorsetvariable (pfc, varname, pvarcurrprops, TRUE);
+}
+
+/*
+ * Set variable value (object variable or real variable) by name
+ */
+OV_DLLFNCEXPORT OV_RESULT 
+fb_functionchart_setvariable 
+(OV_INSTPTR_fb_functionchart pfc,
+ const OV_STRING varname,
+ OV_ANY *pvarcurrprops)
+{ 
+  return fb_functionchart_getorsetvariable (pfc, varname, pvarcurrprops, FALSE);
+}

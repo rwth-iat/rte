@@ -88,6 +88,24 @@ typedef OV_DLLFNCEXPORT void FB_FNC_POSTINTASK(
 	OV_TIME						*pltc
 );
 
+/*
+ * Get variable value (object variable or real variable) by name
+ */
+typedef OV_DLLFNCEXPORT OV_RESULT FB_FNC_GETVARIABLE(
+	OV_INSTPTR_fb_functionchart	pfc,
+	const OV_STRING varname,
+	OV_ANY *pvarcurrprops
+);
+
+/*
+ * Set variable value (object variable or real variable) by name
+ */
+typedef OV_DLLFNCEXPORT OV_RESULT FB_FNC_SETVARIABLE(
+	OV_INSTPTR_fb_functionchart	pfc,
+	const OV_STRING varname,
+	OV_ANY *pvarcurrprops
+);
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif

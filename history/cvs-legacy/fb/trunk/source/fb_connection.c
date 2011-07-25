@@ -63,21 +63,7 @@ int fb_connectiontype_implemented(OV_VAR_TYPE typ) {
 }
 
 OV_INSTPTR_fb_variable fb_functionchart_searchvariable
-(OV_INSTPTR_fb_functionchart pfc, OV_STRING id)
-{
-  OV_INSTPTR_fb_variable pvar;
-
-  Ov_ForEachChild (fb_variables, pfc, pvar)
-  {
-    if (ov_string_compare (id, pvar->v_identifier) == 0)
-    {
-      return pvar;
-    }
-  }
-
-  return NULL;
-}
-
+(OV_INSTPTR_fb_functionchart pfc, OV_STRING id);
 
 /*	----------------------------------------------------------------------	*/
 /*

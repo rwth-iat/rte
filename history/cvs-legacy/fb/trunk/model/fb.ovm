@@ -164,6 +164,8 @@ LIBRARY fb
 			typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
       preintask : C_FUNCTION <FB_FNC_PREINTASK>;
       postintask : C_FUNCTION <FB_FNC_POSTINTASK>;
+      getvariable : C_FUNCTION <FB_FNC_GETVARIABLE>;
+      setvariable : C_FUNCTION <FB_FNC_SETVARIABLE>;
     END_OPERATIONS;
   END_CLASS;
 
