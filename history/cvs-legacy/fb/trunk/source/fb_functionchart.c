@@ -137,6 +137,7 @@ fb_functionchart_getorsetvariable
 
 /*
  * Get variable value (object variable or real variable) by name
+ * Note: call ov_memstack_lock/ov_memstack_unlock around this procedure
  */
 OV_DLLFNCEXPORT OV_RESULT
 fb_functionchart_getvariable 
