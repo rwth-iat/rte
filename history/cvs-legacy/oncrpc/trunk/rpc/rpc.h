@@ -51,7 +51,7 @@
 #ifdef WIN32
 #ifdef FD_SETSIZE 		/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
 #undef FD_SETSIZE 		/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
-#endif 				/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
+#endif 					/* 	add by Sten Gruener to avoid warnings on Windows plattform	*/
 #define FD_SETSIZE	128
 
 #include <stdlib.h>
@@ -110,7 +110,7 @@ extern int xdr_opaque_auth(DOTS);
  *  Uncomment-out the next line if you are building the rpc library with
  *  DES Authentication (see the README file in the secure_rpc/ directory).
  */
-/*#include <rpc/auth_des.h>	/* protocol for des style cred */
+/*#include <rpc/auth_des.h> protocol for des style cred */
 
 /* Server side only remote procedure callee */
 #include <rpc/svc.h>		/* service manager and multiplexer */
