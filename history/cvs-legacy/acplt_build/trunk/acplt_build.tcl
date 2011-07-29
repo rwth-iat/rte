@@ -117,7 +117,11 @@ proc build_acplt {} {
         build ks make -C $builddir/base/ks/build/$os
         build ov make -C $builddir/base/ov/build/$os
    }
-   build acplt_makmak $make -C $builddir/base/acplt_makmak
+   if { $os == "nt" } then {
+   	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
+   } else {
+	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/linux
+   }
 }
 
 proc install {dir} {
@@ -149,7 +153,7 @@ proc install_acplt {} {
     install $builddir/base/plt/build/$target
     install $builddir/base/ks/build/$target
     install $builddir/base/ov/build/$target
-    install $builddir/base/acplt_makmak
+    install $builddir/base/acplt_makmak/build/$target
 }
 
 proc makmak {library opts} {
