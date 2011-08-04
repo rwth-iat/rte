@@ -80,7 +80,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LEN_shutdown(OV_INSTPTR_ov_object pobj) {
 	OV_INSTPTR_iec61131stdfb_LEN pinst = Ov_StaticPtrCast(iec61131stdfb_LEN, pobj);
 	
 	ov_string_setvalue(&pinst->v_IN1, "");
-	ov_object_shutdown(pobj);
+	fb_functionblock_shutdown(pobj);
 }
 
 

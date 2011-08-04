@@ -139,7 +139,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ACOS_shutdown(OV_INSTPTR_ov_object pobj) {
 	
 	iec61131stdfb_freeVec(&pinst->v_IN);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
-	ov_object_shutdown(pobj);
+	fb_functionblock_shutdown(pobj);
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ACOS_constructor(OV_INSTPTR_ov_object pobj) {
@@ -147,7 +147,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ACOS_constructor(OV_INSTPTR_ov_object po
 	OV_RESULT res;
 	OV_INSTPTR_iec61131stdfb_ACOS pinst = Ov_StaticPtrCast(iec61131stdfb_ACOS, pobj);
 	
-	res = ov_object_constructor(pobj);
+	res = fb_functionblock_constructor(pobj);
 	
 	if(Ov_OK(res))
 	{

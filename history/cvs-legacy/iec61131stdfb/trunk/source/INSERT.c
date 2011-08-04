@@ -99,7 +99,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_INSERT_shutdown(OV_INSTPTR_ov_object pobj) {
 	ov_string_setvalue(&pinst->v_IN1, "");
 	ov_string_setvalue(&pinst->v_IN2, "");
 	ov_string_setvalue(&pinst->v_OUT, "");
-	ov_object_shutdown(pobj);
+	fb_functionblock_shutdown(pobj);
 }
 
 

@@ -207,7 +207,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LIMIT_shutdown(OV_INSTPTR_ov_object pobj) {
 	iec61131stdfb_freeVec(&pinst->v_MN);
 	iec61131stdfb_freeVec(&pinst->v_MX);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
-	ov_object_shutdown(pobj);
+	fb_functionblock_shutdown(pobj);
 }
 
 
@@ -216,7 +216,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_LIMIT_constructor(OV_INSTPTR_ov_object p
 	OV_RESULT res;
 	OV_INSTPTR_iec61131stdfb_LIMIT pinst = Ov_StaticPtrCast(iec61131stdfb_LIMIT, pobj);
 	
-	res = ov_object_constructor(pobj);
+	res = fb_functionblock_constructor(pobj);
 	
 	if(Ov_OK(res))
 	{
