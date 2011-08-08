@@ -10,11 +10,13 @@ DATABASE = database
 MAKMAKOPTIONS = -o
 EXTRA_LIBS = $$(BASE_LIB_DIR)oncrpcms$$(_LIB)
 LD_FLAGS = 
-COMPILER = MSVC
+COMPILER = GCC
 COMPILER_LO = $(call lc,$(COMPILER))
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
+
+all:
 
 %:
 	acplt_makmak -l fb $(MAKMAKOPTIONS)

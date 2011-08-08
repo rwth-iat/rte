@@ -10,11 +10,13 @@ DATABASE = database
 MAKMAKOPTIONS =
 EXTRA_LIBS = 
 LD_FLAGS = 
-COMPILER = MSVC
+COMPILER = GCC
 COMPILER_LO = $(call lc,$(COMPILER))
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
+
+all:
 
 %:
 	acplt_makmak -l iec61131stdfb $(MAKMAKOPTIONS)
