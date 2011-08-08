@@ -8,13 +8,15 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 #Project config parameters that are accessed by Eclipse
 DATABASE = database 
 MAKMAKOPTIONS =
-EXTRA_LIBS = 
+EXTRA_LIBS = -lm
 LD_FLAGS = 
 COMPILER = GCC
 COMPILER_LO = $(call lc,$(COMPILER))
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
+
+debug:
 
 %:
 	acplt_makmak -l iec61131stdfb $(MAKMAKOPTIONS)
