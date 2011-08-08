@@ -1,5 +1,5 @@
 
-#   $Id: generic.mk,v 1.23 2011-01-18 14:27:34 martin Exp $
+#   $Id: generic.mk,v 1.24 2011-08-08 17:12:30 sten Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -79,8 +79,8 @@ ONCRPC_BIN_DIR				= $(ONCRPC_DIR)/bin/
 
 #	Cygwin/MinGW stuff
 
-MINGWLIBPATH				= //C/usr/local/mingw/lib
-MINGWINCLUDEPATH			= //C/usr/local/mingw/include
+MINGWLIBPATH				= /cygdrive/c/MinGW32/lib
+MINGWINCLUDEPATH			= /cygdrive/c/MinGW32/include
 
 #	stuff for C16x compatible compilers using the Keil compiler
 

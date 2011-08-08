@@ -1,4 +1,4 @@
-#   $Id: Makefile,v 1.14 2006-02-03 12:52:55 markus Exp $
+#   $Id: Makefile,v 1.15 2011-08-08 17:12:30 sten Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -83,7 +83,8 @@ DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mno-cygwin -md
 CXX_DLLWRAP		= $(DLLWRAP) --driver-name g++
 
 WINDRES			= windres --preprocessor $(CPP_PATH)cpp --define OV_USE_WINDRES \
-				  $(foreach sourcedir, $(SOURCE_DIRS) $(OV_INCLUDE_DIR), --include-dir $(sourcedir))
+				  $(foreach sourcedir, $(SOURCE_DIRS) $(OV_INCLUDE_DIR), --include-dir $(sourcedir)) \
+				  --include-dir $(MINGWINCLUDEPATH)
 
 #	C-Includes
 #	----------
@@ -95,6 +96,7 @@ C_INCLUDES =
 
 include ../generic.mk
 
+
 #	all defines and includes together
 #	---------------------------------
 
@@ -104,21 +106,24 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(_LIB)
+LIBMPM_LIB			= $(LIBMPM_DIR)libml$(_LIB)
 
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 
-ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB) $(LIBRPC_LIB)
+#ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(_LIB) $(LIBRPC_LIB)
+ACPLTKS_LIBS			= ../../../plt/build/cygwin/libplt$(_LIB) $(LIBRPC_LIB)
 
 #	Targets
 #	-------
 
 targets: $(TARGETS) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)
 
+	
 example: $(EXAMPLE)
 	@
 
 all: targets example
+
 
 #   Implicit Rules
 #   --------------
