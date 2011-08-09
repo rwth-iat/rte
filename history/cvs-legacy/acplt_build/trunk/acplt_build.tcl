@@ -64,6 +64,13 @@ proc execute_ignore {args} {
     }
 }
 
+proc copy_wildcard {src target} {
+    set files [concat [glob -nocomplain $src]]
+    foreach file $files {
+        file copy -force $file $target
+    }
+}
+
 # Create directory structure
 proc create_dirs {} {
     global builddir
@@ -104,7 +111,7 @@ proc build {package args} {
     eval [concat "execute" $args]
 }
 
-# Build in a directory
+# Build in a directory using cygwin bash and ignoring errors
 proc build_cygwin {package args} {
 	global bash
     print_msg "Building $package"
@@ -112,6 +119,7 @@ proc build_cygwin {package args} {
 }
 
 proc build_acplt_cygwin {} {
+	print_msg "Starting 2nd compile pass with cygwin and gcc"
     global base
     global os
     global make
@@ -259,134 +267,136 @@ proc release_lib {libname} {
     global os
     global make
     cd $releasedir/user/
+	file delete -force $releasedir/user/$libname/
     checkout $libname
     cd $releasedir/user/$libname/build/$os/
     build $libname $make all
     print_msg "Deploying $libname"
-	file delete -force $releasedir/user/$libname/CVS/
-    #file delete -force $releasedir/user/$libname.build/
-    #file copy -force $releasedir/user/$libname/ $releasedir/user/$libname.build/
-    #file delete -force $releasedir/user/$libname/
-    #file mkdir $releasedir/user/$libname/
-    #file mkdir $releasedir/user/$libname/model/
-    #set models [concat [glob -nocomplain $releasedir/user/$libname.build/model/*.ov?]]
-    #foreach file $models {
-    #    file copy -force $file $releasedir/user/$libname/model/
-    #}
-    #file mkdir $releasedir/user/$libname/include/
-    #set headers [concat [glob -nocomplain $releasedir/user/$libname.build/model/*.h]]
-    #foreach file $headers {
-    #    file copy -force $file $releasedir/user/$libname/include/
-    #}
+    file delete -force $releasedir/user/$libname.build/
+    file copy -force $releasedir/user/$libname/ $releasedir/user/$libname.build/
+    file delete -force $releasedir/user/$libname/
+    file mkdir $releasedir/user/$libname/
+    file mkdir $releasedir/user/$libname/model/
+    copy_wildcard $releasedir/user/$libname.build/model/*.ov? $releasedir/user/$libname/model/
+    file mkdir $releasedir/user/$libname/include/
+	copy_wildcard $releasedir/user/$libname.build/include/*.h $releasedir/user/$libname/include/
     #export libname.a file for compiling under windows
-    #if { $os == "nt" } then {
-    #    file mkdir $releasedir/user/$libname/build/nt/
-	#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-	#        file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-	#}
-	#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.lib] } {
-	#	file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/$libname/build/nt/
-	#}
-    #}
-    #file delete -force $releasedir/user/$libname.build/
+    if { $os == "nt" } then {
+        file mkdir $releasedir/user/$libname/build/nt/
+		if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
+				file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
+		}
+		if { [file exists $releasedir/user/$libname.build/build/nt/$libname.lib] } {
+			file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/$libname/build/nt/
+		}
+    }
+    file delete -force $releasedir/user/$libname.build/
 }
 
+proc create_release {} {
+	global os
+	global releasedir
+	global builddir
+	global env
+	global oldpath
+
+	#create a release
+	set env(ACPLT_HOME) $releasedir
+	if { $os == "nt" } then {
+		set env(PATH) $env(PATH)\;$releasedir/bin/
+	} else {
+		set env(PATH) $env(PATH):$releasedir/bin/
+	}
+
+	print_msg "Creating release in $releasedir"
+	file mkdir $releasedir
+	#bin dir
+	file mkdir $releasedir/bin
+	set libfiles [concat [glob -nocomplain $builddir/bin/*]]
+	foreach file $libfiles {
+		file copy -force $file $releasedir/bin/
+	}
+	#lib dir
+	file mkdir -force $releasedir/lib
+	if { $os == "nt" } then {
+		set lib ".lib"
+	} else {
+		set lib ".a"
+	}
+	set libfiles [list "$builddir/lib/libks$lib" "$builddir/lib/libkscln$lib" "$builddir/lib/libkssvr$lib" "$builddir/lib/libov$lib" "$builddir/lib/libplt$lib"]
+	foreach file $libfiles {
+		file copy -force $file $releasedir/lib/
+	}
+	if { $os == "nt" } then {
+		file copy -force "$builddir/lib/oncrpc$lib" $releasedir/lib/
+		file copy -force "$builddir/lib/oncrpcms$lib" $releasedir/lib/
+	}
+	if { $os == "nt" } then {
+		#rename .lib files to .a files
+		set libfiles [concat [glob -nocomplain $releasedir/lib/*.lib]]
+		foreach file $libfiles {
+		set rootname [file rootname $file]
+		file copy -force $file $rootname.a
+		file delete -force $file
+		
+		#force the copy of 2 needed .a files
+		file copy -force $builddir/base/ov/build/cygwin/libov.a $releasedir/lib/
+		file copy -force $builddir/base/ov/build/cygwin/libovks.a $releasedir/lib/
+
+	   }
+	}
+	#model dir
+	file mkdir $releasedir/model
+	set libfiles [concat [glob -nocomplain $builddir/base/ov/model/ov.*]]
+	foreach file $libfiles {
+		file copy -force $file $releasedir/model
+	}
+	#database dir
+	file mkdir $releasedir/database
+	#include dir
+	file mkdir $releasedir/include
+	file mkdir $releasedir/include/ks
+	copy_wildcard $builddir/base/ks/include/ks/*.h $releasedir/include/ks
+	file mkdir $releasedir/include/libov
+	copy_wildcard $builddir/base/ks/include/libov/*.h $releasedir/include/libov
+	file mkdir $releasedir/include/libovks
+	copy_wildcard $builddir/base/ks/include/libovks/*.h $releasedir/include/libovks
+	file mkdir $releasedir/include/plt
+	copy_wildcard $builddir/base/ks/include/plt/*.h $releasedir/include/plt
+	if { $os == "nt" } then {
+		file mkdir $releasedir/include/rpc
+		copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/include/rpc
+	}
+	#user dir
+	file mkdir $releasedir/user
+	file mkdir $releasedir/user/libs
+	#download tclsh
+	if { $os == "nt" } then {
+		print_msg "Downloading tclsh.exe"
+		cd $releasedir/bin
+		execute "wget" "http://tclkit.googlecode.com/files/tclkitsh-8.5.8-win32.upx.exe"
+		file copy -force tclkitsh-8.5.8-win32.upx.exe tclsh.exe
+		file delete -force tclkitsh-8.5.8-win32.upx.exe
+	}
+	#remove cygwin from path (otherwise we have problems with copy command which is used in makefiles)
+	if { $os == "nt" } then {
+		set env(PATH) $oldpath
+	}
+}
+
+# ============== MAIN STARTS HERE ==================
 create_dirs
 checkout_acplt
 build_acplt
 install_acplt
-#if { $os == "nt" } then { 
-#    build_lib fb "" 1 "../../../../lib/oncrpcms.lib"
-#} else {
-#    build_lib fb "" 1 ""
-#}
-#build_lib iec61131stdfb fb 0 ""
-
-
 if { $os == "nt" } then {
-	print_msg "Starting 2nd compile pass with cygwin and gcc"
 	build_acplt_cygwin
 }
-
-
-#create a release
-set env(ACPLT_HOME) $releasedir
-if { $os == "nt" } then {
-    set env(PATH) $env(PATH)\;$releasedir/bin/
-} else {
-    set env(PATH) $env(PATH):$releasedir/bin/
-}
-
-print_msg "Creating release in $releasedir"
-#file delete -force $releasedir
-file mkdir $releasedir
-#bin dir
-file delete -force $releasedir/bin
-file copy $builddir/bin $releasedir/bin
-#lib dir
-file delete -force $releasedir/lib
-file copy -force $builddir/lib $releasedir/lib
-if { $os == "nt" } then {
-    set libfiles [concat [glob -nocomplain $releasedir/lib/*.lib]]
-    foreach file $libfiles {
-	set rootname [file rootname $file]
-	file copy -force $file $rootname.a
-	
-	#force the copy of 2 needed .a files
-	file copy -force $builddir/base/ov/build/cygwin/libov.a $releasedir/lib/
-	file copy -force $builddir/base/ov/build/cygwin/libovks.a $releasedir/lib/
-   }
-}
-#model dir
-file mkdir $releasedir/model
-set libfiles [concat [glob -nocomplain $builddir/base/ov/model/ov.*]]
-foreach file $libfiles {
-    file copy -force $file $releasedir/model
-}
-#database dir
-file mkdir $releasedir/database
-#database include
-file mkdir $releasedir/include
-file mkdir $releasedir/include/ks
-set headers [concat [glob -nocomplain $builddir/base/ks/include/ks/*.h]]
-foreach file $headers {
-    file copy -force $file $releasedir/include/ks
-}
-file mkdir $releasedir/include/libov
-set headers [concat [glob -nocomplain $builddir/base/ov/include/libov/*.h]]
-foreach file $headers {
-    file copy -force $file $releasedir/include/libov
-}
-file mkdir $releasedir/include/libovks
-set headers [concat [glob -nocomplain $builddir/base/ov/include/libovks/*.h]]
-foreach file $headers {
-    file copy -force $file $releasedir/include/libovks
-}
-file mkdir $releasedir/include/plt
-set headers [concat [glob -nocomplain $builddir/base/plt/include/plt/*.h]]
-foreach file $headers {
-    file copy -force $file $releasedir/include/plt
-}
-if { $os == "nt" } then {
-    file mkdir $releasedir/include/rpc
-    set headers [concat [glob -nocomplain $builddir/oncrpc/rpc/*.h]]
-    foreach file $headers {
-        file copy -force $file $releasedir/include/rpc
-    }
-}
-#user dir
-file mkdir $releasedir/user
-file mkdir $releasedir/user/libs
-
-#remove cygwin from path (otherwise we have problems with copy command)
-if { $os == "nt" } then {
-	set env(PATH) $oldpath
-}
-#-fb
+create_release
+#fb
 release_lib fb
-#-iec61131stdfb
+#iec61131stdfb
 release_lib iec61131stdfb
-
 
 #start_server
 if { $os == "nt" } then {
