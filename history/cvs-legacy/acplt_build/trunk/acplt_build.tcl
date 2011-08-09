@@ -317,7 +317,7 @@ proc create_release {} {
 		file copy -force $file $releasedir/bin/
 	}
 	#lib dir
-	file mkdir -force $releasedir/lib
+	file mkdir $releasedir/lib
 	if { $os == "nt" } then {
 		set lib ".lib"
 	} else {
@@ -358,11 +358,11 @@ proc create_release {} {
 	file mkdir $releasedir/include/ks
 	copy_wildcard $builddir/base/ks/include/ks/*.h $releasedir/include/ks
 	file mkdir $releasedir/include/libov
-	copy_wildcard $builddir/base/ks/include/libov/*.h $releasedir/include/libov
+	copy_wildcard $builddir/base/ov/include/libov/*.h $releasedir/include/libov
 	file mkdir $releasedir/include/libovks
-	copy_wildcard $builddir/base/ks/include/libovks/*.h $releasedir/include/libovks
+	copy_wildcard $builddir/base/ov/include/libovks/*.h $releasedir/include/libovks
 	file mkdir $releasedir/include/plt
-	copy_wildcard $builddir/base/ks/include/plt/*.h $releasedir/include/plt
+	copy_wildcard $builddir/base/plt/include/plt/*.h $releasedir/include/plt
 	if { $os == "nt" } then {
 		file mkdir $releasedir/include/rpc
 		copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/include/rpc
