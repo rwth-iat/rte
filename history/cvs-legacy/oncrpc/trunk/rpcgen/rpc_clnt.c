@@ -59,6 +59,9 @@ static char sccsid[] = "@(#)rpc_clntout.c 1.2 87/06/24 (C) 1987 SMI";
 
 #define DEFAULT_TIMEOUT 25	/* in seconds */
 
+static write_program();
+static printbody();
+
 void
 write_stubs()
 {

@@ -82,6 +82,11 @@ static u_int	xdrrec_getpos();
 static bool_t	xdrrec_setpos();
 static long *	xdrrec_inline();
 static void	xdrrec_destroy();
+static bool_t   flush_out();
+static bool_t   get_input_bytes();
+static bool_t   set_input_fragment();
+static bool_t   skip_input_bytes();
+
 
 static struct  xdr_ops xdrrec_ops = {
 	xdrrec_getlong,

@@ -67,6 +67,9 @@ static enum xprt_stat	svcudp_stat();
 static bool_t		svcudp_getargs();
 static bool_t		svcudp_freeargs();
 static void		svcudp_destroy();
+static                  cache_set();
+static                  cache_get();
+
 
 static struct xp_ops svcudp_op = {
 	svcudp_recv,

@@ -61,6 +61,15 @@ static char sccsid[] = "@(#)rpc_scan.c 1.6 87/06/24 (C) 1987 SMI";
 #define startcomment(where) (where[0] == '/' && where[1] == '*')
 #define endcomment(where) (where[-1] == '*' && where[0] == '/')
 
+static unget_token();
+static findstrconst();
+static findconst();
+static findkind();
+static cppline();
+static directive();
+static printdirective();
+static docppline();
+
 static int pushed = 0;	/* is a token pushed */
 static token lasttok;	/* last token, if pushed */
 

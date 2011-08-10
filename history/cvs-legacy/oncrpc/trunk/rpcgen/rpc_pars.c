@@ -58,6 +58,18 @@ static char sccsid[] = "@(#)rpc_parse.c 1.4 87/04/28 (C) 1987 SMI";
 #include "rpc_parse.h"
 #endif
 
+static isdefined();
+static def_struct();
+static def_program();
+static def_enum();
+static def_const();
+static def_union();
+static def_typedef();
+static get_declaration();
+static get_type();
+static unsigned_dec();
+
+
 /*
  * return the next definition you see
  */

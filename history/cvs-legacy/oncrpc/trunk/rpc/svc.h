@@ -260,7 +260,11 @@ extern fd_set svc_fdset;
 #ifdef __BORLANDC__
 extern __import fd_set svc_fdset;
 #else
+#ifdef __MINGW32__
+extern fd_set svc_fdset;
+#else
 _declspec(dllimport) fd_set svc_fdset;
+#endif
 #endif
 #endif
 #else

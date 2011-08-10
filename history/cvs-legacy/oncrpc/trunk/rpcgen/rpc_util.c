@@ -57,6 +57,9 @@ static char sccsid[] = "@(#)rpc_util.c 1.5 87/06/24 (C) 1987 SMI";
 #endif
 #include "rpc_util.h"
 
+static printwhere();
+
+
 char curline[MAXLINESIZE];	/* current read line */
 char *where = curline;	/* current point in line */
 int linenum = 0;	/* current line number */

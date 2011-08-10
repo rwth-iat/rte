@@ -67,6 +67,13 @@ static char sccsid[] = "@(#)rpc_main.c 1.7 87/06/24 (C) 1987 SMI";
 
 #define EXTEND	1		/* alias for TRUE */
 
+static c_output();
+static h_output();
+static s_output();
+static l_output();
+static do_registers();
+static parseargs();
+
 struct commandline {
 	int cflag;
 	int hflag;

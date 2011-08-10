@@ -58,6 +58,16 @@ static char sccsid[] = "@(#)rpc_cout.c 1.8 87/06/24 (C) 1987 SMI";
 #include "rpc_parse.h"
 #endif
 
+static print_header();
+static print_trailer();
+static space();
+static emit_enum();
+static emit_union();
+static emit_struct();
+static emit_typedef();
+static print_stat();
+
+
 /*
  * Emit the C-routine for the given definition 
  */
