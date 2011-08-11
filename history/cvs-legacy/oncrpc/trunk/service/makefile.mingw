@@ -1,5 +1,5 @@
 
-CC = mingw32-gcc
+CC = gcc -mno-cygwin
 AR = ar
 
 # If the rpc include directory is not included in the standard path
@@ -17,7 +17,7 @@ all: portmap.exe inst_pm.exe
 clean:
 	cmd /c del *.o *.exe
 
-portmap.exe: service.o servreg.o portmap.o $(RPCLIBPATH)oncrpc.lib portmap.res
+portmap.exe: service.o servreg.o portmap.o $(RPCLIBPATH)oncrpc.lib
 	$(CC) $(ldebug) $(conflags) -o portmap.exe portmap.o service.o servreg.o $(conlibs) $(RPCLIBPATH)oncrpc.lib -lwsock32 -luser32
 	cmd /c copy portmap.exe ..\bin
 

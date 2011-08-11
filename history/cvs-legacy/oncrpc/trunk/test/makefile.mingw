@@ -1,5 +1,5 @@
 
-CC = mingw32-gcc
+CC = gcc -mno-cygwin
 AR = ar
 
 # If you want to use the new multithreaded server feature uncomment this line

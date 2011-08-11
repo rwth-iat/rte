@@ -1,5 +1,5 @@
 
-CC = mingw32-gcc
+CC = gcc -mno-cygwin
 AR = ar
 
 # If the rpc include directory is not included in the standard path
