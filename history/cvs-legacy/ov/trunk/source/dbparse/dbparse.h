@@ -1,5 +1,5 @@
 /*
- * $Id: dbparse.h,v 1.12 2011-07-07 13:33:53 gustavo Exp $
+ * $Id: dbparse.h,v 1.13 2011-08-11 15:05:48 sten Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -38,8 +38,13 @@
 #endif
 
 #if PLT_SYSTEM_NT
-#include <iostream.h>
-#include <fstream.h>
+	#if __MINGW32__
+		#include <iostream>
+		#include <fstream>
+	#else
+		#include <iostream.h>
+		#include <fstream.h>
+	#endif
 #else
 #include <iostream>
 #include <fstream>
@@ -54,16 +59,23 @@
 //#include "ks/stdconnectionmgr.h"
 
 #if PLT_SYSTEM_NT
-#include <time.h>
-#include <stdio.h>
-#include <dos.h>
-#define uint unsigned int
-#define timezone _timezone
+	#if __MINGW32__
+		using namespace std;
+		#define uint unsigned int
+	#else
+		#include <time.h>
+		#include <stdio.h>
+		#include <dos.h>
+		#define uint unsigned int
+		#define timezone _timezone
+	#endif
 #else
 using namespace std;
 #endif
 
-#if PLT_COMPILER_MSVC
+
+
+#if PLT_COMPILER_MSVC || __MINGW32__
 #define sleep Sleep
 #include <io.h>
 #endif

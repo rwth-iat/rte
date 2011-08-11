@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump_templ.cpp,v 1.2 2010-07-26 13:29:19 henning Exp $
+ * $Id: dbdump_templ.cpp,v 1.3 2011-08-11 15:05:48 sten Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -64,7 +64,7 @@ template class PltSort<KscSortVarPtr>;
 template class PltContainer_<PltString>;
 template class PltContainer<PltString>;
 
-#if OV_SYSTEM_LINUX
+#if OV_SYSTEM_LINUX || __MINGW32__
 template class PltContainer_<PltAssoc<KsString, KscServerBase*> >;
 template class PltContainer_<PltAssoc<KsString, unsigned long> >;
 template class PltContainer_<PltAssoc<PltKeyPlainConstPtr<KscAvModule>, PltPtrHandle<KscNegotiator> > >;

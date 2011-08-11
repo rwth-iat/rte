@@ -1,5 +1,5 @@
 /*
- * $Id: dbdump.cpp,v 1.18 2011-07-07 13:33:53 gustavo Exp $
+ * $Id: dbdump.cpp,v 1.19 2011-08-11 15:05:47 sten Exp $
  *
  * Copyright (c) 1996-2002
  * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen
@@ -31,9 +31,15 @@
 #include "fnmatch.h"					// for string matching routines
 
 #if PLT_SYSTEM_NT
-#include <iostream.h>
-#include <iomanip.h>
-#include <fstream.h>
+	#if __MINGW32__
+	#include <iostream>
+	#include <iomanip>
+	#include <fstream>
+	#else
+	#include <iostream.h>
+	#include <iomanip.h>
+	#include <fstream.h>	
+	#endif
 #else
 #include <iostream>
 #include <iomanip>
@@ -46,8 +52,13 @@
 #include "ks/conversions.h"
 
 #if PLT_SYSTEM_NT
-#include <stdio.h>
-#define uint unsigned int
+	#if __MINGW32__
+	using namespace std;
+	#define uint unsigned int
+	#else
+	#include <stdio.h>
+	#define uint unsigned int
+	#endif
 #else
 using namespace std;
 #endif
@@ -1229,7 +1240,11 @@ int main(int argc, char **argv)						// command line arguments
 	}
 
 #if OV_SYSTEM_NT
-	test_file.open(outfile, ios::nocreate);	// test if output file exists
+	#if __MINGW32__
+		test_file.open(outfile, ios::in);	// test if output file exists
+	#else
+		test_file.open(outfile, ios::nocreate);	// test if output file exists
+	#endif
 #elif OV_SYSTEM_LINUX
 	test_file.open(outfile, ios::in);	// test if output file exists
 #else

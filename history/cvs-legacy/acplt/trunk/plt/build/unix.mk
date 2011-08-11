@@ -15,6 +15,7 @@ SRCDIR = ../../src/
 ### Compiler
 CXX = g++
 
+#CXX_EXTRA_FLAGS = -I. -I../../include 
 CXX_EXTRA_FLAGS = -I. -I../../include  -fno-implicit-templates
 
 #CXX_FLAGS = -g -Wall -DPLT_DEBUG_PEDANTIC=0

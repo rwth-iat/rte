@@ -89,12 +89,9 @@ CXX = g++
 CXX_EXTRA_FLAGS = -I . -I../../include -I$(PLT_DIR)/include -fno-implicit-templates
 
 
-
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
 
-
-#CXX_LINK = g++ $(LD_FLAGS)
 
 CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl g++ $(LD_FLAGS)
 

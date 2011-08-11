@@ -1,5 +1,5 @@
 /*
-*   $Id: ov_controlpanel.c,v 1.2 2004-10-29 09:08:24 ansgar Exp $
+*   $Id: ov_controlpanel.c,v 1.3 2011-08-11 15:05:48 sten Exp $
 *
 *   Copyright (C) 2000
 *   Lehrstuhl fuer Prozessleittechnik,
@@ -30,7 +30,9 @@
 #include "ov_controlpanel.h"
 
 #include <windows.h>
-#if OV_COMPILER_CYGWIN
+#if __MINGW32__
+#include <cpl.h>
+#elif OV_COMPILER_CYGWIN
 /* missing under cygwin */
 #define CPL_INIT		1
 #define CPL_GETCOUNT	2

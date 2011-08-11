@@ -1,4 +1,4 @@
-#   $Id: Makefile,v 1.15 2011-08-08 17:12:30 sten Exp $
+#   $Id: Makefile,v 1.16 2011-08-11 15:05:47 sten Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -73,6 +73,7 @@ CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 CXX_LINK		= g++ -mno-cygwin -L$(MINGWLIBPATH)
+#CXX_LINK		= MAKE=$(MAKE) perl ../../../plt/build/templ.pl g++ -mno-cygwin -L$(MINGWLIBPATH)
 CXX_LIBS		= $(C_LIBS) -lwsock32
 
 AR				= ar
@@ -234,13 +235,13 @@ $(OV_CONTROLPANEL_CPL) : $(OV_CONTROLPANEL_OBJ) $(OV_CONTROLPANEL_RES)
 #	ACPLT/OV database dumper
 
 dbdump.o : dbdump.cpp
-	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
+	 $(CXX) $(CXX_FLAGS) $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
 
 fnmatch.o : fnmatch.c
 	 $(CC) $(CC_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
-	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(LIBRPC_LIB) $(CXX_LIBS)
 
 #	ACPLT/OV database parser
 
@@ -261,7 +262,7 @@ dbparse1.o : dbparse1.cpp
 	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DOV_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
 
 $(DBPARSE_EXE) : $(DBPARSE_OBJ)  
-	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(LIBRPC_LIB) $(CXX_LIBS)
 
 #	ACPLT/OV OVI/XML parser
 
@@ -269,7 +270,7 @@ ovxiparse.o : ovxiparse.cpp
 	 $(CXX) $(CXX_FLAGS)  $(LIBRPC_DEFINES)	$(ACPLTKS_PLATFORM_DEFINES) -DPLT_SYSTEM_$(SYSTEM)=1 -DPLT_USE_BUFFERED_STREAMS=1 -DNDEBUG $(OV_DEFINES) $(INCLUDES) -c $< -o $@
 
 $(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)  
-	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
+	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(LIBRPC_LIB) $(CXX_LIBS)
 
 #	ACPLT/OV makmak
 
@@ -327,7 +328,7 @@ dynov.c dynov.h : $(OV_CODEGEN_EXE)
 $(TASKLIB_LIB) : $(TASKLIB_DLL)
 	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
 
-$(TASKLIB_DLL) : $(TASKLIB_OBJ)
+$(TASKLIB_DLL) : $(TASKLIB_OBJ) $(OV_LIBOV_LIB)
 	@echo EXPORTS > $(basename $@).def
 	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
@@ -346,7 +347,8 @@ install : all
 #	--------
 
 clean :
-	@del *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
+	-@del *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
+	-@rm *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
 
 #	Include dependencies
 #	--------------------
