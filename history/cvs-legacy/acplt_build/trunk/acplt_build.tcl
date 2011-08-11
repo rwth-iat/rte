@@ -115,17 +115,20 @@ proc build {package args} {
 proc build_cygwin {package args} {
 	global bash
     print_msg "Building $package"
-    eval [concat "execute_ignore" $bash $args]
+    eval [concat "execute" $bash $args]
 }
 
-proc build_acplt_cygwin {} {
-	print_msg "Starting 2nd compile pass with cygwin and gcc"
+proc build_acplt_mingw {} {
+	print_msg "Compiling with mingw32"
     global base
     global os
     global make
     global basedir
 	global builddir
-	file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpc.a
+	print_msg "Build oncrpc"
+	cd $builddir/oncrpc/
+    execute makemingw.bat
+    file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
 	cd $builddir/libml
 	build_cygwin libml make -f mingw.mk
 	cd $builddir/base/libmpm 
@@ -136,9 +139,11 @@ proc build_acplt_cygwin {} {
     build_cygwin ks make -f makefile
 	cd $builddir/base/ov/build/cygwin
     build_cygwin ov make -f makefile
+	cd $builddir/base/acplt_makmak/build/cygwin
+    build_cygwin acplt_makmak make -f makefile
 }
 
-# Build ACPLT
+# Build ACPLT (msvc in windows [depricated] and gcc in linux)
 proc build_acplt {} {
     global builddir
     global base
@@ -195,10 +200,8 @@ proc install {dir} {
     # execute make -C $dir install
 } 
 
-proc install_acplt {} {
+proc install_acplt { target } {
     global builddir
-    global os
-    if { $os == "nt" } then { set target "ntvc" } else { set target $os }
     install $builddir/oncrpc/bin
     install $builddir/base/plt/build/$target
     install $builddir/base/ks/build/$target
@@ -318,32 +321,18 @@ proc create_release {} {
 	}
 	#lib dir
 	file mkdir $releasedir/lib
-	if { $os == "nt" } then {
-		set lib ".lib"
-	} else {
-		set lib ".a"
-	}
-	set libfiles [list "$builddir/lib/libks$lib" "$builddir/lib/libkscln$lib" "$builddir/lib/libkssvr$lib" "$builddir/lib/libov$lib" "$builddir/lib/libplt$lib"]
+	#if { $os == "nt" } then {
+	#	set lib ".lib"
+	#}
+	set lib ".a"
+
+	set libfiles [list "$builddir/lib/libks$lib" "$builddir/lib/libkscln$lib" "$builddir/lib/libkssvr$lib" "$builddir/lib/libov$lib" "$builddir/lib/libovks$lib" "$builddir/lib/libplt$lib"]
 	foreach file $libfiles {
 		file copy -force $file $releasedir/lib/
 	}
 	if { $os == "nt" } then {
 		file copy -force "$builddir/lib/oncrpc$lib" $releasedir/lib/
 		file copy -force "$builddir/lib/oncrpcms$lib" $releasedir/lib/
-	}
-	if { $os == "nt" } then {
-		#rename .lib files to .a files
-		set libfiles [concat [glob -nocomplain $releasedir/lib/*.lib]]
-		foreach file $libfiles {
-		set rootname [file rootname $file]
-		file copy -force $file $rootname.a
-		file delete -force $file
-		
-		#force the copy of 2 needed .a files
-		file copy -force $builddir/base/ov/build/cygwin/libov.a $releasedir/lib/
-		file copy -force $builddir/base/ov/build/cygwin/libovks.a $releasedir/lib/
-
-	   }
 	}
 	#model dir
 	file mkdir $releasedir/model
@@ -387,10 +376,15 @@ proc create_release {} {
 # ============== MAIN STARTS HERE ==================
 create_dirs
 checkout_acplt
-build_acplt
-install_acplt
 if { $os == "nt" } then {
-	build_acplt_cygwin
+	#for depricated msvc use following:
+	#build_acplt
+	#install_acplt {ntvc}
+	build_acplt_mingw
+	install_acplt cygwin
+} else {
+	build_acplt
+	install_acplt linux
 }
 create_release
 #fb
