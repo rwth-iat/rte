@@ -52,22 +52,21 @@ OBJS =          CLNT_RAW.o \
 		BCOPY.o \
 		NT.o
 
-all: oncrpc.dll oncrpc.lib oncrpc.a portmap.exe
+all: oncrpc.dll oncrpc.a portmap.exe
 
 clean:
-	cmd /c del $(OBJS) oncrpc.lib oncrpc.dll oncrpc.exp portmap.o portmap.exe ..\rpcgen\oncrpc.dll *.pdb
+	cmd /c del $(OBJS) oncrpc.dll oncrpc.lib oncrpc.exp portmap.o portmap.exe ..\rpcgen\oncrpc.dll *.pdb
 
-portmap.exe:    portmap.o oncrpc.lib 
-	$(CC) $(conlflags) $(ldebug) -o portmap.exe PORTMAP.o oncrpc.lib $(conlibsdll) -lwsock32
+portmap.exe:    portmap.o oncrpc.dll 
+	$(CC) $(conlflags) $(ldebug) -o portmap.exe PORTMAP.o oncrpc.dll $(conlibsdll) -lwsock32
 	cmd /c copy $@ ..\bin\pm_ascii.exe
 
 oncrpc.a:     $(OBJS)
 	$(AR) crv $@ $(OBJS)
 	cmd /c copy oncrpc.a ..\bin
 
-oncrpc.dll oncrpc.lib:     $(OBJS)
-	$(CC) -shared -o oncrpc.dll -Wl,--output-def,oncrpc.def,--out-implib,oncrpc.lib $(ldebug) $(OBJS) $(conlibsdll) -lwsock32 -ladvapi32
-	cmd /c copy oncrpc.lib ..\bin
+oncrpc.dll:     $(OBJS)
+	$(CC) -shared -o oncrpc.dll -Wl,--output-def,oncrpc.def $(ldebug) $(OBJS) $(conlibsdll) -lwsock32 -ladvapi32
 	cmd /c copy oncrpc.dll ..\bin
 	cmd /c copy oncrpc.dll ..\rpcgen
 

@@ -14,8 +14,8 @@ OBJS= rpcinfo.o
 
 GOAL=rpcinfo.exe
 
-$(GOAL): $(OBJS) $(RPCLIBPATH)\oncrpc.lib
-	$(CC) $(ldebug) $(conflags) $(OBJS) -o $(GOAL) $(conlibsdll) $(RPCLIBPATH)\oncrpc.lib -lwsock32
+$(GOAL): $(OBJS) $(RPCLIBPATH)\oncrpc.dll
+	$(CC) $(ldebug) $(conflags) $(OBJS) -o $(GOAL) $(conlibsdll) $(RPCLIBPATH)\oncrpc.dll -lwsock32
 	cmd /c copy $(GOAL) ..\bin
 
 clean:

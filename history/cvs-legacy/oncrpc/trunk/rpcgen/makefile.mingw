@@ -8,15 +8,15 @@ RPCINCLUDEPATH = ..
 
 # If the rpc library is not included in the standard lib path
 # you have to give the path to it here.
-RPCLIBPATH = ..\bin\\
+RPCLIBPATH = ..\bin\
 
 OBJS= rpc_main.o rpc_hout.o rpc_cout.o rpc_pars.o rpc_scan.o rpc_util.o \
 	rpc_svco.o rpc_clnt.o
 
 GOAL=rpcgen.exe
 
-$(GOAL): $(OBJS) $(RPCLIBPATH)\oncrpc.lib
-	$(CC) $(ldebug) $(conflags) $(OBJS) -o $(GOAL) $(conlibsdll) $(RPCLIBPATH)\oncrpc.lib
+$(GOAL): $(OBJS) $(RPCLIBPATH)\oncrpc.dll
+	$(CC) $(ldebug) $(conflags) $(OBJS) -o $(GOAL) $(conlibsdll) $(RPCLIBPATH)\oncrpc.dll
 	copy $(GOAL) ..\bin
 
 clean:
