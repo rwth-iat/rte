@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.90 $
-*	$Date: 2011-08-12 09:45:34 $
+*	$Revision: 1.91 $
+*	$Date: 2011-08-12 11:19:43 $
 *
 *	History:
 *	--------
@@ -331,32 +331,16 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - Start");
 		
 		//responseText should be something like: {fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi5} {fb_hmi4}
-		var Response = req.responseText;
-		var Server = new Array();
-		var ServerList = "";
+		var Response = req.responseText.substring(1, req.responseText.length-1);
+		var Server = Response.split("} {");
+		Response = null;
 		
 		var i = 0;
 		
-		//build an Array of potential servers
-		while (	Response !== null
-				&&	Response.indexOf('}') != -1)
-		{
-			//cut the servername out of the surrounding { }
-			Server[i] = Response.substring(1, Response.indexOf('}'));
-			ServerList = Server[i] + ", " + ServerList;
-			
-			//preserve the rest for another servertest
-			Response = Response.substring(Response.indexOf('}') + 2, Response.length);
-			i = i + 1;
-			
-			if (Response.indexOf('}') == -1)
-				Response = null;
-		};
 		Server = Server.sort();
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - number of potential servers: "+Server.length);
 		
-		HMI.PossServers.setAttribute("title", "available OV-Servers: "+ServerList.substring(0, ServerList.length-2));
-		ServerList = null;
+		HMI.PossServers.setAttribute("title", "available OV-Servers: "+Server.join(", "));
 		
 		if (Server.length === 0){
 			HMI.PossServers.options[0] = new Option('- no MANAGER available-', 'no server');
@@ -541,35 +525,24 @@ HMIJavaScriptKSClient.prototype = {
 	_cbGetSheets: function(Client, req) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - Start");
 		
-		var Response = req.responseText;
 		var Sheet = new Array();
 		
 		var i = 0;
 		
 		//cut the sheetlist out of brackets
-		if (Response.indexOf('{{') == -1)
-		{
+		if (req.responseText.indexOf('{{') == -1){
 			//could be {/TechUnits/Sheet1}
-			Response = Response.substring(Response.indexOf('{') + 1, Response.indexOf('}'));
-		} else {
+			
+			//cut { and }
+			Sheet[0] = req.responseText.substring(1, req.responseText.length-1);
+		} else if (req.responseText[2] == "/"){
 			//could be {{/TechUnits/Sheet1 /TechUnits/Sheet2 /TechUnits/Sheet3}}
-			Response = Response.substring(Response.indexOf('{{') + 2, Response.indexOf('}}'));
+			
+			//cut {{ and }} after that
+			//split into an array
+			Sheet = req.responseText.substring(2, req.responseText.length-2).split(" ");
 		};
 		
-		while (Response !== null && Response !== "")
-		{
-			if (Response.indexOf(' ') == -1)
-			{
-				//only one Sheet
-				Sheet[i] = Response;
-				Response = null;
-			} else {
-				//multiple Sheets
-				Sheet[i] = Response.substring(0, Response.indexOf(' '));
-				Response = Response.substring(Response.indexOf(' ') + 1, Response.length);
-			};
-			i = i + 1;
-		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
 		if (Sheet.length === 0){
 			HMI.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
@@ -780,7 +753,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2011-08-12 09:45:34 $";
+var filedate = "$Date: 2011-08-12 11:19:43 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
