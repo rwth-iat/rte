@@ -127,8 +127,9 @@ proc build_acplt_mingw {} {
 	global builddir
 	print_msg "Build oncrpc"
 	cd $builddir/oncrpc/
-    execute makemingw.bat
-    file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
+    #execute makemingw.bat
+	execute makemingw.bat
+	file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
 	cd $builddir/libml
 	build_cygwin libml make -f mingw.mk
 	cd $builddir/base/libmpm 
