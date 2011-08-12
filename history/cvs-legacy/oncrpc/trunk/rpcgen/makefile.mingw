@@ -17,7 +17,7 @@ GOAL=rpcgen.exe
 
 $(GOAL): $(OBJS) oncrpc.dll $(RPCLIBPATH)oncrpc.dll
 	$(CC) $(ldebug) $(conflags) $(OBJS) -o $(GOAL) $(conlibsdll) $(RPCLIBPATH)oncrpc.dll
-	copy $(GOAL) ..\bin
+	cmd /c copy $(GOAL) ..\bin
 
 clean:
 	-cmd /c del $(GOAL) $(OBJS)

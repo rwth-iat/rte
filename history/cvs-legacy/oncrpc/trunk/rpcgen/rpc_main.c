@@ -90,8 +90,13 @@ static char *cmdname;
 static char CPP[] = "cpp32";
 static char CPPFLAGS[] = "-C -P- -oCON";
 #else
+#ifdef __MINGW32__
+static char CPP[] = "cpp";
+static char CPPFLAGS[] = "-C";
+#else
 static char CPP[] = "cl";
 static char CPPFLAGS[] = "/C /EP /nologo";
+#endif
 #endif
 #else
 static char CPP[] = "/lib/cpp";
