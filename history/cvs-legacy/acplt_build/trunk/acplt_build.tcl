@@ -31,9 +31,7 @@ if {$tcl_platform(os) == "Linux"} then {
 
 #cygwin stuff
 if { $os == "nt" } then {
-	set bash "C:/Cygwin/bin/bash -c "
-	set oldpath $env(PATH)
-    set env(PATH) $env(PATH)\;C:/Cygwin/bin/
+	set bash "bash -c "
 }
 
 file delete -force $logfile
@@ -190,7 +188,7 @@ proc install {dir} {
     } 
     if { $os == "nt" } then {
         set binfiles [concat [glob -nocomplain $dir/*.dll $dir/*.exe]]
-        set libfiles [concat [glob -nocomplain $dir/*.lib] [glob -nocomplain $dir/*.a]]
+        set libfiles [concat [glob -nocomplain $dir/*.lib $dir/*.a]]
     }
     foreach file $binfiles {
 	file copy -force $file $builddir/bin
@@ -302,9 +300,8 @@ proc create_release {} {
 	global releasedir
 	global builddir
 	global env
-	global oldpath
 
-	#create a release
+        #create a release
 	set env(ACPLT_HOME) $releasedir
 	if { $os == "nt" } then {
 		set env(PATH) $env(PATH)\;$releasedir/bin/
@@ -367,10 +364,6 @@ proc create_release {} {
 		execute "wget" "http://tclkit.googlecode.com/files/tclkitsh-8.5.8-win32.upx.exe"
 		file copy -force tclkitsh-8.5.8-win32.upx.exe tclsh.exe
 		file delete -force tclkitsh-8.5.8-win32.upx.exe
-	}
-	#remove cygwin from path (otherwise we have problems with copy command which is used in makefiles)
-	if { $os == "nt" } then {
-		set env(PATH) $oldpath
 	}
 }
 
