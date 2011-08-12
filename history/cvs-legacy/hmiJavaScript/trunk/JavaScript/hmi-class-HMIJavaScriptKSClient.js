@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.89 $
-*	$Date: 2011-05-02 09:03:51 $
+*	$Revision: 1.90 $
+*	$Date: 2011-08-12 09:45:34 $
 *
 *	History:
 *	--------
@@ -131,16 +131,17 @@ HMIJavaScriptKSClient.prototype = {
 			this.getEP(null, '/servers%20*', this._cbGetServers);
 			response: "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}"
 	*********************************/
-	getEP: function(Handle, path, cbfnc) {
+	getEP: function(Handle, path, cbfnc, tksparameter) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path+" Handle: "+Handle);
 		if (Handle === null){
 			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
 		if (HMI.GatewayTypeTCL === true){
-			path = path + "%20-output%20$::TKS::OP_NAME";
+			path = path + tksparameter;
 			urlparameter = 'obj='+Handle + '&args=getep%20' +path;
 		}else if (HMI.GatewayTypePHP === true){
+			//todo php should get similar interface
 			path = path;
 			urlparameter = 'obj='+Handle + '&cmd=getep&path=' +path;
 		}
@@ -314,7 +315,7 @@ HMIJavaScriptKSClient.prototype = {
 		
 		if (this.TCLKSHandle !== null){
 			//The Handle points to the Manager wich can provide us with a list of OV servers (detection of HMI Servers are made in the callback)
-			this.getEP(null, '/servers%20*', this._cbGetServers);
+			this.getEP(null, '/servers%20*', this._cbGetServers, "%20-output%20$::TKS::OP_NAME");
 		} else {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End - No TCLKSHandle");
 			return false;
@@ -779,7 +780,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2011-05-02 09:03:51 $";
+var filedate = "$Date: 2011-08-12 09:45:34 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
