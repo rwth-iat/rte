@@ -27,15 +27,15 @@ clean:
 COU_SVC.EXE: 	COUNT.o \
 		COU_SVC.o \
 		COU_XDR.o \
-		$(RPCLIBPATH)oncrpc.lib
-	$(CC) $(conlflags) $(ldebug) -o COU_svc.exe COUNT.o COU_XDR.o COU_SVC.o $(conlibsdll) $(RPCLIBPATH)oncrpc.lib
+		$(RPCLIBPATH)oncrpc.dll
+	$(CC) $(conlflags) $(ldebug) -o COU_svc.exe COUNT.o COU_XDR.o COU_SVC.o $(conlibsdll) $(RPCLIBPATH)oncrpc.dll
 	cmd /c copy COU_svc.exe ..\bin
 
 DO_COU.EXE: 	COU_CLNT.o \
 		COU_XDR.o \
 		DO_COU.o \
-		$(RPCLIBPATH)oncrpc.lib
-	$(CC) $(conlflags) $(ldebug) -o DO_COU.exe COU_XDR.o COU_CLNT.o DO_COU.o $(conlibsdll) $(RPCLIBPATH)oncrpc.lib
+		$(RPCLIBPATH)oncrpc.dll
+	$(CC) $(conlflags) $(ldebug) -o DO_COU.exe COU_XDR.o COU_CLNT.o DO_COU.o $(conlibsdll) $(RPCLIBPATH)oncrpc.dll
 	cmd /c copy DO_COU.exe ..\bin
 
 .c.o:
