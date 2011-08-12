@@ -94,7 +94,7 @@ proc checkout_acplt {} {
     if { $os == "nt" } then { checkout oncrpc }
     checkout acplt base
     cd $builddir/base
-    checkout libmpm
+    #checkout libmpm
     checkout ov
     checkout acplt_makmak
     #cd $builddir/user
@@ -130,8 +130,8 @@ proc build_acplt_mingw {} {
 	file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
 	cd $builddir/libml
 	build_cygwin libml make -f mingw.mk
-	cd $builddir/base/libmpm 
-	build_cygwin libmpm make -f Makefile
+	#cd $builddir/base/libmpm 
+	#build_cygwin libmpm make -f Makefile
 	cd $builddir/base/plt/build/cygwin
     build_cygwin plt make -f makefile
 	cd $builddir/base/ks/build/cygwin
