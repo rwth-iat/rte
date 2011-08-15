@@ -113,7 +113,7 @@ proc build {package args} {
 proc build_cygwin {package args} {
 	global bash
     print_msg "Building $package"
-    eval [concat "execute" $bash $args]
+    eval [concat "execute" $bash \"$args\"]
 }
 
 proc build_acplt_mingw {} {
