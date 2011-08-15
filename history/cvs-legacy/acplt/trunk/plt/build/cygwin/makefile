@@ -8,7 +8,7 @@
 
 
 
-MINGWINCLUDEPATH = //C/usr/local/mingw/include
+MINGWINCLUDEPATH = /cygdrive/c/MinGW32/include
 
 
 

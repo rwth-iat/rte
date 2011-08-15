@@ -1,8 +1,8 @@
 RPCINCLUDEPATH = ../../../../oncrpc
 
-MINGWLIBPATH = //C/usr/local/mingw/lib
+MINGWLIBPATH = /cygdrive/c/MinGW32/lib
 
-MINGWINCLUDEPATH = //C/usr/local/mingw/include
+MINGWINCLUDEPATH = /cygdrive/c/MinGW32/include
 
 LIBRPC = ../../../../oncrpc/bin/oncrpc.a
 
