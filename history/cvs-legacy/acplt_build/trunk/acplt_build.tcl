@@ -157,7 +157,7 @@ proc build_acplt {} {
         file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpcms.lib
         cd $basedir
     }
-    build libmpm make -C $builddir/base/libmpm -f $makefile
+    # build libmpm make -C $builddir/base/libmpm -f $makefile
     if { $os == "nt" } then {
         cd $builddir/base/plt/build/ntvc
         build plt nmake /f $makefile
