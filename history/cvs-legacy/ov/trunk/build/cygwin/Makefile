@@ -1,4 +1,4 @@
-#   $Id: Makefile,v 1.16 2011-08-11 15:05:47 sten Exp $
+#   $Id: Makefile,v 1.17 2011-08-16 08:32:58 sten Exp $
 #
 #   Copyright (C) 1998-1999
 #   Lehrstuhl fuer Prozessleittechnik,
@@ -62,7 +62,8 @@ BISON			= bison
 CPP 			= cpp
 
 CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
-CC_FLAGS		= -g -Wall -O2
+CC_FLAGS		= -g -Wall -Wno-attributes -O2 -fno-strict-aliasing -Wstrict-aliasing=2
+#-fstrict-aliasing 
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= gcc -mno-cygwin -L$(MINGWLIBPATH)
