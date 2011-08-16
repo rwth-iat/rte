@@ -284,11 +284,11 @@ proc release_lib {libname} {
 	copy_wildcard $releasedir/user/$libname.build/include/*.h $releasedir/user/$libname/include/
     #export libname.a file for compiling under windows
     if { $os == "nt" } then {
-        file mkdir $releasedir/user/$libname/build/nt/
-		if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-				file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-		}
+		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
+		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
+		#}
 		if { [file exists $releasedir/user/$libname.build/build/nt/$libname.lib] } {
+		    file mkdir $releasedir/user/$libname/build/nt/
 			file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/$libname/build/nt/
 		}
     }
