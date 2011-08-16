@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.177 $
-*	$Date: 2011-06-21 13:01:16 $
+*	$Revision: 1.178 $
+*	$Date: 2011-08-16 08:09:19 $
 *
 *	History:
 *	--------
@@ -205,7 +205,7 @@ HMI.prototype = {
 			if (!(this.Playground = $('idPlayground'))){
 				ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
 			}else{
-				//prevent right click in supported Browsers (no Opera, no IE6-8)
+				//prevent right click in supported Browsers (no Opera < 10.5, no IE6-8)
 				addEventSimple(HMI.Playground, "contextmenu", function (evt) {if (evt.preventDefault) evt.preventDefault();});
 			}
 			//Object of RefreshTime
@@ -1184,22 +1184,24 @@ HMI.prototype = {
 	_getAndImportComponent: function (ComponentPath) {
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - Start");
 		
-		var SVGDescription;
+		var SVGRequestURI;
 		
 		//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
 		if (HMI.ServerProperty.SheetHasStyleDescription){
 			//spaces in objectname are encoded as %20 within OV
-			SVGDescription = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '%20' + encodeURI(ComponentPath) + '.StyleDescription' + '}';
+			SVGRequestURI = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '%20' + encodeURI(ComponentPath) + '.StyleDescription' + '}';
 		}else{
 			//spaces in objectname are encoded as %20 within OV
-			SVGDescription = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '}';
+			SVGRequestURI = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '}';
 		}
 		
 		//	import and show
 		//
-		this.KSClient.getVar(null, SVGDescription, this._cbGetAndShowComponent);
+		var ComponentText = this.KSClient.getVar(null, SVGRequestURI, null);
 		
-		SVGDescription = null;
+		this._importComponent(ComponentText);
+		SVGRequestURI = null;
+		ComponentText = null;
 		
 		this.hmi_log_trace("HMI.prototype._getAndImportComponent - End");
 		
@@ -1207,74 +1209,60 @@ HMI.prototype = {
 	},
 	
 	/*********************************
-		_cbGetAndShowComponent
+		_showComponent
 	*********************************/	
-	_cbGetAndShowComponent: function (Client, req) {
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Start");
+	_showComponent: function (Component) {
+		this.hmi_log_trace("HMI.prototype._showComponent - Start");
 		
-		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
-		var ComponentText = new Array(2);
-		var Component;
+		if (Component === null){
+			//logging not required, already done by _importComponent
+			return;
+		}
 		
-		if (req.responseText !== "")
-		{
-			ComponentText = HMI.KSClient.prepareComponentText(req.responseText);
-			if (ComponentText === null){
-				//logging not required, allready done by prepareComponentText
-				return;
-			}
-			
-			Component = HMI._importComponent(ComponentText);
-			if (Component === null){
-				//logging not required, allready done by _importComponent
-				return;
-			}
-			
-			//if this will be the Sheet (first viewed sheet or comoponent is same as active view)
-			if(HMI.Playground.firstChild === null || HMI.Playground.firstChild.id === Component.id){
-				//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)
-				Component.setAttribute('x', 0);
-				Component.setAttribute('y', 0);
-			}
-			
-			HMI.initGestures(Component);
-			//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
-			if (HMI.AdobeMoveFixNeeded){
-				var dummyRect = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
-				dummyRect.setAttributeNS(null, 'x', '0');
-				dummyRect.setAttributeNS(null, 'y', '0');
-				dummyRect.setAttributeNS(null, 'width', Component.getAttribute('width'));
-				dummyRect.setAttributeNS(null, 'height', Component.getAttribute('height'));
-				dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
-				Component.insertBefore(dummyRect, Component.firstChild);
-				dummyRect = null;
-				HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - Fix for Adobe mousemove Bug enabled.");
-			}
-			HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent: now Playground.append/replaceChild");
-			
-			if(HMI.PlaygroundContainerNode){
-				//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
-				HMI.PlaygroundContainerNode.setAttribute('height', Component.getAttribute('height'));
-				HMI.PlaygroundContainerNode.setAttribute('width', Component.getAttribute('width'));
-			}
-			
-			if(HMI.Playground.firstChild === null){
-				//we have no display => append
-				HMI.Playground.appendChild(Component);
-				
-				//	set TimeoutID
-				if (HMI.RefreshTimeoutID === null){
-					HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
-				}
-			}else if(HMI.Playground.firstChild !== null){
-				//we have a display => replace
-				HMI.Playground.replaceChild(Component, HMI.Playground.firstChild);
-			}
-			Component = null;
-			ComponentText = null;
-		};
+		//if this will be the Sheet (first viewed sheet or comoponent is same as active view)
+		if(this.Playground.firstChild === null || this.Playground.firstChild.id === Component.id){
+			//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)
+			Component.setAttribute('x', 0);
+			Component.setAttribute('y', 0);
+		}
 		
-		HMI.hmi_log_trace("HMI.prototype._cbGetAndShowComponent - End");
+		this.initGestures(Component);
+		//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
+		if (this.AdobeMoveFixNeeded){
+			var dummyRect = this.svgDocument.createElementNS(this.HMI_Constants.NAMESPACE_SVG, 'rect');
+			dummyRect.setAttributeNS(null, 'x', '0');
+			dummyRect.setAttributeNS(null, 'y', '0');
+			dummyRect.setAttributeNS(null, 'width', Component.getAttribute('width'));
+			dummyRect.setAttributeNS(null, 'height', Component.getAttribute('height'));
+			dummyRect.setAttributeNS(null, 'style', 'opacity:0;');
+			Component.insertBefore(dummyRect, Component.firstChild);
+			dummyRect = null;
+			this.hmi_log_trace("HMI.prototype._showComponent - Fix for Adobe mousemove Bug enabled.");
+		}
+		this.hmi_log_trace("HMI.prototype._showComponent: now Playground.append/replaceChild");
+		
+		if(this.PlaygroundContainerNode){
+			//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
+			this.PlaygroundContainerNode.setAttribute('height', Component.getAttribute('height'));
+			this.PlaygroundContainerNode.setAttribute('width', Component.getAttribute('width'));
+		}
+		
+		if(this.Playground.firstChild === null){
+			//we have no display => append
+			this.Playground.appendChild(Component);
+			
+			//	set TimeoutID
+			if (this.RefreshTimeoutID === null){
+				this.RefreshTimeoutID = window.setInterval(function () {this.refreshSheet();}, this.RefreshTime);
+			}
+		}else if(this.Playground.firstChild !== null){
+			//we have a display => replace
+			this.Playground.replaceChild(Component, this.Playground.firstChild);
+		}
+		Component = null;
+		ComponentText = null;
+		
+		this.hmi_log_trace("HMI.prototype._showComponent - End");
 	},
 	
 	/*********************************
@@ -1283,12 +1271,20 @@ HMI.prototype = {
 	_importComponent: function(ComponentText) {
 		this.hmi_log_trace("HMI.prototype._importComponent - Start");
 		
+		var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
+		if (SplitComponent === null){
+			//logging not required, allready done by prepareComponentText
+			return;
+		}
+		
 		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
 		//build a DOM fragment with the SVG String
-		var parsedComponentText = new HMIDOMParser().parse(ComponentText[0], ComponentText[1], null);
+		var Component = new HMIDOMParser().parse(SplitComponent[0], SplitComponent[1], null);
 		
+		if (Component != null){
+			this._showComponent(Component);
+		}
 		this.hmi_log_trace("HMI.prototype._importComponent - End");
-		return (parsedComponentText);
 	},
 	
 	/*********************************
@@ -1716,7 +1712,7 @@ if( window.addEventListener ) {
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
-var filedate = "$Date: 2011-06-21 13:01:16 $";
+var filedate = "$Date: 2011-08-16 08:09:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

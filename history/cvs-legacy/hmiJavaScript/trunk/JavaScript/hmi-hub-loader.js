@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2009
+*	Copyright (C) 2011
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.25 $
-*	$Date: 2011-06-29 09:13:59 $
+*	$Revision: 1.26 $
+*	$Date: 2011-08-16 08:09:19 $
 *
 *	History:
 *	01-March-2005			HA
@@ -110,7 +110,8 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 		
 		if (scriptNode.src !== undefined){
 			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
-			match = p.exec(scriptNode.src);
+			//opera sometimes gets the Filename as "hmi%2fhub%2floader.js". Fixed with decodeURI
+			match = p.exec(decodeURI(scriptNode.src));
 		}else if (scriptNode.getAttribute !== undefined && (scriptNode.getAttribute("src") !== null || scriptNode.getAttribute("src") !== "") ){
 			match = p.exec(scriptNode.getAttribute("src"));
 		}else if(scriptNode.hasAttributeNS !== undefined && scriptNode.getAttributeNS !== undefined){
@@ -153,6 +154,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 		}else{
 			node.setAttribute("type", "text/javascript");
 		}
+		node.setAttribute("charset", "ISO-8859-1");
 		if (node.src !== undefined){
 			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
 			node.src = base+hubFilelist[idx];
@@ -160,7 +162,6 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			//not supported by Firefox 3.6 and Chrome 5
 			node.setAttribute("src", base+hubFilelist[idx]);
 		}
-		node.setAttribute("charset", "ISO-8859-1");
 		if (scriptAnchor.appendChild !== undefined){
 			scriptAnchor.appendChild(node);
 			//some blackberrys kill scriptAnchor, so HMI will not work after that
@@ -207,7 +208,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2011-06-29 09:13:59 $";
+var filedate = "$Date: 2011-08-16 08:09:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

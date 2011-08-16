@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2010
+*	Copyright (C) 2011
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.91 $
-*	$Date: 2011-08-12 11:19:43 $
+*	$Revision: 1.92 $
+*	$Date: 2011-08-16 08:09:19 $
 *
 *	History:
 *	--------
@@ -668,8 +668,8 @@ HMIJavaScriptKSClient.prototype = {
 		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
 		var ReturnText = new Array(2);
 		
-		if (ComponentText === null){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.prepareComponentText - parameter was null");
+		if (ComponentText === null || ComponentText === ""){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.prepareComponentText - parameter was null or empty");
 			return null;
 		}
 		
@@ -753,7 +753,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2011-08-12 11:19:43 $";
+var filedate = "$Date: 2011-08-16 08:09:19 $";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
