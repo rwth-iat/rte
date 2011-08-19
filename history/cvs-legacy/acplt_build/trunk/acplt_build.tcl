@@ -11,10 +11,10 @@ set releasedir $basedir/acplt
 
 set logfile $basedir/acplt_build.log
 
-if {![info exists env(CVSROOT)]} then {
-    puts stderr "Please set the environment variable CVSROOT and try again."
-    exit 1
-}
+#if {![info exists env(CVSROOT)]} then {
+#    puts stderr "Please set the environment variable CVSROOT and try again."
+#    exit 1
+#c}
 
 # Determine operating system
 if {$tcl_platform(os) == "Linux"} then { 
@@ -81,7 +81,8 @@ proc create_dirs {} {
 proc checkout {module {dirname ""}} {
     print_msg "Checking out $module"
     if {$dirname == ""} then { set dirname $module }
-    execute cvs checkout -P -d $dirname $module
+    #execute cvs checkout -P -d $dirname $module
+    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/cvs-legacy/$module/trunk $dirname
 }
 
 # Checkout sources
