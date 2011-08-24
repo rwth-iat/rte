@@ -705,7 +705,7 @@ HMIJavaScriptKSClient.prototype = {
 				ReturnText[1] = ComponentText.substring(ComponentText.indexOf('}} {{') + 5, ComponentText.length - 2);
 			}else{
 				//put StyleVariable to defined state
-				ReturnText[1] = "";
+				ReturnText[1] = null;
 			}
 			if (ReturnText[0] === ""){
 				ReturnText = null;

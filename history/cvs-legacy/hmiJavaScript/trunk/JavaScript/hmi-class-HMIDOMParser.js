@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2010
+*	Copyright (C) 2011
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -78,7 +78,7 @@ HMIDOMParser.prototype = {
 		parse
 	*********************************/
 	//[StyleDescription] adjust this if no ACPLT/HMI Server has a StyleDescription anymore
-	parse: function(GraphicDescription, StyleDescription, BehaviourDescription) {
+	parse: function(GraphicDescription, StyleDescription) {
 		HMI.hmi_log_trace("HMIDOMParser.parse - Start");
 		var GraphicElement;
 		var StyleElement;
@@ -104,7 +104,7 @@ HMIDOMParser.prototype = {
 				return null;
 			};
 			//StyleDescription is optional
-			if (StyleDescription.length !== 0){
+			if (StyleDescription !== null){
 				try {
 					StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
 				} catch (e) {
@@ -129,7 +129,7 @@ HMIDOMParser.prototype = {
 				//http://tickets.examotion.com/public/view.php?id=32
 				
 				//StyleDescription is optional
-				if (StyleDescription.length !== 0){
+				if (StyleDescription !== null){
 					StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
 				}
 			}else{
@@ -150,7 +150,7 @@ HMIDOMParser.prototype = {
 				return null;
 			};
 			//StyleDescription is optional
-			if (StyleDescription.length !== 0){
+			if (StyleDescription !== null){
 				StyleElement = new ActiveXObject("Microsoft.XMLDOM");
 				loadXMLresult = StyleElement.loadXML(StyleDescription);
 				if (loadXMLresult === false){
@@ -161,7 +161,7 @@ HMIDOMParser.prototype = {
 			loadXMLresult = null;
 		}
 		
-		if (StyleDescription.length !== 0){
+		if (StyleDescription !== null){
 			//GraphicElement has another DOM ownerDocument
 			if("unknown" == typeof GraphicElement.importNode){
 				//adobe plugin is buggy

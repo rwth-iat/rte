@@ -109,6 +109,7 @@ function HMI(debug, error, warning, info, trace) {
 	this.KSClient = null;
 	this.Path = null;
 	this.KSGateway_Path = null;
+	this.HMIDOMParser = null;
 	
 	this.svgWindow = null;
 	this.svgDocument = null;
@@ -442,6 +443,7 @@ HMI.prototype = {
 		
 		//Init KSClient
 		this.KSClient = new HMIJavaScriptKSClient();
+		this.HMIDOMParser = new HMIDOMParser();
 		
 		//The state of the Checkbox is preserved at a reload from cache, so
 		//we have to update the variable to reflect the userchoice
@@ -1253,7 +1255,7 @@ HMI.prototype = {
 			
 			//	set TimeoutID
 			if (this.RefreshTimeoutID === null){
-				this.RefreshTimeoutID = window.setInterval(function () {this.refreshSheet();}, this.RefreshTime);
+				this.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, this.RefreshTime);
 			}
 		}else if(this.Playground.firstChild !== null){
 			//we have a display => replace
@@ -1279,7 +1281,7 @@ HMI.prototype = {
 		
 		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
 		//build a DOM fragment with the SVG String
-		var Component = new HMIDOMParser().parse(SplitComponent[0], SplitComponent[1], null);
+		var Component = this.HMIDOMParser.parse(SplitComponent[0], SplitComponent[1]);
 		
 		if (Component != null){
 			this._showComponent(Component);
@@ -1470,7 +1472,7 @@ HMI.prototype = {
 		_setLayerPosition
 	*********************************/
 	_setLayerPosition: function (Element) {
-		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start");
+		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start: "+Element.id);
 		
 		//LayerX and LayerY are HMI specific DOM Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
