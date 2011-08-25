@@ -250,22 +250,22 @@ LIBRARY cshmi
 			content : STRING
 			HAS_ACCESSORS
 			COMMENT = "text content";
-			fontsize : STRING
+			fontSize : STRING
 			HAS_ACCESSORS
 			COMMENT = "font size (keyword or 12px)";
-			fontstyle : STRING
+			fontStyle : STRING
 			HAS_ACCESSORS
 			COMMENT = "font style ('italic','oblique','normal')";
-			fontweight : STRING
+			fontWeight : STRING
 			HAS_ACCESSORS
 			COMMENT = "font weight (number or keyword: 'normal','bold','bolder')"; 
-			fontfamily : STRING
+			fontFamily : STRING
 			HAS_ACCESSORS
 			COMMENT = "font family (family name or keyword: 'serif','sans-serif','monospace')";
-			horalign : STRING
+			horAlignment : STRING
 			HAS_ACCESSORS
 			COMMENT = "text anchor (horizontal alignment; keyword: 'start','middle','end')";
-			veralign : STRING
+			verAlignment : STRING
 			HAS_ACCESSORS
 			COMMENT = "dominant baseline (vertical alignment; keyword: 'central','middle','auto')";
 		END_VARIABLES;

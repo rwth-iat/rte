@@ -109,81 +109,81 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_content_set(
     return ov_string_setvalue(&pobj->v_content,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontsize_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontSize_get(
     OV_INSTPTR_cshmi_Text          pobj
 ) {
-    return pobj->v_fontsize;
+    return pobj->v_fontSize;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontsize_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
     OV_INSTPTR_cshmi_Text          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_fontsize,value);
+    return ov_string_setvalue(&pobj->v_fontSize,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontstyle_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontStyle_get(
     OV_INSTPTR_cshmi_Text          pobj
 ) {
-    return pobj->v_fontstyle;
+    return pobj->v_fontStyle;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontstyle_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontStyle_set(
     OV_INSTPTR_cshmi_Text          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_fontstyle,value);
+    return ov_string_setvalue(&pobj->v_fontStyle,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontweight_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontWeight_get(
     OV_INSTPTR_cshmi_Text          pobj
 ) {
-    return pobj->v_fontweight;
+    return pobj->v_fontWeight;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontweight_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
     OV_INSTPTR_cshmi_Text          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_fontweight,value);
+    return ov_string_setvalue(&pobj->v_fontWeight,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontfamily_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontFamily_get(
     OV_INSTPTR_cshmi_Text          pobj
 ) {
-    return pobj->v_fontfamily;
+    return pobj->v_fontFamily;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontfamily_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontFamily_set(
     OV_INSTPTR_cshmi_Text          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_fontfamily,value);
+    return ov_string_setvalue(&pobj->v_fontFamily,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_horalign_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_Text_horAlignment_get(
     OV_INSTPTR_cshmi_Text          pobj
 ) {
-    return pobj->v_horalign;
+    return pobj->v_horAlignment;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horalign_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
     OV_INSTPTR_cshmi_Text          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_horalign,value);
+    return ov_string_setvalue(&pobj->v_horAlignment,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_veralign_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_Text_verAlignment_get(
     OV_INSTPTR_cshmi_Text          pobj
 ) {
-    return pobj->v_veralign;
+    return pobj->v_verAlignment;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_veralign_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(
     OV_INSTPTR_cshmi_Text          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_veralign,value);
+    return ov_string_setvalue(&pobj->v_verAlignment,value);
 }
 
