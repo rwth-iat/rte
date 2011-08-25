@@ -8,12 +8,12 @@
 *	modification, are permitted provided that the following conditions
 *	are met:
 *	1. Redistributions of source code must retain the above copyright
-*		 notice, this list of conditions and the following disclaimer.
+*	   notice, this list of conditions and the following disclaimer.
 *	2. Redistributions in binary form must print or display the above
-*		 copyright notice either during startup or must have a means for
-*		 the user to view the copyright notice.
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
 *	3. Redistributions in binary form must reproduce the above copyright
-*		 notice, this list of conditions and the following disclaimer in
+*	   notice, this list of conditions and the following disclaimer in
 *		the documentation and/or other materials provided with the
 *		distribution.
 *	4. Neither the name of the Chair of Process Control Engineering nor
@@ -33,15 +33,31 @@
 *	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 *	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *	POSSIBILITY OF SUCH DAMAGE.
-*/
-
-/*
- * CSHMI - Client-Side Human-Machine Interface
- *
- * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University
- * Gustavo Quiros, Holger Jeromin, Stefan Schmitz
- * {g.quiros,h.jeromin}@plt.rwth-aachen.de
- */
+*
+***********************************************************************
+*
+* CSHMI - Client-Side Human-Machine Interface
+*
+*	File:
+*	------
+*	cshmi.ovm
+*
+*	Editors:
+*	--------
+*	Je							Holger Jeromin <jeromin@plt.rwth-aachen.de>
+*	GQ							Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
+*
+*	SVN:
+*	----
+*	$Revision: 1.47 $
+*	$Date: 2011-08-09 11:12:26 $
+*
+*	History:
+*	--------
+*	20-August-2011			GQ		V0.1.0
+*		-	File created
+*
+***********************************************************************/
 
 #include "ov.ovm"
 
