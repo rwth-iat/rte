@@ -1,0 +1,379 @@
+/*
+*	Copyright (C) 2011
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*		 notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*		 copyright notice either during startup or must have a means for
+*		 the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*		 notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+ * CSHMI - Client-Side Human-Machine Interface
+ *
+ * Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University
+ * Gustavo Quiros, Holger Jeromin, Stefan Schmitz
+ * {g.quiros,h.jeromin}@plt.rwth-aachen.de
+ */
+
+#include "ov.ovm"
+
+LIBRARY cshmi
+
+	VERSION		= "0.1";
+	AUTHOR		= "Gustavo Quiros, Holger Jeromin, Stefan Schmitz";
+	COPYRIGHT	= "Copyright (C) 2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
+	COMMENT		= "CSHMI - Client-Side Human-Machine Interface";
+
+	CLASS Object : CLASS ov/domain
+		COMMENT = "base class for CSHMI objects";
+		VARIABLES
+			baseKsPath : STRING 
+			HAS_ACCESSORS 
+			COMMENT = "base KS path for resolution of relative KS paths";
+		END_VARIABLES;
+	END_CLASS;
+
+	/*
+	CLASS Reference : CLASS cshmi/Object
+		IS_INSTANTIABLE;
+		COMMENT = "reference to a remote CSHMI object";
+		VARIABLES
+			kspath : STRING
+			HAS_ACCESSORS 
+			COMMENT = "the KS path of the remote CSHMI object";
+		END_VARIABLES;
+	END_CLASS;
+	*/
+
+	/* Graphical Elements */
+
+	CLASS Element : CLASS cshmi/Object
+		COMMENT = "base class for graphical elements";
+		VARIABLES
+			visible : BOOL
+			HAS_ACCESSORS
+			COMMENT = "the element is visible"
+			INITIALVALUE = TRUE;
+			zindex	: UINT
+			HAS_ACCESSORS
+			COMMENT = "z-index of the component, 0 is least visible (i.e. bottom)"
+			INITIALVALUE = 0;
+			stroke : STRING
+			HAS_ACCESSORS
+			COMMENT = "line stroke color (CSS color name or hex like #000000)"
+			INITIALVALUE = "black";
+			fill : STRING
+			HAS_ACCESSORS
+			COMMENT = "fill color (CSS color name or hex like #000000)"
+			INITIALVALUE = "none";
+			opacity : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "opacity of the element ([0.0-1.0])"
+			INITIALVALUE = 1.0;
+		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS Line : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a line";
+		VARIABLES
+			x1 : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of starting point"
+			INITIALVALUE = 0.0;
+			y1 : SINGLE 
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of starting point"
+			INITIALVALUE = 0.0;
+			x2 : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of ending point"
+			INITIALVALUE = 10.0;
+			y2 : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of ending point"
+			INITIALVALUE = 0.0;
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS Circle : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a circle";
+		VARIABLES
+			cx : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the center of the circle"
+			INITIALVALUE = 10.0;
+			cy : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the center of the circle"
+			INITIALVALUE = 10.0;
+			r : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "radius of the circle"
+			INITIALVALUE = 10.0;
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS Ellipse : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "an ellipse";
+		VARIABLES
+			cx : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the center of the ellipse"
+			INITIALVALUE = 10.0;
+			cy : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the center of the ellipse"
+			INITIALVALUE = 5.0;
+			rx : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis radius of the ellipse"
+			INITIALVALUE = 10.0;
+			ry : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis radius of the ellipse"
+			INITIALVALUE = 5.0;
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS Path : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a path";
+		VARIABLES
+			d [] : STRING
+			HAS_ACCESSORS
+			COMMENT = "definition of the outline of a shape";
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS Polygon : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a polygon";
+		VARIABLES
+			points [] : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "points that make up the polygon";
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS Polyline : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a polyline";
+		VARIABLES
+			points [] : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "points that make up the polyline";
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS Rectangle : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a rectangle";
+		VARIABLES
+			x : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			width : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "width of the rectangle"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "height of the rectangle"
+			INITIALVALUE = 100.0;
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS Text : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "text";
+		VARIABLES
+			x : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the text starting position"
+			INITIALVALUE = 10.0;
+			y : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the text starting position"
+			INITIALVALUE = 10.0;
+			content : STRING
+			HAS_ACCESSORS
+			COMMENT = "text content";
+			fontsize : STRING
+			HAS_ACCESSORS
+			COMMENT = "font size (keyword or 12px)";
+			fontstyle : STRING
+			HAS_ACCESSORS
+			COMMENT = "font style ('italic','oblique','normal')";
+			fontweight : STRING
+			HAS_ACCESSORS
+			COMMENT = "font weight (number or keyword: 'normal','bold','bolder')"; 
+			fontfamily : STRING
+			HAS_ACCESSORS
+			COMMENT = "font family (family name or keyword: 'serif','sans-serif','monospace')";
+			horalign : STRING
+			HAS_ACCESSORS
+			COMMENT = "text anchor (horizontal alignment; keyword: 'start','middle','end')";
+			veralign : STRING
+			HAS_ACCESSORS
+			COMMENT = "dominant baseline (vertical alignment; keyword: 'central','middle','auto')";
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS Group : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a grouping of elements";
+		VARIABLES
+			x : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			width : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "width of the rectangle"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "height of the rectangle"
+			INITIALVALUE = 100.0;
+		END_VARIABLES;
+	END_CLASS;
+
+	/* Actions */
+
+	CLASS Action : CLASS cshmi/Object
+		COMMENT = "base class for actions";
+		VARIABLES
+			cyclic : BOOL
+			HAS_ACCESSORS
+			COMMENT = "the action executes cyclically (one-shot if FALSE)";
+			cyctime : TIME_SPAN
+			HAS_ACCESSORS
+			COMMENT = "the cycle time for the execution of the action";
+		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS GetValue : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "get a value, either constant or from a variable";
+		VARIABLES
+			ksvar : STRING
+			HAS_ACCESSORS
+			COMMENT = "path of the remote KS variable";
+			elemvar : STRING
+			HAS_ACCESSORS
+			COMMENT = "name of the element variable";
+			globalvar : STRING
+			HAS_ACCESSORS
+			COMMENT = "name of the global variable";
+			eventvar : STRING
+			HAS_ACCESSORS
+			COMMENT = "name of the event variable";
+			value : ANY
+			HAS_ACCESSORS
+			COMMENT = "value if no variable given";
+		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS SetVar : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "set a variable with a value";
+		VARIABLES
+			ksvar : STRING
+			HAS_ACCESSORS
+			COMMENT = "path of the target remote KS variable";
+			elemvar : STRING
+			HAS_ACCESSORS
+			COMMENT = "name of the target element variable";
+			globalvar : STRING
+			HAS_ACCESSORS
+			COMMENT = "name of the target global variable";
+		END_VARIABLES;
+		PARTS
+			value : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+
+	CLASS IfThenElse : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "a conditional action (if <conditions> then <actions> else <actions>)";
+		VARIABLES
+			anycond : BOOL
+			HAS_ACCESSORS
+			COMMENT = "then-actions are executed if any condition is true (logical or)"
+			INITIALVALUE = FALSE;
+		END_VARIABLES;
+		PARTS
+			if : CLASS ov/domain;
+			then : CLASS ov/domain;
+			else : CLASS ov/domain;
+		END_PARTS;
+	END_CLASS;
+
+	/* Conditions */
+	
+	CLASS Condition : CLASS cshmi/Object
+		COMMENT = "base class for conditions";
+	END_CLASS;
+
+	CLASS Compare : CLASS cshmi/Condition
+		IS_INSTANTIABLE;
+		COMMENT = "a comparison condition (<value1> <comptype> <value2>)";
+		VARIABLES
+			comptype : STRING
+			HAS_ACCESSORS
+			COMMENT = "comparison type ('<','<=','=','!=','>=','>')";
+		END_VARIABLES;
+		PARTS
+			value1 : CLASS cshmi/GetValue;
+			value2 : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+
+	/* Gestures */
+	
+	CLASS Gesture : CLASS cshmi/Object
+		IS_INSTANTIABLE;
+		COMMENT = "an HMI gesture (i.e. a GUI event)";
+	END_CLASS;
+
+END_LIBRARY;

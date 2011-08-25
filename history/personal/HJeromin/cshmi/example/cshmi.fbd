@@ -1,0 +1,602 @@
+/*********************************************************************
+* Datei : /home/gustavo/programs/ifbspro/client/user/db_doc/cshmi.fbd
+*********************************************************************/
+/*********************************************************************
+======================================================================
+  Sicherung der Datenbasis.
+
+  Erstellt : 2011-08-18 16:33:51
+
+  HOST                : LOCALHOST
+  SERVER              : ov_server_gustavo
+  DB-Groesse          : 1003520
+  Frei                : 830720
+  Anzahl FB-Instanzen : 4
+  Anzahl Tasks        : 1
+  Anzahl Verbindungen : 4
+
+  Server-System       : linux
+
+Dieser Server ist registriert fuer :
+
+Firma      : RWTH Aachen
+Abteilung  : Prozessleittechnik
+Name       : Prof. Epple
+Strasse    : Turmstrasse 46
+PLZ        : 52064
+Ort        : Aachen
+Tel        : 0241/80-4339
+Fax        : 0241/80-238
+eMail      : 
+Typ        : Hochschulversion
+
+======================================================================
+*********************************************************************/
+
+ LIBRARY
+    cshmi
+ END_LIBRARY;
+
+ LIBRARY
+    iec61131stdfb
+ END_LIBRARY;
+
+ LINK
+    OF_ASSOCIATION  tasklist;
+    PARENT  taskparent : CLASS task
+        = /Tasks/UrTask;
+    CHILDREN  taskchild : CLASS unknown
+        = {/TechUnits/sinus , /TechUnits/increment , /TechUnits/move , /TechUnits/scale};
+ END_LINK;
+
+ INSTANCE  /TechUnits/cshmi :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "localhost/ov_server/TechUnits";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/border :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 100.000000;
+        y : INPUT  SINGLE = 100.000000;
+        width : INPUT  SINGLE = 200.000000;
+        height : INPUT  SINGLE = 400.000000;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "gray";
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/label :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 200.000000;
+        y : INPUT  SINGLE = 150.000000;
+        content : INPUT  STRING = "Test Faceplate";
+        fontsize : INPUT  STRING = "";
+        fontstyle : INPUT  STRING = "";
+        fontweight : INPUT  STRING = "";
+        fontfamily : INPUT  STRING = "";
+        horalign : INPUT  STRING = "middle";
+        veralign : INPUT  STRING = "";
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle :
+    CLASS /Libraries/cshmi/Circle;
+    VARIABLE_VALUES
+        cx : INPUT  SINGLE = 200.000000;
+        cy : INPUT  SINGLE = 300.000000;
+        r : INPUT  SINGLE = 50.000000;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "green";
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/setopacity :
+    CLASS /Libraries/cshmi/SetVar;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "opacity";
+        globalvar : INPUT  STRING = "";
+        cyclic : INPUT  BOOL = TRUE;
+        cyctime : INPUT  TIME_SPAN = 0.500000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/setopacity.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "scale.OUT";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        cyclic : INPUT  BOOL = TRUE;
+        cyctime : INPUT  TIME_SPAN = 0.500000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.if :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.if/testlimit :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = ">";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.if/testlimit.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "scale.OUT";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.if/testlimit.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  SINGLE = 0.500000;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.then :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.then/setred :
+    CLASS /Libraries/cshmi/SetVar;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "fill";
+        globalvar : INPUT  STRING = "";
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.then/setred.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  STRING = "red";
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.else :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.else/setgreen :
+    CLASS /Libraries/cshmi/SetVar;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "fill";
+        globalvar : INPUT  STRING = "";
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/circle/changecolor.else/setgreen.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  STRING = "green";
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/valuelabel :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 200.000000;
+        y : INPUT  SINGLE = 450.000000;
+        content : INPUT  STRING = "VALUE";
+        fontsize : INPUT  STRING = "";
+        fontstyle : INPUT  STRING = "";
+        fontweight : INPUT  STRING = "";
+        fontfamily : INPUT  STRING = "monospace";
+        horalign : INPUT  STRING = "middle";
+        veralign : INPUT  STRING = "";
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "blue";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/valuelabel/settext :
+    CLASS /Libraries/cshmi/SetVar;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "content";
+        globalvar : INPUT  STRING = "";
+        cyclic : INPUT  BOOL = TRUE;
+        cyctime : INPUT  TIME_SPAN = 0.500000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/valuelabel/settext.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "scale.OUT";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click :
+    CLASS /Libraries/cshmi/Gesture;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.if :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.if/testvisible :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "=";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.if/testvisible.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "visible";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.if/testvisible.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.then :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.then/setfalse :
+    CLASS /Libraries/cshmi/SetVar;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "visible";
+        globalvar : INPUT  STRING = "";
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.then/setfalse.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.else :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.else/settrue :
+    CLASS /Libraries/cshmi/SetVar;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "visible";
+        globalvar : INPUT  STRING = "";
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.else/settrue.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        cyclic : INPUT  BOOL = FALSE;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/sinus :
+    CLASS /Libraries/iec61131stdfb/SIN;
+    VARIABLE_VALUES
+        IN : INPUT  SINGLE = 1081.483032;
+        OUT : OUTPUT  SINGLE = 0.699830;
+        iexreq : PARAMETER  BOOL = TRUE;
+        eexreq : HIDDEN  BOOL = FALSE;
+        maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
+        Xpos : PARAMETER  INT = 0;
+        Ypos : PARAMETER  INT = 0;
+        methcount : HIDDEN  UINT = 3862;
+        actimode : INPUT  INT = 1;
+        proctime : INPUT  TIME = 2011-08-18 15:29:29.977106;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        ErrState : OUTPUT  INT = 0;
+        calctime : OUTPUT  TIME_SPAN = 0.000004;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/increment :
+    CLASS /Libraries/iec61131stdfb/ADD;
+    VARIABLE_VALUES
+        IN1 : INPUT  SINGLE = 1081.583008;
+        IN2 : INPUT  SINGLE = 0.100000;
+        OUT : OUTPUT  SINGLE = 1081.583008;
+        iexreq : PARAMETER  BOOL = TRUE;
+        eexreq : HIDDEN  BOOL = TRUE;
+        maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
+        Xpos : PARAMETER  INT = 0;
+        Ypos : PARAMETER  INT = 0;
+        methcount : HIDDEN  UINT = 3862;
+        actimode : INPUT  INT = 1;
+        proctime : INPUT  TIME = 2011-08-18 15:29:29.977305;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        ErrState : OUTPUT  INT = 0;
+        calctime : OUTPUT  TIME_SPAN = 0.000004;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/move :
+    CLASS /Libraries/iec61131stdfb/ADD;
+    VARIABLE_VALUES
+        IN1 : INPUT  SINGLE = 0.699830;
+        IN2 : INPUT  SINGLE = 1.000000;
+        OUT : OUTPUT  SINGLE = 1.699830;
+        iexreq : PARAMETER  BOOL = TRUE;
+        eexreq : HIDDEN  BOOL = FALSE;
+        maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
+        Xpos : PARAMETER  INT = 0;
+        Ypos : PARAMETER  INT = 0;
+        methcount : HIDDEN  UINT = 3862;
+        actimode : INPUT  INT = 1;
+        proctime : INPUT  TIME = 2011-08-18 15:29:29.977499;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        ErrState : OUTPUT  INT = 0;
+        calctime : OUTPUT  TIME_SPAN = 0.000002;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/scale :
+    CLASS /Libraries/iec61131stdfb/MUL;
+    VARIABLE_VALUES
+        IN1 : INPUT  SINGLE = 1.699830;
+        IN2 : INPUT  SINGLE = 0.500000;
+        OUT : OUTPUT  SINGLE = 0.849915;
+        iexreq : PARAMETER  BOOL = TRUE;
+        eexreq : HIDDEN  BOOL = FALSE;
+        maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
+        Xpos : PARAMETER  INT = 0;
+        Ypos : PARAMETER  INT = 0;
+        methcount : HIDDEN  UINT = 3862;
+        actimode : INPUT  INT = 1;
+        proctime : INPUT  TIME = 2011-08-18 15:29:29.977693;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        ErrState : OUTPUT  INT = 0;
+        calctime : OUTPUT  TIME_SPAN = 0.000004;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /Cons/v_oogsogeqvjec :
+    CLASS /fb/connection;
+    VARIABLE_VALUES
+        on : PARAMETER  BOOL = TRUE;
+        sourceport : PARAMETER  STRING = "OUT";
+        targetport : PARAMETER  STRING = "IN1";
+        sourcetrig : PARAMETER  BOOL = FALSE;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+    OF_ASSOCIATION  inputconnections;
+    PARENT  targetfb : CLASS unknown
+        = /TechUnits/scale;
+    CHILDREN  inputcon : CLASS connection
+        = {/Cons/v_oogsogeqvjec};
+ END_LINK;
+
+ LINK
+    OF_ASSOCIATION  outputconnections;
+    PARENT  sourcefb : CLASS unknown
+        = /TechUnits/move;
+    CHILDREN  outputcon : CLASS connection
+        = {/Cons/v_oogsogeqvjec};
+ END_LINK;
+
+ INSTANCE  /Cons/v_omgsogexjcxb :
+    CLASS /fb/connection;
+    VARIABLE_VALUES
+        on : PARAMETER  BOOL = TRUE;
+        sourceport : PARAMETER  STRING = "OUT";
+        targetport : PARAMETER  STRING = "IN1";
+        sourcetrig : PARAMETER  BOOL = FALSE;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+    OF_ASSOCIATION  inputconnections;
+    PARENT  targetfb : CLASS unknown
+        = /TechUnits/move;
+    CHILDREN  inputcon : CLASS connection
+        = {/Cons/v_omgsogexjcxb};
+ END_LINK;
+
+ LINK
+    OF_ASSOCIATION  outputconnections;
+    PARENT  sourcefb : CLASS unknown
+        = /TechUnits/sinus;
+    CHILDREN  outputcon : CLASS connection
+        = {/Cons/v_omgsogexjcxb};
+ END_LINK;
+
+ INSTANCE  /Cons/v_lbgsogeqkhb :
+    CLASS /fb/connection;
+    VARIABLE_VALUES
+        on : PARAMETER  BOOL = TRUE;
+        sourceport : PARAMETER  STRING = "OUT";
+        targetport : PARAMETER  STRING = "IN1";
+        sourcetrig : PARAMETER  BOOL = TRUE;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+    OF_ASSOCIATION  inputconnections;
+    PARENT  targetfb : CLASS unknown
+        = /TechUnits/increment;
+    CHILDREN  inputcon : CLASS connection
+        = {/Cons/v_lbgsogeqkhb};
+ END_LINK;
+
+ LINK
+    OF_ASSOCIATION  outputconnections;
+    PARENT  sourcefb : CLASS unknown
+        = /TechUnits/increment;
+    CHILDREN  outputcon : CLASS connection
+        = {/Cons/v_lbgsogeqkhb};
+ END_LINK;
+
+ INSTANCE  /Cons/v_aagsogeduzdb :
+    CLASS /fb/connection;
+    VARIABLE_VALUES
+        on : PARAMETER  BOOL = TRUE;
+        sourceport : PARAMETER  STRING = "OUT";
+        targetport : PARAMETER  STRING = "IN";
+        sourcetrig : PARAMETER  BOOL = FALSE;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+    OF_ASSOCIATION  inputconnections;
+    PARENT  targetfb : CLASS unknown
+        = /TechUnits/sinus;
+    CHILDREN  inputcon : CLASS connection
+        = {/Cons/v_aagsogeduzdb};
+ END_LINK;
+
+ LINK
+    OF_ASSOCIATION  outputconnections;
+    PARENT  sourcefb : CLASS unknown
+        = /TechUnits/increment;
+    CHILDREN  outputcon : CLASS connection
+        = {/Cons/v_aagsogeduzdb};
+ END_LINK;
+
