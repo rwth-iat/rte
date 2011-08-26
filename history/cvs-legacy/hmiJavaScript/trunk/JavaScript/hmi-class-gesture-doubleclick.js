@@ -50,8 +50,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.31 $
-*	$Date: 2011-06-29 09:13:59 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------
@@ -200,7 +200,7 @@ DoubleClick.prototype = {
 		
 	}
 };
-var filedate = "$Date: 2011-06-29 09:13:59 $";
+var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

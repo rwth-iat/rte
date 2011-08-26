@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.39 $
-*	$Date: 2011-06-29 08:06:24 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------
@@ -252,7 +252,7 @@ var BrowserDetect = {
 };
 BrowserDetect.init();
 
-var filedate = "$Date: 2011-06-29 08:06:24 $";
+var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

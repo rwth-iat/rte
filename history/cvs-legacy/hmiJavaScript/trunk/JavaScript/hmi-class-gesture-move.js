@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.52 $
-*	$Date: 2011-06-29 11:34:14 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------
@@ -703,7 +703,7 @@ Dragger.prototype = {
 		y = null;
 	}
 };
-var filedate = "$Date: 2011-06-29 11:34:14 $";
+var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

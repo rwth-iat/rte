@@ -48,8 +48,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.92 $
-*	$Date: 2011-08-16 08:09:19 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------
@@ -753,7 +753,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
-var filedate = "$Date: 2011-08-16 08:09:19 $";
+var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

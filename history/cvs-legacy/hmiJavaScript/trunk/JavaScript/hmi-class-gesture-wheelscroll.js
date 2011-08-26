@@ -47,8 +47,8 @@
 *	CVS:
 *	----
 *	
-*	$Revision: 1.7 $
-*	$Date: 2009-08-25 12:11:41 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------
@@ -211,7 +211,7 @@ WheelScroll.prototype = {
 		return;
 	}
 };
-var filedate = "$Date: 2009-08-25 12:11:41 $";
+var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;

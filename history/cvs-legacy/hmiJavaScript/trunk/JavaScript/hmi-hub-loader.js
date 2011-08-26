@@ -47,8 +47,8 @@
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
-*	$Revision: 1.26 $
-*	$Date: 2011-08-16 08:09:19 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	01-March-2005			HA
@@ -208,7 +208,7 @@ SCRIPT_HUB(
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
 
-var filedate = "$Date: 2011-08-16 08:09:19 $";
+var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
