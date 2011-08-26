@@ -484,6 +484,12 @@ HMIJavaScriptKSClient.prototype = {
 	getSheets: function() {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
 		
+		var SheetList = new Array();
+		var i = 0;
+		
+		
+		//get Sheets from hmi library
+		
 		//the path of the HMI Manager could be different in every OV Server
 		this.getHMIManagerPointer();
 		if (HMI.KSClient.HMIMANAGER_PATH === null){
@@ -498,70 +504,57 @@ HMIJavaScriptKSClient.prototype = {
 				'{010}%20' +
 				'{' + this.HMIMANAGER_PATH + '}%20' + 
 				'{SHOWCOMPONENTS}';
-			this.setVar(null, this.HMIMANAGER_PATH
-					+ '.Command%20',
-					Command,
-					null);
 		}else{
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
 				'{' + this.HMIMANAGER_PATH + '}%20' + 
 				'{SHOWSHEETS}';
-			this.setVar(null, this.HMIMANAGER_PATH
-					+ '.Command%20',
-					Command,
-					null);
 		}
-		this.getVar(null, this.HMIMANAGER_PATH + '.CommandReturn', this._cbGetSheets);
+		this.setVar(null, this.HMIMANAGER_PATH
+				+ '.Command%20',
+				Command,
+				null);
+		var Sheetstring = this.getVar(null, this.HMIMANAGER_PATH + '.CommandReturn', null);
 		Command = null;
 		
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
-		return true;
-	},
-	
-	/*********************************
-		_cbGetSheets
-	*********************************/
-	_cbGetSheets: function(Client, req) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - Start");
-		
-		var Sheet = new Array();
-		
-		var i = 0;
-		
+		if (/KS_ERR/.exec(Sheetstring)){
+			HMI.hmi_log_onwebsite("Listing sheets of server failed.");
+			return false;
+		}else
 		//cut the sheetlist out of brackets
-		if (req.responseText.indexOf('{{') == -1){
+		if (Sheetstring.indexOf('{{') == -1){
 			//could be {/TechUnits/Sheet1}
 			
 			//cut { and }
-			Sheet[0] = req.responseText.substring(1, req.responseText.length-1);
-		} else if (req.responseText[2] == "/"){
+			SheetList.push(Sheetstring.substring(1, Sheetstring.length-1));
+		} else if (Sheetstring[2] == "/"){
 			//could be {{/TechUnits/Sheet1 /TechUnits/Sheet2 /TechUnits/Sheet3}}
 			
 			//cut {{ and }} after that
 			//split into an array
-			Sheet = req.responseText.substring(2, req.responseText.length-2).split(" ");
+			SheetList= SheetList.concat(Sheetstring.substring(2, Sheetstring.length-2).split(" ").sort());
 		};
 		
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - number of sheets: "+Sheet.length);
-		if (Sheet.length === 0){
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.GetSheets - number of sheets: "+SheetList.length);
+		if (SheetList.length === 0){
 			HMI.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
 		} else {
 			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
-			Sheet = Sheet.sort();
-			for (i = 0; i < Sheet.length; i++){
+			for (i = 0; i < SheetList.length; i++){
 				//spaces in objectname are encoded as %20 within OV
-				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(Sheet[i]), Sheet[i]);
+				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(SheetList[i]), SheetList[i]);
 			}
-			if (Sheet.length === 1){
+			if (SheetList.length === 1){
 				//selecting the option does not trigger the EventListener
 				HMI.PossSheets.selectedIndex = 1;
-				HMI.showSheet(Sheet[0]);
+				HMI.showSheet(SheetList[0]);
 			}
 			HMI.PossSheets.disabled = false;
 		}
+		SheetList = null;
 		
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetSheets - End");
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
+		return true;
 	},
 	
 	/*********************************
