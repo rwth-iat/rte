@@ -82,6 +82,8 @@ function HMIJavaScriptKSClient() {
 	this.TCLKSHandle = null;
 	this.HMIMANAGER_PATH = null;
 	
+	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
+	
 	/** Private *********************/
 	var MessageID = 0;	
 	
@@ -131,7 +133,7 @@ HMIJavaScriptKSClient.prototype = {
 			this.getEP(null, '/servers%20*', this._cbGetServers);
 			response: "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}"
 	*********************************/
-	getEP: function(Handle, path, cbfnc, tksparameter) {
+	getEP: function(Handle, path, tksparameter, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path+" Handle: "+Handle);
 		if (Handle === null){
 			Handle = this.TCLKSHandle;
@@ -315,7 +317,7 @@ HMIJavaScriptKSClient.prototype = {
 		
 		if (this.TCLKSHandle !== null){
 			//The Handle points to the Manager wich can provide us with a list of OV servers (detection of HMI Servers are made in the callback)
-			this.getEP(null, '/servers%20*', this._cbGetServers, "%20-output%20$::TKS::OP_NAME");
+			this.getEP(null, '/servers%20*', "%20-output%20$::TKS::OP_NAME", this._cbGetServers);
 		} else {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End - No TCLKSHandle");
 			return false;
@@ -331,9 +333,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - Start");
 		
 		//responseText should be something like: {fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi5} {fb_hmi4}
-		var Response = req.responseText.substring(1, req.responseText.length-1);
-		var Server = Response.split("} {");
-		Response = null;
+		var Server = HMI.KSClient.splitKsResponse(req.responseText);
 		
 		var i = 0;
 		
@@ -517,27 +517,14 @@ HMIJavaScriptKSClient.prototype = {
 		var Sheetstring = this.getVar(null, this.HMIMANAGER_PATH + '.CommandReturn', null);
 		Command = null;
 		
-		if (/KS_ERR/.exec(Sheetstring)){
-			HMI.hmi_log_onwebsite("Listing sheets of server failed.");
-			return false;
-		}else
-		//cut the sheetlist out of brackets
-		if (Sheetstring.indexOf('{{') == -1){
-			//could be {/TechUnits/Sheet1}
-			
-			//cut { and }
-			SheetList.push(Sheetstring.substring(1, Sheetstring.length-1));
-		} else if (Sheetstring[2] == "/"){
-			//could be {{/TechUnits/Sheet1 /TechUnits/Sheet2 /TechUnits/Sheet3}}
-			
-			//cut {{ and }} after that
-			//split into an array
-			SheetList= SheetList.concat(Sheetstring.substring(2, Sheetstring.length-2).split(" ").sort());
-		};
+		var responseArray = this.splitKsResponse(Sheetstring);
 		
+		SheetList= SheetList.concat(responseArray[0].split(" ").sort());
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.GetSheets - number of sheets: "+SheetList.length);
 		if (SheetList.length === 0){
 			HMI.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
+			HMI.hmi_log_onwebsite("Listing sheets of server failed.");
+			return false;
 		} else {
 			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
 			for (i = 0; i < SheetList.length; i++){
@@ -729,6 +716,29 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endt");
 		}
 		return;
+	},	
+	/*********************************
+		splitKsResponse
+			returns the KS Response as an Array, or an empty Array
+	*********************************/
+	splitKsResponse: function (response) {
+		if (/KS_ERR/.exec(response)){
+			return Array();
+		}
+		//get rid of the outmost pair of {}
+		response = response.substring(1, response.length-1);
+		var responseArray = response.split("} {");
+		response = null;
+		
+		for (var i = responseArray.length - 1; i >= 0 ;i--){
+			if (responseArray[i].charAt(0) == "{"){
+				// "{hello world}"
+				responseArray[i] = responseArray[i].substring(1, responseArray[i].length-1);
+			}else{
+				// "helloWorld"
+			}
+		}
+		return responseArray;
 	},	
 	/*********************************
 		destroy
