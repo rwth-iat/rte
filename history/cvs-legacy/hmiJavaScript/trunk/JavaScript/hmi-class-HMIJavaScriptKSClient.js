@@ -392,16 +392,16 @@ HMIJavaScriptKSClient.prototype = {
 			//we need a new handle since we talk to another OV server
 			TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
 			
-			if (/KS_ERR_SERVERUNKNOWN/.exec(TCLKSHandle)){
+			if (TCLKSHandle.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
 				//the Manager sometimes reject connection to a valid server, so retry once
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - got KS_ERR_SERVERUNKNOWN but do not trust");
 				TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
-				if (/KS_ERR/.exec(TCLKSHandle)){
+				if (TCLKSHandle.indexOf("KS_ERR") !== -1){
 					//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
 					HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Server really not there Handlemessage: "+TCLKSHandle);
 					return false;
 				}
-			}else if (/KS_ERR/.exec(TCLKSHandle)){
+			}else if (TCLKSHandle.indexOf("KS_ERR") !== -1){
 				//generic error
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End Handlemessage: "+TCLKSHandle);
 				return false;
@@ -421,7 +421,7 @@ HMIJavaScriptKSClient.prototype = {
 			}else if (ManagerResponse == "{{}}"){
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End2f Handle-Response was {{}}");
 				return false;
-			}else if (/KS_ERR/.exec(ManagerResponse)){
+			}else if (ManagerResponse.indexOf("KS_ERR") !== -1){
 				//error could be: TksS-0174::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End3f Handlemessage: "+ManagerResponse);
 				return false;
@@ -458,7 +458,7 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - no instance found");
 			this.HMIMANAGER_PATH = null;
 			return false;
-		}else if (/KS_ERR/.exec(ManagerResponse)){
+		}else if (ManagerResponse.indexOf("KS_ERR") !== -1){
 			//error could be: TksS-0174::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - KS_ERR");
 			this.HMIMANAGER_PATH = null;
@@ -707,7 +707,7 @@ HMIJavaScriptKSClient.prototype = {
 		//spaces in objectname are encoded as %20 within OV
 		var StyleResponse = this.getVar(null, '{' + encodeURI(ComponentPath) + '.StyleDescription' + '}', null);
 		
-		if (/KS_ERR_BADPATH/.exec(StyleResponse)){
+		if (StyleResponse.indexOf("KS_ERR_BADPATH") !== -1){
 			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
 			HMI.ServerProperty.SheetHasStyleDescription = false;
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endf");
@@ -722,7 +722,7 @@ HMIJavaScriptKSClient.prototype = {
 			returns the KS Response as an Array, or an empty Array
 	*********************************/
 	splitKsResponse: function (response) {
-		if (/KS_ERR/.exec(response)){
+		if (response.indexOf("KS_ERR") !== -1){
 			return Array();
 		}
 		//get rid of the outmost pair of {}

@@ -83,9 +83,9 @@ TextInput.prototype = {
 		
 		//not clickable if the String is only white spaces
 		var buildDummyRect = false;
-		//Gecko, Opera and Webkit are able to use textContent or innerText to find all Text
-		if (typeof Component.textContent != "undefined" ){
-			if (!/\S+/.exec(Component.textContent)) {
+		//IE9, Gecko, Opera and Webkit are able to use textContent to find all Text
+		if (typeof Component.textContent != "undefined" && Component.textContent.trim){
+			if (Component.textContent.trim() === "") {
 				buildDummyRect = true;
 			}
 		}else if (typeof Component.innerText != "undefined" ){
