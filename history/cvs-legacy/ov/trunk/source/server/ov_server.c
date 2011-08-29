@@ -510,6 +510,7 @@ ERRORMSG:
 	result = ov_ksserver_create(servername, port, ov_server_sighandler, reuse);
 	if(Ov_OK(result)) {
 		ov_logfile_info("Server started.");
+		ov_logfile_info("Servername: %s.",servername);
 		ov_ksserver_start();
 #ifdef OV_CATCH_EXCEPTIONS
 		result = ov_supervised_server_run();
