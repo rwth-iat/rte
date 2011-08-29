@@ -98,6 +98,7 @@ proc checkout_acplt {} {
     #checkout libmpm
     checkout ov
     checkout acplt_makmak
+	checkout ov_runtimeserver
     #cd $builddir/user
     #checkout fb
     #checkout iec61131stdfb
@@ -141,6 +142,8 @@ proc build_acplt_mingw {} {
     build_cygwin ov make -f makefile
 	cd $builddir/base/acplt_makmak/build/cygwin
     build_cygwin acplt_makmak make -f makefile
+	cd $builddir/base/ov_runtimeserver/build/cygwin
+    build_cygwin ov_runtimeserver make -f makefile
 }
 
 # Build ACPLT (msvc in windows [depricated] and gcc in linux)
@@ -177,6 +180,10 @@ proc build_acplt {} {
    } else {
 	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/linux
    }
+   if { $os != "nt" } then {
+	#no ntvc for ov_runtimeserver
+	build ov_runtimeserver $make -C $builddir/base/ov_runtimeserver/build/linux
+   }
 }
 
 proc install {dir} {
@@ -207,6 +214,7 @@ proc install_acplt { target } {
     install $builddir/base/ks/build/$target
     install $builddir/base/ov/build/$target
     install $builddir/base/acplt_makmak/build/$target
+	install $builddir/base/ov_runtimeserver/build/$target
 }
 
 proc makmak {library opts} {
@@ -273,6 +281,7 @@ proc release_lib {libname} {
 	file delete -force $releasedir/user/$libname/
     checkout $libname
     cd $releasedir/user/$libname/build/$os/
+	print_msg "Note: no debug symbols will be created"
     build $libname $make all
     print_msg "Deploying $libname"
     file delete -force $releasedir/user/$libname.build/
@@ -375,6 +384,7 @@ if { $os == "nt" } then {
 	#for depricated msvc use following:
 	#build_acplt
 	#install_acplt {ntvc}
+	#note that ov_runtimeserver has never been compiled with msvc
 	build_acplt_mingw
 	install_acplt cygwin
 } else {
@@ -386,6 +396,14 @@ create_release
 release_lib fb
 #iec61131stdfb
 release_lib iec61131stdfb
+
+release_lib ksserv
+release_lib ksservtcp
+
+release_lib ksapi
+release_lib ksapitcp
+
+release_lib fbcomlib
 
 #start_server
 if { $os == "nt" } then {
