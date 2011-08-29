@@ -645,51 +645,44 @@ HMIJavaScriptKSClient.prototype = {
 	prepareComponentText: function(ComponentText) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.prepareComponentText - Start");
 		
-		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
-		var ReturnText = new Array(2);
+		//[StyleDescription] adjust this code if no ACPLT/HMI Server has a StyleDescription anymore
 		
 		if (ComponentText === null || ComponentText === ""){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.prepareComponentText - parameter was null or empty");
 			return null;
 		}
+		var ReturnText = this.splitKsResponse(ComponentText);
 		
 		//	ComponentText should look like:
 		//		{{GraphicDescription}} {{StyleDescription}}
 		//	TksS-XXXX indicates error
 		//
-		if (/\bTksS-\b/.exec(ComponentText) && /KS_ERR/.exec(ComponentText)){
+		if (ReturnText.length === 0 ){
+			var ErrorMessage;
+			
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText);
-			if (ComponentText.length < 250){
-				HMI.hmi_log_onwebsite('Server lost. Gateway reply: ' + ComponentText);
+			if (ComponentText.indexOf("TksS-")){
+				ErrorMessage = "Server lost.";
 			}else{
-				HMI.hmi_log_onwebsite('Server lost. First 250 characters of reply: ' + ComponentText.substr(0,250));
+				ErrorMessage = "Server did not responded valid.";
+			}
+			if (ComponentText.length < 250){
+				HMI.hmi_log_onwebsite(ErrorMessage+' Gateway reply: ' + ComponentText);
+			}else{
+				HMI.hmi_log_onwebsite(ErrorMessage+' First 250 characters of reply: ' + ComponentText.substr(0,250));
 			}
 			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			ReturnText = null;
-		}else if ("{{" != ComponentText.substr(0,2)){
-			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText);
-			if (ComponentText.length < 250){
-				HMI.hmi_log_onwebsite('Server did not responded valid. Gateway reply: ' + ComponentText);
-			}else{
-				HMI.hmi_log_onwebsite('Server did not responded valid. First 250 characters: ' + ComponentText.substr(0,250));
-			}
-			window.clearInterval(HMI.RefreshTimeoutID);
-			HMI.RefreshTimeoutID = null;
-			ReturnText = null;
-		} else {
-			//cut the GraphicDescription and StyleDescription out of the response
-			ReturnText[0] = ComponentText.substring(ComponentText.indexOf('{{') + 2, ComponentText.indexOf('}}'));
-			//StyleDescription requested?
-			if (ComponentText.indexOf('}} {{') != -1 ){
-				ReturnText[1] = ComponentText.substring(ComponentText.indexOf('}} {{') + 5, ComponentText.length - 2);
-			}else{
-				//put StyleVariable to defined state
-				ReturnText[1] = null;
-			}
-			if (ReturnText[0] === ""){
-				ReturnText = null;
+		}else if (ReturnText[0] === ""){
 				HMI.hmi_log_onwebsite('Gateway reply was empty.');
+				return null;
+		} else {
+			//return the GraphicDescription and StyleDescription
+			
+			//put StyleVariable to defined state
+			if (ReturnText.length !== 2 ){
+				ReturnText[1] = null;
 			}
 		};
 		
@@ -722,7 +715,10 @@ HMIJavaScriptKSClient.prototype = {
 			returns the KS Response as an Array, or an empty Array
 	*********************************/
 	splitKsResponse: function (response) {
+		//check input
 		if (response.indexOf("KS_ERR") !== -1){
+			return Array();
+		}else if (response.charAt(0) !== "{" && response.charAt(response.length -1) !== "}"){
 			return Array();
 		}
 		//get rid of the outmost pair of {}
