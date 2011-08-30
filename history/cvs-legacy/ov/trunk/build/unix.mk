@@ -50,7 +50,7 @@ FLEX			= flex
 BISON			= bison
 
 CC			= gcc
-CC_FLAGS		= -g -Wall -O2 -shared -std=c99
+CC_FLAGS		= -g -Wall -O2 -shared -std=c99 -fno-strict-aliasing
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= $(CC)
