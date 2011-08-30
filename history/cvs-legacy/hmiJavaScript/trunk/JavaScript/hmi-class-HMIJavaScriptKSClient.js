@@ -445,8 +445,9 @@ HMIJavaScriptKSClient.prototype = {
 		//the path of the HMI Manager could be different in every OV Server
 		var ManagerResponse = this.getVar(null, "/Libraries/hmi/Manager.instance", null);
 		
-		if (ManagerResponse === null){
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Response was null");
+		var ManagerResponseArray = this.splitKsResponse(ManagerResponse);
+		if (ManagerResponseArray.length === 0){
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Response invalid");
 			this.HMIMANAGER_PATH = null;
 			return false;
 		}else if (ManagerResponse.length === 0){
@@ -454,26 +455,19 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Empty Response");
 			this.HMIMANAGER_PATH = null;
 			return false;
-		}else if (ManagerResponse == "{{}}"){
+		}else if (ManagerResponseArray[0] === ""){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - no instance found");
-			this.HMIMANAGER_PATH = null;
-			return false;
-		}else if (ManagerResponse.indexOf("KS_ERR") !== -1){
-			//error could be: TksS-0174::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - KS_ERR");
 			this.HMIMANAGER_PATH = null;
 			return false;
 		}
 		
-		var PointOfSpace = ManagerResponse.indexOf(' ');
-		if (PointOfSpace == -1){
-			//spaces in objectname are encoded as %20 within OV
-			this.HMIMANAGER_PATH = encodeURI(ManagerResponse.replace(/{/g, "").replace(/}/g, ""));
-		}else{
-			HMI.hmi_log_info_onwebsite("Warning: More than one HMIManagers available ("+ManagerResponse.replace(/{/g, "").replace(/}/g, "")+"). Using first Manager. It is perfectly safe to delete all but one instances.");
-			this.HMIMANAGER_PATH = encodeURI(ManagerResponse.substring(0,PointOfSpace).replace(/{/g, "").replace(/}/g, ""));
+		var ManagerArray = ManagerResponseArray[0].split(' ');
+		if (ManagerArray.length !== 1){
+			HMI.hmi_log_info("Warning: More than one HMIManagers available ("+ManagerArray.join(", ")+"). Using first Manager. It is perfectly safe to delete all but one instances.");
 		}
+		this.HMIMANAGER_PATH = encodeURI(ManagerArray[0]);
 		ManagerResponse = null;
+		ManagerResponseArray = null;
 		PointOfSpace = null;
 		return true;
 	},
@@ -661,7 +655,7 @@ HMIJavaScriptKSClient.prototype = {
 			var ErrorMessage;
 			
 			HMI.hmi_log_error('HMIJavaScriptKSClient.prototype.prepareComponentText: ' + ComponentText);
-			if (ComponentText.indexOf("TksS-")){
+			if (ComponentText.indexOf("TksS-") !== -1){
 				ErrorMessage = "Server lost.";
 			}else{
 				ErrorMessage = "Server did not responded valid.";
@@ -716,7 +710,9 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	splitKsResponse: function (response) {
 		//check input
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === null){
+			return Array();
+		}else if (response.indexOf("KS_ERR") !== -1){
 			return Array();
 		}else if (response.charAt(0) !== "{" && response.charAt(response.length -1) !== "}"){
 			return Array();
