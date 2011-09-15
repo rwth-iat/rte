@@ -107,6 +107,7 @@ function HMI(debug, error, warning, info, trace) {
 	this.RefreshTimeoutID = null;
 	this._currentDragger = null;
 	this.KSClient = null;
+	this.cshmi = null;
 	this.Path = null;
 	this.KSGateway_Path = null;
 	this.HMIDOMParser = null;
@@ -175,6 +176,10 @@ HMI.prototype = {
 		}
 		if (typeof HMIJavaScriptKSClient != "function"){
 			ErrorDetail += "hmi-class-HMIJavaScriptKSClient.js not loaded.\n";
+		}
+		
+		if (typeof cshmi != "function"){
+			ErrorDetail += "hmi-class-cshmi.js not loaded.\n";
 		}
 		
 		if(ErrorDetail === ""){
@@ -1089,10 +1094,8 @@ HMI.prototype = {
 			
 			//check if we have an cshmi target
 			if (ComponentText.indexOf("KS_ERR_BADPATH") !== -1){
-//				this.cshmi = new cshmi();
-//				var Component = this.cshmi.BuildDomain(null, ComponentPath);
-				this.hmi_log_trace("HMI.prototype.refreshSheet - End");
-				return;
+				this.cshmi = new cshmi();
+				this.cshmi.instanciateCshmi(HMI.Path);
 			}else{
 				//hmi target
 				var SplitComponent = this.KSClient.prepareComponentText(ComponentText);

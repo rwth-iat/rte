@@ -64,7 +64,7 @@
 	constructor
 ***********************************************************************/
 
-function HMIBuildSVG() {
+function cshmi() {
 	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
 //	this.TksGetVariableInfo = "%20-type%20$::TKS::OT_VARIABLE%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
 };
@@ -77,23 +77,25 @@ function HMIBuildSVG() {
 //fixme: interval nach time out ändern
 //#########################################################################################################################
 
-/*
-call this way:
-			this.HMIBuildSVG = new HMIBuildSVG();
-			var Component = this.HMIBuildSVG.BuildDomain(null, ComponentPath);
-
-*/
-
 /***********************************************************************
 	prototype
 ***********************************************************************/
-HMIBuildSVG.prototype = {
+cshmi.prototype = {
+	/*********************************
+		instanciateCshmi
+	*********************************/
+	instanciateCshmi: function (ObjectPath) {
+		
+		var Component = this.BuildDomain(null, ObjectPath);
+		
+		HMI.Playground.appendChild(Component);
+	},
 	/*********************************
 		BuildDomain
 		
 	*********************************/
 	BuildDomain: function (targetDomain, ObjectPath) {
-		targetDomain = this._buildSvgContainer(targetDomain, ObjectPath);
+		targetDomain = this._buildSvgContainer(ObjectPath);
 		
 		if (targetDomain === null){
 			return null;
@@ -108,35 +110,32 @@ HMIBuildSVG.prototype = {
 		
 		for (var i = 0, al = responseArray.length; i < al; i++) {
 			var varName = responseArray[i].split(" ");
-			if (varName[1] == "/Libraries/hmisvg/Component"){
-				//this._buildSvgContainer(targetDomain, targetDomain.id+"/"+varName[0]);
+			if (varName[1] == "/Libraries/cshmi/Group"){
 				var Component = this.BuildDomain(targetDomain, targetDomain.id+"/"+varName[0]);
 				if (Component !== null){
 					targetDomain.appendChild(Component);
 				}
-			}else if (varName[1] == "/Libraries/hmisvg/Line"){
+			}else if (varName[1] == "/Libraries/cshmi/Line"){
 				this._buildSvgLine(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/hmisvg/Polyline"){
+			}else if (varName[1] == "/Libraries/cshmi/Polyline"){
 				this._buildSvgPolyline(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/hmisvg/Text"){
+			}else if (varName[1] == "/Libraries/cshmi/Text"){
 				this._buildSvgText(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/hmisvg/Circle"){
+			}else if (varName[1] == "/Libraries/cshmi/Circle"){
 				this._buildSvgCircle(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/hmisvg/Rect"){
+			}else if (varName[1] == "/Libraries/cshmi/Rect"){
 				this._buildSvgRect(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/hmisvg/SVGTest"){
-				this._buildSvgTest(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else{
-				this._buildSvgCheckGesture(targetDomain, targetDomain.id+"/"+varName[0]);
+				//this._buildSvgCheckGesture(targetDomain, targetDomain.id+"/"+varName[0]);
 			}
 		}
 		
 		return targetDomain;
 	},
-	_buildSvgContainer: function(targetDomain, ObjectPath){
+	_buildSvgContainer: function(ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgContainer of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
 			HMI.hmi_log_onwebsite("Visualising the sheet failed.");
 			return null;
 		}
@@ -146,7 +145,7 @@ HMIBuildSVG.prototype = {
 			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			svgElement.id = ObjectPath;
 			
-			this._addClass(svgElement, "hmi-component");
+			this._addClass(svgElement, "cshmi-group");
 			//svgElement.setAttribute("xmlns:svg", HMI.HMI_Constants.NAMESPACE_SVG);
 			
 			//set dimension of container
@@ -162,7 +161,7 @@ HMIBuildSVG.prototype = {
 	_buildSvgLine: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x1 .y1 .x2 .y2 .stroke}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgLine of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgLine of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -185,7 +184,7 @@ HMIBuildSVG.prototype = {
 	_buildSvgPolyline: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgPolyline of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgPolyline of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -206,7 +205,7 @@ HMIBuildSVG.prototype = {
 	_buildSvgPolygon: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgPolygon of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgPolygon of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		
@@ -228,7 +227,7 @@ HMIBuildSVG.prototype = {
 	_buildSvgPath: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .d .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgPath of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgPath of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		
@@ -248,9 +247,9 @@ HMIBuildSVG.prototype = {
 		return true;
 	},
 	_buildSvgText: function(targetDomain, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .HorAlignment .VerAlignment .stroke .fill .content}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .content}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgText of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgText of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		
@@ -282,7 +281,7 @@ HMIBuildSVG.prototype = {
 	_buildSvgCircle: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .r .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgCircle of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgCircle of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -305,7 +304,7 @@ HMIBuildSVG.prototype = {
 	_buildSvgEllipse: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .rx .ry .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgEllipse of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgEllipse of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -329,7 +328,7 @@ HMIBuildSVG.prototype = {
 	_buildSvgRect: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgRect of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgRect of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -350,10 +349,11 @@ HMIBuildSVG.prototype = {
 		}
 		return true;
 	},
+/*
 	_buildSvgTest: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgTest of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgTest of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -361,7 +361,7 @@ HMIBuildSVG.prototype = {
 		if (responseArray[0] != "FALSE"){
 			var response = HMI.KSClient.getVar(null, ObjectPath+'.SVGcontent', null);
 			if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("HMIBuildSVG._buildSvgTest of "+ObjectPath+" failed: "+response);
+				HMI.hmi_log_error("cshmi._buildSvgTest of "+ObjectPath+" failed: "+response);
 				return null;
 			}
 			response =	"<svg:svg xmlns:svg=\"http://www.w3.org/2000/svg\">"
@@ -381,12 +381,13 @@ HMIBuildSVG.prototype = {
 	_buildSvgCheckGesture: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, ObjectPath+'.GestureType', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("HMIBuildSVG._buildSvgTest of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgTest of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		
 		this._addClass(targetDomain, response.substring(1, response.length-1));
 	},
+*/
 	_addClass: function(svgElement, additionalClass){
 		if (svgElement.classList && svgElement.classList.add){
 			svgElement.classList.add(additionalClass);

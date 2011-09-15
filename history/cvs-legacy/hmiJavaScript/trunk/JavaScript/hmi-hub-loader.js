@@ -200,6 +200,7 @@ SCRIPT_HUB(
 		"./hmi-class-gesture-rightclick.js",
 		"./hmi-class-gesture-move.js",
 		"./hmi-class-gesture-textinput.js",
+		"./hmi-class-cshmi.js",
 		//wheelsupport is not supported by the HMI Team and probably firefox only
 		"./hmi-class-gesture-wheelscroll.js",
 		"./hmi-class-HMI.js"

@@ -353,7 +353,7 @@ HMIJavaScriptKSClient.prototype = {
 			for (i = 0; i < Server.length; i++)
 			{
 				//test all potential servers if they are HMI Servers
-				if (HMIJavaScriptKSClient.prototype.pingServer(Server[i]) === true)
+				if (HMI.KSClient.pingServer(Server[i]) === true)
 				{
 					//put server into the dropdown box
 					HMI.PossServers.options[HMI.PossServers.options.length] = new Option(Server[i], Server[i]);
@@ -385,57 +385,40 @@ HMIJavaScriptKSClient.prototype = {
 	pingServer: function(Server) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Start: "+Server);
 		
-		var TCLKSHandle = null;
-		var ManagerResponse = null;
+		//we need a new handle since we talk to another OV server
+		var TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
 		
-		try {
-			//we need a new handle since we talk to another OV server
+		if (TCLKSHandle.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
+			//the Manager sometimes reject connection to a valid server, so retry once
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - got KS_ERR_SERVERUNKNOWN but do not trust");
 			TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
-			
-			if (TCLKSHandle.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
-				//the Manager sometimes reject connection to a valid server, so retry once
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - got KS_ERR_SERVERUNKNOWN but do not trust");
-				TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
-				if (TCLKSHandle.indexOf("KS_ERR") !== -1){
-					//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
-					HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Server really not there Handlemessage: "+TCLKSHandle);
-					return false;
-				}
-			}else if (TCLKSHandle.indexOf("KS_ERR") !== -1){
-				//generic error
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End Handlemessage: "+TCLKSHandle);
+			if (TCLKSHandle.indexOf("KS_ERR") !== -1){
+				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Server really not there Handlemessage: "+TCLKSHandle);
 				return false;
 			}
-			//Try to get the Name of HMI Manager to test the existence
-			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null);
-			
-			this.delHandle(TCLKSHandle);
-			
-			if (ManagerResponse === null){
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Response was null");
-				return false;
-			}else if (ManagerResponse.length === 0){
-				// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1f+Operabug");
-				return false;
-			}else if (ManagerResponse == "{{}}"){
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End2f Handle-Response was {{}}");
-				return false;
-			}else if (ManagerResponse.indexOf("KS_ERR") !== -1){
-				//error could be: TksS-0174::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End3f Handlemessage: "+ManagerResponse);
-				return false;
-			} else {
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End1t");
-				return true;
-			}
-		} catch (e) {
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End2");
+		}else if (TCLKSHandle.indexOf("KS_ERR") !== -1){
+			//generic error
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End Handlemessage: "+TCLKSHandle);
 			return false;
-		};
+		}
+		//Try to get the Name of HMI Manager to test the existence
+		var ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null); 
+		var ManagerResponseArray = this.splitKsResponse(ManagerResponse);
 		
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End3");
-		return false;
+		if (ManagerResponseArray.length === 0){
+			//Try to get the Name of cshmi Group to test the existence
+			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/cshmi/Group.instance", null);
+			ManagerResponseArray = this.splitKsResponse(ManagerResponse);
+			this.delHandle(TCLKSHandle);
+			if (ManagerResponseArray.length === 0){
+				//no hmi, no cshmi server
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - no hmi, no cshmi server");
+				return false;
+			}
+		}
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - hmi or cshmi server");
+		return true;
 	},
 	
 	/*********************************
@@ -527,7 +510,11 @@ HMIJavaScriptKSClient.prototype = {
 		var responseArray = this.splitKsResponse(Sheetstring);
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
-		return SheetList.concat(responseArray[0].split(" ").sort());
+		if (responseArray.length === 0){
+			return SheetList;
+		}else{
+			return SheetList.concat(responseArray[0].split(" ").sort());
+		}
 	},
 	
 	/*********************************
@@ -703,6 +690,8 @@ HMIJavaScriptKSClient.prototype = {
 	splitKsResponse: function (response) {
 		//check input
 		if (response === null){
+			return Array();
+		}else if (response === "{{}}"){
 			return Array();
 		}else if (response.indexOf("KS_ERR") !== -1){
 			return Array();
