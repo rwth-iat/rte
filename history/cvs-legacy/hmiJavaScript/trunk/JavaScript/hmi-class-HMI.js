@@ -564,7 +564,6 @@ HMI.prototype = {
 			var wertestring = unescape(window.location.search);
 			wertestring = wertestring.slice(1);
 			var paare = wertestring.split("&");
-			//todo calc backwards
 			for (var i=0; i < paare.length; i++) {
 				var name = paare[i].substring(0, paare[i].indexOf("="));
 				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
@@ -969,11 +968,27 @@ HMI.prototype = {
 			return false;
 		}
 		
-		//an init generates a new Handle, needed cause we communicate to this server the first time
-		this.KSClient.init(this.KSClient.KSServer.substring(0, this.KSClient.KSServer.indexOf('/')) + '/' + Server, this.KSClient.TCLKSGateway);
-		if (this.KSClient.TCLKSHandle !== null){
-			this.KSClient.getSheets();
+		var SheetList = this.KSClient.getSheets(Server);
+		
+		this.hmi_log_trace("HMI.prototype.showSheets - number of sheets: "+SheetList.length);
+		if (SheetList.length === 0){
+			this.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
+			this.hmi_log_onwebsite("Listing sheets of server failed.");
+			return false;
+		} else {
+			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
+			for (i = 0; i < SheetList.length; i++){
+				//spaces in objectname are encoded as %20 within OV
+				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(SheetList[i]), SheetList[i]);
+			}
+			if (SheetList.length === 1){
+				//selecting the option does not trigger the EventListener
+				HMI.PossSheets.selectedIndex = 1;
+				HMI.showSheet(SheetList[0]);
+			}
+			HMI.PossSheets.disabled = false;
 		}
+		SheetList = null;
 		
 		this.hmi_log_trace("HMI.prototype.showSheets - End");
 		return true;

@@ -475,12 +475,25 @@ HMIJavaScriptKSClient.prototype = {
 	/*********************************
 		getSheets
 	*********************************/
-	getSheets: function() {
+	getSheets: function(Server) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
 		
 		var SheetList = new Array();
 		var i = 0;
 		
+		//an init generates a new Handle, needed cause we communicate to this server the first time
+		this.init(this.KSServer.substring(0, this.KSServer.indexOf('/')) + '/' + Server, this.TCLKSGateway);
+		if (this.TCLKSHandle === null){
+			return false;
+		}
+		
+		//get Sheets from cshmi library
+		
+		var cshmiString = this.getVar(null, '/Libraries/cshmi/Group.instance', null);
+		if (!(cshmiString.indexOf("KS_ERR") !== -1)){
+			var responseArray = this.splitKsResponse(cshmiString);
+			SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+		}
 		
 		//get Sheets from hmi library
 		
@@ -489,7 +502,7 @@ HMIJavaScriptKSClient.prototype = {
 		if (HMI.KSClient.HMIMANAGER_PATH === null){
 			HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getSheets - No Manager found on this Server.");
-			return false;
+			return Array();
 		}
 		
 		var Command = null;
@@ -513,29 +526,8 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var responseArray = this.splitKsResponse(Sheetstring);
 		
-		SheetList= SheetList.concat(responseArray[0].split(" ").sort());
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.GetSheets - number of sheets: "+SheetList.length);
-		if (SheetList.length === 0){
-			HMI.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
-			HMI.hmi_log_onwebsite("Listing sheets of server failed.");
-			return false;
-		} else {
-			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
-			for (i = 0; i < SheetList.length; i++){
-				//spaces in objectname are encoded as %20 within OV
-				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(SheetList[i]), SheetList[i]);
-			}
-			if (SheetList.length === 1){
-				//selecting the option does not trigger the EventListener
-				HMI.PossSheets.selectedIndex = 1;
-				HMI.showSheet(SheetList[0]);
-			}
-			HMI.PossSheets.disabled = false;
-		}
-		SheetList = null;
-		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
-		return true;
+		return SheetList.concat(responseArray[0].split(" ").sort());
 	},
 	
 	/*********************************
