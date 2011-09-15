@@ -551,6 +551,10 @@ HMI.prototype = {
 		}
 		*/
 		
+		if (document.getElementById("idThrobbler") !== null){
+			document.getElementById("idThrobbler").style.display = "none";
+		}
+		
 		this.hmi_log_trace("HMI.prototype.init - End");
 		return true;
 	},

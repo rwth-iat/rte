@@ -88,7 +88,9 @@ cshmi.prototype = {
 		
 		var Component = this.BuildDomain(null, ObjectPath);
 		
-		HMI.Playground.appendChild(Component);
+		if (Component !== null){
+			HMI.Playground.appendChild(Component);
+		}
 	},
 	/*********************************
 		BuildDomain
@@ -137,6 +139,7 @@ cshmi.prototype = {
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
 			HMI.hmi_log_onwebsite("Visualising the sheet failed.");
+			
 			return null;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
