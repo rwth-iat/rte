@@ -78,6 +78,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_comptype_set(
     OV_INSTPTR_cshmi_Compare          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_comptype,value);
+	//todo force our keywords
+	return ov_string_setvalue(&pobj->v_comptype,value);
 }
 

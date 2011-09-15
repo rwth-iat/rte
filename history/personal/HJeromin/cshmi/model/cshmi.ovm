@@ -117,6 +117,29 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 	
+	CLASS Group : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a grouping of elements";
+		VARIABLES
+			x : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			width : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "width of the rectangle"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "height of the rectangle"
+			INITIALVALUE = 100.0;
+		END_VARIABLES;
+	END_CLASS;
+	
 	CLASS Line : CLASS cshmi/Element
 		IS_INSTANTIABLE;
 		COMMENT = "a line";
@@ -252,46 +275,32 @@ LIBRARY cshmi
 			COMMENT = "text content";
 			fontSize : STRING
 			HAS_ACCESSORS
-			COMMENT = "font size (keyword or 12px)";
+			COMMENT = "font size (keyword or 12px)"
+			INITIALVALUE = "medium";
 			fontStyle : STRING
 			HAS_ACCESSORS
-			COMMENT = "font style ('italic','oblique','normal')";
+			COMMENT = "font style ('italic','oblique','normal')"
+			INITIALVALUE = "normal";
 			fontWeight : STRING
 			HAS_ACCESSORS
-			COMMENT = "font weight (number or keyword: 'normal','bold','bolder')"; 
+			COMMENT = "font weight (number or keyword: 'normal','bold','bolder')"
+			INITIALVALUE = "normal";
 			fontFamily : STRING
 			HAS_ACCESSORS
-			COMMENT = "font family (family name or keyword: 'serif','sans-serif','monospace')";
+			COMMENT = "font family (family name or keyword: 'serif','sans-serif','monospace')"
+			INITIALVALUE = "serif";
 			horAlignment : STRING
 			HAS_ACCESSORS
-			COMMENT = "text anchor (horizontal alignment; keyword: 'start','middle','end')";
+			COMMENT = "text anchor (horizontal alignment; keyword: 'start','middle','end')"
+			INITIALVALUE = "start";
 			verAlignment : STRING
 			HAS_ACCESSORS
-			COMMENT = "dominant baseline (vertical alignment; keyword: 'central','middle','auto')";
+			COMMENT = "dominant baseline (vertical alignment; keyword: 'central','middle','auto')"
+			INITIALVALUE = "auto";
 		END_VARIABLES;
-	END_CLASS;
-
-	CLASS Group : CLASS cshmi/Element
-		IS_INSTANTIABLE;
-		COMMENT = "a grouping of elements";
-		VARIABLES
-			x : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "x-axis coordinate of the rectangle"
-			INITIALVALUE = 0.0;
-			y : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "y-axis coordinate of the rectangle"
-			INITIALVALUE = 0.0;
-			width : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "width of the rectangle"
-			INITIALVALUE = 100.0;
-			height : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "height of the rectangle"
-			INITIALVALUE = 100.0;
-		END_VARIABLES;
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 
 	/* Actions */
@@ -299,12 +308,12 @@ LIBRARY cshmi
 	CLASS Action : CLASS cshmi/Object
 		COMMENT = "base class for actions";
 		VARIABLES
-			cyclic : BOOL
+			cyclic : BOOL /*raus!!!! todo */
 			HAS_ACCESSORS
 			COMMENT = "the action executes cyclically (one-shot if FALSE)";
-			cyctime : TIME_SPAN
+			cyctime : TIME_SPAN /*raus!!!! todo */
 			HAS_ACCESSORS
-			COMMENT = "the cycle time for the execution of the action";
+			COMMENT = "the cycle time for the execution of the action, serverpush if zero";
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -385,11 +394,39 @@ LIBRARY cshmi
 		END_PARTS;
 	END_CLASS;
 
-	/* Gestures */
+	/* Events */
 	
-	CLASS Gesture : CLASS cshmi/Object
-		IS_INSTANTIABLE;
+	CLASS Event : CLASS cshmi/Object
 		COMMENT = "an HMI gesture (i.e. a GUI event)";
+	END_CLASS;
+	
+	CLASS Gesture : CLASS cshmi/Event
+		IS_INSTANTIABLE;
+		COMMENT = "an HMI gesture (i.e. an event from the user)";
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS ServerEvent : CLASS cshmi/Event
+		IS_INSTANTIABLE;
+		COMMENT = "an HMI gesture (i.e. an event from the server)";
+	END_CLASS;
+	
+	CLASS TimerEvent : CLASS cshmi/Event
+		COMMENT = "time triggered actions";
+		VARIABLES
+			cyctime : TIME_SPAN
+			HAS_ACCESSORS
+			COMMENT = "the cycle time for the execution of the action";
+		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS ClientEvent : CLASS cshmi/Event
+		COMMENT = "client triggered actions, onload";
+		OPERATIONS /* todo: check name */
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 
 END_LIBRARY;

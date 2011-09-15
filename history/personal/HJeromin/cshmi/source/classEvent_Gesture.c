@@ -40,7 +40,7 @@
 *
 *	File:
 *	------
-*	Gesture.c
+*	classEvent_Gesture.c
 *
 *	Editors:
 *	--------
@@ -67,4 +67,24 @@
 #include "cshmi.h"
 #include "libov/ov_macros.h"
 
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Gesture_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	/*    
+	*   local variables
+	*/
+	OV_INSTPTR_cshmi_Gesture pinst = Ov_StaticPtrCast(cshmi_Gesture, pobj);
+	OV_RESULT    result;
+	
+	/* do what the base class does first */
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
+	
+	 /* todo: check name */
+	
+	
+	return OV_ERR_OK;
+}
 

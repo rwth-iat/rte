@@ -69,121 +69,143 @@
 
 
 OV_DLLFNCEXPORT OV_SINGLE cshmi_Text_x_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_x;
+	return pobj->v_x;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_x_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_SINGLE  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_SINGLE  value
 ) {
-    pobj->v_x = value;
-    return OV_ERR_OK;
+	pobj->v_x = value;
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_SINGLE cshmi_Text_y_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_y;
+	return pobj->v_y;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_y_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_SINGLE  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_SINGLE  value
 ) {
-    pobj->v_y = value;
-    return OV_ERR_OK;
+	pobj->v_y = value;
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_content_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_content;
+	return pobj->v_content;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_content_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_content,value);
+	return ov_string_setvalue(&pobj->v_content,value);
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontSize_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_fontSize;
+	return pobj->v_fontSize;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_fontSize,value);
+	//todo check numeric => change to numeric+"px"
+	return ov_string_setvalue(&pobj->v_fontSize,value);
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontStyle_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_fontStyle;
+	return pobj->v_fontStyle;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontStyle_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_fontStyle,value);
+	return ov_string_setvalue(&pobj->v_fontStyle,value);
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontWeight_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_fontWeight;
+	return pobj->v_fontWeight;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_fontWeight,value);
+	return ov_string_setvalue(&pobj->v_fontWeight,value);
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontFamily_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_fontFamily;
+	return pobj->v_fontFamily;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontFamily_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_fontFamily,value);
+	return ov_string_setvalue(&pobj->v_fontFamily,value);
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_horAlignment_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_horAlignment;
+	return pobj->v_horAlignment;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_horAlignment,value);
+	//todo force only our keywords
+	return ov_string_setvalue(&pobj->v_horAlignment,value);
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_verAlignment_get(
-    OV_INSTPTR_cshmi_Text          pobj
+	OV_INSTPTR_cshmi_Text	pobj
 ) {
-    return pobj->v_verAlignment;
+	return pobj->v_verAlignment;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(
-    OV_INSTPTR_cshmi_Text          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_cshmi_Text	pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_verAlignment,value);
+	//todo force only our keywords
+	return ov_string_setvalue(&pobj->v_verAlignment,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	/*    
+	*   local variables
+	*/
+	OV_INSTPTR_cshmi_Text pinst = Ov_StaticPtrCast(cshmi_Text, pobj);
+	OV_RESULT    result;
+	
+	/* do what the base class does first */
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+	return result;
+	
+	/* todo: swap default fill and stroke  */
+	
+	return OV_ERR_OK;
 }
 

@@ -81,6 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Polygon_points_set(
     const OV_SINGLE*  value,
     const OV_UINT veclen
 ) {
+	//todo check if points describes even number of points
     return Ov_SetDynamicVectorValue(&pobj->v_points,value,veclen,SINGLE);
 }
 
