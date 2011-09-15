@@ -483,9 +483,8 @@ HMIJavaScriptKSClient.prototype = {
 		//the path of the HMI Manager could be different in every OV Server
 		this.getHMIManagerPointer();
 		if (HMI.KSClient.HMIMANAGER_PATH === null){
-			HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getSheets - No Manager found on this Server.");
-			return Array();
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - No HMI Manager found on this Server.");
+			return SheetList;
 		}
 		
 		var Command = null;

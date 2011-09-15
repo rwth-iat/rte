@@ -641,12 +641,8 @@ HMI.prototype = {
 				}else{
 					//the path of the HMI Manager could be different in every OV Server (manager needed for all gestures)
 					this.KSClient.getHMIManagerPointer();
-					if (HMI.KSClient.HMIMANAGER_PATH === null){
-						HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
-					}else{
-						//spaces in objectname are encoded as %20 within OV
-						HMI.showSheet(encodeURI(HMI_Parameter_Liste.Sheet));
-					}
+					//spaces in objectname are encoded as %20 within OV
+					HMI.showSheet(encodeURI(HMI_Parameter_Liste.Sheet));
 				}
 			}else if (	HMI_Parameter_Liste.Server
 				&&	HMI_Parameter_Liste.Server.length !== 0){
@@ -662,13 +658,7 @@ HMI.prototype = {
 				if (this.KSClient.TCLKSHandle === null){
 						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
 				}else{
-					//the path of the HMI Manager could be different in every OV Server (manager needed for all gestures)
-					this.KSClient.getHMIManagerPointer();
-					if (HMI.KSClient.HMIMANAGER_PATH === null){
-						HMI.hmi_log_onwebsite('Requested FB-Server is no HMI-Server.');
-					}else{
-						HMI.showSheets(HMI_Parameter_Liste.Server);
-					}
+					HMI.showSheets(HMI_Parameter_Liste.Server);
 				}
 			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
 				//no server and sheet specified, but a host => load serverlist
@@ -980,7 +970,6 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.showSheets - number of sheets: "+SheetList.length);
 		if (SheetList.length === 0){
 			this.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
-			this.hmi_log_onwebsite("Listing sheets of server failed.");
 			return false;
 		} else {
 			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
