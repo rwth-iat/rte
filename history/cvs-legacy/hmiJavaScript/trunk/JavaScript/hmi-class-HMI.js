@@ -1070,7 +1070,46 @@ HMI.prototype = {
 			deleteChilds(this.InfoOutput);
 		}
 		if (HMI.KSClient.TCLKSHandle !== null){
-			this._getAndImportComponent(HMI.Path);
+			var SVGRequestURI;
+			
+			//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
+			if (HMI.ServerProperty.SheetHasStyleDescription){
+				//spaces in objectname are encoded as %20 within OV
+				SVGRequestURI = '{' + encodeURI(HMI.Path) + '.GraphicDescription' + '%20' + encodeURI(HMI.Path) + '.StyleDescription' + '}';
+			}else{
+				//spaces in objectname are encoded as %20 within OV
+				SVGRequestURI = '{' + encodeURI(HMI.Path) + '.GraphicDescription' + '}';
+			}
+			
+			/*
+			this.HMIBuildSVG = new HMIBuildSVG();
+			var Component = this.HMIBuildSVG.BuildDomain(null, ComponentPath);
+			
+			this._showComponent(Component);
+			this.hmi_log_trace("HMI.prototype.refreshSheet - End");
+			return;
+			*/
+			
+			//	import and show
+			//
+			var ComponentText = this.KSClient.getVar(null, SVGRequestURI, null);
+			
+			var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
+			if (SplitComponent === null){
+				//logging not required, allready done by prepareComponentText
+				return;
+			}
+			
+			//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
+			//build a DOM fragment with the SVG String
+			var Component = this.HMIDOMParser.parse(SplitComponent[0], SplitComponent[1]);
+			
+			if (Component != null){
+				this._showComponent(Component);
+			}
+			
+			SVGRequestURI = null;
+			ComponentText = null;
 		}
 		
 		//reload scroll setting
@@ -1196,43 +1235,13 @@ HMI.prototype = {
 	},
 	
 	/*********************************
-		_getAndImportComponent
-	*********************************/
-	_getAndImportComponent: function (ComponentPath) {
-		this.hmi_log_trace("HMI.prototype._getAndImportComponent - Start");
-		
-		var SVGRequestURI;
-		
-		//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
-		if (HMI.ServerProperty.SheetHasStyleDescription){
-			//spaces in objectname are encoded as %20 within OV
-			SVGRequestURI = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '%20' + encodeURI(ComponentPath) + '.StyleDescription' + '}';
-		}else{
-			//spaces in objectname are encoded as %20 within OV
-			SVGRequestURI = '{' + encodeURI(ComponentPath) + '.GraphicDescription' + '}';
-		}
-		
-		//	import and show
-		//
-		var ComponentText = this.KSClient.getVar(null, SVGRequestURI, null);
-		
-		this._importComponent(ComponentText);
-		SVGRequestURI = null;
-		ComponentText = null;
-		
-		this.hmi_log_trace("HMI.prototype._getAndImportComponent - End");
-		
-		return;
-	},
-	
-	/*********************************
 		_showComponent
 	*********************************/	
 	_showComponent: function (Component) {
 		this.hmi_log_trace("HMI.prototype._showComponent - Start");
 		
 		if (Component === null){
-			//logging not required, already done by _importComponent
+			//logging not required, already done by refreshSheet
 			return;
 		}
 		
@@ -1280,28 +1289,6 @@ HMI.prototype = {
 		ComponentText = null;
 		
 		this.hmi_log_trace("HMI.prototype._showComponent - End");
-	},
-	
-	/*********************************
-		_importComponent
-	*********************************/	
-	_importComponent: function(ComponentText) {
-		this.hmi_log_trace("HMI.prototype._importComponent - Start");
-		
-		var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
-		if (SplitComponent === null){
-			//logging not required, allready done by prepareComponentText
-			return;
-		}
-		
-		//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
-		//build a DOM fragment with the SVG String
-		var Component = this.HMIDOMParser.parse(SplitComponent[0], SplitComponent[1]);
-		
-		if (Component != null){
-			this._showComponent(Component);
-		}
-		this.hmi_log_trace("HMI.prototype._importComponent - End");
 	},
 	
 	/*********************************
