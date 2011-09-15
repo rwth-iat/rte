@@ -69,16 +69,16 @@
 
 
 OV_DLLFNCEXPORT OV_TIME_SPAN* cshmi_TimerEvent_cyctime_get(
-    OV_INSTPTR_cshmi_TimerEvent          pobj
+	OV_INSTPTR_cshmi_TimerEvent          pobj
 ) {
-    return &pobj->v_cyctime;
+	return &pobj->v_cyctime;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_TimerEvent_cyctime_set(
-    OV_INSTPTR_cshmi_TimerEvent          pobj,
-    const OV_TIME_SPAN*  value
+	OV_INSTPTR_cshmi_TimerEvent          pobj,
+	const OV_TIME_SPAN*  value
 ) {
-    pobj->v_cyctime = *value;
-    return OV_ERR_OK;
+	pobj->v_cyctime = *value;
+	return OV_ERR_OK;
 }
 

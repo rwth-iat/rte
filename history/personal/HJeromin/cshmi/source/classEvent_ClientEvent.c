@@ -71,20 +71,19 @@
 OV_DLLFNCEXPORT OV_RESULT cshmi_ClientEvent_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_cshmi_ClientEvent pinst = Ov_StaticPtrCast(cshmi_ClientEvent, pobj);
-    OV_RESULT    result;
-
-    /* do what the base class does first */
-    result = ov_object_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-
-
-    return OV_ERR_OK;
+	/*    
+	*   local variables
+	*/
+	OV_INSTPTR_cshmi_ClientEvent pinst = Ov_StaticPtrCast(cshmi_ClientEvent, pobj);
+	OV_RESULT    result;
+	
+	/* do what the base class does first */
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+	return result;
+	
+	/* todo: check name */
+	
+	return OV_ERR_OK;
 }
 

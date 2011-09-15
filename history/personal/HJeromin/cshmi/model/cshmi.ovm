@@ -307,14 +307,6 @@ LIBRARY cshmi
 
 	CLASS Action : CLASS cshmi/Object
 		COMMENT = "base class for actions";
-		VARIABLES
-			cyclic : BOOL /*raus!!!! todo */
-			HAS_ACCESSORS
-			COMMENT = "the action executes cyclically (one-shot if FALSE)";
-			cyctime : TIME_SPAN /*raus!!!! todo */
-			HAS_ACCESSORS
-			COMMENT = "the cycle time for the execution of the action, serverpush if zero";
-		END_VARIABLES;
 	END_CLASS;
 	
 	CLASS GetValue : CLASS cshmi/Action
@@ -414,6 +406,7 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS TimerEvent : CLASS cshmi/Event
+		IS_INSTANTIABLE;
 		COMMENT = "time triggered actions";
 		VARIABLES
 			cyctime : TIME_SPAN
@@ -423,8 +416,9 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS ClientEvent : CLASS cshmi/Event
+		IS_INSTANTIABLE;
 		COMMENT = "client triggered actions, onload";
-		OPERATIONS /* todo: check name */
+		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
