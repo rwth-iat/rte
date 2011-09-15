@@ -265,7 +265,7 @@ HMI.prototype = {
 		}
 		if ($('idStopRefresh')){
 			addEventSimple($('idStopRefresh'),'click',function(){
-					window.clearInterval(HMI.RefreshTimeoutID);
+					window.clearTimeout(HMI.RefreshTimeoutID);
 					HMI.RefreshTimeoutID = null;
 				}
 			);
@@ -273,7 +273,7 @@ HMI.prototype = {
 		
 		if ($('idStartRefresh')){
 			addEventSimple($('idStartRefresh'),'click',function(){
-				HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value);});
+				HMI.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value);});
 		}
 		
 		//Object of InfoOutput, optional, not necessary
@@ -856,9 +856,7 @@ HMI.prototype = {
 		
 		//if an auto refresh is active, reset to new value
 		if (HMI.RefreshTimeoutID !== null){
-			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.refreshSheet();
-			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 			HMI.hmi_log_info_onwebsite('Refreshtime set to '+(HMI.RefreshTime/1000)+'s.');
 		}
 	},
@@ -876,7 +874,7 @@ HMI.prototype = {
 			document.getElementById("idThrobbler").style.display = "inline";
 		}
 		
-		window.clearInterval(HMI.RefreshTimeoutID);
+		window.clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		//get rid of spaces in the textinput
@@ -959,7 +957,7 @@ HMI.prototype = {
 		$("idBookmark").style.display = "none";
 		document.title = "Startcenter - ACPLT/HMI";
 		
-		window.clearInterval(HMI.RefreshTimeoutID);
+		window.clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		//nothing selected
@@ -1004,7 +1002,8 @@ HMI.prototype = {
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
 		$("idBookmark").style.display = "none";
-		window.clearInterval(HMI.RefreshTimeoutID);
+		
+		window.clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		//nothing selected
@@ -1066,6 +1065,9 @@ HMI.prototype = {
 	refreshSheet: function () {
 		this.hmi_log_trace("HMI.prototype.refreshSheet - Start");
 		
+		window.clearTimeout(HMI.RefreshTimeoutID);
+		HMI.RefreshTimeoutID = null;
+		
 		if (this.InfoOutput){
 			deleteChilds(this.InfoOutput);
 		}
@@ -1081,49 +1083,52 @@ HMI.prototype = {
 				SVGRequestURI = '{' + encodeURI(HMI.Path) + '.GraphicDescription' + '}';
 			}
 			
-			/*
-			this.HMIBuildSVG = new HMIBuildSVG();
-			var Component = this.HMIBuildSVG.BuildDomain(null, ComponentPath);
-			
-			this._showComponent(Component);
-			this.hmi_log_trace("HMI.prototype.refreshSheet - End");
-			return;
-			*/
-			
-			//	import and show
+			//	get GraphicDescription
 			//
 			var ComponentText = this.KSClient.getVar(null, SVGRequestURI, null);
 			
-			var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
-			if (SplitComponent === null){
-				//logging not required, allready done by prepareComponentText
+			//check if we have an cshmi target
+			if (ComponentText.indexOf("KS_ERR_BADPATH") !== -1){
+//				this.cshmi = new cshmi();
+//				var Component = this.cshmi.BuildDomain(null, ComponentPath);
+				this.hmi_log_trace("HMI.prototype.refreshSheet - End");
 				return;
+			}else{
+				//hmi target
+				var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
+				if (SplitComponent === null){
+					//logging not required, allready done by prepareComponentText
+					return;
+				}
+				
+				//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
+				//build a DOM fragment with the SVG String
+				var Component = this.HMIDOMParser.parse(SplitComponent[0], SplitComponent[1]);
+				
+				if (Component != null){
+					this._showComponent(Component);
+					
+					//	activate refresh of sheet later
+					this.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, this.RefreshTime);
+				}
+				
 			}
-			
-			//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
-			//build a DOM fragment with the SVG String
-			var Component = this.HMIDOMParser.parse(SplitComponent[0], SplitComponent[1]);
-			
-			if (Component != null){
-				this._showComponent(Component);
+			//reload scroll setting
+			//wheelsupport is not supported by the HMI Team and probably firefox only
+			if(this.scrollComponent)
+			{
+				var Component;
+				if(document.getElementById(this.scrollComponent) !== null){ //opera, ff
+					Component = document.getElementById(this.scrollComponent);
+				} else if(this.Playground.getElementById(this.scrollComponent) !== null){ //ie
+					Component = this.Playground.getElementById(this.scrollComponent);
+				}
+				Component.setAttribute("y", this.currY);
+				Component.setAttribute("x", this.currX);
 			}
 			
 			SVGRequestURI = null;
 			ComponentText = null;
-		}
-		
-		//reload scroll setting
-		//wheelsupport is not supported by the HMI Team and probably firefox only
-		if(this.scrollComponent)
-		{
-			var Component;
-			if(document.getElementById(this.scrollComponent) !== null){ //opera, ff
-				Component = document.getElementById(this.scrollComponent);
-			} else if(this.Playground.getElementById(this.scrollComponent) !== null){ //ie
-				Component = this.Playground.getElementById(this.scrollComponent);
-			}
-			Component.setAttribute("y", this.currY);
-			Component.setAttribute("x", this.currX);
 		}
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
 	},
@@ -1153,7 +1158,7 @@ HMI.prototype = {
 		}
 		if (HMI.RefreshTimeoutID === null){
 			//reactivate the Refresh
-			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+			HMI.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, HMI.RefreshTime);
 		}
 		
 		//this function is called by mouseup event or mousemove => cleanup
@@ -1276,11 +1281,6 @@ HMI.prototype = {
 		if(this.Playground.firstChild === null){
 			//we have no display => append
 			this.Playground.appendChild(Component);
-			
-			//	set TimeoutID
-			if (this.RefreshTimeoutID === null){
-				this.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, this.RefreshTime);
-			}
 		}else if(this.Playground.firstChild !== null){
 			//we have a display => replace
 			this.Playground.replaceChild(Component, this.Playground.firstChild);

@@ -387,7 +387,7 @@ Dragger.prototype = {
 	startDrag: function (evt) {
 		HMI.hmi_log_trace("Dragger.prototype.startDrag - Start");
 		if (HMI.RefreshTimeoutID !== null){
-			window.clearInterval(HMI.RefreshTimeoutID);
+			window.clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 		}
 		//mark that there is an active drag for HMI.switchGround

@@ -119,7 +119,7 @@ Click.prototype = {
 		if (HMI.RefreshTimeoutID !== null){
 			//deactivate the Refresh
 			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
-			window.clearInterval(HMI.RefreshTimeoutID);
+			window.clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			
 			//provide a fallback for the case the mouseup do not fire

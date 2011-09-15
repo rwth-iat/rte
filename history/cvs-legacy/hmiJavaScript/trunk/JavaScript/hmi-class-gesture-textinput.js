@@ -148,7 +148,7 @@ TextInput.prototype = {
 		if (HMI.RefreshTimeoutID !== null){
 			//deactivate the Refresh
 			//if there is a Screen-Refresh between mouse-down and mouse-up the click would be lost
-			window.clearInterval(HMI.RefreshTimeoutID);
+			window.clearTimeout(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
 			
 			//provide a fallback for the case the mouseup do not fire
@@ -208,10 +208,11 @@ TextInput.prototype = {
 		{
 			this._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-textinput'), input);
 		};
-		if (HMI.RefreshTimeoutID === null){
-			//reactivate the Refresh
-			HMI.RefreshTimeoutID = window.setInterval(function () {HMI.refreshSheet();}, HMI.RefreshTime);
-		}
+		//kill handling of this event for gesture at a parentNode
+		//cancelBubble for IE Bubbling with native IE handling (not used)
+		//stopPropagation for W3C Bubbling
+		evt.cancelBubble = true;
+		if (evt.stopPropagation) evt.stopPropagation();
 		HMI.hmi_log_trace("TextInput.prototype.onClick - End");
 	},
 	
