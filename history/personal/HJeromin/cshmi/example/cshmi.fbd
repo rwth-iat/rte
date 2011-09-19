@@ -99,8 +99,8 @@ Typ        : Hochschulversion
         verAlignment : INPUT  STRING = "auto";
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -261,8 +261,8 @@ Typ        : Hochschulversion
         verAlignment : INPUT  STRING = "auto";
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
-        stroke : INPUT  STRING = "blue";
-        fill : INPUT  STRING = "none";
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "blue";
         opacity : INPUT  SINGLE = 1.000000;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
