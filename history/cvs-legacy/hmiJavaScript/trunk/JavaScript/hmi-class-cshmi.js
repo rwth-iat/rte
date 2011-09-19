@@ -112,23 +112,24 @@ cshmi.prototype = {
 		
 		for (var i = 0, al = responseArray.length; i < al; i++) {
 			var varName = responseArray[i].split(" ");
+			var Component = null;
 			if (varName[1] == "/Libraries/cshmi/Group"){
-				var Component = this.BuildDomain(targetDomain, targetDomain.id+"/"+varName[0]);
-				if (Component !== null){
-					targetDomain.appendChild(Component);
-				}
+				Component = this.BuildDomain(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else if (varName[1] == "/Libraries/cshmi/Line"){
-				this._buildSvgLine(targetDomain, targetDomain.id+"/"+varName[0]);
+				Component = this._buildSvgLine(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else if (varName[1] == "/Libraries/cshmi/Polyline"){
-				this._buildSvgPolyline(targetDomain, targetDomain.id+"/"+varName[0]);
+				Component = this._buildSvgPolyline(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else if (varName[1] == "/Libraries/cshmi/Text"){
-				this._buildSvgText(targetDomain, targetDomain.id+"/"+varName[0]);
+				Component = this._buildSvgText(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else if (varName[1] == "/Libraries/cshmi/Circle"){
-				this._buildSvgCircle(targetDomain, targetDomain.id+"/"+varName[0]);
+				Component = this._buildSvgCircle(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else if (varName[1] == "/Libraries/cshmi/Rectangle"){
-				this._buildSvgRect(targetDomain, targetDomain.id+"/"+varName[0]);
+				Component = this._buildSvgRect(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else{
 				HMI.hmi_log_info("Objekttyp("+varName[1]+"): "+targetDomain.id+"/"+varName[0]+" nicht unterstützt");
+			}
+			if (Component !== null){
+				targetDomain.appendChild(Component);
 			}
 		}
 		
@@ -169,20 +170,20 @@ cshmi.prototype = {
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
-			svgElement.id = ObjectPath;
-			
-			//set dimension of container
-			svgElement.setAttribute("x1", responseArray[1]);
-			svgElement.setAttribute("y1", responseArray[2]);
-			svgElement.setAttribute("x2", responseArray[3]);
-			svgElement.setAttribute("y2", responseArray[4]);
-			svgElement.setAttribute("stroke", responseArray[5]);
-			
-			targetDomain.appendChild(svgElement);
+		if (responseArray[0] == "FALSE"){
+			return null;
 		}
-		return true;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
+		svgElement.id = ObjectPath;
+		
+		//set dimension of container
+		svgElement.setAttribute("x1", responseArray[1]);
+		svgElement.setAttribute("y1", responseArray[2]);
+		svgElement.setAttribute("x2", responseArray[3]);
+		svgElement.setAttribute("y2", responseArray[4]);
+		svgElement.setAttribute("stroke", responseArray[5]);
+		
+		return svgElement;
 	},
 	_buildSvgPolyline: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill}', null);
@@ -192,18 +193,18 @@ cshmi.prototype = {
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
-			svgElement.id = ObjectPath;
-			
-			//set dimension of container
-			svgElement.setAttribute("points", responseArray[1]);
-			svgElement.setAttribute("stroke", responseArray[2]);
-			svgElement.setAttribute("fill", responseArray[3]);
-			
-			targetDomain.appendChild(svgElement);
+		if (responseArray[0] == "FALSE"){
+			return null;
 		}
-		return true;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
+		svgElement.id = ObjectPath;
+		
+		//set dimension of container
+		svgElement.setAttribute("points", responseArray[1]);
+		svgElement.setAttribute("stroke", responseArray[2]);
+		svgElement.setAttribute("fill", responseArray[3]);
+		
+		return svgElement;
 	},
 	_buildSvgPolygon: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill}', null);
@@ -214,18 +215,18 @@ cshmi.prototype = {
 		
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
-			svgElement.id = ObjectPath;
-			
-			//set dimension of container
-			svgElement.setAttribute("points", responseArray[1]);
-			svgElement.setAttribute("stroke", responseArray[2]);
-			svgElement.setAttribute("fill", responseArray[3]);
-			
-			targetDomain.appendChild(svgElement);
+		if (responseArray[0] == "FALSE"){
+			return null;
 		}
-		return true;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
+		svgElement.id = ObjectPath;
+		
+		//set dimension of container
+		svgElement.setAttribute("points", responseArray[1]);
+		svgElement.setAttribute("stroke", responseArray[2]);
+		svgElement.setAttribute("fill", responseArray[3]);
+		
+		return svgElement;
 	},
 	_buildSvgPath: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .d .stroke .fill}', null);
@@ -236,18 +237,18 @@ cshmi.prototype = {
 		
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
-			svgElement.id = ObjectPath;
-			
-			//set dimension of container
-			svgElement.setAttribute("d", responseArray[1]);
-			svgElement.setAttribute("stroke", responseArray[2]);
-			svgElement.setAttribute("fill", responseArray[3]);
-			
-			targetDomain.appendChild(svgElement);
+		if (responseArray[0] == "FALSE"){
+			return null;
 		}
-		return true;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
+		svgElement.id = ObjectPath;
+		
+		//set dimension of container
+		svgElement.setAttribute("d", responseArray[1]);
+		svgElement.setAttribute("stroke", responseArray[2]);
+		svgElement.setAttribute("fill", responseArray[3]);
+		
+		return svgElement;
 	},
 	_buildSvgText: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .content}', null);
@@ -258,28 +259,28 @@ cshmi.prototype = {
 		
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
-			svgElement.id = ObjectPath;
-			
-			//set dimension of container
-			svgElement.setAttribute("x", responseArray[1]);
-			svgElement.setAttribute("y", responseArray[2]);
-			svgElement.setAttribute("font-size", responseArray[3]);
-			svgElement.setAttribute("font-style", responseArray[4]);
-			svgElement.setAttribute("font-weight", responseArray[5]);
-			svgElement.setAttribute("font-family", responseArray[6]);
-			svgElement.setAttribute("text-anchor", responseArray[7]);
-			svgElement.setAttribute("dominant-baseline", responseArray[8]);
-			//todo rebuild for <tspan>
-			svgElement.setAttribute("stroke", responseArray[9]);
-			svgElement.setAttribute("fill", responseArray[10]);
-			
-			svgElement.appendChild(HMI.svgDocument.createTextNode(responseArray[11]));
-			
-			targetDomain.appendChild(svgElement);
+		if (responseArray[0] == "FALSE"){
+			return null;
 		}
-		return true;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
+		svgElement.id = ObjectPath;
+		
+		//set dimension of container
+		svgElement.setAttribute("x", responseArray[1]);
+		svgElement.setAttribute("y", responseArray[2]);
+		svgElement.setAttribute("font-size", responseArray[3]);
+		svgElement.setAttribute("font-style", responseArray[4]);
+		svgElement.setAttribute("font-weight", responseArray[5]);
+		svgElement.setAttribute("font-family", responseArray[6]);
+		svgElement.setAttribute("text-anchor", responseArray[7]);
+		svgElement.setAttribute("dominant-baseline", responseArray[8]);
+		//todo rebuild for <tspan>
+		svgElement.setAttribute("stroke", responseArray[9]);
+		svgElement.setAttribute("fill", responseArray[10]);
+		
+		svgElement.appendChild(HMI.svgDocument.createTextNode(responseArray[11]));
+		
+		return svgElement;
 	},
 	_buildSvgCircle: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .r .stroke .fill}', null);
@@ -289,20 +290,20 @@ cshmi.prototype = {
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
-			svgElement.id = ObjectPath;
-			
-			//set dimension of container
-			svgElement.setAttribute("cx", responseArray[1]);
-			svgElement.setAttribute("cy", responseArray[2]);
-			svgElement.setAttribute("r", responseArray[3]);
-			svgElement.setAttribute("stroke", responseArray[4]);
-			svgElement.setAttribute("fill", responseArray[5]);
-			
-			targetDomain.appendChild(svgElement);
+		if (responseArray[0] == "FALSE"){
+			return null;
 		}
-		return true;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
+		svgElement.id = ObjectPath;
+		
+		//set dimension of container
+		svgElement.setAttribute("cx", responseArray[1]);
+		svgElement.setAttribute("cy", responseArray[2]);
+		svgElement.setAttribute("r", responseArray[3]);
+		svgElement.setAttribute("stroke", responseArray[4]);
+		svgElement.setAttribute("fill", responseArray[5]);
+		
+		return svgElement;
 	},
 	_buildSvgEllipse: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .rx .ry .stroke .fill}', null);
@@ -312,21 +313,21 @@ cshmi.prototype = {
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
-			svgElement.id = ObjectPath;
-			
-			//set dimension of container
-			svgElement.setAttribute("cx", responseArray[1]);
-			svgElement.setAttribute("cy", responseArray[2]);
-			svgElement.setAttribute("rx", responseArray[3]);
-			svgElement.setAttribute("ry", responseArray[4]);
-			svgElement.setAttribute("stroke", responseArray[5]);
-			svgElement.setAttribute("fill", responseArray[6]);
-			
-			targetDomain.appendChild(svgElement);
+		if (responseArray[0] == "FALSE"){
+			return null;
 		}
-		return true;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
+		svgElement.id = ObjectPath;
+		
+		//set dimension of container
+		svgElement.setAttribute("cx", responseArray[1]);
+		svgElement.setAttribute("cy", responseArray[2]);
+		svgElement.setAttribute("rx", responseArray[3]);
+		svgElement.setAttribute("ry", responseArray[4]);
+		svgElement.setAttribute("stroke", responseArray[5]);
+		svgElement.setAttribute("fill", responseArray[6]);
+		
+		return svgElement;
 	},
 	_buildSvgRect: function(targetDomain, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .stroke .fill}', null);
@@ -336,21 +337,21 @@ cshmi.prototype = {
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
-			svgElement.id = ObjectPath;
-			
-			//set dimension of container
-			svgElement.setAttribute("x", responseArray[1]);
-			svgElement.setAttribute("y", responseArray[2]);
-			svgElement.setAttribute("width", responseArray[3]);
-			svgElement.setAttribute("height", responseArray[4]);
-			svgElement.setAttribute("stroke", responseArray[5]);
-			svgElement.setAttribute("fill", responseArray[6]);
-			
-			targetDomain.appendChild(svgElement);
+		if (responseArray[0] == "FALSE"){
+			return null;
 		}
-		return true;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
+		svgElement.id = ObjectPath;
+		
+		//set dimension of container
+		svgElement.setAttribute("x", responseArray[1]);
+		svgElement.setAttribute("y", responseArray[2]);
+		svgElement.setAttribute("width", responseArray[3]);
+		svgElement.setAttribute("height", responseArray[4]);
+		svgElement.setAttribute("stroke", responseArray[5]);
+		svgElement.setAttribute("fill", responseArray[6]);
+		
+		return svgElement;
 	},
 /*
 	_buildSvgTest: function(targetDomain, ObjectPath){
@@ -377,7 +378,7 @@ cshmi.prototype = {
 			svgElement.setAttribute("width", responseArray[3]);
 			svgElement.setAttribute("height", responseArray[4]);
 			
-			targetDomain.appendChild(svgElement);
+			return svgElement;
 		}
 		return true;
 	},
