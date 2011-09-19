@@ -125,10 +125,10 @@ cshmi.prototype = {
 				this._buildSvgText(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else if (varName[1] == "/Libraries/cshmi/Circle"){
 				this._buildSvgCircle(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/cshmi/Rect"){
+			}else if (varName[1] == "/Libraries/cshmi/Rectangle"){
 				this._buildSvgRect(targetDomain, targetDomain.id+"/"+varName[0]);
 			}else{
-				//this._buildSvgCheckGesture(targetDomain, targetDomain.id+"/"+varName[0]);
+				HMI.hmi_log_info("Objekttyp("+varName[1]+"): "+targetDomain.id+"/"+varName[0]+" nicht unterstützt");
 			}
 		}
 		
