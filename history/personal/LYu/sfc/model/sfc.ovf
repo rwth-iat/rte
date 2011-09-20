@@ -1,0 +1,13 @@
+
+#ifndef sfc_OVF_INCLUDE
+#define sfc_OVF_INCLUDE
+
+#endif
+
+typedef OV_DLLFNCEXPORT OV_RESULT SFC_FNC_RESET(
+	OV_INSTPTR_sfc_sfcHeader          pobj
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT SFC_FNC_CHECKPLAUSIBILITY(
+	OV_INSTPTR_sfc_sfcHeader          pobj
+);
