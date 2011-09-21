@@ -437,7 +437,6 @@ OV_DLLFNCEXPORT void fb_task_execChildObjects(
 	OV_TIME				*pltc
 ) {
 	OV_INSTPTR_fb_task	ptaskchild;
-	OV_INSTPTR_fb_task	pnexttaskchild;
 	OV_VTBLPTR_fb_task	pvtable;
 
     FbSvcLog_printexecitem((OV_INSTPTR_ov_object)ptask, "executing child objects");
@@ -447,7 +446,6 @@ OV_DLLFNCEXPORT void fb_task_execChildObjects(
 	*/
 	ptaskchild=Ov_GetFirstChild(fb_tasklist, ptask);
 	while(ptaskchild) {
-		pnexttaskchild=Ov_GetNextChild(fb_tasklist, ptaskchild);
 		Ov_GetVTablePtr(fb_task, pvtable, ptaskchild);
     
 		if(!pvtable) {
@@ -462,7 +460,7 @@ OV_DLLFNCEXPORT void fb_task_execChildObjects(
 		} else {
     		pvtable->m_execute(ptaskchild, pltc);
 		}
-		ptaskchild = pnexttaskchild;
+		ptaskchild = Ov_GetNextChild(fb_tasklist, ptaskchild);
 	}
 
 	return;
