@@ -5,12 +5,12 @@
 ======================================================================
   Sicherung der Datenbasis.
 
-  Erstellt : 2011-09-15 19:47:25
+  Erstellt : 2011-09-23 10:08:10
 
   HOST                : LOCALHOST
   SERVER              : fb_hmifb
   DB-Groesse          : 4001792
-  Frei                : 3840528
+  Frei                : 3839536
   Anzahl FB-Instanzen : 0
   Anzahl Tasks        : 1
   Anzahl Verbindungen : 4
@@ -401,19 +401,69 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/faceplate/ServerName :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 200.000000;
+        y : INPUT  SINGLE = 480.000000;
+        content : INPUT  STRING = "???";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "middle";
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/ServerName/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/ServerName/onload/setServername :
+    CLASS /Libraries/cshmi/SetVar;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "";
+        elemvar : INPUT  STRING = "content";
+        globalvar : INPUT  STRING = "";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/ServerName/onload/setServername.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksvar : INPUT  STRING = "/vendor/server_name";
+        elemvar : INPUT  STRING = "";
+        globalvar : INPUT  STRING = "";
+        eventvar : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/sinus :
     CLASS /Libraries/iec61131stdfb/SIN;
     VARIABLE_VALUES
-        IN : INPUT  SINGLE = 1102.177979;
-        OUT : OUTPUT  SINGLE = 0.497785;
+        IN : INPUT  SINGLE = 1158.364258;
+        OUT : OUTPUT  SINGLE = 0.772921;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 207;
+        methcount : HIDDEN  UINT = 562;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-09-15 19:43:58.437000;
+        proctime : INPUT  TIME = 2011-09-23 09:58:48.937000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -423,17 +473,17 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/increment :
     CLASS /Libraries/iec61131stdfb/ADD;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 1102.277954;
+        IN1 : INPUT  SINGLE = 1158.464233;
         IN2 : INPUT  SINGLE = 0.100000;
-        OUT : OUTPUT  SINGLE = 1102.277954;
+        OUT : OUTPUT  SINGLE = 1158.464233;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = TRUE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 207;
+        methcount : HIDDEN  UINT = 562;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-09-15 19:43:58.437000;
+        proctime : INPUT  TIME = 2011-09-23 09:58:48.937000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -443,17 +493,17 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/move :
     CLASS /Libraries/iec61131stdfb/ADD;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 0.497785;
+        IN1 : INPUT  SINGLE = 0.772921;
         IN2 : INPUT  SINGLE = 1.000000;
-        OUT : OUTPUT  SINGLE = 1.497785;
+        OUT : OUTPUT  SINGLE = 1.772921;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 207;
+        methcount : HIDDEN  UINT = 562;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-09-15 19:43:58.437000;
+        proctime : INPUT  TIME = 2011-09-23 09:58:48.937000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -463,29 +513,29 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/scale :
     CLASS /Libraries/iec61131stdfb/MUL;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 1.497785;
+        IN1 : INPUT  SINGLE = 1.772921;
         IN2 : INPUT  SINGLE = 0.500000;
-        OUT : OUTPUT  SINGLE = 0.748892;
+        OUT : OUTPUT  SINGLE = 0.886460;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 207;
+        methcount : HIDDEN  UINT = 562;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-09-15 19:43:58.437000;
+        proctime : INPUT  TIME = 2011-09-23 09:58:48.937000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /Cons/v_aagsogeduzdb :
+ INSTANCE  /Cons/v_oogsogeqvjec :
     CLASS /fb/connection;
     VARIABLE_VALUES
         on : PARAMETER  BOOL = TRUE;
         sourceport : PARAMETER  STRING = "OUT";
-        targetport : PARAMETER  STRING = "IN";
+        targetport : PARAMETER  STRING = "IN1";
         sourcetrig : PARAMETER  BOOL = FALSE;
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -493,43 +543,17 @@ Typ        : Hochschulversion
  LINK
     OF_ASSOCIATION  inputconnections;
     PARENT  targetfb : CLASS unknown
-        = /TechUnits/sinus;
+        = /TechUnits/scale;
     CHILDREN  inputcon : CLASS connection
-        = {/Cons/v_aagsogeduzdb};
+        = {/Cons/v_oogsogeqvjec};
  END_LINK;
 
  LINK
     OF_ASSOCIATION  outputconnections;
     PARENT  sourcefb : CLASS unknown
-        = /TechUnits/increment;
+        = /TechUnits/move;
     CHILDREN  outputcon : CLASS connection
-        = {/Cons/v_aagsogeduzdb};
- END_LINK;
-
- INSTANCE  /Cons/v_lbgsogeqkhb :
-    CLASS /fb/connection;
-    VARIABLE_VALUES
-        on : PARAMETER  BOOL = TRUE;
-        sourceport : PARAMETER  STRING = "OUT";
-        targetport : PARAMETER  STRING = "IN1";
-        sourcetrig : PARAMETER  BOOL = TRUE;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- LINK
-    OF_ASSOCIATION  inputconnections;
-    PARENT  targetfb : CLASS unknown
-        = /TechUnits/increment;
-    CHILDREN  inputcon : CLASS connection
-        = {/Cons/v_lbgsogeqkhb};
- END_LINK;
-
- LINK
-    OF_ASSOCIATION  outputconnections;
-    PARENT  sourcefb : CLASS unknown
-        = /TechUnits/increment;
-    CHILDREN  outputcon : CLASS connection
-        = {/Cons/v_lbgsogeqkhb};
+        = {/Cons/v_oogsogeqvjec};
  END_LINK;
 
  INSTANCE  /Cons/v_omgsogexjcxb :
@@ -558,12 +582,38 @@ Typ        : Hochschulversion
         = {/Cons/v_omgsogexjcxb};
  END_LINK;
 
- INSTANCE  /Cons/v_oogsogeqvjec :
+ INSTANCE  /Cons/v_lbgsogeqkhb :
     CLASS /fb/connection;
     VARIABLE_VALUES
         on : PARAMETER  BOOL = TRUE;
         sourceport : PARAMETER  STRING = "OUT";
         targetport : PARAMETER  STRING = "IN1";
+        sourcetrig : PARAMETER  BOOL = TRUE;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+    OF_ASSOCIATION  inputconnections;
+    PARENT  targetfb : CLASS unknown
+        = /TechUnits/increment;
+    CHILDREN  inputcon : CLASS connection
+        = {/Cons/v_lbgsogeqkhb};
+ END_LINK;
+
+ LINK
+    OF_ASSOCIATION  outputconnections;
+    PARENT  sourcefb : CLASS unknown
+        = /TechUnits/increment;
+    CHILDREN  outputcon : CLASS connection
+        = {/Cons/v_lbgsogeqkhb};
+ END_LINK;
+
+ INSTANCE  /Cons/v_aagsogeduzdb :
+    CLASS /fb/connection;
+    VARIABLE_VALUES
+        on : PARAMETER  BOOL = TRUE;
+        sourceport : PARAMETER  STRING = "OUT";
+        targetport : PARAMETER  STRING = "IN";
         sourcetrig : PARAMETER  BOOL = FALSE;
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -571,16 +621,16 @@ Typ        : Hochschulversion
  LINK
     OF_ASSOCIATION  inputconnections;
     PARENT  targetfb : CLASS unknown
-        = /TechUnits/scale;
+        = /TechUnits/sinus;
     CHILDREN  inputcon : CLASS connection
-        = {/Cons/v_oogsogeqvjec};
+        = {/Cons/v_aagsogeduzdb};
  END_LINK;
 
  LINK
     OF_ASSOCIATION  outputconnections;
     PARENT  sourcefb : CLASS unknown
-        = /TechUnits/move;
+        = /TechUnits/increment;
     CHILDREN  outputcon : CLASS connection
-        = {/Cons/v_oogsogeqvjec};
+        = {/Cons/v_aagsogeduzdb};
  END_LINK;
 
