@@ -405,7 +405,7 @@ LIBRARY cshmi
 		COMMENT = "an HMI gesture (i.e. an event from the server)";
 	END_CLASS;
 	
-	CLASS TimerEvent : CLASS cshmi/Event
+	CLASS TimeEvent : CLASS cshmi/Event
 		IS_INSTANTIABLE;
 		COMMENT = "time triggered actions";
 		VARIABLES

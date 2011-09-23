@@ -40,7 +40,7 @@
 *
 *	File:
 *	------
-*	classEvent_TimerEvent.c
+*	classEvent_TimeEvent.c
 *
 *	Editors:
 *	--------
@@ -68,14 +68,14 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_TIME_SPAN* cshmi_TimerEvent_cyctime_get(
-	OV_INSTPTR_cshmi_TimerEvent          pobj
+OV_DLLFNCEXPORT OV_TIME_SPAN* cshmi_TimeEvent_cyctime_get(
+	OV_INSTPTR_cshmi_TimeEvent          pobj
 ) {
 	return &pobj->v_cyctime;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_TimerEvent_cyctime_set(
-	OV_INSTPTR_cshmi_TimerEvent          pobj,
+OV_DLLFNCEXPORT OV_RESULT cshmi_TimeEvent_cyctime_set(
+	OV_INSTPTR_cshmi_TimeEvent          pobj,
 	const OV_TIME_SPAN*  value
 ) {
 	pobj->v_cyctime = *value;

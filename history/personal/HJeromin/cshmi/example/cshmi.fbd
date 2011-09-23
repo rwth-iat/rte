@@ -122,7 +122,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus :
-    CLASS /Libraries/cshmi/TimerEvent;
+    CLASS /Libraries/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  TIME_SPAN = 0.500000;
         baseKsPath : INPUT  STRING = "";
@@ -269,7 +269,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/valuelabel/halbsekundenzyklus :
-    CLASS /Libraries/cshmi/TimerEvent;
+    CLASS /Libraries/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  TIME_SPAN = 0.500000;
         baseKsPath : INPUT  STRING = "";
