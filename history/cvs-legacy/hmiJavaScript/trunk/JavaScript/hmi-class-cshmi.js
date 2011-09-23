@@ -74,7 +74,7 @@ function cshmi() {
 
 
 //#########################################################################################################################
-//fixme: interval nach time out ändern
+//fixme: 
 //#########################################################################################################################
 
 /***********************************************************************
@@ -86,7 +86,7 @@ cshmi.prototype = {
 	*********************************/
 	instanciateCshmi: function (ObjectPath) {
 		
-		var Component = this.BuildDomain(null, ObjectPath);
+		var Component = this.BuildDomain(null, ObjectPath, "/Libraries/cshmi/Group");
 		
 		if (Component !== null){
 			HMI.Playground.appendChild(Component);
@@ -94,48 +94,156 @@ cshmi.prototype = {
 	},
 	/*********************************
 		BuildDomain
-		
+		-	Main interation loop for visualisation
+		-	Finds and arms Actions as well
 	*********************************/
-	BuildDomain: function (targetDomain, ObjectPath) {
-		targetDomain = this._buildSvgContainer(ObjectPath);
+	BuildDomain: function (ObjectParent, ObjectPath, ObjectType) {
+		var ChildrenNeeded = false;
+		var Component = null;
 		
-		if (targetDomain === null){
+		if (ObjectType == "/Libraries/cshmi/Group"){
+			Component = this._buildSvgContainer(ObjectParent, ObjectPath);
+			ChildrenNeeded = true;
+		}else if (ObjectType == "/Libraries/cshmi/Line"){
+			Component = this._buildSvgLine(ObjectParent, ObjectPath);
+			ChildrenNeeded = true;
+		}else if (ObjectType == "/Libraries/cshmi/Polyline"){
+			Component = this._buildSvgPolyline(ObjectParent, ObjectPath);
+			ChildrenNeeded = true;
+		}else if (ObjectType == "/Libraries/cshmi/Text"){
+			Component = this._buildSvgText(ObjectParent, ObjectPath);
+			ChildrenNeeded = true;
+		}else if (ObjectType == "/Libraries/cshmi/Circle"){
+			Component = this._buildSvgCircle(ObjectParent, ObjectPath);
+			ChildrenNeeded = true;
+		}else if (ObjectType == "/Libraries/cshmi/Rectangle"){
+			Component = this._buildSvgRect(ObjectParent, ObjectPath);
+			ChildrenNeeded = true;
+		}else if (ObjectType == "/Libraries/cshmi/ClientEvent"){
+			Component = this._interpreteClientEvent(ObjectParent, ObjectPath);
+		}else if (ObjectType == "/Libraries/cshmi/TimeEvent"){
+			HMI.hmi_log_info("TimeEvent "+ObjectPath+" noch nicht unterstützt");
+		}else if (ObjectType == "/Libraries/cshmi/Gesture"){
+			HMI.hmi_log_info("Gesture "+ObjectPath+" noch nicht unterstützt");
+		}else{
+			HMI.hmi_log_info("Objekt(Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
+		}
+		
+		//break if no recursion is needed
+		if (ChildrenNeeded === false){
+			return Component;
+		}
+		
+		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
+		for (var i=0; i < responseArray.length; i++) {
+			var varName = responseArray[i].split(" ");
+			var ChildComponent = this.BuildDomain(Component, Component.id+"/"+varName[0], varName[1]);
+			if (ChildComponent !== null){
+				Component.appendChild(ChildComponent);
+			}
+		}
+		return Component;
+	},
+	/*********************************
+		_interpreteClientEvent
+		-	
+	*********************************/
+	_interpreteClientEvent: function(ObjectParent, ObjectPath){
+		var command = ObjectPath.split("/");
+		if (command[command.length-1] === "onload"){
+			//interprete Action now (todo perhaps as a callback after load)
+			this._interpreteAction(ObjectParent, ObjectPath);
+			
+			return null;
+		}else{
+			HMI.hmi_log_info("ClientEvent "+ObjectPath+" nicht unterstützt");
 			return null;
 		}
-		var response = HMI.KSClient.getEP(null, encodeURI(ObjectPath)+'%20*', HMI.KSClient.TksGetChildInfo, null);
+	},
+	_interpreteAction: function(ObjectParent, ObjectPath){
+			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
+			for (var i=0; i < responseArray.length; i++) {
+				var varName = responseArray[i].split(" ");
+				if (varName[1] == "/Libraries/cshmi/SetVar"){
+					this._setVar(ObjectParent, ObjectPath+"/"+varName[0]);
+				}else{
+					HMI.hmi_log_info("Action "+ObjectPath+" nicht unterstützt");
+				}
+			}
+	},
+	_getValue: function(ObjectParent, ObjectPath){
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar}', null);
 		if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("BuildDomain of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_onwebsite("Visualising the sheet failed.");
+			
 			return null;
 		}
-		
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		for (var i = 0, al = responseArray.length; i < al; i++) {
-			var varName = responseArray[i].split(" ");
-			var Component = null;
-			if (varName[1] == "/Libraries/cshmi/Group"){
-				Component = this.BuildDomain(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/cshmi/Line"){
-				Component = this._buildSvgLine(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/cshmi/Polyline"){
-				Component = this._buildSvgPolyline(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/cshmi/Text"){
-				Component = this._buildSvgText(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/cshmi/Circle"){
-				Component = this._buildSvgCircle(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/cshmi/Rectangle"){
-				Component = this._buildSvgRect(targetDomain, targetDomain.id+"/"+varName[0]);
-			}else{
-				HMI.hmi_log_info("Objekttyp("+varName[1]+"): "+targetDomain.id+"/"+varName[0]+" nicht unterstützt");
-			}
-			if (Component !== null){
-				targetDomain.appendChild(Component);
+		for (var i=0; i < responseArray.length; i++) {
+			if (responseArray[i] !== ""){
+				if (i == 0){
+					//ksvar
+					response = HMI.KSClient.getVar(null, '{'+responseArray[i]+'}', null);
+					responseArray = HMI.KSClient.splitKsResponse(response);
+					return responseArray[0];
+				}else if (i == 1){
+					//elemvar
+					debugger;
+					//todo
+					return null;
+				}else if (i == 2){
+					//globalvar
+					debugger;
+					
+					//todo
+					return null;
+				}
 			}
 		}
-		
-		return targetDomain;
 	},
-	_buildSvgContainer: function(ObjectPath){
+	_setVar: function(ObjectParent, ObjectPath){
+		//get Value to set (via getValue-part of setVar Object)
+		var NewValue = this._getValue(ObjectParent, ObjectPath+".value");
+		
+		//get info where to set the NewValue
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar}', null);
+		if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_onwebsite("Visualising the sheet failed.");
+			
+			return null;
+		}
+		var responseArray = HMI.KSClient.splitKsResponse(response);
+		
+		//set the new Value
+		for (var i=0; i < responseArray.length; i++) {
+			if (responseArray[i] !== ""){
+				if (i == 0){
+					//ksvar
+					HMI.KSClient.setVar(null, '{'+responseArray[i]+'}', NewValue, null);
+					return null;
+				}else if (i == 1){
+					//elemvar
+					if (ObjectParent.hasAttribute(responseArray[i])){
+						ObjectParent.setAttribute(responseArray[i], NewValue);
+					}else if (responseArray[i] == "content"){
+						//content is special, as it is different in OVM and SVG
+						ObjectParent.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild);
+					}
+					return null;
+				}else if (i == 2){
+					//globalvar
+					debugger;
+					
+					//todo
+					return null;
+				}
+			}
+		}
+	},
+	_buildSvgContainer: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
@@ -162,7 +270,7 @@ cshmi.prototype = {
 		}
 		return null;
 	},
-	_buildSvgLine: function(targetDomain, ObjectPath){
+	_buildSvgLine: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x1 .y1 .x2 .y2 .stroke}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgLine of "+ObjectPath+" failed: "+response);
@@ -185,7 +293,7 @@ cshmi.prototype = {
 		
 		return svgElement;
 	},
-	_buildSvgPolyline: function(targetDomain, ObjectPath){
+	_buildSvgPolyline: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgPolyline of "+ObjectPath+" failed: "+response);
@@ -206,7 +314,7 @@ cshmi.prototype = {
 		
 		return svgElement;
 	},
-	_buildSvgPolygon: function(targetDomain, ObjectPath){
+	_buildSvgPolygon: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgPolygon of "+ObjectPath+" failed: "+response);
@@ -228,7 +336,7 @@ cshmi.prototype = {
 		
 		return svgElement;
 	},
-	_buildSvgPath: function(targetDomain, ObjectPath){
+	_buildSvgPath: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .d .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgPath of "+ObjectPath+" failed: "+response);
@@ -250,7 +358,7 @@ cshmi.prototype = {
 		
 		return svgElement;
 	},
-	_buildSvgText: function(targetDomain, ObjectPath){
+	_buildSvgText: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .content}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgText of "+ObjectPath+" failed: "+response);
@@ -282,7 +390,7 @@ cshmi.prototype = {
 		
 		return svgElement;
 	},
-	_buildSvgCircle: function(targetDomain, ObjectPath){
+	_buildSvgCircle: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .r .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgCircle of "+ObjectPath+" failed: "+response);
@@ -305,7 +413,7 @@ cshmi.prototype = {
 		
 		return svgElement;
 	},
-	_buildSvgEllipse: function(targetDomain, ObjectPath){
+	_buildSvgEllipse: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .rx .ry .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgEllipse of "+ObjectPath+" failed: "+response);
@@ -329,7 +437,7 @@ cshmi.prototype = {
 		
 		return svgElement;
 	},
-	_buildSvgRect: function(targetDomain, ObjectPath){
+	_buildSvgRect: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .stroke .fill}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgRect of "+ObjectPath+" failed: "+response);
@@ -354,7 +462,7 @@ cshmi.prototype = {
 		return svgElement;
 	},
 /*
-	_buildSvgTest: function(targetDomain, ObjectPath){
+	_buildSvgTest: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgTest of "+ObjectPath+" failed: "+response);
@@ -382,14 +490,14 @@ cshmi.prototype = {
 		}
 		return true;
 	},
-	_buildSvgCheckGesture: function(targetDomain, ObjectPath){
+	_buildSvgCheckGesture: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, ObjectPath+'.GestureType', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgTest of "+ObjectPath+" failed: "+response);
 			return null;
 		}
 		
-		this._addClass(targetDomain, response.substring(1, response.length-1));
+		this._addClass(ObjectParent, response.substring(1, response.length-1));
 	},
 */
 	_addClass: function(svgElement, additionalClass){
