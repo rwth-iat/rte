@@ -711,7 +711,19 @@ HMIJavaScriptKSClient.prototype = {
 			}
 		}
 		return responseArray;
-	},	
+	},
+	/*********************************
+		getChildObjArray
+			returns the childs of an Object as an Array, or an empty Array
+	*********************************/
+	getChildObjArray: function (ObjectPath) {
+			var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
+			if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			return this.splitKsResponse(response);
+	},
 	/*********************************
 		destroy
 	*********************************/
