@@ -125,8 +125,7 @@ cshmi.prototype = {
 		}else if (ObjectType == "/Libraries/cshmi/TimeEvent"){
 			Result = this._interpreteTimeEvent(ObjectParent, ObjectPath);
 		}else if (ObjectType == "/Libraries/cshmi/Gesture"){
-			//todo
-			HMI.hmi_log_info("Gesture "+ObjectPath+" noch nicht unterstützt");
+			Result = this._interpreteGesture(ObjectParent, ObjectPath);
 		}else{
 			//todo
 			HMI.hmi_log_info("Objekt(Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
@@ -158,6 +157,36 @@ cshmi.prototype = {
 		}else{
 			//todo
 			HMI.hmi_log_info("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
+		}
+	},
+	/*********************************
+		_interpreteGesture
+		-	detect all Gestures and register them
+	*********************************/
+	_interpreteGesture: function(ObjectParent, ObjectPath){
+		var command = ObjectPath.split("/");
+		if (command[command.length-1] === "click"){
+			ObjectParent.setAttribute("cursor", "pointer");
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			ObjectParent.addEventListener(command[command.length-1], function(){
+				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+			}, false);
+		}else if (command[command.length-1] === "doubleclick"){
+			ObjectParent.setAttribute("cursor", "pointer");
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			//fixme make double click ASV compatible
+			ObjectParent.addEventListener("dblclick", function(){
+				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+			}, false);
+		}else if (command[command.length-1] === "rightclick"){
+			ObjectParent.setAttribute("cursor", "pointer");
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			ObjectParent.addEventListener("contextmenu", function(){
+				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+			}, false);
+		}else{
+			//todo
+			HMI.hmi_log_info("Gesture ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
 		}
 	},
 	/*********************************
