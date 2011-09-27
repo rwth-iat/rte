@@ -98,28 +98,21 @@ cshmi.prototype = {
 		-	Finds and arms Actions as well
 	*********************************/
 	BuildDomain: function (ObjectParent, ObjectPath, ObjectType) {
-		var ChildrenNeeded = false;
 		var Component = null;
 		var Result = true;
 		
 		if (ObjectType == "/Libraries/cshmi/Group"){
 			Component = this._buildSvgContainer(ObjectParent, ObjectPath);
-			ChildrenNeeded = true;
 		}else if (ObjectType == "/Libraries/cshmi/Line"){
 			Component = this._buildSvgLine(ObjectParent, ObjectPath);
-			ChildrenNeeded = true;
 		}else if (ObjectType == "/Libraries/cshmi/Polyline"){
 			Component = this._buildSvgPolyline(ObjectParent, ObjectPath);
-			ChildrenNeeded = true;
 		}else if (ObjectType == "/Libraries/cshmi/Text"){
 			Component = this._buildSvgText(ObjectParent, ObjectPath);
-			ChildrenNeeded = true;
 		}else if (ObjectType == "/Libraries/cshmi/Circle"){
 			Component = this._buildSvgCircle(ObjectParent, ObjectPath);
-			ChildrenNeeded = true;
 		}else if (ObjectType == "/Libraries/cshmi/Rectangle"){
 			Component = this._buildSvgRect(ObjectParent, ObjectPath);
-			ChildrenNeeded = true;
 		}else if (ObjectType == "/Libraries/cshmi/ClientEvent"){
 			Result = this._interpreteClientEvent(ObjectParent, ObjectPath);
 		}else if (ObjectType == "/Libraries/cshmi/TimeEvent"){
@@ -132,7 +125,7 @@ cshmi.prototype = {
 		}
 		
 		//get Children if needed
-		if (ChildrenNeeded === true){
+		if (Component !== null){
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
@@ -202,7 +195,6 @@ cshmi.prototype = {
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._interpreteTimeEvent of "+ObjectPath+" failed: "+response);
-			HMI.hmi_log_onwebsite("Visualising the sheet failed.");
 			
 			return false;
 		}
@@ -222,27 +214,29 @@ cshmi.prototype = {
 		-	detect all Actions and triggers them
 	*********************************/
 	_interpreteAction: function(ObjectParent, ObjectPath){
-			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
-			for (var i=0; i < responseArray.length; i++) {
-				var varName = responseArray[i].split(" ");
-				if (varName[1] == "/Libraries/cshmi/SetVar"){
-					this._setVar(ObjectParent, ObjectPath+"/"+varName[0]);
-					return true;
-				}else{
-					//todo
-					HMI.hmi_log_info("Action ("+varName[1]+")"+ObjectPath+" nicht unterstützt");
-				}
+		var returnValue = true;
+		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
+		for (var i=0; i < responseArray.length && returnValue == true; i++) {
+			var varName = responseArray[i].split(" ");
+			if (varName[1] == "/Libraries/cshmi/SetVar"){
+				returnValue = this._setVar(ObjectParent, ObjectPath+"/"+varName[0]);
+			}else if (varName[1] == "/Libraries/cshmi/IfThenElse"){
+				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
+			}else{
+				//todo
+				HMI.hmi_log_info("Action ("+varName[1]+")"+ObjectPath+" nicht unterstützt");
 			}
+		}
+		return returnValue;
 	},
 	/*********************************
 		_getValue
 		-	get a Value from multiple Sources
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar .value}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._getValue of "+ObjectPath+" failed: "+response);
-			HMI.hmi_log_onwebsite("Visualising the sheet failed.");
 			
 			return null;
 		}
@@ -261,14 +255,34 @@ cshmi.prototype = {
 					}
 				}else if (i === 1){
 					//elemvar
-					debugger;
-					//todo
-					return null;
+					if (ObjectParent.hasAttribute(responseArray[i])){
+						return ObjectParent.getAttribute(responseArray[i]);
+					}else if (responseArray[i] == "content"){
+						//content is special, as it is different in OVM and SVG
+						if (typeof ObjectParent.textContent != "undefined"){
+							return ObjectParent.textContent;
+						}else if (typeof ObjectParent.innerText != "undefined"){
+							return ObjectParent.innerText;
+						}else{
+							//todo asv compatibility
+							return null;
+						}
+					}else{
+						//unknown elment variable
+						return null;
+					}
 				}else if (i === 2){
 					//globalvar
 					debugger;
 					
 					//todo
+					return null;
+				}else if (i === 3){
+					//value
+					return responseArray[i];
+				}else{
+					//unknown
+					debugger;
 					return null;
 				}
 			}
@@ -286,9 +300,8 @@ cshmi.prototype = {
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar}', null);
 		if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._setVar of "+ObjectPath+" failed: "+response);
-			HMI.hmi_log_onwebsite("Visualising the sheet failed.");
 			
-			return null;
+			return false;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
@@ -298,7 +311,7 @@ cshmi.prototype = {
 				if (i === 0){
 					//ksvar
 					HMI.KSClient.setVar(null, '{'+responseArray[i]+'}', NewValue, null);
-					return null;
+					return true;
 				}else if (i === 1){
 					//elemvar
 					if (ObjectParent.hasAttribute(responseArray[i])){
@@ -307,17 +320,81 @@ cshmi.prototype = {
 						//content is special, as it is different in OVM and SVG
 						ObjectParent.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild);
 					}
-					return null;
+					return true;
 				}else if (i === 2){
 					//globalvar
 					debugger;
 					
 					//todo
-					return null;
+					return false;
 				}
 			}
 		}
 	},
+	/*********************************
+		_interpreteIfThenElse
+		-	sets a Value to multiple Sources
+	*********************************/
+	_interpreteIfThenElse: function(ObjectParent, ObjectPath){
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.anycond}', null);
+		if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_error("cshmi._interpreteIfThenElse of "+ObjectPath+" failed: "+response);
+			
+			return false;
+		}
+		var responseArray = HMI.KSClient.splitKsResponse(response);
+		
+		var ConditionMatched = false;
+		var andCond = responseArray[0];
+		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if");
+		for (var i=0; i < responseArray.length; i++) {
+			var varName = responseArray[i].split(" ");
+			if (varName[1] == "/Libraries/cshmi/Compare"){
+//fixme andCond buggy
+				ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
+				if (andCond === "FALSE" && ConditionMatched == true){
+					this._interpreteAction(ObjectParent, ObjectPath+".then");
+				}else{
+					this._interpreteAction(ObjectParent, ObjectPath+".else");
+				}
+				break;
+			}
+		}
+		if (andCond === "FALSE"){
+			
+		}
+		return true;
+	},
+	/*********************************
+		_checkCondition
+		-	checks Condition
+	*********************************/
+	_checkCondition: function(ObjectParent, ObjectPath, ConditionPath){
+		//get Values
+		var comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
+		var Value1 = this._getValue(ObjectParent, ObjectPath+".value1");
+		var Value2 = this._getValue(ObjectParent, ObjectPath+".value2");
+		
+		if (comptype === "{<}"){
+			return (Value1 < Value2);
+		}else if (comptype === "{<=}"){
+			return (Value1 <= Value2);
+		}else if (comptype === "{=}"){
+			return (Value1 === Value2);
+		}else if (comptype === "{!=}"){
+			return (Value1 !== Value2);
+		}else if (comptype === "{>=}"){
+			return (Value1 >= Value2);
+		}else if (comptype === "{>}"){
+			return (Value1 > Value2);
+		}else{
+			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
+			return false;
+		}
+	},
+	
+	
+	
 	
 	
 	
