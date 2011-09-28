@@ -194,7 +194,7 @@ WheelScroll.prototype = {
 		}
 		
 		//calculate  x
-		if(parseInt(Component.getAttribute('width'),10)>parseInt(Scrollframe.getAttribute('width')),10){
+		if(parseInt(Component.getAttribute('width'),10)>parseInt(Scrollframe.getAttribute('width'),10)){
 			if (HMI.currX + x + parseInt(Component.getAttribute('width'),10) < parseInt(Scrollframe.getAttribute('width'),10)){
 				HMI.currX = parseInt(Scrollframe.getAttribute('width'),10) - parseInt(Component.getAttribute('width'),10);
 			} else if (HMI.currX + x > 0){

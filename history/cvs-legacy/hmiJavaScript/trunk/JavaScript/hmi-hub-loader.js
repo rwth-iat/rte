@@ -131,7 +131,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	if (base === null)
 	{
 		window.alert("Fatal error: script hub loader unable to locate base in document");
-		throw new Error("hub loader base location error");
+		return false;
 	};
 	
 	/********************************************************************
@@ -145,7 +145,6 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			node = document.createElement("script");
 		}else{
 			window.alert("Fatal error: script hub loader unable to create new script node in document");
-			throw new Error("hub loader script node creation error");
 			return false;
 		}
 		
@@ -174,7 +173,6 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			}
 		}else{
 			window.alert("Fatal error: script hub loader unable to append new script node into document");
-			throw new Error("hub loader script node append error");
 			return false;
 		}
 	}
