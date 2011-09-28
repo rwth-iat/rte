@@ -347,22 +347,32 @@ cshmi.prototype = {
 		var ConditionMatched = false;
 		var andCond = responseArray[0];
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if");
-		for (var i=0; i < responseArray.length; i++) {
-			var varName = responseArray[i].split(" ");
-			if (varName[1] == "/Libraries/cshmi/Compare"){
-//fixme andCond buggy
-				ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
-				if (andCond === "FALSE" && ConditionMatched == true){
-					this._interpreteAction(ObjectParent, ObjectPath+".then");
-				}else{
-					this._interpreteAction(ObjectParent, ObjectPath+".else");
+		var i=0
+		if (andCond == "TRUE"){
+			//logical OR
+			while(i < responseArray.length && ConditionMatched !== false){
+				var varName = responseArray[i].split(" ");
+				if (varName[1] == "/Libraries/cshmi/Compare"){
+					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
-				break;
+				i++;
+			}
+		}else{
+			//logical AND
+			while(i < responseArray.length && ConditionMatched !== true){
+				var varName = responseArray[i].split(" ");
+				if (varName[1] == "/Libraries/cshmi/Compare"){
+					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
+				}
+				i++;
 			}
 		}
-		if (andCond === "FALSE"){
-			
+		if (ConditionMatched == true){
+			this._interpreteAction(ObjectParent, ObjectPath+".then");
+		}else{
+			this._interpreteAction(ObjectParent, ObjectPath+".else");
 		}
+		
 		return true;
 	},
 	/*********************************
