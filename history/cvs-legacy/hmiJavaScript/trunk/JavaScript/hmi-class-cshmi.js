@@ -187,8 +187,6 @@ cshmi.prototype = {
 		-	calling Actions if supported TimeEvent is triggered
 	*********************************/
 	_interpreteTimeEvent: function(ObjectParent, ObjectPath){
-		var command = ObjectPath.split("/");
-		
 		//interprete Action now to initialise
 		this._interpreteAction(ObjectParent, ObjectPath);
 		
