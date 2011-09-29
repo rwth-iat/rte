@@ -691,6 +691,7 @@ HMIJavaScriptKSClient.prototype = {
 		if (response === null){
 			return Array();
 		}else if (response === false){
+			//communication error
 			return Array();
 		}else if (response === "{{}}"){
 			return Array();
@@ -721,6 +722,7 @@ HMIJavaScriptKSClient.prototype = {
 	getChildObjArray: function (ObjectPath) {
 			var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
 			if (response === false){
+				//communication error
 				return Array();
 			}else if (response.indexOf("KS_ERR") !== -1){
 				HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
