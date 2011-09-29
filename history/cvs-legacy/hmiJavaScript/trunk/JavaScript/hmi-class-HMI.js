@@ -1086,7 +1086,7 @@ HMI.prototype = {
 			var ComponentText = this.KSClient.getVar(null, SVGRequestURI, null);
 			
 			//check if we have an cshmi target
-			if (ComponentText.indexOf("KS_ERR_BADPATH") !== -1){
+			if (ComponentText && ComponentText.indexOf("KS_ERR_BADPATH") !== -1){
 				this.cshmi = new cshmi();
 				this.cshmi.instanciateCshmi(HMI.Path);
 			}else{

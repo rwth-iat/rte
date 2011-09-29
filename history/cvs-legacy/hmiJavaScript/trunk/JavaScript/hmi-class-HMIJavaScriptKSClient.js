@@ -690,6 +690,8 @@ HMIJavaScriptKSClient.prototype = {
 		//check input
 		if (response === null){
 			return Array();
+		}else if (response === false){
+			return Array();
 		}else if (response === "{{}}"){
 			return Array();
 		}else if (response.indexOf("KS_ERR") !== -1){
@@ -718,9 +720,11 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	getChildObjArray: function (ObjectPath) {
 			var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
-			if (response.indexOf("KS_ERR") !== -1){
+			if (response === false){
+				return Array();
+			}else if (response.indexOf("KS_ERR") !== -1){
 				HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
-				return null;
+				return Array();
 			}
 			return this.splitKsResponse(response);
 	},

@@ -193,7 +193,9 @@ cshmi.prototype = {
 		this._interpreteAction(ObjectParent, ObjectPath);
 		
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return false;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._interpreteTimeEvent of "+ObjectPath+" failed: "+response);
 			
 			return false;
@@ -235,7 +237,9 @@ cshmi.prototype = {
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar .value}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._getValue of "+ObjectPath+" failed: "+response);
 			
 			return null;
@@ -298,7 +302,9 @@ cshmi.prototype = {
 		
 		//get info where to set the NewValue
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return false;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._setVar of "+ObjectPath+" failed: "+response);
 			
 			return false;
@@ -337,7 +343,9 @@ cshmi.prototype = {
 	*********************************/
 	_interpreteIfThenElse: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.anycond}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return false;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._interpreteIfThenElse of "+ObjectPath+" failed: "+response);
 			
 			return false;
@@ -416,7 +424,9 @@ cshmi.prototype = {
 	*********************************/
 	_buildSvgContainer: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
 			HMI.hmi_log_onwebsite("Visualising the sheet failed.");
 			
@@ -444,7 +454,9 @@ cshmi.prototype = {
 	},
 	_buildSvgLine: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x1 .y1 .x2 .y2 .stroke .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgLine of "+ObjectPath+" failed: "+response);
 			return null;
 		}
@@ -468,7 +480,9 @@ cshmi.prototype = {
 	},
 	_buildSvgPolyline: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgPolyline of "+ObjectPath+" failed: "+response);
 			return null;
 		}
@@ -490,7 +504,9 @@ cshmi.prototype = {
 	},
 	_buildSvgPolygon: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgPolygon of "+ObjectPath+" failed: "+response);
 			return null;
 		}
@@ -513,7 +529,9 @@ cshmi.prototype = {
 	},
 	_buildSvgPath: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .d .stroke .fill .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgPath of "+ObjectPath+" failed: "+response);
 			return null;
 		}
@@ -536,7 +554,9 @@ cshmi.prototype = {
 	},
 	_buildSvgText: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .content .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgText of "+ObjectPath+" failed: "+response);
 			return null;
 		}
@@ -569,7 +589,9 @@ cshmi.prototype = {
 	},
 	_buildSvgCircle: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .r .stroke .fill .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgCircle of "+ObjectPath+" failed: "+response);
 			return null;
 		}
@@ -593,7 +615,9 @@ cshmi.prototype = {
 	},
 	_buildSvgEllipse: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .rx .ry .stroke .fill .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgEllipse of "+ObjectPath+" failed: "+response);
 			return null;
 		}
@@ -618,7 +642,9 @@ cshmi.prototype = {
 	},
 	_buildSvgRect: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .stroke .fill .opacity}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgRect of "+ObjectPath+" failed: "+response);
 			return null;
 		}
@@ -644,7 +670,9 @@ cshmi.prototype = {
 /*
 	_buildSvgTest: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height}', null);
-		if (response.indexOf("KS_ERR") !== -1){
+		if (response === false){
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._buildSvgTest of "+ObjectPath+" failed: "+response);
 			return null;
 		}
