@@ -394,7 +394,7 @@ LIBRARY cshmi
 	
 	CLASS Gesture : CLASS cshmi/Event
 		IS_INSTANTIABLE;
-		COMMENT = "an HMI gesture (i.e. an event from the user)";
+		COMMENT = "an HMI gesture (i.e. an event from the user); the identifier could be click, doubleclick, rightclick";
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
@@ -417,7 +417,7 @@ LIBRARY cshmi
 	
 	CLASS ClientEvent : CLASS cshmi/Event
 		IS_INSTANTIABLE;
-		COMMENT = "client triggered actions, onload";
+		COMMENT = "client triggered actions; the identifier could be onload";
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
