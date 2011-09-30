@@ -65,8 +65,10 @@
 ***********************************************************************/
 
 function cshmi() {
-	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
-//	this.TksGetVariableInfo = "%20-type%20$::TKS::OT_VARIABLE%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
+	this.ResourceList = Object();
+	this.ResourceList.Actions = Object();
+	this.ResourceList.Conditions = Object();
+	this.ResourceList.Events = Object();
 };
 
 
@@ -255,8 +257,8 @@ cshmi.prototype = {
 						//we have an absolute path on another server
 						var RequestServer = Object();
 						RequestServer.servername = responseArray[i].split("/")[2]+"/"+responseArray[i].split("/")[3];
-						RequestServer.serverhandle = HMI.KSClient.getHandle(RequestServer.servername, null);
-						RequestServer.path = responseArray[0].substring(RequestServer.servername.length+2)+RequestServer.path;
+						RequestServer.serverhandle = HMI.KSClient.getHandleID(RequestServer.servername);
+						RequestServer.path = responseArray[0].substring(RequestServer.servername.length+2);
 						response = HMI.KSClient.getVar(RequestServer.serverhandle, '{'+RequestServer.path+'}', null);
 					}else if (responseArray[i].charAt(0) == "/"){
 						//we have an absolute path on this server
@@ -337,8 +339,8 @@ cshmi.prototype = {
 						//we have an absolute path on another server
 						var RequestServer = Object();
 						RequestServer.servername = responseArray[i].split("/")[2]+"/"+responseArray[i].split("/")[3];
-						RequestServer.serverhandle = HMI.KSClient.getHandle(RequestServer.servername, null);
-						RequestServer.path = responseArray[0].substring(RequestServer.servername.length+2)+RequestServer.path;
+						RequestServer.serverhandle = HMI.KSClient.getHandleID(RequestServer.servername);
+						RequestServer.path = responseArray[0].substring(RequestServer.servername.length+2);
 						HMI.KSClient.setVar(RequestServer.serverhandle, '{'+RequestServer.path+'}', NewValue, null);
 					}else if (responseArray[i].charAt(0) == "/"){
 						//we have an absolute path on this server
@@ -391,7 +393,7 @@ cshmi.prototype = {
 				if (responseArray[0].charAt(0) === "/" && responseArray[0].charAt(1) === "/"){
 					//String begins with // so it is a fullpath with Host and servername
 					returnValue.servername = responseArray[0].split("/")[2]+"/"+responseArray[0].split("/")[3];
-					returnValue.serverhandle = HMI.KSClient.getHandle(returnValue.servername, null);
+					returnValue.serverhandle = HMI.KSClient.getHandleID(returnValue.servername);
 					returnValue.path = responseArray[0].substring(returnValue.servername.length+2)+returnValue.path;
 				}else if (responseArray[0].charAt(0) === "/"){
 					//String begins with / so it is a fullpath in this server
