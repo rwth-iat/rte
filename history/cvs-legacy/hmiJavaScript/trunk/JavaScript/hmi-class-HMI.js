@@ -1574,17 +1574,17 @@ HMI.prototype = {
 			HMI.PossServers = null;
 			HMI.PossSheets = null;
 			
-			if (HMI.KSClient && HMI.KSClient.TCLKSHandle !== null){
+			if (HMI.KSClient){
 				HMI.KSClient.destroy();
 			}
 		}
 		this.hmi_log_trace("HMI.prototype.unload - End");
 	},
 	
-   /********************************************************************
+	/********************************************************************
 		logging
 			requires console (Firebug, Opera, Safari...)
-   ********************************************************************/
+	********************************************************************/
 	
 	/*********************************
 		hmi_log_debug

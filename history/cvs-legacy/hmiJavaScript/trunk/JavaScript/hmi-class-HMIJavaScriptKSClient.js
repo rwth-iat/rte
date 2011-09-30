@@ -273,7 +273,9 @@ HMIJavaScriptKSClient.prototype = {
 		}else if (HMI.GatewayTypePHP === true){
 			urlparameter = 'obj='+Handle + '&cmd=destroy';
 		}
-		this._sendRequest(this, 'GET', false, urlparameter, null);
+		if (Handle !== null){
+			this._sendRequest(this, 'GET', false, urlparameter, null);
+		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - End");
 	},
 	
@@ -281,7 +283,7 @@ HMIJavaScriptKSClient.prototype = {
 		getHandleID
 	*********************************/
 	getHandleID: function(HostAndServername) {
-		if (this.Handles[HostAndServername]){
+		if (this.Handles[HostAndServername] && this.Handles[HostAndServername].HandleString !== null){
 			return this.Handles[HostAndServername].HandleString;
 		}else{
 			var HandleString = this.getHandle(HostAndServername, null);
@@ -759,10 +761,15 @@ HMIJavaScriptKSClient.prototype = {
 	destroy: function () {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - Start");
 		
-		if (this.TCLKSHandle !== null)
-		{
+		//destroy main handle
+		if (this.TCLKSHandle !== null){
 			this.delHandle(this.TCLKSHandle);
-		};
+		}
+		//destroy other handles
+		for (var i in HMI.KSClient.Handles){
+			HMI.KSClient.delHandle(HMI.KSClient.Handles[i].HandleString);
+			HMI.KSClient.Handles[i].HandleString = null;
+		}
 		this.KSServer = null;
 		this.TCLKSHandle = null;
 		
