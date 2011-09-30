@@ -82,6 +82,8 @@ function HMIJavaScriptKSClient() {
 	this.TCLKSHandle = null;
 	this.HMIMANAGER_PATH = null;
 	
+	this.Handles = Object();
+	
 	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
 	
 	/** Private *********************/
@@ -273,6 +275,27 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		this._sendRequest(this, 'GET', false, urlparameter, null);
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - End");
+	},
+	
+	/*********************************
+		getHandleID
+	*********************************/
+	getHandleID: function(HostAndServername) {
+		if (this.Handles[HostAndServername]){
+			return this.Handles[HostAndServername].HandleString;
+		}else{
+			var HandleString = this.getHandle(HostAndServername, null);
+			if (HandleString !== false){
+				//a valid result
+				this.Handles[HostAndServername] = Object();
+				this.Handles[HostAndServername].HandleString = HandleString;
+			}else{
+				//communication Error
+				HMI.hmi_log_info_onwebsite("Requested KS Server "+HostAndServername+" not reachable");
+				return null;
+			}
+			return HandleString;
+		}
 	},
 	
 	/*********************************
