@@ -308,6 +308,12 @@ char *strdup(const char *s);
 #define TRUE (1)
 #endif
 
+/*No-MMU Defines*/
+
+/*set this to 1 if your hardware has no MMU*/
+#define OV_ARCH_NOMMU	0
+
+
 #endif
 
 /*
