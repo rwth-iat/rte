@@ -47,8 +47,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.26 $
-*	$Date: 2011-03-11 15:20:21 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------
@@ -794,7 +794,7 @@ cshmi.prototype = {
 		}
 	}
 };
-var filedate = "$Date: 2011-03-11 15:20:21 $";
+var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
 	HMIdate = filedate;
