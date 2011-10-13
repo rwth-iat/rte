@@ -36,7 +36,7 @@
 #include "libov/ov_string.h"
 #include "libov/ov_time.h"
 #include "libov/ov_macros.h"
-
+#include "libov/ov_logfile.h"
 
 
 #if OV_SYSTEM_SOLARIS
@@ -318,12 +318,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	/*
 	*	map the file to memory
 	*/
+#if OV_ARCH_NOMMU
+	pdb = (OV_DATABASE_INFO*) mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+#else
 #if OV_DATABASE_FLASH
 	pdb = (OV_DATABASE_INFO*)mmap(0, size,
 		PROT_READ | PROT_WRITE,	MAP_PRIVATE, fd, 0);
 #else
 	pdb = (OV_DATABASE_INFO*)mmap(0, size,
 		PROT_READ | PROT_WRITE,	MAP_SHARED, fd, 0);
+#endif
 #endif
 	if(pdb == (OV_DATABASE_INFO*)-1) {
 		pdb = NULL;
@@ -511,6 +515,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	ov_database_flush();
 #endif
 
+#if OV_ARCH_NOMMU
+	
+	ov_database_flush();
+	
+#endif
+
 	return OV_ERR_OK;
 }
 
@@ -604,7 +614,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	/*
 	*	map the file to memory
 	*/
-#if OV_DATABASE_FLASH
+#if OV_DATABASE_FLASH | OV_ARCH_NOMMU
 	pdb = (OV_DATABASE_INFO*)mmap(0, size,
 		PROT_READ | PROT_WRITE,	MAP_PRIVATE, fd, 0);
 #else
@@ -912,12 +922,25 @@ OV_DLLFNCEXPORT void ov_database_flush(void) {
 #if OV_SYSTEM_OPENVMS
 	OV_BYTE	*inaddr[2];
 #endif
+
 	/*
 	*	instructions
 	*/
 	if(pdb) {
+#if OV_ARCH_NOMMU
+	if(lseek(fd, 0, SEEK_SET) < 0)
+	{
+		Ov_Warning("can't flush database");
+		return;
+	}
+	if(write(fd, (void*) pdb, pdb->size) == -1)
+	{
+		Ov_Warning("can't flush database");
+		return;
+	}
+#endif
 #if OV_SYSTEM_UNIX
-		msync((void*)pdb, pdb->size, MS_SYNC);
+	msync((void*)pdb, pdb->size, MS_SYNC);
 #endif
 #if OV_SYSTEM_NT
 		FlushViewOfFile((LPCVOID)pdb, 0);
