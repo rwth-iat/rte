@@ -314,9 +314,9 @@ proc create_release {} {
         #create a release
 	set env(ACPLT_HOME) $releasedir
 	if { $os == "nt" } then {
-		set env(PATH) $env(PATH)\;$releasedir/bin/
+		set env(PATH) $releasedir/bin/\;$env(PATH)
 	} else {
-		set env(PATH) $env(PATH):$releasedir/bin/
+		set env(PATH) $releasedir/bin/:$env(PATH)
 	}
 
 	print_msg "Creating release in $releasedir"
