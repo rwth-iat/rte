@@ -36,6 +36,71 @@ if { $os == "nt" } then {
 
 file delete -force $logfile
 
+
+####################### PROCEDURES #######################
+
+
+# findDirectories
+# basedir - the directory to start looking in
+# pattern - A pattern, as defined by the glob command, that the files must match
+proc findDirectories {directory pattern} {
+
+    # Fix the directory name, this ensures the directory name is in the
+    # native format for the platform and contains a final directory seperator
+    set directory [string trimright [file join [file normalize $directory] { }]]
+
+    # Starting with the passed in directory, do a breadth first search for
+    # subdirectories. Avoid cycles by normalizing all file paths and checking
+    # for duplicates at each level.
+
+    set directories [list]
+    set parents $directory
+    while {[llength $parents] > 0} {
+
+        # Find all the children at the current level
+        set children [list]
+        foreach parent $parents {
+            set children [concat $children [glob -nocomplain -type {d r} -path $parent *]]
+        }
+
+        # Normalize the children
+        set length [llength $children]
+        for {set i 0} {$i < $length} {incr i} {
+            lset children $i [string trimright [file join [file normalize [lindex $children $i]] { }]]
+        }
+
+        # Make the list of children unique
+        set children [lsort -unique $children]
+
+        # Find the children that are not duplicates, use them for the next level
+        set parents [list]
+        foreach child $children {
+            if {[lsearch -sorted $directories $child] == -1} {
+                lappend parents $child
+            }
+        }
+
+        # Append the next level directories to the complete list
+        set directories [lsort -unique [concat $directories $parents]]
+    }
+
+    # Get all the files in the passed in directory and all its subdirectories
+    set result [list]
+    foreach directory $directories {
+        set result [concat $result [glob -nocomplain -type {r d} -path $directory -- $pattern]]
+    }
+
+    # Normalize the filenames
+    set length [llength $result]
+    for {set i 0} {$i < $length} {incr i} {
+        lset result $i [file normalize [lindex $result $i]]
+    }
+
+    # Return only unique filenames
+    return [lsort -unique $result]
+}
+
+
 proc print_msg {msg} {
     puts stderr "\[$msg\]"
 }
@@ -90,20 +155,26 @@ proc checkout_acplt {} {
     global builddir
     global basedir
     global os
+    global included_libs
     cd $builddir
     checkout libml
-    if { $os == "nt" } then { checkout oncrpc }
+    #for source release - checkout all
+    #if { $os == "nt" } then { 
+    checkout oncrpc
+    #}
     checkout acplt base
     cd $builddir/base
     #checkout libmpm
     checkout ov
     checkout acplt_makmak
-	checkout ov_runtimeserver
-    #cd $builddir/user
-    #checkout fb
-    #checkout iec61131stdfb
+    checkout ov_runtimeserver
+    cd $builddir/user
+    foreach x $included_libs {
+    	checkout $x
+    }
+
     cd $basedir
-}
+ }
 
 # Build in a directory
 proc build {package args} {
@@ -214,7 +285,7 @@ proc install_acplt { target } {
     install $builddir/base/ks/build/$target
     install $builddir/base/ov/build/$target
     install $builddir/base/acplt_makmak/build/$target
-	install $builddir/base/ov_runtimeserver/build/$target
+    install $builddir/base/ov_runtimeserver/build/$target
 }
 
 proc makmak {library opts} {
@@ -274,6 +345,10 @@ proc start_server {} {
 }
 
 proc release_lib {libname} {
+	relase_lib libname "all"
+}
+
+proc release_lib {libname option} {
     global releasedir
     global os
     global make
@@ -281,8 +356,10 @@ proc release_lib {libname} {
 	file delete -force $releasedir/user/$libname/
     checkout $libname
     cd $releasedir/user/$libname/build/$os/
-	print_msg "Note: no debug symbols will be created"
-    build $libname $make all
+    if { $option == "all" } then {
+	    print_msg "Note: no debug symbols will be created"
+    }
+    build $libname $make $option
     print_msg "Deploying $libname"
     file delete -force $releasedir/user/$libname.build/
     file copy -force $releasedir/user/$libname/ $releasedir/user/$libname.build/
@@ -291,7 +368,7 @@ proc release_lib {libname} {
     file mkdir $releasedir/user/$libname/model/
     copy_wildcard $releasedir/user/$libname.build/model/*.ov? $releasedir/user/$libname/model/
     file mkdir $releasedir/user/$libname/include/
-	copy_wildcard $releasedir/user/$libname.build/include/*.h $releasedir/user/$libname/include/
+    copy_wildcard $releasedir/user/$libname.build/include/*.h $releasedir/user/$libname/include/
     #export libname.a file for compiling under windows
     if { $os == "nt" } then {
 		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
@@ -378,8 +455,31 @@ proc create_release {} {
 }
 
 # ============== MAIN STARTS HERE ==================
+set included_libs {fb iec61131stdfb ksserv ksservtcp ksapi ksapitcp fbcomlib}
+
 create_dirs
 checkout_acplt
+
+# Create source release
+    print_msg "Creating source release"
+    file delete -force "acplt-source"
+    file copy -force $builddir "acplt-source"
+    cd "acplt-source"
+    set dirs [findDirectories "." ".svn"]
+    foreach dir $dirs {
+	file delete -force $dir
+    }
+    set date [clock format [clock seconds] -format "%Y%m%d"]
+    set name "acplt-server-source-$date"
+    cd $basedir
+    if { $os == "linux" } then {
+    	execute "zip" "-r" $name "./acplt-source"
+    } else {
+	execute "7z" "a" "$name.zip" "./acplt-source"
+    }
+    file delete -force "acplt-source"
+# end
+
 if { $os == "nt" } then {
 	#for depricated msvc use following:
 	#build_acplt
@@ -391,19 +491,56 @@ if { $os == "nt" } then {
 	build_acplt
 	install_acplt linux
 }
-create_release
-#fb
-release_lib fb
-#iec61131stdfb
-release_lib iec61131stdfb
 
-release_lib ksserv
-release_lib ksservtcp
 
-release_lib ksapi
-release_lib ksapitcp
+# Create develop release
+    print_msg "Creating develop release"
+    create_release
+    foreach x $included_libs {
+	release_lib $x debug
+    }
+    set date [clock format [clock seconds] -format "%Y%m%d"]
+    set name "acplt-server-develop-$date"
+    cd $basedir
+    if { $os == "linux" } then {
+    	execute "zip" "-r" "$name-linux" "./acplt"
+    } else {
+	execute "7z" "a" "$name-linux.zip" "./acplt"
+    }
+# end
 
-release_lib fbcomlib
+# Create runtime release
+    print_msg "Creating runtime release"
+    create_release
+    foreach x $included_libs {
+        release_lib $x all
+    }
+    set date [clock format [clock seconds] -format "%Y%m%d"]
+    set name "acplt-server-runtime-$date"
+    cd $releasedir/user
+    foreach x $included_libs {
+        file delete -force $x
+    }
+    cd $releasedir/bin
+    file delete -force acplt_makmak
+    file delete -force acplt_makmak.exe
+    file delete -force acplt_builder
+    file delete -force acplt_builder.exe
+    file delete -force ov_builder
+    file delete -force ov_builder.exe
+    file delete -force ov_codegen
+    file delete -force ov_codegen.exe
+    cd $releasedir
+    file delete -force include
+    file delete -force model
+    cd $basedir
+    if { $os == "linux" } then {
+    	execute "zip" "-r" "$name-linux" "./acplt"
+    } else {
+	execute "7z" "a" "$name-linux.zip" "./acplt"
+    }
+# end
+
 
 #start_server
 if { $os == "nt" } then {
