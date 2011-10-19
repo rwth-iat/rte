@@ -221,8 +221,8 @@ cshmi.prototype = {
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
 		for (var i=0; i < responseArray.length && returnValue == true; i++) {
 			var varName = responseArray[i].split(" ");
-			if (varName[1] == "/Libraries/cshmi/SetVar"){
-				returnValue = this._setVar(ObjectParent, ObjectPath+"/"+varName[0]);
+			if (varName[1] == "/Libraries/cshmi/SetValue"){
+				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else if (varName[1] == "/Libraries/cshmi/IfThenElse"){
 				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else{
@@ -310,11 +310,11 @@ cshmi.prototype = {
 		}
 	},
 	/*********************************
-		_setVar
+		_setValue
 		-	sets a Value to multiple Sources
 	*********************************/
-	_setVar: function(ObjectParent, ObjectPath){
-		//get Value to set (via getValue-part of setVar Object)
+	_setValue: function(ObjectParent, ObjectPath){
+		//get Value to set (via getValue-part of setValue Object)
 		var NewValue = this._getValue(ObjectParent, ObjectPath+".value");
 		
 		//get info where to set the NewValue
@@ -323,7 +323,7 @@ cshmi.prototype = {
 			//communication error
 			return false;
 		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._setVar of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._setValue of "+ObjectPath+" failed: "+response);
 			
 			return false;
 		}
