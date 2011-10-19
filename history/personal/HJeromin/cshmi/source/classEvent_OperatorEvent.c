@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 	/*    
 	*   local variables
 	*/
-	OV_INSTPTR_cshmi_OperatorEvent pinst = Ov_StaticPtrCast(cshmi_GestureEvent, pobj);
+	OV_INSTPTR_cshmi_OperatorEvent pinst = Ov_StaticPtrCast(cshmi_OperatorEvent, pobj);
 	OV_RESULT    result;
 	
 	/* do what the base class does first */
