@@ -3,6 +3,11 @@
 # (c) 2011 Chair of Process Control Engineering, RWTH Aachen University
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 # Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
+if { $argc != 0 } {
+	set release 1
+} else {
+	set release 0
+}
 
 set basedir [pwd]
 
@@ -43,6 +48,9 @@ file delete -force $logfile
 # findDirectories
 # basedir - the directory to start looking in
 # pattern - A pattern, as defined by the glob command, that the files must match
+
+#WARNING DOES NOT WORK FOR WINDOWS BECAUSE OF THE SPACES IN THE DIRNAMES
+
 proc findDirectories {directory pattern} {
 
     # Fix the directory name, this ensures the directory name is in the
@@ -99,6 +107,7 @@ proc findDirectories {directory pattern} {
     # Return only unique filenames
     return [lsort -unique $result]
 }
+
 
 
 proc print_msg {msg} {
@@ -457,28 +466,68 @@ proc create_release {} {
 # ============== MAIN STARTS HERE ==================
 set included_libs {fb iec61131stdfb ksserv ksservtcp ksapi ksapitcp fbcomlib}
 
-create_dirs
-checkout_acplt
+if {$release != 1} {
+	puts "Running this script with 'release' option will create releases"
+}
 
-# Create source release
-    print_msg "Creating source release"
-    file delete -force "acplt-source"
-    file copy -force $builddir "acplt-source"
-    cd "acplt-source"
-    set dirs [findDirectories "." ".svn"]
-    foreach dir $dirs {
-	file delete -force $dir
-    }
+if {$release == 1} {
+	# Create source release
+    print_msg "== CREATING SOURCE RELEASE =="
+	
+	#backup old checkout (otherwise binaries will be in the source-release)
+	if { [file exists acplt.build_backup] } {
+		file delete -force acplt.build_backup
+	}
+	if { [file exists acplt.build] } {
+		file rename -force acplt.build acplt.build_backup
+	}
+	if { [file exists acplt-source] } {
+		file delete -force acplt-source
+	}
+	
+	#cheking out a fresh copy
+	create_dirs
+	checkout_acplt
+
+	#rename 
+	file rename -force acplt.build acplt-source
+	print_msg "Deleting .svn directories"
+	#remove .svn directories
+	if { $os == "nt"} {
+		#God, I hate spaces in windows dirnames
+		execute "delete_svn_folders.bat"
+	} else {
+	    cd "acplt-source"
+		set dirs [findDirectories "." ".svn"]
+		foreach dir $dirs {
+			file delete -force $dir
+		}
+		cd ".."
+	}
+
     set date [clock format [clock seconds] -format "%Y%m%d"]
     set name "acplt-server-source-$date"
     cd $basedir
+	print_msg "Compressing"
     if { $os == "linux" } then {
     	execute "zip" "-r" $name "./acplt-source"
     } else {
 	execute "7z" "a" "$name.zip" "./acplt-source"
     }
     file delete -force "acplt-source"
+	
+	#rename back to save compiling overhead
+	file delete -force "acplt.build"
+	if { [file exists acplt.build_backup] } {
+		file rename acplt.build_backup acplt.build
+	}
+	print_msg "== SOURCE RELEASE CREATED =="
 # end
+}
+
+
+create_dirs
+checkout_acplt
 
 if { $os == "nt" } then {
 	#for depricated msvc use following:
@@ -492,25 +541,31 @@ if { $os == "nt" } then {
 	install_acplt linux
 }
 
-
+if {$release == 1} {
 # Create develop release
-    print_msg "Creating develop release"
+    print_msg "== CREATING DEVELOP RELEASE =="
+}
     create_release
     foreach x $included_libs {
 	release_lib $x debug
     }
+if {$release == 1} {
     set date [clock format [clock seconds] -format "%Y%m%d"]
     set name "acplt-server-develop-$date"
     cd $basedir
+	print_msg "Compressing"
     if { $os == "linux" } then {
     	execute "zip" "-r" "$name-linux" "./acplt"
     } else {
-	execute "7z" "a" "$name-linux.zip" "./acplt"
+	execute "7z" "a" "$name-win.zip" "./acplt"
     }
+	print_msg "== DEVELOP RELEASE CREATED =="
 # end
+}
 
+if {$release == 1} {
 # Create runtime release
-    print_msg "Creating runtime release"
+    print_msg "== CREATING RUNTIME RELEASE =="
     create_release
     foreach x $included_libs {
         release_lib $x all
@@ -534,13 +589,15 @@ if { $os == "nt" } then {
     file delete -force include
     file delete -force model
     cd $basedir
+	print_msg "Compressing"
     if { $os == "linux" } then {
     	execute "zip" "-r" "$name-linux" "./acplt"
     } else {
-	execute "7z" "a" "$name-linux.zip" "./acplt"
+	execute "7z" "a" "$name-win.zip" "./acplt"
     }
+	print_msg "== RUNTIME RELEASE CREATED =="
 # end
-
+}
 
 #start_server
 if { $os == "nt" } then {
