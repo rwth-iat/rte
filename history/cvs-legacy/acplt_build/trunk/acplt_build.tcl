@@ -495,7 +495,10 @@ if {$release == 1} {
 	#remove .svn directories
 	if { $os == "nt"} {
 		#God, I hate spaces in windows dirnames
+		file copy delete_svn_folders.bat acplt-source
+		cd "acplt-source"
 		execute "delete_svn_folders.bat"
+		cd ".."
 	} else {
 	    cd "acplt-source"
 		set dirs [findDirectories "." ".svn"]
