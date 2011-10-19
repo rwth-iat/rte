@@ -178,7 +178,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/changecolor.then/setred :
-    CLASS /Libraries/cshmi/SetVar;
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksvar : INPUT  STRING = "";
         elemvar : INPUT  STRING = "fill";
@@ -204,7 +204,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/changecolor.else/setgreen :
-    CLASS /Libraries/cshmi/SetVar;
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksvar : INPUT  STRING = "";
         elemvar : INPUT  STRING = "fill";
@@ -226,7 +226,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/setopacity :
-    CLASS /Libraries/cshmi/SetVar;
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksvar : INPUT  STRING = "";
         elemvar : INPUT  STRING = "opacity";
@@ -277,7 +277,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/valuelabel/halbsekundenzyklus/settext :
-    CLASS /Libraries/cshmi/SetVar;
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksvar : INPUT  STRING = "";
         elemvar : INPUT  STRING = "content";
@@ -354,7 +354,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.then/setfalse :
-    CLASS /Libraries/cshmi/SetVar;
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksvar : INPUT  STRING = "";
         elemvar : INPUT  STRING = "visible";
@@ -380,7 +380,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.else/settrue :
-    CLASS /Libraries/cshmi/SetVar;
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksvar : INPUT  STRING = "";
         elemvar : INPUT  STRING = "visible";
@@ -430,7 +430,7 @@ Typ        : Hochschulversion
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/faceplate/ServerName/onload/setServername :
-    CLASS /Libraries/cshmi/SetVar;
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksvar : INPUT  STRING = "";
         elemvar : INPUT  STRING = "content";
