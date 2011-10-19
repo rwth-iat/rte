@@ -119,8 +119,8 @@ cshmi.prototype = {
 			Result = this._interpreteClientEvent(ObjectParent, ObjectPath);
 		}else if (ObjectType == "/Libraries/cshmi/TimeEvent"){
 			Result = this._interpreteTimeEvent(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/Gesture"){
-			Result = this._interpreteGesture(ObjectParent, ObjectPath);
+		}else if (ObjectType == "/Libraries/cshmi/OperatorEvent"){
+			Result = this._interpreteOperatorEvent(ObjectParent, ObjectPath);
 		}else{
 			//todo
 			HMI.hmi_log_info("Objekt(Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
@@ -155,10 +155,10 @@ cshmi.prototype = {
 		}
 	},
 	/*********************************
-		_interpreteGesture
-		-	detect all Gestures and register them
+		_interpreteOperatorEvent
+		-	detect all OperatorEvents and register them
 	*********************************/
-	_interpreteGesture: function(ObjectParent, ObjectPath){
+	_interpreteOperatorEvent: function(ObjectParent, ObjectPath){
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "click"){
 			ObjectParent.setAttribute("cursor", "pointer");
@@ -181,7 +181,7 @@ cshmi.prototype = {
 			}, false);
 		}else{
 			//todo
-			HMI.hmi_log_info("Gesture ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
+			HMI.hmi_log_info("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
 		}
 	},
 	/*********************************
@@ -237,6 +237,10 @@ cshmi.prototype = {
 		-	get a Value from multiple Sources
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
+		if(!(ObjectParent[ObjectPath] && ObjectParent[ObjectPath].action)){
+			ObjectParent[ObjectPath] = new CsGetValue();
+		}
+		
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar .value}', null);
 		if (response === false){
 			//communication error
@@ -277,16 +281,20 @@ cshmi.prototype = {
 				}else if (i === 1){
 					//elemvar
 					if (ObjectParent.hasAttribute(responseArray[i])){
-						return ObjectParent.getAttribute(responseArray[i]);
+						ObjectParent[ObjectPath].elemvar = ObjectParent.getAttribute(responseArray[i]);
+						return ObjectParent[ObjectPath].elemvar;
 					}else if (responseArray[i] == "content"){
 						//content is special, as it is different in OVM and SVG
 						if (typeof ObjectParent.textContent != "undefined"){
-							return ObjectParent.textContent;
+							ObjectParent[ObjectPath].elemvar = ObjectParent.textContent;
+							return ObjectParent[ObjectPath].elemvar;
 						}else if (typeof ObjectParent.innerText != "undefined"){
-							return ObjectParent.innerText;
+							ObjectParent[ObjectPath].elemvar = ObjectParent.innerText;
+							return ObjectParent[ObjectPath].elemvar;
 						}else{
-							//todo asv compatibility
-							return null;
+							//fixme asv compatibility
+							ObjectParent[ObjectPath].elemvar = null;
+							return ObjectParent[ObjectPath].elemvar;
 						}
 					}else{
 						//unknown elment variable
@@ -300,7 +308,8 @@ cshmi.prototype = {
 					return null;
 				}else if (i === 3){
 					//value
-					return responseArray[i];
+					ObjectParent[ObjectPath].value = responseArray[i]
+					return ObjectParent[ObjectPath].value;
 				}else{
 					//unknown
 					debugger;
@@ -498,7 +507,7 @@ cshmi.prototype = {
 		-	returns DOM Object or null to caller
 	*********************************/
 	_buildSvgContainer: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .opacity}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.x .y .width .height}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -510,23 +519,19 @@ cshmi.prototype = {
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] != "FALSE"){
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			svgElement.id = ObjectPath;
-			
-			this._addClass(svgElement, "cshmi-group");
-			//svgElement.setAttribute("xmlns:svg", HMI.HMI_Constants.NAMESPACE_SVG);
-			
-			//set dimension of container
-			svgElement.setAttribute("x", responseArray[1]);
-			svgElement.setAttribute("y", responseArray[2]);
-			svgElement.setAttribute("width", responseArray[3]);
-			svgElement.setAttribute("height", responseArray[4]);
-			svgElement.setAttribute("opacity", responseArray[5]);
-			
-			return svgElement;
-		}
-		return null;
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+		svgElement.id = ObjectPath;
+		
+		this._addClass(svgElement, "cshmi-group");
+		//svgElement.setAttribute("xmlns:svg", HMI.HMI_Constants.NAMESPACE_SVG);
+		
+		//set dimension of container
+		svgElement.setAttribute("x", responseArray[0]);
+		svgElement.setAttribute("y", responseArray[1]);
+		svgElement.setAttribute("width", responseArray[2]);
+		svgElement.setAttribute("height", responseArray[3]);
+		
+		return svgElement;
 	},
 	_buildSvgLine: function(ObjectParent, ObjectPath){
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x1 .y1 .x2 .y2 .stroke .opacity}', null);
@@ -794,6 +799,18 @@ cshmi.prototype = {
 		}
 	}
 };
+
+
+function CsGetValue(){
+	this.ObjectType = "CsGetValue";
+	this.ksvar = null;
+	this.elemvar = null;
+	this.globalvar = null;
+	this.eventvar = null;
+	this.value = null;
+}
+
+
 var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
