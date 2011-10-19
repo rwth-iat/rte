@@ -589,6 +589,8 @@ if {$release == 1} {
     file delete -force ov_builder.exe
     file delete -force ov_codegen
     file delete -force ov_codegen.exe
+	file delete -force ov_makmak
+    file delete -force ov_makmak.exe
     cd $releasedir
     file delete -force include
     file delete -force model
