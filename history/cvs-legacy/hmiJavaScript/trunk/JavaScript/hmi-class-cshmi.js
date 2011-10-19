@@ -105,6 +105,8 @@ cshmi.prototype = {
 		
 		if (ObjectType == "/Libraries/cshmi/Group"){
 			Component = this._buildSvgContainer(ObjectParent, ObjectPath);
+		}else if (ObjectType == "/Libraries/cshmi/Template"){
+			Component = this._buildFromTemplate(ObjectParent, ObjectPath);
 		}else if (ObjectType == "/Libraries/cshmi/Line"){
 			Component = this._buildSvgLine(ObjectParent, ObjectPath);
 		}else if (ObjectType == "/Libraries/cshmi/Polyline"){
@@ -123,7 +125,7 @@ cshmi.prototype = {
 			Result = this._interpreteOperatorEvent(ObjectParent, ObjectPath);
 		}else{
 			//todo
-			HMI.hmi_log_info("Objekt(Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
+			HMI.hmi_log_info("Objekt (Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
 		}
 		
 		//get Children if needed
@@ -530,6 +532,61 @@ cshmi.prototype = {
 		svgElement.setAttribute("y", responseArray[1]);
 		svgElement.setAttribute("width", responseArray[2]);
 		svgElement.setAttribute("height", responseArray[3]);
+		
+		return svgElement;
+	},
+	/*********************************
+		_buildFromTemplate
+	*********************************/
+	_buildFromTemplate: function(ObjectParent, ObjectPath){
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y}', null);
+		if (response === false){
+			//communication error
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
+			
+			return null;
+		}
+		var responseArray = HMI.KSClient.splitKsResponse(response);
+		
+		if (responseArray[0] === ""){
+			return null;
+		}
+		
+		var response = HMI.KSClient.getVar(null, '{'+responseArray[0]+'.width .height}', null);
+		if (response === false){
+			//communication error
+			return null;
+		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
+			
+			return null;
+		}
+		var responseArrayTemplate = HMI.KSClient.splitKsResponse(response);
+		
+		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+		svgElement.id = ObjectPath;
+		svgElement.setAttribute("TemplateDescription", responseArray[0]);
+		
+		this._addClass(svgElement, "cshmi-template");
+		
+		//set dimension of container
+		svgElement.setAttribute("x", responseArray[1]);
+		svgElement.setAttribute("y", responseArray[2]);
+		svgElement.setAttribute("width", responseArrayTemplate[0]);
+		svgElement.setAttribute("height", responseArrayTemplate[1]);
+		
+		//get childs (grafics and actions) from the TemplateDefinition
+		//our child will be fetched later
+		responseArrayChild = HMI.KSClient.getChildObjArray(responseArray[0]);
+		for (var i=0; i < responseArrayChild.length; i++) {
+			var varName = responseArrayChild[i].split(" ");
+			var ChildComponent = this.BuildDomain(svgElement, responseArray[0]+"/"+varName[0], varName[1]);
+			if (ChildComponent !== null){
+				svgElement.appendChild(ChildComponent);
+			}
+		}
 		
 		return svgElement;
 	},
