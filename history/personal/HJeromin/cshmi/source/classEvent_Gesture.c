@@ -40,7 +40,7 @@
 *
 *	File:
 *	------
-*	classEvent_Gesture.c
+*	classEvent_OperatorEvent.c
 *
 *	Editors:
 *	--------
@@ -68,13 +68,13 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Gesture_constructor(
+OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	/*    
 	*   local variables
 	*/
-	OV_INSTPTR_cshmi_Gesture pinst = Ov_StaticPtrCast(cshmi_Gesture, pobj);
+	OV_INSTPTR_cshmi_OperatorEvent pinst = Ov_StaticPtrCast(cshmi_GestureEvent, pobj);
 	OV_RESULT    result;
 	
 	/* do what the base class does first */

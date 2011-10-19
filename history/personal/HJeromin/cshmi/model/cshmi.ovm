@@ -89,6 +89,50 @@ LIBRARY cshmi
 	END_CLASS;
 	*/
 
+	/* Container Elements */
+
+	CLASS ContainerElement : CLASS cshmi/Object
+		COMMENT = "base class for container elements";
+	END_CLASS;
+	
+	CLASS Group : CLASS cshmi/ContainerElement
+		IS_INSTANTIABLE;
+		COMMENT = "a grouping of elements";
+		VARIABLES
+			x : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			width : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "width of the rectangle"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "height of the rectangle"
+			INITIALVALUE = 100.0;
+		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS TemplateDefinition : CLASS cshmi/ContainerElement
+		IS_INSTANTIABLE;
+		COMMENT = "a grouping of elements with is referenced";
+		VARIABLES
+			width : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "width of the rectangle"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "height of the rectangle"
+			INITIALVALUE = 100.0;
+		END_VARIABLES;
+	END_CLASS;
+	
 	/* Graphical Elements */
 
 	CLASS Element : CLASS cshmi/Object
@@ -117,26 +161,21 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 	
-	CLASS Group : CLASS cshmi/Element
+	CLASS Template : CLASS cshmi/Element
 		IS_INSTANTIABLE;
-		COMMENT = "a grouping of elements";
+		COMMENT = "a reference to a TemplateDefinition";
 		VARIABLES
+			TemplateDefinition : STRING
+			HAS_ACCESSORS
+			COMMENT = "Name of TemplateDefinition";
 			x : SINGLE
 			HAS_ACCESSORS
-			COMMENT = "x-axis coordinate of the rectangle"
+			COMMENT = "x-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
 			y : SINGLE
 			HAS_ACCESSORS
-			COMMENT = "y-axis coordinate of the rectangle"
+			COMMENT = "y-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
-			width : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "width of the rectangle"
-			INITIALVALUE = 100.0;
-			height : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "height of the rectangle"
-			INITIALVALUE = 100.0;
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -392,9 +431,9 @@ LIBRARY cshmi
 		COMMENT = "an HMI gesture (i.e. a GUI event)";
 	END_CLASS;
 	
-	CLASS Gesture : CLASS cshmi/Event
+	CLASS OperatorEvent : CLASS cshmi/Event
 		IS_INSTANTIABLE;
-		COMMENT = "an HMI gesture (i.e. an event from the user); the identifier could be click, doubleclick, rightclick";
+		COMMENT = "an HMI gesture (i.e. an event from the operator); the identifier could be click, doubleclick, rightclick";
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
