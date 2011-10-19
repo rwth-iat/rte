@@ -40,7 +40,7 @@
 *
 *	File:
 *	------
-*	SetVar.c
+*	classAction_SetValue.c
 *
 *	Editors:
 *	--------
@@ -68,40 +68,40 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_STRING cshmi_SetVar_ksvar_get(
-    OV_INSTPTR_cshmi_SetVar          pobj
+OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_ksvar_get(
+    OV_INSTPTR_cshmi_SetValue          pobj
 ) {
     return pobj->v_ksvar;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_SetVar_ksvar_set(
-    OV_INSTPTR_cshmi_SetVar          pobj,
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_ksvar_set(
+    OV_INSTPTR_cshmi_SetValue          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_ksvar,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_SetVar_elemvar_get(
-    OV_INSTPTR_cshmi_SetVar          pobj
+OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_elemvar_get(
+    OV_INSTPTR_cshmi_SetValue          pobj
 ) {
     return pobj->v_elemvar;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_SetVar_elemvar_set(
-    OV_INSTPTR_cshmi_SetVar          pobj,
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_elemvar_set(
+    OV_INSTPTR_cshmi_SetValue          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_elemvar,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_SetVar_globalvar_get(
-    OV_INSTPTR_cshmi_SetVar          pobj
+OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_globalvar_get(
+    OV_INSTPTR_cshmi_SetValue          pobj
 ) {
     return pobj->v_globalvar;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_SetVar_globalvar_set(
-    OV_INSTPTR_cshmi_SetVar          pobj,
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_globalvar_set(
+    OV_INSTPTR_cshmi_SetValue          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_globalvar,value);

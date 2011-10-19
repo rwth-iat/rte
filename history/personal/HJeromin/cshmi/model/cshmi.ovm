@@ -331,7 +331,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 	
-	CLASS SetVar : CLASS cshmi/Action
+	CLASS SetValue : CLASS cshmi/Action
 		IS_INSTANTIABLE;
 		COMMENT = "set a variable with a value";
 		VARIABLES
