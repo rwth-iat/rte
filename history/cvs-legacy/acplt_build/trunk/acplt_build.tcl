@@ -498,6 +498,7 @@ if {$release == 1} {
 		file copy delete_svn_folders.bat acplt-source
 		cd "acplt-source"
 		execute "delete_svn_folders.bat"
+		file delete -force "delete_svn_folders.bat"
 		cd ".."
 	} else {
 	    cd "acplt-source"
