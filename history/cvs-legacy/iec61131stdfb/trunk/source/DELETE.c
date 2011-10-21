@@ -96,14 +96,33 @@ OV_DLLFNCEXPORT OV_STRING iec61131stdfb_DELETE_OUT_get(
 
 OV_DLLFNCEXPORT void iec61131stdfb_DELETE_shutdown(OV_INSTPTR_ov_object pobj) {
 
-	OV_INSTPTR_iec61131stdfb_DELETE pinst = Ov_StaticPtrCast(iec61131stdfb_DELETE, pobj);
-	
-	ov_string_setvalue(&pinst->v_IN, "");
-	ov_string_setvalue(&pinst->v_OUT, "");
-	
 	fb_functionblock_shutdown(pobj);
 }
 
+OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_DELETE_constructor(OV_INSTPTR_ov_object pobj) {
+
+	OV_INSTPTR_iec61131stdfb_DELETE pinst = Ov_StaticPtrCast(iec61131stdfb_DELETE, pobj);
+	OV_RESULT res;
+	
+	res = fb_functionblock_constructor(pobj);
+	if(Ov_Fail(res))
+		return res;
+	
+	pinst->v_IN = 0;
+	pinst->v_OUT = 0;
+	
+	return res;
+}
+
+OV_DLLFNCEXPORT void iec61131stdfb_DELETE_destructor(OV_INSTPTR_ov_object pobj) {
+
+	OV_INSTPTR_iec61131stdfb_DELETE pinst = Ov_StaticPtrCast(iec61131stdfb_DELETE, pobj);
+	
+	ov_string_setvalue(&pinst->v_IN, NULL);
+	ov_string_setvalue(&pinst->v_OUT, NULL);
+	fb_functionblock_constructor(pobj);
+
+}
 
 OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
@@ -136,11 +155,11 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				
 			if(pinst->v_P > 0)
 			{
-				p_begin = (OV_STRING) ov_malloc((pinst->v_P) * sizeof(char));
+				p_begin = (OV_STRING) ov_database_malloc((pinst->v_P) * sizeof(char));
 				if(p_begin == NULL)	//if allocation failed, free memory
 				{
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-					ov_free(p_begin);
+					ov_database_free(p_begin);
 					return;
 				}
 				for(i=0; i < pinst->v_P - 1; i++)
@@ -150,20 +169,20 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT, p_begin)))
 				{
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-					ov_free(p_begin);
+					ov_database_free(p_begin);
 					return;
 				}
 				
-				ov_free(p_begin);
+				ov_database_free(p_begin);
 			}
 				
 			if(end_length > 0)
 			{
-				p_end = (OV_STRING) ov_malloc((end_length + 1) * sizeof(char));
+				p_end = (OV_STRING) ov_database_malloc((end_length + 1) * sizeof(char));
 				if(p_end == NULL)	//if allocation failed, free memory
 				{
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-					ov_free(p_end);
+					ov_database_free(p_end);
 					return;
 				}
 				
@@ -174,10 +193,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				if(Ov_Fail(ov_string_append(&pinst->v_OUT, p_end)))
 				{
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-					ov_free(p_end);
+					ov_database_free(p_end);
 					return;
 				}
-				ov_free(p_end);
+				ov_database_free(p_end);
 			}
 			else
 				ov_logfile_warning("%s: requested deletion over the end of input string", pinst->v_identifier);
