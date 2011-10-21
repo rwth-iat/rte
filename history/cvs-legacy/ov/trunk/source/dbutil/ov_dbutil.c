@@ -618,9 +618,11 @@ int main(int argc, char **argv) {
 	/*
 	*	local variables
 	*/
+	OV_STRING	        help = NULL;
+
 	OV_INT	 		i;
 	OV_UINT			size = 0;
-	OV_STRING		filename = "database.ovd";
+	OV_STRING	        filename = NULL;
 	OV_STRING		dumpfilename = NULL;
 	OV_RESULT		result;
 	OV_BOOL			extended = FALSE;
@@ -633,6 +635,10 @@ int main(int argc, char **argv) {
 #ifdef OV_DEBUG
 	ov_logfile_logtostderr(NULL);
 #endif
+
+	filename = (OV_STRING)malloc(255);
+	sprintf(filename, "%s", "database.ovd");
+
 	/*
 	*	parse command line arguments
 	*/
@@ -735,6 +741,10 @@ HELP:		fprintf(stderr, "Usage: ov_dbutil [arguments]\n"
 	/*
 	*	create new or map existing database
 	*/
+
+	/* Adding database path prefix */
+	CONCATENATE_DATABASE_PATH(filename, help);
+
 	if(size) {
 		ov_logfile_info("Creating database \"%s\"...", filename);
 		result = ov_database_create(filename, size);
@@ -769,6 +779,9 @@ ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
 			}
 		}
 		if (dumpfilename) {
+			/* Adding database path prefix */
+			CONCATENATE_DATABASE_PATH(dumpfilename, help);
+
 			/*
 			*	Create a text dump file of the ov database
 			*/

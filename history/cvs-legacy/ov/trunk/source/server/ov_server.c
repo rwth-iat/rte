@@ -198,6 +198,8 @@ int main(int argc, char **argv) {
 	*	local variables
 	*/
 
+	OV_STRING	        help = NULL;
+
 	OV_STRING	        filename = "database.ovd";
 	OV_STRING	        servername = NULL;
 	OV_STRING	        password = NULL;
@@ -217,7 +219,6 @@ int main(int argc, char **argv) {
 	OV_BOOL		        terminate = FALSE;
 #endif
 
-
 	ov_backup = FALSE;
 	db_backup_filename = NULL;
 	libcount = 0;
@@ -228,6 +229,7 @@ int main(int argc, char **argv) {
 #ifdef OV_DEBUG
 	ov_logfile_logtostderr(NULL);
 #endif
+
 	/*
 	*	parse command line arguments
 	*/
@@ -443,6 +445,8 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 	*	map existing database
 	*/
 	ov_logfile_info("Mapping database \"%s\"...", filename);
+	/* Adding database path prefix */
+	CONCATENATE_DATABASE_PATH(filename, help);
 #ifdef OV_CATCH_EXCEPTIONS
 	result = ov_supervised_database_map(filename);
 #else
@@ -454,6 +458,8 @@ MAPBACKUP:
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 		ov_result_getresulttext(result), result);
 		ov_logfile_info("Mapping backup-database \"%s\"...", db_backup_filename);
+		/* Adding database path prefix */
+		CONCATENATE_DATABASE_PATH(db_backup_filename, help);
 #ifdef OV_CATCH_EXCEPTIONS
 		result = ov_supervised_database_map(db_backup_filename);
 #else

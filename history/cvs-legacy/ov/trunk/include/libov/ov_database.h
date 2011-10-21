@@ -44,6 +44,22 @@ extern "C" {
 #define OV_DATABASE_MAXSIZE	524288000UL	/* 500 MByte */
 #endif
 
+
+/*
+*  Database-Path-Prefix
+*  --------------------
+*/
+#if OV_SYSTEM_NT
+#define DATABASE_PATH 			"\\database\\"
+#else
+#define DATABASE_PATH 			"/database/"
+#endif
+
+#define CONCATENATE_DATABASE_PATH(varname, helpname) \
+	helpname = (OV_STRING)malloc(strlen(varname)+strlen(getenv("ACPLT_HOME"))+strlen(DATABASE_PATH)+1); \
+	sprintf(helpname, "%s%s%s", getenv("ACPLT_HOME"), DATABASE_PATH, varname); \
+	varname = helpname
+
 /*
 *	OV_DATABASE_INFO:
 *	-----------------
