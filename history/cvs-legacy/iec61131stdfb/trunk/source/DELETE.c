@@ -94,10 +94,6 @@ OV_DLLFNCEXPORT OV_STRING iec61131stdfb_DELETE_OUT_get(
 }
 
 
-OV_DLLFNCEXPORT void iec61131stdfb_DELETE_shutdown(OV_INSTPTR_ov_object pobj) {
-
-	fb_functionblock_shutdown(pobj);
-}
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_DELETE_constructor(OV_INSTPTR_ov_object pobj) {
 

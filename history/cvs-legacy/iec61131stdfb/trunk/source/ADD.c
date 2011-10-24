@@ -160,15 +160,16 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ADD_OUT_get(
     return &pobj->v_OUT;
 }
 
-OV_DLLFNCEXPORT void iec61131stdfb_ADD_shutdown(OV_INSTPTR_ov_object pobj) {
+OV_DLLFNCEXPORT void iec61131stdfb_ADD_destructor(OV_INSTPTR_ov_object pobj) {
 
 	OV_INSTPTR_iec61131stdfb_ADD pinst = Ov_StaticPtrCast(iec61131stdfb_ADD, pobj);
 	
 	iec61131stdfb_freeVec(&pinst->v_IN1);
 	iec61131stdfb_freeVec(&pinst->v_IN2);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
-	fb_functionblock_shutdown(pobj);
+	fb_functionblock_destructor(pobj);
 }
+
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ADD_constructor(OV_INSTPTR_ov_object pobj) {
 

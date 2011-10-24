@@ -119,14 +119,15 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_ASIN_OUT_get(
     return &pobj->v_OUT;
 }
 
-OV_DLLFNCEXPORT void iec61131stdfb_ASIN_shutdown(OV_INSTPTR_ov_object pobj) {
+OV_DLLFNCEXPORT void iec61131stdfb_ASIN_destructor(OV_INSTPTR_ov_object pobj) {
 
 	OV_INSTPTR_iec61131stdfb_ASIN pinst = Ov_StaticPtrCast(iec61131stdfb_ASIN, pobj);
 	
 	iec61131stdfb_freeVec(&pinst->v_IN);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
-	fb_functionblock_shutdown(pobj);
+	fb_functionblock_destructor(pobj);
 }
+
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ASIN_constructor(OV_INSTPTR_ov_object pobj) {
 
