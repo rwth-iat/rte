@@ -243,7 +243,7 @@ cshmi.prototype = {
 			ObjectParent[ObjectPath] = new CsGetValue();
 		}
 		
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar .value}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .value}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -257,7 +257,7 @@ cshmi.prototype = {
 		for (var i=0; i < responseArray.length; i++) {
 			if (responseArray[i] !== ""){
 				if (i === 0){
-					//ksvar
+					//ksVar
 					
 					if (responseArray[i].charAt(0) == "/" && responseArray[i].charAt(1) == "/"){
 						//we have an absolute path on another server
@@ -281,29 +281,29 @@ cshmi.prototype = {
 						return responseArray[0];
 					}
 				}else if (i === 1){
-					//elemvar
-					if (ObjectParent.hasAttribute(responseArray[i])){
-						ObjectParent[ObjectPath].elemvar = ObjectParent.getAttribute(responseArray[i]);
-						return ObjectParent[ObjectPath].elemvar;
-					}else if (responseArray[i] == "content"){
+					//elemVar
+					if (responseArray[i] == "content"){
 						//content is special, as it is different in OVM and SVG
 						if (typeof ObjectParent.textContent != "undefined"){
-							ObjectParent[ObjectPath].elemvar = ObjectParent.textContent;
-							return ObjectParent[ObjectPath].elemvar;
+							ObjectParent[ObjectPath].elemVar = ObjectParent.textContent;
+							return ObjectParent[ObjectPath].elemVar;
 						}else if (typeof ObjectParent.innerText != "undefined"){
-							ObjectParent[ObjectPath].elemvar = ObjectParent.innerText;
-							return ObjectParent[ObjectPath].elemvar;
+							ObjectParent[ObjectPath].elemVar = ObjectParent.innerText;
+							return ObjectParent[ObjectPath].elemVar;
 						}else{
 							//fixme asv compatibility
-							ObjectParent[ObjectPath].elemvar = null;
-							return ObjectParent[ObjectPath].elemvar;
+							ObjectParent[ObjectPath].elemVar = null;
+							return ObjectParent[ObjectPath].elemVar;
 						}
+					}else if (ObjectParent.hasAttribute(responseArray[i])){
+						ObjectParent[ObjectPath].elemVar = ObjectParent.getAttribute(responseArray[i]);
+						return ObjectParent[ObjectPath].elemVar;
 					}else{
-						//unknown elment variable
+						//unknown element variable
 						return null;
 					}
 				}else if (i === 2){
-					//globalvar
+					//globalVar
 					debugger;
 					
 					//todo
@@ -329,7 +329,7 @@ cshmi.prototype = {
 		var NewValue = this._getValue(ObjectParent, ObjectPath+".value");
 		
 		//get info where to set the NewValue
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksvar .elemvar .globalvar}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar}', null);
 		if (response === false){
 			//communication error
 			return false;
@@ -344,7 +344,7 @@ cshmi.prototype = {
 		for (var i=0; i < responseArray.length; i++) {
 			if (responseArray[i] !== ""){
 				if (i === 0){
-					//ksvar
+					//ksVar
 					
 					if (responseArray[i].charAt(0) == "/" && responseArray[i].charAt(1) == "/"){
 						//we have an absolute path on another server
@@ -363,16 +363,16 @@ cshmi.prototype = {
 					}
 					return true;
 				}else if (i === 1){
-					//elemvar
-					if (ObjectParent.hasAttribute(responseArray[i])){
-						ObjectParent.setAttribute(responseArray[i], NewValue);
-					}else if (responseArray[i] == "content"){
+					//elemVar
+					if (responseArray[i] == "content"){
 						//content is special, as it is different in OVM and SVG
 						ObjectParent.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild);
+					}else{
+						ObjectParent.setAttribute(responseArray[i], NewValue);
 					}
 					return true;
 				}else if (i === 2){
-					//globalvar
+					//globalVar
 					debugger;
 					
 					//todo
@@ -860,10 +860,10 @@ cshmi.prototype = {
 
 function CsGetValue(){
 	this.ObjectType = "CsGetValue";
-	this.ksvar = null;
-	this.elemvar = null;
-	this.globalvar = null;
-	this.eventvar = null;
+	this.ksVar = null;
+	this.elemVar = null;
+	this.globalVar = null;
+	this.eventVar = null;
 	this.value = null;
 }
 
