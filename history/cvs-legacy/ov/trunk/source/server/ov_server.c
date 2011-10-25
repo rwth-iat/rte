@@ -403,7 +403,7 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 				"-r , --reuse-address             Reuses the socket address/port\n"
 				"-n, --no-startup                 Do not startup the database\n"
 				"-v, --version                    Display version information\n"
-				"-x, --exit                       Exit immideately (test if database loads)\n"
+				"-x, --exit                       Exit immediately (test if database loads)\n"
 				"-h, --help                       Display this help message\n");
 			return EXIT_FAILURE;
 		} else {
