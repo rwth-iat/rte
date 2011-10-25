@@ -82,21 +82,6 @@ OV_DLLFNCEXPORT OV_UINT iec61131stdfb_SHL_OUT_get(
     return pobj->v_OUT;
 }
 
-OV_DLLFNCEXPORT void iec61131stdfb_SHL_shutdown(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*    
-    *   local variables
-    */
-    
-    /* do what */
-
-    /* set the object's state to "shut down" */
-    fb_functionblock_shutdown(pobj);
-
-    return;
-}
-
 OV_DLLFNCEXPORT void iec61131stdfb_SHL_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
