@@ -352,16 +352,19 @@ LIBRARY cshmi
 		IS_INSTANTIABLE;
 		COMMENT = "get a value, either constant or from a variable";
 		VARIABLES
-			ksvar : STRING
+			ksVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "path of the remote KS variable";
-			elemvar : STRING
+			elemVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the element variable";
-			globalvar : STRING
+			elemVarPath : STRING
+			HAS_ACCESSORS
+			COMMENT = "the (relative) path to the element";
+			globalVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the global variable";
-			eventvar : STRING
+			eventVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the event variable";
 			value : ANY
@@ -374,13 +377,16 @@ LIBRARY cshmi
 		IS_INSTANTIABLE;
 		COMMENT = "set a variable with a value";
 		VARIABLES
-			ksvar : STRING
+			ksVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "path of the target remote KS variable";
-			elemvar : STRING
+			elemVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the target element variable";
-			globalvar : STRING
+			elemVarPath : STRING
+			HAS_ACCESSORS
+			COMMENT = "the (relative) path to the element";
+			globalVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the target global variable";
 		END_VARIABLES;

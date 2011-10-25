@@ -68,56 +68,69 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_ksvar_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_ksVar_get(
     OV_INSTPTR_cshmi_GetValue          pobj
 ) {
-    return pobj->v_ksvar;
+    return pobj->v_ksVar;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_ksvar_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_ksVar_set(
     OV_INSTPTR_cshmi_GetValue          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_ksvar,value);
+    return ov_string_setvalue(&pobj->v_ksVar,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_elemvar_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_elemVar_get(
     OV_INSTPTR_cshmi_GetValue          pobj
 ) {
-    return pobj->v_elemvar;
+    return pobj->v_elemVar;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_elemvar_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_elemVar_set(
     OV_INSTPTR_cshmi_GetValue          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_elemvar,value);
+    return ov_string_setvalue(&pobj->v_elemVar,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_globalvar_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_elemVarPath_get(
+	OV_INSTPTR_cshmi_GetValue          pobj
+) {
+	return pobj->v_elemVarPath;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_elemVarPath_set(
+	OV_INSTPTR_cshmi_GetValue          pobj,
+	const OV_STRING  value
+) {
+	return ov_string_setvalue(&pobj->v_elemVarPath,value);
+}
+
+OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_globalVar_get(
     OV_INSTPTR_cshmi_GetValue          pobj
 ) {
-    return pobj->v_globalvar;
+    return pobj->v_globalVar;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_globalvar_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_globalVar_set(
     OV_INSTPTR_cshmi_GetValue          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_globalvar,value);
+    return ov_string_setvalue(&pobj->v_globalVar,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_eventvar_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_eventVar_get(
     OV_INSTPTR_cshmi_GetValue          pobj
 ) {
-    return pobj->v_eventvar;
+    return pobj->v_eventVar;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_eventvar_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_eventVar_set(
     OV_INSTPTR_cshmi_GetValue          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_eventvar,value);
+    return ov_string_setvalue(&pobj->v_eventVar,value);
 }
 
 OV_DLLFNCEXPORT OV_ANY* cshmi_GetValue_value_get(

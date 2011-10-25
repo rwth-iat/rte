@@ -147,10 +147,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/changecolor.if/testlimit.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "scale.OUT";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "scale.OUT";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -159,10 +159,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/changecolor.if/testlimit.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  SINGLE = 0.500000;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -175,9 +175,9 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/changecolor.then/setred :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "fill";
-        globalvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "fill";
+        globalVar : INPUT  STRING = "";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -185,10 +185,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/changecolor.then/setred.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  STRING = "red";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -201,9 +201,9 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/changecolor.else/setgreen :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "fill";
-        globalvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "fill";
+        globalVar : INPUT  STRING = "";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -211,10 +211,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/changecolor.else/setgreen.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  STRING = "green";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -223,9 +223,9 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/setopacity :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "opacity";
-        globalvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "opacity";
+        globalVar : INPUT  STRING = "";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -233,10 +233,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/circle/halbsekundenzyklus/setopacity.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "scale.OUT";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "scale.OUT";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -274,9 +274,9 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/valuelabel/halbsekundenzyklus/settext :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "content";
-        globalvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        globalVar : INPUT  STRING = "";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -284,10 +284,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/valuelabel/halbsekundenzyklus/settext.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "scale.OUT";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "scale.OUT";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -323,10 +323,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.if/testvisible.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "visible";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -335,10 +335,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.if/testvisible.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  BOOL = TRUE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -351,9 +351,9 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.then/setfalse :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "visible";
-        globalvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        globalVar : INPUT  STRING = "";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -361,10 +361,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.then/setfalse.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  BOOL = FALSE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -377,9 +377,9 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.else/settrue :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "visible";
-        globalvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        globalVar : INPUT  STRING = "";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -387,10 +387,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/click/togglevisible.else/settrue.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  BOOL = TRUE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -427,9 +427,9 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/ServerName/onload/setServername :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "";
-        elemvar : INPUT  STRING = "content";
-        globalvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        globalVar : INPUT  STRING = "";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -437,10 +437,10 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/ServerName/onload/setServername.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksvar : INPUT  STRING = "/vendor/server_name";
-        elemvar : INPUT  STRING = "";
-        globalvar : INPUT  STRING = "";
-        eventvar : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "/vendor/server_name";
+        elemVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
