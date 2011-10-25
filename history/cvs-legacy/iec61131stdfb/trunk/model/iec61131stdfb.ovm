@@ -124,7 +124,7 @@ LIBRARY iec61131stdfb
             COMMENT = "squareroot of IN1";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -158,7 +158,7 @@ LIBRARY iec61131stdfb
             COMMENT = "logarithm base 10 of IN";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -192,7 +192,7 @@ LIBRARY iec61131stdfb
             COMMENT = "sine of input IN in radians";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -226,7 +226,7 @@ LIBRARY iec61131stdfb
             COMMENT = "tangent of input IN in radians";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -340,7 +340,6 @@ LIBRARY iec61131stdfb
             COMMENT = "OUT = IN1 * IN2 * ...";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
 		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -360,7 +359,7 @@ LIBRARY iec61131stdfb
             COMMENT = "OUT = IN1 - IN2";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -398,7 +397,7 @@ LIBRARY iec61131stdfb
             COMMENT = "OUT = IN1 modulo IN2";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -434,7 +433,7 @@ LIBRARY iec61131stdfb
             COMMENT = "OUT := IN";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -457,7 +456,6 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = IN << N";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
  END_CLASS;
@@ -475,7 +473,6 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = IN >> N";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
  END_CLASS;
@@ -494,7 +491,6 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = ROL(IN, N)";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
  END_CLASS;
@@ -512,7 +508,6 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = ROR(IN, N)";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
  END_CLASS;
@@ -556,7 +551,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = IN1 OR IN2";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -577,7 +572,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = IN1 XOR IN2";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -594,7 +589,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = NOT IN";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -619,7 +614,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = IN0 if G = 0, OUT = IN1 if G = 1";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -640,7 +635,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = MAX(IN1, IN2)";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -661,7 +656,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = MIN(IN1, IN2)";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -721,7 +716,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "OUT = Demultiplexed Output";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -829,7 +824,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "IN1 < IN2";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -850,7 +845,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "IN1 <> IN2";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
@@ -912,7 +907,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "the rightmost L characters";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
  END_CLASS;
@@ -934,7 +929,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "L characters, at p-th character position";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
  END_CLASS;
@@ -1025,7 +1020,7 @@ CLASS SHL : CLASS fb/functionblock
             COMMENT = "Replace";
     END_VARIABLES;
 	OPERATIONS
-		shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
 		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
  END_CLASS;
