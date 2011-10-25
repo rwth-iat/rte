@@ -234,6 +234,9 @@ int main(int argc, char **argv) {
 	/*
 	*	parse command line arguments
 	*/
+	/*
+	* TODO:BUG: fix parsing in right order!
+	*/
 	for(i=1; i<argc; i++) {
 		/*
 		*	set database filename option
