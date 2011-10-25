@@ -731,7 +731,7 @@ HMIJavaScriptKSClient.prototype = {
 		response = null;
 		
 		for (var i = responseArray.length - 1; i >= 0 ;i--){
-			if (responseArray[i].charAt(0) == "{"){
+			if (responseArray[i].charAt(0) == "{" && responseArray[i].charAt(responseArray[i].length -1) == "}"){
 				// "{hello world}"
 				responseArray[i] = responseArray[i].substring(1, responseArray[i].length-1);
 			}else{
