@@ -131,14 +131,14 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_SEL_OUT_get(
 }
 
 
-OV_DLLFNCEXPORT void iec61131stdfb_SEL_shutdown(OV_INSTPTR_ov_object pobj) {
+OV_DLLFNCEXPORT void iec61131stdfb_SEL_destructor(OV_INSTPTR_ov_object pobj) {
 
 	OV_INSTPTR_iec61131stdfb_SEL pinst = Ov_StaticPtrCast(iec61131stdfb_SEL, pobj);
 	
 	iec61131stdfb_freeVec(&pinst->v_IN0);
 	iec61131stdfb_freeVec(&pinst->v_IN1);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
-	fb_functionblock_shutdown(pobj);
+	fb_functionblock_destructor(pobj);
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_SEL_constructor(OV_INSTPTR_ov_object pobj) {

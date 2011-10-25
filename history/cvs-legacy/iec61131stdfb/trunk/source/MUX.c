@@ -263,7 +263,7 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_MUX_OUT_get(
 }
 
 
-OV_DLLFNCEXPORT void iec61131stdfb_MUX_shutdown(OV_INSTPTR_ov_object pobj) {
+OV_DLLFNCEXPORT void iec61131stdfb_MUX_destructor(OV_INSTPTR_ov_object pobj) {
 
 	OV_INSTPTR_iec61131stdfb_MUX pinst = Ov_StaticPtrCast(iec61131stdfb_MUX, pobj);
 	
@@ -276,7 +276,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MUX_shutdown(OV_INSTPTR_ov_object pobj) {
 	iec61131stdfb_freeVec(&pinst->v_IN7);
 	iec61131stdfb_freeVec(&pinst->v_IN8);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
-	fb_functionblock_shutdown(pobj);
+	fb_functionblock_destructor(pobj);
 }
 
 

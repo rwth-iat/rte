@@ -118,13 +118,13 @@ OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_SQRT_OUT_get(
     return &pobj->v_OUT;
 }
 
-OV_DLLFNCEXPORT void iec61131stdfb_SQRT_shutdown(OV_INSTPTR_ov_object pobj) {
+OV_DLLFNCEXPORT void iec61131stdfb_SQRT_destructor(OV_INSTPTR_ov_object pobj) {
 
 	OV_INSTPTR_iec61131stdfb_SQRT pinst = Ov_StaticPtrCast(iec61131stdfb_SQRT, pobj);
 	
 	iec61131stdfb_freeVec(&pinst->v_IN);
 	iec61131stdfb_freeVec(&pinst->v_OUT);
-	fb_functionblock_shutdown(pobj);
+	fb_functionblock_destructor(pobj);
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_SQRT_constructor(OV_INSTPTR_ov_object pobj) {

@@ -100,14 +100,14 @@ OV_DLLFNCEXPORT OV_STRING iec61131stdfb_REPLACE_OUT_get(
 }
 
 
-OV_DLLFNCEXPORT void iec61131stdfb_REPLACE_shutdown(OV_INSTPTR_ov_object pobj) {
+OV_DLLFNCEXPORT void iec61131stdfb_REPLACE_destructor(OV_INSTPTR_ov_object pobj) {
 
 	OV_INSTPTR_iec61131stdfb_REPLACE pinst = Ov_StaticPtrCast(iec61131stdfb_REPLACE, pobj);
 	
 	ov_string_setvalue(&pinst->v_IN1, "");
 	ov_string_setvalue(&pinst->v_IN2, "");
 	ov_string_setvalue(&pinst->v_OUT, "");
-	fb_functionblock_shutdown(pobj);
+	fb_functionblock_destructor(pobj);
 }
 
 
