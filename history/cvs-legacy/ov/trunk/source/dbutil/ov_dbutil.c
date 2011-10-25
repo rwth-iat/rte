@@ -623,11 +623,18 @@ int main(int argc, char **argv) {
 	OV_INT	 		i;
 	OV_UINT			size = 0;
 	OV_STRING	        filename = NULL;
+	OV_STRING	        argfilename = NULL;
 	OV_STRING		dumpfilename = NULL;
 	OV_RESULT		result;
 	OV_BOOL			extended = FALSE;
 	OV_INSTPTR_ov_object	pobj;
 	OV_INSTPTR_ov_object	pinst;
+        OV_STRING               libraries[16];
+
+	/* stuff for loading libaries */
+	OV_INT			libcount = 0;
+	OV_INT			helpsize = 0;
+
 	/*
 	*	if we are debugging, log to stderr (if not
 	*	specified by the command line options)
@@ -637,6 +644,7 @@ int main(int argc, char **argv) {
 #endif
 
 	filename = (OV_STRING)malloc(255);
+	argfilename = (OV_STRING)malloc(255);
 	sprintf(filename, "%s", "database.ovd");
 
 	/*
@@ -714,6 +722,17 @@ int main(int argc, char **argv) {
 			return EXIT_FAILURE;
 		}
 		/*
+		*	start with library
+		*/
+		else if(!strcmp(argv[i], "-w") || !strcmp(argv[i], "--start-with")) {
+			i++;
+			if (libcount<16) {
+			        libraries[libcount] = argv[i];
+           			libcount++;
+                        }
+                        else 	ov_logfile_error("Too many libraries in start command.\n");
+		}
+		/*
 		*	display help option
 		*/
 		else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
@@ -732,6 +751,7 @@ HELP:		fprintf(stderr, "Usage: ov_dbutil [arguments]\n"
 				"-d DUMPFILE, --dump DUMPFILE    Create database text dump\n"
 				"-e, --extended                  Display extended database information\n"
 				"-v, --version                   Display version information\n"
+				"-w LIBRARY, --swith LIBRARY     Create database with library\n"
 				"-h, --help                      Display this help message\n");
 			return EXIT_FAILURE;
 		} else {
@@ -742,8 +762,11 @@ HELP:		fprintf(stderr, "Usage: ov_dbutil [arguments]\n"
 	*	create new or map existing database
 	*/
 
+	/* Backup of filename without path prefix */
+	strcpy(argfilename, filename);
 	/* Adding database path prefix */
 	CONCATENATE_DATABASE_PATH(filename, help);
+	/* Potential memory leak with help pointer, but it's ok */
 
 	if(size) {
 		ov_logfile_info("Creating database \"%s\"...", filename);
@@ -781,6 +804,7 @@ ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
 		if (dumpfilename) {
 			/* Adding database path prefix */
 			CONCATENATE_DATABASE_PATH(dumpfilename, help);
+			/* Potential memory leak with help pointer, but it's ok */
 
 			/*
 			*	Create a text dump file of the ov database
@@ -806,6 +830,35 @@ ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
         ov_logfile_info("Unmapping database \"%s\"...", filename);
 	ov_database_unmap();
 	ov_logfile_info("Database unmapped.");
+
+
+	if(libcount > 0){
+		ov_logfile_info("Running ov_server to load libraries");
+
+		/*
+		*	create startup libraries
+		*/
+		i = 0;
+		helpsize = strlen("ov_server -x -f ") + strlen(argfilename) + 1;
+		while (i < libcount) {
+		      helpsize += strlen("-w ") + strlen(libraries[i]);
+		      i++;
+		}
+		helpsize++;
+		help = (OV_STRING)malloc(helpsize);
+		sprintf(help, "ov_server -f %s", argfilename);
+		i = 0;
+		while (i < libcount) {
+		      strcat(help, " -w ");
+		      strcat(help, libraries[i]);
+		      i++;
+		}
+		strcat(help, " -x");
+		system(help);
+		free(help);
+
+	}
+
 	/*
 	*	return
 	*/
