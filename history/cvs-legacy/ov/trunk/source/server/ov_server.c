@@ -210,6 +210,7 @@ int main(int argc, char **argv) {
 	OV_INT		        libcount;
 	OV_RESULT	        result;
 	OV_INT 		        port = 0; /* KS_ANYPORT */
+	OV_BOOL		        exit = FALSE;
 	OV_BOOL		        startup = TRUE;
 	OV_BOOL		        reuse = FALSE;
 	int		        exit_status = EXIT_SUCCESS;
@@ -315,6 +316,13 @@ int main(int argc, char **argv) {
                         else 	ov_logfile_error("Too many libraries in start command.\n");
 		}
 		/*
+		*	exit immideately
+		*/
+		else if(!strcmp(argv[i], "-x") || !strcmp(argv[i], "--exit")) {
+			i++;
+			exit = TRUE;
+		}
+		/*
 		*	set logfile option
 		*/
 		else if(!strcmp(argv[i], "-l") || !strcmp(argv[i], "--logfile")) {
@@ -392,6 +400,7 @@ HELP:		fprintf(stderr, "Usage: ov_server [arguments]\n"
 				"-r , --reuse-address             Reuses the socket address/port\n"
 				"-n, --no-startup                 Do not startup the database\n"
 				"-v, --version                    Display version information\n"
+				"-x, --exit                       Exit immideately (test if database loads)\n"
 				"-h, --help                       Display this help message\n");
 			return EXIT_FAILURE;
 		} else {
@@ -509,31 +518,35 @@ ERRORMSG:
 	*	set the serverpassword of the database
 	*/
 	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
-	/*
-	*   run server
-	*/
-	ov_logfile_info("Starting server...");
-	result = ov_ksserver_create(servername, port, ov_server_sighandler, reuse);
-	if(Ov_OK(result)) {
-		ov_logfile_info("Server started.");
-		ov_logfile_info("Servername: %s.",servername);
-		ov_ksserver_start();
-#ifdef OV_CATCH_EXCEPTIONS
-		result = ov_supervised_server_run();
-#else
-		ov_ksserver_run();
-#endif
-		ov_ksserver_stop();
-		ov_logfile_info("Server stopped.");
-		if (Ov_Fail(result) && (!ov_backup) && db_backup_filename) {
-			ov_ksserver_delete();
-			goto MAPBACKUP;
-		}
-	} else {
-		ov_logfile_error("Error: %s (error code 0x%4.4x).",
-			ov_result_getresulttext(result), result);
-		exit_status = EXIT_FAILURE;
-	};
+
+	if(!exit){	
+		/*
+		*   run server
+		*/
+		ov_logfile_info("Starting server...");
+		result = ov_ksserver_create(servername, port, ov_server_sighandler, reuse);
+		if(Ov_OK(result)) {
+			ov_logfile_info("Server started.");
+			ov_logfile_info("Servername: %s.",servername);
+			ov_ksserver_start();
+	#ifdef OV_CATCH_EXCEPTIONS
+			result = ov_supervised_server_run();
+	#else
+			ov_ksserver_run();
+	#endif
+			ov_ksserver_stop();
+			ov_logfile_info("Server stopped.");
+			if (Ov_Fail(result) && (!ov_backup) && db_backup_filename) {
+				ov_ksserver_delete();
+				goto MAPBACKUP;
+			}
+		} else {
+			ov_logfile_error("Error: %s (error code 0x%4.4x).",
+				ov_result_getresulttext(result), result);
+			exit_status = EXIT_FAILURE;
+		};
+
+	}
 
 	/*
 	*	shut down the database if appropriate
