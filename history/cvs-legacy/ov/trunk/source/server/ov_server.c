@@ -232,6 +232,15 @@ int main(int argc, char **argv) {
 #endif
 
 	/*
+	* Setting buffers to 0 for immediate output
+	* Needed for observing server's output in Eclipse on Windows
+	*/
+#if OV_SYSTEM_NT
+	setvbuf(stdout, NULL, _IONBF, 0); 
+	setvbuf(stderr, NULL, _IONBF, 0);
+#endif
+
+	/*
 	*	parse command line arguments
 	*/
 	/*
