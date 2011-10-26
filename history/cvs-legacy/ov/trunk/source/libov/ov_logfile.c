@@ -310,6 +310,15 @@ OV_DLLFNCEXPORT void ov_logfile_print(
 	*/
 	if(logfile) {
 		fprintf(logfile, "%s\n", output);
+#if OV_SYSTEM_NT
+	/*
+	 *	added to handle output for eclipse consoles on windows
+	 * 	workaround for the bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732
+	 *	we need to see whether this has performance issues
+	*/
+		fflush(logfile);
+#endif
+		
 	}
 #endif
 	Ov_HeapFree(output);
