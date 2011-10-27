@@ -124,8 +124,12 @@ cshmi.prototype = {
 		}else if (ObjectType == "/Libraries/cshmi/OperatorEvent"){
 			Result = this._interpreteOperatorEvent(ObjectParent, ObjectPath);
 		}else{
-			//todo
-			HMI.hmi_log_info("Objekt (Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
+			if (	ObjectType == "/Libraries/cshmi/SetValue" ||
+					ObjectType == "/Libraries/cshmi/IfThenElse"){
+				HMI.hmi_log_info("Actions not supported at this position: (Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
+			}else{
+				HMI.hmi_log_info("Objekt (Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
+			}
 		}
 		
 		//get Children if needed
@@ -149,8 +153,11 @@ cshmi.prototype = {
 	_interpreteClientEvent: function(ObjectParent, ObjectPath){
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "onload"){
-			//interprete Action now (todo perhaps as a callback after load)
-			this._interpreteAction(ObjectParent, ObjectPath);
+			//interprete Action "now", but we want to have the full DOM tree ready
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			window.setTimeout(function(){
+				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+			}, 10);
 		}else{
 			//todo
 			HMI.hmi_log_info("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
@@ -243,7 +250,7 @@ cshmi.prototype = {
 			ObjectParent[ObjectPath] = new CsGetValue();
 		}
 		
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .value}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .TemplateKeyName .value}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -309,8 +316,21 @@ cshmi.prototype = {
 					//todo
 					return null;
 				}else if (i === 3){
+					//TemplateKeyName
+					var TemplateObject = ObjectParent;
+					do{
+						if(TemplateObject.ConfigData && TemplateObject.ConfigData[responseArray[i]]){
+							//this is a TemplateObject itself
+							return TemplateObject.ConfigData[responseArray[i]];
+						}else if(TemplateObject.ConfigData){
+							//this is a TemplateObject, but has no Config for this request
+							return null;
+						}
+					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
+					return null;
+				}else if (i === 4){
 					//value
-					ObjectParent[ObjectPath].value = responseArray[i]
+					ObjectParent[ObjectPath].value = responseArray[i];
 					return ObjectParent[ObjectPath].value;
 				}else{
 					//unknown
@@ -319,6 +339,7 @@ cshmi.prototype = {
 				}
 			}
 		}
+		return null; //unconfigured
 	},
 	/*********************************
 		_setValue
@@ -328,6 +349,14 @@ cshmi.prototype = {
 		//get Value to set (via getValue-part of setValue Object)
 		var NewValue = this._getValue(ObjectParent, ObjectPath+".value");
 		
+		if (NewValue === null){
+			HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because of an NewValue of null.");
+			return false;
+		}else if (NewValue === undefined){
+			//should not happen
+			HMI.hmi_log_error("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because of an NewValue of undefined.");
+			return false;
+		}
 		//get info where to set the NewValue
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar}', null);
 		if (response === false){
@@ -539,7 +568,7 @@ cshmi.prototype = {
 		_buildFromTemplate
 	*********************************/
 	_buildFromTemplate: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .TemplateConfig}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -576,6 +605,16 @@ cshmi.prototype = {
 		svgElement.setAttribute("y", responseArray[2]);
 		svgElement.setAttribute("width", responseArrayTemplate[0]);
 		svgElement.setAttribute("height", responseArrayTemplate[1]);
+		
+		//parametrise templateDefinition with the config
+		var ConfigList = responseArray[3].split(" ");
+		svgElement.ConfigData = Object();
+		for (var i=0; i < ConfigList.length; i++) {
+			var ConfigEntry = ConfigList[i].split(":");
+			if (ConfigEntry.length === 2){
+				svgElement.ConfigData[ConfigEntry[0]] = ConfigEntry[1];
+			}
+		}
 		
 		//get childs (grafics and actions) from the TemplateDefinition
 		//our child will be fetched later
