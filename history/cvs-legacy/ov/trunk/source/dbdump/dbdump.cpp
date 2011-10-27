@@ -49,6 +49,8 @@
 #include <ctype.h>
 #include <time.h>
 #include "libov/ov_version.h"
+//for saving dumps to database dir
+#include "libov/ov_database.h"
 #include "ks/conversions.h"
 
 #if PLT_SYSTEM_NT
@@ -1238,6 +1240,9 @@ int main(int argc, char **argv)						// command line arguments
 			return -1;
 		}
 	}
+
+	//append database prefix
+	outfile = KsString(KsString(getenv("ACPLT_HOME"), DATABASE_PATH), outfile);
 
 #if OV_SYSTEM_NT
 	#if __MINGW32__

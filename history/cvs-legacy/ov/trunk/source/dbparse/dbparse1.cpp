@@ -36,6 +36,8 @@
 #include "libov/ov_version.h"
 #include "ks/conversions.h"
 #include "libov/ov_ov.h"
+//for saving dumps to database dir
+#include "libov/ov_database.h"
 
 #include "db_y.h"
 
@@ -2890,9 +2892,12 @@ int main(int argc, char **argv)
 
 	parse_tree = new(parsetree);
 
+	//append database prefix
+	infile = KsString(KsString(getenv("ACPLT_HOME"), DATABASE_PATH), infile);
+
 	yyin = fopen(infile, "r");						// open the input file read-only
 	if(!yyin) {
-		OUT_STREAM << "Error: File not found!" << NEW_LINE;
+		OUT_STREAM << "Error: File " << infile << " not found!" << NEW_LINE;
 		return -1;
 	}
 	ret = yyparse();								// call parser
