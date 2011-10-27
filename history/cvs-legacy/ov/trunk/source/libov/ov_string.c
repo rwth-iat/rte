@@ -412,7 +412,7 @@ OV_DLLFNCEXPORT OV_STRING ov_string_tolower(
 	for(pfrom=string, pto=plower; *pfrom; pfrom++, pto++) {
 		*pto = tolower(*pfrom);
 	}
-	pto = '\0';		/*append terminating '\0'*/
+	*pto = '\0';		/*append terminating '\0'*/
 	return plower;
 }
 
@@ -442,7 +442,7 @@ OV_DLLFNCEXPORT OV_STRING ov_string_toupper(
 	for(pfrom=string, pto=pupper; *pfrom; pfrom++, pto++) {
 		*pto = toupper(*pfrom);
 	}
-	pto = '\0';		/*append terminating '\0'*/
+	*pto = '\0';		/*append terminating '\0'*/
 	return pupper;
 }
 
