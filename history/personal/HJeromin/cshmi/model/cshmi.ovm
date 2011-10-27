@@ -167,7 +167,7 @@ LIBRARY cshmi
 		VARIABLES
 			TemplateDefinition : STRING
 			HAS_ACCESSORS
-			COMMENT = "Name of TemplateDefinition";
+			COMMENT = "Path to the TemplateDefinition";
 			x : SINGLE
 			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of the Template"
@@ -176,6 +176,9 @@ LIBRARY cshmi
 			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
+			TemplateConfig[] : STRING
+			HAS_ACCESSORS
+			COMMENT = "Config for TemplateDefinition (multiple key1:value1 possible)";
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -346,6 +349,9 @@ LIBRARY cshmi
 
 	CLASS Action : CLASS cshmi/Object
 		COMMENT = "base class for actions";
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS GetValue : CLASS cshmi/Action
@@ -367,6 +373,9 @@ LIBRARY cshmi
 			eventVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the event variable";
+			TemplateKeyName : STRING
+			HAS_ACCESSORS
+			COMMENT = "name of the key of a TemplateConfig";
 			value : ANY
 			HAS_ACCESSORS
 			COMMENT = "value if no variable given";
