@@ -20,13 +20,48 @@
 #define OV_COMPILE_LIBRARY_sfc
 #endif
 
-#ifdef SFC_ERROR
-#define SFC_STEP_ERROR
+#ifdef sfc_ERROR
+#define sfc_STEP_ERROR
 #endif
 
 
 #include "sfc.h"
 #include "sfclib.h"
+
+OV_DLLFNCEXPORT OV_RESULT sfc_step_mode_set(
+    OV_INSTPTR_sfc_step          pinst,
+    const OV_UINT  value
+) {
+	OV_INSTPTR_sfc_sequentialFunctionChart pSFC = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pinst));
+	OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
+	OV_INSTPTR_sfc_sequentialFunctionChart pSubSfc=NULL;
+
+	// if mode 1, it should exist no exit-actions stopping or breaking subSFCs
+
+/*
+	// find all action blocks calling subSFC
+	Ov_ForEachChildEx(ov_containment, pinst, pExecuteSfc, sfc_executeSfc)
+	{
+		// find all subSFCs for exit
+		if (pExecuteSfc->v_actionQualifier == ACT_EXIT)
+		{
+			if ( (pExecuteSfc->v_enableSfc==SFCCMD_STOP) || (pExecuteSfc->v_enableSfc==SFCCMD_BREAK))
+			{
+				ov_logfile_error("%s: for mode 1 may exist no action blocks for stopping or breaking SFCs");
+				return OV_ERR_BADINITPARAM;
+			}
+
+		}
+	}
+
+	// if mode 2, every entry or do subSFC must have an exit-action, and its cmd must be STOP
+
+	// if mode 3, every entry or do subSFC must have an exit-action, and its cmd must be BREAK
+*/
+	pinst->v_mode=value;
+	return OV_ERR_OK;
+
+}
 
 OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -40,9 +75,8 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
     OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
     OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
 
-    OV_INSTPTR_ov_domain  pContainer = Ov_GetParent(ov_containment, pinst);
-    OV_INSTPTR_sfc_sfcHeader pSfcHeader = NULL;
-    OV_INSTPTR_fb_task    pIntask=NULL;
+    OV_INSTPTR_sfc_sequentialFunctionChart pSFC = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pinst));
+    //OV_INSTPTR_fb_task    pIntask=NULL;
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -51,29 +85,21 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
          return result;
 
     // check location
-    if (Ov_CanCastTo(sfc_sfcHeader, pContainer))
+    if (pSFC==NULL)
     {
-    	pSfcHeader=Ov_DynamicPtrCast(sfc_sfcHeader, pContainer);
-    	//// link to intask
-    	//pIntask=&pSfcHeader->p_intask;
-    	//result=Ov_Link(fb_tasklist, pIntask, Ov_PtrUpCast(fb_task, pinst));
-     } else {
-		if (pContainer!=NULL)
-		{
-			ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sfcHeader.");
-			return OV_ERR_BADPLACEMENT;
-		}
-     }
+    	ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sequentialFunctionChart.");
+    	return OV_ERR_BADPLACEMENT;
+    }
 
     // local tasklist
-    result=Ov_Link(fb_tasklist, pinst, pEntry);
-    pEntry->v_actimode=3;
-    result=Ov_Link(fb_tasklist, pinst, pDo);
+    //result=Ov_Link(fb_tasklist, pinst, pEntry);
+    pEntry->v_actimode=1;
+    //result=Ov_Link(fb_tasklist, pinst, pDo);
     pDo->v_actimode=1;
-    result=Ov_Link(fb_tasklist, pinst, pTrans);
+    //result=Ov_Link(fb_tasklist, pinst, pTrans);
     pTrans->v_actimode=1;
-    result=Ov_Link(fb_tasklist, pinst, pExit);
-    pExit->v_actimode=0;
+    //result=Ov_Link(fb_tasklist, pinst, pExit);
+    pExit->v_actimode=1;
 
     //activate
     pinst->v_iexreq=1;
@@ -90,15 +116,197 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     *   local variables
     */
     OV_INSTPTR_sfc_step pinst = Ov_StaticPtrCast(sfc_step, pfb);
+    OV_INSTPTR_fb_task    pEntry = &pinst->p_entry;
+    OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
+    OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
+    OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
+    OV_INSTPTR_sfc_sequentialFunctionChart pSFC = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_sfc_step pNextStep = NULL;
+    OV_INSTPTR_sfc_sequentialFunctionChart pSubSfc=NULL;
+    OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
 
-    // set the step flag
-    pinst->v_X=TRUE;
+    // check location
+    if (pSFC==NULL)
+    {
+      	ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sequentialFunctionChart.");
+      	return;
+    }
 
+    // TODO:
+    // check if sequentialFunctionChart is the taskparent.
 
+    // init variables
+    pinst->v_cyctime.secs = 0;
+    pinst->v_cyctime.usecs = 0;
+    pinst->v_iexreq = TRUE;
     pinst->v_evTransTrigger=FALSE;
+    // helper vaiables
+    OV_BOOL	  exitLoop;
 
 
-    // step flag will be resetted by trigglered transition
+    // execute subtasks
+    do{
+    exitLoop=TRUE;
+    	switch (pinst->v_phase)
+    	{
+    	/* phase 1: entry, do */
+    	case 1:
+    		pinst->v_X=TRUE;
+    		if(pinst->v_qualifier==1)
+    		{
+    			/* entry */
+    			printf("%s/%s/entry\n", pSFC->v_identifier, pinst->v_identifier);
+    			Ov_Call1 (fb_task, pEntry, execute, pltc);
+    			pinst->v_qualifier=2;
+    		}
+    		/* do */
+    		printf("%s/%s/do\n", pSFC->v_identifier, pinst->v_identifier);
+    		Ov_Call1 (fb_task, pDo, execute, pltc);
+
+    		/* event: SFC terminates */
+    		if (pinst->v_internalID==999)
+    			pSFC->v_terminated=TRUE;
+    		else
+    			pSFC->v_terminated=FALSE;
+
+    		pinst->v_phase = 2;
+    		break;
+
+    	/* phase 2: transitions, exit*/
+    	case 2:
+
+    		/* mode 1: subSFCs run to the end without interruption. */
+    			if (pinst->v_hasSubSfc && (pinst->v_mode==1) )
+    			{
+    				if (pinst->v_subSfcTerminated)
+    					pTrans->v_actimode=1;
+    				else
+    					pTrans->v_actimode=0;
+    			}else
+    			{
+    	    		/* mode 2: if trigger, stop and reset subSFCs. */
+    				/* mode 3: if trigger, break subSFCs. */
+    				pTrans->v_actimode=1;
+    			}
+
+    		// if stopping SFC, do not check transitions
+    		if (pSFC->v_workingState==WOST_STOP)
+    			pTrans->v_actimode=0;
+
+    		/* transitions */
+    		Ov_Call1 (fb_task, pTrans, execute, pltc);
+
+
+    		// if Trigger, or cmd "STOP" for final step
+    		if (pinst->v_evTransTrigger || ( pSFC->v_workingState==WOST_STOP) )
+    		{
+    			// stop/break subSFCs
+				// find all action blocks calling subSFCs
+				Ov_ForEachChildEx(ov_containment, pinst, pExecuteSfc, sfc_executeSfc)
+				{
+					// find all subSFCs for do
+					if (pExecuteSfc->v_actionQualifier == ACT_DO)
+					{
+						pSubSfc = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(sfc_actionBlocks, pExecuteSfc));
+
+						if (pSubSfc !=NULL)
+						{
+							// stop subSFC
+    						pSubSfc->v_EN=0;
+    						if (pinst->v_mode==3) pSubSfc->v_EN=2;
+    						Ov_Call1 (fb_task, Ov_DynamicPtrCast(fb_task, pSubSfc), execute, pltc);
+						}
+					}
+				}
+
+				if (pSFC->v_workingState==WOST_STOP)
+					pExit->v_actimode=3;
+
+
+    			/* exit */
+    			printf("%s/%s/exit\n", pSFC->v_identifier, pinst->v_identifier);
+    			Ov_Call1 (fb_task, pExit, execute, pltc);
+    			// unlink from sequentialFunctionChart.intask
+    			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
+    			pinst->v_X=FALSE;
+    			pinst->v_qualifier=1;
+
+    			// find next step and execute its entry & do
+    			// Note: this job should be done by ov_ForEachChild(fb_tasklist, ...). But it is not possible to adapt the tasklist dynamically
+    			pNextStep=Ov_DynamicPtrCast(sfc_step, Ov_GetLastChild(fb_tasklist, &pSFC->p_intask));
+    			if (pNextStep != NULL)
+    			{
+    				// update activeStep
+    				ov_string_setvalue(&pSFC->v_activeStep, pNextStep->v_identifier);
+    				// execute nextStep entry & do
+    				Ov_Call1 (fb_task, Ov_DynamicPtrCast(fb_task, pNextStep), execute, pltc);
+    			}
+    		} else exitLoop=FALSE;
+
+    		pinst->v_phase = 1;
+    		break;
+    	}
+    } while (!exitLoop);
+
+    // step flag will be reseted by triggered transition
     return;
+}
+
+OV_DLLFNCEXPORT OV_RESULT sfc_step_resetStep(
+	OV_INSTPTR_sfc_step	pinst
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_fb_task    pEntry = &pinst->p_entry;
+    OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
+    OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
+    OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
+    OV_INSTPTR_sfc_actionBlock pActionBlock  = NULL;
+    OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
+
+    OV_INSTPTR_fb_task pTaskParent = Ov_GetParent(fb_tasklist, pinst);
+    //OV_RESULT    result;
+
+    //unlink from task parent
+    if (pTaskParent != NULL)	Ov_Unlink(fb_tasklist, pTaskParent, pinst);
+
+
+    //reset parameters
+    pinst->v_actimode=0;
+    pinst->v_cyctime.secs = 0;
+    pinst->v_cyctime.usecs = 0;
+    pinst->v_iexreq = TRUE;
+    pinst->v_X = FALSE;
+    //TODO: T, error, errorDetail
+    pinst->v_phase = 1;
+    pinst->v_qualifier = 1;
+
+    // find subSFCs
+    Ov_ForEachChildEx(ov_containment, pinst, pExecuteSfc, sfc_executeSfc)
+	{
+		if (pExecuteSfc->v_actionQualifier != ACT_EXIT)
+			pinst->v_hasSubSfc=TRUE;
+	}
+
+    //reset subtasks
+    pEntry->v_actimode=1;
+    pDo->v_actimode=1;
+    pTrans->v_actimode=1;
+    pExit->v_actimode=0;
+
+    // TODO: reset all action blocks
+
+    //activate all action blocks
+	  Ov_ForEachChildEx(ov_containment, pinst, pActionBlock, sfc_actionBlock)
+	  {
+		  pActionBlock->v_actimode=1;
+		  pActionBlock->v_cyctime.secs = 0;
+		  pActionBlock->v_cyctime.usecs = 0;
+		  pActionBlock->v_iexreq = TRUE;
+	  }
+
+
+    return OV_ERR_OK;
 }
 

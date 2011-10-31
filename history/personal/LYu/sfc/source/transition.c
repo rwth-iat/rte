@@ -20,8 +20,8 @@
 #define OV_COMPILE_LIBRARY_sfc
 #endif
 
-#ifdef SFC_ERROR
-#define SFC_TRANS_ERROR
+#ifdef sfc_ERROR
+#define sfc_TRANS_ERROR
 #endif
 
 
@@ -37,7 +37,7 @@ OV_DLLFNCEXPORT OV_RESULT sfc_transition_constructor(
     OV_INSTPTR_sfc_transition pinst = Ov_StaticPtrCast(sfc_transition, pobj);
 
     OV_INSTPTR_ov_domain  pContainer = Ov_GetParent(ov_containment, pinst);
-    OV_INSTPTR_fc_sfcHeader pSfcHeader = NULL;
+    OV_INSTPTR_sfc_sequentialFunctionChart pSFC = NULL;
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -46,13 +46,13 @@ OV_DLLFNCEXPORT OV_RESULT sfc_transition_constructor(
          return result;
 
     // check location
-    if (Ov_CanCastTo(sfc_sfcHeader, pContainer))
+    if (Ov_CanCastTo(sfc_sequentialFunctionChart, pContainer))
 	{
-    	pSfcHeader=Ov_DynamicPtrCast(sfc_sfcHeader, pContainer);
+    	pSFC=Ov_DynamicPtrCast(sfc_sequentialFunctionChart, pContainer);
 	} else {
 		if (pContainer!=NULL)
 		{
-			ov_logfile_error("sfc_transition_constructor: transition must be encapsulated in a sfcHeader.");
+			ov_logfile_error("sfc_transition_constructor: transition must be encapsulated in a sequentialFunctionChart.");
 			return OV_ERR_BADPLACEMENT;
 		}
 	}
@@ -69,17 +69,22 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     *   local variables
     */
     OV_INSTPTR_sfc_transition 	pinst = Ov_StaticPtrCast(sfc_transition, pfb);
-    //OV_INSTPTR_sfc_transitionCondition pTransCondition = Ov_StaticPtrCast(sfc_transitionCondition, Ov_GetParent( fb_outputconnections, Ov_GetFirstChild(fb_inputconnections, pinst)));
-
+    //OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, Ov_GetFirstChild(fb_inputconnections, pinst)));
+    OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, Ov_GetFirstChild(fb_inputconnections, pinst));
+    OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
     OV_INSTPTR_sfc_step  		pPreStep = Ov_GetParent(sfc_nextTransitions, pinst);
     OV_INSTPTR_sfc_step  		pNextStep = Ov_GetParent(sfc_previousTransitions, pinst);
-    OV_INSTPTR_sfc_sfcHeader	pSfcHeader = Ov_StaticPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pPreStep));
+    OV_INSTPTR_sfc_sequentialFunctionChart	pSFC = Ov_StaticPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_fb_task          pPreStepExit = &pPreStep->p_exit;
     OV_INSTPTR_fb_task          pPreStepEntry = &pPreStep->p_entry;
-    OV_RESULT    fr;
+    OV_INSTPTR_ov_domain        pTransCondsDomain = &pSFC->p_transConds;
+    OV_INSTPTR_ov_domain        pTransCondsContainer = Ov_StaticPtrCast(ov_domain, Ov_GetParent(ov_containment, pTransCond));
+    OV_INSTPTR_fb_task          pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
+    OV_RESULT    result;
+
 
     // check location and links
-    if ( !pPreStep || !pNextStep || !pSfcHeader)
+    if ( !pPreStep || !pNextStep || !pSFC)
     {
     	pinst->v_error=TRUE;
     	ov_string_setvalue(&pinst->v_errorDetail, "wrong link");
@@ -88,41 +93,62 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
-    // triggler sfcTransitionCondition if exists
-    /*
-    if (pTransCondition !=NULL)
+    printf("%s/%s\n", pSFC->v_identifier, pinst->v_identifier);
+
+    // execute transition condition
+    if (pTransCond != NULL)
     {
-    	pTransCondition->v_actimode = 1;
-    	Ov_Call1 (fb_functionblock, pTransCondition, execute, pltc);
-    	// TODO: Warning
-    	// TODO: triggler the connection again.
-    	pTransCondition->v_actimode = 0;
+        // check location
+    	if (pTransCondsContainer != pTransCondsDomain)
+        {
+        	pinst->v_error=TRUE;
+          	ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
+           	return;
+        }
+
+    	// check tasklist
+    	if (pTransCondsTaskParent != NULL)
+    		Ov_Unlink(fb_tasklist, pTransCondsTaskParent, pTransCond);
+
+
+    	// init transition condition
+        pTransCond->v_actimode = 1;
+    	pTransCond->v_cyctime.secs = 0;
+    	pTransCond->v_cyctime.usecs = 0;
+    	pTransCond->v_iexreq = TRUE;
+    	pResultConnection->v_on = 1;
+    	pResultConnection->v_sourcetrig = 1;   // connection mode: source sends
+    	// execute transtion condition
+    	Ov_Call1 (fb_functionblock, pTransCond, execute, pltc);
     }
-    */
 
     // trigger
     if (pinst->v_result)
     {
-    	// broadcast the trigger event
        	if (!pPreStep->v_evTransTrigger)
        	{
+
+       		// broadcast the trigger event
        		pPreStep->v_evTransTrigger=TRUE;
 
-       		// activate Exit-actions
-        	pPreStepExit->v_actimode=3;
+        	// deactivate transition condition
+        	if (pTransCond !=NULL) pTransCond->v_actimode = 0;
 
-        	// reset step
-        	pPreStep->v_actimode=0;
-        	pPreStep->v_X=FALSE;
-        	pPreStepEntry->v_actimode=3;
+        	// execute exit-actions of subSFCs
 
-        	// link nextStep to the sfc-tasklist
-        	fr=Ov_LinkPlaced(fb_tasklist, pSfcHeader, pNextStep, OV_PMH_BEGIN);
+
+        	// link next-step to sfc-tasklist
+        	//result=Ov_LinkPlaced(fb_tasklist, &pSFC->p_intask, pNextStep, OV_PMH_END);
+        	result=Ov_Link(fb_tasklist, &pSFC->p_intask, pNextStep);
         	pNextStep->v_actimode=1;
-        	// unlink previousStep
-        	Ov_Unlink(fb_tasklist, pSfcHeader, pPreStep);
+        	pNextStep->v_phase=1;
+        	pNextStep->v_qualifier=1;
+
+        	// deactivate transition condition
+        	if (pTransCond != NULL) pTransCond->v_actimode = 0;
         }
     }
+
     return;
 }
 

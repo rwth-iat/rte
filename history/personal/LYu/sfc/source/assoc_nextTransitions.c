@@ -56,6 +56,7 @@ OV_DLLFNCEXPORT OV_RESULT sfc_nextTransitions_link
 		Ov_Unlink(fb_tasklist, pTransTaskParent, pchild);
 	// link to local tasklist of the parent step
 	result=Ov_Link(fb_tasklist, &pparent->p_trans, pchild);
+
 	// activate transition
 	pTrans->v_actimode=1;
 	pTrans->v_iexreq=TRUE;
