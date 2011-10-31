@@ -47,8 +47,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.5 $
-*	$Date: 2011-07-03 09:03:57 $
+*	$Revision: 1.9 $
+*	$Date: 2011-08-17 10:17:56 $
 *
 *	History:
 *	--------
@@ -57,7 +57,7 @@
 *
 ***********************************************************************/
 
-#include "fc.ovm"
+#include "fb.ovm"
 
 LIBRARY sfc
 
@@ -66,33 +66,45 @@ LIBRARY sfc
   COPYRIGHT = "2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
   COMMENT   = "ACPLT Sequntial Function Chart Library";
 
-  CLASS sfcHeader : CLASS fc/functionChart
+  CLASS sequentialFunctionChart : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		COMMENT = "SFC header";
 		VARIABLES
-			order			: STRING	HAS_ACCESSORS FLAGS = "p"	COMMENT = "incoming command";
-			activeStep  	: STRING	FLAGS = "o"	COMMENT = "active step" INITIALVALUE = "INIT";
+			EN   			: UINT   	FLAGS = "i"	COMMENT = "enable execution: start/stop/break" INITIALVALUE = 0;
+			woStPhase       : UINT		FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
+			woStQualifier   : UINT		FLAGS = "n"	COMMENT = "working state qualifier: 1(entry), 2(do), 3 (exit))" INITIALVALUE = 1;
+			activeStep  	: STRING	FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
+			terminated		: BOOL		FLAGS = "o"	COMMENT = "TRUE if SFC reaches END step";
+			workingState    : UINT		FLAGS = "o"	COMMENT = "working state" INITIALVALUE = 10;
+			woStText        : STRING    FLAGS = "o"	COMMENT = "working state text: reset/start/break/terminate/abort" INITIALVALUE = "INIT";
 			error			: BOOL		FLAGS = "o"	COMMENT = "error";
 			errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
 		END_VARIABLES;
 		PARTS
-      		ACTs 			: CLASS ov/domain;
-      		TCs 			: CLASS ov/domain;
+      		actions 			: CLASS ov/domain;
+      		transConds 			: CLASS ov/domain;
+      		intask	 			: CLASS fb/task;
     	END_PARTS;
     	OPERATIONS
         	constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-         	typemethod 		: 	C_FUNCTION 	<FB_FNC_TYPEMETHOD>;
+        	typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+         	resetSfc   	: C_FUNCTION <SFC_FNC_RESETSFC>;
     	END_OPERATIONS;
   END_CLASS;
 
   CLASS step : CLASS fb/functionblock
 		IS_INSTANTIABLE;
-  	COMMENT = "SFC step";
+  	COMMENT = "step";
   	VARIABLES
-			internalID		:UINT  		FLAGS = "n"	COMMENT = "internal ID";
-			X				:BOOL		FLAGS = "o"	COMMENT = "step flag (active or inactive state of a step)";
-			T				:TIME_SPAN 	FLAGS = "o"	COMMENT = "elapsed time since initiation of a step";
+			internalID		:UINT  		FLAGS = "n"	COMMENT = "internal ID" INITIALVALUE = 1;
+			X				:BOOL		FLAGS = "o"	COMMENT = "step flag according to IEC61131-3";
+			T				:TIME_SPAN 	FLAGS = "o"	COMMENT = "elapsed time since initiation of a step according to IEC61131-3";
+			phase    		:UINT  		FLAGS = "n"	COMMENT = "execution phase (1: entry & do actions. 2: transitions & exit actions)" INITIALVALUE = 1;
+			qualifier  		:UINT  		FLAGS = "n"	COMMENT = "1: entry actions. 2: do actions. 3: exit actions" INITIALVALUE = 1;
+			mode            :UINT		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "1: subSFCs run to the end without interruption. 2: if trigger, stop and reset subSFCs. 3: if trigger, break subSFCs." INITIALVALUE = 1;
 			evTransTrigger  :BOOL		FLAGS = "o"	COMMENT = "Event: transition triggers";
+			hasSubSfc       :BOOL		FLAGS = "o"	COMMENT = "TRUE if has subSFC(s) (only for entry- and do-actions)";
+			subSfcTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSFC is/are terminated";
 			error			:BOOL		FLAGS = "o"	COMMENT = "error";
 			errorDetail		:STRING		FLAGS = "o"	COMMENT = "error details";	
 	END_VARIABLES;
@@ -103,14 +115,15 @@ LIBRARY sfc
       		exit 	: CLASS fb/task;
     END_PARTS;
   	OPERATIONS
-  			constructor	:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-      		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+  			constructor		: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+  			typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      		resetStep   	: C_FUNCTION <SFC_FNC_RESETSTEP>;
     END_OPERATIONS;
   END_CLASS;
   
   CLASS transition: CLASS fb/functionblock
 	IS_INSTANTIABLE;
-  	COMMENT = "SFC transition";
+  	COMMENT = "transition";
     VARIABLES
       result 			: BOOL 		FLAGS = "i" COMMENT = "The result of the executed transition";
       error				: BOOL		FLAGS = "o"	COMMENT = "error";
@@ -118,12 +131,83 @@ LIBRARY sfc
     END_VARIABLES;
     OPERATIONS
     	constructor		: C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-		typemethod 		: C_FUNCTION 	<FB_FNC_TYPEMETHOD>;
+        typemethod 		: C_FUNCTION 	<FB_FNC_TYPEMETHOD>;
     END_OPERATIONS;
   END_CLASS;
   
+  CLASS actionBlock : CLASS fb/functionblock
+  	COMMENT = "action block ";
+    VARIABLES
+      actionQualifier   : UINT      HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "action qualifier: 1(entry) 2 (do) 3 (exit)" INITIALVALUE = 1;	
+      actionName		: STRING	HAS_SET_ACCESSOR FLAGS = "i"	COMMENT = "action name";
+      error				: BOOL		FLAGS = "o"	COMMENT = "error";
+	  errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
+    END_VARIABLES;
+    OPERATIONS
+      constructor			:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+      setActionName		    : 	C_FUNCTION  <SFC_FNC_SETACTIONNAME> IS_ABSTRACT;
+    END_OPERATIONS;
+  END_CLASS;
+   
+  CLASS setVariable : CLASS sfc/actionBlock
+	IS_INSTANTIABLE;
+  	COMMENT = "action block for set variable action";
+    VARIABLES
+      variable			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The variable name";
+      value				: ANY 			HAS_SET_ACCESSOR FLAGS = "i"	COMMENT = "The value to be set";
+    END_VARIABLES;
+    OPERATIONS
+      typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      setActionName		: C_FUNCTION  <SFC_FNC_SETACTIONNAME>;
+    END_OPERATIONS;
+  END_CLASS;
+  
+   CLASS executeFb : CLASS sfc/actionBlock
+	IS_INSTANTIABLE;
+  	COMMENT = "action block calling FB- or CFC-action ";
+    VARIABLES
+    END_VARIABLES;
+    OPERATIONS
+      typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      setActionName		: 	C_FUNCTION  <SFC_FNC_SETACTIONNAME>;
+      checkAction       : 	C_FUNCTION  <SFC_FNC_CHECKACTION>;
+    END_OPERATIONS;
+  END_CLASS;
+  
+   CLASS executeSfc : CLASS sfc/executeFb
+	IS_INSTANTIABLE;
+  	COMMENT = "action block calling SFC action";
+    VARIABLES
+      enableSfc				: UINT		FLAGS = "i"	COMMENT = "SFC commando" INITIALVALUE = 1;
+    END_VARIABLES;
+    OPERATIONS
+      typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      destructor  : C_FUNCTION <OV_FNC_DESTRUCTOR>;      
+    END_OPERATIONS;
+  END_CLASS;
+  
+  CLASS requireService : CLASS sfc/actionBlock
+	IS_INSTANTIABLE;
+  	COMMENT = "action block for call service action";
+    VARIABLES
+      requester			: STRING 		FLAGS = "p"	COMMENT = "service requester";
+      provider  		: STRING 		FLAGS = "p"	COMMENT = "service provider";
+      service			: STRING		FLAGS = "p"	COMMENT = "required service";
+      parameters[]		: STRING		FLAGS = "p"	COMMENT = "service parameters";  
+    END_VARIABLES;
+    OPERATIONS
+      typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      setActionName		: 	C_FUNCTION  <SFC_FNC_SETACTIONNAME>;
+    END_OPERATIONS;
+  END_CLASS;
+   
 
   /* Associations */
+    /* Connections from steps to next transitions. */
+  ASSOCIATION actionBlocks : ONE_TO_MANY
+    PARENT action  		: CLASS fb/functionblock;
+    CHILD  actionBlocks : CLASS sfc/executeFb;
+  END_ASSOCIATION;
   
   /* Connections from steps to next transitions. */
   ASSOCIATION nextTransitions : ONE_TO_MANY
@@ -138,8 +222,6 @@ LIBRARY sfc
     IS_LOCAL;
     PARENT nextStep  : CLASS sfc/step;
     CHILD  prevTrans : CLASS sfc/transition;
-  END_ASSOCIATION;
-
- 
+  END_ASSOCIATION; 
 
 END_LIBRARY;
