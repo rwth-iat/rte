@@ -38,7 +38,7 @@
 *
 *	File:
 *	------
-*	sfclib.h
+*	sfcliblib.h
 *
 *	Editors:
 *	--------
@@ -65,4 +65,52 @@
 #include "ov_call_macros_10.h"
 
 // TODO:  Cmd mapping
+
+/***********************************************************************
+	Enumerations
+***********************************************************************/
+
+/***********************************************************************
+	command
+***********************************************************************/
+
+enum {
+	SFCCMD_STOP		= 0,	// execute exit-actions of the active step and stop SFC
+	SFCCMD_START	= 1,	// start SFC
+	SFCCMD_BREAK	= 2,	// stop SFC and hold on active step
+	SFCCMD_RESET	= 3		// stop SFC and reset sfc
+};
+
+/***********************************************************************
+	workingStates
+***********************************************************************/
+
+enum {
+	WOST_INIT		= 0,	// initialized
+	WOST_START		= 1,	// start
+	WOST_BREAK		= 2,	// break
+	WOST_STOP		= 3,	// break off
+	WOST_TERMINATE	= 4		// terminate (reaches END-step)
+};
+
+/***********************************************************************
+	action identifier
+***********************************************************************/
+
+enum {
+	ACT_ENTRY		= 1,
+	ACT_DO		    = 2,
+	ACT_EXIT		= 3
+};
+
+/***********************************************************************
+	Ov_GetFirstChildEx
+***********************************************************************/
+
+#define Ov_GetFirstChildEx(assoc, pparent, pchild, childclass)	\
+	Ov_ForEachChildEx(assoc, (pparent), (pchild), childclass)	\
+	{	\
+		break;	\
+	}
+
 #endif
