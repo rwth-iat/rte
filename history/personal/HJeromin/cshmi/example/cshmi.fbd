@@ -5,13 +5,13 @@
 ======================================================================
   Sicherung der Datenbasis.
 
-  Erstellt : 2011-10-27 11:45:56
+  Erstellt : 2011-11-03 17:38:18
 
   HOST                : LOCALHOST
-  SERVER              : fb_hmifb
+  SERVER              : fb_cshmi
   DB-Groesse          : 4001792
-  Frei                : 3833584
-  Anzahl FB-Instanzen : 4
+  Frei                : 3814400
+  Anzahl FB-Instanzen : 5
   Anzahl Tasks        : 1
   Anzahl Verbindungen : 4
 
@@ -46,7 +46,7 @@ Typ        : Hochschulversion
     PARENT  taskparent : CLASS task
         = /Tasks/UrTask;
     CHILDREN  taskchild : CLASS unknown
-        = {/TechUnits/sinus , /TechUnits/increment , /TechUnits/move , /TechUnits/scale};
+        = {/TechUnits/sinus , /TechUnits/increment , /TechUnits/move , /TechUnits/scale , /TechUnits/Pump1};
  END_LINK;
 
  INSTANCE  /TechUnits/cshmi :
@@ -152,7 +152,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -166,7 +167,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  SINGLE = 0.500000;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -195,7 +197,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "red";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -224,7 +227,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "green";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -249,7 +253,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -303,7 +308,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -344,7 +350,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -358,7 +365,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  BOOL = TRUE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -387,7 +395,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  BOOL = FALSE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -416,7 +425,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  BOOL = TRUE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -469,7 +479,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -481,10 +492,11 @@ Typ        : Hochschulversion
         TemplateDefinition : INPUT  STRING = "/TechUnits/cshmi/pumpGreen";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
-        TemplateConfig[2] : INPUT  STRING = {"pumpcolor:red" , "fill:green"};
+        FBReference[1] : INPUT  STRING = {"/TechUnits/Pump1"};
+        ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
-        stroke : INPUT  STRING = "fill:red;stroke:none";
+        stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         baseKsPath : INPUT  STRING = "";
@@ -495,9 +507,27 @@ Typ        : Hochschulversion
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "/TechUnits/cshmi/pumpGreen";
-        x : INPUT  SINGLE = 10.000000;
+        x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 60.000000;
-        TemplateConfig[0] : INPUT  STRING = {};
+        FBReference[1] : INPUT  STRING = {"/TechUnits/scale"};
+        ConfigValues[1] : INPUT  STRING = {"pumpcolor:red"};
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/faceplate/pump3 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "/TechUnits/cshmi/pumpGreen";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 120.000000;
+        FBReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
         stroke : INPUT  STRING = "black";
@@ -511,7 +541,7 @@ Typ        : Hochschulversion
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 42.000000;
-        height : INPUT  SINGLE = 42.000000;
+        height : INPUT  SINGLE = 58.000000;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -557,7 +587,8 @@ Typ        : Hochschulversion
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         eventVar : INPUT  STRING = "";
-        TemplateKeyName : INPUT  STRING = "pumpcolor";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "pumpcolor";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -576,19 +607,73 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/pumpGreen/Text :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 21.000000;
+        y : INPUT  SINGLE = 55.000000;
+        content : INPUT  STRING = "???";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/pumpGreen/Text/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/pumpGreen/Text/onload/PumpName :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/pumpGreen/Text/onload/PumpName.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "iexreq";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/sinus :
     CLASS /Libraries/iec61131stdfb/SIN;
     VARIABLE_VALUES
-        IN : INPUT  SINGLE = 7107.282715;
-        OUT : OUTPUT  SINGLE = 0.841543;
+        IN : INPUT  SINGLE = 7835.393066;
+        OUT : OUTPUT  SINGLE = 0.258036;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 16970;
+        methcount : HIDDEN  UINT = 7274;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-10-26 17:37:12.015000;
+        proctime : INPUT  TIME = 2011-11-03 15:17:34.000000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -598,17 +683,17 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/increment :
     CLASS /Libraries/iec61131stdfb/ADD;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 7107.382812;
+        IN1 : INPUT  SINGLE = 7835.493164;
         IN2 : INPUT  SINGLE = 0.100000;
-        OUT : OUTPUT  SINGLE = 7107.382812;
+        OUT : OUTPUT  SINGLE = 7835.493164;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = TRUE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 16970;
+        methcount : HIDDEN  UINT = 7274;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-10-26 17:37:12.015000;
+        proctime : INPUT  TIME = 2011-11-03 15:17:34.000000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -618,17 +703,17 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/move :
     CLASS /Libraries/iec61131stdfb/ADD;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 0.841543;
+        IN1 : INPUT  SINGLE = 0.258036;
         IN2 : INPUT  SINGLE = 1.000000;
-        OUT : OUTPUT  SINGLE = 1.841542;
+        OUT : OUTPUT  SINGLE = 1.258036;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 16970;
+        methcount : HIDDEN  UINT = 7274;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-10-26 17:37:12.015000;
+        proctime : INPUT  TIME = 2011-11-03 15:17:34.000000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -638,29 +723,49 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/scale :
     CLASS /Libraries/iec61131stdfb/MUL;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 1.841542;
+        IN1 : INPUT  SINGLE = 1.258036;
         IN2 : INPUT  SINGLE = 0.500000;
-        OUT : OUTPUT  SINGLE = 0.920771;
+        OUT : OUTPUT  SINGLE = 0.629018;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 16970;
+        methcount : HIDDEN  UINT = 7274;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-10-26 17:37:12.015000;
+        proctime : INPUT  TIME = 2011-11-03 15:17:34.000000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /Cons/v_aagsogeduzdb :
+ INSTANCE  /TechUnits/Pump1 :
+    CLASS /Libraries/iec61131stdfb/ADD;
+    VARIABLE_VALUES
+        IN1 : INPUT  SINGLE = 0.000000;
+        IN2 : INPUT  SINGLE = 0.000000;
+        OUT : OUTPUT  SINGLE = 0.000000;
+        iexreq : PARAMETER  BOOL = TRUE;
+        eexreq : HIDDEN  BOOL = TRUE;
+        maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
+        Xpos : PARAMETER  INT = 0;
+        Ypos : PARAMETER  INT = 0;
+        methcount : HIDDEN  UINT = 0;
+        actimode : INPUT  INT = 0;
+        proctime : INPUT  TIME = 2011-11-03 16:34:15.812000;
+        cyctime : INPUT  TIME_SPAN = 0.000000;
+        ErrState : OUTPUT  INT = 0;
+        calctime : OUTPUT  TIME_SPAN = 0.000000;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /Cons/v_oogsogeqvjec :
     CLASS /fb/connection;
     VARIABLE_VALUES
         on : PARAMETER  BOOL = TRUE;
         sourceport : PARAMETER  STRING = "OUT";
-        targetport : PARAMETER  STRING = "IN";
+        targetport : PARAMETER  STRING = "IN1";
         sourcetrig : PARAMETER  BOOL = FALSE;
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -668,43 +773,17 @@ Typ        : Hochschulversion
  LINK
     OF_ASSOCIATION  inputconnections;
     PARENT  targetfb : CLASS unknown
-        = /TechUnits/sinus;
+        = /TechUnits/scale;
     CHILDREN  inputcon : CLASS connection
-        = {/Cons/v_aagsogeduzdb};
+        = {/Cons/v_oogsogeqvjec};
  END_LINK;
 
  LINK
     OF_ASSOCIATION  outputconnections;
     PARENT  sourcefb : CLASS unknown
-        = /TechUnits/increment;
+        = /TechUnits/move;
     CHILDREN  outputcon : CLASS connection
-        = {/Cons/v_aagsogeduzdb};
- END_LINK;
-
- INSTANCE  /Cons/v_lbgsogeqkhb :
-    CLASS /fb/connection;
-    VARIABLE_VALUES
-        on : PARAMETER  BOOL = TRUE;
-        sourceport : PARAMETER  STRING = "OUT";
-        targetport : PARAMETER  STRING = "IN1";
-        sourcetrig : PARAMETER  BOOL = TRUE;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- LINK
-    OF_ASSOCIATION  inputconnections;
-    PARENT  targetfb : CLASS unknown
-        = /TechUnits/increment;
-    CHILDREN  inputcon : CLASS connection
-        = {/Cons/v_lbgsogeqkhb};
- END_LINK;
-
- LINK
-    OF_ASSOCIATION  outputconnections;
-    PARENT  sourcefb : CLASS unknown
-        = /TechUnits/increment;
-    CHILDREN  outputcon : CLASS connection
-        = {/Cons/v_lbgsogeqkhb};
+        = {/Cons/v_oogsogeqvjec};
  END_LINK;
 
  INSTANCE  /Cons/v_omgsogexjcxb :
@@ -733,12 +812,38 @@ Typ        : Hochschulversion
         = {/Cons/v_omgsogexjcxb};
  END_LINK;
 
- INSTANCE  /Cons/v_oogsogeqvjec :
+ INSTANCE  /Cons/v_lbgsogeqkhb :
     CLASS /fb/connection;
     VARIABLE_VALUES
         on : PARAMETER  BOOL = TRUE;
         sourceport : PARAMETER  STRING = "OUT";
         targetport : PARAMETER  STRING = "IN1";
+        sourcetrig : PARAMETER  BOOL = TRUE;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+    OF_ASSOCIATION  inputconnections;
+    PARENT  targetfb : CLASS unknown
+        = /TechUnits/increment;
+    CHILDREN  inputcon : CLASS connection
+        = {/Cons/v_lbgsogeqkhb};
+ END_LINK;
+
+ LINK
+    OF_ASSOCIATION  outputconnections;
+    PARENT  sourcefb : CLASS unknown
+        = /TechUnits/increment;
+    CHILDREN  outputcon : CLASS connection
+        = {/Cons/v_lbgsogeqkhb};
+ END_LINK;
+
+ INSTANCE  /Cons/v_aagsogeduzdb :
+    CLASS /fb/connection;
+    VARIABLE_VALUES
+        on : PARAMETER  BOOL = TRUE;
+        sourceport : PARAMETER  STRING = "OUT";
+        targetport : PARAMETER  STRING = "IN";
         sourcetrig : PARAMETER  BOOL = FALSE;
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -746,16 +851,16 @@ Typ        : Hochschulversion
  LINK
     OF_ASSOCIATION  inputconnections;
     PARENT  targetfb : CLASS unknown
-        = /TechUnits/scale;
+        = /TechUnits/sinus;
     CHILDREN  inputcon : CLASS connection
-        = {/Cons/v_oogsogeqvjec};
+        = {/Cons/v_aagsogeduzdb};
  END_LINK;
 
  LINK
     OF_ASSOCIATION  outputconnections;
     PARENT  sourcefb : CLASS unknown
-        = /TechUnits/move;
+        = /TechUnits/increment;
     CHILDREN  outputcon : CLASS connection
-        = {/Cons/v_oogsogeqvjec};
+        = {/Cons/v_aagsogeduzdb};
  END_LINK;
 

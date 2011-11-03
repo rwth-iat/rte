@@ -133,17 +133,30 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_eventVar_set(
     return ov_string_setvalue(&pobj->v_eventVar,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_TemplateKeyName_get(
+OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_TemplateFBReferenceVariable_get(
 	OV_INSTPTR_cshmi_GetValue          pobj
 ) {
-	return pobj->v_TemplateKeyName;
+	return pobj->v_TemplateFBReferenceVariable;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateKeyName_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateFBReferenceVariable_set(
 	OV_INSTPTR_cshmi_GetValue          pobj,
 	const OV_STRING  value
 ) {
-	return ov_string_setvalue(&pobj->v_TemplateKeyName,value);
+	return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable,value);
+}
+
+OV_DLLFNCEXPORT OV_STRING cshmi_GetValue_TemplateConfigValues_get(
+	OV_INSTPTR_cshmi_GetValue          pobj
+) {
+	return pobj->v_TemplateConfigValues;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateConfigValues_set(
+	OV_INSTPTR_cshmi_GetValue          pobj,
+	const OV_STRING  value
+) {
+	return ov_string_setvalue(&pobj->v_TemplateConfigValues,value);
 }
 
 OV_DLLFNCEXPORT OV_ANY* cshmi_GetValue_value_get(

@@ -109,18 +109,35 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Template_y_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_STRING* cshmi_Template_TemplateConfig_get(
+OV_DLLFNCEXPORT OV_STRING* cshmi_Template_FBReference_get(
 	OV_INSTPTR_cshmi_Template          pobj,
 	OV_UINT *pveclen
 ) {
-	*pveclen = pobj->v_TemplateConfig.veclen;
-	return pobj->v_TemplateConfig.value;
+	*pveclen = pobj->v_FBReference.veclen;
+	return pobj->v_FBReference.value;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Template_TemplateConfig_set(
+OV_DLLFNCEXPORT OV_RESULT cshmi_Template_FBReference_set(
 	OV_INSTPTR_cshmi_Template          pobj,
 	const OV_STRING*  value,
 	const OV_UINT veclen
 ) {
-	return Ov_SetDynamicVectorValue(&pobj->v_TemplateConfig,value,veclen,STRING);
+	return Ov_SetDynamicVectorValue(&pobj->v_FBReference,value,veclen,STRING);
 }
+
+OV_DLLFNCEXPORT OV_STRING* cshmi_Template_ConfigValues_get(
+	OV_INSTPTR_cshmi_Template          pobj,
+	OV_UINT *pveclen
+) {
+	*pveclen = pobj->v_ConfigValues.veclen;
+	return pobj->v_ConfigValues.value;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Template_ConfigValues_set(
+	OV_INSTPTR_cshmi_Template          pobj,
+	const OV_STRING*  value,
+	const OV_UINT veclen
+) {
+	return Ov_SetDynamicVectorValue(&pobj->v_ConfigValues,value,veclen,STRING);
+}
+

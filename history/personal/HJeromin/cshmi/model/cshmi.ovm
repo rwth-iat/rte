@@ -176,9 +176,12 @@ LIBRARY cshmi
 			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
-			TemplateConfig[] : STRING
+			FBReference[] : STRING
 			HAS_ACCESSORS
-			COMMENT = "Config for TemplateDefinition (multiple key1:value1 possible)";
+			COMMENT = "Path of the Reference object (multiple values possible, when named as pump47:/TechUnits/Pump47)";
+			ConfigValues[] : STRING
+			HAS_ACCESSORS
+			COMMENT = "Free text value for TemplateDefinition (multiple key1:value1 possible)";
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -373,12 +376,15 @@ LIBRARY cshmi
 			eventVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the event variable";
-			TemplateKeyName : STRING
+			TemplateFBReferenceVariable : STRING
 			HAS_ACCESSORS
-			COMMENT = "name of the key of a TemplateConfig";
+			COMMENT = "name of a variable of a FB object";
+			TemplateConfigValues : STRING
+			HAS_ACCESSORS
+			COMMENT = "name of the key of a ConfigValue";
 			value : ANY
 			HAS_ACCESSORS
-			COMMENT = "value if no variable given";
+			COMMENT = "value";
 		END_VARIABLES;
 	END_CLASS;
 	
