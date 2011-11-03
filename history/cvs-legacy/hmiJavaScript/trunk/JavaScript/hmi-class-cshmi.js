@@ -250,7 +250,7 @@ cshmi.prototype = {
 			ObjectParent[ObjectPath] = new CsGetValue();
 		}
 		
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .TemplateKeyName .value}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .elemVarPath .globalVar .TemplateFBReferenceVariable .TemplateConfigValues .value}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -265,7 +265,6 @@ cshmi.prototype = {
 			if (responseArray[i] !== ""){
 				if (i === 0){
 					//ksVar
-					
 					if (responseArray[i].charAt(0) == "/" && responseArray[i].charAt(1) == "/"){
 						//we have an absolute path on another server
 						var RequestServer = Object();
@@ -288,6 +287,8 @@ cshmi.prototype = {
 						return responseArray[0];
 					}
 				}else if (i === 1){
+					//todo interprete elemVarPath
+					
 					//elemVar
 					if (responseArray[i] == "content"){
 						//content is special, as it is different in OVM and SVG
@@ -309,26 +310,48 @@ cshmi.prototype = {
 						//unknown element variable
 						return null;
 					}
-				}else if (i === 2){
+				}else if (i === 3){
 					//globalVar
 					debugger;
 					
 					//todo
 					return null;
-				}else if (i === 3){
-					//TemplateKeyName
+				}else if (i === 4){
+					//TemplateFBReferenceVariable
 					var TemplateObject = ObjectParent;
 					do{
-						if(TemplateObject.ConfigData && TemplateObject.ConfigData[responseArray[i]]){
+						if(TemplateObject.FBReference && TemplateObject.FBReference[responseArray[i]]){
 							//this is a TemplateObject itself
-							return TemplateObject.ConfigData[responseArray[i]];
-						}else if(TemplateObject.ConfigData){
+							return TemplateObject.FBReference[responseArray[i]];
+						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"]){
+							//this is a TemplateObject itself, but only one reference given
+							
+							//todo fremde ks server erlauben
+							var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
+							var result = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', null);
+							return HMI.KSClient.splitKsResponse(result)[0];
+						}else if(TemplateObject.FBReference){
 							//this is a TemplateObject, but has no Config for this request
 							return null;
 						}
+					//loop upwards to find the Template object
 					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
 					return null;
-				}else if (i === 4){
+				}else if (i === 5){
+					//TemplateConfigValues
+					var TemplateObject = ObjectParent;
+					do{
+						if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[responseArray[i]]){
+							//this is a TemplateObject itself
+							return TemplateObject.ConfigValues[responseArray[i]];
+						}else if(TemplateObject.ConfigValues){
+							//this is a TemplateObject, but has no Config for this request
+							return null;
+						}
+					//loop upwards to find the Template object
+					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
+					return null;
+				}else if (i === 6){
 					//value
 					ObjectParent[ObjectPath].value = responseArray[i];
 					return ObjectParent[ObjectPath].value;
@@ -568,7 +591,7 @@ cshmi.prototype = {
 		_buildFromTemplate
 	*********************************/
 	_buildFromTemplate: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .TemplateConfig}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -607,12 +630,23 @@ cshmi.prototype = {
 		svgElement.setAttribute("height", responseArrayTemplate[1]);
 		
 		//parametrise templateDefinition with the config
+		svgElement.FBReference = Object();
+		svgElement.ConfigValues = Object();
+		var ConfigEntry = null;
 		var ConfigList = responseArray[3].split(" ");
-		svgElement.ConfigData = Object();
 		for (var i=0; i < ConfigList.length; i++) {
-			var ConfigEntry = ConfigList[i].split(":");
+			ConfigEntry = ConfigList[i].split(":");
 			if (ConfigEntry.length === 2){
-				svgElement.ConfigData[ConfigEntry[0]] = ConfigEntry[1];
+				svgElement.FBReference[ConfigEntry[0]] = ConfigEntry[1];
+			}else if (ConfigEntry.length === 1 && ConfigEntry[0] != ""){
+				svgElement.FBReference["default"] = ConfigEntry[0];
+			}
+		}
+		ConfigList = responseArray[4].split(" ");
+		for (var i=0; i < ConfigList.length; i++) {
+			ConfigEntry = ConfigList[i].split(":");
+			if (ConfigEntry.length === 2){
+				svgElement.ConfigValues[ConfigEntry[0]] = ConfigEntry[1];
 			}
 		}
 		
