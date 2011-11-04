@@ -1,0 +1,762 @@
+#include "fb.ovm"
+#include "ov.ovm"
+#include "ksapi.ovm"
+
+LIBRARY	fbcomlib
+	VERSION		=	"0.9a";
+	AUTHOR		=	"Martin Weingarten, Henning Mersch";
+	COPYRIGHT	=	"Copyright (C) 2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+	COMMENT		=	"Communication FunctionBlocks based on the ksapi";
+
+	CLASS FBComCommon	:	CLASS	fb/functionblock
+		COMMENT	=	"Abstract super class providing common variables";
+		VARIABLES
+			host 		: STRING		HAS_ACCESSORS	FLAGS	=	"i"	COMMENT="Target Host" INITIALVALUE	=	"127.0.0.1"; 
+			server	: STRING		HAS_ACCESSORS	FLAGS	=	"i"	COMMENT="Target Server"	INITIALVALUE	=	"fb_server";	
+			path : STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Path on Target Server"
+				INITIALVALUE	=	"";	
+			doSend :	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"If true, the sending will be started"
+				INITIALVALUE	=	FALSE; 
+			doResetAbstract			:	BOOL		HAS_SET_ACCESSOR		FLAGS	=	"h"
+				COMMENT			=	"Set to true to re-initalize the FB" INITIALVALUE	=	FALSE;
+			doCyclic			:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Set to true to cyclically execute the command"
+				INITIALVALUE	=	FALSE;
+			stateString				:	STRING		HAS_GET_ACCESSOR		FLAGS	=	"o"
+				COMMENT			=	"This is the answer state (as human readable string)"
+				INITIALVALUE	=	"";
+			state			:	INT			HAS_ACCESSORS		FLAGS	=	"o"
+				COMMENT			=	"Answer as int: 0: started * 1: everything ok * 2: wrong input * 3: No return message set * 4: OV-error * 5: connection error * 6: service error * 7: wrong variable type * 8: client busy * 9: no memory to store string "
+				INITIALVALUE	=	-1;				 
+		END_VARIABLES;
+		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+				//default (enough for set*): Just store answer/answerString
+				//overwritten for get*, but used as super() 
+		   typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+				
+		END_OPERATIONS;
+	END_CLASS;
+	
+/***********************************************************************
+	string
+***********************************************************************/
+	
+	CLASS setString	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a string";
+		VARIABLES
+			sendstring			:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input String"
+				INITIALVALUE	=	"";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS getString	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a string";
+		VARIABLES
+			receivedString		:	STRING		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The string which is read"
+				INITIALVALUE	=	"";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+/***********************************************************************
+	stringvec
+***********************************************************************/
+	CLASS setStringVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a string vector";
+		VARIABLES
+			sendstringvec[]			:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input StringVec";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getStringVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a string vector";
+		VARIABLES
+			receivedStringVec[]		:	STRING		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The stringvec which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+
+
+/***********************************************************************
+	int
+***********************************************************************/
+	CLASS setInt	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a integer";
+		VARIABLES
+			sendint			:	INT		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Integer";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getInt	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a integer";
+		VARIABLES
+			receivedInt		:	INT		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The integer which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+	
+
+/***********************************************************************
+	intvec
+***********************************************************************/
+	CLASS setIntVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a integer vector";
+		VARIABLES
+			sendintvec[]			:	INT		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Integer Vector";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getIntVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a integer vector";
+		VARIABLES
+			receivedIntVec[]		:	INT		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The integer vector which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+/***********************************************************************
+	uint
+***********************************************************************/
+	CLASS setUInt	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a unsigned integer";
+		VARIABLES
+			senduint			:	UINT		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Unsigned Integer";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getUInt	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a unsigned integer";
+		VARIABLES
+			receivedUInt		:	UINT		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The unsigned integer which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+
+	
+/***********************************************************************
+	uintvec
+***********************************************************************/
+	CLASS setUIntVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a unsigned integer vector";
+		VARIABLES
+			senduintvec[]			:	UINT		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Unsigned Integer Vector";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getUIntVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a unsigned integer vector";
+		VARIABLES
+			receivedUIntVec[]		:	UINT		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The unsigned integer vector which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+
+	
+/***********************************************************************
+	single
+***********************************************************************/
+	CLASS setSingle	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a single";
+		VARIABLES
+			sendsingle			:	SINGLE		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Single";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getSingle	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a single";
+		VARIABLES
+			receivedSingle		:	SINGLE		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The single which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+
+
+/***********************************************************************
+	singlevec
+***********************************************************************/
+	CLASS setSingleVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a single vector";
+		VARIABLES
+			sendsinglevec[]			:	SINGLE		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Single Vector";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getSingleVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a single vector";
+		VARIABLES
+			receivedSingleVec[]		:	SINGLE		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The single vector which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+		
+
+/***********************************************************************
+	bool
+***********************************************************************/
+	CLASS setBool	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a bool";
+		VARIABLES
+			sendbool			:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Bool";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getBool	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a bool";
+		VARIABLES
+			receivedBool		:	BOOL		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The bool which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+
+
+/***********************************************************************
+	boolvec
+***********************************************************************/
+	CLASS setBoolVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a bool vector";
+		VARIABLES
+			sendboolvec[]			:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Bool Vector";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getBoolVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a bool vector";
+		VARIABLES
+			receivedBoolVec[]		:	BOOL		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The bool vector which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+
+
+/***********************************************************************
+	double
+***********************************************************************/
+	CLASS setDouble	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a double";
+		VARIABLES
+			senddouble			:	DOUBLE		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Double";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getDouble	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a double";
+		VARIABLES
+			receivedDouble		:	DOUBLE		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The double which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+
+
+/***********************************************************************
+	doublevec
+***********************************************************************/
+	CLASS setDoubleVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending a double vector";
+		VARIABLES
+			senddoublevec[]			:	DOUBLE		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input Double Vector";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getDoubleVec	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving a double vector";
+		VARIABLES
+			receivedDoubleVec[]		:	DOUBLE		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"The double vector which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
+
+
+/***********************************************************************
+	EP
+***********************************************************************/
+	CLASS getEPidentifiers	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving EPidentifiers";
+		VARIABLES
+			doReset					:	BOOL			HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE; 
+			namemask				:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"A regular expression to filter the Objects"
+				INITIALVALUE	=	"*";
+			identifierList[]	:	STRING								FLAGS	=	"o"
+				COMMENT			=	"A list containing the servers read from the client";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>;
+		END_OPERATIONS;
+	END_CLASS;
+
+
+/***********************************************************************
+	object
+***********************************************************************/
+	CLASS createObject	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block which takes the input and starts the sending";
+		VARIABLES
+			librarypath			:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"path to objecttype"
+				INITIALVALUE	=	"/Libraries/";
+			position				:	INT			HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after";
+			element				:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"element position points to";
+			doReset					:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Set to true to re-initalize the FB"
+				INITIALVALUE	=	FALSE; 
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS deleteObject	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block which takes the input and starts the sending";
+		VARIABLES
+			doReset					:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Set to true to re-initalize the FB"
+				INITIALVALUE	=	FALSE; 
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS renameObject	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block which takes the input and starts the sending";
+		VARIABLES
+			newpath				:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"newpath of object"
+				INITIALVALUE	=	"/TechUnits/";
+			doReset					:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Set to true to re-initalize the FB"
+				INITIALVALUE	=	FALSE; 
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS linkObject					:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block which takes the input and starts the sending";
+		VARIABLES
+			linkedpath		:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"path to linked object"
+				INITIALVALUE	=	"/TechUnits/";
+			position				:	INT			HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after";
+			element				:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"element position points to";
+			doReset					:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Set to true to re-initalize the FB"
+				INITIALVALUE	=	FALSE; 
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS unlinkObject					:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block which takes the input and starts the sending";
+		VARIABLES
+			linkedpath		:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"path to linked object"
+				INITIALVALUE	=	"/TechUnits/";
+			doReset					:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Set to true to re-initalize the FB"
+				INITIALVALUE	=	FALSE; 
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	CLASS vars : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			print: INT HAS_ACCESSORS
+				INITIALVALUE	=	1;
+			bool : BOOL HAS_ACCESSORS;
+			int : INT HAS_ACCESSORS;
+			uint : UINT HAS_ACCESSORS;
+			single : SINGLE HAS_ACCESSORS;
+			double : DOUBLE HAS_ACCESSORS;
+			string : STRING HAS_ACCESSORS;
+			tickettest : STRING HAS_ACCESSORS COMMENT="prints ticket of client call to logfile";
+			boolvec[5] : BOOL HAS_ACCESSORS;
+			intvec[5] : INT HAS_ACCESSORS;
+			uintvec[5] : UINT HAS_ACCESSORS;
+			singlevec[5] : SINGLE HAS_ACCESSORS;
+			doublevec[5] : DOUBLE HAS_ACCESSORS;
+			stringvec[5] : STRING HAS_ACCESSORS;
+		END_VARIABLES;
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+
+
+/***********************************************************************
+	MSGSYS
+***********************************************************************/
+//This is THE ONE central component for retrieving (and sending) messages.
+//Opposite: The FbSendMessage class is a pure sending instance 
+CLASS MsgComponent : CLASS fb/functionblock
+	IS_INSTANTIABLE;
+	VARIABLES
+		retrieveMessage : STRING HAS_SET_ACCESSOR COMMENT="setVar wird von ksapi aufgerufen";
+	END_VARIABLES;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		retMethod : C_FUNCTION <KSAPI_FNC_RET>;
+		sendMessage : C_FUNCTION <SENDMESSAGE_FNC>;
+		registerService : C_FUNCTION <MSGSYS_REGISTER_FNC>;
+		deregisterService : C_FUNCTION <MSGSYS_DEREGISTER_FNC>;
+		findService : C_FUNCTION <MSGSYS_FINDSERVICE_FNC>;
+	END_OPERATIONS;
+END_CLASS;
+
+//FbSendMessage as defined by Epple
+//decentralized version of the MsgComponent.
+//!!! this breaks the origin concept of the messagesys !!!  
+CLASS FbSendMessage : CLASS fb/functionblock
+	IS_INSTANTIABLE;
+	VARIABLES
+	  ACTIMODE : BOOL HAS_ACCESSORS COMMENT="Aktivierungsmode des Blocks, Block schaltet sich nach jedem Senden aus.";
+	  HOST : STRING HAS_ACCESSORS COMMENT="Host an die Nachtricht geschickt werden soll" INITIALVALUE="127.0.0.1";
+	  SERVER : STRING HAS_ACCESSORS COMMENT="Server an die Nachtricht geschickt werden soll" INITIALVALUE="fb_receiver";
+	  PATH : STRING HAS_ACCESSORS COMMENT="Objekt an das die Nachricht geschickt werden soll";
+	  TYPE : INT HAS_ACCESSORS COMMENT="Art der Nachricht";
+	  CONTENT : STRING HAS_ACCESSORS COMMENT="Inhalt der Nachricht";
+	  
+	  LTIM : TIME HAS_GET_ACCESSOR COMMENT="Zeitpunkt des Absendens der letzten Nachricht";
+	  LHOST : STRING HAS_GET_ACCESSOR COMMENT="Host an den die letzte Nachtricht geschickt wurde";
+	  LSERVER : STRING HAS_GET_ACCESSOR COMMENT="Server an den die letzte Nachtricht geschickt wurde";
+	  LPATH : STRING HAS_GET_ACCESSOR COMMENT="Objekt an das die letzte Nachricht geschickt wurde";
+	  LTYPE : INT HAS_GET_ACCESSOR COMMENT="Art der letzten Nachricht";
+	  LCONTENT : STRING HAS_GET_ACCESSOR COMMENT="Inhalt der letzten Nachricht";
+	  ID : INT HAS_GET_ACCESSOR COMMENT="Numer der letzten Nachricht (fortlaufend nummeriert)";
+	END_VARIABLES;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+END_CLASS;
+
+
+//An entry within the ServiceRegistry of the MsgSys
+CLASS ServiceRegistryEntry : CLASS ov/domain
+	IS_INSTANTIABLE;
+	VARIABLES
+		inboxPath : STRING HAS_ACCESSORS COMMENT = "Pfad zur Inbox";
+		arrivalmethodptr	:	C_TYPE <OV_FNCPTR_MSGSYS_ARRIVAL_FNC>				FLAGS =	"n"
+				COMMENT	=	"Pointer to the Service-Arrivalmethod";
+	END_VARIABLES;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+	END_OPERATIONS;
+END_CLASS;
+
+//The MsgSys Registry for services
+CLASS ServiceRegistry : CLASS ov/domain
+	IS_INSTANTIABLE;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+	END_OPERATIONS;
+END_CLASS;
+
+//Inbox and/or Outbox. 
+CLASS MessageBox : CLASS fb/functionblock
+	IS_INSTANTIABLE;
+	VARIABLES
+		arrivalmethodptr	:	C_TYPE <OV_FNCPTR_MSGSYS_ARRIVAL_FNC>				FLAGS =	"n"
+				COMMENT	=	"Pointer to the Arrivalmethod - called on arrived messages, if this is INBOX";
+	END_VARIABLES;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+END_CLASS;
+
+
+//Message - data handling object without "active" interaction
+//Acting is handled within the MsgComponent 
+CLASS Message : CLASS ov/object
+	IS_INSTANTIABLE;
+	VARIABLES
+		senderAddress : STRING HAS_ACCESSORS COMMENT = "Adresse des Senders" INITIALVALUE="127.0.0.1";
+		receiverAddress : STRING HAS_ACCESSORS COMMENT = "Adresse des Empfaengers" INITIALVALUE="127.0.0.1";
+		senderName : STRING HAS_ACCESSORS COMMENT = "Servername des Senders" INITIALVALUE="fb_sender";
+		receiverName : STRING HAS_ACCESSORS COMMENT = "Servername des Empfaengers" INITIALVALUE="fb_receiver";
+		senderService : STRING HAS_ACCESSORS COMMENT = "Name des Sender-Service" INITIALVALUE="Sender";
+		receiverService : STRING HAS_ACCESSORS COMMENT = "Name des Empfaenger-Service" INITIALVALUE="Receiver";
+		msgStatus : INT HAS_ACCESSORS COMMENT="0=NEW, 1=WAITING, 2=DONE, 3=RECEIVERSERVICEERROR, 4=FATALERROR" INITIALVALUE=0 ;
+		msgID : UINT HAS_ACCESSORS INITIALVALUE=0;
+		msgType : INT HAS_ACCESSORS COMMENT = "Nachrichtentyp" INITIALVALUE=0;
+		msgBody : STRING HAS_ACCESSORS;
+		sendString : STRING FLAGS =	"n";
+		//this could be used by services to "subscripe" to a specific message for delivery. 
+		//MsgComponent will call the pointer if message is sent 
+		returnmethodptr	:	C_TYPE <OV_FNCPTR_MSGSYS_RET_FNC>	FLAGS =	"n"	COMMENT	=	"Pointer auf die returnMethod";
+	END_VARIABLES;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		serializeMessage : C_FUNCTION <SERIALIZEMESSAGE_FNC>;
+		deserializeMessage : C_FUNCTION <DESERIALIZEMESSAGE_FNC>;
+		getSenderAddress : C_FUNCTION <GETSENDERADDRESS_FNC>;
+		getSenderName : C_FUNCTION <GETSENDERNAME_FNC>;
+		getSenderService : C_FUNCTION <GETSENDERSERVICE_FNC>;
+		getReceiverAddress : C_FUNCTION <GETRECEIVERADDRESS_FNC>;
+		getReceiverName : C_FUNCTION <GETRECEIVERNAME_FNC>;
+		getReceiverService : C_FUNCTION <GETRECEIVERSERVICE_FNC>;
+		getMsgStatus : C_FUNCTION <GETMSGSTATUS_FNC>;
+		getMsgID : C_FUNCTION <GETMSGID_FNC>;
+		getMsgType : C_FUNCTION <GETMSGTYPE_FNC>;
+		getMsgData : C_FUNCTION <GETMSGDATA_FNC>;
+	END_OPERATIONS;
+END_CLASS;
+
+
+		
+	ASSOCIATION	FBComCommonAssoc			:	ONE_TO_ONE
+		PARENT 	sendingFB 					:	CLASS fbcomlib/FBComCommon;
+		CHILD	sendingObject				:	CLASS ksapi/KSCommon;
+	END_ASSOCIATION;
+
+ASSOCIATION AssertionMsgSys2CurrentMessage : ONE_TO_ONE
+  PARENT fromMsgSys : CLASS fbcomlib/MsgComponent;
+  CHILD toCurrentMessage : CLASS fbcomlib/Message;
+END_ASSOCIATION;
+
+ASSOCIATION AssertionMsgSys2Message : ONE_TO_MANY
+  PARENT fromMsgSys2 : CLASS fbcomlib/MsgComponent;
+  CHILD toMessage : CLASS fbcomlib/Message;
+END_ASSOCIATION;
+	
+END_LIBRARY;
