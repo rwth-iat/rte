@@ -1,0 +1,248 @@
+%	--------------------------------------------------------------------------------
+%	Dokumentklasse
+%	--------------------------------------------------------------------------------
+\documentclass[german,a4paper]{scrartcl}
+
+%	--------------------------------------------------------------------------------
+%	Pakete
+%	--------------------------------------------------------------------------------
+\usepackage[ngerman]{babel}
+\usepackage[normalem]{ulem}
+\usepackage{color}
+
+%	--------------------------------------------------------------------------------
+%	Einstellungen, Zähler
+%	--------------------------------------------------------------------------------
+\include{./HeaderVorlesung}
+
+%	--------------------------------------------------------------------------------
+%	Einstellungen, Zähler
+%	--------------------------------------------------------------------------------
+\setcounter{secnumdepth}{3}%				%	Tiefe der Numerierung
+\setcounter{tocdepth}{3}%					%	Tiefe des TableOfContents
+
+%	--------------------------------------------------------------------------------
+%	Seiten-, Kopf- und Fusszeilenstil
+%	--------------------------------------------------------------------------------
+\PageStyle
+
+%	--------------------------------------------------------------------------------
+%	Titelseite
+%	--------------------------------------------------------------------------------
+\begin{document}
+\Titelseite{ksapi}{Handhabung und Beispiel-FB}{Dokumentation}{Version 1.1.0}
+\thispagestyle{empty}
+
+%	--------------------------------------------------------------------------------
+%	Inhaltsverzeichnis
+%	--------------------------------------------------------------------------------
+\tableofcontents
+\pagenumbering{roman}
+%\mainmatter
+\newpage
+%	--------------------------------------------------------------------------------
+%	Text
+%	--------------------------------------------------------------------------------
+\pagenumbering{arabic}
+
+%	--------------------------------------------------------------------------------
+\section{Die Bibliothek \emph{ksapi}}
+	Die Bibliothek \emph{ksapi} ist eine Sammlung verschiedener Klassen. Jede Klasse liest oder setzt jeweils einen Variablentyp von/auf einem anderen Server. \textcolor{red}{\sout{Dazu wird eine KS-Connection zu einem Server auf einem Host aufgebaut und ein KS-Service auf dieser Connection übernimmt dann den Datentransfer.}} Die Variablennamen in der \emph{ksapi} sind konsistent mit denen in der \emph{ksapiexample}. Im Folgenden werden die Klassen \emph{setString}, \emph{getString} und \emph{getEPidentifier} exemplarisch beschrieben. Alle anderen Variablentypen funktionieren analog. Eine Übersicht, welche Variablen bereits implementiert sind, findet man in Kapitel \ref{impl}.
+	
+	\subsection{setString}
+		\subsubsection{Welche Einstellungen kann man vornehmen?}
+			Zum einen können natürlich der Host, der Server und der Pfad des Empfängers eingestellt werden sowie der zu sendende String. Dies kann entweder über die Set-Funktionen der einzelnen Variablen geschehen oder durch Parameterübergabe an die entsprechende Funktion \textsl{setandsubmit}. \textcolor{red}{\sout{Zum anderen kann auch die Anzahl der Fehler, die auftreten dürfen, eingegeben werden und man kann entscheiden, ob die Verbindung nach dem Ende des Sendevorgangs offen bleiben soll oder nicht.}} \\
+			Alle Änderungen der Variablen dürfen nur über die entsprechenden Set-Methoden vorgenommen werden; bei der Parameterübergabe wird dies intern gemacht. Wenn die Variablen direkt gesetzt werden, werden eventuell wichtige Aufräumaktionen nicht durchgeführt.	
+		\subsubsection{Wie starte ich den Sendevorgang?}
+			Zuerst muss eine Rückgabemethode definiert werden. Was das ist, ist im nächsten Abschnitt erklärt. Danach gibt es zwei Möglichkeiten, den Sendevorgang zu starten:
+			\begin{enumerate}
+				\item Man setzt die benötigten Variablen über ihre Set-Funktionen und ruft die Methode \textsl{submit} auf
+				\item Man übergibt der Methode \textsl{setandsubmit} die benötigten Variablen als Parameter
+			\end{enumerate}
+			Das weitere Vorgehen ist wieder einheitlich und läuft im Hintergrund ab. \textcolor{red}{\sout{Falls noch keine Verbindung existiert, wird eine erzeugt, ansonsten wird die bestehende weiter benutzt. Auf der Verbindung wird dann ein KS-Service erzeugt, der den String dann an den Empfänger sendet. Danach wird der Service wieder geschlossen und eine Meldung an die Rückgabemethode übergeben. Falls die entsprechende Variable gesetzt ist, wird die Verbindung auch geschlossen, sonst ist sie danach wieder offen.}}
+		\paragraph{Was ist die Rückgabemethode?}
+			\label{setret}
+			Da das Objekt \emph{setString} nicht weiß, wer ihn aufgerufen hat, kann es auch keine Rückmeldung an den übergeordneten Prozess geben. Deswegen muss in der aufrufenden Klasse eine Methode mit der entsprechenden Syntax (sie muss vom Typ \textsl{OV\_FNCPTR\_KSAPI\_FNC\_RET} sein) erzeugt werden, die dann entsprechend mit dem aufrufenden Objekt interagieren kann. Dieses Objekt weiß, wo die \emph{setString} in der Hierarchie liegt, kann also den Weg rückwärts entlanggehen. In dieser Methode können dann die eventuell auftretenden Fehler behandelt werden.
+		\paragraph{\textcolor{red}{\sout{Welche Fehler können auftreten?}}}
+			\textcolor{red}{\sout{Beim Senden können verschiedene Fehler auftreten, die an die Rückgabemethode übergeben werden. Eine Übersicht steht unter Kapitel \ref{fehler}.}}
+			
+	\subsection{getString}
+		\subsubsection{Welche Einstellungen kann man vornehmen?}
+			Zum einen können natürlich der Host, der Server und der Pfad der Variable, die gelesen werden soll, eingestellt werden. Dies kann entweder über die Set-Funktionen der einzelnen Variablen geschehen oder durch Parameterübergabe an die entsprechende Funktion \textsl{setandsubmit}. \textcolor{red}{\sout{Zum anderen kann auch die Anzahl der Fehler, die auftreten dürfen, eingegeben werden und man kann entscheiden, ob die Verbindung nach dem Ende des Sendevorgangs offen bleiben soll oder nicht.}} \\
+			Alle Änderungen der Variablen dürfen nur über die entsprechenden Set-Methoden vorgenommen werden; bei der Parameterübergabe wird dies intern gemacht. Wenn die Variablen direkt gesetzt werden, werden eventuell wichtige Aufräumaktionen nicht durchgeführt.	
+		\subsubsection{Wie starte ich den Lesevorgang?}
+			Auch hier muss zuerst eine Rückgabemethode definiert werden. Zusätzlich zu den Aufgaben, die in Kapitel \ref{setret} erklärt sind, muss in dieser Methode auch die Weiterverarbeitung des gelesenen Strings erfolgen. Danach gibt es zwei Möglichkeiten, den Lesevorgang zu starten:
+			\begin{enumerate}
+				\item Man setzt die benötigten Variablen über ihre Set-Funktionen und ruft die Methode \textsl{submit} auf
+				\item Man übergibt der Methode \textsl{setandsubmit} die benötigten Variablen als Parameter
+			\end{enumerate}
+			Das weitere Vorgehen ist wieder einheitlich und läuft im Hintergrund ab. \textcolor{red}{\sout{Falls noch keine Verbindung existiert, wird eine erzeugt, ansonsten wird die bestehende weiter benutzt. Auf der Verbindung wird dann ein KS-Service erzeugt, der den String dann vom Empfänger liest. Danach wird der Service wieder geschlossen und eine Meldung an die Rückgabemethode übergeben. Falls die entsprechende Variable gesetzt ist, wird die Verbindung auch geschlossen, sonst ist sie im Anschluss wieder offen.}}
+		\paragraph{\textcolor{red}{\sout{Welche Fehler können auftreten?}}}
+			\textcolor{red}{\sout{Auch beim Lesen können verschiedene Fehler auftreten, die an die Rückgabemethode übergeben werden. Eine Übersicht steht im Anhang unter Kapitel \ref{fehler}.}}
+			
+	\subsection{\textcolor{red}{\sout{getEPidentifiers}} \textcolor{red}{--> funktioniert noch nicht}}
+		\textcolor{red}{\sout{Die Klasse \emph{getEPidentifiers} gibt eine Liste der Identifier aller unter dem angegebenen Pfad sich befindenden Kinder an. Diese müssen von der Klasse \textsl{ov\_domain} sein. Die Klasse liest die EP-Objekte als ganzes aus, gibt aber nur die Identifier zurück. Sollten andere Attribute benötigt werden, muss man die reqcb-Methode entsprechend ändern.}}
+		\subsubsection{\textcolor{red}{\sout{Welche Einstellungen kann man vornehmen?}}}
+			\textcolor{red}{\sout{Zum einen können natürlich der Host, der Server und der Pfad der Domain, deren Kinder man lesen möchte, sowie ein regulärer Ausdruck, der die Identifier filtert, eingestellt werden. Dies kann entweder über die Set-Funktionen der einzelnen Variablen geschehen oder durch Parameterübergabe an die entsprechende Funktion \textsl{setandsubmit}. Zum anderen kann auch die Anzahl der Fehler, die auftreten dürfen, eingegeben werden und man kann entscheiden, ob die Verbindung nach dem Ende des Sendevorgangs offen bleiben soll oder nicht. \\
+			Alle Änderungen der Variablen dürfen nur über die entsprechenden Set-Methoden vorgenommen werden; bei der Parameterübergabe wird dies intern gemacht. Wenn die Variablen direkt gesetzt werden, werden eventuell wichtige Aufräumaktionen nicht durchgeführt.	}}
+		\subsubsection{\textcolor{red}{\sout{Wie starte ich den Lesevorgang?}}}
+			\textcolor{red}{\sout{Auch hier muss zuerst eine Rückgabemethode definiert werden. Zusätzlich zu den Aufgaben, die in Kapitel \ref{setret} erklärt sind, muss in dieser Methode auch die Weiterverarbeitung der gelesenen Strings, die in einem Vektor gespeichert werden, erfolgen. Danach gibt es zwei Möglichkeiten, den Lesevorgang zu starten:}}
+			\begin{enumerate}
+				\item \textcolor{red}{\sout{Man setzt die benötigten Variablen über ihre Set-Funktionen und ruft die Methode \textsl{submit} auf}}
+				\item \textcolor{red}{\sout{Man übergibt der Methode \textsl{setandsubmit} die benötigten Variablen als Parameter}}
+			\end{enumerate}
+			\textcolor{red}{\sout{Das weitere Vorgehen ist wieder einheitlich und läuft im Hintergrund ab. Falls noch keine Verbindung existiert, wird eine erzeugt, ansonsten wird die bestehende weiter benutzt. Auf der Verbindung wird dann ein KS-Service erzeugt, der die EP-Objekte vom Empfänger liest und die Identifier speichert. Danach wird der Service wieder geschlossen und eine Meldung an die Rückgabemethode übergeben. Falls die entsprechende Variable gesetzt ist, wird die Verbindung auch geschlossen, sonst ist sie im Anschluss wieder offen.}}
+		\paragraph{\textcolor{red}{\sout{Welche Fehler können auftreten?}}}
+			\textcolor{red}{\sout{Auch beim Lesen können verschiedene Fehler auftreten, die an die Rückgabemethode übergeben werden. Eine Übersicht steht im Anhang unter Kapitel \ref{fehler}.}}
+						
+	\subsection{Übersicht der implementierten Variablentypen}
+	\label{impl}
+	\begin{center}
+		\begin{tabular}{|l|l|l|}
+			\hline
+			Variablentyp& Klasse& Aufruf\\
+			\hline
+			\textcolor{red}{\sout{EP}}& \textcolor{red}{\sout{getEPidentifiers}}&\textcolor{red}{\sout{setandsubmit(pobj, host, server, path, namemask)}}\\
+			\hline
+			INT& getInt&setandsubmit(pobj, host, server, path)\\
+			& setInt&setandsubmit(pobj, host, server, path, sendint)\\
+			\hline
+			INTVEC& getIntVec&setandsubmit(pobj, host, server, path)\\
+			& setIntVec&setandsubmit(pobj, host, server, path, sendintvec, sendintveclength)\\
+			\hline
+			STRING& getString&setandsubmit(pobj, host, server, path)\\
+			& setString&setandsubmit(pobj, host, server, path, sendstring)\\
+			\hline
+			STRINGVEC& getStringVec&setandsubmit(pobj, host, server, path)\\
+			& setStringVec&setandsubmit(pobj, host, server, path, sendstringvec, sendstringlength)\\
+			\hline
+			BOOL& getBool&setandsubmit(pobj, host, server, path)\\
+			& setBool&setandsubmit(pobj, host, server, path, sendbool)\\
+			\hline
+			BOOLVEC& getBoolVec&setandsubmit(pobj, host, server, path)\\
+			& setBoolVec&setandsubmit(pobj, host, server, path, sendboolvec, sendboolveclength)\\
+			\hline
+			DOUBLE& getDouble&setandsubmit(pobj, host, server, path)\\
+			& setDouble&setandsubmit(pobj, host, server, path, senddouble)\\
+			\hline
+			DOUBLEVEC& getDoubleVec&setandsubmit(pobj, host, server, path)\\
+			& setDoubleVec&setandsubmit(pobj, host, server, path, senddoublevec, senddoubleveclength)\\
+			\hline
+			SINGLE& getSingle&setandsubmit(pobj, host, server, path)\\
+			& setSingle&setandsubmit(pobj, host, server, path, sendsingle)\\
+			\hline
+			SINGLEVEC& getSingleVec&setandsubmit(pobj, host, server, path)\\
+			& setSingleVec&setandsubmit(pobj, host, server, path, sendsinglevec, sendsingleveclength)\\
+			\hline
+			UINT& getUInt&setandsubmit(pobj, host, server, path)\\
+			& setUInt&setandsubmit(pobj, host, server, path, senduint)\\
+			\hline
+			UINTVEC& getUIntVec&setandsubmit(pobj, host, server, path)\\
+			& setUIntVec&setandsubmit(pobj, host, server, path, senduintvec, senduintveclength)\\
+			\hline
+		\end{tabular}
+	\end{center}
+	Alle weiteren Variablentypen sind noch nicht implementiert, können aber einfach hinzugefügt werden.
+	
+	\subsection{createObject}
+		\subsubsection{Welche Einstellungen kann man vornehmen?}
+		\subsubsection{Wie starte ich den Sendevorgang?}
+	
+	\subsection{renameObject}
+		\subsubsection{Welche Einstellungen kann man vornehmen?}
+		\subsubsection{Wie starte ich den Sendevorgang?}
+	
+	\subsection{deleteObject}
+		\subsubsection{Welche Einstellungen kann man vornehmen?}
+		\subsubsection{Wie starte ich den Sendevorgang?}
+    
+     \subsection{linkObject}
+		\subsubsection{Welche Einstellungen kann man vornehmen?}
+		\subsubsection{Wie starte ich den Sendevorgang?}
+	
+	\subsection{unlinkObject}
+		\subsubsection{Welche Einstellungen kann man vornehmen?}
+		\subsubsection{Wie starte ich den Sendevorgang?}
+	
+\section{Die Beispielbibliothek \emph{ksapiexample}}
+	Die Beispielbibliothek \emph{ksapiexample} ist ein einfacher Anwendungsfall der \emph{ksapi}. In ihr werden alle dort implementierten Variablentypen verwendet. Sie besteht aus je einem Funktionsbaustein pro Typ, einem Client-FB und einem Link, die im Folgenden genauer erläutert werden. Exemplarisch wird hier die Klasse \emph{setStringexample} detailliert erläutert, alle anderen Variablentypen funktionieren analog.
+	\subsection{setStringexample} 
+		Der Zweck dieser Klasse ist es, einen String, der in einem Eingabebaustein eingegeben werden kann, an einen Receiver zu senden. Dazu wird die Bibliothek \emph{ksapi} verwendet, es ist also darauf zu achten, dass die Bibliothek \emph{ksapi} vor \emph{ksapiexample} geladen wird.\\
+	Die folgende Grafik stellt die Abläufe, die für den Nutzer entscheidend sind, dar. Eine detailliertere Beschreibung befindet sich im an die Abbildung folgenden Text.
+\begin{center}
+\includegraphics[viewport=30pt 610pt 500pt 775pt,clip,scale=0.8]{zeichnung.pdf} 
+\end{center}
+		Der FB \emph{setStringExample} ist ein Userinterface, in das alle benötigten Daten zum Versenden eines Strings eingegeben werden können. Im Anhang (\ref{var}) ist eine tabellarische Auflistung der einzelnen Variablen und ihrer Bedeutung.\
+	\begin{enumerate}
+		\item Als erstes muss die Rückgabemethode gesetzt werden. Dazu wird die Methode \textsl{registerMethod} mit dem Methodentabelleneintrag der selbstgeschriebenen Rückgabemethode aufgerufen.
+		\item Anschließend ruft man die Methode \textsl{setandsubmit} mit den benötigten Parametern auf
+		\item Nachdem der \textcolor{red}{\sout{KS}}-Vorgang beendet ist, wird die Rückgabemethode ausgeführt
+		\item Dann kann man sich um die Auswertung der Rückgabewerte kümmern.
+	\end{enumerate}
+	
+	\subsection{Der FB \emph{client}}
+		Der FB \emph{client} ist ein Beispiel für einen ganz einfachen Client-Baustein. Er kann Variablen annehmen, was jedesmal durch Setzen von \textsl{reset} auf \textsc{True} quittiert werden muss. Dabei ist zu beachten, dass jedes Setzen quittiert werden muss, es geht also nicht, dass z.B. zuerst ein String gesetzt wird und direkt im Anschluss noch ein Integer. Gelesen werden kann jedoch immer. 
+		
+	\subsection{Die Links \emph{*assoc}}
+		Die Links dienen nur dazu, die Klassen der \emph{ksapi} als Kinder der Klassen der \emph{ksapiexample} leicht wiederzufinden. Da diese Links nur für diesen Zweck verwendet werden, braucht man nicht bei evtl. weiteren Kindern einen Test durchzuführen, ob das richtige Kind erreicht wurde. 
+
+\section{Anhang}
+
+\subsection{Übersicht der Variablennamen und -bedeutungen}
+\label{var}
+\begin{center}
+	\begin{tabular}{|l|p{6.1cm}|l|}
+		\hline
+		\textsl{Variable}&Bedeutung&\textsc{Standardwert}\\
+		\hline
+		\textsl{send*}& Hier kann der Wert der Variablen eingetragen werden, die versendet werden soll.(nur bei set)& verschiedene Werte\\
+		\hline
+		\textsl{received*}& Enthält den Wert der gelesenen Variable (nur bei get).& NULL\\
+		\hline
+		\textsl{host}& Der Host, auf dem der Receiver ausgeführt wird.& \textsc{127.0.0.1}\\
+		\hline
+		\textsl{server}&Der Server, auf dem der Receiver ausgeführt wird.& \textsc{fb\_testlib}\\
+		\hline
+		\textsl{path}&Der Pfad, wo der Receiver auf dem Server liegt.&\textsc{/TechUnits/client.*}\\
+		\hline
+		\textcolor{red}{\sout{\textsl{maxtries}}}& \textcolor{red}{\sout{Die Anzahl der Versuche, wie oft bei einem Fehler wiederholt werden soll, kann hier eingestellt werden.}}& \textcolor{red}{\sout{\textsc{3}}}\\
+		\hline
+		\textcolor{red}{\sout{\textsl{close}}}& \textcolor{red}{\sout{Hier kann eingestellt werden, ob die Verbindung nach dem Senden geschlossen werden soll.}}& \textcolor{red}{\sout{\textsc{False}}}\\
+		\hline
+		\textcolor{red}{\sout{\textsl{namemask}}}&\textcolor{red}{\sout{Ein regulärer Ausdruck zum Filtern der gelesenen Identifier (nur getEPidentifier).}}& \textcolor{red}{\sout{\textsc{False}}}\\
+		\hline
+		\textsl{send}&Wird auf true gesetzt, wenn der Kommunikationsvorgang gestartet werden soll.& \textsc{False}\\
+		\hline
+		\textsl{reset}&Stellt den Anfangszustand wieder her.& \textsc{False}\\
+		\hline
+	\end{tabular}
+\end{center}
+Bis auf die letzten beiden Variablen treten diese sowohl in der \emph{sendapi} als auch im \emph{sendexample} auf.
+\subsection{\textcolor{red}{\sout{Fehlercodes}}}
+\label{fehler}
+\begin{center}
+	\begin{tabular}{|l|p{14cm}|}
+	\hline
+	\textcolor{red}{\sout{\#}} & \textcolor{red}{\sout{Fehlerbeschreibung}}\\
+	\hline
+	\textcolor{red}{\sout{1}}	&	\textcolor{red}{\sout{Der Sendevorgang wurde erfolgreich abgeschlossen}}\\
+	\hline
+	\textcolor{red}{\sout{2}}	&	\textcolor{red}{\sout{Fehler bei der Eingabe, nicht alle Variablen wurden gesetzt}}\\
+	\hline
+	\textcolor{red}{\sout{3}}	&	\textcolor{red}{\sout{Es wurde keine Rückgabemethode gesetzt}}\\
+	\hline
+	\textcolor{red}{\sout{4}}	&	\textcolor{red}{\sout{Es ist ein Fehler beim Erzeugen eines OV-Objektes aufgetreten}}\\
+	\hline
+	\textcolor{red}{\sout{5}}	&	\textcolor{red}{\sout{Die Verbindung hat einen Fehler erzeugt}}\\
+	\hline
+	\textcolor{red}{\sout{6}}	&	\textcolor{red}{\sout{Der Service hat einen Fehler erzeugt}}\\
+	\hline
+	\textcolor{red}{\sout{7}}	&	\textcolor{red}{\sout{Die Variable, die gelesen werden soll, hat den falschen Typ.}}\\
+	\hline
+	\textcolor{red}{\sout{8}}	&	\textcolor{red}{\sout{Der Receiver hat die Nachricht nicht angenommen}}\\
+	\hline
+	\textcolor{red}{\sout{9}}	&	\textcolor{red}{\sout{Speicherfehler beim dynamischen Vektor in getEPidentifier}}\\
+	\hline
+	\end{tabular}
+\end{center}
+\end{document}
