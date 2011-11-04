@@ -1,0 +1,623 @@
+#include "ksserv.ovm"
+
+LIBRARY	ksapi
+
+	VERSION		=	"0.2";
+	AUTHOR		=	"Martin Weingarten, Henning Mersch";
+	COPYRIGHT	=	"Copyright (C) 2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+	COMMENT		=	"KS 2nd: ksapi, client-side communication API";
+	
+	CLASS	KSCommon					:	CLASS	ov/domain
+		COMMENT	=	"ov_object, which gets the information and tries to send the string";
+		VARIABLES
+			/* Input *************************************************/
+			host						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"Target Host"
+				INITIALVALUE	=	"127.0.0.1";
+			server					:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"Target Server"
+				INITIALVALUE	=	"MANAGER";	
+			path						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"Target Path"
+				INITIALVALUE	=	"/vendor/database_name";
+			status :	INT	HAS_ACCESSORS COMMENT="status of KS obj"	INITIALVALUE	=	0;
+			/* Verbindungshandling (intern)	*******************************/
+			returnmethodptr	:	C_TYPE <OV_FNCPTR_KSAPI_FNC_RET>				FLAGS =	"n"
+				COMMENT	=	"Pointer to the returnmethod";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			// setting the return function:
+			registerMethod		:	C_FUNCTION <KSAPI_FNC_REGISTER>;
+			deregisterMethod	:	C_FUNCTION <KSAPI_FNC_DEREGISTER>;
+			//declaring the return function:
+			returnMethod		:	C_FUNCTION <KSAPI_FNC_RET>;
+			//declaring a default return function:
+			defaultretMethod	:	C_FUNCTION <KSAPI_FNC_RET>;
+			//xdr operations:
+			//Get Var common methods			
+			setandsubmitget		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_COMMON_GET>;
+			submitget			:	C_FUNCTION <KSAPI_FNC_SUBMIT_COMMON_GET>;
+			//Set Var common methods
+			analysesetxdr		:	C_FUNCTION <KSAPI_FNC_ANASET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	Channel					:	CLASS	ksserv/ComTask
+	  //NOT INSTANCIABLE
+		COMMENT	=	"Abstract Interface class, which should be realized by transport libraries";
+		VARIABLES
+			constate :	INT	HAS_ACCESSORS COMMENT="state of channel"	INITIALVALUE	=	0;
+			serverport	:	INT	COMMENT="received serverport from managercom"	INITIALVALUE=0;
+			servername	:	STRING	COMMENT="name of server to send xdr to"	INITIALVALUE="";
+			host	:	STRING	COMMENT="host for sending xdr"	INITIALVALUE="";
+			xdr	:	STRING	COMMENT="xdr to send"	INITIALVALUE="";
+			xdrlength	:	INT	COMMENT="length of xdr to send"	INITIALVALUE=0;
+		END_VARIABLES;	
+		OPERATIONS
+			//real sending of a XDR
+			sendxdr		:	C_FUNCTION <KSAPI_FNC_TCP_SENDXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+
+	CLASS	createObject	:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to create an object";
+		VARIABLES
+			/* Input *************************************************/
+			librarypath			:	STRING				HAS_ACCESSORS
+				COMMENT			=	"path of the object type"
+				INITIALVALUE	=	"";
+			position				:	INT					HAS_ACCESSORS
+				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after"
+				INITIALVALUE	=	0;
+			element					:	STRING				HAS_ACCESSORS
+				COMMENT			=	"element postion points to"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_CREATEOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	deleteObject	:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to delete an object";
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_DELETEOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getBool				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the boolean";
+		VARIABLES
+			/* Output *************************************************/
+			receivebool			:	BOOL		HAS_ACCESSORS						FLAGS	=	"o"
+				COMMENT			=	"The boolean which will be received from the client"
+				INITIALVALUE	=	TRUE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getBoolVec		:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the bool";
+		VARIABLES
+			/* Output *************************************************/
+			receiveboolvec[]	:	BOOL		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The bool which will be received from the client";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getDouble			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the integer";
+		VARIABLES
+			/* Output *************************************************/
+			receivedouble		:	DOUBLE	HAS_ACCESSORS						FLAGS	=	"o"
+				COMMENT			=	"The int which will be received from the client"
+				INITIALVALUE	=	0.0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getDoubleVec		:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the double";
+		VARIABLES
+			/* Output *************************************************/
+			receivedoublevec[]	:	DOUBLE		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The double which will be received from the client";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getInt				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the integer";
+		VARIABLES
+			/* Output *************************************************/
+			receiveint			:	INT		HAS_ACCESSORS						FLAGS	=	"o"
+				COMMENT			=	"The int which will be received from the client"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getIntVec			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the int";
+		VARIABLES
+			/* Output *************************************************/
+			receiveintvec[]	:	INT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The int which will be received from the client";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getSingle				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the single";
+		VARIABLES
+			/* Output *************************************************/
+			receivesingle		:	SINGLE		HAS_ACCESSORS						FLAGS	=	"o"
+				COMMENT			=	"The single which will be received from the client"
+				INITIALVALUE	=	0.0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getSingleVec		:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the single";
+		VARIABLES
+			/* Output *************************************************/
+			receivesinglevec[]	:	SINGLE		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The single which will be received from the client";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getString			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the string";
+		VARIABLES
+			/* Output *************************************************/
+			receivestring		:	STRING		HAS_ACCESSORS						FLAGS	=	"o"
+				COMMENT			=	"The string which will be received from the client"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getStringVec		:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the string";
+		VARIABLES
+			/* Output *************************************************/
+			receivestringvec[]	:	STRING		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The string which will be received from the client";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getUInt				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the uint";
+		VARIABLES
+			/* Output *************************************************/
+			receiveuint			:	UINT		HAS_ACCESSORS						FLAGS	=	"o"
+				COMMENT			=	"The uint which will be received from the client"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getUIntVec			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get the uint";
+		VARIABLES
+			/* Output *************************************************/
+			receiveuintvec[]	:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The uint which will be received from the client";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+
+	CLASS	setBool				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send the boolean";
+		VARIABLES
+			/* Input *************************************************/
+				sendbool			:	BOOL		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The boolean which wants to be send"
+				INITIALVALUE	=	TRUE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_BOOL_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_BOOL_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setBoolVec			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send a bool vector";
+		VARIABLES
+			/* Input *************************************************/
+			sendboolvec[]	:	BOOL		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The bool vector which wants to be send";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_BOOLVEC_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_BOOLVEC_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setDouble			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send the integer";
+		VARIABLES
+			/* Input *************************************************/
+				senddouble		:	DOUBLE	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The int which wants to be send"
+				INITIALVALUE	=	0.0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_DOUBLE_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_DOUBLE_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setDoubleVec			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send a double vector";
+		VARIABLES
+			/* Input *************************************************/
+			senddoublevec[]	:	DOUBLE		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The double vector which wants to be send";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_DOUBLEVEC_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_DOUBLEVEC_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setInt				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send the integer";
+		VARIABLES
+			/* Input *************************************************/
+				sendint			:	INT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The int which wants to be send"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_INT_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_INT_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setIntVec			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send a int vector";
+		VARIABLES
+			/* Input *************************************************/
+			sendintvec[]		:	INT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The int vector which wants to be send";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_INTVEC_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_INTVEC_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setSingle				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send the single";
+		VARIABLES
+			/* Input *************************************************/
+				sendsingle		:	SINGLE		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The single which wants to be send"
+				INITIALVALUE	=	0.0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_SINGLE_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_SINGLE_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setSingleVec			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send a single vector";
+		VARIABLES
+			/* Input *************************************************/
+			sendsinglevec[]	:	SINGLE		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The single vector which wants to be send";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_SINGLEVEC_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_SINGLEVEC_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setString			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send the string";
+		VARIABLES
+			/* Input *************************************************/
+			sendstring			:	STRING		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The string which wants to be send"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_STRING_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_STRING_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setStringVec		:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send a string vector";
+		VARIABLES
+			/* Input *************************************************/
+			sendstringvec[]	:	STRING		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The string vector which wants to be send";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_STRINGVEC_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_STRINGVEC_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setUInt				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send the uint";
+		VARIABLES
+			/* Input *************************************************/
+				senduint			:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The uint which wants to be send"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_UINT_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_UINT_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setUIntVec			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send a uint vector";
+		VARIABLES
+			/* Input *************************************************/
+			senduintvec[]		:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The uint vector which wants to be send";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_UINTVEC_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_UINTVEC_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getEPidentifiers	:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"get Identifiers of contained objects via getEP";
+		VARIABLES
+			/* Output *************************************************/
+			identifierList[]	:	STRING											FLAGS	=	"o"
+				COMMENT			=	"A list containing the servers read from the client";
+			namemask				:	STRING				HAS_ACCESSORS			FLAGS	=	"i"
+				COMMENT			=	"A regular expression to filter the Objects, * takes everything"
+				INITIALVALUE	=	"*";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_EP_GET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_EP_GET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	setPkg				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which sets a package of variables";
+		VARIABLES
+			dosetPkg				:	BOOL				HAS_ACCESSORS
+				COMMENT			=	"start setting"
+				INITIALVALUE	=	FALSE;
+			state					:	STRING			HAS_ACCESSORS
+				COMMENT			=	"state of setting package"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_SETPKG>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getPkg				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets a package of variables";
+		VARIABLES
+			dogetPkg				:	BOOL				HAS_ACCESSORS
+				COMMENT			=	"start setting"
+				INITIALVALUE	=	FALSE;
+			state					:	STRING			HAS_ACCESSORS
+				COMMENT			=	"state of setting package"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_GETPKG>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	renameObject	:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to rename an object";
+		VARIABLES
+			/* Input *************************************************/
+			newpath				:	STRING				HAS_ACCESSORS
+				COMMENT			=	"new path of the object"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_RENAMEOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;		
+	
+	CLASS	linkObject			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to link an object";
+		VARIABLES
+			/* Input *************************************************/
+			linkedpath			:	STRING				HAS_ACCESSORS
+				COMMENT			=	"path of the linked object"
+				INITIALVALUE	=	"";
+			position				:	INT					HAS_ACCESSORS
+				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after"
+				INITIALVALUE	=	0;
+			element					:	STRING				HAS_ACCESSORS
+				COMMENT			=	"place postion points to"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_LINKOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_LINKOBJECT>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	unlinkObject			:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to unlink an object";
+		VARIABLES
+			/* Input *************************************************/
+			linkedpath			:	STRING				HAS_ACCESSORS
+				COMMENT			=	"path of the linked object"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_UNLINKOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_UNLINKOBJECT>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+END_LIBRARY;
