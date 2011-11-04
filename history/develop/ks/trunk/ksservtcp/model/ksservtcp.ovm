@@ -1,0 +1,300 @@
+#include "ksserv.ovm"
+
+LIBRARY ksservtcp
+VERSION = "1.0";
+AUTHOR = "Martin Weingarten, Henning Mersch";
+COPYRIGHT = "Lehrstuhl fuer Prozessleittechnik";
+COMMENT   = "tcp communication ";
+
+CLASS tcpconnection : CLASS ksserv/ComTask
+	IS_INSTANTIABLE;
+  	VARIABLES
+		cycsecs	:	INT
+  			INITIALVALUE = 0;
+  		cycusecs	:	INT
+  			INITIALVALUE = 1;
+		port : INT HAS_ACCESSORS;
+  		listensocket : INT HAS_ACCESSORS;
+  		status	:	INT
+  			COMMENT	=	"0:OK"
+  			INITIALVALUE	=	1;
+  		deleted	:	BOOL
+  			INITIALVALUE = FALSE;
+	END_VARIABLES;
+
+	OPERATIONS
+		startup : C_FUNCTION <OV_FNC_STARTUP>;
+		shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod : C_FUNCTION <FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+
+END_CLASS;
+
+CLASS tcpclient : CLASS ksserv/Client
+	IS_INSTANTIABLE;
+  
+	VARIABLES
+ 		receivesocket : INT HAS_ACCESSORS INITIALVALUE=-1;	
+  		deleted	:	BOOL INITIALVALUE = FALSE;
+	END_VARIABLES;
+
+	OPERATIONS
+		startup : C_FUNCTION <OV_FNC_STARTUP>;
+		shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+		typemethod : C_FUNCTION <FNC_TYPEMETHOD>; 
+	END_OPERATIONS;
+
+END_CLASS;
+
+
+//manager-Klassen
+
+CLASS	register					:	CLASS	ov/domain
+		IS_INSTANTIABLE;
+		COMMENT	=	"object which registers server";
+		VARIABLES
+			/* Input *************************************************/
+			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"name of server"
+				INITIALVALUE	=	"";	
+			version					:	INT	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"version of server"
+				INITIALVALUE	=	0;
+			port						:	INT	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"port of server"
+				INITIALVALUE	=	0;	
+			timetolife				:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"time in seconds in which server has to do callback"
+				INITIALVALUE	=	0;
+			process					:	BOOL		HAS_ACCESSORS						FLAGS =	"i"
+				COMMENT			=	"start processing"
+				INITIALVALUE	=	FALSE;
+			/* Output *************************************************/
+			res						:	INT		HAS_ACCESSORS						FLAGS =	"i"
+				COMMENT			= "ok or not"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown				:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS	serverlist			:	CLASS	ksserv/ComTask //ov/domain
+		IS_INSTANTIABLE;
+		COMMENT	=	"object to save connected server";
+		VARIABLES
+			/* server data *************************************************/
+			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"name of server"
+				INITIALVALUE	=	"";	
+			version					:	INT	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"version of server"
+				INITIALVALUE	=	0;
+			port						:	INT	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"port of server"
+				INITIALVALUE	=	0;	
+			timetolife				:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"time in which server has to do callback"
+				INITIALVALUE	=	0;
+			expirationtime			:	TIME		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"time at which server has to do callback";
+			/* internals ***************************************************/
+			regtime					:	TIME											FLAGS =	"i"
+				COMMENT			=	"time the server registered at the manager";
+			state						:	INT		HAS_ACCESSORS						FLAGS =	"i"
+				COMMENT			=	"state of the server; 0: offline; 1: online; 2: inactiv"
+				INITIALVALUE	=	0;
+			deleted	:	BOOL
+  			INITIALVALUE = FALSE;
+			cycsecs	:	INT
+				INITIALVALUE = 0;
+	  		cycusecs	:	INT
+  				INITIALVALUE = 1;
+		END_VARIABLES;
+		OPERATIONS
+			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown		:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod 		: 	C_FUNCTION <FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS	unregister			:	CLASS	ov/domain
+		IS_INSTANTIABLE;
+		COMMENT	=	"object which unregisters server";
+		VARIABLES
+			/* Input *************************************************/
+			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"name of server"
+				INITIALVALUE	=	"";	
+			version					:	INT	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"version of server"
+				INITIALVALUE	=	0;
+			process					:	BOOL		HAS_ACCESSORS						FLAGS = "i"
+				COMMENT			=	"start processing"
+				INITIALVALUE	=	FALSE;
+			/* Output *************************************************/
+			res						:	INT		HAS_ACCESSORS						FLAGS =	"i"
+			COMMENT				= "ok or not"
+				INITIALVALUE		=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS udpconnection		:	CLASS  ksserv/ComTask //ov/domain //aendern wenn alte udpconnection:
+		IS_INSTANTIABLE;
+		COMMENT	=	"object which handles the UDP connection";
+		VARIABLES
+			cycsecs	:	INT
+  				INITIALVALUE = 0;
+  			cycusecs	:	INT
+  				INITIALVALUE = 1;
+  			xdr : STRING;
+  			xdrlength : INT;
+  			/* connection vars ****************************************/
+  			udpport : INT HAS_ACCESSORS;
+  			tcpport : INT HAS_ACCESSORS;
+  			socket : INT HAS_ACCESSORS
+  				INITIALVALUE = -1;
+  			status :	INT HAS_ACCESSORS
+  				COMMENT	=	"0:OK"
+  				INITIALVALUE	=	1;
+  			deleted	:	BOOL
+  				INITIALVALUE = FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod 		: C_FUNCTION <FNC_TYPEMETHOD>; //auskommentieren, wenn alte updconnection!
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getserverdata		:	CLASS ov/domain
+		IS_INSTANTIABLE;
+		COMMENT	=	"object which gets the server data out of the serverlist";
+		VARIABLES
+			cycsecs	:	INT
+  				INITIALVALUE = 0;
+  			cycusecs	:	INT
+  				INITIALVALUE = 1;
+  			/* Input *************************************************/
+			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"name of server"
+				INITIALVALUE	=	"";	
+			version					:	INT	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"version of server"
+				INITIALVALUE	=	0;
+			process					:	BOOL		HAS_ACCESSORS						FLAGS = "i"
+				COMMENT			=	"start processing"
+				INITIALVALUE	=	FALSE;
+			/* Output *************************************************/
+			res						:	INT		HAS_ACCESSORS						FLAGS =	"i"
+			COMMENT				= "ok or not"
+				INITIALVALUE		=	0;
+			port						:	INT	HAS_ACCESSORS
+				COMMENT	=	"received port"
+				INITIALVALUE	=	0;
+			ttl	:	UINT	HAS_ACCESSORS
+				COMMENT	=	"received time to life"
+				INITIALVALUE	=	0;
+			expirationtime			:	TIME		HAS_ACCESSORS
+				COMMENT			=	"time at which server has to do callback";
+		END_VARIABLES;
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS managercom	:	CLASS ksserv/ComTask
+		IS_INSTANTIABLE;
+		VARIABLES
+			mngport	:	UINT	HAS_ACCESSORS
+				COMMENT	=	"port running on"
+				INITIALVALUE = 0;
+			sname	:	STRING	HAS_ACCESSORS
+				COMMENT	=	"name of server running on";
+			status	:	INT
+				COMMENT	=	"0:OK; 2:portmapper socket created; 3:portmapper request send; 4:portmapper reply received; 5:manager request send"
+				INITIALVALUE	=	1;
+			sversion	:	UINT
+				COMMENT	=	"version of server running on"
+				INITIALVALUE	=	1;
+			sport	:	UINT
+				COMMENT	=	"port of server running on"
+				INITIALVALUE	=	0;
+			sttl	:	UINT	HAS_ACCESSORS
+				COMMENT	=	"time in which server must do call back to manager"
+				INITIALVALUE	=	30;
+			receivedsport	:	INT
+				FLAGS	=	"o"
+				INITIALVALUE	=	0;
+			socket	:	INT
+				FLAGS	=	"n"
+				INITIALVALUE = -1;
+			xdr	:	STRING
+				FLAGS	=	"n";
+			xdrlength	:	INT
+				FLAGS	=	"n"
+				INITIALVALUE	=	0;
+			operatingfunction	:	INT
+				FLAGS	=	"n"
+				COMMENT	=	"1:mngregister; 2:mngunregister"
+				INITIALVALUE	=	0;
+			host	:	STRING
+				INITIALVALUE	=	"127.0.0.1";
+			methcount	:	INT
+				INITIALVALUE = 0;
+			activatetypemethod	:	BOOL	HAS_ACCESSORS
+				COMMENT	=	"choose whether typemethod should be active or not"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			mngregister	:	C_FUNCTION <KSMANAGERCOM_FNC_MANAGERCOM_MNGREGISTER>;
+			mngunregister	:	C_FUNCTION <KSMANAGERCOM_FNC_MANAGERCOM_MNGUNREGISTER>;
+			getmngport	:	C_FUNCTION <KSMANAGERCOM_FNC_MANAGERCOM_GETMNGPORT>;
+			typemethod 		: C_FUNCTION <FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS managersendrecv : CLASS ksserv/ComTask
+		IS_INSTANTIABLE;
+		VARIABLES
+			mngport	:	UINT	HAS_ACCESSORS
+				COMMENT	=	"port running on"
+				INITIALVALUE = 0;
+			socket	:	INT
+				FLAGS	=	"n"
+				INITIALVALUE = -1;
+			xdr	:	STRING
+				FLAGS	=	"n";
+			xdrlength	:	INT
+				FLAGS	=	"n"
+				INITIALVALUE	=	0;
+			operatingfunction	:	INT
+				FLAGS	=	"n"
+				COMMENT	=	"1:mngregister; 2:mngunregister; 3:mnggetserver"
+				INITIALVALUE	=	0;
+			state	:	INT
+				FLAGS	=	"n"
+				COMMENT	=	"0:unused; 1:watiting for sending; 2:waiting for answer"
+				INITIALVALUE	=	0;
+			shutdowncounter	:	INT
+				FLAGS	=	"n"
+				COMMENT	=	"counts loops while shutdown() as a timeout for sending unregister"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			sendxdr	:	C_FUNCTION <KSMANAGERCOM_FNC_MANAGERSENDRECV_SENDXDR>;
+			typemethod 		: C_FUNCTION <FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+END_LIBRARY;
