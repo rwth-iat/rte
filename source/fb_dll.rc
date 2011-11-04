@@ -1,0 +1,70 @@
+/******************************************************************************
+***                                                                         ***
+***   iFBSpro   -   Funktionsbaustein-Model                                 ***
+***   #####################################                                 ***
+***                                                                         ***
+***   L T S o f t                                                           ***
+***   Agentur für Leittechnik Software GmbH                                 ***
+***   Brabanterstr. 13                                                      ***
+***   D-50171 Kerpen                                                        ***
+***   Tel : 02237/92869-2                                                   ***
+***   Fax : 02237/92869-9                                                   ***
+***   e-Mail   : ltsoft@ltsoft.de                                           ***
+***   Internet : http://www.ltsoft.de                                       ***
+***                                                                         ***
+***   -------------------------------------------------------------------   ***
+***                                                                         ***
+***   Implementierung des Funktionsbausteinsystems IFBSpro                  ***
+***   RWTH,   Aachen                                                        ***
+***   LTSoft, Kerpen                                                        ***
+***                                                                         ***
+*******************************************************************************
+*                                                                             *
+*   Datei                                                                     *
+*   -----                                                                     *
+*   fb_dll.rc                                                                 *
+*                                                                             *
+*   Historie                                                                  *
+*   --------                                                                  *
+*   2000-01-30 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
+*                                                                             *
+*   Beschreibung                                                              *
+*   ------------                                                              *
+*   Resources der FB-DLL                                                      *
+*                                                                             *
+******************************************************************************/
+
+#include "fb_version.h"
+
+#define VERSIONINFO_1	1
+
+VERSIONINFO_1 VERSIONINFO
+
+FILEVERSION      FB_DLL_FILE_VERSION
+PRODUCTVERSION   FB_DLL_PRODUCT_VERSION
+#ifdef __BORLANDC__
+FILEOS			VOS_NT_WINDOWS32
+FILETYPE		VFT_DLL
+#endif
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", LTSOFT_COMPANY
+   VALUE "FileDescription", "iFBSpro model library\000"
+   VALUE "FileVersion", FB_STRING_VERSION "\000\000"
+   VALUE "LegalCopyright", LTSOFT_COPYRIGHT
+   VALUE "OriginalFilename", "fb.dll\000"
+   VALUE "Author", "A.Neugebauer <neugebauer@ltsoft.de>\000"
+   VALUE "Licence", LTSOFT_LICENCE
+  }
+
+ }
+
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
+ }
+
+}

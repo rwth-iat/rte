@@ -1,0 +1,45 @@
+/******************************************************************************
+***                                                                         ***
+***   iFBSpro   -   Funktionsbaustein-Model                                 ***
+***   #####################################                                 ***
+***                                                                         ***
+***   L T S o f t                                                           ***
+***   Agentur für Leittechnik Software GmbH                                 ***
+***   Brabanterstr. 13                                                      ***
+***   D-50171 Kerpen                                                        ***
+***   Tel : 02237/92869-2                                                   ***
+***   Fax : 02237/92869-9                                                   ***
+***   e-Mail   : ltsoft@ltsoft.de                                           ***
+***   Internet : http://www.ltsoft.de                                       ***
+***                                                                         ***
+***   -------------------------------------------------------------------   ***
+***                                                                         ***
+***   Implementierung des Funktionsbausteinsystems IFBSpro                  ***
+***   RWTH,   Aachen                                                        ***
+***   LTSoft, Kerpen                                                        ***
+***                                                                         ***
+*******************************************************************************
+*                                                                             *
+*   Datei                                                                     *
+*   -----                                                                     *
+*   fb.ovt                                                                    *
+*                                                                             *
+*   Historie                                                                  *
+*   --------                                                                  *
+*   08-07-1999 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
+*                                    Lehrstuhl fuer Prozessleittechnik, Aachen*
+*                                                                             *
+*   Beschreibung                                                              *
+*   ------------                                                              *
+*   Typ-Definitionen fuer Objekt-Methoden                                     *
+*                                                                             *
+******************************************************************************/
+
+#ifndef FB_OVT_INCLUDED
+#define FB_OVT_INCLUDED
+
+
+#endif
+/*
+*	End of file
+*/

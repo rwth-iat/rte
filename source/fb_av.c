@@ -1,0 +1,260 @@
+/******************************************************************************
+***                                                                         ***
+***   iFBSpro   -   Funktionsbaustein-Model                                 ***
+***   #####################################                                 ***
+***                                                                         ***
+***   L T S o f t                                                           ***
+***   Agentur für Leittechnik Software GmbH                                 ***
+***   Heinrich-Hertz-Straße 9                                               ***
+***   50170 Kerpen                                                          ***
+***   Tel: 02273/9893-0                                                     ***
+***   Fax: 02273/9893-33                                                    ***
+***   e-Mail   : ltsoft@ltsoft.de                                           ***
+***   Internet : http://www.ltsoft.de                                       ***
+***                                                                         ***
+***   -------------------------------------------------------------------   ***
+***                                                                         ***
+***   Implementierung des Funktionsbausteinsystems IFBSpro                  ***
+***   RWTH,   Aachen                                                        ***
+***   LTSoft, Kerpen                                                        ***
+***                                                                         ***
+*******************************************************************************
+*                                                                             *
+*   Datei                                                                     *
+*   -----                                                                     *
+*   fb_av.c                                                                   *
+*                                                                             *
+*                                                                             *
+*   Historie                                                                  *
+*   --------                                                                  *
+*   2000-03-03 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
+*   2010-11-19 Logger-Registrierung hinzugefuegt         Alexander Neugebauer *
+*                                                                             *
+*   Beschreibung                                                              *
+*   ------------                                                              *
+*   Implementierung der Autorisierung- und Logging Funktionen                 *
+*                                                                             *
+******************************************************************************/
+
+#include "fb.h"
+#include "libov/ov_string.h"
+#include "libov/ov_macros.h"
+#include "libovks/ov_ksserver.h"
+#include "fb_av.h"
+#include "fb_namedef.h"
+#include "fb_macros.h"
+
+#if OV_SYSTEM_NT
+OV_BOOL xdr_string(
+	XDR			*xdrs,
+	char		**cpp,
+	OV_UINT		maxsize
+);
+#endif
+/*
+*	function prototypes for ticket methods
+*/
+
+static OV_TICKET *fb_ticket_createticket(XDR *xdr, OV_TICKET_TYPE type);
+static void fb_ticket_deleteticket(OV_TICKET *pticket);
+static OV_ACCESS fb_ticket_getaccess(const OV_TICKET *pticket);
+static OV_BOOL fb_ticket_encodereply(XDR *xdr, OV_TICKET *pticket);
+
+static OV_TICKET *fb_noneticket_createticket(XDR *xdr, OV_TICKET_TYPE type);
+static void fb_noneticket_deleteticket(OV_TICKET *pticket);
+
+/*
+*	VTable of our ticket object
+*/
+static OV_TICKET_VTBL fb_ticketvtbl = {
+	fb_ticket_createticket,
+	fb_ticket_deleteticket,
+	fb_ticket_encodereply,
+	fb_ticket_getaccess
+};
+
+static OV_TICKET_VTBL fb_noneticketvtbl = {
+	fb_noneticket_createticket,
+	fb_noneticket_deleteticket,
+	fb_ticket_encodereply,
+	fb_ticket_getaccess
+};
+
+static OV_ACCESS                  fb_ticket_access;
+
+/*
+*	Create a ticket object from the XDR stream
+*/
+static OV_TICKET *fb_ticket_createticket(XDR *xdr, OV_TICKET_TYPE type) {
+	/*
+	*	local variables: we use a static object
+	*/
+	static OV_TICKET ticket = { &fb_ticketvtbl, OV_TT_SIMPLE };
+    
+	/*
+	*   default : Read access
+	*/
+    fb_ticket_access =  OV_AC_READ;
+    /*
+    *   Server-Passwort gesetzt?
+    */
+	if( !ov_string_compare(pdb->serverpassword, "") ) {
+	    fb_ticket_access = OV_AC_READWRITE  | OV_AC_INSTANTIABLE |
+		                   OV_AC_DELETEABLE | OV_AC_RENAMEABLE   |
+		                   OV_AC_LINKABLE   | OV_AC_UNLINKABLE; 
+	}
+	
+	/*
+	*	make sure we get a simple ticket
+	*/
+	if(type != OV_TT_SIMPLE) {
+		return NULL;
+	}
+	/*
+	*	decode the simple ticket id, a string, from the XDR stream
+	*/
+	if(!xdr_string(xdr, &ticket.ticketunion.simpleticket.id, KS_SIMPLEID_MAXLEN)) {
+		return NULL;
+	}
+
+    if( !ov_string_compare(ticket.ticketunion.simpleticket.id, pdb->serverpassword) ) {
+        fb_ticket_access = OV_AC_READWRITE  | OV_AC_INSTANTIABLE |
+		                   OV_AC_DELETEABLE | OV_AC_RENAMEABLE   |
+		                   OV_AC_LINKABLE   | OV_AC_UNLINKABLE; 
+    }
+
+	return &ticket;
+}
+
+static OV_TICKET *fb_noneticket_createticket(XDR *xdr, OV_TICKET_TYPE type) {
+	/*
+	*	local variables: we use a static object
+	*/
+	static OV_TICKET ticket = { &fb_noneticketvtbl, OV_TT_NONE };
+
+	/*
+	*   default : Read access
+	*/	    
+    fb_ticket_access =  OV_AC_READ;
+    /*
+    *   Server-Passwort gesetzt?
+    */
+	if( !ov_string_compare(pdb->serverpassword, "") ) {
+	    fb_ticket_access = OV_AC_READWRITE  | OV_AC_INSTANTIABLE |
+		                   OV_AC_DELETEABLE | OV_AC_RENAMEABLE   |
+		                   OV_AC_LINKABLE   | OV_AC_UNLINKABLE; 
+	}
+	/*
+	*	make sure we get a simple ticket
+	*/
+	if(type != OV_TT_NONE) {
+		return NULL;
+	}
+
+	return &ticket;
+}
+
+/*
+*	Delete a ticket object, i.e. its id in this case
+*/
+static void fb_ticket_deleteticket(OV_TICKET *pticket) {
+	/*
+	*	local variables
+	*/
+#if OV_SYSTEM_MC164 == 1
+    XDR*    xdr = xdr_create();
+	/*
+	*	just let XDR free the memory it allocated during construction of the id
+	*/
+	xdr->x_op = XDR_FREE;
+	xdr_string(xdr, &pticket->ticketunion.simpleticket.id, KS_SIMPLEID_MAXLEN);
+ 	delete_stream(xdr);
+#else
+	static XDR xdr;
+	/*
+	*	just let XDR free the memory it allocated during construction of the id
+	*/
+	xdr.x_op = XDR_FREE;
+	xdr_string(&xdr, &pticket->ticketunion.simpleticket.id, KS_SIMPLEID_MAXLEN);
+#endif
+}
+
+static void fb_noneticket_deleteticket(OV_TICKET *pticket) {}
+
+/*
+*	we do not encode further ticket information in the reply in a simple ticket
+*/
+
+static OV_BOOL fb_ticket_encodereply(XDR *xdr, OV_TICKET *pticket) {
+
+#if OV_SYSTEM_MC164 == 1
+enum_t var = 0;
+
+	if(!xdr_enum(xdr, &var)) {
+		return FALSE;
+	}
+
+
+#endif
+
+	return TRUE;
+}
+
+/*
+*	determine which access rights the ticket holder gets at most
+*/
+static OV_ACCESS fb_ticket_getaccess(const OV_TICKET *pticket) {
+	return fb_ticket_access;
+}
+
+
+/*
+*	register fb_ticket
+*/
+OV_DLLFNCEXPORT OV_RESULT fb_server_ticket_register() {
+
+    OV_RESULT result = ov_ksserver_ticket_register(OV_TT_NONE, &fb_noneticketvtbl);
+    if(Ov_Fail(result)) {
+        return result;
+    }
+    return ov_ksserver_ticket_register(OV_TT_SIMPLE, &fb_ticketvtbl);
+}
+
+/*
+*   Zugriffsrechte fuer Variablen pruefen
+*/
+OV_BOOL fb_ticket_canwrite(
+    const OV_ELEMENT    *pelem,
+    const OV_TICKET	    *pticket
+) {
+
+    /* Server-Passwort gesetzt? */
+    if( ov_string_compare(pdb->serverpassword, "") ) {
+    
+        /* Passwort gesetzt. Ticket uebergeben? */
+        if(!pticket) {
+            return FALSE;
+        }
+        /* Ticket mit AV-String? */
+        if(pticket->type == OV_TT_NONE) {
+            return FALSE;
+        }
+        if( ov_string_compare(pticket->ticketunion.simpleticket.id, pdb->serverpassword) ) {
+            return FALSE;
+        }
+    }
+    
+    /* Variable mit SET-Accessor? */
+    if(pelem->elemunion.pvar->v_setfnc) {
+        return TRUE;
+    }
+    
+    /* Input oder Output? */
+	if(IsFlagSet(pelem->elemunion.pvar->v_flags, 'i') ||
+	   IsFlagSet(pelem->elemunion.pvar->v_flags, 'p')  ) {
+		return TRUE;
+	}
+
+    return FALSE;
+}
+
