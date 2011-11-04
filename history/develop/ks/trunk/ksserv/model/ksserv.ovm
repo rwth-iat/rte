@@ -1,0 +1,89 @@
+#include "ov.ovm"
+
+LIBRARY ksserv
+	VERSION   = "0.1";
+	AUTHOR    = "Henning Mersch";
+	COPYRIGHT = "Lehrstuhl fuer Prozessleittechnik";
+	COMMENT   = "general communication components - independant of communcation system";
+
+	CLASS comcontainer : CLASS ov/domain
+		IS_INSTANTIABLE;
+		COMMENT = "General Communication domain,nothing specific, source of the CurrentClient Assoc";
+	END_CLASS;
+
+
+////////////////// Scheduling / Tasking components
+
+	CLASS RootComTask : CLASS ov/domain
+		IS_INSTANTIABLE;
+		COMMENT = "root communication task - cycling all connected tasks. ";
+		VARIABLES
+			cycsecs	: INT HAS_ACCESSORS  COMMENT="seconds for scheduler registration. Please note that we do not calculate the among of time spent - root task just pauses for this time intervall." INITIALVALUE=0;
+			cycusecs: INT HAS_ACCESSORS  COMMENT="usecs for scheduler registration" INITIALVALUE=1000;
+		END_VARIABLES;
+		OPERATIONS
+			startup     : C_FUNCTION <OV_FNC_STARTUP>; //registers execute at ov_scheduler 
+			shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;//deregisters execute at ov_scheduler
+			//execute     : C_FUNCTION <FNC_EXECUTE>; //gets called by scheduler and iterates over childs of ComTaskList
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS ComTask : CLASS ov/domain
+		//IS_INSTANTIABLE; NO - not instanceable, need to be inherited and implemented typemethod
+		COMMENT = "communication task - get called typemethod every $cycInterval by root task ";
+		VARIABLES
+			actimode: INT HAS_ACCESSORS  COMMENT="0=NonActive, 1=Active" INITIALVALUE=1;
+			cycIntervalCount	: INT HAS_GET_ACCESSOR COMMENT="current wait cycles until next execution" INITIALVALUE=5;
+			cycInterval		: INT HAS_ACCESSORS COMMENT="execution intervall of cycles of RootTasks" INITIALVALUE=5;
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>; //creates assoc to roottask
+			destructor  : C_FUNCTION <OV_FNC_DESTRUCTOR>;  //deletes assoc to roottask
+			calcExec    : C_FUNCTION <FNC_CALCEXEC>;       //provides bool if typemethod need to be called. decreases cyc
+								      //would be nice to do this check locally by overloading typemethod, by....
+			typemethod  : C_FUNCTION <FNC_TYPEMETHOD>;     //gets called by roottask and should be implemented 
+		END_OPERATIONS;
+	END_CLASS;
+
+
+
+///////////////////// Accessing currently calling client components
+/* 
+ * Hopefully some of these information is applicable to all "KS clients"
+ * this is an interface class, which is inherited e.g. by tcpclient
+ * user applications could cast to this class and access information for 
+ * determining the currently calling client
+*/ 
+
+	CLASS Client : CLASS ksserv/ComTask
+		COMMENT = "General clients ";
+	 	VARIABLES
+			sourceAdr : 	STRING HAS_GET_ACCESSOR COMMENT="Source adr of client (e.g. IP)";
+			ovticket : 	STRING HAS_GET_ACCESSOR COMMENT="Ticket - ONLY set during call from client - thus invisible!";
+			receivedCalls : INT HAS_GET_ACCESSOR COMMENT="Number of received calls from this client"; 
+		END_VARIABLES;
+		OPERATIONS
+			setThisAsCurrent    : C_FUNCTION <FNC_SETCURRENT>;       //used by real clients to set itself as current one
+			unsetThisAsCurrent    : C_FUNCTION <FNC_SETCURRENT>;       //used by real clients to unset itself as current one
+		END_OPERATIONS;
+	END_CLASS;
+
+///////////////Assocs
+
+/* 
+ * This is the Association, which connects the RootComTask to the real ComTasks
+ */
+	ASSOCIATION AssocComTaskList : ONE_TO_MANY
+		PARENT rootcomtask : CLASS ksserv/RootComTask;
+		CHILD  comtaskchild  : CLASS ksserv/ComTask;
+	END_ASSOCIATION;
+/* 
+ * This is the Association, which should be used by every implementatrion of the prior client class
+ * to indicate which of the clients is the current one.
+ */
+	ASSOCIATION AssocCurrentClient : ONE_TO_ONE
+		PARENT connections : CLASS ksserv/comcontainer;
+		CHILD  currentClient  : CLASS ksserv/Client;
+	END_ASSOCIATION;
+
+END_LIBRARY;
