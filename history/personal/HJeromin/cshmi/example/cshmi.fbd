@@ -5,12 +5,12 @@
 ======================================================================
   Sicherung der Datenbasis.
 
-  Erstellt : 2011-11-03 17:38:18
+  Erstellt : 2011-11-04 17:10:47
 
   HOST                : LOCALHOST
   SERVER              : fb_cshmi
   DB-Groesse          : 4001792
-  Frei                : 3814400
+  Frei                : 3814432
   Anzahl FB-Instanzen : 5
   Anzahl Tasks        : 1
   Anzahl Verbindungen : 4
@@ -489,7 +489,7 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/pump1 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "/TechUnits/cshmi/pumpGreen";
+        TemplateDefinition : INPUT  STRING = "Pumpv1";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[1] : INPUT  STRING = {"/TechUnits/Pump1"};
@@ -506,7 +506,7 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/pump2 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "/TechUnits/cshmi/pumpGreen";
+        TemplateDefinition : INPUT  STRING = "Pumpv1";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 60.000000;
         FBReference[1] : INPUT  STRING = {"/TechUnits/scale"};
@@ -523,7 +523,7 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/cshmi/faceplate/pump3 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "/TechUnits/cshmi/pumpGreen";
+        TemplateDefinition : INPUT  STRING = "Pumpv1";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 120.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -537,7 +537,11 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen :
+ INSTANCE  /TechUnits/cshmi/Templates :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1 :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 42.000000;
@@ -546,7 +550,7 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/kreis :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/kreis :
     CLASS /Libraries/cshmi/Circle;
     VARIABLE_VALUES
         cx : INPUT  SINGLE = 21.000000;
@@ -561,14 +565,14 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/kreis/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/kreis/onload :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/kreis/onload/setColor :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/kreis/onload/setColor :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -579,7 +583,7 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/kreis/onload/setColor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/kreis/onload/setColor.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -594,7 +598,7 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/linie :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/linie :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
         points[6] : INPUT  SINGLE = {15.000000 , 1.000000 , 40.000000 , 21.000000 , 15.000000 , 41.000000};
@@ -607,7 +611,7 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/Text :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 21.000000;
@@ -628,14 +632,14 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/Text/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/Text/onload :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/Text/onload/PumpName :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/Text/onload/PumpName :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -646,7 +650,7 @@ Typ        : Hochschulversion
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/pumpGreen/Text/onload/PumpName.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pumpv1/Text/onload/PumpName.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -664,16 +668,16 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/sinus :
     CLASS /Libraries/iec61131stdfb/SIN;
     VARIABLE_VALUES
-        IN : INPUT  SINGLE = 7835.393066;
-        OUT : OUTPUT  SINGLE = 0.258036;
+        IN : INPUT  SINGLE = 9650.820312;
+        OUT : OUTPUT  SINGLE = -0.151731;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 7274;
+        methcount : HIDDEN  UINT = 25482;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-11-03 15:17:34.000000;
+        proctime : INPUT  TIME = 2011-11-04 16:57:46.515000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -683,17 +687,17 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/increment :
     CLASS /Libraries/iec61131stdfb/ADD;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 7835.493164;
+        IN1 : INPUT  SINGLE = 9650.919922;
         IN2 : INPUT  SINGLE = 0.100000;
-        OUT : OUTPUT  SINGLE = 7835.493164;
+        OUT : OUTPUT  SINGLE = 9650.919922;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = TRUE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 7274;
+        methcount : HIDDEN  UINT = 25482;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-11-03 15:17:34.000000;
+        proctime : INPUT  TIME = 2011-11-04 16:57:46.515000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -703,17 +707,17 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/move :
     CLASS /Libraries/iec61131stdfb/ADD;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 0.258036;
+        IN1 : INPUT  SINGLE = -0.151731;
         IN2 : INPUT  SINGLE = 1.000000;
-        OUT : OUTPUT  SINGLE = 1.258036;
+        OUT : OUTPUT  SINGLE = 0.848269;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 7274;
+        methcount : HIDDEN  UINT = 25482;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-11-03 15:17:34.000000;
+        proctime : INPUT  TIME = 2011-11-04 16:57:46.515000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
@@ -723,17 +727,17 @@ Typ        : Hochschulversion
  INSTANCE  /TechUnits/scale :
     CLASS /Libraries/iec61131stdfb/MUL;
     VARIABLE_VALUES
-        IN1 : INPUT  SINGLE = 1.258036;
+        IN1 : INPUT  SINGLE = 0.848269;
         IN2 : INPUT  SINGLE = 0.500000;
-        OUT : OUTPUT  SINGLE = 0.629018;
+        OUT : OUTPUT  SINGLE = 0.424134;
         iexreq : PARAMETER  BOOL = TRUE;
         eexreq : HIDDEN  BOOL = FALSE;
         maxcalctime : PARAMETER  TIME_SPAN = 0.000000;
         Xpos : PARAMETER  INT = 0;
         Ypos : PARAMETER  INT = 0;
-        methcount : HIDDEN  UINT = 7274;
+        methcount : HIDDEN  UINT = 25482;
         actimode : INPUT  INT = 1;
-        proctime : INPUT  TIME = 2011-11-03 15:17:34.000000;
+        proctime : INPUT  TIME = 2011-11-04 16:57:46.515000;
         cyctime : INPUT  TIME_SPAN = 0.000000;
         ErrState : OUTPUT  INT = 0;
         calctime : OUTPUT  TIME_SPAN = 0.000000;
