@@ -606,7 +606,9 @@ cshmi.prototype = {
 			return null;
 		}
 		
-		var response = HMI.KSClient.getVar(null, '{'+responseArray[0]+'.width .height}', null);
+		var TemplateLocation = "/TechUnits/cshmi/Templates/";
+		
+		var response = HMI.KSClient.getVar(null, '{'+TemplateLocation+responseArray[0]+'.width .height}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -619,7 +621,7 @@ cshmi.prototype = {
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		svgElement.id = ObjectPath;
-		svgElement.setAttribute("TemplateDescription", responseArray[0]);
+		svgElement.setAttribute("TemplateDescription", TemplateLocation+responseArray[0]);
 		
 		this._addClass(svgElement, "cshmi-template");
 		
@@ -652,10 +654,10 @@ cshmi.prototype = {
 		
 		//get childs (grafics and actions) from the TemplateDefinition
 		//our child will be fetched later
-		responseArrayChild = HMI.KSClient.getChildObjArray(responseArray[0]);
+		responseArrayChild = HMI.KSClient.getChildObjArray(TemplateLocation+responseArray[0]);
 		for (var i=0; i < responseArrayChild.length; i++) {
 			var varName = responseArrayChild[i].split(" ");
-			var ChildComponent = this.BuildDomain(svgElement, responseArray[0]+"/"+varName[0], varName[1]);
+			var ChildComponent = this.BuildDomain(svgElement, TemplateLocation+responseArray[0]+"/"+varName[0], varName[1]);
 			if (ChildComponent !== null){
 				svgElement.appendChild(ChildComponent);
 			}
