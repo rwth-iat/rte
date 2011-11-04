@@ -1,0 +1,76 @@
+#include "ksapi.ovm"
+#include "ksserv.ovm"
+#include "ksservtcp.ovm" 
+
+LIBRARY	ksapitcp
+
+	VERSION		=	"V0.1";
+	AUTHOR		=	"Martin Weingarten, Henning Mersch";
+	COPYRIGHT	=	"Copyright (C) 2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+	COMMENT		=	"KS 2nd: ksapi, client-side Communication TCP binding";
+	
+/** 
+ * Channel for ksapi object for communication via TCP/IP
+ */
+		CLASS	TCPChannel					:	CLASS	ksapi/Channel
+		IS_INSTANTIABLE;
+		COMMENT	=	"Realization class, which realizes the TCP binding";
+		VARIABLES
+			socket	:	INT	HAS_ACCESSORS COMMENT="opened TCP socket" INITIALVALUE=-1;
+			state : 	INT COMMENT="0:free,1:waitingForServerPort(managercom acting),2:WaitingForSending,3:WaitingForReceiving"; 
+		END_VARIABLES;	
+		OPERATIONS
+			startup		:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown	:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod 	: 	C_FUNCTION <FNC_TYPEMETHOD>; //inherited from ComTask
+														//calls KSCommon->reveivexdr of parent
+			//real sending of a XDR
+			sendxdr		:	C_FUNCTION <KSAPI_FNC_TCP_SENDXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+/** 
+ * Manager Commuication object, sending getserver requests
+ * Depends on ksservtcp for LOCAL execution  of GETSERVER cmds if server is manager
+ */ 
+	CLASS managercom	:	CLASS ksserv/ComTask
+		IS_INSTANTIABLE;
+		VARIABLES
+			mngport	:	UINT	HAS_ACCESSORS
+				COMMENT	=	"port running on"
+				INITIALVALUE = 0;
+			status	:	INT
+				COMMENT	=	"0:OK; 2:portmapper socket created; 3:portmapper request send; 4:portmapper reply received; 5:manager request send"
+				INITIALVALUE	=	1;
+			receivedsport	:	INT
+				FLAGS	=	"o"
+				INITIALVALUE	=	0;
+			udpsocket	:	INT
+				FLAGS	=	"n"
+				INITIALVALUE = -1;
+			tcpsocket	:	INT
+				FLAGS	=	"n"
+				INITIALVALUE = -1;
+			xdr	:	STRING
+				FLAGS	=	"n";
+			xdrlength	:	INT
+				FLAGS	=	"n"
+				INITIALVALUE	=	0;
+			host	:	STRING
+				INITIALVALUE	=	"127.0.0.1";
+			methcount	:	INT
+				INITIALVALUE = 0;
+		END_VARIABLES;
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			mnggetserver	:	C_FUNCTION <KSAPI_FNC_MANAGERCOM_MNGGETSERVER>;
+			getmngport	:	C_FUNCTION <KSAPI_FNC_MANAGERCOM_GETMNGPORT>;
+			typemethod 	: 	C_FUNCTION <FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	
+	
+END_LIBRARY;
