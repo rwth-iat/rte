@@ -198,13 +198,21 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_constructor(
 	*/
 	OV_INSTPTR_cshmi_Text pinst = Ov_StaticPtrCast(cshmi_Text, pobj);
 	OV_RESULT    result;
+	OV_STRING strTempOldStroke = NULL;
 	
 	/* do what the base class does first */
 	result = ov_object_constructor(pobj);
-	if(Ov_Fail(result))
-	return result;
+	if(Ov_Fail(result)){
+		return result;
+	}
 	
-	/* todo: swap default fill and stroke  */
+	// swap default fill and stroke
+	ov_string_setvalue(&strTempOldStroke, pinst->v_stroke);
+	ov_string_setvalue(&pinst->v_stroke, pinst->v_fill);
+	ov_string_setvalue(&pinst->v_fill, strTempOldStroke);
+	
+	//cleanup
+	ov_string_setvalue(&strTempOldStroke, NULL);
 	
 	return OV_ERR_OK;
 }
