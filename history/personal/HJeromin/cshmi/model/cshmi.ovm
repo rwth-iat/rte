@@ -324,11 +324,11 @@ LIBRARY cshmi
 			INITIALVALUE = "medium";
 			fontStyle : STRING
 			HAS_ACCESSORS
-			COMMENT = "font style ('italic','oblique','normal')"
+			COMMENT = "font style ('normal','italic','oblique')"
 			INITIALVALUE = "normal";
 			fontWeight : STRING
 			HAS_ACCESSORS
-			COMMENT = "font weight (number or keyword: 'normal','bold','bolder')"
+			COMMENT = "font weight (keyword: 'normal','bold','lighter','bolder')"
 			INITIALVALUE = "normal";
 			fontFamily : STRING
 			HAS_ACCESSORS
@@ -340,7 +340,7 @@ LIBRARY cshmi
 			INITIALVALUE = "start";
 			verAlignment : STRING
 			HAS_ACCESSORS
-			COMMENT = "dominant baseline (vertical alignment; keyword: 'central','middle','auto')"
+			COMMENT = "dominant baseline (vertical alignment; keyword: 'auto','middle','hanging')"
 			INITIALVALUE = "auto";
 		END_VARIABLES;
 		OPERATIONS

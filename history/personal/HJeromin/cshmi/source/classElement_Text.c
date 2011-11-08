@@ -133,7 +133,14 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontStyle_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	return ov_string_setvalue(&pobj->v_fontStyle,value);
+	//force our keywords
+	if (	ov_string_compare(value, "normal") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "italic") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "oblique") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_fontStyle,value);
+	}else{
+		return OV_ERR_BADPARAM;
+	}
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontWeight_get(
@@ -146,7 +153,15 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	return ov_string_setvalue(&pobj->v_fontWeight,value);
+	//force our keywords
+	if (	ov_string_compare(value, "normal") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "bold") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "lighter") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "bolder") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_fontWeight,value);
+	}else{
+		return OV_ERR_BADPARAM;
+	}
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontFamily_get(
@@ -172,8 +187,14 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	//todo force only our keywords
-	return ov_string_setvalue(&pobj->v_horAlignment,value);
+	//force our keywords
+	if (	ov_string_compare(value, "start") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "middle") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "end") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_horAlignment,value);
+	}else{
+		return OV_ERR_BADPARAM;
+	}
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Text_verAlignment_get(
@@ -186,8 +207,14 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	//todo force only our keywords
-	return ov_string_setvalue(&pobj->v_verAlignment,value);
+	//force our keywords
+	if (	ov_string_compare(value, "auto") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "middle") == OV_STRCMP_EQUAL
+	||		ov_string_compare(value, "hanging") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_verAlignment,value);
+	}else{
+		return OV_ERR_BADPARAM;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_constructor(
