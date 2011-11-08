@@ -418,7 +418,7 @@ cshmi.prototype = {
 					//elemVar
 					if (responseArray[i] == "content"){
 						//content is special, as it is different in OVM and SVG
-						ObjectParent.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild);
+						ObjectParent.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
 					}else{
 						ObjectParent.setAttribute(responseArray[i], NewValue);
 					}
@@ -770,7 +770,7 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgText: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .content .opacity}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .opacity .content}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -795,13 +795,21 @@ cshmi.prototype = {
 		svgElement.setAttribute("font-weight", responseArray[5]);
 		svgElement.setAttribute("font-family", responseArray[6]);
 		svgElement.setAttribute("text-anchor", responseArray[7]);
-		svgElement.setAttribute("dominant-baseline", responseArray[8]);
-		//todo rebuild for <tspan>
 		svgElement.setAttribute("stroke", responseArray[9]);
 		svgElement.setAttribute("fill", responseArray[10]);
+		svgElement.setAttribute("opacity", responseArray[11]);
 		
-		svgElement.appendChild(HMI.svgDocument.createTextNode(responseArray[11]));
-		svgElement.setAttribute("opacity", responseArray[12]);
+		var svgTspan = document.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
+		svgTspan.appendChild(document.createTextNode(responseArray[12]));
+		
+		if (responseArray[8] == "auto"){
+		}else if (responseArray[8] == "middle"){
+			svgTspan.setAttribute("dy", "0.5ex");
+		}else if (responseArray[8] == "hanging"){
+			svgTspan.setAttribute("dy", "1ex");
+		}
+		
+		svgElement.appendChild(svgTspan);
 		
 		return svgElement;
 	},
