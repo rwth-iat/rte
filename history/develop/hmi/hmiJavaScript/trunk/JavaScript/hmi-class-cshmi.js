@@ -88,7 +88,7 @@ cshmi.prototype = {
 	*********************************/
 	instanciateCshmi: function (ObjectPath) {
 		
-		var Component = this.BuildDomain(null, ObjectPath, "/Libraries/cshmi/Group");
+		var Component = this.BuildDomain(null, ObjectPath, "/cshmi/Group");
 		
 		if (Component !== null){
 			HMI.Playground.appendChild(Component);
@@ -102,30 +102,29 @@ cshmi.prototype = {
 	BuildDomain: function (ObjectParent, ObjectPath, ObjectType) {
 		var Component = null;
 		var Result = true;
-		
-		if (ObjectType == "/Libraries/cshmi/Group"){
+		if (ObjectType.indexOf("/cshmi/Group") !== -1){
 			Component = this._buildSvgContainer(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/Template"){
+		}else if (ObjectType.indexOf("/cshmi/Template") !== -1){
 			Component = this._buildFromTemplate(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/Line"){
+		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
 			Component = this._buildSvgLine(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/Polyline"){
+		}else if (ObjectType.indexOf("/cshmi/PolyLine") !== -1){
 			Component = this._buildSvgPolyline(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/Text"){
+		}else if (ObjectType.indexOf("/cshmi/Text") !== -1){
 			Component = this._buildSvgText(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/Circle"){
+		}else if (ObjectType.indexOf("/cshmi/Circle") !== -1){
 			Component = this._buildSvgCircle(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/Rectangle"){
+		}else if (ObjectType.indexOf("/cshmi/Rectangle") !== -1){
 			Component = this._buildSvgRect(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/ClientEvent"){
+		}else if (ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
 			Result = this._interpreteClientEvent(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/TimeEvent"){
+		}else if (ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
 			Result = this._interpreteTimeEvent(ObjectParent, ObjectPath);
-		}else if (ObjectType == "/Libraries/cshmi/OperatorEvent"){
+		}else if (ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
 			Result = this._interpreteOperatorEvent(ObjectParent, ObjectPath);
 		}else{
-			if (	ObjectType == "/Libraries/cshmi/SetValue" ||
-					ObjectType == "/Libraries/cshmi/IfThenElse"){
+			if (	ObjectType.indexOf("/cshmi/SetValue") !== -1 ||
+					ObjectType.indexOf("/cshmi/IfThenElse") !== -1){
 				HMI.hmi_log_info("Actions not supported at this position: (Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
 			}else{
 				HMI.hmi_log_info("Objekt (Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
@@ -230,9 +229,9 @@ cshmi.prototype = {
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
 		for (var i=0; i < responseArray.length && returnValue == true; i++) {
 			var varName = responseArray[i].split(" ");
-			if (varName[1] == "/Libraries/cshmi/SetValue"){
+			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
 				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0]);
-			}else if (varName[1] == "/Libraries/cshmi/IfThenElse"){
+			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
 				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else{
 				//todo
@@ -498,7 +497,7 @@ cshmi.prototype = {
 			//logical OR
 			while(i < responseArray.length && ConditionMatched !== false){
 				var varName = responseArray[i].split(" ");
-				if (varName[1] == "/Libraries/cshmi/Compare"){
+				if (varName[1].indexOf("/cshmi/Compare") !== -1){
 					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
 				i++;
@@ -507,7 +506,7 @@ cshmi.prototype = {
 			//logical AND
 			while(i < responseArray.length && ConditionMatched !== true){
 				var varName = responseArray[i].split(" ");
-				if (varName[1] == "/Libraries/cshmi/Compare"){
+				if (varName[1].indexOf("/cshmi/Compare") !== -1){
 					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
 				i++;

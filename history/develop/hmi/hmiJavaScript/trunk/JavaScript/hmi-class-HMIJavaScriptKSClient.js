@@ -435,14 +435,20 @@ HMIJavaScriptKSClient.prototype = {
 			//Try to get the Name of cshmi Group to test the existence
 			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/cshmi/Group.instance", null);
 			ManagerResponseArray = this.splitKsResponse(ManagerResponse);
-			this.delHandle(TCLKSHandle);
 			if (ManagerResponseArray.length === 0){
-				//no hmi, no cshmi server
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - no hmi, no cshmi server");
-				return false;
+				//no hmi, no cshmi server, try if cshmi without fb lib
+				ManagerResponse = this.getVar(TCLKSHandle, "/acplt/cshmi/Group.instance", null);
+				ManagerResponseArray = this.splitKsResponse(ManagerResponse);
+				if (ManagerResponseArray.length === 0){
+					//no hmi, no cshmi server
+					HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - no hmi, no cshmi server");
+					this.delHandle(TCLKSHandle);
+					return false;
+				}
 			}
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - hmi or cshmi server");
+		this.delHandle(TCLKSHandle);
 		return true;
 	},
 	
@@ -501,6 +507,12 @@ HMIJavaScriptKSClient.prototype = {
 		if (!(cshmiString.indexOf("KS_ERR") !== -1)){
 			var responseArray = this.splitKsResponse(cshmiString);
 			SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+		}else{
+			cshmiString = this.getVar(null, '/acplt/cshmi/Group.instance', null);
+			if (!(cshmiString.indexOf("KS_ERR") !== -1)){
+				var responseArray = this.splitKsResponse(cshmiString);
+				SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+			}
 		}
 		
 		//get Sheets from hmi library
