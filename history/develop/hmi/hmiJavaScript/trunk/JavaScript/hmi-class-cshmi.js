@@ -418,7 +418,7 @@ cshmi.prototype = {
 					//elemVar
 					if (responseArray[i] == "content"){
 						//content is special, as it is different in OVM and SVG
-						ObjectParent.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
+						ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
 					}else{
 						ObjectParent.setAttribute(responseArray[i], NewValue);
 					}
