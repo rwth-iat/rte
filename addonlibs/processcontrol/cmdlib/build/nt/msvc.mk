@@ -32,9 +32,10 @@ include ../generic.mk
 
 # Libraries
 # ---------
-OVLIBS = $(BASE_LIB_DIR)libov_msvc$(_LIB) $(BASE_LIB_DIR)libovks_msvc$(_LIB)
-FBLIBS = $(BASE_LIB_DIR)fb_msvc$(_LIB)
-ADD_LIBS = $(USER_DIR)comlib/build/nt/comlib$(_LIB)
+OVLIBS = $(BASE_LIB_DIR)libov$(_LIB) $(BASE_LIB_DIR)libovks$(_LIB)
+ADD_LIBS += $(foreach lib, $(EXTRA_LIBS),$(lib))
+
+ADD_LIBS = $(USER_DIR)fb/build/nt/fb$(_LIB) $(USER_DIR)comlib/build/nt/comlib$(_LIB)
 
 all: $(TARGETS)
 
@@ -46,7 +47,7 @@ debug: $(TARGETS)
 OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)
 CC              = cl
 ifeq ($(MAKECMDGOALS), debug)
-CC_FLAGS        = /Zi /MTd /c
+CC_FLAGS        = /Zi /MTd /c $(EXTRA_CC_FLAGS)
 else
 CC_FLAGS        = /W3 /c
 endif
@@ -61,28 +62,28 @@ $(_C)$(_OBJ):
 	$(COMPILE_C) -o$@ $<
 
 .ovm$(_C):
-	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(comlib_MODEL_DIR) -f $(subst /,\\, $<) -l $(notdir $(basename $<))
+	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(fb_MODEL_DIR) -I $(comlib_MODEL_DIR) -f $(subst /,\\, $<) -l $(notdir $(basename $<))
 
 .ovm.h:
-	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(comlib_MODEL_DIR) -f $(subst /,\\, $<) -l $(notdir $(basename $<))
+	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(fb_MODEL_DIR) -I $(comlib_MODEL_DIR) -f $(subst /,\\, $<) -l $(notdir $(basename $<))
 
 ov.h : $(BASE_MODEL_DIR)ov.ovm
 	$(OV_CODEGEN_EXE) -f $<
 
-fb.h : $(BASE_MODEL_DIR)fb.ovm
-	$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR)
+fb.h : $(FB_MODEL_DIR)fb.ovm
+	$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR) -I $(FB_MODEL_DIR) -I $(COMLIB_MODEL_DIR)
 
 comlib.h : $(COMLIB_MODEL_DIR)comlib.ovm
-	$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR) -I $(COMLIB_MODEL_DIR)
+	$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR) -I $(FB_MODEL_DIR) -I $(COMLIB_MODEL_DIR)
 
 cmdlib.h : $(MODEL_DIR)cmdlib.ovm
-	$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR) -I $(COMLIB_MODEL_DIR)
+	$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR) -I $(FB_MODEL_DIR) -I $(COMLIB_MODEL_DIR)
 
 $(USERLIB_LIB) : $(USERLIB_DLL)
 
 $(USERLIB_DLL) : $(USERLIB_OBJ)
-	$(LD) $(USERLIB_OBJ) $(ADD_LIBS) $(FBLIBS) $(OVLIBS) $(LINK_FLAGS) /OUT:$@
-	copy $(USERLIB_DLL) $(subst /,\\, $(USERLIB_DIR))
+	$(LD) $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS) $(LINK_FLAGS) /OUT:$@
+	cmd /c copy $(USERLIB_DLL) $(subst /,\\, $(USERLIB_DIR))
 
 #	Aufraeumen
 #	----------
