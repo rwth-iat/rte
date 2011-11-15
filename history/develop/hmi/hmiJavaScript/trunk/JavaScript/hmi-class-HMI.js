@@ -774,7 +774,7 @@ HMI.prototype = {
 			
 			//	iterate hiding function
 			//
-			HMI.smoothHeaderTimeID = window.setInterval(this.smoothHeaderHide, 30);
+			HMI.smoothHeaderTimeID = window.setTimeout(this.smoothHeaderHide, 30);
 			
 			//switch arrow orientation
 			//
@@ -805,17 +805,17 @@ HMI.prototype = {
 		Functions - smoothHeaderHide
 	*********************************/
 	smoothHeaderHide: function(){
-		var HeaderActualheight = parseInt(HMI.HideableHeader.offsetHeight, 10)
-		if (HeaderActualheight <= 20){
-			// last iteration, complete hiding and disable iteration
+		var HeaderActualheight = parseInt(HMI.HideableHeader.offsetHeight, 10);
+		if (HeaderActualheight <= 30){
+			// last iteration, complete hiding
 			//
 			HMI.HideableHeader.style.height = '1px';	// ie < v8 renders 0px like fully visible
-			window.clearInterval(HMI.smoothHeaderTimeID);
-			//HMI.smoothHeaderTimeID = null;
 			HMI.HeaderIsVisible = false;
 		}else{
-			HeaderActualheight -= 20;
+			//adjust header height and call us in a few milli seconds again
+			HeaderActualheight -= 30;
 			HMI.HideableHeader.style.height = HeaderActualheight + 'px';
+			window.setTimeout(HMI.smoothHeaderHide, 30);
 		}
 	},
 	/*********************************
