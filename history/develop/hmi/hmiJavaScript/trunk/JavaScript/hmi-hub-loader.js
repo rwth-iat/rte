@@ -161,6 +161,14 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			//not supported by Firefox 3.6 and Chrome 5
 			node.setAttribute("src", base+hubFilelist[idx]);
 		}
+		//the code should get parsed async as soon as it is fetched, without blocking the html parser
+		if (node.async === false){
+			node.async = true;
+		}else if (node.defer === false){
+			//the code should get parsed as soon the html parser is ready, without him
+			//(only if async is not supported) 
+			node.defer = true;
+		}
 		if (scriptAnchor.appendChild !== undefined){
 			scriptAnchor.appendChild(node);
 			//some blackberrys kill scriptAnchor, so HMI will not work after that
