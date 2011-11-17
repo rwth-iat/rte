@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_ClientEvent_constructor(
 	/*    
 	*   local variables
 	*/
-	OV_INSTPTR_cshmi_ClientEvent pinst = Ov_StaticPtrCast(cshmi_ClientEvent, pobj);
+	//OV_INSTPTR_cshmi_ClientEvent pinst = Ov_StaticPtrCast(cshmi_ClientEvent, pobj);
 	OV_RESULT    result;
 	
 	/* do what the base class does first */

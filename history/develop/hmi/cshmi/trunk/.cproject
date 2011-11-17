@@ -38,7 +38,6 @@
 									<listOptionValue builtIn="false" value="&quot;${MINGW}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/fb/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libov/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/nt/&quot;"/>
@@ -159,8 +158,11 @@
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/cshmi"/>
+	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="cshmi.null.1065038335" name="cshmi"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

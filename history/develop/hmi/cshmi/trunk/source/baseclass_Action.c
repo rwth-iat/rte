@@ -66,13 +66,13 @@
 
 #include "cshmi.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_logfile.h"
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Action_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	//local variables
 	//
-	OV_INSTPTR_cshmi_Action pinst = Ov_StaticPtrCast(cshmi_Action, pobj);
 	OV_INSTPTR_ov_object pParent = NULL;
 	OV_RESULT	result;
 	
@@ -82,7 +82,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Action_constructor(
 		return result;
 	
 	/* do what */
-	pParent = Ov_GetParent(ov_containment, pobj);
+	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	if (pParent != NULL){
 		if (Ov_CanCastTo(cshmi_Element, pParent)){
 			ov_logfile_debug("nicht erlaubt action: %s, Vater: %s", pobj->v_identifier, pParent->v_identifier);
