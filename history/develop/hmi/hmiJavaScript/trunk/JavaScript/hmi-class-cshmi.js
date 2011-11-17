@@ -108,7 +108,7 @@ cshmi.prototype = {
 			Component = this._buildFromTemplate(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
 			Component = this._buildSvgLine(ObjectParent, ObjectPath);
-		}else if (ObjectType.indexOf("/cshmi/PolyLine") !== -1){
+		}else if (ObjectType.indexOf("/cshmi/Polyline") !== -1){
 			Component = this._buildSvgPolyline(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Text") !== -1){
 			Component = this._buildSvgText(ObjectParent, ObjectPath);
