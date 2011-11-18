@@ -106,14 +106,20 @@ cshmi.prototype = {
 			Component = this._buildSvgContainer(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Template") !== -1){
 			Component = this._buildFromTemplate(ObjectParent, ObjectPath);
+		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
+			Component = this._buildSvgPath(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
 			Component = this._buildSvgLine(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Polyline") !== -1){
 			Component = this._buildSvgPolyline(ObjectParent, ObjectPath);
+		}else if (ObjectType.indexOf("/cshmi/Polygon") !== -1){
+			Component = this._buildSvgPolygon(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Text") !== -1){
 			Component = this._buildSvgText(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Circle") !== -1){
 			Component = this._buildSvgCircle(ObjectParent, ObjectPath);
+		}else if (ObjectType.indexOf("/cshmi/Ellipse") !== -1){
+			Component = this._buildSvgEllipse(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Rectangle") !== -1){
 			Component = this._buildSvgRect(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
