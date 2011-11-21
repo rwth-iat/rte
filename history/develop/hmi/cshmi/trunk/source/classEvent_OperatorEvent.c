@@ -63,10 +63,7 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
+#include "cshmilib.h"
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -74,17 +71,26 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 	/*    
 	*   local variables
 	*/
-	//OV_INSTPTR_cshmi_OperatorEvent pinst = Ov_StaticPtrCast(cshmi_OperatorEvent, pobj);
 	OV_RESULT    result;
+	OV_STRING erroroutput;
 	
 	/* do what the base class does first */
 	result = ov_object_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 	
-	 /* todo: check name */
-	
-	
-	return OV_ERR_OK;
+	//force our keywords
+	if (	ov_string_compare(pobj->v_identifier, "click") == OV_STRCMP_EQUAL
+			||	ov_string_compare(pobj->v_identifier, "doubleclick") == OV_STRCMP_EQUAL
+			||	ov_string_compare(pobj->v_identifier, "rightclick") == OV_STRCMP_EQUAL
+		){
+		return OV_ERR_OK;
+	}else{
+		ov_memstack_lock();
+		ov_string_print(&erroroutput, "object %i had wrong identifier. Rejecting construction.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
+		ov_memstack_unlock();
+		ov_logfile_error(erroroutput);
+		return OV_ERR_BADPARAM;
+	}
 }
 

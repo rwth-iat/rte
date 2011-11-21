@@ -33,61 +33,47 @@
 *	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 *	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *	POSSIBILITY OF SUCH DAMAGE.
-*
-***********************************************************************
-*
-* CSHMI - Client-Side Human-Machine Interface
+*/
+/***********************************************************************
 *
 *	File:
 *	------
-*	classEvent_ClientEvent.c
+*	cshmilib.h
 *
 *	Editors:
 *	--------
-*	Je							Holger Jeromin <jeromin@plt.rwth-aachen.de>
-*	GQ							Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
-*	SVN:
+*	CVS:
 *	----
-*	$Revision:  $
-*	$Date:  $
+*	$Revision: 1.17 $
+*	$Date: 2011-05-20 13:16:51 $
 *
 *	History:
 *	--------
-*	15-September-2011			Je		V0.1.0
+*	21-November-2011			Je
 *		-	File created
 *
+************************************************************************/
+
+#ifndef CSHMILIB_H_INCLUDED
+#define CSHMILIB_H_INCLUDED
+
+/***********************************************************************
+	Includes
 ***********************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_cshmi
-#define OV_COMPILE_LIBRARY_cshmi
+#include "cshmi.h"
+#include "libov/ov_macros.h"
+#include "libov/ov_logfile.h"
+#include "libov/ov_path.h"
+
+/***********************************************************************
+	z-index
+***********************************************************************/
+
+#define CSHMI_ZINDEX_BOTTOM	0
+#define CSHMI_ZINDEX_TOP		ULONG_MAX
+#define CSHMI_ZINDEX_DEFAULT	HMI_ZINDEX_TOP
+
 #endif
-
-#include "cshmilib.h"
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_ClientEvent_constructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-	/*    
-	*   local variables
-	*/
-	OV_RESULT    result;
-	OV_STRING erroroutput;
-	
-	/* do what the base class does first */
-	result = ov_object_constructor(pobj);
-	if(Ov_Fail(result))
-		return result;
-	
-	//force our keywords
-	if (	ov_string_compare(pobj->v_identifier, "onload") == OV_STRCMP_EQUAL){
-		return OV_ERR_OK;
-	}else{
-		ov_memstack_lock();
-		ov_string_print(&erroroutput, "object %i had wrong identifier. Rejecting construction.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
-		ov_memstack_unlock();
-		ov_logfile_error(erroroutput);
-		return OV_ERR_BADPARAM;
-	}
-}
-

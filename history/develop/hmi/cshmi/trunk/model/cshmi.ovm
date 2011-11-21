@@ -438,7 +438,7 @@ LIBRARY cshmi
 		VARIABLES
 			comptype : STRING
 			HAS_ACCESSORS
-			COMMENT = "comparison type ('<','<=','=','!=','>=','>')";
+			COMMENT = "comparison type ('<','<=','==','!=','>=','>')";
 		END_VARIABLES;
 		PARTS
 			value1 : CLASS cshmi/GetValue;

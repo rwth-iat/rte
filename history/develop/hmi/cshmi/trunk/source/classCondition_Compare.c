@@ -64,8 +64,8 @@
 #endif
 
 
-#include "cshmi.h"
-#include "libov/ov_macros.h"
+#include "cshmilib.h"
+
 
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Compare_comptype_get(
@@ -78,7 +78,21 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_comptype_set(
     OV_INSTPTR_cshmi_Compare          pobj,
     const OV_STRING  value
 ) {
-	//todo force our keywords
-	return ov_string_setvalue(&pobj->v_comptype,value);
+	OV_STRING erroroutput;
+	//force our keywords
+	if (	ov_string_compare(value, "<") == OV_STRCMP_EQUAL
+		||		ov_string_compare(value, "<=") == OV_STRCMP_EQUAL
+		||		ov_string_compare(value, "==") == OV_STRCMP_EQUAL
+		||		ov_string_compare(value, "!=") == OV_STRCMP_EQUAL
+		||		ov_string_compare(value, ">=") == OV_STRCMP_EQUAL
+		||		ov_string_compare(value, ">") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_comptype,value);
+	}else{
+		ov_memstack_lock();
+		ov_string_print(&erroroutput, "object %i had wrong comptype. Rejecting Variable change.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
+		ov_memstack_unlock();
+		ov_logfile_error(erroroutput);
+		return OV_ERR_BADPARAM;
+	}
 }
 
