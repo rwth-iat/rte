@@ -95,6 +95,11 @@ LIBRARY cshmi
 		COMMENT = "base class for container elements";
 	END_CLASS;
 	
+	CLASS csContainer : CLASS cshmi/ContainerElement
+		IS_INSTANTIABLE;
+		COMMENT = "internal class for container elements as parts of ifThenElse";
+	END_CLASS;
+	
 	CLASS Group : CLASS cshmi/ContainerElement
 		IS_INSTANTIABLE;
 		COMMENT = "a grouping of elements";
@@ -420,9 +425,9 @@ LIBRARY cshmi
 			INITIALVALUE = FALSE;
 		END_VARIABLES;
 		PARTS
-			if : CLASS ov/domain;
-			then : CLASS ov/domain;
-			else : CLASS ov/domain;
+			if : CLASS cshmi/csContainer;
+			then : CLASS cshmi/csContainer;
+			else : CLASS cshmi/csContainer;
 		END_PARTS;
 	END_CLASS;
 
