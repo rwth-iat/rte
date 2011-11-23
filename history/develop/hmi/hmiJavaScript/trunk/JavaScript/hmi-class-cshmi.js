@@ -69,6 +69,8 @@ function cshmi() {
 	this.ResourceList.Actions = Object();
 	this.ResourceList.Conditions = Object();
 	this.ResourceList.Events = Object();
+	
+	this.cshmiTemplateClass = "cshmi-template";
 };
 
 
@@ -596,18 +598,22 @@ cshmi.prototype = {
 		_buildFromTemplate
 	*********************************/
 	_buildFromTemplate: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues .visible}', null);
 		if (response === false){
 			//communication error
 			return null;
 		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
+			HMI.hmi_log_error("cshmi._buildFromTemplate of "+ObjectPath+" failed: "+response);
 			
 			return null;
 		}
+		HMI.hmi_log_info("building template "+ObjectPath+" in "+ObjectParent.id);
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] === ""){
+		if (responseArray[0] === "" && responseArray.length > 3){
+			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is not configured");
+			return null;
+		}else if (responseArray[0] === ""){
 			return null;
 		}
 		
@@ -628,13 +634,19 @@ cshmi.prototype = {
 		svgElement.id = ObjectPath;
 		svgElement.setAttribute("TemplateDescription", TemplateLocation+responseArray[0]);
 		
-		this._addClass(svgElement, "cshmi-template");
+		this._addClass(svgElement, this.cshmiTemplateClass);
 		
 		//set dimension of container
 		svgElement.setAttribute("x", responseArray[1]);
 		svgElement.setAttribute("y", responseArray[2]);
 		svgElement.setAttribute("width", responseArrayTemplate[0]);
 		svgElement.setAttribute("height", responseArrayTemplate[1]);
+		if (responseArray[5] == "TRUE"){
+			svgElement.setAttribute("display", "block");
+		}else{
+			svgElement.setAttribute("display", "none");
+		}
+		svgElement.style.overflow = "visible";
 		
 		//parametrise templateDefinition with the config
 		svgElement.FBReference = Object();
@@ -659,7 +671,7 @@ cshmi.prototype = {
 		
 		//get childs (grafics and actions) from the TemplateDefinition
 		//our child will be fetched later
-		responseArrayChild = HMI.KSClient.getChildObjArray(TemplateLocation+responseArray[0]);
+		var responseArrayChild = HMI.KSClient.getChildObjArray(TemplateLocation+responseArray[0]);
 		for (var i=0; i < responseArrayChild.length; i++) {
 			var varName = responseArrayChild[i].split(" ");
 			var ChildComponent = this.BuildDomain(svgElement, TemplateLocation+responseArray[0]+"/"+varName[0], varName[1]);
@@ -667,6 +679,20 @@ cshmi.prototype = {
 				svgElement.appendChild(ChildComponent);
 			}
 		}
+		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+		//fixme make double click ASV compatible
+		ObjectParent.setAttribute("cursor", "pointer");
+		ObjectParent.addEventListener("dblclick", function(evt){
+			var childTemplates = preserveThis._getElementsByClassName(ObjectParent, preserveThis.cshmiTemplateClass);
+			for (var i=0; i < childTemplates.length; i++) {
+				if (childTemplates[i].getAttribute("display") == "block"){
+					childTemplates[i].setAttribute("display", "none");
+				}else{
+					childTemplates[i].setAttribute("display", "block");
+				}
+			}
+			if (evt.stopPropagation) evt.stopPropagation();
+		}, false);
 		
 		return svgElement;
 	},
@@ -941,6 +967,25 @@ cshmi.prototype = {
 			svgElement.className.baseVal = (svgElement.className.baseVal+" "+additionalClass).trim();
 		}else{
 			svgElement.setAttribute('class', (svgElement.getAttribute('class')+ " "+additionalClass).trim());
+		}
+	},
+	_getElementsByClassName: function(node, className){
+		if (node.getElementsByClassName){
+			return node.getElementsByClassName(className);
+		} else {
+			var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
+			var elm = elm || document;
+			var elements = HMI.svgDocument.getElementsByTagName("*");
+			var returnElements = [];
+			var current;
+			var length = elements.length;
+			for(var i=0; i<length; i++){
+				current = elements[i];
+				if(testClass.test(current.className)){
+					returnElements.push(current);
+				}
+			}
+			return returnElements;
 		}
 	}
 };
