@@ -164,6 +164,9 @@ LIBRARY cshmi
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
 		END_VARIABLES;
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS Template : CLASS cshmi/Element

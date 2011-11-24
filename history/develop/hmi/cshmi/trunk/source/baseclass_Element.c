@@ -46,6 +46,7 @@
 *	--------
 *	Je							Holger Jeromin <jeromin@plt.rwth-aachen.de>
 *	GQ							Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *
 *	SVN:
 *	----
@@ -65,7 +66,7 @@
 
 
 #include "cshmi.h"
-#include "libov/ov_macros.h"
+#include "cshmilib.h"
 
 
 OV_DLLFNCEXPORT OV_BOOL cshmi_Element_visible_get(
@@ -89,12 +90,177 @@ OV_DLLFNCEXPORT OV_UINT cshmi_Element_zindex_get(
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
-    OV_INSTPTR_cshmi_Element          pobj,
-    const OV_UINT  value
+    OV_INSTPTR_cshmi_Element          pObj,
+    const OV_UINT  DesValue
 ) {
-	//todo: rearrange ov_containment (code from bib hmi)
-    pobj->v_zindex = value;
-    return OV_ERR_OK;
+	//	Local Pointer
+	//
+	OV_INSTPTR_ov_domain
+		pDom = Ov_GetParent(ov_containment, pObj);
+	OV_INSTPTR_cshmi_Element
+		pSiblingObj = NULL;
+
+	//	Local Variables
+	//
+	OV_BOOL		ConstructorCall	= FALSE;
+	OV_UINT		SiblingObj			= 0;
+	OV_RESULT	fr						= OV_ERR_OK;
+
+	#ifdef cshmi_Element_DEBUG
+		ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - Set zindex from %u to %u", __LINE__,
+			pObj->v_identifier,
+			pObj->v_zindex,
+			DesValue);
+	#endif
+
+	//	count sibling components (self is also counted)
+	//
+	Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Element)
+	{
+		if (	pObj->v_zindex			== 0
+			&&	pSiblingObj->v_zindex	== 0
+			&&	pObj							!= pSiblingObj)
+		{
+			ConstructorCall = TRUE;
+		}
+		SiblingObj = SiblingObj + 1;
+	}
+
+	//	test if constructor has called setAccessor-Method
+	//
+	if (	ConstructorCall	== TRUE
+		||	SiblingObj			== 1)
+	{
+		if (DesValue == CSHMI_ZINDEX_TOP){
+			pObj->v_zindex = SiblingObj - 1;
+			return OV_ERR_OK;
+		}
+	} else {
+		if (pObj->v_zindex == DesValue){
+			//	actual zindex = desired zindex
+			//
+			return OV_ERR_OK;
+		}
+	}
+
+	//	change zindex(es)
+	//
+	if (pObj->v_zindex > DesValue){
+		//	actual zindex > desired zindex
+		//	cshmi_Element_constructor() guarantees we have never actual zindex == desired zindex
+		//
+		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Element){
+			if (pSiblingObj != pObj){
+				if (pSiblingObj->v_zindex == DesValue){
+					#ifdef cshmi_Element_DEBUG
+						ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - changing containment position to before %s", __LINE__,
+							pObj->v_identifier,
+							pSiblingObj->v_identifier);
+					#endif
+
+					Ov_Unlink(ov_containment, pDom, pObj);
+					fr = Ov_LinkRelativePlaced(
+						ov_containment,
+						pDom,
+						pObj,
+						OV_PMH_BEFORE,
+						pSiblingObj);
+					if (Ov_Fail(fr)){
+						#ifdef cshmi_Element_ERROR
+							ov_logfile_error("%s:%d - %s - Error during > re-link (%s)", __FILE__, __LINE__,
+								pObj->v_identifier,
+								ov_result_getresulttext(fr));
+						#endif
+
+						return fr;
+					}
+				}
+
+				if (	pSiblingObj->v_zindex >= DesValue
+					&&	pSiblingObj->v_zindex <= pObj->v_zindex - 1)
+				{
+					#ifdef cshmi_Element_DEBUG
+						ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - increasing %s zindex from %u to %u", __LINE__,
+							pObj->v_identifier,
+							pSiblingObj->v_identifier,
+							pSiblingObj->v_zindex,
+							pSiblingObj->v_zindex + 1);
+					#endif
+
+					pSiblingObj->v_zindex = pSiblingObj->v_zindex + 1;
+				}
+			}
+		}
+	} else if (pObj->v_zindex <= DesValue){
+		//	actual zindex < desired zindex
+		//	cshmi_Element_constructor() guarantees we have never actual zindex == desired zindex
+		//
+		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Element){
+			if (pSiblingObj != pObj){
+				if (	pSiblingObj->v_zindex	== DesValue
+					||	DesValue						>= SiblingObj)
+				{
+					#ifdef cshmi_Element_DEBUG
+						ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - changing containment position to after %s", __LINE__,
+							pObj->v_identifier,
+							pSiblingObj->v_identifier);
+					#endif
+
+					Ov_Unlink(ov_containment, pDom, pObj);
+					fr = Ov_LinkRelativePlaced(
+						ov_containment,
+						pDom,
+						pObj,
+						OV_PMH_AFTER,
+						pSiblingObj);
+					if (Ov_Fail(fr)){
+						#ifdef cshmi_Element_ERROR
+							ov_logfile_error("%s:%d - %s - Error during < re-link (%s)", __FILE__, __LINE__,
+								pObj->v_identifier,
+								ov_result_getresulttext(fr));
+						#endif
+
+						return fr;
+					}
+				}
+
+				if (	pSiblingObj->v_zindex >= pObj->v_zindex + 1
+					&&	pSiblingObj->v_zindex <= DesValue)
+				{
+					#ifdef cshmi_Element_DEBUG
+						ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - decreasing %s zindex from %u to %u", __LINE__,
+							pObj->v_identifier,
+							pSiblingObj->v_identifier,
+							pSiblingObj->v_zindex,
+							pSiblingObj->v_zindex - 1);
+					#endif
+					pSiblingObj->v_zindex = pSiblingObj->v_zindex - 1;
+				}
+			}
+		}
+	}else{
+		#ifdef cshmi_Element_DEBUG
+			ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - found zindex == desvalue", __LINE__,
+				pObj->v_identifier);
+		#endif
+	}
+
+	if (SiblingObj - 1 > DesValue){
+		pObj->v_zindex = DesValue;
+	} else {
+		pObj->v_zindex = SiblingObj - 1;
+	}
+
+	#ifdef cshmi_Element_DEBUG
+		SiblingObj = 0;
+		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Element)
+		{
+			ov_logfile_debug("%d: %u: %s - %u", __LINE__, SiblingObj, pSiblingObj->v_identifier, pSiblingObj->v_zindex);
+			SiblingObj++;
+		}
+	#endif
+
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Element_stroke_get(
@@ -137,3 +303,19 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_opacity_set(
     return OV_ERR_OK;
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	// local variables
+	//
+	OV_INSTPTR_cshmi_Element pinst = Ov_StaticPtrCast(cshmi_Element, pobj);
+	OV_RESULT    result;
+
+	/* do what the base class does first */
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
+
+	return cshmi_Element_zindex_set(pinst, CSHMI_ZINDEX_DEFAULT);
+}

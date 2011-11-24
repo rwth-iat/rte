@@ -67,6 +67,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_path.h"
+#include "limits.h"
 
 /***********************************************************************
 	z-index
@@ -74,6 +75,6 @@
 
 #define CSHMI_ZINDEX_BOTTOM	0
 #define CSHMI_ZINDEX_TOP		ULONG_MAX
-#define CSHMI_ZINDEX_DEFAULT	HMI_ZINDEX_TOP
+#define CSHMI_ZINDEX_DEFAULT	CSHMI_ZINDEX_TOP
 
 #endif
