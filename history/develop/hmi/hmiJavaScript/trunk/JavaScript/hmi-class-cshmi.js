@@ -348,12 +348,9 @@ cshmi.prototype = {
 					//TemplateConfigValues
 					var TemplateObject = ObjectParent;
 					do{
-						if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[responseArray[i]]){
-							//this is a TemplateObject itself
+						if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[responseArray[i]] !== undefined){
+							//this is a TemplateObject itself and have valid data for us
 							return TemplateObject.ConfigValues[responseArray[i]];
-						}else if(TemplateObject.ConfigValues){
-							//this is a TemplateObject, but has no Config for this request
-							return null;
 						}
 					//loop upwards to find the Template object
 					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
@@ -835,9 +832,15 @@ cshmi.prototype = {
 		
 		if (responseArray[8] == "auto"){
 		}else if (responseArray[8] == "middle"){
-			svgTspan.setAttribute("dy", "0.5ex");
+			svgTspan.setAttribute("dy", "0.7ex");
 		}else if (responseArray[8] == "hanging"){
-			svgTspan.setAttribute("dy", "1ex");
+			if (svgTspan.style.baselineShift !== undefined){
+				svgTspan.style.baselineShift = "-100%";
+			}else if (svgTspan.style.dominantBaseline !== undefined){
+				svgTspan.style.dominantBaseline = "hanging";
+			}else{
+				svgTspan.setAttribute("dy", "1ex");
+			}
 		}
 		
 		svgElement.appendChild(svgTspan);
