@@ -182,7 +182,11 @@ var BrowserDetect = {
 	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
 		//IE6, 7 and 8 needs a plugin (from Adobe)
 		var results = detectSVG();
-		if(results.support){
+		if(results.support == "Builtin"){
+			//ie>=9 has buildin support and is able to use the gecko version
+			//This modern IE could get into this codepath if compatibility mode is active (in the intranet)
+			window.location.href = "hmi-gecko.xhtml"+window.location.search;
+		}else if(results.support){
 			window.location.href = "hmi-explorer.html"+window.location.search;
 		}else{
 			getSVGViewer();
