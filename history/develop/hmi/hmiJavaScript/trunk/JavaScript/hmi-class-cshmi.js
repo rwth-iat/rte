@@ -92,6 +92,12 @@ cshmi.prototype = {
 		
 		var Component = this.BuildDomain(null, ObjectPath, "/cshmi/Group");
 		
+		if(HMI.PlaygroundContainerNode){
+			//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
+			HMI.PlaygroundContainerNode.setAttribute('height', Component.getAttribute('height'));
+			HMI.PlaygroundContainerNode.setAttribute('width', Component.getAttribute('width'));
+		}
+		
 		if (Component !== null){
 			HMI.Playground.appendChild(Component);
 		}
@@ -186,6 +192,10 @@ cshmi.prototype = {
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			//fixme make double click ASV compatible
+			/*ObjectParent.addEventListener("click", function(evt){
+				if (!(evt.button === 0 && evt.detail ==2)){
+				return;
+			}*/
 			ObjectParent.addEventListener("dblclick", function(){
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, false);
@@ -604,7 +614,6 @@ cshmi.prototype = {
 			
 			return null;
 		}
-		HMI.hmi_log_info("building template "+ObjectPath+" in "+ObjectParent.id);
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
 		if (responseArray[0] === "" && responseArray.length > 3){
@@ -677,9 +686,13 @@ cshmi.prototype = {
 			}
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-		//fixme make double click ASV compatible
 		ObjectParent.setAttribute("cursor", "pointer");
-		ObjectParent.addEventListener("dblclick", function(evt){
+		//fixme make double click ASV compatible
+		/*ObjectParent.addEventListener("click", function(evt){
+			if (!(evt.button === 0 && evt.detail ==2)){
+			return;
+		}*/
+		ObjectParent.addEventListener("dblclick", function(){
 			var childTemplates = preserveThis._getElementsByClassName(ObjectParent, preserveThis.cshmiTemplateClass);
 			for (var i=0; i < childTemplates.length; i++) {
 				if (childTemplates[i].getAttribute("display") == "block"){
@@ -827,8 +840,8 @@ cshmi.prototype = {
 		svgElement.setAttribute("fill", responseArray[10]);
 		svgElement.setAttribute("opacity", responseArray[11]);
 		
-		var svgTspan = document.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
-		svgTspan.appendChild(document.createTextNode(responseArray[12]));
+		var svgTspan = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
+		svgTspan.appendChild(HMI.svgDocument.createTextNode(responseArray[12]));
 		
 		if (responseArray[8] == "auto"){
 		}else if (responseArray[8] == "middle"){
@@ -977,14 +990,14 @@ cshmi.prototype = {
 			return node.getElementsByClassName(className);
 		} else {
 			var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
-			var elm = elm || document;
+			var elm = elm || HMI.svgDocument;
 			var elements = HMI.svgDocument.getElementsByTagName("*");
 			var returnElements = [];
 			var current;
 			var length = elements.length;
 			for(var i=0; i<length; i++){
-				current = elements[i];
-				if(testClass.test(current.className)){
+				current = elements.item(i);
+				if(testClass.test(current.getAttribute('class'))){
 					returnElements.push(current);
 				}
 			}
