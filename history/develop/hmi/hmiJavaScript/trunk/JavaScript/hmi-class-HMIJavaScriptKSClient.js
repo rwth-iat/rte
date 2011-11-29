@@ -724,6 +724,9 @@ HMIJavaScriptKSClient.prototype = {
 			returns the KS Response as an Array, or an empty Array
 	*********************************/
 	splitKsResponse: function (response) {
+		
+		//TODO rebuild for proper {} handling
+		
 		//check input
 		if (response === null){
 			return Array();

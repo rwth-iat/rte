@@ -990,8 +990,8 @@ cshmi.prototype = {
 			return node.getElementsByClassName(className);
 		} else {
 			var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
-			var elm = elm || HMI.svgDocument;
-			var elements = HMI.svgDocument.getElementsByTagName("*");
+			var node = node || HMI.svgDocument;
+			var elements = node.getElementsByTagName("*");
 			var returnElements = [];
 			var current;
 			var length = elements.length;
