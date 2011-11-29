@@ -20,6 +20,14 @@ function detectSVG()
 			results = { plugin:"Renesis", IID:"RenesisX.RenesisCtrl.1", pluginVersion:">=1.0" };
 		else if ( obj.window && obj.window.getSVGViewerVersion().indexOf( "enesis" ) > 0 )
 			results = { plugin:"Renesis", IID:"RenesisX.RenesisCtrl.1", pluginVersion:"<1.0" };
+		else{
+			try{
+				var asv = new ActiveXObject("Adobe.SVGCtl");
+				results = { plugin:"Adobe", IID:"Adobe.SVGCtl"};
+			}
+			catch(e){
+			}
+		}
 	}
 	results.IID = ( results.plugin == "Adobe" ? "Adobe.SVGCtl" : ( results.plugin == "Renesis" ? "renesisX.RenesisCtrl.1" : null ));
 	
