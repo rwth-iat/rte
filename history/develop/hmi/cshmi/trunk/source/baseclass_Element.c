@@ -64,8 +64,6 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
-#include "cshmi.h"
 #include "cshmilib.h"
 
 
@@ -309,7 +307,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 ) {
 	// local variables
 	//
-	OV_INSTPTR_cshmi_Element pinst = Ov_StaticPtrCast(cshmi_Element, pobj);
+	OV_INSTPTR_ov_object
+		pParent = NULL;
 	OV_RESULT    result;
 
 	/* do what the base class does first */
@@ -317,5 +316,14 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 	if(Ov_Fail(result))
 		return result;
 
-	return cshmi_Element_zindex_set(pinst, CSHMI_ZINDEX_DEFAULT);
+	//force correct placement
+	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	if (pParent != NULL){
+		if (!Ov_CanCastTo(cshmi_ContainerElement, pParent)){
+			ov_logfile_debug("An element is not allowed below this parent. Element: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
+			return OV_ERR_BADPLACEMENT;
+		}
+	}
+
+	return cshmi_Element_zindex_set(Ov_StaticPtrCast(cshmi_Element, pobj), CSHMI_ZINDEX_DEFAULT);
 }

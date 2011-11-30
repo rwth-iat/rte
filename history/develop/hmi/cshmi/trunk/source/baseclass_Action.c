@@ -64,9 +64,7 @@
 #endif
 
 
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_logfile.h"
+#include "cshmilib.h"
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Action_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -81,14 +79,15 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Action_constructor(
 	if(Ov_Fail(result))
 		return result;
 	
-	/* do what */
+	//force correct placement
 	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	if (pParent != NULL){
-		if (Ov_CanCastTo(cshmi_Element, pParent)){
-			ov_logfile_debug("nicht erlaubt action: %s, Vater: %s", pobj->v_identifier, pParent->v_identifier);
+		if (!(	Ov_CanCastTo(cshmi_Event, pParent)
+			||	Ov_CanCastTo(cshmi_csContainer, pParent)
+				)){
+			ov_logfile_debug("An action is not allowed below this parent. Action: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
 			return OV_ERR_BADPLACEMENT;
 		}
-	}else{
 	}
 	
 	return OV_ERR_OK;

@@ -64,7 +64,29 @@
 #endif
 
 
-#include "cshmi.h"
-#include "libov/ov_macros.h"
+#include "cshmilib.h"
 
+OV_DLLFNCEXPORT OV_RESULT cshmi_Condition_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	//	local variables
+	//
+	OV_INSTPTR_ov_object pParent = NULL;
+	OV_RESULT    result;
 
+	/* do what the base class does first */
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
+
+	//force correct placement
+	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	if (pParent != NULL){
+		if (!Ov_CanCastTo(cshmi_csContainer, pParent)){
+			ov_logfile_debug("An action is not allowed below this parent. Action: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
+			return OV_ERR_BADPLACEMENT;
+		}
+	}
+
+	return OV_ERR_OK;
+}

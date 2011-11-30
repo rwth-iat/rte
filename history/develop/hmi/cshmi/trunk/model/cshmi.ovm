@@ -77,27 +77,13 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 
-	/*
-	CLASS Reference : CLASS cshmi/Object
-		IS_INSTANTIABLE;
-		COMMENT = "reference to a remote CSHMI object";
-		VARIABLES
-			kspath : STRING
-			HAS_ACCESSORS 
-			COMMENT = "the KS path of the remote CSHMI object";
-		END_VARIABLES;
-	END_CLASS;
-	*/
-
 	/* Container Elements */
 
 	CLASS ContainerElement : CLASS cshmi/Object
 		COMMENT = "base class for container elements";
-	END_CLASS;
-	
-	CLASS csContainer : CLASS cshmi/ContainerElement
-		IS_INSTANTIABLE;
-		COMMENT = "internal class for container elements as parts of ifThenElse";
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS Group : CLASS cshmi/ContainerElement
@@ -136,6 +122,11 @@ LIBRARY cshmi
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
 		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS csContainer : CLASS cshmi/ContainerElement
+		IS_INSTANTIABLE;
+		COMMENT = "internal class for container elements as parts of ifThenElse";
 	END_CLASS;
 	
 	/* Graphical Elements */
@@ -216,6 +207,29 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 
+	CLASS Rectangle : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a rectangle";
+		VARIABLES
+			x : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the rectangle"
+			INITIALVALUE = 0.0;
+			width : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "width of the rectangle"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "height of the rectangle"
+			INITIALVALUE = 100.0;
+		END_VARIABLES;
+	END_CLASS;
+
 	CLASS Circle : CLASS cshmi/Element
 		IS_INSTANTIABLE;
 		COMMENT = "a circle";
@@ -285,29 +299,6 @@ LIBRARY cshmi
 			points [] : SINGLE
 			HAS_ACCESSORS
 			COMMENT = "points that make up the polyline";
-		END_VARIABLES;
-	END_CLASS;
-
-	CLASS Rectangle : CLASS cshmi/Element
-		IS_INSTANTIABLE;
-		COMMENT = "a rectangle";
-		VARIABLES
-			x : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "x-axis coordinate of the rectangle"
-			INITIALVALUE = 0.0;
-			y : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "y-axis coordinate of the rectangle"
-			INITIALVALUE = 0.0;
-			width : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "width of the rectangle"
-			INITIALVALUE = 100.0;
-			height : SINGLE
-			HAS_ACCESSORS
-			COMMENT = "height of the rectangle"
-			INITIALVALUE = 100.0;
 		END_VARIABLES;
 	END_CLASS;
 
@@ -438,6 +429,9 @@ LIBRARY cshmi
 	
 	CLASS Condition : CLASS cshmi/Object
 		COMMENT = "base class for conditions";
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 
 	CLASS Compare : CLASS cshmi/Condition
