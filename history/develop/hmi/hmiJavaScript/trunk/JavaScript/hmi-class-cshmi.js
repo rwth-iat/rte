@@ -337,19 +337,17 @@ cshmi.prototype = {
 					//TemplateFBReferenceVariable
 					var TemplateObject = ObjectParent;
 					do{
-						if(TemplateObject.FBReference && TemplateObject.FBReference[responseArray[i]]){
+						if(TemplateObject.FBReference && TemplateObject.FBReference[responseArray[i]] !== undefined){
 							//this is a TemplateObject itself
 							return TemplateObject.FBReference[responseArray[i]];
-						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"]){
+						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 							//this is a TemplateObject itself, but only one reference given
 							
 							//todo fremde ks server erlauben
 							var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
 							var result = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', null);
-							return HMI.KSClient.splitKsResponse(result)[0];
-						}else if(TemplateObject.FBReference){
-							//this is a TemplateObject, but has no Config for this request
-							return null;
+							//todo refactoring
+							return HMI.KSClient.splitKsResponse(result)[0] !== undefined ? HMI.KSClient.splitKsResponse(result)[0]:null;
 						}
 					//loop upwards to find the Template object
 					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
