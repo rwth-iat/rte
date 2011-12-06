@@ -747,7 +747,7 @@ HMI.prototype = {
 			function(){
 				if (HMI.Playground.firstChild.lastChild.id == HMI.HMI_Constants.NODE_NAME_REACTIONMARKER){
 					HMI.Playground.firstChild.removeChild(HMI.Playground.firstChild.lastChild);
-					HMI.gestureReactionMarkerTimeoutID = null
+					HMI.gestureReactionMarkerTimeoutID = null;
 				}
 			}, 800);
 	},
@@ -1487,15 +1487,28 @@ HMI.prototype = {
 		//Firefox, Safari and Opera
 		if (Element.ownerSVGElement !== undefined){
 			if ( Element.ownerSVGElement !== null && Element.ownerSVGElement != document){
-				LayerX += parseInt(Element.ownerSVGElement.getAttribute("layerX"), 10);
-				LayerY += parseInt(Element.ownerSVGElement.getAttribute("layerY"), 10);
+//todo warnen wenn NaN bei hmi auftaucht
+				var newLayerX = parseInt(Element.ownerSVGElement.getAttribute("layerX"), 10);
+				var newLayerY = parseInt(Element.ownerSVGElement.getAttribute("layerY"), 10);
+				if (!isNaN(newLayerX) && !isNaN(newLayerY)){
+					LayerX += newLayerX;
+					LayerY += newLayerY;
+				}
 			}else if (Element.parentNode !== null && Element.parentNode.attributes !== null){
-				LayerX += parseInt(Element.parentNode.getAttribute("layerX"), 10);
-				LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
+				newLayerX = parseInt(Element.parentNode.getAttribute("layerX"), 10);
+				newLayerY = parseInt(Element.parentNode.getAttribute("layerY"), 10);
+				if (!isNaN(newLayerX) && !isNaN(newLayerY)){
+					LayerX += newLayerX;
+					LayerY += newLayerY;
+				}
 			}
 		}else if(Element.parentNode !== null && Element.parentNode.attributes !== null && Element.parentNode.attributes.length !== 0){
-			LayerX += parseInt(Element.parentNode.getAttribute("layerX"), 10);
-			LayerY += parseInt(Element.parentNode.getAttribute("layerY"), 10);
+			newLayerX = parseInt(Element.parentNode.getAttribute("layerX"), 10);
+			newLayerY = parseInt(Element.parentNode.getAttribute("layerY"), 10);
+			if (!isNaN(newLayerX) && !isNaN(newLayerY)){
+				LayerX += newLayerX;
+				LayerY += newLayerY;
+			}
 		}
 		
 		if (isNaN(LayerX) || isNaN(LayerY)){

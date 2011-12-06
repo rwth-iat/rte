@@ -153,6 +153,10 @@ cshmi.prototype = {
 				var ChildComponent = this.BuildDomain(Component, Component.id+"/"+varName[0], varName[1]);
 				if (ChildComponent !== null){
 					Component.appendChild(ChildComponent);
+					
+					if (ObjectType.indexOf("/cshmi/Group") !== -1){ //todo und group
+						HMI._setLayerPosition(ChildComponent);
+					}
 				}
 			}
 		}
@@ -186,6 +190,9 @@ cshmi.prototype = {
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener(command[command.length-1], function(){
+				//mark changed Component
+				HMI.displaygestureReactionMarker(ObjectParent);
+				
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
@@ -197,12 +204,18 @@ cshmi.prototype = {
 				return;
 			}*/
 			ObjectParent.addEventListener("dblclick", function(){
+				//mark changed Component
+				HMI.displaygestureReactionMarker(ObjectParent);
+				
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener("contextmenu", function(){
+				//mark changed Component
+				HMI.displaygestureReactionMarker(ObjectParent);
+				
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, false);
 		}else{
@@ -409,7 +422,6 @@ cshmi.prototype = {
 			if (responseArray[i] !== ""){
 				if (i === 0){
 					//ksVar
-					
 					if (responseArray[i].charAt(0) == "/" && responseArray[i].charAt(1) == "/"){
 						//we have an absolute path on another server
 						var RequestServer = Object();
@@ -462,7 +474,8 @@ cshmi.prototype = {
 				//communication error
 				return returnValue;
 			}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-				//an object in tree is no cshmi object => try parent
+				//an object in tree is no cshmi object
+				return returnValue;
 			}else if (response !== "{{}}" && response.length > 2){
 				var responseArray = HMI.KSClient.splitKsResponse(response);
 				if (responseArray[0].charAt(0) === "/" && responseArray[0].charAt(1) === "/"){
@@ -681,6 +694,10 @@ cshmi.prototype = {
 			var ChildComponent = this.BuildDomain(svgElement, TemplateLocation+responseArray[0]+"/"+varName[0], varName[1]);
 			if (ChildComponent !== null){
 				svgElement.appendChild(ChildComponent);
+				
+				if (ChildComponent.tagName == "svg"){
+					HMI._setLayerPosition(ChildComponent);
+				}
 			}
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
