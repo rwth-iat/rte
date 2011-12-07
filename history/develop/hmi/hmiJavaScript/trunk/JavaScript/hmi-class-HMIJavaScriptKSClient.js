@@ -722,6 +722,8 @@ HMIJavaScriptKSClient.prototype = {
 	/*********************************
 		splitKsResponse
 			returns the KS Response as an Array, or an empty Array
+		"{FALSE}" => ["FALSE"]
+		"{{}} {{}} {{}} {ieexp}" => ["", "", "", "ieexp"]
 	*********************************/
 	splitKsResponse: function (response) {
 		

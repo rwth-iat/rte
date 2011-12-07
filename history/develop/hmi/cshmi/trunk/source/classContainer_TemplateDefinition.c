@@ -96,3 +96,16 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_height_set(
     return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_BOOL cshmi_TemplateDefinition_hideable_get(
+	OV_INSTPTR_cshmi_TemplateDefinition          pobj
+) {
+	return pobj->v_hideable;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_hideable_set(
+	OV_INSTPTR_cshmi_TemplateDefinition          pobj,
+	const OV_BOOL  value
+) {
+	pobj->v_hideable = value;
+	return OV_ERR_OK;
+}

@@ -71,6 +71,7 @@ function cshmi() {
 	this.ResourceList.Events = Object();
 	
 	this.cshmiTemplateClass = "cshmi-template";
+	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
 };
 
 
@@ -176,8 +177,7 @@ cshmi.prototype = {
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, 10);
 		}else{
-			//todo
-			HMI.hmi_log_info("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
+			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
 		}
 	},
 	/*********************************
@@ -219,8 +219,7 @@ cshmi.prototype = {
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, false);
 		}else{
-			//todo
-			HMI.hmi_log_info("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
+			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
 		}
 	},
 	/*********************************
@@ -265,8 +264,7 @@ cshmi.prototype = {
 			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
 				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else{
-				//todo
-				HMI.hmi_log_info("Action ("+varName[1]+")"+ObjectPath+" nicht unterstützt");
+				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+")"+ObjectPath+" nicht unterstützt");
 			}
 		}
 		return returnValue;
@@ -385,8 +383,9 @@ cshmi.prototype = {
 					debugger;
 					return null;
 				}
-			}
-		}
+			}//end if empty
+		}//end for loop
+		HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' not configured.');
 		return null; //unconfigured
 	},
 	/*********************************
@@ -406,7 +405,7 @@ cshmi.prototype = {
 			return false;
 		}
 		//get info where to set the NewValue
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .TemplateFBReferenceVariable}', null);
 		if (response === false){
 			//communication error
 			return false;
@@ -453,9 +452,32 @@ cshmi.prototype = {
 					
 					//todo
 					return false;
+				}else if (i === 3){
+					//TemplateFBReferenceVariable
+					var TemplateObject = ObjectParent;
+					do{
+						if(TemplateObject.FBReference && TemplateObject.FBReference[responseArray[i]] !== undefined){
+							//this is a TemplateObject itself
+							return TemplateObject.FBReference[responseArray[i]];
+						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+							//this is a TemplateObject itself, but only one reference given
+							
+							//todo fremde ks server erlauben
+							var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
+							response = HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', NewValue, null);
+							if (response.indexOf("KS_ERR") !== -1){
+								HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+responseArray[i]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+							}
+							return true;
+						}
+					//loop upwards to find the Template object
+					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
+					return null;
 				}
-			}
-		}
+			}//end: if empty
+		}//end: for loop
+		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
+		return false;
 	},
 	/*********************************
 		_getBaseKsPath
@@ -518,7 +540,7 @@ cshmi.prototype = {
 		var ConditionMatched = false;
 		var andCond = responseArray[0];
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if");
-		var i=0
+		var i = 0;
 		if (andCond == "TRUE"){
 			//logical OR
 			while(i < responseArray.length && ConditionMatched !== false){
@@ -538,7 +560,7 @@ cshmi.prototype = {
 				i++;
 			}
 		}
-		if (ConditionMatched == true){
+		if (ConditionMatched === true){
 			this._interpreteAction(ObjectParent, ObjectPath+".then");
 		}else{
 			this._interpreteAction(ObjectParent, ObjectPath+".else");
@@ -560,7 +582,7 @@ cshmi.prototype = {
 			return (Value1 < Value2);
 		}else if (comptype === "{<=}"){
 			return (Value1 <= Value2);
-		}else if (comptype === "{=}"){
+		}else if (comptype === "{==}"){
 			return (Value1 === Value2);
 		}else if (comptype === "{!=}"){
 			return (Value1 !== Value2);
@@ -636,7 +658,7 @@ cshmi.prototype = {
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
 		
-		var response = HMI.KSClient.getVar(null, '{'+TemplateLocation+responseArray[0]+'.width .height}', null);
+		var response = HMI.KSClient.getVar(null, '{'+TemplateLocation+responseArray[0]+'.width .height .hideable}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -652,6 +674,9 @@ cshmi.prototype = {
 		svgElement.setAttribute("TemplateDescription", TemplateLocation+responseArray[0]);
 		
 		this._addClass(svgElement, this.cshmiTemplateClass);
+		if (responseArrayTemplate[0] === "TRUE"){
+			this._addClass(svgElement, this.cshmiTemplateHideableClass);
+		}
 		
 		//set dimension of container
 		svgElement.setAttribute("x", responseArray[1]);
@@ -708,7 +733,7 @@ cshmi.prototype = {
 			return;
 		}*/
 		ObjectParent.addEventListener("dblclick", function(){
-			var childTemplates = preserveThis._getElementsByClassName(ObjectParent, preserveThis.cshmiTemplateClass);
+			var childTemplates = preserveThis._getElementsByClassName(ObjectParent, preserveThis.cshmiTemplateHideableClass);
 			for (var i=0; i < childTemplates.length; i++) {
 				if (childTemplates[i].getAttribute("display") == "block"){
 					childTemplates[i].setAttribute("display", "none");

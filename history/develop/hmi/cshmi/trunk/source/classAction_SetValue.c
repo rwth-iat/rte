@@ -107,6 +107,19 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_elemVarPath_set(
 	return ov_string_setvalue(&pobj->v_elemVarPath,value);
 }
 
+OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_TemplateFBReferenceVariable_get(
+	OV_INSTPTR_cshmi_SetValue          pobj
+)	{
+	return pobj->v_TemplateFBReferenceVariable;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_TemplateFBReferenceVariable_set(
+	OV_INSTPTR_cshmi_SetValue          pobj,
+	const OV_STRING  value
+) {
+	return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable,value);
+}
+
 OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_globalVar_get(
     OV_INSTPTR_cshmi_SetValue          pobj
 ) {

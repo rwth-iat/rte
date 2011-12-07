@@ -121,6 +121,10 @@ LIBRARY cshmi
 			HAS_ACCESSORS
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
+			hideable : BOOL
+			HAS_ACCESSORS
+			COMMENT = "should this object be hidden if clicked on parent?"
+			INITIALVALUE = FALSE;
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -130,6 +134,9 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	/* Graphical Elements */
+
+
+/* TODO rotate */
 
 	CLASS Element : CLASS cshmi/Object
 		COMMENT = "base class for graphical elements";
@@ -377,7 +384,7 @@ LIBRARY cshmi
 			COMMENT = "name of the event variable";
 			TemplateFBReferenceVariable : STRING
 			HAS_ACCESSORS
-			COMMENT = "name of a variable of a FB object";
+			COMMENT = "name of a variable of a referenced FB object";
 			TemplateConfigValues : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the key of a ConfigValue";
@@ -400,6 +407,9 @@ LIBRARY cshmi
 			elemVarPath : STRING
 			HAS_ACCESSORS
 			COMMENT = "the (relative) path to the element";
+			TemplateFBReferenceVariable : STRING
+			HAS_ACCESSORS
+			COMMENT = "name of a variable of a referenced FB object";
 			globalVar : STRING
 			HAS_ACCESSORS
 			COMMENT = "name of the target global variable";
