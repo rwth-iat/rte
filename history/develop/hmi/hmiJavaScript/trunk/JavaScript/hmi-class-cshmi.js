@@ -189,7 +189,7 @@ cshmi.prototype = {
 		if (command[command.length-1] === "click"){
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			ObjectParent.addEventListener(command[command.length-1], function(){
+			ObjectParent.addEventListener(command[command.length-1], function(evt){
 				//mark changed Component
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
@@ -203,7 +203,7 @@ cshmi.prototype = {
 				if (!(evt.button === 0 && evt.detail ==2)){
 				return;
 			}*/
-			ObjectParent.addEventListener("dblclick", function(){
+			ObjectParent.addEventListener("dblclick", function(evt){
 				//mark changed Component
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
@@ -212,7 +212,7 @@ cshmi.prototype = {
 		}else if (command[command.length-1] === "rightclick"){
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			ObjectParent.addEventListener("contextmenu", function(){
+			ObjectParent.addEventListener("contextmenu", function(evt){
 				//mark changed Component
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
@@ -227,6 +227,8 @@ cshmi.prototype = {
 		-	calling Actions if supported TimeEvent is triggered
 	*********************************/
 	_interpreteTimeEvent: function(ObjectParent, ObjectPath){
+		//fixme prevent update if not visible
+		
 		//interprete Action now to initialise
 		this._interpreteAction(ObjectParent, ObjectPath);
 		
@@ -340,7 +342,7 @@ cshmi.prototype = {
 					}
 				}else if (i === 3){
 					//globalVar
-					debugger;
+					HMI.hmi_log_info_onwebsite('GetValue globalVar not implemented. Object: '+ObjectPath);
 					
 					//todo
 					return null;
@@ -378,10 +380,6 @@ cshmi.prototype = {
 					//value
 					ObjectParent[ObjectPath].value = responseArray[i];
 					return ObjectParent[ObjectPath].value;
-				}else{
-					//unknown
-					debugger;
-					return null;
 				}
 			}//end if empty
 		}//end for loop
@@ -448,9 +446,8 @@ cshmi.prototype = {
 					return true;
 				}else if (i === 2){
 					//globalVar
-					debugger;
+					HMI.hmi_log_info_onwebsite('SetValue globalVar not implemented. Object: '+ObjectPath);
 					
-					//todo
 					return false;
 				}else if (i === 3){
 					//TemplateFBReferenceVariable
@@ -674,7 +671,7 @@ cshmi.prototype = {
 		svgElement.setAttribute("TemplateDescription", TemplateLocation+responseArray[0]);
 		
 		this._addClass(svgElement, this.cshmiTemplateClass);
-		if (responseArrayTemplate[0] === "TRUE"){
+		if (responseArrayTemplate[2] === "TRUE"){
 			this._addClass(svgElement, this.cshmiTemplateHideableClass);
 		}
 		
@@ -732,7 +729,7 @@ cshmi.prototype = {
 			if (!(evt.button === 0 && evt.detail ==2)){
 			return;
 		}*/
-		ObjectParent.addEventListener("dblclick", function(){
+		ObjectParent.addEventListener("dblclick", function(evt){
 			var childTemplates = preserveThis._getElementsByClassName(ObjectParent, preserveThis.cshmiTemplateHideableClass);
 			for (var i=0; i < childTemplates.length; i++) {
 				if (childTemplates[i].getAttribute("display") == "block"){

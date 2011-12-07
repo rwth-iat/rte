@@ -319,7 +319,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 	//force correct placement
 	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	if (pParent != NULL){
-		if (!Ov_CanCastTo(cshmi_ContainerElement, pParent)){
+		if (!( Ov_CanCastTo(cshmi_ContainerElement, pParent) || Ov_CanCastTo(cshmi_Template, pParent) )){
 			ov_logfile_debug("An element is not allowed below this parent. Element: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
 			return OV_ERR_BADPLACEMENT;
 		}
