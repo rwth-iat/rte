@@ -356,6 +356,12 @@ cshmi.prototype = {
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 							//this is a TemplateObject itself, but only one reference given
 							
+							if(responseArray[i] == "identifier"){
+								//if the identifier is requested calculate this to avoid network request
+								var Objectname = TemplateObject.FBReference["default"].split("/");
+								return Objectname[Objectname.length - 1];
+							}
+							
 							//todo fremde ks server erlauben
 							var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
 							var result = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', null);
