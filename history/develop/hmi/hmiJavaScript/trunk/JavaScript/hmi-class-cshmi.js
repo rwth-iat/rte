@@ -644,6 +644,9 @@ cshmi.prototype = {
 			
 			return null;
 		}
+		
+		//transform "...{{/TechUnits/Pump1}} {{pumpcolor:yellow pumpname:N18}}..." 
+		//to [..., "/TechUnits/Pump1", "pumpcolor:yellow pumpname:N18", ...]
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
 		if (responseArray[0] === "" && responseArray.length > 3){
@@ -700,6 +703,10 @@ cshmi.prototype = {
 				svgElement.FBReference["default"] = ConfigEntry[0];
 			}
 		}
+		
+		//responseArray[4] is "pumpcolor:yellow pumpname:N18"
+		//problemfall: "pumpcolor:yellow {pumpname:N 18}"
+		//und noch schöner: "{{{pumpcolor:y ellow} {pumpname:N 18}}}" => ["{{pumpcolor:y ellow", "pumpname:N 18}}"]
 		ConfigList = responseArray[4].split(" ");
 		for (var i=0; i < ConfigList.length; i++) {
 			ConfigEntry = ConfigList[i].split(":");

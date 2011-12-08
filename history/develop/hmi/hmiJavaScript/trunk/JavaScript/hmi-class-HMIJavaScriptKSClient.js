@@ -724,9 +724,15 @@ HMIJavaScriptKSClient.prototype = {
 			returns the KS Response as an Array, or an empty Array
 		"{FALSE}" => ["FALSE"]
 		"{{}} {{}} {{}} {ieexp}" => ["", "", "", "ieexp"]
+		"{Test} {hallo} {bla} {ieexp}" => ["Test", "hallo", "bla", "ieexp"]
+		"{pump1 /Libraries/cshmi/Template} {pump2 /Libraries/cshmi/Template}" => ["pump1 /Libraries/cshmi/Template", "pump2 /Libraries/cshmi/Template"]
+		"{{/TechUnits/Pump1}} {{pumpcolor:yellow pumpname:N18}}" => ["/TechUnits/Pump1", "pumpcolor:yellow pumpname:N18"]
+		"{{/TechUnits/Pump1}} {{pumpcolor:yellow {pumpname:N 18}}}" => ["/TechUnits/Pump1", "pumpcolor:yellow pumpname:N 18"] soll
+		"{{/TechUnits/Pump1}} {{pumpcolor:yellow {pumpname:N 18}}}" => ["/TechUnits/Pump1", "pumpcolor:yellow 	"pumpcolor:yellow {pumpname:N 18}"] ist
+		
+		"{{{pumpcolor:y ellow} {pumpname:N 18}}}" => ["{{pumpcolor:y ellow", "pumpname:N 18}}"] boese
 	*********************************/
 	splitKsResponse: function (response) {
-		
 		//TODO rebuild for proper {} handling
 		
 		//check input
