@@ -63,25 +63,17 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
+#include "cshmilib.h"
 
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_SINGLE* cshmi_Polygon_points_get(
-    OV_INSTPTR_cshmi_Polygon          pobj,
-    OV_UINT *pveclen
+OV_DLLFNCEXPORT OV_STRING cshmi_Polygon_points_get(
+	OV_INSTPTR_cshmi_Polygon          pobj
 ) {
-    *pveclen = pobj->v_points.veclen;
-    return pobj->v_points.value;
+	return pobj->v_points;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Polygon_points_set(
-    OV_INSTPTR_cshmi_Polygon          pobj,
-    const OV_SINGLE*  value,
-    const OV_UINT veclen
+	OV_INSTPTR_cshmi_Polygon          pobj,
+	const OV_STRING  value
 ) {
-	//todo check if points describes even number of points
-    return Ov_SetDynamicVectorValue(&pobj->v_points,value,veclen,SINGLE);
+	return ov_string_setvalue(&pobj->v_points,value);
 }
-

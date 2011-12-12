@@ -63,24 +63,17 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
+#include "cshmilib.h"
 
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_STRING* cshmi_Path_d_get(
-    OV_INSTPTR_cshmi_Path          pobj,
-    OV_UINT *pveclen
+OV_DLLFNCEXPORT OV_STRING cshmi_Path_d_get(
+		OV_INSTPTR_cshmi_Path          pobj
 ) {
-    *pveclen = pobj->v_d.veclen;
-    return pobj->v_d.value;
+	return pobj->v_d;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Path_d_set(
-    OV_INSTPTR_cshmi_Path          pobj,
-    const OV_STRING*  value,
-    const OV_UINT veclen
+	OV_INSTPTR_cshmi_Path          pobj,
+	const OV_STRING  value
 ) {
-    return Ov_SetDynamicVectorValue(&pobj->v_d,value,veclen,STRING);
+	return ov_string_setvalue(&pobj->v_d,value);
 }
-

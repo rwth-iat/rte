@@ -283,7 +283,7 @@ LIBRARY cshmi
 		IS_INSTANTIABLE;
 		COMMENT = "a path";
 		VARIABLES
-			d [] : STRING
+			d : STRING
 			HAS_ACCESSORS
 			COMMENT = "definition of the outline of a shape";
 		END_VARIABLES;
@@ -293,9 +293,9 @@ LIBRARY cshmi
 		IS_INSTANTIABLE;
 		COMMENT = "a polygon";
 		VARIABLES
-			points [] : SINGLE
+			points : STRING
 			HAS_ACCESSORS
-			COMMENT = "points that make up the polygon";
+			COMMENT = "points that make up the polygon (split with spaces)";
 		END_VARIABLES;
 	END_CLASS;
 
@@ -303,9 +303,9 @@ LIBRARY cshmi
 		IS_INSTANTIABLE;
 		COMMENT = "a polyline";
 		VARIABLES
-			points [] : SINGLE
+			points : STRING
 			HAS_ACCESSORS
-			COMMENT = "points that make up the polyline";
+			COMMENT = "points that make up the polyline (split with spaces)";
 		END_VARIABLES;
 	END_CLASS;
 

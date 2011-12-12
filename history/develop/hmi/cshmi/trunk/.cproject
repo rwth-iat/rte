@@ -9,7 +9,10 @@
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="cshmi"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/cshmi"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="cshmi/build/nt"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/build/nt"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="cshmi"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -64,7 +67,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="source"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -79,7 +82,10 @@
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="cshmi"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/cshmi"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="cshmi/build/linux"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/build/linux"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="cshmi"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -105,15 +111,12 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.so.debug.option.optimization.level.60999485" name="Optimization Level" superClass="gnu.c.compiler.so.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.so.debug.option.debugging.level.60999485" name="Debug Level" superClass="gnu.c.compiler.so.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.60999485" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<!-- Project -->
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/linux/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
-									<!-- IFBSPro -->
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/include/fb/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/model/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/include/&quot;"/>
-									<!-- Dependencies -->
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.60999485" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="OV_SYSTEM_LINUX=1"/>
@@ -135,7 +138,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="source"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
