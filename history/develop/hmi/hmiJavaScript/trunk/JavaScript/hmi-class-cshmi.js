@@ -276,20 +276,28 @@ cshmi.prototype = {
 		-	get a Value from multiple Sources
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
-		if(!(ObjectParent[ObjectPath] && ObjectParent[ObjectPath].action)){
-			ObjectParent[ObjectPath] = new CsGetValue();
-		}
-		
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .elemVarPath .globalVar .TemplateFBReferenceVariable .TemplateConfigValues .value}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._getValue of "+ObjectPath+" failed: "+response);
+		var responseArray;
+		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			
-			return null;
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .elemVarPath .globalVar .TemplateFBReferenceVariable .TemplateConfigValues .value}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._getValue of "+ObjectPath+" failed: "+response);
+				
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//prepare main js-object to remember config of getValue OV-Object
+			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].getVarParameters = responseArray;
+			HMI.hmi_log_trace("cshmi._getValue: remembering config of "+ObjectPath+" ");
+		}else{
+			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" ");
+			responseArray = this.ResourceList.Actions[ObjectPath].getVarParameters;
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
 		for (var i=0; i < responseArray.length; i++) {
 			if (responseArray[i] !== ""){
@@ -323,19 +331,15 @@ cshmi.prototype = {
 					if (responseArray[i] == "content"){
 						//content is special, as it is different in OVM and SVG
 						if (typeof ObjectParent.textContent != "undefined"){
-							ObjectParent[ObjectPath].elemVar = ObjectParent.textContent;
-							return ObjectParent[ObjectPath].elemVar;
+							return ObjectParent.textContent;
 						}else if (typeof ObjectParent.innerText != "undefined"){
-							ObjectParent[ObjectPath].elemVar = ObjectParent.innerText;
-							return ObjectParent[ObjectPath].elemVar;
+							return ObjectParent.innerText;
 						}else{
 							//fixme asv compatibility
-							ObjectParent[ObjectPath].elemVar = null;
-							return ObjectParent[ObjectPath].elemVar;
+							return null;
 						}
 					}else if (ObjectParent.hasAttribute(responseArray[i])){
-						ObjectParent[ObjectPath].elemVar = ObjectParent.getAttribute(responseArray[i]);
-						return ObjectParent[ObjectPath].elemVar;
+						return ObjectParent.getAttribute(responseArray[i]);
 					}else{
 						//unknown element variable
 						return null;
@@ -384,8 +388,7 @@ cshmi.prototype = {
 					return null;
 				}else if (i === 6){
 					//value
-					ObjectParent[ObjectPath].value = responseArray[i];
-					return ObjectParent[ObjectPath].value;
+					return responseArray[i];
 				}
 			}//end if empty
 		}//end for loop
@@ -1055,17 +1058,6 @@ cshmi.prototype = {
 		}
 	}
 };
-
-
-function CsGetValue(){
-	this.ObjectType = "CsGetValue";
-	this.ksVar = null;
-	this.elemVar = null;
-	this.globalVar = null;
-	this.eventVar = null;
-	this.value = null;
-}
-
 
 var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
