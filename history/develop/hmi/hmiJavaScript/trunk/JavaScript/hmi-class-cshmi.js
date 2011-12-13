@@ -69,6 +69,7 @@ function cshmi() {
 	this.ResourceList.Actions = Object();
 	this.ResourceList.Conditions = Object();
 	this.ResourceList.Events = Object();
+	this.ResourceList.baseKsPath = Object();
 	
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
@@ -497,7 +498,16 @@ cshmi.prototype = {
 		returnValue.serverhandle = null;
 		returnValue.path = "";
 		do{
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPathArray.join("/")+'.baseKsPath}', null);
+			var currentPath = ObjectPathArray.join("/");
+			var response;
+			if (this.ResourceList.baseKsPath[currentPath] === undefined){
+				response = HMI.KSClient.getVar(null, '{'+currentPath+'.baseKsPath}', null);
+				this.ResourceList.baseKsPath[currentPath] = response;
+				HMI.hmi_log_trace("cshmi._BaseKsPath: remembering config of "+currentPath+" ");
+			}else{
+				response = this.ResourceList.baseKsPath[currentPath];
+				HMI.hmi_log_trace("cshmi._BaseKsPath: reusing remembered config of "+currentPath+" ");
+			}
 			if (response === false){
 				//communication error
 				return returnValue;
