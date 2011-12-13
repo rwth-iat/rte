@@ -733,8 +733,6 @@ HMIJavaScriptKSClient.prototype = {
 		"{{{pumpcolor:y ellow} {pumpname:N 18}}}" => ["{{pumpcolor:y ellow", "pumpname:N 18}}"] boese
 	*********************************/
 	splitKsResponse: function (response) {
-		//TODO rebuild for proper {} handling
-		
 		//check input
 		if (response === null){
 			return Array();
@@ -748,19 +746,52 @@ HMIJavaScriptKSClient.prototype = {
 		}else if (response.charAt(0) !== "{" && response.charAt(response.length -1) !== "}"){
 			return Array();
 		}
-		//get rid of the outmost pair of {}
-		response = response.substring(1, response.length-1);
-		var responseArray = response.split("} {");
-		response = null;
 		
-		for (var i = responseArray.length - 1; i >= 0 ;i--){
-			if (responseArray[i].charAt(0) == "{" && responseArray[i].charAt(responseArray[i].length -1) == "}"){
-				// "{hello world}"
-				responseArray[i] = responseArray[i].substring(1, responseArray[i].length-1);
-			}else{
-				// "helloWorld"
+		var indexOfCurrentOpenBracket = 0;
+		var indexOfNextOpenBracket = 0;
+		var indexOfCurrentClosedBracket = 0;
+		var indexOfNextClosedBracket = 0;
+		var startIndexOfCurrentString = 0;
+		
+		var responseArray = [];
+		var currentArrayElement = "";
+
+		//search 1st open bracket
+		indexOfCurrentOpenBracket = response.indexOf("{", 0);
+		startIndexOfCurrentString = indexOfCurrentOpenBracket;
+
+		while(true){		
+			
+			indexOfNextOpenBracket = (response.indexOf("{", indexOfCurrentOpenBracket+1));
+			indexOfNextClosedBracket = (response.indexOf("}", indexOfCurrentClosedBracket+1));
+			
+			if (indexOfNextClosedBracket < indexOfNextOpenBracket) {
+				
+				currentArrayElement = response.slice(startIndexOfCurrentString+1, indexOfNextClosedBracket);
+				currentArrayElement = currentArrayElement.replace(/{/g, "");
+				currentArrayElement = currentArrayElement.replace(/}/g, "");
+				responseArray.push(currentArrayElement);
+				
+				indexOfCurrentOpenBracket = indexOfNextOpenBracket;
+				indexOfCurrentClosedBracket = indexOfNextClosedBracket;
+				startIndexOfCurrentString = indexOfNextOpenBracket;
+			}
+			else if (indexOfNextOpenBracket === -1) {
+				
+				currentArrayElement = response.slice(startIndexOfCurrentString+1, indexOfNextClosedBracket);
+				currentArrayElement = currentArrayElement.replace(/{/g, "");
+				currentArrayElement = currentArrayElement.replace(/}/g, "");
+				responseArray.push(currentArrayElement);
+				
+				break;
+			}
+
+			else {
+				indexOfCurrentOpenBracket = indexOfNextOpenBracket;
+				indexOfCurrentClosedBracket = indexOfNextClosedBracket;
 			}
 		}
+
 		return responseArray;
 	},
 	/*********************************
