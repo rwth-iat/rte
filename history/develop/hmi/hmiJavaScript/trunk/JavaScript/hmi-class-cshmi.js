@@ -733,8 +733,8 @@ cshmi.prototype = {
 			if (ConfigEntry.length === 2){
 				svgElement.ConfigValues[ConfigEntry[0]] = ConfigEntry[1];
 				lastEntry = ConfigEntry[0];
-			}else if (lastEntry !== null){
-				svgElement.ConfigValues[lastEntry] = svgElement.ConfigValues[lastEntry]+" "+ConfigEntry[1];
+			}else if (ConfigEntry.length === 1 && lastEntry !== null){
+				svgElement.ConfigValues[lastEntry] = svgElement.ConfigValues[lastEntry]+" "+ConfigEntry[0];
 			}
 		}
 		
