@@ -727,10 +727,14 @@ cshmi.prototype = {
 		//problemfall: "pumpcolor:yellow {pumpname:N 18}"
 		//und noch schöner: "{{{pumpcolor:y ellow} {pumpname:N 18}}}" => ["{{pumpcolor:y ellow", "pumpname:N 18}}"]
 		ConfigList = responseArray[4].split(" ");
+		var lastEntry = null;
 		for (var i=0; i < ConfigList.length; i++) {
 			ConfigEntry = ConfigList[i].split(":");
 			if (ConfigEntry.length === 2){
 				svgElement.ConfigValues[ConfigEntry[0]] = ConfigEntry[1];
+				lastEntry = ConfigEntry[0];
+			}else if (lastEntry !== null){
+				svgElement.ConfigValues[lastEntry] = svgElement.ConfigValues[lastEntry]+" "+ConfigEntry[1];
 			}
 		}
 		
