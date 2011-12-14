@@ -71,6 +71,8 @@ function cshmi() {
 	this.ResourceList.Events = Object();
 	this.ResourceList.baseKsPath = Object();
 	
+	this.cshmiComponentClass = "cshmi-component";
+	this.cshmiGroupClass = "cshmi-group";
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
 };
@@ -102,6 +104,11 @@ cshmi.prototype = {
 		
 		if (Component !== null){
 			HMI.Playground.appendChild(Component);
+			HMI._setLayerPosition(Component);
+			var ComponentChilds = Component.getElementsByTagName('*');
+			for(var i = 0;i < ComponentChilds.length;i++){
+				HMI._setLayerPosition(ComponentChilds[i]);
+			}
 		}
 	},
 	/*********************************
@@ -155,10 +162,6 @@ cshmi.prototype = {
 				var ChildComponent = this.BuildDomain(Component, Component.id+"/"+varName[0], varName[1]);
 				if (ChildComponent !== null){
 					Component.appendChild(ChildComponent);
-					
-					if (ObjectType.indexOf("/cshmi/Group") !== -1){ //todo und group
-						HMI._setLayerPosition(ChildComponent);
-					}
 				}
 			}
 		}
@@ -639,7 +642,9 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		svgElement.id = ObjectPath;
 		
-		this._addClass(svgElement, "cshmi-group");
+		this._addClass(svgElement, this.cshmiGroupClass);
+		this._addClass(svgElement, this.cshmiComponentClass);
+		
 		//svgElement.setAttribute("xmlns:svg", HMI.HMI_Constants.NAMESPACE_SVG);
 		
 		//set dimension of container
@@ -693,6 +698,7 @@ cshmi.prototype = {
 		svgElement.setAttribute("TemplateDescription", TemplateLocation+responseArray[0]);
 		
 		this._addClass(svgElement, this.cshmiTemplateClass);
+		this._addClass(svgElement, this.cshmiComponentClass);
 		if (responseArrayTemplate[2] === "TRUE"){
 			this._addClass(svgElement, this.cshmiTemplateHideableClass);
 		}
