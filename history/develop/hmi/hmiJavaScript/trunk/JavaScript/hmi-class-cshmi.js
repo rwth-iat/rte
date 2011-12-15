@@ -687,8 +687,8 @@ cshmi.prototype = {
 			//communication error
 			return null;
 		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+responseArray[0]+"' is not available.");
 			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
-			
 			return null;
 		}
 		var responseArrayTemplate = HMI.KSClient.splitKsResponse(response);

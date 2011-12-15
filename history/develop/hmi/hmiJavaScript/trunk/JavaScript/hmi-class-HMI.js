@@ -897,6 +897,7 @@ HMI.prototype = {
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
+		deleteChilds(this.InfoOutput);
 		
 		//deactivate the Select-Boxes, because there is no usefull content
 		HMI.PossServers.disabled = true;
@@ -951,6 +952,7 @@ HMI.prototype = {
 		deleteChilds(this.PossSheets);
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
+		deleteChilds(this.InfoOutput);
 		
 		HMI.PossSheets.disabled = true;
 		$("idBookmark").style.display = "none";
@@ -999,6 +1001,7 @@ HMI.prototype = {
 		//clean an old SVG display and displayed errors in website
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
+		deleteChilds(this.InfoOutput);
 		$("idBookmark").style.display = "none";
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
@@ -1686,7 +1689,6 @@ HMI.prototype = {
 	hmi_log_info_onwebsite: function (text) {
 		if (this.InfoOutput){
 			var InfoTextNode = document.createTextNode(text);
-			deleteChilds(HMI.InfoOutput);
 			HMI.InfoOutput.appendChild(InfoTextNode);
 			//show header
 			HMI.hideHeader(false);
