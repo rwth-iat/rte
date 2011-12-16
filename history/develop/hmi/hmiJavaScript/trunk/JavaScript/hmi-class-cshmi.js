@@ -233,8 +233,13 @@ cshmi.prototype = {
 	_interpreteTimeEvent: function(ObjectParent, ObjectPath){
 		//fixme prevent update if not visible
 		
-		//interprete Action now to initialise
-		this._interpreteAction(ObjectParent, ObjectPath);
+		//todo könnte sein, dass interpreteAction und der spätere settimeout ungünstig zusammen fallen
+		
+		//interprete Action "now", but we want to have the full DOM tree ready
+		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+		window.setTimeout(function(){
+			preserveThis._interpreteAction(ObjectParent, ObjectPath);
+		}, 10);
 		
 		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
 		if (response === false){
@@ -247,8 +252,8 @@ cshmi.prototype = {
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 		if (responseArray.length !== 0){
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			//HMI.hmi_log_trace("cshmi._interpreteTimeEvent calling myself again in "+responseArray[0]+" seconds");
 			window.setTimeout(function(){
 				preserveThis._interpreteTimeEvent(ObjectParent, ObjectPath);
@@ -370,11 +375,31 @@ cshmi.prototype = {
 								return Objectname[Objectname.length - 1];
 							}
 							
-							//todo fremde ks server erlauben
-							var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-							var result = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', null);
-							//todo refactoring
-							return HMI.KSClient.splitKsResponse(result)[0] !== undefined ? HMI.KSClient.splitKsResponse(result)[0]:null;
+							if (TemplateObject.FBReference["default"].charAt(0) === "/" && TemplateObject.FBReference["default"].charAt(1) === "/"){
+								//String begins with // so it is a fullpath with Host and servername
+								var servername = TemplateObject.FBReference["default"].split("/")[2]+"/"+TemplateObject.FBReference["default"].split("/")[3];
+								var serverhandle = HMI.KSClient.getHandleID(servername);
+								var serverpath = TemplateObject.FBReference["default"].substring(servername.length+2);
+								var result = HMI.KSClient.getVar(serverhandle, '{'+serverpath+'.'+responseArray[i]+'}', null);
+								var returnValue = HMI.KSClient.splitKsResponse(result);
+								if (returnValue.length > 0){
+									return returnValue[0];
+								}
+								return null;
+							}else if (TemplateObject.FBReference["default"].charAt(0) === "/"){
+								//String begins with / so it is a fullpath in this server
+								var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
+								var result = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', null);
+								var returnValue = HMI.KSClient.splitKsResponse(result);
+								if (returnValue.length > 0){
+									return returnValue[0];
+								}
+								return null;
+							}else{
+								//a normal relativ path
+								HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
+								return null;
+							}
 						}
 					//loop upwards to find the Template object
 					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
@@ -472,13 +497,29 @@ cshmi.prototype = {
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 							//this is a TemplateObject itself, but only one reference given
 							
-							//todo fremde ks server erlauben
-							var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-							response = HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', NewValue, null);
-							if (response.indexOf("KS_ERR") !== -1){
-								HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+responseArray[i]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+							if (TemplateObject.FBReference["default"].charAt(0) === "/" && TemplateObject.FBReference["default"].charAt(1) === "/"){
+								//String begins with // so it is a fullpath with Host and servername
+								var servername = TemplateObject.FBReference["default"].split("/")[2]+"/"+TemplateObject.FBReference["default"].split("/")[3];
+								var serverhandle = HMI.KSClient.getHandleID(servername);
+								var serverpath = TemplateObject.FBReference["default"].substring(servername.length+2);
+								response = HMI.KSClient.setVar(serverhandle, '{'+serverpath+'.'+responseArray[i]+'}', NewValue, null);
+								if (response.indexOf("KS_ERR") !== -1){
+									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+responseArray[i]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+								}
+								return true;
+							}else if (TemplateObject.FBReference["default"].charAt(0) === "/"){
+								//String begins with / so it is a fullpath in this server
+								var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
+								response = HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', NewValue, null);
+								if (response.indexOf("KS_ERR") !== -1){
+									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+responseArray[i]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+								}
+								return true;
+							}else{
+								//a normal relativ path
+								HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
+								return false;
 							}
-							return true;
 						}
 					//loop upwards to find the Template object
 					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
