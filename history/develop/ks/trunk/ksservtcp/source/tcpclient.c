@@ -7,6 +7,7 @@
 #define OV_COMPILE_LIBRARY_ksservtcp
 #endif
 
+#include <time.h>
 
 #include "ksservtcp.h"
 #include "ksserv.h"
@@ -157,6 +158,11 @@ void ksservtcp_tcpclient_typemethod(
   	 char *buf;
   	 char tmp[4];
  	u_long xid, messageType, rpcVersion, progID, progVersion, procedure;
+ 	
+ 	MemoryStreamFragment* currFragment = NULL;
+ 	char* placeInBuffer = NULL;
+ 	int sentChunkSize = 0;
+ 	int sentBytes = 0;
         
   	//ksserv_logfile_debug("tcpclient typemethod called ");
 	if (receivesocket < 0) { // check if the socket might be OK.
@@ -441,11 +447,51 @@ void ksservtcp_tcpclient_typemethod(
 					//ksserv_xdrexec(&xdrs, &resultXDRs);
 					xdrmemstream_rewind(&resultXDRs, XDR_DECODE);
 
-					//copy xdr-data
-					size_return = (&resultXDRs)->x_handy+28;
+{
+	xdrmemstream_fragment_description descr;
+	unsigned long count = 0;
+	unsigned long total_size = 0;
+	int len = 0;
+	
+	if(xdrmemstream_get_length(&resultXDRs, &len))
+		ksserv_logfile_debug("resultXDR-length: %d", len);
+	else
+		ksserv_logfile_debug("xdrmemstream_get_length failed, len: %d", len);
+		
+	xdrmemstream_get_fragments(&resultXDRs, &descr, &count, &total_size);
+		ksserv_logfile_info("result_XDRs fragment count: %d,\ntotal size: %d\n fragment description length: %d",
+			count, total_size, descr.length);
+}
+
+				//copy xdr-data
+				//set size_return to size of memstream + 28
+//					size_return = (&resultXDRs)->x_handy+28;
+					xdrmemstream_get_length(&resultXDRs, &size_return);
+					size_return+=28;
+		ksserv_logfile_debug("size_return set: %d", size_return);
+				//allocate memory	
 					xdr_return = (char*)malloc(size_return);
 					buffer = (char*)realloc(buffer, size_return); //reuse buffer for returning answer
-					memcpy(buffer, (&resultXDRs)->x_private, size_return-28);
+		ksserv_logfile_debug("buffer allocated: %p", buffer);		
+				//initialize pointer for later iterations	
+					placeInBuffer = buffer;
+				//set currFragment to first Fragments address
+					currFragment = ((MemoryStreamInfo*)((&resultXDRs)->x_base))->first;
+				//iterate over fragments
+					do
+					{
+					//copy fragment to buffer
+						memcpy(placeInBuffer, &(currFragment->dummy), currFragment->used);
+	ksserv_logfile_debug("fragment copied, currFragment->used: %d", currFragment->used);											
+						//increment Bufferpointer	
+						placeInBuffer = &(placeInBuffer[currFragment->used]);
+					//set currFragment to the next one
+						currFragment = currFragment->next;
+	ksserv_logfile_debug("next fragment: %p", currFragment);
+					} while(currFragment);
+					
+				
+				//reset xdr_return
 					memset(xdr_return, 0, size_return);
 					//clear xdr?
 					MemStreamDestroy(&resultXDRs);
@@ -477,8 +523,48 @@ void ksservtcp_tcpclient_typemethod(
 			//KSDEVEL printf("\n\n");
 			//KSDEVEL printf("%s\n", xdr_return);
 		
-			//send xdr to client
-			if (send(receivesocket, xdr_return, (size_return), 0) == -1) ksserv_logfile_error("send() failed");
+			//send xdr to client, iterate over buffer if it cant be sent atomically
+	ksserv_logfile_debug("tcpclient: sending answer: %d bytes", (size_return));
+			//initialize send pointer with buffer
+			placeInBuffer = xdr_return;
+			do
+			{
+				if((size_return - sentBytes) > 4096)
+				{
+					sentChunkSize = send(receivesocket, placeInBuffer, 4096, 0);
+					if (sentChunkSize == -1) 
+					{
+						ksserv_logfile_error("send() failed");
+						break;
+					}
+				}
+				else
+				{
+					sentChunkSize = send(receivesocket, placeInBuffer, (size_return - sentBytes), 0);
+					if (sentChunkSize == -1) 
+					{
+						ksserv_logfile_error("send() failed");
+						break;
+					}
+				}
+				sentBytes += sentChunkSize;
+	ksserv_logfile_debug("tcpclient: answer sent, sentChunkSize: %d\nsentBytes: %d", sentChunkSize, sentBytes);
+				//move pointer to next chunk
+				placeInBuffer = &(xdr_return[sentBytes]);
+				
+				if(sentBytes < size_return)
+				{
+				//sleep to give time for sending (sleep values are trial and error based for the development PC (Intel C600))
+#if !OV_SYSTEM_NT				
+				//on linux usleep counts in usecs
+					usleep(1000);
+#else
+				//on windows Sleep counts in msecs 
+					Sleep(1);
+#endif					
+				}
+			}while(sentBytes < size_return);
+
 			//client isnt any more the sender
 			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
 			free(xdr_return);
