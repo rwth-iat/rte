@@ -208,6 +208,33 @@ typedef long *XDR_INLINE_PTR;
 extern "C" {
 #endif
 
+/* ---------------------------------------------------------------------------
+ * The information contained in a XDR memory stream is split up and
+ * stored in fragments. These fragments form a linked list with the
+ * XDR structure pointing to the first and current one.
+ */
+typedef struct MemoryStreamFragmentTag {
+    struct MemoryStreamFragmentTag *next;  /* next fragment in chain           */
+    u_int                           used;  /* # of bytes used in this fragment */
+    double                          dummy; /* -- just for alignment --         */
+} MemoryStreamFragment;
+
+
+/* ---------------------------------------------------------------------------
+ * With every XDR structure we're associating this tiny block of
+ * information, so we can easily find the last block as well as we
+ * can keep some accounting data. We need this extra block as the
+ * XDR structure doesn't provide enough space, just the pointer to
+ * this info block, a read/write pointer and a length word indicating
+ * how much bytes are still free in the current fragment.
+ */
+typedef struct {
+    MemoryStreamFragment *first;   /* points to first fragment in chain   */
+    MemoryStreamFragment *current; /* points to current fragment in chain */
+    u_int                 fragment_count; /* # of allocated fragments     */
+    u_int                 length;
+} MemoryStreamInfo;
+
 /*
  * Create and manage XDR dynamic memory streams.
  */
