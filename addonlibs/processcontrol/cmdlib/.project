@@ -3,6 +3,7 @@
 	<name>cmdlib</name>
 	<comment></comment>
 	<projects>
+		<project>comlib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
