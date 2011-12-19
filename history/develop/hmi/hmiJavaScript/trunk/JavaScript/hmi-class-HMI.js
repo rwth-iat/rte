@@ -1081,7 +1081,7 @@ HMI.prototype = {
 				SVGRequestURI = '{' + encodeURI(HMI.Path) + '.GraphicDescription' + '%20' + encodeURI(HMI.Path) + '.StyleDescription' + '}';
 			}else{
 				//spaces in objectname are encoded as %20 within OV
-				SVGRequestURI = '{' + encodeURI(HMI.Path) + '.GraphicDescription' + '}';
+				SVGRequestURI = encodeURI(HMI.Path) + '.GraphicDescription';
 			}
 			
 			//	get GraphicDescription
