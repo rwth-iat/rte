@@ -121,7 +121,7 @@ HMIJavaScriptKSClient.prototype = {
 		this.TCLKSHandle	= null;
 		this.HMIMANAGER_PATH	= null;
 		
-		this.getHandle(this.KSServer, this._cbInit);
+		this.TCLKSHandle = this.getHandleID(this.KSServer);
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.init - End");
 	},
@@ -137,7 +137,19 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	getEP: function(Handle, path, tksparameter, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path+" Handle: "+Handle);
-		if (Handle === null){
+		if(!path || path.length === 0 || path.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no valid path found, path was: "+path);
+			return null;
+		}else if (path.charAt(0) === "/" && path.charAt(1) === "/"){
+			//String begins with // so it is a fullpath with Host and servername
+			var servername = path.split("/")[2]+"/"+path.split("/")[3];
+			Handle = this.getHandleID(servername);
+			path = path.substring(servername.length+2);
+			if(Handle === null){
+				return null;
+			}
+		}else if (Handle === null){
+			//String begins with / so it is a fullpath in the main server
 			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
@@ -201,8 +213,24 @@ HMIJavaScriptKSClient.prototype = {
 			error response: "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
 	*********************************/
 	getVar: function(Handle, path, cbfnc) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path+" Handle: "+Handle);
-		if (Handle === null){
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path);
+		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no valid path found, path was: "+path);
+			return null;
+		}
+		if(path.charAt(0) !== "{"){
+			path = "{"+path+"}";
+		}
+		if (path.charAt(1) === "/" && path.charAt(2) === "/"){
+			//String begins with // so it is a fullpath with Host and servername
+			var servername = path.split("/")[2]+"/"+path.split("/")[3];
+			Handle = this.getHandleID(servername);
+			path = path.substring(servername.length+2);
+			if(Handle === null){
+				return null;
+			}
+		}else if (Handle === null){
+			//String begins with / so it is a fullpath in the main server
 			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
@@ -235,9 +263,24 @@ HMIJavaScriptKSClient.prototype = {
 			response: ""
 	*********************************/
 	setVar: function(Handle, path, value, cbfnc) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path+" Handle: "+Handle);
-		
-		if (Handle === null){
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path);
+		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no valid path found, path was: "+path);
+			return null;
+		}
+		if(path.charAt(0) !== "{"){
+			path = "{"+path+"}";
+		}
+		if (path.charAt(1) === "/" && path.charAt(2) === "/"){
+			//String begins with // so it is a fullpath with Host and servername
+			var servername = path.split("/")[2]+"/"+path.split("/")[3];
+			Handle = this.getHandleID(servername);
+			path = path.substring(servername.length+2);
+			if(Handle === null){
+				return null;
+			}
+		}else if(Handle === null){
+			//String begins with / so it is a fullpath in the main server
 			Handle = this.TCLKSHandle;
 		}
 		var urlparameter;
@@ -281,21 +324,37 @@ HMIJavaScriptKSClient.prototype = {
 	
 	/*********************************
 		getHandleID
+		TODO: add timeout für delHandle
 	*********************************/
 	getHandleID: function(HostAndServername) {
 		if (this.Handles[HostAndServername] && this.Handles[HostAndServername].HandleString !== null){
 			return this.Handles[HostAndServername].HandleString;
 		}else{
 			var HandleString = this.getHandle(HostAndServername, null);
-			if (HandleString !== false){
-				//a valid result
-				this.Handles[HostAndServername] = Object();
-				this.Handles[HostAndServername].HandleString = HandleString;
-			}else{
-				//communication Error
-				HMI.hmi_log_info_onwebsite("Requested KS Server "+HostAndServername+" not reachable");
+			//The handle must have the right format aka start with "TksS-"
+			if (!/^TksS-\b/.exec(HandleString)){
+				if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
+					//the Manager sometimes reject connection to a valid server, so retry once
+					HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust");
+					HandleString = this.getHandle(HostAndServername, null);
+					if (HandleString.indexOf("KS_ERR") !== -1){
+						//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
+						HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - Server really not there Handlemessage: "+HandleString);
+						return null;
+					}
+				}
+				
+				if (HandleString.length < 250){
+					HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + HandleString);
+				}else if (HandleString){
+					HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded (first 250 characters): ' + HandleString.substr(0,250));
+				}else{
+					HMI.hmi_log_onwebsite('Could not analyse server response.');
+				}
 				return null;
 			}
+			this.Handles[HostAndServername] = Object();
+			this.Handles[HostAndServername].HandleString = HandleString;
 			return HandleString;
 		}
 	},
@@ -307,7 +366,9 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	_cbInit: function(Client, req) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - Start");
-		
+
+		//unused!!!! fixme
+
 		//The handle must have the right format aka start with "TksS-"
 		if (/^TksS-\b/.exec(req.responseText)){
 			Client.TCLKSHandle = req.responseText;
@@ -337,7 +398,7 @@ HMIJavaScriptKSClient.prototype = {
 	/*********************************
 		getServers
 	*********************************/
-	getServers: function() {
+	getServers: function(KSServer) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - Start");
 		
 		if (this.TCLKSHandle !== null){
@@ -411,20 +472,9 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Start: "+Server);
 		
 		//we need a new handle since we talk to another OV server
-		var TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
-		
-		if (TCLKSHandle.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
-			//the Manager sometimes reject connection to a valid server, so retry once
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - got KS_ERR_SERVERUNKNOWN but do not trust");
-			TCLKSHandle = this.getHandle(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server, null);
-			if (TCLKSHandle.indexOf("KS_ERR") !== -1){
-				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Server really not there Handlemessage: "+TCLKSHandle);
-				return false;
-			}
-		}else if (TCLKSHandle.indexOf("KS_ERR") !== -1){
+		var TCLKSHandle = this.getHandleID(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server);
+		if (TCLKSHandle === null){
 			//generic error
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - End Handlemessage: "+TCLKSHandle);
 			return false;
 		}
 		//Try to get the Name of HMI Manager to test the existence
@@ -442,20 +492,18 @@ HMIJavaScriptKSClient.prototype = {
 				if (ManagerResponseArray.length === 0){
 					//no hmi, no cshmi server
 					HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - no hmi, no cshmi server");
-					this.delHandle(TCLKSHandle);
 					return false;
 				}
 			}
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - hmi or cshmi server");
-		this.delHandle(TCLKSHandle);
 		return true;
 	},
 	
 	/*********************************
 		getHMIManagerPointer
 	*********************************/
-	getHMIManagerPointer: function() {
+	getHMIManagerPointer: function(Server) {
 		//the path of the HMI Manager could be different in every OV Server
 		var ManagerResponse = this.getVar(null, "/Libraries/hmi/Manager.instance", null);
 		
@@ -476,13 +524,9 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		var ManagerArray = ManagerResponseArray[0].split(' ');
-		if (ManagerArray.length !== 1){
-			HMI.hmi_log_info("Warning: More than one HMIManagers available ("+ManagerArray.join(", ")+"). Using first Manager. It is perfectly safe to delete all but one instances.");
-		}
 		this.HMIMANAGER_PATH = encodeURI(ManagerArray[0]);
 		ManagerResponse = null;
 		ManagerResponseArray = null;
-		PointOfSpace = null;
 		return true;
 	},
 	
@@ -518,7 +562,7 @@ HMIJavaScriptKSClient.prototype = {
 		//get Sheets from hmi library
 		
 		//the path of the HMI Manager could be different in every OV Server
-		this.getHMIManagerPointer();
+		this.getHMIManagerPointer(Server);
 		if (HMI.KSClient.HMIMANAGER_PATH === null){
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - No HMI Manager found on this Server.");
 			return SheetList;
@@ -537,7 +581,7 @@ HMIJavaScriptKSClient.prototype = {
 				'{SHOWSHEETS}';
 		}
 		this.setVar(null, this.HMIMANAGER_PATH
-				+ '.Command%20',
+				+ '.Command',
 				Command,
 				null);
 		var Sheetstring = this.getVar(null, this.HMIMANAGER_PATH + '.CommandReturn', null);
@@ -707,7 +751,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Start");
 		
 		//spaces in objectname are encoded as %20 within OV
-		var StyleResponse = this.getVar(null, '{' + encodeURI(ComponentPath) + '.StyleDescription' + '}', null);
+		var StyleResponse = this.getVar(null, encodeURI(ComponentPath) + '.StyleDescription', null);
 		
 		if (StyleResponse.indexOf("KS_ERR_BADPATH") !== -1){
 			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
