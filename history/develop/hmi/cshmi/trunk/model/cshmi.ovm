@@ -450,7 +450,8 @@ LIBRARY cshmi
 		VARIABLES
 			comptype : STRING
 			HAS_ACCESSORS
-			COMMENT = "comparison type ('<','<=','==','!=','>=','>')";
+			COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
+			INITIALVALUE = "==";
 		END_VARIABLES;
 		PARTS
 			value1 : CLASS cshmi/GetValue;
@@ -483,7 +484,8 @@ LIBRARY cshmi
 		VARIABLES
 			cyctime : TIME_SPAN
 			HAS_ACCESSORS
-			COMMENT = "the cycle time for the execution of the action";
+			COMMENT = "the cycle time for the execution of the action"
+			INITIALVALUE = 00:00:10;
 		END_VARIABLES;
 	END_CLASS;
 	
