@@ -82,7 +82,7 @@ function cshmi() {
 
 
 //#########################################################################################################################
-//fixme: 
+//fixme: check return value of gethandleid
 //#########################################################################################################################
 
 /***********************************************************************
@@ -638,6 +638,15 @@ cshmi.prototype = {
 		var Value1 = this._getValue(ObjectParent, ObjectPath+".value1");
 		var Value2 = this._getValue(ObjectParent, ObjectPath+".value2");
 		
+		if (Value1 === null){
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value1 is null.");
+			return false;
+		}
+		if (Value2 === null){
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value2 is null.");
+			return false;
+		}
+		
 		if (comptype === "{<}"){
 			return (Value1 < Value2);
 		}else if (comptype === "{<=}"){
@@ -700,7 +709,7 @@ cshmi.prototype = {
 		_buildFromTemplate
 	*********************************/
 	_buildFromTemplate: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues .visible}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues .visible .opacity}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -754,6 +763,7 @@ cshmi.prototype = {
 		}else{
 			svgElement.setAttribute("display", "none");
 		}
+		svgElement.setAttribute("opacity", responseArray[6]);
 		svgElement.style.overflow = "visible";
 		
 		//parametrise templateDefinition with the config
@@ -806,7 +816,7 @@ cshmi.prototype = {
 			if (!(evt.button === 0 && evt.detail ==2)){
 			return;
 		}*/
-		ObjectParent.addEventListener("dblclick", function(evt){
+		ObjectParent.addEventListener("click", function(evt){
 			var childTemplates = preserveThis._getElementsByClassName(ObjectParent, preserveThis.cshmiTemplateHideableClass);
 			for (var i=0; i < childTemplates.length; i++) {
 				if (childTemplates[i].getAttribute("display") == "block"){
