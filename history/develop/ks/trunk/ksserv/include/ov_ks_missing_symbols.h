@@ -245,7 +245,7 @@ OV_DLLFNCEXPORT void   xdrmemstream_rewind(XDR *xdrs, enum xdr_op op);
 /*
  * External I/O for filling and draining XDR dynamic memory streams.
  */
-bool_t xdrmemstream_get_length(XDR *xdrs, int *len);
+OV_DLLFNCEXPORT bool_t xdrmemstream_get_length(XDR *xdrs, int *len);
 bool_t xdrmemstream_write_to_fd(XDR *xdrs, int fd, int *max, int *err);
 bool_t xdrmemstream_read_from_fd(XDR *xdrs, int fd, int *max, int *err);
 
@@ -257,7 +257,7 @@ typedef struct {
     char          *fragment; /* points to begin of fragment */
     unsigned long  length;   /* length of fragment */
 } xdrmemstream_fragment_description;
-void xdrmemstream_get_fragments(XDR *xdrs, 
+OV_DLLFNCEXPORT void xdrmemstream_get_fragments(XDR *xdrs,
                                 xdrmemstream_fragment_description *desc,
                                 unsigned long *fragment_count,
                                 unsigned long *total_size);
