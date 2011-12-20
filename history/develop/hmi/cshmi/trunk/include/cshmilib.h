@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision: 1.17 $
-*	$Date: 2011-05-20 13:16:51 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------

@@ -46,8 +46,8 @@
 *
 *	CVS:
 *	----
-*	$Revision:  $
-*	$Date:  $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------

@@ -49,8 +49,8 @@
 *
 *	SVN:
 *	----
-*	$Revision: 1.47 $
-*	$Date: 2011-08-09 11:12:26 $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------

@@ -48,8 +48,8 @@
 *
 *	SVN:
 *	----
-*	$Revision: $
-*	$Date:  $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------
