@@ -254,7 +254,7 @@ void ksservtcp_managersendrecv_typemethod(
     //just get write permissions if waiting for sending
     //if(pinst->v_state == STATUS_MANAGERSENDRECV_WAITINGFORSENDING)
     	FD_SET(sock, &write_flags);
-    err = select(sock, &read_flags,&write_flags, (fd_set*)0,&waitd);
+    err = select(sock + 1, &read_flags,&write_flags, (fd_set*)0,&waitd);
 	ov_logfile_debug("Managersendrecv: socket select returned %d", err);
 	if(err < 0) {
 		perror("Managersendrecv: error sets actimode=0");
