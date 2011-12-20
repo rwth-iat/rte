@@ -482,10 +482,11 @@ LIBRARY cshmi
 		IS_INSTANTIABLE;
 		COMMENT = "time triggered actions";
 		VARIABLES
-			cyctime : TIME_SPAN
+			cyctime : UINT
 			HAS_ACCESSORS
+			UNIT = "sec"
 			COMMENT = "the cycle time for the execution of the action"
-			INITIALVALUE = 00:00:10;
+			INITIALVALUE = 10;
 		END_VARIABLES;
 	END_CLASS;
 	

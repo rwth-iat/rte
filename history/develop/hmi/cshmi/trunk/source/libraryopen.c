@@ -33,28 +33,25 @@
 *	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 *	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *	POSSIBILITY OF SUCH DAMAGE.
-*
-***********************************************************************
-*
-* CSHMI - Client-Side Human-Machine Interface
+*/
+/***********************************************************************
 *
 *	File:
 *	------
-*	classEvent_TimeEvent.c
+*	libraryopen.c
 *
 *	Editors:
 *	--------
 *	Je							Holger Jeromin <jeromin@plt.rwth-aachen.de>
-*	GQ							Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 *
-*	SVN:
+*	CVS:
 *	----
 *	$Revision:  $
 *	$Date:  $
 *
 *	History:
 *	--------
-*	15-September-2011			Je		V0.1.0
+*	20-Dez-2011		Je
 *		-	File created
 *
 ***********************************************************************/
@@ -65,16 +62,51 @@
 
 #include "cshmilib.h"
 
-OV_DLLFNCEXPORT OV_UINT cshmi_TimeEvent_cyctime_get(
-	OV_INSTPTR_cshmi_TimeEvent          pobj
-) {
-	return pobj->v_cyctime;
-}
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_TimeEvent_cyctime_set(
-	OV_INSTPTR_cshmi_TimeEvent          pobj,
-	const OV_UINT  value
-) {
-	pobj->v_cyctime = value;
-	return OV_ERR_OK;
+#ifdef ov_library_open_cshmi
+#undef ov_library_open_cshmi
+#endif
+
+/*
+* This function will be called, when the library is loaded.
+* It creates the cshmi container objects
+*/
+OV_RESULT ov_library_setglobalvars_cshmi_new(void) {
+	OV_RESULT result;
+	OV_INSTPTR_ov_domain
+		pCsDomain = NULL;
+	OV_INSTPTR_ov_domain
+		pTemplateDomain = NULL;
+	/*
+	 *    set the global variables of the original version
+	 *    and if successful, load other libraries
+	 *    and create some objects
+	 */
+	result = ov_library_setglobalvars_cshmi();
+
+	if(Ov_OK(result)){
+		result = Ov_CreateObject(ov_domain, pCsDomain, Ov_DynamicPtrCast(ov_domain, ov_path_getobjectpointer(FB_INSTANZ_CONTAINER_PATH, 2)), "cshmi");
+		if(Ov_OK(result)){
+			result = Ov_CreateObject(ov_domain, pTemplateDomain, pCsDomain, "Templates");
+		}
+		//an error should not prevent loading the library
+		result = OV_ERR_OK;
+	}
+	return result;
+}
+/*
+*       Replace the 'setglobalvars' function of a library with this
+*       previous one, which additionally creates instances.
+* 	This is called by the OV system upon library load.
+*/
+OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_cshmi(void) {
+	/* local variables */
+	static OV_LIBRARY_DEF *OV_LIBRARY_DEF_cshmi_new;
+	/*
+	*       replace the 'setglobalvars' function created by the code generator
+	*       with a new one.
+	*/
+	OV_LIBRARY_DEF_cshmi_new = ov_library_open_cshmi_old();
+	OV_LIBRARY_DEF_cshmi_new->setglobalvarsfnc = ov_library_setglobalvars_cshmi_new;
+	return OV_LIBRARY_DEF_cshmi_new;
 }

@@ -67,7 +67,12 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_path.h"
+#include "libov/ov_result.h"
 #include "limits.h"
+
+#ifndef FB_INSTANZ_CONTAINER_PATH
+#define  FB_INSTANZ_CONTAINER_PATH   "/TechUnits"
+#endif
 
 /***********************************************************************
 	z-index
