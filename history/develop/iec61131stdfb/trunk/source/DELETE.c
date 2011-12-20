@@ -195,7 +195,8 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				ov_database_free(p_end);
 			}
 			else
-				ov_logfile_warning("%s: requested deletion over the end of input string", pinst->v_identifier);
+				if(end_length < 0)
+					ov_logfile_warning("%s: requested deletion over the end of input string", pinst->v_identifier);
 		}
 		else
 		{
