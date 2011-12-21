@@ -258,6 +258,14 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 							return;
 						}
 						
+						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+						{
+							ov_logfile_warning("%s: DigitalIN %s could not be linked into Tasklist",
+								pinst->v_identifier, clamp_name)
+						}
+						else
+							pnewclamp->v_actimode = 1;
+
 						/*set byte Address*/
 						pnewclamp->v_ByteAddress = ppi_info[i].bitposPAE / 8;
 						/*determine BitOffset and adjust ByteAddress if necessary*/
@@ -295,6 +303,13 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 							misc_set_led_off(2);
 							return;
 						}
+						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+						{
+							ov_logfile_warning("%s: DigitalOUT %s could not be linked into Tasklist",
+								pinst->v_identifier, clamp_name)
+						}
+						else
+							pnewclamp->v_actimode = 1;
 						
 						/*set byte Address*/
 						pnewclamp->v_ByteAddress = ppi_info[i].bitposPAA / 8;
@@ -334,6 +349,13 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 							misc_set_led_off(2);
 							return;
 						}
+						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+						{
+							ov_logfile_warning("%s: DigitalIN %s could not be linked into Tasklist",
+								pinst->v_identifier, clamp_name)
+						}
+						else
+							pnewclamp->v_actimode = 1;
 						
 						/*set byte Address*/
 						pnewclamp->v_ByteAddress = ppi_info[i].bitposPAE / 8;
@@ -371,6 +393,15 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 							return;
 						}
 						
+						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+						{
+							ov_logfile_warning("%s: DigitalOUT %s could not be linked into Tasklist",
+								pinst->v_identifier, clamp_name)
+						}
+						else
+							pnewclamp->v_actimode = 1;
+
+
 						/*set byte Address*/
 						pnewclamp->v_ByteAddress = ppi_info[i].bitposPAA / 8;
 						/*determine BitOffset and adjust ByteAddress if necessary*/
@@ -410,6 +441,14 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 								misc_set_led_off(2);
 								return;
 							}
+
+							if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+							{
+								ov_logfile_warning("%s: AnalogIN %s could not be linked into Tasklist",
+										pinst->v_identifier, clamp_name)
+							}
+							else
+								pnewclamp->v_actimode = 1;
 						
 							/*set byte Address*/
 							pnewclamp->v_ByteAddress = ppi_info[i].bitposPAE / 8 + j * sizeof(uint16_t);
@@ -441,6 +480,14 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 								misc_set_led_off(2);
 								return;
 							}
+
+							if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+							{
+								ov_logfile_warning("%s: AnalogOUT %s could not be linked into Tasklist",
+									pinst->v_identifier, clamp_name)
+							}
+							else
+								pnewclamp->v_actimode = 1;
 						
 							/*set byte Address*/
 							pnewclamp->v_ByteAddress = ppi_info[i].bitposPAA / 8 + j * sizeof(uint16_t);
@@ -475,6 +522,14 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 									return;
 								}
 								
+								if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+								{
+									ov_logfile_warning("%s: SpecialIN %s could not be linked into Tasklist",
+										pinst->v_identifier, clamp_name)
+								}
+								else
+									pnewclamp->v_actimode = 1;
+
 								/*assuming number of input channels is the same as number of output channels. assuming
 									each channel has the same size*/
 									
@@ -505,6 +560,14 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 									misc_set_led_off(2);
 									return;
 								}
+
+								if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+								{
+									ov_logfile_warning("%s: AnalogIN %s could not be linked into Tasklist",
+										pinst->v_identifier, clamp_name)
+								}
+								else
+									pnewclamp->v_actimode = 1;
 							
 								pnewclamp->v_ByteAddress = ppi_info[i].bitposPAA / 8;
 								if(ppi_info[i].channels)
