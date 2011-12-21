@@ -216,7 +216,16 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 								ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_AUTODETECT);
 								return;
 						}
-								
+
+						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+						{
+							ov_logfile_warning("%s: SpecialIN %s could not be linked into Tasklist",
+									pinst->v_identifier, clamp_name)
+
+						}
+						else
+							pnewclamp->v_actimode = 1;
+
 						/*assuming number of input channels is the same as number of output channels. assuming
 								each channel has the same size*/
 									
@@ -236,7 +245,7 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 					{	/*output found*/
 						/*create new object with name "Terminal$terminalnumber:$channelnumber-SO"*/
 						ov_string_print(&clamp_name, "Terminal%03hhu:%02u-SO", SlotNumber, j);
-						if(Ov_Fail(Ov_CreateObject(kbuslib_SpecialIN, pnewclamp, pinst, clamp_name)))
+						if(Ov_Fail(Ov_CreateObject(kbuslib_SpecialOUT, pnewclamp, pinst, clamp_name)))
 						{
 							ov_logfile_error("%s: creation of SpecialOUT %s failed\n", 
 							pinst->v_identifier, clamp_name);
@@ -247,6 +256,15 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 							ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_AUTODETECT);
 							return;
 						}
+
+						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+						{
+							ov_logfile_warning("%s: SpecialOUT %s could not be linked into Tasklist",
+								pinst->v_identifier, clamp_name)
+
+						}
+						else
+							pnewclamp->v_actimode = 1;
 							
 						pnewclamp->v_ByteAddress = OutByteOffset;
 						if(ChannelCount)
@@ -288,6 +306,15 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 								ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_AUTODETECT);
 								return;
 							}
+
+							if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+							{
+								ov_logfile_warning("%s: DigitalIN %s could not be linked into Tasklist",
+									pinst->v_identifier, clamp_name)
+
+							}
+							else
+								pnewclamp->v_actimode = 1;
 						
 							/*set byte Address*/
 							pnewclamp->v_ByteAddress = InByteOffset + (InBitOffset + j) / 8;
@@ -321,6 +348,14 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 								ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_AUTODETECT);
 								return;
 							}
+
+							if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+							{
+								ov_logfile_warning("%s: DigitalOUT %s could not be linked into Tasklist",
+									pinst->v_identifier, clamp_name)
+							}
+							else
+								pnewclamp->v_actimode = 1;
 						
 							/*set byte Address*/
 							pnewclamp->v_ByteAddress = OutByteOffset + (OutBitOffset + j) / 8;
@@ -356,6 +391,14 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 							return;
 						}
 						
+						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+						{
+							ov_logfile_warning("%s: AnalogIN %s could not be linked into Tasklist",
+								pinst->v_identifier, clamp_name)
+						}
+						else
+							pnewclamp->v_actimode = 1;
+
 						/*set byte Address*/
 						pnewclamp->v_ByteAddress = InByteOffset + j * sizeof(uint16_t);
 						/*set byteWidth*/
@@ -387,6 +430,14 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 							return;
 						}
 						
+						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+						{
+							ov_logfile_warning("%s: AnalogOUT %s could not be linked into Tasklist",
+								pinst->v_identifier, clamp_name)
+						}
+						else
+							pnewclamp->v_actimode = 1;
+
 						/*set byte Address*/
 						pnewclamp->v_ByteAddress = OutByteOffset + j * sizeof(uint16_t);
 						/*set byteWidth*/
