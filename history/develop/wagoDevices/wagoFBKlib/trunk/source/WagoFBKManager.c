@@ -223,8 +223,6 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 									pinst->v_identifier, clamp_name)
 
 						}
-						else
-							pnewclamp->v_actimode = 1;
 
 						/*assuming number of input channels is the same as number of output channels. assuming
 								each channel has the same size*/
@@ -263,8 +261,6 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 								pinst->v_identifier, clamp_name)
 
 						}
-						else
-							pnewclamp->v_actimode = 1;
 							
 						pnewclamp->v_ByteAddress = OutByteOffset;
 						if(ChannelCount)
@@ -313,9 +309,7 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 									pinst->v_identifier, clamp_name)
 
 							}
-							else
-								pnewclamp->v_actimode = 1;
-						
+
 							/*set byte Address*/
 							pnewclamp->v_ByteAddress = InByteOffset + (InBitOffset + j) / 8;
 							/*set BitOffset*/
@@ -354,9 +348,7 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 								ov_logfile_warning("%s: DigitalOUT %s could not be linked into Tasklist",
 									pinst->v_identifier, clamp_name)
 							}
-							else
-								pnewclamp->v_actimode = 1;
-						
+
 							/*set byte Address*/
 							pnewclamp->v_ByteAddress = OutByteOffset + (OutBitOffset + j) / 8;
 							/*set BitOffset*/
@@ -396,8 +388,6 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 							ov_logfile_warning("%s: AnalogIN %s could not be linked into Tasklist",
 								pinst->v_identifier, clamp_name)
 						}
-						else
-							pnewclamp->v_actimode = 1;
 
 						/*set byte Address*/
 						pnewclamp->v_ByteAddress = InByteOffset + j * sizeof(uint16_t);
@@ -435,8 +425,6 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 							ov_logfile_warning("%s: AnalogOUT %s could not be linked into Tasklist",
 								pinst->v_identifier, clamp_name)
 						}
-						else
-							pnewclamp->v_actimode = 1;
 
 						/*set byte Address*/
 						pnewclamp->v_ByteAddress = OutByteOffset + j * sizeof(uint16_t);
@@ -486,6 +474,10 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 			
 			if(pcClamp->v_Enabled)				/*check if clamp is enabled*/
 			{
+
+				/*trigger input connections*/
+				fb_functionblock_triggerInpGetConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
+
 				if(tmp_number <= dig_output_offset)
 				{
 					/*if there was an error, or the clamp was diasbled reset it*/
@@ -562,6 +554,10 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 			
 			if(pcClamp->v_Enabled)				/*check if clamp is enabled*/
 			{
+
+				/*trigger input connections*/
+				fb_functionblock_triggerInpGetConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
+
 				if(tmp_number <= dig_output_offset)
 				{
 					/*if there was an error, or the clamp was diasbled reset it*/
@@ -616,6 +612,10 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 			
 			if(pcClamp->v_Enabled)				/*check if clamp is enabled*/
 			{
+
+				/*trigger input connections*/
+				fb_functionblock_triggerInpGetConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
+
 				if(tmp_number >= dig_output_offset)
 				{
 					/*if there was an error, or the clamp was diasbled reset it*/
@@ -733,6 +733,9 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 					
 				}
 				
+				/*trigger output connections*/
+				fb_functionblock_triggerOutSendConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
+
 			}
 			else
 			{
@@ -778,6 +781,9 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 					
 				}
 				
+				/*trigger output connections*/
+				fb_functionblock_triggerOutSendConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
+
 			}
 			else
 			{
@@ -826,6 +832,9 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 					
 				}
 				
+				/*trigger output connections*/
+				fb_functionblock_triggerOutSendConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
+
 			}
 			else
 			{
