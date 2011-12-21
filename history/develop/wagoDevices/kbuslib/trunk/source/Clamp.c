@@ -219,7 +219,6 @@ OV_DLLFNCEXPORT void kbuslib_Clamp_startup(
 	OV_INSTPTR_kbuslib_BusManager pUsedManager = NULL;
 	OV_INSTPTR_kbuslib_BusManager ptmpManager = NULL;
 	OV_INSTPTR_ov_domain pParentContainer = NULL;
-	OV_INSTPTR_fb_task pParentTask = NULL;
 	OV_INSTPTR_kbuslib_Clamp pinst = Ov_StaticPtrCast(kbuslib_Clamp, pobj);
 
     /* do what the base class does first */
@@ -279,14 +278,10 @@ OV_DLLFNCEXPORT void kbuslib_Clamp_startup(
 			}
 		}
 		
-		pParentTask = Ov_GetParent(fb_tasklist, pinst);				/*if the clamp instance is listed in a tasklist,*/ 
-		if(pParentTask)												/*this link is deleted*/
-		{
-			Ov_Unlink(fb_tasklist, pParentTask, pinst);
-		}
 		
 		
 		
+
 	}
 	else
 	{
@@ -316,8 +311,7 @@ OV_DLLFNCEXPORT void kbuslib_Clamp_typemethod(
 	OV_INSTPTR_kbuslib_BusManager pUsedManager = NULL;
 	OV_INSTPTR_kbuslib_BusManager ptmpManager = NULL;
 	OV_INSTPTR_ov_domain pParentContainer = NULL;
-	OV_INSTPTR_fb_task pParentTask = NULL;
-   	OV_INSTPTR_kbuslib_Clamp pinst = Ov_StaticPtrCast(kbuslib_Clamp, pfb);
+	OV_INSTPTR_kbuslib_Clamp pinst = Ov_StaticPtrCast(kbuslib_Clamp, pfb);
 
 	Ov_ForEachChild(ov_inheritance, pclass_kbuslib_BusManager, pBusMngr)
 	{
@@ -356,11 +350,7 @@ OV_DLLFNCEXPORT void kbuslib_Clamp_typemethod(
 		}
 		Ov_Link(ov_containment, Ov_StaticPtrCast(ov_domain, pUsedManager), pinst);
 		
-		pParentTask = Ov_GetParent(fb_tasklist, pinst);				/*if the clamp instance is listed in a tasklist,*/ 
-		if(pParentTask)												/*this link is deleted*/
-		{
-			Ov_Unlink(fb_tasklist, pParentTask, pinst);
-		}
+
 			
 	}
 	else
