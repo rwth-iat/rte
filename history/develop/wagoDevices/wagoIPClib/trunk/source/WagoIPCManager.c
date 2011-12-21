@@ -261,7 +261,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
 						{
 							ov_logfile_warning("%s: DigitalIN %s could not be linked into Tasklist",
-								pinst->v_identifier, clamp_name)
+								pinst->v_identifier, clamp_name);
 						}
 						else
 							pnewclamp->v_actimode = 1;
@@ -306,7 +306,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
 						{
 							ov_logfile_warning("%s: DigitalOUT %s could not be linked into Tasklist",
-								pinst->v_identifier, clamp_name)
+								pinst->v_identifier, clamp_name);
 						}
 						else
 							pnewclamp->v_actimode = 1;
@@ -352,7 +352,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
 						{
 							ov_logfile_warning("%s: DigitalIN %s could not be linked into Tasklist",
-								pinst->v_identifier, clamp_name)
+								pinst->v_identifier, clamp_name);
 						}
 						else
 							pnewclamp->v_actimode = 1;
@@ -396,7 +396,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 						if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
 						{
 							ov_logfile_warning("%s: DigitalOUT %s could not be linked into Tasklist",
-								pinst->v_identifier, clamp_name)
+								pinst->v_identifier, clamp_name);
 						}
 						else
 							pnewclamp->v_actimode = 1;
@@ -445,7 +445,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 							if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
 							{
 								ov_logfile_warning("%s: AnalogIN %s could not be linked into Tasklist",
-										pinst->v_identifier, clamp_name)
+										pinst->v_identifier, clamp_name);
 							}
 							else
 								pnewclamp->v_actimode = 1;
@@ -484,7 +484,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 							if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
 							{
 								ov_logfile_warning("%s: AnalogOUT %s could not be linked into Tasklist",
-									pinst->v_identifier, clamp_name)
+									pinst->v_identifier, clamp_name);
 							}
 							else
 								pnewclamp->v_actimode = 1;
@@ -525,7 +525,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 								if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
 								{
 									ov_logfile_warning("%s: SpecialIN %s could not be linked into Tasklist",
-										pinst->v_identifier, clamp_name)
+										pinst->v_identifier, clamp_name);
 								}
 								else
 									pnewclamp->v_actimode = 1;
@@ -564,7 +564,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 								if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
 								{
 									ov_logfile_warning("%s: AnalogIN %s could not be linked into Tasklist",
-										pinst->v_identifier, clamp_name)
+										pinst->v_identifier, clamp_name);
 								}
 								else
 									pnewclamp->v_actimode = 1;
