@@ -233,24 +233,32 @@ cshmi.prototype = {
 	_interpreteTimeEvent: function(ObjectParent, ObjectPath){
 		//fixme prevent update if not visible
 		
-		//todo könnte sein, dass interpreteAction und der spätere settimeout ungünstig zusammen fallen
-		
 		//interprete Action "now", but we want to have the full DOM tree ready
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 		window.setTimeout(function(){
 			preserveThis._interpreteAction(ObjectParent, ObjectPath);
 		}, 10);
 		
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
-		if (response === false){
-			//communication error
-			return false;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._interpreteTimeEvent of "+ObjectPath+" failed: "+response);
+		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
+			if (response === false){
+				//communication error
+				return false;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._interpreteTimeEvent of "+ObjectPath+" failed: "+response);
+				
+				return false;
+			}
+			var responseArray = HMI.KSClient.splitKsResponse(response);
 			
-			return false;
+			//prepare main js-object to remember config of getValue OV-Object
+			this.ResourceList.Events[ObjectPath] = new Object();
+			this.ResourceList.Events[ObjectPath].getVarParameters = responseArray;
+			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: remembering config of "+ObjectPath+" ");
+		}else{
+			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" ");
+			responseArray = this.ResourceList.Events[ObjectPath].getVarParameters;
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
 		if (responseArray.length !== 0){
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
@@ -312,14 +320,7 @@ cshmi.prototype = {
 			if (responseArray[i] !== ""){
 				if (i === 0){
 					//ksVar
-					if (responseArray[i].charAt(0) == "/" && responseArray[i].charAt(1) == "/"){
-						//we have an absolute path on another server
-						var RequestServer = Object();
-						RequestServer.servername = responseArray[i].split("/")[2]+"/"+responseArray[i].split("/")[3];
-						RequestServer.serverhandle = HMI.KSClient.getHandleID(RequestServer.servername);
-						RequestServer.path = responseArray[0].substring(RequestServer.servername.length+2);
-						response = HMI.KSClient.getVar(RequestServer.serverhandle, '{'+RequestServer.path+'}', null);
-					}else if (responseArray[i].charAt(0) == "/"){
+					if (responseArray[i].charAt(0) == "/"){
 						//we have an absolute path on this server
 						response = HMI.KSClient.getVar(null, '{'+responseArray[i]+'}', null);
 					}else{
@@ -375,18 +376,7 @@ cshmi.prototype = {
 								return Objectname[Objectname.length - 1];
 							}
 							
-							if (TemplateObject.FBReference["default"].charAt(0) === "/" && TemplateObject.FBReference["default"].charAt(1) === "/"){
-								//String begins with // so it is a fullpath with Host and servername
-								var servername = TemplateObject.FBReference["default"].split("/")[2]+"/"+TemplateObject.FBReference["default"].split("/")[3];
-								var serverhandle = HMI.KSClient.getHandleID(servername);
-								var serverpath = TemplateObject.FBReference["default"].substring(servername.length+2);
-								var result = HMI.KSClient.getVar(serverhandle, '{'+serverpath+'.'+responseArray[i]+'}', null);
-								var returnValue = HMI.KSClient.splitKsResponse(result);
-								if (returnValue.length > 0){
-									return returnValue[0];
-								}
-								return null;
-							}else if (TemplateObject.FBReference["default"].charAt(0) === "/"){
+							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
 								//String begins with / so it is a fullpath in this server
 								var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
 								var result = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', null);
@@ -457,14 +447,7 @@ cshmi.prototype = {
 			if (responseArray[i] !== ""){
 				if (i === 0){
 					//ksVar
-					if (responseArray[i].charAt(0) == "/" && responseArray[i].charAt(1) == "/"){
-						//we have an absolute path on another server
-						var RequestServer = Object();
-						RequestServer.servername = responseArray[i].split("/")[2]+"/"+responseArray[i].split("/")[3];
-						RequestServer.serverhandle = HMI.KSClient.getHandleID(RequestServer.servername);
-						RequestServer.path = responseArray[0].substring(RequestServer.servername.length+2);
-						HMI.KSClient.setVar(RequestServer.serverhandle, '{'+RequestServer.path+'}', NewValue, null);
-					}else if (responseArray[i].charAt(0) == "/"){
+					if (responseArray[i].charAt(0) == "/"){
 						//we have an absolute path on this server
 						HMI.KSClient.setVar(null, '{'+responseArray[i]+'}', NewValue, null);
 					}else{
@@ -496,18 +479,7 @@ cshmi.prototype = {
 							return TemplateObject.FBReference[responseArray[i]];
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 							//this is a TemplateObject itself, but only one reference given
-							
-							if (TemplateObject.FBReference["default"].charAt(0) === "/" && TemplateObject.FBReference["default"].charAt(1) === "/"){
-								//String begins with // so it is a fullpath with Host and servername
-								var servername = TemplateObject.FBReference["default"].split("/")[2]+"/"+TemplateObject.FBReference["default"].split("/")[3];
-								var serverhandle = HMI.KSClient.getHandleID(servername);
-								var serverpath = TemplateObject.FBReference["default"].substring(servername.length+2);
-								response = HMI.KSClient.setVar(serverhandle, '{'+serverpath+'.'+responseArray[i]+'}', NewValue, null);
-								if (response.indexOf("KS_ERR") !== -1){
-									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+responseArray[i]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
-								}
-								return true;
-							}else if (TemplateObject.FBReference["default"].charAt(0) === "/"){
+							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
 								//String begins with / so it is a fullpath in this server
 								var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
 								response = HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', NewValue, null);
@@ -560,12 +532,7 @@ cshmi.prototype = {
 				return returnValue;
 			}else if (response !== "{{}}" && response.length > 2){
 				var responseArray = HMI.KSClient.splitKsResponse(response);
-				if (responseArray[0].charAt(0) === "/" && responseArray[0].charAt(1) === "/"){
-					//String begins with // so it is a fullpath with Host and servername
-					returnValue.servername = responseArray[0].split("/")[2]+"/"+responseArray[0].split("/")[3];
-					returnValue.serverhandle = HMI.KSClient.getHandleID(returnValue.servername);
-					returnValue.path = responseArray[0].substring(returnValue.servername.length+2)+returnValue.path;
-				}else if (responseArray[0].charAt(0) === "/"){
+				if (responseArray[0].charAt(0) === "/"){
 					//String begins with / so it is a fullpath in this server
 					returnValue.path = responseArray[0]+returnValue.path;
 					//full path => stop searching for other path
