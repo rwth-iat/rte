@@ -309,7 +309,6 @@ HMIJavaScriptKSClient.prototype = {
 			response: ""
 	*********************************/
 	delHandle: function(Handle) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - Start Handle: "+Handle);
 		var urlparameter;
 		if (HMI.GatewayTypeTCL === true){
 			urlparameter = 'obj='+Handle + '&args=destroy';
@@ -319,7 +318,6 @@ HMIJavaScriptKSClient.prototype = {
 		if (Handle !== null){
 			this._sendRequest(this, 'GET', false, urlparameter, null);
 		}
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.delHandle - End");
 	},
 	
 	/*********************************
@@ -857,21 +855,11 @@ HMIJavaScriptKSClient.prototype = {
 		destroy
 	*********************************/
 	destroy: function () {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - Start");
-		
-		//destroy main handle
-		if (this.TCLKSHandle !== null){
-			this.delHandle(this.TCLKSHandle);
-		}
-		//destroy other handles
+		//destroy all handles
 		for (var i in HMI.KSClient.Handles){
 			HMI.KSClient.delHandle(HMI.KSClient.Handles[i].HandleString);
 			HMI.KSClient.Handles[i].HandleString = null;
 		}
-		this.KSServer = null;
-		this.TCLKSHandle = null;
-		
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.destroy - End");
 	}
 };
 var filedate = "$Date$";
