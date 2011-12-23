@@ -225,7 +225,7 @@ HMIJavaScriptKSClient.prototype = {
 			//String begins with // so it is a fullpath with Host and servername
 			var servername = path.split("/")[2]+"/"+path.split("/")[3];
 			Handle = this.getHandleID(servername);
-			path = path.substring(servername.length+2);
+			path = "{"+path.substring(servername.length+3);
 			if(Handle === null){
 				return null;
 			}
@@ -275,7 +275,7 @@ HMIJavaScriptKSClient.prototype = {
 			//String begins with // so it is a fullpath with Host and servername
 			var servername = path.split("/")[2]+"/"+path.split("/")[3];
 			Handle = this.getHandleID(servername);
-			path = path.substring(servername.length+2);
+			path = "{"+path.substring(servername.length+3);
 			if(Handle === null){
 				return null;
 			}
