@@ -1584,17 +1584,9 @@ HMI.prototype = {
 		unload
 	*********************************/
 	unload: function () {
-		this.hmi_log_trace("HMI.prototype.unload - Start");
-		
-		if (HMI){
-			HMI.PossServers = null;
-			HMI.PossSheets = null;
-			
-			if (HMI.KSClient){
-				HMI.KSClient.destroy();
-			}
+		if (HMI && HMI.KSClient){
+			HMI.KSClient.destroy();
 		}
-		this.hmi_log_trace("HMI.prototype.unload - End");
 	},
 	
 	/********************************************************************
