@@ -65,6 +65,7 @@
 ***********************************************************************/
 
 function cshmi() {
+	//oject to cache model information
 	this.ResourceList = Object();
 	this.ResourceList.Actions = Object();
 	this.ResourceList.Conditions = Object();
@@ -103,6 +104,40 @@ cshmi.prototype = {
 		}
 		
 		if (Component !== null){
+			//build predefined gradients
+			var svgDefs = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'defs');
+			var svgLinGrad = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'linearGradient');
+				svgLinGrad.id = "VertWhite2Black";
+				svgLinGrad.setAttribute("x1", "50%");
+				svgLinGrad.setAttribute("y1", "0%");
+				svgLinGrad.setAttribute("x2", "50%");
+				svgLinGrad.setAttribute("y2", "140%");
+				var svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
+					svgStop.setAttribute("stop-color", "white");
+					svgStop.setAttribute("offset", "0%");
+					svgLinGrad.appendChild(svgStop);
+				svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
+					svgStop.setAttribute("stop-color", "black");
+					svgStop.setAttribute("offset", "100%");
+				svgLinGrad.appendChild(svgStop);
+				svgDefs.appendChild(svgLinGrad);
+			svgLinGrad = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'linearGradient');
+				svgLinGrad.id = "HorWhite2Black";
+				svgLinGrad.setAttribute("x1", "0%");
+				svgLinGrad.setAttribute("y1", "50%");
+				svgLinGrad.setAttribute("x2", "140%");
+				svgLinGrad.setAttribute("y2", "50%");
+				svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
+					svgStop.setAttribute("stop-color", "white");
+					svgStop.setAttribute("offset", "0%");
+					svgLinGrad.appendChild(svgStop);
+				svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
+					svgStop.setAttribute("stop-color", "black");
+					svgStop.setAttribute("offset", "100%");
+				svgLinGrad.appendChild(svgStop);
+				svgDefs.appendChild(svgLinGrad);
+			Component.appendChild(svgDefs);
+			
 			HMI.Playground.appendChild(Component);
 			HMI._setLayerPosition(Component);
 			var ComponentChilds = Component.getElementsByTagName('*');
@@ -253,11 +288,11 @@ cshmi.prototype = {
 			
 			//prepare main js-object to remember config of getValue OV-Object
 			this.ResourceList.Events[ObjectPath] = new Object();
-			this.ResourceList.Events[ObjectPath].getVarParameters = responseArray;
+			this.ResourceList.Events[ObjectPath].TimeEventParameters = responseArray;
 			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: remembering config of "+ObjectPath+" ");
 		}else{
 			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" ");
-			responseArray = this.ResourceList.Events[ObjectPath].getVarParameters;
+			responseArray = this.ResourceList.Events[ObjectPath].TimeEventParameters;
 		}
 		
 		if (responseArray.length !== 0){
@@ -377,9 +412,8 @@ cshmi.prototype = {
 							}
 							
 							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
-								//String begins with / so it is a fullpath in this server
-								var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-								var result = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', null);
+								//String begins with / so it is a fullpath
+								var result = HMI.KSClient.getVar(null, TemplateObject.FBReference["default"]+'.'+responseArray[i], null);
 								var returnValue = HMI.KSClient.splitKsResponse(result);
 								if (returnValue.length > 0){
 									return returnValue[0];
@@ -430,17 +464,29 @@ cshmi.prototype = {
 			HMI.hmi_log_error("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because of an NewValue of undefined.");
 			return false;
 		}
-		//get info where to set the NewValue
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .TemplateFBReferenceVariable}', null);
-		if (response === false){
-			//communication error
-			return false;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._setValue of "+ObjectPath+" failed: "+response);
+		
+		var responseArray;
+		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+			//get info where to set the NewValue
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .TemplateFBReferenceVariable}', null);
+			if (response === false){
+				//communication error
+				return false;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._setValue of "+ObjectPath+" failed: "+response);
+				
+				return false;
+			}
+			var responseArray = HMI.KSClient.splitKsResponse(response);
 			
-			return false;
+			//prepare main js-object to remember config of getValue OV-Object
+			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].setVarParameters = responseArray;
+			HMI.hmi_log_trace("cshmi._setValue: remembering config of "+ObjectPath+" ");
+		}else{
+			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" ");
+			responseArray = this.ResourceList.Actions[ObjectPath].setVarParameters;
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
 		//set the new Value
 		for (var i=0; i < responseArray.length; i++) {
@@ -480,9 +526,8 @@ cshmi.prototype = {
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 							//this is a TemplateObject itself, but only one reference given
 							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
-								//String begins with / so it is a fullpath in this server
-								var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-								response = HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+TemplateObject.FBReference["default"]+'.'+responseArray[i]+'}', NewValue, null);
+								//String begins with / so it is a fullpath
+								response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+responseArray[i], NewValue, null);
 								if (response.indexOf("KS_ERR") !== -1){
 									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+responseArray[i]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 								}
@@ -533,7 +578,7 @@ cshmi.prototype = {
 			}else if (response !== "{{}}" && response.length > 2){
 				var responseArray = HMI.KSClient.splitKsResponse(response);
 				if (responseArray[0].charAt(0) === "/"){
-					//String begins with / so it is a fullpath in this server
+					//String begins with / so it is a fullpath
 					returnValue.path = responseArray[0]+returnValue.path;
 					//full path => stop searching for other path
 					break;
@@ -553,22 +598,32 @@ cshmi.prototype = {
 		-	sets a Value to multiple Sources
 	*********************************/
 	_interpreteIfThenElse: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.anycond}', null);
-		if (response === false){
-			//communication error
-			return false;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._interpreteIfThenElse of "+ObjectPath+" failed: "+response);
+		var anyCond;
+		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.anycond}', null);
+			if (response === false){
+				//communication error
+				return false;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._interpreteIfThenElse of "+ObjectPath+" failed: "+response);
+				
+				return false;
+			}
+			anyCond = HMI.KSClient.splitKsResponse(response)[0];
 			
-			return false;
+			//prepare main js-object to remember config of getValue OV-Object
+			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].IfThenElseParameters = anyCond;
+			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
+		}else{
+			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ");
+			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameters;
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
 		var ConditionMatched = false;
-		var andCond = responseArray[0];
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if");
 		var i = 0;
-		if (andCond == "TRUE"){
+		if (anyCond == "TRUE"){
 			//logical OR
 			while(i < responseArray.length && ConditionMatched !== false){
 				var varName = responseArray[i].split(" ");
@@ -601,7 +656,19 @@ cshmi.prototype = {
 	*********************************/
 	_checkCondition: function(ObjectParent, ObjectPath, ConditionPath){
 		//get Values
-		var comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
+		var comptype;
+		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
+			comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
+			
+			//prepare main js-object to remember config of getValue OV-Object
+			this.ResourceList.Conditions[ObjectPath] = new Object();
+			this.ResourceList.Conditions[ObjectPath].checkConditionParameters = comptype;
+			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
+		}else{
+			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ");
+			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionParameters;
+		}
+		
 		var Value1 = this._getValue(ObjectParent, ObjectPath+".value1");
 		var Value2 = this._getValue(ObjectParent, ObjectPath+".value2");
 		
@@ -676,7 +743,7 @@ cshmi.prototype = {
 		_buildFromTemplate
 	*********************************/
 	_buildFromTemplate: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues .visible .opacity}', null);
+		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues .visible .opacity .rotate}', null);
 		if (response === false){
 			//communication error
 			return null;
@@ -731,6 +798,7 @@ cshmi.prototype = {
 			svgElement.setAttribute("display", "none");
 		}
 		svgElement.setAttribute("opacity", responseArray[6]);
+		svgElement.setAttribute("transform", "rotate("+responseArray[7]+")");
 		svgElement.style.overflow = "visible";
 		
 		//parametrise templateDefinition with the config
@@ -770,10 +838,6 @@ cshmi.prototype = {
 			var ChildComponent = this.BuildDomain(svgElement, TemplateLocation+responseArray[0]+"/"+varName[0], varName[1]);
 			if (ChildComponent !== null){
 				svgElement.appendChild(ChildComponent);
-				
-				if (ChildComponent.tagName == "svg"){
-					HMI._setLayerPosition(ChildComponent);
-				}
 			}
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit

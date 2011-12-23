@@ -83,6 +83,7 @@ function HMIJavaScriptKSClient() {
 	this.HMIMANAGER_PATH = null;
 	
 	this.Handles = Object();
+	this.ChildList = Object();
 	
 	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
 	
@@ -841,15 +842,28 @@ HMIJavaScriptKSClient.prototype = {
 			returns the childs of an Object as an Array, or an empty Array
 	*********************************/
 	getChildObjArray: function (ObjectPath) {
-			var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
-			if (response === false){
-				//communication error
-				return Array();
-			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
-				return Array();
+			var responseArray;
+			if (!(this.ChildList && this.ChildList[ObjectPath] !== undefined)){
+				var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
+				
+				//no caching with an communication error
+				if (response === false){
+					//communication error
+					return Array();
+				}else if (response.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
+					return Array();
+				}
+				
+				responseArray = this.splitKsResponse(response);
+				
+				//prepare main js-object to remember config of getValue OV-Object
+				this.ChildList[ObjectPath] = new Object();
+				this.ChildList[ObjectPath].ChildListParameters = responseArray;
+			}else{
+				responseArray = this.ChildList[ObjectPath].ChildListParameters;
 			}
-			return this.splitKsResponse(response);
+			return responseArray;
 	},
 	/*********************************
 		destroy
