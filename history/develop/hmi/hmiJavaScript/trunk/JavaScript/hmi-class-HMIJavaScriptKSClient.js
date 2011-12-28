@@ -82,8 +82,10 @@ function HMIJavaScriptKSClient() {
 	this.TCLKSHandle = null;
 	this.HMIMANAGER_PATH = null;
 	
-	this.Handles = Object();
-	this.ChildList = Object();
+	//object to cache communication details
+	this.ResourceList = Object();
+	this.ResourceList.Handles = Object();
+	this.ResourceList.ChildList = Object();
 	
 	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
 	
@@ -113,9 +115,6 @@ HMIJavaScriptKSClient.prototype = {
 		
 		window.clearInterval(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
-		
-		if (this.TCLKSHandle !== null)
-			this.destroy();
 		
 		this.KSServer		= HostAndServer;
 		this.TCLKSGateway	= TCLKSGateway;
@@ -326,8 +325,8 @@ HMIJavaScriptKSClient.prototype = {
 		TODO: add timeout für delHandle
 	*********************************/
 	getHandleID: function(HostAndServername) {
-		if (this.Handles[HostAndServername] && this.Handles[HostAndServername].HandleString !== null){
-			return this.Handles[HostAndServername].HandleString;
+		if (this.ResourceList.Handles[HostAndServername] && this.ResourceList.Handles[HostAndServername].HandleString !== null){
+			return this.ResourceList.Handles[HostAndServername].HandleString;
 		}else{
 			var HandleString = this.getHandle(HostAndServername, null);
 			//The handle must have the right format aka start with "TksS-"
@@ -352,8 +351,8 @@ HMIJavaScriptKSClient.prototype = {
 				}
 				return null;
 			}
-			this.Handles[HostAndServername] = Object();
-			this.Handles[HostAndServername].HandleString = HandleString;
+			this.ResourceList.Handles[HostAndServername] = Object();
+			this.ResourceList.Handles[HostAndServername].HandleString = HandleString;
 			return HandleString;
 		}
 	},
@@ -843,12 +842,15 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	getChildObjArray: function (ObjectPath) {
 			var responseArray;
-			if (!(this.ChildList && this.ChildList[ObjectPath] !== undefined)){
+			if (!(this.ResourceList.ChildList && this.ResourceList.ChildList[ObjectPath] !== undefined)){
 				var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
 				
 				//no caching with an communication error
 				if (response === false){
 					//communication error
+					return Array();
+				}else if (response === null){
+					HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: response was null");
 					return Array();
 				}else if (response.indexOf("KS_ERR") !== -1){
 					HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
@@ -858,10 +860,10 @@ HMIJavaScriptKSClient.prototype = {
 				responseArray = this.splitKsResponse(response);
 				
 				//prepare main js-object to remember config of getValue OV-Object
-				this.ChildList[ObjectPath] = new Object();
-				this.ChildList[ObjectPath].ChildListParameters = responseArray;
+				this.ResourceList.ChildList[ObjectPath] = new Object();
+				this.ResourceList.ChildList[ObjectPath].ChildListParameters = responseArray;
 			}else{
-				responseArray = this.ChildList[ObjectPath].ChildListParameters;
+				responseArray = this.ResourceList.ChildList[ObjectPath].ChildListParameters;
 			}
 			return responseArray;
 	},
@@ -870,9 +872,11 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	destroy: function () {
 		//destroy all handles
-		for (var i in HMI.KSClient.Handles){
-			HMI.KSClient.delHandle(HMI.KSClient.Handles[i].HandleString);
-			HMI.KSClient.Handles[i].HandleString = null;
+		for (var i in this.ResourceList.Handles){
+			this.delHandle(this.ResourceList.Handles[i].HandleString);
+			this.ResourceList.Handles[i].HandleString = null;
+			delete this.ResourceList.Handles[i].HandleString;
+			delete this.ResourceList.Handles[i];
 		}
 	}
 };
