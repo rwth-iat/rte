@@ -300,6 +300,19 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_opacity_set(
     pobj->v_opacity = value;
     return OV_ERR_OK;
 }
+OV_DLLFNCEXPORT OV_INT cshmi_Element_rotate_get(
+	OV_INSTPTR_cshmi_Element          pobj
+) {
+	return pobj->v_rotate;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Element_rotate_set(
+	OV_INSTPTR_cshmi_Element          pobj,
+	const OV_INT  value
+) {
+	pobj->v_rotate = value;
+	return OV_ERR_OK;
+}
 
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(

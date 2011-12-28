@@ -134,10 +134,6 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	/* Graphical Elements */
-
-
-/* TODO rotate */
-
 	CLASS Element : CLASS cshmi/Object
 		COMMENT = "base class for graphical elements";
 		VARIABLES
@@ -157,6 +153,10 @@ LIBRARY cshmi
 			HAS_ACCESSORS
 			COMMENT = "fill color (CSS color name or hex like #000000)"
 			INITIALVALUE = "none";
+			rotate : INT
+			HAS_ACCESSORS
+			COMMENT = "rotate the Element"
+			INITIALVALUE = 0;
 			opacity : SINGLE
 			HAS_ACCESSORS
 			COMMENT = "opacity of the element ([0.0-1.0])"
