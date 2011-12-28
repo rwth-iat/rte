@@ -65,13 +65,17 @@
 ***********************************************************************/
 
 function cshmi() {
-	//oject to cache model information
+	//every Action, Condition and Event could be requested multiple times
+	//to build the visualisation. It should only transfered once,
+	//so we have to remember the request client side.
 	this.ResourceList = Object();
+	this.ResourceList.Elements = Object();
 	this.ResourceList.Actions = Object();
 	this.ResourceList.Conditions = Object();
 	this.ResourceList.Events = Object();
 	this.ResourceList.baseKsPath = Object();
 	
+	//we want to add all elements to a class to find it later
 	this.cshmiComponentClass = "cshmi-component";
 	this.cshmiGroupClass = "cshmi-group";
 	this.cshmiTemplateClass = "cshmi-template";
@@ -92,9 +96,12 @@ function cshmi() {
 cshmi.prototype = {
 	/*********************************
 		instanciateCshmi
+		-	starts iteration of visualisation
+		-	displays the visualisation
 	*********************************/
 	instanciateCshmi: function (ObjectPath) {
 		
+		//build the selected sheet aka group. This includes all containing elements
 		var Component = this.BuildDomain(null, ObjectPath, "/cshmi/Group");
 		
 		if(HMI.PlaygroundContainerNode){
@@ -105,6 +112,8 @@ cshmi.prototype = {
 		
 		if (Component !== null){
 			//build predefined gradients
+			//they are used in the fill attributes like this
+			//	url(#VertWhite2Black)
 			var svgDefs = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'defs');
 			var svgLinGrad = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'linearGradient');
 				svgLinGrad.id = "VertWhite2Black";
@@ -138,8 +147,13 @@ cshmi.prototype = {
 				svgDefs.appendChild(svgLinGrad);
 			Component.appendChild(svgDefs);
 			
+			//push the svg Component to the screen
 			HMI.Playground.appendChild(Component);
+			
+			//calculate all offset parameter to be able to display visual feedback
+			//this is only possible now, as the orientation of the parents are not defined when they are not appended
 			HMI._setLayerPosition(Component);
+			//we want to have offset parameter on all visual elements
 			var ComponentChilds = Component.getElementsByTagName('*');
 			for(var i = 0;i < ComponentChilds.length;i++){
 				HMI._setLayerPosition(ComponentChilds[i]);
@@ -148,7 +162,7 @@ cshmi.prototype = {
 	},
 	/*********************************
 		BuildDomain
-		-	Main interation loop for visualisation
+		-	Main iteration loop for visualisation
 		-	Finds and arms Actions as well
 	*********************************/
 	BuildDomain: function (ObjectParent, ObjectPath, ObjectType) {
@@ -189,7 +203,7 @@ cshmi.prototype = {
 			}
 		}
 		
-		//get Children if needed
+		//get and prepare Children in an recursive call
 		if (Component !== null){
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
 			for (var i=0; i < responseArray.length; i++) {
@@ -216,7 +230,7 @@ cshmi.prototype = {
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, 10);
 		}else{
-			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
+			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
 	},
 	/*********************************
@@ -229,9 +243,10 @@ cshmi.prototype = {
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener(command[command.length-1], function(evt){
-				//mark changed Component
+				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
+				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
@@ -243,22 +258,24 @@ cshmi.prototype = {
 				return;
 			}*/
 			ObjectParent.addEventListener("dblclick", function(evt){
-				//mark changed Component
+				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
+				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener("contextmenu", function(evt){
-				//mark changed Component
+				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
+				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, false);
 		}else{
-			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" nicht unterstützt");
+			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
 	},
 	/*********************************
@@ -271,9 +288,11 @@ cshmi.prototype = {
 		//interprete Action "now", but we want to have the full DOM tree ready
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 		window.setTimeout(function(){
+			//get and execute all actions
 			preserveThis._interpreteAction(ObjectParent, ObjectPath);
 		}, 10);
 		
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
 			if (response === false){
@@ -286,18 +305,21 @@ cshmi.prototype = {
 			}
 			var responseArray = HMI.KSClient.splitKsResponse(response);
 			
-			//prepare main js-object to remember config of getValue OV-Object
+			//we have asked the object successful, so remember the result
 			this.ResourceList.Events[ObjectPath] = new Object();
+			this.ResourceList.Events[ObjectPath].useCount = 1;
 			this.ResourceList.Events[ObjectPath].TimeEventParameters = responseArray;
 			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: remembering config of "+ObjectPath+" ");
 		}else{
-			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" ");
+			//the object is asked this session, so reuse the config to save communication requests
 			responseArray = this.ResourceList.Events[ObjectPath].TimeEventParameters;
+			this.ResourceList.Events[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" ("+this.ResourceList.Events[ObjectPath].useCount+")");
 		}
 		
+		//call us again for cyclic interpretation of the Actions
 		if (responseArray.length !== 0){
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			//HMI.hmi_log_trace("cshmi._interpreteTimeEvent calling myself again in "+responseArray[0]+" seconds");
 			window.setTimeout(function(){
 				preserveThis._interpreteTimeEvent(ObjectParent, ObjectPath);
 			}, responseArray[0]*1000);
@@ -317,8 +339,10 @@ cshmi.prototype = {
 				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
 				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
+				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
 			}else{
-				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+")"+ObjectPath+" nicht unterstützt");
+				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+")"+ObjectPath+" not supported");
 			}
 		}
 		return returnValue;
@@ -329,8 +353,8 @@ cshmi.prototype = {
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
 		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .elemVarPath .globalVar .TemplateFBReferenceVariable .TemplateConfigValues .value}', null);
 			if (response === false){
 				//communication error
@@ -342,13 +366,16 @@ cshmi.prototype = {
 			}
 			responseArray = HMI.KSClient.splitKsResponse(response);
 			
-			//prepare main js-object to remember config of getValue OV-Object
+			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].useCount = 1;
 			this.ResourceList.Actions[ObjectPath].getVarParameters = responseArray;
 			HMI.hmi_log_trace("cshmi._getValue: remembering config of "+ObjectPath+" ");
 		}else{
-			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" ");
+			//the object is asked this session, so reuse the config to save communication requests
 			responseArray = this.ResourceList.Actions[ObjectPath].getVarParameters;
+			this.ResourceList.Actions[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		for (var i=0; i < responseArray.length; i++) {
@@ -465,9 +492,11 @@ cshmi.prototype = {
 			return false;
 		}
 		
+		//get info where to set the NewValue
+		
 		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			//get info where to set the NewValue
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .TemplateFBReferenceVariable}', null);
 			if (response === false){
 				//communication error
@@ -479,13 +508,16 @@ cshmi.prototype = {
 			}
 			var responseArray = HMI.KSClient.splitKsResponse(response);
 			
-			//prepare main js-object to remember config of getValue OV-Object
+			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].useCount = 1;
 			this.ResourceList.Actions[ObjectPath].setVarParameters = responseArray;
 			HMI.hmi_log_trace("cshmi._setValue: remembering config of "+ObjectPath+" ");
 		}else{
-			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" ");
+			//the object is asked this session, so reuse the config to save communication requests
 			responseArray = this.ResourceList.Actions[ObjectPath].setVarParameters;
+			this.ResourceList.Actions[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		//set the new Value
@@ -564,10 +596,12 @@ cshmi.prototype = {
 			if (this.ResourceList.baseKsPath[currentPath] === undefined){
 				response = HMI.KSClient.getVar(null, '{'+currentPath+'.baseKsPath}', null);
 				this.ResourceList.baseKsPath[currentPath] = response;
+				this.ResourceList.baseKsPath[ObjectPath].useCount = 1;
 				HMI.hmi_log_trace("cshmi._BaseKsPath: remembering config of "+currentPath+" ");
 			}else{
 				response = this.ResourceList.baseKsPath[currentPath];
-				HMI.hmi_log_trace("cshmi._BaseKsPath: reusing remembered config of "+currentPath+" ");
+				this.ResourceList.baseKsPath[ObjectPath].useCount++;
+				HMI.hmi_log_trace("cshmi._BaseKsPath: reusing remembered config of "+currentPath+" ("+this.ResourceList.baseKsPath[ObjectPath].useCount+")");
 			}
 			if (response === false){
 				//communication error
@@ -599,6 +633,7 @@ cshmi.prototype = {
 	*********************************/
 	_interpreteIfThenElse: function(ObjectParent, ObjectPath){
 		var anyCond;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.anycond}', null);
 			if (response === false){
@@ -611,13 +646,16 @@ cshmi.prototype = {
 			}
 			anyCond = HMI.KSClient.splitKsResponse(response)[0];
 			
-			//prepare main js-object to remember config of getValue OV-Object
+			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].IfThenElseParameters = anyCond;
+			this.ResourceList.Actions[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
 		}else{
-			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ");
+			//the object is asked this session, so reuse the config to save communication requests
 			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameters;
+			this.ResourceList.Actions[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		var ConditionMatched = false;
@@ -657,16 +695,20 @@ cshmi.prototype = {
 	_checkCondition: function(ObjectParent, ObjectPath, ConditionPath){
 		//get Values
 		var comptype;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
 			comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
 			
-			//prepare main js-object to remember config of getValue OV-Object
+			//we have asked the object successful, so remember the result
 			this.ResourceList.Conditions[ObjectPath] = new Object();
 			this.ResourceList.Conditions[ObjectPath].checkConditionParameters = comptype;
+			this.ResourceList.Conditions[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
 		}else{
-			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ");
+			//the object is asked this session, so reuse the config to save communication requests
 			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionParameters;
+			this.ResourceList.Conditions[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ("+this.ResourceList.Conditions[ObjectPath].useCount+")");
 		}
 		
 		var Value1 = this._getValue(ObjectParent, ObjectPath+".value1");
@@ -743,19 +785,35 @@ cshmi.prototype = {
 		_buildFromTemplate
 	*********************************/
 	_buildFromTemplate: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues .visible .opacity .rotate}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildFromTemplate of "+ObjectPath+" failed: "+response);
-			
-			return null;
-		}
+		var responseArray;
 		
-		//transform "...{{/TechUnits/Pump1}} {{pumpcolor:yellow pumpname:N18}}..." 
-		//to [..., "/TechUnits/Pump1", "pumpcolor:yellow pumpname:N18", ...]
-		var responseArray = HMI.KSClient.splitKsResponse(response);
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues .visible .opacity .rotate}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildFromTemplate of "+ObjectPath+" failed: "+response);
+				
+				return null;
+			}
+			
+			//transform "...{{/TechUnits/Pump1}} {{pumpcolor:yellow pumpname:N18}}..." 
+			//to [..., "/TechUnits/Pump1", "pumpcolor:yellow pumpname:N18", ...]
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildFromTemplate: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+		}
 		
 		if (responseArray[0] === "" && responseArray.length > 3){
 			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is not configured");
@@ -765,17 +823,31 @@ cshmi.prototype = {
 		}
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
-		
-		var response = HMI.KSClient.getVar(null, '{'+TemplateLocation+responseArray[0]+'.width .height .hideable}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+responseArray[0]+"' is not available.");
-			HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArrayTemplate;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[TemplateLocation+responseArray[0]] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+TemplateLocation+responseArray[0]+'.width .height .hideable}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+responseArray[0]+"' is not available.");
+				HMI.hmi_log_error("cshmi._buildSvgContainer of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArrayTemplate = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[TemplateLocation+responseArray[0]] = new Object();
+			this.ResourceList.Elements[TemplateLocation+responseArray[0]].TemplateParameters = responseArrayTemplate;
+			this.ResourceList.Elements[TemplateLocation+responseArray[0]].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildFromTemplate: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArrayTemplate = this.ResourceList.Elements[TemplateLocation+responseArray[0]].TemplateParameters;
+			this.ResourceList.Elements[TemplateLocation+responseArray[0]].useCount++;
+			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+TemplateLocation+responseArray[0]+" ("+this.ResourceList.Elements[TemplateLocation+responseArray[0]].useCount+")");
 		}
-		var responseArrayTemplate = HMI.KSClient.splitKsResponse(response);
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		svgElement.id = ObjectPath;
@@ -862,22 +934,37 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgLine: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x1 .y1 .x2 .y2 .stroke .opacity}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgLine of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x1 .y1 .x2 .y2 .stroke .opacity}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgLine of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgLine: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgLine: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] == "FALSE"){
-			return null;
-		}
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
 		svgElement.id = ObjectPath;
 		
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}
 		//set dimension of container
 		svgElement.setAttribute("x1", responseArray[1]);
 		svgElement.setAttribute("y1", responseArray[2]);
@@ -889,22 +976,37 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgPolyline: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill .opacity}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgPolyline of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill .opacity}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgPolyline of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgPolyline: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgPolyline: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] == "FALSE"){
-			return null;
-		}
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
 		svgElement.id = ObjectPath;
 		
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}
 		//set dimension of container
 		svgElement.setAttribute("points", responseArray[1]);
 		svgElement.setAttribute("stroke", responseArray[2]);
@@ -914,23 +1016,37 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgPolygon: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill .opacity}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgPolygon of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill .opacity}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgPolygon of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgPolygon: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgPolygon: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var responseArray = HMI.KSClient.splitKsResponse(response);
-		
-		if (responseArray[0] == "FALSE"){
-			return null;
-		}
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
 		svgElement.id = ObjectPath;
 		
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}
 		//set dimension of container
 		svgElement.setAttribute("points", responseArray[1]);
 		svgElement.setAttribute("stroke", responseArray[2]);
@@ -940,23 +1056,37 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgPath: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .d .stroke .fill .opacity}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgPath of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .d .stroke .fill .opacity}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgPath of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgPath: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgPath: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var responseArray = HMI.KSClient.splitKsResponse(response);
-		
-		if (responseArray[0] == "FALSE"){
-			return null;
-		}
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
 		svgElement.id = ObjectPath;
 		
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}
 		//set dimension of container
 		svgElement.setAttribute("d", responseArray[1]);
 		svgElement.setAttribute("stroke", responseArray[2]);
@@ -966,23 +1096,37 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgText: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .opacity .content}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgText of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .opacity .content}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgText of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgText: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgText: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var responseArray = HMI.KSClient.splitKsResponse(response);
-		
-		if (responseArray[0] == "FALSE"){
-			return null;
-		}
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
 		svgElement.id = ObjectPath;
 		
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}
 		//set dimension of container
 		svgElement.setAttribute("x", responseArray[1]);
 		svgElement.setAttribute("y", responseArray[2]);
@@ -1016,22 +1160,37 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgCircle: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .r .stroke .fill .opacity}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgCircle of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .r .stroke .fill .opacity}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgCircle of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgCircle: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgCircle: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] == "FALSE"){
-			return null;
-		}
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
 		svgElement.id = ObjectPath;
 		
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}
 		//set dimension of container
 		svgElement.setAttribute("cx", responseArray[1]);
 		svgElement.setAttribute("cy", responseArray[2]);
@@ -1043,22 +1202,37 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgEllipse: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .rx .ry .stroke .fill .opacity}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgEllipse of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .rx .ry .stroke .fill .opacity}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgEllipse of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgEllipse: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgEllipse: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] == "FALSE"){
-			return null;
-		}
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
 		svgElement.id = ObjectPath;
 		
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}
 		//set dimension of container
 		svgElement.setAttribute("cx", responseArray[1]);
 		svgElement.setAttribute("cy", responseArray[2]);
@@ -1071,22 +1245,37 @@ cshmi.prototype = {
 		return svgElement;
 	},
 	_buildSvgRect: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .stroke .fill .opacity}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgRect of "+ObjectPath+" failed: "+response);
-			return null;
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .stroke .fill .opacity}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgRect of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgRect: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
 		
-		if (responseArray[0] == "FALSE"){
-			return null;
-		}
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
 		svgElement.id = ObjectPath;
 		
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}
 		//set dimension of container
 		svgElement.setAttribute("x", responseArray[1]);
 		svgElement.setAttribute("y", responseArray[2]);
