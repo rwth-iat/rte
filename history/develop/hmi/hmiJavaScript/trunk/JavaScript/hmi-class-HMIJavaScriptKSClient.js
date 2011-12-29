@@ -727,17 +727,13 @@ HMIJavaScriptKSClient.prototype = {
 	/*********************************
 		splitKsResponse
 			returns the KS Response as an Array, or an empty Array
-		"{FALSE}" => ["FALSE"]
-		"{{}} {{}} {{}} {ieexp}" => ["", "", "", "ieexp"]
-		"{Test} {hallo} {bla} {ieexp}" => ["Test", "hallo", "bla", "ieexp"]
-		"{pump1 /Libraries/cshmi/Template} {pump2 /Libraries/cshmi/Template}" => ["pump1 /Libraries/cshmi/Template", "pump2 /Libraries/cshmi/Template"]
-		"{{/TechUnits/Pump1}} {{pumpcolor:yellow pumpname:N18}}" => ["/TechUnits/Pump1", "pumpcolor:yellow pumpname:N18"]
-		"{{/TechUnits/Pump1}} {{pumpcolor:yellow {pumpname:N 18}}}" => ["/TechUnits/Pump1", "pumpcolor:yellow pumpname:N 18"] soll
-		"{{/TechUnits/Pump1}} {{pumpcolor:yellow {pumpname:N 18}}}" => ["/TechUnits/Pump1", "pumpcolor:yellow 	"pumpcolor:yellow {pumpname:N 18}"] ist
-		
-		"{{{pumpcolor:y ellow} {pumpname:N 18}}}" => ["{{pumpcolor:y ellow", "pumpname:N 18}}"] boese
+			if the optional argument recursionDepth is > 0,  
 	*********************************/
-	splitKsResponse: function (response) {
+	splitKsResponse: function (response, recursionDepth) {
+		//Checking if optional argument is set, else set to default: 0
+		if (recursionDepth === undefined){
+			recursionDepth = 0;
+		}
 		//check input
 		if (response === null){
 			return Array();
@@ -750,10 +746,13 @@ HMIJavaScriptKSClient.prototype = {
 			return Array();
 		}else if (response.indexOf("KS_ERR") !== -1){
 			return Array();
-		}else if (response.charAt(0) !== "{" && response.charAt(response.length -1) !== "}"){
-			return Array();
 		}
-		
+//		this check is not needed. Turning into a problem when array elements are not between brackets.
+//		e.g. "maxcalctime KS_OT_VARIABLE {maximum calculation time} {KS_AC_READ KS_AC_WRITE KS_AC_PART} hp {2011-12-29 12:01:44.981} KS_VT_TIME_SPAN sec"
+//		else if (response.charAt(0) !== "{" && response.charAt(response.length -1) !== "}"){
+//			return Array();
+//		}
+
 		var indexOfCurrentOpenBracket = 0;
 		var indexOfNextOpenBracket = 0;
 		var indexOfCurrentClosedBracket = 0;
@@ -765,6 +764,18 @@ HMIJavaScriptKSClient.prototype = {
 
 		//search 1st open bracket
 		indexOfCurrentOpenBracket = response.indexOf("{", 0);
+
+		//add array elements if they are listed before the 1st open bracket
+		//e.g. "maxcalctime KS_OT_VARIABLE {maximum calculation time}"
+		if (indexOfCurrentOpenBracket > 0) {
+			//e.g. startIndexOfCurrentString = 0, indexOfCurrentOpenBracket = 27 --> currentArrayElement = "maxcalctime KS_OT_VARIABLE"
+			currentArrayElement = response.slice(startIndexOfCurrentString, indexOfCurrentOpenBracket-1);
+			//if there are space characters, we need to split currentArrayElement and append each of the elements to the responseArray
+			currentArrayElement = currentArrayElement.split(" ");
+			for (i=0; i < currentArrayElement.length; i++) {
+				responseArray.push(currentArrayElement[i]);
+			}
+		}
 		startIndexOfCurrentString = indexOfCurrentOpenBracket;
 
 		while(true){		
@@ -772,34 +783,65 @@ HMIJavaScriptKSClient.prototype = {
 			indexOfNextOpenBracket = (response.indexOf("{", indexOfCurrentOpenBracket+1));
 			indexOfNextClosedBracket = (response.indexOf("}", indexOfCurrentClosedBracket+1));
 			
-			if (indexOfNextClosedBracket < indexOfNextOpenBracket) {
-				
+			// we have reached the closed bracket of an element
+			if (indexOfNextClosedBracket < indexOfNextOpenBracket  || indexOfNextOpenBracket === -1) {
+				//e.g. "{{/TechUnits/Pump1}} {{pumpcolor:yellow pumpname:N18}}"
+				//indexOfNextClosedBracket = 19, indexOfNextOpenBracket = 21, startIndexOfCurrentString = 0 --> currentArrayElement = {/TechUnits/Pump1}
 				currentArrayElement = response.slice(startIndexOfCurrentString+1, indexOfNextClosedBracket);
-				currentArrayElement = currentArrayElement.replace(/{/g, "");
-				currentArrayElement = currentArrayElement.replace(/}/g, "");
+
+				if (recursionDepth > 0){
+					currentArrayElement = this.splitKsResponse(currentArrayElement, recursionDepth-1);
+				}
+				//get a rid of the remaining brackets because we are done with this element 
+				//e.g "{/TechUnits/Pump1}"
+				else{
+					currentArrayElement = currentArrayElement.replace(/{/g, "");
+					currentArrayElement = currentArrayElement.replace(/}/g, "");
+				}
 				responseArray.push(currentArrayElement);
 				
+				//append elements if they are not between brackets
+				//e.g. "{KS_AC_READ KS_AC_WRITE KS_AC_PART} hp {2011-12-13 12:14:57.767}"
+				// there is more then just a space character between "{KS_AC_READ KS_AC_WRITE KS_AC_PART}" and "{2011-12-13 12:14:57.767}"
+				if (indexOfNextClosedBracket+1 !== indexOfNextOpenBracket-1 && indexOfNextOpenBracket !== -1){
+					currentArrayElement = response.slice(indexOfNextClosedBracket+2, indexOfNextOpenBracket-1);
+					//if there are space characters, we need to split currentArrayElement and append each of the elements to the responseArray
+					currentArrayElement = currentArrayElement.split(" ");
+					for (i=0; i < currentArrayElement.length; i++) {
+						responseArray.push(currentArrayElement[i]);
+					}
+				}		
+				
+				//check if we have reached the last closed bracket
+				if (indexOfNextOpenBracket === -1){
+					//append elements if they come after the last closed bracket
+					//e.g. {2011-12-29 12:01:44.981} KS_VT_TIME_SPAN sec
+					if (response.length > indexOfNextClosedBracket+1){
+						currentArrayElement = response.slice(indexOfNextClosedBracket+2);
+						//if there are space characters, we need to split currentArrayElement and append each of the elements to the responseArray
+						currentArrayElement = currentArrayElement.split(" ");
+						for (i=0; i < currentArrayElement.length; i++) {
+							responseArray.push(currentArrayElement[i]);
+						}
+
+					}
+					
+					//we are done with the split
+					return responseArray;
+				}
+				
+				//prepare to search next element that is beetween brackets
 				indexOfCurrentOpenBracket = indexOfNextOpenBracket;
 				indexOfCurrentClosedBracket = indexOfNextClosedBracket;
 				startIndexOfCurrentString = indexOfNextOpenBracket;
 			}
-			else if (indexOfNextOpenBracket === -1) {
-				
-				currentArrayElement = response.slice(startIndexOfCurrentString+1, indexOfNextClosedBracket);
-				currentArrayElement = currentArrayElement.replace(/{/g, "");
-				currentArrayElement = currentArrayElement.replace(/}/g, "");
-				responseArray.push(currentArrayElement);
-				
-				break;
-			}
 
+			//close bracket of an element not reached yet
 			else {
 				indexOfCurrentOpenBracket = indexOfNextOpenBracket;
 				indexOfCurrentClosedBracket = indexOfNextClosedBracket;
 			}
 		}
-
-		return responseArray;
 	},
 	/*********************************
 		getChildObjArray
