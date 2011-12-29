@@ -74,6 +74,7 @@ function cshmi() {
 	this.ResourceList.Conditions = Object();
 	this.ResourceList.Events = Object();
 	this.ResourceList.baseKsPath = Object();
+	this.ResourceList.ChildList = Object();
 	
 	//we want to add all elements to a class to find it later
 	this.cshmiComponentClass = "cshmi-component";
@@ -205,7 +206,7 @@ cshmi.prototype = {
 		
 		//get and prepare Children in an recursive call
 		if (Component !== null){
-			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
+			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				var ChildComponent = this.BuildDomain(Component, Component.id+"/"+varName[0], varName[1]);
@@ -283,14 +284,25 @@ cshmi.prototype = {
 		-	calling Actions if supported TimeEvent is triggered
 	*********************************/
 	_interpreteTimeEvent: function(ObjectParent, ObjectPath){
-		//fixme prevent update if not visible
+		var skipEvent = false;
+		var iterationObject = ObjectParent;
+		do{
+			//skip eventhandling if the object is not visible
+			if(iterationObject.getAttribute("display") === "none"){
+				skipEvent = true;
+				break;
+			}
+		}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
+		iterationObject = null;
 		
-		//interprete Action "now", but we want to have the full DOM tree ready
-		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-		window.setTimeout(function(){
-			//get and execute all actions
-			preserveThis._interpreteAction(ObjectParent, ObjectPath);
-		}, 10);
+		if(skipEvent === false){
+			//interprete Action "now", but we want to have the full DOM tree ready
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			window.setTimeout(function(){
+				//get and execute all actions
+				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+			}, 10);
+		}
 		
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
@@ -332,7 +344,7 @@ cshmi.prototype = {
 	*********************************/
 	_interpreteAction: function(ObjectParent, ObjectPath){
 		var returnValue = true;
-		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath);
+		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 		for (var i=0; i < responseArray.length && returnValue == true; i++) {
 			var varName = responseArray[i].split(" ");
 			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
@@ -453,7 +465,7 @@ cshmi.prototype = {
 							}
 						}
 					//loop upwards to find the Template object
-					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
+					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 					return null;
 				}else if (i === 5){
 					//TemplateConfigValues
@@ -464,7 +476,7 @@ cshmi.prototype = {
 							return TemplateObject.ConfigValues[responseArray[i]];
 						}
 					//loop upwards to find the Template object
-					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
+					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 					return null;
 				}else if (i === 6){
 					//value
@@ -571,7 +583,7 @@ cshmi.prototype = {
 							}
 						}
 					//loop upwards to find the Template object
-					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null);  //the = is no typo here!
+					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 					return null;
 				}
 			}//end: if empty
@@ -659,7 +671,7 @@ cshmi.prototype = {
 		}
 		
 		var ConditionMatched = false;
-		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if");
+		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if", this);
 		var i = 0;
 		if (anyCond == "TRUE"){
 			//logical OR
@@ -904,7 +916,7 @@ cshmi.prototype = {
 		
 		//get childs (grafics and actions) from the TemplateDefinition
 		//our child will be fetched later
-		var responseArrayChild = HMI.KSClient.getChildObjArray(TemplateLocation+responseArray[0]);
+		var responseArrayChild = HMI.KSClient.getChildObjArray(TemplateLocation+responseArray[0], this);
 		for (var i=0; i < responseArrayChild.length; i++) {
 			var varName = responseArrayChild[i].split(" ");
 			var ChildComponent = this.BuildDomain(svgElement, TemplateLocation+responseArray[0]+"/"+varName[0], varName[1]);
@@ -964,6 +976,8 @@ cshmi.prototype = {
 		
 		if (responseArray[0] == "FALSE"){
 			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
 		svgElement.setAttribute("x1", responseArray[1]);
@@ -1006,6 +1020,8 @@ cshmi.prototype = {
 		
 		if (responseArray[0] == "FALSE"){
 			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
 		svgElement.setAttribute("points", responseArray[1]);
@@ -1046,6 +1062,8 @@ cshmi.prototype = {
 		
 		if (responseArray[0] == "FALSE"){
 			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
 		svgElement.setAttribute("points", responseArray[1]);
@@ -1086,6 +1104,8 @@ cshmi.prototype = {
 		
 		if (responseArray[0] == "FALSE"){
 			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
 		svgElement.setAttribute("d", responseArray[1]);
@@ -1126,6 +1146,8 @@ cshmi.prototype = {
 		
 		if (responseArray[0] == "FALSE"){
 			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
 		svgElement.setAttribute("x", responseArray[1]);
@@ -1190,6 +1212,8 @@ cshmi.prototype = {
 		
 		if (responseArray[0] == "FALSE"){
 			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
 		svgElement.setAttribute("cx", responseArray[1]);
@@ -1232,6 +1256,8 @@ cshmi.prototype = {
 		
 		if (responseArray[0] == "FALSE"){
 			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
 		svgElement.setAttribute("cx", responseArray[1]);
@@ -1275,6 +1301,8 @@ cshmi.prototype = {
 		
 		if (responseArray[0] == "FALSE"){
 			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
 		svgElement.setAttribute("x", responseArray[1]);

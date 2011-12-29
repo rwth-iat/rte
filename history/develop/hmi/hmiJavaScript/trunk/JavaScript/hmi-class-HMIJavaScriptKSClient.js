@@ -85,7 +85,6 @@ function HMIJavaScriptKSClient() {
 	//object to cache communication details
 	this.ResourceList = Object();
 	this.ResourceList.Handles = Object();
-	this.ResourceList.ChildList = Object();
 	
 	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
 	
@@ -329,19 +328,19 @@ HMIJavaScriptKSClient.prototype = {
 			return this.ResourceList.Handles[HostAndServername].HandleString;
 		}else{
 			var HandleString = this.getHandle(HostAndServername, null);
+			if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
+				//the Manager sometimes reject connection to a valid server, so retry once
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
+				HandleString = this.getHandle(HostAndServername, null);
+			}
+			if (HandleString.indexOf("KS_ERR") !== -1){
+				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - Server not available Handlemessage: "+HandleString);
+				return null;
+			}
+			
 			//The handle must have the right format aka start with "TksS-"
 			if (!/^TksS-\b/.exec(HandleString)){
-				if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
-					//the Manager sometimes reject connection to a valid server, so retry once
-					HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust");
-					HandleString = this.getHandle(HostAndServername, null);
-					if (HandleString.indexOf("KS_ERR") !== -1){
-						//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
-						HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - Server really not there Handlemessage: "+HandleString);
-						return null;
-					}
-				}
-				
 				if (HandleString.length < 250){
 					HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + HandleString);
 				}else if (HandleString){
@@ -355,42 +354,6 @@ HMIJavaScriptKSClient.prototype = {
 			this.ResourceList.Handles[HostAndServername].HandleString = HandleString;
 			return HandleString;
 		}
-	},
-	
-	/*********************************
-		_cbinit
-		
-		got a Handle of the KS-Gateway
-	*********************************/
-	_cbInit: function(Client, req) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - Start");
-
-		//unused!!!! fixme
-
-		//The handle must have the right format aka start with "TksS-"
-		if (/^TksS-\b/.exec(req.responseText)){
-			Client.TCLKSHandle = req.responseText;
-		} else {
-			Client.TCLKSHandle = null;
-			if (HMI.PossServers.length === 0){
-				HMI.PossServers.options[HMI.PossServers.options.length] = new Option('- no valid server response -', 'no server');
-			}
-			HMI.hmi_log_error('HMIJavaScriptKSClient._cbinit: Could not initialize TCLKSGateway. '
-				+ 'Gateway responded:'
-				+ '\n'
-				+ req.responseText);
-			if (req.readyState != 4){
-				HMI.hmi_log_onwebsite('This Browser does not support synchronous XMLHttpRequest.');
-			}else if (req.responseText.length < 250){
-				HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + req.responseText);
-			}else if (req.responseText){
-				HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded (first 250 characters): ' + req.responseText.substr(0,250));
-			}else{
-				HMI.hmi_log_onwebsite('Could not analyse server response.');
-			}
-		}
-		
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbinit - End");
 	},
 	
 	/*********************************
@@ -778,6 +741,8 @@ HMIJavaScriptKSClient.prototype = {
 		//check input
 		if (response === null){
 			return Array();
+		}else if (response === ""){
+			return Array();
 		}else if (response === false){
 			//communication error
 			return Array();
@@ -840,32 +805,34 @@ HMIJavaScriptKSClient.prototype = {
 		getChildObjArray
 			returns the childs of an Object as an Array, or an empty Array
 	*********************************/
-	getChildObjArray: function (ObjectPath) {
-			var responseArray;
-			if (!(this.ResourceList.ChildList && this.ResourceList.ChildList[ObjectPath] !== undefined)){
-				var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
-				
-				//no caching with an communication error
-				if (response === false){
-					//communication error
-					return Array();
-				}else if (response === null){
-					HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: response was null");
-					return Array();
-				}else if (response.indexOf("KS_ERR") !== -1){
-					HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
-					return Array();
-				}
-				
-				responseArray = this.splitKsResponse(response);
-				
-				//prepare main js-object to remember config of getValue OV-Object
-				this.ResourceList.ChildList[ObjectPath] = new Object();
-				this.ResourceList.ChildList[ObjectPath].ChildListParameters = responseArray;
-			}else{
-				responseArray = this.ResourceList.ChildList[ObjectPath].ChildListParameters;
+	getChildObjArray: function (ObjectPath, cachingTarget) {
+		var responseArray;
+		if (!(cachingTarget.ResourceList.ChildList && cachingTarget.ResourceList.ChildList[ObjectPath] !== undefined)){
+			var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
+			
+			//no caching with an communication error
+			if (response === false){
+				//communication error
+				return Array();
+			}else if (response === null){
+				HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: response was null");
+				return Array();
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
+				return Array();
 			}
-			return responseArray;
+			
+			responseArray = this.splitKsResponse(response);
+			
+			//prepare main js-object to remember config of getValue OV-Object
+			cachingTarget.ResourceList.ChildList[ObjectPath] = new Object();
+			cachingTarget.ResourceList.ChildList[ObjectPath].ChildListParameters = responseArray;
+			cachingTarget.ResourceList.ChildList[ObjectPath].useCount = 1;
+		}else{
+			responseArray = cachingTarget.ResourceList.ChildList[ObjectPath].ChildListParameters;
+			cachingTarget.ResourceList.ChildList[ObjectPath].useCount++;
+		}
+		return responseArray;
 	},
 	/*********************************
 		destroy

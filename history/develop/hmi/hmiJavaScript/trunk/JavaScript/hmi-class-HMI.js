@@ -320,7 +320,15 @@ HMI.prototype = {
 				req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
 				req.send(null);
 				var ResponseServerString = req.getResponseHeader('server');
-				if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
+				if (req.readyState != 4){
+					//some old mobile browser does not support syncron requests
+					this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
+					this.hmi_log_onwebsite("This Browser does not support synchronous XMLHttpRequest, which is required for ACPLT/HMI. Please use another Browser");
+					if (document.getElementById("idThrobbler") !== null){
+						document.getElementById("idThrobbler").style.display = "none";
+					}
+					return false;
+				}else if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
 					HMI.HMI_Constants.ServerType = "tcl";
 					this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
 				}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('PHP')){
@@ -1180,6 +1188,7 @@ HMI.prototype = {
 	
 	/*********************************
 		getComponent
+		-	returns the Component which has the cssclass set
 	*********************************/
 	getComponent: function (evt, cssclass) {
 		//This event could be called from native IE < 9, so evt.target is not available
@@ -1198,17 +1207,14 @@ HMI.prototype = {
 				&&	Component !== HMI.svgDocument
 				&&	HMI.instanceOf(Component, cssclass) === false)
 		{
-			if (Component.ownerSVGElement !== undefined){
-				//firefox and co
-				Component = Component.ownerSVGElement;
-			}else if (Component.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
-				//Adobe+Renesis
+			if (Component.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG ){
+				//W3C conforming Browsers, Adobe, Renesis
 				Component = Component.parentNode;
 			}else if (Component.parentNode.tagUrn == HMI.HMI_Constants.NAMESPACE_SVG ){
 				//Inline IE6-8 Code inline
 				Component = Component.parentNode;
 			}else{
-				//there is no svg parent and whe checked this object last loop, break
+				//there is no svg parent and we checked this object last loop, break
 				Component = null;
 			}
 			if ( Component !== null && Component.id == HMI.HMI_Constants.NODE_NAME_CLONE){
@@ -1477,6 +1483,7 @@ HMI.prototype = {
 		
 		//LayerX and LayerY are HMI specific DOM Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
+		//and the function displaygestureReactionMarker
 		var LayerX = parseInt(Element.getAttribute("x"), 10);
 		var LayerY = parseInt(Element.getAttribute("y"), 10);
 		
@@ -1487,35 +1494,15 @@ HMI.prototype = {
 			LayerY = 0;
 		}
 		
-		//Firefox, Safari and Opera
-		if (Element.ownerSVGElement !== undefined){
-			if ( Element.ownerSVGElement !== null && Element.ownerSVGElement != document){
-//todo warnen wenn NaN bei hmi auftaucht
-				var newLayerX = parseInt(Element.ownerSVGElement.getAttribute("layerX"), 10);
-				var newLayerY = parseInt(Element.ownerSVGElement.getAttribute("layerY"), 10);
-				if (!isNaN(newLayerX) && !isNaN(newLayerY)){
-					LayerX += newLayerX;
-					LayerY += newLayerY;
-				}
-			}else if (Element.parentNode !== null && Element.parentNode.attributes !== null){
-				newLayerX = parseInt(Element.parentNode.getAttribute("layerX"), 10);
-				newLayerY = parseInt(Element.parentNode.getAttribute("layerY"), 10);
-				if (!isNaN(newLayerX) && !isNaN(newLayerY)){
-					LayerX += newLayerX;
-					LayerY += newLayerY;
-				}
-			}
-		}else if(Element.parentNode !== null && Element.parentNode.attributes !== null && Element.parentNode.attributes.length !== 0){
+		if(Element.parentNode !== null && Element.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			newLayerX = parseInt(Element.parentNode.getAttribute("layerX"), 10);
 			newLayerY = parseInt(Element.parentNode.getAttribute("layerY"), 10);
-			if (!isNaN(newLayerX) && !isNaN(newLayerY)){
-				LayerX += newLayerX;
-				LayerY += newLayerY;
-			}
+			LayerX += newLayerX;
+			LayerY += newLayerY;
 		}
 		
 		if (isNaN(LayerX) || isNaN(LayerY)){
-			this.hmi_log_warning("SVG-ERROR - ownerSVGElement/parentNode of\n"+Element.id+"\n is no hmi-component (has no layerX or layerY). The move-Gesture will not work on child elements!");
+			this.hmi_log_warning("SVG-ERROR - parentNode of\n"+Element.id+"\n is no hmi-component (has no layerX or layerY). The move-Gesture will not work on child elements!");
 			Element.setAttribute("layerX", 0);
 			Element.setAttribute("layerY", 0);
 		}else{
