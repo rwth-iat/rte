@@ -747,11 +747,6 @@ HMIJavaScriptKSClient.prototype = {
 		}else if (response.indexOf("KS_ERR") !== -1){
 			return Array();
 		}
-//		this check is not needed. Turning into a problem when array elements are not between brackets.
-//		e.g. "maxcalctime KS_OT_VARIABLE {maximum calculation time} {KS_AC_READ KS_AC_WRITE KS_AC_PART} hp {2011-12-29 12:01:44.981} KS_VT_TIME_SPAN sec"
-//		else if (response.charAt(0) !== "{" && response.charAt(response.length -1) !== "}"){
-//			return Array();
-//		}
 
 		var indexOfCurrentOpenBracket = 0;
 		var indexOfNextOpenBracket = 0;
@@ -764,6 +759,11 @@ HMIJavaScriptKSClient.prototype = {
 
 		//search 1st open bracket
 		indexOfCurrentOpenBracket = response.indexOf("{", 0);
+		
+		//if there are no brackets at all
+		if (indexOfCurrentOpenBracket === -1){
+			return response.split(" ");
+		}
 
 		//add array elements if they are listed before the 1st open bracket
 		//e.g. "maxcalctime KS_OT_VARIABLE {maximum calculation time}"
