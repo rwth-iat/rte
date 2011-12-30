@@ -453,7 +453,7 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - hmi and/or cshmi server");
 			return true;
 		}else{
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.pingServer - problem with hmi detection");
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - no hmi and no cshmi server");
 			return false;
 		}
 	},
