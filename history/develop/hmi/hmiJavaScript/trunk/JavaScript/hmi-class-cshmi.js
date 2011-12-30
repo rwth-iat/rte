@@ -76,6 +76,9 @@ function cshmi() {
 	this.ResourceList.baseKsPath = Object();
 	this.ResourceList.ChildList = Object();
 	
+	//holds the information if the visualisation is filled with content right now
+	this.initStage = false;
+	
 	//we want to add all elements to a class to find it later
 	this.cshmiComponentClass = "cshmi-component";
 	this.cshmiGroupClass = "cshmi-group";
@@ -88,7 +91,7 @@ function cshmi() {
 
 
 //#########################################################################################################################
-//fixme: check return value of gethandleid
+//TODO: check return value of gethandleid
 //#########################################################################################################################
 
 /***********************************************************************
@@ -101,6 +104,8 @@ cshmi.prototype = {
 		-	displays the visualisation
 	*********************************/
 	instanciateCshmi: function (ObjectPath) {
+		//we are in the init stage, so the DOM Tree is not populated
+		this.initStage = true;
 		
 		//build the selected sheet aka group. This includes all containing elements
 		var Component = this.BuildDomain(null, ObjectPath, "/cshmi/Group");
@@ -159,6 +164,8 @@ cshmi.prototype = {
 			for(var i = 0;i < ComponentChilds.length;i++){
 				HMI._setLayerPosition(ComponentChilds[i]);
 			}
+			//the DOM Tree is populated now
+			this.initStage = false;
 		}
 	},
 	/*********************************
@@ -253,7 +260,7 @@ cshmi.prototype = {
 		}else if (command[command.length-1] === "doubleclick"){
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			//fixme make double click ASV compatible
+			//todo make double click ASV compatible
 			/*ObjectParent.addEventListener("click", function(evt){
 				if (!(evt.button === 0 && evt.detail ==2)){
 				return;
@@ -304,6 +311,7 @@ cshmi.prototype = {
 			}, 10);
 		}
 		
+		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
@@ -315,7 +323,7 @@ cshmi.prototype = {
 				
 				return false;
 			}
-			var responseArray = HMI.KSClient.splitKsResponse(response);
+			responseArray = HMI.KSClient.splitKsResponse(response);
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Events[ObjectPath] = new Object();
@@ -330,7 +338,9 @@ cshmi.prototype = {
 		}
 		
 		//call us again for cyclic interpretation of the Actions
-		if (responseArray.length !== 0){
+		//only if we are in the initialisation or normal stage
+		//and the active cshmi display is "our" one
+		if (responseArray.length !== 0 && (this.initStage === true || HMI.Playground.firstChild !== null ) && HMI.cshmi === this){
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			window.setTimeout(function(){
 				preserveThis._interpreteTimeEvent(ObjectParent, ObjectPath);
@@ -419,7 +429,7 @@ cshmi.prototype = {
 						}else if (typeof ObjectParent.innerText != "undefined"){
 							return ObjectParent.innerText;
 						}else{
-							//fixme asv compatibility
+							//todo asv compatibility
 							return null;
 						}
 					}else if (ObjectParent.hasAttribute(responseArray[i])){
@@ -518,7 +528,7 @@ cshmi.prototype = {
 				
 				return false;
 			}
-			var responseArray = HMI.KSClient.splitKsResponse(response);
+			responseArray = HMI.KSClient.splitKsResponse(response);
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
@@ -926,7 +936,7 @@ cshmi.prototype = {
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 		ObjectParent.setAttribute("cursor", "pointer");
-		//fixme make double click ASV compatible
+		//todo make double click ASV compatible
 		/*ObjectParent.addEventListener("click", function(evt){
 			if (!(evt.button === 0 && evt.detail ==2)){
 			return;
@@ -1362,7 +1372,7 @@ cshmi.prototype = {
 			return node.getElementsByClassName(className);
 		} else {
 			var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
-			var node = node || HMI.svgDocument;
+			node = node || HMI.svgDocument;
 			var elements = node.getElementsByTagName("*");
 			var returnElements = [];
 			var current;
