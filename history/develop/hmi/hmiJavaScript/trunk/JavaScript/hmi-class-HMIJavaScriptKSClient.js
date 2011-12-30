@@ -438,27 +438,24 @@ HMIJavaScriptKSClient.prototype = {
 			//generic error
 			return false;
 		}
-		//Try to get the Name of HMI Manager to test the existence
-		var ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null); 
-		var ManagerResponseArray = this.splitKsResponse(ManagerResponse);
 		
-		if (ManagerResponseArray.length === 0){
-			//Try to get the Name of cshmi Group to test the existence
-			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/cshmi/Group.instance", null);
-			ManagerResponseArray = this.splitKsResponse(ManagerResponse);
-			if (ManagerResponseArray.length === 0){
-				//no hmi, no cshmi server, try if cshmi without fb lib
-				ManagerResponse = this.getVar(TCLKSHandle, "/acplt/cshmi/Group.instance", null);
-				ManagerResponseArray = this.splitKsResponse(ManagerResponse);
-				if (ManagerResponseArray.length === 0){
-					//no hmi, no cshmi server
-					HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - no hmi, no cshmi server");
-					return false;
-				}
-			}
+		//get a list of all loaded ov libraries of this server
+		var Response = this.getVar(TCLKSHandle, "/acplt/ov/library.instance", null);
+		if (!Response){
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - communication problem, so no hmi and no cshmi server");
+			return false;
+		}else if (Response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - no OV server (perhaps MANAGER), so no hmi and no cshmi server");
+			return false;
+		}else if (	Response.indexOf("/hmi") !== -1
+				||	Response.indexOf("/cshmi") !== -1){
+			//an hmi or cshmi library is loaded
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - hmi and/or cshmi server");
+			return true;
+		}else{
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.pingServer - problem with hmi detection");
+			return false;
 		}
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - hmi or cshmi server");
-		return true;
 	},
 	
 	/*********************************
