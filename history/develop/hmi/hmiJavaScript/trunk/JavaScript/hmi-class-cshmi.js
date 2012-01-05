@@ -432,6 +432,15 @@ cshmi.prototype = {
 							//todo asv compatibility
 							return null;
 						}
+					}else if (responseArray[i] == "rotate"){
+						//rotate is special, as it is different in OVM and SVG
+						var TransformString = ObjectParent.getAttribute("transform");
+						//"rotate(45,21.000000,50.000000)" or "rotate(45)"
+						
+						//remove rotate()
+						TransformString = TransformString.replace(")", "").replace("rotate(", "");
+						//get first number if there are 3, separated via comma
+						return TransformString.split(",")[0];
 					}else if (ObjectParent.hasAttribute(responseArray[i])){
 						return ObjectParent.getAttribute(responseArray[i]);
 					}else{
@@ -563,6 +572,15 @@ cshmi.prototype = {
 					if (responseArray[i] == "content"){
 						//content is special, as it is different in OVM and SVG
 						ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
+					}else if (responseArray[i] == "rotate"){
+						//rotate is special, as it is different in OVM and SVG
+						if(ObjectParent.getAttribute("x") !== null){
+							ObjectParent.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("x")+","+ObjectParent.getAttribute("y")+")");
+						}else if(ObjectParent.getAttribute("cx") !== null){
+							ObjectParent.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("cx")+","+ObjectParent.getAttribute("cy")+")");
+						}else{
+							ObjectParent.setAttribute("transform", "rotate("+NewValue+")");
+						}
 					}else{
 						ObjectParent.setAttribute(responseArray[i], NewValue);
 					}
@@ -816,7 +834,7 @@ cshmi.prototype = {
 		
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.TemplateDefinition .x .y .FBReference .ConfigValues .visible .opacity .rotate}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .x .y .TemplateDefinition .FBReference .ConfigValues}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -843,20 +861,18 @@ cshmi.prototype = {
 		}
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
-		if (responseArray[0] === "" && responseArray.length > 3){
+		if (responseArray.length > 8 && responseArray[7] === ""){
 			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is not configured");
 			return null;
-		}else if (responseArray[0] === ""){
-			return null;
-		}else if (ObjectPath.indexOf(TemplateLocation+responseArray[0]) === 0){
+		}else if (ObjectPath.indexOf(TemplateLocation+responseArray[7]) === 0){
 			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself");
 			return null;
 		}
 		
 		var responseArrayTemplate;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[TemplateLocation+responseArray[0]] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+TemplateLocation+responseArray[0]+'.width .height .hideable}', null);
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[TemplateLocation+responseArray[7]] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+TemplateLocation+responseArray[7]+'.width .height .hideable}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -868,20 +884,20 @@ cshmi.prototype = {
 			responseArrayTemplate = HMI.KSClient.splitKsResponse(response);
 			
 			//we have asked the object successful, so remember the result
-			this.ResourceList.Elements[TemplateLocation+responseArray[0]] = new Object();
-			this.ResourceList.Elements[TemplateLocation+responseArray[0]].TemplateParameters = responseArrayTemplate;
-			this.ResourceList.Elements[TemplateLocation+responseArray[0]].useCount = 1;
+			this.ResourceList.Elements[TemplateLocation+responseArray[7]] = new Object();
+			this.ResourceList.Elements[TemplateLocation+responseArray[7]].TemplateParameters = responseArrayTemplate;
+			this.ResourceList.Elements[TemplateLocation+responseArray[7]].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildFromTemplate: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			responseArrayTemplate = this.ResourceList.Elements[TemplateLocation+responseArray[0]].TemplateParameters;
-			this.ResourceList.Elements[TemplateLocation+responseArray[0]].useCount++;
-			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+TemplateLocation+responseArray[0]+" ("+this.ResourceList.Elements[TemplateLocation+responseArray[0]].useCount+")");
+			responseArrayTemplate = this.ResourceList.Elements[TemplateLocation+responseArray[7]].TemplateParameters;
+			this.ResourceList.Elements[TemplateLocation+responseArray[7]].useCount++;
+			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+TemplateLocation+responseArray[7]+" ("+this.ResourceList.Elements[TemplateLocation+responseArray[7]].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		svgElement.id = ObjectPath;
-		svgElement.setAttribute("TemplateDescription", TemplateLocation+responseArray[0]);
+		svgElement.setAttribute("TemplateDescription", TemplateLocation+responseArray[7]);
 		
 		this._addClass(svgElement, this.cshmiTemplateClass);
 		this._addClass(svgElement, this.cshmiComponentClass);
@@ -889,25 +905,19 @@ cshmi.prototype = {
 			this._addClass(svgElement, this.cshmiTemplateHideableClass);
 		}
 		
-		//set dimension of container
-		svgElement.setAttribute("x", responseArray[1]);
-		svgElement.setAttribute("y", responseArray[2]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Template has x y coordinates
+		this._processBasicVariables(svgElement, responseArray, true);
+		
 		svgElement.setAttribute("width", responseArrayTemplate[0]);
 		svgElement.setAttribute("height", responseArrayTemplate[1]);
-		if (responseArray[5] == "TRUE"){
-			svgElement.setAttribute("display", "block");
-		}else{
-			svgElement.setAttribute("display", "none");
-		}
-		svgElement.setAttribute("opacity", responseArray[6]);
-		svgElement.setAttribute("transform", "rotate("+responseArray[7]+","+responseArray[1]+","+responseArray[2]+")");
 		svgElement.style.overflow = "visible";
 		
 		//parametrise templateDefinition with the config
 		svgElement.FBReference = Object();
 		svgElement.ConfigValues = Object();
 		var ConfigEntry = null;
-		var ConfigList = responseArray[3].split(" ");
+		var ConfigList = responseArray[8].split(" ");
 		for (var i=0; i < ConfigList.length; i++) {
 			ConfigEntry = ConfigList[i].split(":");
 			if (ConfigEntry.length === 2){
@@ -920,7 +930,7 @@ cshmi.prototype = {
 		//responseArray[4] is "pumpcolor:yellow pumpname:N18"
 		//problemfall: "pumpcolor:yellow {pumpname:N 18}"
 		//und noch schöner: "{{{pumpcolor:y ellow} {pumpname:N 18}}}" => ["{{pumpcolor:y ellow", "pumpname:N 18}}"]
-		ConfigList = responseArray[4].split(" ");
+		ConfigList = responseArray[9].split(" ");
 		var lastEntry = null;
 		for (var i=0; i < ConfigList.length; i++) {
 			ConfigEntry = ConfigList[i].split(":");
@@ -934,10 +944,10 @@ cshmi.prototype = {
 		
 		//get childs (grafics and actions) from the TemplateDefinition
 		//our child will be fetched later
-		var responseArrayChild = HMI.KSClient.getChildObjArray(TemplateLocation+responseArray[0], this);
+		var responseArrayChild = HMI.KSClient.getChildObjArray(TemplateLocation+responseArray[7], this);
 		for (var i=0; i < responseArrayChild.length; i++) {
 			var varName = responseArrayChild[i].split(" ");
-			var ChildComponent = this.BuildDomain(svgElement, TemplateLocation+responseArray[0]+"/"+varName[0], varName[1]);
+			var ChildComponent = this.BuildDomain(svgElement, TemplateLocation+responseArray[7]+"/"+varName[0], varName[1]);
 			if (ChildComponent !== null){
 				svgElement.appendChild(ChildComponent);
 			}
@@ -967,7 +977,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x1 .y1 .x2 .y2 .stroke .opacity}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .x1 .y1 .x2 .y2}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -992,18 +1002,14 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
 		svgElement.id = ObjectPath;
 		
-		if (responseArray[0] == "FALSE"){
-			svgElement.setAttribute("display", "none");
-		}else{
-			svgElement.setAttribute("display", "block");
-		}
-		//set dimension of container
-		svgElement.setAttribute("x1", responseArray[1]);
-		svgElement.setAttribute("y1", responseArray[2]);
-		svgElement.setAttribute("x2", responseArray[3]);
-		svgElement.setAttribute("y2", responseArray[4]);
-		svgElement.setAttribute("stroke", responseArray[5]);
-		svgElement.setAttribute("opacity", responseArray[6]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Line has no x y coordinates
+		this._processBasicVariables(svgElement, responseArray, false);
+		
+		svgElement.setAttribute("x1", responseArray[5]);
+		svgElement.setAttribute("y1", responseArray[6]);
+		svgElement.setAttribute("x2", responseArray[7]);
+		svgElement.setAttribute("y2", responseArray[8]);
 		
 		return svgElement;
 	},
@@ -1011,7 +1017,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill .opacity}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .points}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -1036,16 +1042,11 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
 		svgElement.id = ObjectPath;
 		
-		if (responseArray[0] == "FALSE"){
-			svgElement.setAttribute("display", "none");
-		}else{
-			svgElement.setAttribute("display", "block");
-		}
-		//set dimension of container
-		svgElement.setAttribute("points", responseArray[1]);
-		svgElement.setAttribute("stroke", responseArray[2]);
-		svgElement.setAttribute("fill", responseArray[3]);
-		svgElement.setAttribute("opacity", responseArray[4]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Polyline has no x y coordinates
+		this._processBasicVariables(svgElement, responseArray, false);
+		
+		svgElement.setAttribute("points", responseArray[5]);
 		
 		return svgElement;
 	},
@@ -1053,7 +1054,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .points .stroke .fill .opacity}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .points}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -1078,16 +1079,11 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
 		svgElement.id = ObjectPath;
 		
-		if (responseArray[0] == "FALSE"){
-			svgElement.setAttribute("display", "none");
-		}else{
-			svgElement.setAttribute("display", "block");
-		}
-		//set dimension of container
-		svgElement.setAttribute("points", responseArray[1]);
-		svgElement.setAttribute("stroke", responseArray[2]);
-		svgElement.setAttribute("fill", responseArray[3]);
-		svgElement.setAttribute("opacity", responseArray[4]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Polygon has no x y coordinates
+		this._processBasicVariables(svgElement, responseArray, false);
+		
+		svgElement.setAttribute("points", responseArray[5]);
 		
 		return svgElement;
 	},
@@ -1095,7 +1091,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .d .stroke .fill .opacity}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .d}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -1120,16 +1116,11 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
 		svgElement.id = ObjectPath;
 		
-		if (responseArray[0] == "FALSE"){
-			svgElement.setAttribute("display", "none");
-		}else{
-			svgElement.setAttribute("display", "block");
-		}
-		//set dimension of container
-		svgElement.setAttribute("d", responseArray[1]);
-		svgElement.setAttribute("stroke", responseArray[2]);
-		svgElement.setAttribute("fill", responseArray[3]);
-		svgElement.setAttribute("opacity", responseArray[4]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Path has no x y coordinates
+		this._processBasicVariables(svgElement, responseArray, false);
+		
+		svgElement.setAttribute("d", responseArray[5]);
 		
 		return svgElement;
 	},
@@ -1137,7 +1128,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .stroke .fill .opacity .content}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .x .y .fontSize .fontStyle .fontWeight .fontFamily .horAlignment .verAlignment .content}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -1162,30 +1153,22 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
 		svgElement.id = ObjectPath;
 		
-		if (responseArray[0] == "FALSE"){
-			svgElement.setAttribute("display", "none");
-		}else{
-			svgElement.setAttribute("display", "block");
-		}
-		//set dimension of container
-		svgElement.setAttribute("x", responseArray[1]);
-		svgElement.setAttribute("y", responseArray[2]);
-		svgElement.setAttribute("font-size", responseArray[3]);
-		svgElement.setAttribute("font-style", responseArray[4]);
-		svgElement.setAttribute("font-weight", responseArray[5]);
-		svgElement.setAttribute("font-family", responseArray[6]);
-		svgElement.setAttribute("text-anchor", responseArray[7]);
-		svgElement.setAttribute("stroke", responseArray[9]);
-		svgElement.setAttribute("fill", responseArray[10]);
-		svgElement.setAttribute("opacity", responseArray[11]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Text has x y coordinates
+		this._processBasicVariables(svgElement, responseArray, true);
+		svgElement.setAttribute("font-size", responseArray[7]);
+		svgElement.setAttribute("font-style", responseArray[8]);
+		svgElement.setAttribute("font-weight", responseArray[9]);
+		svgElement.setAttribute("font-family", responseArray[10]);
+		svgElement.setAttribute("text-anchor", responseArray[11]);
 		
 		var svgTspan = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
-		svgTspan.appendChild(HMI.svgDocument.createTextNode(responseArray[12]));
+		svgTspan.appendChild(HMI.svgDocument.createTextNode(responseArray[13]));
 		
-		if (responseArray[8] == "auto"){
-		}else if (responseArray[8] == "middle"){
+		if (responseArray[12] == "auto"){
+		}else if (responseArray[12] == "middle"){
 			svgTspan.setAttribute("dy", "0.7ex");
-		}else if (responseArray[8] == "hanging"){
+		}else if (responseArray[12] == "hanging"){
 			if (svgTspan.style.baselineShift !== undefined){
 				svgTspan.style.baselineShift = "-100%";
 			}else if (svgTspan.style.dominantBaseline !== undefined){
@@ -1203,7 +1186,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .r .stroke .fill .opacity}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .cx .cy .r}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -1228,18 +1211,12 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
 		svgElement.id = ObjectPath;
 		
-		if (responseArray[0] == "FALSE"){
-			svgElement.setAttribute("display", "none");
-		}else{
-			svgElement.setAttribute("display", "block");
-		}
-		//set dimension of container
-		svgElement.setAttribute("cx", responseArray[1]);
-		svgElement.setAttribute("cy", responseArray[2]);
-		svgElement.setAttribute("r", responseArray[3]);
-		svgElement.setAttribute("stroke", responseArray[4]);
-		svgElement.setAttribute("fill", responseArray[5]);
-		svgElement.setAttribute("opacity", responseArray[6]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Circle has no x y coordinates
+		this._processBasicVariables(svgElement, responseArray, false);
+		svgElement.setAttribute("cx", responseArray[5]);
+		svgElement.setAttribute("cy", responseArray[6]);
+		svgElement.setAttribute("r", responseArray[7]);
 		
 		return svgElement;
 	},
@@ -1247,7 +1224,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .cx .cy .rx .ry .stroke .fill .opacity}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .cx .cy .rx .ry}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -1272,19 +1249,16 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
 		svgElement.id = ObjectPath;
 		
-		if (responseArray[0] == "FALSE"){
-			svgElement.setAttribute("display", "none");
-		}else{
-			svgElement.setAttribute("display", "block");
-		}
-		//set dimension of container
-		svgElement.setAttribute("cx", responseArray[1]);
-		svgElement.setAttribute("cy", responseArray[2]);
-		svgElement.setAttribute("rx", responseArray[3]);
-		svgElement.setAttribute("ry", responseArray[4]);
-		svgElement.setAttribute("stroke", responseArray[5]);
-		svgElement.setAttribute("fill", responseArray[6]);
-		svgElement.setAttribute("opacity", responseArray[7]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Ellipse has no x y coordinates
+		this._processBasicVariables(svgElement, responseArray, false);
+		svgElement.setAttribute("cx", responseArray[5]);
+		svgElement.setAttribute("cy", responseArray[6]);
+		svgElement.setAttribute("rx", responseArray[7]);
+		svgElement.setAttribute("ry", responseArray[8]);
+		
+		//rotation should be around cx and cy
+		svgElement.setAttribute("transform", "rotate("+responseArray[4]+","+responseArray[5]+","+responseArray[6]+")");
 		
 		return svgElement;
 	},
@@ -1292,7 +1266,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height .stroke .fill .opacity}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .x .y .width .height}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -1317,19 +1291,12 @@ cshmi.prototype = {
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
 		svgElement.id = ObjectPath;
 		
-		if (responseArray[0] == "FALSE"){
-			svgElement.setAttribute("display", "none");
-		}else{
-			svgElement.setAttribute("display", "block");
-		}
-		//set dimension of container
-		svgElement.setAttribute("x", responseArray[1]);
-		svgElement.setAttribute("y", responseArray[2]);
-		svgElement.setAttribute("width", responseArray[3]);
-		svgElement.setAttribute("height", responseArray[4]);
-		svgElement.setAttribute("stroke", responseArray[5]);
-		svgElement.setAttribute("fill", responseArray[6]);
-		svgElement.setAttribute("opacity", responseArray[7]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Rect has x y coordinates
+		this._processBasicVariables(svgElement, responseArray, true);
+		
+		svgElement.setAttribute("width", responseArray[7]);
+		svgElement.setAttribute("height", responseArray[8]);
 		
 		return svgElement;
 	},
@@ -1366,6 +1333,28 @@ cshmi.prototype = {
 		return true;
 	},
 */
+	_processBasicVariables: function(svgElement, responseArray, processXY){
+		//the order of settings is:
+		//	.visible .stroke .fill .opacity .rotate
+		//	if x and y is available, this are the next
+		if (responseArray[0] == "FALSE"){
+			svgElement.setAttribute("display", "none");
+		}else{
+			svgElement.setAttribute("display", "block");
+		}
+		//set dimension of container
+		svgElement.setAttribute("stroke", responseArray[1]);
+		svgElement.setAttribute("fill", responseArray[2]);
+		svgElement.setAttribute("opacity", responseArray[3]);
+		if(processXY === true){
+			//the attribute should be "rotate(deg, x, y)"
+			svgElement.setAttribute("transform", "rotate("+responseArray[4]+","+responseArray[5]+","+responseArray[6]+")");
+			svgElement.setAttribute("x", responseArray[5]);
+			svgElement.setAttribute("y", responseArray[6]);
+		}else{
+			svgElement.setAttribute("transform", "rotate("+responseArray[4]+")");
+		}
+	},
 	_addClass: function(svgElement, additionalClass){
 		if (svgElement.classList && svgElement.classList.add){
 			svgElement.classList.add(additionalClass);
