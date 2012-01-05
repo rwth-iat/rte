@@ -339,7 +339,7 @@ LIBRARY cshmi
 			fontFamily : STRING
 			HAS_ACCESSORS
 			COMMENT = "font family (family name or keyword: 'serif','sans-serif','monospace')"
-			INITIALVALUE = "serif";
+			INITIALVALUE = "'Times New Roman',Times,serif";
 			horAlignment : STRING
 			HAS_ACCESSORS
 			COMMENT = "text anchor (horizontal alignment; keyword: 'start','middle','end')"

@@ -64,8 +64,7 @@
 #endif
 
 
-#include "cshmi.h"
-#include "libov/ov_macros.h"
+#include "cshmilib.h"
 
 
 OV_DLLFNCEXPORT OV_STRING cshmi_Template_TemplateDefinition_get(
@@ -75,10 +74,26 @@ OV_DLLFNCEXPORT OV_STRING cshmi_Template_TemplateDefinition_get(
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Template_TemplateDefinition_set(
-    OV_INSTPTR_cshmi_Template          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_cshmi_Template          pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_TemplateDefinition,value);
+	OV_STRING fullpath = NULL;
+	OV_STRING mask = NULL;
+
+	ov_memstack_lock();
+	ov_string_setvalue(&fullpath, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pobj), 2));
+	ov_memstack_unlock();
+	ov_string_print(&mask, "*%s*", value);
+	if (ov_string_match(fullpath, mask)){
+		//avoid recursive template usage
+		ov_string_setvalue(&fullpath, NULL);
+		ov_string_setvalue(&mask, NULL);
+		return OV_ERR_BADPARAM;
+	}
+	ov_string_setvalue(&fullpath, NULL);
+	ov_string_setvalue(&mask, NULL);
+
+	return ov_string_setvalue(&pobj->v_TemplateDefinition,value);
 }
 
 OV_DLLFNCEXPORT OV_SINGLE cshmi_Template_x_get(
