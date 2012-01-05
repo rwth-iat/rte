@@ -465,8 +465,10 @@ cshmi.prototype = {
 								var result = HMI.KSClient.getVar(null, TemplateObject.FBReference["default"]+'.'+responseArray[i], null);
 								var returnValue = HMI.KSClient.splitKsResponse(result);
 								if (returnValue.length > 0){
+									//valid response
 									return returnValue[0];
 								}
+								//error
 								return null;
 							}else{
 								//a normal relativ path
@@ -672,12 +674,12 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].IfThenElseParameters = anyCond;
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
+			HMI.hmi_log_trace("cshmi._interpreteIfThenElse: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		var ConditionMatched = false;
@@ -704,8 +706,11 @@ cshmi.prototype = {
 		}
 		if (ConditionMatched === true){
 			this._interpreteAction(ObjectParent, ObjectPath+".then");
-		}else{
+		}else if (ConditionMatched === false){
 			this._interpreteAction(ObjectParent, ObjectPath+".else");
+		}else{
+			//this Action produced an error
+			return false;
 		}
 		
 		return true;
@@ -738,11 +743,11 @@ cshmi.prototype = {
 		
 		if (Value1 === null){
 			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value1 is null.");
-			return false;
+			return null;
 		}
 		if (Value2 === null){
 			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value2 is null.");
-			return false;
+			return null;
 		}
 		
 		if (comptype === "{<}"){
@@ -759,7 +764,7 @@ cshmi.prototype = {
 			return (Value1 > Value2);
 		}else{
 			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
-			return false;
+			return null;
 		}
 	},
 	
@@ -837,14 +842,17 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
+		var TemplateLocation = "/TechUnits/cshmi/Templates/";
 		if (responseArray[0] === "" && responseArray.length > 3){
 			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is not configured");
 			return null;
 		}else if (responseArray[0] === ""){
 			return null;
+		}else if (ObjectPath.indexOf(TemplateLocation+responseArray[0]) === 0){
+			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself");
+			return null;
 		}
 		
-		var TemplateLocation = "/TechUnits/cshmi/Templates/";
 		var responseArrayTemplate;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[TemplateLocation+responseArray[0]] !== undefined)){
@@ -892,7 +900,7 @@ cshmi.prototype = {
 			svgElement.setAttribute("display", "none");
 		}
 		svgElement.setAttribute("opacity", responseArray[6]);
-		svgElement.setAttribute("transform", "rotate("+responseArray[7]+")");
+		svgElement.setAttribute("transform", "rotate("+responseArray[7]+","+responseArray[1]+","+responseArray[2]+")");
 		svgElement.style.overflow = "visible";
 		
 		//parametrise templateDefinition with the config
