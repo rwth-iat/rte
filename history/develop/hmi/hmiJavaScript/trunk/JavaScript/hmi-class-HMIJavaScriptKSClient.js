@@ -321,7 +321,9 @@ HMIJavaScriptKSClient.prototype = {
 	
 	/*********************************
 		getHandleID
-		TODO: add timeout für delHandle
+		TODO:
+			-	add timeout für delHandle
+			-	cache negative response for a timespan
 	*********************************/
 	getHandleID: function(HostAndServername) {
 		if (this.ResourceList.Handles[HostAndServername] && this.ResourceList.Handles[HostAndServername].HandleString !== null){
@@ -335,7 +337,8 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			if (HandleString.indexOf("KS_ERR") !== -1){
 				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - Server not available Handlemessage: "+HandleString);
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHandleID - Server not available Handlemessage: "+HandleString);
+				HMI.hmi_log_info_onwebsite("Requested KS-Server "+HostAndServername+" not available.");
 				return null;
 			}
 			

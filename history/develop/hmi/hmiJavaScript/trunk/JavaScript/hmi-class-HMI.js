@@ -1667,8 +1667,23 @@ HMI.prototype = {
 	*********************************/
 	hmi_log_info_onwebsite: function (text) {
 		if (this.InfoOutput){
-			var InfoTextNode = document.createTextNode(text);
-			HMI.InfoOutput.appendChild(InfoTextNode);
+			var target = this.InfoOutput;
+			var targetText = "";
+			//do we have an old output right now?
+			if (target.childNodes.length !== 0){
+				if (typeof target.textContent != "undefined"){
+					targetText = target.textContent;
+				}else if (typeof target.innerText != "undefined"){
+					targetText = target.innerText;
+				}
+				if (targetText.indexOf(text) !== -1){
+					//duplication of error message
+					return;
+				}
+				//new message, build newline
+				target.appendChild(document.createElement('br'));
+			}
+			target.appendChild(document.createTextNode(text));
 			//show header
 			HMI.hideHeader(false);
 		}
