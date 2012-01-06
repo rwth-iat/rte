@@ -743,7 +743,7 @@ HMIJavaScriptKSClient.prototype = {
 			//communication error
 			return Array();
 		}else if (response === "{{}}"){
-			return Array();
+			return Array("");
 		}else if (response.indexOf("KS_ERR") !== -1){
 			return Array();
 		}

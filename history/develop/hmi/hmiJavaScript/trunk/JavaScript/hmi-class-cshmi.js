@@ -518,6 +518,8 @@ cshmi.prototype = {
 		
 		if (NewValue === null){
 			HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because of an NewValue of null.");
+			//debugger;
+			//NewValue = this._getValue(ObjectParent, ObjectPath+".value");
 			return false;
 		}else if (NewValue === undefined){
 			//should not happen
@@ -705,7 +707,7 @@ cshmi.prototype = {
 		var i = 0;
 		if (anyCond == "TRUE"){
 			//logical OR
-			while(i < responseArray.length && ConditionMatched !== false){
+			while(i < responseArray.length && ConditionMatched !== true){
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/Compare") !== -1){
 					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
@@ -713,8 +715,9 @@ cshmi.prototype = {
 				i++;
 			}
 		}else{
+			ConditionMatched = true;
 			//logical AND
-			while(i < responseArray.length && ConditionMatched !== true){
+			while(i < responseArray.length && ConditionMatched !== false){
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/Compare") !== -1){
 					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
