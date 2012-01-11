@@ -353,6 +353,38 @@ LIBRARY cshmi
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
+	
+	CLASS Image : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a reference to a TemplateDefinition";
+		VARIABLES
+			x : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "x-axis coordinate of the image"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "y-axis coordinate of the image"
+			INITIALVALUE = 0.0;
+			width : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "width of the rectangle"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			HAS_ACCESSORS
+			COMMENT = "height of the rectangle"
+			INITIALVALUE = 100.0;
+			SVGcontent : STRING
+			HAS_ACCESSORS
+			COMMENT = "direct SVG content";
+			Bitmapcontent : STRING
+			HAS_ACCESSORS
+			COMMENT = "Bitmap content as DataURI (base64 encoded) for example: data:image/png;base64,iVBORw0...";
+		END_VARIABLES;
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
 
 	/* Actions */
 

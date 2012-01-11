@@ -1352,7 +1352,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .x .y .SVGcontent .Bitmapcontent}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .x .y .width .height .SVGcontent .Bitmapcontent}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -1374,27 +1374,47 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-//		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-		
-		
 		var svgElement;
-		if(responseArray[7] !== ""){
-			responseArray[7] =	"<svg:svg xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" xmlns=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\">"
-				+responseArray[7]
+		if(responseArray[9] !== ""){
+			//we have SVG Content to visualise
+			//
+			//the code could use an xlink, svg or no XML prefix at all.
+			responseArray[9] =	"<svg:svg xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" xmlns=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" "
+				+"xmlns:xlink='http://www.w3.org/1999/xlink'>"
+				+responseArray[9]
 				+"</svg:svg>";
-			svgElement = HMI.HMIDOMParser.parse(responseArray[7], null);
-			svgElement.id = ObjectPath;
-			//svgElement.style.overflow = "visible";
+			svgElement = HMI.HMIDOMParser.parse(responseArray[9], null);
+			svgElement.style.overflow = "visible";
+		}else if(responseArray[10] !== ""){
+			//we have an Bitmap Content to visualise
+			//
 			
-			//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-			//Image has x y coordinates
-			this._processBasicVariables(svgElement, responseArray, true);
-		}else if(responseArray[8] !== ""){
-			return null;
+			responseArray[10] =	"<svg:image xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" "
+				+"xmlns:xlink='http://www.w3.org/1999/xlink' xlink:href='"
+				+responseArray[10]
+				+"'></svg:image>";
+			svgElement = HMI.HMIDOMParser.parse(responseArray[10], null);
+			
+			/* better but not working approach
+			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
+			
+			ObjectParent.setAttribute("xmlns:xlink", HMI.HMI_Constants.NAMESPACE_XLINK);
+			//this causes an error, so the image is not displayed
+			//ObjectParent.setAttribute("xmlns", HMI.HMI_Constants.NAMESPACE_SVG);
+			svgElement.setAttribute("xlink:href", responseArray[8]);
+			svgElement.setAttribute("width", "10px");
+			svgElement.setAttribute("height", "10px");
+			*/
 		}else{
 			HMI.hmi_log_info_onwebsite("Image "+ObjectPath+" is not configured");
 			return null;
 		}
+		svgElement.id = ObjectPath;
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//Image has x y coordinates
+		this._processBasicVariables(svgElement, responseArray, true);
+		svgElement.setAttribute("width", responseArray[7]);
+		svgElement.setAttribute("height", responseArray[8]);
 		
 		return svgElement;
 	},
@@ -1441,9 +1461,13 @@ cshmi.prototype = {
 			svgElement.setAttribute("display", "block");
 		}
 		//set dimension of container
-		svgElement.setAttribute("stroke", responseArray[1]);
-		svgElement.setAttribute("fill", responseArray[2]);
-		svgElement.setAttribute("opacity", responseArray[3]);
+		if(responseArray[1] !== ""){
+			svgElement.setAttribute("stroke", responseArray[1]);
+		}
+		if(responseArray[2] !== ""){
+			svgElement.setAttribute("fill", responseArray[2]);
+		}
+		
 		if(processXY === true){
 			//the attribute should be "rotate(deg, x, y)"
 			svgElement.setAttribute("transform", "rotate("+responseArray[4]+","+responseArray[5]+","+responseArray[6]+")");
