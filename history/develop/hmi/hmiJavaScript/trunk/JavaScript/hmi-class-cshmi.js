@@ -1378,12 +1378,11 @@ cshmi.prototype = {
 		
 		
 		var svgElement;
-		debugger;
 		if(responseArray[7] !== ""){
-//			responseArray[7] =	"<svg:svg xmlns:svg=\"http://www.w3.org/2000/svg\">"
-//				+responseArray[7]
-//				+"</svg:svg>";
-			svgElement = HMI.HMIDOMParser.parse(responseArray[7], null, "text/svg+xml");
+			responseArray[7] =	"<svg:svg xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" xmlns=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\">"
+				+responseArray[7]
+				+"</svg:svg>";
+			svgElement = HMI.HMIDOMParser.parse(responseArray[7], null);
 			svgElement.id = ObjectPath;
 			//svgElement.style.overflow = "visible";
 			
