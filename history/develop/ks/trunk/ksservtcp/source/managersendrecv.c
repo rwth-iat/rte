@@ -270,10 +270,14 @@ void ksservtcp_managersendrecv_typemethod(
 			return;
 		}
 		FD_CLR(sock, &write_flags);
-		bytes = write(sock, pinst->v_xdr, pinst->v_xdrlength); //send it!
+		bytes = send(sock, pinst->v_xdr, pinst->v_xdrlength, 0); //send it!
 		if(bytes == -1) {
 			ov_logfile_error("Managersendrecv/typemethod: write hasnt sent anything (returned -1) retry to send %p w/ %d bytes", pinst->v_xdr, pinst->v_xdrlength);
-			perror("Managersendrecv: error waiting for sending");
+#if !OV_SYSTEM_NT
+			perror("Managersendrecv: error while sending");
+#else
+			ov_logfile_error("Managersendrecv: error while sending: %d", WSAGetLastError());
+#endif
 			return;
 		}
 		ov_logfile_error("Managersendrecv/typemethod: write has sent %d bytes", bytes);
@@ -288,7 +292,7 @@ void ksservtcp_managersendrecv_typemethod(
 			return;
 		}
 		FD_CLR(sock, &read_flags);
-		if (read(sock, buffer, sizeof(buffer)-1) <= 0) {
+		if (recv(sock, buffer, sizeof(buffer)-1, 0) <= 0) {
 			ov_logfile_info("Mgrsendreceived: got response but smaller 0? - once more waiting");
 			pinst->v_shutdowncounter ++;
 		} else { //cool, we got the answer
