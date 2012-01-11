@@ -196,6 +196,8 @@ cshmi.prototype = {
 			Component = this._buildSvgEllipse(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Rectangle") !== -1){
 			Component = this._buildSvgRect(ObjectParent, ObjectPath);
+		}else if (ObjectType.indexOf("/cshmi/Image") !== -1){
+			Component = this._buildSvgImage(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
 			Result = this._interpreteClientEvent(ObjectParent, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
@@ -205,9 +207,9 @@ cshmi.prototype = {
 		}else{
 			if (	ObjectType.indexOf("/cshmi/SetValue") !== -1 ||
 					ObjectType.indexOf("/cshmi/IfThenElse") !== -1){
-				HMI.hmi_log_info("Actions not supported at this position: (Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
+				HMI.hmi_log_info("Actions not supported at this position: (Typ: "+ObjectType+"): "+ObjectPath);
 			}else{
-				HMI.hmi_log_info("Objekt (Typ: "+ObjectType+"): "+ObjectPath+" nicht unterstützt");
+				HMI.hmi_log_info("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
 			}
 		}
 		
@@ -1126,6 +1128,49 @@ cshmi.prototype = {
 		svgElement.setAttribute("d", responseArray[5]);
 		
 		return svgElement;
+		
+		/* Code from Yannick Bochatay http://ybochatay.fr
+		autoSmooth = function() {
+			var list = this.pathSegList,
+			i,N = list.numberOfItems,
+			seg,nm1,n0,np1,np2,x0,y0,x1,y1,x2,y2,x3,y3,
+			tgx0,tgy0,tgx3,tgy3,dx,dy,d,dt0,dt3,ft0,ft3;
+
+			if (N < 3) {return;}
+			for (i=0;i<N-1;i++){
+				nm1 = (i===0) ? list.getItem(i) : list.getItem(i-1);
+				n0 = list.getItem(i);
+				np1 = list.getItem(i+1);
+				np2 = (i===N-2) ? list.getItem(i+1) : list.getItem(i+2);
+				        
+				x0 = n0.x;  y0 = n0.y;
+				x3 = np1.x;    y3 = np1.y;
+				
+				tgx3 = x0 - np2.x;
+				tgy3 = y0 - np2.y;
+				tgx0 = nm1.x - np1.x;
+				tgy0 = nm1.y - np1.y;
+				dx  = Math.abs(x0 - x3);
+				dy  = Math.abs(y0 - y3);
+				d   = Math.sqrt(dx*dx + dy*dy);
+				dt3 = Math.sqrt(tgx3*tgx3 + tgy3*tgy3);
+				dt0 = Math.sqrt(tgx0*tgx0 + tgy0*tgy0);
+				
+				if (d !== 0){
+					ft3 = (dt3 / d) * 3;
+					ft0 = (dt0 / d) * 3;
+					
+					x1 = x0 - tgx0 / ft0;
+					y1 = y0 - tgy0 / ft0;
+					x2 = x3 + tgx3 / ft3;
+					y2 = y3 + tgy3 / ft3;
+					
+					seg = this.createSVGPathSegCurvetoCubicAbs(np1.x,np1.y,x1,y1,x2,y2);
+					list.replaceItem(seg,i+1);
+				}
+			}
+		};
+		*/
 	},
 	_buildSvgText: function(ObjectParent, ObjectPath){
 		var responseArray;
@@ -1300,6 +1345,57 @@ cshmi.prototype = {
 		
 		svgElement.setAttribute("width", responseArray[7]);
 		svgElement.setAttribute("height", responseArray[8]);
+		
+		return svgElement;
+	},
+	_buildSvgImage: function(ObjectParent, ObjectPath){
+		var responseArray;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .stroke .fill .opacity .rotate .x .y .SVGcontent .Bitmapcontent}', null);
+			if (response === false){
+				//communication error
+				return null;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._buildSvgRect of "+ObjectPath+" failed: "+response);
+				return null;
+			}
+			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = responseArray;
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgRect: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			responseArray = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+		}
+		
+//		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+		
+		
+		var svgElement;
+		debugger;
+		if(responseArray[7] !== ""){
+//			responseArray[7] =	"<svg:svg xmlns:svg=\"http://www.w3.org/2000/svg\">"
+//				+responseArray[7]
+//				+"</svg:svg>";
+			svgElement = HMI.HMIDOMParser.parse(responseArray[7], null, "text/svg+xml");
+			svgElement.id = ObjectPath;
+			//svgElement.style.overflow = "visible";
+			
+			//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+			//Image has x y coordinates
+			this._processBasicVariables(svgElement, responseArray, true);
+		}else if(responseArray[8] !== ""){
+			return null;
+		}else{
+			HMI.hmi_log_info_onwebsite("Image "+ObjectPath+" is not configured");
+			return null;
+		}
 		
 		return svgElement;
 	},
