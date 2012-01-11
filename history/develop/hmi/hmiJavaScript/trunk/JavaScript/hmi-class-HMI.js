@@ -77,6 +77,7 @@
 function HMI(debug, error, warning, info, trace) {
 	this.HMI_Constants = Object();
 	this.HMI_Constants.NAMESPACE_XHTML = "http://www.w3.org/1999/xhtml";
+	this.HMI_Constants.NAMESPACE_XLINK = "http://www.w3.org/1999/xlink";
 	this.HMI_Constants.NAMESPACE_SVG = "http://www.w3.org/2000/svg";
 	this.HMI_Constants.NODE_NAME_REACTIONMARKER = "HMI_REACTIONMARKER";
 	this.HMI_Constants.NODE_NAME_CLONE = "HMI_CLONE";
@@ -471,18 +472,15 @@ HMI.prototype = {
 		if ("undefined" != typeof HMIdate){
 			HMI.HMI_Constants.HMIdate = HMIdate;
 			var dateTextNode = document.createTextNode("Version: 2.1 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
-			var titlenode = document.createAttribute("title");
-			titlenode.nodeValue = "last changed: "+HMI.HMI_Constants.HMIdate+" UTC";
 			
 			var DateOutput;
 			if ((DateOutput = document.getElementById("idDateOutput"))){
 				DateOutput.appendChild(dateTextNode);
-				DateOutput.parentNode.setAttributeNode(titlenode);
+				DateOutput.setAttribute("title", "last changed: "+HMI.HMI_Constants.HMIdate+" UTC");
 			}
 			DateOutput = null;
 			HMIdate = null;
 			dateTextNode = null;
-			titlenode = null;
 		}
 		
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
