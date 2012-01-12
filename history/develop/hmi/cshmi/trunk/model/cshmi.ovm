@@ -414,6 +414,63 @@ LIBRARY cshmi
 			else : CLASS cshmi/csContainer;
 		END_PARTS;
 	END_CLASS;
+	
+	CLASS ChildrenIterator : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "get children and handle them";
+		VARIABLES
+			ChildrenType : STRING
+			HAS_SET_ACCESSOR
+			COMMENT = "ObjectType to iterate through (OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY)";
+		END_VARIABLES;
+		PARTS
+			forEachChild : CLASS cshmi/csContainer;
+		END_PARTS;
+	END_CLASS;
+	
+	CLASS InstantiateTemplate : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "instatiate Template from TemplateDefinition";
+		VARIABLES
+			TemplateDefinition : STRING
+			COMMENT = "Path to the TemplateDefinition";
+			x : SINGLE
+			COMMENT = "x-axis coordinate of the Template"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			COMMENT = "y-axis coordinate of the Template"
+			INITIALVALUE = 0.0;
+			xOffset : SINGLE
+			COMMENT = "x-axis offset to previously instantiated Template"
+			INITIALVALUE = 0.0;
+			yOffset : SINGLE
+			COMMENT = "y-axis offset to previously instantiated Template"
+			INITIALVALUE = 0.0;
+			FBReference[] : STRING
+			COMMENT = "Path of the Reference object (multiple values possible, when named as pump47:/TechUnits/Pump47)";
+			ConfigValues[] : STRING
+			COMMENT = "Free text value for TemplateDefinition (multiple key1:value1 possible)";
+			visible : BOOL
+			COMMENT = "the element is visible"
+			INITIALVALUE = TRUE;
+			zindex	: UINT
+			HAS_SET_ACCESSOR
+			COMMENT = "z-index of the component, 0 is least visible (i.e. bottom)"
+			INITIALVALUE = 0;
+			stroke : STRING
+			COMMENT = "line stroke color (CSS color name or hex like #000000)"
+			INITIALVALUE = "black";
+			fill : STRING
+			COMMENT = "fill color (CSS color name or hex like #000000)"
+			INITIALVALUE = "none";
+			rotate : INT
+			COMMENT = "rotate the Element"
+			INITIALVALUE = 0;
+			opacity : SINGLE
+			COMMENT = "opacity of the element ([0.0-1.0])"
+			INITIALVALUE = 1.0;
+		END_VARIABLES;
+	END_CLASS;
 
 	/* Conditions */
 	
@@ -436,6 +493,23 @@ LIBRARY cshmi
 		PARTS
 			value1 : CLASS cshmi/GetValue;
 			value2 : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+
+	CLASS CompareIteratedChild : CLASS cshmi/Condition
+		IS_INSTANTIABLE;
+		COMMENT = "a comparison condition for the ChildIterator (<childValue> <comptype> <withValue>)";
+		VARIABLES
+			childValue : STRING
+			HAS_SET_ACCESSOR
+			COMMENT = "(OP_NAME; OP_TYPE; OP_COMMENT; OP_ACCESS; OP_SEMANTICS; OP_CREATIONTIME; OP_CLASS; OP_TECHUNIT; OP_ASSOCIDENT; OP_ROLEIDENT; OP_DEFAULTINTERP; OP_SUPPORTEDINTERP; OP_TYPEIDENT; OP_ANY)";
+			comptype : STRING
+			HAS_SET_ACCESSOR
+			COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
+			INITIALVALUE = "==";
+		END_VARIABLES;
+		PARTS
+			withValue : CLASS cshmi/GetValue;
 		END_PARTS;
 	END_CLASS;
 
