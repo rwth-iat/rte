@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,57 +63,7 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Text_x_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_x;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_x_set(
-	OV_INSTPTR_cshmi_Text	pobj,
-	const OV_SINGLE  value
-) {
-	pobj->v_x = value;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Text_y_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_y;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_y_set(
-	OV_INSTPTR_cshmi_Text	pobj,
-	const OV_SINGLE  value
-) {
-	pobj->v_y = value;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_content_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_content;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_content_set(
-	OV_INSTPTR_cshmi_Text	pobj,
-	const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_content,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontSize_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_fontSize;
-}
+#include "cshmilib.h"
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
 	OV_INSTPTR_cshmi_Text	pobj,
@@ -121,12 +71,6 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
 ) {
 	//todo check numeric => change to numeric+"px"
 	return ov_string_setvalue(&pobj->v_fontSize,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontStyle_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_fontStyle;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontStyle_set(
@@ -141,12 +85,6 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontStyle_set(
 	}else{
 		return OV_ERR_BADPARAM;
 	}
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontWeight_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_fontWeight;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
@@ -164,25 +102,6 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
 	}
 }
 
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_fontFamily_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_fontFamily;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontFamily_set(
-	OV_INSTPTR_cshmi_Text	pobj,
-	const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_fontFamily,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_horAlignment_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_horAlignment;
-}
-
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
@@ -195,12 +114,6 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
 	}else{
 		return OV_ERR_BADPARAM;
 	}
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Text_verAlignment_get(
-	OV_INSTPTR_cshmi_Text	pobj
-) {
-	return pobj->v_verAlignment;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(

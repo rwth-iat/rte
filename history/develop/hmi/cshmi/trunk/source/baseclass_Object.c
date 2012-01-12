@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,20 +64,29 @@
 #endif
 
 
-#include "cshmi.h"
-#include "libov/ov_macros.h"
+#include "cshmilib.h"
 
+/***********************************************************************
+	getAccess
+***********************************************************************/
 
-OV_DLLFNCEXPORT OV_STRING cshmi_Object_baseKsPath_get(
-    OV_INSTPTR_cshmi_Object          pobj
-) {
-    return pobj->v_baseKsPath;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Object_baseKsPath_set(
-    OV_INSTPTR_cshmi_Object          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_baseKsPath,value);
-}
-
+OV_DLLFNCEXPORT OV_ACCESS cshmi_Object_getaccess(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET		*pticket
+)	{
+	//we have nothing to hide, so all our variables can be read and written
+	
+	switch (pelem->elemtype){
+		case OV_ET_VARIABLE :
+			//prevent "special variables" from being read/write
+			if (pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object, __classinfo))
+			{
+				return OV_AC_READWRITE;
+			}
+			break;
+		default:
+			break;
+	};
+	return ov_object_getaccess(pobj, pelem, pticket);
+};

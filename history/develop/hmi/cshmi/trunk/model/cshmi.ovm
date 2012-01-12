@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -57,24 +57,30 @@
 *	20-August-2011			GQ		V0.1.0
 *		-	File created
 *
+*	12-Januar-2012			Je		V0.2.0
+*		-	adding global getaccess function, so no useless HAS_ACCESSORS are needed anymore
+*
 ***********************************************************************/
 
 #include "ov.ovm"
 
 LIBRARY cshmi
 
-	VERSION		= "0.1";
+	VERSION		= "0.2";
 	AUTHOR		= "Gustavo Quiros, Holger Jeromin, Stefan Schmitz";
-	COPYRIGHT	= "Copyright (C) 2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT	= "Copyright (C) 2012 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "CSHMI - Client-Side Human-Machine Interface";
 
 	CLASS Object : CLASS ov/domain
 		COMMENT = "base class for CSHMI objects";
 		VARIABLES
 			baseKsPath : STRING 
-			HAS_ACCESSORS 
 			COMMENT = "base KS path for resolution of relative KS paths";
 		END_VARIABLES;
+		OPERATIONS
+			getaccess 					:	C_FUNCTION
+				<OV_FNC_GETACCESS>;
+		END_OPERATIONS;
 	END_CLASS;
 
 	/* Container Elements */
@@ -91,19 +97,15 @@ LIBRARY cshmi
 		COMMENT = "a grouping of elements";
 		VARIABLES
 			x : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of the rectangle"
 			INITIALVALUE = 0.0;
 			y : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the rectangle"
 			INITIALVALUE = 0.0;
 			width : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "width of the rectangle"
 			INITIALVALUE = 100.0;
 			height : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
 		END_VARIABLES;
@@ -114,15 +116,12 @@ LIBRARY cshmi
 		COMMENT = "a grouping of elements with is referenced";
 		VARIABLES
 			width : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "width of the rectangle"
 			INITIALVALUE = 100.0;
 			height : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
 			hideable : BOOL
-			HAS_ACCESSORS
 			COMMENT = "should this object be hidden if clicked on parent?"
 			INITIALVALUE = FALSE;
 		END_VARIABLES;
@@ -138,27 +137,22 @@ LIBRARY cshmi
 		COMMENT = "base class for graphical elements";
 		VARIABLES
 			visible : BOOL
-			HAS_ACCESSORS
 			COMMENT = "the element is visible"
 			INITIALVALUE = TRUE;
 			zindex	: UINT
-			HAS_ACCESSORS
+			HAS_SET_ACCESSOR
 			COMMENT = "z-index of the component, 0 is least visible (i.e. bottom)"
 			INITIALVALUE = 0;
 			stroke : STRING
-			HAS_ACCESSORS
 			COMMENT = "line stroke color (CSS color name or hex like #000000)"
 			INITIALVALUE = "black";
 			fill : STRING
-			HAS_ACCESSORS
 			COMMENT = "fill color (CSS color name or hex like #000000)"
 			INITIALVALUE = "none";
 			opacity : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
 			rotate : INT
-			HAS_ACCESSORS
 			COMMENT = "rotate the Element"
 			INITIALVALUE = 0;
 		END_VARIABLES;
@@ -172,21 +166,17 @@ LIBRARY cshmi
 		COMMENT = "a reference to a TemplateDefinition";
 		VARIABLES
 			TemplateDefinition : STRING
-			HAS_ACCESSORS
+			HAS_SET_ACCESSOR
 			COMMENT = "Path to the TemplateDefinition";
 			x : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
 			y : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
 			FBReference[] : STRING
-			HAS_ACCESSORS
 			COMMENT = "Path of the Reference object (multiple values possible, when named as pump47:/TechUnits/Pump47)";
 			ConfigValues[] : STRING
-			HAS_ACCESSORS
 			COMMENT = "Free text value for TemplateDefinition (multiple key1:value1 possible)";
 		END_VARIABLES;
 	END_CLASS;
@@ -196,19 +186,15 @@ LIBRARY cshmi
 		COMMENT = "a line";
 		VARIABLES
 			x1 : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of starting point"
 			INITIALVALUE = 0.0;
 			y1 : SINGLE 
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of starting point"
 			INITIALVALUE = 0.0;
 			x2 : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of ending point"
 			INITIALVALUE = 10.0;
 			y2 : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of ending point"
 			INITIALVALUE = 0.0;
 		END_VARIABLES;
@@ -219,19 +205,15 @@ LIBRARY cshmi
 		COMMENT = "a rectangle";
 		VARIABLES
 			x : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of the rectangle"
 			INITIALVALUE = 0.0;
 			y : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the rectangle"
 			INITIALVALUE = 0.0;
 			width : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "width of the rectangle"
 			INITIALVALUE = 100.0;
 			height : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
 		END_VARIABLES;
@@ -242,15 +224,12 @@ LIBRARY cshmi
 		COMMENT = "a circle";
 		VARIABLES
 			cx : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of the center of the circle"
 			INITIALVALUE = 10.0;
 			cy : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the center of the circle"
 			INITIALVALUE = 10.0;
 			r : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "radius of the circle"
 			INITIALVALUE = 10.0;
 		END_VARIABLES;
@@ -261,19 +240,15 @@ LIBRARY cshmi
 		COMMENT = "an ellipse";
 		VARIABLES
 			cx : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of the center of the ellipse"
 			INITIALVALUE = 10.0;
 			cy : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the center of the ellipse"
 			INITIALVALUE = 5.0;
 			rx : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis radius of the ellipse"
 			INITIALVALUE = 10.0;
 			ry : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis radius of the ellipse"
 			INITIALVALUE = 5.0;
 		END_VARIABLES;
@@ -284,7 +259,6 @@ LIBRARY cshmi
 		COMMENT = "a path";
 		VARIABLES
 			d : STRING
-			HAS_ACCESSORS
 			COMMENT = "definition of the outline of a shape";
 		END_VARIABLES;
 	END_CLASS;
@@ -294,7 +268,6 @@ LIBRARY cshmi
 		COMMENT = "a polygon";
 		VARIABLES
 			points : STRING
-			HAS_ACCESSORS
 			COMMENT = "points that make up the polygon (split with spaces)";
 		END_VARIABLES;
 	END_CLASS;
@@ -304,7 +277,6 @@ LIBRARY cshmi
 		COMMENT = "a polyline";
 		VARIABLES
 			points : STRING
-			HAS_ACCESSORS
 			COMMENT = "points that make up the polyline (split with spaces)";
 		END_VARIABLES;
 	END_CLASS;
@@ -314,38 +286,34 @@ LIBRARY cshmi
 		COMMENT = "text";
 		VARIABLES
 			x : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of the text starting position"
 			INITIALVALUE = 10.0;
 			y : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the text starting position"
 			INITIALVALUE = 10.0;
 			content : STRING
-			HAS_ACCESSORS
 			COMMENT = "text content";
 			fontSize : STRING
-			HAS_ACCESSORS
+			HAS_SET_ACCESSOR
 			COMMENT = "font size (keyword or 12px)"
 			INITIALVALUE = "medium";
 			fontStyle : STRING
-			HAS_ACCESSORS
+			HAS_SET_ACCESSOR
 			COMMENT = "font style ('normal','italic','oblique')"
 			INITIALVALUE = "normal";
 			fontWeight : STRING
-			HAS_ACCESSORS
+			HAS_SET_ACCESSOR
 			COMMENT = "font weight (keyword: 'normal','bold','lighter','bolder')"
 			INITIALVALUE = "normal";
 			fontFamily : STRING
-			HAS_ACCESSORS
 			COMMENT = "font family (family name or keyword: 'serif','sans-serif','monospace')"
 			INITIALVALUE = "'Times New Roman',Times,serif";
 			horAlignment : STRING
-			HAS_ACCESSORS
+			HAS_SET_ACCESSOR
 			COMMENT = "text anchor (horizontal alignment; keyword: 'start','middle','end')"
 			INITIALVALUE = "start";
 			verAlignment : STRING
-			HAS_ACCESSORS
+			HAS_SET_ACCESSOR
 			COMMENT = "dominant baseline (vertical alignment; keyword: 'auto','middle','hanging')"
 			INITIALVALUE = "auto";
 		END_VARIABLES;
@@ -359,26 +327,20 @@ LIBRARY cshmi
 		COMMENT = "a reference to a TemplateDefinition";
 		VARIABLES
 			x : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "x-axis coordinate of the image"
 			INITIALVALUE = 0.0;
 			y : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "y-axis coordinate of the image"
 			INITIALVALUE = 0.0;
 			width : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "width of the rectangle"
 			INITIALVALUE = 100.0;
 			height : SINGLE
-			HAS_ACCESSORS
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
 			SVGcontent : STRING
-			HAS_ACCESSORS
 			COMMENT = "direct SVG content";
 			Bitmapcontent : STRING
-			HAS_ACCESSORS
 			COMMENT = "Bitmap content as DataURI (base64 encoded) for example: data:image/png;base64,iVBORw0...";
 		END_VARIABLES;
 		OPERATIONS
@@ -400,28 +362,20 @@ LIBRARY cshmi
 		COMMENT = "get a value, either constant or from a variable";
 		VARIABLES
 			ksVar : STRING
-			HAS_ACCESSORS
 			COMMENT = "path of the remote KS variable";
 			elemVar : STRING
-			HAS_ACCESSORS
 			COMMENT = "name of the element variable";
 			elemVarPath : STRING
-			HAS_ACCESSORS
 			COMMENT = "the (relative) path to the element";
 			globalVar : STRING
-			HAS_ACCESSORS
 			COMMENT = "name of the global variable";
 			eventVar : STRING
-			HAS_ACCESSORS
 			COMMENT = "name of the event variable";
 			TemplateFBReferenceVariable : STRING
-			HAS_ACCESSORS
 			COMMENT = "name of a variable of a referenced FB object";
 			TemplateConfigValues : STRING
-			HAS_ACCESSORS
 			COMMENT = "name of the key of a ConfigValue";
 			value : ANY
-			HAS_ACCESSORS
 			COMMENT = "value";
 		END_VARIABLES;
 	END_CLASS;
@@ -431,19 +385,14 @@ LIBRARY cshmi
 		COMMENT = "set a variable with a value";
 		VARIABLES
 			ksVar : STRING
-			HAS_ACCESSORS
 			COMMENT = "path of the target remote KS variable";
 			elemVar : STRING
-			HAS_ACCESSORS
 			COMMENT = "name of the target element variable";
 			elemVarPath : STRING
-			HAS_ACCESSORS
 			COMMENT = "the (relative) path to the element";
 			TemplateFBReferenceVariable : STRING
-			HAS_ACCESSORS
 			COMMENT = "name of a variable of a referenced FB object";
 			globalVar : STRING
-			HAS_ACCESSORS
 			COMMENT = "name of the target global variable";
 		END_VARIABLES;
 		PARTS
@@ -456,7 +405,6 @@ LIBRARY cshmi
 		COMMENT = "a conditional action (if <conditions> then <actions> else <actions>)";
 		VARIABLES
 			anycond : BOOL
-			HAS_ACCESSORS
 			COMMENT = "then-actions are executed if any condition is true (logical or)"
 			INITIALVALUE = FALSE;
 		END_VARIABLES;
@@ -481,7 +429,7 @@ LIBRARY cshmi
 		COMMENT = "a comparison condition (<value1> <comptype> <value2>)";
 		VARIABLES
 			comptype : STRING
-			HAS_ACCESSORS
+			HAS_SET_ACCESSOR
 			COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
 			INITIALVALUE = "==";
 		END_VARIABLES;
@@ -515,7 +463,6 @@ LIBRARY cshmi
 		COMMENT = "time triggered actions";
 		VARIABLES
 			cyctime : UINT
-			HAS_ACCESSORS
 			UNIT = "sec"
 			COMMENT = "the cycle time for the execution of the action"
 			INITIALVALUE = 10;

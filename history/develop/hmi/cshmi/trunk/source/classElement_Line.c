@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,64 +63,4 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Line_x1_get(
-    OV_INSTPTR_cshmi_Line          pobj
-) {
-    return pobj->v_x1;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Line_x1_set(
-    OV_INSTPTR_cshmi_Line          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_x1 = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Line_y1_get(
-    OV_INSTPTR_cshmi_Line          pobj
-) {
-    return pobj->v_y1;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Line_y1_set(
-    OV_INSTPTR_cshmi_Line          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_y1 = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Line_x2_get(
-    OV_INSTPTR_cshmi_Line          pobj
-) {
-    return pobj->v_x2;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Line_x2_set(
-    OV_INSTPTR_cshmi_Line          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_x2 = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Line_y2_get(
-    OV_INSTPTR_cshmi_Line          pobj
-) {
-    return pobj->v_y2;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Line_y2_set(
-    OV_INSTPTR_cshmi_Line          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_y2 = value;
-    return OV_ERR_OK;
-}
-
+#include "cshmilib.h"

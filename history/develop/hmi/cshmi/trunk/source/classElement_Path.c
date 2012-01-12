@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,16 +64,3 @@
 #endif
 
 #include "cshmilib.h"
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Path_d_get(
-		OV_INSTPTR_cshmi_Path          pobj
-) {
-	return pobj->v_d;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Path_d_set(
-	OV_INSTPTR_cshmi_Path          pobj,
-	const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_d,value);
-}

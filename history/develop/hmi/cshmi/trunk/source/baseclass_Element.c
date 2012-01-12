@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -65,27 +65,6 @@
 #endif
 
 #include "cshmilib.h"
-
-
-OV_DLLFNCEXPORT OV_BOOL cshmi_Element_visible_get(
-    OV_INSTPTR_cshmi_Element          pobj
-) {
-    return pobj->v_visible;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Element_visible_set(
-    OV_INSTPTR_cshmi_Element          pobj,
-    const OV_BOOL  value
-) {
-    pobj->v_visible = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_UINT cshmi_Element_zindex_get(
-    OV_INSTPTR_cshmi_Element          pobj
-) {
-    return pobj->v_zindex;
-}
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
     OV_INSTPTR_cshmi_Element          pObj,
@@ -260,60 +239,6 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 
 	return OV_ERR_OK;
 }
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Element_stroke_get(
-    OV_INSTPTR_cshmi_Element          pobj
-) {
-    return pobj->v_stroke;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Element_stroke_set(
-    OV_INSTPTR_cshmi_Element          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_stroke,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Element_fill_get(
-    OV_INSTPTR_cshmi_Element          pobj
-) {
-    return pobj->v_fill;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Element_fill_set(
-    OV_INSTPTR_cshmi_Element          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_fill,value);
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Element_opacity_get(
-    OV_INSTPTR_cshmi_Element          pobj
-) {
-    return pobj->v_opacity;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Element_opacity_set(
-    OV_INSTPTR_cshmi_Element          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_opacity = value;
-    return OV_ERR_OK;
-}
-OV_DLLFNCEXPORT OV_INT cshmi_Element_rotate_get(
-	OV_INSTPTR_cshmi_Element          pobj
-) {
-	return pobj->v_rotate;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Element_rotate_set(
-	OV_INSTPTR_cshmi_Element          pobj,
-	const OV_INT  value
-) {
-	pobj->v_rotate = value;
-	return OV_ERR_OK;
-}
-
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 	OV_INSTPTR_ov_object 	pobj

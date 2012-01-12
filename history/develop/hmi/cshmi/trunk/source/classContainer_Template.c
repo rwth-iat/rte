@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -66,13 +66,6 @@
 
 #include "cshmilib.h"
 
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Template_TemplateDefinition_get(
-    OV_INSTPTR_cshmi_Template          pobj
-) {
-    return pobj->v_TemplateDefinition;
-}
-
 OV_DLLFNCEXPORT OV_RESULT cshmi_Template_TemplateDefinition_set(
 	OV_INSTPTR_cshmi_Template          pobj,
 	const OV_STRING  value
@@ -95,64 +88,3 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Template_TemplateDefinition_set(
 
 	return ov_string_setvalue(&pobj->v_TemplateDefinition,value);
 }
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Template_x_get(
-    OV_INSTPTR_cshmi_Template          pobj
-) {
-    return pobj->v_x;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Template_x_set(
-    OV_INSTPTR_cshmi_Template          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_x = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Template_y_get(
-    OV_INSTPTR_cshmi_Template          pobj
-) {
-    return pobj->v_y;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Template_y_set(
-    OV_INSTPTR_cshmi_Template          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_y = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_STRING* cshmi_Template_FBReference_get(
-	OV_INSTPTR_cshmi_Template          pobj,
-	OV_UINT *pveclen
-) {
-	*pveclen = pobj->v_FBReference.veclen;
-	return pobj->v_FBReference.value;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Template_FBReference_set(
-	OV_INSTPTR_cshmi_Template          pobj,
-	const OV_STRING*  value,
-	const OV_UINT veclen
-) {
-	return Ov_SetDynamicVectorValue(&pobj->v_FBReference,value,veclen,STRING);
-}
-
-OV_DLLFNCEXPORT OV_STRING* cshmi_Template_ConfigValues_get(
-	OV_INSTPTR_cshmi_Template          pobj,
-	OV_UINT *pveclen
-) {
-	*pveclen = pobj->v_ConfigValues.veclen;
-	return pobj->v_ConfigValues.value;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Template_ConfigValues_set(
-	OV_INSTPTR_cshmi_Template          pobj,
-	const OV_STRING*  value,
-	const OV_UINT veclen
-) {
-	return Ov_SetDynamicVectorValue(&pobj->v_ConfigValues,value,veclen,STRING);
-}
-

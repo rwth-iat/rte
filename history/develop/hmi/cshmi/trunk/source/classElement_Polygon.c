@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,16 +64,3 @@
 #endif
 
 #include "cshmilib.h"
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Polygon_points_get(
-	OV_INSTPTR_cshmi_Polygon          pobj
-) {
-	return pobj->v_points;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Polygon_points_set(
-	OV_INSTPTR_cshmi_Polygon          pobj,
-	const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_points,value);
-}

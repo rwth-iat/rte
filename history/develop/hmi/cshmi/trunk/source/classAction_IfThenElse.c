@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,22 +63,4 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_BOOL cshmi_IfThenElse_anycond_get(
-    OV_INSTPTR_cshmi_IfThenElse          pobj
-) {
-    return pobj->v_anycond;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_IfThenElse_anycond_set(
-    OV_INSTPTR_cshmi_IfThenElse          pobj,
-    const OV_BOOL  value
-) {
-    pobj->v_anycond = value;
-    return OV_ERR_OK;
-}
-
+#include "cshmilib.h"

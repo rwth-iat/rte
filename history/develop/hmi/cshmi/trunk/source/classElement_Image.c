@@ -48,8 +48,8 @@
 *
 *	SVN:
 *	----
-*	$Revision: $
-*	$Date: $
+*	$Revision$
+*	$Date$
 *
 *	History:
 *	--------
@@ -62,90 +62,7 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
 #include "cshmilib.h"
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Image_x_get(
-	OV_INSTPTR_cshmi_Image          pobj
-) {
-	return pobj->v_x;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Image_x_set(
-	OV_INSTPTR_cshmi_Image          pobj,
-	const OV_SINGLE  value
-) {
-	pobj->v_x = value;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Image_y_get(
-	OV_INSTPTR_cshmi_Image          pobj
-) {
-	return pobj->v_y;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Image_y_set(
-	OV_INSTPTR_cshmi_Image          pobj,
-	const OV_SINGLE  value
-) {
-	pobj->v_y = value;
-	return OV_ERR_OK;
-}
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Image_width_get(
-    OV_INSTPTR_cshmi_Image          pobj
-) {
-    return pobj->v_width;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Image_width_set(
-	OV_INSTPTR_cshmi_Image          pobj,
-	const OV_SINGLE  value
-) {
-	pobj->v_width = value;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Image_height_get(
-	OV_INSTPTR_cshmi_Image          pobj
-) {
-	return pobj->v_height;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Image_height_set(
-	OV_INSTPTR_cshmi_Image          pobj,
-	const OV_SINGLE  value
-) {
-	pobj->v_height = value;
-	return OV_ERR_OK;
-}
-
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Image_SVGcontent_get(
-	OV_INSTPTR_cshmi_Image          pobj
-) {
-	return pobj->v_SVGcontent;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Image_SVGcontent_set(
-	OV_INSTPTR_cshmi_Image          pobj,
-	const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_SVGcontent,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Image_Bitmapcontent_get(
-	OV_INSTPTR_cshmi_Image          pobj
-) {
-	return pobj->v_Bitmapcontent;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Image_Bitmapcontent_set(
-	OV_INSTPTR_cshmi_Image          pobj,
-	const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_Bitmapcontent,value);
-}
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Image_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -166,4 +83,3 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Image_constructor(
 
 	return OV_ERR_OK;
 }
-

@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,16 +63,7 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
 #include "cshmilib.h"
-
-
-
-OV_DLLFNCEXPORT OV_STRING cshmi_Compare_comptype_get(
-    OV_INSTPTR_cshmi_Compare          pobj
-) {
-    return pobj->v_comptype;
-}
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_comptype_set(
     OV_INSTPTR_cshmi_Compare          pobj,

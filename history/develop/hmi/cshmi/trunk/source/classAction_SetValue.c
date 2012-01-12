@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,73 +63,5 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_ksVar_get(
-    OV_INSTPTR_cshmi_SetValue          pobj
-) {
-    return pobj->v_ksVar;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_ksVar_set(
-    OV_INSTPTR_cshmi_SetValue          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_ksVar,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_elemVar_get(
-    OV_INSTPTR_cshmi_SetValue          pobj
-) {
-    return pobj->v_elemVar;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_elemVar_set(
-    OV_INSTPTR_cshmi_SetValue          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_elemVar,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_elemVarPath_get(
-	OV_INSTPTR_cshmi_SetValue          pobj
-) {
-	return pobj->v_elemVarPath;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_elemVarPath_set(
-	OV_INSTPTR_cshmi_SetValue          pobj,
-	const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_elemVarPath,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_TemplateFBReferenceVariable_get(
-	OV_INSTPTR_cshmi_SetValue          pobj
-)	{
-	return pobj->v_TemplateFBReferenceVariable;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_TemplateFBReferenceVariable_set(
-	OV_INSTPTR_cshmi_SetValue          pobj,
-	const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING cshmi_SetValue_globalVar_get(
-    OV_INSTPTR_cshmi_SetValue          pobj
-) {
-    return pobj->v_globalVar;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_globalVar_set(
-    OV_INSTPTR_cshmi_SetValue          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_globalVar,value);
-}
+#include "cshmilib.h"
 

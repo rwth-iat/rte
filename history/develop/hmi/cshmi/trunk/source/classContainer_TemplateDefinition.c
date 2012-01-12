@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,49 +63,4 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_TemplateDefinition_width_get(
-    OV_INSTPTR_cshmi_TemplateDefinition          pobj
-) {
-    return pobj->v_width;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_width_set(
-    OV_INSTPTR_cshmi_TemplateDefinition          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_width = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_TemplateDefinition_height_get(
-    OV_INSTPTR_cshmi_TemplateDefinition          pobj
-) {
-    return pobj->v_height;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_height_set(
-    OV_INSTPTR_cshmi_TemplateDefinition          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_height = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_BOOL cshmi_TemplateDefinition_hideable_get(
-	OV_INSTPTR_cshmi_TemplateDefinition          pobj
-) {
-	return pobj->v_hideable;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_hideable_set(
-	OV_INSTPTR_cshmi_TemplateDefinition          pobj,
-	const OV_BOOL  value
-) {
-	pobj->v_hideable = value;
-	return OV_ERR_OK;
-}
+#include "cshmilib.h"

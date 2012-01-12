@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -65,16 +65,3 @@
 
 #include "cshmilib.h"
 
-OV_DLLFNCEXPORT OV_UINT cshmi_TimeEvent_cyctime_get(
-	OV_INSTPTR_cshmi_TimeEvent          pobj
-) {
-	return pobj->v_cyctime;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_TimeEvent_cyctime_set(
-	OV_INSTPTR_cshmi_TimeEvent          pobj,
-	const OV_UINT  value
-) {
-	pobj->v_cyctime = value;
-	return OV_ERR_OK;
-}

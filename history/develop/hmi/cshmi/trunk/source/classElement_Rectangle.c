@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,63 +64,4 @@
 #endif
 
 
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Rectangle_x_get(
-    OV_INSTPTR_cshmi_Rectangle          pobj
-) {
-    return pobj->v_x;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_x_set(
-    OV_INSTPTR_cshmi_Rectangle          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_x = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Rectangle_y_get(
-    OV_INSTPTR_cshmi_Rectangle          pobj
-) {
-    return pobj->v_y;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_y_set(
-    OV_INSTPTR_cshmi_Rectangle          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_y = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Rectangle_width_get(
-    OV_INSTPTR_cshmi_Rectangle          pobj
-) {
-    return pobj->v_width;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_width_set(
-    OV_INSTPTR_cshmi_Rectangle          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_width = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Rectangle_height_get(
-    OV_INSTPTR_cshmi_Rectangle          pobj
-) {
-    return pobj->v_height;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_height_set(
-    OV_INSTPTR_cshmi_Rectangle          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_height = value;
-    return OV_ERR_OK;
-}
-
+#include "cshmilib.h"

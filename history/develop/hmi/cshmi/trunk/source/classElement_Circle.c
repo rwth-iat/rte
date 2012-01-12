@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,50 +63,4 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
-#include "cshmi.h"
-#include "libov/ov_macros.h"
-
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Circle_cx_get(
-    OV_INSTPTR_cshmi_Circle          pobj
-) {
-    return pobj->v_cx;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_cx_set(
-    OV_INSTPTR_cshmi_Circle          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_cx = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Circle_cy_get(
-    OV_INSTPTR_cshmi_Circle          pobj
-) {
-    return pobj->v_cy;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_cy_set(
-    OV_INSTPTR_cshmi_Circle          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_cy = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_SINGLE cshmi_Circle_r_get(
-    OV_INSTPTR_cshmi_Circle          pobj
-) {
-    return pobj->v_r;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_r_set(
-    OV_INSTPTR_cshmi_Circle          pobj,
-    const OV_SINGLE  value
-) {
-    pobj->v_r = value;
-    return OV_ERR_OK;
-}
-
+#include "cshmilib.h"
