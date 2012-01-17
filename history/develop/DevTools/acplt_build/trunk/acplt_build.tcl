@@ -152,11 +152,15 @@ proc create_dirs {} {
 }
 
 # Checkout a CVS module
-proc checkout {module {dirname ""}} {
+proc checkout {prefix module {dirname ""} {notrunk ""}} {
     print_msg "Checking out $module"
     if {$dirname == ""} then { set dirname $module }
     #execute cvs checkout -P -d $dirname $module
-    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/cvs-legacy/$module/trunk $dirname
+    if {$notrunk == ""} then {
+	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module/trunk $dirname	
+    } else {
+	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module $dirname	
+    }
 }
 
 # Checkout sources
@@ -166,20 +170,24 @@ proc checkout_acplt {} {
     global os
     global included_libs
     cd $builddir
-    checkout libml
+    checkout cvs-legacy libml
     #for source release - checkout all
     #if { $os == "nt" } then { 
-    checkout oncrpc
+    checkout cvs-legacy oncrpc
     #}
-    checkout acplt base
+    checkout cvs-legacy acplt base
     cd $builddir/base
     #checkout libmpm
-    checkout ov
-    checkout acplt_makmak
-    checkout ov_runtimeserver
+    checkout cvs-legacy ov
+    checkout develop/DevTools acplt_makmak
+    checkout cvs-legacy ov_runtimeserver
     cd $builddir/user
     foreach x $included_libs {
-    	checkout $x
+	if { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } then {
+	    	checkout develop/ks/trunk $x $x notrunk
+	} else {
+	    	checkout develop $x
+	}
     }
 
     cd $basedir
