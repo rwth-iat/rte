@@ -3,6 +3,8 @@
 # (c) 2011 Chair of Process Control Engineering, RWTH Aachen University
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 # Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
+#
+# Usage: tclsh acplt_build.tcl (release)
 if { $argc != 0 } {
 	set release 1
 } else {
@@ -163,6 +165,14 @@ proc checkout {prefix module {dirname ""} {notrunk ""}} {
     }
 }
 
+proc checkout_lib {x} {
+	if { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } then {
+	    	checkout develop/ks/trunk $x $x notrunk
+	} else {
+	    	checkout develop $x
+	}
+}
+
 # Checkout sources
 proc checkout_acplt {} {
     global builddir
@@ -183,11 +193,7 @@ proc checkout_acplt {} {
     checkout cvs-legacy ov_runtimeserver
     cd $builddir/user
     foreach x $included_libs {
-	if { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } then {
-	    	checkout develop/ks/trunk $x $x notrunk
-	} else {
-	    	checkout develop $x
-	}
+	checkout_lib $x
     }
 
     cd $basedir
@@ -370,8 +376,8 @@ proc release_lib {libname option} {
     global os
     global make
     cd $releasedir/user/
-	file delete -force $releasedir/user/$libname/
-    checkout $libname
+    file delete -force $releasedir/user/$libname/
+    checkout_lib $libname
     cd $releasedir/user/$libname/build/$os/
     if { $option == "all" } then {
 	    print_msg "Note: no debug symbols will be created"
