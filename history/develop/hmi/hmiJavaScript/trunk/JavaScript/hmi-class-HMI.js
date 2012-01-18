@@ -1233,7 +1233,7 @@ HMI.prototype = {
 	*********************************/
 	switchGround: function (evt, ground) {
 		//This event could be called from nativ IE, so evt.target is not available
-		this.hmi_log_trace("HMI.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+(evt.target ? evt.target.id : evt.srcElement.id)+", Evt.nodeName: "+(evt.target ? evt.target.nodeName : evt.srcElement.nodeName)+", Ground: "+ground._node.id);
+		this.hmi_log_trace("HMI.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+(evt.target ? evt.target.id : evt.srcElement.id)+", Evt.name: "+(evt.target ? evt.target.name : evt.srcElement.name)+", Ground: "+ground._node.id);
 		
 		//is there a move gesture in action?
 		if (this._currentDragger !== null)

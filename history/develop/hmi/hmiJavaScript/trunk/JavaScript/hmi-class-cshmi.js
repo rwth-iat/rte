@@ -75,6 +75,7 @@ function cshmi() {
 	this.ResourceList.Events = Object();
 	this.ResourceList.baseKsPath = Object();
 	this.ResourceList.ChildList = Object();
+	this.ResourceList.EventObj = null;
 	
 	//holds the information if the visualisation is filled with content right now
 	this.initStage = false;
@@ -252,12 +253,15 @@ cshmi.prototype = {
 		if (command[command.length-1] === "click"){
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			ObjectParent.addEventListener(command[command.length-1], function(evt){
+			ObjectParent.addEventListener("click", function(evt){
+				preserveThis.ResourceList.EventObj = evt;
 				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+				preserveThis.ResourceList.EventObj = null;
+				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
 			ObjectParent.setAttribute("cursor", "pointer");
@@ -268,21 +272,40 @@ cshmi.prototype = {
 				return;
 			}*/
 			ObjectParent.addEventListener("dblclick", function(evt){
+				preserveThis.ResourceList.EventObj = evt;
 				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+				preserveThis.ResourceList.EventObj = null;
+				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener("contextmenu", function(evt){
+				preserveThis.ResourceList.EventObj = evt;
 				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+				preserveThis.ResourceList.EventObj = null;
+				if (evt.stopPropagation) evt.stopPropagation();
+			}, false);
+		}else if (command[command.length-1] === "textinput"){
+			ObjectParent.setAttribute("cursor", "text");
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			ObjectParent.addEventListener("click", function(evt){
+				preserveThis.ResourceList.EventObj = evt;
+				//mark changed Component for quick visual feedback (hidden after a second)
+				HMI.displaygestureReactionMarker(ObjectParent);
+				
+				//get and execute all actions
+				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+				preserveThis.ResourceList.EventObj = null;
+				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
@@ -379,7 +402,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .elemVarPath .globalVar .TemplateFBReferenceVariable .TemplateConfigValues .value}', null);
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .elemVarPath .globalVar .TemplateFBReferenceVariable .TemplateConfigValues .value .eventVar}', null);
 			if (response === false){
 				//communication error
 				return null;
@@ -504,6 +527,15 @@ cshmi.prototype = {
 				}else if (i === 6){
 					//value
 					return responseArray[i];
+				}else if (i === 7){
+					//eventVar
+					if(responseArray[i] == "textinput"){
+						var input = window.prompt('Please input a new value');
+						if (input !== null){
+							return input;
+						}
+					}
+					return null;
 				}
 			}//end if empty
 		}//end for loop
