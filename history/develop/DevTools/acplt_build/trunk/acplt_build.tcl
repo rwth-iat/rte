@@ -188,7 +188,7 @@ proc checkout_acplt {} {
     checkout cvs-legacy acplt base
     cd $builddir/base
     #checkout libmpm
-    checkout cvs-legacy ov
+    checkout develop ov
     checkout develop/DevTools acplt_makmak
     checkout cvs-legacy ov_runtimeserver
     cd $builddir/user
@@ -219,7 +219,7 @@ proc build_acplt_mingw {} {
     global make
     global basedir
 	global builddir
-	print_msg "Build oncrpc"
+	print_msg "Building oncrpc"
 	cd $builddir/oncrpc/
     #execute makemingw.bat
 	execute makemingw.bat
