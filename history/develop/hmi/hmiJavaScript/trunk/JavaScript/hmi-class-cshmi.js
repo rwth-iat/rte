@@ -399,43 +399,48 @@ cshmi.prototype = {
 		-	get a Value from multiple Sources
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
-		var responseArray;
+		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .elemVarPath .globalVar .TemplateFBReferenceVariable .TemplateConfigValues .value .eventVar}', null);
-			if (response === false){
-				//communication error
-				return null;
-			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("cshmi._getValue of "+ObjectPath+" failed: "+response);
-				
-				return null;
+			requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["ksVar"] = null;
+			requestList[ObjectPath]["elemVar"] = null;
+			requestList[ObjectPath]["elemVarPath"] = null;
+			requestList[ObjectPath]["globalVar"] = null;
+			requestList[ObjectPath]["eventVar"] = null;
+			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
+			requestList[ObjectPath]["TemplateConfigValues"] = null;
+			requestList[ObjectPath]["value"] = null;
+			
+			var successCode = this._executeVariablesArray(requestList);
+			if (successCode == false){
+				return false;
 			}
-			responseArray = HMI.KSClient.splitKsResponse(response);
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			this.ResourceList.Actions[ObjectPath].getVarParameters = responseArray;
+			this.ResourceList.Actions[ObjectPath].getVarParameters = requestList;
 			HMI.hmi_log_trace("cshmi._getValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			responseArray = this.ResourceList.Actions[ObjectPath].getVarParameters;
+			requestList = this.ResourceList.Actions[ObjectPath].getVarParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
-		for (var i=0; i < responseArray.length; i++) {
-			if (responseArray[i] !== ""){
-				if (i === 0){
-					//ksVar
-					if (responseArray[i].charAt(0) == "/"){
+		for (var ksVarName in requestList[ObjectPath]){
+			var getValueParameter = requestList[ObjectPath][ksVarName];
+			if (getValueParameter !== ""){
+				if (ksVarName === "ksVar"){
+					if (getValueParameter.charAt(0) == "/"){
 						//we have an absolute path on this server
-						response = HMI.KSClient.getVar(null, '{'+responseArray[i]+'}', null);
+						response = HMI.KSClient.getVar(null, '{'+getValueParameter+'}', null);
 					}else{
 						//get baseKsPath
 						var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-						response = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+baseKsPath.path+"/"+responseArray[i]+'}', null);
+						response = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+baseKsPath.path+"/"+getValueParameter+'}', null);
 					}
 					responseArray = HMI.KSClient.splitKsResponse(response);
 					if (responseArray.length === 0){
@@ -443,11 +448,9 @@ cshmi.prototype = {
 					}else{
 						return responseArray[0];
 					}
-				}else if (i === 1){
+				}else if (ksVarName === "elemVar"){
 					//todo interprete elemVarPath
-					
-					//elemVar
-					if (responseArray[i] == "content"){
+					if (getValueParameter == "content"){
 						//content is special, as it is different in OVM and SVG
 						if (typeof ObjectParent.textContent != "undefined"){
 							return ObjectParent.textContent;
@@ -457,7 +460,7 @@ cshmi.prototype = {
 							//todo asv compatibility
 							return null;
 						}
-					}else if (responseArray[i] == "rotate"){
+					}else if (getValueParameter == "rotate"){
 						//rotate is special, as it is different in OVM and SVG
 						var TransformString = ObjectParent.getAttribute("transform");
 						//"rotate(45,21.000000,50.000000)" or "rotate(45)"
@@ -466,29 +469,35 @@ cshmi.prototype = {
 						TransformString = TransformString.replace(")", "").replace("rotate(", "");
 						//get first number if there are 3, separated via comma
 						return TransformString.split(",")[0];
-					}else if (ObjectParent.hasAttribute(responseArray[i])){
-						return ObjectParent.getAttribute(responseArray[i]);
+					}else if (ObjectParent.hasAttribute(getValueParameter)){
+						return ObjectParent.getAttribute(getValueParameter);
 					}else{
 						//unknown element variable
 						return null;
 					}
-				}else if (i === 3){
-					//globalVar
+				}else if (ksVarName === "globalVar"){
 					HMI.hmi_log_info_onwebsite('GetValue globalVar not implemented. Object: '+ObjectPath);
 					
 					//todo
 					return null;
-				}else if (i === 4){
-					//TemplateFBReferenceVariable
+				}else if (ksVarName === "eventVar"){
+					if(getValueParameter == "textinput"){
+						var input = window.prompt('Please input a new value');
+						if (input !== null){
+							return input;
+						}
+					}
+					return null;
+				}else if (ksVarName === "TemplateFBReferenceVariable"){
 					var TemplateObject = ObjectParent;
 					do{
-						if(TemplateObject.FBReference && TemplateObject.FBReference[responseArray[i]] !== undefined){
+						if(TemplateObject.FBReference && TemplateObject.FBReference[getValueParameter] !== undefined){
 							//this is a TemplateObject itself
-							return TemplateObject.FBReference[responseArray[i]];
+							return TemplateObject.FBReference[getValueParameter];
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 							//this is a TemplateObject itself, but only one reference given
 							
-							if(responseArray[i] == "identifier"){
+							if(getValueParameter == "identifier"){
 								//if the identifier is requested calculate this to avoid network request
 								var Objectname = TemplateObject.FBReference["default"].split("/");
 								return Objectname[Objectname.length - 1];
@@ -496,7 +505,7 @@ cshmi.prototype = {
 							
 							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
 								//String begins with / so it is a fullpath
-								var result = HMI.KSClient.getVar(null, TemplateObject.FBReference["default"]+'.'+responseArray[i], null);
+								var result = HMI.KSClient.getVar(null, TemplateObject.FBReference["default"]+'.'+getValueParameter, null);
 								var returnValue = HMI.KSClient.splitKsResponse(result);
 								if (returnValue.length > 0){
 									//valid response
@@ -513,32 +522,21 @@ cshmi.prototype = {
 					//loop upwards to find the Template object
 					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 					return null;
-				}else if (i === 5){
-					//TemplateConfigValues
+				}else if (ksVarName === "TemplateConfigValues"){
 					var TemplateObject = ObjectParent;
 					do{
-						if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[responseArray[i]] !== undefined){
+						if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[getValueParameter] !== undefined){
 							//this is a TemplateObject itself and have valid data for us
-							return TemplateObject.ConfigValues[responseArray[i]];
+							return TemplateObject.ConfigValues[getValueParameter];
 						}
 					//loop upwards to find the Template object
 					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 					return null;
-				}else if (i === 6){
-					//value
-					return responseArray[i];
-				}else if (i === 7){
-					//eventVar
-					if(responseArray[i] == "textinput"){
-						var input = window.prompt('Please input a new value');
-						if (input !== null){
-							return input;
-						}
-					}
-					return null;
+				}else if (ksVarName === "value"){
+					return getValueParameter;
 				}
 			}//end if empty
-		}//end for loop
+		}//end for in loop
 		HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' not configured.');
 		return null; //unconfigured
 	},
