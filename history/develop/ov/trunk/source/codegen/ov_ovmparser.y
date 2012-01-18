@@ -1018,6 +1018,11 @@ int yyerror(char *msg)
 		}
 	}
 	fprintf(stderr, "%s:%ld: %s\n", filename, current_line, msg);
+	/* 
+	*	There is a segfault with a return, therefore we do an exit. 
+	*	TODO: Reasons for the segfault have to be investigated.
+	*/
+	exit(EXIT_FAILURE);
 	return EXIT_FAILURE;
 }
 
