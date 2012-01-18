@@ -544,7 +544,7 @@ cshmi.prototype = {
 	},
 	/*********************************
 		_setValue
-		-	sets a Value to multiple Sources
+		-	sets a Value to multiple Targets
 	*********************************/
 	_setValue: function(ObjectParent, ObjectPath){
 		//get Value to set (via getValue-part of setValue Object)
@@ -563,52 +563,53 @@ cshmi.prototype = {
 		
 		//get info where to set the NewValue
 		
-		var responseArray;
+		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ksVar .elemVar .globalVar .TemplateFBReferenceVariable}', null);
-			if (response === false){
-				//communication error
-				return false;
-			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("cshmi._setValue of "+ObjectPath+" failed: "+response);
-				
+			requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["ksVar"] = null;
+			requestList[ObjectPath]["elemVar"] = null;
+			requestList[ObjectPath]["globalVar"] = null;
+			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
+			
+			var successCode = this._executeVariablesArray(requestList);
+			if (successCode == false){
 				return false;
 			}
-			responseArray = HMI.KSClient.splitKsResponse(response);
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			this.ResourceList.Actions[ObjectPath].setVarParameters = responseArray;
+			this.ResourceList.Actions[ObjectPath].setVarParameters = requestList;
 			HMI.hmi_log_trace("cshmi._setValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			responseArray = this.ResourceList.Actions[ObjectPath].setVarParameters;
+			requestList = this.ResourceList.Actions[ObjectPath].setVarParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		//set the new Value
-		for (var i=0; i < responseArray.length; i++) {
-			if (responseArray[i] !== ""){
-				if (i === 0){
+		for (var ksVarName in requestList[ObjectPath]){
+			var setValueParameter = requestList[ObjectPath][ksVarName];
+			if (setValueParameter !== ""){
+				if (ksVarName === "ksVar"){
 					//ksVar
-					if (responseArray[i].charAt(0) == "/"){
+					if (setValueParameter.charAt(0) == "/"){
 						//we have an absolute path on this server
-						HMI.KSClient.setVar(null, '{'+responseArray[i]+'}', NewValue, null);
+						HMI.KSClient.setVar(null, '{'+setValueParameter+'}', NewValue, null);
 					}else{
 						//get baseKsPath
 						var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-						HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+baseKsPath.path+responseArray[i]+'}', NewValue, null);
+						HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+baseKsPath.path+setValueParameter+'}', NewValue, null);
 					}
 					return true;
-				}else if (i === 1){
-					//elemVar
-					if (responseArray[i] == "content"){
+				}else if (ksVarName === "elemVar"){
+					if (setValueParameter == "content"){
 						//content is special, as it is different in OVM and SVG
 						ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
-					}else if (responseArray[i] == "rotate"){
+					}else if (setValueParameter == "rotate"){
 						//rotate is special, as it is different in OVM and SVG
 						if(ObjectParent.getAttribute("x") !== null){
 							ObjectParent.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("x")+","+ObjectParent.getAttribute("y")+")");
@@ -618,28 +619,28 @@ cshmi.prototype = {
 							ObjectParent.setAttribute("transform", "rotate("+NewValue+")");
 						}
 					}else{
-						ObjectParent.setAttribute(responseArray[i], NewValue);
+						ObjectParent.setAttribute(setValueParameter, NewValue);
 					}
 					return true;
-				}else if (i === 2){
+				}else if (ksVarName === "globalVar"){
 					//globalVar
 					HMI.hmi_log_info_onwebsite('SetValue globalVar not implemented. Object: '+ObjectPath);
 					
 					return false;
-				}else if (i === 3){
+				}else if (ksVarName === "TemplateFBReferenceVariable"){
 					//TemplateFBReferenceVariable
 					var TemplateObject = ObjectParent;
 					do{
-						if(TemplateObject.FBReference && TemplateObject.FBReference[responseArray[i]] !== undefined){
+						if(TemplateObject.FBReference && TemplateObject.FBReference[setValueParameter] !== undefined){
 							//this is a TemplateObject itself
-							return TemplateObject.FBReference[responseArray[i]];
+							return TemplateObject.FBReference[setValueParameter];
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 							//this is a TemplateObject itself, but only one reference given
 							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
 								//String begins with / so it is a fullpath
-								response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+responseArray[i], NewValue, null);
+								response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+setValueParameter, NewValue, null);
 								if (response.indexOf("KS_ERR") !== -1){
-									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+responseArray[i]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+setValueParameter+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 								}
 								return true;
 							}else{
@@ -653,7 +654,7 @@ cshmi.prototype = {
 					return null;
 				}
 			}//end: if empty
-		}//end: for loop
+		}//end: for in loop
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
 		return false;
 	},
@@ -1508,6 +1509,48 @@ cshmi.prototype = {
 		}else{
 			svgElement.setAttribute("transform", "rotate("+responseArray[4]+")");
 		}
+	},
+	/*********************************
+	_executeVariablesArray
+		-	requests a list of OV-Variables from multiple OV-Objects
+	*********************************/
+	_executeVariablesArray: function(requestList){
+		var requestString = "";
+		var lastOvObjName = null;
+		
+		//collect all requested Variables
+		for (var ovObjName in requestList) {
+			for (var ksVarName in requestList[ovObjName]) {
+				if (lastOvObjName != ovObjName){
+					//variable from a new object requested
+					requestString += ovObjName+"."+ksVarName+" ";
+				}else{
+					//variable from the same object requested
+					requestString += "."+ksVarName+" ";
+				}
+				lastOvObjName = ovObjName;
+			}
+		}
+		
+		var response = HMI.KSClient.getVar(null, '{'+requestString+'}', null);
+		if (response === false){
+			//communication error
+			return false;
+		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_error("cshmi._executeVariablesArray of "+requestString+" failed: "+response);
+			return false;
+		}
+		var responseArray = HMI.KSClient.splitKsResponse(response);
+		
+		//fill request object with the result
+		var i = 0;
+		for (var ovObjName in requestList) {
+			for (var ksVarName in requestList[ovObjName]) {
+				requestList[ovObjName][ksVarName] = responseArray[i];
+				i++;
+			}
+		}
+		return true;
 	},
 	_addClass: function(svgElement, additionalClass){
 		if (svgElement.classList && svgElement.classList.add){
