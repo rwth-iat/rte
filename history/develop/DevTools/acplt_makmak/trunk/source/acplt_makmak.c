@@ -453,7 +453,9 @@ int main(int argc, char **argv) {
 		fprintf(fd, "set merge 0 	\n");
 		fprintf(fd, "# ----------------------- CONFIGURATION END ----------------------------\n");
 		fprintf(fd, "#error flag\n");
-		fprintf(fd, "set error 0\n\n");
+		fprintf(fd, "set error 0\n");
+		fprintf(fd, "#new file flag\n");
+		fprintf(fd, "set newfiles 0\n\n");
 
 		fprintf(fd, "cd ..\n");
 
@@ -476,14 +478,16 @@ int main(int argc, char **argv) {
 		fprintf(fd, "#check windows platform\n");
 		fprintf(fd, "if {[lsearch $tcl_platform(os) \"Windows\"] >= 0} {\n");
 		fprintf(fd, "	set platform \"nt\"\n");
+		fprintf(fd, "	set ext \".dll\"\n");
 		fprintf(fd, "} else {\n");
 		fprintf(fd, "	set platform \"linux\"\n");
+		fprintf(fd, "	set ext \".so\"\n");
 		fprintf(fd, "}\n\n");
 
 		fprintf(fd, "#get time of library build\n");
-		fprintf(fd, "set makepath \"./$platform/Makefile\"\n");
-		fprintf(fd, "if {[file exists $makepath]} {\n");
-		fprintf(fd, "	set buildtime [file mtime $makepath]\n");
+		fprintf(fd, "set libpath \"./$platform/$libname$ext\"\n");
+		fprintf(fd, "if {[file exists $libpath]} {\n");
+		fprintf(fd, "	set buildtime [file mtime $libpath]\n");
 		fprintf(fd, "} else {\n");
 		fprintf(fd, "	set buildtime 0\n");
 		fprintf(fd, "}\n\n");
@@ -518,6 +522,7 @@ int main(int argc, char **argv) {
 		fprintf(fd, "}\n\n");
 
 		fprintf(fd, "if {$modeltime >= $buildtime} {\n");
+		fprintf(fd, "	set newfiles 1\n");
 		fprintf(fd, "	if {[file exists \"../sourcetemplates\"]} {\n");
 		fprintf(fd, "		file delete -force \"../sourcetemplates\"\n");
 		fprintf(fd, "	}\n");
@@ -534,17 +539,33 @@ int main(int argc, char **argv) {
 		fprintf(fd, "	puts \"Running acplt_builder with option \\\"$makmak\\\":\"\n");
 		fprintf(fd, "	#run acplt_builder\n");
 		fprintf(fd, "	if {$makmak == \"\"} {\n");
-		fprintf(fd, "		if { [catch { exec acplt_builder -l $libname} msg] } {\n");
-		fprintf(fd, "		   puts \"ERROR: $msg\"\n");
-		fprintf(fd, "		   set error 1\n");
-		fprintf(fd, "		}\n");
+		fprintf(fd, "		set command \"acplt_builder -l $libname\"\n");
 		fprintf(fd, "	} else {\n");
-		fprintf(fd, "		if { [catch { exec acplt_builder -l $libname $makmak} msg] } {\n");
-		fprintf(fd, "		   puts \"ERROR: $msg\"\n");
-		fprintf(fd, "		   set error 1\n");
-		fprintf(fd, "		}\n");
+		fprintf(fd, "		set command \"acplt_builder -l $libname $makmak\"\n");
 		fprintf(fd, "	}\n\n");
-
+			
+		fprintf(fd, "	set pipe [open \"| $command\" w+]\n");
+		fprintf(fd, "	flush $pipe\n");
+		fprintf(fd, "	set standard_output [read -nonewline $pipe]\n");
+		fprintf(fd, "	set exit_status 0\n");
+		fprintf(fd, "	if {[catch {close $pipe} standard_error] != 0} {\n");
+		fprintf(fd, "	    global errorCode\n");
+		fprintf(fd, "	    if {\"CHILDSTATUS\" == [lindex $errorCode 0]} {\n");
+		fprintf(fd, "	        set exit_status [lindex $errorCode 2]\n");
+		fprintf(fd, "	    }\n");
+		fprintf(fd, "	    if {\"CHILDKILLED\" == [lindex $errorCode 0]} {\n");
+		fprintf(fd, "	    	set exit_status 1\n");
+		fprintf(fd, "	    }\n");
+		fprintf(fd, "	}\n");
+		fprintf(fd, "	puts \"$standard_output\"\n");
+		fprintf(fd, "	if {$standard_error != \"\"} {\n");
+		fprintf(fd, "		puts \"ERROR: \"\n");
+		fprintf(fd, "		#hack to replace (null) in the error output\n");
+		fprintf(fd, "		puts [string map \"(null) $libname.ovm\" $standard_error]\n");
+		fprintf(fd, "	}\n");
+		fprintf(fd, "	if {$exit_status != 0} {\n");
+		fprintf(fd, "		set error 1\n");
+		fprintf(fd, "	}\n\n");
 		fprintf(fd, "	#restore source\n");
 		fprintf(fd, "	file rename \"../source\" \"../sourcetemplates\"\n");
 		fprintf(fd, "	file rename \"../temp\" \"../source\"\n");
@@ -565,10 +586,24 @@ int main(int argc, char **argv) {
 		fprintf(fd, "				puts \"$filename copied to the source directory\"\n");
 		fprintf(fd, "			}\n");
 		fprintf(fd, "		}\n");
-		fprintf(fd, "	}\n");
+		fprintf(fd, "	}\n\n");
+		fprintf(fd, "   puts \"Starting a second makmak pass. Running acplt_makmak with option \\\"$makmak\\\":\"\n");
+        fprintf(fd, "   #run acplt_makmak\n");
+        fprintf(fd, "   if {$makmak == \"\"} {\n");
+        fprintf(fd, "           if { [catch { exec acplt_makmak -l $libname} msg] } {\n");
+        fprintf(fd, "              puts \"ERROR: $msg\"\n");
+        fprintf(fd, "           }\n");
+        fprintf(fd, "   } else {\n");
+        fprintf(fd, "           if { [catch { exec acplt_makmak -l $libname $makmak} msg] } {\n");
+        fprintf(fd, "              puts \"ERROR: $msg\"\n");
+        fprintf(fd, "           }\n");
+        fprintf(fd, "   }\n");
 		fprintf(fd, "}\n\n");
 
-		fprintf(fd, "puts \"Prebuild script finished.\"\n\n");
+		fprintf(fd, "puts \"Prebuild script finished.\"\n");
+		fprintf(fd, "if {$newfiles == 1} {\n");
+		fprintf(fd, "	puts \"New files have been created in source/sourcetemplates directory.\"\n");
+		fprintf(fd, "}\n");
 
 		fprintf(fd, "exit\n");
 		fclose(fd);
