@@ -1395,6 +1395,8 @@ cshmi.prototype = {
 			requestList[ObjectPath]["fill"] = null;
 			requestList[ObjectPath]["opacity"] = null;
 			requestList[ObjectPath]["rotate"] = null;
+			requestList[ObjectPath]["x"] = null;
+			requestList[ObjectPath]["y"] = null;
 			requestList[ObjectPath]["width"] = null;
 			requestList[ObjectPath]["height"] = null;
 			
@@ -1434,6 +1436,8 @@ cshmi.prototype = {
 			requestList[ObjectPath]["fill"] = null;
 			requestList[ObjectPath]["opacity"] = null;
 			requestList[ObjectPath]["rotate"] = null;
+			requestList[ObjectPath]["x"] = null;
+			requestList[ObjectPath]["y"] = null;
 			requestList[ObjectPath]["width"] = null;
 			requestList[ObjectPath]["height"] = null;
 			requestList[ObjectPath]["SVGcontent"] = null;
