@@ -75,6 +75,8 @@ function cshmi() {
 	this.ResourceList.Events = Object();
 	this.ResourceList.baseKsPath = Object();
 	this.ResourceList.ChildList = Object();
+	this.ResourceList.ChildrenIterator = Object();
+	this.ResourceList.InstantiateTemplate = Object();
 	this.ResourceList.EventObj = null;
 	
 	//holds the information if the visualisation is filled with content right now
@@ -207,7 +209,8 @@ cshmi.prototype = {
 			Result = this._interpreteOperatorEvent(ObjectParent, ObjectPath);
 		}else{
 			if (	ObjectType.indexOf("/cshmi/SetValue") !== -1 ||
-					ObjectType.indexOf("/cshmi/IfThenElse") !== -1){
+					ObjectType.indexOf("/cshmi/IfThenElse") !== -1 ||
+					ObjectType.indexOf("/cshmi/ChildrenIterator") !== -1 ){
 				HMI.hmi_log_info("Actions not supported at this position: (Typ: "+ObjectType+"): "+ObjectPath);
 			}else{
 				HMI.hmi_log_info("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
@@ -388,6 +391,10 @@ cshmi.prototype = {
 				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
+			}else if (varName[1].indexOf("/cshmi/ChildrenIterator") !== -1){
+				returnValue = this._interpreteChildrenIterator(ObjectParent, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/InstantiateTemplate") !== -1){
+				returnValue = this._interpreteInstantiateTemplate(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else{
 				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+")"+ObjectPath+" not supported");
 			}
@@ -494,7 +501,21 @@ cshmi.prototype = {
 					do{
 						if(TemplateObject.FBReference && TemplateObject.FBReference[getValueParameter] !== undefined){
 							//this is a TemplateObject itself
-							return TemplateObject.FBReference[getValueParameter];
+							if (TemplateObject.FBReference[getValueParameter].charAt(0) === "/"){
+								//String begins with / so it is a fullpath
+								var result = HMI.KSClient.getVar(null, TemplateObject.FBReference[getValueParameter], null);
+								var returnValue = HMI.KSClient.splitKsResponse(result);
+								if (returnValue.length > 0){
+									//valid response
+									return returnValue[0];
+								}
+								//error
+								return null;
+							}else{
+								//a normal relativ path
+								HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
+								return null;
+							}
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 							//this is a TemplateObject itself, but only one reference given
 							
@@ -743,7 +764,10 @@ cshmi.prototype = {
 			//logical OR
 			while(i < responseArray.length && ConditionMatched !== true){
 				var varName = responseArray[i].split(" ");
-				if (varName[1].indexOf("/cshmi/Compare") !== -1){
+				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
+					ConditionMatched = this._checkConditionIterator(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
+				}
+				else if (varName[1].indexOf("/cshmi/Compare") !== -1){
 					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
 				i++;
@@ -753,7 +777,10 @@ cshmi.prototype = {
 			//logical AND
 			while(i < responseArray.length && ConditionMatched !== false){
 				var varName = responseArray[i].split(" ");
-				if (varName[1].indexOf("/cshmi/Compare") !== -1){
+				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
+					ConditionMatched = this._checkConditionIterator(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
+				}
+				else if (varName[1].indexOf("/cshmi/Compare") !== -1){
 					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
 				i++;
@@ -769,6 +796,73 @@ cshmi.prototype = {
 		}
 		
 		return true;
+	},
+	/*********************************
+	_interpreteChildrenIterator
+	*********************************/
+	_interpreteChildrenIterator: function(ObjectParent, ObjectPath){
+		var rootObject = ObjectParent;
+		var FBRef;
+		//search FBReference of root Object
+		while (rootObject !== null){
+			//FBReference found
+			if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+				FBRef = rootObject.FBReference["default"];
+				//FBRef found, we can stop search
+				rootObject = null;
+			}
+			else {
+				//loop upwards to find the Template object
+				rootObject = rootObject.parentNode;
+			}
+		}
+		//get Values
+		var childrenType = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ChildrenType}', null);
+		if (childrenType === false){
+			//communication error
+			return false;
+		}else if (childrenType.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_error("cshmi._interpreteChildrenIterator of "+ObjectPath+" failed: "+response);
+			return false;
+		}
+		childrenType = HMI.KSClient.splitKsResponse(childrenType, 0)[0];
+
+		var response = HMI.KSClient.getEP(null, encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + childrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
+		response = HMI.KSClient.splitKsResponse(response, 1);
+		for (var i=0; i<response.length; i++){
+			var responseDictionary = Array();
+			if (childrenType === "OT_VARIABLE"){
+				responseDictionary["OP_NAME"] = response[i][0];
+				responseDictionary["OP_TYPE"] = response[i][1];
+				responseDictionary["OP_COMMENT"] = response[i][2];
+				responseDictionary["OP_ACCESS"] = response[i][3];
+				responseDictionary["OP_SEMANTICS"] = response[i][4];
+				responseDictionary["OP_CREATIONTIME"] = response[i][5];
+				responseDictionary["OP_CLASS"] = response[i][6];
+				responseDictionary["OP_TECHUNIT"] = response[i][7];
+			}
+			this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
+			
+			var returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
+		}
+		//reset Objects, after iteration is done we don't want to cache the last entries
+		this.ResourceList.InstantiateTemplate = Object();
+		this.ResourceList.ChildrenIterator = Object();
+		return null;
+	},
+	/*********************************
+	_interpreteInstantiateTemplate
+	*********************************/
+	_interpreteInstantiateTemplate: function(ObjectParent, ObjectPath){
+		if (this.ResourceList.InstantiateTemplate[ObjectPath] === undefined){
+			this.ResourceList.InstantiateTemplate[ObjectPath] = new Object();
+			this.ResourceList.InstantiateTemplate[ObjectPath].useCount = 0;
+		}
+		var Component = this._buildFromTemplate(ObjectParent, ObjectPath, true);
+		this.ResourceList.InstantiateTemplate[ObjectPath].useCount ++;
+		ObjectParent.appendChild(Component);
+		
+		return null;
 	},
 	/*********************************
 		_checkCondition
@@ -824,9 +918,95 @@ cshmi.prototype = {
 	},
 	
 	
+	/*********************************
+	_checkConditionIterator
+	-	checks Condition within ChildrenIterator
+*********************************/
+_checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
+	//get Values
+	var comptype;
+	var childValue;
+	//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+	if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
+		comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
+		childValue = HMI.KSClient.getVar(null, '{'+ObjectPath+'.childValue}', null);
+		childValue = HMI.KSClient.splitKsResponse(childValue, 0);
+		
+		//we have asked the object successful, so remember the result
+		this.ResourceList.Conditions[ObjectPath] = new Object();
+		this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType = comptype;
+		this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue = childValue;
+		this.ResourceList.Conditions[ObjectPath].useCount = 1;
+		HMI.hmi_log_trace("cshmi._checkConditionIterator: remembering config of "+ObjectPath+" ");
+	}else{
+		//the object is asked this session, so reuse the config to save communication requests
+		comptype = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType;
+		childValue = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue;
+		this.ResourceList.Conditions[ObjectPath].useCount++;
+		HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" ("+this.ResourceList.Conditions[ObjectPath].useCount+")");
+	}
+
+	var Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
+	var Value2 = this._getValue(ObjectParent, ObjectPath+".withValue");
 	
+	if (Value1 === null){
+		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value1 is null.");
+		return null;
+	}
+	if (Value2 === null){
+		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value2 is null.");
+		return null;
+	}
 	
+	Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
 	
+	if (comptype === "{<}"){
+		for (var i=0; i<Value2.length; i++){
+			if (!(Value1 < Value2[i])){
+				return false;
+			}
+		}
+		return true;
+	}else if (comptype === "{<=}"){
+		for (var i=0; i<Value2.length; i++){
+			if (!(Value1 <= Value2[i])){
+				return false;
+			}
+		}
+		return true;
+	}else if (comptype === "{==}"){
+		for (var i=0; i<Value2.length; i++){
+			if (!(Value1 === Value2[i])){
+				return false;
+			}
+		}
+		return true;
+	}else if (comptype === "{!=}"){
+		for (var i=0; i<Value2.length; i++){
+			if (!(Value1 !== Value2[i])){
+				return false;
+			}
+		}
+		return true;
+	}else if (comptype === "{>=}"){
+		for (var i=0; i<Value2.length; i++){
+			if (!(Value1 >= Value2[i])){
+				return false;
+			}
+		}
+		return true;
+	}else if (comptype === "{>}"){
+		for (var i=0; i<Value2.length; i++){
+			if (!(Value1 > Value2[i])){
+				return false;
+			}
+		}
+		return true;
+	}else{
+		HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
+		return null;
+	}
+},
 	
 	/*********************************
 		_buildSvg*
@@ -865,7 +1045,7 @@ cshmi.prototype = {
 	/*********************************
 		_buildFromTemplate
 	*********************************/
-	_buildFromTemplate: function(ObjectParent, ObjectPath){
+	_buildFromTemplate: function(ObjectParent, ObjectPath, calledFromInstantiateTemplate){
 		var requestList;
 		
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -879,6 +1059,10 @@ cshmi.prototype = {
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["x"] = null;
 			requestList[ObjectPath]["y"] = null;
+			if (calledFromInstantiateTemplate){
+				requestList[ObjectPath]["xOffset"] = null;
+				requestList[ObjectPath]["yOffset"] = null;
+			}
 			requestList[ObjectPath]["TemplateDefinition"] = null;
 			requestList[ObjectPath]["FBReference"] = null;
 			requestList[ObjectPath]["ConfigValues"] = null;
@@ -947,8 +1131,22 @@ cshmi.prototype = {
 			this._addClass(svgElement, this.cshmiTemplateHideableClass);
 		}
 		
+		var xTemplate = requestList[ObjectPath]["x"];
+		var yTemplate = requestList[ObjectPath]["y"];
+		
+		if (calledFromInstantiateTemplate){
+			var offsetCount = this.ResourceList.InstantiateTemplate[ObjectPath].useCount;
+			var x = parseFloat(requestList[ObjectPath]["x"]) + (offsetCount * parseFloat(requestList[ObjectPath]["xOffset"]));
+			requestList[ObjectPath]["x"] = x.toString();
+			var y = parseFloat(requestList[ObjectPath]["y"]) + (offsetCount * parseFloat(requestList[ObjectPath]["yOffset"]));
+			requestList[ObjectPath]["y"] = y.toString();
+		}
+		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		
+		requestList[ObjectPath]["x"] = xTemplate;
+		requestList[ObjectPath]["y"] = yTemplate;
 		
 		//width and height comes from the TemplateDefinition
 		svgElement.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
@@ -963,7 +1161,29 @@ cshmi.prototype = {
 		for (var i=0; i < ConfigList.length; i++) {
 			ConfigEntry = ConfigList[i].split(":");
 			if (ConfigEntry.length === 2){
-				svgElement.FBReference[ConfigEntry[0]] = ConfigEntry[1];
+				//check if we want to get values from the current child (e.g. OP_NAME)
+				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]] !== undefined){
+					var rootObject = ObjectParent;
+					var FBRef;
+					//search FBReference of root Object
+					while (rootObject !== null){
+						//FBReference found
+						if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+							FBRef = rootObject.FBReference["default"];
+							//FBRef found, we can stop search
+							rootObject = null;
+						}
+						else {
+							//loop upwards to find the Template object
+							rootObject = rootObject.parentNode;
+						}
+					}
+					svgElement.FBReference[ConfigEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];
+				}
+				else{
+					svgElement.FBReference[ConfigEntry[0]] = ConfigEntry[1];
+				}
 			}else if (ConfigEntry.length === 1 && ConfigEntry[0] != ""){
 				svgElement.FBReference["default"] = ConfigEntry[0];
 			}
@@ -977,7 +1197,14 @@ cshmi.prototype = {
 		for (var i=0; i < ConfigList.length; i++) {
 			ConfigEntry = ConfigList[i].split(":");
 			if (ConfigEntry.length === 2){
-				svgElement.ConfigValues[ConfigEntry[0]] = ConfigEntry[1];
+				//check if we want to get values from the current child (e.g. OP_NAME)
+				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]] !== undefined){
+					svgElement.ConfigValues[ConfigEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];
+				}
+				else{
+					svgElement.ConfigValues[ConfigEntry[0]] = ConfigEntry[1];
+				}
 				lastEntry = ConfigEntry[0];
 			}else if (ConfigEntry.length === 1 && lastEntry !== null){
 				svgElement.ConfigValues[lastEntry] = svgElement.ConfigValues[lastEntry]+" "+ConfigEntry[0];
