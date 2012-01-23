@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-01-23 12:34:39
+  Erstellt : 2012-01-23 15:59:16
 
   HOST                : LOCALHOST
   SERVER              : ov_server_rex69
@@ -96,6 +96,63 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBOutputv1/OutputValue :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 57.000000;
+        y : INPUT  SINGLE = 8.000000;
+        content : INPUT  STRING = "??";
+        fontSize : INPUT  STRING = "7px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "lighter";
+        fontFamily : INPUT  STRING = "monospace";
+        horAlignment : INPUT  STRING = "start";
+        verAlignment : INPUT  STRING = "auto";
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBOutputv1/OutputValue/cyclicmonitoring :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBOutputv1/OutputValue/cyclicmonitoring/Value :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBOutputv1/OutputValue/cyclicmonitoring/Value.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "outputvalue";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBInputv1 :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -174,6 +231,63 @@
         eventVar : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "inputname";
+        value : INPUT  UNKNOWN = ;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBInputv1/InputValue :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = -3.000000;
+        y : INPUT  SINGLE = 8.000000;
+        content : INPUT  STRING = "??";
+        fontSize : INPUT  STRING = "7px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "lighter";
+        fontFamily : INPUT  STRING = "monospace";
+        horAlignment : INPUT  STRING = "end";
+        verAlignment : INPUT  STRING = "auto";
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBInputv1/InputValue/cyclicmonitoring :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBInputv1/InputValue/cyclicmonitoring/Value :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBInputv1/InputValue/cyclicmonitoring/Value.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        eventVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "inputvalue";
+        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -558,7 +672,7 @@
         fontFamily : INPUT  STRING = "serif";
         horAlignment : INPUT  STRING = "middle";
         verAlignment : INPUT  STRING = "auto";
-        visible : INPUT  BOOL = TRUE;
+        visible : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -597,7 +711,7 @@
         eventVar : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "sub";
+        value : INPUT  STRING = "classname";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -614,7 +728,7 @@
         fontFamily : INPUT  STRING = "serif";
         horAlignment : INPUT  STRING = "end";
         verAlignment : INPUT  STRING = "auto";
-        visible : INPUT  BOOL = TRUE;
+        visible : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -849,7 +963,7 @@
         y : INPUT  SINGLE = 41.500000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 11.000000;
-        FBReference[0] : INPUT  STRING = {};
+        FBReference[1] : INPUT  STRING = {"inputvalue:OP_NAME"};
         ConfigValues[1] : INPUT  STRING = {"inputname:OP_NAME"};
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 1;
@@ -946,7 +1060,7 @@
         y : INPUT  SINGLE = 41.500000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 11.000000;
-        FBReference[0] : INPUT  STRING = {};
+        FBReference[1] : INPUT  STRING = {"outputvalue:OP_NAME"};
         ConfigValues[1] : INPUT  STRING = {"outputname:OP_NAME"};
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
