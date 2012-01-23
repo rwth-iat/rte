@@ -42,8 +42,8 @@ OV_DLLFNCEXPORT void sfc_executeSfc_typemethod(
 	OV_INSTPTR_sfc_executeSfc pinst = Ov_StaticPtrCast(sfc_executeSfc, pfb);
 
     OV_INSTPTR_sfc_step  		pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_sequentialFunctionChart  	pSFC= Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pStep));
-    OV_INSTPTR_sfc_sequentialFunctionChart  	pSfcAction= Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(sfc_actionBlocks, pinst));
+    OV_INSTPTR_sfc_sfcHeader  	pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pStep));
+    OV_INSTPTR_sfc_sfcHeader  	pSfcAction= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(sfc_actionBlocks, pinst));
     OV_RESULT    			 result;
 
     // init parameters

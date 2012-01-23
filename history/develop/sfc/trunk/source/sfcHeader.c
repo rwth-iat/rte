@@ -3,7 +3,7 @@
 *
 *   FILE
 *   ----
-*   sequentialFunctionChart.c
+*   sfcHeader.c
 *
 *   History
 *   -------
@@ -24,8 +24,8 @@
 #include "sfc.h"
 #include "sfclib.h"
 
-OV_RESULT sfc_sequentialFunctionChart_checkLocation(
-	OV_INSTPTR_sfc_sequentialFunctionChart	pSFC
+OV_RESULT sfc_sfcHeader_checkLocation(
+	OV_INSTPTR_sfc_sfcHeader	pSFC
 ) {
 	OV_INSTPTR_fb_functionchart pSfcContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSFC));
 	OV_INSTPTR_ov_domain pSfcContainerContainer = Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, pSFC));
@@ -35,20 +35,20 @@ OV_RESULT sfc_sequentialFunctionChart_checkLocation(
 	{
 	   	pSFC->v_error=TRUE;
 	   	ov_string_setvalue(&pSFC->v_errorDetail, "sfc must be encapsulated in a functionchart.");
-		ov_logfile_error("sfc_sequentialFunctionChart_constructor: sfc must be encapsulated in a functionchart.");
+		ov_logfile_error("sfc_sfcHeader_constructor: sfc must be encapsulated in a functionchart.");
 		return OV_ERR_BADPLACEMENT;
 	}
 	return OV_ERR_OK;
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT sfc_sequentialFunctionChart_constructor(
+OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_sfc_sequentialFunctionChart pinst = Ov_StaticPtrCast(sfc_sequentialFunctionChart, pobj);
+    OV_INSTPTR_sfc_sfcHeader pinst = Ov_StaticPtrCast(sfc_sfcHeader, pobj);
     //OV_INSTPTR_fb_functionchart pSfcContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_sfc_step pInitStep = NULL;
     OV_INSTPTR_sfc_step pEndStep = NULL;
@@ -63,14 +63,14 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sequentialFunctionChart_constructor(
     /* do what */
 
     // check location
-    result = sfc_sequentialFunctionChart_checkLocation (pinst);
+    result = sfc_sfcHeader_checkLocation (pinst);
     if(Ov_Fail(result)) return result;
 
 
     /*
     if (pSfcContainer == NULL)
     {
-    	ov_logfile_error("sfc_sequentialFunctionChart_constructor: sfc must be encapsulated in a functionchart.");
+    	ov_logfile_error("sfc_sfcHeader_constructor: sfc must be encapsulated in a functionchart.");
 		return OV_ERR_BADPLACEMENT;
 	}
 	*/
@@ -89,14 +89,14 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sequentialFunctionChart_constructor(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void sfc_sequentialFunctionChart_typemethod(
+OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
 		OV_INSTPTR_fb_functionblock	pfb,
 		OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_sfc_sequentialFunctionChart pinst = Ov_StaticPtrCast(sfc_sequentialFunctionChart, pfb);
+    OV_INSTPTR_sfc_sfcHeader pinst = Ov_StaticPtrCast(sfc_sfcHeader, pfb);
     OV_INSTPTR_fb_functionchart pSfcContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_sfc_step      pInitStep = NULL;
     OV_INSTPTR_sfc_step      pActiveStep = NULL;
@@ -115,7 +115,7 @@ OV_DLLFNCEXPORT void sfc_sequentialFunctionChart_typemethod(
     intask->v_cyctime.usecs = 0;
 
     // check location
-    result = sfc_sequentialFunctionChart_checkLocation (pinst);
+    result = sfc_sfcHeader_checkLocation (pinst);
     if(Ov_Fail(result)) return;
 
 
@@ -153,7 +153,7 @@ OV_DLLFNCEXPORT void sfc_sequentialFunctionChart_typemethod(
     			/* do: */
     			//printf("init, do\n");
     			// reset sfc
-    			result=Ov_Call0 (sfc_sequentialFunctionChart, pinst, resetSfc);
+    			result=Ov_Call0 (sfc_sfcHeader, pinst, resetSfc);
     			if(Ov_Fail(result)) return;
 
     			// generic part
@@ -328,7 +328,7 @@ OV_DLLFNCEXPORT void sfc_sequentialFunctionChart_typemethod(
         	/* do: */
         	//printf("stop, do\n");
         	// reset sfc
-        	result=Ov_Call0 (sfc_sequentialFunctionChart, pinst, resetSfc);
+        	result=Ov_Call0 (sfc_sfcHeader, pinst, resetSfc);
         	if(Ov_Fail(result)) return;
 
         	// generic part
@@ -376,8 +376,8 @@ OV_DLLFNCEXPORT void sfc_sequentialFunctionChart_typemethod(
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_sequentialFunctionChart_resetSfc(
-	OV_INSTPTR_sfc_sequentialFunctionChart    pinst
+OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_resetSfc(
+	OV_INSTPTR_sfc_sfcHeader    pinst
 ) {
 	OV_INSTPTR_sfc_step      pStep = NULL;
 	OV_INSTPTR_sfc_step      pInitStep = NULL;
@@ -385,7 +385,7 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sequentialFunctionChart_resetSfc(
 	OV_RESULT    			 result;
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_fb_task       pTask = NULL;
-	OV_INSTPTR_sfc_sequentialFunctionChart pSfcAction = NULL;
+	OV_INSTPTR_sfc_sfcHeader pSfcAction = NULL;
     OV_TIME *pTime;
     ov_time_gettime(&pTime);
 
@@ -421,13 +421,13 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sequentialFunctionChart_resetSfc(
 		  pFbAction->v_iexreq = TRUE;
 
 		  // reset SFC action
-		  pSfcAction=Ov_DynamicPtrCast(sfc_sequentialFunctionChart,pFbAction);
+		  pSfcAction=Ov_DynamicPtrCast(sfc_sfcHeader,pFbAction);
 		  if (pSfcAction != NULL)
 		  {
 			  pSfcAction->v_actimode=1;
 			  pSfcAction->v_EN=SFCCMD_STOP;
 			  //Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pSfcAction), execute, &pTime);
-			  Ov_Call0 (sfc_sequentialFunctionChart, pSfcAction, resetSfc);
+			  Ov_Call0 (sfc_sfcHeader, pSfcAction, resetSfc);
 			  pSfcAction->v_actimode=0;
 		  }
 	  }
@@ -450,8 +450,8 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sequentialFunctionChart_resetSfc(
 	  return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_sequentialFunctionChart_checkPlausibility(
-	OV_INSTPTR_sfc_sequentialFunctionChart          pobj
+OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_checkPlausibility(
+	OV_INSTPTR_sfc_sfcHeader          pobj
 ) {
 
 

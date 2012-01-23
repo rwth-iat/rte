@@ -32,9 +32,9 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_mode_set(
     OV_INSTPTR_sfc_step          pinst,
     const OV_UINT  value
 ) {
-	OV_INSTPTR_sfc_sequentialFunctionChart pSFC = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pinst));
+	OV_INSTPTR_sfc_sfcHeader pSFC = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
 	OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
-	OV_INSTPTR_sfc_sequentialFunctionChart pSubSfc=NULL;
+	OV_INSTPTR_sfc_sfcHeader pSubSfc=NULL;
 
 	// if mode 1, it should exist no exit-actions stopping or breaking subSFCs
 
@@ -75,7 +75,7 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
     OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
     OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
 
-    OV_INSTPTR_sfc_sequentialFunctionChart pSFC = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_sfc_sfcHeader pSFC = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
     //OV_INSTPTR_fb_task    pIntask=NULL;
     OV_RESULT    result;
 
@@ -87,7 +87,7 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
     // check location
     if (pSFC==NULL)
     {
-    	ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sequentialFunctionChart.");
+    	ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sfcHeader.");
     	return OV_ERR_BADPLACEMENT;
     }
 
@@ -120,20 +120,20 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
     OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
     OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
-    OV_INSTPTR_sfc_sequentialFunctionChart pSFC = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_sfc_sfcHeader pSFC = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_sfc_step pNextStep = NULL;
-    OV_INSTPTR_sfc_sequentialFunctionChart pSubSfc=NULL;
+    OV_INSTPTR_sfc_sfcHeader pSubSfc=NULL;
     OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
 
     // check location
     if (pSFC==NULL)
     {
-      	ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sequentialFunctionChart.");
+      	ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sfcHeader.");
       	return;
     }
 
     // TODO:
-    // check if sequentialFunctionChart is the taskparent.
+    // check if sfcHeader is the taskparent.
 
     // init variables
     pinst->v_cyctime.secs = 0;
@@ -207,7 +207,7 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
 					// find all subSFCs for do
 					if (pExecuteSfc->v_actionQualifier == ACT_DO)
 					{
-						pSubSfc = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(sfc_actionBlocks, pExecuteSfc));
+						pSubSfc = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(sfc_actionBlocks, pExecuteSfc));
 
 						if (pSubSfc !=NULL)
 						{
@@ -226,7 +226,7 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     			/* exit */
     			printf("%s/%s/exit\n", pSFC->v_identifier, pinst->v_identifier);
     			Ov_Call1 (fb_task, pExit, execute, pltc);
-    			// unlink from sequentialFunctionChart.intask
+    			// unlink from sfcHeader.intask
     			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
     			pinst->v_X=FALSE;
     			pinst->v_qualifier=1;

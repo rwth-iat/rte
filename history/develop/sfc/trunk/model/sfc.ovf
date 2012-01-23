@@ -5,7 +5,7 @@
 #endif
 
 typedef OV_DLLFNCEXPORT OV_RESULT SFC_FNC_RESETSFC(
-	OV_INSTPTR_sfc_sequentialFunctionChart       pSFC
+	OV_INSTPTR_sfc_sfcHeader       pSFC
 );
 typedef OV_DLLFNCEXPORT OV_RESULT SFC_FNC_RESETSTEP(
 	OV_INSTPTR_sfc_step       pStep

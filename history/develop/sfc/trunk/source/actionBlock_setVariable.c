@@ -46,7 +46,7 @@ OV_DLLFNCEXPORT void sfc_setVariable_typemethod(
     // local variables
     OV_INSTPTR_sfc_setVariable pinst = Ov_StaticPtrCast(sfc_setVariable, pfb);
     OV_INSTPTR_sfc_step  pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_sequentialFunctionChart  pSFC= Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pStep));
+    OV_INSTPTR_sfc_sfcHeader  pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pStep));
     OV_RESULT    result;
 
     // init variables

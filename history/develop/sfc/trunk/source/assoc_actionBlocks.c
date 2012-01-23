@@ -39,9 +39,9 @@ OV_DLLFNCEXPORT OV_RESULT sfc_actionBlocks_link
 	//	local Pointers
 	OV_INSTPTR_fb_functionblock pAction = Ov_StaticPtrCast(fb_functionblock, pparent);
 	OV_INSTPTR_sfc_executeFb    pActionBlock = Ov_StaticPtrCast(sfc_executeFb, pchild);
-	OV_INSTPTR_sfc_sequentialFunctionChart    pSfcAction  = Ov_DynamicPtrCast(sfc_sequentialFunctionChart, pAction);
+	OV_INSTPTR_sfc_sfcHeader    pSfcAction  = Ov_DynamicPtrCast(sfc_sfcHeader, pAction);
 	OV_INSTPTR_sfc_executeSfc   pExecuteSfc = Ov_DynamicPtrCast(sfc_executeSfc, pActionBlock);
-	OV_INSTPTR_sfc_sequentialFunctionChart  	pSFC= Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, pActionBlock)));
+	OV_INSTPTR_sfc_sfcHeader  	pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, pActionBlock)));
 	OV_INSTPTR_ov_domain  		pActionsContainer= Ov_GetParent(ov_containment, pAction);
 
 	// check

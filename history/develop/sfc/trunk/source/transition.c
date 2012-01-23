@@ -37,7 +37,7 @@ OV_DLLFNCEXPORT OV_RESULT sfc_transition_constructor(
     OV_INSTPTR_sfc_transition pinst = Ov_StaticPtrCast(sfc_transition, pobj);
 
     OV_INSTPTR_ov_domain  pContainer = Ov_GetParent(ov_containment, pinst);
-    OV_INSTPTR_sfc_sequentialFunctionChart pSFC = NULL;
+    OV_INSTPTR_sfc_sfcHeader pSFC = NULL;
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -46,13 +46,13 @@ OV_DLLFNCEXPORT OV_RESULT sfc_transition_constructor(
          return result;
 
     // check location
-    if (Ov_CanCastTo(sfc_sequentialFunctionChart, pContainer))
+    if (Ov_CanCastTo(sfc_sfcHeader, pContainer))
 	{
-    	pSFC=Ov_DynamicPtrCast(sfc_sequentialFunctionChart, pContainer);
+    	pSFC=Ov_DynamicPtrCast(sfc_sfcHeader, pContainer);
 	} else {
 		if (pContainer!=NULL)
 		{
-			ov_logfile_error("sfc_transition_constructor: transition must be encapsulated in a sequentialFunctionChart.");
+			ov_logfile_error("sfc_transition_constructor: transition must be encapsulated in a sfcHeader.");
 			return OV_ERR_BADPLACEMENT;
 		}
 	}
@@ -74,9 +74,9 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
     OV_INSTPTR_sfc_step  		pPreStep = Ov_GetParent(sfc_nextTransitions, pinst);
     OV_INSTPTR_sfc_step  		pNextStep = Ov_GetParent(sfc_previousTransitions, pinst);
-    OV_INSTPTR_sfc_sequentialFunctionChart	pSFC = Ov_StaticPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_fb_task          pPreStepExit = &pPreStep->p_exit;
-    OV_INSTPTR_fb_task          pPreStepEntry = &pPreStep->p_entry;
+    OV_INSTPTR_sfc_sfcHeader	pSFC = Ov_StaticPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
+    //OV_INSTPTR_fb_task          pPreStepExit = &pPreStep->p_exit;
+    //OV_INSTPTR_fb_task          pPreStepEntry = &pPreStep->p_entry;
     OV_INSTPTR_ov_domain        pTransCondsDomain = &pSFC->p_transConds;
     OV_INSTPTR_ov_domain        pTransCondsContainer = Ov_StaticPtrCast(ov_domain, Ov_GetParent(ov_containment, pTransCond));
     OV_INSTPTR_fb_task          pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);

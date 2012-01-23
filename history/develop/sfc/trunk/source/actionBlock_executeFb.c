@@ -35,9 +35,9 @@ OV_DLLFNCEXPORT void sfc_executeFb_typemethod(
     OV_INSTPTR_sfc_executeFb pinst = Ov_StaticPtrCast(sfc_executeFb, pfb);
 
     OV_INSTPTR_sfc_step  		pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_sequentialFunctionChart  	pSFC= Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pStep));
+    OV_INSTPTR_sfc_sfcHeader  	pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pStep));
     OV_INSTPTR_fb_functionblock pAction= Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent(sfc_actionBlocks, pinst));
-    OV_INSTPTR_sfc_sequentialFunctionChart  	pSfcAction=NULL;
+    OV_INSTPTR_sfc_sfcHeader  	pSfcAction=NULL;
     OV_INSTPTR_fb_task 			pTask=NULL;
     OV_RESULT    			 result;
 
@@ -125,10 +125,10 @@ OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_setActionName(
     //  local variables
     OV_INSTPTR_sfc_executeSfc pinst = Ov_StaticPtrCast(sfc_executeSfc, pobj);
     OV_INSTPTR_sfc_step  		pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_sequentialFunctionChart  	pSFC= Ov_DynamicPtrCast(sfc_sequentialFunctionChart, Ov_GetParent(ov_containment, pStep));
+    OV_INSTPTR_sfc_sfcHeader  	pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pStep));
     OV_INSTPTR_fb_functionblock pAction=NULL;
     OV_INSTPTR_fb_functionblock pCurrentAction=NULL;
-    OV_INSTPTR_sfc_sequentialFunctionChart  	pSfcAction=NULL;
+    OV_INSTPTR_sfc_sfcHeader  	pSfcAction=NULL;
     OV_RESULT    result;
 
     // init parameters
