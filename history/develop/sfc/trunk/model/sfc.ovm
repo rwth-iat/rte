@@ -186,7 +186,7 @@ LIBRARY sfc
     END_OPERATIONS;
   END_CLASS;
   
-  CLASS requireService : CLASS sfc/actionBlock
+  CLASS requestService : CLASS sfc/actionBlock
 	IS_INSTANTIABLE;
   	COMMENT = "action block for call service action";
     VARIABLES

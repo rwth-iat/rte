@@ -15,21 +15,21 @@
 
 
 
-OV_DLLFNCEXPORT void sfc_requireService_typemethod(
+OV_DLLFNCEXPORT void sfc_requestService_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
              return (void) 0;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_requireService_setActionName(
+OV_DLLFNCEXPORT OV_RESULT sfc_requestService_setActionName(
              OV_INSTPTR_sfc_actionBlock         pobj,
              const OV_STRING  value
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_sfc_requireService pinst = Ov_StaticPtrCast(sfc_requireService, pobj);
+    OV_INSTPTR_sfc_requestService pinst = Ov_StaticPtrCast(sfc_requestService, pobj);
 
     printf("sfc_executeSfc_setActionName");
 	return ov_string_setvalue(&pinst->v_actionName,value);
