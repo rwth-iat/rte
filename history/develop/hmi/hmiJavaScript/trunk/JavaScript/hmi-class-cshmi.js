@@ -768,7 +768,6 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
-		
 		var ConditionMatched = false;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if", this);
 		var i = 0;
@@ -853,6 +852,16 @@ cshmi.prototype = {
 				responseDictionary["OP_CLASS"] = response[i][6];
 				responseDictionary["OP_TECHUNIT"] = response[i][7];
 			}
+			else if (childrenType === "OT_DOMAIN"){
+				responseDictionary["OP_NAME"] = response[i][0];
+				responseDictionary["OP_TYPE"] = response[i][1];
+				responseDictionary["OP_COMMENT"] = response[i][2];
+				responseDictionary["OP_ACCESS"] = response[i][3];
+				responseDictionary["OP_SEMANTICS"] = response[i][4];
+				responseDictionary["OP_CREATIONTIME"] = response[i][5];
+				responseDictionary["OP_CLASS"] = response[i][6];
+			}
+
 			this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 			
 			var returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
@@ -860,7 +869,7 @@ cshmi.prototype = {
 		//reset Objects, after iteration is done we don't want to cache the last entries
 		this.ResourceList.InstantiateTemplate = Object();
 		this.ResourceList.ChildrenIterator = Object();
-		return null;
+		return returnValue;
 	},
 	/*********************************
 	_interpreteInstantiateTemplate
@@ -898,6 +907,7 @@ cshmi.prototype = {
 			this.ResourceList.Conditions[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ("+this.ResourceList.Conditions[ObjectPath].useCount+")");
 		}
+		
 		
 		var Value1 = this._getValue(ObjectParent, ObjectPath+".value1");
 		var Value2 = this._getValue(ObjectParent, ObjectPath+".value2");
@@ -1059,7 +1069,6 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 	*********************************/
 	_buildFromTemplate: function(ObjectParent, ObjectPath, calledFromInstantiateTemplate){
 		var requestList;
-		
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
@@ -1143,28 +1152,6 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			this._addClass(svgElement, this.cshmiTemplateHideableClass);
 		}
 		
-		var xTemplate = requestList[ObjectPath]["x"];
-		var yTemplate = requestList[ObjectPath]["y"];
-		
-		if (calledFromInstantiateTemplate){
-			var offsetCount = this.ResourceList.InstantiateTemplate[ObjectPath].useCount;
-			var x = parseFloat(requestList[ObjectPath]["x"]) + (offsetCount * parseFloat(requestList[ObjectPath]["xOffset"]));
-			requestList[ObjectPath]["x"] = x.toString();
-			var y = parseFloat(requestList[ObjectPath]["y"]) + (offsetCount * parseFloat(requestList[ObjectPath]["yOffset"]));
-			requestList[ObjectPath]["y"] = y.toString();
-		}
-		
-		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
-		
-		requestList[ObjectPath]["x"] = xTemplate;
-		requestList[ObjectPath]["y"] = yTemplate;
-		
-		//width and height comes from the TemplateDefinition
-		svgElement.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
-		svgElement.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
-		svgElement.style.overflow = "visible";
-		
 		//parametrise templateDefinition with the config
 		svgElement.FBReference = Object();
 		svgElement.ConfigValues = Object();
@@ -1193,13 +1180,59 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 					}
 					svgElement.FBReference[ConfigEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];
 				}
+				
 				else{
 					svgElement.FBReference[ConfigEntry[0]] = ConfigEntry[1];
 				}
-			}else if (ConfigEntry.length === 1 && ConfigEntry[0] != ""){
-				svgElement.FBReference["default"] = ConfigEntry[0];
+			}
+			else if (ConfigEntry.length === 1 && ConfigEntry[0] != ""){
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]] !== undefined){
+					var rootObject = ObjectParent;
+					var FBRef;
+					//search FBReference of root Object
+					while (rootObject !== null){
+						//FBReference found
+						if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+							FBRef = rootObject.FBReference["default"];
+							//FBRef found, we can stop search
+							rootObject = null;
+						}
+						else {
+							//loop upwards to find the Template object
+							rootObject = rootObject.parentNode;
+						}
+					}
+					svgElement.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];						
+				}
+				else{
+					svgElement.FBReference["default"] = ConfigEntry[0];
+				}
 			}
 		}
+		
+		var xTemplate = requestList[ObjectPath]["x"];
+		var yTemplate = requestList[ObjectPath]["y"];
+		
+		if (calledFromInstantiateTemplate){
+			var Xpos = HMI.KSClient.getVar(null, svgElement.FBReference["default"]+".Xpos", null);
+			var Ypos = HMI.KSClient.getVar(null, svgElement.FBReference["default"]+".Ypos", null);
+				var offsetCount = this.ResourceList.InstantiateTemplate[ObjectPath].useCount;
+				var x = parseFloat(requestList[ObjectPath]["x"]) + (offsetCount * parseFloat(requestList[ObjectPath]["xOffset"]));
+				requestList[ObjectPath]["x"] = x.toString();
+				var y = parseFloat(requestList[ObjectPath]["y"]) + (offsetCount * parseFloat(requestList[ObjectPath]["yOffset"]));
+				requestList[ObjectPath]["y"] = y.toString();
+		}
+		
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		
+		requestList[ObjectPath]["x"] = xTemplate;
+		requestList[ObjectPath]["y"] = yTemplate;
+		
+		//width and height comes from the TemplateDefinition
+		svgElement.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
+		svgElement.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
+		svgElement.style.overflow = "visible";
 		
 		//responseArray[4] is "pumpcolor:yellow pumpname:N18"
 		//problemfall: "pumpcolor:yellow {pumpname:N 18}"
