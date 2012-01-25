@@ -217,6 +217,14 @@ cshmi.prototype = {
 			}
 		}
 		
+		//check type of returnvalue
+		if (!(Result === true || Result === false)){
+			HMI.hmi_log_error("Action "+ObjectPath+" given a non boolean returnvalue.");
+		}
+		if (Component === undefined || Component === true || Component === false){
+			HMI.hmi_log_error("Component "+ObjectPath+" given a wrong returnvalue type.");
+		}
+		
 		//get and prepare Children in an recursive call
 		if (Component !== null){
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
@@ -383,7 +391,7 @@ cshmi.prototype = {
 	_interpreteAction: function(ObjectParent, ObjectPath){
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
-		for (var i=0; i < responseArray.length && returnValue == true; i++) {
+		for (var i=0; i < responseArray.length && returnValue === true; i++) {
 			var varName = responseArray[i].split(" ");
 			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
 				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0]);
@@ -396,7 +404,11 @@ cshmi.prototype = {
 			}else if (varName[1].indexOf("/cshmi/InstantiateTemplate") !== -1){
 				returnValue = this._interpreteInstantiateTemplate(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else{
-				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+")"+ObjectPath+" not supported");
+				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+") "+ObjectPath+" not supported");
+			}
+			//check type of returnvalue
+			if (!(returnValue === true || returnValue === false)){
+				HMI.hmi_log_error("Action ("+varName[1]+") of "+ObjectPath+" given a non boolean return value.");
 			}
 		}
 		return returnValue;
@@ -787,15 +799,15 @@ cshmi.prototype = {
 			}
 		}
 		if (ConditionMatched === true){
-			this._interpreteAction(ObjectParent, ObjectPath+".then");
+			return this._interpreteAction(ObjectParent, ObjectPath+".then");
 		}else if (ConditionMatched === false){
-			this._interpreteAction(ObjectParent, ObjectPath+".else");
+			return this._interpreteAction(ObjectParent, ObjectPath+".else");
 		}else{
 			//this Action produced an error
 			return false;
 		}
 		
-		return true;
+		return false;
 	},
 	/*********************************
 	_interpreteChildrenIterator
