@@ -652,6 +652,15 @@ cshmi.prototype = {
 						}
 					}else{
 						ObjectParent.setAttribute(setValueParameter, NewValue);
+						//reposition Layer if x, y, width or height is changed
+						if (setValueParameter === "x" || setValueParameter === "y" || setValueParameter === "width" || setValueParameter === "height"){
+							HMI._setLayerPosition(ObjectParent);
+							//we want to have offset parameter on all visual elements
+							var ComponentChilds = ObjectParent.getElementsByTagName('*');
+							for(var i = 0;i < ComponentChilds.length;i++){
+								HMI._setLayerPosition(ComponentChilds[i]);
+							}
+						}
 					}
 					return true;
 				}else if (ksVarName === "globalVar"){
@@ -882,6 +891,14 @@ cshmi.prototype = {
 		var Component = this._buildFromTemplate(ObjectParent, ObjectPath, true);
 		this.ResourceList.InstantiateTemplate[ObjectPath].useCount ++;
 		ObjectParent.appendChild(Component);
+		//calculate all offset parameter to be able to display visual feedback
+		//needed now, because we append new components
+		HMI._setLayerPosition(Component);
+		//we want to have offset parameter on all visual elements
+		var ComponentChilds = Component.getElementsByTagName('*');
+		for(var i = 0;i < ComponentChilds.length;i++){
+			HMI._setLayerPosition(ComponentChilds[i]);
+		}
 		
 		return null;
 	},
@@ -1178,7 +1195,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 							rootObject = rootObject.parentNode;
 						}
 					}
-					svgElement.FBReference[ConfigEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];
+					svgElement.FBReference[ConfigEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];						
 				}
 				
 				else{
@@ -1214,13 +1231,11 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		var yTemplate = requestList[ObjectPath]["y"];
 		
 		if (calledFromInstantiateTemplate){
-			var Xpos = HMI.KSClient.getVar(null, svgElement.FBReference["default"]+".Xpos", null);
-			var Ypos = HMI.KSClient.getVar(null, svgElement.FBReference["default"]+".Ypos", null);
-				var offsetCount = this.ResourceList.InstantiateTemplate[ObjectPath].useCount;
-				var x = parseFloat(requestList[ObjectPath]["x"]) + (offsetCount * parseFloat(requestList[ObjectPath]["xOffset"]));
-				requestList[ObjectPath]["x"] = x.toString();
-				var y = parseFloat(requestList[ObjectPath]["y"]) + (offsetCount * parseFloat(requestList[ObjectPath]["yOffset"]));
-				requestList[ObjectPath]["y"] = y.toString();
+			var offsetCount = this.ResourceList.InstantiateTemplate[ObjectPath].useCount;
+			var x = parseFloat(requestList[ObjectPath]["x"]) + (offsetCount * parseFloat(requestList[ObjectPath]["xOffset"]));
+			requestList[ObjectPath]["x"] = x.toString();
+			var y = parseFloat(requestList[ObjectPath]["y"]) + (offsetCount * parseFloat(requestList[ObjectPath]["yOffset"]));
+			requestList[ObjectPath]["y"] = y.toString();
 		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
