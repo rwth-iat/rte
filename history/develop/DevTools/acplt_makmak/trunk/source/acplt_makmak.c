@@ -742,7 +742,7 @@ int main(int argc, char **argv) {
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
 	fprintf(fd,"endif\n");
-	fprintf(fd,"CC_FLAGS	= -g -std=c99 -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) -shared $(EXTRA_CC_FLAGS)\n");
+	fprintf(fd,"CC_FLAGS	= -g -std=c99 -m32 -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) -shared $(EXTRA_CC_FLAGS)\n");
 #if OV_SYSTEM_NT
 	fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
 #else	
@@ -753,9 +753,9 @@ int main(int argc, char **argv) {
 	fprintf(fd,"COMPILE_C	= $(CC) $(CC_FLAGS) $(CC_DEFINES) $(CC_INCLUDES) -c\n");
 
 #if OV_SYSTEM_NT
-	fprintf(fd,"LD		= $(CC) -shared -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
+	fprintf(fd,"LD		= $(CC) -shared -m32 -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
 #else
-	fprintf(fd,"LD		= $(CC) -shared\n");
+	fprintf(fd,"LD		= $(CC) -shared -m32\n");
 #endif
 
 	fprintf(fd,"AR			= $(GCC_BIN_PREFIX)ar\n");
