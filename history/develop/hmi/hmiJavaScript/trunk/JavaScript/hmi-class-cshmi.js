@@ -254,6 +254,7 @@ cshmi.prototype = {
 		}else{
 			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
+		return true;
 	},
 	/*********************************
 		_interpreteOperatorEvent
@@ -321,6 +322,7 @@ cshmi.prototype = {
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
+		return true;
 	},
 	/*********************************
 		_interpreteTimeEvent
@@ -846,7 +848,8 @@ cshmi.prototype = {
 			return false;
 		}
 		childrenType = HMI.KSClient.splitKsResponse(childrenType, 0)[0];
-
+		
+		var returnValue = true;
 		var response = HMI.KSClient.getEP(null, encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + childrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
 		response = HMI.KSClient.splitKsResponse(response, 1);
 		for (var i=0; i<response.length; i++){
@@ -873,7 +876,7 @@ cshmi.prototype = {
 
 			this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 			
-			var returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
+			returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
 		}
 		//reset Objects, after iteration is done we don't want to cache the last entries
 		this.ResourceList.InstantiateTemplate = Object();
