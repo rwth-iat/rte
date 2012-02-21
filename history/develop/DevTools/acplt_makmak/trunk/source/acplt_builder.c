@@ -1212,6 +1212,10 @@ HELP:
 		/*
 		*	undef OV_LIBRARY_OPEN option
 		*/
+		fprintf(fp, "#ifndef OV_COMPILE_LIBRARY_%s\n", libname);
+		fprintf(fp, "#define OV_COMPILE_LIBRARY_%s\n", libname);
+		fprintf(fp, "#endif\n");
+		fprintf(fp, "\n");
 		fprintf(fp, "#include \"%s.h\"\n", libname);
 		fprintf(fp, "#ifdef ov_library_open_%s\n", libname);
 		fprintf(fp, "#undef ov_library_open_%s\n", libname);
@@ -1221,7 +1225,7 @@ HELP:
 
 		fprintf(fp, "/*\n");
 		fprintf(fp, "* This function will be called, when the library is loaded.\n");
-		fprintf(fp, "* It could generate compnents and initializes the startup procedure\n");
+		fprintf(fp, "* It could generate components and initializes the startup procedure\n");
 		fprintf(fp, "*/\n");
 		fprintf(fp, "OV_RESULT ov_library_setglobalvars_%s_new(void) {\n", libname);
 		fprintf(fp, "	OV_RESULT result;\n");
