@@ -1,0 +1,62 @@
+#include "ov.ovm"
+#include "ksserv.ovm"
+
+LIBRARY httpserv
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "Sten Grüner, Henning Mersch";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of tcpconnection.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS httpserver : CLASS ksserv/ComTask
+		IS_INSTANTIABLE;
+	  	VARIABLES
+			cycsecs	:	INT
+	  			INITIALVALUE = 0;
+	  		cycusecs	:	INT
+	  			INITIALVALUE = 1;
+			port : INT HAS_ACCESSORS;
+	  		listensocket : INT HAS_ACCESSORS;
+	  		status	:	INT
+	  			COMMENT	=	"0:OK"
+	  			INITIALVALUE	=	1;
+	  		deleted	:	BOOL
+	  			INITIALVALUE = FALSE;
+		END_VARIABLES;
+	
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod : C_FUNCTION <FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	
+	END_CLASS;
+	
+	CLASS httpclient : CLASS ksserv/Client
+		IS_INSTANTIABLE;
+	  
+		VARIABLES
+	 		receivesocket : INT HAS_ACCESSORS INITIALVALUE=-1;	
+	  		deleted	:	BOOL INITIALVALUE = FALSE;
+		END_VARIABLES;
+	
+		OPERATIONS
+			startup : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod : C_FUNCTION <FNC_TYPEMETHOD>; 
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS staticfile : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			mimetype : STRING HAS_ACCESSORS INITIALVALUE="text/html";
+			content : STRING HAS_ACCESSORS INITIALVALUE="";
+		END_VARIABLES;	
+	END_CLASS;
+	
+END_LIBRARY;
