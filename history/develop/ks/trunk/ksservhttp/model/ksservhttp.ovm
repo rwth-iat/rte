@@ -51,8 +51,8 @@ LIBRARY ksservhttp
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/
 	CLASS httpserver : CLASS ksserv/ComTask
-		COMMENT = "class for handling the listening port";
 		IS_INSTANTIABLE;
+		COMMENT = "class for handling the listening port";
 		VARIABLES
 			cycsecs	:	INT
 				INITIALVALUE = 0;
@@ -76,8 +76,8 @@ LIBRARY ksservhttp
 	END_CLASS;
 	
 	CLASS httpclienthandler : CLASS ksserv/Client
-		COMMENT = "class for handling the connection to a client";
 		IS_INSTANTIABLE;
+		COMMENT = "class for handling the connection to a client";
 		VARIABLES
 			receivesocket : INT HAS_ACCESSORS INITIALVALUE=-1;	
 			deleted	:	BOOL INITIALVALUE = FALSE;
@@ -91,8 +91,8 @@ LIBRARY ksservhttp
 	END_CLASS;
 	
 	CLASS staticfile : CLASS ov/object
-		COMMENT = "class for providing static content";
 		IS_INSTANTIABLE;
+		COMMENT = "class for providing static content";
 		VARIABLES
 			mimetype : STRING HAS_ACCESSORS INITIALVALUE="text/html";
 			content : STRING HAS_ACCESSORS INITIALVALUE="";
