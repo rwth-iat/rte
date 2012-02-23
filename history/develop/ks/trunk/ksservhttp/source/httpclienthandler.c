@@ -392,15 +392,16 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
 
+			reply = NULL; //raw reply to send via TCP
+			cmd = NULL; //the get request without arguments
+			rawrequest = NULL;
+
 			ov_string_setvalue(&rawrequest, buffer);
 
 			//buffer contains the raw request
 
 			ov_logfile_error("tcpclient/typemethod: got http command w/ %d bytes",bytes);
 			//ov_logfile_error("%s", rawrequest);
-
-			reply = NULL; //raw reply to send via TCP
-			cmd = NULL; //the get request without arguments
 
 		    //parse request into get command and arguments request
 			fr = parse_http_request(rawrequest, &cmd, &args);
