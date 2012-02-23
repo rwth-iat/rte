@@ -94,6 +94,7 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 
 #define PARSE_HTTP_REQUEST_RETURN \
 						ov_string_setvalue(&rawrequest, NULL);\
+					    ov_string_freelist(plist);\
 						return
 /**
  * Parse raw http HTTP request into a get command and a list of arguments
@@ -115,14 +116,14 @@ OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* ar
     	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400
     }
     ov_string_setvalue(&rawrequest, plist[0]);
-    ov_string_freelist(plist);
+
     //split out the actual GET request
     plist = ov_string_split(rawrequest, " ", &len);
     if(len<1){
     	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400
     }
     ov_string_setvalue(&rawrequest, plist[1]);
-    ov_string_freelist(plist);
+
     //get the command, cmd contains the /-prefexed call now
     //rawrequest contains the vars and args (raw)
     //check if the command contains an ?
@@ -140,10 +141,11 @@ OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* ar
     }
     //not yet done, parsing args
     ov_string_setvalue(&rawrequest, plist[1]);
-    ov_string_freelist(plist);
 
     plist = ov_string_split(rawrequest, "&", &len);
-    if(len <= 0)PARSE_HTTP_REQUEST_RETURN OV_ERR_OK;
+    if(len <= 0){
+    	PARSE_HTTP_REQUEST_RETURN OV_ERR_OK;
+    }
     Ov_SetDynamicVectorLength(args,2*len,STRING);
     for(i = 0;i < len;i++){
         pelement = ov_string_split(plist[i], "=", &len1);
@@ -158,6 +160,6 @@ OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* ar
         	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400;
         }
     }
-    ov_string_freelist(plist);
+
     PARSE_HTTP_REQUEST_RETURN OV_ERR_OK;
 }
