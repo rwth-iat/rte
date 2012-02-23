@@ -189,6 +189,11 @@ $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_DLL)
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_DLL) $(OV_LIBOV_DLL)
 	$(CXX_LINK) -rdynamic -o $@ $^ $(C_LIBS) $(LD_LIB)
 
+#	ACPLT Runtime-Server for ACPLT/OV
+
+$(OV_RUNTIMESERVER_EXE) : $(OV_RUNTIMESERVER_OBJ) $(OV_LIBOV_DLL)
+	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
+
 #	ACPLT/OV database dumper
 
 dbdump.o : dbdump.cpp
@@ -296,7 +301,7 @@ example.c example.h : $(OV_CODEGEN_EXE)
 install : all
 	@echo Installing files to '$(ACPLT_BIN_DIR)'
 	@-cp *.so $(ACPLT_BIN_DIR)
-	@-cp $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) $(OV_DBUTIL_EXE) $(OV_SERVER_EXE) \
+	@-cp $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) $(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(OV_RUNTIMESERVER_EXE) \
 		 $(DBDUMP_EXE) $(DBPARSE_EXE) $(OVXIPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(ACPLT_BIN_DIR)
 	@echo Installing files to '$(ACPLT_LIB_DIR)'
 	@-cp *.a $(ACPLT_LIB_DIR)
@@ -309,7 +314,7 @@ clean :
 	@echo Cleaning up...
 	@rm -f core *.c ov.h example.h dynov.h kshist.h db_y.h db_lex.h \
 		*$(_LIB) *$(_DLL) *$(_OBJ) $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) \
-		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE)
+		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(OV_RUNTIMESERVER_EXE) $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE)
 	@for i in *_inst.h ; do echo > $$i ; done
 	@echo Done.
 
