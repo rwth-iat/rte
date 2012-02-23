@@ -65,6 +65,10 @@
 #include <winsock2.h>
 #endif
 
+#include "libov/ov_macros.h"
+#include "libov/ov_path.h"
+#include "libov/ov_logfile.h"
+
 #define BUFFER_CHUNK_SIZE 2048
 
 

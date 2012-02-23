@@ -46,8 +46,10 @@
 #undef ov_library_open_ksservhttp
 #endif
 
-
-#include "config.h"
+#include "libov/ov_macros.h"
+#include "libov/ov_path.h"
+#include "libov/ov_string.h"
+#include "libov/ov_logfile.h"
 
 /*
 * This function will be called, when the library is loaded.

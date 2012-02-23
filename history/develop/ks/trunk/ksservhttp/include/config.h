@@ -36,15 +36,6 @@
 *
 ***********************************************************************/
 
-#include "libov/ov_ov.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
-#include "libov/ov_string.h"
-#include "libov/ov_vendortree.h"
-#include "libov/ov_path.h"
-#include "libov/ov_logfile.h"
-
-
 // const int STOK; //0
 // const int STPMSOCKCR; //2
 // const int STPMRQSND; //3
