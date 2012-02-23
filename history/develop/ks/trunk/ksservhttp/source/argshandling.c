@@ -34,11 +34,7 @@
 *	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *	POSSIBILITY OF SUCH DAMAGE.
 *
-
 ***********************************************************************/
-#include "libov/ov_ov.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
 
 #include "config.h"
 
