@@ -48,6 +48,8 @@ OV_SOURCE_LIBOV_DIR			= $(OV_SOURCE_DIR)libov/
 OV_SOURCE_DBUTIL_DIR			= $(OV_SOURCE_DIR)dbutil/
 OV_SOURCE_LIBOVKS_DIR			= $(OV_SOURCE_DIR)libovks/
 OV_SOURCE_SERVER_DIR			= $(OV_SOURCE_DIR)server/
+OV_SOURCE_RUNTIMESERVER_DIR		= $(OV_SOURCE_DIR)runtimeserver/
+OV_RUNTIMESERVER_INCLUDE_DIR		= $(OV_INCLUDE_DIR)runtimeserver/
 OV_SOURCE_NTSERVICE_DIR			= $(OV_SOURCE_DIR)ntservice/
 OV_SOURCE_EXAMPLE_DIR			= $(OV_SOURCE_DIR)example/
 OV_SOURCE_KSHISTLIB_DIR			= $(OV_SOURCE_DIR)kshist/
@@ -109,6 +111,7 @@ SOURCE_DIRS	= \
 	$(OV_SOURCE_DBUTIL_DIR) \
 	$(OV_SOURCE_LIBOVKS_DIR) \
 	$(OV_SOURCE_SERVER_DIR) \
+	$(OV_SOURCE_RUNTIMESERVER_DIR) \
 	$(OV_SOURCE_NTSERVICE_DIR) \
 	$(OV_SOURCE_KSHISTLIB_DIR) \
 	$(OV_SOURCE_DYNOV_DIR) \
@@ -211,6 +214,7 @@ OV_INCLUDES = \
 	-I$(OV_SOURCE_DBPARSE_DIR) \
 	-I$(OV_SOURCE_DBDUMP_DIR) \
 	-I$(LIBMPM_DIR) \
+	-I$(OV_RUNTIMESERVER_INCLUDE_DIR)\
 	-I.
 else
 ifeq ($(COMPILER), MSVC)
@@ -227,6 +231,7 @@ OV_INCLUDES = \
 	/I$(OV_SOURCE_DBPARSE_DIR) \
 	/I$(OV_SOURCE_DBDUMP_DIR) \
 	/I$(LIBMPM_DIR) \
+	/I$(OV_RUNTIMESERVER_INCLUDE_DIR)\
 	/I.
 else
 ifeq ($(COMPILER), KEIL)
@@ -235,6 +240,7 @@ OV_INCLUDES = \
 	-I$(OV_INCLUDE_DIR) \
 	-I$(OV_MODEL_DIR) \
 	-I$(LIBMPM_DIR) \
+	-I$(OV_RUNTIMESERVER_INCLUDE_DIR)\
 	-I.
 else
 OV_INCLUDES = \
@@ -249,6 +255,7 @@ OV_INCLUDES = \
 	-I$(OV_SOURCE_DBPARSE_DIR) \
 	-I$(OV_SOURCE_DBDUMP_DIR) \
 	-I$(LIBMPM_DIR) \
+	-I$(OV_RUNTIMESERVER_INCLUDE_DIR)\
 	-I.
 endif
 endif
@@ -384,6 +391,14 @@ OV_SERVER_OBJ  = $(foreach source, $(OV_SERVER_SRC), $(basename $(notdir $(sourc
 OV_SERVER_EXE  = ov_server$(_EXE)
 OV_SERVER_RES  = ov_server$(_RES)
 
+#	ACPLT Runtime-Server for ACPLT/OV
+#   	----------------------------
+
+OV_RUNTIMESERVER_SRC := $(wildcard $(OV_SOURCE_RUNTIMESERVER_DIR)*.c)
+OV_RUNTIMESERVER_OBJ  = $(foreach source, $(OV_RUNTIMESERVER_SRC), $(basename $(notdir $(source)))$(_OBJ))
+OV_RUNTIMESERVER_EXE  = ov_runtimeserver$(_EXE)
+OV_RUNTIMESERVER_RES  = ov_server$(_RES)
+
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
 #   	--------------------------------------------------
 
@@ -510,6 +525,7 @@ TARGETS = \
 	$(EXAMPLE_DLL) \
 	$(EXAMPLE_LIB) \
 	$(OV_SERVER_EXE) \
+	$(OV_RUNTIMESERVER_EXE) \
 	$(DBDUMP_EXE) \
 	$(DBPARSE_EXE) \
 	$(OVXIPARSE_EXE) \
@@ -526,6 +542,7 @@ SOURCES = \
 	$(KS_LIBOVKS_SRC) \
 	$(OV_LIBOVKS_SRC) \
 	$(OV_SERVER_SRC) \
+	$(OV_RUNTIMESERVER_SRC) \
 	$(KSHISTLIB_SRC) \
 	$(DYNOV_SRC) \
 	$(TASKLIB_SRC) \
