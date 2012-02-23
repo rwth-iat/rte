@@ -128,11 +128,11 @@ OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
 	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, pobj);
    
 	int receivesocket;
-	ov_logfile_error("tcpclient/shutdown: %s", pobj->v_identifier);
 	if(!this->v_deleted) {// v_deleted cares that socket closing happens just once, not twiche while DeleteObj
+		ov_logfile_error("tcpclient/shutdown socket %i", this->v_receivesocket);
 		receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
 		if(receivesocket < 0) {
-			ov_logfile_error("tcpclient/shutdown: %s has socket<0 - cant shutdown!?!", pobj->v_identifier);
+			ov_logfile_error("tcpclient/shutdown: instance %s has socket<0 - cant shutdown!?!", pobj->v_identifier);
 			return;
 		}
 		//ov_logfile_debug("tcpclient/shutdown: %s closes socket %d", pobj->v_identifier, receivesocket);
