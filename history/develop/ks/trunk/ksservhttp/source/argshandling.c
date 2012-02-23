@@ -92,6 +92,9 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 	return OV_ERR_OK;
 }
 
+#define PARSE_HTTP_REQUEST_RETURN \
+						ov_string_setvalue(&rawrequest, NULL);\
+						return
 /**
  * Parse raw http HTTP request into a get command and a list of arguments
  *
@@ -103,57 +106,58 @@ OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* ar
 {
     OV_STRING *plist, *pelement;
     OV_UINT i, len, len1;
+    OV_STRING rawrequest=NULL;
 	//initialize return vector properly
 	Ov_SetDynamicVectorLength(args,0,STRING);
     //split out the first line containing the GET command
     plist = ov_string_split(buffer, "\n", &len);
     if(len<=0){
-    	return OV_ERR_BADPARAM; //400
+    	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400
     }
-    ov_string_setvalue(&buffer, plist[0]);
+    ov_string_setvalue(&rawrequest, plist[0]);
     ov_string_freelist(plist);
     //split out the actual GET request
-    plist = ov_string_split(buffer, " ", &len);
+    plist = ov_string_split(rawrequest, " ", &len);
     if(len<1){
-    	return OV_ERR_BADPARAM; //400
+    	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400
     }
-    ov_string_setvalue(&buffer, plist[1]);
+    ov_string_setvalue(&rawrequest, plist[1]);
     ov_string_freelist(plist);
     //get the command, cmd contains the /-prefexed call now
-    //buffer contains the vars and args (raw)
+    //rawrequest contains the vars and args (raw)
     //check if the command contains an ?
-    plist = ov_string_split(buffer, "?", &len);
+    plist = ov_string_split(rawrequest, "?", &len);
     //no ? -> return the full command, args are empty
     if(len<0){
-    	ov_string_setvalue(cmd, buffer);
-    	return OV_ERR_OK;
+    	ov_string_setvalue(cmd, rawrequest);
+    	PARSE_HTTP_REQUEST_RETURN OV_ERR_OK;
     }
     //at least one ? -> split up the command
     ov_string_setvalue(cmd, plist[0]);
     //exactly one ? -> we are done
     if(len == 1) {
-        return OV_ERR_OK;
+    	PARSE_HTTP_REQUEST_RETURN OV_ERR_OK;
     }
     //not yet done, parsing args
-    ov_string_setvalue(&buffer, plist[1]);
+    ov_string_setvalue(&rawrequest, plist[1]);
     ov_string_freelist(plist);
 
-    plist = ov_string_split(buffer, "&", &len);
-    if(len <= 0)return OV_ERR_OK;
+    plist = ov_string_split(rawrequest, "&", &len);
+    if(len <= 0)PARSE_HTTP_REQUEST_RETURN OV_ERR_OK;
     Ov_SetDynamicVectorLength(args,2*len,STRING);
     for(i = 0;i < len;i++){
         pelement = ov_string_split(plist[i], "=", &len1);
         //varname=value
         if(len1==2){
         	if(pelement[0][0] == '\0'){
-            	return OV_ERR_BADPARAM; //400;
+            	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400;
         	}
 			ov_string_setvalue(&(*args).value[2 * i], pelement[0]);
 			ov_string_setvalue(&(*args).value[2 * i + 1], pelement[1]);
         }else{
-        	return OV_ERR_BADPARAM; //400;
+        	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400;
         }
     }
     ov_string_freelist(plist);
-    return OV_ERR_OK;
+    PARSE_HTTP_REQUEST_RETURN OV_ERR_OK;
 }

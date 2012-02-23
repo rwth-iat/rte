@@ -339,7 +339,7 @@ void ksservhttp_httpclienthandler_typemethod(
     int buffer_size = 0; //factor of buffer size * BUFFER_CHUNK_SIZE
     char *buffer_location = 0; //pointer into the buffer 
     char* placeInBuffer = NULL;
-    OV_STRING reply, cmd, rawrequest;
+    OV_STRING reply, cmd;
     OV_RESULT fr;
     //vector of the variables, even elements are variable names, odds are values
     OV_STRING_VEC args = {0,NULL};
@@ -394,18 +394,15 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			reply = NULL; //raw reply to send via TCP
 			cmd = NULL; //the get request without arguments
-			rawrequest = NULL;
-
-			ov_string_setvalue(&rawrequest, buffer);
 
 			//buffer contains the raw request
 
 			ov_logfile_error("tcpclient/typemethod: got http command w/ %d bytes",bytes);
-			//ov_logfile_error("%s", rawrequest);
+			//ov_logfile_error("%s", buffer);
 
 		    //parse request into get command and arguments request
-			fr = parse_http_request(rawrequest, &cmd, &args);
-			ov_string_setvalue(&rawrequest, NULL);
+			fr = parse_http_request(buffer, &cmd, &args);
+
 			if(Ov_Fail(fr)){
 				reply = HTTP_400_ERROR;
 			}
