@@ -55,8 +55,8 @@
 /**
  * Returns the socket on which the object is receiving.
  */
-OV_DLLFNCEXPORT OV_INT ksservhttp_httpclient_receivesocket_get(
-             OV_INSTPTR_ksservhttp_httpclient          pobj
+OV_DLLFNCEXPORT OV_INT ksservhttp_httpclienthandler_receivesocket_get(
+             OV_INSTPTR_ksservhttp_httpclienthandler          pobj
 ) {
              return pobj->v_receivesocket;
 }
@@ -64,8 +64,8 @@ OV_DLLFNCEXPORT OV_INT ksservhttp_httpclient_receivesocket_get(
 /**
  * Sets the socket on which the object is receiving.
  */
-OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclient_receivesocket_set(
-             OV_INSTPTR_ksservhttp_httpclient          pobj,
+OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
+             OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
              const OV_INT           value
 ) {
     struct sockaddr_in m_addr;
@@ -90,7 +90,7 @@ OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclient_receivesocket_set(
 /**
  * This method is called on startup.
  */
-OV_DLLFNCEXPORT void ksservhttp_httpclient_startup(
+OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	//ov_logfile_info("tcpclient/startup ###########");
@@ -102,15 +102,15 @@ OV_DLLFNCEXPORT void ksservhttp_httpclient_startup(
  * Procedure called on object shutdown.
  * It closes open socket.
  */
-OV_DLLFNCEXPORT void ksservhttp_httpclient_shutdown(
+OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-	OV_INSTPTR_ksservhttp_httpclient this = Ov_StaticPtrCast(ksservhttp_httpclient, pobj);
+	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, pobj);
    
 	int receivesocket;
 	ov_logfile_error("tcpclient/shutdown: %s", pobj->v_identifier);
 	if(!this->v_deleted) {// v_deleted cares that socket closing happens just once, not twiche while DeleteObj
-		receivesocket = ksservhttp_httpclient_receivesocket_get(this);
+		receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
 		if(receivesocket < 0) {
 			ov_logfile_error("tcpclient/shutdown: %s has socket<0 - cant shutdown!?!", pobj->v_identifier);
 			return;
@@ -305,14 +305,14 @@ void exec_getep(OV_STRING_VEC* args, OV_STRING* re){
  *  * If the connection is closed by the client this object
  * deletes itself.
  */
-void ksservhttp_httpclient_typemethod(
+void ksservhttp_httpclienthandler_typemethod(
 	//COmTask OV_INSTPTR_ov_object		pfb
 	OV_INSTPTR_ksserv_ComTask	cTask
 ) {
-	OV_INSTPTR_ksservhttp_httpclient this = Ov_StaticPtrCast(ksservhttp_httpclient, cTask);
+	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, cTask);
 
     int bytes = -1; //-1 means nothing received
-    int receivesocket = ksservhttp_httpclient_receivesocket_get(this);
+    int receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
 
     char *buffer = 0;
     int recvBytes = 0;
@@ -334,7 +334,7 @@ void ksservhttp_httpclient_typemethod(
   	//ov_logfile_debug("tcpclient typemethod called ");
 	if (receivesocket < 0) { // check if the socket might be OK.
 		ov_logfile_error("%s/typemethod: no receive socket set (receivesocket==-1), thus deleting myself",cTask->v_identifier);
-		ksservhttp_httpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 		return;
 	}
 	do {//read HTTP request from socket in chunks until nothing more appears
@@ -360,11 +360,11 @@ void ksservhttp_httpclient_typemethod(
 #endif
 	if(bytes == -1 && errno != EAGAIN && errno != EWOULDBLOCK ) {//ERROR during read - shutdown!
 		ov_logfile_error("tcpclient/typemethod: recv error %i, shutdown TCPClient", errno);
-		ksservhttp_httpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 		//else: bytes = -1 && errno == EAGAIN || EWOULDBLOCK
 	} else if(bytes == 0) {//normal shutdown by client
 	    ov_logfile_debug("tcpclient/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
-		ksservhttp_httpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 	//} else if (bytes == -1) {  // no current KS command this turn
 	} else if(bytes > 0) {
 			//this is the important part - http request was read successfully
@@ -478,7 +478,7 @@ void ksservhttp_httpclient_typemethod(
 			}while(sentBytes < size_return);
 
 
-			ksservhttp_httpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+			ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
 	}
 	//free up the memory

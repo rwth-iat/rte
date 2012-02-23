@@ -94,7 +94,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 	OV_INSTPTR_ov_domain thisdomain = Ov_StaticPtrCast(ov_domain, pobj);
 	OV_INSTPTR_ov_domain pclients;
 	OV_INSTPTR_ov_domain pstaticfiles;
-	OV_INSTPTR_ksservhttp_httpclient ptcpc;
+	OV_INSTPTR_ksservhttp_httpclienthandler ptcpc;
 
 	pclients = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "clients");
 	pstaticfiles = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "staticfiles");
@@ -108,10 +108,10 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 
 	//create clients domain
 	if (pclients) {
-		ptcpc = (OV_INSTPTR_ksservhttp_httpclient) Ov_GetFirstChild(ov_containment, pclients);
+		ptcpc = (OV_INSTPTR_ksservhttp_httpclienthandler) Ov_GetFirstChild(ov_containment, pclients);
 		while (ptcpc) {
-			ksservhttp_httpclient_shutdown((OV_INSTPTR_ov_object) ptcpc);
-			ptcpc = (OV_INSTPTR_ksservhttp_httpclient) Ov_GetNextChild(ov_containment, pclients);
+			ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object) ptcpc);
+			ptcpc = (OV_INSTPTR_ksservhttp_httpclienthandler) Ov_GetNextChild(ov_containment, pclients);
 		}
 		Ov_DeleteObject((OV_INSTPTR_ov_object)pclients);
 		if (!Ov_OK((Ov_CreateObject(ov_domain, pclients, thisdomain, "clients")))) {
@@ -169,7 +169,7 @@ void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 	OV_INSTPTR_ksservhttp_httpserver this =
 			Ov_StaticPtrCast(ksservhttp_httpserver, cTask);
 	OV_INSTPTR_ov_domain thisdomain = Ov_StaticPtrCast(ov_domain, cTask);
-	OV_INSTPTR_ksservhttp_httpclient ptcpc = NULL;
+	OV_INSTPTR_ksservhttp_httpclienthandler ptcpc = NULL;
 	OV_INSTPTR_ov_domain
 			pclients =
 					(OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "clients");
@@ -261,14 +261,14 @@ void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		cnr++;
 		sprintf(clientname, "tcpclient%i", cnr);
 		ptcpc
-				= (OV_INSTPTR_ksservhttp_httpclient) Ov_SearchChild(ov_containment, pclients, clientname);
+				= (OV_INSTPTR_ksservhttp_httpclienthandler) Ov_SearchChild(ov_containment, pclients, clientname);
 	} while (ptcpc);
 
 	//create receiving tcpclient
-	if (Ov_OK(Ov_CreateObject(ksservhttp_httpclient, ptcpc, pclients, clientname))) {
+	if (Ov_OK(Ov_CreateObject(ksservhttp_httpclienthandler, ptcpc, pclients, clientname))) {
 		ov_logfile_info("New client connected, socket %d", receivesocket);
 		//copy socket to created tcpclient-object
-		ksservhttp_httpclient_receivesocket_set(ptcpc, receivesocket);
+		ksservhttp_httpclienthandler_receivesocket_set(ptcpc, receivesocket);
 		this->v_status = STATUS_TCPCON_OK;
 	} else {
 		ov_logfile_error("Creating of TCPClient failed while New client connected, socket %d ", receivesocket);

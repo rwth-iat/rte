@@ -36,7 +36,7 @@ LIBRARY ksservhttp
 	
 	END_CLASS;
 	
-	CLASS httpclient : CLASS ksserv/Client
+	CLASS httpclienthandler : CLASS ksserv/Client
 		IS_INSTANTIABLE;
 	  
 		VARIABLES
