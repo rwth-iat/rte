@@ -108,19 +108,18 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.so.debug.option.optimization.level.20757926" name="Optimization Level" superClass="gnu.c.compiler.so.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.so.debug.option.debugging.level.20757926" name="Debug Level" superClass="gnu.c.compiler.so.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.20757926" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<!-- Project -->
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/linux/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libov/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../model/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/&quot;"/>
-									<!-- Dependencies -->
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksserv/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksserv/model/&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.20757926" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="OV_SYSTEM_LINUX=1"/>
+									<listOptionValue builtIn="false" value="OV_SYSTEM_NT=0"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.20757926" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -153,15 +152,6 @@
 		</storageModule>
 		<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.88821368;cdt.managedbuild.config.gnu.so.debug.88821368.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.88821368;cdt.managedbuild.tool.gnu.c.compiler.input.88821368">
-			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.20757926;cdt.managedbuild.config.gnu.so.debug.20757926.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.20757926;cdt.managedbuild.tool.gnu.c.compiler.input.20757926">
-			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="1">
 		<resource resourceType="PROJECT" workspacePath="/httpserv"/>
 	</storageModule>
@@ -169,4 +159,16 @@
 		<project id="httpserv.null.377002500" name="httpserv"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.20757926;cdt.managedbuild.config.gnu.so.debug.20757926.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.20757926;cdt.managedbuild.tool.gnu.c.compiler.input.20757926">
+			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.20757926;cdt.managedbuild.config.gnu.so.debug.20757926.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.88821368;cdt.managedbuild.tool.gnu.c.compiler.input.20757926">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.88821368;cdt.managedbuild.config.gnu.so.debug.88821368.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.88821368;cdt.managedbuild.tool.gnu.c.compiler.input.88821368">
+			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+	</storageModule>
 </cproject>

@@ -61,7 +61,7 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
  * @param cmd output parsed get command
  * @param args output string vector of form value content
  */
-OV_RESULT parse_http_request(char *buffer, OV_STRING* cmd, OV_STRING_VEC* args)
+OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args)
 {
     OV_STRING *plist, *pelement;
     OV_UINT i, len, len1;

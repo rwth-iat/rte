@@ -319,7 +319,7 @@ void httpserv_httpclient_typemethod(
     int buffer_size = 0; //factor of buffer size * BUFFER_CHUNK_SIZE
     char *buffer_location = 0; //pointer into the buffer 
     char* placeInBuffer = NULL;
-    OV_STRING reply, cmd;
+    OV_STRING reply, cmd, rawrequest;
     OV_RESULT fr;
     //vector of the variables, even elements are variable names, odds are values
     OV_STRING_VEC args = {0,NULL};
@@ -339,7 +339,7 @@ void httpserv_httpclient_typemethod(
 	}
 	do {//read HTTP request from socket in chunks until nothing more appears
 		buffer_size++;
-		buffer = (char*)realloc(buffer, BUFFER_CHUNK_SIZE*buffer_size); 
+		buffer = (char*)realloc(buffer, BUFFER_CHUNK_SIZE*buffer_size);
 		if(buffer == 0) {
 			ov_logfile_error("tcpclient/typemethod: recv error, no memory for buffer");
 			return;
@@ -372,16 +372,19 @@ void httpserv_httpclient_typemethod(
 
 			ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
 
+			ov_string_setvalue(&rawrequest, buffer);
+
 			//buffer contains the raw request
 
 			ov_logfile_error("tcpclient/typemethod: got http command w/ %d bytes",bytes);
-			ov_logfile_error("%s", buffer);
+			//ov_logfile_error("%s", rawrequest);
 
 			reply = NULL; //raw reply to send via TCP
 			cmd = NULL; //the get request without arguments
 
 		    //parse request into get command and arguments request
-			fr = parse_http_request(buffer, &cmd, &args);
+			fr = parse_http_request(rawrequest, &cmd, &args);
+			ov_string_setvalue(&rawrequest, NULL);
 			if(Ov_Fail(fr)){
 				reply = HTTP_400_ERROR;
 			}
@@ -432,9 +435,7 @@ void httpserv_httpclient_typemethod(
 			}
 
 			//pushing answer back to client through the tcp socket
-			while(reply[size_return] != '\0'){
-				size_return++;
-			}
+			size_return = ov_string_getlength(reply);
 			placeInBuffer = reply;
 
 			ov_logfile_debug("tcpclient: sending answer: %d bytes", (size_return));
