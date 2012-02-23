@@ -7,7 +7,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 
 #Project config parameters that are accessed by Eclipse
 DATABASE = database 
-DATABASECREATEKEYS = -w ksserv -w httpserv
+DATABASECREATEKEYS = -w ksserv -w ksservhttp
 MAKMAKOPTIONS = -o
 EXTRA_CC_FLAGS = 
 EXTRA_LIBS = 
@@ -20,7 +20,7 @@ COMPILER_LO = $(call lc,$(COMPILER))
 all:
 
 %:
-	acplt_makmak -l httpserv $(MAKMAKOPTIONS)
-	tclsh $(PREBUILD) httpserv $(MAKMAKOPTIONS)
+	acplt_makmak -l ksservhttp $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) ksservhttp $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
-	tclsh $(POSTBUILD) httpserv
+	tclsh $(POSTBUILD) ksservhttp

@@ -1,7 +1,7 @@
 #include "ov.ovm"
 #include "ksserv.ovm"
 
-LIBRARY httpserv
+LIBRARY ksservhttp
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
 	AUTHOR    = "Sten Grüner, Henning Mersch";
 	COPYRIGHT = "";

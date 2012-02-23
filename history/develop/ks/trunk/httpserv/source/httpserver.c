@@ -16,11 +16,11 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_httpserv
-#define OV_COMPILE_LIBRARY_httpserv
+#ifndef OV_COMPILE_LIBRARY_ksservhttp
+#define OV_COMPILE_LIBRARY_ksservhttp
 #endif
 
-#include "httpserv.h"
+#include "ksservhttp.h"
 #include "config.h"
 
 #include <stdio.h>
@@ -47,18 +47,18 @@
 /**
  * Returns the port on which the object is listening.
  */
-OV_DLLFNCEXPORT OV_INT httpserv_httpserver_port_get(
-		OV_INSTPTR_httpserv_httpserver pobj) {
+OV_DLLFNCEXPORT OV_INT ksservhttp_httpserver_port_get(
+		OV_INSTPTR_ksservhttp_httpserver pobj) {
 	return pobj->v_port;
 }
 
 /**
  * Sets the port on which the object is listening.
  */
-OV_DLLFNCEXPORT OV_RESULT httpserv_httpserver_port_set(
-		OV_INSTPTR_httpserv_httpserver pobj, const OV_INT value) {
+OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpserver_port_set(
+		OV_INSTPTR_ksservhttp_httpserver pobj, const OV_INT value) {
 	CLOSE_SOCKET(pobj->v_listensocket);
-	httpserv_httpserver_listensocket_set(pobj, -1);
+	ksservhttp_httpserver_listensocket_set(pobj, -1);
 
 	pobj->v_port = value;
 	return OV_ERR_OK;
@@ -67,16 +67,16 @@ OV_DLLFNCEXPORT OV_RESULT httpserv_httpserver_port_set(
 /**
  * Returns the socket on which the object is listening.
  */
-OV_DLLFNCEXPORT OV_INT httpserv_httpserver_listensocket_get(
-		OV_INSTPTR_httpserv_httpserver pobj) {
+OV_DLLFNCEXPORT OV_INT ksservhttp_httpserver_listensocket_get(
+		OV_INSTPTR_ksservhttp_httpserver pobj) {
 	return pobj->v_listensocket;
 }
 
 /**
  * Sets the socket on which the object is listening.
  */
-OV_DLLFNCEXPORT OV_RESULT httpserv_httpserver_listensocket_set(
-		OV_INSTPTR_httpserv_httpserver pobj, const OV_INT value) {
+OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpserver_listensocket_set(
+		OV_INSTPTR_ksservhttp_httpserver pobj, const OV_INT value) {
 	pobj->v_listensocket = value;
 	return OV_ERR_OK;
 }
@@ -88,13 +88,13 @@ OV_DLLFNCEXPORT OV_RESULT httpserv_httpserver_listensocket_set(
  * It starts the listening on with variable OWNPORT
  * declared port or by default on port 7509.
  */
-OV_DLLFNCEXPORT void httpserv_httpserver_startup(OV_INSTPTR_ov_object pobj) {
-	OV_INSTPTR_httpserv_httpserver this =
-			Ov_StaticPtrCast(httpserv_httpserver, pobj);
+OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
+	OV_INSTPTR_ksservhttp_httpserver this =
+			Ov_StaticPtrCast(ksservhttp_httpserver, pobj);
 	OV_INSTPTR_ov_domain thisdomain = Ov_StaticPtrCast(ov_domain, pobj);
 	OV_INSTPTR_ov_domain pclients;
 	OV_INSTPTR_ov_domain pstaticfiles;
-	OV_INSTPTR_httpserv_httpclient ptcpc;
+	OV_INSTPTR_ksservhttp_httpclient ptcpc;
 
 	pclients = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "clients");
 	pstaticfiles = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "staticfiles");
@@ -104,14 +104,14 @@ OV_DLLFNCEXPORT void httpserv_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 
 
 	//store port to object, 8080 is the default port
-	httpserv_httpserver_port_set(this, 8080);
+	ksservhttp_httpserver_port_set(this, 8080);
 
 	//create clients domain
 	if (pclients) {
-		ptcpc = (OV_INSTPTR_httpserv_httpclient) Ov_GetFirstChild(ov_containment, pclients);
+		ptcpc = (OV_INSTPTR_ksservhttp_httpclient) Ov_GetFirstChild(ov_containment, pclients);
 		while (ptcpc) {
-			httpserv_httpclient_shutdown((OV_INSTPTR_ov_object) ptcpc);
-			ptcpc = (OV_INSTPTR_httpserv_httpclient) Ov_GetNextChild(ov_containment, pclients);
+			ksservhttp_httpclient_shutdown((OV_INSTPTR_ov_object) ptcpc);
+			ptcpc = (OV_INSTPTR_ksservhttp_httpclient) Ov_GetNextChild(ov_containment, pclients);
 		}
 		Ov_DeleteObject((OV_INSTPTR_ov_object)pclients);
 		if (!Ov_OK((Ov_CreateObject(ov_domain, pclients, thisdomain, "clients")))) {
@@ -134,7 +134,7 @@ OV_DLLFNCEXPORT void httpserv_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 	}
 
 	//register typemethod
-	//ComTask Ov_WarnIfNot(Ov_OK(ov_scheduler_register(pobj, httpserv_httpserver_typemethod)));
+	//ComTask Ov_WarnIfNot(Ov_OK(ov_scheduler_register(pobj, ksservhttp_httpserver_typemethod)));
 
 	return;
 }
@@ -144,14 +144,14 @@ OV_DLLFNCEXPORT void httpserv_httpserver_startup(OV_INSTPTR_ov_object pobj) {
  * It closes open socket and deletes created
  * managercom- and manager-objects.
  */
-OV_DLLFNCEXPORT void httpserv_httpserver_shutdown(OV_INSTPTR_ov_object pobj) {
+OV_DLLFNCEXPORT void ksservhttp_httpserver_shutdown(OV_INSTPTR_ov_object pobj) {
 	int listensocket;
-	OV_INSTPTR_httpserv_httpserver this = Ov_StaticPtrCast(httpserv_httpserver, pobj);
+	OV_INSTPTR_ksservhttp_httpserver this = Ov_StaticPtrCast(ksservhttp_httpserver, pobj);
 	//close socket
-	listensocket = httpserv_httpserver_listensocket_get(this);
+	listensocket = ksservhttp_httpserver_listensocket_get(this);
 	if (!(CLOSE_SOCKET(listensocket)))
 		perror("shutdown listen");
-	httpserv_httpserver_listensocket_set(this, -1);
+	ksservhttp_httpserver_listensocket_set(this, -1);
 
 	return;
 }
@@ -163,17 +163,17 @@ OV_DLLFNCEXPORT void httpserv_httpserver_shutdown(OV_INSTPTR_ov_object pobj) {
  * listensocket it creates an tcpclient-object which
  * will take over the communication with requesting client.
  */
-void httpserv_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
+void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 //ComTask OV_INSTPTR_ov_object	pfb
 ) {
-	OV_INSTPTR_httpserv_httpserver this =
-			Ov_StaticPtrCast(httpserv_httpserver, cTask);
+	OV_INSTPTR_ksservhttp_httpserver this =
+			Ov_StaticPtrCast(ksservhttp_httpserver, cTask);
 	OV_INSTPTR_ov_domain thisdomain = Ov_StaticPtrCast(ov_domain, cTask);
-	OV_INSTPTR_httpserv_httpclient ptcpc = NULL;
+	OV_INSTPTR_ksservhttp_httpclient ptcpc = NULL;
 	OV_INSTPTR_ov_domain
 			pclients =
 					(OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "clients");
-	int listensocket = httpserv_httpserver_listensocket_get(this);
+	int listensocket = ksservhttp_httpserver_listensocket_get(this);
 	int receivesocket;
 	char clientname[256];
 	int cnr = 0;
@@ -181,13 +181,13 @@ void httpserv_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 	//int optval = 1;
 	char optval = 1; //used by setsockopt for reuseage of tcp connection port
 	struct sockaddr_in client_addr;
-	int port = httpserv_httpserver_port_get(this);
+	int port = ksservhttp_httpserver_port_get(this);
 
 	//check if we have already an open socket - otherwise create socket
 	if (listensocket == -1) {
 		//open socket
 		listensocket = socket(PF_INET, SOCK_STREAM, 0);
-		httpserv_httpserver_listensocket_set(this, listensocket);
+		ksservhttp_httpserver_listensocket_set(this, listensocket);
 		if (listensocket == -1) {
 			perror("socket(tcpconnection) failed");
 			this->v_status = STATUS_TCPCON_SOCKOPENFAILED;
@@ -199,7 +199,7 @@ void httpserv_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		if ((IOCTL_SOCKET(listensocket, FIONBIO, (u_long*) &on)) == -1) {
 			perror("ioctl(tcpconnection) failed");
 			CLOSE_SOCKET(listensocket);
-			httpserv_httpserver_listensocket_set(this, -1);
+			ksservhttp_httpserver_listensocket_set(this, -1);
 			this->v_status = STATUS_TCPCON_SOCKNONBLOCKFAILED;
 			return;
 		}
@@ -218,7 +218,7 @@ void httpserv_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 				sizeof(client_addr))) == -1) {
 			perror("bind(tcpconnection) failed");
 			CLOSE_SOCKET(listensocket);
-			httpserv_httpserver_listensocket_set(this, -1);
+			ksservhttp_httpserver_listensocket_set(this, -1);
 			this->v_status = STATUS_TCPCON_SOCKBINDFAILED;
 			return;
 		}
@@ -226,7 +226,7 @@ void httpserv_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		if ((listen(listensocket, 3)) == -1) {
 			perror("listen(tcpconnection) failed");
 			CLOSE_SOCKET(listensocket);
-			httpserv_httpserver_listensocket_set(this, -1);
+			ksservhttp_httpserver_listensocket_set(this, -1);
 			this->v_status = STATUS_TCPCON_SOCKLISTENFAILED;
 			return;
 		}
@@ -234,7 +234,7 @@ void httpserv_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 
 	} //end create socket
 
-	listensocket = httpserv_httpserver_listensocket_get(this);
+	listensocket = ksservhttp_httpserver_listensocket_get(this);
 
 	//accept
 	if ((receivesocket = accept(listensocket, NULL, NULL)) < 0) {
@@ -261,14 +261,14 @@ void httpserv_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		cnr++;
 		sprintf(clientname, "tcpclient%i", cnr);
 		ptcpc
-				= (OV_INSTPTR_httpserv_httpclient) Ov_SearchChild(ov_containment, pclients, clientname);
+				= (OV_INSTPTR_ksservhttp_httpclient) Ov_SearchChild(ov_containment, pclients, clientname);
 	} while (ptcpc);
 
 	//create receiving tcpclient
-	if (Ov_OK(Ov_CreateObject(httpserv_httpclient, ptcpc, pclients, clientname))) {
+	if (Ov_OK(Ov_CreateObject(ksservhttp_httpclient, ptcpc, pclients, clientname))) {
 		ov_logfile_info("New client connected, socket %d", receivesocket);
 		//copy socket to created tcpclient-object
-		httpserv_httpclient_receivesocket_set(ptcpc, receivesocket);
+		ksservhttp_httpclient_receivesocket_set(ptcpc, receivesocket);
 		this->v_status = STATUS_TCPCON_OK;
 	} else {
 		ov_logfile_error("Creating of TCPClient failed while New client connected, socket %d ", receivesocket);
