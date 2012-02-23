@@ -44,7 +44,7 @@
 
 
 #include "ksservhttp.h"
-#include "libov/ov_macros.h"
+#include "config.h"
 
 
 OV_DLLFNCEXPORT OV_STRING ksservhttp_staticfile_mimetype_get(

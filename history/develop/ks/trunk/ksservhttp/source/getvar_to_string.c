@@ -36,10 +36,6 @@
 *
 ***********************************************************************/
 
-#include "libov/ov_ov.h"
-#include "libov/ov_string.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_vendortree.h"
 #include "config.h"
 
 #define GETVAR_TO_STRING_RETURN \

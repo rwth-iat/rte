@@ -36,10 +36,6 @@
 *
 ***********************************************************************/
 
-#include "libov/ov_ov.h"
-#include "libov/ov_string.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
 #include "config.h"
 
 #define CHECK_BOOLTRUE(Value)	\

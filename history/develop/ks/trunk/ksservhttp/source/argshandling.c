@@ -36,10 +36,6 @@
 *
 ***********************************************************************/
 
-#include "libov/ov_ov.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
-
 #include "config.h"
 
 /**
@@ -70,25 +66,21 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 			if(ov_string_getlength(args->value[i]) > ov_string_getlength(varname)){
 				//if varname = var search for var[ to allocate a list of variables
 				//construct the mask to cut off
-				ov_string_append(&mask, "%.");
-				ov_string_print(&temp, "%i", ov_string_getlength(varname)+1);
-				ov_string_append(&mask, temp);
-				ov_string_append(&mask, "s");
+				ov_string_print(&mask, "%%.%is", ov_string_getlength(varname)+1);
 				//cut off the first length+1 characters
 				ov_string_print(&temp, mask, args->value[i]);
 				//compare the cut off with "varname["
-				ov_string_setvalue(&compare, "");
 				ov_string_print(&compare, "%s[", varname);
 				if(ov_string_compare(temp, compare) == OV_STRCMP_EQUAL){
 					Ov_SetDynamicVectorLength(re,re->veclen+1,STRING);
 					ov_string_setvalue(&(re->value[re->veclen-1]), args->value[i+1]);
 				}
-				ov_string_setvalue(&mask, NULL);
-				ov_string_setvalue(&temp, NULL);
-				ov_string_setvalue(&compare, NULL);
 			}
 		}
 	}
+	ov_string_setvalue(&mask, NULL);
+	ov_string_setvalue(&temp, NULL);
+	ov_string_setvalue(&compare, NULL);
 	return OV_ERR_OK;
 }
 

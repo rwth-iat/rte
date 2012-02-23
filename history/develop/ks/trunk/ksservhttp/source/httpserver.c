@@ -59,11 +59,6 @@
 #include <fcntl.h>
 #endif
 
-#include "libov/ov_macros.h"
-#include "libov/ov_path.h"
-#include "libov/ov_logfile.h"
-
-
 /**
  * Returns the port on which the object is listening.
  */
