@@ -59,7 +59,6 @@
 OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 	OV_RESULT result;
 
-	OV_INSTPTR_ov_domain 			domain = NULL;
 	OV_INSTPTR_ov_domain			phttpservers  = NULL;
 	OV_INSTPTR_ov_domain			pcommunication  = NULL;
 	OV_INSTPTR_ksservhttp_httpserver	phttpserver  = NULL;
@@ -76,25 +75,13 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 	if(Ov_OK(result))
 	{
 		/*
-		*       get "/" pointer
-		*/
-		domain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer("/", 2);
-		if(!domain)
-		{
-			ov_logfile_error("Fatal: Could not find Domain '/'! - Fatal Error");
-			return OV_ERR_GENERIC;
-		}
-
-
-
-		/*
 		*       create communication container
 		*/
 		//communication container should be provided by ksserv
-		pcommunication = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, domain, "communication");
+		pcommunication = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, &pdb->root, "communication");
 		if(!pcommunication)
 		{
-			result = Ov_CreateObject(ov_domain, pcommunication, domain, "communication");
+			result = Ov_CreateObject(ov_domain, pcommunication, &pdb->root, "communication");
 			if(Ov_Fail(result))
 			{
 				ov_logfile_error("Fatal: Could not create Object 'communication'");
@@ -105,7 +92,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 		/*
 		*       create httpservers container
 		*/
-		phttpservers = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, pcommunication, "httpservers");
+		phttpservers = Ov_SearchChildEx(ov_containment, pcommunication, "httpservers", ov_domain);
 		if(!phttpservers)
 		{
 			result = Ov_CreateObject(ov_domain, phttpservers, pcommunication, "httpservers");
@@ -120,7 +107,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 		/*
 		*       create "httpserver" object
 		*/
-	   phttpserver = (OV_INSTPTR_ksservhttp_httpserver)Ov_SearchChild(ov_containment, phttpservers, "httpserver");
+	   phttpserver = Ov_SearchChildEx(ov_containment, phttpservers, "httpserver", ksservhttp_httpserver);
 	   if(!phttpserver)
 	   {
     	   result = Ov_CreateObject(ksservhttp_httpserver, phttpserver, phttpservers, "httpserver");
@@ -134,7 +121,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 	   /*
 	    * 		create "staticfiles" container
 	    */
-		pstaticfiles = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, phttpserver, "staticfiles");
+		pstaticfiles = Ov_SearchChildEx(ov_containment, phttpserver, "staticfiles", ov_domain);
 		if(!phttpservers)
 		{
 			result = Ov_CreateObject(ov_domain, pstaticfiles, phttpserver, "staticfiles");
@@ -145,11 +132,10 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 				return result;
 			}
 		}
-
 		/*
 		 * 		create "index.html"
 		 */
-		pindexhtml = (OV_INSTPTR_ksservhttp_staticfile)Ov_SearchChild(ov_containment, pstaticfiles, "index.html");
+		pindexhtml = Ov_SearchChildEx(ov_containment, pstaticfiles, "index.html", ksservhttp_staticfile);
 		if(!pindexhtml)
 		{
 			result = Ov_CreateObject(ksservhttp_staticfile, pindexhtml, pstaticfiles, "index.html");
@@ -160,8 +146,8 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 				return result;
 			}
 
-			//set value
-			ov_string_setvalue(&(pindexhtml->v_content), "<html><h2>It works!</h2>Powered by ACPLT/OV.</html>");
+			//set default value
+			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html><html><head><title>OV-http Server</title></head><body><h1>It works!</h1>Powered by ACPLT/OV.</body></html>");
 
 		}
 	}

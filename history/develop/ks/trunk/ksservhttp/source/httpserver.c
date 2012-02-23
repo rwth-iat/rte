@@ -103,10 +103,8 @@ OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpserver_listensocket_set(
 
 /**
  * Procedure called on object startup.
- * It creates a managercom-object which takes over the
- * communication with the ks_manager. 
  * It starts the listening on with variable OWNPORT
- * declared port or by default on port 7509.
+ * declared port or by default on port 8080.
  */
 OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 	OV_INSTPTR_ksservhttp_httpserver this =
@@ -116,14 +114,13 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 	OV_INSTPTR_ov_domain pstaticfiles;
 	OV_INSTPTR_ksservhttp_httpclienthandler ptcpc;
 
-	pclients = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "clients");
-	pstaticfiles = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "staticfiles");
+	pclients = Ov_SearchChildEx(ov_containment, thisdomain, "clients", ov_domain);
+	pstaticfiles = Ov_SearchChildEx(ov_containment, thisdomain, "staticfiles", ov_domain);
 	ptcpc =  NULL;
 
-	//KSDEVEL ov_logfile_info("STARTUP TCPCONNECTION");
-
-
-	//store port to object, 8080 is the default port
+	//TODO: port should be setable via env variable
+	//store port to object
+	//ksservhttp_httpserver_port_set(this, this->v_port);
 	ksservhttp_httpserver_port_set(this, 8080);
 
 	//create clients domain
@@ -161,8 +158,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 
 /**
  * Procedure called on object shutdown. 
- * It closes open socket and deletes created
- * managercom- and manager-objects.
+ * It closes open socket.
  */
 OV_DLLFNCEXPORT void ksservhttp_httpserver_shutdown(OV_INSTPTR_ov_object pobj) {
 	int listensocket;

@@ -58,7 +58,8 @@ LIBRARY ksservhttp
 				INITIALVALUE = 0;
 			cycusecs	:	INT
 				INITIALVALUE = 1;
-			port : INT HAS_ACCESSORS;
+			port : INT HAS_ACCESSORS
+				INITIALVALUE = 8080;
 			listensocket : INT HAS_ACCESSORS;
 			status	:	INT
 				COMMENT	=	"0:OK"
