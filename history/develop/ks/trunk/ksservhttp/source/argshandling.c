@@ -49,7 +49,6 @@
  */
 OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re){
 	int i = 0;
-	OV_STRING mask = NULL;
 	OV_STRING compare = NULL;
 	//initialize the return vector properly
 	Ov_SetDynamicVectorLength(re,0,STRING);
@@ -72,7 +71,6 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 			}
 		}
 	}
-	ov_string_setvalue(&mask, NULL);
 	ov_string_setvalue(&compare, NULL);
 	return OV_ERR_OK;
 }
