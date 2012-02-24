@@ -49,29 +49,27 @@
  */
 OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re){
 	int i = 0;
-	OV_STRING compare = NULL;
-	//initialize the return vector properly
-	Ov_SetDynamicVectorLength(re,0,STRING);
+	int varname_len = 0;
+	Ov_SetDynamicVectorLength(re,0,STRING);	//initialize the return vector properly
 	if(args == NULL || varname == NULL)return OV_ERR_OK;
 	//iterate over argument names
 	for(i = 0;i < args->veclen;i=i+2){
 		//simple match -> put value in the output list
-		if(ov_string_compare(args->value[i], varname) == OV_STRCMP_EQUAL){
-			Ov_SetDynamicVectorLength(re,re->veclen+1,STRING);
-			ov_string_setvalue(&(re->value[re->veclen-1]), args->value[i+1]);
-		}else{
-			//match for varname and an opening bracket
-			if(ov_string_getlength(args->value[i]) > ov_string_getlength(varname)){
-				//if varname = var search for var[ to allocate a list of variables
-				ov_string_print(&compare, "%s[", varname);
-				if(strncmp(args->value[i], compare, ov_string_getlength(varname)+1) == OV_STRCMP_EQUAL){
+		varname_len = ov_string_getlength(varname);
+		if(strncmp(args->value[i], varname, varname_len) == OV_STRCMP_EQUAL){
+			if((int)ov_string_getlength(args->value[i]) == varname_len){
+				Ov_SetDynamicVectorLength(re,re->veclen+1,STRING);
+				ov_string_setvalue(&(re->value[re->veclen-1]), args->value[i+1]);
+			}else{
+				//match for varname and an opening bracket
+				//if varname = var => search for var[ to allocate a list of variables
+				if((args->value[i])[varname_len] == '['){
 					Ov_SetDynamicVectorLength(re,re->veclen+1,STRING);
 					ov_string_setvalue(&(re->value[re->veclen-1]), args->value[i+1]);
 				}
 			}
 		}
 	}
-	ov_string_setvalue(&compare, NULL);
 	return OV_ERR_OK;
 }
 
