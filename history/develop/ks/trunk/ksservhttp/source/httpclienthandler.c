@@ -142,28 +142,50 @@ OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
 	return;
 }
 
-void map_result_to_http(OV_RESULT* result, OV_STRING* re){
+void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* header, OV_STRING* body){
+	OV_STRING tmp_header = NULL;
+	OV_STRING tmp_body = NULL;
+	//this is very ugly, but better than code duplication
+	//the problem is that ov_string_print does not support NULL pointers as argument
+	if(*header == NULL){
+		tmp_header = "";
+	}else{
+		tmp_header = *header;
+	}
+	if(*body == NULL){
+		tmp_body = "";
+	}else{
+		tmp_body = *body;
+	}
+	//no free needed since no memory allocated
 	switch (*result)
 		{
+			//still some duplication, but good enougth for now
 			case OV_ERR_OK:
-				ov_string_setvalue(re, HTTP_200_HEADER);
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_200_HEADER, tmp_header);
 				break;
 			case OV_ERR_GENERIC:
-				ov_string_setvalue(re, HTTP_503_ERROR);
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
 				break;
 			case OV_ERR_BADNAME:
-				ov_string_setvalue(re, HTTP_400_ERROR);
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
 				break;
 			case OV_ERR_BADPARAM:
-				ov_string_setvalue(re, HTTP_400_ERROR);
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
 				break;
 			case OV_ERR_BADPATH:
-				ov_string_setvalue(re, HTTP_404_ERROR);
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_404_BODY, tmp_body);
 				break;
 			default:
-				ov_string_setvalue(re, HTTP_503_ERROR);
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
 				break;
     }
+
 }
 
 #define EXEC_GETVAR_RETURN ov_string_freelist(plist); \
@@ -171,7 +193,7 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* re){
 						ov_string_setvalue(&message, NULL);\
 						return
 
-void exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
+OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING *plist = NULL;
 	OV_UINT len;
 	OV_STRING_VEC match = {0,NULL};
@@ -179,31 +201,26 @@ void exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING message = NULL;
 
 	if(args->veclen != 2){
-    	ov_string_setvalue(re, HTTP_400_ERROR); //not enough params - need a name!
     	ov_string_print(re, "%s\nNumber of parameter should be 1, but is %i", *re, args->veclen/2);
-    	EXEC_GETVAR_RETURN;
+    	EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
 
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
-    	ov_string_setvalue(re, HTTP_400_ERROR);
-    	ov_string_append(re, "\nVariable path not found");
-    	EXEC_GETVAR_RETURN;
+    	ov_string_append(re, "Variable path not found");
+    	EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
     plist = ov_string_split((match.value[0]), ".", &len);
     if(len!=2){
-    	ov_string_setvalue(re, HTTP_400_ERROR); //no . found, thus no variable name given
     	ov_string_freelist(plist);
-    	ov_string_append(re, "\nVariablename must contain a dot");
-    	EXEC_GETVAR_RETURN;
+    	ov_string_append(re, "Variablename must contain a dot");
+    	EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
     }
     result = getvar_to_string(ov_path_getobjectpointer(plist[0],2),&(plist[1]),&message);
 
-    map_result_to_http(&result, re);
-    ov_string_append(re, "\n");
    	ov_string_append(re, message);
 
-    EXEC_GETVAR_RETURN;
+    EXEC_GETVAR_RETURN result;
 }
 
 #define EXEC_SETVAR_RETURN ov_string_freelist(plist); \
@@ -211,7 +228,7 @@ void exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 						ov_string_setvalue(&message, NULL);\
 						return
 
-void exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
+OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING *plist = NULL;
 	OV_UINT len;
 	OV_STRING_VEC match = {0,NULL};
@@ -219,43 +236,37 @@ void exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING message = NULL;
 
 	if(args->veclen != 4){
-    	ov_string_setvalue(re, HTTP_400_ERROR); //not enough params - need a name!
-    	ov_string_print(re, "%s\nNumber of parameter should be 2, but is %i", *re, args->veclen/2);
-    	EXEC_SETVAR_RETURN;
+    	ov_string_print(re, "Number of parameter should be 2, but is %i", args->veclen/2);
+    	EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
-    	ov_string_setvalue(re, HTTP_400_ERROR);
-    	ov_string_print(re, "%s\nVariable path not found", *re);
-    	EXEC_SETVAR_RETURN;
+    	ov_string_print(re, "Variable path not found");
+    	EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
     plist = ov_string_split(match.value[0], ".", &len);
     if(len!=2){
-    	ov_string_setvalue(re, HTTP_400_ERROR); //no . found, thus no variable name given
     	ov_string_freelist(plist);
-    	ov_string_append(re, "\nVariablename must contain a dot");
-    	EXEC_SETVAR_RETURN;
+    	ov_string_append(re, "Variablename must contain a dot");
+    	EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
     }
 	find_arguments(args, "newvalue", &match);
 	if(match.veclen!=1){
-    	ov_string_setvalue(re, HTTP_400_ERROR);
-    	ov_string_print(re, "%s\nVariable newvalue not found", *re);
-    	EXEC_SETVAR_RETURN;
+    	ov_string_print(re, "Variable newvalue not found");
+    	EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400;
 	}
 	result = setvar_at_object(ov_path_getobjectpointer(plist[0],2),&(plist[1]),&match.value[0], &message);
 
-    map_result_to_http(&result, re);
-    ov_string_append(re, "\n");
    	ov_string_append(re, message);
 
-    EXEC_SETVAR_RETURN;
+    EXEC_SETVAR_RETURN result;
 }
 
 #define EXEC_GETEP_RETURN \
 						Ov_SetDynamicVectorLength(&match,0,STRING);\
 						ov_string_setvalue(&message, NULL);\
 						return
-void exec_getep(OV_STRING_VEC* args, OV_STRING* re){
+OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_ov_object pChild = NULL;
 	OV_STRING_VEC match = {0,NULL};
@@ -266,52 +277,44 @@ void exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	//objectType=OT_DOMAINS|OT_VARIABLES|... (siehe tcl-tks doku)
 	//TODO: outputinfos (anderer name muss her) ein bis sieben informatinen liefert tcl-tks
 	if(args->veclen != 4){
-    	ov_string_setvalue(re, HTTP_400_ERROR); //not enough params - need a name!
-    	ov_string_print(re, "%s\nNumber of parameter should be 2, but is %i", *re, args->veclen/2);
-    	EXEC_GETEP_RETURN;
+    	ov_string_print(re, "Number of parameter should be 2, but is %i", args->veclen/2);
+    	EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
 	}
 
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
-    	ov_string_setvalue(re, HTTP_400_ERROR);
-    	ov_string_append(re, "\nVariable path not found");
-    	EXEC_GETEP_RETURN;
+    	ov_string_append(re, "Variable path not found");
+    	EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
 	}
 	pObj = ov_path_getobjectpointer(match.value[0],0);
 	if (pObj == NULL){
-    	ov_string_setvalue(re, HTTP_404_ERROR);
-    	ov_string_append(re, "\nVariable not found");
-    	EXEC_GETEP_RETURN;
+    	ov_string_append(re, "Variable not found");
+    	EXEC_GETEP_RETURN OV_ERR_BADPATH; //404
 	}
 	find_arguments(args, "objectType", &match);
 	if(match.veclen!=1){
-    	ov_string_setvalue(re, HTTP_400_ERROR);
-    	ov_string_append(re, "\nobjectType not found");
-    	EXEC_GETEP_RETURN;
+    	ov_string_append(re, "objectType not found");
+    	EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
 	}
 	if(ov_string_compare(match.value[0], "OT_DOMAINS") == OV_STRCMP_EQUAL
 			&& Ov_CanCastTo(ov_domain, pObj)){
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
 			if (message == NULL){
-				ov_string_print(&message, "{%s}\n", pChild->v_identifier);
+				ov_string_print(&message, "{%s}\r\n", pChild->v_identifier);
 			}else{
 				ov_string_print(&message, "%s{%s}", message, pChild->v_identifier);
 			}
 		}
 	}else if(ov_string_compare(match.value[0], "OT_VARIABLES") == OV_STRCMP_EQUAL){
-    	ov_string_setvalue(re, HTTP_503_ERROR);
-    	ov_string_append(re, "\nobjectType VARIABLES not implemented");
-    	EXEC_GETEP_RETURN;
+    	ov_string_append(re, "objectType VARIABLES not implemented");
+    	EXEC_GETEP_RETURN OV_ERR_GENERIC; //503
 	}else{
-    	ov_string_setvalue(re, HTTP_503_ERROR);
-    	ov_string_append(re, "\nobjectType not implemented");
-    	EXEC_GETEP_RETURN;
+    	ov_string_append(re, "objectType not implemented");
+    	EXEC_GETEP_RETURN OV_ERR_GENERIC; //503
 	}
-	ov_string_setvalue(re, HTTP_200_HEADER);
-	ov_string_append(re, "\n");
    	ov_string_append(re, message);
 
-	EXEC_GETEP_RETURN;
+	EXEC_GETEP_RETURN OV_ERR_OK;
 }
 
 /**
@@ -335,8 +338,15 @@ void ksservhttp_httpclienthandler_typemethod(
     int buffer_size = 0; //factor of buffer size * BUFFER_CHUNK_SIZE
     char *buffer_location = 0; //pointer into the buffer 
     char* placeInBuffer = NULL;
-    OV_STRING reply, cmd;
-    OV_RESULT fr;
+
+    //http stuff
+    OV_STRING *http_request;
+    OV_STRING header, body, cmd, http_reply;
+    OV_RESULT result = OV_ERR_OK;
+    OV_BOOL keep_alive;
+    OV_STRING http_version;
+    OV_UINT len;
+
     //vector of the variables, even elements are variable names, odds are values
     OV_STRING_VEC args = {0,NULL};
 
@@ -354,6 +364,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		return;
 	}
 	do {//read HTTP request from socket in chunks until nothing more appears
+		//TODO: potential error: need to read until \r\n\r\n or content-length!
 		buffer_size++;
 		buffer = (char*)realloc(buffer, BUFFER_CHUNK_SIZE*buffer_size);
 		if(buffer == 0) {
@@ -388,40 +399,57 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
 
-			reply = NULL; //raw reply to send via TCP
 			cmd = NULL; //the get request without arguments
-
-			//buffer contains the raw request
+			body = NULL; //reply *WITHOUT HEADER*
+			header = NULL; //header of the reply
+			http_reply = NULL; //raw reply to send via TCP
+			http_version = NULL; //HTTP version
+			ov_string_setvalue(&http_version, "1.1"); //1.1 is default one
 
 			ov_logfile_error("tcpclient/typemethod: got http command w/ %d bytes",bytes);
 			//ov_logfile_error("%s", buffer);
 
-		    //parse request into get command and arguments request
-			fr = parse_http_request(buffer, &cmd, &args);
+			//buffer contains the raw request
+			//split header and footer of the http request
+		    http_request = ov_string_split(buffer, "\r\n\r\n", &len);
+		    //len is always > 0
+		    //last line of the header will not contain \r\n - fix it
+		    ov_string_append(&(http_request[0]), "\r\n");
 
-			if(Ov_Fail(fr)){
-				reply = HTTP_400_ERROR;
-			}
+		    //http_request[0] is the request header
+		    //http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
-			if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
-				exec_getvar(&args, &reply);
-			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
-				exec_setvar(&args, &reply);
-			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
-				exec_getep(&args, &reply);
-			}else if(ov_string_compare(cmd, "/getHandle") == OV_STRCMP_EQUAL){
-				ov_string_append(&reply, HTTP_200_HEADER);
-				ov_string_append(&reply, "\n");
-				ov_string_append(&reply, "Tks-NoHandleSupported");
-				//only communication to this server allowed
-			}else if(ov_string_compare(cmd, "/delHandle") == OV_STRCMP_EQUAL){
-				ov_string_append(&reply, HTTP_200_HEADER);
-				ov_string_append(&reply, "\n");
-				ov_string_append(&reply, "We do not support Handles, so everything is ok.");
+		    //scan header for Connection: close - default behavior is keep-alive
+		    if(strstr(http_request[0], "Connection: close\r\n")){
+		    	keep_alive = FALSE;
+		    }else{
+		    	keep_alive = TRUE;
+		    }
+
+		    //parse request header into get command and arguments request
+		    if(!Ov_Fail(result)){
+		    	result = parse_http_header(http_request[0], &cmd, &args, &http_version);
+		    }
+
+			if(!Ov_Fail(result)){
+				if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
+					result = exec_getvar(&args, &body);
+				}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
+					result = exec_setvar(&args, &body);
+				}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
+					result = exec_getep(&args, &body);
+				}else if(ov_string_compare(cmd, "/getHandle") == OV_STRCMP_EQUAL){
+					result = OV_ERR_BADPATH; //404
+					ov_string_append(&body, "Tks-NoHandleSupported");
+					//only communication to this server allowed
+				}else if(ov_string_compare(cmd, "/delHandle") == OV_STRCMP_EQUAL){
+					result = OV_ERR_BADPATH; //404
+					ov_string_append(&body, "We do not support Handles, so everything is ok.");
+				}
 			}
 
 			//no command matched yet... Is it a static file?
-			if(reply == NULL){
+			if(!Ov_Fail(result) && body == NULL){
 				OV_INSTPTR_ov_domain pstaticfiles;
 				OV_INSTPTR_ov_domain thisdomain = Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, this));
 				OV_STRING filename;
@@ -435,22 +463,39 @@ void ksservhttp_httpclienthandler_typemethod(
 				temp = Ov_SearchChild(ov_containment, pstaticfiles, filename);
 				if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
 					staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
-					ov_string_append(&reply, HTTP_200_HEADER);
-					ov_string_append(&reply, "Content-type: ");
-					ov_string_append(&reply, staticfile->v_mimetype);
-					ov_string_append(&reply, "\n\n");
-					ov_string_append(&reply, staticfile->v_content);
+					//adding to the end of the header
+					ov_string_print(&header, "Content-type: %s\r\n", staticfile->v_mimetype);
+					result = OV_ERR_OK;
+					ov_string_append(&body, staticfile->v_content);
+				}else{
+					result = OV_ERR_BADPATH;
 				}
 			}
 
-			//no reply formed yet till now -- 404 error -- default behavior
-			if(reply == NULL){
-				reply = HTTP_404_ERROR;
+			//now we have to format the raw http answer
+			map_result_to_http(&result, &http_version, &header, &body);
+			//Append common data to header:
+			ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV\r\n", header);
+			//handle keep_alives
+			if (keep_alive == TRUE) {
+				ov_string_print(&header, "%sConnection: keep-alive\r\n", header);
+			}else{
+				ov_string_print(&header, "%sConnection: close\r\n", header);
 			}
+			//append content length and finalize the header
+			ov_string_print(&header, "%sContent-Length: %i\r\n\r\n", header, (int)ov_string_getlength(body));
+
+			//build http answer from header and body
+			ov_string_print(&http_reply, "%s%s", header, body);
+			//free ressources
+			ov_string_setvalue(&header, NULL);
+			ov_string_setvalue(&body, NULL);
+			ov_string_setvalue(&cmd, NULL);
+			ov_string_setvalue(&http_version, NULL);
 
 			//pushing answer back to client through the tcp socket
-			size_return = ov_string_getlength(reply);
-			placeInBuffer = reply;
+			size_return = ov_string_getlength(http_reply);
+			placeInBuffer = http_reply;
 
 			ov_logfile_debug("tcpclient: sending answer: %d bytes", (size_return));
 			do
@@ -476,7 +521,7 @@ void ksservhttp_httpclienthandler_typemethod(
 				sentBytes += sentChunkSize;
 				ov_logfile_debug("tcpclient: answer sent, sentChunkSize: %d sentBytes: %d", sentChunkSize, sentBytes);
 				//move pointer to next chunk
-				placeInBuffer = &(reply[sentBytes]);
+				placeInBuffer = &(body[sentBytes]);
 
 				if(sentBytes < size_return)
 				{
@@ -491,14 +536,15 @@ void ksservhttp_httpclienthandler_typemethod(
 				}
 			}while(sentBytes < size_return);
 
-
-			ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
+			if (keep_alive != TRUE) {
+				ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
+			}
 			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
 	}
 	//free up the memory
-	ov_string_setvalue(&reply, NULL);
-	ov_string_setvalue(&cmd, NULL);
+	ov_string_setvalue(&http_reply, NULL);
 	Ov_SetDynamicVectorLength(&args,0,STRING);
+	ov_string_freelist(http_request);
 	free(buffer);
 	return;
 }

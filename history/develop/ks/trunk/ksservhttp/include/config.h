@@ -69,13 +69,16 @@
 #define STATUS_TCPCON_SOCKACCEPTFAILED 5
 #define STATUS_TCPCON_SOCKNONBLOCKCLIENTFAILED 6
 
-#define HTTP_COMMON_HEADER "Access-Control-Allow-Origin:*\nConnection: close\n"
-#define HTTP_404_ERROR "HTTP/1.1 404 Not Found\n" HTTP_COMMON_HEADER "\nerror 404: path not found\n"
-#define HTTP_400_ERROR "HTTP/1.1 400 OK\n" HTTP_COMMON_HEADER "\nerror 400: parameter are not valid\n"
-#define HTTP_418_ERROR "HTTP/1.1 418 OK\n" HTTP_COMMON_HEADER "\nI am a teapot (see RFC 2324)\n"
-#define HTTP_500_ERROR "HTTP/1.1 500 OK\n" HTTP_COMMON_HEADER "\nerror 500: internal server error\n"
-#define HTTP_503_ERROR "HTTP/1.1 503 OK\n" HTTP_COMMON_HEADER "\nerror 503: service not available\n"
-#define HTTP_200_HEADER "HTTP/1.1 200 OK\n" HTTP_COMMON_HEADER //content has to follow
+//"HTTP/1.x " will be appended before header
+#define HTTP_404_HEADER "404 Not Found\r\n"
+#define HTTP_404_BODY   "error 404: path not found\r\n"
+#define HTTP_400_HEADER "400 Bad Request\r\n"
+#define HTTP_400_BODY   "error 400: parameter are not valid\r\n"
+#define HTTP_500_HEADER "500 Internal Server Error\r\n"
+#define HTTP_500_BODY   "error 500: internal server error\r\n"
+#define HTTP_503_HEADER "503 Service Unavailable\r\n"
+#define HTTP_503_BODY 	"error 503: service not available\r\n"
+#define HTTP_200_HEADER "200 OK\r\n"
 
 //manager status
 #define STATUS_MANAGER_OK          0
@@ -100,5 +103,5 @@
 
 OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STRING* message);
 OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STRING* newcontent, OV_STRING* message);
-OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args);
+OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version);
 OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re);

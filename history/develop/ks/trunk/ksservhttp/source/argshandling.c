@@ -83,8 +83,9 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
  * @param buffer input raw request
  * @param cmd output parsed get command
  * @param args output string vector of form value content
+ * @param http_version sets HTTP/1.1 or HTTP/1.0
  */
-OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args)
+OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version)
 {
     OV_STRING *plist, *pelement;
     OV_UINT i, len, len1;
@@ -92,7 +93,7 @@ OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* ar
 	//initialize return vector properly
 	Ov_SetDynamicVectorLength(args,0,STRING);
     //split out the first line containing the GET command
-    plist = ov_string_split(buffer, "\n", &len);
+    plist = ov_string_split(buffer, "\r\n", &len);
     if(len<=0){
     	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400
     }
@@ -100,10 +101,15 @@ OV_RESULT parse_http_request(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* ar
 
     //split out the actual GET request
     plist = ov_string_split(rawrequest, " ", &len);
-    if(len<1){
+    if(len!=3){
     	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400
     }
     ov_string_setvalue(&rawrequest, plist[1]);
+    //does the client use HTTP use 1.0
+    if(ov_string_compare(plist[2], "HTTP/1.0") == OV_STRCMP_EQUAL){
+    	//if so, use 1.0, otherwise 1.1 is set
+    	ov_string_setvalue(http_version, "1.0");
+    }
 
     //get the command, cmd contains the /-prefexed call now
     //rawrequest contains the vars and args (raw)

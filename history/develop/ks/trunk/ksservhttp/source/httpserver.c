@@ -160,7 +160,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_shutdown(OV_INSTPTR_ov_object pobj) {
 	OV_INSTPTR_ksservhttp_httpserver this = Ov_StaticPtrCast(ksservhttp_httpserver, pobj);
 	//close socket
 	listensocket = ksservhttp_httpserver_listensocket_get(this);
-	if (!(CLOSE_SOCKET(listensocket)))
+	if ((CLOSE_SOCKET(listensocket)) != 0)
 		perror("shutdown listen");
 	ksservhttp_httpserver_listensocket_set(this, -1);
 
