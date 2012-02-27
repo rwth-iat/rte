@@ -343,7 +343,7 @@ void ksservhttp_httpclienthandler_typemethod(
     OV_STRING *http_request;
     OV_STRING header, body, cmd, http_reply;
     OV_RESULT result = OV_ERR_OK;
-    OV_BOOL keep_alive = TRUE; //default is to keep theconnection open
+    OV_BOOL keep_alive = TRUE; //default is to keep the connection open
     OV_STRING http_version;
     OV_UINT len;
 
@@ -402,6 +402,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			header = NULL; //header of the reply
 			http_reply = NULL; //raw reply to send via TCP
 			http_version = NULL; //HTTP version
+			http_request = NULL;
 
 			//MAIN ROUTINE OF THE WEB SERVER
 
@@ -434,13 +435,12 @@ void ksservhttp_httpclienthandler_typemethod(
 		    ov_string_setvalue(&(this->v_requestbuffer),"");
 			//len is always > 0
 		    //last line of the header will not contain \r\n - fix it
-		    ov_string_append(&(http_request[0]), "\r\n");
 
 		    //http_request[0] is the request header
 		    //http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
 		    //scan header for Connection: close - default behavior is keep-alive
-		    if(strstr(http_request[0], "Connection: close\r\n")){
+		    if(strstr(http_request[0], "Connection: close")){
 		    	keep_alive = FALSE;
 		    }
 
@@ -448,6 +448,9 @@ void ksservhttp_httpclienthandler_typemethod(
 		    if(!Ov_Fail(result)){
 		    	result = parse_http_header(http_request[0], &cmd, &args, &http_version);
 		    }
+
+		    //raw request not needed any longer
+			ov_string_freelist(http_request);
 
 			if(!Ov_Fail(result)){
 				if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
@@ -470,7 +473,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			if(!Ov_Fail(result) && body == NULL){
 				OV_INSTPTR_ov_domain pstaticfiles;
 				OV_INSTPTR_ov_domain thisdomain = Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, this));
-				OV_STRING filename;
+				OV_STRING filename = NULL;
 				//assume index.html as a root file
 				if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
 					filename = "index.html";
@@ -560,9 +563,8 @@ void ksservhttp_httpclienthandler_typemethod(
 			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
 	}
 	//free up the memory
+	free(buffer);
 	ov_string_setvalue(&http_reply, NULL);
 	Ov_SetDynamicVectorLength(&args,0,STRING);
-	ov_string_freelist(http_request);
-	free(buffer);
 	return;
 }
