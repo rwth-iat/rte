@@ -105,7 +105,7 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
     	PARSE_HTTP_REQUEST_RETURN OV_ERR_BADPARAM; //400
     }
     ov_string_setvalue(&rawrequest, plist[1]);
-    //does the client use HTTP use 1.0
+    //does the client use HTTP 1.0?
     if(ov_string_compare(plist[2], "HTTP/1.0") == OV_STRCMP_EQUAL){
     	//if so, use 1.0, otherwise 1.1 is set
     	ov_string_setvalue(http_version, "1.0");

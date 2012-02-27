@@ -69,6 +69,9 @@
 #define STATUS_TCPCON_SOCKACCEPTFAILED 5
 #define STATUS_TCPCON_SOCKNONBLOCKCLIENTFAILED 6
 
+//maximal saved HTTP REQUEST
+#define MAX_HTTP_REQUEST_SIZE 1024
+
 //"HTTP/1.x " will be appended before header
 #define HTTP_404_HEADER "404 Not Found\r\n"
 #define HTTP_404_BODY   "error 404: path not found\r\n"

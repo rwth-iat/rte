@@ -343,7 +343,7 @@ void ksservhttp_httpclienthandler_typemethod(
     OV_STRING *http_request;
     OV_STRING header, body, cmd, http_reply;
     OV_RESULT result = OV_ERR_OK;
-    OV_BOOL keep_alive;
+    OV_BOOL keep_alive = TRUE; //default is to keep theconnection open
     OV_STRING http_version;
     OV_UINT len;
 
@@ -364,7 +364,6 @@ void ksservhttp_httpclienthandler_typemethod(
 		return;
 	}
 	do {//read HTTP request from socket in chunks until nothing more appears
-		//TODO: potential error: need to read until \r\n\r\n or content-length!
 		buffer_size++;
 		buffer = (char*)realloc(buffer, BUFFER_CHUNK_SIZE*buffer_size);
 		if(buffer == 0) {
@@ -394,8 +393,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 	//} else if (bytes == -1) {  // no current KS command this turn
 	} else if(bytes > 0) {
-			//this is the important part - http request was read successfully
-			//MAIN ROUTINE OF THE WEB SERVER
+			//this is the important part - somehting was read on tht tcp buffer
 
 			ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
 
@@ -404,15 +402,37 @@ void ksservhttp_httpclienthandler_typemethod(
 			header = NULL; //header of the reply
 			http_reply = NULL; //raw reply to send via TCP
 			http_version = NULL; //HTTP version
+
+			//MAIN ROUTINE OF THE WEB SERVER
+
+			//NOTE: this works only for GET, for post one needs to evaluate content-length
+			//appending the read chunk to the buffer that is saved between the cycles
+			if(ov_string_getlength(this->v_requestbuffer) + ov_string_getlength(buffer) <= MAX_HTTP_REQUEST_SIZE){
+				ov_string_append(&(this->v_requestbuffer),buffer);
+			}else{
+				result = OV_ERR_BADPARAM; //400
+				ov_string_append(&body, "The request is too long");
+				keep_alive = FALSE; //close connection
+				//append double line break and let server process the input
+				ov_string_append(&(this->v_requestbuffer),"\r\n\r\n");
+			}
+			//if no double line break detected yet - wait till next cycle
+			if(!strstr(this->v_requestbuffer, "\r\n\r\n")){
+				free(buffer);
+				return;
+			}
+
 			ov_string_setvalue(&http_version, "1.1"); //1.1 is default one
 
 			ov_logfile_error("tcpclient/typemethod: got http command w/ %d bytes",bytes);
 			//ov_logfile_error("%s", buffer);
 
-			//buffer contains the raw request
+			//this->v_requestbuffer contains the raw request
 			//split header and footer of the http request
-		    http_request = ov_string_split(buffer, "\r\n\r\n", &len);
-		    //len is always > 0
+		    http_request = ov_string_split(this->v_requestbuffer, "\r\n\r\n", &len);
+		    //empty the buffer
+		    ov_string_setvalue(&(this->v_requestbuffer),"");
+			//len is always > 0
 		    //last line of the header will not contain \r\n - fix it
 		    ov_string_append(&(http_request[0]), "\r\n");
 
@@ -422,8 +442,6 @@ void ksservhttp_httpclienthandler_typemethod(
 		    //scan header for Connection: close - default behavior is keep-alive
 		    if(strstr(http_request[0], "Connection: close\r\n")){
 		    	keep_alive = FALSE;
-		    }else{
-		    	keep_alive = TRUE;
 		    }
 
 		    //parse request header into get command and arguments request

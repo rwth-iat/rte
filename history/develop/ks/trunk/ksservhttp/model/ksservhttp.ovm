@@ -41,7 +41,7 @@
 
 LIBRARY ksservhttp
 	VERSION   = "V0.2 (23-Feb-2012)";
-	AUTHOR    = "Sten Grüner, Henning Mersch, Holger Jeromin";
+	AUTHOR    = "Sten Grï¿½ner, Henning Mersch, Holger Jeromin";
 	COPYRIGHT	= "Copyright (C) 2012 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "HTTP Webserver with lightweight KS and static file support";
 	
@@ -82,6 +82,7 @@ LIBRARY ksservhttp
 		VARIABLES
 			receivesocket : INT HAS_ACCESSORS INITIALVALUE=-1;	
 			deleted	:	BOOL INITIALVALUE = FALSE;
+			requestbuffer : STRING;
 		END_VARIABLES;
 	
 		OPERATIONS
