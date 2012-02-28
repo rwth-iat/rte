@@ -36,6 +36,7 @@
 *
 ***********************************************************************/
 
+#include <ctype.h>
 #include "config.h"
 
 /**
@@ -157,13 +158,15 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
     PARSE_HTTP_HEADER_RETURN OV_ERR_OK;
 }
 
+
+
 //TODO: Merge to OV or rename
 /**
-*	Converts percent characters in asci characters, but skips /
+*	Converts percent characters in ascii characters, but skips /
 *	Note: the memory for the returned string is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
 */
-OV_DLLFNCEXPORT OV_STRING ov_path_topercentNoSlash (
+OV_DLLFNCEXPORT OV_STRING ov_path_topercent_noslash (
 				OV_STRING org
 ) {
 	OV_STRING newstring;

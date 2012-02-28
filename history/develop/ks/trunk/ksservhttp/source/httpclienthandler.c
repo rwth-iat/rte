@@ -518,6 +518,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			if(!Ov_Fail(result) && body == NULL){
 				OV_STRING filename = NULL;
 				OV_STRING filepath = NULL;
+				OV_STRING basepath = NULL;
 				//assume index.html as a root file
 				if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
 					filename = "index.html";
@@ -525,10 +526,12 @@ void ksservhttp_httpclienthandler_typemethod(
 					//remove leading /
 					filename = cmd + 1;
 				}
+				ov_memstack_lock();
+				//basepath is something like /communication/httpservers/httpserver
+				basepath = ov_path_getcanonicalpath((OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,Ov_GetParent(ov_containment,this)), 2); //path to the current client instance
 				//a dot in a filename is represented via a percent notation in an identifier,  so we need
 				//to change the parameter. A directory should be possible, but so we need to skip / in conversion
-				ov_memstack_lock();
-				ov_string_print(&filepath, "/communication/httpservers/httpserver/staticfiles/%s", ov_path_topercentNoSlash(filename));
+				ov_string_print(&filepath, "%s/staticfiles/%s", basepath, ov_path_topercent_noslash(filename));
 				ov_memstack_unlock();
 				temp = ov_path_getobjectpointer(filepath,2);
 				ov_string_setvalue(&filepath, NULL);
