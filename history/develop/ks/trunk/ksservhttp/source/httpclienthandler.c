@@ -164,6 +164,10 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 			case OV_ERR_OK:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_200_HEADER, tmp_header);
 				break;
+			case OV_ERR_BADVALUE:
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_414_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_414_BODY, tmp_body);
+				break;
 			case OV_ERR_GENERIC:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
 				ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
@@ -450,11 +454,11 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			//NOTE: this works only for GET, for post one needs to evaluate content-length
 			//appending the read chunk to the buffer that is saved between the cycles
+
 			if(ov_string_getlength(this->v_requestbuffer) + ov_string_getlength(buffer) <= MAX_HTTP_REQUEST_SIZE){
 				ov_string_append(&(this->v_requestbuffer),buffer);
 			}else{
-				result = OV_ERR_BADPARAM; //400
-				ov_string_append(&body, "The request is too long");
+				result = OV_ERR_BADVALUE; //414
 				keep_alive = FALSE; //close connection
 				//append double line break and let server process the input
 				ov_string_append(&(this->v_requestbuffer),"\r\n\r\n");

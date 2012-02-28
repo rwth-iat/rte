@@ -54,13 +54,15 @@
 #define STATUS_TCPCON_SOCKACCEPTFAILED 5
 #define STATUS_TCPCON_SOCKNONBLOCKCLIENTFAILED 6
 
-//maximal saved HTTP REQUEST
-#define MAX_HTTP_REQUEST_SIZE 1024
+//maximal saved HTTP REQUEST (full request header size)
+#define MAX_HTTP_REQUEST_SIZE 8192
 
 //"HTTP/1.x " will be appended before header
 #define HTTP_200_HEADER "200 OK\r\n"
 #define HTTP_400_HEADER "400 Bad Request\r\n"
 #define HTTP_400_BODY   "error 400: parameter are not valid\r\n"
+#define HTTP_414_HEADER "414 Request Too Long\r\n"
+#define HTTP_414_BODY   "error 414: request too long\r\n"
 #define HTTP_404_HEADER "404 Not Found\r\n"
 #define HTTP_404_BODY   "error 404: path not found\r\n"
 #define HTTP_406_HEADER "406 Not Acceptable\r\n"
