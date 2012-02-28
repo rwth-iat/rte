@@ -317,6 +317,53 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	EXEC_GETEP_RETURN OV_ERR_OK;
 }
 
+/*
+ * The function sends length chars starting from the given pointer
+ *
+  */
+OV_RESULT send_tcp(int socket, char* pointer, int length){
+	int sentBytes=0;
+	int sentChunkSize = 0;
+	do
+	{
+		if((length - sentBytes) > 4096)
+		{
+			sentChunkSize = send(socket, pointer, 4096, 0);
+			if (sentChunkSize == -1)
+			{
+				ov_logfile_error("send() failed");
+				return OV_ERR_GENERIC;
+			}
+		}
+		else
+		{
+			sentChunkSize = send(socket, pointer, (length - sentBytes), 0);
+			if (sentChunkSize == -1)
+			{
+				ov_logfile_error("send() failed");
+				return OV_ERR_GENERIC;
+			}
+		}
+		sentBytes += sentChunkSize;
+		pointer += sentChunkSize;
+		ov_logfile_debug("tcpclient: answer sent, sentChunkSize: %d sentBytes: %d", sentChunkSize, sentBytes);
+		//move pointer to next chunk
+
+		if(sentBytes < length)
+		{
+			//sleep to give time for sending (sleep values are trial and error based for the development PC (Intel C600))
+#if !OV_SYSTEM_NT
+			//on linux usleep counts in usecs
+			usleep(1000);
+#else
+			//on windows Sleep counts in msecs
+			Sleep(1);
+#endif
+		}
+	}while(sentBytes < length);
+	return OV_ERR_OK;
+}
+
 /**
  * Procedure periodically called by ComTask // ov_scheduler. * 
  * It takes over the sending/receiving of data to/from the
@@ -337,22 +384,18 @@ void ksservhttp_httpclienthandler_typemethod(
     int recvBytes = 0;
     int buffer_size = 0; //factor of buffer size * BUFFER_CHUNK_SIZE
     char *buffer_location = 0; //pointer into the buffer 
-    char* placeInBuffer = NULL;
 
     //http stuff
     OV_STRING *http_request;
-    OV_STRING header, body, cmd, http_reply;
+    OV_STRING header, body, cmd;
     OV_RESULT result = OV_ERR_OK;
     OV_BOOL keep_alive = TRUE; //default is to keep the connection open
+    OV_BOOL static_file = FALSE; //is true if we send a static file
     OV_STRING http_version;
     OV_UINT len;
 
     //vector of the variables, even elements are variable names, odds are values
     OV_STRING_VEC args = {0,NULL};
-
-	int sentChunkSize = 0;
-	int sentBytes = 0;
-	int size_return = 0;
 
 	OV_INSTPTR_ov_object temp;
 	OV_INSTPTR_ksservhttp_staticfile staticfile;
@@ -400,7 +443,6 @@ void ksservhttp_httpclienthandler_typemethod(
 			cmd = NULL; //the get request without arguments
 			body = NULL; //reply *WITHOUT HEADER*
 			header = NULL; //header of the reply
-			http_reply = NULL; //raw reply to send via TCP
 			http_version = NULL; //HTTP version
 			http_request = NULL;
 
@@ -434,13 +476,14 @@ void ksservhttp_httpclienthandler_typemethod(
 		    //empty the buffer
 		    ov_string_setvalue(&(this->v_requestbuffer),"");
 			//len is always > 0
-		    //last line of the header will not contain \r\n - fix it
+		    //last line of the header will not contain \r\n
+		    ov_string_append(&(http_request[0]),"\r\n"); //no leak here, valgrind says it
 
 		    //http_request[0] is the request header
 		    //http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
-		    //scan header for Connection: close - default behavior is keep-alive
-		    if(strstr(http_request[0], "Connection: close")){
+		    //scan header for Connection: close - the default behavior is keep-alive
+		    if(strstr(http_request[0], "Connection: close\r\n")){
 		    	keep_alive = FALSE;
 		    }
 
@@ -469,6 +512,8 @@ void ksservhttp_httpclienthandler_typemethod(
 				}
 			}
 
+			Ov_SetDynamicVectorLength(&args,0,STRING);
+
 			//no command matched yet... Is it a static file?
 			if(!Ov_Fail(result) && body == NULL){
 				OV_INSTPTR_ov_domain pstaticfiles;
@@ -485,9 +530,11 @@ void ksservhttp_httpclienthandler_typemethod(
 				if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
 					staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
 					//adding to the end of the header
-					ov_string_print(&header, "Content-type: %s\r\n", staticfile->v_mimetype);
+					ov_string_print(&header, "Content-Type: %s\r\n", staticfile->v_mimetype);
 					result = OV_ERR_OK;
-					ov_string_append(&body, staticfile->v_content);
+					//body is NULL here
+					body = staticfile->v_content;
+					static_file = TRUE;
 				}else{
 					result = OV_ERR_BADPATH;
 				}
@@ -506,56 +553,21 @@ void ksservhttp_httpclienthandler_typemethod(
 			//append content length and finalize the header
 			ov_string_print(&header, "%sContent-Length: %i\r\n\r\n", header, (int)ov_string_getlength(body));
 
-			//build http answer from header and body
-			ov_string_print(&http_reply, "%s%s", header, body);
 			//free ressources
-			ov_string_setvalue(&header, NULL);
-			ov_string_setvalue(&body, NULL);
 			ov_string_setvalue(&cmd, NULL);
 			ov_string_setvalue(&http_version, NULL);
 
-			//pushing answer back to client through the tcp socket
-			size_return = ov_string_getlength(http_reply);
-			placeInBuffer = http_reply;
 
-			ov_logfile_debug("tcpclient: sending answer: %d bytes", (size_return));
-			do
-			{
-				if((size_return - sentBytes) > 4096)
-				{
-					sentChunkSize = send(receivesocket, placeInBuffer, 4096, 0);
-					if (sentChunkSize == -1)
-					{
-						ov_logfile_error("send() failed");
-						break;
-					}
-				}
-				else
-				{
-					sentChunkSize = send(receivesocket, placeInBuffer, (size_return - sentBytes), 0);
-					if (sentChunkSize == -1)
-					{
-						ov_logfile_error("send() failed");
-						break;
-					}
-				}
-				sentBytes += sentChunkSize;
-				ov_logfile_debug("tcpclient: answer sent, sentChunkSize: %d sentBytes: %d", sentChunkSize, sentBytes);
-				//move pointer to next chunk
-				placeInBuffer = &(body[sentBytes]);
+			ov_logfile_debug("tcpclient: sending header: %d bytes", (int)ov_string_getlength(header));
+			send_tcp(receivesocket, header, (int)ov_string_getlength(header));
+			ov_logfile_debug("tcpclient: sending body: %d bytes", (int)ov_string_getlength(body));
+			send_tcp(receivesocket, body, (int)ov_string_getlength(body));
 
-				if(sentBytes < size_return)
-				{
-					//sleep to give time for sending (sleep values are trial and error based for the development PC (Intel C600))
-#if !OV_SYSTEM_NT
-					//on linux usleep counts in usecs
-					usleep(1000);
-#else
-					//on windows Sleep counts in msecs
-					Sleep(1);
-#endif
-				}
-			}while(sentBytes < size_return);
+			ov_string_setvalue(&header, NULL);
+
+			if(static_file == FALSE){
+				ov_string_setvalue(&body, NULL);
+			}
 
 			if (keep_alive != TRUE) {
 				ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
@@ -564,7 +576,5 @@ void ksservhttp_httpclienthandler_typemethod(
 	}
 	//free up the memory
 	free(buffer);
-	ov_string_setvalue(&http_reply, NULL);
-	Ov_SetDynamicVectorLength(&args,0,STRING);
 	return;
 }
