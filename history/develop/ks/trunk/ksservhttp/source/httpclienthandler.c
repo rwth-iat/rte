@@ -553,7 +553,11 @@ void ksservhttp_httpclienthandler_typemethod(
 			//now we have to format the raw http answer
 			map_result_to_http(&result, &http_version, &header, &body);
 			//Append common data to header:
-			ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV\r\n", header);
+			ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s\r\n", header, OV_LIBRARY_DEF_ksservhttp.version);
+			//no-cache
+			if(static_file == FALSE){
+				ov_string_print(&header, "%sPragma: no-cache\r\nCache-Control: no-cache\r\n", header);
+			}
 			//handle keep_alives
 			if (keep_alive == TRUE) {
 				ov_string_print(&header, "%sConnection: keep-alive\r\n", header);

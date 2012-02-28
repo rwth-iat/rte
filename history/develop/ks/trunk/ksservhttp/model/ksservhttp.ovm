@@ -41,7 +41,7 @@
 
 LIBRARY ksservhttp
 	VERSION   = "V0.2 (23-Feb-2012)";
-	AUTHOR    = "Sten Gr�ner, Henning Mersch, Holger Jeromin";
+	AUTHOR    = "Sten Gruener, Henning Mersch, Holger Jeromin";
 	COPYRIGHT	= "Copyright (C) 2012 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "HTTP Webserver with lightweight KS and static file support";
 	
