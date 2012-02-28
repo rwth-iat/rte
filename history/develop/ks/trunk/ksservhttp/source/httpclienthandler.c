@@ -501,16 +501,21 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			if(!Ov_Fail(result)){
 				if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
+					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					result = exec_getvar(&args, &body);
 				}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
+					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					result = exec_setvar(&args, &body);
 				}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
+					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					result = exec_getep(&args, &body);
 				}else if(ov_string_compare(cmd, "/getHandle") == OV_STRCMP_EQUAL){
+					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					result = OV_ERR_BADPATH; //404
 					ov_string_append(&body, "Tks-NoHandleSupported");
 					//only communication to this server allowed
 				}else if(ov_string_compare(cmd, "/delHandle") == OV_STRCMP_EQUAL){
+					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					result = OV_ERR_BADPATH; //404
 					ov_string_append(&body, "We do not support Handles, so everything is ok.");
 				}
