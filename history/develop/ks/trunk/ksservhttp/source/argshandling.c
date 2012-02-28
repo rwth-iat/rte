@@ -156,3 +156,40 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
 
     PARSE_HTTP_HEADER_RETURN OV_ERR_OK;
 }
+
+//TODO: Merge to OV or rename
+/**
+*	Converts percent characters in asci characters, but skips /
+*	Note: the memory for the returned string is allocated on the memory
+*	stack, use ov_memstack_lock()/unlock() outside of this function
+*/
+OV_DLLFNCEXPORT OV_STRING ov_path_topercentNoSlash (
+				OV_STRING org
+) {
+	OV_STRING newstring;
+	unsigned char *s,*d;
+	unsigned int upper, lower;
+
+	newstring = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(org)+1);
+	d = (unsigned char *)org;
+	s = (unsigned char *)newstring;
+	while (*d) {
+		if (*d == '/'){
+			//preserve Slash
+			*s = *d;
+		}else
+		if (!ov_path_isvalidchar(*d)) {
+			upper = (*d) >> 4;
+			lower = (*d) % 16;
+			s[0] = '%';
+			s[1] = (unsigned char)upper + (upper < 10 ? '0' : '7');
+			s[2] = (unsigned char)lower + (lower < 10 ? '0' : '7');
+			s = s + 2;
+		}
+		else *s = *d;
+		s++;
+		d++;
+	}
+	*s = 0;
+	return newstring;
+}

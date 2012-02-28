@@ -516,17 +516,24 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			//no command matched yet... Is it a static file?
 			if(!Ov_Fail(result) && body == NULL){
-				OV_INSTPTR_ov_domain pstaticfiles;
-				OV_INSTPTR_ov_domain thisdomain = Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, this));
 				OV_STRING filename = NULL;
+				OV_STRING filepath = NULL;
 				//assume index.html as a root file
 				if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
 					filename = "index.html";
 				}else{
+					//remove leading /
 					filename = cmd + 1;
 				}
-				pstaticfiles = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "staticfiles");
-				temp = Ov_SearchChild(ov_containment, pstaticfiles, filename);
+				//a dot in a filename is represented via a percent notation in an identifier,  so we need
+				//to change the parameter. A directory should be possible, but so we need to skip / in conversion
+				ov_memstack_lock();
+				ov_string_print(&filepath, "/communication/httpservers/httpserver/staticfiles/%s", ov_path_topercentNoSlash(filename));
+				ov_memstack_unlock();
+				temp = ov_path_getobjectpointer(filepath,2);
+				ov_string_setvalue(&filepath, NULL);
+				filename = NULL;
+
 				if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
 					staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
 					//adding to the end of the header
