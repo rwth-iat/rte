@@ -45,21 +45,6 @@
 #include "libov/ov_logfile.h"
 
 
-// const int STOK; //0
-// const int STPMSOCKCR; //2
-// const int STPMRQSND; //3
-// const int STPMRPLYRCV; //4
-// const int STMNGRQSND; //5
-
-//cyccount of managercom obj, thus intervall of REGISTER sending
-#define MANAGER_REGISTER_INTERVALL 10000
-
-#define STATUS_STOK          0
-#define STATUS_STPMSOCKCR    2
-#define STATUS_STPMRQSND     3
-#define STATUS_STPMRPLYRCV   4
-#define STATUS_STMNGRQSND    5
-
 //tcpconnection status
 #define STATUS_TCPCON_OK          0
 #define STATUS_TCPCON_SOCKOPENFAILED 1
@@ -73,23 +58,17 @@
 #define MAX_HTTP_REQUEST_SIZE 1024
 
 //"HTTP/1.x " will be appended before header
-#define HTTP_404_HEADER "404 Not Found\r\n"
-#define HTTP_404_BODY   "error 404: path not found\r\n"
+#define HTTP_200_HEADER "200 OK\r\n"
 #define HTTP_400_HEADER "400 Bad Request\r\n"
 #define HTTP_400_BODY   "error 400: parameter are not valid\r\n"
+#define HTTP_404_HEADER "404 Not Found\r\n"
+#define HTTP_404_BODY   "error 404: path not found\r\n"
+#define HTTP_406_HEADER "406 Not Acceptable\r\n"
+#define HTTP_406_BODY   "error 406: Bad Name or Path requested\r\n"
 #define HTTP_500_HEADER "500 Internal Server Error\r\n"
 #define HTTP_500_BODY   "error 500: internal server error\r\n"
 #define HTTP_503_HEADER "503 Service Unavailable\r\n"
 #define HTTP_503_BODY 	"error 503: service not available\r\n"
-#define HTTP_200_HEADER "200 OK\r\n"
-
-//manager status
-#define STATUS_MANAGER_OK          0
-
-//managersendrecv status
-#define STATUS_MANAGERSENDRECV_UNUSED                             0
-#define STATUS_MANAGERSENDRECV_WAITINGFORSENDING          1
-#define STATUS_MANAGERSENDRECV_WAITINGFORANSWER           2
 
 
 #if PLT_SYSTEM_NT
