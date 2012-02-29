@@ -213,7 +213,7 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 				*newcontent,
 				Variable.value.vartype);
 */
-			SETVAR_AT_OBJECT_RETURN OV_ERR_GENERIC;
+			SETVAR_AT_OBJECT_RETURN OV_ERR_NOTIMPLEMENTED;
 	}
 
 	//	set Variable Value

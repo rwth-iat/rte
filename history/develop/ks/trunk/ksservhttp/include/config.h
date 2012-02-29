@@ -69,6 +69,8 @@
 #define HTTP_406_BODY   "error 406: Bad Name or Path requested\r\n"
 #define HTTP_500_HEADER "500 Internal Server Error\r\n"
 #define HTTP_500_BODY   "error 500: internal server error\r\n"
+#define HTTP_501_HEADER "501 Not Implemented\r\n"
+#define HTTP_501_BODY 	"error 501: service not implemented\r\n"
 #define HTTP_503_HEADER "503 Service Unavailable\r\n"
 #define HTTP_503_BODY 	"error 503: service not available\r\n"
 

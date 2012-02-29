@@ -72,34 +72,34 @@
  * Returns the socket on which the object is receiving.
  */
 OV_DLLFNCEXPORT OV_INT ksservhttp_httpclienthandler_receivesocket_get(
-             OV_INSTPTR_ksservhttp_httpclienthandler          pobj
+	OV_INSTPTR_ksservhttp_httpclienthandler          pobj
 ) {
-             return pobj->v_receivesocket;
+	return pobj->v_receivesocket;
 }
 
 /**
  * Sets the socket on which the object is receiving.
  */
 OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
-             OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
-             const OV_INT           value
+	OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
+	const OV_INT           value
 ) {
-    struct sockaddr_in m_addr;
+	struct sockaddr_in m_addr;
 #if OV_SYSTEM_NT
-    int len;
+	int len;
 #else
-    socklen_t len;
+	socklen_t len;
 #endif
-    pobj->v_receivesocket = value;
+	pobj->v_receivesocket = value;
 
-    len = sizeof m_addr;
+	len = sizeof m_addr;
 	if (getpeername(value, (struct sockaddr*)&m_addr, &len) == -1) {
 		ov_logfile_error("Error while determining source IP of tcpclient -- getpeername() failed");
 		 return OV_ERR_OK;
-	 }
-	 ov_string_print(&pobj->v_sourceAdr, "%s:%d", inet_ntoa(m_addr.sin_addr), (int) ntohs(m_addr.sin_port));
-	 ov_logfile_debug("tcpclient/receivesocket/set: new TCPSocket %d from %s", value, pobj->v_sourceAdr);
-     return OV_ERR_OK;
+	}
+	ov_string_print(&pobj->v_sourceAdr, "%s:%d", inet_ntoa(m_addr.sin_addr), (int) ntohs(m_addr.sin_port));
+	ov_logfile_debug("tcpclient/receivesocket/set: new TCPSocket %d from %s", value, pobj->v_sourceAdr);
+	return OV_ERR_OK;
 }
 
 
@@ -122,7 +122,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, pobj);
-   
+
 	int receivesocket;
 	if(!this->v_deleted) {// v_deleted cares that socket closing happens just once, not twiche while DeleteObj
 		ov_logfile_error("tcpclient/shutdown socket %i", this->v_receivesocket);
@@ -164,14 +164,6 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 			case OV_ERR_OK:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_200_HEADER, tmp_header);
 				break;
-			case OV_ERR_BADVALUE:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_414_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_414_BODY, tmp_body);
-				break;
-			case OV_ERR_GENERIC:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
-				break;
 			case OV_ERR_BADNAME:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
 				ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
@@ -184,139 +176,150 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
 				ov_string_print(body, "%s%s", HTTP_404_BODY, tmp_body);
 				break;
+			case OV_ERR_BADVALUE:
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_414_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_414_BODY, tmp_body);
+				break;
+			case OV_ERR_NOTIMPLEMENTED:
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_501_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_501_BODY, tmp_body);
+				break;
+			case OV_ERR_GENERIC:
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
+				break;
 			default:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
 				ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
 				break;
-    }
+	}
 
 }
 
-#define EXEC_GETVAR_RETURN ov_string_freelist(plist); \
+#define EXEC_GETVAR_RETURN ov_string_freelist(pPathList); \
 						Ov_SetDynamicVectorLength(&match,0,STRING);\
 						ov_string_setvalue(&message, NULL);\
 						return
 
 OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
-	OV_STRING *plist = NULL;
+	OV_STRING *pPathList = NULL;
 	OV_UINT len;
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT result;
 	OV_STRING message = NULL;
 
-	if(args->veclen != 2){
-    	ov_string_print(re, "%s\nNumber of parameter should be 1, but is %i", *re, args->veclen/2);
-    	EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
-	}
-
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
-    	ov_string_append(re, "Variable path not found");
-    	EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
+		ov_string_append(re, "Variable path not found");
+		EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
-    plist = ov_string_split((match.value[0]), ".", &len);
-    if(len!=2){
-    	ov_string_freelist(plist);
-    	ov_string_append(re, "Variablename must contain a dot");
-    	EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
-    }
-    result = getvar_to_string(ov_path_getobjectpointer(plist[0],2),&(plist[1]),&message);
+	pPathList = ov_string_split((match.value[0]), ".", &len);
+	if(len!=2){
+		ov_string_freelist(pPathList);
+		ov_string_append(re, "Variablename must contain a dot");
+		EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
+	}
+	result = getvar_to_string(ov_path_getobjectpointer(pPathList[0],2),&(pPathList[1]),&message);
 
-   	ov_string_append(re, message);
+	ov_string_append(re, message);
 
-    EXEC_GETVAR_RETURN result;
+	EXEC_GETVAR_RETURN result;
 }
 
-#define EXEC_SETVAR_RETURN ov_string_freelist(plist); \
+#define EXEC_SETVAR_RETURN ov_string_freelist(pPathList); \
 						Ov_SetDynamicVectorLength(&match,0,STRING);\
 						ov_string_setvalue(&message, NULL);\
 						return
 
 OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
-	OV_STRING *plist = NULL;
+	OV_STRING *pPathList = NULL;
 	OV_UINT len;
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT result;
 	OV_STRING message = NULL;
 
-	if(args->veclen != 4){
-    	ov_string_print(re, "Number of parameter should be 2, but is %i", args->veclen/2);
-    	EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
-	}
 	find_arguments(args, "path", &match);
-	if(match.veclen!=1){
-    	ov_string_print(re, "Variable path not found");
-    	EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
+	if(match.veclen<=1){
+		ov_string_append(re, "Variable path not found");
+		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
-    plist = ov_string_split(match.value[0], ".", &len);
-    if(len!=2){
-    	ov_string_freelist(plist);
-    	ov_string_append(re, "Variablename must contain a dot");
-    	EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
-    }
+	pPathList = ov_string_split(match.value[0], ".", &len);
+	if(len!=2){
+		ov_string_freelist(pPathList);
+		ov_string_append(re, "Variablename must contain a dot");
+		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
+	}
 	find_arguments(args, "newvalue", &match);
 	if(match.veclen!=1){
-    	ov_string_print(re, "Variable newvalue not found");
-    	EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400;
+		ov_string_print(re, "Variable newvalue not found");
+		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400;
 	}
-	result = setvar_at_object(ov_path_getobjectpointer(plist[0],2),&(plist[1]),&match.value[0], &message);
+	result = setvar_at_object(ov_path_getobjectpointer(pPathList[0],2),&(pPathList[1]),&match.value[0], &message);
 
-   	ov_string_append(re, message);
+	ov_string_append(re, message);
 
-    EXEC_SETVAR_RETURN result;
+	EXEC_SETVAR_RETURN result;
 }
 
 #define EXEC_GETEP_RETURN \
 						Ov_SetDynamicVectorLength(&match,0,STRING);\
 						ov_string_setvalue(&message, NULL);\
+						ov_string_setvalue(&objectType, match.value[0]);\
+						ov_string_setvalue(&outputInfos, match.value[0]);\
 						return
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_ov_object pChild = NULL;
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING message = NULL;
+	OV_STRING objectType = NULL;
+	OV_STRING outputInfos = NULL;
 
 	//muss noch aufgebohrt werden:
 	//path=/TechUnits
 	//objectType=OT_DOMAINS|OT_VARIABLES|... (siehe tcl-tks doku)
-	//TODO: outputinfos (anderer name muss her) ein bis sieben informatinen liefert tcl-tks
-	if(args->veclen != 4){
-    	ov_string_print(re, "Number of parameter should be 2, but is %i", args->veclen/2);
-    	EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
-	}
+	//TODO: outputInfos (anderer name muss her) ein bis sieben informatinen liefert tcl-tks
 
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
-    	ov_string_append(re, "Variable path not found");
-    	EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
+		ov_string_append(re, "Variable path not found");
+		EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
 	}
 	pObj = ov_path_getobjectpointer(match.value[0],0);
 	if (pObj == NULL){
-    	ov_string_append(re, "Variable not found");
-    	EXEC_GETEP_RETURN OV_ERR_BADPATH; //404
+		ov_string_append(re, "Variable not found");
+		EXEC_GETEP_RETURN OV_ERR_BADPATH; //404
 	}
 	find_arguments(args, "objectType", &match);
 	if(match.veclen!=1){
-    	ov_string_append(re, "objectType not found");
-    	EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
+		ov_string_append(re, "objectType not found");
+		EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
 	}
-	if(ov_string_compare(match.value[0], "OT_DOMAINS") == OV_STRCMP_EQUAL
+	ov_string_setvalue(&objectType, match.value[0]);
+	find_arguments(args, "outputInfos", &match);
+	if(match.veclen!=1){
+		ov_string_setvalue(&outputInfos, "OP_ANY");
+	}else{
+		ov_string_setvalue(&outputInfos, match.value[0]);
+	}
+	if(ov_string_compare(objectType, "OT_DOMAINS") == OV_STRCMP_EQUAL
 			&& Ov_CanCastTo(ov_domain, pObj)){
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
+			//outputInfos=OP_NAME
 			if (message == NULL){
 				ov_string_print(&message, "{%s}\r\n", pChild->v_identifier);
 			}else{
 				ov_string_print(&message, "%s{%s}", message, pChild->v_identifier);
 			}
 		}
-	}else if(ov_string_compare(match.value[0], "OT_VARIABLES") == OV_STRCMP_EQUAL){
-    	ov_string_append(re, "objectType VARIABLES not implemented");
-    	EXEC_GETEP_RETURN OV_ERR_GENERIC; //503
+	}else if(ov_string_compare(objectType, "OT_VARIABLES") == OV_STRCMP_EQUAL){
+		ov_string_append(re, "objectType VARIABLES not implemented");
+		EXEC_GETEP_RETURN OV_ERR_NOTIMPLEMENTED; //501
 	}else{
-    	ov_string_append(re, "objectType not implemented");
-    	EXEC_GETEP_RETURN OV_ERR_GENERIC; //503
+		ov_string_append(re, "objectType not implemented");
+		EXEC_GETEP_RETURN OV_ERR_NOTIMPLEMENTED; //501
 	}
-   	ov_string_append(re, message);
+	ov_string_append(re, message);
 
 	EXEC_GETEP_RETURN OV_ERR_OK;
 }
@@ -381,30 +384,30 @@ void ksservhttp_httpclienthandler_typemethod(
 ) {
 	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, cTask);
 
-    int bytes = -1; //-1 means nothing received
-    int receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
+	int bytes = -1; //-1 means nothing received
+	int receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
 
-    char *buffer = 0;
-    int recvBytes = 0;
-    int buffer_size = 0; //factor of buffer size * BUFFER_CHUNK_SIZE
-    char *buffer_location = 0; //pointer into the buffer 
+	char *buffer = 0;
+	int recvBytes = 0;
+	int buffer_size = 0; //factor of buffer size * BUFFER_CHUNK_SIZE
+	char *buffer_location = 0; //pointer into the buffer
 
-    //http stuff
-    OV_STRING *http_request;
-    OV_STRING header, body, cmd;
-    OV_RESULT result = OV_ERR_OK;
-    OV_BOOL keep_alive = TRUE; //default is to keep the connection open
-    OV_BOOL static_file = FALSE; //is true if we send a static file
-    OV_STRING http_version;
-    OV_UINT len;
+	//http stuff
+	OV_STRING *http_request;
+	OV_STRING header, body, cmd;
+	OV_RESULT result = OV_ERR_OK;
+	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
+	OV_BOOL static_file = FALSE; //is true if we send a static file
+	OV_STRING http_version;
+	OV_UINT len;
 
-    //vector of the variables, even elements are variable names, odds are values
-    OV_STRING_VEC args = {0,NULL};
+	//vector of the variables, even elements are variable names, odds are values
+	OV_STRING_VEC args = {0,NULL};
 
 	OV_INSTPTR_ov_object temp;
 	OV_INSTPTR_ksservhttp_staticfile staticfile;
 
-  	//ov_logfile_debug("tcpclient typemethod called ");
+	//ov_logfile_debug("tcpclient typemethod called ");
 	if (receivesocket < 0) { // check if the socket might be OK.
 		ov_logfile_error("%s/typemethod: no receive socket set (receivesocket==-1), thus deleting myself",cTask->v_identifier);
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
@@ -436,7 +439,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 		//else: bytes = -1 && errno == EAGAIN || EWOULDBLOCK
 	} else if(bytes == 0) {//normal shutdown by client
-	    ov_logfile_debug("tcpclient/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
+		ov_logfile_debug("tcpclient/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 	//} else if (bytes == -1) {  // no current KS command this turn
 	} else if(bytes > 0) {
@@ -476,27 +479,27 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			//this->v_requestbuffer contains the raw request
 			//split header and footer of the http request
-		    http_request = ov_string_split(this->v_requestbuffer, "\r\n\r\n", &len);
-		    //empty the buffer
-		    ov_string_setvalue(&(this->v_requestbuffer),"");
+			http_request = ov_string_split(this->v_requestbuffer, "\r\n\r\n", &len);
+			//empty the buffer
+			ov_string_setvalue(&(this->v_requestbuffer),"");
 			//len is always > 0
-		    //last line of the header will not contain \r\n
-		    ov_string_append(&(http_request[0]),"\r\n"); //no leak here, valgrind says it
+			//last line of the header will not contain \r\n
+			ov_string_append(&(http_request[0]),"\r\n"); //no leak here, valgrind says it
 
-		    //http_request[0] is the request header
-		    //http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
+			//http_request[0] is the request header
+			//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
-		    //scan header for Connection: close - the default behavior is keep-alive
-		    if(strstr(http_request[0], "Connection: close\r\n")){
-		    	keep_alive = FALSE;
-		    }
+			//scan header for Connection: close - the default behavior is keep-alive
+			if(strstr(http_request[0], "Connection: close\r\n")){
+				keep_alive = FALSE;
+			}
 
-		    //parse request header into get command and arguments request
-		    if(!Ov_Fail(result)){
-		    	result = parse_http_header(http_request[0], &cmd, &args, &http_version);
-		    }
+			//parse request header into get command and arguments request
+			if(!Ov_Fail(result)){
+				result = parse_http_header(http_request[0], &cmd, &args, &http_version);
+			}
 
-		    //raw request not needed any longer
+			//raw request not needed any longer
 			ov_string_freelist(http_request);
 
 			if(!Ov_Fail(result)){
