@@ -63,7 +63,7 @@ OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_STRING* r
 						 return
 OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_type, OV_STRING cmd){
 	OV_STRING random_number=NULL;
-	md5_hash_return hash;
+	md5_hash_return hash = "HASH";
 	OV_RESULT res;
 
 	//authorization header line
@@ -138,15 +138,20 @@ OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_
 			//HA1
 			//TODO: the send username is ignored atm, since only one user root exists
 			ov_string_print(&temp, "%s:%s:%s", "root", REALM, "pass");
-			md5_string(&hash, temp, ov_string_getlength(temp));
+			md5_string(&hash, temp);
+/*
+			MD5_Init(&ctx);
+			MD5_Update(&ctx, temp, ov_string_getlength(temp));
+			MD5_Final(hash, &ctx);
+*/
 			ov_string_setvalue(&ha1, hash);
 			//HA2
 			ov_string_print(&temp, "%s:%s", request_type, cmd);
-			md5_string(&hash, temp, ov_string_getlength(temp));
+			md5_string(&hash, temp);
 			ov_string_setvalue(&ha2, hash);
 			//compute own response
 			ov_string_print(&temp, "%s:%s:%s:%s:%s:%s", ha1, this->v_nonce, nc, cnonce, qop, ha2);
-			md5_string(&hash, temp, ov_string_getlength(temp));
+			md5_string(&hash, temp);
 			ov_string_setvalue(&own_response, hash);
 			//verify match
 			if(ov_string_compare(own_response, response) == OV_STRCMP_EQUAL){
@@ -162,7 +167,7 @@ OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_
 
 	//srand has been called by the time of ksservhttp object creation
 	ov_string_print(&random_number, "%i", rand()*rand()*rand());
-	md5_string(&hash, random_number, ov_string_getlength(random_number));
+	md5_string(&hash, random_number);
 	ov_string_setvalue(&(this->v_nonce), hash);
 	ov_string_print(reply_header, "WWW-Authenticate: Digest realm=\"%s\",\
 												    qop=\"auth\",\
