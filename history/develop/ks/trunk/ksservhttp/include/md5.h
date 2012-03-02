@@ -23,10 +23,6 @@
  * See md5.c for more information.
  */
 
-#define _MD5_H
-
-typedef unsigned char md5_hash_raw[16];
-typedef char md5_hash_return[33];
 
 /* Any 32-bit or wider unsigned integer data type will do */
 typedef unsigned int MD5_u32plus;
@@ -38,8 +34,7 @@ typedef struct {
 	MD5_u32plus block[16];
 } MD5_CTX;
 
-extern void MD5_Init(MD5_CTX *ctx);
-extern void MD5_Update(MD5_CTX *ctx, void *data, unsigned long size);
-extern void MD5_Final(md5_hash_raw result, MD5_CTX *ctx);
 
+typedef unsigned char md5_hash_raw[16];
+typedef char md5_hash_return[33];
 void md5_string(md5_hash_return* dest, char* source);

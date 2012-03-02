@@ -63,7 +63,7 @@ OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_STRING* r
 						 return
 OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_type, OV_STRING cmd){
 	OV_STRING random_number=NULL;
-	md5_hash_return hash = "HASH";
+	md5_hash_return hash;
 	OV_RESULT res;
 
 	//authorization header line
@@ -89,61 +89,56 @@ OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_
 		AUTHORIZE_RETURN OV_ERR_OK;
 	}else if(strstr(request_header, "\r\nAuthorization: Digest ")){
 		//verify authorization
-	    res = extract(request_header, "\r\nAuthorization: Digest ", "\r\n", &digestline);
-	    if(Ov_Fail(res)){
-	    	AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
-	    }
+		res = extract(request_header, "\r\nAuthorization: Digest ", "\r\n", &digestline);
+		if(Ov_Fail(res)){
+			AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
+		}
 
-	    //now extract all needed information
-	    res = extract(digestline, "username=\"", "\"", &username);
-	    if(Ov_Fail(res)){
-	    	AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
-	    }
-	    res = extract(digestline, "realm=\"", "\"", &realm);
-	    if(Ov_Fail(res)){
-	    	AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
-	    }
-	    res = extract(digestline, "nonce=\"", "\"", &nonce);
-	    if(Ov_Fail(res)){
-	    	AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
-	    }
-	    res = extract(digestline, "qop=", ",", &qop);
-	    if(Ov_Fail(res)){
-		    res = extract(digestline, "qop=", "\r\n", &qop);
-		    //try end of line since no end delimiter
-		    if(Ov_Fail(res)){
-		    	AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
-		    }
-	    }
-	    res = extract(digestline, "nc=", ",", &nc);
-	    if(Ov_Fail(res)){
-		    res = extract(digestline, "nc=", "\r\n", &nc);
-		    //try end of line since no end delimiter
-		    if(Ov_Fail(res)){
-		    	AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
-		    }
-	    }
-	    res = extract(digestline, "cnonce=\"", "\"", &cnonce);
-	    if(Ov_Fail(res)){
-	    	AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
-	    }
-	    res = extract(digestline, "response=\"", "\"", &response);
-	    if(Ov_Fail(res)){
-	    	AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
-	    }
+		//now extract all needed information
+		res = extract(digestline, "username=\"", "\"", &username);
+		if(Ov_Fail(res)){
+			AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
+		}
+		res = extract(digestline, "realm=\"", "\"", &realm);
+		if(Ov_Fail(res)){
+			AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
+		}
+		res = extract(digestline, "nonce=\"", "\"", &nonce);
+		if(Ov_Fail(res)){
+			AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
+		}
+		res = extract(digestline, "qop=", ",", &qop);
+		if(Ov_Fail(res)){
+			res = extract(digestline, "qop=", "\r\n", &qop);
+			//try end of line since no end delimiter
+			if(Ov_Fail(res)){
+				AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
+			}
+		}
+		res = extract(digestline, "nc=", ",", &nc);
+		if(Ov_Fail(res)){
+			res = extract(digestline, "nc=", "\r\n", &nc);
+			//try end of line since no end delimiter
+			if(Ov_Fail(res)){
+				AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
+			}
+		}
+		res = extract(digestline, "cnonce=\"", "\"", &cnonce);
+		if(Ov_Fail(res)){
+			AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
+		}
+		res = extract(digestline, "response=\"", "\"", &response);
+		if(Ov_Fail(res)){
+			AUTHORIZE_RETURN OV_ERR_BADPARAM; //400
+		}
 
-	    if(ov_string_compare(nonce, this->v_nonce) == OV_STRCMP_EQUAL && ov_string_compare(qop, "auth") == OV_STRCMP_EQUAL){
+		if(ov_string_compare(nonce, this->v_nonce) == OV_STRCMP_EQUAL && ov_string_compare(qop, "auth") == OV_STRCMP_EQUAL){
 			//lets start hashing
 			// GOT info look at http://en.wikipedia.org/wiki/Digest_access_authentication
 			//HA1
 			//TODO: the send username is ignored atm, since only one user root exists
 			ov_string_print(&temp, "%s:%s:%s", "root", REALM, "pass");
 			md5_string(&hash, temp);
-/*
-			MD5_Init(&ctx);
-			MD5_Update(&ctx, temp, ov_string_getlength(temp));
-			MD5_Final(hash, &ctx);
-*/
 			ov_string_setvalue(&ha1, hash);
 			//HA2
 			ov_string_print(&temp, "%s:%s", request_type, cmd);

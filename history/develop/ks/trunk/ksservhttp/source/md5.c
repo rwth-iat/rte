@@ -290,7 +290,7 @@ void MD5_Final(md5_hash_raw result, MD5_CTX *ctx)
 	memset(ctx, 0, sizeof(*ctx));
 }
 
-//a higher level wrapper by Sten
+//a higher level wrapper by Sten Gruener
 void md5_string(md5_hash_return* dest, char* source){
 	MD5_CTX ctx;
 	md5_hash_raw hash;
@@ -301,7 +301,6 @@ void md5_string(md5_hash_return* dest, char* source){
 	MD5_Init(&ctx);
 	MD5_Update(&ctx, source, strlen(source));
 	MD5_Final(hash, &ctx);
-
 
 	for(i=0;i<16;i++){
 		temp = *dest + i*2;
