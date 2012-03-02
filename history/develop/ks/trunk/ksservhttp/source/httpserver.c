@@ -49,6 +49,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #if !OV_SYSTEM_NT 
 #include <arpa/inet.h>
@@ -112,6 +113,9 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 	pclients = Ov_SearchChildEx(ov_containment, thisdomain, "clients", ov_domain);
 	pstaticfiles = Ov_SearchChildEx(ov_containment, thisdomain, "staticfiles", ov_domain);
 	ptcpc =  NULL;
+
+	//seed random generator for md5 nounce generation during http autorization
+	srand(time(NULL));
 
 	//TODO: port should be setable via env variable
 	//store port to object

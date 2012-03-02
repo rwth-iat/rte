@@ -54,6 +54,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+//TCP sockets
 #if !OV_SYSTEM_NT
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -171,6 +172,10 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 			case OV_ERR_BADPARAM:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
 				ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
+				break;
+			case OV_ERR_BADAUTH:
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_401_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_401_BODY, tmp_body);
 				break;
 			case OV_ERR_BADPATH:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
@@ -394,7 +399,8 @@ void ksservhttp_httpclienthandler_typemethod(
 
 	//http stuff
 	OV_STRING *http_request;
-	OV_STRING header, body, cmd;
+	OV_STRING header, body, cmd, http_request_type;
+	int bodylength = 0; //length of the return body
 	OV_RESULT result = OV_ERR_OK;
 	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
 	OV_BOOL static_file = FALSE; //is true if we send a static file
@@ -452,12 +458,12 @@ void ksservhttp_httpclienthandler_typemethod(
 			header = NULL; //header of the reply
 			http_version = NULL; //HTTP version
 			http_request = NULL;
+			http_request_type = NULL; //GET, HEAD, etc.
 
 			//MAIN ROUTINE OF THE WEB SERVER
 
-			//NOTE: this works only for GET, for post one needs to evaluate content-length
-			//appending the read chunk to the buffer that is saved between the cycles
-
+			//NOTE: this works only for GET and HEAD, for post one needs to evaluate content-length
+			//START handling buffer: appending the read chunk to the buffer that is saved between the cycles
 			if(ov_string_getlength(this->v_requestbuffer) + ov_string_getlength(buffer) <= MAX_HTTP_REQUEST_SIZE){
 				ov_string_append(&(this->v_requestbuffer),buffer);
 			}else{
@@ -471,37 +477,46 @@ void ksservhttp_httpclienthandler_typemethod(
 				free(buffer);
 				return;
 			}
-
-			ov_string_setvalue(&http_version, "1.1"); //1.1 is default one
+			//END handling buffer
 
 			ov_logfile_error("tcpclient/typemethod: got http command w/ %d bytes",bytes);
-			//ov_logfile_error("%s", buffer);
 
 			//this->v_requestbuffer contains the raw request
 			//split header and footer of the http request
 			http_request = ov_string_split(this->v_requestbuffer, "\r\n\r\n", &len);
-			//empty the buffer
-			ov_string_setvalue(&(this->v_requestbuffer),"");
 			//len is always > 0
 			//last line of the header will not contain \r\n
 			ov_string_append(&(http_request[0]),"\r\n"); //no leak here, valgrind says it
 
+			//empty the buffer
+			ov_string_setvalue(&(this->v_requestbuffer),"");
+
+			//debug - output header
+			ov_logfile_error("%s", http_request[0]);
+
 			//http_request[0] is the request header
 			//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
+			//START default behaviour
 			//scan header for Connection: close - the default behavior is keep-alive
 			if(strstr(http_request[0], "Connection: close\r\n")){
 				keep_alive = FALSE;
 			}
+			//default HTTP version
+			ov_string_setvalue(&http_version, "1.1");
+			//END default behaviour
 
 			//parse request header into get command and arguments request
 			if(!Ov_Fail(result)){
-				result = parse_http_header(http_request[0], &cmd, &args, &http_version);
+				result = parse_http_header(http_request[0], &cmd, &args, &http_version, &http_request_type);
 			}
 
-			//raw request not needed any longer
-			ov_string_freelist(http_request);
+			//check which kind of request is coming in
+			if(ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL && ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
+				result = OV_ERR_NOTIMPLEMENTED;
+			}
 
+			//BEGIN command routine
 			if(!Ov_Fail(result)){
 				if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
 					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
@@ -521,11 +536,21 @@ void ksservhttp_httpclienthandler_typemethod(
 					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					result = OV_ERR_BADPATH; //404
 					ov_string_append(&body, "We do not support Handles, so everything is ok.");
+				}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
+					result = authorize(1, this, http_request[0], &header, http_request_type, cmd);
+					if(!Ov_Fail(result)){
+						ov_string_append(&body, "Secret area");
+						result = OV_ERR_OK;
+					}
 				}
 			}
+			//END command routine
 
+			//raw request and args not needed any longer
+			ov_string_freelist(http_request);
 			Ov_SetDynamicVectorLength(&args,0,STRING);
 
+			//BEGIN static file routine
 			//no command matched yet... Is it a static file?
 			if(!Ov_Fail(result) && body == NULL){
 				OV_STRING filename = NULL;
@@ -561,7 +586,9 @@ void ksservhttp_httpclienthandler_typemethod(
 					result = OV_ERR_BADPATH;
 				}
 			}
+			//END static file routine
 
+			//BEGIN forming and sending the answer
 			//now we have to format the raw http answer
 			map_result_to_http(&result, &http_version, &header, &body);
 			//Append common data to header:
@@ -576,31 +603,39 @@ void ksservhttp_httpclienthandler_typemethod(
 			}else{
 				ov_string_print(&header, "%sConnection: close\r\n", header);
 			}
+			//in case of a HEAD request there is no need to send the body
+			if(ov_string_compare(http_request_type, "HEAD") == OV_STRCMP_EQUAL){
+				bodylength = 0;
+			}else{
+				bodylength = (int)ov_string_getlength(body);
+			}
 			//append content length and finalize the header
-			ov_string_print(&header, "%sContent-Length: %i\r\n\r\n", header, (int)ov_string_getlength(body));
-
-			//free ressources
-			ov_string_setvalue(&cmd, NULL);
-			ov_string_setvalue(&http_version, NULL);
-
+			ov_string_print(&header, "%sContent-Length: %i\r\n\r\n", header, bodylength);
 
 			ov_logfile_debug("tcpclient: sending header: %d bytes", (int)ov_string_getlength(header));
+
 			send_tcp(receivesocket, header, (int)ov_string_getlength(header));
-			ov_logfile_debug("tcpclient: sending body: %d bytes", (int)ov_string_getlength(body));
-			send_tcp(receivesocket, body, (int)ov_string_getlength(body));
+			//in case of a HEAD request there is no need to send the body
+			if(ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
+				ov_logfile_debug("tcpclient: sending body: %d bytes", (int)ov_string_getlength(body));
+				send_tcp(receivesocket, body, (int)ov_string_getlength(body));
+			}
 
+			//free resources
+			ov_string_setvalue(&cmd, NULL);
+			ov_string_setvalue(&http_version, NULL);
+			ov_string_setvalue(&http_request_type, NULL);
 			ov_string_setvalue(&header, NULL);
-
 			if(static_file == FALSE){
 				ov_string_setvalue(&body, NULL);
 			}
-
+			//shutdown tcp connection if no keep_alive was set
 			if (keep_alive != TRUE) {
 				ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 			}
 			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
 	}
-	//free up the memory
+	//free up the buffer
 	free(buffer);
 	return;
 }

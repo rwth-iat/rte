@@ -98,6 +98,7 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 			GETVAR_TO_STRING_RETURN OV_ERR_BADPATH; //404
 		};
 	}
+
 	//	We are checking actual content and not the definition of Variable, so we have no ANY, but VOID
 	//	OV_VT_BOOL_PV is an ANY which is set to BOOL
 	//

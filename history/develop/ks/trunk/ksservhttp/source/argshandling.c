@@ -86,7 +86,7 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
  * @param args output string vector of form value content
  * @param http_version sets HTTP/1.1 or HTTP/1.0
  */
-OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version)
+OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_type)
 {
     OV_STRING* plist=NULL;
     OV_STRING* pelement=NULL;
@@ -108,6 +108,7 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
     if(len!=3){
     	PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
     }
+    ov_string_setvalue(http_request_type, plist[0]);
     ov_string_setvalue(&rawrequest, plist[1]);
     //does the client use HTTP 1.0?
     if(ov_string_compare(plist[2], "HTTP/1.0") == OV_STRCMP_EQUAL){
