@@ -40,7 +40,6 @@
 #define OV_COMPILE_LIBRARY_ksservhttp
 #endif
 
-#include "ksservhttp.h"
 #include "config.h"
 
 #include <stdio.h>

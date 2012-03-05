@@ -44,6 +44,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_logfile.h"
 
+#include "ksservhttp.h"
 
 //tcpconnection status
 #define STATUS_TCPCON_OK          0

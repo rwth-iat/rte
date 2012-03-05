@@ -2,9 +2,6 @@
 #define OV_COMPILE_LIBRARY_ksservhttp
 #endif
 
-
-#include "ksservhttp.h"
-#include "ksserv.h"
 #include "config.h"
 
 
@@ -61,6 +58,7 @@ OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_STRING* r
 						 ov_string_setvalue(&own_response, NULL);\
 						 ov_string_setvalue(&temp, NULL);\
 						 return
+
 OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_type, OV_STRING cmd){
 	OV_STRING random_number=NULL;
 	md5_hash_return hash;

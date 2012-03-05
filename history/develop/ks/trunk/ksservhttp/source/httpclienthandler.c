@@ -43,8 +43,6 @@
 
 #include <time.h>
 
-#include "ksservhttp.h"
-#include "ksserv.h"
 #include "config.h"
 
 #include <stdio.h>
@@ -576,6 +574,9 @@ void ksservhttp_httpclienthandler_typemethod(
 
 				if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
 					staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
+
+					//TODO: encoding
+
 					//adding to the end of the header
 					ov_string_print(&header, "Content-Type: %s\r\n", staticfile->v_mimetype);
 					result = OV_ERR_OK;
