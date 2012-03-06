@@ -98,8 +98,9 @@ LIBRARY ksservhttp
 		IS_INSTANTIABLE;
 		COMMENT = "class for providing static content";
 		VARIABLES
-			mimetype : STRING HAS_ACCESSORS INITIALVALUE="text/html";
 			content : STRING HAS_ACCESSORS INITIALVALUE="";
+			mimetype : STRING HAS_ACCESSORS INITIALVALUE="text/html";
+			encoding : STRING HAS_ACCESSORS INITIALVALUE="";
 		END_VARIABLES;	
 	END_CLASS;
 	

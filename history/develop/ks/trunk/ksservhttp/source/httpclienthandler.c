@@ -175,6 +175,10 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_401_HEADER, tmp_header);
 				ov_string_print(body, "%s%s", HTTP_401_BODY, tmp_body);
 				break;
+			case OV_ERR_NOACCESS:
+				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_403_HEADER, tmp_header);
+				ov_string_print(body, "%s%s", HTTP_403_BODY, tmp_body);
+				break;
 			case OV_ERR_BADPATH:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
 				ov_string_print(body, "%s%s", HTTP_404_BODY, tmp_body);
@@ -212,7 +216,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING message = NULL;
 
 	find_arguments(args, "path", &match);
-	if(match.veclen!=1){
+	if(match.veclen<1){
 		ov_string_append(re, "Variable path not found");
 		EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
@@ -242,7 +246,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING message = NULL;
 
 	find_arguments(args, "path", &match);
-	if(match.veclen<=1){
+	if(match.veclen<1){
 		ov_string_append(re, "Variable path not found");
 		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
@@ -574,11 +578,12 @@ void ksservhttp_httpclienthandler_typemethod(
 
 				if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
 					staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
-
-					//TODO: encoding
-
-					//adding to the end of the header
-					ov_string_print(&header, "Content-Type: %s\r\n", staticfile->v_mimetype);
+					if (ov_string_compare(staticfile->v_encoding, "") == OV_STRCMP_EQUAL){
+						//adding to the end of the header
+						ov_string_print(&header, "Content-Type: %s\r\n", staticfile->v_mimetype);
+					}else{
+						ov_string_print(&header, "Content-Type: %s; charset=%s\r\n", staticfile->v_mimetype, staticfile->v_encoding);
+					}
 					result = OV_ERR_OK;
 					//body is NULL here
 					body = staticfile->v_content;

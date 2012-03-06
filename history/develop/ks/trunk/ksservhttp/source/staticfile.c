@@ -42,34 +42,44 @@
 #define OV_COMPILE_LIBRARY_ksservhttp
 #endif
 
-
-#include "ksservhttp.h"
 #include "config.h"
 
 
 OV_DLLFNCEXPORT OV_STRING ksservhttp_staticfile_mimetype_get(
-    OV_INSTPTR_ksservhttp_staticfile          pobj
+	OV_INSTPTR_ksservhttp_staticfile          pobj
 ) {
-    return pobj->v_mimetype;
+	return pobj->v_mimetype;
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksservhttp_staticfile_mimetype_set(
-    OV_INSTPTR_ksservhttp_staticfile          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_ksservhttp_staticfile          pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_mimetype,value);
+	return ov_string_setvalue(&pobj->v_mimetype,value);
 }
 
 OV_DLLFNCEXPORT OV_STRING ksservhttp_staticfile_content_get(
-    OV_INSTPTR_ksservhttp_staticfile          pobj
+	OV_INSTPTR_ksservhttp_staticfile          pobj
 ) {
-    return pobj->v_content;
+	return pobj->v_content;
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksservhttp_staticfile_content_set(
-    OV_INSTPTR_ksservhttp_staticfile          pobj,
-    const OV_STRING  value
+	OV_INSTPTR_ksservhttp_staticfile          pobj,
+	const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_content,value);
+	return ov_string_setvalue(&pobj->v_content,value);
 }
 
+OV_DLLFNCEXPORT OV_STRING ksservhttp_staticfile_encoding_get(
+	OV_INSTPTR_ksservhttp_staticfile          pobj
+) {
+	return pobj->v_encoding;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksservhttp_staticfile_encoding_set(
+	OV_INSTPTR_ksservhttp_staticfile          pobj,
+	const OV_STRING  value
+) {
+	return ov_string_setvalue(&pobj->v_encoding,value);
+}
