@@ -70,8 +70,8 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 
 	OV_STRING	Temp = NULL;
 
-
-	OV_ELEMENT	Element;
+	OV_ELEMENT	ParentElement;
+	OV_ELEMENT	PartElement;
 	OV_ANY		Variable;
 
 	Variable.value.vartype = OV_VT_VOID;
@@ -86,22 +86,25 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 		SETVAR_AT_OBJECT_RETURN OV_ERR_BADPATH;
 	};
 
-	Element.elemtype	= OV_ET_OBJECT;
-	Element.pobj		= pObj;
+	ParentElement.elemtype	= OV_ET_OBJECT;
+	ParentElement.pobj		= pObj;
 
 	//	search Variable-Element with corresponding name in OV-Object
 	//
-	fr = ov_element_searchpart(&Element, &Element, OV_ET_VARIABLE, *varname);
+	fr = ov_element_searchpart(&ParentElement, &PartElement, OV_ET_VARIABLE, *varname);
 	if (Ov_Fail(fr))
 	{
 		ov_string_append(message, "Object does not exist\n");
 		SETVAR_AT_OBJECT_RETURN OV_ERR_BADPATH;
 	};
+	if(!(pOvVTable->m_getaccess(pObj, &PartElement, NULL) & OV_AC_WRITE)) {
+		return OV_ERR_NOACCESS;
+	}
 
 	//	fill Variable with active Content of OV-Object
 	//
 	ov_memstack_lock();
-		fr = pOvVTable->m_getvar(pObj, &Element, &Variable);
+		fr = pOvVTable->m_getvar(pObj, &PartElement, &Variable);
 	ov_memstack_unlock();
 	if (Ov_Fail(fr))
 	{
@@ -218,14 +221,14 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 
 	//	set Variable Value
 	//
-	fr = pOvVTable->m_setvar(pObj, &Element, &Variable);
+	fr = pOvVTable->m_setvar(pObj, &PartElement, &Variable);
 	if (Ov_Fail(fr))
 	{
-	    ov_string_append(message, "Error in writing new value\n");
+		ov_string_append(message, "Error in writing new value\n");
 		SETVAR_AT_OBJECT_RETURN OV_ERR_GENERIC;
 	}else{
-	    ov_string_append(message, "Success");
+		ov_string_append(message, "Success");
 	};
 
-    SETVAR_AT_OBJECT_RETURN OV_ERR_OK;
+	SETVAR_AT_OBJECT_RETURN OV_ERR_OK;
 }

@@ -86,7 +86,9 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 		{
 			GETVAR_TO_STRING_RETURN OV_ERR_GENERIC; //503
 		};
-
+		if(!(pOvVTable->m_getaccess(pObj, &PartElement, NULL) & OV_AC_READ)) {
+			return OV_ERR_NOACCESS;
+		}
 		//	fill Variable with active Content of OV-Object
 		//
 		ov_memstack_lock();
