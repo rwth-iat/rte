@@ -833,20 +833,20 @@ ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
 
 
 	if(libcount > 0){
-		ov_logfile_info("Running ov_server to load libraries");
+		ov_logfile_info("Running ov_runtimeserver to load libraries");
 
 		/*
 		*	create startup libraries
 		*/
 		i = 0;
-		helpsize = strlen("ov_server -x -f ") + strlen(argfilename) + 1;
+		helpsize = strlen("ov_runtimeserver -x -f ") + strlen(argfilename) + 1;
 		while (i < libcount) {
 		      helpsize += strlen("-w ") + strlen(libraries[i]);
 		      i++;
 		}
 		helpsize++;
 		help = (OV_STRING)malloc(helpsize);
-		sprintf(help, "ov_server -f %s", argfilename);
+		sprintf(help, "ov_runtimeserver -f %s", argfilename);
 		i = 0;
 		while (i < libcount) {
 		      strcat(help, " -w ");
