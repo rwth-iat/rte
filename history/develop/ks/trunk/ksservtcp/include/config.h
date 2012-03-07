@@ -7,6 +7,10 @@
 //cyccount of managercom obj, thus intervall of REGISTER sending
 #define MANAGER_REGISTER_INTERVALL 10000
 
+//timeouts for TCP UDP connections with manager
+#define MANAGER_TIMEOUT_SEC 0
+#define MANAGER_TIMEOUT_USEC 500
+
 #define STATUS_STOK          0
 #define STATUS_STPMSOCKCR    2
 #define STATUS_STPMRQSND     3

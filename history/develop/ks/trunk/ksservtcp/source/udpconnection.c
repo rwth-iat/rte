@@ -6,10 +6,6 @@
 #define OV_COMPILE_LIBRARY_ksservtcp
 #endif
 
-//timeouts for connections with manager
-#define TIMEOUT_SEC 0
-#define TIMEOUT_USEC 500
-
 #include "ksservtcp.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_scheduler.h"
@@ -115,8 +111,8 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_udpport_set(
 			//receive timeout
 			fd_set fds;
 			struct timeval timeout;
-			timeout.tv_sec = TIMEOUT_SEC;
-			timeout.tv_usec = TIMEOUT_USEC;
+			timeout.tv_sec = MANAGER_TIMEOUT_SEC;
+			timeout.tv_usec = MANAGER_TIMEOUT_USEC;
 			int n;
 
 			do
@@ -225,8 +221,8 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_tcpport_set(
 		//receive timeout
 		fd_set fds;
 		struct timeval timeout;
-		timeout.tv_sec = TIMEOUT_SEC;
-		timeout.tv_usec = TIMEOUT_USEC;
+		timeout.tv_sec = MANAGER_TIMEOUT_SEC;
+		timeout.tv_usec = MANAGER_TIMEOUT_USEC;
 		int n;
 
 		//send data as long as the answer from portmapper is negative
@@ -418,8 +414,8 @@ OV_DLLFNCEXPORT void ksservtcp_udpconnection_shutdown(
 			//receive timeout
 			fd_set fds;
 			struct timeval timeout;
-			timeout.tv_sec = TIMEOUT_SEC;
-			timeout.tv_usec = TIMEOUT_USEC;
+			timeout.tv_sec = MANAGER_TIMEOUT_SEC;
+			timeout.tv_usec = MANAGER_TIMEOUT_USEC;
 			int n;
 
 			do

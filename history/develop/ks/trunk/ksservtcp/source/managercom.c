@@ -872,6 +872,29 @@ OV_DLLFNCEXPORT void ksservtcp_managercom_getmngport(
 
 	//receive
 	memset(buffer, 0, sizeof(buffer));
+
+	//receive timeout
+	fd_set fds;
+	struct timeval timeout;
+	timeout.tv_sec = MANAGER_TIMEOUT_SEC;
+	timeout.tv_usec = MANAGER_TIMEOUT_USEC;
+	int n;
+	FD_ZERO(&fds);
+	FD_SET(sock, &fds);
+	n = select(sock+1, &fds, NULL, NULL, &timeout);
+	if (n < 0)
+	{
+		ksserv_logfile_info("select failed");
+		return;
+	}
+	if (n == 0)
+	{
+		pobj->v_mngport = 7509;
+		pmsr->v_mngport = 7509;
+		ksserv_logfile_info("connection to portmapper timed out");
+		return;
+	}
+
 	bytes = recvfrom(sock, buffer, sizeof(buffer), 0,
 			(struct sockaddr *) &from, &size_from);
 	if (bytes <= 0) {
