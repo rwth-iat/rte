@@ -850,33 +850,48 @@ cshmi.prototype = {
 		childrenType = HMI.KSClient.splitKsResponse(childrenType, 0)[0];
 		
 		var returnValue = true;
-		var response = HMI.KSClient.getEP(null, encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + childrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
-		response = HMI.KSClient.splitKsResponse(response, 1);
-		for (var i=0; i<response.length; i++){
-			var responseDictionary = Array();
-			if (childrenType === "OT_VARIABLE"){
-				responseDictionary["OP_NAME"] = response[i][0];
-				responseDictionary["OP_TYPE"] = response[i][1];
-				responseDictionary["OP_COMMENT"] = response[i][2];
-				responseDictionary["OP_ACCESS"] = response[i][3];
-				responseDictionary["OP_SEMANTICS"] = response[i][4];
-				responseDictionary["OP_CREATIONTIME"] = response[i][5];
-				responseDictionary["OP_CLASS"] = response[i][6];
-				responseDictionary["OP_TECHUNIT"] = response[i][7];
+		if (childrenType.indexOf("OT_") !== -1){
+			var response = HMI.KSClient.getEP(null, encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + childrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
+			response = HMI.KSClient.splitKsResponse(response, 1);
+			for (var i=0; i<response.length; i++){
+				var responseDictionary = Array();
+				if (childrenType === "OT_VARIABLE"){
+					responseDictionary["OP_NAME"] = response[i][0];
+					responseDictionary["OP_TYPE"] = response[i][1];
+					responseDictionary["OP_COMMENT"] = response[i][2];
+					responseDictionary["OP_ACCESS"] = response[i][3];
+					responseDictionary["OP_SEMANTICS"] = response[i][4];
+					responseDictionary["OP_CREATIONTIME"] = response[i][5];
+					responseDictionary["OP_CLASS"] = response[i][6];
+					responseDictionary["OP_TECHUNIT"] = response[i][7];
+				}
+				else if (childrenType === "OT_DOMAIN"){
+					responseDictionary["OP_NAME"] = response[i][0];
+					responseDictionary["OP_TYPE"] = response[i][1];
+					responseDictionary["OP_COMMENT"] = response[i][2];
+					responseDictionary["OP_ACCESS"] = response[i][3];
+					responseDictionary["OP_SEMANTICS"] = response[i][4];
+					responseDictionary["OP_CREATIONTIME"] = response[i][5];
+					responseDictionary["OP_CLASS"] = response[i][6];
+				}
+				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
+				
+				returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
 			}
-			else if (childrenType === "OT_DOMAIN"){
-				responseDictionary["OP_NAME"] = response[i][0];
-				responseDictionary["OP_TYPE"] = response[i][1];
-				responseDictionary["OP_COMMENT"] = response[i][2];
-				responseDictionary["OP_ACCESS"] = response[i][3];
-				responseDictionary["OP_SEMANTICS"] = response[i][4];
-				responseDictionary["OP_CREATIONTIME"] = response[i][5];
-				responseDictionary["OP_CLASS"] = response[i][6];
-			}
-
-			this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
-			
-			returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
+		}
+		else {
+			var response = HMI.KSClient.getVar(null, '{'+ FBRef +'.' + childrenType + '}', null);
+			//get a rid of external brackets 
+			response = response.replace(/{/g, "");
+			response = response.replace(/}/g, "");
+			response = HMI.KSClient.splitKsResponse(response, 1);
+			for (var i=0; i<response.length; i++){
+				var responseDictionary = Array();
+				responseDictionary["OP_VALUE"] = response[i];
+				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
+				
+				returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
+				}
 		}
 		//reset Objects, after iteration is done we don't want to cache the last entries
 		this.ResourceList.InstantiateTemplate = Object();
