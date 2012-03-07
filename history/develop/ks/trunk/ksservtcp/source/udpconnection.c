@@ -430,12 +430,12 @@ OV_DLLFNCEXPORT void ksservtcp_udpconnection_shutdown(
 				if (n < 0)
 				{
 					ksserv_logfile_info("select failed");
-					return OV_ERR_GENERIC;
+					return;
 				}
 				if (n == 0)
 				{
 					ksserv_logfile_info("connection to portmapper timed out");
-					return OV_ERR_GENERIC;
+					return;
 				}
 				bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*) &server, &server_len);
 			} while (bytes <= 0);
