@@ -370,7 +370,7 @@ LIBRARY cshmi
 			globalVar : STRING
 			COMMENT = "name of the global variable";
 			eventVar : STRING
-			COMMENT = "name of the event variable";
+			COMMENT = "name of the event variable (for example textinput)";
 			TemplateFBReferenceVariable : STRING
 			COMMENT = "name of a variable of a referenced FB object";
 			TemplateConfigValues : STRING
@@ -471,7 +471,30 @@ LIBRARY cshmi
 			INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
-
+	
+	CLASS CreateObject : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "create an Object via KS";
+		VARIABLES
+			autoRenameIfExists : BOOL
+			COMMENT = "Choose a different Name if Object already exists"
+			INITIALVALUE = FALSE;
+		END_VARIABLES;
+		PARTS
+			Name : CLASS cshmi/GetValue;
+			Library : CLASS cshmi/GetValue;
+			Class : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+	
+	CLASS DeleteObject : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "delete an Object via KS";
+		PARTS
+			Path : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+	
 	/* Conditions */
 	
 	CLASS Condition : CLASS cshmi/Object
