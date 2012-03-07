@@ -903,7 +903,7 @@ cshmi.prototype = {
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
 		
-		return null;
+		return true;
 	},
 	/*********************************
 		_checkCondition
@@ -1001,6 +1001,8 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 	}
 	
 	Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
+
+
 	
 	if (comptype === "{<}"){
 		for (var i=0; i<Value2.length; i++){
@@ -1017,12 +1019,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		}
 		return true;
 	}else if (comptype === "{==}"){
+		//check if one entry of Value2 == Value1
 		for (var i=0; i<Value2.length; i++){
-			if (!(Value1 === Value2[i])){
-				return false;
+			if (Value1 === Value2[i]){
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}else if (comptype === "{!=}"){
 		for (var i=0; i<Value2.length; i++){
 			if (!(Value1 !== Value2[i])){
@@ -1222,7 +1225,15 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 							rootObject = rootObject.parentNode;
 						}
 					}
-					svgElement.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];						
+
+
+					if (this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]].charAt(0) === "/"){
+						//String begins with / so it is a fullpath
+						svgElement.FBReference["default"] = this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+					}else{
+						//a normal relativ path
+						svgElement.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+					}
 				}
 				else{
 					svgElement.FBReference["default"] = ConfigEntry[0];
