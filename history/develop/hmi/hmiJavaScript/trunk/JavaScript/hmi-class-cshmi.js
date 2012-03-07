@@ -306,19 +306,6 @@ cshmi.prototype = {
 				preserveThis.ResourceList.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
-		}else if (command[command.length-1] === "textinput"){
-			ObjectParent.setAttribute("cursor", "text");
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			ObjectParent.addEventListener("click", function(evt){
-				preserveThis.ResourceList.EventObj = evt;
-				//mark changed Component for quick visual feedback (hidden after a second)
-				HMI.displaygestureReactionMarker(ObjectParent);
-				
-				//get and execute all actions
-				preserveThis._interpreteAction(ObjectParent, ObjectPath);
-				preserveThis.ResourceList.EventObj = null;
-				if (evt.stopPropagation) evt.stopPropagation();
-			}, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
@@ -503,8 +490,14 @@ cshmi.prototype = {
 					//todo
 					return null;
 				}else if (ksVarName === "eventVar"){
-					if(getValueParameter == "textinput"){
-						var input = window.prompt('Please input a new value');
+					if(getValueParameter.indexOf("textinput") !== -1){
+						var textinputHint;
+						if (getValueParameter.indexOf("textinput:") !== -1){
+							textinputHint = getValueParameter.substring(10);
+						}else{
+							textinputHint = 'Please input a new value';
+						}
+						var input = window.prompt(textinputHint);
 						if (input !== null){
 							return input;
 						}
