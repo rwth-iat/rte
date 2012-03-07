@@ -9,7 +9,7 @@
 
 //timeouts for TCP/UDP connections with manager
 #define MANAGER_TIMEOUT_SEC 0
-#define MANAGER_TIMEOUT_USEC 500
+#define MANAGER_TIMEOUT_USEC 500000
 
 #define STATUS_STOK          0
 #define STATUS_STPMSOCKCR    2
