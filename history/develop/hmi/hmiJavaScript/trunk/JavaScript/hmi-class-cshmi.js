@@ -880,18 +880,23 @@ cshmi.prototype = {
 			}
 		}
 		else {
-			var response = HMI.KSClient.getVar(null, '{'+ FBRef +'.' + childrenType + '}', null);
-			//get a rid of external brackets 
-			response = response.replace(/{/g, "");
-			response = response.replace(/}/g, "");
-			response = HMI.KSClient.splitKsResponse(response, 1);
-			for (var i=0; i<response.length; i++){
-				var responseDictionary = Array();
-				responseDictionary["OP_VALUE"] = response[i];
-				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
-				
-				returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
-				}
+			//allow mutltiple childrenTypes
+			var childrenTypeList = childrenType.split(" ");
+			var response;
+			for (var i=0; i < childrenTypeList.length; i++) {
+				response = HMI.KSClient.getVar(null, '{'+ FBRef +'.' + childrenTypeList[i] + '}', null);
+				//get a rid of external brackets 
+				response = response.replace(/{/g, "");
+				response = response.replace(/}/g, "");
+				response = HMI.KSClient.splitKsResponse(response, 1);
+				for (var j=0; j<response.length; j++){
+					var responseDictionary = Array();
+					responseDictionary["OP_VALUE"] = response[j];
+					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
+					
+					returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
+					}
+			}
 		}
 		//reset Objects, after iteration is done we don't want to cache the last entries
 		this.ResourceList.InstantiateTemplate = Object();
@@ -1244,7 +1249,24 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 
 					if (this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
-						svgElement.FBReference["default"] = this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+//						debugger;
+						// if FBref beginn with "//" then keep the server information
+						// e.g "//dev/ov_hmidemo7/TechUnits/Add" --> keep "//dev/ov_hmidemo7"
+						if (FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+							//find the 3rd "/"
+							var slashIndex = FBRef.indexOf("/", 2);
+							//find the 4th "/"
+							slashIndex = FBRef.indexOf("/", slashIndex+1);
+							//only keep the String before 4th "/"
+							FBRef = FBRef.slice(0, slashIndex);
+							
+							svgElement.FBReference["default"] = FBRef + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+						}
+						// FBRef not needed because it's not a path to another server
+						else{
+							svgElement.FBReference["default"] = this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+						}
+						
 					}else{
 						//a normal relativ path
 						svgElement.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
