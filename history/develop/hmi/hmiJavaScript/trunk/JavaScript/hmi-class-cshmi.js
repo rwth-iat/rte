@@ -392,6 +392,8 @@ cshmi.prototype = {
 				returnValue = this._interpreteChildrenIterator(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/InstantiateTemplate") !== -1){
 				returnValue = this._interpreteInstantiateTemplate(ObjectParent, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/RoutePolyline") !== -1){
+				returnValue = this._interpreteRoutePolyline(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else{
 				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+") "+ObjectPath+" not supported");
 			}
@@ -566,8 +568,7 @@ cshmi.prototype = {
 				}
 			}//end if empty
 		}//end for in loop
-		HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' not configured.');
-		return null; //unconfigured
+		return ""; //fallback
 	},
 	/*********************************
 		_setValue
@@ -916,6 +917,130 @@ cshmi.prototype = {
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
 		
+		return true;
+	},
+	/*********************************
+	_interpreteRoutePolyline
+	*********************************/
+	_interpreteRoutePolyline: function(ObjectParent, ObjectPath){
+		if(ObjectParent.tagName.indexOf("polyline") === -1 ){
+			HMI.hmi_log_info_onwebsite("cshmi._interpreteRoutePolyline not supported with: "+ObjectParent.tagName+" (path: "+ObjectPath+")");
+			return false;
+		}
+		var rootObject = ObjectParent;
+//TODO:		ObjectParent.parent.insertBefore(ObjectParent, ObjectParent.parent.firstChild);
+		var FBRef;
+		//search FBReference of root Object
+		while (rootObject !== null){
+			//FBReference found
+			if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+				FBRef = rootObject.FBReference["default"];
+				//FBRef found, we can stop search
+				rootObject = null;
+			}
+			else {
+				//loop upwards to find the Template object
+				rootObject = rootObject.parentNode;
+			}
+		}
+		
+		// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
+		// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
+		var prefix;
+		if (FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+			//find the 3rd "/"
+			var slashIndex = FBRef.indexOf("/", 2);
+			//find the 4th "/"
+			slashIndex = FBRef.indexOf("/", slashIndex+1);
+			//only keep the String before 4th "/"
+			prefix = FBRef.slice(0, slashIndex);
+		}else {
+			prefix = "";
+		}
+
+		//get Values (via getValue-parts)
+		var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
+		var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
+		var Source;
+		if (SourceVariablename !== ""){
+			Source = prefix + SourceBasename + "." + SourceVariablename;
+		}else{
+			Source = prefix + SourceBasename;
+		}
+		var TargetBasename = this._getValue(ObjectParent, ObjectPath+".TargetBasename");
+		var TargetVariablename = this._getValue(ObjectParent, ObjectPath+".TargetVariablename");
+		var Target;
+		if (TargetVariablename !== ""){
+			Target = prefix + TargetBasename + "." + TargetVariablename;
+		}else{
+			Target = prefix + TargetBasename;
+		}
+
+		if (document.getElementById(Source) !== null){
+		    var xStart = parseInt(document.getElementById(Source).getAttribute("layerX"), 10);
+		    var yStart = parseInt(document.getElementById(Source).getAttribute("layerY"), 10);
+		    var x = parseInt(document.getElementById(Source).getAttribute("x"), 10);
+		}
+		if (document.getElementById(Target) !== null){
+		    var xEnd = parseInt(document.getElementById(Target).getAttribute("layerX"), 10);
+		    var yEnd = parseInt(document.getElementById(Target).getAttribute("layerY"), 10);
+		}
+		debugger;
+	    var points;
+		if (x > 0){
+			//OUTPUT --> INPUT
+		    xStart = xStart + 54;
+		    yStart = yStart + 6;
+		    yEnd = yEnd + 6;
+		    points = xStart + "," + yStart + " ";
+		    xStart = xStart + 40;
+		    points = points + xStart + "," + yStart + " ";
+		    if (xStart >= xEnd) {
+		      if (yStart <= yEnd){
+		        yStart = yStart + (yEnd-yStart)/2;
+		      }
+		      else {
+		        yStart = yStart - (yStart-yEnd)/2;
+		      }
+//		    	yStart = yStart + (yEnd+yStart)/2;
+
+		    	points = points + xStart + "," + yStart + " ";
+
+		    	xStart = xEnd - 40;
+		    	points = points + xStart + "," + yStart + " ";
+		    }
+
+		    points = points + xStart + "," + yEnd + " ";
+		    points = points + xEnd + "," + yEnd;
+
+		}else {
+//TODO:		need modification, only copy-paste now
+			//INPUT --> INPUT
+		    xStart = xStart + 54;
+		    yStart = yStart + 6;
+		    yEnd = yEnd + 6;
+		    points = xStart + "," + yStart + " ";
+		    xStart = xStart + 40;
+		    points = points + xStart + "," + yStart + " ";
+		    if (xStart >= xEnd) {
+		      if (yStart <= yEnd){
+		        yStart = yStart + (yEnd-yStart)/2;
+		      }
+		      else {
+		        yStart = yStart - (yStart-yEnd)/2;
+		      }
+		    	points = points + xStart + "," + yStart + " ";
+
+		    	xStart = xEnd - 40;
+		    	points = points + xStart + "," + yStart + " ";
+		    }
+
+		    points = points + xStart + "," + yEnd + " ";
+		    points = points + xEnd + "," + yEnd;
+		}
+
+	    ObjectParent.setAttribute("points", points);
+
 		return true;
 	},
 	/*********************************
@@ -1395,6 +1520,8 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		svgElement.setAttribute("x2", requestList[ObjectPath]["x2"]);
 		svgElement.setAttribute("y2", requestList[ObjectPath]["y2"]);
 		
+		svgElement.setAttribute("shape-rendering", "crispEdges");
+		
 		return svgElement;
 	},
 	_buildSvgPolyline: function(ObjectParent, ObjectPath){
@@ -1435,6 +1562,8 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		
 		svgElement.setAttribute("points", requestList[ObjectPath]["points"]);
 		
+		svgElement.setAttribute("shape-rendering", "crispEdges");
+
 		return svgElement;
 	},
 	_buildSvgPolygon: function(ObjectParent, ObjectPath){
@@ -1474,6 +1603,8 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		this._processBasicVariables(svgElement, requestList[ObjectPath]);
 		
 		svgElement.setAttribute("points", requestList[ObjectPath]["points"]);
+		
+		svgElement.setAttribute("shape-rendering", "crispEdges");
 		
 		return svgElement;
 	},
@@ -1758,6 +1889,8 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		
+		svgElement.setAttribute("shape-rendering", "crispEdges");
 		
 		return svgElement;
 	},
