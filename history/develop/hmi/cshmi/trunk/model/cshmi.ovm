@@ -348,15 +348,15 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 
-	CLASS Connection : CLASS cshmi/Element
+	CLASS RoutePolyline : CLASS cshmi/Action
 		IS_INSTANTIABLE;
 		COMMENT = "a multi purpose connection between two objects";
-		VARIABLES
-			SourceID : STRING
-			COMMENT = "ID if source Object";
-			TargetID : STRING
-			COMMENT = "ID of target Object";
-		END_VARIABLES;
+		PARTS
+			SourceBasename : CLASS cshmi/GetValue;
+			TargetBasename : CLASS cshmi/GetValue;
+			SourceVariablename : CLASS cshmi/GetValue;
+			TargetVariablename : CLASS cshmi/GetValue;
+		END_PARTS;
 	END_CLASS;
 
 	/* Actions */
