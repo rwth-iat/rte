@@ -12,8 +12,12 @@
 #include "ksserv_logfile.h"
 #include "config.h"
 
+#if !OV_SYSTEM_NT
 #include <sys/time.h>
-
+#else
+#include <time.h>
+#include <windows.h>
+#endif
 
 #include <stdio.h>
 #if !OV_SYSTEM_NT
