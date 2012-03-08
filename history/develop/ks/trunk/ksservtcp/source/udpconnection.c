@@ -100,6 +100,20 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_udpport_set(
 		memcpy((char *)&server.sin_addr,(char *)hp->h_addr,hp->h_length);
 		server.sin_port = htons(111);
 
+		//TODO: sometimes program hangs in the outer do-while loop adding a dirty trick to kill it
+		//here the problem occurs if tmanager.exe is running
+		struct timeval tim;
+		double t1, t2;
+		gettimeofday(&tim, NULL);
+		t1=tim.tv_sec+(tim.tv_usec/1000000.0);
+
+		//receive timeout
+		fd_set fds;
+		struct timeval timeout;
+		timeout.tv_sec = MANAGER_TIMEOUT_SEC;
+		timeout.tv_usec = MANAGER_TIMEOUT_USEC;
+		int n;
+
 		//send data as long as the answer from portmapper is negative
 		do
 		{
@@ -110,12 +124,6 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_udpport_set(
 				CLOSE_SOCKET(sock);
 				return OV_ERR_GENERIC;
 			}
-			//receive timeout
-			fd_set fds;
-			struct timeval timeout;
-			timeout.tv_sec = MANAGER_TIMEOUT_SEC;
-			timeout.tv_usec = MANAGER_TIMEOUT_USEC;
-			int n;
 
 			do
 			{
@@ -136,7 +144,10 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_udpport_set(
 				bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*) &server, &server_len);
 
 			} while (bytes <= 0);
-		} while (buffer[bytes-1] != 1);
+	        gettimeofday(&tim, NULL);
+	        t2=tim.tv_sec+(tim.tv_usec/1000000.0);
+		} while (buffer[bytes-1] != 1 && (t2-t1)<ARRIVE_TIMEOUT);
+        if((t2-t1)>=ARRIVE_TIMEOUT)ksserv_logfile_info("answer could not be interpreted");
 		CLOSE_SOCKET(sock);
 	} else { //NOPORTMAPPER set
 		ksserv_logfile_info("NOPORTMAPPER set - NOT registering at portmapper (UDP)");
@@ -220,6 +231,13 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_tcpport_set(
 		memcpy((char *)&server.sin_addr,(char *)hp->h_addr,hp->h_length);
 		server.sin_port = htons(111);
 
+		//TODO: sometimes program hangs in the outer do-while loop adding a dirty trick to kill it
+		//here the problem occurs if tmanager.exe is running
+		struct timeval tim;
+		double t1, t2;
+		gettimeofday(&tim, NULL);
+		t1=tim.tv_sec+(tim.tv_usec/1000000.0);
+
 		//receive timeout
 		fd_set fds;
 		struct timeval timeout;
@@ -237,7 +255,7 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_tcpport_set(
 				CLOSE_SOCKET(sock);
 				return OV_ERR_GENERIC;
 			}
-
+			//timeout
 			do
 			{
 				FD_ZERO(&fds);
@@ -257,7 +275,10 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_tcpport_set(
 
 				bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*) &server, &server_len);
 			} while (bytes <= 0);
-		} while (buffer[bytes-1] != 1);
+	        gettimeofday(&tim, NULL);
+	        t2=tim.tv_sec+(tim.tv_usec/1000000.0);
+		} while (buffer[bytes-1] != 1 && (t2-t1)<ARRIVE_TIMEOUT);
+		if((t2-t1)>=ARRIVE_TIMEOUT)ksserv_logfile_info("answer could not be interpreted");
 		CLOSE_SOCKET(sock);
 	} else { //NOPORTMAPPER set
 		ksserv_logfile_info("NOPORTMAPPER set - NOT registering at portmapper (TCP)");
@@ -445,7 +466,8 @@ OV_DLLFNCEXPORT void ksservtcp_udpconnection_shutdown(
 			} while (bytes <= 0);
 	        gettimeofday(&tim, NULL);
 	        t2=tim.tv_sec+(tim.tv_usec/1000000.0);
-		} while (buffer[bytes-1] != 0 && (t2-t1)<UNREGISTER_TIMEOUT);
+		} while (buffer[bytes-1] != 0 && (t2-t1)<ARRIVE_TIMEOUT);
+		if((t2-t1)>=ARRIVE_TIMEOUT)ksserv_logfile_info("answer could not be interpreted");
 
 		CLOSE_SOCKET(sock);
 	}
