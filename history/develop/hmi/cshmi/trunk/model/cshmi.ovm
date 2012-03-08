@@ -348,6 +348,17 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 
+	CLASS Connection : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "a multi purpose connection between two objects";
+		VARIABLES
+			SourceID : STRING
+			COMMENT = "ID if source Object";
+			TargetID : STRING
+			COMMENT = "ID of target Object";
+		END_VARIABLES;
+	END_CLASS;
+
 	/* Actions */
 
 	CLASS Action : CLASS cshmi/Object
@@ -370,7 +381,7 @@ LIBRARY cshmi
 			globalVar : STRING
 			COMMENT = "name of the global variable";
 			eventVar : STRING
-			COMMENT = "name of the event variable (for example textinput)";
+			COMMENT = "name of the event variable (for example textinput or textinput:question)";
 			TemplateFBReferenceVariable : STRING
 			COMMENT = "name of a variable of a referenced FB object";
 			TemplateConfigValues : STRING
@@ -551,8 +562,8 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS ServerEvent : CLASS cshmi/Event
-		IS_INSTANTIABLE;
-		COMMENT = "an HMI gesture (i.e. an event from the server)";
+/*		IS_INSTANTIABLE;*/
+		COMMENT = "NOT IMPLEMENTED, an HMI gesture (i.e. an event from the server)";
 	END_CLASS;
 	
 	CLASS TimeEvent : CLASS cshmi/Event
