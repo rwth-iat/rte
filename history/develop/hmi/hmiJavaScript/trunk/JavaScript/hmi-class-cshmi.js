@@ -1191,6 +1191,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		//parametrise templateDefinition with the config
 		svgElement.FBReference = Object();
 		svgElement.ConfigValues = Object();
+		var realFBobjectID; 
 		var ConfigEntry = null;
 		var ConfigList = requestList[ObjectPath]["FBReference"].split(" ");
 		for (var i=0; i < ConfigList.length; i++) {
@@ -1214,11 +1215,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 							rootObject = rootObject.parentNode;
 						}
 					}
-					svgElement.FBReference[ConfigEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];						
+					svgElement.FBReference[ConfigEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];
+					realFBobjectID = svgElement.FBReference[ConfigEntry[0]];
 				}
 				
 				else{
 					svgElement.FBReference[ConfigEntry[0]] = ConfigEntry[1];
+					realFBobjectID = ConfigEntry[1];
 				}
 			}
 			else if (ConfigEntry.length === 1 && ConfigEntry[0] != ""){
@@ -1268,8 +1271,10 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 				else{
 					svgElement.FBReference["default"] = ConfigEntry[0];
 				}
+				realFBobjectID = svgElement.FBReference["default"];
 			}
 		}
+		svgElement.id = realFBobjectID;
 		
 		var xTemplate = requestList[ObjectPath]["x"];
 		var yTemplate = requestList[ObjectPath]["y"];
