@@ -249,6 +249,7 @@ OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_tcpport_set(
 				if (n == 0)
 				{
 					ksserv_logfile_info("connection to portmapper timed out");
+					ov_logfile_info("Portmap service not found: running on localhost:7509.");
 					return OV_ERR_GENERIC;
 				}
 
