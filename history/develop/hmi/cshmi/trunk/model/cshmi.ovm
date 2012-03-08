@@ -348,17 +348,6 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 
-	CLASS RoutePolyline : CLASS cshmi/Action
-		IS_INSTANTIABLE;
-		COMMENT = "a multi purpose connection between two objects";
-		PARTS
-			SourceBasename : CLASS cshmi/GetValue;
-			TargetBasename : CLASS cshmi/GetValue;
-			SourceVariablename : CLASS cshmi/GetValue;
-			TargetVariablename : CLASS cshmi/GetValue;
-		END_PARTS;
-	END_CLASS;
-
 	/* Actions */
 
 	CLASS Action : CLASS cshmi/Object
@@ -481,6 +470,17 @@ LIBRARY cshmi
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
 		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS RoutePolyline : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "a multi purpose connection between two objects";
+		PARTS
+			SourceBasename : CLASS cshmi/GetValue;
+			TargetBasename : CLASS cshmi/GetValue;
+			SourceVariablename : CLASS cshmi/GetValue;
+			TargetVariablename : CLASS cshmi/GetValue;
+		END_PARTS;
 	END_CLASS;
 	
 	CLASS CreateObject : CLASS cshmi/Action
