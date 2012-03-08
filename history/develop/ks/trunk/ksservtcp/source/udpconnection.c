@@ -12,6 +12,8 @@
 #include "ksserv_logfile.h"
 #include "config.h"
 
+#include <sys/time.h>
+
 
 #include <stdio.h>
 #if !OV_SYSTEM_NT
@@ -401,6 +403,11 @@ OV_DLLFNCEXPORT void ksservtcp_udpconnection_shutdown(
 		memcpy((char *)&server.sin_addr,(char *)hp->h_addr,hp->h_length);
 		server.sin_port = htons(111);
 
+		//TODO: sometimes program hangs in the outer do-while loop adding a dirty trick to kill it
+		struct timeval tim;
+		double t1, t2;
+		gettimeofday(&tim, NULL);
+		t1=tim.tv_sec+(tim.tv_usec/1000000.0);
 		//send data as long as the answer from portmapper is negative
 		do
 		{
@@ -436,7 +443,9 @@ OV_DLLFNCEXPORT void ksservtcp_udpconnection_shutdown(
 				}
 				bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*) &server, &server_len);
 			} while (bytes <= 0);
-		} while (buffer[bytes-1] != 0);
+	        gettimeofday(&tim, NULL);
+	        t2=tim.tv_sec+(tim.tv_usec/1000000.0);
+		} while (buffer[bytes-1] != 0 && (t2-t1)<UNREGISTER_TIMEOUT);
 
 		CLOSE_SOCKET(sock);
 	}

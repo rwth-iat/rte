@@ -11,6 +11,9 @@
 #define MANAGER_TIMEOUT_SEC 0
 #define MANAGER_TIMEOUT_USEC 500000
 
+//timeout for a vaild portmap unregister answer
+#define UNREGISTER_TIMEOUT 0.5
+
 #define STATUS_STOK          0
 #define STATUS_STPMSOCKCR    2
 #define STATUS_STPMRQSND     3
