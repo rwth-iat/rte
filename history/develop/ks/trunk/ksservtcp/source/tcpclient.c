@@ -163,6 +163,10 @@ void ksservtcp_tcpclient_typemethod(
  	char* placeInBuffer = NULL;
  	int sentChunkSize = 0;
  	int sentBytes = 0;
+ 	int err = 0;
+ 	int mngrcommand = 1;		//1 indicates received manager-command (used to distinguish sending method)
+ 	fd_set read_flags,write_flags;
+ 	struct timeval waitd;
         
   	//ksserv_logfile_debug("tcpclient typemethod called ");
 	if (receivesocket < 0) { // check if the socket might be OK.
@@ -439,6 +443,7 @@ void ksservtcp_tcpclient_typemethod(
 			 		break;
 				 default:	//no manager command
 
+					mngrcommand = 0;
 	 				ksserv_logfile_info("TCPClient/typemethod: normal KS Command execution --> xdrexec");
 
 	 				xdrmem_create(&xdrs, xdr_received , size_received, XDR_DECODE);
@@ -447,67 +452,135 @@ void ksservtcp_tcpclient_typemethod(
 					//ksserv_xdrexec(&xdrs, &resultXDRs);
 					xdrmemstream_rewind(&resultXDRs, XDR_DECODE);
 
-{
-	xdrmemstream_fragment_description descr;
-	unsigned long count = 0;
-	unsigned long total_size = 0;
-	int len = 0;
-	
-	if(xdrmemstream_get_length(&resultXDRs, &len))
-		ksserv_logfile_debug("resultXDR-length: %d", len);
-	else
-		ksserv_logfile_debug("xdrmemstream_get_length failed, len: %d", len);
-		
-	xdrmemstream_get_fragments(&resultXDRs, &descr, &count, &total_size);
-		ksserv_logfile_info("result_XDRs fragment count: %d,\ntotal size: %d\n fragment description length: %d",
-			count, total_size, descr.length);
-}
 
-				//copy xdr-data
 				//set size_return to size of memstream + 28
 //					size_return = (&resultXDRs)->x_handy+28;
 					xdrmemstream_get_length(&resultXDRs, &size_return);
 					size_return+=28;
 		ksserv_logfile_debug("size_return set: %d", size_return);
-				//allocate memory	
-					xdr_return = (char*)malloc(size_return);
-					buffer = (char*)realloc(buffer, size_return); //reuse buffer for returning answer
-		ksserv_logfile_debug("buffer allocated: %p", buffer);		
-				//initialize pointer for later iterations	
-					placeInBuffer = buffer;
-				//set currFragment to first Fragments address
-					currFragment = ((MemoryStreamInfo*)((&resultXDRs)->x_base))->first;
-				//iterate over fragments
-					do
-					{
-					//copy fragment to buffer
-						memcpy(placeInBuffer, &(currFragment->dummy), currFragment->used);
-	ksserv_logfile_debug("fragment copied, currFragment->used: %d", currFragment->used);											
-						//increment Bufferpointer	
-						placeInBuffer = &(placeInBuffer[currFragment->used]);
-					//set currFragment to the next one
-						currFragment = currFragment->next;
-	ksserv_logfile_debug("next fragment: %p", currFragment);
-					} while(currFragment);
-					
-				
-				//reset xdr_return
-					memset(xdr_return, 0, size_return);
-					//clear xdr?
-					MemStreamDestroy(&resultXDRs);
 
+
+				{	//building answer and sending it
+					char header[28];
+
+
+
+					waitd.tv_sec = 0;     // Set Timeout
+					waitd.tv_usec = 1000;    //  1 millisecond
+
+					//reset header
+					memset(header, 0, sizeof(header));
+
+					//build header
 					xdrlret = size_return-4;
 					temp = (char*)&(xdrlret);
 					for (i=0; i<4; i++)
-						rpcheader[3-i] = temp[i];
-		
-					memcpy(xdr_return, rpcheader, 4);
-					xdr_return[0] = 0x80;
+					rpcheader[3-i] = temp[i];
+
+					memcpy(header, rpcheader, 4);
+					header[0] = 0x80;
 					for (i=0; i<4; i++)
-						xdr_return[i+4] = xid2[i];
-					xdr_return[11] = 0x1;
-					for (i=0; i<(size_return-32); i++)
-						xdr_return[i+32] = buffer[i+4];
+					header[i+4] = xid2[i];
+					header[11] = 0x1;
+					placeInBuffer = header;
+					sentBytes = 0;
+
+					//send header
+					do
+					{
+						FD_ZERO(&read_flags); // Zero the flags ready for using
+						FD_ZERO(&write_flags);
+						FD_SET(receivesocket, &write_flags); // get write flags
+						waitd.tv_sec = 0;     // Set Timeout
+						waitd.tv_usec = 1000;    //  1 millisecond
+						err = select(receivesocket + 1, &read_flags,&write_flags, (fd_set*)0,&waitd);
+				ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
+				ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, waitd.tv_usec);
+						if(err < 0)
+						{
+							perror("tcpclient: error waiting for sending answer-header:");
+						}
+
+						sentChunkSize = send(receivesocket, placeInBuffer, sizeof(header), 0);
+						if (sentChunkSize == -1)
+						{
+							ksserv_logfile_error("send() failed");
+							break;
+						}
+				ksserv_logfile_debug("header chunk sent: %d bytes", sentChunkSize);
+						placeInBuffer = &(placeInBuffer[sentChunkSize]);
+						sentBytes += sentChunkSize;
+
+					}while(sentBytes < sizeof(header));
+
+				ksserv_logfile_debug("header sent: %d bytes", sentBytes);
+					sentBytes = 0;
+
+					//get pointer to first fragment
+					currFragment = ((MemoryStreamInfo*)((&resultXDRs)->x_base))->first;
+					//clear first 4 bytes of first fragment
+					memset((void*) &currFragment->dummy, 0, 4);
+
+
+					//iterate over fragments and send them
+					do
+					{
+						sentBytes = 0;		//represents sentBytes of current fragment
+						placeInBuffer = (char*) &(currFragment->dummy);	//pointer to data to send next
+
+						while((currFragment->used - sentBytes) > 0)
+						{
+							FD_ZERO(&read_flags); // Zero the flags ready for using
+							FD_ZERO(&write_flags);
+							FD_SET(receivesocket, &write_flags); // get write flags
+							//wait until ready for sending
+							waitd.tv_sec = 0;     // Set Timeout
+							waitd.tv_usec = 1000;    //  1 millisecond
+							err = select(receivesocket + 1, &read_flags,&write_flags, (fd_set*)0,&waitd);
+		ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
+		ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, waitd.tv_usec);
+							if(err < 0)
+							{
+								perror("tcpclient: error waiting for sending fragment:");
+							}
+
+							if((currFragment->used - sentBytes) > 4096) //send 4096 bytes at most
+							{
+								sentChunkSize = send(receivesocket, placeInBuffer, 4096, 0);
+								if (sentChunkSize == -1)
+								{
+									ksserv_logfile_error("send() failed");
+									break;
+								}
+								placeInBuffer = &(placeInBuffer[sentChunkSize]);
+								sentBytes += sentChunkSize;
+							}
+							else
+							{
+								sentChunkSize = send(receivesocket, placeInBuffer, (currFragment->used - sentBytes), 0);
+								if (sentChunkSize == -1)
+								{
+									ksserv_logfile_error("send() failed");
+									break;
+								}
+								placeInBuffer = &(placeInBuffer[sentChunkSize]);
+								sentBytes += sentChunkSize;
+							}
+						}
+		ksserv_logfile_debug("fragment sent: %p", currFragment);
+
+						//set currFragment to the next one
+						currFragment = currFragment->next;
+		ksserv_logfile_debug("next fragment: %p", currFragment);
+					} while(currFragment);
+		ksserv_logfile_debug("sent %d bytes",sentBytes);
+					
+				}
+
+					//clear xdr?
+					MemStreamDestroy(&resultXDRs);
+
+
 				break;
 		} //close swtich REGISTER UNREGISTER GETSERVER KScmd
 		
@@ -524,46 +597,54 @@ void ksservtcp_tcpclient_typemethod(
 			//KSDEVEL printf("%s\n", xdr_return);
 		
 			//send xdr to client, iterate over buffer if it cant be sent atomically
-	ksserv_logfile_debug("tcpclient: sending answer: %d bytes", (size_return));
-			//initialize send pointer with buffer
-			placeInBuffer = xdr_return;
-			do
+
+			if(mngrcommand)		//only manager-commands use xdr_return for sending; other commands use the send-routine above (directly from xdr-streams)
 			{
-				if((size_return - sentBytes) > 4096)
+	ksserv_logfile_debug("tcpclient: sending answer to manager-command: %d bytes", (size_return));
+				//initialize send pointer with buffer
+				placeInBuffer = xdr_return;
+				do
 				{
-					sentChunkSize = send(receivesocket, placeInBuffer, 4096, 0);
-					if (sentChunkSize == -1) 
+					FD_ZERO(&read_flags); // Zero the flags ready for using
+					FD_ZERO(&write_flags);
+					FD_SET(receivesocket, &write_flags); // get write flags
+					waitd.tv_sec = 0;     // Set Timeout
+					waitd.tv_usec = 1000;    //  1 millisecond
+					err = select(receivesocket + 1, &read_flags,&write_flags, (fd_set*)0,&waitd);
+			ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
+			ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, waitd.tv_usec);
+					if(err < 0)
 					{
-						ksserv_logfile_error("send() failed");
-						break;
+						perror("tcpclient: error waiting for sending answer:");
 					}
-				}
-				else
-				{
-					sentChunkSize = send(receivesocket, placeInBuffer, (size_return - sentBytes), 0);
-					if (sentChunkSize == -1) 
+
+					//send
+					if((size_return - sentBytes) > 4096)
 					{
-						ksserv_logfile_error("send() failed");
-						break;
+						sentChunkSize = send(receivesocket, placeInBuffer, 4096, 0);
+						if (sentChunkSize == -1)
+						{
+							ksserv_logfile_error("send() failed");
+							break;
+						}
 					}
-				}
-				sentBytes += sentChunkSize;
+					else
+					{
+						sentChunkSize = send(receivesocket, placeInBuffer, (size_return - sentBytes), 0);
+						if (sentChunkSize == -1)
+						{
+							ksserv_logfile_error("send() failed");
+							break;
+						}
+					}
+					sentBytes += sentChunkSize;
 	ksserv_logfile_debug("tcpclient: answer sent, sentChunkSize: %d\nsentBytes: %d", sentChunkSize, sentBytes);
-				//move pointer to next chunk
-				placeInBuffer = &(xdr_return[sentBytes]);
-				
-				if(sentBytes < size_return)
-				{
-				//sleep to give time for sending (sleep values are trial and error based for the development PC (Intel C600))
-#if !OV_SYSTEM_NT				
-				//on linux usleep counts in usecs
-					usleep(1000);
-#else
-				//on windows Sleep counts in msecs 
-					Sleep(1);
-#endif					
-				}
-			}while(sentBytes < size_return);
+					//move pointer to next chunk
+					placeInBuffer = &(xdr_return[sentBytes]);
+
+
+				}while(sentBytes < size_return);
+			}
 
 			//client isnt any more the sender
 			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
