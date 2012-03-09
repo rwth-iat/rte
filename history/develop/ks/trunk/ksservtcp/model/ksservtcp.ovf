@@ -27,8 +27,4 @@ typedef OV_DLLFNCEXPORT void KSMANAGERCOM_FNC_MANAGERCOM_MNGUNREGISTER(
 		OV_UINT												version
 );
 
-typedef OV_DLLFNCEXPORT void KSMANAGERCOM_FNC_MANAGERCOM_GETMNGPORT(
-		OV_INSTPTR_ksservtcp_managercom	 			pobj
-);
-
 #endif

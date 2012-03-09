@@ -11,6 +11,7 @@
 #include "libov/ov_scheduler.h"
 #include "ksserv_logfile.h"
 #include "config.h"
+#include <errno.h>
 
 #if !OV_SYSTEM_NT
 #include <sys/time.h>
@@ -42,122 +43,13 @@ OV_DLLFNCEXPORT OV_INT ksservtcp_udpconnection_udpport_get(
 
 /**
  * Sets value of variable udpport.
- * By setting this variable the udpport is registered at portmapper
- * except NOPORTMAPPER variable is set.
+ *
  */
 OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_udpport_set(
 		OV_INSTPTR_ksservtcp_udpconnection          pobj,
 		const OV_INT           value
 ) {
-	int xdrlength = 56;
-	char setxdr[56];
-	char *temp;
-	int c;
-	int sock;
-	struct sockaddr_in server;
-	unsigned int server_len = sizeof(server);
-	struct hostent *hp;
-	int bytes;
-	char buffer[4096];
-	int udpport = value;
-
 	pobj->v_udpport = value;
-
-	if(!getenv("NOPORTMAPPER")) {//register port at portmapper
-
-		ksserv_logfile_info("register at portmapper (UDP)");
-		//generate SET xdr
-		memset(setxdr, 0, xdrlength);
-		setxdr[0] = 0x7c;
-		setxdr[1] = 0xab;
-		setxdr[2] = 0x11;
-		setxdr[3] = 0xd3;
-		setxdr[11] = 0x02;
-		setxdr[13] = 0x01;
-		setxdr[14] = 0x86;
-		setxdr[15] = 0xa0;
-		setxdr[19] = 0x02;
-		setxdr[23] = 0x01;
-		setxdr[41] = 0x04;
-		setxdr[42] = 0x96;
-		setxdr[43] = 0x78;
-		setxdr[47] = 0x02;
-		setxdr[51] = 0x11; //UDP
-		temp = (char*)&udpport;
-		for (c=0; c<4; c++)
-			setxdr[55-c] = temp[c];
-
-		//create socket
-		if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
-		{
-			perror ("socket(udp portmapper) failed");
-			return OV_ERR_GENERIC;
-		}
-		server.sin_family = AF_INET;
-		hp = gethostbyname("127.0.0.1");
-		if (hp==0)
-		{
-			ksserv_logfile_error("Unknown host (udp portmapper)");
-			CLOSE_SOCKET(sock);
-			return OV_ERR_GENERIC;
-		}
-		memcpy((char *)&server.sin_addr,(char *)hp->h_addr,hp->h_length);
-		server.sin_port = htons(111);
-
-		//TODO: sometimes program hangs in the outer do-while loop adding a dirty trick to kill it
-		//here the problem occurs if tmanager.exe is running
-		struct timeval tim;
-		double t1, t2;
-		gettimeofday(&tim, NULL);
-		t1=tim.tv_sec+(tim.tv_usec/1000000.0);
-
-		//receive timeout
-		fd_set fds;
-		struct timeval timeout;
-		timeout.tv_sec = MANAGER_TIMEOUT_SEC;
-		timeout.tv_usec = MANAGER_TIMEOUT_USEC;
-		int n;
-
-		//send data as long as the answer from portmapper is negative
-		do
-		{
-			bytes = sendto(sock,setxdr,xdrlength,0,(struct sockaddr *)&server,sizeof(server));
-			if (bytes < 0)
-			{
-				ksserv_logfile_error("send(udp portmapper) failed");
-				CLOSE_SOCKET(sock);
-				return OV_ERR_GENERIC;
-			}
-
-			do
-			{
-				FD_ZERO(&fds);
-				FD_SET(sock, &fds);
-				n = select(sock+1, &fds, NULL, NULL, &timeout);
-				if (n < 0)
-				{
-					ksserv_logfile_info("select failed");
-					return OV_ERR_GENERIC;
-				}
-				if (n == 0)
-				{
-					ksserv_logfile_info("connection to portmapper timed out");
-					return OV_ERR_GENERIC;
-				}
-
-				bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*) &server, &server_len);
-
-			} while (bytes <= 0);
-	        gettimeofday(&tim, NULL);
-	        t2=tim.tv_sec+(tim.tv_usec/1000000.0);
-		} while (buffer[bytes-1] != 1 && (t2-t1)<ARRIVE_TIMEOUT);
-        if((t2-t1)>=ARRIVE_TIMEOUT)ksserv_logfile_info("answer could not be interpreted");
-		CLOSE_SOCKET(sock);
-	} else { //NOPORTMAPPER set
-		ksserv_logfile_info("NOPORTMAPPER set - NOT registering at portmapper (UDP)");
-	}
-
-
 	return OV_ERR_OK;
 }
 
@@ -172,122 +64,14 @@ OV_DLLFNCEXPORT OV_INT ksservtcp_udpconnection_tcpport_get(
 
 /**
  * Sets value of variable tcpport.
- * By setting this variable the tcpport is registered at portmapper
- * except NOPORTMAPPER variable is set.
+ *
  */
 OV_DLLFNCEXPORT OV_RESULT ksservtcp_udpconnection_tcpport_set(
 		OV_INSTPTR_ksservtcp_udpconnection          pobj,
 		const OV_INT           value
 ) {
-	int xdrlength = 56;
-	char setxdr[56];
-	char *temp;
-	int c;
-	int sock;
-	struct sockaddr_in server;
-	unsigned int server_len = sizeof(server);
-	struct hostent *hp;
-	int bytes;
-	char buffer[4096];
-	int tcpport = value;
 
 	pobj->v_tcpport = value;
-
-	if(!getenv("NOPORTMAPPER"))
-	{//register port at portmapper
-
-		ksserv_logfile_info("register at portmapper (TCP)");
-		//generate SET xdr
-		memset(setxdr, 0, xdrlength);
-		setxdr[0] = 0x7c;
-		setxdr[1] = 0xab;
-		setxdr[2] = 0x11;
-		setxdr[3] = 0xd3;
-		setxdr[11] = 0x02;
-		setxdr[13] = 0x01;
-		setxdr[14] = 0x86;
-		setxdr[15] = 0xa0;
-		setxdr[19] = 0x02;
-		setxdr[23] = 0x01;
-		setxdr[41] = 0x04;
-		setxdr[42] = 0x96;
-		setxdr[43] = 0x78;
-		setxdr[47] = 0x02;
-		setxdr[51] = 0x06; //TCP
-		temp = (char*)&tcpport;
-		for (c=0; c<4; c++)
-			setxdr[55-c] = temp[c];
-
-		//create socket
-		if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
-		{
-			perror ("socket(udp portmapper) failed");
-			return OV_ERR_GENERIC;
-		}
-		server.sin_family = AF_INET;
-		hp = gethostbyname("127.0.0.1");
-		if (hp==0)
-		{
-			ksserv_logfile_error("Unknown host (udp portmapper)");
-			CLOSE_SOCKET(sock);
-			return OV_ERR_GENERIC;
-		}
-		memcpy((char *)&server.sin_addr,(char *)hp->h_addr,hp->h_length);
-		server.sin_port = htons(111);
-
-		//TODO: sometimes program hangs in the outer do-while loop adding a dirty trick to kill it
-		//here the problem occurs if tmanager.exe is running
-		struct timeval tim;
-		double t1, t2;
-		gettimeofday(&tim, NULL);
-		t1=tim.tv_sec+(tim.tv_usec/1000000.0);
-
-		//receive timeout
-		fd_set fds;
-		struct timeval timeout;
-		timeout.tv_sec = MANAGER_TIMEOUT_SEC;
-		timeout.tv_usec = MANAGER_TIMEOUT_USEC;
-		int n;
-
-		//send data as long as the answer from portmapper is negative
-		do
-		{
-			bytes = sendto(sock,setxdr,xdrlength,0,(struct sockaddr *)&server,sizeof(server));
-			if (bytes < 0)
-			{
-				ksserv_logfile_error("send(udp portmapper) failed");
-				CLOSE_SOCKET(sock);
-				return OV_ERR_GENERIC;
-			}
-			//timeout
-			do
-			{
-				FD_ZERO(&fds);
-				FD_SET(sock, &fds);
-				n = select(sock+1, &fds, NULL, NULL, &timeout);
-				if (n < 0)
-				{
-					ksserv_logfile_info("select failed");
-					return OV_ERR_GENERIC;
-				}
-				if (n == 0)
-				{
-					ksserv_logfile_info("connection to portmapper timed out");
-					ov_logfile_info("Portmap service not found: running on localhost:7509.");
-					return OV_ERR_GENERIC;
-				}
-
-				bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*) &server, &server_len);
-			} while (bytes <= 0);
-	        gettimeofday(&tim, NULL);
-	        t2=tim.tv_sec+(tim.tv_usec/1000000.0);
-		} while (buffer[bytes-1] != 1 && (t2-t1)<ARRIVE_TIMEOUT);
-		if((t2-t1)>=ARRIVE_TIMEOUT)ksserv_logfile_info("answer could not be interpreted");
-		CLOSE_SOCKET(sock);
-	} else { //NOPORTMAPPER set
-		ksserv_logfile_info("NOPORTMAPPER set - NOT registering at portmapper (TCP)");
-	}
-
 	return OV_ERR_OK;
 }
 
@@ -383,98 +167,20 @@ OV_DLLFNCEXPORT void ksservtcp_udpconnection_shutdown(
 	int bytes;
 	char buffer[4096];
 
-	//ov_scheduler_unregister(pobj);
-
 	sock = ksservtcp_udpconnection_socket_get(this);
+
+#if OV_SYSTEM_NT
+	if((CLOSE_SOCKET(sock)))
+	{
+		errno = WSAGetLastError();
+#else
 	if(!(CLOSE_SOCKET(sock)))
+	{
+#endif
 		perror("shutdown listen");
+	}
 
 	ksservtcp_udpconnection_socket_set(this, -1);
-
-	if(!getenv("NOPORTMAPPER"))
-	{//unregister at portmapper
-
-		//generate UNSET xdr
-		memset(unsetxdr, 0, xdrlength);
-		unsetxdr[0] = 0x5a;
-		unsetxdr[1] = 0x0a;
-		unsetxdr[2] = 0x89;
-		unsetxdr[3] = 0xed;
-		unsetxdr[11] = 0x02;
-		unsetxdr[13] = 0x01;
-		unsetxdr[14] = 0x86;
-		unsetxdr[15] = 0xa0;
-		unsetxdr[19] = 0x02;
-		unsetxdr[23] = 0x02;
-		unsetxdr[41] = 0x04;
-		unsetxdr[42] = 0x96;
-		unsetxdr[43] = 0x78;
-		unsetxdr[47] = 0x02;
-
-		//create socket
-		if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
-		{
-			perror ("socket(udp portmapper) failed");
-			return;
-		}
-		server.sin_family = AF_INET;
-		hp = gethostbyname("127.0.0.1");
-		if (hp==0)
-		{
-			ksserv_logfile_error("Unknown host (udp portmapper)");
-			CLOSE_SOCKET(sock);
-			return;
-		}
-		memcpy((char *)&server.sin_addr,(char *)hp->h_addr,hp->h_length);
-		server.sin_port = htons(111);
-
-		//TODO: sometimes program hangs in the outer do-while loop adding a dirty trick to kill it
-		struct timeval tim;
-		double t1, t2;
-		gettimeofday(&tim, NULL);
-		t1=tim.tv_sec+(tim.tv_usec/1000000.0);
-		//send data as long as the answer from portmapper is negative
-		do
-		{
-			bytes = sendto(sock,unsetxdr,xdrlength,0,(struct sockaddr *)&server,sizeof(server));
-			if (bytes < 0)
-			{
-				ksserv_logfile_error("send(udp portmapper) failed");
-				CLOSE_SOCKET(sock);
-				return;
-			}
-			memset(buffer, 0, sizeof(buffer));
-			//receive timeout
-			fd_set fds;
-			struct timeval timeout;
-			timeout.tv_sec = MANAGER_TIMEOUT_SEC;
-			timeout.tv_usec = MANAGER_TIMEOUT_USEC;
-			int n;
-
-			do
-			{
-				FD_ZERO(&fds);
-				FD_SET(sock, &fds);
-				n = select(sock+1, &fds, NULL, NULL, &timeout);
-				if (n < 0)
-				{
-					ksserv_logfile_info("select failed");
-					return;
-				}
-				if (n == 0)
-				{
-					ksserv_logfile_info("connection to portmapper timed out");
-					return;
-				}
-				bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*) &server, &server_len);
-			} while (bytes <= 0);
-	        gettimeofday(&tim, NULL);
-	        t2=tim.tv_sec+(tim.tv_usec/1000000.0);
-		} while (buffer[bytes-1] != 0 && (t2-t1)<ARRIVE_TIMEOUT);
-		if((t2-t1)>=ARRIVE_TIMEOUT)ksserv_logfile_info("answer could not be interpreted");
-
-		CLOSE_SOCKET(sock);
-	}
 
 	return;
 }
