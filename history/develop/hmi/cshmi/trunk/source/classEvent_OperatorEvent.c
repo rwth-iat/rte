@@ -83,6 +83,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 	if (	ov_string_compare(pobj->v_identifier, "click") == OV_STRCMP_EQUAL
 			||	ov_string_compare(pobj->v_identifier, "doubleclick") == OV_STRCMP_EQUAL
 			||	ov_string_compare(pobj->v_identifier, "rightclick") == OV_STRCMP_EQUAL
+			||	ov_string_compare(pobj->v_identifier, "move") == OV_STRCMP_EQUAL
 		){
 		return OV_ERR_OK;
 	}else{
