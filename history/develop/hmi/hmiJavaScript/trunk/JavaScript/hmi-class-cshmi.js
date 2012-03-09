@@ -96,6 +96,7 @@ function cshmi() {
 
 //#########################################################################################################################
 //TODO: check return value of gethandleid
+//getElementsByTagName vs ...NS angleichen
 //#########################################################################################################################
 
 /***********************************************************************
@@ -273,7 +274,6 @@ cshmi.prototype = {
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
-				preserveThis.ResourceList.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
@@ -291,7 +291,6 @@ cshmi.prototype = {
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
-				preserveThis.ResourceList.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
@@ -304,7 +303,6 @@ cshmi.prototype = {
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
-				preserveThis.ResourceList.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "move"){
@@ -312,20 +310,27 @@ cshmi.prototype = {
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener("mousedown", function(evt){
 				preserveThis.ResourceList.EventObj = evt;
-				//preserve Startposition
+				//memorize Startposition
 				preserveThis.ResourceList.EventInfos.startXMouse = evt.pageX;
 				preserveThis.ResourceList.EventInfos.startYMouse = evt.pageY;
 				preserveThis.ResourceList.EventInfos.startXObj = parseInt(ObjectParent.getAttribute("x"), 10);
 				preserveThis.ResourceList.EventInfos.startYObj = parseInt(ObjectParent.getAttribute("y"), 10);
 				
-				document.addEventListener("mousemove", function(evt){
-					HMI.hmi_log_info("function called ");
-				}, false);
-				document.addEventListener("mousemove", preserveThis._onMouseMoveThunk(ObjectParent, ObjectPath, evt), false);
+				//make an dummy wrapper function so we can disable it
+				preserveThis._onMouseMoveThunk = function(evt){
+					preserveThis._onMouseMove(ObjectParent, ObjectPath, evt);
+				}
+				document.addEventListener("mousemove", preserveThis._onMouseMoveThunk, false);
 				document.addEventListener("mouseup", function(evt){
+					document.removeEventListener("mousemove", preserveThis._onMouseMoveThunk, false);
+					preserveThis.ResourceList.EventObj = evt;
+					
+					//restore old position
+					ObjectParent.setAttribute("x", preserveThis.ResourceList.EventInfos.startXObj);
+					ObjectParent.setAttribute("y", preserveThis.ResourceList.EventInfos.startYObj);
+					
 					//get and execute all actions
 					preserveThis._interpreteAction(ObjectParent, ObjectPath);
-					//preserveThis.ResourceList.EventObj = null;
 				}, false);
 			}, false);
 		}else{
@@ -333,18 +338,24 @@ cshmi.prototype = {
 		}
 		return true;
 	},
-	_onMouseMoveThunk : function(ObjectParent, ObjectPath, evt){
+	_onMouseMove : function(ObjectParent, ObjectPath, evt){
+		if (this.ResourceList.EventInfos.startXObj === null){
+			return;
+		}
 		if(evt.pageX !== undefined){
-			var newX = evt.pageX;
-			var newY = evt.pageY;
+			var mouseX = evt.pageX;
+			var mouseY = evt.pageY;
 		}else{
 			//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
-			newX = evt.clientX;
-			newY = evt.clientY;
+			mouseX = evt.clientX;
+			mouseY = evt.clientY;
 		}
-		ObjectParent.setAttribute("x", this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse);
-		ObjectParent.setAttribute("y", this.ResourceList.EventInfos.startXObj+newY-this.ResourceList.EventInfos.startYMouse);
-		HMI.hmi_log_info("xy set of "+ObjectParent.id+" to x: "+parseInt(ObjectParent.getAttribute("x"), 10)+" y: "+parseInt(ObjectParent.getAttribute("y"), 10));
+		var newx = this.ResourceList.EventInfos.startXObj+mouseX-this.ResourceList.EventInfos.startXMouse;
+		var newy = this.ResourceList.EventInfos.startYObj+mouseY-this.ResourceList.EventInfos.startYMouse;
+		if (!isNaN(newx) && !isNaN(newy)){
+			ObjectParent.setAttribute("x", newx);
+			ObjectParent.setAttribute("y", newy);
+		}
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	/*********************************
@@ -539,7 +550,7 @@ cshmi.prototype = {
 						if (input !== null){
 							return input;
 						}
-					}else if(getValueParameter.indexOf("mousex") !== -1){
+					}else if(getValueParameter === "mousex"){
 						var EventObj = this.ResourceList.EventObj;
 						if(EventObj.pageX !== undefined){
 							var newX = EventObj.pageX;
@@ -547,9 +558,8 @@ cshmi.prototype = {
 							//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
 							newX = EventObj.clientX;
 						}
-						HMI.hmi_log_info("setting from "+ (this.ResourceList.EventInfos.startXObj)+" to "+(this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse));
 						return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
-					}else if(getValueParameter.indexOf("mousey") !== -1){
+					}else if(getValueParameter === "mousey"){
 						var EventObj = this.ResourceList.EventObj;
 						if(EventObj.pageX !== undefined){
 							newX = EventObj.pageX;
