@@ -442,7 +442,7 @@ void ksservhttp_httpclienthandler_typemethod(
 #if OV_SYSTEM_NT
 	errno = WSAGetLastError();
 #endif
-	if(bytes == -1 && errno != EAGAIN && errno != EWOULDBLOCK ) {//ERROR during read - shutdown!
+	if(bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK) ) {//ERROR during read - shutdown!
 		ov_logfile_error("tcpclient/typemethod: recv error %i, shutdown TCPClient", errno);
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 		//else: bytes = -1 && errno == EAGAIN || EWOULDBLOCK
