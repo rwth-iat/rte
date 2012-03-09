@@ -307,38 +307,42 @@ cshmi.prototype = {
 			}, false);
 		}else if (command[command.length-1] === "move"){
 			ObjectParent.setAttribute("cursor", "move");
+			
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			ObjectParent.addEventListener("mousedown", function(evt){
-				preserveThis.ResourceList.EventObj = evt;
-				//memorize Startposition
-				preserveThis.ResourceList.EventInfos.startXMouse = evt.pageX;
-				preserveThis.ResourceList.EventInfos.startYMouse = evt.pageY;
-				preserveThis.ResourceList.EventInfos.startXObj = parseInt(ObjectParent.getAttribute("x"), 10);
-				preserveThis.ResourceList.EventInfos.startYObj = parseInt(ObjectParent.getAttribute("y"), 10);
-				
-				//make an dummy wrapper function so we can disable it
-				preserveThis._onMouseMoveThunk = function(evt){
-					preserveThis._onMouseMove(ObjectParent, ObjectPath, evt);
-				}
-				document.addEventListener("mousemove", preserveThis._onMouseMoveThunk, false);
-				document.addEventListener("mouseup", function(evt){
-					document.removeEventListener("mousemove", preserveThis._onMouseMoveThunk, false);
-					preserveThis.ResourceList.EventObj = evt;
-					
-					//restore old position
-					ObjectParent.setAttribute("x", preserveThis.ResourceList.EventInfos.startXObj);
-					ObjectParent.setAttribute("y", preserveThis.ResourceList.EventInfos.startYObj);
-					
-					//get and execute all actions
-					preserveThis._interpreteAction(ObjectParent, ObjectPath);
-				}, false);
-			}, false);
+			
+			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it, 
+			//addEventListener only provides the event object
+			this._moveStartDragThunk = function(evt){
+				preserveThis._moveStartDrag(ObjectParent, ObjectPath, evt);
+			}
+			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it
+			this._moveMouseMoveThunk = function(evt){
+				preserveThis._moveMouseMove(ObjectParent, ObjectPath, evt);
+			}
+			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it
+			this._moveStopDragThunk = function(evt){
+				preserveThis._moveStopDrag(ObjectParent, ObjectPath, evt);
+			}
+			
+			ObjectParent.addEventListener("mousedown", preserveThis._moveStartDragThunk, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
 		return true;
 	},
-	_onMouseMove : function(ObjectParent, ObjectPath, evt){
+	_moveStartDrag : function(ObjectParent, ObjectPath, evt){
+		this.ResourceList.EventObj = evt;
+		//memorize Startposition
+		this.ResourceList.EventInfos.startXMouse = evt.pageX;
+		this.ResourceList.EventInfos.startYMouse = evt.pageY;
+		this.ResourceList.EventInfos.startXObj = parseInt(ObjectParent.getAttribute("x"), 10);
+		this.ResourceList.EventInfos.startYObj = parseInt(ObjectParent.getAttribute("y"), 10);
+		
+		document.addEventListener("mousemove", this._moveMouseMoveThunk, false);
+		document.addEventListener("mouseup", this._moveStopDragThunk, false);
+		if (evt.stopPropagation) evt.stopPropagation();
+	},
+	_moveMouseMove : function(ObjectParent, ObjectPath, evt){
 		if (this.ResourceList.EventInfos.startXObj === null){
 			return;
 		}
@@ -356,6 +360,19 @@ cshmi.prototype = {
 			ObjectParent.setAttribute("x", newx);
 			ObjectParent.setAttribute("y", newy);
 		}
+		if (evt.stopPropagation) evt.stopPropagation();
+	},
+	_moveStopDrag : function(ObjectParent, ObjectPath, evt){
+		document.removeEventListener("mousemove", this._moveMouseMoveThunk, false);
+		this.ResourceList.EventObj = evt;
+		
+		//restore old position
+		ObjectParent.setAttribute("x", this.ResourceList.EventInfos.startXObj);
+		ObjectParent.setAttribute("y", this.ResourceList.EventInfos.startYObj);
+		
+		//get and execute all actions
+		this._interpreteAction(ObjectParent, ObjectPath);
+		
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	/*********************************
