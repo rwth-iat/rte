@@ -373,7 +373,7 @@ LIBRARY cshmi
 			globalVar : STRING
 			COMMENT = "name of the global variable";
 			eventVar : STRING
-			COMMENT = "name of the event variable (for example textinput or textinput:question)";
+			COMMENT = "Value from the user (for example mousex, mousey, textinput or textinput:question)";
 			TemplateFBReferenceVariable : STRING
 			COMMENT = "name of a variable of a referenced FB object";
 			TemplateConfigValues : STRING
