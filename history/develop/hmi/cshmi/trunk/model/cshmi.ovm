@@ -316,6 +316,9 @@ LIBRARY cshmi
 			HAS_SET_ACCESSOR
 			COMMENT = "dominant baseline (vertical alignment; keyword: 'auto','middle','hanging')"
 			INITIALVALUE = "auto";
+			trimToLength : INT
+			COMMENT = "Trim text (0 deactivate, negative values trims left)"
+			INITIALVALUE = 0;
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
