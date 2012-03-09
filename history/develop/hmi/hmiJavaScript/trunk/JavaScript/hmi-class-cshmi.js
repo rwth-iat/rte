@@ -294,7 +294,6 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
-			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener("contextmenu", function(evt){
 				preserveThis.ResourceList.EventObj = evt;
@@ -312,25 +311,32 @@ cshmi.prototype = {
 			
 			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it, 
 			//addEventListener only provides the event object
-			this._moveStartDragThunk = function(evt){
+			ObjectParent._moveStartDragThunk = function(evt){
 				preserveThis._moveStartDrag(ObjectParent, ObjectPath, evt);
 			}
 			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it
-			this._moveMouseMoveThunk = function(evt){
+			ObjectParent._moveMouseMoveThunk = function(evt){
 				preserveThis._moveMouseMove(ObjectParent, ObjectPath, evt);
 			}
 			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it
-			this._moveStopDragThunk = function(evt){
+			ObjectParent._moveStopDragThunk = function(evt){
 				preserveThis._moveStopDrag(ObjectParent, ObjectPath, evt);
 			}
 			
-			ObjectParent.addEventListener("mousedown", preserveThis._moveStartDragThunk, false);
+			ObjectParent.addEventListener("mousedown", ObjectParent._moveStartDragThunk, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
 		return true;
 	},
 	_moveStartDrag : function(ObjectParent, ObjectPath, evt){
+		if (evt.button == 2){
+			//right click
+			HMI.hmi_log_trace("moveStartDrag - hit right mouse button on "+ObjectParent.id);
+			if (evt.stopPropagation) evt.stopPropagation();
+			return;
+		}
+		HMI.hmi_log_trace("moveStartDrag - Start with object: "+ObjectParent.id);
 		this.ResourceList.EventObj = evt;
 		//memorize Startposition
 		this.ResourceList.EventInfos.startXMouse = evt.pageX;
@@ -338,8 +344,8 @@ cshmi.prototype = {
 		this.ResourceList.EventInfos.startXObj = parseInt(ObjectParent.getAttribute("x"), 10);
 		this.ResourceList.EventInfos.startYObj = parseInt(ObjectParent.getAttribute("y"), 10);
 		
-		document.addEventListener("mousemove", this._moveMouseMoveThunk, false);
-		document.addEventListener("mouseup", this._moveStopDragThunk, false);
+		document.addEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
+		document.addEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	_moveMouseMove : function(ObjectParent, ObjectPath, evt){
@@ -359,11 +365,20 @@ cshmi.prototype = {
 		if (!isNaN(newx) && !isNaN(newy)){
 			ObjectParent.setAttribute("x", newx);
 			ObjectParent.setAttribute("y", newy);
+			
+			HMI._setLayerPosition(ObjectParent);
+			//we want to have offset parameter on all visual elements
+			var ComponentChilds = ObjectParent.getElementsByTagName('*');
+			for(var i = 0;i < ComponentChilds.length;i++){
+				HMI._setLayerPosition(ComponentChilds[i]);
+			}
 		}
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	_moveStopDrag : function(ObjectParent, ObjectPath, evt){
-		document.removeEventListener("mousemove", this._moveMouseMoveThunk, false);
+		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+ObjectParent.id);
+		document.removeEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
+		document.removeEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
 		this.ResourceList.EventObj = evt;
 		
 		//restore old position
@@ -1535,7 +1550,6 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			}
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-		ObjectParent.setAttribute("cursor", "pointer");
 		//todo make double click ASV compatible
 		/*ObjectParent.addEventListener("click", function(evt){
 			if (!(evt.button === 0 && evt.detail ==2)){
