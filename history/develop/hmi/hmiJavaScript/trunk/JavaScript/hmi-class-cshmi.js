@@ -78,6 +78,7 @@ function cshmi() {
 	this.ResourceList.ChildrenIterator = Object();
 	this.ResourceList.InstantiateTemplate = Object();
 	this.ResourceList.EventObj = null;
+	this.ResourceList.EventInfos = Object();
 	
 	//holds the information if the visualisation is filled with content right now
 	this.initStage = false;
@@ -306,10 +307,45 @@ cshmi.prototype = {
 				preserveThis.ResourceList.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
+		}else if (command[command.length-1] === "move"){
+			ObjectParent.setAttribute("cursor", "move");
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			ObjectParent.addEventListener("mousedown", function(evt){
+				preserveThis.ResourceList.EventObj = evt;
+				//preserve Startposition
+				preserveThis.ResourceList.EventInfos.startXMouse = evt.pageX;
+				preserveThis.ResourceList.EventInfos.startYMouse = evt.pageY;
+				preserveThis.ResourceList.EventInfos.startXObj = parseInt(ObjectParent.getAttribute("x"), 10);
+				preserveThis.ResourceList.EventInfos.startYObj = parseInt(ObjectParent.getAttribute("y"), 10);
+				
+				document.addEventListener("mousemove", function(evt){
+					HMI.hmi_log_info("function called ");
+				}, false);
+				document.addEventListener("mousemove", preserveThis._onMouseMoveThunk(ObjectParent, ObjectPath, evt), false);
+				document.addEventListener("mouseup", function(evt){
+					//get and execute all actions
+					preserveThis._interpreteAction(ObjectParent, ObjectPath);
+					//preserveThis.ResourceList.EventObj = null;
+				}, false);
+			}, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
 		return true;
+	},
+	_onMouseMoveThunk : function(ObjectParent, ObjectPath, evt){
+		if(evt.pageX !== undefined){
+			var newX = evt.pageX;
+			var newY = evt.pageY;
+		}else{
+			//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
+			newX = evt.clientX;
+			newY = evt.clientY;
+		}
+		ObjectParent.setAttribute("x", this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse);
+		ObjectParent.setAttribute("y", this.ResourceList.EventInfos.startXObj+newY-this.ResourceList.EventInfos.startYMouse);
+		HMI.hmi_log_info("xy set of "+ObjectParent.id+" to x: "+parseInt(ObjectParent.getAttribute("x"), 10)+" y: "+parseInt(ObjectParent.getAttribute("y"), 10));
+		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	/*********************************
 		_interpreteTimeEvent
@@ -503,6 +539,29 @@ cshmi.prototype = {
 						if (input !== null){
 							return input;
 						}
+					}else if(getValueParameter.indexOf("mousex") !== -1){
+						var EventObj = this.ResourceList.EventObj;
+						if(EventObj.pageX !== undefined){
+							var newX = EventObj.pageX;
+						}else{
+							//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
+							newX = EventObj.clientX;
+						}
+						HMI.hmi_log_info("setting from "+ (this.ResourceList.EventInfos.startXObj)+" to "+(this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse));
+						return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
+					}else if(getValueParameter.indexOf("mousey") !== -1){
+						var EventObj = this.ResourceList.EventObj;
+						if(EventObj.pageX !== undefined){
+							newX = EventObj.pageX;
+							newY = EventObj.pageY;
+						}else{
+							//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
+							newX = EventObj.clientX;
+							newY = EventObj.clientY;
+						}
+						return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
+					}else{
+						HMI.hmi_log_info_onwebsite('GetValue eventVar not implemented. command: '+getValueParameter);
 					}
 					return null;
 				}else if (ksVarName === "TemplateFBReferenceVariable"){
@@ -924,11 +983,12 @@ cshmi.prototype = {
 	*********************************/
 	_interpreteRoutePolyline: function(ObjectParent, ObjectPath){
 		if(ObjectParent.tagName.indexOf("polyline") === -1 ){
-			HMI.hmi_log_info_onwebsite("cshmi._interpreteRoutePolyline not supported with: "+ObjectParent.tagName+" (path: "+ObjectPath+")");
+			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+ObjectParent.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
 		var rootObject = ObjectParent;
-//TODO:		ObjectParent.parent.insertBefore(ObjectParent, ObjectParent.parent.firstChild);
+		//Move Polyline-Container before every Functionblocks
+		ObjectParent.parentNode.parentNode.insertBefore(ObjectParent.parentNode, ObjectParent.parentNode.parentNode.firstChild);
 		var FBRef;
 		//search FBReference of root Object
 		while (rootObject !== null){
@@ -977,69 +1037,61 @@ cshmi.prototype = {
 		}
 
 		if (document.getElementById(Source) !== null){
-		    var xStart = parseInt(document.getElementById(Source).getAttribute("layerX"), 10);
-		    var yStart = parseInt(document.getElementById(Source).getAttribute("layerY"), 10);
-		    var x = parseInt(document.getElementById(Source).getAttribute("x"), 10);
+			var xStart = parseInt(document.getElementById(Source).getAttribute("layerX"), 10);
+			var yStart = parseInt(document.getElementById(Source).getAttribute("layerY"), 10);
+			var x = parseInt(document.getElementById(Source).getAttribute("x"), 10);
 		}
 		if (document.getElementById(Target) !== null){
-		    var xEnd = parseInt(document.getElementById(Target).getAttribute("layerX"), 10);
-		    var yEnd = parseInt(document.getElementById(Target).getAttribute("layerY"), 10);
+			var xEnd = parseInt(document.getElementById(Target).getAttribute("layerX"), 10);
+			var yEnd = parseInt(document.getElementById(Target).getAttribute("layerY"), 10);
 		}
-		debugger;
-	    var points;
+		var points;
 		if (x > 0){
 			//OUTPUT --> INPUT
-		    xStart = xStart + 54;
-		    yStart = yStart + 6;
-		    yEnd = yEnd + 6;
-		    points = xStart + "," + yStart + " ";
-		    xStart = xStart + 40;
-		    points = points + xStart + "," + yStart + " ";
-		    if (xStart >= xEnd) {
-		      if (yStart <= yEnd){
-		        yStart = yStart + (yEnd-yStart)/2;
-		      }
-		      else {
-		        yStart = yStart - (yStart-yEnd)/2;
-		      }
-//		    	yStart = yStart + (yEnd+yStart)/2;
+			xStart = xStart + 54;
+			yStart = yStart + 6;
+			yEnd = yEnd + 6;
+			points = xStart + "," + yStart + " ";
+			xStart = xStart + 40;
+			points = points + xStart + "," + yStart + " ";
+			if (xStart >= xEnd) {
+				yStart = (yEnd+yStart)/2;
+				points = points + xStart + "," + yStart + " ";
+				
+				xStart = xEnd - 40;
+				points = points + xStart + "," + yStart + " ";
+			}
 
-		    	points = points + xStart + "," + yStart + " ";
-
-		    	xStart = xEnd - 40;
-		    	points = points + xStart + "," + yStart + " ";
-		    }
-
-		    points = points + xStart + "," + yEnd + " ";
-		    points = points + xEnd + "," + yEnd;
+			points = points + xStart + "," + yEnd + " ";
+			points = points + xEnd + "," + yEnd;
 
 		}else {
 //TODO:		need modification, only copy-paste now
 			//INPUT --> INPUT
-		    xStart = xStart + 54;
-		    yStart = yStart + 6;
-		    yEnd = yEnd + 6;
-		    points = xStart + "," + yStart + " ";
-		    xStart = xStart + 40;
-		    points = points + xStart + "," + yStart + " ";
-		    if (xStart >= xEnd) {
-		      if (yStart <= yEnd){
-		        yStart = yStart + (yEnd-yStart)/2;
-		      }
-		      else {
-		        yStart = yStart - (yStart-yEnd)/2;
-		      }
-		    	points = points + xStart + "," + yStart + " ";
+			xStart = xStart + 54;
+			yStart = yStart + 6;
+			yEnd = yEnd + 6;
+			points = xStart + "," + yStart + " ";
+			xStart = xStart + 40;
+			points = points + xStart + "," + yStart + " ";
+			if (xStart >= xEnd) {
+				if (yStart <= yEnd){
+					yStart = yStart + (yEnd-yStart)/2;
+				}
+				else {
+					yStart = yStart - (yStart-yEnd)/2;
+				}
+				points = points + xStart + "," + yStart + " ";
 
-		    	xStart = xEnd - 40;
-		    	points = points + xStart + "," + yStart + " ";
-		    }
+				xStart = xEnd - 40;
+				points = points + xStart + "," + yStart + " ";
+			}
 
-		    points = points + xStart + "," + yEnd + " ";
-		    points = points + xEnd + "," + yEnd;
+			points = points + xStart + "," + yEnd + " ";
+			points = points + xEnd + "," + yEnd;
 		}
 
-	    ObjectParent.setAttribute("points", points);
+		ObjectParent.setAttribute("points", points);
 
 		return true;
 	},
