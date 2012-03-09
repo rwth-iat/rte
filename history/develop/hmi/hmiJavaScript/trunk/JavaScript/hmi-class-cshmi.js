@@ -1079,20 +1079,45 @@ cshmi.prototype = {
 		}
 
 		if (document.getElementById(Source) !== null){
-			var xStart = parseInt(document.getElementById(Source).getAttribute("layerX"), 10);
-			var yStart = parseInt(document.getElementById(Source).getAttribute("layerY"), 10);
-			var x = parseInt(document.getElementById(Source).getAttribute("x"), 10);
+			Source = document.getElementById(Source);
+			var SourceConnectionPoint;
+			var SourceConnectionPointdirection;
+			for(var i = 0; i < Source.childNodes.length;i++){
+				// search tagName "circle" with name containing ConnectionPoint
+				if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
+					SourceConnectionPoint = Source.childNodes[i];
+					SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
+				}
+			}
+			var xStart = parseInt(SourceConnectionPoint.getAttribute("layerX"), 10);
+			var cx = parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
+			xStart = xStart + cx;
+			var cy = parseInt(SourceConnectionPoint.getAttribute("cy"), 10);
+			var yStart = parseInt(SourceConnectionPoint.getAttribute("layerY"), 10);
+			yStart = yStart +cy;
 		}
 		if (document.getElementById(Target) !== null){
-			var xEnd = parseInt(document.getElementById(Target).getAttribute("layerX"), 10);
-			var yEnd = parseInt(document.getElementById(Target).getAttribute("layerY"), 10);
+			Target = document.getElementById(Target);
+			var TargetConnectionPoint;
+			var TargetConnectionPointdirection;
+			for(var i = 0; i < Target.childNodes.length;i++){
+				// search tagName "circle" with name containing ConnectionPoint
+				if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
+					TargetConnectionPoint = Target.childNodes[i];
+					TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
+				}
+			}
+			var xEnd = parseInt(TargetConnectionPoint.getAttribute("layerX"), 10);
+			var cx = parseInt(TargetConnectionPoint.getAttribute("cx"), 10);
+			xEnd = xEnd + cx;
+			var cy = parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
+			var yEnd = parseInt(TargetConnectionPoint.getAttribute("layerY"), 10);
+			yEnd = yEnd +cy;
 		}
+
 		var points;
-		if (x > 0){
+		if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Left"){
 			//OUTPUT --> INPUT
-			xStart = xStart + 54;
-			yStart = yStart + 6;
-			yEnd = yEnd + 6;
 			points = xStart + "," + yStart + " ";
 			xStart = xStart + 40;
 			points = points + xStart + "," + yStart + " ";
@@ -1106,32 +1131,52 @@ cshmi.prototype = {
 
 			points = points + xStart + "," + yEnd + " ";
 			points = points + xEnd + "," + yEnd;
-
-		}else {
-//TODO:		need modification, only copy-paste now
-			//INPUT --> INPUT
-			xStart = xStart + 54;
-			yStart = yStart + 6;
-			yEnd = yEnd + 6;
+		}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Right"){
+			//INPUT --> OUTPUT
+			var xTemp = xStart;
+			var yTemp = yStart;
+			xStart = xEnd;
+			yStart = yEnd;
+			xEnd = xTemp;
+			yEnd = yTemp;
 			points = xStart + "," + yStart + " ";
 			xStart = xStart + 40;
 			points = points + xStart + "," + yStart + " ";
 			if (xStart >= xEnd) {
-				if (yStart <= yEnd){
-					yStart = yStart + (yEnd-yStart)/2;
-				}
-				else {
-					yStart = yStart - (yStart-yEnd)/2;
-				}
+				yStart = (yEnd+yStart)/2;
 				points = points + xStart + "," + yStart + " ";
-
+				
 				xStart = xEnd - 40;
 				points = points + xStart + "," + yStart + " ";
 			}
 
 			points = points + xStart + "," + yEnd + " ";
 			points = points + xEnd + "," + yEnd;
+		}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Left"){
+			//INPUT --> INPUT
+			points = xStart + "," + yStart + " ";
+			xStart = xStart - 40;
+			points = points + xStart + "," + yStart + " ";
+			if (xStart >= xEnd) {
+				xStart = xEnd - 40;
+				points = points + xStart + "," + yStart + " ";
+			}
+
+			points = points + xStart + "," + yEnd + " ";
+			points = points + xEnd + "," + yEnd;
+	}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Right"){
+		//OUTPUT --> OUTPUT
+		points = xStart + "," + yStart + " ";
+		xStart = xStart + 40;
+		points = points + xStart + "," + yStart + " ";
+		if (xStart <= xEnd) {
+			xStart = xEnd + 40;
+			points = points + xStart + "," + yStart + " ";
 		}
+
+		points = points + xStart + "," + yEnd + " ";
+		points = points + xEnd + "," + yEnd;
+	}
 
 		ObjectParent.setAttribute("points", points);
 
