@@ -195,7 +195,7 @@ void ksservtcp_tcpclient_typemethod(
 #if OV_SYSTEM_NT
 	errno = WSAGetLastError();
 #endif
-	if(bytes == -1 && ( errno != EAGAIN || errno != EWOULDBLOCK ) ) {//ERROR during read - shutdown!
+	if(bytes == -1 && ( errno != EAGAIN && errno != EWOULDBLOCK ) ) {//ERROR during read - shutdown!
 		ksserv_logfile_error("tcpclient/typemethod: recv error, shutdown TCPClient");
 		ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
 		//else: bytes = -1 && errno == EAGAIN || EWOULDBLOCK
@@ -644,12 +644,18 @@ void ksservtcp_tcpclient_typemethod(
 
 
 				}while(sentBytes < size_return);
+
+				ksserv_logfile_debug("freeing xdr_return");
+					free(xdr_return);
+				ksserv_logfile_debug("xdr_return freed");
 			}
 
 			//client isnt any more the sender
 			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
-			free(xdr_return);
+
+
 			free(xdr_received);
+	ksserv_logfile_debug("xdr_received freed");
 	} // else recv got bytes - closed
 	//ksserv_logfile_debug("free xdrereturn");
 	//free(xdr_return);
@@ -658,5 +664,6 @@ void ksservtcp_tcpclient_typemethod(
 	//ksserv_logfile_debug("free receivedname");
 	//free(receivedname);
 	free(buffer);
+	ksserv_logfile_debug("buffer freed");
 	return;
 }
