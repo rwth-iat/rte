@@ -717,9 +717,9 @@ int main(int argc, char **argv) {
 
 	fprintf(fd,"include ../generic.mk\n\n");
 
-#if OV_SYSTEM_NT
 	fprintf(fd,"# Libraries\n");
 	fprintf(fd,"# ---------\n\n");
+#if OV_SYSTEM_NT
 	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB) $(BASE_LIB_DIR)libovks$(_LIB)\n");
 	if(anzAddLibs > 0) {
 		fprintf(fd,"ADD_LIBS =");
@@ -727,6 +727,17 @@ int main(int argc, char **argv) {
 			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
 			/* link directly against dll */
 			fprintf(fd," $(USER_DIR)libs/%s$(_DLL)", libs[i]);
+		}
+		fprintf(fd,"\n");
+	}
+#else
+	fprintf(fd,"# Swithces for additional libraries needed for dynamic linkage in Linux\n");
+	if(anzAddLibs > 0) {
+		fprintf(fd,"ADD_LIBS_SWITCHES =");
+		for(i=0; i<anzAddLibs; i++) {
+			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
+			/* link against .a */
+			fprintf(fd," -L$(USER_DIR)%s/build/%s -l:%s$(_LIB)", libs[i], builddir, libs[i]);
 		}
 		fprintf(fd,"\n");
 	}
@@ -812,7 +823,7 @@ int main(int argc, char **argv) {
 	fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
 #else
 	fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
-	fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
+	fprintf(fd, "\t$(LD) -o $@ $^ $(ADD_LIBS_SWITCHES) $(LD_FLAGS)\n");
 #endif
 	fprintf(fd,"\n");
 
