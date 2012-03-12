@@ -4,7 +4,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -54,51 +54,6 @@ struct FB_EXECLOG_TABLE_ENTRY {
 typedef struct FB_EXECLOG_TABLE_ENTRY FB_EXECLOG_TABLE_ENTRY;
 
 static FB_EXECLOG_TABLE_ENTRY	*plogentry = NULL;
-
-/*
-*	Register a new service logging
-*/
-OV_DLLFNCEXPORT OV_RESULT FbExecLog_register(
-	const OV_SVCLOG_VTBL	*ovvtbl,
-	const FB_EXECLOG_VTBL	*fbvtbl
-) {
-	if(!ovvtbl) {
-		return OV_ERR_BADPARAM;
-	}
-	if(!fbvtbl) {
-		return OV_ERR_BADPARAM;
-	}
-	ov_ksserver_svclog_register(ovvtbl);
-	
-	if(plogentry) {
-		/* Svclog already registered, modify vtable entry */
-		plogentry->vtbl = fbvtbl;
-		return OV_ERR_OK;
-	}
-	/* Create new entry */
-	plogentry = Ov_HeapAlloc(FB_EXECLOG_TABLE_ENTRY);
-	if(plogentry) {
-		plogentry->vtbl = fbvtbl;
-		return OV_ERR_OK;
-	}
-	return OV_ERR_HEAPOUTOFMEMORY;
-}
-
-/*
-*	Unregister the service logging
-*/
-OV_DLLFNCEXPORT OV_RESULT FbExecLog_unregister(void) {
-
-	ov_ksserver_svclog_unregister();
-
-	if(plogentry) {
-		Ov_HeapFree(plogentry);
-		plogentry = NULL;
-		return OV_ERR_OK;
-	}
-	/* no service logging registered */
-	return OV_ERR_BADPARAM;
-}
 
 /*	----------------------------------------------------------------------	*/
 /*
