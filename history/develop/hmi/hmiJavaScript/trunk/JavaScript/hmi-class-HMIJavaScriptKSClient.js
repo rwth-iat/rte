@@ -511,7 +511,10 @@ HMIJavaScriptKSClient.prototype = {
 		var cshmiString = this.getVar(null, '/Libraries/cshmi/Group.instance', null);
 		if (!(cshmiString.indexOf("KS_ERR") !== -1)){
 			var responseArray = this.splitKsResponse(cshmiString);
-			SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+			//the array could be [""]
+			if (responseArray.length > 0 && responseArray[0] !== ""){
+				SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+			}
 		}else{
 			cshmiString = this.getVar(null, '/acplt/cshmi/Group.instance', null);
 			if (!(cshmiString.indexOf("KS_ERR") !== -1)){
