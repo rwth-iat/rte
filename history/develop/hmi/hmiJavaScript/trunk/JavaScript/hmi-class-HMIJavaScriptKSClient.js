@@ -337,8 +337,6 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			if (HandleString.indexOf("KS_ERR") !== -1){
 				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHandleID - Server not available Handlemessage: "+HandleString);
-				HMI.hmi_log_info_onwebsite("Requested KS-Server "+HostAndServername+" not available.");
 				return null;
 			}
 			
@@ -394,8 +392,6 @@ HMIJavaScriptKSClient.prototype = {
 		
 		if (Server.length === 0){
 			HMI.PossServers.options[0] = new Option('- no MANAGER available-', 'no server');
-		}else if (Server.length === 1){
-			HMI.PossServers.options[0] = new Option('- no server available -', 'no server');
 		}else{
 			//put first select option with a description
 			HMI.PossServers.options[0] = new Option('loading...', 'no server');

@@ -926,8 +926,18 @@ HMI.prototype = {
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
+		if (this.KSClient.TCLKSHandle === null && KSServer.indexOf(":") === -1){
+			//no communication via a portmapper connection, try to access via direct IANA acplt port
+			//if this is done in the tcl-ks gateway, we don't need this
+			KSServer = KSServer + ':7509';
+			this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
+		}
 		if (this.KSClient.TCLKSHandle !== null){
+			HMI.InputHost.value = KSServer; //save value if 7509 is detected
 			this.KSClient.getServers();
+		}else{
+			HMI.PossServers.setAttribute("title", "No MANAGER available");
+			HMI.hmi_log_info_onwebsite("Requested Host has no MANAGER available.");
 		}
 		
 		//reenable click by user
