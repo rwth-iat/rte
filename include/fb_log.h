@@ -7,7 +7,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -60,14 +60,6 @@ struct FB_EXECLOG_VTBL {
     void        (* printsvcmsg)(OV_SVC svc, OV_STRING ip, OV_STRING msg, OV_RESULT res);
 };
 typedef struct FB_EXECLOG_VTBL	FB_EXECLOG_VTBL;
-
-/* Register service logging */
-OV_DLLFNCEXPORT OV_RESULT FbExecLog_register(
-	const OV_SVCLOG_VTBL	*ovvtbl,
-	const FB_EXECLOG_VTBL	*fbvtbl
-);
-/* Unregister service logging */
-OV_DLLFNCEXPORT OV_RESULT FbExecLog_unregister(void);
 
 /* Start logger */
 OV_DLLFNCEXPORT void FbSvcLog_startexeclog(OV_INSTPTR_ov_object pobj, OV_STRING msg);

@@ -7,7 +7,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -44,12 +44,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*
-*   Register AV-Ticket  
-*   ------------------
-*/
-OV_DLLFNCEXPORT OV_RESULT fb_server_ticket_register(void);
 
 /*
 *   Zugriffsrechte fuer Variablen pruefen
