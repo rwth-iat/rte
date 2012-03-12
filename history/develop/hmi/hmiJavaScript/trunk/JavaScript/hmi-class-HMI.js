@@ -925,15 +925,16 @@ HMI.prototype = {
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
 		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
-		this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
-		if (this.KSClient.TCLKSHandle === null && KSServer.indexOf(":") === -1){
-			//no communication via a portmapper connection, try to access via direct IANA acplt port
-			//if this is done in the tcl-ks gateway, we don't need this
-			KSServer = KSServer + ':7509';
+		if (KSServer.indexOf(":") === -1){
+			this.KSClient.init(KSServer + ':7509/MANAGER', KSGateway + HMI.KSGateway_Path);
+			if (this.KSClient.TCLKSHandle === null){
+				//fall back for portmapper MANAGER detection
+				this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
+			}
+		}else{
 			this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
 		}
 		if (this.KSClient.TCLKSHandle !== null){
-			HMI.InputHost.value = KSServer; //save value if 7509 is detected
 			this.KSClient.getServers();
 		}else{
 			HMI.PossServers.setAttribute("title", "No MANAGER available");
