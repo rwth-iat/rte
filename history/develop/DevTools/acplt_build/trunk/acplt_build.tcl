@@ -190,7 +190,6 @@ proc checkout_acplt {} {
     #checkout libmpm
     checkout develop ov
     checkout develop/DevTools acplt_makmak
-    checkout cvs-legacy ov_runtimeserver
     cd $builddir/user
     foreach x $included_libs {
 	checkout_lib $x
@@ -236,8 +235,6 @@ proc build_acplt_mingw {} {
     build_cygwin ov make -f makefile
 	cd $builddir/base/acplt_makmak/build/cygwin
     build_cygwin acplt_makmak make -f makefile
-	cd $builddir/base/ov_runtimeserver/build/cygwin
-    build_cygwin ov_runtimeserver make -f makefile
 }
 
 # Build ACPLT (msvc in windows [depricated] and gcc in linux)
@@ -273,10 +270,6 @@ proc build_acplt {} {
    	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
    } else {
 	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/linux
-   }
-   if { $os != "nt" } then {
-	#no ntvc for ov_runtimeserver
-	build ov_runtimeserver $make -C $builddir/base/ov_runtimeserver/build/linux
    }
 }
 
@@ -400,6 +393,15 @@ proc release_lib {libname option} {
 		if { [file exists $releasedir/user/$libname.build/build/nt/$libname.lib] } {
 		    file mkdir $releasedir/user/$libname/build/nt/
 			file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/$libname/build/nt/
+		}
+    }
+    if { $os == "linux" } then {
+		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
+		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
+		#}
+		if { [file exists $releasedir/user/$libname.build/build/linux/$libname.a] } {
+		    file mkdir $releasedir/user/$libname/build/linux/
+			file copy -force $releasedir/user/$libname.build/build/linux/$libname.a $releasedir/user/$libname/build/linux/
 		}
     }
     file delete -force $releasedir/user/$libname.build/
