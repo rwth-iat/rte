@@ -556,6 +556,14 @@ cshmi.prototype = {
 							//todo asv compatibility
 							return null;
 						}
+					}else if (getValueParameter == "visible"){
+						//display is special, as it is different in OVM and SVG
+						var displayVar = ObjectParent.getAttribute("display");
+						if (displayVar == "none"){
+							return "FALSE";
+						}else{
+							return "TRUE";
+						}
 					}else if (getValueParameter == "rotate"){
 						//rotate is special, as it is different in OVM and SVG
 						var TransformString = ObjectParent.getAttribute("transform");
@@ -744,6 +752,13 @@ cshmi.prototype = {
 					if (setValueParameter == "content"){
 						//content is special, as it is different in OVM and SVG
 						ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
+					}else if (setValueParameter == "visible"){
+						//visible is special, as it is different in OVM and SVG
+						if (NewValue == "FALSE"){
+							ObjectParent.setAttribute("display", "none");
+						}else{
+							ObjectParent.setAttribute("display", "block");
+						}
 					}else if (setValueParameter == "rotate"){
 						//rotate is special, as it is different in OVM and SVG
 						if(ObjectParent.getAttribute("x") !== null){
