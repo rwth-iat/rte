@@ -367,12 +367,12 @@ LIBRARY cshmi
 			ksVar : STRING
 			COMMENT = "path of the remote KS variable";
 			elemVar : STRING
-			COMMENT = "name of the element variable";
+			COMMENT = "name of the element variable (for example fill, stroke, content)";
 			elemVarPath : STRING
 			COMMENT = "the (relative) path to the element";
 			globalVar : STRING
 			COMMENT = "name of the global variable";
-			eventVar : STRING
+			OperatorInput : STRING
 			COMMENT = "Value from the user (for example mousex, mousey, textinput or textinput:question)";
 			TemplateFBReferenceVariable : STRING
 			COMMENT = "name of a variable of a referenced FB object";

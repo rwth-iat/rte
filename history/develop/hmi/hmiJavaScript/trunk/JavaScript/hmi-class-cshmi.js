@@ -503,7 +503,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["elemVar"] = null;
 			requestList[ObjectPath]["elemVarPath"] = null;
 			requestList[ObjectPath]["globalVar"] = null;
-			requestList[ObjectPath]["eventVar"] = null;
+			requestList[ObjectPath]["OperatorInput"] = null;
 			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
 			requestList[ObjectPath]["TemplateConfigValues"] = null;
 			requestList[ObjectPath]["value"] = null;
@@ -576,7 +576,7 @@ cshmi.prototype = {
 					
 					//todo
 					return null;
-				}else if (ksVarName === "eventVar"){
+				}else if (ksVarName === "OperatorInput"){
 					if(getValueParameter.indexOf("textinput") !== -1){
 						var textinputHint;
 						if (getValueParameter.indexOf("textinput:") !== -1){
@@ -609,7 +609,7 @@ cshmi.prototype = {
 						}
 						return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
 					}else{
-						HMI.hmi_log_info_onwebsite('GetValue eventVar not implemented. command: '+getValueParameter);
+						HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+getValueParameter);
 					}
 					return null;
 				}else if (ksVarName === "TemplateFBReferenceVariable"){

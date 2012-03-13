@@ -89,7 +89,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "outputname";
         value : INPUT  UNKNOWN = ;
@@ -147,7 +147,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "OutputVarPath";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -247,7 +247,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "inputname";
         value : INPUT  UNKNOWN = ;
@@ -305,7 +305,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "InputVarPath";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -406,7 +406,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value[7] : INPUT  STRING = {"o" , "hi" , "ho" , "n" , "hn" , "p" , "hp"};
@@ -479,7 +479,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "o";
@@ -551,7 +551,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "Xpos";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -566,7 +566,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  INT = 0;
@@ -589,7 +589,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "Ypos";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -604,7 +604,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  INT = 0;
@@ -631,7 +631,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "Xpos";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -658,7 +658,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "Ypos";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -735,7 +735,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "actimode";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -750,7 +750,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  INT = 0;
@@ -777,7 +777,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "#EBFFCC";
@@ -804,7 +804,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "#FFFACC";
@@ -838,7 +838,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "blue";
@@ -890,7 +890,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "actimode";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -905,7 +905,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  INT = 0;
@@ -932,7 +932,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  INT = 0;
@@ -959,7 +959,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  INT = 1;
@@ -1016,7 +1016,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "classname";
         value : INPUT  STRING = "";
@@ -1073,7 +1073,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "identifier";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1130,7 +1130,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "taskparent";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1164,7 +1164,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "mousex";
+        OperatorInput : INPUT  STRING = "mousex";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1191,7 +1191,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "mousey";
+        OperatorInput : INPUT  STRING = "mousey";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1218,7 +1218,7 @@
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1245,7 +1245,7 @@
         elemVar : INPUT  STRING = "y";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1330,7 +1330,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value[18] : INPUT  STRING = {"/fb/connection" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar"};
@@ -1403,7 +1403,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value[17] : INPUT  STRING = {"/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar"};
@@ -1491,7 +1491,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "/fb/connection";
@@ -1595,7 +1595,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "varname";
         value : INPUT  UNKNOWN = ;
@@ -1679,7 +1679,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "on";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1694,7 +1694,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  BOOL = TRUE;
@@ -1721,7 +1721,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "black";
@@ -1748,7 +1748,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "lightgrey";
@@ -1782,7 +1782,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "connectionname";
         value : INPUT  UNKNOWN = ;
@@ -1834,7 +1834,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "visuallayout";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1849,7 +1849,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "foo";
@@ -1876,7 +1876,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "visuallayout";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1906,7 +1906,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "sourcefb";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1921,7 +1921,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "targetfb";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1936,7 +1936,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "sourceport";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -1951,7 +1951,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "targetport";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -2023,7 +2023,7 @@
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "ConName";
         value : INPUT  STRING = "";
