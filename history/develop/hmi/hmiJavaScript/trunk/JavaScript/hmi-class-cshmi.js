@@ -304,7 +304,7 @@ cshmi.prototype = {
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
-		}else if (command[command.length-1] === "move"){
+		}else if (command[command.length-1] === "aftermove"){
 			ObjectParent.setAttribute("cursor", "move");
 			
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
@@ -384,6 +384,12 @@ cshmi.prototype = {
 		//restore old position
 		ObjectParent.setAttribute("x", this.ResourceList.EventInfos.startXObj);
 		ObjectParent.setAttribute("y", this.ResourceList.EventInfos.startYObj);
+		HMI._setLayerPosition(ObjectParent);
+		//we want to have offset parameter on all visual elements
+		var ComponentChilds = ObjectParent.getElementsByTagName('*');
+		for(var i = 0;i < ComponentChilds.length;i++){
+			HMI._setLayerPosition(ComponentChilds[i]);
+		}
 		
 		//get and execute all actions
 		this._interpreteAction(ObjectParent, ObjectPath);
