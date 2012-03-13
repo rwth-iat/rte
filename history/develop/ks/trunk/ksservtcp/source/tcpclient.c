@@ -165,7 +165,7 @@ void ksservtcp_tcpclient_typemethod(
  	int sentBytes = 0;
  	int err = 0;
  	int mngrcommand = 1;		//1 indicates received manager-command (used to distinguish sending method)
- 	fd_set read_flags,write_flags;
+ 	fd_set write_flags;
  	struct timeval waitd;
         
   	//ksserv_logfile_debug("tcpclient typemethod called ");
@@ -488,15 +488,17 @@ void ksservtcp_tcpclient_typemethod(
 					//send header
 					do
 					{
-						FD_ZERO(&read_flags); // Zero the flags ready for using
+						// Zero the flags ready for using
 						FD_ZERO(&write_flags);
 						FD_SET(receivesocket, &write_flags); // get write flags
 						waitd.tv_sec = 0;     // Set Timeout
 						waitd.tv_usec = 1000;    //  1 millisecond
-						err = select(receivesocket + 1, &read_flags,&write_flags, (fd_set*)0,&waitd);
+						err = select(receivesocket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
 				ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
-				ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, waitd.tv_usec);
-						if(err < 0)
+#if OV_SYSTEM_UNIX
+				ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-waitd.tv_usec);	//Windows Systems don't alter waitd
+#endif
+					if(err < 0)
 						{
 							perror("tcpclient: error waiting for sending answer-header:");
 						}
@@ -530,15 +532,17 @@ void ksservtcp_tcpclient_typemethod(
 
 						while((currFragment->used - sentBytes) > 0)
 						{
-							FD_ZERO(&read_flags); // Zero the flags ready for using
+							// Zero the flags ready for using
 							FD_ZERO(&write_flags);
 							FD_SET(receivesocket, &write_flags); // get write flags
 							//wait until ready for sending
 							waitd.tv_sec = 0;     // Set Timeout
 							waitd.tv_usec = 1000;    //  1 millisecond
-							err = select(receivesocket + 1, &read_flags,&write_flags, (fd_set*)0,&waitd);
+							err = select(receivesocket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
 		ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
+#if OV_SYSTEM_UNIX
 		ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, waitd.tv_usec);
+#endif
 							if(err < 0)
 							{
 								perror("tcpclient: error waiting for sending fragment:");
@@ -605,14 +609,16 @@ void ksservtcp_tcpclient_typemethod(
 				placeInBuffer = xdr_return;
 				do
 				{
-					FD_ZERO(&read_flags); // Zero the flags ready for using
+					// Zero the flags ready for using
 					FD_ZERO(&write_flags);
 					FD_SET(receivesocket, &write_flags); // get write flags
 					waitd.tv_sec = 0;     // Set Timeout
 					waitd.tv_usec = 1000;    //  1 millisecond
-					err = select(receivesocket + 1, &read_flags,&write_flags, (fd_set*)0,&waitd);
+					err = select(receivesocket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
 			ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
+#if OV_SYSTEM_UNIX
 			ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, waitd.tv_usec);
+#endif
 					if(err < 0)
 					{
 						perror("tcpclient: error waiting for sending answer:");
@@ -645,9 +651,9 @@ void ksservtcp_tcpclient_typemethod(
 
 				}while(sentBytes < size_return);
 
-				ksserv_logfile_debug("freeing xdr_return");
+
 					free(xdr_return);
-				ksserv_logfile_debug("xdr_return freed");
+
 			}
 
 			//client isnt any more the sender
@@ -655,7 +661,7 @@ void ksservtcp_tcpclient_typemethod(
 
 
 			free(xdr_received);
-	ksserv_logfile_debug("xdr_received freed");
+
 	} // else recv got bytes - closed
 	//ksserv_logfile_debug("free xdrereturn");
 	//free(xdr_return);
@@ -664,6 +670,6 @@ void ksservtcp_tcpclient_typemethod(
 	//ksserv_logfile_debug("free receivedname");
 	//free(receivedname);
 	free(buffer);
-	ksserv_logfile_debug("buffer freed");
+
 	return;
 }
