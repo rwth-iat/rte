@@ -558,7 +558,7 @@ LIBRARY cshmi
 	
 	CLASS OperatorEvent : CLASS cshmi/Event
 		IS_INSTANTIABLE;
-		COMMENT = "an HMI gesture (i.e. an event from the operator); the identifier could be click, doubleclick, rightclick";
+		COMMENT = "an event from the operator; the identifier could be click, doubleclick, rightclick, aftermove";
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
@@ -573,10 +573,10 @@ LIBRARY cshmi
 		IS_INSTANTIABLE;
 		COMMENT = "time triggered actions";
 		VARIABLES
-			cyctime : UINT
+			cyctime : SINGLE
 			UNIT = "sec"
 			COMMENT = "the cycle time for the execution of the action"
-			INITIALVALUE = 10;
+			INITIALVALUE = 10.0;
 		END_VARIABLES;
 	END_CLASS;
 	
