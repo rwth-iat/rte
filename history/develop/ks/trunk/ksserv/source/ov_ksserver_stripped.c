@@ -9,6 +9,7 @@
 
 #include "ov_ksserver_stripped.h"
 #include "ov_ksserver_xdr_stripped.h"
+#include "ksserv_logfile.h"
 #include "libov/ov_ov.h"
 #include "libov/ov_object.h"
 #include "libov/ov_scheduler.h"
@@ -729,7 +730,7 @@ void ov_ksserver_dispatch(
 				/*															\
 				*	properly decoded, call service function and send reply	\
 				*/															\
-				ov_logfile_info("Executing Command.");\
+				 ksserv_logfile_info("Executing Command."); \
 				ov_ksserver_##service(version, povticket, &params, &result);\
 				ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,	\
 					(xdrproc_t)ov_ksserver_xdr_OV_##SERVICE##_RES);			\
