@@ -8,7 +8,5 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_MANAGERCOM_MNGGETSERVER(
 		OV_UINT												version
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_MANAGERCOM_GETMNGPORT(
-		OV_INSTPTR_ksapitcp_managercom	 			pobj
-);
+
 #endif //_KSAPITCP_OVF

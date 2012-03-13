@@ -78,7 +78,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_startup(OV_INSTPTR_ov_object pobj) {
 		pinst->v_mngport = atoi(getenv("MNGPORT"));
 		ksapi_logfile_info("MNGPORT: %d", pinst->v_mngport);
 	} else {
-		ksapitcp_managercom_getmngport(pinst);
+		pinst->v_mngport = 7509;
 		ksapi_logfile_info("mngport: %d", pinst->v_mngport);
 	}
 
@@ -303,123 +303,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
 	return;
 }
 
-/**
- * This method gets the port of the ks_manager from the portmapper.
- * DEPRICATED
- */
-OV_DLLFNCEXPORT void ksapitcp_managercom_getmngport(
-		OV_INSTPTR_ksapitcp_managercom pobj) {
-	OV_INT bytes;
-	int sock;
-	struct sockaddr_in server;
-	struct hostent *hp;
-	//~ printf("\n\n\nksapitcp_MANAGERCOM GETMNGPORT\n\n\n");
-	//set xdrlength
-	pobj->v_xdrlength = 56;
-	if (pobj->v_xdr) {
-		free(pobj->v_xdr);
-	}
-	pobj->v_xdr = (char*) malloc(pobj->v_xdrlength);
-	memset(pobj->v_xdr, 0, pobj->v_xdrlength);
 
-	//set xid
-	pobj->v_xdr[0] = 0x4a;
-	pobj->v_xdr[1] = 0x5d;
-	pobj->v_xdr[2] = 0x4f;
-	pobj->v_xdr[3] = 0xe4;
-
-	//set message type call --> 0000
-
-	//set rpc version
-	pobj->v_xdr[11] = 0x02;
-
-	//set programm nr.
-	pobj->v_xdr[13] = 0x01;
-	pobj->v_xdr[14] = 0x86;
-	pobj->v_xdr[15] = 0xa0;
-
-	//set programm version
-	pobj->v_xdr[19] = 0x02;
-
-	//set procedure
-	pobj->v_xdr[23] = 0x03;
-
-	//set programm nr. to get port from
-	pobj->v_xdr[41] = 0x04;
-	pobj->v_xdr[42] = 0x96;
-	pobj->v_xdr[43] = 0x78;
-
-	//set programm version to get port from
-	pobj->v_xdr[47] = 0x02;
-
-	//set protocoll
-	//pobj->v_xdr[51] = 0x11;  // --> udp
-	pobj->v_xdr[51] = 0x06; // --> tcp
-
-	//print xdr
-	//~ int j;
-	//~ printf("\n\nxdr:\nlength: %d\n", pobj->v_xdrlength);
-	//~ for (j = 0; j < pobj->v_xdrlength; j=j+4)
-	//~ {
-	//~ if(((j!=0) && (j%20)) == 0)
-	//~ printf("\n");
-	//~ printf("%X %X %X %X     ", pobj->v_xdr[j], pobj->v_xdr[j+1], pobj->v_xdr[j+2], pobj->v_xdr[j+3]);
-	//~ }
-	//~ printf("\n");
-	//~ for (j = 0; j < pobj->v_xdrlength; j=j+4)
-	//~ {
-	//~ if(((j!=0) && (j%20)) == 0)
-	//~ printf("\n");
-	//~ printf("%c %c %c %c     ", pobj->v_xdr[j], pobj->v_xdr[j+1], pobj->v_xdr[j+2], pobj->v_xdr[j+3]);
-	//~ }
-	//~ printf("\n\n");
-	//~ printf("%s\n\n", pobj->v_xdr);
-
-	//create socket
-
-	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	//if (sock == 0) {
-#if OV_SYSTEM_NT
-	if (sock == INVALID_SOCKET) {
-		perror ("socket(getmngport) failed");
-#else
-	if (sock < 0) {
-		perror("socket(getmngport) failed");
-#endif
-		return;
-	}
-	pobj->v_udpsocket = sock;
-	pobj->v_status = STPMSOCKCR;
-
-	server.sin_family = AF_INET;
-	hp = gethostbyname("127.0.0.1");
-	if (hp == 0) {
-		ksapi_logfile_info("Unknown host (ksapitcp_managercom)");
-		CLOSE_SOCKET(sock);
-		pobj->v_udpsocket = -1;
-		return;
-	}
-	memcpy((char *) &server.sin_addr, (char *) hp->h_addr, hp->h_length);
-	server.sin_port = htons(111);
-
-	//send data
-	bytes = sendto(sock, pobj->v_xdr, pobj->v_xdrlength, 0,
-			(struct sockaddr *) &server, sizeof(server));
-	if (bytes < 0) {
-		ksapi_logfile_info("send(getmngport) failed");
-		CLOSE_SOCKET(sock);
-		pobj->v_udpsocket = -1;
-		return;
-	}
-	pobj->v_status = STPMRQSND;
-	//~ ksapi_logfile_info("send(getmngport) ok");
-
-	//activate typemethod for receiving
-	pobj->v_cycIntervalCount = 0;
-	pobj->v_actimode = 1;
-
-	return;
-}
 
 OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 		OV_INSTPTR_ksserv_ComTask cTask) {
@@ -447,64 +331,6 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 
 	Ov_GetVTablePtr(ksapitcp_TCPChannel, channelVTBL, channel);
 	//~ printf("\n\n\nksapitcp_MANAGERCOM TYPEMETHOD\nudpsocket: %d\ntcpsocket: %d\n\n\n", udpsocket, tcpsocket);
-	if (udpsocket >= 0) {//retrieves manager port from portmapper
-		//receive
-		memset(buffer, 0, sizeof(buffer));
-		//~ printf("\n\n\nksapitcp_MANAGERCOM TYPEMETHOD RECEIVE\n\n\n");
-		bytes = recvfrom(udpsocket, buffer, sizeof(buffer), 0,
-				(struct sockaddr *) &from, &size_from);
-		//~ printf("\n\n\nksapitcp_MANAGERCOM TYPEMETHOD RECEIVED %d bytes\n\n\n", bytes);
-		if (bytes <= 0) {
-			CLOSE_SOCKET(udpsocket);
-			pobj->v_udpsocket = -1;
-			return;
-		}
-		pobj->v_status = STPMRPLYRCV;
-		ksapi_logfile_info("recv(mngport) ok");
-
-		pobj->v_xdrlength = bytes;
-		if (pobj->v_xdr) {
-			free(pobj->v_xdr);
-		}
-		pobj->v_xdr = (char*) malloc(pobj->v_xdrlength);
-		memset(pobj->v_xdr, 0, pobj->v_xdrlength);
-		memcpy(pobj->v_xdr, buffer, pobj->v_xdrlength);
-
-		//print xdr
-		//~ int j;
-		//~ printf("\n\nxdr udp:\nlength: %d\n", pobj->v_xdrlength);
-		//~ for (j = 0; j < pobj->v_xdrlength; j=j+4)
-		//~ {
-		//~ if(((j!=0) && (j%20)) == 0)
-		//~ printf("\n");
-		//~ printf("%X %X %X %X     ", pobj->v_xdr[j], pobj->v_xdr[j+1], pobj->v_xdr[j+2], pobj->v_xdr[j+3]);
-		//~ }
-		//~ printf("\n");
-		//~ for (j = 0; j < pobj->v_xdrlength; j=j+4)
-		//~ {
-		//~ if(((j!=0) && (j%20)) == 0)
-		//~ printf("\n");
-		//~ printf("%c %c %c %c     ", pobj->v_xdr[j], pobj->v_xdr[j+1], pobj->v_xdr[j+2], pobj->v_xdr[j+3]);
-		//~ }
-		//~ printf("\n\n");
-		//~ printf("%s\n\n", pobj->v_xdr);
-
-		CLOSE_SOCKET(udpsocket);
-		pobj->v_udpsocket = -1;
-
-		for (c = 0; c < 4; c++)
-			temp[c] = pobj->v_xdr[pobj->v_xdrlength - 1 - c];
-		memcpy(&mngport, temp, 4);
-		pobj->v_mngport = mngport;
-	}
-
-	if (pobj->v_mngport <= 0) {//close, if we dont have a mng port to communicate with
-		CLOSE_SOCKET(udpsocket);
-		CLOSE_SOCKET(tcpsocket);
-		ksapitcp_managercom_getmngport(pobj);
-		pobj->v_cycIntervalCount = 0;
-		return;
-	}
 
 	if (tcpsocket >= 0) { //receive getserver answer
 		memset(buffer, 0, sizeof(buffer));
