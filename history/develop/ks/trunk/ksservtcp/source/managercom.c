@@ -462,7 +462,7 @@ void ksservtcp_managercom_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 
  return pobj->v_receivedsport;
  }
- /*
+ */
 
  /**
  * This method takes over the registration at the ks_manager.

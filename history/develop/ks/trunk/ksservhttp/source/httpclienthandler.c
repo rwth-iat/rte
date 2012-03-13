@@ -309,6 +309,8 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	}else{
 		ov_string_setvalue(&outputInfos, match.value[0]);
 	}
+
+	//todo reimplement via ov_element_getnextchild, see at ov_ksserver_getep.c
 	if(ov_string_compare(objectType, "OT_DOMAINS") == OV_STRCMP_EQUAL
 			&& Ov_CanCastTo(ov_domain, pObj)){
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
@@ -512,6 +514,9 @@ void ksservhttp_httpclienthandler_typemethod(
 			if(!Ov_Fail(result)){
 				result = parse_http_header(http_request[0], &cmd, &args, &http_version, &http_request_type);
 			}
+
+			//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
+
 
 			//check which kind of request is coming in
 			if(ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL && ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){

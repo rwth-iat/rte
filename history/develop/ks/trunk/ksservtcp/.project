@@ -3,6 +3,7 @@
 	<name>ksservtcp</name>
 	<comment></comment>
 	<projects>
+		<project>ksserv</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
