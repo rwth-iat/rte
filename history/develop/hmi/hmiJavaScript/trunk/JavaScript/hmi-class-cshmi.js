@@ -79,6 +79,7 @@ function cshmi() {
 	this.ResourceList.InstantiateTemplate = Object();
 	this.ResourceList.EventObj = null;
 	this.ResourceList.EventInfos = Object();
+	this.ResourceList.GlobalVar = Object();
 	
 	//holds the information if the visualisation is filled with content right now
 	this.initStage = false;
@@ -596,10 +597,8 @@ cshmi.prototype = {
 						return null;
 					}
 				}else if (ksVarName === "globalVar"){
-					HMI.hmi_log_info_onwebsite('GetValue globalVar not implemented. Object: '+ObjectPath);
-					
-					//todo
-					return null;
+					return this.ResourceList.GlobalVar[getValueParameter];
+
 				}else if (ksVarName === "OperatorInput"){
 					if(getValueParameter.indexOf("textinput") !== -1){
 						var textinputHint;
@@ -789,9 +788,8 @@ cshmi.prototype = {
 					return true;
 				}else if (ksVarName === "globalVar"){
 					//globalVar
-					HMI.hmi_log_info_onwebsite('SetValue globalVar not implemented. Object: '+ObjectPath);
-					
-					return false;
+					this.ResourceList.GlobalVar[requestList[ObjectPath]["globalVar"]] = NewValue;
+					return true;
 				}else if (ksVarName === "TemplateFBReferenceVariable"){
 					//TemplateFBReferenceVariable
 					var TemplateObject = ObjectParent;
