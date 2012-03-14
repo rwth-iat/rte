@@ -1049,9 +1049,8 @@ cshmi.prototype = {
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+ObjectParent.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
+
 		var rootObject = ObjectParent;
-		//Move Polyline-Container before every Functionblocks
-		ObjectParent.parentNode.parentNode.insertBefore(ObjectParent.parentNode, ObjectParent.parentNode.parentNode.firstChild);
 		var FBRef;
 		//search FBReference of root Object
 		while (rootObject !== null){
@@ -1066,140 +1065,188 @@ cshmi.prototype = {
 				rootObject = rootObject.parentNode;
 			}
 		}
+
+		var SourceConnectionPoint;
+		var SourceConnectionPointdirection;
+		var TargetConnectionPoint;
+		var TargetConnectionPointdirection;
+		//if the Polyline was routed earlier, get the cached information (could be the case with cyclic calls)
+		if(this.ResourceList.Actions && this.ResourceList.Actions[FBRef] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			SourceConnectionPoint = this.ResourceList.Actions[FBRef].SourceConnectionPoint;
+			SourceConnectionPointdirection = this.ResourceList.Actions[FBRef].SourceConnectionPointdirection;
+			TargetConnectionPoint = this.ResourceList.Actions[FBRef].TargetConnectionPoint;
+			TargetConnectionPointdirection = this.ResourceList.Actions[FBRef].TargetConnectionPointdirection;
+			this.ResourceList.Actions[FBRef].useCount++;
+			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: using cached information of "+FBRef+" ("+this.ResourceList.Actions[FBRef].useCount+")");
+
+		//
+		}else{
+			//Move Polyline-Container before every Functionblocks
+			//needs only to be done once
+			ObjectParent.parentNode.parentNode.insertBefore(ObjectParent.parentNode, ObjectParent.parentNode.parentNode.firstChild);
+
+			// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
+			// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
+			var prefix;
+			if (FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+				//find the 3rd "/"
+				var slashIndex = FBRef.indexOf("/", 2);
+				//find the 4th "/"
+				slashIndex = FBRef.indexOf("/", slashIndex+1);
+				//only keep the String before 4th "/"
+				prefix = FBRef.slice(0, slashIndex);
+			}else {
+				prefix = "";
+			}
+
+			var Source;
+			var Target;
+			//get Values (via getValue-parts)
+			var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
+			var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
+			if (SourceVariablename !== ""){
+				Source = prefix + SourceBasename + "." + SourceVariablename;
+			}else{
+				Source = prefix + SourceBasename;
+			}
+			var TargetBasename = this._getValue(ObjectParent, ObjectPath+".TargetBasename");
+			var TargetVariablename = this._getValue(ObjectParent, ObjectPath+".TargetVariablename");
+			if (TargetVariablename !== ""){
+				Target = prefix + TargetBasename + "." + TargetVariablename;
+			}else{
+				Target = prefix + TargetBasename;
+			}
+			
+			if (document.getElementById(Source) !== null){
+				Source = document.getElementById(Source);
+				for(var i = 0; i < Source.childNodes.length;i++){
+					// search tagName "circle" with name containing ConnectionPoint
+					if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
+						SourceConnectionPoint = Source.childNodes[i];
+						SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
+					}
+				}
+			}
+
+			if (document.getElementById(Target) !== null){
+				Target = document.getElementById(Target);
+				var TargetConnectionPoint;
+				var TargetConnectionPointdirection;
+				for(var i = 0; i < Target.childNodes.length;i++){
+					// search tagName "circle" with name containing ConnectionPoint
+					if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
+						TargetConnectionPoint = Target.childNodes[i];
+						TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
+					}
+				}
+			}
+
+			//remember the result
+			this.ResourceList.Actions[FBRef] = new Object();
+			this.ResourceList.Actions[FBRef].SourceConnectionPoint = SourceConnectionPoint;
+			this.ResourceList.Actions[FBRef].SourceConnectionPointdirection = SourceConnectionPointdirection;
+			this.ResourceList.Actions[FBRef].TargetConnectionPoint = TargetConnectionPoint;
+			this.ResourceList.Actions[FBRef].TargetConnectionPointdirection = TargetConnectionPointdirection;
+			this.ResourceList.Actions[FBRef].useCount = 1;
+			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering results for "+FBRef+" ");
+		}		
+
+		var xStart = parseInt(SourceConnectionPoint.getAttribute("layerX"), 10);
+		var cx = parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
+		xStart = xStart + cx;
+		var cy = parseInt(SourceConnectionPoint.getAttribute("cy"), 10);
+		var yStart = parseInt(SourceConnectionPoint.getAttribute("layerY"), 10);
+		yStart = yStart +cy;
+
+		var xEnd = parseInt(TargetConnectionPoint.getAttribute("layerX"), 10);
+		var cx = parseInt(TargetConnectionPoint.getAttribute("cx"), 10);
+		xEnd = xEnd + cx;
+		var cy = parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
+		var yEnd = parseInt(TargetConnectionPoint.getAttribute("layerY"), 10);
+		yEnd = yEnd +cy;
+
+		//if start- and endPoints changed since last time, recompute polyline points
+		if (	xStart !== this.ResourceList.Actions[FBRef].xStart ||
+				yStart !== this.ResourceList.Actions[FBRef].yStart ||
+				xEnd !== this.ResourceList.Actions[FBRef].xEnd ||
+				yEnd !== this.ResourceList.Actions[FBRef].yEnd) {
+			//cache new start- and endPoints
+			this.ResourceList.Actions[FBRef].xStart = xStart;
+			this.ResourceList.Actions[FBRef].yStart = yStart;
+			this.ResourceList.Actions[FBRef].xEnd = xEnd;
+			this.ResourceList.Actions[FBRef].yEnd = yEnd;
+
+			var points;
+			if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Left"){
+				//OUTPUT --> INPUT
+				points = xStart + "," + yStart + " ";
+				xStart = xStart + 40;
+				points = points + xStart + "," + yStart + " ";
+				if (xStart >= xEnd) {
+					yStart = (yEnd+yStart)/2;
+					points = points + xStart + "," + yStart + " ";
+					
+					xStart = xEnd - 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xStart + "," + yEnd + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Right"){
+				//INPUT --> OUTPUT
+				var xTemp = xStart;
+				var yTemp = yStart;
+				xStart = xEnd;
+				yStart = yEnd;
+				xEnd = xTemp;
+				yEnd = yTemp;
+				points = xStart + "," + yStart + " ";
+				xStart = xStart + 40;
+				points = points + xStart + "," + yStart + " ";
+				if (xStart >= xEnd) {
+					yStart = (yEnd+yStart)/2;
+					points = points + xStart + "," + yStart + " ";
+					
+					xStart = xEnd - 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xStart + "," + yEnd + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Left"){
+				//INPUT --> INPUT
+				points = xStart + "," + yStart + " ";
+				xStart = xStart - 40;
+				points = points + xStart + "," + yStart + " ";
+				if (xStart >= xEnd) {
+					xStart = xEnd - 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xStart + "," + yEnd + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Right"){
+				//OUTPUT --> OUTPUT
+				points = xStart + "," + yStart + " ";
+				xStart = xStart + 40;
+				points = points + xStart + "," + yStart + " ";
+				if (xStart <= xEnd) {
+					xStart = xEnd + 40;
+					points = points + xStart + "," + yStart + " ";
+				}
 		
-		// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
-		// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
-		var prefix;
-		if (FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
-			//find the 3rd "/"
-			var slashIndex = FBRef.indexOf("/", 2);
-			//find the 4th "/"
-			slashIndex = FBRef.indexOf("/", slashIndex+1);
-			//only keep the String before 4th "/"
-			prefix = FBRef.slice(0, slashIndex);
-		}else {
-			prefix = "";
-		}
+				points = points + xStart + "," + yEnd + " ";
+				points = points + xEnd + "," + yEnd;
+			}
 
-		//get Values (via getValue-parts)
-		var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
-		var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
-		var Source;
-		if (SourceVariablename !== ""){
-			Source = prefix + SourceBasename + "." + SourceVariablename;
+			ObjectParent.setAttribute("points", points);
+			
 		}else{
-			Source = prefix + SourceBasename;
-		}
-		var TargetBasename = this._getValue(ObjectParent, ObjectPath+".TargetBasename");
-		var TargetVariablename = this._getValue(ObjectParent, ObjectPath+".TargetVariablename");
-		var Target;
-		if (TargetVariablename !== ""){
-			Target = prefix + TargetBasename + "." + TargetVariablename;
-		}else{
-			Target = prefix + TargetBasename;
+			//do nothing because the polyline was routed correctly last time
 		}
 
-		if (document.getElementById(Source) !== null){
-			Source = document.getElementById(Source);
-			var SourceConnectionPoint;
-			var SourceConnectionPointdirection;
-			for(var i = 0; i < Source.childNodes.length;i++){
-				// search tagName "circle" with name containing ConnectionPoint
-				if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
-					SourceConnectionPoint = Source.childNodes[i];
-					SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
-				}
-			}
-			var xStart = parseInt(SourceConnectionPoint.getAttribute("layerX"), 10);
-			var cx = parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
-			xStart = xStart + cx;
-			var cy = parseInt(SourceConnectionPoint.getAttribute("cy"), 10);
-			var yStart = parseInt(SourceConnectionPoint.getAttribute("layerY"), 10);
-			yStart = yStart +cy;
-		}
-		if (document.getElementById(Target) !== null){
-			Target = document.getElementById(Target);
-			var TargetConnectionPoint;
-			var TargetConnectionPointdirection;
-			for(var i = 0; i < Target.childNodes.length;i++){
-				// search tagName "circle" with name containing ConnectionPoint
-				if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
-					TargetConnectionPoint = Target.childNodes[i];
-					TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
-				}
-			}
-			var xEnd = parseInt(TargetConnectionPoint.getAttribute("layerX"), 10);
-			var cx = parseInt(TargetConnectionPoint.getAttribute("cx"), 10);
-			xEnd = xEnd + cx;
-			var cy = parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
-			var yEnd = parseInt(TargetConnectionPoint.getAttribute("layerY"), 10);
-			yEnd = yEnd +cy;
-		}
 
-		var points;
-		if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Left"){
-			//OUTPUT --> INPUT
-			points = xStart + "," + yStart + " ";
-			xStart = xStart + 40;
-			points = points + xStart + "," + yStart + " ";
-			if (xStart >= xEnd) {
-				yStart = (yEnd+yStart)/2;
-				points = points + xStart + "," + yStart + " ";
-				
-				xStart = xEnd - 40;
-				points = points + xStart + "," + yStart + " ";
-			}
-
-			points = points + xStart + "," + yEnd + " ";
-			points = points + xEnd + "," + yEnd;
-		}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Right"){
-			//INPUT --> OUTPUT
-			var xTemp = xStart;
-			var yTemp = yStart;
-			xStart = xEnd;
-			yStart = yEnd;
-			xEnd = xTemp;
-			yEnd = yTemp;
-			points = xStart + "," + yStart + " ";
-			xStart = xStart + 40;
-			points = points + xStart + "," + yStart + " ";
-			if (xStart >= xEnd) {
-				yStart = (yEnd+yStart)/2;
-				points = points + xStart + "," + yStart + " ";
-				
-				xStart = xEnd - 40;
-				points = points + xStart + "," + yStart + " ";
-			}
-
-			points = points + xStart + "," + yEnd + " ";
-			points = points + xEnd + "," + yEnd;
-		}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Left"){
-			//INPUT --> INPUT
-			points = xStart + "," + yStart + " ";
-			xStart = xStart - 40;
-			points = points + xStart + "," + yStart + " ";
-			if (xStart >= xEnd) {
-				xStart = xEnd - 40;
-				points = points + xStart + "," + yStart + " ";
-			}
-
-			points = points + xStart + "," + yEnd + " ";
-			points = points + xEnd + "," + yEnd;
-	}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Right"){
-		//OUTPUT --> OUTPUT
-		points = xStart + "," + yStart + " ";
-		xStart = xStart + 40;
-		points = points + xStart + "," + yStart + " ";
-		if (xStart <= xEnd) {
-			xStart = xEnd + 40;
-			points = points + xStart + "," + yStart + " ";
-		}
-
-		points = points + xStart + "," + yEnd + " ";
-		points = points + xEnd + "," + yEnd;
-	}
-
-		ObjectParent.setAttribute("points", points);
 
 		return true;
 	},
