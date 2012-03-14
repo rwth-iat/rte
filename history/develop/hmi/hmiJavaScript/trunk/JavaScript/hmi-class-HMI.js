@@ -641,7 +641,15 @@ HMI.prototype = {
 				HMI.ButShowServers.value = "Reload Serverlist";
 				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
-				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+				if (HMI_Parameter_Liste.Host.indexOf(":") === -1){
+					this.KSClient.init(HMI_Parameter_Liste.Host + ':7509/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+					if (this.KSClient.TCLKSHandle === null){
+						//fall back for portmapper MANAGER detection
+						this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+					}
+				}else{
+					this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+				}
 				if (this.KSClient.TCLKSHandle === null){
 						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
 				}else{
@@ -660,7 +668,15 @@ HMI.prototype = {
 				HMI.ButShowServers.value = "Show Servers";
 				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
-				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+				if (HMI_Parameter_Liste.Host.indexOf(":") === -1){
+					this.KSClient.init(HMI_Parameter_Liste.Host + ':7509/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+					if (this.KSClient.TCLKSHandle === null){
+						//fall back for portmapper MANAGER detection
+						this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+					}
+				}else{
+					this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
+				}
 				if (this.KSClient.TCLKSHandle === null){
 						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
 				}else{
