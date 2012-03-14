@@ -88,7 +88,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 		return OV_ERR_OK;
 	}else{
 		ov_memstack_lock();
-		ov_string_print(&erroroutput, "object %i had wrong identifier. Rejecting construction.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
+		ov_string_print(&erroroutput, "object %s had wrong identifier. Rejecting construction.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
 		ov_memstack_unlock();
 		ov_logfile_error(erroroutput);
 		return OV_ERR_BADPARAM;
