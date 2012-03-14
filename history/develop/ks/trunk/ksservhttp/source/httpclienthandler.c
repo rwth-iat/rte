@@ -159,7 +159,7 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 	//no free needed since no memory allocated
 	switch (*result)
 		{
-			//still some duplication, but good enougth for now
+			//still some duplication, but good enough for now
 			case OV_ERR_OK:
 				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_200_HEADER, tmp_header);
 				break;
@@ -383,6 +383,17 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 }
 
 /**
+ * function to output the size of the database - needed for debug
+ */
+void checkdb(OV_STRING msg){
+	OV_ANY		Variable;
+	OV_INSTPTR_ov_object pObj=ov_path_getobjectpointer("/vendor",2);
+	pObj = Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), "database_free");
+	ov_vendortree_getvar(pObj, &Variable, NULL);
+	ksserv_logfile_debug("-->> %s: %i", msg, Variable.value.valueunion.val_int);
+}
+
+/**
  * Procedure periodically called by ComTask // ov_scheduler. * 
  * It takes over the sending/receiving of data to/from the
  * connected client.
@@ -405,7 +416,7 @@ void ksservhttp_httpclienthandler_typemethod(
 
 	//http stuff
 	OV_STRING *http_request;
-	OV_STRING header, body, cmd, http_request_type;
+	OV_STRING header, body, cmd, http_request_type, http_request_header;
 	int bodylength = 0; //length of the return body
 	OV_RESULT result = OV_ERR_OK;
 	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
@@ -464,6 +475,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			header = NULL; //header of the reply
 			http_version = NULL; //HTTP version
 			http_request = NULL;
+			http_request_header = NULL;
 			http_request_type = NULL; //GET, HEAD, etc.
 
 			//MAIN ROUTINE OF THE WEB SERVER
@@ -491,21 +503,24 @@ void ksservhttp_httpclienthandler_typemethod(
 			//split header and footer of the http request
 			http_request = ov_string_split(this->v_requestbuffer, "\r\n\r\n", &len);
 			//len is always > 0
+			ov_string_setvalue(&http_request_header, http_request[0]);
 			//last line of the header will not contain \r\n
-			ov_string_append(&(http_request[0]),"\r\n"); //no leak here, valgrind says it
+			ov_string_append(&http_request_header,"\r\n");
+			//in future: ov_string_setvalue(&http_request_body, http_request[1]);
 
-			//empty the buffer
+			//empty the buffers
 			ov_string_setvalue(&(this->v_requestbuffer),"");
+			ov_string_freelist(http_request);
 
 			//debug - output header
-			ksserv_logfile_error("%s", http_request[0]);
+			ksserv_logfile_error("%s", http_request_header);
 
-			//http_request[0] is the request header
+			//http_request_header is the request header
 			//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
 			//START default behaviour
 			//scan header for Connection: close - the default behavior is keep-alive
-			if(strstr(http_request[0], "Connection: close\r\n")){
+			if(strstr(http_request_header, "Connection: close\r\n")){
 				keep_alive = FALSE;
 			}
 			//default HTTP version
@@ -514,7 +529,7 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			//parse request header into get command and arguments request
 			if(!Ov_Fail(result)){
-				result = parse_http_header(http_request[0], &cmd, &args, &http_version, &http_request_type);
+				result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type);
 			}
 
 			//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
@@ -554,7 +569,7 @@ void ksservhttp_httpclienthandler_typemethod(
 					result = OV_ERR_BADPATH; //404
 					ov_string_append(&body, "We do not support Handles, so everything is ok.");
 				}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
-					result = authorize(1, this, http_request[0], &header, http_request_type, cmd);
+					result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
 					if(!Ov_Fail(result)){
 						ov_string_append(&body, "Secret area");
 						result = OV_ERR_OK;
@@ -563,8 +578,8 @@ void ksservhttp_httpclienthandler_typemethod(
 			}
 			//END command routine
 
-			//raw request and args not needed any longer
-			ov_string_freelist(http_request);
+			//raw request header and args not needed any longer
+			ov_string_setvalue(&http_request_header, NULL);
 			Ov_SetDynamicVectorLength(&args,0,STRING);
 
 			//BEGIN static file routine
