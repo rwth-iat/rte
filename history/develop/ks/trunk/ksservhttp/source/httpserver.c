@@ -130,12 +130,12 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 		}
 		Ov_DeleteObject((OV_INSTPTR_ov_object)pclients);
 		if (!Ov_OK((Ov_CreateObject(ov_domain, pclients, thisdomain, "clients")))) {
-			ov_logfile_error("Fatal: Couldnt create Object clients");
+			ksserv_logfile_error("Fatal: Couldnt create Object clients");
 			return;
 		}
 	} else {
 		if (!Ov_OK((Ov_CreateObject(ov_domain, pclients, thisdomain, "clients")))) {
-			ov_logfile_error("Fatal: Couldnt create Object clients");
+			ksserv_logfile_error("Fatal: Couldnt create Object clients");
 			return;
 		}
 	}
@@ -143,7 +143,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 	//create staticfiles domain
 	if (!pstaticfiles) {
 		if (!Ov_OK((Ov_CreateObject(ov_domain, pclients, thisdomain, "staticfiles")))) {
-			ov_logfile_error("Fatal: Couldnt create Object staticfiles");
+			ksserv_logfile_error("Fatal: Couldnt create Object staticfiles");
 			return;
 		}
 	}
@@ -280,12 +280,12 @@ void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 
 	//create receiving tcpclient
 	if (Ov_OK(Ov_CreateObject(ksservhttp_httpclienthandler, ptcpc, pclients, clientname))) {
-		ov_logfile_info("New client connected, socket %d", receivesocket);
+		ksserv_logfile_info("New client connected, socket %d", receivesocket);
 		//copy socket to created tcpclient-object
 		ksservhttp_httpclienthandler_receivesocket_set(ptcpc, receivesocket);
 		this->v_status = STATUS_TCPCON_OK;
 	} else {
-		ov_logfile_error("Creating of TCPClient failed while New client connected, socket %d ", receivesocket);
+		ksserv_logfile_error("Creating of TCPClient failed while New client connected, socket %d ", receivesocket);
 	}
 	return;
 }

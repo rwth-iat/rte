@@ -93,11 +93,11 @@ OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
 
 	len = sizeof m_addr;
 	if (getpeername(value, (struct sockaddr*)&m_addr, &len) == -1) {
-		ov_logfile_error("Error while determining source IP of tcpclient -- getpeername() failed");
+		ksserv_logfile_error("Error while determining source IP of tcpclient -- getpeername() failed");
 		 return OV_ERR_OK;
 	}
 	ov_string_print(&pobj->v_sourceAdr, "%s:%d", inet_ntoa(m_addr.sin_addr), (int) ntohs(m_addr.sin_port));
-	ov_logfile_debug("tcpclient/receivesocket/set: new TCPSocket %d from %s", value, pobj->v_sourceAdr);
+	ksserv_logfile_debug("httpclienthandler/receivesocket/set: new TCPSocket %d from %s", value, pobj->v_sourceAdr);
 	return OV_ERR_OK;
 }
 
@@ -108,7 +108,7 @@ OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
 OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-	//ov_logfile_info("tcpclient/startup ###########");
+	//ksserv_logfile_info("httpclienthandler/startup ###########");
 	ov_object_startup(pobj);
     return;
 }
@@ -124,13 +124,13 @@ OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
 
 	int receivesocket;
 	if(!this->v_deleted) {// v_deleted cares that socket closing happens just once, not twiche while DeleteObj
-		ov_logfile_error("tcpclient/shutdown socket %i", this->v_receivesocket);
+		ksserv_logfile_error("httpclienthandler/shutdown socket %i", this->v_receivesocket);
 		receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
 		if(receivesocket < 0) {
-			ov_logfile_error("tcpclient/shutdown: instance %s has socket<0 - cant shutdown!?!", pobj->v_identifier);
+			ksserv_logfile_error("httpclienthandler/shutdown: instance %s has socket<0 - cant shutdown!?!", pobj->v_identifier);
 			return;
 		}
-		//ov_logfile_debug("tcpclient/shutdown: %s closes socket %d", pobj->v_identifier, receivesocket);
+		//ksserv_logfile_debug("httpclienthandler/shutdown: %s closes socket %d", pobj->v_identifier, receivesocket);
 		CLOSE_SOCKET(receivesocket);
 		this->v_deleted = TRUE;
 		Ov_DeleteObject(this); //calls shutdown again. Since it is deleted->TRUE, no recursion
@@ -349,7 +349,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 			sentChunkSize = send(socket, pointer, 4096, 0);
 			if (sentChunkSize == -1)
 			{
-				ov_logfile_error("send() failed");
+				ksserv_logfile_error("send() failed");
 				return OV_ERR_GENERIC;
 			}
 		}
@@ -358,13 +358,13 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 			sentChunkSize = send(socket, pointer, (length - sentBytes), 0);
 			if (sentChunkSize == -1)
 			{
-				ov_logfile_error("send() failed");
+				ksserv_logfile_error("send() failed");
 				return OV_ERR_GENERIC;
 			}
 		}
 		sentBytes += sentChunkSize;
 		pointer += sentChunkSize;
-		ov_logfile_debug("tcpclient: answer sent, sentChunkSize: %d sentBytes: %d", sentChunkSize, sentBytes);
+		ksserv_logfile_debug("httpclienthandler: answer sent, sentChunkSize: %d sentBytes: %d", sentChunkSize, sentBytes);
 		//move pointer to next chunk
 
 		if(sentBytes < length)
@@ -419,9 +419,9 @@ void ksservhttp_httpclienthandler_typemethod(
 	OV_INSTPTR_ov_object temp;
 	OV_INSTPTR_ksservhttp_staticfile staticfile;
 
-	//ov_logfile_debug("tcpclient typemethod called ");
+	//ksserv_logfile_debug("httpclienthandler typemethod called ");
 	if (receivesocket < 0) { // check if the socket might be OK.
-		ov_logfile_error("%s/typemethod: no receive socket set (receivesocket==-1), thus deleting myself",cTask->v_identifier);
+		ksserv_logfile_error("%s/typemethod: no receive socket set (receivesocket==-1), thus deleting myself",cTask->v_identifier);
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 		return;
 	}
@@ -429,7 +429,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		buffer_size++;
 		buffer = (char*)realloc(buffer, BUFFER_CHUNK_SIZE*buffer_size);
 		if(buffer == 0) {
-			ov_logfile_error("tcpclient/typemethod: recv error, no memory for buffer");
+			ksserv_logfile_error("httpclienthandler/typemethod: recv error, no memory for buffer");
 			return;
 		}
 		buffer_location = buffer + BUFFER_CHUNK_SIZE * (buffer_size - 1);
@@ -437,21 +437,21 @@ void ksservhttp_httpclienthandler_typemethod(
 		recvBytes = recv(receivesocket, buffer_location, BUFFER_CHUNK_SIZE,0);
 		if(recvBytes != -1 && bytes == -1) bytes = 0; //1st iteration and we have sth (prevents from missing 1 byte)
 		if(recvBytes != -1) bytes += recvBytes;//if soth was received, calc overall size of received bytes
-		//if(recvBytes > 0) ov_logfile_error("tcpclient/typemethod: ks cmd chunk no %d recv %d bytes, pBuffStart %p, pBuffInside %p",buffer_size, recvBytes, buffer, buffer_location);
+		//if(recvBytes > 0) ksserv_logfile_error("httpclienthandler/typemethod: ks cmd chunk no %d recv %d bytes, pBuffStart %p, pBuffInside %p",buffer_size, recvBytes, buffer, buffer_location);
 	} while(recvBytes == BUFFER_CHUNK_SIZE); // stop if less than maximum bytes was read by recv
 
-	//if(bytes != -1) ov_logfile_error("tcpclient/typemethod: ks cmd w/ size %d received ",bytes);
+	//if(bytes != -1) ksserv_logfile_error("httpclienthandler/typemethod: ks cmd w/ size %d received ",bytes);
 	
 
 #if OV_SYSTEM_NT
 	errno = WSAGetLastError();
 #endif
 	if(bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK) ) {//ERROR during read - shutdown!
-		ov_logfile_error("tcpclient/typemethod: recv error %i, shutdown TCPClient", errno);
+		ksserv_logfile_error("httpclienthandler/typemethod: recv error %i, shutdown httpclienthandler", errno);
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 		//else: bytes = -1 && errno == EAGAIN || EWOULDBLOCK
 	} else if(bytes == 0) {//normal shutdown by client
-		ov_logfile_debug("tcpclient/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
+		ksserv_logfile_debug("httpclienthandler/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 	//} else if (bytes == -1) {  // no current KS command this turn
 	} else if(bytes > 0) {
@@ -485,7 +485,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			}
 			//END handling buffer
 
-			ov_logfile_error("tcpclient/typemethod: got http command w/ %d bytes",bytes);
+			ksserv_logfile_error("httpclienthandler/typemethod: got http command w/ %d bytes",bytes);
 
 			//this->v_requestbuffer contains the raw request
 			//split header and footer of the http request
@@ -498,7 +498,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			ov_string_setvalue(&(this->v_requestbuffer),"");
 
 			//debug - output header
-			ov_logfile_error("%s", http_request[0]);
+			ksserv_logfile_error("%s", http_request[0]);
 
 			//http_request[0] is the request header
 			//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
@@ -633,12 +633,12 @@ void ksservhttp_httpclienthandler_typemethod(
 			//append content length and finalize the header
 			ov_string_print(&header, "%sContent-Length: %i\r\n\r\n", header, bodylength);
 
-			ov_logfile_debug("tcpclient: sending header: %d bytes", (int)ov_string_getlength(header));
+			ksserv_logfile_debug("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(header));
 
 			send_tcp(receivesocket, header, (int)ov_string_getlength(header));
 			//in case of a HEAD request there is no need to send the body
 			if(ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
-				ov_logfile_debug("tcpclient: sending body: %d bytes", (int)ov_string_getlength(body));
+				ksserv_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(body));
 				send_tcp(receivesocket, body, (int)ov_string_getlength(body));
 			}
 
