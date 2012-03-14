@@ -503,10 +503,10 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		//get Sheets from cshmi library
-		
+		var responseArray;
 		var cshmiString = this.getVar(null, '/Libraries/cshmi/Group.instance', null);
 		if (!(cshmiString.indexOf("KS_ERR") !== -1)){
-			var responseArray = this.splitKsResponse(cshmiString);
+			responseArray = this.splitKsResponse(cshmiString);
 			//the array could be [""]
 			if (responseArray.length > 0 && responseArray[0] !== ""){
 				SheetList = SheetList.concat(responseArray[0].split(" ").sort());
@@ -514,8 +514,11 @@ HMIJavaScriptKSClient.prototype = {
 		}else{
 			cshmiString = this.getVar(null, '/acplt/cshmi/Group.instance', null);
 			if (!(cshmiString.indexOf("KS_ERR") !== -1)){
-				var responseArray = this.splitKsResponse(cshmiString);
-				SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+				responseArray = this.splitKsResponse(cshmiString);
+				//the array could be [""]
+				if (responseArray.length > 0 && responseArray[0] !== ""){
+					SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+				}
 			}
 		}
 		
@@ -550,10 +553,11 @@ HMIJavaScriptKSClient.prototype = {
 		var responseArray = this.splitKsResponse(Sheetstring);
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
-		if (responseArray.length === 0){
-			return SheetList;
-		}else{
+		//the array could be [""]
+		if (responseArray.length > 0 && responseArray[0] !== ""){
 			return SheetList.concat(responseArray[0].split(" ").sort());
+		}else{
+			return SheetList;
 		}
 	},
 	
