@@ -220,6 +220,8 @@ OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 		ov_string_append(re, "Variable path not found");
 		EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
+
+	//FIXME! does not work with /vendor/database_name
 	pPathList = ov_string_split((match.value[0]), ".", &len);
 	if(len!=2){
 		ov_string_freelist(pPathList);
@@ -517,14 +519,22 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
 
-
+			result = OV_ERR_NOTIMPLEMENTED;
 			//check which kind of request is coming in
-			if(ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL && ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
-				result = OV_ERR_NOTIMPLEMENTED;
+			if(	ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL ||
+				ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
+				result = OV_ERR_OK;
+			}else if(ov_string_compare(http_request_type, "PUSH") != OV_STRCMP_EQUAL){
+				result = OV_ERR_OK;
+			}else if(ov_string_compare(http_request_type, "OPTIONS") != OV_STRCMP_EQUAL){
+				//used for Cross-Origin Resource Sharing (CORS)
+				//only an 200 is required
+				result = OV_ERR_OK;
+				ov_string_append(&body, "CORS Request granted"); //need some answer to skip commands
 			}
 
 			//BEGIN command routine
-			if(!Ov_Fail(result)){
+			if(!Ov_Fail(result) && body == NULL){
 				if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
 					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					result = exec_getvar(&args, &body);
