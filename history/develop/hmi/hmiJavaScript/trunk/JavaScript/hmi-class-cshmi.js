@@ -323,6 +323,8 @@ cshmi.prototype = {
 				preserveThis._moveStopDrag(ObjectParent, ObjectPath, evt);
 			}
 			
+			//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
+			ObjectParent.addEventListener("mousetouch", ObjectParent._moveStartDragThunk, false);
 			ObjectParent.addEventListener("mousedown", ObjectParent._moveStartDragThunk, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
@@ -339,27 +341,31 @@ cshmi.prototype = {
 		HMI.hmi_log_trace("moveStartDrag - Start with object: "+ObjectParent.id);
 		this.ResourceList.EventObj = evt;
 		//memorize Startposition
-		this.ResourceList.EventInfos.startXMouse = evt.pageX;
-		this.ResourceList.EventInfos.startYMouse = evt.pageY;
+		var mouseposition = HMI.getClickPosition(evt, null);
+		this.ResourceList.EventInfos.startXMouse = mouseposition[0];
+		this.ResourceList.EventInfos.startYMouse = mouseposition[1];
 		this.ResourceList.EventInfos.startXObj = parseInt(ObjectParent.getAttribute("x"), 10);
 		this.ResourceList.EventInfos.startYObj = parseInt(ObjectParent.getAttribute("y"), 10);
 		
-		document.addEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
-		document.addEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
+		if(evt.type === 'touchstart'){
+			//we have touch gestures, so kill legacy mousedown
+			ObjectParent.removeEventListener("mousedown", ObjectParent._moveStartDragThunk, false);
+			
+			document.addEventListener("touchmove", ObjectParent._moveMouseMoveThunk, false);
+			document.addEventListener("touchup", ObjectParent._moveStopDragThunk, false);
+		}else{
+			document.addEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
+			document.addEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
+		}
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	_moveMouseMove : function(ObjectParent, ObjectPath, evt){
 		if (this.ResourceList.EventInfos.startXObj === null){
 			return;
 		}
-		if(evt.pageX !== undefined){
-			var mouseX = evt.pageX;
-			var mouseY = evt.pageY;
-		}else{
-			//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
-			mouseX = evt.clientX;
-			mouseY = evt.clientY;
-		}
+		var mouseposition = HMI.getClickPosition(evt, null);
+		var mouseX = mouseposition[0];
+		var mouseY = mouseposition[1];
 		var newx = this.ResourceList.EventInfos.startXObj+mouseX-this.ResourceList.EventInfos.startXMouse;
 		var newy = this.ResourceList.EventInfos.startYObj+mouseY-this.ResourceList.EventInfos.startYMouse;
 		if (!isNaN(newx) && !isNaN(newy)){
@@ -377,8 +383,13 @@ cshmi.prototype = {
 	},
 	_moveStopDrag : function(ObjectParent, ObjectPath, evt){
 		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+ObjectParent.id);
-		document.removeEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
-		document.removeEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
+		if(evt.type === 'touchup'){
+			document.removeEventListener("touchmove", ObjectParent._moveMouseMoveThunk, false);
+			document.removeEventListener("touchup", ObjectParent._moveStopDragThunk, false);
+		}else{
+			document.removeEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
+			document.removeEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
+		}
 		this.ResourceList.EventObj = evt;
 		
 		//restore old position
@@ -494,6 +505,11 @@ cshmi.prototype = {
 		-	get a Value from multiple Sources
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
+		var req = new XMLHttpRequest();
+		req.open("GET", "http://localhost:8080/getVar?path=/vendor.database_free", false);
+		req.send(null);
+		req.responseText;
+
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
@@ -597,25 +613,15 @@ cshmi.prototype = {
 							return input;
 						}
 					}else if(getValueParameter === "mousex"){
-						var EventObj = this.ResourceList.EventObj;
-						if(EventObj.pageX !== undefined){
-							var newX = EventObj.pageX;
-						}else{
-							//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
-							newX = EventObj.clientX;
+						var newX = HMI.getClickPosition(this.ResourceList.EventObj, null)[0];
+						if (!isNaN(newX)){
+							return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
 						}
-						return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
 					}else if(getValueParameter === "mousey"){
-						var EventObj = this.ResourceList.EventObj;
-						if(EventObj.pageX !== undefined){
-							newX = EventObj.pageX;
-							newY = EventObj.pageY;
-						}else{
-							//clientX is for the plugin, where clientX is based on the Plugin area, without browser scrolling sideeffects
-							newX = EventObj.clientX;
-							newY = EventObj.clientY;
+						var newY = HMI.getClickPosition(this.ResourceList.EventObj, null)[1];
+						if (!isNaN(newY)){
+							return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
 						}
-						return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
 					}else{
 						HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+getValueParameter);
 					}

@@ -1531,6 +1531,14 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.getClickPosition - Start");
 		
 		var clickPosition = new Array(2);
+		if (!evt){
+			clickPosition[0] = Number.NaN;
+			clickPosition[1] = Number.NaN;
+			this.hmi_log_error("HMI.prototype.getClickPosition - called without an event!");
+			return clickPosition;
+		}
+		var mousePosX;
+		var mousePosY;
 		if (Component !== null)
 		{
 			//detect the mouse position relative to the component
@@ -1549,8 +1557,6 @@ HMI.prototype = {
 				} while (obj = obj.offsetParent);
 			}
 			
-			var mousePosX;
-			var mousePosY;
 			if (evt.pageX || evt.pageY) {
 				//code for native SVG. pageX based on the full XHTML Document
 				mousePosX = evt.pageX;
@@ -1570,6 +1576,20 @@ HMI.prototype = {
 			svgOffsetX = null;
 			svgOffsetY = null;
 			obj = null;
+		}else{
+			if (evt.touches && evt.touches.length) {
+				// iPhone (but no other touch devices)
+				clickPosition[0] = evt.touches[0].pageX;
+				clickPosition[1] = evt.touches[0].pageY;
+			}else if (evt.pageX || evt.pageY) {
+				//code for native SVG. pageX based on the full XHTML Document
+				clickPosition[0] = evt.pageX;
+				clickPosition[1] = evt.pageY;
+			}else{
+				//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
+				clickPosition[0] = evt.clientX;
+				clickPosition[1] = evt.clientY;
+			}
 		}
 		this.hmi_log_trace("HMI.prototype.getClickPosition - End");
 		
