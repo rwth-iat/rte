@@ -594,11 +594,12 @@ HMIJavaScriptKSClient.prototype = {
 		try {
 			//FireFox 3 sends in a POST a content-encoding header killing the TCL Webserver
 			//http://wiki.tcl.tk/2085 entry "nb Dec 18, 2008"
-			//patch accepted but commented out in 
+			//patch accepted but commented out in our
 			// TCL-HTTPD\tcllib-1.6\modules\ncgi\ncgi.tcl
 			
-			//real POST is not nessessary, therefor GET is forced
-			req.open('GET',
+			//only send POST to non tcl servers!
+			
+			req.open(method,
 				window.location.protocol+'//'
 				+ HMI.KSClient.TCLKSGateway
 				+ '?'
