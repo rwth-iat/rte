@@ -74,7 +74,8 @@ OV_DLLFNCEXPORT OV_RESULT ksserv_ComTask_constructor(
 	
 	OV_INSTPTR_ksserv_RootComTask 	rcTask = NULL;
 	OV_INSTPTR_ksserv_ComTask 	cTask = NULL;
-
+	OV_TIME_SPAN ts;
+	OV_TIME t;
 	ov_object_constructor(pobj);
 
 	cTask = Ov_StaticPtrCast(ksserv_ComTask, pobj);
@@ -82,6 +83,16 @@ OV_DLLFNCEXPORT OV_RESULT ksserv_ComTask_constructor(
 	//link for getting called
 	Ov_Link(ksserv_AssocComTaskList,rcTask,cTask);
 	//ksserv_logfile_debug("Registered %s at ComTasks", pobj->v_identifier);
+	//set time for next execution
+	ov_time_gettime(&t);
+	ts.secs = rcTask->v_cycsecs * cTask->v_cycInterval;
+	ts.usecs = rcTask->v_cycusecs * cTask->v_cycInterval;
+	if(ts.usecs >= 1000000)
+	{
+		ts.secs += (ts.usecs / 1000000);
+		ts.usecs %= 1000000;
+	}
+	ov_time_add(&(cTask->v_NextExecTime), &(t), &ts);
     return (OV_RESULT) 0;
 }
 
@@ -110,18 +121,20 @@ OV_DLLFNCEXPORT OV_BOOL ksserv_ComTask_calcExec(
 	     OV_INSTPTR_ksserv_ComTask	cTask
 ) {
 
+	OV_INSTPTR_ksserv_RootComTask rcTask;
+	OV_TIME now;
+
 	//ksserv_logfile_debug("ComTask: %s , cyc %d ", cTask->v_identifier, cTask->v_cycInterval);
+	rcTask = (OV_INSTPTR_ksserv_RootComTask)ov_path_getobjectpointer("/ComTasks", 2);
 
 	if(cTask->v_actimode == 0) return FALSE; //disabled ComTask
 
-	if(cTask->v_cycIntervalCount <= 1) {//its time to get called
-		cTask->v_cycIntervalCount = cTask->v_cycInterval; //but reset countdown before!
-		//ksserv_logfile_debug("ComTask: %s executes (will wait %d afterwards)", cTask->v_identifier, cTask->v_cycIntervalCount);
+	ov_time_gettime(&now);
+	if(ov_time_compare(&(cTask->v_NextExecTime), &now) <= 0) {//its time to get called
+
+
 		return TRUE;
 	} 
-	//decrease counter - maybe next time
-	cTask->v_cycIntervalCount--;
-	//ksserv_logfile_debug("ComTask: %s waits %d more steps", cTask->v_identifier, cTask->v_cycIntervalCount);
 	return FALSE;	
 }
 

@@ -35,6 +35,7 @@ LIBRARY ksserv
 			actimode: INT HAS_ACCESSORS  COMMENT="0=NonActive, 1=Active" INITIALVALUE=1;
 			cycIntervalCount	: INT HAS_GET_ACCESSOR COMMENT="current wait cycles until next execution" INITIALVALUE=5;
 			cycInterval		: INT HAS_ACCESSORS COMMENT="execution intervall of cycles of RootTasks" INITIALVALUE=5;
+			NextExecTime	:	TIME COMMENT="time of next execution (if cycInterval !=0)";
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>; //creates assoc to roottask

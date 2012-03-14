@@ -91,21 +91,84 @@ void ksserv_RootComTask_execute(
 	OV_TIME_SPAN		t;
         OV_INSTPTR_ksserv_RootComTask	rcTask;
 	OV_INSTPTR_ksserv_ComTask 	childTask = NULL;
+	OV_INSTPTR_ksserv_ComTask firstChild = NULL;
 	OV_VTBLPTR_ksserv_ComTask	pvtable;
-
+	OV_TIME time_next, now, earliestChild;
+	OV_TIME_SPAN time_left, ts;
 	rcTask = Ov_StaticPtrCast(ksserv_RootComTask, pobj);
-	//lets see if something is todo...
-	childTask = Ov_GetFirstChild(ksserv_AssocComTaskList, rcTask);
-	while(childTask) {
-		if(ksserv_ComTask_calcExec(childTask)) {//if TRUE, its time to execute this object
-			//go via the methodtable to call the "real" implementation of the typemethod
-			//ksserv_logfile_debug("RootComTask: %s was executed", childTask->v_identifier);
-			Ov_GetVTablePtr(ksserv_ComTask, pvtable, childTask);
-			pvtable->m_typemethod(childTask);
+
+	//get time_span until next event
+	time_left = *(ov_scheduler_getnexteventtime());
+	//if next event is too far in the future limit looping to 2 seconds
+	if(time_left.secs > 1)
+		time_left.secs = 1;
+	//get current time
+	ov_time_gettime(&now);
+	//calculate time of next event
+	ov_time_add(&time_next, &now, &time_left);
+
+
+	do{//loop until next event in ov_scheduler
+
+		//startvalue to estimate time until next (child-)event
+		earliestChild = time_next;
+		//lets see if something is todo...
+		firstChild = Ov_GetFirstChild(ksserv_AssocComTaskList, rcTask);
+		childTask = firstChild;
+		while(childTask) {
+			if(ksserv_ComTask_calcExec(childTask)) {//if TRUE, its time to execute this object
+				//go via the methodtable to call the "real" implementation of the typemethod
+				//ksserv_logfile_debug("RootComTask: %s was executed", childTask->v_identifier);
+				Ov_GetVTablePtr(ksserv_ComTask, pvtable, childTask);
+				pvtable->m_typemethod(childTask);
+				//calculate and set next execution time of child task
+				ov_time_gettime(&now);
+				ts.secs = rcTask->v_cycsecs * childTask->v_cycInterval;
+				ts.usecs = rcTask->v_cycusecs * childTask->v_cycInterval;
+				if(ts.usecs >= 1000000)
+				{
+					ts.secs += (ts.usecs / 1000000);
+					ts.usecs %= 1000000;
+				}
+				ov_time_add(&(childTask->v_NextExecTime), &(now), &ts);
+
+				//get the earliest child task to be run again; just to estimate possible sleep time
+				//sequence of child-task, however, remains
+				if(ov_time_compare(&(childTask->v_NextExecTime), &(earliestChild)) < 0)
+				{
+					earliestChild = childTask->v_NextExecTime;
+
+				}
+			}
+
+
+			childTask = Ov_GetNextChild(ksserv_AssocComTaskList, childTask);
+
 		}
-		childTask = Ov_GetNextChild(ksserv_AssocComTaskList, childTask);
-	}
-   	//get called again in a few moments
+
+		ov_time_gettime(&now);
+		ov_time_diff(&time_left, &earliestChild, &now);
+		//sleep until next task is to be executed
+		if((time_left.secs > 0) || ((time_left.secs == 0) && (time_left.usecs > 0)))
+		{
+
+		//	ksserv_logfile_debug("sleepin %d usecs", time_left.usecs);
+#if !OV_SYSTEM_NT
+		usleep(time_left.secs * 1000000 + time_left.usecs);
+        // Not work on LINUX: select(0,  0,0,0,  &delay);
+#else
+        if( (time_left.secs == 0) && (time_left.usecs == 0) ) {
+            /* Windows does not sleep iff 0 is param, but linux usleep drops timslot of thread */
+            time_left.usecs = 1000;
+        }
+    	Sleep(time_left.secs * 1000 + time_left.usecs / 1000);
+#endif
+		}
+	}while(ov_time_compare(&time_next, &now) > 0);
+
+
+	//ksserv_logfile_debug("leaving loop");
+	//get called again in a few moments
 	t.secs = rcTask->v_cycsecs;
 	t.usecs = rcTask->v_cycusecs;
 	//ksserv_logfile_debug("RootComTask reschedule with intervall %d %d", t.secs, t.usecs);
