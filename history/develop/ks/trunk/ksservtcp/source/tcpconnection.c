@@ -103,6 +103,7 @@ OV_DLLFNCEXPORT void ksservtcp_tcpconnection_startup(OV_INSTPTR_ov_object pobj) 
 	if (getenv("OWNPORT")) {//OWNPORT set
 		port = atoi(getenv("OWNPORT"));
 	} else {//OWNPORT not set --> default port 7509 --> create manager-objects
+
 		port = 7509;
 	}
 	//decide Name to use 
@@ -312,9 +313,15 @@ void ksservtcp_tcpconnection_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		ksserv_logfile_info("########## reuseage of used port by setsockopt ");
 		setsockopt(listensocket, SOL_SOCKET, SO_REUSEADDR, &optval,
 				sizeof optval);
-
+#if !OV_SYSTEM_NT
 		if ((bind(listensocket, (struct sockaddr*) &client_addr,
 				sizeof(client_addr))) == -1) {
+#else
+		if ((bind(listensocket, (struct sockaddr*) &client_addr,
+				sizeof(client_addr))) != 0) {
+			errno = WSAGetLastError();
+
+#endif
 			perror("bind(tcpconnection) failed");
 			CLOSE_SOCKET(listensocket);
 			ksservtcp_tcpconnection_listensocket_set(this, -1);
