@@ -108,12 +108,13 @@ OV_DLLFNCEXPORT void ksservtcp_tcpconnection_startup(OV_INSTPTR_ov_object pobj) 
 	//decide Name to use 
 	if (port == 7509) {//OWNPORT not set --> if port 7509 --> MANAGER
 		ov_vendortree_setservername("MANAGER");
+		ov_logfile_info("Forced KS servername to: MANAGER. Could be different in vendortree!");
 	}// else: use default of libov (--> ov_server_USERNAME)
 
 	//decide if Manager --> create components
 	ov_vendortree_getservername(&srvnameprops, NULL);
 	if (port == 7509 || ov_string_compare(
-			srvnameprops.value.valueunion.val_string, "MANAGER") == 0) {
+			srvnameprops.value.valueunion.val_string, "MANAGER") == OV_STRCMP_EQUAL) {
 		res = ksservtcp_tcpconnection_createmanager();
 		if ((!Ov_OK(res)))
 			ov_logfile_error("Cannot load manager library");
