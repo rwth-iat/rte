@@ -94,6 +94,12 @@ OV_DLLFNCEXPORT void ov_scheduler_setreleventtime(
 */
 OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_schedulenextevent(void);
 
+
+/*
+*	Get execution time of the pnext event of the event queue
+*/
+OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_getnexteventtime(void);
+
 /*
 *	Insert an event into the event queue (subroutine)
 */

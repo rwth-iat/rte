@@ -270,6 +270,39 @@ OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_schedulenextevent(void) {
 	return &timespan;
 }
 
+/*
+*	Get execution time of the pnext event of the event queue
+*/
+OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_getnexteventtime(void) {
+	/*
+	*	local variables
+	*/
+	OV_TIME				time;
+	static OV_TIME_SPAN	timespan;
+
+	if (ov_activitylock) {
+		timespan.secs = OV_VL_MAXINT;
+		timespan.usecs = 0;
+		return &timespan;
+	}
+
+	ov_time_gettime(&time);
+	//if there is an event running
+	if(pfirstevent && pfirstevent->pnext) {
+		/* substract the time of the pnext event from the current time */
+		ov_time_diff(&timespan, &pfirstevent->pnext->time, &time);
+		if((timespan.secs < 0) || (timespan.usecs < 0)) {
+			timespan.secs = 0;
+			timespan.usecs = 0;
+		}
+	} else {
+		timespan.secs = OV_VL_MAXINT;
+		timespan.usecs = 0;
+	}
+	return &timespan;
+}
+
+
 /*	----------------------------------------------------------------------	*/
 
 /*
