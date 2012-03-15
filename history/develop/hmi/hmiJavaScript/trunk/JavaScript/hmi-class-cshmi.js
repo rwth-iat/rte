@@ -77,7 +77,6 @@ function cshmi() {
 	this.ResourceList.ChildList = Object();
 	this.ResourceList.ChildrenIterator = Object();
 	this.ResourceList.InstantiateTemplate = Object();
-	this.ResourceList.EventObj = null;
 	this.ResourceList.EventInfos = Object();
 	this.ResourceList.GlobalVar = Object();
 	
@@ -269,7 +268,7 @@ cshmi.prototype = {
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener("click", function(evt){
-				preserveThis.ResourceList.EventObj = evt;
+				preserveThis.ResourceList.EventInfos.EventObj = evt;
 				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
@@ -286,7 +285,7 @@ cshmi.prototype = {
 				return;
 			}*/
 			ObjectParent.addEventListener("dblclick", function(evt){
-				preserveThis.ResourceList.EventObj = evt;
+				preserveThis.ResourceList.EventInfos.EventObj = evt;
 				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
@@ -297,7 +296,7 @@ cshmi.prototype = {
 		}else if (command[command.length-1] === "rightclick"){
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			ObjectParent.addEventListener("contextmenu", function(evt){
-				preserveThis.ResourceList.EventObj = evt;
+				preserveThis.ResourceList.EventInfos.EventObj = evt;
 				//mark changed Component for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(ObjectParent);
 				
@@ -341,7 +340,7 @@ cshmi.prototype = {
 			return;
 		}
 		HMI.hmi_log_trace("moveStartDrag - Start with object: "+ObjectParent.id);
-		this.ResourceList.EventObj = evt;
+		this.ResourceList.EventInfos.EventObj = evt;
 		//memorize Startposition
 		var mouseposition = HMI.getClickPosition(evt, null);
 		this.ResourceList.EventInfos.startXMouse = mouseposition[0];
@@ -383,7 +382,7 @@ cshmi.prototype = {
 				HMI._setLayerPosition(ComponentChilds[i]);
 			}
 			//save event for use in an action
-			this.ResourceList.EventObj = evt;
+			this.ResourceList.EventInfos.EventObj = evt;
 		}
 		if (evt.stopPropagation) evt.stopPropagation();
 		evt.preventDefault();  //default is scrolling, so disable it
@@ -400,7 +399,7 @@ cshmi.prototype = {
 			document.removeEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
 			document.removeEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
 			//the mouseup event has xy position, so remember for use in an action
-			this.ResourceList.EventObj = evt;
+			this.ResourceList.EventInfos.EventObj = evt;
 		}
 		
 		//restore old position
@@ -538,11 +537,12 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			this.ResourceList.Actions[ObjectPath].getVarParameters = requestList;
+			this.ResourceList.Actions[ObjectPath].getVarParameters = requestList[ObjectPath];
 			HMI.hmi_log_trace("cshmi._getValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Actions[ObjectPath].getVarParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].getVarParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
@@ -621,12 +621,12 @@ cshmi.prototype = {
 							return input;
 						}
 					}else if(getValueParameter === "mousex"){
-						var newX = HMI.getClickPosition(this.ResourceList.EventObj, null)[0];
+						var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[0];
 						if (!isNaN(newX)){
 							return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
 						}
 					}else if(getValueParameter === "mousey"){
-						var newY = HMI.getClickPosition(this.ResourceList.EventObj, null)[1];
+						var newY = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[1];
 						if (!isNaN(newY)){
 							return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
 						}
@@ -738,11 +738,12 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			this.ResourceList.Actions[ObjectPath].setVarParameters = requestList;
+			this.ResourceList.Actions[ObjectPath].setVarParameters = requestList[ObjectPath];
 			HMI.hmi_log_trace("cshmi._setValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Actions[ObjectPath].setVarParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].setVarParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
@@ -1328,6 +1329,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 	var childValue;
 	//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 	if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
+		//fixme requests zusammenfassen!
 		comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
 		childValue = HMI.KSClient.getVar(null, '{'+ObjectPath+'.childValue}', null);
 		childValue = HMI.KSClient.splitKsResponse(childValue, 0);
@@ -1476,12 +1478,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildFromTemplate: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -1717,12 +1720,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgLine: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgLine: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -1762,12 +1766,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgPolyline: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgPolyline: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -1804,12 +1809,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgPolygon: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgPolygon: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -1846,12 +1852,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgPath: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgPath: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -1937,12 +1944,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgText: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgText: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -2000,12 +2008,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgCircle: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgCircle: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -2044,12 +2053,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgEllipse: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgEllipse: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -2092,12 +2102,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgRect: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -2137,12 +2148,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList;
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgRect: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList = new Object();
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
@@ -2188,39 +2200,6 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		
 		return svgElement;
 	},
-/*
-	_buildSvgTest: function(ObjectParent, ObjectPath){
-		var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.visible .x .y .width .height}', null);
-		if (response === false){
-			//communication error
-			return null;
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._buildSvgTest of "+ObjectPath+" failed: "+response);
-			return null;
-		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
-		
-		if (responseArray[0] != "FALSE"){
-			var response = HMI.KSClient.getVar(null, ObjectPath+'.SVGcontent', null);
-			if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("cshmi._buildSvgTest of "+ObjectPath+" failed: "+response);
-				return null;
-			}
-			response =	"<svg:svg xmlns:svg=\"http://www.w3.org/2000/svg\">"
-							+response.substring(2, response.length-2)
-							+"</svg:svg>";
-			var svgElement = HMI.HMIDOMParser.parse(response, null);
-			svgElement.id = ObjectPath;
-			svgElement.setAttribute("x", responseArray[1]);
-			svgElement.setAttribute("y", responseArray[2]);
-			svgElement.setAttribute("width", responseArray[3]);
-			svgElement.setAttribute("height", responseArray[4]);
-			
-			return svgElement;
-		}
-		return true;
-	},
-*/
 	/*********************************
 	_processBasicVariables
 		-	sets svg attributes from an Array
