@@ -766,7 +766,23 @@ cshmi.prototype = {
 				}else if (ksVarName === "elemVar"){
 					if (setValueParameter == "content"){
 						//content is special, as it is different in OVM and SVG
-						ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
+						
+						//if trimToLength is set in parent TextFB and perform trimming if needed
+						var trimLength = parseInt(this.ResourceList.Elements[ObjectParent.id].ElementParameters.trimLength, 10);
+						var contentLength = parseInt(NewValue.length, 10);
+						var trimmedContent;
+						if((trimLength > 0) && (contentLength > trimLength)){
+							trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
+							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
+							ObjectParent.firstChild.setAttribute("title", NewValue);
+						}else if((trimLength < 0) && (contentLength > -trimLength)){
+							trimmedContent =  String.fromCharCode(8230) + NewValue.substr(contentLength + trimLength);
+							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
+							ObjectParent.firstChild.setAttribute("title", NewValue);
+						}else{
+							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
+						}
+
 					}else if (setValueParameter == "visible"){
 						//visible is special, as it is different in OVM and SVG
 						if (NewValue == "FALSE"){
@@ -1936,6 +1952,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList[ObjectPath]["horAlignment"] = null;
 			requestList[ObjectPath]["verAlignment"] = null;
 			requestList[ObjectPath]["content"] = null;
+			requestList[ObjectPath]["trimToLength"] = null;
 			
 			var successCode = this._executeVariablesArray(requestList);
 			if (successCode == false){
@@ -1967,8 +1984,23 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		svgElement.setAttribute("text-anchor", requestList[ObjectPath]["horAlignment"]);
 		
 		var svgTspan = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
-		svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
+		//perform trimming if needed
+		var trimLength = parseInt(requestList[ObjectPath]["trimLength"], 10);
+		var contentLength = parseInt(requestList[ObjectPath]["content"].length, 10);
+		var trimmedContent;
 		
+		if((trimLength > 0) && (contentLength > trimLength)){
+			trimmedContent = requestList[ObjectPath]["content"].substr(0, trimLength) + String.fromCharCode(8230);
+			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
+			svgTspan.setAttribute("title", requestList[ObjectPath]["content"]);
+		}else if((trimLength < 0) && (contentLength > -trimLength)){
+			trimmedContent =  String.fromCharCode(8230) + requestList[ObjectPath]["content"].substr(contentLength + trimLength);
+			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
+			svgTspan.setAttribute("title", requestList[ObjectPath]["content"]);
+		}else{
+			svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
+		}
+				
 		if (requestList[ObjectPath]["verAlignment"] == "auto"){
 		}else if (requestList[ObjectPath]["verAlignment"] == "middle"){
 			svgTspan.setAttribute("dy", "0.7ex");
