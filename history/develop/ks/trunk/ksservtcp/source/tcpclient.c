@@ -32,6 +32,8 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fcntl.h>
+/* for select */
+#include <sys/select.h>
 #else
 #include <winsock2.h>
 #endif
@@ -165,7 +167,11 @@ void ksservtcp_tcpclient_typemethod(
  	
  	int on = 1;
  	int off = 0;
+#if !OV_SYSTEM_NT
+ 	fd_set read_flags;
+#else
  	FD_SET read_flags;
+#endif
  	MemoryStreamFragment* currFragment = NULL;
  	char* placeInBuffer = NULL;
  	int sentChunkSize = 0;

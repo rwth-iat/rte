@@ -262,8 +262,8 @@ void ksservtcp_udpconnection_typemethod(
 		server_addr.sin_port = htons(port);
 
 		//test resueage!
-		ksserv_logfile_info("########## reuseage of used port by setsockopt ");
-		setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
+		//ksserv_logfile_info("########## reuseage of used port by setsockopt ");
+		//setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
 		if ((bind(sock, (struct sockaddr*) &server_addr, sizeof(server_addr))) == -1)
 		{

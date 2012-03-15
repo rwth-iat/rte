@@ -106,6 +106,51 @@ OV_DLLFNCEXPORT void ksservtcp_tcpconnection_startup(OV_INSTPTR_ov_object pobj) 
 
 		port = 7509;
 	}
+
+	//TODO: MAJOR REFACTORNIG NEEDED
+	//is this port free?
+	ksserv_logfile_debug("probing tcp port");
+	struct sockaddr_in client_addr;
+	int listensocket = -1;
+	int on = 1;
+	//bind
+	memset(&client_addr, 0, sizeof(client_addr));
+	client_addr.sin_family = AF_INET;
+	client_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	client_addr.sin_port = htons(port);
+	int result = -1;
+	//open socket
+	listensocket = socket(PF_INET, SOCK_STREAM, 0);
+	if (listensocket == -1) {
+		perror("socket(tcpconnection) failed");
+		return;
+	}
+
+	//non-blocking
+	if ((IOCTL_SOCKET(listensocket, FIONBIO, (char*) &on)) == -1) {
+		perror("ioctl(tcpconnection) failed");
+		CLOSE_SOCKET(listensocket);
+		return;
+	}
+	//i am sorry for a potentially not ending loop :(
+	do{
+		result = bind(listensocket, (struct sockaddr*) &client_addr, sizeof(client_addr));
+		if (result == -1){
+#if OV_SYSTEM_NT
+			errno = WSAGetLastError();
+#endif
+			if(errno == EADDRINUSE) {
+				ksserv_logfile_debug("tcp port %i already in use, trying %i", port, port+1);
+				port = port+1;
+				client_addr.sin_port = htons(port);
+			}else{
+				ksserv_logfile_error("error probing tcp port %i", errno);
+				break;
+			}
+		}
+	}while(result < 0);
+	CLOSE_SOCKET(listensocket);
+
 	//decide Name to use 
 	if (port == 7509) {//OWNPORT not set --> if port 7509 --> MANAGER
 		ov_vendortree_setservername("MANAGER");
@@ -310,9 +355,9 @@ void ksservtcp_tcpconnection_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		client_addr.sin_port = htons(port);
 
 		//test resueage!
-		ksserv_logfile_info("########## reuseage of used port by setsockopt ");
-		setsockopt(listensocket, SOL_SOCKET, SO_REUSEADDR, &optval,
-				sizeof optval);
+		//ksserv_logfile_info("########## reuseage of used port by setsockopt ");
+		//setsockopt(listensocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
+
 #if !OV_SYSTEM_NT
 		if ((bind(listensocket, (struct sockaddr*) &client_addr,
 				sizeof(client_addr))) == -1) {
