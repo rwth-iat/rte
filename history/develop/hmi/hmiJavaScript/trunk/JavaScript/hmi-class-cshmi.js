@@ -506,11 +506,6 @@ cshmi.prototype = {
 		-	get a Value from multiple Sources
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
-		var req = new XMLHttpRequest();
-		req.open("GET", "http://localhost:8080/getVar?path=/vendor.database_free", false);
-		req.send(null);
-		req.responseText;
-
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
