@@ -138,8 +138,10 @@ OV_DLLFNCEXPORT void ksservtcp_tcpconnection_startup(OV_INSTPTR_ov_object pobj) 
 		if (result == -1){
 #if OV_SYSTEM_NT
 			errno = WSAGetLastError();
-#endif
+			if(errno== WSAEADDRINUSE){
+#else
 			if(errno == EADDRINUSE) {
+#endif
 				ksserv_logfile_debug("tcp port %i already in use, trying %i", port, port+1);
 				port = port+1;
 				client_addr.sin_port = htons(port);
