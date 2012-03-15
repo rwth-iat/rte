@@ -768,7 +768,7 @@ cshmi.prototype = {
 						//content is special, as it is different in OVM and SVG
 						
 						//if trimToLength is set in parent TextFB and perform trimming if needed
-						var trimLength = parseInt(this.ResourceList.Elements[ObjectParent.id].ElementParameters.trimLength, 10);
+						var trimLength = parseInt(this.ResourceList.Elements[ObjectParent.id].ElementParameters.trimToLength, 10);
 						var contentLength = parseInt(NewValue.length, 10);
 						var trimmedContent;
 						if((trimLength > 0) && (contentLength > trimLength)){
@@ -1985,7 +1985,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		
 		var svgTspan = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
 		//perform trimming if needed
-		var trimLength = parseInt(requestList[ObjectPath]["trimLength"], 10);
+		var trimLength = parseInt(requestList[ObjectPath]["trimToLength"], 10);
 		var contentLength = parseInt(requestList[ObjectPath]["content"].length, 10);
 		var trimmedContent;
 		
