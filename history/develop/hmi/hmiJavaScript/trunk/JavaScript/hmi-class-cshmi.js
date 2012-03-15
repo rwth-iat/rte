@@ -602,7 +602,11 @@ cshmi.prototype = {
 						return null;
 					}
 				}else if (ksVarName === "globalVar"){
-					return this.ResourceList.GlobalVar[getValueParameter];
+					if (this.ResourceList.GlobalVar[getValueParameter] !== undefined){
+						return this.ResourceList.GlobalVar[getValueParameter];
+					}else {
+						return null;
+					}
 
 				}else if (ksVarName === "OperatorInput"){
 					if(getValueParameter.indexOf("textinput") !== -1){
@@ -1586,7 +1590,6 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 
 					if (this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
-//						debugger;
 						// if FBref beginn with "//" then keep the server information
 						// e.g "//dev/ov_hmidemo7/TechUnits/Add" --> keep "//dev/ov_hmidemo7"
 						if (FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
