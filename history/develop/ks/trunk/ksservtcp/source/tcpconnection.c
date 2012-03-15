@@ -253,14 +253,14 @@ OV_DLLFNCEXPORT void ksservtcp_tcpconnection_shutdown(OV_INSTPTR_ov_object pobj)
 	//close socket
 	listensocket = ksservtcp_tcpconnection_listensocket_get(this);
 #if OV_SYSTEM_NT
-	if((CLOSE_SOCKET(listensocket)))
+	if(CLOSE_SOCKET(listensocket)==SOCKET_ERROR)
 	{
 		errno = WSAGetLastError();
 #else
-	if(!(CLOSE_SOCKET(listensocket)))
+	if(CLOSE_SOCKET(listensocket) == -1)
 	{
 #endif
-		perror("shutdown listen");
+		perror("tcp shutdown listen");
 	}
 
 	ksservtcp_tcpconnection_listensocket_set(this, -1);

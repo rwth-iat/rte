@@ -170,14 +170,14 @@ OV_DLLFNCEXPORT void ksservtcp_udpconnection_shutdown(
 	sock = ksservtcp_udpconnection_socket_get(this);
 
 #if OV_SYSTEM_NT
-	if((CLOSE_SOCKET(sock)))
+	if(CLOSE_SOCKET(sock)==SOCKET_ERROR)
 	{
 		errno = WSAGetLastError();
 #else
-	if(!(CLOSE_SOCKET(sock)))
+	if(CLOSE_SOCKET(sock) == -1)
 	{
 #endif
-		perror("shutdown listen");
+		perror("udp shutdown listen");
 	}
 
 	ksservtcp_udpconnection_socket_set(this, -1);
