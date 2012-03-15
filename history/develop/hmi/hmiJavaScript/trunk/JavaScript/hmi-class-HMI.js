@@ -1504,7 +1504,7 @@ HMI.prototype = {
 		_setLayerPosition
 	*********************************/
 	_setLayerPosition: function (Element) {
-		this.hmi_log_trace("HMI.prototype._setLayerPosition - Start: "+Element.id);
+		//this.hmi_log_trace("HMI.prototype._setLayerPosition - Start: "+Element.id);
 		
 		//LayerX and LayerY are HMI specific DOM Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
@@ -1537,7 +1537,7 @@ HMI.prototype = {
 		LayerX = null;
 		LayerY = null;
 		
-		this.hmi_log_trace("HMI.prototype._setLayerPosition - End");
+		//this.hmi_log_trace("HMI.prototype._setLayerPosition - End");
 	},	
 	
 	/*********************************
@@ -1577,10 +1577,13 @@ HMI.prototype = {
 				//code for native SVG. pageX based on the full XHTML Document
 				mousePosX = evt.pageX;
 				mousePosY = evt.pageY;
-			}else{
+			}else if (evt.clientX || evt.clientY) {
 				//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
 				mousePosX = evt.clientX;
 				mousePosY = evt.clientY;
+			}else{
+				mousePosX = Number.NaN;
+				mousePosY = Number.NaN;
 			}
 			
 			//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
@@ -1592,6 +1595,7 @@ HMI.prototype = {
 			svgOffsetX = null;
 			svgOffsetY = null;
 			obj = null;
+			this.hmi_log_trace("HMI.prototype.getClickPosition relative - End x:"+clickPosition[0]+" y:"+clickPosition[1]);
 		}else{
 			if (evt.touches && evt.touches.length) {
 				// iPhone (but no other touch devices)
@@ -1601,13 +1605,16 @@ HMI.prototype = {
 				//code for native SVG. pageX based on the full XHTML Document
 				clickPosition[0] = evt.pageX;
 				clickPosition[1] = evt.pageY;
-			}else{
+			}else if (evt.clientX || evt.clientY) {
 				//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
 				clickPosition[0] = evt.clientX;
 				clickPosition[1] = evt.clientY;
+			}else{
+				clickPosition[0] = Number.NaN;
+				clickPosition[1] = Number.NaN;
 			}
+			this.hmi_log_trace("HMI.prototype.getClickPosition absolute - End x:"+clickPosition[0]+" y:"+clickPosition[1]);
 		}
-		this.hmi_log_trace("HMI.prototype.getClickPosition - End");
 		
 		return clickPosition;
 	},
