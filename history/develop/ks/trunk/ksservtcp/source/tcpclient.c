@@ -215,7 +215,7 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 		if(bytes == 0)		//normal shutdown by client
 			ksserv_logfile_debug("tcpclient/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
 		else			//error
-			ksserv_logfile_error("received less than 4 bytes - shutting down");
+			ksserv_logfile_error("received %d bytes (less than 4) - shutting down", recvBytes);
 		ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
 		return;
 	}
@@ -264,7 +264,7 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 	}while(size_received < size_receiving);
 
 
-	ksserv_logfile_error("tcpclient/typemethod: got ks cmd w/ %d bytes",bytes);
+	ksserv_logfile_error("tcpclient/typemethod: got ks cmd w/ %d bytes", size_received);
 	this->v_receivedCalls++; //count number of calls
 	ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
 	//get size_received
