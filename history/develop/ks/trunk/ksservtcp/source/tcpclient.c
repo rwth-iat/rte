@@ -145,7 +145,6 @@ void ksservtcp_tcpclient_typemethod(
 	char *xdr_received, *xdr_return;
 	char xid2[4];
 
-	char *buffer = 0;
 	int recvBytes = 0;
 	char *buffer_location = 0; //pointer into the buffer
 
@@ -206,7 +205,7 @@ ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-wait
 #endif
 
 //check if data arrived
-if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
+if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 {
 	recvBytes = recv(receivesocket, ckxdrlength, 4,0);		//first 4 bytes code length of xdr
 	if(recvBytes < 4)
@@ -250,7 +249,7 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 		ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-waitd.tv_usec);	//Windows Systems don't alter waitd
 #endif
 #endif
-		if(err == -1)
+		if(err < 1)		//if error or timeout expired
 		{
 			timeoutcounter++;
 			if(timeoutcounter >= 10)
@@ -341,7 +340,6 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 		} else {
 			ksserv_logfile_error("NO REGISTER-OBJECT");
 			free(xdr_received);
-			free(buffer);
 			free(receivedname);
 			return;
 		}
@@ -380,7 +378,6 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 		} else {
 			ksserv_logfile_error("NO UNREGISTER-OBJECT");
 			free(xdr_received);
-			free(buffer);
 			free(receivedname);
 			return;
 		}
@@ -420,7 +417,6 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 		} else {
 			ksserv_logfile_error("NO GETSERVERDATA-OBJECT");
 			free(xdr_received);
-			free(buffer);
 			free(receivedname);
 			return;
 		}
@@ -740,7 +736,6 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 	free(xdr_received);
 
 
-	free(buffer);
 
 
 }
