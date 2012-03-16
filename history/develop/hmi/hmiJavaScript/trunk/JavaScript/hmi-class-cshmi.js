@@ -638,7 +638,7 @@ cshmi.prototype = {
 					var TemplateObject = ObjectParent;
 					do{
 						if(TemplateObject.FBReference && TemplateObject.FBReference[getValueParameter] !== undefined){
-							//this is a TemplateObject itself
+							//a named variable of a FBReference was requested, naming was done in instantiateTemplate
 							if (TemplateObject.FBReference[getValueParameter].charAt(0) === "/"){
 								//String begins with / so it is a fullpath
 								var result = HMI.KSClient.getVar(null, TemplateObject.FBReference[getValueParameter], null);
@@ -655,7 +655,7 @@ cshmi.prototype = {
 								return null;
 							}
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-							//this is a TemplateObject itself, but only one reference given
+							//a variable from a Template was requested
 							
 							if(getValueParameter == "identifier"){
 								//if the identifier is requested calculate this to avoid network request
@@ -686,7 +686,7 @@ cshmi.prototype = {
 					var TemplateObject = ObjectParent;
 					do{
 						if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[getValueParameter] !== undefined){
-							//this is a TemplateObject itself and have valid data for us
+							//this is a ConfigValue and has valid data for us
 							return TemplateObject.ConfigValues[getValueParameter];
 						}
 					//loop upwards to find the Template object
@@ -821,10 +821,21 @@ cshmi.prototype = {
 					var TemplateObject = ObjectParent;
 					do{
 						if(TemplateObject.FBReference && TemplateObject.FBReference[setValueParameter] !== undefined){
-							//this is a TemplateObject itself
-							return TemplateObject.FBReference[setValueParameter];
+							//a named variable of a FBReference was requested, naming was done in instantiateTemplate
+							if (TemplateObject.FBReference[setValueParameter].charAt(0) === "/"){
+								//String begins with / so it is a fullpath
+								var response = HMI.KSClient.setVar(null, TemplateObject.FBReference[setValueParameter], NewValue, null);
+								if (response.indexOf("KS_ERR") !== -1){
+									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference[setValueParameter]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+								}
+								return true;
+							}else{
+								//a normal relativ path
+								HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
+								return false;
+							}
 						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-							//this is a TemplateObject itself, but only one reference given
+							//a variable from a Template was requested
 							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
 								//String begins with / so it is a fullpath
 								response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+setValueParameter, NewValue, null);
