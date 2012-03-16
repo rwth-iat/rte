@@ -140,7 +140,6 @@ void ksservtcp_tcpclient_typemethod(
 	XDR xdrdec, xdrs, resultXDRs;
 	int i;
 	int c;
-	int bytes = -1; //-1 means nothing received
 	int size_received, size_receiving, size_return, xdrlret;
 	int receivesocket = ksservtcp_tcpclient_receivesocket_get(this);
 	char *xdr_received, *xdr_return;
@@ -212,10 +211,16 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 	recvBytes = recv(receivesocket, ckxdrlength, 4,0);		//first 4 bytes code length of xdr
 	if(recvBytes < 4)
 	{
-		if(bytes == 0)		//normal shutdown by client
+		if(recvBytes == 0)		//normal shutdown by client
 			ksserv_logfile_debug("tcpclient/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
 		else			//error
-			ksserv_logfile_error("received %d bytes (less than 4) - shutting down", recvBytes);
+			ksserv_logfile_error("received %d bytes (less than 4) - shutting down", recvBytes);			//on windows machines a closed socket will return -1 here (instead of 0)
+
+#if OV_SYSTEM_NT
+		errno = WSAGetLastError();
+#endif
+		perror("tcpclient - receive");
+
 		ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
 		return;
 	}
@@ -260,11 +265,12 @@ if((err >= 0) && FD_ISSET(receivesocket, &read_flags))
 		size_received += recvBytes;
 		buffer_location = &(xdr_received[size_received]);
 
+		ksserv_logfile_debug("%d of %d bytes received, err is %d", size_received, size_receiving, err);
 
 	}while(size_received < size_receiving);
 
 
-	ksserv_logfile_error("tcpclient/typemethod: got ks cmd w/ %d bytes", size_received);
+	ksserv_logfile_info("tcpclient/typemethod: got ks cmd w/ %d bytes", size_received);
 	this->v_receivedCalls++; //count number of calls
 	ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
 	//get size_received

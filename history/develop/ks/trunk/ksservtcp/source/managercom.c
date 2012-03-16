@@ -485,6 +485,7 @@ OV_DLLFNCEXPORT void ksservtcp_managercom_mngregister(
 	OV_INT c;
 	char *tmpfragment;
 	char *tmp;
+	OV_UINT lengthtemp;
     OV_INSTPTR_ov_domain managerdomain;
     OV_INSTPTR_ksservtcp_register preg;
     
@@ -524,8 +525,9 @@ OV_DLLFNCEXPORT void ksservtcp_managercom_mngregister(
 	pobj->v_xdr = (char*) malloc(pobj->v_xdrlength);
 	memset(pobj->v_xdr, 0, pobj->v_xdrlength);
 
+	lengthtemp = pobj->v_xdrlength - 4;		//first 4 bytes of xdr code length of the REST
 	//add tcp-fragment-rpcheader
-	tmpfragment = (char*)&(pobj->v_xdrlength);
+	tmpfragment = (char*)&(lengthtemp);
 	for (c=0; c<4; c++)
 		pobj->v_xdr[3-c] = tmpfragment[c];
 	pobj->v_xdr[0] = 0x80;
@@ -626,6 +628,7 @@ OV_DLLFNCEXPORT void ksservtcp_managercom_mngunregister(
 	OV_INT c;
 	char *tmp;
 	char *tmpfragment;
+	OV_UINT lengthtemp;
 
 	pobj->v_operatingfunction = 2;
 	pmsr->v_operatingfunction = 2;
@@ -661,8 +664,9 @@ OV_DLLFNCEXPORT void ksservtcp_managercom_mngunregister(
 	pobj->v_xdr = (char*) malloc(pobj->v_xdrlength);
 	memset(pobj->v_xdr, 0, pobj->v_xdrlength);
 
-	//add tcp-fragment-rpcheader
-	tmpfragment = (char*)&(pobj->v_xdrlength);
+	lengthtemp = pobj->v_xdrlength - 4;		//first 4 bytes of xdr code length of the REST
+		//add tcp-fragment-rpcheader
+	tmpfragment = (char*)&(lengthtemp);
 	for (c=0; c<4; c++)
 		pobj->v_xdr[3-c] = tmpfragment[c];
 	pobj->v_xdr[0] = 0x80;
