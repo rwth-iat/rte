@@ -715,6 +715,12 @@ HMIJavaScriptKSClient.prototype = {
 	checkSheetProperty: function(ComponentPath) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Start");
 		
+		if (this.HMIMANAGER_PATH === null){
+			//we have no HMIMANAGER, so there could be no StyleDescription
+			HMI.ServerProperty.SheetHasStyleDescription = false;
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endn");
+			return;
+		}
 		//spaces in objectname are encoded as %20 within OV
 		var StyleResponse = this.getVar(null, encodeURI(ComponentPath) + '.StyleDescription', null);
 		

@@ -1106,23 +1106,26 @@ HMI.prototype = {
 			deleteChilds(this.InfoOutput);
 		}
 		if (HMI.KSClient.TCLKSHandle !== null){
-			var SVGRequestURI;
+			var SVGRequestURI = "";
 			
 			//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
 			if (HMI.ServerProperty.SheetHasStyleDescription){
 				//spaces in objectname are encoded as %20 within OV
 				SVGRequestURI = '{' + encodeURI(HMI.Path) + '.GraphicDescription' + '%20' + encodeURI(HMI.Path) + '.StyleDescription' + '}';
-			}else{
+			}else if (HMI.KSClient.HMIMANAGER_PATH !== null){
 				//spaces in objectname are encoded as %20 within OV
 				SVGRequestURI = encodeURI(HMI.Path) + '.GraphicDescription';
 			}
 			
-			//	get GraphicDescription
-			//
-			var ComponentText = this.KSClient.getVar(null, SVGRequestURI, null);
+			var ComponentText = null;
+			if (SVGRequestURI !== ""){
+				//	get GraphicDescription
+				//
+				ComponentText = this.KSClient.getVar(null, SVGRequestURI, null);
+			}
 			
-			//check if we have an cshmi target
-			if (ComponentText && ComponentText.indexOf("KS_ERR_BADPATH") !== -1){
+			//check if we have an cshmi target, no hmimanager at all or an error
+			if (ComponentText === null || (ComponentText && ComponentText.indexOf("KS_ERR_BADPATH") !== -1)){
 				this.cshmi = new cshmi();
 				this.cshmi.instanciateCshmi(HMI.Path);
 			}else{
