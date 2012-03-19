@@ -342,8 +342,24 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 OV_RESULT send_tcp(int socket, char* pointer, int length){
 	int sentBytes=0;
 	int sentChunkSize = 0;
+	fd_set write_flags;
+	struct timeval waitd;
+	int err;
+
 	do
 	{
+		// Zero the flags ready for using
+		FD_ZERO(&write_flags);
+		FD_SET(socket, &write_flags); // get write flags
+		waitd.tv_sec = 0;     // Set Timeout
+		waitd.tv_usec = 1000;    //  1 millisecond
+		err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
+
+		if(err < 0)
+		{
+			perror("httpclienthandler: error waiting for sending answer:");
+		}
+
 		if((length - sentBytes) > 4096)
 		{
 			sentChunkSize = send(socket, pointer, 4096, 0);
@@ -367,17 +383,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 		ksserv_logfile_debug("httpclienthandler: answer sent, sentChunkSize: %d sentBytes: %d", sentChunkSize, sentBytes);
 		//move pointer to next chunk
 
-		if(sentBytes < length)
-		{
-			//sleep to give time for sending (sleep values are trial and error based for the development PC (Intel C600))
-#if !OV_SYSTEM_NT
-			//on linux usleep counts in usecs
-			usleep(1000);
-#else
-			//on windows Sleep counts in msecs
-			Sleep(1);
-#endif
-		}
+
 	}while(sentBytes < length);
 	return OV_ERR_OK;
 }
