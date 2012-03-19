@@ -353,7 +353,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 		FD_SET(socket, &write_flags); // get write flags
 		waitd.tv_sec = 0;     // Set Timeout
 		waitd.tv_usec = 1000;    //  1 millisecond
-		err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
+		err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0, &waitd);
 
 		if(err < 0)
 		{
@@ -362,7 +362,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 
 		if((length - sentBytes) > 4096)
 		{
-			sentChunkSize = send(socket, pointer, 4096, 0);
+			sentChunkSize = send(socket, pointer, 4096, MSG_NOSIGNAL);
 			if (sentChunkSize == -1)
 			{
 				ksserv_logfile_error("send() failed");
@@ -371,7 +371,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 		}
 		else
 		{
-			sentChunkSize = send(socket, pointer, (length - sentBytes), 0);
+			sentChunkSize = send(socket, pointer, (length - sentBytes), MSG_NOSIGNAL);
 			if (sentChunkSize == -1)
 			{
 				ksserv_logfile_error("send() failed");
@@ -400,6 +400,23 @@ void checkdb(OV_STRING msg){
 }
 
 /**
+ * Time profiling
+ */
+void start(struct timeval* start){
+	gettimeofday(start, NULL);
+}
+void stop(struct timeval* start, OV_STRING comment){
+	struct timeval end;
+	long mtime, seconds, useconds;
+	gettimeofday(&end, NULL);
+    seconds  = end.tv_sec  - start->tv_sec;
+    useconds = end.tv_usec - start->tv_usec;
+    mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+    ksserv_logfile_debug("%s: Elapsed time: %ld milliseconds\n", comment, mtime);
+}
+
+
+/**
  * Procedure periodically called by ComTask // ov_scheduler. * 
  * It takes over the sending/receiving of data to/from the
  * connected client.
@@ -410,6 +427,7 @@ void ksservhttp_httpclienthandler_typemethod(
 	//COmTask OV_INSTPTR_ov_object		pfb
 	OV_INSTPTR_ksserv_ComTask	cTask
 ) {
+
 	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, cTask);
 
 	int bytes = -1; //-1 means nothing received
@@ -435,7 +453,6 @@ void ksservhttp_httpclienthandler_typemethod(
 
 	OV_INSTPTR_ov_object temp;
 	OV_INSTPTR_ksservhttp_staticfile staticfile;
-
 	//ksserv_logfile_debug("httpclienthandler typemethod called ");
 	if (receivesocket < 0) { // check if the socket might be OK.
 		ksserv_logfile_error("%s/typemethod: no receive socket set (receivesocket==-1), thus deleting myself",cTask->v_identifier);
@@ -456,7 +473,6 @@ void ksservhttp_httpclienthandler_typemethod(
 		if(recvBytes != -1) bytes += recvBytes;//if soth was received, calc overall size of received bytes
 		//if(recvBytes > 0) ksserv_logfile_error("httpclienthandler/typemethod: ks cmd chunk no %d recv %d bytes, pBuffStart %p, pBuffInside %p",buffer_size, recvBytes, buffer, buffer_location);
 	} while(recvBytes == BUFFER_CHUNK_SIZE); // stop if less than maximum bytes was read by recv
-
 	//if(bytes != -1) ksserv_logfile_error("httpclienthandler/typemethod: ks cmd w/ size %d received ",bytes);
 	
 
@@ -540,18 +556,20 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
 
-			result = OV_ERR_NOTIMPLEMENTED;
-			//check which kind of request is coming in
-			if(	ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL ||
-				ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
-				result = OV_ERR_OK;
-			}else if(ov_string_compare(http_request_type, "PUSH") != OV_STRCMP_EQUAL){
-				result = OV_ERR_OK;
-			}else if(ov_string_compare(http_request_type, "OPTIONS") != OV_STRCMP_EQUAL){
-				//used for Cross-Origin Resource Sharing (CORS)
-				//only an 200 is required
-				result = OV_ERR_OK;
-				ov_string_append(&body, "CORS Request granted"); //need some answer to skip commands
+			if(!Ov_Fail(result)){
+				result = OV_ERR_NOTIMPLEMENTED;
+				//check which kind of request is coming in
+				if(	ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL ||
+					ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
+					result = OV_ERR_OK;
+				}else if(ov_string_compare(http_request_type, "PUSH") != OV_STRCMP_EQUAL){
+					result = OV_ERR_OK;
+				}else if(ov_string_compare(http_request_type, "OPTIONS") != OV_STRCMP_EQUAL){
+					//used for Cross-Origin Resource Sharing (CORS)
+					//only an 200 is required
+					result = OV_ERR_OK;
+					ov_string_append(&body, "CORS Request granted"); //need some answer to skip commands
+				}
 			}
 
 			//BEGIN command routine
@@ -675,9 +693,11 @@ void ksservhttp_httpclienthandler_typemethod(
 			if (keep_alive != TRUE) {
 				ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 			}
+
 			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
 	}
 	//free up the buffer
 	free(buffer);
+
 	return;
 }

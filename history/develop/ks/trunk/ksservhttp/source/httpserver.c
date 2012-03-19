@@ -236,6 +236,7 @@ void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		//test reuseage!
 		ov_logfile_info("########## reuseage of used port by setsockopt ");
 		setsockopt(listensocket, SOL_SOCKET, SO_REUSEADDR, &optval,	sizeof(optval));
+		//setsockopt(listensocket, SOL_SOCKET, 0, &optval,	sizeof(optval));
 
 		if ((bind(listensocket, (struct sockaddr*) &client_addr,
 				sizeof(client_addr))) == -1) {
