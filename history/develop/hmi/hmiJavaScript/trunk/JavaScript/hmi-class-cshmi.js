@@ -314,13 +314,16 @@ cshmi.prototype = {
 			ObjectParent._moveStartDragThunk = function(evt){
 				preserveThis._moveStartDrag(ObjectParent, ObjectPath, evt);
 			}
-			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it
 			ObjectParent._moveMouseMoveThunk = function(evt){
 				preserveThis._moveMouseMove(ObjectParent, ObjectPath, evt);
 			}
-			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it
 			ObjectParent._moveStopDragThunk = function(evt){
-				preserveThis._moveStopDrag(ObjectParent, ObjectPath, evt);
+				//stop with interpreting the actions
+				preserveThis._moveStopDrag(ObjectParent, ObjectPath, evt, false);
+			}
+			ObjectParent._moveCancelDragThunk = function(evt){
+				//stop without interpreting the actions
+				preserveThis._moveStopDrag(ObjectParent, ObjectPath, evt, true);
 			}
 			//todo: try to implement via HTML5 drag&drop
 			
@@ -355,6 +358,7 @@ cshmi.prototype = {
 			
 			document.addEventListener("touchmove", ObjectParent._moveMouseMoveThunk, false);
 			document.addEventListener("touchend", ObjectParent._moveStopDragThunk, false);
+			document.addEventListener("touchcancel", ObjectParent._moveCancelDragThunk, false);
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy click (x:"+mouseposition[0]+",y:"+mouseposition[1]+") detected");
 			document.addEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
@@ -387,12 +391,13 @@ cshmi.prototype = {
 		if (evt.stopPropagation) evt.stopPropagation();
 		evt.preventDefault();  //default is scrolling, so disable it
 	},
-	_moveStopDrag : function(ObjectParent, ObjectPath, evt){
+	_moveStopDrag : function(ObjectParent, ObjectPath, evt, canceled){
 		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+ObjectParent.id);
 		if(evt.type === 'touchend'){
 			HMI.hmi_log_trace("moveStartDrag - touch up detected");
 			document.removeEventListener("touchmove", ObjectParent._moveMouseMoveThunk, false);
 			document.removeEventListener("touchend", ObjectParent._moveStopDragThunk, false);
+			document.removeEventListener("touchcancel", ObjectParent._moveCancelDragThunk, false);
 			//the touchend has no xy position (since the fingers left the device!), so an action should work on the last move eventobj
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy mouse up detected");
@@ -412,8 +417,13 @@ cshmi.prototype = {
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
 		
-		//get and execute all actions
-		this._interpreteAction(ObjectParent, ObjectPath);
+		if (canceled === true){
+			//an action should not interprete this event
+			this.ResourceList.EventInfos.EventObj = null;
+		}else{
+			//get and execute all actions
+			this._interpreteAction(ObjectParent, ObjectPath);
+		}
 		
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
