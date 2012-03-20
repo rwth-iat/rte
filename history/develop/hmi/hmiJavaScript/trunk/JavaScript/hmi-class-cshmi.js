@@ -2292,6 +2292,9 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		if(configArray["fill"] && configArray["fill"] !== ""){
 			svgElement.setAttribute("fill", configArray["fill"]);
 		}
+		if(configArray["opacity"] && configArray["opacity"] !== ""){
+			svgElement.setAttribute("opacity", configArray["opacity"]);
+		}
 	},
 	/*********************************
 	_executeVariablesArray
