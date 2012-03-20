@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-03-20 17:32:53
+  Erstellt : 2012-03-20 17:40:20
 
   HOST                : LOCALHOST
   SERVER              : ov_server_rex69
@@ -1904,100 +1904,6 @@
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "connectionname";
-        value : INPUT  UNKNOWN = ;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation.if/VisualisationReady :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation.if/VisualisationReady.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "visuallayout";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation.if/VisualisationReady.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "foo";
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation.then/setVisuallayoutPoints :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "points";
-        elemVarPath : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBConnectionv2/ConnectionPolyline/onload/SelectVisualisation.then/setVisuallayoutPoints.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "visuallayout";
-        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
