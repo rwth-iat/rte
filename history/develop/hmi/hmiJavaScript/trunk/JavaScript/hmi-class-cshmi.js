@@ -588,6 +588,13 @@ cshmi.prototype = {
 							//todo asv compatibility
 							return null;
 						}
+					}else if (getValueParameter == "title"){
+						for (var i = 0;i < ObjectParent.childNodes.length;i++){
+							if (ObjectParent.childNodes.item(i).tagName === "title"){
+								return ObjectParent.childNodes.item(i).firstChild.textContent;
+							}
+						} 
+						return null;
 					}else if (getValueParameter == "visible"){
 						//display is special, as it is different in OVM and SVG
 						var displayVar = ObjectParent.getAttribute("display");
@@ -784,15 +791,17 @@ cshmi.prototype = {
 						if((trimLength > 0) && (contentLength > trimLength)){
 							trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
 							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
-							ObjectParent.firstChild.setAttribute("title", NewValue);
+							this._setTitle(ObjectParent, NewValue);
 						}else if((trimLength < 0) && (contentLength > -trimLength)){
 							trimmedContent =  String.fromCharCode(8230) + NewValue.substr(contentLength + trimLength);
 							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
-							ObjectParent.firstChild.setAttribute("title", NewValue);
+							this._setTitle(ObjectParent, NewValue);
 						}else{
 							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
 						}
-
+					}else if (setValueParameter == "title"){
+						this._setTitle(ObjectParent, NewValue);
+						return true;
 					}else if (setValueParameter == "visible"){
 						//visible is special, as it is different in OVM and SVG
 						if (NewValue == "FALSE"){
@@ -2013,11 +2022,11 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		if((trimLength > 0) && (contentLength > trimLength)){
 			trimmedContent = requestList[ObjectPath]["content"].substr(0, trimLength) + String.fromCharCode(8230);
 			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
-			svgTspan.setAttribute("title", requestList[ObjectPath]["content"]);
+			this._setTitle(svgElement, requestList[ObjectPath]["content"]);
 		}else if((trimLength < 0) && (contentLength > -trimLength)){
 			trimmedContent =  String.fromCharCode(8230) + requestList[ObjectPath]["content"].substr(contentLength + trimLength);
 			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
-			svgTspan.setAttribute("title", requestList[ObjectPath]["content"]);
+			this._setTitle(svgElement, requestList[ObjectPath]["content"]);
 		}else{
 			svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
 		}
@@ -2333,6 +2342,16 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			svgElement.className.baseVal = (svgElement.className.baseVal+" "+additionalClass).trim();
 		}else{
 			svgElement.setAttribute('class', (svgElement.getAttribute('class')+ " "+additionalClass).trim());
+		}
+	},
+	_setTitle: function(svgElement, newText){
+		var titles = svgElement.getElementsByTagName("title");
+		if (titles.length >0){
+			titles[0].replaceChild(HMI.svgDocument.createTextNode(newText), titles[0].firstChild);
+		}else{
+			var svgTitle = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
+			svgTitle.appendChild(HMI.svgDocument.createTextNode(newText));
+			svgElement.appendChild(svgTitle);
 		}
 	},
 	_getElementsByClassName: function(node, className){
