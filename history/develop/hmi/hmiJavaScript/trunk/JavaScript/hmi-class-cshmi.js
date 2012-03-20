@@ -1205,6 +1205,9 @@ cshmi.prototype = {
 						SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
 					}
 				}
+			}else if(document.getElementById("/TechUnits/cshmi/Templates/Engineering/Domainv1/ConnectionPointSourceOutsideDomain") !== null){
+				var SourceConnectionPoint = document.getElementById("/TechUnits/cshmi/Templates/Engineering/Domainv1/ConnectionPointSourceOutsideDomain");
+				var SourceConnectionPointdirection = "Right";
 			}
 
 			if (document.getElementById(Target) !== null){
@@ -1218,6 +1221,9 @@ cshmi.prototype = {
 						TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
 					}
 				}
+			}else if(document.getElementById("/TechUnits/cshmi/Templates/Engineering/Domainv1/ConnectionPointTargetOutsideDomain") !== null){
+				var TargetConnectionPoint = document.getElementById("/TechUnits/cshmi/Templates/Engineering/Domainv1/ConnectionPointTargetOutsideDomain");
+				var TargetConnectionPointdirection = "Left";
 			}
 
 			//remember the result
