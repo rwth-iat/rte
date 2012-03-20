@@ -627,13 +627,31 @@ cshmi.prototype = {
 
 				}else if (ksVarName === "OperatorInput"){
 					if(getValueParameter.indexOf("textinput") !== -1){
+						var input;
 						var textinputHint;
-						if (getValueParameter.indexOf("textinput:") !== -1){
-							textinputHint = getValueParameter.substring(10);
+						var splittedValueParameter = getValueParameter.split(":");
+						if (splittedValueParameter.length > 1){
+							textinputHint = splittedValueParameter[1];
+							//e.g. "textinput:Some textinputHint:TemplateFBReferenceVariable:InputVarPath"
+							if (splittedValueParameter.length > 3){
+								this.ResourceList.Actions["tempPath"] = new Object();
+								var requestList = new Object();
+								requestList["tempPath"] = new Object();
+								requestList["tempPath"][splittedValueParameter[2]] = splittedValueParameter[3];
+								this.ResourceList.Actions["tempPath"].getVarParameters = requestList["tempPath"];
+								input = window.prompt(textinputHint, this._getValue(ObjectParent, "tempPath"));
+								delete this.ResourceList.Actions["tempPath"];
+							//e.g. "textinput:Some textinputHint:fixValue"
+							}else if (splittedValueParameter.length > 2){
+								input = window.prompt(textinputHint, splittedValueParameter[2]);
+							}else{
+								//e.g. "textinput:Some textinputHint"
+								input = window.prompt(textinputHint);
+							}
 						}else{
 							textinputHint = 'Please input a new value';
+							input = window.prompt(textinputHint);
 						}
-						var input = window.prompt(textinputHint);
 						if (input !== null){
 							return input;
 						}
