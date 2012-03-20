@@ -84,6 +84,7 @@
 #if PLT_SYSTEM_NT
  #define CLOSE_SOCKET closesocket
  #define IOCTL_SOCKET ioctlsocket
+ #define MSG_NOSIGNAL 0
 #else
  #define CLOSE_SOCKET close
  #define IOCTL_SOCKET ioctl
