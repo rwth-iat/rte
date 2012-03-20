@@ -731,6 +731,12 @@ HMI.prototype = {
 	displaygestureReactionMarker: function (Component){
 		this.hmi_log_trace("HMI.prototype.displaygestureReactionMarker");
 		
+		if (	Component.getAttribute('width') === null ||
+				Component.getAttribute('height') === null ||
+				Component.getAttribute('LayerX') === 0 ||
+				Component.getAttribute('LayerY') === 0){
+			return;
+		}
 		//build info rect around affected component
 		
 		//warning: This function is called after the refresh, so this Component is NOT displayed anymore! (but probably another similar Component)
