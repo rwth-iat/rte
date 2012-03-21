@@ -193,8 +193,12 @@ OV_DLLFNCEXPORT void ksservtcp_managersendrecv_sendxdr(
 	memcpy((char *) &server.sin_addr, (char *) hp->h_addr, hp->h_length);
 	server.sin_port = htons(pobj->v_mngport);
 	//connect socket
-	ov_logfile_error("ksservtcp_managersendrecv: calling connect to port %d", pobj->v_mngport);
-	if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
+	ksserv_logfile_info("ksservtcp_managersendrecv: calling connect to port %d", pobj->v_mngport);
+
+	if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0 ) {
+#if OV_SYSTEM_NT
+		errno = WSAGetLastError();
+#endif
 		perror("connect(ksservtcp_managersendrecv) failed");
 		//CLOSE_SOCKET(sock);
 		//return;
@@ -202,7 +206,7 @@ OV_DLLFNCEXPORT void ksservtcp_managersendrecv_sendxdr(
 	pobj->v_state = STATUS_MANAGERSENDRECV_WAITINGFORSENDING; //ready for waiting to send
 	pobj->v_socket = sock; //store the successfully nonblocking socket
 	pobj->v_actimode = 1; //start waiting for sending XDR on nonblocking socket
-	ov_logfile_info("managersendrecv: sendxdr - prepared socket %d sending %p and enabled typemethod", sock, pobj->v_xdr);
+	ksserv_logfile_info("managersendrecv: sendxdr - prepared socket %d sending %p and enabled typemethod", sock, pobj->v_xdr);
 	return;
 }
 
@@ -221,7 +225,7 @@ void ksservtcp_managersendrecv_typemethod(
 	fd_set read_flags,write_flags;
 	struct timeval waitd;
 
-	ov_logfile_info("managersendrecv: typemethod called - state %d using socket %d for sending %p", pinst->v_state, sock, pinst->v_xdr);
+	ksserv_logfile_info("managersendrecv: typemethod called - state %d using socket %d for sending %p", pinst->v_state, sock, pinst->v_xdr);
 	//check socket
 	if (sock < 0) {
 		ov_logfile_error("managersendrecv: no socket but cycling?? - disabling typemethod");
@@ -255,7 +259,7 @@ void ksservtcp_managersendrecv_typemethod(
     //if(pinst->v_state == STATUS_MANAGERSENDRECV_WAITINGFORSENDING)
     	FD_SET(sock, &write_flags);
     err = select(sock + 1, &read_flags,&write_flags, (fd_set*)0,&waitd);
-	ov_logfile_debug("Managersendrecv: socket select returned %d", err);
+	ksserv_logfile_debug("Managersendrecv: socket select returned %d", err);
 	if(err < 0) {
 		perror("Managersendrecv: error sets actimode=0");
 		pinst->v_actimode = 0;
@@ -264,15 +268,15 @@ void ksservtcp_managersendrecv_typemethod(
 	//ok, something arrived...
 	if(pinst->v_state == STATUS_MANAGERSENDRECV_WAITINGFORSENDING) {
 		if(! FD_ISSET(sock, &write_flags)){
-			ov_logfile_debug("Managersendrecv waiting for sending (tried %d times)...",pinst->v_shutdowncounter );
+			ksserv_logfile_debug("Managersendrecv waiting for sending (tried %d times)...",pinst->v_shutdowncounter );
 			pinst->v_shutdowncounter ++;
-			if(FD_ISSET(sock, &read_flags)) ov_logfile_debug("..but we could read! (state mismatch)");
+			if(FD_ISSET(sock, &read_flags)) ksserv_logfile_debug("..but we could read! (state mismatch)");
 			return;
 		}
 		FD_CLR(sock, &write_flags);
 		bytes = send(sock, pinst->v_xdr, pinst->v_xdrlength, 0); //send it!
 		if(bytes == -1) {
-			ov_logfile_error("Managersendrecv/typemethod: write hasnt sent anything (returned -1) retry to send %p w/ %d bytes", pinst->v_xdr, pinst->v_xdrlength);
+			ksserv_logfile_error("Managersendrecv/typemethod: write hasnt sent anything (returned -1) retry to send %p w/ %d bytes", pinst->v_xdr, pinst->v_xdrlength);
 #if !OV_SYSTEM_NT
 			perror("Managersendrecv: error while sending");
 #else
@@ -280,20 +284,20 @@ void ksservtcp_managersendrecv_typemethod(
 #endif
 			return;
 		}
-		ov_logfile_error("Managersendrecv/typemethod: write has sent %d bytes", bytes);
+		ksserv_logfile_debug("Managersendrecv/typemethod: write has sent %d bytes", bytes);
 		pinst->v_state = STATUS_MANAGERSENDRECV_WAITINGFORANSWER; //wait for answer now
 		pinst->v_shutdowncounter = 0;
 		return;
 	} else if (pinst->v_state == STATUS_MANAGERSENDRECV_WAITINGFORANSWER) {
 		if(! FD_ISSET(sock, &read_flags)){
-			ov_logfile_debug("Managersendrecv waiting for answer  (tried %d times)...",pinst->v_shutdowncounter);
+			ksserv_logfile_debug("Managersendrecv waiting for answer  (tried %d times)...",pinst->v_shutdowncounter);
 			pinst->v_shutdowncounter ++;
-			if(FD_ISSET(sock, &write_flags)) ov_logfile_debug("..but we could write! (state mismatch)");
+			if(FD_ISSET(sock, &write_flags)) ksserv_logfile_debug("..but we could write! (state mismatch)");
 			return;
 		}
 		FD_CLR(sock, &read_flags);
 		if (recv(sock, buffer, sizeof(buffer)-1, 0) <= 0) {
-			ov_logfile_info("Mgrsendreceived: got response but smaller 0? - once more waiting");
+			ksserv_logfile_info("Mgrsendreceived: got response but smaller 0? - once more waiting");
 			pinst->v_shutdowncounter ++;
 		} else { //cool, we got the answer
 			//ov_logfile_info("Mgrsendreceived: got response!");
@@ -321,7 +325,7 @@ void ksservtcp_managersendrecv_typemethod(
 			pinst->v_shutdowncounter = 0;
 		} //end read success
 	} else { //socket neither read or writeable or we are in a bad mood
-		ov_logfile_debug("Managersendrecv waiting?!... obj state: %d", pinst->v_state);
+		ksserv_logfile_debug("Managersendrecv waiting?!... obj state: %d", pinst->v_state);
 	}
 
 

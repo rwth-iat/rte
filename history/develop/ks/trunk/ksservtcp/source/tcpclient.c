@@ -254,6 +254,7 @@ if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 			{
 				ksserv_logfile_error("command didnt arrive within reasonable time (10 msecs)");
 				ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+				free(xdr_received);
 				return;
 			}
 		}
@@ -278,7 +279,8 @@ if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 			!xdr_u_long(&xdrdec, &progID) ||
 			!xdr_u_long(&xdrdec, &progVersion) ||
 			!xdr_u_long(&xdrdec, &procedure)) { //ooops
-		ksserv_logfile_info("tcpclient/typemethod: decode header didnt work out :-/");
+		ov_logfile_error("tcpclient/typemethod: decode header didnt work out :-/");
+		free(xdr_received);
 		return;
 	}
 	//clear xdr?
