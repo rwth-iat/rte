@@ -14,12 +14,24 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 #include "libov/ov_scheduler.h"
+#include <rpc/xdr.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #include "assert.h"
 #if !OV_SYSTEM_NT
 #include <unistd.h>
 #include <sys/ioctl.h>
+#else
+#include <winsock2.h>
 #endif
+
+#ifndef EWOULDBLOCK
+#define EWOULDBLOCK WSAEWOULDBLOCK
+#endif
+
+
 #define h_addr h_addr_list[0]
 
 const int STOK = STATUS_STOK;
@@ -127,6 +139,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
 	OV_INT c;
 	OV_INT bytes;
 	char *tmp;
+	char* tmpfragment;
 	int sock;
 	struct sockaddr_in server;
 	struct hostent *hp;
@@ -135,7 +148,9 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
 	OV_INSTPTR_ksapitcp_TCPChannel channel;
 	OV_VTBLPTR_ksapitcp_TCPChannel channelVTBL;
 	OV_INSTPTR_ksapi_KSCommon  kscommon;
+	OV_UINT lengthtemp;
 	
+
 	//~ printf("\n\n\nksapitcp_MANAGAERCOM_MNGGETSERVER\n\n\n");
 	pobj->v_receivedsport = 0;
 
@@ -194,47 +209,54 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
 	xdrnamelength = strlen(name);
 	while ((xdrnamelength % 4) != 0)
 		xdrnamelength++;
-	pobj->v_xdrlength = xdrnamelength + 52;
+	pobj->v_xdrlength = xdrnamelength + 56;
 	//~ if(pobj->v_xdr) {
 	//~ free(pobj->v_xdr);
 	//~ }
 	pobj->v_xdr = (char*) malloc(pobj->v_xdrlength);
 	memset(pobj->v_xdr, 0, pobj->v_xdrlength);
 
+	lengthtemp = pobj->v_xdrlength - 4;		//first 4 bytes of xdr code length of the REST
+	//add tcp-fragment-rpcheader
+	tmpfragment = (char*)&(lengthtemp);
+	for (c=0; c<4; c++)
+		pobj->v_xdr[3-c] = tmpfragment[c];
+	pobj->v_xdr[0] = 0x80;
+
 	//set xid
-	pobj->v_xdr[0] = 0x4a;
-	pobj->v_xdr[1] = 0x5d;
-	pobj->v_xdr[2] = 0x4f;
-	pobj->v_xdr[3] = 0xe4;
+	pobj->v_xdr[4] = 0x4a;
+	pobj->v_xdr[5] = 0x5d;
+	pobj->v_xdr[6] = 0x4f;
+	pobj->v_xdr[7] = 0xe4;
 
 	//set message type call --> 0000
 
 	//set rpc version
-	pobj->v_xdr[11] = 0x02;
+	pobj->v_xdr[15] = 0x02;
 
 	//set programm nr.
-	pobj->v_xdr[13] = 0x04;
-	pobj->v_xdr[14] = 0x96;
-	pobj->v_xdr[15] = 0x78;
+	pobj->v_xdr[17] = 0x04;
+	pobj->v_xdr[18] = 0x96;
+	pobj->v_xdr[19] = 0x78;
 
 	//set programm version
-	pobj->v_xdr[19] = 0x02;
+	pobj->v_xdr[23] = 0x02;
 
 	//set procedure
-	pobj->v_xdr[22] = 0xff;
-	pobj->v_xdr[23] = 0x03;
+	pobj->v_xdr[26] = 0xff;
+	pobj->v_xdr[27] = 0x03;
 
 	//set servername
 	tmp = (char*) &namelength;
 	for (c = 0; c < 4; c++)
-		pobj->v_xdr[44 + c] = tmp[3 - c];
+		pobj->v_xdr[48 + c] = tmp[3 - c];
 	for (c = 0; c < namelength; c++)
-		pobj->v_xdr[48 + c] = name[c];
+		pobj->v_xdr[52 + c] = name[c];
 
 	//set serverversion
 	tmp = (char*) &version;
 	for (c = 0; c < 4; c++)
-		pobj->v_xdr[48 + xdrnamelength + c] = tmp[3 - c];
+		pobj->v_xdr[52 + xdrnamelength + c] = tmp[3 - c];
 
 	//print xdr
 	//~ int j;
@@ -335,12 +357,17 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 	if (tcpsocket >= 0) { //receive getserver answer
 		memset(buffer, 0, sizeof(buffer));
 		bytes = recv(tcpsocket, buffer, 4096, 0);
-		if (bytes <= 0) {
+#if OV_SYSTEM_NT
+		errno = WSAGetLastError();
+#endif
+		if(bytes == -1 && ( errno != EAGAIN && errno != EWOULDBLOCK ) )
+		{
+			ov_logfile_debug("error receiving?, closing socket!");
 			CLOSE_SOCKET(tcpsocket);
 			pobj->v_tcpsocket = -1;
 			return;
 		} else {
-			ksapi_logfile_info(
+			ov_logfile_debug(
 					"(ksapi_managercom/typemethod: getserver answer analysing");
 			pobj->v_xdrlength = bytes;
 			if (pobj->v_xdr) {
@@ -372,21 +399,21 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 			//~ printf("\n\n");
 			//~ printf("%s\n\n", pobj->v_xdr);
 
-			if (pobj->v_xdr[31] == 0) {
+			if (pobj->v_xdr[35] == 0) {
 				for (c = 0; c < 4; c++) {
-					temp[c] = pobj->v_xdr[35 - c];
+					temp[c] = pobj->v_xdr[39 - c];
 				}
 				memcpy(&xdrnamelength, temp, 4);
 				while ((xdrnamelength % 4) != 0)
 					xdrnamelength++;
 				for (c = 3; c >= 0; c--)
-					temp[3 - c] = pobj->v_xdr[40 + xdrnamelength + c];
+					temp[3 - c] = pobj->v_xdr[44 + xdrnamelength + c];
 				memcpy(&rcvdserverport, temp, 4);
 				pobj->v_receivedsport = rcvdserverport;
 				channel->v_serverport = rcvdserverport;
-				ksapi_logfile_info("receivedsport: %d", pobj->v_receivedsport);
+				ov_logfile_info("receivedsport: %d", pobj->v_receivedsport);
 			} else { // no server found
-				ksapi_logfile_info("mnggetserver failed");
+				ov_logfile_info("mnggetserver failed");
 				pobj->v_receivedsport = 0;
 				channel->v_serverport = 0;
 			}

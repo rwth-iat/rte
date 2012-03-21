@@ -15,7 +15,7 @@
 
 
 #define BUFFER_CHUNK_SIZE 128
-
+#include <errno.h>
 #if !OV_SYSTEM_NT
 #include <unistd.h>
 #include <sys/types.h>
@@ -245,16 +245,20 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 	OV_INSTPTR_ksapi_KSCommon	kscommon = NULL;
 	OV_VTBLPTR_ksapi_KSCommon   kscommonVTBL = NULL;
 
-	char *buffer = 0;
  	int recvBytes = 0;
-	int buffer_size = 0; //factor of buffer size * BUFFER_CHUNK_SIZE
 	char *buffer_location = 0; //pointer into the buffer 
 
+	int off = 0;
+	fd_set read_flags;
+	struct timeval waitd;
+	char ckxdrlength[4];
+	int err = 0;
+	char *xdr_received = 0;
+	int timeoutcounter = 0;
 	
-	char *xdrdata;
-	int xdrlength = 0;
-	int bytes = 0;
 	int sock;
+	int i;
+	int size_received, size_receiving;
 
 	kscommon = (OV_INSTPTR_ksapi_KSCommon)Ov_GetParent(ov_containment, channel);
 	Ov_GetVTablePtr(ksapi_KSCommon, kscommonVTBL, kscommon);
@@ -268,35 +272,91 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 		return;
 	}
 
-	do {//read KS reply from socket in chunks until nothing more appears
-		buffer_size++;
-		buffer = (char*)realloc(buffer, BUFFER_CHUNK_SIZE*buffer_size); 
-		if(buffer == 0) {
-			ov_logfile_error("tcpchannel/typemethod: recv error, no memory for buffer");
+	//blocking
+	if ((IOCTL_SOCKET(sock, FIONBIO, (char*) &off)) == -1) {
+		perror("ioctl(tcpcChannel) failed (set to blocking)");
+		return;
+	}
+
+	FD_ZERO(&read_flags);
+	FD_SET(sock, &read_flags); // get read flags
+	waitd.tv_sec = 0;     // Set Timeout
+	waitd.tv_usec = 1000;    //  1 msec
+	err = select(sock + 1, &read_flags, (fd_set*) 0, (fd_set*)0,&waitd);
+	#if KSSERVTCP_LOG_DEEP
+	ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
+	#if OV_SYSTEM_UNIX
+	ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-waitd.tv_usec);	//Windows Systems don't alter waitd
+	#endif
+	#endif
+
+	//check if data arrived
+	if((err > 0) && FD_ISSET(sock, &read_flags))
+	{
+		recvBytes = recv(sock, ckxdrlength, 4,0);		//first 4 bytes code length of xdr
+		if(recvBytes < 4)
+		{
+			if(recvBytes == 0)		//shutdown by server?
+				ksapi_logfile_debug("tcpchannel/typemethod: read 0 bytes - shutdown");
+			else			//error
+				ksapi_logfile_error("received %d bytes (less than 4) - shutting down", recvBytes);			//on windows machines a closed socket will return -1 here (instead of 0)
+
+	#if OV_SYSTEM_NT
+			errno = WSAGetLastError();
+	#endif
+			perror("tcpchannel - receive");
+
+			ksapitcp_TCPChannel_shutdown((OV_INSTPTR_ov_object)cTask);
 			return;
 		}
-		buffer_location = buffer + BUFFER_CHUNK_SIZE * (buffer_size - 1);
-		memset(buffer_location, 0, BUFFER_CHUNK_SIZE);
-		recvBytes = recv(sock, buffer_location, BUFFER_CHUNK_SIZE,0);
-		bytes += recvBytes;
-		if(recvBytes != -1)	ov_logfile_error("tcpchannel/typemethod: ks reply chunk no %d recv %d bytes, pBuffStart %p, pBuffInside %p",buffer_size, recvBytes, buffer, buffer_location);
-	} while(recvBytes == BUFFER_CHUNK_SIZE); // stop if less than maximum bytes was read by recv
+		//decoding size of memstream
+		for(i=0; i<4; i++)
+			((char*) &size_receiving)[i] = ckxdrlength[3-i];
+		((char*) &size_receiving)[3] = 0;
+
+		ksapi_logfile_debug("xdr-size: %d", size_receiving);
+
+
+		xdr_received = (char*)malloc(size_receiving);
+		memset(xdr_received, 0, size_receiving);
+
+		size_received = 0;
+		buffer_location = xdr_received;
+
+		do{
+			FD_ZERO(&read_flags);
+			FD_SET(sock, &read_flags); // get read flags
+			waitd.tv_sec = 0;     // Set Timeout
+			waitd.tv_usec = 1000;    //  1 msec
+			err = select(sock + 1, &read_flags, (fd_set*) 0, (fd_set*)0,&waitd);
+	#if KSSERVTCP_LOG_DEEP
+			ksapi_logfile_debug("select returned: %d; line %d", err, __LINE__);
+	#if OV_SYSTEM_UNIX
+			ksapi_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-waitd.tv_usec);	//Windows Systems don't alter waitd
+	#endif
+	#endif
+			if(err < 1)		//if error or timeout expired
+			{
+				timeoutcounter++;
+				if(timeoutcounter >= 10)
+				{
+					ksapi_logfile_error("command didnt arrive within reasonable time (10 msecs)");
+					ksapitcp_TCPChannel_shutdown((OV_INSTPTR_ov_object)cTask);
+					free(xdr_received);
+					return;
+				}
+			}
+
+			recvBytes = recv(sock, buffer_location, size_receiving - size_received, 0);
+			size_received += recvBytes;
+			buffer_location = &(xdr_received[size_received]);
+
+			ksapi_logfile_debug("%d of %d bytes received, err is %d", size_received, size_receiving, err);
+
+		}while(size_received < size_receiving);
 
 	//evaluate
-	//TODO check if WSError / errno needs to be verified (compare server side communication)
-	if (bytes < 0) {
-		perror ("recv(ksapitcp) failed");
-		free(buffer);
-		return;
-	} else if (bytes == 0) {
-		free(buffer);
-		return;
-	} else {
-		//KSDEVEL printf("\nrecv(channel) ok\n");
-		xdrlength = bytes;
-		xdrdata = (char*)malloc(xdrlength);
-		memset(xdrdata, 0, xdrlength);
-		memcpy(xdrdata, buffer, xdrlength);
+
 
 		//int j;
 		//~ printf("\n\nxdr channel receive:\nlength: %d\n", xdrlength);
@@ -317,17 +377,19 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 		//~ printf("%s\n\n", xdrdata);
 
 		//close connection
+		ksapi_logfile_debug("TCPChannel closing socket");
 		CLOSE_SOCKET(sock); //todo connection manager for reuseage of socket!
 		ksapitcp_TCPChannel_socket_set(channel, -1);
 		//call obj to decode XDR!
-		kscommonVTBL->m_returnMethodxdr(kscommon, xdrdata, xdrlength);
+		ksapi_logfile_debug("TCPChannel handing over control to ksapi obj %s", kscommon->v_identifier);
+		kscommonVTBL->m_returnMethodxdr(kscommon, xdr_received, size_received);
 		ksapitcp_TCPChannel_constate_set(channel, CONSTATE_CHANNEL_OK); //OK= Frei
 		//ready -> go to sleep
 		cTask->v_actimode = 0;
 
 	}
 
-	free(buffer);
+	free(xdr_received);
 	return;
 }
 
