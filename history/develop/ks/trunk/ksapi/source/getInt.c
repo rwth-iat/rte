@@ -4,6 +4,7 @@
 
 
 #include "ksapi.h"
+#include "ksapi_logfile.h"
 #include "ksapi_h.h"
 #include "libov/ov_scheduler.h"
 
@@ -69,7 +70,8 @@ OV_DLLFNCEXPORT void ksapi_getInt_returnMethodxdr(
 	OV_INT result;
 	
 	Ov_GetVTablePtr(ksapi_getInt, pvtableop, pgi);
-	
+
+	ksapi_logfile_debug("ksapi getInt returnmethod, starting analysing ");
 	//Analyse xdr
 	if((analysegetintreply(xdr, xdrlength, (int*)&result)) == 0)
 	{
