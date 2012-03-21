@@ -303,6 +303,7 @@ cshmi.prototype = {
 				//get and execute all actions
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 				if (evt.stopPropagation) evt.stopPropagation();
+				if (evt.preventDefault) evt.preventDefault();  //default is a context menu, so disable it
 			}, false);
 		}else if (command[command.length-1] === "aftermove"){
 			ObjectParent.setAttribute("cursor", "move");
@@ -389,7 +390,7 @@ cshmi.prototype = {
 			this.ResourceList.EventInfos.EventObj = evt;
 		}
 		if (evt.stopPropagation) evt.stopPropagation();
-		evt.preventDefault();  //default is scrolling, so disable it
+		if (evt.preventDefault) evt.preventDefault();  //default is scrolling, so disable it
 	},
 	_moveStopDrag : function(ObjectParent, ObjectPath, evt, canceled){
 		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+ObjectParent.id);
