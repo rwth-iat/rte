@@ -1117,18 +1117,39 @@ int analysegetstringreply(char xdr[], int xdrlength, char *reply[])
 	char *str;
 	int strlength;
 	int i;
-	
-	if(xdr[43] == 0)
+
+	int j;
+	int number;
+
+	//debugging
+	for(i=0; i< 64; i+=4)
 	{
-		errorcode = xdr[51];
+		printf("ab %d: ", i);
+
+		for(j=0; j<4; j++)
+		{
+			printf("%c", xdr[i+j]);
+			((char*) &number)[3-j] = xdr[i+j];
+		}
+		printf("\nnumber: %d\n", number);
+
+	}
+
+	//decoding
+	if(xdr[39] == 0) // OK, found
+	{
+		errorcode = xdr[47]; //
 		switch (errorcode)
 		{
-			case 48:
-				strlength = xdr[55];
+			case 48: //means ASCII 0
+				strlength = xdr[51]; // TODO read 4 bytes instead - 48-51, inverted
+				//for(j=0; j<4; j++)
+				//	((char*) &strlength)[3-j] = xdr[48+j];
+
 				str = (char*)malloc((strlength+1)*sizeof(char));
 				memset(str, 0, strlength+1);
 				for (i = 0; i < strlength; i++)
-					str[i] = xdr[56+i];
+					str[i] = xdr[52+i]; //Ok, start reading
 				*reply = (char*)malloc((strlength+1)*sizeof(char));
 				memset(*reply, 0, strlength+1);
 				memcpy(*reply, str, strlength+1);
@@ -1137,7 +1158,7 @@ int analysegetstringreply(char xdr[], int xdrlength, char *reply[])
 				printf("\nwrong vartype\n");
 		}
 	}
-	else
+	else //bad luck - no result
 	{
 		errorcode = xdr[xdrlength-1];
 		switch (errorcode)
@@ -1414,6 +1435,25 @@ int analysegetdoublevecreply(char xdr[], int xdrlength, double *reply[], int *ve
 	return errorcode;
 }
 
+void printxdrasintvec(char xdr[], int xdrlength) {
+	int i;
+	int j;
+	int temp;
+
+	for(i=0; i < xdrlength; i +=4)
+	{
+		for(j=0; j<4; j++)
+		{
+			((char*) &temp)[3-j] = xdr[i + j];
+
+		}
+		printf("ab %d: %d\n", i, temp, &temp);
+
+	}
+	return;
+
+}
+
 /**
  * Analyses GETINT reply
  * return value is errorcode (0: OK)
@@ -1428,14 +1468,16 @@ int analysegetintreply(char xdr[], int xdrlength, int *reply)
 	int i;
 	char temp[4];
 	
-	if(xdr[43] == 0)
+	printxdrasintvec(xdr, xdrlength);
+
+	if(xdr[39] == 0)
 	{
-		errorcode = xdr[51];
+		errorcode = xdr[47];
 		switch (errorcode)
 		{
 			case 16:
 				for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[52+i];
+				temp[3-i] = xdr[48+i];
 				memcpy(reply, temp, 4);
 				return 0;
 			default:
@@ -1624,14 +1666,16 @@ int analysegetuintreply(char xdr[], int xdrlength, unsigned int *reply)
 	int i;
 	char temp[4];
 	
-	if(xdr[43] == 0)
+	printxdrasintvec(xdr, xdrlength);
+
+	if(xdr[39] == 0)
 	{
-		errorcode = xdr[51];
+		errorcode = xdr[47];
 		switch (errorcode)
 		{
 			case 17:
 				for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[52+i];
+				temp[3-i] = xdr[48+i];
 				memcpy(reply, temp, 4);
 				return 0;
 			default:

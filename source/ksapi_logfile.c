@@ -13,7 +13,9 @@
 #include <stdarg.h>
 #include <time.h>
 
-//~ static char			msg[1024];
+#if LOG_OV || LOG_OV_INFO
+static char			msg[1024];
+#endif
 /**
 *	Print info to logfile
 */
@@ -21,10 +23,10 @@ OV_DLLFNCEXPORT void ksapi_logfile_info(
 	const OV_STRING	format,
 	...
 ) {
-	//~ time_t now;
-	//~ char str[60];
-	//~ struct tm *ptr;
 #if LOG_OV || LOG_OV_INFO
+	time_t now;
+	char str[60];
+	struct tm *ptr;
 	va_list	args;
 	va_start(args, format);
 	now = time(NULL);
