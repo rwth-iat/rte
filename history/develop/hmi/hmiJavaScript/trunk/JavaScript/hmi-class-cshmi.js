@@ -1433,6 +1433,114 @@ cshmi.prototype = {
 
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Up"){
+				points = xStart + "," + yStart + " ";
+				xStart = xStart + 40;
+				points = points + xStart + "," + yStart + " ";
+				if (!(yStart < yEnd && xStart < xEnd)){
+					yStart = yEnd - 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Right"){
+				var xTemp = xStart;
+				var yTemp = yStart;
+				xStart = xEnd;
+				yStart = yEnd;
+				xEnd = xTemp;
+				yEnd = yTemp;
+				points = xStart + "," + yStart + " ";
+				xStart = xStart + 40;
+				points = points + xStart + "," + yStart + " ";
+				if (!(yStart < yEnd && xStart < xEnd)){
+					yStart = yEnd - 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Down"){
+				points = xStart + "," + yStart + " ";
+				xStart = xStart + 40;
+				points = points + xStart + "," + yStart + " ";
+				if (!(yStart > yEnd && xStart < xEnd)){
+					yStart = yEnd + 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Right"){
+				var xTemp = xStart;
+				var yTemp = yStart;
+				xStart = xEnd;
+				yStart = yEnd;
+				xEnd = xTemp;
+				yEnd = yTemp;
+				points = xStart + "," + yStart + " ";
+				xStart = xStart + 40;
+				points = points + xStart + "," + yStart + " ";
+				if (!(yStart > yEnd && xStart < xEnd)){
+					yStart = yEnd + 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Up"){
+				points = xStart + "," + yStart + " ";
+				xStart = xStart - 40;
+				points = points + xStart + "," + yStart + " ";
+				if (!(yStart < yEnd && xStart > xEnd)){
+					yStart = yEnd - 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Left"){
+				var xTemp = xStart;
+				var yTemp = yStart;
+				xStart = xEnd;
+				yStart = yEnd;
+				xEnd = xTemp;
+				yEnd = yTemp;
+				points = xStart + "," + yStart + " ";
+				xStart = xStart - 40;
+				points = points + xStart + "," + yStart + " ";
+				if (!(yStart < yEnd && xStart > xEnd)){
+					yStart = yEnd - 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Down"){
+				points = xStart + "," + yStart + " ";
+				xStart = xStart - 40;
+				points = points + xStart + "," + yStart + " ";
+				if (!(yStart > yEnd && xStart > xEnd)){
+					yStart = yEnd + 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Left"){
+				var xTemp = xStart;
+				var yTemp = yStart;
+				xStart = xEnd;
+				yStart = yEnd;
+				xEnd = xTemp;
+				yEnd = yTemp;
+				points = xStart + "," + yStart + " ";
+				xStart = xStart - 40;
+				points = points + xStart + "," + yStart + " ";
+				if (!(yStart > yEnd && xStart > xEnd)){
+					yStart = yEnd + 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
 			}
 
 			ObjectParent.setAttribute("points", points);
