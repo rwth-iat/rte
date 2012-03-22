@@ -1725,6 +1725,11 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		var ConfigList = requestList[ObjectPath]["FBReference"].split(" ");
 		for (var i=0; i < ConfigList.length; i++) {
 			ConfigEntry = ConfigList[i].split(":");
+			if (ConfigList[i].charAt(0) === "/"){
+				//entry could be an fullpath with an port, so ":" is no separator
+				svgElement.FBReference["default"] = ConfigList[i];
+				realFBobjectID = svgElement.FBReference["default"];
+			}else
 			if (ConfigEntry.length === 2){
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
