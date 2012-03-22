@@ -55,6 +55,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <unistd.h>
 #include <fcntl.h>
 #endif
@@ -266,6 +267,9 @@ void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		this->v_status = STATUS_TCPCON_SOCKACCEPTFAILED;
 		return;
 	}
+
+	//disable nagle for the receivesocket
+	setsockopt(receivesocket, IPPROTO_TCP, TCP_NODELAY, (char *) &optval, sizeof(optval));
 
 	//non-blocking
 	//if ((IOCTL_SOCKET(receivesocket, FIONBIO, (char*) &on)) == -1) {
