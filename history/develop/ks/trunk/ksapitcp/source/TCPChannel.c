@@ -20,8 +20,12 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
+/* for select */
+#include <sys/select.h>
 #endif
 
 OV_DLLFNCEXPORT OV_RESULT ov_xdr_setvalue(OV_STRING *pxdr, const OV_STRING value, OV_INT length);
