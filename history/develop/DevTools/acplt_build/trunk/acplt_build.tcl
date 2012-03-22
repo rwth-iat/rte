@@ -4,11 +4,21 @@
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 # Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
 #
-# Usage: tclsh acplt_build.tcl (release)
-if { $argc != 0 } {
-	set release 1
-} else {
-	set release 0
+# Usage: tclsh acplt_build.tcl (release) (checkout)
+set release 0
+set checkout 0 
+
+foreach arg $argv {
+	if {$arg == "checkout"} {
+		set release 0
+		set checkout 1
+		break
+	}
+	if {$arg == "release"} {
+		set release 1
+		set checkout 0
+		break
+	}
 }
 
 set basedir [pwd]
@@ -109,8 +119,6 @@ proc findDirectories {directory pattern} {
     # Return only unique filenames
     return [lsort -unique $result]
 }
-
-
 
 proc print_msg {msg} {
     puts stderr "\[$msg\]"
@@ -485,6 +493,13 @@ set included_libs {fb iec61131stdfb ksserv ksservtcp ksapi ksapitcp fbcomlib}
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
 }
+if {$checkout != 1} {
+	puts "Running this script with 'chcekout' option will checkout only"
+}
+
+if {$checkout == 1} {
+	puts "== CHECKOUT ONLY =="
+}
 
 if {$release == 1} {
 	# Create source release
@@ -548,6 +563,9 @@ if {$release == 1} {
 
 create_dirs
 checkout_acplt
+if {$checkout == 1} {
+	exit 0
+}
 
 if { $os == "nt" } then {
 	#for depricated msvc use following:
