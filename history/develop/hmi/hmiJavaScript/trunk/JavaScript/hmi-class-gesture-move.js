@@ -555,7 +555,7 @@ Dragger.prototype = {
 		switchGround
 	*********************************/
 	switchGround: function (evt, ground) {
-		HMI.hmi_log_trace("Dragger.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+evt.target.id+", Evt.nodeName: "+evt.target.nodeName+", Ground: "+ground._node.id);
+		HMI.hmi_log_trace("Dragger.prototype.switchGround - Start, Evt: "+evt.type+", Evt.id: "+evt.target.id+", Evt.TagName: "+evt.target.TagName+", Ground: "+ground._node.id);
 		
 		var node;
 		var SVGx = Number.NaN;

@@ -96,9 +96,9 @@ TextInput.prototype = {
 			//other browsers has to iterate over all elements
 			var Text;
 			for (var idx = 0; idx < Component.childNodes.length; ++idx){
-				if (Component.childNodes.item(idx).nodeName == "svg:text" && Component.childNodes.item(idx).firstChild && Component.childNodes.item(idx).firstChild.nodeValue){
+				if (Component.childNodes.item(idx).tagName == "svg:text" && Component.childNodes.item(idx).firstChild && Component.childNodes.item(idx).firstChild.nodeValue){
 					Text += Component.childNodes.item(idx).firstChild.nodeValue;
-				}else if (Component.childNodes.item(idx).nodeName == "svg:tspan" && Component.childNodes.item(idx).firstChild && Component.childNodes.item(idx).firstChild.nodeValue){
+				}else if (Component.childNodes.item(idx).tagName == "svg:tspan" && Component.childNodes.item(idx).firstChild && Component.childNodes.item(idx).firstChild.nodeValue){
 					Text += Component.childNodes.item(idx).firstChild.nodeValue;
 				}
 			}
