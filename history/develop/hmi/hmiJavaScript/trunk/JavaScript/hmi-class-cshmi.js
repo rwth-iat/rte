@@ -1128,6 +1128,11 @@ cshmi.prototype = {
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+ObjectParent.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
+		//get Values (via getValue-parts)
+		var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
+		var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
+		var TargetBasename = this._getValue(ObjectParent, ObjectPath+".TargetBasename");
+		var TargetVariablename = this._getValue(ObjectParent, ObjectPath+".TargetVariablename");
 
 		var rootObject = ObjectParent;
 		var FBRef;
@@ -1142,15 +1147,20 @@ cshmi.prototype = {
 			else {
 				//loop upwards to find the Template object
 				rootObject = rootObject.parentNode;
-			}
+				if (rootObject === null){
+					//if rootObject is null, we use Source and Target to cache
+					FBRef = SourceBasename+SourceVariablename+TargetBasename+TargetVariablename;
+					}
+				}
 		}
 
-		var SourceConnectionPoint;
-		var SourceConnectionPointdirection;
-		var TargetConnectionPoint;
-		var TargetConnectionPointdirection;
+
+		var SourceConnectionPoint = null;
+		var SourceConnectionPointdirection = null;
+		var TargetConnectionPoint = null;
+		var TargetConnectionPointdirection = null;
 		//if the Polyline was routed earlier, get the cached information (could be the case with cyclic calls)
-		if(this.ResourceList.Actions && this.ResourceList.Actions[FBRef] !== undefined){
+		if(FBRef !== null && this.ResourceList.Actions && this.ResourceList.Actions[FBRef] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			SourceConnectionPoint = this.ResourceList.Actions[FBRef].SourceConnectionPoint;
 			SourceConnectionPointdirection = this.ResourceList.Actions[FBRef].SourceConnectionPointdirection;
@@ -1158,17 +1168,17 @@ cshmi.prototype = {
 			TargetConnectionPointdirection = this.ResourceList.Actions[FBRef].TargetConnectionPointdirection;
 			this.ResourceList.Actions[FBRef].useCount++;
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: using cached information of "+FBRef+" ("+this.ResourceList.Actions[FBRef].useCount+")");
-
-		//
 		}else{
 			//Move Polyline-Container before every Functionblocks
 			//needs only to be done once
-			ObjectParent.parentNode.parentNode.insertBefore(ObjectParent.parentNode, ObjectParent.parentNode.parentNode.firstChild);
+			if (ObjectParent.parentNode.parentNode.tagName === "svg"){
+				ObjectParent.parentNode.parentNode.insertBefore(ObjectParent.parentNode, ObjectParent.parentNode.parentNode.firstChild);
+			}
 
 			// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
 			// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
 			var prefix;
-			if (FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+			if (FBRef !== null && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
 				//find the 3rd "/"
 				var slashIndex = FBRef.indexOf("/", 2);
 				//find the 4th "/"
@@ -1181,22 +1191,16 @@ cshmi.prototype = {
 
 			var Source;
 			var Target;
-			//get Values (via getValue-parts)
-			var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
-			var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
 			if (SourceVariablename !== ""){
 				Source = prefix + SourceBasename + "." + SourceVariablename;
 			}else{
 				Source = prefix + SourceBasename;
 			}
-			var TargetBasename = this._getValue(ObjectParent, ObjectPath+".TargetBasename");
-			var TargetVariablename = this._getValue(ObjectParent, ObjectPath+".TargetVariablename");
 			if (TargetVariablename !== ""){
 				Target = prefix + TargetBasename + "." + TargetVariablename;
 			}else{
 				Target = prefix + TargetBasename;
 			}
-			
 			if (document.getElementById(Source) !== null){
 				Source = document.getElementById(Source);
 				for(var i = 0; i < Source.childNodes.length;i++){
@@ -1204,11 +1208,36 @@ cshmi.prototype = {
 					if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
 						SourceConnectionPoint = Source.childNodes[i];
 						SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
+						break;
 					}
 				}
-			}else if(document.getElementById("/TechUnits/cshmi/Templates/Engineering/Domainv1/ConnectionPointSourceOutsideDomain") !== null){
-				var SourceConnectionPoint = document.getElementById("/TechUnits/cshmi/Templates/Engineering/Domainv1/ConnectionPointSourceOutsideDomain");
-				var SourceConnectionPointdirection = "Right";
+			//the SourceConnectionPoint is outside the domain
+			//search a connectionpoint recursively in all parent svgs for connectionsources that are outside the domain 	
+			}else{
+				//there should only be one SourceConnectionPointOutsideDomain, so use the cached value if it has been searched before
+				if (this.ResourceList.Actions && this.ResourceList.Actions["SourceConnectionPointOutsideDomain"] !== undefined){
+					SourceConnectionPoint = this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPoint;
+					SourceConnectionPointdirection = this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPointdirection;
+				}
+				//search for SourceConnectionPointOutsideDomain in all parent svgs
+				else{
+					var domainSVG = ObjectParent.parentNode;
+					while (domainSVG.tagName === "svg" && SourceConnectionPoint === null){
+						for(var i = 0; i < domainSVG.childNodes.length;i++){
+							// search tagName "circle" with name containing SourceConnectionPointOutsideDomain
+							if (domainSVG.childNodes[i].tagName === "circle" && domainSVG.childNodes[i].id.indexOf("SourceConnectionPointOutsideDomain") !== -1){
+								SourceConnectionPoint = domainSVG.childNodes[i];
+								SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("SourceConnectionPointOutsideDomain")+34);
+								break;
+							}
+						}
+						domainSVG = domainSVG.parentNode;
+					}
+					//remember the result
+					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"] = new Object();
+					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPoint = SourceConnectionPoint;
+					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPointdirection = SourceConnectionPointdirection;
+				}
 			}
 
 			if (document.getElementById(Target) !== null){
@@ -1220,11 +1249,36 @@ cshmi.prototype = {
 					if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
 						TargetConnectionPoint = Target.childNodes[i];
 						TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
+						break;
 					}
 				}
-			}else if(document.getElementById("/TechUnits/cshmi/Templates/Engineering/Domainv1/ConnectionPointTargetOutsideDomain") !== null){
-				var TargetConnectionPoint = document.getElementById("/TechUnits/cshmi/Templates/Engineering/Domainv1/ConnectionPointTargetOutsideDomain");
-				var TargetConnectionPointdirection = "Left";
+			//the TargetConnectionPoint is outside the domain
+			//search a connectionpoint recursively in all parent svgs for connectiontargets that are outside the domain 	
+			}else{
+				//there should only be one TargetConnectionPointOutsideDomain, so use the cached value if it has been searched before
+				if (this.ResourceList.Actions && this.ResourceList.Actions["TargetConnectionPointOutsideDomain"] !== undefined){
+					TargetConnectionPoint = this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPoint;
+					TargetConnectionPointdirection = this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPointdirection;
+				}
+				//search for TargetConnectionPointOutsideDomain in all parent svgs
+				else{
+					var domainSVG = ObjectParent.parentNode;
+					while (domainSVG.tagName === "svg" && TargetConnectionPoint === null){
+						for(var i = 0; i < domainSVG.childNodes.length;i++){
+							// search tagName "circle" with name containing TargetConnectionPointOutsideDomain
+							if (domainSVG.childNodes[i].tagName === "circle" && domainSVG.childNodes[i].id.indexOf("TargetConnectionPointOutsideDomain") !== -1){
+								TargetConnectionPoint = domainSVG.childNodes[i];
+								TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("TargetConnectionPointOutsideDomain")+34);
+								break;
+							}
+						}
+						domainSVG = domainSVG.parentNode;
+					}
+					//remember the result
+					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"] = new Object();
+					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPoint = TargetConnectionPoint;
+					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPointdirection = TargetConnectionPointdirection;
+				}
 			}
 
 			//remember the result
@@ -1322,6 +1376,66 @@ cshmi.prototype = {
 				}
 		
 				points = points + xStart + "," + yEnd + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Down"){
+				points = xStart + "," + yStart + " ";
+				yStart = yStart - 40;
+				points = points + xStart + "," + yStart + " ";
+				if (yStart <= yEnd) {
+					xStart = (xEnd+xStart)/2;
+					points = points + xStart + "," + yStart + " ";
+					
+					yStart = yEnd + 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+
+			ObjectParent.setAttribute("points", points);
+			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Up"){
+				var xTemp = xStart;
+				var yTemp = yStart;
+				xStart = xEnd;
+				yStart = yEnd;
+				xEnd = xTemp;
+				yEnd = yTemp;
+				points = xStart + "," + yStart + " ";
+				yStart = yStart - 40;
+				points = points + xStart + "," + yStart + " ";
+				if (yStart <= yEnd) {
+					xStart = (xEnd+xStart)/2;
+					points = points + xStart + "," + yStart + " ";
+					
+					yStart = yEnd + 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+
+			ObjectParent.setAttribute("points", points);
+			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Down"){
+				points = xStart + "," + yStart + " ";
+				yStart = yStart + 40;
+				points = points + xStart + "," + yStart + " ";
+				if (yStart <= yEnd) {
+					yStart = yEnd + 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xEnd + "," + yStart + " ";
+				points = points + xEnd + "," + yEnd;
+			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Up"){
+				points = xStart + "," + yStart + " ";
+				yStart = yStart - 40;
+				points = points + xStart + "," + yStart + " ";
+				if (yStart >= yEnd) {
+					yStart = yEnd - 40;
+					points = points + xStart + "," + yStart + " ";
+				}
+
+				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}
 
