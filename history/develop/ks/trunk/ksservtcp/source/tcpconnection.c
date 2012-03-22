@@ -360,6 +360,7 @@ void ksservtcp_tcpconnection_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		//ksserv_logfile_info("########## reuseage of used port by setsockopt ");
 		//setsockopt(listensocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
+
 #if !OV_SYSTEM_NT
 		if ((bind(listensocket, (struct sockaddr*) &client_addr,
 				sizeof(client_addr))) == -1) {
@@ -396,6 +397,9 @@ void ksservtcp_tcpconnection_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		return;
 	}
 
+	//disable nagle for the receivesocket
+	setsockopt(receivesocket, IPPROTO_TCP, TCP_NODELAY, (char *) &optval, sizeof(optval));
+
 	//non-blocking
 	if ((IOCTL_SOCKET(receivesocket, FIONBIO, (char*) &on)) == -1) {
 		perror("ioctl(receivesocket) failed");
@@ -403,6 +407,7 @@ void ksservtcp_tcpconnection_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		this->v_status = STATUS_TCPCON_SOCKNONBLOCKCLIENTFAILED;
 		return;
 	}
+
 
 	//KSDEVEL ksserv_logfile_info("clientname: %s", clientname);
 	//KSDEVEL ksserv_logfile_info("socket: %d", receivesocket);
