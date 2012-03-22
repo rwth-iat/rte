@@ -1637,7 +1637,33 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" ("+this.ResourceList.Conditions[ObjectPath].useCount+")");
 	}
 
-	var Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
+	var Value1;
+	//check if we want to get a Value from the iteratedChild
+	if (childValue[0].indexOf(".") !== -1){
+		var rootObject = ObjectParent;
+		var FBRef;
+		//search FBReference of root Object
+		while (rootObject !== null){
+			//FBReference found
+			if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+				FBRef = rootObject.FBReference["default"];
+				//FBRef found, we can stop search
+				rootObject = null;
+			}
+			else {
+				//loop upwards to find the Template object
+				rootObject = rootObject.parentNode;
+			}
+		}
+		var splittedValue = childValue[0].split(".");
+		Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+		Value1 = Value1.replace(/{/g, "");
+		Value1 = Value1.replace(/}/g, "");
+
+		
+	}else{
+		Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
+	}
 	var Value2 = this._getValue(ObjectParent, ObjectPath+".withValue");
 	
 	if (Value1 === null){
