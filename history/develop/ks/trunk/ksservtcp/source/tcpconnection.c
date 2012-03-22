@@ -26,8 +26,10 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <unistd.h>
 #include <fcntl.h>
+
 #endif
 
 #include "libov/ov_macros.h"
