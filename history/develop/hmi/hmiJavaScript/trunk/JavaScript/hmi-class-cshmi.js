@@ -1391,8 +1391,6 @@ cshmi.prototype = {
 
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-
-			ObjectParent.setAttribute("points", points);
 			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Up"){
 				var xTemp = xStart;
 				var yTemp = yStart;
@@ -1413,8 +1411,6 @@ cshmi.prototype = {
 
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-
-			ObjectParent.setAttribute("points", points);
 			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Down"){
 				points = xStart + "," + yStart + " ";
 				yStart = yStart + 40;
