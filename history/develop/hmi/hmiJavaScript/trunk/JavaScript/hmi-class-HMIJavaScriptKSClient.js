@@ -181,21 +181,40 @@ HMIJavaScriptKSClient.prototype = {
 			response: "TksS-0042"
 	*********************************/
 	getHandle: function(host, cbfnc) {
-		var urlparameter;
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - Start");
-		if (HMI.GatewayTypeTCL === true){
-			urlparameter = 'obj=tks-server&args='+host;
-		}else if(HMI.GatewayTypePHP === true){
-			urlparameter = 'cmd=tks-server&args='+host;
+		
+		//fixme cbfnc rausnehmen
+		var urlparameter;
+		var newhost;
+		var hostArray = host.split("/");
+		if (hostArray.length !== 2){
+			return null;
 		}
-		if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+		if (hostArray[0].indexOf(":") === -1){
+			//add default port if the request did not set it
+			newhost = hostArray[0]+ ':7509/' + hostArray[1];
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - End");
-			return ReturnText;
+			newhost = host;
+		}
+		
+		if (HMI.GatewayTypeTCL === true){
+			urlparameter = 'obj=tks-server&args='+newhost;
+		}else if(HMI.GatewayTypePHP === true){
+			urlparameter = 'cmd=tks-server&args='+newhost;
+		}
+		var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, null);
+
+		if (ReturnText.indexOf("KS_ERR") !== -1 && host !== newhost){
+			//on error retest without default acplt port
+			if (HMI.GatewayTypeTCL === true){
+				urlparameter = 'obj=tks-server&args='+host;
+			}else if(HMI.GatewayTypePHP === true){
+				urlparameter = 'cmd=tks-server&args='+host;
+			}
+			ReturnText = this._sendRequest(this, 'GET', false, urlparameter, null);
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - End");
+		return ReturnText;
 	},
 	
 	/*********************************
@@ -333,7 +352,9 @@ HMIJavaScriptKSClient.prototype = {
 			if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
 				//the Manager sometimes reject connection to a valid server, so retry once
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
-				HandleString = this.getHandle(HostAndServername, null);
+				
+				//fixme retry disabled!
+//				HandleString = this.getHandle(HostAndServername, null);
 			}
 			if (HandleString.indexOf("KS_ERR") !== -1){
 				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
