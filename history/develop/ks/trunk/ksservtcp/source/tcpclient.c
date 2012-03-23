@@ -213,10 +213,12 @@ if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 		else			//error
 			ksserv_logfile_error("received %d bytes (less than 4) - shutting down", recvBytes);			//on windows machines a closed socket will return -1 here (instead of 0)
 
+#if LOG_OV || LOG_OV_INFO
 #if OV_SYSTEM_NT
 		errno = WSAGetLastError();
 #endif
 		perror("tcpclient - receive");
+#endif
 
 		ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
 		return;
@@ -564,7 +566,7 @@ if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 				sentChunkSize = send(receivesocket, placeInBuffer, sizeof(header), 0);
 				if (sentChunkSize == -1)
 				{
-					ksserv_logfile_error("send() failed");
+					ksserv_logfile_error("%s:%d send() failed", __FILE__, __LINE__);
 					break;
 				}
 #if KSSERV_LOGFILE_DEEP
@@ -616,7 +618,7 @@ if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 						sentChunkSize = send(receivesocket, placeInBuffer, 4096, 0);
 						if (sentChunkSize == -1)
 						{
-							ksserv_logfile_error("send() failed");
+							ksserv_logfile_error("%s:%d send() failed", __FILE__, __LINE__);
 							break;
 						}
 						placeInBuffer = &(placeInBuffer[sentChunkSize]);
@@ -627,7 +629,7 @@ if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 						sentChunkSize = send(receivesocket, placeInBuffer, (currFragment->used - sentBytes), 0);
 						if (sentChunkSize == -1)
 						{
-							ksserv_logfile_error("send() failed");
+							ksserv_logfile_error("%s:%d send() failed", __FILE__, __LINE__);
 							break;
 						}
 						placeInBuffer = &(placeInBuffer[sentChunkSize]);
@@ -701,7 +703,7 @@ if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 				sentChunkSize = send(receivesocket, placeInBuffer, 4096, 0);
 				if (sentChunkSize == -1)
 				{
-					ksserv_logfile_error("send() failed");
+					ksserv_logfile_error("%s:%d send() failed", __FILE__, __LINE__);
 					break;
 				}
 			}
@@ -710,7 +712,7 @@ if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 				sentChunkSize = send(receivesocket, placeInBuffer, (size_return - sentBytes), 0);
 				if (sentChunkSize == -1)
 				{
-					ksserv_logfile_error("send() failed");
+					ksserv_logfile_error("%s:%d send() failed", __FILE__, __LINE__);
 					break;
 				}
 			}
