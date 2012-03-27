@@ -463,7 +463,6 @@ cshmi.prototype = {
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			window.setTimeout(function(){
 				//get and execute all actions
-HMI.hmi_log_info("executing TimeEvent on "+ObjectParent.id+" because of "+ObjectPath);
 				preserveThis._interpreteAction(ObjectParent, ObjectPath);
 			}, 10);
 		}
@@ -867,7 +866,6 @@ HMI.hmi_log_info("executing TimeEvent on "+ObjectParent.id+" because of "+Object
 				}else if (ksVarName === "globalVar"){
 					//globalVar
 					this.ResourceList.GlobalVar[requestList[ObjectPath]["globalVar"]] = NewValue;
-					HMI.hmi_log_info("set globalvar: "+requestList[ObjectPath]["globalVar"]+" to: "+NewValue);
 					return true;
 				}else if (ksVarName === "TemplateFBReferenceVariable"){
 					//TemplateFBReferenceVariable
