@@ -93,6 +93,7 @@ function HMI(debug, error, warning, info, trace) {
 	//log trace info to console
 	this.trace = trace;
 	this.initialised = false;
+	this.cyclicRequestNeeded = true;
 	
 	this.ButShowServers = null;
 	this.InputRefreshTime = null;
@@ -1098,7 +1099,8 @@ HMI.prototype = {
 		){
 			var skipRefresh = true;
 		}
-		if (HMI.KSClient.TCLKSHandle !== null && skipRefresh === false){
+		//load hmi if playground is empty or with empty view (load in background)
+		if (HMI.KSClient.TCLKSHandle !== null && (skipRefresh === false || HMI.Playground.childNodes.length === 0)){
 			var SVGRequestURI = "";
 			
 			//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
@@ -1121,6 +1123,7 @@ HMI.prototype = {
 			if (ComponentText === null || (ComponentText && ComponentText.indexOf("KS_ERR_BADPATH") !== -1)){
 				this.cshmi = new cshmi();
 				this.cshmi.instanciateCshmi(HMI.Path);
+				HMI.cyclicRequestNeeded = false;
 			}else{
 				//hmi target
 				var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
@@ -1137,26 +1140,30 @@ HMI.prototype = {
 					this._showComponent(Component);
 				}
 				
-			}
-			//reload scroll setting
-			//wheelsupport is not supported by the HMI Team and probably firefox only
-			if(this.scrollComponent)
-			{
-				var Component;
-				if(document.getElementById(this.scrollComponent) !== null){ //opera, ff
-					Component = document.getElementById(this.scrollComponent);
-				} else if(this.Playground.getElementById(this.scrollComponent) !== null){ //ie
-					Component = this.Playground.getElementById(this.scrollComponent);
+				HMI.cyclicRequestNeeded = true;
+				
+				//reload scroll setting
+				//wheelsupport is not supported by the HMI Team and probably firefox only
+				if(this.scrollComponent)
+				{
+					var Component;
+					if(document.getElementById(this.scrollComponent) !== null){ //opera, ff
+						Component = document.getElementById(this.scrollComponent);
+					} else if(this.Playground.getElementById(this.scrollComponent) !== null){ //ie
+						Component = this.Playground.getElementById(this.scrollComponent);
+					}
+					Component.setAttribute("y", this.currY);
+					Component.setAttribute("x", this.currX);
 				}
-				Component.setAttribute("y", this.currY);
-				Component.setAttribute("x", this.currX);
 			}
 			
 			SVGRequestURI = null;
 			ComponentText = null;
 		}
-		//	refresh the sheet again later
-		this.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, this.RefreshTime);
+		if(HMI.cyclicRequestNeeded == true){
+			//	refresh the sheet again later
+			this.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, this.RefreshTime);
+		}
 		
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
 	},
