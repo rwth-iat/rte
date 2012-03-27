@@ -434,18 +434,32 @@ cshmi.prototype = {
 	*********************************/
 	_interpreteTimeEvent: function(ObjectParent, ObjectPath){
 		var skipEvent = false;
-		var iterationObject = ObjectParent;
-		do{
-			//skip eventhandling if the object is not visible
-			if(iterationObject.getAttribute("display") === "none"){
-				skipEvent = true;
-				break;
-			}
-		}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
-		iterationObject = null;
-		
+		//check if the page is visible at all?
+		//http://www.w3.org/TR/page-visibility/
+		if(	document.hidden === true ||
+			document.mozHidden === true||
+			document.webkitHidden === true||
+			document.msHidden === true||
+			document.oHidden === true
+		){
+			skipEvent = true;
+		}else{
+			var iterationObject = ObjectParent;
+			do{
+				//skip eventhandling if the object is not visible
+				if(iterationObject.getAttribute("display") === "none"){
+					skipEvent = true;
+					break;
+				}
+			}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
+			iterationObject = null;
+		}
 		if(skipEvent === false){
 			//interprete Action "now", but we want to have the full DOM tree ready
+			
+			//todo: refactor to remove this
+			//detect onload state and call us after that
+			
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			window.setTimeout(function(){
 				//get and execute all actions
@@ -745,7 +759,6 @@ cshmi.prototype = {
 		
 		if (NewValue === null){
 			HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because of an NewValue of null.");
-			//debugger;
 			//NewValue = this._getValue(ObjectParent, ObjectPath+".value");
 			return false;
 		}else if (NewValue === undefined){

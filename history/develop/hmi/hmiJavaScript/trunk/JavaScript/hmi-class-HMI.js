@@ -1087,7 +1087,18 @@ HMI.prototype = {
 		if (this.InfoOutput){
 			deleteChilds(this.InfoOutput);
 		}
-		if (HMI.KSClient.TCLKSHandle !== null){
+		var skipRefresh = false;
+		//check if the page is visible at all?
+		//http://www.w3.org/TR/page-visibility/
+		if(	document.hidden === true ||
+			document.mozHidden === true||
+			document.webkitHidden === true||
+			document.msHidden === true||
+			document.oHidden === true
+		){
+			var skipRefresh = true;
+		}
+		if (HMI.KSClient.TCLKSHandle !== null && skipRefresh === false){
 			var SVGRequestURI = "";
 			
 			//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
@@ -1124,9 +1135,6 @@ HMI.prototype = {
 				
 				if (Component != null){
 					this._showComponent(Component);
-					
-					//	activate refresh of sheet later
-					this.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, this.RefreshTime);
 				}
 				
 			}
@@ -1147,6 +1155,9 @@ HMI.prototype = {
 			SVGRequestURI = null;
 			ComponentText = null;
 		}
+		//	refresh the sheet again later
+		this.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, this.RefreshTime);
+		
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
 	},
 	
