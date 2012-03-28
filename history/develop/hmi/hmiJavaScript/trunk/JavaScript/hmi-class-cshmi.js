@@ -232,9 +232,15 @@ cshmi.prototype = {
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
-				var ChildComponent = this.BuildDomain(Component, Component.id+"/"+varName[0], varName[1]);
+				if(Component.tagName === "g" && Component.id === "" && Component.firstChild && Component.firstChild.id !== ""){
+					//nested rotation template
+					var realComponent = Component.firstChild;
+				}else{
+					realComponent = Component;
+				}
+				var ChildComponent = this.BuildDomain(realComponent, realComponent.id+"/"+varName[0], varName[1]);
 				if (ChildComponent !== null){
-					Component.appendChild(ChildComponent);
+					realComponent.appendChild(ChildComponent);
 				}
 			}
 		}
@@ -620,7 +626,15 @@ cshmi.prototype = {
 						}
 					}else if (getValueParameter == "rotate"){
 						//rotate is special, as it is different in OVM and SVG
-						var TransformString = ObjectParent.getAttribute("transform");
+						if (ObjectParent.tagName == "svg" && ObjectParent.parentNode.tagName == "g" && ObjectParent.parentNode.id === ""){
+							//svg are not transformable, so the rotation is in the objects parent
+							var TransformString = ObjectParent.parentNode.getAttribute("transform");
+						}else if (ObjectParent.tagName == "svg"){
+							//it is an template, with no rotation
+							return "0";
+						}else{
+							TransformString = ObjectParent.getAttribute("transform");
+						}
 						//"rotate(45,21.000000,50.000000)" or "rotate(45)"
 						
 						//remove rotate()
@@ -843,8 +857,24 @@ cshmi.prototype = {
 						}
 					}else if (setValueParameter == "rotate"){
 						//rotate is special, as it is different in OVM and SVG
+						
+						//svg are not transformable, so the rotation is in the objects parent
+						if (ObjectParent.tagName === "svg" && ObjectParent.parentNode.tagName === "g" && ObjectParent.parentNode.id === ""){
+							//object has already an g parent
+							var rotationObject = ObjectParent.parentNode;
+						}else if (ObjectParent.tagName === "svg" && ObjectParent.parentNode.tagName !== "g"){
+							//element has to be shifted into an g element
+							var rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+							rotationObject.style.overflow = "visible";
+							ObjectParent.parentNode.replaceChild(rotationObject, ObjectParent);
+							rotationObject.appendChild(ObjectParent);
+						}else{
+							//normal visual element
+							rotationObject = ObjectParent;
+						}
+						
 						if(ObjectParent.getAttribute("x") !== null){
-							ObjectParent.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("x")+","+ObjectParent.getAttribute("y")+")");
+							rotationObject.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("x")+","+ObjectParent.getAttribute("y")+")");
 						}else if(ObjectParent.getAttribute("cx") !== null){
 							ObjectParent.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("cx")+","+ObjectParent.getAttribute("cy")+")");
 						}else{
@@ -1971,6 +2001,14 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		if (requestList[ObjectPath]["rotate"] !== "0"){
+			//rotate is not specified with a svg-Element, so encapsule in a G-Element
+			//http://www.w3.org/Graphics/SVG/WG/track/issues/2252
+			var svgGElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+			svgGElement.style.overflow = "visible";
+			svgGElement.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
+			svgGElement.appendChild(svgElement);
+		}
 		
 		requestList[ObjectPath]["x"] = xTemplate;
 		requestList[ObjectPath]["y"] = yTemplate;
@@ -1980,9 +2018,9 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		svgElement.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
 		svgElement.style.overflow = "visible";
 		
-		//responseArray[4] is "pumpcolor:yellow pumpname:N18"
-		//problemfall: "pumpcolor:yellow {pumpname:N 18}"
-		//und noch schöner: "{{{pumpcolor:y ellow} {pumpname:N 18}}}" => ["{{pumpcolor:y ellow", "pumpname:N 18}}"]
+		//ConfigValue is something like "pumpcolor:yellow pumpname:N18"
+		//problem: "pumpcolor:yellow pumpname:N 18"
+		//or "pumpcolor:yel low pumpname:N 18"
 		ConfigList = requestList[ObjectPath]["ConfigValues"].split(" ");
 		var lastEntry = null;
 		for (var i=0; i < ConfigList.length; i++) {
@@ -2001,6 +2039,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 				}
 				lastEntry = ConfigEntry[0];
 			}else if (ConfigEntry.length === 1 && lastEntry !== null){
+				//we had something like "pumpcolor:yellow pumpname:N 18", so need to add the " 18" to the last entry
 				svgElement.ConfigValues[lastEntry] = svgElement.ConfigValues[lastEntry]+" "+ConfigEntry[0];
 			}
 		}
@@ -2033,7 +2072,12 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			if (evt.stopPropagation) evt.stopPropagation();
 		}, false);
 		
-		return svgElement;
+		if (svgGElement){
+			//transformed Template
+			return svgGElement;
+		}else{
+			return svgElement;
+		}
 	},
 	_buildSvgLine: function(ObjectParent, ObjectPath){
 		var requestList;
