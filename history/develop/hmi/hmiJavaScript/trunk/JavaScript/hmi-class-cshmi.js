@@ -449,16 +449,6 @@ cshmi.prototype = {
 			document.oHidden === true
 		){
 			skipEvent = true;
-		}else{
-			var iterationObject = ObjectParent;
-			do{
-				//skip eventhandling if the object is not visible
-				if(iterationObject.getAttribute("display") === "none"){
-					skipEvent = true;
-					break;
-				}
-			}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
-			iterationObject = null;
 		}
 		if(skipEvent === false){
 			//interprete Action "now", but we want to have the full DOM tree ready
@@ -578,10 +568,20 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
+		var iterationObject = ObjectParent;
+		do{
+			//skip eventhandling if the object is not visible
+			if(iterationObject.getAttribute("display") === "none"){
+				var preventNetworkRequest = true;
+				break;
+			}
+		}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
+		iterationObject = null;
+		
 		for (var ksVarName in requestList[ObjectPath]){
 			var getValueParameter = requestList[ObjectPath][ksVarName];
 			if (getValueParameter !== ""){
-				if (ksVarName === "ksVar"){
+				if (ksVarName === "ksVar" && preventNetworkRequest !== true){
 					var response;
 					if (getValueParameter.charAt(0) == "/"){
 						//we have an absolute path on this server
@@ -698,7 +698,7 @@ cshmi.prototype = {
 						HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+getValueParameter);
 					}
 					return null;
-				}else if (ksVarName === "TemplateFBReferenceVariable"){
+				}else if (ksVarName === "TemplateFBReferenceVariable" && preventNetworkRequest !== true){
 					var TemplateObject = ObjectParent;
 					do{
 						if(TemplateObject.FBReference && TemplateObject.FBReference[getValueParameter] !== undefined){
