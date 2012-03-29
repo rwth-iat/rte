@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -69,6 +69,8 @@ function cshmi() {
 	//to build the visualisation. It should only transfered once,
 	//so we have to remember the request client side.
 	this.ResourceList = Object();
+	this.ResourceList.onloadCallStack = Array();
+	
 	this.ResourceList.Elements = Object();
 	this.ResourceList.Actions = Object();
 	this.ResourceList.Conditions = Object();
@@ -169,6 +171,13 @@ cshmi.prototype = {
 			for(var i = 0;i < ComponentChilds.length;i++){
 				HMI._setLayerPosition(ComponentChilds[i]);
 			}
+			
+			//interprete onload Actions in the order of occurrence
+			while(this.ResourceList.onloadCallStack.length !== 0){
+				EventObjItem = this.ResourceList.onloadCallStack.shift();
+				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
+			}
+			
 			//the DOM Tree is populated now
 			this.initStage = false;
 		}
@@ -254,11 +263,11 @@ cshmi.prototype = {
 	_interpreteClientEvent: function(ObjectParent, ObjectPath){
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "onload"){
-			//interprete Action "now", but we want to have the full DOM tree ready
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			window.setTimeout(function(){
-				preserveThis._interpreteAction(ObjectParent, ObjectPath);
-			}, 10);
+			//interprete Action later, so remember this
+			var EventObjItem = Object();
+			EventObjItem["ObjectParent"] = ObjectParent;
+			EventObjItem["ObjectPath"] = ObjectPath;
+			this.ResourceList.onloadCallStack.push(EventObjItem)
 		}else{
 			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
@@ -450,21 +459,18 @@ cshmi.prototype = {
 		){
 			skipEvent = true;
 		}
-		if(skipEvent === false){
-			//interprete Action "now", but we want to have the full DOM tree ready
-			
-			//todo: refactor to remove this
-			//detect onload state and call us after that
-			
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			window.setTimeout(function(){
-				//get and execute all actions
-				preserveThis._interpreteAction(ObjectParent, ObjectPath);
-			}, 10);
+		if (this.initStage === true){
+			//we are in the init state of the sheet so interprete Action later onload, remembering this
+			var EventObjItem = Object();
+			EventObjItem["ObjectParent"] = ObjectParent;
+			EventObjItem["ObjectPath"] = ObjectPath;
+			this.ResourceList.onloadCallStack.push(EventObjItem);
+		}else if(skipEvent === false){
+			this._interpreteAction(ObjectParent, ObjectPath);
 		}
 		
 		var responseArray;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
 			if (response === false){
@@ -483,10 +489,10 @@ cshmi.prototype = {
 			this.ResourceList.Events[ObjectPath].TimeEventParameters = responseArray;
 			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: remembering config of "+ObjectPath+" ");
 		}else{
-			//the object is asked this session, so reuse the config to save communication requests
+			//the object was asked this session, so reuse the config to save communication requests
 			responseArray = this.ResourceList.Events[ObjectPath].TimeEventParameters;
 			this.ResourceList.Events[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" ("+this.ResourceList.Events[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Events[ObjectPath].useCount+")");
 		}
 		
 		//call us again for cyclic interpretation of the Actions
@@ -565,7 +571,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].getVarParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		var iterationObject = ObjectParent;
@@ -808,7 +814,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].setVarParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		//set the new Value
@@ -961,7 +967,7 @@ cshmi.prototype = {
 			}else{
 				response = this.ResourceList.baseKsPath[currentPath];
 				this.ResourceList.baseKsPath[ObjectPath].useCount++;
-				HMI.hmi_log_trace("cshmi._BaseKsPath: reusing remembered config of "+currentPath+" ("+this.ResourceList.baseKsPath[ObjectPath].useCount+")");
+				HMI.hmi_log_trace("cshmi._BaseKsPath: reusing remembered config of "+currentPath+" (#"+this.ResourceList.baseKsPath[ObjectPath].useCount+")");
 			}
 			if (response === false){
 				//communication error
@@ -1015,7 +1021,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" ("+this.ResourceList.Actions[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		var ConditionMatched = false;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if", this);
@@ -1210,7 +1216,7 @@ cshmi.prototype = {
 			TargetConnectionPoint = this.ResourceList.Actions[FBRef].TargetConnectionPoint;
 			TargetConnectionPointdirection = this.ResourceList.Actions[FBRef].TargetConnectionPointdirection;
 			this.ResourceList.Actions[FBRef].useCount++;
-			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: using cached information of "+FBRef+" ("+this.ResourceList.Actions[FBRef].useCount+")");
+			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: using cached information of "+FBRef+" (#"+this.ResourceList.Actions[FBRef].useCount+")");
 		}else{
 			//Move Polyline-Container before every Functionblocks
 			//needs only to be done once
@@ -1616,7 +1622,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionParameters;
 			this.ResourceList.Conditions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" ("+this.ResourceList.Conditions[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
 		}
 		
 		
@@ -1677,7 +1683,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		comptype = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType;
 		childValue = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue;
 		this.ResourceList.Conditions[ObjectPath].useCount++;
-		HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" ("+this.ResourceList.Conditions[ObjectPath].useCount+")");
+		HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
 	}
 
 	var Value1;
@@ -1844,7 +1850,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
@@ -1881,7 +1887,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestListTemplate = this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters;
 			this.ResourceList.Elements[PathOfTemplateDefinition].useCount++;
-			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+PathOfTemplateDefinition+" ("+this.ResourceList.Elements[PathOfTemplateDefinition].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+PathOfTemplateDefinition+" (#"+this.ResourceList.Elements[PathOfTemplateDefinition].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
@@ -2110,7 +2116,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgLine: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgLine: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
@@ -2156,7 +2162,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgPolyline: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgPolyline: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
@@ -2199,7 +2205,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgPolygon: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgPolygon: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
@@ -2242,7 +2248,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgPath: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgPath: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
@@ -2335,7 +2341,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgText: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgText: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
@@ -2414,7 +2420,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgCircle: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgCircle: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
@@ -2459,7 +2465,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgEllipse: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgEllipse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
@@ -2508,7 +2514,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
@@ -2554,7 +2560,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" ("+this.ResourceList.Elements[ObjectPath].useCount+")");
+			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var svgElement;
