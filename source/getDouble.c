@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT void ksapi_getDouble_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getDouble, pvtableop, pgd);
 
 	//Analyse xdr
-	if((analysegetdoublereply(xdr, xdrlength, &result)) == 0)
+	if((analysegetreply(OV_VT_DOUBLE, xdr, xdrlength, &result)) == 0)
 	{
 		ksapi_getDouble_receivedouble_set(pgd, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);

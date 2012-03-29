@@ -73,7 +73,7 @@ OV_DLLFNCEXPORT void ksapi_getInt_returnMethodxdr(
 
 	ksapi_logfile_debug("ksapi getInt returnmethod, starting analysing ");
 	//Analyse xdr
-	if((analysegetintreply(xdr, xdrlength, (int*)&result)) == 0)
+	if((analysegetreply(OV_VT_INT, xdr, xdrlength, (int*)&result)) == 0)
 	{
 		ksapi_getInt_receiveint_set(pgi, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);

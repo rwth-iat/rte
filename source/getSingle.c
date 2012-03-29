@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT void ksapi_getSingle_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getSingle, pvtableop, pgi);
 	
 	//Analyse xdr
-	if((analysegetsinglereply(xdr, xdrlength, &result)) == 0)
+	if((analysegetreply(OV_VT_SINGLE, xdr, xdrlength, &result)) == 0)
 	{
 		ksapi_getSingle_receivesingle_set(pgi, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);

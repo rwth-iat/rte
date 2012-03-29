@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT void ksapi_getStringVec_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getStringVec, pvtableop, pgs);
 	
 	//Analyse xdr
-	if((analysegetstringvecreply(xdr, xdrlength, &result, &len_res)) == 0)
+	if((analysegetvecreply(OV_VT_STRING_VEC, xdr, xdrlength, (void**) &result, &len_res)) == 0)
 	{
 		ksapi_getStringVec_receivestringvec_set(pgs, result, len_res);
 		free(result);

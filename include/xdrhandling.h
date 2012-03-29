@@ -40,31 +40,15 @@ void generaterenameobjectxdr(char *xdr[], int *length, char *oldpath, char *newp
 void generateunlinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpath);
 void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpath, int position, char *refpath);
 
-
 void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, char *namemask, int epflags);
 
 
+int analysegetreply(int type, char xdr[], int xdrlength, void *reply);
+int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *veclength);
 
 
-int analysegetstringreply(char xdr[], int xdrlength, char *reply[]);
-int analysegetstringvecreply(char xdr[], int xdrlength, char ***reply, int *replyveclength);
-int analysegetboolreply(char xdr[], int xdrlength, int *reply);
-int analysegetboolvecreply(char xdr[], int xdrlength, int *reply[], int *veclength);
-int analysegetdoublereply(char xdr[], int xdrlength, double *reply);
-int analysegetdoublevecreply(char xdr[], int xdrlength, double *reply[], int *veclength);
-int analysegetintreply(char xdr[], int xdrlength, int *reply);
-int analysegetintvecreply(char xdr[], int xdrlength, int *reply[], int *veclength);
-int analysegetsinglereply(char xdr[], int xdrlength, float *reply);
-int analysegetsinglevecreply(char xdr[], int xdrlength, float *reply[], int *veclength);
-int analysegetuintreply(char xdr[], int xdrlength, unsigned int *reply);
-int analysegetuintvecreply(char xdr[], int xdrlength, unsigned int *reply[], int *veclength);
+int analyseresultonlyreply(char xdr[], int xdrlength);
 
-
-int analysedeleteobjectreply(char xdr[], int xdrlength);
-int analysecreateobjectreply(char xdr[], int xdrlength);
-int analyserenameobjectreply(char xdr[], int xdrlength);
-int analyselinkobjectreply(char xdr[], int xdrlength);
-int analyseunlinkobjectreply(char xdr[], int xdrlength);
 
 
 int analysesetxdr(char xdr[], int xdrlength);

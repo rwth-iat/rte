@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT void ksapi_getUInt_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getUInt, pvtableop, pgi);
 
 	//Analyse xdr
-	if((analysegetuintreply(xdr, xdrlength, (unsigned int*)&result)) == 0)
+	if((analysegetreply(OV_VT_UINT, xdr, xdrlength, (unsigned int*)&result)) == 0)
 	{
 		ksapi_getUInt_receiveuint_set(pgi, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);

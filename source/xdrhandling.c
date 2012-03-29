@@ -1,6 +1,6 @@
 /** @file 
-* xdrhandling generates XDRs and analyses the reply XDRs 
-******************************************************************************/
+ * xdrhandling generates XDRs and analyses the reply XDRs
+ ******************************************************************************/
 #include "xdrhandling.h"
 
 #include <stdio.h>
@@ -21,6 +21,34 @@
 #include <sys/stat.h>
 #endif
 
+#include "libov/ov_ov.h"
+
+#include "ksapi_logfile.h"
+#define logfile_error ksapi_logfile_error
+#define logfile_debug ksapi_logfile_debug
+
+
+void printxdr(char xdr[], int xdrlength) {
+	int i;
+	int j;
+	int temp;
+
+	for(i=0; i < xdrlength; i +=4)
+	{
+		for(j=0; j<4; j++)
+		{
+			((char*) &temp)[3-j] = xdr[i + j];
+
+		}
+		logfile_debug("ab %d: %d\n", i, temp, &temp);
+		logfile_debug("%c%c%c%c", xdr[i], xdr[i+1], xdr[i+2], xdr[i+3]);
+
+	}
+	return;
+
+}
+
+
 /**
  * Generates the GETVAR xdr
  * input variables are:
@@ -33,7 +61,6 @@ void generategetxdr(char *xdr[], int *length, char *path)
 	generategetheader(xdr, length);
 	generategetbody(xdr, length, path);
 	addrpcheader(xdr, length);
-	
 	return;
 }
 
@@ -50,7 +77,7 @@ void generatesetstringxdr(char *xdr[], int *length, char *path, char *setstring)
 	generatesetheader(xdr, length);
 	generatesetstringbody(xdr, length, path, setstring);
 	addrpcheader(xdr, length);
-	
+
 	return;
 }
 
@@ -68,7 +95,7 @@ void generatesetstringvecxdr(char *xdr[], int *length, char *path, char **setstr
 	generatesetheader(xdr, length);
 	generatesetstringvecbody(xdr, length, path, setstringvec, veclength);
 	addrpcheader(xdr, length);
-	
+
 	return;
 }
 
@@ -85,7 +112,7 @@ void generatesetboolxdr(char *xdr[], int *length, char *path, int setbool)
 	generatesetheader(xdr, length);
 	generatesetboolbody(xdr, length, path, setbool);
 	addrpcheader(xdr, length);	
-	
+
 	return;
 }
 
@@ -103,7 +130,7 @@ void generatesetboolvecxdr(char *xdr[], int *length, char *path, int setboolvec[
 	generatesetheader(xdr, length);
 	generatesetboolvecbody(xdr, length, path, setboolvec, veclength);
 	addrpcheader(xdr, length);
-	
+
 	return;
 }
 
@@ -120,7 +147,7 @@ void generatesetdoublexdr(char *xdr[], int *length, char *path, double setdouble
 	generatesetheader(xdr, length);
 	generatesetdoublebody(xdr, length, path, setdouble);
 	addrpcheader(xdr, length);	
-	
+
 	return;
 }
 
@@ -138,7 +165,7 @@ void generatesetdoublevecxdr(char *xdr[], int *length, char *path, double setdou
 	generatesetheader(xdr, length);
 	generatesetdoublevecbody(xdr, length, path, setdoublevec, 5);
 	addrpcheader(xdr, length);	
-	
+
 	return;
 }
 
@@ -155,7 +182,7 @@ void generatesetintxdr(char *xdr[], int *length, char *path, int setint)
 	generatesetheader(xdr, length);
 	generatesetintbody(xdr, length, path, setint);
 	addrpcheader(xdr, length);
-	
+
 	return;
 }
 
@@ -173,7 +200,7 @@ void generatesetintvecxdr(char *xdr[], int *length, char *path, int setintvec[],
 	generatesetheader(xdr, length);
 	generatesetintvecbody(xdr, length, path, setintvec, veclength);
 	addrpcheader(xdr, length);	
-	
+
 	return;
 }
 
@@ -190,7 +217,7 @@ void generatesetsinglexdr(char *xdr[], int *length, char *path, float setsingle)
 	generatesetheader(xdr, length);
 	generatesetsinglebody(xdr, length, path, setsingle);
 	addrpcheader(xdr, length);
-	
+
 	return;
 }
 
@@ -213,15 +240,15 @@ void generatesetsinglevecxdr(char *xdr[], int *length, char *path, float setsing
 	char temp[4096];
 	char *tmp;
 	char *buf;
-	
+
 	memset(xdrdata, 0, 4096);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
 		pathlength++;
 	xdrlength = pathlength+76+4*veclength;
-	
+
 	//make header
 	header[0] = 61;				//xid
 	header[1] = 50;				//xid
@@ -241,31 +268,31 @@ void generatesetsinglevecxdr(char *xdr[], int *length, char *path, float setsing
 		header[c] = 0;
 	header[46] = 0;
 	header[47] = 1;
-	
+
 	//copy header to xdr
 	memset(xdrdata, 0, 4096);
 	memcpy(xdrdata, header, 48);
-		
-	
+
+
 	//set procedure
 	xdrdata[20] = 0;
 	xdrdata[21] = 0;
 	xdrdata[22] = 1;
 	xdrdata[23] = 2;
-	
+
 	//set path
 	xdrdata[51] = strlen(path);
 	for (c=52; c<(strlen(path)+52); c++)
 		xdrdata[c] = path[c-52];
 	for (c=(strlen(path)+52); c<xdrlength; c++)
 		xdrdata[c] = 0;
-	
+
 	//add rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
+		rpcheader[3-c] = tmp[c];
 	rpcheader[0] = 0x80;
-	
+
 	memset (temp,'\0',xdrlength+5);
 	memcpy(temp, rpcheader, 4);
 	for (c = 0; c < xdrlength; c++)
@@ -273,7 +300,7 @@ void generatesetsinglevecxdr(char *xdr[], int *length, char *path, float setsing
 	xdrlength = xdrlength+4;
 	assert(xdrlength+4 < 4096);
 	memcpy(xdrdata, temp, xdrlength);
-	
+
 	//make xdr end
 	xdrdata[59+pathlength] = 0x2;
 	xdrdata[xdrlength-12] = 0;
@@ -288,24 +315,24 @@ void generatesetsinglevecxdr(char *xdr[], int *length, char *path, float setsing
 	xdrdata[xdrlength-3] = 0;
 	xdrdata[xdrlength-2] = 0;
 	xdrdata[xdrlength-1] = 0x4;
-	
+
 	//make specific part of xdr
 	xdrdata[63+pathlength] = -96;
 	xdrdata[67+pathlength] = veclength;
 	for (c=0; c<veclength; c++)
 		for (d=0; d<4; d++)
-	{
-		buf = (char*)&setsinglevec[c];
-		//~ memcpy(tc[c], buf, 4);
-		xdrdata[71+pathlength+4*c-d] = buf[d];
-	}
-	
+		{
+			buf = (char*)&setsinglevec[c];
+			//~ memcpy(tc[c], buf, 4);
+			xdrdata[71+pathlength+4*c-d] = buf[d];
+		}
+
 	*xdr = (char*)malloc(xdrlength*sizeof(char));
 	memset(*xdr, 1, xdrlength);
 	memcpy(*xdr, xdrdata, xdrlength);
 	*length = xdrlength;
-	
-	
+
+
 	return;
 }
 
@@ -327,7 +354,7 @@ void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setui
 	char temp[4096];
 	char *tmp;
 	char *buf;
-	
+
 	memset(xdrdata, 0, 4096);	
 
 	//set xdrlenght
@@ -335,7 +362,7 @@ void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setui
 	while ((pathlength%4) != 0)
 		pathlength++;
 	xdrlength = pathlength+76;
-	
+
 	//make header
 	header[0] = 61;				//xid
 	header[1] = 50;				//xid
@@ -355,30 +382,30 @@ void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setui
 		header[c] = 0;
 	header[46] = 0;
 	header[47] = 1;
-	
+
 	//copy header to xdr
 	memcpy(xdrdata, header, 48);
-		
-	
+
+
 	//set procedure
 	xdrdata[20] = 0;
 	xdrdata[21] = 0;
 	xdrdata[22] = 1;
 	xdrdata[23] = 2;
-	
+
 	//set path
 	xdrdata[51] = strlen(path);
 	for (c=52; c<(strlen(path)+52); c++)
 		xdrdata[c] = path[c-52];
 	for (c=(strlen(path)+52); c<xdrlength; c++)
 		xdrdata[c] = 0;
-	
+
 	//add rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
+		rpcheader[3-c] = tmp[c];
 	rpcheader[0] = 0x80;
-	
+
 	memset (temp,'\0',xdrlength+5);
 	memcpy(temp, rpcheader, 4);
 	for (c = 0; c < xdrlength; c++)
@@ -386,7 +413,7 @@ void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setui
 	xdrlength = xdrlength+4;
 	assert(xdrlength+4 < 4096);
 	memcpy(xdrdata, temp, xdrlength);
-	
+
 	//make xdr end
 	xdrdata[59+pathlength] = 0x2;
 	xdrdata[xdrlength-12] = 0;
@@ -401,20 +428,20 @@ void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setui
 	xdrdata[xdrlength-3] = 0;
 	xdrdata[xdrlength-2] = 0;
 	xdrdata[xdrlength-1] = 0x4;
-	
+
 	//make specific part of xdr
 	buf = (char*)&setuint;
 	memcpy(temp, buf, 4);
 	xdrdata[63+pathlength] = 17;
 	for (c=0; c<4; c++)
 		xdrdata[67+pathlength-c] = temp[c];
-	
+
 	*xdr = (char*)malloc(xdrlength*sizeof(char));
 	memset(*xdr, 1, xdrlength);
 	memcpy(*xdr, xdrdata, xdrlength);
 	*length = xdrlength;
-	
-	
+
+
 	return;
 }
 
@@ -432,7 +459,7 @@ void generatesetuintvecxdr(char *xdr[], int *length, char *path, unsigned int se
 	generatesetheader(xdr, length);
 	generatesetuintvecbody(xdr, length, path, setuintvec, veclength);
 	addrpcheader(xdr, length);
-	
+
 	return;
 }
 
@@ -454,7 +481,7 @@ void generatedeleteobjectxdr(char *xdr[], int *length, char *path)
 	char *tmp;
 
 	memset(xdrdata, 0, 4096);	
-	
+
 	//set pathlength
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -462,7 +489,7 @@ void generatedeleteobjectxdr(char *xdr[], int *length, char *path)
 
 	//set xdrlenght
 	xdrlength = pathlength+52;
-	
+
 	//make header
 	header[0] = 61;				//xid
 	header[1] = 50;				//xid
@@ -482,30 +509,30 @@ void generatedeleteobjectxdr(char *xdr[], int *length, char *path)
 		header[c] = 0;
 	header[46] = 0;
 	header[47] = 1;
-	
+
 	//copy header to xdr
 	memcpy(xdrdata, header, 48);
-		
-	
+
+
 	//set procedure
 	xdrdata[20] = 0;
 	xdrdata[21] = 0;
 	xdrdata[22] = 2;
 	xdrdata[23] = 2;
-	
+
 	//set path
 	xdrdata[51] = strlen(path);
 	for (c=0; c<(strlen(path)); c++)
 		xdrdata[52+c] = path[c];
 	for (c=(strlen(path)); c<xdrlength-52; c++)
 		xdrdata[52+c] = 0;
-	
+
 	//add rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
+		rpcheader[3-c] = tmp[c];
 	rpcheader[0] = 0x80;
-	
+
 	memset (temp,'\0',xdrlength+5);
 	memcpy(temp, rpcheader, 4);
 	for (c = 0; c < xdrlength; c++)
@@ -513,13 +540,13 @@ void generatedeleteobjectxdr(char *xdr[], int *length, char *path)
 	xdrlength = xdrlength+4;
 	assert(xdrlength+4 < 4096);
 	memcpy(xdrdata, temp, xdrlength);
-	
+
 	*xdr = (char*)malloc(xdrlength*sizeof(char));
 	memset(*xdr, 1, xdrlength);
 	memcpy(*xdr, xdrdata, xdrlength);
 	*length = xdrlength;
-	
-	
+
+
 	return;
 }
 
@@ -545,7 +572,7 @@ void generatecreateobjectxdr(char *xdr[], int *length, char *path, char *library
 	char temp[4096];
 
 	memset(xdrdata, 0, 4096);	
-		
+
 	//set librarypathlength
 	librarypathlength = strlen(librarypath);
 	while ((librarypathlength%4) != 0)
@@ -555,7 +582,7 @@ void generatecreateobjectxdr(char *xdr[], int *length, char *path, char *library
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
 		pathlength++;
-	
+
 	//set refpathlength
 	if ((position == 3) | (position == 4))
 	{
@@ -563,13 +590,13 @@ void generatecreateobjectxdr(char *xdr[], int *length, char *path, char *library
 		while ((refpathlength%4) != 0)
 			refpathlength++;
 	}
-	
+
 	//set xdrlenght
 	if ((position == 3) | (position == 4))
 		xdrlength = librarypathlength+pathlength+refpathlength+72;
 	else
 		xdrlength = librarypathlength+pathlength+68;
-	
+
 	//make header
 	header[0] = 61;				//xid
 	header[1] = 50;				//xid
@@ -589,34 +616,34 @@ void generatecreateobjectxdr(char *xdr[], int *length, char *path, char *library
 		header[c] = 0;
 	header[46] = 0;
 	header[47] = 1;
-	
+
 	//copy header to xdr
 	memcpy(xdrdata, header, 48);
-		
-	
+
+
 	//set procedure
 	xdrdata[20] = 0;
 	xdrdata[21] = 0;
 	xdrdata[22] = 2;
 	xdrdata[23] = 1;
-	
+
 	//set librarypath
 	xdrdata[51] = strlen(librarypath);
 	for (c=0; c<(strlen(librarypath)); c++)
 		xdrdata[52+c] = librarypath[c];
 	for (c=(strlen(librarypath)); c<xdrlength-52; c++)
 		xdrdata[52+c] = 0;
-	
+
 	//set path
 	xdrdata[51+librarypathlength+4] = strlen(path);
 	for (c=0; c<strlen(path); c++)
 		xdrdata[51+librarypathlength+5+c] = path[c];
 	for (c=strlen(path); c<xdrlength-(51+librarypathlength+5); c++)
 		xdrdata[51+librarypathlength+5+c] = 0;
-		
+
 	//set position
 	xdrdata[51+librarypathlength+4+pathlength+4] = position;
-	
+
 	//set refpath
 	if ((position == 3) | (position == 4))
 	{
@@ -626,13 +653,13 @@ void generatecreateobjectxdr(char *xdr[], int *length, char *path, char *library
 		for (c=strlen(refpath); c<xdrlength-(51+librarypathlength+4+pathlength+9); c++)
 			xdrdata[51+librarypathlength+4+pathlength+9+c] = 0;
 	}	
-		
+
 	//add rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
+		rpcheader[3-c] = tmp[c];
 	rpcheader[0] = 0x80;
-	
+
 	memset (temp,'\0',xdrlength+5);
 	memcpy(temp, rpcheader, 4);
 	for (c = 0; c < xdrlength; c++)
@@ -640,13 +667,13 @@ void generatecreateobjectxdr(char *xdr[], int *length, char *path, char *library
 	xdrlength = xdrlength+4;
 	assert(xdrlength+4 < 4096);
 	memcpy(xdrdata, temp, xdrlength);
-	
+
 	*xdr = (char*)malloc(xdrlength*sizeof(char));
 	memset(*xdr, 1, xdrlength);
 	memcpy(*xdr, xdrdata, xdrlength);
 	*length = xdrlength;
-	
-	
+
+
 	return;
 }
 
@@ -669,7 +696,7 @@ void generaterenameobjectxdr(char *xdr[], int *length, char *oldpath, char *newp
 	char *tmp;
 
 	memset(xdrdata, 0, 4096);	
-	
+
 	//set oldpathlength
 	oldpathlength = strlen(oldpath);
 	while ((oldpathlength%4) != 0)
@@ -679,10 +706,10 @@ void generaterenameobjectxdr(char *xdr[], int *length, char *oldpath, char *newp
 	newpathlength = strlen(newpath);
 	while ((newpathlength%4) != 0)
 		newpathlength++;
-	
+
 	//set xdrlenght
 	xdrlength = oldpathlength+newpathlength+60;
-	
+
 	//make header
 	header[0] = 61;				//xid
 	header[1] = 50;				//xid
@@ -702,37 +729,37 @@ void generaterenameobjectxdr(char *xdr[], int *length, char *oldpath, char *newp
 		header[c] = 0;
 	header[46] = 0;
 	header[47] = 1;
-	
+
 	//copy header to xdr
 	memcpy(xdrdata, header, 48);
-		
-	
+
+
 	//set procedure
 	xdrdata[20] = 0;
 	xdrdata[21] = 0;
 	xdrdata[22] = 2;
 	xdrdata[23] = 3;
-	
+
 	//set oldpath
 	xdrdata[51] = strlen(oldpath);
 	for (c=0; c<(strlen(oldpath)); c++)
 		xdrdata[52+c] = oldpath[c];
 	for (c=(strlen(oldpath)); c<xdrlength-52; c++)
 		xdrdata[52+c] = 0;
-	
+
 	//set newpath
 	xdrdata[51+oldpathlength+4] = strlen(newpath);
 	for (c=0; c<strlen(newpath); c++)
 		xdrdata[51+oldpathlength+5+c] = newpath[c];
 	for (c=strlen(newpath); c<xdrlength-52; c++)
 		xdrdata[51+oldpathlength+5+c] = 0;
-		
+
 	//add rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
+		rpcheader[3-c] = tmp[c];
 	rpcheader[0] = 0x80;
-	
+
 	memset (temp,'\0',xdrlength+5);
 	memcpy(temp, rpcheader, 4);
 	temp[3] = xdrlength;
@@ -741,13 +768,13 @@ void generaterenameobjectxdr(char *xdr[], int *length, char *oldpath, char *newp
 	xdrlength = xdrlength+4;
 	assert(xdrlength+4 < 4096);
 	memcpy(xdrdata, temp, xdrlength);
-	
+
 	*xdr = (char*)malloc(xdrlength*sizeof(char));
 	memset(*xdr, 1, xdrlength);
 	memcpy(*xdr, xdrdata, xdrlength);
 	*length = xdrlength;
-	
-	
+
+
 	return;
 }
 
@@ -768,9 +795,9 @@ void generateunlinkobjectxdr(char *xdr[], int *length, char *path, char *linkedp
 	int pathlength, linkedpathlength, xdrlength;
 	char temp[4096];
 	char *tmp;
-	
+
 	memset(xdrdata, 0, 4096);	
-	
+
 	//set linkedpathlength
 	linkedpathlength = strlen(linkedpath);
 	while ((linkedpathlength%4) != 0)
@@ -780,10 +807,10 @@ void generateunlinkobjectxdr(char *xdr[], int *length, char *path, char *linkedp
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
 		pathlength++;
-		
+
 	//set xdrlenght
 	xdrlength = linkedpathlength+pathlength+64;
-	
+
 	//make header
 	header[0] = 61;				//xid
 	header[1] = 50;				//xid
@@ -803,37 +830,37 @@ void generateunlinkobjectxdr(char *xdr[], int *length, char *path, char *linkedp
 		header[c] = 0;
 	header[46] = 0;
 	header[47] = 1;
-	
+
 	//copy header to xdr
 	memcpy(xdrdata, header, 48);
-		
-	
+
+
 	//set procedure
 	xdrdata[20] = 0;
 	xdrdata[21] = 0;
 	xdrdata[22] = 3;
 	xdrdata[23] = 2;
-	
+
 	//set path
 	xdrdata[51] = strlen(path);
 	for (c=0; c<strlen(path); c++)
 		xdrdata[52+c] = path[c];
 	for (c=strlen(path); c<xdrlength-52; c++)
 		xdrdata[52+c] = 0;
-	
+
 	//set linkedpath
 	xdrdata[51+pathlength+4] = strlen(linkedpath);
 	for (c=0; c<(strlen(linkedpath)); c++)
 		xdrdata[52+pathlength+4+c] = linkedpath[c];
 	for (c=(strlen(linkedpath)); c<xdrlength-(52+pathlength+4); c++)
 		xdrdata[52+pathlength+4+c] = 0;
-		
+
 	//add rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
+		rpcheader[3-c] = tmp[c];
 	rpcheader[0] = 0x80;
-	
+
 	memset (temp,'\0',xdrlength+5);
 	memcpy(temp, rpcheader, 4);
 	temp[3] = xdrlength;
@@ -842,13 +869,13 @@ void generateunlinkobjectxdr(char *xdr[], int *length, char *path, char *linkedp
 	xdrlength = xdrlength+4;
 	assert(xdrlength+4 < 4096);
 	memcpy(xdrdata, temp, xdrlength);
-	
+
 	*xdr = (char*)malloc(xdrlength*sizeof(char));
 	memset(*xdr, 1, xdrlength);
 	memcpy(*xdr, xdrdata, xdrlength);
 	*length = xdrlength;
-	
-	
+
+
 	return;
 }
 
@@ -872,9 +899,9 @@ void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpat
 	int pathlength, linkedpathlength, refpathlength, xdrlength;
 	char temp[4096];
 	char *tmp;
-	
+
 	memset(xdrdata, 0, 4096);	
-	
+
 	//set linkedpathlength
 	linkedpathlength = strlen(linkedpath);
 	while ((linkedpathlength%4) != 0)
@@ -884,7 +911,7 @@ void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpat
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
 		pathlength++;
-		
+
 	//set refpathlength
 	if ((position == 3) | (position == 4))
 	{
@@ -892,13 +919,13 @@ void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpat
 		while ((refpathlength%4) != 0)
 			refpathlength++;
 	}
-	
+
 	//set xdrlenght
 	if ((position == 3) | (position == 4))
 		xdrlength = linkedpathlength+pathlength+refpathlength+68;
 	else
 		xdrlength = linkedpathlength+pathlength+64;
-	
+
 	//make header
 	header[0] = 61;				//xid
 	header[1] = 50;				//xid
@@ -918,34 +945,34 @@ void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpat
 		header[c] = 0;
 	header[46] = 0;
 	header[47] = 1;
-	
+
 	//copy header to xdr
 	memcpy(xdrdata, header, 48);
-		
-	
+
+
 	//set procedure
 	xdrdata[20] = 0;
 	xdrdata[21] = 0;
 	xdrdata[22] = 3;
 	xdrdata[23] = 1;
-	
+
 	//set path
 	xdrdata[51] = strlen(path);
 	for (c=0; c<strlen(path); c++)
 		xdrdata[52+c] = path[c];
 	for (c=strlen(path); c<xdrlength-52; c++)
 		xdrdata[52+c] = 0;
-	
+
 	//set elementpath
 	xdrdata[51+pathlength+4] = strlen(linkedpath);
 	for (c=0; c<(strlen(linkedpath)); c++)
 		xdrdata[52+pathlength+4+c] = linkedpath[c];
 	for (c=(strlen(linkedpath)); c<xdrlength-(52+pathlength+4); c++)
 		xdrdata[52+pathlength+4+c] = 0;
-		
+
 	//set position
 	xdrdata[51+pathlength+4+linkedpathlength+4] = position;
-	
+
 	//set place
 	if ((position == 3) | (position == 4))
 	{
@@ -955,13 +982,13 @@ void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpat
 		for (c=strlen(refpath); c<xdrlength-(51+pathlength+4+linkedpathlength+9); c++)
 			xdrdata[51+pathlength+4+linkedpathlength+9+c] = 0;
 	}
-	
+
 	//add rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
+		rpcheader[3-c] = tmp[c];
 	rpcheader[0] = 0x80;
-	
+
 	memset (temp,'\0',xdrlength+5);
 	memcpy(temp, rpcheader, 4);
 	temp[3] = xdrlength;
@@ -970,13 +997,13 @@ void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpat
 	xdrlength = xdrlength+4;
 	assert(xdrlength+4 < 4096);
 	memcpy(xdrdata, temp, xdrlength);
-	
+
 	*xdr = (char*)malloc(xdrlength*sizeof(char));
 	memset(*xdr, 1, xdrlength);
 	memcpy(*xdr, xdrdata, xdrlength);
 	*length = xdrlength;
-	
-	
+
+
 	return;
 }
 
@@ -1004,7 +1031,7 @@ void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, ch
 	char *buf2;
 
 	memset(xdrdata, 0, 4096);	
-	
+
 	//set pathlength
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -1014,10 +1041,10 @@ void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, ch
 	namemasklength = strlen(namemask);
 	while ((namemasklength%4) != 0)
 		namemasklength++;
-	
+
 	//set xdrlenght
 	xdrlength = pathlength+namemasklength+60;
-	
+
 	//make header
 	header[0] = 61;				//xid
 	header[1] = 50;				//xid
@@ -1037,49 +1064,49 @@ void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, ch
 		header[c] = 0;
 	header[46] = 0;
 	header[47] = 1;
-	
+
 	//copy header to xdr
 	memcpy(xdrdata, header, 48);
-		
-	
+
+
 	//set procedure
 	xdrdata[20] = 0;
 	xdrdata[21] = 0;
 	xdrdata[22] = 0;
 	xdrdata[23] = 2;
-	
+
 	//set path
 	xdrdata[47] = strlen(path);
 	for (c=0; c<(strlen(path)); c++)
 		xdrdata[48+c] = path[c];
 	for (c=(strlen(path)); c<xdrlength-48; c++)
 		xdrdata[48+c] = 0;
-	
+
 	//set ksobjecttype
 	buf = (char*)&ksobjecttype;
 	memcpy(temp, buf, 4);
 	for (c=0; c<4; c++)
 		xdrdata[51+pathlength-c] = temp[c];
-	
+
 	//set namemask
 	xdrdata[55+pathlength] = strlen(namemask);
 	for (c=0; c<strlen(namemask); c++)
 		xdrdata[56+pathlength+c] = namemask[c];
 	for (c=strlen(namemask); c<xdrlength-(56+pathlength+namemasklength); c++)
 		xdrdata[56+pathlength+namemasklength+c] = 0;
-		
+
 	//set epflags
 	buf2 = (char*)&epflags;
 	memcpy(temp, buf2, 4);
 	for (c=0; c<4; c++)
 		xdrdata[56+pathlength+namemasklength-c] = temp[c];
-		
+
 	//add rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
+		rpcheader[3-c] = tmp[c];
 	rpcheader[0] = 0x80;
-	
+
 	memset (temp,'\0',xdrlength+5);
 	memcpy(temp, rpcheader, 4);
 	temp[3] = xdrlength;
@@ -1088,868 +1115,287 @@ void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, ch
 	xdrlength = xdrlength+4;
 	assert(xdrlength+4 < 4096);
 	memcpy(xdrdata, temp, xdrlength);
-	
+
 	*xdr = (char*)malloc(xdrlength*sizeof(char));
 	memset(*xdr, 1, xdrlength);
 	memcpy(*xdr, xdrdata, xdrlength);
 	*length = xdrlength;
-	
-	
+
+
 	return;
 }
 
 
-
-
-
-
 /**
- * Analyses GETSTRING reply
+ * Analyses GET reply
  * return value is errorcode (0: OK)
  * input variables are:
+ * int type : OV_VT_* defines type of variable to decode
  * char xdr[] : received xdr which should be analysed
  * int xdrlength : length of xdr
- * char *reply[] : here received STRING is stored
+ * void *reply : here received VAR is stored
  */
-int analysegetstringreply(char xdr[], int xdrlength, char *reply[])
+int analysegetreply(int type, char xdr[], int xdrlength, void *reply)
 {
-	int errorcode;
+	int errorcode, vartype;
 	char *str;
 	int strlength;
 	int i;
-
+	char temp[4];
+	char tempd[8];
 	int j;
-	int number;
 
-	//debugging
-	for(i=0; i< 64; i+=4)
-	{
-		printf("ab %d: ", i);
-
-		for(j=0; j<4; j++)
-		{
-			printf("%c", xdr[i+j]);
-			((char*) &number)[3-j] = xdr[i+j];
-		}
-		printf("\nnumber: %d\n", number);
-
-	}
+	logfile_debug("\nanalysing get reply\n");
 
 	//decoding
 	if(xdr[39] == 0) // OK, found
 	{
-		errorcode = xdr[47]; //
-		switch (errorcode)
-		{
-			case 48: //means ASCII 0
-				strlength = xdr[51]; // TODO read 4 bytes instead - 48-51, inverted
-				//for(j=0; j<4; j++)
-				//	((char*) &strlength)[3-j] = xdr[48+j];
+		for(i=0; i<4; i++)
+			((char*) &vartype)[3-i] = xdr[44+i]; // copy type
 
-				str = (char*)malloc((strlength+1)*sizeof(char));
-				memset(str, 0, strlength+1);
-				for (i = 0; i < strlength; i++)
-					str[i] = xdr[52+i]; //Ok, start reading
-				*reply = (char*)malloc((strlength+1)*sizeof(char));
-				memset(*reply, 0, strlength+1);
-				memcpy(*reply, str, strlength+1);
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
+
+		if((vartype & OV_VT_KSMASK) == type && type == OV_VT_STRING)	//decoding STRING
+		{
+			logfile_debug("\ndecoding STRING\n");
+			for(j=0; j<4; j++)
+				((char*) &strlength)[3-j] = xdr[48+j];
+
+			str = (char*)malloc((strlength+1)*sizeof(char));
+			for (i = 0; i < strlength; i++)
+				str[i] = xdr[52+i]; //Ok, start reading
+			*(char**)reply = malloc((strlength+1)*sizeof(char));
+			memcpy(*(char**)reply, str, strlength+1);
+			(*(char**) reply)[strlength] = 0;
+			free(str);
 		}
+		else if((vartype & OV_VT_KSMASK) == type && type == OV_VT_DOUBLE)	//decoding DOUBLE
+		{
+			logfile_debug("\ndecoding DOUBLE\n");
+			for (i = 7; i >= 0; i--)
+				tempd[7-i] = xdr[48+i];
+			memcpy(reply, tempd, 8);
+		}
+		else if((vartype & OV_VT_KSMASK) == type)		//decoding INT, UINT, SINGLE and BOOL
+		{
+			logfile_debug("\ndecoding INT, UINT, SINGLE and BOOL\n");
+			for (i = 3; i >= 0; i--)
+				temp[3-i] = xdr[48+i];
+			memcpy(reply, temp, 4);
+		}
+		else
+		{
+			logfile_error("\nvartype mismatch\n");
+			return KS_ERR_BADTYPE;
+		}
+
+		return KS_ERR_OK;
+
 	}
 	else //bad luck - no result
 	{
 		errorcode = xdr[xdrlength-1];
 		switch (errorcode)
 		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
+		case KS_ERR_BADPATH:
+			logfile_error("\nwrong path\n");
+			break;
+		default:
+			logfile_error("\nERROR\n");
 		}
 	}
-	
-	
+
+
 	return errorcode;
 }
 
 /**
- * Analyses GETSTRINGVEC reply
+ * Analyses GETVEC reply
  * return value is errorcode (0: OK)
  * input variables are:
+ * int type : OV_VT_* defines type of variable to decode
  * char xdr[] : received xdr which should be analysed
  * int xdrlength : length of xdr
- * char ***reply : here received STRINGVEC is stored
- * int *replyveclength : length of the received vector
+ * void **reply : here received VARVEC is stored
+ * int *veclength: length of received vector is stored here
  */
-int analysegetstringvecreply(char xdr[], int xdrlength, char ***reply, int *replyveclength)
+int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *veclength)
 {
-	int errorcode;
-	char **strvec;
-	int strlength, veclength;
-	int i, j, k;
-	
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case -80:
-				k = 60;
-				veclength = xdr[55];
-				*replyveclength = veclength;
-				strvec = (char**)malloc(veclength*sizeof(char*));
-				*reply = (char**)malloc(veclength*sizeof(char*));
-				strlength = xdr[59];
-				for (i = 0; i < veclength; i++)
-				{
-					strvec[i] = (char*)malloc((strlength+1)*sizeof(char));
-					(*reply)[i] = (char*)malloc((strlength+1)*sizeof(char));
-					memset((*reply)[i], 0, strlength+1);
-					for (j = 0; j < strlength; j++)
-					{
-						strvec[i][j] = xdr[k+j];
-						strvec[i][j+1] = 0;
-					}
-					memcpy((*reply)[i], strvec[i], strlength+1);
-					k = k+strlength;
-					while (k%4 != 0)
-						k++;
-					k = k+3;
-					strlength = xdr[k];
-					k++;
-				}
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses GETBOOL reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * int *reply : here received INT is stored
- */
-int analysegetboolreply(char xdr[], int xdrlength, int *reply)
-{
-	int errorcode;
-
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case 2:
-				*reply = xdr[55];
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses GETBOOLVEC reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * int *reply[] : here received BOOLVEC is stored
- * int *veclength : length of the received vector
- */
-int analysegetboolvecreply(char xdr[], int xdrlength, int *reply[], int *veclength)
-{
-	int errorcode;
-	int i, j, k;
-	char temp[4];
-	
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case -126:
-				k = 56;
-				*veclength = xdr[55];
-				*reply = (int*)malloc(*veclength*sizeof(int));
-				for (j = 0; j < *veclength; j++)
-				{
-					for (i = 3; i >= 0; i--)
-						temp[3-i] = xdr[k+i];
-					memcpy(&((*reply)[j]), temp, 4);
-					k = k+4;
-				}
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses GETDOUBLE reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * double *reply : here received DOUBLE is stored
- */
-int analysegetdoublereply(char xdr[], int xdrlength, double *reply)
-{
-	int errorcode;
-	int i;
-	char temp[8];
-	
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case 33:
-				for (i = 7; i >= 0; i--)
-				temp[7-i] = xdr[52+i];
-				memcpy(reply, temp, 8);
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses GETDOUBLEVEC reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * double *reply[] : here received DOUBLEVEC is stored
- * int *veclength : length of the received vector
- */
-int analysegetdoublevecreply(char xdr[], int xdrlength, double *reply[], int *veclength)
-{
-	int errorcode;
-	int i, j, k;
-	char temp[8];
-	
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case -95:
-				k = 56;
-				*veclength = xdr[55];
-				*reply = (double*)malloc(*veclength*sizeof(double));
-				for (j = 0; j < *veclength; j++)
-				{
-					for (i = 7; i >= 0; i--)
-						temp[7-i] = xdr[k+i];
-					memcpy(&((*reply)[j]), temp, 8);
-					k = k+8;
-				}
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-void printxdrasintvec(char xdr[], int xdrlength) {
+	int errorcode, vartype = 0;
+	int strlength;
 	int i;
 	int j;
-	int temp;
+	int xdrposition;
 
-	for(i=0; i < xdrlength; i +=4)
+	logfile_debug("\nanalysing getvec reply\n");
+
+	//decoding
+	if(xdr[39] == 0) // OK, found
 	{
-		for(j=0; j<4; j++)
-		{
-			((char*) &temp)[3-j] = xdr[i + j];
+		for(i=0; i<4; i++)
+			((char*) &vartype)[3-i] = xdr[44+i]; // copy type
 
+		logfile_debug("vartype: %x", vartype);
+
+		if((vartype & OV_VT_KSMASK) == type && type == OV_VT_STRING_VEC)	//decoding STRINGVEC
+		{
+			for(j=0; j<4; j++) // read length of vec
+				((char*) veclength)[3-j] = xdr[48+j];
+			*reply = (char**)malloc(*veclength*sizeof(char*)); // get space for vector length
+			xdrposition = 52; //start decode, will be incremented per read string
+			for(i=0; i<*veclength; i++) // iterate over strings
+			{
+				for(j=0; j<4; j++) //read length of current string
+					((char*) &strlength)[3-j] = xdr[xdrposition+j];
+				((char**) *reply)[i] = malloc(strlength+1); //get space for current string
+				xdrposition += 4; // go to position of string start
+				memcpy(((char**) *reply)[i], xdr+xdrposition, strlength); //save current string
+				((char**) *reply)[i][strlength] = 0; //0terminate current string
+
+				xdrposition += strlength; // go over to next string
+				while(xdrposition%4) //...but take care of modulo4 encoding in XDRs!
+					xdrposition++;
+			}
 		}
-		printf("ab %d: %d\n", i, temp, &temp);
+		else if((vartype & OV_VT_KSMASK) == type && type == OV_VT_DOUBLE_VEC)	//decoding DOUBLEVEC
+		{																		//TODO untested since no DOUBLE_VECs available
+			for(j=0; j<4; j++)
+				((char*) veclength)[3-j] = xdr[48+j];
 
-	}
-	return;
+			*reply = malloc(*veclength*8);
+			for (j = 0; j < *veclength; j++)
+			{
+				for (i = 7; i >= 0; i--)
+					((char*) *reply)[j*8+7-i] = xdr[52+j*8+i];
+			}
+		}
+		else if((vartype & OV_VT_KSMASK) == type)		//decoding INTVEC, UINTVEC, SINGLEVEC and BOOLVEC
+		{												//TODO tested just for BOOLVEC
+			for(j=0; j<4; j++)
+				((char*) veclength)[3-j] = xdr[48+j];
 
-}
-
-/**
- * Analyses GETINT reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * int *reply : here received INT is stored
- */
-int analysegetintreply(char xdr[], int xdrlength, int *reply)
-{
-	int errorcode;
-	int i;
-	char temp[4];
-	
-	printxdrasintvec(xdr, xdrlength);
-
-	if(xdr[39] == 0)
-	{
-		errorcode = xdr[47];
-		switch (errorcode)
-		{
-			case 16:
+			*reply = malloc(*veclength*4);
+			for (j = 0; j < *veclength; j++)
+			{
 				for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[48+i];
-				memcpy(reply, temp, 4);
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
+					((char*) *reply)[j*4+3-i] = xdr[52+j*4+i];
+			}
 		}
+		else
+		{
+			logfile_error("\nvartype mismatch\n");
+			return KS_ERR_BADTYPE;
+		}
+
+		return KS_ERR_OK;
+
 	}
-	else
+	else //bad luck - no result
 	{
 		errorcode = xdr[xdrlength-1];
 		switch (errorcode)
 		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
+		case KS_ERR_BADPATH:
+			logfile_error("\nwrong path\n");
+			break;
+		default:
+			logfile_error("\nERROR\n");
 		}
 	}
-	
-	
+
+
 	return errorcode;
 }
 
 /**
- * Analyses GETINTVEC reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * int *reply[] : here received INTVEC is stored
- * int *veclength : length of the received vector
- */
-int analysegetintvecreply(char xdr[], int xdrlength, int *reply[], int *veclength)
-{
-	int errorcode;
-	int i, j, k;
-	char temp[4];
-	
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case -112:
-				k = 56;
-				*veclength = xdr[55];
-				*reply = (int*)malloc(*veclength*sizeof(int));
-				for (j = 0; j < *veclength; j++)
-				{
-					for (i = 3; i >= 0; i--)
-						temp[3-i] = xdr[k+i];
-					memcpy(&((*reply)[j]), temp, 4);
-					k = k+4;
-				}
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses GETSINGLE reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * float *reply : here received SINGLE is stored
- */
-int analysegetsinglereply(char xdr[], int xdrlength, float *reply)
-{
-	int errorcode;
-	int i;
-	char temp[4];
-	
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case 32:
-				for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[52+i];
-				memcpy(reply, temp, 4);
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses GETSINGLEVEC reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * float *reply[] : here received SINGLEVEC is stored
- * int *veclength : length of the received vector
- */
-int analysegetsinglevecreply(char xdr[], int xdrlength, float *reply[], int *veclength)
-{
-	int errorcode;
-	int i, j, k;
-	char temp[4];
-	
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case -96:
-				k = 56;
-				*veclength = xdr[55];
-				*reply = (float*)malloc(*veclength*sizeof(float));
-				for (j = 0; j < *veclength; j++)
-				{
-					for (i = 3; i >= 0; i--)
-						temp[3-i] = xdr[k+i];
-					memcpy(&((*reply)[j]), temp, 4);
-					k = k+4;
-				}
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses GETUINT reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * uint *reply : here received UINT is stored
- */
-int analysegetuintreply(char xdr[], int xdrlength, unsigned int *reply)
-{
-	int errorcode;
-	int i;
-	char temp[4];
-	
-	printxdrasintvec(xdr, xdrlength);
-
-	if(xdr[39] == 0)
-	{
-		errorcode = xdr[47];
-		switch (errorcode)
-		{
-			case 17:
-				for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[48+i];
-				memcpy(reply, temp, 4);
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses GETUINTVEC reply
- * return value is errorcode (0: OK)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- * uint *reply[] : here received UINTVEC is stored
- * int *veclength : length of the received vector
- */
-int analysegetuintvecreply(char xdr[], int xdrlength, unsigned int *reply[], int *veclength)
-{
-	int errorcode;
-	int i, j, k;
-	char temp[4];
-	
-	if(xdr[43] == 0)
-	{
-		errorcode = xdr[51];
-		switch (errorcode)
-		{
-			case -111:
-				k = 56;
-				*veclength = xdr[55];
-				*reply = (unsigned int*)malloc(*veclength*sizeof(unsigned int));
-				for (j = 0; j < *veclength; j++)
-				{
-					for (i = 3; i >= 0; i--)
-						temp[3-i] = xdr[k+i];
-					memcpy(&((*reply)[j]), temp, 4);
-					k = k+4;
-				}
-				return 0;
-			default:
-				printf("\nwrong vartype\n");
-		}
-	}
-	else
-	{
-		errorcode = xdr[xdrlength-1];
-		switch (errorcode)
-		{
-			case 17:
-				printf("\nwrong path\n");
-				break;
-			default:
-				printf("\nERROR\n");
-		}
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses DELETEOBJECT reply
+ * Analyses SETVAR and DELETEOBJECT, CREATEOBJECT,RENAMEOBJECT,LINKOBJECT, UNLINKOBJECT replies
  * return value is errorcode
- * (0: OK, 17: object does not exist, 19: object active)
  * input variables are:
  * char xdr[] : received xdr which should be analysed
  * int xdrlength : length of xdr
  */
-int analysedeleteobjectreply(char xdr[], int xdrlength)
+int analyseresultonlyreply(char xdr[], int xdrlength)
 {
 	int errorcode;
-	
-	errorcode = xdr[43];
+
+	errorcode = xdr[39];
 	switch (errorcode)
 	{
-		case 0:
-			printf("\nobject deleted\n");
-			return errorcode;
-		case 17:
-			printf("\nobject does not exists\n");
-			return errorcode;
-		case 19:
-			printf("\nobject ist active (actimode = true)\n");
-			return errorcode;
-		default:
-			printf("\nerror\n");
-			return errorcode;
-	}
-	
-	
-	return errorcode;
-}
 
-/**
- * Analyses CREATEOBJECT reply
- * return value is errorcode
- * (0: OK, 17: objecttype does not exist, 49: object already exists)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- */
-int analysecreateobjectreply(char xdr[], int xdrlength)
-{
-	int errorcode;
+	case KS_ERR_OK:
+		return errorcode;
+	case KS_ERR_GENERIC:
+		logfile_error("\nKS_ERR_GENERIC received\n");
+		return errorcode;
+	case KS_ERR_TARGETGENERIC:
+		logfile_error("\nKS_ERR_TARGETGENERIC received\n");
+		return errorcode;
+	case KS_ERR_BADAUTH:
+		logfile_error("\nKS_ERR_BADAUTH received\n");
+		return errorcode;
+	case KS_ERR_UNKNOWNAUTH:
+		logfile_error("\nKS_ERR_UNKNOWNAUTH received\n");
+		return errorcode;
+	case KS_ERR_NOTIMPLEMENTED:
+		logfile_error("\nKS_ERR_NOTIMPLEMENTED received\n");
+		return errorcode;
+	case KS_ERR_BADPARAM:
+		logfile_error("\nKS_ERR_BADPARAM received\n");
+		return errorcode;
+	case KS_ERR_BADOBJTYPE:
+		logfile_error("\nKS_ERR_BADOBJTYPE received\n");
+		return errorcode;
+	case KS_ERR_BADNAME:
+		logfile_error("\nKS_ERR_BADNAME received\n");
+		return errorcode;
+	case KS_ERR_BADPATH:
+		logfile_error("\nKS_ERR_BADPATH received\n");
+		return errorcode;
+	case KS_ERR_BADMASK:
+		logfile_error("\nKS_ERR_BADMASK received\n");
+		return errorcode;
+	case KS_ERR_NOACCESS:
+		logfile_error("\nKS_ERR_NOACCESS received\n");
+		return errorcode;
+	case KS_ERR_BADTYPE:
+		logfile_error("\nKS_ERR_BADTYPE received\n");
+		return errorcode;
+	case KS_ERR_CANTSYNC:
+		logfile_error("\nKS_ERR_CANTSYNC received\n");
+		return errorcode;
+	case KS_ERR_BADSELECTOR:
+		logfile_error("\nKS_ERR_BADSELECTOR received\n");
+		return errorcode;
+	case KS_ERR_BADVALUE:
+		logfile_error("\nKS_ERR_BADVALUE received\n");
+		return errorcode;
+	case KS_ERR_NOREMOTE:
+		logfile_error("\nKS_ERR_NOREMOTE received\n");
+		return errorcode;
+	case KS_ERR_SERVERUNKNOWN:
+		logfile_error("\nKS_ERR_SERVERUNKNOWN received\n");
+		return errorcode;
+	case KS_ERR_BADFACTORY:
+		logfile_error("\nKS_ERR_BADFACTORY received\n");
+		return errorcode;
+	case KS_ERR_ALREADYEXISTS:
+		logfile_error("\nKS_ERR_ALREADYEXISTS received\n");
+		return errorcode;
+	case KS_ERR_BADINITPARAM:
+		logfile_error("\nKS_ERR_BADINITPARAM received\n");
+		return errorcode;
+	case KS_ERR_BADPLACEMENT:
+		logfile_error("\nKS_ERR_BADPLACEMENT received\n");
+		return errorcode;
+	case KS_ERR_CANTMOVE:
+		logfile_error("\nKS_ERR_CANTMOVE received\n");
+		return errorcode;
 
-	errorcode = xdr[43];
-	switch (errorcode)
-	{
-		case 0:
-			printf("\nobject created\n");
-			return errorcode;
-		case 17:
-			printf("\nobjecttype does not exists\n");
-			return errorcode;
-		case 49:
-			printf("\nobject already exists\n");
-			return errorcode;
-		default:
-			printf("\nerror: %d\n", errorcode);
-			return errorcode;
+	default:
+		logfile_error("\nunknown errorcode received: %d\n", errorcode);
+		return errorcode;
 	}
-	
-	
-	return errorcode;
-}
 
-/**
- * Analyses RENAMEOBJECT reply
- * return value is errorcode
- * (0: OK, 17: objecttype does not exist, 52: object already exists)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- */
-int analyserenameobjectreply(char xdr[], int xdrlength)
-{
-	int errorcode;
-	
-	errorcode = xdr[43];
-	switch (errorcode)
-	{
-		case 0:
-			printf("\nobject renamed\n");
-			return errorcode;
-		case 17:
-			printf("\nobject does not exists\n");
-			return errorcode;
-		case 52:
-			printf("\nobject already exists\n");
-			return errorcode;
-		default:
-			printf("\nerror\n");
-			return errorcode;
-	}
-	
-	
-	return errorcode;
-}
 
-/**
- * Analyses LINKOBJECT reply
- * return value is errorcode
- * (0: OK, 7: no link, 17: object does not exist, 49: link already exists)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- */
-int analyselinkobjectreply(char xdr[], int xdrlength)
-{
-	int errorcode;
-	
-	errorcode = xdr[43];
-	switch (errorcode)
-	{
-		case 0:
-			printf("\nobject linked\n");
-			return errorcode;
-		case 7:
-			printf("\nno link\n");
-			return errorcode;
-		case 17:
-			printf("\nobject does not exist\n");
-			return errorcode;
-		case 49:
-			printf("\nlink already exists\n");
-			return errorcode;
-		default:
-			printf("\nerror\n");
-			return errorcode;
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses UNLINKOBJECT reply
- * return value is errorcode
- * (0: OK, 7: no link, 17: object does not exist)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- */
-int analyseunlinkobjectreply(char xdr[], int xdrlength)
-{
-	int errorcode;
-	
-	errorcode = xdr[43];
-	switch (errorcode)
-	{
-		case 0:
-			printf("\nobject linked\n");
-			return errorcode;
-		case 7:
-			printf("\nno link\n");
-			return errorcode;
-		case 17:
-			printf("\nobject does not exist\n");
-			return errorcode;
-		default:
-			printf("\nerror\n");
-			return errorcode;
-	}
-	
-	
-	return errorcode;
-}
-
-/**
- * Analyses SETVAR reply
- * return value is errorcode
- * (0: OK, 20: wrong vartype, 17: object does not exist)
- * input variables are:
- * char xdr[] : received xdr which should be analysed
- * int xdrlength : length of xdr
- */
-int analysesetxdr(char xdr[], int xdrlength)
-{
-	int errorcode;
-	
-	errorcode = xdr[43];
-	switch (errorcode)
-	{
-		case 0:
-			//~ printf("\nsending completed\n");
-			return errorcode;
-		case 20:
-			printf("\npath does not point to selected vartype\n");
-			return errorcode;
-		case 17:
-			printf("\nobject does not exist\n");
-			return errorcode;
-		default:
-			printf("\nerror\n");
-			return errorcode;
-	}
-	
-	
 	return errorcode;
 }
 
@@ -1957,7 +1403,7 @@ void generatesetheader(char *xdr[], int *length)
 {
 	int c;
 	char xdrdata[48];
-	
+
 	//make header
 	xdrdata[0] = 61;				//xid
 	xdrdata[1] = 50;				//xid
@@ -1983,9 +1429,9 @@ void generatesetheader(char *xdr[], int *length)
 	xdrdata[46] = 0;
 	xdrdata[47] = 1;
 
-	*xdr = (char*)malloc(48*sizeof(char));
-	memcpy(*xdr, xdrdata, 48);
-	*length = 48;
+	*xdr = (char*)malloc(52*sizeof(char));		//rpcheader (4bytes) + xdrheader
+	memcpy(*xdr+4, xdrdata, 48);				//rpcheader (first 4 bytes) is set later
+	*length = 52;
 
 	return;
 }
@@ -1993,24 +1439,15 @@ void generatesetheader(char *xdr[], int *length)
 void addrpcheader(char *xdr[], int *length)
 {
 	char *tmp;
-	char rpcheader[4];
-	char *temp = (char*)malloc(*length*sizeof(char));
 	int c;
-	int xdrlength = *length;
-	
-	memset(temp, 0, *length);
-	memcpy(temp, *xdr, *length);
+	int xdrlength = *length - 4;
 
 	//make rpcheader
 	tmp = (char*)&(xdrlength);
 	for (c=0; c<4; c++)
-			rpcheader[3-c] = tmp[c];
-	rpcheader[0] = 0x80;
+		(*xdr)[3-c] = tmp[c];		//memory was allocated during generate*header()
+	(*xdr)[0] = 0x80;
 
-	*xdr = (char*)malloc((xdrlength+4)*sizeof(char));
-	memcpy(*xdr, rpcheader, 4);
-	memcpy(*xdr+4, temp, *length);
-	*length = xdrlength+4;
 
 	return;
 }
@@ -2027,7 +1464,7 @@ void generatesetboolvecbody(char *xdr[], int *length, char *path, int setboolvec
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2039,17 +1476,17 @@ void generatesetboolvecbody(char *xdr[], int *length, char *path, int setboolvec
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = -126;
 	xdrdata[15+pathlength] = veclength;
 	for (c=0; c<veclength; c++)
 		for (d=0; d<4; d++)
-	{
-		buf = (char*)&setboolvec[c];
-		//~ memcpy(tc[c], buf, 4);
-		xdrdata[19+pathlength+4*c-d] = buf[d];
-	}
+		{
+			buf = (char*)&setboolvec[c];
+			//~ memcpy(tc[c], buf, 4);
+			xdrdata[19+pathlength+4*c-d] = buf[d];
+		}
 
 	//make xdr end
 	xdrdata[xdrlength-1] = 0x4;
@@ -2074,7 +1511,7 @@ void generatesetboolbody(char *xdr[], int *length, char *path, int setbool)
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2086,7 +1523,7 @@ void generatesetboolbody(char *xdr[], int *length, char *path, int setbool)
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = 0x2;
 	buf = (char*)&setbool;
@@ -2116,7 +1553,7 @@ void generatesetdoublevecbody(char *xdr[], int *length, char *path, double setdo
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2128,17 +1565,17 @@ void generatesetdoublevecbody(char *xdr[], int *length, char *path, double setdo
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = -95;
 	xdrdata[15+pathlength] = veclength;
 	for (c=0; c<veclength; c++)
 		for (d=0; d<8; d++)
-	{
-		buf = (char*)&setdoublevec[c];
-		//~ memcpy(tc[c], buf, 4);
-		xdrdata[23+pathlength+8*c-d] = buf[d];
-	}
+		{
+			buf = (char*)&setdoublevec[c];
+			//~ memcpy(tc[c], buf, 4);
+			xdrdata[23+pathlength+8*c-d] = buf[d];
+		}
 
 	//make xdr end
 	xdrdata[xdrlength-1] = 0x4;
@@ -2163,7 +1600,7 @@ void generatesetdoublebody(char *xdr[], int *length, char *path, double setdoubl
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2175,7 +1612,7 @@ void generatesetdoublebody(char *xdr[], int *length, char *path, double setdoubl
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	buf = (char*)&setdouble;
 	xdrdata[11+pathlength] = 33;
@@ -2205,7 +1642,7 @@ void generatesetintvecbody(char *xdr[], int *length, char *path, int setintvec[]
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2217,17 +1654,17 @@ void generatesetintvecbody(char *xdr[], int *length, char *path, int setintvec[]
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = -112;
 	xdrdata[15+pathlength] = veclength;
 	for (c=0; c<veclength; c++)
 		for (d=0; d<4; d++)
-	{
-		buf = (char*)&setintvec[c];
-		//~ memcpy(tc[c], buf, 4);
-		xdrdata[19+pathlength+4*c-d] = buf[d];
-	}
+		{
+			buf = (char*)&setintvec[c];
+			//~ memcpy(tc[c], buf, 4);
+			xdrdata[19+pathlength+4*c-d] = buf[d];
+		}
 
 	//make xdr end
 	xdrdata[xdrlength-1] = 0x4;
@@ -2238,6 +1675,31 @@ void generatesetintvecbody(char *xdr[], int *length, char *path, int setintvec[]
 	*length = *length+xdrlength;
 
 	return;
+}
+
+void generatesetbody(int type, char *xdr[], int *length, char *path, void* setvalue)
+{
+	int pathlength;
+	int i, j;
+	int strlength;
+	int xdrposition;
+
+	pathlength = strlen(path);
+	xdrposition = *length;
+
+	switch(type)
+	{
+	case OV_VT_STRING:
+		break;
+	case OV_VT_DOUBLE:
+		break;
+	default:
+		*length += 4+pathlength+24;		//4 = length of path; 24 = setvalue-encoding
+		*xdr = realloc(*xdr, *length);
+
+	}
+
+
 }
 
 void generatesetintbody(char *xdr[], int *length, char *path, int setint)
@@ -2252,7 +1714,7 @@ void generatesetintbody(char *xdr[], int *length, char *path, int setint)
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2264,7 +1726,7 @@ void generatesetintbody(char *xdr[], int *length, char *path, int setint)
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = 16;
 	buf = (char*)&setint;
@@ -2294,7 +1756,7 @@ void generatesetsinglevecbody(char *xdr[], int *length, char *path, float setsin
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2306,17 +1768,17 @@ void generatesetsinglevecbody(char *xdr[], int *length, char *path, float setsin
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = -96;
 	xdrdata[15+pathlength] = veclength;
 	for (c=0; c<veclength; c++)
 		for (d=0; d<4; d++)
-	{
-		buf = (char*)&setsinglevec[c];
-		//~ memcpy(tc[c], buf, 4);
-		xdrdata[19+pathlength+4*c-d] = buf[d];
-	}
+		{
+			buf = (char*)&setsinglevec[c];
+			//~ memcpy(tc[c], buf, 4);
+			xdrdata[19+pathlength+4*c-d] = buf[d];
+		}
 
 	//make xdr end
 	xdrdata[xdrlength-1] = 0x4;
@@ -2341,7 +1803,7 @@ void generatesetsinglebody(char *xdr[], int *length, char *path, float setsingle
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2353,7 +1815,7 @@ void generatesetsinglebody(char *xdr[], int *length, char *path, float setsingle
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = 32;
 	buf = (char*)&setsingle;
@@ -2385,7 +1847,7 @@ void generatesetstringvecbody(char *xdr[], int *length, char *path, char **setst
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2404,7 +1866,7 @@ void generatesetstringvecbody(char *xdr[], int *length, char *path, char **setst
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = -80;
 	xdrdata[15+pathlength] = veclength;
@@ -2440,11 +1902,11 @@ void generatesetstringbody(char *xdr[], int *length, char *path, char *setstring
 	char xdrdata[4096];
 	char *temp = (char*)malloc(*length*sizeof(char));
 	int strlength;
-	
+
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	strlength = strlen(setstring);
@@ -2453,13 +1915,13 @@ void generatesetstringbody(char *xdr[], int *length, char *path, char *setstring
 	while ((strlength%4) != 0)
 		strlength++;
 	xdrlength = 4+pathlength+24+strlength;
-	
+
 	//set path
 	xdrdata[3] = strlen(path);
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = 48;
 	xdrdata[15+pathlength] = strlen(setstring);
@@ -2489,7 +1951,7 @@ void generatesetuintvecbody(char *xdr[], int *length, char *path, unsigned int s
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2501,17 +1963,17 @@ void generatesetuintvecbody(char *xdr[], int *length, char *path, unsigned int s
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = -111;
 	xdrdata[15+pathlength] = veclength;
 	for (c=0; c<veclength; c++)
 		for (d=0; d<4; d++)
-	{
-		buf = (char*)&setuintvec[c];
-		//~ memcpy(tc[c], buf, 4);
-		xdrdata[19+pathlength+4*c-d] = buf[d];
-	}
+		{
+			buf = (char*)&setuintvec[c];
+			//~ memcpy(tc[c], buf, 4);
+			xdrdata[19+pathlength+4*c-d] = buf[d];
+		}
 
 	//make xdr end
 	xdrdata[xdrlength-1] = 0x4;
@@ -2536,7 +1998,7 @@ void generatesetuintbody(char *xdr[], int *length, char *path, unsigned int setu
 	memset(xdrdata, 0, 4096);
 	memset(temp, 0, *length);
 	memcpy(temp, *xdr, *length);
-	
+
 	//set xdrlenght
 	pathlength = strlen(path);
 	while ((pathlength%4) != 0)
@@ -2548,7 +2010,7 @@ void generatesetuintbody(char *xdr[], int *length, char *path, unsigned int setu
 	for (c=0; c<strlen(path); c++)
 		xdrdata[4+c] = path[c];
 	xdrdata[7+pathlength] = 0x2;
-	
+
 	//make specific part of xdr
 	xdrdata[11+pathlength] = 17;
 	buf = (char*)&setuint;
@@ -2570,7 +2032,7 @@ void generategetheader(char *xdr[], int *length)
 {
 	int c;
 	char xdrdata[48];
-	
+
 	//make header
 	xdrdata[0] = 61;				//xid
 	xdrdata[1] = 50;				//xid
@@ -2596,9 +2058,9 @@ void generategetheader(char *xdr[], int *length)
 	xdrdata[46] = 0;
 	xdrdata[47] = 1;
 
-	*xdr = (char*)malloc(48*sizeof(char));
-	memcpy(*xdr, xdrdata, 48);
-	*length = 48;
+	*xdr = (char*)malloc(52*sizeof(char));		//rpcheader (4bytes) + xdrheader
+	memcpy(*xdr+4, xdrdata, 48);				//rpcheader (first 4 bytes) is set later
+	*length = 52;
 
 	return;
 }
@@ -2606,29 +2068,26 @@ void generategetheader(char *xdr[], int *length)
 void generategetbody(char *xdr[], int *length, char *path)
 {
 	char *temp = (char*)malloc(*length*sizeof(char));
-	char xdrdata[4096];
 	int xdrlength;
 	int c;
-	
-	memset(xdrdata, 0, 4096);
-	memset(temp, 0, *length);
-	memcpy(temp, *xdr, *length);
-	
-	//set xdrlength
+
+	memcpy(temp, *xdr, *length);	//save first part of xdr
+
+	//calc xdrlength
 	xdrlength = strlen(path);
 	while ((xdrlength%4)!=0)
 		xdrlength++;
-	
-	//set path
-	xdrdata[3] = strlen(path);
-	for (c=0; c<strlen(path); c++)
-		xdrdata[4+c] = path[c];
-	
-	*xdr = (char*)malloc((*length+xdrlength+4)*sizeof(char));
-	memcpy(*xdr, temp, *length);
-	memcpy(*xdr+*length, xdrdata, xdrlength+4);
+
+	*xdr = (char*)realloc(*xdr, (*length+xdrlength+4)*sizeof(char));
+	memcpy(*xdr, temp, *length);		//copy in first part of xdr
+
+	for (c=0; c<4; c++)
+		(*xdr)[*length+3-c] = ((char*)&xdrlength)[c];		//copy in xdrlength (length of path)
+
+	memcpy(*xdr+*length+4, path, xdrlength);		//copy in path
 	*length = *length+xdrlength+4;
 
+	free(temp);
 	return;
 }
 

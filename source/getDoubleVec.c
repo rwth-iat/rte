@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT void ksapi_getDoubleVec_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getDoubleVec, pvtableop, pgs);
 
 	//Analyse xdr
-	if((analysegetdoublevecreply(xdr, xdrlength, &result, &len_res)) == 0)
+	if((analysegetvecreply(OV_VT_DOUBLE_VEC, xdr, xdrlength, (void**) &result, &len_res)) == 0)
 	{
 		ksapi_getDoubleVec_receivedoublevec_set(pgs, result, len_res);
 		free(result);
