@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT void ksapi_getSingleVec_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getSingleVec, pvtableop, pgs);
 
 	//Analyse xdr
-	if((analysegetsinglevecreply(xdr, xdrlength, &result, &len_res)) == 0)
+	if((analysegetvecreply(OV_VT_SINGLE_VEC, xdr, xdrlength, (void**) &result, &len_res)) == 0)
 	{
 		ksapi_getSingleVec_receivesinglevec_set(pgs, result, len_res);
 		free(result);

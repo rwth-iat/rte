@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT void ksapi_getBoolVec_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getBoolVec, pvtableop, pgbv);
 
 	//Analyse xdr
-	if((analysegetboolvecreply(xdr, xdrlength, &result, &len_res)) == 0)
+	if((analysegetvecreply(OV_VT_BOOL_VEC, xdr, xdrlength, (void**) &result, &len_res)) == 0)
 	{
 		ksapi_getBoolVec_receiveboolvec_set(pgbv, result, len_res);
 		free(result);

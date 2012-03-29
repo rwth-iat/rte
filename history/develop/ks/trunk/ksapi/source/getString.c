@@ -70,7 +70,7 @@ OV_DLLFNCEXPORT void ksapi_getString_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getString, pvtableop, pgs);
 
 	//Analyse xdr
-	if((analysegetstringreply(xdr, xdrlength, &result)) == 0)
+	if((analysegetreply(OV_VT_STRING, xdr, xdrlength, &result)) == 0)
 	{
 		ksapi_getString_receivestring_set(pgs, result);
 		free(result);

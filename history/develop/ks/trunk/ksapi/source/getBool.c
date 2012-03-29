@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT void ksapi_getBool_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getBool, pvtableop, pgb);
 
 	//Analyse xdr
-	if((analysegetboolreply(xdr, xdrlength, &result)) == 0)
+	if((analysegetreply(OV_VT_BOOL, xdr, xdrlength, &result)) == 0)
 	{
 		ksapi_getBool_receivebool_set(pgb, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);

@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT void ksapi_getIntVec_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getIntVec, pvtableop, pgs);
 	
 	//Analyse xdr
-	if((analysegetintvecreply(xdr, xdrlength, (int**)&result, &len_res)) == 0)
+	if((analysegetvecreply(OV_VT_INT_VEC, xdr, xdrlength, (void**) &result, &len_res)) == 0)
 	{
 		ksapi_getIntVec_receiveintvec_set(pgs, result, len_res);
 		free(result);
