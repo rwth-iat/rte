@@ -1,5 +1,5 @@
 /**
- * @file getUInt.c TEST
+ * @file getUInt.c TEST2
  * FunctionBlock for retrieving a remote UInt.
  * Inherits data fields from FBComCommon.
  */
