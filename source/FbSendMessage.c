@@ -118,7 +118,7 @@ OV_DLLFNCEXPORT void fbcomlib_FbSendMessage_typemethod(
  * Creates a Msg obj from current input
  * sets current input to L* variables and sets LTIME
  */
-OV_DLLFNCEXPORT OV_RESULT fbcomlib_FbSendMessage_ACTIMODE_set(
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_FbSendMessage_doSend_set(
     OV_INSTPTR_fbcomlib_FbSendMessage          pobj,
     const OV_BOOL  value
 ) {
@@ -130,7 +130,7 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_FbSendMessage_ACTIMODE_set(
 	//create Mesage obj
 	fbcomlib_CreateAnonymousMessage(fbcomlib_Message, message, pobj, "Message",&result);
 	if(! result) {
-		ov_logfile_debug("FbSendMsg/ACTIMODE_set: cant create Message!");
+		ov_logfile_debug("FbSendMsg/doSend_set: cant create Message!");
 		return OV_ERR_GENERIC;
 	}
 	//leave default for: message->v_sende,
@@ -167,10 +167,10 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_FbSendMessage_ACTIMODE_set(
 
 // Get Set methods
 
-OV_DLLFNCEXPORT OV_BOOL fbcomlib_FbSendMessage_ACTIMODE_get(
+OV_DLLFNCEXPORT OV_BOOL fbcomlib_FbSendMessage_doSend_get(
     OV_INSTPTR_fbcomlib_FbSendMessage          pobj
 ) {
-    return pobj->v_ACTIMODE;
+    return pobj->v_doSend;
 }
 
 OV_DLLFNCEXPORT OV_STRING fbcomlib_FbSendMessage_SERVER_get(
