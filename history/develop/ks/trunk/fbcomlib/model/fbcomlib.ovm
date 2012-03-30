@@ -12,10 +12,10 @@ LIBRARY	fbcomlib
 		COMMENT	=	"Abstract super class providing common variables";
 		VARIABLES
 			host 		: STRING		HAS_ACCESSORS	FLAGS	=	"i"	COMMENT="Target Host" INITIALVALUE	=	"127.0.0.1"; 
-			server	: STRING		HAS_ACCESSORS	FLAGS	=	"i"	COMMENT="Target Server"	INITIALVALUE	=	"fb_server";	
+			server	: STRING		HAS_ACCESSORS	FLAGS	=	"i"	COMMENT="Target Server"	INITIALVALUE	=	"MANAGER";	
 			path : STRING		HAS_ACCESSORS		FLAGS	=	"i"
 				COMMENT			=	"Path on Target Server"
-				INITIALVALUE	=	"";	
+				INITIALVALUE	=	"/vendor/database_name";	
 			doSend :	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"If true, the sending will be started"
 				INITIALVALUE	=	FALSE; 
@@ -648,7 +648,7 @@ END_CLASS;
 CLASS FbSendMessage : CLASS fb/functionblock
 	IS_INSTANTIABLE;
 	VARIABLES
-	  ACTIMODE : BOOL HAS_ACCESSORS COMMENT="Aktivierungsmode des Blocks, Block schaltet sich nach jedem Senden aus.";
+	  doSend : BOOL HAS_ACCESSORS COMMENT="Aktivierungsmode des Blocks, Block schaltet sich nach jedem Senden aus.";
 	  HOST : STRING HAS_ACCESSORS COMMENT="Host an die Nachtricht geschickt werden soll" INITIALVALUE="127.0.0.1";
 	  SERVER : STRING HAS_ACCESSORS COMMENT="Server an die Nachtricht geschickt werden soll" INITIALVALUE="fb_receiver";
 	  PATH : STRING HAS_ACCESSORS COMMENT="Objekt an das die Nachricht geschickt werden soll";
