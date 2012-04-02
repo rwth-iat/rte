@@ -194,18 +194,34 @@ void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 			Ov_StaticPtrCast(ksservhttp_httpserver, cTask);
 	OV_INSTPTR_ov_domain thisdomain = Ov_StaticPtrCast(ov_domain, cTask);
 	OV_INSTPTR_ksservhttp_httpclienthandler ptcpc = NULL;
+	OV_INSTPTR_ksservhttp_authenticatedsession psession = NULL;
 	OV_INSTPTR_ov_domain
 			pclients =
 					(OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "clients");
+	OV_INSTPTR_ov_domain psessions = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "sessions");
 	int listensocket = ksservhttp_httpserver_listensocket_get(this);
 	int receivesocket;
 	char clientname[256];
-	int cnr = 0;
 	int on = 1;
+	int cnr = 0;
 	//int optval = 1;
 	char optval = 1; //used by setsockopt for reuseage of tcp connection port
 	struct sockaddr_in client_addr;
 	int port = ksservhttp_httpserver_port_get(this);
+
+	OV_TIME time;
+
+	//do some authentication housekeeping - remove expired sessions
+	ov_time_gettime(&time); //current time
+	//add maximal session livetime
+	time.secs -= SESSION_TTL;
+
+	Ov_ForEachChildEx(ov_containment, psessions, psession, ksservhttp_authenticatedsession){
+		if(ov_time_compare(&time, &(psession->v_lastactivity)) == 1){
+			//the session is dead
+			Ov_DeleteObject(psession);
+		}
+	}
 
 	//check if we have already an open socket - otherwise create socket
 	if (listensocket == -1) {

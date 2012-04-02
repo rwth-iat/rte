@@ -60,6 +60,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 	OV_INSTPTR_ov_domain			pcommunication  = NULL;
 	OV_INSTPTR_ksservhttp_httpserver	phttpserver  = NULL;
 	OV_INSTPTR_ov_domain			pstaticfiles = NULL;
+	OV_INSTPTR_ov_domain			psessions = NULL;
 	OV_INSTPTR_ksservhttp_staticfile	pindexhtml  = NULL;
 
 	/*
@@ -129,6 +130,22 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 				return result;
 			}
 		}
+
+		/*
+		 * 		create "sessions" container
+		 */
+		psessions = Ov_SearchChildEx(ov_containment, phttpserver, "sessions", ov_domain);
+		if(!psessions)
+		{
+			result = Ov_CreateObject(ov_domain, psessions, phttpserver, "sessions");
+
+			if(Ov_Fail(result))
+			{
+				ov_logfile_error("Fatal: Could not create Object 'staticfiles'");
+				return result;
+			}
+		}
+
 		/*
 		 * 		create "index.html"
 		 */
@@ -163,6 +180,28 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_ksservhttp(void) {
 	*       replace the 'setglobalvars' function created by the code generator
 	*       with a new one.
 	*/
+
+	OV_INSTPTR_ov_library pNewOvLib = NULL;
+	OV_RESULT fr = OV_ERR_OK;
+	OV_INSTPTR_ov_domain pTarget;
+	//this is executed at database start, too
+
+	fr = OV_ERR_OK;
+	pTarget = Ov_DynamicPtrCast(ov_domain, ov_path_getobjectpointer("/acplt", 2));
+	if (pTarget != NULL){
+		fr = Ov_CreateObject(ov_library, pNewOvLib, pTarget, "ksserv");
+		if (fr != OV_ERR_ALREADYEXISTS && Ov_Fail(fr))
+		{
+			ov_logfile_error("ksservhttp needs the library %s which is not available (%s).",
+					"ksserv",
+					ov_result_getresulttext(fr));
+
+		}
+	} else {
+		ov_logfile_error("domain /acplt does not exist");
+	}
+
+
 	OV_LIBRARY_DEF_ksservhttp_new = ov_library_open_ksservhttp_old();
 	OV_LIBRARY_DEF_ksservhttp_new->setglobalvarsfnc = ov_library_setglobalvars_ksservhttp_new;
 	return OV_LIBRARY_DEF_ksservhttp_new;

@@ -43,9 +43,16 @@
 #include "libov/ov_vendortree.h"
 #include "libov/ov_path.h"
 #include "libov/ov_logfile.h"
+#include "libov/ov_time.h"
 
 #include "ksservhttp.h"
 #include "ksserv_logfile.h"
+
+//authorization.c
+#define REALM "Top secret! User: root Pass: pass"
+#define SESSION_TTL 1200 //http session time to live in seconds
+#define RECHECK_MD5 15   //recalculate md5 checksums ov the authenticaton every nth access
+						 //low levels will produce more cpu load since md5 will be calculated more often
 
 //tcpconnection status
 #define STATUS_TCPCON_OK          0

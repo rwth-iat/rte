@@ -83,8 +83,6 @@ LIBRARY ksservhttp
 			receivesocket : INT HAS_ACCESSORS INITIALVALUE=-1;	
 			deleted	:	BOOL INITIALVALUE = FALSE;
 			requestbuffer : STRING;
-			nonce : STRING; //connection nounce for http authorization
-			securitylevel : INT INITIALVALUE=0; //highest level of security that has been verified on this connection
 		END_VARIABLES;
 	
 		OPERATIONS
@@ -92,6 +90,18 @@ LIBRARY ksservhttp
 			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
 			typemethod : C_FUNCTION <FNC_TYPEMETHOD>; 
 		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS authenticatedsession : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT = "class holding security authenticated sessions";
+		VARIABLES
+			nonce : STRING; //connection nounce for http authorization
+			securitylevel : INT INITIALVALUE=0; //highest level of security that has been verified on this connection
+			lastactivity : TIME HAS_ACCESSORS;
+			uncheckedaccess : INT INITIALVALUE=0; //number of times the password has not been verified
+			lasttcpclient : STRING HAS_ACCESSORS INITIALVALUE=""; //last connected name of the tcp session
+		END_VARIABLES;
 	END_CLASS;
 	
 	CLASS staticfile : CLASS ov/object
