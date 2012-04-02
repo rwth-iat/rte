@@ -290,6 +290,7 @@ HMI.prototype = {
 		
 		// prepare smooth hiding
 		HMI.HideableHeader.style.overflow = "hidden";
+		HMI.HideableHeader.style.maxHeight = HMI.HideableHeader.offsetHeight+"px";
 		
 		addEventSimple(document, 'keyup',function(evt){
 				if (evt.keyCode === 27){	// escape key
@@ -785,9 +786,45 @@ HMI.prototype = {
 		if (hide === true || (hide === null && HMI.HeaderIsVisible === true)){
 			//hide menu
 			
-			//	iterate hiding function
-			//
-			HMI.smoothHeaderTimeID = window.setTimeout(this.smoothHeaderHide, 30);
+			//if there is support for CSS transition use it
+			//transition from an height="auto" is not supported, so we change maxHeight
+			if(HMI.HideableHeader.style.MozTransitionDuration !== undefined){
+				HMI.HideableHeader.style.MozTransitionProperty = "all";
+				HMI.HideableHeader.style.MozTransitionTimingFunction = "ease-in-out";
+				HMI.HideableHeader.style.MozTransitionDuration = "0.6s";
+				HMI.HideableHeader.style.maxHeight = '0px';
+				HMI.HeaderIsVisible = false;
+			}else if(HMI.HideableHeader.style.WebkitTransitionDuration !== undefined){
+				HMI.HideableHeader.style.WebkitTransitionProperty = "all";
+				HMI.HideableHeader.style.WebkitTransitionTimingFunction = "ease-in-out";
+				HMI.HideableHeader.style.WebkitTransitionDuration = "0.6s";
+				HMI.HideableHeader.style.maxHeight = '0px';
+				HMI.HeaderIsVisible = false;
+			}else if(HMI.HideableHeader.style.OTransitionDuration !== undefined){
+				HMI.HideableHeader.style.OTransitionProperty = "all";
+				HMI.HideableHeader.style.OTransitionTimingFunction = "ease-in-out";
+				HMI.HideableHeader.style.OTransitionDuration = "0.6s";
+				HMI.HideableHeader.style.maxHeight = '0px';
+				HMI.HeaderIsVisible = false;
+			}else if(HMI.HideableHeader.style.MSTransitionDuration !== undefined){
+				HMI.HideableHeader.style.MSTransitionProperty = "all";
+				HMI.HideableHeader.style.MSTransitionTimingFunction = "ease-in-out";
+				HMI.HideableHeader.style.MSTransitionDuration = "0.6s";
+				HMI.HideableHeader.style.maxHeight = '0px';
+				HMI.HeaderIsVisible = false;
+			}else if(HMI.HideableHeader.style.transitionDuration !== undefined){
+				HMI.HideableHeader.style.transitionProperty = "all";
+				HMI.HideableHeader.style.transitionTimingFunction = "ease-in-out";
+				HMI.HideableHeader.style.transitionDuration = "0.6s";
+				HMI.HideableHeader.style.maxHeight = '0px';
+				HMI.HeaderIsVisible = false;
+			}else{
+				//simulate transition with an own hiding function
+				
+				//	iterate hiding function
+				//
+				HMI.smoothHeaderTimeID = window.setTimeout(this.smoothHeaderHide, 30);
+			}
 			
 			//switch arrow orientation
 			//
@@ -802,7 +839,7 @@ HMI.prototype = {
 			HMI.HeaderIsVisible = true;
 			
 			//repaint header
-			HMI.HideableHeader.style.height = "";
+			HMI.HideableHeader.style.maxHeight = "300px";
 			
 			//switch arrow orientation
 			//
@@ -822,12 +859,12 @@ HMI.prototype = {
 		if (HeaderActualheight <= 30){
 			// last iteration, complete hiding
 			//
-			HMI.HideableHeader.style.height = '1px';	// ie < v8 renders 0px like fully visible
+			HMI.HideableHeader.style.maxHeight = '1px';	// ie < v8 renders 0px like fully visible
 			HMI.HeaderIsVisible = false;
 		}else{
 			//adjust header height and call us in a few milli seconds again
 			HeaderActualheight -= 30;
-			HMI.HideableHeader.style.height = HeaderActualheight + 'px';
+			HMI.HideableHeader.style.maxHeight = HeaderActualheight + 'px';
 			window.setTimeout(HMI.smoothHeaderHide, 30);
 		}
 	},
