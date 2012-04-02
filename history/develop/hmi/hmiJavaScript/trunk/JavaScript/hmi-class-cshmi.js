@@ -174,7 +174,7 @@ cshmi.prototype = {
 			
 			//interprete onload Actions in the order of occurrence
 			while(this.ResourceList.onloadCallStack.length !== 0){
-				EventObjItem = this.ResourceList.onloadCallStack.shift();
+				var EventObjItem = this.ResourceList.onloadCallStack.shift();
 				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
 			}
 			
@@ -1165,6 +1165,14 @@ cshmi.prototype = {
 		var ComponentChilds = Component.getElementsByTagName('*');
 		for(var i = 0;i < ComponentChilds.length;i++){
 			HMI._setLayerPosition(ComponentChilds[i]);
+		}
+		
+		if (this.initStage === false){
+			//interprete onload Actions if we are allready loaded
+			while(this.ResourceList.onloadCallStack.length !== 0){
+				var EventObjItem = this.ResourceList.onloadCallStack.shift();
+				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
+			}
 		}
 		
 		return true;
