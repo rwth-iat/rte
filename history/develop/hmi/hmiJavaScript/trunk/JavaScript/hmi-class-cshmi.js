@@ -2625,7 +2625,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		}
 		svgElement.id = ObjectPath;
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, responseArray);
+		this._processBasicVariables(svgElement, requestList[ObjectPath]);
 		
 		return svgElement;
 	},
