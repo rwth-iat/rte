@@ -543,6 +543,8 @@ cshmi.prototype = {
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
 		var requestList;
+		var ParameterName;
+		var ParameterValue;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			requestList = new Object();
@@ -561,17 +563,30 @@ cshmi.prototype = {
 				return false;
 			}
 			
+			for (ParameterName in requestList[ObjectPath]){
+				ParameterValue = requestList[ObjectPath][ParameterName];
+				if (ParameterValue !== ""){
+					break;
+				}
+			}
+			if (ParameterValue === ""){
+				//the action was not configured
+				ParameterName = "";
+			}
+			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
+			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			this.ResourceList.Actions[ObjectPath].getVarParameters = requestList[ObjectPath];
 			HMI.hmi_log_trace("cshmi._getValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].getVarParameters;
+			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
+			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
 			this.ResourceList.Actions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		var iterationObject = ObjectParent;
@@ -584,189 +599,181 @@ cshmi.prototype = {
 		}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
 		iterationObject = null;
 		
-		for (var ksVarName in requestList[ObjectPath]){
-			var getValueParameter = requestList[ObjectPath][ksVarName];
-			if (getValueParameter !== ""){
-				if (ksVarName === "ksVar" && preventNetworkRequest !== true){
-					var response;
-					if (getValueParameter.charAt(0) == "/"){
-						//we have an absolute path on this server
-						response = HMI.KSClient.getVar(null, '{'+getValueParameter+'}', null);
-					}else{
-						//get baseKsPath
-						var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-						response = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+baseKsPath.path+"/"+getValueParameter+'}', null);
-					}
-					var responseArray = HMI.KSClient.splitKsResponse(response);
-					if (responseArray.length === 0){
-						return null;
-					}else{
-						return responseArray[0];
-					}
-				}else if (ksVarName === "elemVar"){
-					//todo interprete elemVarPath
-					if (getValueParameter == "content"){
-						//content is special, as it is different in OVM and SVG
-						if (typeof ObjectParent.textContent != "undefined"){
-							return ObjectParent.textContent;
-						}else if (typeof ObjectParent.innerText != "undefined"){
-							return ObjectParent.innerText;
-						}else{
-							//todo asv compatibility
-							return null;
-						}
-					}else if (getValueParameter == "title"){
-						for (var i = 0;i < ObjectParent.childNodes.length;i++){
-							if (ObjectParent.childNodes.item(i).tagName === "title"){
-								return ObjectParent.childNodes.item(i).firstChild.textContent;
-							}
-						} 
-						return null;
-					}else if (getValueParameter == "visible"){
-						//display is special, as it is different in OVM and SVG
-						var displayVar = ObjectParent.getAttribute("display");
-						if (displayVar == "none"){
-							return "FALSE";
-						}else{
-							return "TRUE";
-						}
-					}else if (getValueParameter == "rotate"){
-						//rotate is special, as it is different in OVM and SVG
-						if (ObjectParent.tagName == "svg" && ObjectParent.parentNode.tagName == "g" && ObjectParent.parentNode.id === ""){
-							//svg are not transformable, so the rotation is in the objects parent
-							var TransformString = ObjectParent.parentNode.getAttribute("transform");
-						}else if (ObjectParent.tagName == "svg"){
-							//it is an template, with no rotation
-							return "0";
-						}else{
-							TransformString = ObjectParent.getAttribute("transform");
-						}
-						//"rotate(45,21.000000,50.000000)" or "rotate(45)"
-						
-						//remove rotate()
-						TransformString = TransformString.replace(")", "").replace("rotate(", "");
-						//get first number if there are 3, separated via comma
-						return TransformString.split(",")[0];
-					}else if (ObjectParent.hasAttribute(getValueParameter)){
-						return ObjectParent.getAttribute(getValueParameter);
-					}else{
-						//unknown element variable
-						return null;
-					}
-				}else if (ksVarName === "globalVar"){
-					if (this.ResourceList.GlobalVar[getValueParameter] !== undefined){
-						return this.ResourceList.GlobalVar[getValueParameter];
-					}else {
-						return null;
-					}
-
-				}else if (ksVarName === "OperatorInput"){
-					if(getValueParameter.indexOf("textinput") !== -1){
-						var input;
-						var textinputHint;
-						var splittedValueParameter = getValueParameter.split(":");
-						if (splittedValueParameter.length > 1){
-							textinputHint = splittedValueParameter[1];
-							//e.g. "textinput:Some textinputHint:TemplateFBReferenceVariable:InputVarPath"
-							if (splittedValueParameter.length > 3){
-								this.ResourceList.Actions["tempPath"] = new Object();
-								var requestList = new Object();
-								requestList["tempPath"] = new Object();
-								requestList["tempPath"][splittedValueParameter[2]] = splittedValueParameter[3];
-								this.ResourceList.Actions["tempPath"].getVarParameters = requestList["tempPath"];
-								input = window.prompt(textinputHint, this._getValue(ObjectParent, "tempPath"));
-								delete this.ResourceList.Actions["tempPath"];
-							//e.g. "textinput:Some textinputHint:fixValue"
-							}else if (splittedValueParameter.length > 2){
-								input = window.prompt(textinputHint, splittedValueParameter[2]);
-							}else{
-								//e.g. "textinput:Some textinputHint"
-								input = window.prompt(textinputHint);
-							}
-						}else{
-							textinputHint = 'Please input a new value';
-							input = window.prompt(textinputHint);
-						}
-						if (input !== null){
-							return input;
-						}
-					}else if(getValueParameter === "mousex"){
-						var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[0];
-						if (!isNaN(newX)){
-							return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
-						}
-					}else if(getValueParameter === "mousey"){
-						var newY = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[1];
-						if (!isNaN(newY)){
-							return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
-						}
-					}else{
-						HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+getValueParameter);
-					}
+		if (ParameterName === "ksVar" && preventNetworkRequest !== true){
+			var response;
+			if (ParameterValue.charAt(0) == "/"){
+				//we have an absolute path on this server
+				response = HMI.KSClient.getVar(null, '{'+ParameterValue+'}', null);
+			}else{
+				//get baseKsPath
+				var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
+				response = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+baseKsPath.path+"/"+ParameterValue+'}', null);
+			}
+			var responseArray = HMI.KSClient.splitKsResponse(response);
+			if (responseArray.length === 0){
+				return null;
+			}else{
+				return responseArray[0];
+			}
+		}else if (ParameterName === "elemVar"){
+			//todo interprete elemVarPath
+			if (ParameterValue == "content"){
+				//content is special, as it is different in OVM and SVG
+				if (typeof ObjectParent.textContent != "undefined"){
+					return ObjectParent.textContent;
+				}else if (typeof ObjectParent.innerText != "undefined"){
+					return ObjectParent.innerText;
+				}else{
+					//todo asv compatibility
 					return null;
-				}else if (ksVarName === "TemplateFBReferenceVariable" && preventNetworkRequest !== true){
-					var TemplateObject = ObjectParent;
-					do{
-						if(TemplateObject.FBReference && TemplateObject.FBReference[getValueParameter] !== undefined){
-							//a named variable of a FBReference was requested, naming was done in instantiateTemplate
-							if (TemplateObject.FBReference[getValueParameter].charAt(0) === "/"){
-								//String begins with / so it is a fullpath
-								var result = HMI.KSClient.getVar(null, TemplateObject.FBReference[getValueParameter], null);
-								var returnValue = HMI.KSClient.splitKsResponse(result);
-								if (returnValue.length > 0){
-									//valid response
-									return returnValue[0];
-								}
-								//error
-								return null;
-							}else{
-								//a normal relativ path
-								HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
-								return null;
-							}
-						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-							//a variable from a Template was requested
-							
-							if(getValueParameter == "identifier"){
-								//if the identifier is requested calculate this to avoid network request
-								var Objectname = TemplateObject.FBReference["default"].split("/");
-								return Objectname[Objectname.length - 1];
-							}
-							
-							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
-								//String begins with / so it is a fullpath
-								var result = HMI.KSClient.getVar(null, TemplateObject.FBReference["default"]+'.'+getValueParameter, null);
-								var returnValue = HMI.KSClient.splitKsResponse(result);
-								if (returnValue.length > 0){
-									//valid response
-									return returnValue[0];
-								}
-								//error
-								return null;
-							}else{
-								//a normal relativ path
-								HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
-								return null;
-							}
-						}
-					//loop upwards to find the Template object
-					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-					return null;
-				}else if (ksVarName === "TemplateConfigValues"){
-					var TemplateObject = ObjectParent;
-					do{
-						if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[getValueParameter] !== undefined){
-							//this is a ConfigValue and has valid data for us
-							return TemplateObject.ConfigValues[getValueParameter];
-						}
-					//loop upwards to find the Template object
-					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-					return null;
-				}else if (ksVarName === "value"){
-					return getValueParameter;
 				}
-			}//end if empty
-		}//end for in loop
+			}else if (ParameterValue == "title"){
+				for (var i = 0;i < ObjectParent.childNodes.length;i++){
+					if (ObjectParent.childNodes.item(i).tagName === "title"){
+						return ObjectParent.childNodes.item(i).firstChild.textContent;
+					}
+				} 
+				return null;
+			}else if (ParameterValue == "visible"){
+				//display is special, as it is different in OVM and SVG
+				var displayVar = ObjectParent.getAttribute("display");
+				if (displayVar == "none"){
+					return "FALSE";
+				}else{
+					return "TRUE";
+				}
+			}else if (ParameterValue == "rotate"){
+				//rotate is special, as it is different in OVM and SVG
+				if (ObjectParent.tagName == "svg" && ObjectParent.parentNode.tagName == "g" && ObjectParent.parentNode.id === ""){
+					//svg are not transformable, so the rotation is in the objects parent
+					var TransformString = ObjectParent.parentNode.getAttribute("transform");
+				}else if (ObjectParent.tagName == "svg"){
+					//it is an template, with no rotation
+					return "0";
+				}else{
+					TransformString = ObjectParent.getAttribute("transform");
+				}
+				//"rotate(45,21.000000,50.000000)" or "rotate(45)"
+				
+				//remove rotate()
+				TransformString = TransformString.replace(")", "").replace("rotate(", "");
+				//get first number if there are 3, separated via comma
+				return TransformString.split(",")[0];
+			}else if (ObjectParent.hasAttribute(ParameterValue)){
+				return ObjectParent.getAttribute(ParameterValue);
+			}else{
+				//unknown element variable
+				return null;
+			}
+		}else if (ParameterName === "globalVar"){
+			if (this.ResourceList.GlobalVar[ParameterValue] !== undefined){
+				return this.ResourceList.GlobalVar[ParameterValue];
+			}else {
+				return null;
+			}
+		}else if (ParameterName === "OperatorInput"){
+			if(ParameterValue.indexOf("textinput") !== -1){
+				var input;
+				var textinputHint;
+				var splittedValueParameter = ParameterValue.split(":");
+				if (splittedValueParameter.length > 1){
+					textinputHint = splittedValueParameter[1];
+					//e.g. "textinput:Some textinputHint:TemplateFBReferenceVariable:InputVarPath"
+					if (splittedValueParameter.length > 3){
+						this.ResourceList.Actions["tempPath"] = new Object();
+						this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[2];
+						this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[3];
+						input = window.prompt(textinputHint, this._getValue(ObjectParent, "tempPath"));
+						delete this.ResourceList.Actions["tempPath"];
+					//e.g. "textinput:Some textinputHint:fixValue"
+					}else if (splittedValueParameter.length > 2){
+						input = window.prompt(textinputHint, splittedValueParameter[2]);
+					}else{
+						//e.g. "textinput:Some textinputHint"
+						input = window.prompt(textinputHint);
+					}
+				}else{
+					textinputHint = 'Please input a new value';
+					input = window.prompt(textinputHint);
+				}
+				if (input !== null){
+					return input;
+				}
+			}else if(ParameterValue === "mousex"){
+				var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[0];
+				if (!isNaN(newX)){
+					return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
+				}
+			}else if(ParameterValue === "mousey"){
+				var newY = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[1];
+				if (!isNaN(newY)){
+					return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
+				}
+			}else{
+				HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+ParameterValue);
+			}
+			return null;
+		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest !== true){
+			var TemplateObject = ObjectParent;
+			do{
+				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
+					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
+					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
+						//String begins with / so it is a fullpath
+						var result = HMI.KSClient.getVar(null, TemplateObject.FBReference[ParameterValue], null);
+						var returnValue = HMI.KSClient.splitKsResponse(result);
+						if (returnValue.length > 0){
+							//valid response
+							return returnValue[0];
+						}
+						//error
+						return null;
+					}else{
+						//a normal relativ path
+						HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
+						return null;
+					}
+				}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					//a variable from a Template was requested
+					
+					if(ParameterValue == "identifier"){
+						//if the identifier is requested calculate this to avoid network request
+						var Objectname = TemplateObject.FBReference["default"].split("/");
+						return Objectname[Objectname.length - 1];
+					}
+					
+					if (TemplateObject.FBReference["default"].charAt(0) === "/"){
+						//String begins with / so it is a fullpath
+						var result = HMI.KSClient.getVar(null, TemplateObject.FBReference["default"]+'.'+ParameterValue, null);
+						var returnValue = HMI.KSClient.splitKsResponse(result);
+						if (returnValue.length > 0){
+							//valid response
+							return returnValue[0];
+						}
+						//error
+						return null;
+					}else{
+						//a normal relativ path
+						HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
+						return null;
+					}
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			return null;
+		}else if (ParameterName === "TemplateConfigValues"){
+			var TemplateObject = ObjectParent;
+			do{
+				if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[ParameterValue] !== undefined){
+					//this is a ConfigValue and has valid data for us
+					return TemplateObject.ConfigValues[ParameterValue];
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			return null;
+		}else if (ParameterName === "value"){
+			return ParameterValue;
+		}
 		return ""; //fallback
 	},
 	/*********************************
@@ -790,6 +797,8 @@ cshmi.prototype = {
 		//get info where to set the NewValue
 		
 		var requestList;
+		var ParameterName;
+		var ParameterValue;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			requestList = new Object();
@@ -804,144 +813,152 @@ cshmi.prototype = {
 				return false;
 			}
 			
+			for (ParameterName in requestList[ObjectPath]){
+				ParameterValue = requestList[ObjectPath][ParameterName];
+				if (ParameterValue !== ""){
+					break;
+				}
+			}
+			if (ParameterValue === ""){
+				//the action was not configured
+				ParameterName = "";
+			}
+			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			this.ResourceList.Actions[ObjectPath].setVarParameters = requestList[ObjectPath];
+			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
+			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
 			HMI.hmi_log_trace("cshmi._setValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].setVarParameters;
+			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
+			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		//set the new Value
-		for (var ksVarName in requestList[ObjectPath]){
-			var setValueParameter = requestList[ObjectPath][ksVarName];
-			if (setValueParameter !== ""){
-				if (ksVarName === "ksVar"){
-					//ksVar
-					if (setValueParameter.charAt(0) == "/"){
-						//we have an absolute path on this server
-						HMI.KSClient.setVar(null, '{'+setValueParameter+'}', NewValue, null);
-					}else{
-						//get baseKsPath
-						var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-						HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+baseKsPath.path+setValueParameter+'}', NewValue, null);
-					}
-					return true;
-				}else if (ksVarName === "elemVar"){
-					if (setValueParameter == "content"){
-						//content is special, as it is different in OVM and SVG
-						
-						//if trimToLength is set in parent TextFB and perform trimming if needed
-						var trimLength = parseInt(this.ResourceList.Elements[ObjectParent.id].ElementParameters.trimToLength, 10);
-						var contentLength = parseInt(NewValue.length, 10);
-						var trimmedContent;
-						if((trimLength > 0) && (contentLength > trimLength)){
-							trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
-							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
-							this._setTitle(ObjectParent, NewValue);
-						}else if((trimLength < 0) && (contentLength > -trimLength)){
-							trimmedContent =  String.fromCharCode(8230) + NewValue.substr(contentLength + trimLength);
-							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
-							this._setTitle(ObjectParent, NewValue);
-						}else{
-							ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
-						}
-					}else if (setValueParameter == "title"){
-						this._setTitle(ObjectParent, NewValue);
-						return true;
-					}else if (setValueParameter == "visible"){
-						//visible is special, as it is different in OVM and SVG
-						if (NewValue == "FALSE"){
-							ObjectParent.setAttribute("display", "none");
-						}else{
-							ObjectParent.setAttribute("display", "block");
-						}
-					}else if (setValueParameter == "rotate"){
-						//rotate is special, as it is different in OVM and SVG
-						
-						//svg are not transformable, so the rotation is in the objects parent
-						if (ObjectParent.tagName === "svg" && ObjectParent.parentNode.tagName === "g" && ObjectParent.parentNode.id === ""){
-							//object has already an g parent
-							var rotationObject = ObjectParent.parentNode;
-						}else if (ObjectParent.tagName === "svg" && ObjectParent.parentNode.tagName !== "g"){
-							//element has to be shifted into an g element
-							var rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
-							rotationObject.style.overflow = "visible";
-							ObjectParent.parentNode.replaceChild(rotationObject, ObjectParent);
-							rotationObject.appendChild(ObjectParent);
-						}else{
-							//normal visual element
-							rotationObject = ObjectParent;
-						}
-						
-						if(ObjectParent.getAttribute("x") !== null){
-							rotationObject.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("x")+","+ObjectParent.getAttribute("y")+")");
-						}else if(ObjectParent.getAttribute("cx") !== null){
-							ObjectParent.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("cx")+","+ObjectParent.getAttribute("cy")+")");
-						}else{
-							ObjectParent.setAttribute("transform", "rotate("+NewValue+")");
-						}
-					}else{
-						ObjectParent.setAttribute(setValueParameter, NewValue);
-						//reposition Layer if x, y, width or height is changed
-						if (setValueParameter === "x" || setValueParameter === "y" || setValueParameter === "width" || setValueParameter === "height"){
-							HMI._setLayerPosition(ObjectParent);
-							//we want to have offset parameter on all visual elements
-							var ComponentChilds = ObjectParent.getElementsByTagName('*');
-							for(var i = 0;i < ComponentChilds.length;i++){
-								HMI._setLayerPosition(ComponentChilds[i]);
-							}
-						}
-					}
-					return true;
-				}else if (ksVarName === "globalVar"){
-					//globalVar
-					this.ResourceList.GlobalVar[requestList[ObjectPath]["globalVar"]] = NewValue;
-					return true;
-				}else if (ksVarName === "TemplateFBReferenceVariable"){
-					//TemplateFBReferenceVariable
-					var TemplateObject = ObjectParent;
-					do{
-						if(TemplateObject.FBReference && TemplateObject.FBReference[setValueParameter] !== undefined){
-							//a named variable of a FBReference was requested, naming was done in instantiateTemplate
-							if (TemplateObject.FBReference[setValueParameter].charAt(0) === "/"){
-								//String begins with / so it is a fullpath
-								var response = HMI.KSClient.setVar(null, TemplateObject.FBReference[setValueParameter], NewValue, null);
-								if (response.indexOf("KS_ERR") !== -1){
-									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference[setValueParameter]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
-								}
-								return true;
-							}else{
-								//a normal relativ path
-								HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
-								return false;
-							}
-						}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-							//a variable from a Template was requested
-							if (TemplateObject.FBReference["default"].charAt(0) === "/"){
-								//String begins with / so it is a fullpath
-								response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+setValueParameter, NewValue, null);
-								if (response.indexOf("KS_ERR") !== -1){
-									HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+setValueParameter+' not successfull: '+response+' (configured here: '+ObjectPath+').');
-								}
-								return true;
-							}else{
-								//a normal relativ path
-								HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
-								return false;
-							}
-						}
-					//loop upwards to find the Template object
-					}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-					return null;
+		if (ParameterName === "ksVar"){
+			//ksVar
+			if (ParameterValue.charAt(0) == "/"){
+				//we have an absolute path on this server
+				HMI.KSClient.setVar(null, '{'+ParameterValue+'}', NewValue, null);
+			}else{
+				//get baseKsPath
+				var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
+				HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+baseKsPath.path+ParameterValue+'}', NewValue, null);
+			}
+			return true;
+		}else if (ParameterName === "elemVar"){
+			if (ParameterValue == "content"){
+				//content is special, as it is different in OVM and SVG
+				
+				//if trimToLength is set in parent TextFB and perform trimming if needed
+				var trimLength = parseInt(this.ResourceList.Elements[ObjectParent.id].ElementParameters.trimToLength, 10);
+				var contentLength = parseInt(NewValue.length, 10);
+				var trimmedContent;
+				if((trimLength > 0) && (contentLength > trimLength)){
+					trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
+					ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
+					this._setTitle(ObjectParent, NewValue);
+				}else if((trimLength < 0) && (contentLength > -trimLength)){
+					trimmedContent =  String.fromCharCode(8230) + NewValue.substr(contentLength + trimLength);
+					ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
+					this._setTitle(ObjectParent, NewValue);
+				}else{
+					ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
 				}
-			}//end: if empty
-		}//end: for in loop
+			}else if (ParameterValue == "title"){
+				this._setTitle(ObjectParent, NewValue);
+				return true;
+			}else if (ParameterValue == "visible"){
+				//visible is special, as it is different in OVM and SVG
+				if (NewValue == "FALSE"){
+					ObjectParent.setAttribute("display", "none");
+				}else{
+					ObjectParent.setAttribute("display", "block");
+				}
+			}else if (ParameterValue == "rotate"){
+				//rotate is special, as it is different in OVM and SVG
+				
+				//svg are not transformable, so the rotation is in the objects parent
+				if (ObjectParent.tagName === "svg" && ObjectParent.parentNode.tagName === "g" && ObjectParent.parentNode.id === ""){
+					//object has already an g parent
+					var rotationObject = ObjectParent.parentNode;
+				}else if (ObjectParent.tagName === "svg" && ObjectParent.parentNode.tagName !== "g"){
+					//element has to be shifted into an g element
+					var rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+					rotationObject.style.overflow = "visible";
+					ObjectParent.parentNode.replaceChild(rotationObject, ObjectParent);
+					rotationObject.appendChild(ObjectParent);
+				}else{
+					//normal visual element
+					rotationObject = ObjectParent;
+				}
+				
+				if(ObjectParent.getAttribute("x") !== null){
+					rotationObject.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("x")+","+ObjectParent.getAttribute("y")+")");
+				}else if(ObjectParent.getAttribute("cx") !== null){
+					ObjectParent.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("cx")+","+ObjectParent.getAttribute("cy")+")");
+				}else{
+					ObjectParent.setAttribute("transform", "rotate("+NewValue+")");
+				}
+			}else{
+				ObjectParent.setAttribute(ParameterValue, NewValue);
+				//reposition Layer if x, y, width or height is changed
+				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "width" || ParameterValue === "height"){
+					HMI._setLayerPosition(ObjectParent);
+					//we want to have offset parameter on all visual elements
+					var ComponentChilds = ObjectParent.getElementsByTagName('*');
+					for(var i = 0;i < ComponentChilds.length;i++){
+						HMI._setLayerPosition(ComponentChilds[i]);
+					}
+				}
+			}
+			return true;
+		}else if (ParameterName === "globalVar"){
+			//globalVar
+			this.ResourceList.GlobalVar[ParameterValue] = NewValue;
+			return true;
+		}else if (ParameterName === "TemplateFBReferenceVariable"){
+			//TemplateFBReferenceVariable
+			var TemplateObject = ObjectParent;
+			do{
+				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
+					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
+					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
+						//String begins with / so it is a fullpath
+						var response = HMI.KSClient.setVar(null, TemplateObject.FBReference[ParameterValue], NewValue, null);
+						if (response.indexOf("KS_ERR") !== -1){
+							HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference[ParameterValue]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+						}
+						return true;
+					}else{
+						//a normal relativ path
+						HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
+						return false;
+					}
+				}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					//a variable from a Template was requested
+					if (TemplateObject.FBReference["default"].charAt(0) === "/"){
+						//String begins with / so it is a fullpath
+						response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+ParameterValue, NewValue, null);
+						if (response.indexOf("KS_ERR") !== -1){
+							HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+						}
+						return true;
+					}else{
+						//a normal relativ path
+						HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
+						return false;
+					}
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			return false;
+		}
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
 		return false;
 	},
