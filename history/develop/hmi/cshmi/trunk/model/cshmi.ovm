@@ -372,6 +372,8 @@ LIBRARY cshmi
 			COMMENT = "the (relative) path to the element";
 			globalVar : STRING
 			COMMENT = "name of the global variable";
+			persistentGlobalVar : STRING
+			COMMENT = "name of the persistent global variable";
 			OperatorInput : STRING
 			COMMENT = "Value from the user (for example mousex, mousey, textinput or textinput:question)";
 			TemplateFBReferenceVariable : STRING
@@ -397,6 +399,8 @@ LIBRARY cshmi
 			COMMENT = "name of a variable of a referenced FB object";
 			globalVar : STRING
 			COMMENT = "name of the target global variable";
+			persistentGlobalVar : STRING
+			COMMENT = "name of the target persistent global variable";
 		END_VARIABLES;
 		PARTS
 			value : CLASS cshmi/GetValue;
