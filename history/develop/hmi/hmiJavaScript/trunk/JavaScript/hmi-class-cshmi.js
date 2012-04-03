@@ -98,7 +98,6 @@ function cshmi() {
 
 //#########################################################################################################################
 //TODO: check return value of gethandleid
-//getElementsByTagName vs ...NS angleichen
 //#########################################################################################################################
 
 /***********************************************************************
@@ -167,7 +166,7 @@ cshmi.prototype = {
 			//this is only possible now, as the orientation of the parents are not defined when they are not appended
 			HMI._setLayerPosition(Component);
 			//we want to have offset parameter on all visual elements
-			var ComponentChilds = Component.getElementsByTagName('*');
+			var ComponentChilds = Component.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
 				HMI._setLayerPosition(ComponentChilds[i]);
 			}
@@ -397,7 +396,7 @@ cshmi.prototype = {
 			
 			HMI._setLayerPosition(ObjectParent);
 			//we want to have offset parameter on all visual elements
-			var ComponentChilds = ObjectParent.getElementsByTagName('*');
+			var ComponentChilds = ObjectParent.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
 				HMI._setLayerPosition(ComponentChilds[i]);
 			}
@@ -428,7 +427,7 @@ cshmi.prototype = {
 		ObjectParent.setAttribute("y", this.ResourceList.EventInfos.startYObj);
 		HMI._setLayerPosition(ObjectParent);
 		//we want to have offset parameter on all visual elements
-		var ComponentChilds = ObjectParent.getElementsByTagName('*');
+		var ComponentChilds = ObjectParent.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 		for(var i = 0;i < ComponentChilds.length;i++){
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
@@ -872,7 +871,6 @@ cshmi.prototype = {
 				}
 			}else if (ParameterValue == "title"){
 				this._setTitle(ObjectParent, NewValue);
-				return true;
 			}else if (ParameterValue == "visible"){
 				//visible is special, as it is different in OVM and SVG
 				if (NewValue == "FALSE"){
@@ -911,7 +909,7 @@ cshmi.prototype = {
 				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "width" || ParameterValue === "height"){
 					HMI._setLayerPosition(ObjectParent);
 					//we want to have offset parameter on all visual elements
-					var ComponentChilds = ObjectParent.getElementsByTagName('*');
+					var ComponentChilds = ObjectParent.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 					for(var i = 0;i < ComponentChilds.length;i++){
 						HMI._setLayerPosition(ComponentChilds[i]);
 					}
@@ -1179,7 +1177,7 @@ cshmi.prototype = {
 		//needed now, because we append new components
 		HMI._setLayerPosition(Component);
 		//we want to have offset parameter on all visual elements
-		var ComponentChilds = Component.getElementsByTagName('*');
+		var ComponentChilds = Component.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 		for(var i = 0;i < ComponentChilds.length;i++){
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
@@ -2715,7 +2713,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		}
 	},
 	_setTitle: function(svgElement, newText){
-		var titles = svgElement.getElementsByTagName("title");
+		var titles = svgElement.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
 		if (titles.length >0){
 			titles[0].replaceChild(HMI.svgDocument.createTextNode(newText), titles[0].firstChild);
 		}else{
@@ -2730,7 +2728,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		} else {
 			var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
 			node = node || HMI.svgDocument;
-			var elements = node.getElementsByTagName("*");
+			var elements = node.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
 			var returnElements = [];
 			var current;
 			var length = elements.length;
