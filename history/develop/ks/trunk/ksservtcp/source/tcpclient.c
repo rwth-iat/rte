@@ -162,7 +162,6 @@ void ksservtcp_tcpclient_typemethod(
 	u_long xid, messageType, rpcVersion, progID, progVersion, procedure;
 
 	int off = 0;
-
 	fd_set read_flags;
 
 
