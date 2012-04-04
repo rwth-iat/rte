@@ -70,6 +70,7 @@ function cshmi() {
 	//so we have to remember the request client side.
 	this.ResourceList = Object();
 	this.ResourceList.onloadCallStack = Array();
+	this.ResourceList.globalvarChangedCallStack = Array();
 	
 	this.ResourceList.Elements = Object();
 	this.ResourceList.Actions = Object();
@@ -266,7 +267,13 @@ cshmi.prototype = {
 			var EventObjItem = Object();
 			EventObjItem["ObjectParent"] = ObjectParent;
 			EventObjItem["ObjectPath"] = ObjectPath;
-			this.ResourceList.onloadCallStack.push(EventObjItem)
+			this.ResourceList.onloadCallStack.push(EventObjItem);
+		}else if (command[command.length-1] === "globalvarchanged"){
+			//remember Action to be called after a globalVar is changed
+			var EventObjItem = Object();
+			EventObjItem["ObjectParent"] = ObjectParent;
+			EventObjItem["ObjectPath"] = ObjectPath;
+			this.ResourceList.globalvarChangedCallStack.push(EventObjItem);
 		}else{
 			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
@@ -552,6 +559,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["elemVar"] = null;
 			requestList[ObjectPath]["elemVarPath"] = null;
 			requestList[ObjectPath]["globalVar"] = null;
+			requestList[ObjectPath]["persistentGlobalVar"] = null;
 			requestList[ObjectPath]["OperatorInput"] = null;
 			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
 			requestList[ObjectPath]["TemplateConfigValues"] = null;
@@ -562,9 +570,11 @@ cshmi.prototype = {
 				return false;
 			}
 			
+			//search the configuration of the action
 			for (ParameterName in requestList[ObjectPath]){
 				ParameterValue = requestList[ObjectPath][ParameterName];
 				if (ParameterValue !== ""){
+					//we have found the parameter
 					break;
 				}
 			}
@@ -668,6 +678,15 @@ cshmi.prototype = {
 			if (this.ResourceList.GlobalVar[ParameterValue] !== undefined){
 				return this.ResourceList.GlobalVar[ParameterValue];
 			}else {
+				return null;
+			}
+		}else if (ParameterName === "persistentGlobalVar"){
+			if (localStorage !== undefined){
+				return localStorage.getItem(ParameterValue);
+			}else if(this.ResourceList.GlobalVar[ParameterValue] !== undefined){
+				//fall back to globalVar if no persistent storage is available
+				return this.ResourceList.GlobalVar[ParameterValue];
+			}else{
 				return null;
 			}
 		}else if (ParameterName === "OperatorInput"){
@@ -805,6 +824,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["ksVar"] = null;
 			requestList[ObjectPath]["elemVar"] = null;
 			requestList[ObjectPath]["globalVar"] = null;
+			requestList[ObjectPath]["persistentGlobalVar"] = null;
 			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
 			
 			var successCode = this._executeVariablesArray(requestList);
@@ -812,9 +832,11 @@ cshmi.prototype = {
 				return false;
 			}
 			
+			//search the configuration of the action
 			for (ParameterName in requestList[ObjectPath]){
 				ParameterValue = requestList[ObjectPath][ParameterName];
 				if (ParameterValue !== ""){
+					//we have found the parameter
 					break;
 				}
 			}
@@ -919,6 +941,23 @@ cshmi.prototype = {
 		}else if (ParameterName === "globalVar"){
 			//globalVar
 			this.ResourceList.GlobalVar[ParameterValue] = NewValue;
+			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;i++){
+				var EventObjItem = this.ResourceList.globalvarChangedCallStack[i];
+				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
+			}
+			return true;
+		}else if (ParameterName === "persistentGlobalVar"){
+			//persistentGlobalVar
+			if (localStorage !== undefined){
+				localStorage.setItem(ParameterValue, NewValue);
+			}else{
+				//fall back to globalVar if no persistent storage is available
+				this.ResourceList.GlobalVar[ParameterValue] = NewValue;
+			}
+			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;i++){
+				var EventObjItem = this.ResourceList.globalvarChangedCallStack[i];
+				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
+			}
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
 			//TemplateFBReferenceVariable
