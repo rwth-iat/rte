@@ -428,7 +428,7 @@ LIBRARY cshmi
 		VARIABLES
 			ChildrenType : STRING
 			HAS_SET_ACCESSOR
-			COMMENT = "ObjectType to iterate through (OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY)";
+			COMMENT = "ObjectType to iterate through (OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY) or variable name (association or vector)";
 		END_VARIABLES;
 		PARTS
 			forEachChild : CLASS cshmi/csContainer;
@@ -461,7 +461,6 @@ LIBRARY cshmi
 			COMMENT = "the element is visible"
 			INITIALVALUE = TRUE;
 			zindex	: UINT
-			HAS_SET_ACCESSOR
 			COMMENT = "z-index of the component, 0 is least visible (i.e. bottom)"
 			INITIALVALUE = 0;
 			stroke : STRING
@@ -586,7 +585,7 @@ LIBRARY cshmi
 	
 	CLASS ClientEvent : CLASS cshmi/Event
 		IS_INSTANTIABLE;
-		COMMENT = "client triggered actions; the identifier could be onload";
+		COMMENT = "client triggered actions; the identifier could be onload or globalvarchanged";
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;

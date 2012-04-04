@@ -265,3 +265,6 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 
 	return cshmi_Element_zindex_set(Ov_StaticPtrCast(cshmi_Element, pobj), CSHMI_ZINDEX_DEFAULT);
 }
+
+
+//todo destructor which corrects zindex from sibling objects

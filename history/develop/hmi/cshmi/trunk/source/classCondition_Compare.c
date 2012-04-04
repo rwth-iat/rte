@@ -83,6 +83,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_comptype_set(
 		ov_string_print(&erroroutput, "object %i had wrong comptype. Rejecting Variable change.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
 		ov_memstack_unlock();
 		ov_logfile_error(erroroutput);
+		ov_string_print(&erroroutput, NULL);
 		return OV_ERR_BADPARAM;
 	}
 }

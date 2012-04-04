@@ -106,6 +106,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
+	//todo check for center
+
 	//force our keywords
 	if (	ov_string_compare(value, "start") == OV_STRCMP_EQUAL
 	||		ov_string_compare(value, "middle") == OV_STRCMP_EQUAL
@@ -120,6 +122,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
+	//todo check for center
+
 	//force our keywords
 	if (	ov_string_compare(value, "auto") == OV_STRCMP_EQUAL
 	||		ov_string_compare(value, "middle") == OV_STRCMP_EQUAL

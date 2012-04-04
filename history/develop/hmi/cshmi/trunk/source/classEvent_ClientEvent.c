@@ -79,14 +79,18 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_ClientEvent_constructor(
 	if(Ov_Fail(result))
 		return result;
 	
+	//todo check for camelcase
+
 	//force our keywords
-	if (	ov_string_compare(pobj->v_identifier, "onload") == OV_STRCMP_EQUAL){
+	if (	ov_string_compare(pobj->v_identifier, "onload") == OV_STRCMP_EQUAL||
+			ov_string_compare(pobj->v_identifier, "globalvarchanged") == OV_STRCMP_EQUAL){
 		return OV_ERR_OK;
 	}else{
 		ov_memstack_lock();
 		ov_string_print(&erroroutput, "object %s had wrong identifier. Rejecting construction.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
 		ov_memstack_unlock();
 		ov_logfile_error(erroroutput);
+		ov_string_print(&erroroutput, NULL);
 		return OV_ERR_BADPARAM;
 	}
 }

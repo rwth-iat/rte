@@ -79,6 +79,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 	if(Ov_Fail(result))
 		return result;
 	
+	//todo check for move and correct to aftermove
+
 	//force our keywords
 	if (	ov_string_compare(pobj->v_identifier, "click") == OV_STRCMP_EQUAL
 			||	ov_string_compare(pobj->v_identifier, "doubleclick") == OV_STRCMP_EQUAL
@@ -91,6 +93,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 		ov_string_print(&erroroutput, "object %s had wrong identifier. Rejecting construction.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
 		ov_memstack_unlock();
 		ov_logfile_error(erroroutput);
+		ov_string_print(&erroroutput, NULL);
 		return OV_ERR_BADPARAM;
 	}
 }
