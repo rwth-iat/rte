@@ -176,11 +176,16 @@ void ksservtcp_tcpclient_typemethod(
 	fd_set write_flags;
 	struct timeval waitd;
 	char ckxdrlength[4];
+	int itemp = 0;
 	unsigned int timeoutcounter = 0;
 
 	char header[48];
 	int headlength = 28;
 
+
+	xdr_received = 0;
+	size_receiving = 0;
+	size_received = 0;
 
 	//ksserv_logfile_debug("tcpclient typemethod called ");
 	if (receivesocket < 0) { // check if the socket might be OK.
@@ -194,6 +199,7 @@ void ksservtcp_tcpclient_typemethod(
 		perror("ioctl(tcpclient) failed (set to blocking)");
 		return;
 	}
+
 
 	FD_ZERO(&read_flags);
 	FD_SET(receivesocket, &read_flags); // get read flags
@@ -210,70 +216,103 @@ void ksservtcp_tcpclient_typemethod(
 	//check if data arrived
 	if((err > 0) && FD_ISSET(receivesocket, &read_flags))
 	{
-		recvBytes = recv(receivesocket, ckxdrlength, 4,0);		//first 4 bytes code length of xdr
-		if(recvBytes < 4)
+		do
 		{
-			if(recvBytes == 0)		//normal shutdown by client
-				ksserv_logfile_debug("tcpclient/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
-			else			//error
-				ksserv_logfile_error("received %d bytes (less than 4) - shutting down", recvBytes);			//on windows machines a closed socket will return -1 here (instead of 0)
+			err = recv(receivesocket, ckxdrlength, 4,0);		//first 4 bytes code length of xdr
+			if(err < 4)
+			{
+				if(err == 0)		//normal shutdown by client
+					ksserv_logfile_debug("tcpclient/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
+				else			//error
+					ksserv_logfile_error("received %d bytes (less than 4) - shutting down", err);			//on windows machines a closed socket will return -1 here (instead of 0)
 
 #if LOG_OV || LOG_OV_INFO
 #if OV_SYSTEM_NT
-			errno = WSAGetLastError();
+				errno = WSAGetLastError();
 #endif
-			perror("tcpclient - receive");
+				perror("tcpclient - receive");
 #endif
 
-			ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
-			return;
-		}
-		//decoding size of memstream
-		for(i=0; i<4; i++)
-			((char*) &size_receiving)[i] = ckxdrlength[3-i];
-		((char*) &size_receiving)[3] = 0;
-
-		ksserv_logfile_debug("xdr-size: %d", size_receiving);
-
-
-		xdr_received = (char*)malloc(size_receiving);
-		memset(xdr_received, 0, size_receiving);
-
-		size_received = 0;
-		buffer_location = xdr_received;
-
-		do{
-			FD_ZERO(&read_flags);
-			FD_SET(receivesocket, &read_flags); // get read flags
-			waitd.tv_sec = 0;     // Set Timeout
-			waitd.tv_usec = 1000;    //  1 msec
-			err = select(receivesocket + 1, &read_flags, (fd_set*) 0, (fd_set*)0,&waitd);
-#if KSSERVTCP_LOG_DEEP
-			ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
-#if OV_SYSTEM_UNIX
-			ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-waitd.tv_usec);	//Windows Systems don't alter waitd
-#endif
-#endif
-			if(err < 1)		//if error or timeout expired
-			{
-				timeoutcounter++;
-				if(timeoutcounter >= 10)
-				{
-					ksserv_logfile_error("command didnt arrive within reasonable time (10 msecs)");
-					ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
-					free(xdr_received);
-					return;
-				}
+				ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+				return;
 			}
+			//decoding size of memstream
+			for(i=0; i<4; i++)
+				((char*) &itemp)[i] = ckxdrlength[3-i];
+			((char*) &itemp)[3] = 0;
 
-			recvBytes = recv(receivesocket, buffer_location, size_receiving - size_received, 0);
-			size_received += recvBytes;
+			size_receiving += itemp;
+
+			ksserv_logfile_debug("xdr-size: %d", size_receiving);
+
+
+			xdr_received = (char*)realloc(xdr_received, size_receiving);
+
 			buffer_location = &(xdr_received[size_received]);
 
-			ksserv_logfile_debug("%d of %d bytes received, err is %d", size_received, size_receiving, err);
+			do{
+				FD_ZERO(&read_flags);
+				FD_SET(receivesocket, &read_flags); // get read flags
+				waitd.tv_sec = 0;     // Set Timeout
+				waitd.tv_usec = 1000;    //  1 msec
+				err = select(receivesocket + 1, &read_flags, (fd_set*) 0, (fd_set*)0,&waitd);
+#if KSSERVTCP_LOG_DEEP
+				ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
+#if OV_SYSTEM_UNIX
+				ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-waitd.tv_usec);	//Windows Systems don't alter waitd
+#endif
+#endif
+				if(err < 1)		//if error or timeout expired
+				{
+					timeoutcounter++;
+					if(timeoutcounter >= 10)
+					{
+						ov_logfile_error("command didnt arrive within reasonable time (10 msecs), skipped");
+						ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+						free(xdr_received);
+						return;
+					}
+				}
 
-		}while(size_received < size_receiving);
+				recvBytes = recv(receivesocket, buffer_location, size_receiving - size_received, 0);
+				size_received += recvBytes;
+			//	buffer_location = &(xdr_received[size_received]);
 
+				if(recvBytes < 1)
+				{
+#if OV_SYSTEM_NT
+					errno = WSAGetLastError();
+#endif
+					perror("tcpclient - second receive failed");
+				}
+
+				ksserv_logfile_debug("%d of %d bytes received, err is %d", size_received, size_receiving, err);
+
+			}while(size_received < size_receiving);
+
+			if(ckxdrlength[0] != -128)
+			{
+				FD_ZERO(&read_flags);
+					FD_SET(receivesocket, &read_flags); // get read flags
+					waitd.tv_sec = 0;     // Set Timeout
+					waitd.tv_usec = 1000;    //  1 msec
+					err = select(receivesocket + 1, &read_flags, (fd_set*) 0, (fd_set*)0,&waitd);
+				#if KSSERVTCP_LOG_DEEP
+					ksserv_logfile_debug("select returned: %d; line %d", err, __LINE__);
+				#if OV_SYSTEM_UNIX
+					ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-waitd.tv_usec);	//Windows Systems don't alter waitd
+				#endif
+				#endif
+				if(!((err > 0) && FD_ISSET(receivesocket, &read_flags)))
+				{
+					ov_logfile_error("fragmented xdr did not arrive completely within reasonable time");
+					free(xdr_received);
+					ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+					return;
+				}
+
+			}
+		}while(ckxdrlength[0] != -128);
 
 		ksserv_logfile_info("tcpclient/typemethod: got ks cmd w/ %d bytes", size_received);
 		this->v_receivedCalls++; //count number of calls
