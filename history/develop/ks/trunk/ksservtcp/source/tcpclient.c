@@ -164,7 +164,6 @@ void ksservtcp_tcpclient_typemethod(
 	int off = 0;
 	fd_set read_flags;
 
-
 	MemoryStreamFragment* currFragment = NULL;
 	char* placeInBuffer = NULL;
 	int sentChunkSize = 0;
