@@ -138,8 +138,7 @@ void ksservtcp_tcpclient_typemethod(
 	OV_INSTPTR_ksservtcp_unregister pureg = (OV_INSTPTR_ksservtcp_unregister)Ov_SearchChild(ov_containment, managerdomain, "unregister");
 	OV_INSTPTR_ksservtcp_getserverdata pgsd = (OV_INSTPTR_ksservtcp_getserverdata)Ov_SearchChild(ov_containment, managerdomain, "getserverdata");
 	XDR xdrdec, xdrs, resultXDRs;
-	int i;
-	int c;
+	int i, c;
 	int size_received, size_receiving, size_return, xdrlret;
 	int receivesocket = ksservtcp_tcpclient_receivesocket_get(this);
 	char *xdr_received, *xdr_return;
