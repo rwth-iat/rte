@@ -164,6 +164,25 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html><html><head><title>OV-http Server</title></head><body><h1>It works!</h1>Powered by ACPLT/OV.</body></html>");
 
 		}
+
+		/*
+		 * 		create "sse.html"
+		 */
+		pindexhtml = Ov_SearchChildEx(ov_containment, pstaticfiles, "sse.html", ksservhttp_staticfile);
+		if(!pindexhtml)
+		{
+			result = Ov_CreateObject(ksservhttp_staticfile, pindexhtml, pstaticfiles, "sse.html");
+
+			if(Ov_Fail(result))
+			{
+				ov_logfile_error("Fatal: Could not create Object 'sse.html'");
+				return result;
+			}
+
+			//set default value
+			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html><html><head> <meta charset=\"utf-8\" /></head><body>I am a dummy script observing /vendor.database_free.<br/><script>var source = new EventSource('http://localhost:8080/getVar?path=/vendor.database_free&stream=1'); source.onmessage = function(e) { document.body.innerHTML += e.data + '<br>';  }; </script></body></html>");
+
+		}
 	}
 
 	return result;

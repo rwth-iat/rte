@@ -83,6 +83,9 @@ LIBRARY ksservhttp
 			receivesocket : INT HAS_ACCESSORS INITIALVALUE=-1;	
 			deleted	:	BOOL INITIALVALUE = FALSE;
 			requestbuffer : STRING;
+			stream : BOOL HAS_ACCESSORS INITIALVALUE = FALSE; //are we in a stram mode
+			streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
+			streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
 		END_VARIABLES;
 	
 		OPERATIONS

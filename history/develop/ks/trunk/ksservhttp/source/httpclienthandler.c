@@ -1,40 +1,40 @@
 /*
-*	Copyright (C) 2012
-*	Chair of Process Control Engineering,
-*	Aachen University of Technology.
-*	All rights reserved.
-*
-*	Redistribution and use in source and binary forms, with or without
-*	modification, are permitted provided that the following conditions
-*	are met:
-*	1. Redistributions of source code must retain the above copyright
-*	   notice, this list of conditions and the following disclaimer.
-*	2. Redistributions in binary form must print or display the above
-*	   copyright notice either during startup or must have a means for
-*	   the user to view the copyright notice.
-*	3. Redistributions in binary form must reproduce the above copyright
-*	   notice, this list of conditions and the following disclaimer in
-*		the documentation and/or other materials provided with the
-*		distribution.
-*	4. Neither the name of the Chair of Process Control Engineering nor
-*		the name of the Aachen University of Technology may be used to
-*		endorse or promote products derived from this software without
-*		specific prior written permission.
-*
-*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
-*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
-*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
-*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
-*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
-*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-*	POSSIBILITY OF SUCH DAMAGE.
-*
-***********************************************************************/
+ *	Copyright (C) 2012
+ *	Chair of Process Control Engineering,
+ *	Aachen University of Technology.
+ *	All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without
+ *	modification, are permitted provided that the following conditions
+ *	are met:
+ *	1. Redistributions of source code must retain the above copyright
+ *	   notice, this list of conditions and the following disclaimer.
+ *	2. Redistributions in binary form must print or display the above
+ *	   copyright notice either during startup or must have a means for
+ *	   the user to view the copyright notice.
+ *	3. Redistributions in binary form must reproduce the above copyright
+ *	   notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *	4. Neither the name of the Chair of Process Control Engineering nor
+ *		the name of the Aachen University of Technology may be used to
+ *		endorse or promote products derived from this software without
+ *		specific prior written permission.
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+ *	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ *	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+ *	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ *	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ *	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ *	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+ *	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *	POSSIBILITY OF SUCH DAMAGE.
+ *
+ ***********************************************************************/
 
 #ifndef OV_COMPILE_LIBRARY_ksservhttp
 #define OV_COMPILE_LIBRARY_ksservhttp
@@ -66,12 +66,54 @@
 
 #define BUFFER_CHUNK_SIZE 2048
 
+/*** TEMP ***/
+OV_DLLFNCEXPORT OV_BOOL ksservhttp_httpclienthandler_stream_get(
+		OV_INSTPTR_ksservhttp_httpclienthandler          pobj
+) {
+	return pobj->v_stream;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_stream_set(
+		OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
+		const OV_BOOL  value
+) {
+	pobj->v_stream = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_STRING ksservhttp_httpclienthandler_streamrequestheader_get(
+		OV_INSTPTR_ksservhttp_httpclienthandler          pobj
+) {
+	return pobj->v_streamrequestheader;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_streamrequestheader_set(
+		OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
+		const OV_STRING  value
+) {
+	return ov_string_setvalue(&pobj->v_streamrequestheader,value);
+}
+
+OV_DLLFNCEXPORT OV_STRING ksservhttp_httpclienthandler_streambuffer_get(
+		OV_INSTPTR_ksservhttp_httpclienthandler          pobj
+) {
+	return pobj->v_streambuffer;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_streambuffer_set(
+		OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
+		const OV_STRING  value
+) {
+	return ov_string_setvalue(&pobj->v_streambuffer,value);
+}
+/** TEMP **/
+
 
 /**
  * Returns the socket on which the object is receiving.
  */
 OV_DLLFNCEXPORT OV_INT ksservhttp_httpclienthandler_receivesocket_get(
-	OV_INSTPTR_ksservhttp_httpclienthandler          pobj
+		OV_INSTPTR_ksservhttp_httpclienthandler          pobj
 ) {
 	return pobj->v_receivesocket;
 }
@@ -80,8 +122,8 @@ OV_DLLFNCEXPORT OV_INT ksservhttp_httpclienthandler_receivesocket_get(
  * Sets the socket on which the object is receiving.
  */
 OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
-	OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
-	const OV_INT           value
+		OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
+		const OV_INT           value
 ) {
 	struct sockaddr_in m_addr;
 #if OV_SYSTEM_NT
@@ -94,7 +136,7 @@ OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
 	len = sizeof m_addr;
 	if (getpeername(value, (struct sockaddr*)&m_addr, &len) == -1) {
 		ksserv_logfile_error("Error while determining source IP of tcpclient -- getpeername() failed");
-		 return OV_ERR_OK;
+		return OV_ERR_OK;
 	}
 	ov_string_print(&pobj->v_sourceAdr, "%s:%d", inet_ntoa(m_addr.sin_addr), (int) ntohs(m_addr.sin_port));
 	ksserv_logfile_debug("httpclienthandler/receivesocket/set: new TCPSocket %d from %s", value, pobj->v_sourceAdr);
@@ -106,11 +148,11 @@ OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
  * This method is called on startup.
  */
 OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_startup(
-	OV_INSTPTR_ov_object 	pobj
+		OV_INSTPTR_ov_object 	pobj
 ) {
 	//ksserv_logfile_info("httpclienthandler/startup ###########");
 	ov_object_startup(pobj);
-    return;
+	return;
 }
 
 /**
@@ -118,7 +160,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_startup(
  * It closes open socket.
  */
 OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
-	OV_INSTPTR_ov_object 	pobj
+		OV_INSTPTR_ov_object 	pobj
 ) {
 	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, pobj);
 
@@ -158,55 +200,55 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 	}
 	//no free needed since no memory allocated
 	switch (*result)
-		{
-			//still some duplication, but good enough for now
-			case OV_ERR_OK:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_200_HEADER, tmp_header);
-				break;
-			case OV_ERR_BADNAME:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
-				break;
-			case OV_ERR_BADPARAM:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
-				break;
-			case OV_ERR_BADAUTH:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_401_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_401_BODY, tmp_body);
-				break;
-			case OV_ERR_NOACCESS:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_403_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_403_BODY, tmp_body);
-				break;
-			case OV_ERR_BADPATH:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_404_BODY, tmp_body);
-				break;
-			case OV_ERR_BADVALUE:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_414_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_414_BODY, tmp_body);
-				break;
-			case OV_ERR_NOTIMPLEMENTED:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_501_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_501_BODY, tmp_body);
-				break;
-			case OV_ERR_GENERIC:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
-				break;
-			default:
-				ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-				ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
-				break;
+	{
+	//still some duplication, but good enough for now
+	case OV_ERR_OK:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_200_HEADER, tmp_header);
+		break;
+	case OV_ERR_BADNAME:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
+		break;
+	case OV_ERR_BADPARAM:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
+		break;
+	case OV_ERR_BADAUTH:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_401_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_401_BODY, tmp_body);
+		break;
+	case OV_ERR_NOACCESS:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_403_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_403_BODY, tmp_body);
+		break;
+	case OV_ERR_BADPATH:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_404_BODY, tmp_body);
+		break;
+	case OV_ERR_BADVALUE:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_414_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_414_BODY, tmp_body);
+		break;
+	case OV_ERR_NOTIMPLEMENTED:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_501_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_501_BODY, tmp_body);
+		break;
+	case OV_ERR_GENERIC:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
+		break;
+	default:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
+		ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
+		break;
 	}
 
 }
 
 #define EXEC_GETVAR_RETURN ov_string_freelist(pPathList); \
-						Ov_SetDynamicVectorLength(&match,0,STRING);\
-						ov_string_setvalue(&message, NULL);\
-						return
+		Ov_SetDynamicVectorLength(&match,0,STRING);\
+		ov_string_setvalue(&message, NULL);\
+		return
 
 OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING *pPathList = NULL;
@@ -236,9 +278,9 @@ OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 }
 
 #define EXEC_SETVAR_RETURN ov_string_freelist(pPathList); \
-						Ov_SetDynamicVectorLength(&match,0,STRING);\
-						ov_string_setvalue(&message, NULL);\
-						return
+		Ov_SetDynamicVectorLength(&match,0,STRING);\
+		ov_string_setvalue(&message, NULL);\
+		return
 
 OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING *pPathList = NULL;
@@ -271,11 +313,11 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 }
 
 #define EXEC_GETEP_RETURN \
-						Ov_SetDynamicVectorLength(&match,0,STRING);\
-						ov_string_setvalue(&message, NULL);\
-						ov_string_setvalue(&objectType, match.value[0]);\
-						ov_string_setvalue(&outputInfos, match.value[0]);\
-						return
+		Ov_SetDynamicVectorLength(&match,0,STRING);\
+		ov_string_setvalue(&message, NULL);\
+		ov_string_setvalue(&objectType, match.value[0]);\
+		ov_string_setvalue(&outputInfos, match.value[0]);\
+		return
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_ov_object pChild = NULL;
@@ -338,7 +380,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 /*
  * The function sends length chars starting from the given pointer
  *
-  */
+ */
 OV_RESULT send_tcp(int socket, char* pointer, int length){
 	int sentBytes=0;
 	int sentChunkSize = 0;
@@ -366,6 +408,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 			if (sentChunkSize == -1)
 			{
 				ksserv_logfile_error("send() failed");
+				ov_logfile_debug("send failed");
 				return OV_ERR_GENERIC;
 			}
 		}
@@ -375,6 +418,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 			if (sentChunkSize == -1)
 			{
 				ksserv_logfile_error("send() failed");
+				ov_logfile_debug("send failed");
 				return OV_ERR_GENERIC;
 			}
 		}
@@ -396,7 +440,7 @@ void checkdb(OV_STRING msg){
 	OV_INSTPTR_ov_object pObj=ov_path_getobjectpointer("/vendor",2);
 	pObj = Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), "database_free");
 	ov_vendortree_getvar(pObj, &Variable, NULL);
-	ksserv_logfile_debug("-->> %s: %i", msg, Variable.value.valueunion.val_int);
+	ov_logfile_debug("-->> %s: %i", msg, Variable.value.valueunion.val_int);
 }
 
 /**
@@ -409,10 +453,10 @@ void stop(struct timeval* start, OV_STRING comment){
 	struct timeval end;
 	long mtime, seconds, useconds;
 	gettimeofday(&end, NULL);
-    seconds  = end.tv_sec  - start->tv_sec;
-    useconds = end.tv_usec - start->tv_usec;
-    mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-    ksserv_logfile_debug("%s: Elapsed time: %ld milliseconds\n", comment, mtime);
+	seconds  = end.tv_sec  - start->tv_sec;
+	useconds = end.tv_usec - start->tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	ksserv_logfile_debug("%s: Elapsed time: %ld milliseconds\n", comment, mtime);
 }
 
 
@@ -424,8 +468,8 @@ void stop(struct timeval* start, OV_STRING comment){
  * deletes itself.
  */
 void ksservhttp_httpclienthandler_typemethod(
-	//COmTask OV_INSTPTR_ov_object		pfb
-	OV_INSTPTR_ksserv_ComTask	cTask
+		//COmTask OV_INSTPTR_ov_object		pfb
+		OV_INSTPTR_ksserv_ComTask	cTask
 ) {
 
 	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, cTask);
@@ -447,6 +491,7 @@ void ksservhttp_httpclienthandler_typemethod(
 	OV_BOOL static_file = FALSE; //is true if we send a static file
 	OV_STRING http_version;
 	OV_UINT len;
+	OV_STRING_VEC match = {0,NULL};
 
 	//vector of the variables, even elements are variable names, odds are values
 	OV_STRING_VEC args = {0,NULL};
@@ -459,6 +504,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 		return;
 	}
+
 	do {//read HTTP request from socket in chunks until nothing more appears
 		buffer_size++;
 		buffer = (char*)realloc(buffer, BUFFER_CHUNK_SIZE*buffer_size);
@@ -474,7 +520,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		//if(recvBytes > 0) ksserv_logfile_error("httpclienthandler/typemethod: ks cmd chunk no %d recv %d bytes, pBuffStart %p, pBuffInside %p",buffer_size, recvBytes, buffer, buffer_location);
 	} while(recvBytes == BUFFER_CHUNK_SIZE); // stop if less than maximum bytes was read by recv
 	//if(bytes != -1) ksserv_logfile_error("httpclienthandler/typemethod: ks cmd w/ size %d received ",bytes);
-	
+
 
 #if OV_SYSTEM_NT
 	errno = WSAGetLastError();
@@ -483,27 +529,28 @@ void ksservhttp_httpclienthandler_typemethod(
 		ksserv_logfile_error("httpclienthandler/typemethod: recv error %i, shutdown httpclienthandler", errno);
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
 		//else: bytes = -1 && errno == EAGAIN || EWOULDBLOCK
-	} else if(bytes == 0) {//normal shutdown by client
+	} else if(this->v_stream == FALSE && bytes == 0) {//normal shutdown by client
 		ksserv_logfile_debug("httpclienthandler/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
 		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
-	//} else if (bytes == -1) {  // no current KS command this turn
-	} else if(bytes > 0) {
-			//this is the important part - somehting was read on tht tcp buffer
+		//} else if (bytes == -1) {  // no current KS command this turn
+	} else if(this->v_stream == TRUE || (this->v_stream == FALSE && bytes > 0)) {
+		//this is the important part - something was read on tht tcp buffer
 
-			ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
+		ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
 
-			cmd = NULL; //the get request without arguments
-			body = NULL; //reply *WITHOUT HEADER*
-			header = NULL; //header of the reply
-			http_version = NULL; //HTTP version
-			http_request = NULL;
-			http_request_header = NULL;
-			http_request_type = NULL; //GET, HEAD, etc.
+		cmd = NULL; //the get request without arguments
+		body = NULL; //reply *WITHOUT HEADER*
+		header = NULL; //header of the reply
+		http_version = NULL; //HTTP version
+		http_request = NULL;
+		http_request_header = NULL;
+		http_request_type = NULL; //GET, HEAD, etc.
 
-			//MAIN ROUTINE OF THE WEB SERVER
+		//MAIN ROUTINE OF THE WEB SERVER
 
-			//NOTE: this works only for GET and HEAD, for post one needs to evaluate content-length
-			//START handling buffer: appending the read chunk to the buffer that is saved between the cycles
+		//NOTE: this works only for GET and HEAD, for post one needs to evaluate content-length
+		//START handling buffer: appending the read chunk to the buffer that is saved between the cycles
+		if(bytes > 0){
 			if(ov_string_getlength(this->v_requestbuffer) + ov_string_getlength(buffer) <= MAX_HTTP_REQUEST_SIZE){
 				ov_string_append(&(this->v_requestbuffer),buffer);
 			}else{
@@ -512,15 +559,21 @@ void ksservhttp_httpclienthandler_typemethod(
 				//append double line break and let server process the input
 				ov_string_append(&(this->v_requestbuffer),"\r\n\r\n");
 			}
+		}
+
+		//if no stream mode, wait for the end of the header
+		if(this->v_stream == FALSE){
 			//if no double line break detected yet - wait till next cycle
 			if(!strstr(this->v_requestbuffer, "\r\n\r\n")){
 				free(buffer);
 				return;
 			}
-			//END handling buffer
+		}
+		ksserv_logfile_error("httpclienthandler/typemethod: got http command w/ %d bytes",bytes);
 
-			ksserv_logfile_error("httpclienthandler/typemethod: got http command w/ %d bytes",bytes);
+		//END handling buffer
 
+		if(this->v_stream == FALSE){
 			//this->v_requestbuffer contains the raw request
 			//split header and footer of the http request
 			http_request = ov_string_split(this->v_requestbuffer, "\r\n\r\n", &len);
@@ -530,171 +583,215 @@ void ksservhttp_httpclienthandler_typemethod(
 			ov_string_append(&http_request_header,"\r\n");
 			//in future: ov_string_setvalue(&http_request_body, http_request[1]);
 
-			//empty the buffers
-			ov_string_setvalue(&(this->v_requestbuffer),"");
 			ov_string_freelist(http_request);
+		}else{
+			ov_string_setvalue(&http_request_header, this->v_streamrequestheader);
+		}
 
-			//debug - output header
-			ksserv_logfile_error("%s", http_request_header);
+		//empty the buffers
+		ov_string_setvalue(&(this->v_requestbuffer),"");
 
-			//http_request_header is the request header
-			//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
+		//debug - output header
+		ksserv_logfile_error("%s", http_request_header);
 
-			//START default behaviour
-			//scan header for Connection: close - the default behavior is keep-alive
-			if(strstr(http_request_header, "Connection: close\r\n")){
-				keep_alive = FALSE;
-			}
-			//default HTTP version
-			ov_string_setvalue(&http_version, "1.1");
-			//END default behaviour
+		//http_request_header is the request header
+		//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
-			//parse request header into get command and arguments request
-			if(!Ov_Fail(result)){
-				result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type);
-			}
+		//START default behaviour
+		//scan header for Connection: close - the default behavior is keep-alive
+		if(strstr(http_request_header, "Connection: close\r\n")){
+			keep_alive = FALSE;
+		}
+		//default HTTP version
+		ov_string_setvalue(&http_version, "1.1");
+		//END default behaviour
 
-			//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
+		//parse request header into get command and arguments request
+		if(!Ov_Fail(result)){
+			result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type);
+		}
 
-			if(!Ov_Fail(result)){
-				result = OV_ERR_NOTIMPLEMENTED;
-				//check which kind of request is coming in
-				if(	ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL ||
+		//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
+		if(!Ov_Fail(result)){
+			result = OV_ERR_NOTIMPLEMENTED;
+			//check which kind of request is coming in
+			if(	ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL ||
 					ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
-					result = OV_ERR_OK;
-				}else if(ov_string_compare(http_request_type, "PUSH") != OV_STRCMP_EQUAL){
-					result = OV_ERR_OK;
-				}else if(ov_string_compare(http_request_type, "OPTIONS") != OV_STRCMP_EQUAL){
-					//used for Cross-Origin Resource Sharing (CORS)
-					//only an 200 is required
-					result = OV_ERR_OK;
-					ov_string_append(&body, "CORS Request granted"); //need some answer to skip commands
-				}
+				result = OV_ERR_OK;
+			}else if(ov_string_compare(http_request_type, "PUSH") != OV_STRCMP_EQUAL){
+				result = OV_ERR_OK;
+			}else if(ov_string_compare(http_request_type, "OPTIONS") != OV_STRCMP_EQUAL){
+				//used for Cross-Origin Resource Sharing (CORS)
+				//only an 200 is required
+				result = OV_ERR_OK;
+				ov_string_append(&body, "CORS Request granted"); //need some answer to skip commands
 			}
+		}
 
-			//BEGIN command routine
-			if(!Ov_Fail(result) && body == NULL){
-				if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
-					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
-					result = exec_getvar(&args, &body);
-				}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
-					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
-					result = exec_setvar(&args, &body);
-				}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
-					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
-					result = exec_getep(&args, &body);
-				}else if(ov_string_compare(cmd, "/getHandle") == OV_STRCMP_EQUAL){
-					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
-					result = OV_ERR_BADPATH; //404
-					ov_string_append(&body, "Tks-NoHandleSupported");
-					//only communication to this server allowed
-				}else if(ov_string_compare(cmd, "/delHandle") == OV_STRCMP_EQUAL){
-					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
-					result = OV_ERR_BADPATH; //404
-					ov_string_append(&body, "We do not support Handles, so everything is ok.");
-				}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
-					result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
-					if(!Ov_Fail(result)){
-						ov_string_append(&body, "Secret area");
-						result = OV_ERR_OK;
+		//BEGIN command routine
+		if(!Ov_Fail(result) && body == NULL){
+			if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
+				//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
+				//it is caused by the second dot in the filename
+				result = exec_getvar(&args, &body);
+				//stream required
+				find_arguments(&args, "stream", &match);
+				if(match.veclen>0){
+					//yes
+					ov_string_setvalue(&header, "Content-Type: text/event-stream; charset=Windows-1252\r\n");
+					//first time?
+					if(!this->v_stream){
+						//backup the header
+						ov_string_setvalue(&this->v_streamrequestheader, http_request_header);
 					}
-				}
-			}
-			//END command routine
-
-			//raw request header and args not needed any longer
-			ov_string_setvalue(&http_request_header, NULL);
-			Ov_SetDynamicVectorLength(&args,0,STRING);
-
-			//BEGIN static file routine
-			//no command matched yet... Is it a static file?
-			if(!Ov_Fail(result) && body == NULL){
-				OV_STRING filename = NULL;
-				OV_STRING filepath = NULL;
-				OV_STRING basepath = NULL;
-				//assume index.html as a root file
-				if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
-					filename = "index.html";
-				}else{
-					//remove leading /
-					filename = cmd + 1;
-				}
-				ov_memstack_lock();
-				//basepath is something like /communication/httpservers/httpserver
-				basepath = ov_path_getcanonicalpath((OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,Ov_GetParent(ov_containment,this)), 2); //path to the current client instance
-				//a dot in a filename is represented via a percent notation in an identifier,  so we need
-				//to change the parameter. A directory should be possible, but so we need to skip / in conversion
-				ov_string_print(&filepath, "%s/staticfiles/%s", basepath, ov_path_topercent_noslash(filename));
-				ov_memstack_unlock();
-				temp = ov_path_getobjectpointer(filepath,2);
-				ov_string_setvalue(&filepath, NULL);
-				filename = NULL;
-
-				if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
-					staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
-					if (ov_string_compare(staticfile->v_encoding, "") == OV_STRCMP_EQUAL){
-						//adding to the end of the header
-						ov_string_print(&header, "Content-Type: %s\r\n", staticfile->v_mimetype);
+					//is cache updated?
+					if(ov_string_compare(body, this->v_streambuffer) != OV_STRCMP_EQUAL){
+						//ov_logfile_debug("upd %s %s", body, this->v_streambuffer);
+						//yes
+						ov_string_setvalue(&this->v_streambuffer, body);
+						ov_string_print(&body, "data: %s\r\n\r\n", this->v_streambuffer);
 					}else{
-						ov_string_print(&header, "Content-Type: %s; charset=%s\r\n", staticfile->v_mimetype, staticfile->v_encoding);
+						//no - set body to null
+						ov_string_setvalue(&body, "");
 					}
-					result = OV_ERR_OK;
-					//body is NULL here
-					body = staticfile->v_content;
-					static_file = TRUE;
 				}else{
-					result = OV_ERR_BADPATH;
+					//no
+					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
+				}
+			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
+				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
+				result = exec_setvar(&args, &body);
+			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
+				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
+				result = exec_getep(&args, &body);
+			}else if(ov_string_compare(cmd, "/getHandle") == OV_STRCMP_EQUAL){
+				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
+				result = OV_ERR_BADPATH; //404
+				ov_string_append(&body, "Tks-NoHandleSupported");
+				//only communication to this server allowed
+			}else if(ov_string_compare(cmd, "/delHandle") == OV_STRCMP_EQUAL){
+				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
+				result = OV_ERR_BADPATH; //404
+				ov_string_append(&body, "We do not support Handles, so everything is ok.");
+			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
+				result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
+				if(!Ov_Fail(result)){
+					ov_string_append(&body, "Secret area");
+					result = OV_ERR_OK;
 				}
 			}
-			//END static file routine
+		}
+		//END command routine
 
-			//BEGIN forming and sending the answer
-			//now we have to format the raw http answer
-			map_result_to_http(&result, &http_version, &header, &body);
-			//Append common data to header:
-			ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s\r\n", header, OV_LIBRARY_DEF_ksservhttp.version);
-			//no-cache
-			if(static_file == FALSE){
-				ov_string_print(&header, "%sPragma: no-cache\r\nCache-Control: no-cache\r\n", header);
-			}
-			//handle keep_alives
-			if (keep_alive == TRUE) {
-				ov_string_print(&header, "%sConnection: keep-alive\r\n", header);
-			}else{
-				ov_string_print(&header, "%sConnection: close\r\n", header);
-			}
-			//in case of a HEAD request there is no need to send the body
-			if(ov_string_compare(http_request_type, "HEAD") == OV_STRCMP_EQUAL){
-				bodylength = 0;
-			}else{
-				bodylength = (int)ov_string_getlength(body);
-			}
-			//append content length and finalize the header
-			ov_string_print(&header, "%sContent-Length: %i\r\n\r\n", header, bodylength);
+		//raw request header not needed any longer
+		ov_string_setvalue(&http_request_header, NULL);
+		Ov_SetDynamicVectorLength(&args,0,STRING);
+		Ov_SetDynamicVectorLength(&match,0,STRING);
 
+		//BEGIN static file routine
+		//no command matched yet... Is it a static file?
+		if(!Ov_Fail(result) && body == NULL && (header == NULL || strstr(header, "Content-Type: text/event-stream;") == NULL)){
+			OV_STRING filename = NULL;
+			OV_STRING filepath = NULL;
+			OV_STRING basepath = NULL;
+			//assume index.html as a root file
+			if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
+				filename = "index.html";
+			}else{
+				//remove leading /
+				filename = cmd + 1;
+			}
+			ov_memstack_lock();
+			//basepath is something like /communication/httpservers/httpserver
+			basepath = ov_path_getcanonicalpath((OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,Ov_GetParent(ov_containment,this)), 2); //path to the current client instance
+			//a dot in a filename is represented via a percent notation in an identifier,  so we need
+			//to change the parameter. A directory should be possible, but so we need to skip / in conversion
+			ov_string_print(&filepath, "%s/staticfiles/%s", basepath, ov_path_topercent_noslash(filename));
+			ov_memstack_unlock();
+			temp = ov_path_getobjectpointer(filepath,2);
+			ov_string_setvalue(&filepath, NULL);
+			filename = NULL;
+
+			if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
+				staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
+				if (ov_string_compare(staticfile->v_encoding, "") == OV_STRCMP_EQUAL){
+					//adding to the end of the header
+					ov_string_print(&header, "Content-Type: %s\r\n", staticfile->v_mimetype);
+				}else{
+					ov_string_print(&header, "Content-Type: %s; charset=%s\r\n", staticfile->v_mimetype, staticfile->v_encoding);
+				}
+				result = OV_ERR_OK;
+				//body is NULL here
+				body = staticfile->v_content;
+				static_file = TRUE;
+			}else{
+				result = OV_ERR_BADPATH;
+			}
+		}
+		//END static file routine
+
+		//BEGIN forming and sending the answer
+		//now we have to format the raw http answer
+		map_result_to_http(&result, &http_version, &header, &body);
+		//Append common data to header:
+		ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s\r\n", header, OV_LIBRARY_DEF_ksservhttp.version);
+		//no-cache
+		if(static_file == FALSE){
+			ov_string_print(&header, "%sPragma: no-cache\r\nCache-Control: no-cache\r\n", header);
+		}
+		//handle keep_alives
+		if (keep_alive == TRUE) {
+			ov_string_print(&header, "%sConnection: keep-alive\r\n", header);
+		}else{
+			ov_string_print(&header, "%sConnection: close\r\n", header);
+		}
+		//in case of a HEAD request there is no need to send the body
+		if(ov_string_compare(http_request_type, "HEAD") == OV_STRCMP_EQUAL){
+			bodylength = 0;
+		}else{
+			bodylength = (int)ov_string_getlength(body);
+		}
+
+		if(strstr(header, "Content-Type: text/event-stream;") == NULL){
+			//append content length
+			ov_string_print(&header, "%sContent-Length: %i\r\n", header, bodylength);
+		}
+		// and finalize the header
+		ov_string_append(&header, "\r\n");
+
+		//send header only if not in stream mode
+		if(this->v_stream == FALSE){
 			ksserv_logfile_debug("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(header));
-
 			send_tcp(receivesocket, header, (int)ov_string_getlength(header));
-			//in case of a HEAD request there is no need to send the body
-			if(ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
-				ksserv_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(body));
-				send_tcp(receivesocket, body, (int)ov_string_getlength(body));
-			}
+		}
 
-			//free resources
-			ov_string_setvalue(&cmd, NULL);
-			ov_string_setvalue(&http_version, NULL);
-			ov_string_setvalue(&http_request_type, NULL);
-			ov_string_setvalue(&header, NULL);
-			if(static_file == FALSE){
-				ov_string_setvalue(&body, NULL);
-			}
-			//shutdown tcp connection if no keep_alive was set
-			if (keep_alive != TRUE) {
-				ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
-			}
+		//are we starting a stream?
+		if(this->v_stream == FALSE && strstr(header, "Content-Type: text/event-stream") != NULL){
+			this->v_stream = TRUE;
+		}
 
-			ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
+		//in case of a HEAD request there is no need to send the body
+		if(ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL && body!=NULL){
+			ksserv_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(body));
+			result = send_tcp(receivesocket, body, (int)ov_string_getlength(body));
+		}
+
+		//free resources
+		ov_string_setvalue(&cmd, NULL);
+		ov_string_setvalue(&http_version, NULL);
+		ov_string_setvalue(&http_request_type, NULL);
+		ov_string_setvalue(&header, NULL);
+		//if a static file is returned body is pointing inside of the database
+		if(static_file == FALSE){
+			ov_string_setvalue(&body, NULL);
+		}
+
+		//shutdown tcp connection if no keep_alive was set
+		if (keep_alive != TRUE || Ov_Fail(result)) {
+			ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
+		}
+
+		ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
 	}
 	//free up the buffer
 	free(buffer);
