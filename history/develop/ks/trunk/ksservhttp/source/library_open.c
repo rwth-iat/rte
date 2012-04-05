@@ -180,7 +180,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 			}
 
 			//set default value
-			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html><html><head> <meta charset=\"utf-8\" /></head><body>I am a dummy script observing /vendor.database_free.<br/><script>var source = new EventSource('http://localhost:8080/getVar?path=/vendor.database_free&stream=1'); source.onmessage = function(e) { document.body.innerHTML += e.data + '<br>';  }; </script></body></html>");
+			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html><html><head><meta charset='utf-8' /></head><body>I am a dummy script observing /vendor.database_free.<br/><script type='text/javascript'>if(typeof EventSource !== 'undefined'){var source = new EventSource('/getVar?path=/vendor.database_free&stream=1'); source.onmessage = function(e) { document.body.innerHTML += e.data + '<br>';}}else{document.body.innerHTML += '<br>Sorry, EventSource is not supported in your browser.'}; </script></body></html>");
 
 		}
 	}
