@@ -82,7 +82,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 			result = Ov_CreateObject(ov_domain, pcommunication, &pdb->root, "communication");
 			if(Ov_Fail(result))
 			{
-				ov_logfile_error("Fatal: Could not create Object 'communication'");
+				ov_logfile_error("Fatal: Could not create Object 'communication': %s", ov_result_getresulttext(result));
 				return result;
 			}
 		}
@@ -97,7 +97,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 
 			if(Ov_Fail(result))
 			{
-				ov_logfile_error("Fatal: Could not create Object 'httpservers'");
+				ov_logfile_error("Fatal: Could not create Object 'httpservers': %s", ov_result_getresulttext(result));
 				return result;
 			}
 		}
@@ -111,7 +111,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
     	   result = Ov_CreateObject(ksservhttp_httpserver, phttpserver, phttpservers, "httpserver");
     	   if(Ov_Fail(result))
     	   {
-				ov_logfile_error("Fatal: Could not create Object 'httpserver'");
+				ov_logfile_error("Fatal: Could not create Object 'httpserver': %s", ov_result_getresulttext(result));
 			   return result;
 		   }
 		}
@@ -126,7 +126,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 
 			if(Ov_Fail(result))
 			{
-				ov_logfile_error("Fatal: Could not create Object 'staticfiles'");
+				ov_logfile_error("Fatal: Could not create Object 'staticfiles': %s", ov_result_getresulttext(result));
 				return result;
 			}
 		}
@@ -141,7 +141,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 
 			if(Ov_Fail(result))
 			{
-				ov_logfile_error("Fatal: Could not create Object 'staticfiles'");
+				ov_logfile_error("Fatal: Could not create Object 'staticfiles': %s", ov_result_getresulttext(result));
 				return result;
 			}
 		}
@@ -156,7 +156,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 
 			if(Ov_Fail(result))
 			{
-				ov_logfile_error("Fatal: Could not create Object 'index.html'");
+				ov_logfile_error("Fatal: Could not create Object 'index.html': %s", ov_result_getresulttext(result));
 				return result;
 			}
 
@@ -175,7 +175,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 
 			if(Ov_Fail(result))
 			{
-				ov_logfile_error("Fatal: Could not create Object 'sse.html'");
+				ov_logfile_error("Fatal: Could not create Object 'sse.html': %s", ov_result_getresulttext(result));
 				return result;
 			}
 
