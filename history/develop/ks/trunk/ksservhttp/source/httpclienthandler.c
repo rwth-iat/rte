@@ -418,7 +418,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 			if (sentChunkSize == -1)
 			{
 				ksserv_logfile_error("send() failed");
-				ov_logfile_debug("send failed");
+				ksserv_logfile_debug("send failed");
 				return OV_ERR_GENERIC;
 			}
 		}
