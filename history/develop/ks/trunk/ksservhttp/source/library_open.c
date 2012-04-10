@@ -211,7 +211,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 			}\n\
 		}\n\
 	}\n\
-	// got the database size - init anything else\n\
+	// got the database size - init everything else\n\
 	ajaxRequest.onreadystatechange = function(){\n\
 		if(ajaxRequest.readyState == 4){\n\
 			setInterval(function() {\n\
@@ -228,9 +228,9 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 					lastData = e.data;\n\
 					line1.append(lastUpdate, lastData);\n\
 				};\n\
-		}else{\n\
-				alert(\"Your browser does not supoprt EventSource\");\n\
-		{\n\
+			}else{\n\
+				alert(\"Your browser does not support EventSource\");\n\
+			}\n\
 \n\
 			var smoothie = new SmoothieChart({ grid: { strokeStyle: 'rgb(125, 0, 0)', fillStyle: 'rgb(60, 0, 0)', lineWidth: 1, millisPerLine: 2000, verticalSections: 6 }, millisPerPixel: 500, maxValue: ajaxRequest.responseText, minValue: 0});\n\
 			smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });\n\

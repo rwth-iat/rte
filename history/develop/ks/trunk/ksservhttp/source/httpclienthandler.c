@@ -408,7 +408,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 			if (sentChunkSize == -1)
 			{
 				ksserv_logfile_error("send() failed");
-				ov_logfile_debug("send failed");
+				ksserv_logfile_debug("send failed");
 				return OV_ERR_GENERIC;
 			}
 		}
@@ -634,7 +634,7 @@ void ksservhttp_httpclienthandler_typemethod(
 				//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
 				//it is caused by the second dot in the filename
 				result = exec_getvar(&args, &body);
-				//stream required
+				//stream required?
 				find_arguments(&args, "stream", &match);
 				if(match.veclen>0){
 					//yes
@@ -768,6 +768,8 @@ void ksservhttp_httpclienthandler_typemethod(
 		//are we starting a stream?
 		if(this->v_stream == FALSE && strstr(header, "Content-Type: text/event-stream") != NULL){
 			this->v_stream = TRUE;
+			//speed the processing time down to 500ms
+			this->v_cycInterval = 500;
 		}
 
 		//in case of a HEAD request there is no need to send the body
