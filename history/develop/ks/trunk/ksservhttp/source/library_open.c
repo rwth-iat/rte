@@ -180,7 +180,73 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 			}
 
 			//set default value
-			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html><html><head><meta charset='utf-8' /></head><body>I am a dummy script observing /vendor.database_free.<br/><script type='text/javascript'>if(typeof EventSource !== 'undefined'){var source = new EventSource('/getVar?path=/vendor.database_free&stream=1'); source.onmessage = function(e) { document.body.innerHTML += e.data + '<br>';}}else{document.body.innerHTML += '<br>Sorry, EventSource is not supported in your browser.'}; </script></body></html>");
+			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html>\n\
+<html>\n\
+  <head>\n\
+    <title>Stats of database_free</title>\n\
+    <script type=\"text/javascript\" src=\"http://smoothiecharts.org/smoothie.js\"></script>\n\
+  </head>\n\
+  <body>\n\
+\n\
+    <h1>Stats of database_free</h1>\n\
+\n\
+    <canvas id=\"mycanvas\" width=\"400\" height=\"100\"></canvas>\n\
+\n\
+    <script type=\"text/javascript\">\n\
+	//an ajax request first\n\
+	var ajaxRequest;	\n\
+	try{\n\
+		// Opera 8.0+, Firefox, Safari\n\
+		ajaxRequest = new XMLHttpRequest();\n\
+	} catch (e){\n\
+		// Internet Explorer Browsers\n\
+		try{\n\
+			ajaxRequest = new ActiveXObject(\"Msxml2.XMLHTTP\");\n\
+		} catch (e) {\n\
+			try{\n\
+				ajaxRequest = new ActiveXObject(\"Microsoft.XMLHTTP\");\n\
+			} catch (e){\n\
+				// Something went wrong\n\
+				alert(\"Your browser broke!\");\n\
+			}\n\
+		}\n\
+	}\n\
+	// got the database size - init anything else\n\
+	ajaxRequest.onreadystatechange = function(){\n\
+		if(ajaxRequest.readyState == 4){\n\
+			setInterval(function() {\n\
+			  	var time = new Date().getTime();\n\
+			  	if(time-lastUpdate > 990){\n\
+			   		line1.append(time, lastData);\n\
+			  	}\n\
+			}, 1000);\n\
+\n\
+			if(typeof EventSource !== 'undefined'){\n\
+				var source = new EventSource('/getVar?path=/vendor.database_free&stream=1');\n\
+				source.onmessage = function(e) {\n\
+					lastUpdate = new Date().getTime();\n\
+					lastData = e.data;\n\
+					line1.append(lastUpdate, lastData);\n\
+				};\n\
+		}else{\n\
+				alert(\"Your browser does not supoprt EventSource\");\n\
+		{\n\
+\n\
+			var smoothie = new SmoothieChart({ grid: { strokeStyle: 'rgb(125, 0, 0)', fillStyle: 'rgb(60, 0, 0)', lineWidth: 1, millisPerLine: 2000, verticalSections: 6 }, millisPerPixel: 500, maxValue: ajaxRequest.responseText, minValue: 0});\n\
+			smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });\n\
+			smoothie.streamTo(document.getElementById('mycanvas'), 1000);\n\
+		}\n\
+	}\n\
+	ajaxRequest.open('GET', '/getVar?path=/vendor.database_size', true);\n\
+	ajaxRequest.send(null); \n\
+\n\
+	var line1 = new TimeSeries();\n\
+	var lastUpdate = 0;\n\
+	var lastData = 0;\n\
+    </script>\n\
+  </body>\n\
+</html>\n\
+");
 
 		}
 	}
