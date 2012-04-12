@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stats of database_free</title>
+    <script type="text/javascript" src="smoothie.js"></script>
+  </head>
+  <body>
+
+    <h1>Stats of database_free</h1>
+
+    <canvas id="mycanvas" width="400" height="100"></canvas>
+
+    <script type="text/javascript">
+	//an ajax request first
+	var ajaxRequest;	
+	try{
+		// Opera 8.0+, Firefox, Safari
+		ajaxRequest = new XMLHttpRequest();
+	} catch (e){
+		// Internet Explorer Browsers
+		try{
+			ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try{
+				ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (e){
+				// Something went wrong
+				alert("Your browser broke!");
+			}
+		}
+	}
+	// got the database size - init everything else
+	ajaxRequest.onreadystatechange = function(){
+		if(ajaxRequest.readyState == 4){
+			setInterval(function() {
+			  	var time = new Date().getTime();
+			  	if(time-lastUpdate > 990){
+			   		line1.append(time, lastData);
+			  	}
+			}, 1000);
+
+			if(typeof EventSource !== 'undefined'){
+				var source = new EventSource('/getVar?path=/vendor.database_free&stream=1');
+				source.onmessage = function(e) {
+					lastUpdate = new Date().getTime();
+					lastData = e.data;
+					line1.append(lastUpdate, lastData);
+				};
+			}else{
+				alert("Your browser does not support EventSource");
+			}
+
+			var smoothie = new SmoothieChart({ grid: { strokeStyle: 'rgb(125, 0, 0)', fillStyle: 'rgb(60, 0, 0)', lineWidth: 1, millisPerLine: 2000, verticalSections: 6 }, millisPerPixel: 500, maxValue: ajaxRequest.responseText, minValue: 0});
+			smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });
+			smoothie.streamTo(document.getElementById('mycanvas'), 1000);
+		}
+	}
+	ajaxRequest.open('GET', '/getVar?path=/vendor.database_size', true);
+	ajaxRequest.send(null); 
+
+	var line1 = new TimeSeries();
+	var lastUpdate = 0;
+	var lastData = 0;
+    </script>
+  </body>
+</html>

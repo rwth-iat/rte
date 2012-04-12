@@ -61,7 +61,6 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 	OV_INSTPTR_ksservhttp_httpserver	phttpserver  = NULL;
 	OV_INSTPTR_ov_domain			pstaticfiles = NULL;
 	OV_INSTPTR_ov_domain			psessions = NULL;
-	OV_INSTPTR_ksservhttp_staticfile	pindexhtml  = NULL;
 
 	/*
 	 *    set the global variables of the original version
@@ -147,112 +146,21 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 		}
 
 		/*
-		 * 		create "index.html"
+		 * calling a generated wrapper function to create all the static files from /staticfiles dir
+		 * this function is generated in prebuild.tcl
 		 */
-		pindexhtml = Ov_SearchChildEx(ov_containment, pstaticfiles, "index.html", ksservhttp_staticfile);
-		if(!pindexhtml)
+		result = include_localfiles(pstaticfiles);
+		if(Ov_Fail(result))
 		{
-			result = Ov_CreateObject(ksservhttp_staticfile, pindexhtml, pstaticfiles, "index.html");
-
-			if(Ov_Fail(result))
-			{
-				ov_logfile_error("Fatal: Could not create Object 'index.html': %s", ov_result_getresulttext(result));
-				return result;
-			}
-
-			//set default value
-			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html><html><head><title>OV-http Server</title></head><body><h1>It works!</h1>Powered by ACPLT/OV.</body></html>");
-
+			return result;
 		}
 
-		/*
-		 * 		create "sse.html"
-		 */
-		pindexhtml = Ov_SearchChildEx(ov_containment, pstaticfiles, "sse.html", ksservhttp_staticfile);
-		if(!pindexhtml)
-		{
-			result = Ov_CreateObject(ksservhttp_staticfile, pindexhtml, pstaticfiles, "sse.html");
 
-			if(Ov_Fail(result))
-			{
-				ov_logfile_error("Fatal: Could not create Object 'sse.html': %s", ov_result_getresulttext(result));
-				return result;
-			}
-
-			//set default value
-			ov_string_setvalue(&(pindexhtml->v_content), "<!DOCTYPE html>\n\
-<html>\n\
-  <head>\n\
-    <title>Stats of database_free</title>\n\
-    <script type=\"text/javascript\" src=\"http://smoothiecharts.org/smoothie.js\"></script>\n\
-  </head>\n\
-  <body>\n\
-\n\
-    <h1>Stats of database_free</h1>\n\
-\n\
-    <canvas id=\"mycanvas\" width=\"400\" height=\"100\"></canvas>\n\
-\n\
-    <script type=\"text/javascript\">\n\
-	//an ajax request first\n\
-	var ajaxRequest;	\n\
-	try{\n\
-		// Opera 8.0+, Firefox, Safari\n\
-		ajaxRequest = new XMLHttpRequest();\n\
-	} catch (e){\n\
-		// Internet Explorer Browsers\n\
-		try{\n\
-			ajaxRequest = new ActiveXObject(\"Msxml2.XMLHTTP\");\n\
-		} catch (e) {\n\
-			try{\n\
-				ajaxRequest = new ActiveXObject(\"Microsoft.XMLHTTP\");\n\
-			} catch (e){\n\
-				// Something went wrong\n\
-				alert(\"Your browser broke!\");\n\
-			}\n\
-		}\n\
-	}\n\
-	// got the database size - init everything else\n\
-	ajaxRequest.onreadystatechange = function(){\n\
-		if(ajaxRequest.readyState == 4){\n\
-			setInterval(function() {\n\
-			  	var time = new Date().getTime();\n\
-			  	if(time-lastUpdate > 990){\n\
-			   		line1.append(time, lastData);\n\
-			  	}\n\
-			}, 1000);\n\
-\n\
-			if(typeof EventSource !== 'undefined'){\n\
-				var source = new EventSource('/getVar?path=/vendor.database_free&stream=1');\n\
-				source.onmessage = function(e) {\n\
-					lastUpdate = new Date().getTime();\n\
-					lastData = e.data;\n\
-					line1.append(lastUpdate, lastData);\n\
-				};\n\
-			}else{\n\
-				alert(\"Your browser does not support EventSource\");\n\
-			}\n\
-\n\
-			var smoothie = new SmoothieChart({ grid: { strokeStyle: 'rgb(125, 0, 0)', fillStyle: 'rgb(60, 0, 0)', lineWidth: 1, millisPerLine: 2000, verticalSections: 6 }, millisPerPixel: 500, maxValue: ajaxRequest.responseText, minValue: 0});\n\
-			smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });\n\
-			smoothie.streamTo(document.getElementById('mycanvas'), 1000);\n\
-		}\n\
-	}\n\
-	ajaxRequest.open('GET', '/getVar?path=/vendor.database_size', true);\n\
-	ajaxRequest.send(null); \n\
-\n\
-	var line1 = new TimeSeries();\n\
-	var lastUpdate = 0;\n\
-	var lastData = 0;\n\
-    </script>\n\
-  </body>\n\
-</html>\n\
-");
-
-		}
 	}
 
 	return result;
 }
+
 /*
 *       Replace the 'setglobalvars' function of a library with this
 *       previous one, which additionally creates instances.
