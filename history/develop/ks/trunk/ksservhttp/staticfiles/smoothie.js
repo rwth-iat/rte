@@ -295,6 +295,9 @@ SmoothieChart.prototype.render = function(canvas, time) {
       var minValueString = parseFloat(minValue).toFixed(2);
       canvasContext.fillText(maxValueString, dimensions.width - canvasContext.measureText(maxValueString).width - 2, 10);
       canvasContext.fillText(minValueString, dimensions.width - canvasContext.measureText(minValueString).width - 2, dimensions.height - 2);
+      var latestValueString = parseFloat(dataSet[dataSet.length-1][1]).toFixed(2);
+      var latestValueStringOffset = (lastY>dimensions.height/2) ? -4 : 12;
+      canvasContext.fillText(latestValueString, dimensions.width - canvasContext.measureText(latestValueString).width - 2, lastY + latestValueStringOffset);
   }
 
   canvasContext.restore(); // See .save() above.

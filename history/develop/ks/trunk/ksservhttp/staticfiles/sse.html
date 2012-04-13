@@ -45,6 +45,11 @@
 					lastUpdate = new Date().getTime();
 					lastData = e.data;
 					line1.append(lastUpdate, lastData);
+					smoothie.start();
+				};
+				source.onerror  = function(e) {
+					source.close();
+					smoothie.stop();
 				};
 			}else{
 				alert("Your browser does not support EventSource");
