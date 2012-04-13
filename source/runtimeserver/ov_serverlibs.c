@@ -17,12 +17,8 @@
 #include "ov_ksserver_stripped.h"
 #include "ksserv.h"
 #include "ksservtcp.h"
-#include "ksservhttp.h"
 #include "fb.h"
 #include "iec61131stdfb.h"
-#include "controlblocks.h"
-#include "kbuslib.h"
-#include "wagoFBKlib.h"
 
 
 Ov_BeginStaticLibraryTable
@@ -30,7 +26,6 @@ Ov_DefineStaticLibrary(ksserv)
 Ov_DefineStaticLibrary(ksservtcp)
 Ov_DefineStaticLibrary(fb)
 Ov_DefineStaticLibrary(iec61131stdfb)
-Ov_DefineStaticLibrary(controlblocks)
 Ov_EndStaticLibraryTable;
 
 #endif
