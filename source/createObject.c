@@ -194,7 +194,7 @@ OV_DLLFNCEXPORT void ksapi_createObject_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_KSCommon, pvtableop, kscommon);
 
 	//Analyse xdr
-	analysecreateobjectreply(xdr, xdrlength);
+	analyseresultonlyreply(xdr, xdrlength);
 	pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);
 	return;
 }
