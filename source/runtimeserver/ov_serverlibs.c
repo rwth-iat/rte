@@ -3,7 +3,7 @@
  * When compiling runtimeserver with static libraries, the library_table has to be created
  * this is done here
  *
- * ov_runtimeserver has to be linke with -z,muldefs and --whole-archive
+ * ov_runtimeserver has to be linked with "-Wl,--whole-archive -Wl,-z,muldefs"
  */
 
 
