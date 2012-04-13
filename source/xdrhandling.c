@@ -110,7 +110,7 @@ void generatesetstringvecxdr(char *xdr[], int *length, char *path, char **setstr
 void generatesetboolxdr(char *xdr[], int *length, char *path, int setbool)
 {
 	generatesetheader(xdr, length);
-	generatesetboolbody(xdr, length, path, setbool);
+	generatesetbody(OV_VT_BOOL, xdr, length, path, &setbool);
 	addrpcheader(xdr, length);	
 
 	return;
@@ -145,7 +145,7 @@ void generatesetboolvecxdr(char *xdr[], int *length, char *path, int setboolvec[
 void generatesetdoublexdr(char *xdr[], int *length, char *path, double setdouble)
 {
 	generatesetheader(xdr, length);
-	generatesetdoublebody(xdr, length, path, setdouble);
+	generatesetbody(OV_VT_DOUBLE, xdr, length, path, &setdouble);
 	addrpcheader(xdr, length);	
 
 	return;
@@ -180,7 +180,7 @@ void generatesetdoublevecxdr(char *xdr[], int *length, char *path, double setdou
 void generatesetintxdr(char *xdr[], int *length, char *path, int setint)
 {
 	generatesetheader(xdr, length);
-	generatesetintbody(xdr, length, path, setint);
+	generatesetbody(OV_VT_INT, xdr, length, path, &setint);
 	addrpcheader(xdr, length);
 
 	return;
@@ -215,7 +215,7 @@ void generatesetintvecxdr(char *xdr[], int *length, char *path, int setintvec[],
 void generatesetsinglexdr(char *xdr[], int *length, char *path, float setsingle)
 {
 	generatesetheader(xdr, length);
-	generatesetsinglebody(xdr, length, path, setsingle);
+	generatesetbody(OV_VT_SINGLE, xdr, length, path, &setsingle);
 	addrpcheader(xdr, length);
 
 	return;
@@ -346,101 +346,9 @@ void generatesetsinglevecxdr(char *xdr[], int *length, char *path, float setsing
  */
 void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setuint)
 {
-	char xdrdata[4096];
-	char header[48];
-	int c;
-	char rpcheader[4];
-	int pathlength, xdrlength;
-	char temp[4096];
-	char *tmp;
-	char *buf;
-
-	memset(xdrdata, 0, 4096);	
-
-	//set xdrlenght
-	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
-	xdrlength = pathlength+76;
-
-	//make header
-	header[0] = 61;				//xid
-	header[1] = 50;				//xid
-	header[2] = -13;			//xid
-	header[3] = 74;				//xid
-	for (c=4; c<11; c++)
-		header[c] = 0;
-	header[11] = 2;
-	header[12] = 0;
-	header[13] = 4;				//prog.-nr.
-	header[14] = -106;		//prog.-nr.
-	header[15] = 120;			//prog.-nr.
-	for (c=16; c<19; c++)
-		header[c] = 0;
-	header[19] = 2;				//verion-nr.
-	for (c=24; c<46; c++)
-		header[c] = 0;
-	header[46] = 0;
-	header[47] = 1;
-
-	//copy header to xdr
-	memcpy(xdrdata, header, 48);
-
-
-	//set procedure
-	xdrdata[20] = 0;
-	xdrdata[21] = 0;
-	xdrdata[22] = 1;
-	xdrdata[23] = 2;
-
-	//set path
-	xdrdata[51] = strlen(path);
-	for (c=52; c<(strlen(path)+52); c++)
-		xdrdata[c] = path[c-52];
-	for (c=(strlen(path)+52); c<xdrlength; c++)
-		xdrdata[c] = 0;
-
-	//add rpcheader
-	tmp = (char*)&(xdrlength);
-	for (c=0; c<4; c++)
-		rpcheader[3-c] = tmp[c];
-	rpcheader[0] = 0x80;
-
-	memset (temp,'\0',xdrlength+5);
-	memcpy(temp, rpcheader, 4);
-	for (c = 0; c < xdrlength; c++)
-		temp[4+c] = xdrdata[c];
-	xdrlength = xdrlength+4;
-	assert(xdrlength+4 < 4096);
-	memcpy(xdrdata, temp, xdrlength);
-
-	//make xdr end
-	xdrdata[59+pathlength] = 0x2;
-	xdrdata[xdrlength-12] = 0;
-	xdrdata[xdrlength-11] = 0;
-	xdrdata[xdrlength-10] = 0;
-	xdrdata[xdrlength-9] = 0;
-	xdrdata[xdrlength-8] = 0;
-	xdrdata[xdrlength-7] = 0;
-	xdrdata[xdrlength-6] = 0;
-	xdrdata[xdrlength-5] = 0;
-	xdrdata[xdrlength-4] = 0;
-	xdrdata[xdrlength-3] = 0;
-	xdrdata[xdrlength-2] = 0;
-	xdrdata[xdrlength-1] = 0x4;
-
-	//make specific part of xdr
-	buf = (char*)&setuint;
-	memcpy(temp, buf, 4);
-	xdrdata[63+pathlength] = 17;
-	for (c=0; c<4; c++)
-		xdrdata[67+pathlength-c] = temp[c];
-
-	*xdr = (char*)malloc(xdrlength*sizeof(char));
-	memset(*xdr, 1, xdrlength);
-	memcpy(*xdr, xdrdata, xdrlength);
-	*length = xdrlength;
-
+	generatesetheader(xdr, length);
+	generatesetbody(OV_VT_UINT, xdr, length, path, &setuint);
+	addrpcheader(xdr, length);
 
 	return;
 }
@@ -1499,47 +1407,6 @@ void generatesetboolvecbody(char *xdr[], int *length, char *path, int setboolvec
 	return;
 }
 
-void generatesetboolbody(char *xdr[], int *length, char *path, int setbool)
-{
-	int pathlength;
-	int xdrlength;
-	int c;
-	char xdrdata[4096];
-	char *buf;
-	char *temp = (char*)malloc(*length*sizeof(char));
-
-	memset(xdrdata, 0, 4096);
-	memset(temp, 0, *length);
-	memcpy(temp, *xdr, *length);
-
-	//set xdrlenght
-	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
-	xdrlength = 4+pathlength+24;
-
-	//set path
-	xdrdata[3] = strlen(path);
-	for (c=0; c<strlen(path); c++)
-		xdrdata[4+c] = path[c];
-	xdrdata[7+pathlength] = 0x2;
-
-	//make specific part of xdr
-	xdrdata[11+pathlength] = 0x2;
-	buf = (char*)&setbool;
-	for (c=0; c<4; c++)
-		xdrdata[15+pathlength-c] = buf[c];
-
-	//make xdr end
-	xdrdata[xdrlength-1] = 0x4;
-
-	*xdr = (char*)malloc((*length+xdrlength)*sizeof(char));
-	memcpy(*xdr, temp, *length);
-	memcpy(*xdr+*length, xdrdata, xdrlength);
-	*length = *length+xdrlength;
-
-	return;
-}
 
 void generatesetdoublevecbody(char *xdr[], int *length, char *path, double setdoublevec[], int veclength)
 {
@@ -1588,47 +1455,6 @@ void generatesetdoublevecbody(char *xdr[], int *length, char *path, double setdo
 	return;
 }
 
-void generatesetdoublebody(char *xdr[], int *length, char *path, double setdouble)
-{
-	int pathlength;
-	int xdrlength;
-	int c;
-	char xdrdata[4096];
-	char *buf;
-	char *temp = (char*)malloc(*length*sizeof(char));
-
-	memset(xdrdata, 0, 4096);
-	memset(temp, 0, *length);
-	memcpy(temp, *xdr, *length);
-
-	//set xdrlenght
-	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
-	xdrlength = 4+pathlength+28;
-
-	//set path
-	xdrdata[3] = strlen(path);
-	for (c=0; c<strlen(path); c++)
-		xdrdata[4+c] = path[c];
-	xdrdata[7+pathlength] = 0x2;
-
-	//make specific part of xdr
-	buf = (char*)&setdouble;
-	xdrdata[11+pathlength] = 33;
-	for (c=0; c<8; c++)
-		xdrdata[19+pathlength-c] = buf[c];
-
-	//make xdr end
-	xdrdata[xdrlength-1] = 0x4;
-
-	*xdr = (char*)malloc((*length+xdrlength)*sizeof(char));
-	memcpy(*xdr, temp, *length);
-	memcpy(*xdr+*length, xdrdata, xdrlength);
-	*length = *length+xdrlength;
-
-	return;
-}
 
 void generatesetintvecbody(char *xdr[], int *length, char *path, int setintvec[], int veclength)
 {
@@ -1685,6 +1511,10 @@ void generatesetbody(int type, char *xdr[], int *length, char *path, void* setva
 	int xdrposition;
 
 	pathlength = strlen(path);
+	strlength = pathlength;
+	while(strlength%4)		//make length%4 == 0 for allocation
+		strlength++;
+
 	xdrposition = *length;
 
 	switch(type)
@@ -1692,57 +1522,39 @@ void generatesetbody(int type, char *xdr[], int *length, char *path, void* setva
 	case OV_VT_STRING:
 		break;
 	case OV_VT_DOUBLE:
+		*length += 4+strlength+28;		//4 = length of path; 28 = setvalue-encoding
+		*xdr = realloc(*xdr, *length);
+		memset(&((*xdr)[xdrposition]), 0, 4+strlength+28);
+		for(i=0; i<4; i++)
+			(*xdr)[xdrposition+i] = ((char*)&pathlength)[3-i];
+		memcpy(&((*xdr)[xdrposition+4]), path, pathlength);
+		(*xdr)[xdrposition+strlength+4+3] = 0x2;		//whatever 0x2 stands for^^
+		for(i=0; i<4; i++)
+			(*xdr)[xdrposition+strlength+8+i] = ((char*)&type)[3-i];		//set vartype
+		for(i=0; i<8; i++)
+			(*xdr)[xdrposition+strlength+12+i] = ((char*)setvalue)[7-i];		//set value
 		break;
 	default:
-		*length += 4+pathlength+24;		//4 = length of path; 24 = setvalue-encoding
+		*length += 4+strlength+24;		//4 = length of path; 24 = setvalue-encoding
 		*xdr = realloc(*xdr, *length);
+		memset(&((*xdr)[xdrposition]), 0, 4+strlength+24);
+		for(i=0; i<4; i++)
+			(*xdr)[xdrposition+i] = ((char*)&pathlength)[3-i];
+		memcpy(&((*xdr)[xdrposition+4]), path, pathlength);
+		(*xdr)[xdrposition+strlength+4+3] = 0x2;		//whatever 0x2 stands for^^
+		for(i=0; i<4; i++)
+			(*xdr)[xdrposition+strlength+8+i] = ((char*)&type)[3-i];		//set vartype
+		for(i=0; i<4; i++)
+			(*xdr)[xdrposition+strlength+12+i] = ((char*)setvalue)[3-i];		//set value
+		break;
 
 	}
 
-
-}
-
-void generatesetintbody(char *xdr[], int *length, char *path, int setint)
-{
-	int pathlength;
-	int xdrlength;
-	int c;
-	char xdrdata[4096];
-	char *buf;
-	char *temp = (char*)malloc(*length*sizeof(char));
-
-	memset(xdrdata, 0, 4096);
-	memset(temp, 0, *length);
-	memcpy(temp, *xdr, *length);
-
-	//set xdrlenght
-	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
-	xdrlength = 4+pathlength+24;
-
-	//set path
-	xdrdata[3] = strlen(path);
-	for (c=0; c<strlen(path); c++)
-		xdrdata[4+c] = path[c];
-	xdrdata[7+pathlength] = 0x2;
-
-	//make specific part of xdr
-	xdrdata[11+pathlength] = 16;
-	buf = (char*)&setint;
-	for (c=0; c<4; c++)
-		xdrdata[15+pathlength-c] = buf[c];
-
-	//make xdr end
-	xdrdata[xdrlength-1] = 0x4;
-
-	*xdr = (char*)malloc((*length+xdrlength)*sizeof(char));
-	memcpy(*xdr, temp, *length);
-	memcpy(*xdr+*length, xdrdata, xdrlength);
-	*length = *length+xdrlength;
-
+	//set xdr end
+	(*xdr)[*length-1] = 0x4;					//whatever 0x04 stands for^^
 	return;
 }
+
 
 void generatesetsinglevecbody(char *xdr[], int *length, char *path, float setsinglevec[], int veclength)
 {
@@ -1791,47 +1603,6 @@ void generatesetsinglevecbody(char *xdr[], int *length, char *path, float setsin
 	return;
 }
 
-void generatesetsinglebody(char *xdr[], int *length, char *path, float setsingle)
-{
-	int pathlength;
-	int xdrlength;
-	int c;
-	char xdrdata[4096];
-	char *buf;
-	char *temp = (char*)malloc(*length*sizeof(char));
-
-	memset(xdrdata, 0, 4096);
-	memset(temp, 0, *length);
-	memcpy(temp, *xdr, *length);
-
-	//set xdrlenght
-	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
-	xdrlength = 4+pathlength+24;
-
-	//set path
-	xdrdata[3] = strlen(path);
-	for (c=0; c<strlen(path); c++)
-		xdrdata[4+c] = path[c];
-	xdrdata[7+pathlength] = 0x2;
-
-	//make specific part of xdr
-	xdrdata[11+pathlength] = 32;
-	buf = (char*)&setsingle;
-	for (c=0; c<4; c++)
-		xdrdata[15+pathlength-c] = buf[c];
-
-	//make xdr end
-	xdrdata[xdrlength-1] = 0x4;
-
-	*xdr = (char*)malloc((*length+xdrlength)*sizeof(char));
-	memcpy(*xdr, temp, *length);
-	memcpy(*xdr+*length, xdrdata, xdrlength);
-	*length = *length+xdrlength;
-
-	return;
-}
 
 void generatesetstringvecbody(char *xdr[], int *length, char *path, char **setstringvec, int veclength)
 {
@@ -1986,47 +1757,6 @@ void generatesetuintvecbody(char *xdr[], int *length, char *path, unsigned int s
 	return;
 }
 
-void generatesetuintbody(char *xdr[], int *length, char *path, unsigned int setuint)
-{
-	int pathlength;
-	int xdrlength;
-	int c;
-	char xdrdata[4096];
-	char *buf;
-	char *temp = (char*)malloc(*length*sizeof(char));
-
-	memset(xdrdata, 0, 4096);
-	memset(temp, 0, *length);
-	memcpy(temp, *xdr, *length);
-
-	//set xdrlenght
-	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
-	xdrlength = 4+pathlength+24;
-
-	//set path
-	xdrdata[3] = strlen(path);
-	for (c=0; c<strlen(path); c++)
-		xdrdata[4+c] = path[c];
-	xdrdata[7+pathlength] = 0x2;
-
-	//make specific part of xdr
-	xdrdata[11+pathlength] = 17;
-	buf = (char*)&setuint;
-	for (c=0; c<4; c++)
-		xdrdata[15+pathlength-c] = buf[c];
-
-	//make xdr end
-	xdrdata[xdrlength-1] = 0x4;
-
-	*xdr = (char*)malloc((*length+xdrlength)*sizeof(char));
-	memcpy(*xdr, temp, *length);
-	memcpy(*xdr+*length, xdrdata, xdrlength);
-	*length = *length+xdrlength;
-
-	return;
-}
 
 void generategetheader(char *xdr[], int *length)
 {

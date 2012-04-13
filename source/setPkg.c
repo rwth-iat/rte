@@ -118,7 +118,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsb = Ov_StaticPtrCast(ksapi_setBool, pchild);
 			if(pchildsb->v_path && pchildsb->v_sendbool)
-				generatesetboolbody(&xdr, &xdrlength, pchildsb->v_path, pchildsb->v_sendbool);
+				generatesetbody(OV_VT_BOOL, &xdr, &xdrlength, pchildsb->v_path, &(pchildsb->v_sendbool));
 			else
 				errorcode = -1;
 		}
@@ -136,7 +136,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsd = Ov_StaticPtrCast(ksapi_setDouble, pchild);
 			if(pchildsd->v_path && pchildsd->v_senddouble)
-				generatesetdoublebody(&xdr, &xdrlength, pchildsd->v_path, pchildsd->v_senddouble);
+				generatesetbody(OV_VT_DOUBLE, &xdr, &xdrlength, pchildsd->v_path, &(pchildsd->v_senddouble));
 			else
 				errorcode = -1;
 		}
@@ -154,7 +154,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsi = Ov_DynamicPtrCast(ksapi_setInt, pchild);
 			if(pchildsi->v_path && pchildsi->v_sendint)
-				generatesetintbody(&xdr, &xdrlength, pchildsi->v_path, pchildsi->v_sendint);
+				generatesetbody(OV_VT_INT, &xdr, &xdrlength, pchildsi->v_path, &(pchildsi->v_sendint));
 			else
 				errorcode = -1;
 		}
@@ -172,7 +172,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildssgl = Ov_DynamicPtrCast(ksapi_setSingle, pchild);
 			if(pchildssgl->v_path && pchildssgl->v_sendsingle)
-				generatesetsinglebody(&xdr, &xdrlength, pchildssgl->v_path, pchildssgl->v_sendsingle);
+				generatesetbody(OV_VT_SINGLE, &xdr, &xdrlength, pchildssgl->v_path, &(pchildssgl->v_sendsingle));
 			else
 				errorcode = -1;
 		}
@@ -208,7 +208,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsui = Ov_DynamicPtrCast(ksapi_setUInt, pchild);
 			if(pchildsui->v_path && pchildsui->v_senduint)
-				generatesetuintbody(&xdr, &xdrlength, pchildsui->v_path, pchildsui->v_senduint);
+				generatesetbody(OV_VT_UINT, &xdr, &xdrlength, pchildsui->v_path, &(pchildsui->v_senduint));
 			else
 				errorcode = -1;
 		}
