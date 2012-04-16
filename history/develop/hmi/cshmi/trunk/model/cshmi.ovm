@@ -557,6 +557,9 @@ LIBRARY cshmi
 	
 	CLASS Event : CLASS cshmi/Object
 		COMMENT = "an HMI gesture (i.e. a GUI event)";
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS OperatorEvent : CLASS cshmi/Event

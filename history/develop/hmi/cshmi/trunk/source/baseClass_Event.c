@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -40,7 +40,7 @@
 *
 *	File:
 *	------
-*	classEvent_ClientEvent.c
+*	baseClass_Event.c
 *
 *	Editors:
 *	--------
@@ -49,13 +49,12 @@
 *
 *	SVN:
 *	----
-*	$Revision$
-*	$Date$
+*	$Revision: $
+*	$Date: $
 *
 *	History:
 *	--------
-*	15-September-2011			Je		V0.1.0
-*		-	File created
+*	2012-04-04   File created
 *
 ***********************************************************************/
 
@@ -63,35 +62,36 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
+
 #include "cshmilib.h"
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_ClientEvent_constructor(
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Event_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-	/*    
-	*   local variables
-	*/
+	//	local variables
+	OV_INSTPTR_ov_object
+		pParent = NULL;
 	OV_RESULT    result;
-	OV_STRING erroroutput;
-	
+
 	/* do what the base class does first */
-	result = cshmi_Event_constructor(pobj);
+	result = ov_object_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
-	
-	//todo check for camelcase
 
-	//force our keywords
-	if (	ov_string_compare(pobj->v_identifier, "onload") == OV_STRCMP_EQUAL||
-			ov_string_compare(pobj->v_identifier, "globalvarchanged") == OV_STRCMP_EQUAL){
-		return OV_ERR_OK;
-	}else{
-		ov_memstack_lock();
-		ov_string_print(&erroroutput, "object %s had wrong identifier. Rejecting construction.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
-		ov_memstack_unlock();
-		ov_logfile_error(erroroutput);
-		ov_string_print(&erroroutput, NULL);
-		return OV_ERR_BADPARAM;
+	//force correct placement
+	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	if (pParent != NULL){
+		if (!(	Ov_CanCastTo(cshmi_Template, pParent)
+				||	Ov_CanCastTo(cshmi_TemplateDefinition, pParent)
+				||	Ov_CanCastTo(cshmi_Group, pParent)
+				||	Ov_CanCastTo(cshmi_Element, pParent)
+				)){
+			ov_logfile_debug("An Event is not allowed below this parent. Event: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
+			return OV_ERR_BADPLACEMENT;
+		}
 	}
+
+	return OV_ERR_OK;
 }
 
