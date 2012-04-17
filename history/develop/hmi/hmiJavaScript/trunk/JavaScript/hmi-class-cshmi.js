@@ -557,7 +557,6 @@ cshmi.prototype = {
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ksVar"] = null;
 			requestList[ObjectPath]["elemVar"] = null;
-			requestList[ObjectPath]["elemVarPath"] = null;
 			requestList[ObjectPath]["globalVar"] = null;
 			requestList[ObjectPath]["persistentGlobalVar"] = null;
 			requestList[ObjectPath]["OperatorInput"] = null;
@@ -873,6 +872,7 @@ cshmi.prototype = {
 			}
 			return true;
 		}else if (ParameterName === "elemVar"){
+			//todo interprete elemVarPath
 			if (ParameterValue == "content"){
 				//content is special, as it is different in OVM and SVG
 				
@@ -2128,10 +2128,18 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			if (!(evt.button === 0 && evt.detail ==2)){
 			return;
 		}*/
+		
+		//toggle visibility of hideable childtemplates onclick
 		ObjectParent.addEventListener("click", function(evt){
-			var childTemplates = preserveThis._getElementsByClassName(ObjectParent, preserveThis.cshmiTemplateHideableClass);
+			var childTemplates = ObjectParent.childNodes;
+			
 			for (var i=0; i < childTemplates.length; i++) {
-				if (childTemplates[i].getAttribute("display") == "block"){
+				var Classes = childTemplates[i].getAttribute("class");
+				if (Classes === null){
+					continue;
+				}else if (Classes.indexOf(preserveThis.cshmiTemplateHideableClass) === -1){
+					continue;
+				}else if (childTemplates[i].getAttribute("display") == "block"){
 					childTemplates[i].setAttribute("display", "none");
 				}else{
 					childTemplates[i].setAttribute("display", "block");
