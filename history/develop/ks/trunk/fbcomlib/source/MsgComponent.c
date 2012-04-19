@@ -205,12 +205,15 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_MsgComponent_retrieveMessage_set(
 	generalInbox = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer(serviceINBOX,2);
 
 	//check if registry knows service
-	if(Ov_OK(fbcomlib_MsgComponent_findService(pobj,&sobj,service))){
+	result = fbcomlib_MsgComponent_findService(pobj,&sobj,service);
+	//ov_logfile_debug("result findservice: %d", result);
+	if(Ov_OK(result)){
 		inboxdomain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer(sobj->v_inboxPath, 2);
 	} else if (generalInbox) { //lookup service as OVPath appending INBOX.
+		ov_logfile_debug("no findservice, but general INBOX found: %s", generalInbox);
 		inboxdomain = generalInbox;
 	} else {
-		ov_logfile_error("MsgComp/retrieveMessage: Coudn't find Service nor OVPath/INBOX'%s'! - Cant deliver Message - Fatal Error",sobj->v_inboxPath);
+		ov_logfile_error("MsgComp/retrieveMessage: Coudn't find Service nor OVPath/INBOX! - Cant deliver Message - Fatal Error");
 		return OV_ERR_GENERIC;
 	}
 	ov_logfile_debug("MsgComp/retrieveMessage: Creating retrieved MessageObject!");
