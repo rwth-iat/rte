@@ -64,13 +64,13 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-//#define cshmi_Element_DEBUG 1
+//#define ZINDEX_DEBUG 1
 
 #include "cshmilib.h"
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
-    OV_INSTPTR_cshmi_Element          pObj,
-    const OV_UINT  DesValue
+	OV_INSTPTR_cshmi_Element          pObj,
+	const OV_UINT  DesValue
 ) {
 	//	Local Pointer
 	//
@@ -85,7 +85,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 	OV_UINT		SiblingObj			= 0;
 	OV_RESULT	fr						= OV_ERR_OK;
 
-	#ifdef cshmi_Element_DEBUG
+	#ifdef ZINDEX_DEBUG
 		ov_logfile_debug("%d: %s - zindex_set - Request to set zindex from %u to %u", __LINE__,
 			pObj->v_identifier,
 			pObj->v_zindex,
@@ -111,12 +111,12 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 	//
 	if (	ConstructorCall	== TRUE){
 		pObj->v_zindex = SiblingObj - 1;
-		#ifdef cshmi_Element_DEBUG
+		#ifdef ZINDEX_DEBUG
 			ov_logfile_debug("%d: %s - zindex_set - called from constructor, having at least one 'older' sibling, so setting zindex to last number: %u", __LINE__, pObj->v_identifier, pObj->v_zindex);
 		#endif
 		return OV_ERR_OK;
 	}else if (SiblingObj == 1){
-		#ifdef cshmi_Element_DEBUG
+		#ifdef ZINDEX_DEBUG
 			ov_logfile_debug("%d: %s - zindex_set - we are alone, so setting zindex to 0", __LINE__, pObj->v_identifier);
 		#endif
 		pObj->v_zindex = 0;
@@ -124,7 +124,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 	}else if (pObj->v_zindex == DesValue){
 		//	actual zindex = desired zindex
 		//
-		#ifdef cshmi_Element_DEBUG
+		#ifdef ZINDEX_DEBUG
 			ov_logfile_debug("%d: %s - zindex_set - no change requested, so leaving at %u", __LINE__, pObj->v_identifier, pObj->v_zindex);
 		#endif
 		return OV_ERR_OK;
@@ -139,7 +139,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Element){
 			if (pSiblingObj != pObj){
 				if (pSiblingObj->v_zindex == DesValue){
-					#ifdef cshmi_Element_DEBUG
+					#ifdef ZINDEX_DEBUG
 						ov_logfile_debug("%d: %s - zindex_set - changing containment position to before %s", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier);
@@ -158,22 +158,22 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 								pObj->v_identifier,
 								ov_result_getresulttext(fr));
 						#endif
-
+						
 						return fr;
 					}
 				}
-
+				
 				if (	pSiblingObj->v_zindex >= DesValue
 					&&	pSiblingObj->v_zindex <= pObj->v_zindex - 1)
 				{
-					#ifdef cshmi_Element_DEBUG
+					#ifdef ZINDEX_DEBUG
 						ov_logfile_debug("%d: %s - zindex_set - increasing %s zindex from %u to %u", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier,
 							pSiblingObj->v_zindex,
 							pSiblingObj->v_zindex + 1);
 					#endif
-
+					
 					pSiblingObj->v_zindex = pSiblingObj->v_zindex + 1;
 				}
 			}
@@ -187,12 +187,12 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 				if (	pSiblingObj->v_zindex	== DesValue
 					||	DesValue						>= SiblingObj)
 				{
-					#ifdef cshmi_Element_DEBUG
+					#ifdef ZINDEX_DEBUG
 						ov_logfile_debug("%d: %s - zindex_set - changing containment position to after %s", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier);
 					#endif
-
+					
 					Ov_Unlink(ov_containment, pDom, pObj);
 					fr = Ov_LinkRelativePlaced(
 						ov_containment,
@@ -206,15 +206,15 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 								pObj->v_identifier,
 								ov_result_getresulttext(fr));
 						#endif
-
+						
 						return fr;
 					}
 				}
-
+				
 				if (	pSiblingObj->v_zindex >= pObj->v_zindex + 1
 					&&	pSiblingObj->v_zindex <= DesValue)
 				{
-					#ifdef cshmi_Element_DEBUG
+					#ifdef ZINDEX_DEBUG
 						ov_logfile_debug("%d: %s - zindex_set - decreasing %s zindex from %u to %u", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier,
@@ -226,19 +226,19 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 			}
 		}
 	}else{
-		#ifdef cshmi_Element_DEBUG
+		#ifdef ZINDEX_DEBUG
 			ov_logfile_debug("%d: %s - zindex_set - found zindex == desvalue", __LINE__,
 				pObj->v_identifier);
 		#endif
 	}
-
+	
 	if (SiblingObj - 1 > DesValue){
 		pObj->v_zindex = DesValue;
 	} else {
 		pObj->v_zindex = SiblingObj - 1;
 	}
 
-	#ifdef cshmi_Element_DEBUG
+	#ifdef ZINDEX_DEBUG
 		SiblingObj = 0;
 		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Element)
 		{
@@ -246,9 +246,9 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 			SiblingObj++;
 		}
 	#endif
-
+	
 	return OV_ERR_OK;
-}
+};
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 	OV_INSTPTR_ov_object 	pobj
