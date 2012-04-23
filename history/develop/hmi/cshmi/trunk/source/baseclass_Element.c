@@ -85,14 +85,6 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 	OV_UINT		SiblingObj			= 0;
 	OV_RESULT	fr						= OV_ERR_OK;
 
-	if (pObj->v_zindex == DesValue){
-		//	actual zindex = desired zindex
-		//
-		#ifdef cshmi_Element_DEBUG
-			ov_logfile_debug("%d: %s - zindex_set - no change requested, so leaving at %u", __LINE__, pObj->v_identifier, pObj->v_zindex);
-		#endif
-		return OV_ERR_OK;
-	}
 	#ifdef cshmi_Element_DEBUG
 		ov_logfile_debug("%d: %s - zindex_set - Request to set zindex from %u to %u", __LINE__,
 			pObj->v_identifier,
@@ -128,6 +120,13 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 			ov_logfile_debug("%d: %s - zindex_set - we are alone, so setting zindex to 0", __LINE__, pObj->v_identifier);
 		#endif
 		pObj->v_zindex = 0;
+		return OV_ERR_OK;
+	}else if (pObj->v_zindex == DesValue){
+		//	actual zindex = desired zindex
+		//
+		#ifdef cshmi_Element_DEBUG
+			ov_logfile_debug("%d: %s - zindex_set - no change requested, so leaving at %u", __LINE__, pObj->v_identifier, pObj->v_zindex);
+		#endif
 		return OV_ERR_OK;
 	}
 
@@ -243,7 +242,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 		SiblingObj = 0;
 		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Element)
 		{
-			ov_logfile_debug("%d: %u: %s - %u", __LINE__, SiblingObj, pSiblingObj->v_identifier, pSiblingObj->v_zindex);
+			ov_logfile_debug("%d: check: Position %u has %u: %s ", __LINE__, SiblingObj, pSiblingObj->v_zindex, pSiblingObj->v_identifier);
 			SiblingObj++;
 		}
 	#endif
