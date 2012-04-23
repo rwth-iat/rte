@@ -64,6 +64,8 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
+//#define cshmi_Element_DEBUG 1
+
 #include "cshmilib.h"
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
@@ -83,8 +85,16 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 	OV_UINT		SiblingObj			= 0;
 	OV_RESULT	fr						= OV_ERR_OK;
 
+	if (pObj->v_zindex == DesValue){
+		//	actual zindex = desired zindex
+		//
+		#ifdef cshmi_Element_DEBUG
+			ov_logfile_debug("%d: %s - zindex_set - no change requested, so leaving at %u", __LINE__, pObj->v_identifier, pObj->v_zindex);
+		#endif
+		return OV_ERR_OK;
+	}
 	#ifdef cshmi_Element_DEBUG
-		ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - Set zindex from %u to %u", __LINE__,
+		ov_logfile_debug("%d: %s - zindex_set - Request to set zindex from %u to %u", __LINE__,
 			pObj->v_identifier,
 			pObj->v_zindex,
 			DesValue);
@@ -98,6 +108,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 			&&	pSiblingObj->v_zindex	== 0
 			&&	pObj							!= pSiblingObj)
 		{
+			//the other obj is zindex=0, we are zindex=0,
+			//so it is a call directly after the constructor
 			ConstructorCall = TRUE;
 		}
 		SiblingObj = SiblingObj + 1;
@@ -105,19 +117,18 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 
 	//	test if constructor has called setAccessor-Method
 	//
-	if (	ConstructorCall	== TRUE
-		||	SiblingObj			== 1)
-	{
-		if (DesValue == CSHMI_ZINDEX_TOP){
-			pObj->v_zindex = SiblingObj - 1;
-			return OV_ERR_OK;
-		}
-	} else {
-		if (pObj->v_zindex == DesValue){
-			//	actual zindex = desired zindex
-			//
-			return OV_ERR_OK;
-		}
+	if (	ConstructorCall	== TRUE){
+		pObj->v_zindex = SiblingObj - 1;
+		#ifdef cshmi_Element_DEBUG
+			ov_logfile_debug("%d: %s - zindex_set - called from constructor, having at least one 'older' sibling, so setting zindex to last number: %u", __LINE__, pObj->v_identifier, pObj->v_zindex);
+		#endif
+		return OV_ERR_OK;
+	}else if (SiblingObj == 1){
+		#ifdef cshmi_Element_DEBUG
+			ov_logfile_debug("%d: %s - zindex_set - we are alone, so setting zindex to 0", __LINE__, pObj->v_identifier);
+		#endif
+		pObj->v_zindex = 0;
+		return OV_ERR_OK;
 	}
 
 	//	change zindex(es)
@@ -130,7 +141,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 			if (pSiblingObj != pObj){
 				if (pSiblingObj->v_zindex == DesValue){
 					#ifdef cshmi_Element_DEBUG
-						ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - changing containment position to before %s", __LINE__,
+						ov_logfile_debug("%d: %s - zindex_set - changing containment position to before %s", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier);
 					#endif
@@ -157,7 +168,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 					&&	pSiblingObj->v_zindex <= pObj->v_zindex - 1)
 				{
 					#ifdef cshmi_Element_DEBUG
-						ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - increasing %s zindex from %u to %u", __LINE__,
+						ov_logfile_debug("%d: %s - zindex_set - increasing %s zindex from %u to %u", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier,
 							pSiblingObj->v_zindex,
@@ -178,7 +189,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 					||	DesValue						>= SiblingObj)
 				{
 					#ifdef cshmi_Element_DEBUG
-						ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - changing containment position to after %s", __LINE__,
+						ov_logfile_debug("%d: %s - zindex_set - changing containment position to after %s", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier);
 					#endif
@@ -205,7 +216,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 					&&	pSiblingObj->v_zindex <= DesValue)
 				{
 					#ifdef cshmi_Element_DEBUG
-						ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - decreasing %s zindex from %u to %u", __LINE__,
+						ov_logfile_debug("%d: %s - zindex_set - decreasing %s zindex from %u to %u", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier,
 							pSiblingObj->v_zindex,
@@ -217,7 +228,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 		}
 	}else{
 		#ifdef cshmi_Element_DEBUG
-			ov_logfile_debug("%d: %s - cshmi_Element_zindex_set - found zindex == desvalue", __LINE__,
+			ov_logfile_debug("%d: %s - zindex_set - found zindex == desvalue", __LINE__,
 				pObj->v_identifier);
 		#endif
 	}
