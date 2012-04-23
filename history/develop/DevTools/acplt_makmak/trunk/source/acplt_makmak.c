@@ -393,10 +393,16 @@ int main(int argc, char **argv) {
 	}
 	fprintf(fd,"\t%s.h \n\n", libname);
 
+	fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"TARGETS = \\\n");
 	fprintf(fd,"\t$(HEADERS) \\\n");
 	fprintf(fd,"\t$(USERLIB_LIB) \\\n");
-	fprintf(fd,"\t$(USERLIB_DLL)\n\n");
+	fprintf(fd,"\t$(USERLIB_DLL)\n");
+	fprintf(fd,"else\n");
+	fprintf(fd,"TARGETS = \\\n");
+	fprintf(fd,"\t$(HEADERS) \\\n");
+	fprintf(fd,"\t$(USERLIB_LIB)\n");
+	fprintf(fd,"endif\n\n");
 
 	/* Added by Sten on 14.11.11 */
 
@@ -737,7 +743,7 @@ int main(int argc, char **argv) {
 		for(i=0; i<anzAddLibs; i++) {
 			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
 			/* link against .a */
-			fprintf(fd," -L$(USER_DIR)%s/build/%s -l:%s$(_LIB)", libs[i], builddir, libs[i]);
+			fprintf(fd," -l:%s$(_DLL)", libs[i]);
 		}
 		fprintf(fd,"\n");
 	}
@@ -777,21 +783,26 @@ int main(int argc, char **argv) {
 
 	/* Targets */
 	fprintf(fd,"all: $(TARGETS)\n");
-
+	fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"\t$(STRIP) --strip-debug $(USERLIB_LIB)\n");
 	fprintf(fd,"\t$(STRIP) --strip-debug $(USERLIB_DLL)\n");
 #if OV_SYSTEM_NT
-	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n\n");
+	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
+	fprintf(fd,"endif\n\n");
 #else
-	fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n\n");
+	fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n");
+	fprintf(fd,"endif\n\n");
 #endif
 	fprintf(fd,"\n");
 
 	fprintf(fd,"debug: $(TARGETS)\n");
+fprintf(fd,"ifndef STATIC_ONLY\n");
 #if OV_SYSTEM_NT
-	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n\n");
+	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
+	fprintf(fd,"endif\n\n");
 #else
-	fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n\n");
+	fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n");
+	fprintf(fd,"endif\n\n");
 #endif
 	fprintf(fd,"\n");
 
@@ -812,7 +823,12 @@ int main(int argc, char **argv) {
 	fprintf(fd,"%%.o: %%.c $(HEADERS)\n");
 	fprintf(fd,"\t$(COMPILE_C) -o $@ $<\n");
 	fprintf(fd,"\n");
-	fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_DLL)\n");
+#if OV_SYSTEM_NT
+	fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");
+#else
+	fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
+#endif
+	//fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_DLL)\n");
 #ifndef OV_SYSTEM_NT
 	fprintf(fd,"\t$(AR) rv $@ $^\n");
 	fprintf(fd,"\t$(RANLIB) $@\n");
@@ -823,6 +839,12 @@ int main(int argc, char **argv) {
 	fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
 #else
 	fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
+	if(anzAddLibs > 0) {
+		//ugly method of copying dependencies, but it is the only one to work :(
+		for(i=0; i<anzAddLibs; i++) {
+			fprintf(fd,"\tcp $(USERLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", libs[i], libs[i]);
+		}
+	}
 	fprintf(fd, "\t$(LD) -o $@ $^ $(ADD_LIBS_SWITCHES) $(LD_FLAGS)\n");
 #endif
 	fprintf(fd,"\n");
@@ -1006,13 +1028,26 @@ int main(int argc, char **argv) {
 	fprintf(fd,"\n\n");
 
 
-	fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_DLL)\n\n");
+	//fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_DLL)\n\n");
+
+	//if(acplt == 1){
+	//	fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");	
+	//} else {
+	//	fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(FBLIBS) $(OVLIBS)\n");
+	//}
+
+	if(acplt == 1){
+		fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");	
+	} else {
+		fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS) $(FBLIBS) $(OVLIBS)\n");
+	}
 
 	if(acplt == 1){
 		fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");	
 	} else {
 		fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(FBLIBS) $(OVLIBS)\n");
 	}
+
 	fprintf(fd,"\t-@del $(basename $@).def\n");
 	fprintf(fd,"\t$(LD) -e$@ $(filter-out $(_RES), $^)\n");
 	fprintf(fd,"\t$(IMPDEF) $(basename $@)_tmp.def $@\n");
@@ -1170,7 +1205,7 @@ int main(int argc, char **argv) {
 	fprintf(fd,"\n\n");
 
 
-	fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_DLL)\n\n");
+	fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_OBJ)\n\n");
 
 	fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ)\n");
 
