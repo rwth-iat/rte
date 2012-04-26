@@ -1936,7 +1936,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			
 			successCode = this._executeVariablesArray(requestListTemplate);
 			if (successCode == false){
-				HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+requestList[ObjectPath]["TemplateDefinition"]+"' is not available.");
+				HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+TemplateLocation+requestList[ObjectPath]["TemplateDefinition"]+"' is not available.");
 				return null;
 			}
 			
