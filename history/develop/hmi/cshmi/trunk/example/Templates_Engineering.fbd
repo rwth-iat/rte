@@ -2,10 +2,10 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-04-26 14:24:05
+  Erstellt : 2012-04-26 16:46:08
 
-  HOST                : LOCALHOST:7509
-  SERVER              : MANAGER
+  HOST                : LOCALHOST
+  SERVER              : ov_server_rex69
 ======================================================================
 *********************************************************************/
 
@@ -1572,11 +1572,139 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/addFBVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/IN :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/IN.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/IN.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/IN.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/IN.if/Is_IN :
+    CLASS /Libraries/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+        childValue : INPUT  STRING = "OP_NAME.flags";
+        comptype : INPUT  STRING = "==";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/IN.if/Is_IN.withValue :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UINT = 256;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/IN.then/addInputFBVar :
     CLASS /Libraries/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Engineering/FBFunctionChartVariablesv1";
+        TemplateDefinition : INPUT  STRING = "Engineering/FBFunctionChartInputVariablesv1";
         x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        xOffset : INPUT  SINGLE = 0.000000;
+        yOffset : INPUT  SINGLE = 23.000000;
+        FBReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"varname:OP_NAME"};
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        rotate : INPUT  INT = 0;
+        opacity : INPUT  SINGLE = 1.000000;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/OUT :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/OUT.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/OUT.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/OUT.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/OUT.if/is_OUT :
+    CLASS /Libraries/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+        childValue : INPUT  STRING = "OP_NAME.flags";
+        comptype : INPUT  STRING = "==";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/OUT.if/is_OUT.withValue :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UINT = 16384;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FBIterator.forEachChild/vars.then/OUT.then/addOutputFBVar :
+    CLASS /Libraries/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Engineering/FBFunctionChartOutputVariablesv1";
+        x : INPUT  SINGLE = 890.000000;
         y : INPUT  SINGLE = 0.000000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 23.000000;
@@ -1713,7 +1841,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartVariablesv1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartInputVariablesv1 :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
@@ -1723,7 +1851,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartVariablesv1/Border :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartInputVariablesv1/Border :
     CLASS /Libraries/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.500000;
@@ -1740,7 +1868,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartVariablesv1/Class :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartInputVariablesv1/Class :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 10.000000;
@@ -1763,14 +1891,14 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartVariablesv1/Class/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartInputVariablesv1/Class/onload :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartVariablesv1/Class/onload/ClassName :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartInputVariablesv1/Class/onload/ClassName :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -1783,7 +1911,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartVariablesv1/Class/onload/ClassName.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartInputVariablesv1/Class/onload/ClassName.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -1795,6 +1923,22 @@
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "varname";
         value : INPUT  UNKNOWN = ;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartInputVariablesv1/ConnectionPointRight :
+    CLASS /Libraries/cshmi/Circle;
+    VARIABLE_VALUES
+        cx : INPUT  SINGLE = 109.500000;
+        cy : INPUT  SINGLE = 12.000000;
+        r : INPUT  SINGLE = 2.000000;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 2;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -2143,6 +2287,108 @@
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "ConName";
         value : INPUT  STRING = "";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartOutputVariablesv1 :
+    CLASS /Libraries/cshmi/TemplateDefinition;
+    VARIABLE_VALUES
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartOutputVariablesv1/Border :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.500000;
+        y : INPUT  SINGLE = 0.500000;
+        width : INPUT  SINGLE = 109.000000;
+        height : INPUT  SINGLE = 23.000000;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartOutputVariablesv1/Class :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 10.000000;
+        y : INPUT  SINGLE = 15.500000;
+        content : INPUT  STRING = "???";
+        fontSize : INPUT  STRING = "11.2px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "bold";
+        fontFamily : INPUT  STRING = "'serif";
+        horAlignment : INPUT  STRING = "start";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 1;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartOutputVariablesv1/Class/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartOutputVariablesv1/Class/onload/ClassName :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartOutputVariablesv1/Class/onload/ClassName.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "varname";
+        value : INPUT  UNKNOWN = ;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBFunctionChartOutputVariablesv1/ConnectionPointLeft :
+    CLASS /Libraries/cshmi/Circle;
+    VARIABLE_VALUES
+        cx : INPUT  SINGLE = 0.500000;
+        cy : INPUT  SINGLE = 12.000000;
+        r : INPUT  SINGLE = 2.000000;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 2;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
