@@ -168,7 +168,7 @@ LIBRARY cshmi
 		VARIABLES
 			TemplateDefinition : STRING
 			HAS_SET_ACCESSOR
-			COMMENT = "Path to the TemplateDefinition";
+			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
 			x : SINGLE
 			COMMENT = "x-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
@@ -441,7 +441,7 @@ LIBRARY cshmi
 		COMMENT = "instantiate Template from TemplateDefinition";
 		VARIABLES
 			TemplateDefinition : STRING
-			COMMENT = "Path to the TemplateDefinition";
+			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
 			x : SINGLE
 			COMMENT = "x-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
