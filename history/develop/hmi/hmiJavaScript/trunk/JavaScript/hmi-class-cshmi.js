@@ -1153,7 +1153,7 @@ cshmi.prototype = {
 			response = HMI.KSClient.splitKsResponse(response, 1);
 			for (var i=0; i<response.length; i++){
 				var responseDictionary = Array();
-				if (childrenType === "OT_VARIABLE"){
+				if (childrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
 					responseDictionary["OP_COMMENT"] = response[i][2];
@@ -1163,7 +1163,7 @@ cshmi.prototype = {
 					responseDictionary["OP_CLASS"] = response[i][6];
 					responseDictionary["OP_TECHUNIT"] = response[i][7];
 				}
-				else if (childrenType === "OT_DOMAIN"){
+				else if (childrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
 					responseDictionary["OP_COMMENT"] = response[i][2];
@@ -1171,6 +1171,30 @@ cshmi.prototype = {
 					responseDictionary["OP_SEMANTICS"] = response[i][4];
 					responseDictionary["OP_CREATIONTIME"] = response[i][5];
 					responseDictionary["OP_CLASS"] = response[i][6];
+					responseDictionary["OP_TECHUNIT"] = response[i][7];
+				}
+				else if (childrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
+					responseDictionary["OP_NAME"] = response[i][0];
+					responseDictionary["OP_TYPE"] = response[i][1];
+					responseDictionary["OP_COMMENT"] = response[i][2];
+					responseDictionary["OP_ACCESS"] = response[i][3];
+					responseDictionary["OP_SEMANTICS"] = response[i][4];
+					responseDictionary["OP_CREATIONTIME"] = response[i][5];
+					responseDictionary["OP_CLASS"] = response[i][6];
+					responseDictionary["OP_ASSOCIDENT"] = response[i][7];
+					responseDictionary["OP_ROLEIDENT"] = response[i][8];
+				}
+				else if (childrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
+					responseDictionary["OP_NAME"] = response[i][0];
+					responseDictionary["OP_TYPE"] = response[i][1];
+					responseDictionary["OP_COMMENT"] = response[i][2];
+					responseDictionary["OP_ACCESS"] = response[i][3];
+					responseDictionary["OP_SEMANTICS"] = response[i][4];
+					responseDictionary["OP_CREATIONTIME"] = response[i][5];
+					responseDictionary["OP_CLASS"] = response[i][6];
+					responseDictionary["OP_DEFAULTINTERP"] = response[i][7];
+					responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
+					responseDictionary["OP_TYPEIDENT"] = response[i][9];
 				}
 				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 				
