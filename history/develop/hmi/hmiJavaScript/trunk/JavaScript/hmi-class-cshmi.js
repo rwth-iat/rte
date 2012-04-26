@@ -969,7 +969,7 @@ cshmi.prototype = {
 						//String begins with / so it is a fullpath
 						var response = HMI.KSClient.setVar(null, TemplateObject.FBReference[ParameterValue], NewValue, null);
 						if (response.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference[ParameterValue]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+							HMI.hmi_log_info('Setting '+TemplateObject.FBReference[ParameterValue]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 						}
 						return true;
 					}else{
@@ -983,7 +983,7 @@ cshmi.prototype = {
 						//String begins with / so it is a fullpath
 						response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+ParameterValue, NewValue, null);
 						if (response.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info_onwebsite('Setting '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+							HMI.hmi_log_info('Setting '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 						}
 						return true;
 					}else{
