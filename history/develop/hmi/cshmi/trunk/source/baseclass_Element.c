@@ -284,19 +284,33 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 	return result;
 }
 
-
-//todo destructor which corrects zindex from sibling objects
 OV_DLLFNCEXPORT void cshmi_Element_destructor(
-	OV_INSTPTR_ov_object 	pobj
+	OV_INSTPTR_ov_object 	pObj
 ) {
 	//	local variables
 	//
-	OV_INSTPTR_cshmi_Element pinst = Ov_StaticPtrCast(cshmi_Element, pobj);
+	OV_INSTPTR_ov_domain
+		pDom = Ov_GetParent(ov_containment, pObj);
+	OV_INSTPTR_cshmi_Element
+		pSiblingObj = NULL;
 
-	/* do what */
+	OV_UINT newindex = 0;
 
-	/* destroy object */
-	ov_object_destructor(pobj);
+	//unlink from own domain
+	Ov_Unlink(ov_containment, pDom, pObj);
+
+	//	renumber sibling components (self is removed from it)
+	//
+	Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Element){
+		#ifdef ZINDEX_DEBUG
+			ov_logfile_debug("%d: Position %u has %u: %s ", __LINE__, SiblingObj, pSiblingObj->v_zindex, pSiblingObj->v_identifier);
+		#endif
+		pSiblingObj->v_zindex = newindex;
+		newindex++;
+	}
+
+	// destroy object
+	ov_object_destructor(pObj);
 
 	return;
 }
