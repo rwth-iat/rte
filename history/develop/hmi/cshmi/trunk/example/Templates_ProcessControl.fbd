@@ -23,7 +23,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/rect :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/rectBBreit :
     CLASS /Libraries/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
@@ -106,7 +106,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/rect :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/rectBSchmal :
     CLASS /Libraries/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
@@ -235,7 +235,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/CompErrv1/rect :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/CompErrv1/rectERR :
     CLASS /Libraries/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;

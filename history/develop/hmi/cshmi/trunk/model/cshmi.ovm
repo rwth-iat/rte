@@ -158,6 +158,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			destructor					:	C_FUNCTION	<OV_FNC_DESTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
 	
@@ -437,7 +438,7 @@ LIBRARY cshmi
 	
 	CLASS InstantiateTemplate : CLASS cshmi/Action
 		IS_INSTANTIABLE;
-		COMMENT = "instatiate Template from TemplateDefinition";
+		COMMENT = "instantiate Template from TemplateDefinition";
 		VARIABLES
 			TemplateDefinition : STRING
 			COMMENT = "Path to the TemplateDefinition";

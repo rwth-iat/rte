@@ -86,7 +86,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 	OV_RESULT	fr						= OV_ERR_OK;
 
 	#ifdef ZINDEX_DEBUG
-		ov_logfile_debug("%d: %s - zindex_set - Request to set zindex from %u to %u", __LINE__,
+		ov_logfile_debug("%d: %s/%s - Request to set zindex from %u to %u", __LINE__,
+			Ov_GetParent(ov_containment, pObj)->v_identifier,
 			pObj->v_identifier,
 			pObj->v_zindex,
 			DesValue);
@@ -112,12 +113,12 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 	if (	ConstructorCall	== TRUE){
 		pObj->v_zindex = SiblingObj - 1;
 		#ifdef ZINDEX_DEBUG
-			ov_logfile_debug("%d: %s - zindex_set - called from constructor, having at least one 'older' sibling, so setting zindex to last number: %u", __LINE__, pObj->v_identifier, pObj->v_zindex);
+			ov_logfile_debug("%d: %s - constructor, having at least one 'older' sibling, so setting zindex to last number: %u. Exiting.", __LINE__, pObj->v_identifier, pObj->v_zindex);
 		#endif
 		return OV_ERR_OK;
 	}else if (SiblingObj == 1){
 		#ifdef ZINDEX_DEBUG
-			ov_logfile_debug("%d: %s - zindex_set - we are alone, so setting zindex to 0", __LINE__, pObj->v_identifier);
+			ov_logfile_debug("%d: %s - we are alone, so setting zindex to 0. Exiting.", __LINE__, pObj->v_identifier);
 		#endif
 		pObj->v_zindex = 0;
 		return OV_ERR_OK;
@@ -125,7 +126,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 		//	actual zindex = desired zindex
 		//
 		#ifdef ZINDEX_DEBUG
-			ov_logfile_debug("%d: %s - zindex_set - no change requested, so leaving at %u", __LINE__, pObj->v_identifier, pObj->v_zindex);
+			ov_logfile_debug("%d: %s - no change requested, so leaving at %u. Exiting.", __LINE__, pObj->v_identifier, pObj->v_zindex);
 		#endif
 		return OV_ERR_OK;
 	}
@@ -140,7 +141,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 			if (pSiblingObj != pObj){
 				if (pSiblingObj->v_zindex == DesValue){
 					#ifdef ZINDEX_DEBUG
-						ov_logfile_debug("%d: %s - zindex_set - changing containment position to before %s", __LINE__,
+						ov_logfile_debug("%d: %s - changing containment position to before %s", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier);
 					#endif
@@ -167,7 +168,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 					&&	pSiblingObj->v_zindex <= pObj->v_zindex - 1)
 				{
 					#ifdef ZINDEX_DEBUG
-						ov_logfile_debug("%d: %s - zindex_set - increasing %s zindex from %u to %u", __LINE__,
+						ov_logfile_debug("%d: %s - increasing %s zindex from %u to %u", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier,
 							pSiblingObj->v_zindex,
@@ -188,7 +189,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 					||	DesValue						>= SiblingObj)
 				{
 					#ifdef ZINDEX_DEBUG
-						ov_logfile_debug("%d: %s - zindex_set - changing containment position to after %s", __LINE__,
+						ov_logfile_debug("%d: %s - changing containment position to after %s", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier);
 					#endif
@@ -215,7 +216,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 					&&	pSiblingObj->v_zindex <= DesValue)
 				{
 					#ifdef ZINDEX_DEBUG
-						ov_logfile_debug("%d: %s - zindex_set - decreasing %s zindex from %u to %u", __LINE__,
+						ov_logfile_debug("%d: %s - decreasing %s zindex from %u to %u", __LINE__,
 							pObj->v_identifier,
 							pSiblingObj->v_identifier,
 							pSiblingObj->v_zindex,
@@ -227,7 +228,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_zindex_set(
 		}
 	}else{
 		#ifdef ZINDEX_DEBUG
-			ov_logfile_debug("%d: %s - zindex_set - found zindex == desvalue", __LINE__,
+			ov_logfile_debug("%d: %s - found zindex == desvalue", __LINE__,
 				pObj->v_identifier);
 		#endif
 	}
@@ -273,8 +274,30 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 		}
 	}
 
-	return cshmi_Element_zindex_set(Ov_StaticPtrCast(cshmi_Element, pobj), CSHMI_ZINDEX_DEFAULT);
+	#ifdef ZINDEX_DEBUG
+		ov_logfile_debug("^ %d: constructor: %s/%s moving on top", __LINE__, Ov_GetParent(ov_containment, pobj)->v_identifier, pobj->v_identifier);
+	#endif
+	result = cshmi_Element_zindex_set(Ov_StaticPtrCast(cshmi_Element, pobj), CSHMI_ZINDEX_DEFAULT);
+	#ifdef ZINDEX_DEBUG
+		ov_logfile_debug("$ %d: constructor: %s constructed with zindex: %u.", __LINE__, pobj->v_identifier, Ov_StaticPtrCast(cshmi_Element, pobj)->v_zindex);
+	#endif
+	return result;
 }
 
 
 //todo destructor which corrects zindex from sibling objects
+OV_DLLFNCEXPORT void cshmi_Element_destructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	//	local variables
+	//
+	OV_INSTPTR_cshmi_Element pinst = Ov_StaticPtrCast(cshmi_Element, pobj);
+
+	/* do what */
+
+	/* destroy object */
+	ov_object_destructor(pobj);
+
+	return;
+}
+
