@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-04-26 16:46:08
+  Erstellt : 2012-04-26 17:01:52
 
   HOST                : LOCALHOST
   SERVER              : ov_server_rex69
@@ -1493,7 +1493,7 @@
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[18] : INPUT  STRING = {"/fb/connection" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar"};
+        value[36] : INPUT  STRING = {"/fb/connection" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/connection" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1567,7 +1567,7 @@
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[17] : INPUT  STRING = {"/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar"};
+        value[34] : INPUT  STRING = {"/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1784,7 +1784,7 @@
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "/fb/connection";
+        value[2] : INPUT  STRING = {"/fb/connection" , "/Libraries/fb/connection"};
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
