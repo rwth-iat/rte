@@ -145,7 +145,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_constructor(
 	OV_STRING strTempOldStroke = NULL;
 	
 	/* do what the base class does first */
-	result = ov_object_constructor(pobj);
+	result = cshmi_Element_constructor(pobj);
 	if(Ov_Fail(result)){
 		return result;
 	}
