@@ -97,9 +97,19 @@ function cshmi() {
 
 
 
-//#########################################################################################################################
-//TODO: check return value of gethandleid
-//#########################################################################################################################
+/*#########################################################################################################################
+TODO: 
+
+JavaScript:
+- check return value of gethandleid
+
+- Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
+- Nur einige wenige cycTimes (enum?) erlauben
+- ks befehle konsolidieren bei zyklischer abarbeitung
+
+Modell:
+- sequenceindex für aktionen
+#########################################################################################################################*/
 
 /***********************************************************************
 	prototype
@@ -2072,7 +2082,13 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 						
 					}else{
 						//a normal relativ path
-						svgElement.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+							//we have an OV-PART, so the separator is a dot
+							svgElement.FBReference["default"] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+						}else{
+							//we have no OV-PART, so the separator is a slash
+							svgElement.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+						}
 					}
 				}
 				else{
@@ -2132,6 +2148,9 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 					svgElement.ConfigValues[ConfigEntry[0]] = ConfigEntry[1];
 				}
 				if(ConfigEntry[0] === "Name" && realFBobjectID === null){
+					//TODO doku!!!
+					
+					//if an template has the configValue Name:Dieter, this should be the object id
 					svgElement.id = ConfigEntry[1];
 				}
 				lastEntry = ConfigEntry[0];
