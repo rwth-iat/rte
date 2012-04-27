@@ -532,11 +532,13 @@ cshmi.prototype = {
 		for (var i=0; i < responseArray.length && returnValue === true; i++) {
 			var varName = responseArray[i].split(" ");
 			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
-				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0]);
-			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
-				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
+				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0], false);
+			}else if (varName[1].indexOf("/cshmi/SetConcatValue") !== -1){
+				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0], true);
 			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
+			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
+				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/ChildrenIterator") !== -1){
 				returnValue = this._interpreteChildrenIterator(ObjectParent, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/InstantiateTemplate") !== -1){
@@ -807,18 +809,36 @@ cshmi.prototype = {
 		_setValue
 		-	sets a Value to multiple Targets
 	*********************************/
-	_setValue: function(ObjectParent, ObjectPath){
-		//get Value to set (via getValue-part of setValue Object)
-		var NewValue = this._getValue(ObjectParent, ObjectPath+".value");
-		
-		if (NewValue === null){
-			HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because of an NewValue of null.");
-			//NewValue = this._getValue(ObjectParent, ObjectPath+".value");
-			return false;
-		}else if (NewValue === undefined){
-			//should not happen
-			HMI.hmi_log_error("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because of an NewValue of undefined.");
-			return false;
+	_setValue: function(ObjectParent, ObjectPath, Concat){
+		var NewValue = "";
+		//get Value to set
+		if (Concat === false){
+			//via getValue-part of setValue object
+			NewValue = this._getValue(ObjectParent, ObjectPath+".value");
+			
+			if (NewValue === null){
+				HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because of an NewValue of null.");
+				//NewValue = this._getValue(ObjectParent, ObjectPath+".value");
+				return false;
+			}else if (NewValue === undefined){
+				//should not happen
+				HMI.hmi_log_error("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because of an NewValue of undefined.");
+				return false;
+			}
+		}else{
+			//via multiple getValues under the setValue object
+			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
+			for (var i=0; i < responseArray.length; i++) {
+				var varName = responseArray[i].split(" ");
+				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
+					var TempNewValue = this._getValue(ObjectParent, ObjectPath+"/"+varName[0]);
+					if (TempNewValue !== null && TempNewValue !== undefined){
+						NewValue = NewValue + TempNewValue;
+					}else{
+						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+ObjectParent.id+") was null or undefined.");
+					}
+				}
+			}
 		}
 		
 		//get info where to set the NewValue
