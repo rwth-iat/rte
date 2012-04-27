@@ -743,7 +743,7 @@ int main(int argc, char **argv) {
 		for(i=0; i<anzAddLibs; i++) {
 			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
 			/* link against .a */
-			fprintf(fd," -l:%s$(_DLL)", libs[i]);
+			fprintf(fd," %s$(_DLL)", libs[i]);
 		}
 		fprintf(fd,"\n");
 	}
