@@ -1543,7 +1543,7 @@ HMI.prototype = {
 	/*********************************
 		_setLayerPosition
 	*********************************/
-	_setLayerPosition: function (Element) {
+	_setLayerPosition: function (Element, reportSize) {
 		//this.hmi_log_trace("HMI.prototype._setLayerPosition - Start: "+Element.id);
 		
 		//LayerX and LayerY are HMI specific DOM Attributes!
@@ -1574,9 +1574,21 @@ HMI.prototype = {
 			Element.setAttribute("layerX", LayerX);
 			Element.setAttribute("layerY", LayerY);
 		}
-		LayerX = null;
-		LayerY = null;
 		
+		if (reportSize === true){
+			var LayerWidth = parseInt(Element.getAttribute("width"), 10);
+			var LayerHeight = parseInt(Element.getAttribute("height"), 10);
+			
+			if (isNaN(LayerWidth)){
+				LayerWidth = 0;
+			}
+			if (isNaN(LayerHeight)){
+				LayerHeight = 0;
+			}
+			return new Array(LayerX+LayerWidth, LayerY+LayerHeight);
+		}
+		
+		return;
 		//this.hmi_log_trace("HMI.prototype._setLayerPosition - End");
 	},	
 	

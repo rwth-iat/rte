@@ -170,23 +170,40 @@ cshmi.prototype = {
 				svgDefs.appendChild(svgLinGrad);
 			Component.appendChild(svgDefs);
 			
+			svgLinGrad = null;
+			svgDefs = null;
+			
 			//push the svg Component to the screen
 			HMI.Playground.appendChild(Component);
 			
 			//calculate all offset parameter to be able to display visual feedback
 			//this is only possible now, as the orientation of the parents are not defined when they are not appended
-			HMI._setLayerPosition(Component);
+			var maxPosition = HMI._setLayerPosition(Component, true);
 			//we want to have offset parameter on all visual elements
 			var ComponentChilds = Component.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
-				HMI._setLayerPosition(ComponentChilds[i]);
+				var Position = HMI._setLayerPosition(ComponentChilds[i], true);
+				if (Position[0] > maxPosition[0]){
+					maxPosition[0] = Position[0];
+				}
+				if (Position[1] > maxPosition[1]){
+					maxPosition[1] = Position[1];
+				}
 			}
+			Position = null;
+			ComponentChilds = null;
 			
 			//interprete onload Actions in the order of occurrence
 			while(this.ResourceList.onloadCallStack.length !== 0){
 				var EventObjItem = this.ResourceList.onloadCallStack.shift();
 				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
 			}
+			EventObjItem = null;
+			
+			if (maxPosition[0] > Component.getAttribute('width') || maxPosition[1] > Component.getAttribute('height')){
+				HMI.hmi_log_info_onwebsite("Warning: There is a chance, that there is content outside your view.");
+			}
+			maxPosition = null;
 			
 			//the DOM Tree is populated now
 			this.initStage = false;
