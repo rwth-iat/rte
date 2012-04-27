@@ -91,7 +91,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 
 	#ifdef ZINDEX_DEBUG
 		ov_logfile_debug("%d: %s/%s - Request to set zindex from %u to %u", __LINE__,
-			Ov_GetParent(ov_containment, pObj)->v_identifier,
+			Ov_GetParent(ov_containment, pObj)?Ov_GetParent(ov_containment, pObj)->v_identifier:"-",
 			pObj->v_identifier,
 			pObj->v_zindex,
 			DesValue);
@@ -133,6 +133,10 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 			ov_logfile_debug("%d: %s - no change requested, so leaving at %u. Exiting.", __LINE__, pObj->v_identifier, pObj->v_zindex);
 		#endif
 		return OV_ERR_OK;
+	}else{
+		#ifdef ZINDEX_DEBUG
+			ov_logfile_debug("%d: %s - let the magic begin!", __LINE__, pObj->v_identifier);
+		#endif
 	}
 
 	//	change zindex(es)
@@ -141,6 +145,9 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 		//	actual zindex > desired zindex
 		//	cshmi_Object_constructor() guarantees we have never actual zindex == desired zindex
 		//
+		#ifdef ZINDEX_DEBUG
+			ov_logfile_debug("%d: %s - actual zindex > desired zindex", __LINE__, pObj->v_identifier);
+		#endif
 		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Object){
 			if (pSiblingObj != pObj){
 				if (pSiblingObj->v_zindex == DesValue){
@@ -187,6 +194,9 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 		//	actual zindex < desired zindex
 		//	cshmi_Object_constructor() guarantees we have never actual zindex == desired zindex
 		//
+		#ifdef ZINDEX_DEBUG
+			ov_logfile_debug("%d: %s - actual zindex < desired zindex", __LINE__, pObj->v_identifier);
+		#endif
 		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Object){
 			if (pSiblingObj != pObj){
 				if (	pSiblingObj->v_zindex	== DesValue
@@ -237,7 +247,13 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 		#endif
 	}
 
-	if (SiblingObj - 1 > DesValue){
+	if (SiblingObj == 0){
+		//OV-Part should have an clean 0
+		pObj->v_zindex = 0;
+		#ifdef ZINDEX_DEBUG
+			ov_logfile_debug("%d: %s - OV-Part set to zindex 0. Exiting.", __LINE__, pObj->v_identifier);
+		#endif
+	}else if (SiblingObj - 1 > DesValue){
 		pObj->v_zindex = DesValue;
 	} else {
 		pObj->v_zindex = SiblingObj - 1;
@@ -256,23 +272,23 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 };
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Object_constructor(
-	OV_INSTPTR_ov_object 	pobj
+	OV_INSTPTR_ov_object 	pObj
 ) {
 	// local variables
 	//
 	OV_RESULT    result;
 
 	/* do what the base class does first */
-	result = ov_object_constructor(pobj);
+	result = ov_object_constructor(pObj);
 	if(Ov_Fail(result))
 		return result;
 
 	#ifdef ZINDEX_DEBUG
-		ov_logfile_debug("^ %d: constructor: %s/%s moving on top", __LINE__, Ov_GetParent(ov_containment, pobj)->v_identifier, pobj->v_identifier);
+		ov_logfile_debug("^ %d: constructor: %s/%s moving on top", __LINE__, Ov_GetParent(ov_containment, pObj)?Ov_GetParent(ov_containment, pObj)->v_identifier:"-", pObj->v_identifier);
 	#endif
-	result = cshmi_Object_zindex_set(Ov_StaticPtrCast(cshmi_Object, pobj), CSHMI_ZINDEX_DEFAULT);
+	result = cshmi_Object_zindex_set(Ov_StaticPtrCast(cshmi_Object, pObj), CSHMI_ZINDEX_DEFAULT);
 	#ifdef ZINDEX_DEBUG
-		ov_logfile_debug("$ %d: constructor: %s constructed with zindex: %u.", __LINE__, pobj->v_identifier, Ov_StaticPtrCast(cshmi_Object, pobj)->v_zindex);
+		ov_logfile_debug("$ %d: constructor: %s constructed with zindex: %u.", __LINE__, pObj->v_identifier, Ov_StaticPtrCast(cshmi_Object, pObj)->v_zindex);
 	#endif
 	return result;
 }
@@ -289,17 +305,24 @@ OV_DLLFNCEXPORT void cshmi_Object_destructor(
 
 	OV_UINT newindex = 0;
 
-	//unlink from own domain
-	Ov_Unlink(ov_containment, pDom, pObj);
+	//test if we are deleting an OV-PART
+	if (pDom != NULL){
+		//unlink from own domain
+		Ov_Unlink(ov_containment, pDom, pObj);
 
-	//	renumber sibling components (self is removed from it)
-	//
-	Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Object){
+		//	renumber sibling components (self is removed from it)
+		//
+		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Object){
+			#ifdef ZINDEX_DEBUG
+				ov_logfile_debug("%d: %s changed from %u to %u:  ", __LINE__, pSiblingObj->v_identifier, pSiblingObj->v_zindex, newindex);
+			#endif
+			pSiblingObj->v_zindex = newindex;
+			newindex++;
+		}
+	}else{
 		#ifdef ZINDEX_DEBUG
-			ov_logfile_debug("%d: Position %u has %u: %s ", __LINE__, SiblingObj, pSiblingObj->v_zindex, pSiblingObj->v_identifier);
+			ov_logfile_debug("%d: %s had no parent via containment", __LINE__, pObj->v_identifier);
 		#endif
-		pSiblingObj->v_zindex = newindex;
-		newindex++;
 	}
 
 	// destroy object
