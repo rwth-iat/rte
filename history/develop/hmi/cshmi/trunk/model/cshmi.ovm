@@ -74,12 +74,17 @@ LIBRARY cshmi
 	CLASS Object : CLASS ov/domain
 		COMMENT = "base class for CSHMI objects";
 		VARIABLES
+			zindex	: UINT
+			HAS_SET_ACCESSOR
+			COMMENT = "z-index of the visuals, sequence-index for actions: 0 is least visible (i.e. bottom) or executed first"
+			INITIALVALUE = 0;
 			baseKsPath : STRING 
 			COMMENT = "base KS path for resolution of relative KS paths";
 		END_VARIABLES;
 		OPERATIONS
-			getaccess 					:	C_FUNCTION
-				<OV_FNC_GETACCESS>;
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			destructor					:	C_FUNCTION	<OV_FNC_DESTRUCTOR>;
+			getaccess 					:	C_FUNCTION	<OV_FNC_GETACCESS>;
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -139,10 +144,6 @@ LIBRARY cshmi
 			visible : BOOL
 			COMMENT = "the element is visible"
 			INITIALVALUE = TRUE;
-			zindex	: UINT
-			HAS_SET_ACCESSOR
-			COMMENT = "z-index of the component, 0 is least visible (i.e. bottom)"
-			INITIALVALUE = 0;
 			stroke : STRING
 			COMMENT = "line stroke color (CSS color name or hex like #000000)"
 			INITIALVALUE = "black";
@@ -158,7 +159,6 @@ LIBRARY cshmi
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-			destructor					:	C_FUNCTION	<OV_FNC_DESTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
 	
@@ -176,7 +176,9 @@ LIBRARY cshmi
 			COMMENT = "y-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
 			FBReference[] : STRING
-			COMMENT = "Path of the Reference object (multiple values possible, when named as pump47:/TechUnits/Pump47)";
+			COMMENT = "Path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
+			FBVariableReference[] : STRING
+			COMMENT = "Path of a named reference variable object (example: [variable1:/TechUnits/Pump47.IN1]; multiple variables possible)";
 			ConfigValues[] : STRING
 			COMMENT = "Free text value for TemplateDefinition (multiple key1:value1 possible)";
 		END_VARIABLES;
@@ -379,6 +381,8 @@ LIBRARY cshmi
 			COMMENT = "Value from the user (for example mousex, mousey, textinput or textinput:question)";
 			TemplateFBReferenceVariable : STRING
 			COMMENT = "name of a variable of a referenced FB object";
+			TemplateFBVariableReferenceName : STRING
+			COMMENT = "named referenced variable";
 			TemplateConfigValues : STRING
 			COMMENT = "name of the key of a ConfigValue";
 			value : ANY
@@ -386,9 +390,9 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 	
-	CLASS SetValue : CLASS cshmi/Action
+	CLASS SetConcatValue : CLASS cshmi/Action
 		IS_INSTANTIABLE;
-		COMMENT = "set a variable with a value";
+		COMMENT = "set a variable with a concatenated value";
 		VARIABLES
 			ksVar : STRING
 			COMMENT = "path of the target remote KS variable";
@@ -398,10 +402,19 @@ LIBRARY cshmi
 			COMMENT = "the (relative) path to the element";
 			TemplateFBReferenceVariable : STRING
 			COMMENT = "name of a variable of a referenced FB object";
+			TemplateFBVariableReferenceName : STRING
+			COMMENT = "named referenced variable";
 			globalVar : STRING
 			COMMENT = "name of the target global variable";
 			persistentGlobalVar : STRING
 			COMMENT = "name of the target persistent global variable";
+		END_VARIABLES;
+	END_CLASS;
+
+	CLASS SetValue : CLASS cshmi/SetConcatValue
+		IS_INSTANTIABLE;
+		COMMENT = "set a variable with a value";
+		VARIABLES
 		END_VARIABLES;
 		PARTS
 			value : CLASS cshmi/GetValue;
@@ -455,15 +468,14 @@ LIBRARY cshmi
 			COMMENT = "y-axis offset to previously instantiated Template"
 			INITIALVALUE = 0.0;
 			FBReference[] : STRING
-			COMMENT = "Path of the Reference object (multiple values possible, when named as pump47:/TechUnits/Pump47)";
+			COMMENT = "Path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
+			FBVariableReference[] : STRING
+			COMMENT = "Path of a named reference variable object (example: [variable1:/TechUnits/Pump47.IN1]; multiple variables possible)";
 			ConfigValues[] : STRING
 			COMMENT = "Free text value for TemplateDefinition (multiple key1:value1 possible)";
 			visible : BOOL
 			COMMENT = "the element is visible"
 			INITIALVALUE = TRUE;
-			zindex	: UINT
-			COMMENT = "z-index of the component, 0 is least visible (i.e. bottom)"
-			INITIALVALUE = 0;
 			stroke : STRING
 			COMMENT = "line stroke color (CSS color name or hex like #000000)"
 			INITIALVALUE = "black";

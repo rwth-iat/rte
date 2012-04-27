@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,7 +63,6 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-
 #include "cshmilib.h"
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Action_constructor(
@@ -75,13 +74,17 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Action_constructor(
 	OV_RESULT	result;
 	
 	/* do what the base class does first */
-	result = ov_object_constructor(pobj);
+	result = cshmi_Object_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 	
 	//force correct placement
 	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	if (pParent != NULL){
+		if (Ov_CanCastTo(cshmi_SetConcatValue, pParent) && Ov_CanCastTo(cshmi_GetValue, pobj)){
+			//whitelist GetValue under a SetConcatValue
+			return OV_ERR_OK;
+		}else
 		if (!(	Ov_CanCastTo(cshmi_Event, pParent)
 			||	Ov_CanCastTo(cshmi_csContainer, pParent)
 				)){

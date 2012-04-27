@@ -75,7 +75,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Event_constructor(
 	OV_RESULT    result;
 
 	/* do what the base class does first */
-	result = ov_object_constructor(pobj);
+	result = cshmi_Object_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 
