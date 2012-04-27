@@ -1904,10 +1904,10 @@
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Engineering/FBFunctionChartInputVariablesv1";
         x : INPUT  SINGLE = 0.000000;
-        y : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 50.000000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 23.000000;
-        FBReference[0] : INPUT  STRING = {};
+        FBReference[1] : INPUT  STRING = {"OP_NAME"};
         ConfigValues[1] : INPUT  STRING = {"varname:OP_NAME"};
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
@@ -1978,10 +1978,10 @@
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Engineering/FBFunctionChartOutputVariablesv1";
         x : INPUT  SINGLE = 890.000000;
-        y : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 50.000000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 23.000000;
-        FBReference[0] : INPUT  STRING = {};
+        FBReference[1] : INPUT  STRING = {"OP_NAME"};
         ConfigValues[1] : INPUT  STRING = {"varname:OP_NAME"};
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
