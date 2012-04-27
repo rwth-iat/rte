@@ -1776,9 +1776,9 @@
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Engineering/FBv1";
         x : INPUT  SINGLE = 50.000000;
-        y : INPUT  SINGLE = 150.000000;
-        xOffset : INPUT  SINGLE = 250.000000;
-        yOffset : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 100.000000;
+        xOffset : INPUT  SINGLE = 50.000000;
+        yOffset : INPUT  SINGLE = 20.000000;
         FBReference[1] : INPUT  STRING = {"OP_NAME"};
         ConfigValues[1] : INPUT  STRING = {"classname:OP_CLASS"};
         visible : INPUT  BOOL = TRUE;
@@ -2208,8 +2208,8 @@
         r : INPUT  SINGLE = 2.000000;
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 2;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "black";
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2658,8 +2658,8 @@
         r : INPUT  SINGLE = 2.000000;
         visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 2;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "black";
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         baseKsPath : INPUT  STRING = "";
