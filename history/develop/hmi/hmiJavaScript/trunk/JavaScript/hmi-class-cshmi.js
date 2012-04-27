@@ -2209,16 +2209,12 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 					continue;
 				}else if (childTemplates[i].getAttribute("display") == "block"){
 					childTemplates[i].setAttribute("display", "none");
-					
-					//we have done something, so quit propagation of event
-					if (evt.stopPropagation) evt.stopPropagation();
 				}else{
 					childTemplates[i].setAttribute("display", "block");
-					
-					//we have done something, so quit propagation of event
-					if (evt.stopPropagation) evt.stopPropagation();
 				}
 			}
+			//quit propagation of event in any case. We do not want the parent tempalte to handle the click
+			if (evt.stopPropagation) evt.stopPropagation();
 		}, false);
 		
 		if (svgGElement){
