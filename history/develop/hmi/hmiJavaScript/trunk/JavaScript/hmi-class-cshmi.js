@@ -1716,11 +1716,11 @@ cshmi.prototype = {
 		var Value2 = this._getValue(ObjectParent, ObjectPath+".value2");
 		
 		if (Value1 === null){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value1 is null.");
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value1 is null.");
 			return null;
 		}
 		if (Value2 === null){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value2 is null.");
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value2 is null.");
 			return null;
 		}
 		
@@ -1791,22 +1791,27 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			}
 		}
 		var splittedValue = childValue[0].split(".");
-		Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+		
+		if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+			//we have an OV-PART, so the separator is a dot
+			Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+		}else{
+			//we have no OV-PART, so the separator is a slash
+			Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+		}
 		Value1 = Value1.replace(/{/g, "");
 		Value1 = Value1.replace(/}/g, "");
-
-		
 	}else{
 		Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
 	}
 	var Value2 = this._getValue(ObjectParent, ObjectPath+".withValue");
 	
 	if (Value1 === null){
-		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value1 is null.");
+		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value1 is null.");
 		return null;
 	}
 	if (Value2 === null){
-		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectPath+") failed because Value2 is null.");
+		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value2 is null.");
 		return null;
 	}
 	
@@ -2165,11 +2170,16 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 					continue;
 				}else if (childTemplates[i].getAttribute("display") == "block"){
 					childTemplates[i].setAttribute("display", "none");
+					
+					//we have done something, so quit propagation of event
+					if (evt.stopPropagation) evt.stopPropagation();
 				}else{
 					childTemplates[i].setAttribute("display", "block");
+					
+					//we have done something, so quit propagation of event
+					if (evt.stopPropagation) evt.stopPropagation();
 				}
 			}
-			if (evt.stopPropagation) evt.stopPropagation();
 		}, false);
 		
 		if (svgGElement){
