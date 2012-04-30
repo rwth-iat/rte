@@ -515,7 +515,6 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
 		
 		var SheetList = new Array();
-		var i = 0;
 		
 		//an init generates a new Handle, needed cause we communicate to this server the first time
 		this.init(this.KSServer.substring(0, this.KSServer.indexOf('/')) + '/' + Server, this.TCLKSGateway);
@@ -525,12 +524,14 @@ HMIJavaScriptKSClient.prototype = {
 		
 		//get Sheets from cshmi library
 		var responseArray;
+		var lastEntry;
+		var sortedList = Array();
 		var cshmiString = this.getVar(null, '/Libraries/cshmi/Group.instance', null);
 		if (!(cshmiString.indexOf("KS_ERR") !== -1)){
 			responseArray = this.splitKsResponse(cshmiString);
 			//the array could be [""]
 			if (responseArray.length > 0 && responseArray[0] !== ""){
-				SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+				sortedList = responseArray[0].split(" ").sort();
 			}
 		}else{
 			cshmiString = this.getVar(null, '/acplt/cshmi/Group.instance', null);
@@ -538,10 +539,28 @@ HMIJavaScriptKSClient.prototype = {
 				responseArray = this.splitKsResponse(cshmiString);
 				//the array could be [""]
 				if (responseArray.length > 0 && responseArray[0] !== ""){
-					SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+					sortedList = responseArray[0].split(" ").sort();
 				}
 			}
 		}
+		//show only the top level group
+		for(var i = 0; i < sortedList.length;){
+			if (sortedList[i].indexOf(lastEntry) !== -1){
+				//the last entry is a substring from the this entry
+				//so remove it from list
+				//the next entry will move down, so i is still valid
+				sortedList.splice(i, 1);
+			}else{
+				//no substring, try next one
+				i++;
+			}
+			lastEntry = sortedList[i-1];
+		}
+		SheetList = SheetList.concat(sortedList);
+		
+		var responseArray = null;
+		var lastEntry = null;
+		var sortedList = null;
 		
 		//get Sheets from hmi library
 		
