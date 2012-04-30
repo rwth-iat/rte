@@ -1341,6 +1341,10 @@ cshmi.prototype = {
 		var SourceConnectionPointdirection = null;
 		var TargetConnectionPoint = null;
 		var TargetConnectionPointdirection = null;
+		var ConnectionOffset = 3; //# pixel offset between connections from same FB
+		var OffsetSource = null;
+		var OffsetTarget = null;
+		
 		//if the Polyline was routed earlier, get the cached information (could be the case with cyclic calls)
 		if(FBRef !== null && this.ResourceList.Actions && this.ResourceList.Actions[FBRef] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
@@ -1348,6 +1352,8 @@ cshmi.prototype = {
 			SourceConnectionPointdirection = this.ResourceList.Actions[FBRef].SourceConnectionPointdirection;
 			TargetConnectionPoint = this.ResourceList.Actions[FBRef].TargetConnectionPoint;
 			TargetConnectionPointdirection = this.ResourceList.Actions[FBRef].TargetConnectionPointdirection;
+			OffsetSource = this.ResourceList.Actions[FBRef].OffsetSource;
+			OffsetTarget = this.ResourceList.Actions[FBRef].OffsetTarget;
 			this.ResourceList.Actions[FBRef].useCount++;
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: using cached information of "+FBRef+" (#"+this.ResourceList.Actions[FBRef].useCount+")");
 		}else{
@@ -1462,6 +1468,30 @@ cshmi.prototype = {
 					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPointdirection = TargetConnectionPointdirection;
 				}
 			}
+			
+			//get connection offset 
+			if (this.ResourceList.Actions["Connection_from_" + SourceBasename] !== undefined){
+				//there is already an incomming connection for this Object
+				this.ResourceList.Actions["Connection_from_" + SourceBasename].count += 1;
+				OffsetSource = this.ResourceList.Actions["Connection_from_" + SourceBasename].count * ConnectionOffset;
+			}
+			else{ 
+				//1st incomming connection for this Object
+				this.ResourceList.Actions["Connection_from_" + SourceBasename] = new Object();
+				this.ResourceList.Actions["Connection_from_" + SourceBasename].count = 0;
+				OffsetSource = 0;
+			}
+			if (this.ResourceList.Actions["Connection_to_" + TargetBasename] !== undefined){
+				//there is already an outgoing connection for this Object
+				this.ResourceList.Actions["Connection_to_" + TargetBasename].count += 1;
+				OffsetTarget = this.ResourceList.Actions["Connection_to_" + TargetBasename].count * ConnectionOffset;
+			}
+			else{
+				//1st outgoing connection for this Object
+				this.ResourceList.Actions["Connection_to_" + TargetBasename] = new Object();
+				this.ResourceList.Actions["Connection_to_" + TargetBasename].count = 0;
+				OffsetTarget = 0;
+			}
 
 			//remember the result
 			this.ResourceList.Actions[FBRef] = new Object();
@@ -1469,8 +1499,11 @@ cshmi.prototype = {
 			this.ResourceList.Actions[FBRef].SourceConnectionPointdirection = SourceConnectionPointdirection;
 			this.ResourceList.Actions[FBRef].TargetConnectionPoint = TargetConnectionPoint;
 			this.ResourceList.Actions[FBRef].TargetConnectionPointdirection = TargetConnectionPointdirection;
+			this.ResourceList.Actions[FBRef].OffsetSource = OffsetSource;
+			this.ResourceList.Actions[FBRef].OffsetTarget = OffsetTarget;
 			this.ResourceList.Actions[FBRef].useCount = 1;
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering results for "+FBRef+" ");
+
 		}		
 
 		var xStart = parseInt(SourceConnectionPoint.getAttribute("layerX"), 10);
@@ -1499,16 +1532,19 @@ cshmi.prototype = {
 			this.ResourceList.Actions[FBRef].yEnd = yEnd;
 
 			var points;
+			// add minimum #pixel distance from Object till 1st direction change of connection
+			OffsetSource += 40;
+			OffsetTarget += 40;
 			if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Left"){
 				//OUTPUT --> INPUT
 				points = xStart + "," + yStart + " ";
-				xStart = xStart + 40;
+				xStart = xStart + OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (xStart >= xEnd) {
 					yStart = (yEnd+yStart)/2;
 					points = points + xStart + "," + yStart + " ";
 					
-					xStart = xEnd - 40;
+					xStart = xEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1523,13 +1559,13 @@ cshmi.prototype = {
 				xEnd = xTemp;
 				yEnd = yTemp;
 				points = xStart + "," + yStart + " ";
-				xStart = xStart + 40;
+				xStart = xStart + OffsetTarget;
 				points = points + xStart + "," + yStart + " ";
 				if (xStart >= xEnd) {
 					yStart = (yEnd+yStart)/2;
 					points = points + xStart + "," + yStart + " ";
 					
-					xStart = xEnd - 40;
+					xStart = xEnd - OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1538,10 +1574,10 @@ cshmi.prototype = {
 			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Left"){
 				//INPUT --> INPUT
 				points = xStart + "," + yStart + " ";
-				xStart = xStart - 40;
+				xStart = xStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (xStart >= xEnd) {
-					xStart = xEnd - 40;
+					xStart = xEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1550,10 +1586,10 @@ cshmi.prototype = {
 			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Right"){
 				//OUTPUT --> OUTPUT
 				points = xStart + "," + yStart + " ";
-				xStart = xStart + 40;
+				xStart = xStart + OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (xStart <= xEnd) {
-					xStart = xEnd + 40;
+					xStart = xEnd + OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 		
@@ -1561,13 +1597,13 @@ cshmi.prototype = {
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Down"){
 				points = xStart + "," + yStart + " ";
-				yStart = yStart - 40;
+				yStart = yStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (yStart <= yEnd) {
 					xStart = (xEnd+xStart)/2;
 					points = points + xStart + "," + yStart + " ";
 					
-					yStart = yEnd + 40;
+					yStart = yEnd + OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1581,13 +1617,13 @@ cshmi.prototype = {
 				xEnd = xTemp;
 				yEnd = yTemp;
 				points = xStart + "," + yStart + " ";
-				yStart = yStart - 40;
+				yStart = yStart - OffsetTarget;
 				points = points + xStart + "," + yStart + " ";
 				if (yStart <= yEnd) {
 					xStart = (xEnd+xStart)/2;
 					points = points + xStart + "," + yStart + " ";
 					
-					yStart = yEnd + 40;
+					yStart = yEnd + OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1595,10 +1631,10 @@ cshmi.prototype = {
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Down"){
 				points = xStart + "," + yStart + " ";
-				yStart = yStart + 40;
+				yStart = yStart + OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (yStart <= yEnd) {
-					yStart = yEnd + 40;
+					yStart = yEnd + OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1606,10 +1642,10 @@ cshmi.prototype = {
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Up"){
 				points = xStart + "," + yStart + " ";
-				yStart = yStart - 40;
+				yStart = yStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (yStart >= yEnd) {
-					yStart = yEnd - 40;
+					yStart = yEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1617,10 +1653,10 @@ cshmi.prototype = {
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Up"){
 				points = xStart + "," + yStart + " ";
-				xStart = xStart + 40;
+				xStart = xStart + OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (!(yStart < yEnd && xStart < xEnd)){
-					yStart = yEnd - 40;
+					yStart = yEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1634,10 +1670,10 @@ cshmi.prototype = {
 				xEnd = xTemp;
 				yEnd = yTemp;
 				points = xStart + "," + yStart + " ";
-				xStart = xStart + 40;
+				xStart = xStart + OffsetTarget;
 				points = points + xStart + "," + yStart + " ";
 				if (!(yStart < yEnd && xStart < xEnd)){
-					yStart = yEnd - 40;
+					yStart = yEnd - OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1645,10 +1681,10 @@ cshmi.prototype = {
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Down"){
 				points = xStart + "," + yStart + " ";
-				xStart = xStart + 40;
+				xStart = xStart + OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (!(yStart > yEnd && xStart < xEnd)){
-					yStart = yEnd + 40;
+					yStart = yEnd + OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 				points = points + xEnd + "," + yStart + " ";
@@ -1661,20 +1697,20 @@ cshmi.prototype = {
 				xEnd = xTemp;
 				yEnd = yTemp;
 				points = xStart + "," + yStart + " ";
-				xStart = xStart + 40;
+				xStart = xStart + OffsetTarget;
 				points = points + xStart + "," + yStart + " ";
 				if (!(yStart > yEnd && xStart < xEnd)){
-					yStart = yEnd + 40;
+					yStart = yEnd + OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Up"){
 				points = xStart + "," + yStart + " ";
-				xStart = xStart - 40;
+				xStart = xStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (!(yStart < yEnd && xStart > xEnd)){
-					yStart = yEnd - 40;
+					yStart = yEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1688,10 +1724,10 @@ cshmi.prototype = {
 				xEnd = xTemp;
 				yEnd = yTemp;
 				points = xStart + "," + yStart + " ";
-				xStart = xStart - 40;
+				xStart = xStart - OffsetTarget;
 				points = points + xStart + "," + yStart + " ";
 				if (!(yStart < yEnd && xStart > xEnd)){
-					yStart = yEnd - 40;
+					yStart = yEnd - OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
 
@@ -1699,10 +1735,10 @@ cshmi.prototype = {
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Down"){
 				points = xStart + "," + yStart + " ";
-				xStart = xStart - 40;
+				xStart = xStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
 				if (!(yStart > yEnd && xStart > xEnd)){
-					yStart = yEnd + 40;
+					yStart = yEnd + OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
 				points = points + xEnd + "," + yStart + " ";
@@ -1715,10 +1751,10 @@ cshmi.prototype = {
 				xEnd = xTemp;
 				yEnd = yTemp;
 				points = xStart + "," + yStart + " ";
-				xStart = xStart - 40;
+				xStart = xStart - OffsetTarget;
 				points = points + xStart + "," + yStart + " ";
 				if (!(yStart > yEnd && xStart > xEnd)){
-					yStart = yEnd + 40;
+					yStart = yEnd + OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
 				points = points + xEnd + "," + yStart + " ";
@@ -1971,6 +2007,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			}
 			requestList[ObjectPath]["TemplateDefinition"] = null;
 			requestList[ObjectPath]["FBReference"] = null;
+//			requestList[ObjectPath]["FBVariableReference"] = null;
 			requestList[ObjectPath]["ConfigValues"] = null;
 			
 			var successCode = this._executeVariablesArray(requestList);
