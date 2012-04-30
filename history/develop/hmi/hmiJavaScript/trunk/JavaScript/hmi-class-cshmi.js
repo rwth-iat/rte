@@ -183,10 +183,10 @@ cshmi.prototype = {
 			var ComponentChilds = Component.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
 				var Position = HMI._setLayerPosition(ComponentChilds[i], true);
-				if (Position[0] > maxPosition[0]){
+				if (ComponentChilds[i].tagName !== "svg" && Position[0] > maxPosition[0]){
 					maxPosition[0] = Position[0];
 				}
-				if (Position[1] > maxPosition[1]){
+				if (ComponentChilds[i].tagName !== "svg" && Position[1] > maxPosition[1]){
 					maxPosition[1] = Position[1];
 				}
 			}
