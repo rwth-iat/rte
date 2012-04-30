@@ -327,7 +327,7 @@ cshmi.prototype = {
 		}else if (command[command.length-1] === "doubleclick"){
 			ObjectParent.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			//todo make double click ASV compatible
+			//todo make double click ASV compatible 
 			/*ObjectParent.addEventListener("click", function(evt){
 				if (!(evt.button === 0 && evt.detail ==2)){
 				return;
