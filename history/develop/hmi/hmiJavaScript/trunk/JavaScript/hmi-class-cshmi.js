@@ -106,9 +106,6 @@ JavaScript:
 - Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
 - Nur einige wenige cycTimes (enum?) erlauben
 - ks befehle konsolidieren bei zyklischer abarbeitung
-
-Modell:
-- sequenceindex für aktionen
 #########################################################################################################################*/
 
 /***********************************************************************
@@ -940,6 +937,12 @@ cshmi.prototype = {
 				}
 			}else if (ParameterValue == "title"){
 				this._setTitle(ObjectParent, NewValue);
+/*
+			}else if (ParameterValue.indexOf("hover") !== -1){
+				//todo, https://developer.mozilla.org/en/DOM/CSSStyleSheet/insertRule
+				
+				//ObjectParent, NewValue;
+*/
 			}else if (ParameterValue == "visible"){
 				//visible is special, as it is different in OVM and SVG
 				if (NewValue == "FALSE"){
@@ -2245,12 +2248,6 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			}
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-		//todo make double click ASV compatible
-		/*ObjectParent.addEventListener("click", function(evt){
-			if (!(evt.button === 0 && evt.detail ==2)){
-			return;
-		}*/
-		
 		//toggle visibility of hideable childtemplates onclick
 		ObjectParent.addEventListener("click", function(evt){
 			var childTemplates = ObjectParent.childNodes;
@@ -2267,7 +2264,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 					childTemplates[i].setAttribute("display", "block");
 				}
 			}
-			//quit propagation of event in any case. We do not want the parent tempalte to handle the click
+			//quit propagation of event in any case. We do not want the parent template to handle the click
 			if (evt.stopPropagation) evt.stopPropagation();
 		}, false);
 		
@@ -2826,6 +2823,10 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		}
 		if(configArray["fill"] && configArray["fill"] !== ""){
 			svgElement.setAttribute("fill", configArray["fill"]);
+			if (configArray["fill"].indexOf("url(") !== -1){
+				//opera has a Bug in May 2012 (v11+v12 beta), so the pointer-event is not correct in this case
+				svgElement.setAttribute('pointer-events', 'all');
+			}
 		}
 		if(configArray["opacity"] && configArray["opacity"] !== ""){
 			svgElement.setAttribute("opacity", configArray["opacity"]);
