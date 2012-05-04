@@ -574,12 +574,11 @@ cshmi.prototype = {
 		-	get a Value from multiple Sources
 	*********************************/
 	_getValue: function(ObjectParent, ObjectPath){
-		var requestList;
 		var ParameterName;
 		var ParameterValue;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			requestList = new Object();
+			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ksVar"] = null;
 			requestList[ObjectPath]["elemVar"] = null;
@@ -607,6 +606,8 @@ cshmi.prototype = {
 				//the action was not configured
 				ParameterName = "";
 			}
+			//feeding garbage collector early
+			requestList = null;
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
@@ -616,7 +617,6 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._getValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
 			this.ResourceList.Actions[ObjectPath].useCount++;
@@ -857,12 +857,11 @@ cshmi.prototype = {
 		
 		//get info where to set the NewValue
 		
-		var requestList;
 		var ParameterName;
 		var ParameterValue;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			requestList = new Object();
+			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ksVar"] = null;
 			requestList[ObjectPath]["elemVar"] = null;
@@ -887,6 +886,8 @@ cshmi.prototype = {
 				//the action was not configured
 				ParameterName = "";
 			}
+			//feeding garbage collector early
+			requestList = null;
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
@@ -896,7 +897,6 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._setValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
 			this.ResourceList.Actions[ObjectPath].useCount++;
@@ -1855,10 +1855,21 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 	var childValue;
 	//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 	if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
-		//fixme requests zusammenfassen!
-		comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
-		childValue = HMI.KSClient.getVar(null, '{'+ObjectPath+'.childValue}', null);
-		childValue = HMI.KSClient.splitKsResponse(childValue, 0);
+		var requestList = new Object();
+		requestList[ObjectPath] = new Object();
+		requestList[ObjectPath]["comptype"] = null;
+		requestList[ObjectPath]["childValue"] = null;
+		
+		var successCode = this._executeVariablesArray(requestList);
+		if (successCode == false){
+			return false;
+		}
+		
+		comptype = requestList[ObjectPath]["comptype"]
+		childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
+		
+		//feeding garbage collector early
+		requestList = null;
 		
 		//we have asked the object successful, so remember the result
 		this.ResourceList.Conditions[ObjectPath] = new Object();
