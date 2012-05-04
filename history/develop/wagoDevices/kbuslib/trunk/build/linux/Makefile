@@ -17,10 +17,17 @@ PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
 
+BIN_DIR = 
+USERLIB_DLL = 
+CC = ucfront-gcc gcc
+CC_FLAGS = -g -Wall -O2 -fomit-frame-pointer -pipe -msoft-float -fno-builtin -DEMBED -fno-strict-aliasing
+LD	= $(CC) -Wl,-elf2flt -msoft-float
+LD_FLAGS =
+
 all:
 
 %:
 	acplt_makmak -l kbuslib $(MAKMAKOPTIONS)
 	tclsh $(PREBUILD) kbuslib $(MAKMAKOPTIONS)
-	$(MAKE) EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
+	$(MAKE) NO_DLL_COPY=1 BIN_DIR='$(BIN_DIR)' USERLIB_DLL='$(USERLIB_DLL)' CC='$(CC)' CC_FLAGS='$(CC_FLAGS)' LD='$(LD)' LD_FLAGS='$(LD_FLAGS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	tclsh $(POSTBUILD) kbuslib
