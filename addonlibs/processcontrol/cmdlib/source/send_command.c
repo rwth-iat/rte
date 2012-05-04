@@ -84,6 +84,7 @@
 
 #include "cmdlib.h"
 #include "cmd.h"
+#include "libov/ov_logfile.h"
 
 /***********************************************************************
 	send_command
@@ -124,69 +125,7 @@ OV_RESULT OV_DLLFNCEXPORT send_command(
 	if(strncmp(target, "//", 2) == 0) 
 	{	/* Kommandoversand soll über einen Com-Manager (Remote) erfolgen */
 		
-		//	Zeiger auf Sender prüfen, da nur der cmdlib/Sender remote Kommandos
-		//	verschicken kann
-		//
-		if (!pSender)
-			return OV_ERR_BADPARAM;
-			
-		//	Instance und WriteManager gesetzt?
-		//
-		if (	(ov_string_compare(pSender->v_WriteManager,"")	!= 0) 
-			&& (ov_string_compare(pSender->v_Instance,"")		!= 0))
-		{
-			ov_memstack_lock();
-			
-			//	Kommando erzeugen (Geber, Kommando, Wert)
-			//
-			FullCommand = (OV_STRING) Ov_HeapMalloc(strlen(ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pCommander), 2)) + strlen(command) + strlen(value) + 2);
-			if (!FullCommand)
-			{
-				ov_memstack_unlock();
-				return OV_ERR_GENERIC;
-			};
-			
-			strcpy(FullCommand, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pCommander), 2));
-			strcat(FullCommand, ";");
-			strcat(FullCommand, command);
-			strcat(FullCommand, ";");
-			strcat(FullCommand, value);
-			
-			//	Die Remote Instance extrahieren
-			//
-			RemoteInst = (OV_STRING) target;
-			RemoteInst = RemoteInst + 2;
-			RemoteInst = strchr(RemoteInst,'/');
-			RemoteInst = RemoteInst + 1;
-			RemoteInst = strchr(RemoteInst,'/');
-			
-			//	Auf die Variable order der Remote Instance weisen
-			//
-			RemoteVar = (OV_STRING) Ov_HeapMalloc(strlen(RemoteInst) + strlen(".order"));			
-			if (!RemoteVar)
-			{
-				Ov_HeapFree(FullCommand);
-				ov_memstack_unlock();
-				return OV_ERR_GENERIC;
-			};
-			strcpy(RemoteVar, RemoteInst);
-			strcat(RemoteVar, ".order");
-		
-			//	Order ist vom Typ OV_STRING, zu setzender Wert ist FullCommand
-			//
-			SendValue.vartype = OV_VT_STRING;
-			SendValue.valueunion.val_string = FullCommand;
-			
-			//	Kommando verschicken
-			//
-			pSender->v_ResultLocal = COMLIB_SET(pSender, pSender->v_WriteManager, RemoteVar, SendValue, "ResultRemote");
-			
-			//	Free Heap
-			//
-			Ov_HeapFree(RemoteVar);
-			Ov_HeapFree(FullCommand);
-			ov_memstack_unlock();
-		};
+		ov_logfile_error("remote sending not implemented ritght now");
 	
 	} else 
 	{	/* Kommandoversand innerhalb des lokalen Systems  */
