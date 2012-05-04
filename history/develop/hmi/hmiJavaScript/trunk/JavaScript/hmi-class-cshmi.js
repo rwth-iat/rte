@@ -1252,7 +1252,7 @@ cshmi.prototype = {
 			}
 		}
 		else {
-			//allow mutltiple childrenTypes
+			//allow multiple childrenTypes
 			var childrenTypeList = childrenType.split(" ");
 			var response;
 			for (var i=0; i < childrenTypeList.length; i++) {
@@ -1859,6 +1859,12 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 	}
 
 	var Value1;
+	
+	if (childValue[0] === ""){
+		HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not configured");
+		//error state, so no boolean
+		return null;
+	}else
 	//check if we want to get a Value from the iteratedChild
 	if (childValue[0].indexOf(".") !== -1){
 		var rootObject = ObjectParent;
@@ -1894,10 +1900,12 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 	
 	if (Value1 === null){
 		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value1 is null.");
+		//error state, so no boolean
 		return null;
 	}
 	if (Value2 === null){
 		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value2 is null.");
+		//error state, so no boolean
 		return null;
 	}
 	
@@ -1950,6 +1958,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		return true;
 	}else{
 		HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
+		//error state, so no boolean
 		return null;
 	}
 },
