@@ -105,6 +105,8 @@ JavaScript:
 - unbenutzte pointer events killen? sonst in engineering event per hand killen 
 - engineering fake rect raus
 
+- hover für polylines
+
 - Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
 - Nur einige wenige cycTimes (enum?) erlauben
 - ks befehle konsolidieren bei zyklischer abarbeitung
@@ -1341,33 +1343,51 @@ cshmi.prototype = {
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+ObjectParent.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
-		//get Values (via getValue-parts)
-		var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
-		var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
-		var TargetBasename = this._getValue(ObjectParent, ObjectPath+".TargetBasename");
-		var TargetVariablename = this._getValue(ObjectParent, ObjectPath+".TargetVariablename");
-
-		var rootObject = ObjectParent;
 		var FBRef;
-		//search FBReference of root Object
-		while (rootObject !== null){
-			//FBReference found
-			if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
-				FBRef = rootObject.FBReference["default"];
-				//FBRef found, we can stop search
-				rootObject = null;
-			}
-			else {
-				//loop upwards to find the Template object
-				rootObject = rootObject.parentNode;
-				if (rootObject === null){
-					//if rootObject is null, we use Source and Target to cache
-					FBRef = SourceBasename+SourceVariablename+TargetBasename+TargetVariablename;
-					}
+		//if the Object is routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		
+		//Not the config is cached here, but the result! So caching ObjectParent specific, not ObjectPath
+		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectParent.id] !== undefined)){
+			//get Values (via getValue-parts)
+			var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
+			var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
+			var TargetBasename = this._getValue(ObjectParent, ObjectPath+".TargetBasename");
+			var TargetVariablename = this._getValue(ObjectParent, ObjectPath+".TargetVariablename");
+
+			
+			var rootObject = ObjectParent;
+			//search FBReference of root Object
+			while (rootObject !== null){
+				//FBReference found
+				if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+					FBRef = rootObject.FBReference["default"];
+					//FBRef found, we can stop search
+					rootObject = null;
 				}
+				else {
+					//loop upwards to find the Template object
+					rootObject = rootObject.parentNode;
+					if (rootObject === null){
+						//if rootObject is null, we use Source and Target to cache
+						FBRef = SourceBasename+SourceVariablename+TargetBasename+TargetVariablename;
+						}
+					}
+			}
+			rootObject = null;
+
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Actions[ObjectParent.id] = new Object();
+			this.ResourceList.Actions[ObjectParent.id].FBRef = FBRef;
+			this.ResourceList.Actions[ObjectParent.id].useCount = 1;
+			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			FBRef = this.ResourceList.Actions[ObjectParent.id].FBRef;
+			this.ResourceList.Actions[ObjectParent.id].useCount++;
+			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
-
-
+		
 		var SourceConnectionPoint = null;
 		var SourceConnectionPointdirection = null;
 		var TargetConnectionPoint = null;
@@ -1375,6 +1395,9 @@ cshmi.prototype = {
 		var ConnectionOffset = 3; //# pixel offset between connections from same FB
 		var OffsetSource = null;
 		var OffsetTarget = null;
+		
+		//todo merge caching!!
+		
 		
 		//if the Polyline was routed earlier, get the cached information (could be the case with cyclic calls)
 		if(FBRef !== null && this.ResourceList.Actions && this.ResourceList.Actions[FBRef] !== undefined){
