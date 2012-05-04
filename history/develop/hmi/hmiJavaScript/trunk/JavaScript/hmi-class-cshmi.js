@@ -102,7 +102,8 @@ TODO:
 
 JavaScript:
 - check return value of gethandleid
-- unbenutzte pointer events killen?
+- unbenutzte pointer events killen? sonst in engineering event per hand killen 
+- engineering fake rect raus
 
 - Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
 - Nur einige wenige cycTimes (enum?) erlauben
@@ -1214,6 +1215,9 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
+		//this will be increased after an successful instantiateTemplate
+		this.ResourceList.ChildrenIterator.currentCount = 0;
+		
 		var returnValue = true;
 		if (childrenType.indexOf("OT_") !== -1){
 			var response = HMI.KSClient.getEP(null, encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + childrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
@@ -1291,7 +1295,7 @@ cshmi.prototype = {
 					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 					
 					returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
-					}
+				}
 			}
 		}
 		//reset Objects, after iteration is done we don't want to cache the last entries
@@ -1858,6 +1862,11 @@ cshmi.prototype = {
 	-	checks Condition within ChildrenIterator
 *********************************/
 _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
+	if (this.ResourceList.ChildrenIterator.currentChild === undefined){
+		HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
+		//error state, so no boolean
+		return null;
+	}
 	//get Values
 	var comptype;
 	var childValue;
@@ -2138,7 +2147,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			if (ConfigEntry.length === 2){
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]] !== undefined){
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]] !== undefined){
 					var rootObject = ObjectParent;
 					var FBRef;
 					//search FBReference of root Object
@@ -2164,7 +2173,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 				}
 			}
 			else if (ConfigEntry.length === 1 && ConfigEntry[0] != ""){
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]] !== undefined){
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]] !== undefined){
 					var rootObject = ObjectParent;
 					var FBRef;
 					//search FBReference of root Object
@@ -2225,8 +2234,12 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		var xTemplate = requestList[ObjectPath]["x"];
 		var yTemplate = requestList[ObjectPath]["y"];
 		
-		if (calledFromInstantiateTemplate){
-			var offsetCount = this.ResourceList.InstantiateTemplate[ObjectPath].useCount;
+		if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined){
+			//the offsetCount must be global for all InstantiateTemplate below an iterator
+			var offsetCount = this.ResourceList.ChildrenIterator.currentCount;
+			//the next InstantiateTemplate should go to an other position
+			this.ResourceList.ChildrenIterator.currentCount++;
+			
 			var x = parseFloat(requestList[ObjectPath]["x"]) + (offsetCount * parseFloat(requestList[ObjectPath]["xOffset"]));
 			requestList[ObjectPath]["x"] = x.toString();
 			var y = parseFloat(requestList[ObjectPath]["y"]) + (offsetCount * parseFloat(requestList[ObjectPath]["yOffset"]));
@@ -2262,7 +2275,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			if (ConfigEntry.length === 2){
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]] !== undefined){
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]] !== undefined){
 					svgElement.ConfigValues[ConfigEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];
 				}
 				else{
