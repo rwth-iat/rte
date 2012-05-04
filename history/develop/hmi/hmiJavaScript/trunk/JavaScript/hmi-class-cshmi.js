@@ -1186,16 +1186,32 @@ cshmi.prototype = {
 				rootObject = rootObject.parentNode;
 			}
 		}
-		//get Values
-		var childrenType = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ChildrenType}', null);
-		if (childrenType === false){
-			//communication error
-			return false;
-		}else if (childrenType.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._interpreteChildrenIterator of "+ObjectPath+" failed: "+response);
-			return false;
+		
+		var childrenType;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ChildrenType}', null);
+			if (response === false){
+				//communication error
+				return false;
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_error("cshmi._interpreteChildrenIterator of "+ObjectPath+" failed: "+response);
+				
+				return false;
+			}
+			childrenType = HMI.KSClient.splitKsResponse(response, 0)[0];
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameters = childrenType;
+			this.ResourceList.Actions[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			childrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameters;
+			this.ResourceList.Actions[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
-		childrenType = HMI.KSClient.splitKsResponse(childrenType, 0)[0];
 		
 		var returnValue = true;
 		if (childrenType.indexOf("OT_") !== -1){
