@@ -32,7 +32,9 @@ OV_DLLFNCEXPORT void kbuslib_DigitalIN_startup(
     /* do what the base class does first */
     kbuslib_Clamp_startup(pobj);
 
-   
+    Ov_StaticPtrCast(kbuslib_DigitalIN, pobj)->v_ValuePV.value = FALSE;
+    Ov_StaticPtrCast(kbuslib_DigitalIN, pobj)->v_ValuePV.state = OV_ST_UNKNOWN;
+
     return;
 }
 

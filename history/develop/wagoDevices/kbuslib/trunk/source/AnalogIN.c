@@ -35,7 +35,9 @@ OV_DLLFNCEXPORT void kbuslib_AnalogIN_startup(
     /* do what */
 	
 	Ov_StaticPtrCast(kbuslib_AnalogIN, pobj)->v_ByteWidth = 2;
-	
+	Ov_StaticPtrCast(kbuslib_AnalogIN, pobj)->v_ValuePV.value = 0.0;
+	Ov_StaticPtrCast(kbuslib_AnalogIN, pobj)->v_ValuePV.state = OV_ST_UNKNOWN;
+
 
     return;
 }

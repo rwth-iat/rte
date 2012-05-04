@@ -85,6 +85,10 @@ LIBRARY kbuslib
 			nrSP	:	UINT	FLAGS = "o"
 				COMMENT = "Number of specialized clamps"
 				INITIALVALUE = 0;
+			LastRead	:	TIME	FLAGS = "o"
+				COMMENT = "Time of Last successfull read of ProcessImage";
+			LastWrite	:	TIME	FLAGS = "o"
+				COMMENT = "Time of Last successfull write of ProcessImage";	
 			Error	:	BOOL	FLAGS = "o"
 				COMMENT = "Error state (TRUE = Good)"
 				INITIALVALUE = TRUE;
@@ -124,6 +128,9 @@ LIBRARY kbuslib
 				FLAGS = "i"
 				COMMENT = "Clamp enabled"
 				INITIALVALUE = FALSE;
+			TimeStamp	:	TIME
+				FLAGS = "o"
+				COMMENT = "Last sync with ProcessImage";
 			Error	:	BOOL	FLAGS = "o"
 				COMMENT = "Error state (TRUE = Good)"
 				INITIALVALUE = TRUE;
@@ -152,6 +159,8 @@ LIBRARY kbuslib
 			Value	:	SINGLE	FLAGS = "o"
 				COMMENT = "Analog value"
 				INITIALVALUE = 0.0;
+			ValuePV	:	SINGLE_PV FLAGS = "o"
+				COMMENT = "Analog Value with state and Timestamp";
 		END_VARIABLES;
 		OPERATIONS
 			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
@@ -194,7 +203,9 @@ LIBRARY kbuslib
 		VARIABLES
 			Value	:	BOOL	FLAGS = "o"
 				COMMENT = "Digital value"
-				INITIALVALUE = FALSE;			
+				INITIALVALUE = FALSE;
+			ValuePV	:	BOOL_PV	FLAGS = "o"
+				COMMENT = "Digital Value with state and Timestamp";		
 		END_VARIABLES;
 		OPERATIONS
 			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
