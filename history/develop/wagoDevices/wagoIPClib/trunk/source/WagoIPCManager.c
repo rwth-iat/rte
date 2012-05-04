@@ -26,6 +26,7 @@
 #define OV_COMPILE_LIBRARY_wagolib
 #endif
 
+
 #include "kbusl.h"
 #include "wagoIPClib.h"
 #include "wagoIPClib_macros.h"
@@ -655,6 +656,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 	switch(res)
 	{
 		case 0:			/*no error*/
+			ov_time_gettime(&pinst->v_LastRead);	/*set time of successfull read*/
 			break;
 			
 		case KBUS_ERROR_BUSY:
@@ -777,6 +779,11 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 							* (Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_UpperLimit
 							- Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit)
 							 + Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit);
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.value =
+							Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value;
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.time = pinst->v_LastRead;
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.state = OV_ST_GOOD;
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_TimeStamp = pinst->v_LastRead;
 				}
 				else
 				{
@@ -786,7 +793,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					ov_string_setvalue(&pcClamp->v_ErrorString, KBUS_ERRORSTR_NOCLAMP); 
 					misc_set_led_on(3);
 					misc_set_led_off(2);
-					
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.state = OV_ST_BAD;
 				}
 				
 				/*trigger output connections*/
@@ -798,7 +805,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 				pcClamp->v_Error = TRUE;
 				pcClamp->v_ErrorCode = KBUS_CLAMP_DISABLED;
 				ov_string_setvalue(&pcClamp->v_ErrorString, KBUS_STR_CLAMP_DISABLED); 
-				
+				Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.state = OV_ST_BAD;
 			}
 			
 			continue;		/*	continue to next object	*/
@@ -826,7 +833,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					}
 	
 					Ov_SetDynamicVectorValue(&(Ov_StaticPtrCast(kbuslib_SpecialIN, pcClamp)->v_Value.value.valueunion.val_byte_vec), &(pinfo->image.inputs.data[tmp_number]), pcClamp->v_ByteWidth, BYTE);
-					
+					Ov_StaticPtrCast(kbuslib_SpecialIN, pcClamp)->v_TimeStamp = pinst->v_LastRead;
 						
 				}
 				else
@@ -881,7 +888,13 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					if(btemp)
 						Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_Value = TRUE;
 					else
-						Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_Value = FALSE;	
+						Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_Value = FALSE;
+
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.value =
+							Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_Value;
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.state = OV_ST_GOOD;
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.time = pinst->v_LastRead;
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_TimeStamp = pinst->v_LastRead;
 				}
 				else
 				{
@@ -891,6 +904,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					ov_string_setvalue(&pcClamp->v_ErrorString, KBUS_ERRORSTR_NOCLAMP); 
 					misc_set_led_on(3);
 					misc_set_led_off(2);
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.state = OV_ST_BAD;
 					
 				}
 				
@@ -903,7 +917,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 				pcClamp->v_Error = TRUE;
 				pcClamp->v_ErrorCode = KBUS_CLAMP_DISABLED;
 				ov_string_setvalue(&pcClamp->v_ErrorString, KBUS_STR_CLAMP_DISABLED); 
-				
+				Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.state = OV_ST_BAD;
 			}
 			
 			continue;		/*	continue to next object	*/
@@ -924,7 +938,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 
 				if(tmp_number <= dig_output_offset)
 				{
-					/*if there was an error, or the clamp was diasbled reset it*/
+					/*if there was an error, or the clamp was disabled reset it*/
 					if((!(pcClamp->v_Error))
 						|| pcClamp->v_ErrorCode == KBUS_CLAMP_DISABLED)	
 					{
@@ -1144,6 +1158,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 		switch(res)
 		{
 			case 0:			/*no error*/
+				ov_time_gettime(&pinst->v_LastWrite);	/*set time of successfull write*/
 				break;
 		
 			case KBUS_ERROR_BUSY:
