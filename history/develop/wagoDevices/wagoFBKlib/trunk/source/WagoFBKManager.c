@@ -641,7 +641,11 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 		//return;
 	}
 	
-		
+	/*set LastRead and LastWrite*/
+	ov_time_gettime(&pinst->v_LastRead);
+	pinst->v_LastWrite = pinst->v_LastRead;
+
+
 	/*then iterate over all inputs*/
 	
 	Ov_ForEachChild(ov_containment, pinst, pcClampobj)		/*iterate over all contained objects*/
@@ -671,6 +675,12 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 							* (Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_UpperLimit
 							- Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit)
 							 + Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit);
+
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.value =
+							Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value;
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.state = OV_ST_GOOD;
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.time = pinst->v_LastRead;
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_TimeStamp = pinst->v_LastRead;
 				}
 				/*else
 				{
@@ -682,13 +692,13 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 				}*/
 				
 			}
-			/*else
+			else
 			{
 				pcClamp->v_Error = TRUE;
 				pcClamp->v_ErrorCode = KBUS_CLAMP_DISABLED;
 				ov_string_setvalue(&pcClamp->v_ErrorString, KBUS_STR_CLAMP_DISABLED); 
-				
-			}*/
+				Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.state = OV_ST_BAD;
+			}
 			
 			continue;		/*	continue to next object	*/
 		}
@@ -714,7 +724,7 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 					}
 	
 					Ov_SetDynamicVectorValue(&(Ov_StaticPtrCast(kbuslib_SpecialIN, pcClamp)->v_Value.value.valueunion.val_byte_vec), &(pstPabIN->uc.Pab[tmp_number]), pcClamp->v_ByteWidth, BYTE);
-					
+					Ov_StaticPtrCast(kbuslib_SpecialIN, pcClamp)->v_TimeStamp = pinst->v_LastRead;
 						
 				}
 				/*else
@@ -764,6 +774,12 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 						Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_Value = TRUE;
 					else
 						Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_Value = FALSE;	
+
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.value =
+							Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_Value;
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.time = pinst->v_LastRead;
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.state = OV_ST_GOOD;
+					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_TimeStamp = pinst->v_LastRead;
 				}
 				/*else
 				{
@@ -779,7 +795,8 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 			{
 				pcClamp->v_Error = TRUE;
 				pcClamp->v_ErrorCode = KBUS_CLAMP_DISABLED;
-				ov_string_setvalue(&pcClamp->v_ErrorString, KBUS_STR_CLAMP_DISABLED); 
+				ov_string_setvalue(&pcClamp->v_ErrorString, KBUS_STR_CLAMP_DISABLED);
+				Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.state = OV_ST_BAD;
 				
 			}
 			
