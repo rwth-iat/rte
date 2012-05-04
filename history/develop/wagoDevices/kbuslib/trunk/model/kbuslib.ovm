@@ -128,9 +128,6 @@ LIBRARY kbuslib
 				FLAGS = "i"
 				COMMENT = "Clamp enabled"
 				INITIALVALUE = FALSE;
-			TimeStamp	:	TIME
-				FLAGS = "o"
-				COMMENT = "Last sync with ProcessImage";
 			Error	:	BOOL	FLAGS = "o"
 				COMMENT = "Error state (TRUE = Good)"
 				INITIALVALUE = TRUE;
@@ -156,6 +153,9 @@ LIBRARY kbuslib
 			LowerLimit	:	SINGLE	FLAGS = "i"
 				COMMENT = "Lower limit of range"
 				INITIALVALUE = 0.0;
+				TimeStamp	:	TIME
+				FLAGS = "o"
+				COMMENT = "Last sync with ProcessImage.";
 			Value	:	SINGLE	FLAGS = "o"
 				COMMENT = "Analog value"
 				INITIALVALUE = 0.0;
@@ -205,7 +205,10 @@ LIBRARY kbuslib
 				COMMENT = "Digital value"
 				INITIALVALUE = FALSE;
 			ValuePV	:	BOOL_PV	FLAGS = "o"
-				COMMENT = "Digital Value with state and Timestamp";		
+				COMMENT = "Digital Value with state and Timestamp";
+			TimeStamp	:	TIME
+				FLAGS = "o"
+				COMMENT = "Last sync with ProcessImage.";
 		END_VARIABLES;
 		OPERATIONS
 			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
@@ -240,6 +243,9 @@ LIBRARY kbuslib
 		VARIABLES
 		Value	:	ANY	FLAGS = "o"
 			COMMENT = "Value read from bus";
+		TimeStamp	:	TIME
+				FLAGS = "o"
+				COMMENT = "Last sync with ProcessImage.";
 		END_VARIABLES;
 		OPERATIONS
 			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
