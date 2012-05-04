@@ -102,6 +102,7 @@ TODO:
 
 JavaScript:
 - check return value of gethandleid
+- unbenutzte pointer events killen?
 
 - Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
 - Nur einige wenige cycTimes (enum?) erlauben
@@ -1219,6 +1220,7 @@ cshmi.prototype = {
 			response = HMI.KSClient.splitKsResponse(response, 1);
 			for (var i=0; i<response.length; i++){
 				var responseDictionary = Array();
+				//Variables were requested or ANY and we got a Variable right now
 				if (childrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
@@ -1229,6 +1231,7 @@ cshmi.prototype = {
 					responseDictionary["OP_CLASS"] = response[i][6];
 					responseDictionary["OP_TECHUNIT"] = response[i][7];
 				}
+				//Domains were requested or ANY and we got a Domain right now
 				else if (childrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
@@ -1239,6 +1242,7 @@ cshmi.prototype = {
 					responseDictionary["OP_CLASS"] = response[i][6];
 					responseDictionary["OP_TECHUNIT"] = response[i][7];
 				}
+				//Links were requested or ANY and we got a Link right now
 				else if (childrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
@@ -1250,6 +1254,7 @@ cshmi.prototype = {
 					responseDictionary["OP_ASSOCIDENT"] = response[i][7];
 					responseDictionary["OP_ROLEIDENT"] = response[i][8];
 				}
+				//Historys were requested or ANY and we got a History right now
 				else if (childrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
@@ -1262,6 +1267,7 @@ cshmi.prototype = {
 					responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
 					responseDictionary["OP_TYPEIDENT"] = response[i][9];
 				}
+				//todo doku
 				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 				
 				returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
@@ -1280,6 +1286,8 @@ cshmi.prototype = {
 				for (var j=0; j<response.length; j++){
 					var responseDictionary = Array();
 					responseDictionary["OP_VALUE"] = response[j];
+					
+					//todo doku
 					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 					
 					returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
@@ -1940,21 +1948,21 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 
 
 	
-	if (comptype === "{<}"){
+	if (comptype === "<"){
 		for (var i=0; i<Value2.length; i++){
 			if (!(Value1 < Value2[i])){
 				return false;
 			}
 		}
 		return true;
-	}else if (comptype === "{<=}"){
+	}else if (comptype === "<="){
 		for (var i=0; i<Value2.length; i++){
 			if (!(Value1 <= Value2[i])){
 				return false;
 			}
 		}
 		return true;
-	}else if (comptype === "{==}"){
+	}else if (comptype === "=="){
 		//check if one entry of Value2 == Value1
 		for (var i=0; i<Value2.length; i++){
 			if (Value1 === Value2[i]){
@@ -1962,21 +1970,21 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			}
 		}
 		return false;
-	}else if (comptype === "{!=}"){
+	}else if (comptype === "!="){
 		for (var i=0; i<Value2.length; i++){
 			if (!(Value1 !== Value2[i])){
 				return false;
 			}
 		}
 		return true;
-	}else if (comptype === "{>=}"){
+	}else if (comptype === ">="){
 		for (var i=0; i<Value2.length; i++){
 			if (!(Value1 >= Value2[i])){
 				return false;
 			}
 		}
 		return true;
-	}else if (comptype === "{>}"){
+	}else if (comptype === ">"){
 		for (var i=0; i<Value2.length; i++){
 			if (!(Value1 > Value2[i])){
 				return false;
