@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-05-04 16:48:14
+  Erstellt : 2012-05-07 14:00:18
 
   HOST                : LOCALHOST:7509
   SERVER              : ov_server_zuse
@@ -192,7 +192,7 @@
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -657,8 +657,9 @@
         TemplateDefinition : INPUT  STRING = "Processcontrol/TemplDefCommandNoSP";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
-        xOffset : INPUT  SINGLE = 0.000000;
+        xOffset : INPUT  SINGLE = 85.000000;
         yOffset : INPUT  SINGLE = 28.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "y:3";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"PFCommand:OP_VALUE" , "buttoncontent:OP_VALUE"};
@@ -676,7 +677,7 @@
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -739,8 +740,9 @@
         TemplateDefinition : INPUT  STRING = "Processcontrol/TemplDefCommandSP";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
-        xOffset : INPUT  SINGLE = 0.000000;
+        xOffset : INPUT  SINGLE = 85.000000;
         yOffset : INPUT  SINGLE = 28.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "y:3";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"PFCommand:OP_VALUE" , "buttoncontent:OP_VALUE"};
@@ -3295,7 +3297,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;

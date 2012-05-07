@@ -2089,6 +2089,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			if (calledFromInstantiateTemplate){
 				requestList[ObjectPath]["xOffset"] = null;
 				requestList[ObjectPath]["yOffset"] = null;
+				requestList[ObjectPath]["maxTemplatesPerDirection"] = null;
 			}
 			requestList[ObjectPath]["TemplateDefinition"] = null;
 			requestList[ObjectPath]["FBReference"] = null;
@@ -2268,10 +2269,26 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			var offsetCount = this.ResourceList.ChildrenIterator.currentCount;
 			//the next InstantiateTemplate should go to an other position
 			this.ResourceList.ChildrenIterator.currentCount++;
+			var offsetCountX;
+			var offsetCountY;
+			var direction = requestList[ObjectPath]["maxTemplatesPerDirection"].split(":");
+			if(direction.length == 2 && direction[0] === "x"){
+				// we have an maximum in a line
+				offsetCountX = offsetCount % parseInt(direction[1]);
+				offsetCountY = Math.floor(offsetCount / parseInt(direction[1]));
+			}else if(direction.length == 2 && direction[0] === "y"){
+				// we have an maximum in a row
+				offsetCountX = Math.floor(offsetCount / parseInt(direction[1]));
+				offsetCountY = offsetCount % parseInt(direction[1]);
+			}else{
+				//use both offsets
+				offsetCountX = offsetCount;
+				offsetCountY = offsetCount;
+			}
+			var x = parseFloat(requestList[ObjectPath]["x"]) + (offsetCountX * parseFloat(requestList[ObjectPath]["xOffset"]));
+			var y = parseFloat(requestList[ObjectPath]["y"]) + (offsetCountY * parseFloat(requestList[ObjectPath]["yOffset"]));
 			
-			var x = parseFloat(requestList[ObjectPath]["x"]) + (offsetCount * parseFloat(requestList[ObjectPath]["xOffset"]));
 			requestList[ObjectPath]["x"] = x.toString();
-			var y = parseFloat(requestList[ObjectPath]["y"]) + (offsetCount * parseFloat(requestList[ObjectPath]["yOffset"]));
 			requestList[ObjectPath]["y"] = y.toString();
 		}
 		

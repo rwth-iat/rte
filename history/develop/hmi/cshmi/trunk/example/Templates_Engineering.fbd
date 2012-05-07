@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-05-07 10:29:46
+  Erstellt : 2012-05-07 14:18:57
 
   HOST                : LOCALHOST:7509
   SERVER              : ov_server_zuse
@@ -1335,6 +1335,7 @@
         y : INPUT  SINGLE = 41.500000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 11.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "";
         FBReference[1] : INPUT  STRING = {"InputVarPath:OP_NAME"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"inputname:OP_NAME"};
@@ -1473,6 +1474,7 @@
         y : INPUT  SINGLE = 41.500000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 11.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "";
         FBReference[1] : INPUT  STRING = {"OP_NAME"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"inputname:OP_NAME"};
@@ -1572,6 +1574,7 @@
         y : INPUT  SINGLE = 41.500000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 11.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "";
         FBReference[1] : INPUT  STRING = {"OutputVarPath:OP_NAME"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"outputname:OP_NAME"};
@@ -1710,6 +1713,7 @@
         y : INPUT  SINGLE = 41.500000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 11.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "";
         FBReference[1] : INPUT  STRING = {"OP_NAME"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"outputname:OP_NAME"};
@@ -1998,8 +2002,9 @@
         TemplateDefinition : INPUT  STRING = "Engineering/FBv1";
         x : INPUT  SINGLE = 50.000000;
         y : INPUT  SINGLE = 100.000000;
-        xOffset : INPUT  SINGLE = 50.000000;
-        yOffset : INPUT  SINGLE = 20.000000;
+        xOffset : INPUT  SINGLE = 125.000000;
+        yOffset : INPUT  SINGLE = 80.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "x:7";
         FBReference[1] : INPUT  STRING = {"OP_NAME"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"classname:OP_CLASS"};
@@ -2127,6 +2132,7 @@
         y : INPUT  SINGLE = 50.000000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 23.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "";
         FBReference[1] : INPUT  STRING = {"OP_NAME"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"varname:OP_NAME"};
@@ -2254,6 +2260,7 @@
         y : INPUT  SINGLE = 50.000000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 23.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "";
         FBReference[1] : INPUT  STRING = {"OP_NAME"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"varname:OP_NAME"};
@@ -2353,6 +2360,7 @@
         y : INPUT  SINGLE = 0.000000;
         xOffset : INPUT  SINGLE = 0.000000;
         yOffset : INPUT  SINGLE = 0.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "";
         FBReference[1] : INPUT  STRING = {"OP_NAME"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"connectionname:OP_NAME"};
