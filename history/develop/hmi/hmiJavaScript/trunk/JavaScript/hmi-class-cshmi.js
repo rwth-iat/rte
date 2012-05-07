@@ -547,7 +547,10 @@ cshmi.prototype = {
 	_interpreteAction: function(ObjectParent, ObjectPath){
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
-		for (var i=0; i < responseArray.length && returnValue === true; i++) {
+		//for (var i=0; i < responseArray.length && returnValue === true; i++) {
+		//todo ignore return value?
+		//a server could be not available, or we request a not existing (xpos) variable. This should not cancel the other actions
+		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
 			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
 				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0], false);
@@ -2151,6 +2154,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+PathOfTemplateDefinition+" (#"+this.ResourceList.Elements[PathOfTemplateDefinition].useCount+")");
 		}
 		
+		//make svg Element
 		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		svgElement.id = ObjectPath;
 		svgElement.setAttribute("TemplateDescription", PathOfTemplateDefinition);
@@ -2161,8 +2165,10 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			this._addClass(svgElement, this.cshmiTemplateHideableClass);
 		}
 		
+		////////////////////////////////////////////////////////////////////////////
 		//parametrise templateDefinition with the config
 		svgElement.FBReference = Object();
+		svgElement.FBVariableReference = Object();
 		svgElement.ConfigValues = Object();
 		var realFBobjectID = null; 
 		var ConfigEntry = null;
@@ -2292,6 +2298,9 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			requestList[ObjectPath]["y"] = y.toString();
 		}
 		
+		//////////////////////////////////////////////////////////////////////////
+		//adjust visual appearance
+		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(svgElement, requestList[ObjectPath]);
 		if (requestList[ObjectPath]["rotate"] !== "0"){
@@ -2303,6 +2312,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			svgGElement.appendChild(svgElement);
 		}
 		
+		//restore Template config
 		requestList[ObjectPath]["x"] = xTemplate;
 		requestList[ObjectPath]["y"] = yTemplate;
 		
@@ -2340,6 +2350,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			}
 		}
 		
+		//////////////////////////////////////////////////////////////////////////
 		//get childs (grafics and actions) from the TemplateDefinition
 		//our child will be fetched later
 		var responseArrayChild = HMI.KSClient.getChildObjArray(PathOfTemplateDefinition, this);
