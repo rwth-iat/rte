@@ -14,7 +14,11 @@
 *       ----------------------------------------------------------
 */
 OV_RESULT ov_library_setglobalvars_fbcomlib_new(void) {
-	return OV_ERR_OK;
+
+	/*
+	*       set the global variables and if successfull go on
+	*/
+		return ov_library_setglobalvars_fbcomlib();
 }
 
 
