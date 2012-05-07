@@ -622,6 +622,6 @@ LIBRARY	fbcomlib
 ASSOCIATION	FBComCommonAssoc			:	ONE_TO_ONE
 		PARENT 	sendingFB 					:	CLASS fbcomlib/FBComCommon;
 		CHILD	sendingObject				:	CLASS ksapi/KSCommon;
-	END_ASSOCIATION;
+END_ASSOCIATION;
 	
 END_LIBRARY;
