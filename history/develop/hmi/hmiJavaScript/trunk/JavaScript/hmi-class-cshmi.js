@@ -912,14 +912,19 @@ cshmi.prototype = {
 		
 		//set the new Value
 		if (ParameterName === "ksVar"){
-			//ksVar
+			var response;
 			if (ParameterValue.charAt(0) == "/"){
 				//we have an absolute path on this server
-				HMI.KSClient.setVar(null, '{'+ParameterValue+'}', NewValue, null);
+				response = HMI.KSClient.setVar(null, '{'+ParameterValue+'}', NewValue, null);
 			}else{
 				//get baseKsPath
 				var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
-				HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+baseKsPath.path+ParameterValue+'}', NewValue, null);
+				response = HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+baseKsPath.path+ParameterValue+'}', NewValue, null);
+			}
+			if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+baseKsPath.path+ParameterValue+' not successfull: Bad Parameter ');
+			}else if (response.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_info('Setting '+NewValue+' at variable '+baseKsPath.path+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 			}
 			return true;
 		}else if (ParameterName === "elemVar"){
@@ -1025,8 +1030,10 @@ cshmi.prototype = {
 					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						var response = HMI.KSClient.setVar(null, TemplateObject.FBReference[ParameterValue], NewValue, null);
-						if (response.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info('Setting '+TemplateObject.FBReference[ParameterValue]+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+						if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference[ParameterValue]+' not successfull: Bad Parameter ');
+						}else if (response.indexOf("KS_ERR") !== -1){
+							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 						}
 						return true;
 					}else{
@@ -1039,8 +1046,10 @@ cshmi.prototype = {
 					if (TemplateObject.FBReference["default"].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+ParameterValue, NewValue, null);
-						if (response.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info('Setting '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+						if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: Bad Parameter ');
+						}else if (response.indexOf("KS_ERR") !== -1){
+							HMI.hmi_log_info('Setting '+NewValue+' at '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 						}
 						return true;
 					}else{
@@ -2267,6 +2276,12 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			svgElement.id = realFBobjectID;
 		}
 		
+		
+		
+		/////////////////////////////////////////////////////////////////////////////
+		//Iterator position changing
+		
+		//save Template configuration for caching
 		var xTemplate = requestList[ObjectPath]["x"];
 		var yTemplate = requestList[ObjectPath]["y"];
 		
