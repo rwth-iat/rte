@@ -166,7 +166,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 					(OV_INSTPTR_ksservtcp_getserverdata) Ov_SearchChild(ov_containment, managerdomain, "getserverdata");
 	channel =
 			(OV_INSTPTR_ksapitcp_TCPChannel) Ov_GetParent(ov_containment, pobj);
-	if (pgsd && ov_string_compare(host, "127.0.0.1") && ov_string_compare(host, "localhost")) { //dont ask local manager, if remote server is requested
+	if (pgsd && (!ov_string_compare(host, "127.0.0.1") || !ov_string_compare(host, "localhost"))) { //dont ask local manager, if remote server is requested
 		ov_logfile_info(
 				"getserverdata-OBJECT found - server is MANAGER, local distribution of GETSERVER cmd");
 		ksservtcp_getserverdata_name_set(pgsd, servername);
