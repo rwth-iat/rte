@@ -1346,8 +1346,10 @@ cshmi.prototype = {
 		var FBRef;
 		//if the Object is routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		
+
+		
 		//Not the config is cached here, but the result! So caching ObjectParent specific, not ObjectPath
-		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectParent.id] !== undefined)){
+		if (!(ObjectParent.ResourceList && ObjectParent.ResourceList.Actions && ObjectParent.ResourceList.Actions[ObjectParent.id] !== undefined)){
 			//get Values (via getValue-parts)
 			var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
 			var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
@@ -1374,17 +1376,18 @@ cshmi.prototype = {
 					}
 			}
 			rootObject = null;
-
 			
 			//we have asked the object successful, so remember the result
-			this.ResourceList.Actions[ObjectParent.id] = new Object();
-			this.ResourceList.Actions[ObjectParent.id].FBRef = FBRef;
-			this.ResourceList.Actions[ObjectParent.id].useCount = 1;
+			ObjectParent.ResourceList = Object();
+			ObjectParent.ResourceList.Actions = Object();
+			ObjectParent.ResourceList.Actions[ObjectParent.id] = new Object();
+			ObjectParent.ResourceList.Actions[ObjectParent.id].FBRef = FBRef;
+			ObjectParent.ResourceList.Actions[ObjectParent.id].useCount = 1;
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			FBRef = this.ResourceList.Actions[ObjectParent.id].FBRef;
-			this.ResourceList.Actions[ObjectParent.id].useCount++;
+			FBRef = ObjectParent.ResourceList.Actions[ObjectParent.id].FBRef;
+			ObjectParent.ResourceList.Actions[ObjectParent.id].useCount++;
 			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
@@ -1932,6 +1935,9 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		//error state, so no boolean
 		return null;
 	}else
+	
+	//todo doku!!!!  
+	//childValue : INPUT  STRING = "OP_NAME.flags";
 	//check if we want to get a Value from the iteratedChild
 	if (childValue[0].indexOf(".") !== -1){
 		var rootObject = ObjectParent;
