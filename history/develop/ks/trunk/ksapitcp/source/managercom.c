@@ -132,9 +132,8 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_shutdown(OV_INSTPTR_ov_object pobj) {
  * The received port is stored in the variable
  * pobj->v_receivedsport.
  */
-OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
-		OV_INSTPTR_ksapitcp_managercom pobj, OV_STRING name, OV_UINT version) {
-	OV_UINT namelength = strlen(name);
+OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_managercom pobj, OV_STRING host, OV_STRING servername, OV_UINT version) {
+	OV_UINT namelength = strlen(servername);
 	OV_UINT xdrnamelength;
 	OV_INT c;
 	OV_INT bytes;
@@ -167,16 +166,16 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
 					(OV_INSTPTR_ksservtcp_getserverdata) Ov_SearchChild(ov_containment, managerdomain, "getserverdata");
 	channel =
 			(OV_INSTPTR_ksapitcp_TCPChannel) Ov_GetParent(ov_containment, pobj);
-	if (pgsd) {
+	if (pgsd && ov_string_compare(host, "127.0.0.1") && ov_string_compare(host, "localhost")) { //dont ask local manager, if remote server is requested
 		ov_logfile_info(
 				"getserverdata-OBJECT found - server is MANAGER, local distribution of GETSERVER cmd");
-		ksservtcp_getserverdata_name_set(pgsd, name);
+		ksservtcp_getserverdata_name_set(pgsd, servername);
 		ksservtcp_getserverdata_version_set(pgsd, version);
 		ksservtcp_getserverdata_process_set(pgsd, 1);
 		if (pgsd->v_res == 1) { // we successfully found sth
 			ov_logfile_info(
 					"ManagerCom local GETSERVER: ANSWER w/ name: %s, version: %d, port: %d, secs: %d, usecs: %d",
-					name, pgsd->v_version, pgsd->v_port,
+					servername, pgsd->v_version, pgsd->v_port,
 					pgsd->v_expirationtime.secs, pgsd->v_expirationtime.usecs);
 			pobj->v_receivedsport = pgsd->v_port;
 			channel->v_serverport = pgsd->v_port;
@@ -206,7 +205,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
 	}
 
 	//set xdrlength
-	xdrnamelength = strlen(name);
+	xdrnamelength = strlen(servername);
 	while ((xdrnamelength % 4) != 0)
 		xdrnamelength++;
 	pobj->v_xdrlength = xdrnamelength + 56;
@@ -251,7 +250,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
 	for (c = 0; c < 4; c++)
 		pobj->v_xdr[48 + c] = tmp[3 - c];
 	for (c = 0; c < namelength; c++)
-		pobj->v_xdr[52 + c] = name[c];
+		pobj->v_xdr[52 + c] = servername[c];
 
 	//set serverversion
 	tmp = (char*) &version;
@@ -289,7 +288,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(
 
 	//~ memset(&server, 0, sizeof(server));
 	server.sin_family = AF_INET;
-	hp = gethostbyname("127.0.0.1");
+	hp = gethostbyname(host); //hp = gethostbyname("127.0.0.1");
 	if (hp == 0) {
 		ksapi_logfile_info("Unknown host (mnggetserver)");
 		CLOSE_SOCKET(sock);
