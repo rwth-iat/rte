@@ -164,7 +164,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 			//get serverport by name
 			ov_xdr_setvalue(&pobj->v_xdr, xdr, xdrlength);
 			pobj->v_xdrlength = xdrlength;
-			ksapitcp_managercom_mnggetserver(pmc, ksapi_KSCommon_server_get(kscommon), 1); //todo desync
+			ksapitcp_managercom_mnggetserver(pmc, ksapi_KSCommon_host_get(kscommon), ksapi_KSCommon_server_get(kscommon), 1); //todo desync
 			//~ printf("\n\n\nCHANNEL_SENDXDR mnggetserver\n\n\n");
 			return;
 		}

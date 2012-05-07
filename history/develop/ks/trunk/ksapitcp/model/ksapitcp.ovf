@@ -4,7 +4,8 @@
 //managercom definitions
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_MANAGERCOM_MNGGETSERVER(
 		OV_INSTPTR_ksapitcp_managercom	 			pobj,
-		OV_STRING											name,
+		OV_STRING											host,
+		OV_STRING											server,
 		OV_UINT												version
 );
 
