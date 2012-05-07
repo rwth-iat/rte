@@ -203,8 +203,14 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = 'cmd=tks-server&args='+newhost;
 		}
 		var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, null);
-
-		if (ReturnText.indexOf("KS_ERR") !== -1 && host !== newhost){
+		
+		if (ReturnText === false){
+			//communication error
+			return null;
+		}else if(ReturnText === true){
+			//no async communication. oops
+			return null;
+		}else if (ReturnText.indexOf("KS_ERR") !== -1 && host !== newhost){
 			//on error retest without default acplt port
 			if (HMI.GatewayTypeTCL === true){
 				urlparameter = 'obj=tks-server&args='+host;
