@@ -321,9 +321,11 @@ OV_DLLFNCEXPORT void ksapi_KSCommon_analysesetxdr(
 	
 	ksapi_KSCommon_status_set(pobj, STATUS_KSCOMMON_OK);
 
-	if((analyseresultonlyreply(xdr, xdrlength)) == 0)
+	if(analyseresultonlyreply(xdr, xdrlength) == 0)
 		pvtableop->m_returnMethod(pov, "Sending completed", 1);
-		
+	else
+		pvtableop->m_returnMethod(pov, "error", -1);
+
 	return;
 }
 
