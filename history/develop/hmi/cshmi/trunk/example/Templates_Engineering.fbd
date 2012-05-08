@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-05-08 15:51:07
+  Erstellt : 2012-05-08 19:02:19
 
   HOST                : LOCALHOST:7509
   SERVER              : ov_server_zuse
@@ -1293,7 +1293,7 @@
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[7] : INPUT  STRING = {"o" , "hi" , "ho" , "n" , "hn" , "p" , "hp"};
+        value[6] : INPUT  STRING = {"o" , "hi" , "ho" , "n" , "hn" , "hp"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
