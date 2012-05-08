@@ -126,15 +126,15 @@ cshmi.prototype = {
 		this.initStage = true;
 		
 		//build the selected sheet aka group. This includes all containing elements
-		var Component = this.BuildDomain(null, ObjectPath, "/cshmi/Group");
+		var VisualObject = this.BuildDomain(null, ObjectPath, "/cshmi/Group");
 		
 		if(HMI.PlaygroundContainerNode){
 			//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
-			HMI.PlaygroundContainerNode.setAttribute('height', Component.getAttribute('height'));
-			HMI.PlaygroundContainerNode.setAttribute('width', Component.getAttribute('width'));
+			HMI.PlaygroundContainerNode.setAttribute('height', VisualObject.getAttribute('height'));
+			HMI.PlaygroundContainerNode.setAttribute('width', VisualObject.getAttribute('width'));
 		}
 		
-		if (Component !== null){
+		if (VisualObject !== null){
 			//build predefined gradients
 			//they are used in the fill attributes like this
 			//	url(#VertWhite2Black)
@@ -169,19 +169,19 @@ cshmi.prototype = {
 					svgStop.setAttribute("offset", "100%");
 				svgLinGrad.appendChild(svgStop);
 				svgDefs.appendChild(svgLinGrad);
-			Component.appendChild(svgDefs);
+			VisualObject.appendChild(svgDefs);
 			
 			svgLinGrad = null;
 			svgDefs = null;
 			
-			//push the svg Component to the screen
-			HMI.Playground.appendChild(Component);
+			//push the svg VisualObject to the screen
+			HMI.Playground.appendChild(VisualObject);
 			
 			//calculate all offset parameter to be able to display visual feedback
 			//this is only possible now, as the orientation of the parents are not defined when they are not appended
-			var maxPosition = HMI._setLayerPosition(Component, true);
+			var maxPosition = HMI._setLayerPosition(VisualObject, true);
 			//we want to have offset parameter on all visual elements
-			var ComponentChilds = Component.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
 				var Position = HMI._setLayerPosition(ComponentChilds[i], true);
 				if (ComponentChilds[i].tagName !== "svg" && Position[0] > maxPosition[0]){
@@ -197,11 +197,11 @@ cshmi.prototype = {
 			//interprete onload Actions in the order of occurrence
 			while(this.ResourceList.onloadCallStack.length !== 0){
 				var EventObjItem = this.ResourceList.onloadCallStack.shift();
-				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
+				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
 			}
 			EventObjItem = null;
 			
-			if (maxPosition[0] > Component.getAttribute('width') || maxPosition[1] > Component.getAttribute('height')){
+			if (maxPosition[0] > VisualObject.getAttribute('width') || maxPosition[1] > VisualObject.getAttribute('height')){
 				HMI.hmi_log_info_onwebsite("Warning: There is a chance, that there is content outside your view.");
 			}
 			maxPosition = null;
@@ -215,37 +215,37 @@ cshmi.prototype = {
 		-	Main iteration loop for visualisation
 		-	Finds and arms Actions as well
 	*********************************/
-	BuildDomain: function (ObjectParent, ObjectPath, ObjectType) {
-		var Component = null;
+	BuildDomain: function (VisualParentObject, ObjectPath, ObjectType) {
+		var VisualObject = null;
 		var Result = true;
 		if (ObjectType.indexOf("/cshmi/Group") !== -1){
-			Component = this._buildSvgContainer(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgContainer(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Template") !== -1){
-			Component = this._buildFromTemplate(ObjectParent, ObjectPath);
+			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
-			Component = this._buildSvgPath(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
-			Component = this._buildSvgLine(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgLine(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Polyline") !== -1){
-			Component = this._buildSvgPolyline(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgPolyline(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Polygon") !== -1){
-			Component = this._buildSvgPolygon(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgPolygon(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Text") !== -1){
-			Component = this._buildSvgText(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgText(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Circle") !== -1){
-			Component = this._buildSvgCircle(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgCircle(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Ellipse") !== -1){
-			Component = this._buildSvgEllipse(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgEllipse(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Rectangle") !== -1){
-			Component = this._buildSvgRect(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgRect(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/Image") !== -1){
-			Component = this._buildSvgImage(ObjectParent, ObjectPath);
+			VisualObject = this._buildSvgImage(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
-			Result = this._interpreteClientEvent(ObjectParent, ObjectPath);
+			Result = this._interpreteClientEvent(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
-			Result = this._interpreteTimeEvent(ObjectParent, ObjectPath);
+			Result = this._interpreteTimeEvent(VisualParentObject, ObjectPath);
 		}else if (ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
-			Result = this._interpreteOperatorEvent(ObjectParent, ObjectPath);
+			Result = this._interpreteOperatorEvent(VisualParentObject, ObjectPath);
 		}else{
 			if (	ObjectType.indexOf("/cshmi/SetValue") !== -1 ||
 					ObjectType.indexOf("/cshmi/IfThenElse") !== -1 ||
@@ -260,20 +260,20 @@ cshmi.prototype = {
 		if (!(Result === true || Result === false)){
 			HMI.hmi_log_error("Action "+ObjectPath+" given a non boolean returnvalue.");
 		}
-		if (Component === undefined || Component === true || Component === false){
-			HMI.hmi_log_error("Component "+ObjectPath+" given a wrong returnvalue type.");
+		if (VisualObject === undefined || VisualObject === true || VisualObject === false){
+			HMI.hmi_log_error("VisualObject "+ObjectPath+" gave a wrong returnvalue type.");
 		}
 		
 		//get and prepare Children in an recursive call
-		if (Component !== null){
+		if (VisualObject !== null){
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
-				if(Component.tagName === "g" && Component.id === "" && Component.firstChild && Component.firstChild.id !== ""){
+				if(VisualObject.tagName === "g" && VisualObject.id === "" && VisualObject.firstChild && VisualObject.firstChild.id !== ""){
 					//nested rotation template
-					var realComponent = Component.firstChild;
+					var realComponent = VisualObject.firstChild;
 				}else{
-					realComponent = Component;
+					realComponent = VisualObject;
 				}
 				var ChildComponent = this.BuildDomain(realComponent, realComponent.id+"/"+varName[0], varName[1]);
 				if (ChildComponent !== null){
@@ -282,24 +282,24 @@ cshmi.prototype = {
 			}
 		}
 		
-		return Component;
+		return VisualObject;
 	},
 	/*********************************
 		_interpreteClientEvent
 		-	calling Actions if supported ClientEvent is triggered
 	*********************************/
-	_interpreteClientEvent: function(ObjectParent, ObjectPath){
+	_interpreteClientEvent: function(VisualObject, ObjectPath){
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "onload"){
 			//interprete Action later, so remember this
 			var EventObjItem = Object();
-			EventObjItem["ObjectParent"] = ObjectParent;
+			EventObjItem["VisualObject"] = VisualObject;
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.onloadCallStack.push(EventObjItem);
 		}else if (command[command.length-1] === "globalvarchanged"){
 			//remember Action to be called after a globalVar is changed
 			var EventObjItem = Object();
-			EventObjItem["ObjectParent"] = ObjectParent;
+			EventObjItem["VisualObject"] = VisualObject;
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.globalvarChangedCallStack.push(EventObjItem);
 		}else{
@@ -311,112 +311,107 @@ cshmi.prototype = {
 		_interpreteOperatorEvent
 		-	detect all OperatorEvents and register them
 	*********************************/
-	_interpreteOperatorEvent: function(ObjectParent, ObjectPath){
+	_interpreteOperatorEvent: function(VisualObject, ObjectPath){
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "click"){
-			ObjectParent.setAttribute("cursor", "pointer");
+			VisualObject.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			ObjectParent.addEventListener("click", function(evt){
+			VisualObject.addEventListener("click", function(evt){
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
-				//mark changed Component for quick visual feedback (hidden after a second)
-				HMI.displaygestureReactionMarker(ObjectParent);
+				//mark changed VisualObject for quick visual feedback (hidden after a second)
+				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//get and execute all actions
-				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+				preserveThis._interpreteAction(VisualObject, ObjectPath);
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
-			ObjectParent.setAttribute("cursor", "pointer");
+			VisualObject.setAttribute("cursor", "pointer");
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			//todo make double click ASV compatible 
-			/*ObjectParent.addEventListener("click", function(evt){
-				if (!(evt.button === 0 && evt.detail ==2)){
-				return;
-			}*/
-			ObjectParent.addEventListener("dblclick", function(evt){
+			VisualObject.addEventListener("dblclick", function(evt){
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
-				//mark changed Component for quick visual feedback (hidden after a second)
-				HMI.displaygestureReactionMarker(ObjectParent);
+				//mark changed VisualObject for quick visual feedback (hidden after a second)
+				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//get and execute all actions
-				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+				preserveThis._interpreteAction(VisualObject, ObjectPath);
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			ObjectParent.addEventListener("contextmenu", function(evt){
+			VisualObject.addEventListener("contextmenu", function(evt){
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
-				//mark changed Component for quick visual feedback (hidden after a second)
-				HMI.displaygestureReactionMarker(ObjectParent);
+				//mark changed VisualObject for quick visual feedback (hidden after a second)
+				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//get and execute all actions
-				preserveThis._interpreteAction(ObjectParent, ObjectPath);
+				preserveThis._interpreteAction(VisualObject, ObjectPath);
 				if (evt.stopPropagation) evt.stopPropagation();
 				if (evt.preventDefault) evt.preventDefault();  //default is a context menu, so disable it
 			}, false);
 		}else if (command[command.length-1] === "aftermove"){
-			ObjectParent.setAttribute("cursor", "move");
+			VisualObject.setAttribute("cursor", "move");
 			
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			
-			//make an dummy wrapper function so we can use ObjectParent and ObjectPath in it, 
+			//make an dummy wrapper function so we can use VisualObject and ObjectPath in it, 
 			//addEventListener only provides the event object
-			ObjectParent._moveStartDragThunk = function(evt){
-				preserveThis._moveStartDrag(ObjectParent, ObjectPath, evt);
+			VisualObject._moveStartDragThunk = function(evt){
+				preserveThis._moveStartDrag(VisualObject, ObjectPath, evt);
 			}
-			ObjectParent._moveMouseMoveThunk = function(evt){
-				preserveThis._moveMouseMove(ObjectParent, ObjectPath, evt);
+			VisualObject._moveMouseMoveThunk = function(evt){
+				preserveThis._moveMouseMove(VisualObject, ObjectPath, evt);
 			}
-			ObjectParent._moveStopDragThunk = function(evt){
+			VisualObject._moveStopDragThunk = function(evt){
 				//stop with interpreting the actions
-				preserveThis._moveStopDrag(ObjectParent, ObjectPath, evt, false);
+				preserveThis._moveStopDrag(VisualObject, ObjectPath, evt, false);
 			}
-			ObjectParent._moveCancelDragThunk = function(evt){
+			VisualObject._moveCancelDragThunk = function(evt){
 				//stop without interpreting the actions
-				preserveThis._moveStopDrag(ObjectParent, ObjectPath, evt, true);
+				preserveThis._moveStopDrag(VisualObject, ObjectPath, evt, true);
 			}
 			//todo: try to implement via HTML5 drag&drop
 			
 			//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
-			ObjectParent.addEventListener("touchstart", ObjectParent._moveStartDragThunk, false);
-			ObjectParent.addEventListener("mousedown", ObjectParent._moveStartDragThunk, false);
+			VisualObject.addEventListener("touchstart", VisualObject._moveStartDragThunk, false);
+			VisualObject.addEventListener("mousedown", VisualObject._moveStartDragThunk, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
 		return true;
 	},
-	_moveStartDrag : function(ObjectParent, ObjectPath, evt){
+	_moveStartDrag : function(VisualObject, ObjectPath, evt){
 		if (evt.button == 2){
 			//right click
-			HMI.hmi_log_trace("moveStartDrag - hit right mouse button on "+ObjectParent.id);
+			HMI.hmi_log_trace("moveStartDrag - hit right mouse button on "+VisualObject.id);
 			if (evt.stopPropagation) evt.stopPropagation();
 			return;
 		}
-		HMI.hmi_log_trace("moveStartDrag - Start with object: "+ObjectParent.id);
+		HMI.hmi_log_trace("moveStartDrag - Start with object: "+VisualObject.id);
 		this.ResourceList.EventInfos.EventObj = evt;
 		//memorize Startposition
 		var mouseposition = HMI.getClickPosition(evt, null);
 		this.ResourceList.EventInfos.startXMouse = mouseposition[0];
 		this.ResourceList.EventInfos.startYMouse = mouseposition[1];
-		this.ResourceList.EventInfos.startXObj = parseInt(ObjectParent.getAttribute("x"), 10);
-		this.ResourceList.EventInfos.startYObj = parseInt(ObjectParent.getAttribute("y"), 10);
+		this.ResourceList.EventInfos.startXObj = parseInt(VisualObject.getAttribute("x"), 10);
+		this.ResourceList.EventInfos.startYObj = parseInt(VisualObject.getAttribute("y"), 10);
 		
 		if(evt.type === 'touchstart'){
 			HMI.hmi_log_trace("moveStartDrag - touch (x:"+mouseposition[0]+",y:"+mouseposition[1]+") detected, killing legacy events");
 			//we have touch gestures, so kill legacy mousedown
-			ObjectParent.removeEventListener("mousedown", ObjectParent._moveStartDragThunk, false);
+			VisualObject.removeEventListener("mousedown", VisualObject._moveStartDragThunk, false);
 			
-			document.addEventListener("touchmove", ObjectParent._moveMouseMoveThunk, false);
-			document.addEventListener("touchend", ObjectParent._moveStopDragThunk, false);
-			document.addEventListener("touchcancel", ObjectParent._moveCancelDragThunk, false);
+			document.addEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
+			document.addEventListener("touchend", VisualObject._moveStopDragThunk, false);
+			document.addEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy click (x:"+mouseposition[0]+",y:"+mouseposition[1]+") detected");
-			document.addEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
-			document.addEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
+			document.addEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
+			document.addEventListener("mouseup", VisualObject._moveStopDragThunk, false);
 		}
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
-	_moveMouseMove : function(ObjectParent, ObjectPath, evt){
+	_moveMouseMove : function(VisualObject, ObjectPath, evt){
 		if (this.ResourceList.EventInfos.startXObj === null){
 			return;
 		}
@@ -426,12 +421,12 @@ cshmi.prototype = {
 		var newx = this.ResourceList.EventInfos.startXObj+mouseX-this.ResourceList.EventInfos.startXMouse;
 		var newy = this.ResourceList.EventInfos.startYObj+mouseY-this.ResourceList.EventInfos.startYMouse;
 		if (!isNaN(newx) && !isNaN(newy)){
-			ObjectParent.setAttribute("x", newx);
-			ObjectParent.setAttribute("y", newy);
+			VisualObject.setAttribute("x", newx);
+			VisualObject.setAttribute("y", newy);
 			
-			HMI._setLayerPosition(ObjectParent);
+			HMI._setLayerPosition(VisualObject);
 			//we want to have offset parameter on all visual elements
-			var ComponentChilds = ObjectParent.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
 				HMI._setLayerPosition(ComponentChilds[i]);
 			}
@@ -441,28 +436,28 @@ cshmi.prototype = {
 		if (evt.stopPropagation) evt.stopPropagation();
 		if (evt.preventDefault) evt.preventDefault();  //default is scrolling, so disable it
 	},
-	_moveStopDrag : function(ObjectParent, ObjectPath, evt, canceled){
-		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+ObjectParent.id);
+	_moveStopDrag : function(VisualObject, ObjectPath, evt, canceled){
+		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+VisualObject.id);
 		if(evt.type === 'touchend'){
 			HMI.hmi_log_trace("moveStartDrag - touch up detected");
-			document.removeEventListener("touchmove", ObjectParent._moveMouseMoveThunk, false);
-			document.removeEventListener("touchend", ObjectParent._moveStopDragThunk, false);
-			document.removeEventListener("touchcancel", ObjectParent._moveCancelDragThunk, false);
+			document.removeEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
+			document.removeEventListener("touchend", VisualObject._moveStopDragThunk, false);
+			document.removeEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
 			//the touchend has no xy position (since the fingers left the device!), so an action should work on the last move eventobj
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy mouse up detected");
-			document.removeEventListener("mousemove", ObjectParent._moveMouseMoveThunk, false);
-			document.removeEventListener("mouseup", ObjectParent._moveStopDragThunk, false);
+			document.removeEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
+			document.removeEventListener("mouseup", VisualObject._moveStopDragThunk, false);
 			//the mouseup event has xy position, so remember for use in an action
 			this.ResourceList.EventInfos.EventObj = evt;
 		}
 		
 		//restore old position
-		ObjectParent.setAttribute("x", this.ResourceList.EventInfos.startXObj);
-		ObjectParent.setAttribute("y", this.ResourceList.EventInfos.startYObj);
-		HMI._setLayerPosition(ObjectParent);
+		VisualObject.setAttribute("x", this.ResourceList.EventInfos.startXObj);
+		VisualObject.setAttribute("y", this.ResourceList.EventInfos.startYObj);
+		HMI._setLayerPosition(VisualObject);
 		//we want to have offset parameter on all visual elements
-		var ComponentChilds = ObjectParent.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 		for(var i = 0;i < ComponentChilds.length;i++){
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
@@ -472,7 +467,7 @@ cshmi.prototype = {
 			this.ResourceList.EventInfos.EventObj = null;
 		}else{
 			//get and execute all actions
-			this._interpreteAction(ObjectParent, ObjectPath);
+			this._interpreteAction(VisualObject, ObjectPath);
 		}
 		
 		if (evt.stopPropagation) evt.stopPropagation();
@@ -481,7 +476,7 @@ cshmi.prototype = {
 		_interpreteTimeEvent
 		-	calling Actions if supported TimeEvent is triggered
 	*********************************/
-	_interpreteTimeEvent: function(ObjectParent, ObjectPath){
+	_interpreteTimeEvent: function(VisualObject, ObjectPath){
 		var skipEvent = false;
 		//check if the page is visible at all?
 		//http://www.w3.org/TR/page-visibility/
@@ -496,11 +491,11 @@ cshmi.prototype = {
 		if (this.initStage === true){
 			//we are in the init state of the sheet so interprete Action later onload, remembering this
 			var EventObjItem = Object();
-			EventObjItem["ObjectParent"] = ObjectParent;
+			EventObjItem["VisualObject"] = VisualObject;
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.onloadCallStack.push(EventObjItem);
 		}else if(skipEvent === false){
-			this._interpreteAction(ObjectParent, ObjectPath);
+			this._interpreteAction(VisualObject, ObjectPath);
 		}
 		
 		var responseArray;
@@ -535,7 +530,7 @@ cshmi.prototype = {
 		if (responseArray.length !== 0 && (this.initStage === true || HMI.Playground.firstChild !== null ) && HMI.cshmi === this){
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			window.setTimeout(function(){
-				preserveThis._interpreteTimeEvent(ObjectParent, ObjectPath);
+				preserveThis._interpreteTimeEvent(VisualObject, ObjectPath);
 			}, responseArray[0]*1000);
 		}
 		return true;
@@ -544,7 +539,7 @@ cshmi.prototype = {
 		_interpreteAction
 		-	detect all Actions and triggers them
 	*********************************/
-	_interpreteAction: function(ObjectParent, ObjectPath){
+	_interpreteAction: function(VisualObject, ObjectPath){
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 		//for (var i=0; i < responseArray.length && returnValue === true; i++) {
@@ -553,19 +548,19 @@ cshmi.prototype = {
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
 			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
-				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0], false);
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], false);
 			}else if (varName[1].indexOf("/cshmi/SetConcatValue") !== -1){
-				returnValue = this._setValue(ObjectParent, ObjectPath+"/"+varName[0], true);
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], true);
 			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
 			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
-				returnValue = this._interpreteIfThenElse(ObjectParent, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteIfThenElse(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/ChildrenIterator") !== -1){
-				returnValue = this._interpreteChildrenIterator(ObjectParent, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteChildrenIterator(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/InstantiateTemplate") !== -1){
-				returnValue = this._interpreteInstantiateTemplate(ObjectParent, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteInstantiateTemplate(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/RoutePolyline") !== -1){
-				returnValue = this._interpreteRoutePolyline(ObjectParent, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteRoutePolyline(VisualObject, ObjectPath+"/"+varName[0]);
 			}else{
 				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+") "+ObjectPath+" not supported");
 			}
@@ -580,7 +575,7 @@ cshmi.prototype = {
 		_getValue
 		-	get a Value from multiple Sources
 	*********************************/
-	_getValue: function(ObjectParent, ObjectPath){
+	_getValue: function(VisualObject, ObjectPath){
 		var ParameterName;
 		var ParameterValue;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -593,6 +588,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["persistentGlobalVar"] = null;
 			requestList[ObjectPath]["OperatorInput"] = null;
 			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
+			requestList[ObjectPath]["TemplateFBVariableReferenceName"] = null;
 			requestList[ObjectPath]["TemplateConfigValues"] = null;
 			requestList[ObjectPath]["value"] = null;
 			
@@ -630,7 +626,7 @@ cshmi.prototype = {
 			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
-		var iterationObject = ObjectParent;
+		var iterationObject = VisualObject;
 		do{
 			//skip eventhandling if the object is not visible
 			if(iterationObject.getAttribute("display") === "none"){
@@ -647,7 +643,7 @@ cshmi.prototype = {
 				response = HMI.KSClient.getVar(null, '{'+ParameterValue+'}', null);
 			}else{
 				//get baseKsPath
-				var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
+				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
 				response = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+baseKsPath.path+"/"+ParameterValue+'}', null);
 			}
 			var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -660,24 +656,24 @@ cshmi.prototype = {
 			//todo interprete elemVarPath
 			if (ParameterValue == "content"){
 				//content is special, as it is different in OVM and SVG
-				if (typeof ObjectParent.textContent != "undefined"){
-					return ObjectParent.textContent;
-				}else if (typeof ObjectParent.innerText != "undefined"){
-					return ObjectParent.innerText;
+				if (typeof VisualObject.textContent != "undefined"){
+					return VisualObject.textContent;
+				}else if (typeof VisualObject.innerText != "undefined"){
+					return VisualObject.innerText;
 				}else{
 					//todo asv compatibility
 					return null;
 				}
 			}else if (ParameterValue == "title"){
-				for (var i = 0;i < ObjectParent.childNodes.length;i++){
-					if (ObjectParent.childNodes.item(i).tagName === "title"){
-						return ObjectParent.childNodes.item(i).firstChild.textContent;
+				for (var i = 0;i < VisualObject.childNodes.length;i++){
+					if (VisualObject.childNodes.item(i).tagName === "title"){
+						return VisualObject.childNodes.item(i).firstChild.textContent;
 					}
 				} 
 				return null;
 			}else if (ParameterValue == "visible"){
 				//display is special, as it is different in OVM and SVG
-				var displayVar = ObjectParent.getAttribute("display");
+				var displayVar = VisualObject.getAttribute("display");
 				if (displayVar == "none"){
 					return "FALSE";
 				}else{
@@ -685,14 +681,14 @@ cshmi.prototype = {
 				}
 			}else if (ParameterValue == "rotate"){
 				//rotate is special, as it is different in OVM and SVG
-				if (ObjectParent.tagName == "svg" && ObjectParent.parentNode.tagName == "g" && ObjectParent.parentNode.id === ""){
+				if (VisualObject.tagName == "svg" && VisualObject.parentNode.tagName == "g" && VisualObject.parentNode.id === ""){
 					//svg are not transformable, so the rotation is in the objects parent
-					var TransformString = ObjectParent.parentNode.getAttribute("transform");
-				}else if (ObjectParent.tagName == "svg"){
+					var TransformString = VisualObject.parentNode.getAttribute("transform");
+				}else if (VisualObject.tagName == "svg"){
 					//it is an template, with no rotation
 					return "0";
 				}else{
-					TransformString = ObjectParent.getAttribute("transform");
+					TransformString = VisualObject.getAttribute("transform");
 				}
 				//"rotate(45,21.000000,50.000000)" or "rotate(45)"
 				
@@ -700,8 +696,8 @@ cshmi.prototype = {
 				TransformString = TransformString.replace(")", "").replace("rotate(", "");
 				//get first number if there are 3, separated via comma
 				return TransformString.split(",")[0];
-			}else if (ObjectParent.hasAttribute(ParameterValue)){
-				return ObjectParent.getAttribute(ParameterValue);
+			}else if (VisualObject.hasAttribute(ParameterValue)){
+				return VisualObject.getAttribute(ParameterValue);
 			}else{
 				//unknown element variable
 				return null;
@@ -733,7 +729,7 @@ cshmi.prototype = {
 						this.ResourceList.Actions["tempPath"] = new Object();
 						this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[2];
 						this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[3];
-						input = window.prompt(textinputHint, this._getValue(ObjectParent, "tempPath"));
+						input = window.prompt(textinputHint, this._getValue(VisualObject, "tempPath"));
 						delete this.ResourceList.Actions["tempPath"];
 					//e.g. "textinput:Some textinputHint:fixValue"
 					}else if (splittedValueParameter.length > 2){
@@ -764,9 +760,11 @@ cshmi.prototype = {
 			}
 			return null;
 		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest !== true){
-			var TemplateObject = ObjectParent;
+			var TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
+					//fixme change this we have TemplateFBVariableReferenceName now
+					
 					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
 					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
@@ -779,7 +777,7 @@ cshmi.prototype = {
 						//error
 						return null;
 					}else{
-						//a normal relativ path
+						//a normal relative path
 						HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
 						return null;
 					}
@@ -803,7 +801,31 @@ cshmi.prototype = {
 						//error
 						return null;
 					}else{
-						//a normal relativ path
+						//a normal relative path
+						HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
+						return null;
+					}
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			return null;
+		}else if (ParameterName === "TemplateFBVariableReferenceName" && preventNetworkRequest !== true){
+			var TemplateObject = VisualObject;
+			do{
+				if(TemplateObject.FBVariableReference && TemplateObject.FBVariableReference[ParameterValue] !== undefined){
+					//a FBVariableReferenceName was requested
+					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
+						//String begins with / so it is a fullpath
+						var result = HMI.KSClient.getVar(null, TemplateObject.FBVariableReference[ParameterValue], null);
+						var returnValue = HMI.KSClient.splitKsResponse(result);
+						if (returnValue.length > 0){
+							//valid response
+							return returnValue[0];
+						}
+						//error
+						return null;
+					}else{
+						//a normal relative path
 						HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
 						return null;
 					}
@@ -812,7 +834,7 @@ cshmi.prototype = {
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 			return null;
 		}else if (ParameterName === "TemplateConfigValues"){
-			var TemplateObject = ObjectParent;
+			var TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[ParameterValue] !== undefined){
 					//this is a ConfigValue and has valid data for us
@@ -830,20 +852,20 @@ cshmi.prototype = {
 		_setValue
 		-	sets a Value to multiple Targets
 	*********************************/
-	_setValue: function(ObjectParent, ObjectPath, Concat){
+	_setValue: function(VisualObject, ObjectPath, Concat){
 		var NewValue = "";
 		//get Value to set
 		if (Concat === false){
 			//via getValue-part of setValue object
-			NewValue = this._getValue(ObjectParent, ObjectPath+".value");
+			NewValue = this._getValue(VisualObject, ObjectPath+".value");
 			
 			if (NewValue === null){
-				HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because of an NewValue of null.");
-				//NewValue = this._getValue(ObjectParent, ObjectPath+".value");
+				HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because of an NewValue of null.");
+				//NewValue = this._getValue(VisualObject, ObjectPath+".value");
 				return false;
 			}else if (NewValue === undefined){
 				//should not happen
-				HMI.hmi_log_error("cshmi._setValue on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because of an NewValue of undefined.");
+				HMI.hmi_log_error("cshmi._setValue on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because of an NewValue of undefined.");
 				return false;
 			}
 		}else{
@@ -852,11 +874,11 @@ cshmi.prototype = {
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
-					var TempNewValue = this._getValue(ObjectParent, ObjectPath+"/"+varName[0]);
+					var TempNewValue = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
 					if (TempNewValue !== null && TempNewValue !== undefined){
 						NewValue = NewValue + TempNewValue;
 					}else{
-						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+ObjectParent.id+") was null or undefined.");
+						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") was null or undefined.");
 					}
 				}
 			}
@@ -875,6 +897,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["globalVar"] = null;
 			requestList[ObjectPath]["persistentGlobalVar"] = null;
 			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
+			requestList[ObjectPath]["TemplateFBVariableReferenceName"] = null;
 			
 			var successCode = this._executeVariablesArray(requestList);
 			if (successCode == false){
@@ -918,7 +941,7 @@ cshmi.prototype = {
 				response = HMI.KSClient.setVar(null, '{'+ParameterValue+'}', NewValue, null);
 			}else{
 				//get baseKsPath
-				var baseKsPath = this._getBaseKsPath(ObjectParent, ObjectPath);
+				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
 				response = HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+baseKsPath.path+ParameterValue+'}', NewValue, null);
 			}
 			if (response.indexOf("KS_ERR_BADPARAM") !== -1){
@@ -933,67 +956,67 @@ cshmi.prototype = {
 				//content is special, as it is different in OVM and SVG
 				
 				//if trimToLength is set in parent TextFB and perform trimming if needed
-				var trimLength = parseInt(this.ResourceList.Elements[ObjectParent.id].ElementParameters.trimToLength, 10);
+				var trimLength = parseInt(this.ResourceList.Elements[VisualObject.id].ElementParameters.trimToLength, 10);
 				var contentLength = parseInt(NewValue.length, 10);
 				var trimmedContent;
 				if((trimLength > 0) && (contentLength > trimLength)){
 					trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
-					ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
-					this._setTitle(ObjectParent, NewValue);
+					VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild.firstChild);
+					this._setTitle(VisualObject, NewValue);
 				}else if((trimLength < 0) && (contentLength > -trimLength)){
 					trimmedContent =  String.fromCharCode(8230) + NewValue.substr(contentLength + trimLength);
-					ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), ObjectParent.firstChild.firstChild);
-					this._setTitle(ObjectParent, NewValue);
+					VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild.firstChild);
+					this._setTitle(VisualObject, NewValue);
 				}else{
-					ObjectParent.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), ObjectParent.firstChild.firstChild);
+					VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild.firstChild);
 				}
 			}else if (ParameterValue == "title"){
-				this._setTitle(ObjectParent, NewValue);
+				this._setTitle(VisualObject, NewValue);
 /*
 			}else if (ParameterValue.indexOf("hover") !== -1){
 				//todo, https://developer.mozilla.org/en/DOM/CSSStyleSheet/insertRule
 				
-				//ObjectParent, NewValue;
+				//VisualObject, NewValue;
 */
 			}else if (ParameterValue == "visible"){
 				//visible is special, as it is different in OVM and SVG
 				if (NewValue == "FALSE"){
-					ObjectParent.setAttribute("display", "none");
+					VisualObject.setAttribute("display", "none");
 				}else{
-					ObjectParent.setAttribute("display", "block");
+					VisualObject.setAttribute("display", "block");
 				}
 			}else if (ParameterValue == "rotate"){
 				//rotate is special, as it is different in OVM and SVG
 				
 				//svg are not transformable, so the rotation is in the objects parent
-				if (ObjectParent.tagName === "svg" && ObjectParent.parentNode.tagName === "g" && ObjectParent.parentNode.id === ""){
+				if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
 					//object has already an g parent
-					var rotationObject = ObjectParent.parentNode;
-				}else if (ObjectParent.tagName === "svg" && ObjectParent.parentNode.tagName !== "g"){
+					var rotationObject = VisualObject.parentNode;
+				}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
 					//element has to be shifted into an g element
 					var rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
 					rotationObject.style.overflow = "visible";
-					ObjectParent.parentNode.replaceChild(rotationObject, ObjectParent);
-					rotationObject.appendChild(ObjectParent);
+					VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
+					rotationObject.appendChild(VisualObject);
 				}else{
 					//normal visual element
-					rotationObject = ObjectParent;
+					rotationObject = VisualObject;
 				}
 				
-				if(ObjectParent.getAttribute("x") !== null){
-					rotationObject.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("x")+","+ObjectParent.getAttribute("y")+")");
-				}else if(ObjectParent.getAttribute("cx") !== null){
-					ObjectParent.setAttribute("transform", "rotate("+NewValue+","+ObjectParent.getAttribute("cx")+","+ObjectParent.getAttribute("cy")+")");
+				if(VisualObject.getAttribute("x") !== null){
+					rotationObject.setAttribute("transform", "rotate("+NewValue+","+VisualObject.getAttribute("x")+","+VisualObject.getAttribute("y")+")");
+				}else if(VisualObject.getAttribute("cx") !== null){
+					VisualObject.setAttribute("transform", "rotate("+NewValue+","+VisualObject.getAttribute("cx")+","+VisualObject.getAttribute("cy")+")");
 				}else{
-					ObjectParent.setAttribute("transform", "rotate("+NewValue+")");
+					VisualObject.setAttribute("transform", "rotate("+NewValue+")");
 				}
 			}else{
-				ObjectParent.setAttribute(ParameterValue, NewValue);
+				VisualObject.setAttribute(ParameterValue, NewValue);
 				//reposition Layer if x, y, width or height is changed
 				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "width" || ParameterValue === "height"){
-					HMI._setLayerPosition(ObjectParent);
+					HMI._setLayerPosition(VisualObject);
 					//we want to have offset parameter on all visual elements
-					var ComponentChilds = ObjectParent.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 					for(var i = 0;i < ComponentChilds.length;i++){
 						HMI._setLayerPosition(ComponentChilds[i]);
 					}
@@ -1005,7 +1028,7 @@ cshmi.prototype = {
 			this.ResourceList.GlobalVar[ParameterValue] = NewValue;
 			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;i++){
 				var EventObjItem = this.ResourceList.globalvarChangedCallStack[i];
-				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
+				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
 			}
 			return true;
 		}else if (ParameterName === "persistentGlobalVar"){
@@ -1018,14 +1041,16 @@ cshmi.prototype = {
 			}
 			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;i++){
 				var EventObjItem = this.ResourceList.globalvarChangedCallStack[i];
-				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
+				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
 			}
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
 			//TemplateFBReferenceVariable
-			var TemplateObject = ObjectParent;
+			var TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
+					//fixme change this we have TemplateFBVariableReferenceName now
+					
 					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
 					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
@@ -1037,7 +1062,7 @@ cshmi.prototype = {
 						}
 						return true;
 					}else{
-						//a normal relativ path
+						//a normal relative path
 						HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
 						return false;
 					}
@@ -1053,7 +1078,31 @@ cshmi.prototype = {
 						}
 						return true;
 					}else{
-						//a normal relativ path
+						//a normal relative path
+						HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
+						return false;
+					}
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			return false;
+		}else if (ParameterName === "TemplateFBVariableReferenceName"){
+			//TemplateFBReferenceVariable
+			var TemplateObject = VisualObject;
+			do{
+				if(TemplateObject.FBVariableReference && TemplateObject.FBVariableReference[ParameterValue] !== undefined){
+					//a FBVariableReferenceName was requested
+					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
+						//String begins with / so it is a fullpath
+						var response = HMI.KSClient.setVar(null, TemplateObject.FBVariableReference[ParameterValue], NewValue, null);
+						if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBVariableReference[ParameterValue]+' not successfull: Bad Parameter ');
+						}else if (response.indexOf("KS_ERR") !== -1){
+							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+						}
+						return true;
+					}else{
+						//a normal relative path
 						HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
 						return false;
 					}
@@ -1069,7 +1118,7 @@ cshmi.prototype = {
 		_getBaseKsPath
 		-	search baseKsPath by iterating objects
 	*********************************/
-	_getBaseKsPath: function(ObjectParent, ObjectPath){
+	_getBaseKsPath: function(VisualObject, ObjectPath){
 		var ObjectPathArray = ObjectPath.split("/");
 		
 		var returnValue = Object();
@@ -1103,7 +1152,7 @@ cshmi.prototype = {
 					//full path => stop searching for other path
 					break;
 				}else{
-					//a normal relativ path
+					//a normal relative path
 					returnValue.path = responseArray[0]+returnValue.path;
 				}
 			}else{
@@ -1117,7 +1166,7 @@ cshmi.prototype = {
 		_interpreteIfThenElse
 		-	sets a Value to multiple Sources
 	*********************************/
-	_interpreteIfThenElse: function(ObjectParent, ObjectPath){
+	_interpreteIfThenElse: function(VisualObject, ObjectPath){
 		var anyCond;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
@@ -1151,10 +1200,10 @@ cshmi.prototype = {
 			while(i < responseArray.length && ConditionMatched !== true){
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
-					ConditionMatched = this._checkConditionIterator(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
+					ConditionMatched = this._checkConditionIterator(VisualObject, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
 				else if (varName[1].indexOf("/cshmi/Compare") !== -1){
-					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
+					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
 				i++;
 			}
@@ -1164,18 +1213,18 @@ cshmi.prototype = {
 			while(i < responseArray.length && ConditionMatched !== false){
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
-					ConditionMatched = this._checkConditionIterator(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
+					ConditionMatched = this._checkConditionIterator(VisualObject, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
 				else if (varName[1].indexOf("/cshmi/Compare") !== -1){
-					ConditionMatched = this._checkCondition(ObjectParent, ObjectPath+".if/"+varName[0], ObjectPath);
+					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], ObjectPath);
 				}
 				i++;
 			}
 		}
 		if (ConditionMatched === true){
-			return this._interpreteAction(ObjectParent, ObjectPath+".then");
+			return this._interpreteAction(VisualObject, ObjectPath+".then");
 		}else if (ConditionMatched === false){
-			return this._interpreteAction(ObjectParent, ObjectPath+".else");
+			return this._interpreteAction(VisualObject, ObjectPath+".else");
 		}else{
 			//this Action produced an error
 			return false;
@@ -1186,11 +1235,11 @@ cshmi.prototype = {
 	/*********************************
 	_interpreteChildrenIterator
 	*********************************/
-	_interpreteChildrenIterator: function(ObjectParent, ObjectPath){
-		var rootObject = ObjectParent;
+	_interpreteChildrenIterator: function(VisualObject, ObjectPath){
+		var rootObject = VisualObject;
 		var FBRef;
 		//search FBReference of root Object
-		while (rootObject !== null){
+		while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			//FBReference found
 			if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
 				FBRef = rootObject.FBReference["default"];
@@ -1288,7 +1337,7 @@ cshmi.prototype = {
 				//todo doku
 				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 				
-				returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
+				returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
 			}
 		}
 		else {
@@ -1308,7 +1357,7 @@ cshmi.prototype = {
 					//todo doku
 					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 					
-					returnValue = this._interpreteAction(ObjectParent, ObjectPath + ".forEachChild");
+					returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
 				}
 			}
 		}
@@ -1320,19 +1369,19 @@ cshmi.prototype = {
 	/*********************************
 	_interpreteInstantiateTemplate
 	*********************************/
-	_interpreteInstantiateTemplate: function(ObjectParent, ObjectPath){
+	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
 		if (this.ResourceList.InstantiateTemplate[ObjectPath] === undefined){
 			this.ResourceList.InstantiateTemplate[ObjectPath] = new Object();
 			this.ResourceList.InstantiateTemplate[ObjectPath].useCount = 0;
 		}
-		var Component = this._buildFromTemplate(ObjectParent, ObjectPath, true);
+		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true);
 		this.ResourceList.InstantiateTemplate[ObjectPath].useCount ++;
-		ObjectParent.appendChild(Component);
+		VisualParentObject.appendChild(VisualObject);
 		//calculate all offset parameter to be able to display visual feedback
 		//needed now, because we append new components
-		HMI._setLayerPosition(Component);
+		HMI._setLayerPosition(VisualObject);
 		//we want to have offset parameter on all visual elements
-		var ComponentChilds = Component.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 		for(var i = 0;i < ComponentChilds.length;i++){
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
@@ -1341,7 +1390,7 @@ cshmi.prototype = {
 			//interprete onload Actions if we are allready loaded
 			while(this.ResourceList.onloadCallStack.length !== 0){
 				var EventObjItem = this.ResourceList.onloadCallStack.shift();
-				this._interpreteAction(EventObjItem["ObjectParent"], EventObjItem["ObjectPath"]);
+				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
 			}
 		}
 		
@@ -1350,28 +1399,26 @@ cshmi.prototype = {
 	/*********************************
 	_interpreteRoutePolyline
 	*********************************/
-	_interpreteRoutePolyline: function(ObjectParent, ObjectPath){
-		if(ObjectParent.tagName.indexOf("polyline") === -1 ){
-			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+ObjectParent.tagName+"-Objects (path: "+ObjectPath+")");
+	_interpreteRoutePolyline: function(VisualObject, ObjectPath){
+		if(VisualObject.tagName.indexOf("polyline") === -1 ){
+			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
 		var FBRef;
 		//if the Object is routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		
-
 		
-		//Not the config is cached here, but the result! So caching ObjectParent specific, not ObjectPath
-		if (!(ObjectParent.ResourceList && ObjectParent.ResourceList.Actions && ObjectParent.ResourceList.Actions[ObjectParent.id] !== undefined)){
+		//Not the config is cached here, but the result! So caching VisualObject specific, not ObjectPath
+		if (!(VisualObject.ResourceList && VisualObject.ResourceList.Actions && VisualObject.ResourceList.Actions[VisualObject.id] !== undefined)){
 			//get Values (via getValue-parts)
-			var SourceBasename = this._getValue(ObjectParent, ObjectPath+".SourceBasename");
-			var SourceVariablename = this._getValue(ObjectParent, ObjectPath+".SourceVariablename");
-			var TargetBasename = this._getValue(ObjectParent, ObjectPath+".TargetBasename");
-			var TargetVariablename = this._getValue(ObjectParent, ObjectPath+".TargetVariablename");
-
+			var SourceBasename = this._getValue(VisualObject, ObjectPath+".SourceBasename");
+			var SourceVariablename = this._getValue(VisualObject, ObjectPath+".SourceVariablename");
+			var TargetBasename = this._getValue(VisualObject, ObjectPath+".TargetBasename");
+			var TargetVariablename = this._getValue(VisualObject, ObjectPath+".TargetVariablename");
 			
-			var rootObject = ObjectParent;
+			var rootObject = VisualObject;
 			//search FBReference of root Object
-			while (rootObject !== null){
+			while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 				//FBReference found
 				if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
 					FBRef = rootObject.FBReference["default"];
@@ -1381,7 +1428,7 @@ cshmi.prototype = {
 				else {
 					//loop upwards to find the Template object
 					rootObject = rootObject.parentNode;
-					if (rootObject === null){
+					if (rootObject === null || rootObject.namespaceURI !== HMI.HMI_Constants.NAMESPACE_SVG){
 						//if rootObject is null, we use Source and Target to cache
 						FBRef = SourceBasename+SourceVariablename+TargetBasename+TargetVariablename;
 						}
@@ -1390,16 +1437,16 @@ cshmi.prototype = {
 			rootObject = null;
 			
 			//we have asked the object successful, so remember the result
-			ObjectParent.ResourceList = Object();
-			ObjectParent.ResourceList.Actions = Object();
-			ObjectParent.ResourceList.Actions[ObjectParent.id] = new Object();
-			ObjectParent.ResourceList.Actions[ObjectParent.id].FBRef = FBRef;
-			ObjectParent.ResourceList.Actions[ObjectParent.id].useCount = 1;
+			VisualObject.ResourceList = Object();
+			VisualObject.ResourceList.Actions = Object();
+			VisualObject.ResourceList.Actions[VisualObject.id] = new Object();
+			VisualObject.ResourceList.Actions[VisualObject.id].FBRef = FBRef;
+			VisualObject.ResourceList.Actions[VisualObject.id].useCount = 1;
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			FBRef = ObjectParent.ResourceList.Actions[ObjectParent.id].FBRef;
-			ObjectParent.ResourceList.Actions[ObjectParent.id].useCount++;
+			FBRef = VisualObject.ResourceList.Actions[VisualObject.id].FBRef;
+			VisualObject.ResourceList.Actions[VisualObject.id].useCount++;
 			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
@@ -1428,8 +1475,8 @@ cshmi.prototype = {
 		}else{
 			//Move Polyline-Container before every Functionblocks
 			//needs only to be done once
-			if (ObjectParent.parentNode.parentNode.tagName === "svg"){
-				ObjectParent.parentNode.parentNode.insertBefore(ObjectParent.parentNode, ObjectParent.parentNode.parentNode.firstChild);
+			if (VisualObject.parentNode.parentNode.tagName === "svg"){
+				VisualObject.parentNode.parentNode.insertBefore(VisualObject.parentNode, VisualObject.parentNode.parentNode.firstChild);
 			}
 
 			// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
@@ -1449,12 +1496,14 @@ cshmi.prototype = {
 			var Source;
 			var Target;
 			if (SourceVariablename !== ""){
-				Source = prefix + SourceBasename + "." + SourceVariablename;
+				//in the svg separators is always /, since it is named via ConfigValue "Name"
+				Source = prefix + SourceBasename + "/" + SourceVariablename;
 			}else{
 				Source = prefix + SourceBasename;
 			}
 			if (TargetVariablename !== ""){
-				Target = prefix + TargetBasename + "." + TargetVariablename;
+				//in the svg separators is always /, since it is named via ConfigValue "Name"
+				Target = prefix + TargetBasename + "/" + TargetVariablename;
 			}else{
 				Target = prefix + TargetBasename;
 			}
@@ -1478,7 +1527,7 @@ cshmi.prototype = {
 				}
 				//search for SourceConnectionPointOutsideDomain in all parent svgs
 				else{
-					var domainSVG = ObjectParent.parentNode;
+					var domainSVG = VisualObject.parentNode;
 					while (domainSVG.tagName === "svg" && SourceConnectionPoint === null){
 						for(var i = 0; i < domainSVG.childNodes.length;i++){
 							// search tagName "circle" with name containing SourceConnectionPointOutsideDomain
@@ -1519,7 +1568,7 @@ cshmi.prototype = {
 				}
 				//search for TargetConnectionPointOutsideDomain in all parent svgs
 				else{
-					var domainSVG = ObjectParent.parentNode;
+					var domainSVG = VisualObject.parentNode;
 					while (domainSVG.tagName === "svg" && TargetConnectionPoint === null){
 						for(var i = 0; i < domainSVG.childNodes.length;i++){
 							// search tagName "circle" with name containing TargetConnectionPointOutsideDomain
@@ -1572,23 +1621,22 @@ cshmi.prototype = {
 			this.ResourceList.Actions[FBRef].OffsetTarget = OffsetTarget;
 			this.ResourceList.Actions[FBRef].useCount = 1;
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering results for "+FBRef+" ");
-
-		}		
-
+		}
+		
 		var xStart = parseInt(SourceConnectionPoint.getAttribute("layerX"), 10);
 		var cx = parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
 		xStart = xStart + cx;
 		var cy = parseInt(SourceConnectionPoint.getAttribute("cy"), 10);
 		var yStart = parseInt(SourceConnectionPoint.getAttribute("layerY"), 10);
 		yStart = yStart +cy;
-
+		
 		var xEnd = parseInt(TargetConnectionPoint.getAttribute("layerX"), 10);
 		var cx = parseInt(TargetConnectionPoint.getAttribute("cx"), 10);
 		xEnd = xEnd + cx;
 		var cy = parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
 		var yEnd = parseInt(TargetConnectionPoint.getAttribute("layerY"), 10);
 		yEnd = yEnd +cy;
-
+		
 		//if start- and endPoints changed since last time, recompute polyline points
 		if (	xStart !== this.ResourceList.Actions[FBRef].xStart ||
 				yStart !== this.ResourceList.Actions[FBRef].yStart ||
@@ -1599,7 +1647,7 @@ cshmi.prototype = {
 			this.ResourceList.Actions[FBRef].yStart = yStart;
 			this.ResourceList.Actions[FBRef].xEnd = xEnd;
 			this.ResourceList.Actions[FBRef].yEnd = yEnd;
-
+			
 			var points;
 			// add minimum #pixel distance from Object till 1st direction change of connection
 			OffsetSource += 40;
@@ -1616,7 +1664,7 @@ cshmi.prototype = {
 					xStart = xEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xStart + "," + yEnd + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Right"){
@@ -1637,7 +1685,7 @@ cshmi.prototype = {
 					xStart = xEnd - OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xStart + "," + yEnd + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Left"){
@@ -1649,7 +1697,7 @@ cshmi.prototype = {
 					xStart = xEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xStart + "," + yEnd + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Right"){
@@ -1661,7 +1709,7 @@ cshmi.prototype = {
 					xStart = xEnd + OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
-		
+				
 				points = points + xStart + "," + yEnd + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Down"){
@@ -1675,7 +1723,7 @@ cshmi.prototype = {
 					yStart = yEnd + OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Up"){
@@ -1695,7 +1743,7 @@ cshmi.prototype = {
 					yStart = yEnd + OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Down"){
@@ -1706,7 +1754,7 @@ cshmi.prototype = {
 					yStart = yEnd + OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Up"){
@@ -1717,7 +1765,7 @@ cshmi.prototype = {
 					yStart = yEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Up"){
@@ -1728,7 +1776,7 @@ cshmi.prototype = {
 					yStart = yEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Right"){
@@ -1745,7 +1793,7 @@ cshmi.prototype = {
 					yStart = yEnd - OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Down"){
@@ -1782,7 +1830,7 @@ cshmi.prototype = {
 					yStart = yEnd - OffsetTarget;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Left"){
@@ -1799,7 +1847,7 @@ cshmi.prototype = {
 					yStart = yEnd - OffsetSource;
 					points = points + xStart + "," + yStart + " ";
 				}
-
+				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Down"){
@@ -1829,22 +1877,19 @@ cshmi.prototype = {
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
 			}
-
-			ObjectParent.setAttribute("points", points);
+			
+			VisualObject.setAttribute("points", points);
 			
 		}else{
 			//do nothing because the polyline was routed correctly last time
 		}
-
-
-
 		return true;
 	},
 	/*********************************
 		_checkCondition
 		-	checks Condition
 	*********************************/
-	_checkCondition: function(ObjectParent, ObjectPath, ConditionPath){
+	_checkCondition: function(VisualObject, ObjectPath, ConditionPath){
 		//get Values
 		var comptype;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -1864,15 +1909,15 @@ cshmi.prototype = {
 		}
 		
 		
-		var Value1 = this._getValue(ObjectParent, ObjectPath+".value1");
-		var Value2 = this._getValue(ObjectParent, ObjectPath+".value2");
+		var Value1 = this._getValue(VisualObject, ObjectPath+".value1");
+		var Value2 = this._getValue(VisualObject, ObjectPath+".value2");
 		
 		if (Value1 === null){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value1 is null.");
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
 			return null;
 		}
 		if (Value2 === null){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value2 is null.");
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
 			return null;
 		}
 		
@@ -1898,155 +1943,154 @@ cshmi.prototype = {
 	/*********************************
 	_checkConditionIterator
 	-	checks Condition within ChildrenIterator
-*********************************/
-_checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
-	if (this.ResourceList.ChildrenIterator.currentChild === undefined){
-		HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
-		//error state, so no boolean
-		return null;
-	}
-	//get Values
-	var comptype;
-	var childValue;
-	//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-	if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
-		var requestList = new Object();
-		requestList[ObjectPath] = new Object();
-		requestList[ObjectPath]["comptype"] = null;
-		requestList[ObjectPath]["childValue"] = null;
-		
-		var successCode = this._executeVariablesArray(requestList);
-		if (successCode == false){
-			return false;
+	*********************************/
+	_checkConditionIterator: function(VisualObject, ObjectPath, ConditionPath){
+		if (this.ResourceList.ChildrenIterator.currentChild === undefined){
+			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
+			//error state, so no boolean
+			return null;
 		}
-		
-		comptype = requestList[ObjectPath]["comptype"]
-		childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
-		
-		//feeding garbage collector early
-		requestList = null;
-		
-		//we have asked the object successful, so remember the result
-		this.ResourceList.Conditions[ObjectPath] = new Object();
-		this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType = comptype;
-		this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue = childValue;
-		this.ResourceList.Conditions[ObjectPath].useCount = 1;
-		HMI.hmi_log_trace("cshmi._checkConditionIterator: remembering config of "+ObjectPath+" ");
-	}else{
-		//the object is asked this session, so reuse the config to save communication requests
-		comptype = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType;
-		childValue = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue;
-		this.ResourceList.Conditions[ObjectPath].useCount++;
-		HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
-	}
-
-	var Value1;
-	
-	if (childValue[0] === ""){
-		HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not configured");
-		//error state, so no boolean
-		return null;
-	}else
-	
-	//todo doku!!!!  
-	//childValue : INPUT  STRING = "OP_NAME.flags";
-	//check if we want to get a Value from the iteratedChild
-	if (childValue[0].indexOf(".") !== -1){
-		var rootObject = ObjectParent;
-		var FBRef;
-		//search FBReference of root Object
-		while (rootObject !== null){
-			//FBReference found
-			if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
-				FBRef = rootObject.FBReference["default"];
-				//FBRef found, we can stop search
-				rootObject = null;
+		//get Values
+		var comptype;
+		var childValue;
+		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
+			var requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["comptype"] = null;
+			requestList[ObjectPath]["childValue"] = null;
+			
+			var successCode = this._executeVariablesArray(requestList);
+			if (successCode == false){
+				return false;
 			}
-			else {
-				//loop upwards to find the Template object
-				rootObject = rootObject.parentNode;
-			}
-		}
-		var splittedValue = childValue[0].split(".");
-		
-		if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
-			//we have an OV-PART, so the separator is a dot
-			Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+			
+			comptype = requestList[ObjectPath]["comptype"]
+			childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
+			
+			//feeding garbage collector early
+			requestList = null;
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Conditions[ObjectPath] = new Object();
+			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType = comptype;
+			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue = childValue;
+			this.ResourceList.Conditions[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._checkConditionIterator: remembering config of "+ObjectPath+" ");
 		}else{
-			//we have no OV-PART, so the separator is a slash
-			Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+			//the object is asked this session, so reuse the config to save communication requests
+			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType;
+			childValue = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue;
+			this.ResourceList.Conditions[ObjectPath].useCount++;
+			HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
 		}
-		Value1 = Value1.replace(/{/g, "");
-		Value1 = Value1.replace(/}/g, "");
-	}else{
-		Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
-	}
-	var Value2 = this._getValue(ObjectParent, ObjectPath+".withValue");
-	
-	if (Value1 === null){
-		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value1 is null.");
-		//error state, so no boolean
-		return null;
-	}
-	if (Value2 === null){
-		HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+ObjectParent.id+") failed because Value2 is null.");
-		//error state, so no boolean
-		return null;
-	}
-	
-	Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
-
-
-	
-	if (comptype === "<"){
-		for (var i=0; i<Value2.length; i++){
-			if (!(Value1 < Value2[i])){
-				return false;
+		
+		var Value1;
+		
+		if (childValue[0] === ""){
+			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not configured");
+			//error state, so no boolean
+			return null;
+		}else
+		
+		//check if we want to get a Value from the iteratedChild
+		if (childValue[0].indexOf(".") !== -1){
+			//todo doku!!!!
+			//found something like childValue : INPUT  STRING = "OP_NAME.flags";
+			
+			var rootObject = VisualObject;
+			var FBRef;
+			//search FBReference of root Object
+			while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+				//FBReference found
+				if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+					FBRef = rootObject.FBReference["default"];
+					//FBRef found, we can stop search
+					rootObject = null;
+				}
+				else {
+					//loop upwards to find the Template object
+					rootObject = rootObject.parentNode;
+				}
 			}
-		}
-		return true;
-	}else if (comptype === "<="){
-		for (var i=0; i<Value2.length; i++){
-			if (!(Value1 <= Value2[i])){
-				return false;
+			var splittedValue = childValue[0].split(".");
+			
+			if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+				//we have an OV-PART, so the separator is a dot
+				Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+			}else{
+				//we have no OV-PART, so the separator is a slash
+				Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
 			}
+			Value1 = Value1.replace(/{/g, "");
+			Value1 = Value1.replace(/}/g, "");
+		}else{
+			Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
 		}
-		return true;
-	}else if (comptype === "=="){
-		//check if one entry of Value2 == Value1
-		for (var i=0; i<Value2.length; i++){
-			if (Value1 === Value2[i]){
-				return true;
+		var Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
+		
+		if (Value1 === null){
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
+			//error state, so no boolean
+			return null;
+		}
+		if (Value2 === null){
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
+			//error state, so no boolean
+			return null;
+		}
+		
+		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
+		
+		if (comptype === "<"){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 < Value2[i])){
+					return false;
+				}
 			}
-		}
-		return false;
-	}else if (comptype === "!="){
-		for (var i=0; i<Value2.length; i++){
-			if (!(Value1 !== Value2[i])){
-				return false;
+			return true;
+		}else if (comptype === "<="){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 <= Value2[i])){
+					return false;
+				}
 			}
-		}
-		return true;
-	}else if (comptype === ">="){
-		for (var i=0; i<Value2.length; i++){
-			if (!(Value1 >= Value2[i])){
-				return false;
+			return true;
+		}else if (comptype === "=="){
+			//check if one entry of Value2 == Value1
+			for (var i=0; i<Value2.length; i++){
+				if (Value1 === Value2[i]){
+					return true;
+				}
 			}
-		}
-		return true;
-	}else if (comptype === ">"){
-		for (var i=0; i<Value2.length; i++){
-			if (!(Value1 > Value2[i])){
-				return false;
+			return false;
+		}else if (comptype === "!="){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 !== Value2[i])){
+					return false;
+				}
 			}
+			return true;
+		}else if (comptype === ">="){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 >= Value2[i])){
+					return false;
+				}
+			}
+			return true;
+		}else if (comptype === ">"){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 > Value2[i])){
+					return false;
+				}
+			}
+			return true;
+		}else{
+			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
+			//error state, so no boolean
+			return null;
 		}
-		return true;
-	}else{
-		HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
-		//error state, so no boolean
-		return null;
-	}
-},
+	},
 	
 	/*********************************
 		_buildSvg*
@@ -2054,7 +2098,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		-	gets parameter via KS
 		-	returns DOM Object or null to caller
 	*********************************/
-	_buildSvgContainer: function(ObjectParent, ObjectPath){
+	_buildSvgContainer: function(VisualParentObject, ObjectPath){
 		var requestList;
 		requestList = new Object();
 		requestList[ObjectPath] = new Object();
@@ -2068,24 +2112,24 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			return null;
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+		VisualObject.id = ObjectPath;
 		
-		this._addClass(svgElement, this.cshmiGroupClass);
-		this._addClass(svgElement, this.cshmiComponentClass);
+		this._addClass(VisualObject, this.cshmiGroupClass);
+		this._addClass(VisualObject, this.cshmiComponentClass);
 		
 		//set dimension of container
-		svgElement.setAttribute("x", requestList[ObjectPath]["x"]);
-		svgElement.setAttribute("y", requestList[ObjectPath]["y"]);
-		svgElement.setAttribute("width", requestList[ObjectPath]["width"]);
-		svgElement.setAttribute("height", requestList[ObjectPath]["height"]);
+		VisualObject.setAttribute("x", requestList[ObjectPath]["x"]);
+		VisualObject.setAttribute("y", requestList[ObjectPath]["y"]);
+		VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
+		VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
 		
-		return svgElement;
+		return VisualObject;
 	},
 	/*********************************
 		_buildFromTemplate
 	*********************************/
-	_buildFromTemplate: function(ObjectParent, ObjectPath, calledFromInstantiateTemplate){
+	_buildFromTemplate: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2105,7 +2149,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			}
 			requestList[ObjectPath]["TemplateDefinition"] = null;
 			requestList[ObjectPath]["FBReference"] = null;
-//			requestList[ObjectPath]["FBVariableReference"] = null;
+			requestList[ObjectPath]["FBVariableReference"] = null;
 			requestList[ObjectPath]["ConfigValues"] = null;
 			
 			var successCode = this._executeVariablesArray(requestList);
@@ -2164,39 +2208,52 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		}
 		
 		//make svg Element
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-		svgElement.id = ObjectPath;
-		svgElement.setAttribute("TemplateDescription", PathOfTemplateDefinition);
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+		VisualObject.id = ObjectPath;
+		VisualObject.setAttribute("TemplateDescription", PathOfTemplateDefinition);
+		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
 		
-		this._addClass(svgElement, this.cshmiTemplateClass);
-		this._addClass(svgElement, this.cshmiComponentClass);
+		this._addClass(VisualObject, this.cshmiTemplateClass);
+		this._addClass(VisualObject, this.cshmiComponentClass);
 		if (requestListTemplate[PathOfTemplateDefinition]["hideable"] === "TRUE"){
-			this._addClass(svgElement, this.cshmiTemplateHideableClass);
+			this._addClass(VisualObject, this.cshmiTemplateHideableClass);
 		}
 		
-		////////////////////////////////////////////////////////////////////////////
+		//###########################################################################
 		//parametrise templateDefinition with the config
-		svgElement.FBReference = Object();
-		svgElement.FBVariableReference = Object();
-		svgElement.ConfigValues = Object();
-		var realFBobjectID = null; 
-		var ConfigEntry = null;
-		var ConfigList = requestList[ObjectPath]["FBReference"].split(" ");
-		for (var i=0; i < ConfigList.length; i++) {
-			ConfigEntry = ConfigList[i].split(":");
-			if (ConfigList[i].charAt(0) === "/"){
+		VisualObject.FBReference = Object();
+		VisualObject.FBVariableReference = Object();
+		VisualObject.ConfigValues = Object();
+		
+		
+		////////////////////////////////////////////////////////////////////////////
+		//FBReference
+		
+		var FBReferenceList = requestList[ObjectPath]["FBReference"].split(" ");
+		var FBReferenceEntry = null;
+		for (var i=0; i < FBReferenceList.length; i++) {
+			FBReferenceEntry = FBReferenceList[i].split(":");
+			if (FBReferenceList[i].charAt(0) === "/"){
 				//entry could be an fullpath with an port, so ":" is no separator
-				svgElement.FBReference["default"] = ConfigList[i];
-				realFBobjectID = svgElement.FBReference["default"];
-			}else
-			if (ConfigEntry.length === 2){
+				VisualObject.FBReference["default"] = FBReferenceList[i];
+				VisualObject.id = VisualObject.FBReference["default"];
+				VisualObject.setAttribute("data-NameOrigin", "FBReference");
+			}else if (FBReferenceEntry.length >= 2){
+				
+				//extract the varname and remerge the rest into one arrayentry (a servername can contain : as a port separator)
+				var VarName = FBReferenceEntry.shift();
+				FBReferenceEntry = [VarName, FBReferenceEntry.join(":")];
+				
+				HMI.hmi_log_warning("Deprecated use of FBReference. Please use FBVariableReference!")
+				
+				//##### fixme change this code (named objects should use FBVarRef!), this should be named FBrefs
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]] !== undefined){
-					var rootObject = ObjectParent;
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[1]] !== undefined){
+					var rootObject = VisualParentObject;
 					var FBRef;
 					//search FBReference of root Object
-					while (rootObject !== null){
+					while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 						//FBReference found
 						if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
 							FBRef = rootObject.FBReference["default"];
@@ -2208,21 +2265,22 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 							rootObject = rootObject.parentNode;
 						}
 					}
-					svgElement.FBReference[ConfigEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];
-					realFBobjectID = svgElement.FBReference[ConfigEntry[0]];
+					VisualObject.FBReference[FBReferenceEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[1]];
 				}
+				//##### end change this code (named objects should use FBVarRef!)
 				
 				else{
-					svgElement.FBReference[ConfigEntry[0]] = ConfigEntry[1];
-					realFBobjectID = ConfigEntry[1];
+					VisualObject.FBReference[FBReferenceEntry[0]] = FBReferenceEntry[1];
 				}
-			}
-			else if (ConfigEntry.length === 1 && ConfigEntry[0] != ""){
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]] !== undefined){
-					var rootObject = ObjectParent;
+			}else if (FBReferenceEntry.length === 1 && FBReferenceEntry[0] != ""){
+				//only one info was requested, so we can save it to the default position. 
+				
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]] !== undefined){
+					//something like OP_NAME was requested, so we have to find the real info from the iterator
+					var rootObject = VisualParentObject;
 					var FBRef;
 					//search FBReference of root Object
-					while (rootObject !== null){
+					while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 						//FBReference found
 						if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
 							FBRef = rootObject.FBReference["default"];
@@ -2234,11 +2292,10 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 							rootObject = rootObject.parentNode;
 						}
 					}
-
-
-					if (this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]].charAt(0) === "/"){
-						//String begins with / so it is a fullpath
-						// if FBref beginn with "//" then keep the server information
+					if (this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]].charAt(0) === "/"){
+						// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
+						
+						// if FBref begins with "//" then keep the server information
 						// e.g "//dev/ov_hmidemo7/TechUnits/Add" --> keep "//dev/ov_hmidemo7"
 						if (FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
 							//find the 3rd "/"
@@ -2246,36 +2303,123 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 							//find the 4th "/"
 							slashIndex = FBRef.indexOf("/", slashIndex+1);
 							//only keep the String before 4th "/"
-							FBRef = FBRef.slice(0, slashIndex);
+							var ServerName = FBRef.slice(0, slashIndex);
 							
-							svgElement.FBReference["default"] = FBRef + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
-						}
-						// FBRef not needed because it's not a path to another server
-						else{
-							svgElement.FBReference["default"] = this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+							// it's a path to another server, so we must add the serverName
+							VisualObject.FBReference["default"] = ServerName + this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]];
+						}else{
+							// it's not a path to another server, so we must replace the full FBRef path
+							VisualObject.FBReference["default"] = this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]];
 						}
 						
 					}else{
-						//a normal relativ path
+						//In OP_NAME is a relative path (likely from a GetEP request). We have to use the correct separator
 						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 							//we have an OV-PART, so the separator is a dot
-							svgElement.FBReference["default"] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+							VisualObject.FBReference["default"] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]];
 						}else{
 							//we have no OV-PART, so the separator is a slash
-							svgElement.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[0]];
+							VisualObject.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]];
 						}
 					}
+				}else{
+					//We have straightforward a full name of one FB Object, so save it with the default name
+					VisualObject.FBReference["default"] = FBReferenceEntry[0];
 				}
-				else{
-					svgElement.FBReference["default"] = ConfigEntry[0];
-				}
-				realFBobjectID = svgElement.FBReference["default"];
+				VisualObject.id = VisualObject.FBReference["default"];
+				VisualObject.setAttribute("data-NameOrigin", "FBReference");
 			}
 		}
-		if (realFBobjectID !== null){
-			svgElement.id = realFBobjectID;
+		
+		
+		////////////////////////////////////////////////////////////////////////////
+		//FBVariableReference
+		
+		var FBVariableReferenceList = requestList[ObjectPath]["FBVariableReference"].split(" ");
+		var FBVariableReferenceEntry = null;
+		for (var i=0; i < FBVariableReferenceList.length; i++) {
+			FBVariableReferenceEntry = FBVariableReferenceList[i].split(":");
+			if (FBVariableReferenceEntry.length <= 1){
+				//a FBVariable must be always be named, so this is no valid entry
+				continue;
+			}
+			if (FBVariableReferenceEntry.length >= 2){
+				//extract the varname and remerge the rest into one arrayentry (a servername can contain : as a port separator)
+				var VarName = FBVariableReferenceEntry.shift();
+				FBVariableReferenceEntry = [VarName, FBVariableReferenceEntry.join(":")];
+			}
+			
+			//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
+			if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]] !== undefined){
+				//we want to get values from the current child (e.g. myFavoriteVar:OP_NAME)
+				
+				if (this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]].charAt(0) !== "/"){
+					//Value from currentChild is not a full path, so search for it in the parents
+					
+					var rootObject = VisualParentObject;
+					var FBRef = "";
+					//search FBReference of root Object
+					while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+						//FBVariableReference found
+						if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+							FBRef = rootObject.FBReference["default"];
+							//FBRef found, we can stop search
+							rootObject = null;
+						}
+						else {
+							//loop upwards to find the Template object
+							rootObject = rootObject.parentNode;
+						}
+					}
+					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
+				}else{
+					//currentChild set a full path
+					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
+				}
+			}else{
+				//direct setting of a FBVariable
+				VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBVariableReferenceEntry[1];
+			}
 		}
 		
+		////////////////////////////////////////////////////////////////////////////
+		//ConfigValue
+		
+		//ConfigValue is something like "pumpcolor:yellow pumpname:N18"
+		var ConfigValueList = requestList[ObjectPath]["ConfigValues"].split(" ");
+		var ConfigValueEntry = null;
+		var lastEntry = null;
+		for (var i=0; i < ConfigValueList.length; i++) {
+			ConfigValueEntry = ConfigValueList[i].split(":");
+			if (ConfigValueEntry.length === 2){
+				//check if we want to get values from the current child (e.g. OP_NAME)
+				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
+				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigValueEntry[1]] !== undefined){
+					VisualObject.ConfigValues[ConfigValueEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[ConfigValueEntry[1]];
+				}
+				else{
+					VisualObject.ConfigValues[ConfigValueEntry[0]] = ConfigValueEntry[1];
+				}
+				//TODO doku!!!
+				if(ConfigValueEntry[0] === "Name"){
+					//if an template has the configValue Name:Dieter, this should be the object id
+					if (VisualParentObject.getAttribute("data-NameOrigin") !== "TemplateName"){
+						//if the parent was named, append our name
+						VisualObject.id = VisualParentObject.id + "/" + VisualObject.ConfigValues[ConfigValueEntry[0]];
+						//fixme hier ist hart der slash drin. ist das ok? Alle FCs testen
+						VisualObject.setAttribute("data-NameOrigin", "Parent+ConfigValue");
+					}else{
+						//our parent was named with an TemplateName, append our Name
+						VisualObject.id = VisualObject.ConfigValues[ConfigValueEntry[0]];
+						VisualObject.setAttribute("data-NameOrigin", "ConfigValue");
+					}
+				}
+				lastEntry = ConfigValueEntry[0];
+			}else if (ConfigValueEntry.length === 1 && lastEntry !== null){
+				//we had something like "pumpcolor:yellow pumpname:N 18", so need to add the " 18" to the last entry
+				VisualObject.ConfigValues[lastEntry] = VisualObject.ConfigValues[lastEntry]+" "+ConfigValueEntry[0];
+			}
+		}
 		
 		
 		/////////////////////////////////////////////////////////////////////////////
@@ -2317,14 +2461,14 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		//adjust visual appearance
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		if (requestList[ObjectPath]["rotate"] !== "0"){
 			//rotate is not specified with a svg-Element, so encapsule in a G-Element
 			//http://www.w3.org/Graphics/SVG/WG/track/issues/2252
-			var svgGElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
-			svgGElement.style.overflow = "visible";
-			svgGElement.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
-			svgGElement.appendChild(svgElement);
+			var VisualChildObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+			VisualChildObject.style.overflow = "visible";
+			VisualChildObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
+			VisualChildObject.appendChild(VisualObject);
 		}
 		
 		//restore Template config
@@ -2332,38 +2476,10 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		requestList[ObjectPath]["y"] = yTemplate;
 		
 		//width and height comes from the TemplateDefinition
-		svgElement.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
-		svgElement.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
-		svgElement.style.overflow = "visible";
+		VisualObject.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
+		VisualObject.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
+		VisualObject.style.overflow = "visible";
 		
-		//ConfigValue is something like "pumpcolor:yellow pumpname:N18"
-		//problem: "pumpcolor:yellow pumpname:N 18"
-		//or "pumpcolor:yel low pumpname:N 18"
-		ConfigList = requestList[ObjectPath]["ConfigValues"].split(" ");
-		var lastEntry = null;
-		for (var i=0; i < ConfigList.length; i++) {
-			ConfigEntry = ConfigList[i].split(":");
-			if (ConfigEntry.length === 2){
-				//check if we want to get values from the current child (e.g. OP_NAME)
-				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]] !== undefined){
-					svgElement.ConfigValues[ConfigEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[ConfigEntry[1]];
-				}
-				else{
-					svgElement.ConfigValues[ConfigEntry[0]] = ConfigEntry[1];
-				}
-				if(ConfigEntry[0] === "Name" && realFBobjectID === null){
-					//TODO doku!!!
-					
-					//if an template has the configValue Name:Dieter, this should be the object id
-					svgElement.id = ConfigEntry[1];
-				}
-				lastEntry = ConfigEntry[0];
-			}else if (ConfigEntry.length === 1 && lastEntry !== null){
-				//we had something like "pumpcolor:yellow pumpname:N 18", so need to add the " 18" to the last entry
-				svgElement.ConfigValues[lastEntry] = svgElement.ConfigValues[lastEntry]+" "+ConfigEntry[0];
-			}
-		}
 		
 		//////////////////////////////////////////////////////////////////////////
 		//get childs (grafics and actions) from the TemplateDefinition
@@ -2371,15 +2487,15 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		var responseArrayChild = HMI.KSClient.getChildObjArray(PathOfTemplateDefinition, this);
 		for (var i=0; i < responseArrayChild.length; i++) {
 			var varName = responseArrayChild[i].split(" ");
-			var ChildComponent = this.BuildDomain(svgElement, PathOfTemplateDefinition+"/"+varName[0], varName[1]);
+			var ChildComponent = this.BuildDomain(VisualObject, PathOfTemplateDefinition+"/"+varName[0], varName[1]);
 			if (ChildComponent !== null){
-				svgElement.appendChild(ChildComponent);
+				VisualObject.appendChild(ChildComponent);
 			}
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 		//toggle visibility of hideable childtemplates onclick
-		ObjectParent.addEventListener("click", function(evt){
-			var childTemplates = ObjectParent.childNodes;
+		VisualParentObject.addEventListener("click", function(evt){
+			var childTemplates = VisualParentObject.childNodes;
 			
 			for (var i=0; i < childTemplates.length; i++) {
 				var Classes = childTemplates[i].getAttribute("class");
@@ -2397,14 +2513,17 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			if (evt.stopPropagation) evt.stopPropagation();
 		}, false);
 		
-		if (svgGElement){
-			//transformed Template
-			return svgGElement;
+		if (VisualChildObject){
+			//transformed Template for rotation
+			return VisualChildObject;
 		}else{
-			return svgElement;
+			return VisualObject;
 		}
 	},
-	_buildSvgLine: function(ObjectParent, ObjectPath){
+	/*********************************
+	_buildSvgLine
+	*********************************/
+	_buildSvgLine: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2438,22 +2557,22 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgLine: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
+		VisualObject.id = ObjectPath;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
-		svgElement.setAttribute("x1", requestList[ObjectPath]["x1"]);
-		svgElement.setAttribute("y1", requestList[ObjectPath]["y1"]);
-		svgElement.setAttribute("x2", requestList[ObjectPath]["x2"]);
-		svgElement.setAttribute("y2", requestList[ObjectPath]["y2"]);
+		VisualObject.setAttribute("x1", requestList[ObjectPath]["x1"]);
+		VisualObject.setAttribute("y1", requestList[ObjectPath]["y1"]);
+		VisualObject.setAttribute("x2", requestList[ObjectPath]["x2"]);
+		VisualObject.setAttribute("y2", requestList[ObjectPath]["y2"]);
 		
-		svgElement.setAttribute("shape-rendering", "crispEdges");
+		VisualObject.setAttribute("shape-rendering", "crispEdges");
 		
-		return svgElement;
+		return VisualObject;
 	},
-	_buildSvgPolyline: function(ObjectParent, ObjectPath){
+	_buildSvgPolyline: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2484,19 +2603,19 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgPolyline: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
+		VisualObject.id = ObjectPath;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
-		svgElement.setAttribute("points", requestList[ObjectPath]["points"]);
+		VisualObject.setAttribute("points", requestList[ObjectPath]["points"]);
 		
-		svgElement.setAttribute("shape-rendering", "crispEdges");
+		VisualObject.setAttribute("shape-rendering", "crispEdges");
 
-		return svgElement;
+		return VisualObject;
 	},
-	_buildSvgPolygon: function(ObjectParent, ObjectPath){
+	_buildSvgPolygon: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2527,19 +2646,19 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgPolygon: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
+		VisualObject.id = ObjectPath;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
-		svgElement.setAttribute("points", requestList[ObjectPath]["points"]);
+		VisualObject.setAttribute("points", requestList[ObjectPath]["points"]);
 		
-		svgElement.setAttribute("shape-rendering", "crispEdges");
+		VisualObject.setAttribute("shape-rendering", "crispEdges");
 		
-		return svgElement;
+		return VisualObject;
 	},
-	_buildSvgPath: function(ObjectParent, ObjectPath){
+	_buildSvgPath: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2570,15 +2689,15 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgPath: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
+		VisualObject.id = ObjectPath;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
-		svgElement.setAttribute("d", requestList[ObjectPath]["d"]);
+		VisualObject.setAttribute("d", requestList[ObjectPath]["d"]);
 		
-		return svgElement;
+		return VisualObject;
 		
 		/* Code from Yannick Bochatay http://ybochatay.fr
 		autoSmooth = function() {
@@ -2623,7 +2742,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		};
 		*/
 	},
-	_buildSvgText: function(ObjectParent, ObjectPath){
+	_buildSvgText: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2663,16 +2782,16 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgText: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
+		VisualObject.id = ObjectPath;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
-		svgElement.setAttribute("font-size", requestList[ObjectPath]["fontSize"]);
-		svgElement.setAttribute("font-style", requestList[ObjectPath]["fontStyle"]);
-		svgElement.setAttribute("font-weight", requestList[ObjectPath]["fontWeight"]);
-		svgElement.setAttribute("font-family", requestList[ObjectPath]["fontFamily"]);
-		svgElement.setAttribute("text-anchor", requestList[ObjectPath]["horAlignment"]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
+		VisualObject.setAttribute("font-size", requestList[ObjectPath]["fontSize"]);
+		VisualObject.setAttribute("font-style", requestList[ObjectPath]["fontStyle"]);
+		VisualObject.setAttribute("font-weight", requestList[ObjectPath]["fontWeight"]);
+		VisualObject.setAttribute("font-family", requestList[ObjectPath]["fontFamily"]);
+		VisualObject.setAttribute("text-anchor", requestList[ObjectPath]["horAlignment"]);
 		
 		var svgTspan = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
 		//perform trimming if needed
@@ -2683,11 +2802,11 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		if((trimLength > 0) && (contentLength > trimLength)){
 			trimmedContent = requestList[ObjectPath]["content"].substr(0, trimLength) + String.fromCharCode(8230);
 			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
-			this._setTitle(svgElement, requestList[ObjectPath]["content"]);
+			this._setTitle(VisualObject, requestList[ObjectPath]["content"]);
 		}else if((trimLength < 0) && (contentLength > -trimLength)){
 			trimmedContent =  String.fromCharCode(8230) + requestList[ObjectPath]["content"].substr(contentLength + trimLength);
 			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
-			this._setTitle(svgElement, requestList[ObjectPath]["content"]);
+			this._setTitle(VisualObject, requestList[ObjectPath]["content"]);
 		}else{
 			svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
 		}
@@ -2705,11 +2824,11 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			}
 		}
 		
-		svgElement.appendChild(svgTspan);
+		VisualObject.appendChild(svgTspan);
 		
-		return svgElement;
+		return VisualObject;
 	},
-	_buildSvgCircle: function(ObjectParent, ObjectPath){
+	_buildSvgCircle: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2742,18 +2861,18 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgCircle: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
+		VisualObject.id = ObjectPath;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
-		svgElement.setAttribute("cx", requestList[ObjectPath]["cx"]);
-		svgElement.setAttribute("cy", requestList[ObjectPath]["cy"]);
-		svgElement.setAttribute("r",requestList[ObjectPath]["r"]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
+		VisualObject.setAttribute("cx", requestList[ObjectPath]["cx"]);
+		VisualObject.setAttribute("cy", requestList[ObjectPath]["cy"]);
+		VisualObject.setAttribute("r",requestList[ObjectPath]["r"]);
 		
-		return svgElement;
+		return VisualObject;
 	},
-	_buildSvgEllipse: function(ObjectParent, ObjectPath){
+	_buildSvgEllipse: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2787,22 +2906,22 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgEllipse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
+		VisualObject.id = ObjectPath;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
-		svgElement.setAttribute("cx", requestList[ObjectPath]["cx"]);
-		svgElement.setAttribute("cy", requestList[ObjectPath]["cy"]);
-		svgElement.setAttribute("rx",requestList[ObjectPath]["rx"]);
-		svgElement.setAttribute("ry",requestList[ObjectPath]["ry"]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
+		VisualObject.setAttribute("cx", requestList[ObjectPath]["cx"]);
+		VisualObject.setAttribute("cy", requestList[ObjectPath]["cy"]);
+		VisualObject.setAttribute("rx",requestList[ObjectPath]["rx"]);
+		VisualObject.setAttribute("ry",requestList[ObjectPath]["ry"]);
 		
 		//rotation should be around cx and cy
-		svgElement.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["cx"]+","+requestList[ObjectPath]["cy"]+")");
+		VisualObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["cx"]+","+requestList[ObjectPath]["cy"]+")");
 		
-		return svgElement;
+		return VisualObject;
 	},
-	_buildSvgRect: function(ObjectParent, ObjectPath){
+	_buildSvgRect: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2836,17 +2955,17 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
-		svgElement.id = ObjectPath;
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
+		VisualObject.id = ObjectPath;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
-		svgElement.setAttribute("shape-rendering", "crispEdges");
+		VisualObject.setAttribute("shape-rendering", "crispEdges");
 		
-		return svgElement;
+		return VisualObject;
 	},
-	_buildSvgImage: function(ObjectParent, ObjectPath){
+	_buildSvgImage: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
@@ -2882,7 +3001,7 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var svgElement;
+		var VisualObject;
 		if(requestList[ObjectPath]["SVGcontent"] !== ""){
 			//we have SVG Content to visualise
 			//
@@ -2891,8 +3010,8 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 				+"xmlns:xlink='http://www.w3.org/1999/xlink'>"
 				+requestList[ObjectPath]["SVGcontent"]
 				+"</svg:svg>";
-			svgElement = HMI.HMIDOMParser.parse(svgContent, null);
-			svgElement.style.overflow = "visible";
+			VisualObject = HMI.HMIDOMParser.parse(svgContent, null);
+			VisualObject.style.overflow = "visible";
 		}else if(requestList[ObjectPath]["Bitmapcontent"] !== ""){
 			//we have an Bitmap Content to visualise
 			//
@@ -2901,64 +3020,64 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 				+"xmlns:xlink='http://www.w3.org/1999/xlink' xlink:href='"
 				+requestList[ObjectPath]["Bitmapcontent"]
 				+"'></svg:image>";
-			svgElement = HMI.HMIDOMParser.parse(bitmapContent, null);
+			VisualObject = HMI.HMIDOMParser.parse(bitmapContent, null);
 			
 			/* better but not working approach
-			var svgElement = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
 			
-			ObjectParent.setAttribute("xmlns:xlink", HMI.HMI_Constants.NAMESPACE_XLINK);
+			VisualParentObject.setAttribute("xmlns:xlink", HMI.HMI_Constants.NAMESPACE_XLINK);
 			//this causes an error, so the image is not displayed
-			//ObjectParent.setAttribute("xmlns", HMI.HMI_Constants.NAMESPACE_SVG);
-			svgElement.setAttribute("xlink:href", requestList[ObjectPath]["Bitmapcontent"]);
-			svgElement.setAttribute("width", requestList[ObjectPath]["width"]);
-			svgElement.setAttribute("height", requestList[ObjectPath]["height"]);
+			//VisualParentObject.setAttribute("xmlns", HMI.HMI_Constants.NAMESPACE_SVG);
+			VisualObject.setAttribute("xlink:href", requestList[ObjectPath]["Bitmapcontent"]);
+			VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
+			VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
 			*/
 		}else{
 			HMI.hmi_log_info_onwebsite("Image "+ObjectPath+" is not configured");
 			return null;
 		}
-		svgElement.id = ObjectPath;
+		VisualObject.id = ObjectPath;
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(svgElement, requestList[ObjectPath]);
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
-		return svgElement;
+		return VisualObject;
 	},
 	/*********************************
 	_processBasicVariables
 		-	sets svg attributes from an Array
 	*********************************/
-	_processBasicVariables: function(svgElement, configArray){
+	_processBasicVariables: function(VisualObject, configArray){
 		if (configArray["visible"] && configArray["visible"] == "FALSE"){
-			svgElement.setAttribute("display", "none");
+			VisualObject.setAttribute("display", "none");
 		}else{
-			svgElement.setAttribute("display", "block");
+			VisualObject.setAttribute("display", "block");
 		}
 		if(configArray["x"] && configArray["y"]){
 			//the attribute should be "rotate(deg, x, y)"
-			svgElement.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
-			svgElement.setAttribute("x", configArray["x"]);
-			svgElement.setAttribute("y", configArray["y"]);
+			VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
+			VisualObject.setAttribute("x", configArray["x"]);
+			VisualObject.setAttribute("y", configArray["y"]);
 		}else{
-			svgElement.setAttribute("transform", "rotate("+configArray["rotate"]+")");
+			VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+")");
 		}
 		if(configArray["width"] && configArray["width"] !== ""){
-			svgElement.setAttribute("width", configArray["width"]);
+			VisualObject.setAttribute("width", configArray["width"]);
 		}
 		if(configArray["height"] && configArray["height"] !== ""){
-			svgElement.setAttribute("height", configArray["height"]);
+			VisualObject.setAttribute("height", configArray["height"]);
 		}
 		if(configArray["stroke"] && configArray["stroke"] !== ""){
-			svgElement.setAttribute("stroke", configArray["stroke"]);
+			VisualObject.setAttribute("stroke", configArray["stroke"]);
 		}
 		if(configArray["fill"] && configArray["fill"] !== ""){
-			svgElement.setAttribute("fill", configArray["fill"]);
+			VisualObject.setAttribute("fill", configArray["fill"]);
 			if (configArray["fill"].indexOf("url(") !== -1){
-				//opera has a Bug in May 2012 (v11+v12 beta), so the pointer-event is not correct in this case
-				svgElement.setAttribute('pointer-events', 'all');
+				//opera has a Bug in May 2012 (v11+v12 beta), so the pointer-event is not correct in this case (buttons from processcontrol)
+				VisualObject.setAttribute('pointer-events', 'visible');
 			}
 		}
 		if(configArray["opacity"] && configArray["opacity"] !== ""){
-			svgElement.setAttribute("opacity", configArray["opacity"]);
+			VisualObject.setAttribute("opacity", configArray["opacity"]);
 		}
 	},
 	/*********************************
@@ -3003,23 +3122,23 @@ _checkConditionIterator: function(ObjectParent, ObjectPath, ConditionPath){
 		}
 		return true;
 	},
-	_addClass: function(svgElement, additionalClass){
-		if (svgElement.classList && svgElement.classList.add){
-			svgElement.classList.add(additionalClass);
-		}else if (svgElement.className !== undefined){
-			svgElement.className.baseVal = (svgElement.className.baseVal+" "+additionalClass).trim();
+	_addClass: function(VisualObject, additionalClass){
+		if (VisualObject.classList && VisualObject.classList.add){
+			VisualObject.classList.add(additionalClass);
+		}else if (VisualObject.className !== undefined){
+			VisualObject.className.baseVal = (VisualObject.className.baseVal+" "+additionalClass).trim();
 		}else{
-			svgElement.setAttribute('class', (svgElement.getAttribute('class')+ " "+additionalClass).trim());
+			VisualObject.setAttribute('class', (VisualObject.getAttribute('class')+ " "+additionalClass).trim());
 		}
 	},
-	_setTitle: function(svgElement, newText){
-		var titles = svgElement.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
+	_setTitle: function(VisualObject, newText){
+		var titles = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
 		if (titles.length >0){
 			titles[0].replaceChild(HMI.svgDocument.createTextNode(newText), titles[0].firstChild);
 		}else{
 			var svgTitle = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
 			svgTitle.appendChild(HMI.svgDocument.createTextNode(newText));
-			svgElement.appendChild(svgTitle);
+			VisualObject.appendChild(svgTitle);
 		}
 	},
 	_getElementsByClassName: function(node, className){
