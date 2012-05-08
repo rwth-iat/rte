@@ -30,13 +30,9 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getDouble_receivedDouble_set(
     OV_INSTPTR_fbcomlib_getDouble          pobj,
     const OV_DOUBLE  value
 ) {
-	if(!(pobj->v_doSend)){
+
 		pobj->v_receivedDouble = value;
 		return OV_ERR_OK;
-	} else{
-		return OV_ERR_GENERIC;
-	}
-
 }
 
 /**

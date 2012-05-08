@@ -30,13 +30,8 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getBool_receivedBool_set(
     OV_INSTPTR_fbcomlib_getBool          pobj,
     const OV_BOOL  value
 ) {
-	if(!(pobj->v_doSend)){
 		pobj->v_receivedBool = value;
 		return OV_ERR_OK;
-	} else{
-		return OV_ERR_GENERIC;
-	}
-
 }
 
 /**

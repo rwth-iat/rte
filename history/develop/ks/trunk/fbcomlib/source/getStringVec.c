@@ -33,12 +33,9 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getStringVec_receivedStringVec_set(
 	const OV_STRING										*pvalue,
 	const OV_UINT											veclen
 ) {
-	if(!(pobj->v_doSend)){
+
 		return Ov_SetDynamicVectorValue(&pobj->v_receivedStringVec,pvalue,veclen,STRING);
-	}
-	else{
-		return OV_ERR_GENERIC;
-	}	
+
 }
 
 /**

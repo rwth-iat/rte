@@ -33,12 +33,9 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getUIntVec_receivedUIntVec_set(
 	const OV_UINT											*pvalue,
 	const OV_UINT											veclen
 ) {
-	if(!(pobj->v_doSend)){
+
 		return Ov_SetDynamicVectorValue(&pobj->v_receivedUIntVec,pvalue,veclen,UINT);
-	}
-	else{
-		return OV_ERR_GENERIC;
-	}	
+
 }
 
 /**

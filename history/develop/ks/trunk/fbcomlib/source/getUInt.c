@@ -30,12 +30,9 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getUInt_receivedUInt_set(
     OV_INSTPTR_fbcomlib_getUInt          pobj,
     const OV_UINT  value
 ) {
-	if(!(pobj->v_doSend)){
+
 		pobj->v_receivedUInt = value;
 		return OV_ERR_OK;
-	} else{
-		return OV_ERR_GENERIC;
-	}
 
 }
 
