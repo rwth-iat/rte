@@ -30,12 +30,10 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getSingle_receivedSingle_set(
     OV_INSTPTR_fbcomlib_getSingle          pobj,
     const OV_SINGLE  value
 ) {
-	if(!(pobj->v_doSend)){
+
 		pobj->v_receivedSingle = value;
 		return OV_ERR_OK;
-	} else{
-		return OV_ERR_GENERIC;
-	}
+
 
 }
 

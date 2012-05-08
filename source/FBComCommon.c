@@ -236,13 +236,15 @@ OV_DLLFNCEXPORT void fbcomlib_FBComCommon_retMethod(
 		OV_STRING 						errorstring,
 		OV_INT	 						errorcode
 ) {
-
 	OV_INSTPTR_ksapi_KSCommon kscommon = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	OV_INSTPTR_fbcomlib_FBComCommon	fbcomconnon = Ov_GetParent(fbcomlib_FBComCommonAssoc, kscommon);
 
+	ov_logfile_debug("fbcomlib retmethod called with %i / %s",errorcode,errorstring);
 	fbcomlib_FBComCommon_state_set(fbcomconnon, errorcode);
 	//@todo: ?? wurde in der ksapiexample gemacht: fbcomlib_FBComCommon_stateString_set(fbcomconnon, errorstring);
 	fbcomconnon->v_stateString = errorstring;
+
+	if(fbcomconnon->v_doCyclic) fbcomlib_FBComCommon_doSend_set(fbcomconnon, TRUE); // cycle if requested
 	return;
 }
 

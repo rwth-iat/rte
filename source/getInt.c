@@ -30,13 +30,8 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getInt_receivedInt_set(
     OV_INSTPTR_fbcomlib_getInt          pobj,
     const OV_INT  value
 ) {
-	if(!(pobj->v_doSend)){
-		pobj->v_receivedInt = value;
+	pobj->v_receivedInt = value;
 		return OV_ERR_OK;
-	} else{
-		return OV_ERR_GENERIC;
-	}
-
 }
 
 /**
