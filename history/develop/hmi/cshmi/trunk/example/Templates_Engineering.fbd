@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-05-08 19:02:19
+  Erstellt : 2012-05-09 10:03:06
 
   HOST                : LOCALHOST:7509
   SERVER              : ov_server_zuse
@@ -1439,16 +1439,33 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.if/isInput :
-    CLASS /Libraries/cshmi/CompareIteratedChild;
+    CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
-        childValue : INPUT  STRING = "OP_NAME.flags";
         comptype : INPUT  STRING = "!=";
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.if/isInput.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.if/isInput.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "flags";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.if/isInput.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -1677,17 +1694,34 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.if/isOutput :
-    CLASS /Libraries/cshmi/CompareIteratedChild;
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.if/isOuput :
+    CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
-        childValue : INPUT  STRING = "OP_NAME.flags";
         comptype : INPUT  STRING = "==";
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.if/isOutput.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.if/isOuput.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "flags";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.if/isOuput.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2096,17 +2130,34 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCOutputIterator.forEachChild/OUT.if/is_OUT :
-    CLASS /Libraries/cshmi/CompareIteratedChild;
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCOutputIterator.forEachChild/OUT.if/Is_Out :
+    CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
-        childValue : INPUT  STRING = "OP_NAME.flags";
         comptype : INPUT  STRING = "==";
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCOutputIterator.forEachChild/OUT.if/is_OUT.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCOutputIterator.forEachChild/OUT.if/Is_Out.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "flags";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCOutputIterator.forEachChild/OUT.if/Is_Out.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2224,17 +2275,34 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCInputIterator.forEachChild/IN.if/Is_IN :
-    CLASS /Libraries/cshmi/CompareIteratedChild;
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCInputIterator.forEachChild/IN.if/Is_In :
+    CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
-        childValue : INPUT  STRING = "OP_NAME.flags";
         comptype : INPUT  STRING = "!=";
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCInputIterator.forEachChild/IN.if/Is_IN.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCInputIterator.forEachChild/IN.if/Is_In.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "flags";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/FCInputIterator.forEachChild/IN.if/Is_In.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";

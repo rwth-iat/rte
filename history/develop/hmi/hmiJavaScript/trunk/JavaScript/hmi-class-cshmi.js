@@ -760,7 +760,39 @@ cshmi.prototype = {
 			}
 			return null;
 		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest !== true){
-			var TemplateObject = VisualObject;
+			var TemplateObject;
+			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
+				//we are in an iterator and want to read out a value from the currentchild
+				var TemplateObject = VisualObject;
+				var FBRef;
+				//search FBReference of root Object
+				do{
+					//FBReference found
+					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+						FBRef = TemplateObject.FBReference["default"];
+						
+						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+							//we have an OV-PART, so the separator is a dot
+							var result = HMI.KSClient.getVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', null);
+						}else{
+							//we have no OV-PART, so the separator is a slash
+							result = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', null);
+						}
+						var returnValue = HMI.KSClient.splitKsResponse(result);
+						if (returnValue.length > 0){
+							//valid response
+							return returnValue[0];
+						}
+						//error
+						return null;
+					}
+				//loop upwards to find the Template object
+				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+				return null;
+			}
+			
+			//no active iterator, so plain FBReference
+			TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
 					//fixme change this we have TemplateFBVariableReferenceName now
@@ -1045,8 +1077,38 @@ cshmi.prototype = {
 			}
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
-			//TemplateFBReferenceVariable
-			var TemplateObject = VisualObject;
+			var TemplateObject;
+			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
+				//we are in an iterator and want to read out a value from the currentchild
+				var TemplateObject = VisualObject;
+				var FBRef;
+				//search FBReference of root Object
+				do{
+					//FBReference found
+					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+						FBRef = TemplateObject.FBReference["default"];
+						
+						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+							//we have an OV-PART, so the separator is a dot
+							var result = HMI.KSClient.setVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', NewValue, null);
+						}else{
+							//we have no OV-PART, so the separator is a slash
+							result = HMI.KSClient.setVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', NewValue, null);
+						}
+						if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference[ParameterValue]+' not successfull: Bad Parameter ');
+						}else if (response.indexOf("KS_ERR") !== -1){
+							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+						}
+						return true;
+					}
+				//loop upwards to find the Template object
+				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+				return null;
+			}
+			
+			//no active iterator, so plain FBReference
+			TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
 					//fixme change this we have TemplateFBVariableReferenceName now
@@ -1364,6 +1426,7 @@ cshmi.prototype = {
 		//reset Objects, after iteration is done we don't want to cache the last entries
 		this.ResourceList.InstantiateTemplate = Object();
 		this.ResourceList.ChildrenIterator = Object();
+		delete this.ResourceList.ChildrenIterator.currentChild;
 		return returnValue;
 	},
 	/*********************************
@@ -1995,9 +2058,10 @@ cshmi.prototype = {
 		
 		//check if we want to get a Value from the iteratedChild
 		if (childValue[0].indexOf(".") !== -1){
-			//todo doku!!!!
-			//found something like childValue : INPUT  STRING = "OP_NAME.flags";
+			HMI.hmi_log_warning("Deprecated use of compareIteratedChild. Compare is now able to do the same!")
 			
+			
+			//found something like childValue : INPUT  STRING = "OP_NAME.flags";
 			var rootObject = VisualObject;
 			var FBRef;
 			//search FBReference of root Object
@@ -2015,7 +2079,7 @@ cshmi.prototype = {
 			}
 			var splittedValue = childValue[0].split(".");
 			
-			if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+			if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 				//we have an OV-PART, so the separator is a dot
 				Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
 			}else{
