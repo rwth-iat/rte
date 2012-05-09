@@ -542,8 +542,7 @@ cshmi.prototype = {
 	_interpreteAction: function(VisualObject, ObjectPath){
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
-		//for (var i=0; i < responseArray.length && returnValue === true; i++) {
-		//todo ignore return value?
+		
 		//a server could be not available, or we request a not existing (xpos) variable. This should not cancel the other actions
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
@@ -761,6 +760,8 @@ cshmi.prototype = {
 			return null;
 		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest !== true){
 			var TemplateObject;
+			
+			//doku OP_NAME im Iterator nicht, sonst schon
 			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
 				//we are in an iterator and want to read out a value from the currentchild
 				var TemplateObject = VisualObject;
@@ -800,7 +801,7 @@ cshmi.prototype = {
 			TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
-					//fixme change this we have TemplateFBVariableReferenceName now
+					//Deprecated: change this we have TemplateFBVariableReferenceName now
 					
 					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
 					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
@@ -879,7 +880,7 @@ cshmi.prototype = {
 				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-			return null;
+			return "";
 		}else if (ParameterName === "value"){
 			return ParameterValue;
 		}
@@ -1116,7 +1117,7 @@ cshmi.prototype = {
 			TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
-					//fixme change this we have TemplateFBVariableReferenceName now
+					//Deprecated: change this we have TemplateFBVariableReferenceName now
 					
 					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
 					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
@@ -1401,7 +1402,7 @@ cshmi.prototype = {
 					responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
 					responseDictionary["OP_TYPEIDENT"] = response[i][9];
 				}
-				//todo doku
+				//doku
 				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 				
 				returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
@@ -1421,7 +1422,7 @@ cshmi.prototype = {
 					var responseDictionary = Array();
 					responseDictionary["OP_VALUE"] = response[j];
 					
-					//todo doku
+					//doku
 					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
 					
 					returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
@@ -2106,12 +2107,12 @@ cshmi.prototype = {
 		var Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
 		
 		if (Value1 === null){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
+			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
 			//error state, so no boolean
 			return null;
 		}
 		if (Value2 === null){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
+			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
 			//error state, so no boolean
 			return null;
 		}
@@ -2322,7 +2323,7 @@ cshmi.prototype = {
 				
 				HMI.hmi_log_warning("Deprecated use of FBReference. Please use FBVariableReference!")
 				
-				//##### fixme change this code (named objects should use FBVarRef!), this should be named FBrefs
+				//##### Deprecated: change this code (named objects should use FBVarRef!), this should be named FBrefs
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
 				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[1]] !== undefined){
@@ -2479,13 +2480,12 @@ cshmi.prototype = {
 				else{
 					VisualObject.ConfigValues[ConfigValueEntry[0]] = ConfigValueEntry[1];
 				}
-				//TODO doku!!!
+				//doku
 				if(ConfigValueEntry[0] === "Name"){
 					//if an template has the configValue Name:Dieter, this should be the object id
 					if (VisualParentObject.getAttribute("data-NameOrigin") !== "TemplateName"){
 						//if the parent was named, append our name
 						VisualObject.id = VisualParentObject.id + "/" + VisualObject.ConfigValues[ConfigValueEntry[0]];
-						//fixme hier ist hart der slash drin. ist das ok? Alle FCs testen
 						VisualObject.setAttribute("data-NameOrigin", "Parent+ConfigValue");
 					}else{
 						//our parent was named with an TemplateName, append our Name
