@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-05-07 14:00:18
+  Erstellt : 2012-05-09 10:42:06
 
   HOST                : LOCALHOST:7509
   SERVER              : ov_server_zuse
@@ -1923,14 +1923,14 @@
     VARIABLE_VALUES
         x : INPUT  SINGLE = 60.000000;
         y : INPUT  SINGLE = 10.000000;
-        content : INPUT  STRING = "42?";
+        content : INPUT  STRING = "???";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "start";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
+        trimToLength : INPUT  INT = 5;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -1986,7 +1986,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/unitText :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = 125.000000;
+        x : INPUT  SINGLE = 100.000000;
         y : INPUT  SINGLE = 10.000000;
         content : INPUT  STRING = "?";
         fontSize : INPUT  STRING = "medium";
@@ -2006,16 +2006,15 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/unitText/cyclText :
-    CLASS /Libraries/cshmi/TimeEvent;
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/unitText/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
-        cyctime : INPUT  SINGLE = 1.000000;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/unitText/cyclText/updText :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/unitText/onload/updText :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2030,7 +2029,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/unitText/cyclText/updText.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/unitText/onload/updText.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
