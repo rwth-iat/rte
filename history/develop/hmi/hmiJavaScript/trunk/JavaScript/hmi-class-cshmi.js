@@ -2377,7 +2377,8 @@ cshmi.prototype = {
 							// it's not a path to another server, so we must replace the full FBRef path
 							VisualObject.FBReference["default"] = this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]];
 						}
-						
+						VisualObject.id = VisualObject.FBReference["default"]
+						VisualObject.setAttribute("data-NameOrigin", "CurrentChildfullpath");
 					}else{
 						//In OP_NAME is a relative path (likely from a GetEP request). We have to use the correct separator
 						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
@@ -2387,13 +2388,15 @@ cshmi.prototype = {
 							//we have no OV-PART, so the separator is a slash
 							VisualObject.FBReference["default"] = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]];
 						}
+						VisualObject.id = FBRef + "/" + this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]];
+						VisualObject.setAttribute("data-NameOrigin", "FBReference/OP_NAME");
 					}
 				}else{
 					//We have straightforward a full name of one FB Object, so save it with the default name
 					VisualObject.FBReference["default"] = FBReferenceEntry[0];
+					VisualObject.id = VisualObject.FBReference["default"];
+					VisualObject.setAttribute("data-NameOrigin", "FBReference");
 				}
-				VisualObject.id = VisualObject.FBReference["default"];
-				VisualObject.setAttribute("data-NameOrigin", "FBReference");
 			}
 		}
 		
