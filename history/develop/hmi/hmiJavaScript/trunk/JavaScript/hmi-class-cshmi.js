@@ -1958,6 +1958,7 @@ cshmi.prototype = {
 		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
 			comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
+			comptype = HMI.KSClient.splitKsResponse(comptype)[0];
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Conditions[ObjectPath] = new Object();
@@ -1984,20 +1985,21 @@ cshmi.prototype = {
 			return null;
 		}
 		
-		if (comptype === "{<}"){
+		if (comptype === "<"){
 			return (Value1 < Value2);
-		}else if (comptype === "{<=}"){
+		}else if (comptype === "<="){
 			return (Value1 <= Value2);
-		}else if (comptype === "{==}"){
+		}else if (comptype === "=="){
 			return (Value1 === Value2);
-		}else if (comptype === "{!=}"){
+		}else if (comptype === "!="){
 			return (Value1 !== Value2);
-		}else if (comptype === "{>=}"){
+		}else if (comptype === ">="){
 			return (Value1 >= Value2);
-		}else if (comptype === "{>}"){
+		}else if (comptype === ">"){
 			return (Value1 > Value2);
 		}else{
 			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
+			//error state, so no boolean
 			return null;
 		}
 	},
@@ -2028,7 +2030,7 @@ cshmi.prototype = {
 				return false;
 			}
 			
-			comptype = requestList[ObjectPath]["comptype"]
+			comptype = requestList[ObjectPath]["comptype"];
 			childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
 			
 			//feeding garbage collector early
@@ -2150,7 +2152,7 @@ cshmi.prototype = {
 			}
 			return true;
 		}else{
-			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
+			HMI.hmi_log_error("cshmi._checkConditionIterator Comparingtype "+comptype+" unknown");
 			//error state, so no boolean
 			return null;
 		}
