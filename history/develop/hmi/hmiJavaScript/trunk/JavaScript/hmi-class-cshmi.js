@@ -638,12 +638,12 @@ cshmi.prototype = {
 		if (ParameterName === "ksVar" && preventNetworkRequest !== true){
 			var response;
 			if (ParameterValue.charAt(0) == "/"){
-				//we have an absolute path on this server
+				//we have an absolute path
 				response = HMI.KSClient.getVar(null, '{'+ParameterValue+'}', null);
 			}else{
 				//get baseKsPath
 				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
-				response = HMI.KSClient.getVar(baseKsPath.serverhandle, '{'+baseKsPath.path+"/"+ParameterValue+'}', null);
+				response = HMI.KSClient.getVar(null, '{'+baseKsPath+"/"+ParameterValue+'}', null);
 			}
 			var responseArray = HMI.KSClient.splitKsResponse(response);
 			if (responseArray.length === 0){
@@ -975,17 +975,17 @@ cshmi.prototype = {
 		if (ParameterName === "ksVar"){
 			var response;
 			if (ParameterValue.charAt(0) == "/"){
-				//we have an absolute path on this server
+				//we have an absolute path
 				response = HMI.KSClient.setVar(null, '{'+ParameterValue+'}', NewValue, null);
 			}else{
 				//get baseKsPath
 				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
-				response = HMI.KSClient.setVar(baseKsPath.serverhandle, '{'+baseKsPath.path+ParameterValue+'}', NewValue, null);
+				response = HMI.KSClient.setVar(null, '{'+baseKsPath+ParameterValue+'}', NewValue, null);
 			}
 			if (response.indexOf("KS_ERR_BADPARAM") !== -1){
-				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+baseKsPath.path+ParameterValue+' not successfull: Bad Parameter ');
+				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+baseKsPath+ParameterValue+' not successfull: Bad Parameter ');
 			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_info('Setting '+NewValue+' at variable '+baseKsPath.path+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+				HMI.hmi_log_info('Setting '+NewValue+' at variable '+baseKsPath+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 			}
 			return true;
 		}else if (ParameterName === "elemVar"){
@@ -1189,10 +1189,7 @@ cshmi.prototype = {
 	_getBaseKsPath: function(VisualObject, ObjectPath){
 		var ObjectPathArray = ObjectPath.split("/");
 		
-		var returnValue = Object();
-		returnValue.servername = null;
-		returnValue.serverhandle = null;
-		returnValue.path = "";
+		var returnValue = "";
 		do{
 			var currentPath = ObjectPathArray.join("/");
 			var response;
@@ -1216,12 +1213,12 @@ cshmi.prototype = {
 				var responseArray = HMI.KSClient.splitKsResponse(response);
 				if (responseArray[0].charAt(0) === "/"){
 					//String begins with / so it is a fullpath
-					returnValue.path = responseArray[0]+returnValue.path;
+					returnValue = responseArray[0]+returnValue;
 					//full path => stop searching for other path
 					break;
 				}else{
 					//a normal relative path
-					returnValue.path = responseArray[0]+returnValue.path;
+					returnValue = responseArray[0]+returnValue;
 				}
 			}else{
 				// no action in this loop

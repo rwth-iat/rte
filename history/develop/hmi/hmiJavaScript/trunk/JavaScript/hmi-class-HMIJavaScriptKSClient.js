@@ -355,7 +355,10 @@ HMIJavaScriptKSClient.prototype = {
 			return this.ResourceList.Handles[HostAndServername].HandleString;
 		}else{
 			var HandleString = this.getHandle(HostAndServername, null);
-			if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
+			if (HandleString === null){
+				//occures in shutdown of cshmi
+				return HandleString;
+			}else if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
 				//the Manager sometimes reject connection to a valid server, so retry once
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
 				
