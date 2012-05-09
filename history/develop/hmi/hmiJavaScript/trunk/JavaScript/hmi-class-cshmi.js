@@ -771,6 +771,11 @@ cshmi.prototype = {
 					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 						FBRef = TemplateObject.FBReference["default"];
 						
+						if(ParameterValue == "identifier"){
+							//if the identifier is requested calculate it to avoid network request
+							return this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+						}
+						
 						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 							//we have an OV-PART, so the separator is a dot
 							var result = HMI.KSClient.getVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', null);
@@ -1095,10 +1100,10 @@ cshmi.prototype = {
 							//we have no OV-PART, so the separator is a slash
 							result = HMI.KSClient.setVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', NewValue, null);
 						}
-						if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+						if (result.indexOf("KS_ERR_BADPARAM") !== -1){
 							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference[ParameterValue]+' not successfull: Bad Parameter ');
-						}else if (response.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+						}else if (result.indexOf("KS_ERR") !== -1){
+							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
 						}
 						return true;
 					}
@@ -1449,6 +1454,9 @@ cshmi.prototype = {
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
 		
+		var savedChild = this.ResourceList.ChildrenIterator.currentChild;
+		delete this.ResourceList.ChildrenIterator.currentChild;
+		
 		if (this.initStage === false){
 			//interprete onload Actions if we are allready loaded
 			while(this.ResourceList.onloadCallStack.length !== 0){
@@ -1456,6 +1464,8 @@ cshmi.prototype = {
 				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
 			}
 		}
+		this.ResourceList.ChildrenIterator.currentChild = savedChild;
+		savedChild = null;
 		
 		return true;
 	},
