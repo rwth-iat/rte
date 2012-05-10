@@ -1192,25 +1192,24 @@ cshmi.prototype = {
 		var returnValue = "";
 		do{
 			var currentPath = ObjectPathArray.join("/");
-			var response;
+			var responseArray;
 			if (this.ResourceList.baseKsPath[currentPath] === undefined){
-				response = HMI.KSClient.getVar(null, '{'+currentPath+'.baseKsPath}', null);
-				this.ResourceList.baseKsPath[currentPath] = response;
+				var response = HMI.KSClient.getVar(null, '{'+currentPath+'.baseKsPath}', null);
+				responseArray = HMI.KSClient.splitKsResponse(response);
+				
+				this.ResourceList.baseKsPath[currentPath] = responseArray;
 				this.ResourceList.baseKsPath[ObjectPath].useCount = 1;
 				HMI.hmi_log_trace("cshmi._BaseKsPath: remembering config of "+currentPath+" ");
 			}else{
-				response = this.ResourceList.baseKsPath[currentPath];
+				responseArray = this.ResourceList.baseKsPath[currentPath];
 				this.ResourceList.baseKsPath[ObjectPath].useCount++;
-				HMI.hmi_log_trace("cshmi._BaseKsPath: reusing remembered config of "+currentPath+" (#"+this.ResourceList.baseKsPath[ObjectPath].useCount+")");
+				//HMI.hmi_log_trace("cshmi._BaseKsPath: reusing remembered config of "+currentPath+" (#"+this.ResourceList.baseKsPath[ObjectPath].useCount+")");
 			}
-			if (response === false){
-				//communication error
+			
+			if (responseArray.length === 0){
+				//an object in tree is no cshmi object or we have an error
 				return returnValue;
-			}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-				//an object in tree is no cshmi object
-				return returnValue;
-			}else if (response !== "{{}}" && response.length > 2){
-				var responseArray = HMI.KSClient.splitKsResponse(response);
+			}else if (responseArray[0] !== ""){
 				if (responseArray[0].charAt(0) === "/"){
 					//String begins with / so it is a fullpath
 					returnValue = responseArray[0]+returnValue;
@@ -2198,6 +2197,8 @@ cshmi.prototype = {
 		VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
 		VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
 		
+		VisualObject.style.overflow = "visible";
+		
 		return VisualObject;
 	},
 	/*********************************
@@ -2341,11 +2342,10 @@ cshmi.prototype = {
 					}
 					VisualObject.FBReference[FBReferenceEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[1]];
 				}
-				//##### end change this code (named objects should use FBVarRef!)
-				
 				else{
 					VisualObject.FBReference[FBReferenceEntry[0]] = FBReferenceEntry[1];
 				}
+				//##### end change this code (named objects should use FBVarRef!)
 			}else if (FBReferenceEntry.length === 1 && FBReferenceEntry[0] != ""){
 				//only one info was requested, so we can save it to the default position. 
 				
@@ -2401,9 +2401,14 @@ cshmi.prototype = {
 					}
 				}else{
 					//We have straightforward a full name of one FB Object, so save it with the default name
-					VisualObject.FBReference["default"] = FBReferenceEntry[0];
+					if (FBReferenceEntry[0].charAt(0) === "/"){
+						VisualObject.FBReference["default"] = FBReferenceEntry[0];
+						VisualObject.setAttribute("data-NameOrigin", "FBReference");
+					}else{
+						VisualObject.FBReference["default"] = this._getBaseKsPath(VisualObject, ObjectPath) + FBReferenceEntry[0];
+						VisualObject.setAttribute("data-NameOrigin", "FBReference+BaseKsPath");
+					}
 					VisualObject.id = VisualObject.FBReference["default"];
-					VisualObject.setAttribute("data-NameOrigin", "FBReference");
 				}
 			}
 		}

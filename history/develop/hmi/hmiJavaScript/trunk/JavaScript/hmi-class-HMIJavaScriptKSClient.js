@@ -355,7 +355,7 @@ HMIJavaScriptKSClient.prototype = {
 			return this.ResourceList.Handles[HostAndServername].HandleString;
 		}else{
 			var HandleString = this.getHandle(HostAndServername, null);
-			if (HandleString === null){
+			if (HandleString === null || HandleString === false){
 				//occures in shutdown of cshmi
 				return HandleString;
 			}else if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
@@ -536,7 +536,7 @@ HMIJavaScriptKSClient.prototype = {
 		var lastEntry;
 		var sortedList = Array();
 		var cshmiString = this.getVar(null, '/Libraries/cshmi/Group.instance', null);
-		if (!(cshmiString.indexOf("KS_ERR") !== -1)){
+		if (!(cshmiString && cshmiString.indexOf("KS_ERR") !== -1)){
 			responseArray = this.splitKsResponse(cshmiString);
 			//the array could be [""]
 			if (responseArray.length > 0 && responseArray[0] !== ""){
@@ -544,7 +544,7 @@ HMIJavaScriptKSClient.prototype = {
 			}
 		}else{
 			cshmiString = this.getVar(null, '/acplt/cshmi/Group.instance', null);
-			if (!(cshmiString.indexOf("KS_ERR") !== -1)){
+			if (!(cshmiString && cshmiString.indexOf("KS_ERR") !== -1)){
 				responseArray = this.splitKsResponse(cshmiString);
 				//the array could be [""]
 				if (responseArray.length > 0 && responseArray[0] !== ""){
