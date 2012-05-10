@@ -2402,9 +2402,11 @@ cshmi.prototype = {
 				}else{
 					//We have straightforward a full name of one FB Object, so save it with the default name
 					if (FBReferenceEntry[0].charAt(0) === "/"){
+						//full path is given
 						VisualObject.FBReference["default"] = FBReferenceEntry[0];
 						VisualObject.setAttribute("data-NameOrigin", "FBReference");
 					}else{
+						//relative path is given, so complete the path with the BaseKsPath
 						VisualObject.FBReference["default"] = this._getBaseKsPath(VisualObject, ObjectPath) + FBReferenceEntry[0];
 						VisualObject.setAttribute("data-NameOrigin", "FBReference+BaseKsPath");
 					}
@@ -2460,7 +2462,13 @@ cshmi.prototype = {
 				}
 			}else{
 				//direct setting of a FBVariable
-				VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBVariableReferenceEntry[1];
+				if (FBVariableReferenceEntry[1].charAt(0) === "/"){
+					//full path is given
+					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBVariableReferenceEntry[1];
+				}else{
+					//relative path is given, so complete the path with the BaseKsPath
+					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = this._getBaseKsPath(VisualObject, ObjectPath) + FBVariableReferenceEntry[1];
+				}
 			}
 		}
 		
