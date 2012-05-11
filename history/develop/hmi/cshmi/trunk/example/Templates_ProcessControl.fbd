@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-05-09 17:23:41
+  Erstellt : 2012-05-11 15:14:00
 
   HOST                : LOCALHOST:7509
   SERVER              : ov_server_zuse
@@ -1859,14 +1859,14 @@
     VARIABLE_VALUES
         x : INPUT  SINGLE = 5.000000;
         y : INPUT  SINGLE = 10.000000;
-        content : INPUT  STRING = "T??";
+        content : INPUT  STRING = "unkown";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "start";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
+        trimToLength : INPUT  INT = 3;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -1921,16 +1921,16 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/SensorValue :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = 60.000000;
+        x : INPUT  SINGLE = 40.000000;
         y : INPUT  SINGLE = 10.000000;
-        content : INPUT  STRING = "???";
+        content : INPUT  STRING = "";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "start";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 5;
+        trimToLength : INPUT  INT = 3;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -1986,9 +1986,9 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensorv1/unitText :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = 100.000000;
+        x : INPUT  SINGLE = 70.000000;
         y : INPUT  SINGLE = 10.000000;
-        content : INPUT  STRING = "?";
+        content : INPUT  STRING = "";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
@@ -3869,7 +3869,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "end";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 5;
+        trimToLength : INPUT  INT = 2;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -4090,7 +4090,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "end";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 5;
+        trimToLength : INPUT  INT = 2;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";

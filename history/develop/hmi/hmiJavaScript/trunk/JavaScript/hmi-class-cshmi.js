@@ -993,6 +993,10 @@ cshmi.prototype = {
 			if (ParameterValue == "content"){
 				//content is special, as it is different in OVM and SVG
 				
+				var tspans = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
+				if (tspans.length == 0){
+					return false;
+				}
 				//if trimToLength is set in parent TextFB and perform trimming if needed
 				var trimLength = parseInt(this.ResourceList.Elements[VisualObject.id].ElementParameters.trimToLength, 10);
 				var contentLength = parseInt(NewValue.length, 10);
@@ -1001,23 +1005,23 @@ cshmi.prototype = {
 					//we have a numeric NewValue
 					if(NewValue.indexOf(".") === -1){
 						//INT or UINT
-						VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild.firstChild);
+						tspans[0].replaceChild(HMI.svgDocument.createTextNode(NewValue), tspans[0].firstChild);
 					}else{
 						//other values
 						trimmedContent =  parseFloat(NewValue).toPrecision(trimLength);
-						VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild.firstChild);
+						tspans[0].replaceChild(HMI.svgDocument.createTextNode(trimmedContent), tspans[0].firstChild);
 						this._setTitle(VisualObject, NewValue);
 					}
 				}else if((trimLength > 0) && (contentLength > trimLength)){
 					trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
-					VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild.firstChild);
+					tspans[0].replaceChild(HMI.svgDocument.createTextNode(trimmedContent), tspans[0].firstChild);
 					this._setTitle(VisualObject, NewValue);
 				}else if((trimLength < 0) && (contentLength > -trimLength)){
 					trimmedContent =  String.fromCharCode(8230) + NewValue.substr(contentLength + trimLength);
-					VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild.firstChild);
+					tspans[0].replaceChild(HMI.svgDocument.createTextNode(trimmedContent), tspans[0].firstChild);
 					this._setTitle(VisualObject, NewValue);
 				}else{
-					VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild.firstChild);
+					tspans[0].replaceChild(HMI.svgDocument.createTextNode(NewValue), tspans[0].firstChild);
 				}
 			}else if (ParameterValue == "title"){
 				this._setTitle(VisualObject, NewValue);
