@@ -1008,7 +1008,9 @@ cshmi.prototype = {
 						tspans[0].replaceChild(HMI.svgDocument.createTextNode(NewValue), tspans[0].firstChild);
 					}else{
 						//other values
-						trimmedContent =  parseFloat(NewValue).toPrecision(trimLength);
+						var power = Math.pow(10, trimLength || 0);
+						trimmedContent = String(Math.round(NewValue * power) / power);
+						
 						tspans[0].replaceChild(HMI.svgDocument.createTextNode(trimmedContent), tspans[0].firstChild);
 						this._setTitle(VisualObject, NewValue);
 					}
@@ -2910,7 +2912,9 @@ cshmi.prototype = {
 				svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
 			}else{
 				//other values
-				trimmedContent =  parseFloat(requestList[ObjectPath]["content"]).toPrecision(trimLength);
+				var power = Math.pow(10, trimLength || 0);
+				trimmedContent = String(Math.round(NewValue * power) / power);
+				
 				svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
 				this._setTitle(VisualObject, NewValue);
 			}
