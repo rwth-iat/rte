@@ -997,7 +997,18 @@ cshmi.prototype = {
 				var trimLength = parseInt(this.ResourceList.Elements[VisualObject.id].ElementParameters.trimToLength, 10);
 				var contentLength = parseInt(NewValue.length, 10);
 				var trimmedContent;
-				if((trimLength > 0) && (contentLength > trimLength)){
+				if(trimLength > 0 && !isNaN(parseFloat(NewValue)) && isFinite(NewValue)){
+					//we have a numeric NewValue
+					if(NewValue.indexOf(".") === -1){
+						//INT or UINT
+						VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild.firstChild);
+					}else{
+						//other values
+						trimmedContent =  parseFloat(NewValue).toPrecision(trimLength);
+						VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild.firstChild);
+						this._setTitle(VisualObject, NewValue);
+					}
+				}else if((trimLength > 0) && (contentLength > trimLength)){
 					trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
 					VisualObject.firstChild.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild.firstChild);
 					this._setTitle(VisualObject, NewValue);
@@ -2888,7 +2899,18 @@ cshmi.prototype = {
 		var contentLength = parseInt(requestList[ObjectPath]["content"].length, 10);
 		var trimmedContent;
 		
-		if((trimLength > 0) && (contentLength > trimLength)){
+		if(trimLength > 0 && !isNaN(parseFloat(requestList[ObjectPath]["content"])) && isFinite(requestList[ObjectPath]["content"])){
+			//we have a numeric NewValue
+			if(requestList[ObjectPath]["content"].indexOf(".") === -1){
+				//INT or UINT
+				svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
+			}else{
+				//other values
+				trimmedContent =  parseFloat(requestList[ObjectPath]["content"]).toPrecision(trimLength);
+				svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
+				this._setTitle(VisualObject, NewValue);
+			}
+		}else if((trimLength > 0) && (contentLength > trimLength)){
 			trimmedContent = requestList[ObjectPath]["content"].substr(0, trimLength) + String.fromCharCode(8230);
 			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
 			this._setTitle(VisualObject, requestList[ObjectPath]["content"]);
