@@ -1050,7 +1050,7 @@ cshmi.prototype = {
 				}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
 					//element has to be shifted into an g element
 					var rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
-					rotationObject.style.overflow = "visible";
+					rotationObject.setAttribute("overflow", "visible");
 					VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
 					rotationObject.appendChild(VisualObject);
 				}else{
@@ -2214,7 +2214,7 @@ cshmi.prototype = {
 		VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
 		VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
 		
-		VisualObject.style.overflow = "visible";
+		VisualObject.setAttribute("overflow", "visible");
 		
 		return VisualObject;
 	},
@@ -2572,7 +2572,7 @@ cshmi.prototype = {
 			//rotate is not specified with a svg-Element, so encapsule in a G-Element
 			//http://www.w3.org/Graphics/SVG/WG/track/issues/2252
 			var VisualChildObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
-			VisualChildObject.style.overflow = "visible";
+			VisualChildObject.setAttribute("overflow", "visible");
 			VisualChildObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
 			VisualChildObject.appendChild(VisualObject);
 		}
@@ -2584,7 +2584,7 @@ cshmi.prototype = {
 		//width and height comes from the TemplateDefinition
 		VisualObject.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
 		VisualObject.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
-		VisualObject.style.overflow = "visible";
+		VisualObject.setAttribute("overflow", "visible");
 		
 		
 		//////////////////////////////////////////////////////////////////////////
@@ -3130,7 +3130,7 @@ cshmi.prototype = {
 				+requestList[ObjectPath]["SVGcontent"]
 				+"</svg:svg>";
 			VisualObject = HMI.HMIDOMParser.parse(svgContent, null);
-			VisualObject.style.overflow = "visible";
+			VisualObject.setAttribute("overflow", "visible");
 		}else if(requestList[ObjectPath]["Bitmapcontent"] !== ""){
 			//we have an Bitmap Content to visualise
 			//
