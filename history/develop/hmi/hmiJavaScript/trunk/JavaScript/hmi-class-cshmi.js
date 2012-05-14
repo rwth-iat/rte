@@ -759,12 +759,12 @@ cshmi.prototype = {
 			return null;
 		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest !== true){
 			var TemplateObject;
+			var FBRef;
 			
 			//doku OP_NAME im Iterator nicht, sonst schon
 			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
 				//we are in an iterator and want to read out a value from the currentchild
-				var TemplateObject = VisualObject;
-				var FBRef;
+				TemplateObject = VisualObject;
 				//search FBReference of root Object
 				do{
 					//FBReference found
@@ -793,6 +793,40 @@ cshmi.prototype = {
 					}
 				//loop upwards to find the Template object
 				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+				return null;
+			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
+				//we are in an iterator and want to read out a value from the currentchild
+				TemplateObject = VisualObject;
+				//search FBReference of root Object
+				do{
+					//FBReference found
+					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+						FBRef = TemplateObject.FBReference["default"];
+						break;
+					}
+				//loop upwards to find the Template object
+				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+				
+				// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
+				// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
+				var prefix = "";
+				if (FBRef !== null && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+					//find the 3rd "/"
+					var slashIndex = FBRef.indexOf("/", 2);
+					//find the 4th "/"
+					slashIndex = FBRef.indexOf("/", slashIndex+1);
+					//only keep the String before 4th "/"
+					var prefix = FBRef.slice(0, slashIndex);
+				}
+				
+				var result = HMI.KSClient.getVar(null, '{'+ prefix+"."+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue + '}', null);
+				
+				var returnValue = HMI.KSClient.splitKsResponse(result);
+				if (returnValue.length > 0){
+					//valid response
+					return returnValue[0];
+				}
+				//error
 				return null;
 			}
 			
@@ -1127,6 +1161,39 @@ cshmi.prototype = {
 				//loop upwards to find the Template object
 				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 				return null;
+			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
+				//we are in an iterator and want to read out a value from the currentchild
+				var TemplateObject = VisualObject;
+				var FBRef;
+				//search FBReference of root Object
+				do{
+					//FBReference found
+					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+						FBRef = TemplateObject.FBReference["default"];
+						break;
+					}
+				//loop upwards to find the Template object
+				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+				
+				// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
+				// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
+				var prefix = "";
+				if (FBRef !== null && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+					//find the 3rd "/"
+					var slashIndex = FBRef.indexOf("/", 2);
+					//find the 4th "/"
+					slashIndex = FBRef.indexOf("/", slashIndex+1);
+					//only keep the String before 4th "/"
+					var prefix = FBRef.slice(0, slashIndex);
+				}
+				
+				var result = HMI.KSClient.setVar(null, '{'+ prefix + this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue + '}', NewValue, null);
+				if (result.indexOf("KS_ERR_BADPARAM") !== -1){
+					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue+' not successfull: Bad Parameter ');
+				}else if (result.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
+				}
+				return true;
 			}
 			
 			//no active iterator, so plain FBReference
@@ -1425,15 +1492,18 @@ cshmi.prototype = {
 			}
 		}
 		else {
-			//allow multiple childrenTypes
+			//doku multiple values possible
+			
+			//allow a list of variables as childrenTypes
 			var childrenTypeList = childrenType.split(" ");
 			var response;
 			for (var i=0; i < childrenTypeList.length; i++) {
 				response = HMI.KSClient.getVar(null, '{'+ FBRef +'.' + childrenTypeList[i] + '}', null);
-				//get a rid of external brackets 
-				response = response.replace(/{/g, "");
-				response = response.replace(/}/g, "");
-				response = HMI.KSClient.splitKsResponse(response, 1);
+				if (response === false){
+					continue;
+				}
+				
+				response = HMI.KSClient.splitKsResponse(response, 0);
 				for (var j=0; j<response.length; j++){
 					var responseDictionary = Array();
 					responseDictionary["OP_VALUE"] = response[j];
@@ -2110,6 +2180,11 @@ cshmi.prototype = {
 			}else{
 				//we have no OV-PART, so the separator is a slash
 				Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+			}
+			if (Value1 === false || Value1 === null){
+				//communication problem
+				//error state, so no boolean
+				return null;
 			}
 			Value1 = Value1.replace(/{/g, "");
 			Value1 = Value1.replace(/}/g, "");
