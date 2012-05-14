@@ -7,59 +7,351 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 #include "libov/ov_logfile.h"
+#include "libov/ov_result.h"
 #include "xdrhandling.h"
+#include "config.h"
 
+
+void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xdrposition, OV_INSTPTR_ksapi_KSCommon pchild)
+{
+	int errorcode;
+	int vartype;
+	int i, j;
+	int veclength, stringlength, currstringlength;
+	int* genvec =0;
+
+	for(i=0;i<4; i++)
+		((char*)(&errorcode))[i] = xdr[*xdrposition+3-i];		//read errorcode of current getvar
+	//printf("\n\nvartype: %d\n\n", errorcode);
+	//xdrposition +7 -i not used right now; purpose unknown
+	if(!errorcode)	//0 is OK
+	{
+		for(i=0;i<4; i++)										//read type of current variable
+			((char*)(&vartype))[i] = xdr[*xdrposition+11-i];
+		switch(vartype)
+		{
+		case OV_VT_BOOL:
+			if(Ov_CanCastTo(ksapi_getBool, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read value
+					((char*)&(Ov_StaticPtrCast(ksapi_getBool, pchild)->v_receivebool))[i] = xdr[*xdrposition+15-i];
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_BOOL_VEC:
+			if(Ov_CanCastTo(ksapi_getBoolVec, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				genvec = malloc(veclength*4);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<4; i++)
+						((char*)(&genvec[j]))[i] = xdr[*xdrposition+19+j*4-i];
+				}
+				ksapi_getBoolVec_receiveboolvec_set(Ov_StaticPtrCast(ksapi_getBoolVec, pchild), (OV_BOOL*) genvec, veclength);
+				free(genvec);
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28+veclength*4;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_INT:
+			if(Ov_CanCastTo(ksapi_getInt, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read value
+					((char*)&(Ov_StaticPtrCast(ksapi_getInt, pchild)->v_receiveint))[i] = xdr[*xdrposition+15-i];
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_INT_VEC:
+			if(Ov_CanCastTo(ksapi_getIntVec, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				genvec = malloc(veclength*4);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<4; i++)
+						((char*)(&genvec[j]))[i] = xdr[*xdrposition+19+j*4-i];
+				}
+				ksapi_getIntVec_receiveintvec_set(Ov_StaticPtrCast(ksapi_getIntVec, pchild), (OV_INT*) genvec, veclength);
+				free(genvec);
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28+veclength*4;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_UINT:
+			if(Ov_CanCastTo(ksapi_getUInt, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read value
+					((char*)&(Ov_StaticPtrCast(ksapi_getUInt, pchild)->v_receiveuint))[i] = xdr[*xdrposition+15-i];
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_UINT_VEC:
+			if(Ov_CanCastTo(ksapi_getUIntVec, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				genvec = malloc(veclength*4);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<4; i++)
+						((char*)(&genvec[j]))[i] = xdr[*xdrposition+19+j*4-i];
+				}
+				ksapi_getUIntVec_receiveuintvec_set(Ov_StaticPtrCast(ksapi_getUIntVec, pchild), (OV_UINT*) genvec, veclength);
+				free(genvec);
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+			*xdrposition = *xdrposition+28+veclength*4;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_DOUBLE:
+			if(Ov_CanCastTo(ksapi_getDouble, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<8; i++)								//read value
+					((char*)&(Ov_StaticPtrCast(ksapi_getDouble, pchild)->v_receivedouble))[i] = xdr[*xdrposition+19-i];
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+32;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_DOUBLE_VEC:
+			if(Ov_CanCastTo(ksapi_getDoubleVec, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				genvec = malloc(veclength*8);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<8; i++)
+						((char*)(&genvec[j]))[i] = xdr[*xdrposition+19+j*8-i];
+				}
+				ksapi_getDoubleVec_receivedoublevec_set(Ov_StaticPtrCast(ksapi_getDoubleVec, pchild), (OV_DOUBLE*) genvec, veclength);
+				free(genvec);
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+			*xdrposition = *xdrposition+28+veclength*8;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_SINGLE:
+			if(Ov_CanCastTo(ksapi_getSingle, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read value
+					((char*)&(Ov_StaticPtrCast(ksapi_getSingle, pchild)->v_receivesingle))[i] = xdr[*xdrposition+15-i];
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_SINGLE_VEC:
+			if(Ov_CanCastTo(ksapi_getSingleVec, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				genvec = malloc(veclength*4);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<4; i++)
+						((char*)(&genvec[j]))[i] = xdr[*xdrposition+19+j*4-i];
+				}
+				ksapi_getSingleVec_receivesinglevec_set(Ov_StaticPtrCast(ksapi_getSingleVec, pchild), (OV_SINGLE*) genvec, veclength);
+				free(genvec);
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28+veclength*4;						//point to position of next variable in xdr
+			break;
+
+		case OV_VT_STRING:
+			if(Ov_CanCastTo(ksapi_getString, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read stringlength
+					((char*)&stringlength)[i] = xdr[*xdrposition+15-i];
+
+				genvec = malloc(stringlength+1);
+				for (i =0; i<stringlength; i++)
+					((char*)genvec)[i] = xdr[*xdrposition+16+i];
+				((char*)genvec)[stringlength] = '\0';
+				ksapi_getString_receivestring_set(Ov_StaticPtrCast(ksapi_getString, pchild), (OV_STRING) genvec);
+				free(genvec);
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28+stringlength;						//point to position of next variable in xdr
+			while((*xdrposition)%4)
+				(*xdrposition)++;
+			break;
+
+		case OV_VT_STRING_VEC:
+			if(Ov_CanCastTo(ksapi_getStringVec, pchild))				//compare type to ksapi get*block type
+			{
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+				//printf("veclength: %d\n", veclength);
+				stringlength = 0;
+				genvec = malloc(veclength*sizeof(char*));
+				for (i=0; i<veclength; i++)
+				{
+					for(j=0; j<4; j++)
+						((char*)&currstringlength)[j] = xdr[(*xdrposition)+19+i*4+stringlength-j];
+					((char**)genvec)[i] = malloc(currstringlength + 1);
+					memcpy((char**)genvec[i], &(xdr[*xdrposition+20+i*4+stringlength]), currstringlength);
+					((char**)genvec)[i][currstringlength] = '\0';
+					stringlength+=currstringlength;
+					while(stringlength%4)
+						stringlength++;
+					//printf("currstringlength: %d\n%s\n", currstringlength, ((char**)genvec)[i]);
+
+				}
+
+				ksapi_getStringVec_receivestringvec_set(Ov_StaticPtrCast(ksapi_getStringVec, pchild), (OV_STRING*) genvec, veclength);
+				for (i=0; i<veclength; i++)
+					free((char**)genvec[i]);
+				free(genvec);
+			}
+			else												//wrong vartype
+			{
+				ksapi_getPkg_state_set(this, "wrong vartype");
+				pchild->v_status = -1;
+			}
+
+			*xdrposition = *xdrposition+28+stringlength+4*veclength;						//point to position of next variable in xdr
+
+			break;
+
+		}
+
+
+
+	}
+	else
+	{
+		ksapi_getPkg_state_set(this, ov_result_getresulttext(errorcode));
+		pchild->v_status = -1;
+		*xdrposition = *xdrposition+4;		//ks error has only one field in xdr
+
+	}
+
+	return;
+}
 
 
 OV_DLLFNCEXPORT OV_BOOL ksapi_getPkg_dogetPkg_get(
-    OV_INSTPTR_ksapi_getPkg          pobj
+		OV_INSTPTR_ksapi_getPkg          pobj
 ) {
-    return pobj->v_dogetPkg;
+	return pobj->v_dogetPkg;
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksapi_getPkg_dogetPkg_set(
-    OV_INSTPTR_ksapi_getPkg          pobj,
-    const OV_BOOL  value
+		OV_INSTPTR_ksapi_getPkg          pobj,
+		const OV_BOOL  value
 ) {
-    pobj->v_dogetPkg = value;
+	pobj->v_dogetPkg = value;
 
-	 if(value == TRUE)
-	 {
+	if(value == TRUE)
+	{
 		ksapi_getPkg_state_set(pobj, "start sending package");
 		ksapi_getPkg_submit(pobj);
 		pobj->v_dogetPkg = FALSE;
-	 }		
+	}
 
-    return OV_ERR_OK;
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_STRING ksapi_getPkg_state_get(
-	OV_INSTPTR_ksapi_getPkg			pobj
+		OV_INSTPTR_ksapi_getPkg			pobj
 ) {
 	return pobj->v_state;
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksapi_getPkg_state_set(
-	OV_INSTPTR_ksapi_getPkg			pobj,
-	const OV_STRING           		value
+		OV_INSTPTR_ksapi_getPkg			pobj,
+		const OV_STRING           		value
 ) {
 	return ov_string_setvalue(&pobj->v_state, value);
 }
 
 OV_DLLFNCEXPORT void ksapi_getPkg_startup(
-	OV_INSTPTR_ov_object 	pobj
+		OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
-    *   local variables
-    */
+	/*
+	 *   local variables
+	 */
 
-    /* do what the base class does first */
-    ksapi_KSCommon_startup(pobj);
+	/* do what the base class does first */
+	ksapi_KSCommon_startup(pobj);
 
-    /* do what */
+	/* do what */
 
 
-    return;
+	return;
 }
 
 OV_DLLFNCEXPORT void ksapi_getPkg_submit(
@@ -67,21 +359,10 @@ OV_DLLFNCEXPORT void ksapi_getPkg_submit(
 ) {
 	OV_INSTPTR_ov_object pchild = NULL;
 	OV_INSTPTR_ksapi_KSCommon pchildksc = NULL;
-	OV_INSTPTR_ksapi_getBool pchildgb = NULL;
-	OV_INSTPTR_ksapi_getBoolVec pchildgbv = NULL;
-	OV_INSTPTR_ksapi_getDouble pchildgd = NULL;
-	OV_INSTPTR_ksapi_getDoubleVec pchildgdv = NULL;
-	OV_INSTPTR_ksapi_getInt pchildgi = NULL;
-	OV_INSTPTR_ksapi_getIntVec pchildgiv = NULL;
-	OV_INSTPTR_ksapi_getSingle pchildgsgl = NULL;
-	OV_INSTPTR_ksapi_getSingleVec pchildgsglv = NULL;
-	OV_INSTPTR_ksapi_getString pchildgstr = NULL;
-	OV_INSTPTR_ksapi_getStringVec pchildgstrv = NULL;
-	OV_INSTPTR_ksapi_getUInt pchildgui = NULL;
-	OV_INSTPTR_ksapi_getUIntVec pchildguiv = NULL;
+
 	OV_UINT childcount = 0;
 	char *xdr;
-   int xdrlength;
+	int xdrlength;
 	int errorcode = 0;
 	int c;
 	int check = 1;
@@ -89,9 +370,9 @@ OV_DLLFNCEXPORT void ksapi_getPkg_submit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	OV_INSTPTR_ksapi_Channel channel = (OV_INSTPTR_ksapi_Channel)Ov_SearchChild(ov_containment, pobj, "channel");
 	if(channel == NULL) {
-	    ov_logfile_error("GETPKG object without Channel to use: %s", pobj->v_identifier);
-	    ksapi_getPkg_state_set(pobj, "GETPKG object without Channel to use");
-	    return;
+		ov_logfile_error("GETPKG object without Channel to use: %s", pobj->v_identifier);
+		ksapi_getPkg_state_set(pobj, "GETPKG object without Channel to use");
+		return;
 	}
 
 	//get host and server
@@ -123,115 +404,29 @@ OV_DLLFNCEXPORT void ksapi_getPkg_submit(
 	//make body
 	Ov_ForEachChild(ov_containment, (OV_INSTPTR_ov_domain)pobj, pchild)
 	{
-		if(Ov_CanCastTo(ksapi_getBool, pchild))
+
+		if(Ov_CanCastTo(ksapi_getBool, pchild)
+				|| Ov_CanCastTo(ksapi_getBoolVec, pchild)
+				|| Ov_CanCastTo(ksapi_getInt, pchild)
+				|| Ov_CanCastTo(ksapi_getIntVec, pchild)
+				|| Ov_CanCastTo(ksapi_getUInt, pchild)
+				|| Ov_CanCastTo(ksapi_getUIntVec, pchild)
+				|| Ov_CanCastTo(ksapi_getString, pchild)
+				|| Ov_CanCastTo(ksapi_getStringVec, pchild)
+				|| Ov_CanCastTo(ksapi_getSingle, pchild)
+				|| Ov_CanCastTo(ksapi_getSingleVec, pchild)
+				|| Ov_CanCastTo(ksapi_getDouble, pchild)
+				|| Ov_CanCastTo(ksapi_getDoubleVec, pchild))
 		{
 			childcount++;
-			pchildgb = Ov_StaticPtrCast(ksapi_getBool, pchild);
-			if(pchildgb->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgb->v_path);
+			pchildksc = Ov_StaticPtrCast(ksapi_KSCommon, pchild);
+			pchildksc->v_status = STATUS_KSCOMMON_OK; //reset status, will provide detailed channel status afterwards
+			if(pchildksc->v_path && *pchildksc->v_path)
+				generategetbody(&xdr, &xdrlength, pchildksc->v_path);
 			else
 				errorcode = -1;
 		}
-		else if(Ov_CanCastTo(ksapi_getBoolVec, pchild))
-		{
-			childcount++;
-			pchildgbv = Ov_StaticPtrCast(ksapi_getBoolVec, pchild);
-			if(pchildgbv->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgbv->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getDouble, pchild))
-		{
-			childcount++;
-			pchildgd = Ov_StaticPtrCast(ksapi_getDouble, pchild);
-			if(pchildgd->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgd->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getDoubleVec, pchild))
-		{
-			childcount++;
-			pchildgdv = Ov_StaticPtrCast(ksapi_getDoubleVec, pchild);
-			if(pchildgdv->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgdv->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getInt, pchild))
-		{
-			childcount++;
-			pchildgi = Ov_DynamicPtrCast(ksapi_getInt, pchild);
-			if(pchildgi->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgi->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getIntVec, pchild))
-		{
-			childcount++;
-			pchildgiv = Ov_StaticPtrCast(ksapi_getIntVec, pchild);
-			if(pchildgiv->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgiv->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getSingle, pchild))
-		{
-			childcount++;
-			pchildgsgl = Ov_DynamicPtrCast(ksapi_getSingle, pchild);
-			if(pchildgsgl->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgsgl->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getSingleVec, pchild))
-		{
-			childcount++;
-			pchildgsglv = Ov_StaticPtrCast(ksapi_getSingleVec, pchild);
-			if(pchildgsglv->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgsglv->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getString, pchild))
-		{
-			childcount++;
-			pchildgstr = Ov_DynamicPtrCast(ksapi_getString, pchild);
-			if(pchildgstr->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgstr->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getStringVec, pchild))
-		{
-			childcount++;
-			pchildgstrv = Ov_StaticPtrCast(ksapi_getStringVec, pchild);
-			if(pchildgstrv->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgstrv->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getUInt, pchild))
-		{
-			childcount++;
-			pchildgui = Ov_DynamicPtrCast(ksapi_getUInt, pchild);
-			if(pchildgui->v_path)
-				generategetbody(&xdr, &xdrlength, pchildgui->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_getUIntVec, pchild))
-		{
-			childcount++;
-			pchildguiv = Ov_StaticPtrCast(ksapi_getUIntVec, pchild);
-			if(pchildguiv->v_path)
-				generategetbody(&xdr, &xdrlength, pchildguiv->v_path);
-			else
-				errorcode = -1;
-		}
-		else if(Ov_CanCastTo(ksapi_Channel, pchild))
+		else if(Ov_CanCastTo(ksapi_Channel, pchild))	//ignore channel
 		{
 		}
 		else
@@ -244,7 +439,7 @@ OV_DLLFNCEXPORT void ksapi_getPkg_submit(
 		//set package length
 		char *tmp = (char*)&childcount;
 		for (c=0; c<4; c++)
-			xdr[47-c] = tmp[c];
+			xdr[51-c] = tmp[c];
 
 		//add rpcheader
 		addrpcheader(&xdr, &xdrlength);
@@ -262,15 +457,15 @@ OV_DLLFNCEXPORT void ksapi_getPkg_submit(
 	//~ int j;
 	//~ printf("\nxdr:\nlength: %d\n", xdrlength);
 	//~ for (j = 0; j < xdrlength; j=j+4)
-		//~ printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
+	//~ printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
 	//~ printf("\n\n");
 	//~ for (j = 0; j < xdrlength; j=j+4)
-		//~ printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
+	//~ printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
 	//~ printf("\n\n");
 
 	free(xdr);
 
-    return;
+	return;
 }
 
 OV_DLLFNCEXPORT void ksapi_getPkg_returnMethodxdr(
@@ -278,492 +473,37 @@ OV_DLLFNCEXPORT void ksapi_getPkg_returnMethodxdr(
 		OV_STRING									xdr,
 		OV_INT										xdrlength
 ) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_ksapi_getPkg this = Ov_StaticPtrCast(ksapi_getPkg, kscommon);
-	 OV_INSTPTR_ov_object pchild = NULL;
-	 OV_INSTPTR_ksapi_getBool pchildgb = NULL;
-	 OV_INSTPTR_ksapi_getBoolVec pchildgbv = NULL;
-	 OV_INSTPTR_ksapi_getDouble pchildgd = NULL;
-	 OV_INSTPTR_ksapi_getDoubleVec pchildgdv = NULL;
-	 OV_INSTPTR_ksapi_getInt pchildgi = NULL;
-	 OV_INSTPTR_ksapi_getIntVec pchildgiv = NULL;
-	 OV_INSTPTR_ksapi_getSingle pchildgsgl = NULL;
-	 OV_INSTPTR_ksapi_getSingleVec pchildgsglv = NULL;
-	 OV_INSTPTR_ksapi_getString pchildgstr = NULL;
-	 OV_INSTPTR_ksapi_getStringVec pchildgstrv = NULL;
-	 OV_INSTPTR_ksapi_getUInt pchildgui = NULL;
-	 OV_INSTPTR_ksapi_getUIntVec pchildguiv = NULL;
-    OV_UINT childcount = 0;
-    OV_UINT packagelength;
-    OV_UINT xdrposition;
-    OV_UINT veclength = 0;
-    int vartype;
-    int i,j,k;
-    char temp[8];
-    OV_BOOL *boolvec;
-    OV_DOUBLE *doublevec;
-    OV_INT *intvec;
-    OV_SINGLE *singlevec;
-    OV_UINT strlength = 0;
-    OV_STRING str;
-    OV_STRING *strvec;
-    OV_UINT strlengthges = 0;
-    OV_UINT *uintvec;
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_ksapi_getPkg this = Ov_StaticPtrCast(ksapi_getPkg, kscommon);
+	OV_INSTPTR_ov_object pchild = NULL;
+	OV_UINT xdrposition;
 
-	 
-	//~ printf("\nreceivedxdr:\nlength: %d\n", xdrlength);
-	//~ for (j = 0; j < xdrlength; j=j+4)
-		//~ printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-	//~ printf("\n\n");
-	//~ for (j = 0; j < xdrlength; j=j+4)
-		//~ printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-	//~ printf("\n\n");
 
-	//get packagelength
-	for (i = 3; i >= 0; i--)
-		temp[3-i] = xdr[36+i];
-	memcpy(&packagelength, temp, 4);
-	//~ printf("\n\npackagelength: %d\n\n", packagelength);
+	ksapi_getPkg_state_set(this, "sending completed");	//will be overwritten on error on one get*
 
-	xdrposition = 48;
+
+	//printxdr(xdr, xdrlength);
+
+
+	xdrposition = 36;			//begin of first variable (error code)
 
 	Ov_ForEachChild(ov_containment, (OV_INSTPTR_ov_domain)kscommon, pchild)
 	{
-		if(Ov_CanCastTo(ksapi_getBool, pchild))
-		{
-			childcount++;
-			pchildgb = Ov_StaticPtrCast(ksapi_getBool, pchild);
-			vartype = xdr[xdrposition+3];
-			printf("\n\nvartype: %d\n\n", vartype);
-			if(vartype==2)
-			{
-				pchildgb->v_receivebool = xdr[xdrposition+7];
-				xdrposition = xdrposition+28;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getBoolVec, pchild))
-		{
-			childcount++;
-			pchildgbv = Ov_StaticPtrCast(ksapi_getBoolVec, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==-126){
-				//get veclength
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&veclength, temp, 4);
 
-				k = xdrposition+8;
-				boolvec = malloc(veclength*sizeof(OV_BOOL));
-				for (j = 0; j < veclength; j++)
-				{
-					for (i = 3; i >= 0; i--)
-						temp[3-i] = xdr[k+i];
-					memcpy(&(boolvec[j]), temp, 4);
-					k = k+4;
-				}
-				ksapi_getBoolVec_receiveboolvec_set(pchildgbv, boolvec, veclength);
-				free(boolvec);
-				xdrposition = xdrposition+28+veclength*4;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getDouble, pchild))
+		if(Ov_CanCastTo(ksapi_KSCommon, pchild))
 		{
-			childcount++;
-			pchildgd = Ov_StaticPtrCast(ksapi_getDouble, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==33){
-				for (i = 7; i >= 0; i--)
-					temp[7-i] = xdr[xdrposition+4+i];
-				memcpy(&pchildgd->v_receivedouble, temp, 8);
-				xdrposition = xdrposition+32;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
+			getPkgElementInspector(this, xdr, &xdrposition, Ov_StaticPtrCast(ksapi_KSCommon, pchild));
 		}
-		else if(Ov_CanCastTo(ksapi_getDoubleVec, pchild))
-		{
-			childcount++;
-			pchildgdv = Ov_StaticPtrCast(ksapi_getDoubleVec, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==-95){
-				//get veclength
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&veclength, temp, 4);
 
-				k = xdrposition+8;
-				doublevec = malloc(veclength*sizeof(OV_DOUBLE));
-				for (j = 0; j < veclength; j++)
-				{
-					for (i = 7; i >= 0; i--)
-						temp[7-i] = xdr[k+i];
-					memcpy(&(doublevec[j]), temp, 8);
-					k = k+8;
-				}
-				ksapi_getDoubleVec_receivedoublevec_set(pchildgdv, doublevec, veclength);
-				free(doublevec);
-				xdrposition = xdrposition+28+veclength*8;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getInt, pchild))
-		{
-			childcount++;
-			pchildgi = Ov_DynamicPtrCast(ksapi_getInt, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==16){
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&pchildgi->v_receiveint, temp, 4);
-				xdrposition = xdrposition+28;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getIntVec, pchild))
-		{
-			childcount++;
-			pchildgiv = Ov_StaticPtrCast(ksapi_getIntVec, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==-112){
-				//get veclength
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&veclength, temp, 4);
-
-				k = xdrposition+8;
-				intvec = malloc(veclength*sizeof(OV_INT));
-				for (j = 0; j < veclength; j++)
-				{
-					for (i = 3; i >= 0; i--)
-						temp[3-i] = xdr[k+i];
-					memcpy(&(intvec[j]), temp, 4);
-					k = k+4;
-				}
-				ksapi_getIntVec_receiveintvec_set(pchildgiv, intvec, veclength);
-				free(intvec);
-				xdrposition = xdrposition+28+veclength*4;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getSingle, pchild))
-		{
-			childcount++;
-			pchildgsgl = Ov_DynamicPtrCast(ksapi_getSingle, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==32){
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&pchildgsgl->v_receivesingle, temp, 4);
-				xdrposition = xdrposition+28;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getSingleVec, pchild))
-		{
-			childcount++;
-			pchildgsglv = Ov_StaticPtrCast(ksapi_getSingleVec, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==-96){
-				//get veclength
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&veclength, temp, 4);
-
-				k = xdrposition+8;
-				singlevec = malloc(veclength*sizeof(OV_SINGLE));
-				for (j = 0; j < veclength; j++)
-				{
-					for (i = 3; i >= 0; i--)
-						temp[3-i] = xdr[k+i];
-					memcpy(&(singlevec[j]), temp, 4);
-					k = k+4;
-				}
-				ksapi_getSingleVec_receivesinglevec_set(pchildgsglv, singlevec, veclength);
-				free(singlevec);
-				xdrposition = xdrposition+28+veclength*4;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getString, pchild))
-		{
-			childcount++;
-			pchildgstr = Ov_DynamicPtrCast(ksapi_getString, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==48){
-				//get strlength
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&strlength, temp, 4);
-
-				str = (char*)malloc((strlength+1)*sizeof(char));
-				memset(str, 0, strlength+1);
-				for (i = 0; i < strlength; i++)
-					str[i] = xdr[xdrposition+8+i];
-				ksapi_getString_receivestring_set(pchildgstr, str);
-				free(str);
-				while ((strlength%4) != 0)
-					strlength++;
-				xdrposition = xdrposition+28+strlength;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getStringVec, pchild))
-		{
-			childcount++;
-			pchildgstrv = Ov_StaticPtrCast(ksapi_getStringVec, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==-80){
-				//get veclength
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&veclength, temp, 4);
-				strvec = (OV_STRING*)malloc(veclength*sizeof(char*));
-				
-				k = xdrposition+8;
-				for (i = 0; i < veclength; i++)
-				{
-					//get strlength
-					for (j = 3; j >= 0; j--)
-						temp[3-j] = xdr[k+j];
-					memcpy(&strlength, temp, 4);
-					strlengthges = strlengthges+strlength;
-					while ((strlengthges%4) != 0)
-						strlengthges++;
-					k = k+4;
-
-					strvec[i] = (OV_STRING)malloc((strlength+1)*sizeof(char));
-					memset(strvec[i], 0, strlength+1);
-					for (j = 0; j < strlength; j++)
-					{
-						strvec[i][j] = xdr[k+j];
-						strvec[i][j+1] = 0;
-					}
-					k = k+strlength;
-					while (k%4 != 0)
-						k++;
-				}
-				ksapi_getStringVec_receivestringvec_set(pchildgstrv, strvec, veclength);
-				free(strvec);
-				xdrposition = xdrposition+28+veclength*4+strlengthges;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getUInt, pchild))
-		{
-			childcount++;
-			pchildgui = Ov_DynamicPtrCast(ksapi_getUInt, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==17){
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&pchildgui->v_receiveuint, temp, 4);
-				xdrposition = xdrposition+28;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
-		else if(Ov_CanCastTo(ksapi_getUIntVec, pchild))
-		{
-			childcount++;
-			pchildguiv = Ov_StaticPtrCast(ksapi_getUIntVec, pchild);
-			vartype = xdr[xdrposition+3];
-			if(vartype==-111){
-				//get veclength
-				for (i = 3; i >= 0; i--)
-					temp[3-i] = xdr[xdrposition+4+i];
-				memcpy(&veclength, temp, 4);
-
-				k = xdrposition+8;
-				uintvec = malloc(veclength*sizeof(OV_UINT));
-				for (j = 0; j < veclength; j++)
-				{
-					for (i = 3; i >= 0; i--)
-						temp[3-i] = xdr[k+i];
-					memcpy(&(uintvec[j]), temp, 4);
-					k = k+4;
-				}
-				ksapi_getUIntVec_receiveuintvec_set(pchildguiv, uintvec, veclength);
-				free(uintvec);
-				xdrposition = xdrposition+28+veclength*4;
-			}
-			else if (vartype==0)
-			{
-				ksapi_getPkg_state_set(this, "wrong path");
-				return;
-			}
-			else if (vartype==48)
-			{
-				ksapi_getPkg_state_set(this, "wrong vartype");
-				return;
-			}
-			else
-			{
-				ksapi_getPkg_state_set(this, "error");
-				return;
-			}
-		}
 		else if(Ov_CanCastTo(ksapi_Channel, pchild))
 		{
 		}
+
 	}
 
-	ksapi_getPkg_state_set(this, "sending complete");
 
-    return;
+
+	return;
 }

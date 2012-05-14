@@ -129,9 +129,9 @@ OV_DLLFNCEXPORT void ksapi_KSCommon_startup(
 	ov_object_startup(pobj);
 	
 	//initialize Values
-	ksapi_KSCommon_host_set(sobj,"");
-	ksapi_KSCommon_server_set(sobj,"");
-	ksapi_KSCommon_path_set(sobj,"");
+	//ksapi_KSCommon_host_set(sobj,"");
+	//ksapi_KSCommon_server_set(sobj,"");
+	//ksapi_KSCommon_path_set(sobj,"");
 	ov_time_gettime(&curtime);
 	
 	ksapi_KSCommon_deregisterMethod(sobj);
