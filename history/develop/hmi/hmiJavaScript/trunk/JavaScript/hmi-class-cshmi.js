@@ -1514,11 +1514,14 @@ cshmi.prototype = {
 				if (response === false){
 					continue;
 				}
+				//get a rid of external brackets 
+				response = response.replace(/{/g, "");
+				response = response.replace(/}/g, "");
+				var responseArray = HMI.KSClient.splitKsResponse(response, 1);
 				
-				response = HMI.KSClient.splitKsResponse(response, 0);
-				for (var j=0; j<response.length; j++){
+				for (var j=0; j<responseArray.length; j++){
 					var responseDictionary = Array();
-					responseDictionary["OP_VALUE"] = response[j];
+					responseDictionary["OP_VALUE"] = responseArray[j];
 					
 					//doku
 					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
