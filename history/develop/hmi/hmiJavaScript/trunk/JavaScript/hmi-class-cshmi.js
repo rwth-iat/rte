@@ -79,7 +79,6 @@ function cshmi() {
 	this.ResourceList.baseKsPath = Object();
 	this.ResourceList.ChildList = Object();
 	this.ResourceList.ChildrenIterator = Object();
-	this.ResourceList.InstantiateTemplate = Object();
 	this.ResourceList.EventInfos = Object();
 	this.ResourceList.GlobalVar = Object();
 	
@@ -1359,8 +1358,12 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
-		//this will be increased after an successful instantiateTemplate
+		//this will be increased in a successful instantiateTemplate
 		this.ResourceList.ChildrenIterator.currentCount = 0;
+		
+		//remember an old currentChild (for cascaded iterators)
+		var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
+		delete this.ResourceList.ChildrenIterator.currentChild;
 		
 		var returnValue = true;
 		if (childrenType.indexOf("OT_") !== -1){
@@ -1442,22 +1445,18 @@ cshmi.prototype = {
 				}
 			}
 		}
-		//reset Objects, after iteration is done we don't want to cache the last entries
-		this.ResourceList.InstantiateTemplate = Object();
-		this.ResourceList.ChildrenIterator = Object();
-		delete this.ResourceList.ChildrenIterator.currentChild;
+		//reset Objects, after iteration we want to have the same (or non) currentChild as before (cascaded iterators)
+		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+		this.ResourceList.ChildrenIterator.currentCount = 0;
+		savedCurrentChild = null;
+		
 		return returnValue;
 	},
 	/*********************************
 	_interpreteInstantiateTemplate
 	*********************************/
 	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
-		if (this.ResourceList.InstantiateTemplate[ObjectPath] === undefined){
-			this.ResourceList.InstantiateTemplate[ObjectPath] = new Object();
-			this.ResourceList.InstantiateTemplate[ObjectPath].useCount = 0;
-		}
 		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true);
-		this.ResourceList.InstantiateTemplate[ObjectPath].useCount ++;
 		VisualParentObject.appendChild(VisualObject);
 		//calculate all offset parameter to be able to display visual feedback
 		//needed now, because we append new components
@@ -1468,7 +1467,7 @@ cshmi.prototype = {
 			HMI._setLayerPosition(ComponentChilds[i]);
 		}
 		
-		var savedChild = this.ResourceList.ChildrenIterator.currentChild;
+		var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
 		delete this.ResourceList.ChildrenIterator.currentChild;
 		
 		if (this.initStage === false){
@@ -1478,8 +1477,8 @@ cshmi.prototype = {
 				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
 			}
 		}
-		this.ResourceList.ChildrenIterator.currentChild = savedChild;
-		savedChild = null;
+		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+		savedCurrentChild = null;
 		
 		return true;
 	},
