@@ -369,6 +369,11 @@ cshmi.prototype = {
 				//stop without interpreting the actions
 				preserveThis._moveStopDrag(VisualObject, ObjectPath, evt, true);
 			}
+			VisualObject._moveHandleClickThunk = function(evt){
+				//stop the propagation
+				preserveThis._moveHandleClick(VisualObject, ObjectPath, evt, true);
+			}
+			
 			//todo: try to implement via HTML5 drag&drop
 			
 			//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
@@ -400,14 +405,21 @@ cshmi.prototype = {
 			//we have touch gestures, so kill legacy mousedown
 			VisualObject.removeEventListener("mousedown", VisualObject._moveStartDragThunk, false);
 			
-			document.addEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
-			document.addEventListener("touchend", VisualObject._moveStopDragThunk, false);
-			document.addEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
+			HMI.svgDocument.addEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
+			HMI.svgDocument.addEventListener("touchend", VisualObject._moveStopDragThunk, false);
+			HMI.svgDocument.addEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
+			HMI.svgDocument.addEventListener("click", VisualObject._moveHandleClickThunk, false);
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy click (x:"+mouseposition[0]+",y:"+mouseposition[1]+") detected");
-			document.addEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
-			document.addEventListener("mouseup", VisualObject._moveStopDragThunk, false);
+			HMI.svgDocument.addEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
+			HMI.svgDocument.addEventListener("mouseup", VisualObject._moveStopDragThunk, false);
+			HMI.svgDocument.addEventListener("click", VisualObject._moveHandleClickThunk, false);
 		}
+		if (evt.stopPropagation) evt.stopPropagation();
+	},
+	_moveHandleClick : function(VisualObject, ObjectPath, evt){
+		//we do not want to propagate a click to the parents
+		//todo detect click/rightclick on this object
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	_moveMouseMove : function(VisualObject, ObjectPath, evt){
@@ -439,14 +451,14 @@ cshmi.prototype = {
 		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+VisualObject.id);
 		if(evt.type === 'touchend'){
 			HMI.hmi_log_trace("moveStartDrag - touch up detected");
-			document.removeEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
-			document.removeEventListener("touchend", VisualObject._moveStopDragThunk, false);
-			document.removeEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
+			HMI.svgDocument.removeEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
+			HMI.svgDocument.removeEventListener("touchend", VisualObject._moveStopDragThunk, false);
+			HMI.svgDocument.removeEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
 			//the touchend has no xy position (since the fingers left the device!), so an action should work on the last move eventobj
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy mouse up detected");
-			document.removeEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
-			document.removeEventListener("mouseup", VisualObject._moveStopDragThunk, false);
+			HMI.svgDocument.removeEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
+			HMI.svgDocument.removeEventListener("mouseup", VisualObject._moveStopDragThunk, false);
 			//the mouseup event has xy position, so remember for use in an action
 			this.ResourceList.EventInfos.EventObj = evt;
 		}
@@ -1663,8 +1675,8 @@ cshmi.prototype = {
 			}else{
 				Target = prefix + TargetBasename;
 			}
-			if (document.getElementById(Source) !== null){
-				Source = document.getElementById(Source);
+			if (HMI.svgDocument.getElementById(Source) !== null){
+				Source = HMI.svgDocument.getElementById(Source);
 				for(var i = 0; i < Source.childNodes.length;i++){
 					// search tagName "circle" with name containing ConnectionPoint
 					if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
@@ -1702,8 +1714,8 @@ cshmi.prototype = {
 				}
 			}
 
-			if (document.getElementById(Target) !== null){
-				Target = document.getElementById(Target);
+			if (HMI.svgDocument.getElementById(Target) !== null){
+				Target = HMI.svgDocument.getElementById(Target);
 				var TargetConnectionPoint;
 				var TargetConnectionPointdirection;
 				for(var i = 0; i < Target.childNodes.length;i++){
