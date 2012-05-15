@@ -172,7 +172,7 @@ void ksservtcp_tcpclient_typemethod(
 	int mngrcommand = 1;		//1 indicates received manager-command (used to distinguish sending method)
 	fd_set write_flags;
 	struct timeval waitd;
-	char ckxdrlength[4];
+	unsigned char ckxdrlength[4];
 	int itemp = 0;
 	unsigned int timeoutcounter = 0;
 
@@ -215,7 +215,7 @@ void ksservtcp_tcpclient_typemethod(
 	{
 		do
 		{
-			err = recv(receivesocket, ckxdrlength, 4,0);		//first 4 bytes code length of xdr
+			err = recv(receivesocket, (char*) ckxdrlength, 4,0);		//first 4 bytes code length of xdr
 			if(err < 4)
 			{
 				if(err == 0)		//normal shutdown by client
@@ -287,7 +287,7 @@ void ksservtcp_tcpclient_typemethod(
 
 			}while(size_received < size_receiving);
 
-			if(ckxdrlength[0] != -128)
+			if(ckxdrlength[0] != 0x80)
 			{
 				FD_ZERO(&read_flags);
 					FD_SET(receivesocket, &read_flags); // get read flags
@@ -309,7 +309,7 @@ void ksservtcp_tcpclient_typemethod(
 				}
 
 			}
-		}while(ckxdrlength[0] != -128);
+		}while(ckxdrlength[0] != 0x80);
 
 		ksserv_logfile_info("tcpclient/typemethod: got ks cmd w/ %d bytes", size_received);
 		this->v_receivedCalls++; //count number of calls
