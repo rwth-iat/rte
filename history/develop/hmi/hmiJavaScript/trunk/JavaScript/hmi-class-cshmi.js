@@ -90,6 +90,11 @@ function cshmi() {
 	this.cshmiGroupClass = "cshmi-group";
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
+	
+	this.cshmiOperatorClickClass = "cshmi-click";
+	this.cshmiOperatorDoubleclickClass = "cshmi-doubleclick";
+	this.cshmiOperatorRightclickClass = "cshmi-rightclick";
+	this.cshmiOperatorAftermoveClass = "cshmi-aftermove";
 };
 
 
@@ -314,6 +319,7 @@ cshmi.prototype = {
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "click"){
 			VisualObject.setAttribute("cursor", "pointer");
+			this._addClass(VisualObject, this.cshmiOperatorClickClass);
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("click", function(evt){
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
@@ -326,6 +332,7 @@ cshmi.prototype = {
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
 			VisualObject.setAttribute("cursor", "pointer");
+			this._addClass(VisualObject, this.cshmiOperatorDoubleclickClass);
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("dblclick", function(evt){
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
@@ -337,6 +344,7 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
+			this._addClass(VisualObject, this.cshmiOperatorRightclickClass);
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("contextmenu", function(evt){
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
@@ -350,6 +358,7 @@ cshmi.prototype = {
 			}, false);
 		}else if (command[command.length-1] === "aftermove"){
 			VisualObject.setAttribute("cursor", "move");
+			this._addClass(VisualObject, this.cshmiOperatorAftermoveClass);
 			
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			
@@ -408,12 +417,12 @@ cshmi.prototype = {
 			HMI.svgDocument.addEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
 			HMI.svgDocument.addEventListener("touchend", VisualObject._moveStopDragThunk, false);
 			HMI.svgDocument.addEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
-			HMI.svgDocument.addEventListener("click", VisualObject._moveHandleClickThunk, false);
+			VisualObject.addEventListener("click", VisualObject._moveHandleClickThunk, false);
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy click (x:"+mouseposition[0]+",y:"+mouseposition[1]+") detected");
 			HMI.svgDocument.addEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
 			HMI.svgDocument.addEventListener("mouseup", VisualObject._moveStopDragThunk, false);
-			HMI.svgDocument.addEventListener("click", VisualObject._moveHandleClickThunk, false);
+			VisualObject.addEventListener("click", VisualObject._moveHandleClickThunk, false);
 		}
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
@@ -571,6 +580,9 @@ cshmi.prototype = {
 				returnValue = this._interpreteInstantiateTemplate(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/RoutePolyline") !== -1){
 				returnValue = this._interpreteRoutePolyline(VisualObject, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/debugger") !== -1){
+				//breakpoint requested
+				debugger;
 			}else{
 				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+") "+ObjectPath+" not supported");
 			}

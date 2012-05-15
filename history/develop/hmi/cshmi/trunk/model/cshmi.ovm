@@ -79,7 +79,7 @@ LIBRARY cshmi
 			COMMENT = "z-index of the visuals, sequence-index for actions: 0 is least visible (i.e. bottom) or executed first"
 			INITIALVALUE = 0;
 			baseKsPath : STRING 
-			COMMENT = "base KS path for resolution of relative KS paths";
+			COMMENT = "base KS path for resolution of relative KS paths, used in References and direct ksVar";
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -176,11 +176,11 @@ LIBRARY cshmi
 			COMMENT = "y-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
 			FBReference[] : STRING
-			COMMENT = "Path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
+			COMMENT = "Path of the Reference object; example '/TechUnits/Pump47'"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
 			FBVariableReference[] : STRING
-			COMMENT = "Path of a named reference variable object (example: [variable1:/TechUnits/Pump47.IN1]; multiple variables possible)";
+			COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
 			ConfigValues[] : STRING
-			COMMENT = "Free text value for TemplateDefinition (multiple key1:value1 possible)";
+			COMMENT = "Free text value for TemplateDefinition; example 'myText:halloWelt'; multiple key1:value1 possible)";
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -330,7 +330,7 @@ LIBRARY cshmi
 	
 	CLASS Image : CLASS cshmi/Element
 		IS_INSTANTIABLE;
-		COMMENT = "a reference to a TemplateDefinition";
+		COMMENT = "an image, bitmap or vector";
 		VARIABLES
 			x : SINGLE
 			COMMENT = "x-axis coordinate of the image"
@@ -347,7 +347,7 @@ LIBRARY cshmi
 			SVGcontent : STRING
 			COMMENT = "direct SVG content";
 			Bitmapcontent : STRING
-			COMMENT = "Bitmap content as DataURI (base64 encoded) for example: data:image/png;base64,iVBORw0...";
+			COMMENT = "Bitmap content as DataURI (base64 encoded); example 'data:image/png;base64,iVBORw0...'";
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -368,21 +368,21 @@ LIBRARY cshmi
 		COMMENT = "get a value, either constant or from a variable";
 		VARIABLES
 			ksVar : STRING
-			COMMENT = "path of the remote KS variable";
+			COMMENT = "path of a remote KS variable";
 			elemVar : STRING
-			COMMENT = "name of the element variable (for example fill, stroke, content)";
+			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content')";
 			elemVarPath : STRING
-			COMMENT = "the (relative) path to the element";
+			COMMENT = "NOT IMPLEMENTED! The (relative) path to the element";
 			globalVar : STRING
-			COMMENT = "name of the global variable";
+			COMMENT = "name of the global variable (is resetted on reloading)";
 			persistentGlobalVar : STRING
-			COMMENT = "name of the persistent global variable";
+			COMMENT = "name of the persistent global variable (survives reloading)";
 			OperatorInput : STRING
-			COMMENT = "Value from the user (for example mousex, mousey, textinput or textinput:question)";
+			COMMENT = "Value from the user; example 'mousex', 'mousey', 'textinput', 'textinput:question', 'textinput:question:TemplateFBReferenceVariable:IN1')";
 			TemplateFBReferenceVariable : STRING
-			COMMENT = "name of a variable of a referenced FB object";
+			COMMENT = "name of a variable of a referenced FB object; example 'IN1'";
 			TemplateFBVariableReferenceName : STRING
-			COMMENT = "named referenced variable";
+			COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			TemplateConfigValues : STRING
 			COMMENT = "name of the key of a ConfigValue";
 			value : ANY
@@ -395,19 +395,19 @@ LIBRARY cshmi
 		COMMENT = "set a variable with a concatenated value";
 		VARIABLES
 			ksVar : STRING
-			COMMENT = "path of the target remote KS variable";
+			COMMENT = "path of a remote KS variable";
 			elemVar : STRING
-			COMMENT = "name of the target element variable";
+			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content')";
 			elemVarPath : STRING
-			COMMENT = "the (relative) path to the element";
+			COMMENT = "NOT IMPLEMENTED! the (relative) path to the element";
 			TemplateFBReferenceVariable : STRING
-			COMMENT = "name of a variable of a referenced FB object";
+			COMMENT = "name of a variable of a referenced FB object; example 'IN1'";
 			TemplateFBVariableReferenceName : STRING
-			COMMENT = "named referenced variable";
+			COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			globalVar : STRING
-			COMMENT = "name of the target global variable";
+			COMMENT = "name of the global variable (is resetted on reloading)";
 			persistentGlobalVar : STRING
-			COMMENT = "name of the target persistent global variable";
+			COMMENT = "name of the persistent global variable (survives reloading)";
 		END_VARIABLES;
 	END_CLASS;
 
@@ -445,7 +445,7 @@ LIBRARY cshmi
 		VARIABLES
 			ChildrenType : STRING
 			HAS_SET_ACCESSOR
-			COMMENT = "ObjectType to iterate through (OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY) or variable name (association or vector)";
+			COMMENT = "ObjectType to iterate through (OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY) or name (association or vector)";
 		END_VARIABLES;
 		PARTS
 			forEachChild : CLASS cshmi/csContainer;
@@ -459,10 +459,10 @@ LIBRARY cshmi
 			TemplateDefinition : STRING
 			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
 			x : SINGLE
-			COMMENT = "x-axis coordinate of the Template"
+			COMMENT = "x-axis coordinate of the first Template"
 			INITIALVALUE = 0.0;
 			y : SINGLE
-			COMMENT = "y-axis coordinate of the Template"
+			COMMENT = "y-axis coordinate of the first Template"
 			INITIALVALUE = 0.0;
 			xOffset : SINGLE
 			COMMENT = "x-axis offset to previously instantiated Template"
@@ -473,11 +473,11 @@ LIBRARY cshmi
 			maxTemplatesPerDirection : STRING
 			COMMENT = "'x:3'' will paint three Templates horizontal and then reset x position, but adds the yOffset";
 			FBReference[] : STRING
-			COMMENT = "Path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
+			COMMENT = "Probably 'OP_NAME'' for the iteratedChild, path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
 			FBVariableReference[] : STRING
-			COMMENT = "Path of a named reference variable object (example: [variable1:/TechUnits/Pump47.IN1]; multiple variables possible)";
+			COMMENT = "Probably 'myVar:OP_NAME', path of a named reference variable object";
 			ConfigValues[] : STRING
-			COMMENT = "Free text value for TemplateDefinition (multiple key1:value1 possible)";
+			COMMENT = "Perhaps 'myText:OP_CLASS' if you want to use this info later";
 			visible : BOOL
 			COMMENT = "the element is visible"
 			INITIALVALUE = TRUE;
@@ -508,8 +508,8 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS CreateObject : CLASS cshmi/Action
-		IS_INSTANTIABLE;
-		COMMENT = "create an Object via KS";
+/*		IS_INSTANTIABLE;*/
+		COMMENT = "NOT IMPLEMENTED, create an Object via KS";
 		VARIABLES
 			autoRenameIfExists : BOOL
 			COMMENT = "Choose a different Name if Object already exists"
@@ -523,11 +523,16 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS DeleteObject : CLASS cshmi/Action
-		IS_INSTANTIABLE;
-		COMMENT = "delete an Object via KS";
+/*		IS_INSTANTIABLE;*/
+		COMMENT = "NOT IMPLEMENTED, delete an Object via KS";
 		PARTS
 			Path : CLASS cshmi/GetValue;
 		END_PARTS;
+	END_CLASS;
+	
+	CLASS debugger : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "break point in the execution";
 	END_CLASS;
 	
 	/* Conditions */
