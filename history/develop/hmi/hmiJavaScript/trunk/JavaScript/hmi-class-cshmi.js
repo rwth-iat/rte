@@ -603,6 +603,7 @@ cshmi.prototype = {
 				returnValue = this._interpreteRoutePolyline(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/debugger") !== -1){
 				//breakpoint requested
+				returnValue = true;
 				debugger;
 			}else{
 				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+") "+ObjectPath+" not supported");
@@ -671,8 +672,8 @@ cshmi.prototype = {
 		
 		var iterationObject = VisualObject;
 		do{
-			//skip eventhandling if the object is not visible
-			if(iterationObject.getAttribute("display") === "none"){
+			//skip eventhandling if the object is not visible and the initstage is active
+			if(iterationObject.getAttribute("display") === "none" && this.initStage === false){
 				var preventNetworkRequest = true;
 				
 				//doku unsichtbare objekte koennen nicht per ks getriggert sichtbar werden
@@ -1594,10 +1595,16 @@ cshmi.prototype = {
 			
 			if (this.initStage === false){
 				//interprete onload Actions if we are allready loaded
+				
+				//for this objects, the init stage should be set (needed for getValue and timeevent)
+				this.initStage = true;
+				
 				while(this.ResourceList.onloadCallStack.length !== 0){
 					var EventObjItem = this.ResourceList.onloadCallStack.shift();
 					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
 				}
+				//reset stage to real state
+				this.initStage = false;
 			}
 			this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
 			savedCurrentChild = null;
