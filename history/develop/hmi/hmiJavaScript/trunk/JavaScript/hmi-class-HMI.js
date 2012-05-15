@@ -1541,6 +1541,22 @@ HMI.prototype = {
 	},
 	
 	/*********************************
+	addClass
+	
+	adds a class to a svg element
+	*********************************/
+	addClass: function(Node, additionalClass){
+		if (Node.classList && Node.classList.add){
+			//html5 classList saves us some work
+			Node.classList.add(additionalClass);
+		}else if (Node.className !== undefined){
+			Node.className.baseVal = (Node.className.baseVal+" "+additionalClass).trim();
+		}else{
+			Node.setAttribute('class', (Node.getAttribute('class')+ " "+additionalClass).trim());
+		}
+	},
+	
+	/*********************************
 		_setLayerPosition
 	*********************************/
 	_setLayerPosition: function (Element, reportSize) {

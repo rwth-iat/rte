@@ -319,9 +319,15 @@ cshmi.prototype = {
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "click"){
 			VisualObject.setAttribute("cursor", "pointer");
-			this._addClass(VisualObject, this.cshmiOperatorClickClass);
+			HMI.addClass(VisualObject, this.cshmiOperatorClickClass);
+			VisualObject.setAttribute("data-clickpath", ObjectPath);
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("click", function(evt){
+				if(HMI.instanceOf(VisualObject, preserveThis.cshmiOperatorAftermoveClass)){
+					//we have an movegesture on the same VisualObject, so this will handle all action
+					return;
+				}
+				
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
 				//mark changed VisualObject for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(VisualObject);
@@ -332,7 +338,8 @@ cshmi.prototype = {
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
 			VisualObject.setAttribute("cursor", "pointer");
-			this._addClass(VisualObject, this.cshmiOperatorDoubleclickClass);
+			HMI.addClass(VisualObject, this.cshmiOperatorDoubleclickClass);
+			VisualObject.setAttribute("data-doubleclickpath", ObjectPath);
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("dblclick", function(evt){
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
@@ -344,7 +351,8 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
-			this._addClass(VisualObject, this.cshmiOperatorRightclickClass);
+			HMI.addClass(VisualObject, this.cshmiOperatorRightclickClass);
+			VisualObject.setAttribute("data-rightclickpath", ObjectPath);
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("contextmenu", function(evt){
 				preserveThis.ResourceList.EventInfos.EventObj = evt;
@@ -358,7 +366,8 @@ cshmi.prototype = {
 			}, false);
 		}else if (command[command.length-1] === "aftermove"){
 			VisualObject.setAttribute("cursor", "move");
-			this._addClass(VisualObject, this.cshmiOperatorAftermoveClass);
+			HMI.addClass(VisualObject, this.cshmiOperatorAftermoveClass);
+			VisualObject.setAttribute("data-aftermovepath", ObjectPath);
 			
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			
@@ -417,18 +426,17 @@ cshmi.prototype = {
 			HMI.svgDocument.addEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
 			HMI.svgDocument.addEventListener("touchend", VisualObject._moveStopDragThunk, false);
 			HMI.svgDocument.addEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
-			VisualObject.addEventListener("click", VisualObject._moveHandleClickThunk, false);
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy click (x:"+mouseposition[0]+",y:"+mouseposition[1]+") detected");
 			HMI.svgDocument.addEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
 			HMI.svgDocument.addEventListener("mouseup", VisualObject._moveStopDragThunk, false);
-			VisualObject.addEventListener("click", VisualObject._moveHandleClickThunk, false);
 		}
+		VisualObject.addEventListener("click", VisualObject._moveHandleClickThunk, false);
+		
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	_moveHandleClick : function(VisualObject, ObjectPath, evt){
 		//we do not want to propagate a click to the parents
-		//todo detect click/rightclick on this object
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	_moveMouseMove : function(VisualObject, ObjectPath, evt){
@@ -471,6 +479,17 @@ cshmi.prototype = {
 			//the mouseup event has xy position, so remember for use in an action
 			this.ResourceList.EventInfos.EventObj = evt;
 		}
+		//no more grabbing of click needed
+		VisualObject.removeEventListener("click", VisualObject._moveHandleClickThunk, false);
+		
+		var mouseposition = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null);
+		if(HMI.instanceOf(VisualObject, this.cshmiOperatorClickClass)
+			&& (Math.abs(mouseposition[0] - VisualObject.getAttribute("x")) < 5)
+			&& (Math.abs(mouseposition[1] - VisualObject.getAttribute("y")) < 5)){
+			
+			//no movement detected, so interprete the click
+			var interpreteEvent = "click";
+		}
 		
 		//restore old position
 		VisualObject.setAttribute("x", this.ResourceList.EventInfos.startXObj);
@@ -485,6 +504,8 @@ cshmi.prototype = {
 		if (canceled === true){
 			//an action should not interprete this event
 			this.ResourceList.EventInfos.EventObj = null;
+		}else if (interpreteEvent === "click"){
+			this._interpreteAction(VisualObject, VisualObject.getAttribute("data-clickpath"));
 		}else{
 			//get and execute all actions
 			this._interpreteAction(VisualObject, ObjectPath);
@@ -653,6 +674,9 @@ cshmi.prototype = {
 			//skip eventhandling if the object is not visible
 			if(iterationObject.getAttribute("display") === "none"){
 				var preventNetworkRequest = true;
+				
+				//doku unsichtbare objekte koennen nicht per ks getriggert sichtbar werden
+				
 				break;
 			}
 		}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
@@ -1554,30 +1578,33 @@ cshmi.prototype = {
 	*********************************/
 	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
 		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true);
-		VisualParentObject.appendChild(VisualObject);
-		//calculate all offset parameter to be able to display visual feedback
-		//needed now, because we append new components
-		HMI._setLayerPosition(VisualObject);
-		//we want to have offset parameter on all visual elements
-		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-		for(var i = 0;i < ComponentChilds.length;i++){
-			HMI._setLayerPosition(ComponentChilds[i]);
-		}
-		
-		var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
-		delete this.ResourceList.ChildrenIterator.currentChild;
-		
-		if (this.initStage === false){
-			//interprete onload Actions if we are allready loaded
-			while(this.ResourceList.onloadCallStack.length !== 0){
-				var EventObjItem = this.ResourceList.onloadCallStack.shift();
-				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+		if (VisualObject !== null){
+			VisualParentObject.appendChild(VisualObject);
+			//calculate all offset parameter to be able to display visual feedback
+			//needed now, because we append new components
+			HMI._setLayerPosition(VisualObject);
+			//we want to have offset parameter on all visual elements
+			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+			for(var i = 0;i < ComponentChilds.length;i++){
+				HMI._setLayerPosition(ComponentChilds[i]);
 			}
+			
+			var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
+			delete this.ResourceList.ChildrenIterator.currentChild;
+			
+			if (this.initStage === false){
+				//interprete onload Actions if we are allready loaded
+				while(this.ResourceList.onloadCallStack.length !== 0){
+					var EventObjItem = this.ResourceList.onloadCallStack.shift();
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+				}
+			}
+			this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+			savedCurrentChild = null;
+			
+			return true;
 		}
-		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-		savedCurrentChild = null;
-		
-		return true;
+		return false;
 	},
 	/*********************************
 	_interpreteRoutePolyline
@@ -2180,7 +2207,7 @@ cshmi.prototype = {
 		
 		//check if we want to get a Value from the iteratedChild
 		if (childValue[0].indexOf(".") !== -1){
-			HMI.hmi_log_warning("Deprecated use of compareIteratedChild. Compare is now able to do the same!")
+			HMI.hmi_log_warning("Deprecated use of compareIteratedChild. Compare is now able to do the same! This function will be removed in summer 2012.")
 			
 			
 			//found something like childValue : INPUT  STRING = "OP_NAME.flags";
@@ -2306,8 +2333,8 @@ cshmi.prototype = {
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		VisualObject.id = ObjectPath;
 		
-		this._addClass(VisualObject, this.cshmiGroupClass);
-		this._addClass(VisualObject, this.cshmiComponentClass);
+		HMI.addClass(VisualObject, this.cshmiGroupClass);
+		HMI.addClass(VisualObject, this.cshmiComponentClass);
 		
 		//set dimension of container
 		VisualObject.setAttribute("x", requestList[ObjectPath]["x"]);
@@ -2406,10 +2433,10 @@ cshmi.prototype = {
 		VisualObject.setAttribute("TemplateDescription", PathOfTemplateDefinition);
 		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
 		
-		this._addClass(VisualObject, this.cshmiTemplateClass);
-		this._addClass(VisualObject, this.cshmiComponentClass);
+		HMI.addClass(VisualObject, this.cshmiTemplateClass);
+		HMI.addClass(VisualObject, this.cshmiComponentClass);
 		if (requestListTemplate[PathOfTemplateDefinition]["hideable"] === "TRUE"){
-			this._addClass(VisualObject, this.cshmiTemplateHideableClass);
+			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
 		}
 		
 		//###########################################################################
@@ -2437,7 +2464,7 @@ cshmi.prototype = {
 				var VarName = FBReferenceEntry.shift();
 				FBReferenceEntry = [VarName, FBReferenceEntry.join(":")];
 				
-				HMI.hmi_log_warning("Deprecated use of FBReference. Please use FBVariableReference!")
+				HMI.hmi_log_warning("Deprecated use of FBReference. Please use FBVariableReference! This function will be removed in summer 2012.")
 				
 				//##### Deprecated: change this code (named objects should use FBVarRef!), this should be named FBrefs
 				//check if we want to get values from the current child (e.g. OP_NAME)
@@ -3341,15 +3368,6 @@ cshmi.prototype = {
 			}
 		}
 		return true;
-	},
-	_addClass: function(VisualObject, additionalClass){
-		if (VisualObject.classList && VisualObject.classList.add){
-			VisualObject.classList.add(additionalClass);
-		}else if (VisualObject.className !== undefined){
-			VisualObject.className.baseVal = (VisualObject.className.baseVal+" "+additionalClass).trim();
-		}else{
-			VisualObject.setAttribute('class', (VisualObject.getAttribute('class')+ " "+additionalClass).trim());
-		}
 	},
 	_setTitle: function(VisualObject, newText){
 		var titles = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
