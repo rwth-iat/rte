@@ -533,6 +533,9 @@ LIBRARY cshmi
 	CLASS debugger : CLASS cshmi/Action
 		IS_INSTANTIABLE;
 		COMMENT = "break point in the execution";
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	/* Conditions */

@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-05-11 17:43:22
+  Erstellt : 2012-05-16 16:10:45
 
   HOST                : LOCALHOST:7509
   SERVER              : ov_server_zuse
@@ -173,7 +173,7 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/SensorsAMPMC :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
@@ -181,17 +181,48 @@ M620 620 H20";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "TechUnits/P10/IC10/PU10/PS10/";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/SensorsAMPMC/SensorL10 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 5.000000;
+        y : INPUT  SINGLE = 5.000000;
+        FBReference[1] : INPUT  STRING = {"TU10/L10/PV_Surveillance"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"SignalName:L10"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "TechUnits/Communication/P10/IC10/PU10/PS10/";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorL10 :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorT12 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
         x : INPUT  SINGLE = 120.000000;
         y : INPUT  SINGLE = 5.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/L10/PV"};
+        FBReference[1] : INPUT  STRING = {"TU10/T12/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
@@ -207,7 +238,7 @@ M620 620 H20";
  INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorQ11 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
         x : INPUT  SINGLE = 25.000000;
         y : INPUT  SINGLE = 150.000000;
         FBReference[1] : INPUT  STRING = {"TU10/Q11/PV"};
@@ -223,13 +254,13 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorT12 :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorP14 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
-        x : INPUT  SINGLE = 5.000000;
-        y : INPUT  SINGLE = 5.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/T12/PV"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 260.000000;
+        y : INPUT  SINGLE = 175.000000;
+        FBReference[1] : INPUT  STRING = {"TU10/P14/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
@@ -242,13 +273,13 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorP14 :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorT15 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
-        x : INPUT  SINGLE = 260.000000;
-        y : INPUT  SINGLE = 175.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/P14/PV"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 390.000000;
+        y : INPUT  SINGLE = 150.000000;
+        FBReference[1] : INPUT  STRING = {"TU10/T15/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
@@ -261,13 +292,13 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorT15 :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorP19 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
-        x : INPUT  SINGLE = 390.000000;
-        y : INPUT  SINGLE = 150.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/T15/PV"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 275.000000;
+        y : INPUT  SINGLE = 385.000000;
+        FBReference[1] : INPUT  STRING = {"TU10/P19/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
@@ -280,13 +311,13 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorP19 :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorT20 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
-        x : INPUT  SINGLE = 275.000000;
-        y : INPUT  SINGLE = 385.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/P19/PV"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 380.000000;
+        y : INPUT  SINGLE = 360.000000;
+        FBReference[1] : INPUT  STRING = {"TU10/T20/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
@@ -299,13 +330,13 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorT20 :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorF17 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
-        x : INPUT  SINGLE = 380.000000;
-        y : INPUT  SINGLE = 360.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/T20/PV"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 390.000000;
+        y : INPUT  SINGLE = 175.000000;
+        FBReference[1] : INPUT  STRING = {"TU10/F17/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
@@ -318,13 +349,13 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorF17 :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorF22 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
-        x : INPUT  SINGLE = 390.000000;
-        y : INPUT  SINGLE = 175.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/F17/PV"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 380.000000;
+        y : INPUT  SINGLE = 385.000000;
+        FBReference[1] : INPUT  STRING = {"TU10/F22/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
@@ -337,13 +368,13 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorF22 :
+ INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorT23 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
-        x : INPUT  SINGLE = 380.000000;
-        y : INPUT  SINGLE = 385.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/F22/PV"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 730.000000;
+        y : INPUT  SINGLE = 190.000000;
+        FBReference[1] : INPUT  STRING = {"TU10/T23/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
@@ -356,25 +387,6 @@ M620 620 H20";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Pumpwerk/Sensors/SensorT23 :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/SensorCurrent";
-        x : INPUT  SINGLE = 730.000000;
-        y : INPUT  SINGLE = 190.000000;
-        FBReference[1] : INPUT  STRING = {"TU10/T23/PV"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 9;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Pumpwerk/PCUs :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
@@ -382,7 +394,7 @@ M620 620 H20";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        zindex : INPUT  UINT = 10;
+        zindex : INPUT  UINT = 11;
         baseKsPath : INPUT  STRING = "TechUnits/P10/IC10/PU10/PS10/";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -629,7 +641,7 @@ M620 620 H20";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 11;
+        zindex : INPUT  UINT = 12;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
