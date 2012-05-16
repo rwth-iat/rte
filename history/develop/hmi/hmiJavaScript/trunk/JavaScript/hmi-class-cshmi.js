@@ -542,6 +542,7 @@ cshmi.prototype = {
 		var responseArray;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
+			//todo refactor to use executeArray
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
 			if (response === false){
 				//communication error
@@ -562,7 +563,7 @@ cshmi.prototype = {
 			//the object was asked this session, so reuse the config to save communication requests
 			responseArray = this.ResourceList.Events[ObjectPath].TimeEventParameters;
 			this.ResourceList.Events[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Events[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Events[ObjectPath].useCount+")");
 		}
 		
 		//call us again for cyclic interpretation of the Actions
@@ -622,7 +623,7 @@ cshmi.prototype = {
 	_getValue: function(VisualObject, ObjectPath){
 		var ParameterName;
 		var ParameterValue;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -883,7 +884,7 @@ cshmi.prototype = {
 			TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
-					//Deprecated: change this we have TemplateFBVariableReferenceName now
+					//##### Deprecated: change this we have TemplateFBVariableReferenceName now
 					
 					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
 					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
@@ -1008,7 +1009,7 @@ cshmi.prototype = {
 		
 		var ParameterName;
 		var ParameterValue;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -1050,7 +1051,7 @@ cshmi.prototype = {
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
 			this.ResourceList.Actions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		//set the new Value
@@ -1249,7 +1250,7 @@ cshmi.prototype = {
 			TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
-					//Deprecated: change this we have TemplateFBVariableReferenceName now
+					//##### Deprecated: change this we have TemplateFBVariableReferenceName now
 					
 					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
 					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
@@ -1364,8 +1365,9 @@ cshmi.prototype = {
 	*********************************/
 	_interpreteIfThenElse: function(VisualObject, ObjectPath){
 		var anyCond;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+			//todo refactor to use executeArray
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.anycond}', null);
 			if (response === false){
 				//communication error
@@ -1386,7 +1388,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		var ConditionMatched = false;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if", this);
@@ -1449,8 +1451,9 @@ cshmi.prototype = {
 		}
 		
 		var childrenType;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+			//todo refactor to use executeArray
 			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ChildrenType}', null);
 			if (response === false){
 				//communication error
@@ -1471,7 +1474,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			childrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameters;
 			this.ResourceList.Actions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		//this will be increased in a successful instantiateTemplate
@@ -2108,35 +2111,57 @@ cshmi.prototype = {
 	*********************************/
 	_checkCondition: function(VisualObject, ObjectPath, ConditionPath){
 		//get Values
+		var ignoreError;
 		var comptype;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
-			comptype = HMI.KSClient.getVar(null, '{'+ObjectPath+'.comptype}', null);
-			comptype = HMI.KSClient.splitKsResponse(comptype)[0];
+			var requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["ignoreError"] = null;
+			requestList[ObjectPath]["comptype"] = null;
+			
+			var successCode = this._executeVariablesArray(requestList);
+			if (successCode == false){
+				return null;
+			}
+			
+			ignoreError = requestList[ObjectPath]["ignoreError"];
+			comptype = requestList[ObjectPath]["comptype"];
+			
+			//feeding garbage collector early
+			requestList = null;
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Conditions[ObjectPath] = new Object();
-			this.ResourceList.Conditions[ObjectPath].checkConditionParameters = comptype;
+			this.ResourceList.Conditions[ObjectPath].checkConditionIgnoreError = ignoreError;
+			this.ResourceList.Conditions[ObjectPath].checkConditionCompType = comptype;
 			this.ResourceList.Conditions[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionParameters;
+			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionCompType;
+			ignoreError = this.ResourceList.Conditions[ObjectPath].checkConditionIgnoreError;
 			this.ResourceList.Conditions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
 		}
 		
 		
 		var Value1 = this._getValue(VisualObject, ObjectPath+".value1");
 		var Value2 = this._getValue(VisualObject, ObjectPath+".value2");
 		
-		if (Value1 === null){
+		if (Value1 === null && ignoreError === "FALSE"){
 			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
+			//error state, so no boolean
 			return null;
+		}else if (Value1 === null && ignoreError === "TRUE"){
+			Value1 = "";
 		}
-		if (Value2 === null){
+		if (Value2 === null && ignoreError === "FALSE"){
 			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
+			//error state, so no boolean
 			return null;
+		}else if (Value2 === null && ignoreError === "TRUE"){
+			Value2 = "";
 		}
 		
 		if (comptype === "<"){
@@ -2170,20 +2195,23 @@ cshmi.prototype = {
 			return null;
 		}
 		//get Values
+		var ignoreError;
 		var comptype;
 		var childValue;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
 			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["ignoreError"] = null;
 			requestList[ObjectPath]["comptype"] = null;
 			requestList[ObjectPath]["childValue"] = null;
 			
 			var successCode = this._executeVariablesArray(requestList);
 			if (successCode == false){
-				return false;
+				return null;
 			}
 			
+			ignoreError = requestList[ObjectPath]["ignoreError"];
 			comptype = requestList[ObjectPath]["comptype"];
 			childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
 			
@@ -2192,16 +2220,18 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Conditions[ObjectPath] = new Object();
+			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorIgnoreError = ignoreError;
 			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType = comptype;
 			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue = childValue;
 			this.ResourceList.Conditions[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._checkConditionIterator: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
+			ignoreError = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorIgnoreError;
 			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType;
 			childValue = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue;
 			this.ResourceList.Conditions[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
 		}
 		
 		var Value1;
@@ -2215,7 +2245,7 @@ cshmi.prototype = {
 		//check if we want to get a Value from the iteratedChild
 		if (childValue[0].indexOf(".") !== -1){
 			HMI.hmi_log_warning("Deprecated use of compareIteratedChild. Compare is now able to do the same! This function will be removed in summer 2012.")
-			
+			//##### Deprecated
 			
 			//found something like childValue : INPUT  STRING = "OP_NAME.flags";
 			var rootObject = VisualObject;
@@ -2242,27 +2272,34 @@ cshmi.prototype = {
 				//we have no OV-PART, so the separator is a slash
 				Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
 			}
-			if (Value1 === false || Value1 === null){
+			if ((Value1 === false || Value1 === null) && ignoreError === "FALSE"){
 				//communication problem
+				HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
 				//error state, so no boolean
 				return null;
 			}
 			Value1 = Value1.replace(/{/g, "");
 			Value1 = Value1.replace(/}/g, "");
+			
+			//##### end change this code
 		}else{
 			Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
 		}
 		var Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
 		
-		if (Value1 === null){
+		if (Value1 === null && ignoreError === "FALSE"){
 			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
 			//error state, so no boolean
 			return null;
+		}else if ((Value1 === false || Value1 === null) && ignoreError === "TRUE"){
+			Value1 = "";
 		}
-		if (Value2 === null){
+		if (Value2 === null && ignoreError === "FALSE"){
 			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
 			//error state, so no boolean
 			return null;
+		}else if ((Value2 === false || Value2 === null) && ignoreError === "TRUE"){
+			Value2 = "";
 		}
 		
 		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
@@ -2358,7 +2395,7 @@ cshmi.prototype = {
 	*********************************/
 	_buildFromTemplate: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -2394,7 +2431,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
@@ -2408,7 +2445,7 @@ cshmi.prototype = {
 		
 		var requestListTemplate;
 		var PathOfTemplateDefinition = TemplateLocation+requestList[ObjectPath]["TemplateDefinition"];
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined)){
 			requestListTemplate = new Object();
 			requestListTemplate[PathOfTemplateDefinition] = new Object();
@@ -2431,7 +2468,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestListTemplate = this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters;
 			this.ResourceList.Elements[PathOfTemplateDefinition].useCount++;
-			HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+PathOfTemplateDefinition+" (#"+this.ResourceList.Elements[PathOfTemplateDefinition].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+PathOfTemplateDefinition+" (#"+this.ResourceList.Elements[PathOfTemplateDefinition].useCount+")");
 		}
 		
 		//make svg Element
@@ -2766,7 +2803,7 @@ cshmi.prototype = {
 	*********************************/
 	_buildSvgLine: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -2795,7 +2832,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgLine: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgLine: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
@@ -2815,7 +2852,7 @@ cshmi.prototype = {
 	},
 	_buildSvgPolyline: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -2841,7 +2878,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgPolyline: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgPolyline: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
@@ -2858,7 +2895,7 @@ cshmi.prototype = {
 	},
 	_buildSvgPolygon: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -2884,7 +2921,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgPolygon: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgPolygon: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
@@ -2901,7 +2938,7 @@ cshmi.prototype = {
 	},
 	_buildSvgPath: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -2927,7 +2964,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgPath: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgPath: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
@@ -2985,7 +3022,7 @@ cshmi.prototype = {
 	},
 	_buildSvgText: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -3020,7 +3057,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgText: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgText: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
@@ -3084,7 +3121,7 @@ cshmi.prototype = {
 	},
 	_buildSvgCircle: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -3112,7 +3149,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgCircle: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgCircle: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
@@ -3128,7 +3165,7 @@ cshmi.prototype = {
 	},
 	_buildSvgEllipse: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -3157,7 +3194,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgEllipse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgEllipse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
@@ -3177,7 +3214,7 @@ cshmi.prototype = {
 	},
 	_buildSvgRect: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -3206,7 +3243,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
@@ -3221,7 +3258,7 @@ cshmi.prototype = {
 	},
 	_buildSvgImage: function(VisualParentObject, ObjectPath){
 		var requestList;
-		//if the Object is scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
@@ -3252,7 +3289,7 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-			HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
+			//HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var VisualObject;
@@ -3359,6 +3396,10 @@ cshmi.prototype = {
 		var response = HMI.KSClient.getVar(null, '{'+requestString+'}', null);
 		if (response === false){
 			//communication error
+			return false;
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+			HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
+			HMI.hmi_log_error("cshmi._executeVariablesArray of "+requestString+" failed: "+response);
 			return false;
 		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_error("cshmi._executeVariablesArray of "+requestString+" failed: "+response);

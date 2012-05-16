@@ -539,6 +539,11 @@ LIBRARY cshmi
 	
 	CLASS Condition : CLASS cshmi/Object
 		COMMENT = "base class for conditions";
+		VARIABLES
+			ignoreError : BOOL
+			COMMENT = "ignore communication or other errors. They will be equal to an empty string ''"
+			INITIALVALUE = FALSE;
+		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
