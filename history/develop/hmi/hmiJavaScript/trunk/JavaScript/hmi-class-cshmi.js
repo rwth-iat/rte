@@ -106,8 +106,6 @@ TODO:
 
 JavaScript:
 - check return value of gethandleid
-- unbenutzte pointer events killen? sonst in engineering event per hand killen 
-- engineering fake rect raus
 
 - hover für polylines
 
@@ -120,12 +118,12 @@ JavaScript:
 	prototype
 ***********************************************************************/
 cshmi.prototype = {
-	/*********************************
-		instanciateCshmi
-		-	starts iteration of visualisation
-		-	displays the visualisation
-	*********************************/
-	instanciateCshmi: function (ObjectPath) {
+	/**
+	 * @description starts iteration of visualisation and displays the result
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns nothing
+	 */
+	instanciateCshmi: function(ObjectPath) {
 		//we are in the init stage, so the DOM Tree is not populated
 		this.initStage = true;
 		
@@ -214,12 +212,14 @@ cshmi.prototype = {
 			this.initStage = false;
 		}
 	},
-	/*********************************
-		BuildDomain
-		-	Main iteration loop for visualisation
-		-	Finds and arms Actions as well
-	*********************************/
-	BuildDomain: function (VisualParentObject, ObjectPath, ObjectType) {
+	
+	/**
+	 * @description Main iteration loop for visualisation, finds and arms Actions as well
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
+	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType) {
 		var VisualObject = null;
 		var Result = true;
 		if (ObjectType.indexOf("/cshmi/Group") !== -1){
@@ -288,10 +288,13 @@ cshmi.prototype = {
 		
 		return VisualObject;
 	},
-	/*********************************
-		_interpreteClientEvent
-		-	calling Actions if supported ClientEvent is triggered
-	*********************************/
+	
+	/**
+	 * @description calling Actions if supported ClientEvent is triggered
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} true
+	 */
 	_interpreteClientEvent: function(VisualObject, ObjectPath){
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "onload"){
@@ -311,10 +314,13 @@ cshmi.prototype = {
 		}
 		return true;
 	},
-	/*********************************
-		_interpreteOperatorEvent
-		-	detect all OperatorEvents and register them
-	*********************************/
+	
+	/**
+	 * @description detect all OperatorEvents and register them
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} true
+	 */
 	_interpreteOperatorEvent: function(VisualObject, ObjectPath){
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "click"){
@@ -402,6 +408,14 @@ cshmi.prototype = {
 		}
 		return true;
 	},
+	
+	/**
+	 * @description prepares the drag and drop handling via mousemove etc
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {DOM Event} evt event object
+	 * @returns nothing
+	 */
 	_moveStartDrag : function(VisualObject, ObjectPath, evt){
 		if (evt.button == 2){
 			//right click
@@ -435,10 +449,26 @@ cshmi.prototype = {
 		
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
+	
+	/**
+	 * @description stops propagation of event
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {DOM Event} evt event object
+	 * @returns nothing
+	 */
 	_moveHandleClick : function(VisualObject, ObjectPath, evt){
 		//we do not want to propagate a click to the parents
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
+	
+	/**
+	 * @description handles the movement during a drag
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {DOM Event} evt event object
+	 * @returns nothing
+	 */
 	_moveMouseMove : function(VisualObject, ObjectPath, evt){
 		if (this.ResourceList.EventInfos.startXObj === null){
 			return;
@@ -464,6 +494,14 @@ cshmi.prototype = {
 		if (evt.stopPropagation) evt.stopPropagation();
 		if (evt.preventDefault) evt.preventDefault();  //default is scrolling, so disable it
 	},
+	
+	/**
+	 * @description stops the drag and call needed actions
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {DOM Event} evt event object
+	 * @returns nothing
+	 */
 	_moveStopDrag : function(VisualObject, ObjectPath, evt, canceled){
 		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+VisualObject.id);
 		if(evt.type === 'touchend'){
@@ -513,10 +551,13 @@ cshmi.prototype = {
 		
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
-	/*********************************
-		_interpreteTimeEvent
-		-	calling Actions if supported TimeEvent is triggered
-	*********************************/
+	
+	/**
+	 * @description calling Actions if supported TimeEvent is triggered
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} true
+	 */
 	_interpreteTimeEvent: function(VisualObject, ObjectPath){
 		var skipEvent = false;
 		//check if the page is visible at all?
@@ -577,10 +618,13 @@ cshmi.prototype = {
 		}
 		return true;
 	},
-	/*********************************
-		_interpreteAction
-		-	detect all Actions and triggers them
-	*********************************/
+	
+	/**
+	 * @description detect all Actions and triggers them
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns returnValue returnValue from the last Action
+	 */
 	_interpreteAction: function(VisualObject, ObjectPath){
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
@@ -616,10 +660,13 @@ cshmi.prototype = {
 		}
 		return returnValue;
 	},
-	/*********************************
-		_getValue
-		-	get a Value from multiple Sources
-	*********************************/
+	
+	/**
+	 * @description get a Value from multiple Sources
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns false if error, null if intentionally no value, "" if no entry found
+	 */
 	_getValue: function(VisualObject, ObjectPath){
 		var ParameterName;
 		var ParameterValue;
@@ -637,7 +684,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["TemplateConfigValues"] = null;
 			requestList[ObjectPath]["value"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return false;
 			}
@@ -672,10 +719,11 @@ cshmi.prototype = {
 		}
 		
 		var iterationObject = VisualObject;
+		var preventNetworkRequest = false;
 		do{
 			//skip eventhandling if the object is not visible and the initstage is active
 			if(iterationObject.getAttribute("display") === "none" && this.initStage === false){
-				var preventNetworkRequest = true;
+				preventNetworkRequest = true;
 				
 				//doku unsichtbare objekte koennen nicht per ks getriggert sichtbar werden
 				
@@ -684,7 +732,10 @@ cshmi.prototype = {
 		}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
 		iterationObject = null;
 		
-		if (ParameterName === "ksVar" && preventNetworkRequest !== true){
+		if (ParameterName === "ksVar" && preventNetworkRequest === true){
+			//intentionally no value
+			return null;
+		}else if (ParameterName === "ksVar" && preventNetworkRequest === false){
 			var response;
 			if (ParameterValue.charAt(0) == "/"){
 				//we have an absolute path
@@ -696,7 +747,7 @@ cshmi.prototype = {
 			}
 			var responseArray = HMI.KSClient.splitKsResponse(response);
 			if (responseArray.length === 0){
-				return null;
+				return false;
 			}else{
 				return responseArray[0];
 			}
@@ -710,7 +761,7 @@ cshmi.prototype = {
 					return VisualObject.innerText;
 				}else{
 					//todo asv compatibility
-					return null;
+					return "";
 				}
 			}else if (ParameterValue == "title"){
 				for (var i = 0;i < VisualObject.childNodes.length;i++){
@@ -718,7 +769,7 @@ cshmi.prototype = {
 						return VisualObject.childNodes.item(i).firstChild.textContent;
 					}
 				} 
-				return null;
+				return "";
 			}else if (ParameterValue == "visible"){
 				//display is special, as it is different in OVM and SVG
 				var displayVar = VisualObject.getAttribute("display");
@@ -748,23 +799,24 @@ cshmi.prototype = {
 				return VisualObject.getAttribute(ParameterValue);
 			}else{
 				//unknown element variable
-				return null;
+				return "";
 			}
 		}else if (ParameterName === "globalVar"){
 			if (this.ResourceList.GlobalVar[ParameterValue] !== undefined){
 				return this.ResourceList.GlobalVar[ParameterValue];
 			}else {
-				return null;
+				return "";
 			}
 		}else if (ParameterName === "persistentGlobalVar"){
 			if (localStorage !== undefined){
-				return localStorage.getItem(ParameterValue);
+				if (localStorage.getItem(ParameterValue) !== null){
+					return localStorage.getItem(ParameterValue);
+				}
 			}else if(this.ResourceList.GlobalVar[ParameterValue] !== undefined){
 				//fall back to globalVar if no persistent storage is available
 				return this.ResourceList.GlobalVar[ParameterValue];
-			}else{
-				return null;
 			}
+			return "";
 		}else if (ParameterName === "OperatorInput"){
 			if(ParameterValue.indexOf("textinput") !== -1){
 				var input;
@@ -777,21 +829,30 @@ cshmi.prototype = {
 						this.ResourceList.Actions["tempPath"] = new Object();
 						this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[2];
 						this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[3];
-						input = window.prompt(textinputHint, this._getValue(VisualObject, "tempPath"));
+						var defaultValue = this._getValue(VisualObject, "tempPath")
+						if (defaultValue !== false && defaultValue !== null){
+							input = window.prompt(textinputHint, defaultValue);
+						}else{
+							input = window.prompt(textinputHint, "");
+						}
+						defaultValue = null;
 						delete this.ResourceList.Actions["tempPath"];
 					//e.g. "textinput:Some textinputHint:fixValue"
 					}else if (splittedValueParameter.length > 2){
 						input = window.prompt(textinputHint, splittedValueParameter[2]);
 					}else{
 						//e.g. "textinput:Some textinputHint"
-						input = window.prompt(textinputHint);
+						input = window.prompt(textinputHint, "");
 					}
 				}else{
 					textinputHint = 'Please input a new value';
-					input = window.prompt(textinputHint);
+					input = window.prompt(textinputHint, "");
 				}
 				if (input !== null){
 					return input;
+				}else{
+					//intentionally no value
+					return null;
 				}
 			}else if(ParameterValue === "mousex"){
 				var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[0];
@@ -806,8 +867,11 @@ cshmi.prototype = {
 			}else{
 				HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+ParameterValue);
 			}
+			return false;
+		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest === true){
+			//intentionally no value
 			return null;
-		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest !== true){
+		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest === false){
 			var TemplateObject;
 			var FBRef;
 			
@@ -839,11 +903,11 @@ cshmi.prototype = {
 							return returnValue[0];
 						}
 						//error
-						return null;
+						return false;
 					}
 				//loop upwards to find the Template object
 				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-				return null;
+				return "";
 			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
 				//we are in an iterator and want to read out a value from the currentchild
 				TemplateObject = VisualObject;
@@ -877,7 +941,7 @@ cshmi.prototype = {
 					return returnValue[0];
 				}
 				//error
-				return null;
+				return false;
 			}
 			
 			//no active iterator, so plain FBReference
@@ -896,11 +960,11 @@ cshmi.prototype = {
 							return returnValue[0];
 						}
 						//error
-						return null;
+						return false;
 					}else{
 						//a normal relative path
 						HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
-						return null;
+						return false;
 					}
 				}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 					//a variable from a Template was requested
@@ -920,16 +984,16 @@ cshmi.prototype = {
 							return returnValue[0];
 						}
 						//error
-						return null;
+						return false;
 					}else{
 						//a normal relative path
 						HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
-						return null;
+						return false;
 					}
 				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-			return null;
+			return "";
 		}else if (ParameterName === "TemplateFBVariableReferenceName" && preventNetworkRequest !== true){
 			var TemplateObject = VisualObject;
 			do{
@@ -944,16 +1008,16 @@ cshmi.prototype = {
 							return returnValue[0];
 						}
 						//error
-						return null;
+						return false;
 					}else{
 						//a normal relative path
 						HMI.hmi_log_info_onwebsite('GetValue '+ObjectPath+' wrong configured. No relative path allowed');
-						return null;
+						return false;
 					}
 				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-			return null;
+			return "";
 		}else if (ParameterName === "TemplateConfigValues"){
 			var TemplateObject = VisualObject;
 			do{
@@ -969,10 +1033,14 @@ cshmi.prototype = {
 		}
 		return ""; //fallback
 	},
-	/*********************************
-		_setValue
-		-	sets a Value to multiple Targets
-	*********************************/
+	
+	/**
+	 * @description set a Value to multiple Targets
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {Boolean} Concat Concat multiple getValues or have we one static OV_PART?
+	 * @returns false on error, true on success
+	 */
 	_setValue: function(VisualObject, ObjectPath, Concat){
 		var NewValue = "";
 		//get Value to set
@@ -980,10 +1048,14 @@ cshmi.prototype = {
 			//via getValue-part of setValue object
 			NewValue = this._getValue(VisualObject, ObjectPath+".value");
 			
-			if (NewValue === null){
-				HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because of an NewValue of null.");
+			if (NewValue === false){
+				//_getValue had an error
+				HMI.hmi_log_info("cshmi._setValue on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because of an error in getValue.");
 				//NewValue = this._getValue(VisualObject, ObjectPath+".value");
 				return false;
+			}else if (NewValue === null){
+				//_getValue had intentionally no value, abort
+				return true;
 			}else if (NewValue === undefined){
 				//should not happen
 				HMI.hmi_log_error("cshmi._setValue on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because of an NewValue of undefined.");
@@ -996,10 +1068,10 @@ cshmi.prototype = {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 					var TempNewValue = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
-					if (TempNewValue !== null && TempNewValue !== undefined){
+					if (TempNewValue !== false && TempNewValue !== null && TempNewValue !== undefined){
 						NewValue = NewValue + TempNewValue;
-					}else{
-						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") was null or undefined.");
+					}else if (TempNewValue !== false){
+						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") was had an error. Skipping.");
 					}
 				}
 			}
@@ -1020,7 +1092,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
 			requestList[ObjectPath]["TemplateFBVariableReferenceName"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return false;
 			}
@@ -1210,7 +1282,7 @@ cshmi.prototype = {
 					}
 				//loop upwards to find the Template object
 				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-				return null;
+				return false;
 			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
 				//we are in an iterator and want to read out a value from the currentchild
 				var TemplateObject = VisualObject;
@@ -1315,10 +1387,13 @@ cshmi.prototype = {
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
 		return false;
 	},
-	/*********************************
-		_getBaseKsPath
-		-	search baseKsPath by iterating objects
-	*********************************/
+	
+	/**
+	 * @description search baseKsPath by iterating objects
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {String} returnValue String of the baseKSPath as seen from the ObjectPath; could be ""
+	 */
 	_getBaseKsPath: function(VisualObject, ObjectPath){
 		var ObjectPathArray = ObjectPath.split("/");
 		
@@ -1359,10 +1434,13 @@ cshmi.prototype = {
 		}while(ObjectPathArray.length > 1);
 		return returnValue;
 	},
-	/*********************************
-		_interpreteIfThenElse
-		-	sets a Value to multiple Sources
-	*********************************/
+	
+	/**
+	 * @description calls conditions below the if PART and triggers actions in then or else PART
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} false if an error occured, returnValue of the called actions
+	 */
 	_interpreteIfThenElse: function(VisualObject, ObjectPath){
 		var anyCond;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -1430,9 +1508,13 @@ cshmi.prototype = {
 		
 		return false;
 	},
-	/*********************************
-	_interpreteChildrenIterator
-	*********************************/
+	
+	/**
+	 * @description iterates over an association (ov_containment or other) or an variable vector
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} false if an error occured, returnValue of the called actions
+	 */
 	_interpreteChildrenIterator: function(VisualObject, ObjectPath){
 		var rootObject = VisualObject;
 		var FBRef;
@@ -1577,9 +1659,13 @@ cshmi.prototype = {
 		
 		return returnValue;
 	},
-	/*********************************
-	_interpreteInstantiateTemplate
-	*********************************/
+	
+	/**
+	 * @description Action which calls _buildFromTemplate to build a template
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} true on success, false if an error occured
+	 */
 	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
 		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true);
 		if (VisualObject !== null){
@@ -1616,16 +1702,20 @@ cshmi.prototype = {
 		}
 		return false;
 	},
-	/*********************************
-	_interpreteRoutePolyline
-	*********************************/
+	
+	/**
+	 * @description routes a polyline to connect two points
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} true on success, false if an error occured
+	 */
 	_interpreteRoutePolyline: function(VisualObject, ObjectPath){
 		if(VisualObject.tagName.indexOf("polyline") === -1 ){
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
 		var FBRef;
-		//if the Object is routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//if the Object was routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		
 		
 		//Not the config is cached here, but the result! So caching VisualObject specific, not ObjectPath
@@ -1635,6 +1725,19 @@ cshmi.prototype = {
 			var SourceVariablename = this._getValue(VisualObject, ObjectPath+".SourceVariablename");
 			var TargetBasename = this._getValue(VisualObject, ObjectPath+".TargetBasename");
 			var TargetVariablename = this._getValue(VisualObject, ObjectPath+".TargetVariablename");
+			
+			if (SourceBasename === false || SourceVariablename === false || TargetBasename === false || TargetVariablename === false){
+				//an error occured
+				return false;
+			}else if (SourceBasename === null){
+				SourceBasename = "";
+			}else if (SourceVariablename === null){
+				SourceVariablename = "";
+			}else if (TargetBasename === null){
+				TargetBasename = "";
+			}else if (TargetVariablename === null){
+				TargetVariablename = "";
+			}
 			
 			var rootObject = VisualObject;
 			//search FBReference of root Object
@@ -2105,10 +2208,13 @@ cshmi.prototype = {
 		}
 		return true;
 	},
-	/*********************************
-		_checkCondition
-		-	checks Condition
-	*********************************/
+	
+	/**
+	 * @description checks Condition
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} true if condition matched, false if not matched, null on error
+	 */
 	_checkCondition: function(VisualObject, ObjectPath, ConditionPath){
 		//get Values
 		var ignoreError;
@@ -2120,7 +2226,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["ignoreError"] = null;
 			requestList[ObjectPath]["comptype"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -2149,18 +2255,24 @@ cshmi.prototype = {
 		var Value1 = this._getValue(VisualObject, ObjectPath+".value1");
 		var Value2 = this._getValue(VisualObject, ObjectPath+".value2");
 		
-		if (Value1 === null && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
-			//error state, so no boolean
+		if (Value1 === null){
+			//getValue had intentionally no value, abort
 			return null;
-		}else if (Value1 === null && ignoreError === "TRUE"){
+		}else if (Value1 === false && ignoreError === "FALSE"){
+				HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 had an error.");
+				//error state, so no boolean
+				return null;
+		}else if (Value1 === false && ignoreError === "TRUE"){
 			Value1 = "";
 		}
-		if (Value2 === null && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
+		if (Value2 === null){
+			//getValue had intentionally no value, abort
+			return null;
+		}else if (Value2 === false && ignoreError === "FALSE"){
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 had an error.");
 			//error state, so no boolean
 			return null;
-		}else if (Value2 === null && ignoreError === "TRUE"){
+		}else if (Value2 === false && ignoreError === "TRUE"){
 			Value2 = "";
 		}
 		
@@ -2183,11 +2295,12 @@ cshmi.prototype = {
 		}
 	},
 	
-	
-	/*********************************
-	_checkConditionIterator
-	-	checks Condition within ChildrenIterator
-	*********************************/
+	/**
+	 * @description checks Condition within ChildrenIterator
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {Boolean} true if condition matched, false if not matched, null on error
+	 */
 	_checkConditionIterator: function(VisualObject, ObjectPath, ConditionPath){
 		if (this.ResourceList.ChildrenIterator.currentChild === undefined){
 			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
@@ -2206,7 +2319,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["comptype"] = null;
 			requestList[ObjectPath]["childValue"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -2288,17 +2401,27 @@ cshmi.prototype = {
 		var Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
 		
 		if (Value1 === null && ignoreError === "FALSE"){
+			//intentionally no value, abort
+			return null;
+		}else if (Value1 === false && ignoreError === "FALSE"){
 			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
 			//error state, so no boolean
 			return null;
 		}else if ((Value1 === false || Value1 === null) && ignoreError === "TRUE"){
 			Value1 = "";
 		}
+		if (Value2 === null){
+			//intentionally no value, abort
+			return null;
+		}
 		if (Value2 === null && ignoreError === "FALSE"){
+			//getValue had intentionally no value, abort
+			return null;
+		}else if (Value2 === false && ignoreError === "FALSE"){
 			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
 			//error state, so no boolean
 			return null;
-		}else if ((Value2 === false || Value2 === null) && ignoreError === "TRUE"){
+		}else if (Value2 === false && ignoreError === "TRUE"){
 			Value2 = "";
 		}
 		
@@ -2354,45 +2477,14 @@ cshmi.prototype = {
 		}
 	},
 	
-	/*********************************
-		_buildSvg*
-		-	builds SVG Object
-		-	gets parameter via KS
-		-	returns DOM Object or null to caller
-	*********************************/
-	_buildSvgContainer: function(VisualParentObject, ObjectPath){
-		var requestList;
-		requestList = new Object();
-		requestList[ObjectPath] = new Object();
-		requestList[ObjectPath]["x"] = null;
-		requestList[ObjectPath]["y"] = null;
-		requestList[ObjectPath]["width"] = null;
-		requestList[ObjectPath]["height"] = null;
-		
-		var successCode = this._executeVariablesArray(requestList);
-		if (successCode == false){
-			return null;
-		}
-		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-		VisualObject.id = ObjectPath;
-		
-		HMI.addClass(VisualObject, this.cshmiGroupClass);
-		HMI.addClass(VisualObject, this.cshmiComponentClass);
-		
-		//set dimension of container
-		VisualObject.setAttribute("x", requestList[ObjectPath]["x"]);
-		VisualObject.setAttribute("y", requestList[ObjectPath]["y"]);
-		VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
-		VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
-		
-		VisualObject.setAttribute("overflow", "visible");
-		
-		return VisualObject;
-	},
-	/*********************************
-		_buildFromTemplate
-	*********************************/
+	
+	/**
+	 * @description builds template, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {Boolean} calledFromInstantiateTemplate true if called from an action
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildFromTemplate: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -2416,7 +2508,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["FBVariableReference"] = null;
 			requestList[ObjectPath]["ConfigValues"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -2453,7 +2545,7 @@ cshmi.prototype = {
 			requestListTemplate[PathOfTemplateDefinition]["height"] = null;
 			requestListTemplate[PathOfTemplateDefinition]["hideable"] = null;
 			
-			successCode = this._executeVariablesArray(requestListTemplate);
+			successCode = this._requestVariablesArray(requestListTemplate);
 			if (successCode == false){
 				HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+TemplateLocation+requestList[ObjectPath]["TemplateDefinition"]+"' is not available.");
 				return null;
@@ -2798,9 +2890,51 @@ cshmi.prototype = {
 			return VisualObject;
 		}
 	},
-	/*********************************
-	_buildSvgLine
-	*********************************/
+	
+	
+	/***************************************************************************************************************
+	 * @description builds SVG container, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
+	_buildSvgContainer: function(VisualParentObject, ObjectPath){
+		var requestList;
+		requestList = new Object();
+		requestList[ObjectPath] = new Object();
+		requestList[ObjectPath]["x"] = null;
+		requestList[ObjectPath]["y"] = null;
+		requestList[ObjectPath]["width"] = null;
+		requestList[ObjectPath]["height"] = null;
+		
+		var successCode = this._requestVariablesArray(requestList);
+		if (successCode == false){
+			return null;
+		}
+		
+		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+		VisualObject.id = ObjectPath;
+		
+		HMI.addClass(VisualObject, this.cshmiGroupClass);
+		HMI.addClass(VisualObject, this.cshmiComponentClass);
+		
+		//set dimension of container
+		VisualObject.setAttribute("x", requestList[ObjectPath]["x"]);
+		VisualObject.setAttribute("y", requestList[ObjectPath]["y"]);
+		VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
+		VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
+		
+		VisualObject.setAttribute("overflow", "visible");
+		
+		return VisualObject;
+	},
+	
+	/**
+	 * @description builds SVG line object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgLine: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -2817,7 +2951,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["x2"] = null;
 			requestList[ObjectPath]["y2"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -2850,6 +2984,13 @@ cshmi.prototype = {
 		
 		return VisualObject;
 	},
+	
+	/**
+	 * @description builds SVG polyline object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgPolyline: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -2863,7 +3004,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["points"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -2893,6 +3034,13 @@ cshmi.prototype = {
 
 		return VisualObject;
 	},
+	
+	/**
+	 * @description builds SVG polygon object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgPolygon: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -2906,7 +3054,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["points"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -2936,6 +3084,13 @@ cshmi.prototype = {
 		
 		return VisualObject;
 	},
+	
+	/**
+	 * @description builds SVG path object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgPath: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -2949,7 +3104,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["d"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -3020,6 +3175,13 @@ cshmi.prototype = {
 		};
 		*/
 	},
+	
+	/**
+	 * @description builds SVG Text object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgText: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -3042,7 +3204,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["content"] = null;
 			requestList[ObjectPath]["trimToLength"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -3119,6 +3281,13 @@ cshmi.prototype = {
 		
 		return VisualObject;
 	},
+	
+	/**
+	 * @description builds SVG circle object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgCircle: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -3134,7 +3303,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["cy"] = null;
 			requestList[ObjectPath]["r"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -3163,6 +3332,13 @@ cshmi.prototype = {
 		
 		return VisualObject;
 	},
+	
+	/**
+	 * @description builds SVG ellipse object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgEllipse: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -3179,7 +3355,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["rx"] = null;
 			requestList[ObjectPath]["ry"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -3212,6 +3388,13 @@ cshmi.prototype = {
 		
 		return VisualObject;
 	},
+	
+	/**
+	 * @description builds SVG rect object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgRect: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -3228,7 +3411,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["width"] = null;
 			requestList[ObjectPath]["height"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -3256,6 +3439,13 @@ cshmi.prototype = {
 		
 		return VisualObject;
 	},
+	
+	/**
+	 * @description builds SVG image object, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 */
 	_buildSvgImage: function(VisualParentObject, ObjectPath){
 		var requestList;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -3274,7 +3464,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["SVGcontent"] = null;
 			requestList[ObjectPath]["Bitmapcontent"] = null;
 			
-			var successCode = this._executeVariablesArray(requestList);
+			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
 				return null;
 			}
@@ -3333,10 +3523,13 @@ cshmi.prototype = {
 		
 		return VisualObject;
 	},
-	/*********************************
-	_processBasicVariables
-		-	sets svg attributes from an Array
-	*********************************/
+	
+	/**
+	 * @description sets svg attributes from an Array
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {Array} configArray array with a list of thing to set
+	 * @returns {Boolean} true
+	 */
 	_processBasicVariables: function(VisualObject, configArray){
 		if (configArray["visible"] && configArray["visible"] == "FALSE"){
 			VisualObject.setAttribute("display", "none");
@@ -3370,12 +3563,16 @@ cshmi.prototype = {
 		if(configArray["opacity"] && configArray["opacity"] !== ""){
 			VisualObject.setAttribute("opacity", configArray["opacity"]);
 		}
+		return true;
 	},
-	/*********************************
-	_executeVariablesArray
-		-	requests a list of OV-Variables from multiple OV-Objects
-	*********************************/
-	_executeVariablesArray: function(requestList){
+	
+	/**
+	 * @description requests a list of OV-Variables from multiple OV-Objects
+	 * @param {Array} requestList List of multiple Variables to fetch
+	 * @param {Boolean} reportError Should an error be reported on screen?
+	 * @returns {Boolean} true on success, false if an error occured
+	 */
+	_requestVariablesArray: function(requestList, reportError){
 		var requestString = "";
 		var lastOvObjName = null;
 		
@@ -3397,12 +3594,12 @@ cshmi.prototype = {
 		if (response === false){
 			//communication error
 			return false;
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1 && reportError === true){
 			HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
-			HMI.hmi_log_error("cshmi._executeVariablesArray of "+requestString+" failed: "+response);
+			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestString+" failed: "+response);
 			return false;
 		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._executeVariablesArray of "+requestString+" failed: "+response);
+			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestString+" failed: "+response);
 			return false;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -3417,6 +3614,13 @@ cshmi.prototype = {
 		}
 		return true;
 	},
+	
+	/**
+	 * @description sets an SVG title on an object
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} newText Text for the title
+	 * @returns {Boolean} true
+	 */
 	_setTitle: function(VisualObject, newText){
 		var titles = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
 		if (titles.length >0){
@@ -3426,7 +3630,15 @@ cshmi.prototype = {
 			svgTitle.appendChild(HMI.svgDocument.createTextNode(newText));
 			VisualObject.appendChild(svgTitle);
 		}
+		return true;
 	},
+	
+	/**
+	 * @description returns a recursive list of all elements with a requested class
+	 * @param node node to start the search
+	 * @param {String} newText a string representing the list of class names to match; class names are separated by whitespace
+	 * @returns {NodeList} returnElements a live NodeList (but see the note below) of found elements in the order they appear in the tree.
+	 */
 	_getElementsByClassName: function(node, className){
 		if (node.getElementsByClassName){
 			return node.getElementsByClassName(className);
