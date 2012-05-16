@@ -580,29 +580,31 @@ cshmi.prototype = {
 			this._interpreteAction(VisualObject, ObjectPath);
 		}
 		
-		var responseArray;
+		var cyctime;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
-			//todo refactor to use executeArray
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.cyctime}', null);
-			if (response === false){
-				//communication error
-				return false;
-			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("cshmi._interpreteTimeEvent of "+ObjectPath+" failed: "+response);
-				
-				return false;
+			var requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["cyctime"] = null;
+			
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode == false){
+				return null;
 			}
-			responseArray = HMI.KSClient.splitKsResponse(response);
+			
+			cyctime = requestList[ObjectPath]["cyctime"];
+			
+			//feeding garbage collector early
+			requestList = null;
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Events[ObjectPath] = new Object();
 			this.ResourceList.Events[ObjectPath].useCount = 1;
-			this.ResourceList.Events[ObjectPath].TimeEventParameters = responseArray;
+			this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime = cyctime;
 			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object was asked this session, so reuse the config to save communication requests
-			responseArray = this.ResourceList.Events[ObjectPath].TimeEventParameters;
+			cyctime = this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime;
 			this.ResourceList.Events[ObjectPath].useCount++;
 			//HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Events[ObjectPath].useCount+")");
 		}
@@ -610,11 +612,11 @@ cshmi.prototype = {
 		//call us again for cyclic interpretation of the Actions
 		//only if we are in the initialisation or normal stage
 		//and the active cshmi display is "our" one
-		if (responseArray.length !== 0 && (this.initStage === true || HMI.Playground.firstChild !== null ) && HMI.cshmi === this){
+		if ((this.initStage === true || HMI.Playground.firstChild !== null ) && HMI.cshmi === this){
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			window.setTimeout(function(){
 				preserveThis._interpreteTimeEvent(VisualObject, ObjectPath);
-			}, responseArray[0]*1000);
+			}, cyctime*1000);
 		}
 		return true;
 	},
@@ -1445,26 +1447,28 @@ cshmi.prototype = {
 		var anyCond;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			//todo refactor to use executeArray
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.anycond}', null);
-			if (response === false){
-				//communication error
-				return false;
-			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("cshmi._interpreteIfThenElse of "+ObjectPath+" failed: "+response);
-				
-				return false;
+			var requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["anycond"] = null;
+			
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode == false){
+				return null;
 			}
-			anyCond = HMI.KSClient.splitKsResponse(response)[0];
+			
+			anyCond = requestList[ObjectPath]["anycond"];
+			
+			//feeding garbage collector early
+			requestList = null;
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
-			this.ResourceList.Actions[ObjectPath].IfThenElseParameters = anyCond;
+			this.ResourceList.Actions[ObjectPath].IfThenElseParameterAnycond = anyCond;
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._interpreteIfThenElse: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameters;
+			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameterAnycond;
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			//HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
@@ -1532,29 +1536,31 @@ cshmi.prototype = {
 			}
 		}
 		
-		var childrenType;
+		var ChildrenType;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			//todo refactor to use executeArray
-			var response = HMI.KSClient.getVar(null, '{'+ObjectPath+'.ChildrenType}', null);
-			if (response === false){
-				//communication error
-				return false;
-			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("cshmi._interpreteChildrenIterator of "+ObjectPath+" failed: "+response);
-				
-				return false;
+			var requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["ChildrenType"] = null;
+			
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode == false){
+				return null;
 			}
-			childrenType = HMI.KSClient.splitKsResponse(response, 0)[0];
+			
+			ChildrenType = requestList[ObjectPath]["ChildrenType"];
+			
+			//feeding garbage collector early
+			requestList = null;
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
-			this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameters = childrenType;
+			this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType = ChildrenType;
 			this.ResourceList.Actions[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			childrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameters;
+			ChildrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType;
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			//HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
@@ -1567,13 +1573,13 @@ cshmi.prototype = {
 		delete this.ResourceList.ChildrenIterator.currentChild;
 		
 		var returnValue = true;
-		if (childrenType.indexOf("OT_") !== -1){
-			var response = HMI.KSClient.getEP(null, encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + childrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
+		if (ChildrenType.indexOf("OT_") !== -1){
+			var response = HMI.KSClient.getEP(null, encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + ChildrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
 			response = HMI.KSClient.splitKsResponse(response, 1);
 			for (var i=0; i<response.length; i++){
 				var responseDictionary = Array();
 				//Variables were requested or ANY and we got a Variable right now
-				if (childrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
+				if (ChildrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
 					responseDictionary["OP_COMMENT"] = response[i][2];
@@ -1584,7 +1590,7 @@ cshmi.prototype = {
 					responseDictionary["OP_TECHUNIT"] = response[i][7];
 				}
 				//Domains were requested or ANY and we got a Domain right now
-				else if (childrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
+				else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
 					responseDictionary["OP_COMMENT"] = response[i][2];
@@ -1595,7 +1601,7 @@ cshmi.prototype = {
 					responseDictionary["OP_TECHUNIT"] = response[i][7];
 				}
 				//Links were requested or ANY and we got a Link right now
-				else if (childrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
+				else if (ChildrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
 					responseDictionary["OP_COMMENT"] = response[i][2];
@@ -1607,7 +1613,7 @@ cshmi.prototype = {
 					responseDictionary["OP_ROLEIDENT"] = response[i][8];
 				}
 				//Historys were requested or ANY and we got a History right now
-				else if (childrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
+				else if (ChildrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
 					responseDictionary["OP_COMMENT"] = response[i][2];
@@ -1628,11 +1634,11 @@ cshmi.prototype = {
 		else {
 			//doku multiple values possible
 			
-			//allow a list of variables as childrenTypes
-			var childrenTypeList = childrenType.split(" ");
+			//allow a list of variables as ChildrenTypes
+			var ChildrenTypeList = ChildrenType.split(" ");
 			var response;
-			for (var i=0; i < childrenTypeList.length; i++) {
-				response = HMI.KSClient.getVar(null, '{'+ FBRef +'.' + childrenTypeList[i] + '}', null);
+			for (var i=0; i < ChildrenTypeList.length; i++) {
+				response = HMI.KSClient.getVar(null, '{'+ FBRef +'.' + ChildrenTypeList[i] + '}', null);
 				if (response === false){
 					continue;
 				}
