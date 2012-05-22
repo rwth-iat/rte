@@ -86,9 +86,9 @@ function cshmi() {
 	this.initStage = false;
 	
 	//we want to add all elements to a class to find it later
-	this.cshmiComponentClass = "cshmi-component";
 	this.cshmiGroupClass = "cshmi-group";
 	this.cshmiTemplateClass = "cshmi-template";
+	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
 	
 	this.cshmiOperatorClickClass = "cshmi-click";
@@ -2585,7 +2585,10 @@ cshmi.prototype = {
 		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
 		
 		HMI.addClass(VisualObject, this.cshmiTemplateClass);
-		HMI.addClass(VisualObject, this.cshmiComponentClass);
+		
+		if (calledFromInstantiateTemplate === true){
+			HMI.addClass(VisualObject, this.cshmiTemplateActionClass);
+		}
 		if (requestListTemplate[PathOfTemplateDefinition]["hideable"] === "TRUE"){
 			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
 		}
@@ -2892,6 +2895,18 @@ cshmi.prototype = {
 					childTemplates[i].setAttribute("display", "none");
 				}else{
 					childTemplates[i].setAttribute("display", "block");
+					
+					
+					//doku depth of moving to top
+					
+					//Move Faceplate-Container after every other, so it is fully visible
+					if (HMI.instanceOf(VisualObject.parentNode, preserveThis.cshmiTemplateActionClass) === false){
+						//hideable childtemplate in a normal template
+						VisualObject.parentNode.parentNode.appendChild(VisualObject.parentNode);
+					}else{
+						//hideable childtemplate in an action instantiated template (one level more)
+						VisualObject.parentNode.parentNode.parentNode.appendChild(VisualObject.parentNode.parentNode);
+					}
 				}
 			}
 			//quit propagation of event in any case. We do not want the parent template to handle the click
@@ -2931,7 +2946,6 @@ cshmi.prototype = {
 		VisualObject.id = ObjectPath;
 		
 		HMI.addClass(VisualObject, this.cshmiGroupClass);
-		HMI.addClass(VisualObject, this.cshmiComponentClass);
 		
 		//set dimension of container
 		VisualObject.setAttribute("x", requestList[ObjectPath]["x"]);

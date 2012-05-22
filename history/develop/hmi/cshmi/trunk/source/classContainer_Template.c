@@ -76,7 +76,9 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Template_TemplateDefinition_set(
 	ov_memstack_lock();
 	ov_string_setvalue(&fullpath, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pobj), 2));
 	ov_memstack_unlock();
-	ov_string_print(&mask, "*%s*", value);
+	
+	//the path to the templates is hardcoded in the visualisation system
+	ov_string_print(&mask, "/TechUnits/cshmi/Templates/%s/*", value);
 	if (ov_string_match(fullpath, mask)){
 		//avoid recursive template usage
 		ov_string_setvalue(&fullpath, NULL);
