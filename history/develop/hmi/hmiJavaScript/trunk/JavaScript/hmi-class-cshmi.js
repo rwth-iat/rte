@@ -1953,6 +1953,14 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering results for "+FBRef+" ");
 		}
 		
+		if (SourceConnectionPoint === null){
+			HMI.hmi_log_info_onwebsite("Routepolyline "+ObjectPath+" could not find the SourceConnectionPoint. Routepolyline or connected objects are wrong configured.");
+			return false;
+		}else if (TargetConnectionPoint === null){
+			HMI.hmi_log_info_onwebsite("Routepolyline "+ObjectPath+" could not find the TargetConnectionPoint. Routepolyline or connected objects are wrong configured.");
+			return false;
+		}
+		
 		var xStart = parseInt(SourceConnectionPoint.getAttribute("layerX"), 10);
 		var cx = parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
 		xStart = xStart + cx;
