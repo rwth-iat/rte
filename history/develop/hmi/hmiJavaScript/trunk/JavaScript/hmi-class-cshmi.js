@@ -458,6 +458,9 @@ cshmi.prototype = {
 	 * @returns nothing
 	 */
 	_moveHandleClick : function(VisualObject, ObjectPath, evt){
+		//no more grabbing of click needed
+		VisualObject.removeEventListener("click", VisualObject._moveHandleClickThunk, false);
+		
 		//we do not want to propagate a click to the parents
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
@@ -517,8 +520,6 @@ cshmi.prototype = {
 			//the mouseup event has xy position, so remember for use in an action
 			this.ResourceList.EventInfos.EventObj = evt;
 		}
-		//no more grabbing of click needed
-		VisualObject.removeEventListener("click", VisualObject._moveHandleClickThunk, false);
 		
 		var mouseposition = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null);
 		if(HMI.instanceOf(VisualObject, this.cshmiOperatorClickClass)
