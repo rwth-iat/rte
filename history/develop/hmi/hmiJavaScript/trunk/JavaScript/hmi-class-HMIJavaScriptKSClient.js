@@ -125,15 +125,14 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.init - End");
 	},
 	
-	/*********************************
-		getEP
-		Handle:	requires own Handle, null if uses the normal global Handle
-		path:	command to process of the command
-		cbfnc: callback function
-		usage example:
-			this.getEP(null, '/servers%20*', this._cbGetServers);
-			response: "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}"
-	*********************************/
+	/**
+	 * usage example:
+	 *		this.getEP(null, '/servers%20*', this._cbGetServers);
+	 * @param Handle requires own Handle, null if uses the normal global Handle
+	 * @param path command to process of the command
+	 * @param cbfnc callback function
+	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null
+	 */
 	getEP: function(Handle, path, tksparameter, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path+" Handle: "+Handle);
 		if(!path || path.length === 0 || path.charAt(0) !== "/"){
@@ -171,15 +170,14 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - End");
 	},
 	
-	/*********************************
-		getHandle
-		cbfnc: callback function
-		usage example:
-			getHandle("localhost/MANAGER", this._cbInit);
-			response: "TksS-0000"
-			getHandle("localhost/fb_hmi1", null);
-			response: "TksS-0042"
-	*********************************/
+	/**
+	 * usage example:
+	 *		getHandle("localhost/MANAGER", this._cbInit);
+	 *		getHandle("localhost/fb_hmi1", null);
+	 * @param host Name of requested Host
+	 * @param cbfnc callback function
+	 * @return response "TksS-0042" or null
+	 */
 	getHandle: function(host, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - Start");
 		
@@ -223,19 +221,16 @@ HMIJavaScriptKSClient.prototype = {
 		return ReturnText;
 	},
 	
-	/*********************************
-		getVar
-		Handle:	requires own Handle, null if uses the normal global Handle
-		path:	command to process of the command, multiple commands are {part1} {part1} coded (used in GraphicDescription+StyleDescription)
-		cbfnc: callback function
-		usage example:
-			ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null)
-			response: "{{/TechUnits/HMIManager}}"
-			this.getVar(null, '/TechUnits/HMIManager.CommandReturn', this._cbGetSheets);
-			response: "{/TechUnits/Sheet1}"
-			
-			error response: "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
-	*********************************/
+	/**
+	 * usage example:
+	 *		ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null)
+	 *		this.getVar(null, '/TechUnits/HMIManager.CommandReturn', this._cbGetSheets);
+	 * 
+	 * @param Handle requires own Handle, null if uses the normal global Handle
+	 * @param path command to process of the command, multiple commands are {part1} {part1} coded (used in GraphicDescription+StyleDescription)
+	 * @param cbfnc callback function
+	 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
+	 */
 	getVar: function(Handle, path, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path);
 		if(!path || path.length === 0){
@@ -324,14 +319,12 @@ HMIJavaScriptKSClient.prototype = {
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - End");
 	},
-	
-	/*********************************
-		delHandle
-		Handle:	Handle to be destroyed
-		usage example:
-			this.delHandle("TksS-0042");
-			response: ""
-	*********************************/
+	/**
+	 * usage example:
+	 * 		this.delHandle("TksS-0042");
+	 * @param Handle Handle to be destroyed
+	 * @return none
+	 */
 	delHandle: function(Handle) {
 		var urlparameter;
 		if (HMI.GatewayTypeTCL === true){
@@ -344,34 +337,33 @@ HMIJavaScriptKSClient.prototype = {
 		}
 	},
 	
-	/*********************************
-		getHandleID
-		TODO:
-			-	add timeout für delHandle
-			-	cache negative response for a timespan
-	*********************************/
+	/**
+	 * @param {String} HostAndServername Host and Servername concat with a slash
+	 * @return {String} TKS Handle of the requested Server or null
+	 * @todo add timeout für delHandle
+	 */
 	getHandleID: function(HostAndServername) {
 		if (this.ResourceList.Handles[HostAndServername] && this.ResourceList.Handles[HostAndServername].HandleString !== null){
 			return this.ResourceList.Handles[HostAndServername].HandleString;
 		}else{
 			var HandleString = this.getHandle(HostAndServername, null);
 			if (HandleString === null || HandleString === false){
-				//occures in shutdown of cshmi
-				return HandleString;
+				//occures in shutdown
+				return null;
 			}else if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
 				//the Manager sometimes reject connection to a valid server, so retry once
-				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
+				//HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
 				
 				//fixme retry disabled!
-//				HandleString = this.getHandle(HostAndServername, null);
+				//HandleString = this.getHandle(HostAndServername, null);
 			}
 			if (HandleString.indexOf("KS_ERR") !== -1){
 				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
-				return null;
-			}
-			
-			//The handle must have the right format aka start with "TksS-"
-			if (!/^TksS-\b/.exec(HandleString)){
+				
+				//caching the result of the failure
+				HandleString = null;
+			}else if (!/^TksS-\b/.exec(HandleString)){
+				//The handle must have the right format aka start with "TksS-"
 				if (HandleString.length < 250){
 					HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + HandleString);
 				}else if (HandleString){
@@ -634,9 +626,14 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._handleStateChange - End");
 	},
 	
-	/*********************************
-		_sendRequest
-	*********************************/
+	/**
+	 * @param Client Instance of HMI Object
+	 * @param method often "GET"
+	 * @param async request
+	 * @param urlparameter the URL of the request
+	 * @param cbfnc Name of the callack function or null
+	 * @return if no cbfnc submitted returnvalue of request or false on an communication error
+	 */
 	_sendRequest: function(Client, method, async, urlparameter, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+window.location.protocol+'//'+ HMI.KSClient.TCLKSGateway + '?' + urlparameter);
 		
@@ -660,6 +657,11 @@ HMIJavaScriptKSClient.prototype = {
 			
 			//prevent caching of request in all browsers (ie was the problem - as usual
 			req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT");
+			
+			if (req.timeout !== undefined && async === true){
+				//timeout is not allowed with sync requests
+				req.timeout = 1000;
+			}
 			
 			if (async === true)
 			{

@@ -627,6 +627,8 @@ HMI.prototype = {
 				&&	HMI_Parameter_Liste.Sheet
 				&&	HMI_Parameter_Liste.Sheet.length !== 0)
 			{
+				HMI.ButShowServers.value = "Loading Sheet...";
+				
 				//clean old Server and Sheet entrys, an old SVG display and displayed errors in website
 				deleteChilds(this.PossServers);
 				deleteChilds(this.PossSheets);
@@ -640,8 +642,6 @@ HMI.prototype = {
 				HMI.PossServers.disabled = true;
 				HMI.PossSheets.disabled = true;
 				
-				HMI.ButShowServers.value = "Reload Serverlist";
-				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
 				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
 				if (this.KSClient.TCLKSHandle === null){
@@ -652,14 +652,14 @@ HMI.prototype = {
 					//spaces in objectname are encoded as %20 within OV
 					HMI.showSheet(encodeURI(HMI_Parameter_Liste.Sheet));
 				}
+				HMI.ButShowServers.value = "Reload Serverlist";
 			}else if (	HMI_Parameter_Liste.Server
 				&&	HMI_Parameter_Liste.Server.length !== 0){
 				//only a server is specified in "deep link" => showSheets
 				
+				HMI.ButShowServers.value = "Loading Sheetlist...";
 				HMI.PossServers.options[0] = new Option('- list not loaded -', 'no server');
 				HMI.PossSheets.options[0] = new Option('- list not loaded -', 'no sheet');
-				
-				HMI.ButShowServers.value = "Show Servers";
 				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
 				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
@@ -668,6 +668,7 @@ HMI.prototype = {
 				}else{
 					HMI.showSheets(HMI_Parameter_Liste.Server);
 				}
+				HMI.ButShowServers.value = "Reload Serverlist";
 			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
 				//no server and sheet specified, but a host => load serverlist
 				HMI.showServers();
