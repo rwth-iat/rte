@@ -108,7 +108,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 	}
 
 	//make header
-	generatesetheader(&xdr, &xdrlength);
+	generateheader(KS_SETVAR, &xdr, &xdrlength);
 
 	//make body
 	Ov_ForEachChild(ov_containment, (OV_INSTPTR_ov_domain)pobj, pchild)
@@ -258,7 +258,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 		//~ printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
 	//~ printf("\n\n");
 
-	printxdr(xdr, xdrlength);
+	//printxdr(xdr, xdrlength);
 
 	free(xdr);
 
@@ -280,7 +280,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_returnMethodxdr(
     char temp[4];
     int j;
     
-    printxdr(xdr, xdrlength);
+   // printxdr(xdr, xdrlength);
 
 	//~ printf("\nreceivedxdr:\nlength: %d\n", xdrlength);
 	//~ for (j = 0; j < xdrlength; j=j+4)

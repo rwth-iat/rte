@@ -399,7 +399,7 @@ OV_DLLFNCEXPORT void ksapi_getPkg_submit(
 	}
 
 	//make header
-	generategetheader(&xdr, &xdrlength);
+	generateheader(KS_GETVAR, &xdr, &xdrlength);
 
 	//make body
 	Ov_ForEachChild(ov_containment, (OV_INSTPTR_ov_domain)pobj, pchild)
