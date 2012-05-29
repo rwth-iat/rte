@@ -234,7 +234,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 		//set package length
 		char *tmp = (char*)&childcount;
 		for (c=0; c<4; c++)
-			xdr[47-c] = tmp[c];
+			xdr[51-c] = tmp[c];
 
 		//add rpcheader
 		addrpcheader(&xdr, &xdrlength);
@@ -258,6 +258,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 		//~ printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
 	//~ printf("\n\n");
 
+	printxdr(xdr, xdrlength);
+
 	free(xdr);
 
     return;
@@ -278,6 +280,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_returnMethodxdr(
     char temp[4];
     int j;
     
+    printxdr(xdr, xdrlength);
+
 	//~ printf("\nreceivedxdr:\nlength: %d\n", xdrlength);
 	//~ for (j = 0; j < xdrlength; j=j+4)
 		//~ printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
@@ -287,7 +291,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_returnMethodxdr(
 	//~ printf("\n\n");
 
 	for(j=0; j<4; j++) {
-		temp[j] = xdr[39-j];
+		temp[j] = xdr[35-j];
 	}
 
 	memcpy(&number, temp, 4);
@@ -296,21 +300,21 @@ OV_DLLFNCEXPORT void ksapi_setPkg_returnMethodxdr(
 
 	for(j=0;j<number;j++)
 	{
-		errorcode[j] = xdr[43+4*j];
+		errorcode[j] = xdr[39+4*j];
 		finalerrorcode = finalerrorcode+errorcode[j];
 		switch (errorcode[j])
 		{
-			case 0:
-				//~ printf("\nsending completed\n");
+			case KS_ERR_OK:
+				ov_string_append(&errorstring, "OK; ");
 				break;
-			case 20:
-				ov_string_append(&errorstring, "path does not point to selected vartype; ");
+			case KS_ERR_BADTYPE:
+				ov_string_append(&errorstring, "ERR: BADTYPE; ");
 				break;
-			case 17:
-				ov_string_append(&errorstring, "object does not exist; ");
+			case KS_ERR_BADPATH:
+				ov_string_append(&errorstring, "ERR: BADPATH; ");
 				break;
 			default:
-				ov_string_append(&errorstring, "error; ");
+				ov_string_append(&errorstring, "ERR: unknown; ");
 		}
 	}
 
