@@ -4,9 +4,8 @@
 #include <stdlib.h>
 
 void generategetxdr(char *xdr[], int *length, char *path);
-void generategetheader(char *xdr[], int *length);
+void generateheader(int procedureNumber, char *xdr[], int *length);
 void generategetbody(char *xdr[], int *length, char *path);
-void generatesetheader(char *xdr[], int *length);
 void generatesetbody(int type, char *xdr[], int *length, char *path, void* setvalue);
 void generatesetvecbody(int type, char *xdr[], int *length, char *path, void* setvalue, int veclength);
 void addrpcheader(char *xdr[], int *length);
