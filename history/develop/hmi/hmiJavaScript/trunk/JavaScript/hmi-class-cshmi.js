@@ -399,6 +399,7 @@ cshmi.prototype = {
 			}
 			
 			//todo: try to implement via HTML5 drag&drop
+			//todo http://blogs.msdn.com/b/ie/archive/2011/10/19/handling-multi-touch-and-mouse-input-in-all-browsers.aspx
 			
 			//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
 			VisualObject.addEventListener("touchstart", VisualObject._moveStartDragThunk, false);
@@ -1717,6 +1718,10 @@ cshmi.prototype = {
 	 * @returns {Boolean} true on success, false if an error occured
 	 */
 	_interpreteRoutePolyline: function(VisualObject, ObjectPath){
+		if(VisualObject.parentNode === null){
+			//not visualised right now
+			return false;
+		}
 		if(VisualObject.tagName.indexOf("polyline") === -1 ){
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
@@ -2291,6 +2296,16 @@ cshmi.prototype = {
 			Value2 = "";
 		}
 		
+		//todo move isNumeric to hmi-generics.js
+		
+		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
+		if(!isNaN(parseFloat(Value1)) && isFinite(Value1)){
+			Value1 = parseFloat(Value1);
+		}
+		if(!isNaN(parseFloat(Value2)) && isFinite(Value2)){
+			Value2 = parseFloat(Value2);
+		}
+		
 		if (comptype === "<"){
 			return (Value1 < Value2);
 		}else if (comptype === "<="){
@@ -2441,6 +2456,11 @@ cshmi.prototype = {
 		}
 		
 		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
+		
+		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
+		if(!isNaN(parseFloat(Value2)) && isFinite(Value2)){
+			Value2 = parseFloat(Value2);
+		}
 		
 		if (comptype === "<"){
 			for (var i=0; i<Value2.length; i++){

@@ -567,9 +567,9 @@ HMI.prototype = {
 		return true;
 	},
 	
-	/*********************************
-		Functions - interpreteUrlParameter
-	*********************************/
+	/**
+	 * parse url Parameter and loads the requested sheets
+	 */
 	interpreteUrlParameter: function (){
 		this.hmi_log_trace("HMI.prototype.interpreteUrlParameter");
 		
@@ -686,10 +686,6 @@ HMI.prototype = {
 			HMI.ButShowServers.focus();
 		}catch(e){ }
 		
-		if (document.getElementById("idThrobbler") !== null){
-			document.getElementById("idThrobbler").style.display = "none";
-		}
-		
 		//append html5 datalist if supported and provided
 		if(this.InputHost.list !== undefined & HMI_Parameter_Liste !== null && HMI_Parameter_Liste.hostlist !== undefined){
 			this.InputHost.setAttribute("list", "InputHost");
@@ -705,6 +701,10 @@ HMI.prototype = {
 			this.InputHost.parentNode.appendChild(datalistNode);
 		}
 		HMI_Parameter_Liste = null;
+		
+		if (document.getElementById("idThrobbler") !== null){
+			document.getElementById("idThrobbler").style.display = "none";
+		}
 		
 		this.hmi_log_trace("HMI.prototype.interpreteUrlParameter - End");
 		return;
@@ -1057,6 +1057,10 @@ HMI.prototype = {
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
 		$("idBookmark").style.display = "none";
+		HMI.ButShowServers.value = "Loading Sheet...";
+		if (document.getElementById("idThrobbler") !== null){
+			document.getElementById("idThrobbler").style.display = "inline";
+		}
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
@@ -1109,6 +1113,10 @@ HMI.prototype = {
 		}else{
 			//show deeplink if history management is not available
 			$("idBookmark").style.display = "inline";
+		}
+		HMI.ButShowServers.value = "Reload Serverlist";
+		if (document.getElementById("idThrobbler") !== null){
+			document.getElementById("idThrobbler").style.display = "none";
 		}
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
