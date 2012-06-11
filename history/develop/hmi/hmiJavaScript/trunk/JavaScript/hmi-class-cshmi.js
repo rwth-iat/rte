@@ -655,7 +655,7 @@ cshmi.prototype = {
 				returnValue = true;
 				debugger;
 			}else{
-				HMI.hmi_log_info_onwebsite("Action ("+varName[1]+") "+ObjectPath+" not supported");
+				HMI.hmi_log_info_onwebsite("Action "+varName[0]+" (Type: "+varName[1]+") under "+ObjectPath+" not supported");
 			}
 			//check type of returnvalue
 			if (!(returnValue === true || returnValue === false)){
