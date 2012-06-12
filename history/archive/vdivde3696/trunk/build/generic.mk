@@ -67,10 +67,13 @@ USERLIB_DLL    = $(LIBRARY)$(_DLL)
 USERLIB_SRC = $(USERLIB_C) $(wildcard $(SOURCE_DIR)*$(_C))
 USERLIB_OBJ = $(foreach source, $(USERLIB_SRC), $(basename $(notdir $(source)))$(_OBJ))
 
-TARGETS = \
+HEADERS = \
 	ov.h \
 	fb.h \
-	vdivde3696.h \
+	vdivde3696.h 
+
+TARGETS = \
+	$(HEADERS) \
 	$(USERLIB_LIB) \
 	$(USERLIB_DLL)
 
