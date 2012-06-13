@@ -1,0 +1,9 @@
+Anmerkungen zu fbcomlib:
+
+- Als Servername könnte "localhost" bei manchen Windows Rechnern Problem führen. Es sollte "127.0.0.1" verwendet werden.
+  Port wie z.B. 7509 muss nicht eingegeben werden.
+  
+- channel object MUSS "channel" heißen
+
+
+Liyong
