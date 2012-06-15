@@ -137,7 +137,7 @@ OV_DLLFNCEXPORT void ksapi_setIntVec_setandsubmit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	//set values:
 	if (Ov_Fail(ksapi_setIntVec_sendintvec_set(pobj, sendintvec, sendintveclength))) {
-		log_error("setIntVec: error setting sendstring");
+		log_error("setIntVec: error setting sendintvec");
 		return;
 	}
 	if (Ov_Fail(ksapi_KSCommon_host_set(pksc, host))) {

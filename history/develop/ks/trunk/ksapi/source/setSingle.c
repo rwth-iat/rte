@@ -79,7 +79,7 @@ OV_DLLFNCEXPORT void ksapi_setSingle_submit(
 	    return;
 	}
 
-	if((pobj->v_sendsingle != 0) && (pobj->v_host) && (pobj->v_server) && (pobj->v_path)
+	if((pobj->v_host) && (pobj->v_server) && (pobj->v_path)
 			&& (ksapi_KSCommon_status_get(pksc) == STATUS_KSCOMMON_OK)){
 		//all values are set
 	char *xdr;
@@ -136,7 +136,7 @@ OV_DLLFNCEXPORT void ksapi_setSingle_setandsubmit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	//set values:
 	if (Ov_Fail(ksapi_setSingle_sendsingle_set(pobj, sendsingle))) {
-		log_error("setSingle: error setting sendstring");
+		log_error("setSingle: error setting sendsingle");
 		return;
 	}
 	if (Ov_Fail(ksapi_KSCommon_host_set(pksc, host))) {

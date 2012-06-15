@@ -133,7 +133,7 @@ OV_DLLFNCEXPORT void ksapi_setBool_setandsubmit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	//set values:
 	if (Ov_Fail(ksapi_setBool_sendbool_set(pobj, sendbool))) {
-		log_error("setBool: error setting sendstring");
+		log_error("setBool: error setting sendbool");
 		return;
 	}
 	if (Ov_Fail(ksapi_KSCommon_host_set(pksc, host))) {

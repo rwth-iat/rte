@@ -79,8 +79,7 @@ OV_DLLFNCEXPORT void ksapi_setDouble_submit(
 	    return;
 	}
 
-	if( (pobj->v_senddouble != 0) &&
-        (pobj->v_host) &&
+	if( (pobj->v_host) &&
         (pobj->v_server) &&
         (pobj->v_path) &&
         (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY) ) {
@@ -137,7 +136,7 @@ OV_DLLFNCEXPORT void ksapi_setDouble_setandsubmit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	//set values:
 	if (Ov_Fail(ksapi_setDouble_senddouble_set(pobj, senddouble))) {
-		log_error("setDouble: error setting sendstring");
+		log_error("setDouble: error setting senddouble");
 		return;
 	}
 	if (Ov_Fail(ksapi_KSCommon_host_set(pksc, host))) {

@@ -78,7 +78,7 @@ OV_DLLFNCEXPORT void ksapi_setBoolVec_submit(
 	    return;
 	}
 
-	if((pobj->v_host) && (pobj->v_server) && (pobj->v_path) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
+	if((pobj->v_sendboolvec.value) && (pobj->v_host) && (pobj->v_server) && (pobj->v_path) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
 		//all values are set
 	char *xdr;
 	char path[4096];
@@ -135,7 +135,7 @@ OV_DLLFNCEXPORT void ksapi_setBoolVec_setandsubmit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	//set values:
 	if (Ov_Fail(ksapi_setBoolVec_sendboolvec_set(pobj, sendboolvec, sendboolveclength))) {
-		log_error("setBoolVec: error setting sendstring");
+		log_error("setBoolVec: error setting sendboolvec");
 		return;
 	}
 	if (Ov_Fail(ksapi_KSCommon_host_set(pksc, host))) {
