@@ -79,7 +79,7 @@ OV_DLLFNCEXPORT void ksapi_setUInt_submit(
 	    return;
 	}
 
-	if((pobj->v_senduint) && (pobj->v_host) && (pobj->v_server) && (pobj->v_path) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
+	if((pobj->v_host) && (pobj->v_server) && (pobj->v_path) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
 		//all values are set
 	char *xdr;
 	char path[4096];
@@ -132,7 +132,7 @@ OV_DLLFNCEXPORT void ksapi_setUInt_setandsubmit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	//set values:
 	if (Ov_Fail(ksapi_setUInt_senduint_set(pobj, senduint))) {
-		log_error("setUInt: error setting sendstring");
+		log_error("setUInt: error setting senduint");
 		return;
 	}
 	if (Ov_Fail(ksapi_KSCommon_host_set(pksc, host))) {

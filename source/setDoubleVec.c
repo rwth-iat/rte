@@ -135,7 +135,7 @@ OV_DLLFNCEXPORT void ksapi_setDoubleVec_setandsubmit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	//set values:
 	if (Ov_Fail(ksapi_setDoubleVec_senddoublevec_set(pobj, senddoublevec, senddoubleveclength))) {
-		log_error("setDoubleVec: error setting sendstring");
+		log_error("setDoubleVec: error setting senddoublevec");
 		return;
 	}
 	if (Ov_Fail(ksapi_KSCommon_host_set(pksc, host))) {
