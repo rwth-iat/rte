@@ -170,6 +170,10 @@ puts "Including static files..."
 set out [open "../source/generated_static_index.c" w]
 puts $out "//this is an included index of static files"
 puts $out "//do not edit or check in this file since it will be overwritten"
+puts $out "#ifndef OV_COMPILE_LIBRARY_ksservhttp"
+puts $out "#define OV_COMPILE_LIBRARY_ksservhttp"
+puts $out "#endif"
+puts $out ""
 puts $out "#include \"config.h\""
 puts $out ""
 puts $out "OV_RESULT include_localfiles(OV_INSTPTR_ov_domain pstaticfiles){";
