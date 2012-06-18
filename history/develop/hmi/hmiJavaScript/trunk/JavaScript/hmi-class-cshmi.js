@@ -60,10 +60,10 @@
 *
 ***********************************************************************/
 
-/***********************************************************************
-	constructor
-***********************************************************************/
-
+/**
+ * Main cshmi constructor
+ * @constructor
+ */
 function cshmi() {
 	//every Action, Condition and Event could be requested multiple times
 	//to build the visualisation. It should only transfered once,
@@ -119,9 +119,10 @@ JavaScript:
 ***********************************************************************/
 cshmi.prototype = {
 	/**
-	 * @description starts iteration of visualisation and displays the result
+	 * starts iteration of visualisation and displays the result
+	 * @this main cshmi object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns nothing
+	 * @return nothing
 	 */
 	instanciateCshmi: function(ObjectPath) {
 		//we are in the init stage, so the DOM Tree is not populated
@@ -214,10 +215,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description Main iteration loop for visualisation, finds and arms Actions as well
+	 * Main iteration loop for visualisation, finds and arms Actions as well
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType) {
 		var VisualObject = null;
@@ -290,10 +291,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description calling Actions if supported ClientEvent is triggered
+	 * calling Actions if supported ClientEvent is triggered
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} true
+	 * @return {Boolean} true
 	 */
 	_interpreteClientEvent: function(VisualObject, ObjectPath){
 		var command = ObjectPath.split("/");
@@ -316,10 +317,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description detect all OperatorEvents and register them
+	 * detect all OperatorEvents and register them
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} true
+	 * @return {Boolean} true
 	 */
 	_interpreteOperatorEvent: function(VisualObject, ObjectPath){
 		var command = ObjectPath.split("/");
@@ -338,11 +339,12 @@ cshmi.prototype = {
 				//mark changed VisualObject for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(VisualObject);
 				
+				//toggle visibility of hideable childtemplates
+				preserveThis.toggleChildTemplates(VisualObject);
+				
 				//get and execute all actions
 				preserveThis._interpreteAction(VisualObject, ObjectPath);
 				
-				
-				//fixme: hideable hier abfrühstücken!
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
@@ -414,11 +416,11 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description prepares the drag and drop handling via mousemove etc
+	 * prepares the drag and drop handling via mousemove etc
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {DOM Event} evt event object
-	 * @returns nothing
+	 * @return nothing
 	 */
 	_moveStartDrag : function(VisualObject, ObjectPath, evt){
 		if (evt.button == 2){
@@ -455,11 +457,11 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description stops propagation of event
+	 * stops propagation of event
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {DOM Event} evt event object
-	 * @returns nothing
+	 * @return nothing
 	 */
 	_moveHandleClick : function(VisualObject, ObjectPath, evt){
 		//no more grabbing of click needed
@@ -470,11 +472,11 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description handles the movement during a drag
+	 * handles the movement during a drag
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {DOM Event} evt event object
-	 * @returns nothing
+	 * @return nothing
 	 */
 	_moveMouseMove : function(VisualObject, ObjectPath, evt){
 		if (this.ResourceList.EventInfos.startXObj === null){
@@ -503,11 +505,11 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description stops the drag and call needed actions
+	 * stops the drag and call needed actions
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {DOM Event} evt event object
-	 * @returns nothing
+	 * @return nothing
 	 */
 	_moveStopDrag : function(VisualObject, ObjectPath, evt, canceled){
 		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+VisualObject.id);
@@ -558,10 +560,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description calling Actions if supported TimeEvent is triggered
+	 * calling Actions if supported TimeEvent is triggered
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} true
+	 * @return {Boolean} true
 	 */
 	_interpreteTimeEvent: function(VisualObject, ObjectPath){
 		var skipEvent = false;
@@ -627,10 +629,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description detect all Actions and triggers them
+	 * detect all Actions and triggers them
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns returnValue returnValue from the last Action
+	 * @return returnValue returnValue from the last Action
 	 */
 	_interpreteAction: function(VisualObject, ObjectPath){
 		var returnValue = true;
@@ -669,10 +671,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description get a Value from multiple Sources
+	 * get a Value from multiple Sources
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns false if error, null if intentionally no value, "" if no entry found
+	 * @return false if error, null if intentionally no value, "" if no entry found
 	 */
 	_getValue: function(VisualObject, ObjectPath){
 		var ParameterName;
@@ -1042,11 +1044,12 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description set a Value to multiple Targets
+	 * set a Value to multiple Targets
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {Boolean} Concat Concat multiple getValues or have we one static OV_PART?
-	 * @returns false on error, true on success
+	 * @return false on error, true on success
+	 * @todo configvalue unterstützen...
 	 */
 	_setValue: function(VisualObject, ObjectPath, Concat){
 		var NewValue = "";
@@ -1163,7 +1166,7 @@ cshmi.prototype = {
 				var trimLength = parseInt(this.ResourceList.Elements[VisualObject.id].ElementParameters.trimToLength, 10);
 				var contentLength = parseInt(NewValue.length, 10);
 				var trimmedContent;
-				if(trimLength > 0 && !isNaN(parseFloat(NewValue)) && isFinite(NewValue)){
+				if(trimLength > 0 && isNumeric(NewValue)){
 					//we have a numeric NewValue
 					if(NewValue.indexOf(".") === -1){
 						//INT or UINT
@@ -1396,10 +1399,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description search baseKsPath by iterating objects
+	 * search baseKsPath by iterating objects
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {String} returnValue String of the baseKSPath as seen from the ObjectPath; could be ""
+	 * @return {String} returnValue String of the baseKSPath as seen from the ObjectPath; could be ""
 	 */
 	_getBaseKsPath: function(VisualObject, ObjectPath){
 		var ObjectPathArray = ObjectPath.split("/");
@@ -1443,10 +1446,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description calls conditions below the if PART and triggers actions in then or else PART
+	 * calls conditions below the if PART and triggers actions in then or else PART
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} false if an error occured, returnValue of the called actions
+	 * @return {Boolean} false if an error occured, returnValue of the called actions
 	 */
 	_interpreteIfThenElse: function(VisualObject, ObjectPath){
 		var anyCond;
@@ -1519,10 +1522,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description iterates over an association (ov_containment or other) or an variable vector
+	 * iterates over an association (ov_containment or other) or an variable vector
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} false if an error occured, returnValue of the called actions
+	 * @return {Boolean} false if an error occured, returnValue of the called actions
 	 */
 	_interpreteChildrenIterator: function(VisualObject, ObjectPath){
 		var rootObject = VisualObject;
@@ -1672,10 +1675,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description Action which calls _buildFromTemplate to build a template
+	 * Action which calls _buildFromTemplate to build a template
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} true on success, false if an error occured
+	 * @return {Boolean} true on success, false if an error occured
 	 */
 	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
 		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true);
@@ -1715,10 +1718,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description routes a polyline to connect two points
+	 * routes a polyline to connect two points
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} true on success, false if an error occured
+	 * @return {Boolean} true on success, false if an error occured
 	 */
 	_interpreteRoutePolyline: function(VisualObject, ObjectPath){
 		if(VisualObject.parentNode === null){
@@ -2233,10 +2236,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description checks Condition
+	 * checks Condition
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} true if condition matched, false if not matched, null on error
+	 * @return {Boolean} true if condition matched, false if not matched, null on error
 	 */
 	_checkCondition: function(VisualObject, ObjectPath, ConditionPath){
 		//get Values
@@ -2299,13 +2302,11 @@ cshmi.prototype = {
 			Value2 = "";
 		}
 		
-		//todo move isNumeric to hmi-generics.js
-		
 		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
-		if(!isNaN(parseFloat(Value1)) && isFinite(Value1)){
+		if(isNumeric(Value1)){
 			Value1 = parseFloat(Value1);
 		}
-		if(!isNaN(parseFloat(Value2)) && isFinite(Value2)){
+		if(isNumeric(Value2)){
 			Value2 = parseFloat(Value2);
 		}
 		
@@ -2329,10 +2330,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description checks Condition within ChildrenIterator
+	 * checks Condition within ChildrenIterator
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {Boolean} true if condition matched, false if not matched, null on error
+	 * @return {Boolean} true if condition matched, false if not matched, null on error
 	 */
 	_checkConditionIterator: function(VisualObject, ObjectPath, ConditionPath){
 		if (this.ResourceList.ChildrenIterator.currentChild === undefined){
@@ -2461,7 +2462,7 @@ cshmi.prototype = {
 		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
 		
 		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
-		if(!isNaN(parseFloat(Value2)) && isFinite(Value2)){
+		if(isNumeric(Value2)){
 			Value2 = parseFloat(Value2);
 		}
 		
@@ -2517,11 +2518,11 @@ cshmi.prototype = {
 	
 	
 	/**
-	 * @description builds template, gets the parameter via KS
+	 * builds template, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {Boolean} calledFromInstantiateTemplate true if called from an action
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildFromTemplate: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate){
 		var requestList;
@@ -2905,35 +2906,9 @@ cshmi.prototype = {
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 		//toggle visibility of hideable childtemplates onclick
-		
-		//todo: in funktion verschieben und in click geste auch erledigen
 		VisualParentObject.addEventListener("click", function(evt){
-			var childTemplates = VisualParentObject.childNodes;
+			preserveThis.toggleChildTemplates(VisualParentObject);
 			
-			for (var i=0; i < childTemplates.length; i++) {
-				var Classes = childTemplates[i].getAttribute("class");
-				if (Classes === null){
-					continue;
-				}else if (Classes.indexOf(preserveThis.cshmiTemplateHideableClass) === -1){
-					continue;
-				}else if (childTemplates[i].getAttribute("display") == "block"){
-					childTemplates[i].setAttribute("display", "none");
-				}else{
-					childTemplates[i].setAttribute("display", "block");
-					
-					
-					//doku depth of moving to top
-					
-					//Move Faceplate-Container after every other, so it is fully visible
-					if (HMI.instanceOf(VisualObject.parentNode, preserveThis.cshmiTemplateActionClass) === false){
-						//hideable childtemplate in a normal template
-						VisualObject.parentNode.parentNode.appendChild(VisualObject.parentNode);
-					}else{
-						//hideable childtemplate in an action instantiated template (one level more)
-						VisualObject.parentNode.parentNode.parentNode.appendChild(VisualObject.parentNode.parentNode);
-					}
-				}
-			}
 			//quit propagation of event in any case. We do not want the parent template to handle the click
 			if (evt.stopPropagation) evt.stopPropagation();
 		}, false);
@@ -2946,12 +2921,45 @@ cshmi.prototype = {
 		}
 	},
 	
-	
+	/**
+	 * toggles visibility of child Templates
+	 * @param {Node} VisualParentObject Node which childs are toggled
+	 * @return void
+	 */
+	toggleChildTemplates: function(VisualParentObject){
+		var childTemplates = VisualParentObject.childNodes;
+		
+		for (var i=0; i < childTemplates.length; i++) {
+			var Classes = childTemplates[i].getAttribute("class");
+			if (Classes === null){
+				continue;
+			}else if (Classes.indexOf(this.cshmiTemplateHideableClass) === -1){
+				continue;
+			}else if (childTemplates[i].getAttribute("display") == "block"){
+				childTemplates[i].setAttribute("display", "none");
+			}else{
+				childTemplates[i].setAttribute("display", "block");
+				
+				
+				//doku depth of moving to top
+				
+				//Move Faceplate-Container after every other, so it is fully visible
+				if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateActionClass) === false){
+					//hideable childtemplate in a normal template
+					VisualParentObject.parentNode.appendChild(VisualParentObject);
+				}else{
+					//hideable childtemplate in an action instantiated template (one level more)
+					VisualParentObject.parentNode.parentNode.appendChild(VisualParentObject.parentNode);
+				}
+			}
+		}
+	},
+
 	/***************************************************************************************************************
-	 * @description builds SVG container, gets the parameter via KS
+	 * builds SVG container, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgContainer: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -2984,10 +2992,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG line object, gets the parameter via KS
+	 * builds SVG line object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgLine: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3041,10 +3049,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG polyline object, gets the parameter via KS
+	 * builds SVG polyline object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgPolyline: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3092,10 +3100,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG polygon object, gets the parameter via KS
+	 * builds SVG polygon object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgPolygon: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3143,10 +3151,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG path object, gets the parameter via KS
+	 * builds SVG path object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgPath: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3235,10 +3243,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG Text object, gets the parameter via KS
+	 * builds SVG Text object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgText: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3297,7 +3305,7 @@ cshmi.prototype = {
 		var contentLength = parseInt(requestList[ObjectPath]["content"].length, 10);
 		var trimmedContent;
 		
-		if(trimLength > 0 && !isNaN(parseFloat(requestList[ObjectPath]["content"])) && isFinite(requestList[ObjectPath]["content"])){
+		if(trimLength > 0 && isNumeric(requestList[ObjectPath]["content"])){
 			//we have a numeric NewValue
 			if(requestList[ObjectPath]["content"].indexOf(".") === -1){
 				//INT or UINT
@@ -3341,10 +3349,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG circle object, gets the parameter via KS
+	 * builds SVG circle object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgCircle: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3392,10 +3400,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG ellipse object, gets the parameter via KS
+	 * builds SVG ellipse object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgEllipse: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3448,10 +3456,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG rect object, gets the parameter via KS
+	 * builds SVG rect object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgRect: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3499,10 +3507,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description builds SVG image object, gets the parameter via KS
+	 * builds SVG image object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @returns {SVGElement} VisualObject the new constructed element or null
+	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
 	_buildSvgImage: function(VisualParentObject, ObjectPath){
 		var requestList;
@@ -3583,10 +3591,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description sets svg attributes from an Array
+	 * sets svg attributes from an Array
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {Array} configArray array with a list of thing to set
-	 * @returns {Boolean} true
+	 * @return {Boolean} true
 	 */
 	_processBasicVariables: function(VisualObject, configArray){
 		if (configArray["visible"] && configArray["visible"] == "FALSE"){
@@ -3628,10 +3636,11 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description requests a list of OV-Variables from multiple OV-Objects
+	 * Requests a list of OV-Variables from multiple OV-Objects
+	 * @this main cshmi object
 	 * @param {Array} requestList List of multiple Variables to fetch
 	 * @param {Boolean} reportError Should an error be reported on screen?
-	 * @returns {Boolean} true on success, false if an error occured
+	 * @return {Boolean} true on success, false if an error occured
 	 */
 	_requestVariablesArray: function(requestList, reportError){
 		var requestString = "";
@@ -3677,10 +3686,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description sets an SVG title on an object
+	 * sets an SVG title on an object
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} newText Text for the title
-	 * @returns {Boolean} true
+	 * @return {Boolean} true
 	 */
 	_setTitle: function(VisualObject, newText){
 		var titles = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
@@ -3695,10 +3704,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * @description returns a recursive list of all elements with a requested class
+	 * returns a recursive list of all elements with a requested class
 	 * @param node node to start the search
 	 * @param {String} newText a string representing the list of class names to match; class names are separated by whitespace
-	 * @returns {NodeList} returnElements a live NodeList (but see the note below) of found elements in the order they appear in the tree.
+	 * @return {NodeList} returnElements a live NodeList (but see the note below) of found elements in the order they appear in the tree.
 	 */
 	_getElementsByClassName: function(node, className){
 		if (node.getElementsByClassName){

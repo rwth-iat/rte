@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2009
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -65,24 +65,18 @@
 ************************************************************************/
 
 
-/***************************************************
-				Attention
-	The HMI is parametrised in hmi-class-HMI.js
-****************************************************/
-
-
-/*********************************
-	Functions - $
-*********************************/
-
+/**
+ * short for document.getElementById
+ */
 function $(id) {
 	return document.getElementById(id);
 }
 
-/*********************************
-	Functions - deleteChilds
-*********************************/
-
+/**
+ * deletes all childs of a Node
+ * @param ParentNode
+ * @returns void
+ */
 function deleteChilds(ParentNode) {
 	HMI.hmi_log_trace("deleteChilds with id: "+ParentNode.id+" - Start");
 	
@@ -93,9 +87,22 @@ function deleteChilds(ParentNode) {
 	HMI.hmi_log_trace("deleteChilds - End");
 }
 
-/*********************************
-	Feature - emulate XMLHttpRequest of old IEs with new API
-*********************************/
+/**
+ * checks if a variable is Numeric
+ * http://stackoverflow.com/questions/18082
+ * http://dl.dropbox.com/u/35146/js/tests/isNumber.html
+ * @returns boolean
+ */
+function isNumeric(Value){
+	if(!isNaN(parseFloat(Value)) && isFinite(Value)){
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Feature - emulate XMLHttpRequest of old IEs with new API
+ */
 if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 	try{ return new ActiveXObject("Msxml2.XMLHTTP.6.0"); }catch(e){}
 	try{ return new ActiveXObject("Msxml2.XMLHTTP.3.0"); }catch(e){}
@@ -103,10 +110,11 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function(){
 	try{ return new ActiveXObject("Microsoft.XMLHTTP"); }catch(e){}
 	throw new Error("Could not find an XMLHttpRequest alternative.");
 };
-/*********************************
-	Feature - emulate String trim() in old browsers
-	trim is native on: Firefox 3.5, Internet Explorer 9, Webkit since Okt 2009, Opera since 2010
-*********************************/
+
+/**
+ * Feature - emulate String trim() in old browsers
+ * trim is native on: Firefox 3.5, Internet Explorer 9, Webkit since Okt 2009, Opera since 2010
+ */
 if (!String.prototype.trim) {
 	String.prototype.trim = function(){
 		//performance test:
@@ -115,12 +123,12 @@ if (!String.prototype.trim) {
 	};
 }
 
-/*********************************
-	Crossbrowser Eventhandling
-	http://www.quirksmode.org/js/eventSimple.html
-	used for the Select Menus
-	Adobe SVG Viewer supports addEventListener, so the gestures did not need a change
-*********************************/
+/**
+ * Crossbrowser Eventhandling
+ * http://www.quirksmode.org/js/eventSimple.html
+ * used for the Select Menus
+ * Adobe SVG Viewer supports addEventListener, so the gestures did not need a change
+ */
 function addEventSimple(obj,evt,fn) {
 	if (obj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG || obj.addEventListener)
 		obj.addEventListener(evt,fn,false);
