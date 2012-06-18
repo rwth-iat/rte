@@ -69,6 +69,10 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
+	if(ov_string_compare(value, "normal") == OV_STRCMP_EQUAL){
+		//fixing common typo
+		return ov_string_setvalue(&pobj->v_fontSize,"medium");
+	}
 	//todo check numeric => change to numeric+"px"
 	return ov_string_setvalue(&pobj->v_fontSize,value);
 }
