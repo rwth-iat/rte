@@ -340,6 +340,9 @@ cshmi.prototype = {
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				
+				
+				//fixme: hideable hier abfrühstücken!
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
@@ -2902,6 +2905,8 @@ cshmi.prototype = {
 		}
 		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 		//toggle visibility of hideable childtemplates onclick
+		
+		//todo: in funktion verschieben und in click geste auch erledigen
 		VisualParentObject.addEventListener("click", function(evt){
 			var childTemplates = VisualParentObject.childNodes;
 			
@@ -2999,6 +3004,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["y1"] = null;
 			requestList[ObjectPath]["x2"] = null;
 			requestList[ObjectPath]["y2"] = null;
+			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
@@ -3052,6 +3058,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["opacity"] = null;
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["points"] = null;
+			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
@@ -3102,6 +3109,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["opacity"] = null;
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["points"] = null;
+			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
@@ -3152,6 +3160,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["opacity"] = null;
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["d"] = null;
+			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
@@ -3601,6 +3610,9 @@ cshmi.prototype = {
 		}
 		if(configArray["stroke"] && configArray["stroke"] !== ""){
 			VisualObject.setAttribute("stroke", configArray["stroke"]);
+		}
+		if(configArray["strokeWidth"] && configArray["strokeWidth"] !== ""){
+			VisualObject.setAttribute("stroke-width", configArray["strokeWidth"]);
 		}
 		if(configArray["fill"] && configArray["fill"] !== ""){
 			VisualObject.setAttribute("fill", configArray["fill"]);
