@@ -303,14 +303,14 @@ void ksservtcp_managersendrecv_typemethod(
 			//ov_logfile_info("Mgrsendreceived: got response!");
 			// 		auswertung des empfangenen XDRs nicht moeglich,
 			//		da keine register/unregister-fehlgeschlagen Befehle erzeugt werden konnten
-			if (pinst->v_operatingfunction == 1) {
+		//	if (pinst->v_operatingfunction == 1) {
 				//~ printf("\n\n\nregistered\n\n\n");
-				ov_logfile_info("Mgrsendreceived: got response - registered at manager");
-			} else if (pinst->v_operatingfunction == 2) {
-				ov_logfile_info("Mgrsendreceived: got response - unregistered at manager");
-			} else {
-				ov_logfile_info("Mgrsendreceived: got response - unknown operatingfunction");
-			}
+		//		ov_logfile_info("Mgrsendreceived: got response - registered at manager");
+		//	} else if (pinst->v_operatingfunction == 2) {
+		//		ov_logfile_info("Mgrsendreceived: got response - unregistered at manager");
+		//	} else {
+		//		ov_logfile_info("Mgrsendreceived: got response - unknown operatingfunction");
+		//	}
 			//ready for new work
 			pinst->v_actimode = 0;
 			pinst->v_state = STATUS_MANAGERSENDRECV_UNUSED;
