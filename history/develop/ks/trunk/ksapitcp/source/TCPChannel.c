@@ -318,7 +318,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 			((char*) &size_receiving)[i] = ckxdrlength[3-i];
 		((char*) &size_receiving)[3] = 0;
 
-		ksapi_logfile_debug("xdr-size: %d", size_receiving);
+		//ksapi_logfile_debug("xdr-size: %d", size_receiving);
 
 
 		xdr_received = (char*)malloc(size_receiving);
@@ -355,7 +355,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 			size_received += recvBytes;
 			buffer_location = &(xdr_received[size_received]);
 
-			ksapi_logfile_debug("%d of %d bytes received, err is %d", size_received, size_receiving, err);
+			//ksapi_logfile_debug("%d of %d bytes received, err is %d", size_received, size_receiving, err);
 
 		}while(size_received < size_receiving);
 
@@ -381,11 +381,11 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 		//~ printf("%s\n\n", xdrdata);
 
 		//close connection
-		ksapi_logfile_debug("TCPChannel closing socket");
+	//	ksapi_logfile_debug("TCPChannel closing socket");
 		CLOSE_SOCKET(sock); //todo connection manager for reuseage of socket!
 		ksapitcp_TCPChannel_socket_set(channel, -1);
 		//call obj to decode XDR!
-		ksapi_logfile_debug("TCPChannel handing over control to ksapi obj %s", kscommon->v_identifier);
+	//	ksapi_logfile_debug("TCPChannel handing over control to ksapi obj %s", kscommon->v_identifier);
 		kscommonVTBL->m_returnMethodxdr(kscommon, xdr_received, size_received);
 		ksapitcp_TCPChannel_constate_set(channel, CONSTATE_CHANNEL_OK); //OK= Frei
 		//ready -> go to sleep
