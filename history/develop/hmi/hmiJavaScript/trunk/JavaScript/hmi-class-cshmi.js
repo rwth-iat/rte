@@ -1101,6 +1101,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["persistentGlobalVar"] = null;
 			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
 			requestList[ObjectPath]["TemplateFBVariableReferenceName"] = null;
+			requestList[ObjectPath]["TemplateConfigValues"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
@@ -1393,6 +1394,19 @@ cshmi.prototype = {
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 			return false;
+		}else if (ParameterName === "TemplateConfigValues"){
+			TemplateObject = VisualObject;
+			do{
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					break;
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			
+			if(TemplateObject !== null){
+				TemplateObject.ConfigValues[ParameterValue] = NewValue;
+				return true;
+			}
 		}
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
 		return false;
