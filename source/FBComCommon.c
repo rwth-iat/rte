@@ -276,8 +276,10 @@ OV_DLLFNCEXPORT void fbcomlib_FBComCommon_typemethod(
 	OV_VTBLPTR_ksapi_KSCommon						mtable = NULL;
 
 	//check if read was set to true
-	if (fbcommon->v_doSend){
-		fbcommon->v_doSend = FALSE;
+	if ((fbcommon->v_doSend || fbcommon->v_doCyclic)
+			&& fbcommon->v_state != STATE_INIT
+			&& fbcommon->v_state != STATE_CLIENTBUSY){
+		fbcommon->v_doSend = TRUE;
 		//check if all values are set
 		if (!((fbcommon->v_server)&&(fbcommon->v_host)&&(fbcommon->v_path))){
 			ov_logfile_error("Please set all values: server,host,path");

@@ -560,7 +560,7 @@ LIBRARY	fbcomlib
 		COMMENT	=	"Function block which takes the input and starts the sending";
 		VARIABLES
 			linkedpath		:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
-				COMMENT			=	"path to linked object"
+				COMMENT			=	"path to linked (child) object without anchor; path variable must include anchor of parent"
 				INITIALVALUE	=	"/TechUnits/";
 			position				:	INT			HAS_ACCESSORS		FLAGS	=	"i"
 				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after";
@@ -581,7 +581,7 @@ LIBRARY	fbcomlib
 		COMMENT	=	"Function block which takes the input and starts the sending";
 		VARIABLES
 			linkedpath		:	STRING		HAS_ACCESSORS		FLAGS	=	"i"
-				COMMENT			=	"path to linked object"
+				COMMENT			=	"path to linked (child) object without anchor; path variable must include anchor of parent"
 				INITIALVALUE	=	"/TechUnits/";
 			doReset					:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
 				COMMENT			=	"Set to true to re-initalize the FB"
