@@ -161,10 +161,10 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_FBComCommon_doResetAbstract_set(
  * Indicates that a command sould be repeated if the previous one
  * is finied (ignores state of previous!!!)
  */
-OV_DLLFNCEXPORT OV_BOOL fbcomlib_FBComCommon_CyclicReactivation_get(
+OV_DLLFNCEXPORT OV_BOOL fbcomlib_FBComCommon_doCyclic_get(
     OV_INSTPTR_fbcomlib_FBComCommon          pobj
 ) {
-    return pobj->v_CyclicReactivation;
+    return pobj->v_doCyclic;
 }
 
 /**
@@ -172,11 +172,11 @@ OV_DLLFNCEXPORT OV_BOOL fbcomlib_FBComCommon_CyclicReactivation_get(
  * Indicates that a command should be repeated if the previous one
  * is finished (ignores state of previous!!!)
  */
-OV_DLLFNCEXPORT OV_RESULT fbcomlib_FBComCommon_CyclicReactivation_set(
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_FBComCommon_doCyclic_set(
     OV_INSTPTR_fbcomlib_FBComCommon          pobj,
     const OV_BOOL  value
 ) {
-    pobj->v_CyclicReactivation = value;
+    pobj->v_doCyclic = value;
     return OV_ERR_OK;
 }
 

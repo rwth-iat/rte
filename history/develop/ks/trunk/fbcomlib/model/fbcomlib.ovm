@@ -21,7 +21,7 @@ LIBRARY	fbcomlib
 				INITIALVALUE	=	FALSE; 
 			doResetAbstract			:	BOOL		HAS_SET_ACCESSOR		FLAGS	=	"h"
 				COMMENT			=	"Set to true to re-initalize the FB" INITIALVALUE	=	FALSE;
-			CyclicReactivation			:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
+			doCyclic			:	BOOL		HAS_ACCESSORS		FLAGS	=	"i"
 				COMMENT			=	"Set to true to cyclically execute the command"
 				INITIALVALUE	=	FALSE;
 			stateString				:	STRING		HAS_GET_ACCESSOR		FLAGS	=	"o"
