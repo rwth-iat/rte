@@ -149,13 +149,22 @@ OV_DLLFNCEXPORT void fbcomlib_getEPidentifiers_retMethod(
 	OV_RESULT result;
 
 	fbcomlib_FBComCommon_retMethod(pobj, errorstring, errorcode);
-	//get the string
+
+	result = Ov_SetDynamicVectorLength(&(getepidentifiers->v_identifierList), ksapigetepidentifiers->v_identifierList.veclen, STRING);
+	if (Ov_Fail(result))
+	{
+		ov_logfile_error("Error setting vector length: %s", ov_result_getresulttext(result));
+		Ov_SetDynamicVectorValue(&getepidentifiers->v_identifierList, NULL, 0, STRING);
+		return;
+	}
+
+	//get the strings from the underlying kscommon obj
 	for (i = 0; i < ksapigetepidentifiers->v_identifierList.veclen; i++)
 	{
 		result = ov_string_setvalue(&(getepidentifiers->v_identifierList.value[i]), ksapigetepidentifiers->v_identifierList.value[i]);
 		if (Ov_Fail(result))
 		{
-			ov_logfile_error("Error setting string");
+			ov_logfile_error("Error setting string: %s", ov_result_getresulttext(result));
 			Ov_SetDynamicVectorValue(&getepidentifiers->v_identifierList, NULL, 0, STRING);
 			return;
 		}
