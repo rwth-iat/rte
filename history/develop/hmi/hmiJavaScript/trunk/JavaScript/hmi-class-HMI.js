@@ -903,7 +903,7 @@ HMI.prototype = {
 		$("idBookmark").href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
-			"&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value
+			"&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value+
 			"&Sheet="+HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
@@ -1105,7 +1105,7 @@ HMI.prototype = {
 		$("idBookmark").href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
-			"&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value
+			"&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value+
 			"&Sheet="+HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
