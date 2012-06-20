@@ -660,7 +660,7 @@ HMI.prototype = {
 				
 				HMI.ButShowServers.value = "Loading Sheetlist...";
 				HMI.PossServers.options[0] = new Option('- list not loaded -', HMI_Parameter_Liste.Server);
-				HMI.PossSheets.options[0] = new Option('- list not loaded -', 'no sheet');
+				HMI.PossSheets.options[0] = new Option('- list not loaded -', '');
 				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
 				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
@@ -709,6 +709,40 @@ HMI.prototype = {
 		
 		this.hmi_log_trace("HMI.prototype.interpreteUrlParameter - End");
 		return;
+	},
+	
+	/**
+	 * update deep link and HTML5 history
+	 */
+	updateDeepLink: function (){
+		var newDeepLink = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1);
+		newDeepLink += "?RefreshTime="+HMI.RefreshTime;
+		if(HMI.InputHost.value !== ""){
+			newDeepLink += "&Host="+HMI.InputHost.value;
+		}
+		if(HMI.PossServers.selectedIndex >= 0 && HMI.PossServers.options[HMI.PossServers.selectedIndex].value !== ""){
+			newDeepLink += "&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value;
+		}
+		if(HMI.PossSheets.selectedIndex >= 0 && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value !== ""){
+			newDeepLink += "&Sheet="+HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value;
+		}
+		if (HMI.trace === true){
+			newDeepLink += "&trace=true";
+		}
+		if ($("idShowcomponents") && $("idShowcomponents").checked){
+			newDeepLink += "&ShowComp=true";
+		}
+		$("idBookmark").href = newDeepLink;
+		
+		//add sheet to html5 Session history management, if new
+		if (window.history.pushState){
+			if (newDeepLink != window.location.href){
+				window.history.pushState("", "", newDeepLink);
+			}
+		}else{
+			//show deeplink if history management is not available
+			$("idBookmark").style.display = "inline";
+		}
 	},
 	
 	/**
@@ -900,13 +934,8 @@ HMI.prototype = {
 		}
 		newInputRefreshTime = null;
 		
-		$("idBookmark").href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
-			"?Host="+HMI.InputHost.value+
-			"&RefreshTime="+HMI.RefreshTime+
-			"&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value+
-			"&Sheet="+HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value+
-			(HMI.trace===true?"&trace=true":"")+
-			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
+		//present a "deep link" to the state
+		this.updateDeepLink();
 		
 		//if an auto refresh is active, reset to new value
 		if (HMI.RefreshTimeoutID !== null){
@@ -963,15 +992,6 @@ HMI.prototype = {
 		
 		//Gateway could not be another host without violating Same Origin Policy
 		var KSGateway = window.location.host;
-		
-		//present a deep link to the Host setting
-		$("idBookmark").style.display = "";
-		$("idBookmark").href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
-			"?Host="+HMI.InputHost.value+
-			"&RefreshTime="+HMI.RefreshTime+
-			(HMI.trace===true?"&trace=true":"")+
-			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
-		
 		//an init generates a new Handle, needed cause we communicate to the Manager the first time
 		this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
 		if (this.KSClient.TCLKSHandle !== null){
@@ -987,6 +1007,10 @@ HMI.prototype = {
 		if (document.getElementById("idThrobbler") !== null){
 			document.getElementById("idThrobbler").style.display = "none";
 		}
+		
+		//present a "deep link" to the state
+		this.updateDeepLink();
+		
 		//correct magellan URL
 		//
 		if (this.WebmagellanPath !== null){
@@ -1020,19 +1044,19 @@ HMI.prototype = {
 		HMI.RefreshTimeoutID = null;
 		
 		//nothing selected
-		if (Server == 'no server'){
-			HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
+		if (Server === ''){
+			HMI.PossSheets.options[0] = new Option('please select Server first', '');
 			return false;
 		}
 		
-		var SheetList = this.KSClient.getSheets(Server);
+		var SheetList = this.KSClient.getSheets(this.KSClient.Host, Server);
 		
 		this.hmi_log_trace("HMI.prototype.showSheets - number of sheets: "+SheetList.length);
 		if (SheetList.length === 0){
-			this.PossSheets.options[0] = new Option('- no sheets available -', 'no sheet');
+			this.PossSheets.options[0] = new Option('- no sheets available -', '');
 			return false;
 		} else {
-			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', 'no sheet');
+			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', '');
 			for (i = 0; i < SheetList.length; i++){
 				//spaces in objectname are encoded as %20 within OV
 				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(SheetList[i]), SheetList[i]);
@@ -1046,6 +1070,9 @@ HMI.prototype = {
 		}
 		SheetList = null;
 		
+		//present a "deep link" to the state
+		this.updateDeepLink();
+		
 		this.hmi_log_trace("HMI.prototype.showSheets - End");
 		return true;
 	},
@@ -1057,21 +1084,20 @@ HMI.prototype = {
 	showSheet: function (Sheet) {
 		this.hmi_log_trace("HMI.prototype.showSheet - Start with Sheet: "+Sheet);
 		
+		//present a "deep link" to the state
+		this.updateDeepLink();
+		
 		//clean an old SVG display and displayed errors in website
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
 		$("idBookmark").style.display = "none";
-		HMI.ButShowServers.value = "Loading Sheet...";
-		if (document.getElementById("idThrobbler") !== null){
-			document.getElementById("idThrobbler").style.display = "inline";
-		}
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
 		//nothing selected
-		if (Sheet == 'no sheet'){
+		if (Sheet === ''){
 			return;
 		}
 		
@@ -1100,25 +1126,7 @@ HMI.prototype = {
 		//blur the buttons for convenience with keyboard interaction
 		HMI.PossSheets.blur();
 		HMI.PossServers.blur();
-		//present a "deep link" to the sheet
 		
-		$("idBookmark").href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
-			"?Host="+HMI.InputHost.value+
-			"&RefreshTime="+HMI.RefreshTime+
-			"&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value+
-			"&Sheet="+HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value+
-			(HMI.trace===true?"&trace=true":"")+
-			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
-		
-		//add sheet to html5 Session history management, if new
-		if (window.history.pushState){
-			if ($("idBookmark").href != window.location.href){
-				window.history.pushState("", "", $("idBookmark").href);
-			}
-		}else{
-			//show deeplink if history management is not available
-			$("idBookmark").style.display = "inline";
-		}
 		HMI.ButShowServers.value = "Reload Serverlist";
 		if (document.getElementById("idThrobbler") !== null){
 			document.getElementById("idThrobbler").style.display = "none";
