@@ -82,6 +82,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 	//force correct placement
 	pParent = Ov_GetParent(ov_containment, pobj);
 	if (pParent != NULL){
+		//Element allowed only under ContainerElements, Templates and not under csContainers
 		if (!( Ov_CanCastTo(cshmi_ContainerElement, pParent) || Ov_CanCastTo(cshmi_Template, pParent) ) ||
 			Ov_CanCastTo(cshmi_csContainer, pParent)
 		){
