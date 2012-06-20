@@ -1049,7 +1049,7 @@ HMI.prototype = {
 			return false;
 		}
 		
-		var SheetList = this.KSClient.getSheets(this.KSClient.Host, Server);
+		var SheetList = this.KSClient.getSheets(Server);
 		
 		this.hmi_log_trace("HMI.prototype.showSheets - number of sheets: "+SheetList.length);
 		if (SheetList.length === 0){
