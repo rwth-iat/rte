@@ -143,8 +143,11 @@ OV_DLLFNCEXPORT void ksapi_unlinkObject_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_KSCommon, pvtableop, kscommon);
 
 	//Analyse xdr
-	analyseresultonlyreply(xdr, xdrlength);
-	pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);
+	if(analyseresultonlyreply(xdr, xdrlength) == 0)
+		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);
+	else
+		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+
 	
 	return;
 }
