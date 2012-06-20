@@ -68,12 +68,15 @@
 *
 ***********************************************************************/
 
-/***********************************************************************
-	constructor
-	
-	called at construction time, has to be independent from other js files
-***********************************************************************/
-
+/**
+ * initialises HMI object
+ * @param {boolean} debug log debug output to the console
+ * @param {boolean} error log errors to the console
+ * @param {boolean} warning log warning to the console
+ * @param {boolean} info log info output to the console
+ * @param {boolean} trace log trace information to the console
+ * @constructor
+ */
 function HMI(debug, error, warning, info, trace) {
 	this.HMI_Constants = Object();
 	this.HMI_Constants.NAMESPACE_XHTML = "http://www.w3.org/1999/xhtml";
@@ -134,16 +137,14 @@ function HMI(debug, error, warning, info, trace) {
 	}
 };
 
-/***********************************************************************
-	prototype
-***********************************************************************/
-
+/**
+ * prototype
+ */
 HMI.prototype = {
-	/*********************************
-		init
-		
-		called from "load" event, all js files are available
-	*********************************/
+	/**
+	 * init
+	 * called from "load" event, when all js files are available
+	 */
 	init: function () {
 		//garantee uniq initialisation
 		if (this.initialised === true){
@@ -612,7 +613,6 @@ HMI.prototype = {
 			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length !== 0){
 				HMI.InputRefreshTime.value = HMI_Parameter_Liste.RefreshTime;
 			}
-			HMI.ChangeRefreshTime();
 			
 			//correct ShowComponents Status in website with user wish
 			if (HMI_Parameter_Liste.ShowComp && HMI_Parameter_Liste.ShowComp.length !== 0){
@@ -620,6 +620,7 @@ HMI.prototype = {
 					$("idShowcomponents").checked = true;
 				}
 			}
+			HMI.ChangeRefreshTime();
 			
 			//a server and sheet is specified in "deep link" (host is always there)
 			if (	HMI_Parameter_Liste.Server
@@ -635,8 +636,8 @@ HMI.prototype = {
 				deleteChilds(this.Playground);
 				deleteChilds(this.ErrorOutput);
 				
-				HMI.PossServers.options[0] = new Option('- list not loaded -', 'no server');
-				HMI.PossSheets.options[0] = new Option('- list not loaded -', 'no sheet');
+				HMI.PossServers.options[0] = new Option('- list not loaded -', HMI_Parameter_Liste.Server);
+				HMI.PossSheets.options[0] = new Option('- list not loaded -', HMI_Parameter_Liste.Sheet);
 				
 				//deactivate the Select-Boxes, because there is no usefull content
 				HMI.PossServers.disabled = true;
@@ -658,7 +659,7 @@ HMI.prototype = {
 				//only a server is specified in "deep link" => showSheets
 				
 				HMI.ButShowServers.value = "Loading Sheetlist...";
-				HMI.PossServers.options[0] = new Option('- list not loaded -', 'no server');
+				HMI.PossServers.options[0] = new Option('- list not loaded -', HMI_Parameter_Liste.Server);
 				HMI.PossSheets.options[0] = new Option('- list not loaded -', 'no sheet');
 				
 				//an init generates a new Handle, needed cause we communicate to the Server the first time
@@ -710,11 +711,10 @@ HMI.prototype = {
 		return;
 	},
 	
-	/*********************************
-		Functions - displaygestureReactionMarker
-		
-		called after sending a gesture request
-	*********************************/
+	/**
+	 * shows a rectangle for 800ms to provide visual feedback
+	 * called after sending a gesture request
+	 */
 	displaygestureReactionMarker: function (Component){
 		this.hmi_log_trace("HMI.prototype.displaygestureReactionMarker");
 		
@@ -767,11 +767,10 @@ HMI.prototype = {
 			}, 800);
 	},
 	
-	/*********************************
-		Functions - updateKeepHeader
-		
-		called with a onclick handler of the checkbox and in HMI.init
-	*********************************/
+	/**
+	 * saves state of input checkbox in a js variable
+	 * called with a onclick handler of the checkbox and in HMI.init
+	 */
 	updateKeepHeader: function (){
 		this.hmi_log_trace("HMI.prototype.updateKeepHeader - change requested");
 		if (document.getElementById("idKeepHeader").checked === true) {
@@ -780,9 +779,11 @@ HMI.prototype = {
 			HMI.autoKeepHeader = false;
 		}
 	},
-	/*********************************
-		Functions - hideHeader
-	*********************************/
+	
+	/**
+	 * hides or toggles header
+	 * @param {boolean} show hide header if false, hide if false, toggle if null
+	 */
 	hideHeader: function(hide){
 		if (hide === true || (hide === null && HMI.HeaderIsVisible === true)){
 			//hide menu
@@ -852,9 +853,11 @@ HMI.prototype = {
 			}
 		}
 	},
-	/*********************************
-		Functions - smoothHeaderHide
-	*********************************/
+	
+	/**
+	 * reduces height of header
+	 * recall itself if header is still visible
+	 */
 	smoothHeaderHide: function(){
 		var HeaderActualheight = parseInt(HMI.HideableHeader.offsetHeight, 10);
 		if (HeaderActualheight <= 30){
@@ -869,9 +872,10 @@ HMI.prototype = {
 			window.setTimeout(HMI.smoothHeaderHide, 30);
 		}
 	},
-	/*********************************
-		Functions - ChangeRefreshTime
-	*********************************/
+	
+	/**
+	 * handles a refreshtime input change
+	 */
 	ChangeRefreshTime: function(){
 		
 		var newInputRefreshTime;
@@ -895,12 +899,12 @@ HMI.prototype = {
 			HMI.InputRefreshTime.value = newInputRefreshTime;
 		}
 		newInputRefreshTime = null;
-		$("idBookmark").href = window.location.protocol+"//"+
-			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
+		
+		$("idBookmark").href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
-			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
+			"&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value
+			"&Sheet="+HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
 		
@@ -911,9 +915,9 @@ HMI.prototype = {
 		}
 	},
 	
-	/*********************************
-		showServers
-	*********************************/
+	/**
+	 * clears active display and loads a new serverlist from host
+	 */
 	showServers: function () {
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
@@ -962,8 +966,7 @@ HMI.prototype = {
 		
 		//present a deep link to the Host setting
 		$("idBookmark").style.display = "";
-		$("idBookmark").href = window.location.protocol+"//"+
-			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
+		$("idBookmark").href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
 			(HMI.trace===true?"&trace=true":"")+
@@ -996,9 +999,10 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
 	
-	/*********************************
-		showSheets
-	*********************************/
+	/**
+	 * clears active display and loads a new sheetlist from server
+	 * @param {String} Server Name of server to ask for sheets
+	 */
 	showSheets: function (Server) {
 		this.hmi_log_trace("HMI.prototype.showSheets - Start, requested Server: "+Server);
 		
@@ -1046,9 +1050,10 @@ HMI.prototype = {
 		return true;
 	},
 	
-	/*********************************
-		showSheet
-	*********************************/
+	/**
+	 * clears active display and loads a new sheet from server
+	 * @param {String} Sheet Name of sheet to load
+	 */
 	showSheet: function (Sheet) {
 		this.hmi_log_trace("HMI.prototype.showSheet - Start with Sheet: "+Sheet);
 		
@@ -1096,12 +1101,12 @@ HMI.prototype = {
 		HMI.PossSheets.blur();
 		HMI.PossServers.blur();
 		//present a "deep link" to the sheet
-		$("idBookmark").href = window.location.protocol+"//"+
-			window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
+		
+		$("idBookmark").href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+
 			"?Host="+HMI.InputHost.value+
 			"&RefreshTime="+HMI.RefreshTime+
-			"&Server="+(HMI.KSClient.KSServer ? HMI.KSClient.KSServer.substr(HMI.KSClient.KSServer.indexOf('/')+1) : "")+
-			"&Sheet="+(HMI.Path !== null ? HMI.Path : "")+
+			"&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value
+			"&Sheet="+HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value+
 			(HMI.trace===true?"&trace=true":"")+
 			(($("idShowcomponents") && $("idShowcomponents").checked)?"&ShowComp=true":"");
 		
@@ -1122,9 +1127,9 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
 	},
 	
-	/*********************************
-		refreshSheet
-	*********************************/
+	/**
+	 * gets a new sheet from a server and displays it
+	 */
 	refreshSheet: function () {
 		this.hmi_log_trace("HMI.prototype.refreshSheet - Start");
 		
@@ -1214,9 +1219,9 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
 	},
 	
-	/*********************************
-		cbrefreshSheet
-	*********************************/
+	/**
+	 * request a reload of the active sheet
+	 */
 	cbrefreshSheet: function (client, req) {
 		HMI.hmi_log_trace("HMI.prototype.cbrefreshSheet - Start");
 		
@@ -1515,11 +1520,9 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.initGestures - End");
 	},
 	
-	/*********************************
-		instanceOf
-		
-		checks if a svg element is instanceOf a class
-	*********************************/
+	/**
+	 * checks if a svg element is instanceOf a class
+	 */
 	instanceOf: function (Node, ClassName) {
 		
 		//trace log deactivated, causes too much noise and performanceproblem in a production system
@@ -1549,11 +1552,9 @@ HMI.prototype = {
 		return false;
 	},
 	
-	/*********************************
-	addClass
-	
-	adds a class to a svg element
-	*********************************/
+	/**
+	 * adds a class to a svg element
+	 */
 	addClass: function(Node, additionalClass){
 		if (Node.classList && Node.classList.add){
 			//html5 classList saves us some work
@@ -1710,9 +1711,9 @@ HMI.prototype = {
 			requires console (Firebug, Opera, Safari...)
 	********************************************************************/
 	
-	/*********************************
-		hmi_log_debug
-	*********************************/
+	/**
+	 * prints debug output on the console
+	 */
 	hmi_log_debug: function (text) {
 		if (this.debug === true){
 			if(window.console && window.console.debug){
@@ -1726,9 +1727,9 @@ HMI.prototype = {
 		}
 	},
 	
-	/*********************************
-		hmi_log_error
-	*********************************/
+	/**
+	 * prints error output on the console
+	 */
 	hmi_log_error: function (text) {
 		if (this.error === true){
 			if(window.console && window.console.error){
@@ -1739,9 +1740,9 @@ HMI.prototype = {
 		}
 	},
 	
-	/*********************************
-		hmi_log_warning
-	*********************************/
+	/**
+	 * prints warning output on the console
+	 */
 	hmi_log_warning: function (text) {
 		if (this.warning === true){
 			if(window.console && window.console.warn){
@@ -1752,9 +1753,9 @@ HMI.prototype = {
 		}
 	},
 	
-	/*********************************
-		hmi_log_info
-	*********************************/
+	/**
+	 * prints info output on the console
+	 */
 	hmi_log_info: function (text) {
 		if (this.info === true){
 			if(window.console && window.console.info){
@@ -1765,9 +1766,9 @@ HMI.prototype = {
 		}
 	},
 	
-	/*********************************
-		hmi_log_trace
-	*********************************/
+	/**
+	 * prints trace output on the console
+	 */
 	hmi_log_trace: function (text) {
 		if (this.trace === true){
 			if(window.console && window.console.debug){
@@ -1780,9 +1781,9 @@ HMI.prototype = {
 		}
 	},
 	
-	/*********************************
-		hmi_log_onwebsite
-	*********************************/
+	/**
+	 * clears error section on the page and prints output on the page
+	 */
 	hmi_log_onwebsite: function (text) {
 		var ErrorTextNode = document.createTextNode(text);
 		deleteChilds(HMI.ErrorOutput);
@@ -1791,9 +1792,9 @@ HMI.prototype = {
 		HMI.hideHeader(false);
 	},
 	
-	/*********************************
-		hmi_log_info_onwebsite
-	*********************************/
+	/**
+	 * prints info output on the page, but prevents dupe message
+	 */
 	hmi_log_info_onwebsite: function (text) {
 		if (this.InfoOutput){
 			var target = this.InfoOutput;
@@ -1819,11 +1820,11 @@ HMI.prototype = {
 	}
 };
 
-/*********************************
-	Global Variables
-	
-	HMI(debug, error, warning, info, trace)
-*********************************/
+/**
+ * instanciates a new HMI object in the global scope
+ * 
+ * HMI(debug, error, warning, info, trace)
+ */
 var HMI;
 if (window.location.search && -1 != unescape(window.location.search).indexOf("trace=true")){
 	HMI = new HMI(true, true, true, true, true);
@@ -1846,7 +1847,7 @@ if( window.addEventListener ) {
 	window.attachEvent('onload',function(){HMI.init();});
 }
 
-//fallback for stupid browsers (mostly Google Chrome) which fires onload to early, so our init code is never called
+//fallback for stupid browsers (aka Google Chrome v1-v8 or so) which fires onload to early, so our init code is never called
 //
 window.setTimeout(function(){HMI.init();}, 1000);
 
