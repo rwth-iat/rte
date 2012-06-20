@@ -91,7 +91,7 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_submit(
 		int xdrlength;
 		strcpy(path, pobj->v_path);
 		
-		generategetepxdr(&xdr, &xdrlength, path, 15, pobj->v_namemask, 192);
+		generategetepxdr(&xdr, &xdrlength, path, KS_OT_ANY, pobj->v_namemask, KS_EPF_DEFAULT);
 	
 		//print xdr
 		//KSDEVEL int j;
@@ -174,88 +174,100 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_returnMethodxdr(
 ) {
 	OV_INSTPTR_ksapi_getEPidentifiers pgEP = Ov_StaticPtrCast(ksapi_getEPidentifiers, kscommon);
 	OV_VTBLPTR_ksapi_getEPidentifiers  pvtableop; 
-	int veclength;
-	int *strlength;
-	//KSDEVEL int j;
-	char **result;
-	
+	OV_UINT errorcode = 0;
+	OV_UINT veclength, position, type;
+	OV_UINT j, i;
+	OV_UINT currstringlen;
+	OV_STRING tempstr;
 	Ov_GetVTablePtr(ksapi_getEPidentifiers, pvtableop, pgEP);
-	veclength = xdr[39];
-	strlength = (int*)malloc(veclength*sizeof(int));
-	result = (char**)malloc(veclength*sizeof(char*));
-	
-	//print xdr
-	//KSDEVEL printf("\n\nxdr:\n");
-	//KSDEVEL for (j = 0; j < xdrlength; j=j+4)
-		//KSDEVEL printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-	//KSDEVEL printf("\n\n");
-	//KSDEVEL for (j = 0; j < xdrlength; j=j+4)
-		//KSDEVEL printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-	//KSDEVEL printf("\n\n");
-	//KSDEVEL printf("%s\n\n", xdr);
 
-	/*KSDEVEL //get strings
-	for (i=0; i<veclength; i++)
+
+
+	printxdr(xdr, xdrlength);
+
+
+	errorcode = xdr[31];
+	if(!errorcode)
 	{
-		if (xdr[pos] == 0)
+		for(j=0; j<4; j++) // read length of vec
+			((char*) (&veclength))[3-j] = xdr[32+j];
+
+		errorcode = Ov_SetDynamicVectorLength(&(pgEP->v_identifierList), veclength, STRING);
+		if (Ov_Fail(errorcode))
 		{
-			pos = pos+8;
-			strlength[i] = xdr[pos];
-			result[i] = (char*)malloc((strlength[i]+1)*sizeof(char));
-			for (j=0; j<strlength[i]; j++)
-			{
-				result[i][j] = xdr[pos+1+j];
-				result[i][j+1] = 0;
-			}
-			count = strlength[i];
-			while ((count%4)!=0)
-				count++;
-			pos = pos+count+28;
-		}
-		else
-		{
-			count = xdr[pos];
-			while ((count%4)!=0)
-				count++;
-			pos = pos+count+8;
-			strlength[i] = xdr[pos];
-			result[i] = (char*)malloc((strlength[i]+1)*sizeof(char));
-			for (j=0; j<strlength[i]; j++)
-			{
-				result[i][j] = xdr[pos+1+j];
-				result[i][j+1] = 0;
-			}
-			count = strlength[i];
-			while ((count%4)!=0)
-				count++;
-			pos = pos+count+28;
-		}
-	}
-	
-	//set to object
-	//	Set length of the string vector
-	res = Ov_SetDynamicVectorLength(&pgEP->v_identifierList, veclength, STRING);
-	if (Ov_Fail(res))
-	{	
-		pvtableop->m_returnMethod(pobj, ov_result_getresulttext(res), 9);
-		return;
-	}
-	//	set Values
-	for (i = 0; i < veclength; i++)
-	{
-		res = ov_string_setvalue(&(pgEP->v_identifierList.value[i]), result[i]);
-		if (Ov_Fail(res))
-		{
+			ov_logfile_error("Error setting dynamic vector loength: %s", ov_result_getresulttext(errorcode));
 			Ov_SetDynamicVectorValue(&pgEP->v_identifierList, NULL, 0, STRING);
-			pvtableop->m_returnMethod(pobj, ov_result_getresulttext(res),9);
+			pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
 			return;
 		}
-	}*/
-	
-	pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);
 
-	free(strlength);
-	free (result);
-	
+		position = 36;			//begin of first element
+		for(i=0; i<veclength; i++)	//iterate over elements
+		{
+			for(j=0; j<4; j++) // read length of class-string
+				((char*) (&type))[3-j] = xdr[position+j];
+			position +=4;		//ignore first 4 bytes
+			switch(type)
+			{
+			case KS_OT_DOMAIN:
+				for(j=0; j<4; j++) // read length of class-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				position += 4 + currstringlen;	//ignore class-string
+				while(position%4)
+					position++;
+
+				for(j=0; j<4; j++) // read length of identifier-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				ov_memstack_lock();
+				tempstr = ov_memstack_alloc(currstringlen+1);		//use temporary string to copy since xdr is not 0-terminated
+				if (!tempstr)
+				{
+					ov_logfile_error("Error setting tempstr: out of memory");
+					Ov_SetDynamicVectorValue(&pgEP->v_identifierList, NULL, 0, STRING);
+					pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+					ov_memstack_unlock();
+					return;
+				}
+				for(j=0; j<currstringlen; j++)
+					tempstr[j] = xdr[position+4+j];
+				tempstr[currstringlen] = 0;
+				errorcode = ov_string_setvalue(&(pgEP->v_identifierList.value[i]), tempstr);
+				ov_memstack_unlock();
+				if (Ov_Fail(errorcode))
+				{
+					ov_logfile_error("Error setting identifier string: %s", ov_result_getresulttext(errorcode));
+					Ov_SetDynamicVectorValue(&pgEP->v_identifierList, NULL, 0, STRING);
+					pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+					return;
+				}
+				position += 4 + currstringlen;
+				while(position%4)
+					position++;
+
+				position += 8;		//ignore 2 xdr-fields (most probably creation-time)
+
+				for(j=0; j<4; j++) // read length of comment-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				position += 4 + currstringlen;	//ignore comment-string
+				while(position%4)
+					position++;
+
+				position += 4; //ignore one field (most probably access-flags)
+
+				position += 4; //ignore one more field (which is most probably always 0 (semantics?))
+				break;
+			default:
+				pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+				ov_logfile_error("GetEP found other tyope than Domain, not yet implemented: %u", type);
+				return;
+			}
+		}
+		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);
+	}
+	else
+	{
+		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+	}
+
 	return;
 }

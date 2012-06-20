@@ -40,8 +40,8 @@ void printxdr(char xdr[], int xdrlength) {
 			((char*) &temp)[3-j] = xdr[i + j];
 
 		}
-		logfile_debug("ab %d: %d\n", i, temp, &temp);
-		logfile_debug("%c%c%c%c", xdr[i], xdr[i+1], xdr[i+2], xdr[i+3]);
+		logfile_debug("ab %d: %u - %x", i, temp, temp);
+		logfile_debug("%c%c%c%c\n", xdr[i], xdr[i+1], xdr[i+2], xdr[i+3]);
 
 	}
 	return;
@@ -450,99 +450,50 @@ void generaterenameobjectxdr(char *xdr[], int *length, char *oldpath, char *newp
  * input variables are:
  * char *xdr[] : here the generated xdr is stored
  * int *length : here the length of the xdr is stored
- * char *path : path to the object which should be unlinked
- * char *linkedpath : path of the object which is linked with selected object
+ * char *path : path to the object - with anchor - which should be unlinked
+ * char *linkedpath : path of the (child) object - without anchor -  which should be unlinked with selected object
  */
 void generateunlinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpath)
 {
-	char xdrdata[4096];
-	char header[48];
-	int c;
-	char rpcheader[4];
-	int pathlength, linkedpathlength, xdrlength;
-	char temp[4096];
-	char *tmp;
+	int c, xdrposition;
+	int pathlength, linkedpathlength;
+	int pathlengthmod4, linkedpathlengthmod4;
 
-	memset(xdrdata, 0, 4096);	
-
-	//set linkedpathlength
-	linkedpathlength = strlen(linkedpath);
-	while ((linkedpathlength%4) != 0)
-		linkedpathlength++;
+	generateheader(KS_UNLINK, xdr, length);
+	xdrposition = *length;
 
 	//set pathlength
 	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
+	pathlengthmod4 = pathlength;
+	while(pathlengthmod4 % 4)
+		pathlengthmod4++;
+
+	//set linkedpathlength
+	linkedpathlength = strlen(linkedpath);
+	linkedpathlengthmod4 = linkedpathlength;
+	while(linkedpathlengthmod4 % 4)
+		linkedpathlengthmod4++;
 
 	//set xdrlenght
-	xdrlength = linkedpathlength+pathlength+64;
-
-	//make header
-	header[0] = 61;				//xid
-	header[1] = 50;				//xid
-	header[2] = -13;			//xid
-	header[3] = 74;				//xid
-	for (c=4; c<11; c++)
-		header[c] = 0;
-	header[11] = 2;
-	header[12] = 0;
-	header[13] = 4;				//prog.-nr.
-	header[14] = -106;		//prog.-nr.
-	header[15] = 120;			//prog.-nr.
-	for (c=16; c<19; c++)
-		header[c] = 0;
-	header[19] = 2;				//verion-nr.
-	for (c=24; c<46; c++)
-		header[c] = 0;
-	header[46] = 0;
-	header[47] = 1;
-
-	//copy header to xdr
-	memcpy(xdrdata, header, 48);
-
-
-	//set procedure
-	xdrdata[20] = 0;
-	xdrdata[21] = 0;
-	xdrdata[22] = 3;
-	xdrdata[23] = 2;
+	*length += pathlengthmod4+linkedpathlengthmod4+60;
+	*xdr = realloc(*xdr, *length);
+	memset(&((*xdr)[xdrposition]), 0, (*length)-xdrposition);
 
 	//set path
-	xdrdata[51] = strlen(path);
-	for (c=0; c<strlen(path); c++)
-		xdrdata[52+c] = path[c];
-	for (c=strlen(path); c<xdrlength-52; c++)
-		xdrdata[52+c] = 0;
+	for(c=0; c < 4; c++)
+		(*xdr)[xdrposition+c] = ((char*)(&pathlength))[3-c];
+	xdrposition += 4;
+	memcpy(&((*xdr)[xdrposition]), path, pathlength);
+	xdrposition += pathlengthmod4;
 
 	//set linkedpath
-	xdrdata[51+pathlength+4] = strlen(linkedpath);
-	for (c=0; c<(strlen(linkedpath)); c++)
-		xdrdata[52+pathlength+4+c] = linkedpath[c];
-	for (c=(strlen(linkedpath)); c<xdrlength-(52+pathlength+4); c++)
-		xdrdata[52+pathlength+4+c] = 0;
+	for(c=0; c < 4; c++)
+		(*xdr)[xdrposition+c] = ((char*)(&linkedpathlength))[3-c];
+	xdrposition += 4;
+	memcpy(&((*xdr)[xdrposition]), linkedpath, linkedpathlength);
+	xdrposition += linkedpathlengthmod4;
 
-	//add rpcheader
-	tmp = (char*)&(xdrlength);
-	for (c=0; c<4; c++)
-		rpcheader[3-c] = tmp[c];
-	rpcheader[0] = 0x80;
-
-	memset (temp,'\0',xdrlength+5);
-	memcpy(temp, rpcheader, 4);
-	temp[3] = xdrlength;
-	for (c = 0; c < xdrlength; c++)
-		temp[4+c] = xdrdata[c];
-	xdrlength = xdrlength+4;
-	assert(xdrlength+4 < 4096);
-	memcpy(xdrdata, temp, xdrlength);
-
-	*xdr = (char*)malloc(xdrlength*sizeof(char));
-	memset(*xdr, 1, xdrlength);
-	memcpy(*xdr, xdrdata, xdrlength);
-	*length = xdrlength;
-
-
+	addrpcheader(xdr, length);
 	return;
 }
 
@@ -551,126 +502,53 @@ void generateunlinkobjectxdr(char *xdr[], int *length, char *path, char *linkedp
  * input variables are:
  * char *xdr[] : here the generated xdr is stored
  * int *length : here the length of the xdr is stored
- * char *path : path to the object which should be linked
- * char *linkedpath : path of the object which should be linked with selected object
+ * char *path : path to the object - with anchor - which should be linked
+ * char *linkedpath : path of the (child) object - without anchor -  which should be linked with selected object
  * int position : position to place the object in the hierarchy
  * 					(0: default, 1: begin, 2: end, 3: before, 4: after)
  * char *refpath : path to object before or after refers to
  */
 void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpath, int position, char *refpath)
 {
-	char xdrdata[4096];
-	char header[48];
-	int c;
-	char rpcheader[4];
-	int pathlength, linkedpathlength, refpathlength, xdrlength;
-	char temp[4096];
-	char *tmp;
+	int c, xdrposition;
+	int pathlength, linkedpathlength;
+	int pathlengthmod4, linkedpathlengthmod4;
 
-	memset(xdrdata, 0, 4096);	
-
-	//set linkedpathlength
-	linkedpathlength = strlen(linkedpath);
-	while ((linkedpathlength%4) != 0)
-		linkedpathlength++;
+	generateheader(KS_LINK, xdr, length);
+	xdrposition = *length;
 
 	//set pathlength
 	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
+	pathlengthmod4 = pathlength;
+	while(pathlengthmod4 % 4)
+		pathlengthmod4++;
 
-	//set refpathlength
-	if ((position == 3) | (position == 4))
-	{
-		refpathlength = strlen(refpath);
-		while ((refpathlength%4) != 0)
-			refpathlength++;
-	}
+	//set linkedpathlength
+	linkedpathlength = strlen(linkedpath);
+	linkedpathlengthmod4 = linkedpathlength;
+	while(linkedpathlengthmod4 % 4)
+		linkedpathlengthmod4++;
 
 	//set xdrlenght
-	if ((position == 3) | (position == 4))
-		xdrlength = linkedpathlength+pathlength+refpathlength+68;
-	else
-		xdrlength = linkedpathlength+pathlength+64;
-
-	//make header
-	header[0] = 61;				//xid
-	header[1] = 50;				//xid
-	header[2] = -13;			//xid
-	header[3] = 74;				//xid
-	for (c=4; c<11; c++)
-		header[c] = 0;
-	header[11] = 2;
-	header[12] = 0;
-	header[13] = 4;				//prog.-nr.
-	header[14] = -106;		//prog.-nr.
-	header[15] = 120;			//prog.-nr.
-	for (c=16; c<19; c++)
-		header[c] = 0;
-	header[19] = 2;				//verion-nr.
-	for (c=24; c<46; c++)
-		header[c] = 0;
-	header[46] = 0;
-	header[47] = 1;
-
-	//copy header to xdr
-	memcpy(xdrdata, header, 48);
-
-
-	//set procedure
-	xdrdata[20] = 0;
-	xdrdata[21] = 0;
-	xdrdata[22] = 3;
-	xdrdata[23] = 1;
+	*length += pathlengthmod4+linkedpathlengthmod4+60;
+	*xdr = realloc(*xdr, *length);
+	memset(&((*xdr)[xdrposition]), 0, (*length)-xdrposition);
 
 	//set path
-	xdrdata[51] = strlen(path);
-	for (c=0; c<strlen(path); c++)
-		xdrdata[52+c] = path[c];
-	for (c=strlen(path); c<xdrlength-52; c++)
-		xdrdata[52+c] = 0;
+	for(c=0; c < 4; c++)
+		(*xdr)[xdrposition+c] = ((char*)(&pathlength))[3-c];
+	xdrposition += 4;
+	memcpy(&((*xdr)[xdrposition]), path, pathlength);
+	xdrposition += pathlengthmod4;
 
-	//set elementpath
-	xdrdata[51+pathlength+4] = strlen(linkedpath);
-	for (c=0; c<(strlen(linkedpath)); c++)
-		xdrdata[52+pathlength+4+c] = linkedpath[c];
-	for (c=(strlen(linkedpath)); c<xdrlength-(52+pathlength+4); c++)
-		xdrdata[52+pathlength+4+c] = 0;
+	//set linkedpath
+	for(c=0; c < 4; c++)
+		(*xdr)[xdrposition+c] = ((char*)(&linkedpathlength))[3-c];
+	xdrposition += 4;
+	memcpy(&((*xdr)[xdrposition]), linkedpath, linkedpathlength);
+	xdrposition += linkedpathlengthmod4;
 
-	//set position
-	xdrdata[51+pathlength+4+linkedpathlength+4] = position;
-
-	//set place
-	if ((position == 3) | (position == 4))
-	{
-		xdrdata[51+pathlength+4+linkedpathlength+8] = strlen(refpath);
-		for (c=0; c<strlen(refpath); c++)
-			xdrdata[51+pathlength+4+linkedpathlength+9+c] = refpath[c];
-		for (c=strlen(refpath); c<xdrlength-(51+pathlength+4+linkedpathlength+9); c++)
-			xdrdata[51+pathlength+4+linkedpathlength+9+c] = 0;
-	}
-
-	//add rpcheader
-	tmp = (char*)&(xdrlength);
-	for (c=0; c<4; c++)
-		rpcheader[3-c] = tmp[c];
-	rpcheader[0] = 0x80;
-
-	memset (temp,'\0',xdrlength+5);
-	memcpy(temp, rpcheader, 4);
-	temp[3] = xdrlength;
-	for (c = 0; c < xdrlength; c++)
-		temp[4+c] = xdrdata[c];
-	xdrlength = xdrlength+4;
-	assert(xdrlength+4 < 4096);
-	memcpy(xdrdata, temp, xdrlength);
-
-	*xdr = (char*)malloc(xdrlength*sizeof(char));
-	memset(*xdr, 1, xdrlength);
-	memcpy(*xdr, xdrdata, xdrlength);
-	*length = xdrlength;
-
-
+	addrpcheader(xdr, length);
 	return;
 }
 
@@ -687,107 +565,54 @@ void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpat
  */
 void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, char *namemask, int epflags)
 {
-	char xdrdata[4096];
-	char header[48];
-	int c;
-	char rpcheader[4];
-	int pathlength, namemasklength, xdrlength;
-	char temp[4096];
-	char *tmp;
-	char *buf;
-	char *buf2;
-
-	memset(xdrdata, 0, 4096);	
+	int c, xdrposition;
+	int pathlength, namemasklength;
+	int pathlengthmod4, namemasklengthmod4;
+	generateheader(KS_GETEP, xdr, length);
+	xdrposition = (*length) - 4;		//ovwewrite last 4 bytes of header in GetEP (for whatever reason^^)
 
 	//set pathlength
 	pathlength = strlen(path);
-	while ((pathlength%4) != 0)
-		pathlength++;
+	pathlengthmod4 = pathlength;
+	while(pathlengthmod4 % 4)
+		pathlengthmod4++;
 
 	//set namemasklength
 	namemasklength = strlen(namemask);
-	while ((namemasklength%4) != 0)
-		namemasklength++;
+	namemasklengthmod4 = namemasklength;
+	while(namemasklengthmod4 % 4)
+		namemasklengthmod4++;
 
 	//set xdrlenght
-	xdrlength = pathlength+namemasklength+60;
-
-	//make header
-	header[0] = 61;				//xid
-	header[1] = 50;				//xid
-	header[2] = -13;			//xid
-	header[3] = 74;				//xid
-	for (c=4; c<11; c++)
-		header[c] = 0;
-	header[11] = 2;
-	header[12] = 0;
-	header[13] = 4;				//prog.-nr.
-	header[14] = -106;		//prog.-nr.
-	header[15] = 120;			//prog.-nr.
-	for (c=16; c<19; c++)
-		header[c] = 0;
-	header[19] = 2;				//verion-nr.
-	for (c=24; c<46; c++)
-		header[c] = 0;
-	header[46] = 0;
-	header[47] = 1;
-
-	//copy header to xdr
-	memcpy(xdrdata, header, 48);
-
-
-	//set procedure
-	xdrdata[20] = 0;
-	xdrdata[21] = 0;
-	xdrdata[22] = 0;
-	xdrdata[23] = 2;
+	*length += pathlengthmod4+namemasklengthmod4+12;
+	*xdr = realloc(*xdr, *length);
+	memset(&((*xdr)[xdrposition]), 0, (*length)-xdrposition);
 
 	//set path
-	xdrdata[47] = strlen(path);
-	for (c=0; c<(strlen(path)); c++)
-		xdrdata[48+c] = path[c];
-	for (c=(strlen(path)); c<xdrlength-48; c++)
-		xdrdata[48+c] = 0;
+	for(c=0; c < 4; c++)
+		(*xdr)[xdrposition+c] = ((char*)(&pathlength))[3-c];
+	xdrposition += 4;
+	memcpy(&((*xdr)[xdrposition]), path, pathlength);
+	xdrposition += pathlengthmod4;
 
-	//set ksobjecttype
-	buf = (char*)&ksobjecttype;
-	memcpy(temp, buf, 4);
-	for (c=0; c<4; c++)
-		xdrdata[51+pathlength-c] = temp[c];
+	//ksobjecttype
+	for(c=0; c < 4; c++)
+		(*xdr)[xdrposition+c] = ((char*)(&ksobjecttype))[3-c];
+	xdrposition += 4;
 
 	//set namemask
-	xdrdata[55+pathlength] = strlen(namemask);
-	for (c=0; c<strlen(namemask); c++)
-		xdrdata[56+pathlength+c] = namemask[c];
-	for (c=strlen(namemask); c<xdrlength-(56+pathlength+namemasklength); c++)
-		xdrdata[56+pathlength+namemasklength+c] = 0;
+	for(c=0; c < 4; c++)
+		(*xdr)[xdrposition+c] = ((char*)(&namemasklength))[3-c];
+	xdrposition += 4;
+	memcpy(&((*xdr)[xdrposition]), namemask, namemasklength);
+	xdrposition += namemasklengthmod4;
 
-	//set epflags
-	buf2 = (char*)&epflags;
-	memcpy(temp, buf2, 4);
-	for (c=0; c<4; c++)
-		xdrdata[56+pathlength+namemasklength-c] = temp[c];
+	//epflags
+	for(c=0; c < 4; c++)
+		(*xdr)[xdrposition+c] = ((char*)(&epflags))[3-c];
+	xdrposition += 4;
 
-	//add rpcheader
-	tmp = (char*)&(xdrlength);
-	for (c=0; c<4; c++)
-		rpcheader[3-c] = tmp[c];
-	rpcheader[0] = 0x80;
-
-	memset (temp,'\0',xdrlength+5);
-	memcpy(temp, rpcheader, 4);
-	temp[3] = xdrlength;
-	for (c = 0; c < xdrlength; c++)
-		temp[4+c] = xdrdata[c];
-	xdrlength = xdrlength+4;
-	assert(xdrlength+4 < 4096);
-	memcpy(xdrdata, temp, xdrlength);
-
-	*xdr = (char*)malloc(xdrlength*sizeof(char));
-	memset(*xdr, 1, xdrlength);
-	memcpy(*xdr, xdrdata, xdrlength);
-	*length = xdrlength;
-
+	addrpcheader(xdr, length);
 
 	return;
 }
