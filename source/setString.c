@@ -118,7 +118,7 @@ OV_DLLFNCEXPORT void fbcomlib_setString_typemethod(
 	//OV_VTBLPTR_ksapi_KSCommon						mtable = NULL;
 
 	//check if something should be sent and if we are in a final state
-	if ((fbcommon->v_doSend || fbcommon->v_CyclicReactivation)
+	if ((fbcommon->v_doSend || fbcommon->v_doCyclic)
 			&& fbcommon->v_state != STATE_INIT
 			&& fbcommon->v_state != STATE_CLIENTBUSY){
 		fbcommon->v_doSend = TRUE;
