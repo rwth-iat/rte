@@ -195,7 +195,7 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_returnMethodxdr(
 		errorcode = Ov_SetDynamicVectorLength(&(pgEP->v_identifierList), veclength, STRING);
 		if (Ov_Fail(errorcode))
 		{
-			ov_logfile_error("Error setting dynamic vector loength: %s", ov_result_getresulttext(errorcode));
+			ov_logfile_error("Error setting dynamic vector length: %s", ov_result_getresulttext(errorcode));
 			Ov_SetDynamicVectorValue(&pgEP->v_identifierList, NULL, 0, STRING);
 			pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
 			return;
