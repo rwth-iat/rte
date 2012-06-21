@@ -224,6 +224,9 @@ LIBRARY cshmi
 			height : SINGLE
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
+			strokeWidth : SINGLE
+			COMMENT = "stroke width of the line"
+			INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
@@ -240,6 +243,9 @@ LIBRARY cshmi
 			r : SINGLE
 			COMMENT = "radius of the circle"
 			INITIALVALUE = 10.0;
+			strokeWidth : SINGLE
+			COMMENT = "stroke width of the line"
+			INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
@@ -259,6 +265,9 @@ LIBRARY cshmi
 			ry : SINGLE
 			COMMENT = "y-axis radius of the ellipse"
 			INITIALVALUE = 5.0;
+			strokeWidth : SINGLE
+			COMMENT = "stroke width of the line"
+			INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 

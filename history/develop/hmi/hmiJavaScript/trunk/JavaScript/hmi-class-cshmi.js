@@ -1652,8 +1652,10 @@ cshmi.prototype = {
 				
 				returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
 			}
-		}
-		else {
+		}else if (ChildrenType === ""){
+			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
+			return false;
+		}else{
 			//doku multiple values possible
 			
 			//allow a list of variables as ChildrenTypes
@@ -3382,6 +3384,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["cx"] = null;
 			requestList[ObjectPath]["cy"] = null;
 			requestList[ObjectPath]["r"] = null;
+			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
@@ -3434,6 +3437,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["cy"] = null;
 			requestList[ObjectPath]["rx"] = null;
 			requestList[ObjectPath]["ry"] = null;
+			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
@@ -3490,6 +3494,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["y"] = null;
 			requestList[ObjectPath]["width"] = null;
 			requestList[ObjectPath]["height"] = null;
+			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){

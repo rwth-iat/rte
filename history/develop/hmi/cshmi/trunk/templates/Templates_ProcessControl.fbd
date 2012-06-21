@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-06-19 12:47:14
+  Erstellt : 2012-06-21 09:04:12
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -3642,7 +3642,7 @@ isDigital:TRUE|FALSE";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 4;
+        zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -3933,7 +3933,7 @@ isDigital:TRUE|FALSE";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
+        zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -4218,7 +4218,7 @@ isDigital:TRUE|FALSE";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/onload :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
-        zindex : INPUT  UINT = 6;
+        zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -4397,7 +4397,7 @@ isDigital:TRUE|FALSE";
         x : INPUT  SINGLE = 75.000000;
         y : INPUT  SINGLE = 57.000000;
         content : INPUT  STRING = "PV";
-        fontSize : INPUT  STRING = "normal";
+        fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
@@ -4589,23 +4589,6 @@ isDigital:TRUE|FALSE";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplateSensorGeneric/ValueRect :
-    CLASS /Libraries/cshmi/Rectangle;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 100.000000;
-        y : INPUT  SINGLE = 40.000000;
-        width : INPUT  SINGLE = 130.000000;
-        height : INPUT  SINGLE = 30.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -5537,6 +5520,23 @@ isDigital:TRUE|FALSE";
         rotate : INPUT  INT = 0;
         opacity : INPUT  SINGLE = 1.000000;
         zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplateSensorGeneric/ValueRect :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 100.000000;
+        y : INPUT  SINGLE = 40.000000;
+        width : INPUT  SINGLE = 130.000000;
+        height : INPUT  SINGLE = 30.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8409,7 +8409,7 @@ Para2Unit:";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -8947,7 +8947,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9001,7 +9001,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnCommands/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
