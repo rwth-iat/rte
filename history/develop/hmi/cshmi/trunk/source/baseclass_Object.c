@@ -271,12 +271,52 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 	return OV_ERR_OK;
 };
 
+/**
+ * renumber all zindex of all children to match ov_containment
+ * @param pDom Domain to fix
+ * @return void
+ */
+
+void cshmi_Object_zindexcorrection(
+	OV_INSTPTR_ov_domain pDom
+) {
+	//	local variables
+	//
+	OV_INSTPTR_cshmi_Object
+		pChildObj = NULL;
+
+	OV_UINT newindex = 0;
+
+	//test if we are handling an OV-PART
+	if (pDom != NULL){
+		//	renumber sibling components
+		//
+		Ov_ForEachChildEx(ov_containment, pDom, pChildObj, cshmi_Object){
+			#ifdef ZINDEX_DEBUG
+				ov_logfile_debug("%d: %s changed from %u to %u:  ", __LINE__, pSiblingObj->v_identifier, pChildObj->v_zindex, newindex);
+			#endif
+			//this is the truth, so no setaccessor needed
+			pChildObj->v_zindex = newindex;
+			newindex++;
+		}
+	}
+	return;
+}
+
+/**
+ * set zindex to top and
+ * correct zindex of all siblings (could have been wrong from moving objects arround)
+ * @param pObj Object to create
+ */
 OV_DLLFNCEXPORT OV_RESULT cshmi_Object_constructor(
 	OV_INSTPTR_ov_object 	pObj
 ) {
 	// local variables
 	//
+	OV_INSTPTR_ov_domain
+		pDom = Ov_GetParent(ov_containment, pObj);
 	OV_RESULT    result;
+
 
 	/* do what the base class does first */
 	result = ov_object_constructor(pObj);
@@ -286,13 +326,20 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_constructor(
 	#ifdef ZINDEX_DEBUG
 		ov_logfile_debug("^ %d: constructor: %s/%s moving on top", __LINE__, Ov_GetParent(ov_containment, pObj)?Ov_GetParent(ov_containment, pObj)->v_identifier:"-", pObj->v_identifier);
 	#endif
-	result = cshmi_Object_zindex_set(Ov_StaticPtrCast(cshmi_Object, pObj), CSHMI_ZINDEX_DEFAULT);
+	//test if we are creating an OV-PART
+	if (pDom != NULL){
+		cshmi_Object_zindexcorrection(pDom);
+	}
 	#ifdef ZINDEX_DEBUG
 		ov_logfile_debug("$ %d: constructor: %s constructed with zindex: %u.", __LINE__, pObj->v_identifier, Ov_StaticPtrCast(cshmi_Object, pObj)->v_zindex);
 	#endif
-	return result;
+	return OV_ERR_OK;
 }
 
+/**
+ * correct zindex of all siblings (could have been wrong from moving objects arround)
+ * @param pObj Object to delete
+ */
 OV_DLLFNCEXPORT void cshmi_Object_destructor(
 	OV_INSTPTR_ov_object 	pObj
 ) {
@@ -300,10 +347,6 @@ OV_DLLFNCEXPORT void cshmi_Object_destructor(
 	//
 	OV_INSTPTR_ov_domain
 		pDom = Ov_GetParent(ov_containment, pObj);
-	OV_INSTPTR_cshmi_Object
-		pSiblingObj = NULL;
-
-	OV_UINT newindex = 0;
 
 	//test if we are deleting an OV-PART
 	if (pDom != NULL){
@@ -312,13 +355,7 @@ OV_DLLFNCEXPORT void cshmi_Object_destructor(
 
 		//	renumber sibling components (self is removed from it)
 		//
-		Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Object){
-			#ifdef ZINDEX_DEBUG
-				ov_logfile_debug("%d: %s changed from %u to %u:  ", __LINE__, pSiblingObj->v_identifier, pSiblingObj->v_zindex, newindex);
-			#endif
-			pSiblingObj->v_zindex = newindex;
-			newindex++;
-		}
+		cshmi_Object_zindexcorrection(pDom);
 	}else{
 		#ifdef ZINDEX_DEBUG
 			ov_logfile_debug("%d: %s had no parent via containment", __LINE__, pObj->v_identifier);

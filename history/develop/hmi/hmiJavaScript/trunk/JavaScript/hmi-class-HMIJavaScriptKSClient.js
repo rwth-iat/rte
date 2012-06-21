@@ -181,7 +181,7 @@ HMIJavaScriptKSClient.prototype = {
 	getHandle: function(host, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - Start");
 		
-		//fixme cbfnc rausnehmen
+		//fixme auf async umstellen
 		var urlparameter;
 		var newhost;
 		var hostArray = host.split("/");
@@ -217,7 +217,7 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			ReturnText = this._sendRequest(this, 'GET', false, urlparameter, null);
 		}
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - End");
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._getHandle - End");
 		return ReturnText;
 	},
 	
@@ -355,7 +355,7 @@ HMIJavaScriptKSClient.prototype = {
 				//HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
 				
 				//fixme retry disabled!
-				//HandleString = this.getHandle(HostAndServername, null);
+				//HandleString = this._getHandle(HostAndServername, null);
 			}
 			if (HandleString.indexOf("KS_ERR") !== -1){
 				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
@@ -413,10 +413,10 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.PossServers.setAttribute("title", "available OV-Servers: "+Server.join(", "));
 		
 		if (Server.length === 0){
-			HMI.PossServers.options[0] = new Option('- no MANAGER available-', 'no server');
+			HMI.PossServers.options[0] = new Option('- no MANAGER available-', '');
 		}else{
 			//put first select option with a description
-			HMI.PossServers.options[0] = new Option('loading...', 'no server');
+			HMI.PossServers.options[0] = new Option('loading...', '');
 			
 			for (i = 0; i < Server.length; i++)
 			{
@@ -428,20 +428,20 @@ HMIJavaScriptKSClient.prototype = {
 				};
 			};
 			if (HMI.PossServers.length === 1){
-				HMI.PossServers.options[0] = new Option('- no HMI server available -', 'no server');
+				HMI.PossServers.options[0] = new Option('- no HMI server available -', '');
 			}else if (HMI.PossServers.length == 2){
-				HMI.PossServers.options[0] = new Option('- select server -', 'no server');
+				HMI.PossServers.options[0] = new Option('- select server -', '');
 				//selecting the option does not trigger the EventListener
 				//it is allways the second/last <option>...
 				HMI.PossServers.selectedIndex = 1;
 				HMI.PossServers.disabled = false;
 				HMI.showSheets(HMI.PossServers.options[1].value);
 			}else{
-				HMI.PossServers.options[0] = new Option('- select server -', 'no server');
+				HMI.PossServers.options[0] = new Option('- select server -', '');
 				//replacing option[0] drops us into the first server
 				HMI.PossServers.selectedIndex = 0;
 				HMI.PossServers.disabled = false;
-				HMI.PossSheets.options[0] = new Option('please select Server first', 'no sheet');
+				HMI.PossSheets.options[0] = new Option('please select Server first', '');
 			}
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - End");
@@ -544,18 +544,22 @@ HMIJavaScriptKSClient.prototype = {
 				}
 			}
 		}
-		//show only the top level group
+		//detect all relevant groups
 		for(var i = 0; i < sortedList.length;){
-			if (sortedList[i].indexOf(lastEntry) !== -1){
-				//the last entry is a substring from the this entry
+			if (sortedList[i].indexOf("/TechUnits/cshmi/Templates/") === 0){
+				//hide all Groups in Templates
+				sortedList.splice(i, 1);
+			}else
+			if (sortedList[i].indexOf(lastEntry) === 0){
+				//this sheet is a child from the last sheet
 				//so remove it from list
-				//the next entry will move down, so i is still valid
+				//the next entry will move down, so index i is still valid
 				sortedList.splice(i, 1);
 			}else{
-				//no substring, try next one
+				//save Sheetname, but append a / to find only children not similar named sheets
+				lastEntry = sortedList[i]+"/";
 				i++;
 			}
-			lastEntry = sortedList[i-1];
 		}
 		SheetList = SheetList.concat(sortedList);
 		
@@ -602,9 +606,11 @@ HMIJavaScriptKSClient.prototype = {
 		}
 	},
 	
-	/*********************************
-		_handleStateChange
-	*********************************/
+	/**
+	 * calls callback function if loaded
+	 * @param req XmlHttpRequest object
+	 * @param cbfnc callback function
+	 */
 	_handleStateChange: function (req, cbfnc) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._handleStateChange - Start");
 		
@@ -629,18 +635,16 @@ HMIJavaScriptKSClient.prototype = {
 	/**
 	 * @param Client Instance of HMI Object
 	 * @param method often "GET"
-	 * @param async request
+	 * @param async request async communication
 	 * @param urlparameter the URL of the request
 	 * @param cbfnc Name of the callack function or null
 	 * @return if no cbfnc submitted returnvalue of request or false on an communication error
 	 */
 	_sendRequest: function(Client, method, async, urlparameter, cbfnc) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+window.location.protocol+'//'+ HMI.KSClient.TCLKSGateway + '?' + urlparameter);
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+urlparameter);
 		
 		var req = new XMLHttpRequest();
 		
-		//netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
-		//does not work in other browsers than mozillabased
 		try {
 			//FireFox 3 sends in a POST a content-encoding header killing the TCL Webserver
 			//http://wiki.tcl.tk/2085 entry "nb Dec 18, 2008"
@@ -655,7 +659,7 @@ HMIJavaScriptKSClient.prototype = {
 				+ '?'
 				+ urlparameter, async);
 			
-			//prevent caching of request in all browsers (ie was the problem - as usual
+			//prevent caching of request in all browsers (ie was the problem - as usual)
 			req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT");
 			
 			if (req.timeout !== undefined && async === true){
@@ -663,7 +667,7 @@ HMIJavaScriptKSClient.prototype = {
 				req.timeout = 1000;
 			}
 			
-			if (async === true)
+			if (async === true && cbfnc !== null)
 			{
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - entering async communication");
 				//	Asynchron Communication
@@ -944,7 +948,6 @@ HMIJavaScriptKSClient.prototype = {
 		//destroy all handles
 		for (var i in this.ResourceList.Handles){
 			this.delHandle(this.ResourceList.Handles[i].HandleString);
-			this.ResourceList.Handles[i].HandleString = null;
 			delete this.ResourceList.Handles[i].HandleString;
 			delete this.ResourceList.Handles[i];
 		}

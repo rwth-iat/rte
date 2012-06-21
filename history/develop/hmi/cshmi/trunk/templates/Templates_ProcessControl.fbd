@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-06-21 09:04:12
+  Erstellt : 2012-06-21 10:29:48
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -23,8 +23,8 @@
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = TRUE;
-        comment : INPUT  STRING = "configValues:
-captionText:LL|L|H|HH|MAX|MIN
+        comment : INPUT  STRING = "configValues:
+captionText:LL|L|H|HH|MAX|MIN
 isAMPMC:TRUE|FALSE";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -38,6 +38,7 @@ isAMPMC:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 130.000000;
         height : INPUT  SINGLE = 30.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -55,6 +56,7 @@ isAMPMC:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 50.000000;
         height : INPUT  SINGLE = 30.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "silver";
@@ -2079,6 +2081,7 @@ isAMPMC:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 175.000000;
         height : INPUT  SINGLE = 28.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "grey";
         fill : INPUT  STRING = "lightgrey";
@@ -2597,6 +2600,7 @@ isAMPMC:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 127.000000;
         height : INPUT  SINGLE = 20.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "grey";
         fill : INPUT  STRING = "lightgrey";
@@ -2822,6 +2826,7 @@ isAMPMC:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 127.000000;
         height : INPUT  SINGLE = 20.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "grey";
         fill : INPUT  STRING = "lightgrey";
@@ -3034,10 +3039,10 @@ isAMPMC:TRUE|FALSE";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "FBReferences:
-Signaladaptation or AMPMC
-configValues:
-isAMPMC:TRUE|FALSE
+        comment : INPUT  STRING = "FBReferences:
+Signaladaptation or AMPMC
+configValues:
+isAMPMC:TRUE|FALSE
 isDigital:TRUE|FALSE";
         zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
@@ -3051,6 +3056,7 @@ isDigital:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 80.000000;
         height : INPUT  SINGLE = 20.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -3349,6 +3355,7 @@ isDigital:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 125.000000;
         height : INPUT  SINGLE = 20.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "white";
@@ -4330,10 +4337,10 @@ isDigital:TRUE|FALSE";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = TRUE;
-        comment : INPUT  STRING = "FBReferences:
-Signaladaptation or AMPMC
-configValues:
-isAMPMC:TRUE|FALSE
+        comment : INPUT  STRING = "FBReferences:
+Signaladaptation or AMPMC
+configValues:
+isAMPMC:TRUE|FALSE
 isDigital:TRUE|FALSE";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -4347,6 +4354,7 @@ isDigital:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 250.000000;
         height : INPUT  SINGLE = 280.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -4364,6 +4372,7 @@ isDigital:TRUE|FALSE";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 250.000000;
         height : INPUT  SINGLE = 25.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "grey";
@@ -4381,6 +4390,7 @@ isDigital:TRUE|FALSE";
         y : INPUT  SINGLE = 40.000000;
         width : INPUT  SINGLE = 50.000000;
         height : INPUT  SINGLE = 30.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightblue";
@@ -5531,6 +5541,7 @@ isDigital:TRUE|FALSE";
         y : INPUT  SINGLE = 40.000000;
         width : INPUT  SINGLE = 130.000000;
         height : INPUT  SINGLE = 30.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5691,8 +5702,8 @@ isDigital:TRUE|FALSE";
         width : INPUT  SINGLE = 85.000000;
         height : INPUT  SINGLE = 28.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "configValues:
-buttoncontent
+        comment : INPUT  STRING = "configValues:
+buttoncontent
 buttontitle";
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
@@ -5706,6 +5717,7 @@ buttontitle";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 82.000000;
         height : INPUT  SINGLE = 26.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "url(#VertWhite2Black)";
@@ -5829,8 +5841,8 @@ buttontitle";
         width : INPUT  SINGLE = 42.000000;
         height : INPUT  SINGLE = 28.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "configValues:
-buttoncontent
+        comment : INPUT  STRING = "configValues:
+buttoncontent
 buttontitle";
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -5844,6 +5856,7 @@ buttontitle";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 40.000000;
         height : INPUT  SINGLE = 26.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "url(#VertWhite2Black)";
@@ -5967,7 +5980,7 @@ buttontitle";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "ConfigValues:
+        comment : INPUT  STRING = "ConfigValues:
 vesselname";
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
@@ -5981,6 +5994,7 @@ vesselname";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 150.000000;
         height : INPUT  SINGLE = 100.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "url(#HorWhite2Black)";
@@ -6124,15 +6138,15 @@ vesselname";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "FBReference:
-pflib PCU Object
-FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
+        comment : INPUT  STRING = "FBReference:
+pflib PCU Object
+FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
 Para2Unit:";
         zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
@@ -6143,7 +6157,7 @@ Para2Unit:";
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "0,0 50,25 50,0 0,25 0,0";
-        strokeWidth : INPUT  SINGLE = 1.000000;
+        strokeWidth : INPUT  SINGLE = 2.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -6162,45 +6176,11 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/onload/setLineWidth :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "stroke-width";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/onload/setLineWidth.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  SINGLE = 2.000000;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/onload/alignDirection :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -6304,40 +6284,6 @@ Para2Unit:";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "0,0 25,0 0,50 25,50 0,0";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/onload/alignDirection.then/setLineWidth :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "stroke-width";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/onload/alignDirection.then/setLineWidth.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  SINGLE = 2.000000;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6765,6 +6711,7 @@ Para2Unit:";
         cx : INPUT  SINGLE = 25.000000;
         cy : INPUT  SINGLE = 12.500000;
         r : INPUT  SINGLE = 6.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -6783,7 +6730,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -6792,7 +6739,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6800,7 +6747,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6808,7 +6755,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6816,7 +6763,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.if/isVertical :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.if/isVertical :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
@@ -6826,7 +6773,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.if/isVertical.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.if/isVertical.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6844,7 +6791,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.if/isVertical.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.if/isVertical.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6862,7 +6809,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.then/setCx :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.then/setCx :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6878,7 +6825,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.then/setCx.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.then/setCx.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6896,7 +6843,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.then/setCy :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.then/setCy :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6912,7 +6859,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPotition.then/setCy.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/onload/alignPosition.then/setCy.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -7020,15 +6967,15 @@ Para2Unit:";
         width : INPUT  SINGLE = 2000.000000;
         height : INPUT  SINGLE = 1000.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "FBReference:
-pflib PCU Object
-FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
+        comment : INPUT  STRING = "FBReference:
+pflib PCU Object
+FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
 Para2Unit:";
         zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
@@ -7041,6 +6988,7 @@ Para2Unit:";
         cx : INPUT  SINGLE = 25.000000;
         cy : INPUT  SINGLE = 25.000000;
         r : INPUT  SINGLE = 25.000000;
+        strokeWidth : INPUT  SINGLE = 2.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightblue";
@@ -7051,53 +6999,11 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/onload/setLineWidth :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "stroke-width";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/onload/setLineWidth.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  SINGLE = 2.000000;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest :
     CLASS /Libraries/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  SINGLE = 3.000000;
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7513,7 +7419,7 @@ Para2Unit:";
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "25,0 50,25 25,50";
-        strokeWidth : INPUT  SINGLE = 1.000000;
+        strokeWidth : INPUT  SINGLE = 2.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7871,40 +7777,6 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/line/onload/setLineWidth :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "stroke-width";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/line/onload/setLineWidth.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  SINGLE = 2.000000;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/identity :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
@@ -8007,6 +7879,7 @@ Para2Unit:";
         cx : INPUT  SINGLE = 21.000000;
         cy : INPUT  SINGLE = 21.000000;
         r : INPUT  SINGLE = 20.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -8038,15 +7911,15 @@ Para2Unit:";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = TRUE;
-        comment : INPUT  STRING = "FBReference:
-pflib PCU Object
-FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
+        comment : INPUT  STRING = "FBReference:
+pflib PCU Object
+FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
 Para2Unit:";
         zindex : INPUT  UINT = 9;
         baseKsPath : INPUT  STRING = "";
@@ -8060,6 +7933,7 @@ Para2Unit:";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 127.000000;
         height : INPUT  SINGLE = 84.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "grey";
         fill : INPUT  STRING = "silver";
@@ -8077,6 +7951,7 @@ Para2Unit:";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 84.000000;
         height : INPUT  SINGLE = 28.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "grey";
         fill : INPUT  STRING = "lightgrey";
@@ -8094,6 +7969,7 @@ Para2Unit:";
         y : INPUT  SINGLE = 28.000000;
         width : INPUT  SINGLE = 84.000000;
         height : INPUT  SINGLE = 28.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "grey";
         fill : INPUT  STRING = "lightgrey";
@@ -8409,7 +8285,7 @@ Para2Unit:";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -8947,7 +8823,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9001,7 +8877,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnCommands/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9567,7 +9443,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "FBReferences:
+        comment : INPUT  STRING = "FBReferences:
 Signaladaptation or AMPMC";
         zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "";
