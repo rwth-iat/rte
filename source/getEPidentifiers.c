@@ -91,7 +91,7 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_submit(
 		int xdrlength;
 		strcpy(path, pobj->v_path);
 		
-		generategetepxdr(&xdr, &xdrlength, path, KS_OT_ANY, pobj->v_namemask, KS_EPF_DEFAULT);
+		generategetepxdr(&xdr, &xdrlength, path, (KS_OT_DOMAIN | KS_OT_LINK | KS_OT_VARIABLE), pobj->v_namemask, KS_EPF_DEFAULT);		//Don't ask for histories, since we can't parse the answer yet
 	
 		//print xdr
 		//KSDEVEL int j;
@@ -183,7 +183,7 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_returnMethodxdr(
 
 
 
-	printxdr(xdr, xdrlength);
+	//printxdr(xdr, xdrlength);
 
 
 	errorcode = xdr[31];
@@ -204,12 +204,15 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_returnMethodxdr(
 		position = 36;			//begin of first element
 		for(i=0; i<veclength; i++)	//iterate over elements
 		{
-			for(j=0; j<4; j++) // read length of class-string
+			for(j=0; j<4; j++) // read type
 				((char*) (&type))[3-j] = xdr[position+j];
 			position +=4;		//ignore first 4 bytes
 			switch(type)
 			{
+
+										//DOMAINS
 			case KS_OT_DOMAIN:
+
 				for(j=0; j<4; j++) // read length of class-string
 					((char*) (&currstringlen))[3-j] = xdr[position+j];
 				position += 4 + currstringlen;	//ignore class-string
@@ -244,7 +247,7 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_returnMethodxdr(
 				while(position%4)
 					position++;
 
-				position += 8;		//ignore 2 xdr-fields (most probably creation-time)
+				position += 8;		//ignore 2 xdr-fields (creation-time)
 
 				for(j=0; j<4; j++) // read length of comment-string
 					((char*) (&currstringlen))[3-j] = xdr[position+j];
@@ -252,10 +255,122 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_returnMethodxdr(
 				while(position%4)
 					position++;
 
-				position += 4; //ignore one field (most probably access-flags)
+				position += 4; //ignore one field (access-flags)
 
-				position += 4; //ignore one more field (which is most probably always 0 (semantics?))
+				position += 4; //ignore one more field (most probably semantics, but not tested since no domain with semantic flags found)
 				break;
+
+										//VARIABLES
+			case KS_OT_VARIABLE:
+
+				for(j=0; j<4; j++) // read length of unit-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				position += 4 + currstringlen;	//ignore unit-string
+				while(position%4)
+					position++;
+
+				position += 4;		//ignore vartype
+
+				for(j=0; j<4; j++) // read length of identifier-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				ov_memstack_lock();
+				tempstr = ov_memstack_alloc(currstringlen+1);		//use temporary string to copy since xdr is not 0-terminated
+				if (!tempstr)
+				{
+					ov_logfile_error("Error setting tempstr: out of memory");
+					Ov_SetDynamicVectorValue(&pgEP->v_identifierList, NULL, 0, STRING);
+					pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+					ov_memstack_unlock();
+					return;
+				}
+				for(j=0; j<currstringlen; j++)
+					tempstr[j] = xdr[position+4+j];
+				tempstr[currstringlen] = 0;
+				errorcode = ov_string_setvalue(&(pgEP->v_identifierList.value[i]), tempstr);
+				ov_memstack_unlock();
+				if (Ov_Fail(errorcode))
+				{
+					ov_logfile_error("Error setting identifier string: %s", ov_result_getresulttext(errorcode));
+					Ov_SetDynamicVectorValue(&pgEP->v_identifierList, NULL, 0, STRING);
+					pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+					return;
+				}
+				position += 4 + currstringlen;
+				while(position%4)
+					position++;
+
+				position += 8;		//ignore 2 xdr-fields (creation-time)
+
+				for(j=0; j<4; j++) // read length of comment-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				position += 4 + currstringlen;	//ignore comment-string
+				while(position%4)
+					position++;
+
+				position += 4; //ignore one field (access-flags)
+
+				position += 4; //ignore one more field (semantics)
+				break;
+
+											//LINKS
+			case KS_OT_LINK:
+
+				position += 4;		//ignore linktype
+
+				for(j=0; j<4; j++) // read length of anchor/role-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				position += 4 + currstringlen;	//ignore anchor/role-string
+				while(position%4)
+					position++;
+
+				for(j=0; j<4; j++) // read length of linkclass-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				position += 4 + currstringlen;	//ignore linkclass-string
+				while(position%4)
+					position++;
+
+				for(j=0; j<4; j++) // read length of identifier-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				ov_memstack_lock();
+				tempstr = ov_memstack_alloc(currstringlen+1);		//use temporary string to copy since xdr is not 0-terminated
+				if (!tempstr)
+				{
+					ov_logfile_error("Error setting tempstr: out of memory");
+					Ov_SetDynamicVectorValue(&pgEP->v_identifierList, NULL, 0, STRING);
+					pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+					ov_memstack_unlock();
+					return;
+				}
+				for(j=0; j<currstringlen; j++)
+					tempstr[j] = xdr[position+4+j];
+				tempstr[currstringlen] = 0;
+				errorcode = ov_string_setvalue(&(pgEP->v_identifierList.value[i]), tempstr);
+				ov_memstack_unlock();
+				if (Ov_Fail(errorcode))
+				{
+					ov_logfile_error("Error setting identifier string: %s", ov_result_getresulttext(errorcode));
+					Ov_SetDynamicVectorValue(&pgEP->v_identifierList, NULL, 0, STRING);
+					pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
+					return;
+				}
+				position += 4 + currstringlen;
+				while(position%4)
+					position++;
+
+				position += 8;		//ignore 2 xdr-fields (creation-time)
+
+				for(j=0; j<4; j++) // read length of comment-string
+					((char*) (&currstringlen))[3-j] = xdr[position+j];
+				position += 4 + currstringlen;	//ignore comment-string
+				while(position%4)
+					position++;
+
+				position += 4; //ignore one field (access-flags)
+
+				position += 4; //ignore one more field (most probably semantics but not verifiable right now semantics)
+
+				break;
+
 			default:
 				pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "error", -1);
 				ov_logfile_error("GetEP found other tyope than Domain, not yet implemented: %u", type);
