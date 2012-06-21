@@ -1403,7 +1403,7 @@ cshmi.prototype = {
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 			
-			if(TemplateObject !== null){
+			if(TemplateObject !== null && TemplateObject.ConfigValues){
 				TemplateObject.ConfigValues[ParameterValue] = NewValue;
 				return true;
 			}
