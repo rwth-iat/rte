@@ -1407,6 +1407,8 @@ cshmi.prototype = {
 				TemplateObject.ConfigValues[ParameterValue] = NewValue;
 				return true;
 			}
+			//fixme in diesem Fall muss die info auch irgendwo hinterlegt sein. Nur wohin?
+			return false;
 		}
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
 		return false;
