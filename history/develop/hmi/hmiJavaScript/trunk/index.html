@@ -175,34 +175,39 @@ var BrowserDetect = {
 
 };
 	BrowserDetect.init();
+	if (window && window.location && window.location.search){
+		var urlparameter = window.location.search;
+	}else{
+		urlparameter = "";
+	}
 	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
 		//IE6, 7 and 8 needs a plugin (from Adobe)
 		var results = detectSVG();
 		if(results.support == "Builtin"){
 			//ie>=9 has buildin support and is able to use the gecko version
 			//This modern IE could get into this codepath if compatibility mode is active (in the intranet)
-			window.location.href = "hmi-gecko.xhtml"+window.location.search;
+			window.location.href = "hmi-gecko.xhtml"+urlparameter;
 		}else if(results.support){
-			window.location.href = "hmi-explorer.html"+window.location.search;
+			window.location.href = "hmi-explorer.html"+urlparameter;
 		}else{
 			getSVGViewer();
 		}
 	}else if ("Explorer" == BrowserDetect.browser && 8 < BrowserDetect.version ) {
 		//IE9 can use the gecko.xhtml file
-		window.location.href = "hmi-gecko.xhtml"+window.location.search;
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
 	}else if ("Mozilla" == BrowserDetect.browser) {
-		window.location.href = "hmi-gecko.xhtml"+window.location.search;
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
 	}else if ("Firefox" == BrowserDetect.browser) {
-		window.location.href = "hmi-gecko.xhtml"+window.location.search;
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
 	}else if ("Opera" == BrowserDetect.browser) {
-		window.location.href = "hmi-gecko.xhtml"+window.location.search;
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
 	}else if ("Safari" == BrowserDetect.browser ) {
-		window.location.href = "hmi-gecko.xhtml"+window.location.search;
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
 	}else if ("Konqueror" == BrowserDetect.browser ) {
 		//Version 4.2 arbeitet mit dem HMI trotzdem nicht, parst das SVG als XML und zeigt die Textkomponenten an
-		window.location.href = "hmi-gecko.xhtml"+window.location.search;
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
 	}else{
-		window.location.href = "hmi-gecko.xhtml"+window.location.search;
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
 	}
 </script>
 	<title>HMI Browserweiche</title>
@@ -254,11 +259,11 @@ var BrowserDetect = {
 			//correct link
 			var aNode = document.getElementById("idIELink");
 			if(aNode && aNode.href){
-				aNode.href = aNode.href + window.location.search;
+				aNode.href = aNode.href + urlparameter;
 			}
 			aNode = document.getElementById("idW3CLink");
 			if(aNode && aNode.href){
-				aNode.href = aNode.href + window.location.search;
+				aNode.href = aNode.href + urlparameter;
 			}
 		</script>
 	</body>
