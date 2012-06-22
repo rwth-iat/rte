@@ -109,7 +109,7 @@ LIBRARY ksservhttp
 	
 	CLASS staticfile : CLASS ov/object
 		IS_INSTANTIABLE;
-		COMMENT = "class for providing static content";
+		COMMENT = "class for providing static content, file with name n.html is accessible under localhost:8080/n.html and shows the content of the content field. Mimetype and encoding have generic HTTP meaning.";
 		VARIABLES
 			content : STRING HAS_ACCESSORS INITIALVALUE="";
 			mimetype : STRING HAS_ACCESSORS INITIALVALUE="text/html";

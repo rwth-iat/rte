@@ -315,8 +315,8 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 #define EXEC_GETEP_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&message, NULL);\
-		ov_string_setvalue(&objectType, match.value[0]);\
-		ov_string_setvalue(&outputInfos, match.value[0]);\
+		ov_string_setvalue(&objectType, NULL);\
+		ov_string_setvalue(&outputInfos, NULL);\
 		return
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_INSTPTR_ov_object pObj = NULL;
