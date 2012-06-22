@@ -360,9 +360,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
 			//outputInfos=OP_NAME
 			if (message == NULL){
-				ov_string_print(&message, "{%s}\r\n", pChild->v_identifier);
+				ov_string_print(&message, "{%s} ", pChild->v_identifier);
 			}else{
-				ov_string_print(&message, "%s{%s}", message, pChild->v_identifier);
+				ov_string_print(&message, "%s {%s}", message, pChild->v_identifier);
 			}
 		}
 	}else if(ov_string_compare(objectType, "OT_VARIABLES") == OV_STRCMP_EQUAL){
