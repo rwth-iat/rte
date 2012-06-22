@@ -40,9 +40,18 @@
 
 #define GETVAR_TO_STRING_RETURN \
 	ov_string_setvalue(&temp, NULL);\
+	if(format==GETVAR_FORMAT_TCL)ov_string_append(message, "}");\
 	return
 
-OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STRING* message){
+/**
+ * getvar_to_string returns the string result of the getvar call
+ *
+ * pObj is the pointer to the object
+ * varname is the name of thq ueried variable
+ * format is an it specifying the format: check constants GETVAR_FORMAT_TCL, GETVAR_FORMAT_PLAIN etc
+ * message is the output string
+ */
+OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UINT format, OV_STRING* message){
 	//	Local Variables
 	//
 	OV_VTBLPTR_ov_object pOvVTable = NULL;
@@ -60,8 +69,11 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 	ParentElement.elemtype	= OV_ET_OBJECT;
 	ParentElement.pobj		= Ov_PtrUpCast(ov_object, pObj);
 
+	//first separator
+	if(format==GETVAR_FORMAT_TCL)ov_string_append(message, "{");
+
 	if(pObj == NULL){
-		ov_string_append(message, "Object does not exist\n");
+		ov_string_append(message, "Object does not exist");
 		GETVAR_TO_STRING_RETURN OV_ERR_BADPATH; //404
 	}
 
@@ -75,7 +87,7 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 		}
 		if (Ov_Fail(fr))
 		{
-			ov_string_append(message, "Vendor object exists, but variable does not\n");
+			ov_string_append(message, "Vendor object exists, but variable does not");
 			GETVAR_TO_STRING_RETURN OV_ERR_BADPATH; //404
 		}
 	}else{
@@ -96,7 +108,7 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 		ov_memstack_unlock();
 		if (Ov_Fail(fr))
 		{
-			ov_string_append(message, "Object exists, but variable does not\n");
+			ov_string_append(message, "Object exists, but variable does not");
 			GETVAR_TO_STRING_RETURN OV_ERR_BADPATH; //404
 		};
 	}
@@ -143,9 +155,9 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 		case OV_VT_STRING:
 		case OV_VT_STRING_PV:
 			if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
-				ov_string_setvalue(&temp, "\"\"");
+				ov_string_setvalue(&temp, "");
 			}else{
-				ov_string_print(&temp, "\"%s\"", Variable.value.valueunion.val_string);
+				ov_string_print(&temp, "%s", Variable.value.valueunion.val_string);
 			}
 			break;
 
@@ -314,6 +326,8 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 			break;
 	}
 
-    ov_string_setvalue(message, temp);
+	ov_string_setvalue(message, "");
+	if(format==GETVAR_FORMAT_TCL)ov_string_append(message, "{");
+    ov_string_append(message, temp);
     GETVAR_TO_STRING_RETURN OV_ERR_OK;
 }

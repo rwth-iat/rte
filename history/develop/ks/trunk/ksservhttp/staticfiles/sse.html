@@ -40,7 +40,7 @@
 			}, 1000);
 
 			if(typeof EventSource !== 'undefined'){
-				var source = new EventSource('/getVar?path=/vendor.database_free&stream=1');
+				var source = new EventSource('/getVar?path=/vendor.database_free&stream=1&format=plain');
 				source.onmessage = function(e) {
 					lastUpdate = new Date().getTime();
 					lastData = e.data;
@@ -60,7 +60,7 @@
 			smoothie.streamTo(document.getElementById('mycanvas'), 1000);
 		}
 	}
-	ajaxRequest.open('GET', '/getVar?path=/vendor.database_size', true);
+	ajaxRequest.open('GET', '/getVar?path=/vendor.database_size&format=plain', true);
 	ajaxRequest.send(null); 
 
 	var line1 = new TimeSeries();

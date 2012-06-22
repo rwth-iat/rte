@@ -246,33 +246,79 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 }
 
 #define EXEC_GETVAR_RETURN ov_string_freelist(pPathList); \
+		ov_string_freelist(pVarsList); \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&message, NULL);\
+		ov_string_setvalue(&prefix, NULL);\
 		return
 
 OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
+	OV_STRING *pVarsList = NULL;
 	OV_STRING *pPathList = NULL;
+	OV_STRING prefix = NULL;
 	OV_UINT len;
+	OV_UINT format = GETVAR_FORMAT_TCL;
+	int i;
+	int j;
+	OV_UINT innerlen;
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT result;
 	OV_STRING message = NULL;
 
+	//output format
+	find_arguments(args, "format", &match);
+	if(match.veclen>=1){
+		if(ov_string_compare(match.value[0], "plain") == OV_STRCMP_EQUAL){
+			format = GETVAR_FORMAT_PLAIN;
+		}
+	}
+
+	//process path
+	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen<1){
 		ov_string_append(re, "Variable path not found");
 		EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
+	//process multiple path requests at once
+	for(i=0;i<match.veclen;i++){
+		//separating spacer
+		if(i>0)ov_string_append(re, " ");
+		//handle the funny syntax path=/vendor.database_name .database_free to get 2 variables at once
+		//NOTE: space is %20 here
+		pVarsList = ov_string_split((match.value[i]), "%20", &innerlen);
+		//pVarsList[0] should be /vendor.database_name
 
-	//FIXME! does not work with /vendor/database_name
-	pPathList = ov_string_split((match.value[0]), ".", &len);
-	if(len!=2){
-		ov_string_freelist(pPathList);
-		ov_string_append(re, "Variablename must contain a dot");
-		EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
+		//process the first portion
+		//e.g. /vendor.database_name
+		//it is important to separate /vendor as prefix
+		//FIXME! does not work with /vendor/database_name but with /vendor.database_name
+		if(pPathList != NULL)ov_string_freelist(pPathList);
+		pPathList = ov_string_split((pVarsList[0]), ".", &len);
+		if(len!=2){
+			ov_string_append(re, "First variable name must contain a dot");
+			EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
+		}else{
+			ov_string_setvalue(&prefix, pPathList[0]);
+		}
+		result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[1]),format,&message);
+		ov_string_append(re, message);
+		//process remaining queries like .database_free
+		//no prefix expected here
+		for(j=1;j<innerlen;j++){
+			if(pPathList != NULL)ov_string_freelist(pPathList);
+			pPathList = ov_string_split((pVarsList[j]), ".", &len);
+			if(len!=2){
+				ov_string_append(re, "Every variable name after a space must start with a dot");
+				EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
+			}
+			ov_string_setvalue(&message, NULL);
+			//this is the actual getvar call
+			result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[1]), format, &message);
+			ov_string_append(re, " "); //one more spacer
+			ov_string_append(re, message);
+		}
 	}
-	result = getvar_to_string(ov_path_getobjectpointer(pPathList[0],2),&(pPathList[1]),&message);
-
-	ov_string_append(re, message);
 
 	EXEC_GETVAR_RETURN result;
 }
@@ -343,10 +389,15 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	}
 	find_arguments(args, "objectType", &match);
 	if(match.veclen!=1){
-		ov_string_append(re, "objectType not found");
-		EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
+		if(Ov_CanCastTo(ov_domain, pObj)){
+			ov_string_setvalue(&objectType, "OT_DOMAIN");
+		}else{
+			ov_string_append(re, "objectType not found and the object is not a domain");
+			EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
+		}
+	}else{
+		ov_string_setvalue(&objectType, match.value[0]);
 	}
-	ov_string_setvalue(&objectType, match.value[0]);
 	find_arguments(args, "outputInfos", &match);
 	if(match.veclen!=1){
 		ov_string_setvalue(&outputInfos, "OP_ANY");
@@ -355,14 +406,14 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	}
 
 	//todo reimplement via ov_element_getnextchild, see at ov_ksserver_getep.c
-	if(ov_string_compare(objectType, "OT_DOMAINS") == OV_STRCMP_EQUAL
+	if(ov_string_compare(objectType, "OT_DOMAIN") == OV_STRCMP_EQUAL
 			&& Ov_CanCastTo(ov_domain, pObj)){
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
 			//outputInfos=OP_NAME
 			if (message == NULL){
 				ov_string_print(&message, "{%s} ", pChild->v_identifier);
 			}else{
-				ov_string_print(&message, "%s {%s}", message, pChild->v_identifier);
+				ov_string_print(&message, "%s{%s} ", message, pChild->v_identifier);
 			}
 		}
 	}else if(ov_string_compare(objectType, "OT_VARIABLES") == OV_STRCMP_EQUAL){
