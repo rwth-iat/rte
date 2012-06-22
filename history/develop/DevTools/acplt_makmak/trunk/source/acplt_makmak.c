@@ -421,7 +421,7 @@ int main(int argc, char **argv) {
 	fclose(fd);
 
 	/* Generic postbuild script */
-	/* prebuild.tcl */
+	/* postbuild.tcl */
 	sprintf(help, "%s/build/postbuild.tcl", libPath);
 	compatiblePath(help);
 
@@ -536,7 +536,9 @@ int main(int argc, char **argv) {
 		fprintf(fd, "		file delete -force \"../source/sourcetemplates\"\n");
 		fprintf(fd, "	}\n");
 		fprintf(fd, "	if {[file exists \"../temp\"]} {\n");
-		fprintf(fd, "		file delete -force \"../temp\"\n");
+		fprintf(fd, "		#file delete -force \"../temp\"\n");
+		fprintf(fd, "		puts \"ERROR: The temp folder still exists. This might happen if the last build went wrong. Please control the contents of temp and source folder and remove the temp folder manually. Be careful, temp might content the LAST backup of the source you have on your drive!\"\n");
+		fprintf(fd, "		exit 1\n");
 		fprintf(fd, "	}\n");
 		fprintf(fd, "	#backup source\n");
 		fprintf(fd, "	file rename \"../source\" \"../temp\"\n");
