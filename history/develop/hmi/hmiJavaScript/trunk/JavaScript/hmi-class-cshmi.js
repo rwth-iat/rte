@@ -3214,6 +3214,8 @@ cshmi.prototype = {
 		
 		VisualObject.setAttribute("d", requestList[ObjectPath]["d"]);
 		
+		VisualObject.setAttribute("shape-rendering", "crispEdges");
+		
 		return VisualObject;
 		
 		/* Code from Yannick Bochatay http://ybochatay.fr

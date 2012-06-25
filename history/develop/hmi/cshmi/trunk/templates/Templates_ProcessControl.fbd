@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-06-22 15:11:14
+  Erstellt : 2012-06-25 13:55:54
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -10046,7 +10046,7 @@ SignalName";
         width : INPUT  SINGLE = 40.000000;
         height : INPUT  SINGLE = 20.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "";
+        comment : INPUT  STRING = "xy position at center, so easy rotatable";
         zindex : INPUT  UINT = 12;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -10120,7 +10120,7 @@ SignalName";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ValveHand/figure :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "0,0 25,12.5 25,-12.5 -25,12.5 -25,-12.5 0,0 0,-20 -10,-20 10,-20";
+        points : INPUT  STRING = "0,0 25,12.5 25,-12.5 -25,12.5 -25,-12.5 0,0 0,-20 -10,-20 10,-20 0,-20";
         strokeWidth : INPUT  SINGLE = 2.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
