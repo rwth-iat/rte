@@ -282,9 +282,11 @@ OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 	}
 	//process multiple path requests at once
 	for(i=0;i<match.veclen;i++){
+		//handle empty path requests like path="" to avoid passing NULL around
+		if(match.value[i]==NULL)ov_string_setvalue(&match.value[i], " ");
 		//separating spacer
 		if(i>0)ov_string_append(re, " ");
-		//handle the funny syntax path=/vendor.database_name .database_free to get 2 variables at once
+		//handle the funny ks syntax path=/vendor.database_name .database_free to get 2 variables at once
 		//NOTE: space is %20 here
 		pVarsList = ov_string_split((match.value[i]), "%20", &innerlen);
 		//pVarsList[0] should be /vendor.database_name
@@ -392,8 +394,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 		if(Ov_CanCastTo(ov_domain, pObj)){
 			ov_string_setvalue(&objectType, "OT_DOMAIN");
 		}else{
-			ov_string_append(re, "objectType not found and the object is not a domain");
-			EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
+			ov_string_setvalue(&objectType, "OT_ANY");
 		}
 	}else{
 		ov_string_setvalue(&objectType, match.value[0]);
@@ -416,6 +417,10 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 				ov_string_print(&message, "%s{%s} ", message, pChild->v_identifier);
 			}
 		}
+	}else if(ov_string_compare(objectType, "OT_ANY") == OV_STRCMP_EQUAL){
+		ov_memstack_lock();
+		ov_string_print(&message, "{%s} {} {} {} {} {} {%s}", pObj->v_identifier, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object,Ov_GetClassPtr(pObj)),2));
+		ov_memstack_unlock();
 	}else if(ov_string_compare(objectType, "OT_VARIABLES") == OV_STRCMP_EQUAL){
 		ov_string_append(re, "objectType VARIABLES not implemented");
 		EXEC_GETEP_RETURN OV_ERR_NOTIMPLEMENTED; //501
