@@ -2633,6 +2633,7 @@ cshmi.prototype = {
 		}
 		if (requestListTemplate[PathOfTemplateDefinition]["hideable"] === "TRUE"){
 			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
+			VisualParentObject.setAttribute("cursor", "pointer");
 		}
 		
 		//###########################################################################
