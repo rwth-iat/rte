@@ -65,3 +65,40 @@
 
 #include "cshmilib.h"
 
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	//	local variables
+	//
+	OV_INSTPTR_ov_object
+		pParent = NULL;
+	OV_RESULT    result;
+
+	/* general placement check is done here */
+	result = cshmi_Action_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
+
+	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	if (pParent != NULL){
+		if(Ov_GetParent(ov_instantiation, (pParent)) == pclass_cshmi_SetConcatValue){
+			//whitelist any GetValue under a SetConcatValue
+			return OV_ERR_OK;
+		}else if (Ov_CanCastTo(cshmi_SetMathValue, pParent)){
+			//check name of GetValue under a SetMathValue
+			if(ov_string_match(pobj->v_identifier, "add*")){
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "sub*")){
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "mul*")){
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "div*")){
+				return OV_ERR_OK;
+			}
+		}
+		ov_logfile_debug("An action is not allowed below this parent. Action: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
+		return OV_ERR_BADPLACEMENT;
+	}
+	return OV_ERR_OK;
+}
+

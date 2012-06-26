@@ -404,6 +404,9 @@ LIBRARY cshmi
 			value : ANY
 			COMMENT = "value";
 		END_VARIABLES;
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS SetConcatValue : CLASS cshmi/Action
@@ -429,8 +432,10 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 
-//ideas: setAddedValue
-//setMultipliedValue
+	CLASS SetMathValue : CLASS cshmi/SetConcatValue
+		IS_INSTANTIABLE;
+		COMMENT = "set a variable with a calculated value, add getValues with name add*, sub*, mul*, div*";
+	END_CLASS;
 
 	CLASS SetValue : CLASS cshmi/SetConcatValue
 		IS_INSTANTIABLE;

@@ -81,8 +81,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Action_constructor(
 	//force correct placement
 	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	if (pParent != NULL){
-		if (Ov_CanCastTo(cshmi_SetConcatValue, pParent) && Ov_CanCastTo(cshmi_GetValue, pobj)){
-			//whitelist GetValue under a SetConcatValue
+		if (Ov_CanCastTo(cshmi_GetValue, pobj)){
+			//GetValue has an own constructor placement check
 			return OV_ERR_OK;
 		}else
 		if (!(	Ov_CanCastTo(cshmi_Event, pParent)

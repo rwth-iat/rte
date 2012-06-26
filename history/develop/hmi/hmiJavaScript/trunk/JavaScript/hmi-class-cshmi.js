@@ -107,7 +107,7 @@ TODO:
 JavaScript:
 - check return value of gethandleid
 
-- hover für polylines
+- hover fuer polylines
 
 - Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
 - Nur einige wenige cycTimes (enum?) erlauben
@@ -642,9 +642,11 @@ cshmi.prototype = {
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
 			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
-				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], false);
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "static");
 			}else if (varName[1].indexOf("/cshmi/SetConcatValue") !== -1){
-				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], true);
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "concat");
+			}else if (varName[1].indexOf("/cshmi/SetMathValue") !== -1){
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "math");
 			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
 			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
@@ -1047,14 +1049,13 @@ cshmi.prototype = {
 	 * set a Value to multiple Targets
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {Boolean} Concat Concat multiple getValues or have we one static OV_PART?
+	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
 	 * @return false on error, true on success
-	 * @todo configvalue unterstützen...
 	 */
-	_setValue: function(VisualObject, ObjectPath, Concat){
+	_setValue: function(VisualObject, ObjectPath, GetType){
 		var NewValue = "";
 		//get Value to set
-		if (Concat === false){
+		if (GetType === "static"){
 			//via getValue-part of setValue object
 			NewValue = this._getValue(VisualObject, ObjectPath+".value");
 			
@@ -1071,20 +1072,48 @@ cshmi.prototype = {
 				HMI.hmi_log_error("cshmi._setValue on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because of an NewValue of undefined.");
 				return false;
 			}
-		}else{
+		}else if (GetType === "concat"){
 			//via multiple getValues under the setValue object
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
-					var TempNewValue = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
-					if (TempNewValue !== false && TempNewValue !== null && TempNewValue !== undefined){
-						NewValue = NewValue + TempNewValue;
-					}else if (TempNewValue !== false){
-						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") was had an error. Skipping.");
+					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
+					if (NewValuePart === null || NewValuePart === undefined){
+						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") had an error. Skipping.");
+					}else if (NewValuePart !== false && NewValuePart !== null && NewValuePart !== undefined){
+						NewValue = NewValue + NewValuePart.toString();
 					}
 				}
 			}
+		}else if (GetType === "math"){
+			//via multiple getValues under the setValue object
+			
+			NewValue = 0;
+			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
+			for (var i=0; i < responseArray.length; i++) {
+				var varName = responseArray[i].split(" ");
+				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
+					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
+					if (NewValuePart === null || NewValuePart === undefined){
+						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") had an error. Skipping.");
+					}else if (NewValuePart !== false && NewValuePart !== null && NewValuePart !== undefined && isNumeric(NewValuePart)){
+						if (varName[0].indexOf("add") === 0){
+							NewValue = NewValue + parseFloat(NewValuePart);
+						}else if (varName[0].indexOf("sub") === 0){
+							NewValue = NewValue - parseFloat(NewValuePart);
+						}else if (varName[0].indexOf("mul") === 0){
+							NewValue = NewValue * parseFloat(NewValuePart);
+						}else if (varName[0].indexOf("div") === 0){
+							NewValue = NewValue / parseFloat(NewValuePart);
+							if (isNaN(NewValue)){
+								NewValue = 0;
+							}
+						}
+					}
+				}
+			}
+			NewValue = NewValue.toString();
 		}
 		
 		//get info where to set the NewValue
