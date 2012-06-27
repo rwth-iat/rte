@@ -88,7 +88,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_ContainerElement_constructor(
 			Ov_CanCastTo(cshmi_Action, pParent) ||
 			Ov_CanCastTo(cshmi_Condition, pParent) ){
 			//ContainerElements are not allowed under Elements, Actions and Conditions
-			ov_logfile_debug("An ContainerElement is not allowed below this parent. ContainerElement: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
+			ov_logfile_warning("An ContainerElement is not allowed below this parent. ContainerElement: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
 			return OV_ERR_BADPLACEMENT;
 		}
 	}

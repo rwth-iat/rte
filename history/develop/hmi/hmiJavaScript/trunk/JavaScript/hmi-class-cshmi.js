@@ -1005,6 +1005,9 @@ cshmi.prototype = {
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 			return "";
+		}else if (ParameterName === "TemplateFBVariableReferenceName" && preventNetworkRequest === true){
+			//intentionally no value
+			return null;
 		}else if (ParameterName === "TemplateFBVariableReferenceName" && preventNetworkRequest !== true){
 			var TemplateObject = VisualObject;
 			do{
@@ -1106,10 +1109,32 @@ cshmi.prototype = {
 							NewValue = NewValue * parseFloat(NewValuePart);
 						}else if (varName[0].indexOf("div") === 0){
 							NewValue = NewValue / parseFloat(NewValuePart);
-							if (isNaN(NewValue)){
-								NewValue = 0;
-							}
+						}else if (varName[0].indexOf("abs") === 0){
+							NewValue = NewValue + Math.abs(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("acos") === 0){
+							NewValue = NewValue + Math.acos(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("asin") === 0){
+							NewValue = NewValue + Math.asin(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("atan") === 0){
+							NewValue = NewValue + Math.atan(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("cos") === 0){
+							NewValue = NewValue + Math.cos(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("exp") === 0){
+							NewValue = NewValue + Math.exp(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("log") === 0){
+							NewValue = NewValue + Math.log(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("sin") === 0){
+							NewValue = NewValue + Math.sin(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("sqrt") === 0){
+							NewValue = NewValue + Math.sqrt(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("tan") === 0){
+							NewValue = NewValue + Math.tan(parseFloat(NewValuePart));
+						}else if (varName[0].indexOf("pow") === 0){
+							NewValue = Math.pow(NewValue, parseFloat(NewValuePart));
 						}
+					}
+					if (!isFinite(NewValue)){
+						NewValue = 0;
 					}
 				}
 			}
@@ -3379,17 +3404,18 @@ cshmi.prototype = {
 		}else{
 			svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
 		}
-				
+		
+		//todo tspan raus!
 		if (requestList[ObjectPath]["verAlignment"] == "auto"){
 		}else if (requestList[ObjectPath]["verAlignment"] == "middle"){
-			svgTspan.setAttribute("dy", "0.7ex");
+			VisualObject.setAttribute("dy", "0.7ex");
 		}else if (requestList[ObjectPath]["verAlignment"] == "hanging"){
-			if (svgTspan.style.baselineShift !== undefined){
-				svgTspan.style.baselineShift = "-100%";
-			}else if (svgTspan.style.dominantBaseline !== undefined){
-				svgTspan.style.dominantBaseline = "hanging";
+			if (VisualObject.style.baselineShift !== undefined){
+				VisualObject.style.baselineShift = "-100%";
+			}else if (VisualObject.style.dominantBaseline !== undefined){
+				VisualObject.style.dominantBaseline = "hanging";
 			}else{
-				svgTspan.setAttribute("dy", "1ex");
+				VisualObject.setAttribute("dy", "1ex");
 			}
 		}
 		

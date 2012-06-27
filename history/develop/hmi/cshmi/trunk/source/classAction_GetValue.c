@@ -94,11 +94,61 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_constructor(
 				return OV_ERR_OK;
 			}else if(ov_string_match(pobj->v_identifier, "div*")){
 				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "abs*")){
+				//Returns the absolute value (modulus) of a number.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "acos*")){
+				//Returns the arccosine of a number.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "asin*")){
+				//Returns the arcsine of a number.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "atan*")){
+				//Returns the arctangent of a number.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "cos*")){
+				//Returns the cosine of a number.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "exp*")){
+				//Returns E^number, where number is the argument, and E is Euler's constant (2.718...), the base of the natural logarithm.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "log*")){
+				//Returns the natural logarithm (loge, also ln) of a number.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "pow*")){
+				//Returns base to the exponent power, that is, base^exponent.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "sin*")){
+				//Returns the sine of a number.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "sqrt*")){
+				//Returns the positive square root of a number.
+				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "tan*")){
+				//Returns the tangent of a number.
+				return OV_ERR_OK;
 			}
+			ov_logfile_warning("Naming the GetValue %s was wrong. allowed is add*, sub*, mul*, div*, abs*, acos*, asin*, atan*, cos*, exp*, log*, sin*, sqrt*, tan*, pow* ", pobj->v_identifier);
+			return OV_ERR_BADNAME;
 		}
-		ov_logfile_debug("An action is not allowed below this parent. Action: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
+		ov_logfile_warning("An action is not allowed below this parent. Action: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
 		return OV_ERR_BADPLACEMENT;
 	}
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_OperatorInput_set(
+	OV_INSTPTR_cshmi_GetValue          pobj,
+	const OV_STRING  value
+) {
+	if (	ov_string_compare(value, "") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "mousex") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "mousey") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "textinput") == OV_STRCMP_EQUAL
+		||	ov_string_match(value, "textinput:*")){
+		return ov_string_setvalue(&pobj->v_OperatorInput,value);
+	}
+	ov_logfile_warning("Wrong OperatorInput set on: '%s', requested value was: '%s'. Only mousex, mousey and textinput* is allowed.", pobj->v_identifier, value);
+	return OV_ERR_BADPARAM;
+
+}

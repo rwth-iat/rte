@@ -83,7 +83,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Condition_constructor(
 	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	if (pParent != NULL){
 		if (!Ov_CanCastTo(cshmi_csContainer, pParent)){
-			ov_logfile_debug("An action is not allowed below this parent. Action: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
+			ov_logfile_warning("An Condition is not allowed below this parent. Condition: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
 			return OV_ERR_BADPLACEMENT;
 		}
 	}

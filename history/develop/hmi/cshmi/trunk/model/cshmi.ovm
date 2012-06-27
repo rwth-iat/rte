@@ -394,6 +394,7 @@ LIBRARY cshmi
 			persistentGlobalVar : STRING
 			COMMENT = "name of the persistent global variable (survives reloading)";
 			OperatorInput : STRING
+			HAS_SET_ACCESSOR
 			COMMENT = "Value from the user; example 'mousex', 'mousey', 'textinput', 'textinput:question', 'textinput:question:TemplateFBReferenceVariable:IN1')";
 			TemplateFBReferenceVariable : STRING
 			COMMENT = "name of a variable of a referenced FB object; example 'IN1'";
@@ -434,7 +435,7 @@ LIBRARY cshmi
 
 	CLASS SetMathValue : CLASS cshmi/SetConcatValue
 		IS_INSTANTIABLE;
-		COMMENT = "set a variable with a calculated value, add getValues with name add*, sub*, mul*, div*";
+		COMMENT = "set a variable with a calculated value, add getValues with correct name: add*, sub*, mul*, div*; The following adds the result: abs*, acos*, asin*, atan*, cos*, exp*, log*, sin*, sqrt*, tan*; pow* is oldValue power newValue";
 	END_CLASS;
 
 	CLASS SetValue : CLASS cshmi/SetConcatValue
