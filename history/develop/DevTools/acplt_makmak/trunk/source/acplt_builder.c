@@ -1261,6 +1261,12 @@ HELP:
 	/*
 	*	syntactically parse the input
 	*/
+	
+	//Sten: hack to make error outputs work	
+	if(filename!=NULL)free(filename);
+	filename = (OV_STRING)ov_codegen_malloc(strlen(libname)+4);
+	sprintf(filename, "%s.ovm", libname);
+
 	if(yyparse() == EXIT_SUCCESS) {
 		/*
 		*	Check the input semantically
