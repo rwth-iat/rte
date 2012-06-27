@@ -1017,6 +1017,12 @@ int yyerror(char *msg)
 			fprintf(stderr, "\tincluded from %s:\n", filename_stack[i]);
 		}
 	}
+	if(msg!=NULL){
+		if (strstr(msg, "error")!=NULL || strstr(msg, "Error")!=NULL){
+			fprintf(stderr, "ERROR: ");
+		}
+	}
+	
 	fprintf(stderr, "%s:%ld: %s\n", filename, current_line, msg);
 	/* 
 	*	There is a segfault with a return, therefore we do an exit. 
