@@ -37,38 +37,7 @@
  ***********************************************************************/
 
 #include "config.h"
-#include <stdarg.h>
 
-/*
- * initializes the vector output
- */
-OV_RESULT init_vector_output(OV_STRING* output, OV_UINT format){
-	ov_string_setvalue(output, "");
-	if(format==GETVAR_FORMAT_TCL){
-		ov_string_append(output, "{");
-	}else{
-		ov_string_append(output, "Vector has no entries");
-	}
-	return OV_ERR_OK;
-}
-
-OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format){
-	if(format==GETVAR_FORMAT_TCL){
-		ov_string_append(output, "}{");
-	}else{
-		ov_string_append(output, ";");
-	}
-	return OV_ERR_OK;
-}
-
-OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format){
-	if(format==GETVAR_FORMAT_TCL){
-		ov_string_append(output, "}");
-	}else{
-		ov_string_append(output, "Vector has no entries");
-	}
-	return OV_ERR_OK;
-}
 
 #define GETVAR_TO_STRING_RETURN \
 		ov_string_setvalue(&temp, NULL);\

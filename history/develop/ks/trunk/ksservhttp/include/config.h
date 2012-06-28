@@ -114,3 +114,7 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 OV_STRING ov_path_topercent_noslash (OV_STRING org);
 OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_type, OV_STRING cmd);
 OV_RESULT include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
+OV_UINT extract_output_format(OV_STRING_VEC* args);
+OV_RESULT init_vector_output(OV_STRING* output, OV_UINT format);
+OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format);
+OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format);

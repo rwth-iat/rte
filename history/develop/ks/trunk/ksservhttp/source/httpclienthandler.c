@@ -257,21 +257,15 @@ OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING *pPathList = NULL;
 	OV_STRING prefix = NULL;
 	OV_UINT len;
-	OV_UINT format = GETVAR_FORMAT_TCL;
 	int i;
 	int j;
 	OV_UINT innerlen;
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT result;
 	OV_STRING message = NULL;
+	OV_UINT output_format;
 
-	//output format
-	find_arguments(args, "format", &match);
-	if(match.veclen>=1){
-		if(ov_string_compare(match.value[0], "plain") == OV_STRCMP_EQUAL){
-			format = GETVAR_FORMAT_PLAIN;
-		}
-	}
+	output_format = extract_output_format(args);
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -303,7 +297,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 		}else{
 			ov_string_setvalue(&prefix, pPathList[0]);
 		}
-		result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[1]),format,&message);
+		result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[1]),output_format,&message);
 		ov_string_append(re, message);
 		//process remaining queries like .database_free
 		//no prefix expected here
@@ -316,7 +310,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
 			}
 			ov_string_setvalue(&message, NULL);
 			//this is the actual getvar call
-			result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[1]), format, &message);
+			result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[1]), output_format, &message);
 			ov_string_append(re, " "); //one more spacer
 			ov_string_append(re, message);
 		}
@@ -365,6 +359,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 		ov_string_setvalue(&message, NULL);\
 		ov_string_setvalue(&objectType, NULL);\
 		ov_string_setvalue(&outputInfos, NULL);\
+		ov_string_setvalue(&temp, NULL);\
 		return
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_INSTPTR_ov_object pObj = NULL;
@@ -373,11 +368,16 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING message = NULL;
 	OV_STRING objectType = NULL;
 	OV_STRING outputInfos = NULL;
+	OV_STRING temp = NULL;
+	OV_UINT output_format;
+	int i;
 
 	//muss noch aufgebohrt werden:
 	//path=/TechUnits
 	//objectType=OT_DOMAINS|OT_VARIABLES|... (siehe tcl-tks doku)
 	//TODO: outputInfos (anderer name muss her) ein bis sieben informatinen liefert tcl-tks
+
+	output_format = extract_output_format(args);
 
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
@@ -394,6 +394,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 		if(Ov_CanCastTo(ov_domain, pObj)){
 			ov_string_setvalue(&objectType, "OT_DOMAIN");
 		}else{
+			//not implemented yet
 			ov_string_setvalue(&objectType, "OT_ANY");
 		}
 	}else{
@@ -406,21 +407,27 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 		ov_string_setvalue(&outputInfos, match.value[0]);
 	}
 
-	//todo reimplement via ov_element_getnextchild, see at ov_ksserver_getep.c
+	i=0;
+	//todo: reimplement via ov_element_getnextchild, see at ov_ksserver_getep.c
 	if(ov_string_compare(objectType, "OT_DOMAIN") == OV_STRCMP_EQUAL
 			&& Ov_CanCastTo(ov_domain, pObj)){
+		//OT_DOMAIN == ov_containment
+		init_vector_output(&message, output_format);
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
-			//outputInfos=OP_NAME
-			if (message == NULL){
-				ov_string_print(&message, "{%s} ", pChild->v_identifier);
+			//outputInfos=OP_ANY
+			if(i!=0){ //FIXME: this is ugly
+				split_vector_output(&message, output_format);
 			}else{
-				ov_string_print(&message, "%s{%s} ", message, pChild->v_identifier);
+				i++;
 			}
+			//the number of output variables depends on the OP ~ outputInfos request
+			ov_memstack_lock();
+			//todo: adjust the format
+			ov_string_print(&temp, "{%s} {} {} {} {} {%s} {%s} ", pChild->v_identifier, ov_time_timetoascii(&(pChild->v_creationtime)), ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object,Ov_GetClassPtr(pChild)),2));
+			ov_memstack_unlock();
+			ov_string_append(&message, temp);
 		}
-	}else if(ov_string_compare(objectType, "OT_ANY") == OV_STRCMP_EQUAL){
-		ov_memstack_lock();
-		ov_string_print(&message, "{%s} {} {} {} {} {} {%s}", pObj->v_identifier, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object,Ov_GetClassPtr(pObj)),2));
-		ov_memstack_unlock();
+		finalize_vector_output(&message, output_format);
 	}else if(ov_string_compare(objectType, "OT_VARIABLES") == OV_STRCMP_EQUAL){
 		ov_string_append(re, "objectType VARIABLES not implemented");
 		EXEC_GETEP_RETURN OV_ERR_NOTIMPLEMENTED; //501
