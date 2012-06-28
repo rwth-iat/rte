@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-06-25 13:55:54
+  Erstellt : 2012-06-28 13:20:14
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -23,8 +23,8 @@
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = TRUE;
-        comment : INPUT  STRING = "configValues:
-captionText:LL|L|H|HH|MAX|MIN
+        comment : INPUT  STRING = "configValues:
+captionText:LL|L|H|HH|MAX|MIN
 isAMPMC:TRUE|FALSE";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3039,10 +3039,11 @@ isAMPMC:TRUE|FALSE";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "FBReferences:
-Signaladaptation or AMPMC
-configValues:
-isAMPMC:TRUE|FALSE
+        comment : INPUT  STRING = "width:80 or 200, height 20
+FBReferences:
+Signaladaptation or AMPMC
+configValues:
+isAMPMC:TRUE|FALSE
 isDigital:TRUE|FALSE";
         zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
@@ -3353,7 +3354,7 @@ isDigital:TRUE|FALSE";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 80.000000;
         y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 125.000000;
+        width : INPUT  SINGLE = 120.000000;
         height : INPUT  SINGLE = 20.000000;
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -4337,10 +4338,10 @@ isDigital:TRUE|FALSE";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = TRUE;
-        comment : INPUT  STRING = "FBReferences:
-Signaladaptation or AMPMC
-configValues:
-isAMPMC:TRUE|FALSE
+        comment : INPUT  STRING = "FBReferences:
+Signaladaptation or AMPMC
+configValues:
+isAMPMC:TRUE|FALSE
 isDigital:TRUE|FALSE";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5702,8 +5703,8 @@ isDigital:TRUE|FALSE";
         width : INPUT  SINGLE = 85.000000;
         height : INPUT  SINGLE = 28.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "configValues:
-buttoncontent
+        comment : INPUT  STRING = "configValues:
+buttoncontent
 buttontitle";
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
@@ -5841,8 +5842,8 @@ buttontitle";
         width : INPUT  SINGLE = 42.000000;
         height : INPUT  SINGLE = 28.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "configValues:
-buttoncontent
+        comment : INPUT  STRING = "configValues:
+buttoncontent
 buttontitle";
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -5980,7 +5981,7 @@ buttontitle";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "ConfigValues:
+        comment : INPUT  STRING = "ConfigValues:
 vesselname";
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
@@ -6138,15 +6139,15 @@ vesselname";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "FBReference:
-pflib PCU Object
-FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
+        comment : INPUT  STRING = "FBReference:
+pflib PCU Object
+FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
 Para2Unit:";
         zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
@@ -6967,15 +6968,15 @@ Para2Unit:";
         width : INPUT  SINGLE = 2000.000000;
         height : INPUT  SINGLE = 1000.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "FBReference:
-pflib PCU Object
-FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
+        comment : INPUT  STRING = "FBReference:
+pflib PCU Object
+FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
 Para2Unit:";
         zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
@@ -7911,15 +7912,15 @@ Para2Unit:";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = TRUE;
-        comment : INPUT  STRING = "FBReference:
-pflib PCU Object
-optional FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-optional ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
+        comment : INPUT  STRING = "FBReference:
+pflib PCU Object
+optional FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+optional ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
 Para2Unit:
 fixedFaceplatePosition:TRUE";
         zindex : INPUT  UINT = 9;
@@ -8016,7 +8017,7 @@ fixedFaceplatePosition:TRUE";
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 2;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8102,7 +8103,7 @@ fixedFaceplatePosition:TRUE";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8399,7 +8400,7 @@ fixedFaceplatePosition:TRUE";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -8937,7 +8938,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -8991,7 +8992,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnCommands/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9505,7 +9506,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         TemplateFBReferenceVariable : INPUT  STRING = "Xpos";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 2;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9514,45 +9515,11 @@ M37.8 14 L39.9 17.5 L37.8 21";
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "x";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "Ypos";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "y";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "mousex";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
@@ -9596,6 +9563,40 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "Ypos";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "mousey";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/setY :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
@@ -9607,7 +9608,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 4;
+        zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9636,7 +9637,8 @@ M37.8 14 L39.9 17.5 L37.8 21";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "FBReferences:
+        comment : INPUT  STRING = "width:80 or 200, height 20
+FBReferences:
 Signaladaptation or AMPMC
 optional configValues:
 SignalName";
