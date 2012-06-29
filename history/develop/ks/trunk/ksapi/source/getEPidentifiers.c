@@ -75,6 +75,8 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_submit(
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 
 	OV_INSTPTR_ksapi_Channel channel = (OV_INSTPTR_ksapi_Channel)Ov_SearchChild(ov_containment, pobj, "channel");
+	char *xdr;
+	int xdrlength;
 
 	Ov_GetVTablePtr(ksapi_getEPidentifiers, pvtableop, pobj)
 
@@ -86,25 +88,10 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_submit(
 
 	if((pobj->v_host) && (pobj->v_path)&& (pobj->v_namemask) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
 		//all values are set
-		char *xdr;
-		char path[4096];
-		int xdrlength;
-		strcpy(path, pobj->v_path);
 		
-		generategetepxdr(&xdr, &xdrlength, path, (KS_OT_DOMAIN | KS_OT_LINK | KS_OT_VARIABLE), pobj->v_namemask, KS_EPF_DEFAULT);		//Don't ask for histories, since we can't parse the answer yet
+		generategetepxdr(&xdr, &xdrlength, pobj->v_path, (KS_OT_DOMAIN | KS_OT_LINK | KS_OT_VARIABLE), pobj->v_namemask, KS_EPF_DEFAULT);		//Don't ask for histories, since we can't parse the answer yet
 	
-		//print xdr
-		//KSDEVEL int j;
-		//KSDEVEL printf("\n\nxdr:\n");
-		//KSDEVEL printf("%X %X %X %X %X %X   ", xdr[0], xdr[1], xdr[2], xdr[3], xdr[4], xdr[5]);
-		//KSDEVEL for (j = 6; j < xdrlength; j=j+4)
-			//KSDEVEL printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-		//KSDEVEL printf("\n\n");
-		//KSDEVEL for (j = 6; j < xdrlength; j=j+4)
-			//KSDEVEL printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-		//KSDEVEL printf("\n\n");
-		//KSDEVEL printf("%s\n\n", xdr);	
-	
+
 		ksapi_Channel_sendxdr(channel, pksc, xdr, xdrlength);
 	}
 	else if(ksapi_KSCommon_status_get(pksc) == STATUS_KSCOMMON_BUSY)

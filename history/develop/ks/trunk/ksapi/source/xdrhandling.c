@@ -637,8 +637,6 @@ int analysegetreply(int type, char xdr[], int xdrlength, void *reply)
 	char tempd[8];
 	int j;
 
-	logfile_debug("\nanalysing get reply\n");
-
 	//decoding
 	if(xdr[39] == 0) // OK, found
 	{

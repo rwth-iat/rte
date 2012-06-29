@@ -75,6 +75,18 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT(
 		OV_STRING 									path
 );
 
+//definitions for setAny
+typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_ANY_SET(
+		OV_INSTPTR_ksapi_setAny 				pobj
+);
+typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_ANY_SET(
+		OV_INSTPTR_ksapi_setAny	 			pobj,
+		OV_STRING 									host,
+		OV_STRING 									server,
+		OV_STRING 									path,
+		OV_ANY	 									sendany
+);
+
 //definitions for setBool
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_BOOL_SET(
 		OV_INSTPTR_ksapi_setBool 				pobj

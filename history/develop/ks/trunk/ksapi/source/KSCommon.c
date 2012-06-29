@@ -180,6 +180,7 @@ OV_DLLFNCEXPORT void ksapi_KSCommon_submitget(
 		
 		//send
 		generategetxdr(&xdr, &xdrlength, pobj->v_path);
+
 		ksapi_Channel_sendxdr(channel, pobj, xdr, xdrlength);
 	} else if(ksapi_KSCommon_status_get(pobj) == STATUS_KSCOMMON_BUSY) {
 		ksapi_logfile_error("get*: connection in use");

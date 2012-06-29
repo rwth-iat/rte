@@ -69,6 +69,8 @@ OV_DLLFNCEXPORT void ksapi_setInt_submit(
 	OV_VTBLPTR_ksapi_setInt   pvtableop; 
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	OV_INSTPTR_ksapi_Channel channel;
+	char *xdr;
+	int xdrlength;
 
 	Ov_GetVTablePtr(ksapi_setInt, pvtableop, pobj);
 
@@ -81,12 +83,8 @@ OV_DLLFNCEXPORT void ksapi_setInt_submit(
 
 	if((pobj->v_host) && (pobj->v_server) && (pobj->v_path) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
 		//all values are set
-	char *xdr;
-	char path[4096];
-	int xdrlength;
-	strcpy(path, pobj->v_path);
 		
-	generatesetintxdr(&xdr, &xdrlength, path, pobj->v_sendint);
+	generatesetintxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendint);
 	
 	{
 	//print xdr

@@ -68,6 +68,8 @@ OV_DLLFNCEXPORT void ksapi_setUIntVec_submit(
 	OV_VTBLPTR_ksapi_setUIntVec   pvtableop;
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	OV_INSTPTR_ksapi_Channel channel;
+	char *xdr;
+	int xdrlength;
 
 	Ov_GetVTablePtr(ksapi_setUIntVec, pvtableop, pobj);
 
@@ -80,25 +82,9 @@ OV_DLLFNCEXPORT void ksapi_setUIntVec_submit(
 	
 	if((pobj->v_host) && (pobj->v_server) && (pobj->v_path) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
 		//all values are set
-	char *xdr;
-	char path[4096];
-	int xdrlength;
 	
-		
-	strcpy(path, pobj->v_path);
-	generatesetuintvecxdr(&xdr, &xdrlength, path, (unsigned int*)pobj->v_senduintvec.value, pobj->v_senduintvec.veclen);
 	
-	//print xdr
-	//KSDEVEL int j;
-	//KSDEVEL printf("\n\nxdr:\nlength: %d\n", xdrlength);
-	//KSDEVEL printf("%X %X %X %X %X %X    ", xdr[0], xdr[1], xdr[2], xdr[3], xdr[4], xdr[5]);
-	//KSDEVEL for (j = 6; j < xdrlength; j=j+4)
-		//KSDEVEL printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-	//KSDEVEL printf("\n\n");
-	//KSDEVEL for (j = 6; j < xdrlength; j=j+4)
-		//KSDEVEL printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-	//KSDEVEL printf("\n\n");
-	//KSDEVEL printf("%s\n\n", xdr);
+	generatesetuintvecxdr(&xdr, &xdrlength, pobj->v_path, (unsigned int*)pobj->v_senduintvec.value, pobj->v_senduintvec.veclen);
 	
 	//send
 	ksapi_Channel_sendxdr(channel, pksc, xdr, xdrlength);
