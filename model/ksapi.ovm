@@ -99,6 +99,23 @@ LIBRARY	ksapi
 		END_OPERATIONS;
 	END_CLASS;
 
+	CLASS	getAny				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get any variable";
+		VARIABLES
+			/* Output *************************************************/
+			receiveany			:	ANY		HAS_ACCESSORS						FLAGS	=	"o"
+				COMMENT			=	"Any which will be received from the client";
+		END_VARIABLES;
+		OPERATIONS
+			constructor			: 	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
+
 	CLASS	getBool				:	CLASS	ksapi/KSCommon
 		IS_INSTANTIABLE;
 		COMMENT	=	"ov_object, which gets the information and tries to get the boolean";
@@ -285,6 +302,24 @@ LIBRARY	ksapi
 		END_OPERATIONS;
 	END_CLASS;
 
+	CLASS	setAny				:	CLASS	ksapi/KSCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to send the any";
+		VARIABLES
+			/* Input *************************************************/
+				sendany			:	ANY		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"The any which wants to be send";
+		END_VARIABLES;
+		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_ANY_SET>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_ANY_SET>;
+			returnMethodxdr	:	C_FUNCTION <KSAPI_FNC_RETXDR>;
+		END_OPERATIONS;
+	END_CLASS;
 
 	CLASS	setBool				:	CLASS	ksapi/KSCommon
 		IS_INSTANTIABLE;
