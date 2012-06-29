@@ -109,7 +109,7 @@ FILE *fb_builder_createfile(
 	filename = (OV_STRING)ov_codegen_malloc(strlen(outputpath)+
 		+strlen(name)+strlen(extension)+5);
 	if(!filename) {
-		fprintf(stderr, "Out of memory.\n");
+		fprintf(stderr, "Error: Out of memory.\n");
         return NULL;
     }
 	sprintf(filename, "%s/%s%s", outputpath, name, extension);
@@ -117,7 +117,7 @@ FILE *fb_builder_createfile(
 
 	fp = fopen(filename, "r");
 	if(fp) {
-		fprintf(stderr, "File '%s%s' already exists.\n",
+		fprintf(stderr, "Error: File '%s%s' already exists.\n",
 			name, extension);
 		free(filename);
 		fclose(fp);
@@ -127,7 +127,7 @@ FILE *fb_builder_createfile(
 	fp = fopen(filename, "w");
 	free(filename);
 	if(!fp) {
-		fprintf(stderr, "unable to open file '%s%s' for writing.\n",
+		fprintf(stderr, "Error: unable to open file '%s%s' for writing.\n",
 			name, extension);
 		return NULL;
 	}
@@ -1184,6 +1184,12 @@ HELP:
 	sprintf(outputpath, "%s/%s/model/%s.ovm", userLibPath, libname, libname);
 	compatiblePath(outputpath);
 
+	//Sten: hack to make error outputs work	
+	//this path needs to be relative to build/*/ to be marked by eclipse
+	if(filename!=NULL)free(filename);
+	filename = (OV_STRING)ov_codegen_malloc(strlen(outputpath)+17);
+	sprintf(filename, "../../model/%s.ovm", libname);
+
 	yyin = fopen(outputpath, "r");
 	if(!yyin) {
 		fprintf(stderr, "File '%s' not found.\n", outputpath);
@@ -1262,11 +1268,6 @@ HELP:
 	*	syntactically parse the input
 	*/
 	
-	//Sten: hack to make error outputs work	
-	if(filename!=NULL)free(filename);
-	filename = (OV_STRING)ov_codegen_malloc(strlen(libname)+4);
-	sprintf(filename, "%s.ovm", libname);
-
 	if(yyparse() == EXIT_SUCCESS) {
 		/*
 		*	Check the input semantically

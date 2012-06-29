@@ -784,6 +784,11 @@ int main(int argc, char **argv) {
 	fprintf(fd,"\n");
 
 	/* Targets */
+	fprintf(fd,"templates: \n");
+	fprintf(fd,"\tacplt_builder -l %s $(MAKMAKOPTIONS)\n", libname);
+
+	fprintf(fd,"\n");
+
 	fprintf(fd,"all: $(TARGETS)\n");
 	fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"\t$(STRIP) --strip-debug $(USERLIB_LIB)\n");
