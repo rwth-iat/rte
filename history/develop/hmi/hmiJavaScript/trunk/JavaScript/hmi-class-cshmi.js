@@ -750,11 +750,11 @@ cshmi.prototype = {
 			var response;
 			if (ParameterValue.charAt(0) == "/"){
 				//we have an absolute path
-				response = HMI.KSClient.getVar(null, '{'+ParameterValue+'}', null);
+				response = HMI.KSClient.getVar(null, ParameterValue, null);
 			}else{
 				//get baseKsPath
 				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
-				response = HMI.KSClient.getVar(null, '{'+baseKsPath+"/"+ParameterValue+'}', null);
+				response = HMI.KSClient.getVar(null, baseKsPath+ParameterValue, null);
 			}
 			var responseArray = HMI.KSClient.splitKsResponse(response);
 			if (responseArray.length === 0){
@@ -903,10 +903,10 @@ cshmi.prototype = {
 						
 						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 							//we have an OV-PART, so the separator is a dot
-							var result = HMI.KSClient.getVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', null);
+							var result = HMI.KSClient.getVar(null, FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue, null);
 						}else{
 							//we have no OV-PART, so the separator is a slash
-							result = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', null);
+							result = HMI.KSClient.getVar(null, FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue, null);
 						}
 						var returnValue = HMI.KSClient.splitKsResponse(result);
 						if (returnValue.length > 0){
@@ -944,7 +944,7 @@ cshmi.prototype = {
 					var prefix = FBRef.slice(0, slashIndex);
 				}
 				
-				var result = HMI.KSClient.getVar(null, '{'+ prefix+"."+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue + '}', null);
+				var result = HMI.KSClient.getVar(null, prefix+"."+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue, null);
 				
 				var returnValue = HMI.KSClient.splitKsResponse(result);
 				if (returnValue.length > 0){
@@ -1196,11 +1196,11 @@ cshmi.prototype = {
 			var response;
 			if (ParameterValue.charAt(0) == "/"){
 				//we have an absolute path
-				response = HMI.KSClient.setVar(null, '{'+ParameterValue+'}', NewValue, null);
+				response = HMI.KSClient.setVar(null, ParameterValue, NewValue, null);
 			}else{
 				//get baseKsPath
 				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
-				response = HMI.KSClient.setVar(null, '{'+baseKsPath+ParameterValue+'}', NewValue, null);
+				response = HMI.KSClient.setVar(null, baseKsPath+ParameterValue, NewValue, null);
 			}
 			if (response.indexOf("KS_ERR_BADPARAM") !== -1){
 				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+baseKsPath+ParameterValue+' not successfull: Bad Parameter ');
@@ -1333,10 +1333,10 @@ cshmi.prototype = {
 						
 						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 							//we have an OV-PART, so the separator is a dot
-							var result = HMI.KSClient.setVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', NewValue, null);
+							var result = HMI.KSClient.setVar(null, FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue, NewValue, null);
 						}else{
 							//we have no OV-PART, so the separator is a slash
-							result = HMI.KSClient.setVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue + '}', NewValue, null);
+							result = HMI.KSClient.setVar(null, FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue, NewValue, null);
 						}
 						if (result.indexOf("KS_ERR_BADPARAM") !== -1){
 							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference[ParameterValue]+' not successfull: Bad Parameter ');
@@ -1374,7 +1374,7 @@ cshmi.prototype = {
 					var prefix = FBRef.slice(0, slashIndex);
 				}
 				
-				var result = HMI.KSClient.setVar(null, '{'+ prefix + this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue + '}', NewValue, null);
+				var result = HMI.KSClient.setVar(null, prefix + this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue, NewValue, null);
 				if (result.indexOf("KS_ERR_BADPARAM") !== -1){
 					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue+' not successfull: Bad Parameter ');
 				}else if (result.indexOf("KS_ERR") !== -1){
@@ -1482,7 +1482,7 @@ cshmi.prototype = {
 			var currentPath = ObjectPathArray.join("/");
 			var responseArray;
 			if (this.ResourceList.baseKsPath[currentPath] === undefined){
-				var response = HMI.KSClient.getVar(null, '{'+currentPath+'.baseKsPath}', null);
+				var response = HMI.KSClient.getVar(null, currentPath+'.baseKsPath', null);
 				responseArray = HMI.KSClient.splitKsResponse(response);
 				
 				this.ResourceList.baseKsPath[currentPath] = responseArray;
@@ -1718,7 +1718,7 @@ cshmi.prototype = {
 			var ChildrenTypeList = ChildrenType.split(" ");
 			var response;
 			for (var i=0; i < ChildrenTypeList.length; i++) {
-				response = HMI.KSClient.getVar(null, '{'+ FBRef +'.' + ChildrenTypeList[i] + '}', null);
+				response = HMI.KSClient.getVar(null, FBRef +'.' + ChildrenTypeList[i], null);
 				if (response === false){
 					continue;
 				}
@@ -2486,10 +2486,10 @@ cshmi.prototype = {
 			
 			if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 				//we have an OV-PART, so the separator is a dot
-				Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"."+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+				Value1 = HMI.KSClient.getVar(null, FBRef+"."+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1], null);
 			}else{
 				//we have no OV-PART, so the separator is a slash
-				Value1 = HMI.KSClient.getVar(null, '{'+ FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1] + '}', null);
+				Value1 = HMI.KSClient.getVar(null, FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1], null);
 			}
 			if ((Value1 === false || Value1 === null) && ignoreError === "FALSE"){
 				//communication problem
@@ -3739,7 +3739,7 @@ cshmi.prototype = {
 			}
 		}
 		
-		var response = HMI.KSClient.getVar(null, '{'+requestString+'}', null);
+		var response = HMI.KSClient.getVar(null, requestString, null);
 		if (response === false){
 			//communication error
 			return false;
