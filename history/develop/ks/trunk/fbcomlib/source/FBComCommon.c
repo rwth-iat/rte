@@ -100,10 +100,6 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_FBComCommon_doSend_set(
 	if (pobj->v_doSend){
 		return OV_ERR_GENERIC;
 	}
-	if(value){
-		pobj->v_state=0;
-		fbcomlib_FBComCommon_state_set(pobj, STATE_INIT);
-	}
 	pobj->v_doSend = value;
     return OV_ERR_OK;
 }
@@ -280,6 +276,7 @@ OV_DLLFNCEXPORT void fbcomlib_FBComCommon_typemethod(
 			&& fbcommon->v_state != STATE_INIT
 			&& fbcommon->v_state != STATE_CLIENTBUSY){
 		fbcommon->v_doSend = TRUE;
+		fbcomlib_FBComCommon_state_set(fbcommon, STATE_INIT);
 		//check if all values are set
 		if (!((fbcommon->v_server)&&(fbcommon->v_host)&&(fbcommon->v_path))){
 			ov_logfile_error("Please set all values: server,host,path");
