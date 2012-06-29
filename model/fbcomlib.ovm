@@ -475,6 +475,40 @@ LIBRARY	fbcomlib
 		END_OPERATIONS;
 	END_CLASS;
 
+/***********************************************************************
+	any
+***********************************************************************/
+	CLASS setAny	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for sending an any";
+		VARIABLES
+			sendany			:	ANY		HAS_ACCESSORS		FLAGS	=	"i"
+				COMMENT			=	"Input AnyThing";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getAny	:	CLASS	fbcomlib/FBComCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"Function block for receiving any";
+		VARIABLES
+			receivedAny		:	ANY		HAS_ACCESSORS	FLAGS	=	"o"
+				COMMENT			=	"Any in which is read";
+			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
+				COMMENT			=	"Reset"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			retMethod			:	C_FUNCTION <KSAPI_FNC_RET>; 
+		END_OPERATIONS;
+	END_CLASS;
 
 /***********************************************************************
 	EP
