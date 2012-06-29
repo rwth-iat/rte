@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-06-28 13:20:14
+  Erstellt : 2012-06-29 14:40:39
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -1959,7 +1959,7 @@ isAMPMC:TRUE|FALSE";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.then/instCommandNoSP :
     CLASS /Libraries/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/internal/FaceplatePCUCommandNoSP";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/internal/FaceplatePCUCommand";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         xOffset : INPUT  SINGLE = 85.000000;
@@ -1967,7 +1967,7 @@ isAMPMC:TRUE|FALSE";
         maxTemplatesPerDirection : INPUT  STRING = "y:3";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"PFCommand:OP_VALUE" , "buttoncontent:OP_VALUE"};
+        ConfigValues[3] : INPUT  STRING = {"PFCommand:OP_VALUE" , "buttoncontent:OP_VALUE" , "hasSP:FALSE"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2043,7 +2043,7 @@ isAMPMC:TRUE|FALSE";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else/checkCommandSP.then/instCommandSP :
     CLASS /Libraries/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/internal/FaceplatePCUCommandSP";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/internal/FaceplatePCUCommand";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         xOffset : INPUT  SINGLE = 85.000000;
@@ -2051,7 +2051,7 @@ isAMPMC:TRUE|FALSE";
         maxTemplatesPerDirection : INPUT  STRING = "y:3";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"PFCommand:OP_VALUE" , "buttoncontent:OP_VALUE"};
+        ConfigValues[3] : INPUT  STRING = {"PFCommand:OP_VALUE" , "buttoncontent:OP_VALUE" , "hasSP:TRUE"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2291,7 +2291,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
@@ -2303,7 +2303,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP/BtnCmdSP :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
@@ -2322,7 +2322,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP/BtnCmdSP/click :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click :
     CLASS /Libraries/cshmi/OperatorEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -2330,7 +2330,86 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP/BtnCmdSP/click/setOrder :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.if/hasSP :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.if/hasSP.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "hasSP";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.if/hasSP.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP :
     CLASS /Libraries/cshmi/SetConcatValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2346,7 +2425,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP/BtnCmdSP/click/setOrder/Commander :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/Commander :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2364,7 +2443,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP/BtnCmdSP/click/setOrder/semicolon1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/semicolon1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2382,7 +2461,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP/BtnCmdSP/click/setOrder/Command :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/Command :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2400,7 +2479,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP/BtnCmdSP/click/setOrder/semicolon2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/semicolon2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2418,7 +2497,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandSP/BtnCmdSP/click/setOrder/Value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/Value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2436,46 +2515,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 5;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP/BtnCmd :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
-        x : INPUT  SINGLE = 0.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP/BtnCmd/click :
-    CLASS /Libraries/cshmi/OperatorEvent;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP/BtnCmd/click/setOrder :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP :
     CLASS /Libraries/cshmi/SetConcatValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2491,7 +2531,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP/BtnCmd/click/setOrder/Commander :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/Commander :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2509,7 +2549,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP/BtnCmd/click/setOrder/semicolon1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/semicolon1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2527,7 +2567,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP/BtnCmd/click/setOrder/Command :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/Command :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2545,7 +2585,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP/BtnCmd/click/setOrder/semicolon2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/semicolon2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2563,7 +2603,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommandNoSP/BtnCmd/click/setOrder/Parameter :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/Parameter :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2588,7 +2628,7 @@ isAMPMC:TRUE|FALSE";
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 6;
+        zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -2814,7 +2854,7 @@ isAMPMC:TRUE|FALSE";
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 7;
+        zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -3045,7 +3085,7 @@ Signaladaptation or AMPMC
 configValues:
 isAMPMC:TRUE|FALSE
 isDigital:TRUE|FALSE";
-        zindex : INPUT  UINT = 8;
+        zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -5703,7 +5743,8 @@ isDigital:TRUE|FALSE";
         width : INPUT  SINGLE = 85.000000;
         height : INPUT  SINGLE = 28.000000;
         hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "configValues:
+        comment : INPUT  STRING = "width is 82, height 26
+optional configValues:
 buttoncontent
 buttontitle";
         zindex : INPUT  UINT = 1;
@@ -5783,7 +5824,7 @@ buttontitle";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "middle";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
+        trimToLength : INPUT  INT = 11;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -7912,7 +7953,8 @@ Para2Unit:";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = TRUE;
-        comment : INPUT  STRING = "FBReference:
+        comment : INPUT  STRING = "maximal width 310px, height 83px
+FBReference:
 pflib PCU Object
 optional FBVariableReference:
 para1:variable of a PCU
