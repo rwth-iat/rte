@@ -42,7 +42,6 @@
 *
 *	Autoren:
 *	--------
-*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
 *	CVS:
@@ -1213,10 +1212,6 @@ cshmi.prototype = {
 			if (ParameterValue == "content"){
 				//content is special, as it is different in OVM and SVG
 				
-				var tspans = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
-				if (tspans.length == 0){
-					return false;
-				}
 				//if trimToLength is set in parent TextFB and perform trimming if needed
 				var trimLength = parseInt(this.ResourceList.Elements[VisualObject.id].ElementParameters.trimToLength, 10);
 				var contentLength = parseInt(NewValue.length, 10);
@@ -1225,25 +1220,25 @@ cshmi.prototype = {
 					//we have a numeric NewValue
 					if(NewValue.indexOf(".") === -1){
 						//INT or UINT
-						tspans[0].replaceChild(HMI.svgDocument.createTextNode(NewValue), tspans[0].firstChild);
+						VisualObject.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild);
 					}else{
 						//other values
 						var power = Math.pow(10, trimLength || 0);
 						trimmedContent = String(Math.round(NewValue * power) / power);
 						
-						tspans[0].replaceChild(HMI.svgDocument.createTextNode(trimmedContent), tspans[0].firstChild);
+						VisualObject.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild);
 						this._setTitle(VisualObject, NewValue);
 					}
 				}else if((trimLength > 0) && (contentLength > trimLength)){
 					trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
-					tspans[0].replaceChild(HMI.svgDocument.createTextNode(trimmedContent), tspans[0].firstChild);
+					VisualObject.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild);
 					this._setTitle(VisualObject, NewValue);
 				}else if((trimLength < 0) && (contentLength > -trimLength)){
 					trimmedContent =  String.fromCharCode(8230) + NewValue.substr(contentLength + trimLength);
-					tspans[0].replaceChild(HMI.svgDocument.createTextNode(trimmedContent), tspans[0].firstChild);
+					VisualObject.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild);
 					this._setTitle(VisualObject, NewValue);
 				}else{
-					tspans[0].replaceChild(HMI.svgDocument.createTextNode(NewValue), tspans[0].firstChild);
+					VisualObject.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild);
 				}
 			}else if (ParameterValue == "title"){
 				this._setTitle(VisualObject, NewValue);
@@ -1473,6 +1468,9 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @return {String} returnValue String of the baseKSPath as seen from the ObjectPath; could be ""
+	 * 
+	 * 
+	 * fixme: baseKsPath darf nicht ov_containment sondern instanziierungsbaum abgehen
 	 */
 	_getBaseKsPath: function(VisualObject, ObjectPath){
 		var ObjectPathArray = ObjectPath.split("/");
@@ -3374,7 +3372,6 @@ cshmi.prototype = {
 		VisualObject.setAttribute("font-family", requestList[ObjectPath]["fontFamily"]);
 		VisualObject.setAttribute("text-anchor", requestList[ObjectPath]["horAlignment"]);
 		
-		var svgTspan = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
 		//perform trimming if needed
 		var trimLength = parseInt(requestList[ObjectPath]["trimToLength"], 10);
 		var contentLength = parseInt(requestList[ObjectPath]["content"].length, 10);
@@ -3384,28 +3381,27 @@ cshmi.prototype = {
 			//we have a numeric NewValue
 			if(requestList[ObjectPath]["content"].indexOf(".") === -1){
 				//INT or UINT
-				svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
+				VisualObject.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
 			}else{
 				//other values
 				var power = Math.pow(10, trimLength || 0);
 				trimmedContent = String(Math.round(NewValue * power) / power);
 				
-				svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
+				VisualObject.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
 				this._setTitle(VisualObject, NewValue);
 			}
 		}else if((trimLength > 0) && (contentLength > trimLength)){
 			trimmedContent = requestList[ObjectPath]["content"].substr(0, trimLength) + String.fromCharCode(8230);
-			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
+			VisualObject.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
 			this._setTitle(VisualObject, requestList[ObjectPath]["content"]);
 		}else if((trimLength < 0) && (contentLength > -trimLength)){
 			trimmedContent =  String.fromCharCode(8230) + requestList[ObjectPath]["content"].substr(contentLength + trimLength);
-			svgTspan.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
+			VisualObject.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
 			this._setTitle(VisualObject, requestList[ObjectPath]["content"]);
 		}else{
-			svgTspan.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
+			VisualObject.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
 		}
 		
-		//todo tspan raus!
 		if (requestList[ObjectPath]["verAlignment"] == "auto"){
 		}else if (requestList[ObjectPath]["verAlignment"] == "middle"){
 			VisualObject.setAttribute("dy", "0.7ex");
@@ -3418,8 +3414,6 @@ cshmi.prototype = {
 				VisualObject.setAttribute("dy", "1ex");
 			}
 		}
-		
-		VisualObject.appendChild(svgTspan);
 		
 		return VisualObject;
 	},
