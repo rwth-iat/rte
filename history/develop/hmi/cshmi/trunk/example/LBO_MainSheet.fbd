@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-06-29 17:45:51
+  Erstellt : 2012-07-03 13:24:58
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -524,8 +524,8 @@
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/Pump";
-        x : INPUT  SINGLE = 875.000000;
-        y : INPUT  SINGLE = 1050.000000;
+        x : INPUT  SINGLE = 900.000000;
+        y : INPUT  SINGLE = 1075.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/N053/N053"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"rotate:270"};
@@ -599,8 +599,8 @@
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/Valve";
-        x : INPUT  SINGLE = 960.000000;
-        y : INPUT  SINGLE = 290.000000;
+        x : INPUT  SINGLE = 970.000000;
+        y : INPUT  SINGLE = 300.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU11/Y081/Y081"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
@@ -618,8 +618,8 @@
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/Valve";
-        x : INPUT  SINGLE = 960.000000;
-        y : INPUT  SINGLE = 490.000000;
+        x : INPUT  SINGLE = 970.000000;
+        y : INPUT  SINGLE = 500.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU11/Y080/Y080"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
@@ -693,8 +693,8 @@
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/Valve";
-        x : INPUT  SINGLE = 1288.000000;
-        y : INPUT  SINGLE = 900.000000;
+        x : INPUT  SINGLE = 1300.000000;
+        y : INPUT  SINGLE = 920.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/Y064/Y064"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"rotate:90" , "x:100" , "y:-50"};
@@ -787,8 +787,8 @@
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/Valve";
-        x : INPUT  SINGLE = 888.000000;
-        y : INPUT  SINGLE = 550.000000;
+        x : INPUT  SINGLE = 900.000000;
+        y : INPUT  SINGLE = 580.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/Y063/Y063"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"rotate:90"};
@@ -912,8 +912,8 @@
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 500.000000;
-        y : INPUT  SINGLE = 50.000000;
-        content : INPUT  STRING = "Die Seite Kühlwasserkreislauf ist in Arbeit.";
+        y : INPUT  SINGLE = 30.000000;
+        content : INPUT  STRING = "Kühlwasserkreislauf";
         fontSize : INPUT  STRING = "20px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
@@ -931,15 +931,15 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Y181 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/arrowIn :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 930.000000;
-        y : INPUT  SINGLE = 550.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/Y181/Y181"};
+        TemplateDefinition : INPUT  STRING = "ELBO/arrow";
+        x : INPUT  SINGLE = 650.000000;
+        y : INPUT  SINGLE = 680.000000;
+        FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        ConfigValues[2] : INPUT  STRING = {"title:" , "rotate:-90"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -950,15 +950,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Y182 :
-    CLASS /Libraries/cshmi/Template;
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/pipeline_main :
+    CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 620.000000;
-        y : INPUT  SINGLE = 550.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/Y182/Y182"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        points : INPUT  STRING = "650,650 650,50 1100,50 900,50 900,150 1100,150 900,150 900,250 1100,250 900,250 900,380 1450,380 1450,650";
+        strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -969,15 +965,12 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/GCU320 :
-    CLASS /Libraries/cshmi/Template;
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/signalLines :
+    CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 20.000000;
-        y : INPUT  SINGLE = 450.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/GCU320"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        d : INPUT  STRING = "M660,70 L650,70
+M1000,150 v40 h-100";
+        strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -988,15 +981,15 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N132 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/arrowOut :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 330.000000;
-        y : INPUT  SINGLE = 350.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N132/N132"};
+        TemplateDefinition : INPUT  STRING = "ELBO/arrow";
+        x : INPUT  SINGLE = 1450.000000;
+        y : INPUT  SINGLE = 680.000000;
+        FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        ConfigValues[2] : INPUT  STRING = {"title:" , "rotate:90"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1007,15 +1000,15 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N131 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/H_P146_HandvalveNachspeisung :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 20.000000;
-        y : INPUT  SINGLE = 350.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N131/N131"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 1000.000000;
+        y : INPUT  SINGLE = 150.000000;
+        FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1026,18 +1019,22 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/GCU310 :
-    CLASS /Libraries/cshmi/Template;
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/textNachspeisung :
+    CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 330.000000;
-        y : INPUT  SINGLE = 250.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/GCU310"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        x : INPUT  SINGLE = 1120.000000;
+        y : INPUT  SINGLE = 155.000000;
+        content : INPUT  STRING = "Nachspeisung";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "start";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 6;
@@ -1045,15 +1042,15 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/J122 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/H_Auslass :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 20.000000;
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 1000.000000;
         y : INPUT  SINGLE = 250.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/J122/J122"};
+        FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        ConfigValues[0] : INPUT  STRING = {};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1064,18 +1061,22 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N136 :
-    CLASS /Libraries/cshmi/Template;
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/textAuslass :
+    CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 330.000000;
-        y : INPUT  SINGLE = 150.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N136/N136"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        x : INPUT  SINGLE = 1120.000000;
+        y : INPUT  SINGLE = 255.000000;
+        content : INPUT  STRING = "Nachlass";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "start";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 8;
@@ -1083,15 +1084,15 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N135 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Tank :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 20.000000;
-        y : INPUT  SINGLE = 150.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N135/N135"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Vesselv1";
+        x : INPUT  SINGLE = 1100.000000;
+        y : INPUT  SINGLE = 10.000000;
+        FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        ConfigValues[1] : INPUT  STRING = {"vesselname:AusgleichsbehÃ¤lter"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1102,15 +1103,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N134 :
-    CLASS /Libraries/cshmi/Template;
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/pipeline_Y182 :
+    CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 330.000000;
-        y : INPUT  SINGLE = 50.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N134/N134"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        points : INPUT  STRING = "650,450 700,450 700,630";
+        strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1121,7 +1118,299 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N133 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/H127_at_Y182 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 700.000000;
+        y : INPUT  SINGLE = 580.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = -90;
+        zindex : INPUT  UINT = 11;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 650.000000;
+        y : INPUT  SINGLE = 100.000000;
+        width : INPUT  SINGLE = 50.000000;
+        height : INPUT  SINGLE = 200.000000;
+        zindex : INPUT  UINT = 12;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/baserect :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = -25.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 50.000000;
+        height : INPUT  SINGLE = 220.000000;
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/H01 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = -25.000000;
+        y : INPUT  SINGLE = 30.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = -90;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/H02 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 25.000000;
+        y : INPUT  SINGLE = 30.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = -90;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/H03 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = -25.000000;
+        y : INPUT  SINGLE = 190.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = -90;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/H04 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 25.000000;
+        y : INPUT  SINGLE = 190.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = -90;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/Heatexchanger1 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HeatExchangerLinear";
+        x : INPUT  SINGLE = -25.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/Heatexchanger2 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HeatExchangerLinear";
+        x : INPUT  SINGLE = 25.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/HeatExchangerCircle :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/HeatExchangerCircle";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 300.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 90;
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/VentilatorN133 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/Ventilator";
+        x : INPUT  SINGLE = 80.000000;
+        y : INPUT  SINGLE = 85.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N133/N133"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/VentilatorN134 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/Ventilator";
+        x : INPUT  SINGLE = 125.000000;
+        y : INPUT  SINGLE = 85.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N134/N134"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HeatExchanger/VentilatorN135 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/Ventilator";
+        x : INPUT  SINGLE = 170.000000;
+        y : INPUT  SINGLE = 85.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N135/N135"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 10;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/HandvalveBehindPumps :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 1400.000000;
+        y : INPUT  SINGLE = 380.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 13;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/pipeline_Y181 :
+    CLASS /Libraries/cshmi/Polyline;
+    VARIABLE_VALUES
+        points : INPUT  STRING = "1450,450 1500,450 1500,630";
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 14;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Handvalve_at_Y181 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 1500.000000;
+        y : INPUT  SINGLE = 580.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = -90;
+        zindex : INPUT  UINT = 15;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N133_FP :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
@@ -1135,7 +1424,542 @@
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 11;
+        zindex : INPUT  UINT = 16;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N134_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 330.000000;
+        y : INPUT  SINGLE = 50.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N134/N134"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 17;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N135_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 20.000000;
+        y : INPUT  SINGLE = 200.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N135/N135"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 18;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N136_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 330.000000;
+        y : INPUT  SINGLE = 200.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N136/N136"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 19;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/J122_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 20.000000;
+        y : INPUT  SINGLE = 350.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/J122/J122"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 20;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/GCU310_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 330.000000;
+        y : INPUT  SINGLE = 350.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/GCU310"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 21;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N131_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 20.000000;
+        y : INPUT  SINGLE = 500.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N131/N131"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 22;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N132_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 330.000000;
+        y : INPUT  SINGLE = 500.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N132/N132"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 23;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/GCU320_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 20.000000;
+        y : INPUT  SINGLE = 650.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/GCU320"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 24;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Y182 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Valve";
+        x : INPUT  SINGLE = 700.000000;
+        y : INPUT  SINGLE = 490.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/Y182/Y182"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[2] : INPUT  STRING = {"fixedFaceplatePosition:TRUE" , "rotate:90"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 25;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/T099 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 660.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS30/T099/PV"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 26;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/P0146 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 960.000000;
+        y : INPUT  SINGLE = 180.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS30/P146/Flt"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 27;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Filters :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 980.000000;
+        y : INPUT  SINGLE = 380.000000;
+        width : INPUT  SINGLE = 180.000000;
+        height : INPUT  SINGLE = 80.000000;
+        zindex : INPUT  UINT = 28;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Filters/baserect :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = -40.000000;
+        width : INPUT  SINGLE = 180.000000;
+        height : INPUT  SINGLE = 80.000000;
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Filters/Filter1 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/filter";
+        x : INPUT  SINGLE = 90.000000;
+        y : INPUT  SINGLE = -40.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 90;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Filters/Filter2 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/filter";
+        x : INPUT  SINGLE = 90.000000;
+        y : INPUT  SINGLE = 40.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 90;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Filters/HandValve1 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 30.000000;
+        y : INPUT  SINGLE = -40.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Filters/HandValve2 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 150.000000;
+        y : INPUT  SINGLE = -40.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Filters/HandValve3 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 30.000000;
+        y : INPUT  SINGLE = 40.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Filters/HandValve4 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 150.000000;
+        y : INPUT  SINGLE = 40.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Pumps :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 1180.000000;
+        y : INPUT  SINGLE = 380.000000;
+        width : INPUT  SINGLE = 120.000000;
+        height : INPUT  SINGLE = 80.000000;
+        zindex : INPUT  UINT = 29;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Pumps/baserect :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = -40.000000;
+        width : INPUT  SINGLE = 120.000000;
+        height : INPUT  SINGLE = 80.000000;
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Pumps/N131 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Pump";
+        x : INPUT  SINGLE = 80.000000;
+        y : INPUT  SINGLE = -40.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N131/N131"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Pumps/N132 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Pump";
+        x : INPUT  SINGLE = 80.000000;
+        y : INPUT  SINGLE = 40.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N132/N132"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Pumps/polylineH :
+    CLASS /Libraries/cshmi/Polyline;
+    VARIABLE_VALUES
+        points : INPUT  STRING = "25,40 25,110";
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Pumps/Handvalve :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
+        x : INPUT  SINGLE = 25.000000;
+        y : INPUT  SINGLE = 80.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = -90;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/P128 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 1470.000000;
+        y : INPUT  SINGLE = 390.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS30/P128/PV"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 30;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/T125 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
+        x : INPUT  SINGLE = 1470.000000;
+        y : INPUT  SINGLE = 415.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS30/T125/PV"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 31;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/Y181 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Valve";
+        x : INPUT  SINGLE = 1500.000000;
+        y : INPUT  SINGLE = 490.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/Y181/Y181"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"rotate:90"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 32;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/textStadtwasser :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 1480.000000;
+        y : INPUT  SINGLE = 670.000000;
+        content : INPUT  STRING = "Stadtwasser";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "start";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 33;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1497,7 +2321,7 @@
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrode1/checkValve :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/checkValve";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveCheckvalve";
         x : INPUT  SINGLE = 241.000000;
         y : INPUT  SINGLE = 550.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -1759,7 +2583,7 @@
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrode2/checkValve :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/checkValve";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveCheckvalve";
         x : INPUT  SINGLE = 241.000000;
         y : INPUT  SINGLE = 550.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -2021,7 +2845,7 @@
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrode3/checkValve :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/checkValve";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ValveCheckvalve";
         x : INPUT  SINGLE = 241.000000;
         y : INPUT  SINGLE = 550.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -6249,25 +7073,6 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/filter :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/filter";
-        x : INPUT  SINGLE = 100.000000;
-        y : INPUT  SINGLE = 100.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/InfoText :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
@@ -6286,7 +7091,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;

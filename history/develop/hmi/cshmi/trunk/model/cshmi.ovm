@@ -288,7 +288,7 @@ LIBRARY cshmi
 		COMMENT = "a polyline";
 		VARIABLES
 			points : STRING
-			COMMENT = "points that make up the visual object (alternating x and y position, split with spaces, for example '0 0 10 10 20 20')";
+			COMMENT = "points that make up the visual object (alternating x and y position, split with comma and spaces, for example '0,0 10,10 20,20')";
 			strokeWidth : SINGLE
 			COMMENT = "stroke width of the line"
 			INITIALVALUE = 1.0;
