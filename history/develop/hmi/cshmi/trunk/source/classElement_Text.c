@@ -82,9 +82,12 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontStyle_set(
 	const OV_STRING  value
 ) {
 	//force our keywords
-	if (	ov_string_compare(value, "normal") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "italic") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "oblique") == OV_STRCMP_EQUAL){
+	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		//setting default
+		return ov_string_setvalue(&pobj->v_fontStyle,"normal");
+	}else if (	ov_string_compare(value, "normal") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "italic") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "oblique") == OV_STRCMP_EQUAL){
 		return ov_string_setvalue(&pobj->v_fontStyle,value);
 	}else{
 		return OV_ERR_BADPARAM;
@@ -96,10 +99,13 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
 	const OV_STRING  value
 ) {
 	//force our keywords
-	if (	ov_string_compare(value, "normal") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "bold") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "lighter") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "bolder") == OV_STRCMP_EQUAL){
+	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		//setting default
+		return ov_string_setvalue(&pobj->v_fontWeight,"normal");
+	}else if (	ov_string_compare(value, "normal") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "bold") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "lighter") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "bolder") == OV_STRCMP_EQUAL){
 		return ov_string_setvalue(&pobj->v_fontWeight,value);
 	}else{
 		return OV_ERR_BADPARAM;
@@ -110,12 +116,16 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	//todo check for center
-
 	//force our keywords
-	if (	ov_string_compare(value, "start") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "middle") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "end") == OV_STRCMP_EQUAL){
+	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		//setting default
+		return ov_string_setvalue(&pobj->v_horAlignment,"start");
+	}else if (ov_string_compare(value, "center") == OV_STRCMP_EQUAL){
+		//fixing common typo
+		return ov_string_setvalue(&pobj->v_verAlignment,"middle");
+	}else if (	ov_string_compare(value, "start") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "middle") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "end") == OV_STRCMP_EQUAL){
 		return ov_string_setvalue(&pobj->v_horAlignment,value);
 	}else{
 		return OV_ERR_BADPARAM;
@@ -126,12 +136,16 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	//todo check for center
-
 	//force our keywords
-	if (	ov_string_compare(value, "auto") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "middle") == OV_STRCMP_EQUAL
-	||		ov_string_compare(value, "hanging") == OV_STRCMP_EQUAL){
+	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		//setting default
+		return ov_string_setvalue(&pobj->v_verAlignment,"auto");
+	}else if (ov_string_compare(value, "center") == OV_STRCMP_EQUAL){
+		//fixing common typo
+		return ov_string_setvalue(&pobj->v_verAlignment,"middle");
+	}else if (	ov_string_compare(value, "auto") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "middle") == OV_STRCMP_EQUAL
+			||	ov_string_compare(value, "hanging") == OV_STRCMP_EQUAL){
 		return ov_string_setvalue(&pobj->v_verAlignment,value);
 	}else{
 		return OV_ERR_BADPARAM;
