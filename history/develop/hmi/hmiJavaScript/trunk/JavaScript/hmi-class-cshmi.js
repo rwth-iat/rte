@@ -1055,6 +1055,8 @@ cshmi.prototype = {
 	 * @return false on error, true on success
 	 */
 	_setValue: function(VisualObject, ObjectPath, GetType){
+		//fixme get config for setvalue and getvalue combined
+		
 		var NewValue = "";
 		//get Value to set
 		if (GetType === "static"){
@@ -3402,17 +3404,13 @@ cshmi.prototype = {
 			VisualObject.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
 		}
 		
+		//dominant-baseline:hanging not supported by Opera (v12) and IE9
+		//baseline-shift:-100% only defined on a tspan, not on text (respected by Opera), not supported by IE9
 		if (requestList[ObjectPath]["verAlignment"] == "auto"){
 		}else if (requestList[ObjectPath]["verAlignment"] == "middle"){
 			VisualObject.setAttribute("dy", "0.7ex");
 		}else if (requestList[ObjectPath]["verAlignment"] == "hanging"){
-			if (VisualObject.style.baselineShift !== undefined){
-				VisualObject.style.baselineShift = "-100%";
-			}else if (VisualObject.style.dominantBaseline !== undefined){
-				VisualObject.style.dominantBaseline = "hanging";
-			}else{
-				VisualObject.setAttribute("dy", "1ex");
-			}
+			VisualObject.setAttribute("dy", "1ex");
 		}
 		
 		return VisualObject;
