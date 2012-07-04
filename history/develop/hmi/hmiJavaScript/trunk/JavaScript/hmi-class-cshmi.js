@@ -3623,9 +3623,12 @@ cshmi.prototype = {
 		if(requestList[ObjectPath]["SVGcontent"] !== ""){
 			//we have SVG Content to visualise
 			//
-			//the code could use an xlink, svg or no XML prefix at all.
+			//the code could use an xlink, svg or no XML prefix at all. Examples
+			//"<rect stroke='red' x='0' y='0' width='10' height='20'></rect>"
+			//"<svg:rect stroke='red' x='0' y='0' width='10' height='20'></svg:rect>"
+			
 			var svgContent =	"<svg:svg xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" xmlns=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" "
-				+"xmlns:xlink='http://www.w3.org/1999/xlink'>"
+				+"xmlns:xlink=\""+HMI.HMI_Constants.NAMESPACE_XLINK+"\">"
 				+requestList[ObjectPath]["SVGcontent"]
 				+"</svg:svg>";
 			VisualObject = HMI.HMIDOMParser.parse(svgContent, null);
@@ -3634,22 +3637,15 @@ cshmi.prototype = {
 			//we have an Bitmap Content to visualise
 			//
 			
-			var bitmapContent =	"<svg:image xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" "
-				+"xmlns:xlink='http://www.w3.org/1999/xlink' xlink:href='"
-				+requestList[ObjectPath]["Bitmapcontent"]
-				+"'></svg:image>";
-			VisualObject = HMI.HMIDOMParser.parse(bitmapContent, null);
-			
-			/* better but not working approach
+			if (requestList[ObjectPath]["Bitmapcontent"].indexOf("data:") !== 0){
+				HMI.hmi_log_info_onwebsite("Bitmapcontent of Image "+ObjectPath+" must begin with the string 'data:'");
+				return null;
+			}
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
 			
-			VisualParentObject.setAttribute("xmlns:xlink", HMI.HMI_Constants.NAMESPACE_XLINK);
-			//this causes an error, so the image is not displayed
-			//VisualParentObject.setAttribute("xmlns", HMI.HMI_Constants.NAMESPACE_SVG);
-			VisualObject.setAttribute("xlink:href", requestList[ObjectPath]["Bitmapcontent"]);
+			VisualObject.setAttributeNS(HMI.HMI_Constants.NAMESPACE_XLINK, "href", requestList[ObjectPath]["Bitmapcontent"]);
 			VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
 			VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
-			*/
 		}else{
 			HMI.hmi_log_info_onwebsite("Image "+ObjectPath+" is not configured");
 			return null;

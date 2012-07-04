@@ -361,7 +361,7 @@ LIBRARY cshmi
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
 			SVGcontent : STRING
-			COMMENT = "direct SVG content";
+			COMMENT = "direct SVG content; example: <rect width='10' height='20' /> or <svg:rect width='10' height='20' />";
 			Bitmapcontent : STRING
 			COMMENT = "Bitmap content as DataURI (base64 encoded); example 'data:image/png;base64,iVBORw0...'";
 		END_VARIABLES;
