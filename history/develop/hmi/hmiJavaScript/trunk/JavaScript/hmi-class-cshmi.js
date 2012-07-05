@@ -3709,7 +3709,7 @@ cshmi.prototype = {
 	 * @param {Boolean} reportError Should an error be reported on screen?
 	 * @return {Boolean} true on success, false if an error occured
 	 */
-	_requestVariablesArray: function(requestList, reportError){
+	_requestVariablesArray: function(requestList){
 		var requestString = "";
 		var lastOvObjName = null;
 		
@@ -3731,7 +3731,7 @@ cshmi.prototype = {
 		if (response === false){
 			//communication error
 			return false;
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1 && reportError === true){
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
 			HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
 			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestString+" failed: "+response);
 			return false;
