@@ -106,6 +106,9 @@ TODO:
 JavaScript:
 - check return value of gethandleid
 
+var varName = responseArray[i].split(" ");
+varName[1] evtl nicht verfügbar!
+
 - hover fuer polylines
 
 - Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
@@ -3038,8 +3041,11 @@ cshmi.prototype = {
 		var requestList;
 		requestList = new Object();
 		requestList[ObjectPath] = new Object();
-		requestList[ObjectPath]["x"] = null;
-		requestList[ObjectPath]["y"] = null;
+		if (VisualParentObject !== null){
+			//with this "hack" we can visualize a TemplateDefinition via deep link for testing
+			requestList[ObjectPath]["x"] = null;
+			requestList[ObjectPath]["y"] = null;
+		}
 		requestList[ObjectPath]["width"] = null;
 		requestList[ObjectPath]["height"] = null;
 		
@@ -3054,8 +3060,11 @@ cshmi.prototype = {
 		HMI.addClass(VisualObject, this.cshmiGroupClass);
 		
 		//set dimension of container
-		VisualObject.setAttribute("x", requestList[ObjectPath]["x"]);
-		VisualObject.setAttribute("y", requestList[ObjectPath]["y"]);
+		if (VisualParentObject !== null){
+			//with this "hack" we can visualize a TemplateDefinition via deep link for testing
+			VisualObject.setAttribute("x", requestList[ObjectPath]["x"]);
+			VisualObject.setAttribute("y", requestList[ObjectPath]["y"]);
+		}
 		VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
 		VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
 		
