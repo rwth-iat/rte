@@ -32,6 +32,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#else
+#include <Winsock2.h>
 #endif
 
 //#include <time.h>
@@ -198,6 +200,8 @@ OV_DLLFNCEXPORT void ksservtcp_managersendrecv_sendxdr(
 	if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0 ) {
 #if OV_SYSTEM_NT
 		errno = WSAGetLastError();
+			//on non-blocking sockets connect always gives an error
+		if(errno != WSAEWOULDBLOCK)
 #endif
 		perror("connect(ksservtcp_managersendrecv) failed");
 		//CLOSE_SOCKET(sock);
