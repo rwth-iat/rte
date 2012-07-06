@@ -1058,7 +1058,7 @@ cshmi.prototype = {
 	 * @return false on error, true on success
 	 */
 	_setValue: function(VisualObject, ObjectPath, GetType){
-		//fixme get config for setvalue and getvalue combined
+		//fixme get config for setvalue and getvalue combined in one request
 		
 		var NewValue = "";
 		//get Value to set
@@ -3715,12 +3715,12 @@ cshmi.prototype = {
 	 * Requests a list of OV-Variables from multiple OV-Objects
 	 * @this main cshmi object
 	 * @param {Array} requestList List of multiple Variables to fetch
-	 * @param {Boolean} reportError Should an error be reported on screen?
 	 * @return {Boolean} true on success, false if an error occured
 	 */
 	_requestVariablesArray: function(requestList){
 		var requestString = "";
 		var lastOvObjName = null;
+		var VariableCount = 0;
 		
 		//collect all requested Variables
 		for (var ovObjName in requestList) {
@@ -3733,12 +3733,19 @@ cshmi.prototype = {
 					requestString += "."+ksVarName+" ";
 				}
 				lastOvObjName = ovObjName;
+				VariableCount++;
 			}
 		}
 		
 		var response = HMI.KSClient.getVar(null, requestString, null);
 		if (response === false){
 			//communication error
+			return false;
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1 && (response.match(/KS_ERR_BADPATH/g)||[]).length - 1 === VariableCount){
+			//TCL gives one global KS_ERR and one for each error
+			//"TksS-0335::KS_ERR_BADPATH {{/TechUnits/VesselCurrent.width KS_ERR_BADPATH} {.height KS_ERR_BADPATH} {.hideable KS_ERR_BADPATH}}"
+			
+			//all our variables gave an error, so it is an server problem and no model problem, will be reported in caller function
 			return false;
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
 			HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
