@@ -134,11 +134,14 @@ OV_DLLFNCEXPORT void ksservtcp_managersendrecv_shutdown(
  */
 OV_DLLFNCEXPORT void ksservtcp_managersendrecv_sendxdr(
 		OV_INSTPTR_ksservtcp_managersendrecv pobj) {
-	int sock, flags;
+
+	int sock;
 	struct sockaddr_in server;
 	struct hostent *hp;
 #if OV_SYSTEM_NT
 	unsigned long  dummy;
+#else
+	int flags;
 #endif   
 	if (pobj->v_mngport <= 0) {
 		ov_logfile_error("no manager port set");
@@ -202,6 +205,8 @@ OV_DLLFNCEXPORT void ksservtcp_managersendrecv_sendxdr(
 		errno = WSAGetLastError();
 			//on non-blocking sockets connect always gives an error
 		if(errno != WSAEWOULDBLOCK)
+#else
+		if((errno != EINPROGRESS) && (errno != EWOULDBLOCK))
 #endif
 		perror("connect(ksservtcp_managersendrecv) failed");
 		//CLOSE_SOCKET(sock);
