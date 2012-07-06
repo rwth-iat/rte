@@ -3006,6 +3006,10 @@ cshmi.prototype = {
 		var childTemplates = VisualParentObject.childNodes;
 		
 		for (var i=0; i < childTemplates.length; i++) {
+			if(childTemplates[i].getAttribute === undefined){
+				//this children can be for example a text node
+				continue;
+			}
 			var Classes = childTemplates[i].getAttribute("class");
 			if (Classes === null){
 				continue;
