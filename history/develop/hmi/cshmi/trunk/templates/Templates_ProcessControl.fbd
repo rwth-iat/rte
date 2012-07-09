@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-07-03 13:25:48
+  Erstellt : 2012-07-09 15:06:03
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -144,7 +144,7 @@ isAMPMC:TRUE|FALSE";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "end";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
+        trimToLength : INPUT  INT = 3;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -1894,7 +1894,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -1903,7 +1903,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -1911,7 +1911,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -1919,7 +1919,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -1927,7 +1927,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.if/hiddenOrNeedsSP :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.if/NotHiddenOrNeedsOperator :
     CLASS /Libraries/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
         childValue : INPUT  STRING = "OP_VALUE";
@@ -1938,7 +1938,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.if/hiddenOrNeedsSP.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.if/NotHiddenOrNeedsOperator.withValue :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -1956,10 +1956,10 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.then/instCommandNoSP :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.then/instCommandValue0 :
     CLASS /Libraries/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/internal/FaceplatePCUCommand";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         xOffset : INPUT  SINGLE = 85.000000;
@@ -1967,7 +1967,7 @@ isAMPMC:TRUE|FALSE";
         maxTemplatesPerDirection : INPUT  STRING = "y:3";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"PFCommand:OP_VALUE" , "buttoncontent:OP_VALUE" , "hasSP:FALSE"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:OP_VALUE" , "PFCommand:OP_VALUE" , "PFValue:0"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1978,7 +1978,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else/checkCommandSP :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.else/checkCommandSP :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -1987,7 +1987,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else/checkCommandSP.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.else/checkCommandSP.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -1995,7 +1995,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else/checkCommandSP.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.else/checkCommandSP.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -2003,7 +2003,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else/checkCommandSP.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.else/checkCommandSP.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -2011,7 +2011,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else/checkCommandSP.if/hidden :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.else/checkCommandSP.if/NotHidden :
     CLASS /Libraries/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
         childValue : INPUT  STRING = "OP_VALUE";
@@ -2022,7 +2022,7 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else/checkCommandSP.if/hidden.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.else/checkCommandSP.if/NotHidden.withValue :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2040,10 +2040,10 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandNoSP.else/checkCommandSP.then/instCommandSP :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommands/onload/readCommands.forEachChild/checkCommandType.else/checkCommandSP.then/instCommandOperatorinputValue :
     CLASS /Libraries/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/internal/FaceplatePCUCommand";
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         xOffset : INPUT  SINGLE = 85.000000;
@@ -2051,7 +2051,7 @@ isAMPMC:TRUE|FALSE";
         maxTemplatesPerDirection : INPUT  STRING = "y:3";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"PFCommand:OP_VALUE" , "buttoncontent:OP_VALUE" , "hasSP:TRUE"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:OP_VALUE" , "PFCommand:OP_VALUE" , "PFValue:"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2291,336 +2291,6 @@ isAMPMC:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 4;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
-        x : INPUT  SINGLE = 0.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click :
-    CLASS /Libraries/cshmi/OperatorEvent;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.if/hasSP :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.if/hasSP.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "hasSP";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.if/hasSP.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  BOOL = TRUE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP :
-    CLASS /Libraries/cshmi/SetConcatValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "order";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/Commander :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "OP";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/semicolon1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = ";";
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/Command :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "PFCommand";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 2;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/semicolon2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = ";";
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.then/setOrderSP/Value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "textinput:Please enter new SetPoint:0.5";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 4;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP :
-    CLASS /Libraries/cshmi/SetConcatValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "order";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/Commander :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "OP";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/semicolon1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = ";";
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/Command :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "PFCommand";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 2;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/semicolon2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = ";";
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUCommand/BtnCmd/click/setOrder.else/setOrderNoSP/Parameter :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "0";
-        zindex : INPUT  UINT = 4;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUDisplayPara1 :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -2628,7 +2298,7 @@ isAMPMC:TRUE|FALSE";
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 5;
+        zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -2854,7 +2524,7 @@ isAMPMC:TRUE|FALSE";
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 6;
+        zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -3085,7 +2755,7 @@ Signaladaptation or AMPMC
 configValues:
 isAMPMC:TRUE|FALSE
 isDigital:TRUE|FALSE";
-        zindex : INPUT  UINT = 7;
+        zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -3966,16 +3636,16 @@ isDigital:TRUE|FALSE";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/SensorValue :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = 85.000000;
+        x : INPUT  SINGLE = 155.000000;
         y : INPUT  SINGLE = 10.000000;
         content : INPUT  STRING = "";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
-        horAlignment : INPUT  STRING = "start";
+        horAlignment : INPUT  STRING = "end";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
+        trimToLength : INPUT  INT = 3;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -4477,7 +4147,7 @@ isDigital:TRUE|FALSE";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "end";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
+        trimToLength : INPUT  INT = 3;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -6112,37 +5782,6 @@ vesselname";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PumpCurrent :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = FALSE;
-        comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 4;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PumpCurrent/usePumpV1 :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Pump";
-        x : INPUT  SINGLE = 0.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ValveCurrent :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -6150,7 +5789,7 @@ vesselname";
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 5;
+        zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -6190,7 +5829,7 @@ Para1Name:
 Para1Unit:
 Para2Name:
 Para2Unit:";
-        zindex : INPUT  UINT = 6;
+        zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -6785,7 +6424,7 @@ Para1Name:
 Para1Unit:
 Para2Name:
 Para2Unit:";
-        zindex : INPUT  UINT = 7;
+        zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7371,7 +7010,7 @@ Para2Unit:";
         height : INPUT  SINGLE = 58.000000;
         hideable : INPUT  BOOL = FALSE;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 8;
+        zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7425,8 +7064,10 @@ Para1Name:
 Para1Unit:
 Para2Name:
 Para2Unit:
-fixedFaceplatePosition:TRUE";
-        zindex : INPUT  UINT = 9;
+fixedFaceplatePosition:TRUE
+FaceplateXPos
+FaceplateYPos";
+        zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8516,7 +8157,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -8525,7 +8166,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -8533,7 +8174,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -8541,7 +8182,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -8549,7 +8190,154 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.if/checkFixed :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.if/FaceplateXPosNotZero :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "!=";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.if/FaceplateXPosNotZero.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "FaceplateXPos";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.if/FaceplateXPosNotZero.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.then/setX :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "x";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.then/setX.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "FaceplateXPos";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.then/setY :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "y";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.then/setY.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "FaceplateYPos";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.if/checkFixed :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "!=";
@@ -8559,7 +8347,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.if/checkFixed.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.if/checkFixed.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -8577,7 +8365,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.if/checkFixed.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.if/checkFixed.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -8595,7 +8383,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.if/XnotZero :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.if/XnotZero :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "!=";
@@ -8605,7 +8393,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.if/XnotZero.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.if/XnotZero.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -8623,7 +8411,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.if/XnotZero.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.if/XnotZero.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -8641,7 +8429,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.then/setX :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.then/setX :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -8657,7 +8445,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.then/setX.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.then/setX.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -8675,7 +8463,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.then/setY :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.then/setY :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -8686,12 +8474,12 @@ M37.8 14 L39.9 17.5 L37.8 21";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/useXYPosFromFB.then/setY.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.then/setY.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -9130,6 +8918,341 @@ M37.8 14 L39.9 17.5 L37.8 21";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton :
+    CLASS /Libraries/cshmi/TemplateDefinition;
+    VARIABLE_VALUES
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
+        comment : INPUT  STRING = "Displays a button with the Text from 
+the ConfigValue buttoncontent
+A click send the command from
+PFCommand and the Value from PFValue
+to the object specified via FBReference.
+If no PFValue is given, the operator is asked.";
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.if/PFValueGiven :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "!=";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.if/PFValueGiven.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFValue";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.if/PFValueGiven.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.then/setOrderWithValue :
+    CLASS /Libraries/cshmi/SetConcatValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "order";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.then/setOrderWithValue/Commander :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "OP";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.then/setOrderWithValue/semicolon1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = ";";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.then/setOrderWithValue/Command :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFCommand";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.then/setOrderWithValue/semicolon2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = ";";
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.then/setOrderWithValue/Value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFValue";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.else/setOrderWithOperatorinputValue :
+    CLASS /Libraries/cshmi/SetConcatValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "order";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.else/setOrderWithOperatorinputValue/Commander :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "OP";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.else/setOrderWithOperatorinputValue/semicolon1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = ";";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.else/setOrderWithOperatorinputValue/Command :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFCommand";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.else/setOrderWithOperatorinputValue/semicolon2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = ";";
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/setOrder.else/setOrderWithOperatorinputValue/Value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "textinput:Please enter new SetPoint:0.5";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9696,6 +9819,37 @@ width 50, height 25";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PumpCurrent :
+    CLASS /Libraries/cshmi/TemplateDefinition;
+    VARIABLE_VALUES
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
+        comment : INPUT  STRING = "";
+        zindex : INPUT  UINT = 14;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PumpCurrent/usePumpV1 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/Pump";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;

@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-07-05 18:02:34
+  Erstellt : 2012-07-09 15:06:13
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -2501,7 +2501,7 @@ A17,17 0 0 0 -16,0";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 4;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -2566,7 +2566,7 @@ A17,17 0 0 0 -16,0";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
+        zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -2631,7 +2631,7 @@ A17,17 0 0 0 -16,0";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 6;
+        zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
