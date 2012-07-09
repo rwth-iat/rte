@@ -123,7 +123,7 @@ LIBRARY	ksapi
 			/* Output *************************************************/
 			receivebool			:	BOOL		HAS_ACCESSORS						FLAGS	=	"o"
 				COMMENT			=	"The boolean which will be received from the client"
-				INITIALVALUE	=	TRUE;
+				INITIALVALUE	=	FALSE;
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -328,7 +328,7 @@ LIBRARY	ksapi
 			/* Input *************************************************/
 				sendbool			:	BOOL		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The boolean which wants to be send"
-				INITIALVALUE	=	TRUE;
+				INITIALVALUE	=	FALSE;
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
