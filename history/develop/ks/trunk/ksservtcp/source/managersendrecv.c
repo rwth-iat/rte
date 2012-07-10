@@ -138,6 +138,7 @@ OV_DLLFNCEXPORT void ksservtcp_managersendrecv_sendxdr(
 	int sock;
 	struct sockaddr_in server;
 	struct hostent *hp;
+	int optval = 1;
 #if OV_SYSTEM_NT
 	unsigned long  dummy;
 #else
@@ -185,6 +186,8 @@ OV_DLLFNCEXPORT void ksservtcp_managersendrecv_sendxdr(
     flags = fcntl(sock,F_GETFL,0);              // Get socket flags
 	fcntl(sock,F_SETFL,flags | O_NONBLOCK);   // Add non-blocking flag
 #endif
+	//disable nagle for the socket
+	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char *) &optval, sizeof(optval));
 
 
 	// conencting - building server adr struct
