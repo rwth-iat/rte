@@ -21,7 +21,6 @@ void sysMsgToError() {
     DWORD       eNum;
     TCHAR       sysMsg[256];
     TCHAR*      p;
-    static char smsgstr[2048];
     
     // INIT
     sysMsg[0] = 0;

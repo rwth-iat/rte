@@ -159,13 +159,6 @@ OV_DLLFNCEXPORT void ksservtcp_udpconnection_shutdown(
 ) {
 	OV_INSTPTR_ksservtcp_udpconnection this = Ov_StaticPtrCast(ksservtcp_udpconnection, pobj);
 	int sock;
-	char unsetxdr[56];
-	int xdrlength = 56;
-	struct sockaddr_in server;
-	unsigned int server_len = sizeof(server);
-	struct hostent *hp;
-	int bytes;
-	char buffer[4096];
 
 	sock = ksservtcp_udpconnection_socket_get(this);
 
@@ -201,7 +194,6 @@ void ksservtcp_udpconnection_typemethod(
 	OV_INSTPTR_ksservtcp_getserverdata pgsd = (OV_INSTPTR_ksservtcp_getserverdata)Ov_SearchChild(ov_containment, ksservtcpdomain, "getserverdata");
 	OV_TIME_SPAN CYCTIME;
 	int sock = ksservtcp_udpconnection_socket_get(this);
-	int optval = 1; //used by setsockopt for reuseage of tcp connection port
 	struct sockaddr_in server_addr, client_addr;
 	unsigned int client_addr_len = sizeof(client_addr);
 	int port = ksservtcp_udpconnection_udpport_get(this);
@@ -263,6 +255,7 @@ void ksservtcp_udpconnection_typemethod(
 
 		//test resueage!
 		//ksserv_logfile_info("########## reuseage of used port by setsockopt ");
+		//int optval = 1; //used by setsockopt for reuseage of tcp connection port
 		//setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
 		if ((bind(sock, (struct sockaddr*) &server_addr, sizeof(server_addr))) == -1)

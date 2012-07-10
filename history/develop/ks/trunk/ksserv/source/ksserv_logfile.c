@@ -13,7 +13,10 @@
 #include <stdarg.h>
 #include <time.h>
 
+#if LOG_OV || LOG_OV_INFO || LOG_OV_DEBUG || LOG_OV_WARNING || LOG_OV_ERROR
 static char			msg[1024];
+#endif
+
 /**
   * Print info to logfile
   */
