@@ -252,7 +252,7 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 		ov_string_setvalue(&prefix, NULL);\
 		return
 
-OV_RESULT exec_getvar(OV_STRING_VEC* args, OV_STRING* re){
+OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* re){
 	OV_STRING *pVarsList = NULL;
 	OV_STRING *pPathList = NULL;
 	OV_STRING prefix = NULL;
