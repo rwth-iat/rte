@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 	OV_INSTPTR_ksapi_setUInt pchildsui = NULL;
 	OV_INSTPTR_ksapi_setUIntVec pchildsuiv = NULL;
 	OV_UINT childcount = 0;
-	char *xdr;
+	char *xdr=NULL;
    int xdrlength;
 	int errorcode = 0;
 	int c;

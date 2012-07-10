@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT void ksapi_setString_submit(
 	OV_VTBLPTR_ksapi_setString   pvtableop;
 	OV_INSTPTR_ksapi_KSCommon pksc = Ov_StaticPtrCast(ksapi_KSCommon, pobj);
 	OV_INSTPTR_ksapi_Channel channel;
-	char *xdr;
+	char *xdr=NULL;
 	int xdrlength;
 
 	Ov_GetVTablePtr(ksapi_setString, pvtableop, pobj);
