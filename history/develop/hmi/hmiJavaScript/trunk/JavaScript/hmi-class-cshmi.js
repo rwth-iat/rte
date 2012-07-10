@@ -89,6 +89,7 @@ function cshmi() {
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
+	this.cshmiTemplateHideActionArmedClass = "cshmi-hideactionarmed";
 	
 	this.cshmiOperatorClickClass = "cshmi-click";
 	this.cshmiOperatorDoubleclickClass = "cshmi-doubleclick";
@@ -2980,14 +2981,27 @@ cshmi.prototype = {
 				VisualObject.appendChild(ChildComponent);
 			}
 		}
-		var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-		//toggle visibility of hideable childtemplates onclick
-		VisualParentObject.addEventListener("click", function(evt){
-			preserveThis.toggleChildTemplates(VisualParentObject);
+		
+		//make the parent clickable, if we can be hidden and no sibling has done this before
+		if (requestListTemplate[PathOfTemplateDefinition]["hideable"] === "TRUE"
+			&& HMI.instanceOf(VisualParentObject, this.cshmiTemplateHideActionArmedClass) === false){
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			//toggle visibility of hideable childtemplates onclick
+			VisualParentObject.addEventListener("click", function(evt){
+				if(HMI.instanceOf(VisualParentObject, preserveThis.cshmiOperatorClickClass)){
+					//we have an clickgesture on the same VisualObject, so this will handle all action
+					return;
+				}
+				
+				preserveThis.toggleChildTemplates(VisualParentObject);
+				
+				//quit propagation of event in any case. We do not want the parent template to handle the click
+				if (evt.stopPropagation) evt.stopPropagation();
+			}, false);
 			
-			//quit propagation of event in any case. We do not want the parent template to handle the click
-			if (evt.stopPropagation) evt.stopPropagation();
-		}, false);
+			//prevent multiple events on this
+			HMI.addClass(VisualParentObject, this.cshmiTemplateHideActionArmedClass);
+		}
 		
 		if (VisualChildObject){
 			//transformed Template for rotation
