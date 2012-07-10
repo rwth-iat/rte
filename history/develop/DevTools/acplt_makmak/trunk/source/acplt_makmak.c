@@ -818,7 +818,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"#   -----\n");
 
 
-	fprintf(fd,"%%.c %%.h: %%.ovm\n");
+	fprintf(fd,"%%.c %%.h: %%.ovm %%.ovf Makefile\n");
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
 	for(i=0; i<anzAddLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[i]));
