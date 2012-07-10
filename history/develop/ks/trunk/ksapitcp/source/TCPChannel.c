@@ -228,7 +228,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 			{
 				perror("TCPChannel: error waiting for sending answer:");
 			}
-			printf("pointer: %p ", xdrtosend);
+
 
 			//send
 			if((xdrlengthtosend - sentbytes) > 4096)
