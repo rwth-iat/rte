@@ -245,8 +245,6 @@ void ksservtcp_tcpclient_typemethod(
 
 			xdr_received = (char*)realloc(xdr_received, size_receiving);
 
-			buffer_location = &(xdr_received[size_received]);
-
 			do{
 				FD_ZERO(&read_flags);
 				FD_SET(receivesocket, &read_flags); // get read flags
@@ -269,8 +267,10 @@ void ksservtcp_tcpclient_typemethod(
 						free(xdr_received);
 						return;
 					}
+					continue;
 				}
 
+				buffer_location = &(xdr_received[size_received]);
 				recvBytes = recv(receivesocket, buffer_location, size_receiving - size_received, 0);
 				size_received += recvBytes;
 			//	buffer_location = &(xdr_received[size_received]);
@@ -279,15 +279,24 @@ void ksservtcp_tcpclient_typemethod(
 				{
 #if OV_SYSTEM_NT
 					errno = WSAGetLastError();
+					if((errno!=WSAEWOULDBLOCK))
+#else
+					if((errno!=EAGAIN) && (errno!=EWOULDBLOCK))
 #endif
-					perror("tcpclient - second receive failed");
+					{
+						perror("tcpclient - second receive failed: ");
+						ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object)cTask);
+						free(xdr_received);
+						return;
+					}
+					perror("tcpclient - second receive failed (would block?!): ");
 				}
 
-				ksserv_logfile_debug("%d of %d bytes received, err is %d", size_received, size_receiving, err);
+				ksserv_logfile_debug("%d of %d bytes received, err is %d, pointer is: %p", size_received, size_receiving, err, buffer_location);
 
 			}while(size_received < size_receiving);
 
-			if(ckxdrlength[0] != 0x80)
+			if(ckxdrlength[0] != 0x80)		//first byte 0x80 indicates last xdr-fragment (if xdr-memstrem is fragmented)
 			{
 				FD_ZERO(&read_flags);
 					FD_SET(receivesocket, &read_flags); // get read flags
