@@ -140,6 +140,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 	char *tmp;
 	char* tmpfragment;
 	int sock;
+	int optval = 1;
 	struct sockaddr_in server;
 	struct hostent *hp;
 	OV_INSTPTR_ov_domain managerdomain;
@@ -285,6 +286,9 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 		return;
 	}
 	pobj->v_tcpsocket = sock;
+
+	//disable nagle for the socket
+	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char *) &optval, sizeof(optval));
 
 	//~ memset(&server, 0, sizeof(server));
 	server.sin_family = AF_INET;

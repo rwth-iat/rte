@@ -137,6 +137,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 		int sentbytes=0;
 		int sentChunkSize=0;
 		int sock;
+		int optval = 1;
 		struct sockaddr_in server_add;
 		fd_set write_flags;
 		struct timeval waitd;
@@ -177,6 +178,9 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 			} else {
 				//KSDEVEL printf("socket(ksapitcp): %d\n", sock);
 				ksapitcp_TCPChannel_socket_set(tcpchannel, sock);
+				//disable nagle for the socket
+				setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char *) &optval, sizeof(optval));
+
 			}
 		}
 
