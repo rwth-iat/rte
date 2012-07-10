@@ -88,6 +88,7 @@ OV_DLLFNCEXPORT void fbcomlib_getAny_startup(
 		//(re)register the return method
 		mtable->m_registerMethod((OV_INSTPTR_ksapi_KSCommon) ksapigetAny, stable->m_retMethod);
 		fbcomlib_FBComCommon_state_set((OV_INSTPTR_fbcomlib_FBComCommon)getAny, STATE_OK);
+		fbcomlib_getAny_receivedAny_set(getAny, NULL);
 		return;
 
 }
