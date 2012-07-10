@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-07-09 15:05:46
+  Erstellt : 2012-07-10 19:55:49
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -1543,50 +1543,12 @@ M1000,150 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N131_FP :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 20.000000;
-        y : INPUT  SINGLE = 500.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N131/N131"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"FaceplateXPos:0" , "FaceplateYPos:-120" , "fixedFaceplatePosition:TRUE"};
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 22;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/N132_FP :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 330.000000;
-        y : INPUT  SINGLE = 500.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N132/N132"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 23;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/GCU320_FP :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
         x : INPUT  SINGLE = 20.000000;
-        y : INPUT  SINGLE = 650.000000;
+        y : INPUT  SINGLE = 500.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/GCU320"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
@@ -1595,7 +1557,7 @@ M1000,150 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 24;
+        zindex : INPUT  UINT = 22;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1614,7 +1576,7 @@ M1000,150 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 25;
+        zindex : INPUT  UINT = 23;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1633,7 +1595,7 @@ M1000,150 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 26;
+        zindex : INPUT  UINT = 24;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1652,7 +1614,7 @@ M1000,150 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 27;
+        zindex : INPUT  UINT = 25;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1664,7 +1626,7 @@ M1000,150 v40 h-100";
         y : INPUT  SINGLE = 380.000000;
         width : INPUT  SINGLE = 180.000000;
         height : INPUT  SINGLE = 80.000000;
-        zindex : INPUT  UINT = 28;
+        zindex : INPUT  UINT = 26;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1808,7 +1770,7 @@ M1000,150 v40 h-100";
         y : INPUT  SINGLE = 380.000000;
         width : INPUT  SINGLE = 120.000000;
         height : INPUT  SINGLE = 80.000000;
-        zindex : INPUT  UINT = 29;
+        zindex : INPUT  UINT = 27;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1917,7 +1879,7 @@ M1000,150 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 30;
+        zindex : INPUT  UINT = 28;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1936,7 +1898,7 @@ M1000,150 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 31;
+        zindex : INPUT  UINT = 29;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1955,7 +1917,7 @@ M1000,150 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 32;
+        zindex : INPUT  UINT = 30;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1978,7 +1940,7 @@ M1000,150 v40 h-100";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 33;
+        zindex : INPUT  UINT = 31;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7574,7 +7536,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
     VARIABLE_VALUES
         x : INPUT  SINGLE = 10.000000;
         y : INPUT  SINGLE = 20.000000;
-        content : INPUT  STRING = "Strom:";
+        content : INPUT  STRING = "";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
@@ -7588,6 +7550,49 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/StromGroup/SetPointLabel/cycUpdate :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  SINGLE = 3.000000;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/StromGroup/SetPointLabel/cycUpdate/displaySPtext :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/StromGroup/SetPointLabel/cycUpdate/displaySPtext.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "TechUnits/P30/IC10/PU90/PS20/Stromrichter.SPText";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7663,7 +7668,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
     VARIABLE_VALUES
         x : INPUT  SINGLE = 155.000000;
         y : INPUT  SINGLE = 20.000000;
-        content : INPUT  STRING = "kA";
+        content : INPUT  STRING = "";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
@@ -7677,6 +7682,49 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/StromGroup/SetPointUnit/cycUpdate :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  SINGLE = 3.000000;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/StromGroup/SetPointUnit/cycUpdate/displayOperatingMode :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/StromGroup/SetPointUnit/cycUpdate/displayOperatingMode.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "TechUnits/P30/IC10/PU90/PS20/Stromrichter.SPUnit";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7833,7 +7881,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/RegelgrPanel :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/BetriebsartPanel :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 455.000000;
@@ -7841,6 +7889,135 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/BetriebsartPanel/baserect :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 240.000000;
+        height : INPUT  SINGLE = 220.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/BetriebsartPanel/GroupLabel :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 120.000000;
+        y : INPUT  SINGLE = 30.000000;
+        content : INPUT  STRING = "Betriebsart";
+        fontSize : INPUT  STRING = "20px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "bold";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/BetriebsartPanel/CommandGLBO3AC :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 75.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBO3AC" , "PFCommand:GLBO3AC" , "PFValue:0"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/BetriebsartPanel/CommandGLBODC :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 105.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBODC" , "PFCommand:GLBODC" , "PFValue:0"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/BetriebsartPanel/CommandKLBO1 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 135.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO1" , "PFCommand:KLBO1" , "PFValue:0"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/BetriebsartPanel/CommandKLBO2 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 165.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO2" , "PFCommand:KLBO2" , "PFValue:0"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/RegelgrPanel :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 455.000000;
+        y : INPUT  SINGLE = 375.000000;
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7868,7 +8045,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
     VARIABLE_VALUES
         x : INPUT  SINGLE = 120.000000;
         y : INPUT  SINGLE = 30.000000;
-        content : INPUT  STRING = "Leistung";
+        content : INPUT  STRING = "Regelgröße";
         fontSize : INPUT  STRING = "20px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
@@ -7886,40 +8063,59 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/RegelgrPanel/CommandOK :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/RegelgrPanel/CommandStrom :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
-        x : INPUT  SINGLE = 20.000000;
-        y : INPUT  SINGLE = 180.000000;
-        FBReference[0] : INPUT  STRING = {};
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 75.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[4] : INPUT  STRING = {"buttoncontent:OK" , "PFCommand:SEL_SP" , "PFValue:0" , "evRegelgrOK"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Strom" , "PFCommand:I" , "PFValue:0"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 0.400000;
+        opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/RegelgrPanel/CommandAbort :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/RegelgrPanel/CommandSpannung :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
-        x : INPUT  SINGLE = 130.000000;
-        y : INPUT  SINGLE = 180.000000;
-        FBReference[0] : INPUT  STRING = {};
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 105.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Abbrechen" , "PFCommand:SEL_SP" , "PFValue:0"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Spannung" , "PFCommand:U" , "PFValue:0"};
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 0.400000;
+        opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 3;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/RegelgrPanel/CommandLeistung :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 135.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Leistung" , "PFCommand:P" , "PFValue:0"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7931,7 +8127,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 600.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        zindex : INPUT  UINT = 3;
+        zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7977,6 +8173,63 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/VorgabePanel/CommandMore :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 75.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:MEHR" , "PFCommand:INC_SP" , "PFValue:1"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/VorgabePanel/CommandSet :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 105.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:SetzeWert" , "PFCommand:SET_SP" , "PFValue:"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/VorgabePanel/CommandLess :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 135.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:WENIGER" , "PFCommand:DEC_SP" , "PFValue:1"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
@@ -7984,7 +8237,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        zindex : INPUT  UINT = 4;
+        zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -7992,7 +8245,11 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/mainlines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M-100,100 h200 M0,100 V850";
+        d : INPUT  STRING = "M-100,100 h200
+M0,100 V850 H150 V100 H250 V850 H400 V100 H500 V850
+M500,100 H600 V850
+M600,400 H700 V850
+M700,400 H800 V850";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -8073,7 +8330,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/CutoffSwitch1 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Steuerungsschalter :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/CutoffSwitch";
@@ -8153,7 +8410,8 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/sideLines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M10,300 H85 V225";
+        d : INPUT  STRING = "M10,300 H85 V225
+M0,750 l30,30 v30 h55 V700";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -8161,6 +8419,462 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/isolation1 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/GalvanicIsolation";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 600.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"text1:1000 kVA" , "text2:10/0,44 kV" , "text3:uH = 8%"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/activeFilterRect :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 60.000000;
+        y : INPUT  SINGLE = 650.000000;
+        width : INPUT  SINGLE = 50.000000;
+        height : INPUT  SINGLE = 50.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 10;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/activeFilterText1 :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 85.000000;
+        y : INPUT  SINGLE = 665.000000;
+        content : INPUT  STRING = "Aktiver";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 11;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/activeFilterText2 :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 85.000000;
+        y : INPUT  SINGLE = 685.000000;
+        content : INPUT  STRING = "Filter";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 12;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Mittelspannungsschalter :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/CutoffSwitch";
+        x : INPUT  SINGLE = 250.000000;
+        y : INPUT  SINGLE = 400.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 13;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/ThyristorRect :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 230.000000;
+        y : INPUT  SINGLE = 550.000000;
+        width : INPUT  SINGLE = 40.000000;
+        height : INPUT  SINGLE = 100.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 14;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Thyristor1 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/Thyristor";
+        x : INPUT  SINGLE = 230.000000;
+        y : INPUT  SINGLE = 615.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 15;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Thyristor2 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/Thyristor";
+        x : INPUT  SINGLE = 270.000000;
+        y : INPUT  SINGLE = 585.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 180;
+        zindex : INPUT  UINT = 16;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/isolation2 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/GalvanicIsolation";
+        x : INPUT  SINGLE = 250.000000;
+        y : INPUT  SINGLE = 800.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[2] : INPUT  STRING = {"text1:1000 kVA" , "text2:440/200 V"};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 17;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Switch_GLBO3AC :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/CutoffSwitch";
+        x : INPUT  SINGLE = 500.000000;
+        y : INPUT  SINGLE = 700.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 18;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Diode :
+    CLASS /Libraries/cshmi/Path;
+    VARIABLE_VALUES
+        d : INPUT  STRING = "M600,270
+v-30
+m0,30
+m-15,0 h30
+m-15,0 l-15,-30 h30 l-15,30";
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 19;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Switch_GLBODC :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/CutoffSwitch";
+        x : INPUT  SINGLE = 600.000000;
+        y : INPUT  SINGLE = 700.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 20;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Switch_KLBO1 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/CutoffSwitch";
+        x : INPUT  SINGLE = 700.000000;
+        y : INPUT  SINGLE = 700.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 21;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Switch_KLBO2 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/CutoffSwitch";
+        x : INPUT  SINGLE = 800.000000;
+        y : INPUT  SINGLE = 700.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 22;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/GLBO3text :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 500.000000;
+        y : INPUT  SINGLE = 880.000000;
+        content : INPUT  STRING = "GLBO";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 23;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/GLBO3text2 :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 500.000000;
+        y : INPUT  SINGLE = 900.000000;
+        content : INPUT  STRING = "3~10 kA";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 24;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/GLBO10text :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 600.000000;
+        y : INPUT  SINGLE = 880.000000;
+        content : INPUT  STRING = "GLBO";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 25;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/GLBO10text2 :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 600.000000;
+        y : INPUT  SINGLE = 900.000000;
+        content : INPUT  STRING = "= 10 kA";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 26;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/KLBO1text :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 700.000000;
+        y : INPUT  SINGLE = 880.000000;
+        content : INPUT  STRING = "KLBO 1";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 27;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/KLBO1text2 :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 700.000000;
+        y : INPUT  SINGLE = 900.000000;
+        content : INPUT  STRING = "= 1 kA";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 28;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/KLBO2text :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 800.000000;
+        y : INPUT  SINGLE = 880.000000;
+        content : INPUT  STRING = "KLBO 2";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 29;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/KLBO2text2 :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 800.000000;
+        y : INPUT  SINGLE = 900.000000;
+        content : INPUT  STRING = "= 1 kA";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "auto";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 30;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
