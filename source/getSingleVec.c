@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT void ksapi_getSingleVec_returnMethodxdr(
 ) {
 	OV_INSTPTR_ksapi_getSingleVec pgs = Ov_StaticPtrCast(ksapi_getSingleVec, kscommon);
 	OV_VTBLPTR_ksapi_getSingleVec  pvtableop; 
-	OV_SINGLE *result;
+	OV_SINGLE *result=NULL;
 	int len_res;
 	
 	Ov_GetVTablePtr(ksapi_getSingleVec, pvtableop, pgs);

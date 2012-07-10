@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT void ksapi_getBoolVec_returnMethodxdr(
 ) {
 	OV_INSTPTR_ksapi_getBoolVec pgbv = Ov_StaticPtrCast(ksapi_getBoolVec, kscommon);
 	OV_VTBLPTR_ksapi_getBoolVec  pvtableop; 
-	OV_BOOL *result;
+	OV_BOOL *result=NULL;
 	int len_res;
 	
 	Ov_GetVTablePtr(ksapi_getBoolVec, pvtableop, pgbv);

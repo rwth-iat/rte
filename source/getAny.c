@@ -95,8 +95,7 @@ OV_DLLFNCEXPORT void ksapi_getAny_startup(
     ksapi_KSCommon_startup(pobj);
 
     /* do what */
-
-
+    ksapi_getAny_receiveany_set(Ov_StaticPtrCast(ksapi_getAny, pobj), NULL);
     return;
 }
 

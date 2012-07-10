@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT void ksapi_setBool_submit(
 	
 	if((pobj->v_host) && (pobj->v_server) && (pobj->v_path) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
 		//all values are set
-	char *xdr;
+	char *xdr=NULL;
 	int xdrlength;
 
 	generatesetboolxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendbool);

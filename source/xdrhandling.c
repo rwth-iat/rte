@@ -630,7 +630,7 @@ void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, ch
 int analysegetreply(int type, char xdr[], int xdrlength, void *reply)
 {
 	int errorcode, vartype;
-	char *str;
+	char *str=NULL;
 	int strlength;
 	int i;
 	char temp[4];
@@ -1006,7 +1006,7 @@ void generatesetbody(int type, char *xdr[], int *length, char *path, void* setva
 	}
 
 	//set xdr end
-	(*xdr)[*length-1] = 0x4;					//whatever 0x04 stands for^^
+	(*xdr)[*length-1] = 0x04;					//whatever 0x04 stands for^^
 	return;
 }
 

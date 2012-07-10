@@ -361,7 +361,7 @@ OV_DLLFNCEXPORT void ksapi_getPkg_submit(
 	OV_INSTPTR_ksapi_KSCommon pchildksc = NULL;
 
 	OV_UINT childcount = 0;
-	char *xdr;
+	char *xdr=NULL;
 	int xdrlength;
 	int errorcode = 0;
 	int c;

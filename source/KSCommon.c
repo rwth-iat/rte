@@ -163,7 +163,7 @@ OV_DLLFNCEXPORT void ksapi_KSCommon_submitget(
 ) {
 	OV_INSTPTR_ksapi_Channel channel = (OV_INSTPTR_ksapi_Channel)Ov_SearchChild(ov_containment, pobj, "channel");
 	OV_VTBLPTR_ksapi_KSCommon   pvtableop; 
-	char *xdr;
+	char *xdr=NULL;
 	int xdrlength;
 	
 	Ov_GetVTablePtr(ksapi_KSCommon, pvtableop, pobj);

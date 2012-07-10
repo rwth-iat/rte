@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT void ksapi_getDoubleVec_returnMethodxdr(
 ) {
 	OV_INSTPTR_ksapi_getDoubleVec pgs = Ov_StaticPtrCast(ksapi_getDoubleVec, kscommon);
 	OV_VTBLPTR_ksapi_getDoubleVec  pvtableop; 
-	OV_DOUBLE *result;
+	OV_DOUBLE *result=NULL;
 	int len_res;
 	
 	Ov_GetVTablePtr(ksapi_getDoubleVec, pvtableop, pgs);
