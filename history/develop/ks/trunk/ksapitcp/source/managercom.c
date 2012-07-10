@@ -196,7 +196,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 				NULL, 0);
 		return;
 	}
-	ov_logfile_info(
+	ksapi_logfile_info(
 			"NO getserverdata-OBJECT, thus server is NOT Manager - remote sending...");
 
 	if (pobj->v_mngport <= 0) {
@@ -336,18 +336,11 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 	OV_INSTPTR_ksapi_KSCommon kscommon =
 			(OV_INSTPTR_ksapi_KSCommon) Ov_GetParent(ov_containment, channel);
 	OV_INT bytes, c;
-	OV_UINT mngport;
 	OV_UINT xdrnamelength = 0;
 	OV_INT rcvdserverport;
 	char buffer[4096];
-	int udpsocket = pobj->v_udpsocket;
 	int tcpsocket = pobj->v_tcpsocket;
-#if OV_SYSTEM_NT
-	int size_from;
-#else
-	socklen_t size_from;
-#endif
-	struct sockaddr_in from;
+
 	char temp[4];
 
 	Ov_GetVTablePtr(ksapitcp_TCPChannel, channelVTBL, channel);
@@ -361,12 +354,12 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 #endif
 		if(bytes == -1 && ( errno != EAGAIN && errno != EWOULDBLOCK ) )
 		{
-			ov_logfile_debug("error receiving?, closing socket!");
+			ksapi_logfile_debug("error receiving?, closing socket!");
 			CLOSE_SOCKET(tcpsocket);
 			pobj->v_tcpsocket = -1;
 			return;
 		} else {
-			ov_logfile_debug(
+			ksapi_logfile_debug(
 					"(ksapi_managercom/typemethod: getserver answer analysing");
 			pobj->v_xdrlength = bytes;
 			if (pobj->v_xdr) {
@@ -410,9 +403,9 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 				memcpy(&rcvdserverport, temp, 4);
 				pobj->v_receivedsport = rcvdserverport;
 				channel->v_serverport = rcvdserverport;
-				ov_logfile_info("receivedsport: %d", pobj->v_receivedsport);
+				ksapi_logfile_info("receivedsport: %d", pobj->v_receivedsport);
 			} else { // no server found
-				ov_logfile_info("mnggetserver failed");
+				ksapi_logfile_info("mnggetserver failed");
 				pobj->v_receivedsport = 0;
 				channel->v_serverport = 0;
 			}
