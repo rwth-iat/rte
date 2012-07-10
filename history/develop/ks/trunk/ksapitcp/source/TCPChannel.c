@@ -28,6 +28,7 @@
 #include <sys/select.h>
 #endif
 
+
 OV_DLLFNCEXPORT OV_RESULT ov_xdr_setvalue(OV_STRING *pxdr, const OV_STRING value, OV_INT length);
 
 /**
@@ -133,8 +134,13 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 		OV_INSTPTR_ksapitcp_managercom pmc = (OV_INSTPTR_ksapitcp_managercom)Ov_SearchChild(ov_containment, thisdomain, "managercom");
 		char *xdrtosend;
 		OV_INT xdrlengthtosend;
+		int sentbytes=0;
+		int sentChunkSize=0;
 		int sock;
 		struct sockaddr_in server_add;
+		fd_set write_flags;
+		struct timeval waitd;
+		int err = 0;
 
 		//reset counter and serverport, if channel now communicates with other host or servername
 		if(ov_string_compare(ksapi_KSCommon_server_get(kscommon), pobj->v_servername) != 0)		{
@@ -146,16 +152,6 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 			pobj->v_serverport = 0;
 		}
 
-		//print xdr
-		 //~ int j;
-		 //~ printf("\n\nsendxdr:\n");
-		 //~ for (j = 0; j < xdrlength; j=j+4)
-			 //~ printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-		 //~ printf("\n\n");
-		 //~ for (j = 5; j < xdrlength; j=j+4)
-			 //~ printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-		 //~ printf("\n\n");
-		 //~ printf("%s\n\n", xdr);
 
 		ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_SENDING);
 
@@ -207,34 +203,73 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 		//send data
 		if((xdr == NULL) || (xdrlength <= 0)) {
 			//~ ov_xdr_setvalue(&xdrtosend, pobj->v_xdr, pobj->v_xdrlength);
-			xdrtosend=(char*)malloc(pobj->v_xdrlength);
-			memcpy(xdrtosend, pobj->v_xdr, pobj->v_xdrlength);
+			xdrtosend=pobj->v_xdr;
 			xdrlengthtosend = pobj->v_xdrlength;
 		} else {
-			xdrtosend=(char*)malloc(xdrlength);
-			memcpy(xdrtosend, xdr, xdrlength);
+			xdrtosend=xdr;
 			xdrlengthtosend = xdrlength;
 		}
-		//~ printf("\n\n\nCHANNEL_SENDXDR send\n\n\n");
-		if (send(sock, xdrtosend, xdrlengthtosend, 0) == -1) {
-			ksapi_logfile_error("send(ksapitcp) failed");
-			CLOSE_SOCKET(sock);
-			ksapitcp_TCPChannel_socket_set(tcpchannel, -1);
-			ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_SOCKETSENDFAILED);
-			return;
-		} else {
-			//ready -> wait for answer
-			cTask->v_actimode = 1;
-			ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_WAITINGRESPOND);
+			sentbytes = 0;
+		do{
+			// Zero the flags ready for using
+			FD_ZERO(&write_flags);
+			FD_SET(sock, &write_flags); // get write flags
+			waitd.tv_sec = 0;     // Set Timeout
+			waitd.tv_usec = 1000;    //  1 millisecond
+			err = select(sock + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
+#if KSSERV_LOGFILE_DEEP
+			ov_logfile_debug("select returned: %d; line %d", err, __LINE__);
+#if OV_SYSTEM_UNIX
+			ksserv_logfile_debug("select waited: %d secs, %d usecs", waitd.tv_sec, 1000-waitd.tv_usec);
+#endif
+#endif
 
-			//~ printf("\n\n\nCHANNEL TYPEMETHOD ACTIVATED\n\n\n");
-			//TODO: Do we need to set this as a status flag???
+			if(err < 0)
+			{
+				perror("TCPChannel: error waiting for sending answer:");
+			}
+			printf("pointer: %p ", xdrtosend);
 
-			//KSDEVEL printf("send(ksapitcp) ok\n");
-			//Ov_WarnIfNot(Ov_OK(ov_scheduler_register(pov, KSCommon_receivexdr)));
-			//ov_scheduler_setreleventtime(pov, &tsp);
-		}
+			//send
+			if((xdrlengthtosend - sentbytes) > 4096)
+			{
+				printf("sending 4096 bytes\n");
+				sentChunkSize = send(sock, xdrtosend, 4096, 0);
+				if (sentChunkSize == -1)
+				{
+					ov_logfile_error("send(ksapitcp) failed");
+					CLOSE_SOCKET(sock);
+					ksapitcp_TCPChannel_socket_set(tcpchannel, -1);
+					ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_SOCKETSENDFAILED);
+					return;
+				}
+			}
+			else
+			{
+				sentChunkSize = send(sock, xdrtosend, (xdrlengthtosend - sentbytes), 0);
+				if (sentChunkSize == -1)
+				{
+					ov_logfile_error("send(ksapitcp) failed");
+					CLOSE_SOCKET(sock);
+					ksapitcp_TCPChannel_socket_set(tcpchannel, -1);
+					ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_SOCKETSENDFAILED);
+					return;
+				}
+			}
+			sentbytes += sentChunkSize;
+			//move pointer to next chunk
+			xdrtosend = &(xdrtosend[sentChunkSize]);
 
+		}while(sentbytes<xdrlengthtosend);
+
+		//ready -> wait for answer
+		cTask->v_actimode = 1;
+		ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_WAITINGRESPOND);
+
+		//~ printf("\n\n\nCHANNEL TYPEMETHOD ACTIVATED\n\n\n");
+		//TODO: Do we need to set this as a status flag???
+
+		//KSDEVEL printf("send(ksapitcp) ok\n");
 	return;
 }
 
@@ -358,27 +393,6 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 			//ksapi_logfile_debug("%d of %d bytes received, err is %d", size_received, size_receiving, err);
 
 		}while(size_received < size_receiving);
-
-	//evaluate
-
-
-		//int j;
-		//~ printf("\n\nxdr channel receive:\nlength: %d\n", xdrlength);
-		//~ for (j = 0; j < xdrlength; j=j+4)
-		//~ {
-			//~ if(((j!=0) && (j%20)) == 0)
-				//~ printf("\n");
-			//~ printf("%X %X %X %X     ", xdrdata[j], xdrdata[j+1], xdrdata[j+2], xdrdata[j+3]);
-		//~ }
-		//~ printf("\n");
-		//~ for (j = 0; j < xdrlength; j=j+4)
-		//~ {
-			//~ if(((j!=0) && (j%20)) == 0)
-				//~ printf("\n");
-			//~ printf("%c %c %c %c     ", xdrdata[j], xdrdata[j+1], xdrdata[j+2], xdrdata[j+3]);
-		//~ }
-		//~ printf("\n\n");
-		//~ printf("%s\n\n", xdrdata);
 
 		//close connection
 	//	ksapi_logfile_debug("TCPChannel closing socket");
