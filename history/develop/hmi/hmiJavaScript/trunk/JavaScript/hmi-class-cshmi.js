@@ -1087,9 +1087,13 @@ cshmi.prototype = {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
-					if (NewValuePart === null || NewValuePart === undefined){
-						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") had an error. Skipping.");
-					}else if (NewValuePart !== false && NewValuePart !== null && NewValuePart !== undefined){
+					if (NewValuePart === null){
+						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") given no value. Aborting setvalue.");
+						return true;
+					}else if (NewValuePart === undefined || NewValuePart === false){
+						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") had an error. Aborting.");
+						return false;
+					}else{
 						NewValue = NewValue + NewValuePart.toString();
 					}
 				}
@@ -1103,8 +1107,12 @@ cshmi.prototype = {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
-					if (NewValuePart === null || NewValuePart === undefined){
+					if (NewValuePart === null){
+						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") given no value. Aborting setvalue.");
+						return true;
+					}else if (NewValuePart === undefined || NewValuePart === false){
 						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") had an error. Skipping.");
+						return false;
 					}else if (NewValuePart !== false && NewValuePart !== null && NewValuePart !== undefined && isNumeric(NewValuePart)){
 						if (varName[0].indexOf("add") === 0){
 							NewValue = NewValue + parseFloat(NewValuePart);
