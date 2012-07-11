@@ -112,6 +112,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_shutdown(
 	if(pmc != NULL)	{
 		Ov_DeleteObject(pmc);
 	}
+	ksapitcp_TCPChannel_socket_set(cobj, -1);
 	//doesnt has something like this currently ksserv_ComTask_shutdown(pobj);
 	return;
 } // end shutdown
