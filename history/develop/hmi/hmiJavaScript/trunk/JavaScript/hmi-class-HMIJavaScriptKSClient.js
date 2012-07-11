@@ -343,7 +343,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @todo add timeout für delHandle
 	 */
 	getHandleID: function(HostAndServername) {
-		if (this.ResourceList.Handles[HostAndServername] && this.ResourceList.Handles[HostAndServername].HandleString !== null){
+		if (this.ResourceList.Handles[HostAndServername] && this.ResourceList.Handles[HostAndServername].HandleString !== undefined){
 			return this.ResourceList.Handles[HostAndServername].HandleString;
 		}else{
 			var HandleString = this.getHandle(HostAndServername, null);
