@@ -95,7 +95,6 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			check = 1;
 		}
 	}
-	printf("\n\n\nname: %s\n\n\n", pchildksc->v_identifier);
 	if(pchildksc && pchildksc->v_host && pchildksc->v_server)
 	{
 		ov_string_setvalue(&pobj->v_host, pchildksc->v_host);

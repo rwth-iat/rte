@@ -86,19 +86,7 @@ OV_DLLFNCEXPORT void ksapi_setInt_submit(
 		
 	generatesetintxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendint);
 	
-	{
-	//print xdr
-	int j;
-	printf("\n\nxdr:\nlength: %d\n", xdrlength);
-	printf("%X %X %X %X %X %X    ", xdr[0], xdr[1], xdr[2], xdr[3], xdr[4], xdr[5]);
-	for (j = 6; j < xdrlength; j=j+4)
-		printf("%X %X %X %X     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-	printf("\n\n");
-	for (j = 5; j < xdrlength; j=j+4)
-		printf("%c %c %c %c     ", xdr[j], xdr[j+1], xdr[j+2], xdr[j+3]);
-	printf("\n\n");
-	printf("%s\n\n", xdr);
-	}
+
 	//send
 	ksapi_Channel_sendxdr(channel, pksc, xdr, xdrlength);
 	
