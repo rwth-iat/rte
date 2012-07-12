@@ -238,7 +238,6 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 			//send
 			if((xdrlengthtosend - sentbytes) > 4096)
 			{
-				printf("sending 4096 bytes\n");
 				sentChunkSize = send(sock, xdrtosend, 4096, 0);
 				if (sentChunkSize == -1)
 				{
