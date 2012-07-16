@@ -63,7 +63,9 @@ OV_DLLFNCEXPORT void fbComPkg_comPkg_typemethod(
     if (pinst->v_useSetPkg)
         ksapi_setPkg_dosetPkg_set(pSetPkg, pinst->v_do);
 
-	//ov_string_setvalue(&pinst->v_status, "no error");
+	ov_string_setvalue(&pinst->v_getPkgState, ksapi_getPkg_state_get(pGetPkg));
+	ov_string_setvalue(&pinst->v_setPkgState, ksapi_setPkg_state_get(pSetPkg));
+
 
     return;
 

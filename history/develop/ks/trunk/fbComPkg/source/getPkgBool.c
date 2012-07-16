@@ -58,7 +58,7 @@ OV_DLLFNCEXPORT void fbComPkg_getPkgBool_typemethod(
 
     if (!pKsGetBool)
     {
-          ov_logfile_error("fbComPkg_getPkgBool_typemethod: wrong ksapi object in pkg.");
+          ov_logfile_error("%s - fbComPkg_getPkgBool_typemethod: wrong ksapi object in pkg.", pinst->v_identifier);
           return;
     }
 

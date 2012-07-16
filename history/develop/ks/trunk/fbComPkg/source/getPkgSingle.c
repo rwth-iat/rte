@@ -60,7 +60,7 @@ OV_DLLFNCEXPORT void fbComPkg_getPkgSingle_typemethod(
 
     if (!pKsGetSingle)
     {
-          ov_logfile_error("fbComPkg_getPkgSingle_typemethod: wrong ksapi object in pkg.");
+    	  ov_logfile_error("%s - fbComPkg_getPkgSingle_typemethod: wrong ksapi object in pkg.", pinst->v_identifier);
           return;
     }
 
