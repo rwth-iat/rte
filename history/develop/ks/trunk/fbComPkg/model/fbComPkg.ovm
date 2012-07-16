@@ -2,9 +2,9 @@
 #include "ksapi.ovm"
 
 LIBRARY fbComPkg
-	VERSION   = "V0.1 (DD-Mon-YYYY)";
-	AUTHOR    = "";
-	COPYRIGHT = "";
+	VERSION   = "V0.1 (16-07-2012)";
+	AUTHOR    = "Liyong Yu";
+	COPYRIGHT = "ACPLT";
 	COMMENT   = "";
 	
 	/**
@@ -20,7 +20,8 @@ LIBRARY fbComPkg
 			server: STRING 	FLAGS = "i" COMMENT = "server name";
 			useSetPkg: BOOL	FLAGS = "p" COMMENT = "set package would be activated if TRUE";
 			useGetPkg: BOOL	FLAGS = "p" COMMENT = "get package would be activated if TRUE";
-			status: STRING 	FLAGS = "o" COMMENT = "status information";
+			setPkgState: STRING 	FLAGS = "o" COMMENT = "set package state information";
+			getPkgState: STRING 	FLAGS = "o" COMMENT = "get package state information";
 		END_VARIABLES;
 		PARTS
       		setPkg			: CLASS ksapi/setPkg;
