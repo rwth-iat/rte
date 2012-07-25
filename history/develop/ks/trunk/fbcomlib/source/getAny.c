@@ -26,6 +26,33 @@
 #include "libov/ov_logfile.h"
 #include "../../include/config.h"
 
+OV_DLLFNCEXPORT OV_TIME* fbcomlib_getAny_varTimeStamp_get(
+    OV_INSTPTR_fbcomlib_getAny          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getAny_varTimeStamp_set(
+    OV_INSTPTR_fbcomlib_getAny          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT fbcomlib_getAny_varQState_get(
+    OV_INSTPTR_fbcomlib_getAny          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getAny_varQState_set(
+    OV_INSTPTR_fbcomlib_getAny          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
 
 OV_DLLFNCEXPORT OV_ANY* fbcomlib_getAny_receivedAny_get(
     OV_INSTPTR_fbcomlib_getAny          pobj
@@ -102,7 +129,9 @@ OV_DLLFNCEXPORT void fbcomlib_getAny_retMethod(
 	OV_INSTPTR_fbcomlib_getAny getAny = (OV_INSTPTR_fbcomlib_getAny)Ov_GetParent(fbcomlib_FBComCommonAssoc, ksapigetAny);
 
 	fbcomlib_FBComCommon_retMethod(pobj, errorstring, errorcode);
-	//get the bool
+	//get the any
 	fbcomlib_getAny_receivedAny_set(getAny, &(ksapigetAny->v_receiveany));
+	getAny->v_varQState = ksapigetAny->v_varQState;
+	getAny->v_varTimeStamp = ksapigetAny->v_varTimeStamp;
 }
 

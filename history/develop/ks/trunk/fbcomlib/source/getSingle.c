@@ -13,6 +13,34 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
+OV_DLLFNCEXPORT OV_TIME* fbcomlib_getSingle_varTimeStamp_get(
+    OV_INSTPTR_fbcomlib_getSingle          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getSingle_varTimeStamp_set(
+    OV_INSTPTR_fbcomlib_getSingle          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT fbcomlib_getSingle_varQState_get(
+    OV_INSTPTR_fbcomlib_getSingle          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getSingle_varQState_set(
+    OV_INSTPTR_fbcomlib_getSingle          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /**
  * The received Single is stored here
  */
@@ -115,6 +143,8 @@ OV_DLLFNCEXPORT void fbcomlib_getSingle_retMethod(
 	fbcomlib_FBComCommon_retMethod(pobj, errorstring, errorcode);
 	//get the single
 	fbcomlib_getSingle_receivedSingle_set(getsingle, ksapigetsingle->v_receivesingle);
+	getsingle->v_varQState = ksapigetsingle->v_varQState;
+	getsingle->v_varTimeStamp = ksapigetsingle->v_varTimeStamp;
 
 }
 

@@ -13,6 +13,35 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
+OV_DLLFNCEXPORT OV_TIME* fbcomlib_getUInt_varTimeStamp_get(
+    OV_INSTPTR_fbcomlib_getUInt          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getUInt_varTimeStamp_set(
+    OV_INSTPTR_fbcomlib_getUInt          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT fbcomlib_getUInt_varQState_get(
+    OV_INSTPTR_fbcomlib_getUInt          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getUInt_varQState_set(
+    OV_INSTPTR_fbcomlib_getUInt          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
+
 /**
  * The received Uint is stored here
  */
@@ -114,6 +143,8 @@ OV_DLLFNCEXPORT void fbcomlib_getUInt_retMethod(
 	fbcomlib_FBComCommon_retMethod(pobj, errorstring, errorcode);
 	//get the uint
 	fbcomlib_getUInt_receivedUInt_set(getuint, ksapigetuint->v_receiveuint);
+	getuint->v_varQState = ksapigetuint->v_varQState;
+	getuint->v_varTimeStamp = ksapigetuint->v_varTimeStamp;
 
 }
 

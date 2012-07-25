@@ -72,6 +72,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -108,6 +112,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -144,6 +152,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -180,6 +192,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -216,6 +232,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -252,6 +272,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -288,6 +312,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -324,6 +352,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -360,6 +392,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -396,6 +432,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -432,6 +472,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -468,6 +512,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -503,6 +551,10 @@ LIBRARY	fbcomlib
 			doReset		:	BOOL		HAS_ACCESSORS	FLAGS	=	"i"
 				COMMENT			=	"Reset"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "o"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;

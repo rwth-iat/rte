@@ -13,6 +13,34 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
+OV_DLLFNCEXPORT OV_TIME* fbcomlib_getBoolVec_varTimeStamp_get(
+    OV_INSTPTR_fbcomlib_getBoolVec          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getBoolVec_varTimeStamp_set(
+    OV_INSTPTR_fbcomlib_getBoolVec          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT fbcomlib_getBoolVec_varQState_get(
+    OV_INSTPTR_fbcomlib_getBoolVec          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getBoolVec_varQState_set(
+    OV_INSTPTR_fbcomlib_getBoolVec          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /**
  * The received BoolVec is stored here
  */
@@ -117,5 +145,7 @@ OV_DLLFNCEXPORT void fbcomlib_getBoolVec_retMethod(
 	fbcomlib_FBComCommon_retMethod(pobj, errorstring, errorcode);
 	//get the boolvec
 	fbcomlib_getBoolVec_receivedBoolVec_set(getboolvec, ksapigetboolvec->v_receiveboolvec.value, ksapigetboolvec->v_receiveboolvec.veclen);
+	getboolvec->v_varQState = ksapigetboolvec->v_varQState;
+	getboolvec->v_varTimeStamp = ksapigetboolvec->v_varTimeStamp;
 
 }
