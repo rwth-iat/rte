@@ -10,6 +10,35 @@
 #include "xdrhandling.h"
 #include "config.h"
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_setAny_varTimeStamp_get(
+    OV_INSTPTR_ksapi_setAny          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setAny_varTimeStamp_set(
+    OV_INSTPTR_ksapi_setAny          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_setAny_varQState_get(
+    OV_INSTPTR_ksapi_setAny          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setAny_varQState_set(
+    OV_INSTPTR_ksapi_setAny          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
+
 
 OV_DLLFNCEXPORT OV_RESULT ksapi_setAny_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -111,6 +140,7 @@ OV_DLLFNCEXPORT void ksapi_setAny_submit(
 	OV_INSTPTR_ksapi_Channel channel;
 	char *xdr=NULL;
 	int xdrlength;
+	OV_UINT tTsSecs, tTsUsecs, tQstate;
 
 	Ov_GetVTablePtr(ksapi_setAny, pvtableop, pobj);
 
@@ -126,63 +156,79 @@ OV_DLLFNCEXPORT void ksapi_setAny_submit(
 	
 	
 	generateheader(KS_SETVAR, &xdr, &xdrlength);
+	//decide which Timestamp / Qstate to use: values inside the Any override inputs of ksapi-Block
+	if(pobj->v_sendany.value.vartype & OV_VT_HAS_STATE)
+		tQstate = pobj->v_sendany.state;
+	else
+		tQstate = pobj->v_varQState;
+	if(pobj->v_sendany.value.vartype & OV_VT_HAS_TIMESTAMP)
+	{
+		tTsSecs = pobj->v_sendany.time.secs;
+		tTsUsecs = pobj->v_sendany.time.usecs;
+	}
+	else
+	{
+		tTsSecs = pobj->v_varTimeStamp.secs;
+		tTsUsecs = pobj->v_varTimeStamp.usecs;
+	}
+
 	switch(pobj->v_sendany.value.vartype & OV_VT_KSMASK)
 	{
 	case OV_VT_BOOL:
-		generatesetbody(OV_VT_BOOL, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_bool));
+		generatesetbody(OV_VT_BOOL, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_bool), tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_UINT:
-		generatesetbody(OV_VT_UINT, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_uint));
+		generatesetbody(OV_VT_UINT, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_uint), tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_INT:
-		generatesetbody(OV_VT_INT, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_int));
+		generatesetbody(OV_VT_INT, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_int), tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_SINGLE:
-		generatesetbody(OV_VT_SINGLE, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_single));
+		generatesetbody(OV_VT_SINGLE, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_single), tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_DOUBLE:
-		generatesetbody(OV_VT_DOUBLE, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_double));
+		generatesetbody(OV_VT_DOUBLE, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_double), tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_TIME:
-		generatesetbody(OV_VT_TIME, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_time));
+		generatesetbody(OV_VT_TIME, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_time), tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_TIME_SPAN:
-		generatesetbody(OV_VT_TIME_SPAN, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_time_span));
+		generatesetbody(OV_VT_TIME_SPAN, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_time_span), tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_STRING:
-		generatesetbody(OV_VT_STRING, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_string));
+		generatesetbody(OV_VT_STRING, &xdr, &xdrlength, pobj->v_path, &(pobj->v_sendany.value.valueunion.val_string), tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_BOOL_VEC:
 		generatesetvecbody(OV_VT_BOOL_VEC, &xdr, &xdrlength, pobj->v_path,
-				(void*) pobj->v_sendany.value.valueunion.val_bool_vec.value, pobj->v_sendany.value.valueunion.val_bool_vec.veclen);
+				(void*) pobj->v_sendany.value.valueunion.val_bool_vec.value, pobj->v_sendany.value.valueunion.val_bool_vec.veclen, tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_UINT_VEC:
 		generatesetvecbody(OV_VT_UINT_VEC, &xdr, &xdrlength, pobj->v_path,
-				(void*) pobj->v_sendany.value.valueunion.val_uint_vec.value, pobj->v_sendany.value.valueunion.val_uint_vec.veclen);
+				(void*) pobj->v_sendany.value.valueunion.val_uint_vec.value, pobj->v_sendany.value.valueunion.val_uint_vec.veclen, tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_INT_VEC:
 		generatesetvecbody(OV_VT_INT_VEC, &xdr, &xdrlength, pobj->v_path,
-				(void*) pobj->v_sendany.value.valueunion.val_int_vec.value, pobj->v_sendany.value.valueunion.val_int_vec.veclen);
+				(void*) pobj->v_sendany.value.valueunion.val_int_vec.value, pobj->v_sendany.value.valueunion.val_int_vec.veclen, tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_SINGLE_VEC:
 		generatesetvecbody(OV_VT_SINGLE_VEC, &xdr, &xdrlength, pobj->v_path,
-				(void*) pobj->v_sendany.value.valueunion.val_single_vec.value, pobj->v_sendany.value.valueunion.val_single_vec.veclen);
+				(void*) pobj->v_sendany.value.valueunion.val_single_vec.value, pobj->v_sendany.value.valueunion.val_single_vec.veclen, tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_DOUBLE_VEC:
 		generatesetvecbody(OV_VT_DOUBLE_VEC, &xdr, &xdrlength, pobj->v_path,
-				(void*) pobj->v_sendany.value.valueunion.val_double_vec.value, pobj->v_sendany.value.valueunion.val_double_vec.veclen);
+				(void*) pobj->v_sendany.value.valueunion.val_double_vec.value, pobj->v_sendany.value.valueunion.val_double_vec.veclen, tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_STRING_VEC:
 		generatesetvecbody(OV_VT_STRING_VEC, &xdr, &xdrlength, pobj->v_path,
-				(void*) &(pobj->v_sendany.value.valueunion.val_string_vec.value), pobj->v_sendany.value.valueunion.val_string_vec.veclen);
+				(void*) &(pobj->v_sendany.value.valueunion.val_string_vec.value), pobj->v_sendany.value.valueunion.val_string_vec.veclen, tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_TIME_VEC:
 		generatesetvecbody(OV_VT_TIME_VEC, &xdr, &xdrlength, pobj->v_path,
-				(void*) pobj->v_sendany.value.valueunion.val_time_vec.value, pobj->v_sendany.value.valueunion.val_time_vec.veclen);
+				(void*) pobj->v_sendany.value.valueunion.val_time_vec.value, pobj->v_sendany.value.valueunion.val_time_vec.veclen, tTsSecs, tTsUsecs, tQstate);
 		break;
 	case OV_VT_TIME_SPAN_VEC:
 		generatesetvecbody(OV_VT_TIME_SPAN_VEC, &xdr, &xdrlength, pobj->v_path,
-				(void*) pobj->v_sendany.value.valueunion.val_time_span_vec.value, pobj->v_sendany.value.valueunion.val_time_span_vec.veclen);
+				(void*) pobj->v_sendany.value.valueunion.val_time_span_vec.value, pobj->v_sendany.value.valueunion.val_time_span_vec.veclen, tTsSecs, tTsUsecs, tQstate);
 		break;
 	default:
 		ov_logfile_error("wtf type is this variable??? 0x%x", pobj->v_sendany.value.vartype);

@@ -359,8 +359,12 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to send the any";
 		VARIABLES
 			/* Input *************************************************/
-				sendany			:	ANY		HAS_ACCESSORS						FLAGS	=	"i"
+			sendany			:	ANY		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The any which wants to be send";
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -378,9 +382,13 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to send the boolean";
 		VARIABLES
 			/* Input *************************************************/
-				sendbool			:	BOOL		HAS_ACCESSORS						FLAGS	=	"i"
+			sendbool			:	BOOL		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The boolean which wants to be send"
 				INITIALVALUE	=	FALSE;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -398,6 +406,10 @@ LIBRARY	ksapi
 			/* Input *************************************************/
 			sendboolvec[]	:	BOOL		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The bool vector which wants to be send";
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -414,9 +426,13 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to send the integer";
 		VARIABLES
 			/* Input *************************************************/
-				senddouble		:	DOUBLE	HAS_ACCESSORS						FLAGS	=	"i"
+			senddouble		:	DOUBLE	HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The int which wants to be send"
 				INITIALVALUE	=	0.0;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -434,6 +450,10 @@ LIBRARY	ksapi
 			/* Input *************************************************/
 			senddoublevec[]	:	DOUBLE		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The double vector which wants to be send";
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -450,9 +470,13 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to send the integer";
 		VARIABLES
 			/* Input *************************************************/
-				sendint			:	INT		HAS_ACCESSORS						FLAGS	=	"i"
+			sendint			:	INT		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The int which wants to be send"
 				INITIALVALUE	=	0;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -470,6 +494,10 @@ LIBRARY	ksapi
 			/* Input *************************************************/
 			sendintvec[]		:	INT		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The int vector which wants to be send";
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -486,9 +514,13 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to send the single";
 		VARIABLES
 			/* Input *************************************************/
-				sendsingle		:	SINGLE		HAS_ACCESSORS						FLAGS	=	"i"
+			sendsingle		:	SINGLE		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The single which wants to be send"
 				INITIALVALUE	=	0.0;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -506,6 +538,10 @@ LIBRARY	ksapi
 			/* Input *************************************************/
 			sendsinglevec[]	:	SINGLE		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The single vector which wants to be send";
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -525,6 +561,10 @@ LIBRARY	ksapi
 			sendstring			:	STRING		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The string which wants to be send"
 				INITIALVALUE	=	"";
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -543,6 +583,10 @@ LIBRARY	ksapi
 			/* Input *************************************************/
 			sendstringvec[]	:	STRING		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The string vector which wants to be send";
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -559,9 +603,13 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to send the uint";
 		VARIABLES
 			/* Input *************************************************/
-				senduint			:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+			senduint			:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The uint which wants to be send"
 				INITIALVALUE	=	0;
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -579,6 +627,10 @@ LIBRARY	ksapi
 			/* Input *************************************************/
 			senduintvec[]		:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"The uint vector which wants to be send";
+			varTimeStamp		: TIME		HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Time Stamp of Variable";
+			varQState			:	UINT	HAS_ACCESSORS	FLAGS = "i"
+				COMMENT			=	"Quality-State of Variable";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;

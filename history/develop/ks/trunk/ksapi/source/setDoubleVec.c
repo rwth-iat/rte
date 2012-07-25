@@ -11,6 +11,35 @@
 #include "config.h"
 
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_setDoubleVec_varTimeStamp_get(
+    OV_INSTPTR_ksapi_setDoubleVec          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setDoubleVec_varTimeStamp_set(
+    OV_INSTPTR_ksapi_setDoubleVec          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_setDoubleVec_varQState_get(
+    OV_INSTPTR_ksapi_setDoubleVec          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setDoubleVec_varQState_set(
+    OV_INSTPTR_ksapi_setDoubleVec          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
+
 /*	ksapi_setDoubleVec_senddoublevec_get
  *	returns the current value and the length of the senddoublevec
  */
@@ -83,7 +112,8 @@ OV_DLLFNCEXPORT void ksapi_setDoubleVec_submit(
 	if((pobj->v_senddoublevec.value) && (pobj->v_host) && (pobj->v_server) && (pobj->v_path) && (ksapi_KSCommon_status_get(pksc) != STATUS_KSCOMMON_BUSY)){
 		//all values are set
 		
-	generatesetdoublevecxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_senddoublevec.value, pobj->v_senddoublevec.veclen);
+	generatesetdoublevecxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_senddoublevec.value, pobj->v_senddoublevec.veclen,
+			pobj->v_varTimeStamp.secs, pobj->v_varTimeStamp.usecs, pobj->v_varQState);
 	
 	//send
 	ksapi_Channel_sendxdr(channel, pksc, xdr, xdrlength);

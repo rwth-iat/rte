@@ -72,10 +72,11 @@ void generategetxdr(char *xdr[], int *length, char *path)
  * char *path : path to the variable which should be set
  * char *setstring : string which should be set to dedicated variable
  */
-void generatesetstringxdr(char *xdr[], int *length, char *path, char *setstring)
+void generatesetstringxdr(char *xdr[], int *length, char *path, char *setstring,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetbody(OV_VT_STRING, xdr, length, path, &setstring);
+	generatesetbody(OV_VT_STRING, xdr, length, path, &setstring, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);
 
 	return;
@@ -90,10 +91,11 @@ void generatesetstringxdr(char *xdr[], int *length, char *path, char *setstring)
  * char **setstringvec : a vector of strings which should be set to dedicated variable
  * int veclength : length of setstringvec
  */
-void generatesetstringvecxdr(char *xdr[], int *length, char *path, char **setstringvec, int veclength)
+void generatesetstringvecxdr(char *xdr[], int *length, char *path, char **setstringvec, int veclength,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetvecbody(OV_VT_STRING_VEC, xdr, length, path, &setstringvec, veclength);
+	generatesetvecbody(OV_VT_STRING_VEC, xdr, length, path, &setstringvec, veclength, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);
 
 	return;
@@ -107,10 +109,11 @@ void generatesetstringvecxdr(char *xdr[], int *length, char *path, char **setstr
  * char *path : path to the variable which should be set
  * int setbool : bool value (0 or 1) which should be set to dedicated variable
  */
-void generatesetboolxdr(char *xdr[], int *length, char *path, int setbool)
+void generatesetboolxdr(char *xdr[], int *length, char *path, int setbool,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetbody(OV_VT_BOOL, xdr, length, path, &setbool);
+	generatesetbody(OV_VT_BOOL, xdr, length, path, &setbool, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);	
 
 	return;
@@ -125,10 +128,11 @@ void generatesetboolxdr(char *xdr[], int *length, char *path, int setbool)
  * int setboolvec[] : a vector of bool values which should be set to dedicated variable
  * int veclength : length of setboolvec
  */
-void generatesetboolvecxdr(char *xdr[], int *length, char *path, int setboolvec[], int veclength)
+void generatesetboolvecxdr(char *xdr[], int *length, char *path, int setboolvec[], int veclength,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetvecbody(OV_VT_BOOL_VEC, xdr, length, path, &setboolvec, veclength);
+	generatesetvecbody(OV_VT_BOOL_VEC, xdr, length, path, &setboolvec, veclength, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);
 
 	return;
@@ -142,10 +146,11 @@ void generatesetboolvecxdr(char *xdr[], int *length, char *path, int setboolvec[
  * char *path : path to the variable which should be set
  * double setdouble : double value which should be set to dedicated variable
  */
-void generatesetdoublexdr(char *xdr[], int *length, char *path, double setdouble)
+void generatesetdoublexdr(char *xdr[], int *length, char *path, double setdouble,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetbody(OV_VT_DOUBLE, xdr, length, path, &setdouble);
+	generatesetbody(OV_VT_DOUBLE, xdr, length, path, &setdouble, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);	
 
 	return;
@@ -160,10 +165,11 @@ void generatesetdoublexdr(char *xdr[], int *length, char *path, double setdouble
  * double setdoublevec[] : a vector of double values which should be set to dedicated variable
  * int veclength : length of setdoublevec
  */
-void generatesetdoublevecxdr(char *xdr[], int *length, char *path, double setdoublevec[], int veclength)
+void generatesetdoublevecxdr(char *xdr[], int *length, char *path, double setdoublevec[], int veclength,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetvecbody(OV_VT_DOUBLE_VEC, xdr, length, path, &setdoublevec, veclength);
+	generatesetvecbody(OV_VT_DOUBLE_VEC, xdr, length, path, &setdoublevec, veclength, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);	
 
 	return;
@@ -177,10 +183,11 @@ void generatesetdoublevecxdr(char *xdr[], int *length, char *path, double setdou
  * char *path : path to the variable which should be set
  * int setint : integer value which should be set to dedicated variable
  */
-void generatesetintxdr(char *xdr[], int *length, char *path, int setint)
+void generatesetintxdr(char *xdr[], int *length, char *path, int setint,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetbody(OV_VT_INT, xdr, length, path, &setint);
+	generatesetbody(OV_VT_INT, xdr, length, path, &setint, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);
 
 	return;
@@ -195,10 +202,11 @@ void generatesetintxdr(char *xdr[], int *length, char *path, int setint)
  * int setintvec[] : a vector of integer values which should be set to dedicated variable
  * int veclength : length of setintvec
  */
-void generatesetintvecxdr(char *xdr[], int *length, char *path, int setintvec[], int veclength)
+void generatesetintvecxdr(char *xdr[], int *length, char *path, int setintvec[], int veclength,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetvecbody(OV_VT_INT_VEC, xdr, length, path, &setintvec, veclength);
+	generatesetvecbody(OV_VT_INT_VEC, xdr, length, path, &setintvec, veclength, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);	
 
 	return;
@@ -212,10 +220,11 @@ void generatesetintvecxdr(char *xdr[], int *length, char *path, int setintvec[],
  * char *path : path to the variable which should be set
  * float setsingle : float value which should be set to dedicated variable
  */
-void generatesetsinglexdr(char *xdr[], int *length, char *path, float setsingle)
+void generatesetsinglexdr(char *xdr[], int *length, char *path, float setsingle,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetbody(OV_VT_SINGLE, xdr, length, path, &setsingle);
+	generatesetbody(OV_VT_SINGLE, xdr, length, path, &setsingle, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);
 
 	return;
@@ -230,10 +239,11 @@ void generatesetsinglexdr(char *xdr[], int *length, char *path, float setsingle)
  * float setsinglevec[] : a vector of float values which should be set to dedicated variable
  * int veclength : length of setsinglevec
  */
-void generatesetsinglevecxdr(char *xdr[], int *length, char *path, float setsinglevec[], int veclength)
+void generatesetsinglevecxdr(char *xdr[], int *length, char *path, float setsinglevec[], int veclength,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetvecbody(OV_VT_SINGLE_VEC, xdr, length, path, &setsinglevec, veclength);
+	generatesetvecbody(OV_VT_SINGLE_VEC, xdr, length, path, &setsinglevec, veclength, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);
 	return;
 }
@@ -246,10 +256,11 @@ void generatesetsinglevecxdr(char *xdr[], int *length, char *path, float setsing
  * char *path : path to the variable which should be set
  * uint setuint : unsigned integer value which should be set to dedicated variable
  */
-void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setuint)
+void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setuint,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetbody(OV_VT_UINT, xdr, length, path, &setuint);
+	generatesetbody(OV_VT_UINT, xdr, length, path, &setuint, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);
 
 	return;
@@ -264,10 +275,11 @@ void generatesetuintxdr(char *xdr[], int *length, char *path, unsigned int setui
  * uint setuintvec[] : a vector of unsigned integer values which should be set to dedicated variable
  * int veclength : length of setuintvec
  */
-void generatesetuintvecxdr(char *xdr[], int *length, char *path, unsigned int setuintvec[], int veclength)
+void generatesetuintvecxdr(char *xdr[], int *length, char *path, unsigned int setuintvec[], int veclength,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	generateheader(KS_SETVAR, xdr, length);
-	generatesetvecbody(OV_VT_UINT_VEC, xdr, length, path, &setuintvec, veclength);
+	generatesetvecbody(OV_VT_UINT_VEC, xdr, length, path, &setuintvec, veclength, varTsSecs, varTsUsecs, varQState);
 	addrpcheader(xdr, length);
 
 	return;
@@ -1025,7 +1037,7 @@ void addrpcheader(char *xdr[], int *length)
 
 
 
-void generatesetbody(int type, char *xdr[], int *length, char *path, void* setvalue)
+void generatesetbody(int type, char *xdr[], int *length, char *path, void* setvalue, unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	int pathlength;
 	int i;
@@ -1058,6 +1070,9 @@ void generatesetbody(int type, char *xdr[], int *length, char *path, void* setva
 		for(i=0; i<4; i++)
 			(*xdr)[xdrposition+strlength+12+i] = ((char*)&setstringlength)[3-i];		//set stringlength
 		memcpy(&((*xdr)[xdrposition+strlength+16]), (*(char**)setvalue), setstringlength);		//set value
+		xdrposition+=strlength+16+setstringlength;
+		while(xdrposition%4)
+			xdrposition++;
 		break;
 	case OV_VT_DOUBLE:
 		*length += 4+strlength+28;		//4 = length of path; 28 = setvalue-encoding
@@ -1071,6 +1086,7 @@ void generatesetbody(int type, char *xdr[], int *length, char *path, void* setva
 			(*xdr)[xdrposition+strlength+8+i] = ((char*)&type)[3-i];		//set vartype
 		for(i=0; i<8; i++)
 			(*xdr)[xdrposition+strlength+12+i] = ((char*)setvalue)[7-i];		//set value
+		xdrposition+=strlength+20;
 		break;
 	default:
 		*length += 4+strlength+24;		//4 = length of path; 24 = setvalue-encoding
@@ -1084,17 +1100,31 @@ void generatesetbody(int type, char *xdr[], int *length, char *path, void* setva
 			(*xdr)[xdrposition+strlength+8+i] = ((char*)&type)[3-i];		//set vartype
 		for(i=0; i<4; i++)
 			(*xdr)[xdrposition+strlength+12+i] = ((char*)setvalue)[3-i];		//set value
+		xdrposition+=strlength+16;
 		break;
 
 	}
 
+	//set Time-Stamps seconds
+	for(i=0; i<4; i++)
+		(*xdr)[xdrposition+i] = ((char*)&varTsSecs)[3-i];
+	xdrposition += 4;
+	//set Time-Stamps useconds
+	for(i=0; i<4; i++)
+		(*xdr)[xdrposition+i] = ((char*)&varTsUsecs)[3-i];
+	xdrposition += 4;
+	//set quality state
+	for(i=0; i<4; i++)
+		(*xdr)[xdrposition+i] = ((char*)&varQState)[3-i];
+	xdrposition += 4;
 	//set xdr end
-	(*xdr)[*length-1] = 0x04;					//whatever 0x04 stands for^^
+	//(*xdr)[*length-1] = 0x04;					//whatever 0x04 stands for^^
 	return;
 }
 
 
-void generatesetvecbody(int type, char *xdr[], int *length, char *path, void* setvalue, int veclength)
+void generatesetvecbody(int type, char *xdr[], int *length, char *path, void* setvalue, int veclength,
+		unsigned long varTsSecs, unsigned long varTsUsecs, unsigned long varQState)
 {
 	int pathlength;
 	int i, j;
@@ -1130,6 +1160,7 @@ void generatesetvecbody(int type, char *xdr[], int *length, char *path, void* se
 			for(j=0; j<8; j++)
 				(*xdr)[xdrposition+strlength+16+i*8+j] = ((char*)(&((int**)setvalue)[i]))[7-j];		//set values
 		}
+		xdrposition+=strlength+veclength*8+16;
 		break;
 	case OV_VT_STRING_VEC:
 		for(i=0; i< veclength; i++)		//calculating overall size
@@ -1178,12 +1209,26 @@ void generatesetvecbody(int type, char *xdr[], int *length, char *path, void* se
 			for(j=0; j<4; j++)
 				(*xdr)[xdrposition+strlength+16+i*4+j] = ((char*)(&((int**)setvalue)[i]))[3-j];		//set values
 		}
+		xdrposition+=strlength+veclength*4+16;
 		break;
 
 	}
 
+	//set Time-Stamps seconds
+	for(i=0; i<4; i++)
+		(*xdr)[xdrposition+i] = ((char*)&varTsSecs)[3-i];
+	xdrposition += 4;
+	//set Time-Stamps useconds
+	for(i=0; i<4; i++)
+		(*xdr)[xdrposition+i] = ((char*)&varTsUsecs)[3-i];
+	xdrposition += 4;
+	//set quality state
+	for(i=0; i<4; i++)
+		(*xdr)[xdrposition+i] = ((char*)&varQState)[3-i];
+	xdrposition += 4;
+
 	//set xdr end
-	(*xdr)[*length-1] = 0x4;					//whatever 0x04 stands for^^
+	//(*xdr)[*length-1] = 0x4;					//whatever 0x04 stands for^^
 	return;
 }
 
