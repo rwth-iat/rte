@@ -10,6 +10,35 @@
 #include "xdrhandling.h"
 
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getUInt_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getUInt          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getUInt_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getUInt          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getUInt_varQState_get(
+    OV_INSTPTR_ksapi_getUInt          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getUInt_varQState_set(
+    OV_INSTPTR_ksapi_getUInt          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
+
 /*	ksapi_getUInt_receiveuint_get
  *	returns the current value of the receiveuint
  */
@@ -71,7 +100,7 @@ OV_DLLFNCEXPORT void ksapi_getUInt_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getUInt, pvtableop, pgi);
 
 	//Analyse xdr
-	if((analysegetreply(OV_VT_UINT, xdr, xdrlength, (unsigned int*)&result)) == 0)
+	if((analysegetreply(OV_VT_UINT, xdr, xdrlength, (unsigned int*)&result, &(pgi->v_varTimeStamp.secs), &(pgi->v_varTimeStamp.usecs), &(pgi->v_varQState))) == 0)
 	{
 		ksapi_getUInt_receiveuint_set(pgi, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);

@@ -10,6 +10,34 @@
 #include "xdrhandling.h"
 
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getBoolVec_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getBoolVec          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getBoolVec_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getBoolVec          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getBoolVec_varQState_get(
+    OV_INSTPTR_ksapi_getBoolVec          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getBoolVec_varQState_set(
+    OV_INSTPTR_ksapi_getBoolVec          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /*	ksapi_getBoolVec_receiveboolvec_get
  *	returns the current value and the length of the receiveboolvec
  */
@@ -74,7 +102,8 @@ OV_DLLFNCEXPORT void ksapi_getBoolVec_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getBoolVec, pvtableop, pgbv);
 
 	//Analyse xdr
-	if((analysegetvecreply(OV_VT_BOOL_VEC, xdr, xdrlength, (void**) &result, &len_res)) == 0)
+	if((analysegetvecreply(OV_VT_BOOL_VEC, xdr, xdrlength, (void**) &result, &len_res,
+			&(pgbv->v_varTimeStamp.secs), &(pgbv->v_varTimeStamp.usecs), &(pgbv->v_varQState))) == 0)
 	{
 		ksapi_getBoolVec_receiveboolvec_set(pgbv, result, len_res);
 		free(result);

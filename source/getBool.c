@@ -9,6 +9,34 @@
 
 #include "xdrhandling.h"
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getBool_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getBool          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getBool_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getBool          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getBool_varQState_get(
+    OV_INSTPTR_ksapi_getBool          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getBool_varQState_set(
+    OV_INSTPTR_ksapi_getBool          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 
 /*	ksapi_getBool_receivebool_get
  *	returns the current value of the receivebool
@@ -71,7 +99,7 @@ OV_DLLFNCEXPORT void ksapi_getBool_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getBool, pvtableop, pgb);
 
 	//Analyse xdr
-	if((analysegetreply(OV_VT_BOOL, xdr, xdrlength, &result)) == 0)
+	if((analysegetreply(OV_VT_BOOL, xdr, xdrlength, &result, &(pgb->v_varTimeStamp.secs), &(pgb->v_varTimeStamp.usecs), &(pgb->v_varQState))) == 0)
 	{
 		ksapi_getBool_receivebool_set(pgb, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);

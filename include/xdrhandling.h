@@ -39,8 +39,8 @@ void generatelinkobjectxdr(char *xdr[], int *length, char *path, char *linkedpat
 void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, char *namemask, int epflags);
 
 
-int analysegetreply(int type, char xdr[], int xdrlength, void *reply);
-int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *veclength);
+int analysegetreply(int type, char xdr[], int xdrlength, void *reply, unsigned long *repTsSecs, unsigned long *repTsUsecs, unsigned long *repState);
+int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *veclength, unsigned long *repTsSecs, unsigned long *repTsUsecs, unsigned long *repState);
 
 
 int analyseresultonlyreply(char xdr[], int xdrlength);
