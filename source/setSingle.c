@@ -115,6 +115,7 @@ OV_DLLFNCEXPORT void fbcomlib_setSingle_typemethod(
     OV_INSTPTR_fbcomlib_setSingle 					setSingle = Ov_StaticPtrCast(fbcomlib_setSingle, pfb);
 	OV_INSTPTR_ksapi_setSingle						ksapisetsingle = NULL;
 	OV_VTBLPTR_ksapi_setSingle						mtable = NULL;
+	OV_TIME ttemp;
 	//OV_INSTPTR_ksapi_KSCommon						kscommon = NULL;
 	//OV_VTBLPTR_ksapi_KSCommon						mtable = NULL;
 	//check if something should be sent and if we are in a final state
@@ -135,6 +136,12 @@ OV_DLLFNCEXPORT void fbcomlib_setSingle_typemethod(
 		}
 		//get variable pointer
 		Ov_GetVTablePtr(ksapi_setSingle, mtable, ksapisetsingle);
+
+		//set time-stamp to current time
+		ov_time_gettime(&ttemp);
+		ksapi_setSingle_varTimeStamp_set(ksapisetsingle, &ttemp);
+		//set qaulity state to good
+		ksapi_setSingle_varQState_set(ksapisetsingle, 4);
 		//start sending
 		mtable->m_setandsubmit(ksapisetsingle,
 				fbcommon->v_host,

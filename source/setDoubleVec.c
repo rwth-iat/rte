@@ -117,6 +117,7 @@ OV_DLLFNCEXPORT void fbcomlib_setDoubleVec_typemethod(
 	OV_INSTPTR_fbcomlib_setDoubleVec 					setDoubleVec = Ov_StaticPtrCast(fbcomlib_setDoubleVec, pfb);
 	OV_INSTPTR_ksapi_setDoubleVec						ksapisetdoublevec = NULL;
 	OV_VTBLPTR_ksapi_setDoubleVec						mtable = NULL;
+	OV_TIME ttemp;
 	//OV_INSTPTR_ksapi_KSCommon						kscommon = NULL;
 	//OV_VTBLPTR_ksapi_KSCommon						mtable = NULL;
 
@@ -138,6 +139,12 @@ OV_DLLFNCEXPORT void fbcomlib_setDoubleVec_typemethod(
 		}
 		//get variable pointer
 		Ov_GetVTablePtr(ksapi_setDoubleVec, mtable, ksapisetdoublevec);
+
+		//set time-stamp to current time
+		ov_time_gettime(&ttemp);
+		ksapi_setDoubleVec_varTimeStamp_set(ksapisetdoublevec, &ttemp);
+		//set qaulity state to good
+		ksapi_setDoubleVec_varQState_set(ksapisetdoublevec, 4);
 		//start sending
 		mtable->m_setandsubmit(ksapisetdoublevec,
 				fbcommon->v_host,
