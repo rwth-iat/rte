@@ -10,6 +10,34 @@
 #include "xdrhandling.h"
 
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getStringVec_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getStringVec          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getStringVec_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getStringVec          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getStringVec_varQState_get(
+    OV_INSTPTR_ksapi_getStringVec          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getStringVec_varQState_set(
+    OV_INSTPTR_ksapi_getStringVec          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /*	ksapi_getStringVec_receivestringvec_get
  *	returns the current value and the length of the receivestringvec
  */
@@ -74,7 +102,8 @@ OV_DLLFNCEXPORT void ksapi_getStringVec_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getStringVec, pvtableop, pgs);
 	
 	//Analyse xdr
-	if((analysegetvecreply(OV_VT_STRING_VEC, xdr, xdrlength, (void**) &result, &len_res)) == 0)
+	if((analysegetvecreply(OV_VT_STRING_VEC, xdr, xdrlength, (void**) &result, &len_res,
+			&(pgs->v_varTimeStamp.secs), &(pgs->v_varTimeStamp.usecs), &(pgs->v_varQState))) == 0)
 	{
 		ksapi_getStringVec_receivestringvec_set(pgs, result, len_res);
 		free(result);

@@ -10,6 +10,35 @@
 #include "xdrhandling.h"
 
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getString_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getString          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getString_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getString          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getString_varQState_get(
+    OV_INSTPTR_ksapi_getString          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getString_varQState_set(
+    OV_INSTPTR_ksapi_getString          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
+
 /*	ksapi_getString_receivestring_get
  *	returns the current value of the receivestring
  */
@@ -70,7 +99,7 @@ OV_DLLFNCEXPORT void ksapi_getString_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getString, pvtableop, pgs);
 
 	//Analyse xdr
-	if((analysegetreply(OV_VT_STRING, xdr, xdrlength, &result)) == 0)
+	if((analysegetreply(OV_VT_STRING, xdr, xdrlength, &result, &(pgs->v_varTimeStamp.secs), &(pgs->v_varTimeStamp.usecs), &(pgs->v_varQState))) == 0)
 	{
 		ksapi_getString_receivestring_set(pgs, result);
 		free(result);

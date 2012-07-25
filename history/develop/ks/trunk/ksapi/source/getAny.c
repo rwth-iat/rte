@@ -26,6 +26,33 @@
 #include "libov/ov_macros.h"
 #include "xdrhandling.h"
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getAny_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getAny          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getAny_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getAny          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getAny_varQState_get(
+    OV_INSTPTR_ksapi_getAny          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getAny_varQState_set(
+    OV_INSTPTR_ksapi_getAny          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
 
 OV_DLLFNCEXPORT OV_ANY* ksapi_getAny_receiveany_get(
     OV_INSTPTR_ksapi_getAny          pobj
@@ -129,76 +156,92 @@ OV_DLLFNCEXPORT void ksapi_getAny_returnMethodxdr(
 		switch(vartype)
 		{
 		case OV_VT_BOOL:
-			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_bool));
+			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_bool),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			break;
 		case OV_VT_UINT:
-			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_uint));
+			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_uint),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			break;
 		case OV_VT_INT:
-			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_int));
+			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_int),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			break;
 		case OV_VT_SINGLE:
-			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_single));
+			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_single),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			break;
 
 		case OV_VT_DOUBLE:
-			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_double));
+			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_double),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			break;
 		case OV_VT_TIME:
-			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_time));
+			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_time),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			break;
 		case OV_VT_TIME_SPAN:
-			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_time_span));
+			analysegetreply(vartype, xdr, xdrlength, &(pga->v_receiveany.value.valueunion.val_time_span),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			break;
 		case OV_VT_STRING:
-			analysegetreply(vartype, xdr, xdrlength, &(result.value.valueunion.val_string));
+			analysegetreply(vartype, xdr, xdrlength, &(result.value.valueunion.val_string),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			ov_string_setvalue(&(pga->v_receiveany.value.valueunion.val_string), result.value.valueunion.val_string);
 			free(result.value.valueunion.val_string);
 			break;
 		case OV_VT_BOOL_VEC:
-			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_bool_vec.value), (int*) &(result.value.valueunion.val_bool_vec.veclen));
+			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_bool_vec.value), (int*) &(result.value.valueunion.val_bool_vec.veclen),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			Ov_SetDynamicVectorValue(&(pga->v_receiveany.value.valueunion.val_bool_vec),
 										result.value.valueunion.val_bool_vec.value, result.value.valueunion.val_bool_vec.veclen, BOOL);
 			free(result.value.valueunion.val_bool_vec.value);
 			break;
 		case OV_VT_UINT_VEC:
-			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_uint_vec.value), (int*) &(result.value.valueunion.val_uint_vec.veclen));
+			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_uint_vec.value), (int*) &(result.value.valueunion.val_uint_vec.veclen),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			Ov_SetDynamicVectorValue(&(pga->v_receiveany.value.valueunion.val_uint_vec),
 					result.value.valueunion.val_uint_vec.value, result.value.valueunion.val_uint_vec.veclen, UINT);
 			free(result.value.valueunion.val_uint_vec.value);
 			break;
 		case OV_VT_INT_VEC:
-			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_int_vec.value), (int*) &(result.value.valueunion.val_int_vec.veclen));
+			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_int_vec.value), (int*) &(result.value.valueunion.val_int_vec.veclen),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			Ov_SetDynamicVectorValue(&(pga->v_receiveany.value.valueunion.val_int_vec),
 					result.value.valueunion.val_int_vec.value, result.value.valueunion.val_int_vec.veclen, INT);
 			free(result.value.valueunion.val_int_vec.value);
 			break;
 		case OV_VT_SINGLE_VEC:
-			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_single_vec.value), (int*) &(result.value.valueunion.val_single_vec.veclen));
+			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_single_vec.value), (int*) &(result.value.valueunion.val_single_vec.veclen),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			Ov_SetDynamicVectorValue(&(pga->v_receiveany.value.valueunion.val_single_vec),
 					result.value.valueunion.val_single_vec.value, result.value.valueunion.val_single_vec.veclen, SINGLE);
 			free(result.value.valueunion.val_single_vec.value);
 			break;
 		case OV_VT_DOUBLE_VEC:
-			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_double_vec.value), (int*) &(result.value.valueunion.val_double_vec.veclen));
+			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_double_vec.value), (int*) &(result.value.valueunion.val_double_vec.veclen),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			Ov_SetDynamicVectorValue(&(pga->v_receiveany.value.valueunion.val_double_vec),
 					result.value.valueunion.val_double_vec.value, result.value.valueunion.val_double_vec.veclen, DOUBLE);
 			free(result.value.valueunion.val_double_vec.value);
 			break;
 		case OV_VT_TIME_VEC:
-			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_time_vec.value), (int*) &(result.value.valueunion.val_time_vec.veclen));
+			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_time_vec.value), (int*) &(result.value.valueunion.val_time_vec.veclen),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			Ov_SetDynamicVectorValue(&(pga->v_receiveany.value.valueunion.val_time_vec),
 					result.value.valueunion.val_time_vec.value, result.value.valueunion.val_time_vec.veclen, TIME);
 			free(result.value.valueunion.val_time_vec.value);
 			break;
 		case OV_VT_TIME_SPAN_VEC:
-			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_time_span_vec.value), (int*) &(result.value.valueunion.val_time_span_vec.veclen));
+			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_time_span_vec.value), (int*) &(result.value.valueunion.val_time_span_vec.veclen),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			Ov_SetDynamicVectorValue(&(pga->v_receiveany.value.valueunion.val_time_span_vec),
 					result.value.valueunion.val_time_span_vec.value, result.value.valueunion.val_time_span_vec.veclen, TIME_SPAN);
 			free(result.value.valueunion.val_time_span_vec.value);
 			break;
 		case OV_VT_STRING_VEC:
-			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_string_vec.value), (int*) &(result.value.valueunion.val_string_vec.veclen));
+			analysegetvecreply(vartype, xdr, xdrlength, (void**) &(result.value.valueunion.val_string_vec.value), (int*) &(result.value.valueunion.val_string_vec.veclen),
+					&(pga->v_varTimeStamp.secs), &(pga->v_varTimeStamp.usecs), &(pga->v_varQState));
 			Ov_SetDynamicVectorValue(&(pga->v_receiveany.value.valueunion.val_string_vec),
 					result.value.valueunion.val_string_vec.value, result.value.valueunion.val_string_vec.veclen, STRING);
 			for(i=0; i<result.value.valueunion.val_string_vec.veclen; i++)
@@ -210,6 +253,8 @@ OV_DLLFNCEXPORT void ksapi_getAny_returnMethodxdr(
 			ov_logfile_error("what the hack is this vartype?! 0x%x", vartype);
 
 		}
+
+
 
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);
 

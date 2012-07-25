@@ -9,6 +9,34 @@
 
 #include "xdrhandling.h"
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getDouble_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getDouble          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getDouble_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getDouble          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getDouble_varQState_get(
+    OV_INSTPTR_ksapi_getDouble          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getDouble_varQState_set(
+    OV_INSTPTR_ksapi_getDouble          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 
 /*	ksapi_getDouble_receivedouble_get
  *	returns the current value of the receivedouble
@@ -71,7 +99,7 @@ OV_DLLFNCEXPORT void ksapi_getDouble_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getDouble, pvtableop, pgd);
 
 	//Analyse xdr
-	if((analysegetreply(OV_VT_DOUBLE, xdr, xdrlength, &result)) == 0)
+	if((analysegetreply(OV_VT_DOUBLE, xdr, xdrlength, &result, &(pgd->v_varTimeStamp.secs), &(pgd->v_varTimeStamp.usecs), &(pgd->v_varQState))) == 0)
 	{
 		ksapi_getDouble_receivedouble_set(pgd, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);

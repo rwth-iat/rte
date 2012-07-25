@@ -10,6 +10,35 @@
 #include "xdrhandling.h"
 
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getDoubleVec_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getDoubleVec          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getDoubleVec_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getDoubleVec          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getDoubleVec_varQState_get(
+    OV_INSTPTR_ksapi_getDoubleVec          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getDoubleVec_varQState_set(
+    OV_INSTPTR_ksapi_getDoubleVec          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
+
 /*	ksapi_getDoubleVec_receivedoublevec_get
  *	returns the current value and the length of the receivedoublevec
  */
@@ -74,7 +103,8 @@ OV_DLLFNCEXPORT void ksapi_getDoubleVec_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getDoubleVec, pvtableop, pgs);
 
 	//Analyse xdr
-	if((analysegetvecreply(OV_VT_DOUBLE_VEC, xdr, xdrlength, (void**) &result, &len_res)) == 0)
+	if((analysegetvecreply(OV_VT_DOUBLE_VEC, xdr, xdrlength, (void**) &result, &len_res,
+			&(pgs->v_varTimeStamp.secs), &(pgs->v_varTimeStamp.usecs), &(pgs->v_varQState))) == 0)
 	{
 		ksapi_getDoubleVec_receivedoublevec_set(pgs, result, len_res);
 		free(result);

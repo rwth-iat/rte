@@ -10,6 +10,35 @@
 #include "xdrhandling.h"
 
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_getSingle_varTimeStamp_get(
+    OV_INSTPTR_ksapi_getSingle          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getSingle_varTimeStamp_set(
+    OV_INSTPTR_ksapi_getSingle          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_getSingle_varQState_get(
+    OV_INSTPTR_ksapi_getSingle          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_getSingle_varQState_set(
+    OV_INSTPTR_ksapi_getSingle          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
+
 /*	ksapi_getSingle_receivesingle_get
  *	returns the current value of the receivesingle
  */
@@ -71,7 +100,7 @@ OV_DLLFNCEXPORT void ksapi_getSingle_returnMethodxdr(
 	Ov_GetVTablePtr(ksapi_getSingle, pvtableop, pgi);
 	
 	//Analyse xdr
-	if((analysegetreply(OV_VT_SINGLE, xdr, xdrlength, &result)) == 0)
+	if((analysegetreply(OV_VT_SINGLE, xdr, xdrlength, &result, &(pgi->v_varTimeStamp.secs), &(pgi->v_varTimeStamp.usecs), &(pgi->v_varQState))) == 0)
 	{
 		ksapi_getSingle_receivesingle_set(pgi, result);
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);
