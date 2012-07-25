@@ -114,6 +114,7 @@ OV_DLLFNCEXPORT void fbcomlib_setAny_typemethod(
     OV_INSTPTR_fbcomlib_setAny 					setAny = Ov_StaticPtrCast(fbcomlib_setAny, pfb);
 	OV_INSTPTR_ksapi_setAny						ksapisetany = NULL;
 	OV_VTBLPTR_ksapi_setAny						mtable = NULL;
+	OV_TIME ttemp;
 	//OV_INSTPTR_ksapi_KSCommon						kscommon = NULL;
 	//OV_VTBLPTR_ksapi_KSCommon						mtable = NULL;
 
@@ -136,6 +137,11 @@ OV_DLLFNCEXPORT void fbcomlib_setAny_typemethod(
 		}
 		//get variable pointer
 		Ov_GetVTablePtr(ksapi_setAny, mtable, ksapisetany);
+		//set time-stamp to current time, will be overwritten inside ksapi-object, if ANY has a timestamp encoded
+		ov_time_gettime(&ttemp);
+		ksapi_setAny_varTimeStamp_set(ksapisetany, &ttemp);
+		//set qaulity state to good, will be overwritten inside ksapi-object, if ANY has a qstate encoded
+		ksapi_setAny_varQState_set(ksapisetany, 4);
 		//start sending
 		mtable->m_setandsubmit(ksapisetany,
 				fbcommon->v_host,

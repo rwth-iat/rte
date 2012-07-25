@@ -115,6 +115,7 @@ OV_DLLFNCEXPORT void fbcomlib_setInt_typemethod(
     OV_INSTPTR_fbcomlib_setInt 					setInt = Ov_StaticPtrCast(fbcomlib_setInt, pfb);
 	OV_INSTPTR_ksapi_setInt						ksapisetint = NULL;
 	OV_VTBLPTR_ksapi_setInt						mtable = NULL;
+	OV_TIME ttemp;
 	//OV_INSTPTR_ksapi_KSCommon						kscommon = NULL;
 	//OV_VTBLPTR_ksapi_KSCommon						mtable = NULL;
 
@@ -136,6 +137,12 @@ OV_DLLFNCEXPORT void fbcomlib_setInt_typemethod(
 		}
 		//get variable pointer
 		Ov_GetVTablePtr(ksapi_setInt, mtable, ksapisetint);
+
+		//set time-stamp to current time
+		ov_time_gettime(&ttemp);
+		ksapi_setInt_varTimeStamp_set(ksapisetint, &ttemp);
+		//set qaulity state to good
+		ksapi_setInt_varQState_set(ksapisetint, 4);
 		//start sending
 		mtable->m_setandsubmit(ksapisetint,
 				fbcommon->v_host,
