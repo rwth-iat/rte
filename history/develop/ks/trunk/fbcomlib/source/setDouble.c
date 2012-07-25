@@ -141,8 +141,8 @@ OV_DLLFNCEXPORT void fbcomlib_setDouble_typemethod(
 		//set time-stamp to current time
 		ov_time_gettime(&ttemp);
 		ksapi_setDouble_varTimeStamp_set(ksapisetdouble, &ttemp);
-		//set qaulity state to good
-		ksapi_setDouble_varQState_set(ksapisetdouble, 4);
+		//set qaulity state to not-supported
+		ksapi_setDouble_varQState_set(ksapisetdouble, 0);
 		//start sending
 		mtable->m_setandsubmit(ksapisetdouble,
 				fbcommon->v_host,
