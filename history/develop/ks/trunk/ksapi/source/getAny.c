@@ -254,7 +254,9 @@ OV_DLLFNCEXPORT void ksapi_getAny_returnMethodxdr(
 
 		}
 
-
+		pga->v_receiveany.value.vartype |= (OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+		pga->v_receiveany.time = pga->v_varTimeStamp;
+		pga->v_receiveany.state = pga->v_varQState;
 
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object)kscommon, "Reading completed", 1);
 
