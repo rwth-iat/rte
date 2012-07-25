@@ -143,8 +143,8 @@ OV_DLLFNCEXPORT void fbcomlib_setUIntVec_typemethod(
 		//set time-stamp to current time
 		ov_time_gettime(&ttemp);
 		ksapi_setUIntVec_varTimeStamp_set(ksapisetuintvec, &ttemp);
-		//set qaulity state to good
-		ksapi_setUIntVec_varQState_set(ksapisetuintvec, 4);
+		//set qaulity state to not-supported
+		ksapi_setUIntVec_varQState_set(ksapisetuintvec, KS_ST_NOTSUPPORTED);
 		//start sending
 		mtable->m_setandsubmit(ksapisetuintvec,
 				fbcommon->v_host,

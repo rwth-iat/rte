@@ -143,8 +143,8 @@ OV_DLLFNCEXPORT void fbcomlib_setBoolVec_typemethod(
 		//set time-stamp to current time
 		ov_time_gettime(&ttemp);
 		ksapi_setBoolVec_varTimeStamp_set(ksapisetboolvec, &ttemp);
-		//set qaulity state to good
-		ksapi_setBoolVec_varQState_set(ksapisetboolvec, 4);
+		//set qaulity state to not-supported
+		ksapi_setBoolVec_varQState_set(ksapisetboolvec, 0);
 		//start sending
 		mtable->m_setandsubmit(ksapisetboolvec,
 				fbcommon->v_host,

@@ -142,8 +142,8 @@ OV_DLLFNCEXPORT void fbcomlib_setBool_typemethod(
 		//set time-stamp to current time
 		ov_time_gettime(&ttemp);
 		ksapi_setBool_varTimeStamp_set(ksapisetbool, &ttemp);
-		//set qaulity state to good
-		ksapi_setBool_varQState_set(ksapisetbool, 4);
+		//set qaulity state to not-supported
+		ksapi_setBool_varQState_set(ksapisetbool, 0);
 		//start sending
 		mtable->m_setandsubmit(ksapisetbool,
 				fbcommon->v_host,

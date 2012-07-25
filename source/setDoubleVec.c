@@ -143,8 +143,8 @@ OV_DLLFNCEXPORT void fbcomlib_setDoubleVec_typemethod(
 		//set time-stamp to current time
 		ov_time_gettime(&ttemp);
 		ksapi_setDoubleVec_varTimeStamp_set(ksapisetdoublevec, &ttemp);
-		//set qaulity state to good
-		ksapi_setDoubleVec_varQState_set(ksapisetdoublevec, 4);
+		//set qaulity state to not-supported
+		ksapi_setDoubleVec_varQState_set(ksapisetdoublevec, 0);
 		//start sending
 		mtable->m_setandsubmit(ksapisetdoublevec,
 				fbcommon->v_host,

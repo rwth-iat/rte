@@ -140,8 +140,8 @@ OV_DLLFNCEXPORT void fbcomlib_setAny_typemethod(
 		//set time-stamp to current time, will be overwritten inside ksapi-object, if ANY has a timestamp encoded
 		ov_time_gettime(&ttemp);
 		ksapi_setAny_varTimeStamp_set(ksapisetany, &ttemp);
-		//set qaulity state to good, will be overwritten inside ksapi-object, if ANY has a qstate encoded
-		ksapi_setAny_varQState_set(ksapisetany, 4);
+		//set qaulity state to not-supported, will be overwritten inside ksapi-object, if ANY has a qstate encoded
+		ksapi_setAny_varQState_set(ksapisetany, 0);
 		//start sending
 		mtable->m_setandsubmit(ksapisetany,
 				fbcommon->v_host,
