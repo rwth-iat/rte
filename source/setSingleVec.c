@@ -11,6 +11,34 @@
 
 #include "config.h"
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_setSingleVec_varTimeStamp_get(
+    OV_INSTPTR_ksapi_setSingleVec          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setSingleVec_varTimeStamp_set(
+    OV_INSTPTR_ksapi_setSingleVec          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_setSingleVec_varQState_get(
+    OV_INSTPTR_ksapi_setSingleVec          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setSingleVec_varQState_set(
+    OV_INSTPTR_ksapi_setSingleVec          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /*	ksapi_setSingleVec_sendsinglevec_get
  *	returns the current value and the length of the sendsinglevec
  */
@@ -84,7 +112,8 @@ OV_DLLFNCEXPORT void ksapi_setSingleVec_submit(
 		//all values are set
 	
 		
-	generatesetsinglevecxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendsinglevec.value, pobj->v_sendsinglevec.veclen);
+	generatesetsinglevecxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendsinglevec.value, pobj->v_sendsinglevec.veclen,
+			pobj->v_varTimeStamp.secs, pobj->v_varTimeStamp.usecs, pobj->v_varQState);
 	
 	//send
 	ksapi_Channel_sendxdr(channel, pksc, xdr, xdrlength);

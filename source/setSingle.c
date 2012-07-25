@@ -11,6 +11,34 @@
 
 #include "config.h"
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_setSingle_varTimeStamp_get(
+    OV_INSTPTR_ksapi_setSingle          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setSingle_varTimeStamp_set(
+    OV_INSTPTR_ksapi_setSingle          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_setSingle_varQState_get(
+    OV_INSTPTR_ksapi_setSingle          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setSingle_varQState_set(
+    OV_INSTPTR_ksapi_setSingle          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /*	ksapi_setSingle_sendsingle_get
  *	returns the current value of the sendsingle
  */
@@ -85,7 +113,7 @@ OV_DLLFNCEXPORT void ksapi_setSingle_submit(
 			&& (ksapi_KSCommon_status_get(pksc) == STATUS_KSCOMMON_OK)){
 		//all values are set
 	
-	generatesetsinglexdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendsingle);
+	generatesetsinglexdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendsingle, pobj->v_varTimeStamp.secs, pobj->v_varTimeStamp.usecs, pobj->v_varQState);
 	
 	//send
 	ksapi_Channel_sendxdr(channel, pksc, xdr, xdrlength);

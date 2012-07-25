@@ -11,6 +11,34 @@
 #include "config.h"
 
 
+OV_DLLFNCEXPORT OV_TIME* ksapi_setBool_varTimeStamp_get(
+    OV_INSTPTR_ksapi_setBool          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setBool_varTimeStamp_set(
+    OV_INSTPTR_ksapi_setBool          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapi_setBool_varQState_get(
+    OV_INSTPTR_ksapi_setBool          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_setBool_varQState_set(
+    OV_INSTPTR_ksapi_setBool          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /*	ksapi_setBool_sendbool_get
  *	returns the current value of the sendbool
  */
@@ -84,7 +112,7 @@ OV_DLLFNCEXPORT void ksapi_setBool_submit(
 	char *xdr=NULL;
 	int xdrlength;
 
-	generatesetboolxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendbool);
+	generatesetboolxdr(&xdr, &xdrlength, pobj->v_path, pobj->v_sendbool, pobj->v_varTimeStamp.secs, pobj->v_varTimeStamp.usecs, pobj->v_varQState);
 	
 	//send
 	ksapi_Channel_sendxdr(channel, pksc, xdr, xdrlength);
