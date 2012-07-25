@@ -13,6 +13,34 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
+OV_DLLFNCEXPORT OV_TIME* fbcomlib_getStringVec_varTimeStamp_get(
+    OV_INSTPTR_fbcomlib_getStringVec          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getStringVec_varTimeStamp_set(
+    OV_INSTPTR_fbcomlib_getStringVec          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT fbcomlib_getStringVec_varQState_get(
+    OV_INSTPTR_fbcomlib_getStringVec          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getStringVec_varQState_set(
+    OV_INSTPTR_fbcomlib_getStringVec          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /**
  * The received StringVec is stored here
  */
@@ -118,5 +146,7 @@ OV_DLLFNCEXPORT void fbcomlib_getStringVec_retMethod(
 	fbcomlib_FBComCommon_retMethod(pobj, errorstring, errorcode);
 	//get the stringvec
 	fbcomlib_getStringVec_receivedStringVec_set(getstringvec, ksapigetstringvec->v_receivestringvec.value, ksapigetstringvec->v_receivestringvec.veclen);
+	getstringvec->v_varQState = ksapigetstringvec->v_varQState;
+	getstringvec->v_varTimeStamp = ksapigetstringvec->v_varTimeStamp;
 
 }

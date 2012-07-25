@@ -13,6 +13,34 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
+OV_DLLFNCEXPORT OV_TIME* fbcomlib_getDoubleVec_varTimeStamp_get(
+    OV_INSTPTR_fbcomlib_getDoubleVec          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getDoubleVec_varTimeStamp_set(
+    OV_INSTPTR_fbcomlib_getDoubleVec          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT fbcomlib_getDoubleVec_varQState_get(
+    OV_INSTPTR_fbcomlib_getDoubleVec          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getDoubleVec_varQState_set(
+    OV_INSTPTR_fbcomlib_getDoubleVec          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /**
  * The received DoubleVec is stored here
  */
@@ -117,5 +145,7 @@ OV_DLLFNCEXPORT void fbcomlib_getDoubleVec_retMethod(
 	fbcomlib_FBComCommon_retMethod(pobj, errorstring, errorcode);
 	//get the doublevec
 	fbcomlib_getDoubleVec_receivedDoubleVec_set(getdoublevec, ksapigetdoublevec->v_receivedoublevec.value, ksapigetdoublevec->v_receivedoublevec.veclen);
+	getdoublevec->v_varQState = ksapigetdoublevec->v_varQState;
+	getdoublevec->v_varTimeStamp = ksapigetdoublevec->v_varTimeStamp;
 
 }

@@ -13,6 +13,34 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
+OV_DLLFNCEXPORT OV_TIME* fbcomlib_getDouble_varTimeStamp_get(
+    OV_INSTPTR_fbcomlib_getDouble          pobj
+) {
+    return &pobj->v_varTimeStamp;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getDouble_varTimeStamp_set(
+    OV_INSTPTR_fbcomlib_getDouble          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_varTimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT fbcomlib_getDouble_varQState_get(
+    OV_INSTPTR_fbcomlib_getDouble          pobj
+) {
+    return pobj->v_varQState;
+}
+
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_getDouble_varQState_set(
+    OV_INSTPTR_fbcomlib_getDouble          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_varQState = value;
+    return OV_ERR_OK;
+}
+
 /**
  * The received Double is stored here
  */
@@ -113,6 +141,8 @@ OV_DLLFNCEXPORT void fbcomlib_getDouble_retMethod(
 	fbcomlib_FBComCommon_retMethod(pobj, errorstring, errorcode);
 	//get the double
 	fbcomlib_getDouble_receivedDouble_set(getdouble, ksapigetdouble->v_receivedouble);
+	getdouble->v_varQState = ksapigetdouble->v_varQState;
+	getdouble->v_varTimeStamp = ksapigetdouble->v_varTimeStamp;
 
 }
 
