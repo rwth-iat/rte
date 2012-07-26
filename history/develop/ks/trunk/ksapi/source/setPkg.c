@@ -117,7 +117,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsb = Ov_StaticPtrCast(ksapi_setBool, pchild);
 			if(pchildsb->v_path)
-				generatesetbody(OV_VT_BOOL, &xdr, &xdrlength, pchildsb->v_path, &(pchildsb->v_sendbool));
+				generatesetbody(OV_VT_BOOL, &xdr, &xdrlength, pchildsb->v_path, &(pchildsb->v_sendbool),
+						pchildsb->v_varTimeStamp.secs, pchildsb->v_varTimeStamp.usecs, pchildsb->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -126,7 +127,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsbv = Ov_StaticPtrCast(ksapi_setBoolVec, pchild);
 			if(pchildsbv->v_path)
-				generatesetvecbody(OV_VT_BOOL_VEC, &xdr, &xdrlength, pchildsbv->v_path, &(pchildsbv->v_sendboolvec.value), pchildsbv->v_sendboolvec.veclen);
+				generatesetvecbody(OV_VT_BOOL_VEC, &xdr, &xdrlength, pchildsbv->v_path, &(pchildsbv->v_sendboolvec.value), pchildsbv->v_sendboolvec.veclen,
+						pchildsbv->v_varTimeStamp.secs, pchildsbv->v_varTimeStamp.usecs, pchildsbv->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -135,7 +137,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsd = Ov_StaticPtrCast(ksapi_setDouble, pchild);
 			if(pchildsd->v_path)
-				generatesetbody(OV_VT_DOUBLE, &xdr, &xdrlength, pchildsd->v_path, &(pchildsd->v_senddouble));
+				generatesetbody(OV_VT_DOUBLE, &xdr, &xdrlength, pchildsd->v_path, &(pchildsd->v_senddouble),
+						pchildsd->v_varTimeStamp.secs, pchildsd->v_varTimeStamp.usecs, pchildsd->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -144,7 +147,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsdv = Ov_StaticPtrCast(ksapi_setDoubleVec, pchild);
 			if(pchildsdv->v_path)
-				generatesetvecbody(OV_VT_DOUBLE_VEC, &xdr, &xdrlength, pchildsdv->v_path, &(pchildsdv->v_senddoublevec.value), pchildsdv->v_senddoublevec.veclen);
+				generatesetvecbody(OV_VT_DOUBLE_VEC, &xdr, &xdrlength, pchildsdv->v_path, &(pchildsdv->v_senddoublevec.value), pchildsdv->v_senddoublevec.veclen,
+						pchildsdv->v_varTimeStamp.secs, pchildsdv->v_varTimeStamp.usecs, pchildsdv->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -153,7 +157,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsi = Ov_DynamicPtrCast(ksapi_setInt, pchild);
 			if(pchildsi->v_path)
-				generatesetbody(OV_VT_INT, &xdr, &xdrlength, pchildsi->v_path, &(pchildsi->v_sendint));
+				generatesetbody(OV_VT_INT, &xdr, &xdrlength, pchildsi->v_path, &(pchildsi->v_sendint),
+						pchildsi->v_varTimeStamp.secs, pchildsi->v_varTimeStamp.usecs, pchildsi->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -162,7 +167,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsiv = Ov_StaticPtrCast(ksapi_setIntVec, pchild);
 			if(pchildsiv->v_path)
-				generatesetvecbody(OV_VT_INT_VEC, &xdr, &xdrlength, pchildsiv->v_path, (int*)&(pchildsiv->v_sendintvec.value), pchildsiv->v_sendintvec.veclen);
+				generatesetvecbody(OV_VT_INT_VEC, &xdr, &xdrlength, pchildsiv->v_path, (int*)&(pchildsiv->v_sendintvec.value), pchildsiv->v_sendintvec.veclen,
+						pchildsiv->v_varTimeStamp.secs, pchildsiv->v_varTimeStamp.usecs, pchildsiv->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -171,7 +177,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildssgl = Ov_DynamicPtrCast(ksapi_setSingle, pchild);
 			if(pchildssgl->v_path)
-				generatesetbody(OV_VT_SINGLE, &xdr, &xdrlength, pchildssgl->v_path, &(pchildssgl->v_sendsingle));
+				generatesetbody(OV_VT_SINGLE, &xdr, &xdrlength, pchildssgl->v_path, &(pchildssgl->v_sendsingle),
+						pchildssgl->v_varTimeStamp.secs, pchildssgl->v_varTimeStamp.usecs, pchildssgl->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -180,7 +187,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildssglv = Ov_StaticPtrCast(ksapi_setSingleVec, pchild);
 			if(pchildssglv->v_path)
-				generatesetvecbody(OV_VT_SINGLE_VEC, &xdr, &xdrlength, pchildssglv->v_path, &(pchildssglv->v_sendsinglevec.value), pchildssglv->v_sendsinglevec.veclen);
+				generatesetvecbody(OV_VT_SINGLE_VEC, &xdr, &xdrlength, pchildssglv->v_path, &(pchildssglv->v_sendsinglevec.value), pchildssglv->v_sendsinglevec.veclen,
+						pchildssglv->v_varTimeStamp.secs, pchildssglv->v_varTimeStamp.usecs, pchildssglv->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -189,7 +197,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsstr = Ov_DynamicPtrCast(ksapi_setString, pchild);
 			if(pchildsstr->v_path)
-				generatesetbody(OV_VT_STRING, &xdr, &xdrlength, pchildsstr->v_path, &(pchildsstr->v_sendstring));
+				generatesetbody(OV_VT_STRING, &xdr, &xdrlength, pchildsstr->v_path, &(pchildsstr->v_sendstring),
+						pchildsstr->v_varTimeStamp.secs, pchildsstr->v_varTimeStamp.usecs, pchildsstr->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -198,7 +207,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsstrv = Ov_StaticPtrCast(ksapi_setStringVec, pchild);
 			if(pchildsstrv->v_path)
-				generatesetvecbody(OV_VT_STRING_VEC, &xdr, &xdrlength, pchildsstrv->v_path, &(pchildsstrv->v_sendstringvec.value), pchildsstrv->v_sendstringvec.veclen);
+				generatesetvecbody(OV_VT_STRING_VEC, &xdr, &xdrlength, pchildsstrv->v_path, &(pchildsstrv->v_sendstringvec.value), pchildsstrv->v_sendstringvec.veclen,
+						pchildsstrv->v_varTimeStamp.secs, pchildsstrv->v_varTimeStamp.usecs, pchildsstrv->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -207,7 +217,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsui = Ov_DynamicPtrCast(ksapi_setUInt, pchild);
 			if(pchildsui->v_path)
-				generatesetbody(OV_VT_UINT, &xdr, &xdrlength, pchildsui->v_path, &(pchildsui->v_senduint));
+				generatesetbody(OV_VT_UINT, &xdr, &xdrlength, pchildsui->v_path, &(pchildsui->v_senduint),
+						pchildsui->v_varTimeStamp.secs, pchildsui->v_varTimeStamp.usecs, pchildsui->v_varQState);
 			else
 				errorcode = -1;
 		}
@@ -216,7 +227,8 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			childcount++;
 			pchildsuiv = Ov_StaticPtrCast(ksapi_setUIntVec, pchild);
 			if(pchildsuiv->v_path)
-				generatesetvecbody(OV_VT_UINT, &xdr, &xdrlength, pchildsuiv->v_path, (unsigned int*)&(pchildsuiv->v_senduintvec.value), pchildsuiv->v_senduintvec.veclen);
+				generatesetvecbody(OV_VT_UINT, &xdr, &xdrlength, pchildsuiv->v_path, (unsigned int*)&(pchildsuiv->v_senduintvec.value), pchildsuiv->v_senduintvec.veclen,
+						pchildsuiv->v_varTimeStamp.secs, pchildsuiv->v_varTimeStamp.usecs, pchildsuiv->v_varQState);
 			else
 				errorcode = -1;
 		}

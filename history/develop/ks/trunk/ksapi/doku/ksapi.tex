@@ -80,11 +80,11 @@
 		\paragraph{\textcolor{red}{\sout{Welche Fehler können auftreten?}}}
 			\textcolor{red}{\sout{Auch beim Lesen können verschiedene Fehler auftreten, die an die Rückgabemethode übergeben werden. Eine Übersicht steht im Anhang unter Kapitel \ref{fehler}.}}
 			
-	\subsection{\textcolor{red}{\sout{getEPidentifiers}} \textcolor{red}{--> funktioniert noch nicht}}
-		\textcolor{red}{\sout{Die Klasse \emph{getEPidentifiers} gibt eine Liste der Identifier aller unter dem angegebenen Pfad sich befindenden Kinder an. Diese müssen von der Klasse \textsl{ov\_domain} sein. Die Klasse liest die EP-Objekte als ganzes aus, gibt aber nur die Identifier zurück. Sollten andere Attribute benötigt werden, muss man die reqcb-Methode entsprechend ändern.}}
-		\subsubsection{\textcolor{red}{\sout{Welche Einstellungen kann man vornehmen?}}}
-			\textcolor{red}{\sout{Zum einen können natürlich der Host, der Server und der Pfad der Domain, deren Kinder man lesen möchte, sowie ein regulärer Ausdruck, der die Identifier filtert, eingestellt werden. Dies kann entweder über die Set-Funktionen der einzelnen Variablen geschehen oder durch Parameterübergabe an die entsprechende Funktion \textsl{setandsubmit}. Zum anderen kann auch die Anzahl der Fehler, die auftreten dürfen, eingegeben werden und man kann entscheiden, ob die Verbindung nach dem Ende des Sendevorgangs offen bleiben soll oder nicht. \\
-			Alle Änderungen der Variablen dürfen nur über die entsprechenden Set-Methoden vorgenommen werden; bei der Parameterübergabe wird dies intern gemacht. Wenn die Variablen direkt gesetzt werden, werden eventuell wichtige Aufräumaktionen nicht durchgeführt.	}}
+	\subsection{getEPidentifiers}
+		Die Klasse \emph{getEPidentifiers} gibt eine Liste der Identifier aller unter dem angegebenen Pfad sich befindenden Kinder an. Bei den kindern kann es sich um Domains, Variablen und Links handeln. Die Klasse liest die EP-Objekte als ganzes aus, gibt aber nur die Identifier zurück. Sollten andere Attribute benötigt werden, muss die Return-Methode entsprechend angepasst werden. In der Return-Methode sind die relevanten Daten im XDR-Strom kommentiert.
+		\subsubsection{Welche Einstellungen kann man vornehmen?}
+			Zum einen können natürlich der Host, der Server und der Pfad der Domain, deren Kinder man lesen möchte eingestellt werden. Dies kann entweder über die Set-Funktionen der einzelnen Variablen geschehen oder durch Parameterübergabe an die entsprechende Funktion \textsl{setandsubmit}.\\
+			Alle Änderungen der Variablen dürfen nur über die entsprechenden Set-Methoden vorgenommen werden; bei der Parameterübergabe wird dies intern gemacht. Wenn die Variablen direkt gesetzt werden, werden eventuell wichtige Aufräumaktionen nicht durchgeführt.
 		\subsubsection{\textcolor{red}{\sout{Wie starte ich den Lesevorgang?}}}
 			\textcolor{red}{\sout{Auch hier muss zuerst eine Rückgabemethode definiert werden. Zusätzlich zu den Aufgaben, die in Kapitel \ref{setret} erklärt sind, muss in dieser Methode auch die Weiterverarbeitung der gelesenen Strings, die in einem Vektor gespeichert werden, erfolgen. Danach gibt es zwei Möglichkeiten, den Lesevorgang zu starten:}}
 			\begin{enumerate}
@@ -102,7 +102,7 @@
 			\hline
 			Variablentyp& Klasse& Aufruf\\
 			\hline
-			\textcolor{red}{\sout{EP}}& \textcolor{red}{\sout{getEPidentifiers}}&\textcolor{red}{\sout{setandsubmit(pobj, host, server, path, namemask)}}\\
+			EPIdentifiers& getEPidentifiers&setandsubmit(pobj, host, server, path)\\
 			\hline
 			INT& getInt&setandsubmit(pobj, host, server, path)\\
 			& setInt&setandsubmit(pobj, host, server, path, sendint)\\
