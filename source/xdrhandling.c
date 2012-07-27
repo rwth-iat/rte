@@ -770,6 +770,9 @@ int analysegetreply(int type, char xdr[], int xdrlength, void *reply, unsigned l
 		case KS_ERR_BADPATH:
 			logfile_error("\nwrong path\n");
 			break;
+		case KS_ERR_NOACCESS:
+			logfile_error("\nno access\n");
+			break;
 		default:
 			logfile_error("\nERROR\n");
 		}
@@ -939,6 +942,9 @@ int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *v
 		{
 		case KS_ERR_BADPATH:
 			logfile_error("\nwrong path\n");
+			break;
+		case KS_ERR_NOACCESS:
+			logfile_error("\nno access\n");
 			break;
 		default:
 			logfile_error("\nERROR\n");
