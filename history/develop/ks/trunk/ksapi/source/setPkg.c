@@ -70,7 +70,10 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 	OV_INSTPTR_ksapi_setStringVec pchildsstrv = NULL;
 	OV_INSTPTR_ksapi_setUInt pchildsui = NULL;
 	OV_INSTPTR_ksapi_setUIntVec pchildsuiv = NULL;
+	OV_INSTPTR_ksapi_setAny pchildsa = NULL;
 	OV_UINT childcount = 0;
+	OV_TIME ttemp;
+	OV_UINT stemp;
 	char *xdr=NULL;
    int xdrlength;
 	int errorcode = 0;
@@ -232,6 +235,81 @@ OV_DLLFNCEXPORT void ksapi_setPkg_submit(
 			else
 				errorcode = -1;
 		}
+		else if(Ov_CanCastTo(ksapi_setAny, pchild))
+		{
+			childcount++;
+			pchildsa = Ov_StaticPtrCast(ksapi_setAny, pchild);
+			if(pchildsa->v_path)
+			{
+				if(pchildsa->v_sendany.value.vartype & OV_VT_HAS_STATE)
+					stemp = pchildsa->v_sendany.state;
+				else
+					stemp = OV_ST_NOTSUPPORTED;
+				if(pchildsa->v_sendany.value.vartype & OV_VT_HAS_TIMESTAMP)
+					ttemp = pchildsa->v_sendany.time;
+				else
+				{
+					ttemp.secs = 0;
+					ttemp.usecs = 0;
+				}
+
+				switch(pchildsa->v_sendany.value.vartype & OV_VT_KSMASK)
+				{
+				case OV_VT_BOOL:
+					generatesetbody(OV_VT_BOOL, &xdr, &xdrlength, pchildsa->v_path, &(pchildsa->v_sendany.value.valueunion.val_bool),
+											ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_BOOL_VEC:
+					generatesetvecbody(OV_VT_BOOL, &xdr, &xdrlength, pchildsa->v_path, (OV_BOOL*)&(pchildsa->v_sendany.value.valueunion.val_bool_vec.value),
+							pchildsa->v_sendany.value.valueunion.val_bool_vec.veclen, ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_UINT:
+					generatesetbody(OV_VT_UINT, &xdr, &xdrlength, pchildsa->v_path, &(pchildsa->v_sendany.value.valueunion.val_uint),
+							ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_UINT_VEC:
+					generatesetvecbody(OV_VT_UINT, &xdr, &xdrlength, pchildsa->v_path, (OV_UINT*)&(pchildsa->v_sendany.value.valueunion.val_uint_vec.value),
+							pchildsa->v_sendany.value.valueunion.val_uint_vec.veclen, ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_INT:
+					generatesetbody(OV_VT_INT, &xdr, &xdrlength, pchildsa->v_path, &(pchildsa->v_sendany.value.valueunion.val_int),
+							ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_INT_VEC:
+					generatesetvecbody(OV_VT_INT, &xdr, &xdrlength, pchildsa->v_path, (OV_INT*)&(pchildsa->v_sendany.value.valueunion.val_int_vec.value),
+							pchildsa->v_sendany.value.valueunion.val_int_vec.veclen, ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_SINGLE:
+					generatesetbody(OV_VT_SINGLE, &xdr, &xdrlength, pchildsa->v_path, &(pchildsa->v_sendany.value.valueunion.val_single),
+							ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_SINGLE_VEC:
+					generatesetvecbody(OV_VT_SINGLE, &xdr, &xdrlength, pchildsa->v_path, (OV_SINGLE*)&(pchildsa->v_sendany.value.valueunion.val_single_vec.value),
+							pchildsa->v_sendany.value.valueunion.val_single_vec.veclen, ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_DOUBLE:
+					generatesetbody(OV_VT_DOUBLE, &xdr, &xdrlength, pchildsa->v_path, &(pchildsa->v_sendany.value.valueunion.val_double),
+							ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_DOUBLE_VEC:
+					generatesetvecbody(OV_VT_DOUBLE, &xdr, &xdrlength, pchildsa->v_path, (OV_DOUBLE*)&(pchildsa->v_sendany.value.valueunion.val_double_vec.value),
+							pchildsa->v_sendany.value.valueunion.val_double_vec.veclen, ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_STRING:
+					generatesetbody(OV_VT_STRING, &xdr, &xdrlength, pchildsa->v_path, &(pchildsa->v_sendany.value.valueunion.val_string),
+							ttemp.secs, ttemp.usecs, stemp);
+					break;
+				case OV_VT_STRING_VEC:
+					generatesetvecbody(OV_VT_STRING, &xdr, &xdrlength, pchildsa->v_path, (OV_STRING*)&(pchildsa->v_sendany.value.valueunion.val_string_vec.value),
+							pchildsa->v_sendany.value.valueunion.val_string_vec.veclen, ttemp.secs, ttemp.usecs, stemp);
+					break;
+				default:
+					ov_logfile_error("wtf type is this variable??? 0x%x (not supported)", pchildsa->v_sendany.value.vartype);
+				}
+			}
+			else
+				errorcode = -1;
+		}
 		else if(Ov_CanCastTo(ksapi_Channel, pchild))
 		{
 		}
@@ -318,11 +396,71 @@ OV_DLLFNCEXPORT void ksapi_setPkg_returnMethodxdr(
 			case KS_ERR_OK:
 				ov_string_append(&errorstring, "OK; ");
 				break;
-			case KS_ERR_BADTYPE:
-				ov_string_append(&errorstring, "ERR: BADTYPE; ");
+			case KS_ERR_GENERIC:
+				ov_string_append(&errorstring, "ERR: GENERIC");
+				break;
+			case KS_ERR_TARGETGENERIC:
+				ov_string_append(&errorstring, "ERR: TARGETGENERIC");
+				break;
+			case KS_ERR_BADAUTH:
+				ov_string_append(&errorstring, "ERR: BADAUTH");
+				break;
+			case KS_ERR_UNKNOWNAUTH:
+				ov_string_append(&errorstring, "ERR: UNKNOWNAUTH");
+				break;
+			case KS_ERR_NOTIMPLEMENTED:
+				ov_string_append(&errorstring, "ERR: NOTIMPLEMENTED");
+				break;
+			case KS_ERR_BADPARAM:
+				ov_string_append(&errorstring, "ERR: BADPARAM");
+				break;
+			case KS_ERR_BADOBJTYPE:
+				ov_string_append(&errorstring, "ERR: BADOBJTYPE");
+				break;
+			case KS_ERR_BADNAME:
+				ov_string_append(&errorstring, "ERR: BADNAME");
 				break;
 			case KS_ERR_BADPATH:
-				ov_string_append(&errorstring, "ERR: BADPATH; ");
+				ov_string_append(&errorstring, "ERR: BADPATH");
+				break;
+			case KS_ERR_BADMASK:
+				ov_string_append(&errorstring, "ERR: BADMASK");
+				break;
+			case KS_ERR_NOACCESS:
+				ov_string_append(&errorstring, "ERR: NOACCESS");
+				break;
+			case KS_ERR_BADTYPE:
+				ov_string_append(&errorstring, "ERR: BADTYPE");
+				break;
+			case KS_ERR_CANTSYNC:
+				ov_string_append(&errorstring, "ERR: CANTSYNC");
+				break;
+			case KS_ERR_BADSELECTOR:
+				ov_string_append(&errorstring, "ERR: BADSELECTOR");
+				break;
+			case KS_ERR_BADVALUE:
+				ov_string_append(&errorstring, "ERR: BADVALUE");
+				break;
+			case KS_ERR_NOREMOTE:
+				ov_string_append(&errorstring, "ERR: NOREMOTE");
+				break;
+			case KS_ERR_SERVERUNKNOWN:
+				ov_string_append(&errorstring, "ERR: SERVERUNKNOWN");
+				break;
+			case KS_ERR_BADFACTORY:
+				ov_string_append(&errorstring, "ERR: BADFACTORY");
+				break;
+			case KS_ERR_ALREADYEXISTS:
+				ov_string_append(&errorstring, "ERR: ALREADYEXISTS");
+				break;
+			case KS_ERR_BADINITPARAM:
+				ov_string_append(&errorstring, "ERR: BADINITPARAM");
+				break;
+			case KS_ERR_BADPLACEMENT:
+				ov_string_append(&errorstring, "ERR: BADPLACEMENT");
+				break;
+			case KS_ERR_CANTMOVE:
+				ov_string_append(&errorstring, "ERR: CANTMOVE");
 				break;
 			default:
 				ov_string_append(&errorstring, "ERR: unknown; ");
