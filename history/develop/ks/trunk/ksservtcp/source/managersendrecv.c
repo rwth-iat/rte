@@ -247,7 +247,7 @@ void ksservtcp_managersendrecv_typemethod(
 
 	if(pinst->v_shutdowncounter > 5) {//give up
 		//reset everything back
-		ov_logfile_debug("Managersendrecv waited too long ... giving up on socket %d ", sock);
+		ksserv_logfile_debug("Managersendrecv waited too long ... giving up on socket %d ", sock);
 		free(pinst->v_xdr);
 		pinst->v_xdr = 0;
 		CLOSE_SOCKET(sock);

@@ -187,7 +187,7 @@ OV_DLLFNCEXPORT void ksservtcp_tcpconnection_startup(OV_INSTPTR_ov_object pobj) 
 		while (ptcpc) {
 			ksservtcp_tcpclient_shutdown((OV_INSTPTR_ov_object) ptcpc);
 			ptcpc
-					= (OV_INSTPTR_ksservtcp_tcpclient) Ov_GetNextChild(ov_containment, pclients);
+					= (OV_INSTPTR_ksservtcp_tcpclient) Ov_GetNextChild(ov_containment, ptcpc);
 		}
 		Ov_DeleteObject((OV_INSTPTR_ov_object)pclients);
 		if (!Ov_OK((Ov_CreateObject(ov_domain, pclients, thisdomain, "clients")))) {
