@@ -87,6 +87,10 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_startup(
 	cobj->v_actimode = 0;
 	//ov_time_gettime(&curtime);
 
+	ksapitcp_TCPChannel_constate_set(cobj, 0);
+	ksapitcp_TCPChannel_socket_set(cobj, -1);
+	cobj->v_state = 0;
+	cobj->v_serverport = 0;
 	//create managercom
 	if(pmc != NULL)	{
 		Ov_DeleteObject(pmc);
