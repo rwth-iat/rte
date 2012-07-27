@@ -19,6 +19,7 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 	int i, j;
 	int veclength, stringlength, currstringlength;
 	int* genvec =0;
+	OV_ANY anyvar;
 
 	for(i=0;i<4; i++)
 		((char*)(&errorcode))[i] = xdr[*xdrposition+3-i];		//read errorcode of current getvar
@@ -48,7 +49,27 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 					((char*)&(Ov_StaticPtrCast(ksapi_getBool, pchild)->v_varQState))[i] = xdr[*xdrposition+27-i];
 
 			}
-			else												//wrong vartype
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_BOOL | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read value
+					((char*)&(anyvar.value.valueunion.val_bool))[i] = xdr[*xdrposition+15-i];
+				pchild->v_status = STATUS_KSCOMMON_OK;
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
+			}
+			else			//wrong vartype
 			{
 				ksapi_getPkg_state_set(this, "wrong vartype");
 				pchild->v_status = -1;
@@ -71,6 +92,7 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				}
 				ksapi_getBoolVec_receiveboolvec_set(Ov_StaticPtrCast(ksapi_getBoolVec, pchild), (OV_BOOL*) genvec, veclength);
 				free(genvec);
+				pchild->v_status = STATUS_KSCOMMON_OK;
 				//decode Timestamp Seconds
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getBoolVec, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+veclength*4+19-i];
@@ -80,6 +102,38 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				//decode QState
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getBoolVec, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+27-i];
+			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_BOOL_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				anyvar.value.valueunion.val_bool_vec.veclen = veclength;
+				anyvar.value.valueunion.val_bool_vec.value = (OV_BOOL*) malloc(veclength*4);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<4; i++)
+						((char*)(&(anyvar.value.valueunion.val_bool_vec.value[j])))[i] = xdr[*xdrposition+19+j*4-i];
+				}
+
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+veclength*4+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+veclength*4+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
+				free(anyvar.value.valueunion.val_bool_vec.value);
 			}
 			else												//wrong vartype
 			{
@@ -95,6 +149,7 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 			{
 				for(i=0; i<4; i++)								//read value
 					((char*)&(Ov_StaticPtrCast(ksapi_getInt, pchild)->v_receiveint))[i] = xdr[*xdrposition+15-i];
+				pchild->v_status = STATUS_KSCOMMON_OK;
 				//decode Timestamp Seconds
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getInt, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+19-i];
@@ -104,6 +159,27 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				//decode QState
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getInt, pchild)->v_varQState))[i] = xdr[*xdrposition+27-i];
+			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_INT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read value
+					((char*)&(anyvar.value.valueunion.val_int))[i] = xdr[*xdrposition+15-i];
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
 			}
 			else												//wrong vartype
 			{
@@ -138,6 +214,38 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getIntVec, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+27-i];
 			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_INT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				anyvar.value.valueunion.val_int_vec.veclen = veclength;
+				anyvar.value.valueunion.val_int_vec.value = (OV_INT*) malloc(veclength*4);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<4; i++)
+						((char*)(&(anyvar.value.valueunion.val_int_vec.value[j])))[i] = xdr[*xdrposition+19+j*4-i];
+				}
+
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+veclength*4+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+veclength*4+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
+				free(anyvar.value.valueunion.val_int_vec.value);
+			}
 			else												//wrong vartype
 			{
 				ksapi_getPkg_state_set(this, "wrong vartype");
@@ -152,6 +260,7 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 			{
 				for(i=0; i<4; i++)								//read value
 					((char*)&(Ov_StaticPtrCast(ksapi_getUInt, pchild)->v_receiveuint))[i] = xdr[*xdrposition+15-i];
+				pchild->v_status = STATUS_KSCOMMON_OK;
 				//decode Timestamp Seconds
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getUInt, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+19-i];
@@ -161,6 +270,27 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				//decode QState
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getUInt, pchild)->v_varQState))[i] = xdr[*xdrposition+27-i];
+			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_UINT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read value
+					((char*)&(anyvar.value.valueunion.val_uint))[i] = xdr[*xdrposition+15-i];
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
 			}
 			else												//wrong vartype
 			{
@@ -195,6 +325,38 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getUIntVec, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+27-i];
 			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_UINT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				anyvar.value.valueunion.val_uint_vec.veclen = veclength;
+				anyvar.value.valueunion.val_uint_vec.value = (OV_UINT*) malloc(veclength*4);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<4; i++)
+						((char*)(&(anyvar.value.valueunion.val_uint_vec.value[j])))[i] = xdr[*xdrposition+19+j*4-i];
+				}
+
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+veclength*4+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+veclength*4+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
+				free(anyvar.value.valueunion.val_uint_vec.value);
+			}
 			else												//wrong vartype
 			{
 				ksapi_getPkg_state_set(this, "wrong vartype");
@@ -208,6 +370,7 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 			{
 				for(i=0; i<8; i++)								//read value
 					((char*)&(Ov_StaticPtrCast(ksapi_getDouble, pchild)->v_receivedouble))[i] = xdr[*xdrposition+19-i];
+				pchild->v_status = STATUS_KSCOMMON_OK;
 				//decode Timestamp Seconds
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getDouble, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+23-i];
@@ -217,6 +380,27 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				//decode QState
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getDouble, pchild)->v_varQState))[i] = xdr[*xdrposition+31-i];
+			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_DOUBLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<8; i++)								//read value
+					((char*)&(anyvar.value.valueunion.val_double))[i] = xdr[*xdrposition+19-i];
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+23-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+27-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+31-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
 			}
 			else												//wrong vartype
 			{
@@ -237,7 +421,7 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				for (j = 0; j < veclength; j++)
 				{
 					for (i =0; i<8; i++)
-						((char*)(&genvec[j]))[i] = xdr[*xdrposition+19+j*8-i];
+						((char*)(&genvec[j]))[i] = xdr[*xdrposition+23+j*8-i];
 				}
 				ksapi_getDoubleVec_receivedoublevec_set(Ov_StaticPtrCast(ksapi_getDoubleVec, pchild), (OV_DOUBLE*) genvec, veclength);
 				free(genvec);
@@ -250,6 +434,38 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				//decode QState
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getDoubleVec, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*8+27-i];
+			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_DOUBLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				anyvar.value.valueunion.val_double_vec.veclen = veclength;
+				anyvar.value.valueunion.val_double_vec.value = (OV_DOUBLE*) malloc(veclength*8);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<8; i++)
+						((char*)(&(anyvar.value.valueunion.val_double_vec.value[j])))[i] = xdr[*xdrposition+23+j*8-i];
+				}
+
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+veclength*8+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+veclength*8+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*8+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
+				free(anyvar.value.valueunion.val_double_vec.value);
 			}
 			else												//wrong vartype
 			{
@@ -264,6 +480,7 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 			{
 				for(i=0; i<4; i++)								//read value
 					((char*)&(Ov_StaticPtrCast(ksapi_getSingle, pchild)->v_receivesingle))[i] = xdr[*xdrposition+15-i];
+				pchild->v_status = STATUS_KSCOMMON_OK;
 				//decode Timestamp Seconds
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getSingle, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+19-i];
@@ -273,6 +490,27 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				//decode QState
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getSingle, pchild)->v_varQState))[i] = xdr[*xdrposition+27-i];
+			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_SINGLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read value
+					((char*)&(anyvar.value.valueunion.val_single))[i] = xdr[*xdrposition+15-i];
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
 			}
 			else												//wrong vartype
 			{
@@ -307,6 +545,38 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getSingleVec, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+27-i];
 			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_SINGLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+
+				anyvar.value.valueunion.val_single_vec.veclen = veclength;
+				anyvar.value.valueunion.val_single_vec.value = (OV_SINGLE*) malloc(veclength*4);
+				for (j = 0; j < veclength; j++)
+				{
+					for (i =0; i<4; i++)
+						((char*)(&(anyvar.value.valueunion.val_single_vec.value[j])))[i] = xdr[*xdrposition+19+j*4-i];
+				}
+
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+veclength*4+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+veclength*4+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
+				free(anyvar.value.valueunion.val_single_vec.value);
+			}
 			else												//wrong vartype
 			{
 				ksapi_getPkg_state_set(this, "wrong vartype");
@@ -330,6 +600,8 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				free(genvec);
 				while(stringlength%4)
 					stringlength++;
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
 				//decode Timestamp Seconds
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getString, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+stringlength+19-i];
@@ -339,6 +611,35 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				//decode QState
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getString, pchild)->v_varQState))[i] = xdr[*xdrposition+stringlength+27-i];
+			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_STRING | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read stringlength
+					((char*)&stringlength)[i] = xdr[*xdrposition+15-i];
+
+				anyvar.value.valueunion.val_string = malloc(stringlength+1);
+				for (i =0; i<stringlength; i++)
+					(anyvar.value.valueunion.val_string)[i] = xdr[*xdrposition+16+i];
+				anyvar.value.valueunion.val_string[stringlength] = '\0';
+
+				while(stringlength%4)
+					stringlength++;
+				pchild->v_status = STATUS_KSCOMMON_OK;
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+stringlength+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+stringlength+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+stringlength+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
+				free(anyvar.value.valueunion.val_string);
 			}
 			else												//wrong vartype
 			{
@@ -386,6 +687,46 @@ void getPkgElementInspector(OV_INSTPTR_ksapi_getPkg this, char* xdr, OV_UINT* xd
 				//decode QState
 				for(i=0;i<4; i++)
 					((char*)&(Ov_StaticPtrCast(ksapi_getStringVec, pchild)->v_varQState))[i] = xdr[*xdrposition+veclength*4+stringlength+27-i];
+			}
+			else if(Ov_CanCastTo(ksapi_getAny, pchild))				//compare type to ksapi get*block type
+			{
+				anyvar.value.vartype = (OV_VT_STRING_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP);
+				for(i=0; i<4; i++)								//read veclength
+					((char*)&veclength)[i] = xdr[*xdrposition+15-i];
+				stringlength = 0;
+				anyvar.value.valueunion.val_string_vec.veclen = veclength;
+				anyvar.value.valueunion.val_string_vec.value = (OV_STRING*) malloc(veclength*sizeof(OV_STRING));
+				for (i = 0; i < veclength; i++)
+				{
+					for(j=0; j<4; j++)
+						((char*)&currstringlength)[j] = xdr[(*xdrposition)+19+i*4+stringlength-j];
+					anyvar.value.valueunion.val_string_vec.value[i] = malloc(currstringlength + 1);
+					memcpy(anyvar.value.valueunion.val_string_vec.value[i], &(xdr[*xdrposition+20+i*4+stringlength]), currstringlength);
+					anyvar.value.valueunion.val_string_vec.value[i][currstringlength] = '\0';
+					stringlength+=currstringlength;
+					while(stringlength%4)
+						stringlength++;
+				}
+
+
+				pchild->v_status = STATUS_KSCOMMON_OK;
+
+				//decode Timestamp Seconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs))[i] = xdr[*xdrposition+stringlength+veclength*4+19-i];
+				anyvar.time.secs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.secs;
+				//decode Timestamp USeconds
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs))[i] = xdr[*xdrposition+stringlength+veclength*4+23-i];
+				anyvar.time.usecs = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varTimeStamp.usecs;
+				//decode QState
+				for(i=0;i<4; i++)
+					((char*)&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState))[i] = xdr[*xdrposition+stringlength+veclength*4+27-i];
+				anyvar.state = Ov_StaticPtrCast(ksapi_getAny, pchild)->v_varQState;
+				Ov_SetAnyValue(&(Ov_StaticPtrCast(ksapi_getAny, pchild)->v_receiveany), &anyvar);
+				for (i=0; i<veclength; i++)
+					free(anyvar.value.valueunion.val_string_vec.value[i]);
+				free(anyvar.value.valueunion.val_string_vec.value);
 			}
 			else												//wrong vartype
 			{
@@ -527,7 +868,8 @@ OV_DLLFNCEXPORT void ksapi_getPkg_submit(
 				|| Ov_CanCastTo(ksapi_getSingle, pchild)
 				|| Ov_CanCastTo(ksapi_getSingleVec, pchild)
 				|| Ov_CanCastTo(ksapi_getDouble, pchild)
-				|| Ov_CanCastTo(ksapi_getDoubleVec, pchild))
+				|| Ov_CanCastTo(ksapi_getDoubleVec, pchild)
+				|| Ov_CanCastTo(ksapi_getAny, pchild))
 		{
 			childcount++;
 			pchildksc = Ov_StaticPtrCast(ksapi_KSCommon, pchild);
