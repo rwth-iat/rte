@@ -638,6 +638,9 @@ void generategetepxdr(char *xdr[], int *length, char *path, int ksobjecttype, ch
  * char xdr[] : received xdr which should be analysed
  * int xdrlength : length of xdr
  * void *reply : here received VAR is stored
+ * unsigned long *repTsSecs : here the seconds part of the timestamp is saved
+ * unsigned long *repTsUsecs : here the microseconds part of the timestamp is saved
+ * unsigned long *repState : here the quality-state of the variable is saved
  */
 int analysegetreply(int type, char xdr[], int xdrlength, void *reply, unsigned long *repTsSecs, unsigned long *repTsUsecs, unsigned long *repState)
 {
@@ -673,18 +676,27 @@ int analysegetreply(int type, char xdr[], int xdrlength, void *reply, unsigned l
 			while(strlength%4)
 				strlength++;
 			//decode TimeStamps seconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[52+strlength+i];
-			memcpy(repTsSecs, temp, 4);
+			if(repTsSecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[52+strlength+i];
+				memcpy(repTsSecs, temp, 4);
+			}
 			//decode TimeStamps microseconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[56+strlength+i];
-			memcpy(repTsUsecs, temp, 4);
-			//decode state
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[60+strlength+i];
-			memcpy(repState, temp, 4);
+			if(repTsUsecs)
+			{
+				for (i = 3; i >= 0; i--)
 
+					temp[3-i] = xdr[56+strlength+i];
+				memcpy(repTsUsecs, temp, 4);
+			}
+			//decode state
+			if(repState)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[60+strlength+i];
+				memcpy(repState, temp, 4);
+			}
 		}
 		else if((vartype & OV_VT_KSMASK) == type && type == OV_VT_DOUBLE)	//decoding DOUBLE
 		{
@@ -694,17 +706,26 @@ int analysegetreply(int type, char xdr[], int xdrlength, void *reply, unsigned l
 			memcpy(reply, tempd, 8);
 
 			//decode TimeStamps seconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[56+i];
-			memcpy(repTsSecs, temp, 4);
+			if(repTsSecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[56+i];
+				memcpy(repTsSecs, temp, 4);
+			}
 			//decode TimeStamps microseconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[60+i];
-			memcpy(repTsUsecs, temp, 4);
+			if(repTsUsecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[60+i];
+				memcpy(repTsUsecs, temp, 4);
+			}
 			//decode state
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[64+i];
-			memcpy(repState, temp, 4);
+			if(repState)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[64+i];
+				memcpy(repState, temp, 4);
+			}
 		}
 		else if((vartype & OV_VT_KSMASK) == type)		//decoding INT, UINT, SINGLE and BOOL
 		{
@@ -713,13 +734,20 @@ int analysegetreply(int type, char xdr[], int xdrlength, void *reply, unsigned l
 				temp[3-i] = xdr[48+i];
 			memcpy(reply, temp, 4);
 			//decode TimeStamps seconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[52+i];
-			memcpy(repTsSecs, temp, 4);
+			if(repTsSecs)
+			{
+				for (i = 3; i >= 0; i--)
+
+					temp[3-i] = xdr[52+i];
+				memcpy(repTsSecs, temp, 4);
+			}
 			//decode TimeStamps microseconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[56+i];
-			memcpy(repTsUsecs, temp, 4);
+			if(repTsUsecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[56+i];
+				memcpy(repTsUsecs, temp, 4);
+			}
 			//decode state
 			for (i = 3; i >= 0; i--)
 				temp[3-i] = xdr[60+i];
@@ -760,6 +788,9 @@ int analysegetreply(int type, char xdr[], int xdrlength, void *reply, unsigned l
  * int xdrlength : length of xdr
  * void **reply : here received VARVEC is stored
  * int *veclength: length of received vector is stored here
+ * unsigned long *repTsSecs : here the seconds part of the timestamp is saved
+ * unsigned long *repTsUsecs : here the microseconds part of the timestamp is saved
+ * unsigned long *repState : here the quality-state of the variable is saved
  */
 int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *veclength, unsigned long *repTsSecs, unsigned long *repTsUsecs, unsigned long *repState)
 {
@@ -801,19 +832,28 @@ int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *v
 			}
 
 			//decode TimeStamps seconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[xdrposition+i];
-			memcpy(repTsSecs, temp, 4);
+			if(repTsSecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[xdrposition+i];
+				memcpy(repTsSecs, temp, 4);
+			}
 			xdrposition+=4;
 			//decode TimeStamps microseconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[xdrposition+i];
-			memcpy(repTsUsecs, temp, 4);
+			if(repTsUsecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[xdrposition+i];
+				memcpy(repTsUsecs, temp, 4);
+			}
 			xdrposition+=4;
 			//decode state
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[xdrposition+i];
-			memcpy(repState, temp, 4);
+			if(repState)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[xdrposition+i];
+				memcpy(repState, temp, 4);
+			}
 			xdrposition+=4;
 
 		}
@@ -829,17 +869,26 @@ int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *v
 					((char*) *reply)[j*8+7-i] = xdr[52+j*8+i];
 			}
 			//decode TimeStamps seconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[56+*veclength*8+i];
-			memcpy(repTsSecs, temp, 4);
+			if(repTsSecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[56+*veclength*8+i];
+				memcpy(repTsSecs, temp, 4);
+			}
 			//decode TimeStamps microseconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[60+*veclength*8+i];
-			memcpy(repTsUsecs, temp, 4);
+			if(repTsUsecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[60+*veclength*8+i];
+				memcpy(repTsUsecs, temp, 4);
+			}
 			//decode state
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[64+*veclength*8+i];
-			memcpy(repState, temp, 4);
+			if(repState)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[64+*veclength*8+i];
+				memcpy(repState, temp, 4);
+			}
 		}
 		else if((vartype & OV_VT_KSMASK) == type)		//decoding INTVEC, UINTVEC, SINGLEVEC and BOOLVEC
 		{												//TODO tested just for BOOLVEC
@@ -853,17 +902,26 @@ int analysegetvecreply(int type, char xdr[], int xdrlength, void **reply, int *v
 					((char*) *reply)[j*4+3-i] = xdr[52+j*4+i];
 			}
 			//decode TimeStamps seconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[56+*veclength*4+i];
-			memcpy(repTsSecs, temp, 4);
+			if(repTsSecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[56+*veclength*4+i];
+				memcpy(repTsSecs, temp, 4);
+			}
 			//decode TimeStamps microseconds
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[60+*veclength*4+i];
-			memcpy(repTsUsecs, temp, 4);
+			if(repTsSecs)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[60+*veclength*4+i];
+				memcpy(repTsUsecs, temp, 4);
+			}
 			//decode state
-			for (i = 3; i >= 0; i--)
-				temp[3-i] = xdr[64+*veclength*4+i];
-			memcpy(repState, temp, 4);
+			if(repState)
+			{
+				for (i = 3; i >= 0; i--)
+					temp[3-i] = xdr[64+*veclength*4+i];
+				memcpy(repState, temp, 4);
+			}
 		}
 		else
 		{
