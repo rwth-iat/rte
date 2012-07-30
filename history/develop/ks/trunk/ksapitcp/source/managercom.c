@@ -23,6 +23,7 @@
 #if !OV_SYSTEM_NT
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <netinet/tcp.h>
 #else
 #include <winsock2.h>
 #endif
