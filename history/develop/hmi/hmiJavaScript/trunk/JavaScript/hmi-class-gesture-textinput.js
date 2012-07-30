@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -264,7 +264,10 @@ TextInput.prototype = {
 		}
 		var input;
 		
-		if (evt.currentTarget && ("unknown" == typeof evt.currentTarget.hasAttributeNS || evt.currentTarget.hasAttributeNS) && evt.currentTarget.hasAttributeNS("http://www.acplt.de/hmi", "textinputcaption")) {
+		if(!window.prompt){
+			HMI.hmi_log_info_onwebsite("Sorry, your browser does not support textinput. If this is IE10 Metro mode, try desktop mode.");
+			input = null;
+		}else if (evt.currentTarget && ("unknown" == typeof evt.currentTarget.hasAttributeNS || evt.currentTarget.hasAttributeNS) && evt.currentTarget.hasAttributeNS("http://www.acplt.de/hmi", "textinputcaption")) {
 			//	supported in Firefox 2+3, Opera 10, Webkit, Adobe SVG Viewer 3, Renesis 1.1
 			input = window.prompt(evt.currentTarget.getAttributeNS("http://www.acplt.de/hmi", "textinputcaption"), text);
 		}else{

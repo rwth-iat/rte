@@ -89,7 +89,7 @@ function cshmi() {
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
-	this.cshmiTemplateHideActionArmedClass = "cshmi-hideactionarmed";
+	this.cshmiTemplateHasHideableChildren = "cshmi-TemplateHasHideableChildren";
 	
 	this.cshmiOperatorClickClass = "cshmi-click";
 	this.cshmiOperatorDoubleclickClass = "cshmi-doubleclick";
@@ -833,10 +833,12 @@ cshmi.prototype = {
 			return "";
 		}else if (ParameterName === "OperatorInput"){
 			if(ParameterValue.indexOf("textinput") !== -1){
-				var input;
+				var input = null;
 				var textinputHint;
 				var splittedValueParameter = ParameterValue.split(":");
-				if (splittedValueParameter.length > 1){
+				if(!window.prompt){
+					HMI.hmi_log_info_onwebsite("Sorry, your browser does not support textinput. If this is IE10 Metro mode, try desktop mode.");
+				}else if (splittedValueParameter.length > 1){
 					textinputHint = splittedValueParameter[1];
 					//e.g. "textinput:Some textinputHint:TemplateFBReferenceVariable:InputVarPath"
 					if (splittedValueParameter.length > 3){
@@ -1485,6 +1487,8 @@ cshmi.prototype = {
 	 * 
 	 * 
 	 * fixme: baseKsPath darf nicht ov_containment sondern instanziierungsbaum abgehen
+	 * sollte den vollen pfad zwischen speichern
+	 * sollte gefüllt werden von den containern, die sowieso abfragen machen
 	 */
 	_getBaseKsPath: function(VisualObject, ObjectPath){
 		var ObjectPathArray = ObjectPath.split("/");
@@ -1498,12 +1502,9 @@ cshmi.prototype = {
 				responseArray = HMI.KSClient.splitKsResponse(response);
 				
 				this.ResourceList.baseKsPath[currentPath] = responseArray;
-				this.ResourceList.baseKsPath[ObjectPath].useCount = 1;
-				HMI.hmi_log_trace("cshmi._BaseKsPath: remembering config of "+currentPath+" ");
+				//HMI.hmi_log_trace("cshmi._BaseKsPath: remembering config of "+currentPath+" ");
 			}else{
 				responseArray = this.ResourceList.baseKsPath[currentPath];
-				this.ResourceList.baseKsPath[ObjectPath].useCount++;
-				//HMI.hmi_log_trace("cshmi._BaseKsPath: reusing remembered config of "+currentPath+" (#"+this.ResourceList.baseKsPath[ObjectPath].useCount+")");
 			}
 			
 			if (responseArray.length === 0){
@@ -2992,7 +2993,7 @@ cshmi.prototype = {
 		
 		//make the parent clickable, if we can be hidden and no sibling has done this before
 		if (requestListTemplate[PathOfTemplateDefinition]["hideable"] === "TRUE"
-			&& HMI.instanceOf(VisualParentObject, this.cshmiTemplateHideActionArmedClass) === false){
+			&& HMI.instanceOf(VisualParentObject, this.cshmiTemplateHasHideableChildren) === false){
 			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			//toggle visibility of hideable childtemplates onclick
 			VisualParentObject.addEventListener("click", function(evt){
@@ -3008,7 +3009,7 @@ cshmi.prototype = {
 			}, false);
 			
 			//prevent multiple events on this
-			HMI.addClass(VisualParentObject, this.cshmiTemplateHideActionArmedClass);
+			HMI.addClass(VisualParentObject, this.cshmiTemplateHasHideableChildren);
 		}
 		
 		if (VisualChildObject){
