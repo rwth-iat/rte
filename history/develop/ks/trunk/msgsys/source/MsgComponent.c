@@ -28,22 +28,27 @@ OV_DLLFNCEXPORT OV_RESULT msgsys_MsgComponent_constructor(
 	this->v_actimode = TRUE;
 
     /* do what */
+	ov_logfile_error("MsgComp/constructor: do what");
 
 	//initialize setString
 	if(setstring){
 		ksapi_KSCommon_deregisterMethod((OV_INSTPTR_ksapi_KSCommon)setstring);
 	}
 	
+	ov_logfile_error("MsgComp/constructor: initialize setString");
+
 	if (Ov_Fail(Ov_CreateObject(ksapi_setString,setstring,this, "sendingInstance"))){
 		ov_logfile_error("MsgComp/constructor: Error while creating the setString/sendingInstance!");
 		return OV_ERR_GENERIC;
 	}
+	ov_logfile_error("MsgComp/constructor: Ov_CreateObject(ksapi_setString");
 
 	//set up return method -- TODO Check: Why is this required? Startup is NOT enough!!!
 	Ov_GetVTablePtr(ksapi_setString, setstringVtable, setstring);
 	Ov_GetVTablePtr(msgsys_MsgComponent, thisVtable, this);
 	setstringVtable->m_registerMethod((OV_INSTPTR_ksapi_KSCommon)setstring,thisVtable->m_retMethod);
 
+	ov_logfile_error("MsgComp/constructor: return OV_ERR_OK");
 	return OV_ERR_OK;
 }
 
@@ -60,7 +65,9 @@ OV_DLLFNCEXPORT void msgsys_MsgComponent_startup(
 	setstring = (OV_INSTPTR_ksapi_setString)ov_path_getobjectpointer(SENDINGINSTANCEPATH,2);;
 	Ov_GetVTablePtr(ksapi_setString, setstringVtable, setstring);
 	Ov_GetVTablePtr(msgsys_MsgComponent, thisVtable, this);
+	ov_logfile_error("MsgComp/constructor: setstringVtable");
 	setstringVtable->m_registerMethod((OV_INSTPTR_ksapi_KSCommon)setstring,thisVtable->m_retMethod);
+	ov_logfile_error("MsgComp/constructor: after setstringVtable");
 
 }
 
@@ -200,6 +207,17 @@ OV_DLLFNCEXPORT OV_RESULT msgsys_MsgComponent_retrieveMessage_set(
 	OV_STRING serviceINBOX = NULL;
 	OV_RESULT result = 0;
 	//prepare registry findservice by extracting target service name
+
+	// Anmerkung Liyong 01.08.2012
+	// hier oder in msgsys_Message_getReceiverServic fehlt eine Überprüfung von value. Wenn z.B. "" eingegeben wird, stürtz die Datenbasis ab!
+	// Hiermit nur eine provisorische Lösung
+	if (ov_string_compare(value, "") == 0)
+	{
+		ov_logfile_error("MsgComp/retrieveMessage: value invalid");
+		return OV_ERR_BADVALUE;
+	}
+	// End der eine provisorische Lösung
+
 	ov_string_setvalue(&service,msgsys_Message_getReceiverService(value));
 	//prepare OVPath/INBOX-workaround
 	ov_string_print(&serviceINBOX, "%s/INBOX",service);
