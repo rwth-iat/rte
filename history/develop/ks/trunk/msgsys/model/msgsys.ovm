@@ -57,7 +57,7 @@ CLASS MsgComponent : CLASS fb/functionblock
 	IS_INSTANTIABLE;
 	COMMENT   = "THE ONE central component for retrieving (and sending) messages.";
 	VARIABLES
-		retrieveMessage : STRING HAS_SET_ACCESSOR COMMENT="setVar wird von ksapi aufgerufen" INITIALVALUE="/TechUnits";
+		retrieveMessage : STRING HAS_SET_ACCESSOR COMMENT="setVar wird von ksapi aufgerufen";
 	END_VARIABLES;
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;

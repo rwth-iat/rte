@@ -214,8 +214,9 @@ OV_DLLFNCEXPORT OV_RESULT msgsys_MsgComponent_retrieveMessage_set(
 	// Hiermit nur eine provisorische Lösung
 	if (ov_string_compare(value, "") == 0)
 	{
-		ov_logfile_error("MsgComp/retrieveMessage: value invalid");
-		return OV_ERR_BADVALUE;
+		ov_logfile_error("MsgComp/retrieveMessage: value invalid ('' %s '')", value);
+		// eigentlich muss "return OV_ERR_BADVALUE;" sein. Hier wird provisorisch eine OV_OK zurückgegeben, damit fbd-Laden nicht wegen Fehlermeldung abgebrochen wird.
+		return result;
 	}
 	// End der provisorische Lösung
 
