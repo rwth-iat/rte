@@ -1090,7 +1090,7 @@ cshmi.prototype = {
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
 					if (NewValuePart === null){
-						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") given no value. Aborting setvalue.");
+						//_getValue had intentionally no value, abort
 						return true;
 					}else if (NewValuePart === undefined || NewValuePart === false){
 						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") had an error. Aborting.");
@@ -1110,7 +1110,7 @@ cshmi.prototype = {
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0]);
 					if (NewValuePart === null){
-						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") given no value. Aborting setvalue.");
+						//_getValue had intentionally no value, abort
 						return true;
 					}else if (NewValuePart === undefined || NewValuePart === false){
 						HMI.hmi_log_info("cshmi._getValue of "+ObjectPath+"/"+varName[0]+" (baseobject: "+VisualObject.id+") had an error. Skipping.");
