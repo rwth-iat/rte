@@ -89,7 +89,7 @@ function cshmi() {
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
-	this.cshmiTemplateHasHideableChildren = "cshmi-TemplateHasHideableChildren";
+	this.cshmiObjectHasHideableChildren = "cshmi-ObjectHasHideableChildren";
 	
 	this.cshmiOperatorClickClass = "cshmi-click";
 	this.cshmiOperatorDoubleclickClass = "cshmi-doubleclick";
@@ -1217,7 +1217,10 @@ cshmi.prototype = {
 				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
 				response = HMI.KSClient.setVar(null, baseKsPath+ParameterValue, NewValue, null);
 			}
-			if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+			if (response === false || response === null){
+				//communication error
+				return true;
+			}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
 				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+baseKsPath+ParameterValue+' not successfull: Bad Parameter ');
 			}else if (response.indexOf("KS_ERR") !== -1){
 				HMI.hmi_log_info('Setting '+NewValue+' at variable '+baseKsPath+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
@@ -1349,7 +1352,10 @@ cshmi.prototype = {
 							//we have no OV-PART, so the separator is a slash
 							result = HMI.KSClient.setVar(null, FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue, NewValue, null);
 						}
-						if (result.indexOf("KS_ERR_BADPARAM") !== -1){
+						if (response === false || response === null){
+							//communication error
+							return true;
+						}else if (result.indexOf("KS_ERR_BADPARAM") !== -1){
 							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference[ParameterValue]+' not successfull: Bad Parameter ');
 						}else if (result.indexOf("KS_ERR") !== -1){
 							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
@@ -1386,7 +1392,10 @@ cshmi.prototype = {
 				}
 				
 				var result = HMI.KSClient.setVar(null, prefix + this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue, NewValue, null);
-				if (result.indexOf("KS_ERR_BADPARAM") !== -1){
+				if (response === false || response === null){
+					//communication error
+					return true;
+				}else if (result.indexOf("KS_ERR_BADPARAM") !== -1){
 					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue+' not successfull: Bad Parameter ');
 				}else if (result.indexOf("KS_ERR") !== -1){
 					HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
@@ -1404,7 +1413,10 @@ cshmi.prototype = {
 					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						var response = HMI.KSClient.setVar(null, TemplateObject.FBReference[ParameterValue], NewValue, null);
-						if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+						if (response === false || response === null){
+							//communication error
+							return true;
+						}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
 							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference[ParameterValue]+' not successfull: Bad Parameter ');
 						}else if (response.indexOf("KS_ERR") !== -1){
 							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
@@ -1420,7 +1432,10 @@ cshmi.prototype = {
 					if (TemplateObject.FBReference["default"].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						response = HMI.KSClient.setVar(null, TemplateObject.FBReference["default"]+'.'+ParameterValue, NewValue, null);
-						if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+						if (response === false || response === null){
+							//communication error
+							return true;
+						}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
 							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: Bad Parameter ');
 						}else if (response.indexOf("KS_ERR") !== -1){
 							HMI.hmi_log_info('Setting '+NewValue+' at '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
@@ -1444,7 +1459,10 @@ cshmi.prototype = {
 					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						var response = HMI.KSClient.setVar(null, TemplateObject.FBVariableReference[ParameterValue], NewValue, null);
-						if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+						if (response === false || response === null){
+							//communication error
+							return true;
+						}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
 							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBVariableReference[ParameterValue]+' not successfull: Bad Parameter ');
 						}else if (response.indexOf("KS_ERR") !== -1){
 							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
@@ -1732,7 +1750,7 @@ cshmi.prototype = {
 			var response;
 			for (var i=0; i < ChildrenTypeList.length; i++) {
 				response = HMI.KSClient.getVar(null, FBRef +'.' + ChildrenTypeList[i], null);
-				if (response === false){
+				if (response === false || response === null){
 					continue;
 				}
 				//get a rid of external brackets 
@@ -1782,7 +1800,7 @@ cshmi.prototype = {
 			delete this.ResourceList.ChildrenIterator.currentChild;
 			
 			if (this.initStage === false){
-				//interprete onload Actions if we are allready loaded
+				//interprete onload Actions if we are already loaded
 				
 				//for this objects, the init stage should be set (needed for getValue and timeevent)
 				this.initStage = true;
@@ -2631,6 +2649,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["FBReference"] = null;
 			requestList[ObjectPath]["FBVariableReference"] = null;
 			requestList[ObjectPath]["ConfigValues"] = null;
+			requestList[ObjectPath]["hideable"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
@@ -2667,7 +2686,6 @@ cshmi.prototype = {
 			requestListTemplate[PathOfTemplateDefinition] = new Object();
 			requestListTemplate[PathOfTemplateDefinition]["width"] = null;
 			requestListTemplate[PathOfTemplateDefinition]["height"] = null;
-			requestListTemplate[PathOfTemplateDefinition]["hideable"] = null;
 			
 			successCode = this._requestVariablesArray(requestListTemplate);
 			if (successCode == false){
@@ -2698,10 +2716,8 @@ cshmi.prototype = {
 		if (calledFromInstantiateTemplate === true){
 			HMI.addClass(VisualObject, this.cshmiTemplateActionClass);
 		}
-		if (requestListTemplate[PathOfTemplateDefinition]["hideable"] === "TRUE"){
-			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
-			VisualParentObject.setAttribute("cursor", "pointer");
-		}
+		
+		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
 		
 		//###########################################################################
 		//parametrise templateDefinition with the config
@@ -2991,27 +3007,6 @@ cshmi.prototype = {
 			}
 		}
 		
-		//make the parent clickable, if we can be hidden and no sibling has done this before
-		if (requestListTemplate[PathOfTemplateDefinition]["hideable"] === "TRUE"
-			&& HMI.instanceOf(VisualParentObject, this.cshmiTemplateHasHideableChildren) === false){
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			//toggle visibility of hideable childtemplates onclick
-			VisualParentObject.addEventListener("click", function(evt){
-				if(HMI.instanceOf(VisualParentObject, preserveThis.cshmiOperatorClickClass)){
-					//we have an clickgesture on the same VisualObject, so this will handle all action
-					return;
-				}
-				
-				preserveThis.toggleChildTemplates(VisualParentObject);
-				
-				//quit propagation of event in any case. We do not want the parent template to handle the click
-				if (evt.stopPropagation) evt.stopPropagation();
-			}, false);
-			
-			//prevent multiple events on this
-			HMI.addClass(VisualParentObject, this.cshmiTemplateHasHideableChildren);
-		}
-		
 		if (VisualChildObject){
 			//transformed Template for rotation
 			return VisualChildObject;
@@ -3075,6 +3070,7 @@ cshmi.prototype = {
 		}
 		requestList[ObjectPath]["width"] = null;
 		requestList[ObjectPath]["height"] = null;
+		requestList[ObjectPath]["hideable"] = null;
 		
 		var successCode = this._requestVariablesArray(requestList);
 		if (successCode == false){
@@ -3096,6 +3092,8 @@ cshmi.prototype = {
 		VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
 		
 		VisualObject.setAttribute("overflow", "visible");
+		
+		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
 		
 		return VisualObject;
 	},
@@ -3765,7 +3763,7 @@ cshmi.prototype = {
 		}
 		
 		var response = HMI.KSClient.getVar(null, requestString, null);
-		if (response === false){
+		if (response === false || response === null){
 			//communication error
 			return false;
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1 && (response.match(/KS_ERR_BADPATH/g)||[]).length - 1 === VariableCount){
@@ -3812,30 +3810,36 @@ cshmi.prototype = {
 		}
 		return true;
 	},
-	
 	/**
-	 * returns a recursive list of all elements with a requested class
-	 * @param node node to start the search
-	 * @param {String} newText a string representing the list of class names to match; class names are separated by whitespace
-	 * @return {NodeList} returnElements a live NodeList (but see the note below) of found elements in the order they appear in the tree.
+	 * tests if the parent should get a click event and register for this
 	 */
-	_getElementsByClassName: function(node, className){
-		if (node.getElementsByClassName){
-			return node.getElementsByClassName(className);
-		} else {
-			var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
-			node = node || HMI.svgDocument;
-			var elements = node.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
-			var returnElements = [];
-			var current;
-			var length = elements.length;
-			for(var i=0; i<length; i++){
-				current = elements.item(i);
-				if(testClass.test(current.getAttribute('class'))){
-					returnElements.push(current);
+	_armToggleChildVisibility: function(VisualParentObject, VisualObject, ObjectPath, requestList){
+		if(VisualParentObject === null){
+			return;
+		}
+		if (requestList[ObjectPath]["hideable"] === "TRUE"){
+			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
+			VisualParentObject.setAttribute("cursor", "pointer");
+		}
+		//make the parent clickable, if we can be hidden and no sibling has done this before
+		if (requestList[ObjectPath]["hideable"] === "TRUE"
+			&& HMI.instanceOf(VisualParentObject, this.cshmiObjectHasHideableChildren) === false){
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			//toggle visibility of hideable childtemplates onclick
+			VisualParentObject.addEventListener("click", function(evt){
+				if(HMI.instanceOf(VisualParentObject, preserveThis.cshmiOperatorClickClass)){
+					//we have an clickgesture on the same VisualObject, so this will handle all action
+					return;
 				}
-			}
-			return returnElements;
+				
+				preserveThis.toggleChildTemplates(VisualParentObject);
+				
+				//quit propagation of event in any case. We do not want the parent template to handle the click
+				if (evt.stopPropagation) evt.stopPropagation();
+			}, false);
+			
+			//prevent multiple events on this
+			HMI.addClass(VisualParentObject, this.cshmiObjectHasHideableChildren);
 		}
 	}
 };

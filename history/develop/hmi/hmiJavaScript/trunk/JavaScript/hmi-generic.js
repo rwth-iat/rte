@@ -142,6 +142,34 @@ function removeEventSimple(obj,evt,fn) {
 		obj.detachEvent('on'+evt,fn);
 }
 
+/**
+ * returns a recursive list of all elements with a requested class
+ * @param node node to start the search
+ * @param {String} newText a string representing the list of class names to match; class names are separated by whitespace
+ * @return {NodeList} returnElements a live NodeList (but see the note below) of found elements in the order they appear in the tree.
+ */
+/*
+function csHMIgetElementsByClassName(node, className){
+	if (node.getElementsByClassName){
+		return node.getElementsByClassName(className);
+	} else {
+		var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
+		node = node || HMI.svgDocument;
+		var elements = node.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
+		var returnElements = [];
+		var current;
+		var length = elements.length;
+		for(var i=0; i<length; i++){
+			current = elements.item(i);
+			if(testClass.test(current.getAttribute('class'))){
+				returnElements.push(current);
+			}
+		}
+		return returnElements;
+	}
+}
+*/
+
 var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){

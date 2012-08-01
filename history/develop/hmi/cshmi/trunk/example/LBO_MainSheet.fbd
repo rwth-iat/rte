@@ -2,10 +2,10 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-07-31 16:24:12
+  Erstellt : 2012-08-01 15:24:11
 
-  HOST                : DEV
-  SERVER              : ov_hmidemo8
+  HOST                : LOCALHOST:7509
+  SERVER              : MANAGER
 ======================================================================
 *********************************************************************/
 
@@ -16,6 +16,7 @@
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 2095.000000;
         height : INPUT  SINGLE = 1280.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "//demo/fb_lbo_ProcessControl/";
     END_VARIABLE_VALUES;
@@ -46,6 +47,7 @@
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -60,6 +62,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Übersicht"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -79,6 +82,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Übersicht"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -119,6 +123,7 @@
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -133,6 +138,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Hydraulik Pumpenstation"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -152,6 +158,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Hydraulik Pumpenstation"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -209,6 +216,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"title:T1" , "rotate:90"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -243,6 +251,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:T2"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -277,6 +286,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:P2"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -311,6 +321,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:P1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -345,6 +356,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -438,6 +450,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/P060/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -457,6 +470,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -491,6 +505,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/P054/H"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -510,6 +525,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -529,6 +545,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/N053/N053"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[4] : INPUT  STRING = {"rotate:270" , "FaceplateXPos:40" , "FaceplateYPos:-90" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -566,6 +583,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/P055/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -585,6 +603,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/P055/L"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -604,6 +623,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU11/Y081/Y081"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"FaceplateXPos:-60" , "FaceplateYPos:-150" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -623,6 +643,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU11/Y080/Y080"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"FaceplateXPos:-60" , "FaceplateYPos:-150" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -660,6 +681,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU11/P061/H"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -679,6 +701,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU11/P061/L"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -698,6 +721,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/Y064/Y064"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[4] : INPUT  STRING = {"rotate:90" , "FaceplateXPos:80" , "FaceplateYPos:-30" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -735,6 +759,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/T061/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -754,6 +779,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/T061/H"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -773,6 +799,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/T061/L"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -792,6 +819,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/Y063/Y063"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[4] : INPUT  STRING = {"rotate:90" , "FaceplateXPos:80" , "FaceplateYPos:-30" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -829,6 +857,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/L051/L"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -848,6 +877,7 @@
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU10/L051/LL"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -865,6 +895,7 @@
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -879,6 +910,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Kühlwasserkreislauf"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -898,6 +930,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Kühlwasserkreislauf"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -940,6 +973,7 @@
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"title:" , "rotate:-90"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -968,7 +1002,7 @@
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/signalLines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M660,170 L650,170
+        d : INPUT  STRING = "M660,170 L650,170
 M1000,250 v40 h-100";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -990,6 +1024,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"title:" , "rotate:90"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1009,6 +1044,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1051,6 +1087,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1093,6 +1130,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"vesselname:AusgleichsbehÃ¤lter"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1127,6 +1165,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1144,6 +1183,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 200.000000;
         width : INPUT  SINGLE = 50.000000;
         height : INPUT  SINGLE = 200.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 12;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -1176,6 +1216,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1195,6 +1236,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1214,6 +1256,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1233,6 +1276,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1252,6 +1296,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1271,6 +1316,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1290,6 +1336,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1309,6 +1356,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N133/N133"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1328,6 +1376,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N134/N134"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1347,6 +1396,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N135/N135"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1366,6 +1416,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N136/N136"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1385,6 +1436,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1419,6 +1471,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1438,6 +1491,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N133/N133"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1457,6 +1511,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N134/N134"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1476,6 +1531,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N135/N135"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1495,6 +1551,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N136/N136"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1514,6 +1571,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/J122/J122"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1533,6 +1591,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/GCU310"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1552,6 +1611,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/GCU320"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1571,6 +1631,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/Y182/Y182"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[4] : INPUT  STRING = {"rotate:90" , "FaceplateXPos:80" , "FaceplateYPos:-30" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1590,6 +1651,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS30/T099/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1609,6 +1671,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS30/P146/Flt"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1626,6 +1689,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 480.000000;
         width : INPUT  SINGLE = 180.000000;
         height : INPUT  SINGLE = 80.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 26;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -1658,6 +1722,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1677,6 +1742,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1696,6 +1762,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1715,6 +1782,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1734,6 +1802,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1753,6 +1822,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1770,6 +1840,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 480.000000;
         width : INPUT  SINGLE = 120.000000;
         height : INPUT  SINGLE = 80.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 27;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -1802,6 +1873,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N131/N131"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"FaceplateXPos:0" , "FaceplateYPos:-120" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1821,6 +1893,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/N132/N132"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"FaceplateXPos:-80" , "FaceplateYPos:80" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1855,6 +1928,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1874,6 +1948,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS30/P128/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1893,6 +1968,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS30/T125/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1912,6 +1988,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/Y181/Y181"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[4] : INPUT  STRING = {"rotate:90" , "FaceplateXPos:80" , "FaceplateYPos:-30" , "fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1952,6 +2029,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -1966,6 +2044,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Hydraulik Elektrode"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -1985,6 +2064,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Hydraulik Elektrode"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2004,6 +2084,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU30/GCU030"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2021,6 +2102,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 200.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2069,6 +2151,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2143,6 +2226,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2162,6 +2246,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2181,6 +2266,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y067/Y067"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2200,6 +2286,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y067/Y067"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2219,6 +2306,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2238,6 +2326,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2314,6 +2403,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU21/P057/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2331,6 +2421,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2405,6 +2496,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y068/Y068"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2424,6 +2516,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y068/Y068"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2443,6 +2536,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y070/Y070"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2462,6 +2556,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y070/Y070"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2481,6 +2576,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2500,6 +2596,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2576,6 +2673,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU22/P058/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2593,6 +2691,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2667,6 +2766,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y071/Y071"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2686,6 +2786,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y071/Y071"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2705,6 +2806,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y073/Y073"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2724,6 +2826,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y073/Y073"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2743,6 +2846,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2762,6 +2866,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2838,6 +2943,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU23/P059/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2857,6 +2963,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:P1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2876,6 +2983,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"title:T1" , "rotate:180"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -2916,6 +3024,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2964,6 +3073,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3008,6 +3118,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3027,6 +3138,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3046,6 +3158,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3088,6 +3201,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Close"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:geklemmt"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3107,6 +3221,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Open"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3124,6 +3239,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3168,6 +3284,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3187,6 +3304,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3206,6 +3324,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3248,6 +3367,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Close"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:geklemmt"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3267,6 +3387,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Open"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3284,6 +3405,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3328,6 +3450,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3347,6 +3470,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3366,6 +3490,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3408,6 +3533,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Close"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:geklemmt"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3427,6 +3553,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Open"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3446,6 +3573,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"title:T2" , "rotate:180"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3465,6 +3593,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:P2"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3505,6 +3634,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3519,6 +3649,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Kühlwasserverteiler"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3538,6 +3669,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Kühlwasserverteiler"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3610,6 +3742,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Gleichrichter"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3629,6 +3762,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3663,6 +3797,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3697,6 +3832,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3716,6 +3852,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/P141/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:P141"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3735,6 +3872,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T151/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T151"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3754,6 +3892,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Stromseile1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3773,6 +3912,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T164/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T164"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3792,6 +3932,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F109"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3811,6 +3952,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Stromseile2"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3830,6 +3972,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T165/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T165"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3849,6 +3992,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F110"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3868,6 +4012,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Stromseile3"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3887,6 +4032,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T166/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T166"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3906,6 +4052,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F111"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3925,6 +4072,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Elektrodenarme1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3944,6 +4092,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T167/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T167"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3963,6 +4112,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F112"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -3982,6 +4132,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Elektrodenarme2"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4001,6 +4152,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T168/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T168"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4020,6 +4172,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F113"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4039,6 +4192,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Elektrodenarme3"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4058,6 +4212,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T169/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T169"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4077,6 +4232,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F114"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4096,6 +4252,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofen1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4115,6 +4272,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T156/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T156"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4134,6 +4292,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F101"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4153,6 +4312,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofen2"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4172,6 +4332,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T157/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T157"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4191,6 +4352,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F102"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4210,6 +4372,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofen3"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4229,6 +4392,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T158/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T158"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4248,6 +4412,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F103"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4267,6 +4432,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofen4"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4286,6 +4452,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T159/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T159"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4305,6 +4472,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F104"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4324,6 +4492,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofenboden1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4343,6 +4512,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T171/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T171"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4362,6 +4532,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F115"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4381,6 +4552,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofenboden2"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4400,6 +4572,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T172/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T172"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4419,6 +4592,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F116"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4438,6 +4612,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofenboden3"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4457,6 +4632,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T173/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T173"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4476,6 +4652,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F117"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4495,6 +4672,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofendeckel1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4514,6 +4692,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T160/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T160"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4533,6 +4712,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F105"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4552,6 +4732,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofendeckel2"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4571,6 +4752,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T161/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T161"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4590,6 +4772,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F106"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4609,6 +4792,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Ofendeckel3"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4628,6 +4812,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T162/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T162"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4647,6 +4832,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F107"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4666,6 +4852,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"caption:Elektrodendurchführung1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4685,6 +4872,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T163/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T163"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4704,6 +4892,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:F108"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4738,6 +4927,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/P129/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:P129"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4757,6 +4947,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS30/T155/PV_Surveillance"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:T155"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4776,6 +4967,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4808,6 +5000,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -4822,6 +5015,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Ofentemperatur"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4841,6 +5035,7 @@ M1000,250 v40 h-100";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Ofentemperatur"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4883,6 +5078,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T007A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4902,6 +5098,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T007B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4921,6 +5118,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T008A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4940,6 +5138,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T008B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4959,6 +5158,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T009A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4978,6 +5178,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T009B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -4997,6 +5198,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T010A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5016,6 +5218,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T010B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5035,6 +5238,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T011A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5054,6 +5258,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T011B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5073,6 +5278,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T012A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5092,6 +5298,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T012B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5111,6 +5318,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T013A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5130,6 +5338,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T013B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5149,6 +5358,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T014A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5168,6 +5378,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T014B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5187,6 +5398,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T015A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5206,6 +5418,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T015B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5225,6 +5438,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T016A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5244,6 +5458,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T016B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5263,6 +5478,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T017A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5282,6 +5498,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T017B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5301,6 +5518,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T018A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5320,6 +5538,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T018B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5339,6 +5558,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T019A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5358,6 +5578,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T019B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5377,6 +5598,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T020A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5396,6 +5618,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T020B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5415,6 +5638,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T021A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5434,6 +5658,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T021B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5453,6 +5678,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T023A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5472,6 +5698,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T023B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5491,6 +5718,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T024A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5510,6 +5738,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T024B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5529,6 +5758,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T025A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5548,6 +5778,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T025B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5567,6 +5798,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T026A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5586,6 +5818,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T026B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5605,6 +5838,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T027A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5624,6 +5858,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T027B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5643,6 +5878,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T028A/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5662,6 +5898,7 @@ M1000,250 v40 h-100";
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/T028B/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5680,150 +5917,150 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 393.000000;
         height : INPUT  SINGLE = 550.000000;
         SVGcontent : INPUT  STRING = "";
-        Bitmapcontent : INPUT  STRING = "data:image/png;base64,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
+        Bitmapcontent : INPUT  STRING = "data:image/png;base64,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
 1Gwj8n8BDBuB/JD3ed8AAAAASUVORK5CYII=";
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "";
@@ -5885,6 +6122,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS10/Tmin/Tmin"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5904,6 +6142,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS10/Tmax/Tmax"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -5921,6 +6160,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 530.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 48;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6189,6 +6429,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 530.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 49;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6493,6 +6734,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 530.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 50;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6761,6 +7003,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6775,6 +7018,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Elektrode"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -6794,6 +7038,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Elektrode"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -6834,6 +7079,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 50.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6866,6 +7112,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/Z043/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"VisMin:500" , "VisMax:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -6885,6 +7132,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/Z044/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"VisMin:500" , "VisMax:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -6904,6 +7152,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/Z045/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"VisMin:500" , "VisMax:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -6923,6 +7172,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/Z043/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:Z043"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -6965,6 +7215,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/Z044/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:Z044"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7007,6 +7258,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS10/Z045/PV"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:Z045"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7064,6 +7316,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/C024"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7083,6 +7336,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/GCU121"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7102,6 +7356,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/C021"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7121,6 +7376,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/C022"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7140,6 +7396,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/C023"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7159,6 +7416,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/GCU021"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7178,6 +7436,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/GCU022"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7197,6 +7456,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/GCU023"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7214,6 +7474,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 585.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -7529,6 +7790,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"buttoncontent:Aktivieren"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7703,6 +7965,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"buttoncontent:Erneuern"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7875,6 +8138,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -7889,6 +8153,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Gleichrichter"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7908,6 +8173,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Gleichrichter"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7925,6 +8191,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 20.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -7980,6 +8247,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Mittelspannung/MVchkbFern"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:auf FERN"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -7999,6 +8267,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Mittelspannung/MVchkbOn"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:eingeschaltet"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8018,6 +8287,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Mittelspannung/MVchkbOff"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:ausgeschaltet"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8037,6 +8307,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:EIN" , "PFCommand:MV_ON" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8056,6 +8327,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:AUS" , "PFCommand:MV_OFF" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8075,6 +8347,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:START" , "PFCommand:START" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8092,6 +8365,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 450.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8147,6 +8421,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Gleichrichter/RecChkbFern"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:auf FERN"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8164,6 +8439,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 150.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8372,6 +8648,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 210.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8602,6 +8879,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Gleichrichter/RecChkbOn"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:eingeschaltet"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8621,6 +8899,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Gleichrichter/RecChkbOff"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:ausgeschaltet"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8640,6 +8919,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Gleichrichter/RecFreeChkbOn"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:Zündimpulse freigegeben"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8659,6 +8939,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Gleichrichter/RecFreeChkbOff"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"SignalName:Zündimpulse gesperrt"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8678,6 +8959,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:EIN" , "PFCommand:REC_ON" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8697,6 +8979,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:AUS" , "PFCommand:REC_OFF" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8716,6 +8999,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:FREIGABE" , "PFCommand:REC_UNLOCK" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8735,6 +9019,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:SPERRE" , "PFCommand:REC_LOCK" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8752,6 +9037,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 150.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8807,6 +9093,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBO3AC" , "PFCommand:GLBO3AC" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8826,6 +9113,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBODC" , "PFCommand:GLBODC" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8845,6 +9133,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO1" , "PFCommand:KLBO1" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8864,6 +9153,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO2" , "PFCommand:KLBO2" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8881,6 +9171,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 375.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8936,6 +9227,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:Strom" , "PFCommand:I" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8955,6 +9247,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:Spannung" , "PFCommand:U" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8974,6 +9267,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:Leistung" , "PFCommand:P" , "PFValue:0"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -8991,6 +9285,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 600.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9046,6 +9341,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:MEHR" , "PFCommand:INC_SP" , "PFValue:1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9065,6 +9361,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:SetzeWert" , "PFCommand:SET_SP" , "PFValue:"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9084,6 +9381,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:WENIGER" , "PFCommand:DEC_SP" , "PFValue:1"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9101,6 +9399,7 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9109,10 +9408,10 @@ SKwk8sgZMkaKfJra42AkviI2B64hPiSn2By4hviQmGFz7AyZIlnZHDtDpsieNBU+F4nV38izkWJN
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/mainlines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M-100,100 h200
-M0,100 V850 H150 V100 H250 V850 H400 V100 H500 V850
-M500,100 H600 V850
-M600,400 H700 V850
+        d : INPUT  STRING = "M-100,100 h200
+M0,100 V850 H150 V100 H250 V850 H400 V100 H500 V850
+M500,100 H600 V850
+M600,400 H700 V850
 M700,400 H800 V850";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9203,6 +9502,7 @@ M700,400 H800 V850";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9274,7 +9574,7 @@ M700,400 H800 V850";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/sideLines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M10,300 H85 V225
+        d : INPUT  STRING = "M10,300 H85 V225
 M0,750 l30,30 v30 h55 V700";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9296,6 +9596,7 @@ M0,750 l30,30 v30 h55 V700";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"text1:1000 kVA" , "text2:10/0,44 kV" , "text3:uH = 8%"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9379,6 +9680,7 @@ M0,750 l30,30 v30 h55 V700";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9416,6 +9718,7 @@ M0,750 l30,30 v30 h55 V700";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9435,6 +9738,7 @@ M0,750 l30,30 v30 h55 V700";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9454,6 +9758,7 @@ M0,750 l30,30 v30 h55 V700";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[2] : INPUT  STRING = {"text1:1000 kVA" , "text2:440/200 V"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9473,6 +9778,7 @@ M0,750 l30,30 v30 h55 V700";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9486,10 +9792,10 @@ M0,750 l30,30 v30 h55 V700";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Diode :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M600,270
-v-30
-m0,30
-m-15,0 h30
+        d : INPUT  STRING = "M600,270
+v-30
+m0,30
+m-15,0 h30
 m-15,0 l-15,-30 h30 l-15,30";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9511,6 +9817,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9530,6 +9837,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9549,6 +9857,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9750,6 +10059,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 9;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9764,6 +10074,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Chargierer"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9783,6 +10094,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Chargierer"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9823,6 +10135,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         y : INPUT  SINGLE = 5.000000;
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
+        hideable : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9837,6 +10150,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Betriebsweise"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9856,6 +10170,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"title:Betriebsweise"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9885,6 +10200,46 @@ m-15,0 l-15,-30 h30 l-15,30";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Leistunsversorgung :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"title:Leistungsversorgung" , "line:0" , "column:0"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Moeller :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"title:Möller" , "line:1" , "column:0"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;

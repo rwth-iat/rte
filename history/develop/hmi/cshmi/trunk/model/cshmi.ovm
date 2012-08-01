@@ -113,6 +113,9 @@ LIBRARY cshmi
 			height : SINGLE
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
+			hideable : BOOL
+			COMMENT = "should this object be hidden if clicked on parent?"
+			INITIALVALUE = FALSE;
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -126,9 +129,6 @@ LIBRARY cshmi
 			height : SINGLE
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
-			hideable : BOOL
-			COMMENT = "should this object be hidden if clicked on parent?"
-			INITIALVALUE = FALSE;
 			comment : STRING
 			COMMENT = "describes the use of the Definition (including parameters)";
 		END_VARIABLES;
@@ -183,6 +183,9 @@ LIBRARY cshmi
 			COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
 			ConfigValues[] : STRING
 			COMMENT = "Free text value for TemplateDefinition; example 'myText:halloWelt'; multiple key1:value1 possible)";
+			hideable : BOOL
+			COMMENT = "should this object be hidden if clicked on parent?"
+			INITIALVALUE = FALSE;
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -517,6 +520,9 @@ LIBRARY cshmi
 			opacity : SINGLE
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
+			hideable : BOOL
+			COMMENT = "should this object be hidden if clicked on parent?"
+			INITIALVALUE = FALSE;
 		END_VARIABLES;
 	END_CLASS;
 	
