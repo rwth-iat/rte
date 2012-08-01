@@ -23,6 +23,7 @@ LIBRARY msgsys
 	
 	//Inbox and/or Outbox. 
 CLASS MessageBox : CLASS fb/functionblock
+	COMMENT   = "Inbox and/or Outbox.";
 	VARIABLES
 		arrivalmethodptr	:	C_TYPE <OV_FNCPTR_MSGSYS_ARRIVAL_FNC>				FLAGS =	"n"
 				COMMENT	=	"Pointer to the Arrivalmethod - called on arrived messages, if this is INBOX";
@@ -54,8 +55,9 @@ END_CLASS;
 //Opposite: The FbSendMessage class is a pure sending instance 
 CLASS MsgComponent : CLASS fb/functionblock
 	IS_INSTANTIABLE;
+	COMMENT   = "THE ONE central component for retrieving (and sending) messages.";
 	VARIABLES
-		retrieveMessage : STRING HAS_SET_ACCESSOR COMMENT="setVar wird von ksapi aufgerufen";
+		retrieveMessage : STRING HAS_SET_ACCESSOR COMMENT="setVar wird von ksapi aufgerufen" INITIALVALUE="/TechUnits";
 	END_VARIABLES;
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;

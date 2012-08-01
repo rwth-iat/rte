@@ -206,19 +206,21 @@ OV_DLLFNCEXPORT OV_RESULT msgsys_MsgComponent_retrieveMessage_set(
 	OV_STRING service = NULL;
 	OV_STRING serviceINBOX = NULL;
 	OV_RESULT result = 0;
+
 	//prepare registry findservice by extracting target service name
 
 	// Anmerkung Liyong 01.08.2012
-	// hier oder in msgsys_Message_getReceiverServic fehlt eine Überprüfung von value. Wenn z.B. "" eingegeben wird, stürtz die Datenbasis ab!
+	// hier fehlt eine Überprüfung von value. Wenn z.B. "" eingegeben wird, stürtz die Datenbasis ab!
 	// Hiermit nur eine provisorische Lösung
 	if (ov_string_compare(value, "") == 0)
 	{
 		ov_logfile_error("MsgComp/retrieveMessage: value invalid");
 		return OV_ERR_BADVALUE;
 	}
-	// End der eine provisorische Lösung
+	// End der provisorische Lösung
 
 	ov_string_setvalue(&service,msgsys_Message_getReceiverService(value));
+
 	//prepare OVPath/INBOX-workaround
 	ov_string_print(&serviceINBOX, "%s/INBOX",service);
 	generalInbox = ov_path_getobjectpointer(serviceINBOX,2);
