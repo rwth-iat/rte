@@ -1,0 +1,24 @@
+#include "fb.ovm"
+#include "ov.ovm"
+#include "ksapi.ovm"
+#include "msgsys.ovm"
+
+LIBRARY msgreceiver
+
+	VERSION   = "0.3";
+	AUTHOR    = "Michael Borchers";
+	COPYRIGHT = "";
+	COMMENT   = "Library for testing ksapi maxtries";
+
+CLASS Receiver : CLASS fb/functionblock
+	IS_INSTANTIABLE;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		retMethod : C_FUNCTION <MSGSYS_RET_FNC>;
+		arrivalMethod : C_FUNCTION <MSGSYS_ARRIVAL_FNC>;
+		
+	END_OPERATIONS;
+END_CLASS;
+
+END_LIBRARY;
