@@ -90,6 +90,7 @@ function cshmi() {
 	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
 	this.cshmiObjectHasHideableChildren = "cshmi-ObjectHasHideableChildren";
+	this.cshmiObjectChildrenNotLoaded = "cshmi-ObjectChildrenNotLoaded";
 	
 	this.cshmiOperatorClickClass = "cshmi-click";
 	this.cshmiOperatorDoubleclickClass = "cshmi-doubleclick";
@@ -273,21 +274,14 @@ cshmi.prototype = {
 		}
 		
 		//get and prepare Children in an recursive call
+		
+		/* fixme special handling for invisible objects
+		if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
+			HMI.addClass(VisualObject, this.cshmiObjectChildrenNotLoaded);
+		}
+		*/
 		if (VisualObject !== null){
-			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
-			for (var i=0; i < responseArray.length; i++) {
-				var varName = responseArray[i].split(" ");
-				if(VisualObject.tagName === "g" && VisualObject.id === "" && VisualObject.firstChild && VisualObject.firstChild.id !== ""){
-					//nested rotation template
-					var realComponent = VisualObject.firstChild;
-				}else{
-					realComponent = VisualObject;
-				}
-				var ChildComponent = this.BuildDomain(realComponent, realComponent.id+"/"+varName[0], varName[1]);
-				if (ChildComponent !== null){
-					realComponent.appendChild(ChildComponent);
-				}
-			}
+			this._loadChildren(VisualObject, ObjectPath);
 		}
 		
 		return VisualObject;
@@ -1061,7 +1055,7 @@ cshmi.prototype = {
 	 * @return false on error, true on success
 	 */
 	_setValue: function(VisualObject, ObjectPath, GetType){
-		//fixme get config for setvalue and getvalue combined in one request
+		//todo get config for setvalue and getvalue combined in one request
 		
 		var NewValue = "";
 		//get Value to set
@@ -1273,6 +1267,8 @@ cshmi.prototype = {
 					VisualObject.setAttribute("display", "none");
 				}else{
 					VisualObject.setAttribute("display", "block");
+					
+					//fixme, activate visible things
 				}
 			}else if (ParameterValue == "rotate"){
 				//rotate is special, as it is different in OVM and SVG
@@ -2998,14 +2994,13 @@ cshmi.prototype = {
 		//////////////////////////////////////////////////////////////////////////
 		//get childs (grafics and actions) from the TemplateDefinition
 		//our child will be fetched later
-		var responseArrayChild = HMI.KSClient.getChildObjArray(PathOfTemplateDefinition, this);
-		for (var i=0; i < responseArrayChild.length; i++) {
-			var varName = responseArrayChild[i].split(" ");
-			var ChildComponent = this.BuildDomain(VisualObject, PathOfTemplateDefinition+"/"+varName[0], varName[1]);
-			if (ChildComponent !== null){
-				VisualObject.appendChild(ChildComponent);
-			}
+		
+		/* fixme special handling for invisible objects
+		if (VisualObject.getAttribute("display") === "none"){
+			//HMI.addClass(VisualObject, this.cshmiObjectChildrenNotLoaded);
 		}
+		*/
+		this._loadChildren(VisualObject, PathOfTemplateDefinition);
 		
 		if (VisualChildObject){
 			//transformed Template for rotation
@@ -3037,7 +3032,7 @@ cshmi.prototype = {
 				childTemplates[i].setAttribute("display", "none");
 			}else{
 				childTemplates[i].setAttribute("display", "block");
-				
+				//fixme, activate visible things
 				
 				//doku depth of moving to top
 				
@@ -3810,6 +3805,29 @@ cshmi.prototype = {
 		}
 		return true;
 	},
+	
+	/**
+	 * loads all children and appends them to the Parent
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 */
+	_loadChildren: function(VisualParentObject, ObjectPath){
+		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
+		for (var i=0; i < responseArray.length; i++) {
+			var varName = responseArray[i].split(" ");
+			if(VisualParentObject.tagName === "g" && VisualParentObject.id === "" && VisualParentObject.firstChild && VisualParentObject.firstChild.id !== ""){
+				//nested rotation template
+				var realComponent = VisualParentObject.firstChild;
+			}else{
+				realComponent = VisualParentObject;
+			}
+			var ChildComponent = this.BuildDomain(realComponent, ObjectPath+"/"+varName[0], varName[1]);
+			if (ChildComponent !== null){
+				realComponent.appendChild(ChildComponent);
+			}
+		}
+	},
+	
 	/**
 	 * tests if the parent should get a click event and register for this
 	 */
