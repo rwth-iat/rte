@@ -651,7 +651,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"#   Rules\n");
 	fprintf(fd,"#   -----\n");
 	fprintf(fd,"$(LIBRARY).c $(LIBRARY).h: $(wildcard $(MODEL_DIR)$(LIBRARY).ov?) Makefile\n");
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(FB_MODEL_DIR)");
+	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
 	for(i=0; i<anzAddLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[i]));
 	}
