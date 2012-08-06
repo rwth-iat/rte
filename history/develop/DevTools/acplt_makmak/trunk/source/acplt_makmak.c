@@ -619,6 +619,11 @@ int main(int argc, char **argv) {
 
 	/* Targets */
 	fprintf(fd,"templates: \n");
+#if OV_SYSTEM_NT
+	fprintf(fd,"\t-@cmd /c del ./../source/sourcetemplates/*$(_C)\n");
+#else
+	fprintf(fd,"\t-@rm ../../source/sourcetemplates/*$(_C)\n");
+#endif
 	fprintf(fd,"\tacplt_builder -l %s $(MAKMAKOPTIONS)\n", libname);
 
 	fprintf(fd,"\n");

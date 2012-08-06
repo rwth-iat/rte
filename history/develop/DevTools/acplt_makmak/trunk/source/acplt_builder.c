@@ -1199,7 +1199,7 @@ HELP:
 	/*
 	*	Create output path
 	*/
-	sprintf(outputpath, "%s/%s/source", userLibPath, libname);
+	sprintf(outputpath, "%s/%s/source/sourcetemplates", userLibPath, libname);
 	compatiblePath(outputpath);
 
 	/* Check if outputpath */
